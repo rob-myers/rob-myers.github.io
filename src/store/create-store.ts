@@ -15,7 +15,9 @@ import {
 } from "./persist-store";
 // import { createEpicMiddleware } from "redux-observable";
 
-export const history = createBrowserHistory();
+export const history = createBrowserHistory({
+  basename: process.env.PUBLIC_URL // For GitHub
+});
 
 const persistConfig: ArgumentTypes<typeof persistReducer>[0] = {
   key: "root",
