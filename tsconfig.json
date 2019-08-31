@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "strictNullChecks": true,
+    "target": "es5",
+    "lib": [
+      "dom",
+      "es2015",
+      "es2016",
+      "es2017",
+      "esnext.asynciterable"
+    ],
+    "downlevelIteration": true,
+    "skipLibCheck": false,
+    "noErrorTruncation": false,
+    "outDir": "./build/",
+    "jsx": "react",
+    "typeRoots": [
+      "node_modules/@types", 
+      "src/custom-types"
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "@src/*": ["src/*"]
+    },
+  },
+  "exclude": [
+    "node_modules",
+    "config"
+  ]
+}
