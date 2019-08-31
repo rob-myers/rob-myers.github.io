@@ -38,6 +38,10 @@ const htmlWebpackPluginConfig = new HTMLWebpackPlugin({
 const definePluginConfig = new webpack.DefinePlugin({
   "process.env": {
     NODE_ENV: JSON.stringify(dev ? "development" : "production")
+    // /**
+    //  * For GitHub Pages routing.
+    //  */
+    // PUBLIC_URL: JSON.stringify("https://rob-myers.github.io")
   }
 });
 

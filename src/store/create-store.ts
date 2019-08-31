@@ -2,7 +2,8 @@ import { createStore, applyMiddleware, compose, Store, DeepPartial } from "redux
 import { persistStore, persistReducer, Persistor } from "redux-persist";
 
 import * as localforage from "localforage";
-import { createBrowserHistory } from "history";
+// import { createBrowserHistory } from "history";
+import { createHashHistory } from "history";
 import { routerMiddleware } from "connected-react-router";
 import { composeWithDevTools, EnhancerOptions } from "redux-devtools-extension";
 
@@ -15,8 +16,8 @@ import {
 } from "./persist-store";
 // import { createEpicMiddleware } from "redux-observable";
 
-export const history = createBrowserHistory({
-  basename: process.env.PUBLIC_URL // For GitHub
+export const history = createHashHistory({
+  // basename: process.env.PUBLIC_URL // For GitHub
 });
 
 const persistConfig: ArgumentTypes<typeof persistReducer>[0] = {
