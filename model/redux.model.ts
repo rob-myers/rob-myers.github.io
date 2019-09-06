@@ -1,9 +1,9 @@
 import { MiddlewareAPI } from "redux";
-import { RootState, RootAction } from "@src/store/reducer";
+import { RootState, RootAction } from "@store/reducer";
 import { KeyedLookup } from "./generic.model";
 
 /**
- * If attached as part of an action's payload, then
+ * If attached as part of an action's payload,
  * said payload will be replaced by string in redux devtools.
  * Prevents redux devtools from crashing when storing
  * large and/or cyclic objects.
@@ -106,12 +106,12 @@ export const generateThunk = <ActKey extends string, ActArgs extends {}, ReturnV
   actKey: ActKey,
   thunk: ThunkAct<ActKey, ActArgs, ReturnValue>["thunk"]
 ) => (args: ActArgs) =>
-  ({
-    key: "thunk",
-    type: actKey,
-    thunk,
-    args
-  } as ThunkAct<ActKey, ActArgs, ReturnValue>);
+    ({
+      key: "thunk",
+      type: actKey,
+      thunk,
+      args
+    } as ThunkAct<ActKey, ActArgs, ReturnValue>);
 
 type ThunkMiddleware =
   // (service: Service) => (

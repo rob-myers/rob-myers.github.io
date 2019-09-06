@@ -13,7 +13,7 @@ const ghpages = require('gh-pages');
           branch: 'master',
           repo: 'git@github.com:rob-myers/rob-myers.github.io',
           user: {
-            name: 'Rob Myers',
+            name: 'Robert S. R. Myers',
             email: 'me.robmyers@gmail.com'
           }
         },

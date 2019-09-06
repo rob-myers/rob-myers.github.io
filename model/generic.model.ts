@@ -16,3 +16,17 @@ export type KeyedLookup<Key extends string | number, Value extends { key: Key }>
 export type ArgumentTypes<F extends (...args: any[]) => any> = F extends (...args: infer A) => any
   ? A
   : never;
+
+/**
+ * Pretty-print JSON.
+ */
+export function pretty(input: any): string {
+  return JSON.stringify(input, null, "\t");
+}
+
+/**
+ * Usage `default: throw testNever(x)`.
+ */
+export function testNever(x: never): string {
+  return `testNever: ${pretty(x)} not implemented.`;
+}

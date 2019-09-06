@@ -1,6 +1,5 @@
-import { generateSync, generateThunk } from "@src/model/redux.model";
-import { testNever } from "@src/util";
-import { Merge } from "@src/model/generic.model";
+import { generateSync, generateThunk } from "@model/redux.model";
+import { Merge, testNever } from "@model/generic.model";
 
 export interface State {
   lastPing: null | string;
@@ -17,13 +16,13 @@ const initialState: State = {
 };
 
 //#region sync actions
-export const testPing = generateSync("TEST_PING", ({  }: {}, state: State) => ({
+export const testPing = generateSync("TEST_PING", ({ }: {}, state: State) => ({
   ...state,
   lastPing: `${new Date()}`
 }));
 // export type TestPing = typeof testPing["act"];
 
-export const testIncrement = generateSync("TEST_INCREMENT", ({  }: {}, state: State) => ({
+export const testIncrement = generateSync("TEST_INCREMENT", ({ }: {}, state: State) => ({
   ...state,
   count: state.count + 1
 }));
@@ -38,7 +37,7 @@ export const testDelta = generateSync(
 );
 // export type TestDelta = typeof testDelta["act"];
 
-export const testDecrement = generateSync("TEST_DECREMENT", ({  }: {}, state: State) => ({
+export const testDecrement = generateSync("TEST_DECREMENT", ({ }: {}, state: State) => ({
   ...state,
   count: state.count - 1
 }));
@@ -46,7 +45,7 @@ export const testDecrement = generateSync("TEST_DECREMENT", ({  }: {}, state: St
 
 //#endregion
 
-export const testPingInfoThunk = generateThunk("TEST_THUNK", ({ state: { test } }, {}): string =>
+export const testPingInfoThunk = generateThunk("TEST_THUNK", ({ state: { test } }, { }): string =>
   test.lastPing ? `Last ping was ${test.lastPing}` : "No pings seen"
 );
 

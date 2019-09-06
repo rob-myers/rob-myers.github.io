@@ -1,5 +1,5 @@
-import { Dispatch } from "@src/model/redux.model";
-import { RootState } from "@src/store/reducer";
+import { Dispatch } from "@model/redux.model";
+import { RootState } from "@store/reducer";
 
 /**
  * Add missing typings for react hooks.

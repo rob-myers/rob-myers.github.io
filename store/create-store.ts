@@ -1,49 +1,29 @@
 import { createStore, applyMiddleware, compose, Store, DeepPartial } from "redux";
-import { persistStore, persistReducer, Persistor } from "redux-persist";
-
-import * as localforage from "localforage";
-// import { createBrowserHistory } from "history";
-import { createHashHistory } from "history";
+import { createHashHistory, createMemoryHistory } from "history";
 import { routerMiddleware } from "connected-react-router";
 import { composeWithDevTools, EnhancerOptions } from "redux-devtools-extension";
 
-import { RedactInReduxDevTools, thunkMiddleware } from "@src/model/redux.model";
-import { ArgumentTypes } from "@src/model/generic.model";
+import { RedactInReduxDevTools, thunkMiddleware } from "@model/redux.model";
+// import { ArgumentTypes } from "@model/generic.model";
 import createRootReducer, { RootState, RootAction } from "./reducer";
-import {
-  persistTestTransform
-  // persistTopDownTransform
-} from "./persist-store";
-// import { createEpicMiddleware } from "redux-observable";
-
-export const history = createHashHistory({
-  // basename: process.env.PUBLIC_URL // For GitHub
-});
-
-const persistConfig: ArgumentTypes<typeof persistReducer>[0] = {
-  key: "root",
-  storage: localforage,
-  transforms: [
-    persistTestTransform
-    // persistTopDownTransform
-  ],
-  // Do not persist router state.
-  blacklist: ["router"]
-};
-
-const persistedReducer = persistReducer(persistConfig, createRootReducer(history));
 
 /**
- * Avoids error:
- * <Provider> does not support changing `store` on the fly.
+ * On server one must use `createMemoryHistory`.
+ */
+export const history = process.browser ? createHashHistory({}) : createMemoryHistory({});
+
+const rootReducer = createRootReducer(history);
+
+/**
+ * Avoids error: <Provider> does not support changing `store` on the fly.
  * https://github.com/reduxjs/react-redux/issues/356
  */
 let store: Store;
-let persistor: Persistor;
 
 export default function configureStore(preloadedState?: RootState) {
   if (store) {
-    return { store, persistor };
+    // return { store, persistor };
+    return { store };
   }
   // const epicMiddleware = createEpicMiddleware<
   //   Action<any>,
@@ -53,8 +33,8 @@ export default function configureStore(preloadedState?: RootState) {
   // >();
 
   store = createStore<RootState, RootAction, any, any>(
-    // rootReducer,
-    persistedReducer,
+    rootReducer,
+    // persistedReducer,
     (preloadedState as DeepPartial<RootState>) || {},
     composeEnhancers(
       applyMiddleware(
@@ -66,7 +46,7 @@ export default function configureStore(preloadedState?: RootState) {
     )
   );
   // epicMiddleware.run(rootEpic);
-  persistor = persistStore(store);
+  // persistor = persistStore(store);
 
   if (module.hot) {
     /**
@@ -75,11 +55,13 @@ export default function configureStore(preloadedState?: RootState) {
      */
     module.hot.accept("./reducer", () => {
       const nextRootReducer = require("./reducer").default(history);
-      store.replaceReducer(persistReducer(persistConfig, nextRootReducer));
+      // store.replaceReducer(persistReducer(persistConfig, nextRootReducer));
+      store.replaceReducer(nextRootReducer);
     });
   }
 
-  return { store, persistor };
+  // return { store, persistor };
+  return { store };
 }
 
 /**
@@ -99,7 +81,6 @@ const composeEnhancers =
         }
         return value;
       },
-      // Ignore functions (NOT WORKING).
-      function: false
+      function: false // NOT WORKING?
     } as EnhancerOptions["serialize"]
   }) || compose;
