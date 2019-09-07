@@ -1,7 +1,7 @@
 const path = require('path')
 
 module.exports = {
-  webpack (config, _options) {
+  webpack(config, _options) {
     /**
      * Add path aliases.
      */
@@ -11,5 +11,11 @@ module.exports = {
       '@store': path.join(__dirname, 'store')
     });
     return config;
+  },
+
+  exportPathMap: function () {
+    return {
+      '/': { page: '/' }
+    };
   }
 }

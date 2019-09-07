@@ -9,13 +9,11 @@ import App from "@components/app";
 const Index = () => {
   return (
     <Provider store={store} key="provider">
-      {
-        <PersistGate loading={null} persistor={persistor}>
-          <ConnectedRouter history={history}>
-            <App />
-          </ConnectedRouter>
-        </PersistGate>
-      }
+      <PersistGate loading={null} persistor={persistor}>
+        <ConnectedRouter history={history}>
+          <App />
+        </ConnectedRouter>
+      </PersistGate>
     </Provider>
   );
 };
