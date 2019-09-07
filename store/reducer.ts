@@ -28,8 +28,10 @@ export interface RootState {
 
 export type RootSyncAction = RouterAction | TestAction;
 // | TopDownAction;
+
 export type RootThunkAction = TestThunkAction;
 // | TopDownThunkAction;
+
 export type RootAction = RootSyncAction | RootThunkAction;
 
 export default (history: History) =>

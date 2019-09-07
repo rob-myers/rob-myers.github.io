@@ -1,52 +1,63 @@
-import { createStore, applyMiddleware, compose, Store, DeepPartial } from "redux";
+import { createStore, applyMiddleware, compose, Store, DeepPartial, Reducer } from "redux";
 import { createHashHistory, createMemoryHistory } from "history";
 import { routerMiddleware } from "connected-react-router";
 import { composeWithDevTools, EnhancerOptions } from "redux-devtools-extension";
+import { persistStore, persistReducer, Persistor } from "redux-persist";
+import * as localforage from "localforage";
 
-import { RedactInReduxDevTools, thunkMiddleware } from "@model/redux.model";
-// import { ArgumentTypes } from "@model/generic.model";
 import createRootReducer, { RootState, RootAction } from "./reducer";
+import { persistTestTransform } from "./persist-store";
+import { RedactInReduxDevTools, thunkMiddleware } from "@model/redux.model";
+import { PersistPartial } from "redux-persist/es/persistReducer";
 
 /**
- * On server one must use `createMemoryHistory`.
+ * Router history.
+ * - must use `createHashHistory` on foo.github.io
+ * - must use `createMemoryHistory` on server.
  */
 export const history = process.browser ? createHashHistory({}) : createMemoryHistory({});
 
-const rootReducer = createRootReducer(history);
+/** Persistent storage; on server we use a mock. */
+const storage = process.browser
+  ? localforage
+  : { getItem: async () => null, setItem: async () => null, removeItem: async () => null };
+
+const persistConfig = {
+  key: "root",
+  storage,
+  transforms: [
+    persistTestTransform,
+    // persistTopDownTransform,
+  ],
+  blacklist: ["router"], // Do not persist router state.
+};
+
+const persistedReducer = persistReducer<RootState, RootAction>(persistConfig, createRootReducer(history));
 
 /**
  * Avoids error: <Provider> does not support changing `store` on the fly.
  * https://github.com/reduxjs/react-redux/issues/356
  */
 let store: Store;
+let persistor: Persistor;
 
 export default function configureStore(preloadedState?: RootState) {
   if (store) {
-    // return { store, persistor };
-    return { store };
+    return { store, persistor };
   }
-  // const epicMiddleware = createEpicMiddleware<
-  //   Action<any>,
-  //   Action<any>,
-  //   RootState,
-  //   any
-  // >();
 
-  store = createStore<RootState, RootAction, any, any>(
-    rootReducer,
-    // persistedReducer,
+  store = createStore<RootState & PersistPartial, RootAction, any, any>(
+    persistedReducer,
     (preloadedState as DeepPartial<RootState>) || {},
     composeEnhancers(
       applyMiddleware(
-        // epicMiddleware,
         thunkMiddleware(),
         // For dispatching history actions.
         routerMiddleware(history)
       )
     )
   );
-  // epicMiddleware.run(rootEpic);
-  // persistor = persistStore(store);
+  persistor = persistStore(store);
 
   if (module.hot) {
     /**
@@ -55,26 +66,20 @@ export default function configureStore(preloadedState?: RootState) {
      */
     module.hot.accept("./reducer", () => {
       const nextRootReducer = require("./reducer").default(history);
-      // store.replaceReducer(persistReducer(persistConfig, nextRootReducer));
-      store.replaceReducer(nextRootReducer);
+      store.replaceReducer(persistReducer(persistConfig, nextRootReducer));
     });
   }
 
-  // return { store, persistor };
-  return { store };
+  return { store, persistor };
 }
 
-/**
- * Use redux devtools in development, if browser extension exists.
- */
+/** Use redux devtools in development, if browser extension exists. */
 const composeEnhancers =
   composeWithDevTools({
     shouldHotReload: false,
     maxAge: 50,
     serialize: {
-      /**
-       * Handle huge/cyclic objects via RedactInReduxDevTools.
-       */
+      /** Handle huge/cyclic objects via RedactInReduxDevTools. */
       replacer: (_: any, value: RedactInReduxDevTools) => {
         if (value && value.devToolsRedaction) {
           return `Redacted<${value.devToolsRedaction}>`;

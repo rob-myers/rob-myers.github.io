@@ -8,7 +8,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -22,7 +22,11 @@
       "@components/*":  ["components/*"],
       "@model/*":  ["model/*"],
       "@store/*":  ["store/*"]
-    }
+    },
+    "typeRoots": [
+      "node_modules/@types", 
+      "custom-types"
+    ],
   },
   "exclude": [
     "node_modules"
