@@ -12,7 +12,7 @@ import Test from "@components/test";
 
 interface Props extends RouteComponentProps { }
 
-const appComponent: React.FunctionComponent<Props> = _props => (
+const App: React.FunctionComponent<Props> = _props => (
   <Switch>
     <Route exact path="/" component={Home} />
     <Route path="/test" component={Test} />
@@ -20,4 +20,4 @@ const appComponent: React.FunctionComponent<Props> = _props => (
   </Switch>
 );
 
-export default withRouter(appComponent);
+export default withRouter(App);

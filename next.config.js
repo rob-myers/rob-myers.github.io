@@ -4,6 +4,7 @@ module.exports = {
   webpack(config, _options) {
     /**
      * Add path aliases.
+     * Also defined in tsconfig.json.
      */
     Object.assign(config.resolve.alias, {
       '@components': path.join(__dirname, 'components'),

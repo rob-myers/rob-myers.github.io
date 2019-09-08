@@ -5,13 +5,10 @@ import { KeyedLookup } from "./generic.model";
 /**
  * If attached as part of an action's payload,
  * said payload will be replaced by string in redux devtools.
- * Prevents redux devtools from crashing when storing
- * large and/or cyclic objects.
+ * Prevents redux devtools from crashing when storing large and/or cyclic objects.
  */
 export interface RedactInReduxDevTools {
-  /**
-   * Parent object will be serialised as: Redacted<{devToolsRedaction}>
-   */
+  /** Parent object will be serialised as: Redacted<{devToolsRedaction}> */
   devToolsRedaction: string;
 }
 
@@ -35,9 +32,6 @@ export interface Dispatch {
     action: ThunkAct<ActKey, any, ReturnValue>
   ): ReturnValue;
 }
-
-// export type ActionType = SyncAct<string, any> | ThunkAct<string, any, any>;
-// export type ActionType = RootSyncAction | ThunkAction;
 
 /**
  * A base dispatched action.
@@ -82,9 +76,11 @@ interface ActionParam {
 }
 
 /**
- * Generate a synchronous action {act} which can be dispatched,
- * and also the code {def} which the reducer will run.
- * The latter must be manually hooked into the reducer.
+ * Generate:
+ * - a synchronous action {act} which can be dispatched,
+ * - the code {def} which the reducer will run.
+ *
+ * The latter must be manually hooked into the reducer below.
  */
 export const generateSync = <ActKey extends string, Payload extends {}, State>(
   actKey: ActKey,

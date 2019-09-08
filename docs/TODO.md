@@ -1,7 +1,7 @@
 
 # TODO
 
-next.js project to github.io (1st publish)
+next.js project to github.io (1st publish) 👍
 
 AWS account with £20
 

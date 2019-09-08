@@ -18,7 +18,7 @@ const initialState: State = {
 //#region sync actions
 export const testPing = generateSync("TEST_PING", ({ }: {}, state: State) => ({
   ...state,
-  lastPing: `${new Date()}`
+  lastPing: `${new Date()}` as string | null
 }));
 // export type TestPing = typeof testPing["act"];
 

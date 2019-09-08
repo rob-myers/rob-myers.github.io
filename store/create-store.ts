@@ -13,11 +13,11 @@ import { PersistPartial } from "redux-persist/es/persistReducer";
 /**
  * Router history.
  * - must use `createHashHistory` on foo.github.io
- * - must use `createMemoryHistory` on server.
+ * - must use `createMemoryHistory` on server (SSR).
  */
 export const history = process.browser ? createHashHistory({}) : createMemoryHistory({});
 
-/** Persistent storage; on server we use a mock. */
+/** Persistent storage; for SSR we use a mock. */
 const storage = process.browser
   ? localforage
   : { getItem: async () => null, setItem: async () => null, removeItem: async () => null };
