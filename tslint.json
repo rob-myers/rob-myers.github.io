@@ -27,7 +27,7 @@
           ]
       },
       "class-name": true,
-      "comment-format": [true,
+      "comment-format": [false,
           "check-space"
       ],
       "curly":[true, "ignore-same-line"],

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next",
+    "dev": "next -p 3000",
     "build": "next build",
     "start": "next start",
     "export": "next export",
@@ -22,7 +22,9 @@
   },
   "homepage": "https://github.com/rob-myers/rob-myers.github.io#readme",
   "dependencies": {
+    "@zeit/next-css": "^1.0.1",
     "connected-react-router": "^6.5.2",
+    "gitment": "0.0.3",
     "history": "^4.9.0",
     "localforage": "^1.7.3",
     "next": "^9.0.5",

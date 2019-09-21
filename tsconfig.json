@@ -19,14 +19,26 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@components/*":  ["components/*"],
-      "@model/*":  ["model/*"],
-      "@store/*":  ["store/*"]
+      "@components/*": [
+        "components/*"
+      ],
+      "@model/*": [
+        "model/*"
+      ],
+      "@store/*": [
+        "store/*"
+      ],
+      "@service/*": [
+        "service/*"
+      ],
+      "@env": [
+        "env/index"
+      ]
     },
     "typeRoots": [
-      "node_modules/@types", 
+      "node_modules/@types",
       "custom-types"
-    ],
+    ]
   },
   "exclude": [
     "node_modules"
