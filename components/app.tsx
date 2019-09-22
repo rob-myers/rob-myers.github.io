@@ -1,4 +1,4 @@
-import "gitment/style/default.css";
+import "gitalk/dist/gitalk.css";
 
 import React from "react";
 import { withRouter, Switch, Route, Redirect, RouteComponentProps } from "react-router-dom";
