@@ -1,6 +1,7 @@
+/** @jsx jsx */
+import { jsx } from "theme-ui";
 import React from "react";
 import ReactSwitch, { ReactSwitchProps } from "react-switch";
-import { css } from "@emotion/core";
 
 interface Props
   extends Pick<
@@ -32,9 +33,9 @@ export const Switch: React.FC<Props> = ({ checked, onChange, ...opts }) => {
 
   return (
     <ReactSwitch
-      css={css({
+      sx={{
         bg: `primary`
-      })}
+      }}
       checked={checked}
       onChange={onChange}
       {...props}

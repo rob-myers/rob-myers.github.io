@@ -1,5 +1,6 @@
+/** @jsx jsx */
+import { jsx, useColorMode } from "theme-ui";
 import React from "react";
-import { css, useColorMode } from "theme-ui";
 import Title from "./title";
 import Switch from "./switch";
 import { checkedIcon, uncheckedIcon } from "./icons";
@@ -38,9 +39,13 @@ const Header: React.FC<Props> = ({ children, title, ...props }) => {
           {children}
           <Switch
             aria-label="Toggle dark mode"
-            css={css({
-              bg: `black`
-            })}
+            // css={css({
+            //   bg: `black`
+            // })}
+            sx={{
+              // bg: `primary`
+              bg: `red`
+            }}
             checkedIcon={checkedIcon}
             uncheckedIcon={uncheckedIcon}
             checked={isDark}

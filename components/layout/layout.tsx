@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { jsx } from "theme-ui";
 import React from "react";
 import { Styled, css } from "theme-ui";
 import Header, { Props as HeaderProps } from "./header";
@@ -14,12 +16,12 @@ const Layout: React.FC<Props> = ({ children, ...props }) => (
     <Header {...props} />
     <div>
       <div
-        css={css({
+        sx={{
           maxWidth: `container`,
           mx: `auto`,
           px: 3,
           py: 4
-        })}
+        }}
       >
         {children}
       </div>

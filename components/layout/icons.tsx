@@ -1,3 +1,5 @@
+/** @jsx jsx */
+import { jsx } from "theme-ui";
 import sun from "@assets/sun.png";
 import moon from "@assets/moon.png";
 
@@ -8,7 +10,7 @@ export const checkedIcon = (
     width="16"
     height="16"
     role="presentation"
-    css={{
+    sx={{
       pointerEvents: `none`,
       margin: 4
     }}
@@ -22,7 +24,7 @@ export const uncheckedIcon = (
     width="16"
     height="16"
     role="presentation"
-    css={{
+    sx={{
       pointerEvents: `none`,
       margin: 4
     }}

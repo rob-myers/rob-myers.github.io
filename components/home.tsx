@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import { ThemeProvider } from "theme-ui";
 import { gitalk } from "@service/gitalk";
 import Layout from "./layout/layout";
+import theme from "./theme";
 
 interface Props {}
 
@@ -12,13 +13,7 @@ const Home: React.FunctionComponent<Props> = _props => {
   }, []);
   return (
     <div>
-      <ThemeProvider
-        theme={
-          {
-            /** TODO */
-          }
-        }
-      >
+      <ThemeProvider theme={theme}>
         <Layout title={"Foo bar baz qux"} />
       </ThemeProvider>
 
