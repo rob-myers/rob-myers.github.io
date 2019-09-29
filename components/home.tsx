@@ -1,6 +1,8 @@
 // import "./home.scss";
 import React, { useEffect } from "react";
+import { ThemeProvider } from "theme-ui";
 import { gitalk } from "@service/gitalk";
+import Layout from "./layout/layout";
 
 interface Props {}
 
@@ -10,6 +12,16 @@ const Home: React.FunctionComponent<Props> = _props => {
   }, []);
   return (
     <div>
+      <ThemeProvider
+        theme={
+          {
+            /** TODO */
+          }
+        }
+      >
+        <Layout title={"Foo bar baz qux"} />
+      </ThemeProvider>
+
       <div>Welcome home!</div>
       <div id="gitalk_comments_home" />
     </div>
