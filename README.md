@@ -11,7 +11,7 @@ mkdir pages
 yarn dev
 ```
 
-```json
+```js
 // in package.json
 "scripts": {
   "dev": "next",
@@ -59,4 +59,28 @@ yarn add -D @types/react @types/node
 yarn add -D typescript
 yarn dev
 # creates tsconfig.json
+```
+
+### aliases
+
+```js
+// tsconfig.json
+  "compilerOptions": {
+    // ...
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["./components/*"]
+    }
+```
+
+```js
+// next.config.ts
+const path = require('path')
+
+module.exports = {
+  webpack(config, _options) {
+    config.resolve.alias['@components'] = path.join(path.resolve(__dirname), 'components')
+    return config
+  },
+}
 ```
