@@ -1,0 +1,32 @@
+{
+  "name": "rob-myers.github.io",
+  "version": "1.0.0",
+  "description": "homepage",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rob-myers/rob-myers.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rob-myers/rob-myers.github.io/issues"
+  },
+  "homepage": "https://github.com/rob-myers/rob-myers.github.io#readme",
+  "dependencies": {
+    "next": "^9.2.0",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
+  },
+  "devDependencies": {
+    "@types/node": "^13.1.8",
+    "@types/react": "^16.9.17",
+    "typescript": "^3.7.5"
+  }
+}
