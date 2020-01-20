@@ -11,9 +11,9 @@ interface Props extends HeaderProps {
 /**
  * TODO understand `Styled.root`.
  */
-const Layout: React.FC<Props> = ({ children, ...props }) => (
+const Layout: React.FC<Props> = ({ children, title }) => (
   <Styled.root>
-    <Header {...props} />
+    <Header title={title} />
     <div>
       <div
         sx={{

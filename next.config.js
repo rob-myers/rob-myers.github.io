@@ -12,7 +12,14 @@ const withCSS = require('@zeit/next-css');
  */
 const withImages = require('next-images');
 
+/**
+ * MDX support.
+ * https://github.com/zeit/next.js/tree/master/packages/next-mdx
+ */
+const withMDX = require('@next/mdx')()
+
 module.exports =
+  withMDX(
   withImages(
   withCSS({
     webpack(config, _options) {
@@ -37,4 +44,4 @@ module.exports =
       };
     }
   }
-))
+)))

@@ -11,6 +11,7 @@ const Home: React.FunctionComponent<Props> = _props => {
   useEffect(() => {
     gitalk.render("gitalk_comments_home");
   }, []);
+
   return (
     <div>
       <ThemeProvider theme={theme}>
