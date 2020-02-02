@@ -1,6 +1,8 @@
 // eslint-disable-next-line no-unused-vars
 import webpack from 'webpack';
+import webpackMerge from 'webpack-merge';
 import nextConst from 'next/constants';
+import path from 'path';
 
 type Phase = (
   | typeof nextConst.PHASE_DEVELOPMENT_SERVER
@@ -11,7 +13,10 @@ type Phase = (
 
 type NextJsConfig = Partial<{
   env: string[];
-  webpack: webpack.Configuration;
+  webpack: (
+    config: webpack.Configuration,
+    opts: any
+  ) => webpack.Configuration;
   webpackDevMiddleware: any;
   /** e.g. '.next' */
   distDir: string;
@@ -41,11 +46,23 @@ type NextJsConfig = Partial<{
   publicRuntimeConfig: {};
 }>
 
+
 export default (
   _phase: Phase,
   _opts: { defaultConfig: NextJsConfig }
 ): NextJsConfig => {
+  console.log(`components: ${path.resolve(__dirname, 'components')}`);
+
   return {
-    // ...
+    webpack: (config) => webpackMerge(
+      config,
+      {
+        resolve: {
+          alias: {
+            '@components': path.resolve(__dirname, 'components'),
+          },
+        },
+      }
+    ),
   };
 };
