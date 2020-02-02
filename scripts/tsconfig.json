@@ -19,6 +19,7 @@
     "node_modules"
   ],
   "include": [
-    "next.config.ts"
+    "next.config.ts",
+    "babel.config.ts",
   ]
 }

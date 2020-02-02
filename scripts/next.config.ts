@@ -35,13 +35,13 @@ type NextJsConfig = Partial<{
   poweredByHeader: boolean;
   /** e.g. true */
   compress: boolean;
-  devIndicators: Object;
-  onDemandEntries: Object;
-  amp: Object;
+  devIndicators: Record<string, any>;
+  onDemandEntries: Record<string, any>;
+  amp: Record<string, any>;
   /** e.g. false */
   exportTrailingSlash: boolean;
-  experimental: Object;
-  future: Object;
+  experimental: Record<string, any>;
+  future: Record<string, any>;
   serverRuntimeConfig: {};
   publicRuntimeConfig: {};
 }>
@@ -51,7 +51,6 @@ export default (
   _phase: Phase,
   _opts: { defaultConfig: NextJsConfig }
 ): NextJsConfig => {
-  console.log(`components: ${path.resolve(__dirname, 'components')}`);
 
   return {
     webpack: (config) => webpackMerge(
@@ -60,9 +59,10 @@ export default (
         resolve: {
           alias: {
             '@components': path.resolve(__dirname, 'components'),
-          },
-        },
+            'react-dom': '@hot-loader/react-dom'
+          }
+        }
       }
-    ),
+    )
   };
 };
