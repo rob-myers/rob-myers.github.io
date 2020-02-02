@@ -17,7 +17,7 @@ const Home: React.FC = () => {
       <div>
         <NavDom/>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: 100 }}>
         <div>{count}</div>
         <button onClick={() => setCount(count + 1)}>+1</button>
       </div>
