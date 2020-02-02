@@ -1,0 +1,36 @@
+{
+  "name": "rob-myers",
+  "license": "MIT",
+  "dependencies": {
+    "react": "16.12.0",
+    "react-dom": "16.12.0"
+  },
+  "scripts": {
+    "dev": "yarn next-cfg && next",
+    "build": "yarn next-cfg && next build",
+    "start": "yarn next-cfg && next start",
+    "export": "next export",
+    "deploy": "yarn build && yarn export && touch out/.nojekyll && yarn gh-pages",
+    "next-cfg": "tsc -p scripts/tsconfig.json",
+    "gh-pages": "ts-node -P scripts/tsconfig.json scripts/gh-pages.ts"
+  },
+  "devDependencies": {
+    "@types/gh-pages": "2.0.1",
+    "@types/node": "13.7.0",
+    "@types/react": "16.9.19",
+    "@types/webpack": "4.41.3",
+    "@typescript-eslint/eslint-plugin": "2.18.0",
+    "@typescript-eslint/parser": "2.18.0",
+    "eslint": "6.8.0",
+    "eslint-config-standard": "14.1.0",
+    "eslint-plugin-import": "2.20.0",
+    "eslint-plugin-node": "11.0.0",
+    "eslint-plugin-promise": "4.2.1",
+    "eslint-plugin-react": "7.18.0",
+    "eslint-plugin-standard": "4.0.1",
+    "gh-pages": "2.2.0",
+    "next": "9.2.1",
+    "ts-node": "8.6.2",
+    "typescript": "3.7.5"
+  }
+}
