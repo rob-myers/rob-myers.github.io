@@ -1,7 +1,8 @@
 import { hot } from 'react-hot-loader/root';
+import { useState } from 'react';
 import Link from 'next/link';
 import NavDom from '@components/nav-dom/nav-dom';
-import { useState } from 'react';
+import { withRedux } from '@store/with-redux';
 
 const Home: React.FC = () => {
   const [count, setCount] = useState(0);
@@ -25,5 +26,4 @@ const Home: React.FC = () => {
   );
 };
 
-// export default Home;
-export default hot(Home);
+export default hot(withRedux(Home));

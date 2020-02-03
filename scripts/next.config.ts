@@ -46,6 +46,8 @@ type NextJsConfig = Partial<{
   publicRuntimeConfig: {};
 }>
 
+const production = process.env.NODE_ENV === 'production';
+console.log({ production });
 
 export default (
   _phase: Phase,
@@ -59,7 +61,8 @@ export default (
         resolve: {
           alias: {
             '@components': path.resolve(__dirname, 'components'),
-            'react-dom': '@hot-loader/react-dom'
+            '@store': path.resolve(__dirname, 'store'),
+            ...(!production && { 'react-dom': '@hot-loader/react-dom' })
           }
         }
       }
