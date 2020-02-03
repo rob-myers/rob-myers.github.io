@@ -7,13 +7,13 @@
       "esnext"
     ],
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
     "module": "CommonJS",
     "moduleResolution": "node",
     "isolatedModules": true,
-    "outDir": "../"
+    "outDir": ".."
   },
   "exclude": [
     "node_modules"

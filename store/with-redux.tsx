@@ -1,76 +1,53 @@
-/*global process*/
-import { Provider } from 'react-redux';
-import App from 'next/app';
-import { RootState } from './reducer';
+import React from 'react';
 import { NextComponentType, NextPageContext } from 'next';
-import { AppContextType, AppType } from 'next/dist/next-server/lib/utils';
+import { RootState } from './reducer';
 import { initializeStore, ReduxStore } from '.';
 
-let reduxStore: ReturnType<typeof initializeStore>;
+const __NEXT_REDUX_STORE__ = '__NEXT_REDUX_STORE__';
+type Window = typeof window & { __NEXT_REDUX_STORE__: ReduxStore }
+
 const getOrInitializeStore = (initialState?: RootState) => {
-  if (typeof window === 'undefined') { // New store if server.
+  if (typeof window === 'undefined') {
     return initializeStore(initialState);
-  } else if (!reduxStore) { // Ensure client has store.
-    reduxStore = initializeStore(initialState);
   }
-  return reduxStore;
+  return (
+    (window as Window)[__NEXT_REDUX_STORE__]
+    || ((window as Window)[__NEXT_REDUX_STORE__] = initializeStore(initialState))
+  );
 };
 
-type PageComponent = NextComponentType | AppType;
-type GetInitPropsCtxt = NextPageContext | AppContextType;
 
-export const withRedux = (
-  PageComponent: PageComponent,
-  { ssr = true } = {}
-) => {
-  const WithRedux = ({ initialReduxState, ...props }: any) => {
-    const store = getOrInitializeStore(initialReduxState);
-    return (
-      <Provider store={store}>
-        <PageComponent {...props} />
-      </Provider>
-    );
-  };
+type IProps = { initialReduxState: RootState }
+type Props = { pageProps: any; reduxStore: ReduxStore }
+type AppContext = NextPageContext & { ctx: { reduxStore: ReduxStore }  }
 
-  if (process.env.NODE_ENV !== 'production') {
-    // Make sure people don't use this HOC on _app.js level
-    const isAppHoc =
-      PageComponent === App || PageComponent.prototype instanceof App;
-    if (isAppHoc) {
-      throw new Error('The withRedux HOC only works with PageComponents');
-    }
+export default (App: NextComponentType<NextPageContext, IProps, Props>) => {
+  return class AppWithRedux extends React.Component<Props> {
+    private reduxStore: ReduxStore;
 
-    // Set the correct displayName in development
-    const displayName = (
-      'displayName' in PageComponent && PageComponent.displayName
-      || PageComponent.name
-      || 'Component'
-    );
-    WithRedux.displayName = `withRedux(${displayName})`;
-  }
-
-  if (ssr || PageComponent.getInitialProps) {
-    WithRedux.getInitialProps = async (
-      context: GetInitPropsCtxt & { reduxStore: ReduxStore }
-    ) => {
-      // Get or Create the store with `undefined` as initialState
-      // This allows you to set a custom default initialState
+    static async getInitialProps(appContext: AppContext): Promise<IProps | Props> {
       const reduxStore = getOrInitializeStore();
-      // Provide the store to getInitialProps of pages
-      context.reduxStore = reduxStore;
+      // console.log({ appContext });
+      // appContext.ctx.reduxStore = reduxStore;
 
-      // Run getInitialProps from HOCed PageComponent
-      // Pass props to PageComponent
       return {
         ...(
-          typeof PageComponent.getInitialProps === 'function'
-            ? await PageComponent.getInitialProps(context as any)
+          typeof App.getInitialProps === 'function'
+            ? await App.getInitialProps(appContext)
             : {}
         ),
         initialReduxState: reduxStore.getState(),
       };
-    };
-  }
+    }
 
-  return WithRedux;
+    constructor(props: IProps & Props) {
+      super(props);
+      this.reduxStore = getOrInitializeStore(props.initialReduxState);
+    }
+
+    render() {
+      return <App {...this.props} reduxStore={this.reduxStore}  />;
+    }
+  };
 };
+

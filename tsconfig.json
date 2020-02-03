@@ -21,7 +21,11 @@
     "paths": {
       "@components/*": ["components/*"],
       "@store/*": ["store/*"]
-    }
+    },
+    "typeRoots": [
+      "node_modules/@types",
+      "custom-types"
+    ]
   },
   "exclude": [
     "node_modules"

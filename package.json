@@ -37,6 +37,7 @@
     "next": "9.2.1",
     "react-hot-loader": "4.12.19",
     "redux-devtools-extension": "2.13.8",
+    "redux-persist": "6.0.0",
     "ts-node": "8.6.2",
     "typescript": "3.7.5",
     "webpack-merge": "4.2.2"
