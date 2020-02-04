@@ -1,3 +1,25 @@
+
+
+## TODO
+
+- `NavDom` first approximation
+
+## So far
+
+- next js
+  - typescript
+  - next.config.ts + custom webpack
+  - babel.config.ts
+  - @components alias
+  - react-hot-loader + @hot-loader/react-dom
+  - redux
+  - redux-persist
+  - basic jest integration
+- deploy using gh-pages.config.ts
+- eslint + @typescript-eslint + .eslintignore
+  
+
+
 # Next JS
 
 ## Getting started

@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "outDir": ".."
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "next.config.ts",
+    "babel.config.ts",
+    "jest.config.ts"
+  ]
+}

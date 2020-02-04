@@ -1,5 +1,6 @@
-node_modules/
+# .vscode
+
+node_modules
+
 .next
-out/
-env/development.ts
-env/production.ts
+out
