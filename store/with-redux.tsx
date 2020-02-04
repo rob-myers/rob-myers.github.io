@@ -18,14 +18,14 @@ const getOrInitializeStore = (initialState?: RootState) => {
 
 
 type IProps = { initialReduxState: RootState }
-type Props = { pageProps: any; reduxStore: ReduxStore }
-type AppContext = NextPageContext & { ctx: { reduxStore: ReduxStore }  }
+type Props = { pageProps?: any; reduxStore?: ReduxStore }
+// type AppContext = NextPageContext & { ctx: { reduxStore: ReduxStore }  }
 
 export default (App: NextComponentType<NextPageContext, IProps, Props>) => {
   return class AppWithRedux extends React.Component<Props> {
     private reduxStore: ReduxStore;
 
-    static async getInitialProps(appContext: AppContext): Promise<IProps | Props> {
+    static async getInitialProps(appContext: NextPageContext): Promise<IProps | Props> {
       const reduxStore = getOrInitializeStore();
       // console.log({ appContext });
       // appContext.ctx.reduxStore = reduxStore;

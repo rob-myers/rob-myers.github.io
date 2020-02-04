@@ -34,7 +34,17 @@ export default (api: Api): Config => {
       ],
     ],
     plugins: [
-      'react-hot-loader/babel'
+      'react-hot-loader/babel',
+      [
+        'module-resolver',
+        {
+          'root': ['./'],
+          'alias': {
+            '@components': './components',
+            '@store': './store',
+          }
+        }
+      ]
     ]
   };
 };

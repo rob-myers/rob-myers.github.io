@@ -15,7 +15,17 @@ exports.default = (api) => {
             ],
         ],
         plugins: [
-            'react-hot-loader/babel'
+            'react-hot-loader/babel',
+            [
+                'module-resolver',
+                {
+                    'root': ['./'],
+                    'alias': {
+                        '@components': './components',
+                        '@store': './store',
+                    }
+                }
+            ]
         ]
     };
 };
