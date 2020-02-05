@@ -20,7 +20,8 @@
     "baseUrl": "./",
     "paths": {
       "@components/*": ["components/*"],
-      "@store/*": ["store/*"]
+      "@store/*": ["store/*"],
+      "@custom-types/*": ["custom-types/*"]
     },
     "typeRoots": [
       "node_modules/@types",

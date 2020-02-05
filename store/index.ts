@@ -1,9 +1,9 @@
 import { createStore, applyMiddleware, Dispatch } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { composeWithDevTools, EnhancerOptions } from 'redux-devtools-extension';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import rootReducer, { RootState, RootAction } from './reducer';
-import { ThunkParams, ThunkAct } from './redux-util';
+import { ThunkParams, ThunkAct, RedactInReduxDevTools } from './redux-util';
 
 const thunkMiddleware = () =>
   (params: ThunkParams) =>
@@ -29,6 +29,16 @@ export const initializeStore = (preloadedState?: RootState) =>
     preloadedState,
     composeWithDevTools({
       shouldHotReload: false,
+      serialize: {
+        // Handle huge/cyclic objects by redacting them.
+        replacer: (_: any, value: RedactInReduxDevTools) => {
+          if (value && value.devToolsRedaction) {
+            return `Redacted<${value.devToolsRedaction}>`;
+          }
+          return value;
+        },
+        function: false
+      } as EnhancerOptions['serialize']
     })(
       applyMiddleware(
         thunkMiddleware(),

@@ -42,6 +42,7 @@ export default (api: Api): Config => {
           'alias': {
             '@components': './components',
             '@store': './store',
+            '@custom-types': './custom-types',
           }
         }
       ]

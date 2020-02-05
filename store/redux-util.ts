@@ -1,22 +1,14 @@
 import { Dispatch } from 'redux';
 import { RootAction, RootState } from './reducer';
 
-interface Act<T extends string, P extends {}> {
-  type: T;
-  payload: P;
-}
-
-export const createAct = <T extends string, P = {}>(
+export const createAct = <T extends string, P extends object = {}>(
   type: T,
   payload?: P
-): Act<T, P> => ({
-    type,
-    payload: payload || {} as P,
-  });
+) => ({ ...payload, type }) as P & { type: T };
 
 export interface ThunkParams {
-  dispatch: Dispatch<RootAction>;
-   getState: () => RootState;
+  dispatch: Dispatch<RootAction | ThunkAct<string, any, any>>;
+  getState: () => RootState;
 }
 
 export interface ThunkAct<T extends string, A extends {}, R> {
@@ -34,3 +26,26 @@ export const createThunk = <T extends string, A extends {} = {}, R = void>(
       thunk,
       args
     } as ThunkAct<T, A, R>);
+
+/**
+ * If this key is in action's payload, said payload
+ * will be replaced by its string value in redux devtools.
+ * Prevents redux devtools from crashing via large/cyclic objects.
+ */
+export interface RedactInReduxDevTools {
+  /** Parent object will be serialised as Redacted<{devToolsRedaction}> */
+  devToolsRedaction: string;
+}
+
+/**
+ * Mutate object with property devToolsRedaction (see create-store.ts).
+ * Redux dev-tools will replace objects with this property by the string
+ * Redact<{object.devToolsRedaction}>.
+ */
+export function redact<T extends {}>(object: T, devToolsRedaction: string) {
+  // tslint:disable-next-line: prefer-object-spread
+  return Object.assign<T, RedactInReduxDevTools>(object, { devToolsRedaction });
+}
+
+type ActionCreatorsMapObject = { [actionCreator: string]: (...args: any[]) => any }
+export type ActionsUnion<A extends ActionCreatorsMapObject> = ReturnType<A[keyof A]>;

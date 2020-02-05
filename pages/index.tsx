@@ -5,7 +5,7 @@ import NavDom from '@components/nav-dom/nav-dom';
 import withRedux from '@store/with-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@store/reducer';
-import { testIncrement, testDecrement } from '@store/test.duck';
+import Act from '@store/test.duck';
 
 const Home: React.FC = () => {
   // const [count, setCount] = useState(0);
@@ -21,13 +21,13 @@ const Home: React.FC = () => {
         </Link>
       </div>
       <div>
-        <NavDom/>
+        <NavDom ctxtKey="foo"/>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: 100 }}>
         <div>{count}</div>
         {/* <button onClick={() => setCount(count + 1)}>+1</button> */}
-        <button onClick={() => dispatch(testDecrement)}>-1</button>
-        <button onClick={() => dispatch(testIncrement)}>+1</button>
+        <button onClick={() => dispatch(Act.testDecrement())}>-1</button>
+        <button onClick={() => dispatch(Act.testIncrement())}>+1</button>
       </div>
     </div>
   );

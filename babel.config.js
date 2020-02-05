@@ -23,6 +23,7 @@ exports.default = (api) => {
                     'alias': {
                         '@components': './components',
                         '@store': './store',
+                        '@custom-types': './custom-types',
                     }
                 }
             ]

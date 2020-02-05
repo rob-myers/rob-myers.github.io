@@ -1,6 +1,6 @@
-import { createAct } from './redux-util';
+import { createAct, ActionsUnion } from './redux-util';
 
-interface State {
+export interface State {
   count: number;
   lastPing: null | string;
 }
@@ -10,26 +10,23 @@ const initialState: State = {
   lastPing: null,
 };
 
-const TEST_PING = 'TEST_PING';
-export const testPing = createAct(TEST_PING);
+const Act = {
+  testPing: () => createAct('TEST_PING'),
+  testIncrement: () => createAct('TEST_INCREMENT'),
+  testDecrement: () => createAct('TEST_DECREMENT'),
+  setTestCount: (count: number) => createAct('SET_TEST_COUNT', { count }),
+};
 
-const TEST_INCREMENT = 'TEST_INCREMENT';
-export const testIncrement = createAct(TEST_INCREMENT);
+export type Action = ActionsUnion<typeof Act>;
 
-const TEST_DECREMENT = 'TEST_DECREMENT';
-export const testDecrement = createAct(TEST_DECREMENT);
-
-type Action = (
-  | typeof testPing
-  | typeof testIncrement
-  | typeof testDecrement
-)
-
-export default (state = initialState, action: Action): State => {
+export const reducer = (state = initialState, action: Action): State => {
   switch (action.type) {
-    case TEST_DECREMENT: return { ...state, count: state.count - 1 };
-    case TEST_INCREMENT: return { ...state, count: state.count + 1 };
-    case TEST_PING: return { ...state, lastPing: `${new Date()}` };
+    case 'SET_TEST_COUNT': return { ...state, count: action.count };
+    case 'TEST_DECREMENT': return { ...state, count: state.count - 1 };
+    case 'TEST_INCREMENT': return { ...state, count: state.count + 1 };
+    case 'TEST_PING': return { ...state, lastPing: `${Date()}` };
     default: return state;
   }
 };
+
+export default Act;
