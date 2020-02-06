@@ -1,4 +1,4 @@
-import { createAct, ActionsUnion, createThunk, addToLookup, updateLookup } from './redux-util';
+import { createAct, ActionsUnion, createThunk, addToLookup, updateLookup, removeFromLookup } from './redux-util';
 import { KeyedLookup } from '@custom-types/generic.model';
 
 
@@ -21,17 +21,18 @@ function createNavDomState(uid: string): NavDomState {
   };
 }
 
-
-const Act = {
+export const Act = {
   registerNavDom: (uid: string) =>
     createAct('REGISTER_NAV_DOM', { uid }),
+  unregisterNavDom: (uid: string) =>
+    createAct('UNREGISTER_NAV_DOM', { uid }),
   setThrottle: (uid: string, nextUpdate: number) =>
     createAct('THROTTLE_NAV_DOM', { uid, nextUpdate }),
 };
 
 export type Action = ActionsUnion<typeof Act>;
 
-const Thunk = {
+export const Thunk = {
   computeNavigable: createThunk(
     'COMPUTE_NAVIGABLE_THUNK',
     (_, _uid: string) => {
@@ -61,11 +62,12 @@ export const reducer = (state = initialState, act: Action): State => {
     case 'REGISTER_NAV_DOM': return { ...state,
       dom: addToLookup(createNavDomState(act.uid), state.dom)
     };
+    case 'UNREGISTER_NAV_DOM': return { ...state,
+      dom: removeFromLookup(act.uid, state.dom)
+    };
     case 'THROTTLE_NAV_DOM': return { ...state,
       dom: updateLookup(act.uid, state.dom, () => ({ nextUpdate: act.nextUpdate }))
     };
     default: return state;
   }
 };
-
-export default Act;
