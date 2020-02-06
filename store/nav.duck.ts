@@ -1,5 +1,6 @@
 import { createAct, ActionsUnion, createThunk, addToLookup, updateLookup } from './redux-util';
 import { KeyedLookup } from '@custom-types/generic.model';
+import { getNavElemId, traverseDom } from '@components/nav-dom/nav-util';
 
 
 export interface State {
@@ -7,6 +8,7 @@ export interface State {
 }
 interface NavDomState {
   key: string;
+  rootKey: string;
   /** For throttling (epoch ms). */
   nextUpdate: null | number;
 }
@@ -17,6 +19,7 @@ const initialState: State = {
 function createNavDomState(uid: string): NavDomState {
   return {
     key: uid,
+    rootKey: getNavElemId(uid, 'root'),
     nextUpdate: null,
   };
 }
@@ -25,7 +28,7 @@ function createNavDomState(uid: string): NavDomState {
 const Act = {
   registerNavDom: (uid: string) =>
     createAct('REGISTER_NAV_DOM', { uid }),
-  setThrottle: (uid: string, nextUpdate: number) =>
+  setThrottle: (uid: string, nextUpdate: number | null) =>
     createAct('THROTTLE_NAV_DOM', { uid, nextUpdate }),
 };
 
@@ -34,8 +37,20 @@ export type Action = ActionsUnion<typeof Act>;
 const Thunk = {
   computeNavigable: createThunk(
     'COMPUTE_NAVIGABLE_THUNK',
-    (_, _uid: string) => {
-      // ...
+    ({ getState, dispatch }, uid: string) => {
+
+      const state = getState().nav.dom[uid];
+      if (!state) return;
+      const root = document.getElementById(state.rootKey);
+      if (!root) return;
+
+      traverseDom(root, (node) => {
+        if (!node.children.length) {
+          console.log({ child: node });
+        }
+      });
+
+      dispatch(Act.setThrottle(uid, null));
     },
   ),
   updateNavigable: createThunk(
@@ -43,9 +58,8 @@ const Thunk = {
     ({ dispatch, getState }, uid: string) => {
   
       const state = getState().nav.dom[uid];
-      if (!state || state.nextUpdate) {
-        return; // Not found or throttled.
-      }
+      // Exists and not throttled?
+      if (!state || state.nextUpdate) return;
   
       const waitMs = 100;
       dispatch(Act.setThrottle(uid, Date.now() + waitMs));

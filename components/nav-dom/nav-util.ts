@@ -6,3 +6,8 @@ export function getNavElemId(uid: string, key: NavElKey) {
     case 'nav-poly': return `nav-poly-${uid}`;
   }
 }
+
+export function traverseDom(el: Element, act: (el: Element) => void) {
+  act(el);
+  Array.from(el.children).forEach((childEl) => traverseDom(childEl, act));
+}
