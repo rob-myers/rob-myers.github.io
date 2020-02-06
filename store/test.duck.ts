@@ -10,7 +10,7 @@ const initialState: State = {
   lastPing: null,
 };
 
-const Act = {
+export const Act = {
   testPing: () => createAct('TEST_PING'),
   testIncrement: () => createAct('TEST_INCREMENT'),
   testDecrement: () => createAct('TEST_DECREMENT'),
@@ -28,5 +28,3 @@ export const reducer = (state = initialState, action: Action): State => {
     default: return state;
   }
 };
-
-export default Act;

@@ -1,51 +1,51 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavElemId } from './nav-util';
-import Acts from '@store/nav.duck';
+import { Act, Thunk } from '@store/nav.duck';
 import { RootState } from '@store/reducer';
 
 /**
  * This component uses its DOM descendents to create a navmesh.
  */
-const NavDom: React.FC<Props> = ({ ctxtKey }) => {
-  const rootId = getNavElemId(ctxtKey, 'root');
+const NavDom: React.FC<Props> = ({ uid, children }) => {
+
+  const rootId = getNavElemId(uid, 'root');
   const dispatch = useDispatch();
-  const state = useSelector(({ nav: { dom: navdom } }: RootState) => navdom);
+  const state = useSelector(({ nav: { dom } }: RootState) => dom[uid]);
+  const rootDiv = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!state) {
-      dispatch(Acts.registerNavDom(ctxtKey));
+      dispatch(Act.registerNavDom(uid));
     }
 
-    // // Recompute walkable on dom change within div.
-    // const observer = new MutationObserver(_mutations => {
-    //   // console.log({ mutations });
-    //   dispatch(tdUpdateWalkableThunk({ ctxtKey: uid }));
-    // });
-    // observer.observe(rootDivRef.current!, {
-    //   attributes: true,
-    //   childList: true,
-    //   subtree: true
-    // });
+    // Recompute navigable on dom change.
+    const observer = new MutationObserver(mutations => {
+      console.log({ mutations });
+      dispatch(Thunk.updateNavigable(uid));
+    });
+    observer.observe(rootDiv.current!, {
+      attributes: true,
+      childList: true,
+      subtree: true
+    });
 
-    // setInitialized(true);
-    // dispatch(tdUpdateWalkableThunk({ ctxtKey: uid }));
-    // return () => {
-    //   dispatch(tdRemoveCtxt.act({ uid }));
-    //   // window.removeEventListener("resize", onResize);
-    //   observer.disconnect();
-    // };
+    dispatch(Thunk.updateNavigable(uid));
+    return () => {
+      dispatch(Act.unregisterNavDom(uid));
+      observer.disconnect();
+    };
   }, []);
 
   return (
-    <div id={rootId}>
-      NavDom
+    <div id={rootId} ref={rootDiv}>
+      {children}
     </div>
   );
 };
 
 interface Props {
-  ctxtKey: string;
+  uid: string;
   showMesh?: boolean;
 }
 
