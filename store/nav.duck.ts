@@ -1,21 +1,19 @@
-import { createAct, ActionsUnion, createThunk } from './redux-util';
+import { createAct, ActionsUnion, createThunk, addToLookup, updateLookup } from './redux-util';
 import { KeyedLookup } from '@custom-types/generic.model';
 
+
 export interface State {
-  dom: KeyedLookup<string, {
-    key: string;
-    /** For throttling (epoch ms). */
-    nextUpdate: null | number;
-  }>;
+  dom: KeyedLookup<NavDomState>;
 }
-
-type NavDomState = State['dom'][0];
-
+interface NavDomState {
+  key: string;
+  /** For throttling (epoch ms). */
+  nextUpdate: null | number;
+}
 
 const initialState: State = {
   dom: {},
 };
-
 function createNavDomState(uid: string): NavDomState {
   return {
     key: uid,
@@ -23,11 +21,12 @@ function createNavDomState(uid: string): NavDomState {
   };
 }
 
+
 const Act = {
   registerNavDom: (uid: string) =>
     createAct('REGISTER_NAV_DOM', { uid }),
-  setThrottle: (uid: string, waitMs: number) =>
-    createAct('THROTTLE_NAV_DOM', { uid, waitMs }),
+  setThrottle: (uid: string, nextUpdate: number) =>
+    createAct('THROTTLE_NAV_DOM', { uid, nextUpdate }),
 };
 
 export type Action = ActionsUnion<typeof Act>;
@@ -60,13 +59,10 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
     case 'REGISTER_NAV_DOM': return { ...state,
-      dom: { ...state.dom, [act.uid]: createNavDomState(act.uid) }
+      dom: addToLookup(createNavDomState(act.uid), state.dom)
     };
-    /**
-     * TODO utils to simplify {lookup} create/update.
-     */
     case 'THROTTLE_NAV_DOM': return { ...state,
-      dom: { ...state.dom, /** TODO */ }
+      dom: updateLookup(act.uid, state.dom, () => ({ nextUpdate: act.nextUpdate }))
     };
     default: return state;
   }
