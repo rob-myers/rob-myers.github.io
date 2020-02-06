@@ -11,7 +11,7 @@ const NavDom: React.FC<Props> = ({ uid, children }) => {
 
   const rootId = getNavElemId(uid, 'root');
   const dispatch = useDispatch();
-  const state = useSelector(({ nav: { dom: navdom } }: RootState) => navdom);
+  const state = useSelector(({ nav: { dom } }: RootState) => dom[uid]);
   const rootDiv = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

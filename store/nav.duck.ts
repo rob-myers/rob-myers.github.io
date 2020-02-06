@@ -1,14 +1,30 @@
-import { createAct, ActionsUnion, createThunk, addToLookup, updateLookup, removeFromLookup } from './redux-util';
+import {
+  createAct,
+  createThunk,
+  ActionsUnion,
+  addToLookup,
+  updateLookup,
+  removeFromLookup,
+  RedactInReduxDevTools,
+} from './redux-util';
 import { KeyedLookup } from '@custom-types/generic.model';
+import { Rect2 } from '@custom-types/rect2.model';
 
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
 }
 interface NavDomState {
+  /** uid. */
   key: string;
   /** For throttling (epoch ms). */
   nextUpdate: null | number;
+  spawns: NavSpawnState[];
+}
+
+interface NavSpawnState {
+  key: string;
+  bounds: Rect2 & RedactInReduxDevTools;
 }
 
 const initialState: State = {
@@ -18,6 +34,7 @@ function createNavDomState(uid: string): NavDomState {
   return {
     key: uid,
     nextUpdate: null,
+    spawns: [],
   };
 }
 

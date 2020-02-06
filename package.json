@@ -2,6 +2,9 @@
   "name": "rob-myers",
   "license": "MIT",
   "dependencies": {
+    "earcut": "^2.2.2",
+    "poly2tri": "^1.5.0",
+    "polygon-clipping": "^0.14.3",
     "react": "16.12.0",
     "react-dom": "16.12.0",
     "react-redux": "7.1.3",
@@ -21,6 +24,7 @@
     "@hot-loader/react-dom": "16.11.0",
     "@testing-library/jest-dom": "5.1.1",
     "@testing-library/react": "9.4.0",
+    "@types/earcut": "^2.1.0",
     "@types/gh-pages": "2.0.1",
     "@types/node": "13.7.0",
     "@types/react": "16.9.19",
