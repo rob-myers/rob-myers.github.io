@@ -6,10 +6,11 @@ import {
   updateLookup,
   removeFromLookup,
   RedactInReduxDevTools,
+  redact,
 } from './redux-util';
-import { KeyedLookup } from '@custom-types/generic.model';
+import { KeyedLookup } from '@model/generic.model';
+import { Rect2 } from '@model/rect2.model';
 import { getNavElemId, traverseDom } from '@components/nav-dom/nav-util';
-import { Rect2 } from '@custom-types/rect2.model';
 
 
 export interface State {
@@ -19,6 +20,7 @@ interface NavDomState {
   /** uid. */
   key: string;
   rootKey: string;
+  bounds: Rect2 & RedactInReduxDevTools;
   /** For throttling (epoch ms). */
   nextUpdate: null | number;
   spawns: NavSpawnState[];
@@ -36,6 +38,7 @@ function createNavDomState(uid: string): NavDomState {
   return {
     key: uid,
     rootKey: getNavElemId(uid, 'root'),
+    bounds: redact(Rect2.from(), 'Rect2'),
     nextUpdate: null,
     spawns: [],
   };

@@ -1,9 +1,11 @@
 import { createStore, applyMiddleware, Dispatch } from 'redux';
 import { composeWithDevTools, EnhancerOptions } from 'redux-devtools-extension';
-import { persistReducer } from 'redux-persist';
+import { persistReducer, createTransform } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import rootReducer, { RootState, RootAction } from './reducer';
 import { ThunkParams, ThunkAct, RedactInReduxDevTools } from './redux-util';
+import { State as TestState } from '@store/test.duck';
+import { State as NavState } from '@store/nav.duck';
 
 const thunkMiddleware = () =>
   (params: ThunkParams) =>
@@ -19,7 +21,21 @@ const thunkMiddleware = () =>
 const persistedReducer = persistReducer({
   key: 'primary',
   storage,
-  whitelist: ['test'],
+  transforms: [
+    createTransform(
+      ({ count }: TestState, _key): TestState => ({
+        count,
+        lastPing: null
+      }),
+      (state: TestState, _key): TestState => state,
+      { whitelist: ['test'] }
+    ),
+    createTransform(
+      (_state: NavState): NavState => ({ dom: {} }),
+      (state: NavState): NavState => state,
+      { whitelist: ['nav'] }
+    ),
+  ],
 }, rootReducer);
 
 export const initializeStore = (preloadedState?: RootState) =>

@@ -62,7 +62,7 @@ export default (
           alias: {
             '@components': path.resolve(__dirname, 'components'),
             '@store': path.resolve(__dirname, 'store'),
-            '@custom-types': path.resolve(__dirname, 'custom-types'),
+            '@model': path.resolve(__dirname, 'model'),
             ...(!production && { 'react-dom': '@hot-loader/react-dom' })
           }
         }
