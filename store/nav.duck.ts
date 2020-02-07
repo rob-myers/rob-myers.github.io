@@ -7,10 +7,11 @@ import {
   removeFromLookup,
   redact,
 } from './redux.model';
-import { KeyedLookup } from '@custom-types/generic.model';
+import { KeyedLookup } from '@model/generic.model';
+import { Rect2 } from '@model/rect2.model';
 import { NavDomState, createNavDomState, traverseDom, navOutset } from '@components/nav-dom/nav.model';
-import { Rect2 } from '@custom-types/rect2.model';
-import { Poly2 } from '@custom-types/poly2.model';
+import { Poly2 } from '@model/poly2.model';
+
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
@@ -25,7 +26,7 @@ export const Act = {
     createAct('REGISTER_NAV_DOM', { uid }),
   unregisterNavDom: (uid: string) =>
     createAct('UNREGISTER_NAV_DOM', { uid }),
-  setThrottle: (uid: string, nextUpdate: number) =>
+  setThrottle: (uid: string, nextUpdate: number | null) =>
     createAct('THROTTLE_NAV_DOM', { uid, nextUpdate }),
   updateNavDom: (uid: string, updates: Partial<NavDomState>) =>
     createAct('UPDATE_NAV_DOM', { uid, updates }),
@@ -63,6 +64,8 @@ export const Thunk = {
         bounds: redact(worldRect),
         navPolys: navPolys.map((poly) => redact(poly)),
       }));
+
+      dispatch(Act.setThrottle(uid, null));
     },
   ),
   updateNavigable: createThunk(

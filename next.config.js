@@ -11,7 +11,7 @@ exports.default = (_phase, _opts) => {
     return {
         webpack: (config) => webpack_merge_1.default(config, {
             resolve: {
-                alias: Object.assign({ '@components': path_1.default.resolve(__dirname, 'components'), '@store': path_1.default.resolve(__dirname, 'store'), '@custom-types': path_1.default.resolve(__dirname, 'custom-types') }, (!production && { 'react-dom': '@hot-loader/react-dom' }))
+                alias: Object.assign({ '@components': path_1.default.resolve(__dirname, 'components'), '@store': path_1.default.resolve(__dirname, 'store'), '@model': path_1.default.resolve(__dirname, 'model') }, (!production && { 'react-dom': '@hot-loader/react-dom' }))
             }
         })
     };

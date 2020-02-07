@@ -1,6 +1,6 @@
-import { Rect2 } from '@custom-types/rect2.model';
+import { Rect2 } from '@model/rect2.model';
 import { redact, Redacted } from '@store/redux.model';
-import { Poly2 } from '@custom-types/poly2.model';
+import { Poly2 } from '@model/poly2.model';
 
 type NavElKey = 'root' | 'nav-poly' | 'spawn';
 

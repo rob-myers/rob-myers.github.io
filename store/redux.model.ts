@@ -1,6 +1,6 @@
 import { Dispatch } from 'redux';
 import { RootAction, RootState } from './reducer';
-import { KeyedLookup } from '@custom-types/generic.model';
+import { KeyedLookup } from '@model/generic.model';
 
 export const createAct = <T extends string, P extends object = {}>(
   type: T,
@@ -42,9 +42,8 @@ export interface RedactInReduxDevTools {
 export type Redacted<T> = T & RedactInReduxDevTools;
 
 /**
- * Mutate object with property devToolsRedaction (see create-store.ts).
- * Redux dev-tools will replace objects with this property by the string
- * Redact<{object.devToolsRedaction}>.
+ * Mutate object with property 'devToolsRedaction'.
+ * We've configured redux dev-tools to replace it by `Redact<{object.devToolsRedaction}>`.
  */
 export function redact<T extends {}>(object: T, devToolsRedaction?: string) {
   // tslint:disable-next-line: prefer-object-spread
