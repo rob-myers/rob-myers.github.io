@@ -1,4 +1,4 @@
-import { createAct, ActionsUnion } from './redux-util';
+import { createAct, ActionsUnion } from './redux.model';
 
 export interface State {
   count: number;

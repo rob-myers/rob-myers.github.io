@@ -9,7 +9,7 @@ import '@testing-library/jest-dom'; // TODO move to own file
 const mockStore = configureStore<RootState>([]);
 
 test('renders "Hello, world"', () => {
-  const store = mockStore({ test: { count: 0, lastPing: null } });
+  const store = mockStore({ test: { count: 0, lastPing: null } } as RootState);
   const { getByText } = render((
     <Provider store={store}>
       <Index />

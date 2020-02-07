@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getNavElemId } from './nav-util';
+import { getNavElemId } from './nav.model';
 import { Act, Thunk } from '@store/nav.duck';
 import { RootState } from '@store/reducer';
 

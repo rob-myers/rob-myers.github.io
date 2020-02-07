@@ -245,7 +245,6 @@ export class Poly2 {
 
   /**
    * Cut {cuttingPolys} from {polys}.
-   * We must ensure there are no colinear points for 'poly2tri'.
    */
   public static cutOut(cuttingPolys: Poly2[], polys: Poly2[]): Poly2[] {
     return polygonClipping

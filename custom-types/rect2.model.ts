@@ -64,6 +64,13 @@ export class Rect2 {
     return this.x <= x && x <= this.x + this.width && (this.y <= y && y <= this.y + this.height);
   }
 
+  public copy({ x, y, width, height }: DOMRect | Rect2): this {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    return this;
+  }
   public covers({ x, y, width, height }: Rect2) {
     return (
       this.x <= x &&
@@ -73,24 +80,25 @@ export class Rect2 {
     );
   }
 
-  public static from(...items: Rect2[]): Rect2
   public static from(...items: Vector2[]): Rect2
-  public static from(...items: any[]): Rect2 {
+  public static from(...items: Rect2[]): Rect2
+  public static from(...items: DOMRect[]): Rect2
+  public static from(...items: Rect2[] | Vector2[] | DOMRect[]): Rect2 {
     if (!items.length) {
       return new Rect2(0, 0, 0, 0);
-    } else if (items[0] instanceof Rect2) {
-      const rects = items as Rect2[];
-      const mx = Math.min(...rects.map(({ x }) => x));
-      const my = Math.min(...rects.map(({ y }) => y));
-      const Mx = Math.max(...rects.map(({ x, width }) => x + width));
-      const My = Math.max(...rects.map(({ y, height }) => y + height));
-      return new Rect2(mx, my, Mx - mx, My - my);
-    } else {
+    } else if (items[0] instanceof Vector2) {
       const vectors = items as Vector2[];
       const mx = Math.min(...vectors.map(({ x }) => x));
       const my = Math.min(...vectors.map(({ y }) => y));
       const Mx = Math.max(...vectors.map(({ x }) => x));
       const My = Math.max(...vectors.map(({ y }) => y));
+      return new Rect2(mx, my, Mx - mx, My - my);
+    } else {
+      const rects = items as Rect2[];
+      const mx = Math.min(...rects.map(({ x }) => x));
+      const my = Math.min(...rects.map(({ y }) => y));
+      const Mx = Math.max(...rects.map(({ x, width }) => x + width));
+      const My = Math.max(...rects.map(({ y, height }) => y + height));
       return new Rect2(mx, my, Mx - mx, My - my);
     }
   }

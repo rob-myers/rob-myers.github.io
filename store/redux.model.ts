@@ -10,6 +10,7 @@ export const createAct = <T extends string, P extends object = {}>(
 export interface ThunkParams {
   dispatch: Dispatch<RootAction | ThunkAct<string, any, any>>;
   getState: () => RootState;
+  state: RootState;
 }
 
 export interface ThunkAct<T extends string, A extends {}, R> {
@@ -38,14 +39,19 @@ export interface RedactInReduxDevTools {
   devToolsRedaction: string;
 }
 
+export type Redacted<T> = T & RedactInReduxDevTools;
+
 /**
  * Mutate object with property devToolsRedaction (see create-store.ts).
  * Redux dev-tools will replace objects with this property by the string
  * Redact<{object.devToolsRedaction}>.
  */
-export function redact<T extends {}>(object: T, devToolsRedaction: string) {
+export function redact<T extends {}>(object: T, devToolsRedaction?: string) {
   // tslint:disable-next-line: prefer-object-spread
-  return Object.assign<T, RedactInReduxDevTools>(object, { devToolsRedaction });
+  return Object.assign<T, RedactInReduxDevTools>(
+    object,
+    { devToolsRedaction: devToolsRedaction || `${object.constructor.name}` }
+  );
 }
 
 type ActionCreatorsMapObject = { [actionCreator: string]: (...args: any[]) => any }

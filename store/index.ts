@@ -3,14 +3,17 @@ import { composeWithDevTools, EnhancerOptions } from 'redux-devtools-extension';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import rootReducer, { RootState, RootAction } from './reducer';
-import { ThunkParams, ThunkAct, RedactInReduxDevTools } from './redux-util';
+import { ThunkParams, ThunkAct, RedactInReduxDevTools } from './redux.model';
 
 const thunkMiddleware = () =>
-  (params: ThunkParams) =>
+  (params: Omit<ThunkParams, 'state'>) =>
     (next: Dispatch) =>
       (action: RootAction | ThunkAct<string, {}, any>) => {
         if ('thunk' in action) {
-          return action.thunk(params, action.args);
+          return action.thunk({
+            ...params,
+            state: params.getState(),
+          }, action.args);
         }
         next(action);
         return;
