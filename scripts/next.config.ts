@@ -28,6 +28,10 @@ export default (
               ...(!production && { 'react-dom': '@hot-loader/react-dom' })
             }
           },
+          module: {
+            rules: [{ test: /\.spec\.(ts|tsx)$/, loader: 'ignore-loader' }]
+          },
+          ...(!options.isServer && { node: { fs: 'empty' } }),
         },
         configStyles(options),
       );

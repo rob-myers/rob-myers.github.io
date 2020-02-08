@@ -9,7 +9,7 @@ import webpack from 'webpack';
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 import OptimizeCssAssetsWebpackPlugin from 'optimize-css-assets-webpack-plugin';
 import { WebpackCtxt } from './next.config';
-import { resolve } from 'path';
+// import { resolve } from 'path';
 
 export default function({
   isServer,
@@ -26,20 +26,21 @@ export default function({
           : '[hash:base64]',
       },
       sourceMap: dev,
-      importLoaders: 2, // 'postcss-loader' and 'sass-loader'
+      // importLoaders: 2, // 'postcss-loader' and 'sass-loader'
+      importLoaders: 1, // 'sass-loader'
       onlyLocals: isServer,
       localsConvention: 'camelCase',
     },
   };
 
-  const postCssLoader: webpack.RuleSetLoader = {
-    loader: 'postcss-loader',
-    options: {
-      config: {
-        path: resolve(__dirname, 'postcss.config.js'),
-      },
-    },
-  };
+  // const postCssLoader: webpack.RuleSetLoader = {
+  //   loader: 'postcss-loader',
+  //   options: {
+  //     config: {
+  //       path: resolve(__dirname, 'postcss.config.js'),
+  //     },
+  //   },
+  // };
 
   const eccLoader: webpack.RuleSetLoader = {
     loader: ExtractCssChunks.loader,
@@ -51,7 +52,7 @@ export default function({
   defaultLoaders.sass = [
     ...(isServer ? [] : [eccLoader]),
     cssLoader,
-    postCssLoader,
+    // postCssLoader,
     { loader: 'sass-loader', options: {} }
   ];
 
