@@ -9,3 +9,5 @@ babel.config.js
 jest.config.js
 next.config.js
 styles.config.js
+
+yarn-error.log
