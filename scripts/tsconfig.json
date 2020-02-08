@@ -21,6 +21,8 @@
   "include": [
     "next.config.ts",
     "babel.config.ts",
-    "jest.config.ts"
+    "jest.config.ts",
+    "styles.config.ts",
+    "postcss.config.ts"
   ]
 }

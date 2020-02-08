@@ -7,18 +7,25 @@ import NavDom from '@components/nav-dom/nav-dom';
 // import { Act } from '@store/test.duck';
 
 import css from './index.scss';
+import { useDispatch } from 'react-redux';
+import { Thunk } from '@store/nav.duck';
 
 const Home: React.FC = () => {
-  // const [count, setCount] = useState(0);
-  // const count = useSelector(({ test }) => test.count);
-  // const dispatch = useDispatch();
-  const dim = (width: number, height: number) => ({ width, height, background: '#000' });
+  const dispatch = useDispatch();
+  const dim = (width: number, height: number) =>
+    ({ width, height, background: '#000' });
+
+  if (module.hot) {
+    module.hot.accept('./index.scss', function() {
+      dispatch(Thunk.updateNavigable({ uid: 'demo' }));
+    });
+  }
 
   return (
     <div>
       <h1>Hello, world!</h1>
       <NavDom uid='demo'>
-        <div className={css['container-test']}>
+        <div className={css.containerTest}>
           <div className={css.test} style={dim(30,30)}/>
           <div style={dim(30, 60)}/>
           <div style={dim(30, 60)}/>
@@ -26,7 +33,7 @@ const Home: React.FC = () => {
           <div style={dim(30, 60)}/>
           <div style={dim(30, 30)}/>
         </div>
-        <div className={css['container-test']}>
+        <div className={css.containerTest}>
           <div className={css.test} style={dim(30,30)}/>
           <div style={dim(30, 60)}/>
           <div style={dim(30, 60)}/>
@@ -34,7 +41,15 @@ const Home: React.FC = () => {
           <div style={dim(30, 60)}/>
           <div style={dim(30, 30)}/>
         </div>
-        <div className={css['container-test']}>
+        <div className={css.containerTest}>
+          <div className={css.test} style={dim(30,30)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 30)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 30)}/>
+          <div style={dim(30, 60)}/>
+        </div>
+        <div className={css.containerTest}>
           <div className={css.test} style={dim(30,30)}/>
           <div style={dim(30, 60)}/>
           <div style={dim(30, 60)}/>
@@ -48,3 +63,5 @@ const Home: React.FC = () => {
 };
 
 export default hot(withRedux(Home));
+
+

@@ -30,6 +30,7 @@ export function createNavDomState(uid: string): NavDomState {
     key: uid,
     elemId: getNavElemId(uid, 'content'),
     nextUpdate: null,
+    pending: false,
     spawns: [],
     bounds: {
       screen: redact(Rect2.from()),
@@ -45,6 +46,7 @@ export interface NavDomState {
   elemId: string;
   /** For throttling (epoch ms). */
   nextUpdate: null | number;
+  pending: boolean;
   spawns: NavSpawnState[];
   bounds: {
     screen: Redacted<Rect2>;

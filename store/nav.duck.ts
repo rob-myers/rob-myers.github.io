@@ -69,24 +69,28 @@ export const Thunk = {
           screen: redact(screenBounds),
           world: redact(worldBounds),
         },
+        nextUpdate: null,
+        pending: false,
         navigable: navPolys.map((poly) => redact(poly)),
       }));
-
-      dispatch(Act.setThrottle(uid, null));
     },
   ),
   updateNavigable: createThunk(
     'UPDATE_NAVIGABLE_THUNK',
-    ({ dispatch, state: { nav } }, uid: string) => {
-  
+    ({ dispatch, state: { nav }}, { uid }: {uid: string}) => {
+      
       const state = nav.dom[uid];
-      if (!state || state.nextUpdate) {
-        return; // Not found, or throttled.
+      if (!state) return;
+      
+      if (!state.nextUpdate) {
+        dispatch(Thunk.computeNavigable(uid));
+        dispatch(Act.setThrottle(uid, Date.now() + 100));
+      } else {
+        const delta = Math.max(state.nextUpdate - Date.now(), 0);
+        window.setTimeout(() => {
+          dispatch(Thunk.computeNavigable(uid));
+        }, delta);
       }
-  
-      const waitMs = 100;
-      dispatch(Act.setThrottle(uid, Date.now() + waitMs));
-      window.setTimeout(() => dispatch(Thunk.computeNavigable(uid)), waitMs);
     },
   )
 };
