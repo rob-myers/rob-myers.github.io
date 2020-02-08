@@ -9,24 +9,21 @@ import css from './nav-dom.scss';
  */
 const NavDom: React.FC<Props> = ({ uid, children }) => {
 
-  const rootId = getNavElemId(uid, 'root');
+  const contentId = getNavElemId(uid, 'content');
   const dispatch = useDispatch();
-  const state = useSelector(({ nav: { dom } }) => dom[uid]);
-  const rootDiv = useRef<HTMLDivElement>(null);
-  // const svgRef = useRef<SVGSVGElement>(null);
+  const contentDiv = useRef<HTMLDivElement>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    if (!state) dispatch(Act.registerNavDom(uid));
+    dispatch(Act.registerNavDom(uid));
 
-    // Compute navigation initially
+    // Compute navigation, updating on change.
     dispatch(Thunk.updateNavigable(uid));
-
-    // Update navigation on dom change
     const observer = new MutationObserver(mutations => {
       console.log({ mutations });
       dispatch(Thunk.updateNavigable(uid));
     });
-    observer.observe(rootDiv.current!, observeOpts);
+    observer.observe(contentDiv.current!, observeOpts);
 
     return () => {
       dispatch(Act.unregisterNavDom(uid));
@@ -34,9 +31,28 @@ const NavDom: React.FC<Props> = ({ uid, children }) => {
     };
   }, []);
 
+  const state = useSelector(({ nav: { dom } }) => dom[uid]);
+  const navigable = state ? state.navigable : [];
+
   return (
-    <div id={rootId} ref={rootDiv} className={css.root}>
-      {children}
+    <div className={css.root}>
+      <svg ref={svgRef} className={css.svg}>
+        <g>
+          {navigable.map((poly, i) => (
+            <path
+              key={i}
+              d={poly.svgPath}
+              // fill="rgba(100, 100, 100, 0.05)"
+              fill="#999"
+              stroke="#ccc"
+              // strokeDasharray={3}
+            />
+          ))}
+        </g>
+      </svg>
+      <div id={contentId} ref={contentDiv} className={css.content}>
+        {children}
+      </div>
     </div>
   );
 };

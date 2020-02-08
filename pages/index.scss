@@ -3,3 +3,11 @@ $color: red;
 .test {
   background: $color !important;
 }
+
+.container-test {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 500px;
+  margin: 20px 0;
+}

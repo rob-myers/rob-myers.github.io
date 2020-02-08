@@ -1,23 +1,24 @@
-
-
 ## TODO
 
-- `NavDom` first approximation
+Update navmesh on css change too?
 
 ## So far
 
 - next js
-  - typescript
-  - next.config.ts + custom webpack
-  - babel.config.ts
-  - @components alias
-  - react-hot-loader + @hot-loader/react-dom
-  - redux
-  - redux-persist
-  - basic jest integration
+- typescript
+- next.config.ts + custom webpack
+- babel.config.ts
+- @components alias
+- react-hot-loader + @hot-loader/react-dom
+- redux
+- redux-persist
+- basic jest integration
+- sass + hmr
 - deploy using gh-pages.config.ts
 - eslint + @typescript-eslint + .eslintignore
   
+- `NavDom` renders navigable polygon
+
 
 
 # Next JS

@@ -2,11 +2,11 @@ import { Rect2 } from '@model/rect2.model';
 import { redact, Redacted } from '@store/redux.model';
 import { Poly2 } from '@model/poly2.model';
 
-type NavElKey = 'root' | 'nav-poly' | 'spawn';
+type NavElKey = 'content' | 'nav-poly' | 'spawn';
 
 export function getNavElemId(uid: string, key: NavElKey) {
   switch (key) {
-    case 'root': return `nav-root-${uid}`;
+    case 'content': return `nav-root-${uid}`;
     case 'nav-poly': return `nav-poly-${uid}`;
     case 'spawn': return `nav-spawn-${uid}`;
   }
@@ -28,11 +28,14 @@ export const navOutset = 10;
 export function createNavDomState(uid: string): NavDomState {
   return {
     key: uid,
-    elemId: getNavElemId(uid, 'root'),
+    elemId: getNavElemId(uid, 'content'),
     nextUpdate: null,
     spawns: [],
-    bounds: redact(Rect2.from()),
-    navPolys: [],
+    bounds: {
+      screen: redact(Rect2.from()),
+      world: redact(Rect2.from()),
+    },
+    navigable: [],
   };
 }
 
@@ -43,8 +46,12 @@ export interface NavDomState {
   /** For throttling (epoch ms). */
   nextUpdate: null | number;
   spawns: NavSpawnState[];
-  bounds: Redacted<Rect2>;
-  navPolys: Redacted<Poly2>[];
+  bounds: {
+    screen: Redacted<Rect2>;
+    world: Redacted<Rect2>;
+  };
+  /** Navigable multipolygon. */
+  navigable: Redacted<Poly2>[];
 }
 
 interface NavSpawnState {

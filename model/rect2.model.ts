@@ -93,12 +93,19 @@ export class Rect2 {
       const Mx = Math.max(...vectors.map(({ x }) => x));
       const My = Math.max(...vectors.map(({ y }) => y));
       return new Rect2(mx, my, Mx - mx, My - my);
-    } else {
+    } else if (items[0] instanceof Rect2) {
       const rects = items as Rect2[];
       const mx = Math.min(...rects.map(({ x }) => x));
       const my = Math.min(...rects.map(({ y }) => y));
       const Mx = Math.max(...rects.map(({ x, width }) => x + width));
       const My = Math.max(...rects.map(({ y, height }) => y + height));
+      return new Rect2(mx, my, Mx - mx, My - my);
+    } else {
+      const rects = items as DOMRect[];
+      const mx = Math.min(...rects.map(({ left }) => left));
+      const my = Math.min(...rects.map(({ top }) => top));
+      const Mx = Math.max(...rects.map(({ right }) => right));
+      const My = Math.max(...rects.map(({ bottom }) => bottom));
       return new Rect2(mx, my, Mx - mx, My - my);
     }
   }

@@ -18,13 +18,27 @@ const Home: React.FC = () => {
     <div>
       <h1>Hello, world!</h1>
       <NavDom uid='demo'>
-        <div style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          width: 200,
-        }}>
+        <div className={css['container-test']}>
           <div className={css.test} style={dim(30,30)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 30)}/>
+        </div>
+        <div className={css['container-test']}>
+          <div className={css.test} style={dim(30,30)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 30)}/>
+        </div>
+        <div className={css['container-test']}>
+          <div className={css.test} style={dim(30,30)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
           <div style={dim(30, 60)}/>
           <div style={dim(30, 30)}/>
         </div>

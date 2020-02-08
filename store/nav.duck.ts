@@ -44,25 +44,32 @@ export const Thunk = {
       const root = document.getElementById(state.elemId);
       if (!root) return;
 
-      const worldRect = Rect2.from(root.getBoundingClientRect());
+      const screenBounds = Rect2.from(root.getBoundingClientRect());
+      const { x: rootLeft, y: rootTop } = screenBounds;
+      const worldBounds = screenBounds.clone().translate(-rootLeft, -rootTop);
       const leafRects = [] as Rect2[];
       // TODO svg polygons
       // TODO NavSpawn's are containers
 
       traverseDom(root, (node) => {
         if (!node.children.length) {
-          leafRects.push(Rect2.from(node.getBoundingClientRect()));
+          const rect = Rect2.from(node.getBoundingClientRect());
+          leafRects.push(rect.translate(-rootLeft, -rootTop));
         }
       });
 
       const navPolys = Poly2.cutOut(
         leafRects.map((rect) => rect.outset(navOutset).poly2),
-        [worldRect.poly2],
+        [worldBounds.poly2],
       );
 
+      // Update state to reflect dom
       dispatch(Act.updateNavDom(uid, {
-        bounds: redact(worldRect),
-        navPolys: navPolys.map((poly) => redact(poly)),
+        bounds: {
+          screen: redact(screenBounds),
+          world: redact(worldBounds),
+        },
+        navigable: navPolys.map((poly) => redact(poly)),
       }));
 
       dispatch(Act.setThrottle(uid, null));

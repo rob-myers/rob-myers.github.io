@@ -39,7 +39,7 @@ export interface RedactInReduxDevTools {
   devToolsRedaction: string;
 }
 
-export type Redacted<T> = T & RedactInReduxDevTools;
+export type Redacted<T> = RedactInReduxDevTools & T;
 
 /**
  * Mutate object with property 'devToolsRedaction'.

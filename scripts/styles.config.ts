@@ -5,10 +5,10 @@
  * https://github.com/zeit/next-plugins/blob/master/packages/next-sass/index.js
  * https://github.com/zeit/next-plugins/blob/master/packages/next-css/css-loader-config.js
  */
-import { WebpackCtxt } from './next.config';
 import webpack from 'webpack';
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 import OptimizeCssAssetsWebpackPlugin from 'optimize-css-assets-webpack-plugin';
+import { WebpackCtxt } from './next.config';
 
 export default function({
   isServer,
