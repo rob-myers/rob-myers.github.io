@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavElemId, observeOpts } from './nav.model';
 import { Act, Thunk } from '@store/nav.duck';
+import css from './nav-dom.scss';
 
 /**
  * This component uses its DOM descendents to create a navmesh.
@@ -12,6 +13,7 @@ const NavDom: React.FC<Props> = ({ uid, children }) => {
   const dispatch = useDispatch();
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
   const rootDiv = useRef<HTMLDivElement>(null);
+  // const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     if (!state) dispatch(Act.registerNavDom(uid));
@@ -33,7 +35,7 @@ const NavDom: React.FC<Props> = ({ uid, children }) => {
   }, []);
 
   return (
-    <div id={rootId} ref={rootDiv}>
+    <div id={rootId} ref={rootDiv} className={css.root}>
       {children}
     </div>
   );

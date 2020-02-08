@@ -6,6 +6,8 @@ import NavDom from '@components/nav-dom/nav-dom';
 // import { useDispatch, useSelector } from 'react-redux';
 // import { Act } from '@store/test.duck';
 
+import css from './index.scss';
+
 const Home: React.FC = () => {
   // const [count, setCount] = useState(0);
   // const count = useSelector(({ test }) => test.count);
@@ -22,7 +24,7 @@ const Home: React.FC = () => {
           alignItems: 'center',
           width: 200,
         }}>
-          <div style={dim(30,30)}/>
+          <div className={css.test} style={dim(30,30)}/>
           <div style={dim(30, 60)}/>
           <div style={dim(30, 30)}/>
         </div>

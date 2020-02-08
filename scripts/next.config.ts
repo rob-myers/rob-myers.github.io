@@ -1,8 +1,39 @@
-// eslint-disable-next-line no-unused-vars
+/// <reference types="../types/sass-loader" />
+
+import path from 'path';
 import webpack from 'webpack';
 import webpackMerge from 'webpack-merge';
 import nextConst from 'next/constants';
-import path from 'path';
+import configStyles from './styles.config';
+
+const production = process.env.NODE_ENV === 'production';
+console.log({ production });
+
+export default (
+  _phase: Phase,
+  _nextCtxt: NextJsConfigCtxt
+): NextJsConfig => {
+
+  
+  return {
+    webpack: (config, options) => {
+      return webpackMerge(
+        config,
+        {
+          resolve: {
+            alias: {
+              '@components': path.resolve(__dirname, 'components'),
+              '@store': path.resolve(__dirname, 'store'),
+              '@model': path.resolve(__dirname, 'model'),
+              ...(!production && { 'react-dom': '@hot-loader/react-dom' })
+            }
+          },
+        },
+        configStyles(options),
+      );
+    }
+  };
+};
 
 type Phase = (
   | typeof nextConst.PHASE_DEVELOPMENT_SERVER
@@ -15,7 +46,7 @@ type NextJsConfig = Partial<{
   env: string[];
   webpack: (
     config: webpack.Configuration,
-    opts: any
+    opts: WebpackCtxt,
   ) => webpack.Configuration;
   webpackDevMiddleware: any;
   /** e.g. '.next' */
@@ -46,27 +77,12 @@ type NextJsConfig = Partial<{
   publicRuntimeConfig: {};
 }>
 
-const production = process.env.NODE_ENV === 'production';
-console.log({ production });
+interface NextJsConfigCtxt {
+  defaultConfig: NextJsConfig;
+}
 
-export default (
-  _phase: Phase,
-  _opts: { defaultConfig: NextJsConfig }
-): NextJsConfig => {
-
-  return {
-    webpack: (config) => webpackMerge(
-      config,
-      {
-        resolve: {
-          alias: {
-            '@components': path.resolve(__dirname, 'components'),
-            '@store': path.resolve(__dirname, 'store'),
-            '@model': path.resolve(__dirname, 'model'),
-            ...(!production && { 'react-dom': '@hot-loader/react-dom' })
-          }
-        }
-      }
-    )
-  };
-};
+export interface WebpackCtxt {
+  defaultLoaders: Record<string, webpack.RuleSetLoader[]>;
+  isServer: boolean;
+  dev: boolean;
+}

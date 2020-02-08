@@ -4,3 +4,8 @@ node_modules
 
 .next
 out
+
+babel.config.js
+jest.config.js
+next.config.js
+styles.config.js
