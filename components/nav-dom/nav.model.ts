@@ -17,6 +17,12 @@ export function traverseDom(el: Element, act: (el: Element) => void) {
   Array.from(el.children).forEach((childEl) => traverseDom(childEl, act));
 }
 
+export const observeOpts: MutationObserverInit = {
+  attributes: true,
+  childList: true,
+  subtree: true,
+};
+
 export const navOutset = 10;
 
 export function createNavDomState(uid: string): NavDomState {
