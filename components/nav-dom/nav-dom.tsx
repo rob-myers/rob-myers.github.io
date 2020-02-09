@@ -42,7 +42,7 @@ const NavDom: React.FC<Props> = ({
     <div>
       <svg
         ref={svgRef}
-        style={{ width, height, position: 'absolute' }}
+        style={{ width, height, position: 'absolute', zIndex: -10 }}
       >
         <g>
           {navigable.map((poly, i) => (

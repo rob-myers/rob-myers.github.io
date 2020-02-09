@@ -51,26 +51,21 @@ export class Poly2 {
 
   /**
    * IN PROGRESS.
-   * - 1st test: cdt2d in 2 passes using center.
-   * - 2nd test: split tris with small min angle
-   * - 3rd test: implement 'Chew's 2nd algorithm'
    */
   public get customTriangulation(): Poly2[] {
     if (this._customTriangulation) {
       return this._customTriangulation;
     }
+    // Triangulate.
+    const baseTris = this.triangulation;
+    // Add triangle centers as Steiner points.
+    const centers = baseTris.map(({ center }) => center);
     const { points: vs, edges: es } = this.planarLineGraph;
-    const triangles = cdt2d(vs, es, this.cdt2dOpts)
-      .map((triIds) => new Poly2(triIds.map(i => Vector2.from(vs[i]))));
-
-
-    // TODO refine via extra point for each circumcenter.
-    const centers = triangles.map(({ center }) => center);
     const extVs = vs.concat(centers.map(({ coord }) => coord));
-    const triangles2 = cdt2d(extVs, es, this.cdt2dOpts)
+    const finalTris = cdt2d(extVs, es, this.cdt2dOpts)
       .map((triIds) => new Poly2(triIds.map(i => Vector2.from(extVs[i]))));
 
-    return (this._customTriangulation = triangles2);
+    return (this._customTriangulation = finalTris);
   }
 
   /**

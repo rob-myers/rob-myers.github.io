@@ -1,8 +1,12 @@
 ## TODO
 
-- use cdt2d to improve triangulation
-- start using mdx for blogs
+- implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
+- illustrate it
+- string-pulling
+- actors move along them via css
 
+
+- start using mdx for blogs
 - integrate gitalk from older branch
 - delete older branch
 - PR this branch `fresh-start-2020` into new branch `dev-setup`.
@@ -23,6 +27,7 @@
 - eslint + @typescript-eslint + .eslintignore
   
 - `NavDom` renders navigable polygon
+- use cdt2d to improve triangulation
 
 
 # Next JS
