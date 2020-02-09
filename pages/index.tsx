@@ -1,12 +1,12 @@
 import { hot } from 'react-hot-loader/root';
 import withRedux from '@store/with-redux';
-import _css from './index.scss';
+import css from './index.scss';
 import Demo1 from '@components/demo/demo-1';
 
 const Home: React.FC = () => {
 
   return (
-    <div>
+    <div className={css.root}>
       <h1>Hello, world!</h1>
       <Demo1 />
     </div>  

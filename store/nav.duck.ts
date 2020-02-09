@@ -7,10 +7,11 @@ import {
   removeFromLookup,
   redact,
 } from './redux.model';
-import { KeyedLookup } from '@model/generic.model';
+import { KeyedLookup, flatten } from '@model/generic.model';
 import { Rect2 } from '@model/rect2.model';
 import { NavDomState, createNavDomState, traverseDom, navOutset } from '@components/nav-dom/nav.model';
 import { Poly2 } from '@model/poly2.model';
+import { Vector2 } from '@model/vec2.model';
 
 
 export interface State {
@@ -48,20 +49,26 @@ export const Thunk = {
       const { x: rootLeft, y: rootTop } = screenBounds;
       const worldBounds = screenBounds.clone().translate(-rootLeft, -rootTop);
       const leafRects = [] as Rect2[];
-      // TODO svg polygons
-      // TODO NavSpawn's are containers
+      const leafPolys = [] as Poly2[];
 
       traverseDom(root, (node) => {
         if (!node.children.length) {
           const rect = Rect2.from(node.getBoundingClientRect());
-          leafRects.push(rect.translate(-rootLeft, -rootTop));
+          rect.translate(-rootLeft, -rootTop);
+
+          if (node instanceof SVGPolygonElement) {
+            const vs = Array.from(node.points).map(p => Vector2.from(p));
+            leafPolys.push(new Poly2(vs).translate(rect.x, rect.y));
+          } else {
+            leafRects.push(rect);
+          }
         }
       });
 
-      const navPolys = Poly2.cutOut(
-        leafRects.map((rect) => rect.outset(navOutset).poly2),
-        [worldBounds.poly2],
-      );
+      const navPolys = Poly2.cutOut([
+        ...leafRects.map((rect) => rect.outset(navOutset).poly2),
+        ...flatten(leafPolys.map((poly) => poly.createOutset(navOutset))),
+      ], [worldBounds.poly2]);
 
       // Update state to reflect dom
       dispatch(Act.updateNavDom(uid, {
@@ -78,7 +85,7 @@ export const Thunk = {
   updateNavigable: createThunk(
     'UPDATE_NAVIGABLE_THUNK',
     ({ dispatch, state: { nav }}, { uid }: {uid: string}) => {
-      
+
       const state = nav.dom[uid];
       if (!state || state.nextUpdate) return;
       

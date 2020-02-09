@@ -33,12 +33,9 @@ const Demo1: React.FC = () => {
         <div style={dim(30, 30)}/>
       </div>
       <div style={containerTest}>
-        <div style={dim(70,30)}/>
-        <div style={dim(30, 60)}/>
-        <div style={dim(30, 30)}/>
-        <div style={dim(30, 60)}/>
-        <div style={dim(30, 30)}/>
-        <div style={dim(30, 60)}/>
+        <svg width={250} height={100}>
+          <polygon fill="#555" points={`${[0,0, 200,0, 250,50, 200,100, 0,100, 50,50]}`} />
+        </svg>
       </div>
       <div style={containerTest}>
         <div style={dim(30,30)}/>

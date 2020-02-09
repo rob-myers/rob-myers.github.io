@@ -441,7 +441,7 @@ export class Poly2 {
   /**
    * Mutates this polygon.
    */
-  public offset(delta: Vector2): Poly2 {
+  public offset(delta: Vector2): this {
     this.points.forEach(p => p.add(delta));
     this.holes.forEach(hole => hole.forEach(p => p.add(delta)));
     this.clearCache();
@@ -495,6 +495,10 @@ export class Poly2 {
 
   private static sign(p1: Vector2, p2: Vector2, p3: Vector2) {
     return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+  }
+
+  public translate(dx: number, dy: number): this {
+    return this.offset(new Vector2(dx, dy));
   }
 
   /**

@@ -37,13 +37,12 @@ const NavDom: React.FC<Props> = ({
 
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
   const navigable = state ? state.navigable : [];
-  const baseStyle: React.CSSProperties = { position: 'absolute', width, height };
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div>
       <svg
         ref={svgRef}
-        style={baseStyle}
+        style={{ width, height, position: 'absolute' }}
       >
         <g>
           {navigable.map((poly, i) => (
@@ -75,7 +74,7 @@ const NavDom: React.FC<Props> = ({
       <div
         id={contentId}
         ref={contentDiv}
-        style={{ ...baseStyle, ...contentStyle, overflow: 'hidden' }}
+        style={{ ...contentStyle, width, height, margin: '0 auto', overflow: 'hidden' }}
       >
         {children}
       </div>
