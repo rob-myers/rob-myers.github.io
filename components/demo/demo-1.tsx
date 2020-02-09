@@ -7,13 +7,15 @@ const containerTest: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-around',
   alignItems: 'center',
-  // // width: 500px;
-  margin: '20px 0',
+  margin: '40px 0',
 };
 
 const Demo1: React.FC = () => {
   return (
-    <NavDom uid='demo'>
+    <NavDom 
+      uid='demo' width={600} height={800}
+      contentStyle={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+    >
       <div style={containerTest}>
         <div style={dim(30,30)}/>
         <div style={dim(30, 60)}/>
@@ -26,7 +28,7 @@ const Demo1: React.FC = () => {
         <div style={dim(30,30)}/>
         <div style={dim(30, 60)}/>
         <div style={dim(30, 60)}/>
-        <div style={dim(30, 60)}/>
+        <div style={dim(150, 60)}/>
         <div style={dim(30, 60)}/>
         <div style={dim(30, 30)}/>
       </div>
@@ -54,14 +56,14 @@ const Demo1: React.FC = () => {
         <div style={dim(30, 60)}/>
         <div style={dim(30, 30)}/>
       </div>
-      <div style={containerTest}>
-        <div style={dim(30,30)}/>
-        <div style={dim(30, 60)}/>
-        <div style={dim(30, 60)}/>
-        <div style={dim(30, 60)}/>
-        <div style={dim(30, 60)}/>
-        <div style={dim(30, 30)}/>
-      </div>
+      {/* <div style={containerTest}>
+          <div style={dim(30,30)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 30)}/>
+        </div> */}
     </NavDom>
 
   );

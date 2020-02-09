@@ -83,10 +83,7 @@ export const Thunk = {
       if (!state || state.nextUpdate) return;
       
       dispatch(Act.setThrottle(uid, Date.now() + 100));
-      window.setTimeout(() => {
-        dispatch(Thunk.computeNavigable(uid));
-      }, 100);
-
+      window.setTimeout(() => dispatch(Thunk.computeNavigable(uid)), 100);
     },
   )
 };

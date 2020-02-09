@@ -67,7 +67,6 @@ export class Poly2 {
     // TODO refine via extra point for each circumcenter.
     const centers = triangles.map(({ center }) => center);
     const extVs = vs.concat(centers.map(({ coord }) => coord));
-    // const extVs = vs;
     const triangles2 = cdt2d(extVs, es, this.cdt2dOpts)
       .map((triIds) => new Poly2(triIds.map(i => Vector2.from(extVs[i]))));
 
