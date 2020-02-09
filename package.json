@@ -2,6 +2,7 @@
   "name": "rob-myers",
   "license": "MIT",
   "dependencies": {
+    "cdt2d": "^1.0.0",
     "earcut": "^2.2.2",
     "node-sass": "^4.13.1",
     "poly2tri": "^1.5.0",

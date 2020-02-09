@@ -91,12 +91,13 @@ export class Rect2 {
     );
   }
 
+  /** Returns `Rect2.zero` if no args. */
   public static from(...items: Vector2[]): Rect2
   public static from(...items: Rect2[]): Rect2
   public static from(...items: DOMRect[]): Rect2
   public static from(...items: Rect2[] | Vector2[] | DOMRect[]): Rect2 {
     if (!items.length) {
-      return new Rect2(0, 0, 0, 0);
+      return Rect2.zero;
     } else if (items[0] instanceof Vector2) {
       const vectors = items as Vector2[];
       const mx = Math.min(...vectors.map(({ x }) => x));

@@ -33,8 +33,8 @@ export function createNavDomState(uid: string): NavDomState {
     pending: false,
     spawns: [],
     bounds: {
-      screen: redact(Rect2.zero),
-      world: redact(Rect2.zero),
+      screen: redact(Rect2.from()),
+      world: redact(Rect2.from()),
     },
     navigable: [],
   };

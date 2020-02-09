@@ -69,7 +69,7 @@ export const Thunk = {
           screen: redact(screenBounds),
           world: redact(worldBounds),
         },
-        nextUpdate: null,
+        nextUpdate: null, // Turn off throttle
         pending: false,
         navigable: navPolys.map((poly) => redact(poly)),
       }));

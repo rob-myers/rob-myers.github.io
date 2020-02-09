@@ -1,6 +1,11 @@
 ## TODO
 
-Update navmesh on css change too?
+- use cdt2d to improve triangulation
+- start using mdx for blogs
+
+- integrate gitalk from older branch
+- delete older branch
+- PR this branch `fresh-start-2020` into new branch `dev-setup`.
 
 ## So far
 
@@ -18,7 +23,6 @@ Update navmesh on css change too?
 - eslint + @typescript-eslint + .eslintignore
   
 - `NavDom` renders navigable polygon
-
 
 
 # Next JS

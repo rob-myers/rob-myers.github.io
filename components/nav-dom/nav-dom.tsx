@@ -60,17 +60,19 @@ const NavDom: React.FC<Props> = ({ uid, children }) => {
           ))}
         </g>
         <g>
-          {navigable.map(({ triangulation }, i) =>
-            triangulation.map((triangle, j) => (
-              <path
-                key={`${i}-${j}`}
-                d={triangle.svgPath}
-                fill="none"
-                stroke="red"
-                strokeWidth={0.1}
-              />
-            ))
-          )}
+          {
+            // navigable.map(({ triangulation }, i) =>
+            navigable.map(({ customTriangulation: triangulation }, i) =>
+              triangulation.map((triangle, j) => (
+                <path
+                  key={`${i}-${j}`}
+                  d={triangle.svgPath}
+                  fill="none"
+                  stroke="red"
+                  strokeWidth={0.1}
+                />
+              ))
+            )}
         </g>
       </svg>
       <div id={contentId} ref={contentDiv} className={css.content}>

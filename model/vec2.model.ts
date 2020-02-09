@@ -2,9 +2,29 @@
  * A two dimensional coordinate.
  */
 export class Vector2 {
-  constructor(public x: number, public y: number) {}
 
-  public add({ x, y }: Vector2): Vector2 {
+  public get coord(): Coord {
+    return [this.x, this.y];
+  }
+
+  public get length() {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
+  }
+
+  public get lengthSquared() {
+    return this.x * this.x + this.y * this.y;
+  }
+
+  public static get zero() {
+    return new Vector2(0, 0);
+  }
+
+  constructor(
+    public x: number,
+    public y: number,
+  ) {}
+
+  public add({ x, y }: Vector2): this {
     return this.translate(x, y);
   }
 
@@ -32,16 +52,12 @@ export class Vector2 {
     return this.x === x && this.y === y;
   }
 
-  public static from({ x, y }: Vector2Json) {
-    return new Vector2(x, y);
-  }
-
-  public get length() {
-    return Math.sqrt(this.x * this.x + this.y * this.y);
-  }
-
-  public get lengthSquared() {
-    return this.x * this.x + this.y * this.y;
+  public static from(coord: [number, number]): Vector2
+  public static from({ x, y }: Vector2Json): Vector2
+  public static from(input: Vector2Json | [number, number]) {
+    return Array.isArray(input)
+      ? new Vector2(input[0], input[1])
+      : new Vector2(input.x, input.y);
   }
 
   public normalize(newLength = 1): Vector2 {
@@ -80,18 +96,17 @@ export class Vector2 {
     return `${this.x},${this.y}`;
   }
 
-  public translate(x: number, y: number): Vector2 {
+  public translate(x: number, y: number): this {
     this.x += x;
     this.y += y;
     return this;
   }
 
-  public static get zero() {
-    return new Vector2(0, 0);
-  }
 }
 
 export interface Vector2Json {
   x: number;
   y: number;
 }
+
+export type Coord = [number, number];
