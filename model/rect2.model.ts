@@ -2,9 +2,10 @@ import { Vector2 } from './vec2.model';
 import { GeoJsonPolygon, Poly2 } from './poly2.model';
 
 /**
- * A two dimensional rectangle, where {x}, {y} is top-left.
+ * A two dimensional rectangle where {x}, {y} is top-left.
  */
 export class Rect2 {
+
   public get area() {
     return this.width * this.height;
   }
@@ -54,7 +55,16 @@ export class Rect2 {
     return new Vector2(this.x + this.width, this.y);
   }
 
-  constructor(public x: number, public y: number, public width: number, public height: number) {}
+  public static get zero(): Rect2 {
+    return new Rect2(0, 0, 0, 0);
+  }
+
+  constructor(
+    public x: number,
+    public y: number,
+    public width: number,
+    public height: number,
+  ) {}
 
   public clone(): Rect2 {
     return new Rect2(this.x, this.y, this.width, this.height);
@@ -71,6 +81,7 @@ export class Rect2 {
     this.height = height;
     return this;
   }
+
   public covers({ x, y, width, height }: Rect2) {
     return (
       this.x <= x &&
@@ -161,4 +172,5 @@ export class Rect2 {
     this.y += dy;
     return this;
   }
+
 }

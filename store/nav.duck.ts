@@ -80,17 +80,13 @@ export const Thunk = {
     ({ dispatch, state: { nav }}, { uid }: {uid: string}) => {
       
       const state = nav.dom[uid];
-      if (!state) return;
+      if (!state || state.nextUpdate) return;
       
-      if (!state.nextUpdate) {
+      dispatch(Act.setThrottle(uid, Date.now() + 100));
+      window.setTimeout(() => {
         dispatch(Thunk.computeNavigable(uid));
-        dispatch(Act.setThrottle(uid, Date.now() + 100));
-      } else {
-        const delta = Math.max(state.nextUpdate - Date.now(), 0);
-        window.setTimeout(() => {
-          dispatch(Thunk.computeNavigable(uid));
-        }, delta);
-      }
+      }, 100);
+
     },
   )
 };
