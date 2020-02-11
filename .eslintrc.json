@@ -40,7 +40,8 @@
       "@typescript-eslint/no-explicit-any": ["off"],
       "@typescript-eslint/explicit-function-return-type": ["off"],
       "react/prop-types": ["off"],
-      "no-dupe-class-members": "off"
+      "no-dupe-class-members": "off",
+      "@typescript-eslint/ban-ts-ignore": "off"
     },
     "overrides": [
       {

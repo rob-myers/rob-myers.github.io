@@ -5,6 +5,8 @@
 - string-pulling
 - actors move along them via css
 
+- spawn points
+- light polygons
 
 - start using mdx for blogs
 - integrate gitalk from older branch
@@ -28,6 +30,8 @@
   
 - `NavDom` renders navigable polygon
 - use cdt2d to improve triangulation
+
+- web worker
 
 
 # Next JS

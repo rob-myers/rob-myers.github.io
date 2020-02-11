@@ -4,7 +4,8 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext"
+      "esnext",
+      "WebWorker"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -21,7 +22,8 @@
     "paths": {
       "@components/*": ["components/*"],
       "@store/*": ["store/*"],
-      "@model/*": ["model/*"]
+      "@model/*": ["model/*"],
+      "@worker/*": ["worker/*"],
     },
     "typeRoots": [
       "node_modules/@types",

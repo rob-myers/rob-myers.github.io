@@ -64,6 +64,7 @@
     "sass-loader": "^8.0.2",
     "ts-node": "8.6.2",
     "typescript": "3.7.5",
-    "webpack-merge": "4.2.2"
+    "webpack-merge": "4.2.2",
+    "worker-loader": "^2.0.0"
   }
 }

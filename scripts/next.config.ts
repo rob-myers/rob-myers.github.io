@@ -13,24 +13,52 @@ export default (
   _phase: Phase,
   _nextCtxt: NextJsConfigCtxt
 ): NextJsConfig => {
-
-  
   return {
     webpack: (config, options) => {
       return webpackMerge(
         config,
+        // Module aliases
         {
           resolve: {
             alias: {
               '@components': path.resolve(__dirname, 'components'),
               '@store': path.resolve(__dirname, 'store'),
               '@model': path.resolve(__dirname, 'model'),
+              '@worker': path.resolve(__dirname, 'worker'),
               ...(!production && { 'react-dom': '@hot-loader/react-dom' })
             }
           },
+        },
+        // Ignore tests
+        {
           module: {
-            rules: [{ test: /\.spec\.(ts|tsx)$/, loader: 'ignore-loader' }]
+            rules: [
+              { test: /\.spec\.(ts|tsx)$/, loader: 'ignore-loader' },
+            ],
           },
+        },
+        // Web workers
+        // https://github.com/zeit/next-plugins/tree/master/packages/next-workers
+        {
+          output: {
+            // Overcome webpack referencing `window` in chunks
+            globalObject: 'self',
+          },
+          module: {
+            rules: [
+              {
+                test: /\.worker\.(js|ts)$/,
+                loader: 'worker-loader',
+                options: {
+                  name: 'static/[hash].worker.js',
+                  publicPath: '/_next/',
+                  // inline: true
+                }
+              },
+            ],
+          }
+        },
+        {
           ...(!options.isServer && { node: { fs: 'empty' } }),
         },
         configStyles(options),
