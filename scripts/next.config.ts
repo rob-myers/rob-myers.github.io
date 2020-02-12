@@ -5,6 +5,7 @@ import webpack from 'webpack';
 import webpackMerge from 'webpack-merge';
 import nextConst from 'next/constants';
 import configStyles from './styles.config';
+import WorkerPlugin from 'worker-plugin';
 
 const production = process.env.NODE_ENV === 'production';
 console.log({ production });
@@ -38,25 +39,10 @@ export default (
           },
         },
         // Web workers
-        // https://github.com/zeit/next-plugins/tree/master/packages/next-workers
         {
-          output: {
-            // Overcome webpack referencing `window` in chunks
-            globalObject: 'self',
-          },
-          module: {
-            rules: [
-              {
-                test: /\.worker\.(js|ts)$/,
-                loader: 'worker-loader',
-                options: {
-                  name: 'static/[hash].worker.js',
-                  publicPath: '/_next/',
-                  // inline: true
-                }
-              },
-            ],
-          }
+          plugins: [
+            new WorkerPlugin(),
+          ],
         },
         {
           ...(!options.isServer && { node: { fs: 'empty' } }),

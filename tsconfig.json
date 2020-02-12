@@ -4,8 +4,7 @@
     "lib": [
       "dom",
       "dom.iterable",
-      "esnext",
-      "WebWorker"
+      "esnext"
     ],
     "allowJs": true,
     "skipLibCheck": true,
@@ -24,11 +23,7 @@
       "@store/*": ["store/*"],
       "@model/*": ["model/*"],
       "@worker/*": ["worker/*"],
-    },
-    "typeRoots": [
-      "node_modules/@types",
-      "types"
-    ]
+    }
   },
   "exclude": [
     "node_modules"
@@ -36,6 +31,7 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "types/*"
   ]
 }
