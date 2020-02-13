@@ -2,6 +2,9 @@ import { Rect2 } from '@model/rect2.model';
 import { redact, Redacted } from '@store/redux.model';
 import { Poly2 } from '@model/poly2.model';
 
+export const createNavWorker = () =>
+  redact(new Worker('@worker/example.worker.ts', { type: 'module' }));
+
 type NavElKey = 'content' | 'nav-poly' | 'spawn';
 
 export function getNavElemId(uid: string, key: NavElKey) {
@@ -32,10 +35,8 @@ export function createNavDomState(uid: string): NavDomState {
     nextUpdate: null,
     pending: false,
     spawns: [],
-    bounds: {
-      screen: redact(Rect2.from()),
-      world: redact(Rect2.from()),
-    },
+    screenBounds: redact(Rect2.from()),
+    worldBounds: redact(Rect2.from()),
     navigable: [],
   };
 }
@@ -48,10 +49,8 @@ export interface NavDomState {
   nextUpdate: null | number;
   pending: boolean;
   spawns: NavSpawnState[];
-  bounds: {
-    screen: Redacted<Rect2>;
-    world: Redacted<Rect2>;
-  };
+  screenBounds: Redacted<Rect2>;
+  worldBounds: Redacted<Rect2>;
   /** Navigable multipolygon. */
   navigable: Redacted<Poly2>[];
 }

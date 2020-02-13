@@ -1,17 +1,17 @@
 import { useEffect } from 'react';
 import { hot } from 'react-hot-loader/root';
+import { useDispatch } from 'react-redux';
 import withRedux from '@store/with-redux';
-import css from './index.scss';
+import { Thunk } from '@store/nav.duck';
 import Demo1 from '@components/demo/demo-1';
+import css from './index.scss';
 
 const Home: React.FC = () => {
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    const worker = new Worker('../worker/example.worker.ts', { type: 'module' });
-    worker.postMessage({ fromHost: 'fromHost'});
-    worker.addEventListener('message', (event: any) => console.log({ receivedFromWorker: event }));
-
-    return () => worker.terminate();
+    dispatch(Thunk.initializeNav({}));
+    return () => void Thunk.destroyNav({});
   }, []);
 
   return (
@@ -23,5 +23,3 @@ const Home: React.FC = () => {
 };
 
 export default hot(withRedux(Home));
-
-

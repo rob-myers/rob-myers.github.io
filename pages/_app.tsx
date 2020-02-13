@@ -1,10 +1,12 @@
-import App from 'next/app';
+import App, { AppInitialProps } from 'next/app';
 import { Persistor, persistStore } from 'redux-persist';
 import { ReduxStore } from '@store/index';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import withRedux from '@store/with-redux';
 import React from 'react';
+import { NextComponentType, NextPageContext } from 'next';
+import { Router } from 'next/dist/client/router';
 
 interface Props {
   reduxStore: ReduxStore;
@@ -13,7 +15,12 @@ interface Props {
 class MyApp extends App<Props> {
   private persistor: Persistor;
 
-  constructor(props: any) {
+  constructor(
+    props: Props & AppInitialProps & {
+      Component: NextComponentType<NextPageContext, any, {}>;
+      router: Router;
+    }
+  ) {
     super(props);
     this.persistor = persistStore(props.reduxStore);
   }

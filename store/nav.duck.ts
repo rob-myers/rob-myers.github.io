@@ -6,23 +6,28 @@ import {
   updateLookup,
   removeFromLookup,
   redact,
+  Redacted,
 } from './redux.model';
 import { KeyedLookup, flatten } from '@model/generic.model';
 import { Rect2 } from '@model/rect2.model';
-import { NavDomState, createNavDomState, traverseDom, navOutset } from '@components/nav-dom/nav.model';
+import { NavDomState, createNavDomState, traverseDom, navOutset } from '@model/nav.model';
 import { Poly2 } from '@model/poly2.model';
 import { Vector2 } from '@model/vec2.model';
 
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
+  webWorker: null | Redacted<Worker>;
 }
 
 const initialState: State = {
   dom: {},
+  webWorker: null,
 };
 
 export const Act = {
+  initializeNav: (webWorker: Redacted<Worker>) =>
+    createAct('INITIALIZE_NAV', { webWorker }),
   registerNavDom: (uid: string) =>
     createAct('REGISTER_NAV_DOM', { uid }),
   unregisterNavDom: (uid: string) =>
@@ -36,6 +41,21 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  initializeNav: createThunk(
+    'REGISTER_NAV_THUNK',
+    ({ dispatch }) => {
+      const worker = new Worker('@worker/example.worker.ts', { type: 'module' });
+      dispatch(Act.initializeNav(redact(worker)));
+
+      // webworker test
+      worker.postMessage({ fromHost: 'fromHost'});
+      worker.addEventListener('message', (event: any) => console.log({ receivedFromWorker: event }));
+    },
+  ),
+  destroyNav: createThunk(
+    'UNREGISTER_NAV_THUNK',
+    ({ state: { nav: { webWorker } } }) => webWorker && webWorker.terminate(),
+  ),
   computeNavigable: createThunk(
     'COMPUTE_NAVIGABLE_THUNK',
     ({ state: { nav }, dispatch }, uid: string) => {
@@ -51,6 +71,7 @@ export const Thunk = {
       const leafRects = [] as Rect2[];
       const leafPolys = [] as Poly2[];
 
+      // Compute rects/polys from descendents of NavDom
       traverseDom(root, (node) => {
         if (!node.children.length) {
           const rect = Rect2.from(node.getBoundingClientRect());
@@ -65,6 +86,7 @@ export const Thunk = {
         }
       });
 
+      // Compute navigable multipolygon
       const navPolys = Poly2.cutOut([
         ...leafRects.map((rect) => rect.outset(navOutset).poly2),
         ...flatten(leafPolys.map((poly) => poly.createOutset(navOutset))),
@@ -72,10 +94,8 @@ export const Thunk = {
 
       // Update state to reflect dom
       dispatch(Act.updateNavDom(uid, {
-        bounds: {
-          screen: redact(screenBounds),
-          world: redact(worldBounds),
-        },
+        screenBounds: redact(screenBounds),
+        worldBounds: redact(screenBounds),
         nextUpdate: null, // Turn off throttle
         pending: false,
         navigable: navPolys.map((poly) => redact(poly)),
@@ -99,6 +119,9 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
+    case 'INITIALIZE_NAV': return { ...state,
+      webWorker: act.webWorker,
+    };
     case 'REGISTER_NAV_DOM': return { ...state,
       dom: addToLookup(createNavDomState(act.uid), state.dom)
     };

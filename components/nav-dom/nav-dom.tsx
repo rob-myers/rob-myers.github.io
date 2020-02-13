@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getNavElemId, observeOpts } from './nav.model';
+import { getNavElemId, observeOpts } from '@model/nav.model';
 import { Act, Thunk } from '@store/nav.duck';
 
 const NavDom: React.FC<Props> = ({

@@ -7,6 +7,15 @@ import { Rect2 } from './rect2.model';
 import { Vector2, Coord } from './vec2.model';
 import { chooseRandomItem } from './generic.model';
 
+interface Options {
+  /**
+   * Compute triangulations when requested?
+   * - If not, must use `computeTriangulation`.
+   * - Default is `true`.
+   */
+  autoTriangulate?: boolean;
+}
+
 /**
  * A polygon with possibly many holes.
  */
@@ -55,6 +64,8 @@ export class Poly2 {
   public get customTriangulation(): Poly2[] {
     if (this._customTriangulation) {
       return this._customTriangulation;
+    } else if (!this.options.autoTriangulate) {
+      return [];
     }
     // Triangulate.
     const baseTris = this.triangulation;
@@ -184,7 +195,10 @@ export class Poly2 {
   public get triangulation(): Poly2[] {
     if (this._triangulation) {
       return this._triangulation;
+    } else if (!this.options.autoTriangulate) {
+      return [];
     }
+
     try {
       const qualityTriangulation = new poly2tri.SweepContext(
         this.points.map(p => new poly2tri.Point(p.x, p.y))
@@ -202,16 +216,22 @@ export class Poly2 {
         );
       return (this._triangulation = qualityTriangulation);
     } catch (e) {
-      console.error('Quality triangulation failed, falling back to earcut.');
+      console.error('Quality triangulation failed, falling back to earcut');
       console.error(e);
       return (this._triangulation = this.fastTriangulation);
     }
   }
 
+  private static defaultOptions: Options = {
+    autoTriangulate: true,
+  };
+
   constructor(
     public points: Vector2[] = [],
     public holes: Vector2[][] = [],
+    public options: Options = Poly2.defaultOptions,
   ) {
+    this.options = { ...Poly2.defaultOptions, ...options,  };
     this.clearCache();
   }
 

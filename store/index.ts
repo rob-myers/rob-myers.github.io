@@ -25,17 +25,20 @@ const persistedReducer = persistReducer({
   key: 'primary',
   storage,
   transforms: [
-    createTransform(
-      ({ count }: TestState, _key): TestState => ({
+    createTransform<TestState, TestState & { lastPing: null }>(
+      ({ count }, _key) => ({
         count,
         lastPing: null
       }),
-      (state: TestState, _key): TestState => state,
+      (state, _key) => state,
       { whitelist: ['test'] }
     ),
-    createTransform(
-      (_state: NavState): NavState => ({ dom: {} }),
-      (state: NavState): NavState => state,
+    createTransform<NavState, NavState>(
+      (_state) => ({
+        dom: {},
+        webWorker: null,
+      }),
+      (state) => state,
       { whitelist: ['nav'] }
     ),
   ],

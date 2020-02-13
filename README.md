@@ -1,5 +1,7 @@
 ## TODO
 
+- compute triangulation in webworker
+
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it
 - string-pulling
@@ -32,7 +34,7 @@
 - use cdt2d to improve triangulation
 
 - web worker
-
+- web worker in reducer `nav`
 
 # Next JS
 
