@@ -34,8 +34,6 @@ export function createNavDomState(uid: string): NavDomState {
   return {
     key: uid,
     elemId: getNavElemId(uid, 'content'),
-    nextUpdate: null,
-    pending: false,
     spawns: [],
     screenBounds: redact(Rect2.from()),
     worldBounds: redact(Rect2.from()),
@@ -47,9 +45,6 @@ export interface NavDomState {
   /** uid. */
   key: string;
   elemId: string;
-  /** For throttling (epoch ms). */
-  nextUpdate: null | number;
-  pending: boolean;
   spawns: NavSpawnState[];
   screenBounds: Redacted<Rect2>;
   worldBounds: Redacted<Rect2>;
@@ -75,4 +70,9 @@ interface NavPoly {
   key: string;
   elemId: string;
   bounds: Redacted<Rect2>;
+}
+
+export interface NavDomMeta {
+  key: string;
+  justHmr: boolean;
 }

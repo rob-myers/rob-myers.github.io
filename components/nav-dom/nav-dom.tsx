@@ -14,12 +14,18 @@ const NavDom: React.FC<Props> = ({
   const dispatch = useDispatch();
   const contentDiv = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const state = useSelector(({ nav: { dom } }) => dom[uid]);
+  const navigable = state ? state.navigable : [];
+
+  if (!state) {
+    dispatch(Thunk.ensureGlobalSetup({}));
+  }
 
   useEffect(() => {
-    // Dispatch to avoid triggering a render.
-    if (dispatch(Thunk.getJustHmr({}))) {
+    // Rebuild navigation on 1st render after hot reload.
+    if (dispatch(Thunk.getJustHmr({ uid }))) {
       dispatch(Thunk.updateNavigable({ uid }));
-      dispatch(Act.setJustHmr(false));
+      dispatch(Act.updateDomMeta(uid, { justHmr: false }));
     }
   });
 
@@ -34,7 +40,7 @@ const NavDom: React.FC<Props> = ({
     // Update on hot reload
     const hotHandler = (status: string) => {
       if (status === 'idle') {
-        dispatch(Act.setJustHmr(true));
+        dispatch(Act.updateDomMeta(uid, { justHmr: true }));
       }
     };
     module.hot && module.hot.addStatusHandler(hotHandler);
@@ -45,9 +51,6 @@ const NavDom: React.FC<Props> = ({
       module.hot && module.hot.removeStatusHandler(hotHandler);
     };
   }, []);
-
-  const state = useSelector(({ nav: { dom } }) => dom[uid]);
-  const navigable = state ? state.navigable : [];
 
   return (
     <div>

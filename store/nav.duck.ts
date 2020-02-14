@@ -10,59 +10,64 @@ import {
 } from './redux.model';
 import { KeyedLookup, flatten } from '@model/generic.model';
 import { Rect2 } from '@model/rect2.model';
-import { NavDomState, createNavDomState, traverseDom, navOutset } from '@model/nav.model';
+import { NavDomState, createNavDomState, traverseDom, navOutset, NavDomMeta } from '@model/nav.model';
 import { Poly2 } from '@model/poly2.model';
 import { Vector2 } from '@model/vec2.model';
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
+  domMeta: KeyedLookup<{ key: string; justHmr: boolean }>;
+  ready: boolean;
   webWorker: null | Redacted<Worker>;
-  justHmr: boolean;
 }
 
 const initialState: State = {
   dom: {},
+  domMeta: {},
+  ready: false,
   webWorker: null,
-  justHmr: false,
 };
 
 export const Act = {
-  initializeNav: (webWorker: Redacted<Worker>) =>
-    createAct('INITIALIZE_NAV', { webWorker }),
+  setupGlobalNav: (webWorker: Redacted<Worker>) =>
+    createAct('[Nav] setup', { webWorker }),
   registerNavDom: (uid: string) =>
-    createAct('REGISTER_NAV_DOM', { uid }),
+    createAct('[NavDom] register', { uid }),
   unregisterNavDom: (uid: string) =>
-    createAct('UNREGISTER_NAV_DOM', { uid }),
-  setJustHmr: (justHmr: boolean) =>
-    createAct('[nav] set justHmr', { justHmr }),
+    createAct('[NavDom] unregister', { uid }),
+  updateDomMeta: (uid: string, updates: Partial<NavDomMeta>) =>
+    createAct('[NavDom] update meta', { uid, updates }),
   updateNavDom: (uid: string, updates: Partial<NavDomState>) =>
-    createAct('UPDATE_NAV_DOM', { uid, updates }),
+    createAct('[NavDom] generic update', { uid, updates }),
 };
 
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
-  initializeNav: createThunk(
-    'REGISTER_NAV_THUNK',
-    ({ dispatch }) => {
-      const worker = new Worker('@worker/nav.worker.ts', { type: 'module' });
-      dispatch(Act.initializeNav(redact(worker)));
+  ensureGlobalSetup: createThunk(
+    '[Nav] ensure setup',
+    ({ dispatch, state: { nav } }) => {
+      if (!nav.ready && typeof Worker !== 'undefined') {
+        const worker = new Worker('@worker/nav.worker.ts', { type: 'module' });
+        dispatch(Act.setupGlobalNav(redact(worker)));
 
-      // webworker test
-      worker.postMessage({ fromHost: 'fromHost'});
-      worker.addEventListener('message', (event: any) => console.log({ receivedFromWorker: event }));
+        // webworker test
+        worker.postMessage({ fromHost: 'fromHost'});
+        worker.addEventListener('message', (event: any) => console.log({ receivedFromWorker: event }));
+      }
     },
   ),
   getJustHmr: createThunk(
-    '[nav] get justHmr',
-    ({ state: { nav: { justHmr } } }) => justHmr,
+    '[NavDom] get justHmr',
+    ({ state: { nav: { domMeta } } }, { uid }: { uid: string }) =>
+      domMeta[uid] ? domMeta[uid].justHmr : false
   ),
   destroyNav: createThunk(
-    'UNREGISTER_NAV_THUNK',
+    '[Nav] unregister',
     ({ state: { nav: { webWorker } } }) => webWorker && webWorker.terminate(),
   ),
   updateNavigable: createThunk(
-    'UPDATE_NAVIGABLE_THUNK',
+    '[NavDom] update navigable',
     ({ state: { nav }, dispatch }, { uid }: { uid: string }) => {
       
       const state = nav.dom[uid];
@@ -101,8 +106,6 @@ export const Thunk = {
       dispatch(Act.updateNavDom(uid, {
         screenBounds: redact(screenBounds),
         worldBounds: redact(screenBounds),
-        nextUpdate: null, // Turn off throttle
-        pending: false,
         navigable: navPolys.map((poly) => redact(poly)),
       }));
     },
@@ -113,19 +116,22 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
-    case 'INITIALIZE_NAV': return { ...state,
+    case '[Nav] setup': return { ...state,
       webWorker: act.webWorker,
+      ready: true,
     };
-    case 'REGISTER_NAV_DOM': return { ...state,
+    case '[NavDom] register': return { ...state,
       dom: addToLookup(createNavDomState(act.uid), state.dom),
+      domMeta: addToLookup({ key: act.uid, justHmr: false }, state.domMeta),
     };
-    case 'UNREGISTER_NAV_DOM': return { ...state,
+    case '[NavDom] unregister': return { ...state,
       dom: removeFromLookup(act.uid, state.dom),
+      domMeta: removeFromLookup(act.uid, state.domMeta),
     };
-    case '[nav] set justHmr': return { ...state,
-      justHmr: act.justHmr,
+    case '[NavDom] update meta': return { ...state,
+      domMeta: updateLookup(act.uid, state.domMeta, () => act.updates),
     };
-    case 'UPDATE_NAV_DOM': return { ...state,
+    case '[NavDom] generic update': return { ...state,
       dom: updateLookup(act.uid, state.dom, () => act.updates),
     };
     default: return state;

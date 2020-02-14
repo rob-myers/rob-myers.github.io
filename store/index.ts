@@ -34,10 +34,11 @@ const persistedReducer = persistReducer({
       { whitelist: ['test'] }
     ),
     createTransform<NavState, NavState>(
-      (_state) => ({
+      (_state): NavState => ({
         dom: {},
+        domMeta: {},
         webWorker: null,
-        justHmr: false,
+        ready: false,
       }),
       (state) => state,
       { whitelist: ['nav'] }
