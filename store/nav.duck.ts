@@ -16,7 +16,7 @@ import { Vector2 } from '@model/vec2.model';
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
-  domMeta: KeyedLookup<{ key: string; justHmr: boolean }>;
+  domMeta: KeyedLookup<NavDomMeta>;
   ready: boolean;
   webWorker: null | Redacted<Worker>;
 }
@@ -44,6 +44,14 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  destroyNav: createThunk(
+    '[Nav] unregister',
+    ({ state: { nav: { webWorker } } }) => webWorker && webWorker.terminate(),
+  ),
+  domUidExists: createThunk(
+    '[Nav] dom uid?',
+    ({ state: { nav: { dom } } }, { uid }: { uid: string }) => !!dom[uid],
+  ),
   ensureGlobalSetup: createThunk(
     '[Nav] ensure setup',
     ({ dispatch, state: { nav } }) => {
@@ -61,10 +69,6 @@ export const Thunk = {
     '[NavDom] get justHmr',
     ({ state: { nav: { domMeta } } }, { uid }: { uid: string }) =>
       domMeta[uid] ? domMeta[uid].justHmr : false
-  ),
-  destroyNav: createThunk(
-    '[Nav] unregister',
-    ({ state: { nav: { webWorker } } }) => webWorker && webWorker.terminate(),
   ),
   updateNavigable: createThunk(
     '[NavDom] update navigable',

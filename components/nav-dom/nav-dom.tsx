@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavElemId } from '@model/nav.model';
 import { Act, Thunk } from '@store/nav.duck';
@@ -16,22 +16,17 @@ const NavDom: React.FC<Props> = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
   const navigable = state ? state.navigable : [];
-
-  if (!state) {
-    dispatch(Thunk.ensureGlobalSetup({}));
-  }
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    // Rebuild navigation on 1st render after hot reload.
-    if (dispatch(Thunk.getJustHmr({ uid }))) {
-      dispatch(Thunk.updateNavigable({ uid }));
-      dispatch(Act.updateDomMeta(uid, { justHmr: false }));
+    if (dispatch(Thunk.domUidExists({ uid }))) {
+      return setFailed(true);
     }
-  });
+    module.hot && setFailed(false);
 
-  useEffect(() => {
+    dispatch(Thunk.ensureGlobalSetup({}));
     dispatch(Act.registerNavDom(uid));
-    dispatch(Thunk.updateNavigable({ uid }));
+    setTimeout(() => dispatch(Thunk.updateNavigable({ uid })));
 
     // Update on resize
     const onResize = () => dispatch(Thunk.updateNavigable({ uid }));
@@ -50,7 +45,19 @@ const NavDom: React.FC<Props> = ({
       window.removeEventListener('resize', onResize);
       module.hot && module.hot.removeStatusHandler(hotHandler);
     };
-  }, []);
+  }, [uid]);
+
+  useEffect(() => {
+    // Rebuild navigation on 1st render after hot reload.
+    if (dispatch(Thunk.getJustHmr({ uid }))) {
+      dispatch(Thunk.updateNavigable({ uid }));
+      dispatch(Act.updateDomMeta(uid, { justHmr: false }));
+    }
+  });
+
+  if (failed) {
+    return <div>{`Duplicate NavDom uid "${uid}" detected`}</div>;
+  }
 
   return (
     <div>
