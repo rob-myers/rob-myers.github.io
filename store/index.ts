@@ -37,6 +37,7 @@ const persistedReducer = persistReducer({
       (_state) => ({
         dom: {},
         webWorker: null,
+        justHmr: false,
       }),
       (state) => state,
       { whitelist: ['nav'] }

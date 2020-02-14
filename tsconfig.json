@@ -23,7 +23,8 @@
       "@store/*": ["store/*"],
       "@model/*": ["model/*"],
       "@worker/*": ["worker/*"],
-    }
+    },
+    "downlevelIteration": true
   },
   "exclude": [
     "node_modules"

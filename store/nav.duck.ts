@@ -14,15 +14,16 @@ import { NavDomState, createNavDomState, traverseDom, navOutset } from '@model/n
 import { Poly2 } from '@model/poly2.model';
 import { Vector2 } from '@model/vec2.model';
 
-
 export interface State {
   dom: KeyedLookup<NavDomState>;
   webWorker: null | Redacted<Worker>;
+  justHmr: boolean;
 }
 
 const initialState: State = {
   dom: {},
   webWorker: null,
+  justHmr: false,
 };
 
 export const Act = {
@@ -32,8 +33,8 @@ export const Act = {
     createAct('REGISTER_NAV_DOM', { uid }),
   unregisterNavDom: (uid: string) =>
     createAct('UNREGISTER_NAV_DOM', { uid }),
-  setThrottle: (uid: string, nextUpdate: number | null) =>
-    createAct('THROTTLE_NAV_DOM', { uid, nextUpdate }),
+  setJustHmr: (justHmr: boolean) =>
+    createAct('[nav] set justHmr', { justHmr }),
   updateNavDom: (uid: string, updates: Partial<NavDomState>) =>
     createAct('UPDATE_NAV_DOM', { uid, updates }),
 };
@@ -44,7 +45,7 @@ export const Thunk = {
   initializeNav: createThunk(
     'REGISTER_NAV_THUNK',
     ({ dispatch }) => {
-      const worker = new Worker('@worker/example.worker.ts', { type: 'module' });
+      const worker = new Worker('@worker/nav.worker.ts', { type: 'module' });
       dispatch(Act.initializeNav(redact(worker)));
 
       // webworker test
@@ -52,13 +53,17 @@ export const Thunk = {
       worker.addEventListener('message', (event: any) => console.log({ receivedFromWorker: event }));
     },
   ),
+  getJustHmr: createThunk(
+    '[nav] get justHmr',
+    ({ state: { nav: { justHmr } } }) => justHmr,
+  ),
   destroyNav: createThunk(
     'UNREGISTER_NAV_THUNK',
     ({ state: { nav: { webWorker } } }) => webWorker && webWorker.terminate(),
   ),
-  computeNavigable: createThunk(
-    'COMPUTE_NAVIGABLE_THUNK',
-    ({ state: { nav }, dispatch }, uid: string) => {
+  updateNavigable: createThunk(
+    'UPDATE_NAVIGABLE_THUNK',
+    ({ state: { nav }, dispatch }, { uid }: { uid: string }) => {
       
       const state = nav.dom[uid];
       if (!state) return;
@@ -102,17 +107,6 @@ export const Thunk = {
       }));
     },
   ),
-  updateNavigable: createThunk(
-    'UPDATE_NAVIGABLE_THUNK',
-    ({ dispatch, state: { nav }}, { uid }: {uid: string}) => {
-
-      const state = nav.dom[uid];
-      if (!state || state.nextUpdate) return;
-      
-      dispatch(Act.setThrottle(uid, Date.now() + 100));
-      window.setTimeout(() => dispatch(Thunk.computeNavigable(uid)), 100);
-    },
-  )
 };
 
 export type Thunk = ActionsUnion<typeof Thunk>;
@@ -123,16 +117,16 @@ export const reducer = (state = initialState, act: Action): State => {
       webWorker: act.webWorker,
     };
     case 'REGISTER_NAV_DOM': return { ...state,
-      dom: addToLookup(createNavDomState(act.uid), state.dom)
+      dom: addToLookup(createNavDomState(act.uid), state.dom),
     };
     case 'UNREGISTER_NAV_DOM': return { ...state,
-      dom: removeFromLookup(act.uid, state.dom)
+      dom: removeFromLookup(act.uid, state.dom),
     };
-    case 'THROTTLE_NAV_DOM': return { ...state,
-      dom: updateLookup(act.uid, state.dom, () => ({ nextUpdate: act.nextUpdate }))
+    case '[nav] set justHmr': return { ...state,
+      justHmr: act.justHmr,
     };
     case 'UPDATE_NAV_DOM': return { ...state,
-      dom: updateLookup(act.uid, state.dom, () => act.updates)
+      dom: updateLookup(act.uid, state.dom, () => act.updates),
     };
     default: return state;
   }

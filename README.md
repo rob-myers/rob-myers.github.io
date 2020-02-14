@@ -29,10 +29,8 @@
 - sass + hmr
 - deploy using gh-pages.config.ts
 - eslint + @typescript-eslint + .eslintignore
-  
 - `NavDom` renders navigable polygon
 - use cdt2d to improve triangulation
-
 - web worker
 - web worker in reducer `nav`
 

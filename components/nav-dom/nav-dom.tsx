@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getNavElemId, observeOpts } from '@model/nav.model';
+import { getNavElemId } from '@model/nav.model';
 import { Act, Thunk } from '@store/nav.duck';
 
 const NavDom: React.FC<Props> = ({
@@ -16,22 +16,33 @@ const NavDom: React.FC<Props> = ({
   const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
+    // Dispatch to avoid triggering a render.
+    if (dispatch(Thunk.getJustHmr({}))) {
+      dispatch(Thunk.updateNavigable({ uid }));
+      dispatch(Act.setJustHmr(false));
+    }
+  });
+
+  useEffect(() => {
     dispatch(Act.registerNavDom(uid));
     dispatch(Thunk.updateNavigable({ uid }));
 
-    // Update on change/resize.
-    const observer = new MutationObserver(mutations => {
-      console.log({ mutations });
-      dispatch(Thunk.updateNavigable({ uid }));
-    });
-    observer.observe(contentDiv.current!, observeOpts);
+    // Update on resize
     const onResize = () => dispatch(Thunk.updateNavigable({ uid }));
     window.addEventListener('resize', onResize);
 
+    // Update on hot reload
+    const hotHandler = (status: string) => {
+      if (status === 'idle') {
+        dispatch(Act.setJustHmr(true));
+      }
+    };
+    module.hot && module.hot.addStatusHandler(hotHandler);
+
     return () => {
       dispatch(Act.unregisterNavDom(uid));
-      observer.disconnect();
       window.removeEventListener('resize', onResize);
+      module.hot && module.hot.removeStatusHandler(hotHandler);
     };
   }, []);
 
