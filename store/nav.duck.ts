@@ -8,12 +8,12 @@ import {
   redact,
   Redacted,
 } from './redux.model';
-import { KeyedLookup, flatten } from '@model/generic.model';
+import { KeyedLookup } from '@model/generic.model';
 import { Rect2 } from '@model/rect2.model';
-import { NavDomState, createNavDomState, traverseDom, navOutset, NavDomMeta } from '@model/nav.model';
+import { NavDomState, createNavDomState, traverseDom, NavDomMeta } from '@model/nav.model';
 import { Poly2 } from '@model/poly2.model';
 import { Vector2 } from '@model/vec2.model';
-import { NavWorker } from '@model/nav-worker.model';
+import { NavWorker, registerNavContract, NavDomContract } from '@model/nav-worker.model';
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
@@ -45,10 +45,10 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
-  destroyNav: createThunk(
-    '[Nav] unregister',
-    ({ state: { nav: { webWorker } } }) => webWorker && webWorker.terminate(),
-  ),
+  // destroyNav: createThunk(
+  //   '[Nav] unregister',
+  //   ({ state: { nav: { webWorker } } }) => webWorker && webWorker.terminate(),
+  // ),
   domUidExists: createThunk(
     '[Nav] dom uid?',
     ({ state: { nav: { dom } } }, { uid }: { uid: string }) => !!dom[uid],
@@ -57,14 +57,14 @@ export const Thunk = {
     '[Nav] ensure setup',
     ({ dispatch, state: { nav } }) => {
       if (!nav.ready && typeof Worker !== 'undefined') {
-        const navWorker: NavWorker = new Worker(
+        const worker: NavWorker = new Worker(
           '@worker/nav.worker.ts',
           { type: 'module' },
         );
-        dispatch(Act.setupNav(redact(navWorker)));
-        // webworker test
-        navWorker.postMessage({ key: 'ping?' });
-        navWorker.addEventListener('message', ({ data }) =>
+        dispatch(Act.setupNav(redact(worker)));
+        // testing
+        worker.postMessage({ key: 'ping?', context: 'nav-setup' });
+        worker.addEventListener('message', ({ data }) =>
           console.log({ navWorkerSent: data }));
       }
     },
@@ -79,8 +79,8 @@ export const Thunk = {
     ({ state: { nav }, dispatch }, { uid }: { uid: string }) => {
       
       const state = nav.dom[uid];
-      const webWorker = nav.webWorker;
-      if (!webWorker || !state) return;
+      const worker = nav.webWorker;
+      if (!worker || !state) return;
       const root = document.getElementById(state.elemId);
       if (!root) return;
 
@@ -105,27 +105,41 @@ export const Thunk = {
         }
       });
 
-      // webWorker.postMessage({
-      //   key: 'nav-dom?',
-      //   domUid: uid,
-      //   bounds: worldBounds,
-      //   polys: leafPolys,
-      //   rects: leafRects,
-      // });
+      registerNavContract<NavDomContract>(worker, {
+        message: {
+          key: 'nav-dom?',
+          context: uid,
+          bounds: worldBounds.json,
+          polys: leafPolys.map(({ json }) => json),
+          rects: leafRects.map(({ json }) => json),
+        },
+        callback: (received) => {
+          switch (received.key) {
+            case 'nav-dom:outline!': {
+              dispatch(Act.updateNavDom(uid, {
+                navigable: received.navPolys.map((poly) => redact(Poly2.fromJson(poly))),
+              }));
+              break;
+            }
+            case 'nav-dom:refined!': {
+              console.log('refined');
+              break;
+            }
+          }
+        },
+        replyCount: 2,
+      });
 
-      // Compute navigable multipolygon
-      const navPolys = Poly2.cutOut([
-        ...leafRects.map((rect) => rect.outset(navOutset).poly2),
-        ...flatten(leafPolys.map((poly) => poly.createOutset(navOutset))),
-      ], [worldBounds.poly2]);
-
-      
+      // // Compute navigable multipolygon
+      // const navPolys = Poly2.cutOut([
+      //   ...leafRects.map((rect) => rect.outset(navOutset).poly2),
+      //   ...flatten(leafPolys.map((poly) => poly.createOutset(navOutset))),
+      // ], [worldBounds.poly2]);
 
       // Update state to reflect dom
       dispatch(Act.updateNavDom(uid, {
-        screenBounds: redact(screenBounds),
         worldBounds: redact(screenBounds),
-        navigable: navPolys.map((poly) => redact(poly)),
+        // navigable: navPolys.map((poly) => redact(poly)),
       }));
     },
   ),

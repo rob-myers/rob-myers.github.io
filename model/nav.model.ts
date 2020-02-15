@@ -32,7 +32,6 @@ export function createNavDomState(uid: string): NavDomState {
     key: uid,
     elemId: getNavElemId(uid, 'content'),
     spawns: [],
-    screenBounds: redact(Rect2.from()),
     worldBounds: redact(Rect2.from()),
     navigable: [],
   };
@@ -43,7 +42,6 @@ export interface NavDomState {
   key: string;
   elemId: string;
   spawns: NavSpawnState[];
-  screenBounds: Redacted<Rect2>;
   worldBounds: Redacted<Rect2>;
   /** Navigable multipolygon. */
   navigable: Redacted<Poly2>[];
