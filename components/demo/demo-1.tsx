@@ -1,4 +1,6 @@
 import NavDom from '@components/nav-dom/nav-dom';
+import css from './demo.scss';
+
 
 const dim = (width: number, height: number) =>
   ({ width, height, background: '#000' });
@@ -11,6 +13,7 @@ const containerTest: React.CSSProperties = {
 };
 
 const Demo1: React.FC = () => {
+
   return (
     <div style={{ display: 'flex' }}>
       {/* <NavDom 
@@ -28,8 +31,11 @@ const Demo1: React.FC = () => {
       </NavDom> */}
     
       <NavDom 
-        uid='demo' width={'100vw'} height={800}
-        contentStyle={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+        uid='demo'
+        width={'100vw'}
+        height={800}
+        contentClass={css.demo1Root}
+        // contentStyle={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
       >
         <div style={containerTest}>
           <div style={dim(30,30)}/>

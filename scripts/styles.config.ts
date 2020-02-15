@@ -7,7 +7,7 @@ import webpack from 'webpack';
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 import OptimizeCssAssetsWebpackPlugin from 'optimize-css-assets-webpack-plugin';
 import { WebpackCtxt } from './next.config';
-// import { resolve } from 'path';
+import { resolve } from 'path';
 
 export default function({
   isServer,
@@ -20,37 +20,44 @@ export default function({
     options: {
       modules: {
         localIdentName: dev
-          ? '[path][name]__[local]'
+          // ? '[path][name]__[local]'
+          ? '[name]__[local]'
           : '[hash:base64]',
       },
       sourceMap: dev,
-      // importLoaders: 2, // 'postcss-loader' and 'sass-loader'
-      importLoaders: 1, // 'sass-loader'
+      importLoaders: 2, // 'postcss-loader' and 'sass-loader'
+      // importLoaders: 1, // 'sass-loader'
       onlyLocals: isServer,
       localsConvention: 'camelCase',
     },
   };
 
-  // const postCssLoader: webpack.RuleSetLoader = {
-  //   loader: 'postcss-loader',
-  //   options: {
-  //     config: {
-  //       path: resolve(__dirname, 'postcss.config.js'),
-  //     },
-  //   },
-  // };
-
-  const eccLoader: webpack.RuleSetLoader = {
-    loader: ExtractCssChunks.loader,
+  const postCssLoader: webpack.RuleSetLoader = {
+    loader: 'postcss-loader',
     options: {
-      hmr: dev,
+      config: {
+        path: resolve(__dirname, 'postcss.config.js'),
+      },
     },
   };
 
+  // const eccLoader: webpack.RuleSetLoader = {
+  //   loader: ExtractCssChunks.loader,
+  //   options: {
+  //     hmr: dev,
+  //   },
+  // };
+
   defaultLoaders.sass = [
-    ...(isServer ? [] : [eccLoader]),
+    ...(isServer ? [] : [
+      {
+        loader: 'style-loader',
+        options: { injectType: 'singletonStyleTag' },
+      },
+      // eccLoader
+    ]),
     cssLoader,
-    // postCssLoader,
+    postCssLoader,
     { loader: 'sass-loader', options: {} }
   ];
 

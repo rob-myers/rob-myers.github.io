@@ -1,7 +1,5 @@
 ## TODO
 
-- use scss instead of inline styles (hmr should trigger)
-
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it
 - string-pulling
@@ -38,6 +36,7 @@
 - refactor poly2: has steiner points, caches triangle ids, has at most one triangulation
 - compute triangulation in webworker
 - refined triangulation in webworker
+- use scss and style-loader to get hmr trigger working
 
 # Next JS
 

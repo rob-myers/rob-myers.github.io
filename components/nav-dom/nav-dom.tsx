@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavElemId } from '@model/nav.model';
 import { Act, Thunk } from '@store/nav.duck';
+import css from './nav-dom.scss';
 
 const NavDom: React.FC<Props> = ({
   uid,
   children,
-  contentStyle = {},
+  contentStyle,
+  contentClass,
   width,
   height,
 }) => {
@@ -65,7 +67,8 @@ const NavDom: React.FC<Props> = ({
     <div>
       <svg
         ref={svg}
-        style={{ width, height, position: 'absolute', zIndex: -10 }}
+        className={css.svgRoot}
+        style={{ width, height }}
       >
         <g>
           {navigable.map((poly, i) => (
@@ -97,7 +100,8 @@ const NavDom: React.FC<Props> = ({
       <div
         id={contentId}
         ref={contentDiv}
-        style={{ ...contentStyle, width, height, margin: '0 auto', overflow: 'hidden' }}
+        className={[css.contentRoot, contentClass].join(' ')}
+        style={{ ...contentStyle, width, height }}
       >
         {children}
       </div>
@@ -111,6 +115,7 @@ interface Props {
   width: React.ReactText;
   height: React.ReactText;
   contentStyle?: React.CSSProperties;
+  contentClass?: string;
 }
 
 export default NavDom;
