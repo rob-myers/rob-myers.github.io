@@ -1,7 +1,6 @@
 ## TODO
 
 - compute triangulation in webworker
-- use small messages instead
 - use scss instead of inline styles (hmr should trigger)
 
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm

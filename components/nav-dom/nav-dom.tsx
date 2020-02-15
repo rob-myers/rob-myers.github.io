@@ -13,7 +13,7 @@ const NavDom: React.FC<Props> = ({
   const contentId = getNavElemId(uid, 'content');
   const dispatch = useDispatch();
   const contentDiv = useRef<HTMLDivElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
+  const svg = useRef<SVGSVGElement>(null);
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
   const navigable = state ? state.navigable : [];
   const [failed, setFailed] = useState(false);
@@ -62,7 +62,7 @@ const NavDom: React.FC<Props> = ({
   return (
     <div>
       <svg
-        ref={svgRef}
+        ref={svg}
         style={{ width, height, position: 'absolute', zIndex: -10 }}
       >
         <g>
@@ -106,8 +106,8 @@ const NavDom: React.FC<Props> = ({
 interface Props {
   uid: string;
   showMesh?: boolean;
-  width: number;
-  height: number;
+  width: React.ReactText;
+  height: React.ReactText;
   contentStyle?: React.CSSProperties;
 }
 

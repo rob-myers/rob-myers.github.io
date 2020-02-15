@@ -28,21 +28,21 @@ const Demo1: React.FC = () => {
       </NavDom> */}
     
       <NavDom 
-        uid='demo' width={600} height={800}
+        uid='demo' width={'100vw'} height={800}
         contentStyle={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
       >
         <div style={containerTest}>
           <div style={dim(30,30)}/>
           <div style={dim(30, 60)}/>
+          {/* <div style={dim(30, 60)}/>
           <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/> */}
           <div style={dim(30, 30)}/>
         </div>
         <div style={containerTest}>
           <div style={dim(30,30)}/>
           <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
+          {/* <div style={dim(30, 60)}/> */}
           <div style={dim(150, 60)}/>
           <div style={dim(30, 60)}/>
           <div style={dim(30, 30)}/>
