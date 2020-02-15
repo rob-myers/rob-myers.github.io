@@ -1,5 +1,3 @@
-/// <reference types="../types/extract-css-chunks-webpack-plugin" />
-
 /**
  * Based on:
  * https://github.com/zeit/next-plugins/blob/master/packages/next-sass/index.js

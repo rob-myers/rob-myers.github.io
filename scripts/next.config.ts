@@ -1,5 +1,3 @@
-/// <reference types="../types/sass-loader" />
-
 import path from 'path';
 import webpack from 'webpack';
 import webpackMerge from 'webpack-merge';
@@ -38,10 +36,17 @@ export default (
             ],
           },
         },
-        // Web workers
+        /**
+         * Web workers.
+         * Caused silent build failure when worker code referenced
+         * other code with an unused Worker('@worker/nav.worker.ts')
+         * in a function body.
+         */
         {
           plugins: [
-            new WorkerPlugin(),
+            new WorkerPlugin({
+              // globalObject: 'self'
+            }),
           ],
         },
         {

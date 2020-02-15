@@ -78,8 +78,8 @@ const NavDom: React.FC<Props> = ({
         </g>
         <g>
           {
-            // navigable.map(({ triangulation }, i) =>
-            navigable.map(({ customTriangulation: triangulation }, i) =>
+            navigable.map(({ triangulation }, i) =>
+            // navigable.map(({ customTriangulation: triangulation }, i) =>
               triangulation.map((triangle, j) => (
                 <path
                   key={`${i}-${j}`}

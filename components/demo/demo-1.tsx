@@ -13,8 +13,8 @@ const containerTest: React.CSSProperties = {
 const Demo1: React.FC = () => {
   return (
     <div style={{ display: 'flex' }}>
-      <NavDom 
-        uid='demo0' width={600} height={200}
+      {/* <NavDom 
+        uid='demo' width={600} height={200}
         contentStyle={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
       >
         <div style={containerTest}>
@@ -25,7 +25,7 @@ const Demo1: React.FC = () => {
           <div style={dim(30, 60)}/>
           <div style={dim(30, 30)}/>
         </div>
-      </NavDom>
+      </NavDom> */}
     
       <NavDom 
         uid='demo' width={600} height={800}

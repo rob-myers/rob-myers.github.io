@@ -2,9 +2,6 @@ import { Rect2 } from '@model/rect2.model';
 import { redact, Redacted } from '@store/redux.model';
 import { Poly2 } from '@model/poly2.model';
 
-export const createNavWorker = () =>
-  redact(new Worker('@worker/nav.worker.ts', { type: 'module' }));
-
 type NavElKey = 'content' | 'nav-poly' | 'spawn';
 
 export function getNavElemId(uid: string, key: NavElKey) {

@@ -36,6 +36,10 @@ export class Rect2 {
     };
   }
 
+  public get json(): Rect2Json {
+    return [this.x, this.y, this.width, this.height];
+  }
+
   public get key(): string {
     return `${this.x},${this.y},${this.width},${this.height}`;
   }
@@ -122,6 +126,10 @@ export class Rect2 {
     }
   }
 
+  public static fromJson([ x, y, width, height ]: Rect2Json) {
+    return new Rect2(x, y, width, height);
+  }
+
   /** Bounded version of lambda x. this.outset(-x) */
   public inset(nonNegAmount: number) {
     const [cx, cy] = [this.cx, this.cy];
@@ -175,3 +183,6 @@ export class Rect2 {
   }
 
 }
+
+/** [x, y, width, height] */
+export type Rect2Json = [number, number, number, number];

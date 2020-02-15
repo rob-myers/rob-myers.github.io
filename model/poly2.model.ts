@@ -4,21 +4,29 @@ import * as poly2tri from 'poly2tri';
 import cdt2d, { Cdt2dOptions } from 'cdt2d';
 
 import { Rect2 } from './rect2.model';
-import { Vector2, Coord } from './vec2.model';
-import { chooseRandomItem } from './generic.model';
+import { Vector2, Coord, Vector2Json } from './vec2.model';
+import { chooseRandomItem, Triple } from './generic.model';
 
 interface Options {
   /**
    * Compute triangulations when requested?
-   * - If not, must use `computeTriangulation`.
-   * - Default is `true`.
+   * Default `true`, else use `triangulate()`.
    */
-  autoTriangulate?: boolean;
+  autoTriangulate: boolean;
+  steinerPoints?: Vector2[];
+  /**
+   * Sometimes already know this e.g. when deserializing.
+   * Consists of triples of indices of all vertices
+   * i.e. `points.concat(...holes).concat(steinerPoints)`.
+   * It is preserved by translation, scaling and reflection.
+   */
+  triangulationIds?: [number, number, number][];
+  triangulationType: TriangulationType;
 }
 
-/**
- * A polygon with possibly many holes.
- */
+type TriangulationType = 'standard' | 'fast' | 'custom';
+
+/** A polygon with possibly many holes */
 export class Poly2 {
 
   public bounds!: Rect2;
@@ -29,15 +37,22 @@ export class Poly2 {
     interior: true,
   };
 
+  private static defaultOptions: Options = {
+    autoTriangulate: true,
+    triangulationType: 'standard',
+  };
+
   //#region cached
+  /** Avoid costly recomputation when no mutation. */
+  private _triangulation = [] as Poly2[];
+  /** Often preserved under mutation. */
+  private _triangulationIds = [] as Triple<number>[];
+  /** TODO needed? */
   private _svgPath?: string;
-  private _triangulation?: Poly2[];
-  /** Can be refined e.g. for better path-finding */
-  private _customTriangulation?: Poly2[];
   //#endregion
 
-  /** Ignoring holes. */
-  public get center(): Vector2 {
+  /** Ignores holes. */
+  public get centerOfBoundary(): Vector2 {
     if (this.points.length) {
       return this.points
         .reduce((agg, point) => agg.add(point), Vector2.zero)
@@ -47,7 +62,7 @@ export class Poly2 {
   }
 
   /**
-   * Assuming this is triangle, get its circum center.
+   * Assuming this is a triangle, get its circum center.
    * Source https://bjornharrtell.github.io/jsts/doc/api/jsts_geom_Triangle.js.html
    */
   public get circumCenter(): Vector2 {
@@ -58,81 +73,44 @@ export class Poly2 {
     return new Vector2(cx - numx / denom, cy + numy / denom);
   }
 
-  /**
-   * IN PROGRESS.
-   */
-  public get customTriangulation(): Poly2[] {
-    if (this._customTriangulation) {
-      return this._customTriangulation;
-    } else if (!this.options.autoTriangulate) {
-      return [];
-    }
-    // Triangulate.
-    const baseTris = this.triangulation;
-    // Add triangle centers as Steiner points.
-    const centers = baseTris.map(({ center }) => center);
-    const { points: vs, edges: es } = this.planarLineGraph;
-    const extVs = vs.concat(centers.map(({ coord }) => coord));
-    const finalTris = cdt2d(extVs, es, this.cdt2dOpts)
-      .map((triIds) => new Poly2(triIds.map(i => Vector2.from(extVs[i]))));
-
-    return (this._customTriangulation = finalTris);
-  }
-
-  /**
-   * Alternative triangulation: faster but less 'uniform'.
-   */
-  public get fastTriangulation(): Poly2[] {
-    // Represent polygon as Geo-JSON polygon coords.
-    const { coordinates } = this.geoJson;
-    // Compute vertices and holes in {earcut}'s format.
-    const data = earcut.flatten(coordinates);
-    // Compute list of triangular indices, relative to {data.vertices}.
-    const triangleIndices = earcut(data.vertices, data.holes, 2);
-    // Unflatten indices.
-    const indexTriples = triangleIndices.reduce<[number, number, number][]>(
-      (agg, vertexIndex, index) =>
-        index % 3 === 2
-          ? agg.concat([[triangleIndices[index - 2], triangleIndices[index - 1], vertexIndex]])
-          : agg,
-      []
-    );
-
-    // Unflatten {data.vertices}, which has even length.
-    const vertices = data.vertices.reduce<Vector2[]>(
-      (agg, vertexIndex, index) =>
-        index % 2 ? agg.concat(new Vector2(data.vertices[index - 1], vertexIndex)) : agg,
-      []
-    );
-    // De-reference {triangleIndices}, whose length is divisible by 3.
-    return indexTriples.map(([i, j, k]) => new Poly2([vertices[i], vertices[j], vertices[k]]));
-  }
-
   public get geoJson(): GeoJsonPolygon {
     return {
       type: 'Polygon',
-      coordinates: [this.points.map<[number, number]>(({ x, y }) => [x, y])].concat(
-        this.holes.map(hole => hole.map<[number, number]>(({ x, y }) => [x, y]))
+      coordinates: [
+        this.points.map<Coord>(({ x, y }) => [x, y])
+      ].concat(
+        this.holes.map(hole => hole.map(({ x, y }) => [x, y]))
       )
     };
   }
 
+  public get json(): Poly2Json {
+    return {
+      holes: this.holes.map((points) => points.map(({ x, y }) => [x, y])),
+      points: this.points.map(({ x, y }) => [x, y]),
+      steiners: this.steinerPoints.map(({ x, y }) => [x, y]),
+      triIds: this._triangulationIds,
+    };
+  }
+
+  public options: Options;
+
   public get planarLineGraph(): Pslg {
-    return Poly2.planarLineGraph(this);
+    return Poly2.computePlanarLineGraph(this);
   }
 
   public get randomPoint(): Vector2 {
     if (!this.points.length || !this.triangulation.length) {
       return Vector2.zero;
     }
-    const {
-      points: [a, b, c]
-    } = chooseRandomItem(this.triangulation) as Poly2;
+    const { points: [a, b, c] } = chooseRandomItem(this.triangulation)!;
     return Poly2.getRandomPointInTriangle(a, b, c);
-    // return a.clone();
   }
 
+  public steinerPoints: Vector2[];
+
   /**
+   * TODO
    * Additionally inset to get thin walls. (?)
    * Assume {outer} has opposite orientation to each hole in {holes}.
    */
@@ -163,10 +141,7 @@ export class Poly2 {
   }
 
   /** Compute tangents of exterior and holes. */
-  public get tangents(): {
-    outer: Vector2[];
-    inner: Vector2[][];
-    } {
+  public get tangents(): { outer: Vector2[]; inner: Vector2[][] } {
     const rings = [this.points, ...this.holes];
     const [outer, ...inner] = rings.map(ring =>
       // Append first to get final tangent.
@@ -187,60 +162,35 @@ export class Poly2 {
   }
 
   /**
-   * Quality triangulation via constrained delaunay.
-   * Can fail for 'non-wellformed polygons' e.g. given square
-   * with a hole, cut another hole meeting 1st hole at a point.
-   * On failure we fallback to earcut algorithm, warning in console.
+   * Get the triangulation. If it doesn't exist and
+   * {autoTriangulate} option is true, we compute and return.
    */
   public get triangulation(): Poly2[] {
-    if (this._triangulation) {
+    if (this._triangulation.length) {
       return this._triangulation;
-    } else if (!this.options.autoTriangulate) {
-      return [];
     }
-
-    try {
-      const qualityTriangulation = new poly2tri.SweepContext(
-        this.points.map(p => new poly2tri.Point(p.x, p.y))
-      )
-        .addHoles(this.holes.map(hole => hole.map(p => new poly2tri.Point(p.x, p.y))))
-        .triangulate()
-        .getTriangles()
-        .map<Poly2>(
-          t =>
-            new Poly2([
-              Vector2.from(t.getPoint(0)),
-              Vector2.from(t.getPoint(1)),
-              Vector2.from(t.getPoint(2))
-            ])
-        );
-      return (this._triangulation = qualityTriangulation);
-    } catch (e) {
-      console.error('Quality triangulation failed, falling back to earcut');
-      console.error(e);
-      return (this._triangulation = this.fastTriangulation);
-    }
+    return this.options.autoTriangulate
+      ? this.triangulate(this.options.triangulationType)
+      : [];
   }
-
-  private static defaultOptions: Options = {
-    autoTriangulate: true,
-  };
 
   constructor(
     public points: Vector2[] = [],
     public holes: Vector2[][] = [],
-    public options: Options = Poly2.defaultOptions,
+    options: Partial<Options> = Poly2.defaultOptions,
   ) {
-    this.options = { ...Poly2.defaultOptions, ...options,  };
+    this.options = { ...Poly2.defaultOptions, ...options };
+    this._triangulationIds = this.options.triangulationIds || [];
+    this.steinerPoints = this.options.steinerPoints || [];
     this.clearCache();
   }
 
   /**
-   * Ensure the final point of each ring does not equal 1st point.
+   * Ensure final point of each ring doesn't equal 1st point.
    * Such loops arise from npm module 'polygon-clipping',
    * but are unsupported by npm module 'poly2tri'.
    */
-  public cleanFinalReps(): Poly2 {
+  public cleanFinalReps() {
     for (const ring of [this.points, ...this.holes]) {
       const last = ring.pop();
       if (last && !last.equals(ring[0])) {
@@ -251,24 +201,22 @@ export class Poly2 {
   }
 
   private clearCache() {
+    this._triangulation = this._triangulationIds.length
+      ? this.triangleIdsToPolys(this._triangulationIds)
+      : [];
     this._svgPath = undefined;
-    this._triangulation = undefined;
-    this._customTriangulation = undefined;
     this.bounds = Rect2.from(...this.points);
   }
 
-  /**
-   * Clone this polygon.
-   */
+  /** Clone this polygon */
   public clone() {
     const points = this.points.map(p => p.clone());
     const holes = this.holes.map(hole => hole.map(p => p.clone()));
-    return new Poly2(points, holes);
+    const options = { ...this.options }; // Shallow clone
+    return new Poly2(points, holes, options);
   }
 
-  /**
-   * Does this polygon contain {point}?
-   */
+  /** Does this polygon contain {point}? */
   public contains(point: Vector2) {
     if (!this.bounds.contains(point)) {
       return false;
@@ -285,7 +233,7 @@ export class Poly2 {
    * - Assume outer points have anticlockwise orientation,
    * - Assume holes have clockwise orientation.
    */
-  public createInset(amount: number): Poly2[] {
+  public createInset(amount: number) {
     if (amount === 0) {
       return [this.clone()];
     }
@@ -294,11 +242,11 @@ export class Poly2 {
     const [outerQuads, ...holesQuads] = [
       {
         ring: this.points,
-        inset: Poly2.insetRing(this.points, amount)
+        inset: Poly2.insetRing(this.points, amount),
       },
       ...this.holes.map(ring => ({
         ring,
-        inset: Poly2.insetRing(ring, amount)
+        inset: Poly2.insetRing(ring, amount),
       }))
     ].map(({ ring, inset }) =>
       ring.map(
@@ -312,15 +260,30 @@ export class Poly2 {
       )
     );
 
-    if (amount > 0) {
-      // Inset.
+    if (amount > 0) {// Inset
       return Poly2.cutOut(outerQuads.concat(...holesQuads), [this.clone()]);
-    } // Outset
+    } // Otherwise we outset
     return Poly2.union([this.clone()].concat(outerQuads, ...holesQuads));
   }
 
   public createOutset(amount: number) {
     return this.createInset(-amount);
+  }
+
+  /**
+   * IN PROGRESS.
+   * TODO: polygon should already have Steiner points instead.
+   */
+  public customTriangulate(): Poly2[] {
+    // Triangulate.
+    const baseTris = this.qualityTriangulate();
+    // TODO: triangle centers should already be Steiner points.
+    const centers = baseTris.map(({ centerOfBoundary: center }) => center);
+    const { points: vs, edges: es } = this.planarLineGraph;
+    const extendedVs = vs.concat(centers.map(({ coord }) => coord));
+    const finalTris = cdt2d(extendedVs, es, this.cdt2dOpts)
+      .map((triIds) => new Poly2(triIds.map(i => Vector2.from(extendedVs[i]))));
+    return finalTris;
   }
 
   /**
@@ -330,17 +293,40 @@ export class Poly2 {
     return polygonClipping
       .difference(
         polys.map(({ geoJson: { coordinates } }) => coordinates),
-        ...cuttingPolys.map(({ geoJson: { coordinates } }) => coordinates)
+        ...cuttingPolys.map(({ geoJson: { coordinates } }) => coordinates),
       )
-      .map(coords => Poly2.from(coords).cleanFinalReps());
+      .map(coords => Poly2.fromGeoJson(coords).cleanFinalReps());
   }
 
   private static det2d(a: number, b: number, c: number, d: number) {
-    return a * d - b * c;
+    return (a * d) - (b * c);
   }
   
+  /**
+   * Faster but less uniform.
+   * Also, it ignores Steiner points.
+   */
+  public fastTriangulate(): Poly2[] {
+    const { coordinates } = this.geoJson;
+    const data = earcut.flatten(coordinates);
+    const triIds = earcut(data.vertices, data.holes, 2);
+    const indexTriples = triIds.reduce<Triple<number>[]>(
+      (agg, vertexIndex, i) =>
+        i % 3 === 2
+          ? agg.concat([[triIds[i - 2], triIds[i - 1], vertexIndex]])
+          : agg,
+      [],
+    );
+    // Needed?
+    // const vertices = data.vertices.reduce((agg, vertexId, index) =>
+    //   index % 2 ? agg.concat(new Vector2(data.vertices[index - 1], vertexId)) : agg,
+    // [] as Vector2[]);
 
-  public static from(input: [number, number][][] | GeoJsonPolygon): Poly2 {
+    this._triangulationIds = indexTriples;
+    return this._triangulation = this.triangleIdsToPolys(this._triangulationIds);
+  }
+
+  public static fromGeoJson(input: GeoJsonPolygon['coordinates'] | GeoJsonPolygon): Poly2 {
     if (Array.isArray(input)) {
       const coordinates = input;
       return new Poly2(
@@ -354,6 +340,24 @@ export class Poly2 {
         coordinates.slice(1).map(hole => hole.map(([x, y]) => new Vector2(x, y)))
       );
     }
+  }
+
+  public static fromJson(
+    {
+      points,
+      holes,
+      steiners,
+      triIds,
+    }: Poly2Json,
+  ): Poly2 {
+    return new Poly2(
+      points.map(([x, y]) => new Vector2(x, y)),
+      holes.map((points) => points.map(([x, y]) => new Vector2(x, y))),
+      {
+        steinerPoints: steiners.map(([ x, y ]) => new Vector2(x, y)),
+        triangulationIds: triIds.map(t => t.slice() as Triple<number>),
+      },
+    );
   }
 
   /**
@@ -404,9 +408,9 @@ export class Poly2 {
    * https://stackoverflow.com/a/2049593/2917822
    */
   public static isPointInTriangle(pt: Vector2, v1: Vector2, v2: Vector2, v3: Vector2) {
-    const d1 = Poly2.sign(pt, v1, v2);
-    const d2 = Poly2.sign(pt, v2, v3);
-    const d3 = Poly2.sign(pt, v3, v1);
+    const d1 = Poly2.triangleSign(pt, v1, v2);
+    const d2 = Poly2.triangleSign(pt, v2, v3);
+    const d3 = Poly2.triangleSign(pt, v3, v1);
 
     const hasNeg = d1 < 0 || d2 < 0 || d3 < 0;
     const hasPos = d1 > 0 || d2 > 0 || d3 > 0;
@@ -414,9 +418,7 @@ export class Poly2 {
     return !(hasNeg && hasPos);
   }
 
-  /**
-   * Inset/outset a ring by {amount}.
-   */
+  /** Inset/outset a ring by {amount}. */
   public static insetRing(ring: Vector2[], amount: number): Vector2[] {
     const poly = new Poly2(ring);
     const tangents = poly.tangents.outer;
@@ -440,7 +442,7 @@ export class Poly2 {
   }
 
   /**
-   * Construct intersection of _1 or more multipolygons_,
+   * Construct intersection of _one or more multipolygons_,
    * yielding a multipolygon. For example, `rest` could be
    * the stage's polygons, viewed as a single multipolygon.
    */
@@ -450,20 +452,19 @@ export class Poly2 {
         first.map(({ geoJson: { coordinates } }) => coordinates),
         ...rest.map(poly => poly.map(({ geoJson: { coordinates } }) => coordinates))
       )
-      .map(coords => Poly2.from(coords).cleanFinalReps());
+      .map(coords => Poly2.fromGeoJson(coords).cleanFinalReps());
   }
 
-  /**
-   * Mutates this polygon.
-   */
-  public offset(delta: Vector2): this {
+  /** Translate this polygon i.e. mutate it. */
+  public offset(delta: Vector2) {
     this.points.forEach(p => p.add(delta));
     this.holes.forEach(hole => hole.forEach(p => p.add(delta)));
+    this.steinerPoints.forEach(p => p.add(delta));
     this.clearCache();
     return this;
   }
 
-  public static planarLineGraph(...polys: Poly2[]): Pslg {
+  public static computePlanarLineGraph(...polys: Poly2[]): Pslg {
     return [
       ...polys.map(({ points }) => points),
       ...polys.reduce((agg, { holes }) => agg.concat(holes), [] as Vector2[][]),
@@ -480,67 +481,118 @@ export class Poly2 {
     );
   }
 
-  /**
-   * Reflect through horizontal axis,
-   * i.e. the line y = {y}.
-   */
+  /** Reflect through horizontal axis i.e. the line y = {y}. */
   public reflectHorizontal(y: number) {
     this.points.forEach(p => (p.y = y + (y - p.y)));
     this.holes.forEach(hole => hole.forEach(p => (p.y = y + (y - p.y))));
+    this.steinerPoints.forEach(p => (p.y = y + (y - p.y)));
     this.clearCache();
   }
 
-  /**
-   * Reflect through vertical axis,
-   * i.e. the line x = {x}.
-   */
+  /** Reflect through vertical axis i.e. the line x = {x}. */
   public reflectVertical(x: number) {
     this.points.forEach(p => (p.x = x + (x - p.x)));
     this.holes.forEach(hole => hole.forEach(p => (p.x = x + (x - p.x))));
+    this.steinerPoints.forEach(p => (p.x = x + (x - p.x)));
     this.clearCache();
   }
 
-  public removeHoles(): Poly2 {
+  public removeHoles() {
     if (this.holes.length) {
       this.holes = [];
+      // This mutation invalidates any triangulation
+      this._triangulationIds = [];
       this.clearCache();
     }
     return this;
   }
 
-  private static sign(p1: Vector2, p2: Vector2, p3: Vector2) {
-    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+  /**
+   * Dot product (p1 - p3) . (p2 - p3), so its sign indicates
+   * direction of turn from one triangle's side to another.
+   */
+  private static triangleSign(p1: Vector2, p2: Vector2, p3: Vector2) {
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p1.y - p3.y) * (p2.x - p3.x);
   }
 
-  public translate(dx: number, dy: number): this {
+  /**
+   * Quality triangulation via constrained delaunay library 'poly2ti'.
+   * Can fail for 'non-wellformed polygons' e.g. given square
+   * with a hole, cut another hole meeting 1st hole at a point.
+   * On failure we fallback to earcut algorithm, warning in console.
+   */
+  public qualityTriangulate(): Poly2[] {
+    try {
+      interface V2WithId extends Vector2Json { id: number }
+      const outline: V2WithId[] = this.points.map(({ x, y }, id) => ({ x, y, id }));
+      let nextId = outline.length;
+      const holes: V2WithId[][] = this.holes
+        .map(hole => hole.map(({ x, y }) => ({ x, y, id: nextId++ })));
+
+      this._triangulationIds = new poly2tri.SweepContext(outline)
+        .addHoles(holes)
+        // .addPoints(steinerPoints)
+        .triangulate()
+        .getTriangles()
+        .map(t => [t.getPoint(0), t.getPoint(1), t.getPoint(2)] as Triple<V2WithId>)
+        .map(([u, v, w]) => [u.id, v.id, w.id]);
+      
+      return this._triangulation = this.triangleIdsToPolys(this._triangulationIds);
+    } catch (e) {
+      console.error('Quality triangulation failed, falling back to earcut');
+      console.error(e);
+      return this.fastTriangulate();
+    }
+  }
+
+  public translate(dx: number, dy: number) {
     return this.offset(new Vector2(dx, dy));
   }
 
   /**
-   * Construct union of _polygons_, yielding a multipolygon.
+   * IN PROGRESS
    */
+  public triangulate(type: TriangulationType, ignoreCache = false): Poly2[] {
+    if (!ignoreCache && this._triangulation.length) {
+      return this._triangulation;
+    }
+    switch (type) {
+      case 'standard': return this.qualityTriangulate();
+      case 'fast': return this.fastTriangulate();
+      case 'custom': return this.customTriangulate();
+    }
+  }
+
+  private triangleIdsToPolys(triIds: Triple<number>[]): Poly2[] {
+    const ps = this.points.concat(...this.holes).concat(this.steinerPoints);
+    return triIds.map(([u, v, w]) => new Poly2([ ps[u], ps[v], ps[w] ]));
+  }
+
+  /** Construct union of _polygons_, yielding a multipolygon. */
   public static union(polys: Poly2[]): Poly2[] {
     return polygonClipping
       .union([], ...polys.map(({ geoJson: { coordinates } }) => coordinates))
-      .map(coords => Poly2.from(coords).cleanFinalReps());
+      .map(coords => Poly2.fromGeoJson(coords).cleanFinalReps());
   }
 }
 
 export interface GeoJsonPolygon {
   type: 'Polygon';
-  /** First are points, rest are holes. */
-  coordinates: [number, number][][];
-}
-
-export interface GeoJsonFeature {
-  type: 'Feature';
-  geometry: GeoJsonPolygon;
+  coordinates: Coord[][];
 }
 
 /** Planar straight line graph. */
 interface Pslg {
-  /** Coords. */
+  /** Vertices. */
   points: Coord[];
   /** Pairs of point indices. */
-  edges: Coord[];
+  edges: [number, number][];
+}
+
+/** We don't track some options. */
+export interface Poly2Json {
+  points: Coord[];
+  holes: Coord[][];
+  steiners: Coord[];
+  triIds: Triple<number>[];
 }

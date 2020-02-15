@@ -13,12 +13,13 @@ import { Rect2 } from '@model/rect2.model';
 import { NavDomState, createNavDomState, traverseDom, navOutset, NavDomMeta } from '@model/nav.model';
 import { Poly2 } from '@model/poly2.model';
 import { Vector2 } from '@model/vec2.model';
+import { NavWorker } from '@model/nav-worker.model';
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
   domMeta: KeyedLookup<NavDomMeta>;
   ready: boolean;
-  webWorker: null | Redacted<Worker>;
+  webWorker: null | Redacted<NavWorker>;
 }
 
 const initialState: State = {
@@ -29,7 +30,7 @@ const initialState: State = {
 };
 
 export const Act = {
-  setupGlobalNav: (webWorker: Redacted<Worker>) =>
+  setupNav: (webWorker: Redacted<NavWorker>) =>
     createAct('[Nav] setup', { webWorker }),
   registerNavDom: (uid: string) =>
     createAct('[NavDom] register', { uid }),
@@ -56,12 +57,15 @@ export const Thunk = {
     '[Nav] ensure setup',
     ({ dispatch, state: { nav } }) => {
       if (!nav.ready && typeof Worker !== 'undefined') {
-        const worker = new Worker('@worker/nav.worker.ts', { type: 'module' });
-        dispatch(Act.setupGlobalNav(redact(worker)));
-
+        const navWorker: NavWorker = new Worker(
+          '@worker/nav.worker.ts',
+          { type: 'module' },
+        );
+        dispatch(Act.setupNav(redact(navWorker)));
         // webworker test
-        worker.postMessage({ fromHost: 'fromHost'});
-        worker.addEventListener('message', (event: any) => console.log({ receivedFromWorker: event }));
+        navWorker.postMessage({ key: 'ping?' });
+        navWorker.addEventListener('message', ({ data }) =>
+          console.log({ navWorkerSent: data }));
       }
     },
   ),
@@ -75,7 +79,8 @@ export const Thunk = {
     ({ state: { nav }, dispatch }, { uid }: { uid: string }) => {
       
       const state = nav.dom[uid];
-      if (!state) return;
+      const webWorker = nav.webWorker;
+      if (!webWorker || !state) return;
       const root = document.getElementById(state.elemId);
       if (!root) return;
 
@@ -100,11 +105,21 @@ export const Thunk = {
         }
       });
 
+      // webWorker.postMessage({
+      //   key: 'nav-dom?',
+      //   domUid: uid,
+      //   bounds: worldBounds,
+      //   polys: leafPolys,
+      //   rects: leafRects,
+      // });
+
       // Compute navigable multipolygon
       const navPolys = Poly2.cutOut([
         ...leafRects.map((rect) => rect.outset(navOutset).poly2),
         ...flatten(leafPolys.map((poly) => poly.createOutset(navOutset))),
       ], [worldBounds.poly2]);
+
+      
 
       // Update state to reflect dom
       dispatch(Act.updateNavDom(uid, {

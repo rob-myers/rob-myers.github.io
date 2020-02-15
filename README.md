@@ -1,6 +1,8 @@
 ## TODO
 
 - compute triangulation in webworker
+- use small messages instead
+- use scss instead of inline styles (hmr should trigger)
 
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it
@@ -33,6 +35,9 @@
 - use cdt2d to improve triangulation
 - web worker
 - web worker in reducer `nav`
+- multiple `NavDom` detecting dups
+- fixed silent fail i.e. worked mustn't import from file with `new Worker(workerPath)`
+- refactor poly2: has steiner points, caches triangle ids, has at most one triangulation
 
 # Next JS
 
