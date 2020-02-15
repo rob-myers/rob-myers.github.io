@@ -15,7 +15,9 @@ const NavDom: React.FC<Props> = ({
   const contentDiv = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
-  const navigable = state ? state.navigable : [];
+  const navigable = state
+    ? state.refinedNav || state.navigable
+    : [];
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {

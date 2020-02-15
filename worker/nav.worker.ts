@@ -21,15 +21,15 @@ ctxt.addEventListener(
       }
       case 'nav-dom?': {
         setTimeout(() => {
-          // Compute navigable multipolygon
-          const worldBounds = Rect2.fromJson(data.bounds);
+          const bounds = Rect2.fromJson(data.bounds);
           const rects = data.rects.map((json) => Rect2.fromJson(json));
           const polys = data.polys.map((json) => Poly2.fromJson(json));
 
+          // Compute navigable multipolygon
           const navPolys = Poly2.cutOut([
             ...rects.map((rect) => rect.outset(navOutset).poly2),
             ...flatten(polys.map((poly) => poly.createOutset(navOutset))),
-          ], [worldBounds.poly2]);
+          ], [bounds.poly2]);
 
           // Precompute triangulation.
           navPolys.forEach((poly) => poly.triangulate('standard'));
@@ -42,14 +42,19 @@ ctxt.addEventListener(
           });
 
           setTimeout(() => {
-            /**
-             * TODO navpoly with steiner points + custom triangulation
-             */
+            // Compute navpoly with refined triangulation.
+            const refinedNavPolys = navPolys.map((poly) => {
+              const centers = poly.triangulation.map(({ centerOfBoundary: center }) => center);
+              const nextPoly = poly.clone().addSteinerPoints(centers);
+              nextPoly.triangulate('custom', { ignoreCache: true });
+              return nextPoly;
+            });
+
             ctxt.postMessage({
               key: 'nav-dom:refined!',
               parentKey: 'nav-dom?',
               context,
-              refinedNavPolys: []
+              refinedNavPolys: refinedNavPolys.map(({ json }) => json),
             });
           });
 

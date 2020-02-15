@@ -185,6 +185,15 @@ export class Poly2 {
     this.clearCache();
   }
 
+  public addSteinerPoints(points: Vector2[]) {
+    if (points.length) {
+      this.steinerPoints.push(...points);
+      this._triangulationIds = [];
+      this.clearCache();
+    }
+    return this;
+  }
+
   /**
    * Ensure final point of each ring doesn't equal 1st point.
    * Such loops arise from npm module 'polygon-clipping',
@@ -271,19 +280,13 @@ export class Poly2 {
   }
 
   /**
-   * IN PROGRESS.
-   * TODO: polygon should already have Steiner points instead.
+   * Uses steiner points.
    */
   public customTriangulate(): Poly2[] {
-    // Triangulate.
-    const baseTris = this.qualityTriangulate();
-    // TODO: triangle centers should already be Steiner points.
-    const centers = baseTris.map(({ centerOfBoundary: center }) => center);
-    const { points: vs, edges: es } = this.planarLineGraph;
-    const extendedVs = vs.concat(centers.map(({ coord }) => coord));
-    const finalTris = cdt2d(extendedVs, es, this.cdt2dOpts)
-      .map((triIds) => new Poly2(triIds.map(i => Vector2.from(extendedVs[i]))));
-    return finalTris;
+    const { points: coords, edges } = this.planarLineGraph;
+    const extendedCoords = coords.concat(this.steinerPoints.map(({ coord }) => coord));
+    this._triangulationIds = cdt2d(extendedCoords, edges, this.cdt2dOpts);
+    return this._triangulation = this.triangleIdsToPolys(this._triangulationIds);
   }
 
   /**
@@ -317,10 +320,6 @@ export class Poly2 {
           : agg,
       [],
     );
-    // Needed?
-    // const vertices = data.vertices.reduce((agg, vertexId, index) =>
-    //   index % 2 ? agg.concat(new Vector2(data.vertices[index - 1], vertexId)) : agg,
-    // [] as Vector2[]);
 
     this._triangulationIds = indexTriples;
     return this._triangulation = this.triangleIdsToPolys(this._triangulationIds);
@@ -549,10 +548,7 @@ export class Poly2 {
     return this.offset(new Vector2(dx, dy));
   }
 
-  /**
-   * IN PROGRESS
-   */
-  public triangulate(type: TriangulationType, ignoreCache = false): Poly2[] {
+  public triangulate(type: TriangulationType, { ignoreCache = false } = {}): Poly2[] {
     if (!ignoreCache && this._triangulation.length) {
       return this._triangulation;
     }

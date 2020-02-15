@@ -105,6 +105,7 @@ export const Thunk = {
         }
       });
 
+      // In web worker, compute navigable poly and a refinement
       registerNavContract<NavDomContract>(worker, {
         message: {
           key: 'nav-dom?',
@@ -114,32 +115,19 @@ export const Thunk = {
           rects: leafRects.map(({ json }) => json),
         },
         callback: (received) => {
-          switch (received.key) {
-            case 'nav-dom:outline!': {
-              dispatch(Act.updateNavDom(uid, {
-                navigable: received.navPolys.map((poly) => redact(Poly2.fromJson(poly))),
-              }));
-              break;
-            }
-            case 'nav-dom:refined!': {
-              console.log('refined');
-              break;
-            }
+          if (received.key === 'nav-dom:outline!') {
+            const { navPolys } = received;
+            dispatch(Act.updateNavDom(uid, { navigable: navPolys.map(p => redact(Poly2.fromJson(p))) }));
+          } else if (received.key === 'nav-dom:refined!') {
+            const { refinedNavPolys: navPolys } = received;
+            dispatch(Act.updateNavDom(uid, { refinedNav: navPolys.map(p => redact(Poly2.fromJson(p))) }));
           }
         },
         replyCount: 2,
       });
 
-      // // Compute navigable multipolygon
-      // const navPolys = Poly2.cutOut([
-      //   ...leafRects.map((rect) => rect.outset(navOutset).poly2),
-      //   ...flatten(leafPolys.map((poly) => poly.createOutset(navOutset))),
-      // ], [worldBounds.poly2]);
-
-      // Update state to reflect dom
       dispatch(Act.updateNavDom(uid, {
         worldBounds: redact(screenBounds),
-        // navigable: navPolys.map((poly) => redact(poly)),
       }));
     },
   ),
