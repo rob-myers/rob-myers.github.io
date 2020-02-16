@@ -12,7 +12,6 @@ import { KeyedLookup } from '@model/generic.model';
 import { Rect2 } from '@model/rect2.model';
 import { NavDomState, createNavDomState, traverseDom, NavDomMeta, createNavDomMetaState } from '@model/nav.model';
 import { Poly2 } from '@model/poly2.model';
-import { Vector2 } from '@model/vec2.model';
 import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav-worker.model';
 
 export interface State {
@@ -78,9 +77,8 @@ export const Thunk = {
     async ({ state: { nav }, dispatch }, { uid }: { uid: string }) => {
       
       const state = nav.dom[uid];
-      const worker = nav.webWorker;
-      const meta = nav.domMeta[uid];
-      if (!worker || !state || !meta) return;
+      const [worker, meta] = [nav.webWorker, nav.domMeta[uid]];
+      if (!worker || !state) return;
       const root = document.getElementById(state.elemId);
       if (!root) return;
 
@@ -88,22 +86,33 @@ export const Thunk = {
       dispatch(Act.updateDomMeta(uid, { updating: true }));
 
       const screenBounds = Rect2.from(root.getBoundingClientRect());
-      const { x: rootLeft, y: rootTop } = screenBounds;
-      const worldBounds = screenBounds.clone().translate(-rootLeft, -rootTop);
+      const { x: rx, y: ry } = screenBounds;
+      const worldBounds = screenBounds.clone().translate(-rx, -ry);
       const leafRects = [] as Rect2[];
-      const leafPolys = [] as Poly2[];
+      /** Transformed rects or bordered rects */
+      const polys = [] as Poly2[];
 
-      // Compute rects/polys from descendents of NavDom
-      traverseDom(root, (node) => {
+      // Compute rects from descendents of NavDom
+      traverseDom(root, (node: HTMLElement) => {
         if (!node.children.length) {
-          const rect = Rect2.from(node.getBoundingClientRect());
-          rect.translate(-rootLeft, -rootTop);
-
-          if (node instanceof SVGPolygonElement) {
-            const vs = Array.from(node.points).map(p => Vector2.from(p));
-            leafPolys.push(new Poly2(vs).translate(rect.x, rect.y));
+          /**
+           * Take account of transform.
+           * Assume transform-origin is default "50% 50%".
+           */
+          const style = window.getComputedStyle(node);
+          const matrix = new DOMMatrix(style.webkitTransform);
+          if (matrix.isIdentity) {
+            const rect = Rect2.from(node.getBoundingClientRect());
+            leafRects.push(rect.translate(-rx, -ry));
           } else {
-            leafRects.push(rect);
+            const rect = new Rect2(
+              node.offsetLeft,
+              node.offsetTop,
+              node.offsetWidth,
+              node.offsetHeight,
+            ).translate(-rx, -ry);
+            const poly = rect.poly2.transform(matrix, rect.center);
+            polys.push(poly);
           }
         }
       });
@@ -114,8 +123,8 @@ export const Thunk = {
           key: 'nav-dom?',
           context: uid,
           bounds: worldBounds.json,
-          polys: leafPolys.map(({ json }) => json),
           rects: leafRects.map(({ json }) => json),
+          polys: polys.map(({ json }) => json),
         },
         on: {
           'nav-dom:outline!': { do: ({ navPolys }) => {
@@ -131,7 +140,6 @@ export const Thunk = {
 
       dispatch(Act.updateNavDom(uid, { worldBounds: redact(worldBounds) }));
       dispatch(Act.updateDomMeta(uid, { updating: false }));
-      
     },
   ),
 };

@@ -96,6 +96,13 @@ export class Vector2 {
     return `${this.x},${this.y}`;
   }
 
+  public transform({ a, b, c, d, e, f }: DOMMatrix) {
+    const { x, y } = this;
+    this.x = a * x + c * y + e;
+    this.y = b * x + d * y + f;
+    return this;
+  }
+
   public translate(x: number, y: number): this {
     this.x += x;
     this.y += y;

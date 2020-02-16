@@ -225,6 +225,23 @@ export class Poly2 {
     return new Poly2(points, holes, options);
   }
 
+  public static computePlanarLineGraph(...polys: Poly2[]): Pslg {
+    return [
+      ...polys.map(({ points }) => points),
+      ...polys.reduce((agg, { holes }) => agg.concat(holes), [] as Vector2[][]),
+    ].reduce(
+      (agg, loop) => {
+        if (loop.length < 2) return agg;
+        const offset = agg.points.length;
+        return {
+          points: agg.points.concat(loop.map(({ x, y }) => [x, y])),
+          edges: agg.edges.concat(loop.map((_, i) => [offset+i, offset+(i+1)%loop.length])),
+        };
+      },
+      { points: [], edges: [] } as Pslg
+    );
+  }
+
   /** Does this polygon contain {point}? */
   public contains(point: Vector2) {
     if (!this.bounds.contains(point)) {
@@ -463,23 +480,6 @@ export class Poly2 {
     return this;
   }
 
-  public static computePlanarLineGraph(...polys: Poly2[]): Pslg {
-    return [
-      ...polys.map(({ points }) => points),
-      ...polys.reduce((agg, { holes }) => agg.concat(holes), [] as Vector2[][]),
-    ].reduce(
-      (agg, loop) => {
-        if (loop.length < 2) return agg;
-        const offset = agg.points.length;
-        return {
-          points: agg.points.concat(loop.map(({ x, y }) => [x, y])),
-          edges: agg.edges.concat(loop.map((_, i) => [offset+i, offset+(i+1)%loop.length])),
-        };
-      },
-      { points: [], edges: [] } as Pslg
-    );
-  }
-
   /** Reflect through horizontal axis i.e. the line y = {y}. */
   public reflectHorizontal(y: number) {
     this.points.forEach(p => (p.y = y + (y - p.y)));
@@ -503,6 +503,14 @@ export class Poly2 {
       this._triangulationIds = [];
       this.clearCache();
     }
+    return this;
+  }
+
+  public transform(matrix: DOMMatrix, origin: Vector2, skewed = false) {
+    this.points.concat(...this.holes).concat(this.steinerPoints)
+      .forEach(p => p.sub(origin).transform(matrix).add(origin));
+    if (skewed) this._triangulationIds = []; // Invalidate triangulation
+    this.clearCache();
     return this;
   }
 

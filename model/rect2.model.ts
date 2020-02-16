@@ -55,6 +55,10 @@ export class Rect2 {
     );
   }
 
+  public get topLeft() {
+    return new Vector2(this.x, this.y);
+  }
+
   public get topRight() {
     return new Vector2(this.x + this.width, this.y);
   }
@@ -176,7 +180,7 @@ export class Rect2 {
     return this;
   }
 
-  public translate(dx: number, dy: number): Rect2 {
+  public translate(dx: number, dy: number) {
     this.x += dx;
     this.y += dy;
     return this;

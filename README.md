@@ -1,6 +1,6 @@
 ## TODO
 
-- level generation: support solid borders via class, support holes via class, don't support polygon, don't support transform, better demo.
+- level generation: support solid borders via class, support holes via class, don't support polygon, better demo.
 - smoother transition to new triangulation via css
 
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
@@ -40,6 +40,7 @@
 - compute triangulation in webworker
 - refined triangulation in webworker
 - use scss and style-loader to get hmr trigger working
+- support css transform of rects, assuming default transform-origin
 
 # Next JS
 

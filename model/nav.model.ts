@@ -12,10 +12,10 @@ export function getNavElemId(uid: string, key: NavElKey) {
   }
 }
 
-export function traverseDom(el: Element, act: (el: Element) => void) {
+export function traverseDom(el: HTMLElement, act: (el: HTMLElement) => void) {
   act(el);
   for (const childEl of el.children) {
-    traverseDom(childEl, act);
+    traverseDom(childEl as HTMLElement, act);
   }
 }
 
