@@ -114,21 +114,19 @@ export const Thunk = {
           polys: leafPolys.map(({ json }) => json),
           rects: leafRects.map(({ json }) => json),
         },
-        callback: (received) => {
-          if (received.key === 'nav-dom:outline!') {
-            const { navPolys } = received;
-            dispatch(Act.updateNavDom(uid, { navigable: navPolys.map(p => redact(Poly2.fromJson(p))) }));
-          } else if (received.key === 'nav-dom:refined!') {
-            const { refinedNavPolys: navPolys } = received;
-            dispatch(Act.updateNavDom(uid, { refinedNav: navPolys.map(p => redact(Poly2.fromJson(p))) }));
-          }
+        on: {
+          'nav-dom:outline!': { do: ({ navPolys }) => {
+            const navigable = navPolys.map(p => redact(Poly2.fromJson(p)));
+            dispatch(Act.updateNavDom(uid, { navigable }));
+          }},
+          'nav-dom:refined!': { do: ({ refinedNavPolys: navPolys }) => {
+            const refinedNav = navPolys.map(p => redact(Poly2.fromJson(p)));
+            dispatch(Act.updateNavDom(uid, { refinedNav }));
+          }},
         },
-        replyCount: 2,
       });
 
-      dispatch(Act.updateNavDom(uid, {
-        worldBounds: redact(screenBounds),
-      }));
+      dispatch(Act.updateNavDom(uid, { worldBounds: redact(screenBounds) }));
     },
   ),
 };

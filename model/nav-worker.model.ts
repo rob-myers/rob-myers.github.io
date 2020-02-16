@@ -1,5 +1,6 @@
 import { Poly2Json } from '@model/poly2.model';
 import { Rect2Json } from './rect2.model';
+import { KeyedUnionToLookup } from './generic.model';
 
 type NavToWorkerKey = (
   | 'ping?'
@@ -11,8 +12,8 @@ type NavFromWorkerKey = (
   | 'nav-dom:refined!'
 )
 
-type NavCallback<Data> = (data: Data) => void;
-// type NavShouldCallback<Data, Memory = {}> = (data: Data, memory: Memory) => { matched: boolean; unregister?: true };
+type GetKeyedCallbacks<T extends { key: string }> = T extends any
+  ? { key: T['key']; do: ((reply: T) => void) } : never;
 
 interface ParentContract<
   Sent extends { key: NavToWorkerKey; context: string },
@@ -20,10 +21,10 @@ interface ParentContract<
 > {
   /** Message from parent */
   message: Sent;
-  /** Callback invoked by parent when reply received */
-  callback: (data: Received) => void;
-  /** Number of messages sent back */
-  replyCount: number;
+  /** Action to perform for specific reply */
+  on: KeyedUnionToLookup<GetKeyedCallbacks<Received>>;
+  /** Action to perform for any reply */
+  onAny?: (reply: Received) => void;
 }
 
 type PingPongContract = ParentContract<
@@ -64,7 +65,7 @@ type NavWorkerContracts = (
 );
 
 type NavDataFromParent = NavWorkerContracts['message'];
-type NavDataFromWorker = Parameters<NavWorkerContracts['callback']>[0];
+type NavDataFromWorker = Parameters<NonNullable<NavWorkerContracts['onAny']>>[0];
 
 interface NavMessageFromWorker extends MessageEvent {
   data: NavDataFromWorker;
@@ -96,13 +97,24 @@ export interface NavWorkerContext extends Worker {
  */
 export function registerNavContract<Contract extends NavWorkerContracts>(
   worker: NavWorker,
-  { callback, message, replyCount }: Contract,
+  contract: Contract,
 ) {
-  let replies = 0;
+  const on = { ...contract.on } as Record<string, {
+    do: (x: NavDataFromWorker ) => void;
+  }>;
+  const { message, onAny } = contract;
+
   const handleMessage = ({ data }: NavMessageFromWorker) => {
     if (data.parentKey === message.key && data.context === message.context) {
-      (callback as (data: NavDataFromWorker) => void)(data);
-      (++replies >= replyCount) && worker.removeEventListener('message', handleMessage);
+      on[data.key].do(data);
+      if (onAny) {
+        (onAny as (data: NavDataFromWorker) => void)(data);
+      }
+      // Unregister once all replies received 
+      delete on[data.key];
+      if (!Object.keys(on).length) {
+        worker.removeEventListener('message', handleMessage);
+      }
     }
   };
 

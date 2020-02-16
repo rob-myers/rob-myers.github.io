@@ -15,3 +15,11 @@ export function last<T>(items: T[]): T | undefined {
 }
 
 export type Triple<T> = [T, T, T];
+
+/**
+ * Given `{ key: 'foo', bar: number; } | { key: 'baz', qux: boolean; }`
+ * outputs `{ foo: { bar: number }, baz: { qux: boolean; }}`.
+ */
+export type KeyedUnionToLookup<T extends { key: string }> = {
+  [K in T['key']]: Omit<Extract<T, { key: K }>, 'key'>
+}
