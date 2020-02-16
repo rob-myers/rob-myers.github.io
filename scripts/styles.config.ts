@@ -7,7 +7,6 @@ import webpack from 'webpack';
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 import OptimizeCssAssetsWebpackPlugin from 'optimize-css-assets-webpack-plugin';
 import { WebpackCtxt } from './next.config';
-import { resolve } from 'path';
 
 export default function({
   isServer,
@@ -46,15 +45,16 @@ export default function({
     options: { injectType: 'singletonStyleTag' },
   };
 
-  // const eccLoader: webpack.RuleSetLoader = {
-  //   loader: ExtractCssChunks.loader,
-  //   options: {
-  //     hmr: dev,
-  //   },
-  // };
+  const eccLoader: webpack.RuleSetLoader = {
+    loader: ExtractCssChunks.loader,
+    options: {
+      hmr: dev,
+    },
+  };
 
   defaultLoaders.sass = [
-    ...(isServer ? [] : [styleLoader]),
+    ...(!isServer && !dev ? [eccLoader] : []),
+    ...(!isServer && dev ? [styleLoader] : []),
     cssLoader,
     // postCssLoader,
     { loader: 'sass-loader', options: {} }
