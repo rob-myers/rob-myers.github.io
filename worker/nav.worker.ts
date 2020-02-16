@@ -1,7 +1,6 @@
 import { NavWorkerContext } from '@model/nav-worker.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
-import { navOutset } from '@model/nav.model';
 import { flatten } from '@model/generic.model';
 
 const ctxt: NavWorkerContext = self as any;
@@ -25,11 +24,11 @@ ctxt.addEventListener(
 
           // Compute navigable multipolygon
           const navPolys = Poly2.cutOut([
-            ...rects.map((rect) => rect.outset(navOutset).poly2),
-            ...flatten(polys.map((poly) => poly.createOutset(navOutset))),
+            ...rects.map((rect) => rect.outset(data.navOutset).poly2),
+            ...flatten(polys.map((poly) => poly.createOutset(data.navOutset))),
           ], [bounds.poly2]);
 
-          // Precompute triangulation.
+          // Precompute triangulation before serialisation
           navPolys.forEach((poly) => poly.triangulate('standard'));
 
           ctxt.postMessage({
@@ -41,6 +40,7 @@ ctxt.addEventListener(
 
           setTimeout(() => {
             // Compute navpoly with refined triangulation.
+            // TODO better approach e.g. Chew's 2nd algorithm
             const refinedNavPolys = navPolys.map((poly) => {
               const centers = poly.triangulation.map(({ centerOfBoundary: center }) => center);
               const nextPoly = poly.clone().addSteinerPoints(centers);

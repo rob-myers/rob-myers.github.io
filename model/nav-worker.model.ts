@@ -43,6 +43,7 @@ export type NavDomContract = ParentContract<
     rects: Rect2Json[];
     /** Polygons in world coords */
     polys: Poly2Json[];
+    navOutset: number;
   },
   (
     { parentKey: 'nav-dom?'; context: string } & (

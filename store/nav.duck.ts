@@ -10,7 +10,7 @@ import {
 } from './redux.model';
 import { KeyedLookup } from '@model/generic.model';
 import { Rect2 } from '@model/rect2.model';
-import { NavDomState, createNavDomState, traverseDom, NavDomMeta, createNavDomMetaState } from '@model/nav.model';
+import { NavDomState, createNavDomState, traverseDom, NavDomMeta, createNavDomMetaState, defaultNavOutset } from '@model/nav.model';
 import { Poly2 } from '@model/poly2.model';
 import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav-worker.model';
 
@@ -96,7 +96,7 @@ export const Thunk = {
       traverseDom(root, (node: HTMLElement) => {
         if (!node.children.length) {
           /**
-           * Take account of transform.
+           * Take account of css transform.
            * Assume transform-origin is default "50% 50%".
            */
           const style = window.getComputedStyle(node);
@@ -106,10 +106,8 @@ export const Thunk = {
             leafRects.push(rect.translate(-rx, -ry));
           } else {
             const rect = new Rect2(
-              node.offsetLeft,
-              node.offsetTop,
-              node.offsetWidth,
-              node.offsetHeight,
+              node.offsetLeft, node.offsetTop,
+              node.offsetWidth, node.offsetHeight,
             ).translate(-rx, -ry);
             const poly = rect.poly2.transform(matrix, rect.center);
             polys.push(poly);
@@ -125,6 +123,7 @@ export const Thunk = {
           bounds: worldBounds.json,
           rects: leafRects.map(({ json }) => json),
           polys: polys.map(({ json }) => json),
+          navOutset: state.navOutset || defaultNavOutset,
         },
         on: {
           'nav-dom:outline!': { do: ({ navPolys }) => {

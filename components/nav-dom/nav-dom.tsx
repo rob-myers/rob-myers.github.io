@@ -11,6 +11,7 @@ const NavDom: React.FC<Props> = ({
   contentClass,
   width,
   height,
+  navOutset,
 }) => {
   const dispatch = useDispatch();
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
@@ -25,6 +26,7 @@ const NavDom: React.FC<Props> = ({
 
     dispatch(Thunk.ensureGlobalSetup({}));
     dispatch(Act.registerNavDom(uid));
+    dispatch(Act.updateNavDom(uid, { navOutset }));
     setTimeout(() => dispatch(Thunk.updateNavigable({ uid })));
 
     // Update on resize or hot reload
@@ -40,6 +42,12 @@ const NavDom: React.FC<Props> = ({
       module.hot && module.hot.removeStatusHandler(hotHandler);
     };
   }, [uid]);
+
+  useEffect(() => {
+    if (state && navOutset && navOutset !== state.navOutset) {
+      dispatch(Act.updateNavDom(uid, { navOutset }));
+    }
+  }, [navOutset]);
 
   useEffect(() => {
     // Rebuild navigation on 1st render after hot reload
@@ -99,6 +107,7 @@ const NavDom: React.FC<Props> = ({
 interface Props {
   uid: string;
   showMesh?: boolean;
+  navOutset?: number;
   width: React.ReactText;
   height: React.ReactText;
   contentStyle?: React.CSSProperties;

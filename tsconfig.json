@@ -22,7 +22,7 @@
       "@components/*": ["components/*"],
       "@store/*": ["store/*"],
       "@model/*": ["model/*"],
-      "@worker/*": ["worker/*"],
+      "@worker/*": ["worker/*"]
     },
     "downlevelIteration": true
   },

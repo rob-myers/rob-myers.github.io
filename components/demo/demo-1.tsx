@@ -27,6 +27,7 @@ const Demo1: React.FC = () => {
         width={'100vw'}
         height={800}
         contentClass={css.demo1Content}
+        navOutset={12}
       >
         <div className={css.containerTest}>
           <div style={dim(30,30)}/>
@@ -64,7 +65,7 @@ const Demo1: React.FC = () => {
           <div style={dim(30, 60)}/>
           <div style={dim(30, 30)}/>
         </div>
-        {/* <div style={containerTest}>
+        {/* <div className={css.containerTest}>
           <div style={dim(30,30)}/>
           <div style={dim(30, 60)}/>
           <div style={dim(30, 60)}/>
