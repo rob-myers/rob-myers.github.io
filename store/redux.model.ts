@@ -1,4 +1,3 @@
-import { Dispatch } from 'redux';
 import { RootAction, RootState } from './reducer';
 import { KeyedLookup } from '@model/generic.model';
 
@@ -8,7 +7,8 @@ export const createAct = <T extends string, P extends object = {}>(
 ) => ({ ...payload, type }) as P & { type: T };
 
 export interface ThunkParams {
-  dispatch: Dispatch<RootAction | ThunkAct<string, any, any>>;
+  // dispatch: Dispatch<RootAction | ThunkAct<string, any, any>>;
+  dispatch: <T extends RootAction | ThunkAct<string, any, any>>(arg: T) => ThunkActReturnType<T>;
   getState: () => RootState;
   state: RootState;
 }
@@ -18,6 +18,8 @@ export interface ThunkAct<T extends string, A extends {}, R> {
   thunk: (params: ThunkParams, args: A) => R;
   args: A;
 }
+
+export type ThunkActReturnType<T> = T extends ThunkAct<string, any, infer R> ? R : any;
 
 export const createThunk = <T extends string, A extends {} = {}, R = void>(
   type: T,

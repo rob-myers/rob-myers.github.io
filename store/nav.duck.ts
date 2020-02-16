@@ -10,10 +10,10 @@ import {
 } from './redux.model';
 import { KeyedLookup } from '@model/generic.model';
 import { Rect2 } from '@model/rect2.model';
-import { NavDomState, createNavDomState, traverseDom, NavDomMeta } from '@model/nav.model';
+import { NavDomState, createNavDomState, traverseDom, NavDomMeta, createNavDomMetaState } from '@model/nav.model';
 import { Poly2 } from '@model/poly2.model';
 import { Vector2 } from '@model/vec2.model';
-import { NavWorker, registerNavContract, NavDomContract } from '@model/nav-worker.model';
+import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav-worker.model';
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
@@ -69,20 +69,23 @@ export const Thunk = {
       }
     },
   ),
-  getJustHmr: createThunk(
-    '[NavDom] get justHmr',
-    ({ state: { nav: { domMeta } } }, { uid }: { uid: string }) =>
-      domMeta[uid] ? domMeta[uid].justHmr : false
+  getDomMeta: createThunk(
+    '[NavDom] get meta',
+    ({ state: { nav: { domMeta } } }, { uid }: { uid: string }) => domMeta[uid] || {}
   ),
   updateNavigable: createThunk(
     '[NavDom] update navigable',
-    ({ state: { nav }, dispatch }, { uid }: { uid: string }) => {
+    async ({ state: { nav }, dispatch }, { uid }: { uid: string }) => {
       
       const state = nav.dom[uid];
       const worker = nav.webWorker;
-      if (!worker || !state) return;
+      const meta = nav.domMeta[uid];
+      if (!worker || !state || !meta) return;
       const root = document.getElementById(state.elemId);
       if (!root) return;
+
+      if (meta.updating) return; // Currently ignore requests while updating.
+      dispatch(Act.updateDomMeta(uid, { updating: true }));
 
       const screenBounds = Rect2.from(root.getBoundingClientRect());
       const { x: rootLeft, y: rootTop } = screenBounds;
@@ -106,7 +109,7 @@ export const Thunk = {
       });
 
       // In web worker, compute navigable poly and a refinement
-      registerNavContract<NavDomContract>(worker, {
+      await navWorkerMessages<NavDomContract>(worker, {
         message: {
           key: 'nav-dom?',
           context: uid,
@@ -126,7 +129,9 @@ export const Thunk = {
         },
       });
 
-      dispatch(Act.updateNavDom(uid, { worldBounds: redact(screenBounds) }));
+      dispatch(Act.updateNavDom(uid, { worldBounds: redact(worldBounds) }));
+      dispatch(Act.updateDomMeta(uid, { updating: false }));
+      
     },
   ),
 };
@@ -141,7 +146,7 @@ export const reducer = (state = initialState, act: Action): State => {
     };
     case '[NavDom] register': return { ...state,
       dom: addToLookup(createNavDomState(act.uid), state.dom),
-      domMeta: addToLookup({ key: act.uid, justHmr: false }, state.domMeta),
+      domMeta: addToLookup(createNavDomMetaState(act.uid), state.domMeta),
     };
     case '[NavDom] unregister': return { ...state,
       dom: removeFromLookup(act.uid, state.dom),

@@ -7,6 +7,7 @@ import withRedux from '@store/with-redux';
 import React from 'react';
 import { NextComponentType, NextPageContext } from 'next';
 import { Router } from 'next/dist/client/router';
+import Head from 'next/head';
 
 interface Props {
   reduxStore: ReduxStore;
@@ -33,6 +34,9 @@ class MyApp extends App<Props> {
           loading={<Component {...pageProps} />}
           persistor={this.persistor}
         >
+          <Head>
+            <link rel="shortcut icon" href="/favicon.ico" />
+          </Head>
           <Component {...pageProps} />
         </PersistGate>
       </Provider>

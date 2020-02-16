@@ -73,4 +73,13 @@ interface NavPoly {
 export interface NavDomMeta {
   key: string;
   justHmr: boolean;
+  updating: boolean;
+}
+
+export function createNavDomMetaState(uid: string): NavDomMeta {
+  return {
+    key: uid,
+    justHmr: false,
+    updating: false,
+  };
 }

@@ -95,7 +95,7 @@ export interface NavWorkerContext extends Worker {
 /**
  * Register parent-side of contract.
  */
-export function registerNavContract<Contract extends NavWorkerContracts>(
+export async function navWorkerMessages<Contract extends NavWorkerContracts>(
   worker: NavWorker,
   contract: Contract,
 ) {
@@ -104,20 +104,23 @@ export function registerNavContract<Contract extends NavWorkerContracts>(
   }>;
   const { message, onAny } = contract;
 
-  const handleMessage = ({ data }: NavMessageFromWorker) => {
-    if (data.parentKey === message.key && data.context === message.context) {
-      on[data.key].do(data);
-      if (onAny) {
-        (onAny as (data: NavDataFromWorker) => void)(data);
+  await new Promise(resolve => {
+    const handleMessage = ({ data }: NavMessageFromWorker) => {
+      if (data.parentKey === message.key && data.context === message.context) {
+        on[data.key].do(data);
+        if (onAny) (onAny as (data: NavDataFromWorker) => void)(data);
+  
+        // Unregister once all replies received 
+        delete on[data.key];
+        if (!Object.keys(on).length) {
+          worker.removeEventListener('message', handleMessage);
+          resolve();
+        }
       }
-      // Unregister once all replies received 
-      delete on[data.key];
-      if (!Object.keys(on).length) {
-        worker.removeEventListener('message', handleMessage);
-      }
-    }
-  };
+    };
+  
+    worker.addEventListener('message', handleMessage);
+    worker.postMessage(message);
+  });
 
-  worker.addEventListener('message', handleMessage);
-  worker.postMessage(message);
 }
