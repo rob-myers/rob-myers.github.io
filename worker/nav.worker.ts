@@ -3,8 +3,6 @@ import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { navOutset } from '@model/nav.model';
 import { flatten } from '@model/generic.model';
-// import { flatten } from '@model/generic.model';
-// import { Poly2 } from '@model/poly2.model';
 
 const ctxt: NavWorkerContext = self as any;
 

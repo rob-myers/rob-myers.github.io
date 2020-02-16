@@ -1,5 +1,8 @@
 ## TODO
 
+- level generation: support solid borders via class, support holes via class, don't support polygon, don't support transform, better demo.
+- smoother transition to new triangulation via css
+
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it
 - string-pulling
@@ -11,7 +14,7 @@
 - start using mdx for blogs
 - integrate gitalk from older branch
 - delete older branch
-- PR this branch `fresh-start-2020` into new branch `dev-setup`.
+- PR this branch `fresh-start-2020` into new branch `dev`.
 
 ## So far
 
