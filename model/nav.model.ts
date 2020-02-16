@@ -27,6 +27,8 @@ export const observeOpts: MutationObserverInit = {
 
 export const defaultNavOutset = 10;
 
+export const defaultNavigableClass = 'navigable';
+
 export function createNavDomState(uid: string): NavDomState {
   return {
     key: uid,
@@ -45,6 +47,8 @@ export interface NavDomState {
   elemId: string;
   /** Optional custom outset; overrides default. */
   navOutset?: number;
+  /** Optional custom class name for holes. */
+  navHoleClass?: string;
   spawns: NavSpawnState[];
   worldBounds: Redacted<Rect2>;
   /** Navigable multipolygon. */
@@ -54,20 +58,6 @@ export interface NavDomState {
 }
 
 interface NavSpawnState {
-  key: string;
-  elemId: string;
-  bounds: Redacted<Rect2>;
-}
-
-/** Descendant leaf elem. */
-interface NavLeafRect {
-  key: string;
-  elemId: string;
-  bounds: Redacted<Rect2>;
-}
-
-/** Descendant poly. */
-interface NavPoly {
   key: string;
   elemId: string;
   bounds: Redacted<Rect2>;

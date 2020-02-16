@@ -21,27 +21,34 @@ ctxt.addEventListener(
           const bounds = Rect2.fromJson(data.bounds);
           const rects = data.rects.map((json) => Rect2.fromJson(json));
           const polys = data.polys.map((json) => Poly2.fromJson(json));
+          const navRects = data.navRects.map((json) => Rect2.fromJson(json));
+          const navPolys = data.navPolys.map((json) => Poly2.fromJson(json));
 
           // Compute navigable multipolygon
-          const navPolys = Poly2.cutOut([
+          const without = Poly2.cutOut([
             ...rects.map((rect) => rect.outset(data.navOutset).poly2),
             ...flatten(polys.map((poly) => poly.createOutset(data.navOutset))),
           ], [bounds.poly2]);
+          const allNavPolys = Poly2.union([
+            ...without,
+            ...navRects.map((rect) => rect.outset(data.navOutset).poly2),
+            ...flatten(navPolys.map((poly) => poly.createOutset(data.navOutset))),
+          ]);
 
           // Precompute triangulation before serialisation
-          navPolys.forEach((poly) => poly.triangulate('standard'));
+          allNavPolys.forEach((poly) => poly.triangulate('standard'));
 
           ctxt.postMessage({
             key: 'nav-dom:outline!',
             parentKey: 'nav-dom?',
             context,
-            navPolys: navPolys.map(({ json }) => json),
+            navPolys: allNavPolys.map(({ json }) => json),
           });
 
           setTimeout(() => {
             // Compute navpoly with refined triangulation.
             // TODO better approach e.g. Chew's 2nd algorithm
-            const refinedNavPolys = navPolys.map((poly) => {
+            const refinedNavPolys = allNavPolys.map((poly) => {
               const centers = poly.triangulation.map(({ centerOfBoundary: center }) => center);
               const nextPoly = poly.clone().addSteinerPoints(centers);
               nextPoly.triangulate('custom', { ignoreCache: true });

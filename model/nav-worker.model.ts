@@ -37,13 +37,15 @@ export type NavDomContract = ParentContract<
     key: 'nav-dom?';
     /** NavDom uid */
     context: string;
+    navOutset: number;
     /** World bounds */
     bounds: Rect2Json;
     /** Rectangles in world coords */
     rects: Rect2Json[];
+    navRects: Rect2Json[];
     /** Polygons in world coords */
     polys: Poly2Json[];
-    navOutset: number;
+    navPolys: Poly2Json[];
   },
   (
     { parentKey: 'nav-dom?'; context: string } & (
@@ -100,9 +102,7 @@ export async function navWorkerMessages<Contract extends NavWorkerContracts>(
   worker: NavWorker,
   contract: Contract,
 ) {
-  const on = { ...contract.on } as Record<string, {
-    do: (x: NavDataFromWorker ) => void;
-  }>;
+  const on = { ...contract.on } as Record<string, { do: (x: NavDataFromWorker ) => void }>;
   const { message, onAny } = contract;
 
   await new Promise(resolve => {

@@ -39,12 +39,20 @@ const Demo1: React.FC = () => {
         </div>
         <div className={css.containerTest}>
           <div style={dim(30,30)}/>
+          {/* <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/> */}
           <div style={dim(30, 60)}/>
           <div style={dim(30, 60)}/>
+          <div style={dim(30, 30)}/>
+        </div>
+        <div className={css.containerTest}>
+          <div style={dim(30,30)}/>
+          <div style={dim(30, 60)}/>
+          <div style={{...dim(30, 60), transform: 'translateX(10px)'  }} className="navigable" />
           <div style={{
             ...dim(150, 60),
             width: 'calc(10% + 20px)',
-            transform: 'rotateZ(45deg) translateX(0px) scale(1.5)'
+            transform: 'translateX(0px) rotateZ(45deg) scale(1.5)'
           }}/>
           <div style={dim(30, 60)}/>
           <div style={dim(30, 30)}/>
@@ -57,14 +65,6 @@ const Demo1: React.FC = () => {
           <div style={dim(30, 30)}/>
           <div style={dim(30, 60)}/>
         </div>
-        <div className={css.containerTest}>
-          <div style={dim(30,30)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 30)}/>
-        </div>
         {/* <div className={css.containerTest}>
           <div style={dim(30,30)}/>
           <div style={dim(30, 60)}/>
@@ -73,6 +73,14 @@ const Demo1: React.FC = () => {
           <div style={dim(30, 60)}/>
           <div style={dim(30, 30)}/>
         </div> */}
+        <div className={css.containerTest}>
+          <div style={dim(30,30)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 60)}/>
+          <div style={dim(30, 30)}/>
+        </div>
       </NavDom>
     </div>
   );

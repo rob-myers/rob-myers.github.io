@@ -10,7 +10,7 @@ import {
 } from './redux.model';
 import { KeyedLookup } from '@model/generic.model';
 import { Rect2 } from '@model/rect2.model';
-import { NavDomState, createNavDomState, traverseDom, NavDomMeta, createNavDomMetaState, defaultNavOutset } from '@model/nav.model';
+import { NavDomState, createNavDomState, traverseDom, NavDomMeta, createNavDomMetaState, defaultNavOutset, defaultNavigableClass } from '@model/nav.model';
 import { Poly2 } from '@model/poly2.model';
 import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav-worker.model';
 
@@ -87,30 +87,29 @@ export const Thunk = {
 
       const screenBounds = Rect2.from(root.getBoundingClientRect());
       const { x: rx, y: ry } = screenBounds;
-      const worldBounds = screenBounds.clone().translate(-rx, -ry);
-      const leafRects = [] as Rect2[];
-      /** Transformed rects or bordered rects */
-      const polys = [] as Poly2[];
-
-      // Compute rects from descendents of NavDom
+      const worldBounds = screenBounds.clone().delta(-rx, -ry);
+      const [navRects, rects] = [[] as Rect2[], [] as Rect2[]];
+      const [navPolys, polys] = [[] as Poly2[], [] as Poly2[]];
+      
+      // Compute descendents of NavDom
       traverseDom(root, (node: HTMLElement) => {
         if (!node.children.length) {
           /**
-           * Take account of css transform.
-           * Assume transform-origin is default "50% 50%".
+           * Handle css transform (assume default transform-origin).
+           * Handle navigable rects/polys.
+           * Handle borders <== TODO
            */
+          const navigable = node.classList.contains(defaultNavigableClass);
           const style = window.getComputedStyle(node);
           const matrix = new DOMMatrix(style.webkitTransform);
           if (matrix.isIdentity) {
-            const rect = Rect2.from(node.getBoundingClientRect());
-            leafRects.push(rect.translate(-rx, -ry));
+            const rect =  Rect2.from(node.getBoundingClientRect());
+            (navigable ? navRects : rects).push(rect.delta(-rx, -ry));
           } else {
-            const rect = new Rect2(
-              node.offsetLeft, node.offsetTop,
-              node.offsetWidth, node.offsetHeight,
-            ).translate(-rx, -ry);
-            const poly = rect.poly2.transform(matrix, rect.center);
-            polys.push(poly);
+            const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = node;
+            const rect = new Rect2(offsetLeft, offsetTop, offsetWidth, offsetHeight);
+            const poly = rect.delta(-rx, -ry).poly2.transform(matrix, rect.center);
+            (navigable ? navPolys : polys).push(poly);
           }
         }
       });
@@ -121,8 +120,10 @@ export const Thunk = {
           key: 'nav-dom?',
           context: uid,
           bounds: worldBounds.json,
-          rects: leafRects.map(({ json }) => json),
+          rects: rects.map(({ json }) => json),
+          navRects: navRects.map(({ json }) => json),
           polys: polys.map(({ json }) => json),
+          navPolys: navPolys.map(({ json }) => json),
           navOutset: state.navOutset || defaultNavOutset,
         },
         on: {

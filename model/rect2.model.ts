@@ -180,7 +180,7 @@ export class Rect2 {
     return this;
   }
 
-  public translate(dx: number, dy: number) {
+  public delta(dx: number, dy: number) {
     this.x += dx;
     this.y += dy;
     return this;
