@@ -1,5 +1,9 @@
 .demo-1-root {
   display: flex;
+}
+
+.demo-1-content {
+  display: flex;
   flex-direction: column;
   justify-content: space-evenly;
 }

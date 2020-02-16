@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavElemId } from '@model/nav.model';
 import { Act, Thunk } from '@store/nav.duck';
@@ -12,36 +12,26 @@ const NavDom: React.FC<Props> = ({
   width,
   height,
 }) => {
-  const contentId = getNavElemId(uid, 'content');
   const dispatch = useDispatch();
-  const contentDiv = useRef<HTMLDivElement>(null);
-  const svg = useRef<SVGSVGElement>(null);
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
-  const navigable = state
-    ? state.refinedNav || state.navigable
-    : [];
+  const navigable = state ? state.refinedNav || state.navigable : [];
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (dispatch(Thunk.domUidExists({ uid }))) {
       return setFailed(true);
     }
-    module.hot && setFailed(false);
+    module.hot && failed && setFailed(false);
 
     dispatch(Thunk.ensureGlobalSetup({}));
     dispatch(Act.registerNavDom(uid));
     setTimeout(() => dispatch(Thunk.updateNavigable({ uid })));
 
-    // Update on resize
+    // Update on resize or hot reload
     const onResize = () => dispatch(Thunk.updateNavigable({ uid }));
     window.addEventListener('resize', onResize);
-
-    // Update on hot reload
-    const hotHandler = (status: string) => {
-      if (status === 'idle') {
-        dispatch(Act.updateDomMeta(uid, { justHmr: true }));
-      }
-    };
+    const hotHandler = (status: string) => status === 'idle'
+      && dispatch(Act.updateDomMeta(uid, { justHmr: true }));
     module.hot && module.hot.addStatusHandler(hotHandler);
 
     return () => {
@@ -66,7 +56,6 @@ const NavDom: React.FC<Props> = ({
   return (
     <div>
       <svg
-        ref={svg}
         className={css.svgRoot}
         style={{ width, height }}
       >
@@ -84,7 +73,6 @@ const NavDom: React.FC<Props> = ({
         <g>
           {
             navigable.map(({ triangulation }, i) =>
-            // navigable.map(({ customTriangulation: triangulation }, i) =>
               triangulation.map((triangle, j) => (
                 <path
                   key={`${i}-${j}`}
@@ -98,8 +86,7 @@ const NavDom: React.FC<Props> = ({
         </g>
       </svg>
       <div
-        id={contentId}
-        ref={contentDiv}
+        id={getNavElemId(uid, 'content')}
         className={[css.contentRoot, contentClass].join(' ')}
         style={{ ...contentStyle, width, height }}
       >

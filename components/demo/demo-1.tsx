@@ -7,7 +7,7 @@ const dim = (width: number, height: number) =>
 const Demo1: React.FC = () => {
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div className={css.demo1Root}>
       {/* <NavDom 
         uid='demo' width={600} height={200}
         contentStyle={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
@@ -26,7 +26,7 @@ const Demo1: React.FC = () => {
         uid='demo'
         width={'100vw'}
         height={800}
-        contentClass={css.demo1Root}
+        contentClass={css.demo1Content}
       >
         <div className={css.containerTest}>
           <div style={dim(30,30)}/>
@@ -36,7 +36,7 @@ const Demo1: React.FC = () => {
           <div style={dim(30, 60)}/>
           <div style={dim(30, 30)}/>
         </div>
-        {/* <div style={containerTest}>
+        {/* <div className={css.containerTest}>
           <div style={dim(30,30)}/>
           <div style={dim(30, 60)}/>
           <div style={dim(30, 60)}/>
