@@ -1,85 +1,48 @@
 import NavDom from '@components/nav-dom/nav-dom';
 import css from './demo.scss';
+import { Cross, Line, Room, TurnNw, TurnNe, Blank, TurnSw } from './tiles';
+import { Row } from './box';
 
-const dim = (width: number, height: number) =>
-  ({ width, height, background: '#000' });
 
 const Demo1: React.FC = () => {
 
   return (
     <div className={css.demo1Root}>
-      {/* <NavDom 
-        uid='demo' width={600} height={200}
-        contentStyle={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
-      >
-        <div style={containerTest}>
-          <div style={dim(30,30)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 30)}/>
-        </div>
-      </NavDom> */}
-    
       <NavDom 
         uid='demo'
-        width={'100vw'}
+        width={600}
         height={800}
         contentClass={css.demo1Content}
-        navOutset={12}
+        navOutset={8}
       >
-        <div className={css.containerTest}>
-          <div style={dim(30,30)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 30)}/>
-        </div>
-        <div className={css.containerTest}>
-          <div style={dim(30,30)}/>
-          {/* <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/> */}
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 30)}/>
-        </div>
-        <div className={css.containerTest}>
-          <div style={dim(30,30)}/>
-          <div style={dim(30, 60)}/>
-          <div style={{...dim(30, 60), transform: 'translateX(10px)'  }} className="navigable" />
-          <div style={{
-            ...dim(150, 60),
-            width: 'calc(10% + 20px)',
-            transform: 'translateX(0px) rotateZ(45deg) scale(1.5)'
-          }}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 30)}/>
-        </div>
-        <div className={css.containerTest}>
-          <div style={dim(30,30)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 30)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 30)}/>
-          <div style={dim(30, 60)}/>
-        </div>
-        {/* <div className={css.containerTest}>
-          <div style={dim(30,30)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 30)}/>
-        </div> */}
-        <div className={css.containerTest}>
-          <div style={dim(30,30)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 60)}/>
-          <div style={dim(30, 30)}/>
+        <div style={{ margin: 'auto' }}>
+          <Row>
+            <Cross n w />
+            <Line h />
+            <TurnSw />
+          </Row>
+          <Row>
+            <Line v />
+            <Room e />
+            <Cross />
+            <Room w />
+          </Row>
+          <Row>
+            <Cross w />
+            <Line h />
+            <TurnNw />
+          </Row>
+          <Row>
+            <TurnNe />
+            <Line h />
+            <Room w s E />
+            <Room W />
+          </Row>
+          <Row>
+            <Blank/>
+            <Blank/>
+            <Room N/>
+          </Row>
         </div>
       </NavDom>
     </div>

@@ -42,10 +42,6 @@ export type NavDomContract = ParentContract<
     bounds: Rect2Json;
     /** Rectangles in world coords */
     rects: Rect2Json[];
-    navRects: Rect2Json[];
-    /** Polygons in world coords */
-    polys: Poly2Json[];
-    navPolys: Poly2Json[];
   },
   (
     { parentKey: 'nav-dom?'; context: string } & (

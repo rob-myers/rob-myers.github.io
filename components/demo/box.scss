@@ -1,0 +1,17 @@
+$box-dimension: 50px;
+$line-thickness: 4px;
+
+
+.root {
+  position: relative;
+  width: $box-dimension;
+  height: $box-dimension;
+  outline: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.base {
+  width: $line-thickness;
+  height: $line-thickness;
+  background: #000;
+  position: absolute;
+}

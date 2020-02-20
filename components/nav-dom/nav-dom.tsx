@@ -74,7 +74,7 @@ const NavDom: React.FC<Props> = ({
               d={poly.svgPath}
               fill="rgba(100, 100, 100, 0.05)"
               stroke="#ccc"
-              strokeDasharray={3}
+              strokeDasharray={2}
             />
           ))}
         </g>
@@ -86,7 +86,7 @@ const NavDom: React.FC<Props> = ({
                   key={`${i}-${j}`}
                   d={triangle.svgPath}
                   fill="none"
-                  stroke="#777"
+                  stroke="#999"
                   strokeWidth={0.1}
                 />
               ))

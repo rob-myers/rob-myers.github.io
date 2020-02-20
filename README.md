@@ -1,8 +1,6 @@
 ## TODO
 
-- level generation: support solid borders via class, better demo.
 - smoother transition to new triangulation via css
-
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it
 - string-pulling
@@ -44,6 +42,7 @@
 - don't support svg polygon
 - support custom nav outset
 - support holes via class
+- better demo.
 
 # Next JS
 

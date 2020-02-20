@@ -27,8 +27,6 @@ export const observeOpts: MutationObserverInit = {
 
 export const defaultNavOutset = 10;
 
-export const defaultNavigableClass = 'navigable';
-
 export function createNavDomState(uid: string): NavDomState {
   return {
     key: uid,
