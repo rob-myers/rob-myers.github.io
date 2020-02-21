@@ -45,7 +45,7 @@ export default (
         {
           plugins: [
             new WorkerPlugin({
-              // globalObject: 'self'
+              globalObject: 'self'
             }),
           ],
         },

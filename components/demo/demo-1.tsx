@@ -42,6 +42,7 @@ const Demo1: React.FC = () => {
             <Blank/>
             <Blank/>
             <Room N/>
+            {/* <Room N W/> */}
           </Row>
         </div>
       </NavDom>

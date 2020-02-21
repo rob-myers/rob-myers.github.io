@@ -17,12 +17,12 @@ const NavDom: React.FC<Props> = ({
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
   const navigable = state ? state.refinedNav || state.navigable : [];
   const [failed, setFailed] = useState(false);
+  const [updateFade, setUpdateFade] = useState(false);
 
   useEffect(() => {
-    if (dispatch(Thunk.domUidExists({ uid }))) {
+    if (!uid || dispatch(Thunk.domUidExists({ uid }))) {
       return setFailed(true);
     }
-    module.hot && failed && setFailed(false);
 
     dispatch(Thunk.ensureGlobalSetup({}));
     dispatch(Act.registerNavDom(uid));
@@ -37,11 +37,14 @@ const NavDom: React.FC<Props> = ({
     module.hot && module.hot.addStatusHandler(hotHandler);
 
     return () => {
-      dispatch(Act.unregisterNavDom(uid));
-      window.removeEventListener('resize', onResize);
-      module.hot && module.hot.removeStatusHandler(hotHandler);
+      if (!failed) {
+        console.log('UNREGISTER');
+        dispatch(Act.unregisterNavDom(uid));
+        window.removeEventListener('resize', onResize);
+        module.hot && module.hot.removeStatusHandler(hotHandler);
+      }
     };
-  }, [uid]);
+  }, []);
 
   useEffect(() => {
     if (state && navOutset && navOutset !== state.navOutset) {
@@ -52,8 +55,11 @@ const NavDom: React.FC<Props> = ({
   useEffect(() => {
     // Rebuild navigation on 1st render after hot reload
     if (dispatch(Thunk.getDomMeta({ uid })).justHmr) {
+      console.log('HERE');
+      setUpdateFade(true);
       dispatch(Thunk.updateNavigable({ uid }));
       dispatch(Act.updateDomMeta(uid, { justHmr: false }));
+      window.setTimeout(() => setUpdateFade(false), 500);
     }
   });
 
@@ -61,36 +67,44 @@ const NavDom: React.FC<Props> = ({
     return <div>{`Duplicate NavDom uid "${uid}" detected`}</div>;
   }
 
+  console.log({ updateFade });
+
   return (
     <div>
       <svg
         className={css.svgRoot}
         style={{ width, height }}
       >
-        <g>
-          {navigable.map((poly, i) => (
-            <path
-              key={i}
-              d={poly.svgPath}
-              fill="rgba(100, 100, 100, 0.05)"
-              stroke="#ccc"
-              strokeDasharray={2}
-            />
-          ))}
-        </g>
-        <g>
-          {
-            navigable.map(({ triangulation }, i) =>
-              triangulation.map((triangle, j) => (
-                <path
-                  key={`${i}-${j}`}
-                  d={triangle.svgPath}
-                  fill="none"
-                  stroke="#999"
-                  strokeWidth={0.1}
-                />
-              ))
-            )}
+        <g className={[
+          css.svgNavigable,
+          updateFade ? css.pending : css.ready
+        ].join(' ')}>
+          <g>
+            {navigable.map((poly, i) => (
+              <path
+                key={i}
+                d={poly.svgPath}
+                // fill="rgba(100, 100, 100, 0.05)"
+                fill="none"
+                stroke="#ccc"
+                strokeDasharray={2}
+              />
+            ))}
+          </g>
+          <g>
+            {
+              navigable.map(({ triangulation }, i) =>
+                triangulation.map((triangle, j) => (
+                  <path
+                    key={`${i}-${j}`}
+                    d={triangle.svgPath}
+                    fill="none"
+                    stroke="#777"
+                    strokeWidth={0.1}
+                  />
+                ))
+              )}
+          </g>
         </g>
       </svg>
       <div

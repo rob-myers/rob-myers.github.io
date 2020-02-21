@@ -1,6 +1,5 @@
 ## TODO
 
-- smoother transition to new triangulation via css
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it
 - string-pulling
@@ -43,6 +42,8 @@
 - support custom nav outset
 - support holes via class
 - better demo.
+- smoother transition to new triangulation via css
+  - learnt that HMR reloads all non-empty useEffect!
 
 # Next JS
 
