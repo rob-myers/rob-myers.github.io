@@ -1,5 +1,6 @@
 ## TODO
 
+- warn about missing messages from worker after timeout
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it via click spawn-point draw on mousemove
 - 

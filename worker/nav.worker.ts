@@ -16,7 +16,16 @@ ctxt.addEventListener('message', ({ data }) => {
     case 'nav-dom?': {
       setTimeout(() => {
         const navPolys = sendNavOutline(context, data);
-        setTimeout(() => sendRefinedNavMesh(context, navPolys));
+        setTimeout(() => {
+          sendRefinedNavMesh(context, navPolys);
+
+          ctxt.postMessage({
+            key: 'nav-dom:navgraph!',
+            parentKey: 'nav-dom?',
+            context,
+            navGraph: {}, // TODO
+          });
+        });
       });
       break;
     }
@@ -64,4 +73,6 @@ function sendRefinedNavMesh(context: string, navPolys: Poly2[]) {
     context,
     refinedNavPolys: refinedNavPolys.map(({ json }) => json),
   });
+
+  return refinedNavPolys;
 }
