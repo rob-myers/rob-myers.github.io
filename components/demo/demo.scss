@@ -1,16 +1,10 @@
 .demo-1-root {
   display: flex;
+  width: 600px;
+  overflow: scroll;
 }
 
 .demo-1-content {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
+  opacity: 1;
 }
 
-.container-test {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin: 40px 0;
-}

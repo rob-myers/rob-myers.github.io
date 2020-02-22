@@ -9,15 +9,13 @@ const NavDom: React.FC<Props> = ({
   children,
   contentStyle,
   contentClass,
-  width,
-  height,
   navOutset,
 }) => {
   const dispatch = useDispatch();
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
   const navigable = state ? state.refinedNav || state.navigable : [];
   const [failed, setFailed] = useState(false);
-  const [updateFade, setUpdateFade] = useState(false);
+  const [faded, setFaded] = useState(false);
 
   useEffect(() => {
     if (!uid || dispatch(Thunk.domUidExists({ uid }))) {
@@ -36,9 +34,11 @@ const NavDom: React.FC<Props> = ({
       && dispatch(Act.updateDomMeta(uid, { justHmr: true }));
     module.hot && module.hot.addStatusHandler(hotHandler);
 
+    setFaded(true); // Initial fade in
+    window.setTimeout(() => setFaded(false), 500);
+
     return () => {
       if (!failed) {
-        console.log('UNREGISTER');
         dispatch(Act.unregisterNavDom(uid));
         window.removeEventListener('resize', onResize);
         module.hot && module.hot.removeStatusHandler(hotHandler);
@@ -55,11 +55,10 @@ const NavDom: React.FC<Props> = ({
   useEffect(() => {
     // Rebuild navigation on 1st render after hot reload
     if (dispatch(Thunk.getDomMeta({ uid })).justHmr) {
-      console.log('HERE');
-      setUpdateFade(true);
+      setFaded(true);
       dispatch(Thunk.updateNavigable({ uid }));
       dispatch(Act.updateDomMeta(uid, { justHmr: false }));
-      window.setTimeout(() => setUpdateFade(false), 500);
+      window.setTimeout(() => setFaded(false), 500);
     }
   });
 
@@ -67,17 +66,18 @@ const NavDom: React.FC<Props> = ({
     return <div>{`Duplicate NavDom uid "${uid}" detected`}</div>;
   }
 
-  console.log({ updateFade });
-
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <svg
         className={css.svgRoot}
-        style={{ width, height }}
+        style={{
+          width: state ? state.worldBounds.width : 0,
+          height: state ? state.worldBounds.height : 0,
+        }}
       >
         <g className={[
           css.svgNavigable,
-          updateFade ? css.pending : css.ready
+          faded ? css.pending : css.ready
         ].join(' ')}>
           <g>
             {navigable.map((poly, i) => (
@@ -110,7 +110,7 @@ const NavDom: React.FC<Props> = ({
       <div
         id={getNavElemId(uid, 'content')}
         className={[css.contentRoot, contentClass].join(' ')}
-        style={{ ...contentStyle, width, height }}
+        style={{ ...contentStyle }}
       >
         {children}
       </div>
@@ -122,8 +122,6 @@ interface Props {
   uid: string;
   showMesh?: boolean;
   navOutset?: number;
-  width: React.ReactText;
-  height: React.ReactText;
   contentStyle?: React.CSSProperties;
   contentClass?: string;
 }

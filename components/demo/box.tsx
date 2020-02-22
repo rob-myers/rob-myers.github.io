@@ -1,6 +1,6 @@
 import css from './box.scss';
 
-export const dim = 50;
+export const dim = 80;
 /** Wall thickness. */
 const wt = 4;
 /** Wall length */

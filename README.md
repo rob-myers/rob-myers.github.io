@@ -1,11 +1,11 @@
 ## TODO
 
+- can add spawn points; restrict nav to polygons with a spawn point
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
-- illustrate it
+- illustrate it via click spawn-point draw on mousemove
+- 
 - string-pulling
 - actors move along them via css
-
-- spawn points
 - light polygons
 
 - start using mdx for blogs

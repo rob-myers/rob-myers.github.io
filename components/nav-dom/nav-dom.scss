@@ -1,6 +1,5 @@
 .svg-root {
-  position: absolute;
-  z-index: -10;
+  opacity: 1;
 }
 
 .svg-navigable {  
@@ -12,12 +11,13 @@
 
   &.ready {
     opacity: 1;
-    transition: .5s opacity ease;
+    transition: .3s opacity ease;
   }
 }
 
 
 .content-root {
-  margin: 0 auto;
-  overflow: hidden;
+  position: absolute;
+  top:0px;
+  left:0px;
 }

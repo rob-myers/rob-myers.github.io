@@ -10,41 +10,37 @@ const Demo1: React.FC = () => {
     <div className={css.demo1Root}>
       <NavDom 
         uid='demo'
-        width={600}
-        height={800}
         contentClass={css.demo1Content}
         navOutset={8}
       >
-        <div style={{ margin: 'auto' }}>
-          <Row>
-            <Cross n w />
-            <Line h />
-            <TurnSw />
-          </Row>
-          <Row>
-            <Line v />
-            <Room e />
-            <Cross />
-            <Room w />
-          </Row>
-          <Row>
-            <Cross w />
-            <Line h />
-            <TurnNw />
-          </Row>
-          <Row>
-            <TurnNe />
-            <Line h />
-            <Room w s E />
-            <Room W />
-          </Row>
-          <Row>
-            <Blank/>
-            <Blank/>
-            <Room N/>
-            {/* <Room N W/> */}
-          </Row>
-        </div>
+        <Row>
+          <Cross n w />
+          <Line h />
+          <TurnSw />
+        </Row>
+        <Row>
+          <Line v />
+          <Room e />
+          <Cross />
+          <Room w />
+        </Row>
+        <Row>
+          <Cross w />
+          <Line h />
+          <TurnNw />
+        </Row>
+        <Row>
+          <TurnNe />
+          <Line h />
+          <Room w s E />
+          <Room W />
+        </Row>
+        <Row>
+          <Blank/>
+          <Blank/>
+          <Room N/>
+          {/* <Room N W/> */}
+        </Row>
       </NavDom>
     </div>
   );
