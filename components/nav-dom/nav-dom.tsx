@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavElemId } from '@model/nav.model';
 import { Act, Thunk } from '@store/nav.duck';
@@ -14,12 +14,14 @@ const NavDom: React.FC<Props> = ({
   const dispatch = useDispatch();
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
   const navigable = state ? state.refinedNav || state.navigable : [];
-  const [failed, setFailed] = useState(false);
+  const failedRef = useRef(false);
   const [svgFaded, setSvgFaded] = useState(true);
 
   useEffect(() => {
-    if (!uid || dispatch(Thunk.domUidExists({ uid }))) {
-      return setFailed(true);
+    if (dispatch(Thunk.domUidExists({ uid }))) {
+      failedRef.current = true;
+      console.error(`Duplicate NavDom uid "${uid}" detected`);
+      return;
     }
 
     dispatch(Thunk.ensureGlobalSetup({}));
@@ -37,8 +39,8 @@ const NavDom: React.FC<Props> = ({
     const fadeId = window.setTimeout(() => setSvgFaded(false), 500);
 
     return () => {
-      window.clearTimeout(fadeId);
-      if (!failed) {
+      if (!failedRef.current) {
+        window.clearTimeout(fadeId);
         dispatch(Act.unregisterNavDom(uid));
         window.removeEventListener('resize', onResize);
         module.hot && module.hot.removeStatusHandler(hotHandler);
@@ -60,10 +62,6 @@ const NavDom: React.FC<Props> = ({
       window.setTimeout(() => setSvgFaded(false), 500);
     }
   });
-
-  if (failed) {
-    return <div>{`Duplicate NavDom uid "${uid}" detected`}</div>;
-  }
 
   return (
     <div style={{ position: 'relative' }}>

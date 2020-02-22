@@ -53,7 +53,7 @@ export function createNavSpawnState(
     key: uid,
     parentKey: domUid,
     elemId: getNavElemId({ key: 'spawn', uid, domUid }),
-    worldBounds,
+    bounds: worldBounds,
   };
 }
 
@@ -75,11 +75,11 @@ export interface NavDomState {
   refinedNav: Redacted<Poly2>[];
 }
 
-interface NavSpawnState {
+export interface NavSpawnState {
   key: string;
   parentKey: string;
   elemId: string;
-  worldBounds: Rect2;
+  bounds: Rect2;
 }
 
 export interface NavDomMeta {

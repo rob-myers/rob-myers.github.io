@@ -35,13 +35,14 @@ type PingPongContract = ParentContract<
 export type NavDomContract = ParentContract<
   {
     key: 'nav-dom?';
+    /** World bounds */
+    bounds: Rect2Json;
     /** NavDom uid */
     context: string;
     navOutset: number;
-    /** World bounds */
-    bounds: Rect2Json;
     /** Rectangles in world coords */
     rects: Rect2Json[];
+    spawns: Rect2Json[];
   },
   (
     { parentKey: 'nav-dom?'; context: string } & (
@@ -93,6 +94,7 @@ export interface NavWorkerContext extends Worker {
 
 /**
  * Register parent-side of contract.
+ * TODO generic version, independent of nav.
  */
 export async function navWorkerMessages<Contract extends NavWorkerContracts>(
   worker: NavWorker,

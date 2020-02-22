@@ -1,6 +1,5 @@
 ## TODO
 
-- restrict nav to polygons with a spawn point
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it via click spawn-point draw on mousemove
 - 
@@ -43,9 +42,12 @@
 - support holes via class
 - better demo.
 - smoother transition to new triangulation via css
-  - learnt that HMR reloads all non-empty useEffect!
+  - learnt that HMR reloads __all non-empty useEffect!__
 - NavDom no longer has width/height props; svg dimension set via worldBounds
 - can add spawn points
+- restrict nav to polygons with a spawn point
+- fix useEffect(..., []) misunderstanding i.e. can only access initial useState values.
+- 
 
 # Next JS
 

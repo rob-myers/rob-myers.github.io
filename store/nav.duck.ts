@@ -84,9 +84,10 @@ export const Thunk = {
   ),
   tryRegisterSpawn: createThunk(
     '[NavSpawn] try register',
-    ({ state: { nav: { dom } }, dispatch }, { uid, el }: { uid: string; el: Element }): {
-      navDomUid: string | null;
-    } => {
+    (
+      { state: { nav: { dom } }, dispatch },
+      { uid, el }: { uid: string; el: Element },
+    ): { navDomUid: string | null } => {
       const ancestorIds = getDomAncestors(el).map(({ id }) => id);
       const parentNavDom = Object.values(dom || {}).find(({ elemId }) =>
         ancestorIds.includes(elemId));
@@ -95,6 +96,7 @@ export const Thunk = {
         const { key: navDomUid, screenBounds: { x, y } } = parentNavDom;
         const worldBounds = Rect2.from(el.getBoundingClientRect()).delta(-x, -y);
         dispatch(Act.registerNavSpawn(uid, parentNavDom.key, worldBounds));
+        dispatch(Thunk.updateNavigable({ uid: navDomUid }));
         return { navDomUid };
       }
       console.error(`Failed to register NavSpawn "${uid}"`);
@@ -117,8 +119,7 @@ export const Thunk = {
       dispatch(Act.updateDomMeta(uid, { updating: true }));
 
       const screenBounds = Rect2.from(root.getBoundingClientRect());
-      const rx = screenBounds.x;
-      const ry = screenBounds.y;
+      const { x: rx, y: ry } = screenBounds;
       const worldBounds = screenBounds.clone().delta(-rx, -ry);
       const rects = [] as Rect2[];
 
@@ -135,10 +136,11 @@ export const Thunk = {
       await navWorkerMessages<NavDomContract>(worker, {
         message: {
           key: 'nav-dom?',
-          context: uid,
           bounds: worldBounds.json,
-          rects: rects.map(({ json }) => json),
+          context: uid,
           navOutset: state.navOutset || defaultNavOutset,
+          rects: rects.map(({ json }) => json),
+          spawns: state.spawns.map(({ bounds: { json } }) => json),
         },
         on: {
           'nav-dom:outline!': { do: ({ navPolys }) => {
