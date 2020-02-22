@@ -17,9 +17,11 @@ import {
   NavDomMeta,
   createNavDomMetaState,
   defaultNavOutset,
+  createNavSpawnState,
 } from '@model/nav.model';
 import { Poly2 } from '@model/poly2.model';
 import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav-worker.model';
+import { getDomAncestors } from '@model/dom.model';
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
@@ -40,6 +42,10 @@ export const Act = {
     createAct('[Nav] setup', { webWorker }),
   registerNavDom: (uid: string) =>
     createAct('[NavDom] register', { uid }),
+  registerNavSpawn: (uid: string, domUid: string, worldBounds: Rect2) =>
+    createAct('[NavSpawn] register', { uid, domUid, worldBounds }),
+  unregisterNavSpawn: (uid: string, domUid: string) =>
+    createAct('[NavSpawn] unregister', { uid, domUid }),
   unregisterNavDom: (uid: string) =>
     createAct('[NavDom] unregister', { uid }),
   updateDomMeta: (uid: string, updates: Partial<NavDomMeta>) =>
@@ -63,21 +69,37 @@ export const Thunk = {
     '[Nav] ensure setup',
     ({ dispatch, state: { nav } }) => {
       if (!nav.ready && typeof Worker !== 'undefined') {
-        const worker: NavWorker = new Worker(
-          '@worker/nav.worker.ts',
-          { type: 'module' },
-        );
+        const worker: NavWorker = new Worker('@worker/nav.worker.ts', { type: 'module' });
         dispatch(Act.setupNav(redact(worker)));
-        // testing
+
+        // TESTING
         worker.postMessage({ key: 'ping?', context: 'nav-setup' });
-        worker.addEventListener('message', ({ data }) =>
-          console.log({ navWorkerSent: data }));
+        worker.addEventListener('message', ({ data }) => console.log({ navWorkerSent: data }));
       }
     },
   ),
   getDomMeta: createThunk(
     '[NavDom] get meta',
     ({ state: { nav: { domMeta } } }, { uid }: { uid: string }) => domMeta[uid] || {}
+  ),
+  tryRegisterSpawn: createThunk(
+    '[NavSpawn] try register',
+    ({ state: { nav: { dom } }, dispatch }, { uid, el }: { uid: string; el: Element }): {
+      navDomUid: string | null;
+    } => {
+      const ancestorIds = getDomAncestors(el).map(({ id }) => id);
+      const parentNavDom = Object.values(dom || {}).find(({ elemId }) =>
+        ancestorIds.includes(elemId));
+
+      if (parentNavDom) {
+        const { key: navDomUid, screenBounds: { x, y } } = parentNavDom;
+        const worldBounds = Rect2.from(el.getBoundingClientRect()).delta(-x, -y);
+        dispatch(Act.registerNavSpawn(uid, parentNavDom.key, worldBounds));
+        return { navDomUid };
+      }
+      console.error(`Failed to register NavSpawn "${uid}"`);
+      return { navDomUid: null };
+    },
   ),
   updateNavigable: createThunk(
     '[NavDom] update navigable',
@@ -89,16 +111,20 @@ export const Thunk = {
       const root = document.getElementById(state.elemId);
       if (!root) return;
 
-      if (meta.updating) return; // Currently ignore requests while updating.
+      if (meta.updating) {// Defer updates whilst updating
+        return dispatch(Act.updateDomMeta(uid, { pendingUpdate: true }));
+      }
       dispatch(Act.updateDomMeta(uid, { updating: true }));
 
       const screenBounds = Rect2.from(root.getBoundingClientRect());
-      const { x: rx, y: ry } = screenBounds;
+      const rx = screenBounds.x;
+      const ry = screenBounds.y;
       const worldBounds = screenBounds.clone().delta(-rx, -ry);
       const rects = [] as Rect2[];
-      
-      // Compute leaf rects
-      traverseDom(root, (node) => {
+
+      dispatch(Act.updateNavDom(uid, { screenBounds, worldBounds }));
+
+      traverseDom(root, (node) => { // Compute leaf rects
         if (!node.children.length && !node.classList.contains('navigable')) {
           const rect =  Rect2.from(node.getBoundingClientRect());
           rects.push(rect.delta(-rx, -ry));
@@ -126,8 +152,10 @@ export const Thunk = {
         },
       });
 
-      dispatch(Act.updateNavDom(uid, { worldBounds: redact(worldBounds) }));
-      dispatch(Act.updateDomMeta(uid, { updating: false }));
+      if (dispatch(Thunk.getDomMeta({ uid })).pendingUpdate) {
+        setTimeout(() => dispatch(Thunk.updateNavigable({ uid })));
+      }
+      dispatch(Act.updateDomMeta(uid, { updating: false, pendingUpdate: false }));
     },
   ),
 };
@@ -143,6 +171,16 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[NavDom] register': return { ...state,
       dom: addToLookup(createNavDomState(act.uid), state.dom),
       domMeta: addToLookup(createNavDomMetaState(act.uid), state.domMeta),
+    };
+    case '[NavSpawn] register': return { ...state,
+      dom: updateLookup(act.domUid, state.dom, ({ spawns }) => ({
+        spawns: spawns.concat(createNavSpawnState(act.uid, act.domUid, act.worldBounds)),
+      })),
+    };
+    case '[NavSpawn] unregister': return { ...state,
+      dom: updateLookup(act.domUid, state.dom, ({ spawns }) => ({
+        spawns: spawns.filter(({ key }) => key !== act.uid),
+      })),
     };
     case '[NavDom] unregister': return { ...state,
       dom: removeFromLookup(act.uid, state.dom),

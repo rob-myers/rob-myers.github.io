@@ -1,13 +1,14 @@
 import NavDom from '@components/nav-dom/nav-dom';
-import css from './demo.scss';
-import { Cross, Line, Room, TurnNw, TurnNe, Blank, TurnSw } from './tiles';
+import { Cross, Line, Room, TurnNw, TurnNe, Blank, TurnSw, Offset } from './tiles';
 import { Row } from './box';
+import css from './demo.scss';
+import NavSpawn from '@components/nav-dom/nav-spawn';
 
 
 const Demo1: React.FC = () => {
 
   return (
-    <div className={css.demo1Root}>
+    <div className={css.demo1Root} >
       <NavDom 
         uid='demo'
         contentClass={css.demo1Content}
@@ -20,7 +21,14 @@ const Demo1: React.FC = () => {
         </Row>
         <Row>
           <Line v />
-          <Room e />
+          <Room e>
+            <Offset left={20} top={20}>
+              <NavSpawn uid={'first'} />
+            </Offset>
+            <Offset right={20} bottom={20}>
+              <NavSpawn uid={'second'} />
+            </Offset>
+          </Room>
           <Cross />
           <Room w />
         </Row>
@@ -39,7 +47,7 @@ const Demo1: React.FC = () => {
           <Blank/>
           <Blank/>
           <Room N/>
-          {/* <Room N W/> */}
+          <Room N W/>
         </Row>
       </NavDom>
     </div>

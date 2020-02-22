@@ -15,9 +15,15 @@
   }
 }
 
-
 .content-root {
   position: absolute;
   top:0px;
   left:0px;
+}
+
+.nav-spawn {
+  width: 10px;
+  height: 10px;
+  background: #f00;
+  border-radius: 5px;
 }

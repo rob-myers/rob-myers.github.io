@@ -1,4 +1,5 @@
 import { Box, Row, Col, dim } from './box';
+import css from './box.scss';
 
 export const Cross: React.FC<{
   n?: boolean;
@@ -50,8 +51,16 @@ export const Room: React.FC<{
   e?: boolean; E?: boolean;
   s?: boolean; S?: boolean;
   w?: boolean; W?: boolean;
-}> = ({ n, N, e, E, s, S, w, W }) => (
-  <Col height={3 * dim}>
+}> = ({
+  n, N, e, E, s, S, w, W,
+  children,
+}) => (
+  <Col height={3 * dim} position="relative">
+    {children && (
+      <div className={css.children}>
+        {children}
+      </div>
+    )}
     <Row>
       <Box n={!N} w={!W} />
       {n ? <Box ne nw /> : <Box n={!N} />}
@@ -133,4 +142,16 @@ export const TurnSw: React.FC<{
       <Box e w s={s} />
     </Row>
   </Col>
+);
+
+export const Offset: React.FC<Pick<
+  React.CSSProperties,
+  'left' | 'right' | 'top' | 'bottom'
+>> = ({ left, right, top, bottom, children }) => (
+  <div
+    className="navigable"
+    style={{ position: 'absolute', left, right, top, bottom }}
+  >
+    {children}
+  </div>
 );

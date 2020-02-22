@@ -1,7 +1,6 @@
 .demo-1-root {
-  display: flex;
-  width: 600px;
-  overflow: scroll;
+  // Override ancestral centering
+  align-self: flex-start;
 }
 
 .demo-1-content {

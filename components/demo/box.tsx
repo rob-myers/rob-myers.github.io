@@ -15,16 +15,16 @@ export const Box: React.FC<Props> = (props) => {
 
   return (
     <div className={`navigable ${css.root}`}>
-      {(N || W || props.nw) && <div className={css.base} />}
-      {N && <div className={css.base} style={{ left: wt, width: wl }} />}
-      {(N || E || props.ne) && <div className={css.base} style={{ right: 0 }} />}
+      {(N || W || props.nw) && <div className={css.tileBase} />}
+      {N && <div className={css.tileBase} style={{ left: wt, width: wl }} />}
+      {(N || E || props.ne) && <div className={css.tileBase} style={{ right: 0 }} />}
 
-      {W && <div className={css.base} style={{ top: wt, height: wl }} />}
-      {E && <div className={css.base} style={{ top: wt, right: 0, height: wl }} />}
+      {W && <div className={css.tileBase} style={{ top: wt, height: wl }} />}
+      {E && <div className={css.tileBase} style={{ top: wt, right: 0, height: wl }} />}
 
-      {(S || W || props.sw) && <div className={css.base} style={{ bottom: 0 }} />}
-      {S && <div className={css.base} style={{ bottom: 0, left: wt, width: wl }} />}
-      {(S || E || props.se) && <div className={css.base} style={{ bottom: 0, right: 0 }} />}
+      {(S || W || props.sw) && <div className={css.tileBase} style={{ bottom: 0 }} />}
+      {S && <div className={css.tileBase} style={{ bottom: 0, left: wt, width: wl }} />}
+      {(S || E || props.se) && <div className={css.tileBase} style={{ bottom: 0, right: 0 }} />}
     </div>
   );
 };
@@ -44,22 +44,24 @@ interface Props {
 export const Row: React.FC<
   Pick<React.CSSProperties, 'width' | 'justifyContent'>
 > = ({ children, width, justifyContent }) => (
-  <div className="navigable" style={{ display: 'flex', width, justifyContent }}>
+  <div
+    className={`navigable ${css.row}`}
+    style={{ width, justifyContent }}
+  >
     {children}
   </div>
 );
 
 export const Col: React.FC<
-  Pick<React.CSSProperties, 'height' | 'justifyContent'>
-> = ({ children, height, justifyContent }) =>
+  Pick<React.CSSProperties, (
+    | 'height'
+    | 'justifyContent'
+    | 'position'
+  )>
+> = ({ children, height, justifyContent, position }) =>
   <div
-    className="navigable"
-    style={{
-      display: 'flex',
-      flexDirection: 'column',
-      height,
-      justifyContent,
-    }}
+    className={`navigable ${css.column}`}
+    style={{ height, justifyContent, position }}
   >
     {children}
-  </div>;
+  </div>;  

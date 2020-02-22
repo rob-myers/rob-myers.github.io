@@ -15,7 +15,7 @@ const NavDom: React.FC<Props> = ({
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
   const navigable = state ? state.refinedNav || state.navigable : [];
   const [failed, setFailed] = useState(false);
-  const [faded, setFaded] = useState(false);
+  const [svgFaded, setSvgFaded] = useState(true);
 
   useEffect(() => {
     if (!uid || dispatch(Thunk.domUidExists({ uid }))) {
@@ -33,11 +33,11 @@ const NavDom: React.FC<Props> = ({
     const hotHandler = (status: string) => status === 'idle'
       && dispatch(Act.updateDomMeta(uid, { justHmr: true }));
     module.hot && module.hot.addStatusHandler(hotHandler);
-
-    setFaded(true); // Initial fade in
-    window.setTimeout(() => setFaded(false), 500);
+    // Initial fade-in
+    const fadeId = window.setTimeout(() => setSvgFaded(false), 500);
 
     return () => {
+      window.clearTimeout(fadeId);
       if (!failed) {
         dispatch(Act.unregisterNavDom(uid));
         window.removeEventListener('resize', onResize);
@@ -52,13 +52,12 @@ const NavDom: React.FC<Props> = ({
     }
   }, [navOutset]);
 
-  useEffect(() => {
-    // Rebuild navigation on 1st render after hot reload
+  useEffect(() => {// Rebuild nav on 1st render after hot reload
     if (dispatch(Thunk.getDomMeta({ uid })).justHmr) {
-      setFaded(true);
       dispatch(Thunk.updateNavigable({ uid }));
       dispatch(Act.updateDomMeta(uid, { justHmr: false }));
-      window.setTimeout(() => setFaded(false), 500);
+      setSvgFaded(true);
+      window.setTimeout(() => setSvgFaded(false), 500);
     }
   });
 
@@ -77,14 +76,13 @@ const NavDom: React.FC<Props> = ({
       >
         <g className={[
           css.svgNavigable,
-          faded ? css.pending : css.ready
+          svgFaded ? css.pending : css.ready
         ].join(' ')}>
           <g>
             {navigable.map((poly, i) => (
               <path
                 key={i}
                 d={poly.svgPath}
-                // fill="rgba(100, 100, 100, 0.05)"
                 fill="none"
                 stroke="#ccc"
                 strokeDasharray={2}
@@ -108,7 +106,7 @@ const NavDom: React.FC<Props> = ({
         </g>
       </svg>
       <div
-        id={getNavElemId(uid, 'content')}
+        id={getNavElemId({ key: 'content', domUid: uid })}
         className={[css.contentRoot, contentClass].join(' ')}
         style={{ ...contentStyle }}
       >
