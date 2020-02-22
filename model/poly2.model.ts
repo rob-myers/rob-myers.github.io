@@ -161,6 +161,16 @@ export class Poly2 {
     return { outer, inner };
   }
 
+  public get triangleIds(): [number, number, number][] {
+    if (this._triangulationIds.length) {
+      return this._triangulationIds;
+    } else if (this.options.autoTriangulate) {
+      this.triangulate(this.options.triangulationType);
+      return this._triangulationIds;
+    }
+    return [];
+  }
+
   /**
    * Get the triangulation. If it doesn't exist and
    * {autoTriangulate} option is true, we compute and return.

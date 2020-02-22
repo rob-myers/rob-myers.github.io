@@ -1,12 +1,13 @@
 ## TODO
 
-- warn about missing messages from worker after timeout
+- verify navgraph is working
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it via click spawn-point draw on mousemove
 - 
 - string-pulling
 - actors move along them via css
 - light polygons
+- warn about missing messages from worker after timeout
 
 - start using mdx for blogs
 - integrate gitalk from older branch
@@ -48,7 +49,7 @@
 - can add spawn points
 - restrict nav to polygons with a spawn point
 - fix useEffect(..., []) misunderstanding i.e. can only access initial useState values.
-- 
+- create navgraph from navpolys
 
 # Next JS
 

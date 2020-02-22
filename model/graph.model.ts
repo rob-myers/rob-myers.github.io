@@ -8,21 +8,17 @@ import { flatten, removeFirst } from './generic.model';
 export interface BaseNodeOpts {
   /** uid for node */
   id: string;
-  /** constructor uid; usually refined to a string literal type. */
-  key: string;
+  /** Optional extra data for debugging */
   context?: any;
 }
 
-export class BaseNode {
-  /** Always required, even if only one node class. */
-  public key: string;
+export class BaseNode<NodeOpts extends BaseNodeOpts = BaseNodeOpts> {
   /** Identifies the node. */
   public id: string;
   /** Original options used to construct node, so can clone. */
-  public origOpts: BaseNodeOpts;
+  public origOpts: NodeOpts;
 
-  constructor(opts: BaseNodeOpts) {
-    this.key = opts.key;
+  constructor(opts: NodeOpts) {
     this.id = opts.id;
     this.origOpts = opts;
   }
@@ -32,31 +28,28 @@ export class BaseNode {
 
 //#region edges
 
-/**
- * Expect a graph class to have exactly one edge class,
- * with exactly one repective options.
- */
 export interface BaseEdgeOpts<Node extends BaseNode> {
-  src: Node;
-  dst: Node;
+  src: Node | string;
+  dst: Node | string;
 }
 
-/** Serializable edge */
-export interface BaseEdgeJson {
-  src: string;
-  dst: string;
-}
-
-export class BaseEdge<Node extends BaseNode = BaseNode> {
+export class BaseEdge<
+  Node extends BaseNode = BaseNode,
+  EdgeOpts extends BaseEdgeOpts<Node> = BaseEdgeOpts<Node>
+> {
   /** `${src_id}->${dst_id}` */
   public id: string;
   public src: Node;
   public dst: Node;
+  public otherOpts: Omit<EdgeOpts, 'src' | 'dst'>;
 
-  constructor(opts: BaseEdgeOpts<Node>) {
-    this.src = opts.src;
-    this.dst = opts.dst;
+  constructor(opts: EdgeOpts) {
+    // Assume not strings
+    this.src = opts.src as Node;
+    this.dst = opts.dst as Node;
     this.id = `${this.src.id}->${this.dst.id}`;
+    const { src: _, dst: __, ...otherOpts } = opts;
+    this.otherOpts = otherOpts;
   }
 }
 
@@ -70,10 +63,6 @@ export interface IGraph<
   Edge extends BaseEdge<Node>,
   EdgeOpts extends BaseEdgeOpts<Node>
 > {
-  ensureNode<T extends Node = Node>(opts: NodeOpts): {
-    isNew: boolean;
-    node: T;
-  };
   connect(opts: EdgeOpts): { isNew: boolean; edge: Edge | null };
   disconnect(src: Node, dst: Node): boolean;
   removeNode(node: Node): boolean;
@@ -97,11 +86,6 @@ export abstract class BaseGraph<
   EdgeOpts extends BaseEdgeOpts<Node> = BaseEdgeOpts<Node>
 >
 implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
-  /**
-   * Node groups by key. Instantiable subclasses should refine this,
-   * e.g. `keyToNodes: { basic: BasicD3Node, rich: RichD3Node  }`
-   */
-  public keyToNodes: { [nodeClassKey: string]: Node[] };
   /** Set of nodes. */
   public nodes: Set<Node>;
   /**
@@ -124,18 +108,6 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
   public idToEdge: Map<string, Edge>;
 
   constructor(
-    options: {},
-    public toNodeClass: {
-      /** Can construct dynamically. */
-      [nodeClassKey: string]: { new(opts: NodeOpts): Node }; 
-      /** Must define fallback. */
-      default: { new(opts: NodeOpts): Node };
-    },
-    /**
-     * Technically, arg type should be BaseEdgeOpts<Node>.
-     * as EdgeClass constructor cannot handle ids.
-     * So in `this.connect` below, we replace ids by nodes.
-     */
     public EdgeClass: { new(opts: EdgeOpts): Edge },
   ) {
     this.nodes = new Set<Node>();
@@ -145,10 +117,6 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
     this.edgesArray = [];
     this.idToNode = new Map<string, Node>();
     this.idToEdge = new Map<string, Edge>();
-    // keyToNodes has same keys as toNodeClass
-    this.keyToNodes = {};
-    Object.keys(toNodeClass).map((key) =>
-      this.keyToNodes[key] = []);
   }
 
   /**
@@ -185,8 +153,6 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
   }
 
   public reset(): void {
-    Object.keys(this.keyToNodes)
-      .map((key) => this.keyToNodes[key] = []);
     this.nodes.clear();
     this.succ.clear();
     this.pred.clear();
@@ -194,30 +160,6 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
     this.edgesArray = [];
     this.idToNode.clear();
     this.idToEdge.clear();
-  }
-
-  /**
-   * Create node if one with given id doesn't exist,
-   * otherwise return pre-existing. Not to be overridden.
-   */
-  public ensureNode<T extends Node = Node>(opts: NodeOpts): {
-    isNew: boolean;
-    node: T;
-    // node: ToNodeType[typeof opts.key],
-  } {
-    // log(`Looking for node using opts:`, opts);
-    let node = this.idToNode.get(opts.id);
-    if (node) {
-      return {
-        isNew: false,
-        node: node as T,
-      };
-    }
-    // create new node
-    node = new this.toNodeClass[opts.key](opts);
-    // log(`Registering node:`, node);
-    this.registerNode(node);
-    return { isNew: true, node: node as T };
   }
 
   public removeNode(node: Node): boolean {
@@ -234,7 +176,6 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
 
       this.succ.delete(node);
       this.pred.delete(node);
-      removeFirst(this.keyToNodes[node.key], node as any);
       return true;
     }
     return false;
@@ -409,77 +350,6 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
   }
 
   /**
-   * _TODO_ clarify
-   */
-  public static parseJson(
-    input: any,
-    graph: BaseGraph,
-    _parent: BaseNode | null,
-    path: string,
-  ): BaseNode {
-    if (input === undefined) {
-      throw Error('Unexpected undefined input.');
-    }
-    if (Array.isArray(input)) {
-      const { node } = graph.ensureNode<BaseNode>({
-        key: 'default',
-        id: path, // use path for id
-        context: { input, path }, 
-      });
-      for (const [index, value] of input.entries()) {
-        const child = BaseGraph.parseJson(
-          value, graph, node, joinPaths(path, index));
-        graph.connect({ src: node, dst: child });
-      }
-      return node;
-    }
-    if (typeof input === 'boolean') {
-      return graph.ensureNode({
-        key: 'default',
-        id: path, // use path for id
-        context: { input, path },
-      }).node;
-    }
-    if (input === null) {
-      return graph.ensureNode({
-        key: 'default',
-        id: path, // use path for id
-        context: { input, path },
-      }).node;
-    }
-    if (typeof input === 'number') {
-      return graph.ensureNode({
-        key: 'default',
-        id: path, // use path for id
-        context: { input, path },
-      }).node;
-    }
-    if (typeof input === 'object') {
-      // because _not_ an Array, nor null
-      const { node } = graph.ensureNode<BaseNode>({
-        key: 'default',
-        id: path, // use path for id
-        context: { input, path },
-      });
-      for (const key of Object.keys(input)) {
-        const child = BaseGraph.parseJson(
-          input[key], graph, node, joinPaths(path, key));
-        graph.connect({ src: node, dst: child });
-      }
-      return node;
-    }
-    if (typeof input === 'string') {
-      return graph.ensureNode({
-        key: 'default',
-        id: path, // use path for id
-        // id: input,
-        context: { input, path },
-      }).node;
-    }
-    throw Error(`Input '${input}' has unexpected type.`);
-  }
-
-  /**
    * Register a (presumed new) node with the graph.
    */
   protected registerNode(node: Node) {
@@ -488,7 +358,6 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
     this.succ.set(node, new Map<Node, Edge>());
     this.pred.set(node, new Map<Node, Edge>());
     this.idToNode.set(node.id, node);
-    this.keyToNodes[node.key].push(node as any);
   }
 
   /**
@@ -510,17 +379,3 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
   }
 }
 //#endregion
-
-/**
- * Join two string | number paths with a `.`, handling empty-paths.
- */
-function joinPaths(
-  path0: string | number,
-  path1: string | number
-): string {
-  path0 = String(path0);
-  path1 = String(path1);
-  return path0
-    ? (path1 ? `${path0}.${path1}` : path0)
-    : path1;
-}

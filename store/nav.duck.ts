@@ -22,6 +22,7 @@ import {
 import { Poly2 } from '@model/poly2.model';
 import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav-worker.model';
 import { getDomAncestors } from '@model/dom.model';
+import { NavGraph } from '@model/nav-graph.model';
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
@@ -132,7 +133,10 @@ export const Thunk = {
         }
       });
 
-      // In web worker, compute navigable poly and a refinement
+      /**
+       * In web worker compute nav poly/refinement/graph.
+       * All messages must be received before continuing.
+       */
       await navWorkerMessages<NavDomContract>(worker, {
         message: {
           key: 'nav-dom?',
@@ -151,8 +155,9 @@ export const Thunk = {
             const refinedNav = navPolys.map(p => redact(Poly2.fromJson(p)));
             dispatch(Act.updateNavDom(uid, { refinedNav }));
           }},
-          'nav-dom:navgraph!': { do: () => {
-            // TODO
+          'nav-dom:nav-graph!': { do: ({ navGraph: json}) => {
+            const navGraph = redact(NavGraph.fromJson(json));
+            dispatch(Act.updateNavDom(uid, { navGraph }));
           }},
         },
       });

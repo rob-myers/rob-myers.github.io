@@ -1,6 +1,7 @@
 import { Rect2 } from '@model/rect2.model';
-import { Redacted } from '@store/redux.model';
+import { Redacted, redact } from '@store/redux.model';
 import { Poly2 } from '@model/poly2.model';
+import { NavGraph } from './nav-graph.model';
 
 export function getNavElemId(data: (
   | { key: 'content'; domUid: string }
@@ -41,6 +42,7 @@ export function createNavDomState(uid: string): NavDomState {
     worldBounds: Rect2.from(),
     navigable: [],
     refinedNav: [],
+    navGraph: redact(NavGraph.from([])),
   };
 }
 
@@ -73,6 +75,7 @@ export interface NavDomState {
   navigable: Redacted<Poly2>[];
   /** Refined multipolygon for pathfinding. */
   refinedNav: Redacted<Poly2>[];
+  navGraph: Redacted<NavGraph>;
 }
 
 export interface NavSpawnState {

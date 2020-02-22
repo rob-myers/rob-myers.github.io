@@ -10,7 +10,7 @@ type NavFromWorkerKey = (
   | 'pong!'
   | 'nav-dom:outline!'
   | 'nav-dom:refined!'
-  | 'nav-dom:navgraph!'
+  | 'nav-dom:nav-graph!'
 )
 
 type GetKeyedCallbacks<T extends { key: string }> = T extends any
@@ -56,7 +56,7 @@ export type NavDomContract = ParentContract<
         /** Refined navigable multipolygon with Steiner points */
         refinedNavPolys: Poly2Json[];
       } | {
-        key: 'nav-dom:navgraph!';
+        key: 'nav-dom:nav-graph!';
         /** Refined navigable multipolygon with Steiner points */
         navGraph: any; // TODO
       }
