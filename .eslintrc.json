@@ -42,7 +42,8 @@
       "react/prop-types": ["off"],
       "no-dupe-class-members": "off",
       "@typescript-eslint/ban-ts-ignore": "off",
-      "@typescript-eslint/no-use-before-define": ["error", { "functions": false }]
+      "@typescript-eslint/no-use-before-define": ["error", { "functions": false }],
+      "@typescript-eslint/interface-name-prefix": "off"
     },
     "overrides": [
       {

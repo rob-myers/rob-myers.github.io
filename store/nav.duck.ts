@@ -151,6 +151,9 @@ export const Thunk = {
             const refinedNav = navPolys.map(p => redact(Poly2.fromJson(p)));
             dispatch(Act.updateNavDom(uid, { refinedNav }));
           }},
+          'nav-dom:navgraph!': { do: () => {
+            // TODO
+          }},
         },
       });
 

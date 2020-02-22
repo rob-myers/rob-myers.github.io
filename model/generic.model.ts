@@ -23,3 +23,15 @@ export type Triple<T> = [T, T, T];
 export type KeyedUnionToLookup<T extends { key: string }> = {
   [K in T['key']]: Omit<Extract<T, { key: K }>, 'key'>
 }
+
+/**
+ * Remove the _first_ occurrence of `elem` from _`array`_,
+ * mutating the latter if the former exists.
+ */
+export function removeFirst<T>(array: T[], elem: T): T[] {
+  const firstIndex = array.indexOf(elem);
+  if (firstIndex !== -1) {
+    array.splice(firstIndex, 1);
+  }
+  return array;
+}
