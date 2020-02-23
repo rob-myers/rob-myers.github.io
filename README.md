@@ -1,6 +1,6 @@
 ## TODO
 
-- verify navgraph is working
+- verify navgraph is working by drawing it
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it via click spawn-point draw on mousemove
 - 
