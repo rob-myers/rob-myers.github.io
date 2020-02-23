@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavElemId } from '@model/nav.model';
 import { Act, Thunk } from '@store/nav.duck';
@@ -11,14 +11,13 @@ const NavDom: React.FC<Props> = ({
   contentStyle,
   contentClass,
   navOutset,
+  debug,
 }) => {
-
   const dispatch = useDispatch();
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
   const failedRef = useRef(false);
-  const [svgFaded, setSvgFaded] = useState(true);
 
-  useEffect(() => {
+  useEffect(() => {// NOTE editing this hook remounts it
     if (dispatch(Thunk.domUidExists({ uid }))) {
       failedRef.current = true;
       console.error(`Duplicate NavDom uid "${uid}" detected`);
@@ -27,46 +26,43 @@ const NavDom: React.FC<Props> = ({
 
     dispatch(Thunk.ensureGlobalSetup({}));
     dispatch(Act.registerNavDom(uid));
-    dispatch(Act.updateNavDom(uid, { navOutset }));
-    setTimeout(() => dispatch(Thunk.updateNavigable({ uid })));
+    // setTimeout handles unexplained initial remount
+    const updateId = window.setTimeout(() => dispatch(Thunk.updateNavigable({ uid })));
 
-    // Update on resize or hot reload
-    const onResize = () => dispatch(Thunk.updateNavigable({ uid }));
-    window.addEventListener('resize', onResize);
+    // detect hot reloading
     const hotHandler = (status: string) => status === 'idle'
       && dispatch(Act.updateDomMeta(uid, { justHmr: true }));
     module.hot && module.hot.addStatusHandler(hotHandler);
-    // Initial fade-in
-    const fadeId = window.setTimeout(() => setSvgFaded(false), 500);
 
     return () => {
+      window.clearTimeout(updateId);
       if (!failedRef.current) {
-        window.clearTimeout(fadeId);
         dispatch(Act.unregisterNavDom(uid));
-        window.removeEventListener('resize', onResize);
         module.hot && module.hot.removeStatusHandler(hotHandler);
       }
     };
   }, []);
 
   useEffect(() => {
-    if (state && navOutset && navOutset !== state.navOutset) {
-      dispatch(Act.updateNavDom(uid, { navOutset }));
-    }
+    state && dispatch(Act.updateNavDom(uid, { navOutset }));
   }, [navOutset]);
 
+  useEffect(() => {
+    state && dispatch(Act.updateDomMeta(uid, { debug }));
+  }, [debug]);
+
   useEffect(() => {// Rebuild nav on 1st render after hot reload
-    if (dispatch(Thunk.getDomMeta({ uid })).justHmr) {
+    console.log('render');
+    if (module.hot && dispatch(Thunk.getDomMeta({ uid })).justHmr) {
+      console.log('update nav');
       dispatch(Thunk.updateNavigable({ uid }));
       dispatch(Act.updateDomMeta(uid, { justHmr: false }));
-      setSvgFaded(true);
-      window.setTimeout(() => setSvgFaded(false), 500);
     }
   });
 
   return (
     <div className={css.root}>
-      <NavDomBackground uid={uid} faded={svgFaded} />
+      <NavDomBackground uid={uid} />
       <div
         id={getNavElemId({ key: 'content', domUid: uid })}
         className={[css.contentRoot, contentClass].join(' ')}
@@ -84,6 +80,7 @@ interface Props {
   navOutset?: number;
   contentStyle?: React.CSSProperties;
   contentClass?: string;
+  debug?: boolean;
 }
 
 export default NavDom;

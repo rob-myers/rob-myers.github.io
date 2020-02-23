@@ -12,12 +12,12 @@ export interface BaseNodeOpts {
 export class BaseNode<NodeOpts extends BaseNodeOpts = BaseNodeOpts> {
   /** Identifies the node. */
   public id: string;
-  /** Original options used to construct node, so can clone. */
-  public origOpts: NodeOpts;
 
-  constructor(opts: NodeOpts) {
+  constructor(
+    /** Original options used to construct node, so can clone. */
+    public opts: NodeOpts
+  ) {
     this.id = opts.id;
-    this.origOpts = opts;
   }
 }
 

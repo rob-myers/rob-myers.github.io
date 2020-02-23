@@ -1,6 +1,7 @@
 import { Poly2Json } from '@model/poly2.model';
 import { Rect2Json } from './rect2.model';
 import { KeyedUnionToLookup } from './generic.model';
+import { NavGraphJson } from './nav-graph.model';
 
 type NavToWorkerKey = (
   | 'ping?'
@@ -44,6 +45,7 @@ export type NavDomContract = ParentContract<
     /** Rectangles in world coords */
     rects: Rect2Json[];
     spawns: Rect2Json[];
+    debug?: boolean;
   },
   (
     { parentKey: 'nav-dom?'; context: string } & (
@@ -58,7 +60,7 @@ export type NavDomContract = ParentContract<
       } | {
         key: 'nav-dom:nav-graph!';
         /** Refined navigable multipolygon with Steiner points */
-        navGraph: any; // TODO
+        navGraph: NavGraphJson;
       }
     )
   )

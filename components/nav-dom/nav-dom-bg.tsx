@@ -1,12 +1,32 @@
 import { useSelector } from 'react-redux';
 import css from './nav-dom.scss';
+import { useMemo, useState, useEffect } from 'react';
+import { Poly2 } from '@model/poly2.model';
 
 const NavDomBackground: React.FC<Props> = ({
   uid,
-  faded,
 }) => {
+  const [faded, setFaded] = useState(true);
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
+  const navReady = state ? !state.updating : false;
   const navigable = state ? state.refinedNav || state.navigable : [];
+  const navGraph = navReady ? state.navGraph : null;
+
+  // TODO draw navgraph as test
+  const { centers } = useMemo(() => {
+    if (!navGraph) return { centers: [], segs: [] };
+    const polyPs = state.refinedNav.map(({ allPoints }) => allPoints);
+    const centers = navGraph.nodesArray.map(({ opts: { polyId, pointIds } }) =>
+      Poly2.centerOf(pointIds.map(id => polyPs[polyId][id]))
+    );
+    return { centers, segs: [] };
+  }, [navGraph]);
+
+  useEffect(() => {
+    setFaded(true);
+    const fadeId = window.setTimeout(() => setFaded(false), 500);
+    return () => window.clearTimeout(fadeId);
+  }, [navReady]);
 
   return (
     <svg
@@ -21,6 +41,7 @@ const NavDomBackground: React.FC<Props> = ({
         faded ? css.pending : css.ready
       ].join(' ')}>
         <g>
+          {/* Draw outline */}
           {navigable.map((poly, i) => (
             <path
               key={i}
@@ -32,6 +53,7 @@ const NavDomBackground: React.FC<Props> = ({
           ))}
         </g>
         <g>
+          {/* Draw triangles */}
           {
             navigable.map(({ triangulation }, i) =>
               triangulation.map((triangle, j) => (
@@ -45,6 +67,12 @@ const NavDomBackground: React.FC<Props> = ({
               ))
             )}
         </g>
+        <g>
+          {/* TESTING */}
+          {centers.map(({ x, y }, i) => (
+            <circle key={i} cx={x} cy={y} r={2} fill="blue" />
+          ))}
+        </g>
       </g>
     </svg>
   );
@@ -52,7 +80,6 @@ const NavDomBackground: React.FC<Props> = ({
 
 interface Props {
   uid: string;
-  faded: boolean;
 }
 
 export default NavDomBackground;

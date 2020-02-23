@@ -13,6 +13,7 @@ const Demo1: React.FC = () => {
         uid='demo'
         contentClass={css.demo1Content}
         navOutset={8}
+        // debug
       >
         <Row>
           <Cross n w />

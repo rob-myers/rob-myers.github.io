@@ -113,10 +113,10 @@ export const Thunk = {
       const root = document.getElementById(state.elemId);
       if (!root) return;
 
-      if (meta.updating) {// Defer updates whilst updating
+      if (state.updating) {// Defer updates whilst updating
         return dispatch(Act.updateDomMeta(uid, { pendingUpdate: true }));
       }
-      dispatch(Act.updateDomMeta(uid, { updating: true }));
+      dispatch(Act.updateNavDom(uid, { updating: true }));
 
       const screenBounds = Rect2.from(root.getBoundingClientRect());
       const { x: rx, y: ry } = screenBounds;
@@ -136,6 +136,10 @@ export const Thunk = {
        * In web worker compute nav poly/refinement/graph.
        * All messages must be received before continuing.
        */
+      let navigable = [] as Redacted<Poly2>[];
+      let refinedNav = [] as Redacted<Poly2>[];
+      let navGraph = redact(NavGraph.from([]));
+
       await navWorkerMessages<NavDomContract>(worker, {
         message: {
           key: 'nav-dom?',
@@ -144,27 +148,29 @@ export const Thunk = {
           navOutset: state.navOutset || defaultNavOutset,
           rects: rects.map(({ json }) => json),
           spawns: state.spawns.map(({ bounds: { json } }) => json),
+          debug: meta.debug,
         },
         on: {
           'nav-dom:outline!': { do: ({ navPolys }) => {
-            const navigable = navPolys.map(p => redact(Poly2.fromJson(p)));
-            dispatch(Act.updateNavDom(uid, { navigable }));
+            navigable = navPolys.map(p => redact(Poly2.fromJson(p)));
           }},
           'nav-dom:refined!': { do: ({ refinedNavPolys: navPolys }) => {
-            const refinedNav = navPolys.map(p => redact(Poly2.fromJson(p)));
-            dispatch(Act.updateNavDom(uid, { refinedNav }));
+            refinedNav = navPolys.map(p => redact(Poly2.fromJson(p)));
           }},
           'nav-dom:nav-graph!': { do: ({ navGraph: json}) => {
-            const navGraph = redact(NavGraph.fromJson(json));
-            dispatch(Act.updateNavDom(uid, { navGraph }));
+            navGraph = redact(NavGraph.fromJson(json));
           }},
         },
       });
 
       if (dispatch(Thunk.getDomMeta({ uid })).pendingUpdate) {
+        dispatch(Act.updateDomMeta(uid, { pendingUpdate: false }));
         setTimeout(() => dispatch(Thunk.updateNavigable({ uid })));
       }
-      dispatch(Act.updateDomMeta(uid, { updating: false, pendingUpdate: false }));
+      dispatch(Act.updateNavDom(uid, {
+        updating: false,
+        navigable, refinedNav, navGraph,
+      }));
     },
   ),
 };

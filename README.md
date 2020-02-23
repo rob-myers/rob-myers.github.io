@@ -1,6 +1,6 @@
 ## TODO
 
-- verify navgraph is working by drawing it
+- use rxjs to avoid jerky fade
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it via click spawn-point draw on mousemove
 - 
@@ -50,6 +50,9 @@
 - restrict nav to polygons with a spawn point
 - fix useEffect(..., []) misunderstanding i.e. can only access initial useState values.
 - create navgraph from navpolys
+- verify navgraph is working by drawing it
+- NOTE editing a useEffect(..., []) remounts it
+- NOTE nextjs/react-hot-loader seems to do a spurious initial remount
 
 # Next JS
 

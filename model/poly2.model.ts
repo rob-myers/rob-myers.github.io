@@ -51,14 +51,13 @@ export class Poly2 {
   private _svgPath?: string;
   //#endregion
 
+  public get allPoints(): Vector2[] {
+    return this.points.concat(...this.holes).concat(this.steinerPoints);
+  }
+
   /** Ignores holes. */
   public get centerOfBoundary(): Vector2 {
-    if (this.points.length) {
-      return this.points
-        .reduce((agg, point) => agg.add(point), Vector2.zero)
-        .scale(1 / this.points.length);
-    }
-    return Vector2.zero;
+    return Poly2.centerOf(this.points);
   }
 
   /**
@@ -202,6 +201,15 @@ export class Poly2 {
       this.clearCache();
     }
     return this;
+  }
+
+  public static centerOf(points: Vector2[]) {
+    if (points.length) {
+      return points
+        .reduce((agg, point) => agg.add(point), Vector2.zero)
+        .scale(1 / points.length);
+    }
+    return Vector2.zero;
   }
 
   /**
@@ -517,8 +525,7 @@ export class Poly2 {
   }
 
   public transform(matrix: DOMMatrix, origin: Vector2, skewed = false) {
-    this.points.concat(...this.holes).concat(this.steinerPoints)
-      .forEach(p => p.sub(origin).transform(matrix).add(origin));
+    this.allPoints.forEach(p => p.sub(origin).transform(matrix).add(origin));
     if (skewed) this._triangulationIds = []; // Invalidate triangulation
     this.clearCache();
     return this;
@@ -578,7 +585,7 @@ export class Poly2 {
   }
 
   private triangleIdsToPolys(triIds: Triple<number>[]): Poly2[] {
-    const ps = this.points.concat(...this.holes).concat(this.steinerPoints);
+    const ps = this.allPoints;
     return triIds.map(([u, v, w]) => new Poly2([ ps[u], ps[v], ps[w] ]));
   }
 

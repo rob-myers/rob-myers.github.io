@@ -28,7 +28,7 @@ export class NavGraph extends BaseGraph<
 
   public get json(): NavGraphJson {
     return {
-      nodes: this.nodesArray.map(({ origOpts }) => origOpts),
+      nodes: this.nodesArray.map(({ opts: origOpts }) => origOpts),
       edges: this.edgesArray.map(({ src, dst, otherOpts: { portal } }) => ({
         src: src.id,
         dst: dst.id,
@@ -92,7 +92,7 @@ export class NavGraph extends BaseGraph<
 
 }
 
-interface NavGraphJson {
+export interface NavGraphJson {
   nodes: NavNodeOpts[];
   edges: NavEdgeJson[];
 }

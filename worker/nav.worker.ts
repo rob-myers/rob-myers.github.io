@@ -43,9 +43,10 @@ function sendNavOutline(context: string, data: NavDomContract['message']) {
     rect.outset(data.navOutset).poly2)], [bounds.poly2]);
   // Precompute triangulation before serialisation
   sansRects.forEach((poly) => poly.triangulate('standard'));
-  // Discard polys not containing some spawn point.
+  // Discard polys not containing some spawn point, unless debugging
   const points = spawns.map(({ center }) => center);
-  const navPolys = sansRects.filter(poly => points.some(p => poly.contains(p)));
+  const navPolys = data.debug ? sansRects
+    : sansRects.filter(poly => points.some(p => poly.contains(p)));
 
   ctxt.postMessage({
     key: 'nav-dom:outline!',

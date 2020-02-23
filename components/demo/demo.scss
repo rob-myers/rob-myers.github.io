@@ -1,5 +1,6 @@
 .demo-1-root {
-  // Override ancestral centering
+  // REQUIRED: must be left aligned
+  // e.g. 'center' will break things
   align-self: flex-start;
 }
 

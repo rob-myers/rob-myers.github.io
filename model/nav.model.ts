@@ -30,6 +30,7 @@ export function createNavDomState(uid: string): NavDomState {
     navigable: [],
     refinedNav: [],
     navGraph: redact(NavGraph.from([])),
+    updating: false,
   };
 }
 
@@ -63,6 +64,7 @@ export interface NavDomState {
   /** Refined multipolygon for pathfinding. */
   refinedNav: Redacted<Poly2>[];
   navGraph: Redacted<NavGraph>;
+  updating: boolean;
 }
 
 export interface NavSpawnState {
@@ -75,15 +77,15 @@ export interface NavSpawnState {
 export interface NavDomMeta {
   key: string;
   justHmr: boolean;
-  updating: boolean;
   pendingUpdate: boolean;
+  debug: boolean;
 }
 
 export function createNavDomMetaState(uid: string): NavDomMeta {
   return {
     key: uid,
     justHmr: false,
-    updating: false,
     pendingUpdate: false,
+    debug: false,
   };
 }
