@@ -9,3 +9,9 @@ export function getDomAncestors(el: Element): Element[] {
   ];
 }
 
+export function traverseDom(el: HTMLElement, act: (el: HTMLElement) => void) {
+  act(el);
+  for (const childEl of el.children) {
+    traverseDom(childEl as HTMLElement, act);
+  }
+}

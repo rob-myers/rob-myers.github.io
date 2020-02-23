@@ -17,19 +17,6 @@ export function getNavElemId(data: (
   }
 }
 
-export function traverseDom(el: HTMLElement, act: (el: HTMLElement) => void) {
-  act(el);
-  for (const childEl of el.children) {
-    traverseDom(childEl as HTMLElement, act);
-  }
-}
-
-export const observeOpts: MutationObserverInit = {
-  attributes: true,
-  childList: true,
-  subtree: true,
-};
-
 export const defaultNavOutset = 10;
 
 export function createNavDomState(uid: string): NavDomState {

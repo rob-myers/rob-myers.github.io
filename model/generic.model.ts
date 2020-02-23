@@ -35,3 +35,7 @@ export function removeFirst<T>(array: T[], elem: T): T[] {
   }
   return array;
 }
+
+export function pause(ms = 0) {
+  return new Promise(r => setTimeout(() => r(), ms));
+}

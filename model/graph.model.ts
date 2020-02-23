@@ -2,9 +2,6 @@ import { flatten, removeFirst } from './generic.model';
 
 //#region nodes
 
-/**
- * A single graph class may have multiple node classes with respective options.
- */
 export interface BaseNodeOpts {
   /** uid for node */
   id: string;

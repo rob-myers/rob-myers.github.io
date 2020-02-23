@@ -2,10 +2,11 @@ import { NavWorkerContext, NavDomContract } from '@model/nav-worker.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { NavGraph } from '@model/nav-graph.model';
+import { pause } from '@model/generic.model';
 
 const ctxt: NavWorkerContext = self as any;
 
-ctxt.addEventListener('message', ({ data }) => {
+ctxt.addEventListener('message', async ({ data }) => {
   console.log({ navWorkerReceived: data });
   const { context } = data;  
 
@@ -15,23 +16,16 @@ ctxt.addEventListener('message', ({ data }) => {
       break;
     }
     case 'nav-dom?': {
-      setTimeout(() => {
-        const navPolys = sendNavOutline(context, data);
-        setTimeout(() => {
-          const refinedPolys = sendRefinedNavMesh(context, navPolys);
-
-          setTimeout(() => {
-            const navGraph = NavGraph.from(refinedPolys);
-            // const navGraph = NavGraph.from([]);
-  
-            ctxt.postMessage({
-              key: 'nav-dom:nav-graph!',
-              parentKey: 'nav-dom?',
-              context,
-              navGraph: navGraph.json,
-            });
-          });
-        });
+      const navPolys = sendNavOutline(context, data);
+      await pause();
+      const refinedPolys = sendRefinedNavMesh(context, navPolys);
+      await pause();
+      const navGraph = NavGraph.from(refinedPolys);
+      ctxt.postMessage({
+        key: 'nav-dom:nav-graph!',
+        parentKey: 'nav-dom?',
+        context,
+        navGraph: navGraph.json,
       });
       break;
     }

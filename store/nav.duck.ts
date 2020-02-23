@@ -13,7 +13,6 @@ import { Rect2 } from '@model/rect2.model';
 import {
   NavDomState,
   createNavDomState,
-  traverseDom,
   NavDomMeta,
   createNavDomMetaState,
   defaultNavOutset,
@@ -21,7 +20,7 @@ import {
 } from '@model/nav.model';
 import { Poly2 } from '@model/poly2.model';
 import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav-worker.model';
-import { getDomAncestors } from '@model/dom.model';
+import { getDomAncestors, traverseDom } from '@model/dom.model';
 import { NavGraph } from '@model/nav-graph.model';
 
 export interface State {
