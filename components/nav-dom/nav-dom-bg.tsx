@@ -52,10 +52,9 @@ const NavDomBackground: React.FC<Props> = ({
           {/* Draw outline */}
           {navigable.map((poly, i) => (
             <path
+              className={css.svgNavigableOutline}
               key={i}
               d={poly.svgPath}
-              fill="none"
-              stroke="#ccc"
               strokeDasharray={2}
             />
           ))}
@@ -78,7 +77,11 @@ const NavDomBackground: React.FC<Props> = ({
         <g>
           {/* TESTING */}
           {centers.map(({ x, y }, i) => (
-            <circle key={i} cx={x} cy={y} r={2} fill="blue" />
+            <circle
+              key={i}
+              cx={x} cy={y} r={2}
+              className={css.svgNavNode}
+            />
           ))}
         </g>
         <g>
@@ -87,7 +90,7 @@ const NavDomBackground: React.FC<Props> = ({
               key={i}
               x1={src.x} y1={src.y}
               x2={dst.x} y2={dst.y}
-              stroke="rgba(0, 0, 100, 0.2)"
+              className={css.svgNavEdge}
             />
           ))}
         </g>

@@ -1,18 +1,16 @@
-$box-dimension: 80px;
-$line-thickness: 4px;
-
+@import '../variables';
 
 .root {
   position: relative;
-  width: $box-dimension;
-  height: $box-dimension;
+  width: $nav-box-dimension;
+  height: $nav-box-dimension;
   outline: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.tileBase {
-  width: $line-thickness;
-  height: $line-thickness;
-  background: #000;
+.tile-base {
+  width: $nav-line-thickness;
+  height: $nav-line-thickness;
+  background: $nav-box-color;
   position: absolute;
 }
 

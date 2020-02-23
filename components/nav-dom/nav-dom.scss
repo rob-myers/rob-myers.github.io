@@ -1,5 +1,8 @@
+@import '../variables.scss';
+
 .root {
   position: relative;
+  background: $nav-background;
 }
 
 .svg-root {
@@ -7,7 +10,6 @@
 }
 
 .svg-navigable {  
-  
   &.pending {
     opacity: 0;
     transition: .3s opacity ease-out;
@@ -17,6 +19,11 @@
     opacity: 1;
     transition: .3s opacity ease;
   }
+}
+
+.svg-navigable-outline {
+  fill: $nav-navigable-bg;
+  stroke: $nav-navigable-stroke;
 }
 
 .content-root {
@@ -30,4 +37,12 @@
   height: 10px;
   background: #f00;
   border-radius: 5px;
+}
+
+.svg-nav-node {
+  fill: $nav-node-color;
+}
+
+.svg-nav-edge {
+  stroke: $nav-node-color;
 }

@@ -12,7 +12,7 @@ const Demo1: React.FC = () => {
       <NavDom 
         uid='demo'
         contentClass={css.demo1Content}
-        navOutset={8}
+        navOutset={10}
         // debug
       >
         <Row>

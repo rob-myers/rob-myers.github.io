@@ -1,6 +1,6 @@
 ## TODO
 
-- illustrate it via click spawn-point draw on mousemove
+- illustrate floyd-warshall via click on spawn-point and mousemove
 - use rxjs to avoid jerky fade
 
 - string-pulling
@@ -54,6 +54,7 @@
 - NOTE nextjs/react-hot-loader seems to do a spurious initial remount
 - show navGraph edges too
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
+- create dark theme (currently manual via variables.scss and `wt` in box.tsx)
 
 # Next JS
 
