@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getNavElemId } from '@model/nav.model';
 import { Act, Thunk } from '@store/nav.duck';
+import NavDomBackground from './nav-dom-bg';
 import css from './nav-dom.scss';
 
 const NavDom: React.FC<Props> = ({
@@ -11,9 +12,9 @@ const NavDom: React.FC<Props> = ({
   contentClass,
   navOutset,
 }) => {
+
   const dispatch = useDispatch();
   const state = useSelector(({ nav: { dom } }) => dom[uid]);
-  const navigable = state ? state.refinedNav || state.navigable : [];
   const failedRef = useRef(false);
   const [svgFaded, setSvgFaded] = useState(true);
 
@@ -64,45 +65,8 @@ const NavDom: React.FC<Props> = ({
   });
 
   return (
-    <div style={{ position: 'relative' }}>
-      <svg
-        className={css.svgRoot}
-        style={{
-          width: state ? state.worldBounds.width : 0,
-          height: state ? state.worldBounds.height : 0,
-        }}
-      >
-        <g className={[
-          css.svgNavigable,
-          svgFaded ? css.pending : css.ready
-        ].join(' ')}>
-          <g>
-            {navigable.map((poly, i) => (
-              <path
-                key={i}
-                d={poly.svgPath}
-                fill="none"
-                stroke="#ccc"
-                strokeDasharray={2}
-              />
-            ))}
-          </g>
-          <g>
-            {
-              navigable.map(({ triangulation }, i) =>
-                triangulation.map((triangle, j) => (
-                  <path
-                    key={`${i}-${j}`}
-                    d={triangle.svgPath}
-                    fill="none"
-                    stroke="#777"
-                    strokeWidth={0.1}
-                  />
-                ))
-              )}
-          </g>
-        </g>
-      </svg>
+    <div className={css.root}>
+      <NavDomBackground uid={uid} faded={svgFaded} />
       <div
         id={getNavElemId({ key: 'content', domUid: uid })}
         className={[css.contentRoot, contentClass].join(' ')}
