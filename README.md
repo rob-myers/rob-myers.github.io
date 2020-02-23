@@ -53,6 +53,7 @@
 - verify navgraph is working by drawing it
 - NOTE editing a useEffect(..., []) remounts it
 - NOTE nextjs/react-hot-loader seems to do a spurious initial remount
+- show navGraph edges too
 
 # Next JS
 

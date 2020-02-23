@@ -37,6 +37,9 @@ export class NavGraph extends BaseGraph<
     };
   }
 
+  /**
+   * Compute from a triangulation.
+   */
   public static from(polys: Poly2[]): NavGraph {
     const graph = new NavGraph(NavEdge);
 
