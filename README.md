@@ -1,7 +1,8 @@
 ## TODO
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
-- use rxjs to avoid jerky fade
+- avoid jerky fade in/out
+- avoid lag caused by floyd-warshall e.g. via another webworker
 
 - string-pulling
 - actors move along them via css
@@ -11,7 +12,7 @@
 - start using mdx for blogs
 - integrate gitalk from older branch
 - delete older branch
-- PR this branch `fresh-start-2020` into new branch `dev`.
+- merge this branch `fresh-start-2020` into new branch `dev`.
 
 ## So far
 
@@ -55,6 +56,7 @@
 - show navGraph edges too
 - implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - create dark theme (currently manual via variables.scss and `wt` in box.tsx)
+- avoid multiple navspawns causing multiple updates
 
 # Next JS
 

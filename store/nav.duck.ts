@@ -20,7 +20,7 @@ import {
 } from '@model/nav.model';
 import { Poly2 } from '@model/poly2.model';
 import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav-worker.model';
-import { getDomAncestors, traverseDom } from '@model/dom.model';
+import { traverseDom } from '@model/dom.model';
 import { NavGraph } from '@model/nav-graph.model';
 
 export interface State {
@@ -42,10 +42,6 @@ export const Act = {
     createAct('[Nav] setup', { webWorker }),
   registerNavDom: (uid: string) =>
     createAct('[NavDom] register', { uid }),
-  registerNavSpawn: (uid: string, domUid: string, worldBounds: Rect2) =>
-    createAct('[NavSpawn] register', { uid, domUid, worldBounds }),
-  unregisterNavSpawn: (uid: string, domUid: string) =>
-    createAct('[NavSpawn] unregister', { uid, domUid }),
   unregisterNavDom: (uid: string) =>
     createAct('[NavDom] unregister', { uid }),
   updateDomMeta: (uid: string, updates: Partial<NavDomMeta>) =>
@@ -82,27 +78,6 @@ export const Thunk = {
     '[NavDom] get meta',
     ({ state: { nav: { domMeta } } }, { uid }: { uid: string }) => domMeta[uid] || {}
   ),
-  tryRegisterSpawn: createThunk(
-    '[NavSpawn] try register',
-    (
-      { state: { nav: { dom } }, dispatch },
-      { uid, el }: { uid: string; el: Element },
-    ): { navDomUid: string | null } => {
-      const ancestorIds = getDomAncestors(el).map(({ id }) => id);
-      const parentNavDom = Object.values(dom || {}).find(({ elemId }) =>
-        ancestorIds.includes(elemId));
-
-      if (parentNavDom) {
-        const { key: navDomUid, screenBounds: { x, y } } = parentNavDom;
-        const worldBounds = Rect2.from(el.getBoundingClientRect()).delta(-x, -y);
-        dispatch(Act.registerNavSpawn(uid, parentNavDom.key, worldBounds));
-        dispatch(Thunk.updateNavigable({ uid: navDomUid }));
-        return { navDomUid };
-      }
-      console.error(`Failed to register NavSpawn "${uid}"`);
-      return { navDomUid: null };
-    },
-  ),
   updateNavigable: createThunk(
     '[NavDom] update navigable',
     async ({ state: { nav }, dispatch }, { uid }: { uid: string }) => {
@@ -122,13 +97,19 @@ export const Thunk = {
       const { x: rx, y: ry } = screenBounds;
       const worldBounds = screenBounds.clone().delta(-rx, -ry);
       const rects = [] as Rect2[];
+      const spawns = [] as { elemId: string; bounds: Rect2 }[];
 
       dispatch(Act.updateNavDom(uid, { screenBounds, worldBounds }));
 
       traverseDom(root, (node) => { // Compute leaf rects
-        if (!node.children.length && !node.classList.contains('navigable')) {
-          const rect =  Rect2.from(node.getBoundingClientRect());
-          rects.push(rect.delta(-rx, -ry));
+        if (!node.children.length) {
+          if (!node.classList.contains('navigable')) {
+            const rect =  Rect2.from(node.getBoundingClientRect());
+            rects.push(rect.delta(-rx, -ry));
+          } else if (node.classList.contains('nav-spawn')) {
+            const rect =  Rect2.from(node.getBoundingClientRect());
+            spawns.push({ elemId: node.id, bounds: rect.delta(-rx, -ry) });
+          }
         }
       });
 
@@ -147,7 +128,7 @@ export const Thunk = {
           context: uid,
           navOutset: state.navOutset || defaultNavOutset,
           rects: rects.map(({ json }) => json),
-          spawns: state.spawns.map(({ bounds: { json } }) => json),
+          spawns: spawns.map(({ bounds: { json } }) => json),
           debug: meta.debug,
         },
         on: {
@@ -170,6 +151,8 @@ export const Thunk = {
       dispatch(Act.updateNavDom(uid, {
         updating: false,
         navigable, refinedNav, navGraph,
+        spawns: spawns.map(({ elemId, bounds }) =>
+          createNavSpawnState({ elemId, domUid: uid, bounds }))
       }));
     },
   ),
@@ -186,16 +169,6 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[NavDom] register': return { ...state,
       dom: addToLookup(createNavDomState(act.uid), state.dom),
       domMeta: addToLookup(createNavDomMetaState(act.uid), state.domMeta),
-    };
-    case '[NavSpawn] register': return { ...state,
-      dom: updateLookup(act.domUid, state.dom, ({ spawns }) => ({
-        spawns: spawns.concat(createNavSpawnState(act.uid, act.domUid, act.worldBounds)),
-      })),
-    };
-    case '[NavSpawn] unregister': return { ...state,
-      dom: updateLookup(act.domUid, state.dom, ({ spawns }) => ({
-        spawns: spawns.filter(({ key }) => key !== act.uid),
-      })),
     };
     case '[NavDom] unregister': return { ...state,
       dom: removeFromLookup(act.uid, state.dom),

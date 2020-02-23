@@ -30,7 +30,7 @@ const NavDom: React.FC<Props> = ({
     const updateId = window.setTimeout(() => dispatch(Thunk.updateNavigable({ uid })));
 
     // detect hot reloading
-    const hotHandler = (status: string) => status === 'idle'
+    const hotHandler = (status: string) => (status === 'idle')
       && dispatch(Act.updateDomMeta(uid, { justHmr: true }));
     module.hot && module.hot.addStatusHandler(hotHandler);
 
@@ -59,7 +59,15 @@ const NavDom: React.FC<Props> = ({
   });
 
   return (
-    <div className={css.root}>
+    <div
+      className={css.root}
+      /**
+       * Testing NavGraph e.g. place src/dst via 2 clicks.
+       */
+      onClick={() => {
+        console.log('click');
+      }}
+    >
       <NavDomBackground uid={uid} />
       <div
         id={getNavElemId({ key: 'content', domUid: uid })}

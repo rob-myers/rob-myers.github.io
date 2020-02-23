@@ -1,5 +1,6 @@
 import { Poly2 } from './poly2.model';
 import { BaseGraph, BaseNode, BaseNodeOpts, BaseEdge, BaseEdgeOpts } from './graph.model';
+import { Vector2 } from './vec2.model';
 
 interface NavNodeOpts extends BaseNodeOpts {
   /** Index of polygon this node occurs in */
@@ -25,6 +26,22 @@ class NavEdge extends BaseEdge<NavNode, NavEdgeOpts> {}
 export class NavGraph extends BaseGraph<
   NavNode, NavNodeOpts, NavEdge, NavEdgeOpts
 > {
+
+  /** Needs original polygons as input */
+  public dualGraph(polys: Poly2[]) {
+    const polyPs = polys.map(({ allPoints }) => allPoints);
+    const toCenter = this.nodesArray.reduce(
+      (agg, { id, opts: { polyId, pointIds } }) => ({
+        ...agg,
+        [id]: Poly2.centerOf(pointIds.map(id => polyPs[polyId][id])),
+      }),
+      {} as Record<string, Vector2>,
+    );
+    const segs = this.edgesArray.map(({ src, dst }) => [
+      toCenter[src.id], toCenter[dst.id]
+    ] as [Vector2, Vector2]);
+    return { centers: Object.values(toCenter), segs };
+  }
 
   public get json(): NavGraphJson {
     return {

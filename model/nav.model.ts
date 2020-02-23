@@ -7,13 +7,13 @@ export function getNavElemId(data: (
   | { key: 'content'; domUid: string }
   | { key: 'svg-background'; domUid: string }
   | { key: 'svg-foreground'; domUid: string }
-  | { key: 'spawn'; uid: string; domUid: string }
+  | { key: 'spawn'; uid: string }
 )) {
   switch (data.key) {
     case 'content': return `nav-${data.domUid}`;
     case 'svg-background': return `nav-bg-${data.domUid}`;
     case 'svg-foreground': return `nav-fg-${data.domUid}`;
-    case 'spawn': return `nav-spawn-${data.domUid}_${data.uid}`;
+    case 'spawn': return `nav-spawn-${data.uid}`;
   }
 }
 
@@ -34,16 +34,18 @@ export function createNavDomState(uid: string): NavDomState {
   };
 }
 
-export function createNavSpawnState(
-  uid: string,
-  domUid: string,
-  worldBounds: Rect2,
-): NavSpawnState {
+export function createNavSpawnState({
+  domUid, elemId, bounds
+}: {
+  elemId: string;
+  domUid: string;
+  bounds: Rect2;
+}): NavSpawnState {
   return {
-    key: uid,
+    key: elemId.split('_')[0],
     parentKey: domUid,
-    elemId: getNavElemId({ key: 'spawn', uid, domUid }),
-    bounds: worldBounds,
+    elemId,
+    bounds,
   };
 }
 
@@ -68,8 +70,11 @@ export interface NavDomState {
 }
 
 export interface NavSpawnState {
+  /** e.g. `home` */
   key: string;
+  /** e.g. `demo` */
   parentKey: string;
+  /** e.g. `home_yDed4` */
   elemId: string;
   bounds: Rect2;
 }
