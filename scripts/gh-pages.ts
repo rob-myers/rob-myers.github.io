@@ -25,7 +25,7 @@ const {
             name: GITHUB_USER,
             email: GITHUB_EMAIL,
           },
-          dotfiles: true, // Ensure .notjekyll is pushed.
+          dotfiles: true, // Ensure .nojekyll is pushed.
         },
         resolve
       );
