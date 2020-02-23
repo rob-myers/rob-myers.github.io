@@ -24,7 +24,6 @@ export default (
               '@store': path.resolve(__dirname, 'store'),
               '@model': path.resolve(__dirname, 'model'),
               '@worker': path.resolve(__dirname, 'worker'),
-              ...(!production && { 'react-dom': '@hot-loader/react-dom' })
             }
           },
         },
