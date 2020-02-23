@@ -105,3 +105,59 @@ interface NavEdgeJson {
   dst: string;
   portal: [number, number];
 }
+
+/**
+ * Floyd Warshall algorithm
+ * https://github.com/trekhleb/javascript-algorithms/blob/master/src/algorithms/graph/floyd-warshall/floydWarshall.js
+ */
+export class FloydWarshall {
+  
+  constructor(
+    public dist: { [srcId: string]: { [targetId: string]: number  } } = {},
+    public next: { [srcId: string]: { [targetId: string]: null | string  } } = {},
+  ) {}
+
+  public static from(graph: NavGraph): FloydWarshall {
+    const fm = new FloydWarshall();
+    fm.initializeFrom(graph);
+    const [vs, dist, next] = [graph.nodesArray, fm.dist, fm.next];
+
+    vs.forEach(({ id: middleId }) => {
+      vs.forEach(({ id: startId }) => {
+        vs.forEach(({ id: endId }) => {
+          const altDist = dist[startId][middleId] + dist[middleId][endId];
+
+          if (dist[startId][endId] > altDist) {
+            dist[startId][endId] = altDist;
+            next[startId][endId] = middleId;
+          }
+        });
+      });
+    });
+
+    return fm;
+  }
+
+  private initializeFrom(navGraph: NavGraph) {
+    // Distances initially infinite
+    const { nodesArray: vs } = navGraph;
+    const innerDist = vs.reduce((agg, { id }) => ({ ...agg,
+      [id]: Number.POSITIVE_INFINITY }), {} as Record<string, number>);
+    this.dist = vs.reduce((agg, v) => ({ ...agg, [v.id]: { ...innerDist } }), {});
+    // Next vertices initially null
+    const innerNext = vs.reduce((agg, { id }) => ({ ...agg, [id]: null }),
+      {} as Record<string, null | string>);
+    this.next = vs.reduce((agg, v) => ({ ...agg, [v.id]: { ...innerNext } }), {});
+
+    vs.forEach((vA) =>
+      vs.forEach((vB) => {
+        if (vA === vB) {
+          this.dist[vA.id][vB.id] = 0;
+        } else if (navGraph.isConnected(vA, vB)) {
+          this.dist[vA.id][vB.id] = 1;
+          this.next[vA.id][vB.id] = vA.id; // ?
+        }
+      })
+    );
+  }
+}

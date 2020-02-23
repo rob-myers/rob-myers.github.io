@@ -32,7 +32,7 @@ const NavDomBackground: React.FC<Props> = ({
   // TODO use rxjs instead
   useEffect(() => {
     setFaded(true);
-    const fadeId = window.setTimeout(() => setFaded(false), 500);
+    const fadeId = window.setTimeout(() => setFaded(false), 200);
     return () => window.clearTimeout(fadeId);
   }, [navReady]);
 
@@ -83,7 +83,12 @@ const NavDomBackground: React.FC<Props> = ({
         </g>
         <g>
           {segs.map(([ src, dst ], i) => (
-            <line key={i} x1={src.x} y1={src.y} x2={dst.x} y2={dst.y} stroke="blue" />
+            <line
+              key={i}
+              x1={src.x} y1={src.y}
+              x2={dst.x} y2={dst.y}
+              stroke="rgba(0, 0, 100, 0.2)"
+            />
           ))}
         </g>
       </g>

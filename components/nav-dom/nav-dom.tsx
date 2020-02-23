@@ -52,9 +52,7 @@ const NavDom: React.FC<Props> = ({
   }, [debug]);
 
   useEffect(() => {// Rebuild nav on 1st render after hot reload
-    console.log('render');
     if (module.hot && dispatch(Thunk.getDomMeta({ uid })).justHmr) {
-      console.log('update nav');
       dispatch(Thunk.updateNavigable({ uid }));
       dispatch(Act.updateDomMeta(uid, { justHmr: false }));
     }

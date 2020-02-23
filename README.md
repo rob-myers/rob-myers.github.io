@@ -1,9 +1,8 @@
 ## TODO
 
-- use rxjs to avoid jerky fade
-- implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 - illustrate it via click spawn-point draw on mousemove
-- 
+- use rxjs to avoid jerky fade
+
 - string-pulling
 - actors move along them via css
 - light polygons
@@ -54,6 +53,7 @@
 - NOTE editing a useEffect(..., []) remounts it
 - NOTE nextjs/react-hot-loader seems to do a spurious initial remount
 - show navGraph edges too
+- implement https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm
 
 # Next JS
 

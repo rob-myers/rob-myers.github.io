@@ -1,10 +1,18 @@
 import { NavWorkerContext, NavDomContract } from '@model/nav-worker.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
-import { NavGraph } from '@model/nav-graph.model';
+import { NavGraph, FloydWarshall } from '@model/nav-graph.model';
 import { pause } from '@model/generic.model';
 
 const ctxt: NavWorkerContext = self as any;
+
+interface Store {
+  floydWarshall: Record<string, FloydWarshall>;
+}
+
+const store: Store = {
+  floydWarshall: {},
+};
 
 ctxt.addEventListener('message', async ({ data }) => {
   console.log({ navWorkerReceived: data });
@@ -20,13 +28,13 @@ ctxt.addEventListener('message', async ({ data }) => {
       await pause();
       const refinedPolys = sendRefinedNavMesh(context, navPolys);
       await pause();
-      const navGraph = NavGraph.from(refinedPolys);
-      ctxt.postMessage({
-        key: 'nav-dom:nav-graph!',
-        parentKey: 'nav-dom?',
-        context,
-        navGraph: navGraph.json,
-      });
+      const navGraph = sendNavGraph(context, refinedPolys);
+      await pause();
+      
+      // Construct floyd warshall and store here
+      const fw = FloydWarshall.from(navGraph);
+      store.floydWarshall[context] = fw;
+      console.log({ fw });
       break;
     }
   }
@@ -76,4 +84,17 @@ function sendRefinedNavMesh(context: string, navPolys: Poly2[]) {
   });
 
   return refinedNavPolys;
+}
+
+function sendNavGraph(context: string, refinedPolys: Poly2[]) {
+  const navGraph = NavGraph.from(refinedPolys);
+
+  ctxt.postMessage({
+    key: 'nav-dom:nav-graph!',
+    parentKey: 'nav-dom?',
+    context,
+    navGraph: navGraph.json,
+  });
+
+  return navGraph;
 }
