@@ -58,12 +58,11 @@ const NavDom: React.FC<Props> = ({
     }
   });
 
+  if (typeof window === 'undefined') return null; // No SSR
+
   return (
     <div
       className={css.root}
-      /**
-       * Testing NavGraph e.g. place src/dst via 2 clicks.
-       */
       onClick={() => {
         console.log('click');
       }}

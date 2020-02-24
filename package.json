@@ -17,7 +17,7 @@
     "build": "yarn next-cfg && next build",
     "start": "yarn next-cfg && next start",
     "export": "next export",
-    "deploy": "yarn build && yarn export && touch out/.nojekyll && yarn gh-pages",
+    "deploy": "rm -rf .next && yarn build && yarn export && touch out/.nojekyll && yarn gh-pages",
     "next-cfg": "tsc -p scripts",
     "gh-pages": "cd scripts && ts-node gh-pages.ts",
     "test": "jest --watch --verbose"
@@ -69,5 +69,8 @@
     "typescript": "3.7.5",
     "webpack-merge": "4.2.2",
     "worker-plugin": "^3.2.0"
-  }
+  },
+  "sideEffects": [
+    "*.css"
+  ]
 }

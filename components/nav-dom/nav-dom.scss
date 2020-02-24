@@ -6,7 +6,7 @@
 }
 
 .svg-root {
-  opacity: 1;
+  position: absolute;
 }
 
 .svg-navigable {  
@@ -27,9 +27,7 @@
 }
 
 .content-root {
-  position: absolute;
-  top:0px;
-  left:0px;
+  opacity: 1;
 }
 
 .nav-spawn {

@@ -1,9 +1,9 @@
 import css from './nav-dom.scss';
-import { useRef } from 'react';
+import { useState } from 'react';
 import shortid from 'shortid';
 
 const NavSpawn: React.FC<Props> = ({ uid }) => {
-  const genUid = useRef(() => shortid());
+  const [genUid, ] = useState(() => shortid());
   const id = `${uid}_${genUid}`;
 
   return (
