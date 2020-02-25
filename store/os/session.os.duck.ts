@@ -1,9 +1,9 @@
 import * as XTerm from 'xterm';
 import { RedactInReduxDevTools, addToLookup, updateLookup, redact, removeFromLookup, SyncAct, SyncActDef } from '@model/redux.model';
-import { OsThunkAct, createOsThunk, createOsAct } from '@model/os.redux.model';
-import { OsAct } from '@model/os.model';
+import { OsThunkAct, createOsThunk, createOsAct } from '@model/os/os.redux.model';
+import { OsAct } from '@model/os/os.model';
 import { BinaryGuiType, BinaryExecType, BaseGuiSpec } from '@model/sh/binary.model';
-import { ProcessSignal } from '@model/process.model';
+import { ProcessSignal } from '@model/os/process.model';
 import { osCreateTtyThunk } from './tty.os.duck';
 import { State } from '../os.duck';
 import { TtyINode } from '@store/inode/tty.inode';
@@ -12,7 +12,7 @@ import { osOpenFileThunk, osUnlinkFileThunk } from './file.os.duck';
 import { osSetProcessUserThunk } from './user.os.duck';
 import { ensureArrayItem, last, testNever } from '@model/generic.model';
 import { BashBinary } from '@model/sh/binary/bash.binary';
-import { CompositeType } from '@model/term.model';
+import { CompositeType } from '@model/os/term.model';
 import { isInteractiveShell } from '@service/term.util';
 
 /**

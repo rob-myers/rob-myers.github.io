@@ -1,4 +1,4 @@
-import { ProcessVar, VarFlags, PositionalProcVar } from '@model/process.model';
+import { ProcessVar, VarFlags, PositionalProcVar } from '@model/os/process.model';
 import { testNever, mapValues, keys } from '@model/generic.model';
 import { AssignVarThunkBase } from '@store/os/declare.os.duck';
 

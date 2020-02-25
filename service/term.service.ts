@@ -1,4 +1,4 @@
-import { Term, CompositeType, ExpandComposite, IteratorType, Builtin, DeclareBuiltinType, BinaryComposite } from '@model/term.model';
+import { Term, CompositeType, ExpandComposite, IteratorType, Builtin, DeclareBuiltinType, BinaryComposite } from '@model/os/term.model';
 import { testNever } from '@model/generic.model';
 import { BinaryExecType, BinaryGuiType, BinaryType } from '@model/sh/binary.model';
 import { ArithmOpComposite } from '@model/sh/composite/arithm-op.composite';
@@ -80,11 +80,11 @@ import { TimeComposite } from '@model/sh/composite/time.composite';
 import { CstyleForIterator } from '@model/sh/iterator/cstyle-for.iterator';
 import { ForIterator } from '@model/sh/iterator/for.iterator';
 import { WhileIterator } from '@model/sh/iterator/while.iterator';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { ReplaySubject } from 'rxjs';
 import { iterateTerm } from './term.util';
 import { TopBinary } from '@model/sh/binary/top.binary';
-import { NamedFunction } from '@model/process.model';
+import { NamedFunction } from '@model/os/process.model';
 import { WcBinary } from '@model/sh/binary/wc.binary';
 
 export type ObservedType = (

@@ -1,5 +1,5 @@
 import { BaseTermDef } from '../base-term';
-import { CompositeType } from '../../term.model';
+import { CompositeType } from '../../os/term.model';
 import { ArithmOpComposite } from './arithm-op.composite';
 import { BaseCompositeTerm, CompositeChildren } from './base-composite';
 import { ObservedType } from '@service/term.service';

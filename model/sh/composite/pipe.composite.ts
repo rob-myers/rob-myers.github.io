@@ -1,8 +1,8 @@
 import { BaseTermDef } from '../base-term';
-import { CompositeType, Term } from '../../term.model';
+import { CompositeType, Term } from '../../os/term.model';
 import { BaseCompositeTerm, CompositeChildren } from './base-composite';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { launchedInteractively } from '@service/term.util';
 import { last } from '@model/generic.model';
 import { osMakeFifoThunk, osUnlinkFileThunk } from '@store/os/file.os.duck';

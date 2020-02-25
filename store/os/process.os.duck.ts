@@ -3,16 +3,16 @@ import { Subscription } from 'rxjs';
 
 import { mapValues, ensureArrayItem, last, testNever } from '@model/generic.model';
 import { SyncActDef, SyncAct, updateLookup, addToLookup, removeFromLookup, ReduxUpdater, redact } from '@model/redux.model';
-import { createOsThunk, OsThunkAct, createOsAct } from '@model/os.redux.model';
-import { OsAct, OsProcGroup } from '@model/os.model';
-import { Term, CompositeType } from '@model/term.model';
-import { ProcessState, UnregisteredProcess, FromFdToOpenKey, ProcessSigHandler, CodeStackItem } from '@model/process.model';
+import { createOsThunk, OsThunkAct, createOsAct } from '@model/os/os.redux.model';
+import { OsAct, OsProcGroup } from '@model/os/os.model';
+import { Term, CompositeType } from '@model/os/term.model';
+import { ProcessState, UnregisteredProcess, FromFdToOpenKey, ProcessSigHandler, CodeStackItem } from '@model/os/process.model';
 import { closeFd } from '@service/filesystem.service';
 import { State } from '@store/os.duck';
 import { osIncrementOpenAct, osReadThunk, osWriteThunk, IoToPromise, osOpenFileThunk } from '@store/os/file.os.duck';
 import { osExpandVarThunk, osAssignVarThunk, osRestrictToEnvThunk } from './declare.os.duck';
 import { cloneVar } from '@service/process-var.service';
-import { OpenFileRequest } from '@model/file.model';
+import { OpenFileRequest } from '@model/os/file.model';
 import { osSetSessionForegroundAct } from './session.os.duck';
 
 export type Action = (

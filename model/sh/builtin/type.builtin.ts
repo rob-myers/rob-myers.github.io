@@ -1,9 +1,9 @@
 import { BuiltinOtherType, isBuiltinSpecialCommand, isBuiltinOtherCommand } from '../builtin.model';
 import { BaseBuiltinComposite } from './base-builtin';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osGetFunctionThunk } from '@store/os/declare.os.duck';
-import { NamedFunction } from '@model/process.model';
+import { NamedFunction } from '@model/os/process.model';
 import { osResolvePathThunk } from '@store/os/file.os.duck';
 
 /**

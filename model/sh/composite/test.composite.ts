@@ -1,9 +1,9 @@
 import { BaseTermDef } from '../base-term';
-import { CompositeType, ExpandComposite } from '../../term.model';
+import { CompositeType, ExpandComposite } from '../../os/term.model';
 import { BaseCompositeTerm } from './base-composite';
 import { TestOpComposite } from './test-op.composite';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 /**
  * test
  */

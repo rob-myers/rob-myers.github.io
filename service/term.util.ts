@@ -1,5 +1,5 @@
-import { Term, BinaryComposite, CompositeType } from '@model/term.model';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { Term, BinaryComposite, CompositeType } from '@model/os/term.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { ObservedType } from './term.service';
 import { last } from '@model/generic.model';
 import { PipeComposite } from '@model/sh/composite/pipe.composite';

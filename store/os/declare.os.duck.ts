@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { OsAct } from '@model/os.model';
+import { OsAct } from '@model/os/os.model';
 import { SyncAct, SyncActDef } from '@model/redux.model';
-import { createOsAct, createOsThunk, OsThunkAct } from '@model/os.redux.model';
-import { ProcessVar, VarFlags, ToProcVar, NamedFunction, BasePositionalVar, PositionalProcVar } from '@model/process.model';
+import { createOsAct, createOsThunk, OsThunkAct } from '@model/os/os.redux.model';
+import { ProcessVar, VarFlags, ToProcVar, NamedFunction, BasePositionalVar, PositionalProcVar } from '@model/os/process.model';
 import { State } from '../os.duck';
 import { updateLookup, addToLookup } from '@model/redux.model';
 import { mapValues, testNever, last, flatten, withoutProperty } from '@model/generic.model';
@@ -10,7 +10,7 @@ import { createPositional, cloneVar } from '@service/process-var.service';
 import { closeFd } from '@service/filesystem.service';
 import { osUpdateProcessAct } from './process.os.duck';
 import { TermError } from '@service/term.util';
-import { Term } from '@model/term.model';
+import { Term } from '@model/os/term.model';
 
 export type Action = (
   | AddFunctionAct

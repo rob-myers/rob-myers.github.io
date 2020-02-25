@@ -2,7 +2,7 @@ import { BaseBuiltinComposite } from './base-builtin';
 import { BuiltinSpecialType } from '../builtin.model';
 import { ObservedType } from '@service/term.service';
 import { findAncestralTerm } from '@service/term.util';
-import { Term, IteratorTerm } from '@model/term.model';
+import { Term, IteratorTerm } from '@model/os/term.model';
 
 export class ContinueBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.continue> {
 

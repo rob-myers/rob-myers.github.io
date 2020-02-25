@@ -1,9 +1,9 @@
 import * as XTerm from 'xterm';
-import { createOsThunk, OsThunkAct } from '@model/os.redux.model';
-import { OsAct } from '@model/os.model';
+import { createOsThunk, OsThunkAct } from '@model/os/os.redux.model';
+import { OsAct } from '@model/os/os.model';
 import { TtyINode } from '@store/inode/tty.inode';
 import { RedactInReduxDevTools } from '@model/redux.model';
-import { ProcessSignal } from '@model/process.model';
+import { ProcessSignal } from '@model/os/process.model';
 import { osSignalForegroundThunk, osIncrementTtyIdAct } from './session.os.duck';
 import { osMountFileAct, osGetOfdThunk } from './file.os.duck';
 import { DirectoryINode } from '@store/inode/directory.inode';

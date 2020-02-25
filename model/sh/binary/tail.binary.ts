@@ -2,7 +2,7 @@ import { BinaryExecType } from '@model/sh/binary.model';
 import { BaseBinaryComposite } from './base-binary';
 import { ObservedType } from '@service/term.service';
 import { isStringInt } from '@model/generic.model';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osResolvePathThunk, osOpenFileThunk, osOffsetOpenAct, osGetOfdThunk } from '@store/os/file.os.duck';
 import { basename } from 'path';
 import { INodeType } from '@store/inode/base-inode';

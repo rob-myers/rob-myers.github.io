@@ -3,7 +3,7 @@ import { BuiltinOtherType } from '../builtin.model';
 import { ObservedType } from '@service/term.service';
 import { last, testNever } from '@model/generic.model';
 import { isUnaryTest, UnaryTestType, isBasicBinaryTest, BinaryTestType } from '../test.model';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osResolvePathThunk } from '@store/os/file.os.duck';
 import { INodeType } from '@store/inode/base-inode';
 import { osIsATtyThunk } from '@store/os/tty.os.duck';

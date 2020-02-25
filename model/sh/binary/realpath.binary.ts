@@ -1,7 +1,7 @@
 import { BinaryExecType } from '@model/sh/binary.model';
 import { BaseBinaryComposite } from './base-binary';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osRealPathThunk } from '@store/os/file.os.duck';
 
 export class RealpathBinary extends BaseBinaryComposite<BinaryExecType.realpath> {

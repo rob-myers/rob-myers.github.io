@@ -1,12 +1,12 @@
 import { BinaryExecType } from '@model/sh/binary.model';
 import { BaseBinaryComposite } from './base-binary';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osRealPathThunk, osAbsToINodeThunk, osMountFileAct, osUnlinkFileThunk, osResolvePathThunk } from '@store/os/file.os.duck';
 import { INodeType } from '@store/inode/base-inode';
 import { DirectoryINode } from '@store/inode/directory.inode';
 import { basename, dirname } from 'path';
-import { INode } from '@model/file.model';
+import { INode } from '@model/os/file.model';
 
 /**
  * cp or mv.

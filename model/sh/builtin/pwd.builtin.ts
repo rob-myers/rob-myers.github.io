@@ -1,7 +1,7 @@
 import { BaseBuiltinComposite } from './base-builtin';
 import { BuiltinOtherType } from '../builtin.model';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osExpandVarThunk } from '@store/os/declare.os.duck';
 
 export class PwdBuiltin extends BaseBuiltinComposite<BuiltinOtherType.pwd> {

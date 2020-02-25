@@ -2,7 +2,7 @@ import { BaseBuiltinComposite } from './base-builtin';
 import { BuiltinSpecialType } from '../builtin.model';
 import { ObservedType } from '@service/term.service';
 import { findAncestralTerm } from '@service/term.util';
-import { IteratorTerm, Term } from '@model/term.model';
+import { IteratorTerm, Term } from '@model/os/term.model';
 
 export class BreakBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.break> {
 

@@ -7,9 +7,9 @@ import {
 // import { map, filter } from 'rxjs/operators';
 import { testNever, KeyedLookup, deepClone } from '@model/generic.model';
 import { OsSession, osIncrementTtyIdDef, osRegisterSessionDef, osSetSessionForegroundDef, osSetSessionGuiDef, osUnregisterSessionDef } from './os/session.os.duck';
-import { OsAct, OsProcGroup, OsUserGroup, OsUser } from '@model/os.model';
-import { ProcessState } from '@model/process.model';
-import { OpenFileDescription } from '@model/file.model';
+import { OsAct, OsProcGroup, OsUserGroup, OsUser } from '@model/os/os.model';
+import { ProcessState } from '@model/os/process.model';
+import { OpenFileDescription } from '@model/os/file.model';
 import { DirectoryINode } from '@store/inode/directory.inode';
 
 export interface State {

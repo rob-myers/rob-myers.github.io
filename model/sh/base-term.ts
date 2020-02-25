@@ -1,5 +1,5 @@
-import { TermKey, Term } from '@model/term.model';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { TermKey, Term } from '@model/os/term.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { ObservedType } from 'service/term.service';
 
 /** Used to define {BaseTerm.termId}. */

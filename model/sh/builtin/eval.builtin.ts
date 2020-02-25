@@ -1,6 +1,6 @@
 import { BaseBuiltinComposite, BaseBuiltinCompositeDef } from './base-builtin';
 import { BuiltinSpecialType } from '../builtin.model';
-import { Term } from '@model/term.model';
+import { Term } from '@model/os/term.model';
 import { ObservedType } from '@service/term.service';
 
 /**

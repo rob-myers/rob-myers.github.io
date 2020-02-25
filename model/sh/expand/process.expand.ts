@@ -1,6 +1,6 @@
 import { BaseExpandComposite, BaseExpandCompositeDef } from './base-expand';
 import { CompositeChildren } from '../composite/base-composite';
-import { Term } from '@model/term.model';
+import { Term } from '@model/os/term.model';
 import { ExpandType } from '../expand.model';
 import { ObservedType } from '@service/term.service';
 

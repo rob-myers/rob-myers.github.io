@@ -1,9 +1,9 @@
 import { BaseExpandComposite, BaseExpandCompositeDef } from './base-expand';
 import { CompositeChildren } from '../composite/base-composite';
-import { Term, CompositeType } from '@model/term.model';
+import { Term, CompositeType } from '@model/os/term.model';
 import { ExpandType } from '../expand.model';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osOpenTempThunk, osResolvePathThunk, osCloseFdAct, osUnlinkFileThunk } from '@store/os/file.os.duck';
 import { osGetPositionalsThunk } from '@store/os/declare.os.duck';
 import { osSpawnChildThunk } from '@store/os/process.os.duck';

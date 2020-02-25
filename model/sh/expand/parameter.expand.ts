@@ -1,11 +1,11 @@
 import globrex from 'globrex';
 import { BaseExpandComposite, BaseExpandCompositeDef, } from './base-expand';
-import { Term, ExpandComposite } from '@model/term.model';
+import { Term, ExpandComposite } from '@model/os/term.model';
 import { testNever } from '@model/generic.model';
 import { ExpandType, ParamType } from '../expand.model';
 import { ArithmOpComposite } from '../composite/arithm-op.composite';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osGetPositionalsThunk, osLookupVarThunk, osAssignVarThunk, osFindVarNamesThunk } from '@store/os/declare.os.duck';
 import { osGetProcessThunk } from '@store/os/process.os.duck';
 

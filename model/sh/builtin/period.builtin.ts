@@ -1,9 +1,9 @@
 import { BuiltinSpecialType, BuiltinOtherType } from '../builtin.model';
 import { BaseBuiltinComposite, BaseBuiltinCompositeDef } from './base-builtin';
 import { AssignComposite } from '../composite/assign.composite';
-import { Term } from '@model/term.model';
+import { Term } from '@model/os/term.model';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osOpenFileThunk, osCloseFdAct } from '@store/os/file.os.duck';
 import { INodeType } from '@store/inode/base-inode';
 import { osParseShThunk, osTranspileShThunk, osDistributeSrcThunk } from '@store/os/parse.os.duck';

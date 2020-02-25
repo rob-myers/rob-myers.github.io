@@ -1,5 +1,5 @@
 import * as XTerm from 'xterm';
-import { ProcessSignal } from '@model/process.model';
+import { ProcessSignal } from '@model/os/process.model';
 import { RedactInReduxDevTools } from '@model/redux.model';
 import { BaseINode, INodeType, BaseINodeDef } from './base-inode';
 import { testNever } from '@model/generic.model';

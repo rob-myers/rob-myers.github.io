@@ -1,7 +1,7 @@
 import * as Sh from '@service/parse-sh.service';
 import { testNever, flatten, last, Unpacked } from '@model/generic.model';
 
-import { Term, CompositeType, IteratorType, ExpandComposite, DeclareBuiltinType, DeclareBuiltinTerm } from '@model/term.model';
+import { Term, CompositeType, IteratorType, ExpandComposite, DeclareBuiltinType, DeclareBuiltinTerm } from '@model/os/term.model';
 import { TermComment, TermSourceMap, CodePosition } from '@model/sh/base-term';
 import { TimeComposite } from '@model/sh/composite/time.composite';
 import { TestOpComposite } from '@model/sh/composite/test-op.composite';

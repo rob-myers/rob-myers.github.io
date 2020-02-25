@@ -2,12 +2,12 @@
 import { dirname, basename, join } from 'path';
 import * as shortId from 'shortid';
 
-import { OsAct } from '@model/os.model';
+import { OsAct } from '@model/os/os.model';
 import { updateLookup, addToLookup, SyncAct, SyncActDef, } from '@model/redux.model';
-import { createOsAct, OsThunkAct, createOsThunk } from '@model/os.redux.model';
+import { createOsAct, OsThunkAct, createOsThunk } from '@model/os/os.redux.model';
 import { State } from '@store/os.duck';
 import { osExpandVarThunk, osAssignVarThunk } from './declare.os.duck';
-import { INode, OpenFileRequest, OpenFileDescription } from '@model/file.model';
+import { INode, OpenFileRequest, OpenFileDescription } from '@model/os/file.model';
 import { DirectoryINode } from '@store/inode/directory.inode';
 import { RegularINode } from '@store/inode/regular.inode';
 import { INodeType } from '@store/inode/base-inode';

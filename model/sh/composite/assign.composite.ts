@@ -1,11 +1,11 @@
 import { testNever } from '@model/generic.model';
 import { BaseAssignOpts, osAssignVarThunk } from '@store/os/declare.os.duck';
 import { BaseCompositeTerm } from './base-composite';
-import { CompositeType, ExpandComposite } from '@model/term.model';
+import { CompositeType, ExpandComposite } from '@model/os/term.model';
 import { ArrayComposite } from './array.composite';
 import { ArithmOpComposite } from './arithm-op.composite';
 import { BaseTermDef } from '../base-term';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { ObservedType } from '@service/term.service';
 
 /**

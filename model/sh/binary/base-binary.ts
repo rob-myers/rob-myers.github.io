@@ -1,11 +1,11 @@
 import getopts from 'getopts';
 import { BaseCompositeTerm } from '../composite/base-composite';
-import { CompositeType, Term } from '@model/term.model';
+import { CompositeType, Term } from '@model/os/term.model';
 import { BinaryType, isBinaryUiType } from '../binary.model';
-import { GetOpts } from '@model/os.model';
+import { GetOpts } from '@model/os/os.model';
 import { BaseTermDef } from '../base-term';
 import { simplifyGetOpts } from '@service/filesystem.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { ObservedType } from '@service/term.service';
 import { osLaunchGuiThunk } from '@store/os/session.os.duck';
 

@@ -1,5 +1,5 @@
 import { keys } from '@model/generic.model';
-import { DeclareBuiltinType } from '../term.model';
+import { DeclareBuiltinType } from '../os/term.model';
 import { EchoBuiltin } from './builtin/echo.builtin';
 import { PwdBuiltin } from './builtin/pwd.builtin';
 import { TestBuiltin } from './builtin/test.builtin';

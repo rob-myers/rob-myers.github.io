@@ -1,7 +1,7 @@
 import { BaseBuiltinComposite } from './base-builtin';
 import { BuiltinSpecialType } from '../builtin.model';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osShiftPositionalsAct } from '@store/os/declare.os.duck';
 
 export class ShiftBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.shift> {

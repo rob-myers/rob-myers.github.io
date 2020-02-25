@@ -1,13 +1,13 @@
 import * as shortid from 'shortid';
 import { DirectoryINode } from '@store/inode/directory.inode';
-import { INode, OpenFileDescription, OpenFileRequest } from '@model/file.model';
+import { INode, OpenFileDescription, OpenFileRequest } from '@model/os/file.model';
 import { INodeType } from '@store/inode/base-inode';
 import { keys, last } from '@model/generic.model';
 import { State } from '@store/os.duck';
-import { FromFdToOpenKey, ProcessState } from '@model/process.model';
+import { FromFdToOpenKey, ProcessState } from '@model/os/process.model';
 import { removeFromLookup, updateLookup } from '@model/redux.model';
 import { RegularINode } from '@store/inode/regular.inode';
-import { GetOpts } from '@model/os.model';
+import { GetOpts } from '@model/os/os.model';
 import { TermError } from './term.util';
 import { FifoINode } from '@store/inode/fifo.inode';
 

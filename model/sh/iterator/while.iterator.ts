@@ -1,7 +1,7 @@
 import { BaseIteratorTerm, BaseIteratorTermDef } from './base-iterator';
-import { IteratorType, Term } from '@model/term.model';
+import { IteratorType, Term } from '@model/os/term.model';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 
 /**
  * while

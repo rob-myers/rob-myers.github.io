@@ -1,9 +1,9 @@
 import { BaseTerm } from '@model/sh/base-term';
-import { CompositeType, Term, ExpandComposite } from '@model/term.model';
-import { OsDispatchOverload } from '@model/os.redux.model';
+import { CompositeType, Term, ExpandComposite } from '@model/os/term.model';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { RedirectComposite } from './redirect.composite';
 import { AssignComposite } from './assign.composite';
-import { CodeStackItem } from '@model/process.model';
+import { CodeStackItem } from '@model/os/process.model';
 import { ObservedType } from '@service/term.service';
 import { iterateTerm } from '@service/term.util';
 import { osPushRedirectScopeAct, osPopRedirectScopeAct, osPushPositionalsScopeAct, osPopPositionalsScopeAct, osExpandVarThunk } from '@store/os/declare.os.duck';

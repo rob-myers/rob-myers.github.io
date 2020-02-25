@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { BaseIteratorTerm, BaseIteratorTermDef } from './base-iterator';
-import { IteratorType, Term } from '@model/term.model';
+import { IteratorType, Term } from '@model/os/term.model';
 import { ArithmOpComposite } from '../composite/arithm-op.composite';
 import { ObservedType } from '@service/term.service';
 

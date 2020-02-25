@@ -1,5 +1,5 @@
 import { BaseIteratorTerm, BaseIteratorTermDef } from './base-iterator';
-import { IteratorType, ExpandComposite, Term } from '@model/term.model';
+import { IteratorType, ExpandComposite, Term } from '@model/os/term.model';
 import { ObservedType } from '@service/term.service';
 
 /**

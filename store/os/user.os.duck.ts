@@ -1,5 +1,5 @@
-import { OsThunkAct, createOsThunk, createOsAct } from '@model/os.redux.model';
-import { OsAct, OsUser } from '@model/os.model';
+import { OsThunkAct, createOsThunk, createOsAct } from '@model/os/os.redux.model';
+import { OsAct, OsUser } from '@model/os/os.model';
 import { State } from '../os.duck';
 import { SyncAct, SyncActDef, addToLookup, updateLookup } from '@model/redux.model';
 import { osAssignVarThunk } from './declare.os.duck';

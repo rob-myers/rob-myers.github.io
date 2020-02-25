@@ -1,4 +1,4 @@
-import { ExpandComposite } from '../term.model';
+import { ExpandComposite } from '../os/term.model';
 
 export enum ExpandType {
   /** Arithmetic expansion. */

@@ -1,7 +1,7 @@
 import { BaseCompositeTerm } from '../composite/base-composite';
-import { CompositeType } from '@model/term.model';
+import { CompositeType } from '@model/os/term.model';
 import { BaseTermDef } from '../base-term';
-import { ProcessVar } from '@model/process.model';
+import { ProcessVar } from '@model/os/process.model';
 import { ExpandType } from '../expand.model';
 
 export abstract class BaseExpandComposite<ExactKey extends ExpandType> extends BaseCompositeTerm<CompositeType.expand> {

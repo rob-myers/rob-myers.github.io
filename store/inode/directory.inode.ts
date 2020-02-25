@@ -1,5 +1,5 @@
 import { BaseINode, INodeType, BaseINodeDef } from './base-inode';
-import { INode } from '@model/file.model';
+import { INode } from '@model/os/file.model';
 import { flatten } from '@model/generic.model';
 import globRex from 'globrex';
 

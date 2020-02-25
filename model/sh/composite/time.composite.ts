@@ -1,5 +1,5 @@
 import { BaseTermDef } from '../base-term';
-import { CompositeType, Term } from '../../term.model';
+import { CompositeType, Term } from '../../os/term.model';
 import { BaseCompositeTerm } from './base-composite';
 import { ObservedType } from '@service/term.service';
 /**
