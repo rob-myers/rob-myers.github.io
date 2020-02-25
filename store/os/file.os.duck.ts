@@ -3,8 +3,8 @@ import { dirname, basename, join } from 'path';
 import * as shortId from 'shortid';
 
 import { OsAct } from '@model/os.model';
-import { updateLookup, addToLookup, createOsThunk } from '@model/redux.model';
-import { createOsAct, SyncAct, SyncActDef, OsThunkAct } from '@model/redux.model';
+import { updateLookup, addToLookup, SyncAct, SyncActDef, } from '@model/redux.model';
+import { createOsAct, OsThunkAct, createOsThunk } from '@model/os.redux.model';
 import { State } from '@store/os.duck';
 import { osExpandVarThunk, osAssignVarThunk } from './declare.os.duck';
 import { INode, OpenFileRequest, OpenFileDescription } from '@model/file.model';

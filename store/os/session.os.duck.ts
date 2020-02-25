@@ -1,6 +1,6 @@
 import * as XTerm from 'xterm';
-import { RedactInReduxDevTools, addToLookup, updateLookup, redact, removeFromLookup } from '@model/redux.model';
-import { OsThunkAct, createOsThunk, createOsAct, SyncAct, SyncActDef } from '@model/redux.model';
+import { RedactInReduxDevTools, addToLookup, updateLookup, redact, removeFromLookup, SyncAct, SyncActDef } from '@model/redux.model';
+import { OsThunkAct, createOsThunk, createOsAct } from '@model/os.redux.model';
 import { OsAct } from '@model/os.model';
 import { BinaryGuiType, BinaryExecType, BaseGuiSpec } from '@model/sh/binary.model';
 import { ProcessSignal } from '@model/process.model';

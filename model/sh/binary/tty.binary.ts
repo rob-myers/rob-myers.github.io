@@ -2,7 +2,7 @@ import { BinaryExecType } from '@model/sh/binary.model';
 import { BaseBinaryComposite } from './base-binary';
 import { ObservedType } from '@service/term.service';
 import { osGetOfdThunk } from '@store/os/file.os.duck';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { INodeType } from '@store/inode/base-inode';
 
 export class TtyBinary extends BaseBinaryComposite<BinaryExecType.tty> {

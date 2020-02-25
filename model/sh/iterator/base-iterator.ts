@@ -1,6 +1,6 @@
 import { IteratorType, Term, IteratorTerm } from '@model/term.model';
 import { BaseTerm, BaseTermDef } from '@model/sh/base-term';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { ObservedType } from '@service/term.service';
 import { iterateTerm } from '@service/term.util';
 

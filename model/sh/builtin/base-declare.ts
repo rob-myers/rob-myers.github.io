@@ -4,7 +4,7 @@ import { DeclareOpt, isDeclareOpt, ProcVarPredicate, getVarPredicates, printVar 
 import { BaseTermDef } from '../base-term';
 import { AssignComposite } from '../composite/assign.composite';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { keys } from '@model/generic.model';
 import { ProcessVar, NamedFunction } from '@model/process.model';
 

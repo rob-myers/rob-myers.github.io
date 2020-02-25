@@ -2,7 +2,7 @@ import { BinaryExecType } from '@model/sh/binary.model';
 import { BaseBinaryComposite } from './base-binary';
 import { ObservedType } from '@service/term.service';
 import { osUnlinkFileThunk } from '@store/os/file.os.duck';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 
 export class RmBinary extends BaseBinaryComposite<BinaryExecType.rm> {
 

@@ -1,6 +1,6 @@
 import { BaseTerm } from '@model/sh/base-term';
 import { CompositeType, Term, ExpandComposite } from '@model/term.model';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { RedirectComposite } from './redirect.composite';
 import { AssignComposite } from './assign.composite';
 import { CodeStackItem } from '@model/process.model';

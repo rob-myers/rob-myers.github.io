@@ -1,7 +1,4 @@
-import { RootAction, RootState } from '../store/reducer';
 import { KeyedLookup } from '@model/generic.model';
-import { OsWorkerState, OsWorkerAction } from '@worker/os.worker';
-import { Service } from '@service/create-services';
 
 //#region sync
 export interface SyncAct<T extends string, Payload extends null | {}> {
@@ -14,16 +11,6 @@ export const createAct = <T extends string, P extends object = {}>(
   payload: P
 ): SyncAct<T, P> => ({ pay: payload, type });
 
-/**
- * We create sync actions differently for operating system.
- */
-export function createOsAct<
-  T extends string,
-  Act extends SyncAct<T, Act['pay']>
->(actKey: T) {
-  return (pay: Act['pay']) => ({ type: actKey, pay }) as Act;
-}
-
 export type SyncActDef<
   ActKey extends string,
   Act extends SyncAct<ActKey, Act['pay']>,
@@ -32,76 +19,6 @@ export type SyncActDef<
 
 //#endregion
 
-
-//#region thunk
-export interface RootThunkParams {
-  dispatch: <T extends RootAction | ThunkAct<string, any, any>>(arg: T) => ThunkActReturnType<T>;
-  getState: () => RootState;
-  state: RootState;
-}
-
-export interface OsThunkParams {
-  dispatch: <T extends OsWorkerAction | OsThunkAct<string, any, any>>(arg: T) => ThunkActReturnType<T>;
-  getState: () => OsWorkerState;
-  state: OsWorkerState;
-  /**
-   * TODO
-   */
-  service: Service;
-}
-
-export interface ThunkAct<T extends string, A extends {}, R> {
-  type: T;
-  thunk: (params: RootThunkParams, args: A) => R;
-  args: A;
-}
-
-export interface OsThunkAct<T extends string, A extends {}, R> {
-  type: T;
-  thunk: (params: OsThunkParams, args: A) => R;
-  args: A;
-}
-
-export type ThunkActReturnType<T> = T extends ThunkAct<string, any, infer R> ? R : any;
-
-/**
- * Thunk factory inferring args from parameter.
- */
-export const createThunk = <T extends string, A extends {} = {}, R = void>(
-  type: T,
-  thunk: ThunkAct<T, A, R>['thunk']
-) => (args: A) =>
-    ({
-      type,
-      thunk,
-      args
-    } as ThunkAct<T, A, R>);
-
-/**
- * We create thunks differently for operating system.
- */
-export const createOsThunk  = <
-  T extends string,
-  Act extends OsThunkAct<T, Act['args'], R>,
-  R = void
->(type: T, thunk: Act['thunk']) => (args: Act['args']) =>
-    ({
-      type,
-      thunk,
-      args
-    } as Act);
-
-//#endregion
-
-export interface DispatchOverload {
-  <ActKey extends string = string, Payload = any>(action: SyncAct<ActKey, Payload>): void;
-  <ActKey extends string = string, ReturnValue = any>(action: ThunkAct<ActKey, any, ReturnValue>): ReturnValue;
-}
-
-export interface OsDispatchOverload {
-  <ActKey extends string = string, Payload = any>(action: SyncAct<ActKey, Payload>): void;
-  <ActKey extends string = string, ReturnValue = any>(action: OsThunkAct<ActKey, any, ReturnValue>): ReturnValue;
-}
 
 /**
  * If this key is in action's payload, said payload

@@ -2,7 +2,7 @@ import { BuiltinSpecialType } from '../builtin.model';
 import { BaseBuiltinComposite } from './base-builtin';
 import { ObservedType } from '@service/term.service';
 import { osTerminateProcessThunk, osIsSessionLeaderThunk } from '@store/os/process.os.duck';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 
 export class ExitBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.exit> {
 

@@ -3,7 +3,8 @@ import { composeWithDevTools, EnhancerOptions } from 'redux-devtools-extension';
 import { persistReducer, createTransform } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import rootReducer, { RootState, RootAction } from './reducer';
-import { ThunkAct, RedactInReduxDevTools, RootThunkParams } from '../model/redux.model';
+import { RedactInReduxDevTools } from '@model/redux.model';
+import { RootThunkParams, ThunkAct } from '@model/root.redux.model';
 import { State as TestState } from '@store/test.duck';
 import { State as NavState } from '@store/nav.duck';
 

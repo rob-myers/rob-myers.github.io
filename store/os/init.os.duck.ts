@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { createOsThunk, OsThunkAct, createOsAct, SyncAct, SyncActDef } from '@model/redux.model';
+import { SyncAct, SyncActDef } from '@model/redux.model';
+import { createOsThunk, OsThunkAct, createOsAct } from '@model/os.redux.model';
 import { OsAct, topLevelDirs } from '@model/os.model';
 import { State } from '../os.duck';
 import { UnregisteredProcess } from '@model/process.model';

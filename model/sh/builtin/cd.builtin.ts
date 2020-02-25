@@ -1,7 +1,7 @@
 import { BaseBuiltinComposite } from './base-builtin';
 import { BuiltinOtherType } from '../builtin.model';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { osGoHomeThunk, osRealPathThunk, osAbsToINodeThunk, osUpdatePwdThunk } from '@store/os/file.os.duck';
 import { INodeType } from '@store/inode/base-inode';
 

@@ -1,5 +1,5 @@
 import * as XTerm from 'xterm';
-import { createOsThunk, OsThunkAct } from '@model/redux.model';
+import { createOsThunk, OsThunkAct } from '@model/os.redux.model';
 import { OsAct } from '@model/os.model';
 import { TtyINode } from '@store/inode/tty.inode';
 import { RedactInReduxDevTools } from '@model/redux.model';

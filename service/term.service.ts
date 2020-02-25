@@ -80,7 +80,7 @@ import { TimeComposite } from '@model/sh/composite/time.composite';
 import { CstyleForIterator } from '@model/sh/iterator/cstyle-for.iterator';
 import { ForIterator } from '@model/sh/iterator/for.iterator';
 import { WhileIterator } from '@model/sh/iterator/while.iterator';
-import { DispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { ReplaySubject } from 'rxjs';
 import { iterateTerm } from './term.util';
 import { TopBinary } from '@model/sh/binary/top.binary';
@@ -116,7 +116,7 @@ class TermService {
 
   public compile({ term, dispatch, processKey }: {
     term: Term;
-    dispatch: DispatchOverload;
+    dispatch: OsDispatchOverload;
     processKey: string;
   }) {
     const iterator = iterateTerm({ term, dispatch, processKey });

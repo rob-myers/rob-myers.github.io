@@ -4,7 +4,7 @@ import { AssignComposite, AssignDefVar } from './assign.composite';
 import { RedirectComposite } from './redirect.composite';
 import { BaseCompositeTerm } from './base-composite';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { ExpandType } from '../expand.model';
 import { normalizeWhitespace, launchedInteractively } from '@service/term.util';
 import { osExpandFilepathThunk, osResolvePathThunk } from '@store/os/file.os.duck';

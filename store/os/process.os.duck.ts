@@ -2,9 +2,9 @@
 import { Subscription } from 'rxjs';
 
 import { mapValues, ensureArrayItem, last, testNever } from '@model/generic.model';
-import { createOsThunk, OsThunkAct, createOsAct, SyncActDef, SyncAct } from '@model/redux.model';
+import { SyncActDef, SyncAct, updateLookup, addToLookup, removeFromLookup, ReduxUpdater, redact } from '@model/redux.model';
+import { createOsThunk, OsThunkAct, createOsAct } from '@model/os.redux.model';
 import { OsAct, OsProcGroup } from '@model/os.model';
-import { updateLookup, addToLookup, removeFromLookup, ReduxUpdater, redact } from '@model/redux.model';
 import { Term, CompositeType } from '@model/term.model';
 import { ProcessState, UnregisteredProcess, FromFdToOpenKey, ProcessSigHandler, CodeStackItem } from '@model/process.model';
 import { closeFd } from '@service/filesystem.service';

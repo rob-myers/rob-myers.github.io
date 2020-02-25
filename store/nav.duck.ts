@@ -1,13 +1,13 @@
 import {
   createAct,
-  createThunk,
   ActionsUnion,
   addToLookup,
   updateLookup,
   removeFromLookup,
   redact,
   Redacted,
-} from '../model/redux.model';
+} from '@model/redux.model';
+import { createThunk } from '@model/root.redux.model';
 import { KeyedLookup } from '@model/generic.model';
 import { Rect2 } from '@model/rect2.model';
 import {

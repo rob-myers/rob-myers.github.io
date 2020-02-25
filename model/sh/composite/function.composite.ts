@@ -2,7 +2,7 @@ import { BaseCompositeTerm } from './base-composite';
 import { CompositeType, Term } from '@model/term.model';
 import { BaseTermDef } from '../base-term';
 import term, { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { osGetFunctionThunk, osAddFunctionAct } from '@store/os/declare.os.duck';
 
 /**

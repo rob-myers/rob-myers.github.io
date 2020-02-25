@@ -1,7 +1,7 @@
 import { BuiltinSpecialType } from '../builtin.model';
 import { BaseBuiltinComposite } from './base-builtin';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { osLookupVarThunk, osRemoveFunctionThunk, osUnsetVarThunk } from '@store/os/declare.os.duck';
 
 export class UnsetBuiltin extends BaseBuiltinComposite<

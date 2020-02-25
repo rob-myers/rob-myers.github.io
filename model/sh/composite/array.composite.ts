@@ -1,4 +1,4 @@
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { ExpandComposite, Term, CompositeType } from '@model/term.model';
 import { ArithmOpComposite } from './arithm-op.composite';
 import { BaseCompositeTerm } from './base-composite';

@@ -3,7 +3,7 @@ import { CompositeChildren } from '../composite/base-composite';
 import { ExpandComposite } from '@model/term.model';
 import { ExpandType } from '../expand.model';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { last } from '@model/generic.model';
 import { normalizeWhitespace } from '@service/term.util';
 

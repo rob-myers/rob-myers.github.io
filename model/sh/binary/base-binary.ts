@@ -5,7 +5,7 @@ import { BinaryType, isBinaryUiType } from '../binary.model';
 import { GetOpts } from '@model/os.model';
 import { BaseTermDef } from '../base-term';
 import { simplifyGetOpts } from '@service/filesystem.service';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { ObservedType } from '@service/term.service';
 import { osLaunchGuiThunk } from '@store/os/session.os.duck';
 

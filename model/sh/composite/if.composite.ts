@@ -3,7 +3,7 @@ import { CompositeType, Term } from '@model/term.model';
 
 import { BaseTermDef } from '../base-term';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 
 /**
  * if

@@ -5,7 +5,7 @@ import { CompositeType, ExpandComposite } from '@model/term.model';
 import { ArrayComposite } from './array.composite';
 import { ArithmOpComposite } from './arithm-op.composite';
 import { BaseTermDef } from '../base-term';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { ObservedType } from '@service/term.service';
 
 /**

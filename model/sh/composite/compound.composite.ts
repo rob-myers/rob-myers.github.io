@@ -3,7 +3,7 @@ import { RedirectComposite } from './redirect.composite';
 import { CompositeType, Term } from '@model/term.model';
 import { BaseTermDef } from '../base-term';
 import { ObservedType } from '@service/term.service';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { osPushRedirectScopeAct, osPopRedirectScopeAct } from '@store/os/declare.os.duck';
 import { osSpawnChildThunk } from '@store/os/process.os.duck';
 import { osCloneTerm } from '@store/os/parse.os.duck';

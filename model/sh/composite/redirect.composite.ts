@@ -4,7 +4,7 @@ import { CompositeType, Term, ExpandComposite } from '@model/term.model';
 import { BaseCompositeTerm } from './base-composite';
 import { ObservedType } from '@service/term.service';
 import { osGetProcessThunk } from '@store/os/process.os.duck';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { osCloseFdAct, osDupFileDescriptorAct, osOpenFileThunk, osUnlinkFileThunk } from '@store/os/file.os.duck';
 import { OpenFileOpts } from '@model/file.model';
 import { testNever } from '@model/generic.model';

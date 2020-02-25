@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import { OsAct } from '@model/os.model';
-import { createOsAct, SyncAct, SyncActDef, createOsThunk, OsThunkAct } from '@model/redux.model';
+import { SyncAct, SyncActDef } from '@model/redux.model';
+import { createOsAct, createOsThunk, OsThunkAct } from '@model/os.redux.model';
 import { ProcessVar, VarFlags, ToProcVar, NamedFunction, BasePositionalVar, PositionalProcVar } from '@model/process.model';
 import { State } from '../os.duck';
 import { updateLookup, addToLookup } from '@model/redux.model';

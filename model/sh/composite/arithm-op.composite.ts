@@ -4,7 +4,7 @@ import { CompositeType, ExpandComposite } from '@model/term.model';
 import { BaseCompositeTerm } from './base-composite';
 import { ObservedType } from '@service/term.service';
 import { osAssignVarThunk } from '@store/os/declare.os.duck';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 import { testNever } from '@model/generic.model';
 
 /**

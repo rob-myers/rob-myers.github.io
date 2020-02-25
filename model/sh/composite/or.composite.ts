@@ -3,7 +3,7 @@ import { CompositeType, Term } from '../../term.model';
 import { BaseCompositeTerm, CompositeChildren } from './base-composite';
 import { ObservedType } from '@service/term.service';
 import { last } from '@model/generic.model';
-import { OsDispatchOverload } from '@model/redux.model';
+import { OsDispatchOverload } from '@model/os.redux.model';
 
 /**
  * or
