@@ -43,7 +43,8 @@
       "no-dupe-class-members": "off",
       "@typescript-eslint/ban-ts-ignore": "off",
       "@typescript-eslint/no-use-before-define": ["error", { "functions": false }],
-      "@typescript-eslint/interface-name-prefix": "off"
+      "@typescript-eslint/interface-name-prefix": "off",
+      "require-yield": "off"
     },
     "overrides": [
       {

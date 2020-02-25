@@ -7,7 +7,7 @@ import {
   removeFromLookup,
   redact,
   Redacted,
-} from './redux.model';
+} from '../model/redux.model';
 import { KeyedLookup } from '@model/generic.model';
 import { Rect2 } from '@model/rect2.model';
 import {
@@ -163,22 +163,22 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
     case '[Nav] setup': return { ...state,
-      webWorker: act.webWorker,
+      webWorker: act.pay.webWorker,
       ready: true,
     };
     case '[NavDom] register': return { ...state,
-      dom: addToLookup(createNavDomState(act.uid), state.dom),
-      domMeta: addToLookup(createNavDomMetaState(act.uid), state.domMeta),
+      dom: addToLookup(createNavDomState(act.pay.uid), state.dom),
+      domMeta: addToLookup(createNavDomMetaState(act.pay.uid), state.domMeta),
     };
     case '[NavDom] unregister': return { ...state,
-      dom: removeFromLookup(act.uid, state.dom),
-      domMeta: removeFromLookup(act.uid, state.domMeta),
+      dom: removeFromLookup(act.pay.uid, state.dom),
+      domMeta: removeFromLookup(act.pay.uid, state.domMeta),
     };
     case '[NavDom] update meta': return { ...state,
-      domMeta: updateLookup(act.uid, state.domMeta, () => act.updates),
+      domMeta: updateLookup(act.pay.uid, state.domMeta, () => act.pay.updates),
     };
     case '[NavDom] generic update': return { ...state,
-      dom: updateLookup(act.uid, state.dom, () => act.updates),
+      dom: updateLookup(act.pay.uid, state.dom, () => act.pay.updates),
     };
     default: return state;
   }

@@ -1,5 +1,5 @@
 import { RootState } from '@store/reducer';
-import { ThunkActReturnType } from '@store/redux.model';
+import { ThunkActReturnType } from '@model/redux.model';
 
 declare module 'react-redux' {
   function useSelector<T = any>(selector: (state: RootState) => T, equalityFn?: Function): T;
