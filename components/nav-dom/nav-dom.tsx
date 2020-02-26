@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getNavElemId } from '@model/nav.model';
+import { getNavElemId } from '@model/nav/nav.model';
 import { Act, Thunk } from '@store/nav.duck';
 import NavDomBackground from './nav-dom-bg';
 import css from './nav-dom.scss';

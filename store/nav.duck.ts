@@ -17,11 +17,11 @@ import {
   createNavDomMetaState,
   defaultNavOutset,
   createNavSpawnState,
-} from '@model/nav.model';
+} from '@model/nav/nav.model';
 import { Poly2 } from '@model/poly2.model';
-import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav-worker.model';
+import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav/nav-worker.model';
 import { traverseDom } from '@model/dom.model';
-import { NavGraph } from '@model/nav-graph.model';
+import { NavGraph } from '@model/nav/nav-graph.model';
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
