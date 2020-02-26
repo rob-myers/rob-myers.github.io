@@ -11,20 +11,17 @@ import { osParseShThunk, osTranspileShThunk, osDistributeSrcThunk } from '@store
 export abstract class PeriodOrSourceBuiltin<
   Key extends BuiltinSpecialType.period | BuiltinOtherType.source
 > extends BaseBuiltinComposite<Key> {
-  /**
-   * Attached by {SimpleComposite}.
-   */
+  
+  /** Attached by {SimpleComposite}. */
   public assigns: AssignComposite[];
 
   public get children() {
     return this.mounted ? [this.mounted] : [];
   }
-  /**
-   * The term induced by the script.
-   */
+
+  /** The term induced by the script. */
   public mounted: null | Term;
   
-
   constructor(public def: BaseBuiltinCompositeDef<Key>) {
     super(def);
     this.assigns = [];

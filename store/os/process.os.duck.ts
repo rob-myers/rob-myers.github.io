@@ -320,6 +320,7 @@ export type Thunk = (
   | StartProcessThunk
   | TerminateProcessThunk
   | WaiterThunk
+  | WriteWarningThunk
 );
 
 /**
@@ -599,6 +600,35 @@ export interface BaseSpawnDef {
   posPositionals: string[];
 }
 
+export const osWriteWarningThunk = createOsThunk<OsAct, WriteWarningThunk>(
+  OsAct.OS_WRITE_WARNING,
+  async ({ dispatch }, { processKey, line, term }) => {
+    const zeroethParam = dispatch(osExpandVarThunk({ processKey, varName: '0' }));
+    let warning: string;
+
+    if (term.key === CompositeType.binary) {
+      warning = dispatch(osIsSessionLeaderThunk({ processKey }))
+        ? `${zeroethParam}: ${line}` // Prevent erroneous '-bash: bash: ...'.
+        : `${zeroethParam}: ${term.binaryKey}: ${line}`;
+    } else if (term.key === CompositeType.builtin) {
+      warning = `${zeroethParam}: ${term.builtinKey}: ${line}`;
+    } else {
+      warning = `${zeroethParam}: ${line}`;
+    }
+
+    let result: { toPromise: IoToPromise };
+    while ((result = await dispatch(osWriteThunk({ fd: 2, lines: [warning], processKey }))) && result.toPromise) {
+      await result.toPromise();
+    }
+  },
+);
+interface WriteWarningThunk extends OsThunkAct<OsAct,
+  { processKey: string; line: string; term: Term },
+  Promise<void>
+> {
+  type: OsAct.OS_WRITE_WARNING;
+}
+
 /**
  * Start process by subscribing to ReplaySubject wrapping an iterator.
  * Handle its yielded actions, and then iterate the iterator it wraps.
@@ -608,30 +638,6 @@ export const osStartProcessThunk = createOsThunk<OsAct, StartProcessThunk>(
   OsAct.OS_START_PROCESS_THUNK,
   ({ state: { os: { proc } }, dispatch }, { processKey }) => {
     const { observable, subscription } = proc[processKey];
-
-    /**
-     * _TODO_ move elsewhere.
-     * Block until error written to stderr.
-     */
-    const warn = async (line: string, term: Term) => {
-      const zeroethParam = dispatch(osExpandVarThunk({ processKey, varName: '0' }));
-      let warning: string;
-
-      if (term.key === CompositeType.binary) {
-        warning = dispatch(osIsSessionLeaderThunk({ processKey }))
-          ? `${zeroethParam}: ${line}` // Prevent erroneous '-bash: bash: ...'.
-          : `${zeroethParam}: ${term.binaryKey}: ${line}`;
-      } else if (term.key === CompositeType.builtin) {
-        warning = `${zeroethParam}: ${term.builtinKey}: ${line}`;
-      } else {
-        warning = `${zeroethParam}: ${line}`;
-      }
-
-      let result: { toPromise: IoToPromise };
-      while ((result = await dispatch(osWriteThunk({ fd: 2, lines: [warning], processKey }))) && result.toPromise) {
-        await result.toPromise();
-      }
-    };
 
     if (!subscription) {
       const newSubscription = observable.subscribe({
@@ -649,7 +655,7 @@ export const osStartProcessThunk = createOsThunk<OsAct, StartProcessThunk>(
                 break;
               }
               case 'warn': {
-                await warn(act.line, act.term);
+                await dispatch(osWriteWarningThunk({ processKey, line: act.line, term: act.term}));
                 break;
               }
               case 'exit': {// NOTE actual term-exit enforced in {*iterateTerm}.
@@ -660,7 +666,7 @@ export const osStartProcessThunk = createOsThunk<OsAct, StartProcessThunk>(
                 // Store code in term so ancestors can use it.
                 act.term.exitCode = act.code;
                 if (act.line) {
-                  await warn(act.line, act.term);
+                  await dispatch(osWriteWarningThunk({ processKey, line: act.line, term: act.term}));
                 }
                 break;
               }
@@ -706,7 +712,7 @@ export const osStartProcessThunk = createOsThunk<OsAct, StartProcessThunk>(
         },
         error: (err) => {
           /**
-           * _TODO_ remove process on internal error?
+           * TODO remove process on internal error?
            */
           console.log({ processKey, event: 'error', err });
         },

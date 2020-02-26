@@ -19,8 +19,7 @@ export class TestComposite extends BaseCompositeTerm<CompositeType.test> {
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
     yield* this.runChild({ child: this.def.expr, dispatch, processKey });
-    // Forward exit code.
-    this.exitCode = this.def.expr.exitCode || 0;
+    this.exitCode = this.def.expr.exitCode || 0; // Forward exit code.
   }
 }
 

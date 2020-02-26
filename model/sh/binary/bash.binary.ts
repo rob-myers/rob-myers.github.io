@@ -10,7 +10,9 @@ import { osPromptThunk } from '@store/os/tty.os.duck';
 import { osParseBufferThunk, osTranspileShThunk, osDistributeSrcThunk } from '@store/os/parse.os.duck';
 
 /**
- * _TODO_ support non-interactive.
+ * TODO support non-interactive as in `step`.
+ * - only interactive if stdin a tty
+ * - noniteractive if have non-empty operand (filepath)
  */
 
 export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
@@ -18,18 +20,15 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
   public get children() {
     return this.mounted ? [this.mounted] : [];
   }
-  /**
-   * Determined by {this.args} and stdin.
-   */
-  public interactive = false;
-  /**
-   * Both interactive and noninteractive bash mount a term.
-   */
+
+  /** Determined by {this.args} and stdin. */
+  public interactive = true;
+  /** Both interactive and noninteractive bash mount a term. */
   public mounted: null | Term = null;
 
   public onEnter() {
     super.onEnter();
-    this.interactive = true; // TODO
+    this.interactive = true;
     this.mounted = null;
   }
 
@@ -38,30 +37,22 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
   }
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
-    /**
-     * bash handles Ctrl+C by resetting itself.
-     */
+    // handle Ctrl+C by resetting itself.
     dispatch(osSetSignalHandlerAct({ processKey, handler: { TERM: 'reset' }}));
-    /**
-     * $0 is '-bash' iff process is session leader.
-     */
+    // $0 is '-bash' iff process is session leader.
     const isLeader = dispatch(osIsSessionLeaderThunk({ processKey }));
     dispatch(osSetZeroethParamAct({ processKey, $0: isLeader ? '-bash' : 'bash' }));
     dispatch(osSetProcessGroupAct({ processKey, processGroupKey: processKey }));
     dispatch(osSetSessionForegroundAct({ processKey, processGroupKey: processKey }));
 
+    // Interactive command loop.
     while (true) {
-      /**
-       * Interactive command loop.
-       */
       const srcBuffer = [] as string[];
       dispatch(osPromptThunk({ processKey, fd: 1, text: '\x1b[96m$ \x1b[0m' }));
 
+      // Interactive partial-parse loop.
       while (true) {
-        /**
-         * Interactive partial-parse loop.
-         * We start by reading exactly one line.
-         */
+        // We start by reading exactly one line.
         const buffer = [] as string[];
         while ((yield this.read(1, 0, buffer)) && !buffer.length);
         
@@ -69,21 +60,15 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
         const result = dispatch(osParseBufferThunk({ processKey, buffer: srcBuffer }));
 
         if (result.key === 'failed') {
-          /**
-           * Write to stderr, store exit-code and continue.
-           */
+          // Write to stderr, store exit-code and continue.
           yield this.warn(result.error.replace(/^Error: runtime error: src\.sh:/, ''));
           dispatch(osStoreExitCodeAct({ processKey, exitCode: 1 }));
           break;
         } else if (result.key === 'complete') {
-          /**
-           * Transpile, distributing source code to specific subterms.
-           */
+          // Transpile, distributing source code to specific subterms.
           const term = dispatch(osTranspileShThunk({ parsed: result.parsed }));
           dispatch(osDistributeSrcThunk({ term, src: srcBuffer.join('\n') }));
-          /**
-           * Mount and run.
-           */
+          // Mount and run.
           this.mounted = term;
           this.adoptChildren();
           yield* this.runChild({ child: term, dispatch, processKey });
@@ -91,9 +76,7 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
           // yield* term.semantics(dispatch, processKey);
           break;
         } else {
-          /**
-           * Code in buffer is incomplete, so prompt for more input.
-           */
+          // Code in buffer is incomplete, so prompt for more input.
           dispatch(osPromptThunk({ processKey, fd: 1, text: '> ' }));
         }
       }

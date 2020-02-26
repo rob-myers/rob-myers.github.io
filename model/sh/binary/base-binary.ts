@@ -21,22 +21,16 @@ export abstract class BaseBinaryComposite<
 > extends BaseCompositeTerm<CompositeType.binary> {
  
   public binaryKey: ExactKey;
-  /**
-   * Computed via npm module getopts.
-   */
+  /** Computed via npm module getopts. */
   public opts: GetOpts<SpecOpts['string'][0], SpecOpts['boolean'][0]>;
-  /**
-   * Shortcut to {this.opts._}.
-   */
+  /** Shortcut to {this.opts._}. */
   public operands: string[];
   public unknownOpts: string[];
 
   public get children(): Term[] {
     return [];
   }
-  /**
-   * Must return options specification (static data).
-   */
+  /** Must return options specification (static data). */
   public abstract specOpts(): SpecOpts
 
   constructor(public def: BaseBinaryCompositeDef<ExactKey>) {

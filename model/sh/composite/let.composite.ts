@@ -3,9 +3,10 @@ import { CompositeType } from '../../os/term.model';
 import { ArithmOpComposite } from './arithm-op.composite';
 import { BaseCompositeTerm, CompositeChildren } from './base-composite';
 import { ObservedType } from '@service/term.service';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 
 /**
- * let
+ * let (a builtin)
  */
 export class LetComposite extends BaseCompositeTerm<CompositeType.let> {
   public get children() {
@@ -16,8 +17,10 @@ export class LetComposite extends BaseCompositeTerm<CompositeType.let> {
     super(def);
   }
 
-  public async *semantics(): AsyncIterableIterator<ObservedType> {
-    //
+  public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
+    for (const child of this.def.cs) {
+      yield* this.runChild({ child, dispatch, processKey });
+    }
   }
 }
 

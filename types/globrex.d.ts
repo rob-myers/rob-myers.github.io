@@ -8,5 +8,6 @@ declare module 'globrex' {
     filepath?: boolean;
   }
 
-  export = function(glob: string, opts?: Options): { regex: RegExp };
+  export default function(glob: string, opts?: Options): { regex: RegExp };
+
 }

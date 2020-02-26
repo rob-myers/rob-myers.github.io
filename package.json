@@ -27,7 +27,8 @@
     "deploy": "rm -rf .next && yarn build && yarn export && touch out/.nojekyll && yarn gh-pages",
     "next-cfg": "tsc -p scripts",
     "gh-pages": "cd scripts && ts-node gh-pages.ts",
-    "test": "jest --watch --verbose"
+    "test": "jest --watch --verbose",
+    "check-types": "tsc --noEmit"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "5.1.1",
