@@ -8,7 +8,7 @@ import { OsAct, OsProcGroup } from '@model/os/os.model';
 import { Term, CompositeType } from '@model/os/term.model';
 import { ProcessState, UnregisteredProcess, FromFdToOpenKey, ProcessSigHandler, CodeStackItem } from '@model/os/process.model';
 import { closeFd } from '@service/filesystem.service';
-import { State } from '@store/os.duck';
+import { State } from '@store/os/os.duck';
 import { osIncrementOpenAct, osReadThunk, osWriteThunk, IoToPromise, osOpenFileThunk } from '@store/os/file.os.duck';
 import { osExpandVarThunk, osAssignVarThunk, osRestrictToEnvThunk } from './declare.os.duck';
 import { cloneVar } from '@service/process-var.service';

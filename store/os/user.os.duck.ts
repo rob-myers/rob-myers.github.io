@@ -1,6 +1,6 @@
 import { OsThunkAct, createOsThunk, createOsAct } from '@model/os/os.redux.model';
 import { OsAct, OsUser } from '@model/os/os.model';
-import { State } from '../os.duck';
+import { State } from './os.duck';
 import { SyncAct, SyncActDef, addToLookup, updateLookup } from '@model/redux.model';
 import { osAssignVarThunk } from './declare.os.duck';
 import { DirectoryINode } from '@store/inode/directory.inode';

@@ -1,5 +1,5 @@
 import { SyncAct } from '../redux.model';
-import { OsWorkerAction, OsWorkerState } from '@worker/os.worker';
+import { OsWorkerAction, OsWorkerState } from '@worker/os/reducer';
 import { Service } from '@service/create-services';
 
 /**

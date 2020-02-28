@@ -1,4 +1,4 @@
-import * as shortid from 'shortid';
+import generateUid from '@service/generate-uid';
 
 export enum INodeType {
   regular= 'regular',
@@ -65,7 +65,7 @@ export abstract class BaseINode {
   public writeResolvers: (() => boolean)[];
 
   constructor(public def: BaseINodeDef) {
-    this.inodeKey = shortid.generate();
+    this.inodeKey = `${generateUid()}`;
     this.numLinks = 1;
     this.readResolvers = [];
     this.writeResolvers = [];

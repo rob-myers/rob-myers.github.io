@@ -3,9 +3,18 @@ import { Cross, Line, Room, TurnNw, TurnNe, Blank, TurnSw, Offset } from './tile
 import { Row } from './box';
 import css from './demo.scss';
 import NavSpawn from '@components/nav-dom/nav-spawn';
+import { useDispatch } from 'react-redux';
+import { Thunk } from '@store/xterm.duck';
+import { useEffect } from 'react';
 
 
 const Demo1: React.FC = () => {
+
+  // TEST
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(Thunk.ensureGlobalSetup({}));
+  }, []);
 
   return (
     <div className={css.demo1Root} >

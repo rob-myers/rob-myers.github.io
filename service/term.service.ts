@@ -1,3 +1,4 @@
+import { ReplaySubject } from 'rxjs';
 import { Term, CompositeType, ExpandComposite, IteratorType, Builtin, DeclareBuiltinType, BinaryComposite } from '@model/os/term.model';
 import { testNever } from '@model/generic.model';
 import { BinaryExecType, BinaryGuiType, BinaryType } from '@model/sh/binary.model';
@@ -81,7 +82,6 @@ import { CstyleForIterator } from '@model/sh/iterator/cstyle-for.iterator';
 import { ForIterator } from '@model/sh/iterator/for.iterator';
 import { WhileIterator } from '@model/sh/iterator/while.iterator';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
-import { ReplaySubject } from 'rxjs';
 import { iterateTerm } from './term.util';
 import { TopBinary } from '@model/sh/binary/top.binary';
 import { NamedFunction } from '@model/os/process.model';

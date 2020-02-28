@@ -25,21 +25,6 @@ export default (App: NextComponentType<NextPageContext, IProps, Props>) => {
   return class AppWithRedux extends React.Component<Props> {
     private reduxStore: ReduxStore;
 
-    // static async getInitialProps(appContext: NextPageContext): Promise<IProps | Props> {
-    //   const reduxStore = getOrInitializeStore();
-    //   // console.log({ appContext });
-    //   // appContext.ctx.reduxStore = reduxStore;
-
-    //   return {
-    //     ...(
-    //       typeof App.getInitialProps === 'function'
-    //         ? await App.getInitialProps(appContext)
-    //         : {}
-    //     ),
-    //     initialReduxState: reduxStore.getState(),
-    //   };
-    // }
-
     constructor(props: IProps & Props) {
       super(props);
       this.reduxStore = getOrInitializeStore(props.initialReduxState);

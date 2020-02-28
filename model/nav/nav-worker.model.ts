@@ -1,3 +1,6 @@
+/**
+ * TODO simplify e.g. remove contracts
+ */
 import { Poly2Json } from '@model/poly2.model';
 import { Rect2Json } from '../rect2.model';
 import { KeyedUnionToLookup } from '../generic.model';

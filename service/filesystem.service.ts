@@ -1,9 +1,9 @@
-import * as shortid from 'shortid';
+import generateUid from '@service/generate-uid';
 import { DirectoryINode } from '@store/inode/directory.inode';
 import { INode, OpenFileDescription, OpenFileRequest } from '@model/os/file.model';
 import { INodeType } from '@store/inode/base-inode';
 import { keys, last } from '@model/generic.model';
-import { State } from '@store/os.duck';
+import { State } from '@store/os/os.duck';
 import { FromFdToOpenKey, ProcessState } from '@model/os/process.model';
 import { removeFromLookup, updateLookup } from '@model/redux.model';
 import { RegularINode } from '@store/inode/regular.inode';
@@ -73,7 +73,7 @@ export class FilesystemService {
    * Create open file description.
    */
   public createOfd(iNode: INode, request: OpenFileRequest): OpenFileDescription {
-    const openKey = `${shortid.generate()}.ofd`;
+    const openKey = `${generateUid()}.ofd`;
 
     // Only regular files can be appended to.
     const append = iNode.type === INodeType.regular

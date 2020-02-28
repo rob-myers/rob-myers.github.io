@@ -1,6 +1,6 @@
+import { BaseBinaryComposite } from './base-binary';
 import { BinaryExecType } from '@model/sh/binary.model';
 import { Term } from '@model/os/term.model';
-import { BaseBinaryComposite } from './base-binary';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osSetSignalHandlerAct, osIsSessionLeaderThunk, osSetProcessGroupAct, osStoreExitCodeAct } from '@store/os/process.os.duck';
 import { osSetZeroethParamAct } from '@store/os/declare.os.duck';

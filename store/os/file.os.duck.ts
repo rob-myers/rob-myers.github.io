@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { dirname, basename, join } from 'path';
-import * as shortId from 'shortid';
+import { dirname, basename, join } from '@service/path';
+import generateUid from '@service/generate-uid';
 
 import { OsAct } from '@model/os/os.model';
 import { updateLookup, addToLookup, SyncAct, SyncActDef, } from '@model/redux.model';
 import { createOsAct, OsThunkAct, createOsThunk } from '@model/os/os.redux.model';
-import { State } from '@store/os.duck';
+import { State } from '@store/os/os.duck';
 import { osExpandVarThunk, osAssignVarThunk } from './declare.os.duck';
 import { INode, OpenFileRequest, OpenFileDescription } from '@model/os/file.model';
 import { DirectoryINode } from '@store/inode/directory.inode';
@@ -468,7 +468,7 @@ export const osOpenTempThunk = createOsThunk<OsAct, OpenTempThunk>(
   ({ dispatch, state: { os } }, { processKey }) => {
     const { fdToOpenKey } = os.proc[processKey];
     const fd = firstAvailableInteger(range(0, 10).concat(Object.keys(fdToOpenKey).map(Number)));
-    const tempPath = `/tmp/${shortId.generate()}.tmp`;
+    const tempPath = `/tmp/${generateUid()}.tmp`;
     dispatch(osOpenFileThunk({ processKey, request: { fd, mode: 'RDWR', path: tempPath } }));
     return { fd, tempPath };
   },

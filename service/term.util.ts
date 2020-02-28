@@ -47,7 +47,7 @@ export async function* iterateTerm(
     }
     /**
      * Exit the term, if we haven't already.
-     * _TODO_ avoid exiting twice.
+     * TODO avoid exiting twice.
      */
     yield { key: 'exit', term, code: term.exitCode || 0 };
 

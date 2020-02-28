@@ -6,7 +6,7 @@ import {
 } from 'redux-observable';
 // import { map, filter } from 'rxjs/operators';
 import { testNever, KeyedLookup, deepClone } from '@model/generic.model';
-import { OsSession, osIncrementTtyIdDef, osRegisterSessionDef, osSetSessionForegroundDef, osSetSessionGuiDef, osUnregisterSessionDef } from './os/session.os.duck';
+import { OsSession, osIncrementTtyIdDef, osRegisterSessionDef, osSetSessionForegroundDef, osSetSessionGuiDef, osUnregisterSessionDef } from './session.os.duck';
 import { OsAct, OsProcGroup, OsUserGroup, OsUser } from '@model/os/os.model';
 import { ProcessState } from '@model/os/process.model';
 import { OpenFileDescription } from '@model/os/file.model';
@@ -76,12 +76,12 @@ export const osInitialState: State = {
 /**
  * Import actions etc. from files in subdirectory ./os.
  */
-import { Action as DeclareAction, Thunk as DeclareThunk, osUpdateNestedVarDef, osSetZeroethParamDef, osPushRedirectScopeDef, osPopRedirectScopeDef, osPushPositionalsScopeDef, osPopPositionalsScopeDef, osPushVarScopeDef, osPopVarScopeDef, osUpdateFunctionDef, osAddFunctionDef, osShiftPositionalsDef } from './os/declare.os.duck';
-import { Action as FileAction, Thunk as FileThunk, osMountFileDef, osIncrementOpenDef, osRegisterOpenFileDef, osSetFileDescriptorDef, osCloseFdDef, osDupFileDescriptorDef, osOffsetOpenDef } from './os/file.os.duck';
-import { Action as InitAction, Thunk as InitThunk, osInitializedDef } from './os/init.os.duck';
-import { Action as ProcessAction, Thunk as ProcessThunk, osStoreExitCodeDef, osRegisterProcessDef, osCloseProcessFdsDef, osSetProcessGroupDef, osUpdateProcessDef, osSetSignalHandlerDef, osStoreProcessSubscriptionDef, osClearBufferDef, osPushCodeStackDef, osPopCodeStackDef, osUnregisterProcessDef } from './os/process.os.duck';
-import { Action as SessionAction, Thunk as SessionThunk } from './os/session.os.duck';
-import { Action as UserAction, Thunk as UserThunk, osCreateUserGroupDef, osRegisterUserDef, osSetProcessUidDef } from './os/user.os.duck';
+import { Action as DeclareAction, Thunk as DeclareThunk, osUpdateNestedVarDef, osSetZeroethParamDef, osPushRedirectScopeDef, osPopRedirectScopeDef, osPushPositionalsScopeDef, osPopPositionalsScopeDef, osPushVarScopeDef, osPopVarScopeDef, osUpdateFunctionDef, osAddFunctionDef, osShiftPositionalsDef } from './declare.os.duck';
+import { Action as FileAction, Thunk as FileThunk, osMountFileDef, osIncrementOpenDef, osRegisterOpenFileDef, osSetFileDescriptorDef, osCloseFdDef, osDupFileDescriptorDef, osOffsetOpenDef } from './file.os.duck';
+import { Action as InitAction, Thunk as InitThunk, osInitializedDef } from './init.os.duck';
+import { Action as ProcessAction, Thunk as ProcessThunk, osStoreExitCodeDef, osRegisterProcessDef, osCloseProcessFdsDef, osSetProcessGroupDef, osUpdateProcessDef, osSetSignalHandlerDef, osStoreProcessSubscriptionDef, osClearBufferDef, osPushCodeStackDef, osPopCodeStackDef, osUnregisterProcessDef } from './process.os.duck';
+import { Action as SessionAction, Thunk as SessionThunk } from './session.os.duck';
+import { Action as UserAction, Thunk as UserThunk, osCreateUserGroupDef, osRegisterUserDef, osSetProcessUidDef } from './user.os.duck';
 
 export type Action = (
   | DeclareAction

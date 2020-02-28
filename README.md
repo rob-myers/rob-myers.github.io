@@ -1,8 +1,11 @@
 ## TODO
 
+- get xterm working
+- get os state running in webworker
+
 - illustrate floyd-warshall via click on spawn-point and mousemove
 - avoid jerky fade in/out
-- avoid lag caused by floyd-warshall e.g. via another webworker
+- avoid lag caused by floyd-warshall, or at least indicate it
 
 - string-pulling
 - actors move along them via css

@@ -3,7 +3,7 @@ import { OsAct } from '@model/os/os.model';
 import { SyncAct, SyncActDef } from '@model/redux.model';
 import { createOsAct, createOsThunk, OsThunkAct } from '@model/os/os.redux.model';
 import { ProcessVar, VarFlags, ToProcVar, NamedFunction, BasePositionalVar, PositionalProcVar } from '@model/os/process.model';
-import { State } from '../os.duck';
+import { State } from './os.duck';
 import { updateLookup, addToLookup } from '@model/redux.model';
 import { mapValues, testNever, last, flatten, withoutProperty } from '@model/generic.model';
 import { createPositional, cloneVar } from '@service/process-var.service';

@@ -1,4 +1,4 @@
-import * as shortid from 'shortid';
+import generateUid from '@service/generate-uid';
 import { BaseTermDef } from '@model/sh/base-term';
 import { CompositeType, Term, ExpandComposite } from '@model/os/term.model';
 import { BaseCompositeTerm } from './base-composite';
@@ -93,7 +93,7 @@ export class RedirectComposite extends BaseCompositeTerm<CompositeType.redirect>
          * - https://www.oilshell.org/blog/2016/10/18.html
          * - TODO Write in new redirection scope?
          */
-        const tempPath = `/tmp/here-doc.${shortid.generate()}.${processKey}`;
+        const tempPath = `/tmp/here-doc.${generateUid()}.${processKey}`;
         dispatch(osOpenFileThunk({ processKey, request: { fd: 10, mode: 'WRONLY', path: tempPath }}));
         yield this.write(buffer, 10);
         dispatch(osCloseFdAct({ processKey, fd: 10 }));

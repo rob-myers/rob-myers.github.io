@@ -2,7 +2,7 @@
 import { SyncAct, SyncActDef } from '@model/redux.model';
 import { createOsThunk, OsThunkAct, createOsAct } from '@model/os/os.redux.model';
 import { OsAct, topLevelDirs } from '@model/os/os.model';
-import { State } from '../os.duck';
+import { State } from './os.duck';
 import { UnregisteredProcess } from '@model/os/process.model';
 import { osRegisterSessionAct as osRegisterSessionAct } from './session.os.duck';
 import { osRegisterProcessAct, osStartProcessThunk } from './process.os.duck';
