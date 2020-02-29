@@ -6,7 +6,7 @@ import { ArrayComposite } from './array.composite';
 import { ArithmOpComposite } from './arithm-op.composite';
 import { BaseTermDef } from '../base-term';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 
 /**
  * assignment

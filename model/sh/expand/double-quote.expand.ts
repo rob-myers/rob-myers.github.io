@@ -1,7 +1,7 @@
 import { BaseExpandComposite, BaseExpandCompositeDef } from './base-expand';
 import { ExpandComposite } from '@model/os/term.model';
 import { ExpandType, isExpansionSpecial } from '../expand.model';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 
 export class DoubleQuoteExpand extends BaseExpandComposite<ExpandType.doubleQuote> {

@@ -1,6 +1,6 @@
 import { BaseExpandComposite, BaseExpandCompositeDef } from './base-expand';
 import { ExpandType } from '../expand.model';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { CompositeType } from '@model/os/term.model';
 const braceExpansion = require('brace-expansion') as (input: string) => string[];
 

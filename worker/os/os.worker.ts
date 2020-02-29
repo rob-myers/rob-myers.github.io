@@ -1,5 +1,5 @@
 import { initializeStore } from './create-store';
-import createServices from '@service/create-services';
+import createServices from '@os-service/create-services';
 import { OsWorkerContext, OsWorker } from '@model/os/os.worker.model';
 import { osInitializeThunk } from '@store/os/init.os.duck';
 import { OsSession } from '@store/os/session.os.duck';

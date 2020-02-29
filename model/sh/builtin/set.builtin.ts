@@ -1,6 +1,6 @@
 import { BuiltinSpecialType } from '../builtin.model';
 import { BaseBuiltinComposite } from './base-builtin';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 
 export class SetBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.set> {
 

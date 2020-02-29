@@ -1,7 +1,7 @@
 import { basename, dirname } from 'path';
 import { BinaryExecType } from '@model/sh/binary.model';
 import { BaseBinaryComposite } from './base-binary';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osRealPathThunk, osAbsToINodeThunk, osMountFileAct, osUnlinkFileThunk, osResolvePathThunk } from '@store/os/file.os.duck';
 import { INodeType } from '@store/inode/base-inode';

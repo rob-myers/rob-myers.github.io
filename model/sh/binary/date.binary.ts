@@ -1,6 +1,6 @@
 import { BinaryExecType } from '@model/sh/binary.model';
 import { BaseBinaryComposite } from './base-binary';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 
 export class DateBinary extends BaseBinaryComposite<BinaryExecType.date> {
 

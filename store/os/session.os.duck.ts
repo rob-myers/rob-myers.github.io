@@ -10,7 +10,7 @@ import { osForkProcessThunk, osCloseProcessFdsAct, osSetProcessGroupAct, osExecT
 import { osOpenFileThunk, osUnlinkFileThunk } from './file.os.duck';
 import { osSetProcessUserThunk } from './user.os.duck';
 import { ensureArrayItem, last, testNever } from '@model/generic.model';
-import { isInteractiveShell } from '@service/term.util';
+import { isInteractiveShell } from '@os-service/term.util';
 
 /**
  * Session for login or daemon.

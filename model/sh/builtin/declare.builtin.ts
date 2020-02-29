@@ -1,7 +1,7 @@
 import { BuiltinOtherType } from '../builtin.model';
 import { BaseDeclareComposite } from './base-declare';
-import { ObservedType } from '@service/term.service';
-import { ProcVarDisplayOpt, ProcVarPredicate, procVarPredicates, printVar } from '@service/process-var.service';
+import { ObservedType } from '@os-service/term.service';
+import { ProcVarDisplayOpt, ProcVarPredicate, procVarPredicates, printVar } from '@os-service/process-var.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osGetVarsThunk, osGetFunctionsThunk, osGetFunctionThunk, BaseAssignOpts, osUpdateFunctionAct } from '@store/os/declare.os.duck';
 import { NamedFunction } from '@model/os/process.model';

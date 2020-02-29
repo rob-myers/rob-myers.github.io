@@ -1,7 +1,7 @@
 import { BaseExpandComposite, BaseExpandCompositeDef } from './base-expand';
 import { ExpandType } from '../expand.model';
-import { ObservedType } from '@service/term.service';
-import { interpretEscapeSequences } from '@service/term.util';
+import { ObservedType } from '@os-service/term.service';
+import { interpretEscapeSequences } from '@os-service/term.util';
 
 export class SingleQuoteExpand extends BaseExpandComposite<ExpandType.singleQuote> {
 

@@ -2,7 +2,7 @@ import generateUid from 'shortid';
 import { BaseTermDef } from '@model/sh/base-term';
 import { CompositeType, Term, ExpandComposite } from '@model/os/term.model';
 import { BaseCompositeTerm } from './base-composite';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { osGetProcessThunk } from '@store/os/process.os.duck';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osCloseFdAct, osDupFileDescriptorAct, osOpenFileThunk, osUnlinkFileThunk } from '@store/os/file.os.duck';

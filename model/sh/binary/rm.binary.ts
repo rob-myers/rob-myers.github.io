@@ -1,6 +1,6 @@
 import { BinaryExecType } from '@model/sh/binary.model';
 import { BaseBinaryComposite } from './base-binary';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { osUnlinkFileThunk } from '@store/os/file.os.duck';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 

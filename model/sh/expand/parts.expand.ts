@@ -2,10 +2,10 @@ import { BaseExpandComposite, BaseExpandCompositeDef } from './base-expand';
 import { CompositeChildren } from '../composite/base-composite';
 import { ExpandComposite } from '@model/os/term.model';
 import { ExpandType } from '../expand.model';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { last } from '@model/generic.model';
-import { normalizeWhitespace } from '@service/term.util';
+import { normalizeWhitespace } from '@os-service/term.util';
 
 export class PartsExpand extends BaseExpandComposite<ExpandType.parts> {
   

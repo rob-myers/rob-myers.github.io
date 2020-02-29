@@ -1,5 +1,5 @@
 import { Term } from './term.model';
-import { ObservedType } from 'service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { Subscription, ReplaySubject } from 'rxjs';
 
 export enum ProcessSignal {

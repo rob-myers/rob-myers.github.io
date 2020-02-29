@@ -1,6 +1,6 @@
 import { OsThunkAct, createOsThunk } from '@model/os/os.redux.model';
 import { OsAct } from '@model/os/os.model';
-import * as ParsedSh from '@service/parse-sh.service';
+import * as ParsedSh from '@os-service/parse-sh.service';
 import { Term, Builtin, DeclareBuiltinType, BinaryComposite, CompositeType } from '@model/os/term.model';
 import { BuiltinType, BuiltinBinary } from '@model/sh/builtin.model';
 import { BinaryType } from '@model/sh/binary.model';

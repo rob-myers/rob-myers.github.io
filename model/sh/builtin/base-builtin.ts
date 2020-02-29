@@ -2,7 +2,7 @@ import getopts from 'getopts';
 import { BuiltinType } from '../builtin.model';
 import { DeclareBuiltinType, CompositeType, Term } from '@model/os/term.model';
 import { BaseCompositeTerm } from '../composite/base-composite';
-import { simplifyGetOpts } from '@service/filesystem.service';
+import { simplifyGetOpts } from '@os-service/filesystem.service';
 import { GetOpts } from '@model/os/os.model';
 import { BaseTermDef } from '../base-term';
 

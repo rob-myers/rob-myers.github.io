@@ -1,9 +1,9 @@
 import { DeclareBuiltinType, CompositeType, ExpandComposite, Term } from '@model/os/term.model';
 import { BaseCompositeTerm } from '../composite/base-composite';
-import { DeclareOpt, isDeclareOpt, ProcVarPredicate, getVarPredicates, printVar } from '@service/process-var.service';
+import { DeclareOpt, isDeclareOpt, ProcVarPredicate, getVarPredicates, printVar } from '@os-service/process-var.service';
 import { BaseTermDef } from '../base-term';
 import { AssignComposite } from '../composite/assign.composite';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { keys } from '@model/generic.model';
 import { ProcessVar, NamedFunction } from '@model/os/process.model';

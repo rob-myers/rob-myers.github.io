@@ -6,10 +6,10 @@ import { ProcessVar, VarFlags, ToProcVar, NamedFunction, BasePositionalVar, Posi
 import { State } from './os.duck';
 import { updateLookup, addToLookup } from '@model/redux.model';
 import { mapValues, testNever, last, flatten, withoutProperty } from '@model/generic.model';
-import { createPositional, cloneVar } from '@service/process-var.service';
-import { closeFd } from '@service/filesystem.service';
+import { createPositional, cloneVar } from '@os-service/process-var.service';
+import { closeFd } from '@os-service/filesystem.service';
 import { osUpdateProcessAct } from './process.os.duck';
-import { TermError } from '@service/term.util';
+import { TermError } from '@os-service/term.util';
 import { Term } from '@model/os/term.model';
 
 export type Action = (

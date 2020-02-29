@@ -11,9 +11,9 @@ import { INode, OpenFileRequest, OpenFileDescription } from '@model/os/file.mode
 import { DirectoryINode } from '@store/inode/directory.inode';
 import { RegularINode } from '@store/inode/regular.inode';
 import { INodeType } from '@store/inode/base-inode';
-import { closeFd, firstAvailableInteger } from '@service/filesystem.service';
+import { closeFd, firstAvailableInteger } from '@os-service/filesystem.service';
 import { osGetProcessThunk } from './process.os.duck';
-import { validateRegexString, TermError } from '@service/term.util';
+import { validateRegexString, TermError } from '@os-service/term.util';
 import { testNever, range } from '@model/generic.model';
 import { FifoINode } from '@store/inode/fifo.inode';
 

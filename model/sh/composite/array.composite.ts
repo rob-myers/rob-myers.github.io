@@ -3,7 +3,7 @@ import { ExpandComposite, Term, CompositeType } from '@model/os/term.model';
 import { ArithmOpComposite } from './arithm-op.composite';
 import { BaseCompositeTerm } from './base-composite';
 import { BaseTermDef } from '@model/sh/base-term';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 
 /**
  * array

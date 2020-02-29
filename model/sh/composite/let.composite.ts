@@ -2,7 +2,7 @@ import { BaseTermDef } from '../base-term';
 import { CompositeType } from '../../os/term.model';
 import { ArithmOpComposite } from './arithm-op.composite';
 import { BaseCompositeTerm, CompositeChildren } from './base-composite';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 
 /**

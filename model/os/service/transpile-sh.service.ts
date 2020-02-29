@@ -1,4 +1,4 @@
-import * as Sh from '@service/parse-sh.service';
+import * as Sh from '@os-service/parse-sh.service';
 import { testNever, flatten, last, Unpacked } from '@model/generic.model';
 
 import { Term, CompositeType, IteratorType, ExpandComposite, DeclareBuiltinType, DeclareBuiltinTerm } from '@model/os/term.model';

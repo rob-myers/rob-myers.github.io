@@ -2,12 +2,12 @@ import { BaseCompositeTerm } from './base-composite';
 import { RedirectComposite } from './redirect.composite';
 import { CompositeType, Term } from '@model/os/term.model';
 import { BaseTermDef } from '../base-term';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osPushRedirectScopeAct, osPopRedirectScopeAct } from '@store/os/declare.os.duck';
 import { osSpawnChildThunk } from '@store/os/process.os.duck';
 import { osCloneTerm } from '@store/os/parse.os.duck';
-import { launchedInteractively } from '@service/term.util';
+import { launchedInteractively } from '@os-service/term.util';
 
 /**
  * compound

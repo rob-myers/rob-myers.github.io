@@ -1,9 +1,9 @@
 import { BaseIteratorTerm, BaseIteratorTermDef } from './base-iterator';
 import { IteratorType, ExpandComposite, Term } from '@model/os/term.model';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { ExpandType } from '../expand.model';
-import { normalizeWhitespace } from '@service/term.util';
+import { normalizeWhitespace } from '@os-service/term.util';
 import { osAssignVarThunk } from '@store/os/declare.os.duck';
 
 /**

@@ -1,6 +1,6 @@
 import { BuiltinSpecialType } from '../builtin.model';
 import { BaseDeclareComposite } from './base-declare';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 
 export class ReadonlyBuiltin extends BaseDeclareComposite<BuiltinSpecialType.readonly> {
 

@@ -4,7 +4,7 @@ import { BaseTermDef } from '../base-term';
 import { CompositeType, ExpandComposite } from '../../os/term.model';
 import { ExprOpDef } from './arithm-op.composite';
 import { BaseCompositeTerm } from './base-composite';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { isUnaryTest, UnaryTestType, isExtraBinaryTest, BinaryTestExtraType, isBasicBinaryTest, BinaryTestType } from '../test.model';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osResolvePathThunk } from '@store/os/file.os.duck';

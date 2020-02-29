@@ -1,7 +1,7 @@
 import { BaseBuiltinComposite, BaseBuiltinCompositeDef } from './base-builtin';
 import { BuiltinSpecialType } from '../builtin.model';
 import { Term } from '@model/os/term.model';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 
 /**
  * Parse args, mounting respective term.

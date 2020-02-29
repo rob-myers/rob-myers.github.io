@@ -7,11 +7,11 @@ import { createOsThunk, OsThunkAct, createOsAct } from '@model/os/os.redux.model
 import { OsAct, OsProcGroup } from '@model/os/os.model';
 import { Term, CompositeType } from '@model/os/term.model';
 import { ProcessState, UnregisteredProcess, FromFdToOpenKey, ProcessSigHandler, CodeStackItem } from '@model/os/process.model';
-import { closeFd } from '@service/filesystem.service';
+import { closeFd } from '@os-service/filesystem.service';
 import { State } from '@store/os/os.duck';
 import { osIncrementOpenAct, osReadThunk, osWriteThunk, IoToPromise, osOpenFileThunk } from '@store/os/file.os.duck';
 import { osExpandVarThunk, osAssignVarThunk, osRestrictToEnvThunk } from './declare.os.duck';
-import { cloneVar } from '@service/process-var.service';
+import { cloneVar } from '@os-service/process-var.service';
 import { OpenFileRequest } from '@model/os/file.model';
 import { osSetSessionForegroundAct } from './session.os.duck';
 

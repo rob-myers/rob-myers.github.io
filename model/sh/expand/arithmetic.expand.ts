@@ -2,7 +2,7 @@ import { BaseExpandComposite, BaseExpandCompositeDef } from './base-expand';
 import { ExpandComposite } from '@model/os/term.model';
 import { ExpandType } from '../expand.model';
 import { ArithmOpComposite } from '../composite/arithm-op.composite';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { isStringInt } from '@model/generic.model';
 

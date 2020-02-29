@@ -4,9 +4,9 @@ import { CompositeType, Term } from '@model/os/term.model';
 import { BinaryType, isBinaryUiType } from '../binary.model';
 import { GetOpts } from '@model/os/os.model';
 import { BaseTermDef } from '../base-term';
-import { simplifyGetOpts } from '@service/filesystem.service';
+import { simplifyGetOpts } from '@os-service/filesystem.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { osLaunchGuiThunk } from '@store/os/session.os.duck';
 
 /**

@@ -1,6 +1,6 @@
 import { BaseBuiltinComposite } from './base-builtin';
 import { BuiltinSpecialType } from '../builtin.model';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osShiftPositionalsAct } from '@store/os/declare.os.duck';
 

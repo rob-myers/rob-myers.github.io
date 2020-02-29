@@ -1,8 +1,8 @@
 import { IteratorType, Term, IteratorTerm } from '@model/os/term.model';
 import { BaseTerm, BaseTermDef } from '@model/sh/base-term';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
-import { ObservedType } from '@service/term.service';
-import { iterateTerm } from '@service/term.util';
+import { ObservedType } from '@os-service/term.service';
+import { iterateTerm } from '@os-service/term.util';
 
 export abstract class BaseIteratorTerm<ExactKey extends IteratorType> extends BaseTerm<ExactKey> {
   public readonly type = 'iterator';

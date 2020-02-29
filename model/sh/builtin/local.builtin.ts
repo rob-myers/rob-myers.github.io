@@ -1,6 +1,6 @@
 import { BuiltinOtherType } from '../builtin.model';
 import { BaseDeclareComposite } from './base-declare';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 
 export class LocalBuiltin extends BaseDeclareComposite<BuiltinOtherType.local> {
 

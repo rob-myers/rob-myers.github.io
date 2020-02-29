@@ -24,7 +24,7 @@ export default (
               '@store': path.resolve(__dirname, 'store'),
               '@model': path.resolve(__dirname, 'model'),
               '@worker': path.resolve(__dirname, 'worker'),
-              '@service': path.resolve(__dirname, 'service'),
+              '@os-service': path.resolve(__dirname, 'model/os/service'),
             }
           },
         },

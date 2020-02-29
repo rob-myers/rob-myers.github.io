@@ -5,7 +5,7 @@ import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osSetSignalHandlerAct, osIsSessionLeaderThunk, osSetProcessGroupAct, osStoreExitCodeAct } from '@store/os/process.os.duck';
 import { osSetZeroethParamAct } from '@store/os/declare.os.duck';
 import { osSetSessionForegroundAct } from '@store/os/session.os.duck';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { osPromptThunk } from '@store/os/tty.os.duck';
 import { osParseBufferThunk, osTranspileShThunk, osDistributeSrcThunk } from '@store/os/parse.os.duck';
 

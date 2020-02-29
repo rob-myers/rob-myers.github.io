@@ -1,7 +1,7 @@
 import { BaseBuiltinComposite, BaseBuiltinCompositeDef } from './base-builtin';
 import { BuiltinSpecialType } from '../builtin.model';
 import { RedirectComposite } from '../composite/redirect.composite';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 
 /**
  * Exec is special.

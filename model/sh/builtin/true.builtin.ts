@@ -1,6 +1,6 @@
 import { BaseBuiltinComposite } from '../builtin/base-builtin';
 import { BuiltinOtherType } from '../builtin.model';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 
 export class TrueBuiltin extends BaseBuiltinComposite<BuiltinOtherType.true> {
 

@@ -3,10 +3,10 @@ import { CompositeType, Term, ExpandComposite, SpecialBuiltin, OtherBuiltin } fr
 import { AssignComposite, AssignDefVar } from './assign.composite';
 import { RedirectComposite } from './redirect.composite';
 import { BaseCompositeTerm } from './base-composite';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { ExpandType } from '../expand.model';
-import { normalizeWhitespace, launchedInteractively } from '@service/term.util';
+import { normalizeWhitespace, launchedInteractively } from '@os-service/term.util';
 import { osExpandFilepathThunk, osResolvePathThunk } from '@store/os/file.os.duck';
 import { osPushRedirectScopeAct, osPopRedirectScopeAct, osGetFunctionThunk, osPushVarScopeAct, osPopVarScopeAct } from '@store/os/declare.os.duck';
 import { osCloneTerm, osCreateBuiltinThunk, osCreateBinaryThunk } from '@store/os/parse.os.duck';

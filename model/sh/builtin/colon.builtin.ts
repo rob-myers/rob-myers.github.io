@@ -1,6 +1,6 @@
 import { BaseBuiltinComposite } from './base-builtin';
 import { BuiltinSpecialType } from '../builtin.model';
-import { ObservedType } from '@service/term.service';
+import { ObservedType } from '@os-service/term.service';
 
 export class ColonBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.colon> {
 

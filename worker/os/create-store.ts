@@ -14,7 +14,7 @@ import { NullINode } from '@store/inode/null.inode';
 import { RandomINode } from '@store/inode/random.inode';
 import { RegularINode } from '@store/inode/regular.inode';
 import { testNever } from '@model/generic.model';
-import { Service } from '@service/create-services';
+import { Service } from '@os-service/create-services';
 import { OsWorkerContext } from '@model/os/os.worker.model';
 
 const thunkMiddleware =

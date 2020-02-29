@@ -23,7 +23,7 @@
       "@store/*": ["store/*"],
       "@model/*": ["model/*"],
       "@worker/*": ["worker/*"],
-      "@service/*": ["service/*"]
+      "@os-service/*": ["model/os/service/*"]
     },
     "downlevelIteration": true
   },
