@@ -48,7 +48,8 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
     // Interactive command loop.
     while (true) {
       const srcBuffer = [] as string[];
-      dispatch(osPromptThunk({ processKey, fd: 1, text: '\x1b[96m$ \x1b[0m' }));
+      // dispatch(osPromptThunk({ processKey, fd: 1, text: '\x1b[96m$ \x1b[0m' }));
+      dispatch(osPromptThunk({ processKey, fd: 1, text: '$ ' }));
 
       // Interactive partial-parse loop.
       while (true) {

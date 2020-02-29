@@ -23,7 +23,7 @@ console.log({ service, store, persistor });
 // const transpiled = service.transpileSh.transpile(parsed);
 // console.log({ parsed, transpiled });
 
-ctxt.addEventListener('message', async (msg) => {
+ctxt.addEventListener('message', async ({ data: msg }) => {
   console.log({ osWorkerReceived: msg });
 
   switch (msg.key) {

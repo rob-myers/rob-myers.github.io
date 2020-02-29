@@ -1,21 +1,22 @@
 import { TtyOutputCommand } from '@store/inode/tty.inode';
-import { Redacted } from '@model/redux.model';
+
+export type Message<Data> = MessageEvent & { data: Data };
 
 /** Worker in parent thread */
 export interface OsWorker extends Worker {
   postMessage(message: MessageFromOsParent): void;
-  addEventListener(type: 'message', listener: (message: MessageFromOsWorker) => void): void;
+  addEventListener(type: 'message', listener: (message: Message<MessageFromOsWorker>) => void): void;
   addEventListener(type: 'message', object: EventListenerObject): void;
-  removeEventListener(type: 'message', listener: (message: MessageFromOsWorker) => void): void;
+  removeEventListener(type: 'message', listener: (message: Message<MessageFromOsWorker>) => void): void;
   removeEventListener(type: 'message', object: EventListenerObject): void; 
 }
 
 /** A web worker */
 export interface OsWorkerContext extends Worker {
   postMessage(message: MessageFromOsWorker): void;
-  addEventListener(type: 'message', listener: (message: MessageFromOsParent) => void): void;
+  addEventListener(type: 'message', listener: (message: Message<MessageFromOsParent>) => void): void;
   addEventListener(type: 'message', object: EventListenerObject): void; 
-  removeEventListener(type: 'message', listener: (message: MessageFromOsParent) => void): void;
+  removeEventListener(type: 'message', listener: (message: Message<MessageFromOsParent>) => void): void;
   removeEventListener(type: 'message', object: EventListenerObject): void; 
 }
 
@@ -117,7 +118,7 @@ interface BaseMessage {
 export function listenUntil(
   worker: OsWorker,
   /** Return truthy iff should unregister */
-  listener: (message: MessageFromOsWorker) => any,
+  listener: (message: Message<MessageFromOsWorker>) => any,
 ) {
   worker.addEventListener('message', (message) => {
     if (listener(message)) {

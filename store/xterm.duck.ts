@@ -57,7 +57,7 @@ export const Thunk = {
       const worker = getState().xterm.worker!;
       worker.postMessage({ key: 'create-session', uiKey, userKey });
 
-      listenUntil(worker, (msg) => {
+      listenUntil(worker, ({ data: msg }) => {
         if (msg.key === 'created-session' && msg.uiKey === uiKey) {
           // Create TtyXterm and register
           const { sessionKey } = msg;

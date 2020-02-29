@@ -9,6 +9,7 @@ import { WebLinksAddon } from 'xterm-addon-web-links';
 const XTermComponent: React.FC<Props> = ({
   className,
   options,
+  onMount,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const xtermRef = useRef<Terminal>();
@@ -30,6 +31,8 @@ const XTermComponent: React.FC<Props> = ({
       triggerUpdate({});
     };
     window.addEventListener('resize', onResize);
+
+    onMount(xterm);
 
     return () => {
       window.removeEventListener('resize', onResize);

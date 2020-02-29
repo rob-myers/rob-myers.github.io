@@ -1,4 +1,4 @@
-import { OsWorker, MessageFromOsWorker } from '@model/os/os.worker.model';
+import { OsWorker, MessageFromOsWorker, Message } from '@model/os/os.worker.model';
 import { Terminal } from 'xterm';
 import { testNever } from '@model/generic.model';
 import { Redacted } from '@model/redux.model';
@@ -37,6 +37,7 @@ export class TtyXterm {
   private nextPrintId: null | number;
   /**
    * User-input prompt e.g. '$ '.
+   * Currently do not support escape chars in prompt.
    */
   private prompt: string;
   /** Shortcut */
@@ -51,7 +52,6 @@ export class TtyXterm {
     this.commandBuffer = [];
     this.nextPrintId = null;
 
-    this.xterm.onResize(this.handleXtermResize.bind(this));
     this.xterm.onData(this.handleXtermInput.bind(this));
 
     // Initial message.
@@ -349,16 +349,6 @@ export class TtyXterm {
   }
 
   /**
-   * Handle reflow for current input.
-   */
-  private handleXtermResize() {
-    const { cursor, input } = this;
-    this.clearInput();
-    this.setInput(input);
-    this.setCursor(cursor);
-  }
-
-  /**
    * Suppose we're about to write {nextInput} (possibly after prompt).
    * If real input ends _exactly_ at right-hand edge, cursor doesn't wrap.
    * This method detects this, so we can append \r\n.
@@ -397,7 +387,7 @@ export class TtyXterm {
     }
   }
 
-  private onWorkerMessage(msg: MessageFromOsWorker) {
+  private onWorkerMessage = ({ data: msg }: Message<MessageFromOsWorker>) => {
     console.log({ receivedFromOsWorker: msg });
 
     switch (msg.key) {
@@ -549,7 +539,8 @@ export class TtyXterm {
     // Get next cursor position.
     const newPromptOffset = this.actualCursor(this.input, newCursor);
     const { col: nextCol, row: nextRow } = this.offsetToColRow(inputWithPrompt, newPromptOffset);
-    // console.log({ prevCol, prevRow, nextCol, nextRow });
+    
+    // console.log({ prevPromptOffset, prevCol, prevRow, nextCol, nextRow });
 
     // Adjust vertically.
     if (nextRow > prevRow) {// Cursor Down.

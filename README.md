@@ -1,6 +1,6 @@
 ## TODO
 
-- get xterm working
+- get bash responding to terminal
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
 - avoid jerky fade in/out
@@ -67,6 +67,8 @@
 - can load css from npm modules
 - xterm has plugins
 - xterm renders with css
+- get xterm working
+- NOTE removed escape chars from prompt because currently unsupported (need to measure prompt without them)
 
 ## Redux devtools for os webworker
 
