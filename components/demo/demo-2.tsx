@@ -1,17 +1,12 @@
-import { useDispatch } from 'react-redux';
-import { Thunk } from '@store/xterm.duck';
-import { useEffect } from 'react';
+import { Session } from '@components/xterm/session';
 
 const Demo2: React.FC = () => {
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(Thunk.ensureGlobalSetup({}));
-  }, []);
+  if (typeof window === 'undefined') return null;
 
   return (
     <div>
-      Foo
+      <Session uid="demo-2" userKey="ged" />
     </div>
   );
 };

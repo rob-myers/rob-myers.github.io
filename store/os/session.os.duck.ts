@@ -233,7 +233,7 @@ export const osCreateSessionThunk = createOsThunk<OsAct, CreateSessionThunk>(
   OsAct.OS_CREATE_SESSION_THUNK,
   ({ dispatch, service }, { uiKey, userKey }) => {
 
-    const { canonicalPath: ttyPath, sessionKey, iNode: ttyINode } = dispatch(osCreateTtyThunk({
+    const { canonicalPath, sessionKey, iNode: ttyINode } = dispatch(osCreateTtyThunk({
       userKey,
     }));
     /**
@@ -242,15 +242,15 @@ export const osCreateSessionThunk = createOsThunk<OsAct, CreateSessionThunk>(
     const processKey = `bash.${sessionKey}`;
     dispatch(osForkProcessThunk({ parentKey: 'init', processKey }));
     dispatch(osCloseProcessFdsAct({ processKey }));
-    dispatch(osOpenFileThunk({ processKey, request: { path: ttyPath, mode: 'RDONLY' } }));
-    dispatch(osOpenFileThunk({ processKey, request: { path: ttyPath, mode: 'WRONLY' } }));
-    dispatch(osOpenFileThunk({ processKey, request: { path: ttyPath, mode: 'WRONLY' } }));
+    dispatch(osOpenFileThunk({ processKey, request: { path: canonicalPath, mode: 'RDONLY' } }));
+    dispatch(osOpenFileThunk({ processKey, request: { path: canonicalPath, mode: 'WRONLY' } }));
+    dispatch(osOpenFileThunk({ processKey, request: { path: canonicalPath, mode: 'WRONLY' } }));
     dispatch(osSetProcessUserThunk({ processKey, userKey }));
     /**
      * Register new session.
      */
     const processGroupKey = processKey;
-    dispatch(osRegisterSessionAct({ uiKey: uiKey, processKey, processGroupKey, sessionKey, ttyINode, ttyPath, userKey }));
+    dispatch(osRegisterSessionAct({ uiKey: uiKey, processKey, processGroupKey, sessionKey, ttyINode, ttyPath: canonicalPath, userKey }));
     /**
      * Controlling process has own process group.
      */
@@ -266,7 +266,7 @@ export const osCreateSessionThunk = createOsThunk<OsAct, CreateSessionThunk>(
      */
     dispatch(osStartProcessThunk({ processKey }));
 
-    return { sessionKey };
+    return { sessionKey, canonicalPath };
   },
 );
 interface CreateSessionThunk extends OsThunkAct<OsAct,
@@ -276,7 +276,7 @@ interface CreateSessionThunk extends OsThunkAct<OsAct,
     userKey: string;
   },
   // Outputs a session key.
-  { sessionKey: string }
+  { sessionKey: string; canonicalPath: string }
 > {
   type: OsAct.OS_CREATE_SESSION_THUNK;
 }

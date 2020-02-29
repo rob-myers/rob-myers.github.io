@@ -1,4 +1,5 @@
 import { TtyOutputCommand } from '@store/inode/tty.inode';
+import { Redacted } from '@model/redux.model';
 
 /** Worker in parent thread */
 export interface OsWorker extends Worker {
@@ -23,6 +24,23 @@ interface PingFromParent extends BaseMessage {
 }
 interface PongFromWorker extends BaseMessage {
   key: 'pong';
+}
+
+interface CreateSession extends BaseMessage {
+  key: 'create-session';
+  userKey: string;
+  uiKey: string;
+}
+interface CreatedSession extends BaseMessage {
+  key: 'created-session';
+  uiKey: string;
+  sessionKey: string;
+  canonicalPath: string;
+}
+
+interface EndSession extends BaseMessage {
+  key: 'end-session';
+  sessionKey: string;
 }
 
 interface SendLineToTty extends BaseMessage {
@@ -78,6 +96,8 @@ export type MessageFromOsParent = (
   | SigTermTty
   | AckXtermCommands
   | UpdateTtyCols
+  | CreateSession
+  | EndSession
 );
   
 export type MessageFromOsWorker = (
@@ -86,9 +106,22 @@ export type MessageFromOsWorker = (
   | SendXtermCommands
   | ClearXterm
   | AckTtyLine
+  | CreatedSession
 );
 
 interface BaseMessage {
   /** Message uid */
   key: string;
+}
+
+export function listenUntil(
+  worker: OsWorker,
+  /** Return truthy iff should unregister */
+  listener: (message: MessageFromOsWorker) => any,
+) {
+  worker.addEventListener('message', (message) => {
+    if (listener(message)) {
+      worker.removeEventListener('message', listener);
+    }
+  });
 }

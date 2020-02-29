@@ -96,15 +96,6 @@ export interface TtyINodeDef extends BaseINodeDef {
    */
   canonicalPath: string;
   /**
-   * Maximum number of 'line' commands printed by {this.print}.
-   * All other commands are printed with no cost.
-   */
-  linesPerUpdate: number;
-  /**
-   * Length of time in milliseconds between consecutive {this.print}s.
-   */
-  refreshMs: number;
-  /**
    * Dispatch signal to foreground process group of parent session.
    */
   sendSignal: (signal: ProcessSignal) => void;

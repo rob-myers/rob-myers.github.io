@@ -60,11 +60,13 @@
 - create dark theme (currently manual via variables.scss and `wt` in box.tsx)
 - avoid multiple navspawns causing multiple updates
 
-- switch from worker-plugin to webpack's worker loader
+- switch from worker-plugin to webpack's worker-loader
 - get os state running in webworker
 - run redux-devtools in webworker on port 3002
   > https://itnext.io/ruining-redux-devtools-extension-for-webworker-1eeca68d7900
-
+- can load css from npm modules
+- xterm has plugins
+- xterm renders with css
 
 ## Redux devtools for os webworker
 

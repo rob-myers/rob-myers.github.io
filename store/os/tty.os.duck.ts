@@ -52,8 +52,6 @@ export const osCreateTtyThunk = createOsThunk<OsAct, CreateTtyThunk>(
     const iNode = new TtyINode({
       userKey: 'ged', // TODO
       groupKey: 'ged', // TODO
-      linesPerUpdate: 100,
-      refreshMs: 20,
       canonicalPath,
       sendSignal: (signal) => dispatch(osSignalForegroundThunk({
         sessionKey,

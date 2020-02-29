@@ -2,8 +2,9 @@ import { initializeStore } from './create-store';
 import createServices from '@os-service/create-services';
 import { OsWorkerContext, OsWorker } from '@model/os/os.worker.model';
 import { osInitializeThunk } from '@store/os/init.os.duck';
-import { OsSession } from '@store/os/session.os.duck';
+import { OsSession, osCreateSessionThunk, osEndSessionThunk } from '@store/os/session.os.duck';
 import { persistStore } from 'redux-persist';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
 
 const ctxt: OsWorkerContext = self as any;
 
@@ -12,7 +13,7 @@ const store = initializeStore(service, ctxt);
 const persistor = persistStore(store as any);
 persistor.pause();
 
-const dispatch = store.dispatch;
+const dispatch = store.dispatch as OsDispatchOverload;
 dispatch(osInitializeThunk({}));
 
 
@@ -28,6 +29,26 @@ ctxt.addEventListener('message', async (msg) => {
   switch (msg.key) {
     case 'ping': {
       return ctxt.postMessage({ key: 'pong' });
+    }
+    case 'create-session': {
+      const { sessionKey, canonicalPath } = dispatch(osCreateSessionThunk({
+        uiKey: msg.uiKey,
+        userKey: msg.userKey,
+      }));
+      ctxt.postMessage({
+        key: 'created-session',
+        uiKey: msg.uiKey,
+        canonicalPath,
+        sessionKey,
+      });
+      return;
+    }
+    case 'end-session': {
+      /**
+       * TODO keep track of how many uis are connected
+       * and only end session when none left.
+       */
+      return dispatch(osEndSessionThunk({ sessionKey: msg.sessionKey }));
     }
     case 'line-to-tty': {
       return mutateSession(msg.sessionKey, store, ({ ttyINode }) => {

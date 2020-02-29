@@ -1,16 +1,17 @@
-import { Redacted } from '@model/redux.model';
-import { Terminal } from 'xterm';
+import { TtyXterm } from '@store/inode/tty.xterm';
 
 export interface XTermState {
   key: string;
+  uiKey: string;
+  userKey: string;
   sessionKey: string;
-  xterm: null | Redacted<Terminal>;
+  ttyXterm: TtyXterm;
 }
 
-export function createXTermState(key: string, sessionKey: string): XTermState {
-  return {
-    key,
-    sessionKey,
-    xterm: null,
-  };
+export function createXTermState(init: XTermState): XTermState {
+  return { ...init };
+}
+
+export function computeXtermKey(uiKey: string, sessionKey: string) {
+  return `${uiKey}@${sessionKey}`;
 }

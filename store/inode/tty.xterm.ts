@@ -1,6 +1,7 @@
 import { OsWorker, MessageFromOsWorker } from '@model/os/os.worker.model';
-import * as XTerm from 'xterm';
+import { Terminal } from 'xterm';
 import { testNever } from '@model/generic.model';
+import { Redacted } from '@model/redux.model';
 
 /**
  * Wrapper around XTerm.Terminal which communicates
@@ -39,9 +40,7 @@ export class TtyXterm {
    */
   private prompt: string;
   /** Shortcut */
-  private xterm: XTerm.Terminal;
-  /** Number of lines sent */
-  private lineCount = 0;
+  private xterm: Redacted<Terminal>;
 
   constructor(private def: TtyXtermDef) {
     this.xterm = this.def.xterm;
@@ -394,7 +393,7 @@ export class TtyXterm {
     this.commandBuffer.push(...commands);
     if (!this.nextPrintId) {
       // Awaken printer; do not invoke {this.print} directly.
-      this.nextPrintId = window.setTimeout(this.print, 0);
+      this.nextPrintId = window.setTimeout(this.print, this.def.refreshMs);
     }
   }
 
@@ -631,10 +630,11 @@ export class TtyXterm {
 interface TtyXtermDef {
   uiKey: string;
   osWorker: OsWorker;
-  xterm: XTerm.Terminal;
+  xterm: Redacted<Terminal>;
   sessionKey: string;
   canonicalPath: string;
   linesPerUpdate: number;
+  refreshMs: number;
 }
 
 type TtyOutputCommand = (

@@ -1,7 +1,7 @@
 import React from 'react';
 import { NextComponentType, NextPageContext } from 'next';
 import { RootState } from './reducer';
-import { initializeStore, ReduxStore } from '.';
+import { initializeStore, ReduxStore } from './create-store';
 
 const __NEXT_REDUX_STORE__ = '__NEXT_REDUX_STORE__';
 type Window = typeof window & { __NEXT_REDUX_STORE__: ReduxStore }

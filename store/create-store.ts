@@ -48,7 +48,7 @@ const persistedReducer = persistReducer({
     createTransform<XTermState, XTermState>(
       (_state): XTermState => ({
         instance: {},
-        webWorker: null,
+        worker: null,
         ready: false,
       }),
       (state) => state,

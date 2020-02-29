@@ -14,22 +14,24 @@ export default function({
   defaultLoaders,
 }: WebpackCtxt): webpack.Configuration {
 
-  const cssLoader: webpack.RuleSetLoader = {
+  const cssLoader = (
+    { useModules }: { useModules: boolean }
+  ): webpack.RuleSetLoader => ({
     loader: 'css-loader',
     options: {
-      modules: {
+      modules: useModules ? {
         localIdentName: dev
           // ? '[path][name]__[local]'
           ? '[name]__[local]'
           : '[hash:base64]',
-      },
+      } : false,
       sourceMap: dev,
       // importLoaders: 2, // 'postcss-loader' and 'sass-loader'
       importLoaders: 1, // 'sass-loader'
       onlyLocals: isServer,
       localsConvention: 'camelCase',
     },
-  };
+  });
 
   // const postCssLoader: webpack.RuleSetLoader = {
   //   loader: 'postcss-loader',
@@ -55,9 +57,15 @@ export default function({
   defaultLoaders.sass = [
     ...(!isServer && !dev ? [eccLoader] : []),
     ...(!isServer && dev ? [styleLoader] : []),
-    cssLoader,
+    cssLoader({ useModules: true }),
     // postCssLoader,
     { loader: 'sass-loader', options: {} }
+  ];
+
+  defaultLoaders.npmCss = [
+    ...(!isServer && !dev ? [eccLoader] : []),
+    ...(!isServer && dev ? [styleLoader] : []),
+    cssLoader({ useModules: false }),
   ];
 
   return {
@@ -68,7 +76,7 @@ export default function({
             cacheGroups: {
               styles: {
                 name: 'styles',
-                test: /\.(scss|sass)$/,
+                test: /\.(sa|sc)ss$/,
                 chunks: 'all',
                 enforce: true
               }
@@ -104,13 +112,14 @@ export default function({
     module: {
       rules: [
         {
-          test: /\.scss$/,
+          test: /\.(sa|sc|c)ss$/,
+          exclude: /node_modules/,
           use: defaultLoaders.sass
         },
         {
-          test: /\.sass$/,
-          use: defaultLoaders.sass
-        }
+          test: /node_modules.+\.css$/,
+          use: defaultLoaders.npmCss
+        },
       ],
     }
   };

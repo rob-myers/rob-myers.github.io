@@ -3,7 +3,6 @@ import webpack from 'webpack';
 import webpackMerge from 'webpack-merge';
 import nextConst from 'next/constants';
 import configStyles from './styles.config';
-// import WorkerPlugin from 'worker-plugin';
 
 const production = process.env.NODE_ENV === 'production';
 console.log({ production });
@@ -12,6 +11,7 @@ export default (
   _phase: Phase,
   _nextCtxt: NextJsConfigCtxt
 ): NextJsConfig => {
+
   return {
     webpack: (config, options) => {
       return webpackMerge(
@@ -36,16 +36,7 @@ export default (
             ],
           },
         },
-        /**
-         * Web workers.
-         */
-        // {
-        //   plugins: [
-        //     new WorkerPlugin({
-        //       globalObject: 'self'
-        //     }),
-        //   ],
-        // },
+        // Web workers
         {
           output: {
             globalObject: 'self',
