@@ -1,6 +1,9 @@
 ## TODO
 
 - fiddle with terminal and summaries features/issues
+- get pasting working
+- implement history
+- rename from `bash` to e.g. `ti` (textual interface)
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
 - avoid jerky fade in/out
@@ -70,9 +73,21 @@
 - get xterm working
 - NOTE removed escape chars from prompt because currently unsupported (need to measure prompt without them)
 - get bash responding to terminal
+- printf now supports option `-v`
 
+## Character codes example
+
+```sh
+echo $'\033[31mHello\e[0m World'
+echo $'\e[37mHello\e[0m World'
+
+printf "\e[31mHello\e[0m World"
+x=foo; printf "%s\e[37m%s\e[39m\n" "hello " "$x"
+printf -v foo "\e[31mHello\e[0m World"; echo $foo
+```
 
 ## Redux devtools for os webworker
+
 
 `yarn dev` i.e. start the app.
 

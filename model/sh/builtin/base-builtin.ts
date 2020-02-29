@@ -27,9 +27,7 @@ export abstract class BaseBuiltinComposite<
    */
   public operands: string[];
 
-  constructor(
-    public def: BaseBuiltinCompositeDef<ExactKey>,
-  ) {
+  constructor(public def: BaseBuiltinCompositeDef<ExactKey>) {
     super(def);
 
     this.builtinKey = def.builtinKey;
@@ -45,6 +43,15 @@ export abstract class BaseBuiltinComposite<
 
   public get children() {
     return [] as Term[];
+  }
+
+  public get malformedOpts() {
+    const { boolean, string } = this.specOpts();
+    const { _ , ...opts } = this.opts;
+    return Object.entries<string | boolean>(opts).some(([key, value]) =>
+      !(boolean.includes(key) && typeof value === 'boolean')
+      && !(string.includes(key) && typeof value === 'string')
+    );
   }
 }
 
