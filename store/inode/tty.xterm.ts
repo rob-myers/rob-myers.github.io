@@ -261,8 +261,9 @@ export class TtyXterm {
        */
       switch (data) {
         case '\r': {// Enter.
-          this.sendLine();
-          this.prompt = ''; // ?
+          // this.sendLine();
+          // this.prompt = ''; // ?
+          this.queueCommands({ key: 'newline' });
           break;
         }
         case '\x7F': {// Backspace.
@@ -329,16 +330,28 @@ export class TtyXterm {
     }
   }
 
-  private handleXtermInput(data: string) {
-    if (this.linePending) {
-      return; // Ignore input while waiting for reader
+  private async handleXtermInput(data: string) {
+    if (this.linePending) {// Ignore while awaiting read
+      return;
     }
     if (data.length > 3 && data.charCodeAt(0) !== 0x1b) {
       // Handle pasted input
-      data.replace(/[\r\n]+/g, '\n')
-        .split('\n')
-        .forEach((line) => this.handleXtermData(line));
-    } else {
+      const text = data.replace(/[\r\n]+/g, '\n');
+      const lines = text.split('\n');
+      const last = !text.endsWith('\n') && lines.pop();
+      for (const line of lines) {
+        await new Promise(resolve => {
+          this.queueCommands(
+            { key: 'pasted-line', line },
+            { key: 'newline' },
+            { key: 'resolve', resolve },
+          );
+        });
+      }
+      if (last) {
+        this.queueCommands({ key: 'pasted-line', line: last });
+      }
+    } else {// Handle a keypress
       this.handleXtermData(data);
     }
   }
@@ -376,10 +389,7 @@ export class TtyXterm {
 
   public queueCommands(...commands: TtyOutputCommand[]) {
     this.commandBuffer.push(...commands);
-    if (!this.nextPrintId) {
-      // Awaken printer; do not invoke {this.print} directly.
-      this.nextPrintId = window.setTimeout(this.print, this.def.refreshMs);
-    }
+    this.printPending();
   }
 
   private onWorkerMessage = ({ data: msg }: Message<MessageFromOsWorker>) => {
@@ -398,9 +408,10 @@ export class TtyXterm {
         }
         return;
       }
+      // TODO better name e.g. print-lines
       case 'send-xterm-cmds': {
         if (msg.sessionKey === this.def.sessionKey) {
-          // Run commands; acknowledge once done
+          // Run commands sent from tty inode; ack when done
           const resolve = () => this.def.osWorker.postMessage({
             key: 'ack-xterm-cmds',
             sessionKey: msg.sessionKey,
@@ -418,6 +429,7 @@ export class TtyXterm {
           // Line has been processed by tty
           this.input = '';
           this.linePending = false;
+          // this.printPending();
         }
         return;
       }
@@ -460,6 +472,7 @@ export class TtyXterm {
   private print = () => {
     let command: TtyOutputCommand | undefined;
     let numLines = 0;
+    this.nextPrintId = null;
 
     while (
       (command = this.commandBuffer.shift())
@@ -476,11 +489,17 @@ export class TtyXterm {
           numLines++;
           break;
         }
+        case 'pasted-line': {
+          this.xterm.write(command.line);
+          this.input = command.line;
+          break;
+        }
         case 'newline': {
           this.xterm.write('\r\n');
           this.trackCursorRow(+1);
           numLines++;
-          break;
+          this.sendLine();
+          return;
         }
         case 'prompt': {
           this.xterm.write(command.text);
@@ -494,32 +513,28 @@ export class TtyXterm {
       }
     }
 
-    this.nextPrintId = this.commandBuffer.length 
-      ? window.setTimeout(this.print, this.def.refreshMs)
-      : null;
+    this.printPending();
+  }
+
+  private printPending() {
+    if (this.commandBuffer.length && !this.nextPrintId) {
+      this.nextPrintId = window.setTimeout(this.print, this.def.refreshMs);
+    }
   }
 
   /**
    * Send line to reader.
    */
   private sendLine() {
-    const { input: line } = this;
+    this.prompt = '';
     this.linePending = true;
 
-    this.queueCommands(
-      { key: 'newline' },
-      { key: 'resolve',
-        resolve: () => {
-          this.def.osWorker.postMessage({
-            key: 'line-to-tty',
-            sessionKey: this.def.sessionKey,
-            line,
-            xtermKey: this.def.uiKey,
-          });
-        }
-      },
-    );
-
+    this.def.osWorker.postMessage({
+      key: 'line-to-tty',
+      sessionKey: this.def.sessionKey,
+      line: this.input,
+      xtermKey: this.def.uiKey,
+    });
   }
 
   /**
@@ -631,6 +646,7 @@ interface TtyXtermDef {
 
 type TtyOutputCommand = (
   | { key: 'line'; line: string }
+  | { key: 'pasted-line'; line: string }
   | { key: 'clear' }
   | { key: 'newline' }
   | { key: 'prompt'; text: string }

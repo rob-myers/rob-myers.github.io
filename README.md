@@ -1,8 +1,8 @@
 ## TODO
 
-- fiddle with terminal and summaries features/issues
 - get pasting working
 - implement history
+- fiddle with terminal and summaries features/issues
 - rename from `bash` to e.g. `ti` (textual interface)
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
