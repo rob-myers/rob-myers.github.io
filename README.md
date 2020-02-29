@@ -1,7 +1,6 @@
 ## TODO
 
 - get xterm working
-- get os state running in webworker
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
 - avoid jerky fade in/out
@@ -61,7 +60,22 @@
 - create dark theme (currently manual via variables.scss and `wt` in box.tsx)
 - avoid multiple navspawns causing multiple updates
 
-# Next JS
+- switch from worker-plugin to webpack's worker loader
+- get os state running in webworker
+- run redux-devtools in webworker on port 3002
+  > https://itnext.io/ruining-redux-devtools-extension-for-webworker-1eeca68d7900
+
+
+## Redux devtools for os webworker
+
+`yarn dev` i.e. start the app.
+
+`yarn remotedev` i.e. run a websocket server on `3002` ATOW.
+
+Finally, in Redux DevTools extension:
+   - click "Remote" to open new window.
+   - click "Settings"
+   - Use custom server, host: `localhost`, port: `3002` ATOW
 
 ## Getting started
 

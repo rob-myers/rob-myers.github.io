@@ -3,7 +3,7 @@ import webpack from 'webpack';
 import webpackMerge from 'webpack-merge';
 import nextConst from 'next/constants';
 import configStyles from './styles.config';
-import WorkerPlugin from 'worker-plugin';
+// import WorkerPlugin from 'worker-plugin';
 
 const production = process.env.NODE_ENV === 'production';
 console.log({ production });
@@ -38,16 +38,40 @@ export default (
         },
         /**
          * Web workers.
-         * Caused silent build failure when worker code referenced
-         * other code with an unused Worker('@worker/nav.worker.ts')
-         * in a function body.
          */
+        // {
+        //   plugins: [
+        //     new WorkerPlugin({
+        //       globalObject: 'self'
+        //     }),
+        //   ],
+        // },
         {
-          plugins: [
-            new WorkerPlugin({
-              globalObject: 'self'
-            }),
-          ],
+          output: {
+            globalObject: 'self',
+          },
+          module: {
+            rules: [
+              {
+                test: /\.worker\.ts$/,
+                use: [
+                  {
+                    loader: 'worker-loader',
+                    options: {
+                      name: 'static/[hash].worker.js',
+                      publicPath: '/_next/'
+                    }
+                  },
+                  {
+                    loader: 'babel-loader',
+                    options: {
+                      cacheDirectory: true
+                    }
+                  }
+                ]
+              }
+            ]
+          }
         },
         {
           ...(!options.isServer && { node: { fs: 'empty' } }),

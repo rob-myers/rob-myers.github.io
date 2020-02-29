@@ -1,4 +1,4 @@
-import generateUid from '@service/generate-uid';
+import generateUid from 'shortid';
 
 export enum INodeType {
   regular= 'regular',

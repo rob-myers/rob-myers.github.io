@@ -4,6 +4,8 @@ import { XTermState, createXTermState } from '@model/xterm/xterm.model';
 import { createThunk } from '@model/root.redux.model';
 import { OsWorker } from '@model/os/os.worker.model';
 
+import OsWorkerConstructor from '@worker/os/os.worker';
+
 export interface State {
   instance: KeyedLookup<XTermState>;
   webWorker: null | Redacted<OsWorker>;
@@ -32,8 +34,30 @@ export const Thunk = {
     '[xterm] ensure setup',
     ({ dispatch, state: { xterm } }) => {
       if (!xterm.ready && typeof Worker !== 'undefined') {
-        const worker: OsWorker = new Worker('@worker/os/os.worker.ts', { type: 'module' });
+        const worker = new OsWorkerConstructor();
         dispatch(Act.setupXterms(redact(worker)));
+
+        /**
+         * TODO register inside TtyXterm
+         */
+
+      }
+    },
+  ),
+  createSession: createThunk(
+    '[xterm] create session',
+    () => {
+      /**
+       * TODO create session
+       */
+    },
+  ),
+  destroySession: createThunk(
+    '[xterm] destroy session',
+    ({ state: { xterm: { instance } }  }, { sessionKey }: { sessionKey: string }) => {
+      const state = instance[sessionKey];
+      if (state) {
+        state.xterm?.dispose();
       }
     },
   ),

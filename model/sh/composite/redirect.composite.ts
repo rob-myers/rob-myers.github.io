@@ -1,4 +1,4 @@
-import generateUid from '@service/generate-uid';
+import generateUid from 'shortid';
 import { BaseTermDef } from '@model/sh/base-term';
 import { CompositeType, Term, ExpandComposite } from '@model/os/term.model';
 import { BaseCompositeTerm } from './base-composite';

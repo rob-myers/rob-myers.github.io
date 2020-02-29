@@ -23,6 +23,8 @@ import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav/nav-wor
 import { traverseDom } from '@model/dom.model';
 import { NavGraph } from '@model/nav/nav-graph.model';
 
+import NavWorkerConstructor from '@worker/nav.worker';
+
 export interface State {
   dom: KeyedLookup<NavDomState>;
   domMeta: KeyedLookup<NavDomMeta>;
@@ -65,7 +67,8 @@ export const Thunk = {
     '[Nav] ensure setup',
     ({ dispatch, state: { nav } }) => {
       if (!nav.ready && typeof Worker !== 'undefined') {
-        const worker: NavWorker = new Worker('@worker/nav.worker.ts', { type: 'module' });
+        // const worker: NavWorker = new Worker('@worker/nav.worker.ts', { type: 'module' });
+        const worker = new NavWorkerConstructor();
         dispatch(Act.setupNav(redact(worker)));
 
         // TESTING

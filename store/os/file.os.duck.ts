@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { dirname, basename, join } from '@service/path';
-import generateUid from '@service/generate-uid';
+import { dirname, basename, join } from 'path';
+import generateUid from 'shortid';
 
 import { OsAct } from '@model/os/os.model';
 import { updateLookup, addToLookup, SyncAct, SyncActDef, } from '@model/redux.model';

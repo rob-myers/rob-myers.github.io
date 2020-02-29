@@ -1,9 +1,6 @@
-import * as XTerm from 'xterm';
 import { createOsThunk, OsThunkAct } from '@model/os/os.redux.model';
 import { OsAct } from '@model/os/os.model';
 import { TtyINode } from '@store/inode/tty.inode';
-import { RedactInReduxDevTools } from '@model/redux.model';
-import { ProcessSignal } from '@model/os/process.model';
 import { osSignalForegroundThunk, osIncrementTtyIdAct } from './session.os.duck';
 import { osMountFileAct, osGetOfdThunk } from './file.os.duck';
 import { DirectoryINode } from '@store/inode/directory.inode';
@@ -25,7 +22,8 @@ export const osClearTtyThunk = createOsThunk<OsAct, ClearTtyThunk>(
     const { sessionKey } = os.proc[processKey];
     const { ttyINode } = os.session[sessionKey];
     if (ttyINode) {
-      ttyINode.queueCommands({ key: 'clear' });
+      // ttyINode.queueCommands({ key: 'clear' });
+      ttyINode.clear();
     }
   },
 );
@@ -39,7 +37,7 @@ interface ClearTtyThunk extends OsThunkAct<OsAct, { processKey: string }, void> 
  */
 export const osCreateTtyThunk = createOsThunk<OsAct, CreateTtyThunk>(
   OsAct.OS_CREATE_TTY_THUNK,
-  ({ dispatch, state: { os }}, { xterm }) => {
+  ({ dispatch, state: { os }, worker } ) => {
 
     const { nextTtyId } = os.aux;
     const canonicalFilename = `tty-${nextTtyId}`;
@@ -54,11 +52,28 @@ export const osCreateTtyThunk = createOsThunk<OsAct, CreateTtyThunk>(
     const iNode = new TtyINode({
       userKey: 'ged', // TODO
       groupKey: 'ged', // TODO
-      xterm,
       linesPerUpdate: 100,
       refreshMs: 20,
       canonicalPath,
-      sendSignal: (signal: ProcessSignal) => dispatch(osSignalForegroundThunk({ sessionKey, signal })),
+      sendSignal: (signal) => dispatch(osSignalForegroundThunk({
+        sessionKey,
+        signal,
+      })),
+      setPrompt: (prompt) => worker.postMessage({
+        key: 'set-xterm-prompt',
+        sessionKey,
+        prompt,
+      }),
+      clearXterm: () => worker.postMessage({
+        key: 'clear-xterm',
+        sessionKey,
+      }),
+      sendCommands: (commands, messageUid) => worker.postMessage({
+        key: 'send-xterm-cmds',
+        sessionKey,
+        messageUid,
+        commands,
+      }),
     });
 
     /**
@@ -73,7 +88,7 @@ export const osCreateTtyThunk = createOsThunk<OsAct, CreateTtyThunk>(
 );
 
 interface CreateTtyThunk extends OsThunkAct<OsAct,
-  { userKey: string; xterm: XTerm.Terminal & RedactInReduxDevTools },
+  { userKey: string  },
   { canonicalPath: string; iNode: TtyINode; sessionKey: string }
 > {
   type: OsAct.OS_CREATE_TTY_THUNK;

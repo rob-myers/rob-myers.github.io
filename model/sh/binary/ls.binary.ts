@@ -23,7 +23,7 @@ export class LsBinary extends BaseBinaryComposite<
 
     // If writing to a tty we could use its column width.
     const { iNode } = dispatch(osGetOfdThunk({ processKey, fd: 1 }));
-    const columnWidth = (iNode.type === INodeType.tty) && iNode.xterm.cols || undefined;
+    const columnWidth = (iNode.type === INodeType.tty) && iNode.cols || undefined;
     const onePerLine = this.opts[1] || this.opts.l;
     const filepaths = this.operands.length ? this.operands : ['.'];
 

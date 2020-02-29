@@ -1,10 +1,10 @@
-// import { useEffect } from 'react';
-// import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 // import { Terminal } from 'xterm';
+import { Thunk } from '@store/xterm.duck';
 
 // import { redact } from '@model/redux.model';
 // import XTermComponent from './xterm';
-// import { Act } from '@store/xterm.duck';
 
 // /**
 //  * Assume a new session is created/destroyed on mount/unmount.
@@ -18,58 +18,66 @@
 // //   setSessionPanelMetasThunk
 // // } from '@store/os/session.os.duck';
 
-// export const Session: React.FC<Props> = ({ uid, userName }) => {
-//   const dispatch = useDispatch();
-//   const { xterm } = useSelector((state) => state);
-//   const state = xterm.instance[uid];
+export const Session: React.FC<Props> = ({ uid, userName }) => {
+  const dispatch = useDispatch();
+  const { xterm } = useSelector((state) => state);
+  const state = xterm.instance[uid];
 
-//   /**
-//    * TODO create session by talking to webworker.
-//    */
+  console.log({ state, userName });
 
-//   // useEffect(() => {
-//   //   // Create a new login session.
-//   //   const { sessionKey } = this.props.createSession({
-//   //     // Needed to track panel closure via UI.
-//   //     panelKey: this.props.panelKey,
-//   //     userKey: this.props.userName,
-//   //     xterm: redact(xterm),
-//   //     dispatch(Act.registerInstance({ key: uid,  }))
-//   //   }, []);
+  useEffect(() => {
+    dispatch(Thunk.ensureGlobalSetup({}));
+    /**
+     * TODO trigger osCreateSessionThunk via message
+     */
+    // dispatch(osCreateSessionThunk)
 
+    // const { sessionKey } = this.props.createSession({
+    //   // Needed to track panel closure via UI.
+    //   panelKey: this.props.panelKey,
+    //   userKey: this.props.userName,
+    //   xterm: redact(xterm),
+    // }, []);
+    // dispatch(Act.registerInstance({ key: uid, sessionKey }));
+    return () => {
+      // Close session ?
+      // dispatch(Act.unregisterInstance(uid));
+    };
+  }, []);
 
-//   return (
-//     <XTermComponent
-//       // Truthy iff resuming pre-existing session.
-//       resume={this.props.xterm}
-//       options={{
-//         fontSize: 12,
-//         cursorBlink: true,
-//         // bellStyle: 'sound',
-//         // bellSound: beep29DataUri,
-//         rendererType: 'dom',
-//         theme: {
-//           background: 'black',
-//           foreground: '#41FF00',
-//         },
-//       }}
-//       resizedAt={this.props.resizedAt}
-//       addons={['fit', 'fullscreen', 'search', 'webLinks']}
-//       onMount={(xterm: Terminal) => {
+  return null;
+  //   return (
+  //     <XTermComponent
+  //       // Truthy iff resuming pre-existing session.
+  //       resume={this.props.xterm}
+  //       options={{
+  //         fontSize: 12,
+  //         cursorBlink: true,
+  //         // bellStyle: 'sound',
+  //         // bellSound: beep29DataUri,
+  //         rendererType: 'dom',
+  //         theme: {
+  //           background: 'black',
+  //           foreground: '#41FF00',
+  //         },
+  //       }}
+  //       resizedAt={this.props.resizedAt}
+  //       addons={['fit', 'fullscreen', 'search', 'webLinks']}
+  //       onMount={(xterm: Terminal) => {
 
-//         // Initialize plugins.
-//         xterm.fit();
-//         xterm.webLinksInit();
+  //         // Initialize plugins.
+  //         xterm.fit();
+  //         xterm.webLinksInit();
 
-//         if (!this.props.xterm) {// Not resuming.
-//           try {
-//             // Create a new login session.
-//             const { sessionKey } = this.props.createSession({
-//               // Needed to track panel closure via UI.
-//               panelKey: this.props.panelKey,
-//               userKey: this.props.userName,
-//               xterm: redact(xterm)
-//             });
+  //         if (!this.props.xterm) {// Not resuming.
+  //           try {
+  //             // Create a new login session.
+  //             const { sessionKey } = this.props.createSession({
+  //               // Needed to track panel closure via UI.
+  //               panelKey: this.props.panelKey,
+  //               userKey: this.props.userName,
+  //               xterm: redact(xterm)
+  //             });
 
 //             this.props.setPanelMetas({
 //               panelKey: this.props.panelKey,
@@ -85,14 +93,14 @@
 //       }}
 //     />
 //   );
-// };
+};
 
-// interface Props {
-//   /** User name to login with. */
-//   userName: string;
-//   /** If other UI closes this, we can tidy away session. */
-//   uid: string;
-// }
+interface Props {
+  /** User name to login with. */
+  userName: string;
+  /** If other UI closes this, we can tidy away session. */
+  uid: string;
+}
 
 // // class Session extends React.Component<Props> {
 

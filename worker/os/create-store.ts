@@ -1,9 +1,9 @@
-import { createStore, applyMiddleware, Dispatch, MiddlewareAPI } from 'redux';
-import { composeWithDevTools, EnhancerOptions } from 'redux-devtools-extension';
+import { createStore, applyMiddleware, Dispatch, MiddlewareAPI, Store } from 'redux';
+import { composeWithDevTools } from 'remote-redux-devtools';
 import { persistReducer, createTransform } from 'redux-persist';
 import storage from 'localforage';
-import rootReducer, { OsWorkerState, OsWorkerAction } from './reducer';
-import { RedactInReduxDevTools } from '@model/redux.model';
+import rootReducer, { OsWorkerState, OsWorkerAction, OsWorkerThunk } from './reducer';
+import { RedactInReduxDevTools, Redacted } from '@model/redux.model';
 import { OsThunkAct, OsDispatchOverload } from '@model/os/os.redux.model';
 import { State as OsState, initialOsAux } from '@store/os/os.duck';
 import { DirectoryINode } from '@store/inode/directory.inode';
@@ -15,9 +15,10 @@ import { RandomINode } from '@store/inode/random.inode';
 import { RegularINode } from '@store/inode/regular.inode';
 import { testNever } from '@model/generic.model';
 import { Service } from '@service/create-services';
+import { OsWorkerContext } from '@model/os/os.worker.model';
 
 const thunkMiddleware =
-  (service: Service) =>
+  (service: Service, worker: OsWorkerContext) =>
     (params: MiddlewareAPI<OsDispatchOverload>) =>
       (next: Dispatch) =>
         (action: OsWorkerAction | OsThunkAct<string, {}, any>) => {
@@ -26,6 +27,7 @@ const thunkMiddleware =
               ...params,
               state: params.getState(),
               service,
+              worker,
             }, action.args);
           }
           next(action);
@@ -99,9 +101,17 @@ function rehydrateFilesystem(inode: INode, parent: null | DirectoryINode): INode
   }
 }
 
+/** Handle huge/cyclic objects by redacting them. */
+const replacer = (_: any, value: RedactInReduxDevTools) => {
+  if (value && value.devToolsRedaction) {
+    return `Redacted<${value.devToolsRedaction}>`;
+  }
+  return value;
+};
 
 export const initializeStore = (
   service: Service,
+  worker: OsWorkerContext,
   preloadedState?: OsWorkerState,
 ) =>
   createStore(
@@ -109,22 +119,21 @@ export const initializeStore = (
     persistedReducer,
     preloadedState,
     composeWithDevTools({
-      shouldHotReload: false,
-      serialize: {
-        // Handle huge/cyclic objects by redacting them.
-        replacer: (_: any, value: RedactInReduxDevTools) => {
-          if (value && value.devToolsRedaction) {
-            return `Redacted<${value.devToolsRedaction}>`;
-          }
-          return value;
-        },
-        function: false
-      } as EnhancerOptions['serialize']
+      shouldHotReload: true,
+      realtime: true,
+      port: 3002,
+      name: 'os-worker',
+      stateSanitizer: (state: OsWorkerState): Redacted<OsWorkerState> => {
+        return JSON.parse(JSON.stringify(state, replacer));
+      },
+      actionSanitizer: (act: OsWorkerAction): Redacted<OsWorkerAction> => {
+        return JSON.parse(JSON.stringify(act, replacer));
+      },
     })(
       applyMiddleware(
-        thunkMiddleware(service),
+        thunkMiddleware(service, worker),
       )
     )
-  );
+  ) as any as Store<OsWorkerState, OsWorkerAction | OsWorkerThunk>;
 
 export type ReduxStore = ReturnType<typeof initializeStore>;

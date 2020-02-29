@@ -15,7 +15,7 @@ import { DirectoryINode } from '@store/inode/directory.inode';
 import { NullINode } from '@store/inode/null.inode';
 import { RandomINode } from '@store/inode/random.inode';
 import { RegularINode } from '@store/inode/regular.inode';
-import { VoiceINode } from '@store/inode/voice.inode';
+// import { VoiceINode } from '@store/inode/voice.inode';
 
 export type Action = (
   | OsInitializedAct
@@ -75,9 +75,12 @@ export const osInitializeThunk = createOsThunk<OsAct, OsInitializeThunk>(
     if (!dev.to.random) {
       dev.addChild('random', new RandomINode({ ...dev.def }));
     }
-    if (!dev.to.voice) {
-      dev.addChild('voice', new VoiceINode({ ...dev.def }));
-    }
+    /**
+     * TODO move to main thread
+     */
+    // if (!dev.to.voice) {
+    //   dev.addChild('voice', new VoiceINode({ ...dev.def }));
+    // }
 
     /**
      * Ensure binaries in /bin.
@@ -149,7 +152,7 @@ export const osSpawnInitThunk = createOsThunk<OsAct, SpawnInitThunk>(
     // init has session sans terminal.
     const sessionKey = 'root@init';
     dispatch(osRegisterSessionAct({
-      panelKey: null,
+      uiKey: null,
       processKey,
       // init will be in process group 'init'.
       processGroupKey: processKey,
@@ -157,7 +160,6 @@ export const osSpawnInitThunk = createOsThunk<OsAct, SpawnInitThunk>(
       ttyINode: null,
       ttyPath: null,
       userKey,
-      xterm: null,
     }));
 
     // Register init with state.

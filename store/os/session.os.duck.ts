@@ -1,6 +1,4 @@
-import * as XTerm from 'xterm'; // TODO remove
-
-import { RedactInReduxDevTools, addToLookup, updateLookup, redact, removeFromLookup, SyncAct, SyncActDef } from '@model/redux.model';
+import { addToLookup, updateLookup, removeFromLookup, SyncAct, SyncActDef } from '@model/redux.model';
 import { OsThunkAct, createOsThunk, createOsAct } from '@model/os/os.redux.model';
 import { OsAct } from '@model/os/os.model';
 import { BinaryGuiType, BinaryExecType, BaseGuiSpec } from '@model/sh/binary.model';
@@ -35,9 +33,9 @@ export interface OsSession {
    */
   guiKey: null | BinaryGuiType;
   /**
-   * Parent panel identifier.
+   * Spawning UI id e.g. can end session when UI closes.
    */
-  panelKey: null | string;
+  uiKey: null | string;
   /**
    * Controlling process key.
    */
@@ -63,10 +61,6 @@ export interface OsSession {
    * Login name.
    */
   userKey: string;
-  /**
-   * From npm module 'xterm', rendered inside {WindowPane}.
-   */
-  xterm: null | XTerm.Terminal & RedactInReduxDevTools;
   /**
    * Legacy PID of session leader (?).
    */
@@ -105,7 +99,7 @@ export const osRegisterSessionAct = createOsAct<OsAct, RegisterSessionAct>(
 interface RegisterSessionAct extends SyncAct<OsAct, {
   /** For example `tty-1`. */
   sessionKey: string;
-  panelKey: null | string;
+  uiKey: null | string;
   /**
    * Controlling process id i.e. for a bash instance.
    * If initial session, this process will not yet exist.
@@ -118,14 +112,13 @@ interface RegisterSessionAct extends SyncAct<OsAct, {
   userKey: string;
   ttyINode: null | TtyINode;
   ttyPath: null | string;
-  xterm: null | XTerm.Terminal & RedactInReduxDevTools;
 }> {
   type: OsAct.OS_REGISTER_SESSION;
 }
 export const osRegisterSessionDef: SyncActDef<OsAct, RegisterSessionAct, State> = (payload, state) => {
   const {
-    sessionKey, userKey, panelKey, processKey,
-    processGroupKey, xterm, ttyINode, ttyPath,
+    sessionKey, userKey, uiKey, processKey,
+    processGroupKey, ttyINode, ttyPath,
   } = payload;
   const { aux: { nextPid }, session, proc } = state;
 
@@ -134,7 +127,7 @@ export const osRegisterSessionDef: SyncActDef<OsAct, RegisterSessionAct, State> 
     fgStack: [],
     guiKey: null,
     key: sessionKey,
-    panelKey,
+    uiKey,
     /**
      * If initial session, process won't exist yet.
      * Otherwise will already have been forked.
@@ -159,7 +152,6 @@ export const osRegisterSessionDef: SyncActDef<OsAct, RegisterSessionAct, State> 
     ttyINode,
     ttyPath,
     userKey,
-    xterm,
   };
   return { ...state,
     session: addToLookup(newSession, session),
@@ -239,11 +231,10 @@ export type Thunk = (
  */
 export const osCreateSessionThunk = createOsThunk<OsAct, CreateSessionThunk>(
   OsAct.OS_CREATE_SESSION_THUNK,
-  ({ dispatch, service }, { panelKey, userKey, xterm }) => {
+  ({ dispatch, service }, { uiKey, userKey }) => {
 
     const { canonicalPath: ttyPath, sessionKey, iNode: ttyINode } = dispatch(osCreateTtyThunk({
       userKey,
-      xterm: redact(xterm, 'XTerm.Terminal'),
     }));
     /**
      * Fork 'init', close fds, open tty at std{in,out,err}, set environment HOME, PWD etc.
@@ -259,7 +250,7 @@ export const osCreateSessionThunk = createOsThunk<OsAct, CreateSessionThunk>(
      * Register new session.
      */
     const processGroupKey = processKey;
-    dispatch(osRegisterSessionAct({ panelKey, processKey, processGroupKey, sessionKey, ttyINode, ttyPath, userKey, xterm }));
+    dispatch(osRegisterSessionAct({ uiKey: uiKey, processKey, processGroupKey, sessionKey, ttyINode, ttyPath, userKey }));
     /**
      * Controlling process has own process group.
      */
@@ -280,10 +271,9 @@ export const osCreateSessionThunk = createOsThunk<OsAct, CreateSessionThunk>(
 );
 interface CreateSessionThunk extends OsThunkAct<OsAct,
   {
-    /** Need to know parent panel so can end session when panel closed via UI. */
-    panelKey: string;
+    /** So can close session on ui close, if needed */
+    uiKey: string;
     userKey: string;
-    xterm: XTerm.Terminal & RedactInReduxDevTools;
   },
   // Outputs a session key.
   { sessionKey: string }
@@ -298,12 +288,9 @@ export const osEndSessionThunk = createOsThunk<OsAct, EndSessionThunk>(
   OsAct.OS_END_SESSION_THUNK,
   ({ dispatch, state: { os } }, { sessionKey }) => {
     // console.log(sessionKey, os.session);
-    const { processKey, ttyINode, xterm } = os.session[sessionKey];
+    const { processKey, ttyINode } = os.session[sessionKey];
     if (ttyINode) {// Unlink /dev/tty-{ttyId}.
       dispatch(osUnlinkFileThunk({ processKey, path: ttyINode.def.canonicalPath }));
-    }
-    if (xterm) {
-      xterm.dispose();
     }
     // Terminate process.
     dispatch(osTerminateProcessThunk({ processKey, exitCode: 0 }));

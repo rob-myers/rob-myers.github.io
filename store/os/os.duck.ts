@@ -82,6 +82,7 @@ import { Action as InitAction, Thunk as InitThunk, osInitializedDef } from './in
 import { Action as ProcessAction, Thunk as ProcessThunk, osStoreExitCodeDef, osRegisterProcessDef, osCloseProcessFdsDef, osSetProcessGroupDef, osUpdateProcessDef, osSetSignalHandlerDef, osStoreProcessSubscriptionDef, osClearBufferDef, osPushCodeStackDef, osPopCodeStackDef, osUnregisterProcessDef } from './process.os.duck';
 import { Action as SessionAction, Thunk as SessionThunk } from './session.os.duck';
 import { Action as UserAction, Thunk as UserThunk, osCreateUserGroupDef, osRegisterUserDef, osSetProcessUidDef } from './user.os.duck';
+import { Thunk as ParseThunk} from './parse.os.duck';
 
 export type Action = (
   | DeclareAction
@@ -99,6 +100,7 @@ export type Thunk = (
   | ProcessThunk
   | SessionThunk
   | UserThunk
+  | ParseThunk
 )
 
 export function reducer(state: State = osInitialState, action: Action): State {

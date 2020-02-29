@@ -1,4 +1,4 @@
-import { basename, dirname } from '@service/path';
+import { basename, dirname } from 'path';
 import { BinaryExecType } from '@model/sh/binary.model';
 import { BaseBinaryComposite } from './base-binary';
 import { ObservedType } from '@service/term.service';

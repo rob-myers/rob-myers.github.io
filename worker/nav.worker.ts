@@ -1,4 +1,7 @@
-import { NavWorkerContext, NavDomContract } from '@model/nav/nav-worker.model';
+/**
+ * TODO simplify
+ */
+import { NavWorkerContext, NavDomContract, NavWorker } from '@model/nav/nav-worker.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { NavGraph, FloydWarshall } from '@model/nav/nav-graph.model';
@@ -98,3 +101,5 @@ function sendNavGraph(context: string, refinedPolys: Poly2[]) {
 
   return navGraph;
 }
+
+export default {} as Worker & {new (): NavWorker};

@@ -1,4 +1,4 @@
-import generateUid from '@service/generate-uid';
+import generateUid from 'shortid';
 import { DirectoryINode } from '@store/inode/directory.inode';
 import { INode, OpenFileDescription, OpenFileRequest } from '@model/os/file.model';
 import { INodeType } from '@store/inode/base-inode';

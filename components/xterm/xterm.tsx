@@ -1,5 +1,5 @@
 // // https://github.com/farfromrefug/react-xterm/blob/master/src/react-xterm.tsx
-// import * as React from 'react';
+import {} from 'react';
 // import { Terminal, ITerminalOptions } from 'xterm';
 
 // export interface Props extends React.DOMAttributes<{}> {

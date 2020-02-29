@@ -1,6 +1,7 @@
 import { SyncAct } from '../redux.model';
 import { OsWorkerAction, OsWorkerState } from '@worker/os/reducer';
 import { Service } from '@service/create-services';
+import { OsWorkerContext } from './os.worker.model';
 
 /**
  * We create sync actions differently for operating system.
@@ -23,6 +24,7 @@ export interface OsThunkParams {
   getState: () => OsWorkerState;
   state: OsWorkerState;
   service: Service;
+  worker: OsWorkerContext;
 }
 
 export interface OsThunkAct<T extends string, A extends {}, R> {
