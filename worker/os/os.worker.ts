@@ -58,7 +58,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
             resolve: () => ctxt.postMessage({
               key: 'ack-tty-line',
               sessionKey: msg.sessionKey,
-              xtermKey: msg.xtermKey,
+              uiKey: msg.xtermKey,
             })
           });
           ttyINode.awakenFirstPendingReader();

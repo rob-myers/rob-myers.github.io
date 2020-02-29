@@ -1,6 +1,8 @@
 import { TtyOutputCommand } from '@store/inode/tty.inode';
 
-export type Message<Data> = MessageEvent & { data: Data };
+export interface Message<Data> extends MessageEvent {
+  data: Data;
+}
 
 /** Worker in parent thread */
 export interface OsWorker extends Worker {
@@ -53,7 +55,7 @@ interface SendLineToTty extends BaseMessage {
 interface AckTtyLine extends BaseMessage {
   key: 'ack-tty-line';
   sessionKey: string;
-  xtermKey: string;
+  uiKey: string;
 }
 
 interface SigTermTty extends BaseMessage {

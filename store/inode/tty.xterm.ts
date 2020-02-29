@@ -54,24 +54,19 @@ export class TtyXterm {
 
     this.xterm.onData(this.handleXtermInput.bind(this));
 
-    // Initial message.
+    // Initial message
     this.xterm.write('\x1b[38;5;248;1m');
     this.xterm.writeln(`Connected to ${this.def.canonicalPath}.\x1b[0m`);
     this.clearInput();
+    this.cursorRow = 2;
 
-    // Green foreground.
-    // this.xterm.write('\x1b[0m\x1b[92m');
-    // this.xterm.write('\x1b[0m');
-    this.cursorRow = 2;// After initial message.
-
-    /**
-     * Listen to worker.
-     */
+    // Listen to worker
     this.def.osWorker.addEventListener('message', this.onWorkerMessage);
   }
 
   /**
    * Compute actual cursor (1-dimensional), taking prompt into account.
+   * TODO handle length when prompt contains control chars
    */
   private actualCursor(input: string, cursor: number) {
     return this.actualLine(input.slice(0, cursor)).length;
@@ -411,7 +406,7 @@ export class TtyXterm {
             sessionKey: msg.sessionKey,
             messageUid: msg.messageUid,
           });
-          this.commandBuffer.push(
+          this.queueCommands(
             ...msg.commands,
             { key: 'resolve', resolve },
           );
@@ -419,7 +414,7 @@ export class TtyXterm {
         return;
       }
       case 'ack-tty-line': {
-        if (msg.sessionKey === this.def.sessionKey && msg.xtermKey === this.def.uiKey) {
+        if (msg.sessionKey === this.def.sessionKey && msg.uiKey === this.def.uiKey) {
           // Line has been processed by tty
           this.input = '';
           this.linePending = false;
@@ -466,8 +461,10 @@ export class TtyXterm {
     let command: TtyOutputCommand | undefined;
     let numLines = 0;
 
-    // eslint-disable-next-line no-cond-assign
-    while (command = this.commandBuffer.shift()) {
+    while (
+      (command = this.commandBuffer.shift())
+      && numLines <= this.def.linesPerUpdate
+    ) {
       switch (command.key) {
         case 'clear': {
           this.clearScreen();
@@ -482,6 +479,7 @@ export class TtyXterm {
         case 'newline': {
           this.xterm.write('\r\n');
           this.trackCursorRow(+1);
+          numLines++;
           break;
         }
         case 'prompt': {
@@ -494,11 +492,11 @@ export class TtyXterm {
         }
         default: throw testNever(command);
       }
-
-      if (numLines > this.def.linesPerUpdate) {
-        break;
-      }
     }
+
+    this.nextPrintId = this.commandBuffer.length 
+      ? window.setTimeout(this.print, this.def.refreshMs)
+      : null;
   }
 
   /**
@@ -511,14 +509,17 @@ export class TtyXterm {
     this.queueCommands(
       { key: 'newline' },
       { key: 'resolve',
-        resolve: () => this.def.osWorker.postMessage({
-          key: 'line-to-tty',
-          sessionKey: this.def.sessionKey,
-          line,
-          xtermKey: this.def.uiKey,
-        }),
+        resolve: () => {
+          this.def.osWorker.postMessage({
+            key: 'line-to-tty',
+            sessionKey: this.def.sessionKey,
+            line,
+            xtermKey: this.def.uiKey,
+          });
+        }
       },
     );
+
   }
 
   /**
@@ -584,10 +585,10 @@ export class TtyXterm {
     this.cursor = newInput.length;
   }
 
+  /** Set and print prompt. */
   public setPrompt(prompt: string) {
-    // Print prompt.
-    this.queueCommands({ key: 'prompt', text: prompt });
     this.prompt = prompt;
+    this.queueCommands({ key: 'prompt', text: prompt });
   }
 
   /**

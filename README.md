@@ -1,6 +1,6 @@
 ## TODO
 
-- get bash responding to terminal
+- fiddle with terminal and summaries features/issues
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
 - avoid jerky fade in/out
@@ -69,6 +69,8 @@
 - xterm renders with css
 - get xterm working
 - NOTE removed escape chars from prompt because currently unsupported (need to measure prompt without them)
+- get bash responding to terminal
+
 
 ## Redux devtools for os webworker
 
