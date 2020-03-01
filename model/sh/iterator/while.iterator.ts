@@ -2,11 +2,14 @@ import { BaseIteratorTerm, BaseIteratorTermDef } from './base-iterator';
 import { IteratorType, Term } from '@model/os/term.model';
 import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
+import { pause } from '@model/generic.model';
 
 /**
  * while
  */
 export class WhileIterator extends BaseIteratorTerm<IteratorType.while> {
+
+  private readonly pauseIterations = 1000;
 
   public get children(): Term[] {
     return [this.def.guard, this.def.body];
@@ -18,8 +21,14 @@ export class WhileIterator extends BaseIteratorTerm<IteratorType.while> {
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
     const { guard, body } = this.def;
+    let numIterations = 0;
 
     while (true) {
+      if (numIterations++ > this.pauseIterations) {
+        numIterations = 0;
+        await pause(100); // Throttle
+      }
+
       yield* this.runChild({ child: guard, dispatch, processKey });
 
       if (guard.exitCode) {

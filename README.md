@@ -80,6 +80,8 @@
 - remove 'gui binaries' `top` and `stage`
 - clarify and cleanup xterm <-> tty communication.
   > get pasting working
+- throttle while so ctrl + c works for `while true; do echo foo; done > bar`
+
 
 ## Character codes example
 
