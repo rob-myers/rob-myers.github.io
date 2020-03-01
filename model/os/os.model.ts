@@ -35,7 +35,6 @@ export enum OsAct {
    * Exec forked process with specified code.
    */
   OS_EXEC_TERM_THUNK= 'OS_EXEC_TERM_THUNK',
-  OS_EXIT_GUI_THUNK= 'OS_EXIT_GUI_THUNK',
   OS_EXPAND_FILEPATH_THUNK= 'OS_EXPAND_FILEPATH_THUNK',
   OS_FIND_VAR_NAMES_THUNK= 'OS_FIND_VAR_NAMES_THUNK',
   OS_GET_FUNCTION_THUNK= 'OS_GET_FUNCTION_THUNK',
@@ -52,7 +51,6 @@ export enum OsAct {
    * Is process the session leader?
    */
   OS_IS_SESSION_LEADER_THUNK= 'OS_IS_SESSION_LEADER_THUNK',
-  OS_LAUNCH_GUI_THUNK= 'OS_LAUNCH_GUI_THUNK',
   OS_MAKE_DIR_THUNK= 'OS_MAKE_DIR_THUNK',
   OS_MAKE_FIFO_THUNK= 'OS_MAKE_FIFO_THUNK',
   /**
@@ -108,7 +106,6 @@ export enum OsAct {
    * Set foreground process group of session.
    */
   OS_SET_SESSION_FOREGROUND= 'OS_SET_SESSION_FOREGROUND',
-  OS_SET_SESSION_GUI= 'OS_SET_SESSION_GUI',
   /**
    * Assign a specific signal handler to process.
    */

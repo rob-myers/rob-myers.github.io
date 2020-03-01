@@ -28,12 +28,11 @@ export class PrintfBuiltin extends BaseBuiltinComposite<
     if (format) {
       try {
         const output = sprintfJs.sprintf(format, ...args);
+        const value = interpretEscapeSequences(output);
         if (opts.v) {
-          const value = interpretEscapeSequences(output);
           dispatch(osAssignVarThunk({ varName: opts.v, act: { key: 'default', value }, processKey }));
         } else {
-          const buffer = interpretEscapeSequences(output).split('\n');
-          yield this.write(buffer, 1);
+          yield this.write(value.split('\n'), 1);
         }
       } catch (e) {
         const errMsg = `${e}`.replace('SyntaxError: [sprintf] ', '');

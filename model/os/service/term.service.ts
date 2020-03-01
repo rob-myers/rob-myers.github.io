@@ -1,7 +1,7 @@
 import { ReplaySubject } from 'rxjs';
 import { Term, CompositeType, ExpandComposite, IteratorType, Builtin, DeclareBuiltinType, BinaryComposite } from '@model/os/term.model';
 import { testNever } from '@model/generic.model';
-import { BinaryExecType, BinaryGuiType, BinaryType } from '@model/sh/binary.model';
+import { BinaryExecType, BinaryType } from '@model/sh/binary.model';
 import { ArithmOpComposite } from '@model/sh/composite/arithm-op.composite';
 import { BlockComposite } from '@model/sh/composite/block.composite';
 import { CaseComposite } from '@model/sh/composite/case.composite';
@@ -23,7 +23,6 @@ import { SeqBinary } from '@model/sh/binary/seq.binary';
 import { SleepBinary } from '@model/sh/binary/sleep.binary';
 import { TailBinary } from '@model/sh/binary/tail.binary';
 import { TtyBinary } from '@model/sh/binary/tty.binary';
-import { StageBinary } from '@model/sh/binary/stage.binary';
 import { AndComposite } from '@model/sh/composite/and.composite';
 import { ArrayComposite } from '@model/sh/composite/array.composite';
 import { AssignComposite } from '@model/sh/composite/assign.composite';
@@ -83,7 +82,6 @@ import { ForIterator } from '@model/sh/iterator/for.iterator';
 import { WhileIterator } from '@model/sh/iterator/while.iterator';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { iterateTerm } from './term.util';
-import { TopBinary } from '@model/sh/binary/top.binary';
 import { NamedFunction } from '@model/os/process.model';
 import { WcBinary } from '@model/sh/binary/wc.binary';
 
@@ -175,8 +173,6 @@ class TermService {
       case BinaryExecType.tail: return new TailBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.tty: return new TtyBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.wc: return new WcBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryGuiType.stage: return new StageBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryGuiType.top: return new TopBinary({ key: CompositeType.binary, binaryKey, args });
       case BuiltinOtherType.echo: return new EchoBuiltin({ key: CompositeType.builtin, builtinKey: binaryKey, args });
       case BuiltinOtherType.pwd: return new PwdBuiltin({ key: CompositeType.builtin, builtinKey: binaryKey, args });
       default: throw testNever(binaryKey);
@@ -307,8 +303,6 @@ class TermService {
           case BinaryExecType.tail: return new TailBinary(term.def);
           case BinaryExecType.tty: return new TtyBinary(term.def);
           case BinaryExecType.wc: return new WcBinary(term.def);
-          case BinaryGuiType.stage: return new StageBinary(term.def);
-          case BinaryGuiType.top: return new TopBinary(term.def);
           default: throw testNever(term);
         }
       }

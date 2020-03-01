@@ -6,7 +6,7 @@ import {
 } from 'redux-observable';
 // import { map, filter } from 'rxjs/operators';
 import { testNever, KeyedLookup, deepClone } from '@model/generic.model';
-import { OsSession, osIncrementTtyIdDef, osRegisterSessionDef, osSetSessionForegroundDef, osSetSessionGuiDef, osUnregisterSessionDef } from './session.os.duck';
+import { OsSession, osIncrementTtyIdDef, osRegisterSessionDef, osSetSessionForegroundDef, osUnregisterSessionDef } from './session.os.duck';
 import { OsAct, OsProcGroup, OsUserGroup, OsUser } from '@model/os/os.model';
 import { ProcessState } from '@model/os/process.model';
 import { OpenFileDescription } from '@model/os/file.model';
@@ -188,9 +188,6 @@ export function reducer(state: State = osInitialState, action: Action): State {
     }
     case OsAct.OS_SET_SESSION_FOREGROUND: {
       return osSetSessionForegroundDef(action.pay, state);
-    }
-    case OsAct.OS_SET_SESSION_GUI: {
-      return osSetSessionGuiDef(action.pay, state);
     }
     case OsAct.OS_SET_SIGNAL_HANDLER: {
       return osSetSignalHandlerDef(action.pay, state);

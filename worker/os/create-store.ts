@@ -119,7 +119,7 @@ export const initializeStore = (
     persistedReducer,
     preloadedState,
     composeWithDevTools({
-      shouldHotReload: true,
+      shouldHotReload: false,
       realtime: true,
       port: 3002,
       name: 'os-worker',

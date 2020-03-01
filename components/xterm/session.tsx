@@ -37,8 +37,6 @@ export const Session: React.FC<Props> = ({ uid, userKey }) => {
       options={{
         fontSize: 12,
         cursorBlink: true,
-        // bellStyle: 'sound',
-        // bellSound: beep29DataUri,
         rendererType: 'dom',
         theme: {
           background: 'black',

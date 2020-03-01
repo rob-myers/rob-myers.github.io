@@ -9,7 +9,7 @@ import { osRegisterProcessAct, osStartProcessThunk } from './process.os.duck';
 import { osCreateUserThunk } from './user.os.duck';
 import { osOpenFileThunk, osDupFileDescriptorAct } from './file.os.duck';
 import { redact } from '@model/redux.model';
-import { binaryExecTypes, binaryGuiTypes } from '@model/sh/binary.model';
+import { binaryExecTypes } from '@model/sh/binary.model';
 import { builtinBinaryTypes } from '@model/sh/builtin.model';
 import { DirectoryINode } from '@store/inode/directory.inode';
 import { NullINode } from '@store/inode/null.inode';
@@ -88,7 +88,6 @@ export const osInitializeThunk = createOsThunk<OsAct, OsInitializeThunk>(
     const bin = root.to.bin as DirectoryINode;
     [
       ...binaryExecTypes,
-      ...binaryGuiTypes,
       // Some builtins have binaries.
       ...builtinBinaryTypes,
     ].sort().forEach((binaryType) => bin.addChild(binaryType, new RegularINode({ ...bin.def, binaryType })));

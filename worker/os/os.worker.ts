@@ -11,13 +11,13 @@ const ctxt: OsWorkerContext = self as any;
 const service = createServices();
 const store = initializeStore(service, ctxt);
 const persistor = persistStore(store as any);
-persistor.pause();
+
+persistor.pause(); // TODO saves
 
 const dispatch = store.dispatch as OsDispatchOverload;
 dispatch(osInitializeThunk({}));
 
-
-console.log({ service, store, persistor });
+// console.log({ service, store, persistor });
 // TRANSPILE TEST
 // const parsed = service.parseSh.parse('echo foo');
 // const transpiled = service.transpileSh.transpile(parsed);

@@ -24,7 +24,6 @@ import { RmdirBinary } from '../sh/binary/rmdir.binary';
 import { SayBinary } from '../sh/binary/say.binary';
 import { SeqBinary } from '../sh/binary/seq.binary';
 import { SleepBinary } from '../sh/binary/sleep.binary';
-import { StageBinary } from '../sh/binary/stage.binary';
 import { TailBinary } from '../sh/binary/tail.binary';
 import { TtyBinary } from '../sh/binary/tty.binary';
 import { CpBinary } from '../sh/binary/cp.binary';
@@ -77,7 +76,6 @@ import { SetBuiltin } from '../sh/builtin/set.builtin';
 import { ShiftBuiltin } from '../sh/builtin/shift.builtin';
 import { TrapBuiltin } from '../sh/builtin/trap.builtin';
 import { UnsetBuiltin } from '../sh/builtin/unset.builtin';
-import { TopBinary } from '../sh/binary/top.binary';
 import { WcBinary } from '../sh/binary/wc.binary';
 
 export type Term = (
@@ -108,9 +106,7 @@ export type BinaryComposite = (
   | SayBinary
   | SeqBinary
   | SleepBinary
-  | StageBinary
   | TailBinary
-  | TopBinary
   | TtyBinary
   | WcBinary
 );

@@ -1,9 +1,11 @@
 ## TODO
 
+- binary error messages shouldn't have prefix `-bash: `
 - get pasting working
 - implement history
 - fiddle with terminal and summaries features/issues
 - rename from `bash` to e.g. `ti` (textual interface)
+
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
 - avoid jerky fade in/out
@@ -74,6 +76,9 @@
 - NOTE removed escape chars from prompt because currently unsupported (need to measure prompt without them)
 - get bash responding to terminal
 - printf now supports option `-v`
+- Ctrl + C is working
+  `while true; do sleep 1; echo foo; done`
+- remove 'gui binaries' `top` and `stage`
 
 ## Character codes example
 

@@ -1,7 +1,7 @@
 import { addToLookup, updateLookup, removeFromLookup, SyncAct, SyncActDef } from '@model/redux.model';
 import { OsThunkAct, createOsThunk, createOsAct } from '@model/os/os.redux.model';
 import { OsAct } from '@model/os/os.model';
-import { BinaryGuiType, BinaryExecType, BaseGuiSpec } from '@model/sh/binary.model';
+import { BinaryExecType } from '@model/sh/binary.model';
 import { ProcessSignal } from '@model/os/process.model';
 import { osCreateTtyThunk } from './tty.os.duck';
 import { State } from './os.duck';
@@ -28,11 +28,6 @@ export interface OsSession {
    */
   fgStack: string[];
   /**
-   * If null then using 'xterm' i.e. terminal.
-   * Else binary that launched a graphical user-interface.
-   */
-  guiKey: null | BinaryGuiType;
-  /**
    * Spawning UI id e.g. can end session when UI closes.
    */
   uiKey: null | string;
@@ -44,11 +39,6 @@ export interface OsSession {
    * The process groups in this session.
    */
   procGrps: string[];
-  /**
-   * If {guiKey} non-null, this function is invoked once respective GUI
-   * finished, to resume the process which originally launched it.
-   */
-  resumeXTerm: null | (() => void);
   /**
    * The tty inode.
    */
@@ -71,7 +61,6 @@ export type Action = (
   | IncrementTtyIdAct
   | RegisterSessionAct
   | SetSessionForegroundAct
-  | SetSessionGuiAct
   | UnregisterSessionAct
 );
 
@@ -125,7 +114,6 @@ export const osRegisterSessionDef: SyncActDef<OsAct, RegisterSessionAct, State> 
   const newSession: OsSession = {
     // `init` has no foreground, but each login session does.
     fgStack: [],
-    guiKey: null,
     key: sessionKey,
     uiKey,
     /**
@@ -144,7 +132,6 @@ export const osRegisterSessionDef: SyncActDef<OsAct, RegisterSessionAct, State> 
      * {createProcessGroupAct} moves it into own group.
      */
     procGrps: [processGroupKey],
-    resumeXTerm: null,
     /**
      * If initial session use next PID, else use previous.
      */
@@ -180,25 +167,6 @@ export const osSetSessionForegroundDef: SyncActDef<OsAct, SetSessionForegroundAc
 });
 
 /**
- * Start using a GUI.
- */
-export const osSetSessionGuiAct = createOsAct<OsAct, SetSessionGuiAct>(
-  OsAct.OS_SET_SESSION_GUI,
-);
-interface SetSessionGuiAct extends SyncAct<OsAct, {
-  sessionKey: string;
-  guiKey: null | BinaryGuiType;
-  resumeXTerm: null | (() => void);
-}> {
-  type: OsAct.OS_SET_SESSION_GUI;
-}
-export const osSetSessionGuiDef: SyncActDef<OsAct, SetSessionGuiAct, State> =
-({ guiKey, resumeXTerm, sessionKey }, state) => ({
-  ...state,
-  session: updateLookup(sessionKey, state.session, () => ({ guiKey, resumeXTerm })),
-});
-
-/**
  * Remove session from state.
  */
 export const osUnregisterSessionAct = createOsAct<OsAct, UnregisterSessionAct>(
@@ -216,8 +184,6 @@ export const osUnregisterSessionDef: SyncActDef<OsAct, UnregisterSessionAct, Sta
 
 export type Thunk = (
   | CreateSessionThunk
-  | ExitGuiThunk
-  | LaunchGuiThunk
   | SignalForegroundThunk
 );
 
@@ -301,55 +267,6 @@ export const osEndSessionThunk = createOsThunk<OsAct, EndSessionThunk>(
 export interface EndSessionThunk extends OsThunkAct<OsAct, { sessionKey: string }, void> {
   type: OsAct.OS_END_SESSION_THUNK;
 }
-
-/**
- * Exit GUI in {sessionKey} and return to the terminal.
- */
-export const osExitGuiThunk = createOsThunk<OsAct, ExitGuiThunk>(
-  OsAct.OS_EXIT_GUI_THUNK,
-  ({ state: { os } }, { sessionKey }) => {
-    const { resumeXTerm } = os.session[sessionKey];
-    if (resumeXTerm) {
-      resumeXTerm();
-    } else {
-      throw Error(`Expected non-null 'resumeXTerm' in session '${sessionKey}'`);
-    }
-  },
-);
-interface ExitGuiThunk extends OsThunkAct<OsAct, { sessionKey: string }, void> {
-  type: OsAct.OS_EXIT_GUI_THUNK;
-}
-
-/**
- * Launch GUI in session of {processKey}.
- * Always launched via a binary running in {processKey}.
- * Displays the GUI by setting {session.guiKey}.
- * To resume XTerm afterwards, invoke {session.resumeXTerm}.
- */
-export const osLaunchGuiThunk = createOsThunk<OsAct, LaunchGuiThunk>(
-  OsAct.OS_LAUNCH_GUI_THUNK,
-  ({ dispatch, state: { os }}, { guiKey, processKey }) => {
-    const { sessionKey } = os.proc[processKey];
-    const toPromise = () => new Promise<void>((resolve) =>
-      dispatch(osSetSessionGuiAct({
-        sessionKey,
-        guiKey,
-        resumeXTerm: () => {
-          dispatch(osSetSessionGuiAct({ sessionKey, guiKey: null, resumeXTerm: null }));
-          resolve(); // Resume suspended process.
-        },
-      }))
-    );
-    return { toPromise };
-  },
-);
-interface LaunchGuiThunk extends OsThunkAct<OsAct,
-  { processKey: string } & BaseGuiSpec,
-  { toPromise: () => Promise<void> }
-> {
-  type: OsAct.OS_LAUNCH_GUI_THUNK;
-}
-
 
 // /**
 //  * _TODO_ review.
