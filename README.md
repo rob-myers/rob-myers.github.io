@@ -1,13 +1,10 @@
 ## TODO
 
-- clarify and cleanup xterm <-> tty communication.
-  > get pasting working
 - implement history
 
 - binary error messages shouldn't have prefix `-bash: `
 - fiddle with terminal and summaries features/issues
 - rename from `bash` to e.g. `ti` (textual interface)
-
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
 - avoid jerky fade in/out
@@ -81,6 +78,8 @@
 - Ctrl + C is working
   `while true; do sleep 1; echo foo; done`
 - remove 'gui binaries' `top` and `stage`
+- clarify and cleanup xterm <-> tty communication.
+  > get pasting working
 
 ## Character codes example
 

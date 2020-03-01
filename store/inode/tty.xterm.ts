@@ -13,7 +13,7 @@ export class TtyXterm {
    * e.g. write a line, clear the screen. They are induced
    * by user input and/or processes in the respective session.
    */
-  private commandBuffer: TtyOutputCommand[];
+  private commandBuffer: XtermOutputCommand[];
   /**
    * Number of characters from char after prompt
    * to the current cursor position.
@@ -28,13 +28,9 @@ export class TtyXterm {
    * The current user input line before pressing enter.
    */
   private input: string;
-  /**
-   * Has last line entered by user not yet been read?
-   */
+  /** Has last line entered by user not yet been read? */
   private linePending: boolean;
-  /**
-   * Timeout id for next drain of {commandBuffer} to screen.
-   */
+  /** Timeout id for next drain of {commandBuffer} to screen. */
   private nextPrintId: null | number;
   /**
    * User-input prompt e.g. '$ '.
@@ -196,14 +192,40 @@ export class TtyXterm {
     }
   }
 
-  private handleXtermData(data: string) {
+  private async handleXtermInput(data: string) {
+    if (this.linePending) {// Ignore while awaiting read
+      return;
+    }
+    if (data.length > 3 && data.charCodeAt(0) !== 0x1b) {
+      // Handle pasted input
+      const text = data.replace(/[\r\n]+/g, '\n');
+      const lines = text.split('\n');
+      const last = !text.endsWith('\n') && lines.pop();
+      for (const line of lines) {
+        await new Promise(resolve => {
+          this.queueCommands(
+            { key: 'paste-line', line },
+            { key: 'await-prompt' },
+            { key: 'resolve', resolve },
+          );
+        });
+      }
+      if (last) {// Set as pending input but don't send
+        this.queueCommands({ key: 'resolve', resolve: () => {
+          this.clearInput();
+          this.setInput(last);
+        }});
+      }
+    } else {
+      this.handleXtermKeypress(data);
+    }
+  }
+
+  private handleXtermKeypress(data: string) {
     const ord = data.charCodeAt(0);
     let cursor: number;
 
-    if (ord == 0x1b) {
-      /**
-       * Handle ANSI escape sequences.
-       */
+    if (ord == 0x1b) { // ANSI escape sequences
       switch (data.slice(1)) {
         case '[A': {// Up arrow.
           /**
@@ -257,9 +279,7 @@ export class TtyXterm {
         }
       }
     } else if (ord < 32 || ord === 0x7f) {
-      /**
-       * Handle special characters.
-       */
+      // Handle special characters
       switch (data) {
         case '\r': {// Enter.
           // this.sendLine();
@@ -322,41 +342,15 @@ export class TtyXterm {
           break;
         }
       }
-    } else {// Handle visible characters
+    } else {// Visible characters
       this.handleCursorInsert(data);
     }
   }
 
-  private async handleXtermInput(data: string) {
-    if (this.linePending) {// Ignore while awaiting read
-      return;
-    }
-    if (data.length > 3 && data.charCodeAt(0) !== 0x1b) {
-      // Handle pasted input
-      const text = data.replace(/[\r\n]+/g, '\n');
-      const lines = text.split('\n');
-      const last = !text.endsWith('\n') && lines.pop();
-      for (const line of lines) {
-        await new Promise(resolve => {
-          this.queueCommands(
-            { key: 'pasted-line', line },
-            { key: 'newline' },
-            { key: 'resolve', resolve },
-          );
-        });
-      }
-      if (last) {
-        this.queueCommands({ key: 'pasted-line', line: last });
-      }
-    } else {// Handle a keypress
-      this.handleXtermData(data);
-    }
-  }
-
   /**
-   * Suppose we're about to write {nextInput} (possibly after prompt).
-   * If real input ends _exactly_ at right-hand edge, cursor doesn't wrap.
-   * This method detects this, so we can append \r\n.
+   * Suppose we're about to write `nextInput` possibly after prompt.
+   * If real input ends _exactly_ at right-hand edge, the cursor doesn't wrap.
+   * This method detects this so we can append `\r\n`.
    */
   private inputEndsAtEdge(nextInput: string) {
     const realInput = this.actualLine(nextInput);
@@ -374,7 +368,7 @@ export class TtyXterm {
     this.trackCursorRow(1);
     this.input = '';
     this.cursor = 0;
-    // Immediately forget any pending input.
+    // Immediately forget any pending output
     this.commandBuffer.length = 0;
 
     // Reset controlling process
@@ -385,7 +379,7 @@ export class TtyXterm {
     });
   }
 
-  public queueCommands(...commands: TtyOutputCommand[]) {
+  public queueCommands(...commands: XtermOutputCommand[]) {
     this.commandBuffer.push(...commands);
     this.printPending();
   }
@@ -408,21 +402,21 @@ export class TtyXterm {
       }
       case 'write-to-xterm': {
         if (msg.sessionKey === this.def.sessionKey) {
-          const resolve = () => this.def.osWorker.postMessage({
+          // Acknowledge immediately i.e. before writing lines
+          this.def.osWorker.postMessage({
             key: 'xterm-received-lines',
             sessionKey: msg.sessionKey,
             messageUid: msg.messageUid,
           });
-          this.queueCommands(
-            ...msg.lines.map(line => ({ key: 'line' as 'line', line })),
-            { key: 'resolve', resolve },
+          this.queueCommands(...msg.lines.map(
+            line => ({ key: 'line' as 'line', line }))
           );
         }
         return;
       }
       case 'tty-received-line': {
         if (msg.sessionKey === this.def.sessionKey && msg.uiKey === this.def.uiKey) {
-          // tty inode has received line sent from this xterm,
+          // The tty inode has received the line sent from this xterm,
           // so we can resume listening for input
           this.input = '';
           this.linePending = false;
@@ -466,7 +460,7 @@ export class TtyXterm {
    * Print part of command buffer to the screen.
    */
   private print = () => {
-    let command: TtyOutputCommand | undefined;
+    let command: XtermOutputCommand | undefined;
     let numLines = 0;
     this.nextPrintId = null;
 
@@ -475,6 +469,10 @@ export class TtyXterm {
       && numLines <= this.def.linesPerUpdate
     ) {
       switch (command.key) {
+        case 'await-prompt': {
+          this.commandBuffer.unshift(command);
+          return;
+        }
         case 'clear': {
           this.clearScreen();
           break;
@@ -485,24 +483,25 @@ export class TtyXterm {
           numLines++;
           break;
         }
-        case 'pasted-line': {
-          this.xterm.write(command.line);
-          this.input = command.line;
-          break;
-        }
         case 'newline': {
           this.xterm.write('\r\n');
           this.trackCursorRow(+1);
-          numLines++;
           this.sendLine();
           return;
         }
-        case 'prompt': {
-          this.xterm.write(command.text);
-          break;
+        case 'paste-line': {
+          this.xterm.writeln(command.line);
+          this.trackCursorRow(+1);
+          this.input = command.line;
+          this.sendLine();
+          return;
         }
         case 'resolve': {
           command.resolve();
+          break;
+        }
+        case 'write': {
+          this.xterm.write(command.text);
           break;
         }
         default: throw testNever(command);
@@ -596,10 +595,14 @@ export class TtyXterm {
     this.cursor = newInput.length;
   }
 
-  /** Set and print prompt. */
+  /** Set and print prompt, unblocking any 'await-prompt'. */
   public setPrompt(prompt: string) {
     this.prompt = prompt;
-    this.queueCommands({ key: 'prompt', text: prompt });
+    const [first] = this.commandBuffer;
+    if (first && first.key === 'await-prompt') {
+      this.commandBuffer.shift();
+    }
+    this.queueCommands({ key: 'write', text: prompt });
   }
 
   /**
@@ -640,11 +643,31 @@ interface TtyXtermDef {
   refreshMs: number;
 }
 
-type TtyOutputCommand = (
-  | { key: 'line'; line: string }
-  | { key: 'pasted-line'; line: string }
-  | { key: 'clear' }
-  | { key: 'newline' }
-  | { key: 'prompt'; text: string }
-  | { key: 'resolve'; resolve: () => void }
+type XtermOutputCommand = (
+  | {
+    /** Wait for next prompt from tty */
+    key: 'await-prompt';
+  } | {
+    /** Clear the screen */
+    key: 'clear';
+  } | {
+    /** Write a single line of text including final newline */
+    key: 'line';
+    line: string;
+  } | {
+    /** Write a newline and send `this.input` to tty */
+    key: 'newline';
+  } | {
+    /** Write a pasted line of text and send it to tty */
+    key: 'paste-line';
+    line: string;
+  } | {
+    /** Invoke the function `resolve` */
+    key: 'resolve';
+    resolve: () => void;
+  } | {
+    /** Write some free text e.g. prompt or line without final newline */
+    key: 'write';
+    text: string;
+  }
 );

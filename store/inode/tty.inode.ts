@@ -4,7 +4,7 @@ import { BaseINode, INodeType, BaseINodeDef } from './base-inode';
 /**
  * tty running in interactive mode.
  * - can read user-input from it.
- * - writing to it produces output on the display, otherwise a sink.
+ * - writing to it produces output on the display.
  */
 export class TtyINode extends BaseINode {
   
@@ -80,7 +80,7 @@ export class TtyINode extends BaseINode {
     await new Promise<void>((resolve) => {
       const messageUid = `write-${this.writeCount++}`;
       this.def.writeToXterm(lines, messageUid);
-      // Will be resolved after ack from xterm
+      // Resolved after ack from xterm i.e. lines received
       this.resolveLookup[messageUid] = resolve;
     });
 
@@ -112,11 +112,3 @@ export interface TtyINodeDef extends BaseINodeDef {
    */
   writeToXterm: (lines: string[], messageUid: string) => void;
 }
-
-export type TtyOutputCommand = (
-  | { key: 'line'; line: string }
-  | { key: 'clear' }
-  | { key: 'newline' }
-  | { key: 'prompt'; text: string }
-  | { key: 'resolve'; resolve: () => void }
-);
