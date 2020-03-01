@@ -66,11 +66,11 @@ export const osCreateTtyThunk = createOsThunk<OsAct, CreateTtyThunk>(
         key: 'clear-xterm',
         sessionKey,
       }),
-      sendCommands: (commands, messageUid) => worker.postMessage({
-        key: 'send-xterm-cmds',
+      writeToXterm: (lines, messageUid) => worker.postMessage({
+        key: 'write-to-xterm',
         sessionKey,
         messageUid,
-        commands,
+        lines,
       }),
     });
 

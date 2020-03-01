@@ -1,4 +1,4 @@
-import { TtyOutputCommand } from '@store/inode/tty.inode';
+import { ProcessSignal } from './process.model';
 
 export interface Message<Data> extends MessageEvent {
   data: Data;
@@ -29,11 +29,17 @@ interface PongFromWorker extends BaseMessage {
   key: 'pong';
 }
 
+/**
+ * xterm requests a new session from tty
+ */
 interface CreateSession extends BaseMessage {
   key: 'create-session';
   userKey: string;
   uiKey: string;
 }
+/**
+ * tty informs xterm about newly created session
+ */
 interface CreatedSession extends BaseMessage {
   key: 'created-session';
   uiKey: string;
@@ -41,52 +47,81 @@ interface CreatedSession extends BaseMessage {
   canonicalPath: string;
 }
 
+/**
+ * xterm requests session to end on dismount
+ * TODO xterms connected to same session
+ */
 interface EndSession extends BaseMessage {
   key: 'end-session';
   sessionKey: string;
 }
 
+/**
+ * xterm sends single input line to tty
+ */
 interface SendLineToTty extends BaseMessage {
   key: 'line-to-tty';
   sessionKey: string;
   xtermKey: string;
   line: string;
 }
-interface AckTtyLine extends BaseMessage {
-  key: 'ack-tty-line';
+/**
+ * tty informs xterm it received input line
+ */
+interface TtyReceivedLine extends BaseMessage {
+  key: 'tty-received-line';
   sessionKey: string;
   uiKey: string;
 }
 
-interface SigTermTty extends BaseMessage {
-  key: 'sig-term-tty';
+/**
+ * xterm sends signal to tty
+ */
+interface SendTtySignal extends BaseMessage {
+  key: 'send-tty-signal';
   sessionKey: string;
+  signal: ProcessSignal;
 }
 
+/**
+ * tty sets xterm prompt
+ */
 interface SetXtermPrompt extends BaseMessage {
   key: 'set-xterm-prompt';
   sessionKey: string;
   prompt: string;
 }
 
-interface SendXtermCommands extends BaseMessage {
-  key: 'send-xterm-cmds';
+/**
+ * tty writes lines to xterm
+ */
+interface WriteToXterm extends BaseMessage {
+  key: 'write-to-xterm';
   sessionKey: string;
   messageUid: string;
-  commands: Exclude<TtyOutputCommand, { key: 'resolve' }>[];
+  lines: string[];
 }
-/** Acknowledge commands sent from tty to xterm */
-interface AckXtermCommands extends BaseMessage {
-  key: 'ack-xterm-cmds';
+
+/**
+ * xterm informs tty it received lines
+ */
+interface XtermReceivedLines extends BaseMessage {
+  key: 'xterm-received-lines';
   sessionKey: string;
   messageUid: string;
 }
 
+/**
+ * tty clears xterm
+ */
 interface ClearXterm extends BaseMessage {
   key: 'clear-xterm';
   sessionKey: string;
 }
 
+/**
+ * xterm tells tty its number of columns
+ */
 interface UpdateTtyCols extends BaseMessage {
   key: 'update-tty-cols';
   sessionKey: string;
@@ -96,8 +131,8 @@ interface UpdateTtyCols extends BaseMessage {
 export type MessageFromOsParent = (
   | PingFromParent
   | SendLineToTty
-  | SigTermTty
-  | AckXtermCommands
+  | SendTtySignal
+  | XtermReceivedLines
   | UpdateTtyCols
   | CreateSession
   | EndSession
@@ -106,9 +141,9 @@ export type MessageFromOsParent = (
 export type MessageFromOsWorker = (
   | PongFromWorker
   | SetXtermPrompt
-  | SendXtermCommands
+  | WriteToXterm
   | ClearXterm
-  | AckTtyLine
+  | TtyReceivedLine
   | CreatedSession
 );
 

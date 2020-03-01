@@ -75,17 +75,17 @@ export class TtyINode extends BaseINode {
   
   /** Handle lines written by processes. */
   public async write(buffer: string[], _offset: number): Promise<number> {
-    const commands = buffer.map((line) =>
-      ({ key: 'line' as 'line', line }));
+    const lines = buffer.slice();
     
     await new Promise<void>((resolve) => {
       const messageUid = `write-${this.writeCount++}`;
-      this.def.sendCommands(commands, messageUid);
+      this.def.writeToXterm(lines, messageUid);
+      // Will be resolved after ack from xterm
       this.resolveLookup[messageUid] = resolve;
     });
 
     buffer.length = 0;
-    return commands.length;
+    return lines.length;
   }
 
 }
@@ -108,12 +108,9 @@ export interface TtyINodeDef extends BaseINodeDef {
    */
   clearXterm: () => void;
   /**
-   * Send commands to xterm.
+   * Send lines to xterm
    */
-  sendCommands: (
-    commands: Exclude<TtyOutputCommand, { key: 'resolve' }>[],
-    messageUid: string,
-  ) => void;
+  writeToXterm: (lines: string[], messageUid: string) => void;
 }
 
 export type TtyOutputCommand = (

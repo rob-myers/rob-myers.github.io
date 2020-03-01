@@ -2,6 +2,7 @@ import { OsWorker, MessageFromOsWorker, Message } from '@model/os/os.worker.mode
 import { Terminal } from 'xterm';
 import { testNever } from '@model/generic.model';
 import { Redacted } from '@model/redux.model';
+import { ProcessSignal } from '@model/os/process.model';
 
 /**
  * Wrapper around XTerm.Terminal which communicates
@@ -271,16 +272,12 @@ export class TtyXterm {
           break;
         }
         case '\t': {// Tab.
-          /**
-           * Tab
-           * - TODO Autocompletion.
-           */
+          // TODO autocompletion
           this.handleCursorInsert('  ');
           break;
         }
         case '\x03': {// Ctrl + C.
-          this.killSignal();
-          // this.queueCommands({ key: 'signal' },);
+          this.sendTermSignal();
           break;
         }
         case '\x17': {// Ctrl + W.
@@ -371,7 +368,7 @@ export class TtyXterm {
   /**
    * Send TERM to foreground process group.
    */
-  private killSignal() {
+  private sendTermSignal() {
     this.setCursor(this.input.length);
     this.xterm.write('^C\r\n');
     this.trackCursorRow(1);
@@ -382,8 +379,9 @@ export class TtyXterm {
 
     // Reset controlling process
     this.def.osWorker.postMessage({
-      key: 'sig-term-tty',
+      key: 'send-tty-signal',
       sessionKey: this.def.sessionKey,
+      signal: ProcessSignal.TERM,
     });
   }
 
@@ -408,28 +406,26 @@ export class TtyXterm {
         }
         return;
       }
-      // TODO better name e.g. print-lines
-      case 'send-xterm-cmds': {
+      case 'write-to-xterm': {
         if (msg.sessionKey === this.def.sessionKey) {
-          // Run commands sent from tty inode; ack when done
           const resolve = () => this.def.osWorker.postMessage({
-            key: 'ack-xterm-cmds',
+            key: 'xterm-received-lines',
             sessionKey: msg.sessionKey,
             messageUid: msg.messageUid,
           });
           this.queueCommands(
-            ...msg.commands,
+            ...msg.lines.map(line => ({ key: 'line' as 'line', line })),
             { key: 'resolve', resolve },
           );
         }
         return;
       }
-      case 'ack-tty-line': {
+      case 'tty-received-line': {
         if (msg.sessionKey === this.def.sessionKey && msg.uiKey === this.def.uiKey) {
-          // Line has been processed by tty
+          // tty inode has received line sent from this xterm,
+          // so we can resume listening for input
           this.input = '';
           this.linePending = false;
-          // this.printPending();
         }
         return;
       }

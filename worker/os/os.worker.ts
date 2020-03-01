@@ -5,6 +5,7 @@ import { osInitializeThunk } from '@store/os/init.os.duck';
 import { OsSession, osCreateSessionThunk, osEndSessionThunk } from '@store/os/session.os.duck';
 import { persistStore } from 'redux-persist';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
+import { ProcessSignal } from '@model/os/process.model';
 
 const ctxt: OsWorkerContext = self as any;
 
@@ -56,7 +57,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
           ttyINode.inputs.push({
             line: msg.line,
             resolve: () => ctxt.postMessage({
-              key: 'ack-tty-line',
+              key: 'tty-received-line',
               sessionKey: msg.sessionKey,
               uiKey: msg.xtermKey,
             })
@@ -65,12 +66,15 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
         }
       });
     }
-    case 'sig-term-tty': {
+    case 'send-tty-signal': {
+      // received signal from xterm
       return mutateSession(msg.sessionKey, store, ({ ttyINode }) => {
-        ttyINode?.sendSigTerm();
+        if (msg.signal === ProcessSignal.TERM) {
+          ttyINode?.sendSigTerm();
+        }
       });
     }
-    case 'ack-xterm-cmds': {
+    case 'xterm-received-lines': {
       return mutateSession(msg.sessionKey, store, ({ ttyINode }) => {
         if (ttyINode) {
           Object.keys(ttyINode.resolveLookup).forEach((messageUid) => {

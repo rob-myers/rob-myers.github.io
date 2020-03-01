@@ -1,10 +1,10 @@
 ## TODO
 
-- binary error messages shouldn't have prefix `-bash: `
-- get pasting working
-  > clarify and cleanup xterm <-> tty communication.
-
+- clarify and cleanup xterm <-> tty communication.
+  > get pasting working
 - implement history
+
+- binary error messages shouldn't have prefix `-bash: `
 - fiddle with terminal and summaries features/issues
 - rename from `bash` to e.g. `ti` (textual interface)
 
