@@ -87,7 +87,7 @@
 - FIX pasting onto partial line overwrites
 
 
-## Character codes example
+## Bash example
 
 ```sh
 echo $'\033[31mHello\e[0m World'
@@ -96,6 +96,8 @@ echo $'\e[37mHello\e[0m World'
 printf "\e[31mHello\e[0m World"
 x=foo; printf "%s\e[37m%s\e[39m\n" "hello " "$x"
 printf -v foo "\e[31mHello\e[0m World"; echo $foo
+
+case "$x" in foo) echo foo; ;; bar) echo bar; esac
 ```
 
 ## Redux devtools for os webworker

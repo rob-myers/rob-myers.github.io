@@ -26,7 +26,7 @@ import { TtyBinary } from '@model/sh/binary/tty.binary';
 import { AndComposite } from '@model/sh/composite/and.composite';
 import { ArrayComposite } from '@model/sh/composite/array.composite';
 import { AssignComposite } from '@model/sh/composite/assign.composite';
-import { BuiltinOtherType, BuiltinSpecialType, BuiltinType, BuiltinBinary } from '@model/sh/builtin.model';
+import { BuiltinOtherType, BuiltinSpecialType, BuiltinType, BuiltinBinary, builtinKeyToCommand } from '@model/sh/builtin.model';
 import { CdBuiltin } from '@model/sh/builtin/cd.builtin';
 import { DeclareBuiltin } from '@model/sh/builtin/declare.builtin';
 import { EchoBuiltin } from '@model/sh/builtin/echo.builtin';
@@ -84,6 +84,7 @@ import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { iterateTerm } from './term.util';
 import { NamedFunction } from '@model/os/process.model';
 import { WcBinary } from '@model/sh/binary/wc.binary';
+import { GetOpts } from '../os.model';
 
 export type ObservedType = (
   | undefined
@@ -120,110 +121,6 @@ export class TermService {
     const iterator = iterateTerm({ term, dispatch, processKey });
     const subject = this.createIteratorSubject<any, ObservedType>(iterator);
     return subject;
-  }
-
-  /**
-   * Source: https://itnext.io/lossless-backpressure-in-rxjs-b6de30a1b6d4
-   */
-  private createIteratorSubject<V, T>(iterator: AsyncIterator<T>) {
-    /**
-     * Slower via async scheduler?
-     * Args (undefined, undefined, asyncScheduler)
-     */
-    const iterator$ = new ReplaySubject() as (
-      ReplaySubject<T> & { push: (value?: V) => Promise<void> }
-    );
-  
-    const pushNextValue = ({ done, value }: IteratorResult<T>) => {
-      if (done && value === undefined) {
-        iterator$.complete();
-      } else {
-        iterator$.next(value);
-      }
-    };
-  
-    iterator$.push = async (value) => pushNextValue(await iterator.next(value as any));
-    iterator$.push();
-  
-    return iterator$;
-  }
-
-  public createBinary({ binaryKey, args }: {
-    binaryKey: BinaryType;
-    args: string[];
-  }): BinaryComposite | BuiltinBinary {
-    switch (binaryKey) {
-      case '[': return new TestBuiltin({ key: CompositeType.builtin, builtinKey: BuiltinOtherType.squareBracket, args });
-      case BinaryExecType.bash: return new BashBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.cat: return new CatBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.clear: return new ClearBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.cp: return new CpOrMvBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.date: return new DateBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.grep: return new GrepBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.head: return new HeadBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.ls: return new LsBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.mkdir: return new MkdirBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.mv: return new MvBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.realpath: return new RealpathBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.rm: return new RmBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.rmdir: return new RmdirBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.sleep: return new SleepBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.say: return new SayBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.seq: return new SeqBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.tail: return new TailBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.tty: return new TtyBinary({ key: CompositeType.binary, binaryKey, args });
-      case BinaryExecType.wc: return new WcBinary({ key: CompositeType.binary, binaryKey, args });
-      case BuiltinOtherType.echo: return new EchoBuiltin({ key: CompositeType.builtin, builtinKey: binaryKey, args });
-      case BuiltinOtherType.pwd: return new PwdBuiltin({ key: CompositeType.builtin, builtinKey: binaryKey, args });
-      default: throw testNever(binaryKey);
-    }
-  }
-
-  public createBuiltin({ builtinKey, args }: {
-    builtinKey: Exclude<BuiltinType, DeclareBuiltinType>;
-    args: string[];
-  }): Builtin {
-    switch (builtinKey) {
-      case BuiltinOtherType.alias: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.bind: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.builtin: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.caller: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.cd: return new CdBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinOtherType.command: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.echo: return new EchoBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinOtherType.enable: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.false: return new FalseBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinOtherType.help: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.let: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.logout: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.mapfile: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.printf: return new PrintfBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinOtherType.pwd: return new PwdBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinOtherType.read: return new ReadBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinOtherType.readarray: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.source: return new SourceBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinOtherType.squareBracket: return new TestBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinOtherType.test: return new TestBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinOtherType.times: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.true: return new TrueBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinOtherType.type: return new TypeBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinOtherType.ulimit: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.umask: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.unalias: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinSpecialType.break: return new BreakBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinSpecialType.colon: return new ColonBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinSpecialType.continue: return new ContinueBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinSpecialType.eval: return new EvalBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinSpecialType.exec: return new ExecBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinSpecialType.exit: return new ExitBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinSpecialType.period: return new PeriodBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinSpecialType.return: return new ReturnBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinSpecialType.set: return new SetBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinSpecialType.shift: return new ShiftBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinSpecialType.trap: return new TrapBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      case BuiltinSpecialType.unset: return new UnsetBuiltin({ key: CompositeType.builtin, builtinKey, args });
-      default: throw testNever(builtinKey);
-    }
   }
 
   public cloneFunc(func: NamedFunction): NamedFunction {
@@ -564,6 +461,110 @@ export class TermService {
     }
   }
 
+  public createBinary({ binaryKey, args }: {
+    binaryKey: BinaryType;
+    args: string[];
+  }): BinaryComposite | BuiltinBinary {
+    switch (binaryKey) {
+      case '[': return new TestBuiltin({ key: CompositeType.builtin, builtinKey: BuiltinOtherType.squareBracket, args });
+      case BinaryExecType.bash: return new BashBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.cat: return new CatBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.clear: return new ClearBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.cp: return new CpOrMvBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.date: return new DateBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.grep: return new GrepBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.head: return new HeadBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.ls: return new LsBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.mkdir: return new MkdirBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.mv: return new MvBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.realpath: return new RealpathBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.rm: return new RmBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.rmdir: return new RmdirBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.sleep: return new SleepBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.say: return new SayBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.seq: return new SeqBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.tail: return new TailBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.tty: return new TtyBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.wc: return new WcBinary({ key: CompositeType.binary, binaryKey, args });
+      case BuiltinOtherType.echo: return new EchoBuiltin({ key: CompositeType.builtin, builtinKey: binaryKey, args });
+      case BuiltinOtherType.pwd: return new PwdBuiltin({ key: CompositeType.builtin, builtinKey: binaryKey, args });
+      default: throw testNever(binaryKey);
+    }
+  }
+
+  public createBuiltin({ builtinKey, args }: {
+    builtinKey: Exclude<BuiltinType, DeclareBuiltinType>;
+    args: string[];
+  }): Builtin {
+    switch (builtinKey) {
+      case BuiltinOtherType.alias: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.bind: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.builtin: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.caller: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.cd: return new CdBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.command: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.echo: return new EchoBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.enable: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.false: return new FalseBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.help: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.let: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.logout: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.mapfile: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.printf: return new PrintfBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.pwd: return new PwdBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.read: return new ReadBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.readarray: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.source: return new SourceBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.squareBracket: return new TestBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.test: return new TestBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.times: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.true: return new TrueBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.type: return new TypeBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.ulimit: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.umask: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.unalias: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinSpecialType.break: return new BreakBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinSpecialType.colon: return new ColonBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinSpecialType.continue: return new ContinueBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinSpecialType.eval: return new EvalBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinSpecialType.exec: return new ExecBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinSpecialType.exit: return new ExitBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinSpecialType.period: return new PeriodBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinSpecialType.return: return new ReturnBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinSpecialType.set: return new SetBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinSpecialType.shift: return new ShiftBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinSpecialType.trap: return new TrapBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinSpecialType.unset: return new UnsetBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      default: throw testNever(builtinKey);
+    }
+  }
+
+  /**
+   * Source: https://itnext.io/lossless-backpressure-in-rxjs-b6de30a1b6d4
+   */
+  private createIteratorSubject<V, T>(iterator: AsyncIterator<T>) {
+    /**
+     * Slower via async scheduler?
+     * Args (undefined, undefined, asyncScheduler)
+     */
+    const iterator$ = new ReplaySubject() as (
+      ReplaySubject<T> & { push: (value?: V) => Promise<void> }
+    );
+  
+    const pushNextValue = ({ done, value }: IteratorResult<T>) => {
+      if (done && value === undefined) {
+        iterator$.complete();
+      } else {
+        iterator$.next(value);
+      }
+    };
+  
+    iterator$.push = async (value) => pushNextValue(await iterator.next(value as any));
+    iterator$.push();
+  
+    return iterator$;
+  }
+
   public walkTerm(node: Term, func: (node: Term) => void): void {
     func(node);
     switch (node.key) {
@@ -745,5 +746,102 @@ export class TermService {
       }
       default: throw testNever(node);
     } 
+  }
+
+  private computeOptsSrc(opts: GetOpts<string, string>): string {
+    const { _, ...rest } = opts;
+    return Object.entries(rest).reduce((agg, [key, value]) =>
+      typeof value === 'boolean'
+        ? agg + (value ? ` -${key}` : '')
+        : `${agg} -${key} '${value}'`
+    , '');
+    
+  }
+
+  /**
+   * Compute source code on one line.
+   */
+  public computeSrc(term: Term): string {
+    switch (term.key) {
+      case CompositeType.and:
+        return term.def.cs.map(c => this.computeSrc(c)).join(' && ');
+      case CompositeType.arithm_op: {
+        const { symbol, postfix, cs } = term.def;
+        return cs.length === 1
+          ? postfix
+            ? `${this.computeSrc(cs[0])}${symbol}`
+            : `${symbol}${this.computeSrc(cs[0])}`
+          : cs.map(c => this.computeSrc(c)).join(` ${symbol} `);
+      }
+      case CompositeType.array: {
+        const contents = term.def.pairs.map(({ key, value }) => key
+          ? `[${this.computeSrc(key)}]=${this.computeSrc(value)}`
+          : this.computeSrc(value));
+        return `(${contents})`;
+      }
+      case CompositeType.assign: {
+        const { def, def: { varName } } = term;
+        switch (def.subKey) {
+          case 'array':
+            return `${varName}=${this.computeSrc(def.array)}`;
+          case 'item':
+            return `${varName}[${
+              this.computeSrc(def.index)
+            }]=${def.value ? this.computeSrc(def.value) : ''}`;
+          case 'var':
+            return `${varName}=${def.value ? this.computeSrc(def.value) : ''}`;
+          default: throw testNever(def);
+        }
+      }
+      case CompositeType.binary:
+        return [
+          term.binaryKey,
+          this.computeOptsSrc(term.opts),
+          term.operands.join(' '),
+        ].filter(Boolean).join(' ');
+      case CompositeType.block:
+        return `{ ${term.def.cs.map(c => this.computeSrc(c)).join('; ')}; }`;
+      case CompositeType.builtin:
+        return [
+          builtinKeyToCommand(term.builtinKey),
+          this.computeOptsSrc(term.opts),
+          term.operands.join(' '),
+        ].filter(Boolean).join(' ');  
+      case CompositeType.case:
+        return [
+          'case',
+          this.computeSrc(term.def.head),
+          'in',
+          term.def.cases.map(({ child, globs, terminal }) => [
+            `${globs.map(g => this.computeSrc(g)).join('|')})`,
+            this.computeSrc(child),
+            terminal,
+          ].join(' ')),
+        ].filter(Boolean).join(' ');
+      case CompositeType.compound: {
+        return [
+          term.def.negated && '!',
+          this.computeSrc(term.def.child),
+          term.def.redirects.map(r => this.computeSrc(r)).join(' '),
+          term.def.background && '&'
+        ].filter(Boolean).join(' ');
+      }
+      /**
+       * TODO clarify
+       */
+      case CompositeType.declare: {
+        return [
+          builtinKeyToCommand(term.builtinKey),
+          term.def.options.map(c => this.computeSrc(c)).join(' '),
+          term.def.assigns.map(c => this.computeSrc(c)).join(' '),
+          term.def.others.map(c => this.computeSrc(c)).join(' '),
+        ].filter(Boolean).join(' ');
+      }
+      case CompositeType.expand: {
+        // TODO
+      }
+      // default: throw testNever(term);
+    }
+    return ''; // TODO
   }
 }

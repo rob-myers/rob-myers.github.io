@@ -75,9 +75,7 @@ interface CompoundCommandDef<T, RedirType> {
    * we'd get a simple command instead (originally {CallExpr}).
    */
   child: T;
-  /**
-   * Compound commands can be redirected.
-   */
+  /** Compound commands can be redirected. */
   redirects: RedirType[];
   /** Run in background? */
   background: boolean;
