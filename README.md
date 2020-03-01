@@ -84,6 +84,7 @@
 - clarify and cleanup xterm <-> tty communication.
   > get pasting working
 - throttle while so ctrl + c works for `while true; do echo foo; done > bar`
+- FIX pasting onto partial line overwrites
 
 
 ## Character codes example

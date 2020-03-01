@@ -211,10 +211,13 @@ export class TtyXterm {
         });
       }
       if (last) {// Set as pending input but don't send
-        this.queueCommands({ key: 'resolve', resolve: () => {
-          this.clearInput();
-          this.setInput(last);
-        }});
+        this.queueCommands(
+          lines.length === 1
+            ? { key: 'write', text: last }
+            : { key: 'resolve', resolve: () => {
+              this.clearInput();
+              this.setInput(last);
+            }});
       }
     } else {
       this.handleXtermKeypress(data);
