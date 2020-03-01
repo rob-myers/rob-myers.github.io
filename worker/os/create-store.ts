@@ -40,7 +40,7 @@ const persistedReducer = persistReducer({
   transforms: [
     createTransform<OsState, OsState>(
       ({ root, user, userGrp }, _key) => {
-        // Remove devices to avoid serializing {TtyINode}s.
+        // Remove devices to avoid serializing TtyINode
         const preRoot = { ...root, to: { ...root.to} } as OsState['root'];
         delete preRoot.to.dev;
         
@@ -120,7 +120,7 @@ export const initializeStore = (
     preloadedState,
     composeWithDevTools({
       shouldHotReload: false,
-      realtime: true,
+      // realtime: true,
       port: 3002,
       name: 'os-worker',
       stateSanitizer: (state: OsWorkerState): Redacted<OsWorkerState> => {

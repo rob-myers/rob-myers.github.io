@@ -30,7 +30,7 @@ interface CloneTermThunk extends OsThunkAct<OsAct, { term: Term }, Term> {
  * Distribute source code to subterms.
  * Remember the source for new processes.
  * Remember the source for functions.
- * _TODO_ what about augmenting the source-maps?
+ * TODO what about augmenting the source-maps?
  */
 export const osDistributeSrcThunk = createOsThunk<OsAct, DistributeSrcThunk>(
   OsAct.OS_DISTRIBUTE_SRC_THUNK,
@@ -38,15 +38,13 @@ export const osDistributeSrcThunk = createOsThunk<OsAct, DistributeSrcThunk>(
     term,
     (subterm) => {
       if (
-        subterm.key === CompositeType.subshell
-        || subterm.key === CompositeType.expand && (
-          subterm.expandKey === ExpandType.command
-          || subterm.expandKey === ExpandType.process
+        subterm.key === CompositeType.subshell ||
+        subterm.key === CompositeType.expand && (
+          subterm.expandKey === ExpandType.command ||
+          subterm.expandKey === ExpandType.process
         )
       ) {
-        /**
-         * Attach source to subterm, spanning all children.
-         */
+        // Attach source to subterm, spanning all children
         const { cs } = subterm.def;
         if (!cs.length) {// No source.
           subterm.def.src = '';
@@ -56,23 +54,18 @@ export const osDistributeSrcThunk = createOsThunk<OsAct, DistributeSrcThunk>(
         const to = ((last(cs) as Term).def.sourceMap as TermSourceMap).to.offset;
         subterm.def.src = src.slice(from, to);
       } else if (subterm.key === CompositeType.function) {
-        /**
-         * Attach source to function body.
-         */
+        // Attach source to function body
         const sm = subterm.def.body.def.sourceMap;
         sm && (subterm.def.src = src.slice(sm.from.offset, sm.to.offset));
       } else if (subterm.key === CompositeType.pipe) {
-        /**
-         * Attach source to each child.
-         */
+        // Attach source to each child
         for (const c of subterm.def.cs) {
           const sm = c.def.sourceMap;
           sm && (c.def.src = src.slice(sm.from.offset, sm.to.offset));
         }
       } else if (subterm.key === CompositeType.redirect && subterm.def.sourceMap) {
-        /**
-         * Attach source to redirects in case of exec. (FIX)
-         */
+        // Attach source to redirects in case of exec
+        // TODO fix
         const sm = subterm.def.sourceMap;
         subterm.def.src = src.slice(sm.from.offset, sm.to.offset);
       }
@@ -111,20 +104,14 @@ export const osParseBufferThunk = createOsThunk<OsAct, ParseBufferThunk>(
   ({ state: { os: { proc } }, service: { parseSh }}, { processKey, buffer: otherBuffer }) =>
   {
     const buffer = otherBuffer || proc[processKey].buffer;
-    /**
-     * DEBUG.
-     */
-    console.log('PARSING', buffer.slice());
+    console.log('PARSING', buffer.slice()); // DEBUG
 
     try {
       // Parser.Interactive expects terminal newline.
       const src = buffer.join('\n') + '\n';
       const { incomplete, parsed } = parseSh.interactiveParse(src);
 
-      if (parsed) {
-        /**
-         * DEBUG.
-         */
+      if (parsed) {// DEBUG
         parsed.StmtList.Stmts.forEach((stmt) => console.log('PARSED', stmt.Cmd));
       }
 

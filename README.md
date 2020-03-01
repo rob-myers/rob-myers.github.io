@@ -1,10 +1,13 @@
 ## TODO
 
 - implement history
+  > must convert src to "one-line src" (our input cannot contain newlines)
+  > use a "history device" which reads like .history and keeps track
 
 - binary error messages shouldn't have prefix `-bash: `
 - fiddle with terminal and summaries features/issues
 - rename from `bash` to e.g. `ti` (textual interface)
+- implement tab completion
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
 - avoid jerky fade in/out

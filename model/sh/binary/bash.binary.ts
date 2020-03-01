@@ -10,7 +10,7 @@ import { osPromptThunk } from '@store/os/tty.os.duck';
 import { osParseBufferThunk, osTranspileShThunk, osDistributeSrcThunk } from '@store/os/parse.os.duck';
 
 /**
- * TODO support non-interactive as in `step`.
+ * TODO support non-interactive (see repo for 'step')
  * - only interactive if stdin a tty
  * - noniteractive if have non-empty operand (filepath)
  */
@@ -69,12 +69,12 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
           // Transpile, distributing source code to specific subterms.
           const term = dispatch(osTranspileShThunk({ parsed: result.parsed }));
           dispatch(osDistributeSrcThunk({ term, src: srcBuffer.join('\n') }));
+
           // Mount and run.
           this.mounted = term;
           this.adoptChildren();
           yield* this.runChild({ child: term, dispatch, processKey });
 
-          // yield* term.semantics(dispatch, processKey);
           break;
         } else {
           // Code in buffer is incomplete, so prompt for more input.

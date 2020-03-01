@@ -1,4 +1,4 @@
-import * as Sh from 'mvdan-sh';
+import Sh, { syntax } from 'mvdan-sh';
 // console.log({ Sh });
 
 export interface InteractiveParseResult {
@@ -19,37 +19,27 @@ export interface InteractiveParseResult {
 export class ParseShService {
 
   public parse(src: string): File {
-    /**
-     * Use mvdan/sh to parse shell code.
-     */
-    const parser = Sh.syntax.NewParser();
-    Sh.syntax.KeepComments(parser);
+    // Use mvdan-sh to parse shell code
+    const parser = syntax.NewParser();
+    syntax.KeepComments(parser);
     const parsed = parser.Parse(src, 'src.sh');
-    /**
-     * DEBUG.
-     */
-    // console.log('MVDAN-SH-PARSE', parsed);
-    /**
-     * Clean the parse.
-     */
+
+    // Clean up the parse e.g. make it serialisable
     return this.File(parsed);
   }
 
   /**
-   * {partialSrc} must come from the command line.
-   * It must be \n-terminated.
+   * `partialSrc` must come from the command line.
+   * It must be `\n`-terminated.
    * It must not have a proper-prefix which is
-   * a complete command, e.g. {echo foo\necho bar\n} is invalid
-   * due to proper-prefix {echo foo\n}.
+   * a complete command, e.g. `echo foo\necho bar\n` is invalid
+   * due to proper-prefix `echo foo\n`.
    */
   public interactiveParse(partialSrc: string): InteractiveParseResult {
-    const parser = Sh.syntax.NewParser();
+    const parser = syntax.NewParser();
     let incomplete: null | boolean = null;
 
-    try {
-      /**
-       * Use mvdah/sh to parse partial shell code.
-       */
+    try { // Use mvdah-sh to parse partial shell code
       parser.Interactive(
         { read: () => partialSrc },
         () => { incomplete = parser.Incomplete(); return false; }
@@ -57,9 +47,8 @@ export class ParseShService {
     } catch (e) {
       // console.log('ERROR', e);
     }
-    /**
-     * Want source-map, so we re-parse.
-     */
+
+    // Want source-map, so we re-parse
     const parsed = incomplete ? null : this.parse(partialSrc);
     return { incomplete, parsed };
   }
