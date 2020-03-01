@@ -2,6 +2,8 @@
 
 - binary error messages shouldn't have prefix `-bash: `
 - get pasting working
+  > clarify and cleanup xterm <-> tty communication.
+
 - implement history
 - fiddle with terminal and summaries features/issues
 - rename from `bash` to e.g. `ti` (textual interface)

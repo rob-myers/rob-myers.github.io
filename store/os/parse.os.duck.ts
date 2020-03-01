@@ -15,6 +15,7 @@ export type Thunk = (
   | DistributeSrcThunk
   | ParseBufferThunk
   | TranspileShThunk
+  | WalkTermThunk
 );
 
 export const osCloneTerm = createOsThunk<OsAct, CloneTermThunk>(
@@ -178,4 +179,15 @@ export const osTranspileShThunk = createOsThunk<OsAct, TranspileShThunk>(
 );
 interface TranspileShThunk extends OsThunkAct<OsAct, { parsed: ParsedSh.File }, Term> {
   type: OsAct.OS_TRANSPILE_SH_THUNK;
+}
+
+export const osWalkTerm = createOsThunk<OsAct, WalkTermThunk>(
+  OsAct.OS_CLONE_TERM_THUNK,
+  ({ service }, { term, action }) => service.term.walkTerm(term, action),
+);
+interface WalkTermThunk extends OsThunkAct<OsAct, {
+  term: Term;
+  action: (node: Term) => void;
+}, void> {
+  type: OsAct.OS_WALK_TERM_THUNK;
 }

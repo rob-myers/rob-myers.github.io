@@ -268,28 +268,6 @@ export interface EndSessionThunk extends OsThunkAct<OsAct, { sessionKey: string 
   type: OsAct.OS_END_SESSION_THUNK;
 }
 
-// /**
-//  * _TODO_ review.
-//  * Store 'sessionKey' and 'title' in panelMeta.
-//  * Also applies title to panel via underlying GoldenLayout API.
-//  */
-// export const setSessionPanelMetasThunk = createOsThunk<OsAct, SetSessionPanelMetasThunk>(
-//   OsAct.OS_SET_SESSION_PANEL_METAS_THUNK,
-//   ({ dispatch }, { panelKey, panelMeta }) => {
-//     dispatch(layoutAttachPanelDataAct({ panelKey, panelMeta }));
-//     dispatch(layoutSetPanelTitleThunk({ panelKey, title: panelMeta.title }));
-//   },
-// );
-// interface SetSessionPanelMetasThunk extends OsThunkAct<OsAct,
-//   {
-//     panelKey: string;
-//     panelMeta: Required<LayoutPanelMeta<OsPanelMetaKey>>;
-//   },
-//   void
-// > {
-//   type: OsAct.OS_SET_SESSION_PANEL_METAS_THUNK;
-// }
-
 /**
  * Signal foreground process-group in specified session.
  * Foreground group is either:

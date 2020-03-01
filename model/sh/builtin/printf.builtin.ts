@@ -22,7 +22,8 @@ export class PrintfBuiltin extends BaseBuiltinComposite<
     const { operands: [format, ...args], opts } = this;
 
     if (this.malformedOpts || (opts.v && !format)) {
-      yield this.exit(1, 'usage: printf [-v var] format [arguments]');
+      yield this.write('printf: usage: printf [-v var] format [arguments]');
+      yield this.exit(1);
     }
 
     if (format) {

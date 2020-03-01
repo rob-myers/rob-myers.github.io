@@ -110,7 +110,7 @@ export type ObservedType = (
   | { key: 'write'; lines?: string[]; fd: number }
 );
 
-class TermService {
+export class TermService {
 
   public compile({ term, dispatch, processKey }: {
     term: Term;
@@ -747,5 +747,3 @@ class TermService {
     } 
   }
 }
-
-export default new TermService();
