@@ -4,6 +4,7 @@ import { ObservedType } from './term.service';
 import { last } from '@model/generic.model';
 import { PipeComposite } from '@model/sh/composite/pipe.composite';
 import { BinaryExecType } from '@model/sh/binary.model';
+import { BashBinary } from '@model/sh/binary/bash.binary';
 
 export class TermError extends Error {
   constructor(message: string, public exitCode: number) {
@@ -171,4 +172,8 @@ export function isInteractiveShell(term: Term): boolean {
   return term.key === CompositeType.binary
     && term.binaryKey === BinaryExecType.bash
     && term.interactive;
+}
+
+export function isTermBash(term: Term): term is BashBinary {
+  return term.key === CompositeType.binary && term.binaryKey === BinaryExecType.bash;
 }

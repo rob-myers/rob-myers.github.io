@@ -43,7 +43,6 @@ export interface ProcessDef {
  * A spawned yet unregistered process.
  */
 export interface UnregisteredProcess extends ProcessDef {
-  // observable: Observable<ObservedType>;
   observable:  ReplaySubject<ObservedType> & {
     push: (value?: any) => Promise<void>;
   };

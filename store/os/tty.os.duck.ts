@@ -115,7 +115,7 @@ export const osPromptThunk = createOsThunk<OsAct, PromptThunk>(
   ({ dispatch }, { processKey, fd, text }) => {
     const { iNode } = dispatch(osGetOfdThunk({ processKey, fd }));
     if (iNode.type === INodeType.tty) {
-      iNode.receivePrompt(text);
+      iNode.setXtermPrompt(text);
       return true;
     }
     return false;

@@ -47,6 +47,7 @@ export enum OsAct {
   OS_GET_VARS_THUNK= 'OS_GET_VARS_THUNK',
   OS_GO_HOME_THUNK= 'OS_GO_HOME_THUNK',
   OS_IS_A_TTY_THUNK= 'OS_IS_A_TTY_THUNK',
+  OS_IS_LOGIN_SHELL= 'OS_IS_LOGIN_SHELL',
   /**
    * Is process the session leader?
    */

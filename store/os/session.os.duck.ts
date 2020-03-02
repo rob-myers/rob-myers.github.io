@@ -10,7 +10,7 @@ import { osForkProcessThunk, osCloseProcessFdsAct, osSetProcessGroupAct, osExecT
 import { osOpenFileThunk, osUnlinkFileThunk } from './file.os.duck';
 import { osSetProcessUserThunk } from './user.os.duck';
 import { ensureArrayItem, last, testNever } from '@model/generic.model';
-import { isInteractiveShell } from '@os-service/term.util';
+import { isInteractiveShell, findAncestralTerm, isTermBash } from '@os-service/term.util';
 
 /**
  * Session for login or daemon.
@@ -172,7 +172,7 @@ export const osSetSessionForegroundDef: SyncActDef<OsAct, SetSessionForegroundAc
 export const osUnregisterSessionAct = createOsAct<OsAct, UnregisterSessionAct>(
   OsAct.OS_UNREGISTER_SESSION,
 );
-export interface UnregisterSessionAct extends SyncAct<OsAct, { sessionKey: string }> {
+interface UnregisterSessionAct extends SyncAct<OsAct, { sessionKey: string }> {
   type: OsAct.OS_UNREGISTER_SESSION;
 }
 export const osUnregisterSessionDef: SyncActDef<OsAct, UnregisterSessionAct, State> =
@@ -185,6 +185,7 @@ export const osUnregisterSessionDef: SyncActDef<OsAct, UnregisterSessionAct, Sta
 export type Thunk = (
   | CreateSessionThunk
   | SignalForegroundThunk
+  | IsLoginShellThunk
 );
 
 /**
@@ -264,7 +265,7 @@ export const osEndSessionThunk = createOsThunk<OsAct, EndSessionThunk>(
     dispatch(osUnregisterSessionAct({ sessionKey }));
   },
 );
-export interface EndSessionThunk extends OsThunkAct<OsAct, { sessionKey: string }, void> {
+interface EndSessionThunk extends OsThunkAct<OsAct, { sessionKey: string }, void> {
   type: OsAct.OS_END_SESSION_THUNK;
 }
 
@@ -332,4 +333,17 @@ export const osSignalForegroundThunk = createOsThunk<OsAct, SignalForegroundThun
 
 interface SignalForegroundThunk extends OsThunkAct<OsAct, { sessionKey: string; signal: ProcessSignal}, void> {
   type: OsAct.OS_SIGNAL_FOREGROUND_THUNK;
+}
+
+export const osIsLoginShell = createOsThunk<OsAct, IsLoginShellThunk>(
+  OsAct.OS_IS_LOGIN_SHELL,
+  ({ state: { os } }, { processKey }): boolean => {
+    const { term, sessionKey } = os.proc[processKey];
+    const closestBash = isTermBash(term) ? term : findAncestralTerm(term, isTermBash);
+    const { term: sessionLeaderTerm } = os.proc[os.session[sessionKey].processKey];
+    return sessionLeaderTerm === closestBash;
+  },
+);
+interface IsLoginShellThunk extends OsThunkAct<OsAct, { processKey: string }, boolean> {
+  type: OsAct.OS_IS_LOGIN_SHELL;
 }

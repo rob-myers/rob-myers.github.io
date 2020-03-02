@@ -364,6 +364,7 @@ export class TtyXterm {
 
   /**
    * Send TERM to foreground process group.
+   * Could argue should send INT instead.
    */
   private sendTermSignal() {
     this.setCursor(this.input.length);

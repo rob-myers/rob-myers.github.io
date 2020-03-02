@@ -54,7 +54,7 @@ export class TtyINode extends BaseINode {
   }
 
   /** Set prompt by sending to xterm. */
-  public receivePrompt(prompt: string) {
+  public setXtermPrompt(prompt: string) {
     this.def.setPrompt(prompt);
   }
 

@@ -44,6 +44,7 @@ import { ContinueBuiltin } from '@model/sh/builtin/continue.builtin';
 import { EvalBuiltin } from '@model/sh/builtin/eval.builtin';
 import { ExecBuiltin } from '@model/sh/builtin/exec.builtin';
 import { ExitBuiltin } from '@model/sh/builtin/exit.builtin';
+import { LogoutBuiltin } from '@model/sh/builtin/logout.builtin';
 import { PeriodBuiltin } from '@model/sh/builtin/period.builtin';
 import { ReturnBuiltin } from '@model/sh/builtin/return.builtin';
 import { SetBuiltin } from '@model/sh/builtin/set.builtin';
@@ -234,6 +235,7 @@ export class TermService {
           case BuiltinSpecialType.eval: return new EvalBuiltin(term.def);
           case BuiltinSpecialType.exec: return new ExecBuiltin(term.def);
           case BuiltinSpecialType.exit: return new ExitBuiltin(term.def);
+          case BuiltinOtherType.logout: return new LogoutBuiltin(term.def);
           case BuiltinSpecialType.period: return new PeriodBuiltin(term.def);
           case BuiltinSpecialType.return: return new ReturnBuiltin(term.def);
           case BuiltinSpecialType.set: return new SetBuiltin(term.def);
@@ -514,7 +516,7 @@ export class TermService {
       case BuiltinOtherType.false: return new FalseBuiltin({ key: CompositeType.builtin, builtinKey, args });
       case BuiltinOtherType.help: throw Error(`builtinKey '${builtinKey}' not implemented`);
       case BuiltinOtherType.let: throw Error(`builtinKey '${builtinKey}' not implemented`);
-      case BuiltinOtherType.logout: throw Error(`builtinKey '${builtinKey}' not implemented`);
+      case BuiltinOtherType.logout: return new LogoutBuiltin({ key: CompositeType.builtin, builtinKey, args });
       case BuiltinOtherType.mapfile: throw Error(`builtinKey '${builtinKey}' not implemented`);
       case BuiltinOtherType.printf: return new PrintfBuiltin({ key: CompositeType.builtin, builtinKey, args });
       case BuiltinOtherType.pwd: return new PwdBuiltin({ key: CompositeType.builtin, builtinKey, args });

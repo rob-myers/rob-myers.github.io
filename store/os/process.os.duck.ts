@@ -641,12 +641,8 @@ export const osStartProcessThunk = createOsThunk<OsAct, StartProcessThunk>(
 
     if (!subscription) {
       const newSubscription = observable.subscribe({
-        /**
-         * Handle actions yielded by terms.
-         */
-        next: async (act) => {
-          // DEBUG
-          // console.log({ processKey, act });
+        next: async (act) => {// Handle actions yielded by terms.
+          // console.log({ processKey, act }); // DEBUG
 
           if (act) {
             switch (act.key) {
@@ -658,7 +654,7 @@ export const osStartProcessThunk = createOsThunk<OsAct, StartProcessThunk>(
                 await dispatch(osWriteWarningThunk({ processKey, line: act.line, term: act.term}));
                 break;
               }
-              case 'exit': {// NOTE actual term-exit enforced in {*iterateTerm}.
+              case 'exit': {// NOTE actual term exit enforced in {*iterateTerm}.
                 if (act.term.key === CompositeType.simple || act.term.key === CompositeType.compound) {
                   // These terms correspond to commands.
                   dispatch(osStoreExitCodeAct({ processKey, exitCode: act.code }));

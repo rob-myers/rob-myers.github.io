@@ -70,6 +70,7 @@ import { ContinueBuiltin } from '../sh/builtin/continue.builtin';
 import { EvalBuiltin } from '../sh/builtin/eval.builtin';
 import { ExecBuiltin } from '../sh/builtin/exec.builtin';
 import { ExitBuiltin } from '../sh/builtin/exit.builtin';
+import { LogoutBuiltin } from '../sh/builtin/logout.builtin';
 import { PeriodBuiltin } from '../sh/builtin/period.builtin';
 import { ReturnBuiltin } from '../sh/builtin/return.builtin';
 import { SetBuiltin } from '../sh/builtin/set.builtin';
@@ -236,6 +237,7 @@ export type SpecialBuiltin = (
   | ExecBuiltin
   | ExitBuiltin
   | ExportBuiltin
+  | LogoutBuiltin
   | PeriodBuiltin
   | ReadonlyBuiltin
   | ReturnBuiltin
