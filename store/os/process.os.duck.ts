@@ -609,7 +609,7 @@ export const osWriteWarningThunk = createOsThunk<OsAct, WriteWarningThunk>(
     if (term.key === CompositeType.binary) {
       warning = dispatch(osIsSessionLeaderThunk({ processKey }))
         ? `${zeroethParam}: ${line}` // Prevent erroneous '-bash: bash: ...'.
-        : `${zeroethParam}: ${term.binaryKey}: ${line}`;
+        : `${term.binaryKey}: ${line}`;
     } else if (term.key === CompositeType.builtin) {
       warning = `${zeroethParam}: ${term.builtinKey}: ${line}`;
     } else {
