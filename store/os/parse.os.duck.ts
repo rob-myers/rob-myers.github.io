@@ -22,8 +22,27 @@ export const osCloneTerm = createOsThunk<OsAct, CloneTermThunk>(
   OsAct.OS_CLONE_TERM_THUNK,
   ({ service }, { term }) => service.term.cloneTerm(term),
 );
-interface CloneTermThunk extends OsThunkAct<OsAct, { term: Term }, Term> {
+interface CloneTermThunk extends OsThunkAct<OsAct, { term: Term | Term[] }, Term> {
   type: OsAct.OS_CLONE_TERM_THUNK;
+}
+
+export const osCreateBinaryThunk = createOsThunk<OsAct, CreateBinaryThunk>(
+  OsAct.OS_CREATE_BINARY_THUNK,
+  ({ service }, { binaryKey, args }) => service.term.createBinary({ binaryKey, args }),
+);
+interface CreateBinaryThunk extends OsThunkAct<OsAct, { binaryKey: BinaryType; args: string[] }, BinaryComposite | BuiltinBinary> {
+  type: OsAct.OS_CREATE_BINARY_THUNK;
+}
+
+export const osCreateBuiltinThunk = createOsThunk<OsAct, CreateBuiltinThunk>(
+  OsAct.OS_CREATE_BUILTIN_THUNK,
+  ({ service }, { builtinKey, args }) => service.term.createBuiltin({ builtinKey, args }),
+);
+interface CreateBuiltinThunk extends OsThunkAct<OsAct, {
+  builtinKey: Exclude<BuiltinType, DeclareBuiltinType>;
+  args: string[];
+}, Builtin> {
+  type: OsAct.OS_CREATE_BUILTIN_THUNK;
 }
 
 /**
@@ -75,26 +94,6 @@ export const osDistributeSrcThunk = createOsThunk<OsAct, DistributeSrcThunk>(
 interface DistributeSrcThunk extends OsThunkAct<OsAct, { term: Term; src: string }, void> {
   type: OsAct.OS_DISTRIBUTE_SRC_THUNK;
 }
-
-export const osCreateBinaryThunk = createOsThunk<OsAct, CreateBinaryThunk>(
-  OsAct.OS_CREATE_BINARY_THUNK,
-  ({ service }, { binaryKey, args }) => service.term.createBinary({ binaryKey, args }),
-);
-interface CreateBinaryThunk extends OsThunkAct<OsAct, { binaryKey: BinaryType; args: string[] }, BinaryComposite | BuiltinBinary> {
-  type: OsAct.OS_CREATE_BINARY_THUNK;
-}
-
-export const osCreateBuiltinThunk = createOsThunk<OsAct, CreateBuiltinThunk>(
-  OsAct.OS_CREATE_BUILTIN_THUNK,
-  ({ service }, { builtinKey, args }) => service.term.createBuiltin({ builtinKey, args }),
-);
-interface CreateBuiltinThunk extends OsThunkAct<OsAct, {
-  builtinKey: Exclude<BuiltinType, DeclareBuiltinType>;
-  args: string[];
-}, Builtin> {
-  type: OsAct.OS_CREATE_BUILTIN_THUNK;
-}
-
 
 /**
  * Attempt to parse interactive shell code stored in buffer of process.

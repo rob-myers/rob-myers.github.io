@@ -130,7 +130,13 @@ export class TermService {
     };
   }
 
-  public cloneTerm(term: Term): Term {
+  public cloneTerm(term: Term | Term[]): Term {
+    if (Array.isArray(term)) {
+      return new SeqComposite({
+        key: CompositeType.seq,
+        cs: term.map(t => this.cloneTerm(t)),
+      });
+    }
     switch (term.key) {
       case CompositeType.and: {
         return new AndComposite({
@@ -759,7 +765,7 @@ export class TermService {
   }
 
   /**
-   * Compute source code on one line.
+   * Compute source code without newlines. 
    */
   public computeSrc(term: Term): string {
     switch (term.key) {
