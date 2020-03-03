@@ -150,4 +150,5 @@ type RedirectDef<WordType> = { location: WordType } & (
   // Here-string `location` at fd (default 0).
   | { subKey: '<<<'; fd?: number }
   // Open fd (default 0) for reading and writing.
-  | { subKey: '<>'; fd?: number });
+  | { subKey: '<>'; fd?: number }
+);

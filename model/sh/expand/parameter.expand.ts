@@ -120,6 +120,7 @@ export class ParameterExpand extends BaseExpandComposite<ExpandType.parameter> {
     switch (this.def.parKey) {
       /**
        * case: ${x^y}, ${x^^y}, ${x,y} or ${x,,y}.
+       * also e.g. ${x[1]^^}.
        */
       case ParamType.case: {
         const { all, to, pattern } = this.def;
@@ -139,7 +140,7 @@ export class ParameterExpand extends BaseExpandComposite<ExpandType.parameter> {
         break;
       }
       /**
-       * default: ${x[:][-=?+]y}, or e.g. ${x[0]:-foo}.
+       * default: ${x[:][-=?+]y} or ${x[0]:-foo}.
        */
       case ParamType.default: {
         const { alt, colon, symbol } = this.def;
@@ -369,14 +370,14 @@ export type ParameterExpandDef = (
 );
 
 export type ParameterDef<WordType, OpType> = BaseParamDef<OpType> & (
-  // Alphabetic case ${a^b}, ${a^^b}, ${a,b}, ${a,,b}.
+  // Alphabetic case with letter pattern ${a^b}, ${a^^b}, ${a,b}, ${a,,b}.
   | { parKey: ParamType.case; pattern: null | WordType; to: 'upper' | 'lower'; all: boolean }
   // Default parameters.
   | { parKey: ParamType.default; alt: null | WordType; colon: boolean;
       symbol:
-      | '+'// Use alternative.
-      | '='// Assign default.
-      | '?'// indicate error.
+      | '+' // Use alternative.
+      | '=' // Assign default.
+      | '?' // indicate error.
       | '-';// Use default.
     }
   // Array keys ${!x[@]}, ${!x[*]}.
@@ -389,10 +390,10 @@ export type ParameterDef<WordType, OpType> = BaseParamDef<OpType> & (
   | { parKey: ParamType.pointer }
   // Positional $1, $2, ..., ${10}, ...
   | { parKey: ParamType.position }// param: 0 | 1 | 2 | ...
-  // ${x/y/z}, ${x//y/z}, ${x[i]/y/z} // TODO one arg?
-  | { parKey: ParamType.replace; orig: WordType; with: null | WordType; all: boolean }
   // Remove pre/suffix ${x#y}, ${x##y}, ${x%%y}, ${x%y}
   | { parKey: ParamType.remove; pattern: null | WordType; dir: 1 | -1; greedy: boolean }
+  // ${x/y/z}, ${x//y/z}, ${x[i]/y/z} // TODO one arg?
+  | { parKey: ParamType.replace; orig: WordType; with: null | WordType; all: boolean }
   // Special $@ | $* | ...
   | { parKey: ParamType.special;
       // Removed '#@' and '#*'.

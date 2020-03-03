@@ -82,7 +82,7 @@ import { CstyleForIterator } from '@model/sh/iterator/cstyle-for.iterator';
 import { ForIterator } from '@model/sh/iterator/for.iterator';
 import { WhileIterator } from '@model/sh/iterator/while.iterator';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
-import { iterateTerm, isDoubleQuote, isSingleQuote } from './term.util';
+import { iterateTerm, isDoubleQuote } from './term.util';
 import { NamedFunction } from '@model/os/process.model';
 import { WcBinary } from '@model/sh/binary/wc.binary';
 import { GetOpts } from '../os.model';
@@ -291,8 +291,10 @@ export class TermService {
               cs: term.def.cs.map((child) => this.cloneTerm(child) as ExpandComposite),
             });
           }
-          case ExpandType.extendedGlob: return new ExtGlobExpand(term.def);
-          case ExpandType.literal: return new LiteralExpand(term.def);
+          case ExpandType.extendedGlob:
+            return new ExtGlobExpand(term.def);
+          case ExpandType.literal:
+            return new LiteralExpand(term.def);
           case ExpandType.parameter: {
             const { def } = term;
             switch (def.parKey) {
@@ -756,7 +758,7 @@ export class TermService {
     } 
   }
 
-  private computeOptsSrc(opts: GetOpts<string, string>): string {
+  private optsSrc(opts: GetOpts<string, string>): string {
     const { _, ...rest } = opts;
     return Object.entries(rest).reduce((agg, [key, value]) =>
       typeof value === 'boolean'
@@ -769,130 +771,268 @@ export class TermService {
   /**
    * Compute source code without newlines. 
    */
-  public computeSrc(term: Term): string {
+  public src(term: Term | null): string {
+    if (!term) {
+      return '';
+    }
     switch (term.key) {
-      case CompositeType.and:
-        return term.def.cs.map(c => this.computeSrc(c)).join(' && ');
+      case CompositeType.and: {
+        return term.def.cs.map(c => this.src(c)).join(' && ');
+      }
       case CompositeType.arithm_op: {
         const { symbol, postfix, cs } = term.def;
         return cs.length === 1
           ? postfix
-            ? `${this.computeSrc(cs[0])}${symbol}`
-            : `${symbol}${this.computeSrc(cs[0])}`
-          : cs.map(c => this.computeSrc(c)).join(` ${symbol} `);
+            ? `${this.src(cs[0])}${symbol}`
+            : `${symbol}${this.src(cs[0])}`
+          : cs.map(c => this.src(c)).join(` ${symbol} `);
       }
       case CompositeType.array: {
         const contents = term.def.pairs.map(({ key, value }) => key
-          ? `[${this.computeSrc(key)}]=${this.computeSrc(value)}`
-          : this.computeSrc(value));
+          ? `[${this.src(key)}]=${this.src(value)}`
+          : this.src(value));
         return `(${contents})`;
       }
       case CompositeType.assign: {
         const { def, def: { varName } } = term;
         switch (def.subKey) {
           case 'array':
-            return `${varName}=${this.computeSrc(def.array)}`;
+            return `${varName}=${this.src(def.array)}`;
           case 'item':
-            return `${varName}[${
-              this.computeSrc(def.index)
-            }]=${def.value ? this.computeSrc(def.value) : ''}`;
+            return `${varName}[${this.src(def.index)}]=${this.src(def.value)}`;
           case 'var':
-            return `${varName}=${def.value ? this.computeSrc(def.value) : ''}`;
+            return `${varName}=${def.value ? this.src(def.value) : ''}`;
           default: throw testNever(def);
         }
       }
-      case CompositeType.binary:
+      case CompositeType.binary: {
         return [
           term.binaryKey,
-          this.computeOptsSrc(term.opts),
+          this.optsSrc(term.opts),
           term.operands.join(' '),
         ].filter(Boolean).join(' ');
-      case CompositeType.block:
-        return `{ ${term.def.cs.map(c => this.computeSrc(c)).join('; ')}; }`;
-      case CompositeType.builtin:
+      }
+      case CompositeType.block: {
+        return `{ ${term.def.cs.map(c => this.src(c)).join('; ')}; }`;
+      }
+      case CompositeType.builtin: {
         return [
           builtinKeyToCommand(term.builtinKey),
-          this.computeOptsSrc(term.opts),
+          this.optsSrc(term.opts),
           term.operands.join(' '),
         ].filter(Boolean).join(' ');  
-      case CompositeType.case:
+      }
+      case CompositeType.case: {
         return [
           'case',
-          this.computeSrc(term.def.head),
+          this.src(term.def.head),
           'in',
           term.def.cases.map(({ child, globs, terminal }) => [
-            `${globs.map(g => this.computeSrc(g)).join('|')})`,
-            this.computeSrc(child),
+            `${globs.map(g => this.src(g)).join('|')})`,
+            this.src(child),
             terminal,
           ].join(' ')),
         ].filter(Boolean).join(' ');
+      }
       case CompositeType.compound: {
         return [
           term.def.negated && '!',
-          this.computeSrc(term.def.child),
-          term.def.redirects.map(r => this.computeSrc(r)).join(' '),
+          this.src(term.def.child),
+          term.def.redirects.map(r => this.src(r)).join(' '),
           term.def.background && '&'
         ].filter(Boolean).join(' ');
       }
-      /**
-       * TODO clarify
-       */
       case CompositeType.declare: {
+        // Needs clarification
         return [
           builtinKeyToCommand(term.builtinKey),
-          term.def.options.map(c => this.computeSrc(c)).join(' '),
-          term.def.assigns.map(c => this.computeSrc(c)).join(' '),
-          term.def.others.map(c => this.computeSrc(c)).join(' '),
+          term.def.options.map(c => this.src(c)).join(' '),
+          term.def.assigns.map(c => this.src(c)).join(' '),
+          term.def.others.map(c => this.src(c)).join(' '),
         ].filter(Boolean).join(' ');
       }
       case CompositeType.expand: {
         switch (term.expandKey) {
           case ExpandType.arithmetic:
-            return `$(( ${this.computeSrc(term.def.expr)} ))`;
+            return `$(( ${this.src(term.def.expr)} ))`;
           case ExpandType.command:
             return `$( ${
-              term.def.cs.map(c => this.computeSrc(c))
+              term.def.cs.map(c => this.src(c))
                 .filter(Boolean).join(' ')
             } )`;
-          case ExpandType.doubleQuote:
-            return term.def.cs.map(c => this.computeSrc(c)).join('');
-          case ExpandType.extendedGlob:
+          case ExpandType.doubleQuote: {
+            return `"${term.def.cs.map(c => this.src(c)).join('')}"`;
+          }
+          case ExpandType.extendedGlob: {
             return term.def.glob.replace('\n', ''); // ignore newlines
+          }
+          // Literals inside heredocs are handled earlier
           case ExpandType.literal: {
             const parent = term.parent!;
             const value = term.def.value.replace(/\\\n/g, '');
-            if (isDoubleQuote(parent)) {
-              return value.replace('\n', '"$\'\\n\'"');
-            } else if (isSingleQuote(parent)) {
-              return value.replace('\n', '\'$\'\\n\'');
+            if (isDoubleQuote(parent)) {// Need $$ for literal $
+              return value.replace('\n', '"$$\'\\n\'"');
             }
-            // Literals inside heredocs are handled earlier
             return term.def.value;
           }
-          case ExpandType.parameter: {// TODO
+          case ExpandType.parameter: {
             const { def } = term;
+            const param = `${def.param}${def.index ? `[${this.src(def.index)}]` : ''}`;
+
             switch (def.parKey) {
               case ParamType.case:
-                return [
-                  '${',
-                  def.param,
-                  (def.to === 'lower' ? ',' : '^').repeat(def.all ? 2 : 1),
-                  def.pattern ? this.computeSrc(def.pattern) : '',
-                  '}',
-                ].join('');
+                return `\${${param}${
+                  (def.to === 'lower' ? ',' : '^').repeat(def.all ? 2 : 1)
+                }${
+                  def.pattern ? this.src(def.pattern) : ''
+                }}`;
               case ParamType.default:
-                return [
-                  '${',
-                  // TODO 
-                  '}',
-                ].join('');
+                return `\${${param}${def.colon ? `:${def.symbol}${this.src(def.alt)}` : ''}}`;
+              case ParamType.keys:
+                return `\${!${param}[${def.split ? '@' : '*'}]}`;
+              case ParamType.length:
+                return `\${${param}}${def.of === 'values' ? '[@]' : ''}`;
+              case ParamType.plain:
+                return `\${${param}}`;
+              case ParamType.pointer:
+                return `\${!${param}}`;
+              case ParamType.position:
+                return `\${${param}}`;
+              case ParamType.remove:
+                return `\${${param}${
+                  (def.dir === 1 ? '#' : '%').repeat(def.greedy ? 2 : 1)
+                }${this.src(def.pattern)}}`;
+              case ParamType.replace:
+                return `\${${param}${def.all ? '//' : '/'}${this.src(def.orig)}/${this.src(def.with)}}`;
+              case ParamType.special:
+                return `$${def.param}`;
+              case ParamType.substring:
+                return `\${${param}:${this.src(def.from)}:${this.src(def.length)}}`;
+              case ParamType.vars:
+                return `\${!${param}${def.split ? '@' : '*'}}`;
+              default: throw testNever(def);
             }
-            return '';
           }
+          case ExpandType.parts: {
+            return term.def.cs.map(c => this.src(c)).join('');
+          }
+          case ExpandType.process: {
+            return `${term.def.dir}( ${
+              term.def.cs.map(c => this.src(c)).join(' ')
+            } )`;
+          }
+          case ExpandType.singleQuote: {
+            return `${// Need $$ for literal $
+              term.def.interpret ? '$' : ''
+            }'${term.def.value.replace('\n', '\'$$\'\\n\'')}'`;
+          }
+          default: throw testNever(term);
         }
       }
-      // default: throw testNever(term);
+      case CompositeType.function: {
+        return `${term.def.funcName}() { ${term.def.body} }`;
+      }
+      case CompositeType.if: {
+        return term.def.cs.map(({ test, child }, i) => test
+          ? `${!i ? 'if' : 'elif'} ${this.src(test)}; then ${this.src(child)}; `
+          : `else ${child}; `
+        ).concat('fi').join('');
+      }
+      case CompositeType.let: {
+        return `let ${term.def.cs.map(c => this.src(c)).join(' ')}`;
+      }
+      case CompositeType.or: {
+        return term.def.cs.map(c => this.src(c)).join(' || ');
+      }
+      case CompositeType.pipe: {
+        return term.def.cs.map(c => this.src(c)).join(' | ');
+      }
+      case CompositeType.redirect: {
+        const { def } = term;
+        switch (def.subKey) {
+          case '<': {
+            return `${def.fd || ''}<${def.mod ? '&' : ''}${
+              this.src(def.location)
+            }${def.mod === 'move' ? '-' : ''}`;
+          }
+          case '>': {
+            return `${def.fd || ''}${
+              def.mod === 'append' ? '>>' : '>'
+            }${ def.mod ? '&' : '' }${ this.src(def.location) }${def.mod === 'move' ? '-' : ''}`;
+          }
+          case '&>': {
+            return `${!def.append ? '&>' : '&>>'}${this.src(def.location)}`;
+          }
+          /**
+           * Transform heredoc to process expansion to fit on 1 line.
+           */
+          case '<<': {
+            return `${def.fd || ''}<( ${this.src(def.location)} )`;
+          }
+          case '<<<': {
+            return `${def.fd || ''}<<<( ${this.src(def.location)} )`;
+          }
+          case '<>': {
+            return `${def.fd || ''}<>${this.src(def.location)}`;
+          }
+          default: throw testNever(def);
+        }
+      }
+      case CompositeType.seq: {
+        return term.def.cs.map(c => this.src(c)).join('; ');
+      }
+      case CompositeType.simple: {
+        return [
+          term.def.negated && '!',
+          term.def.assigns.map(c => this.src(c)).join(' '),
+          term.def.words.map(c => this.src(c)).join(' '),
+          term.def.redirects.map(c => this.src(c)).join(' '),
+          term.def.background && '&',
+        ].filter(Boolean).join(' ');
+      }
+      case CompositeType.subshell: {
+        return `( ${
+          term.def.cs.map(c => this.src(c)).join(' ')
+        } )`;
+      }
+      case CompositeType.test: {
+        return `[[ ${this.src(term.def.expr)} ]]`;
+      }
+      case CompositeType.test_op: {
+        const { symbol, postfix, cs } = term.def;
+        return cs.length === 1
+          ? postfix
+            ? `${this.src(cs[0])}${symbol}`
+            : `${symbol}${this.src(cs[0])}`
+          : cs.map(c => this.src(c)).join(` ${symbol} `);
+      }
+      case CompositeType.time: {
+        return `time ${term.def.posix ? '-p ' : ''}${
+          this.src(term.def.timed)
+        }`;
+      }
+      case IteratorType.cstyle_for: {
+        return `for (( ${
+          this.src(term.def.prior)
+        }; ${
+          this.src(term.def.condition)
+        }; ${
+          this.src(term.def.post)
+        } )); do { ${
+          this.src(term.def.body)
+        } }; done`;
+      }
+      case IteratorType.for: {
+        return `for ${term.def.paramName} in ${
+          term.def.items.map(c => this.src(c)).join(' ')
+        }; do ${this.src(term.def.body)}; done`;
+      }
+      case IteratorType.while: {
+        return `while ${this.src(term.def.guard)}; do ${
+          this.src(term.def.body)
+        }; done`;
+      }
+      default: throw testNever(term);
     }
-    return ''; // TODO
   }
 }

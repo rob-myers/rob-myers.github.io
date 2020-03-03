@@ -24,5 +24,4 @@ export class LetComposite extends BaseCompositeTerm<CompositeType.let> {
   }
 }
 
-interface LetCompositeDef extends BaseTermDef<CompositeType.let>, CompositeChildren<ArithmOpComposite> {
-}
+interface LetCompositeDef extends BaseTermDef<CompositeType.let>, CompositeChildren<ArithmOpComposite> {}

@@ -177,3 +177,13 @@ interface WalkTermThunk extends OsThunkAct<OsAct, {
 }, void> {
   type: OsAct.OS_WALK_TERM_THUNK;
 }
+
+export const osGetHistoricalSrc = createOsThunk<OsAct, GetHistoricalSrc>(
+  OsAct.OS_GET_HISTORICAL_SRC,
+  ({ service }, { term }) => service.term.src(term),
+);
+interface GetHistoricalSrc extends OsThunkAct<OsAct, {
+  term: Term;
+}, string> {
+  type: OsAct.OS_GET_HISTORICAL_SRC;
+}

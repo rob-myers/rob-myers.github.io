@@ -7,7 +7,7 @@ import { osSetZeroethParamAct } from '@store/os/declare.os.duck';
 import { osSetSessionForegroundAct } from '@store/os/session.os.duck';
 import { ObservedType } from '@os-service/term.service';
 import { osPromptThunk } from '@store/os/tty.os.duck';
-import { osParseBufferThunk, osTranspileShThunk, osDistributeSrcThunk } from '@store/os/parse.os.duck';
+import { osParseBufferThunk, osTranspileShThunk, osDistributeSrcThunk, osGetHistoricalSrc } from '@store/os/parse.os.duck';
 
 /**
  * TODO support non-interactive (see repo for 'step')
@@ -69,6 +69,10 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
           // Transpile, distributing source code to specific subterms.
           const term = dispatch(osTranspileShThunk({ parsed: result.parsed }));
           dispatch(osDistributeSrcThunk({ term, src: srcBuffer.join('\n') }));
+
+          // TODO send to .history device
+          const oneLineSrc = dispatch(osGetHistoricalSrc({ term }));
+          console.log({ oneLineSrc });
 
           // Mount and run.
           this.mounted = term;
