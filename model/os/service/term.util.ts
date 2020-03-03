@@ -5,6 +5,9 @@ import { last } from '@model/generic.model';
 import { PipeComposite } from '@model/sh/composite/pipe.composite';
 import { BinaryExecType } from '@model/sh/binary.model';
 import { BashBinary } from '@model/sh/binary/bash.binary';
+import { DoubleQuoteExpand } from '@model/sh/expand/double-quote.expand';
+import { ExpandType } from '@model/sh/expand.model';
+import { SingleQuoteExpand } from '@model/sh/expand/single-quote.expand';
 
 export class TermError extends Error {
   constructor(message: string, public exitCode: number) {
@@ -174,6 +177,14 @@ export function isInteractiveShell(term: Term): boolean {
     && term.interactive;
 }
 
-export function isTermBash(term: Term): term is BashBinary {
+export function isBash(term: Term): term is BashBinary {
   return term.key === CompositeType.binary && term.binaryKey === BinaryExecType.bash;
+}
+
+export function isDoubleQuote(term: Term): term is DoubleQuoteExpand {
+  return term.key === CompositeType.expand && term.expandKey === ExpandType.doubleQuote;
+}
+
+export function isSingleQuote(term: Term): term is SingleQuoteExpand {
+  return term.key === CompositeType.expand && term.expandKey === ExpandType.singleQuote;
 }

@@ -1,5 +1,7 @@
 ## TODO
 
+- can bring bg processed to foreground
+
 - implement history
   > must convert src to "one-line src" (our input cannot contain newlines)
   > use a "history device" which reads like .history and keeps track
@@ -85,6 +87,7 @@
   > get pasting working
 - throttle while so ctrl + c works for `while true; do echo foo; done > bar`
 - FIX pasting onto partial line overwrites
+- background processes are stopped on exit/logout
 
 
 ## Bash example

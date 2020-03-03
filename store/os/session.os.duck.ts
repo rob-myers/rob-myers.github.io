@@ -10,7 +10,7 @@ import { osForkProcessThunk, osCloseProcessFdsAct, osSetProcessGroupAct, osExecT
 import { osOpenFileThunk, osUnlinkFileThunk } from './file.os.duck';
 import { osSetProcessUserThunk } from './user.os.duck';
 import { ensureArrayItem, last, testNever } from '@model/generic.model';
-import { isInteractiveShell, findAncestralTerm, isTermBash } from '@os-service/term.util';
+import { isInteractiveShell, findAncestralTerm, isBash } from '@os-service/term.util';
 
 /**
  * Session for login or daemon.
@@ -254,13 +254,14 @@ interface CreateSessionThunk extends OsThunkAct<OsAct,
 export const osEndSessionThunk = createOsThunk<OsAct, EndSessionThunk>(
   OsAct.OS_END_SESSION_THUNK,
   ({ dispatch, state: { os } }, { sessionKey }) => {
-    // console.log(sessionKey, os.session);
-    const { processKey, ttyINode } = os.session[sessionKey];
+    const { processKey, ttyINode, procGrps } = os.session[sessionKey];
     if (ttyINode) {// Unlink /dev/tty-{ttyId}.
       dispatch(osUnlinkFileThunk({ processKey, path: ttyINode.def.canonicalPath }));
     }
     // Terminate process.
     dispatch(osTerminateProcessThunk({ processKey, exitCode: 0 }));
+    procGrps.forEach((key) => dispatch(osTerminateProcessThunk({ processKey: key, exitCode: 0 })));
+
     // Remove session from lookup.
     dispatch(osUnregisterSessionAct({ sessionKey }));
   },
@@ -339,7 +340,7 @@ export const osIsLoginShell = createOsThunk<OsAct, IsLoginShellThunk>(
   OsAct.OS_IS_LOGIN_SHELL,
   ({ state: { os } }, { processKey }): boolean => {
     const { term, sessionKey } = os.proc[processKey];
-    const closestBash = isTermBash(term) ? term : findAncestralTerm(term, isTermBash);
+    const closestBash = isBash(term) ? term : findAncestralTerm(term, isBash);
     const { term: sessionLeaderTerm } = os.proc[os.session[sessionKey].processKey];
     return sessionLeaderTerm === closestBash;
   },

@@ -82,7 +82,7 @@ import { CstyleForIterator } from '@model/sh/iterator/cstyle-for.iterator';
 import { ForIterator } from '@model/sh/iterator/for.iterator';
 import { WhileIterator } from '@model/sh/iterator/while.iterator';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
-import { iterateTerm } from './term.util';
+import { iterateTerm, isDoubleQuote, isSingleQuote } from './term.util';
 import { NamedFunction } from '@model/os/process.model';
 import { WcBinary } from '@model/sh/binary/wc.binary';
 import { GetOpts } from '../os.model';
@@ -846,7 +846,50 @@ export class TermService {
         ].filter(Boolean).join(' ');
       }
       case CompositeType.expand: {
-        // TODO
+        switch (term.expandKey) {
+          case ExpandType.arithmetic:
+            return `$(( ${this.computeSrc(term.def.expr)} ))`;
+          case ExpandType.command:
+            return `$( ${
+              term.def.cs.map(c => this.computeSrc(c))
+                .filter(Boolean).join(' ')
+            } )`;
+          case ExpandType.doubleQuote:
+            return term.def.cs.map(c => this.computeSrc(c)).join('');
+          case ExpandType.extendedGlob:
+            return term.def.glob.replace('\n', ''); // ignore newlines
+          case ExpandType.literal: {
+            const parent = term.parent!;
+            const value = term.def.value.replace(/\\\n/g, '');
+            if (isDoubleQuote(parent)) {
+              return value.replace('\n', '"$\'\\n\'"');
+            } else if (isSingleQuote(parent)) {
+              return value.replace('\n', '\'$\'\\n\'');
+            }
+            // Literals inside heredocs are handled earlier
+            return term.def.value;
+          }
+          case ExpandType.parameter: {// TODO
+            const { def } = term;
+            switch (def.parKey) {
+              case ParamType.case:
+                return [
+                  '${',
+                  def.param,
+                  (def.to === 'lower' ? ',' : '^').repeat(def.all ? 2 : 1),
+                  def.pattern ? this.computeSrc(def.pattern) : '',
+                  '}',
+                ].join('');
+              case ParamType.default:
+                return [
+                  '${',
+                  // TODO 
+                  '}',
+                ].join('');
+            }
+            return '';
+          }
+        }
       }
       // default: throw testNever(term);
     }

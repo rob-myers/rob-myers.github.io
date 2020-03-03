@@ -724,7 +724,7 @@ declare namespace MvdanSh {
      */
     Word: WordGeneric<Base, Pos, Op>; // >word
     /**
-     * Non-null iff here-document body (?)
+     * Non-null iff here-document body
      */
     Hdoc: null | WordGeneric<Base, Pos, Op>;
   }

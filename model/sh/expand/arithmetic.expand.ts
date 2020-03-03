@@ -18,9 +18,8 @@ export class ArithmExpand extends BaseExpandComposite<ExpandType.arithmetic> {
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
     yield* this.runArithmExpr({ child: this.def.expr, dispatch, processKey });
-    /**
-     * Exit code 0 iff {this.value} is {String(n)} for some non-zero integer n.
-     */
+    
+    // Exit code 0 iff {this.value} is {String(n)} for some non-zero integer n.
     if (isStringInt(this.value)) {
       yield this.exit(parseInt(this.value) ? 0 : 1);
     }

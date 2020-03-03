@@ -23,7 +23,6 @@ export class ParseShService {
     const parser = syntax.NewParser();
     syntax.KeepComments(parser);
     const parsed = parser.Parse(src, 'src.sh');
-
     // Clean up the parse e.g. make it serialisable
     return this.File(parsed);
   }
@@ -353,25 +352,6 @@ export class ParseShService {
       Variant: this.Lit(Variant),
       others: others.map(this.Word),// PATCH.
     };
-    /**
-     * Approach below failed: we cannot refer/run
-     * the assignments inside BuiltinComposite.
-     */
-    // const variant: Word = {
-    //   ...this.base({ Pos: Variant.Pos, End: Variant.End }),
-    //   type: 'Word',
-    //   Parts: [this.Lit(Variant)],
-    // };
-    // return {
-    //   ...this.base({ Pos, End }),
-    //   type: 'CallExpr',
-    //   Assigns: AssignsPatched.map(this.Assign),
-    //   Args: ([] as Word[]).concat(
-    //     variant,// e.g. 'declare'.
-    //     OptsPatched.map(this.Word),
-    //     others.map(this.Word),
-    //   ),
-    // };
   };
   
   private ExtGlob = (
@@ -535,7 +515,6 @@ export class ParseShService {
     type: 'Redirect',
     Hdoc: Hdoc ? this.Word(Hdoc) : null,
     N: N ? this.Lit(N) : null,
-    // Op: (console.log({ Op, OpPos }) as any) || this.op(Op),
     Op: this.op(Op),
     OpPos: this.pos(OpPos),
     Word: this.Word(Word),

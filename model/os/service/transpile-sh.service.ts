@@ -725,7 +725,7 @@ export class TranspileShService {
           subKey: '<<',
           location: this.Expand(Word),
           fd,
-          here: this.Expand(Hdoc as any), // TODO remove any.
+          here: this.Expand(Hdoc!),
         });
       }
       case '<<<': {

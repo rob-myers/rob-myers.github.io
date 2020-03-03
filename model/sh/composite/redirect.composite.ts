@@ -73,16 +73,13 @@ export class RedirectComposite extends BaseCompositeTerm<CompositeType.redirect>
         dispatch(osOpenFileThunk({ processKey, request: { fd: 2, mode: 'WRONLY', path: location.value, opts } }));
         break;
       }
-      case '<<':  // Here-doc.
-      case '<<<': // Here-string.
+      case '<<':  // Here-doc
+      case '<<<': // Here-string
       {
         const buffer = [] as string[];
-        if (this.def.subKey === '<<') {// location.value is e.g. 'EOF'.
+        if (this.def.subKey === '<<') {// location.value is e.g. EOF
           yield* this.runChild({ child: this.def.here, dispatch, processKey });
-          /**
-           * Remove a single final newline if exists,
-           * due to our global convention concerning lines.
-           */
+          // Remove a single final newline if exists
           buffer.push(...this.def.here.value.replace(/\n$/, '').split('\n'));
         } else {
           yield* this.runChild({ child: location, dispatch, processKey });
@@ -137,12 +134,12 @@ type RedirectDef<WordType> = { location: WordType } & (
   | { subKey: '<'; fd?: number; mod: null | 'dup' | 'move' }
   /**
    * Output modifier:
-   * {null} (fd>location): Open {location} at {fd} (default 1) for writing.
-   * {append} (fd>>location): Open {location} at {fd} (default 1) for appending at location.
-   * {dup}: (fd>&location): Duplicate file descriptor {location} at {fd} (default 1).
+   * - `null` (fd>location): Open {location} at {fd} (default 1) for writing.
+   * - `append` (fd>>location): Open {location} at {fd} (default 1) for appending at location.
+   * - `dup`: (fd>&location): Duplicate file descriptor {location} at {fd} (default 1).
    *   {location} must be a valid fd which writes output, or '-' (close fd).
    *   TODO: special case where {location} evaluates to whitespace.
-   * {move} (<&-): Move file descriptor {location} to {fd} (default 1).
+   * - `move` (<&-): Move file descriptor {location} to {fd} (default 1).
    *   {location} must be a valid fd which writes output.
    */
   | { subKey: '>'; fd?: number; mod: null | 'append' | 'dup' | 'move' }
