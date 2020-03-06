@@ -105,7 +105,7 @@ export enum BuiltinOtherType {
   test= 'test',
   times= 'times',// TODO
   true= 'true',
-  type= 'type',// TODO
+  type= 'type',
   /**
    * Same as {declare}.
    */

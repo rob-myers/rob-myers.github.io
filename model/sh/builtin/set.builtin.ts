@@ -9,7 +9,9 @@ export class SetBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.set> {
   }
 
   public async *semantics(): AsyncIterableIterator<ObservedType> {
-    // ...
+    /**
+     * TODO (?)
+     */
   }
 
 }

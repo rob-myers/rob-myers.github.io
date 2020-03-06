@@ -10,7 +10,7 @@ export class TrueBuiltin extends BaseBuiltinComposite<BuiltinOtherType.true> {
 
   public async *semantics(): AsyncIterableIterator<ObservedType> {
     /**
-     * Intentionally empty.
+     * NOOP
      */
   }
 

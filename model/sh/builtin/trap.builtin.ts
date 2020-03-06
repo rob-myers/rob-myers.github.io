@@ -9,7 +9,9 @@ export class TrapBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.trap> {
   }
 
   public async *semantics(): AsyncIterableIterator<ObservedType> {
-    // ...
+    /**
+     * TODO (?)
+     */
   }
 
 }
