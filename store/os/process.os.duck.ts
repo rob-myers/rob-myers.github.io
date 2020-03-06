@@ -607,14 +607,19 @@ export const osWriteWarningThunk = createOsThunk<OsAct, WriteWarningThunk>(
     const zeroethParam = dispatch(osExpandVarThunk({ processKey, varName: '0' }));
     let warning: string;
 
-    if (term.key === CompositeType.binary) {
-      warning = dispatch(osIsSessionLeaderThunk({ processKey }))
-        ? `${zeroethParam}: ${line}` // Prevent erroneous '-bash: bash: ...'.
-        : `${term.binaryKey}: ${line}`;
-    } else if (term.key === CompositeType.builtin) {
-      warning = `${zeroethParam}: ${builtinKeyToCommand(term.builtinKey)}: ${line}`;
-    } else {
-      warning = `${zeroethParam}: ${line}`;
+    switch (term.key) {
+      case CompositeType.binary: {
+        warning = dispatch(osIsSessionLeaderThunk({ processKey }))
+          ? `${zeroethParam}: ${line}` // Prevent erroneous '-bash: bash: ...'.
+          : `${term.binaryKey}: ${line}`;
+        break;
+      }
+      case CompositeType.builtin:
+      case CompositeType.declare: {
+        warning = `${zeroethParam}: ${builtinKeyToCommand(term.builtinKey)}: ${line}`;
+        break;
+      }
+      default: warning = `${zeroethParam}: ${line}`;
     }
 
     let result: { toPromise: IoToPromise };

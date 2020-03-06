@@ -8,6 +8,7 @@ import { BashBinary } from '@model/sh/binary/bash.binary';
 import { DoubleQuoteExpand } from '@model/sh/expand/double-quote.expand';
 import { ExpandType } from '@model/sh/expand.model';
 import { SingleQuoteExpand } from '@model/sh/expand/single-quote.expand';
+import { SimpleComposite } from '@model/sh/composite/simple.composite';
 
 export class TermError extends Error {
   constructor(message: string, public exitCode: number) {
@@ -192,4 +193,13 @@ export function isSingleQuote(term: Term): term is SingleQuoteExpand {
 export function isBackgroundTerm(term: Term) {
   return term.key === CompositeType.simple && term.def.background
     || term.key === CompositeType.compound && term.def.background;
+}
+
+/** Note `FunctionComposite` used for _declaration_ not _invocation_. */
+export function insideInvokedFunction(term: Term): boolean {
+  return findAncestralTerm(term, (ancestor): ancestor is SimpleComposite =>
+    ancestor.key === CompositeType.simple
+      && (ancestor.method && ancestor.method.key === 'invoke-function')
+      || false
+  ) !== null;
 }
