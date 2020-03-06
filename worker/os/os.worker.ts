@@ -92,9 +92,15 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       });
     }
     case 'request-history-line': {
-      /**
-       * TODO session has a history device at /home/user/.history
-       */
+      mutateSession(msg.sessionKey, store, ({ ttyINode }) => {
+        const { line, nextIndex } = ttyINode!.def.historyINode.getLine(msg.historyIndex);
+        ctxt.postMessage({
+          key: 'send-history-line',
+          sessionKey: msg.sessionKey,
+          line,
+          nextIndex,
+        });
+      });
       break;
     }
   }
@@ -110,6 +116,7 @@ function mutateSession(
   if (session) {
     mutate(session);
   }
+  return session;
 }
 
 export default {} as Worker & {new (): OsWorker};

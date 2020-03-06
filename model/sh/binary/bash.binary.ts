@@ -60,14 +60,14 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
     dispatch(osSetProcessGroupAct({ processKey, processGroupKey: processKey }));
     dispatch(osSetSessionForegroundAct({ processKey, processGroupKey: processKey }));
 
-    // Get reference to history inode
+    // Expects history at /dev/{userKey}/.history
     const { userKey } = dispatch(osGetProcessThunk({ processKey }));
     const historyPath = `/home/${userKey}/.history`;
     const { iNode: historyINode } = dispatch(osResolvePathThunk({ processKey, path: historyPath }));
 
     while (true) {// Interactive command loop
       const srcBuffer = [] as string[];
-      // NOTE control chars in prompt currently unsupported (TtyXterm)
+      // Control chars in prompt currently unsupported (TtyXterm)
       dispatch(osPromptThunk({ processKey, fd: 1, text: '$ ' }));
 
       while (true) {// Interactive parse loop

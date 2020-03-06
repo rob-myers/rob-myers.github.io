@@ -1,5 +1,6 @@
 import { ProcessSignal } from '@model/os/process.model';
 import { BaseINode, INodeType, BaseINodeDef } from './base-inode';
+import { HistoryINode } from './history.inode';
 
 /**
  * tty running in interactive mode.
@@ -95,6 +96,10 @@ export interface TtyINodeDef extends BaseINodeDef {
    * The canonical path in filesystem e.g. /dev/tty-1.
    */
   canonicalPath: string;
+  /**
+   * Tty has history.
+   */
+  historyINode: HistoryINode;
   /**
    * Dispatch signal to foreground process group of parent session.
    */

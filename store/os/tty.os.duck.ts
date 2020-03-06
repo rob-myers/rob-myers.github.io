@@ -5,6 +5,7 @@ import { osSignalForegroundThunk, osIncrementTtyIdAct } from './session.os.duck'
 import { osMountFileAct, osGetOfdThunk } from './file.os.duck';
 import { DirectoryINode } from '@store/inode/directory.inode';
 import { INodeType } from '@store/inode/base-inode';
+import { HistoryINode } from '@store/inode/history.inode';
 
 export type Thunk = (
   | ClearTtyThunk
@@ -46,11 +47,16 @@ export const osCreateTtyThunk = createOsThunk<OsAct, CreateTtyThunk>(
     const sessionKey = canonicalFilename;
     const userKey = 'user'; // TODO
 
+    // Expects history at /home/{userKey}/.history
+    const historyINode = ((os.root.to.home as DirectoryINode)
+      .to[userKey] as DirectoryINode).to['.history'] as HistoryINode;
+
     // Create tty device
     const iNode = new TtyINode({
       userKey,
       groupKey: userKey,
       canonicalPath,
+      historyINode,
       sendSignal: (signal) => dispatch(osSignalForegroundThunk({
         sessionKey,
         signal,

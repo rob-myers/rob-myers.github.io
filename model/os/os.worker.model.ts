@@ -156,12 +156,13 @@ interface RequestHistoryLine extends BaseMessage {
   key: 'request-history-line';
   sessionKey: string;
   /** Non-negative integer */
-  history: number;
+  historyIndex: number;
 }
 interface SendHistoryLine extends BaseMessage {
   key: 'send-history-line';
   sessionKey: string;
   line: string;
+  nextIndex: number;
 }
 
 export type MessageFromOsParent = (

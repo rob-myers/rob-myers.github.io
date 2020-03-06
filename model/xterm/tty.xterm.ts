@@ -41,7 +41,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
   /** Shortcut */
   private xterm: Redacted<Terminal>;
 
-  private history: number;
+  private historyIndex = -1;
   private preHistory: string;
 
   constructor(def: TtyXtermDef) {
@@ -54,7 +54,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     this.commandBuffer = [];
     this.nextPrintId = null;
     this.cursorRow = 0;
-    this.history = 0;
+    this.historyIndex = 0;
     this.preHistory = this.input;
   }
 
@@ -224,83 +224,72 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
           }});
       }
     } else {
-      this.handleXtermKeypress(data);
+      this.handleXtermKeypresses(data);
     }
   }
 
   /**
-   * Handle keypresses (including escape sequences)
-   * or multiple characters via a paste without newline.
+   * Handle:
+   * - individual characters (including escape sequences)
+   * - multiple characters via a paste without newline
    */
-  private handleXtermKeypress(data: string) {
+  private handleXtermKeypresses(data: string) {
     const ord = data.charCodeAt(0);
     let cursor: number;
 
     if (ord == 0x1b) { // ANSI escape sequences
       switch (data.slice(1)) {
         case '[A': {// Up arrow.
-          /**
-           * TODO history
-           */
-          if (!this.history) {
-            this.preHistory = this.input;
-          }
-          this.history = Math.min(500, this.history + 1);
           this.def.osWorker.postMessage({
             key: 'request-history-line',
-            history: this.history,
+            historyIndex: this.historyIndex + 1,
             sessionKey: this.def.sessionKey,
           });
           break;  
         }
-        case '[B': {// Down arrow.
-          this.history = Math.max(0, this.history - 1);
-          if (this.history) {
-            this.def.osWorker.postMessage({
-              key: 'request-history-line',
-              history: this.history,
-              sessionKey: this.def.sessionKey,
-            });
-          } else {
-            this.setInput(this.preHistory);
-          }
+        case '[B': {// Down arrow
+          this.def.osWorker.postMessage({
+            key: 'request-history-line',
+            historyIndex: this.historyIndex - 1,
+            sessionKey: this.def.sessionKey,
+          });
           break;
         }
-        case '[D': {// Left Arrow.
+        case '[D': {// Left Arrow
           this.handleCursorMove(-1);
           break;
         }
-        case '[C': {// Right Arrow.
+        case '[C': {// Right Arrow
           this.handleCursorMove(1);
           break;
         }
-        case '[3~': {// Delete.
+        case '[3~': {// Delete
           this.handleCursorErase(false);
           break;
         }
-        case '[F': {// End.
+        case '[F': {// End
           this.setCursor(this.input.length);
           break;
         }
-        case '[H': {// Home. (?)
+        case '[H': {// Home (?)
           this.setCursor(0);
           break;
         }
-        case 'b': {// Alt + Left.
+        case 'b': {// Alt + Left
           cursor = this.closestLeftBoundary(this.input, this.cursor);
           if (cursor != null) {
             this.setCursor(cursor);
           }
           break;
         }
-        case 'f': {// Alt + Right.
+        case 'f': {// Alt + Right
           cursor = this.closestRightBoundary(this.input, this.cursor);
           if (cursor != null) {
             this.setCursor(cursor);
           }
           break;
         }
-        case '\x7F': {// Ctrl + Backspace.
+        case '\x7F': {// Ctrl + Backspace
           this.deletePreviousWord();
           break;
         }
@@ -308,55 +297,55 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     } else if (ord < 32 || ord === 0x7f) {
       // Handle special characters
       switch (data) {
-        case '\r': {// Enter.
+        case '\r': {// Enter
           this.queueCommands({ key: 'newline' });
           break;
         }
-        case '\x7F': {// Backspace.
+        case '\x7F': {// Backspace
           this.handleCursorErase(true);
           break;
         }
-        case '\t': {// Tab.
+        case '\t': {// Tab
           // TODO autocompletion
           this.handleCursorInsert('  ');
           break;
         }
-        case '\x03': {// Ctrl + C.
+        case '\x03': {// Ctrl + C
           this.sendSigInt();
           break;
         }
-        case '\x17': {// Ctrl + W.
-          // Delete previous word.
+        case '\x17': {// Ctrl + W
+          // Delete previous word
           this.deletePreviousWord();
           break;
         }
-        case '\x01': {// Ctrl + A.
-          // Goto line start.
+        case '\x01': {// Ctrl + A
+          // Goto line start
           this.setCursor(0);
           break;
         }
-        case '\x05': {// Ctrl + E.
-          // Goto EOL.
+        case '\x05': {// Ctrl + E
+          // Goto EOL; do not collect £200
           this.setCursor(this.input.length);
           break;
         }
-        case '\x0C': {// Ctrl + L.
-          // Clear screen.
+        case '\x0C': {// Ctrl + L
+          // Clear screen
           this.clearScreen();
-          // Show prompt again.
+          // Show prompt again
           this.setInput(this.input);
           break;
         }
-        case '\x0b': {// Ctrl + K.
+        case '\x0b': {// Ctrl + K
           /**
            * Erase from cursor to EOL.
            */
           const nextInput = this.input.slice(0, this.cursor);
           this.clearInput();
           this.setInput(nextInput);
-          break;// Cursor already at EOL.
+          break;// Cursor already at EOL
         }
-        case '\x15': {// Ctrl + U.
+        case '\x15': {// Ctrl + U
           /**
            * Erase from start of line to cursor.
            */
@@ -448,8 +437,20 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
       }
       case 'send-history-line': {
         if (msg.sessionKey === this.def.sessionKey) {
-          this.clearInput();
-          this.setInput(msg.line);
+          if (msg.line) {
+            if (this.historyIndex === -1) {
+              this.preHistory = this.input;
+            }
+            this.clearInput();
+            this.setInput(msg.line);
+            this.historyIndex = msg.nextIndex; 
+          } else if (msg.nextIndex === 0) {
+            // Since msg.line empty we must've gone below
+            this.clearInput();
+            this.setInput(this.input !== this.preHistory ? this.preHistory : '') ;
+            this.historyIndex = -1;
+            this.preHistory = '';
+          }
         }
         return;
       }
@@ -475,7 +476,6 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     let command: XtermOutputCommand | undefined;
     let numLines = 0;
     this.nextPrintId = null;
-
     
     while (
       (command = this.commandBuffer.shift())
@@ -537,6 +537,8 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
   private sendLine() {
     this.prompt = '';
     this.linePending = true;
+    this.historyIndex = -1;
+    this.preHistory = '';
 
     this.def.osWorker.postMessage({
       key: 'line-to-tty',

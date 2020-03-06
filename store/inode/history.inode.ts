@@ -1,6 +1,8 @@
 import { BaseINode, INodeType, BaseINodeDef } from './base-inode';
 import { RedactInReduxDevTools } from '@model/redux.model';
 
+const maxLines = 500;
+
 export class HistoryINode extends BaseINode implements RedactInReduxDevTools {
 
   public readonly devToolsRedaction = HistoryINode.name;  
@@ -17,7 +19,11 @@ export class HistoryINode extends BaseINode implements RedactInReduxDevTools {
   }
 
   public getLine(lineIndex: number) {
-    return this.history[lineIndex] || '';
+    const maxIndex = this.history.length - 1;
+    return {
+      line: this.history[maxIndex - lineIndex] || '',
+      nextIndex: lineIndex < 0 ? 0 : lineIndex > maxIndex ? maxIndex : lineIndex,
+    };
   }
 
   public read(buffer: string[], maxLines: number, offset: number): number {
@@ -31,7 +37,7 @@ export class HistoryINode extends BaseINode implements RedactInReduxDevTools {
   public storeSrcLine(srcLine: string) {
     if (srcLine) {
       this.history.push(srcLine);
-      while (this.history.length > 500) this.history.shift();
+      while (this.history.length > maxLines) this.history.shift();
       console.log({ srcLine });
     }
   }
