@@ -2,29 +2,35 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, Redacted, redac
 import { KeyedLookup } from '@model/generic.model';
 import { XTermState, createXTermState, computeXtermKey } from '@model/xterm/xterm.model';
 import { createThunk } from '@model/root.redux.model';
-import { OsWorker, listenUntil } from '@model/os/os.worker.model';
+import { OsWorker, listenToWorkerUntil } from '@model/os/os.worker.model';
 
 import OsWorkerClass from '@worker/os/os.worker';
-import { TtyXterm } from './inode/tty.xterm';
+import { TtyXterm } from '../model/xterm/tty.xterm';
 import { Terminal } from 'xterm';
+import { VoiceXterm } from '@model/xterm/voice.xterm';
 
 export interface State {
   instance: KeyedLookup<XTermState>;
   worker: null | Redacted<OsWorker>;
+  voice: null | VoiceXterm;
   ready: boolean;
 }
 
 const initialState: State = {
   instance: {},
   worker: null,
+  voice: null,
   ready: false,
 };
 
 export const Act = {
   registerInstance: (def: XTermState) =>
     createAct('[xterm] register', def),
-  setupXterms: (webWorker: Redacted<OsWorker>) =>
-    createAct('[xterm] setup', { webWorker }),
+  initialSetup: ({ worker, voice }: {
+    worker: Redacted<OsWorker>;
+    voice: Redacted<VoiceXterm>;
+  }) =>
+    createAct('[xterm] setup', { worker, voice }),
   unregisterInstance: (key: string) =>
     createAct('[xterm] unregister', { key }),
 };
@@ -36,8 +42,13 @@ export const Thunk = {
     '[xterm] ensure setup',
     ({ dispatch, state: { xterm } }) => {
       if (!xterm.ready && typeof Worker !== 'undefined') {
-        const worker = new OsWorkerClass();
-        dispatch(Act.setupXterms(redact(worker)));
+        const worker = redact(new OsWorkerClass);
+        const voice = redact(new VoiceXterm({
+          // defaultVoice: 'Alex',
+          osWorker: worker,
+        }));
+        voice.initialise();
+        dispatch(Act.initialSetup({ voice, worker }));
       }
     },
   ),
@@ -57,10 +68,10 @@ export const Thunk = {
       const worker = getState().xterm.worker!;
       worker.postMessage({ key: 'create-session', uiKey, userKey });
 
-      listenUntil(worker, ({ data: msg }) => {
+      listenToWorkerUntil(worker, ({ data: msg }) => {
         if (msg.key === 'created-session' && msg.uiKey === uiKey) {
-          // Create TtyXterm and register
           const { sessionKey } = msg;
+          // Create TtyXterm, initialise and register
           const ttyXterm = new TtyXterm({
             canonicalPath: msg.canonicalPath,
             sessionKey,
@@ -70,6 +81,8 @@ export const Thunk = {
             uiKey,
             xterm,
           });
+          ttyXterm.initialise();
+
           dispatch(Act.registerInstance({
             key: computeXtermKey(uiKey, sessionKey),
             sessionKey,
@@ -103,7 +116,8 @@ export const reducer = (state = initialState, act: Action): State => {
       instance: addToLookup(createXTermState(act.pay), state.instance),
     };
     case '[xterm] setup': return { ...state,
-      worker: act.pay.webWorker,
+      worker: act.pay.worker,
+      voice: act.pay.voice,
       ready: true,
     };
     case '[xterm] unregister': return { ...state,

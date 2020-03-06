@@ -69,8 +69,8 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     case 'send-tty-signal': {
       // received signal from xterm
       return mutateSession(msg.sessionKey, store, ({ ttyINode }) => {
-        if (msg.signal === ProcessSignal.TERM) {
-          ttyINode?.sendSigTerm();
+        if (msg.signal === ProcessSignal.INT) {
+          ttyINode?.sendSigInt();
         }
       });
     }

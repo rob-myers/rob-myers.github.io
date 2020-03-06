@@ -64,9 +64,9 @@ export class TtyINode extends BaseINode {
    * subscription and subscribing to a new one.
    * But 1st we remove the old subscription's read resolver.
    */
-  public sendSigTerm() {
+  public sendSigInt() {
     this.readResolvers.length = 0;
-    this.def.sendSignal(ProcessSignal.TERM);
+    this.def.sendSignal(ProcessSignal.INT);
   }
 
   public setColumns(cols: number) {

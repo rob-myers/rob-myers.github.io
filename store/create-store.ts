@@ -49,6 +49,7 @@ const persistedReducer = persistReducer({
       (_state): XTermState => ({
         instance: {},
         worker: null,
+        voice: null,
         ready: false,
       }),
       (state) => state,

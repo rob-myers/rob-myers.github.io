@@ -1,14 +1,9 @@
 ## TODO
 
+- fix TermService.src in case of `echo foo & echo bar`
+- use a "history device" which reads like .history and keeps track
+
 - can bring bg processed to foreground
-
-- implement history
-  > must convert src to "one-line src" (our input cannot contain newlines)
-  > use a "history device" which reads like .history and keeps track
-
-- binary error messages shouldn't have prefix `-bash: `
-- fiddle with terminal and summaries features/issues
-- rename from `bash` to e.g. `ti` (textual interface)
 - implement tab completion
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
@@ -88,7 +83,10 @@
 - throttle while so ctrl + c works for `while true; do echo foo; done > bar`
 - FIX pasting onto partial line overwrites
 - background processes are stopped on exit/logout
-
+- binary error messages shouldn't have prefix `-bash: `
+- can convert `Term` to "one-line src" (our input cannot contain newlines)
+- get voice inode working
+- ensure background `say` terminates e.g. via handler for SIGINT but not SIGTERM
 
 ## Bash example
 

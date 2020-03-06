@@ -2,9 +2,9 @@ import { BaseBinaryComposite } from './base-binary';
 import { BinaryExecType } from '@model/sh/binary.model';
 import { Term } from '@model/os/term.model';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
-import { osSetSignalHandlerAct, osIsSessionLeaderThunk, osSetProcessGroupAct, osStoreExitCodeAct } from '@store/os/process.os.duck';
+import { osSetSignalHandlerAct, osIsSessionLeaderThunk, osSetProcessGroupAct, osStoreExitCodeAct, osGetProcessThunk, osTerminateProcessThunk } from '@store/os/process.os.duck';
 import { osSetZeroethParamAct } from '@store/os/declare.os.duck';
-import { osSetSessionForegroundAct } from '@store/os/session.os.duck';
+import { osSetSessionForegroundAct, osEndSessionThunk } from '@store/os/session.os.duck';
 import { ObservedType } from '@os-service/term.service';
 import { osPromptThunk } from '@store/os/tty.os.duck';
 import { osParseBufferThunk, osTranspileShThunk, osDistributeSrcThunk, osGetHistoricalSrc } from '@store/os/parse.os.duck';
@@ -37,36 +37,46 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
   }
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
-    // handle Ctrl+C by resetting itself.
-    dispatch(osSetSignalHandlerAct({ processKey, handler: { TERM: 'reset' }}));
-    // $0 is '-bash' iff process is session leader.
+
+    dispatch(osSetSignalHandlerAct({ processKey, handler: {
+      // handle SIGINT by resetting itself
+      INT: { cleanup: null, do: 'reset' },
+      // handle SIGTERM by ending session or self
+      TERM: { cleanup: () => {
+        if (dispatch(osIsSessionLeaderThunk({ processKey }))) {
+          const { sessionKey } = dispatch(osGetProcessThunk({ processKey }));
+          dispatch(osEndSessionThunk({ sessionKey }));
+        } else {
+          dispatch(osTerminateProcessThunk({ processKey, exitCode: 0 }));
+        }
+      }, do: 'ignore' },
+    }}));
+
+    // $0 is '-bash' iff process is session leader
     const isLeader = dispatch(osIsSessionLeaderThunk({ processKey }));
     dispatch(osSetZeroethParamAct({ processKey, $0: isLeader ? '-bash' : 'bash' }));
     dispatch(osSetProcessGroupAct({ processKey, processGroupKey: processKey }));
     dispatch(osSetSessionForegroundAct({ processKey, processGroupKey: processKey }));
 
-    // Interactive command loop.
-    while (true) {
+    while (true) {// Interactive command loop
       const srcBuffer = [] as string[];
-      // dispatch(osPromptThunk({ processKey, fd: 1, text: '\x1b[96m$ \x1b[0m' }));
+      // NOTE control chars in prompt currently unsupported (TtyXterm)
       dispatch(osPromptThunk({ processKey, fd: 1, text: '$ ' }));
 
-      // Interactive partial-parse loop.
-      while (true) {
-        // We start by reading exactly one line.
-        const buffer = [] as string[];
+      while (true) {// Interactive parse loop
+        const buffer = [] as string[]; // Read exactly one line
         while ((yield this.read(1, 0, buffer)) && !buffer.length);
         
-        srcBuffer.push(...buffer);
+        srcBuffer.push(buffer[0]);
         const result = dispatch(osParseBufferThunk({ processKey, buffer: srcBuffer }));
 
         if (result.key === 'failed') {
-          // Write to stderr, store exit-code and continue.
+          // Write to stderr, store exit-code, goto command loop
           yield this.warn(result.error.replace(/^Error: runtime error: src\.sh:/, ''));
           dispatch(osStoreExitCodeAct({ processKey, exitCode: 1 }));
           break;
         } else if (result.key === 'complete') {
-          // Transpile, distributing source code to specific subterms.
+          // Transpile, distributing source code to specific subterms
           const term = dispatch(osTranspileShThunk({ parsed: result.parsed }));
           dispatch(osDistributeSrcThunk({ term, src: srcBuffer.join('\n') }));
 
@@ -80,8 +90,7 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
           yield* this.runChild({ child: term, dispatch, processKey });
 
           break;
-        } else {
-          // Code in buffer is incomplete, so prompt for more input.
+        } else {// Code in srcBuffer incomplete, so prompt for more input.
           dispatch(osPromptThunk({ processKey, fd: 1, text: '> ' }));
         }
       }

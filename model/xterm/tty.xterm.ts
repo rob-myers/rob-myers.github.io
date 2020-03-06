@@ -1,14 +1,15 @@
-import { OsWorker, MessageFromOsWorker, Message } from '@model/os/os.worker.model';
+import { MessageFromOsWorker, Message } from '@model/os/os.worker.model';
 import { Terminal } from 'xterm';
 import { testNever } from '@model/generic.model';
 import { Redacted } from '@model/redux.model';
 import { ProcessSignal } from '@model/os/process.model';
+import { BaseOsBridge, BaseXtermExtensionDef } from './base-os-bridge';
 
 /**
  * Wrapper around XTerm.Terminal which communicates
  * with a TtyINode in the OS web worker.
  */
-export class TtyXterm {
+export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
   /**
    * e.g. write a line, clear the screen. They are induced
    * by user input and/or processes in the respective session.
@@ -40,7 +41,8 @@ export class TtyXterm {
   /** Shortcut */
   private xterm: Redacted<Terminal>;
 
-  constructor(private def: TtyXtermDef) {
+  constructor(def: TtyXtermDef) {
+    super(def);
     this.xterm = this.def.xterm;
     this.input = '';
     this.cursor = 0;
@@ -48,6 +50,22 @@ export class TtyXterm {
     this.linePending = false;
     this.commandBuffer = [];
     this.nextPrintId = null;
+    this.cursorRow = 0;
+
+    // this.xterm.onData(this.handleXtermInput.bind(this));
+
+    // // Initial message
+    // this.xterm.write('\x1b[38;5;248;1m');
+    // this.xterm.writeln(`Connected to ${this.def.canonicalPath}.\x1b[0m`);
+    // this.clearInput();
+    // this.cursorRow = 2;
+
+    // // Listen to worker
+    // this.def.osWorker.addEventListener('message', this.onWorkerMessage);
+  }
+
+  public initialise() {
+    super.initialise();
 
     this.xterm.onData(this.handleXtermInput.bind(this));
 
@@ -56,9 +74,6 @@ export class TtyXterm {
     this.xterm.writeln(`Connected to ${this.def.canonicalPath}.\x1b[0m`);
     this.clearInput();
     this.cursorRow = 2;
-
-    // Listen to worker
-    this.def.osWorker.addEventListener('message', this.onWorkerMessage);
   }
 
   /**
@@ -137,10 +152,6 @@ export class TtyXterm {
       this.setInput(nextInput);
       this.setCursor(cursor);
     }
-  }
-
-  public dispose() {
-    this.def.osWorker.removeEventListener('message', this.onWorkerMessage);
   }
 
   /**
@@ -300,7 +311,7 @@ export class TtyXterm {
           break;
         }
         case '\x03': {// Ctrl + C.
-          this.sendTermSignal();
+          this.sendSigInt();
           break;
         }
         case '\x17': {// Ctrl + W.
@@ -363,10 +374,9 @@ export class TtyXterm {
   }
 
   /**
-   * Send TERM to foreground process group.
-   * Could argue should send INT instead.
+   * Send SIGINT to foreground process group.
    */
-  private sendTermSignal() {
+  private sendSigInt() {
     this.setCursor(this.input.length);
     this.xterm.write('^C\r\n');
     this.trackCursorRow(1);
@@ -379,7 +389,7 @@ export class TtyXterm {
     this.def.osWorker.postMessage({
       key: 'send-tty-signal',
       sessionKey: this.def.sessionKey,
-      signal: ProcessSignal.TERM,
+      signal: ProcessSignal.INT,
     });
   }
 
@@ -388,7 +398,7 @@ export class TtyXterm {
     this.printPending();
   }
 
-  private onWorkerMessage = ({ data: msg }: Message<MessageFromOsWorker>) => {
+  protected onWorkerMessage({ data: msg }: Message<MessageFromOsWorker>) {
     console.log({ receivedFromOsWorker: msg });
 
     switch (msg.key) {
@@ -463,7 +473,7 @@ export class TtyXterm {
   /**
    * Print part of command buffer to the screen.
    */
-  private print = () => {
+  private runCommands = () => {
     let command: XtermOutputCommand | undefined;
     let numLines = 0;
     this.nextPrintId = null;
@@ -517,7 +527,7 @@ export class TtyXterm {
 
   private printPending() {
     if (this.commandBuffer.length && !this.nextPrintId) {
-      this.nextPrintId = window.setTimeout(this.print, this.def.refreshMs);
+      this.nextPrintId = window.setTimeout(this.runCommands, this.def.refreshMs);
     }
   }
 
@@ -637,9 +647,8 @@ export class TtyXterm {
   }
 }
 
-interface TtyXtermDef {
+interface TtyXtermDef extends BaseXtermExtensionDef {
   uiKey: string;
-  osWorker: OsWorker;
   xterm: Redacted<Terminal>;
   sessionKey: string;
   canonicalPath: string;

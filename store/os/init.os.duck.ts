@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import { generate } from 'shortid';
 import { SyncAct, SyncActDef } from '@model/redux.model';
 import { createOsThunk, OsThunkAct, createOsAct } from '@model/os/os.redux.model';
 import { OsAct, topLevelDirs } from '@model/os/os.model';
@@ -15,7 +16,9 @@ import { DirectoryINode } from '@store/inode/directory.inode';
 import { NullINode } from '@store/inode/null.inode';
 import { RandomINode } from '@store/inode/random.inode';
 import { RegularINode } from '@store/inode/regular.inode';
-// import { VoiceINode } from '@store/inode/voice.inode';
+import { VoiceINode } from '@store/inode/voice.inode';
+import { VoiceCommandSpeech } from '@model/xterm/voice.xterm';
+import { listenToParentUntil } from '@model/os/os.worker.model';
 
 export type Action = (
   | OsInitializedAct
@@ -59,7 +62,7 @@ export type Thunk = (
  */
 export const osInitializeThunk = createOsThunk<OsAct, OsInitializeThunk>(
   OsAct.OS_INITIALIZE_THUNK,
-  ({ dispatch, state: { os: { root } } }) => {
+  ({ dispatch, state: { os: { root }}, worker }) => {
     // Create user 'root' in user-group 'root'.
     dispatch(osCreateUserThunk({ userKey: 'root', groupKeys: [] }));
 
@@ -75,12 +78,40 @@ export const osInitializeThunk = createOsThunk<OsAct, OsInitializeThunk>(
     if (!dev.to.random) {
       dev.addChild('random', new RandomINode({ ...dev.def }));
     }
-    /**
-     * TODO move to main thread
-     */
-    // if (!dev.to.voice) {
-    //   dev.addChild('voice', new VoiceINode({ ...dev.def }));
-    // }
+    if (!dev.to.voice) {
+      dev.addChild('voice', new VoiceINode({
+        ...dev.def,
+        cancelVoiceCommands: (processKey: string) => {
+          worker.postMessage({
+            key: 'cancel-voice-cmds',
+            processKey,
+          });
+        },
+        getVoices: async () => {
+          return await new Promise(resolve => {
+            worker.postMessage({ key: 'get-all-voices' });
+            listenToParentUntil(worker, ({ data: msg }) => {
+              if (msg.key === 'send-all-voices') {
+                resolve(msg.voices);
+                return true;
+              }
+            });
+          });
+        },
+        sendVoiceCommand: async (command: VoiceCommandSpeech) => {
+          const uid = generate();
+          await new Promise(resolve => {
+            worker.postMessage({ key: 'send-voice-cmd', command, uid });
+            listenToParentUntil(worker, ({ data: msg }) => {
+              if (msg.key === 'said-voice-cmd' && msg.uid === uid) {
+                resolve();
+                return true;
+              }
+            });
+          });
+        },
+      }));
+    }
 
     /**
      * Ensure binaries in /bin.

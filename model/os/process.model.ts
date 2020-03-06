@@ -13,9 +13,9 @@ export enum ProcessSignal {
 }
 
 /**
- * Information needed to spawn a process.
+ * A spawned yet unregistered process.
  */
-export interface ProcessDef {
+export interface UnregisteredProcess {
   /**
    * Parent process's identifier.
    */
@@ -37,15 +37,15 @@ export interface ProcessDef {
    * Function definitions.
    */
   toFunc: Record<string, NamedFunction>;
-}
-
-/**
- * A spawned yet unregistered process.
- */
-export interface UnregisteredProcess extends ProcessDef {
-  observable:  ReplaySubject<ObservedType> & {
+  /**
+   * Compiled `term`.
+   */
+  observable: ReplaySubject<ObservedType> & {
     push: (value?: any) => Promise<void>;
   };
+  /**
+   * Running `term`.
+   */
   subscription: null | Subscription;
 }
 
@@ -162,17 +162,13 @@ export interface PositionalProcVar extends BaseProcessVar, BasePositionalVar {}
 export interface NamedFunction {
   /** Function name. */
   key: string;
-  /**
-   * Function definition.
-   */
+  /** Function definition. */
   term: Term;
   /** Export function to child processes? */
   exported: boolean;
   /** Is this function readonly? */
   readonly: boolean;
-  /**
-   * The source code of the body of the function, e.g. { echo foo; }
-   */
+  /** The source code of the body of the function, e.g. `{ echo foo; }` */
   src: null | string;
 }
 
@@ -183,7 +179,10 @@ export type CodeStackItem = (
 
 export type FromFdToOpenKey = Record<number, string>;
 
-export type ProcessSigHandler = Partial<Record<ProcessSignal, SignalHandlerKey>>
+export type ProcessSigHandler = Partial<Record<ProcessSignal, {
+  cleanup: null | (() => void);
+  do: SignalHandlerKey;
+}>>;
 
 export type SignalHandlerKey = (
   // Default behaviour.

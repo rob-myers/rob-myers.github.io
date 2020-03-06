@@ -1,4 +1,4 @@
-import { TtyXterm } from '@store/inode/tty.xterm';
+import { TtyXterm } from '@model/xterm/tty.xterm';
 
 export interface XTermState {
   key: string;

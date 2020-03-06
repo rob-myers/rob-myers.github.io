@@ -1,4 +1,5 @@
 import { ProcessSignal } from './process.model';
+import { VoiceCommandSpeech } from '@model/xterm/voice.xterm';
 
 export interface Message<Data> extends MessageEvent {
   data: Data;
@@ -128,6 +129,29 @@ interface UpdateTtyCols extends BaseMessage {
   cols: number;
 }
 
+interface SendVoiceCommand extends BaseMessage {
+  key: 'send-voice-cmd';
+  command: VoiceCommandSpeech;
+  uid: string;
+}
+interface SaidVoiceCommand extends BaseMessage {
+  key: 'said-voice-cmd';
+  uid: string;
+}
+
+interface CancelVoiceCommands extends BaseMessage {
+  key: 'cancel-voice-cmds';
+  processKey: string;
+}
+
+interface GetAllVoices extends BaseMessage {
+  key: 'get-all-voices';
+}
+interface SendAllVoices extends BaseMessage {
+  key: 'send-all-voices';
+  voices: string[];
+}
+
 export type MessageFromOsParent = (
   | PingFromParent
   | SendLineToTty
@@ -136,6 +160,8 @@ export type MessageFromOsParent = (
   | UpdateTtyCols
   | CreateSession
   | EndSession
+  | SaidVoiceCommand
+  | SendAllVoices
 );
   
 export type MessageFromOsWorker = (
@@ -145,6 +171,9 @@ export type MessageFromOsWorker = (
   | ClearXterm
   | TtyReceivedLine
   | CreatedSession
+  | SendVoiceCommand
+  | CancelVoiceCommands
+  | GetAllVoices
 );
 
 interface BaseMessage {
@@ -152,10 +181,22 @@ interface BaseMessage {
   key: string;
 }
 
-export function listenUntil(
+export function listenToWorkerUntil(
   worker: OsWorker,
   /** Return truthy iff should unregister */
   listener: (message: Message<MessageFromOsWorker>) => any,
+) {
+  worker.addEventListener('message', (message) => {
+    if (listener(message)) {
+      worker.removeEventListener('message', listener);
+    }
+  });
+}
+
+export function listenToParentUntil(
+  worker: OsWorkerContext,
+  /** Return truthy iff should unregister */
+  listener: (message: Message<MessageFromOsParent>) => any,
 ) {
   worker.addEventListener('message', (message) => {
     if (listener(message)) {

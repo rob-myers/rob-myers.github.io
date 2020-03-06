@@ -1,9 +1,10 @@
 import { BuiltinSpecialType } from '../builtin.model';
 import { BaseBuiltinComposite } from './base-builtin';
 import { ObservedType } from '@os-service/term.service';
-import { osTerminateProcessThunk, osIsSessionLeaderThunk, osGetProcessThunk } from '@store/os/process.os.duck';
+import { osIsSessionLeaderThunk, osGetProcessThunk } from '@store/os/process.os.duck';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
-import { osEndSessionThunk } from '@store/os/session.os.duck';
+import { osSignalForegroundThunk } from '@store/os/session.os.duck';
+import { ProcessSignal } from '@model/os/process.model';
 
 export class ExitBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.exit> {
 
@@ -12,21 +13,17 @@ export class ExitBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.exit> {
   }
 
   /**
-   * Terminate process using specified exit code,
-   * falling back to last exit code.
+   * Terminate process using specified exit code or last exit code.
    */
-  public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
-    const logout = dispatch(osIsSessionLeaderThunk({ processKey }));
-    yield this.write(logout ? 'logout' : 'exit');
+  public async *semantics(
+    dispatch: OsDispatchOverload,
+    processKey: string,
+  ): AsyncIterableIterator<ObservedType> {
+    yield this.write(dispatch(osIsSessionLeaderThunk({ processKey })) ? 'logout' : 'exit');
     
-    const exitCode = this.def.args.length ? parseInt(this.def.args[0]) || 0 : 0;
-
-    if (logout) {
-      const { sessionKey } = dispatch(osGetProcessThunk({ processKey }));
-      dispatch(osEndSessionThunk({ sessionKey }));
-    } else {
-      dispatch(osTerminateProcessThunk({ processKey, exitCode }));
-    }
+    const { lastExitCode, sessionKey } = dispatch(osGetProcessThunk({ processKey }));
+    const exitCode = parseInt(this.def.args[0]) || lastExitCode || 0;
+    dispatch(osSignalForegroundThunk({ sessionKey, signal: ProcessSignal.TERM }));
     
     yield this.exit(exitCode);
   }

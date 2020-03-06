@@ -293,7 +293,7 @@ export const osSignalForegroundThunk = createOsThunk<OsAct, SignalForegroundThun
     /**
      * If foreground group is not singleton interactive bash, then
      * expect that the parent of the 1st process in group _is_.
-     * We'll signal it after the others, which will 'reset' it.
+     * We'll signal it after the others.
      */
     const signalKeys = procKeys.slice();
     const first = os.proc[signalKeys[0]];
@@ -311,7 +311,16 @@ export const osSignalForegroundThunk = createOsThunk<OsAct, SignalForegroundThun
       const { sigHandler, term } = os.proc[processKey];
       const handler = sigHandler[signal];
 
-      switch(handler) {
+      if (!handler) {// Terminate if signal unhandled
+        dispatch(osTerminateProcessThunk({ processKey, exitCode: 0 }));
+        continue;
+      }
+
+      if (handler.cleanup) {
+        handler.cleanup();
+      }
+
+      switch(handler.do) {
         case 'ignore': {
           break;
         }
@@ -320,13 +329,11 @@ export const osSignalForegroundThunk = createOsThunk<OsAct, SignalForegroundThun
           dispatch(osStartProcessThunk({ processKey }));
           break;
         }
-        case 'terminate':
-        case undefined:
-        {
+        case 'terminate': {
           dispatch(osTerminateProcessThunk({ processKey, exitCode: 0 })); 
           break;
         }
-        default: throw testNever(handler);
+        default: throw testNever(handler.do);
       }
     }
   }

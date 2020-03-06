@@ -731,35 +731,35 @@ interface StartProcessThunk extends OsThunkAct<OsAct, { processKey: string }, vo
 export const osTerminateProcessThunk = createOsThunk<OsAct, TerminateProcessThunk>(
   OsAct.OS_TERMINATE_PROCESS_THUNK,
   ({ dispatch, state: { os } }, { processKey, exitCode }) => {
-
     if (!os.proc[processKey]) {
-      console.log(`process '${processKey}' has already terminated`);
-      return;
+      return console.log(`process '${processKey}' has already terminated`);
     }
-    const { parentKey, subscription } = os.proc[processKey];
-    dispatch(osCloseProcessFdsAct({ processKey }));
 
-    if (subscription) {// Some running process.
-      subscription.unsubscribe();
-    }
+    dispatch(osCloseProcessFdsAct({ processKey }));
+    // Stop any running code
+    os.proc[processKey].subscription?.unsubscribe();
+    // Terminate any spawned processes
+    // TODO terminate descendants if we implement non-interactive bash
+    Object.values(os.proc)
+      .filter(({ parentKey }) => processKey === parentKey)
+      .forEach(({ key }) => dispatch(osTerminateProcessThunk({ processKey: key, exitCode: 0 })));
+
     dispatch(osUnregisterProcessAct({ processKey }));
 
     console.log(`[\x1b[36m${processKey}\x1b[39m] has terminated.`);
 
+    const { parentKey } = os.proc[processKey];
     if (!os.proc[parentKey]) {// Parent already terminated.
       return;
     }
-    dispatch(osUpdateProcessAct({
-      processKey: parentKey,
+    dispatch(osUpdateProcessAct({ processKey: parentKey,
       updater: ({ childCount: c }) => ({ childCount: c - 1, lastExitCode: exitCode }),
     }));
 
     const { tryResolveWait } = os.proc[parentKey];
     if (tryResolveWait) {// Inform waiting parent that child terminated.
       tryResolveWait(processKey);
-    } else {
-      // Was not waiting, or was but has since been exec'd.
-    }
+    } else {/* Was not waiting, or was but has since been exec'd. */}
   },
 );
 interface TerminateProcessThunk extends OsThunkAct<OsAct, { processKey: string; exitCode: number }, void> {
