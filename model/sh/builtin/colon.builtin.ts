@@ -10,7 +10,7 @@ export class ColonBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.colon>
 
   public async *semantics(): AsyncIterableIterator<ObservedType> {
     /**
-     * Intentionally empty.
+     * NOOP
      */
   }
 

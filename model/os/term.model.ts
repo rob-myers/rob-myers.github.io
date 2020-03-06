@@ -78,6 +78,7 @@ import { ShiftBuiltin } from '../sh/builtin/shift.builtin';
 import { TrapBuiltin } from '../sh/builtin/trap.builtin';
 import { UnsetBuiltin } from '../sh/builtin/unset.builtin';
 import { WcBinary } from '../sh/binary/wc.binary';
+import { HistoryBuiltin } from '@model/sh/builtin/history.builtin';
 
 export type Term = (
   // | LeafTermJSON
@@ -217,6 +218,7 @@ export type OtherBuiltin = (
   | DeclareBuiltin
   | EchoBuiltin
   | FalseBuiltin
+  | HistoryBuiltin
   // LetBuiltin is LetComposite.
   | LocalBuiltin
   | PrintfBuiltin

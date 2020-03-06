@@ -1,6 +1,8 @@
 ## TODO
 
 - implement tab completion
+- implement `jq` using jq-web
+- implement `find` (basic version)
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
 - avoid jerky fade in/out
@@ -89,6 +91,7 @@
 - fix pasting
 - .history device exists, receives src, and can `cat` it
 - use a "history device" which reads like .history and keeps track
+- added builtin eval e.g. `eval '{ while true; do echo foo; sleep 2; done; } &'`
 
 ## Bash example
 

@@ -3,9 +3,6 @@ import { DeclareBuiltinType } from '../os/term.model';
 import { EchoBuiltin } from './builtin/echo.builtin';
 import { PwdBuiltin } from './builtin/pwd.builtin';
 import { TestBuiltin } from './builtin/test.builtin';
-// import { BaseBuiltinComposite } from "./builtin/base-builtin";
-
-// export type BuiltinCompositeJSON = BaseBuiltinComposite<BuiltinType>
 
 export enum BuiltinSpecialType {
   break= 'break',
@@ -84,6 +81,7 @@ export enum BuiltinOtherType {
   enable= 'enable',// TODO
   false= 'false',
   help= 'help',// TODO
+  history= 'history',// TODO
   /**
    * See LetComposite.
    */
