@@ -30,7 +30,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
    */
   private input: string;
   /** Has last line entered by user not yet been read? */
-  private linePending: boolean;
+  private readyForInput: boolean;
   /** Timeout id for next drain of {commandBuffer} to screen. */
   private nextPrintId: null | number;
   /**
@@ -50,7 +50,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     this.input = '';
     this.cursor = 0;
     this.prompt = '';
-    this.linePending = false;
+    this.readyForInput = false;
     this.commandBuffer = [];
     this.nextPrintId = null;
     this.cursorRow = 0;
@@ -198,7 +198,10 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
   }
 
   private async handleXtermInput(data: string) {
-    if (this.linePending) {// Ignore while awaiting read
+    if (data === '\x03') {// Ctrl + C
+      return this.sendSigInt();
+    }
+    if (!this.readyForInput) {// Ignore while awaiting prompt
       return;
     }
     if (data.length > 1 && data.includes('\r')) {
@@ -240,19 +243,23 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     if (ord == 0x1b) { // ANSI escape sequences
       switch (data.slice(1)) {
         case '[A': {// Up arrow.
-          this.def.osWorker.postMessage({
-            key: 'request-history-line',
-            historyIndex: this.historyIndex + 1,
-            sessionKey: this.def.sessionKey,
-          });
+          if (this.readyForInput) {
+            this.def.osWorker.postMessage({
+              key: 'request-history-line',
+              historyIndex: this.historyIndex + 1,
+              sessionKey: this.def.sessionKey,
+            });
+          }
           break;  
         }
         case '[B': {// Down arrow
-          this.def.osWorker.postMessage({
-            key: 'request-history-line',
-            historyIndex: this.historyIndex - 1,
-            sessionKey: this.def.sessionKey,
-          });
+          if (this.readyForInput) {
+            this.def.osWorker.postMessage({
+              key: 'request-history-line',
+              historyIndex: this.historyIndex - 1,
+              sessionKey: this.def.sessionKey,
+            });
+          }
           break;
         }
         case '[D': {// Left Arrow
@@ -431,7 +438,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
           // The tty inode has received the line sent from this xterm,
           // so we can resume listening for input
           this.input = '';
-          this.linePending = false;
+          // this.linePending = false;
         }
         return;
       }
@@ -516,6 +523,8 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
         }
         case 'prompt': {
           this.xterm.write(command.prompt);
+          // Only permit input after prompt
+          this.readyForInput = true;
           break;
         }
         default: throw testNever(command);
@@ -536,7 +545,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
    */
   private sendLine() {
     this.prompt = '';
-    this.linePending = true;
+    this.readyForInput = false;
     this.historyIndex = -1;
     this.preHistory = '';
 

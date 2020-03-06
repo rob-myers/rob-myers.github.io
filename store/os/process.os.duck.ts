@@ -14,6 +14,7 @@ import { osExpandVarThunk, osAssignVarThunk, osRestrictToEnvThunk } from './decl
 import { cloneVar } from '@os-service/process-var.service';
 import { OpenFileRequest } from '@model/os/file.model';
 import { osSetSessionForegroundAct } from './session.os.duck';
+import { builtinKeyToCommand } from '@model/sh/builtin.model';
 
 export type Action = (
   | ClearBufferAct
@@ -611,7 +612,7 @@ export const osWriteWarningThunk = createOsThunk<OsAct, WriteWarningThunk>(
         ? `${zeroethParam}: ${line}` // Prevent erroneous '-bash: bash: ...'.
         : `${term.binaryKey}: ${line}`;
     } else if (term.key === CompositeType.builtin) {
-      warning = `${zeroethParam}: ${term.builtinKey}: ${line}`;
+      warning = `${zeroethParam}: ${builtinKeyToCommand(term.builtinKey)}: ${line}`;
     } else {
       warning = `${zeroethParam}: ${line}`;
     }

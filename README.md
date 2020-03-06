@@ -1,14 +1,12 @@
 ## TODO
 
-
-- use a "history device" which reads like .history and keeps track
-
-- can bring bg processed to foreground
 - implement tab completion
 
 - illustrate floyd-warshall via click on spawn-point and mousemove
 - avoid jerky fade in/out
 - avoid lag caused by floyd-warshall, or at least indicate it
+
+- can bring bg processed to foreground
 
 - string-pulling
 - actors move along them via css
@@ -90,6 +88,8 @@
 - fix TermService.src in case of `echo foo & echo bar` and `{ echo foo & }`
 - fix pasting
 - .history device exists, receives src, and can `cat` it
+- use a "history device" which reads like .history and keeps track
+- only accept key Ctrl+C while awaiting prompt
 
 ## Bash example
 
