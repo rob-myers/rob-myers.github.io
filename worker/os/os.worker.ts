@@ -91,6 +91,12 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
         ttyINode?.setColumns(msg.cols);
       });
     }
+    case 'request-history-line': {
+      /**
+       * TODO session has a history device at /home/user/.history
+       */
+      break;
+    }
   }
 
 });

@@ -4,6 +4,7 @@ export enum INodeType {
   regular= 'regular',
   directory= 'directory',
   fifo= 'fifo',
+  history= 'history',
   null= 'null',
   random= 'random',
   tty= 'tty',

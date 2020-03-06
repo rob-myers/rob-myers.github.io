@@ -1,6 +1,6 @@
 import { OsWorker, Message, MessageFromOsWorker } from '@model/os/os.worker.model';
 
-export abstract class BaseOsBridge<Def extends BaseXtermExtensionDef> {
+export abstract class BaseOsBridge<Def extends BaseOsBridgeDef> {
   constructor(protected def: Def) {}
   
   public initialise() {// Listen to worker
@@ -14,6 +14,6 @@ export abstract class BaseOsBridge<Def extends BaseXtermExtensionDef> {
   protected abstract onWorkerMessage(data: Message<MessageFromOsWorker>): void;
 }
 
-export interface BaseXtermExtensionDef {
+export interface BaseOsBridgeDef {
   osWorker: OsWorker;
 }

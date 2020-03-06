@@ -870,14 +870,14 @@ export class TermService {
             return `"${term.def.cs.map(c => this.src(c)).join('')}"`;
           }
           case ExpandType.extendedGlob: {
-            return term.def.glob.replace('\n', ''); // ignore newlines
+            return term.def.glob.replace(/\n/g, ''); // ignore newlines
           }
           // Literals inside heredocs are handled earlier
           case ExpandType.literal: {
             const parent = term.parent!;
             const value = term.def.value.replace(/\\\n/g, '');
             if (isDoubleQuote(parent)) {// Need $$ for literal $
-              return value.replace('\n', '"$$\'\\n\'"');
+              return value.replace(/\n/g, '"$$\'\\n\'"');
             }
             return term.def.value;
           }
@@ -930,13 +930,13 @@ export class TermService {
           case ExpandType.singleQuote: {
             return `${// Need $$ for literal $
               term.def.interpret ? '$' : ''
-            }'${term.def.value.replace('\n', '\'$$\'\\n\'')}'`;
+            }'${term.def.value.replace(/\n/g, '\'$$\'\\n\'')}'`;
           }
           default: throw testNever(term);
         }
       }
       case CompositeType.function: {
-        return `${term.def.funcName}() { ${term.def.body} }`;
+        return `${term.def.funcName}() { ${this.src(term.def.body)} }`;
       }
       case CompositeType.if: {
         return term.def.cs.map(({ test, child }, i) => test
@@ -970,13 +970,17 @@ export class TermService {
             return `${!def.append ? '&>' : '&>>'}${this.src(def.location)}`;
           }
           /**
-           * Transform heredoc to process expansion to fit on 1 line.
+           * Transform heredoc to fit on 1 line.
            */
           case '<<': {
-            return `${def.fd || ''}<( ${this.src(def.location)} )`;
+            let src = this.src(def.here);
+            if (src.endsWith('\n')) {// echo will add a newline
+              src = src.slice(0, -1);
+            }
+            return `${def.fd || ''}< <( echo "${src.replace(/\n/g, '"$$\'\\n\'"')}" )`;
           }
           case '<<<': {
-            return `${def.fd || ''}<<<( ${this.src(def.location)} )`;
+            return `${def.fd || ''}<<<${this.src(def.location)}`;
           }
           case '<>': {
             return `${def.fd || ''}<>${this.src(def.location)}`;

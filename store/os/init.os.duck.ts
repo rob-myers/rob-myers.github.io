@@ -22,7 +22,6 @@ import { listenToParentUntil } from '@model/os/os.worker.model';
 
 export type Action = (
   | OsInitializedAct
-  // | OsResetAct
 );
 
 /**
@@ -38,19 +37,6 @@ export const osInitializedDef: SyncActDef<OsAct, OsInitializedAct, State> = (_, 
   ...state,
   aux: { ...state.aux, initialized: true },
 });
-
-// /**
-//  * Reset the operating-system state.
-//  */
-// export const osResetAct = createOsAct<OsAct, OsResetAct>(
-//   OsAct.OS_RESET
-// );
-// interface OsResetAct extends SyncAct<OsAct, {}> {
-//   type: OsAct.OS_RESET;
-// }
-// export const osResetDef: SyncActDef<OsAct, OsResetAct, State> = ({}, _state) =>
-//   osInitialState;
-
 
 export type Thunk = (
   | OsInitializeThunk
@@ -121,16 +107,17 @@ export const osInitializeThunk = createOsThunk<OsAct, OsInitializeThunk>(
       ...binaryExecTypes,
       // Some builtins have binaries.
       ...builtinBinaryTypes,
-    ].sort().forEach((binaryType) => bin.addChild(binaryType, new RegularINode({ ...bin.def, binaryType })));
+    ].sort().forEach((binaryType) =>
+      bin.addChild(binaryType, new RegularINode({ ...bin.def, binaryType })));
 
     /**
      * Spawn the top-level process.
      */
     dispatch(osSpawnInitThunk({}));
     /**
-     * Create user 'ged' in user-group 'ged'.
+     * Create user 'user' in user-group 'user'.
      */
-    dispatch(osCreateUserThunk({ userKey: 'ged', groupKeys: [] }));
+    dispatch(osCreateUserThunk({ userKey: 'user', groupKeys: [] }));
     /**
      * Start init process.
      */

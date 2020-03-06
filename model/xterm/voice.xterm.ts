@@ -1,7 +1,11 @@
 import { Redacted, redact } from '@model/redux.model';
 import { Message, MessageFromOsWorker } from '@model/os/os.worker.model';
-import { BaseOsBridge, BaseXtermExtensionDef } from './base-os-bridge';
+import { BaseOsBridge, BaseOsBridgeDef } from './base-os-bridge';
 
+/**
+ * There is only one instance of this class for all xterms,
+ * because the Web Speech API doesn't permit simultaneous voices.
+ */
 export class VoiceXterm extends BaseOsBridge<VoiceXtermDef> {
   private commandBuffer: VoiceCommand[];
   private currentCommand: null | VoiceCommand;
@@ -134,6 +138,6 @@ type VoiceCommand = (
   | VoiceCommandResolve
 );
 
-interface VoiceXtermDef extends BaseXtermExtensionDef {
+interface VoiceXtermDef extends BaseOsBridgeDef {
   defaultVoice?: string;
 }

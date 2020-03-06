@@ -5,10 +5,12 @@ import { DirectoryINode } from '@store/inode/directory.inode';
 import { RegularINode } from '@store/inode/regular.inode';
 import { FifoINode } from '@store/inode/fifo.inode';
 import { VoiceINode } from '@store/inode/voice.inode';
+import { HistoryINode } from '@store/inode/history.inode';
 
 export type INode = (
   | DirectoryINode
   | FifoINode
+  | HistoryINode
   | NullINode
   | RegularINode
   | RandomINode

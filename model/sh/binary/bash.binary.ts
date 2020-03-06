@@ -8,6 +8,8 @@ import { osSetSessionForegroundAct, osEndSessionThunk } from '@store/os/session.
 import { ObservedType } from '@os-service/term.service';
 import { osPromptThunk } from '@store/os/tty.os.duck';
 import { osParseBufferThunk, osTranspileShThunk, osDistributeSrcThunk, osGetHistoricalSrc } from '@store/os/parse.os.duck';
+import { osResolvePathThunk } from '@store/os/file.os.duck';
+import { HistoryINode } from '@store/inode/history.inode';
 
 /**
  * TODO support non-interactive (see repo for 'step')
@@ -58,6 +60,11 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
     dispatch(osSetProcessGroupAct({ processKey, processGroupKey: processKey }));
     dispatch(osSetSessionForegroundAct({ processKey, processGroupKey: processKey }));
 
+    // Get reference to history inode
+    const { userKey } = dispatch(osGetProcessThunk({ processKey }));
+    const historyPath = `/home/${userKey}/.history`;
+    const { iNode: historyINode } = dispatch(osResolvePathThunk({ processKey, path: historyPath }));
+
     while (true) {// Interactive command loop
       const srcBuffer = [] as string[];
       // NOTE control chars in prompt currently unsupported (TtyXterm)
@@ -80,9 +87,9 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
           const term = dispatch(osTranspileShThunk({ parsed: result.parsed }));
           dispatch(osDistributeSrcThunk({ term, src: srcBuffer.join('\n') }));
 
-          // TODO send to .history device
-          const oneLineSrc = dispatch(osGetHistoricalSrc({ term }));
-          console.log({ oneLineSrc });
+          // store in .history device
+          const singleLineSrc = dispatch(osGetHistoricalSrc({ term }));
+          (historyINode as HistoryINode).storeSrcLine(singleLineSrc);
 
           // Mount and run.
           this.mounted = term;

@@ -3,7 +3,7 @@ import { Terminal } from 'xterm';
 import { testNever } from '@model/generic.model';
 import { Redacted } from '@model/redux.model';
 import { ProcessSignal } from '@model/os/process.model';
-import { BaseOsBridge, BaseXtermExtensionDef } from './base-os-bridge';
+import { BaseOsBridge, BaseOsBridgeDef } from './base-os-bridge';
 
 /**
  * Wrapper around XTerm.Terminal which communicates
@@ -41,6 +41,9 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
   /** Shortcut */
   private xterm: Redacted<Terminal>;
 
+  private history: number;
+  private preHistory: string;
+
   constructor(def: TtyXtermDef) {
     super(def);
     this.xterm = this.def.xterm;
@@ -51,17 +54,8 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     this.commandBuffer = [];
     this.nextPrintId = null;
     this.cursorRow = 0;
-
-    // this.xterm.onData(this.handleXtermInput.bind(this));
-
-    // // Initial message
-    // this.xterm.write('\x1b[38;5;248;1m');
-    // this.xterm.writeln(`Connected to ${this.def.canonicalPath}.\x1b[0m`);
-    // this.clearInput();
-    // this.cursorRow = 2;
-
-    // // Listen to worker
-    // this.def.osWorker.addEventListener('message', this.onWorkerMessage);
+    this.history = 0;
+    this.preHistory = this.input;
   }
 
   public initialise() {
@@ -177,17 +171,17 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
   }
 
   /**
-   * Insert character at cursor location
+   * Insert characters at cursor location
    */
   private handleCursorInsert(data: string) {
     const { input, cursor } = this;
     const newInput = input.slice(0, cursor) + data + input.slice(cursor);
-    // Store cursor.
-    const prevCursor = this.cursor;
+    // Store cursor
+    const nextCursor = this.cursor + data.length;
     this.clearInput();
     this.setInput(newInput);
-    // Update cursor.
-    this.setCursor(prevCursor + data.length);
+    // Update cursor
+    this.setCursor(nextCursor);
   }
 
   /**
@@ -207,10 +201,11 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     if (this.linePending) {// Ignore while awaiting read
       return;
     }
-    if (data.length > 3 && data.charCodeAt(0) !== 0x1b) {
-      // Handle pasted input
+    if (data.length > 1 && data.includes('\r')) {
+      // Handle pasting of multiple lines
       const text = data.replace(/[\r\n]+/g, '\n');
       const lines = text.split('\n');
+      lines[0] = `${this.input}${lines[0]}`;
       const last = !text.endsWith('\n') && lines.pop();
       for (const line of lines) {
         await new Promise(resolve => {
@@ -223,18 +218,20 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
       }
       if (last) {// Set as pending input but don't send
         this.queueCommands(
-          lines.length === 1
-            ? { key: 'write', text: last }
-            : { key: 'resolve', resolve: () => {
-              this.clearInput();
-              this.setInput(last);
-            }});
+          { key: 'resolve', resolve: () => {
+            this.clearInput();
+            this.setInput(last);
+          }});
       }
     } else {
       this.handleXtermKeypress(data);
     }
   }
 
+  /**
+   * Handle keypresses (including escape sequences)
+   * or multiple characters via a paste without newline.
+   */
   private handleXtermKeypress(data: string) {
     const ord = data.charCodeAt(0);
     let cursor: number;
@@ -245,12 +242,28 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
           /**
            * TODO history
            */
+          if (!this.history) {
+            this.preHistory = this.input;
+          }
+          this.history = Math.min(500, this.history + 1);
+          this.def.osWorker.postMessage({
+            key: 'request-history-line',
+            history: this.history,
+            sessionKey: this.def.sessionKey,
+          });
           break;  
         }
         case '[B': {// Down arrow.
-          /**
-           * TODO history
-           */
+          this.history = Math.max(0, this.history - 1);
+          if (this.history) {
+            this.def.osWorker.postMessage({
+              key: 'request-history-line',
+              history: this.history,
+              sessionKey: this.def.sessionKey,
+            });
+          } else {
+            this.setInput(this.preHistory);
+          }
           break;
         }
         case '[D': {// Left Arrow.
@@ -296,8 +309,6 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
       // Handle special characters
       switch (data) {
         case '\r': {// Enter.
-          // this.sendLine();
-          // this.prompt = ''; // ?
           this.queueCommands({ key: 'newline' });
           break;
         }
@@ -374,28 +385,26 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
   }
 
   /**
-   * Send SIGINT to foreground process group.
+   * Convert 0-based {cursor} in {input} to
+   * a relative 0-based col/row location.
    */
-  private sendSigInt() {
-    this.setCursor(this.input.length);
-    this.xterm.write('^C\r\n');
-    this.trackCursorRow(1);
-    this.input = '';
-    this.cursor = 0;
-    // Immediately forget any pending output
-    this.commandBuffer.length = 0;
-
-    // Reset controlling process
-    this.def.osWorker.postMessage({
-      key: 'send-tty-signal',
-      sessionKey: this.def.sessionKey,
-      signal: ProcessSignal.INT,
-    });
-  }
-
-  public queueCommands(...commands: XtermOutputCommand[]) {
-    this.commandBuffer.push(...commands);
-    this.printPending();
+  private offsetToColRow(input: string, cursor: number) {
+    const { cols } = this.xterm;
+    let row = 0, col = 0;
+    for (let i = 0; i < cursor; ++i) {
+      const chr = input.charAt(i);
+      if (chr == '\n') {
+        col = 0;
+        row += 1;
+      } else {
+        col += 1;
+        if (col >= cols) {
+          col = 0;
+          row += 1;
+        }
+      }
+    }
+    return { row, col };
   }
 
   protected onWorkerMessage({ data: msg }: Message<MessageFromOsWorker>) {
@@ -437,30 +446,14 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
         }
         return;
       }
-    }
-  }
-
-  /**
-   * Convert 0-based {cursor} in {input} to
-   * a relative 0-based col/row location.
-   */
-  private offsetToColRow(input: string, cursor: number) {
-    const { cols } = this.xterm;
-    let row = 0, col = 0;
-    for (let i = 0; i < cursor; ++i) {
-      const chr = input.charAt(i);
-      if (chr == '\n') {
-        col = 0;
-        row += 1;
-      } else {
-        col += 1;
-        if (col >= cols) {
-          col = 0;
-          row += 1;
+      case 'send-history-line': {
+        if (msg.sessionKey === this.def.sessionKey) {
+          this.clearInput();
+          this.setInput(msg.line);
         }
+        return;
       }
     }
-    return { row, col };
   }
 
   /**
@@ -468,6 +461,11 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
    */
   private numLines() {
     return 1 + this.offsetToColRow(this.input, this.input.length).row;
+  }
+
+  public queueCommands(...commands: XtermOutputCommand[]) {
+    this.commandBuffer.push(...commands);
+    this.printPending();
   }
 
   /**
@@ -478,10 +476,12 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     let numLines = 0;
     this.nextPrintId = null;
 
+    
     while (
       (command = this.commandBuffer.shift())
       && numLines <= this.def.linesPerUpdate
     ) {
+      // console.log({ command });
       switch (command.key) {
         case 'await-prompt': {
           this.commandBuffer.unshift(command);
@@ -514,8 +514,8 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
           command.resolve();
           break;
         }
-        case 'write': {
-          this.xterm.write(command.text);
+        case 'prompt': {
+          this.xterm.write(command.prompt);
           break;
         }
         default: throw testNever(command);
@@ -543,6 +543,26 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
       sessionKey: this.def.sessionKey,
       line: this.input,
       xtermKey: this.def.uiKey,
+    });
+  }
+
+  /**
+   * Send SIGINT to foreground process group.
+   */
+  private sendSigInt() {
+    this.setCursor(this.input.length);
+    this.xterm.write('^C\r\n');
+    this.trackCursorRow(1);
+    this.input = '';
+    this.cursor = 0;
+    // Immediately forget any pending output
+    this.commandBuffer.length = 0;
+
+    // Reset controlling process
+    this.def.osWorker.postMessage({
+      key: 'send-tty-signal',
+      sessionKey: this.def.sessionKey,
+      signal: ProcessSignal.INT,
     });
   }
 
@@ -589,8 +609,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
    * Updates {this.input}. Finishes with cursor at end of input.
    */
   private setInput(newInput: string) {
-    // Return to start of input.
-    this.setCursor(0);
+    this.setCursor(0); // Return to start of input.
     const realNewInput = this.actualLine(newInput);
     // const normalized = realNewInput.replace(/[\r\n]+/g, '\n');
     // this.xterm.write(normalized.replace(/\n/g, '\r\n'));
@@ -616,7 +635,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     if (first && first.key === 'await-prompt') {
       this.commandBuffer.shift();
     }
-    this.queueCommands({ key: 'write', text: prompt });
+    this.queueCommands({ key: 'prompt', prompt });
   }
 
   /**
@@ -647,7 +666,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
   }
 }
 
-interface TtyXtermDef extends BaseXtermExtensionDef {
+interface TtyXtermDef extends BaseOsBridgeDef {
   uiKey: string;
   xterm: Redacted<Terminal>;
   sessionKey: string;
@@ -679,8 +698,8 @@ type XtermOutputCommand = (
     key: 'resolve';
     resolve: () => void;
   } | {
-    /** Write some free text e.g. prompt or line without final newline */
-    key: 'write';
-    text: string;
+    /** Write prompt */
+    key: 'prompt';
+    prompt: string;
   }
 );

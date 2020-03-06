@@ -5,6 +5,8 @@ import { SyncAct, SyncActDef, addToLookup, updateLookup } from '@model/redux.mod
 import { osAssignVarThunk } from './declare.os.duck';
 import { DirectoryINode } from '@store/inode/directory.inode';
 import { osMountFileAct } from './file.os.duck';
+import { INodeType } from '@store/inode/base-inode';
+import { HistoryINode } from '@store/inode/history.inode';
 
 export type Action = (
   | CreateUserGroupAct
@@ -93,12 +95,16 @@ export const osCreateUserThunk = createOsThunk<OsAct, CreateUserThunk>(
     // Ensure user group exists
     dispatch(osCreateUserGroupAct({ groupKey: userKey }));
 
-    // Ensure non-root user has home directory inside /home.
+    // Ensure non-root user has home directory and .history
     if (userKey !== 'root') {
       const parent = os.root.to.home as DirectoryINode;
-      if (!parent.to[userKey]) {
-        const iNode = parent.createSubdir();
-        dispatch(osMountFileAct({ filename: userKey, iNode, parent }));
+      if (parent.to[userKey]?.type !== INodeType.directory) {
+        dispatch(osMountFileAct({ filename: userKey, iNode: parent.createSubdir(), parent }));
+      }
+      const homeDir = parent.to[userKey] as DirectoryINode;
+      if (homeDir.to['.history']?.type !== INodeType.history) {
+        const history = new HistoryINode({ groupKey: userKey, userKey });
+        dispatch(osMountFileAct({ filename: '.history', iNode: history, parent: homeDir }));
       }
     }
     // Register user in state.

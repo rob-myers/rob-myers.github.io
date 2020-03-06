@@ -1,5 +1,6 @@
 ## TODO
 
+
 - use a "history device" which reads like .history and keeps track
 
 - can bring bg processed to foreground
@@ -87,6 +88,8 @@
 - get voice inode working
 - ensure background `say` terminates e.g. via handler for SIGINT but not SIGTERM
 - fix TermService.src in case of `echo foo & echo bar` and `{ echo foo & }`
+- fix pasting
+- .history device exists, receives src, and can `cat` it
 
 ## Bash example
 

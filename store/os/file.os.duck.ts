@@ -493,13 +493,9 @@ export const osReadThunk = createOsThunk<OsAct, ReadThunk>(
       const readReturn = iNode.read(buffer, maxLines, offset);
 
       if (buffer.length > prevLength) {
-        /**
-         * INode specific behaviour on read positive number of lines.
-         * One can read nothing via empty pipe, or regular file with offset beyond EOF.
-         */
-        if (iNode.type === INodeType.regular) {
-          dispatch(osOffsetOpenAct({ openKey, delta: buffer.length - prevLength }));
-        } else if (iNode.type === INodeType.fifo) {
+        // Only useful for 'regular' and 'history' ATOW
+        dispatch(osOffsetOpenAct({ openKey, delta: buffer.length - prevLength }));
+        if (iNode.type === INodeType.fifo) {
           iNode.awakenWriters();
         }
       }
@@ -512,8 +508,12 @@ export const osReadThunk = createOsThunk<OsAct, ReadThunk>(
         }
       } else {// Have read lines and seen EOF.
         // console.log({ buffer: buffer.slice(), prevLength });
-
-        return {// Only report EOF if nothing read (read again for EOF).
+        return {
+          /**
+           * Only report EOF if nothing read (read again for EOF).
+           * One can read nothing via e.g. empty pipe,
+           * or regular file (or history) with offset beyond EOF.
+           */
           eof: buffer.length === prevLength,
           toPromise: null,
         };

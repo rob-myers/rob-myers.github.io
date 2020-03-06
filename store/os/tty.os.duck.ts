@@ -44,14 +44,12 @@ export const osCreateTtyThunk = createOsThunk<OsAct, CreateTtyThunk>(
     const canonicalPath = `/dev/${canonicalFilename}`;
     // const sessionKey = `${userKey}@${canonicalFilename}`;
     const sessionKey = canonicalFilename;
-    // console.log({ nextTtyId, canonicalPath, sessionKey }); 
+    const userKey = 'user'; // TODO
 
-    /**
-     * Create tty device.
-     */
+    // Create tty device
     const iNode = new TtyINode({
-      userKey: 'ged', // TODO
-      groupKey: 'ged', // TODO
+      userKey,
+      groupKey: userKey,
       canonicalPath,
       sendSignal: (signal) => dispatch(osSignalForegroundThunk({
         sessionKey,
@@ -74,9 +72,7 @@ export const osCreateTtyThunk = createOsThunk<OsAct, CreateTtyThunk>(
       }),
     });
 
-    /**
-     * Mount tty device inside /dev.
-     */
+    // Mount tty device inside /dev
     const parent = os.root.to.dev as DirectoryINode;
     dispatch(osMountFileAct({ iNode, parent, filename: canonicalFilename }));
     dispatch(osIncrementTtyIdAct({}));

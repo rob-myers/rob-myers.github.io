@@ -152,6 +152,18 @@ interface SendAllVoices extends BaseMessage {
   voices: string[];
 }
 
+interface RequestHistoryLine extends BaseMessage {
+  key: 'request-history-line';
+  sessionKey: string;
+  /** Non-negative integer */
+  history: number;
+}
+interface SendHistoryLine extends BaseMessage {
+  key: 'send-history-line';
+  sessionKey: string;
+  line: string;
+}
+
 export type MessageFromOsParent = (
   | PingFromParent
   | SendLineToTty
@@ -162,6 +174,7 @@ export type MessageFromOsParent = (
   | EndSession
   | SaidVoiceCommand
   | SendAllVoices
+  | RequestHistoryLine
 );
   
 export type MessageFromOsWorker = (
@@ -174,6 +187,7 @@ export type MessageFromOsWorker = (
   | SendVoiceCommand
   | CancelVoiceCommands
   | GetAllVoices
+  | SendHistoryLine
 );
 
 interface BaseMessage {

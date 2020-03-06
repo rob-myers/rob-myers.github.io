@@ -16,6 +16,7 @@ import { RegularINode } from '@store/inode/regular.inode';
 import { testNever } from '@model/generic.model';
 import { Service } from '@os-service/create-services';
 import { OsWorkerContext } from '@model/os/os.worker.model';
+import { HistoryINode } from '@store/inode/history.inode';
 
 const thunkMiddleware =
   (service: Service, worker: OsWorkerContext) =>
@@ -81,6 +82,9 @@ function rehydrateFilesystem(inode: INode, parent: null | DirectoryINode): INode
     }
     case INodeType.fifo: {
       return new FifoINode({ ...inode.def });
+    }
+    case INodeType.history: {
+      return new HistoryINode({ ...inode.def }, inode.history.slice());
     }
     case INodeType.null: {
       return new NullINode({ ...inode.def });

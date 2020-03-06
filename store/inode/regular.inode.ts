@@ -14,7 +14,7 @@ export class RegularINode extends BaseINode {
     public data: string[] = [],
   ) {
     super(def);
-    this.binary = def.binaryType !== undefined;
+    this.binary = !!def.binaryType;
   }
 
   /**
@@ -40,6 +40,7 @@ export class RegularINode extends BaseINode {
     if (!numLinesLeft) {
       return 0;
     }
+
     // Non-zero because 0 < {offset} < {maxLineNumber} < {data.length}.
     return readLines.length;
   }
