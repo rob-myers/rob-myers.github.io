@@ -188,3 +188,8 @@ export function isDoubleQuote(term: Term): term is DoubleQuoteExpand {
 export function isSingleQuote(term: Term): term is SingleQuoteExpand {
   return term.key === CompositeType.expand && term.expandKey === ExpandType.singleQuote;
 }
+
+export function isBackgroundTerm(term: Term) {
+  return term.key === CompositeType.simple && term.def.background
+    || term.key === CompositeType.compound && term.def.background;
+}

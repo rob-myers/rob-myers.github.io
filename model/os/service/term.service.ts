@@ -1,6 +1,6 @@
 import { ReplaySubject } from 'rxjs';
 import { Term, CompositeType, ExpandComposite, IteratorType, Builtin, DeclareBuiltinType, BinaryComposite } from '@model/os/term.model';
-import { testNever } from '@model/generic.model';
+import { testNever, last } from '@model/generic.model';
 import { BinaryExecType, BinaryType } from '@model/sh/binary.model';
 import { ArithmOpComposite } from '@model/sh/composite/arithm-op.composite';
 import { BlockComposite } from '@model/sh/composite/block.composite';
@@ -82,7 +82,7 @@ import { CstyleForIterator } from '@model/sh/iterator/cstyle-for.iterator';
 import { ForIterator } from '@model/sh/iterator/for.iterator';
 import { WhileIterator } from '@model/sh/iterator/while.iterator';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
-import { iterateTerm, isDoubleQuote } from './term.util';
+import { iterateTerm, isDoubleQuote, isBackgroundTerm } from './term.util';
 import { NamedFunction } from '@model/os/process.model';
 import { WcBinary } from '@model/sh/binary/wc.binary';
 import { GetOpts } from '../os.model';
@@ -765,7 +765,12 @@ export class TermService {
         ? agg + (value ? ` -${key}` : '')
         : `${agg} -${key} '${value}'`
     , '');
-    
+  }
+
+  private seqSrc(children: Term[]) {
+    const srcs = [] as string[];
+    children.forEach((c) => srcs.push(this.src(c), isBackgroundTerm(c) ? ' ' : '; '));
+    return srcs.slice(0, -1).join('');
   }
 
   /**
@@ -813,7 +818,9 @@ export class TermService {
         ].filter(Boolean).join(' ');
       }
       case CompositeType.block: {
-        return `{ ${term.def.cs.map(c => this.src(c)).join('; ')}; }`;
+        // Handle `{ echo foo & }`
+        const terminal = isBackgroundTerm(last(term.def.cs)!) ? '' : ';';
+        return `{ ${ this.seqSrc(term.def.cs) }${terminal} }`;
       }
       case CompositeType.builtin: {
         return [
@@ -853,13 +860,12 @@ export class TermService {
       }
       case CompositeType.expand: {
         switch (term.expandKey) {
-          case ExpandType.arithmetic:
+          case ExpandType.arithmetic: {
             return `$(( ${this.src(term.def.expr)} ))`;
-          case ExpandType.command:
-            return `$( ${
-              term.def.cs.map(c => this.src(c))
-                .filter(Boolean).join(' ')
-            } )`;
+          }
+          case ExpandType.command: {
+            return `$( ${term.def.cs.map(c => this.src(c)).join(' ')} )`;
+          }
           case ExpandType.doubleQuote: {
             return `"${term.def.cs.map(c => this.src(c)).join('')}"`;
           }
@@ -979,7 +985,8 @@ export class TermService {
         }
       }
       case CompositeType.seq: {
-        return term.def.cs.map(c => this.src(c)).join('; ');
+        // Handle `echo foo & echo bar`
+        return this.seqSrc(term.def.cs);
       }
       case CompositeType.simple: {
         return [

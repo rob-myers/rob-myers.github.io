@@ -1,6 +1,5 @@
 ## TODO
 
-- fix TermService.src in case of `echo foo & echo bar`
 - use a "history device" which reads like .history and keeps track
 
 - can bring bg processed to foreground
@@ -87,6 +86,7 @@
 - can convert `Term` to "one-line src" (our input cannot contain newlines)
 - get voice inode working
 - ensure background `say` terminates e.g. via handler for SIGINT but not SIGTERM
+- fix TermService.src in case of `echo foo & echo bar` and `{ echo foo & }`
 
 ## Bash example
 
