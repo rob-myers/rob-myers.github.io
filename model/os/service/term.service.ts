@@ -939,7 +939,7 @@ export class TermService {
         }
       }
       case CompositeType.function: {
-        return `${term.def.funcName}() { ${this.src(term.def.body)} }`;
+        return `${term.def.funcName}() ${this.src(term.def.body)}`;
       }
       case CompositeType.if: {
         return term.def.cs.map(({ test, child }, i) => test
