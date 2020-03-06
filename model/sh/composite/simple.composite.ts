@@ -198,25 +198,28 @@ export class SimpleComposite extends BaseCompositeTerm<CompositeType.simple> {
         yield this.exit(2);
       }
   
-      // Mount term.
-      const builtin = dispatch(osCreateBuiltinThunk({ builtinKey, args }));
-      this.method = { key: 'run-builtin', builtin };
-      this.adoptChildren();
-  
-      // Only '.' and 'source' need {this.def.assigns}.
-      if (builtin.builtinKey === BuiltinSpecialType.period || builtin.builtinKey === BuiltinOtherType.source) {
-        builtin.assigns = this.def.assigns;
+      try {
+        // Mount term.
+        const builtin = dispatch(osCreateBuiltinThunk({ builtinKey, args }));
+        this.method = { key: 'run-builtin', builtin };
+        this.adoptChildren();
+    
+        // Only '.' and 'source' need {this.def.assigns}.
+        if (builtin.builtinKey === BuiltinSpecialType.period || builtin.builtinKey === BuiltinOtherType.source) {
+          builtin.assigns = this.def.assigns;
+        }
+    
+        // Only 'exec' doesn't evaluate redirects now.
+        if (builtin.builtinKey === BuiltinSpecialType.exec) {
+          builtin.redirects = this.def.redirects;
+          yield* this.runChild({ child: builtin, dispatch, processKey });
+        } else {
+          yield* this.runChild({ child: builtin, dispatch, processKey}, { freshRedirs: this.def.redirects });
+        }
+        yield this.exit(builtin.exitCode || 0);
+      } catch (e) {
+        yield this.exit(1, `builtin \`${builtinKey}' not implemented yet`);
       }
-  
-      // Only 'exec' doesn't evaluate redirects now.
-      if (builtin.builtinKey === BuiltinSpecialType.exec) {
-        builtin.redirects = this.def.redirects;
-        yield* this.runChild({ child: builtin, dispatch, processKey });
-      } else {
-        yield* this.runChild({ child: builtin, dispatch, processKey}, { freshRedirs: this.def.redirects });
-      }
-
-      yield this.exit(builtin.exitCode || 0);
     } 
   }
 

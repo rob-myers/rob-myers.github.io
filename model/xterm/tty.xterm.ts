@@ -29,8 +29,10 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
    * The current user input line before pressing enter.
    */
   private input: string;
-  /** Has last line entered by user not yet been read? */
+  /** Has the tty received the last line sent? */
   private readyForInput: boolean;
+  /** Has the tty prompted for input and we haven't sent yet? */
+  private promptReady: boolean;
   /** Timeout id for next drain of {commandBuffer} to screen. */
   private nextPrintId: null | number;
   /**
@@ -50,7 +52,8 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     this.input = '';
     this.cursor = 0;
     this.prompt = '';
-    this.readyForInput = false;
+    this.readyForInput = true;
+    this.promptReady = false;
     this.commandBuffer = [];
     this.nextPrintId = null;
     this.cursorRow = 0;
@@ -120,8 +123,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
    * Find closest word-boundary to the left of cursor.
    */
   private closestLeftBoundary(input: string, cursor: number) {
-    const found = this.wordBoundaries(input, true)
-      .reverse()
+    const found = this.wordBoundaries(input, true).reverse()
       .find((x) => x < cursor);
     return found || 0;
   }
@@ -198,10 +200,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
   }
 
   private async handleXtermInput(data: string) {
-    if (data === '\x03') {// Ctrl + C
-      return this.sendSigInt();
-    }
-    if (!this.readyForInput) {// Ignore while awaiting prompt
+    if (!this.readyForInput) {
       return;
     }
     if (data.length > 1 && data.includes('\r')) {
@@ -243,7 +242,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     if (ord == 0x1b) { // ANSI escape sequences
       switch (data.slice(1)) {
         case '[A': {// Up arrow.
-          if (this.readyForInput) {
+          if (this.promptReady) {
             this.def.osWorker.postMessage({
               key: 'request-history-line',
               historyIndex: this.historyIndex + 1,
@@ -253,7 +252,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
           break;  
         }
         case '[B': {// Down arrow
-          if (this.readyForInput) {
+          if (this.promptReady) {
             this.def.osWorker.postMessage({
               key: 'request-history-line',
               historyIndex: this.historyIndex - 1,
@@ -344,18 +343,14 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
           break;
         }
         case '\x0b': {// Ctrl + K
-          /**
-           * Erase from cursor to EOL.
-           */
+          // Erase from cursor to EOL.
           const nextInput = this.input.slice(0, this.cursor);
           this.clearInput();
           this.setInput(nextInput);
           break;// Cursor already at EOL
         }
         case '\x15': {// Ctrl + U
-          /**
-           * Erase from start of line to cursor.
-           */
+          // Erase from start of line to cursor.
           const nextInput = this.input.slice(this.cursor);
           this.clearInput();
           this.setInput(nextInput);
@@ -435,10 +430,12 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
       }
       case 'tty-received-line': {
         if (msg.sessionKey === this.def.sessionKey && msg.uiKey === this.def.uiKey) {
-          // The tty inode has received the line sent from this xterm,
-          // so we can resume listening for input
+          /**
+           * The tty inode has received the line sent from this xterm.
+           * We now resume listening for input, even without prompt.
+           */
           this.input = '';
-          // this.linePending = false;
+          this.readyForInput = true;
         }
         return;
       }
@@ -523,8 +520,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
         }
         case 'prompt': {
           this.xterm.write(command.prompt);
-          // Only permit input after prompt
-          this.readyForInput = true;
+          this.promptReady = true;
           break;
         }
         default: throw testNever(command);
@@ -545,7 +541,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
    */
   private sendLine() {
     this.prompt = '';
-    this.readyForInput = false;
+    this.readyForInput = this.promptReady = false;
     this.historyIndex = -1;
     this.preHistory = '';
 

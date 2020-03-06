@@ -89,7 +89,7 @@ export enum BuiltinOtherType {
    */
   let= 'let',
   local= 'local',
-  logout= 'logout',// TODO
+  logout= 'logout',
   mapfile= 'mapfile',// TODO
   printf= 'printf',
   pwd= 'pwd',
@@ -98,7 +98,7 @@ export enum BuiltinOtherType {
   /**
    * Same as '.'.
    */
-  source= 'source',// TODO
+  source= 'source',
   /**
    * Similar to {test}.
    * Actual command is [.

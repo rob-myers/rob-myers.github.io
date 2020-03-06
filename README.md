@@ -89,7 +89,6 @@
 - fix pasting
 - .history device exists, receives src, and can `cat` it
 - use a "history device" which reads like .history and keeps track
-- only accept key Ctrl+C while awaiting prompt
 
 ## Bash example
 
