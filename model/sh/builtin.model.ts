@@ -134,37 +134,40 @@ export type BuiltinOtherBinary = (
 /**
  * Other builtins, where {squareBracket} becomes '['.
  */
-export const builtinOtherBinaries = [
-  BuiltinOtherType.alias,
-  BuiltinOtherType.bind,
-  BuiltinOtherType.builtin,
-  BuiltinOtherType.caller,
-  BuiltinOtherType.cd,
-  BuiltinOtherType.command,
-  BuiltinOtherType.declare,
-  BuiltinOtherType.echo,
-  BuiltinOtherType.enable,
-  BuiltinOtherType.false,
-  BuiltinOtherType.help,
-  BuiltinOtherType.let,
-  BuiltinOtherType.local,
-  BuiltinOtherType.logout,
-  BuiltinOtherType.mapfile,
-  BuiltinOtherType.printf,
-  BuiltinOtherType.pwd,
-  BuiltinOtherType.read,
-  BuiltinOtherType.readarray,
-  BuiltinOtherType.source,
-  '[',
-  BuiltinOtherType.test,
-  BuiltinOtherType.times,
-  BuiltinOtherType.true,
-  BuiltinOtherType.type,
-  BuiltinOtherType.typeset,
-  BuiltinOtherType.ulimit,
-  BuiltinOtherType.umask,
-  BuiltinOtherType.unalias,
-] as BuiltinOtherBinary[];
+export const builtinOtherBinaries: {
+  [key in Exclude<BuiltinOtherType, 'squareBracket'> | '[']: true
+} = {
+  [BuiltinOtherType.alias]: true,
+  [BuiltinOtherType.bind]: true,
+  [BuiltinOtherType.builtin]: true,
+  [BuiltinOtherType.caller]: true,
+  [BuiltinOtherType.cd]: true,
+  [BuiltinOtherType.command]: true,
+  [BuiltinOtherType.declare]: true,
+  [BuiltinOtherType.echo]: true,
+  [BuiltinOtherType.enable]: true,
+  [BuiltinOtherType.false]: true,
+  [BuiltinOtherType.help]: true,
+  [BuiltinOtherType.history]: true,
+  [BuiltinOtherType.let]: true,
+  [BuiltinOtherType.local]: true,
+  [BuiltinOtherType.logout]: true,
+  [BuiltinOtherType.mapfile]: true,
+  [BuiltinOtherType.printf]: true,
+  [BuiltinOtherType.pwd]: true,
+  [BuiltinOtherType.read]: true,
+  [BuiltinOtherType.readarray]: true,
+  [BuiltinOtherType.source]: true,
+  '[': true,
+  [BuiltinOtherType.test]: true,
+  [BuiltinOtherType.times]: true,
+  [BuiltinOtherType.true]: true,
+  [BuiltinOtherType.type]: true,
+  [BuiltinOtherType.typeset]: true,
+  [BuiltinOtherType.ulimit]: true,
+  [BuiltinOtherType.umask]: true,
+  [BuiltinOtherType.unalias]: true,
+};
 
 /**
  * Is {x} the command of a non-special builtin?
@@ -172,7 +175,7 @@ export const builtinOtherBinaries = [
 export function isBuiltinOtherCommand(
   x: string,
 ): x is BuiltinOtherBinary {
-  return builtinOtherBinaries.includes(x as any);
+  return (builtinOtherBinaries as any)[x] || false;
 }
 
 export type BuiltinType = (
