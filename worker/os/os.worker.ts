@@ -18,7 +18,6 @@ const persistor = persistStore(store as any, null, () => {
   dispatch(osInitializeThunk({}));
   ctxt.postMessage({ key: 'worker-os-ready' });
 });
-
 persistor.pause(); // We save manually
 
 ctxt.addEventListener('message', async ({ data: msg }) => {

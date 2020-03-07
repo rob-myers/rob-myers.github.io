@@ -1,7 +1,7 @@
 import LevelOverlay from './level-overlay';
 import { useRef } from 'react';
 import LevelCursor from './level-cursor';
-// import css from './level.scss';
+import css from './level.scss';
 
 const Level: React.FC<Props> = ({ width, height, tileDim = 20 }) => {
   const mouseMove = useRef<(e: React.MouseEvent) => void>(() => null);
@@ -9,7 +9,7 @@ const Level: React.FC<Props> = ({ width, height, tileDim = 20 }) => {
 
   return (
     <div ref={root} onMouseMove={(e) => mouseMove.current(e)}>
-      <svg style={{ width, height, border: '1px solid #000' }}>
+      <svg style={{ width, height }} className={css.svg}>
         <LevelOverlay
           width={width}
           height={height}

@@ -21,9 +21,14 @@ interface PongFromWorker extends BaseMessage {
   key: 'pong-from-level';
 }
 
+interface LevelWorkerReady extends BaseMessage {
+  key: 'level-worker-ready';
+}
+
 export type MessageFromLevelParent = (
   | PingFromParent
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker
+  | LevelWorkerReady
 );

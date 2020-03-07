@@ -1,4 +1,4 @@
-import { SyncAct } from '../redux.model';
+import { SyncAct } from '@model/redux.model';
 import { OsWorkerAction, OsWorkerState } from '@worker/os/reducer';
 import { Service } from '@os-service/create-services';
 import { OsWorkerContext } from './os.worker.model';

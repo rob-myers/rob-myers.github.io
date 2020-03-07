@@ -1,6 +1,7 @@
 ## TODO
 
 - level.worker has persisted state and level component talks to it
+- throttled communication
 
 - redo navigation i.e. new component where can specify filled rectangles and inset borders are computed and shown
 - hookup redux and redux-persist to nav worker

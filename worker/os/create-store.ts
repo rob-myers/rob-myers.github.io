@@ -3,7 +3,7 @@ import { composeWithDevTools } from 'remote-redux-devtools';
 import { persistReducer, createTransform } from 'redux-persist';
 import storage from 'localforage';
 import rootReducer, { OsWorkerState, OsWorkerAction, OsWorkerThunk } from './reducer';
-import { RedactInReduxDevTools, Redacted } from '@model/redux.model';
+import { Redacted, replacer } from '@model/redux.model';
 import { OsThunkAct, OsDispatchOverload } from '@model/os/os.redux.model';
 import { State as OsState, initialOsAux } from '@store/os/os.duck';
 import { DirectoryINode } from '@store/inode/directory.inode';
@@ -34,7 +34,6 @@ const thunkMiddleware =
           next(action);
           return;
         };
-
 
 type SerializableINode = DirectoryINode | RegularINode | HistoryINode;
 function isINodeSerializable(inode: INode): inode is SerializableINode {
@@ -90,7 +89,7 @@ const persistedReducer = persistReducer({
           userGrp,
           user,
         };
-        console.log({ transformed });
+        // console.log({ transformed });
         return transformed;
       },
       (state, _key) => ({
@@ -105,7 +104,7 @@ const persistedReducer = persistReducer({
 /**
  * Convert serialized inodes back into {BaseINode} instances.
  */
-function rehydrateFilesystem(inode: INode, parent: null | DirectoryINode): INode {
+export function rehydrateFilesystem(inode: INode, parent: null | DirectoryINode): INode {
   switch (inode.type) {
     case INodeType.directory: {
       const newNode = new DirectoryINode({ ...inode.def }, parent);
@@ -141,14 +140,6 @@ function rehydrateFilesystem(inode: INode, parent: null | DirectoryINode): INode
   }
 }
 
-/** Handle huge/cyclic objects by redacting them. */
-const replacer = (_: any, value: RedactInReduxDevTools) => {
-  if (value && value.devToolsRedaction) {
-    return `Redacted<${value.devToolsRedaction}>`;
-  }
-  return value;
-};
-
 export const initializeStore = (
   service: Service,
   worker: OsWorkerContext,
@@ -175,5 +166,3 @@ export const initializeStore = (
       )
     )
   ) as any as Store<OsWorkerState, OsWorkerAction | OsWorkerThunk>;
-
-export type ReduxStore = ReturnType<typeof initializeStore>;

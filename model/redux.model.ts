@@ -89,3 +89,11 @@ export function updateLookup<LookupItem extends { key: string }>(
 export type ReduxUpdater<LookupItem extends { key: string }> = (
   item: LookupItem
 ) => Partial<LookupItem>;
+
+/** Handle huge/cyclic objects by redacting them. */
+export const replacer = (_: any, value: RedactInReduxDevTools) => {
+  if (value && value.devToolsRedaction) {
+    return `Redacted<${value.devToolsRedaction}>`;
+  }
+  return value;
+};
