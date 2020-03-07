@@ -1,7 +1,7 @@
 import { initializeStore } from './create-store';
 import createServices from '@os-service/create-services';
 import { OsWorkerContext, OsWorker } from '@model/os/os.worker.model';
-import { osInitializeThunk } from '@store/os/init.os.duck';
+import { osInitializeThunk, osStorePingAct } from '@store/os/init.os.duck';
 import { OsSession, osCreateSessionThunk, osEndSessionThunk } from '@store/os/session.os.duck';
 import { persistStore } from 'redux-persist';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
@@ -11,18 +11,15 @@ const ctxt: OsWorkerContext = self as any;
 
 const service = createServices();
 const store = initializeStore(service, ctxt);
-const persistor = persistStore(store as any);
-
-persistor.pause(); // TODO saves
-
 const dispatch = store.dispatch as OsDispatchOverload;
-dispatch(osInitializeThunk({}));
 
-// console.log({ service, store, persistor });
-// TRANSPILE TEST
-// const parsed = service.parseSh.parse('echo foo');
-// const transpiled = service.transpileSh.transpile(parsed);
-// console.log({ parsed, transpiled });
+const persistor = persistStore(store as any, null, () => {
+  // Invoked after rehydration
+  dispatch(osInitializeThunk({}));
+  ctxt.postMessage({ key: 'worker-os-ready' });
+});
+
+persistor.pause(); // We save manually
 
 ctxt.addEventListener('message', async ({ data: msg }) => {
   console.log({ osWorkerReceived: msg });
@@ -101,6 +98,13 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
           nextIndex,
         });
       });
+      break;
+    }
+    case 'save-os': {
+      persistor.persist();
+      // Trigger persist
+      dispatch(osStorePingAct({ pingedAtMs: Date.now() }));
+      persistor.pause();
       break;
     }
   }

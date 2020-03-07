@@ -35,26 +35,62 @@ const thunkMiddleware =
           return;
         };
 
+
+type SerializableINode = DirectoryINode | RegularINode | HistoryINode;
+function isINodeSerializable(inode: INode): inode is SerializableINode {
+  return inode.type === INodeType.directory
+  || inode.type === INodeType.regular
+  || inode.type === INodeType.history;
+}
+type INodeJson = DirJson | RegJson | HistJson;
+type DirJson = Pick<DirectoryINode, 'type' | 'def' | 'to'>;
+type RegJson = Pick<RegularINode, 'type' | 'data'>;
+type HistJson = Pick<HistoryINode, 'type' | 'history'>;
+
+function serializeFiles(inode: SerializableINode): INodeJson {
+  switch (inode.type) {
+    case INodeType.directory: return {
+      type: INodeType.directory,
+      def: inode.def,
+      to: Object.entries(inode.to).reduce((agg, [k, v]) => ({
+        ...agg,
+        ...(isINodeSerializable(v) && { [k]: serializeFiles(v) }),
+      }), {}),
+    };
+    case INodeType.regular: return {
+      type: INodeType.regular,
+      data: inode.data.slice(),
+    };
+    case INodeType.history: return {
+      type: INodeType.history,
+      history: inode.history.slice(),
+    };
+  }
+}
+
 const persistedReducer = persistReducer({
   key: 'os-worker',
   storage,
   transforms: [
     createTransform<OsState, OsState>(
       ({ root, user, userGrp }, _key) => {
-        // Remove devices to avoid serializing TtyINode
-        const preRoot = { ...root, to: { ...root.to} } as OsState['root'];
-        delete preRoot.to.dev;
+        const home = root.to.home as DirectoryINode;
         
         const transformed: OsState = {
           aux: initialOsAux,
           ofd: {},
           proc: {},
           procGrp: {},
-          root: preRoot,
+          root: {
+            type: INodeType.directory,
+            def: root.def,
+            to: { home: serializeFiles(home) },
+          } as unknown as DirectoryINode,
           session: {},
           userGrp,
           user,
         };
+        console.log({ transformed });
         return transformed;
       },
       (state, _key) => ({

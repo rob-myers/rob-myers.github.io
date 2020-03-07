@@ -30,6 +30,10 @@ interface PongFromWorker extends BaseMessage {
   key: 'pong';
 }
 
+interface WorkerOsReady extends BaseMessage {
+  key: 'worker-os-ready';
+}
+
 /**
  * xterm requests a new session from tty
  */
@@ -165,6 +169,10 @@ interface SendHistoryLine extends BaseMessage {
   nextIndex: number;
 }
 
+interface SaveOperatingSystem extends BaseMessage {
+  key: 'save-os';
+}
+
 export type MessageFromOsParent = (
   | PingFromParent
   | SendLineToTty
@@ -176,10 +184,12 @@ export type MessageFromOsParent = (
   | SaidVoiceCommand
   | SendAllVoices
   | RequestHistoryLine
+  | SaveOperatingSystem
 );
   
 export type MessageFromOsWorker = (
   | PongFromWorker
+  | WorkerOsReady
   | SetXtermPrompt
   | WriteToXterm
   | ClearXterm
