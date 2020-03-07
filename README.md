@@ -1,6 +1,7 @@
 ## TODO
 
-- cleanup demo-1 worker
+- level.worker has persisted state and level component talks to it
+
 - redo navigation i.e. new component where can specify filled rectangles and inset borders are computed and shown
 - hookup redux and redux-persist to nav worker
 - store as branch `redo-navigation`.
@@ -24,6 +25,7 @@
 - integrate gitalk from older branch
 - delete older branch
 - merge this branch `fresh-start-2020` into new branch `dev`.
+- cleanup nav.worker; now intend to replace by level.worker
 
 ## So far
 

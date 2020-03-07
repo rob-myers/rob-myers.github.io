@@ -6,15 +6,15 @@ function toGrid(x: number, td: number) {
   return Math.floor(x / td) * td;
 }
 
-const LevelCursor: React.FC<Props> = ({ root, tileDim, onMount }) => {
+const LevelCursor: React.FC<Props> = ({ root, tileDim, provideHandler }) => {
   const origin = useRef(new Vector2(0, 0));
   const [cursor, setCursor] = useState(new Vector2(0, 0));
 
   useEffect(() => {
     if (root.current) {
       const rect = root.current.getBoundingClientRect();
-      origin.current!.set(rect.x, rect.y);
-      onMount((e) => {
+      origin.current.set(rect.x, rect.y);
+      provideHandler((e) => {
         if (e) {
           const { clientX, clientY } = e;
           const { x: ox, y: oy } = origin.current;
@@ -38,7 +38,7 @@ const LevelCursor: React.FC<Props> = ({ root, tileDim, onMount }) => {
 interface Props {
   tileDim: number;
   root: React.RefObject<HTMLDivElement>;
-  onMount: (onMouseMove: (e: React.MouseEvent) => void) => void;
+  provideHandler: (onMouseMove: (e: React.MouseEvent) => void) => void;
 }
 
 export default LevelCursor;

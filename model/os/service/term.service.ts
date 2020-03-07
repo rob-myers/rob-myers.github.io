@@ -964,7 +964,7 @@ export class TermService {
               def.mod === 'move' ? '-' : ''}`;
           }
           case '>': {
-            return `${def.fd || ''}${def.mod === 'append' ? '>>' : def.mod ? '>' : '>&'}${
+            return `${def.fd || ''}${def.mod === 'append' ? '>>' : def.mod ? '>&' : '>'}${
               this.src(def.location) }${def.mod === 'move' ? '-' : ''}`;
           }
           case '&>': {

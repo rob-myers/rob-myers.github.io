@@ -16,7 +16,7 @@ const Level: React.FC<Props> = ({ width, height, tileDim = 20 }) => {
           tileDim={tileDim}
         />
         <LevelCursor
-          onMount={(onMouseMove) => mouseMove.current = onMouseMove}
+          provideHandler={(onMouseMove) => mouseMove.current = onMouseMove}
           root={root}
           tileDim={tileDim}
         />
