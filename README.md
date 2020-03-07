@@ -1,5 +1,7 @@
 ## TODO
 
+- ensure demo-1 works, provide linked pages, ensure working, store as branch `first-2-demos`.
+
 - implement tab completion
 - implement `jq` using jq-web
 - implement `find` (basic version)

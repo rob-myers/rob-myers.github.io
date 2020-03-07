@@ -960,17 +960,15 @@ export class TermService {
         const { def } = term;
         switch (def.subKey) {
           case '<': {
-            return `${def.fd || ''}<${def.mod ? '&' : ''}${
-              this.src(def.location)
-            }${def.mod === 'move' ? '-' : ''}`;
+            return `${def.fd || ''}<${def.mod ? '&' : ''}${this.src(def.location) }${
+              def.mod === 'move' ? '-' : ''}`;
           }
           case '>': {
-            return `${def.fd || ''}${
-              def.mod === 'append' ? '>>' : '>'
-            }${ def.mod ? '&' : '' }${ this.src(def.location) }${def.mod === 'move' ? '-' : ''}`;
+            return `${def.fd || ''}${def.mod === 'append' ? '>>' : def.mod ? '>' : '>&'}${
+              this.src(def.location) }${def.mod === 'move' ? '-' : ''}`;
           }
           case '&>': {
-            return `${!def.append ? '&>' : '&>>'}${this.src(def.location)}`;
+            return `${def.append ? '&>>' : '&>'}${this.src(def.location)}`;
           }
           /**
            * Transform heredoc to fit on 1 line.
