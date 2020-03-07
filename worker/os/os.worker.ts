@@ -22,7 +22,7 @@ const persistor = persistStore(store as any, null, () => {
 persistor.pause(); // We save manually
 
 ctxt.addEventListener('message', async ({ data: msg }) => {
-  console.log({ osWorkerReceived: msg });
+  // console.log({ osWorkerReceived: msg });
 
   switch (msg.key) {
     case 'ping': {

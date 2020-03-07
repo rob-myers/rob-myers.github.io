@@ -1,9 +1,10 @@
-import { MessageFromOsWorker, Message } from '@model/os/os.worker.model';
+import { MessageFromOsWorker } from '@model/os/os.worker.model';
 import { Terminal } from 'xterm';
 import { testNever } from '@model/generic.model';
 import { Redacted } from '@model/redux.model';
 import { ProcessSignal } from '@model/os/process.model';
 import { BaseOsBridge, BaseOsBridgeDef } from './base-os-bridge';
+import { Message } from '@model/worker.model';
 
 /**
  * Wrapper around XTerm.Terminal which communicates

@@ -1,10 +1,6 @@
 import { ProcessSignal } from './process.model';
 import { VoiceCommandSpeech } from '@model/xterm/voice.xterm';
-import { BaseMessage } from '@model/worker.model';
-
-export interface Message<Data> extends MessageEvent {
-  data: Data;
-}
+import { BaseMessage, Message } from '@model/worker.model';
 
 /** Worker in parent thread */
 export interface OsWorker extends Worker {

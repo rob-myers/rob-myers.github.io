@@ -2,6 +2,7 @@
 
 - cleanup demo-1 worker
 - redo navigation i.e. new component where can specify filled rectangles and inset borders are computed and shown
+- hookup redux and redux-persist to nav worker
 - store as branch `redo-navigation`.
 
 - implement tab completion

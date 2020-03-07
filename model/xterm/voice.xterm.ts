@@ -1,6 +1,7 @@
 import { Redacted, redact } from '@model/redux.model';
-import { Message, MessageFromOsWorker } from '@model/os/os.worker.model';
+import { MessageFromOsWorker } from '@model/os/os.worker.model';
 import { BaseOsBridge, BaseOsBridgeDef } from './base-os-bridge';
+import { Message } from '@model/worker.model';
 
 /**
  * There is only one instance of this class for all xterms,

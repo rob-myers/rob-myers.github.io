@@ -1,4 +1,5 @@
-import { OsWorker, Message, MessageFromOsWorker } from '@model/os/os.worker.model';
+import { OsWorker, MessageFromOsWorker } from '@model/os/os.worker.model';
+import { Message } from '@model/worker.model';
 
 export abstract class BaseOsBridge<Def extends BaseOsBridgeDef> {
   constructor(protected def: Def) {}
