@@ -22,6 +22,7 @@ import { listenToParentUntil } from '@model/os/os.worker.model';
 
 export type Action = (
   | OsInitializedAct
+  | OsStorePingAct
 );
 
 /**
@@ -36,6 +37,17 @@ interface OsInitializedAct extends SyncAct<OsAct, {}> {
 export const osInitializedDef: SyncActDef<OsAct, OsInitializedAct, State> = (_, state) => ({
   ...state,
   aux: { ...state.aux, initialized: true },
+});
+
+export const osStorePingAct = createOsAct<OsAct, OsStorePingAct>(
+  OsAct.OS_STORE_LAST_PING,
+);
+interface OsStorePingAct extends SyncAct<OsAct, { pingedAtMs: number }> {
+  type: OsAct.OS_STORE_LAST_PING;
+}
+export const osStoreLastPingDef: SyncActDef<OsAct, OsStorePingAct, State> = ({ pingedAtMs }, state) => ({
+  ...state,
+  aux: { ...state.aux, lastPingMs: pingedAtMs },
 });
 
 export type Thunk = (

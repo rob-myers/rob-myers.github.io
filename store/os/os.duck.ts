@@ -23,6 +23,8 @@ export interface State {
     nextGid: number;
     /** Legacy tty id. */
     nextTtyId: number;
+    /** Last ping in ms since epoch. */
+    lastPingMs: null | number;
   };
   /**
    * Sessions.
@@ -60,6 +62,7 @@ export const initialOsAux: State['aux'] = {
   nextUid: 0,
   nextGid: 0,
   nextTtyId: 1,
+  lastPingMs: null,
 };
 
 export const osInitialState: State = {
@@ -78,7 +81,7 @@ export const osInitialState: State = {
  */
 import { Action as DeclareAction, Thunk as DeclareThunk, osUpdateNestedVarDef, osSetZeroethParamDef, osPushRedirectScopeDef, osPopRedirectScopeDef, osPushPositionalsScopeDef, osPopPositionalsScopeDef, osPushVarScopeDef, osPopVarScopeDef, osUpdateFunctionDef, osAddFunctionDef, osShiftPositionalsDef } from './declare.os.duck';
 import { Action as FileAction, Thunk as FileThunk, osMountFileDef, osIncrementOpenDef, osRegisterOpenFileDef, osSetFileDescriptorDef, osCloseFdDef, osDupFileDescriptorDef, osOffsetOpenDef } from './file.os.duck';
-import { Action as InitAction, Thunk as InitThunk, osInitializedDef } from './init.os.duck';
+import { Action as InitAction, Thunk as InitThunk, osInitializedDef, osStoreLastPingDef } from './init.os.duck';
 import { Action as ProcessAction, Thunk as ProcessThunk, osStoreExitCodeDef, osRegisterProcessDef, osCloseProcessFdsDef, osSetProcessGroupDef, osUpdateProcessDef, osSetSignalHandlerDef, osStoreProcessSubscriptionDef, osClearBufferDef, osPushCodeStackDef, osPopCodeStackDef, osUnregisterProcessDef } from './process.os.duck';
 import { Action as SessionAction, Thunk as SessionThunk } from './session.os.duck';
 import { Action as UserAction, Thunk as UserThunk, osCreateUserGroupDef, osRegisterUserDef, osSetProcessUidDef } from './user.os.duck';
@@ -203,6 +206,9 @@ export function reducer(state: State = osInitialState, action: Action): State {
     }
     case OsAct.OS_STORE_EXIT_CODE: {
       return osStoreExitCodeDef(action.pay, state);
+    }
+    case OsAct.OS_STORE_LAST_PING: {
+      return osStoreLastPingDef(action.pay, state);
     }
     case OsAct.OS_UNREGISTER_PROCESS: {
       return osUnregisterProcessDef(action.pay, state);
