@@ -5,8 +5,9 @@ import Link from 'next/link';
 import css from './index.scss';
 
 const links = [
-  { label: 'Demo 1', pathname: '/demo', query: { id: 1 } },
-  { label: 'Demo 2', pathname: '/demo', query: { id: 2 } },
+  { label: 'NavDom (old)', pathname: '/demo', query: { id: 1 } },
+  { label: 'Bash in browser', pathname: '/demo', query: { id: 2 } },
+  { label: 'Level', pathname: '/demo', query: { id: 3 } },
 ];
 
 const Home: React.FC = () => {

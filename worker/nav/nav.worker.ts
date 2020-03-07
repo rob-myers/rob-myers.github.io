@@ -5,17 +5,8 @@ import { NavGraph, FloydWarshall } from '@model/nav/nav-graph.model';
 
 const ctxt: NavWorkerContext = self as any;
 
-// interface Store {
-//   floydWarshall: Record<string, FloydWarshall>;
-// }
-
-// const store: Store = {
-//   floydWarshall: {},
-// };
-
 ctxt.addEventListener('message', async ({ data: msg }) => {
   console.log({ navWorkerReceived: msg });
-  // const { context } = data;  
 
   switch (msg.key) {
     case 'ping-nav': {
