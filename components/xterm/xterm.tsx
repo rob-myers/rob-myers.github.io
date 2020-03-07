@@ -44,7 +44,6 @@ const XTermComponent: React.FC<Props> = ({
     <div
       ref={containerRef}
       className={className}
-      style={{ height: '100%', width: '100%' }}
     />
   );
 };

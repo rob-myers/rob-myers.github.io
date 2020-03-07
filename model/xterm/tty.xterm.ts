@@ -399,7 +399,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
   }
 
   protected onWorkerMessage({ data: msg }: Message<MessageFromOsWorker>) {
-    console.log({ receivedFromOsWorker: msg });
+    // console.log({ receivedFromOsWorker: msg });
 
     switch (msg.key) {
       case 'set-xterm-prompt': {
@@ -618,9 +618,6 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
   private setInput(newInput: string) {
     this.setCursor(0); // Return to start of input.
     const realNewInput = this.actualLine(newInput);
-    // const normalized = realNewInput.replace(/[\r\n]+/g, '\n');
-    // this.xterm.write(normalized.replace(/\n/g, '\r\n'));
-    // this.xterm.write(this.normalizeText(realNewInput));
     this.xterm.write(realNewInput);
     /**
      * Right-edge detection uses {newInput} sans prompt.

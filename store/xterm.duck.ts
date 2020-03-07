@@ -84,7 +84,7 @@ export const Thunk = {
             canonicalPath: msg.canonicalPath,
             sessionKey,
             linesPerUpdate: 100,
-            refreshMs: 10,
+            refreshMs: 1,
             osWorker: worker,
             uiKey,
             xterm,

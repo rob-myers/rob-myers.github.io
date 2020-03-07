@@ -50,17 +50,15 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     }
     case 'line-to-tty': {
       return mutateSession(msg.sessionKey, store, ({ ttyINode }) => {
-        if (ttyINode) {
-          ttyINode.inputs.push({
-            line: msg.line,
-            resolve: () => ctxt.postMessage({
-              key: 'tty-received-line',
-              sessionKey: msg.sessionKey,
-              uiKey: msg.xtermKey,
-            })
-          });
-          ttyINode.awakenFirstPendingReader();
-        }
+        ttyINode?.inputs.push({
+          line: msg.line,
+          resolve: () => ctxt.postMessage({
+            key: 'tty-received-line',
+            sessionKey: msg.sessionKey,
+            uiKey: msg.xtermKey,
+          })
+        });
+        ttyINode?.awakenFirstPendingReader();
       });
     }
     case 'send-tty-signal': {
