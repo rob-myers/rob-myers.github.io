@@ -5,7 +5,6 @@ import Link from 'next/link';
 import css from './index.scss';
 
 const links = [
-  { label: 'About', pathname: '/about', query: {} },
   { label: 'Demo 1', pathname: '/demo', query: { id: 1 } },
   { label: 'Demo 2', pathname: '/demo', query: { id: 2 } },
 ];
@@ -16,11 +15,15 @@ const Home: React.FC = () => {
       <Head>
         <title>rob-myers</title>
       </Head>
+      <h1>Robert S. R. Myers</h1>
       <section className={css.links}>
+        <Link href="about">
+          <a>About</a>
+        </Link>
         {
-          links.map(({ pathname, query, label }, i) => (
+          links.map(({ query, label }, i) => (
             <div key={i}>
-              <Link href={{ pathname, query }}>
+              <Link href="demo/[pid]" as={`demo/${query.id}`}>
                 <a>{ label }</a>
               </Link> 
             </div>

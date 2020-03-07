@@ -1,6 +1,6 @@
 ## TODO
 
-- fix demo-1
+- redo navigation e.g. interactive level building via graph
 - cleanup demo-1 worker
 - store as branch `first-2-demos`.
 
