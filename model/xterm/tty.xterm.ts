@@ -57,7 +57,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     this.commandBuffer = [];
     this.nextPrintId = null;
     this.cursorRow = 0;
-    this.historyIndex = 0;
+    this.historyIndex = -1;
     this.preHistory = this.input;
   }
 

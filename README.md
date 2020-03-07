@@ -1,8 +1,8 @@
 ## TODO
 
-- redo navigation e.g. interactive level building via graph
 - cleanup demo-1 worker
-- store as branch `first-2-demos`.
+- redo navigation i.e. new component where can specify filled rectangles and inset borders are computed and shown
+- store as branch `redo-navigation`.
 
 - implement tab completion
 - implement `jq` using jq-web

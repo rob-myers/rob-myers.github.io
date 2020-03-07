@@ -19,7 +19,7 @@ import {
   createNavSpawnState,
 } from '@model/nav/nav.model';
 import { Poly2 } from '@model/poly2.model';
-import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav/nav-worker.model';
+import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav/nav.worker.model';
 import { traverseDom } from '@model/dom.model';
 import { NavGraph } from '@model/nav/nav-graph.model';
 

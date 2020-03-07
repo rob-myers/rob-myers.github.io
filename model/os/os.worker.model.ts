@@ -1,5 +1,6 @@
 import { ProcessSignal } from './process.model';
 import { VoiceCommandSpeech } from '@model/xterm/voice.xterm';
+import { BaseMessage } from '@model/worker.model';
 
 export interface Message<Data> extends MessageEvent {
   data: Data;
@@ -200,11 +201,6 @@ export type MessageFromOsWorker = (
   | GetAllVoices
   | SendHistoryLine
 );
-
-interface BaseMessage {
-  /** Message uid */
-  key: string;
-}
 
 export function listenToWorkerUntil(
   worker: OsWorker,

@@ -1,10 +1,71 @@
-/**
- * TODO simplify e.g. remove contracts
- */
 import { Poly2Json } from '@model/poly2.model';
 import { Rect2Json } from '../rect2.model';
 import { KeyedUnionToLookup } from '../generic.model';
 import { NavGraphJson } from './nav-graph.model';
+import { BaseMessage } from '@model/worker.model';
+
+/** A Worker instance in parent thread. */
+export interface NavWorker extends Worker {
+  postMessage(message: NavDataFromParent): void;
+  addEventListener(type: 'message', listener: (message: NavMessageFromWorker) => void): void;
+  addEventListener(type: 'message', object: EventListenerObject): void;
+}
+
+/** A web worker. */
+export interface NavWorkerContext extends Worker {
+  postMessage(message: NavDataFromWorker): void;
+  addEventListener(type: 'message', listener: (message: NavMessageFromParent) => void): void;
+  addEventListener(type: 'message', object: EventListenerObject): void; 
+}
+
+interface PingFromParent extends BaseMessage {
+  key: 'ping-nav';
+}
+interface PongFromWorker extends BaseMessage {
+  key: 'pong-from-nav';
+}
+
+interface RequestNavData extends BaseMessage {
+  key: 'request-nav-data';
+  /** World bounds */
+  bounds: Rect2Json;
+  /** NavDom uid */
+  navUid: string;
+  navOutset: number;
+  /** Rectangles in world coords */
+  rects: Rect2Json[];
+  spawns: Rect2Json[];
+  debug?: boolean;
+}
+interface SendNavOutline extends BaseMessage {
+  key: 'send-nav-outline';
+  /** Navigable multipolygon with triangulation */
+  navPolys: Poly2Json[];
+}
+/** In future might not send this. */
+interface SendRefinedNav extends BaseMessage {
+  key: 'send-refined-nav';
+  /** Refined navigable multipolygon with Steiner points */
+  refinedNavPolys: Poly2Json[];
+}
+interface SendNavGraph extends BaseMessage {
+  key: 'send-nav-graph';
+  navGraph: NavGraphJson;
+}
+
+export type MessageFromNavParent = (
+  | PingFromParent
+  | RequestNavData
+);
+export type MessageFromNavWorker = (
+  | PongFromWorker
+  | SendNavOutline
+  | SendRefinedNav
+  | SendNavGraph
+);
+
+// OLD BELOW
+//
 
 type NavToWorkerKey = (
   | 'ping?'
@@ -84,23 +145,6 @@ interface NavMessageFromParent extends MessageEvent {
   data: NavDataFromParent;
 }
 
-/**
- * A Worker instance in parent thread.
- */
-export interface NavWorker extends Worker {
-  postMessage(message: NavDataFromParent): void;
-  addEventListener(type: 'message', listener: (message: NavMessageFromWorker) => void): void;
-  addEventListener(type: 'message', object: EventListenerObject): void;
-}
-
-/**
- * A web worker.
- */
-export interface NavWorkerContext extends Worker {
-  postMessage(message: NavDataFromWorker): void;
-  addEventListener(type: 'message', listener: (message: NavMessageFromParent) => void): void;
-  addEventListener(type: 'message', object: EventListenerObject): void; 
-}
 
 /**
  * Register parent-side of contract.

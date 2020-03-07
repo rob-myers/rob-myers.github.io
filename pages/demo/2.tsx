@@ -1,10 +1,12 @@
 import { hot } from 'react-hot-loader/root';
 import withRedux from '@store/with-redux';
-import Demo2 from '@components/demo/demo-2';
+import { Session } from '@components/xterm/session';
 
 const Demo2Page: React.FC = () => {
   return (
-    <Demo2/>
+    <div>
+      <Session uid="demo-2" userKey="user" />
+    </div>
   );
 };
 
