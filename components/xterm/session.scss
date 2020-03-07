@@ -1,15 +1,26 @@
+.container {
+  background: darkslategray;
+}
+
 .top-panel {
   display: flex;
   justify-content: flex-end;
 }
 
 .save-button {
-  color: black;
-  text-decoration: underline;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10pt;
+  margin-right: 5px;
   cursor: pointer;
+
+  &:hover {
+    color: yellow;
+  }
 }
 
 .terminal {
-  padding-left: 2px;
-  background: black;
+  border: 1px solid black;
+  border-left-width: 2px;
+  border-radius: 2px;
 }

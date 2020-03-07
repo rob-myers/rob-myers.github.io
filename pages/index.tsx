@@ -6,11 +6,11 @@ import css from './index.scss';
 
 const Home: React.FC = () => {
   return (
-    <div className={css.root}>
-      <h1>Hello, world!</h1>
+    <section className={css.root}>
+      {/* <h2>Hello, world!</h2> */}
       {/* <Demo1 /> */}
       <Demo2 />
-    </div>  
+    </section>  
   );
 };
 

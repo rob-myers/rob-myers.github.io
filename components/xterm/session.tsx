@@ -26,15 +26,15 @@ export const Session: React.FC<Props> = ({ uid, userKey }) => {
   }, []);
   
   return (
-    <div>
-      <div className={css.topPanel}>
+    <section className={css.container}>
+      <section className={css.topPanel}>
         <a
           className={css.saveButton}
           onClick={() => dispatch(Thunk.saveOs({}))}
         >
           save
         </a>
-      </div>
+      </section>
       <XTermWithoutSsr
         className={css.terminal}
         onMount={async (xterm) => {
@@ -55,7 +55,7 @@ export const Session: React.FC<Props> = ({ uid, userKey }) => {
           },
         }}
       />
-    </div>
+    </section>
   );
 };
 
