@@ -1,6 +1,8 @@
 ## TODO
 
-- ensure demo-1 works, provide linked pages, ensure working, store as branch `first-2-demos`.
+- fix demo-1
+- cleanup demo-1 worker
+- store as branch `first-2-demos`.
 
 - implement tab completion
 - implement `jq` using jq-web
@@ -10,7 +12,7 @@
 - avoid jerky fade in/out
 - avoid lag caused by floyd-warshall, or at least indicate it
 
-- can bring bg processed to foreground
+- can bring bg process to foreground
 
 - string-pulling
 - actors move along them via css
@@ -94,6 +96,7 @@
 - .history device exists, receives src, and can `cat` it
 - use a "history device" which reads like .history and keeps track
 - added builtin eval e.g. `eval '{ while true; do echo foo; sleep 2; done; } &'`
+- index + about + demo pages
 
 ## Bash example
 
