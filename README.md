@@ -1,8 +1,18 @@
 ## TODO
 
+- redo navigation e.g. interactive level building via graph
+- cleanup demo-1 worker
+- store as branch `first-2-demos`.
+
+- implement tab completion
+- implement `jq` using jq-web
+- implement `find` (basic version)
+
 - illustrate floyd-warshall via click on spawn-point and mousemove
 - avoid jerky fade in/out
-- avoid lag caused by floyd-warshall e.g. via another webworker
+- avoid lag caused by floyd-warshall, or at least indicate it
+
+- can bring bg process to foreground
 
 - string-pulling
 - actors move along them via css
@@ -58,7 +68,60 @@
 - create dark theme (currently manual via variables.scss and `wt` in box.tsx)
 - avoid multiple navspawns causing multiple updates
 
-# Next JS
+- switch from worker-plugin to webpack's worker-loader
+- get os state running in webworker
+- run redux-devtools in webworker on port 3002
+  > https://itnext.io/ruining-redux-devtools-extension-for-webworker-1eeca68d7900
+- can load css from npm modules
+- xterm has plugins
+- xterm renders with css
+- get xterm working
+- NOTE removed escape chars from prompt because currently unsupported (need to measure prompt without them)
+- get bash responding to terminal
+- printf now supports option `-v`
+- Ctrl + C is working
+  `while true; do sleep 1; echo foo; done`
+- remove 'gui binaries' `top` and `stage`
+- clarify and cleanup xterm <-> tty communication.
+  > get pasting working
+- throttle while so ctrl + c works for `while true; do echo foo; done > bar`
+- FIX pasting onto partial line overwrites
+- background processes are stopped on exit/logout
+- binary error messages shouldn't have prefix `-bash: `
+- can convert `Term` to "one-line src" (our input cannot contain newlines)
+- get voice inode working
+- ensure background `say` terminates e.g. via handler for SIGINT but not SIGTERM
+- fix TermService.src in case of `echo foo & echo bar` and `{ echo foo & }`
+- fix pasting
+- .history device exists, receives src, and can `cat` it
+- use a "history device" which reads like .history and keeps track
+- added builtin eval e.g. `eval '{ while true; do echo foo; sleep 2; done; } &'`
+- index + about + demo pages
+
+## Bash example
+
+```sh
+echo $'\033[31mHello\e[0m World'
+echo $'\e[37mHello\e[0m World'
+
+printf "\e[31mHello\e[0m World"
+x=foo; printf "%s\e[37m%s\e[39m\n" "hello " "$x"
+printf -v foo "\e[31mHello\e[0m World"; echo $foo
+
+case "$x" in foo) echo foo; ;; bar) echo bar; esac
+```
+
+## Redux devtools for os webworker
+
+
+`yarn dev` i.e. start the app.
+
+`yarn remotedev` i.e. run a websocket server on `3002` ATOW.
+
+Finally, in Redux DevTools extension:
+   - click "Remote" to open new window.
+   - click "Settings"
+   - Use custom server, host: `localhost`, port: `3002` ATOW
 
 ## Getting started
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getNavElemId } from '@model/nav.model';
+import { getNavElemId } from '@model/nav/nav.model';
 import { Act, Thunk } from '@store/nav.duck';
 import NavDomBackground from './nav-dom-bg';
 import css from './nav-dom.scss';
@@ -58,12 +58,11 @@ const NavDom: React.FC<Props> = ({
     }
   });
 
+  if (typeof window === 'undefined') return null; // No SSR
+
   return (
     <div
       className={css.root}
-      /**
-       * Testing NavGraph e.g. place src/dst via 2 clicks.
-       */
       onClick={() => {
         console.log('click');
       }}

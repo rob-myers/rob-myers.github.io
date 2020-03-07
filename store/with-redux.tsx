@@ -1,7 +1,7 @@
 import React from 'react';
 import { NextComponentType, NextPageContext } from 'next';
 import { RootState } from './reducer';
-import { initializeStore, ReduxStore } from '.';
+import { initializeStore, ReduxStore } from './create-store';
 
 const __NEXT_REDUX_STORE__ = '__NEXT_REDUX_STORE__';
 type Window = typeof window & { __NEXT_REDUX_STORE__: ReduxStore }
@@ -24,21 +24,6 @@ type Props = { pageProps?: any; reduxStore?: ReduxStore }
 export default (App: NextComponentType<NextPageContext, IProps, Props>) => {
   return class AppWithRedux extends React.Component<Props> {
     private reduxStore: ReduxStore;
-
-    // static async getInitialProps(appContext: NextPageContext): Promise<IProps | Props> {
-    //   const reduxStore = getOrInitializeStore();
-    //   // console.log({ appContext });
-    //   // appContext.ctx.reduxStore = reduxStore;
-
-    //   return {
-    //     ...(
-    //       typeof App.getInitialProps === 'function'
-    //         ? await App.getInitialProps(appContext)
-    //         : {}
-    //     ),
-    //     initialReduxState: reduxStore.getState(),
-    //   };
-    // }
 
     constructor(props: IProps & Props) {
       super(props);

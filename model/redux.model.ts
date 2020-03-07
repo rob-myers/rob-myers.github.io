@@ -1,35 +1,24 @@
-import { RootAction, RootState } from './reducer';
 import { KeyedLookup } from '@model/generic.model';
+
+//#region sync
+export interface SyncAct<T extends string, Payload extends null | {}> {
+  type: T;
+  pay: Payload;
+}
 
 export const createAct = <T extends string, P extends object = {}>(
   type: T,
-  payload?: P
-) => ({ ...payload, type }) as P & { type: T };
+  payload: P
+): SyncAct<T, P> => ({ pay: payload, type });
 
-export interface ThunkParams {
-  // dispatch: Dispatch<RootAction | ThunkAct<string, any, any>>;
-  dispatch: <T extends RootAction | ThunkAct<string, any, any>>(arg: T) => ThunkActReturnType<T>;
-  getState: () => RootState;
-  state: RootState;
-}
+export type SyncActDef<
+  ActKey extends string,
+  Act extends SyncAct<ActKey, Act['pay']>,
+  State
+> = (payload: Act['pay'], state: State) => State;
 
-export interface ThunkAct<T extends string, A extends {}, R> {
-  type: T;
-  thunk: (params: ThunkParams, args: A) => R;
-  args: A;
-}
+//#endregion
 
-export type ThunkActReturnType<T> = T extends ThunkAct<string, any, infer R> ? R : any;
-
-export const createThunk = <T extends string, A extends {} = {}, R = void>(
-  type: T,
-  thunk: ThunkAct<T, A, R>['thunk']
-) => (args: A) =>
-    ({
-      type,
-      thunk,
-      args
-    } as ThunkAct<T, A, R>);
 
 /**
  * If this key is in action's payload, said payload
@@ -97,6 +86,6 @@ export function updateLookup<LookupItem extends { key: string }>(
   };
 }
 
-type ReduxUpdater<LookupItem extends { key: string }> = (
+export type ReduxUpdater<LookupItem extends { key: string }> = (
   item: LookupItem
 ) => Partial<LookupItem>;

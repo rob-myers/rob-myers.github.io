@@ -1,6 +1,6 @@
 import App, { AppInitialProps } from 'next/app';
 import { Persistor, persistStore } from 'redux-persist';
-import { ReduxStore } from '@store/index';
+import { ReduxStore } from '@store/create-store';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import withRedux from '@store/with-redux';
@@ -8,6 +8,8 @@ import React from 'react';
 import { NextComponentType, NextPageContext } from 'next';
 import { Router } from 'next/dist/client/router';
 import Head from 'next/head';
+
+import 'xterm/css/xterm.css';
 
 interface Props {
   reduxStore: ReduxStore;

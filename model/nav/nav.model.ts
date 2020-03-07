@@ -1,5 +1,5 @@
 import { Rect2 } from '@model/rect2.model';
-import { Redacted, redact } from '@store/redux.model';
+import { Redacted, redact } from '@model/redux.model';
 import { Poly2 } from '@model/poly2.model';
 import { NavGraph } from './nav-graph.model';
 

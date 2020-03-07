@@ -1,13 +1,13 @@
 import {
   createAct,
-  createThunk,
   ActionsUnion,
   addToLookup,
   updateLookup,
   removeFromLookup,
   redact,
   Redacted,
-} from './redux.model';
+} from '@model/redux.model';
+import { createThunk } from '@model/root.redux.model';
 import { KeyedLookup } from '@model/generic.model';
 import { Rect2 } from '@model/rect2.model';
 import {
@@ -17,11 +17,13 @@ import {
   createNavDomMetaState,
   defaultNavOutset,
   createNavSpawnState,
-} from '@model/nav.model';
+} from '@model/nav/nav.model';
 import { Poly2 } from '@model/poly2.model';
-import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav-worker.model';
+import { NavWorker, navWorkerMessages, NavDomContract } from '@model/nav/nav-worker.model';
 import { traverseDom } from '@model/dom.model';
-import { NavGraph } from '@model/nav-graph.model';
+import { NavGraph } from '@model/nav/nav-graph.model';
+
+import NavWorkerConstructor from '@worker/nav.worker';
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
@@ -65,7 +67,8 @@ export const Thunk = {
     '[Nav] ensure setup',
     ({ dispatch, state: { nav } }) => {
       if (!nav.ready && typeof Worker !== 'undefined') {
-        const worker: NavWorker = new Worker('@worker/nav.worker.ts', { type: 'module' });
+        // const worker: NavWorker = new Worker('@worker/nav.worker.ts', { type: 'module' });
+        const worker = new NavWorkerConstructor();
         dispatch(Act.setupNav(redact(worker)));
 
         // TESTING
@@ -163,22 +166,22 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
     case '[Nav] setup': return { ...state,
-      webWorker: act.webWorker,
+      webWorker: act.pay.webWorker,
       ready: true,
     };
     case '[NavDom] register': return { ...state,
-      dom: addToLookup(createNavDomState(act.uid), state.dom),
-      domMeta: addToLookup(createNavDomMetaState(act.uid), state.domMeta),
+      dom: addToLookup(createNavDomState(act.pay.uid), state.dom),
+      domMeta: addToLookup(createNavDomMetaState(act.pay.uid), state.domMeta),
     };
     case '[NavDom] unregister': return { ...state,
-      dom: removeFromLookup(act.uid, state.dom),
-      domMeta: removeFromLookup(act.uid, state.domMeta),
+      dom: removeFromLookup(act.pay.uid, state.dom),
+      domMeta: removeFromLookup(act.pay.uid, state.domMeta),
     };
     case '[NavDom] update meta': return { ...state,
-      domMeta: updateLookup(act.uid, state.domMeta, () => act.updates),
+      domMeta: updateLookup(act.pay.uid, state.domMeta, () => act.pay.updates),
     };
     case '[NavDom] generic update': return { ...state,
-      dom: updateLookup(act.uid, state.dom, () => act.updates),
+      dom: updateLookup(act.pay.uid, state.dom, () => act.pay.updates),
     };
     default: return state;
   }

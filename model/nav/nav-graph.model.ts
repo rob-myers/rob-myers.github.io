@@ -1,6 +1,6 @@
-import { Poly2 } from './poly2.model';
-import { BaseGraph, BaseNode, BaseNodeOpts, BaseEdge, BaseEdgeOpts } from './graph.model';
-import { Vector2 } from './vec2.model';
+import { Poly2 } from '../poly2.model';
+import { BaseGraph, BaseNode, BaseNodeOpts, BaseEdge, BaseEdgeOpts } from '../graph.model';
+import { Vector2 } from '../vec2.model';
 
 interface NavNodeOpts extends BaseNodeOpts {
   /** Index of polygon this node occurs in */

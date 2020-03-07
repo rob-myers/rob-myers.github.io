@@ -3,12 +3,14 @@ import { composeWithDevTools, EnhancerOptions } from 'redux-devtools-extension';
 import { persistReducer, createTransform } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import rootReducer, { RootState, RootAction } from './reducer';
-import { ThunkParams, ThunkAct, RedactInReduxDevTools } from './redux.model';
+import { RedactInReduxDevTools } from '@model/redux.model';
+import { RootThunkParams, ThunkAct } from '@model/root.redux.model';
 import { State as TestState } from '@store/test.duck';
 import { State as NavState } from '@store/nav.duck';
+import { State as XTermState } from '@store/xterm.duck';
 
 const thunkMiddleware = () =>
-  (params: Omit<ThunkParams, 'state'>) =>
+  (params: Omit<RootThunkParams, 'state'>) =>
     (next: Dispatch) =>
       (action: RootAction | ThunkAct<string, {}, any>) => {
         if ('thunk' in action) {
@@ -42,6 +44,16 @@ const persistedReducer = persistReducer({
       }),
       (state) => state,
       { whitelist: ['nav'] }
+    ),
+    createTransform<XTermState, XTermState>(
+      (_state): XTermState => ({
+        instance: {},
+        worker: null,
+        voice: null,
+        ready: false,
+      }),
+      (state) => state,
+      { whitelist: ['xterm'] }
     ),
   ],
 }, rootReducer);
