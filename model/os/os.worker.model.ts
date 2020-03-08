@@ -42,7 +42,7 @@ interface CreateSession extends BaseMessage {
 /**
  * tty informs xterm about newly created session
  */
-interface CreatedSession extends BaseMessage {
+export interface CreatedSession extends BaseMessage {
   key: 'created-session';
   uiKey: string;
   sessionKey: string;
@@ -198,26 +198,52 @@ export type MessageFromOsWorker = (
   | SendHistoryLine
 );
 
-export function listenToWorkerUntil(
+// Shortcut
+type MsgFrmWrk<Key> = Extract<MessageFromOsWorker, { key: Key }>
+
+export async function awaitWorker<Key extends MessageFromOsWorker['key']>(
+  key: Key,
   worker: OsWorker,
-  /** Return truthy iff should unregister */
-  listener: (message: Message<MessageFromOsWorker>) => any,
-) {
-  worker.addEventListener('message', (message) => {
-    if (listener(message)) {
-      worker.removeEventListener('message', listener);
-    }
+  /** Return truthy iff message received */
+  isMessage: (message: MsgFrmWrk<Key>) => boolean = () => true,
+  act?: (message: MsgFrmWrk<Key>) => void
+): Promise<MsgFrmWrk<Key>> {
+  return new Promise(resolve => {
+    const listener = (message: Message<MessageFromOsWorker>) => {
+      if (message.data.key === key) {
+        const data = message.data as MsgFrmWrk<Key>;
+        if (isMessage(data)) {
+          worker.removeEventListener('message', listener);
+          act && act(data);
+          resolve(data);
+        }
+      }
+    };
+    worker.addEventListener('message', listener);
   });
 }
 
-export function listenToParentUntil(
+// Shortcut
+type MsgFrmPar<Key> = Extract<MessageFromOsParent, { key: Key }>
+
+export async function awaitParent<Key extends MessageFromOsParent['key']>(
+  key: Key,
   worker: OsWorkerContext,
-  /** Return truthy iff should unregister */
-  listener: (message: Message<MessageFromOsParent>) => any,
-) {
-  worker.addEventListener('message', (message) => {
-    if (listener(message)) {
-      worker.removeEventListener('message', listener);
-    }
+  /** Return truthy iff message received */
+  isMessage: (message: MsgFrmPar<Key>) => boolean = () => true,
+  act?: (message: MsgFrmPar<Key>) => void
+): Promise<MsgFrmPar<Key>> {
+  return new Promise(resolve => {
+    const listener = (message: Message<MessageFromOsParent>) => {
+      if (message.data.key === key) {
+        const data = message.data as MsgFrmPar<Key>;
+        if (isMessage(data)) {
+          worker.removeEventListener('message', listener);
+          act && act(data);
+          resolve(data);
+        }
+      }
+    };
+    worker.addEventListener('message', listener);
   });
 }

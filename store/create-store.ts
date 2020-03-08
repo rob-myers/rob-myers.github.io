@@ -50,7 +50,7 @@ const persistedReducer = persistReducer({
         instance: {},
         worker: null,
         voice: null,
-        ready: false,
+        status: 'initial',
       }),
       (state) => state,
       { whitelist: ['xterm'] }

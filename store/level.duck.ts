@@ -1,6 +1,6 @@
 /**
- * This is a simple reducer which communicates with
- * the LevelWorker, which has its own more complex reducer.
+ * This simple reducer initialises the LevelWorker,
+ * which has its own more complex reducer.
  */
 import { createAct, ActionsUnion, Redacted } from '@model/redux.model';
 import { LevelWorker } from '@model/level/level.worker.model';
@@ -28,7 +28,7 @@ export const Thunk = {
     '[Level] ensure worker',
     ({ state: { level: _ }}) => {
       /**
-       * TODO create level worker
+       * TODO ensure level worker
        */
     },
   ),

@@ -18,7 +18,7 @@ import { RandomINode } from '@store/inode/random.inode';
 import { RegularINode } from '@store/inode/regular.inode';
 import { VoiceINode } from '@store/inode/voice.inode';
 import { VoiceCommandSpeech } from '@model/xterm/voice.xterm';
-import { listenToParentUntil } from '@model/os/os.worker.model';
+import { awaitParent } from '@model/os/os.worker.model';
 
 export type Action = (
   | OsInitializedAct
@@ -80,33 +80,17 @@ export const osInitializeThunk = createOsThunk<OsAct, OsInitializeThunk>(
       dev.addChild('voice', new VoiceINode({
         ...dev.def,
         cancelVoiceCommands: (processKey: string) => {
-          worker.postMessage({
-            key: 'cancel-voice-cmds',
-            processKey,
-          });
+          worker.postMessage({ key: 'cancel-voice-cmds', processKey });
         },
         getVoices: async () => {
-          return await new Promise(resolve => {
-            worker.postMessage({ key: 'get-all-voices' });
-            listenToParentUntil(worker, ({ data: msg }) => {
-              if (msg.key === 'send-all-voices') {
-                resolve(msg.voices);
-                return true;
-              }
-            });
-          });
+          worker.postMessage({ key: 'get-all-voices' });
+          const { voices } = await awaitParent('send-all-voices', worker);
+          return voices;
         },
         sendVoiceCommand: async (command: VoiceCommandSpeech) => {
           const uid = generate();
-          await new Promise(resolve => {
-            worker.postMessage({ key: 'send-voice-cmd', command, uid });
-            listenToParentUntil(worker, ({ data: msg }) => {
-              if (msg.key === 'said-voice-cmd' && msg.uid === uid) {
-                resolve();
-                return true;
-              }
-            });
-          });
+          worker.postMessage({ key: 'send-voice-cmd', command, uid });
+          await awaitParent('said-voice-cmd', worker, (msg) => msg.uid === uid);
         },
       }));
     }

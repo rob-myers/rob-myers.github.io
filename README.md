@@ -26,7 +26,6 @@
 - integrate gitalk from older branch
 - delete older branch
 - merge this branch `fresh-start-2020` into new branch `dev`.
-- cleanup nav.worker; now intend to replace by level.worker
 
 ## So far
 
@@ -101,6 +100,8 @@
 - use a "history device" which reads like .history and keeps track
 - added builtin eval e.g. `eval '{ while true; do echo foo; sleep 2; done; } &'`
 - index + about + demo pages
+- cleanup nav.worker; now intend to replace by level.worker
+- replace listenTo{Worker,Parent}Until by await{Worker,Parent}
 
 ## Bash example
 

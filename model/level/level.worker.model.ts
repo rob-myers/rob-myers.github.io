@@ -32,3 +32,28 @@ export type MessageFromLevelWorker = (
   | PongFromWorker
   | LevelWorkerReady
 );
+
+// Shortcut
+type MsgFrmWrk<Key> = Extract<MessageFromLevelWorker, { key: Key }>
+
+export async function awaitWorker<Key extends MessageFromLevelWorker['key']>(
+  key: Key,
+  worker: LevelWorker,
+  /** Return truthy iff message received */
+  isMessage: (message: MsgFrmWrk<Key>) => boolean = () => true,
+  act?: (message: MsgFrmWrk<Key>) => void
+): Promise<MsgFrmWrk<Key>> {
+  return new Promise(resolve => {
+    const listener = (message: Message<MessageFromLevelWorker>) => {
+      if (message.data.key === key) {
+        const data = message.data as MsgFrmWrk<Key>;
+        if (isMessage(data)) {
+          worker.removeEventListener('message', listener);
+          act && act(data);
+          resolve(data);
+        }
+      }
+    };
+    worker.addEventListener('message', listener);
+  });
+}

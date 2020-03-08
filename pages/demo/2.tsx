@@ -6,6 +6,8 @@ const Demo2Page: React.FC = () => {
   return (
     <div>
       <Session uid="demo-2" userKey="user" />
+      {/* <Session uid="demo-2b" userKey="user" />
+      <Session uid="demo-2c" userKey="user" /> */}
     </div>
   );
 };
