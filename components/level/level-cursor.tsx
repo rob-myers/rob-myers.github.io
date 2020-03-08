@@ -6,9 +6,6 @@ import { useSelector } from 'react-redux';
 function snapToGrid(worldX: number, worldY: number, td: number) {
   return new Vector2(Math.floor(worldX / td) * td, Math.floor(worldY / td) * td);
 }
-function toTileCoords(cursor: Vector2, td: number) {
-  return cursor.clone().scale(1 / td);
-}
 
 const LevelCursor: React.FC<Props> = ({ root, tileDim, levelUid }) => {
   const origin = useRef(new Vector2(0, 0));
@@ -17,11 +14,11 @@ const LevelCursor: React.FC<Props> = ({ root, tileDim, levelUid }) => {
   const [, forceUpdate] = useState();
   const worker = useSelector(({ level: { worker } }) => worker)!;
 
-  const onClick = (_e: React.MouseEvent) => {
+  const toggleTile = () => {
     worker.postMessage({
       key: 'toggle-level-tile',
       levelUid,
-      tile: toTileCoords(cursor.current, tileDim).json,
+      tile: cursor.current.json,
     });
   };
 
@@ -43,11 +40,13 @@ const LevelCursor: React.FC<Props> = ({ root, tileDim, levelUid }) => {
           if (!cursor.current.equals(nextCursor)) {
             cursor.current = nextCursor;
             forceUpdate({});
-            mouseIsDown.current && onClick(e);
+            mouseIsDown.current && toggleTile();
           }
         }}
-        onClick={onClick}
-        onMouseDown={(_e) => mouseIsDown.current = true}
+        onMouseDown={(_e) => {
+          mouseIsDown.current = true;
+          toggleTile();
+        }}
         onMouseUp={(_e) => mouseIsDown.current = false}
       >
       </rect>
