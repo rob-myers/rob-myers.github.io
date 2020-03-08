@@ -28,7 +28,7 @@
     "xterm-addon-web-links": "^0.2.1"
   },
   "scripts": {
-    "dev": "yarn next-cfg && concurrently 'next -p 3001' 'yarn remotedev'",
+    "dev": "yarn next-cfg && concurrently 'next -p 3001' 'yarn os-remotedev' 'yarn level-remotedev'",
     "build": "yarn next-cfg && next build",
     "start": "yarn next-cfg && next start",
     "export": "next export",
@@ -37,7 +37,8 @@
     "gh-pages": "cd scripts && ts-node gh-pages.ts",
     "test": "jest --watch --verbose",
     "check-types": "tsc --noEmit",
-    "remotedev": "remotedev --hostname=localhost --port=3002 --wsEngine=ws"
+    "os-remotedev": "remotedev --hostname=localhost --port=3002 --wsEngine=ws",
+    "level-remotedev": "remotedev --hostname=localhost --port=3003 --wsEngine=ws"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "5.1.1",

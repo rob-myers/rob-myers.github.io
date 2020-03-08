@@ -1,4 +1,5 @@
 import { BaseMessage, Message } from '@model/worker.model';
+import { Vector2Json } from '@model/vec2.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {
@@ -38,11 +39,17 @@ interface WorkerCreatedLevel extends BaseMessage {
   levelUid: string;
 }
 
+interface ToggleLevelTile extends BaseMessage {
+  key: 'toggle-level-tile';
+  levelUid: string;
+  tile: Vector2Json;
+}
 
 export type MessageFromLevelParent = (
   | PingFromParent
   | RequestNewLevel
   | RequestDestroyLevel
+  | ToggleLevelTile
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker

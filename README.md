@@ -1,6 +1,6 @@
 ## TODO
 
-- can send throttled grid toggles; receive walls polygon from worker
+- Level receives walls polygon from worker
 
 - redo navigation i.e. new component where can specify filled rectangles and inset borders are computed and shown
 - store as branch `redo-navigation`.
@@ -101,6 +101,7 @@
 - cleanup nav.worker; now intend to replace by level.worker
 - replace listenTo{Worker,Parent}Until by await{Worker,Parent}
 - level.worker has persisted state and level component talks to it
+- can send grid toggles to level worker
 
 ## Bash example
 

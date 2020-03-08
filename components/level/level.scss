@@ -6,6 +6,14 @@
   stroke: #ccc;
 }
 
+.mouse-rect {
+  pointer-events: bounding-box;
+  width: 100%;
+  height: 100%;
+  fill: none;
+}
+
 .cursor {
   fill: #edd;
+  pointer-events: none;
 }

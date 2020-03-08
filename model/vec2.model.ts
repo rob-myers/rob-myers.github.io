@@ -7,6 +7,10 @@ export class Vector2 {
     return [this.x, this.y];
   }
 
+  public get json(): Vector2Json {
+    return { x: this.x, y: this.y };
+  }
+
   public get length() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }
