@@ -3,16 +3,17 @@ import { useDispatch } from 'react-redux';
 import { Thunk } from '@store/level.duck';
 import LevelOverlay from './level-overlay';
 import LevelCursor from './level-cursor';
+import LevelContent from './level-content';
 import css from './level.scss';
 
-const Level: React.FC<Props> = ({ uid, width, height, tileDim = 20 }) => {
+const Level: React.FC<Props> = ({ uid, width, height, tileDim = 50 }) => {
   const root = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     (async () => {
-      await dispatch(Thunk.createLevel({ uid }));
+      await dispatch(Thunk.createLevel({ uid, tileDim }));
       root.current && setReady(true);
     })();
 
@@ -30,11 +31,18 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 20 }) => {
           tileDim={tileDim}
         />
         {ready && 
-          <LevelCursor
-            levelUid={uid}
-            root={root}
-            tileDim={tileDim}
-          />
+          <>
+            <LevelContent
+              levelUid={uid}
+            />
+            <LevelCursor
+              levelUid={uid}
+              root={root}
+              width={width}
+              height={height}
+              tileDim={tileDim}
+            />
+          </>
         }
       </svg>
     </div>

@@ -13,8 +13,8 @@ const initialState: State = {
 };
 
 export const Act = {
-  registerLevel: (uid: string) =>
-    createAct('[Level] register', { uid }),
+  registerLevel: (uid: string, tileDim: number) =>
+    createAct('[Level] register', { uid, tileDim }),
   unregisterLevel: (uid: string) =>
     createAct('[Level] unregister', { uid }),
   updateLevel: (uid: string, updates: Partial<LevelState>) =>
@@ -26,7 +26,7 @@ export type Action = ActionsUnion<typeof Act>;
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
     case '[Level] register': return { ...state,
-      instance: addToLookup(createLevelState(act.pay.uid), state.instance),
+      instance: addToLookup(createLevelState(act.pay.uid, act.pay.tileDim), state.instance),
     };
     case '[Level] unregister': return { ...state,
       instance: removeFromLookup(act.pay.uid, state.instance),
