@@ -13,7 +13,7 @@ import { Poly2 } from '@model/poly2.model';
 import { NavWorker, awaitWorker, SendNavOutline, SendRefinedNav, SendNavGraph } from '@model/nav/nav.worker.model';
 import { traverseDom } from '@model/dom.model';
 import { NavGraph } from '@model/nav/nav-graph.model';
-import NavWorkerConstructor from '@worker/nav/nav.worker';
+import NavWorkerClass from '@worker/nav/nav.worker';
 
 export interface State {
   dom: KeyedLookup<NavDomState>;
@@ -54,7 +54,7 @@ export const Thunk = {
     ({ dispatch, state: { nav } }) => {
       if (!nav.ready && typeof Worker !== 'undefined') {
         // const worker: NavWorker = new Worker('@worker/nav.worker.ts', { type: 'module' });
-        const worker = new NavWorkerConstructor();
+        const worker = new NavWorkerClass();
         dispatch(Act.setupNav(redact(worker)));
 
         // TESTING

@@ -1,10 +1,8 @@
 ## TODO
 
-- level.worker has persisted state and level component talks to it
-- throttled communication
+- can send throttled grid toggles; receive walls polygon from worker
 
 - redo navigation i.e. new component where can specify filled rectangles and inset borders are computed and shown
-- hookup redux and redux-persist to nav worker
 - store as branch `redo-navigation`.
 
 - implement tab completion
@@ -102,6 +100,7 @@
 - index + about + demo pages
 - cleanup nav.worker; now intend to replace by level.worker
 - replace listenTo{Worker,Parent}Until by await{Worker,Parent}
+- level.worker has persisted state and level component talks to it
 
 ## Bash example
 

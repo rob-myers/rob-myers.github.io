@@ -15,7 +15,7 @@ export interface LevelWorkerContext extends Worker {
 }
 
 interface PingFromParent extends BaseMessage {
-  key: 'ping-level';
+  key: 'ping-level-worker';
 }
 interface PongFromWorker extends BaseMessage {
   key: 'pong-from-level';
@@ -25,12 +25,29 @@ interface LevelWorkerReady extends BaseMessage {
   key: 'level-worker-ready';
 }
 
+interface RequestNewLevel extends BaseMessage {
+  key: 'request-new-level';
+  levelUid: string;
+}
+interface RequestDestroyLevel extends BaseMessage {
+  key: 'request-destroy-level';
+  levelUid: string;
+}
+interface WorkerCreatedLevel extends BaseMessage {
+  key: 'worker-created-level';
+  levelUid: string;
+}
+
+
 export type MessageFromLevelParent = (
   | PingFromParent
+  | RequestNewLevel
+  | RequestDestroyLevel
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker
   | LevelWorkerReady
+  | WorkerCreatedLevel
 );
 
 // Shortcut

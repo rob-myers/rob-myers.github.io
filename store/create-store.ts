@@ -8,6 +8,7 @@ import { RootThunkParams, ThunkAct } from '@model/root.redux.model';
 import { State as TestState } from '@store/test.duck';
 import { State as NavState } from '@store/nav.duck';
 import { State as XTermState } from '@store/xterm.duck';
+import { State as LevelState } from '@store/level.duck';
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
@@ -35,6 +36,9 @@ const persistedReducer = persistReducer({
       (state, _key) => state,
       { whitelist: ['test'] }
     ),
+    /**
+     * TODO remove
+     */
     createTransform<NavState, NavState>(
       (_state): NavState => ({
         dom: {},
@@ -54,6 +58,14 @@ const persistedReducer = persistReducer({
       }),
       (state) => state,
       { whitelist: ['xterm'] }
+    ),
+    createTransform<LevelState, LevelState>(
+      (_state): LevelState => ({
+        worker: null,
+        status: 'initial',
+      }),
+      (state) => state,
+      { whitelist: ['level'] }
     ),
   ],
 }, rootReducer);
