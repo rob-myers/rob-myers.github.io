@@ -11,6 +11,8 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
   /** e.g. "M4,3 L33,2 ..." */
   const [outlines, setOutlines] = useState([] as string[]);
   const [walls, setWalls] = useState([] as string[]);
+  const [floors, setFloors] = useState([] as string[]);
+  const [triangles, setTriangles] = useState([] as string[]);
 
   useEffect(() => {
     const sub = fromEvent<Message<MessageFromLevelWorker>>(worker, 'message')
@@ -21,7 +23,11 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
             setOutlines(msg.outlinePoly.map(x => Poly2.fromJson(x).svgPath));
           }
           if (msg.key === 'send-level-walls' && msg.levelUid === levelUid) {
-            setWalls(msg.wallsPoly.map(x => Poly2.fromJson(x).svgPath));
+            setWalls(msg.walls.map(x => Poly2.fromJson(x).svgPath));
+            setFloors(msg.floors.map(x => Poly2.fromJson(x).svgPath));
+          }
+          if (msg.key === 'send-level-tris' && msg.levelUid === levelUid) {
+            setTriangles(msg.tris.map(x => Poly2.fromJson(x).svgPath));
           }
         })
       ).subscribe();
@@ -39,6 +45,20 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
       {walls.map((pathDef, i) =>
         <path key={i} fill="rgba(0,0,0,0.8)" d={pathDef} />
       )}
+      {floors.map((pathDef, i) =>
+        <path key={i} fill="rgba(50,50,50,0.1)" d={pathDef} />
+      )}
+      {
+        triangles.map((pathDef, i) => (
+          <path
+            key={i}
+            d={pathDef}
+            fill="none"
+            stroke="#555"
+            strokeWidth={0.1}
+          />
+        ))
+      }
     </>
   );
 };

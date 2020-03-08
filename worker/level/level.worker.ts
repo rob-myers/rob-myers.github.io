@@ -13,7 +13,7 @@ import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { flatten } from '@model/generic.model';
 
-const wallDepth = 4;
+const wallDepth = 2;
 const ctxt: LevelWorkerContext = self as any;
 
 const store = initializeStore(ctxt);
@@ -36,7 +36,9 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     case 'request-new-level': {
       dispatch(Act.registerLevel(msg.levelUid, msg.tileDim));
       dispatch(Act.updateLevel(msg.levelUid, {
-        tileToggleSub: redact(levelToggleHandlerFactory(msg.levelUid).subscribe()),
+        tileToggleSub: redact(
+          levelToggleHandlerFactory(msg.levelUid).subscribe()
+        ),
       }));
       ctxt.postMessage({ key: 'worker-created-level', levelUid: msg.levelUid });
       break;
@@ -49,7 +51,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     }
     case 'toggle-level-tile': {
       /**
-       * Handled by rxjs Observable.
+       * Handled by an rxjs Observable.
        */
       break;
     }
@@ -66,7 +68,7 @@ function levelToggleHandlerFactory(levelUid: string) {
       filter((msg): msg is ToggleLevelTile =>
         msg.key === 'toggle-level-tile' && msg.levelUid === levelUid
       ),
-      bufferTime(200),
+      bufferTime(100),
       filter(msgs => msgs.length > 0),
       /**
        * Mutate grid and collect rects to add/subtract
@@ -85,24 +87,50 @@ function levelToggleHandlerFactory(levelUid: string) {
         return { adds, subs };
       }),
       /**
-       * Create fresh gridPoly via union/cutting
+       * Create fresh outline via union/cutting
        */
       map(({ adds, subs }) => {
-        const { outlinePoly } = getLevel(levelUid)!;
+        const { outline: outlinePoly } = getLevel(levelUid)!;
         const nextPoly = Poly2.cutOut(subs, Poly2.union([...outlinePoly, ...adds]));
-        dispatch(Act.updateLevel(levelUid, { outlinePoly: nextPoly.map((x) => redact(x)) }));
+        dispatch(Act.updateLevel(levelUid, { outline: nextPoly.map((x) => redact(x)) }));
         ctxt.postMessage({ key: 'send-level-grid', levelUid, outlinePoly: nextPoly.map(({ json }) => json) });
         return nextPoly;
       }),
-      delay(200),
+      delay(100),
       /**
-       * Create walls polygon
+       * Create walls and floors
        */
-      map((outlinePoly) => {
-        const insets = flatten(outlinePoly.map(x => x.createInset(wallDepth)));
-        const wallsPoly = Poly2.cutOut(insets, outlinePoly);
-        dispatch(Act.updateLevel(levelUid, { wallsPoly: wallsPoly.map((x) => redact(x)) }));
-        ctxt.postMessage({ key: 'send-level-walls', levelUid, wallsPoly: wallsPoly.map(({ json }) => json) });
+      map((outline) => {
+        const insets = flatten(outline.map(x => x.createInset(wallDepth)));
+        const walls = Poly2.cutOut(insets, outline);
+        const floors = Poly2.union(flatten(outline.map(x => x.createInset(10))));
+
+        dispatch(Act.updateLevel(levelUid, {
+          walls: walls.map((x) => redact(x)),
+          floors: floors.map(x => redact(x)),
+        }));
+        ctxt.postMessage({
+          key: 'send-level-walls',
+          levelUid,
+          walls: walls.map(({ json }) => json),
+          floors: floors.map(({ json }) => json),
+        });
+        return floors;
+      }),
+      // delay(200),
+      /**
+       * Triangulate (can be refined).
+       * Floyd marshall should be computed when finished editing.
+       */
+      map(floors => {
+        // Mutates floors in level state
+        floors.forEach((floor) => floor.qualityTriangulate());
+        ctxt.postMessage({
+          key: 'send-level-tris',
+          levelUid,
+          tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
+        });
+        return null;
       }),
     );
 }

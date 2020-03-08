@@ -60,7 +60,14 @@ interface SendLevelGrid extends BaseMessage {
 interface SendLevelWalls extends BaseMessage {
   key: 'send-level-walls';
   levelUid: string;
-  wallsPoly: Poly2Json[];
+  walls: Poly2Json[];
+  floors: Poly2Json[];
+}
+
+interface SendLevelTris extends BaseMessage {
+  key: 'send-level-tris';
+  levelUid: string;
+  tris: Poly2Json[];
 }
 
 export type MessageFromLevelParent = (
@@ -75,6 +82,7 @@ export type MessageFromLevelWorker = (
   | WorkerCreatedLevel
   | SendLevelGrid
   | SendLevelWalls
+  | SendLevelTris
 );
 
 // Shortcut

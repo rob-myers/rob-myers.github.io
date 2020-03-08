@@ -11,9 +11,11 @@ export interface LevelState {
   /** Key format "${x},${y}" in world coords snapped to grid */
   grid: { [key: string]: undefined | boolean };
   /** Union of grid rects */
-  outlinePoly: Redacted<Poly2>[];
+  outline: Redacted<Poly2>[];
+  /** Navigable polygon */
+  floors: Redacted<Poly2>[];
   /** Walls induced by `gridPoly` */
-  wallsPoly: Redacted<Poly2>[];
+  walls: Redacted<Poly2>[];
   /** Handles tile toggling */
   tileToggleSub: null | Redacted<Subscription>;
 }
@@ -26,8 +28,9 @@ export function createLevelState(
     key: uid,
     tileDim,
     grid: {},
-    outlinePoly: [],
-    wallsPoly: [],
+    outline: [],
+    floors: [],
+    walls: [],
     tileToggleSub: null,
   };
 }

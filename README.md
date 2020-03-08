@@ -1,7 +1,6 @@
 ## TODO
 
-- Level receives walls polygon from worker
-
+- can add doors an blocks to Level
 - redo navigation i.e. new component where can specify filled rectangles and inset borders are computed and shown
 - store as branch `redo-navigation`.
 
@@ -102,6 +101,7 @@
 - replace listenTo{Worker,Parent}Until by await{Worker,Parent}
 - level.worker has persisted state and level component talks to it
 - can send grid toggles to level worker
+- Level receives outline/walls/floors/triangles from worker
 
 ## Bash example
 
