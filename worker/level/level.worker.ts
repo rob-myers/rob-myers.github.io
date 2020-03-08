@@ -13,7 +13,6 @@ import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { flatten } from '@model/generic.model';
 
-const wallDepth = 2;
 const ctxt: LevelWorkerContext = self as any;
 
 const store = initializeStore(ctxt);
@@ -25,6 +24,9 @@ persistor.pause(); // We save manually
 
 const getLevel = (levelUid: string): LevelState | undefined =>
   store.getState().level.instance[levelUid];
+
+const wallDepth = 4;
+const floorInset = 20;
 
 /**
  * Worker message handler.
@@ -81,7 +83,7 @@ function levelToggleHandlerFactory(levelUid: string) {
           const key = `${tile.x},${tile.y}`;
           const poly = new Rect2(tile.x, tile.y, tileDim, tileDim).poly2;
           (grid[key] ? subs : adds).push(poly);
-          grid[key] = !grid[key];
+          grid[key] = grid[key] ? undefined : {};
         });
         dispatch(Act.updateLevel(levelUid, { grid }));
         return { adds, subs };
@@ -103,7 +105,7 @@ function levelToggleHandlerFactory(levelUid: string) {
       map((outline) => {
         const insets = flatten(outline.map(x => x.createInset(wallDepth)));
         const walls = Poly2.cutOut(insets, outline);
-        const floors = Poly2.union(flatten(outline.map(x => x.createInset(10))));
+        const floors = Poly2.union(flatten(outline.map(x => x.createInset(floorInset))));
 
         dispatch(Act.updateLevel(levelUid, {
           walls: walls.map((x) => redact(x)),

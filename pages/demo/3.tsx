@@ -5,11 +5,11 @@ import Level from '@components/level/level';
 const Demo3Page: React.FC = () => {
   return (
     <div style={{
-      width: 500,
-      height: 500,
+      width: 800,
+      height: 800,
       overflow: 'auto'
     }}>
-      <Level uid="level-1" width={1000} height={1000} />
+      <Level uid="level-1" width={2000} height={2000} />
     </div>
   );
 };

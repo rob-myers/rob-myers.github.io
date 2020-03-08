@@ -3,10 +3,11 @@ import { useDispatch } from 'react-redux';
 import { Thunk } from '@store/level.duck';
 import LevelOverlay from './level-overlay';
 import LevelCursor from './level-cursor';
+import LevelKeys from './level-keys';
 import LevelContent from './level-content';
 import css from './level.scss';
 
-const Level: React.FC<Props> = ({ uid, width, height, tileDim = 50 }) => {
+const Level: React.FC<Props> = ({ uid, width, height, tileDim = 100 }) => {
   const root = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [ready, setReady] = useState(false);
@@ -32,8 +33,11 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 50 }) => {
         />
         {ready && 
           <>
-            <LevelContent
+            <LevelContent levelUid={uid} />
+            <LevelKeys
               levelUid={uid}
+              width={width}
+              height={height}
             />
             <LevelCursor
               levelUid={uid}

@@ -2,6 +2,17 @@ import { Redacted } from '@model/redux.model';
 import { Poly2 } from '@model/poly2.model';
 import { Subscription } from 'rxjs';
 
+type WallStyle = (
+  | 'd' // central door
+  | 'w' // plain wall
+);
+export interface GridMeta {
+  n?: WallStyle;
+  e?: WallStyle;
+  s?: WallStyle;
+  w?: WallStyle;
+}
+
 /**
  * Stored inside level web worker.
  */
@@ -9,7 +20,7 @@ export interface LevelState {
   key: string;
   tileDim: number;
   /** Key format "${x},${y}" in world coords snapped to grid */
-  grid: { [key: string]: undefined | boolean };
+  grid: { [key: string]: undefined | GridMeta };
   /** Union of grid rects */
   outline: Redacted<Poly2>[];
   /** Navigable polygon */

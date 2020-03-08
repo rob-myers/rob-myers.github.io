@@ -1,7 +1,12 @@
 ## TODO
 
-- can add doors an blocks to Level
-- redo navigation i.e. new component where can specify filled rectangles and inset borders are computed and shown
+- can add extras walls (e.g. doorways) to Level i.e. tile modifiers via keypresses (wsad)
+
+- can scale view via shift-scroll
+- can add blocks
+- can add lights
+
+redo navigation i.e. new component where can specify filled rectangles and inset borders are computed and shown
 - store as branch `redo-navigation`.
 
 - implement tab completion

@@ -1,6 +1,7 @@
 import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
+import { GridMeta } from './level.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {
@@ -70,11 +71,19 @@ interface SendLevelTris extends BaseMessage {
   tris: Poly2Json[];
 }
 
+export interface ModifyLevelTile extends BaseMessage {
+  key: 'modify-level-tile';
+  levelUid: string;
+  tile: Vector2Json;
+  meta: GridMeta;
+}
+
 export type MessageFromLevelParent = (
   | PingFromParent
   | RequestNewLevel
   | RequestDestroyLevel
   | ToggleLevelTile
+  | ModifyLevelTile
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker

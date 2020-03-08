@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Vector2 } from '@model/vec2.model';
 import css from './level.scss';
-import { useSelector } from 'react-redux';
 
 function snapToGrid(worldX: number, worldY: number, td: number) {
   return new Vector2(Math.floor(worldX / td) * td, Math.floor(worldY / td) * td);
