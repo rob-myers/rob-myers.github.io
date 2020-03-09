@@ -1,6 +1,7 @@
 import path from 'path';
 import webpack from 'webpack';
 import webpackMerge from 'webpack-merge';
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import nextConst from 'next/constants';
 import configStyles from './styles.config';
 
@@ -50,7 +51,8 @@ export default (
                     loader: 'worker-loader',
                     options: {
                       name: 'static/[hash].worker.js',
-                      publicPath: '/_next/'
+                      publicPath: '/_next/',
+                      // inline: true, fallback: false,
                     }
                   },
                   {
@@ -67,6 +69,17 @@ export default (
         {
           ...(!options.isServer && { node: { fs: 'empty' } }),
         },
+        // Bundle analyzer
+        process.env.ANALYZE === 'true' ? {
+          plugins: [
+            new BundleAnalyzerPlugin({
+              analyzerMode: 'static',
+              reportFilename: options.isServer
+                ? '../analyze/server.html'
+                : './analyze/client.html',
+            })
+          ]
+        } : {},
         configStyles(options),
       );
     }

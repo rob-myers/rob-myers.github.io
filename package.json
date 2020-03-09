@@ -38,7 +38,8 @@
     "test": "jest --watch --verbose",
     "check-types": "tsc --noEmit",
     "os-remotedev": "remotedev --hostname=localhost --port=3002 --wsEngine=ws",
-    "level-remotedev": "remotedev --hostname=localhost --port=3003 --wsEngine=ws"
+    "level-remotedev": "remotedev --hostname=localhost --port=3003 --wsEngine=ws",
+    "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "5.1.1",
@@ -54,6 +55,7 @@
     "@types/shortid": "^0.0.29",
     "@types/sprintf-js": "^1.1.2",
     "@types/webpack": "4.41.3",
+    "@types/webpack-bundle-analyzer": "^2.13.3",
     "@types/webpack-env": "^1.15.1",
     "@types/webpack-merge": "4.1.5",
     "@types/worker-plugin": "^3.2.0",
@@ -88,6 +90,7 @@
     "style-loader": "^1.1.3",
     "ts-node": "8.6.2",
     "typescript": "3.7.5",
+    "webpack-bundle-analyzer": "^3.6.0",
     "webpack-merge": "4.2.2",
     "worker-loader": "^2.0.0"
   },

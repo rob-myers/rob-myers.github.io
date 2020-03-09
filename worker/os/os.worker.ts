@@ -1,9 +1,9 @@
+import { persistStore } from 'redux-persist';
 import { initializeStore } from './create-store';
 import createServices from '@os-service/create-services';
 import { OsWorkerContext, OsWorker } from '@model/os/os.worker.model';
 import { osInitializeThunk, osStorePingAct } from '@store/os/init.os.duck';
 import { OsSession, osCreateSessionThunk, osEndSessionThunk } from '@store/os/session.os.duck';
-import { persistStore } from 'redux-persist';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { ProcessSignal } from '@model/os/process.model';
 
