@@ -13,6 +13,9 @@ import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { flatten } from '@model/generic.model';
 
+const wallDepth = 2;
+const floorInset = 12;
+
 const ctxt: LevelWorkerContext = self as any;
 
 const store = initializeStore(ctxt);
@@ -24,9 +27,6 @@ persistor.pause(); // We save manually
 
 const getLevel = (levelUid: string): LevelState | undefined =>
   store.getState().level.instance[levelUid];
-
-const wallDepth = 4;
-const floorInset = 20;
 
 /**
  * Worker message handler.

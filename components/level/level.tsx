@@ -7,7 +7,7 @@ import LevelKeys from './level-keys';
 import LevelContent from './level-content';
 import css from './level.scss';
 
-const Level: React.FC<Props> = ({ uid, width, height, tileDim = 100 }) => {
+const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
   const root = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [ready, setReady] = useState(false);
@@ -24,7 +24,7 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 100 }) => {
   }, []);
 
   return (
-    <div ref={root} >
+    <div ref={root}>
       <svg style={{ width, height }} className={css.svg}>
         <LevelOverlay
           width={width}
@@ -33,7 +33,9 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 100 }) => {
         />
         {ready && 
           <>
-            <LevelContent levelUid={uid} />
+            <LevelContent
+              levelUid={uid}
+            />
             <LevelKeys
               levelUid={uid}
               width={width}

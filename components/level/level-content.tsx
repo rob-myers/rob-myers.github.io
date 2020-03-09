@@ -7,6 +7,7 @@ import { MessageFromLevelWorker } from '@model/level/level.worker.model';
 import { Poly2 } from '@model/poly2.model';
 
 const LevelContent: React.FC<Props> = ({ levelUid }) => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const worker = useSelector(({ level: { worker } }) => worker)!;
   /** e.g. "M4,3 L33,2 ..." */
   const [outlines, setOutlines] = useState([] as string[]);
