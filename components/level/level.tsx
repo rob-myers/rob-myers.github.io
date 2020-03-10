@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Thunk } from '@store/level.duck';
 import LevelOverlay from './level-overlay';
 import LevelCursor from './level-cursor';
@@ -11,6 +11,7 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
   const root = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [ready, setReady] = useState(false);
+  const state = useSelector(({ level: { instance } }) => instance[uid]);
 
   useEffect(() => {
     (async () => {
@@ -25,25 +26,38 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
 
   return (
     <div ref={root} style={{ width, height }}>
-      <svg className={css.svg}>
-        {ready && 
+      <svg className={css.svg} >
+        {ready && state &&
           <>
-            <LevelOverlay
-              levelUid={uid}
-              tileDim={tileDim}
-            />
-            {/* <LevelContent
-              levelUid={uid}
-            /> */}
-            {/* <LevelKeys
-              levelUid={uid}
-              width={width}
-              height={height}
-            /> */}
             <LevelCursor
               levelUid={uid}
               tileDim={tileDim}
             />
+            <g style={{ transform: `scale(${state.zoomFactor})` }}>
+              <g style={{ transform: `translate(${state.renderBounds.x}, ${state.renderBounds.y})` }}>
+                <>
+                  <LevelOverlay
+                    levelUid={uid}
+                    tileDim={tileDim}
+                  />
+                  <rect
+                    className={css.cursor}
+                    x={state.cursor.x - state.renderBounds.x}
+                    y={state.cursor.y - state.renderBounds.y}
+                    width={tileDim}
+                    height={tileDim}
+                  />
+                  {/* <LevelContent
+                  levelUid={uid}
+                /> */}
+                  {/* <LevelKeys
+                  levelUid={uid}
+                  width={width}
+                  height={height}
+                /> */}
+                </>
+              </g>
+            </g>
           </>
         }
       </svg>

@@ -2,6 +2,7 @@ import { Redacted } from '@model/redux.model';
 import { Poly2 } from '@model/poly2.model';
 import { Subscription } from 'rxjs';
 import { Rect2 } from '@model/rect2.model';
+import { Vector2 } from '@model/vec2.model';
 
 type WallStyle = (
   | 'd' // central door
@@ -51,6 +52,7 @@ export interface LevelUiState {
   key: string;
   zoomFactor: number;
   renderBounds: Rect2;
+  cursor: Vector2;
 }
 
 export function createLevelUiState(uid: string): LevelUiState {
@@ -58,5 +60,6 @@ export function createLevelUiState(uid: string): LevelUiState {
     key: uid,
     renderBounds: new Rect2(0, 0, 0, 0),
     zoomFactor: 1,
+    cursor: new Vector2(0, 0),
   };
 }

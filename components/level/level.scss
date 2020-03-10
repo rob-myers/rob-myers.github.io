@@ -9,8 +9,8 @@ body {
   height: 100%;
 }
 
-.grid-line {
-  stroke: #ccc;
+.svg-grid {
+  pointer-events: none;
 }
 
 .mouse-rect {

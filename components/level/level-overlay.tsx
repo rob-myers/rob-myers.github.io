@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Rect2 } from '@model/rect2.model';
-
+import css from './level.scss';
 
 const LevelOverlay: React.FC<Props> = ({ tileDim: td, levelUid }) => {
   const gridId = useRef(`grid-${levelUid}`);
@@ -21,6 +21,7 @@ const LevelOverlay: React.FC<Props> = ({ tileDim: td, levelUid }) => {
       {
         state && 
           <rect
+            className={css.svgGrid}
             width={`${100 / state.zoomFactor}%`}
             height={`${100 / state.zoomFactor}%`}
             fill={`url(#${gridId.current})`}

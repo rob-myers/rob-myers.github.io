@@ -2,7 +2,7 @@
  * Level components in main thread.
  * Concerning instances, we only store ui-related state.
  */
-import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup } from '@model/redux.model';
+import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup } from '@model/redux.model';
 import { LevelWorker, awaitWorker } from '@model/level/level.worker.model';
 import { createThunk } from '@model/root.redux.model';
 
@@ -26,6 +26,8 @@ const initialState: State = {
 export const Act = {
   registerLevel: (uid: string) =>
     createAct('[Level] register level', { uid }),
+  updateLevel: (uid: string, updates: Partial<LevelUiState>) =>
+    createAct('[Level] update level', { uid, updates }),
   unregisterLevel: (uid: string) =>
     createAct('[Level] unregister level', { uid }),
   setStatus: (status: State['status']) =>
@@ -91,6 +93,9 @@ export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
     case '[Level] register level': return { ...state,
       instance: addToLookup(createLevelUiState(act.pay.uid), state.instance),
+    };
+    case '[Level] update level': return { ...state,
+      instance: updateLookup(act.pay.uid, state.instance, () => act.pay.updates),
     };
     case '[Level] unregister level': return { ...state,
       instance: removeFromLookup(act.pay.uid, state.instance),
