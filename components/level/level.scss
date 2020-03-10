@@ -5,6 +5,8 @@ body {
 
 .svg {
   border: 1px solid #000;
+  width: 100%;
+  height: 100%;
 }
 
 .grid-line {
@@ -13,8 +15,8 @@ body {
 
 .mouse-rect {
   pointer-events: bounding-box;
-  // width: 100%;
-  // height: 100%;
+  width: 100%;
+  height: 100%;
   fill: none;
 }
 

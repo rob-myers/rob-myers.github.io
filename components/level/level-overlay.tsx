@@ -1,22 +1,38 @@
-import { range } from '@model/generic.model';
-import css from './level.scss';
+import { useRef } from 'react';
+import { useSelector } from 'react-redux';
+import { Rect2 } from '@model/rect2.model';
 
 
-const LevelOverlay: React.FC<Props> = ({ width, height, tileDim: td}) => {
+const LevelOverlay: React.FC<Props> = ({ tileDim: td, levelUid }) => {
+  const gridId = useRef(`grid-${levelUid}`);
+  const state = useSelector(({ level: { instance } }) => instance[levelUid]);
+  const rect = state ? state.renderBounds : Rect2.zero;
+  // Compute grid pattern offset.
+  const dx = -(rect.x > 0 ? rect.x % td : (rect.x % td) + td);
+  const dy = -(rect.y > 0 ? rect.y % td : (rect.y % td) + td);
+
   return (
     <>
-      {range(Math.ceil( width / td )).map(x => x * td).map((x, i) =>
-        <line key={`v-${i}`} x1={x} y1={0} x2={x} y2={height} className={css.gridLine} /> )}
-      {range(Math.ceil( height / td )).map(x => x * td).map((y, i) =>
-        <line key={`h-${i}`} x1={0} y1={y} x2={width} y2={y} className={css.gridLine} /> )}
+      <defs>
+        <pattern id={gridId.current} x={dx} y={dy} width={td} height={td} patternUnits="userSpaceOnUse">
+          <path d={`M ${td} 0 L 0 0 0 ${td}`} fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="0.5"/>
+        </pattern>
+      </defs>
+      {
+        state && 
+          <rect
+            width={`${100 / state.zoomFactor}%`}
+            height={`${100 / state.zoomFactor}%`}
+            fill={`url(#${gridId.current})`}
+          />
+      }
     </>
   );
 };
 
 interface Props {
+  levelUid: string;
   tileDim: number;
-  width: number;
-  height: number;
 }
 
 export default LevelOverlay;

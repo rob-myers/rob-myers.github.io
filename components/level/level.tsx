@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { Thunk } from '@store/level.duck';
 import LevelOverlay from './level-overlay';
 import LevelCursor from './level-cursor';
-import LevelKeys from './level-keys';
-import LevelContent from './level-content';
+// import LevelKeys from './level-keys';
+// import LevelContent from './level-content';
 import css from './level.scss';
 
 const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
@@ -24,28 +24,24 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
   }, []);
 
   return (
-    <div ref={root}>
-      <svg style={{ width, height }} className={css.svg}>
-        <LevelOverlay
-          width={width}
-          height={height}
-          tileDim={tileDim}
-        />
+    <div ref={root} style={{ width, height }}>
+      <svg className={css.svg}>
         {ready && 
           <>
-            <LevelContent
+            <LevelOverlay
               levelUid={uid}
+              tileDim={tileDim}
             />
-            <LevelKeys
+            {/* <LevelContent
+              levelUid={uid}
+            /> */}
+            {/* <LevelKeys
               levelUid={uid}
               width={width}
               height={height}
-            />
+            /> */}
             <LevelCursor
               levelUid={uid}
-              root={root}
-              width={width}
-              height={height}
               tileDim={tileDim}
             />
           </>
