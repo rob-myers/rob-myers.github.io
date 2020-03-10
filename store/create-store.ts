@@ -63,6 +63,7 @@ const persistedReducer = persistReducer({
       (_state): LevelState => ({
         worker: null,
         status: 'initial',
+        instance: {},
       }),
       (state) => state,
       { whitelist: ['level'] }

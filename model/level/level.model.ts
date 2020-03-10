@@ -1,6 +1,7 @@
 import { Redacted } from '@model/redux.model';
 import { Poly2 } from '@model/poly2.model';
 import { Subscription } from 'rxjs';
+import { Rect2 } from '@model/rect2.model';
 
 type WallStyle = (
   | 'd' // central door
@@ -43,5 +44,19 @@ export function createLevelState(
     floors: [],
     walls: [],
     tileToggleSub: null,
+  };
+}
+
+export interface LevelUiState {
+  key: string;
+  zoomFactor: number;
+  renderBounds: Rect2;
+}
+
+export function createLevelUiState(uid: string): LevelUiState {
+  return {
+    key: uid,
+    renderBounds: new Rect2(0, 0, 0, 0),
+    zoomFactor: 1,
   };
 }

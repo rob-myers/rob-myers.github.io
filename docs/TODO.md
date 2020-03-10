@@ -1,6 +1,8 @@
 # TODO
 
-- store/level.duck -> store/level-ui.duck and has `instance[uid].scaleFactor`.
+- decided against scrollbars in `Level` because not natural way to zoom. instead we'll pan via scroll and scale via shift-scroll.
+  > see topdown-cli and integrate bit by bit
+
 - can scale view via shift-scroll
 
 - clear vision of how `Level` + `Session` are used on our upcoming site
@@ -117,3 +119,4 @@
 - can send grid toggles to level worker
 - Level receives outline/walls/floors/triangles from worker
 - store as branch `redo-navigation`.
+- Level component has ui state too
