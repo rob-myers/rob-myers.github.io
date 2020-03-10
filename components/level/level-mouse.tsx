@@ -12,22 +12,22 @@ function snapToGrid(world: Vector2, td: number) {
   return world;
 }
 
-const LevelCursor: React.FC<Props> = ({
+const LevelMouse: React.FC<Props> = ({
   tileDim,
   levelUid,
 }) => {
   const mouseIsDown = useRef(false);
-  const _worker = useSelector(({ level: { worker } }) => worker)!;
+  const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
   const dispatch = useDispatch();
 
-  // const toggleTile = () => {
-  //   worker.postMessage({
-  //     key: 'toggle-level-tile',
-  //     levelUid,
-  //     tile: cursor.current.json,
-  //   });
-  // };
+  const toggleTile = () => {
+    state && worker.postMessage({
+      key: 'toggle-level-tile',
+      levelUid,
+      tile: state.cursor.json,
+    });
+  };
   
   return (
     <>
@@ -38,29 +38,32 @@ const LevelCursor: React.FC<Props> = ({
           if (state && !state.cursor.equals(cursor)) {
             // console.log({ x: cursor.x, y: cursor.y });
             dispatch(Act.updateLevel(levelUid, { cursor }));
-            // mouseIsDown.current && toggleTile();
+            mouseIsDown.current && toggleTile();
           }
         }}
         onMouseDown={(_e) => {
           mouseIsDown.current = true;
-          // toggleTile();
+          toggleTile();
         }}
-        onMouseUp={(_e) => mouseIsDown.current = false}
+        onMouseUp={(_e) => {
+          mouseIsDown.current = false;
+        }}
         onWheel={(e) => {
           if (e.shiftKey && state) {// Zoom
-            const { zoomFactor } = state;
-            const nextZoom = zoomFactor - 0.005 * e.deltaY;
+            const nextZoom = state.zoomFactor - 0.005 * e.deltaY;
             if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
               // Preserve world position of mouse
               const { x: svgPosX, y: svgPosY } = getRelativePos(e);
               const renderBounds = state.renderBounds.clone().delta(
-                svgPosX * 1 * (1 / zoomFactor - 1 / nextZoom),
-                svgPosY * 1 * (1 / zoomFactor - 1 / nextZoom),
+                svgPosX * (1 / state.zoomFactor - 1 / nextZoom),
+                svgPosY * (1 / state.zoomFactor - 1 / nextZoom),
               );
               dispatch(Act.updateLevel(levelUid, { zoomFactor: nextZoom, renderBounds }));
             }
-          } else {
-            // TODO
+          } else {// Pan
+            const renderBounds = state.renderBounds.clone()
+              .delta(0.5 * e.deltaX, 0.5 * e.deltaY);
+            dispatch(Act.updateLevel(levelUid, { renderBounds }));
           }
         }}
       />
@@ -81,4 +84,4 @@ function getMouseWorld(e: React.MouseEvent, state: LevelUiState) {
   );
 }
 
-export default LevelCursor;
+export default LevelMouse;

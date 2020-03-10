@@ -2,9 +2,9 @@ import { useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Thunk } from '@store/level.duck';
 import LevelOverlay from './level-overlay';
-import LevelCursor from './level-cursor';
+import LevelMouse from './level-mouse';
 // import LevelKeys from './level-keys';
-// import LevelContent from './level-content';
+import LevelContent from './level-content';
 import css from './level.scss';
 
 const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
@@ -29,27 +29,23 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
       <svg className={css.svg} >
         {ready && state &&
           <>
-            <LevelCursor
-              levelUid={uid}
-              tileDim={tileDim}
-            />
             <g style={{ transform: `scale(${state.zoomFactor})` }}>
-              <g style={{ transform: `translate(${state.renderBounds.x}, ${state.renderBounds.y})` }}>
+              <LevelOverlay
+                levelUid={uid}
+                tileDim={tileDim}
+              />
+              <g style={{ transform: `translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}>
                 <>
-                  <LevelOverlay
+                  <LevelContent
                     levelUid={uid}
-                    tileDim={tileDim}
                   />
                   <rect
                     className={css.cursor}
-                    x={state.cursor.x - state.renderBounds.x}
-                    y={state.cursor.y - state.renderBounds.y}
+                    x={state.cursor.x}
+                    y={state.cursor.y}
                     width={tileDim}
                     height={tileDim}
                   />
-                  {/* <LevelContent
-                  levelUid={uid}
-                /> */}
                   {/* <LevelKeys
                   levelUid={uid}
                   width={width}
@@ -58,6 +54,10 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
                 </>
               </g>
             </g>
+            <LevelMouse
+              levelUid={uid}
+              tileDim={tileDim}
+            />
           </>
         }
       </svg>
