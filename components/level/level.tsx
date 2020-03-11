@@ -1,22 +1,20 @@
-import { useRef, useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Thunk } from '@store/level.duck';
 import LevelGrid from './level-grid';
 import LevelMouse from './level-mouse';
-// import LevelKeys from './level-keys';
+import LevelKeys from './level-keys';
 import LevelContent from './level-content';
+import LevelCursor from './level-cursor';
 import css from './level.scss';
 
-const Level: React.FC<Props> = ({ uid, width, height, tileDim = 50 }) => {
-  const root = useRef<HTMLDivElement>(null);
+const Level: React.FC<Props> = ({ uid, tileDim = 60 }) => {
   const dispatch = useDispatch();
-  const [ready, setReady] = useState(false);
   const state = useSelector(({ level: { instance } }) => instance[uid]);
 
   useEffect(() => {
     (async () => {
       await dispatch(Thunk.createLevel({ uid, tileDim }));
-      root.current && setReady(true);
     })();
 
     return () => {
@@ -25,30 +23,21 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 50 }) => {
   }, []);
 
   return (
-    <div ref={root} style={{ width, height }}>
-      <svg className={css.svg} >
-        {ready && state &&
-          <>
+    <div className={css.root}>
+      {state &&
+        <LevelKeys levelUid={uid}>
+          <svg className={css.svg} >
             <g style={{ transform: `scale(${state.zoomFactor})` }}>
               <LevelGrid levelUid={uid} tileDim={tileDim} />
               <g style={{ transform: `translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}>
-                <>
-                  <LevelContent levelUid={uid} />
-                  <rect
-                    className={css.cursor}
-                    x={state.cursor.x}
-                    y={state.cursor.y}
-                    width={tileDim}
-                    height={tileDim}
-                  />
-                </>
+                <LevelContent levelUid={uid} />
+                <LevelCursor levelUid={uid} tileDim={tileDim} />
               </g>
             </g>
-            {/* <LevelKeys levelUid={uid} /> */}
             <LevelMouse levelUid={uid} tileDim={tileDim} />
-          </>
-        }
-      </svg>
+          </svg>
+        </LevelKeys>
+      }
     </div>
   );
 };
@@ -56,8 +45,6 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 50 }) => {
 interface Props {
   uid: string;
   tileDim?: number;
-  width: number;
-  height: number;
 }
 
 export default Level;

@@ -20,7 +20,7 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
       .pipe(
         map(({ data }) => data),
         tap((msg) => {
-          if (msg.key === 'send-level-grid' && msg.levelUid === levelUid) {
+          if (msg.key === 'send-level-outline' && msg.levelUid === levelUid) {
             setOutlines(msg.outlinePoly.map(x => Poly2.fromJson(x).svgPath));
           }
           if (msg.key === 'send-level-walls' && msg.levelUid === levelUid) {
@@ -41,7 +41,7 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
   return (
     <>
       {outlines.map((pathDef, i) =>
-        <path key={i} fill="rgba(230,200,200,0.15)" d={pathDef} />
+        <path key={i} fill="rgba(230,230,230,0.15)" d={pathDef} />
       )}
       {walls.map((pathDef, i) =>
         <path key={i} fill="rgba(0,0,0,0.8)" d={pathDef} />

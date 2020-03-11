@@ -1,11 +1,10 @@
 # TODO
 
-- when over some tile:
-  > pressing 1 shows "wall editor" 4\*3 line segments (clicking toggle them)
-  > pressing 2 shows "sub-tile editor" i.e. can toggle 3\*3 sub-tiles
-  > pressing same number again or 0 turns them off
+- test centers/edges/floyd-warshall still works
+- remove old NavDom component
 
-- in normal mode, clicking on sub-tiles changes type: `wall` (default) or `obstacle` (can see over it).
+- can press lines to add walls
+- can press 1 to divide grid/tiles by 3 where can add sub-tiles or smaller walls
 
 - also have meta-layer with triggers (rects) and points
 - also have selection-layer where can delete/cut/copy/paste
@@ -18,7 +17,6 @@
 
 - can compute floyd-warshall on request
 - can show centers and edges
-- remove nav-dom work, nav.duck etc.
 
 - can add navigable/obstacle blocks
 - represent as 3 polygon layers:

@@ -8,7 +8,7 @@ type SubTileKey = 'c' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw';
 /** Start, middle, or end */
 type WallSegKey = 's' | 'm' | 'e';
 
-export interface GridMeta {
+export interface TileMeta {
   /** Filled? */
   f: boolean;
   /** Sub-tiles */
@@ -29,7 +29,7 @@ export interface LevelState {
   key: string;
   tileDim: number;
   /** Key format "${x},${y}" in world coords snapped to grid */
-  grid: { [key: string]: undefined | GridMeta };
+  grid: { [key: string]: undefined | TileMeta };
   /** Union of grid rects */
   outline: Redacted<Poly2>[];
   /** Navigable polygon */
@@ -69,6 +69,7 @@ export interface LevelUiState {
   zoomFactor: number;
   renderBounds: Rect2;
   cursor: Vector2;
+  cursorType: 'default' | 'small';
 }
 
 export function createLevelUiState(uid: string): LevelUiState {
@@ -77,5 +78,6 @@ export function createLevelUiState(uid: string): LevelUiState {
     renderBounds: new Rect2(0, 0, 0, 0),
     zoomFactor: 1,
     cursor: new Vector2(0, 0),
+    cursorType: 'default',
   };
 }

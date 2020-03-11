@@ -91,7 +91,7 @@ function levelToggleHandlerFactory(levelUid: string) {
           ? Poly2.union([...outlinePoly, msg.rect.poly2])
           : Poly2.cutOut([msg.rect.poly2], [...outlinePoly]);
         dispatch(Act.updateLevel(levelUid, { outline: nextPoly.map((x) => redact(x)) }));
-        ctxt.postMessage({ key: 'send-level-grid', levelUid, outlinePoly: nextPoly.map(({ json }) => json) });
+        ctxt.postMessage({ key: 'send-level-outline', levelUid, outlinePoly: nextPoly.map(({ json }) => json) });
         return nextPoly;
       }),
       delay(20),
