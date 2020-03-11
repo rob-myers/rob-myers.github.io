@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { Rect2 } from '@model/rect2.model';
 import css from './level.scss';
 
-const LevelOverlay: React.FC<Props> = ({ tileDim: td, levelUid }) => {
+const LevelGrid: React.FC<Props> = ({ tileDim: td, levelUid }) => {
   const gridId = useRef(`grid-${levelUid}`);
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
   const rect = state ? state.renderBounds : Rect2.zero;
@@ -36,4 +36,4 @@ interface Props {
   tileDim: number;
 }
 
-export default LevelOverlay;
+export default LevelGrid;

@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Thunk } from '@store/level.duck';
-import LevelOverlay from './level-overlay';
+import LevelGrid from './level-grid';
 import LevelMouse from './level-mouse';
 // import LevelKeys from './level-keys';
 import LevelContent from './level-content';
@@ -30,7 +30,7 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
         {ready && state &&
           <>
             <g style={{ transform: `scale(${state.zoomFactor})` }}>
-              <LevelOverlay
+              <LevelGrid
                 levelUid={uid}
                 tileDim={tileDim}
               />
@@ -46,14 +46,14 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
                     width={tileDim}
                     height={tileDim}
                   />
-                  {/* <LevelKeys
-                  levelUid={uid}
-                  width={width}
-                  height={height}
-                /> */}
                 </>
               </g>
             </g>
+            {/* <LevelKeys
+              levelUid={uid}
+              width={width}
+              height={height}
+            /> */}
             <LevelMouse
               levelUid={uid}
               tileDim={tileDim}
