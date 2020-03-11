@@ -27,14 +27,17 @@ const Level: React.FC<Props> = ({ uid, tileDim = 60 }) => {
       {state &&
         <LevelKeys levelUid={uid}>
           <svg className={css.svg} >
+            <LevelMouse levelUid={uid} tileDim={tileDim} />
             <g style={{ transform: `scale(${state.zoomFactor})` }}>
               <LevelGrid levelUid={uid} tileDim={tileDim} />
-              <g style={{ transform: `translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}>
+              <g
+                className={css.svgInnerGroup} 
+                style={{ transform: `translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}
+              >
                 <LevelContent levelUid={uid} />
                 <LevelCursor levelUid={uid} tileDim={tileDim} />
               </g>
             </g>
-            <LevelMouse levelUid={uid} tileDim={tileDim} />
           </svg>
         </LevelKeys>
       }

@@ -25,6 +25,10 @@ body {
   pointer-events: none;
 }
 
+.svg-inner-group {
+  pointer-events: none;
+}
+
 .mouse-rect {
   pointer-events: all;
   width: 100%;
@@ -35,4 +39,12 @@ body {
 .cursor {
   fill: rgba(240, 220, 220, 0.3);
   pointer-events: none;
+
+  .cursor-lines {
+    pointer-events: all;
+
+    .cursor-line:hover {
+      fill: rgba(200, 0, 0, 0.5);
+    }
+  }
 }

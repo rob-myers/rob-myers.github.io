@@ -8,13 +8,10 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
 import { redact } from '@model/redux.model';
-import { LevelState, toggleGrid } from '@model/level/level.model';
+import { LevelState, toggleGrid, wallDepth, floorInset } from '@model/level/level.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { flatten } from '@model/generic.model';
-
-const wallDepth = 2;
-const floorInset = 12;
 
 const ctxt: LevelWorkerContext = self as any;
 

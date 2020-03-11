@@ -4,6 +4,9 @@ import { Subscription } from 'rxjs';
 import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 
+export const wallDepth = 2;
+export const floorInset = 12;
+
 type SubTileKey = 'c' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw';
 /** Start, middle, or end */
 type WallSegKey = 's' | 'm' | 'e';
