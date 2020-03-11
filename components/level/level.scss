@@ -40,11 +40,7 @@ body {
   fill: rgba(240, 220, 220, 0.3);
   pointer-events: none;
 
-  .cursor-lines {
-    pointer-events: all;
-
-    .cursor-line:hover {
-      fill: rgba(200, 0, 0, 0.5);
-    }
+  .highlight {
+    fill: rgba(200, 0, 0, 0.5);
   }
 }

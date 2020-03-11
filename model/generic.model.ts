@@ -142,3 +142,8 @@ export function isStringInt(input: string, mustBeNonNegative = false): boolean {
     && !Number.isNaN(parsed)
     && (!mustBeNonNegative || parsed >= 0);
 }
+
+export function positiveModulo(x: number, modulus: number) {
+  const modulo = x % modulus;
+  return modulo < 0 ? modulus - modulo : modulo;
+}

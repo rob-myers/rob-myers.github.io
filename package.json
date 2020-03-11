@@ -3,6 +3,7 @@
   "license": "MIT",
   "dependencies": {
     "cdt2d": "^1.0.0",
+    "classnames": "^2.2.6",
     "cli-columns": "^3.1.2",
     "earcut": "^2.2.2",
     "getopts": "^2.2.5",
@@ -44,6 +45,7 @@
   "devDependencies": {
     "@testing-library/jest-dom": "5.1.1",
     "@testing-library/react": "9.4.0",
+    "@types/classnames": "^2.2.10",
     "@types/earcut": "^2.1.0",
     "@types/gh-pages": "2.0.1",
     "@types/node": "13.7.0",

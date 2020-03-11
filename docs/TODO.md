@@ -1,10 +1,10 @@
 # TODO
 
-- test centers/edges/floyd-warshall still works
-- remove old NavDom component
-
 - can press lines to add walls
 - can press 1 to divide grid/tiles by 3 where can add sub-tiles or smaller walls
+
+- test centers/edges/floyd-warshall still works
+- remove old NavDom component
 
 - also have meta-layer with triggers (rects) and points
 - also have selection-layer where can delete/cut/copy/paste

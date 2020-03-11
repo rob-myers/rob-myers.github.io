@@ -18,7 +18,7 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
             cursorType: 'default',
           }));
           case '1': return dispatch(Act.updateLevel(levelUid, {
-            cursorType: state.cursorType === 'default' ? 'small' : 'default',
+            cursorType: state.cursorType === 'default' ? 'refined' : 'default',
           }));
         }
       }}

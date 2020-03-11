@@ -72,15 +72,18 @@ export interface LevelUiState {
   zoomFactor: number;
   renderBounds: Rect2;
   cursor: Vector2;
-  cursorType: 'default' | 'small';
+  cursorType: 'default' | 'refined';
+  /** Mouse world position modulo tile */
+  mouseModulo: Vector2;
 }
 
 export function createLevelUiState(uid: string): LevelUiState {
   return {
     key: uid,
-    renderBounds: new Rect2(0, 0, 0, 0),
+    renderBounds: Rect2.zero,
     zoomFactor: 1,
-    cursor: new Vector2(0, 0),
+    cursor: Vector2.zero,
     cursorType: 'default',
+    mouseModulo: Vector2.zero,
   };
 }

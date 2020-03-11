@@ -4,17 +4,16 @@ import css from './level.scss';
 import { getRelativePos } from '@model/dom.model';
 import { LevelUiState } from '@model/level/level.model';
 import { Act } from '@store/level.duck';
+import { positiveModulo } from '@model/generic.model';
 
 function snapToGrid(world: Vector2, td: number) {
-  world.x = Math.floor(world.x / td) * td;
-  world.y = Math.floor(world.y / td) * td;
-  return world;
+  return new Vector2(
+    Math.floor(world.x / td) * td,
+    Math.floor(world.y / td) * td,
+  );
 }
 
-const LevelMouse: React.FC<Props> = ({
-  tileDim,
-  levelUid,
-}) => {
+const LevelMouse: React.FC<Props> = ({ tileDim, levelUid }) => {
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
   const dispatch = useDispatch();
@@ -28,10 +27,14 @@ const LevelMouse: React.FC<Props> = ({
   };
 
   const onMouseMove = (e: React.MouseEvent) => {
-    const cursor = snapToGrid(getMouseWorld(e, state), tileDim);
-    if (state && !state.cursor.equals(cursor)) {
-      dispatch(Act.updateLevel(levelUid, { cursor }));
-    }
+    const mouseWorld = getMouseWorld(e, state);
+    dispatch(Act.updateLevel(levelUid, {
+      cursor: snapToGrid(mouseWorld, tileDim),
+      mouseModulo: new Vector2(
+        positiveModulo(mouseWorld.x, tileDim),
+        positiveModulo(mouseWorld.y, tileDim)
+      ),
+    }));
   };
   
   return (
