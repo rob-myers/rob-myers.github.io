@@ -12,7 +12,7 @@ import { LevelState, toggleGrid, wallDepth, floorInset } from '@model/level/leve
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { flatten } from '@model/generic.model';
-import { NavGraph, FloydWarshall } from '@model/nav/nav-graph.model';
+import { NavGraph } from '@model/nav/nav-graph.model';
 
 const ctxt: LevelWorkerContext = self as any;
 
@@ -137,7 +137,6 @@ function levelToggleHandlerFactory(levelUid: string) {
           navGraph: navGraph.json,
           floors: floors.map(floor => floor.json),
         });
-
         // // floyd warshall test
         // const fw = FloydWarshall.from(navGraph);
         // console.log({ fw });

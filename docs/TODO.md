@@ -1,10 +1,7 @@
 # TODO
 
-- remove old NavDom component and nav.worker etc.
-
 - can press lines to add walls
 - can press 1 to divide grid/tiles by 3 where can add sub-tiles or smaller walls
-
 
 - also have meta-layer with triggers (rects) and points
 - also have selection-layer where can delete/cut/copy/paste
@@ -130,3 +127,4 @@
 - decided against scrollbars in `Level` because not natural way to zoom. instead we'll pan via scroll and scale via shift-scroll.
 - can scale view via shift-scroll
 - test centers/edges/floyd-warshall still works
+- remove old NavDom component and nav.worker etc.

@@ -5,7 +5,6 @@ import Link from 'next/link';
 import css from './index.scss';
 
 const links = [
-  { label: 'NavDom (old)', pathname: '/demo', query: { id: 1 } },
   { label: 'Bash in browser', pathname: '/demo', query: { id: 2 } },
   { label: 'Level', pathname: '/demo', query: { id: 3 } },
 ];
@@ -16,7 +15,10 @@ const Home: React.FC = () => {
       <Head>
         <title>rob-myers</title>
       </Head>
-      <h1>Robert S. R. Myers</h1>
+      <h1>
+        Robert S. R. Myers
+      </h1>
+
       <section className={css.links}>
         <Link href="about">
           <a>About</a>

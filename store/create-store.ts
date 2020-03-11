@@ -6,7 +6,6 @@ import rootReducer, { RootState, RootAction } from './reducer';
 import { RedactInReduxDevTools } from '@model/redux.model';
 import { RootThunkParams, ThunkAct } from '@model/root.redux.model';
 import { State as TestState } from '@store/test.duck';
-import { State as NavState } from '@store/nav.duck';
 import { State as XTermState } from '@store/xterm.duck';
 import { State as LevelState } from '@store/level.duck';
 
@@ -35,19 +34,6 @@ const persistedReducer = persistReducer({
       }),
       (state, _key) => state,
       { whitelist: ['test'] }
-    ),
-    /**
-     * TODO remove
-     */
-    createTransform<NavState, NavState>(
-      (_state): NavState => ({
-        dom: {},
-        domMeta: {},
-        webWorker: null,
-        ready: false,
-      }),
-      (state) => state,
-      { whitelist: ['nav'] }
     ),
     createTransform<XTermState, XTermState>(
       (_state): XTermState => ({
