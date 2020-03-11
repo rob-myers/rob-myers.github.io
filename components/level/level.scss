@@ -14,7 +14,7 @@ body {
 }
 
 .mouse-rect {
-  pointer-events: bounding-box;
+  pointer-events: all;
   width: 100%;
   height: 100%;
   fill: none;

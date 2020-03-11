@@ -1,6 +1,6 @@
 import { persistStore } from 'redux-persist';
 import { fromEvent } from 'rxjs';
-import { filter, map, bufferTime, delay } from 'rxjs/operators';
+import { filter, map, delay, auditTime } from 'rxjs/operators';
 
 import { LevelWorkerContext, LevelWorker, MessageFromLevelParent, ToggleLevelTile } from '@model/level/level.worker.model';
 import { initializeStore } from './create-store';
@@ -8,7 +8,7 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
 import { redact } from '@model/redux.model';
-import { LevelState } from '@model/level/level.model';
+import { LevelState, toggleGrid } from '@model/level/level.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { flatten } from '@model/generic.model';
@@ -70,41 +70,37 @@ function levelToggleHandlerFactory(levelUid: string) {
       filter((msg): msg is ToggleLevelTile =>
         msg.key === 'toggle-level-tile' && msg.levelUid === levelUid
       ),
-      bufferTime(100),
-      filter(msgs => msgs.length > 0),
       /**
-       * Mutate grid and collect rects to add/subtract
+       * Update grid and forward rect to add/remove
        */
-      map((msgs) => {
+      map(({ tile }) => {
         const { grid, tileDim } = getLevel(levelUid)!;
-        const [adds, subs] = [[] as Poly2[], [] as Poly2[]];
-
-        msgs.forEach(({ tile }) => {
-          const key = `${tile.x},${tile.y}`;
-          const poly = new Rect2(tile.x, tile.y, tileDim, tileDim).poly2;
-          (grid[key] ? subs : adds).push(poly);
-          grid[key] = grid[key] ? undefined : {};
-        });
-        dispatch(Act.updateLevel(levelUid, { grid }));
-        return { adds, subs };
+        const { action, nextGrid  } = toggleGrid(grid, tile);
+        dispatch(Act.updateLevel(levelUid, { grid: nextGrid }));
+        return {
+          key: action,
+          rect: new Rect2(tile.x, tile.y, tileDim, tileDim),
+        };
       }),
       /**
        * Create fresh outline via union/cutting
        */
-      map(({ adds, subs }) => {
+      map((msg) => {
         const { outline: outlinePoly } = getLevel(levelUid)!;
-        const nextPoly = Poly2.cutOut(subs, Poly2.union([...outlinePoly, ...adds]));
+        const nextPoly = msg.key === 'add'
+          ? Poly2.union([...outlinePoly, msg.rect.poly2])
+          : Poly2.cutOut([msg.rect.poly2], [...outlinePoly]);
         dispatch(Act.updateLevel(levelUid, { outline: nextPoly.map((x) => redact(x)) }));
         ctxt.postMessage({ key: 'send-level-grid', levelUid, outlinePoly: nextPoly.map(({ json }) => json) });
         return nextPoly;
       }),
-      delay(100),
+      delay(20),
       /**
        * Create walls and floors
        */
       map((outline) => {
-        const insets = flatten(outline.map(x => x.createInset(wallDepth)));
-        const walls = Poly2.cutOut(insets, outline);
+        const wallInsets = flatten(outline.map(x => x.createInset(wallDepth)));
+        const walls = Poly2.cutOut(wallInsets, outline);
         const floors = Poly2.union(flatten(outline.map(x => x.createInset(floorInset))));
 
         dispatch(Act.updateLevel(levelUid, {
@@ -119,21 +115,21 @@ function levelToggleHandlerFactory(levelUid: string) {
         });
         return floors;
       }),
-      // delay(200),
+      auditTime(1000),
       /**
-       * Triangulate (can be refined).
-       * Floyd marshall should be computed when finished editing.
+       * Triangulate (could be refined).
        */
       map(floors => {
-        // Mutates floors in level state
-        floors.forEach((floor) => floor.qualityTriangulate());
         ctxt.postMessage({
           key: 'send-level-tris',
-          levelUid,
+          levelUid, // Mutates floors in level state
           tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
         });
         return null;
       }),
+      /**
+       * TODO Floyd marshall
+       */
     );
 }
 

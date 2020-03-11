@@ -2,17 +2,24 @@ import { Redacted } from '@model/redux.model';
 import { Poly2 } from '@model/poly2.model';
 import { Subscription } from 'rxjs';
 import { Rect2 } from '@model/rect2.model';
-import { Vector2 } from '@model/vec2.model';
+import { Vector2, Vector2Json } from '@model/vec2.model';
 
-type WallStyle = (
-  | 'd' // central door
-  | 'w' // plain wall
-);
+type SubTileKey = 'c' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw';
+/** Start, middle, or end */
+type WallSegKey = 's' | 'm' | 'e';
+
 export interface GridMeta {
-  n?: WallStyle;
-  e?: WallStyle;
-  s?: WallStyle;
-  w?: WallStyle;
+  /** Filled? */
+  f: boolean;
+  /** Sub-tiles */
+  st?: { [key in SubTileKey]?: boolean; };
+  /** Walls */
+  w?: {
+    n?: { [key in WallSegKey]?: boolean };
+    e?: { [key in WallSegKey]?: boolean };
+    s?: { [key in WallSegKey]?: boolean };
+    w?: { [key in WallSegKey]?: boolean };
+  };
 }
 
 /**
@@ -45,6 +52,15 @@ export function createLevelState(
     floors: [],
     walls: [],
     tileToggleSub: null,
+  };
+}
+
+export function toggleGrid(grid: LevelState['grid'], worldPoint: Vector2Json) {
+  const key = `${worldPoint.x},${worldPoint.y}`;
+  const action: 'remove' | 'add' = grid[key]?.f ? 'remove' : 'add';
+  return {
+    nextGrid: { ...grid, [key]: { ...grid[key], f: action === 'add' } },
+    action,
   };
 }
 

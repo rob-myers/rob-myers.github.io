@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Vector2 } from '@model/vec2.model';
 import css from './level.scss';
@@ -16,7 +15,6 @@ const LevelMouse: React.FC<Props> = ({
   tileDim,
   levelUid,
 }) => {
-  const mouseIsDown = useRef(false);
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
   const dispatch = useDispatch();
@@ -41,12 +39,8 @@ const LevelMouse: React.FC<Props> = ({
       <rect
         className={css.mouseRect}
         onMouseMove={onMouseMove}
-        onMouseDown={(_e) => {
-          mouseIsDown.current = true;
+        onClick={(_e) => {
           toggleTile();
-        }}
-        onMouseUp={(_e) => {
-          mouseIsDown.current = false;
         }}
         onWheel={(e) => {
           if (e.shiftKey && state) {// Zoom

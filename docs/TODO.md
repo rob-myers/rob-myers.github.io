@@ -1,9 +1,18 @@
 # TODO
 
-- decided against scrollbars in `Level` because not natural way to zoom. instead we'll pan via scroll and scale via shift-scroll.
-  > see topdown-cli and integrate bit by bit
+- when over some tile:
+  > pressing 1 shows "wall editor" 4\*3 line segments (clicking toggle them)
+  > pressing 2 shows "sub-tile editor" i.e. can toggle 3\*3 sub-tiles
+  > pressing same number again or 0 turns them off
 
-- can scale view via shift-scroll
+- in normal mode, clicking on sub-tiles changes type: `wall` (default) or `obstacle` (can see over it).
+
+- also have meta-layer with triggers (rects) and points
+- also have selection-layer where can delete/cut/copy/paste
+
+- can add internal walls and doorways
+- can add blocks (obstacles)
+- can add points e.g. spawn, interactive
 
 - clear vision of how `Level` + `Session` are used on our upcoming site
 
@@ -120,3 +129,5 @@
 - Level receives outline/walls/floors/triangles from worker
 - store as branch `redo-navigation`.
 - Level component has ui state too
+- decided against scrollbars in `Level` because not natural way to zoom. instead we'll pan via scroll and scale via shift-scroll.
+- can scale view via shift-scroll
