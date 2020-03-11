@@ -55,7 +55,7 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
             key={i}
             d={pathDef}
             fill="none"
-            stroke="#555"
+            stroke="#888"
             strokeWidth={0.1}
           />
         ))

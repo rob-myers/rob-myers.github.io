@@ -7,7 +7,7 @@ import LevelMouse from './level-mouse';
 import LevelContent from './level-content';
 import css from './level.scss';
 
-const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
+const Level: React.FC<Props> = ({ uid, width, height, tileDim = 50 }) => {
   const root = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const [ready, setReady] = useState(false);
@@ -30,15 +30,10 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
         {ready && state &&
           <>
             <g style={{ transform: `scale(${state.zoomFactor})` }}>
-              <LevelGrid
-                levelUid={uid}
-                tileDim={tileDim}
-              />
+              <LevelGrid levelUid={uid} tileDim={tileDim} />
               <g style={{ transform: `translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}>
                 <>
-                  <LevelContent
-                    levelUid={uid}
-                  />
+                  <LevelContent levelUid={uid} />
                   <rect
                     className={css.cursor}
                     x={state.cursor.x}
@@ -49,15 +44,8 @@ const Level: React.FC<Props> = ({ uid, width, height, tileDim = 80 }) => {
                 </>
               </g>
             </g>
-            {/* <LevelKeys
-              levelUid={uid}
-              width={width}
-              height={height}
-            /> */}
-            <LevelMouse
-              levelUid={uid}
-              tileDim={tileDim}
-            />
+            {/* <LevelKeys levelUid={uid} /> */}
+            <LevelMouse levelUid={uid} tileDim={tileDim} />
           </>
         }
       </svg>

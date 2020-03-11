@@ -28,19 +28,19 @@ const LevelMouse: React.FC<Props> = ({
       tile: state.cursor.json,
     });
   };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    const cursor = snapToGrid(getMouseWorld(e, state), tileDim);
+    if (state && !state.cursor.equals(cursor)) {
+      dispatch(Act.updateLevel(levelUid, { cursor }));
+    }
+  };
   
   return (
     <>
       <rect
         className={css.mouseRect}
-        onMouseMove={(e) => {
-          const cursor = snapToGrid(getMouseWorld(e, state), tileDim);
-          if (state && !state.cursor.equals(cursor)) {
-            // console.log({ x: cursor.x, y: cursor.y });
-            dispatch(Act.updateLevel(levelUid, { cursor }));
-            mouseIsDown.current && toggleTile();
-          }
-        }}
+        onMouseMove={onMouseMove}
         onMouseDown={(_e) => {
           mouseIsDown.current = true;
           toggleTile();
@@ -61,6 +61,7 @@ const LevelMouse: React.FC<Props> = ({
               dispatch(Act.updateLevel(levelUid, { zoomFactor: nextZoom, renderBounds }));
             }
           } else {// Pan
+            onMouseMove(e);
             const renderBounds = state.renderBounds.clone()
               .delta(0.5 * e.deltaX, 0.5 * e.deltaY);
             dispatch(Act.updateLevel(levelUid, { renderBounds }));
