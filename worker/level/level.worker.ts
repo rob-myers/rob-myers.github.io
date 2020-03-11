@@ -12,6 +12,7 @@ import { LevelState, toggleGrid, wallDepth, floorInset } from '@model/level/leve
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { flatten } from '@model/generic.model';
+import { NavGraph, FloydWarshall } from '@model/nav/nav-graph.model';
 
 const ctxt: LevelWorkerContext = self as any;
 
@@ -112,7 +113,7 @@ function levelToggleHandlerFactory(levelUid: string) {
         });
         return floors;
       }),
-      auditTime(1000),
+      auditTime(300),
       /**
        * Triangulate (could be refined).
        */
@@ -122,7 +123,26 @@ function levelToggleHandlerFactory(levelUid: string) {
           levelUid, // Mutates floors in level state
           tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
         });
-        return null;
+        return floors;
+      }),
+      // auditTime(500),
+      /**
+       * Send navgraph
+       */
+      map(floors => {
+        const navGraph = NavGraph.from(floors);
+        ctxt.postMessage({
+          key: 'send-nav-graph',
+          levelUid,
+          navGraph: navGraph.json,
+          floors: floors.map(floor => floor.json),
+        });
+
+        // // floyd warshall test
+        // const fw = FloydWarshall.from(navGraph);
+        // console.log({ fw });
+
+        return floors;
       }),
       /**
        * TODO Floyd marshall

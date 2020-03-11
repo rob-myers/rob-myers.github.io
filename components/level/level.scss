@@ -1,3 +1,5 @@
+@import '../variables.scss';
+
 body {
   // https://stackoverflow.com/a/56071966/2917822
   overscroll-behavior-x: none;
@@ -43,4 +45,12 @@ body {
   .highlight {
     fill: rgba(200, 0, 0, 0.5);
   }
+}
+
+.svg-nav-node {
+  fill: $nav-node-color;
+}
+
+.svg-nav-edge {
+  stroke: $nav-node-color;
 }

@@ -2,6 +2,7 @@ import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
 import { TileMeta } from './level.model';
+import { NavGraphJson } from '@model/nav/nav-graph.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {
@@ -52,7 +53,7 @@ export interface ToggleLevelTile extends BaseMessage {
   levelUid: string;
   tile: Vector2Json;
 }
-interface SendLevelGrid extends BaseMessage {
+interface SendLevelOutline extends BaseMessage {
   key: 'send-level-outline';
   levelUid: string;
   outlinePoly: Poly2Json[];
@@ -69,6 +70,13 @@ interface SendLevelTris extends BaseMessage {
   key: 'send-level-tris';
   levelUid: string;
   tris: Poly2Json[];
+}
+
+interface SendNavGraph extends BaseMessage {
+  key: 'send-nav-graph';
+  levelUid: string;
+  navGraph: NavGraphJson;
+  floors: Poly2Json[];
 }
 
 export interface ModifyLevelTile extends BaseMessage {
@@ -89,9 +97,10 @@ export type MessageFromLevelWorker = (
   | PongFromWorker
   | LevelWorkerReady
   | WorkerCreatedLevel
-  | SendLevelGrid
+  | SendLevelOutline
   | SendLevelWalls
   | SendLevelTris
+  | SendNavGraph
 );
 
 // Shortcut

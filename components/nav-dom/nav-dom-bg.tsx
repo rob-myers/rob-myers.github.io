@@ -1,6 +1,6 @@
+import { useMemo, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import css from './nav-dom.scss';
-import { useMemo, useState, useEffect } from 'react';
 
 const NavDomBackground: React.FC<Props> = ({
   uid,
