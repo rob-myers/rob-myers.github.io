@@ -9,6 +9,7 @@ body {
   outline: none;
   width: 100%;
   height: 100%;
+  background: $level-background;
 }
 
 .keys {
@@ -25,6 +26,10 @@ body {
 
 .svg-grid {
   pointer-events: none;
+
+  &-path {
+    stroke: $level-grid-color;
+  }
 }
 
 .svg-inner-group {
@@ -39,12 +44,16 @@ body {
 }
 
 .cursor {
-  fill: rgba(240, 220, 220, 0.3);
+  fill: rgba(180, 180, 220, 0.2);
   pointer-events: none;
 
   .highlight {
     fill: rgba(200, 0, 0, 0.5);
   }
+}
+
+.navigable {
+  fill: $level-navigable-bg;
 }
 
 .svg-nav-node {

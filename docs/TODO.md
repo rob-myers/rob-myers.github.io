@@ -2,23 +2,16 @@
 
 - can press lines to add walls
 - can press 1 to divide grid/tiles by 3 where can add sub-tiles or smaller walls
+- edit vs live mode
+- can save/restore
+
 
 - also have meta-layer with triggers (rects) and points
-- also have selection-layer where can delete/cut/copy/paste
-
 - can add internal walls and doorways
 - can add blocks (obstacles)
 - can add points e.g. spawn, interactive
 
 - clear vision of how `Level` + `Session` are used on our upcoming site
-
-- can compute floyd-warshall on request
-- can show centers and edges
-
-- can add navigable/obstacle blocks
-- represent as 3 polygon layers:
-  > base multipolygon, inner walls multipolygon, scenery polygons
-- can add inner walls via keypresses e.g.
 - can add lights
 
 - can save/restore level
@@ -128,3 +121,5 @@
 - can scale view via shift-scroll
 - test centers/edges/floyd-warshall still works
 - remove old NavDom component and nav.worker etc.
+- can show centers and edges
+- can compute floyd-warshall on request

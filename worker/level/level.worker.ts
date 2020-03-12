@@ -100,6 +100,10 @@ function levelToggleHandlerFactory(levelUid: string) {
         const wallInsets = flatten(outline.map(x => x.createInset(wallDepth)));
         const walls = Poly2.cutOut(wallInsets, outline);
         const floors = Poly2.union(flatten(outline.map(x => x.createInset(floorInset))));
+        // // Basic refinement of triangulation
+        // const centers = floors.map(f => f.triangulation.map(c => c.centerOfBoundary));
+        // // console.log({ centers });
+        // floors.forEach((floor, i) => floor.addSteinerPoints(centers[i]).customTriangulate());
 
         dispatch(Act.updateLevel(levelUid, {
           walls: walls.map((x) => redact(x)),
@@ -135,7 +139,7 @@ function levelToggleHandlerFactory(levelUid: string) {
           key: 'send-nav-graph',
           levelUid,
           navGraph: navGraph.json,
-          floors: floors.map(floor => floor.json),
+          floors: floors.map(({ json }) => json),
         });
         // // floyd warshall test
         // const fw = FloydWarshall.from(navGraph);

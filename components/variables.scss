@@ -1,15 +1,17 @@
-$nav-background: white;
-$nav-navigable-bg: none;
+$level-background: white;
+$level-navigable-bg: none;
 $nav-navigable-stroke: #ccc;
 $nav-box-color: black;
 $nav-box-dimension: 80px;
-$nav-line-thickness: 4px;
-$nav-node-color: rgba(0, 0, 100, 0.2);
+$nav-line-thickness: 2px;
+$nav-node-color: rgba(0, 0, 100, 0.1);
+$level-grid-color: rgba(0,0,0,0.5);
 
 // dark mode
 // $nav-line-thickness: 8px;
-// $nav-background: black;
-// $nav-navigable-bg: #222;
+// $level-background: black;
+// $level-navigable-bg: #222;
 // $nav-navigable-stroke: none;
 // $nav-box-color: white;
 // $nav-node-color: white;
+// $level-grid-color: rgba(200,200,200,0.6);

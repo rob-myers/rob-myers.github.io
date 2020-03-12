@@ -15,7 +15,7 @@ const LevelGrid: React.FC<Props> = ({ tileDim: td, levelUid }) => {
     <>
       <defs>
         <pattern id={gridId.current} x={dx} y={dy} width={td} height={td} patternUnits="userSpaceOnUse">
-          <path d={`M ${td} 0 L 0 0 0 ${td}`} fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="0.5"/>
+          <path className={css.svgGridPath} d={`M ${td} 0 L 0 0 0 ${td}`} fill="none" strokeWidth="0.5"/>
         </pattern>
       </defs>
       <rect

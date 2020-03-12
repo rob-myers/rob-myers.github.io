@@ -62,9 +62,11 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
       {walls.map((pathDef, i) =>
         <path key={i} fill="rgba(0,0,0,0.8)" d={pathDef} />
       )}
-      {floors.map((pathDef, i) =>
-        <path key={i} fill="rgba(50,50,50,0.1)" d={pathDef} />
-      )}
+      <g className={css.navigable}>
+        {floors.map((pathDef, i) =>
+          <path key={i} fill="rgba(50,50,50,0.1)" d={pathDef} />
+        )}
+      </g>
       {
         triangles.map((pathDef, i) => (
           <path
