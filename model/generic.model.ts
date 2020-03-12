@@ -145,5 +145,5 @@ export function isStringInt(input: string, mustBeNonNegative = false): boolean {
 
 export function positiveModulo(x: number, modulus: number) {
   const modulo = x % modulus;
-  return modulo < 0 ? modulus - modulo : modulo;
+  return modulo < 0 ? modulus + modulo : modulo;
 }
