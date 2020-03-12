@@ -1,10 +1,11 @@
+import { useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Vector2 } from '@model/vec2.model';
-import css from './level.scss';
-import { getRelativePos } from '@model/dom.model';
-import { LevelUiState } from '@model/level/level.model';
 import { Act } from '@store/level.duck';
+import { Vector2 } from '@model/vec2.model';
+import { getRelativePos } from '@model/dom.model';
+import { LevelUiState, wallDepth } from '@model/level/level.model';
 import { positiveModulo } from '@model/generic.model';
+import css from './level.scss';
 
 function snapToGrid(world: Vector2, td: number) {
   return new Vector2(
@@ -16,6 +17,7 @@ function snapToGrid(world: Vector2, td: number) {
 const LevelMouse: React.FC<Props> = ({ tileDim, levelUid }) => {
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
+  const highlighted = useRef(false);
   const dispatch = useDispatch();
 
   const toggleTile = () => {
@@ -28,12 +30,20 @@ const LevelMouse: React.FC<Props> = ({ tileDim, levelUid }) => {
 
   const onMouseMove = (e: React.MouseEvent) => {
     const mouseWorld = getMouseWorld(e, state);
+    const mouseModulo = new Vector2(
+      positiveModulo(mouseWorld.x, tileDim),
+      positiveModulo(mouseWorld.y, tileDim),
+    );
+    const highlight: LevelUiState['cursorHighlight'] = {
+      n: mouseModulo.y <= wallDepth,
+      e: mouseModulo.x >= tileDim - wallDepth,
+      s: mouseModulo.y >= tileDim - wallDepth,
+      w: mouseModulo.x <= wallDepth,
+    };
+    highlighted.current = highlight.n || highlight.e || highlight.s || highlight.w || false;
     dispatch(Act.updateLevel(levelUid, {
       cursor: snapToGrid(mouseWorld, tileDim),
-      mouseModulo: new Vector2(
-        positiveModulo(mouseWorld.x, tileDim),
-        positiveModulo(mouseWorld.y, tileDim)
-      ),
+      cursorHighlight: highlight,
     }));
   };
   
@@ -43,17 +53,21 @@ const LevelMouse: React.FC<Props> = ({ tileDim, levelUid }) => {
         className={css.mouseRect}
         onMouseMove={onMouseMove}
         onClick={(_e) => {
-          toggleTile();
+          if (highlighted.current) {
+            console.log('HIGHLIGHT', state.cursorHighlight);
+          } else {
+            toggleTile();
+          }
         }}
         onWheel={(e) => {
           if (e.shiftKey && state) {// Zoom
             const nextZoom = state.zoomFactor - 0.005 * e.deltaY;
             if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
               // Preserve world position of mouse
-              const { x: svgPosX, y: svgPosY } = getRelativePos(e);
+              const { x, y } = getRelativePos(e);
               const renderBounds = state.renderBounds.clone().delta(
-                svgPosX * (1 / state.zoomFactor - 1 / nextZoom),
-                svgPosY * (1 / state.zoomFactor - 1 / nextZoom),
+                x * (1 / state.zoomFactor - 1 / nextZoom),
+                y * (1 / state.zoomFactor - 1 / nextZoom),
               );
               dispatch(Act.updateLevel(levelUid, { zoomFactor: nextZoom, renderBounds }));
             }
