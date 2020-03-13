@@ -30,6 +30,9 @@ body {
   &-path {
     stroke: $level-grid-color;
   }
+  &-refined-path {
+    stroke: $level-grid-refined-color;
+  }
 }
 
 .svg-inner-group {

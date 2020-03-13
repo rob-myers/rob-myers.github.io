@@ -1,49 +1,44 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Act } from '@store/level.duck';
 import { Vector2 } from '@model/vec2.model';
 import { getRelativePos } from '@model/dom.model';
 import { LevelUiState, wallDepth } from '@model/level/level.model';
-import { positiveModulo } from '@model/generic.model';
+import { posModulo } from '@model/generic.model';
 import css from './level.scss';
 
-function snapToGrid(world: Vector2, td: number) {
-  return new Vector2(
-    Math.floor(world.x / td) * td,
-    Math.floor(world.y / td) * td,
-  );
+function snapToGrid({ x, y }: Vector2, td: number) {
+  return new Vector2(Math.floor(x / td) * td, Math.floor(y / td) * td);
 }
 
 const LevelMouse: React.FC<Props> = ({ tileDim, levelUid }) => {
+  const highlighted = useRef(false);
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
-  const highlighted = useRef(false);
   const dispatch = useDispatch();
 
-  const toggleTile = () => {
-    state && worker.postMessage({
-      key: 'toggle-level-tile',
-      levelUid,
-      tile: state.cursor.json,
-    });
-  };
+  useEffect(() => {
+    const td = state.cursorType === 'refined' ? tileDim/3 : tileDim;
+    dispatch(Act.updateLevel(levelUid, {
+      cursor: snapToGrid(state.mouseWorld, td),
+    }));
+  }, [state.cursorType]);
 
   const onMouseMove = (e: React.MouseEvent) => {
+    const td = state.cursorType === 'refined' ? tileDim/3 : tileDim;
     const mouseWorld = getMouseWorld(e, state);
-    const mouseModulo = new Vector2(
-      positiveModulo(mouseWorld.x, tileDim),
-      positiveModulo(mouseWorld.y, tileDim),
-    );
+    const mouseModulo = new Vector2(posModulo(mouseWorld.x, td), posModulo(mouseWorld.y, td));
     const highlight: LevelUiState['cursorHighlight'] = {
       n: mouseModulo.y <= wallDepth,
-      e: mouseModulo.x >= tileDim - wallDepth,
-      s: mouseModulo.y >= tileDim - wallDepth,
+      e: mouseModulo.x >= td - wallDepth,
+      s: mouseModulo.y >= td - wallDepth,
       w: mouseModulo.x <= wallDepth,
     };
     highlighted.current = highlight.n || highlight.e || highlight.s || highlight.w || false;
     dispatch(Act.updateLevel(levelUid, {
-      cursor: snapToGrid(mouseWorld, tileDim),
+      cursor: snapToGrid(mouseWorld, td),
       cursorHighlight: highlight,
+      mouseWorld,
     }));
   };
   
@@ -56,26 +51,33 @@ const LevelMouse: React.FC<Props> = ({ tileDim, levelUid }) => {
           if (highlighted.current) {
             console.log('HIGHLIGHT', state.cursorHighlight);
           } else {
-            toggleTile();
+            worker.postMessage({
+              key: 'toggle-level-tile',
+              levelUid,
+              tile: state.cursor.json,
+            });
           }
         }}
         onWheel={(e) => {
           if (e.shiftKey && state) {// Zoom
             const nextZoom = state.zoomFactor - 0.005 * e.deltaY;
             if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
-              // Preserve world position of mouse
               const { x, y } = getRelativePos(e);
-              const renderBounds = state.renderBounds.clone().delta(
-                x * (1 / state.zoomFactor - 1 / nextZoom),
-                y * (1 / state.zoomFactor - 1 / nextZoom),
-              );
-              dispatch(Act.updateLevel(levelUid, { zoomFactor: nextZoom, renderBounds }));
+              dispatch(Act.updateLevel(levelUid, {
+                zoomFactor: nextZoom,
+                // Preserve world position of mouse
+                renderBounds: state.renderBounds.clone().delta(
+                  x * (1 / state.zoomFactor - 1 / nextZoom),
+                  y * (1 / state.zoomFactor - 1 / nextZoom),
+                ),
+              }));
             }
           } else {// Pan
             onMouseMove(e);
-            const renderBounds = state.renderBounds.clone()
-              .delta(0.5 * e.deltaX, 0.5 * e.deltaY);
-            dispatch(Act.updateLevel(levelUid, { renderBounds }));
+            dispatch(Act.updateLevel(levelUid, {
+              renderBounds: state.renderBounds.clone()
+                .delta(0.5 * e.deltaX, 0.5 * e.deltaY)
+            }));
           }
         }}
       />

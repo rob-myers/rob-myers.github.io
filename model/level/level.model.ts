@@ -5,17 +5,27 @@ import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 
 export const wallDepth = 2;
-export const floorInset = 12;
+export const floorInset = 10;
 
 type SubTileKey = 'c' | 'n' | 'ne' | 'e' | 'se' | 's' | 'sw' | 'w' | 'nw';
 /** Start, middle, or end */
 type WallSegKey = 's' | 'm' | 'e';
 
+/**
+ * Alternatively could represent via level {floor} polygon,
+ * level {obstacle} polygon, and:
+ * - tile-click inverts floor polygon (restricted to tile)
+ * - subtile-click needs to test for subtile in {floor} or {obstacle}
+ *   and move between them
+ * - wall-click inverts obstacle polygon (restricted to wall)
+ */
 export interface TileMeta {
-  /** Filled? */
+  /** Fully filled floor? */
   f: boolean;
-  /** Sub-tiles */
-  st?: { [key in SubTileKey]?: boolean; };
+  /** Sub floor tiles (relevant if floor not fully filled) */
+  sf?: { [key in SubTileKey]?: boolean; };
+  /** Blocks i.e. obstacles */
+  b?: { [key in SubTileKey]?: boolean; };
   /** Walls */
   w?: {
     n?: { [key in WallSegKey]?: boolean };
@@ -71,6 +81,7 @@ export interface LevelUiState {
   key: string;
   zoomFactor: number;
   renderBounds: Rect2;
+  mouseWorld: Vector2;
   cursor: Vector2;
   cursorType: 'default' | 'refined';
   cursorHighlight: Partial<Record<'n' | 'e' | 's' | 'w', boolean>>;
@@ -81,6 +92,7 @@ export function createLevelUiState(uid: string): LevelUiState {
     key: uid,
     renderBounds: Rect2.zero,
     zoomFactor: 1,
+    mouseWorld:  Vector2.zero,
     cursor: Vector2.zero,
     cursorType: 'default',
     cursorHighlight: {},

@@ -1,13 +1,14 @@
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { Rect2 } from '@model/rect2.model';
 import css from './level.scss';
 
-const LevelGrid: React.FC<Props> = ({ tileDim: td, levelUid }) => {
+const LevelGrid: React.FC<Props> = ({ tileDim, levelUid }) => {
   const gridId = useRef(`grid-${levelUid}`);
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
+
   // Compute grid pattern offset
-  const rect = state ? state.renderBounds : Rect2.zero;
+  const td = state.cursorType === 'default' ? tileDim : tileDim/3;
+  const rect = state.renderBounds;
   const dx = -(rect.x > 0 ? rect.x % td : (rect.x % td) + td);
   const dy = -(rect.y > 0 ? rect.y % td : (rect.y % td) + td);
 
@@ -15,7 +16,12 @@ const LevelGrid: React.FC<Props> = ({ tileDim: td, levelUid }) => {
     <>
       <defs>
         <pattern id={gridId.current} x={dx} y={dy} width={td} height={td} patternUnits="userSpaceOnUse">
-          <path className={css.svgGridPath} d={`M ${td} 0 L 0 0 0 ${td}`} fill="none" strokeWidth="0.5"/>
+          <path
+            className={state.cursorType === 'refined' ? css.svgGridRefinedPath : css.svgGridPath}
+            d={`M ${td} 0 L 0 0 0 ${td}`}
+            fill="none"
+            strokeWidth="0.5"
+          />
         </pattern>
       </defs>
       <rect

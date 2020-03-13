@@ -143,7 +143,8 @@ export function isStringInt(input: string, mustBeNonNegative = false): boolean {
     && (!mustBeNonNegative || parsed >= 0);
 }
 
-export function positiveModulo(x: number, modulus: number) {
+/** Construct `x` modulo `modulus` ensuring positive */
+export function posModulo(x: number, modulus: number) {
   const modulo = x % modulus;
   return modulo < 0 ? modulus + modulo : modulo;
 }
