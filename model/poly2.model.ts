@@ -271,6 +271,13 @@ export class Poly2 {
       .some(([u, v, w]) => Poly2.isPointInTriangle(point, u, v, w));
   }
 
+  /** Does multipolygon {polygon} cover {other} polygon? */
+  public static covers(polygon: Poly2[], other: Poly2) {
+    const { bounds } = other;
+    const filtered = polygon.filter(p => p.bounds.intersects(bounds));
+    return Poly2.cutOut(filtered, [other]).length === 0;
+  }
+
   /**
    * Create a new inset/outset version of this polygon,
    * by cutting/unioning quads.
@@ -593,6 +600,13 @@ export class Poly2 {
   public static union(polys: Poly2[]): Poly2[] {
     return polygonClipping
       .union([], ...polys.map(({ geoJson: { coordinates } }) => coordinates))
+      .map(coords => Poly2.fromGeoJson(coords).cleanFinalReps());
+  }
+
+  /** Construct symmetric difference of multipolygon {polygon} with {other} polygon */
+  public static xor(multipolygon: Poly2[], other: Poly2) {
+    return polygonClipping
+      .xor(other.geoJson.coordinates, multipolygon.map(({ geoJson }) => geoJson.coordinates))
       .map(coords => Poly2.fromGeoJson(coords).cleanFinalReps());
   }
 }

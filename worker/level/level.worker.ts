@@ -8,7 +8,7 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
 import { redact } from '@model/redux.model';
-import { LevelState, toggleGrid, wallDepth, floorInset } from '@model/level/level.model';
+import { LevelState, wallDepth, floorInset } from '@model/level/level.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { flatten } from '@model/generic.model';
@@ -69,28 +69,15 @@ function levelToggleHandlerFactory(levelUid: string) {
         msg.key === 'toggle-level-tile' && msg.levelUid === levelUid
       ),
       /**
-       * Update grid and forward rect to add/remove
-       */
-      map(({ tile }) => {
-        const { grid, tileDim } = getLevel(levelUid)!;
-        const { action, nextGrid  } = toggleGrid(grid, tile);
-        dispatch(Act.updateLevel(levelUid, { grid: nextGrid }));
-        return {
-          key: action,
-          rect: new Rect2(tile.x, tile.y, tileDim, tileDim),
-        };
-      }),
-      /**
        * Create fresh outline via union/cutting
        */
-      map((msg) => {
-        const { outline: outlinePoly } = getLevel(levelUid)!;
-        const nextPoly = msg.key === 'add'
-          ? Poly2.union([...outlinePoly, msg.rect.poly2])
-          : Poly2.cutOut([msg.rect.poly2], [...outlinePoly]);
-        dispatch(Act.updateLevel(levelUid, { outline: nextPoly.map((x) => redact(x)) }));
-        ctxt.postMessage({ key: 'send-level-outline', levelUid, outlinePoly: nextPoly.map(({ json }) => json) });
-        return nextPoly;
+      map(({ tile }) => {
+        const { tileDim, tileFloors: prevTileFloors } = getLevel(levelUid)!;
+        const rect = new Rect2(tile.x, tile.y, tileDim, tileDim);
+        const tileFloors = Poly2.xor(prevTileFloors, rect.poly2);
+        dispatch(Act.updateLevel(levelUid, { tileFloors: tileFloors.map((x) => redact(x)) }));
+        ctxt.postMessage({ key: 'send-level-outline', levelUid, outlinePoly: tileFloors.map(({ json }) => json) });
+        return tileFloors;
       }),
       delay(20),
       /**

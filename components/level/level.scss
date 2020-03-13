@@ -2,7 +2,8 @@
 
 body {
   // https://stackoverflow.com/a/56071966/2917822
-  overscroll-behavior-x: none;
+  // overscroll-behavior-x: none;
+  overscroll-behavior: none;
 }
 
 .root {

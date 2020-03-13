@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import {
   State as LevelsState, 
   Action as LevelAction,
-  // Thunk as OsThunk,
+  // Thunk as LevelThunk,
   reducer as levelReducer,
 } from '@store/level/level.worker.duck';
 

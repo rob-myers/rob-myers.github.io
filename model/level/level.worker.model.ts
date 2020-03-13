@@ -1,7 +1,6 @@
 import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
-import { TileMeta } from './level.model';
 import { NavGraphJson } from '@model/nav/nav-graph.model';
 
 /** A Worker instance in parent thread. */
@@ -79,19 +78,11 @@ interface SendNavGraph extends BaseMessage {
   floors: Poly2Json[];
 }
 
-export interface ModifyLevelTile extends BaseMessage {
-  key: 'modify-level-tile';
-  levelUid: string;
-  tile: Vector2Json;
-  meta: TileMeta;
-}
-
 export type MessageFromLevelParent = (
   | PingFromParent
   | RequestNewLevel
   | RequestDestroyLevel
   | ToggleLevelTile
-  | ModifyLevelTile
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker
