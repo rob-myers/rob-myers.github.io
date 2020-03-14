@@ -96,7 +96,7 @@ export const Thunk = {
       const ttyXterm = new TtyXterm({
         canonicalPath: msg.canonicalPath,
         sessionKey: msg.sessionKey,
-        linesPerUpdate: 100,
+        linesPerUpdate: 1000,
         refreshMs: 1,
         osWorker: worker,
         uiKey,

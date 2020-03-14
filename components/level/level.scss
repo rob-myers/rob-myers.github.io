@@ -7,7 +7,6 @@ body {
 }
 
 .root {
-  outline: none;
   width: 100%;
   height: 100%;
   background: $level-background;
@@ -59,13 +58,24 @@ body {
       text-decoration: underline;
     }
   }
+}
 
+.viewport {
+  width: 100%;
+  height: calc(100% - 25px);
+  position: relative;
+
+  .meta-points-popover  {
+    position: absolute;
+    background: white;
+    border: 1px solid #aaa;
+    top: 0px;
+  }
 }
 
 .svg {
-  overflow: none;
   width: 100%;
-  height: calc(100% - 25px);
+  height: 100%;
 }
 
 .svg-grid {

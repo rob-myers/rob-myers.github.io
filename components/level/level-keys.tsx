@@ -11,8 +11,6 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
       className={css.keys}
       onKeyUp={(e) => {
         // console.log({ key: e.key, state });
-        if (!state) return;
-  
         switch (e.key) {
           case ' ': return state.editMode && e.shiftKey &&
             dispatch(Act.updateLevel(levelUid, {

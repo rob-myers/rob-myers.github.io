@@ -25,34 +25,33 @@ const Level: React.FC<Props> = ({ uid }) => {
   }, []);
 
   return (
-    <div className={css.root}>
+    <section className={css.root}>
       {state &&
         <LevelKeys levelUid={uid}>
           <LevelMenu levelUid={uid} />
-          <svg className={css.svg} >
-            <LevelMouse levelUid={uid} />
-            <g style={{ transform: `scale(${state.zoomFactor})` }}>
-              <g
-                className={css.svgInnerGroup} 
-                style={{ transform: `translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}
-              >
-                <LevelContent
-                  levelUid={uid}
-                  showMeta={state.editMode === 'meta'}
-                  showNavGraph={false}
-                />
-                {state.editMode === 'make'
-                  && <LevelCursor levelUid={uid} />}
+          <section className={css.viewport}>
+            <svg className={css.svg} >
+              <LevelMouse levelUid={uid} />
+              <g style={{ transform: `scale(${state.zoomFactor})` }}>
+                <g
+                  className={css.svgInnerGroup} 
+                  style={{ transform: `translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}
+                >
+                  <LevelContent
+                    levelUid={uid}
+                    showMeta={state.editMode === 'meta'}
+                    showNavGraph={false}
+                  />
+                  {state.editMode === 'make' && <LevelCursor levelUid={uid} />}
+                </g>
+                {state.editMode === 'make' && <LevelGrid levelUid={uid} />}
               </g>
-              {state.editMode === 'make'
-                && <LevelGrid levelUid={uid} />}
-            </g>
-          </svg>
-          {state.editMode === 'meta'
-            && <LevelMeta levelUid={uid} />}
+            </svg>
+            {state.editMode === 'meta' && <LevelMeta levelUid={uid} />}
+          </section>
         </LevelKeys>
       }
-    </div>
+    </section>
   );
 };
 

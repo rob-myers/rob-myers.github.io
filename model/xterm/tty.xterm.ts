@@ -212,19 +212,20 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
       const last = !text.endsWith('\n') && lines.pop();
       for (const line of lines) {
         await new Promise(resolve => {
-          this.queueCommands(
+          this.queueCommands([
             { key: 'paste-line', line },
             { key: 'await-prompt' },
             { key: 'resolve', resolve },
-          );
+          ]);
         });
       }
       if (last) {// Set as pending input but don't send
-        this.queueCommands(
+        this.queueCommands([
           { key: 'resolve', resolve: () => {
             this.clearInput();
             this.setInput(last);
-          }});
+          }}
+        ]);
       }
     } else {
       this.handleXtermKeypresses(data);
@@ -305,7 +306,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
       // Handle special characters
       switch (data) {
         case '\r': {// Enter
-          this.queueCommands({ key: 'newline' });
+          this.queueCommands([{ key: 'newline' }]);
           break;
         }
         case '\x7F': {// Backspace
@@ -423,9 +424,8 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
             sessionKey: msg.sessionKey,
             messageUid: msg.messageUid,
           });
-          this.queueCommands(...msg.lines.map(
-            line => ({ key: 'line' as 'line', line }))
-          );
+          this.queueCommands(msg.lines.map(
+            line => ({ key: 'line' as 'line', line })));
         }
         return;
       }
@@ -469,8 +469,11 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     return 1 + this.offsetToColRow(this.input, this.input.length).row;
   }
 
-  public queueCommands(...commands: XtermOutputCommand[]) {
-    this.commandBuffer.push(...commands);
+  public queueCommands(commands: XtermOutputCommand[]) {
+    // We avoid stack overflow for push(...commands)
+    for (const command of commands) {
+      this.commandBuffer.push(command);
+    }
     this.printPending();
   }
 
@@ -640,7 +643,7 @@ export class TtyXterm extends BaseOsBridge<TtyXtermDef> {
     if (first && first.key === 'await-prompt') {
       this.commandBuffer.shift();
     }
-    this.queueCommands({ key: 'prompt', prompt });
+    this.queueCommands([{ key: 'prompt', prompt }]);
   }
 
   /**

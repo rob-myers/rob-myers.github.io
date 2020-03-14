@@ -88,8 +88,8 @@ export const osCreateTtyThunk = createOsThunk<OsAct, CreateTtyThunk>(
 );
 
 interface CreateTtyThunk extends OsThunkAct<OsAct,
-  { userKey: string  },
-  { canonicalPath: string; iNode: TtyINode; sessionKey: string }
+{ userKey: string  },
+{ canonicalPath: string; iNode: TtyINode; sessionKey: string }
 > {
   type: OsAct.OS_CREATE_TTY_THUNK;
 }
@@ -124,8 +124,8 @@ export const osPromptThunk = createOsThunk<OsAct, PromptThunk>(
   },
 );
 export interface PromptThunk extends OsThunkAct<OsAct,
-  { processKey: string; fd: number; text: string },
-  boolean
+{ processKey: string; fd: number; text: string },
+boolean
 > {
   type: OsAct.OS_PROMPT_THUNK;
 }
