@@ -849,7 +849,7 @@ export class TermService {
           term.def.negated && '!',
           this.src(term.def.child),
           term.def.redirects.map(r => this.src(r)).join(' '),
-          term.def.background && '&'
+          term.def.background && '&',
         ].filter(Boolean).join(' ');
       }
       case CompositeType.declare: {
@@ -1004,7 +1004,7 @@ export class TermService {
       }
       case CompositeType.subshell: {
         return `( ${
-          term.def.cs.map(c => this.src(c)).join(' ')
+          term.def.cs.map(c => this.src(c)).join('; ')
         } )`;
       }
       case CompositeType.test: {
