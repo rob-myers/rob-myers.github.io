@@ -45,6 +45,8 @@ export interface LevelUiState {
   cursor: Vector2;
   cursorType: 'default' | 'refined';
   cursorHighlight: Partial<Record<Direction, boolean>>;
+  mode: 'edit' | 'live';
+  editMode: null | 'make' | 'meta';
 }
 
 export function createLevelUiState(uid: string): LevelUiState {
@@ -56,6 +58,8 @@ export function createLevelUiState(uid: string): LevelUiState {
     cursor: Vector2.zero,
     cursorType: 'default',
     cursorHighlight: {},
+    mode: 'edit',
+    editMode: 'make',
   };
 }
 

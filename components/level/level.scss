@@ -2,8 +2,8 @@
 
 body {
   // https://stackoverflow.com/a/56071966/2917822
-  // overscroll-behavior-x: none;
-  overscroll-behavior: none;
+  overscroll-behavior-x: none;
+  // overscroll-behavior: none;
 }
 
 .root {
@@ -31,9 +31,17 @@ body {
   padding: 2px;
 
   .main-menu {
+    display: flex;
+  }
+  
+  .edit-menu {
     flex: 1;
     display: flex;
-    // align-items: center;
+
+    .filename-input {
+      padding: 0 4px;
+      font-family: 'Courier New', Courier, monospace;
+    }
   }
 
   .button {
@@ -53,8 +61,6 @@ body {
   }
 
 }
-
-
 
 .svg {
   overflow: none;
@@ -94,26 +100,30 @@ body {
 }
 
 .base-floor {
-  stroke-width: 1;
+  stroke-width: 2;
   stroke: rgba(0,0,0,1);
-  fill: rgba(230,230,230,0.15);
+  fill: $level-floor-fill;
 }
 
 .navigable {
-  fill: $level-navigable-bg;
-}
-
-.wall-seg {
-  stroke: rgba(0, 0, 0, 1);
-  stroke-width: 0.5;
-  // Ensures correct overlap
-  stroke-linecap: square;
+  fill: $level-navigable-fill;
+  stroke: rgba(0, 0, 0, 0.5);
+  stroke-width: 0.3;
+  // fill: url(#stripe-pattern);
 }
 
 .triangle {
   fill: none;
-  stroke: #888;
-  stroke-width: 0.1;
+  stroke: $level-navigable-stroke;
+  stroke-width: 0.2;
+  stroke-linecap: round;
+}
+
+.wall-seg {
+  stroke: rgba(0, 0, 0, 1);
+  stroke-width: 2;
+  // Ensures correct overlap
+  stroke-linecap: square;
 }
 
 .svg-nav-node {

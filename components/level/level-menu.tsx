@@ -9,28 +9,46 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
 
   return (
     <section className={css.menu}>
-      <section className={css.mainMenu}>
-        <button className={classNames(css.button)}>
-          make
-        </button>
-        <button className={classNames(css.button)}>
-          meta
-        </button>
-      </section>
-      <section className={css.editMenu}>
-        <button
-          className={classNames(css.button, {
-            [css.pressed]: state.cursorType === 'refined'
-          })}
-          onClick={(_e) => {
-            dispatch(Act.updateLevel(levelUid, {
-              cursorType: state.cursorType === 'refined' ? 'default' : 'refined',
-            }));
-          }}
-        >
-          inner
-        </button>
-      </section>
+      {
+        state.mode === 'edit' && (
+          <>
+            <section className={css.editMenu}>
+              <button
+                className={classNames(css.button, {
+                  [css.pressed]: state.cursorType === 'refined'
+                })}
+                onClick={(_e) => dispatch(Act.updateLevel(levelUid, {
+                  cursorType: state.cursorType === 'refined' ? 'default' : 'refined',
+                }))}
+              >
+                inner
+              </button>
+              <input
+                className={css.filenameInput}
+                placeholder="filename"
+              />
+            </section>
+            <section className={css.mainMenu}>
+              <button
+                className={classNames(css.button, {
+                  [css.pressed]: state.editMode === 'make'
+                })}
+                onClick={(_e) => dispatch(Act.updateLevel(levelUid, { editMode: 'make' }))}
+              >
+                make
+              </button>
+              <button
+                className={classNames(css.button, {
+                  [css.pressed]: state.editMode === 'meta'
+                })}
+                onClick={(_e) => dispatch(Act.updateLevel(levelUid, { editMode: 'meta' }))}
+              >
+                meta
+              </button>
+            </section>
+          </>
+        )
+      }
     </section>
   );
 };

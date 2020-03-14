@@ -66,7 +66,7 @@ const LevelContent: React.FC<Props> = ({ levelUid, showNavGraph = false }) => {
       </g>
       <g className={css.navigable}>
         {floors.map((pathDef, i) =>
-          <path key={i} fill="rgba(50,50,50,0.1)" d={pathDef} />
+          <path key={i} d={pathDef} />
         )}
       </g>
       <g className={css.triangle}>

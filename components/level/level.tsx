@@ -29,15 +29,19 @@ const Level: React.FC<Props> = ({ uid }) => {
         <LevelKeys levelUid={uid}>
           <LevelMenu levelUid={uid} />
           <svg className={css.svg} >
+            {/* <pattern // Stripe pattern
+              id='stripe-pattern' width="4" height="4" patternUnits="userSpaceOnUse" patternTransform="scale(0.5)">
+              <rect width="0.2" height="4" fill="#000"></rect>
+            </pattern> */}
             <LevelMouse levelUid={uid} />
             <g style={{ transform: `scale(${state.zoomFactor})` }}>
-              <LevelGrid levelUid={uid} />
+              {state.editMode === 'make' && <LevelGrid levelUid={uid} />}
               <g
                 className={css.svgInnerGroup} 
                 style={{ transform: `translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}
               >
                 <LevelContent levelUid={uid} showNavGraph={false} />
-                <LevelCursor levelUid={uid} />
+                {state.editMode === 'make' && <LevelCursor levelUid={uid} />}
               </g>
             </g>
           </svg>

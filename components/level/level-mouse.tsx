@@ -47,6 +47,9 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
         className={css.mouseRect}
         onMouseMove={onMouseMove}
         onClick={(_e) => {
+          if (state.editMode !== 'make') {
+            return;
+          }
           if (highlighted.current) {
             // console.log('HIGHLIGHT', state.cursorHighlight);
             const { cursorHighlight: h  } = state;
@@ -70,7 +73,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
             });
           }
         }}
-        onWheel={(e) => {
+        onWheelCapture={(e) => {
           if (e.shiftKey && state) {// Zoom
             const nextZoom = state.zoomFactor - 0.005 * e.deltaY;
             if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
