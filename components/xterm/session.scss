@@ -1,10 +1,11 @@
 .container {
-  background: darkslategray;
+  background: #222;
 }
 
 .top-panel {
   display: flex;
   justify-content: flex-end;
+  border-bottom: 1px solid #444;
 }
 
 .save-button {

@@ -29,10 +29,11 @@ export const Session: React.FC<Props> = ({ uid, userKey }) => {
     <section className={css.container}>
       <section className={css.topPanel}>
         <a
+          title="save"
           className={css.saveButton}
           onClick={() => dispatch(Thunk.saveOs({}))}
         >
-          save
+          💾
         </a>
       </section>
       <XTermWithoutSsr

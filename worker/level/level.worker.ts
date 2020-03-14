@@ -1,6 +1,7 @@
 import { persistStore } from 'redux-persist';
 import { fromEvent } from 'rxjs';
 import { filter, map, delay, auditTime } from 'rxjs/operators';
+import { generate } from 'shortid';
 
 import { LevelWorkerContext, LevelWorker, MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall } from '@model/level/level.worker.model';
 import { initializeStore } from './create-store';
@@ -8,10 +9,11 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
 import { redact } from '@model/redux.model';
-import { LevelState, floorInset, smallTileDim, tileDim } from '@model/level/level.model';
+import { LevelState, floorInset, smallTileDim, tileDim, LevelPoint } from '@model/level/level.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { NavGraph } from '@model/nav/nav-graph.model';
+import { Vector2 } from '@model/vec2.model';
 
 const ctxt: LevelWorkerContext = self as any;
 
@@ -35,9 +37,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     case 'request-new-level': {
       dispatch(Act.registerLevel(msg.levelUid));
       dispatch(Act.updateLevel(msg.levelUid, {
-        tileToggleSub: redact(
-          levelToggleHandlerFactory(msg.levelUid).subscribe()
-        ),
+        tileToggleSub: redact(levelToggleHandlerFactory(msg.levelUid).subscribe()),
       }));
       ctxt.postMessage({ key: 'worker-created-level', levelUid: msg.levelUid });
       break;
@@ -50,6 +50,28 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     }
     case 'toggle-level-tile': {
       /** Handled by an rxjs Observable */
+      break;
+    }
+    case 'add-level-point': {
+      const lp = new LevelPoint(`p-${generate()}`, Vector2.from(msg.position));
+      const points = { ...getLevel(msg.levelUid)!.metaPoints, [lp.key]: lp };
+      dispatch(Act.updateLevel(msg.levelUid, { metaPoints: points }));
+      ctxt.postMessage({ key: 'send-level-points', levelUid: msg.levelUid,
+        points: Object.values(points).map(p => p.json),
+      });
+      break;
+    }
+    case 'request-level-data': {
+      const level = getLevel(msg.levelUid);
+      if (level) {
+        ctxt.postMessage({ key: 'send-level-layers', levelUid: msg.levelUid,
+          tileFloors: level.tileFloors.map(({ json }) => json),
+          wallSegs: Object.values(level.walls),
+        });
+        ctxt.postMessage({ key: 'send-level-points', levelUid: msg.levelUid,
+          points: Object.values(level.metaPoints).map(p => p.json),
+        });
+      }
       break;
     }
   }
@@ -128,7 +150,6 @@ function levelToggleHandlerFactory(levelUid: string) {
         });
         return floors;
       }),
-      // auditTime(500),
       /**
        * Send navgraph
        */

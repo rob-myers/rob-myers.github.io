@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Act } from '@store/level.duck';
 import { Vector2 } from '@model/vec2.model';
@@ -17,6 +17,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
   const dispatch = useDispatch();
   const td = state.cursorType === 'refined' ? smallTileDim : tileDim;
+  const metaPoints = useMemo(() => Object.values(state.metaPoints), [state.metaPoints]);
 
   useEffect(() => {
     dispatch(Act.updateLevel(levelUid, {
@@ -47,30 +48,48 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
         className={css.mouseRect}
         onMouseMove={onMouseMove}
         onClick={(_e) => {
-          if (state.editMode !== 'make') {
-            return;
-          }
-          if (highlighted.current) {
-            // console.log('HIGHLIGHT', state.cursorHighlight);
-            const { cursorHighlight: h  } = state;
-            const segs = [] as [Vector2, Vector2][];
-            h.n && segs.push(...computeLineSegs(td, state.cursor, 'n'));
-            h.e && segs.push(...computeLineSegs(td, state.cursor, 'e'));
-            h.s && segs.push(...computeLineSegs(td, state.cursor, 's'));
-            h.w && segs.push(...computeLineSegs(td, state.cursor, 'w'));
+          switch (state.editMode) {
+            case 'make': {
+              if (highlighted.current) {
+                // console.log('HIGHLIGHT', state.cursorHighlight);
+                const { cursorHighlight: h  } = state;
+                const segs = [] as [Vector2, Vector2][];
+                h.n && segs.push(...computeLineSegs(td, state.cursor, 'n'));
+                h.e && segs.push(...computeLineSegs(td, state.cursor, 'e'));
+                h.s && segs.push(...computeLineSegs(td, state.cursor, 's'));
+                h.w && segs.push(...computeLineSegs(td, state.cursor, 'w'));
+    
+                worker.postMessage({
+                  key: 'toggle-level-wall',
+                  levelUid,
+                  segs: segs.map(([u, v]) => [u.json, v.json]),
+                });
+              } else {
+                worker.postMessage({
+                  key: 'toggle-level-tile',
+                  levelUid,
+                  tile: state.cursor.json,
+                  type: state.cursorType === 'default' ? 'large' : 'small',
+                });
+              }
+              break;
+            }
+            case 'meta': {
+              const { x: mx, y: my } = state.mouseWorld;
+              const found = metaPoints.find(({ position: { x, y } }) =>
+                Math.pow(mx - x, 2) + Math.pow(my - y, 2) <= 5 * 5);
 
-            worker.postMessage({
-              key: 'toggle-level-wall',
-              levelUid,
-              segs: segs.map(([u, v]) => [u.json, v.json]),
-            });
-          } else {
-            worker.postMessage({
-              key: 'toggle-level-tile',
-              levelUid,
-              tile: state.cursor.json,
-              type: state.cursorType === 'default' ? 'large' : 'small',
-            });
+              if (found) {
+                console.log({ found });
+              } else {
+                worker.postMessage({
+                  key: 'add-level-point',
+                  levelUid,
+                  position: state.mouseWorld.json,
+                });
+              }
+              break;
+            }
           }
         }}
         onWheelCapture={(e) => {

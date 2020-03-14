@@ -100,7 +100,7 @@ body {
 }
 
 .base-floor {
-  stroke-width: 2;
+  stroke-width: 1;
   stroke: rgba(0,0,0,1);
   fill: $level-floor-fill;
 }
@@ -121,9 +121,17 @@ body {
 
 .wall-seg {
   stroke: rgba(0, 0, 0, 1);
-  stroke-width: 2;
+  stroke-width: 1;
   // Ensures correct overlap
   stroke-linecap: square;
+}
+
+.level-points {
+  // cursor: pointer;
+  // pointer-events: all;
+  fill: white;
+  stroke: black;
+  stroke-width: 0.2;
 }
 
 .svg-nav-node {

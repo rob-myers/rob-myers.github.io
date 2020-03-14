@@ -2,6 +2,7 @@ import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
 import { NavGraphJson } from '@model/nav/nav-graph.model';
+import { LevelPointJson } from './level.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {
@@ -84,12 +85,29 @@ interface SendNavGraph extends BaseMessage {
   floors: Poly2Json[];
 }
 
+interface AddLevelPoint extends BaseMessage {
+  key: 'add-level-point';
+  levelUid: string;
+  position: Vector2Json;
+}
+interface RequestLevelData extends BaseMessage {
+  key: 'request-level-data';
+  levelUid: string;
+}
+interface SendLevelPoints extends BaseMessage {
+  key: 'send-level-points';
+  levelUid: string;
+  points: LevelPointJson[];
+}
+
 export type MessageFromLevelParent = (
   | PingFromParent
   | RequestNewLevel
   | RequestDestroyLevel
   | ToggleLevelTile
   | ToggleLevelWall
+  | AddLevelPoint
+  | RequestLevelData
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker
@@ -99,6 +117,7 @@ export type MessageFromLevelWorker = (
   | SendLevelNavFloors
   | SendLevelTris
   | SendNavGraph
+  | SendLevelPoints
 );
 
 // Shortcut
