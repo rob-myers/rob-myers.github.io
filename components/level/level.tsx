@@ -8,13 +8,13 @@ import LevelContent from './level-content';
 import LevelCursor from './level-cursor';
 import css from './level.scss';
 
-const Level: React.FC<Props> = ({ uid, tileDim = 60 }) => {
+const Level: React.FC<Props> = ({ uid }) => {
   const dispatch = useDispatch();
   const state = useSelector(({ level: { instance } }) => instance[uid]);
 
   useEffect(() => {
     (async () => {
-      await dispatch(Thunk.createLevel({ uid, tileDim }));
+      await dispatch(Thunk.createLevel({ uid }));
     })();
 
     return () => {
@@ -27,15 +27,15 @@ const Level: React.FC<Props> = ({ uid, tileDim = 60 }) => {
       {state &&
         <LevelKeys levelUid={uid}>
           <svg className={css.svg} >
-            <LevelMouse levelUid={uid} tileDim={tileDim} />
+            <LevelMouse levelUid={uid} />
             <g style={{ transform: `scale(${state.zoomFactor})` }}>
-              <LevelGrid levelUid={uid} tileDim={tileDim} />
+              <LevelGrid levelUid={uid} />
               <g
                 className={css.svgInnerGroup} 
                 style={{ transform: `translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}
               >
-                <LevelContent levelUid={uid} />
-                <LevelCursor levelUid={uid} tileDim={tileDim} />
+                <LevelContent levelUid={uid} showNavGraph={false} />
+                <LevelCursor levelUid={uid} />
               </g>
             </g>
           </svg>
@@ -47,7 +47,6 @@ const Level: React.FC<Props> = ({ uid, tileDim = 60 }) => {
 
 interface Props {
   uid: string;
-  tileDim?: number;
 }
 
 export default Level;

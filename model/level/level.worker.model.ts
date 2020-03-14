@@ -2,6 +2,7 @@ import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
 import { NavGraphJson } from '@model/nav/nav-graph.model';
+import { Rect2Json } from '@model/rect2.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {
@@ -36,7 +37,6 @@ interface LevelWorkerReady extends BaseMessage {
 interface RequestNewLevel extends BaseMessage {
   key: 'request-new-level';
   levelUid: string;
-  tileDim: number;
 }
 interface RequestDestroyLevel extends BaseMessage {
   key: 'request-destroy-level';
@@ -51,18 +51,25 @@ export interface ToggleLevelTile extends BaseMessage {
   key: 'toggle-level-tile';
   levelUid: string;
   tile: Vector2Json;
+  type: 'small' | 'large';
 }
-interface SendLevelOutline extends BaseMessage {
-  key: 'send-level-outline';
+export interface ToggleLevelWall extends BaseMessage {
+  key: 'toggle-level-wall';
   levelUid: string;
-  outlinePoly: Poly2Json[];
+  segs: [Vector2Json, Vector2Json][];
+}
+
+interface SendLevelFLoors extends BaseMessage {
+  key: 'send-level-floors';
+  levelUid: string;
+  tileFloors: Poly2Json[];
 }
 
 interface SendLevelWalls extends BaseMessage {
   key: 'send-level-walls';
   levelUid: string;
-  walls: Poly2Json[];
   floors: Poly2Json[];
+  wallSegs: [Vector2Json, Vector2Json][];
 }
 
 interface SendLevelTris extends BaseMessage {
@@ -83,12 +90,13 @@ export type MessageFromLevelParent = (
   | RequestNewLevel
   | RequestDestroyLevel
   | ToggleLevelTile
+  | ToggleLevelWall
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker
   | LevelWorkerReady
   | WorkerCreatedLevel
-  | SendLevelOutline
+  | SendLevelFLoors
   | SendLevelWalls
   | SendLevelTris
   | SendNavGraph

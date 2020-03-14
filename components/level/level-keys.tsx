@@ -14,11 +14,11 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
         if (!state) return;
   
         switch (e.key) {
-          case '0': return dispatch(Act.updateLevel(levelUid, {
+          case '1': return dispatch(Act.updateLevel(levelUid, {
             cursorType: 'default',
           }));
-          case '1': return dispatch(Act.updateLevel(levelUid, {
-            cursorType: state.cursorType === 'default' ? 'refined' : 'default',
+          case '2': return dispatch(Act.updateLevel(levelUid, {
+            cursorType: 'refined',
           }));
         }
       }}

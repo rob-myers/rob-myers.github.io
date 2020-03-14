@@ -2,16 +2,15 @@ import { persistStore } from 'redux-persist';
 import { fromEvent } from 'rxjs';
 import { filter, map, delay, auditTime } from 'rxjs/operators';
 
-import { LevelWorkerContext, LevelWorker, MessageFromLevelParent, ToggleLevelTile } from '@model/level/level.worker.model';
+import { LevelWorkerContext, LevelWorker, MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall } from '@model/level/level.worker.model';
 import { initializeStore } from './create-store';
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
 import { redact } from '@model/redux.model';
-import { LevelState, wallDepth, floorInset } from '@model/level/level.model';
+import { LevelState, floorInset, smallTileDim, tileDim } from '@model/level/level.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
-import { flatten } from '@model/generic.model';
 import { NavGraph } from '@model/nav/nav-graph.model';
 
 const ctxt: LevelWorkerContext = self as any;
@@ -34,7 +33,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
 
   switch (msg.key) {
     case 'request-new-level': {
-      dispatch(Act.registerLevel(msg.levelUid, msg.tileDim));
+      dispatch(Act.registerLevel(msg.levelUid));
       dispatch(Act.updateLevel(msg.levelUid, {
         tileToggleSub: redact(
           levelToggleHandlerFactory(msg.levelUid).subscribe()
@@ -50,9 +49,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       break;
     }
     case 'toggle-level-tile': {
-      /**
-       * Handled by an rxjs Observable.
-       */
+      /** Handled by an rxjs Observable */
       break;
     }
   }
@@ -65,48 +62,62 @@ function levelToggleHandlerFactory(levelUid: string) {
   return fromEvent<Message<MessageFromLevelParent>>(ctxt, 'message')
     .pipe(
       map(({ data }) => data),
-      filter((msg): msg is ToggleLevelTile =>
+      filter((msg): msg is ToggleLevelTile | ToggleLevelWall =>
         msg.key === 'toggle-level-tile' && msg.levelUid === levelUid
+        || msg.key === 'toggle-level-wall' && msg.levelUid === levelUid
       ),
       /**
-       * Create fresh outline via union/cutting
+       * Update tileFloors and tileObstacles.
+       * We can toggle small/large-floor, small-obstacle or wall.
        */
-      map(({ tile }) => {
-        const { tileDim, tileFloors: prevTileFloors } = getLevel(levelUid)!;
-        const rect = new Rect2(tile.x, tile.y, tileDim, tileDim);
-        const tileFloors = Poly2.xor(prevTileFloors, rect.poly2);
-        dispatch(Act.updateLevel(levelUid, { tileFloors: tileFloors.map((x) => redact(x)) }));
-        ctxt.postMessage({ key: 'send-level-outline', levelUid, outlinePoly: tileFloors.map(({ json }) => json) });
-        return tileFloors;
+      map((msg) => {
+        switch (msg.key) {
+          case 'toggle-level-tile': {
+            const { tileFloors: prevFloors } = getLevel(levelUid)!;
+            const td = msg.type === 'large' ? tileDim : smallTileDim;
+            const rect = new Rect2(msg.tile.x, msg.tile.y, td, td);
+            const tileFloors = Poly2.xor(prevFloors, rect.poly2);
+
+            dispatch(Act.updateLevel(levelUid, { tileFloors: tileFloors.map((x) => redact(x)) }));
+            ctxt.postMessage({ key: 'send-level-floors',
+              levelUid,
+              tileFloors: tileFloors.map(({ json }) => json),
+            });
+            return { tileFloors };
+          }
+          case 'toggle-level-wall': {
+            const { tileFloors, walls: prevWalls } = getLevel(levelUid)!;
+            const walls = { ...prevWalls };
+            msg.segs.forEach(([u, v]) => {
+              const key = `${u.x},${u.y};${v.x},${v.y}`;
+              walls[key] ? delete walls[key] : walls[key] = [u, v];
+            });
+          
+            dispatch(Act.updateLevel(levelUid, { walls }));
+            return { tileFloors };
+          }
+        }
       }),
       delay(20),
       /**
        * Create walls and floors
        */
-      map((outline) => {
-        const wallInsets = flatten(outline.map(x => x.createInset(wallDepth)));
-        const walls = Poly2.cutOut(wallInsets, outline);
-        const floors = Poly2.union(flatten(outline.map(x => x.createInset(floorInset))));
-        // // Basic refinement of triangulation
-        // const centers = floors.map(f => f.triangulation.map(c => c.centerOfBoundary));
-        // // console.log({ centers });
-        // floors.forEach((floor, i) => floor.addSteinerPoints(centers[i]).customTriangulate());
+      map(({ tileFloors }) => {
+        const { walls } = getLevel(levelUid)!;
+        const floors = tileFloors.flatMap(x => x.createInset(floorInset));
 
-        dispatch(Act.updateLevel(levelUid, {
-          walls: walls.map((x) => redact(x)),
-          floors: floors.map(x => redact(x)),
-        }));
+        dispatch(Act.updateLevel(levelUid, { floors: floors.map(x => redact(x)) }));
         ctxt.postMessage({
           key: 'send-level-walls',
           levelUid,
-          walls: walls.map(({ json }) => json),
           floors: floors.map(({ json }) => json),
+          wallSegs: Object.values(walls),
         });
         return floors;
       }),
       auditTime(300),
       /**
-       * Triangulate (could be refined).
+       * Triangulate (could be refined)
        */
       map(floors => {
         ctxt.postMessage({
@@ -131,7 +142,6 @@ function levelToggleHandlerFactory(levelUid: string) {
         // // floyd warshall test
         // const fw = FloydWarshall.from(navGraph);
         // console.log({ fw });
-
         return floors;
       }),
       /**

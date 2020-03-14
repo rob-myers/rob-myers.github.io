@@ -70,9 +70,9 @@ export const Thunk = {
   ),
   createLevel: createThunk(
     '[Level] create',
-    async ({ dispatch }, { uid, tileDim }: { uid: string; tileDim: number }) => {
+    async ({ dispatch }, { uid }: { uid: string }) => {
       const worker = await dispatch(Thunk.ensureWorker({}));
-      worker.postMessage({ key: 'request-new-level', levelUid: uid, tileDim });
+      worker.postMessage({ key: 'request-new-level', levelUid: uid });
       await awaitWorker('worker-created-level', worker);
       dispatch(Act.registerLevel(uid));
     },
