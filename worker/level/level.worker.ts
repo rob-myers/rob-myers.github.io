@@ -67,53 +67,50 @@ function levelToggleHandlerFactory(levelUid: string) {
         || msg.key === 'toggle-level-wall' && msg.levelUid === levelUid
       ),
       /**
-       * Update tileFloors and tileObstacles.
-       * We can toggle small/large-floor, small-obstacle or wall.
+       * Update tileFloors or walls.
        */
       map((msg) => {
+        let { tileFloors, walls } = getLevel(levelUid)!;
         switch (msg.key) {
           case 'toggle-level-tile': {
-            const { tileFloors: prevFloors } = getLevel(levelUid)!;
             const td = msg.type === 'large' ? tileDim : smallTileDim;
             const rect = new Rect2(msg.tile.x, msg.tile.y, td, td);
-            const tileFloors = Poly2.xor(prevFloors, rect.poly2);
-
-            dispatch(Act.updateLevel(levelUid, { tileFloors: tileFloors.map((x) => redact(x)) }));
-            ctxt.postMessage({ key: 'send-level-floors',
-              levelUid,
-              tileFloors: tileFloors.map(({ json }) => json),
-            });
-            return { tileFloors };
+            tileFloors = Poly2.xor(tileFloors, rect.poly2).map(x => redact(x));
+            break;
           }
           case 'toggle-level-wall': {
-            const { tileFloors, walls: prevWalls } = getLevel(levelUid)!;
-            const walls = { ...prevWalls };
+            walls = { ...walls };
             msg.segs.forEach(([u, v]) => {
               const key = `${u.x},${u.y};${v.x},${v.y}`;
               walls[key] ? delete walls[key] : walls[key] = [u, v];
             });
-          
-            dispatch(Act.updateLevel(levelUid, { walls }));
-            return { tileFloors };
           }
         }
+
+        dispatch(Act.updateLevel(levelUid, { tileFloors, walls }));
+        ctxt.postMessage({
+          key: 'send-level-layers',
+          levelUid,
+          tileFloors: tileFloors.map(({ json }) => json),
+          wallSegs: Object.values(walls),
+        });
+        return null;
       }),
       delay(20),
       /**
-       * Create walls and floors
+       * Update navigable floor.
        */
-      map(({ tileFloors }) => {
-        const { walls } = getLevel(levelUid)!;
-        const floors = tileFloors.flatMap(x => x.createInset(floorInset));
+      map((_) => {
+        const { tileFloors, walls } = getLevel(levelUid)!;
+        const navFloors = tileFloors.flatMap(x => x.createInset(floorInset));
 
-        dispatch(Act.updateLevel(levelUid, { floors: floors.map(x => redact(x)) }));
+        dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
         ctxt.postMessage({
-          key: 'send-level-walls',
+          key: 'send-level-nav-floors',
           levelUid,
-          floors: floors.map(({ json }) => json),
-          wallSegs: Object.values(walls),
+          navFloors: navFloors.map(({ json }) => json),
         });
-        return floors;
+        return navFloors;
       }),
       auditTime(300),
       /**

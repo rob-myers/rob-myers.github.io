@@ -26,12 +26,12 @@ const LevelContent: React.FC<Props> = ({ levelUid, showNavGraph = false }) => {
       .pipe(
         map(({ data }) => data),
         tap((msg) => {
-          if (msg.key === 'send-level-floors' && msg.levelUid === levelUid) {
+          if (msg.key === 'send-level-layers' && msg.levelUid === levelUid) {
             setOutlines(msg.tileFloors.map(x => Poly2.fromJson(x).svgPath));
-          }
-          if (msg.key === 'send-level-walls' && msg.levelUid === levelUid) {
             setWalls(msg.wallSegs);
-            setFloors(msg.floors.map(x => Poly2.fromJson(x).svgPath));
+          }
+          if (msg.key === 'send-level-nav-floors' && msg.levelUid === levelUid) {
+            setFloors(msg.navFloors.map(x => Poly2.fromJson(x).svgPath));
           }
           if (msg.key === 'send-level-tris' && msg.levelUid === levelUid) {
             setTriangles(msg.tris.map(x => Poly2.fromJson(x).svgPath));
