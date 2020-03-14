@@ -6,6 +6,7 @@ import LevelMouse from './level-mouse';
 import LevelKeys from './level-keys';
 import LevelContent from './level-content';
 import LevelCursor from './level-cursor';
+import LevelMenu from './level-menu';
 import css from './level.scss';
 
 const Level: React.FC<Props> = ({ uid }) => {
@@ -26,6 +27,7 @@ const Level: React.FC<Props> = ({ uid }) => {
     <div className={css.root}>
       {state &&
         <LevelKeys levelUid={uid}>
+          <LevelMenu levelUid={uid} />
           <svg className={css.svg} >
             <LevelMouse levelUid={uid} />
             <g style={{ transform: `scale(${state.zoomFactor})` }}>

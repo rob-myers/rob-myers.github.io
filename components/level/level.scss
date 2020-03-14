@@ -11,6 +11,7 @@ body {
   width: 100%;
   height: 100%;
   background: $level-background;
+  border: 1px solid #000;
 }
 
 .keys {
@@ -19,10 +20,46 @@ body {
   outline: none;
 }
 
+.menu {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  background-image: linear-gradient(90deg, rgba(0, 0, 0, 0.1) 10%, #ffffff 10%, #ffffff 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 60%, #ffffff 60%, #ffffff 100%);
+  background-size: 10.00px 10.00px;
+  
+  box-sizing: border-box;
+  height: 25px;
+  padding: 2px;
+
+  .main-menu {
+    flex: 1;
+    display: flex;
+    // align-items: center;
+  }
+
+  .button {
+    color: rgba(0, 0, 0, 0.3);
+    margin: 0 3px;
+
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
+
+    &.pressed {
+      color: black;
+    }
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+}
+
+
+
 .svg {
-  border: 1px solid #000;
+  overflow: none;
   width: 100%;
-  height: 100%;
+  height: calc(100% - 25px);
 }
 
 .svg-grid {
@@ -85,4 +122,5 @@ body {
 
 .svg-nav-edge {
   stroke: $nav-node-color;
+  stroke-width: 0.5;
 }

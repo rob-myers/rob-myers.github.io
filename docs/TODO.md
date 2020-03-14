@@ -1,15 +1,14 @@
 # TODO
 
-- can toggle tiles i.e. floor or absent
-- can triple-toggle subtiles with shift-reverse i.e. floor or absent or block
-- can toggle walls/sub-walls i.e. block or absent
+- can add/remove points with editable tags
+- point tags include `steiner`, `light`
+- steiner points affect triangulation
+- lights can be turned on/off
 
-- edit vs live mode
-- can save/restore
-- meta-layer with triggers (rects) and points
+- edit/live mode
+- can save/restore level
 
 - clear vision of how `Level` + `Session` are used on our upcoming site
-- can add lights
 
 - can `click 2 | nav | goto`.
 - illustrate floyd-warshall via click on spawn-point and mousemove
@@ -119,4 +118,7 @@
 - remove old NavDom component and nav.worker etc.
 - can show centers and edges
 - can compute floyd-warshall on request
-- can press 1 to divide grid/tiles by 3 where can add sub-tiles or smaller walls
+- can press 1/2 to switch between large/small tiles
+- can toggle tiles i.e. floor or absent
+- can toggle subtiles
+- can toggle walls/sub-walls
