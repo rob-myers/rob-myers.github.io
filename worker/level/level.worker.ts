@@ -102,10 +102,10 @@ function levelToggleHandlerFactory(levelUid: string) {
        */
       map((_) => {
         const { tileFloors, walls } = getLevel(levelUid)!;
-        const outsetWalls = Object.values(walls).map(([u, v]) => new Rect2(
+        const outsetWalls = Poly2.union(Object.values(walls).map(([u, v]) => new Rect2(
           u.x - floorInset, u.y - floorInset,
           v.x - u.x + 2 * floorInset, v.y - u.y + 2 * floorInset,
-        ).poly2);
+        ).poly2));
         const navFloors = Poly2.cutOut(outsetWalls, tileFloors.flatMap(x => x.createInset(floorInset)));
 
         dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));

@@ -54,28 +54,26 @@ const LevelContent: React.FC<Props> = ({ levelUid, showNavGraph = false }) => {
 
   return (
     <>
-      {outlines.map((pathDef, i) =>
-        <path key={i} strokeWidth="1" stroke="rgba(0,0,0,1)" fill="rgba(230,230,230,0.15)" d={pathDef} />
-      )}
-      {walls.map(([u, v], i) =>
-        <line key={i} stroke="rgba(0,0,0,1)" strokeWidth="1" x1={u.x} y1={u.y} x2={v.x} y2={v.y} />
-      )}
+      <g className={css.baseFloor}>
+        {outlines.map((pathDef, i) =>
+          <path key={i} d={pathDef} />
+        )}
+      </g>
+      <g className={css.wallSeg}>
+        {walls.map(([u, v], i) =>
+          <line key={i} x1={u.x} y1={u.y} x2={v.x} y2={v.y} />
+        )}
+      </g>
       <g className={css.navigable}>
         {floors.map((pathDef, i) =>
           <path key={i} fill="rgba(50,50,50,0.1)" d={pathDef} />
         )}
       </g>
-      {
-        triangles.map((pathDef, i) => (
-          <path
-            key={i}
-            d={pathDef}
-            fill="none"
-            stroke="#888"
-            strokeWidth={0.1}
-          />
-        ))
-      }
+      <g className={css.triangle}>
+        {triangles.map((pathDef, i) => (
+          <path key={i} d={pathDef} />
+        ))}
+      </g>
       <g>
         {centers.map(({ x, y }, i) => (
           <circle

@@ -5,7 +5,7 @@ import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 
 export const wallDepth = 2;
-export const floorInset = 8;
+export const floorInset = 5;
 export const tileDim = 60;
 /** tileDim divided by 3 */
 export const smallTileDim = 20;
@@ -62,15 +62,14 @@ export function createLevelUiState(uid: string): LevelUiState {
 /**
  * For large tiles we create 3 line segments.
  * Part of approach to avoid extruding 1-dim polygons.
- * Offset by 0.5 to center (stroke-width will be 1).
  */
 export function computeLineSegs(td: number, from: Vector2, dir: Direction): [Vector2, Vector2][] {
   let seg: [Vector2, Vector2];
   switch (dir) {
-    case 'n': seg = [new Vector2(from.x - 0.5, from.y), new Vector2(from.x + smallTileDim + 0.5, from.y)]; break;
-    case 'e': seg = [new Vector2(from.x + td, from.y - 0.5), new Vector2(from.x + td, from.y + smallTileDim + 0.5)]; break;
-    case 's': seg = [new Vector2(from.x - 0.5, from.y + td), new Vector2(from.x + smallTileDim + 0.5, from.y + td)]; break;
-    case 'w': seg = [new Vector2(from.x, from.y - 0.5), new Vector2(from.x, from.y + smallTileDim + 0.5)]; break;
+    case 'n': seg = [new Vector2(from.x, from.y), new Vector2(from.x + smallTileDim, from.y)]; break;
+    case 'e': seg = [new Vector2(from.x + td, from.y), new Vector2(from.x + td, from.y + smallTileDim)]; break;
+    case 's': seg = [new Vector2(from.x, from.y + td), new Vector2(from.x + smallTileDim, from.y + td)]; break;
+    case 'w': seg = [new Vector2(from.x, from.y), new Vector2(from.x, from.y + smallTileDim)]; break;
   }
 
   if (td === smallTileDim) {

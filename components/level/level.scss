@@ -56,8 +56,27 @@ body {
   }
 }
 
+.base-floor {
+  stroke-width: 1;
+  stroke: rgba(0,0,0,1);
+  fill: rgba(230,230,230,0.15);
+}
+
 .navigable {
   fill: $level-navigable-bg;
+}
+
+.wall-seg {
+  stroke: rgba(0, 0, 0, 1);
+  stroke-width: 0.5;
+  // Ensures correct overlap
+  stroke-linecap: square;
+}
+
+.triangle {
+  fill: none;
+  stroke: #888;
+  stroke-width: 0.1;
 }
 
 .svg-nav-node {
