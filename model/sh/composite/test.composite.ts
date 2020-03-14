@@ -4,6 +4,7 @@ import { BaseCompositeTerm } from './base-composite';
 import { TestOpComposite } from './test-op.composite';
 import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
+
 /**
  * test
  */

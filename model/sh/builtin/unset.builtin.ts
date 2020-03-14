@@ -5,8 +5,8 @@ import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osLookupVarThunk, osRemoveFunctionThunk, osUnsetVarThunk } from '@store/os/declare.os.duck';
 
 export class UnsetBuiltin extends BaseBuiltinComposite<
-  BuiltinSpecialType.unset,
-  { string: never[]; boolean: ('f' | 'v')[] }
+BuiltinSpecialType.unset,
+{ string: never[]; boolean: ('f' | 'v')[] }
 > {
 
   public specOpts() {

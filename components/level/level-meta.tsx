@@ -6,8 +6,7 @@ import css from './level.scss';
 const LevelMeta: React.FC<Props> = ({ levelUid }) => {
   // const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
-  const metaPoints = useMemo(() =>
-    Object.values(state.metaPoints), [state.metaPoints]);
+  const metaPoints = useMemo(() => Object.values(state.metaPoints), [state.metaPoints]);
 
   return (
     <>

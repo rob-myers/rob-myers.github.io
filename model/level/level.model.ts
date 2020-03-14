@@ -102,6 +102,8 @@ export class LevelPoint {
       tags: this.tags.slice(),
     };
   }
+  /** Used in Level Component */
+  public ui: LevelPointUi;
 
   constructor(
     /** Unique identifier */
@@ -109,7 +111,12 @@ export class LevelPoint {
     public position: Vector2,
     public tags = [] as string[],
     public lightPoly = [] as Redacted<Poly2>[],
-  ) {}
+  ) {
+    this.ui = {
+      open: false,
+      position: position.clone(),
+    };
+  }
 
   public static fromJson(json: LevelPointJson): LevelPoint {
     return new LevelPoint(
@@ -126,4 +133,9 @@ export interface LevelPointJson {
   position: Vector2Json;
   tags: string[];
   lightPoly: Poly2Json[];
+}
+
+interface LevelPointUi {
+  open: boolean;
+  position: Vector2;
 }

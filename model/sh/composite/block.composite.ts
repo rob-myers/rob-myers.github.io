@@ -17,7 +17,6 @@ export class BlockComposite extends BaseCompositeTerm<CompositeType.block> {
     super(def);
   }
 
-
   /**
    * Same as {SeqComposite}
    * However, can be redirected as child of {CompositeCommand}.
