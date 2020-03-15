@@ -4,7 +4,7 @@ import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
 import { NavGraphJson } from '@model/nav/nav-graph.model';
-import { LevelPointJson } from './level-point.model';
+import { LevelMetaJson } from './level-meta.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {
@@ -87,8 +87,8 @@ interface SendNavGraph extends BaseMessage {
   floors: Poly2Json[];
 }
 
-interface AddLevelPoint extends BaseMessage {
-  key: 'add-level-point';
+interface AddLevelMeta extends BaseMessage {
+  key: 'add-level-meta';
   levelUid: string;
   position: Vector2Json;
 }
@@ -96,14 +96,20 @@ interface RequestLevelData extends BaseMessage {
   key: 'request-level-data';
   levelUid: string;
 }
-interface RequestLevelPoints extends BaseMessage {
-  key: 'request-level-points';
+interface RequestLevelMetas extends BaseMessage {
+  key: 'request-level-metas';
   levelUid: string;
 }
-interface SendLevelPoints extends BaseMessage {
-  key: 'send-level-points';
+interface SendLevelMetas extends BaseMessage {
+  key: 'send-level-metas';
   levelUid: string;
-  points: LevelPointJson[];
+  metas: LevelMetaJson[];
+}
+interface UpdateLevelMeta extends BaseMessage {
+  key: 'update-level-meta';
+  levelUid: string;
+  metaKey: string;
+  updates: Partial<LevelMetaJson>;
 }
 
 export type MessageFromLevelParent = (
@@ -112,9 +118,10 @@ export type MessageFromLevelParent = (
   | RequestDestroyLevel
   | ToggleLevelTile
   | ToggleLevelWall
-  | AddLevelPoint
+  | AddLevelMeta
   | RequestLevelData
-  | RequestLevelPoints
+  | RequestLevelMetas
+  | UpdateLevelMeta
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker
@@ -124,7 +131,7 @@ export type MessageFromLevelWorker = (
   | SendLevelNavFloors
   | SendLevelTris
   | SendNavGraph
-  | SendLevelPoints
+  | SendLevelMetas
 );
 
 // Shortcut

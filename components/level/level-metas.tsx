@@ -3,15 +3,14 @@ import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { LevelState } from '@model/level/level.model';
-import { LevelPoint } from '@model/level/level-point.model';
+import { LevelMeta } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
 import { Act } from '@store/level.duck';
 import css from './level.scss';
-import { Vector2 } from '@model/vec2.model';
 
-type MetaPoints = LevelState['metaPoints'];
+type MetaPoints = LevelState['metas'];
 
-const LevelMeta: React.FC<Props> = ({ levelUid, overlayRef }) => {
+const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const [metaPoints, setMetaPoints] = useState<MetaPoints>({});
   const points = useMemo(() => Object.values(metaPoints), [metaPoints]);
@@ -20,14 +19,15 @@ const LevelMeta: React.FC<Props> = ({ levelUid, overlayRef }) => {
 
   useEffect(() => {
     const sub = subscribeToWorker(worker, (msg) => {
-      if (msg.key === 'send-level-points' && msg.levelUid === levelUid) {
-        const metaPoints = msg.points.map(p => LevelPoint.fromJson(p))
+      if (msg.key === 'send-level-metas' && msg.levelUid === levelUid) {
+        const metaPoints = msg.metas.map(p => LevelMeta.fromJson(p))
           .reduce<MetaPoints>((agg, item) => ({ ...agg, [item.key]: item }), {}); 
         setMetaPoints(metaPoints);
-        dispatch(Act.ensureMetaUi(levelUid, Object.keys(metaPoints)));
+        console.log({ metaPoints });
+        dispatch(Act.syncMetaUi(levelUid, Object.values(metaPoints)));
       }
     });
-    worker.postMessage({ key: 'request-level-points', levelUid });
+    worker.postMessage({ key: 'request-level-metas', levelUid });
     return () => sub.unsubscribe();
   }, []);
 
@@ -43,9 +43,22 @@ const LevelMeta: React.FC<Props> = ({ levelUid, overlayRef }) => {
             onClick={() => {
               dispatch(Act.updateMetaUi(levelUid, key, {
                 open: !metaUi[key].open,
-                position: new Vector2(position.x + 3, position.y),
               }));
             }}
+            /**
+             * TODO permit dragging...
+             */
+            // onMouseDown={() => {
+            //   mouseDownAt.current = key;
+            // }}
+            // onMouseUp={() => {
+            //   mouseDownAt.current = undefined;
+            // }}
+            // onMouseMove={() => {
+            //   if (mouseDownAt.current) {
+            //     dispatch(Thunk.moveMetaToMouse({ uid: levelUid, metaKey: key }));
+            //   }
+            // }}
           />
         )}
       </g>
@@ -58,8 +71,8 @@ const LevelMeta: React.FC<Props> = ({ levelUid, overlayRef }) => {
                 [css.open]: metaUi[key].open,
               })}
               style={{
-                left: metaUi[key].position.x,
-                top: metaUi[key].position.y,
+                left: metaUi[key].dialogPosition.x,
+                top: metaUi[key].dialogPosition.y,
               }}
             >
               {key}
@@ -76,4 +89,4 @@ interface Props {
   overlayRef: React.RefObject<HTMLElement>;
 }
 
-export default LevelMeta;
+export default LevelMetas;

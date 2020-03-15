@@ -2,9 +2,9 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { Poly2, Poly2Json } from '@model/poly2.model';
 import { Redacted, redact } from '@model/redux.model';
 
-export class LevelPoint {
+export class LevelMeta {
   
-  public get json(): LevelPointJson {
+  public get json(): LevelMetaJson {
     return {
       key: this.key,
       lightPoly: this.lightPoly.map(({ json }) => json),
@@ -21,8 +21,13 @@ export class LevelPoint {
     public lightPoly = [] as Redacted<Poly2>[],
   ) {}
 
-  public static fromJson(json: LevelPointJson): LevelPoint {
-    return new LevelPoint(
+  public applyUpdates({ position, tags }: Partial<LevelMetaJson>): void {
+    position && (this.position = Vector2.from(position));
+    tags && (this.tags = tags.slice());
+  }
+
+  public static fromJson(json: LevelMetaJson): LevelMeta {
+    return new LevelMeta(
       json.key,
       Vector2.from(json.position),
       json.tags.slice(),
@@ -31,15 +36,15 @@ export class LevelPoint {
   }
 }
 
-export interface LevelPointJson {
+export interface LevelMetaJson {
   key: string;
   position: Vector2Json;
   tags: string[];
   lightPoly: Poly2Json[];
 }
 
-export interface LevelPointUi {
+export interface LevelMetaUi {
   key: string;
   open: boolean;
-  position: Vector2;
+  dialogPosition: Vector2;
 }

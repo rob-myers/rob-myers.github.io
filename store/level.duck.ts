@@ -7,9 +7,9 @@ import { LevelWorker, awaitWorker } from '@model/level/level.worker.model';
 import { createThunk } from '@model/root.redux.model';
 
 import LevelWorkerClass from '@worker/level/level.worker';
-import { LevelUiState, createLevelUiState, createLevelPointUi } from '@model/level/level.model';
+import { LevelUiState, createLevelUiState, createLevelMetaUi } from '@model/level/level.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
-import { LevelPointUi } from '@model/level/level-point.model';
+import { LevelMetaUi, LevelMeta } from '@model/level/level-meta.model';
 
 export interface State {
   worker: null | Redacted<LevelWorker>;
@@ -35,9 +35,9 @@ export const Act = {
     createAct('[Level] set status', { status }),
   storeWorker: (worker: Redacted<LevelWorker>) =>
     createAct('[Level] store worker', { worker }),
-  ensureMetaUi: (uid: string, keys: string[]) =>
-    createAct('[Level] ensure meta ui', { uid, keys }),
-  updateMetaUi: (uid: string, key: string, updates: Partial<LevelPointUi>) =>
+  syncMetaUi: (uid: string, metas: LevelMeta[]) =>
+    createAct('[Level] sync meta ui', { uid, metas }),
+  updateMetaUi: (uid: string, key: string, updates: Partial<LevelMetaUi>) =>
     createAct('[Level] update meta ui', { uid, key, updates }),
 };
 
@@ -90,6 +90,16 @@ export const Thunk = {
       dispatch(Act.unregisterLevel(uid));
     },
   ),
+  moveMetaToMouse: createThunk(
+    '[Level] move meta to mouse',
+    ({ state: { level } }, { uid, metaKey }: { uid: string; metaKey: string }) => {
+      const { worker, instance: { [uid]: state } } = level;
+      state && worker?.postMessage({
+        key: 'update-level-meta', levelUid: uid, metaKey,
+        updates: { position: state.mouseWorld.json, }
+      });
+    },
+  ),
 };
 
 export type Thunk = ActionsUnion<typeof Thunk>;
@@ -111,10 +121,13 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[Level] store worker': return { ...state,
       worker: act.pay.worker,
     };
-    case '[Level] ensure meta ui': return { ...state,
+    case '[Level] sync meta ui': return { ...state,
       instance: updateLookup(act.pay.uid, state.instance, ({ metaUi }) => ({
-        metaUi: act.pay.keys.reduce((agg, key) => ({ ...agg,
-          [key]: metaUi[key] || createLevelPointUi(key)
+        metaUi: act.pay.metas.reduce((agg, meta) => ({ ...agg,
+          [meta.key]: {
+            ...(metaUi[meta.key] || createLevelMetaUi(meta.key)),
+            ...{ dialogPosition: meta.position.clone().translate(3, 0) } as LevelMetaUi
+          },
         }), {}),
       })),
     };

@@ -1,6 +1,5 @@
 # TODO
 
-- rename LevelPoint to LevelMeta (intend to support rect triggers)
 - can add/remove points with editable tags
 - point tags include `steiner`, `light`
 - steiner points affect triangulation
@@ -126,3 +125,4 @@
 - avoid re-rendering LevelContent on mouse move
 - can add meta points
 - can open/close positioned meta popovers
+- rename LevelPoint to LevelMeta (intend to support rect triggers)

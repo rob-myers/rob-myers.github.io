@@ -7,7 +7,7 @@ import LevelKeys from './level-keys';
 import LevelContent from './level-content';
 import LevelCursor from './level-cursor';
 import LevelMenu from './level-menu';
-import LevelMeta from './level-meta';
+import LevelMetas from './level-metas';
 import css from './level.scss';
 
 const Level: React.FC<Props> = ({ uid }) => {
@@ -29,8 +29,8 @@ const Level: React.FC<Props> = ({ uid }) => {
     stateKey && <LevelContent levelUid={uid} showNavGraph={false} />
   ), [stateKey]);
   
-  const levelMeta = useMemo(() => (
-    editMode === 'meta' && <LevelMeta levelUid={uid} overlayRef={overlayRef} />
+  const levelMetas = useMemo(() => (
+    editMode === 'meta' && <LevelMetas levelUid={uid} overlayRef={overlayRef} />
   ), [editMode, overlayRef]);
 
   const scale = `scale(${zoomFactor})`;
@@ -47,7 +47,7 @@ const Level: React.FC<Props> = ({ uid }) => {
               <g style={{ transform: scale }}>
                 <g style={{ transform: translate }}>
                   {levelContent}
-                  {levelMeta}
+                  {levelMetas}
                   {editMode === 'make' && <LevelCursor levelUid={uid} />}
                 </g>
                 {editMode === 'make' && <LevelGrid levelUid={uid} />}

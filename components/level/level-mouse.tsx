@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo } from 'react';
+import { useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Act } from '@store/level.duck';
 import { Vector2 } from '@model/vec2.model';
@@ -76,7 +76,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
             case 'meta': {
               // Extant points should receive click instead
               worker.postMessage({
-                key: 'add-level-point',
+                key: 'add-level-meta',
                 levelUid,
                 position: state.mouseWorld.json,
               });

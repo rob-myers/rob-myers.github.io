@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { KeyedLookup } from '@model/generic.model';
-import { LevelPointUi, LevelPoint } from './level-point.model';
+import { LevelMetaUi, LevelMeta } from './level-meta.model';
 
 export const wallDepth = 2;
 export const floorInset = 5;
@@ -28,7 +28,7 @@ export interface LevelState {
   /** Tile/wall toggle handler */
   tileToggleSub: null | Redacted<Subscription>;
   /** Spawn points, steiner points, lights, interactives */
-  metaPoints: KeyedLookup<LevelPoint>;
+  metas: KeyedLookup<LevelMeta>;
 }
 
 export function createLevelState(uid: string): LevelState {
@@ -38,7 +38,7 @@ export function createLevelState(uid: string): LevelState {
     walls: {},
     floors: [],
     tileToggleSub: null,
-    metaPoints: {},
+    metas: {},
   };
 }
 
@@ -52,7 +52,7 @@ export interface LevelUiState {
   cursorHighlight: Partial<Record<Direction, boolean>>;
   mode: 'edit' | 'live';
   editMode: null | 'make' | 'meta';
-  metaUi: KeyedLookup<LevelPointUi>;
+  metaUi: KeyedLookup<LevelMetaUi>;
 }
 
 export function createLevelUiState(uid: string): LevelUiState {
@@ -70,11 +70,11 @@ export function createLevelUiState(uid: string): LevelUiState {
   };
 }
 
-export function createLevelPointUi(key: string): LevelPointUi {
+export function createLevelMetaUi(key: string): LevelMetaUi {
   return {
     key,
     open: false,
-    position: Vector2.zero,
+    dialogPosition: Vector2.zero,
   };
 }
 

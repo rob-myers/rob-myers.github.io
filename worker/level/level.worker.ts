@@ -14,7 +14,7 @@ import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { NavGraph } from '@model/nav/nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
-import { LevelPoint } from '@model/level/level-point.model';
+import { LevelMeta } from '@model/level/level-meta.model';
 
 const ctxt: LevelWorkerContext = self as any;
 
@@ -53,12 +53,12 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       /** Handled by an rxjs Observable */
       break;
     }
-    case 'add-level-point': {
-      const lp = new LevelPoint(`p-${generate()}`, Vector2.from(msg.position));
-      const points = { ...getLevel(msg.levelUid)!.metaPoints, [lp.key]: lp };
-      dispatch(Act.updateLevel(msg.levelUid, { metaPoints: points }));
-      ctxt.postMessage({ key: 'send-level-points', levelUid: msg.levelUid,
-        points: Object.values(points).map(p => p.json),
+    case 'add-level-meta': {
+      const lp = new LevelMeta(`p-${generate()}`, Vector2.from(msg.position));
+      const metas = { ...getLevel(msg.levelUid)!.metas, [lp.key]: lp };
+      dispatch(Act.updateLevel(msg.levelUid, { metas: metas }));
+      ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
+        metas: Object.values(metas).map(p => p.json),
       });
       break;
     }
@@ -69,17 +69,27 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
           tileFloors: level.tileFloors.map(({ json }) => json),
           wallSegs: Object.values(level.walls),
         });
-        ctxt.postMessage({ key: 'send-level-points', levelUid: msg.levelUid,
-          points: Object.values(level.metaPoints).map(p => p.json),
+        ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
+          metas: Object.values(level.metas).map(p => p.json),
         });
       }
       break;
     }
-    case 'request-level-points': {
+    case 'request-level-metas': {
       const level = getLevel(msg.levelUid);
-      level && ctxt.postMessage({ key: 'send-level-points', levelUid: msg.levelUid,
-        points: Object.values(level.metaPoints).map(p => p.json),
+      level && ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
+        metas: Object.values(level.metas).map(p => p.json),
       });
+      break;
+    }
+    case 'update-level-meta': {
+      const level = getLevel(msg.levelUid);
+      if (level && level.metas[msg.metaKey]) {
+        level.metas[msg.metaKey].applyUpdates(msg.updates); // Mutation
+        ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
+          metas: Object.values(level.metas).map(p => p.json),
+        });
+      }
       break;
     }
   }
