@@ -2,6 +2,8 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { Poly2, Poly2Json } from '@model/poly2.model';
 import { Redacted, redact } from '@model/redux.model';
 
+export const metaPointRadius = 1.5;
+
 export class LevelMeta {
   
   public get json(): LevelMetaJson {

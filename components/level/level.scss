@@ -81,8 +81,9 @@ body {
         top: 0px;
         visibility: hidden;
 
-        // transform: scale(0.5);
-        // transform-origin: top left;
+        // Account for scaling up of overlay
+        transform: scale(0.5);
+        transform-origin: top left;
     
         &.open {
           visibility: visible;

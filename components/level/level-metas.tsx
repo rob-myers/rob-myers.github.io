@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 import { LevelState } from '@model/level/level.model';
-import { LevelMeta } from '@model/level/level-meta.model';
+import { LevelMeta, metaPointRadius } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
 import { Act } from '@store/level.duck';
 import css from './level.scss';
@@ -40,12 +40,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
             style={metaUi[key] && { fill: metaUi[key].over ? 'red' : 'white' }}
             cx={position.x}
             cy={position.y}
-            r={1.5}
-            onClick={() => {
-              dispatch(Act.updateMetaUi(levelUid, key, {
-                open: !metaUi[key].open,
-              }));
-            }}
+            r={metaPointRadius}
             /**
              * TODO permit dragging...
              */
