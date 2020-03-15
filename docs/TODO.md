@@ -1,5 +1,6 @@
 # TODO
 
+- rename LevelPoint to LevelMeta (intend to support rect triggers)
 - can add/remove points with editable tags
 - point tags include `steiner`, `light`
 - steiner points affect triangulation

@@ -4,21 +4,22 @@ import css from './level.scss';
 import { Act } from '@store/level.duck';
 
 const LevelMenu: React.FC<Props> = ({ levelUid }) => {
-  const state = useSelector(({ level: { instance } }) => instance[levelUid]);
+  const cursorType = useSelector(({ level: { instance } }) => instance[levelUid]?.cursorType);
+  const editMode = useSelector(({ level: { instance } }) => instance[levelUid]?.editMode);
   const dispatch = useDispatch();
 
   return (
     <section className={css.menu}>
       {
-        state.mode === 'edit' && (
+        editMode && (
           <>
             <section className={css.editMenu}>
               <button
                 className={classNames(css.button, {
-                  [css.pressed]: state.cursorType === 'refined'
+                  [css.pressed]: cursorType === 'refined'
                 })}
                 onClick={(_e) => dispatch(Act.updateLevel(levelUid, {
-                  cursorType: state.cursorType === 'refined' ? 'default' : 'refined',
+                  cursorType: cursorType === 'refined' ? 'default' : 'refined',
                 }))}
               >
                 inner
@@ -30,20 +31,12 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
             </section>
             <section className={css.mainMenu}>
               <button
-                className={classNames(css.button, {
-                  [css.pressed]: state.editMode === 'make'
-                })}
-                onClick={(_e) => dispatch(Act.updateLevel(levelUid, { editMode: 'make' }))}
+                className={css.button}
+                onClick={(_e) => dispatch(Act.updateLevel(levelUid, {
+                  editMode: editMode === 'make' ? 'meta' : 'make',
+                }))}
               >
-                make
-              </button>
-              <button
-                className={classNames(css.button, {
-                  [css.pressed]: state.editMode === 'meta'
-                })}
-                onClick={(_e) => dispatch(Act.updateLevel(levelUid, { editMode: 'meta' }))}
-              >
-                meta
+                {editMode}
               </button>
             </section>
           </>

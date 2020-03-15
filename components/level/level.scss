@@ -44,14 +44,15 @@ body {
   }
 
   .button {
-    color: rgba(0, 0, 0, 0.3);
+    color: black;
     margin: 0 3px;
+    outline: 0;
 
     cursor: pointer;
     font-family: 'Courier New', Courier, monospace;
 
     &.pressed {
-      color: black;
+      // font-style: italic;
     }
 
     &:hover {

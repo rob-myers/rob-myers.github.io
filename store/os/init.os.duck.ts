@@ -94,10 +94,20 @@ export const osInitializeThunk = createOsThunk<OsAct, OsInitializeThunk>(
         },
       }));
     }
+    // Ensure README in /root
+    (root.to['root'] as DirectoryINode).addChild(
+      'README',
+      new RegularINode(root.to['root'].def, [
+        '',
+        `${'\x1b[38;5;248;1m'}Javascript bash interpreter by Robert S. R. Myers${'\x1b[0m'}.`,
+        `${'\x1b[33m'}site${'\x1b[0m'}: https://rob-myers.github.io`,
+        `${'\x1b[33m'}mail${'\x1b[0m'}: me.robmyers@gmail.com`,
+        `Built using the excellent shell parser ${'\x1b[38m'}https://github.com/mvdan/sh${'\x1b[0m'}`,
+        '',
+      ])
+    );
 
-    /**
-     * Ensure binaries in /bin.
-     */
+    // Ensure binaries in /bin
     const bin = root.to.bin as DirectoryINode;
     [
       ...binaryExecTypes,
@@ -106,21 +116,13 @@ export const osInitializeThunk = createOsThunk<OsAct, OsInitializeThunk>(
     ].sort().forEach((binaryType) =>
       bin.addChild(binaryType, new RegularINode({ ...bin.def, binaryType })));
 
-    /**
-     * Spawn the top-level process.
-     */
+    // Spawn the top-level process
     dispatch(osSpawnInitThunk({}));
-    /**
-     * Create user 'user' in user-group 'user'.
-     */
+    // Create user 'user' in user-group 'user'
     dispatch(osCreateUserThunk({ userKey: 'user', groupKeys: [] }));
-    /**
-     * Start init process.
-     */
+    // Start init process
     dispatch(osStartProcessThunk({ processKey: 'init' }));
-    /**
-     * Inform listeners we are ready.
-     */
+    // Inform listeners we are ready
     dispatch(osInitializedAct({}));
   },
 );

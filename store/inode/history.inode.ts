@@ -38,7 +38,6 @@ export class HistoryINode extends BaseINode implements RedactInReduxDevTools {
     if (srcLine) {
       this.history.push(srcLine);
       while (this.history.length > maxLines) this.history.shift();
-      console.log({ srcLine });
     }
   }
 
