@@ -1,3 +1,5 @@
+import { fromEvent } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
@@ -94,6 +96,10 @@ interface RequestLevelData extends BaseMessage {
   key: 'request-level-data';
   levelUid: string;
 }
+interface RequestLevelPoints extends BaseMessage {
+  key: 'request-level-points';
+  levelUid: string;
+}
 interface SendLevelPoints extends BaseMessage {
   key: 'send-level-points';
   levelUid: string;
@@ -108,6 +114,7 @@ export type MessageFromLevelParent = (
   | ToggleLevelWall
   | AddLevelPoint
   | RequestLevelData
+  | RequestLevelPoints
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker
@@ -143,4 +150,15 @@ export async function awaitWorker<Key extends MessageFromLevelWorker['key']>(
     };
     worker.addEventListener('message', listener);
   });
+}
+
+export function subscribeToWorker(
+  worker: LevelWorker,
+  handler: (msg: MessageFromLevelWorker) => void, 
+) {
+  return fromEvent<Message<MessageFromLevelWorker>>(worker, 'message')
+    .pipe(
+      map(({ data }) => data),
+      tap(handler)
+    ).subscribe();
 }

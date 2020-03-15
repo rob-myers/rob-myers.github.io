@@ -75,6 +75,13 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       }
       break;
     }
+    case 'request-level-points': {
+      const level = getLevel(msg.levelUid);
+      level && ctxt.postMessage({ key: 'send-level-points', levelUid: msg.levelUid,
+        points: Object.values(level.metaPoints).map(p => p.json),
+      });
+      break;
+    }
   }
 });
 
