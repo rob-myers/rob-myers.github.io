@@ -122,3 +122,5 @@
 - can toggle tiles i.e. floor or absent
 - can toggle subtiles
 - can toggle walls/sub-walls
+- avoid re-rendering LevelContent on mouse move
+- can add meta points

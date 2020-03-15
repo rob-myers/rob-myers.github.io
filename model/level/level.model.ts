@@ -1,9 +1,10 @@
-import { Redacted, redact } from '@model/redux.model';
-import { Poly2, Poly2Json } from '@model/poly2.model';
+import { Redacted } from '@model/redux.model';
+import { Poly2 } from '@model/poly2.model';
 import { Subscription } from 'rxjs';
 import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { KeyedLookup } from '@model/generic.model';
+import { LevelPointUi, LevelPoint } from './level-point.model';
 
 export const wallDepth = 2;
 export const floorInset = 5;
@@ -51,8 +52,7 @@ export interface LevelUiState {
   cursorHighlight: Partial<Record<Direction, boolean>>;
   mode: 'edit' | 'live';
   editMode: null | 'make' | 'meta';
-  /** A copy of `LevelState.metaPoints`  */
-  metaPoints: KeyedLookup<LevelPoint>;
+  metaUi: KeyedLookup<LevelPointUi>;
 }
 
 export function createLevelUiState(uid: string): LevelUiState {
@@ -66,7 +66,7 @@ export function createLevelUiState(uid: string): LevelUiState {
     cursorHighlight: {},
     mode: 'edit',
     editMode: 'make',
-    metaPoints: {},
+    metaUi: {},
   };
 }
 
@@ -90,52 +90,4 @@ export function computeLineSegs(td: number, from: Vector2, dir: Direction): [Vec
     ? new Vector2(smallTileDim, 0) : new Vector2(0, smallTileDim);
   return [seg, seg, seg].map(([u, v], i) =>
     [u.clone().translate(i * d.x, i * d.y), v.clone().translate(i * d.x, i * d.y)]);
-}
-
-export class LevelPoint {
-  
-  public get json(): LevelPointJson {
-    return {
-      key: this.key,
-      lightPoly: this.lightPoly.map(({ json }) => json),
-      position: this.position.json,
-      tags: this.tags.slice(),
-    };
-  }
-  /** Used in Level Component */
-  public ui: LevelPointUi;
-
-  constructor(
-    /** Unique identifier */
-    public key: string,
-    public position: Vector2,
-    public tags = [] as string[],
-    public lightPoly = [] as Redacted<Poly2>[],
-  ) {
-    this.ui = {
-      open: false,
-      position: position.clone(),
-    };
-  }
-
-  public static fromJson(json: LevelPointJson): LevelPoint {
-    return new LevelPoint(
-      json.key,
-      Vector2.from(json.position),
-      json.tags.slice(),
-      json.lightPoly.map(x => redact(Poly2.fromJson(x)))
-    );
-  }
-}
-
-export interface LevelPointJson {
-  key: string;
-  position: Vector2Json;
-  tags: string[];
-  lightPoly: Poly2Json[];
-}
-
-interface LevelPointUi {
-  open: boolean;
-  position: Vector2;
 }

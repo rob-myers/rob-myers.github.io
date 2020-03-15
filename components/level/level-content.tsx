@@ -1,4 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -7,22 +7,24 @@ import { MessageFromLevelWorker } from '@model/level/level.worker.model';
 import { Poly2 } from '@model/poly2.model';
 import { NavGraph } from '@model/nav/nav-graph.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
-import { LevelPoint } from '@model/level/level.model';
-import { Act } from '@store/level.duck';
+import { LevelPoint } from '@model/level/level-point.model';
+import { KeyedLookup } from '@model/generic.model';
+import LevelMeta from './level-meta';
 import css from './level.scss';
 
-const LevelContent: React.FC<Props> = ({ levelUid, showMeta, showNavGraph = false }) => {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const LevelContent: React.FC<Props> = ({
+  levelUid,
+  viewportRef,
+  showMeta,
+  showNavGraph = false,
+}) => {
   const worker = useSelector(({ level: { worker } }) => worker)!;
 
-  // make
   const [tileFloors, setTileFloors] = useState([] as string[]);
   const [walls, setWalls] = useState([] as [Vector2Json, Vector2Json][]);
   const [floors, setFloors] = useState([] as string[]);
   const [triangles, setTriangles] = useState([] as string[]);
-  // meta
-  const [points, setPoints] = useState([] as LevelPoint[]);
-  const dispatch = useDispatch();
+  const [metaPoints, setMetaPoints] = useState<KeyedLookup<LevelPoint>>();
   // debug
   const [centers, setCenters] = useState([] as Vector2[]);
   const [segs, setSegs] = useState([] as Vector2[][]);
@@ -45,13 +47,9 @@ const LevelContent: React.FC<Props> = ({ levelUid, showMeta, showNavGraph = fals
             setTriangles(msg.tris.map(x => Poly2.fromJson(x).svgPath));
           }
           if (msg.key === 'send-level-points' && msg.levelUid === levelUid) {
-            const points = msg.points.map(p => LevelPoint.fromJson(p));
-            setPoints(points);
-            dispatch(Act.updateLevel(levelUid, {
-              metaPoints: points.reduce((agg, item) => ({ ...agg, [item.key]: item }), {})
-            }));
+            setMetaPoints(msg.points.map(p => LevelPoint.fromJson(p))
+              .reduce((agg, item) => ({ ...agg, [item.key]: item }), {} as KeyedLookup<LevelPoint>));
           }
-
           // Debug
           if (showNavGraph && msg.key === 'send-nav-graph' && msg.levelUid === levelUid) {
             const navGraph = NavGraph.fromJson(msg.navGraph);
@@ -108,26 +106,22 @@ const LevelContent: React.FC<Props> = ({ levelUid, showMeta, showNavGraph = fals
           ))}
         </g>
       )}
-      {showMeta && (
-        <g className={css.levelPoints}>
-          {points.map(({ position, key }) =>
-            <circle
-              key={key}
-              cx={position.x}
-              cy={position.y}
-              r={3}
-            />
-          )}
-        </g>
-      )}
+      {showMeta && 
+        <LevelMeta
+          levelUid={levelUid}
+          metaPoints={metaPoints || {}}
+          viewportRef={viewportRef}
+        />
+      }
     </>
   );
 };
 
 interface Props {
   levelUid: string;
-  showNavGraph?: boolean;
   showMeta: boolean;
+  showNavGraph?: boolean;
+  viewportRef: React.RefObject<HTMLElement>;
 }
 
 export default LevelContent;

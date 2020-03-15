@@ -17,7 +17,6 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
   const dispatch = useDispatch();
   const td = state.cursorType === 'refined' ? smallTileDim : tileDim;
-  const metaPoints = useMemo(() => Object.values(state.metaPoints), [state.metaPoints]);
 
   useEffect(() => {
     dispatch(Act.updateLevel(levelUid, {
@@ -75,19 +74,12 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
               break;
             }
             case 'meta': {
-              const { x: mx, y: my } = state.mouseWorld;
-              const found = metaPoints.find(({ position: { x, y } }) =>
-                Math.pow(mx - x, 2) + Math.pow(my - y, 2) <= 5 * 5);
-
-              if (found) {
-                console.log({ found });
-              } else {
-                worker.postMessage({
-                  key: 'add-level-point',
-                  levelUid,
-                  position: state.mouseWorld.json,
-                });
-              }
+              // Extant points should receive click instead
+              worker.postMessage({
+                key: 'add-level-point',
+                levelUid,
+                position: state.mouseWorld.json,
+              });
               break;
             }
           }

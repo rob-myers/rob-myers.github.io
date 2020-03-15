@@ -2,7 +2,7 @@ import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
 import { NavGraphJson } from '@model/nav/nav-graph.model';
-import { LevelPointJson } from './level.model';
+import { LevelPointJson } from './level-point.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {

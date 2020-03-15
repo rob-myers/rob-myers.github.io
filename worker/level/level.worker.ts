@@ -9,11 +9,12 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
 import { redact } from '@model/redux.model';
-import { LevelState, floorInset, smallTileDim, tileDim, LevelPoint } from '@model/level/level.model';
+import { LevelState, floorInset, smallTileDim, tileDim } from '@model/level/level.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { NavGraph } from '@model/nav/nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
+import { LevelPoint } from '@model/level/level-point.model';
 
 const ctxt: LevelWorkerContext = self as any;
 
