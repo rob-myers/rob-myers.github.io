@@ -33,10 +33,11 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
 
   return (
     <>
-      <g className={css.levelPoints}>
+      <g className={css.levelMetas}>
         {points.map(({ position, key }) =>
           <circle
             key={key}
+            style={metaUi[key] && { fill: metaUi[key].over ? 'red' : 'white' }}
             cx={position.x}
             cy={position.y}
             r={1.5}

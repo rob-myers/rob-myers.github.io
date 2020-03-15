@@ -70,14 +70,6 @@ export function createLevelUiState(uid: string): LevelUiState {
   };
 }
 
-export function createLevelMetaUi(key: string): LevelMetaUi {
-  return {
-    key,
-    open: false,
-    dialogPosition: Vector2.zero,
-  };
-}
-
 /**
  * For large tiles we create 3 line segments.
  * Part of approach to avoid extruding 1-dim polygons.

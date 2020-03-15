@@ -46,5 +46,27 @@ export interface LevelMetaJson {
 export interface LevelMetaUi {
   key: string;
   open: boolean;
+  over: boolean;
+  position: Vector2;
   dialogPosition: Vector2;
+}
+
+function createLevelMetaUi(key: string): LevelMetaUi {
+  return {
+    key,
+    open: false,
+    over: false,
+    dialogPosition: Vector2.zero,
+    position: Vector2.zero,
+  };
+}
+
+export function syncLevelMetaUi(src: LevelMeta, dst?: LevelMetaUi): LevelMetaUi {
+  return {
+    ...(dst || createLevelMetaUi(src.key)),
+    ...{
+      dialogPosition: src.position.clone().translate(3, 0),
+      position: src.position.clone(),
+    } as LevelMetaUi
+  };
 }

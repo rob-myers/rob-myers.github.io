@@ -1,5 +1,6 @@
 # TODO
 
+- LevelMeta mouse events handled in LevelMouse
 - can add/remove points with editable tags
 - point tags include `steiner`, `light`
 - steiner points affect triangulation
@@ -126,3 +127,4 @@
 - can add meta points
 - can open/close positioned meta popovers
 - rename LevelPoint to LevelMeta (intend to support rect triggers)
+- LevelMeta highlighted when mouseover

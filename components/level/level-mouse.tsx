@@ -5,6 +5,7 @@ import { Vector2 } from '@model/vec2.model';
 import { getRelativePos } from '@model/dom.model';
 import { LevelUiState, wallDepth, computeLineSegs, tileDim, smallTileDim } from '@model/level/level.model';
 import { posModulo } from '@model/generic.model';
+import { LevelMetaUi } from '@model/level/level-meta.model';
 import css from './level.scss';
 
 function snapToGrid({ x, y }: Vector2, td: number) {
@@ -13,6 +14,7 @@ function snapToGrid({ x, y }: Vector2, td: number) {
 
 const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const highlighted = useRef(false);
+  const overMetas = useRef<LevelMetaUi>();
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
   const dispatch = useDispatch();
@@ -25,8 +27,10 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   }, [state.cursorType]);
 
   const onMouseMove = (e: React.MouseEvent) => {
+    // Track mouse
     const mouseWorld = getMouseWorld(e, state);
     const mouseModulo = new Vector2(posModulo(mouseWorld.x, td), posModulo(mouseWorld.y, td));
+    // Track edge highlighting
     const highlight: LevelUiState['cursorHighlight'] = {
       n: mouseModulo.y <= wallDepth,
       e: mouseModulo.x >= td - wallDepth,
@@ -39,6 +43,12 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
       cursorHighlight: highlight,
       mouseWorld,
     }));
+    // Track metas
+    const nextOverMeta = state.editMode === 'meta' && Object.values(state.metaUi).find(({ position: { x, y } }) =>
+      Math.pow(mouseWorld.x - x, 2) + Math.pow(mouseWorld.y - y, 2) <= 1.5 * 1.5);
+    const some = nextOverMeta || overMetas.current;
+    some && dispatch(Act.updateMetaUi(levelUid, some.key, { over: !!nextOverMeta }));
+    overMetas.current = nextOverMeta || undefined;
   };
   
   return (
@@ -74,12 +84,15 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
               break;
             }
             case 'meta': {
-              // Extant points should receive click instead
-              worker.postMessage({
-                key: 'add-level-meta',
-                levelUid,
-                position: state.mouseWorld.json,
-              });
+              if (overMetas.current) {
+                console.log('CLICK');
+              } else {
+                worker.postMessage({
+                  key: 'add-level-meta',
+                  levelUid,
+                  position: state.mouseWorld.json,
+                });
+              }
               break;
             }
           }

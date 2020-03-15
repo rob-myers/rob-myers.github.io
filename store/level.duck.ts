@@ -7,9 +7,9 @@ import { LevelWorker, awaitWorker } from '@model/level/level.worker.model';
 import { createThunk } from '@model/root.redux.model';
 
 import LevelWorkerClass from '@worker/level/level.worker';
-import { LevelUiState, createLevelUiState, createLevelMetaUi } from '@model/level/level.model';
+import { LevelUiState, createLevelUiState } from '@model/level/level.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
-import { LevelMetaUi, LevelMeta } from '@model/level/level-meta.model';
+import { LevelMetaUi, LevelMeta, syncLevelMetaUi } from '@model/level/level-meta.model';
 
 export interface State {
   worker: null | Redacted<LevelWorker>;
@@ -124,16 +124,14 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[Level] sync meta ui': return { ...state,
       instance: updateLookup(act.pay.uid, state.instance, ({ metaUi }) => ({
         metaUi: act.pay.metas.reduce((agg, meta) => ({ ...agg,
-          [meta.key]: {
-            ...(metaUi[meta.key] || createLevelMetaUi(meta.key)),
-            ...{ dialogPosition: meta.position.clone().translate(3, 0) } as LevelMetaUi
-          },
+          [meta.key]: syncLevelMetaUi(meta, metaUi[meta.key]),
         }), {}),
       })),
     };
     case '[Level] update meta ui': return { ...state,
       instance: updateLookup(act.pay.uid, state.instance, ({ metaUi }) =>
-        ({ metaUi: updateLookup(act.pay.key, metaUi, () => act.pay.updates) }))
+        ({ metaUi: updateLookup(act.pay.key, metaUi, () => act.pay.updates) })
+      ),
     };
     default: return state || testNever(act);
   }
