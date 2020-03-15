@@ -1,24 +1,30 @@
 import { useMemo, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { useSelector } from 'react-redux';
-import { KeyedLookup } from '@model/generic.model';
+import { useSelector, useDispatch } from 'react-redux';
+import classNames from 'classnames';
+import { LevelState } from '@model/level/level.model';
 import { LevelPoint } from '@model/level/level-point.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
+import { Act } from '@store/level.duck';
 import css from './level.scss';
+import { Vector2 } from '@model/vec2.model';
 
-const LevelMeta: React.FC<Props> = ({ levelUid, viewportRef }) => {
+type MetaPoints = LevelState['metaPoints'];
+
+const LevelMeta: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const worker = useSelector(({ level: { worker } }) => worker)!;
-  const metaUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaUi)!;
-  const [metaPoints, setMetaPoints] = useState<KeyedLookup<LevelPoint>>({});
+  const [metaPoints, setMetaPoints] = useState<MetaPoints>({});
   const points = useMemo(() => Object.values(metaPoints), [metaPoints]);
-
-  console.log({ metaUi });
+  const metaUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaUi)!;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const sub = subscribeToWorker(worker, (msg) => {
       if (msg.key === 'send-level-points' && msg.levelUid === levelUid) {
-        setMetaPoints(msg.points.map(p => LevelPoint.fromJson(p))
-          .reduce((agg, item) => ({ ...agg, [item.key]: item }), {}));
+        const metaPoints = msg.points.map(p => LevelPoint.fromJson(p))
+          .reduce<MetaPoints>((agg, item) => ({ ...agg, [item.key]: item }), {}); 
+        setMetaPoints(metaPoints);
+        dispatch(Act.ensureMetaUi(levelUid, Object.keys(metaPoints)));
       }
     });
     worker.postMessage({ key: 'request-level-points', levelUid });
@@ -33,24 +39,33 @@ const LevelMeta: React.FC<Props> = ({ levelUid, viewportRef }) => {
             key={key}
             cx={position.x}
             cy={position.y}
-            r={1}
+            r={1.5}
             onClick={() => {
-              console.log('CLICK');
+              dispatch(Act.updateMetaUi(levelUid, key, {
+                open: !metaUi[key].open,
+                position: new Vector2(position.x + 3, position.y),
+              }));
             }}
           />
         )}
       </g>
       {// Popovers
-        viewportRef.current && ReactDOM.createPortal(
+        overlayRef.current && ReactDOM.createPortal(
           points.map(({ key }) => (
-            <div
+            metaUi[key] && <div
               key={key}
-              className={css.metaPointsPopover}
+              className={classNames(css.metaPopover, {
+                [css.open]: metaUi[key].open,
+              })}
+              style={{
+                left: metaUi[key].position.x,
+                top: metaUi[key].position.y,
+              }}
             >
               {key}
             </div>
           ))
-          , viewportRef.current)
+          , overlayRef.current)
       }
     </>
   );
@@ -58,7 +73,7 @@ const LevelMeta: React.FC<Props> = ({ levelUid, viewportRef }) => {
 
 interface Props {
   levelUid: string;
-  viewportRef: React.RefObject<HTMLElement>;
+  overlayRef: React.RefObject<HTMLElement>;
 }
 
 export default LevelMeta;

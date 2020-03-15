@@ -64,12 +64,30 @@ body {
   width: 100%;
   height: calc(100% - 25px);
   position: relative;
-
-  .meta-points-popover  {
+  overflow: hidden;
+  
+  .overlay-container {
     position: absolute;
-    background: white;
-    border: 1px solid #aaa;
     top: 0px;
+
+    .overlay {
+      position: relative;
+    
+      .meta-popover  {
+        position: absolute;
+        background: white;
+        border: 1px solid #aaa;
+        top: 0px;
+        visibility: hidden;
+
+        // transform: scale(0.5);
+        // transform-origin: top left;
+    
+        &.open {
+          visibility: visible;
+        }
+      }
+    }
   }
 }
 

@@ -13,7 +13,7 @@ import css from './level.scss';
 const Level: React.FC<Props> = ({ uid }) => {
   const dispatch = useDispatch();
   const state = useSelector(({ level: { instance } }) => instance[uid]);
-  const viewportRef = useRef<HTMLElement>(null);
+  const overlayRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     (async () => {
@@ -27,15 +27,15 @@ const Level: React.FC<Props> = ({ uid }) => {
   ), [!!state]);
   
   const levelMeta = useMemo(() => (
-    state && state.editMode === 'meta' && <LevelMeta levelUid={uid} viewportRef={viewportRef} />
-  ), [state && state.editMode, viewportRef]);
+    state && state.editMode === 'meta' && <LevelMeta levelUid={uid} overlayRef={overlayRef} />
+  ), [state && state.editMode, overlayRef]);
 
   return (
     <section className={css.root}>
       {state &&
         <LevelKeys levelUid={uid}>
           <LevelMenu levelUid={uid} />
-          <section className={css.viewport} ref={viewportRef}>
+          <section className={css.viewport}>
             <svg className={css.svg} >
               <LevelMouse levelUid={uid} />
               <g style={{ transform: `scale(${state.zoomFactor})` }}>
@@ -47,6 +47,12 @@ const Level: React.FC<Props> = ({ uid }) => {
                 {state.editMode === 'make' && <LevelGrid levelUid={uid} />}
               </g>
             </svg>
+            <section
+              className={css.overlayContainer}
+              style={{ transform: `scale(${state.zoomFactor}) translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}
+            >
+              <section className={css.overlay} ref={overlayRef} />
+            </section>
           </section>
         </LevelKeys>
       }

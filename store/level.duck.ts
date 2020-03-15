@@ -7,8 +7,9 @@ import { LevelWorker, awaitWorker } from '@model/level/level.worker.model';
 import { createThunk } from '@model/root.redux.model';
 
 import LevelWorkerClass from '@worker/level/level.worker';
-import { LevelUiState, createLevelUiState } from '@model/level/level.model';
-import { KeyedLookup } from '@model/generic.model';
+import { LevelUiState, createLevelUiState, createLevelPointUi } from '@model/level/level.model';
+import { KeyedLookup, testNever } from '@model/generic.model';
+import { LevelPointUi } from '@model/level/level-point.model';
 
 export interface State {
   worker: null | Redacted<LevelWorker>;
@@ -34,6 +35,10 @@ export const Act = {
     createAct('[Level] set status', { status }),
   storeWorker: (worker: Redacted<LevelWorker>) =>
     createAct('[Level] store worker', { worker }),
+  ensureMetaUi: (uid: string, keys: string[]) =>
+    createAct('[Level] ensure meta ui', { uid, keys }),
+  updateMetaUi: (uid: string, key: string, updates: Partial<LevelPointUi>) =>
+    createAct('[Level] update meta ui', { uid, key, updates }),
 };
 
 export type Action = ActionsUnion<typeof Act>;
@@ -106,6 +111,17 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[Level] store worker': return { ...state,
       worker: act.pay.worker,
     };
-    default: return state;
+    case '[Level] ensure meta ui': return { ...state,
+      instance: updateLookup(act.pay.uid, state.instance, ({ metaUi }) => ({
+        metaUi: act.pay.keys.reduce((agg, key) => ({ ...agg,
+          [key]: metaUi[key] || createLevelPointUi(key)
+        }), {}),
+      })),
+    };
+    case '[Level] update meta ui': return { ...state,
+      instance: updateLookup(act.pay.uid, state.instance, ({ metaUi }) =>
+        ({ metaUi: updateLookup(act.pay.key, metaUi, () => act.pay.updates) }))
+    };
+    default: return state || testNever(act);
   }
 };

@@ -124,3 +124,4 @@
 - can toggle walls/sub-walls
 - avoid re-rendering LevelContent on mouse move
 - can add meta points
+- can open/close positioned meta popovers
