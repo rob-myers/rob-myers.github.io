@@ -12,8 +12,11 @@ import css from './level.scss';
 
 const Level: React.FC<Props> = ({ uid }) => {
   const dispatch = useDispatch();
-  const state = useSelector(({ level: { instance } }) => instance[uid]);
   const overlayRef = useRef<HTMLElement>(null);
+  const stateKey = useSelector(({ level: { instance } }) => instance[uid]?.key);
+  const renderBounds = useSelector(({ level: { instance } }) => instance[uid]?.renderBounds);
+  const zoomFactor = useSelector(({ level: { instance } }) => instance[uid]?.zoomFactor);
+  const editMode = useSelector(({ level: { instance } }) => instance[uid]?.editMode);
 
   useEffect(() => {
     (async () => {
@@ -23,34 +26,34 @@ const Level: React.FC<Props> = ({ uid }) => {
   }, []);
 
   const levelContent = useMemo(() => (
-    state && <LevelContent levelUid={uid} showNavGraph={false} />
-  ), [!!state]);
+    stateKey && <LevelContent levelUid={uid} showNavGraph={false} />
+  ), [stateKey]);
   
   const levelMeta = useMemo(() => (
-    state && state.editMode === 'meta' && <LevelMeta levelUid={uid} overlayRef={overlayRef} />
-  ), [state && state.editMode, overlayRef]);
+    editMode === 'meta' && <LevelMeta levelUid={uid} overlayRef={overlayRef} />
+  ), [editMode, overlayRef]);
+
+  const scale = `scale(${zoomFactor})`;
+  const translate = renderBounds && `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
 
   return (
     <section className={css.root}>
-      {state &&
+      {stateKey &&
         <LevelKeys levelUid={uid}>
           <LevelMenu levelUid={uid} />
           <section className={css.viewport}>
             <svg className={css.svg} >
               <LevelMouse levelUid={uid} />
-              <g style={{ transform: `scale(${state.zoomFactor})` }}>
-                <g style={{ transform: `translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}>
+              <g style={{ transform: scale }}>
+                <g style={{ transform: translate }}>
                   {levelContent}
                   {levelMeta}
-                  {state.editMode === 'make' && <LevelCursor levelUid={uid} />}
+                  {editMode === 'make' && <LevelCursor levelUid={uid} />}
                 </g>
-                {state.editMode === 'make' && <LevelGrid levelUid={uid} />}
+                {editMode === 'make' && <LevelGrid levelUid={uid} />}
               </g>
             </svg>
-            <section
-              className={css.overlayContainer}
-              style={{ transform: `scale(${state.zoomFactor}) translate(${-state.renderBounds.x}px, ${-state.renderBounds.y}px)` }}
-            >
+            <section className={css.overlayContainer} style={{ transform: `${scale} ${translate}` }}>
               <section className={css.overlay} ref={overlayRef} />
             </section>
           </section>
