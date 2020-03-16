@@ -1,7 +1,7 @@
 import { useRef, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { generate } from 'shortid';
-import { Act } from '@store/level.duck';
+import { Act, Thunk } from '@store/level.duck';
 import { Vector2 } from '@model/vec2.model';
 import { getRelativePos } from '@model/dom.model';
 import { LevelUiState, wallDepth, computeLineSegs, tileDim, smallTileDim } from '@model/level/level.model';
@@ -100,9 +100,13 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
                 open: !state.metaUi[overMeta.current].open,
               }));
               dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
-            } else if (state.draggedMeta) {// Drag end
-              // TODO
-              dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
+            } else if (state.draggedMeta) {
+              if (!overMeta.current) {// Move meta
+                dispatch(Thunk.moveMetaToMouse({ uid: levelUid, metaKey: state.draggedMeta }));
+                dispatch(Act.updateMetaUi(levelUid, state.draggedMeta, { over: true }));
+                dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
+                overMeta.current = state.draggedMeta;
+              }
             } else {// Create new meta
               const metaKey = `meta-${generate()}`;
               worker.postMessage({

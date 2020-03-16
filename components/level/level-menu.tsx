@@ -36,6 +36,7 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
                   editMode: editMode === 'make' ? 'meta' : 'make',
                 }))}
               >
+                <strong>@</strong>
                 {editMode}
               </button>
             </section>
