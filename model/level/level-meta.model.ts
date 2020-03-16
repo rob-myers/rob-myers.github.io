@@ -2,7 +2,7 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { Poly2, Poly2Json } from '@model/poly2.model';
 import { Redacted, redact } from '@model/redux.model';
 
-export const metaPointRadius = 1.5;
+export const metaPointRadius = 2;
 
 export class LevelMeta {
   
@@ -57,7 +57,7 @@ function createLevelMetaUi(key: string): LevelMetaUi {
   return {
     key,
     open: false,
-    over: false,
+    over: true, // Expect initially mouseover
     dialogPosition: Vector2.zero,
     position: Vector2.zero,
   };

@@ -91,6 +91,7 @@ interface AddLevelMeta extends BaseMessage {
   key: 'add-level-meta';
   levelUid: string;
   position: Vector2Json;
+  metaKey: string;
 }
 interface RequestLevelData extends BaseMessage {
   key: 'request-level-data';

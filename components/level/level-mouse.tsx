@@ -1,5 +1,6 @@
 import { useRef, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { generate } from 'shortid';
 import { Act, Thunk } from '@store/level.duck';
 import { Vector2 } from '@model/vec2.model';
 import { getRelativePos } from '@model/dom.model';
@@ -13,9 +14,14 @@ function snapToGrid({ x, y }: Vector2, td: number) {
 }
 
 const LevelMouse: React.FC<Props> = ({ levelUid }) => {
+  /** Is a cursor direction highlighted? (editMode 'make') */
   const highlighted = useRef(false);
-  const overMetaKey = useRef<string>();
+  /** Key of the meta mouse is over (editMode 'meta') */
+  const overMeta = useRef<string>();
+  /** Is the mouse held down? */
   const mouseIsDown = useRef(false);
+  /** Are we showing a drag indicator? (editMode 'meta) */
+  const metaIsDragged = useRef<string>();
 
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
@@ -23,7 +29,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const dispatch = useDispatch();
   const td = state.cursorType === 'refined' ? smallTileDim : tileDim;
 
-  useEffect(() => {
+  useEffect(() => {// Adjust cursor position on change cursor
     dispatch(Act.updateLevel(levelUid, {
       cursor: snapToGrid(state.mouseWorld, td),
     }));
@@ -34,32 +40,40 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
     const mw = getMouseWorld(e, state);
     /** Mouse world modulo tile (small or large) */
     const mm = new Vector2(posModulo(mw.x, td), posModulo(mw.y, td));
-    /** Track edge highlighting */
-    const highlight: LevelUiState['cursorHighlight'] = {
-      n: mm.y <= wallDepth,
-      e: mm.x >= td - wallDepth,
-      s: mm.y >= td - wallDepth,
-      w: mm.x <= wallDepth,
-    };
-    highlighted.current = highlight.n || highlight.e || highlight.s || highlight.w || false;
     dispatch(Act.updateLevel(levelUid, {
       cursor: snapToGrid(mw, td),
-      cursorHighlight: highlight,
       mouseWorld: mw,
     }));
-    /** Meta under mouse */
-    const nextMeta = state.editMode === 'meta' && metaUis
-      .find(({ position: { x, y } }) =>
-        Math.pow(mw.x - x, 2) + Math.pow(mw.y - y, 2) <= Math.pow(metaPointRadius, 2));
-    const nextKey = nextMeta ? nextMeta.key : undefined;
-    if (nextKey !== overMetaKey.current) {
-      overMetaKey.current && dispatch(Act.updateMetaUi(levelUid, overMetaKey.current, { over: false }));
-      nextKey && dispatch(Act.updateMetaUi(levelUid, nextKey, { over: true }));
-      overMetaKey.current = nextKey;
+
+    if (state.editMode === 'make') {
+      // Track edge highlighting
+      const highlight: LevelUiState['cursorHighlight'] = {
+        n: mm.y <= wallDepth,
+        e: mm.x >= td - wallDepth,
+        s: mm.y >= td - wallDepth,
+        w: mm.x <= wallDepth,
+      };
+      highlighted.current = highlight.n || highlight.e || highlight.s || highlight.w || false;
+      dispatch(Act.updateLevel(levelUid, { cursorHighlight: highlight }));
     }
 
-    if (overMetaKey.current && mouseIsDown.current) {
-      dispatch(Thunk.moveMetaToMouse({ uid: levelUid, metaKey: overMetaKey.current }));
+    if (state.editMode === 'meta') {
+      // Track meta under mouse
+      const nextMeta = state.editMode === 'meta' && metaUis.find(({ position: { x, y } }) =>
+        Math.pow(mw.x - x, 2) + Math.pow(mw.y - y, 2) <= Math.pow(metaPointRadius, 2));
+      const nextKey = nextMeta ? nextMeta.key : undefined;
+      if (nextKey !== overMeta.current) {
+        overMeta.current && dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));
+        nextKey && dispatch(Act.updateMetaUi(levelUid, nextKey, { over: true }));
+        overMeta.current = nextKey;
+      }
+      /**
+       * TODO show line indicator instead, moving only when release.
+       * could set into state and draw line inside LevelMeta
+       */
+      // if (metaIsDragged.current) {
+      //   dispatch(Thunk.moveMetaToMouse({ uid: levelUid, metaKey: metaIsDragged.current }));
+      // }
     }
   };
   
@@ -67,8 +81,17 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
     <rect
       className={css.mouseRect}
       onMouseMove={onMouseMove}
-      onMouseDown={() => mouseIsDown.current = true}
-      onMouseUp={() => mouseIsDown.current = false}
+      onMouseDown={() => {
+        mouseIsDown.current = true;
+        metaIsDragged.current = overMeta.current;
+        // overMetaKey.current && dispatch(Act.updateMetaUi(levelUid, overMetaKey.current, { open: false }));
+      }}
+      onMouseUp={() => {
+        mouseIsDown.current = false;
+        metaIsDragged.current = undefined;
+        const key = overMeta.current;
+        key && dispatch(Act.updateMetaUi(levelUid, key, { open: !state.metaUi[key].open }));
+      }}
       onClick={(_e) => {
         switch (state.editMode) {
           case 'make': {
@@ -97,15 +120,17 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
             break;
           }
           case 'meta': {
-            if (overMetaKey.current) {
-              const key = overMetaKey.current;
-              dispatch(Act.updateMetaUi(levelUid, key, { open: !state.metaUi[key].open }));
+            if (overMeta.current) {
+              // Handled by mouseDown/Up
             } else {
+              const metaKey = `meta-${generate()}`;
               worker.postMessage({
                 key: 'add-level-meta',
                 levelUid,
                 position: state.mouseWorld.json,
+                metaKey,
               });
+              overMeta.current = metaKey;
             }
             break;
           }

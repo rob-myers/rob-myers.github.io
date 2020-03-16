@@ -8,23 +8,22 @@ import { subscribeToWorker } from '@model/level/level.worker.model';
 import { Act } from '@store/level.duck';
 import css from './level.scss';
 
-type MetaPoints = LevelState['metas'];
+type MetaLookup = LevelState['metas'];
 
 const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const worker = useSelector(({ level: { worker } }) => worker)!;
-  const [metaPoints, setMetaPoints] = useState<MetaPoints>({});
-  const points = useMemo(() => Object.values(metaPoints), [metaPoints]);
+  const [levelMetas, setLevelMetas] = useState<MetaLookup>({});
+  const metas = useMemo(() => Object.values(levelMetas), [levelMetas]);
   const metaUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaUi)!;
   const dispatch = useDispatch();
 
   useEffect(() => {
     const sub = subscribeToWorker(worker, (msg) => {
       if (msg.key === 'send-level-metas' && msg.levelUid === levelUid) {
-        const metaPoints = msg.metas.map(p => LevelMeta.fromJson(p))
-          .reduce<MetaPoints>((agg, item) => ({ ...agg, [item.key]: item }), {}); 
-        setMetaPoints(metaPoints);
-        console.log({ metaPoints });
-        dispatch(Act.syncMetaUi(levelUid, Object.values(metaPoints)));
+        const metas = msg.metas.map(p => LevelMeta.fromJson(p))
+          .reduce<MetaLookup>((agg, item) => ({ ...agg, [item.key]: item }), {}); 
+        setLevelMetas(metas);
+        dispatch(Act.syncMetaUi(levelUid, Object.values(metas)));
       }
     });
     worker.postMessage({ key: 'request-level-metas', levelUid });
@@ -34,33 +33,20 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   return (
     <>
       <g className={css.levelMetas}>
-        {points.map(({ position, key }) =>
+        {metas.map(({ position, key }) =>
           <circle
             key={key}
-            style={metaUi[key] && { fill: metaUi[key].over ? 'red' : 'white' }}
+            style={metaUi[key] && { 
+              fill: metaUi[key].over ? 'red' : 'white' }}
             cx={position.x}
             cy={position.y}
             r={metaPointRadius}
-            /**
-             * TODO permit dragging...
-             */
-            // onMouseDown={() => {
-            //   mouseDownAt.current = key;
-            // }}
-            // onMouseUp={() => {
-            //   mouseDownAt.current = undefined;
-            // }}
-            // onMouseMove={() => {
-            //   if (mouseDownAt.current) {
-            //     dispatch(Thunk.moveMetaToMouse({ uid: levelUid, metaKey: key }));
-            //   }
-            // }}
           />
         )}
       </g>
       {// Popovers
         overlayRef.current && ReactDOM.createPortal(
-          points.map(({ key }) => (
+          metas.map(({ key }) => (
             metaUi[key] && <div
               key={key}
               className={classNames(css.metaPopover, {

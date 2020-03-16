@@ -1,10 +1,8 @@
 import { persistStore } from 'redux-persist';
 import { fromEvent } from 'rxjs';
 import { filter, map, delay, auditTime } from 'rxjs/operators';
-import { generate } from 'shortid';
 
 import { LevelWorkerContext, LevelWorker, MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall } from '@model/level/level.worker.model';
-import { initializeStore } from './create-store';
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
@@ -15,6 +13,7 @@ import { Rect2 } from '@model/rect2.model';
 import { NavGraph } from '@model/nav/nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
 import { LevelMeta } from '@model/level/level-meta.model';
+import { initializeStore } from './create-store';
 
 const ctxt: LevelWorkerContext = self as any;
 
@@ -54,7 +53,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       break;
     }
     case 'add-level-meta': {
-      const lp = new LevelMeta(`p-${generate()}`, Vector2.from(msg.position));
+      const lp = new LevelMeta(msg.metaKey, Vector2.from(msg.position));
       const metas = { ...getLevel(msg.levelUid)!.metas, [lp.key]: lp };
       dispatch(Act.updateLevel(msg.levelUid, { metas: metas }));
       ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
