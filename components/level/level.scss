@@ -159,6 +159,18 @@ body {
   fill: white;
   stroke: black;
   stroke-width: 0.2;
+
+  .drag-indicator {
+    line {
+      stroke-width: 0.1;
+      stroke: #000;
+    }
+    circle {
+      stroke-width: 0.1;
+      stroke: #000;
+      fill: #fff;
+    }
+  }
 }
 
 .svg-nav-node {

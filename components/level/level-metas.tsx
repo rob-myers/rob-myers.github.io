@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
@@ -12,9 +12,13 @@ type MetaLookup = LevelState['metas'];
 
 const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const worker = useSelector(({ level: { worker } }) => worker)!;
+  const metaUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaUi);
+  const draggedMeta = useSelector(({ level: { instance: { [levelUid]: level } } }) =>
+    level.draggedMeta ? level.metaUi[level.draggedMeta] : null);
+  const mouseWorld = useSelector(({ level: { instance } }) =>
+    draggedMeta && instance[levelUid]?.mouseWorld); // Track mouse while dragging
+
   const [levelMetas, setLevelMetas] = useState<MetaLookup>({});
-  const metas = useMemo(() => Object.values(levelMetas), [levelMetas]);
-  const metaUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaUi)!;
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -33,7 +37,18 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   return (
     <>
       <g className={css.levelMetas}>
-        {metas.map(({ position, key }) =>
+        {draggedMeta && mouseWorld &&
+          <g className={css.dragIndicator}>
+            <line
+              x1={draggedMeta.position.x}
+              y1={draggedMeta.position.y}
+              x2={mouseWorld.x}
+              y2={mouseWorld.y}
+            />
+            <circle cx={mouseWorld.x} cy={mouseWorld.y} r={1}/>
+          </g>
+        }
+        {Object.values(levelMetas).map(({ position, key }) =>
           <circle
             key={key}
             style={metaUi[key] && { 
@@ -45,22 +60,25 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
         )}
       </g>
       {// Popovers
-        overlayRef.current && ReactDOM.createPortal(
-          metas.map(({ key }) => (
-            metaUi[key] && <div
-              key={key}
-              className={classNames(css.metaPopover, {
-                [css.open]: metaUi[key].open,
-              })}
-              style={{
-                left: metaUi[key].dialogPosition.x,
-                top: metaUi[key].dialogPosition.y,
-              }}
-            >
-              {key}
-            </div>
-          ))
-          , overlayRef.current)
+        overlayRef.current && (
+          ReactDOM.createPortal(
+            Object.values(levelMetas).map(({ key }) => (
+              metaUi[key] && <div
+                key={key}
+                className={classNames(css.metaPopover, {
+                  [css.open]: metaUi[key].open,
+                })}
+                style={{
+                  left: metaUi[key].dialogPosition.x,
+                  top: metaUi[key].dialogPosition.y,
+                }}
+              >
+                {key}
+              </div>
+            ))
+            , overlayRef.current
+          )
+        )
       }
     </>
   );

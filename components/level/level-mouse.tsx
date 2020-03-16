@@ -20,8 +20,6 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const overMeta = useRef<string>();
   /** Is the mouse held down? */
   const mouseIsDown = useRef(false);
-  /** Are we showing a drag indicator? (editMode 'meta) */
-  const metaIsDragged = useRef<string>();
 
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
@@ -85,14 +83,20 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   return (
     <rect
       className={css.mouseRect}
+      onMouseLeave={() => {// Cleanup
+        const overKey = overMeta.current;
+        overKey && dispatch(Act.updateMetaUi(levelUid, overKey, { over: false }));
+        overMeta.current = undefined;
+        state.draggedMeta && dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
+      }}
       onMouseMove={onMouseMove}
       onMouseDown={() => {
         mouseIsDown.current = true;
-        metaIsDragged.current = overMeta.current;
+        dispatch(Act.updateLevel(levelUid, { draggedMeta: overMeta.current }));
       }}
       onMouseUp={() => {
         mouseIsDown.current = false;
-        metaIsDragged.current = undefined;
+        dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
         const key = overMeta.current;
         key && dispatch(Act.updateMetaUi(levelUid, key, { open: !state.metaUi[key].open }));
       }}
@@ -158,7 +162,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
           onMouseMove(e);
           dispatch(Act.updateLevel(levelUid, {
             renderBounds: state.renderBounds.clone()
-              .delta(0.5 * e.deltaX, 0.5 * e.deltaY)
+              .delta(0.25 * e.deltaX, 0.25 * e.deltaY)
           }));
         }
       }}

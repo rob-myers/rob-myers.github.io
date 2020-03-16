@@ -52,7 +52,10 @@ export interface LevelUiState {
   cursorHighlight: Partial<Record<Direction, boolean>>;
   mode: 'edit' | 'live';
   editMode: null | 'make' | 'meta';
+  /** UIs for LevelState.metas */
   metaUi: KeyedLookup<LevelMetaUi>;
+  /** Key of dragged meta if any (editMode 'meta') */
+  draggedMeta: null | string;
 }
 
 export function createLevelUiState(uid: string): LevelUiState {
@@ -67,6 +70,7 @@ export function createLevelUiState(uid: string): LevelUiState {
     mode: 'edit',
     editMode: 'make',
     metaUi: {},
+    draggedMeta: null,
   };
 }
 
