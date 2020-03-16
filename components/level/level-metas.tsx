@@ -41,6 +41,22 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
     worker.postMessage({ key: 'remove-level-meta', levelUid, metaKey });
     worker.postMessage({ key: 'request-level-metas', levelUid });
   };
+  const addTag = (metaKey: string, tag: string) => {
+    if (/^[a-z0-9-]+$/.test(tag)) {
+      worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, updates: {
+        tags: levelMetas[metaKey].tags.filter(other => other !== tag).concat(tag),
+      }});
+      worker.postMessage({ key: 'request-level-metas', levelUid });
+      return true;
+    }
+    return false;
+  };
+  const removeTag = (metaKey: string, tag: string) => {
+    worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, updates: {
+      tags: levelMetas[metaKey].tags.filter(other => other !== tag),
+    }});
+    worker.postMessage({ key: 'request-level-metas', levelUid });
+  };
 
   return (
     <>
@@ -68,13 +84,12 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
       {// Popovers
         overlayRef.current && (
           ReactDOM.createPortal(
-            Object.values(levelMetas).map(({ key }) => (
+            Object.values(levelMetas).map(({ key, tags }) => (
               metaUi[key] && (
                 <section
                   key={key}
-                  className={classNames({
-                    [css.metaPopover]: true,
-                    [css.open]: metaUi[key].open
+                  className={classNames(css.metaPopover, {
+                    [css.open]: metaUi[key].open && key !== draggedMeta?.key,
                   })}
                   style={{
                     left: metaUi[key].dialogPosition.x,
@@ -84,11 +99,25 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   <section className={css.content}>
                     <section className={css.toolbar}>
                       <div
+                        title="rectangular area"
+                        className={css.button}
+                        // TODO can set width/height
+                      >
+                        r
+                      </div>
+                      <div
+                        title="circular area"
+                        className={css.button}
+                        // TODO can choose radius
+                      >
+                        c
+                      </div>
+                      <div
                         title="delete"
                         className={css.button}
                         onClick={() => removeMeta(key)}
                       >
-                        -
+                        d
                       </div>
                       <div
                         title="close"
@@ -96,7 +125,23 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                         onClick={() => closeMeta(key)}>
                         x
                       </div>
-
+                    </section>
+                    <section className={css.tags}>
+                      <input
+                        placeholder="tag"
+                        onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
+                          inputKey === 'Enter' && addTag(key, value) && (currentTarget.value = '')
+                        }
+                      />
+                      {tags.map((tag) =>
+                        <div
+                          key={tag}
+                          className={css.tag}
+                          onClick={() => removeTag(key, tag)}
+                        >
+                          {tag}
+                        </div>
+                      )}
                     </section>
                   </section>
                 </section>

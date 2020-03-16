@@ -40,6 +40,7 @@ body {
     .filename-input {
       padding: 0 4px;
       font-family: 'Courier New', Courier, monospace;
+      outline: none;
     }
   }
 
@@ -77,12 +78,11 @@ body {
       .meta-popover  {
         position: absolute;
         background: white;
-        border: 1px solid #aaa;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      
         top: 0px;
         visibility: hidden;
-        pointer-events: none;
         
-        // Account for scaling up of overlay
         transform: scale(0.5);
         transform-origin: top left;
 
@@ -92,28 +92,47 @@ body {
 
         .content {
           box-sizing: border-box;
-          width: 100px;
-          height: 50px;
+          width: 60px;
+          height: fit-content;
           padding: 4px 2px;
 
-          display: flex;
-          justify-content: flex-end;
-
           font-family: 'Courier New', Courier, monospace;
-          font-size: 8pt;
+          font-size: 6pt;
 
           .toolbar {
             padding: 0 2px;
             display: flex;
-            align-items: flex-start;
+            justify-content: space-between;
+            user-select: none;
 
             .button {
-              pointer-events: all;
+              cursor: pointer;
+              padding: 0 1px;
+              // margin-left: 4px;
+              background: #eee;
+              border-radius: 2px 2px 0 0;
+              border: 1px solid #ddd;
+              border-bottom-width: 0;
+            }
+          }
+
+          .tags {
+            display: flex;
+            flex-wrap: wrap;
+            user-select: none;
+
+            input {
+              font-family: 'Courier New', Courier, monospace;
+              outline: none;
+              width: 100%;
+              font-size: 6pt;
+            }
+
+            .tag {
               cursor: pointer;
               padding: 0 2px;
-              margin-left: 4px;
               background: #eee;
-            } 
+            }
           }
         }
       }

@@ -37,7 +37,6 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
       overMeta.current && dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));
       nextKey && dispatch(Act.updateMetaUi(levelUid, nextKey, { over: true }));
       overMeta.current = nextKey;
-      // Change cursor
       rectEl.current?.style.setProperty('cursor', nextKey ? 'pointer' : 'auto');
     }
   };
