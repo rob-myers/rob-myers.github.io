@@ -14,7 +14,15 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
         editMode && (
           <>
             <section className={css.editMenu}>
+              <input
+                title="filename"
+                className={css.filenameInput}
+                placeholder="filename"
+              />
+            </section>
+            <section className={css.mainMenu}>
               <button
+                title="grid size"
                 className={classNames(css.button, {
                   [css.pressed]: cursorType === 'refined'
                 })}
@@ -22,14 +30,8 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
                   cursorType: cursorType === 'refined' ? 'default' : 'refined',
                 }))}
               >
-                inner
+                ×{cursorType === 'refined' ? 3 : 1}
               </button>
-              <input
-                className={css.filenameInput}
-                placeholder="filename"
-              />
-            </section>
-            <section className={css.mainMenu}>
               <button
                 className={css.button}
                 onClick={(_e) => dispatch(Act.updateLevel(levelUid, {

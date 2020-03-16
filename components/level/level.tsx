@@ -50,7 +50,7 @@ const Level: React.FC<Props> = ({ uid }) => {
                   {levelMetas}
                   {editMode === 'make' && <LevelCursor levelUid={uid} />}
                 </g>
-                {editMode === 'make' && <LevelGrid levelUid={uid} />}
+                {editMode && <LevelGrid levelUid={uid} />}
               </g>
             </svg>
             <section className={css.overlayContainer}

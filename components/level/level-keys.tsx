@@ -17,7 +17,10 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
               editMode: state.editMode === 'make' ? 'meta' : 'make',
             }));
           case '1': return state.editMode && dispatch(Act.updateLevel(levelUid, {
-            cursorType: state.cursorType === 'default' ? 'refined' : 'default',
+            cursorType: 'default',
+          }));
+          case '3': return state.editMode && dispatch(Act.updateLevel(levelUid, {
+            cursorType: 'refined',
           }));
         }
       }}
