@@ -1,8 +1,8 @@
 import { persistStore } from 'redux-persist';
 import { fromEvent } from 'rxjs';
-import { filter, map, delay, auditTime } from 'rxjs/operators';
+import { filter, map, delay, auditTime, tap } from 'rxjs/operators';
 
-import { LevelWorkerContext, LevelWorker, MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall } from '@model/level/level.worker.model';
+import { LevelWorkerContext, LevelWorker, MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall, UpdateLevelMeta } from '@model/level/level.worker.model';
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
@@ -38,6 +38,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       dispatch(Act.registerLevel(msg.levelUid));
       dispatch(Act.updateLevel(msg.levelUid, {
         tileToggleSub: redact(levelToggleHandlerFactory(msg.levelUid).subscribe()),
+        metaUpdateSub: redact(metaUpdateHandlerFactory(msg.levelUid).subscribe()),
       }));
       ctxt.postMessage({ key: 'worker-created-level', levelUid: msg.levelUid });
       break;
@@ -45,11 +46,8 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     case 'request-destroy-level': {
       const level = getLevel(msg.levelUid);
       level?.tileToggleSub?.unsubscribe();
+      level?.metaUpdateSub?.unsubscribe();
       dispatch(Act.unregisterLevel(msg.levelUid));
-      break;
-    }
-    case 'toggle-level-tile': {
-      /** Handled by an rxjs Observable */
       break;
     }
     case 'add-level-meta': {
@@ -83,18 +81,42 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       });
       break;
     }
-    case 'update-level-meta': {
-      const level = getLevel(msg.levelUid);
-      if (level && level.metas[msg.metaKey]) {
-        level.metas[msg.metaKey].applyUpdates(msg.updates); // Mutation
-        ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
-          metas: Object.values(level.metas).map(p => p.json),
-        });
-      }
-      break;
-    }
   }
 });
+
+const specialTags = ['steiner', 'light'];
+
+/**
+ * Handle meta updates for specified level.
+ */
+function metaUpdateHandlerFactory(levelUid: string) {
+  return fromEvent<Message<MessageFromLevelParent>>(ctxt, 'message')
+    .pipe(
+      map(({ data }) => data),
+      filter((msg): msg is UpdateLevelMeta =>
+        msg.key === 'update-level-meta' && levelUid === msg.levelUid
+      ),
+      filter((msg) => {
+        const { metas } = getLevel(levelUid)!;
+        metas[msg.metaKey].applyUpdates(msg.update); // Mutation
+        ctxt.postMessage({ key: 'send-level-metas', levelUid,
+          metas: Object.values(metas).map(p => p.json),
+        });
+        return (// Some actions can affect floor/lights
+          'tag' in msg.update && specialTags.includes(msg.update.tag)
+          || msg.update.key === 'set-position'
+          && metas[msg.metaKey].tags.some(tag => specialTags.includes(tag))
+        );
+      }),
+      auditTime(300),
+      tap((msg) => {
+        console.log({ extra: msg });
+        /**
+         * TODO
+         */
+      }),
+    );
+}
 
 /**
  * Handle tile toggling for specified level.
@@ -159,36 +181,30 @@ function levelToggleHandlerFactory(levelUid: string) {
       }),
       auditTime(300),
       /**
-       * Triangulate (could be refined)
+       * Triangulate and construct NavGraph.
        */
-      map(floors => {
-        ctxt.postMessage({
-          key: 'send-level-tris',
-          levelUid, // Mutates floors in level state
-          tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
-        });
-        return floors;
+      tap(floors => {
+        updateNavGraph(levelUid, floors);
+        // NOTE floyd warshall will be computed on exit edit-mode
       }),
-      /**
-       * Send navgraph
-       */
-      map(floors => {
-        const navGraph = NavGraph.from(floors);
-        ctxt.postMessage({
-          key: 'send-nav-graph',
-          levelUid,
-          navGraph: navGraph.json,
-          floors: floors.map(({ json }) => json),
-        });
-        // // floyd warshall test
-        // const fw = FloydWarshall.from(navGraph);
-        // console.log({ fw });
-        return floors;
-      }),
-      /**
-       * TODO Floyd marshall
-       */
     );
+}
+
+function updateNavGraph(levelUid: string, floors: Poly2[]) {
+  ctxt.postMessage({
+    key: 'send-level-tris',
+    levelUid, // Constructing triangulation mutates floors
+    tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
+  });
+
+  const navGraph = NavGraph.from(floors);
+  ctxt.postMessage({
+    key: 'send-nav-graph',
+    levelUid,
+    navGraph: navGraph.json,
+    floors: floors.map(({ json }) => json), // Debug only
+  });
+  // console.log({ fw: FloydWarshall.from(navGraph) });
 }
 
 export default {} as Worker & { new (): LevelWorker };

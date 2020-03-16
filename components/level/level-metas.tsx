@@ -43,18 +43,16 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   };
   const addTag = (metaKey: string, tag: string) => {
     if (/^[a-z0-9-]+$/.test(tag)) {
-      worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, updates: {
-        tags: levelMetas[metaKey].tags.filter(other => other !== tag).concat(tag),
-      }});
+      worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: {
+        key: 'add-tag', tag }});
       worker.postMessage({ key: 'request-level-metas', levelUid });
       return true;
     }
     return false;
   };
   const removeTag = (metaKey: string, tag: string) => {
-    worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, updates: {
-      tags: levelMetas[metaKey].tags.filter(other => other !== tag),
-    }});
+    worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: {
+      key: 'remove-tag', tag }});
     worker.postMessage({ key: 'request-level-metas', levelUid });
   };
 

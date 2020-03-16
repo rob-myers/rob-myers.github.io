@@ -27,6 +27,8 @@ export interface LevelState {
   floors: Redacted<Poly2>[];
   /** Tile/wall toggle handler */
   tileToggleSub: null | Redacted<Subscription>;
+  /** Meta update handler */
+  metaUpdateSub: null | Redacted<Subscription>;
   /** Spawn points, steiner points, lights, interactives */
   metas: KeyedLookup<LevelMeta>;
 }
@@ -38,6 +40,7 @@ export function createLevelState(uid: string): LevelState {
     walls: {},
     floors: [],
     tileToggleSub: null,
+    metaUpdateSub: null,
     metas: {},
   };
 }

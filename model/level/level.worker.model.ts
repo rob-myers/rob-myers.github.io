@@ -4,7 +4,7 @@ import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
 import { NavGraphJson } from '@model/nav/nav-graph.model';
-import { LevelMetaJson } from './level-meta.model';
+import { LevelMetaJson, LevelMetaUpdate } from './level-meta.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {
@@ -111,11 +111,11 @@ interface SendLevelMetas extends BaseMessage {
   levelUid: string;
   metas: LevelMetaJson[];
 }
-interface UpdateLevelMeta extends BaseMessage {
+export interface UpdateLevelMeta extends BaseMessage {
   key: 'update-level-meta';
   levelUid: string;
   metaKey: string;
-  updates: Partial<LevelMetaJson>;
+  update: LevelMetaUpdate;
 }
 
 export type MessageFromLevelParent = (

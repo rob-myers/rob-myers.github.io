@@ -96,7 +96,7 @@ export const Thunk = {
       const { worker, instance: { [uid]: state } } = level;
       state && worker?.postMessage({
         key: 'update-level-meta', levelUid: uid, metaKey,
-        updates: { position: state.mouseWorld.json, }
+        update: { key: 'set-position', position: state.mouseWorld.json, }
       });
     },
   ),

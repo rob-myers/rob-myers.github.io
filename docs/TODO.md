@@ -2,7 +2,6 @@
 
 - steiner points affect triangulation
 - lights can be turned on/off
-
 - edit/live mode
 - can save/restore level
 

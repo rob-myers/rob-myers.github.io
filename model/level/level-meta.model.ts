@@ -23,9 +23,21 @@ export class LevelMeta {
     public lightPoly = [] as Redacted<Poly2>[],
   ) {}
 
-  public applyUpdates({ position, tags }: Partial<LevelMetaJson>): void {
-    position && (this.position = Vector2.from(position));
-    tags && (this.tags = tags.slice());
+  public applyUpdates(update: LevelMetaUpdate): void {
+    switch (update.key) {
+      case 'add-tag': {
+        this.tags = this.tags.filter((tag) => tag !== update.tag).concat(update.tag);
+        break;
+      }
+      case 'remove-tag': {
+        this.tags = this.tags.filter((tag) => tag !== update.tag);
+        break;
+      }
+      case 'set-position': {
+        this.position = Vector2.from(update.position);
+        break;
+      }
+    }
   }
 
   public static fromJson(json: LevelMetaJson): LevelMeta {
@@ -44,6 +56,12 @@ export interface LevelMetaJson {
   tags: string[];
   lightPoly: Poly2Json[];
 }
+
+export type LevelMetaUpdate = (
+  | { key: 'add-tag'; tag: string }
+  | { key: 'remove-tag'; tag: string }
+  | { key: 'set-position'; position: Vector2Json }
+);
 
 export interface LevelMetaUi {
   key: string;
