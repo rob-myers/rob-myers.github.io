@@ -9,7 +9,7 @@ import { LevelMetaUi, LevelMeta } from './level-meta.model';
 export const wallDepth = 2;
 export const floorInset = 5;
 export const tileDim = 60;
-/** tileDim divided by 3 */
+/** `tileDim` divided by 3 */
 export const smallTileDim = 20;
 
 export type Direction = 'n' | 'e' | 's' | 'w'; 

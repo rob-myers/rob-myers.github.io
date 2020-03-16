@@ -531,6 +531,16 @@ export class Poly2 {
     return this;
   }
 
+  public removeSteiners() {
+    if (this.steinerPoints.length) {
+      this.steinerPoints = [];
+      // This mutation invalidates any triangulation
+      this._triangulationIds = [];
+      this.clearCache();
+    }
+    return this;
+  }
+
   public transform(matrix: DOMMatrix, origin: Vector2, skewed = false) {
     this.allPoints.forEach(p => p.sub(origin).transform(matrix).add(origin));
     if (skewed) this._triangulationIds = []; // Invalidate triangulation
@@ -562,7 +572,8 @@ export class Poly2 {
 
       this._triangulationIds = new poly2tri.SweepContext(outline)
         .addHoles(holes)
-        .addPoints(this.steinerPoints) // Same as customTriangulate?
+        // Seen failures, but customTriangulation handles steiner points
+        // .addPoints(this.steinerPoints)
         .triangulate()
         .getTriangles()
         .map(t => [t.getPoint(0), t.getPoint(1), t.getPoint(2)] as Triple<V2WithId>)

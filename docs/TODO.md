@@ -1,6 +1,5 @@
 # TODO
 
-- steiner points affect triangulation
 - lights can be turned on/off
 - edit/live mode
 - can save/restore level
@@ -127,3 +126,4 @@
 - LevelMeta mouse events handled in LevelMouse, except for popover onClicks
 - can add/remove points with editable tags
 - point tags can include `steiner`, `light`
+- steiner points affect triangulation

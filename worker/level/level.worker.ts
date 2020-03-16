@@ -96,24 +96,23 @@ function metaUpdateHandlerFactory(levelUid: string) {
       filter((msg): msg is UpdateLevelMeta =>
         msg.key === 'update-level-meta' && levelUid === msg.levelUid
       ),
-      filter((msg) => {
+      filter(({ metaKey, update }) => {
         const { metas } = getLevel(levelUid)!;
-        metas[msg.metaKey].applyUpdates(msg.update); // Mutation
+        metas[metaKey].applyUpdates(update); // Mutation
         ctxt.postMessage({ key: 'send-level-metas', levelUid,
           metas: Object.values(metas).map(p => p.json),
         });
-        return (// Some actions can affect floor/lights
-          'tag' in msg.update && specialTags.includes(msg.update.tag)
-          || msg.update.key === 'set-position'
-          && metas[msg.metaKey].tags.some(tag => specialTags.includes(tag))
+        return (// Some actions can affect NavGraph or lights
+          update.key === 'add-tag' && specialTags.includes(update.tag)
+          || update.key === 'remove-tag' && specialTags.includes(update.tag)
+          || update.key === 'set-position' && metas[metaKey].tags.some(tag => specialTags.includes(tag))
         );
       }),
       auditTime(300),
-      tap((msg) => {
-        console.log({ extra: msg });
-        /**
-         * TODO
-         */
+      tap((_) => {
+        // console.log({ metaKey, update });
+        updateNavGraph(levelUid);
+        // TODO update lights
       }),
     );
 }
@@ -183,20 +182,36 @@ function levelToggleHandlerFactory(levelUid: string) {
       /**
        * Triangulate and construct NavGraph.
        */
-      tap(floors => {
-        updateNavGraph(levelUid, floors);
+      tap((_) => {
+        updateNavGraph(levelUid);
         // NOTE floyd warshall will be computed on exit edit-mode
       }),
     );
 }
 
-function updateNavGraph(levelUid: string, floors: Poly2[]) {
+function updateNavGraph(levelUid: string) {
+  const { floors, metas } = getLevel(levelUid)!;
+  floors.flatMap(x => x.removeSteiners().qualityTriangulate());
+
+  // Valid steiner points will require a retriangulation
+  const steiners = Object.values(metas)
+    .filter(({ tags }) => tags.includes('steiner'))
+    .reduce((agg, { position: p }) => {
+      const index = floors.findIndex(floor => floor.contains(p));
+      return index >= 0 ? { ...agg, [index]: (agg[index] || []).concat(p) } : agg;
+    }, {} as Record<number, Vector2[]>);
+
+  if (Object.keys(steiners).length) {// Retriangulate
+    Object.entries(steiners).forEach(([index, ps]) => {
+      floors[Number(index)].addSteinerPoints(ps).customTriangulate();
+    });
+  }
+
   ctxt.postMessage({
     key: 'send-level-tris',
-    levelUid, // Constructing triangulation mutates floors
+    levelUid, 
     tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
   });
-
   const navGraph = NavGraph.from(floors);
   ctxt.postMessage({
     key: 'send-nav-graph',
