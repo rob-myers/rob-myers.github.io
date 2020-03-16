@@ -59,6 +59,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     case 'remove-level-meta': {
       const metas = removeFromLookup(msg.metaKey, getLevel(msg.levelUid)!.metas);
       dispatch(Act.updateLevel(msg.levelUid, { metas }));
+      updateNavGraph(msg.levelUid);
       break;
     }
     case 'request-level-data': {
