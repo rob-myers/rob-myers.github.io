@@ -93,6 +93,11 @@ interface AddLevelMeta extends BaseMessage {
   position: Vector2Json;
   metaKey: string;
 }
+interface RemoveLevelMeta extends BaseMessage {
+  key: 'remove-level-meta';
+  levelUid: string;
+  metaKey: string;
+}
 interface RequestLevelData extends BaseMessage {
   key: 'request-level-data';
   levelUid: string;
@@ -123,6 +128,7 @@ export type MessageFromLevelParent = (
   | RequestLevelData
   | RequestLevelMetas
   | UpdateLevelMeta
+  | RemoveLevelMeta
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker

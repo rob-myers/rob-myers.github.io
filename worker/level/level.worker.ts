@@ -6,7 +6,7 @@ import { LevelWorkerContext, LevelWorker, MessageFromLevelParent, ToggleLevelTil
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
-import { redact } from '@model/redux.model';
+import { redact, removeFromLookup } from '@model/redux.model';
 import { LevelState, floorInset, smallTileDim, tileDim } from '@model/level/level.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
@@ -56,9 +56,11 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       const lp = new LevelMeta(msg.metaKey, Vector2.from(msg.position));
       const metas = { ...getLevel(msg.levelUid)!.metas, [lp.key]: lp };
       dispatch(Act.updateLevel(msg.levelUid, { metas: metas }));
-      ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
-        metas: Object.values(metas).map(p => p.json),
-      });
+      break;
+    }
+    case 'remove-level-meta': {
+      const metas = removeFromLookup(msg.metaKey, getLevel(msg.levelUid)!.metas);
+      dispatch(Act.updateLevel(msg.levelUid, { metas }));
       break;
     }
     case 'request-level-data': {

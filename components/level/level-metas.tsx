@@ -34,6 +34,14 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
     return () => sub.unsubscribe();
   }, []);
 
+  const closeMeta = (metaKey: string) => {
+    dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
+  };
+  const removeMeta = (metaKey: string) => {
+    worker.postMessage({ key: 'remove-level-meta', levelUid, metaKey });
+    worker.postMessage({ key: 'request-level-metas', levelUid });
+  };
+
   return (
     <>
       <g className={css.levelMetas}>
@@ -51,8 +59,6 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
         {Object.values(levelMetas).map(({ position, key }) =>
           <circle
             key={key}
-            style={metaUi[key] && { 
-              fill: metaUi[key].over ? 'red' : 'white' }}
             cx={position.x}
             cy={position.y}
             r={metaPointRadius}
@@ -63,18 +69,39 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
         overlayRef.current && (
           ReactDOM.createPortal(
             Object.values(levelMetas).map(({ key }) => (
-              metaUi[key] && <div
-                key={key}
-                className={classNames(css.metaPopover, {
-                  [css.open]: metaUi[key].open,
-                })}
-                style={{
-                  left: metaUi[key].dialogPosition.x,
-                  top: metaUi[key].dialogPosition.y,
-                }}
-              >
-                {key}
-              </div>
+              metaUi[key] && (
+                <section
+                  key={key}
+                  className={classNames({
+                    [css.metaPopover]: true,
+                    [css.open]: metaUi[key].open
+                  })}
+                  style={{
+                    left: metaUi[key].dialogPosition.x,
+                    top: metaUi[key].dialogPosition.y,
+                  }}
+                >
+                  <section className={css.content}>
+                    <section className={css.toolbar}>
+                      <div
+                        title="delete"
+                        className={css.button}
+                        onClick={() => removeMeta(key)}
+                      >
+                        -
+                      </div>
+                      <div
+                        title="close"
+                        className={css.button}
+                        onClick={() => closeMeta(key)}>
+                        x
+                      </div>
+
+                    </section>
+                  </section>
+                </section>
+              )
+              
             ))
             , overlayRef.current
           )

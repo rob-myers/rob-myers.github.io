@@ -14,6 +14,7 @@ function snapToGrid({ x, y }: Vector2, td: number) {
 }
 
 const LevelMouse: React.FC<Props> = ({ levelUid }) => {
+  const rectEl = useRef<SVGRectElement>(null);
   /** Is a cursor direction highlighted? (editMode 'make') */
   const highlighted = useRef(false);
   /** Key of meta the mouse is over (editMode 'meta') */
@@ -36,6 +37,8 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
       overMeta.current && dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));
       nextKey && dispatch(Act.updateMetaUi(levelUid, nextKey, { over: true }));
       overMeta.current = nextKey;
+      // Change cursor
+      rectEl.current?.style.setProperty('cursor', nextKey ? 'pointer' : 'auto');
     }
   };
 
@@ -79,12 +82,14 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   
   return (
     <rect
+      ref={rectEl}
       className={css.mouseRect}
-      onMouseLeave={() => {// We need to cleanup state
+      onMouseLeave={() => {// We cleanup
         const overKey = overMeta.current;
         overKey && dispatch(Act.updateMetaUi(levelUid, overKey, { over: false }));
         overMeta.current = undefined;
         state.draggedMeta && dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
+        rectEl.current?.style.setProperty('cursor', 'auto');
       }}
       onMouseMove={onMouseMove}
       onMouseDown={() => {
@@ -106,6 +111,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
                 dispatch(Act.updateMetaUi(levelUid, state.draggedMeta, { over: true }));
                 dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
                 overMeta.current = state.draggedMeta;
+                rectEl.current?.style.setProperty('cursor', 'pointer');
               }
             } else {// Create new meta
               const metaKey = `meta-${generate()}`;
@@ -115,7 +121,9 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
                 position: state.mouseWorld.json,
                 metaKey,
               });
+              worker.postMessage({ key: 'request-level-metas', levelUid });
               overMeta.current = metaKey;
+              rectEl.current?.style.setProperty('cursor', 'pointer');
             }
             break;
           }

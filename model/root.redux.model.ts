@@ -27,11 +27,11 @@ export const createThunk = <T extends string, A extends {} = {}, R = void>(
   type: T,
   thunk: ThunkAct<T, A, R>['thunk']
 ) => (args: A) =>
-    ({
-      type,
-      thunk,
-      args
-    } as ThunkAct<T, A, R>);
+  ({
+    type,
+    thunk,
+    args
+  } as ThunkAct<T, A, R>);
 
 export interface DispatchOverload {
   <ActKey extends string = string, Payload = any>(action: SyncAct<ActKey, Payload>): void;
