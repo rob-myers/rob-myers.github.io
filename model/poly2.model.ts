@@ -562,7 +562,7 @@ export class Poly2 {
 
       this._triangulationIds = new poly2tri.SweepContext(outline)
         .addHoles(holes)
-        // .addPoints(steinerPoints)
+        .addPoints(this.steinerPoints) // Same as customTriangulate?
         .triangulate()
         .getTriangles()
         .map(t => [t.getPoint(0), t.getPoint(1), t.getPoint(2)] as Triple<V2WithId>)
