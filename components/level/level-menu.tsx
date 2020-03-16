@@ -19,7 +19,11 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
                 className={css.filenameInput}
                 placeholder="filename"
               />
+              <button className={css.button}>
+                save
+              </button>
             </section>
+
             <section className={css.mainMenu}>
               <button
                 title="grid size"
