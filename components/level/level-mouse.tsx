@@ -1,7 +1,7 @@
 import { useRef, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { generate } from 'shortid';
-import { Act, Thunk } from '@store/level.duck';
+import { Act } from '@store/level.duck';
 import { Vector2 } from '@model/vec2.model';
 import { getRelativePos } from '@model/dom.model';
 import { LevelUiState, wallDepth, computeLineSegs, tileDim, smallTileDim } from '@model/level/level.model';
@@ -29,24 +29,37 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const dispatch = useDispatch();
   const td = state.cursorType === 'refined' ? smallTileDim : tileDim;
 
+  const trackMeta = () => {// Track meta under mouse
+    const { mouseWorld } = state;
+    const nextMeta = state.editMode === 'meta' && metaUis.find(({ position: { x, y } }) =>
+      Math.pow(mouseWorld.x - x, 2) + Math.pow(mouseWorld.y - y, 2) <= Math.pow(metaPointRadius, 2));
+    const nextKey = nextMeta ? nextMeta.key : undefined;
+    if (nextKey !== overMeta.current) {
+      overMeta.current && dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));
+      nextKey && dispatch(Act.updateMetaUi(levelUid, nextKey, { over: true }));
+      overMeta.current = nextKey;
+    }
+  };
+
   useEffect(() => {// Adjust cursor position on change cursor
-    dispatch(Act.updateLevel(levelUid, {
-      cursor: snapToGrid(state.mouseWorld, td),
-    }));
+    dispatch(Act.updateLevel(levelUid, { cursor: snapToGrid(state.mouseWorld, td) }));
   }, [state.cursorType]);
 
-  const onMouseMove = (e: React.MouseEvent) => {
-    /** Mouse world */
-    const mw = getMouseWorld(e, state);
-    /** Mouse world modulo tile (small or large) */
-    const mm = new Vector2(posModulo(mw.x, td), posModulo(mw.y, td));
-    dispatch(Act.updateLevel(levelUid, {
-      cursor: snapToGrid(mw, td),
-      mouseWorld: mw,
-    }));
+  useEffect(() => {// Track meta on change edit mode
+    if (state.editMode === 'make' && overMeta.current) {
+      dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));
+      overMeta.current = undefined;
+    } else if (state.editMode === 'meta') {
+      trackMeta();
+    }
+  }, [state.editMode]);
 
-    if (state.editMode === 'make') {
-      // Track edge highlighting
+  const onMouseMove = (e: React.MouseEvent) => {
+    const mouseWorld = getMouseWorld(e, state);
+    dispatch(Act.updateLevel(levelUid, { cursor: snapToGrid(mouseWorld, td), mouseWorld }));
+    
+    if (state.editMode === 'make') {// Track edge highlighting
+      const mm = new Vector2(posModulo(mouseWorld.x, td), posModulo(mouseWorld.y, td));
       const highlight: LevelUiState['cursorHighlight'] = {
         n: mm.y <= wallDepth,
         e: mm.x >= td - wallDepth,
@@ -57,16 +70,8 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
       dispatch(Act.updateLevel(levelUid, { cursorHighlight: highlight }));
     }
 
-    if (state.editMode === 'meta') {
-      // Track meta under mouse
-      const nextMeta = state.editMode === 'meta' && metaUis.find(({ position: { x, y } }) =>
-        Math.pow(mw.x - x, 2) + Math.pow(mw.y - y, 2) <= Math.pow(metaPointRadius, 2));
-      const nextKey = nextMeta ? nextMeta.key : undefined;
-      if (nextKey !== overMeta.current) {
-        overMeta.current && dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));
-        nextKey && dispatch(Act.updateMetaUi(levelUid, nextKey, { over: true }));
-        overMeta.current = nextKey;
-      }
+    if (state.editMode === 'meta') {// Track meta under mouse
+      trackMeta();
       /**
        * TODO show line indicator instead, moving only when release.
        * could set into state and draw line inside LevelMeta
@@ -84,7 +89,6 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
       onMouseDown={() => {
         mouseIsDown.current = true;
         metaIsDragged.current = overMeta.current;
-        // overMetaKey.current && dispatch(Act.updateMetaUi(levelUid, overMetaKey.current, { open: false }));
       }}
       onMouseUp={() => {
         mouseIsDown.current = false;
