@@ -1,6 +1,5 @@
 import { Vector2, Vector2Json } from '@model/vec2.model';
-import { Poly2, Poly2Json } from '@model/poly2.model';
-import { Redacted, redact } from '@model/redux.model';
+import { LevelLight, LevelLightJson } from './level-light.model';
 
 export const metaPointRadius = 2;
 
@@ -9,7 +8,7 @@ export class LevelMeta {
   public get json(): LevelMetaJson {
     return {
       key: this.key,
-      lightPoly: this.lightPoly.map(({ json }) => json),
+      light: this.light ? this.light.json : null,
       position: this.position.json,
       tags: this.tags.slice(),
     };
@@ -20,7 +19,7 @@ export class LevelMeta {
     public key: string,
     public position: Vector2,
     public tags = [] as string[],
-    public lightPoly = [] as Redacted<Poly2>[],
+    public light: null | LevelLight = null,
   ) {}
 
   public applyUpdates(update: LevelMetaUpdate): void {
@@ -45,7 +44,7 @@ export class LevelMeta {
       json.key,
       Vector2.from(json.position),
       json.tags.slice(),
-      json.lightPoly.map(x => redact(Poly2.fromJson(x)))
+      json.light ? LevelLight.fromJson(json.light) : null,
     );
   }
 }
@@ -54,7 +53,7 @@ export interface LevelMetaJson {
   key: string;
   position: Vector2Json;
   tags: string[];
-  lightPoly: Poly2Json[];
+  light: null | LevelLightJson;
 }
 
 export type LevelMetaUpdate = (
