@@ -1,9 +1,10 @@
 @import '../variables.scss';
 
-body {
-  // https://stackoverflow.com/a/56071966/2917822
-  // overscroll-behavior-x: none;
+html {
   overscroll-behavior: none;
+  body {
+    overscroll-behavior: none;
+  }
 }
 
 .root {
@@ -92,46 +93,32 @@ body {
 
         .content {
           box-sizing: border-box;
-          width: 60px;
+          width: fit-content;
           height: fit-content;
           padding: 4px 2px;
 
           font-family: 'Courier New', Courier, monospace;
           font-size: 6pt;
 
-          .toolbar {
-            padding: 0 2px;
-            display: flex;
-            justify-content: space-between;
-            user-select: none;
-
-            .button {
-              cursor: pointer;
-              padding: 0 1px;
-              // margin-left: 4px;
-              background: #eee;
-              border-radius: 2px 2px 0 0;
-              border: 1px solid #ddd;
-              border-bottom-width: 0;
-            }
+          input {
+            width: 60px;
+            font-family: 'Courier New', Courier, monospace;
+            outline: none;
+            border: none;
+            padding: 0 0 2px;
+            font-size: 6pt;
           }
-
           .tags {
             display: flex;
             flex-wrap: wrap;
             user-select: none;
-
-            input {
-              font-family: 'Courier New', Courier, monospace;
-              outline: none;
-              width: 100%;
-              font-size: 6pt;
-            }
+            
 
             .tag {
               cursor: pointer;
               padding: 0 2px;
               background: #eee;
+              font-size: smaller;
             }
           }
         }

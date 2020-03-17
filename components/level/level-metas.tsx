@@ -34,27 +34,18 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
     return () => sub.unsubscribe();
   }, []);
 
-  const closeMeta = (metaKey: string) => {
-    dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
-  };
-  const removeMeta = (metaKey: string) => {
-    worker.postMessage({ key: 'remove-level-meta', levelUid, metaKey });
-    worker.postMessage({ key: 'request-level-metas', levelUid });
-  };
   const addTag = (metaKey: string, tag: string) => {
     if (/^[a-z0-9-]+$/.test(tag)) {
-      worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: {
-        key: 'add-tag', tag }});
-      worker.postMessage({ key: 'request-level-metas', levelUid });
-      return true;
+      if (tag === '-') {
+        worker.postMessage({ key: 'remove-level-meta', levelUid, metaKey });
+      } else {
+        worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'add-tag', tag }});
+        return true;
+      }
     }
-    return false;
   };
-  const removeTag = (metaKey: string, tag: string) => {
-    worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: {
-      key: 'remove-tag', tag }});
-    worker.postMessage({ key: 'request-level-metas', levelUid });
-  };
+  const removeTag = (metaKey: string, tag: string) =>
+    worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'remove-tag', tag }});
 
   return (
     <>
@@ -95,42 +86,13 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   }}
                 >
                   <section className={css.content}>
-                    <section className={css.toolbar}>
-                      <div
-                        title="rectangular area"
-                        className={css.button}
-                        // TODO can set width/height
-                      >
-                        r
-                      </div>
-                      <div
-                        title="circular area"
-                        className={css.button}
-                        // TODO can choose radius
-                      >
-                        c
-                      </div>
-                      <div
-                        title="delete"
-                        className={css.button}
-                        onClick={() => removeMeta(key)}
-                      >
-                        d
-                      </div>
-                      <div
-                        title="close"
-                        className={css.button}
-                        onClick={() => closeMeta(key)}>
-                        x
-                      </div>
-                    </section>
+                    <input
+                      placeholder="tag"
+                      onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
+                        inputKey === 'Enter' && addTag(key, value) && (currentTarget.value = '')
+                      }
+                    />
                     <section className={css.tags}>
-                      <input
-                        placeholder="tag"
-                        onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
-                          inputKey === 'Enter' && addTag(key, value) && (currentTarget.value = '')
-                        }
-                      />
                       {tags.map((tag) =>
                         <div
                           key={tag}

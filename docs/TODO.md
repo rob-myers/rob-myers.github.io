@@ -1,5 +1,6 @@
 # TODO
 
+- try merging edit modes `make` and `meta` (can switch tool)
 - lights can be turned on/off
 - edit/live mode
 - can save/restore level
@@ -127,3 +128,4 @@
 - can add/remove points with editable tags
 - point tags can include `steiner`, `light`
 - steiner points affect triangulation
+- improve popover design: tags only; delete via `-`

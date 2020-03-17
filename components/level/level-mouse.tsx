@@ -31,7 +31,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const trackMeta = () => {// Track meta under mouse
     const { mouseWorld } = state;
     const nextMeta = state.editMode === 'meta' && metaUis.find(({ position: { x, y } }) =>
-      Math.pow(mouseWorld.x - x, 2) + Math.pow(mouseWorld.y - y, 2) <= Math.pow(metaPointRadius, 2));
+      Math.pow(mouseWorld.x - x, 2) + Math.pow(mouseWorld.y - y, 2) <= Math.pow(0.5 + metaPointRadius, 2));
     const nextKey = nextMeta ? nextMeta.key : undefined;
     if (nextKey !== overMeta.current) {
       overMeta.current && dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));

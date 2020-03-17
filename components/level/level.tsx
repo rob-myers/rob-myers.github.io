@@ -30,7 +30,7 @@ const Level: React.FC<Props> = ({ uid }) => {
   ), [stateKey]);
   
   const levelMetas = useMemo(() => (
-    editMode === 'meta' && <LevelMetas levelUid={uid} overlayRef={overlayRef} />
+    editMode && <LevelMetas levelUid={uid} overlayRef={overlayRef} />
   ), [editMode, overlayRef]);
 
   const scale = `scale(${zoomFactor})`;
