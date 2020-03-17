@@ -16,7 +16,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const draggedMeta = useSelector(({ level: { instance: { [levelUid]: level } } }) =>
     level.draggedMeta ? level.metaUi[level.draggedMeta] : null);
   const mouseWorld = useSelector(({ level: { instance } }) =>
-    draggedMeta && instance[levelUid]?.mouseWorld); // Track mouse while dragging
+    draggedMeta && instance[levelUid]?.mouseWorld);
+  const wheelFowarder = useSelector(({ level: { instance } }) => instance[levelUid]?.wheelForwarder);
 
   const [levelMetas, setLevelMetas] = useState<MetaLookup>({});
   const dispatch = useDispatch();
@@ -83,6 +84,13 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   style={{
                     left: metaUi[key].dialogPosition.x,
                     top: metaUi[key].dialogPosition.y,
+                  }}
+                  onWheel={(e) => {
+                    /**
+                     * Forward wheel events to LevelMouse,
+                     * so can pan/zoom popover too.
+                     */
+                    wheelFowarder?.next({ key: 'wheel', e });
                   }}
                 >
                   <section className={css.content}>

@@ -130,3 +130,4 @@
 - steiner points affect triangulation
 - improve popover design: tags only; delete via `-`
 - shift-drag meta to duplicate
+- can pan-zoom over meta popovers

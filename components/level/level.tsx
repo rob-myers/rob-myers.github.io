@@ -53,7 +53,8 @@ const Level: React.FC<Props> = ({ uid }) => {
                 {editMode && <LevelGrid levelUid={uid} />}
               </g>
             </svg>
-            <section className={css.overlayContainer}
+            <section
+              className={css.overlayContainer}
               style={{ transform: `${scale} ${translate}` }}
             >
               <section className={css.overlay} ref={overlayRef} />

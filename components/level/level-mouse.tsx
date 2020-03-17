@@ -1,12 +1,14 @@
 import { useRef, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { generate } from 'shortid';
+import { ReplaySubject } from 'rxjs';
 import { Act, Thunk } from '@store/level.duck';
 import { Vector2 } from '@model/vec2.model';
 import { getRelativePos } from '@model/dom.model';
-import { LevelUiState, wallDepth, computeLineSegs, tileDim, smallTileDim } from '@model/level/level.model';
+import { LevelUiState, wallDepth, computeLineSegs, tileDim, smallTileDim, ForwardedWheelEvent } from '@model/level/level.model';
 import { posModulo } from '@model/generic.model';
 import { metaPointRadius } from '@model/level/level-meta.model';
+import { redact } from '@model/redux.model';
 import css from './level.scss';
 
 function snapToGrid({ x, y }: Vector2, td: number) {
@@ -15,7 +17,7 @@ function snapToGrid({ x, y }: Vector2, td: number) {
 
 const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const rectEl = useRef<SVGRectElement>(null);
-  /** Is a cursor direction highlighted? (editMode 'make') */
+  /** Is a cursor border highlighted? (editMode 'make') */
   const highlighted = useRef(false);
   /** Key of the meta the mouse is over (editMode 'meta') */
   const overMeta = useRef<string>();
@@ -23,12 +25,24 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const mouseIsDown = useRef(false);
   /** Is the mouse dragging and has moved? */
   const mouseIsDrag = useRef(false);
+  /** Pan-zoom handler */
+  const onWheel = useRef<(e: React.WheelEvent) => void>(() => null);
 
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
   const metaUis = useMemo(() => Object.values(state.metaUi), [state.metaUi]);
   const dispatch = useDispatch();
   const td = state.cursorType === 'refined' ? smallTileDim : tileDim;
+
+  useEffect(() => {// Handle fowarded pan-zooms from LevelMetas
+    const wheelForwarder = redact(new ReplaySubject<ForwardedWheelEvent>());
+    const sub = wheelForwarder.subscribe((msg) => onWheel.current(msg.e));
+    dispatch(Act.updateLevel(levelUid, { wheelForwarder }));
+    return () => {
+      sub.unsubscribe();
+      dispatch(Act.updateLevel(levelUid, { wheelForwarder: null }));
+    };
+  }, []);
 
   const setCursor = (cursor: 'auto' | 'pointer') =>
     rectEl.current?.style.setProperty('cursor', cursor);
@@ -85,6 +99,34 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
     }
   };
   
+  onWheel.current = (e) => {
+    if (e.shiftKey) {// Zoom
+      const nextZoom = state.zoomFactor - 0.005 * e.deltaY;
+      if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
+        const { x, y } = getRelativePos(e);
+        // Handle forwarded events
+        const offset = Vector2.from(e.currentTarget.getBoundingClientRect())
+          .sub(Vector2.from(rectEl.current!.getBoundingClientRect()));
+
+        dispatch(Act.updateLevel(levelUid, {
+          zoomFactor: nextZoom,
+          // Preserve world position of mouse
+          renderBounds: state.renderBounds.clone().delta(
+            (x + offset.x) * (1 / state.zoomFactor - 1 / nextZoom),
+            (y + offset.y) * (1 / state.zoomFactor - 1 / nextZoom),
+          ),
+        }));
+      }
+    } else {// Pan
+      onMouseMove(e);
+      const k = 0.5 / state.zoomFactor;
+      dispatch(Act.updateLevel(levelUid, {
+        renderBounds: state.renderBounds
+          .clone().delta(k * e.deltaX, k * e.deltaY)
+      }));
+    }
+  };
+
   return (
     <rect
       ref={rectEl}
@@ -183,28 +225,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
           }
         }
       }}
-      onWheelCapture={(e) => {
-        if (e.shiftKey && state) {// Zoom
-          const nextZoom = state.zoomFactor - 0.005 * e.deltaY;
-          if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
-            const { x, y } = getRelativePos(e);
-            dispatch(Act.updateLevel(levelUid, {
-              zoomFactor: nextZoom,
-              // Preserve world position of mouse
-              renderBounds: state.renderBounds.clone().delta(
-                x * (1 / state.zoomFactor - 1 / nextZoom),
-                y * (1 / state.zoomFactor - 1 / nextZoom),
-              ),
-            }));
-          }
-        } else {// Pan
-          onMouseMove(e);
-          dispatch(Act.updateLevel(levelUid, {
-            renderBounds: state.renderBounds
-              .clone().delta(0.25 * e.deltaX, 0.25 * e.deltaY)
-          }));
-        }
-      }}
+      onWheel={onWheel.current}
     />
   );
 };

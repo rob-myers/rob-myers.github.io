@@ -1,6 +1,6 @@
 import { Redacted } from '@model/redux.model';
 import { Poly2 } from '@model/poly2.model';
-import { Subscription } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { KeyedLookup } from '@model/generic.model';
@@ -59,7 +59,13 @@ export interface LevelUiState {
   metaUi: KeyedLookup<LevelMetaUi>;
   /** Key of dragged meta if any (editMode 'meta') */
   draggedMeta: null | string;
+  wheelForwarder: null | Redacted<Subject<ForwardedWheelEvent>>;
 }
+
+export type ForwardedWheelEvent = {
+  key: 'wheel';
+  e: React.WheelEvent;
+};
 
 export function createLevelUiState(uid: string): LevelUiState {
   return {
@@ -74,6 +80,7 @@ export function createLevelUiState(uid: string): LevelUiState {
     editMode: 'make',
     metaUi: {},
     draggedMeta: null,
+    wheelForwarder: null,
   };
 }
 
