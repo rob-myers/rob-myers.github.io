@@ -39,6 +39,7 @@ html {
           padding: 0 4px;
           font-family: 'Courier New', Courier, monospace;
           outline: none;
+          width: 80px;
         }
       }
     
@@ -51,6 +52,10 @@ html {
         cursor: pointer;
         font-family: 'Courier New', Courier, monospace;
     
+        &.disabled {
+          color: #aaa;
+        }
+
         &:hover {
           text-decoration: underline;
         }

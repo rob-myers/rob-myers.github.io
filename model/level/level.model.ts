@@ -5,6 +5,7 @@ import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { KeyedLookup } from '@model/generic.model';
 import { LevelMetaUi, LevelMeta } from './level-meta.model';
+import { FloydWarshall } from '@model/nav/nav-graph.model';
 
 export const wallDepth = 2;
 export const floorInset = 5;
@@ -31,6 +32,7 @@ export interface LevelState {
   metaUpdateSub: null | Redacted<Subscription>;
   /** Spawn points, steiner points, lights, interactives */
   metas: KeyedLookup<LevelMeta>;
+  floydWarshall: null | Redacted<FloydWarshall>;
 }
 
 export function createLevelState(uid: string): LevelState {
@@ -42,6 +44,7 @@ export function createLevelState(uid: string): LevelState {
     tileToggleSub: null,
     metaUpdateSub: null,
     metas: {},
+    floydWarshall: null,
   };
 }
 
@@ -54,6 +57,7 @@ export interface LevelUiState {
   cursorType: 'default' | 'refined';
   cursorHighlight: Partial<Record<Direction, boolean>>;
   mode: 'edit' | 'live';
+  /** Plan mode (default) or dark mode with lights */
   view: 'plan' | 'dark';
   /** UIs for LevelState.metas */
   metaUi: KeyedLookup<LevelMetaUi>;
@@ -66,6 +70,8 @@ export type ForwardedWheelEvent = {
   key: 'wheel';
   e: React.WheelEvent;
 };
+
+export const specialTags = ['steiner', 'light'];
 
 export function createLevelUiState(uid: string): LevelUiState {
   return {

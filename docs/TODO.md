@@ -1,7 +1,6 @@
 # TODO
 
-- on click save, computes Floyd-Warshall
-- can query Floyd-Warshall by selecting 2 points
+- can select 2 points and Floyd-Warshall shows path
 - Floyd-Warshall supports string-pulling
 - can save and restore level
 
@@ -137,3 +136,4 @@
 - can pan-zoom over meta popovers via event forwarding
 - merge meta/make modes into one mode
 - implemented lights
+- on click save, computes Floyd-Warshall

@@ -117,9 +117,9 @@ export function mapValues<SrcValue, DstValue, Key extends string = string>(
  */
 export type Unpacked<T> =
   T extends (infer U)[] ? U :
-  T extends (...args: any[]) => infer U ? U :
-  T extends Promise<infer U> ? U :
-  T;
+    T extends (...args: any[]) => infer U ? U :
+      T extends Promise<infer U> ? U :
+        T;
 
 /**
  * Create fresh array containing {item} without adding duplicate.
@@ -145,6 +145,5 @@ export function isStringInt(input: string, mustBeNonNegative = false): boolean {
 
 /** Construct `x` modulo `modulus` ensuring positive */
 export function posModulo(x: number, modulus: number) {
-  const modulo = x % modulus;
-  return modulo < 0 ? modulus + modulo : modulo;
+  return x < 0 ? modulus + x % modulus : x % modulus;
 }

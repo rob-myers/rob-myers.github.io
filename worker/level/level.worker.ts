@@ -7,10 +7,10 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
 import { redact, removeFromLookup } from '@model/redux.model';
-import { LevelState, floorInset, smallTileDim, tileDim } from '@model/level/level.model';
+import { LevelState, floorInset, smallTileDim, tileDim, specialTags } from '@model/level/level.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
-import { NavGraph } from '@model/nav/nav-graph.model';
+import { NavGraph, FloydWarshall } from '@model/nav/nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
 import { LevelMeta } from '@model/level/level-meta.model';
 import { initializeStore } from './create-store';
@@ -76,10 +76,17 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       });
       break;
     }
+    case 'compute-floyd-warshall': {
+      const { floors } = getLevel(msg.levelUid)!;
+      const navGraph = NavGraph.from(floors);
+      const floydWarshall = redact(FloydWarshall.from(navGraph));
+      // console.log({ floydWarshall });
+      dispatch(Act.updateLevel(msg.levelUid, { floydWarshall }));
+      ctxt.postMessage({ key: 'floyd-warshall-ready', levelUid: msg.levelUid });
+      break;
+    }
   }
 });
-
-const specialTags = ['steiner', 'light'];
 
 /**
  * Handle meta updates with side-effects for specified level.
@@ -152,6 +159,8 @@ function levelToggleHandlerFactory(levelUid: string) {
             const td = msg.type === 'large' ? tileDim : smallTileDim;
             const rect = new Rect2(msg.tile.x, msg.tile.y, td, td);
             tileFloors = Poly2.xor(tileFloors, rect.poly2).map(x => redact(x));
+            // outer polygon can self-intersect and is used by updateLights
+            tileFloors.forEach((p) => p.options.triangulationType = 'fast');
             break;
           }
           case 'toggle-level-wall': {
@@ -200,7 +209,6 @@ function levelToggleHandlerFactory(levelUid: string) {
        */
       tap((_) => {
         updateNavGraph(levelUid);
-        // NOTE floyd warshall will be computed on exit edit-mode
       }),
     );
 }
@@ -214,11 +222,11 @@ function sendMetas(levelUid: string) {
 
 function updateLights(levelUid: string) {
   const { tileFloors, wallSeg, metas } = getLevel(levelUid)!;
-  const lineSegs = Object.values(wallSeg).concat(
-    tileFloors.flatMap(x => x.lineSegs)
-  ).map<[Vector2, Vector2]>(([u, v]) => [Vector2.from(u), Vector2.from(v)]);
-
-  Object.values(metas)
+  const lineSegs = ([] as [Vector2, Vector2][]).concat(
+    Object.values(wallSeg).map(([u, v]) => [Vector2.from(u), Vector2.from(v)]),
+    tileFloors.flatMap(x => x.lineSegs),
+  );
+  Object.values(metas) // `contains` uses a triangulation
     .filter(({ light }) => light && tileFloors.some(p => p.contains(light.position)))
     .forEach(({ light }) => light!.computePolygon(lineSegs));
 }

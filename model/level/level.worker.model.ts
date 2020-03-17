@@ -125,6 +125,15 @@ export interface UpdateLevelMeta extends BaseMessage {
   update: LevelMetaUpdate;
 }
 
+interface ComputeFloydWarshall extends BaseMessage {
+  key: 'compute-floyd-warshall';
+  levelUid: string;
+}
+interface FloydWarshallReady extends BaseMessage {
+  key: 'floyd-warshall-ready';
+  levelUid: string;
+}
+
 export type MessageFromLevelParent = (
   | PingFromParent
   | RequestNewLevel
@@ -137,6 +146,7 @@ export type MessageFromLevelParent = (
   | RequestLevelMetas
   | UpdateLevelMeta
   | RemoveLevelMeta
+  | ComputeFloydWarshall
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker
@@ -147,6 +157,7 @@ export type MessageFromLevelWorker = (
   | SendLevelTris
   | SendNavGraph
   | SendLevelMetas
+  | FloydWarshallReady
 );
 
 // Shortcut

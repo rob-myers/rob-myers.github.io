@@ -5,9 +5,15 @@ import { Act } from '@store/level.duck';
 
 const LevelMenu: React.FC<Props> = ({ levelUid }) => {
   const cursorType = useSelector(({ level: { instance } }) => instance[levelUid]?.cursorType);
+  const worker = useSelector(({ level: { worker } }) => worker);
   const mode = useSelector(({ level: { instance } }) => instance[levelUid]?.mode);
   const view = useSelector(({ level: { instance } }) => instance[levelUid]?.view);
   const dispatch = useDispatch();
+
+  const save = () => {
+    worker?.postMessage({ key: 'compute-floyd-warshall', levelUid });
+    // TODO
+  };
 
   return (
     <section className={css.menu}>
@@ -16,11 +22,15 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
           <>
             <section className={css.editMenu}>
               <input
-                title="filename"
                 className={css.filenameInput}
-                placeholder="filename"
+                title="filename"
+                disabled
+                placeholder={levelUid}
               />
-              <button className={css.button}>
+              <button
+                className={css.button}
+                onClick={() => save()}
+              >
                 save
               </button>
             </section>
