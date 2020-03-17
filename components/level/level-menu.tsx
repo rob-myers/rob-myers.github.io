@@ -6,6 +6,7 @@ import { Act } from '@store/level.duck';
 const LevelMenu: React.FC<Props> = ({ levelUid }) => {
   const cursorType = useSelector(({ level: { instance } }) => instance[levelUid]?.cursorType);
   const mode = useSelector(({ level: { instance } }) => instance[levelUid]?.mode);
+  const view = useSelector(({ level: { instance } }) => instance[levelUid]?.view);
   const dispatch = useDispatch();
 
   return (
@@ -35,6 +36,14 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
                 }))}
               >
                 ×{cursorType === 'refined' ? 3 : 1}
+              </button>
+              <button
+                className={css.button}
+                onClick={(_e) => dispatch(Act.updateLevel(levelUid, {
+                  view: view === 'plan' ? 'dark' : 'plan',
+                }))}
+              >
+                {view}
               </button>
             </section>
           </>

@@ -22,7 +22,7 @@ export class LevelLight {
 
   constructor(
     public position: Vector2,
-    public range = 200,
+    public range = 400,
     public polygon = redact(new Poly2()),
   ) {
     this.rangeBounds = Rect2.zero;

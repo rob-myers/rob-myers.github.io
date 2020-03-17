@@ -218,9 +218,9 @@ function updateLights(levelUid: string) {
     tileFloors.flatMap(x => x.lineSegs)
   ).map<[Vector2, Vector2]>(([u, v]) => [Vector2.from(u), Vector2.from(v)]);
 
-  Object.values(metas).forEach(({ light }) =>
-    light?.computePolygon(lineSegs)
-  );
+  Object.values(metas)
+    .filter(({ light }) => light && tileFloors.some(p => p.contains(light.position)))
+    .forEach(({ light }) => light!.computePolygon(lineSegs));
 }
 
 function updateNavGraph(levelUid: string) {
