@@ -17,10 +17,12 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const rectEl = useRef<SVGRectElement>(null);
   /** Is a cursor direction highlighted? (editMode 'make') */
   const highlighted = useRef(false);
-  /** Key of meta the mouse is over (editMode 'meta') */
+  /** Key of the meta the mouse is over (editMode 'meta') */
   const overMeta = useRef<string>();
   /** Is the mouse held down? */
   const mouseIsDown = useRef(false);
+  /** Is the mouse dragging and has moved? */
+  const mouseIsDrag = useRef(false);
 
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
@@ -30,6 +32,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
 
   const setCursor = (cursor: 'auto' | 'pointer') =>
     rectEl.current?.style.setProperty('cursor', cursor);
+
   const trackMeta = () => {// Track meta under mouse
     const { mouseWorld } = state;
     const nextMeta = state.editMode === 'meta' && metaUis.find(({ position: { x, y } }) =>
@@ -38,9 +41,10 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
     if (nextKey !== overMeta.current) {
       overMeta.current && dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));
       nextKey && dispatch(Act.updateMetaUi(levelUid, nextKey, { over: true }));
-      overMeta.current = nextKey;
       setCursor(nextKey ? 'pointer' : 'auto');
+      overMeta.current = nextKey;
     }
+    mouseIsDrag.current = !!state.draggedMeta;
   };
 
   useEffect(() => {// Adjust cursor position on change cursor
@@ -101,13 +105,13 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
         mouseIsDown.current = false;
         switch (state.editMode) {
           case 'meta': {
-            if (overMeta.current) {// Toggle meta dialog
+            if (overMeta.current && !mouseIsDrag.current) {// Toggle meta dialog
               dispatch(Act.updateMetaUi(levelUid, overMeta.current, {
                 open: !state.metaUi[overMeta.current].open,
               }));
               dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
             } else if (state.draggedMeta) {
-              if (overMeta.current) {
+              if (overMeta.current && overMeta.current !== state.draggedMeta ) {
                 break;
               } else if (e.shiftKey) {// Duplicate meta
                 const newMetaKey = `meta-${generate()}`;
@@ -130,7 +134,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
                 overMeta.current = state.draggedMeta;
                 setCursor('pointer');
               }
-            } else {// Create new meta
+            } else if (e.shiftKey) {// Create new meta
               const metaKey = `meta-${generate()}`;
               worker.postMessage({
                 key: 'add-level-meta',
@@ -145,6 +149,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
             break;
           }
         }
+        mouseIsDrag.current = false;
       }}
       onClick={(_e) => {
         switch (state.editMode) {
