@@ -5,13 +5,13 @@ import { Act } from '@store/level.duck';
 
 const LevelMenu: React.FC<Props> = ({ levelUid }) => {
   const cursorType = useSelector(({ level: { instance } }) => instance[levelUid]?.cursorType);
-  const editMode = useSelector(({ level: { instance } }) => instance[levelUid]?.editMode);
+  const mode = useSelector(({ level: { instance } }) => instance[levelUid]?.mode);
   const dispatch = useDispatch();
 
   return (
     <section className={css.menu}>
       {
-        editMode && (
+        mode === 'edit' && (
           <>
             <section className={css.editMenu}>
               <input
@@ -35,15 +35,6 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
                 }))}
               >
                 ×{cursorType === 'refined' ? 3 : 1}
-              </button>
-              <button
-                className={css.button}
-                onClick={(_e) => dispatch(Act.updateLevel(levelUid, {
-                  editMode: editMode === 'make' ? 'meta' : 'make',
-                }))}
-              >
-                <strong>@</strong>
-                {editMode}
               </button>
             </section>
           </>

@@ -1,9 +1,9 @@
 # TODO
 
+- improve meta/make switching
 - lights can be turned on/off
 - edit/live mode
 - can save/restore level
-- improve meta/make switching
 
 - clear vision of how `Level` + `Session` are used on our upcoming site
 
@@ -130,4 +130,4 @@
 - steiner points affect triangulation
 - improve popover design: tags only; delete via `-`
 - shift-drag meta to duplicate
-- can pan-zoom over meta popovers
+- can pan-zoom over meta popovers via event forwarding

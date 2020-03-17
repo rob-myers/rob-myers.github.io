@@ -54,10 +54,9 @@ export interface LevelUiState {
   cursorType: 'default' | 'refined';
   cursorHighlight: Partial<Record<Direction, boolean>>;
   mode: 'edit' | 'live';
-  editMode: null | 'make' | 'meta';
   /** UIs for LevelState.metas */
   metaUi: KeyedLookup<LevelMetaUi>;
-  /** Key of dragged meta if any (editMode 'meta') */
+  /** Key of dragged meta if any */
   draggedMeta: null | string;
   wheelForwarder: null | Redacted<Subject<ForwardedWheelEvent>>;
 }
@@ -77,7 +76,6 @@ export function createLevelUiState(uid: string): LevelUiState {
     cursorType: 'default',
     cursorHighlight: {},
     mode: 'edit',
-    editMode: 'make',
     metaUi: {},
     draggedMeta: null,
     wheelForwarder: null,

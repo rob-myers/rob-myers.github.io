@@ -90,7 +90,7 @@ export function syncLevelMetaUi(src: LevelMeta, dst?: LevelMetaUi): LevelMetaUi 
   return {
     ...(dst || createLevelMetaUi(src.key)),
     ...{
-      dialogPosition: src.position.clone().translate(3, -3),
+      dialogPosition: src.position.clone().translate(2.5, -3),
       position: src.position.clone(),
     } as LevelMetaUi
   };

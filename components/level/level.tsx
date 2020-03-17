@@ -16,7 +16,7 @@ const Level: React.FC<Props> = ({ uid }) => {
   const stateKey = useSelector(({ level: { instance } }) => instance[uid]?.key);
   const renderBounds = useSelector(({ level: { instance } }) => instance[uid]?.renderBounds);
   const zoomFactor = useSelector(({ level: { instance } }) => instance[uid]?.zoomFactor);
-  const editMode = useSelector(({ level: { instance } }) => instance[uid]?.editMode);
+  const mode = useSelector(({ level: { instance } }) => instance[uid]?.mode);
 
   useEffect(() => {
     (async () => {
@@ -30,8 +30,8 @@ const Level: React.FC<Props> = ({ uid }) => {
   ), [stateKey]);
   
   const levelMetas = useMemo(() => (
-    editMode && <LevelMetas levelUid={uid} overlayRef={overlayRef} />
-  ), [editMode, overlayRef]);
+    mode === 'edit' && <LevelMetas levelUid={uid} overlayRef={overlayRef} />
+  ), [mode, overlayRef]);
 
   const scale = `scale(${zoomFactor})`;
   const translate = renderBounds && `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
@@ -47,10 +47,10 @@ const Level: React.FC<Props> = ({ uid }) => {
               <g style={{ transform: scale }}>
                 <g style={{ transform: translate }}>
                   {levelContent}
-                  {editMode === 'make' && <LevelCursor levelUid={uid} />}
+                  <LevelCursor levelUid={uid} />
                   {levelMetas}
                 </g>
-                {editMode && <LevelGrid levelUid={uid} />}
+                {mode === 'edit' && <LevelGrid levelUid={uid} />}
               </g>
             </svg>
             <section

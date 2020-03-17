@@ -17,9 +17,9 @@ function snapToGrid({ x, y }: Vector2, td: number) {
 
 const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const rectEl = useRef<SVGRectElement>(null);
-  /** Is a cursor border highlighted? (editMode 'make') */
+  /** Is a cursor border highlighted? */
   const highlighted = useRef(false);
-  /** Key of the meta the mouse is over (editMode 'meta') */
+  /** Key of the meta the mouse is over */
   const overMeta = useRef<string>();
   /** Is the mouse held down? */
   const mouseIsDown = useRef(false);
@@ -49,7 +49,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
 
   const trackMeta = () => {// Track meta under mouse
     const { mouseWorld } = state;
-    const nextMeta = state.editMode === 'meta' && metaUis.find(({ position: { x, y } }) =>
+    const nextMeta = metaUis.find(({ position: { x, y } }) =>
       Math.pow(mouseWorld.x - x, 2) + Math.pow(mouseWorld.y - y, 2) <= Math.pow(0.5 + metaPointRadius, 2));
     const nextKey = nextMeta ? nextMeta.key : undefined;
     if (nextKey !== overMeta.current) {
@@ -65,55 +65,40 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
     dispatch(Act.updateLevel(levelUid, { cursor: snapToGrid(state.mouseWorld, td) }));
   }, [state.cursorType]);
 
-  useEffect(() => {// Track meta on change edit mode
-    if (state.editMode === 'make' && overMeta.current) {
-      dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));
-      overMeta.current = undefined;
-    } else if (state.editMode === 'meta') {
-      trackMeta();
-    }
-  }, [state.editMode]);
-
   const onMouseMove = (e: React.MouseEvent) => {
-    const mouseWorld = getMouseWorld(e, state);
+    const relPos = getRelativePos(e, rectEl.current!);
+    const mouseWorld = new Vector2(
+      state.renderBounds.x + (relPos.x / state.zoomFactor),
+      state.renderBounds.y + (relPos.y / state.zoomFactor),
+    );
     dispatch(Act.updateLevel(levelUid, { cursor: snapToGrid(mouseWorld, td), mouseWorld }));
     
-    switch (state.editMode) {
-      case 'make': {
-        // Track edge highlighting
-        const mm = new Vector2(posModulo(mouseWorld.x, td), posModulo(mouseWorld.y, td));
-        const highlight: LevelUiState['cursorHighlight'] = {
-          n: mm.y <= wallDepth,
-          e: mm.x >= td - wallDepth,
-          s: mm.y >= td - wallDepth,
-          w: mm.x <= wallDepth,
-        };
-        highlighted.current = highlight.n || highlight.e || highlight.s || highlight.w || false;
-        dispatch(Act.updateLevel(levelUid, { cursorHighlight: highlight }));
-        break;
-      }
-      case 'meta': {
-        trackMeta();
-        break;
-      }
-    }
+    // Track edge highlighting
+    const mm = new Vector2(posModulo(mouseWorld.x, td), posModulo(mouseWorld.y, td));
+    const highlight: LevelUiState['cursorHighlight'] = {
+      n: mm.y <= wallDepth,
+      e: mm.x >= td - wallDepth,
+      s: mm.y >= td - wallDepth,
+      w: mm.x <= wallDepth,
+    };
+    highlighted.current = highlight.n || highlight.e || highlight.s || highlight.w || false;
+    dispatch(Act.updateLevel(levelUid, { cursorHighlight: highlight }));
+    
+    trackMeta();
   };
   
   onWheel.current = (e) => {
     if (e.shiftKey) {// Zoom
       const nextZoom = state.zoomFactor - 0.005 * e.deltaY;
       if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
-        const { x, y } = getRelativePos(e);
-        // Handle forwarded events
-        const offset = Vector2.from(e.currentTarget.getBoundingClientRect())
-          .sub(Vector2.from(rectEl.current!.getBoundingClientRect()));
+        const relPos = getRelativePos(e, rectEl.current!);
 
         dispatch(Act.updateLevel(levelUid, {
           zoomFactor: nextZoom,
           // Preserve world position of mouse
           renderBounds: state.renderBounds.clone().delta(
-            (x + offset.x) * (1 / state.zoomFactor - 1 / nextZoom),
-            (y + offset.y) * (1 / state.zoomFactor - 1 / nextZoom),
+            relPos.x * (1 / state.zoomFactor - 1 / nextZoom),
+            relPos.y * (1 / state.zoomFactor - 1 / nextZoom),
           ),
         }));
       }
@@ -145,85 +130,74 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
       }}
       onMouseUp={(e) => {
         mouseIsDown.current = false;
-        switch (state.editMode) {
-          case 'meta': {
-            if (overMeta.current && !mouseIsDrag.current) {// Toggle meta dialog
-              dispatch(Act.updateMetaUi(levelUid, overMeta.current, {
-                open: !state.metaUi[overMeta.current].open,
-              }));
-              dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
-            } else if (state.draggedMeta) {
-              if (overMeta.current && overMeta.current !== state.draggedMeta ) {
-                break;
-              } else if (e.shiftKey) {// Duplicate meta
-                const newMetaKey = `meta-${generate()}`;
-                worker.postMessage({
-                  key: 'duplicate-level-meta',
-                  levelUid,
-                  position: state.mouseWorld.json,
-                  metaKey: state.draggedMeta,
-                  newMetaKey,
-                });
-                dispatch(Act.updateMetaUi(levelUid, state.draggedMeta, { over: true }));
-                dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
-                overMeta.current = newMetaKey;
-                setCursor('pointer');
-                worker.postMessage({ key: 'request-level-metas', levelUid });
-              } else { // Move meta
-                dispatch(Thunk.moveMetaToMouse({ uid: levelUid, metaKey: state.draggedMeta }));
-                dispatch(Act.updateMetaUi(levelUid, state.draggedMeta, { over: true }));
-                dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
-                overMeta.current = state.draggedMeta;
-                setCursor('pointer');
-              }
-            } else if (e.shiftKey) {// Create new meta
-              const metaKey = `meta-${generate()}`;
-              worker.postMessage({
-                key: 'add-level-meta',
-                levelUid,
-                position: state.mouseWorld.json,
-                metaKey,
-              });
-              overMeta.current = metaKey;
-              setCursor('pointer');
-              worker.postMessage({ key: 'request-level-metas', levelUid });
-            }
-            break;
+        if (overMeta.current && !mouseIsDrag.current) {// Toggle meta dialog
+          dispatch(Act.updateMetaUi(levelUid, overMeta.current, {
+            open: !state.metaUi[overMeta.current].open,
+          }));
+          dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
+        } else if (state.draggedMeta) {
+          if (overMeta.current && overMeta.current !== state.draggedMeta ) {
+            // NOOP
+          } else if (e.shiftKey) {// Duplicate meta
+            const newMetaKey = `meta-${generate()}`;
+            worker.postMessage({
+              key: 'duplicate-level-meta',
+              levelUid,
+              position: state.mouseWorld.json,
+              metaKey: state.draggedMeta,
+              newMetaKey,
+            });
+            dispatch(Act.updateMetaUi(levelUid, state.draggedMeta, { over: true }));
+            dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
+            overMeta.current = newMetaKey;
+            setCursor('pointer');
+            worker.postMessage({ key: 'request-level-metas', levelUid });
+          } else { // Move meta
+            dispatch(Thunk.moveMetaToMouse({ uid: levelUid, metaKey: state.draggedMeta }));
+            dispatch(Act.updateMetaUi(levelUid, state.draggedMeta, { over: true }));
+            dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
+            overMeta.current = state.draggedMeta;
+            setCursor('pointer');
           }
+        } else if (e.shiftKey) {// Create new meta
+          const metaKey = `meta-${generate()}`;
+          worker.postMessage({
+            key: 'add-level-meta',
+            levelUid,
+            position: state.mouseWorld.json,
+            metaKey,
+          });
+          overMeta.current = metaKey;
+          setCursor('pointer');
+          worker.postMessage({ key: 'request-level-metas', levelUid });
         }
         mouseIsDrag.current = false;
       }}
-      onClick={(_e) => {
-        switch (state.editMode) {
-          case 'make': {
-            if (highlighted.current) {
-              // console.log('HIGHLIGHT', state.cursorHighlight);
-              const { cursorHighlight: h  } = state;
-              const segs = [] as [Vector2, Vector2][];
-              h.n && segs.push(...computeLineSegs(td, state.cursor, 'n'));
-              h.e && segs.push(...computeLineSegs(td, state.cursor, 'e'));
-              h.s && segs.push(...computeLineSegs(td, state.cursor, 's'));
-              h.w && segs.push(...computeLineSegs(td, state.cursor, 'w'));
+      onClick={(e) => {
+        if (overMeta.current || e.shiftKey) {
+          // NOOP
+        } else if (highlighted.current) {
+          const { cursorHighlight: h  } = state;
+          const segs = [] as [Vector2, Vector2][];
+          h.n && segs.push(...computeLineSegs(td, state.cursor, 'n'));
+          h.e && segs.push(...computeLineSegs(td, state.cursor, 'e'));
+          h.s && segs.push(...computeLineSegs(td, state.cursor, 's'));
+          h.w && segs.push(...computeLineSegs(td, state.cursor, 'w'));
     
-              worker.postMessage({
-                key: 'toggle-level-wall',
-                levelUid,
-                segs: segs.map(([u, v]) => [u.json, v.json]),
-              });
-            } else {
-              worker.postMessage({
-                key: 'toggle-level-tile',
-                levelUid,
-                tile: state.cursor.json,
-                type: state.cursorType === 'default' ? 'large' : 'small',
-              });
-            }
-            break;
-          }
-          case 'meta': {// Handled by onMouseUp
-            break;
-          }
+          worker.postMessage({
+            key: 'toggle-level-wall',
+            levelUid,
+            segs: segs.map(([u, v]) => [u.json, v.json]),
+          });
+        } else {
+          worker.postMessage({
+            key: 'toggle-level-tile',
+            levelUid,
+            tile: state.cursor.json,
+            type: state.cursorType === 'default' ? 'large' : 'small',
+          });
         }
+
       }}
       onWheel={onWheel.current}
     />
@@ -234,12 +208,5 @@ interface Props {
   levelUid: string;
 }
 
-function getMouseWorld(e: React.MouseEvent, state: LevelUiState) {
-  const svgPos = getRelativePos(e);
-  return new Vector2(
-    state.renderBounds.x + (svgPos.x / state.zoomFactor),
-    state.renderBounds.y + (svgPos.y / state.zoomFactor),
-  );
-}
 
 export default LevelMouse;

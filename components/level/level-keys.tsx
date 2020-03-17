@@ -3,7 +3,7 @@ import { Act } from '@store/level.duck';
 import css from './level.scss';
 
 const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
-  const state = useSelector(({ level: { instance } }) => instance[levelUid]);
+  const mode = useSelector(({ level: { instance } }) => instance[levelUid].mode);
   const dispatch = useDispatch();
 
   return (
@@ -12,14 +12,10 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
       onKeyUp={(e) => {
         // console.log({ key: e.key, state });
         switch (e.key) {
-          case ' ': return state.editMode && e.shiftKey &&
-            dispatch(Act.updateLevel(levelUid, {
-              editMode: state.editMode === 'make' ? 'meta' : 'make',
-            }));
-          case '1': return state.editMode && dispatch(Act.updateLevel(levelUid, {
+          case '1': return mode === 'edit' && dispatch(Act.updateLevel(levelUid, {
             cursorType: 'default',
           }));
-          case '3': return state.editMode && dispatch(Act.updateLevel(levelUid, {
+          case '3': return mode === 'edit' && dispatch(Act.updateLevel(levelUid, {
             cursorType: 'refined',
           }));
         }

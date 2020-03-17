@@ -28,7 +28,7 @@ export class Vector2 {
     public y: number,
   ) {}
 
-  public add({ x, y }: Vector2): this {
+  public add({ x, y }: Vector2Json): this {
     return this.translate(x, y);
   }
 
@@ -92,7 +92,7 @@ export class Vector2 {
     return this;
   }
 
-  public sub({ x, y }: Vector2): Vector2 {
+  public sub({ x, y }: Vector2Json): Vector2 {
     return this.translate(-x, -y);
   }
 
