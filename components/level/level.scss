@@ -53,10 +53,6 @@ html {
     cursor: pointer;
     font-family: 'Courier New', Courier, monospace;
 
-    &.pressed {
-      // font-style: italic;
-    }
-
     &:hover {
       text-decoration: underline;
     }
@@ -99,6 +95,7 @@ html {
 
           font-family: 'Courier New', Courier, monospace;
           font-size: 6pt;
+          user-select: none;
 
           input {
             width: 60px;

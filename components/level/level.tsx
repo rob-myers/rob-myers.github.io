@@ -47,8 +47,8 @@ const Level: React.FC<Props> = ({ uid }) => {
               <g style={{ transform: scale }}>
                 <g style={{ transform: translate }}>
                   {levelContent}
-                  {levelMetas}
                   {editMode === 'make' && <LevelCursor levelUid={uid} />}
+                  {levelMetas}
                 </g>
                 {editMode && <LevelGrid levelUid={uid} />}
               </g>

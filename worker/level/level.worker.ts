@@ -2,7 +2,7 @@ import { persistStore } from 'redux-persist';
 import { fromEvent } from 'rxjs';
 import { filter, map, delay, auditTime, tap } from 'rxjs/operators';
 
-import { LevelWorkerContext, LevelWorker, MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall, UpdateLevelMeta } from '@model/level/level.worker.model';
+import { LevelWorkerContext, LevelWorker, MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall, UpdateLevelMeta, DuplicateLevelMeta, RemoveLevelMeta } from '@model/level/level.worker.model';
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
@@ -56,15 +56,6 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       dispatch(Act.updateLevel(msg.levelUid, { metas: metas }));
       break;
     }
-    case 'remove-level-meta': {
-      const metas = removeFromLookup(msg.metaKey, getLevel(msg.levelUid)!.metas);
-      dispatch(Act.updateLevel(msg.levelUid, { metas }));
-      ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
-        metas: Object.values(metas).map(p => p.json),
-      });
-      updateNavGraph(msg.levelUid);
-      break;
-    }
     case 'request-level-data': {
       const level = getLevel(msg.levelUid);
       if (level) {
@@ -91,26 +82,48 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
 const specialTags = ['steiner', 'light'];
 
 /**
- * Handle meta updates for specified level.
+ * Handle meta updates with side-effects for specified level.
  */
 function metaUpdateHandlerFactory(levelUid: string) {
   return fromEvent<Message<MessageFromLevelParent>>(ctxt, 'message')
     .pipe(
       map(({ data }) => data),
-      filter((msg): msg is UpdateLevelMeta =>
+      filter((msg): msg is UpdateLevelMeta | DuplicateLevelMeta | RemoveLevelMeta =>
         msg.key === 'update-level-meta' && levelUid === msg.levelUid
+        || msg.key === 'duplicate-level-meta' && levelUid === msg.levelUid
+        || msg.key === 'remove-level-meta' && levelUid === msg.levelUid
       ),
-      filter(({ metaKey, update }) => {
+      filter((msg) => {
         const { metas } = getLevel(levelUid)!;
-        metas[metaKey].applyUpdates(update); // Mutation
-        ctxt.postMessage({ key: 'send-level-metas', levelUid,
-          metas: Object.values(metas).map(p => p.json),
-        });
-        return (// Some actions can affect NavGraph or lights
-          update.key === 'add-tag' && specialTags.includes(update.tag)
-          || update.key === 'remove-tag' && specialTags.includes(update.tag)
-          || update.key === 'set-position' && metas[metaKey].tags.some(tag => specialTags.includes(tag))
-        );
+
+        switch (msg.key) {
+          case 'update-level-meta': {
+            const { metaKey, update } = msg;
+            metas[metaKey].applyUpdates(update); // Mutation
+            ctxt.postMessage({ key: 'send-level-metas', levelUid,
+              metas: Object.values(metas).map(p => p.json),
+            });
+            return (// Some updates can affect NavGraph or lights
+              update.key === 'add-tag' && specialTags.includes(update.tag)
+              || update.key === 'remove-tag' && specialTags.includes(update.tag)
+              || update.key === 'set-position' && metas[metaKey].tags.some(tag => specialTags.includes(tag))
+            );
+          }
+          case 'duplicate-level-meta': {
+            const meta = metas[msg.metaKey].clone(msg.newMetaKey, Vector2.from(msg.position));
+            dispatch(Act.updateLevel(msg.levelUid, { metas: { ...metas, [meta.key]: meta }}));
+            // Duplicating steiners effects NavGraph
+            return specialTags.some(tag => meta.tags.includes(tag));
+          }
+          case 'remove-level-meta': {
+            const nextMetas = removeFromLookup(msg.metaKey, metas);
+            dispatch(Act.updateLevel(msg.levelUid, { metas: nextMetas }));
+            ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
+              metas: Object.values(nextMetas).map(p => p.json),
+            });
+            return specialTags.some(tag => metas[msg.metaKey].tags.includes(tag));
+          }
+        }
       }),
       auditTime(300),
       tap((_) => {

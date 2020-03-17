@@ -39,6 +39,12 @@ export class LevelMeta {
     }
   }
 
+  public clone(newKey: string, position = this.position.clone()) {
+    const clone = new LevelMeta(newKey, position);
+    clone.tags = this.tags.slice();
+    return clone;
+  }
+
   public static fromJson(json: LevelMetaJson): LevelMeta {
     return new LevelMeta(
       json.key,

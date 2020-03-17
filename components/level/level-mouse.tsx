@@ -28,6 +28,8 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const dispatch = useDispatch();
   const td = state.cursorType === 'refined' ? smallTileDim : tileDim;
 
+  const setCursor = (cursor: 'auto' | 'pointer') =>
+    rectEl.current?.style.setProperty('cursor', cursor);
   const trackMeta = () => {// Track meta under mouse
     const { mouseWorld } = state;
     const nextMeta = state.editMode === 'meta' && metaUis.find(({ position: { x, y } }) =>
@@ -37,7 +39,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
       overMeta.current && dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));
       nextKey && dispatch(Act.updateMetaUi(levelUid, nextKey, { over: true }));
       overMeta.current = nextKey;
-      rectEl.current?.style.setProperty('cursor', nextKey ? 'pointer' : 'auto');
+      setCursor(nextKey ? 'pointer' : 'auto');
     }
   };
 
@@ -88,14 +90,14 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
         overKey && dispatch(Act.updateMetaUi(levelUid, overKey, { over: false }));
         overMeta.current = undefined;
         state.draggedMeta && dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
-        rectEl.current?.style.setProperty('cursor', 'auto');
+        setCursor('auto');
       }}
       onMouseMove={onMouseMove}
       onMouseDown={() => {
         mouseIsDown.current = true;
         dispatch(Act.updateLevel(levelUid, { draggedMeta: overMeta.current }));
       }}
-      onMouseUp={() => {
+      onMouseUp={(e) => {
         mouseIsDown.current = false;
         switch (state.editMode) {
           case 'meta': {
@@ -105,12 +107,28 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
               }));
               dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
             } else if (state.draggedMeta) {
-              if (!overMeta.current) {// Move meta
+              if (overMeta.current) {
+                break;
+              } else if (e.shiftKey) {// Duplicate meta
+                const newMetaKey = `meta-${generate()}`;
+                worker.postMessage({
+                  key: 'duplicate-level-meta',
+                  levelUid,
+                  position: state.mouseWorld.json,
+                  metaKey: state.draggedMeta,
+                  newMetaKey,
+                });
+                dispatch(Act.updateMetaUi(levelUid, state.draggedMeta, { over: true }));
+                dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
+                overMeta.current = newMetaKey;
+                setCursor('pointer');
+                worker.postMessage({ key: 'request-level-metas', levelUid });
+              } else { // Move meta
                 dispatch(Thunk.moveMetaToMouse({ uid: levelUid, metaKey: state.draggedMeta }));
                 dispatch(Act.updateMetaUi(levelUid, state.draggedMeta, { over: true }));
                 dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
                 overMeta.current = state.draggedMeta;
-                rectEl.current?.style.setProperty('cursor', 'pointer');
+                setCursor('pointer');
               }
             } else {// Create new meta
               const metaKey = `meta-${generate()}`;
@@ -120,9 +138,9 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
                 position: state.mouseWorld.json,
                 metaKey,
               });
-              worker.postMessage({ key: 'request-level-metas', levelUid });
               overMeta.current = metaKey;
-              rectEl.current?.style.setProperty('cursor', 'pointer');
+              setCursor('pointer');
+              worker.postMessage({ key: 'request-level-metas', levelUid });
             }
             break;
           }
@@ -177,8 +195,8 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
         } else {// Pan
           onMouseMove(e);
           dispatch(Act.updateLevel(levelUid, {
-            renderBounds: state.renderBounds.clone()
-              .delta(0.25 * e.deltaX, 0.25 * e.deltaY)
+            renderBounds: state.renderBounds
+              .clone().delta(0.25 * e.deltaX, 0.25 * e.deltaY)
           }));
         }
       }}

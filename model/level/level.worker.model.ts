@@ -93,7 +93,14 @@ interface AddLevelMeta extends BaseMessage {
   position: Vector2Json;
   metaKey: string;
 }
-interface RemoveLevelMeta extends BaseMessage {
+export interface DuplicateLevelMeta extends BaseMessage {
+  key: 'duplicate-level-meta';
+  levelUid: string;
+  position: Vector2Json;
+  metaKey: string;
+  newMetaKey: string;
+}
+export interface RemoveLevelMeta extends BaseMessage {
   key: 'remove-level-meta';
   levelUid: string;
   metaKey: string;
@@ -125,6 +132,7 @@ export type MessageFromLevelParent = (
   | ToggleLevelTile
   | ToggleLevelWall
   | AddLevelMeta
+  | DuplicateLevelMeta
   | RequestLevelData
   | RequestLevelMetas
   | UpdateLevelMeta
