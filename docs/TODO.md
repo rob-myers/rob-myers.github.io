@@ -1,9 +1,13 @@
 # TODO
 
-- lights can be turned on/off
-- dark mode with lights
+- on click save, computes Floyd-Warshall
+- can query Floyd-Warshall by selecting 2 points
+- Floyd-Warshall supports string-pulling
+- can save and restore level
+
 - edit/live mode
-- can save/restore level
+- dark mode with lights
+- lights can be turned on/off
 
 - clear vision of how `Level` + `Session` are used on our upcoming site
 

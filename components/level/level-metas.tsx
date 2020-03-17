@@ -51,7 +51,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
 
   return (
     <>
-      <g className={css.levelMetas}>
+      <g className={css.metas}>
         {draggedMeta && mouseWorld &&
           <g className={css.dragIndicator}>
             <line
