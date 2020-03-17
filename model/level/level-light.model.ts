@@ -22,28 +22,25 @@ export class LevelLight {
 
   constructor(
     public position: Vector2,
-    public range = 100,
+    public range = 200,
     public polygon = redact(new Poly2()),
   ) {
-    this.polygon = redact(new Poly2());
-    this.rangeBounds = new Rect2(
-      position.x - range, position.y - range,
-      2 * range, 2 * range,
-    );
+    this.rangeBounds = Rect2.zero;
     this.sourceRatios = new Vector2(0.5, 0.5);
+    this.setPosition(position);
   }
 
-  public computePolygon(
-    /** Triangulation of walls. */
-    triangles: Poly2[]
-  ) {
-    this.polygon = redact(lightPolygon(this.position, this.range, triangles));
+  public computePolygon(lineSegs: [Vector2, Vector2][]) {
+    this.polygon = redact(lightPolygon(this.position, this.range, lineSegs));
     const { bounds } = this.polygon;
     this.sourceRatios = new Vector2(
       (this.position.x - bounds.x) / bounds.width,
       (this.position.y - bounds.y) / bounds.height,
     );
-    
+  }
+
+  public clone() {
+    return LevelLight.fromJson(this.json);
   }
 
   public static fromJson({ position, range, polygon }: LevelLightJson): LevelLight {
@@ -52,6 +49,18 @@ export class LevelLight {
       range,
       redact(Poly2.fromJson(polygon)),
     );
+  }
+
+  public setPosition(position: Vector2) {
+    this.position.copy(position);
+    this.rangeBounds = new Rect2(
+      position.x - this.range,
+      position.y - this.range,
+      2 * this.range,
+      2 * this.range,
+    );
+    const offset = position.clone().sub(this.position);
+    this.polygon.offset(offset);
   }
 }
 

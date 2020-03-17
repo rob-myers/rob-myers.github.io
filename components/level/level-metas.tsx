@@ -17,7 +17,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
     level.draggedMeta ? level.metaUi[level.draggedMeta] : null);
   const mouseWorld = useSelector(({ level: { instance } }) =>
     draggedMeta && instance[levelUid]?.mouseWorld);
-  const wheelFowarder = useSelector(({ level: { instance } }) => instance[levelUid]?.wheelForwarder);
+  const wheelFowarder = useSelector(({ level: { instance } }) =>
+    instance[levelUid].wheelForwarder);
 
   const [levelMetas, setLevelMetas] = useState<MetaLookup>({});
   const dispatch = useDispatch();
@@ -62,14 +63,40 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
             <circle cx={mouseWorld.x} cy={mouseWorld.y} r={1}/>
           </g>
         }
-        {Object.values(levelMetas).map(({ position, key }) =>
-          <circle
-            key={key}
-            cx={position.x}
-            cy={position.y}
-            r={metaPointRadius}
-          />
-        )}
+        {// Metas
+          Object.values(levelMetas).map(({ position, key, light }) =>
+            <g key={key}>
+              <circle
+                cx={position.x}
+                cy={position.y}
+                r={metaPointRadius}
+              />
+              {light && (
+                <>
+                  <defs>
+                    <radialGradient
+                      id={`light-radial-${key}`}
+                      cx={`${100 * light.sourceRatios.x}%`}
+                      cy={`${100 * light.sourceRatios.y}%`}
+                      r="50%"
+                    >
+                      <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.1' }} />
+                      <stop offset="100%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} />
+                      {/* <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 255, 0.25)' }} />
+                      <stop offset="50%" style={{ stopColor: 'rgba(255, 255, 255, 0.1)' }} />
+                      <stop offset="100%" style={{ stopColor: 'rgba(255, 255, 255, 0)' }} /> */}
+                    </radialGradient>
+                  </defs>
+                  <path
+                    key={`light-${key}`}
+                    strokeWidth={0}
+                    d={light.polygon.svgPath}
+                    fill={`url(#light-radial-${key})`}
+                  />
+                </>
+              )}
+            </g>
+          )}
       </g>
       {// Popovers
         overlayRef.current && (
@@ -88,7 +115,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   onWheel={(e) => {
                     /**
                      * Forward wheel events to LevelMouse,
-                     * so can pan/zoom popover too.
+                     * so can pan/zoom over popover.
                      */
                     wheelFowarder?.next({ key: 'wheel', e });
                   }}

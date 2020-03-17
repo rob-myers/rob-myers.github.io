@@ -22,7 +22,7 @@ export interface LevelState {
   /** Floor induced by tiles */
   tileFloors: Redacted<Poly2>[];
   /** Line segments aligned to refined grid */
-  walls: Record<string, [Vector2Json, Vector2Json]>;
+  wallSeg: Record<string, [Vector2Json, Vector2Json]>;
   /** Navigable polygon induced by tileFloors and walls */
   floors: Redacted<Poly2>[];
   /** Tile/wall toggle handler */
@@ -37,7 +37,7 @@ export function createLevelState(uid: string): LevelState {
   return {
     key: uid,
     tileFloors: [],
-    walls: {},
+    wallSeg: {},
     floors: [],
     tileToggleSub: null,
     metaUpdateSub: null,

@@ -26,14 +26,17 @@ export class LevelMeta {
     switch (update.key) {
       case 'add-tag': {
         this.tags = this.tags.filter((tag) => tag !== update.tag).concat(update.tag);
+        update.tag === 'light' && (this.light = new LevelLight(this.position));
         break;
       }
       case 'remove-tag': {
         this.tags = this.tags.filter((tag) => tag !== update.tag);
+        update.tag === 'light' && (this.light = null);
         break;
       }
       case 'set-position': {
         this.position = Vector2.from(update.position);
+        this.light?.setPosition(this.position);
         break;
       }
     }
@@ -42,6 +45,10 @@ export class LevelMeta {
   public clone(newKey: string, position = this.position.clone()) {
     const clone = new LevelMeta(newKey, position);
     clone.tags = this.tags.slice();
+    if (this.light) {
+      clone.light = this.light.clone();
+      clone.light.setPosition(position);
+    }
     return clone;
   }
 

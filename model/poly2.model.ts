@@ -109,8 +109,6 @@ export class Poly2 {
   public steinerPoints: Vector2[];
 
   /**
-   * TODO
-   * Additionally inset to get thin walls. (?)
    * Assume {outer} has opposite orientation to each hole in {holes}.
    */
   public get svgPath() {
@@ -494,6 +492,17 @@ export class Poly2 {
         ...rest.map(poly => poly.map(({ geoJson: { coordinates } }) => coordinates))
       )
       .map(coords => Poly2.fromGeoJson(coords).cleanFinalReps());
+  }
+
+  /** Line segs from outline and holes. */
+  public get lineSegs(): [Vector2, Vector2][] {
+    return [this.points, ...this.holes].reduce(
+      (agg, loop) => agg.concat(loop.map((x, i) => [
+        x.clone(),
+        loop[(i + 1) % loop.length].clone(),
+      ])),
+      [] as [Vector2, Vector2][],
+    );
   }
 
   /** Translate this polygon i.e. mutate it. */

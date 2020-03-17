@@ -1,7 +1,7 @@
 # TODO
 
-- improve meta/make switching
 - lights can be turned on/off
+- dark mode with lights
 - edit/live mode
 - can save/restore level
 
@@ -131,3 +131,5 @@
 - improve popover design: tags only; delete via `-`
 - shift-drag meta to duplicate
 - can pan-zoom over meta popovers via event forwarding
+- merge meta/make modes into one mode
+- implemented lights

@@ -1,6 +1,5 @@
 import { Vector2 } from '@model/vec2.model';
 import { Poly2 } from '@model/poly2.model';
-import { Rect2 } from '@model/rect2.model';
 
 export function getLineLineSegIntersect(
   p: Vector2,
@@ -74,16 +73,10 @@ export function lightPolygon(
   /** Position of light. */
   pos: Vector2,
   range: number,
-  /** Each polygon must be a triangle. */
-  tris: Poly2[],
+  lineSegs: [Vector2, Vector2][],
 ) {
-  const lightBounds = new Rect2(pos.x - range, pos.y - range, 2 * range, 2 * range);
-  const closeTris = tris.filter(({ bounds }) => lightBounds.intersects(bounds));
-  const points = new Set(closeTris.reduce((agg, { points }) => agg.concat(points), [] as Vector2[]));
-  const lineSegs = closeTris.reduce(
-    (agg, { points: [u, v, w] }) => agg.concat([[u, v], [v, w], [w, u]]),
-    [] as [Vector2, Vector2][],
-  );
+  // TODO restrict lineSegs to close ones
+  const points = new Set(lineSegs.flatMap(x => x));
 
   // These will be unit directional vectors.
   const dir0 = Vector2.zero;
