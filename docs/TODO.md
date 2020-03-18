@@ -1,30 +1,32 @@
 # TODO
 
+- clearer vision of site i.e. beyond `Level` + `Session` + comments.
+
 - can select 2 points and Floyd-Warshall shows path
 - Floyd-Warshall supports string-pulling
-- can save and restore level
+- can trigger circle moving along path via css
 
+- `Level` has prop `deviceId` and `levelId`.
+- can save level as text in development via webpack-dev-server
+- can load level from json file
+- level `levelId` loaded from json file on mount `Level`
+- can save _branches_ of a level `${levelid}.${branch}` via redux-persist
+- can stringify/parse branches within ui (so can send as comments)
 - edit/live mode
+
+- start implementing `LevelINode`
+- each `Level` has corresponding `LevelINode` at `/dev/level-${deviceId}/`
+- can `click 2 | nav | goto`.
+
 - dark mode with lights
 - lights can be turned on/off
-
-- clear vision of how `Level` + `Session` are used on our upcoming site
-
-- can `click 2 | nav | goto`.
-- illustrate floyd-warshall via click on spawn-point and mousemove
-- avoid jerky fade in/out
-- avoid lag caused by floyd-warshall, or at least indicate it
 
 - implement tab completion
 - implement `jq` using jq-web
 - implement `find` (basic version)
 
-
 - can bring bg process to foreground
 
-- string-pulling
-- actors move along them via css
-- light polygons
 - warn about missing messages from worker after timeout
 
 - start using mdx for blogs
