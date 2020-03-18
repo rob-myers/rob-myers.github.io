@@ -5,7 +5,7 @@ import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { KeyedLookup } from '@model/generic.model';
 import { LevelMetaUi, LevelMeta } from './level-meta.model';
-import { FloydWarshall } from '@model/nav/nav-graph.model';
+import { FloydWarshall } from '@model/nav/floyd-warshall.model';
 
 export const wallDepth = 2;
 export const floorInset = 5;

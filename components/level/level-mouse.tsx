@@ -147,8 +147,8 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
               metaKey: state.draggedMeta,
               newMetaKey,
             });
-            dispatch(Act.updateMetaUi(levelUid, state.draggedMeta, { over: true }));
             dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
+            dispatch(Act.updateMetaUi(levelUid, newMetaKey, { over: true }));
             overMeta.current = newMetaKey;
             setCursor('pointer');
             worker.postMessage({ key: 'request-level-metas', levelUid });

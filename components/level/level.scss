@@ -52,10 +52,6 @@ html {
         cursor: pointer;
         font-family: 'Courier New', Courier, monospace;
     
-        &.disabled {
-          color: #aaa;
-        }
-
         &:hover {
           text-decoration: underline;
         }

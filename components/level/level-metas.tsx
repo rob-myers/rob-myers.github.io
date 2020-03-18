@@ -37,11 +37,20 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   }, []);
 
   const addTag = (metaKey: string, tag: string) => {
-    if (/^[a-z0-9-]+$/.test(tag)) {
-      if (tag === '-') {
-        worker.postMessage({ key: 'remove-level-meta', levelUid, metaKey });
-      } else {
-        worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'add-tag', tag }});
+    if (/^[a-z0-9][a-z0-9-]*$/.test(tag)) {
+      worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'add-tag', tag }});
+      return true;
+    } else if (tag === '-') {
+      worker.postMessage({ key: 'remove-level-meta', levelUid, metaKey });
+    } else if (/^>[a-z0-9][a-z0-9-]*$/.test(tag)) {
+      // Draw navpath to first meta with tag `tag.slice(1)`;
+      const { position } = levelMetas[metaKey];
+      const dstMeta = Object.values(levelMetas).find(({ tags }) => tags.includes(tag.slice(1)));
+      if (dstMeta) {
+        worker.postMessage({ key: 'request-nav-path', levelUid,
+          src: position.json,
+          dst: dstMeta.position.json,
+        });
         return true;
       }
     }

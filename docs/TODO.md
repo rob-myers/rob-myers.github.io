@@ -2,9 +2,11 @@
 
 - clearer vision of site i.e. beyond `Level` + `Session` + comments.
 
-- can select 2 points and Floyd-Warshall shows path
+- can select 2 points and Floyd-Warshall shows basic path
 - Floyd-Warshall supports string-pulling
 - can trigger circle moving along path via css
+
+- snap metas to integer-valued `x`, `y` (better serialisation)
 
 - `Level` has prop `deviceId` and `levelId`.
 - can save level as text in development via webpack-dev-server
@@ -139,3 +141,4 @@
 - merge meta/make modes into one mode
 - implemented lights
 - on click save, computes Floyd-Warshall
+- Floyd-Warshall provides basic path

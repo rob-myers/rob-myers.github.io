@@ -4,12 +4,10 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup } 
 
 export interface State {
   instance: KeyedLookup<LevelState>;
-  ready: boolean;
 }
 
 const initialState: State = {
   instance: {},
-  ready: false,
 };
 
 export const Act = {

@@ -28,10 +28,9 @@ const persistedReducer = persistReducer({
   storage,
   transforms: [
     createTransform<LevelWorkerState['level'], LevelWorkerState['level']>(
-      (_, _key) => {
+      (_, _key): LevelWorkerState['level'] => {
         return {
           instance: {},
-          ready: false,
         };
       },
       (state, _key) => ({

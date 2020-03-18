@@ -25,9 +25,10 @@ const Level: React.FC<Props> = ({ uid }) => {
     return () => void dispatch(Thunk.destroyLevel({ uid }));
   }, []);
 
+  const showNavGraph = true;
   const levelContent = useMemo(() => (
-    stateKey && <LevelContent levelUid={uid} showNavGraph={false} />
-  ), [stateKey]);
+    stateKey && <LevelContent levelUid={uid} showNavGraph={showNavGraph} />
+  ), [stateKey, showNavGraph]);
   
   const levelMetas = useMemo(() => (
     mode === 'edit' && <LevelMetas levelUid={uid} overlayRef={overlayRef} />

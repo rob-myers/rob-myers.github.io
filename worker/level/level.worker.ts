@@ -10,9 +10,10 @@ import { redact, removeFromLookup } from '@model/redux.model';
 import { LevelState, floorInset, smallTileDim, tileDim, navTags } from '@model/level/level.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
-import { NavGraph, FloydWarshall } from '@model/nav/nav-graph.model';
+import { NavGraph } from '@model/nav/nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
 import { LevelMeta } from '@model/level/level-meta.model';
+import { FloydWarshall } from '@model/nav/floyd-warshall.model';
 import { initializeStore } from './create-store';
 
 const ctxt: LevelWorkerContext = self as any;
@@ -83,6 +84,16 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       // console.log({ floydWarshall });
       dispatch(Act.updateLevel(msg.levelUid, { floydWarshall }));
       ctxt.postMessage({ key: 'floyd-warshall-ready', levelUid: msg.levelUid });
+      break;
+    }
+    case 'request-nav-path': {
+      const { floydWarshall } = getLevel(msg.levelUid)!;
+      if (floydWarshall) {
+        const navPath = floydWarshall.findPath(Vector2.from(msg.src), Vector2.from(msg.dst));
+        console.log({ navPath });
+      } else {
+        console.error(`level "${msg.levelUid}" not ready for ${msg.key}`);
+      }
       break;
     }
   }

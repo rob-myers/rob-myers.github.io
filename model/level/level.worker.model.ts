@@ -134,6 +134,13 @@ interface FloydWarshallReady extends BaseMessage {
   levelUid: string;
 }
 
+interface RequestNavPath extends BaseMessage {
+  key: 'request-nav-path';
+  levelUid: string;
+  src: Vector2Json;
+  dst: Vector2Json;
+}
+
 export type MessageFromLevelParent = (
   | PingFromParent
   | RequestNewLevel
@@ -147,6 +154,7 @@ export type MessageFromLevelParent = (
   | UpdateLevelMeta
   | RemoveLevelMeta
   | ComputeFloydWarshall
+  | RequestNavPath
 );
 export type MessageFromLevelWorker = (
   | PongFromWorker
