@@ -51,6 +51,10 @@ export class LevelLight {
     );
   }
 
+  public resetPolygon() {
+    this.polygon = redact(new Poly2());
+  }
+
   public setPosition(position: Vector2) {
     this.position.copy(position);
     this.rangeBounds = new Rect2(

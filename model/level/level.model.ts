@@ -72,6 +72,8 @@ export type ForwardedWheelEvent = {
 };
 
 export const specialTags = ['steiner', 'light'];
+/** Tags which can affect navigatino */
+export const navTags = ['steiner'];
 
 export function createLevelUiState(uid: string): LevelUiState {
   return {

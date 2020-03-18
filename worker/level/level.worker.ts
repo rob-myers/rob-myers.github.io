@@ -7,7 +7,7 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.worker.duck';
 import { Message } from '@model/worker.model';
 import { redact, removeFromLookup } from '@model/redux.model';
-import { LevelState, floorInset, smallTileDim, tileDim, specialTags } from '@model/level/level.model';
+import { LevelState, floorInset, smallTileDim, tileDim, navTags } from '@model/level/level.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 import { NavGraph, FloydWarshall } from '@model/nav/nav-graph.model';
@@ -89,7 +89,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
 });
 
 /**
- * Handle meta updates with side-effects for specified level.
+ * Handle meta updates side-effects for specified level.
  */
 function metaUpdateHandlerFactory(levelUid: string) {
   return fromEvent<Message<MessageFromLevelParent>>(ctxt, 'message')
@@ -108,32 +108,33 @@ function metaUpdateHandlerFactory(levelUid: string) {
             const { metaKey, update } = msg;
             metas[metaKey].applyUpdates(update); // Mutate
             return (
-              // Some updates can affect NavGraph or lights
-              update.key === 'add-tag' && specialTags.includes(update.tag)
-              || update.key === 'remove-tag' && specialTags.includes(update.tag)
-              || update.key === 'set-position' && metas[metaKey].tags.some(tag => specialTags.includes(tag))
+              // Some updates can affect NavGraph
+              update.key === 'add-tag' && navTags.includes(update.tag)
+              || update.key === 'remove-tag' && navTags.includes(update.tag)
+              || update.key === 'set-position' && metas[metaKey].tags.some(tag => navTags.includes(tag))
             );
           }
           case 'duplicate-level-meta': {
             const meta = metas[msg.metaKey].clone(msg.newMetaKey, Vector2.from(msg.position));
             dispatch(Act.updateLevel(levelUid, { metas: { ...metas, [meta.key]: meta }}));
-            return specialTags.some(tag => meta.tags.includes(tag));
+            return navTags.some(tag => meta.tags.includes(tag));
           }
           case 'remove-level-meta': {
             const nextMetas = removeFromLookup(msg.metaKey, metas);
             dispatch(Act.updateLevel(msg.levelUid, { metas: nextMetas }));
-            return specialTags.some(tag => metas[msg.metaKey].tags.includes(tag));
+            return navTags.some(tag => metas[msg.metaKey].tags.includes(tag));
           }
         }
       }),
       filter((updateNav) => {
+        // Currently we update lights immediately
         updateLights(levelUid);
-        sendMetas(levelUid); // Send metas immediately
+        sendMetas(levelUid);
         return updateNav;
       }),
       auditTime(300),
-      tap((updateNav) => {
-        updateNav && updateNavGraph(levelUid); // Sends metas again
+      tap((_) => {
+        updateNavGraph(levelUid);
       }),
     );
 }
@@ -226,9 +227,9 @@ function updateLights(levelUid: string) {
     Object.values(wallSeg).map(([u, v]) => [Vector2.from(u), Vector2.from(v)]),
     tileFloors.flatMap(x => x.lineSegs),
   );
-  Object.values(metas) // `contains` uses a triangulation
-    .filter(({ light }) => light && tileFloors.some(p => p.contains(light.position)))
-    .forEach(({ light }) => light!.computePolygon(lineSegs));
+  Object.values(metas)
+    .filter((meta) => meta.validateLight(tileFloors))
+    .forEach((meta) => meta.light?.computePolygon(lineSegs));
 }
 
 function updateNavGraph(levelUid: string) {

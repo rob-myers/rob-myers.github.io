@@ -1,5 +1,6 @@
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { LevelLight, LevelLightJson } from './level-light.model';
+import { Poly2 } from '@model/poly2.model';
 
 export const metaPointRadius = 2;
 
@@ -59,6 +60,15 @@ export class LevelMeta {
       json.tags.slice(),
       json.light ? LevelLight.fromJson(json.light) : null,
     );
+  }
+
+  /** Empties light polygon if light position not inside {polys}. */
+  public validateLight(polys: Poly2[]) {
+    if (this.light && !polys.some(p => p.contains(this.light!.position))) {
+      this.light.resetPolygon();
+      return false;
+    }
+    return !!this.light;
   }
 }
 
