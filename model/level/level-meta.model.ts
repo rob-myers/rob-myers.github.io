@@ -62,7 +62,7 @@ export class LevelMeta {
     );
   }
 
-  /** Empties light polygon if light position not inside {polys}. */
+  /** Sets light polygon empty if light position not inside {polys}. */
   public validateLight(polys: Poly2[]) {
     if (this.light && !polys.some(p => p.contains(this.light!.position))) {
       this.light.resetPolygon();

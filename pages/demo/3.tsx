@@ -4,7 +4,7 @@ import Level from '@components/level/level';
 
 const Demo3Page: React.FC = () => {
   return (
-    <div style={{ width: 60 * 16, height: 60 * 8 }}>
+    <div style={{ width: '100%', height: 60 * 8 }}>
       <Level uid="level-1" />
     </div>
   );

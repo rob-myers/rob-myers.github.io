@@ -48,6 +48,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   };
   const removeTag = (metaKey: string, tag: string) =>
     worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'remove-tag', tag }});
+  const closeMeta = (metaKey: string) =>
+    dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
 
   return (
     <>
@@ -126,6 +128,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                       onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
                         inputKey === 'Enter' && addTag(key, value) && (currentTarget.value = '')
                       }
+                      onKeyDown={({ key: inputKey }) => inputKey === 'Escape' && closeMeta(key)}
                     />
                     <section className={css.tags}>
                       {tags.map((tag) =>

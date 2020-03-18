@@ -56,6 +56,9 @@ export class LevelLight {
   }
 
   public setPosition(position: Vector2) {
+    if (!position.equals(this.position)) {
+      this.resetPolygon();
+    }
     this.position.copy(position);
     this.rangeBounds = new Rect2(
       position.x - this.range,
@@ -63,8 +66,6 @@ export class LevelLight {
       2 * this.range,
       2 * this.range,
     );
-    const offset = position.clone().sub(this.position);
-    this.polygon.offset(offset);
   }
 }
 
