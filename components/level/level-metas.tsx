@@ -6,9 +6,9 @@ import { LevelMeta, metaPointRadius } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
 import { NavPath } from '@model/nav/nav-path.model';
 import { Act } from '@store/level.duck';
-import css from './level.scss';
 import { KeyedLookup, mapValues } from '@model/generic.model';
 import { addToLookup } from '@model/redux.model';
+import css from './level.scss';
 
 type MetaLookup = LevelState['metas'];
 
@@ -143,7 +143,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
         overlayRef.current && (
           ReactDOM.createPortal(
             Object.values(levelMetas).map(({ key, tags }) => (
-              metaUi[key] && metaUi[key].open && (
+              metaUi[key] && !draggedMeta && metaUi[key].open && (
                 <section
                   key={key}
                   className={css.metaPopover}
@@ -161,7 +161,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                 >
                   <section className={css.content}>
                     <input
-                      ref={(ref) => ref && ref.focus()}
+                      tabIndex={-1} // Tab focus can break svg height
                       placeholder="tag"
                       onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
                         inputKey === 'Enter' && addTag(key, value) && (currentTarget.value = '')

@@ -2,7 +2,6 @@
 
 - clearer vision of site i.e. beyond `Level` + `Session` + comments.
 
-- Floyd-Warshall supports string-pulling
 - can trigger circle moving along path via css
 - actors have position and direction
 - can `look`: metas within radius, ray-cast
@@ -147,3 +146,5 @@
 - on click save, computes Floyd-Warshall
 - Floyd-Warshall provides basic path
 - can tag one meta `foo` and another `>foo` and Floyd-Warshall shows basic path
+- Floyd-Warshall supports string-pulling
+- fix bug: prevent tab to offscreen meta via tabIndex -1 (it changed svg height)

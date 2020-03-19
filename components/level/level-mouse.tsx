@@ -58,7 +58,9 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
       setCursor(nextKey ? 'pointer' : 'auto');
       overMeta.current = nextKey;
     }
-    mouseIsDrag.current = !!state.draggedMeta;
+    if (mouseIsDrag.current && !state.draggedMeta) {
+      dispatch(Act.updateLevel(levelUid, { draggedMeta: nextKey }));
+    }
   };
 
   useEffect(() => {// Adjust cursor position on change cursor
@@ -127,11 +129,11 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
       onMouseMove={onMouseMove}
       onMouseDown={() => {
         mouseIsDown.current = true;
-        dispatch(Act.updateLevel(levelUid, { draggedMeta: overMeta.current }));
+        mouseIsDrag.current = true;
       }}
       onMouseUp={(e) => {
         mouseIsDown.current = false;
-        if (overMeta.current && !mouseIsDrag.current) {// Toggle meta dialog
+        if (overMeta.current && !state.draggedMeta) {// Toggle meta dialog
           dispatch(Act.updateMetaUi(levelUid, overMeta.current, {
             open: !state.metaUi[overMeta.current].open,
           }));
