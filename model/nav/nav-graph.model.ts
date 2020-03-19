@@ -2,6 +2,7 @@ import { Poly2, Poly2Json } from '@model/poly2.model';
 import { BaseGraph, BaseNode, BaseNodeOpts, BaseEdge, BaseEdgeOpts } from '@model/graph.model';
 import { Vector2 } from '@model/vec2.model';
 import { redact } from '@model/redux.model';
+import { NavPortal } from './nav-channel';
 
 interface NavNodeOpts extends BaseNodeOpts {
   /** Index of polygon this node occurs in */
@@ -16,8 +17,8 @@ interface NavNodeOpts extends BaseNodeOpts {
 export class NavNode extends BaseNode<NavNodeOpts> {}
 
 interface NavEdgeOpts extends BaseEdgeOpts<NavNode> {
-  /** Point ids shared by src/dst */
-  portal: [number, number];
+  /** Indices in `src`s triangle shared by `src` and `dst` */
+  portal: [0 | 1 | 2, 0 | 1 | 2];
 }
 
 /** Represents a portal in navmesh */
@@ -71,6 +72,11 @@ NavNode, NavNodeOpts, NavEdge, NavEdgeOpts
   public static from(navFloors: Poly2[]): NavGraph {
     const groupedTris = navFloors.map(p => p.triangulation);
     const graph = new NavGraph(groupedTris.map(p => redact(p)));
+    /**
+     * Triangles and triangleIds based on all points i.e.
+     * each polygon can contribute outline, holes, steiner points.
+     */
+    const allPoints = navFloors.flatMap(p => p.allPoints);
 
     for (const [polyId, { triangleIds }] of navFloors.entries()) {
       triangleIds.forEach((pointIds, triId) => {
@@ -106,13 +112,23 @@ NavNode, NavNodeOpts, NavEdge, NavEdgeOpts
             graph.connect({
               src: `${polyId}-${triIndex}`,
               dst: `${polyId}-${otherIndex}`,
-              portal: [pidA, pidB],
+              portal: [
+                groupedTris[polyId][triIndex].points
+                  .findIndex(p => p.equals(allPoints[pidA])) as 0 | 1 | 2,
+                groupedTris[polyId][triIndex].points
+                  .findIndex(p => p.equals(allPoints[pidB])) as 0 | 1 | 2,
+              ],
             });
           });
         });
       });
     }
     return graph;
+  }
+
+  public getPortal({ src: { opts }, otherOpts: { portal } }: NavEdge): NavPortal {
+    const { points } = this.groupedTris[opts.polyId][opts.triId];
+    return { left: points[portal[0]], right: points[portal[1]] };
   }
 
   public static fromJson({ nodes, edges, groupedTris }: NavGraphJson): NavGraph {
@@ -133,5 +149,5 @@ export interface NavGraphJson {
 interface NavEdgeJson {
   src: string;
   dst: string;
-  portal: [number, number];
+  portal: [0 | 1 | 2, 0 | 1 | 2];
 }

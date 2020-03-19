@@ -1,6 +1,7 @@
-import { NavGraph } from './nav-graph.model';
+import { NavGraph, NavNode } from './nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
 import { Poly2 } from '@model/poly2.model';
+import NavChannel, { NavPortal } from './nav-channel';
 
 /**
  * Floyd Warshall algorithm
@@ -17,7 +18,7 @@ export class FloydWarshall {
   }
 
   /**
-   * First attempt, without string-pulling.
+   * Find string-pulled path, if exists.
    */
   public findPath(src: Vector2, dst: Vector2): Vector2[] {
     const srcNode = this.findNode(src);
@@ -28,12 +29,15 @@ export class FloydWarshall {
       return []; // Nodes in disjoint polygons
     }
 
-    const nodeIds = [srcNode.id];
-    let srcId = srcNode.id;
-    while (srcId !== dstNode.id) {
-      nodeIds.push(srcId = this.next[srcId]![dstNode.id]!);
+    const nodes = [srcNode];
+    let node = srcNode;
+    while (node !== dstNode) {
+      nodes.push(node = this.navGraph.getNodeById(this.next[node.id]![dstNode.id]!)!);
     }
-    return nodeIds.map(id => this.getNodeCenter(id));
+    
+    // return nodes.map(node => this.getNodeCenter(node));
+    const portals = this.getPortals(src, nodes, dst);
+    return NavChannel.stringPull(portals);
   }
 
   private findNode(point: Vector2) {
@@ -69,9 +73,19 @@ export class FloydWarshall {
     return fm;
   }
 
-  private getNodeCenter(nodeId: string) {
-    const { opts: { polyId, triId } } = this.navGraph.getNodeById(nodeId)!;
+  /** Debug only? */
+  private getNodeCenter(node: NavNode) {
+    const { opts: { polyId, triId } } = this.navGraph.getNodeById(node.id)!;
     return this.navGraph.groupedTris[polyId][triId].centerOfBoundary;
+  }
+
+  private getPortals(src: Vector2, nodes: NavNode[], dst: Vector2) {
+    const edges = nodes.slice(0, -1).map((src, i) => this.navGraph.getEdge(src, nodes[i + 1])!);
+    return ([] as NavPortal[]).concat(
+      { left: src, right: src },
+      edges.map(edge => this.navGraph.getPortal(edge)),
+      { left: dst, right: dst },
+    );
   }
 
   private initialize() {
