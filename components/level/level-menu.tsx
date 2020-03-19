@@ -37,6 +37,14 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
 
             <section className={css.mainMenu}>
               <button
+                className={css.button}
+                onClick={(_e) => dispatch(Act.updateLevel(levelUid, {
+                  view: view === 'plan' ? 'dark' : 'plan',
+                }))}
+              >
+                {view}
+              </button>
+              <button
                 title="grid size"
                 className={classNames(css.button, {
                   [css.pressed]: cursorType === 'refined'
@@ -46,14 +54,6 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
                 }))}
               >
                 ×{cursorType === 'refined' ? 3 : 1}
-              </button>
-              <button
-                className={css.button}
-                onClick={(_e) => dispatch(Act.updateLevel(levelUid, {
-                  view: view === 'plan' ? 'dark' : 'plan',
-                }))}
-              >
-                {view}
               </button>
             </section>
           </>

@@ -2,7 +2,6 @@
 
 - clearer vision of site i.e. beyond `Level` + `Session` + comments.
 
-- can select 2 points and Floyd-Warshall shows basic path
 - Floyd-Warshall supports string-pulling
 - can trigger circle moving along path via css
 - actors have position and direction
@@ -22,6 +21,8 @@
 - each `Level` has corresponding `LevelINode` at `/dev/level-${deviceId}/`
 - can `click 2 | nav | goto`.
 
+- get pan-zoom working in safari
+
 - dark mode with lights
 - lights can be turned on/off
 
@@ -37,6 +38,7 @@
 - integrate gitalk from older branch
 - delete older branch
 - merge this branch `fresh-start-2020` into new branch `dev`.
+
 
 ## So far
 
@@ -144,3 +146,4 @@
 - implemented lights
 - on click save, computes Floyd-Warshall
 - Floyd-Warshall provides basic path
+- can tag one meta `foo` and another `>foo` and Floyd-Warshall shows basic path

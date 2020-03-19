@@ -4,9 +4,9 @@ import { filter, map, delay, auditTime, tap } from 'rxjs/operators';
 
 import { LevelWorkerContext, LevelWorker, MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall, UpdateLevelMeta, DuplicateLevelMeta, RemoveLevelMeta } from '@model/level/level.worker.model';
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
-import { Act } from '@store/level/level.worker.duck';
+import { Act } from '@store/level/level.duck';
 import { Message } from '@model/worker.model';
-import { redact, removeFromLookup } from '@model/redux.model';
+import { redact, removeFromLookup, addToLookup } from '@model/redux.model';
 import { LevelState, floorInset, smallTileDim, tileDim, navTags } from '@model/level/level.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
@@ -15,6 +15,9 @@ import { Vector2 } from '@model/vec2.model';
 import { LevelMeta } from '@model/level/level-meta.model';
 import { FloydWarshall } from '@model/nav/floyd-warshall.model';
 import { initializeStore } from './create-store';
+import { NavPath } from '@model/nav/nav-path.model';
+import { LevelAuxState } from '@model/level/level-aux.model';
+import { mapValues } from '@model/generic.model';
 
 const ctxt: LevelWorkerContext = self as any;
 
@@ -27,6 +30,8 @@ persistor.pause(); // We save manually
 
 const getLevel = (levelUid: string): LevelState | undefined =>
   store.getState().level.instance[levelUid];
+const getLevelAux = (levelUid: string): LevelAuxState | undefined =>
+  store.getState().level.aux[levelUid];
 
 /**
  * Worker message handler.
@@ -67,6 +72,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
         ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
           metas: Object.values(level.metas).map(p => p.json),
         });
+        sendLevelAux(msg.levelUid);
       }
       break;
     }
@@ -80,17 +86,20 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     case 'compute-floyd-warshall': {
       const { floors } = getLevel(msg.levelUid)!;
       const navGraph = NavGraph.from(floors);
-      const floydWarshall = redact(FloydWarshall.from(navGraph));
-      // console.log({ floydWarshall });
-      dispatch(Act.updateLevel(msg.levelUid, { floydWarshall }));
+      dispatch(Act.updateLevel(msg.levelUid, { floydWarshall: redact(FloydWarshall.from(navGraph)) }));
       ctxt.postMessage({ key: 'floyd-warshall-ready', levelUid: msg.levelUid });
       break;
     }
     case 'request-nav-path': {
       const { floydWarshall } = getLevel(msg.levelUid)!;
+      const { navPath: toNavPath } = getLevelAux(msg.levelUid)!;
+
       if (floydWarshall) {
-        const navPath = floydWarshall.findPath(Vector2.from(msg.src), Vector2.from(msg.dst));
-        console.log({ navPath });
+        const [src, dst] = [Vector2.from(msg.src), Vector2.from(msg.dst)];
+        const points = floydWarshall.findPath(src, dst);
+        const navPath = new NavPath(msg.navPathUid, points);
+        dispatch(Act.updateLevelAux(msg.levelUid, { navPath: addToLookup(navPath, toNavPath) }));
+        ctxt.postMessage({ key: 'send-nav-path', levelUid: msg.levelUid, navPath: navPath.json });
       } else {
         console.error(`level "${msg.levelUid}" not ready for ${msg.key}`);
       }
@@ -99,8 +108,15 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
   }
 });
 
+function sendLevelAux(levelUid: string) {
+  const { navPath } = getLevelAux(levelUid)!;
+  ctxt.postMessage({ key: 'send-level-aux', levelUid,
+    toNavPath: mapValues(navPath, (p) => p.json),
+  });
+}
+
 /**
- * Handle meta updates side-effects for specified level.
+ * Handle meta updates with side-effects for specified level.
  */
 function metaUpdateHandlerFactory(levelUid: string) {
   return fromEvent<Message<MessageFromLevelParent>>(ctxt, 'message')
@@ -266,14 +282,16 @@ function updateNavGraph(levelUid: string) {
     levelUid, 
     tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
   });
-  const navGraph = NavGraph.from(floors);
   ctxt.postMessage({
     key: 'send-nav-graph',
     levelUid,
-    navGraph: navGraph.json,
+    navGraph: NavGraph.from(floors).json,
     floors: floors.map(({ json }) => json), // Debug only
   });
-  // console.log({ fw: FloydWarshall.from(navGraph) });
+
+  // Clear emphemeral
+  dispatch(Act.clearLevelAux(levelUid));
+  sendLevelAux(levelUid);
 
   sendMetas(levelUid);
 }

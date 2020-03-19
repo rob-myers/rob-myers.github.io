@@ -7,8 +7,11 @@ import { KeyedLookup } from '@model/generic.model';
 import { LevelMetaUi, LevelMeta } from './level-meta.model';
 import { FloydWarshall } from '@model/nav/floyd-warshall.model';
 
+/** Depth of cursor highlight */
 export const wallDepth = 2;
+/** How far to inset when constructing navigable poly `floors` */
 export const floorInset = 5;
+/** Dimension of large tile in pixels */
 export const tileDim = 60;
 /** `tileDim` divided by 3 */
 export const smallTileDim = 20;
@@ -32,6 +35,7 @@ export interface LevelState {
   metaUpdateSub: null | Redacted<Subscription>;
   /** Spawn points, steiner points, lights, interactives */
   metas: KeyedLookup<LevelMeta>;
+  /** Pathfinder */
   floydWarshall: null | Redacted<FloydWarshall>;
 }
 
@@ -49,13 +53,21 @@ export function createLevelState(uid: string): LevelState {
 }
 
 export interface LevelUiState {
+  /** Level identifier e.g. `level-1` */
   key: string;
+  /** Zoom multiplier with default `1` */
   zoomFactor: number;
+  /** Viewport bounds in world coords */
   renderBounds: Rect2;
+  /** Mouse position in world coords */
   mouseWorld: Vector2;
+  /** Top left of square cursor (snapped to grid) */
   cursor: Vector2;
+  /** Large or small square? */
   cursorType: 'default' | 'refined';
+  /** The 4 edges of the cursor can be highlighted */
   cursorHighlight: Partial<Record<Direction, boolean>>;
+  /** Editing or in live mode */
   mode: 'edit' | 'live';
   /** Plan mode (default) or dark mode with lights */
   view: 'plan' | 'dark';
@@ -63,16 +75,18 @@ export interface LevelUiState {
   metaUi: KeyedLookup<LevelMetaUi>;
   /** Key of dragged meta if any */
   draggedMeta: null | string;
+  /** Can forward wheel events (pan/zoom) to LevelMouse  */
   wheelForwarder: null | Redacted<Subject<ForwardedWheelEvent>>;
 }
 
-export type ForwardedWheelEvent = {
+export interface ForwardedWheelEvent {
   key: 'wheel';
   e: React.WheelEvent;
-};
+}
 
+/** Tags with side-effects */
 export const specialTags = ['steiner', 'light'];
-/** Tags which can affect navigatino */
+/** Tags which can affect navigation */
 export const navTags = ['steiner'];
 
 export function createLevelUiState(uid: string): LevelUiState {

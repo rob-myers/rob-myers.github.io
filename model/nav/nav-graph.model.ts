@@ -37,7 +37,7 @@ NavNode, NavNodeOpts, NavEdge, NavEdgeOpts
     super(NavEdge);
   }
 
-  /** Needs original polygons as input */
+  /** Needs original polygons (not triangles) as input */
   public dualGraph(polys: Poly2[]) {
     const polyPs = polys.map(({ allPoints }) => allPoints);
     const toCenter = this.nodesArray.reduce(
@@ -66,7 +66,7 @@ NavNode, NavNodeOpts, NavEdge, NavEdgeOpts
   }
 
   /**
-   * Compute from a navigable floors.
+   * Compute from navigable floors.
    */
   public static from(navFloors: Poly2[]): NavGraph {
     const groupedTris = navFloors.map(p => p.triangulation);

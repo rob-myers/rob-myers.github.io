@@ -20,23 +20,32 @@ const LevelContent: React.FC<Props> = ({ levelUid, showNavGraph = false }) => {
   useEffect(() => {
     const sub = subscribeToWorker(worker, (msg) => {
       // console.log({ levelContentReceived: msg });
-      if (msg.key === 'send-level-layers' && msg.levelUid === levelUid) {
-        setTileFloors(msg.tileFloors.map(x => Poly2.fromJson(x).svgPath));
-        setWalls(msg.wallSegs);
+      if ('levelUid' in msg && msg.levelUid !== levelUid) {
+        return;
       }
-      if (msg.key === 'send-level-nav-floors' && msg.levelUid === levelUid) {
-        setFloors(msg.navFloors.map(x => Poly2.fromJson(x).svgPath));
-      }
-      if (msg.key === 'send-level-tris' && msg.levelUid === levelUid) {
-        setTriangles(msg.tris.map(x => Poly2.fromJson(x).svgPath));
-      }
-      // Debug
-      if (showNavGraph && msg.key === 'send-nav-graph' && msg.levelUid === levelUid) {
-        const navGraph = NavGraph.fromJson(msg.navGraph);
-        const floors = msg.floors.map(floor => Poly2.fromJson(floor));
-        const { centers, segs } = navGraph.dualGraph(floors);
-        setCenters(centers);
-        setSegs(segs);
+      switch (msg.key) {
+        case 'send-level-layers': {
+          setTileFloors(msg.tileFloors.map(x => Poly2.fromJson(x).svgPath));
+          setWalls(msg.wallSegs);
+          break;
+        }
+        case 'send-level-nav-floors': {
+          setFloors(msg.navFloors.map(x => Poly2.fromJson(x).svgPath));
+          break;
+        }
+        case 'send-level-tris': {
+          setTriangles(msg.tris.map(x => Poly2.fromJson(x).svgPath));
+          break;
+        }
+        case 'send-nav-graph': {// Debug
+          if (showNavGraph) {
+            const navGraph = NavGraph.fromJson(msg.navGraph);
+            const floors = msg.floors.map(floor => Poly2.fromJson(floor));
+            const { centers, segs } = navGraph.dualGraph(floors);
+            setCenters(centers);
+            setSegs(segs);
+          }
+        }
       }
     });
     worker.postMessage({ key: 'request-level-data', levelUid });
@@ -65,7 +74,7 @@ const LevelContent: React.FC<Props> = ({ levelUid, showNavGraph = false }) => {
           <path key={i} d={pathDef} />
         ))}
       </g>
-      {showNavGraph && (
+      {showNavGraph && (// TODO move to LevelMetas
         <g>
           {centers.map(({ x, y }, i) => (
             <circle

@@ -5,6 +5,8 @@ import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
 import { NavGraphJson } from '@model/nav/nav-graph.model';
 import { LevelMetaJson, LevelMetaUpdate } from './level-meta.model';
+import { NavPathJson } from '@model/nav/nav-path.model';
+import { KeyedLookup } from '@model/generic.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {
@@ -23,13 +25,6 @@ export interface LevelWorkerContext extends Worker {
   addEventListener(type: 'message', object: EventListenerObject): void; 
   removeEventListener(type: 'message', listener: (message: Message<MessageFromLevelParent>) => void): void;
   removeEventListener(type: 'message', object: EventListenerObject): void;
-}
-
-interface PingFromParent extends BaseMessage {
-  key: 'ping-level-worker';
-}
-interface PongFromWorker extends BaseMessage {
-  key: 'pong-from-level';
 }
 
 interface LevelWorkerReady extends BaseMessage {
@@ -137,12 +132,23 @@ interface FloydWarshallReady extends BaseMessage {
 interface RequestNavPath extends BaseMessage {
   key: 'request-nav-path';
   levelUid: string;
+  navPathUid: string;
   src: Vector2Json;
   dst: Vector2Json;
 }
+interface SendNavPath extends BaseMessage {
+  key: 'send-nav-path';
+  levelUid: string;
+  navPath: NavPathJson;
+}
+interface SendLevelAux extends BaseMessage {
+  key: 'send-level-aux';
+  levelUid: string;
+  toNavPath: KeyedLookup<NavPathJson>;
+  // ...
+}
 
 export type MessageFromLevelParent = (
-  | PingFromParent
   | RequestNewLevel
   | RequestDestroyLevel
   | ToggleLevelTile
@@ -156,8 +162,8 @@ export type MessageFromLevelParent = (
   | ComputeFloydWarshall
   | RequestNavPath
 );
+
 export type MessageFromLevelWorker = (
-  | PongFromWorker
   | LevelWorkerReady
   | WorkerCreatedLevel
   | SendLevelLayers
@@ -166,6 +172,8 @@ export type MessageFromLevelWorker = (
   | SendNavGraph
   | SendLevelMetas
   | FloydWarshallReady
+  | SendNavPath
+  | SendLevelAux
 );
 
 // Shortcut

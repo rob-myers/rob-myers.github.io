@@ -145,6 +145,16 @@ html {
       }
     }
 
+    .nav-paths {
+      circle {
+        fill: black;
+      }
+      line {
+        stroke-width: 0.1;
+        stroke: black;
+      }
+    }
+
     .svg-grid {
       pointer-events: none;
     
@@ -169,16 +179,10 @@ html {
         background: white;
         border: 1px solid rgba(0, 0, 0, 0.2);
         border-radius: 1px;
-      
         top: 0px;
-        visibility: hidden;
         
         transform: scale(0.5);
         transform-origin: top left;
-
-        &.open {
-          visibility: visible;
-        }
 
         .content {
           box-sizing: border-box;

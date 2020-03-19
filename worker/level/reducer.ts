@@ -4,7 +4,7 @@ import {
   Action as LevelAction,
   // Thunk as LevelThunk,
   reducer as levelReducer,
-} from '@store/level/level.worker.duck';
+} from '@store/level/level.duck';
 
 export interface LevelWorkerState {
   level: LevelsState;
