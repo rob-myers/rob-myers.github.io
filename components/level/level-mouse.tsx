@@ -81,13 +81,14 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
       s: mm.y >= td - wallDepth,
       w: mm.x <= wallDepth,
     };
-    highlighted.current = highlight.n || highlight.e || highlight.s || highlight.w || false;
     dispatch(Act.updateLevel(levelUid, { cursorHighlight: highlight }));
+    highlighted.current = highlight.n || highlight.e || highlight.s || highlight.w || false;
     
     trackMeta();
   };
   
   onWheel.current = (e) => {
+    // console.log({ deltaX: e.deltaX, deltaY: e.deltaY }); // Safari issue?
     if (e.shiftKey) {// Zoom
       const nextZoom = state.zoomFactor - 0.005 * e.deltaY;
       if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
@@ -116,7 +117,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
     <rect
       ref={rectEl}
       className={css.mouseRect}
-      onMouseLeave={() => {// We cleanup
+      onMouseLeave={() => {// Cleanup
         const overKey = overMeta.current;
         overKey && dispatch(Act.updateMetaUi(levelUid, overKey, { over: false }));
         overMeta.current = undefined;

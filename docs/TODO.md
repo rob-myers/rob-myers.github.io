@@ -5,6 +5,8 @@
 - can select 2 points and Floyd-Warshall shows basic path
 - Floyd-Warshall supports string-pulling
 - can trigger circle moving along path via css
+- actors have position and direction
+- can `look`: metas within radius, ray-cast
 
 - snap metas to integer-valued `x`, `y` (better serialisation)
 

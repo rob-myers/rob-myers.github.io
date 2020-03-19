@@ -25,7 +25,7 @@ const Level: React.FC<Props> = ({ uid }) => {
     return () => void dispatch(Thunk.destroyLevel({ uid }));
   }, []);
 
-  const showNavGraph = true;
+  const showNavGraph = false;
   const levelContent = useMemo(() => (
     stateKey && <LevelContent levelUid={uid} showNavGraph={showNavGraph} />
   ), [stateKey, showNavGraph]);
