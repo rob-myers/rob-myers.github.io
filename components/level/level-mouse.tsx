@@ -123,6 +123,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
         const overKey = overMeta.current;
         overKey && dispatch(Act.updateMetaUi(levelUid, overKey, { over: false }));
         overMeta.current = undefined;
+        mouseIsDrag.current = false;
         state.draggedMeta && dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
         setCursor('auto');
       }}

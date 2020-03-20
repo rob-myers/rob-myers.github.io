@@ -1,5 +1,8 @@
 # TODO
 
+- bug: on window maximise, new area unreachable by cursor
+- indicate that Floyd-warshall stale/missing and recompute on create navpath
+
 - clearer vision of site i.e. beyond `Level` + `Session` + comments.
 
 - can trigger circle moving along path via css

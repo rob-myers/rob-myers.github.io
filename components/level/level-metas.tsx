@@ -23,7 +23,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
     instance[levelUid].wheelForwarder);
 
   const [levelMetas, setLevelMetas] = useState<MetaLookup>({});
-  const [toNavPath, setToNavPath] = useState<KeyedLookup<NavPath>>({});
+  const [navPaths, setNavPaths] = useState<KeyedLookup<NavPath>>({});
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -40,12 +40,12 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
           break;
         }
         case 'send-level-aux': {
-          setToNavPath(mapValues(msg.toNavPath, (p) => NavPath.from(p)));
+          setNavPaths(mapValues(msg.toNavPath, (p) => NavPath.from(p)));
           break;
         }
         case 'send-nav-path': {
-          setToNavPath(addToLookup(NavPath.from(msg.navPath), toNavPath));
-          // console.log('edges', NavPath.from(msg.navPath).edges);
+          // NOTE cannot use state variable because in stale scope
+          setNavPaths((prev) => addToLookup(NavPath.from(msg.navPath), prev));
           break;
         }
       }
@@ -128,7 +128,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
         }
       </g>
       <g className={css.navPaths}>
-        {Object.values(toNavPath).map((navPath) =>
+        {Object.values(navPaths).map((navPath) =>
           <g key={navPath.key}>
             {navPath.points.map(({ x, y }, i) =>
               <circle key={`node-${i}`} cx={x} cy={y} r={0.5} />
@@ -161,7 +161,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                 >
                   <section className={css.content}>
                     <input
-                      tabIndex={-1} // Tab focus can break svg height
+                      // Tab focus can break svg height due to parent with overflow hidden (?)
+                      tabIndex={-1}
                       placeholder="tag"
                       onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
                         inputKey === 'Enter' && addTag(key, value) && (currentTarget.value = '')

@@ -57,6 +57,7 @@ export class FloydWarshall {
     fm.initialize();
     const [vs, dist, next] = [graph.nodesArray, fm.dist, fm.next];
 
+    // TODO group nodes by polyId and compute disjoint separately
     vs.forEach(({ id: middleId }) => {
       vs.forEach(({ id: startId }) => {
         vs.forEach(({ id: endId }) => {
@@ -73,7 +74,6 @@ export class FloydWarshall {
     return fm;
   }
 
-  /** Debug only? */
   private getNodeCenter(node: NavNode) {
     const { opts: { polyId, triId } } = this.navGraph.getNodeById(node.id)!;
     return this.navGraph.groupedTris[polyId][triId].centerOfBoundary;
@@ -102,13 +102,18 @@ export class FloydWarshall {
     this.next = vs.reduce((agg, v) =>
       ({ ...agg, [v.id]: { ...innerNext } }), {});
 
-    vs.forEach((vA) =>
-      vs.forEach((vB) => {
+    // Compute triangle centers so can approx distance between nodes
+    const centers = vs.map(v => this.getNodeCenter(v));
+    const point = Vector2.zero;
+
+    vs.forEach((vA, i) =>
+      vs.forEach((vB, j) => {
         if (vA === vB) {
           this.dist[vA.id][vB.id] = 0;
           this.next[vA.id][vB.id] = vA.id;
         } else if (this.navGraph.isConnected(vA, vB)) {
-          this.dist[vA.id][vB.id] = 1;
+          // this.dist[vA.id][vB.id] = 1;
+          this.dist[vA.id][vB.id] = Math.round(point.copy(centers[i]).sub(centers[j]).length);
           this.next[vA.id][vB.id] = vB.id;
           this.next[vB.id][vA.id] = vA.id;
         }
