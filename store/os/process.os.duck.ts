@@ -455,7 +455,7 @@ export const osGetProcessesMeta = createOsThunk<OsAct, GetProcessesMetaThunk>(
         } else if (launchedCommand) {
           command = launchedCommand;
         } else {
-          command = dispatch(osGetHistoricalSrc({ term: term.children }));
+          command = dispatch(osGetHistoricalSrc({ term }));
         }
 
         return {

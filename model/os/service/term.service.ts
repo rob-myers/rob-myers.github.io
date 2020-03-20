@@ -773,7 +773,7 @@ export class TermService {
     , '');
   }
 
-  public seqSrc(children: Term[]) {
+  private seqSrc(children: Term[]) {
     const srcs = [] as string[];
     children.forEach((c) => srcs.push(this.src(c), isBackgroundTerm(c) ? ' ' : '; '));
     return srcs.slice(0, -1).join('');
