@@ -67,6 +67,10 @@ export interface ProcessState extends UnregisteredProcess {
    */
   codeStack: CodeStackItem[];
   /**
+   * Command used to launch process, if any.
+   */
+  command: null | string;
+  /**
    * File descriptor to open key.
    */
   fdToOpenKey: FromFdToOpenKey;

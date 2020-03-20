@@ -1,6 +1,5 @@
 # TODO
 
-- implement `ps`
 - implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
 - for `goto` intend stop/continue to pause/continue animations
@@ -167,3 +166,4 @@
 - can tag one meta `foo` and another `>foo` and Floyd-Warshall shows basic path
 - Floyd-Warshall supports string-pulling
 - fix bug: prevent tab to offscreen meta via tabIndex -1 (it changed svg height)
+- implement `ps`

@@ -336,6 +336,7 @@ export class SimpleComposite extends BaseCompositeTerm<CompositeType.simple> {
        * Evaluated assignments will be exported in new process.
        */
       exportVars,
+      command: this.method.filepath,
     }));
 
     if (toPromise) {

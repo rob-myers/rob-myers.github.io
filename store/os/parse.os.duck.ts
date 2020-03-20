@@ -125,12 +125,12 @@ export const osParseBufferThunk = createOsThunk<OsAct, ParseBufferThunk>(
   },
 );
 interface ParseBufferThunk extends OsThunkAct<OsAct,
-  { processKey: string; buffer?: string[] },
-  (
-    | { key: 'failed'; error: string }
-    | { key: 'incomplete' }
-    | { key: 'complete'; parsed: ParsedSh.File; src: string }
-  )
+{ processKey: string; buffer?: string[] },
+(
+  | { key: 'failed'; error: string }
+  | { key: 'incomplete' }
+  | { key: 'complete'; parsed: ParsedSh.File; src: string }
+)
 > {
   type: OsAct.OS_PARSE_BUFFER_THUNK;
 }
@@ -180,10 +180,10 @@ interface WalkTermThunk extends OsThunkAct<OsAct, {
 
 export const osGetHistoricalSrc = createOsThunk<OsAct, GetHistoricalSrc>(
   OsAct.OS_GET_HISTORICAL_SRC,
-  ({ service }, { term }) => service.term.src(term),
+  ({ service }, { term }) => Array.isArray(term)
+    ? service.term.seqSrc(term)
+    : service.term.src(term),
 );
-interface GetHistoricalSrc extends OsThunkAct<OsAct, {
-  term: Term;
-}, string> {
+interface GetHistoricalSrc extends OsThunkAct<OsAct, { term: Term | Term[] }, string> {
   type: OsAct.OS_GET_HISTORICAL_SRC;
 }

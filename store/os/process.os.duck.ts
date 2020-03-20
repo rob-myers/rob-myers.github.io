@@ -15,6 +15,7 @@ import { cloneVar } from '@os-service/process-var.service';
 import { OpenFileRequest } from '@model/os/file.model';
 import { osSetSessionForegroundAct } from './session.os.duck';
 import { builtinKeyToCommand } from '@model/sh/builtin.model';
+import { osGetHistoricalSrc } from './parse.os.duck';
 
 export type Action = (
   | ClearBufferAct
@@ -134,6 +135,7 @@ export const osRegisterProcessDef: SyncActDef<OsAct, RegisterProcessAct, State> 
     buffer: [],
     childCount: 0,
     codeStack: [],
+    command: null,
     fdToOpenKey: { ...fdToOpenKey },
     key: processKey,
     lastExitCode: null,
@@ -332,7 +334,7 @@ export type Thunk = (
 export const osExecTermThunk = createOsThunk<OsAct, ExecTermThunk>(
   OsAct.OS_EXEC_TERM_THUNK,
   ( { dispatch, state: { os: { proc } }, service },
-    { processKey, term: execTerm },
+    { processKey, term: execTerm, command },
   ) => {
 
     const term = service.term.cloneTerm(execTerm);
@@ -357,12 +359,17 @@ export const osExecTermThunk = createOsThunk<OsAct, ExecTermThunk>(
         nestedVars: [{ ...last(nestedVars) }],
         // Clear code stack.
         codeStack: [],
+        command: command || null,
       }),
     }));
   },
 );
 
-interface ExecTermThunk extends OsThunkAct<OsAct, { processKey: string; term: Term }, void> {
+interface ExecTermThunk extends OsThunkAct<OsAct, {
+  processKey: string;
+  term: Term;
+  command: string | null;
+}, void> {
   type: OsAct.OS_EXEC_TERM_THUNK;
 }
 
@@ -435,22 +442,32 @@ interface GetProcessThunk extends OsThunkAct<OsAct, { processKey: string }, Proc
   type: OsAct.OS_GET_PROCESS_THUNK;
 }
 
-export const osGetProcessesMeta = createOsThunk<OsAct, GetProcessesMeta>(
+export const osGetProcessesMeta = createOsThunk<OsAct, GetProcessesMetaThunk>(
   OsAct.OS_GET_PROCESSES_META_THUNK,
-  ({ state: { os: { proc, session }}}) => {
+  ({ state: { os: { proc, session }}, dispatch }) => {
     return {
-      metas: Object.values(proc).map(({ pid, sessionKey, term }) => {
+      metas: Object.values(proc).map(({ pid, sessionKey, term, command: launchedCommand }) => {
         const { ttyPath } = session[sessionKey];
+
+        let command = '';
+        if (pid === 1) {
+          command = '(init)';
+        } else if (launchedCommand) {
+          command = launchedCommand;
+        } else {
+          command = dispatch(osGetHistoricalSrc({ term: term.children }));
+        }
+
         return {
           pid,
-          command: '__TODO__',
+          command,
           ttyName: ttyPath?.split('/').pop() || null,
         };
       })
     };
   },
 );
-interface GetProcessesMeta extends OsThunkAct<OsAct, {}, { metas: ProcMeta[] }> {
+interface GetProcessesMetaThunk extends OsThunkAct<OsAct, {}, { metas: ProcMeta[] }> {
   type: OsAct.OS_GET_PROCESSES_META_THUNK;
 }
 interface ProcMeta { pid: number; ttyName: string | null; command: string }
@@ -477,7 +494,7 @@ export const osSpawnChildThunk = createOsThunk<OsAct, SpawnChildThunk>(
   (
     { dispatch, state: { os } },
     { processKey, childProcessKey, term, redirects, posPositionals,
-      background = false, suspend = false, specPgKey, subshell = false, exportVars = [] },
+      background = false, suspend = false, specPgKey, subshell = false, exportVars = [], command },
   ) => {
     /**
      * Fork {processKey} as {childProcessKey}.
@@ -536,7 +553,7 @@ export const osSpawnChildThunk = createOsThunk<OsAct, SpawnChildThunk>(
     /**
      * Replace cloned process with specified code.
      */
-    dispatch(osExecTermThunk({ processKey: childProcessKey, term }));
+    dispatch(osExecTermThunk({ processKey: childProcessKey, term, command: command || null }));
 
     if (!suspend) {
       /**
@@ -598,6 +615,10 @@ export interface SpawnChildDef extends BaseSpawnDef {
    * Exported variables to be created.
    */
   exportVars?: { varName: string; varValue: string }[];
+  /**
+   * Command which 'launched' this process.
+   */
+  command?: string;
   // /**
   //  * Attached source to propagate.
   //  */

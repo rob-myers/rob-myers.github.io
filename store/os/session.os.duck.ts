@@ -227,7 +227,7 @@ export const osCreateSessionThunk = createOsThunk<OsAct, CreateSessionThunk>(
      */
     // const bashTerm = new BashBinary({ key: CompositeType.binary, binaryKey: BinaryExecType.bash, args: [] });
     const bashTerm = service.term.createBinary({ binaryKey: BinaryExecType.bash, args: []});
-    dispatch(osExecTermThunk({ processKey, term: bashTerm }));
+    dispatch(osExecTermThunk({ processKey, term: bashTerm, command: '-bash' }));
     /**
      * Start controlling process.
      */
@@ -308,7 +308,7 @@ export const osSignalForegroundThunk = createOsThunk<OsAct, SignalForegroundThun
     }
 
     for (const processKey of signalKeys) {
-      const { sigHandler, term } = os.proc[processKey];
+      const { sigHandler, term, command } = os.proc[processKey];
       const handler = sigHandler[signal];
 
       if (!handler) {// Terminate if signal unhandled
@@ -325,7 +325,7 @@ export const osSignalForegroundThunk = createOsThunk<OsAct, SignalForegroundThun
           break;
         }
         case 'reset': {
-          dispatch(osExecTermThunk({ processKey, term }));
+          dispatch(osExecTermThunk({ processKey, term, command }));
           dispatch(osStartProcessThunk({ processKey }));
           break;
         }
