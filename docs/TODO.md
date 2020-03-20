@@ -3,9 +3,15 @@
 - bug: on window maximise, new area unreachable by cursor
 - indicate that Floyd-warshall stale/missing and recompute on create navpath
 
+- can trigger circle moving along path via css
+
+- Concerning future implementation of `goto`:
+  - takes arbitrarily many integer or empty params `4 '' -3 5 ...` 
+  - consumes two-at-a-time and simply goes to that point
+  - can specify ease-in/out or similar
+
 - clearer vision of site i.e. beyond `Level` + `Session` + comments.
 
-- can trigger circle moving along path via css
 - actors have position and direction
 - can `look`: metas within radius, ray-cast
 

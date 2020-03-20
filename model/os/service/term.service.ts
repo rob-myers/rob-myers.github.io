@@ -1014,8 +1014,8 @@ export class TermService {
         const { symbol, postfix, cs } = term.def;
         return cs.length === 1
           ? postfix
-            ? `${this.src(cs[0])}${symbol}`
-            : `${symbol}${this.src(cs[0])}`
+            ? `${this.src(cs[0])} ${symbol}`
+            : `${symbol} ${this.src(cs[0])}`
           : cs.map(c => this.src(c)).join(` ${symbol} `);
       }
       case CompositeType.time: {
