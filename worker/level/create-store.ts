@@ -31,6 +31,7 @@ const persistedReducer = persistReducer({
       (_, _key): LevelWorkerState['level'] => {
         return {
           instance: {},
+          aux: {},
         };
       },
       (state, _key) => ({

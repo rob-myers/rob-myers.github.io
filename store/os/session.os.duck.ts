@@ -237,13 +237,13 @@ export const osCreateSessionThunk = createOsThunk<OsAct, CreateSessionThunk>(
   },
 );
 interface CreateSessionThunk extends OsThunkAct<OsAct,
-  {
-    /** So can close session on ui close, if needed */
-    uiKey: string;
-    userKey: string;
-  },
-  // Outputs a session key.
-  { sessionKey: string; canonicalPath: string }
+{
+  /** So can close session on ui close, if needed */
+  uiKey: string;
+  userKey: string;
+},
+// Outputs a session key.
+{ sessionKey: string; canonicalPath: string }
 > {
   type: OsAct.OS_CREATE_SESSION_THUNK;
 }

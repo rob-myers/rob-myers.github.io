@@ -1,5 +1,10 @@
 # TODO
 
+- implement `ps`
+- implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
+- also need `fg` to put process into foreground
+- for `goto` intend stop/continue to pause/continue animations
+
 - can trigger circle moving along path via css
   - adding tag `@bob>foo` spawns bob and sends him to some meta tagged `foo`
   - clicking on `bob` pauses/resumes animation
@@ -7,10 +12,6 @@
 
 - BUG: on window maximise, new area unreachable by cursor
 - auto Floyd-warshall when missing and needed, notifying user
-
-- implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
-- also need `fg` to put process into foreground
-- for `goto` intend stop/continue to pause/continue animations
 
 - Concerning future implementation of `goto`:
   - takes many integer or empty params `4 '' -3 5 ...` 

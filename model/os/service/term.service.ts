@@ -15,6 +15,7 @@ import { HeadBinary } from '@model/sh/binary/head.binary';
 import { LsBinary } from '@model/sh/binary/ls.binary';
 import { MkdirBinary } from '@model/sh/binary/mkdir.binary';
 import { MvBinary } from '@model/sh/binary/mv.binary';
+import { PsBinary } from '@model/sh/binary/ps.binary';
 import { RealpathBinary } from '@model/sh/binary/realpath.binary';
 import { RmBinary } from '@model/sh/binary/rm.binary';
 import { RmdirBinary } from '@model/sh/binary/rmdir.binary';
@@ -199,6 +200,7 @@ export class TermService {
           case BinaryExecType.ls: return new LsBinary(term.def);
           case BinaryExecType.mkdir: return new MkdirBinary(term.def);
           case BinaryExecType.mv: return new MvBinary(term.def);
+          case BinaryExecType.ps: return new PsBinary(term.def);
           case BinaryExecType.realpath: return new RealpathBinary(term.def);
           case BinaryExecType.rm: return new RmBinary(term.def);
           case BinaryExecType.rmdir: return new RmdirBinary(term.def);
@@ -489,6 +491,7 @@ export class TermService {
       case BinaryExecType.ls: return new LsBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.mkdir: return new MkdirBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.mv: return new MvBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.ps: return new PsBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.realpath: return new RealpathBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.rm: return new RmBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.rmdir: return new RmdirBinary({ key: CompositeType.binary, binaryKey, args });
