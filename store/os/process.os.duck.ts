@@ -316,6 +316,7 @@ export type Thunk = (
   | ExecTermThunk
   | ForkProcessThunk
   | GetProcessThunk
+  | GetProcessesMetaThunk
   | IsSessionLeaderThunk
   | SpawnChildThunk
   | StartProcessThunk
@@ -434,6 +435,26 @@ interface GetProcessThunk extends OsThunkAct<OsAct, { processKey: string }, Proc
   type: OsAct.OS_GET_PROCESS_THUNK;
 }
 
+export const osGetProcessesMeta = createOsThunk<OsAct, GetProcessesMeta>(
+  OsAct.OS_GET_PROCESSES_META_THUNK,
+  ({ state: { os: { proc, session }}}) => {
+    return {
+      metas: Object.values(proc).map(({ pid, sessionKey, term }) => {
+        const { ttyPath } = session[sessionKey];
+        return {
+          pid,
+          command: '__TODO__',
+          ttyName: ttyPath?.split('/').pop() || null,
+        };
+      })
+    };
+  },
+);
+interface GetProcessesMeta extends OsThunkAct<OsAct, {}, { metas: ProcMeta[] }> {
+  type: OsAct.OS_GET_PROCESSES_META_THUNK;
+}
+interface ProcMeta { pid: number; ttyName: string | null; command: string }
+
 /**
  * Is {processKey} the session leader?
  */
@@ -538,8 +559,8 @@ export const osSpawnChildThunk = createOsThunk<OsAct, SpawnChildThunk>(
 );
 
 export interface SpawnChildThunk extends OsThunkAct<OsAct,
-  { processKey: string } & SpawnChildDef,
-  { toPromise: IoToPromise }
+{ processKey: string } & SpawnChildDef,
+{ toPromise: IoToPromise }
 > {
   type: OsAct.OS_SPAWN_CHILD_THUNK;
 }
@@ -629,8 +650,8 @@ export const osWriteWarningThunk = createOsThunk<OsAct, WriteWarningThunk>(
   },
 );
 interface WriteWarningThunk extends OsThunkAct<OsAct,
-  { processKey: string; line: string; term: Term },
-  Promise<void>
+{ processKey: string; line: string; term: Term },
+Promise<void>
 > {
   type: OsAct.OS_WRITE_WARNING;
 }
