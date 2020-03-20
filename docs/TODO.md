@@ -1,14 +1,23 @@
 # TODO
 
-- bug: on window maximise, new area unreachable by cursor
-- indicate that Floyd-warshall stale/missing and recompute on create navpath
-
 - can trigger circle moving along path via css
+  - adding tag `@bob>foo` spawns bob and sends him to some meta tagged `foo`
+  - clicking on `bob` pauses/resumes animation
+  - actors exist in `LevelAuxState`
+
+- BUG: on window maximise, new area unreachable by cursor
+- auto Floyd-warshall when missing and needed, notifying user
+
+- implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
+- also need `fg` to put process into foreground
+- for `goto` intend stop/continue to pause/continue animations
 
 - Concerning future implementation of `goto`:
-  - takes arbitrarily many integer or empty params `4 '' -3 5 ...` 
-  - consumes two-at-a-time and simply goes to that point
+  - takes many integer or empty params `4 '' -3 5 ...` 
+  - consumes two-at-a-time and simply goes to point
   - can specify ease-in/out or similar
+  - completes once respective animation is complete
+  - suspending it pauses animation
 
 - clearer vision of site i.e. beyond `Level` + `Session` + comments.
 

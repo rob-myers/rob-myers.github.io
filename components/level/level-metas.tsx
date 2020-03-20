@@ -143,13 +143,14 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
         overlayRef.current && (
           ReactDOM.createPortal(
             Object.values(levelMetas).map(({ key, tags }) => (
-              metaUi[key] && !draggedMeta && metaUi[key].open && (
+              metaUi[key] && metaUi[key].open && (
                 <section
                   key={key}
                   className={css.metaPopover}
                   style={{
                     left: metaUi[key].dialogPosition.x,
                     top: metaUi[key].dialogPosition.y,
+                    pointerEvents: draggedMeta ? 'none' : 'inherit',
                   }}
                   onWheel={(e) => {
                     /**

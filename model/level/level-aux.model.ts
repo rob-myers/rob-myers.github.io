@@ -4,7 +4,7 @@ import { NavPath } from '@model/nav/nav-path.model';
 export interface LevelAuxState {
   /** Aligned to `LevelState` */
   key: string;
-  /** Navigation path storage */
+  /** Navigation paths by key */
   navPath: KeyedLookup<NavPath>;
 }
 
