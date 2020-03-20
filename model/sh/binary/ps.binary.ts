@@ -11,10 +11,10 @@ export class PsBinary extends BaseBinaryComposite<BinaryExecType.ps> {
   }
 
   public async *semantics(dispatch: OsDispatchOverload): AsyncIterableIterator<ObservedType> {
-    yield this.write('PID'.padEnd(5) + 'TTY'.padEnd(7) + 'CMD');
+    yield this.write('PID'.padEnd(7) + 'TTY'.padEnd(9) + 'CMD');
     const { metas } = dispatch(osGetProcessesMeta({}));
     for (const { pid, ttyName, command } of metas) {
-      yield this.write(`${pid}`.padEnd(5) + `${ttyName || ''}`.padEnd(7) + `${command}`);
+      yield this.write(`${pid}`.padEnd(7) + `${ttyName || ''}`.padEnd(9) + `${command}`);
     }
   }
 
