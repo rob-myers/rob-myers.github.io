@@ -82,7 +82,15 @@ export class ParameterExpand extends BaseExpandComposite<ExpandType.parameter> {
             case '-': this.value = ''; break;
             // TODO take account of ()-subshells.
             case '$': this.value = String(process.pid); break;
-            case '!': this.value = String(process.lastBgKey || 0); break;
+            case '!': {
+              this.value = '';
+              if (process.lastBgKey) {
+                const bgProc = dispatch(osGetProcessThunk({ processKey: process.lastBgKey }));
+                // Only provide PID if background process still exists
+                bgProc && (this.value = bgProc.pid.toString());
+              }
+              break;
+            }
             default: throw testNever(this.def.param);
           }
           break;
@@ -374,12 +382,12 @@ export type ParameterDef<WordType, OpType> = BaseParamDef<OpType> & (
   | { parKey: ParamType.case; pattern: null | WordType; to: 'upper' | 'lower'; all: boolean }
   // Default parameters.
   | { parKey: ParamType.default; alt: null | WordType; colon: boolean;
-      symbol:
-      | '+' // Use alternative.
-      | '=' // Assign default.
-      | '?' // indicate error.
-      | '-';// Use default.
-    }
+    symbol:
+    | '+' // Use alternative.
+    | '=' // Assign default.
+    | '?' // indicate error.
+    | '-';// Use default.
+  }
   // Array keys ${!x[@]}, ${!x[*]}.
   | { parKey: ParamType.keys; split: boolean }
   // String length ${#x}, ${#x[i]}, ${#x[@]}
@@ -396,8 +404,8 @@ export type ParameterDef<WordType, OpType> = BaseParamDef<OpType> & (
   | { parKey: ParamType.replace; orig: WordType; with: null | WordType; all: boolean }
   // Special $@ | $* | ...
   | { parKey: ParamType.special;
-      // Removed '#@' and '#*'.
-      param: '@' | '*' | '#' | '?' | '-' | '$' | '!' | '0' | '_'; }
+    // Removed '#@' and '#*'.
+    param: '@' | '*' | '#' | '?' | '-' | '$' | '!' | '0' | '_'; }
   // Substring ${x:y:z}, ${x[i]:y:z}
   | { parKey: ParamType.substring; from: OpType; length: null | OpType }
   // Vars with given non-empty prefix ${!prefix*} or ${!prefix@}

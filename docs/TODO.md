@@ -1,6 +1,7 @@
 # TODO
 
-- Implement `init` without `while true; do sleep 1000; done`
+- Implement `init` without `while true; do sleep 1000; done` e.g. detect special case and don't start running term
+- BUG: `ps` command for launched processes should include args and redirs
 - BUG: `echo $$` showing wrong pid
 - dark mode with lights
 - lights can be turned on/off
@@ -170,3 +171,4 @@
 - Floyd-Warshall supports string-pulling
 - fix bug: prevent tab to offscreen meta via tabIndex -1 (it changed svg height)
 - implement `ps`
+- BUG: `echo $!` should be initial empty, and provides PID of last bg process if still exists
