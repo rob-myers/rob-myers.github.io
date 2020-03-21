@@ -334,10 +334,11 @@ export type Thunk = (
 export const osExecTermThunk = createOsThunk<OsAct, ExecTermThunk>(
   OsAct.OS_EXEC_TERM_THUNK,
   ( { dispatch, state: { os: { proc } }, service },
-    { processKey, term: execTerm, command },
+    { processKey, term: execTerm, command = null },
   ) => {
 
-    const term = service.term.cloneTerm(execTerm);
+    const cloned = service.term.cloneTerm(execTerm);
+    const term = service.term.eliminateSubshell(cloned);
     const observable = service.term.compile({ term, dispatch, processKey });
 
     if (proc[processKey].subscription) {// Stop running code.
@@ -359,7 +360,7 @@ export const osExecTermThunk = createOsThunk<OsAct, ExecTermThunk>(
         nestedVars: [{ ...last(nestedVars) }],
         // Clear code stack.
         codeStack: [],
-        command: command || null,
+        command,
       }),
     }));
   },
@@ -442,6 +443,9 @@ interface GetProcessThunk extends OsThunkAct<OsAct, { processKey: string }, Proc
   type: OsAct.OS_GET_PROCESS_THUNK;
 }
 
+/**
+ * Get info about all processes.
+ */
 export const osGetProcessesMeta = createOsThunk<OsAct, GetProcessesMetaThunk>(
   OsAct.OS_GET_PROCESSES_META_THUNK,
   ({ state: { os: { proc, session }}, dispatch }) => {
@@ -494,34 +498,24 @@ export const osSpawnChildThunk = createOsThunk<OsAct, SpawnChildThunk>(
   (
     { dispatch, state: { os } },
     { processKey, childProcessKey, term, redirects, posPositionals,
-      background = false, suspend = false, specPgKey, subshell = false, exportVars = [], command },
+      background = false, suspend = false, specPgKey, subshell = false, exportVars = [], command = null },
   ) => {
-    /**
-     * Fork {processKey} as {childProcessKey}.
-     */
+    // Fork {processKey} as {childProcessKey}
     dispatch(osForkProcessThunk({ parentKey: processKey, processKey: childProcessKey }));
-    /**
-     * Apply any explicit redirections (as opposed to {RedirectComposite}).
-     */
+    // Apply any explicit redirections (as opposed to {RedirectComposite})
     redirects.forEach(({ fd, mode, path }) =>
       dispatch(osOpenFileThunk({ processKey: childProcessKey, request: { fd, mode, path } }))
     );
 
     if (specPgKey) {
-      /**
-       * Add to specified process group.
-       */
+      // Add to specified process group
       dispatch(osSetProcessGroupAct({ processKey: childProcessKey, processGroupKey: specPgKey }));
       if (!background) {
-        /**
-         * Assume not in background means in session foreground.
-         */
+        // Assume not in background means in session foreground
         dispatch(osSetSessionForegroundAct({ processKey, processGroupKey: specPgKey }));
       }
     } else if (background) {
-      /**
-       * If parent in session foreground, create new process group for child.
-       */
+      // If parent in session foreground, create new process group for child
       const { sessionKey, processGroupKey } = os.proc[processKey];
       const { fgStack } = os.session[sessionKey];
       if (fgStack.length && (processGroupKey === last(fgStack))) {
@@ -530,18 +524,12 @@ export const osSpawnChildThunk = createOsThunk<OsAct, SpawnChildThunk>(
     }
 
     if (subshell) {
-      /**
-       * Subshells inherit everything (cloned), including positional params.
-       */
+      // Subshells inherit everything (cloned), including positional params
     } else {
-      /**
-       * Restrict child process to environment vars/functions, and set positionals.
-       */
+      // Restrict child process to environment vars/functions, and set positionals
       dispatch(osRestrictToEnvThunk({ processKey: childProcessKey, posPositionals }));
     }
-    /**
-     * Export specified variables into child process.
-     */
+    // Export specified variables into child process
     for (const { varName, varValue } of exportVars) {
       dispatch(osAssignVarThunk({
         processKey: childProcessKey,
@@ -550,26 +538,18 @@ export const osSpawnChildThunk = createOsThunk<OsAct, SpawnChildThunk>(
         exported: true,
       }));
     }
-    /**
-     * Replace cloned process with specified code.
-     */
-    dispatch(osExecTermThunk({ processKey: childProcessKey, term, command: command || null }));
+    // Replace cloned process with specified code
+    dispatch(osExecTermThunk({ processKey: childProcessKey, term, command }));
 
     if (!suspend) {
-      /**
-       * Start child process.
-       */
+      // Start child process
       dispatch(osStartProcessThunk({ processKey: childProcessKey }));
     }
     if (!background) {
-      /**
-       * Wait for child to terminate.
-       */
+      // Wait for child to terminate
       return { ...dispatch(osWaiterThunk({ processKey, waitFor: [childProcessKey] })) };
     }
-    /**
-     * Inform parent of last background child.
-     */
+    // Inform parent of last background child
     dispatch(osUpdateProcessAct({ processKey, updater: () => ({ lastBgKey: childProcessKey }) }));
     return { toPromise: null };
   },
@@ -787,13 +767,12 @@ export const osTerminateProcessThunk = createOsThunk<OsAct, TerminateProcessThun
     // Stop any running code
     os.proc[processKey].subscription?.unsubscribe();
     // Terminate any spawned processes
-    // TODO terminate descendants if we implement non-interactive bash
     Object.values(os.proc)
       .filter(({ parentKey }) => processKey === parentKey)
       .forEach(({ key }) => dispatch(osTerminateProcessThunk({ processKey: key, exitCode: 0 })));
+    // TODO terminate descendants if implement non-interactive bash?
 
     dispatch(osUnregisterProcessAct({ processKey }));
-
     console.log(`[\x1b[36m${processKey}\x1b[39m] has terminated.`);
 
     const { parentKey } = os.proc[processKey];

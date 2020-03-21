@@ -581,187 +581,20 @@ export class TermService {
     return iterator$;
   }
 
-  public walkTerm(node: Term, func: (node: Term) => void): void {
-    func(node);
-    switch (node.key) {
-      case CompositeType.binary:
-      case CompositeType.builtin:
-      case CompositeType.redirect:
-      case CompositeType.simple: // Ignore mounted.
-        return;
-      case CompositeType.and:
-      case CompositeType.arithm_op:
-      case CompositeType.block:
-      case CompositeType.or:
-      case CompositeType.pipe:
-      case CompositeType.seq: {
-        node.def.cs.forEach((c) => this.walkTerm(c, func));
-        return;
-      }
-      case CompositeType.array: {
-        node.def.pairs.forEach(({ key, value }) => {
-          key && this.walkTerm(key, func);
-          this.walkTerm(value, func);
-        });
-        return;
-      }
-      case CompositeType.assign: {
-        switch (node.def.subKey) {
-          case 'array': this.walkTerm(node.def.array, func); break;
-          case 'item': {
-            this.walkTerm(node.def.index, func);
-            node.def.value && this.walkTerm(node.def.value, func);
-            break;
-          }
-          case 'var': {
-            node.def.value && this.walkTerm(node.def.value, func);
-            break;
-          }
-          default: throw testNever(node.def);
-        }
-        return;
-      }
-      case CompositeType.case: {
-        this.walkTerm(node.def.head, func);
-        node.def.cases.forEach(({ child, globs }) => {
-          this.walkTerm(child, func);
-          globs.forEach((glob) => this.walkTerm(glob, func));
-        });
-        return;
-      }
-      case CompositeType.compound: {
-        this.walkTerm(node.def.child, func);
-        node.def.redirects.forEach((redirect) => this.walkTerm(redirect, func));
-        return;
-      }
-      case CompositeType.declare: {
-        node.def.assigns.forEach((assign) => this.walkTerm(assign, func));
-        node.def.options.forEach((option) => this.walkTerm(option, func));
-        return;
-      }
-      case CompositeType.expand: {
-        switch (node.expandKey) {
-          case ExpandType.arithmetic: {
-            this.walkTerm(node.def.expr, func);
-            return;
-          }
-          case ExpandType.command: {
-            node.def.cs.forEach((c) => this.walkTerm(c, func));
-            return;
-          }
-          case ExpandType.doubleQuote: {
-            node.def.cs.forEach((c) => this.walkTerm(c, func));
-            return;
-          }
-          case ExpandType.extendedGlob:
-          case ExpandType.literal:
-          case ExpandType.singleQuote: {
-            return;
-          }
-          case ExpandType.parameter: {
-            const { def } = node;
-            switch (def.parKey) {
-              case ParamType['case']:
-              case ParamType['remove']: {
-                def.index && this.walkTerm(def.index, func);
-                def.pattern && this.walkTerm(def.pattern, func);
-                break;
-              }
-              case ParamType['default']: {
-                def.alt && this.walkTerm(def.alt, func);
-                def.index && this.walkTerm(def.index, func);
-                break;
-              }
-              case ParamType['keys']:
-              case ParamType['length']:
-              case ParamType['plain']:
-              case ParamType['pointer']:
-              case ParamType['position']: {
-                def.index && this.walkTerm(def.index, func);
-                break;
-              }
-              case ParamType['replace']: {
-                def.index && this.walkTerm(def.index, func);
-                this.walkTerm(def.orig, func);
-                def.with && this.walkTerm(def.with, func);
-                break;
-              }
-              case ParamType['special']: break;
-              case ParamType['substring']: {
-                this.walkTerm(def.from, func);
-                def.index && this.walkTerm(def.index, func);
-                def.length && this.walkTerm(def.length, func);
-                break;
-              }
-              case ParamType['vars']: {
-                def.index && this.walkTerm(def.index, func);
-                break;
-              }
-              default: throw testNever(def);
-            }
-            return;
-          }
-          case ExpandType.parts: {
-            node.def.cs.forEach((c) => this.walkTerm(c, func));
-            return;          
-          }
-          case ExpandType.process: {
-            node.def.cs.forEach((c) => this.walkTerm(c, func));
-            return;          
-          }
-          default: throw testNever(node);
-        }
-      }
-      case CompositeType.function: {
-        this.walkTerm(node.def.body, func);
-        return;
-      }
-      case CompositeType.if: {
-        node.def.cs.forEach(({ child, test }) => {
-          this.walkTerm(child, func);
-          test && this.walkTerm(test, func);
-        });
-        return;
-      }
-      case CompositeType.let: {
-        node.def.cs.forEach((c) => this.walkTerm(c, func));
-        return;
-      }
-      case CompositeType.subshell: {
-        node.def.cs.forEach((c) => this.walkTerm(c, func));
-        return;
-      }
-      case CompositeType.test: {
-        this.walkTerm(node.def.expr, func);
-        return;
-      }
-      case CompositeType.test_op: {
-        node.def.cs.forEach((c) => this.walkTerm(c, func));
-        return;
-      }
-      case CompositeType.time: {
-        node.def.timed && this.walkTerm(node.def.timed, func);
-        return;
-      }
-      case IteratorType.cstyle_for: {
-        this.walkTerm(node.def.body, func);
-        this.walkTerm(node.def.condition, func);
-        this.walkTerm(node.def.post, func);
-        this.walkTerm(node.def.prior, func);
-        return;
-      }
-      case IteratorType.for: {
-        this.walkTerm(node.def.body, func);
-        node.def.items.forEach((c) => this.walkTerm(c, func));
-        return;
-      }
-      case IteratorType.while: {
-        this.walkTerm(node.def.body, func);
-        this.walkTerm(node.def.guard, func);
-        return;
-      }
-      default: throw testNever(node);
-    } 
+  /**
+   * Eliminate subshell if root term of a process e.g `( foo; bar ) &`.
+   * Modified to look good in `ps` e.g. `( sleep ) &` results in 2 processes
+   * `{ sleep; }` and `sleep`.
+   */
+  public eliminateSubshell(root: Term): Term {
+    if (root.key === CompositeType.subshell) {
+      return root.children.length
+        ? root.children.length > 1 || root.children[0].key === CompositeType.simple
+          ? new BlockComposite({ key: CompositeType.block, cs: root.children })
+          : root.children[0]
+        : this.createBuiltin({ builtinKey: BuiltinOtherType.true, args: [] });
+    }
+    return root;
   }
 
   private optsSrc(opts: GetOpts<string, string>): string {
@@ -1049,5 +882,188 @@ export class TermService {
       }
       default: throw testNever(term);
     }
+  }
+
+  public walkTerm(node: Term, func: (node: Term) => void): void {
+    func(node);
+    switch (node.key) {
+      case CompositeType.binary:
+      case CompositeType.builtin:
+      case CompositeType.redirect:
+      case CompositeType.simple: // Ignore mounted.
+        return;
+      case CompositeType.and:
+      case CompositeType.arithm_op:
+      case CompositeType.block:
+      case CompositeType.or:
+      case CompositeType.pipe:
+      case CompositeType.seq: {
+        node.def.cs.forEach((c) => this.walkTerm(c, func));
+        return;
+      }
+      case CompositeType.array: {
+        node.def.pairs.forEach(({ key, value }) => {
+          key && this.walkTerm(key, func);
+          this.walkTerm(value, func);
+        });
+        return;
+      }
+      case CompositeType.assign: {
+        switch (node.def.subKey) {
+          case 'array': this.walkTerm(node.def.array, func); break;
+          case 'item': {
+            this.walkTerm(node.def.index, func);
+            node.def.value && this.walkTerm(node.def.value, func);
+            break;
+          }
+          case 'var': {
+            node.def.value && this.walkTerm(node.def.value, func);
+            break;
+          }
+          default: throw testNever(node.def);
+        }
+        return;
+      }
+      case CompositeType.case: {
+        this.walkTerm(node.def.head, func);
+        node.def.cases.forEach(({ child, globs }) => {
+          this.walkTerm(child, func);
+          globs.forEach((glob) => this.walkTerm(glob, func));
+        });
+        return;
+      }
+      case CompositeType.compound: {
+        this.walkTerm(node.def.child, func);
+        node.def.redirects.forEach((redirect) => this.walkTerm(redirect, func));
+        return;
+      }
+      case CompositeType.declare: {
+        node.def.assigns.forEach((assign) => this.walkTerm(assign, func));
+        node.def.options.forEach((option) => this.walkTerm(option, func));
+        return;
+      }
+      case CompositeType.expand: {
+        switch (node.expandKey) {
+          case ExpandType.arithmetic: {
+            this.walkTerm(node.def.expr, func);
+            return;
+          }
+          case ExpandType.command: {
+            node.def.cs.forEach((c) => this.walkTerm(c, func));
+            return;
+          }
+          case ExpandType.doubleQuote: {
+            node.def.cs.forEach((c) => this.walkTerm(c, func));
+            return;
+          }
+          case ExpandType.extendedGlob:
+          case ExpandType.literal:
+          case ExpandType.singleQuote: {
+            return;
+          }
+          case ExpandType.parameter: {
+            const { def } = node;
+            switch (def.parKey) {
+              case ParamType['case']:
+              case ParamType['remove']: {
+                def.index && this.walkTerm(def.index, func);
+                def.pattern && this.walkTerm(def.pattern, func);
+                break;
+              }
+              case ParamType['default']: {
+                def.alt && this.walkTerm(def.alt, func);
+                def.index && this.walkTerm(def.index, func);
+                break;
+              }
+              case ParamType['keys']:
+              case ParamType['length']:
+              case ParamType['plain']:
+              case ParamType['pointer']:
+              case ParamType['position']: {
+                def.index && this.walkTerm(def.index, func);
+                break;
+              }
+              case ParamType['replace']: {
+                def.index && this.walkTerm(def.index, func);
+                this.walkTerm(def.orig, func);
+                def.with && this.walkTerm(def.with, func);
+                break;
+              }
+              case ParamType['special']: break;
+              case ParamType['substring']: {
+                this.walkTerm(def.from, func);
+                def.index && this.walkTerm(def.index, func);
+                def.length && this.walkTerm(def.length, func);
+                break;
+              }
+              case ParamType['vars']: {
+                def.index && this.walkTerm(def.index, func);
+                break;
+              }
+              default: throw testNever(def);
+            }
+            return;
+          }
+          case ExpandType.parts: {
+            node.def.cs.forEach((c) => this.walkTerm(c, func));
+            return;          
+          }
+          case ExpandType.process: {
+            node.def.cs.forEach((c) => this.walkTerm(c, func));
+            return;          
+          }
+          default: throw testNever(node);
+        }
+      }
+      case CompositeType.function: {
+        this.walkTerm(node.def.body, func);
+        return;
+      }
+      case CompositeType.if: {
+        node.def.cs.forEach(({ child, test }) => {
+          this.walkTerm(child, func);
+          test && this.walkTerm(test, func);
+        });
+        return;
+      }
+      case CompositeType.let: {
+        node.def.cs.forEach((c) => this.walkTerm(c, func));
+        return;
+      }
+      case CompositeType.subshell: {
+        node.def.cs.forEach((c) => this.walkTerm(c, func));
+        return;
+      }
+      case CompositeType.test: {
+        this.walkTerm(node.def.expr, func);
+        return;
+      }
+      case CompositeType.test_op: {
+        node.def.cs.forEach((c) => this.walkTerm(c, func));
+        return;
+      }
+      case CompositeType.time: {
+        node.def.timed && this.walkTerm(node.def.timed, func);
+        return;
+      }
+      case IteratorType.cstyle_for: {
+        this.walkTerm(node.def.body, func);
+        this.walkTerm(node.def.condition, func);
+        this.walkTerm(node.def.post, func);
+        this.walkTerm(node.def.prior, func);
+        return;
+      }
+      case IteratorType.for: {
+        this.walkTerm(node.def.body, func);
+        node.def.items.forEach((c) => this.walkTerm(c, func));
+        return;
+      }
+      case IteratorType.while: {
+        this.walkTerm(node.def.body, func);
+        this.walkTerm(node.def.guard, func);
+        return;
+      }
+      default: throw testNever(node);
+    } 
   }
 }

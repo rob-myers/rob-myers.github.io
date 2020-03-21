@@ -1,5 +1,7 @@
 # TODO
 
+-  BUG: `echo $$` showing wrong pid
+
 - implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
 - for `goto` intend stop/continue to pause/continue animations
