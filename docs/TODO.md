@@ -1,6 +1,5 @@
 # TODO
 
-- BUG: `ps` command for launched processes should include args and redirs
 - BUG: `echo $$` showing wrong pid
 - dark mode with lights
 - lights can be turned on/off
@@ -194,3 +193,4 @@
   while true; do echo foo; eval '{ sleep 1 & }' ; done
   ```
 - Implement `init` without `while true; do sleep 1000; done` e.g. detect special case and don't start running term
+- BUG: `ps` command for launched processes should include args and redirs

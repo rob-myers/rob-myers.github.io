@@ -9,7 +9,7 @@ import { ExpandType } from '../expand.model';
 import { normalizeWhitespace, launchedInteractively, TermError } from '@os-service/term.util';
 import { osExpandFilepathThunk, osResolvePathThunk } from '@store/os/file.os.duck';
 import { osPushRedirectScopeAct, osPopRedirectScopeAct, osGetFunctionThunk, osPushVarScopeAct, osPopVarScopeAct } from '@store/os/declare.os.duck';
-import { osCloneTerm, osCreateBuiltinThunk, osCreateBinaryThunk } from '@store/os/parse.os.duck';
+import { osCloneTerm, osCreateBuiltinThunk, osCreateBinaryThunk, osGetHistoricalSrc } from '@store/os/parse.os.duck';
 import { isBuiltinSpecialCommand, isBuiltinOtherCommand, BuiltinSpecialType, BuiltinOtherType, isDeclareBuiltinType, BuiltinType } from '@model/sh/builtin.model';
 import { BinaryType } from '@model/sh/binary.model';
 import { INodeType } from '@store/inode/base-inode';
@@ -355,8 +355,12 @@ export class SimpleComposite extends BaseCompositeTerm<CompositeType.simple> {
        * Evaluated assignments will be exported in new process.
        */
       exportVars,
-      // Launched binary or builtin have filepath
-      command: this.method.filepath,
+      /**
+       * Store launched command for `ps`, recalling that this.arg[0] is filepath.
+       */
+      command: this.args
+        .concat(this.def.redirects.map(r => dispatch(osGetHistoricalSrc({ term: r }))))
+        .join(' '),
     }));
 
     // Mustn't pop scope if it was changed by an exec
