@@ -344,7 +344,7 @@ export const osAssignVarThunk = createOsThunk<OsAct, AssignVarThunk>(
      * Require alphanumeric variable name, where 1st char non-numeric.
      */
     if (!/^[a-z_][a-z0-9_]*$/i.test(varName || '')) {
-      throw Error(`\`${varName}' not a valid identifier`);
+      throw new TermError(`\`${varName}' not a valid identifier`, 1);
     }
     /**
      * Local readonly variables cannot be overwritten.
@@ -384,10 +384,10 @@ export const osAssignVarThunk = createOsThunk<OsAct, AssignVarThunk>(
     let next: ProcessVar;
 
     const curr = ns[scopeIndex][varName];
-    if (curr.readonly) {
-      throw Error(`${curr.varName}: readonly variable`);
+    if (curr.readonly && !def.force) {
+      throw new TermError(`${curr.varName}: readonly variable`, 1);
     } else if (curr.key === 'positional') {
-      throw Error(`${curr.varName}: positional variable`);
+      throw new TermError(`${curr.varName}: positional variable`, 1);
     }
     const { integer } = def;
     /**

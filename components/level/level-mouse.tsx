@@ -39,10 +39,11 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
     const sub = wheelForwarder.subscribe((msg) => onWheel.current(msg.e));
     dispatch(Act.updateLevel(levelUid, { wheelForwarder }));
 
-    const onResize = () => {// Ensure rectangle 100% on window resize
-      if (rectEl.current) {
-        rectEl.current.style.setProperty('min-width', '100%');
-        rectEl.current.style.setProperty('min-height', '100%');
+    const onResize = () => {
+      const el = rectEl.current;
+      if (el && el.parentElement) {// Ensure rectangle 100% on resize
+        el.style.setProperty('width', `${el.parentElement.clientWidth}px`);
+        el.style.setProperty('height', `${el.parentElement.clientHeight}px`);
       }
     };
     window.addEventListener('resize', onResize);
