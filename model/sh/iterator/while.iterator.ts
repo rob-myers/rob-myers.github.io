@@ -9,8 +9,6 @@ import { pause } from '@model/generic.model';
  */
 export class WhileIterator extends BaseIteratorTerm<IteratorType.while> {
 
-  private readonly pauseIterations = 1000;
-
   public get children(): Term[] {
     return [this.def.guard, this.def.body];
   }
@@ -24,9 +22,8 @@ export class WhileIterator extends BaseIteratorTerm<IteratorType.while> {
     let numIterations = 0;
 
     while (true) {
-      if (numIterations++ > this.pauseIterations) {
-        numIterations = 0;
-        await pause(100); // Throttle
+      if (!(numIterations++ % 10)) {
+        await pause(10); // Permit e.g. SIGINT
       }
 
       yield* this.runChild({ child: guard, dispatch, processKey });

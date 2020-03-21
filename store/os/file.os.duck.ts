@@ -607,12 +607,10 @@ export const osResolvePathThunk = createOsThunk<OsAct, ResolvePathThunk>(
               return { absPath: join(dirPath, path), iNode: dirNode.to[path] };
             }
           }
-        } catch (e) {
-          // NOOP
-        }
+        } catch (e) { /** NOOP */ }
       }
     }
-    throw new TermError(`${path}: no such file or directory`, 1);
+    throw new TermError(`${path}: no such file or directory`, 1, 'F_NO_EXIST');
   },
 );
 interface ResolvePathThunk extends OsThunkAct<OsAct,

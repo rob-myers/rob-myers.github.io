@@ -54,15 +54,15 @@ export class FilesystemService {
       if (iNode.type === INodeType.directory) {
         iNode = iNode.to[part];
       } else {
-        throw new TermError(`${part}: not a directory`, 1);
+        throw new TermError(`${part}: not a directory`, 1, 'NOT_A_DIR');
       }
     }
     if (lastPart) {
       if (iNode.type !== INodeType.directory) {
         // Penultimate not a directory.
-        throw new TermError(`${last(parts)}: no such file or directory`, 1);
+        throw new TermError(`${last(parts)}: no such file or directory`, 1, 'F_NO_EXIST');
       } else if (!iNode.to[lastPart]) {
-        throw new TermError(`${lastPart}: no such file or directory`, 1);
+        throw new TermError(`${lastPart}: no such file or directory`, 1, 'F_NO_EXIST');
       }
       return iNode.to[lastPart];
     }
@@ -110,7 +110,7 @@ export class FilesystemService {
     { homeDir, cwd }: { homeDir: string; cwd: string },
   ) {
     if (!path.trim()) {// Only whitespace.
-      throw new TermError(`${path}: no such file or directory`, 1);
+      throw new TermError(`${path}: no such file or directory`, 1, 'F_NO_EXIST');
     }
     const absPath = this.absPath(path, { homeDir, cwd });
 
@@ -125,14 +125,14 @@ export class FilesystemService {
       if (iNode.type === INodeType.directory) {
         iNode = iNode.to[part];
         if (!iNode) {
-          throw new TermError(`${path}: no such file or directory`, 1);
+          throw new TermError(`${path}: no such file or directory`, 1, 'F_NO_EXIST');
         } else if (part === '..') {
           absParts.pop();
         } else {
           absParts.push(part);
         }
       } else {
-        throw new TermError(`${path}: no such file or directory`, 1);
+        throw new TermError(`${path}: no such file or directory`, 1, 'F_NO_EXIST');
       }
     }
 

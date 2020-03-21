@@ -6,7 +6,7 @@ import { BaseCompositeTerm } from './base-composite';
 import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { ExpandType } from '../expand.model';
-import { normalizeWhitespace, launchedInteractively } from '@os-service/term.util';
+import { normalizeWhitespace, launchedInteractively, TermError } from '@os-service/term.util';
 import { osExpandFilepathThunk, osResolvePathThunk } from '@store/os/file.os.duck';
 import { osPushRedirectScopeAct, osPopRedirectScopeAct, osGetFunctionThunk, osPushVarScopeAct, osPopVarScopeAct } from '@store/os/declare.os.duck';
 import { osCloneTerm, osCreateBuiltinThunk, osCreateBinaryThunk } from '@store/os/parse.os.duck';
@@ -66,11 +66,7 @@ export class SimpleComposite extends BaseCompositeTerm<CompositeType.simple> {
 
     yield* this.tryInvokeFunction(dispatch, processKey);
     yield* this.tryRunBuiltin(dispatch, processKey);
-
-    // Try to launch binary or script in new process.
     yield* this.tryLaunch(dispatch, processKey);
-
-    yield this.exit(1, `${this.args[0]}: command not found`);
   }
 
   private async *computeArgs(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
@@ -223,26 +219,49 @@ export class SimpleComposite extends BaseCompositeTerm<CompositeType.simple> {
     } 
   }
 
+  /**
+   * Try to launch binary or script in new process.
+   */
   private async *tryLaunch(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
     try {
-      /**
-       * Try to resolve path locally or via PATH.
-       */
+      // Try to resolve path locally or via PATH
       const { iNode } = dispatch(osResolvePathThunk({ processKey, path: this.args[0], PATH: true }));
+
       if (iNode.type === INodeType.regular) {
         if (iNode.binary) {
           yield* this.launch(iNode.def.binaryType as BinaryType, dispatch, processKey);
         } else if (/^~|(\.?\/)/.test(this.args[0])) {
           /**
-           * Only try to run script if path started '~', './' or '/'.
-           * Run script by launching {source} in new process.
+           * Only try to run script if path has prefix '~', './' or '/'.
+           * Run script by launching builtin `source` in new process.
            */
           yield* this.launch(BuiltinOtherType.source, dispatch, processKey);
+        } else {
+          /**
+           * Regular file like 'foo' won't be executed even if script.
+           * Would've worked if it was a function.
+           */
+          yield this.exit(1, `${this.args[0]}: command not found`);
         }
       }
     } catch (e) {
-      // NOOP
-    }    
+      if (e instanceof TermError) {
+        console.log({ termError: e });
+        if (e.internalCode === 'P_EXIST') {
+          /**
+           * We forbid spawning multiple processes from same subterm,
+           * e.g. `while true; do sleep 1 & done` fails after 1st iteration.
+           * This is for system stability and can be bypassed via `eval`,
+           * e.g. `while true; do eval "{ sleep 1; } &"; done`.
+           */
+          yield this.exit(1, 'at most one process permitted per subterm');
+        } else if (e.internalCode === 'F_NO_EXIST') {
+          // Rewrite errors due to failure to resolve iNode
+          yield this.exit(1, `${this.args[0]}: command not found`);
+        }
+      }
+      throw e;
+    }
   }
 
   private async *launch(binaryKey: BinaryType | BuiltinOtherType.source, dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {

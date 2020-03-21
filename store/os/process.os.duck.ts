@@ -16,6 +16,7 @@ import { OpenFileRequest } from '@model/os/file.model';
 import { osSetSessionForegroundAct } from './session.os.duck';
 import { builtinKeyToCommand } from '@model/sh/builtin.model';
 import { osGetHistoricalSrc } from './parse.os.duck';
+import { TermError } from '@model/os/service/term.util';
 
 export type Action = (
   | ClearBufferAct
@@ -384,9 +385,9 @@ export const osForkProcessThunk = createOsThunk<OsAct, ForkProcessThunk>(
   ) => {
 
     if (proc[processKey]) {
-      throw new Error(`Cannot fork '${parentKey}' as pre-existing process '${processKey}'.`);
+      throw new TermError(`Cannot fork '${parentKey}' as extant '${processKey}'`, 2, 'P_EXIST');
     } else if (!proc[parentKey]) {
-      throw new Error(`Cannot fork non-existent process '${parentKey}' as '${processKey}'.`);
+      throw new TermError(`Cannot fork non-extant '${parentKey}' as '${processKey}'`, 2, 'PP_NO_EXIST');
     }
     const {
       term: parentTerm, nestedVars, toFunc, sessionKey,

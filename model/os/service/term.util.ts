@@ -1,7 +1,7 @@
+import { last } from '@model/generic.model';
 import { Term, BinaryComposite, CompositeType } from '@model/os/term.model';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { ObservedType } from './term.service';
-import { last } from '@model/generic.model';
 import { PipeComposite } from '@model/sh/composite/pipe.composite';
 import { BinaryExecType } from '@model/sh/binary.model';
 import { BashBinary } from '@model/sh/binary/bash.binary';
@@ -11,7 +11,11 @@ import { SingleQuoteExpand } from '@model/sh/expand/single-quote.expand';
 import { SimpleComposite } from '@model/sh/composite/simple.composite';
 
 export class TermError extends Error {
-  constructor(message: string, public exitCode: number) {
+  constructor(
+    message: string,
+    public exitCode: number,
+    public internalCode?: 'P_EXIST' | 'PP_NO_EXIST' | 'F_NO_EXIST' | 'NOT_A_DIR',
+  ) {
     super(message);
     // Set the prototype explicitly.
     Object.setPrototypeOf(this, TermError.prototype);

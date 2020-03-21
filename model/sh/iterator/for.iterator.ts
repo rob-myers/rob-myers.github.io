@@ -28,7 +28,8 @@ export class ForIterator extends BaseIteratorTerm<IteratorType.for> {
       // Expand word.
       yield* this.runChild({ child: item, dispatch, processKey });
 
-      const values = (item.def.expandKey === ExpandType.parameter
+      const values = (
+        item.def.expandKey === ExpandType.parameter
         || item.def.expandKey === ExpandType.command
       ) ? normalizeWhitespace(item.value) : item.values;
 
@@ -37,7 +38,7 @@ export class ForIterator extends BaseIteratorTerm<IteratorType.for> {
         dispatch(osAssignVarThunk({ processKey, varName: paramName, act: { key: 'default', value: word } }));
         yield* this.runChild({ child: body, dispatch, processKey });
   
-        if (this.breakDepth || this.returnCode !== null || this.continueDepth && this.continueDepth > 1) {
+        if (this.breakDepth || this.returnCode !== null || (this.continueDepth && this.continueDepth > 1)) {
           this.propagateBreakers();
           stop = true;
           break;
@@ -49,7 +50,6 @@ export class ForIterator extends BaseIteratorTerm<IteratorType.for> {
         break;
       }
     }
-    yield this.exit();
   }
 }
 

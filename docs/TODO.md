@@ -1,7 +1,5 @@
 # TODO
 
-- BUG: can't `sleep 2 &` inside while loop 
-
 - BUG: `ps` command for launched processes should include args and redirs
 - Implement `init` without `while true; do sleep 1000; done` e.g. detect special case and don't start running term
 - BUG: `echo $$` showing wrong pid
@@ -177,9 +175,22 @@
 - implement `ps`
 - BUG: `echo $!` should be initial empty, and provides PID of last bg process if still exists
 - BUG: system breaks on:
-```bash
-$ sleep 10 >baz
-^C
-```
-FIX: do not pop redirect scope in bash if `exec` has changed it.
+  ```sh
+  $ sleep 10 >baz
+  ^C
+  ```
+  FIX: do not pop redirect scope in bash if `exec` has changed it.
 - BUG: serialization of iterators e.g. `while true; do echo foo; sleep 2; echo bar & done` 
+- BUG: can't `sleep 1 &` inside while loop 
+  ```sh
+  # works
+  while true; do sleep 1 & break; done
+  # but the following errors after 1st iteration
+  # -bash: sleep: command not found
+  while true; do echo foo; sleep 1 & done
+  ```
+  We need better error handling, but perhaps _should_ prevent iterated background processes.
+  Can also get around it via `eval`, but that's ok:
+  ```sh
+  while true; do echo foo; eval '{ sleep 1 & }' ; done
+  ```
