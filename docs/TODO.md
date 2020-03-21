@@ -1,10 +1,6 @@
 # TODO
 
-- lights can be turned on/off
-- BUG: on window maximise, new area unreachable by cursor 
 - auto Floyd-warshall when missing and needed, notifying user
-
-- add basic shell testing framework
 
 - implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
@@ -14,6 +10,8 @@
   - adding tag `@bob>foo` spawns bob and sends him to some meta tagged `foo`
   - clicking on `bob` pauses/resumes animation
   - actors exist in `LevelAuxState`
+
+- add basic shell testing framework
 
 - Concerning future implementation of `goto`:
   - takes many integer or empty params `4 '' -3 5 ...` 
@@ -194,3 +192,4 @@
 - BUG: `ps` command for launched processes should include args and redirs
 - BUG: `echo $$` showing wrong pid
 - dark mode with lights
+- BUG: on window maximise, new area unreachable by cursor 

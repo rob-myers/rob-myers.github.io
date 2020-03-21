@@ -38,11 +38,22 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
     const wheelForwarder = redact(new ReplaySubject<ForwardedWheelEvent>());
     const sub = wheelForwarder.subscribe((msg) => onWheel.current(msg.e));
     dispatch(Act.updateLevel(levelUid, { wheelForwarder }));
+
+    const onResize = () => {// Ensure rectangle 100% on window resize
+      if (rectEl.current) {
+        rectEl.current.style.setProperty('min-width', '100%');
+        rectEl.current.style.setProperty('min-height', '100%');
+      }
+    };
+    window.addEventListener('resize', onResize);
+
     return () => {
       sub.unsubscribe();
       dispatch(Act.updateLevel(levelUid, { wheelForwarder: null }));
+      window.removeEventListener('resize', onResize);
     };
   }, []);
+
 
   const setCursor = (cursor: 'auto' | 'pointer') =>
     rectEl.current?.style.setProperty('cursor', cursor);

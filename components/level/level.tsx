@@ -45,7 +45,7 @@ const Level: React.FC<Props> = ({ uid }) => {
         <LevelKeys levelUid={uid}>
           <LevelMenu levelUid={uid} />
           <section className={css.viewport}>
-            <svg className={css.svg} >
+            <svg className={css.svg} preserveAspectRatio="none">
               <LevelMouse levelUid={uid} />
               <g style={{ transform: scale }}>
                 <g style={{ transform: translate }}>
