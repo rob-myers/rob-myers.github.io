@@ -122,7 +122,11 @@ export class TermService {
     processKey: string;
   }) {
     const iterator = iterateTerm({ term, dispatch, processKey });
-    const subject = this.createIteratorSubject<any, ObservedType>(iterator);
+    const subject = processKey === 'init'
+      // Never start 'init'
+      ? new ReplaySubject() as any
+      // This iterator is started as soon as it is created
+      : this.createIteratorSubject<any, ObservedType>(iterator);
     return subject;
   }
 

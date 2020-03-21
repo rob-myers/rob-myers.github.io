@@ -140,14 +140,8 @@ export const osSpawnInitThunk = createOsThunk<OsAct, SpawnInitThunk>(
 
     const userKey = 'root';
     const processKey = 'init';
-    /**
-     * The init process repeatedly sleeps for 1000 seconds.
-     * The binary 'sleep' is resolved via '/bin' in PATH below.
-     * init must never terminate beacuse we fork it when creating new sessions.
-     */
-    const term = service.transpileSh.transpile(
-      service.parseSh.parse('while true; do sleep 1000; done')
-    );
+    // The init process is never started, see TermService.compile.
+    const term = service.transpileSh.transpile(service.parseSh.parse(''));
     const observable = service.term.compile({ term, dispatch, processKey });
 
     const unregisteredProcess: UnregisteredProcess = {
