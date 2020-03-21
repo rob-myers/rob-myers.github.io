@@ -21,6 +21,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
     draggedMeta && instance[levelUid]?.mouseWorld);
   const wheelFowarder = useSelector(({ level: { instance } }) =>
     instance[levelUid].wheelForwarder);
+  const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
 
   const [levelMetas, setLevelMetas] = useState<MetaLookup>({});
   const [navPaths, setNavPaths] = useState<KeyedLookup<NavPath>>({});
@@ -98,11 +99,17 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                     cy={`${100 * light.sourceRatios.y}%`}
                     r="50%"
                   >
-                    <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.1' }} />
-                    {/* <stop offset="100%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} /> */}
-                    {/* <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 255, 0.25)' }} />
-                      <stop offset="50%" style={{ stopColor: 'rgba(255, 255, 255, 0.1)' }} />
-                      <stop offset="100%" style={{ stopColor: 'rgba(255, 255, 255, 0)' }} /> */}
+                    {
+                      theme === 'light-mode' && (
+                        <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.1' }} />
+                      ) || (
+                        <>
+                          <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 255, 0.25)' }} />
+                          <stop offset="50%" style={{ stopColor: 'rgba(255, 255, 255, 0.1)' }} />
+                          <stop offset="100%" style={{ stopColor: 'rgba(255, 255, 255, 0)' }} />
+                        </>
+                      )
+                    }
                   </radialGradient>
                 </defs>
                 <path

@@ -69,8 +69,8 @@ export interface LevelUiState {
   cursorHighlight: Partial<Record<Direction, boolean>>;
   /** Editing or in live mode */
   mode: 'edit' | 'live';
-  /** Plan mode (default) or dark mode with lights */
-  view: 'plan' | 'dark';
+  /** CSS theme */
+  theme: 'light-mode' | 'dark-mode';
   /** UIs for LevelState.metas */
   metaUi: KeyedLookup<LevelMetaUi>;
   /** Key of dragged meta if any */
@@ -99,7 +99,7 @@ export function createLevelUiState(uid: string): LevelUiState {
     cursorType: 'default',
     cursorHighlight: {},
     mode: 'edit',
-    view: 'plan',
+    theme: 'light-mode',
     metaUi: {},
     draggedMeta: null,
     wheelForwarder: null,

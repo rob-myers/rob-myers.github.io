@@ -1,9 +1,30 @@
-$level-background: white;
-$level-floor-fill: white;
-$level-navigable-fill: #eee;
-$level-navigable-stroke: #ccc;
-$level-node-color: rgba(0, 0, 100, 0.1);
-$level-grid-color: rgba(0,0,0,0.5);
-$level-grid-refined-color: rgba(0,0,200,0.3);
+// Theme
+$level-bg-light: white;
+$level-bg-dark: black;
 
-// TODO dark mode
+$level-menu-light: black;
+$level-menu-dark: black;
+
+$level-text-light: black;
+$level-text-dark: white;
+
+$level-floor-light: white;
+$level-floor-dark: black;
+
+$level-wall-light: black;
+$level-wall-dark: white;
+
+$level-navigable-light: #eee;
+$level-navigable-dark: #222;
+
+$level-triangle-light: #ccc;
+$level-triangle-dark: #333;
+
+$level-grid-light: rgba(0,0,0,0.5);
+$level-grid-refined-light: rgba(0,0,200,0.3);
+
+$level-grid-dark: rgba(200, 200, 200,0.5);
+$level-grid-refined-dark: rgba(200, 200 , 200,0.3);
+
+$level-navnode-light: rgba(0, 0, 100, 0.1);
+$level-navnode-dark: rgba(0, 0, 100, 0.1);

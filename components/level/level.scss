@@ -1,11 +1,9 @@
 @import '../variables.scss';
 
 html {
-  // Firefox
-  overscroll-behavior: none;
+  overscroll-behavior: none; // Firefox
   body {
-    // Chrome
-    overscroll-behavior: none;
+    overscroll-behavior: none; // Chrome
     // Safari?
   }
 }
@@ -13,8 +11,14 @@ html {
 .root {
   width: 100%;
   height: 100%;
-  background: $level-background;
   border: 1px solid #000;
+
+  @at-root .root.light-mode {
+    background: $level-bg-light; 
+  }
+  @at-root .root.dark-mode {
+    background: $level-bg-dark; 
+  }
 
   .keys {
     width: 100%;
@@ -24,7 +28,13 @@ html {
     .menu {
       display: flex;
       border-bottom: 1px solid #ddd;
-      background: black;
+
+      @at-root .light-mode .keys .menu {
+        background: $level-menu-light;
+      }
+      @at-root .dark-mode .keys .menu {
+        background: $level-menu-dark;
+      }
       
       box-sizing: border-box;
       height: 25px;
@@ -47,11 +57,19 @@ html {
       }
     
       .button {
-        color: black;
         margin-left: 1px;
         outline: 0;
         border: 0;
     
+        @at-root .light-mode .keys .menu .button {
+          background: $level-bg-light;
+          color: $level-text-light;
+        }
+        @at-root .dark-mode .keys .menu .button {
+          background: $level-bg-dark;
+          color: $level-text-dark;
+        }
+
         cursor: pointer;
         font-family: 'Courier New', Courier, monospace;
     
@@ -62,7 +80,6 @@ html {
     }
   }
 }
-
 
 .viewport {
   width: 100%;
@@ -83,38 +100,74 @@ html {
     }
 
     .base-floor {
-      fill: $level-floor-fill;
+      @at-root .light-mode .viewport .svg .base-floor {
+        fill: $level-floor-light;
+        stroke: $level-wall-light;
+      }
+      @at-root .dark-mode .viewport .svg .base-floor {
+        fill: $level-floor-dark;
+        stroke: $level-wall-dark;
+      }
+
       stroke-width: 1;
-      stroke: rgba(0,0,0,1);
+      // stroke: rgba(0,0,0,1);
     }
   
     .wall-seg {
-      stroke: rgba(0, 0, 0, 1);
+      @at-root .light-mode .viewport .svg .wall-seg {
+        stroke: $level-wall-light;
+      }
+      @at-root .dark-mode .viewport .svg .wall-seg {
+        stroke: $level-wall-dark;
+      }
+
       stroke-width: 1;
       // Ensures correct overlap
       stroke-linecap: square;
     }
   
     .navigable {
-      fill: $level-navigable-fill;
+      @at-root .light-mode .viewport .svg .navigable {
+        fill: $level-navigable-light;
+      }
+      @at-root .dark-mode .viewport .svg .navigable {
+        fill: $level-navigable-dark;
+      }
+
       stroke: rgba(0, 0, 0, 0.5);
       stroke-width: 0.3;
       // fill: url(#stripe-pattern);
     }
   
     .triangle {
+      @at-root .light-mode .viewport .svg .triangle {
+        stroke: $level-triangle-light;
+      }
+      @at-root .dark-mode .viewport .svg .triangle {
+        stroke: $level-triangle-dark;
+      }
+
       fill: none;
-      stroke: $level-navigable-stroke;
       stroke-width: 0.2;
       stroke-linecap: round;
     }
 
     .svg-nav-node {
-      fill: $level-node-color;
+      @at-root .light-mode .viewport .svg .svg-nav-node {
+        fill: $level-navnode-light;
+      }
+      @at-root .dark-mode .viewport .svg .svg-nav-node {
+        fill: $level-navnode-dark;
+      }
     }
 
     .svg-nav-edge {
-      stroke: $level-node-color;
+      @at-root .light-mode .viewport .svg .svg-nav-node {
+        fill: $level-navnode-light;
+      }
+      @at-root .dark-mode .viewport .svg .svg-nav-node {
+        fill: $level-navnode-dark;
+      }
       stroke-width: 0.5;
     }
   
@@ -158,11 +211,21 @@ html {
     .svg-grid {
       pointer-events: none;
     
-      &-path {
-        stroke: $level-grid-color;
+      @at-root .light-mode .viewport .svg .svg-grid {
+        &-path {
+          stroke: $level-grid-light;
+        }
+        &-refined-path {
+          stroke: $level-grid-refined-light;
+        }
       }
-      &-refined-path {
-        stroke: $level-grid-refined-color;
+      @at-root .dark-mode .viewport .svg .svg-grid {
+        &-path {
+          stroke: $level-grid-dark;
+        }
+        &-refined-path {
+          stroke: $level-grid-refined-dark;
+        }
       }
     }
   }

@@ -7,7 +7,7 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
   const cursorType = useSelector(({ level: { instance } }) => instance[levelUid]?.cursorType);
   const worker = useSelector(({ level: { worker } }) => worker);
   const mode = useSelector(({ level: { instance } }) => instance[levelUid]?.mode);
-  const view = useSelector(({ level: { instance } }) => instance[levelUid]?.view);
+  const theme = useSelector(({ level: { instance } }) => instance[levelUid]?.theme);
   const dispatch = useDispatch();
 
   const save = () => {
@@ -39,10 +39,10 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
               <button
                 className={css.button}
                 onClick={(_e) => dispatch(Act.updateLevel(levelUid, {
-                  view: view === 'plan' ? 'dark' : 'plan',
+                  theme: theme === 'dark-mode' ? 'light-mode' : 'dark-mode',
                 }))}
               >
-                {view}
+                {theme === 'dark-mode' ? 'dark' : 'plan'}
               </button>
               <button
                 title="grid size"

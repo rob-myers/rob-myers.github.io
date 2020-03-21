@@ -1,6 +1,5 @@
 # TODO
 
-- dark mode with lights
 - lights can be turned on/off
 - BUG: on window maximise, new area unreachable by cursor 
 - auto Floyd-warshall when missing and needed, notifying user
@@ -194,3 +193,4 @@
 - Implement `init` without `while true; do sleep 1000; done` e.g. detect special case and don't start running term
 - BUG: `ps` command for launched processes should include args and redirs
 - BUG: `echo $$` showing wrong pid
+- dark mode with lights

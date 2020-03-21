@@ -1,5 +1,6 @@
 import { useEffect, useRef, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import classNames from 'classnames';
 import { Thunk } from '@store/level.duck';
 import LevelGrid from './level-grid';
 import LevelMouse from './level-mouse';
@@ -17,6 +18,7 @@ const Level: React.FC<Props> = ({ uid }) => {
   const renderBounds = useSelector(({ level: { instance } }) => instance[uid]?.renderBounds);
   const zoomFactor = useSelector(({ level: { instance } }) => instance[uid]?.zoomFactor);
   const mode = useSelector(({ level: { instance } }) => instance[uid]?.mode);
+  const theme = useSelector(({ level: { instance } }) => instance[uid]?.theme);
 
   useEffect(() => {
     (async () => {
@@ -38,7 +40,7 @@ const Level: React.FC<Props> = ({ uid }) => {
   const translate = renderBounds && `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
 
   return (
-    <section className={css.root}>
+    <section className={classNames(css.root, css[theme])}>
       {stateKey &&
         <LevelKeys levelUid={uid}>
           <LevelMenu levelUid={uid} />
