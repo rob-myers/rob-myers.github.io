@@ -539,9 +539,9 @@ export const osExpandVarThunk = createOsThunk<OsAct, ExpandVarThunk>(
   },
 );
 export interface ExpandVarThunk extends OsThunkAct<
-  OsAct,
-  { processKey: string; varName: string; index?: string },
-  string
+OsAct,
+{ processKey: string; varName: string; index?: string },
+string
 >{
   type: OsAct.OS_EXPAND_VAR_THUNK;
 }
@@ -575,8 +575,8 @@ export const osGetFunctionThunk = createOsThunk<OsAct, GetFunctionThunk>(
   },
 );
 export interface GetFunctionThunk extends OsThunkAct<OsAct,
-  { processKey: string; functionName: string },
-   NamedFunction | null
+{ processKey: string; functionName: string },
+NamedFunction | null
 > {
   type: OsAct.OS_GET_FUNCTION_THUNK;
 }
@@ -630,9 +630,9 @@ export const osGetVarsThunk = createOsThunk<OsAct, GetVarsThunk>(
     const { nestedVars } = proc[processKey];
     const tempLookup = nestedVars.slice().reverse()
       .reduce<Record<string, ProcessVar>>(
-        (agg, toVar) => ({ ...agg, ...toVar }),
-        {},
-      );
+      (agg, toVar) => ({ ...agg, ...toVar }),
+      {},
+    );
     return Object.values(tempLookup);
   },
 );
@@ -655,8 +655,8 @@ export const osLookupVarThunk = createOsThunk<OsAct, LookupVarThunk>(
   },
 );
 export interface LookupVarThunk extends OsThunkAct<OsAct,
-  { processKey: string; varName: string },
-  ProcessVar['value'] | undefined
+{ processKey: string; varName: string },
+ProcessVar['value'] | undefined
 > {
   type: OsAct.OS_LOOKUP_VAR_THUNK;
 }

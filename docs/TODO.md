@@ -1,11 +1,14 @@
 # TODO
 
-- Implement `init` without `while true; do sleep 1000; done` e.g. detect special case and don't start running term
+- BUG: serialization of `while true; do echo foo; sleep 2; echo bar & done` 
+- BUG: can't `sleep 2 &` inside while loop 
+
 - BUG: `ps` command for launched processes should include args and redirs
+- Implement `init` without `while true; do sleep 1000; done` e.g. detect special case and don't start running term
 - BUG: `echo $$` showing wrong pid
 - dark mode with lights
 - lights can be turned on/off
-- BUG: on window maximise, new area unreachable by cursor
+- BUG: on window maximise, new area unreachable by cursor 
 - auto Floyd-warshall when missing and needed, notifying user
 
 - implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
@@ -172,3 +175,9 @@
 - fix bug: prevent tab to offscreen meta via tabIndex -1 (it changed svg height)
 - implement `ps`
 - BUG: `echo $!` should be initial empty, and provides PID of last bg process if still exists
+- BUG: system breaks on:
+```bash
+$ sleep 10 >baz
+^C
+```
+FIX: do not pop redirect scope in bash if `exec` has changed it.

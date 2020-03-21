@@ -474,7 +474,11 @@ export const osGetProcessesMeta = createOsThunk<OsAct, GetProcessesMetaThunk>(
 interface GetProcessesMetaThunk extends OsThunkAct<OsAct, {}, { metas: ProcMeta[] }> {
   type: OsAct.OS_GET_PROCESSES_META_THUNK;
 }
-interface ProcMeta { pid: number; ttyName: string | null; command: string }
+interface ProcMeta {
+  pid: number;
+  ttyName: string | null;
+  command: string;
+}
 
 /**
  * Is {processKey} the session leader?
@@ -785,6 +789,7 @@ export const osTerminateProcessThunk = createOsThunk<OsAct, TerminateProcessThun
 
     const { tryResolveWait } = os.proc[parentKey];
     if (tryResolveWait) {// Inform waiting parent that child terminated.
+      console.log('ATTEMPT RESOLVE', processKey);
       tryResolveWait(processKey);
     } else {/* Was not waiting, or was but has since been exec'd. */}
   },

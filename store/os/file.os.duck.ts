@@ -454,8 +454,8 @@ export const osOpenFileThunk = createOsThunk<OsAct, OpenFileThunk>(
   },
 );
 interface OpenFileThunk extends OsThunkAct<OsAct,
-  { processKey: string; request: OpenFileRequest },
-  { openKey: string; fd: number; iNode: INode }
+{ processKey: string; request: OpenFileRequest },
+{ openKey: string; fd: number; iNode: INode }
 > {
   type: OsAct.OS_OPEN_FILE_THUNK;
 }
@@ -537,8 +537,8 @@ export const osReadThunk = createOsThunk<OsAct, ReadThunk>(
 );
 
 export interface ReadThunk extends OsThunkAct<OsAct,
-  { processKey: string; fd: number; maxLines: number; buffer?: string[] },
-  { eof: boolean; toPromise: IoToPromise }
+{ processKey: string; fd: number; maxLines: number; buffer?: string[] },
+{ eof: boolean; toPromise: IoToPromise }
 > {
   type: OsAct.OS_READ_THUNK;
 }
@@ -616,8 +616,8 @@ export const osResolvePathThunk = createOsThunk<OsAct, ResolvePathThunk>(
   },
 );
 interface ResolvePathThunk extends OsThunkAct<OsAct,
-  { processKey: string; path: string; PATH?: boolean },
-  { iNode: INode; absPath: string }
+{ processKey: string; path: string; PATH?: boolean },
+{ iNode: INode; absPath: string }
 > {
   type: OsAct.OS_RESOLVE_PATH_THUNK;
 }
@@ -726,9 +726,9 @@ export const osWriteThunk = createOsThunk<OsAct, WriteThunk>(
   },
 );
 interface WriteThunk extends OsThunkAct<
-  OsAct.OS_WRITE_THUNK,
-  { processKey: string; fd: number; lines?: string[] },
-  Promise<{ toPromise: IoToPromise }>
+OsAct.OS_WRITE_THUNK,
+{ processKey: string; fd: number; lines?: string[] },
+Promise<{ toPromise: IoToPromise }>
 > {
   type: OsAct.OS_WRITE_THUNK;
 }

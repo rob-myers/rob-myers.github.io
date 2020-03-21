@@ -340,21 +340,18 @@ export class SimpleComposite extends BaseCompositeTerm<CompositeType.simple> {
       command: this.method.filepath,
     }));
 
-    if (toPromise) {
-      /**
-       * Wait for child process to terminate.
-       */
-      await toPromise();
+    // Mustn't pop scope if it was changed by an exec
+    const redirs = dispatch(osGetProcessThunk({ processKey })).nestedRedirs[0];
+    if (toPromise) {// Wait for child process to terminate
+      await toPromise(); // We resume after even if exec'd this process
     }
+    const { nestedRedirs } = dispatch(osGetProcessThunk({ processKey }));
 
-    if (this.def.redirects.length) {
-      /**
-       * Forget redirections intended for child process only.
-       */
+    if (this.def.redirects.length && (redirs === nestedRedirs[0])) {
+      // Forget redirections intended for child process only
       dispatch(osPopRedirectScopeAct({ processKey }));
     }
 
-    // Must yield this.exit to terminate this.*semantics.
     yield this.exit(this.def.background ? 0 : dispatch(osGetProcessThunk({ processKey })).lastExitCode || 0);
   }
 
