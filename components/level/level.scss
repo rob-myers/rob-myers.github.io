@@ -127,10 +127,10 @@ html {
     }
   
     .navigable {
-      @at-root .light-mode .viewport .svg .navigable {
+      @at-root .light-mode .viewport .navigable {
         fill: $level-navigable-light;
       }
-      @at-root .dark-mode .viewport .svg .navigable {
+      @at-root .dark-mode .viewport .navigable {
         fill: $level-navigable-dark;
       }
 
@@ -140,10 +140,10 @@ html {
     }
   
     .triangle {
-      @at-root .light-mode .viewport .svg .triangle {
+      @at-root .light-mode .viewport .triangle {
         stroke: $level-triangle-light;
       }
-      @at-root .dark-mode .viewport .svg .triangle {
+      @at-root .dark-mode .viewport .triangle {
         stroke: $level-triangle-dark;
       }
 
@@ -153,19 +153,19 @@ html {
     }
 
     .svg-nav-node {
-      @at-root .light-mode .viewport .svg .svg-nav-node {
+      @at-root .light-mode .viewport .svg-nav-node {
         fill: $level-navnode-light;
       }
-      @at-root .dark-mode .viewport .svg .svg-nav-node {
+      @at-root .dark-mode .viewport .svg-nav-node {
         fill: $level-navnode-dark;
       }
     }
 
     .svg-nav-edge {
-      @at-root .light-mode .viewport .svg .svg-nav-node {
+      @at-root .light-mode .viewport .svg-nav-node {
         fill: $level-navnode-light;
       }
-      @at-root .dark-mode .viewport .svg .svg-nav-node {
+      @at-root .dark-mode .viewport .svg-nav-node {
         fill: $level-navnode-dark;
       }
       stroke-width: 0.5;
@@ -186,25 +186,37 @@ html {
       stroke-width: 0.2;
     
       .drag-indicator {
-        line {
-          stroke-width: 0.1;
-          stroke: #000;
+        stroke-width: 0.1;
+
+        @at-root .light-mode .viewport .drag-indicator {
+          fill: $level-drag-fill-light;
+          stroke: $level-drag-stroke-light;
         }
-        circle {
-          stroke-width: 0.1;
-          stroke: #000;
-          fill: #fff;
+        @at-root .dark-mode .viewport .drag-indicator {
+          fill: $level-drag-fill-dark;
+          stroke: $level-drag-stroke-dark;
         }
       }
     }
 
     .nav-paths {
-      circle {
-        fill: black;
+      @at-root .light-mode .nav-paths {
+        circle {
+          fill: $level-navpath-light;
+        }
+        line {
+          stroke-width: 0.1;
+          stroke: $level-navpath-light;
+        }
       }
-      line {
-        stroke-width: 0.1;
-        stroke: black;
+      @at-root .dark-mode .nav-paths {
+        circle, line {
+          fill: $level-navpath-dark;
+        }
+        line {
+          stroke-width: 0.1;
+          stroke: $level-navpath-dark;
+        }
       }
     }
 
