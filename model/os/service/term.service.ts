@@ -700,7 +700,10 @@ export class TermService {
       case CompositeType.expand: {
         switch (term.expandKey) {
           case ExpandType.arithmetic: {
-            return `$(( ${this.src(term.def.expr)} ))`;
+            return `${
+              // Have expression (( foo )) iff parent is CompoundComposite
+              term.parent?.key === CompositeType.compound ? '' : '$'
+            }(( ${this.src(term.def.expr)} ))`;
           }
           case ExpandType.command: {
             return `$( ${term.def.cs.map(c => this.src(c)).join(' ')} )`;

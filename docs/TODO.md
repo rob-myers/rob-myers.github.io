@@ -1,6 +1,11 @@
 # TODO
 
--  BUG: `echo $$` showing wrong pid
+- Implement `init` without `while true; do sleep 1000; done`
+- BUG: `echo $$` showing wrong pid
+- dark mode with lights
+- lights can be turned on/off
+- BUG: on window maximise, new area unreachable by cursor
+- auto Floyd-warshall when missing and needed, notifying user
 
 - implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
@@ -10,9 +15,6 @@
   - adding tag `@bob>foo` spawns bob and sends him to some meta tagged `foo`
   - clicking on `bob` pauses/resumes animation
   - actors exist in `LevelAuxState`
-
-- BUG: on window maximise, new area unreachable by cursor
-- auto Floyd-warshall when missing and needed, notifying user
 
 - Concerning future implementation of `goto`:
   - takes many integer or empty params `4 '' -3 5 ...` 
@@ -42,8 +44,7 @@
 
 - get pan-zoom working in safari
 
-- dark mode with lights
-- lights can be turned on/off
+
 
 - implement tab completion
 - implement `jq` using jq-web

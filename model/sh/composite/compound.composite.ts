@@ -10,7 +10,11 @@ import { osCloneTerm } from '@store/os/parse.os.duck';
 import { launchedInteractively } from '@os-service/term.util';
 
 /**
- * compound
+ * compound commands
+ * > https://www.gnu.org/software/bash/manual/html_node/Compound-Commands.html
+ * 
+ * Includes arithmetic expressions like `(( x++ ))`
+ * > https://www.gnu.org/software/bash/manual/html_node/Conditional-Constructs.html#Conditional-Constructs
  */
 export class CompoundComposite extends BaseCompositeTerm<CompositeType.compound> {
   public get children() {
