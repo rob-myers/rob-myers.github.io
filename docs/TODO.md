@@ -1,6 +1,5 @@
 # TODO
 
-- BUG: serialization of `while true; do echo foo; sleep 2; echo bar & done` 
 - BUG: can't `sleep 2 &` inside while loop 
 
 - BUG: `ps` command for launched processes should include args and redirs
@@ -10,6 +9,8 @@
 - lights can be turned on/off
 - BUG: on window maximise, new area unreachable by cursor 
 - auto Floyd-warshall when missing and needed, notifying user
+
+- add basic shell testing framework
 
 - implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
@@ -181,3 +182,4 @@ $ sleep 10 >baz
 ^C
 ```
 FIX: do not pop redirect scope in bash if `exec` has changed it.
+- BUG: serialization of iterators e.g. `while true; do echo foo; sleep 2; echo bar & done` 

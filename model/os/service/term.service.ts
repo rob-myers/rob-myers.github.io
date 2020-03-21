@@ -606,10 +606,10 @@ export class TermService {
     , '');
   }
 
-  private seqSrc(children: Term[]) {
+  private seqSrc(children: Term[], trailing = false) {
     const srcs = [] as string[];
     children.forEach((c) => srcs.push(this.src(c), isBackgroundTerm(c) ? ' ' : '; '));
-    return srcs.slice(0, -1).join('');
+    return (trailing ? srcs : srcs.slice(0, -1)).join('');
   }
 
   /**
@@ -869,19 +869,22 @@ export class TermService {
           this.src(term.def.condition)
         }; ${
           this.src(term.def.post)
-        } )); do { ${
-          this.src(term.def.body)
-        } }; done`;
+        } )); do ${
+          this.seqSrc(term.def.body.children, true)
+        }done`;
       }
       case IteratorType.for: {
         return `for ${term.def.paramName} in ${
           term.def.items.map(c => this.src(c)).join(' ')
-        }; do ${this.src(term.def.body)}; done`;
+        }; do ${
+          this.seqSrc(term.def.body.children, true)
+        }done`;
       }
       case IteratorType.while: {
-        return `while ${this.src(term.def.guard)}; do ${
-          this.src(term.def.body)
-        }; done`;
+        // guard and body are always SeqComposite
+        return `while ${this.seqSrc(term.def.guard.children, true)}do ${
+          this.seqSrc(term.def.body.children, true)
+        }done`;
       }
       default: throw testNever(term);
     }

@@ -789,7 +789,6 @@ export const osTerminateProcessThunk = createOsThunk<OsAct, TerminateProcessThun
 
     const { tryResolveWait } = os.proc[parentKey];
     if (tryResolveWait) {// Inform waiting parent that child terminated.
-      console.log('ATTEMPT RESOLVE', processKey);
       tryResolveWait(processKey);
     } else {/* Was not waiting, or was but has since been exec'd. */}
   },
