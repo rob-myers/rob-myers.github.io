@@ -351,8 +351,8 @@ export const osAssignVarThunk = createOsThunk<OsAct, AssignVarThunk>(
      */
     if (def.local) {
       const found = ns.find((toVar) => varName in toVar);
-      if (found && found[varName].readonly) {
-        throw Error(`${varName}: readonly variable`);
+      if (found && found[varName].readonly && !def.force) {
+        throw new TermError(`${varName}: readonly variable`, 1);
       }
     }
     /**
@@ -510,6 +510,8 @@ export interface BaseAssignOpts {
   readonly: boolean;
   /** To uppercase on assign. */
   upper: boolean;
+  /** Forcibly overwrite readonly (internal use only) */
+  force: boolean;
 }
 /**
  * If {value} undefined then must be declaring.

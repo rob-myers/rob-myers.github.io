@@ -79,9 +79,15 @@ export class ParameterExpand extends BaseExpandComposite<ExpandType.parameter> {
           switch (this.def.param) {
             case '?': this.value = String(process.lastExitCode || 0); break;
             // TODO opt flags from set?
-            case '-': this.value = ''; break;
-            // TODO take account of ()-subshells.
-            case '$': this.value = String(process.pid); break;
+            case '-': {
+              this.value = '';
+              break;
+            }
+            case '$': {
+              const value = dispatch(osLookupVarThunk({ processKey, varName: 'BASHPID' }));
+              this.value = (typeof value === 'number' ? value : process.pid).toString();
+              break;
+            }
             case '!': {
               this.value = '';
               if (process.lastBgKey) {

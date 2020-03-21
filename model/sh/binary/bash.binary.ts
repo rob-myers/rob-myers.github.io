@@ -3,7 +3,7 @@ import { BinaryExecType } from '@model/sh/binary.model';
 import { Term } from '@model/os/term.model';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osSetSignalHandlerAct, osIsSessionLeaderThunk, osSetProcessGroupAct, osStoreExitCodeAct, osGetProcessThunk, osTerminateProcessThunk } from '@store/os/process.os.duck';
-import { osSetZeroethParamAct } from '@store/os/declare.os.duck';
+import { osSetZeroethParamAct, osAssignVarThunk } from '@store/os/declare.os.duck';
 import { osSetSessionForegroundAct, osEndSessionThunk } from '@store/os/session.os.duck';
 import { ObservedType } from '@os-service/term.service';
 import { osPromptThunk } from '@store/os/tty.os.duck';
@@ -61,9 +61,15 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
     dispatch(osSetSessionForegroundAct({ processKey, processGroupKey: processKey }));
 
     // Expects history at /dev/{userKey}/.history
-    const { userKey } = dispatch(osGetProcessThunk({ processKey }));
+    const { userKey, pid } = dispatch(osGetProcessThunk({ processKey }));
     const historyPath = `/home/${userKey}/.history`;
     const { iNode: historyINode } = dispatch(osResolvePathThunk({ processKey, path: historyPath }));
+
+    // Store BASHPID for subshells
+    dispatch(osAssignVarThunk({ processKey, varName: 'BASHPID',
+      readonly: true, integer: true, force: true,
+      act: { key: 'default', value: pid.toString() },
+    }));
 
     while (true) {// Interactive command loop
       const srcBuffer = [] as string[];

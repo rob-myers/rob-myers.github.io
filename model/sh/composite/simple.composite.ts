@@ -364,13 +364,13 @@ export class SimpleComposite extends BaseCompositeTerm<CompositeType.simple> {
     }));
 
     // Mustn't pop scope if it was changed by an exec
-    const redirs = dispatch(osGetProcessThunk({ processKey })).nestedRedirs[0];
+    const prevRedirs = dispatch(osGetProcessThunk({ processKey })).nestedRedirs[0];
     if (toPromise) {// Wait for child process to terminate
       await toPromise(); // We resume after even if exec'd this process
     }
-    const { nestedRedirs } = dispatch(osGetProcessThunk({ processKey }));
+    const [postRedirs] = dispatch(osGetProcessThunk({ processKey })).nestedRedirs;
 
-    if (this.def.redirects.length && (redirs === nestedRedirs[0])) {
+    if (this.def.redirects.length && (prevRedirs === postRedirs)) {
       // Forget redirections intended for child process only
       dispatch(osPopRedirectScopeAct({ processKey }));
     }
