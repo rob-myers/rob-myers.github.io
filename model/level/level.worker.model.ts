@@ -127,6 +127,10 @@ interface ComputeFloydWarshall extends BaseMessage {
 interface FloydWarshallReady extends BaseMessage {
   key: 'floyd-warshall-ready';
   levelUid: string;
+  nodeCount: number;
+  edgeCount: number;
+  /** Number of disjoint areas */
+  areaCount: number;
 }
 
 interface RequestNavPath extends BaseMessage {

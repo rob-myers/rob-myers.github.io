@@ -86,8 +86,9 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     case 'compute-floyd-warshall': {
       const { floors } = getLevel(msg.levelUid)!;
       const navGraph = NavGraph.from(floors);
+      const [nodeCount, edgeCount, areaCount] = [navGraph.nodesArray.length, navGraph.edgesArray.length, navGraph.groupedTris.length];
       dispatch(Act.updateLevel(msg.levelUid, { floydWarshall: redact(FloydWarshall.from(navGraph)) }));
-      ctxt.postMessage({ key: 'floyd-warshall-ready', levelUid: msg.levelUid });
+      ctxt.postMessage({ key: 'floyd-warshall-ready', levelUid: msg.levelUid, nodeCount, edgeCount, areaCount });
       break;
     }
     case 'request-nav-path': {

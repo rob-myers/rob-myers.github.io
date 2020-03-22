@@ -1,15 +1,31 @@
 # TODO
 
-- auto Floyd-warshall when missing and needed, notifying user
+- detect stale Floyd-Warshall
+- auto Floyd-Warshall when stale, notifying user
 
 - implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
 - for `goto` intend stop/continue to pause/continue animations
+- can pause entire session -- but how to pause a `sleep`?
 
 - can trigger circle moving along path via css
-  - adding tag `@bob>foo` spawns bob and sends him to some meta tagged `foo`
+  - adding tag `@bob` spawns bob
+  -  and sends him to some meta tagged `foo`
   - clicking on `bob` pauses/resumes animation
   - actors exist in `LevelAuxState`
+
+- saving and loading levels
+  - only concerned with level data i.e. geometry + metas
+  - `@dev` we'll add an endpoint to webpack-dev-server which saves/loads json
+  - `@dev` also have 'branches' of a save which are saved/loaded via redux-persist
+  - branches only exist locally; json-saves are part of website
+  - `@prod` can only save/load branches (no server available)
+  - `@{dev,prod}` however can serialise branches so can comment
+  - could start from another's branch, but serialise as delta from json -save
+
+- saving and loading scripts (UNDECIDED)
+  - could provide `/sbin/level-1/onload.sh`
+  - users could save scripts to `/home/user/`
 
 - add basic shell testing framework
 
@@ -193,3 +209,5 @@
 - BUG: `echo $$` showing wrong pid
 - dark mode with lights
 - BUG: on window maximise, new area unreachable by cursor 
+- on click save notify when Floyd-Warshall computed
+  > mention number of nodes, edges, disjoint parts
