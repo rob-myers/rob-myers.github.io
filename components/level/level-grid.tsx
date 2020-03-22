@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
-import css from './level.scss';
 import { tileDim, smallTileDim } from '@model/level/level.model';
 import { posModulo } from '@model/generic.model';
+import css from './level.scss';
 
 const LevelGrid: React.FC<Props> = ({ levelUid }) => {
   const gridId = useRef(`grid-${levelUid}`);
@@ -11,27 +11,45 @@ const LevelGrid: React.FC<Props> = ({ levelUid }) => {
   const zoomFactor = useSelector(({ level: { instance } }) => instance[levelUid].zoomFactor);
 
   // Compute grid pattern offset
-  const td = cursorType === 'default' ? tileDim : smallTileDim;
-  const dx = -posModulo(renderBounds.x, td);
-  const dy = -posModulo(renderBounds.y, td);
+  const smallGrid = cursorType === 'refined';
+  const dx = -posModulo(renderBounds.x, tileDim);
+  const dy = -posModulo(renderBounds.y, tileDim);
 
   return (
     <>
       <defs>
-        <pattern id={gridId.current} x={dx} y={dy} width={td} height={td} patternUnits="userSpaceOnUse">
+        <pattern id={gridId.current} x={dx} y={dy} width={tileDim} height={tileDim} patternUnits="userSpaceOnUse">
           <path
-            className={cursorType === 'refined' ? css.svgGridRefinedPath : css.svgGridPath}
-            d={`M ${td} 0 L 0 0 0 ${td}`}
+            className={css.svgGridPath}
+            d={`M ${tileDim} 0 L 0 0 0 ${tileDim}`}
             fill="none"
             strokeWidth="0.5"
           />
         </pattern>
       </defs>
+      {smallGrid && (
+        <defs>
+          <pattern id={`small-${gridId.current}`} x={dx % smallTileDim} y={dy % smallTileDim} width={smallTileDim} height={smallTileDim} patternUnits="userSpaceOnUse">
+            <path
+              className={css.svgGridRefinedPath}
+              d={`M ${smallTileDim} 0 L 0 0 0 ${smallTileDim}`}
+              fill="none"
+              strokeWidth="0.5"
+            />
+          </pattern>
+        </defs>
+      )}
       <rect
         className={css.svgGrid}
         width={`${100 / zoomFactor}%`}
         height={`${100 / zoomFactor}%`}
         fill={`url(#${gridId.current})`}
+      />
+      <rect
+        className={css.svgGrid}
+        width={`${100 / zoomFactor}%`}
+        height={`${100 / zoomFactor}%`}
+        fill={`url(#small-${gridId.current})`}
       />
     </>
   );

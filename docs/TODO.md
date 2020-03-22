@@ -1,7 +1,9 @@
 # TODO
 
-- Prevent save during update e.g. via count.
+- Prevent save during update e.g. via an increasing count.
 - Floyd-Warshall handles dijsoint areas efficiently
+- Cleanup level worker
+- Lights radial fill should be properly centered
 
 - implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
@@ -9,8 +11,7 @@
 - can pause entire session -- but how to pause a `sleep`?
 
 - can trigger circle moving along path via css
-  - adding tag `@bob` spawns bob
-  -  and sends him to some meta tagged `foo`
+  - adding tag `@bob>foo` spawns bob and sends him to some meta tagged `foo`
   - clicking on `bob` pauses/resumes animation
   - actors exist in `LevelAuxState`
 

@@ -209,6 +209,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                         inputKey === 'Enter' && addTag(key, value) && (currentTarget.value = '')
                       }
                       onKeyDown={({ key: inputKey }) => inputKey === 'Escape' && closeMeta(key)}
+                      onKeyUp={(e) =>  e.stopPropagation()}
                     />
                     <section className={css.tags}>
                       {tags.map((tag) =>
