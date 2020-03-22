@@ -4,8 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { LevelState } from '@model/level/level.model';
 import { LevelMeta, metaPointRadius } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
-import { NavPath } from '@model/nav/nav-path.model';
+import { Vector2 } from '@model/vec2.model';
 import { Act } from '@store/level.duck';
+import { NavPath } from '@model/nav/nav-path.model';
 import { KeyedLookup, mapValues } from '@model/generic.model';
 import { addToLookup } from '@model/redux.model';
 import css from './level.scss';
@@ -22,9 +23,13 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const wheelFowarder = useSelector(({ level: { instance } }) =>
     instance[levelUid].wheelForwarder);
   const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
+  const showNavGraph = useSelector(({ level: { instance } }) => instance[levelUid].showNavGraph);
 
   const [levelMetas, setLevelMetas] = useState<MetaLookup>({});
   const [navPaths, setNavPaths] = useState<KeyedLookup<NavPath>>({});
+
+  const [navCenters, setNavCenters] = useState([] as Vector2[]);
+  const [navSegs, setNavSegs] = useState([] as Vector2[][]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -48,6 +53,11 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
           // NOTE cannot use state variable because in stale scope
           setNavPaths((prev) => addToLookup(NavPath.from(msg.navPath), prev));
           break;
+        }
+        case 'send-nav-view': {
+          const { centers, segs } = msg;
+          setNavCenters(centers.map(c => Vector2.from(c)));
+          setNavSegs(segs.map(([u, v]) => [Vector2.from(u), Vector2.from(v)]));
         }
       }
     });
@@ -97,15 +107,19 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                     id={`light-radial-${key}`}
                     cx={`${100 * light.sourceRatios.x}%`}
                     cy={`${100 * light.sourceRatios.y}%`}
-                    r="50%"
+                    r="100%"
                   >
                     {
                       theme === 'light-mode' && (
-                        <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.1' }} />
+                        <>
+                          <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.2' }} />
+                          <stop offset="50%" style={{ stopColor: 'rgba(0, 0, 0, 0.1' }} />
+                          <stop offset="80%" style={{ stopColor: 'rgba(0, 0, 0, 0' }} />
+                        </>
                       ) || (
                         <>
-                          <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 255, 0.25)' }} />
-                          <stop offset="50%" style={{ stopColor: 'rgba(255, 255, 255, 0.1)' }} />
+                          <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 255, 0.4)' }} />
+                          <stop offset="30%" style={{ stopColor: 'rgba(255, 255, 255, 0.1)' }} />
                           <stop offset="100%" style={{ stopColor: 'rgba(255, 255, 255, 0)' }} />
                         </>
                       )
@@ -146,6 +160,25 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
           </g>
         )}
       </g>
+      {showNavGraph && (
+        <g>
+          {navCenters.map(({ x, y }, i) => (
+            <circle
+              key={i}
+              cx={x} cy={y} r={0.5}
+              className={css.navGraphNode}
+            />
+          ))}
+          {navSegs.map(([ src, dst ], i) => (
+            <line
+              key={i}
+              x1={src.x} y1={src.y}
+              x2={dst.x} y2={dst.y}
+              className={css.navGraphEdge}
+            />
+          ))}
+        </g>
+      )}
       {// Popovers
         overlayRef.current && (
           ReactDOM.createPortal(
@@ -157,7 +190,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   style={{
                     left: metaUi[key].dialogPosition.x,
                     top: metaUi[key].dialogPosition.y,
-                    pointerEvents: draggedMeta ? 'none' : 'inherit',
+                    pointerEvents: draggedMeta ? 'none' : 'all',
                   }}
                   onWheel={(e) => {
                     /**

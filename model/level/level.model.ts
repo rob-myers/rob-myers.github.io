@@ -6,6 +6,7 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { KeyedLookup } from '@model/generic.model';
 import { LevelMetaUi, LevelMeta } from './level-meta.model';
 import { FloydWarshall } from '@model/nav/floyd-warshall.model';
+import { FloydWarshallReady } from './level.worker.model';
 
 /** Depth of cursor highlight */
 export const wallDepth = 2;
@@ -37,6 +38,10 @@ export interface LevelState {
   metas: KeyedLookup<LevelMeta>;
   /** Pathfinder */
   floydWarshall: null | Redacted<FloydWarshall>;
+  /**
+   * TODO should be updating whilst updates are pending
+   */
+  status: 'ready' | 'updating';
 }
 
 export function createLevelState(uid: string): LevelState {
@@ -49,6 +54,7 @@ export function createLevelState(uid: string): LevelState {
     metaUpdateSub: null,
     metas: {},
     floydWarshall: null,
+    status: 'ready',
   };
 }
 
@@ -57,7 +63,10 @@ export interface LevelUiState {
   key: string;
   /** Zoom multiplier with default `1` */
   zoomFactor: number;
-  /** Viewport bounds in world coords */
+  /**
+   * Viewport bounds in world coords.
+   * TODO verify width/height on resize
+   */
   renderBounds: Rect2;
   /** Mouse position in world coords */
   mouseWorld: Vector2;
@@ -73,16 +82,25 @@ export interface LevelUiState {
   theme: 'light-mode' | 'dark-mode';
   /** UIs for LevelState.metas */
   metaUi: KeyedLookup<LevelMetaUi>;
-  /** Key of dragged meta if any */
+  /** Key of dragged meta, if any */
   draggedMeta: null | string;
   /** Can forward wheel events (pan/zoom) to LevelMouse  */
   wheelForwarder: null | Redacted<Subject<ForwardedWheelEvent>>;
+  /** Should visualisation of NavGraph? */
+  showNavGraph: boolean;
+  /** Can forward notifications to LevelNotify */
+  notifyForwarder: null | Redacted<Subject<ForwardedNotification>>;
 }
 
 export interface ForwardedWheelEvent {
   key: 'wheel';
   e: React.WheelEvent;
 }
+
+export type ForwardedNotification = (
+  | { key: 'floyd-warshall-ready'; orig: FloydWarshallReady }
+  | { key: 'ping' }
+);
 
 /** Tags with side-effects */
 export const specialTags = ['steiner', 'light'];
@@ -103,6 +121,8 @@ export function createLevelUiState(uid: string): LevelUiState {
     metaUi: {},
     draggedMeta: null,
     wheelForwarder: null,
+    showNavGraph: false,
+    notifyForwarder: null,
   };
 }
 

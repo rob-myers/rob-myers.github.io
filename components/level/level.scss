@@ -151,23 +151,23 @@ html {
       stroke-linecap: round;
     }
 
-    .svg-nav-node {
-      @at-root .light-mode .viewport .svg-nav-node {
+    .nav-graph-node {
+      @at-root .light-mode .viewport .nav-graph-node {
         fill: $level-navnode-light;
       }
-      @at-root .dark-mode .viewport .svg-nav-node {
+      @at-root .dark-mode .viewport .nav-graph-node {
         fill: $level-navnode-dark;
       }
     }
 
-    .svg-nav-edge {
-      @at-root .light-mode .viewport .svg-nav-node {
-        fill: $level-navnode-light;
+    .nav-graph-edge {
+      stroke-width: 0.1;
+      @at-root .light-mode .viewport .nav-graph-edge {
+        stroke: $level-navnode-light;
       }
-      @at-root .dark-mode .viewport .svg-nav-node {
-        fill: $level-navnode-dark;
+      @at-root .dark-mode .viewport .nav-graph-edge {
+        stroke: $level-navnode-dark;
       }
-      stroke-width: 0.5;
     }
   
     .cursor {
@@ -280,7 +280,6 @@ html {
             display: flex;
             flex-wrap: wrap;
             user-select: none;
-            
 
             .tag {
               cursor: pointer;

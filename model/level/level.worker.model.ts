@@ -3,7 +3,6 @@ import { map, tap } from 'rxjs/operators';
 import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
-import { NavGraphJson } from '@model/nav/nav-graph.model';
 import { LevelMetaJson, LevelMetaUpdate } from './level-meta.model';
 import { NavPathJson } from '@model/nav/nav-path.model';
 import { KeyedLookup } from '@model/generic.model';
@@ -75,11 +74,16 @@ interface SendLevelTris extends BaseMessage {
   tris: Poly2Json[];
 }
 
-interface SendNavGraph extends BaseMessage {
-  key: 'send-nav-graph';
+/** Request visualisation of NavGraph */
+interface RequestNavView extends BaseMessage {
+  key: 'request-nav-view';
   levelUid: string;
-  navGraph: NavGraphJson;
-  floors: Poly2Json[];
+}
+interface SendNavView extends BaseMessage {
+  key: 'send-nav-view';
+  levelUid: string;
+  centers: Vector2Json[];
+  segs: [Vector2Json, Vector2Json][];
 }
 
 interface AddLevelMeta extends BaseMessage {
@@ -120,13 +124,14 @@ export interface UpdateLevelMeta extends BaseMessage {
   update: LevelMetaUpdate;
 }
 
-interface ComputeFloydWarshall extends BaseMessage {
-  key: 'compute-floyd-warshall';
+interface EnsureFloydWarshall extends BaseMessage {
+  key: 'ensure-floyd-warshall';
   levelUid: string;
 }
-interface FloydWarshallReady extends BaseMessage {
+export interface FloydWarshallReady extends BaseMessage {
   key: 'floyd-warshall-ready';
   levelUid: string;
+  changed: boolean;
   nodeCount: number;
   edgeCount: number;
   /** Number of disjoint areas */
@@ -163,8 +168,9 @@ export type MessageFromLevelParent = (
   | RequestLevelMetas
   | UpdateLevelMeta
   | RemoveLevelMeta
-  | ComputeFloydWarshall
+  | EnsureFloydWarshall
   | RequestNavPath
+  | RequestNavView
 );
 
 export type MessageFromLevelWorker = (
@@ -173,7 +179,7 @@ export type MessageFromLevelWorker = (
   | SendLevelLayers
   | SendLevelNavFloors
   | SendLevelTris
-  | SendNavGraph
+  | SendNavView
   | SendLevelMetas
   | FloydWarshallReady
   | SendNavPath

@@ -1,3 +1,6 @@
+/**
+ * TODO needs a clean up and clarifying comments
+ */
 import { persistStore } from 'redux-persist';
 import { fromEvent } from 'rxjs';
 import { filter, map, delay, auditTime, tap } from 'rxjs/operators';
@@ -17,7 +20,7 @@ import { FloydWarshall } from '@model/nav/floyd-warshall.model';
 import { initializeStore } from './create-store';
 import { NavPath } from '@model/nav/nav-path.model';
 import { LevelAuxState } from '@model/level/level-aux.model';
-import { mapValues } from '@model/generic.model';
+import { mapValues, testNever } from '@model/generic.model';
 
 const ctxt: LevelWorkerContext = self as any;
 
@@ -33,9 +36,6 @@ const getLevel = (levelUid: string): LevelState | undefined =>
 const getLevelAux = (levelUid: string): LevelAuxState | undefined =>
   store.getState().level.aux[levelUid];
 
-/**
- * Worker message handler.
- */
 ctxt.addEventListener('message', async ({ data: msg }) => {
   console.log({ levelWorkerReceived: msg });
 
@@ -44,15 +44,15 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       dispatch(Act.registerLevel(msg.levelUid));
       dispatch(Act.updateLevel(msg.levelUid, {
         tileToggleSub: redact(levelToggleHandlerFactory(msg.levelUid).subscribe()),
-        metaUpdateSub: redact(metaUpdateHandlerFactory(msg.levelUid).subscribe()),
+        metaUpdateSub: redact(metaUpdateHandler(msg.levelUid).subscribe()),
       }));
       ctxt.postMessage({ key: 'worker-created-level', levelUid: msg.levelUid });
       break;
     }
     case 'request-destroy-level': {
-      const level = getLevel(msg.levelUid)!;
-      level.tileToggleSub?.unsubscribe();
-      level.metaUpdateSub?.unsubscribe();
+      const level = getLevel(msg.levelUid);
+      level?.tileToggleSub?.unsubscribe();
+      level?.metaUpdateSub?.unsubscribe();
       dispatch(Act.unregisterLevel(msg.levelUid));
       break;
     }
@@ -83,31 +83,49 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       });
       break;
     }
-    case 'compute-floyd-warshall': {
-      const { floors } = getLevel(msg.levelUid)!;
-      const navGraph = NavGraph.from(floors);
-      const [nodeCount, edgeCount, areaCount] = [navGraph.nodesArray.length, navGraph.edgesArray.length, navGraph.groupedTris.length];
-      dispatch(Act.updateLevel(msg.levelUid, { floydWarshall: redact(FloydWarshall.from(navGraph)) }));
-      ctxt.postMessage({ key: 'floyd-warshall-ready', levelUid: msg.levelUid, nodeCount, edgeCount, areaCount });
+    case 'ensure-floyd-warshall': {
+      ensureFloydWarshall(msg.levelUid);
       break;
     }
     case 'request-nav-path': {
+      ensureFloydWarshall(msg.levelUid);
       const { floydWarshall } = getLevel(msg.levelUid)!;
       const { navPath: toNavPath } = getLevelAux(msg.levelUid)!;
 
-      if (floydWarshall) {
-        const [src, dst] = [Vector2.from(msg.src), Vector2.from(msg.dst)];
-        const points = floydWarshall.findPath(src, dst);
-        const navPath = new NavPath(msg.navPathUid, points);
-        dispatch(Act.updateLevelAux(msg.levelUid, { navPath: addToLookup(navPath, toNavPath) }));
-        ctxt.postMessage({ key: 'send-nav-path', levelUid: msg.levelUid, navPath: navPath.json });
-      } else {
-        console.error(`level "${msg.levelUid}" not ready for ${msg.key}`);
-      }
+      const [src, dst] = [Vector2.from(msg.src), Vector2.from(msg.dst)];
+      const points = floydWarshall!.findPath(src, dst);
+      const navPath = new NavPath(msg.navPathUid, points);
+      dispatch(Act.updateLevelAux(msg.levelUid, { navPath: addToLookup(navPath, toNavPath) }));
+      ctxt.postMessage({ key: 'send-nav-path', levelUid: msg.levelUid, navPath: navPath.json });
+      break;
+    }
+    case 'request-nav-view': {
+      const { floors } = getLevel(msg.levelUid)!;
+      const { centers, segs } = NavGraph.from(floors).dualGraph(floors);
+
+      ctxt.postMessage({
+        key: 'send-nav-view',
+        levelUid: msg.levelUid,
+        centers: centers.map(c => c.json),
+        segs: segs.map(([u, v]) => [u.json, v.json]),
+      });
       break;
     }
   }
 });
+
+function ensureFloydWarshall(levelUid: string) {
+  const { floors, floydWarshall } = getLevel(levelUid)!;
+  const navGraph = NavGraph.from(floors);
+  // FloydWarshall.from is an expensive computation
+  const nextFloydWarshall = floydWarshall || redact(FloydWarshall.from(navGraph));
+  dispatch(Act.updateLevel(levelUid, { floydWarshall: nextFloydWarshall }));
+
+  // Divide by 2 for undirected edges
+  const [nodeCount, edgeCount, areaCount] = [navGraph.nodesArray.length, navGraph.edgesArray.length / 2, navGraph.groupedTris.length];
+  const changed = floydWarshall !== nextFloydWarshall;
+  ctxt.postMessage({ key: 'floyd-warshall-ready', levelUid, changed, nodeCount, edgeCount, areaCount });
+}
 
 function sendLevelAux(levelUid: string) {
   const { navPath } = getLevelAux(levelUid)!;
@@ -116,10 +134,17 @@ function sendLevelAux(levelUid: string) {
   });
 }
 
+function sendMetas(levelUid: string) {
+  const metas = getLevel(levelUid)?.metas;
+  metas && ctxt.postMessage({ key: 'send-level-metas', levelUid,
+    metas: Object.values(metas).map(p => p.json),
+  });
+}
+
 /**
  * Handle meta updates with side-effects for specified level.
  */
-function metaUpdateHandlerFactory(levelUid: string) {
+function metaUpdateHandler(levelUid: string) {
   return fromEvent<Message<MessageFromLevelParent>>(ctxt, 'message')
     .pipe(
       map(({ data }) => data),
@@ -130,6 +155,11 @@ function metaUpdateHandlerFactory(levelUid: string) {
       ),
       map((msg) => {// Return true iff should update nav
         const { metas } = getLevel(levelUid)!;
+
+        /**
+         * ISSUE can't say status 'ready' because have
+         * two parallel processes i.e. for meta and for tiles/walls.
+         */
 
         switch (msg.key) {
           case 'update-level-meta': {
@@ -152,9 +182,13 @@ function metaUpdateHandlerFactory(levelUid: string) {
             dispatch(Act.updateLevel(msg.levelUid, { metas: nextMetas }));
             return navTags.some(tag => metas[msg.metaKey].tags.includes(tag));
           }
+          default: throw testNever(msg);
         }
       }),
       filter((updateNav) => {
+        if (updateNav) {// Clear cached
+          dispatch(Act.updateLevel(levelUid, { floydWarshall: null }));
+        }
         // Currently we update lights immediately
         updateLights(levelUid);
         sendMetas(levelUid);
@@ -168,7 +202,7 @@ function metaUpdateHandlerFactory(levelUid: string) {
 }
 
 /**
- * Handle tile toggling for specified level.
+ * Handle tile/wall toggling for specified level.
  */
 function levelToggleHandlerFactory(levelUid: string) {
   return fromEvent<Message<MessageFromLevelParent>>(ctxt, 'message')
@@ -198,8 +232,12 @@ function levelToggleHandlerFactory(levelUid: string) {
               const key = `${u.x},${u.y};${v.x},${v.y}`;
               wallSeg[key] ? delete wallSeg[key] : wallSeg[key] = [u, v];
             });
+            break;
           }
+          default: throw testNever(msg);
         }
+        // Clear cached
+        dispatch(Act.updateLevel(levelUid, { floydWarshall: null }));
 
         dispatch(Act.updateLevel(levelUid, { tileFloors, wallSeg }));
         ctxt.postMessage({
@@ -242,13 +280,6 @@ function levelToggleHandlerFactory(levelUid: string) {
     );
 }
 
-function sendMetas(levelUid: string) {
-  const metas = getLevel(levelUid)?.metas;
-  metas && ctxt.postMessage({ key: 'send-level-metas', levelUid,
-    metas: Object.values(metas).map(p => p.json),
-  });
-}
-
 function updateLights(levelUid: string) {
   const { tileFloors, wallSeg, metas } = getLevel(levelUid)!;
   const lineSegs = ([] as [Vector2, Vector2][]).concat(
@@ -283,14 +314,8 @@ function updateNavGraph(levelUid: string) {
     levelUid, 
     tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
   });
-  ctxt.postMessage({
-    key: 'send-nav-graph',
-    levelUid,
-    navGraph: NavGraph.from(floors).json,
-    floors: floors.map(({ json }) => json), // Debug only
-  });
 
-  // Clear emphemeral
+  // Clear ephemeral
   dispatch(Act.clearLevelAux(levelUid));
   sendLevelAux(levelUid);
 

@@ -1,7 +1,7 @@
 # TODO
 
-- detect stale Floyd-Warshall
-- auto Floyd-Warshall when stale, notifying user
+- Prevent save during update e.g. via count.
+- Floyd-Warshall handles dijsoint areas efficiently
 
 - implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
@@ -211,3 +211,6 @@
 - BUG: on window maximise, new area unreachable by cursor 
 - on click save notify when Floyd-Warshall computed
   > mention number of nodes, edges, disjoint parts
+- Set Floyd-Warshall null on change nav
+- Can show dual nav graph via menu
+- Auto Floyd-Warshall when stale, notifying user
