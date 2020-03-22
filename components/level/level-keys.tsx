@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { ToastProvider } from 'react-toast-notifications';
 
 import { Act } from '@store/level.duck';
 import css from './level.scss';
@@ -24,9 +23,7 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
       }}
       tabIndex={0}
     >
-      <ToastProvider>
-        {children}
-      </ToastProvider>
+      {children}
     </div>
   );
 };
