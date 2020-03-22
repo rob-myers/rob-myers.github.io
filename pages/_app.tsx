@@ -8,6 +8,7 @@ import React from 'react';
 import { NextComponentType, NextPageContext } from 'next';
 import { Router } from 'next/dist/client/router';
 import Head from 'next/head';
+import { ToastProvider } from 'react-toast-notifications';
 
 import 'xterm/css/xterm.css';
 
@@ -36,10 +37,12 @@ class MyApp extends App<Props> {
           loading={<Component {...pageProps} />}
           persistor={this.persistor}
         >
-          <Head>
-            <link rel="shortcut icon" href="/favicon.ico" />
-          </Head>
-          <Component {...pageProps} />
+          <ToastProvider>
+            <Head>
+              <link rel="shortcut icon" href="/favicon.ico" />
+            </Head>
+            <Component {...pageProps} />
+          </ToastProvider>
         </PersistGate>
       </Provider>
     );

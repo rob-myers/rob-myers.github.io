@@ -10,6 +10,7 @@ import LevelCursor from './level-cursor';
 import LevelMenu from './level-menu';
 import LevelMetas from './level-metas';
 import css from './level.scss';
+import LevelNotify from './level-notify';
 
 const Level: React.FC<Props> = ({ uid }) => {
   const dispatch = useDispatch();
@@ -27,10 +28,9 @@ const Level: React.FC<Props> = ({ uid }) => {
     return () => void dispatch(Thunk.destroyLevel({ uid }));
   }, []);
 
-  const showNavGraph = false;
   const levelContent = useMemo(() => (
-    stateKey && <LevelContent levelUid={uid} showNavGraph={showNavGraph} />
-  ), [stateKey, showNavGraph]);
+    stateKey && <LevelContent levelUid={uid} />
+  ), [stateKey]);
   
   const levelMetas = useMemo(() => (
     mode === 'edit' && <LevelMetas levelUid={uid} overlayRef={overlayRef} />
@@ -42,28 +42,31 @@ const Level: React.FC<Props> = ({ uid }) => {
   return (
     <section className={classNames(css.root, css[theme])}>
       {stateKey &&
-        <LevelKeys levelUid={uid}>
-          <LevelMenu levelUid={uid} />
-          <section className={css.viewport}>
-            <svg className={css.svg} preserveAspectRatio="none">
-              <LevelMouse levelUid={uid} />
-              <g style={{ transform: scale }}>
-                <g style={{ transform: translate }}>
-                  {levelContent}
-                  <LevelCursor levelUid={uid} />
-                  {levelMetas}
+        <>
+          <LevelNotify levelUid={uid} />
+          <LevelKeys levelUid={uid}>
+            <LevelMenu levelUid={uid} />
+            <section className={css.viewport}>
+              <svg className={css.svg} preserveAspectRatio="none">
+                <LevelMouse levelUid={uid} />
+                <g style={{ transform: scale }}>
+                  <g style={{ transform: translate }}>
+                    {levelContent}
+                    <LevelCursor levelUid={uid} />
+                    {levelMetas}
+                  </g>
+                  {mode === 'edit' && <LevelGrid levelUid={uid} />}
                 </g>
-                {mode === 'edit' && <LevelGrid levelUid={uid} />}
-              </g>
-            </svg>
-            <section
-              className={css.overlayContainer}
-              style={{ transform: `${scale} ${translate}` }}
-            >
-              <section className={css.overlay} ref={overlayRef} />
+              </svg>
+              <section
+                className={css.overlayContainer}
+                style={{ transform: `${scale} ${translate}` }}
+              >
+                <section className={css.overlay} ref={overlayRef} />
+              </section>
             </section>
-          </section>
-        </LevelKeys>
+          </LevelKeys>
+        </>
       }
     </section>
   );

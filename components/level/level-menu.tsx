@@ -1,37 +1,45 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import { useToasts, Options as ToastOptions} from 'react-toast-notifications';
 
-import css from './level.scss';
 import { Act } from '@store/level.duck';
-import { awaitWorker } from '@model/level/level.worker.model';
+import { subscribeToWorker } from '@model/level/level.worker.model';
+import css from './level.scss';
 
-const toastOpts = (ms = 3000) => ({
-  appearance: 'info',
-  autoDismiss: true,
-  autoDismissTimeout: ms,
-} as ToastOptions);
 
 const LevelMenu: React.FC<Props> = ({ levelUid }) => {
-  const cursorType = useSelector(({ level: { instance } }) => instance[levelUid]?.cursorType);
   const worker = useSelector(({ level: { worker } }) => worker);
-  const mode = useSelector(({ level: { instance } }) => instance[levelUid]?.mode);
-  const theme = useSelector(({ level: { instance } }) => instance[levelUid]?.theme);
+  const cursorType = useSelector(({ level: { instance } }) => instance[levelUid].cursorType);
+  const mode = useSelector(({ level: { instance } }) => instance[levelUid].mode);
+  const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
+  const showNavGraph = useSelector(({ level: { instance } }) => instance[levelUid].showNavGraph);
+  const notifyForwarder = useSelector(({ level: { instance } }) => instance[levelUid].notifyForwarder);
   const dispatch = useDispatch();
-  const { addToast } = useToasts();
   const [canSave, setCanSave] = useState(true);
 
-  // TODO
+  useEffect(() => {
+    const sub = subscribeToWorker(worker!, (msg) => {
+      if ('levelUid' in msg && msg.levelUid !== levelUid) return;
+      if (showNavGraph && msg.key === 'send-level-tris') {
+        // Showing visualisation of NavGraph, so request it whenever nav tris update
+        worker?.postMessage({ key: 'request-nav-view', levelUid });
+      }
+      if (msg.key === 'floyd-warshall-ready') {
+        msg.changed && notifyForwarder?.next({ key: 'floyd-warshall-ready', orig: msg });
+        setCanSave(true);
+      }
+    });
+    return () => sub.unsubscribe();
+  }, [showNavGraph, notifyForwarder]);
+
   const save = async () => {
     setCanSave(false);
-    worker!.postMessage({ key: 'compute-floyd-warshall', levelUid });
-    const { areaCount, edgeCount, nodeCount } = await awaitWorker('floyd-warshall-ready', worker!);
-    addToast((<>
-      <div>Computed <a target="_blank" rel="noopener noreferrer" href="https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm">Floyd-Warshall algorithm</a></div>
-      <div>{nodeCount} nodes, {edgeCount} edges and {areaCount} area{areaCount === 1 ? '' : 's'}.</div>
-    </>), toastOpts());
-    setCanSave(true);
+    worker!.postMessage({ key: 'ensure-floyd-warshall', levelUid });
+  };
+
+  const toggleNavView = () => {
+    !showNavGraph && worker?.postMessage({ key: 'request-nav-view', levelUid });
+    dispatch(Act.updateLevel(levelUid, { showNavGraph: !showNavGraph }));
   };
 
   return (
@@ -62,6 +70,12 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
                 }))}
               >
                 {theme === 'dark-mode' ? 'dark' : 'plan'}
+              </button>
+              <button
+                className={css.button}
+                onClick={toggleNavView}
+              >
+                nav
               </button>
               <button
                 title="grid size"
