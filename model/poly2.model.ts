@@ -158,6 +158,9 @@ export class Poly2 {
     return { outer, inner };
   }
 
+  private static tempPointA = new Vector2(0, 0);
+  private static tempPointB = new Vector2(0, 0);
+
   public get triangleIds(): [number, number, number][] {
     if (this._triangulationIds.length) {
       return this._triangulationIds;
@@ -239,6 +242,21 @@ export class Poly2 {
     const holes = this.holes.map(hole => hole.map(p => p.clone()));
     const options = { ...this.options }; // Shallow clone
     return new Poly2(points, holes, options);
+  }
+
+  private static colinear(a: Vector2, b: Vector2, c: Vector2, thresholdAngle?: number) {
+    if(!thresholdAngle){
+      return Poly2.triangleSign(a, b, c) === 0;
+    } else {
+      const ab = Poly2.tempPointA;
+      const bc = Poly2.tempPointB;
+      ab.copy(b).sub(a);
+      bc.copy(c).sub(b);
+      const abLength = ab.length;
+      const bcLength = bc.length;
+      if (!abLength || !bcLength) return true;
+      return Math.acos(ab.dot(bc) / (abLength * bcLength)) < thresholdAngle;
+    }
   }
 
   public static computePlanarLineGraph(...polys: Poly2[]): Pslg {
@@ -512,6 +530,20 @@ export class Poly2 {
     this.steinerPoints.forEach(p => p.add(delta));
     this.clearCache();
     return this;
+  }
+
+  /** Mutates `ring` */
+  public static removeColinear(ring: Vector2[], thresholdAngle: number): void {
+    for(let i= ring.length - 1; ring.length > 3 && i >= 0; --i){
+      if (Poly2.colinear(
+        ring[(i - 1 + ring.length) % ring.length],
+        ring[i],
+        ring[(i + 1) % ring.length],
+        thresholdAngle,
+      )){
+        ring.splice(i % ring.length, 1); // Remove the middle point
+      }
+    }
   }
 
   /** Reflect through horizontal axis i.e. the line y = {y}. */

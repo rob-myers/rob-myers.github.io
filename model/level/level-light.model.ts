@@ -32,6 +32,7 @@ export class LevelLight {
 
   public computePolygon(lineSegs: [Vector2, Vector2][]) {
     this.polygon = redact(lightPolygon(this.position, this.range, lineSegs));
+    Poly2.removeColinear(this.polygon.points, 0.1);
     const { bounds } = this.polygon;
     this.sourceRatios = new Vector2(
       (this.position.x - bounds.x) / bounds.width,

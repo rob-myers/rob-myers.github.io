@@ -85,8 +85,10 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
       }
     }
   };
+
   const removeTag = (metaKey: string, tag: string) =>
     worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'remove-tag', tag }});
+
   const closeMeta = (metaKey: string) =>
     dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
 
@@ -128,9 +130,10 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                 </defs>
                 <path
                   key={`light-${key}`}
-                  strokeWidth={0}
                   d={light.polygon.svgPath}
                   fill={`url(#light-radial-${key})`}
+                  strokeWidth={0.1}
+                  stroke="rgba(255, 255, 255, 0.5)"
                 />
               </>
             )}

@@ -1,9 +1,10 @@
 # TODO
 
+- Lights radial fill should be properly centered
+
 - Prevent save during update e.g. via an increasing count.
 - Floyd-Warshall handles dijsoint areas efficiently
 - Cleanup level worker
-- Lights radial fill should be properly centered
 
 - implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
@@ -215,3 +216,4 @@
 - Set Floyd-Warshall null on change nav
 - Can show dual nav graph via menu
 - Auto Floyd-Warshall when stale, notifying user
+- Simplified light polygons by removing colinear
