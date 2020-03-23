@@ -1,6 +1,5 @@
 # TODO
 
-- Lights radial fill should be properly centered
 
 - Prevent save during update e.g. via an increasing count.
 - Floyd-Warshall handles dijsoint areas efficiently
@@ -217,3 +216,4 @@
 - Can show dual nav graph via menu
 - Auto Floyd-Warshall when stale, notifying user
 - Simplified light polygons by removing colinear
+- Lights radial fill should be properly centered

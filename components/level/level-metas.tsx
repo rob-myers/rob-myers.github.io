@@ -92,6 +92,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const closeMeta = (metaKey: string) =>
     dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
 
+  console.log({levelMetas});
+
   return (
     <>
       <g className={css.metas}>
@@ -120,8 +122,9 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                         </>
                       ) || (
                         <>
-                          <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 255, 0.4)' }} />
-                          <stop offset="30%" style={{ stopColor: 'rgba(255, 255, 255, 0.1)' }} />
+                          <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 230, 0.3)' }} />
+                          <stop offset="10%" style={{ stopColor: 'rgba(255, 255, 230, 0.2)' }} />
+                          <stop offset="50%" style={{ stopColor: 'rgba(255, 255, 255, 0.1)' }} />
                           <stop offset="100%" style={{ stopColor: 'rgba(255, 255, 255, 0)' }} />
                         </>
                       )
@@ -132,8 +135,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   key={`light-${key}`}
                   d={light.polygon.svgPath}
                   fill={`url(#light-radial-${key})`}
-                  strokeWidth={0.1}
-                  stroke="rgba(255, 255, 255, 0.5)"
+                  strokeWidth={0}
+                  // stroke="rgba(255, 255, 255, 0.5)"
                 />
               </>
             )}
