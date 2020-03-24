@@ -303,7 +303,6 @@ html {
         transform-origin: top left;
         // height: 100px;
         height: 1000px;
-        backface-visibility: hidden;
 
         @at-root .light-mode .viewport .container-three-d .wall {
           background: #000;
@@ -312,6 +311,12 @@ html {
           background: #fff;
         }
       }
+
+      .cull-backface {
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+      }
+
     }
   }
 

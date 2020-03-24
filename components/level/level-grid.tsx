@@ -44,12 +44,14 @@ const LevelGrid: React.FC<Props> = ({ levelUid }) => {
         width={`${100 / zoomFactor}%`}
         height={`${100 / zoomFactor}%`}
         fill={`url(#${gridId.current})`}
+        // fill={`url(${location.href}#${gridId.current})`}
       />
       <rect
         className={css.svgGrid}
         width={`${100 / zoomFactor}%`}
         height={`${100 / zoomFactor}%`}
         fill={`url(#small-${gridId.current})`}
+        // fill={`url(${location.href}#small-${gridId.current})`}
       />
     </>
   );
