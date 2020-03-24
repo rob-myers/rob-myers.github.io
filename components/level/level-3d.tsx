@@ -38,13 +38,13 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
 
   const geometry = useMemo(() =>
     wallSegs.map(([u, v], i) => {
-      tempPoint.current.copy(v).sub(u);
+      tempPoint.current.copy(u).sub(v);
       return (
         <div
           key={i}
           className={css.wall}
           style={{
-            transform: `translate(${u.x}px, ${u.y}px) rotateZ(${tempPoint.current.angle}rad) rotateX(90deg)`,
+            transform: `translate(${v.x}px, ${v.y}px) rotateZ(${tempPoint.current.angle}rad) rotateX(90deg)`,
             width: tempPoint.current.length,
           }}
         >

@@ -301,8 +301,9 @@ html {
       .wall {
         position: absolute;
         transform-origin: top left;
-        height: 1000px;
         // height: 100px;
+        height: 1000px;
+        backface-visibility: hidden;
 
         @at-root .light-mode .viewport .container-three-d .wall {
           background: #000;
