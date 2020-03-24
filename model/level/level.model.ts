@@ -61,35 +61,37 @@ export function createLevelState(uid: string): LevelState {
 export interface LevelUiState {
   /** Level identifier e.g. `level-1` */
   key: string;
-  /** Zoom multiplier with default `1` */
-  zoomFactor: number;
-  /**
-   * Viewport bounds in world coords.
-   * TODO verify width/height on resize
-   */
-  renderBounds: Rect2;
-  /** Mouse position in world coords */
-  mouseWorld: Vector2;
   /** Top left of square cursor (snapped to grid) */
   cursor: Vector2;
   /** Large or small square? */
   cursorType: 'default' | 'refined';
   /** The 4 edges of the cursor can be highlighted */
   cursorHighlight: Partial<Record<Direction, boolean>>;
-  /** Editing or in live mode */
-  mode: 'edit' | 'live';
-  /** CSS theme */
-  theme: 'light-mode' | 'dark-mode';
-  /** UIs for LevelState.metas */
-  metaUi: KeyedLookup<LevelMetaUi>;
   /** Key of dragged meta, if any */
   draggedMeta: null | string;
-  /** Can forward wheel events (pan/zoom) to LevelMouse  */
-  wheelForwarder: null | Redacted<Subject<ForwardedWheelEvent>>;
-  /** Should visualisation of NavGraph? */
-  showNavGraph: boolean;
+  /** UIs for LevelState.metas */
+  metaUi: KeyedLookup<LevelMetaUi>;
+  /** Editing or in live mode */
+  mode: 'edit' | 'live';
+  /** Mouse position in world coords */
+  mouseWorld: Vector2;
   /** Can forward notifications to LevelNotify */
   notifyForwarder: null | Redacted<Subject<ForwardedNotification>>;
+  /**
+   * Viewport bounds in world coords.
+   * TODO verify width/height on resize
+   */
+  renderBounds: Rect2;
+  /** Should visualisation of NavGraph? */
+  showNavGraph: boolean;
+  /** Show 3d walls? */
+  showThreeD: boolean;
+  /** CSS theme */
+  theme: 'light-mode' | 'dark-mode';
+  /** Can forward wheel events (pan/zoom) to LevelMouse  */
+  wheelForwarder: null | Redacted<Subject<ForwardedWheelEvent>>;
+  /** Zoom multiplier with default `1` */
+  zoomFactor: number;
 }
 
 export interface ForwardedWheelEvent {
@@ -110,19 +112,20 @@ export const navTags = ['steiner'];
 export function createLevelUiState(uid: string): LevelUiState {
   return {
     key: uid,
-    renderBounds: Rect2.zero,
-    zoomFactor: 1,
-    mouseWorld:  Vector2.zero,
     cursor: Vector2.zero,
     cursorType: 'default',
     cursorHighlight: {},
-    mode: 'edit',
-    theme: 'light-mode',
-    metaUi: {},
     draggedMeta: null,
-    wheelForwarder: null,
-    showNavGraph: false,
+    metaUi: {},
+    mode: 'edit',
+    mouseWorld:  Vector2.zero,
     notifyForwarder: null,
+    renderBounds: Rect2.zero,
+    showNavGraph: false,
+    showThreeD: false,
+    theme: 'light-mode',
+    wheelForwarder: null,
+    zoomFactor: 1,
   };
 }
 

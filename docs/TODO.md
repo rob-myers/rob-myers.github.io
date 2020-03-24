@@ -1,5 +1,7 @@
 # TODO
 
+- If showing 3d walls, scale them up/down if in/outside.
+
 - Prevent save during update e.g. store increasing `saveCount`
 - Cleanup level worker
 - Floyd-Warshall handles dijsoint areas efficiently
@@ -219,3 +221,4 @@
 - Simplified light polygons by removing colinear
 - Lights radial fill should be properly centered
 - Support 3d walls via Level3d component
+- Improve 3d walls

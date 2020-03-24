@@ -6,13 +6,13 @@ import { Act } from '@store/level.duck';
 import { subscribeToWorker } from '@model/level/level.worker.model';
 import css from './level.scss';
 
-
 const LevelMenu: React.FC<Props> = ({ levelUid }) => {
   const worker = useSelector(({ level: { worker } }) => worker);
   const cursorType = useSelector(({ level: { instance } }) => instance[levelUid].cursorType);
   const mode = useSelector(({ level: { instance } }) => instance[levelUid].mode);
   const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
   const showNavGraph = useSelector(({ level: { instance } }) => instance[levelUid].showNavGraph);
+  const showThreeD = useSelector(({ level: { instance } }) => instance[levelUid].showThreeD);
   const notifyForwarder = useSelector(({ level: { instance } }) => instance[levelUid].notifyForwarder);
   const dispatch = useDispatch();
   const [canSave, setCanSave] = useState(true);
@@ -35,6 +35,10 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
   const save = async () => {
     setCanSave(false);
     worker!.postMessage({ key: 'ensure-floyd-warshall', levelUid });
+  };
+
+  const toggle3dView = () => {
+    dispatch(Act.updateLevel(levelUid, { showThreeD: !showThreeD }));
   };
 
   const toggleNavView = () => {
@@ -63,6 +67,12 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
             </section>
 
             <section className={css.mainMenu}>
+              <button
+                className={css.button}
+                onClick={toggle3dView}
+              >
+                3d
+              </button>
               <button
                 className={css.button}
                 onClick={(_e) => dispatch(Act.updateLevel(levelUid, {

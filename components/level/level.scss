@@ -297,6 +297,20 @@ html {
       pointer-events: none;
       position: absolute;
       perspective: 500px;
+
+      .wall {
+        position: absolute;
+        transform-origin: top left;
+        height: 1000px;
+        // height: 100px;
+
+        @at-root .light-mode .viewport .container-three-d .wall {
+          background: #000;
+        }
+        @at-root .dark-mode .viewport .container-three-d .wall {
+          background: #fff;
+        }
+      }
     }
   }
 

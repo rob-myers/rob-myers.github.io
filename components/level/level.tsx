@@ -21,6 +21,7 @@ const Level: React.FC<Props> = ({ uid }) => {
   const zoomFactor = useSelector(({ level: { instance } }) => instance[uid]?.zoomFactor);
   const mode = useSelector(({ level: { instance } }) => instance[uid]?.mode);
   const theme = useSelector(({ level: { instance } }) => instance[uid]?.theme);
+  const showThreeD = useSelector(({ level: { instance } }) => instance[uid]?.showThreeD);
 
   useEffect(() => {
     (async () => {
@@ -63,8 +64,8 @@ const Level: React.FC<Props> = ({ uid }) => {
                 className={css.overlayContainer}
                 style={{ transform: `${scale} ${translate}` }}
               >
+                {showThreeD && <Level3d levelUid={uid} />}
                 <section className={css.overlay} ref={overlayRef} />
-                <Level3d levelUid={uid} />
               </div>
             </section>
           </LevelKeys>

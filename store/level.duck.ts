@@ -100,6 +100,11 @@ export const Thunk = {
       });
     },
   ),
+  getLevel: createThunk(
+    '[Level] get level',
+    ({ state: { level: { instance } } }, { levelUid }: { levelUid: string }) =>
+      instance[levelUid] || null, 
+  ),
 };
 
 export type Thunk = ActionsUnion<typeof Thunk>;

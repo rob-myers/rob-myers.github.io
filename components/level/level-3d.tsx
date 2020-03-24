@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { subscribeToWorker } from '@model/level/level.worker.model';
 import { Poly2 } from '@model/poly2.model';
-import { Vector2Json, Vector2 } from '@model/vec2.model';
+import { Vector2 } from '@model/vec2.model';
 import css from './level.scss';
 
 const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
@@ -10,16 +10,16 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
   const tempPoint = useRef(Vector2.zero);
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const mouseWorld = useSelector(({ level: { instance } }) => instance[levelUid].mouseWorld);
-  const [tileFloors, setTileFloors] = useState([] as Poly2[]);
-  const [_walls, setWalls] = useState([] as [Vector2Json, Vector2Json][]);
+  const [wallSegs, setWallSegs] = useState([] as [Vector2, Vector2][]);
   const [dimension, setDimension] = useState<Vector2>();
 
   useEffect(() => {
     const sub = subscribeToWorker(worker, (msg) => {
       if ('levelUid' in msg && msg.levelUid !== levelUid) return;
       if (msg.key === 'send-level-layers') {
-        setTileFloors(msg.tileFloors.map(x => Poly2.fromJson(x)));
-        setWalls(msg.wallSegs);
+        setWallSegs(msg.wallSegs.map<[Vector2, Vector2]>(([u, v]) =>
+          [Vector2.from(u), Vector2.from(v)]
+        ).concat(...msg.tileFloors.map(x => Poly2.fromJson(x)).map(({ lineSegs }) => lineSegs)));
       }
     });
     worker.postMessage({ key: 'request-level-data', levelUid });
@@ -36,6 +36,22 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
     };
   }, []);
 
+  const geometry = useMemo(() =>
+    wallSegs.map(([u, v], i) => {
+      tempPoint.current.copy(v).sub(u);
+      return (
+        <div
+          key={i}
+          className={css.wall}
+          style={{
+            transform: `translate(${u.x}px, ${u.y}px) rotateZ(${tempPoint.current.angle}rad) rotateX(90deg)`,
+            width: tempPoint.current.length,
+          }}
+        >
+        </div>
+      );
+    }), [wallSegs]);
+
   return (
     <div
       ref={containerEl}
@@ -46,25 +62,7 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
         height: dimension.y,
       }}
     >
-      {tileFloors.map(({ lineSegs }, i) => (
-        lineSegs.map(([u, v], j) => {
-          tempPoint.current.copy(v).sub(u);
-          return (
-            <div
-              key={`${i}-${j}`}
-              style={{
-                position: 'absolute',
-                transformOrigin: 'top left',
-                transform: `translate(${u.x}px, ${u.y}px) rotateZ(${tempPoint.current.angle}rad) rotateX(90deg)`,
-                width: tempPoint.current.length,
-                background: 'rgba(0, 0, 0, 1)',
-                height: 300,
-              }}
-            >
-            </div>
-          );
-        })
-      ))}
+      {geometry}
     </div>
   );
 };
