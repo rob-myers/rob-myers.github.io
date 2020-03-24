@@ -131,9 +131,9 @@ html {
       }
       @at-root .dark-mode .viewport .navigable {
         fill: $level-navigable-dark;
+        stroke: rgba(0, 0, 0, 0.5);
       }
-
-      stroke: rgba(0, 0, 0, 0.5);
+      
       stroke-width: 0.3;
       // fill: url(#stripe-pattern);
     }
@@ -148,7 +148,7 @@ html {
 
       fill: none;
       stroke-width: 0.2;
-      stroke-linecap: round;
+      // stroke-linecap: round;
     }
 
     .nav-graph-node {
