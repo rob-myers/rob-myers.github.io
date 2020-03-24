@@ -1,14 +1,14 @@
 # TODO
 
-
-- Prevent save during update e.g. via an increasing count.
-- Floyd-Warshall handles dijsoint areas efficiently
+- Prevent save during update e.g. store increasing `saveCount`
 - Cleanup level worker
+- Floyd-Warshall handles dijsoint areas efficiently
 
-- implement `kill` with `SIGSTP`, `SIGCONT`, `SIGINT,` `SIGTERM`
+- implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
-- for `goto` intend stop/continue to pause/continue animations
+- for `goto` intend `STOP`/`CONT` to pause/continue animations
 - can pause entire session -- but how to pause a `sleep`?
+  - if finishes make it sleep the 'difference' and immediately pause it
 
 - can trigger circle moving along path via css
   - adding tag `@bob>foo` spawns bob and sends him to some meta tagged `foo`
@@ -24,6 +24,14 @@
   - `@{dev,prod}` however can serialise branches so can comment
   - could start from another's branch, but serialise as delta from json -save
 
+- `Level` has prop `deviceId` and `levelId`.
+- can save level as text in development via webpack-dev-server
+- can load level from json file
+- level `levelId` loaded from json file on mount `Level`
+- can save _branches_ of a level `${levelid}.${branch}` via redux-persist
+- can stringify/parse branches within ui (so can send as comments)
+- edit/live mode
+
 - saving and loading scripts (UNDECIDED)
   - could provide `/sbin/level-1/onload.sh`
   - users could save scripts to `/home/user/`
@@ -36,6 +44,7 @@
   - can specify ease-in/out or similar
   - completes once respective animation is complete
   - suspending it pauses animation
+  - when reads from stdout runs each line one-by-one
 
 - clearer vision of site i.e. beyond `Level` + `Session` + comments.
 
@@ -43,14 +52,6 @@
 - can `look`: metas within radius, ray-cast
 
 - snap metas to integer-valued `x`, `y` (better serialisation)
-
-- `Level` has prop `deviceId` and `levelId`.
-- can save level as text in development via webpack-dev-server
-- can load level from json file
-- level `levelId` loaded from json file on mount `Level`
-- can save _branches_ of a level `${levelid}.${branch}` via redux-persist
-- can stringify/parse branches within ui (so can send as comments)
-- edit/live mode
 
 - start implementing `LevelINode`
 - each `Level` has corresponding `LevelINode` at `/dev/level-${deviceId}/`
