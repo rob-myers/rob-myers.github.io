@@ -244,6 +244,7 @@ html {
   .overlay-container {
     position: absolute;
     top: 0px;
+    pointer-events: none;
 
     .overlay {
       position: relative;
@@ -291,5 +292,12 @@ html {
         }
       }
     }
+
+    .container-three-d {
+      pointer-events: none;
+      position: absolute;
+      perspective: 500px;
+    }
   }
+
 }

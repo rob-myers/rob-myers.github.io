@@ -218,3 +218,4 @@
 - Auto Floyd-Warshall when stale, notifying user
 - Simplified light polygons by removing colinear
 - Lights radial fill should be properly centered
+- Support 3d walls via Level3d component

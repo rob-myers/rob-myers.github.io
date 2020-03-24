@@ -9,8 +9,9 @@ import LevelContent from './level-content';
 import LevelCursor from './level-cursor';
 import LevelMenu from './level-menu';
 import LevelMetas from './level-metas';
-import css from './level.scss';
 import LevelNotify from './level-notify';
+import Level3d from './level-3d';
+import css from './level.scss';
 
 const Level: React.FC<Props> = ({ uid }) => {
   const dispatch = useDispatch();
@@ -58,12 +59,13 @@ const Level: React.FC<Props> = ({ uid }) => {
                   {mode === 'edit' && <LevelGrid levelUid={uid} />}
                 </g>
               </svg>
-              <section
+              <div
                 className={css.overlayContainer}
                 style={{ transform: `${scale} ${translate}` }}
               >
                 <section className={css.overlay} ref={overlayRef} />
-              </section>
+                <Level3d levelUid={uid} />
+              </div>
             </section>
           </LevelKeys>
         </>

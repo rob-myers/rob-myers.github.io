@@ -92,8 +92,6 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const closeMeta = (metaKey: string) =>
     dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
 
-  console.log({levelMetas});
-
   return (
     <>
       <g className={css.metas}>

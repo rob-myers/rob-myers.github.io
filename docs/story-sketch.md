@@ -1,3 +1,11 @@
+Nice to have a story as background.
+
+But our main thrust is:
+- to study/compare/catalogue the game AI of top-down games
+- more generally games involving a player character who can move through some world
+
+---
+
 Avatars/scenery: robots and various futuristic interfaces.
 > Much easier than humanoid animation.
 > Fits our interest of Game AI.

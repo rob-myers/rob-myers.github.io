@@ -3,6 +3,10 @@
  */
 export class Vector2 {
 
+  public get angle() {
+    return Math.atan2(this.y, this.x);
+  }
+
   public get coord(): Coord {
     return [this.x, this.y];
   }
