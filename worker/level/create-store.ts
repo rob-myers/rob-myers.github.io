@@ -1,11 +1,13 @@
 import { MiddlewareAPI, Dispatch, createStore, applyMiddleware, Store } from 'redux';
-import { persistReducer, createTransform } from 'redux-persist';
+import { persistReducer, createTransform, persistStore } from 'redux-persist';
 import storage from 'localforage';
 import { LevelWorkerContext } from '@model/level/level.worker.model';
 import { LevelDispatchOverload, LevelThunkAct } from '@model/level/level.redux.model';
 import rootReducer, { LevelWorkerAction, LevelWorkerState, LevelWorkerThunk } from './reducer';
 import { composeWithDevTools } from 'remote-redux-devtools';
 import { Redacted, replacer } from '@model/redux.model';
+import { LevelState } from '@model/level/level.model';
+import { LevelAuxState } from '@model/level/level-aux.model';
 
 const thunkMiddleware =
   (worker: LevelWorkerContext) =>
@@ -68,3 +70,21 @@ export const initializeStore = (
       )
     )
   ) as any as Store<LevelWorkerState, LevelWorkerAction | LevelWorkerThunk>;
+
+
+/**
+ * We also create an instance of the store here.
+ */
+const ctxt: LevelWorkerContext = self as any;
+export const store = initializeStore(ctxt);
+
+const persistor = persistStore(store as any, null, () => 
+  ctxt.postMessage({ key: 'level-worker-ready' }));
+
+persistor.pause(); // We save manually
+
+export const getLevel = (levelUid: string) =>
+  store.getState().level.instance[levelUid] as LevelState | undefined;
+
+export const getLevelAux = (levelUid: string) =>
+  store.getState().level.aux[levelUid] as LevelAuxState | undefined;

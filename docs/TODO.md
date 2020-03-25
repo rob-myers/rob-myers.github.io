@@ -1,13 +1,13 @@
 # TODO
 
-- Cleanup level worker
-- Floyd-Warshall handles dijsoint areas efficiently
+- Floyd-Warshall handles disjoint areas efficiently
 
 - meta tags for circular trigger `circ-${r}`
 - meta tags for rectangle trigger `rect-$width-$height`
 - meta pickups `pickup` with arrow icon and touch radius
 - meta obstructions `block` with augmenting tags
 
+- clearer vision of site
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
 - for `goto` intend `STOP`/`CONT` to pause/continue animations
@@ -40,7 +40,7 @@
   - could provide `/sbin/level-1/onload.sh`
   - users could save scripts to `/home/user/`
 
-- add basic shell testing framework
+- tests for shell i.e. given env and command should provide output
 
 - Concerning future implementation of `goto`:
   - takes many integer or empty params `4 '' -3 5 ...` 
@@ -49,8 +49,6 @@
   - completes once respective animation is complete
   - suspending it pauses animation
   - when reads from stdout runs each line one-by-one
-
-- clearer vision of site i.e. beyond `Level` + `Session` + comments.
 
 - actors have position and direction
 - can `look`: metas within radius, ray-cast
@@ -223,3 +221,4 @@
 - Support 3d walls via Level3d component
 - Improve 3d walls
 - snap metas to integer-valued `x`, `y` (better serialisation)
+- Cleanup level worker
