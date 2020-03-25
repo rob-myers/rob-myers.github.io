@@ -2,7 +2,7 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { LevelLight, LevelLightJson } from './level-light.model';
 import { Poly2 } from '@model/poly2.model';
 
-export const metaPointRadius = 2;
+export const metaPointRadius = 1;
 
 export class LevelMeta {
   

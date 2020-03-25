@@ -74,6 +74,9 @@ html {
         font-family: 'Courier New', Courier, monospace;
     
         &:hover {
+          font-weight: bold;
+        }
+        &.enabled {
           text-decoration: underline;
         }
       }
@@ -100,29 +103,47 @@ html {
     }
 
     .base-floor {
-      @at-root .light-mode .viewport .svg .base-floor {
+      stroke-width: 1;
+
+      @at-root .light-mode .base-floor {
         fill: $level-floor-light;
         stroke: $level-wall-light;
       }
-      @at-root .dark-mode .viewport .svg .base-floor {
+      @at-root .dark-mode .base-floor {
         fill: $level-floor-dark;
         stroke: $level-wall-dark;
       }
 
-      stroke-width: 1;
+      @at-root .light-mode.three-d .base-floor {
+        stroke: #777;
+        stroke-width: 0.5;
+      }
+      @at-root .dark-mode.three-d .base-floor {
+        stroke: #999;
+        stroke-width: 0.5;
+      }
     }
   
     .wall-seg {
-      @at-root .light-mode .viewport .svg .wall-seg {
-        stroke: $level-wall-light;
-      }
-      @at-root .dark-mode .viewport .svg .wall-seg {
-        stroke: $level-wall-dark;
-      }
-
       stroke-width: 1;
       // Ensures correct overlap
       stroke-linecap: square;
+
+      @at-root .light-mode .wall-seg {
+        stroke: $level-wall-light;
+      }
+      @at-root .dark-mode .wall-seg {
+        stroke: $level-wall-dark;
+      }
+
+      @at-root .light-mode.three-d .wall-seg {
+        stroke: #777;
+        stroke-width: 0.5;
+      }
+      @at-root .dark-mode.three-d .wall-seg {
+        stroke: #999;
+        stroke-width: 0.5;
+      }
     }
   
     .navigable {
@@ -136,6 +157,7 @@ html {
       
       stroke-width: 0.3;
       // fill: url(#stripe-pattern);
+
     }
   
     .triangle {
@@ -147,7 +169,7 @@ html {
       }
 
       fill: none;
-      stroke-width: 0.2;
+      stroke-width: 0.1;
       // stroke-linecap: round;
     }
 
@@ -301,14 +323,16 @@ html {
       .wall {
         position: absolute;
         transform-origin: top left;
-        // height: 100px;
-        height: 1000px;
+        height: 20px;
+        // height: 1000px;
 
         @at-root .light-mode .viewport .container-three-d .wall {
           background: #000;
         }
         @at-root .dark-mode .viewport .container-three-d .wall {
           background: #fff;
+          // background: rgba(0, 0, 0, 0.4);
+          // background: rgba(0, 0, 0, 1);
         }
       }
 

@@ -68,21 +68,21 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
 
             <section className={css.mainMenu}>
               <button
-                className={css.button}
+                className={classNames(css.button, showThreeD && css.enabled)}
                 onClick={toggle3dView}
               >
                 3d
               </button>
               <button
-                className={css.button}
+                className={classNames(css.button, theme === 'dark-mode' && css.enabled)}
                 onClick={(_e) => dispatch(Act.updateLevel(levelUid, {
                   theme: theme === 'dark-mode' ? 'light-mode' : 'dark-mode',
                 }))}
               >
-                {theme === 'dark-mode' ? 'dark' : 'plan'}
+                dark
               </button>
               <button
-                className={css.button}
+                className={classNames(css.button, showNavGraph && css.enabled)}
                 onClick={toggleNavView}
               >
                 nav

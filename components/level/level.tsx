@@ -42,7 +42,7 @@ const Level: React.FC<Props> = ({ uid }) => {
   const translate = renderBounds && `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
 
   return (
-    <section className={classNames(css.root, css[theme])}>
+    <section className={classNames(css.root, css[theme], showThreeD && css.threeD)}>
       {stateKey &&
         <>
           <LevelNotify levelUid={uid} />
