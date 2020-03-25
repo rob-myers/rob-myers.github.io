@@ -55,21 +55,26 @@ export class FloydWarshall {
   public static from(graph: NavGraph): FloydWarshall {
     const fm = new FloydWarshall(graph);
     fm.initialize();
-    const [vs, dist, next] = [graph.nodesArray, fm.dist, fm.next];
+    const [dist, next] = [fm.dist, fm.next];
 
-    // TODO group nodes by polyId and compute disjoint separately
-    vs.forEach(({ id: middleId }) => {
-      vs.forEach(({ id: startId }) => {
-        vs.forEach(({ id: endId }) => {
-          const altDist = dist[startId][middleId] + dist[middleId][endId];
+    const groupedNodes = graph.groupedTris.map((tris, polyIndex) =>
+      tris.map((_tri, triId) => graph.getNodeById(`${polyIndex}-${triId}`)!));
 
-          if (dist[startId][endId] > altDist) {
-            dist[startId][endId] = altDist;
-            next[startId][endId] = next[startId][middleId];
-          }
+    groupedNodes.forEach((vs) => {
+      vs.forEach(({ id: middleId }) => {
+        vs.forEach(({ id: startId }) => {
+          vs.forEach(({ id: endId }) => {
+            const altDist = dist[startId][middleId] + dist[middleId][endId];
+  
+            if (dist[startId][endId] > altDist) {
+              dist[startId][endId] = altDist;
+              next[startId][endId] = next[startId][middleId];
+            }
+          });
         });
       });
     });
+
 
     return fm;
   }

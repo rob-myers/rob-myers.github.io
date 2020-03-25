@@ -1,6 +1,5 @@
 # TODO
 
-- Floyd-Warshall handles disjoint areas efficiently
 
 - meta tags for circular trigger `circ-${r}`
 - meta tags for rectangle trigger `rect-$width-$height`
@@ -222,3 +221,4 @@
 - Improve 3d walls
 - snap metas to integer-valued `x`, `y` (better serialisation)
 - Cleanup level worker
+- Floyd-Warshall handles disjoint areas efficiently
