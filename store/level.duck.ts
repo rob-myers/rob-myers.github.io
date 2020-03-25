@@ -96,7 +96,10 @@ export const Thunk = {
       const { worker, instance: { [uid]: state } } = level;
       state && worker?.postMessage({
         key: 'update-level-meta', levelUid: uid, metaKey,
-        update: { key: 'set-position', position: state.mouseWorld.json, }
+        update: { key: 'set-position', position: {
+          x: Math.round(state.mouseWorld.x), // Snapped to nearest integers
+          y: Math.round(state.mouseWorld.y),
+        }}
       });
     },
   ),

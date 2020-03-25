@@ -16,12 +16,9 @@ type MetaLookup = LevelState['metas'];
 const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const metaUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaUi);
-  const draggedMeta = useSelector(({ level: { instance: { [levelUid]: level } } }) =>
-    level.draggedMeta ? level.metaUi[level.draggedMeta] : null);
-  const mouseWorld = useSelector(({ level: { instance } }) =>
-    draggedMeta && instance[levelUid]?.mouseWorld);
-  const wheelFowarder = useSelector(({ level: { instance } }) =>
-    instance[levelUid].wheelForwarder);
+  const draggedMeta = useSelector(({ level: { instance: { [levelUid]: level } } }) => level.draggedMeta ? level.metaUi[level.draggedMeta] : null);
+  const mouseWorld = useSelector(({ level: { instance } }) => draggedMeta && instance[levelUid]?.mouseWorld);
+  const wheelFowarder = useSelector(({ level: { instance } }) => instance[levelUid].wheelForwarder);
   const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
   const showNavGraph = useSelector(({ level: { instance } }) => instance[levelUid].showNavGraph);
 
@@ -89,8 +86,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const removeTag = (metaKey: string, tag: string) =>
     worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'remove-tag', tag }});
 
-  const closeMeta = (metaKey: string) =>
-    dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
+  const closeMeta = (metaKey: string) => dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
 
   return (
     <>
@@ -212,8 +208,9 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                       onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
                         inputKey === 'Enter' && addTag(key, value) && (currentTarget.value = '')
                       }
+                      // TODO prevent loss of key focus on 'Escape'
                       onKeyDown={({ key: inputKey }) => inputKey === 'Escape' && closeMeta(key)}
-                      onKeyUp={(e) =>  e.stopPropagation()}
+                      onKeyUp={(e) => e.stopPropagation()}
                     />
                     <section className={css.tags}>
                       {tags.map((tag) =>

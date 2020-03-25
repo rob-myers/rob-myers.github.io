@@ -1,10 +1,12 @@
 # TODO
 
-- If showing 3d walls, scale them up/down if in/outside.
-
-- Prevent save during update e.g. store increasing `saveCount`
 - Cleanup level worker
 - Floyd-Warshall handles dijsoint areas efficiently
+
+- meta tags for circular trigger `circ-${r}`
+- meta tags for rectangle trigger `rect-$width-$height`
+- meta pickups `pickup` with arrow icon and touch radius
+- meta obstructions `block` with augmenting tags
 
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
@@ -52,8 +54,6 @@
 
 - actors have position and direction
 - can `look`: metas within radius, ray-cast
-
-- snap metas to integer-valued `x`, `y` (better serialisation)
 
 - start implementing `LevelINode`
 - each `Level` has corresponding `LevelINode` at `/dev/level-${deviceId}/`
@@ -222,3 +222,4 @@
 - Lights radial fill should be properly centered
 - Support 3d walls via Level3d component
 - Improve 3d walls
+- snap metas to integer-valued `x`, `y` (better serialisation)

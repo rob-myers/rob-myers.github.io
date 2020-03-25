@@ -57,7 +57,9 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       break;
     }
     case 'add-level-meta': {
-      const lp = new LevelMeta(msg.metaKey, Vector2.from(msg.position));
+      // Snap to integers
+      const [x, y] = [Math.round(msg.position.x), Math.round(msg.position.y)];
+      const lp = new LevelMeta(msg.metaKey, Vector2.from({ x, y }));
       const metas = { ...getLevel(msg.levelUid)!.metas, [lp.key]: lp };
       dispatch(Act.updateLevel(msg.levelUid, { metas: metas }));
       break;
@@ -173,7 +175,9 @@ function metaUpdateHandler(levelUid: string) {
             );
           }
           case 'duplicate-level-meta': {
-            const meta = metas[msg.metaKey].clone(msg.newMetaKey, Vector2.from(msg.position));
+            // Snap position to integers
+            const [x, y] = [Math.round(msg.position.x), Math.round(msg.position.y)];
+            const meta = metas[msg.metaKey].clone(msg.newMetaKey, Vector2.from({ x, y }));
             dispatch(Act.updateLevel(levelUid, { metas: { ...metas, [meta.key]: meta }}));
             return navTags.some(tag => meta.tags.includes(tag));
           }
