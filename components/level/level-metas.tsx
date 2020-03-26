@@ -62,12 +62,16 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
     return () => sub.unsubscribe();
   }, []);
 
+  const focusLevelKeys = () =>
+    overlayRef.current?.parentElement?.parentElement?.parentElement?.focus();
+
   const addTag = (metaKey: string, tag: string) => {
     if (/^[a-z0-9][a-z0-9-]*$/.test(tag)) {
       worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'add-tag', tag }});
       return true;
     } else if (tag === '-') {
       worker.postMessage({ key: 'remove-level-meta', levelUid, metaKey });
+      focusLevelKeys();
     } else if (/^>[a-z0-9][a-z0-9-]*$/.test(tag)) {
       // Draw navpath to first meta with tag `tag.slice(1)`;
       const { position } = levelMetas[metaKey];
@@ -88,8 +92,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
 
   const closeMeta = (metaKey: string) => {
     dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
-    // Focus LevelKeys
-    overlayRef.current?.parentElement?.parentElement?.parentElement?.focus();
+    focusLevelKeys();
   };
 
   return (

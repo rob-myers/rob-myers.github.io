@@ -169,7 +169,7 @@ html {
       }
 
       fill: none;
-      stroke-width: 0.2;
+      stroke-width: 0.1;
       // stroke-linecap: round;
     }
 
@@ -323,16 +323,14 @@ html {
       .wall {
         position: absolute;
         transform-origin: top left;
-        height: 30px;
-        // height: 1000px;
+        // height: 20px;
+        height: 500px;
 
         @at-root .light-mode .viewport .container-three-d .wall {
           background: #000;
         }
         @at-root .dark-mode .viewport .container-three-d .wall {
           background: #fff;
-          // background: rgba(0, 0, 0, 0.4);
-          // background: rgba(0, 0, 0, 1);
         }
       }
 
