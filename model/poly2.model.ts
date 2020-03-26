@@ -34,7 +34,9 @@ export class Poly2 {
   private cdt2dOpts: Cdt2dOptions = {
     delaunay: true,
     exterior: false,
+    // exterior: true,
     interior: true,
+    infinity: false,
   };
 
   private static defaultOptions: Options = {

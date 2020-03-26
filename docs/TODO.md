@@ -1,5 +1,7 @@
 # TODO
 
+- discard extra triangles from steiner point on edge
+
 - meta tags for circular trigger `circ-$radius`
 - meta tags for rectangle trigger `rect-$width-$height`
 - meta pickups `pickup` with arrow icon and touch radius
@@ -222,3 +224,4 @@
 - Cleanup level worker
 - Floyd-Warshall handles disjoint areas efficiently
 - Focus `LevelKeys` on mouse-enter and on close-meta.
+- ignore steiner point on corner (duplicate vertex)
