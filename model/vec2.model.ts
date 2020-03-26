@@ -82,6 +82,7 @@ export class Vector2 {
     const [x, y] = [this.x, this.y];
     this.x = Math.cos(radians) * x - Math.sin(radians) * y;
     this.y = Math.sin(radians) * x + Math.cos(radians) * y;
+    return this;
   }
 
   public scale(amount: number): Vector2 {

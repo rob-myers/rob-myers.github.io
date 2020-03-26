@@ -207,13 +207,14 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
             key: 'toggle-level-wall',
             levelUid,
             segs: segs.map(([u, v]) => [u.json, v.json]),
+            tileSize: state.cursorType === 'default' ? 'large' : 'small',
           });
         } else {
           worker.postMessage({
             key: 'toggle-level-tile',
             levelUid,
             tile: state.cursor.json,
-            type: state.cursorType === 'default' ? 'large' : 'small',
+            tileSize: state.cursorType === 'default' ? 'large' : 'small',
           });
         }
 

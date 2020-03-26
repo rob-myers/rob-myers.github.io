@@ -225,3 +225,5 @@
 - Floyd-Warshall handles disjoint areas efficiently
 - Focus `LevelKeys` on mouse-enter and on close-meta.
 - ignore steiner point on corner (duplicate vertex)
+- on remove small wall bordering exactly one filled tile, set both unfilled
+- on remove tile with prexisting walls, remove the walls

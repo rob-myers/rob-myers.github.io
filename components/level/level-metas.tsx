@@ -112,7 +112,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                     id={`light-radial-${key}`}
                     cx={`${100 * light.sourceRatios.x}%`}
                     cy={`${100 * light.sourceRatios.y}%`}
-                    r="50%"
+                    r="100%"
                   >
                     {
                       theme === 'light-mode' && (
@@ -137,7 +137,6 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   d={light.polygon.svgPath}
                   fill={`url(#light-radial-${key})`}
                   strokeWidth={0}
-                  // stroke="rgba(255, 255, 255, 0.5)"
                 />
               </>
             )}

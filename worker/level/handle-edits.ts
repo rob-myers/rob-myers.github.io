@@ -9,7 +9,7 @@ import { tileDim, smallTileDim, floorInset, navTags } from '@model/level/level.m
 import { testNever } from '@model/generic.model';
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
-import { Vector2 } from '@model/vec2.model';
+import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
 import { sendLevelAux, sendMetas } from './handle-requests';
 
@@ -34,18 +34,73 @@ export function handleLevelToggles(levelUid: string) {
         let { tileFloors, wallSeg } = getLevel(levelUid)!;
         switch (msg.key) {
           case 'toggle-level-tile': {
-            const td = msg.type === 'large' ? tileDim : smallTileDim;
+            const td = msg.tileSize === 'large' ? tileDim : smallTileDim;
             const rect = new Rect2(msg.tile.x, msg.tile.y, td, td);
             tileFloors = Poly2.xor(tileFloors, rect.poly2).map(x => redact(x));
-            // outer polygon can self-intersect and is used by updateLights
+            /**
+             * The outer polygons `tileFloors` can self-intersect so we must
+             * use the fast triangulator. These polygons are used by `updateLights`.
+             */
             tileFloors.forEach((p) => p.options.triangulationType = 'fast');
+            if (!tileFloors.some(f => f.contains(rect.center))) {
+              /**
+               * If we removed a tile ensure any adjacent walls are removed too
+               */
+              const { x, y } = msg.tile;
+              if (td === tileDim) {
+                [ ...[0, 1, 2].map((i) => edgeToKey({ x, y }, { x: x + i * smallTileDim, y })),
+                  ...[0, 1, 2].map((i) => edgeToKey({ x: x + tileDim, y }, { x: x + tileDim, y: y + i * smallTileDim })),
+                  ...[0, 1, 2].map((i) => edgeToKey({ x, y: y + tileDim }, { x: x + i * smallTileDim, y: y + tileDim })),
+                  ...[0, 1, 2].map((i) => edgeToKey({ x, y }, { x, y: y + i * smallTileDim })),
+                ].forEach(key => delete wallSeg[key]);
+              } else {
+                [ edgeToKey({ x, y }, { x: x + smallTileDim, y }),
+                  edgeToKey({ x: x + smallTileDim, y }, { x: x + smallTileDim, y: y + smallTileDim }),
+                  edgeToKey({ x, y: y + smallTileDim }, { x: x + smallTileDim, y: y + smallTileDim }),
+                  edgeToKey({ x, y }, { x, y: y + smallTileDim })
+                ].forEach(key => delete wallSeg[key]);
+              }
+            }
             break;
           }
           case 'toggle-level-wall': {
             wallSeg = { ...wallSeg };
             msg.segs.forEach(([u, v]) => {
-              const key = `${u.x},${u.y};${v.x},${v.y}`;
-              wallSeg[key] ? delete wallSeg[key] : wallSeg[key] = [u, v];
+              const key = edgeToKey(u, v);
+
+              const mid = Vector2.from(u).add(v).scale(1/2);
+              const norm = Vector2.from(v).sub(u).rotate(Math.PI/2).normalize();
+              const [left, right] = [mid.clone().sub(norm), mid.clone().add(norm)];
+              const hasLeftTile = tileFloors.some((f) => f.contains(left));
+              const hasRightTile = tileFloors.some((f) => f.contains(right));
+
+              if (msg.tileSize === 'large') {
+                // For large tiles only toggle edges with both adjacent tiles
+                if (hasLeftTile && hasRightTile) {
+                  wallSeg[key] ? delete wallSeg[key] : wallSeg[key] = [u, v];
+                }
+              } else {
+                if (hasLeftTile !== hasRightTile) {
+                  /**
+                   * If exactly one adjacent tile then wall already exists,
+                   * so assume we're removing it. Also remove adjacent tile.
+                   */
+                  delete wallSeg[key]; // Ensure wall removed
+                  const rect = hasLeftTile
+                    ? Rect2.from(Vector2.from(u).sub(norm.clone().scale(smallTileDim)), Vector2.from(v))
+                    : Rect2.from(Vector2.from(u).add(norm.clone().scale(smallTileDim)), Vector2.from(v));
+                  tileFloors = Poly2.xor(tileFloors, rect.poly2).map(x => redact(x));
+                } else if (!(hasLeftTile || hasRightTile)) {
+                  /**
+                   * No adjacent tiles so ensure removed,
+                   * e.g. inverting large tile can leave hanging walls.
+                   */
+                  delete wallSeg[key];
+                } else {
+                  wallSeg[key] ? delete wallSeg[key] : wallSeg[key] = [u, v];
+                }
+              }
+
             });
             break;
           }
@@ -93,6 +148,10 @@ export function handleLevelToggles(levelUid: string) {
         updateNavGraph(levelUid);
       }),
     );
+}
+
+function edgeToKey(u: Vector2Json, v: Vector2Json) {
+  return `${u.x},${u.y};${v.x},${v.y}`;
 }
 
 /**

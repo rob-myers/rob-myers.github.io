@@ -47,12 +47,13 @@ export interface ToggleLevelTile extends BaseMessage {
   key: 'toggle-level-tile';
   levelUid: string;
   tile: Vector2Json;
-  type: 'small' | 'large';
+  tileSize: 'small' | 'large';
 }
 export interface ToggleLevelWall extends BaseMessage {
   key: 'toggle-level-wall';
   levelUid: string;
   segs: [Vector2Json, Vector2Json][];
+  tileSize: 'small' | 'large';
 }
 
 interface SendLevelLayers extends BaseMessage {
