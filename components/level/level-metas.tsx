@@ -86,7 +86,11 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const removeTag = (metaKey: string, tag: string) =>
     worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'remove-tag', tag }});
 
-  const closeMeta = (metaKey: string) => dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
+  const closeMeta = (metaKey: string) => {
+    dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
+    // Focus LevelKeys
+    overlayRef.current?.parentElement?.parentElement?.parentElement?.focus();
+  };
 
   return (
     <>

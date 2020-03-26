@@ -26,9 +26,7 @@ const LevelGrid: React.FC<Props> = ({ levelUid }) => {
             strokeWidth="0.5"
           />
         </pattern>
-      </defs>
-      {smallGrid && (
-        <defs>
+        {smallGrid && (
           <pattern id={`small-${gridId.current}`} x={dx % smallTileDim} y={dy % smallTileDim} width={smallTileDim} height={smallTileDim} patternUnits="userSpaceOnUse">
             <path
               className={css.svgGridRefinedPath}
@@ -37,8 +35,8 @@ const LevelGrid: React.FC<Props> = ({ levelUid }) => {
               strokeWidth="0.5"
             />
           </pattern>
-        </defs>
-      )}
+        )}
+      </defs>
       <rect
         className={css.svgGrid}
         width={`${100 / zoomFactor}%`}

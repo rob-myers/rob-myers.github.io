@@ -63,7 +63,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
     const { mouseWorld } = state;
     const nextMeta = metaUis.find(({ position: { x, y } }) =>
       Math.pow(mouseWorld.x - x, 2) + Math.pow(mouseWorld.y - y, 2) <= Math.pow(0.5 + metaPointRadius, 2));
-    const nextKey = nextMeta ? nextMeta.key : undefined;
+    const nextKey = nextMeta?.key;
     if (nextKey !== overMeta.current) {
       overMeta.current && dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));
       nextKey && dispatch(Act.updateMetaUi(levelUid, nextKey, { over: true }));
@@ -131,6 +131,9 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
     <rect
       ref={rectEl}
       className={css.mouseRect}
+      onMouseEnter={// Focus LevelKeys
+        () => rectEl.current?.parentElement?.parentElement?.parentElement?.focus()
+      }
       onMouseLeave={() => {// Cleanup
         const overKey = overMeta.current;
         overKey && dispatch(Act.updateMetaUi(levelUid, overKey, { over: false }));

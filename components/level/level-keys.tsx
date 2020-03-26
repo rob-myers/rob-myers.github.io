@@ -11,7 +11,7 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
     <div
       className={css.keys}
       onKeyUp={(e) => {
-        // console.log({ key: e.key, state });
+        // console.log({ key: e.key });
         const state = dispatch(Thunk.getLevel({ levelUid }));
 
         switch (e.key.toLowerCase()) {
