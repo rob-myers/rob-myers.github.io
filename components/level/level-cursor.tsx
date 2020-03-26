@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import classnames  from 'classnames';
-import { wallDepth, tileDim, smallTileDim } from '@model/level/level.model';
+import { tileDim, wallDepth, smallTileDim } from '@model/level/level-params';
 import css from './level.scss';
 
 const LevelCursor: React.FC<Props> = ({ levelUid }) => {

@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useSelector } from 'react-redux';
-import { tileDim, smallTileDim } from '@model/level/level.model';
 import { posModulo } from '@model/generic.model';
+import { tileDim, smallTileDim } from '@model/level/level-params';
 import css from './level.scss';
 
 const LevelGrid: React.FC<Props> = ({ levelUid }) => {

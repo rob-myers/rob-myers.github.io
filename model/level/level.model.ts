@@ -1,4 +1,4 @@
-import { Redacted } from '@model/redux.model';
+import { Redacted, redact } from '@model/redux.model';
 import { Poly2 } from '@model/poly2.model';
 import { Subscription, Subject } from 'rxjs';
 import { Rect2 } from '@model/rect2.model';
@@ -7,15 +7,8 @@ import { KeyedLookup } from '@model/generic.model';
 import { LevelMetaUi, LevelMeta } from './level-meta.model';
 import { FloydWarshall } from '@model/nav/floyd-warshall.model';
 import { FloydWarshallReady } from './level.worker.model';
-
-/** Depth of cursor highlight */
-export const wallDepth = 2;
-/** How far to inset when constructing navigable poly `floors` */
-export const floorInset = 5;
-/** Dimension of large tile in pixels */
-export const tileDim = 60;
-/** `tileDim` divided by 3 */
-export const smallTileDim = 20;
+import { TileGraph } from '@model/nav/tile-graph';
+import { smallTileDim } from './level-params';
 
 export type Direction = 'n' | 'e' | 's' | 'w'; 
 
@@ -36,12 +29,12 @@ export interface LevelState {
   metaUpdateSub: null | Redacted<Subscription>;
   /** Spawn points, steiner points, lights, interactives */
   metas: KeyedLookup<LevelMeta>;
-  /** Pathfinder */
+  /** Pathfinder (might remove it) */
   floydWarshall: null | Redacted<FloydWarshall>;
   /**
-   * TODO should be updating whilst updates are pending
+   * TODO new tile-based layout
    */
-  status: 'ready' | 'updating';
+  grid: Redacted<TileGraph>;
 }
 
 export function createLevelState(uid: string): LevelState {
@@ -54,7 +47,7 @@ export function createLevelState(uid: string): LevelState {
     metaUpdateSub: null,
     metas: {},
     floydWarshall: null,
-    status: 'ready',
+    grid: redact(new TileGraph()),
   };
 }
 
@@ -77,10 +70,7 @@ export interface LevelUiState {
   mouseWorld: Vector2;
   /** Can forward notifications to LevelNotify */
   notifyForwarder: null | Redacted<Subject<ForwardedNotification>>;
-  /**
-   * Viewport bounds in world coords.
-   * TODO verify width/height on resize
-   */
+  /** Viewport bounds in world coords. */
   renderBounds: Rect2;
   /** Should visualisation of NavGraph? */
   showNavGraph: boolean;
@@ -103,11 +93,6 @@ export type ForwardedNotification = (
   | { key: 'floyd-warshall-ready'; orig: FloydWarshallReady }
   | { key: 'ping' }
 );
-
-/** Tags with side-effects */
-export const specialTags = ['steiner', 'light'];
-/** Tags which can affect navigation */
-export const navTags = ['steiner'];
 
 export function createLevelUiState(uid: string): LevelUiState {
   return {

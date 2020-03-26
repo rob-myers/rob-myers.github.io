@@ -5,13 +5,13 @@ import { MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall, LevelWorkerCo
 import { Rect2 } from '@model/rect2.model';
 import { Poly2 } from '@model/poly2.model';
 import { redact, removeFromLookup } from '@model/redux.model';
-import { tileDim, smallTileDim, floorInset, navTags } from '@model/level/level.model';
 import { testNever } from '@model/generic.model';
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
 import { sendLevelAux, sendMetas } from './handle-requests';
+import { tileDim, smallTileDim, floorInset, navTags } from '@model/level/level-params';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -42,24 +42,17 @@ export function handleLevelToggles(levelUid: string) {
              * use the fast triangulator. These polygons are used by `updateLights`.
              */
             tileFloors.forEach((p) => p.options.triangulationType = 'fast');
+            /**
+             * If we removed a tile ensure any adjacent walls are removed too.
+             */
             if (!tileFloors.some(f => f.contains(rect.center))) {
-              /**
-               * If we removed a tile ensure any adjacent walls are removed too
-               */
               const { x, y } = msg.tile;
-              if (td === tileDim) {
-                [ ...[0, 1, 2].map((i) => edgeToKey({ x, y }, { x: x + i * smallTileDim, y })),
-                  ...[0, 1, 2].map((i) => edgeToKey({ x: x + tileDim, y }, { x: x + tileDim, y: y + i * smallTileDim })),
-                  ...[0, 1, 2].map((i) => edgeToKey({ x, y: y + tileDim }, { x: x + i * smallTileDim, y: y + tileDim })),
-                  ...[0, 1, 2].map((i) => edgeToKey({ x, y }, { x, y: y + i * smallTileDim })),
-                ].forEach(key => delete wallSeg[key]);
-              } else {
-                [ edgeToKey({ x, y }, { x: x + smallTileDim, y }),
-                  edgeToKey({ x: x + smallTileDim, y }, { x: x + smallTileDim, y: y + smallTileDim }),
-                  edgeToKey({ x, y: y + smallTileDim }, { x: x + smallTileDim, y: y + smallTileDim }),
-                  edgeToKey({ x, y }, { x, y: y + smallTileDim })
-                ].forEach(key => delete wallSeg[key]);
-              }
+              const indices = td === tileDim ? [1, 2, 3] : [1];
+              [ ...indices.map((i) => edgeToKey({ x, y }, { x: x + i * smallTileDim, y })),
+                ...indices.map((i) => edgeToKey({ x: x + td, y }, { x: x + td, y: y + i * smallTileDim })),
+                ...indices.map((i) => edgeToKey({ x, y: y + td }, { x: x + i * smallTileDim, y: y + td })),
+                ...indices.map((i) => edgeToKey({ x, y }, { x, y: y + i * smallTileDim })),
+              ].forEach(key => delete wallSeg[key]);
             }
             break;
           }
@@ -126,11 +119,21 @@ export function handleLevelToggles(levelUid: string) {
        */
       map((_) => {
         const { tileFloors, wallSeg } = getLevel(levelUid)!;
-        const outsetWalls = Poly2.union(Object.values(wallSeg).map(([u, v]) => new Rect2(
-          u.x - floorInset, u.y - floorInset,
-          v.x - u.x + 2 * floorInset, v.y - u.y + 2 * floorInset,
-        ).poly2));
-        const navFloors = Poly2.cutOut(outsetWalls, tileFloors.flatMap(x => x.createInset(floorInset)));
+        const outsetWalls = Poly2.union(Object.values(wallSeg).map(([u, v]) =>
+          new Rect2(
+            u.x - floorInset,
+            u.y - floorInset,
+            v.x - u.x + 2 * floorInset,
+            v.y - u.y + 2 * floorInset,
+          ).poly2));
+        const navFloors = Poly2.cutOut(
+          outsetWalls,
+          /**
+           * Still smaller inset so steiner points place 'on edge'
+           * are actually slight inside, so are valid.
+           */
+          tileFloors.flatMap(x => x.createInset(floorInset - 0.01)),
+        );
 
         dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
         ctxt.postMessage({
@@ -235,11 +238,11 @@ function updateNavGraph(levelUid: string) {
   floors.flatMap(x => x.removeSteiners().qualityTriangulate());
   
   // Valid steiner points will require a retriangulation
-  const nonSteiners = floors.flatMap(f => f.allPoints);
+  // const nonSteiners = floors.flatMap(f => f.allPoints);
   const steiners = Object.values(metas)
     .filter(({ tags }) => tags.includes('steiner'))
-    // Duplicate vertices can break triangulator
-    .filter(({ position }) => nonSteiners.every(p => !p.equals(position)))
+    // // Duplicate vertices can break triangulator
+    // .filter(({ position }) => nonSteiners.every(p => !p.equals(position)))
     .reduce((agg, { position: p }) => {
       const index = floors.findIndex(floor => floor.contains(p));
       return index >= 0 ? { ...agg, [index]: (agg[index] || []).concat(p) } : agg;

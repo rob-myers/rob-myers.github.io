@@ -1,6 +1,7 @@
 # TODO
 
-- discard extra triangles from steiner point on edge
+- try constructing a TileGraph (4 * 4 per small tile) and feed into FloydWarshall instead.
+- could also try to use TileGraph with `Anta` i.e. [Optimal Any-Angle Pathfinding In Practice](http://harabor.net/data/papers/hgoa-oaapip-16.pdf).
 
 - meta tags for circular trigger `circ-$radius`
 - meta tags for rectangle trigger `rect-$width-$height`
@@ -227,3 +228,4 @@
 - ignore steiner point on corner (duplicate vertex)
 - on remove small wall bordering exactly one filled tile, set both unfilled
 - on remove tile with prexisting walls, remove the walls
+- permit steiner points "on edge" by insetting slightly less
