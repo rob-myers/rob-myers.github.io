@@ -8,6 +8,7 @@ declare module 'cdt2d' {
     delaunay?: boolean;
     interior?: boolean;
     exterior?: boolean;
+    infinity?: boolean;
   }
 
   export default function(

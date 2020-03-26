@@ -31,7 +31,7 @@ export class LevelLight {
   }
 
   public computePolygon(lineSegs: [Vector2, Vector2][]) {
-    this.polygon = redact(lightPolygon(this.position, this.range, lineSegs));
+    this.polygon = redact(lightPolygon(this.position, lineSegs));
     Poly2.removeColinear(this.polygon.points, 0.1);
 
     const { bounds } = this.polygon;

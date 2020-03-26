@@ -72,8 +72,12 @@ export function getLinesIntersection(
 export function lightPolygon(
   /** Position of light. */
   pos: Vector2,
-  range: number,
   lineSegs: [Vector2, Vector2][],
+  /**
+   * Should be large enough to cover everything in
+   * line-of-sight of light, regardless of light radius.
+   */
+  geometryRadius = 500
 ) {
   // TODO restrict lineSegs to close ones
   const points = new Set(lineSegs.flatMap(x => x));
@@ -93,7 +97,7 @@ export function lightPolygon(
     dir1.copy(point).sub(pos).normalize();
     dir0.copy(dir1).rotate(-0.001);
     dir2.copy(dir1).rotate(+0.001);
-    dist0 = dist1 = dist2 = range;
+    dist0 = dist1 = dist2 = geometryRadius;
     lineSegs.forEach(([q0, q1]) => {
       d = getLineLineSegIntersect(pos, dir0, q0, q1);
       if (d !== null && d >= 0 && d < dist0) {

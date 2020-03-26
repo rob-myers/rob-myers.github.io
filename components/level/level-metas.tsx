@@ -112,7 +112,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                     id={`light-radial-${key}`}
                     cx={`${100 * light.sourceRatios.x}%`}
                     cy={`${100 * light.sourceRatios.y}%`}
-                    r="100%"
+                    r="50%"
                   >
                     {
                       theme === 'light-mode' && (

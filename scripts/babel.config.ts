@@ -1,10 +1,10 @@
 interface Api {
   version: string;
   cache: Function & {
-     forever: Function;
-     never: Function;
-     using: Function;
-     invalidate: Function;
+    forever: Function;
+    never: Function;
+    using: Function;
+    invalidate: Function;
   };
   env: Function;
   async: Function;

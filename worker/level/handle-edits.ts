@@ -181,7 +181,7 @@ function updateNavGraph(levelUid: string) {
       return index >= 0 ? { ...agg, [index]: (agg[index] || []).concat(p) } : agg;
     }, {} as Record<number, Vector2[]>);
 
-  if (Object.keys(steiners).length) {// Retriangulate
+  if (Object.keys(steiners).length) {// Retriangulate with steiners
     Object.entries(steiners).forEach(([index, ps]) => {
       floors[Number(index)].addSteinerPoints(ps).customTriangulate();
     });
