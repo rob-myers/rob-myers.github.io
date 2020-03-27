@@ -7,7 +7,7 @@ import { KeyedLookup } from '@model/generic.model';
 import { LevelMetaUi, LevelMeta } from './level-meta.model';
 import { FloydWarshall } from '@model/nav/floyd-warshall.model';
 import { FloydWarshallReady } from './level.worker.model';
-import { NavRectGraph } from '@model/nav/nav-rect-graph';
+import { NavRectGraph } from '@model/nav/nav-rect-graph.model';
 import { smallTileDim } from './level-params';
 
 export type Direction = 'n' | 'e' | 's' | 'w'; 
@@ -47,7 +47,7 @@ export function createLevelState(uid: string): LevelState {
     metaUpdateSub: null,
     metas: {},
     floydWarshall: null,
-    navRectGraph: redact(new NavRectGraph()),
+    navRectGraph: redact(new NavRectGraph([])),
   };
 }
 

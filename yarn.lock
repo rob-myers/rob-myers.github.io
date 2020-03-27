@@ -2472,6 +2472,11 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.0.0.tgz#23c0df14f6a88077f5f986c0d167ec03c3d5537c"
   integrity sha512-Phlt0plgpIIBOGTT/ehfFnbNlfsDEiqmzE2KRXoX1bLIlir4X/MR+zSyBEkL05ffWgnRSf/DXv+WrUAVr93/ow==
 
+binary-search-bounds@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/binary-search-bounds/-/binary-search-bounds-1.0.0.tgz#323ca317e3f2a40f4244c7255f5384a5b207bb69"
+  integrity sha1-MjyjF+PypA9CRMclX1OEpbIHu2k=
+
 binary-search-bounds@^2.0.3:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/binary-search-bounds/-/binary-search-bounds-2.0.4.tgz#eea0e4081da93baa851c7d851a7e636c3d51307f"
@@ -2483,6 +2488,34 @@ bindings@^1.5.0:
   integrity sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==
   dependencies:
     file-uri-to-path "1.0.0"
+
+bipartite-independent-set@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/bipartite-independent-set/-/bipartite-independent-set-1.0.0.tgz#23a673ddd4be23dfd9d336c59c85ed7e1ba35283"
+  integrity sha1-I6Zz3dS+I9/Z0zbFnIXtfhujUoM=
+  dependencies:
+    bipartite-vertex-cover "^1.0.0"
+
+bipartite-matching@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/bipartite-matching/-/bipartite-matching-1.0.0.tgz#f3e0ed6142eef46f2acc3eac93ee8fa41e9b2742"
+  integrity sha1-8+DtYULu9G8qzD6sk+6PpB6bJ0I=
+  dependencies:
+    typedarray-pool "^1.0.0"
+
+bipartite-vertex-cover@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/bipartite-vertex-cover/-/bipartite-vertex-cover-1.0.0.tgz#27b7fef08da9be107082c380caabdc2d9a77a06b"
+  integrity sha1-J7f+8I2pvhBwgsOAyqvcLZp3oGs=
+  dependencies:
+    bipartite-matching "^1.0.0"
+    iota-array "^1.0.0"
+    typedarray-pool "^1.0.0"
+
+bit-twiddle@^1.0.0:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/bit-twiddle/-/bit-twiddle-1.0.2.tgz#0c6c1fabe2b23d17173d9a61b7b7093eb9e1769e"
+  integrity sha1-DGwfq+KyPRcXPZpht7cJPrnhdp4=
 
 block-stream@*:
   version "0.0.9"
@@ -3979,6 +4012,11 @@ dot-prop@^5.0.0:
   integrity sha512-uEUyaDKoSQ1M4Oq8l45hSE26SnTxL6snNnqvK/VWx5wJhmff5z0FUVJDKDanor/6w3kzE3i7XZOk+7wC0EXr1A==
   dependencies:
     is-obj "^2.0.0"
+
+dup@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/dup/-/dup-1.0.0.tgz#51fc5ac685f8196469df0b905e934b20af5b4029"
+  integrity sha1-UfxaxoX4GWRp3wuQXpNLIK9bQCk=
 
 duplexer@^0.1.1:
   version "0.1.1"
@@ -5657,6 +5695,13 @@ interpret@^1.1.0:
   resolved "https://registry.yarnpkg.com/interpret/-/interpret-1.2.0.tgz#d5061a6224be58e8083985f5014d844359576296"
   integrity sha512-mT34yGKMNceBQUoVn7iCDKDntA7SC6gycMAWzGx1z/CMCTV7b2AAtXlo3nRyHZ1FelRkQbQjprHSYGwzLtkVbw==
 
+interval-tree-1d@^1.0.0:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/interval-tree-1d/-/interval-tree-1d-1.0.3.tgz#8fdbde02b6b2c7dbdead636bcbed8e08710d85c1"
+  integrity sha1-j9veArayx9verWNry+2OCHENhcE=
+  dependencies:
+    binary-search-bounds "^1.0.0"
+
 invariant@^2.2.2, invariant@^2.2.4:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/invariant/-/invariant-2.2.4.tgz#610f3c92c9359ce1db616e538008d23ff35158e6"
@@ -5668,6 +5713,11 @@ invert-kv@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/invert-kv/-/invert-kv-1.0.0.tgz#104a8e4aaca6d3d8cd157a8ef8bfab2d7a3ffdb6"
   integrity sha1-EEqOSqym09jNFXqO+L+rLXo//bY=
+
+iota-array@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/iota-array/-/iota-array-1.0.0.tgz#81ef57fe5d05814cd58c2483632a99c30a0e8087"
+  integrity sha1-ge9X/l0FgUzVjCSDYyqZwwoOgIc=
 
 ip-regex@^2.1.0:
   version "2.1.0"
@@ -9378,6 +9428,15 @@ rechoir@^0.6.2:
   dependencies:
     resolve "^1.1.6"
 
+rectangle-decomposition@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/rectangle-decomposition/-/rectangle-decomposition-1.0.0.tgz#4412d6a5396449ed2364816c9431770cf5d54e9e"
+  integrity sha1-RBLWpTlkSe0jZIFslDF3DPXVTp4=
+  dependencies:
+    bipartite-independent-set "^1.0.0"
+    dup "^1.0.0"
+    interval-tree-1d "^1.0.0"
+
 redent@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/redent/-/redent-1.0.0.tgz#cf916ab1fd5f1f16dfb20822dd6ec7f730c2afde"
@@ -11222,6 +11281,14 @@ type@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/type/-/type-2.0.0.tgz#5f16ff6ef2eb44f260494dae271033b29c09a9c3"
   integrity sha512-KBt58xCHry4Cejnc2ISQAF7QY+ORngsWfxezO68+12hKV6lQY8P/psIkcbjeHWn7MqcgciWJyCCevFMJdIXpow==
+
+typedarray-pool@^1.0.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/typedarray-pool/-/typedarray-pool-1.2.0.tgz#e7e90720144ba02b9ed660438af6f3aacfe33ac3"
+  integrity sha512-YTSQbzX43yvtpfRtIDAYygoYtgT+Rpjuxy9iOpczrjpXLgGoyG7aS5USJXV2d3nn8uHTeb9rXDvzS27zUg5KYQ==
+  dependencies:
+    bit-twiddle "^1.0.0"
+    dup "^1.0.0"
 
 typedarray-to-buffer@^3.1.5:
   version "3.1.5"

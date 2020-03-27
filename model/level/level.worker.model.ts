@@ -6,6 +6,7 @@ import { Poly2Json } from '@model/poly2.model';
 import { LevelMetaJson, LevelMetaUpdate } from './level-meta.model';
 import { NavPathJson } from '@model/nav/nav-path.model';
 import { KeyedLookup } from '@model/generic.model';
+import { Rect2Json } from '@model/rect2.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {
@@ -73,6 +74,11 @@ interface SendLevelTris extends BaseMessage {
   key: 'send-level-tris';
   levelUid: string;
   tris: Poly2Json[];
+}
+interface SendLevelNavRects extends BaseMessage {
+  key: 'send-level-nav-rects';
+  levelUid: string;
+  rects: Rect2Json[];
 }
 
 /** Request visualisation of NavGraph */
@@ -185,6 +191,7 @@ export type MessageFromLevelWorker = (
   | FloydWarshallReady
   | SendNavPath
   | SendLevelAux
+  | SendLevelNavRects
 );
 
 // Shortcut

@@ -1,12 +1,10 @@
 # TODO
 
 - better navigation
-  - better navmesh i.e. use optimal rect decomposition of the rectilinear nav polygon via the npm module `rectangle-decomposition`
-  - display as dashed rects (for debug)
-  - a node could be a _rect_ or a _rect with portal_
-  - intersection of two rects defines a _portal_
-  - if we fix `src` -> nodes -> `dst` then string-pulled path should be optimal
-  - experimental approach to navpath finding
+- a node could be a _rect_ or a _rect with portal_
+- intersection of two rects defines a _portal_
+- if we fix `src` -> nodes -> `dst` then string-pulled path should be optimal
+- experimental approach to navpath finding
 
 - meta tags for circular trigger `circ-$radius`
 - meta tags for rectangle trigger `rect-$width-$height`
@@ -234,3 +232,5 @@
 - on remove small wall bordering exactly one filled tile, set both unfilled
 - on remove tile with prexisting walls, remove the walls
 - permit steiner points "on edge" by insetting slightly less
+- navmesh via optimal rect decomposition of the rectilinear nav polygon via the npm module `rectangle-decomposition`
+- display as outlined rects, and hide triangles
