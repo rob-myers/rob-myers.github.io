@@ -1,7 +1,12 @@
 # TODO
 
-- try constructing a TileGraph (4 * 4 per small tile) and feed into FloydWarshall instead.
-- could also try to use TileGraph with `Anta` i.e. [Optimal Any-Angle Pathfinding In Practice](http://harabor.net/data/papers/hgoa-oaapip-16.pdf).
+- better navigation
+  - better navmesh i.e. use optimal rect decomposition of the rectilinear nav polygon via the npm module `rectangle-decomposition`
+  - display as dashed rects (for debug)
+  - a node could be a _rect_ or a _rect with portal_
+  - intersection of two rects defines a _portal_
+  - if we fix `src` -> nodes -> `dst` then string-pulled path should be optimal
+  - experimental approach to navpath finding
 
 - meta tags for circular trigger `circ-$radius`
 - meta tags for rectangle trigger `rect-$width-$height`

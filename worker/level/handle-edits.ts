@@ -60,7 +60,6 @@ export function handleLevelToggles(levelUid: string) {
             wallSeg = { ...wallSeg };
             msg.segs.forEach(([u, v]) => {
               const key = edgeToKey(u, v);
-
               const mid = Vector2.from(u).add(v).scale(1/2);
               const norm = Vector2.from(v).sub(u).rotate(Math.PI/2).normalize();
               const [left, right] = [mid.clone().sub(norm), mid.clone().add(norm)];
@@ -110,7 +109,7 @@ export function handleLevelToggles(levelUid: string) {
           wallSegs: Object.values(wallSeg),
         });
 
-        updateLights(levelUid); // Can do this early?
+        updateLights(levelUid);
         return null;
       }),
       delay(20),
@@ -120,20 +119,10 @@ export function handleLevelToggles(levelUid: string) {
       map((_) => {
         const { tileFloors, wallSeg } = getLevel(levelUid)!;
         const outsetWalls = Poly2.union(Object.values(wallSeg).map(([u, v]) =>
-          new Rect2(
-            u.x - floorInset,
-            u.y - floorInset,
-            v.x - u.x + 2 * floorInset,
-            v.y - u.y + 2 * floorInset,
-          ).poly2));
-        const navFloors = Poly2.cutOut(
-          outsetWalls,
-          /**
-           * Still smaller inset so steiner points place 'on edge'
-           * are actually slight inside, so are valid.
-           */
-          tileFloors.flatMap(x => x.createInset(floorInset - 0.01)),
-        );
+          new Rect2(u.x - floorInset, u.y - floorInset, v.x - u.x + 2 * floorInset, v.y - u.y + 2 * floorInset).poly2));
+
+        // Smaller inset so steiners 'on edge' are actually inside
+        const navFloors = Poly2.cutOut(outsetWalls, tileFloors.flatMap(x => x.createInset(floorInset - 0.01)));
 
         dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
         ctxt.postMessage({
@@ -233,7 +222,13 @@ function updateLights(levelUid: string) {
  */
 function updateNavGraph(levelUid: string) {
   const { floors, metas } = getLevel(levelUid)!;
-  
+
+  // floors.forEach(floor => {
+  //   const steiners = floor.createInset(2.5).flatMap(p => p.allPoints);
+  //   floor.removeSteiners();
+  //   floor.addSteinerPoints(steiners).customTriangulate();
+  // });
+
   // Remove steiners and then triangulate
   floors.flatMap(x => x.removeSteiners().qualityTriangulate());
   
@@ -253,7 +248,7 @@ function updateNavGraph(levelUid: string) {
       floors[Number(index)].addSteinerPoints(ps).customTriangulate();
     });
   }
-
+  
   ctxt.postMessage({
     key: 'send-level-tris',
     levelUid, 

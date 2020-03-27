@@ -99,6 +99,12 @@ export class Rect2 {
     );
   }
 
+  public delta(dx: number, dy: number) {
+    this.x += dx;
+    this.y += dy;
+    return this;
+  }
+
   /** Returns `Rect2.zero` if no args. */
   public static from(...items: Vector2[]): Rect2
   public static from(...items: Rect2[]): Rect2
@@ -180,10 +186,8 @@ export class Rect2 {
     return this;
   }
 
-  public delta(dx: number, dy: number) {
-    this.x += dx;
-    this.y += dy;
-    return this;
+  public toString() {
+    return `${this.x},${this.y},${this.width},${this.height}`;
   }
 
 }
