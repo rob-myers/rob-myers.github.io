@@ -1,10 +1,7 @@
 # TODO
 
-- better navigation
-- a node could be a _rect_ or a _rect with portal_
-- intersection of two rects defines a _portal_
-- if we fix `src` -> nodes -> `dst` then string-pulled path should be optimal
-- experimental approach to navpath finding
+- keep rectangle-decomposition but use navmesh for navigation
+- however, change induced graph i.e. vertices induce nodes, edges induce edges.
 
 - meta tags for circular trigger `circ-$radius`
 - meta tags for rectangle trigger `rect-$width-$height`

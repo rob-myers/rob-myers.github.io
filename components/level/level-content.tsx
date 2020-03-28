@@ -12,7 +12,7 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
   const [tileFloors, setTileFloors] = useState([] as string[]);
   const [walls, setWalls] = useState([] as [Vector2Json, Vector2Json][]);
   const [floors, setFloors] = useState([] as string[]);
-  // const [triangles, setTriangles] = useState([] as string[]);
+  const [triangles, setTriangles] = useState([] as string[]);
   const [rects, setRects] = useState([] as Rect2Json[]);
 
   useEffect(() => {
@@ -31,10 +31,10 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
           setFloors(msg.navFloors.map(x => Poly2.fromJson(x).svgPath));
           break;
         }
-        // case 'send-level-tris': {
-        //   setTriangles(msg.tris.map(x => Poly2.fromJson(x).svgPath));
-        //   break;
-        // }
+        case 'send-level-tris': {
+          setTriangles(msg.tris.map(x => Poly2.fromJson(x).svgPath));
+          break;
+        }
         case 'send-level-nav-rects': {
           setRects(msg.rects);
           break;
@@ -62,11 +62,11 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
           <path key={i} d={pathDef} />
         )}
       </g>
-      {/* <g className={css.triangle}>
+      <g className={css.triangle}>
         {triangles.map((pathDef, i) => (
           <path key={i} d={pathDef} />
         ))}
-      </g> */}
+      </g>
       <g className={css.rects}>
         {rects.map(([x, y, width, height], i) => (
           <rect
@@ -74,6 +74,7 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
             fill="none"
             stroke="rgba(200, 0, 0, 0.5)"
             strokeWidth={0.1}
+            // strokeDasharray='0.5 1'
             x={x}
             y={y}
             width={width}

@@ -2,7 +2,6 @@ import rectDecompose from 'rectangle-decomposition';
 import { BaseNodeOpts, BaseNode, BaseEdgeOpts, BaseEdge, BaseGraph } from '@model/graph.model';
 import { Rect2Json, Rect2 } from '@model/rect2.model';
 import { Poly2 } from '@model/poly2.model';
-import { Vector2 } from '@model/vec2.model';
 
 interface NavRectNodeOpts extends BaseNodeOpts {
   /** `${Rect2.from(rect)}` */
@@ -31,7 +30,7 @@ export class NavRectGraph extends BaseGraph<NavRectNode, NavRectNodeOpts, NavRec
     this.rects = [];
   }
 
-  public computeRects() {
+  private computeRects() {
     /**
      * Npm module 'rectangle-decomposition' requires +ve coords,
      * so we transform first, then apply inverse transform.

@@ -123,8 +123,8 @@ export function handleLevelToggles(levelUid: string) {
           new Rect2(u.x - floorInset, u.y - floorInset, v.x - u.x + 2 * floorInset, v.y - u.y + 2 * floorInset).poly2));
 
         // Smaller inset so steiners 'on edge' are actually inside
-        // const navFloors = Poly2.cutOut(outsetWalls, tileFloors.flatMap(x => x.createInset(floorInset - 0.01)));
-        const navFloors = Poly2.cutOut(outsetWalls, tileFloors.flatMap(x => x.createInset(floorInset)));
+        const navFloors = Poly2.cutOut(outsetWalls, tileFloors.flatMap(x => x.createInset(floorInset - 0.01)));
+        // const navFloors = Poly2.cutOut(outsetWalls, tileFloors.flatMap(x => x.createInset(floorInset)));
 
         dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
         ctxt.postMessage({
@@ -255,7 +255,8 @@ function updateNavGraph(levelUid: string) {
   /**
    * NEW APPROACH
    */
-  const navRectGraph = NavRectGraph.from(floors);
+  const navRectGraph = redact(NavRectGraph.from(floors));
+  dispatch(Act.updateLevel(levelUid, { navRectGraph }));
   // console.log({ navRectGraph });
   ctxt.postMessage({
     key: 'send-level-nav-rects',
