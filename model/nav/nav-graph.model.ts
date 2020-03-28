@@ -13,11 +13,13 @@ interface NavNodeOpts extends BaseNodeOpts {
   vertexId: number;
   /** Indices of neighbouring vertices in triangulation of polygon. */
   adjacentIds: number[];
+  /** Global index in `polys.flatMap(({ allPoints }) => allPoints) */
+  globalId: number;
   // /** Indices of neighbouring triangles in triangulation of polygon. */
   // triIds: number[];
 }
 
-class NavNode extends BaseNode<NavNodeOpts> {} 
+export class NavNode extends BaseNode<NavNodeOpts> {} 
 
 type NavEdgeOpts = BaseEdgeOpts<NavNode>;
 
@@ -32,9 +34,9 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
 
   constructor(
     /** Navigable rectilinear polygons */
-    private polys: Poly2[],
-    /** Aligned triangulations */
-    private polysTris: Poly2[][],
+    public navPolys: Poly2[],
+    /** Grouped triangulations */
+    public groupedTris: Poly2[][],
   ) {
     super(NavEdge);
     this.rects = [];
@@ -45,8 +47,8 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
      * Npm module 'rectangle-decomposition' requires +ve coords,
      * so we transform first, then apply inverse transform.
      */
-    const bounds = Rect2.from(...this.polys.flatMap(({ bounds }) => bounds));
-    const loops = this.polys
+    const bounds = Rect2.from(...this.navPolys.flatMap(({ bounds }) => bounds));
+    const loops = this.navPolys
       .flatMap(({ points, holes }) => [points].concat(holes))
       .map((loop) => loop.map(({ x, y }) =>
         [x - bounds.x, y - bounds.y] as [number, number]));
@@ -61,17 +63,22 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   public static from(navFloors: Poly2[]): NavGraph {
     const groupedTris = navFloors.map(p => p.triangulation);
     const graph = new NavGraph(navFloors, groupedTris);
+    let globalId = 0;
 
-    for (const [polyId, { points, triangleIds }] of navFloors.entries()) {
+    /**
+     * `triangleIds` refer to points, holes and steiners of polygon.
+     */
+    for (const [polyId, { allPoints, triangleIds }] of navFloors.entries()) {
       // Create nodes
-      for (const [vertexId] of points.entries()) {
+      for (const [vertexId] of allPoints.entries()) {
         graph.registerNode(new NavNode({
           id: `${polyId}-${vertexId}`,
           polyId,
           vertexId,
           adjacentIds: removeDups(triangleIds.flatMap(ids =>
             ids.includes(vertexId) ? ids.filter(id => id !== vertexId) : []
-          ))
+          )),
+          globalId: globalId + vertexId,
         }));
       }
       // Create edges
@@ -84,6 +91,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
           });
         }
       }
+      globalId += allPoints.length;
     }
 
     graph.computeRects();

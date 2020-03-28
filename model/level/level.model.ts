@@ -5,10 +5,10 @@ import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { KeyedLookup } from '@model/generic.model';
 import { LevelMetaUi, LevelMeta } from './level-meta.model';
-import { OldFloydWarshall } from '@model/nav/old-floyd-warshall.model';
 import { FloydWarshallReady } from './level.worker.model';
 import { NavGraph } from '@model/nav/nav-graph.model';
 import { smallTileDim } from './level-params';
+import { FloydWarshall } from '@model/nav/floyd-warshall.model';
 
 export type Direction = 'n' | 'e' | 's' | 'w'; 
 
@@ -30,7 +30,8 @@ export interface LevelState {
   /** Spawn points, steiner points, lights, interactives */
   metas: KeyedLookup<LevelMeta>;
   /** Pathfinder (might remove it) */
-  floydWarshall: null | Redacted<OldFloydWarshall>;
+  // floydWarshall: null | Redacted<OldFloydWarshall>;
+  floydWarshall: null | Redacted<FloydWarshall>;
   /**
    * NEW approach
    */

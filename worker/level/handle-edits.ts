@@ -231,11 +231,11 @@ function updateNavGraph(levelUid: string) {
   // Remove steiners and then triangulate
   floors.flatMap(x => x.removeSteiners().qualityTriangulate());
   // Valid steiner points will require a retriangulation
-  // const nonSteiners = floors.flatMap(f => f.allPoints);
+  const nonSteiners = floors.flatMap(f => f.allPoints);
   const steiners = Object.values(metas)
     .filter(({ tags }) => tags.includes('steiner'))
     // // Duplicate vertices can break triangulator
-    // .filter(({ position }) => nonSteiners.every(p => !p.equals(position)))
+    .filter(({ position }) => nonSteiners.every(p => !p.equals(position)))
     .reduce((agg, { position: p }) => {
       const index = floors.findIndex(floor => floor.contains(p));
       return index >= 0 ? { ...agg, [index]: (agg[index] || []).concat(p) } : agg;
