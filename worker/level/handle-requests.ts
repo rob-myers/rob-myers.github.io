@@ -4,7 +4,7 @@ import { redact, addToLookup } from '@model/redux.model';
 import { mapValues } from '@model/generic.model';
 import { NavPath } from '@model/nav/nav-path.model';
 import { Vector2 } from '@model/vec2.model';
-import { NavGraph } from '@model/nav/nav-graph.model';
+import { OldNavGraph } from '@model/nav/old-nav-graph.model';
 import { LevelMeta } from '@model/level/level-meta.model';
 import { Act } from '@store/level/level.duck';
 import { store, getLevel, getLevelAux } from './create-store';
@@ -74,7 +74,7 @@ export function listenForRequests() {
       }
       case 'request-nav-view': {
         const { floors } = getLevel(msg.levelUid)!;
-        const { centers, segs } = NavGraph.from(floors).dualGraph(floors);
+        const { centers, segs } = OldNavGraph.from(floors).dualGraph(floors);
   
         ctxt.postMessage({
           key: 'send-nav-view',

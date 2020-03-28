@@ -1,7 +1,7 @@
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { LevelWorkerContext } from '@model/level/level.worker.model';
 import { Act } from '@store/level/level.duck';
-import { NavGraph } from '@model/nav/nav-graph.model';
+import { OldNavGraph } from '@model/nav/old-nav-graph.model';
 import { redact } from '@model/redux.model';
 import { FloydWarshall } from '@model/nav/floyd-warshall.model';
 import { store, getLevel } from './create-store';
@@ -11,7 +11,7 @@ const dispatch = store.dispatch as LevelDispatchOverload;
 
 export function ensureFloydWarshall(levelUid: string) {
   const { floors, floydWarshall } = getLevel(levelUid)!;
-  const navGraph = NavGraph.from(floors);
+  const navGraph = OldNavGraph.from(floors);
  
   // FloydWarshall.from is an expensive computation
   const nextFloydWarshall = floydWarshall || redact(FloydWarshall.from(navGraph));

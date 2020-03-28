@@ -12,7 +12,7 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
 import { sendLevelAux, sendMetas } from './handle-requests';
 import { tileDim, smallTileDim, floorInset, navTags } from '@model/level/level-params';
-import { NavRectGraph } from '@model/nav/nav-rect-graph.model';
+import { NavGraph } from '@model/nav/nav-graph.model';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -255,8 +255,8 @@ function updateNavGraph(levelUid: string) {
   /**
    * NEW APPROACH
    */
-  const navRectGraph = redact(NavRectGraph.from(floors));
-  dispatch(Act.updateLevel(levelUid, { navRectGraph }));
+  const navRectGraph = redact(NavGraph.from(floors));
+  dispatch(Act.updateLevel(levelUid, { navGraph: navRectGraph }));
   // console.log({ navRectGraph });
   ctxt.postMessage({
     key: 'send-level-nav-rects',

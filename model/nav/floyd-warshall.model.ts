@@ -1,4 +1,4 @@
-import { NavGraph, NavNode } from './nav-graph.model';
+import { OldNavGraph, NavNode } from './old-nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
 import { Poly2 } from '@model/poly2.model';
 import NavChannel, { NavPortal } from './nav-channel';
@@ -12,7 +12,7 @@ export class FloydWarshall {
   public dist: { [srcId: string]: { [targetId: string]: number  } };
   public next: { [srcId: string]: { [targetId: string]: null | string  } };
 
-  constructor(public navGraph: NavGraph) {
+  constructor(public navGraph: OldNavGraph) {
     this.dist = {};
     this.next = {};
   }
@@ -52,7 +52,7 @@ export class FloydWarshall {
   }
 
   /** https://en.wikipedia.org/wiki/Floyd%E2%80%93Warshall_algorithm */
-  public static from(graph: NavGraph): FloydWarshall {
+  public static from(graph: OldNavGraph): FloydWarshall {
     const fm = new FloydWarshall(graph);
     fm.initialize();
     const [dist, next] = [fm.dist, fm.next];

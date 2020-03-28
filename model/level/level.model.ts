@@ -7,7 +7,7 @@ import { KeyedLookup } from '@model/generic.model';
 import { LevelMetaUi, LevelMeta } from './level-meta.model';
 import { FloydWarshall } from '@model/nav/floyd-warshall.model';
 import { FloydWarshallReady } from './level.worker.model';
-import { NavRectGraph } from '@model/nav/nav-rect-graph.model';
+import { NavGraph } from '@model/nav/nav-graph.model';
 import { smallTileDim } from './level-params';
 
 export type Direction = 'n' | 'e' | 's' | 'w'; 
@@ -32,9 +32,9 @@ export interface LevelState {
   /** Pathfinder (might remove it) */
   floydWarshall: null | Redacted<FloydWarshall>;
   /**
-   * TODO new rectangular decomposition for navigation
+   * NEW approach
    */
-  navRectGraph: Redacted<NavRectGraph>;
+  navGraph: Redacted<NavGraph>;
 }
 
 export function createLevelState(uid: string): LevelState {
@@ -47,7 +47,7 @@ export function createLevelState(uid: string): LevelState {
     metaUpdateSub: null,
     metas: {},
     floydWarshall: null,
-    navRectGraph: redact(new NavRectGraph([])),
+    navGraph: redact(new NavGraph([])),
   };
 }
 

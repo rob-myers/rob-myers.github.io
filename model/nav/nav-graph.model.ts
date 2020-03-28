@@ -1,153 +1,60 @@
-import { Poly2, Poly2Json } from '@model/poly2.model';
-import { BaseGraph, BaseNode, BaseNodeOpts, BaseEdge, BaseEdgeOpts } from '@model/graph.model';
-import { Vector2 } from '@model/vec2.model';
-import { redact } from '@model/redux.model';
-import { NavPortal } from './nav-channel';
+import rectDecompose from 'rectangle-decomposition';
+import { BaseNodeOpts, BaseNode, BaseEdgeOpts, BaseEdge, BaseGraph } from '@model/graph.model';
+import { Rect2 } from '@model/rect2.model';
+import { Poly2 } from '@model/poly2.model';
 
 interface NavNodeOpts extends BaseNodeOpts {
-  /** Index of polygon this node occurs in */
+  id: string;
+  /** Index of polygon this node occurs in. */
   polyId: number;
-  /** Index of triangle in triangulation of polygon */
-  triId: number;
-  /** Indices of points in polygon defining the triangle */
-  pointIds: [number, number, number];
+  /** Vertex of polygon this node corresponds to. */
+  vertexId: number;
+  /** Indices of neighbouring vertices in triangulation of polygon. */
+  nextVertexIds: number[];
+  /** Indices of neighbouring triangles in triangulation of polygon. */
+  triIds: number[];
 }
 
-/** Represents a triangle in navmesh */
-export class NavNode extends BaseNode<NavNodeOpts> {}
+class NavNode extends BaseNode<NavNodeOpts> {} 
 
-interface NavEdgeOpts extends BaseEdgeOpts<NavNode> {
-  /** Indices in `src`s triangle shared by `src` and `dst` */
-  portal: [0 | 1 | 2, 0 | 1 | 2];
-}
+type NavEdgeOpts = BaseEdgeOpts<NavNode>;
 
-/** Represents a portal in navmesh */
 class NavEdge extends BaseEdge<NavNode, NavEdgeOpts> {}
 
-export class NavGraph extends BaseGraph<
-NavNode, NavNodeOpts, NavEdge, NavEdgeOpts
-> {
+export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOpts> {
+  /**
+   * Rectangles partitioning `polys`.
+   * These play an auxiliary role.
+   */
+  public rects: Rect2[];
 
   constructor(
-    /**
-     * Triangles grouped by original polygon,
-     * so can easily recognise disjointness.
-     */
-    public groupedTris: Poly2[][]
+    /** Navigable rectilinear polygons */
+    public polys: Poly2[],
   ) {
     super(NavEdge);
+    this.rects = [];
   }
 
-  /** Needs original polygons (not triangles) as input */
-  public dualGraph(polys: Poly2[]) {
-    const polyPs = polys.map(({ allPoints }) => allPoints);
-    const toCenter = this.nodesArray.reduce(
-      (agg, { id, opts: { polyId, pointIds } }) => ({
-        ...agg,
-        [id]: Poly2.centerOf(pointIds.map(id => polyPs[polyId][id])),
-      }),
-      {} as Record<string, Vector2>,
-    );
-    const segs = this.edgesArray.map(({ src, dst }) => [
-      toCenter[src.id], toCenter[dst.id]
-    ] as [Vector2, Vector2]);
-    return { centers: Object.values(toCenter), segs };
-  }
-
-  public get json(): NavGraphJson {
-    return {
-      nodes: this.nodesArray.map(({ opts: origOpts }) => origOpts),
-      edges: this.edgesArray.map(({ src, dst, otherOpts: { portal } }) => ({
-        src: src.id,
-        dst: dst.id,
-        portal,
-      })),
-      groupedTris: this.groupedTris.map(tris => tris.map(p => p.json)),
-    };
-  }
-
-  /**
-   * Compute from navigable floors.
-   */
-  public static from(navFloors: Poly2[]): NavGraph {
-    const groupedTris = navFloors.map(p => p.triangulation);
-    const graph = new NavGraph(groupedTris.map(p => redact(p)));
+  private computeRects() {
     /**
-     * Triangles and triangleIds based on all points i.e.
-     * each polygon can contribute outline, holes, steiner points.
+     * Npm module 'rectangle-decomposition' requires +ve coords,
+     * so we transform first, then apply inverse transform.
      */
-    const allPoints = navFloors.flatMap(p => p.allPoints);
+    const bounds = Rect2.from(...this.polys.flatMap(({ bounds }) => bounds));
+    const loops = this.polys
+      .flatMap(({ points, holes }) => [points].concat(holes))
+      .map((loop) => loop.map(({ x, y }) =>
+        [x - bounds.x, y - bounds.y] as [number, number]));
 
-    for (const [polyId, { triangleIds }] of navFloors.entries()) {
-      triangleIds.forEach((pointIds, triId) => {
-        const node = new NavNode({
-          id: `${polyId}-${triId}`,
-          polyId,
-          triId,
-          pointIds,
-        });
-        graph.registerNode(node);
-      });
+    this.rects = rectDecompose(loops).map(([[x1, y1], [x2, y2]]) =>
+      new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1));
+  }
 
-      // adjs[{pidA}_{pidB}] is one or two triangle indexes
-      const adjs = triangleIds.reduce(
-        (agg, triple, triIndex) => {
-          triple.forEach((pidA, i) => {
-            const pidB = triple[(i + 1) % 3];
-            const key = pidA < pidB ? `${pidA}_${pidB}` : `${pidB}_${pidA}`;
-            (agg[key] = agg[key] || []).push(triIndex);
-          });
-          return agg;
-        },
-        {} as Record<string, number[]>
-      );
-
-      triangleIds.forEach((triple, triIndex) => {
-        triple.forEach((pidA, i) => {
-          const pidB = triple[(i + 1) % 3];
-          // Find at most one other triangle
-          const key = pidA < pidB ? `${pidA}_${pidB}` : `${pidB}_${pidA}`;
-          const adjIds = adjs[key].filter(k => k !== triIndex);
-          adjIds.forEach((otherIndex) => {
-            graph.connect({
-              src: `${polyId}-${triIndex}`,
-              dst: `${polyId}-${otherIndex}`,
-              portal: [
-                groupedTris[polyId][triIndex].points
-                  .findIndex(p => p.equals(allPoints[pidA])) as 0 | 1 | 2,
-                groupedTris[polyId][triIndex].points
-                  .findIndex(p => p.equals(allPoints[pidB])) as 0 | 1 | 2,
-              ],
-            });
-          });
-        });
-      });
-    }
+  public static from(navFloors: Poly2[]): NavGraph {
+    const graph = new NavGraph(navFloors);
+    graph.computeRects();
     return graph;
   }
-
-  public getPortal({ src: { opts }, otherOpts: { portal } }: NavEdge): NavPortal {
-    const { points } = this.groupedTris[opts.polyId][opts.triId];
-    return { left: points[portal[0]], right: points[portal[1]] };
-  }
-
-  public static fromJson({ nodes, edges, groupedTris }: NavGraphJson): NavGraph {
-    const graph = new NavGraph(groupedTris.map(tris => tris.map(p => redact(Poly2.fromJson(p)))));
-    nodes.forEach((nodeOpts) => graph.registerNode(new NavNode(nodeOpts)));
-    edges.forEach(edgeOpts => graph.connect(edgeOpts));
-    return graph;
-  }
-
-}
-
-export interface NavGraphJson {
-  nodes: NavNodeOpts[];
-  edges: NavEdgeJson[];
-  groupedTris: Poly2Json[][];
-}
-
-interface NavEdgeJson {
-  src: string;
-  dst: string;
-  portal: [0 | 1 | 2, 0 | 1 | 2];
+  
 }
