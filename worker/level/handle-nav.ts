@@ -3,7 +3,7 @@ import { LevelWorkerContext } from '@model/level/level.worker.model';
 import { Act } from '@store/level/level.duck';
 import { OldNavGraph } from '@model/nav/old-nav-graph.model';
 import { redact } from '@model/redux.model';
-import { FloydWarshall } from '@model/nav/floyd-warshall.model';
+import { OldFloydWarshall } from '@model/nav/old-floyd-warshall.model';
 import { store, getLevel } from './create-store';
 
 const ctxt: LevelWorkerContext = self as any;
@@ -14,7 +14,7 @@ export function ensureFloydWarshall(levelUid: string) {
   const navGraph = OldNavGraph.from(floors);
  
   // FloydWarshall.from is an expensive computation
-  const nextFloydWarshall = floydWarshall || redact(FloydWarshall.from(navGraph));
+  const nextFloydWarshall = floydWarshall || redact(OldFloydWarshall.from(navGraph));
   dispatch(Act.updateLevel(levelUid, { floydWarshall: nextFloydWarshall }));
 
   // Divide by 2 for undirected edges

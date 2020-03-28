@@ -70,10 +70,7 @@ export class OldNavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdg
   public static from(navFloors: Poly2[]): OldNavGraph {
     const groupedTris = navFloors.map(p => p.triangulation);
     const graph = new OldNavGraph(groupedTris.map(p => redact(p)));
-    /**
-     * Triangles and triangleIds based on all points i.e.
-     * each polygon can contribute outline, holes, steiner points.
-     */
+    // Each polygon can contribute outline, holes, steiner points
     const allPoints = navFloors.flatMap(p => p.allPoints);
 
     for (const [polyId, { triangleIds }] of navFloors.entries()) {

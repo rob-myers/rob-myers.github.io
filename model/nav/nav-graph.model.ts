@@ -2,17 +2,19 @@ import rectDecompose from 'rectangle-decomposition';
 import { BaseNodeOpts, BaseNode, BaseEdgeOpts, BaseEdge, BaseGraph } from '@model/graph.model';
 import { Rect2 } from '@model/rect2.model';
 import { Poly2 } from '@model/poly2.model';
+import { removeDups } from '@model/generic.model';
 
 interface NavNodeOpts extends BaseNodeOpts {
+  /** `${polyId}-${vertexId}` */
   id: string;
   /** Index of polygon this node occurs in. */
   polyId: number;
   /** Vertex of polygon this node corresponds to. */
   vertexId: number;
   /** Indices of neighbouring vertices in triangulation of polygon. */
-  nextVertexIds: number[];
-  /** Indices of neighbouring triangles in triangulation of polygon. */
-  triIds: number[];
+  adjacentIds: number[];
+  // /** Indices of neighbouring triangles in triangulation of polygon. */
+  // triIds: number[];
 }
 
 class NavNode extends BaseNode<NavNodeOpts> {} 
@@ -30,7 +32,9 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
 
   constructor(
     /** Navigable rectilinear polygons */
-    public polys: Poly2[],
+    private polys: Poly2[],
+    /** Aligned triangulations */
+    private polysTris: Poly2[][],
   ) {
     super(NavEdge);
     this.rects = [];
@@ -51,8 +55,37 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1));
   }
 
+  /**
+   * Construct NavGraph from navmesh `navFloors`.
+   */
   public static from(navFloors: Poly2[]): NavGraph {
-    const graph = new NavGraph(navFloors);
+    const groupedTris = navFloors.map(p => p.triangulation);
+    const graph = new NavGraph(navFloors, groupedTris);
+
+    for (const [polyId, { points, triangleIds }] of navFloors.entries()) {
+      // Create nodes
+      for (const [vertexId] of points.entries()) {
+        graph.registerNode(new NavNode({
+          id: `${polyId}-${vertexId}`,
+          polyId,
+          vertexId,
+          adjacentIds: removeDups(triangleIds.flatMap(ids =>
+            ids.includes(vertexId) ? ids.filter(id => id !== vertexId) : []
+          ))
+        }));
+      }
+      // Create edges
+      for (const node of graph.nodesArray) {
+        const { polyId, adjacentIds } = node.opts;
+        for (const adjId of adjacentIds) {
+          graph.connect({
+            src: node,
+            dst: graph.getNodeById(`${polyId}-${adjId}`)!,
+          });
+        }
+      }
+    }
+
     graph.computeRects();
     return graph;
   }

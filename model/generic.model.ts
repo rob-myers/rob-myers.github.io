@@ -147,3 +147,7 @@ export function isStringInt(input: string, mustBeNonNegative = false): boolean {
 export function posModulo(x: number, modulus: number) {
   return x < 0 ? modulus + x % modulus : x % modulus;
 }
+
+export function removeDups<T>(items: T[]) {
+  return Array.from(new Set(items));
+}
