@@ -74,7 +74,7 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
             fill="none"
             stroke="rgba(200, 0, 0, 0.5)"
             strokeWidth={0.1}
-            // strokeDasharray='0.5 1'
+            strokeDasharray='0.75 2'
             x={x}
             y={y}
             width={width}

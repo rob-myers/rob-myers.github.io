@@ -12,7 +12,6 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
 import { sendLevelAux, sendMetas } from './handle-requests';
 import { tileDim, smallTileDim, floorInset, navTags } from '@model/level/level-params';
-import { NavGraph } from '@model/nav/nav-graph.model';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -121,15 +120,11 @@ export function handleLevelToggles(levelUid: string) {
         const { tileFloors, wallSeg } = getLevel(levelUid)!;
         const outsetWalls = Poly2.union(Object.values(wallSeg).map(([u, v]) =>
           new Rect2(u.x - floorInset, u.y - floorInset, v.x - u.x + 2 * floorInset, v.y - u.y + 2 * floorInset).poly2));
-
         // Smaller inset so steiners 'on edge' are actually inside
-        const navFloors = Poly2.cutOut(outsetWalls, tileFloors.flatMap(x => x.createInset(floorInset - 0.01)));
-        // const navFloors = Poly2.cutOut(outsetWalls, tileFloors.flatMap(x => x.createInset(floorInset)));
+        const navFloors = Poly2.cutOut(outsetWalls, tileFloors.flatMap(x => x.createInset(floorInset)));
 
         dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
-        ctxt.postMessage({
-          key: 'send-level-nav-floors',
-          levelUid,
+        ctxt.postMessage({ key: 'send-level-nav-floors', levelUid,
           navFloors: navFloors.map(({ json }) => json),
         });
         return navFloors;
@@ -224,44 +219,27 @@ function updateLights(levelUid: string) {
  */
 function updateNavGraph(levelUid: string) {
   const { floors, metas } = getLevel(levelUid)!;
+  // const allPoints = floors.flatMap(f => f.allPoints);
 
-  /**
-   * OLD APPROACH
-   */
-  // Remove steiners and then triangulate
-  floors.flatMap(x => x.removeSteiners().qualityTriangulate());
-  // Valid steiner points will require a retriangulation
-  const nonSteiners = floors.flatMap(f => f.allPoints);
   const steiners = Object.values(metas)
     .filter(({ tags }) => tags.includes('steiner'))
-    // // Duplicate vertices can break triangulator
-    .filter(({ position }) => nonSteiners.every(p => !p.equals(position)))
+    // .filter(({ position }) => allPoints.every(p => !p.equals(position)))
     .reduce((agg, { position: p }) => {
-      const index = floors.findIndex(floor => floor.contains(p));
-      return index >= 0 ? { ...agg, [index]: (agg[index] || []).concat(p) } : agg;
+      const polyId = floors.findIndex(floor => floor.contains(p));
+      return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;
     }, {} as Record<number, Vector2[]>);
 
-  if (Object.keys(steiners).length) {// Retriangulate with steiners
-    Object.entries(steiners).forEach(([index, ps]) => {
-      floors[Number(index)].addSteinerPoints(ps).customTriangulate();
-    });
-  }
-  ctxt.postMessage({
-    key: 'send-level-tris',
-    levelUid, 
-    tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
+  floors.flatMap((poly, polyId) => {
+    poly.removeSteiners();
+    if (steiners[polyId]) {
+      poly.addSteiners(steiners[polyId]).customTriangulate(0.01);
+    } else {
+      poly.customTriangulate();
+    }
   });
 
-  /**
-   * NEW APPROACH
-   */
-  const navRectGraph = redact(NavGraph.from(floors));
-  dispatch(Act.updateLevel(levelUid, { navGraph: navRectGraph }));
-  // console.log({ navRectGraph });
-  ctxt.postMessage({
-    key: 'send-level-nav-rects',
-    levelUid,
-    rects: navRectGraph.rects.map(r => r.json),
+  ctxt.postMessage({ key: 'send-level-tris', levelUid, 
+    tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
   });
 
   // Clear ephemeral

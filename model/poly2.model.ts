@@ -197,7 +197,7 @@ export class Poly2 {
     this.clearCache();
   }
 
-  public addSteinerPoints(points: Vector2[]) {
+  public addSteiners(points: Vector2[]) {
     if (points.length) {
       this.steinerPoints.push(...points);
       this._triangulationIds = [];
@@ -342,8 +342,13 @@ export class Poly2 {
   /**
    * Uses steiner points.
    */
-  public customTriangulate(): Poly2[] {
-    const { points: coords, edges } = this.planarLineGraph;
+  public customTriangulate(edgeSteinersOutset = 0): Poly2[] {
+    /**
+     * Importantly, we're assuming the slightly outset polygon:
+     * doesn't have additional structure and vertices are in same order.
+     */
+    const subject = edgeSteinersOutset ? this.createOutset(edgeSteinersOutset)[0] : this;
+    const { points: coords, edges } = subject.planarLineGraph;
     const extendedCoords = coords.concat(this.steinerPoints.map(({ coord }) => coord));
     this._triangulationIds = cdt2d(extendedCoords, edges, this.cdt2dOpts);
     return this._triangulation = this.triangleIdsToPolys(this._triangulationIds);

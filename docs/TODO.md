@@ -1,7 +1,13 @@
 # TODO
 
-- keep rectangle-decomposition but use navmesh for navigation
-- however, change induced graph i.e. vertices induce nodes, edges induce edges.
+- discard subsequent path points in same rect
+- discard intermediate point if a -> c intersects portal
+
+- rects induce extra steiners to keep triangles inside rects
+- add refined rects in case of long corridor with doorways
+- fast 'point to rect' lookup
+- fast 'point to triangle' lookup
+- clean away old navigation
 
 - meta tags for circular trigger `circ-$radius`
 - meta tags for rectangle trigger `rect-$width-$height`
@@ -231,3 +237,10 @@
 - permit steiner points "on edge" by insetting slightly less
 - navmesh via optimal rect decomposition of the rectilinear nav polygon via the npm module `rectangle-decomposition`
 - display as outlined rects, and hide triangles
+- keep rectangle-decomposition but use navmesh for navigation
+- however, change induced graph i.e. vertices induce nodes, edges induce edges.
+- remove hack where steiners on edges are slightly inside.
+  instead, create fresh slightly outset polys, compute triangulation,
+  and use triangulation with original polys
+- pick best start/end node by testing 3 in each triangle (9 distance lookups)
+  - eliminate 2nd/penultimate intermediate point if a -> b -> c all in same rect

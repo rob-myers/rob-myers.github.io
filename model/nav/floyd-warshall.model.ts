@@ -1,19 +1,13 @@
 import { NavGraph } from './nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
 import { Poly2 } from '@model/poly2.model';
-
-/**
- * TODO precompute Line-of-sight tests for each pair of vertices,
- * and use to simplify paths.
- */
+import { Rect2 } from '@model/rect2.model';
 
 export class FloydWarshall {
   
   public dist: { [srcId: string]: { [dstId: string]: number  } };
   public next: { [srcId: string]: { [dstId: string]: null | string  } };
-  /**
-   * All node positions, aligned to `this.navGraph.nodesArray`
-   */
+  /** All node positions, aligned to `this.navGraph.nodesArray` */
   private allPositions: Vector2[];
   private tempPoint: Vector2;
 
@@ -24,15 +18,27 @@ export class FloydWarshall {
     this.tempPoint = Vector2.zero;
   }
 
-  /**
-   * TODO expand search to 'close' vertex in adjacent triangle within line-of-sight
-   * TODO faster lookup from position to triangles
-   */
-  private findSrcDstNode(src: Vector2, dst: Vector2) {
+  public findPath(src: Vector2, dst: Vector2): Vector2[] {
+    const { srcNode, dstNode } = this.findPathEndNodes(src, dst);
+    // Handle unnavigable nodes, or nodes in disjoint polys
+    if (!srcNode || !dstNode) return [];
+
+    const nodes = [srcNode];
+    let node = srcNode;
+    while (node !== dstNode) nodes.push(node = this.navGraph.getNodeById(this.next[node.id]![dstNode.id]!)!);
+
+    return this.simplifyPath([
+      src,
+      ...nodes.map(({ opts: { globalId } }) => this.allPositions[globalId]),
+      dst,
+    ]);
+  }
+
+  private findPathEndNodes(src: Vector2, dst: Vector2) {
     const srcTri = this.findTriangle(src);
     const dstTri = this.findTriangle(dst);
     if (!srcTri || !dstTri || srcTri.polyId !== dstTri.polyId) {
-      return null;
+      return { srcNode: null, dstNode : null };
     }
     let closest = {
       srcId: null as null | string,
@@ -51,26 +57,23 @@ export class FloydWarshall {
     };
   }
 
-  public findPath(src: Vector2, dst: Vector2): Vector2[] {
-    const ends = this.findSrcDstNode(src, dst);
-    if (!ends) {
-      return []; // Some node not navigable or nodes in disjoint polys
+  /**
+   * Find some rectangle containing every point.
+   * NOTE a point might be contained in 1, 2 or 3 rects.
+   * TODO better approach e.g. via BSP
+   */
+  private findRect(points: Vector2[]): Rect2 | null;
+  private findRect(point: Vector2): Rect2 | null;
+  private findRect(input: Vector2 | Vector2[]) {
+    if (Array.isArray(input)) {
+      return this.navGraph.rects.find(r => input.every(p => r.contains(p))) || null;
     }
-
-    const { srcNode, dstNode } = ends;
-    const nodes = [srcNode];
-    let node = srcNode;
-    while (node !== dstNode) {
-      nodes.push(node = this.navGraph.getNodeById(this.next[node.id]![dstNode.id]!)!);
-    }
-
-    return [
-      src,
-      ...nodes.map(({ opts: { globalId } }) => this.allPositions[globalId]),
-      dst,
-    ];
+    return this.navGraph.rects.find(r => r.contains(input)) || null;
   }
 
+  /**
+   * TODO better approach e.g. find rect and know intersecting tris.
+   */
   private findTriangle(point: Vector2) {
     for (const [polyId, tris] of this.navGraph.groupedTris.entries()) {
       for (const [triId, { points: [u, v, w] }] of tris.entries()) {
@@ -149,9 +152,19 @@ export class FloydWarshall {
   }
 
   /**
-   * Precompute line-of-sight and use to discard intermediates.
+   * Try to eliminate 2nd and/or penultimate point in path.
+   * TODO eliminate when in adjacent rects and lineSeg joining intersects their portal...
+   * TODO eliminate along whole path.
    */
-  private simplifyPath() {
-    // TODO
+  private simplifyPath(path: Vector2[]) {
+    if (path.length >= 3) {
+      if (this.findRect(path.slice(0, 3))) {
+        path.splice(1, 1);
+      }
+      if (path.length >= 3 && this.findRect(path.slice(-3))) {
+        path.splice(path.length - 2, 1);
+      }
+    }
+    return path;
   }
 }
