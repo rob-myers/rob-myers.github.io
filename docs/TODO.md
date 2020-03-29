@@ -1,5 +1,7 @@
 # TODO
-  
+
+- split each rect via its neighbours, and use these 4 points as start/end points
+
 - fast line-of-sight test via rects for negation of nav polys.
 - Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
 - path simplification does line-of-sight simplification from endpoints

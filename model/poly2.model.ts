@@ -539,6 +539,37 @@ export class Poly2 {
     return this;
   }
 
+  /**
+   * Quality triangulation via constrained delaunay library 'poly2ti'.
+   * Can fail for 'non-wellformed polygons' e.g. given square
+   * with a hole, cut another hole meeting 1st hole at a point.
+   * On failure we fallback to earcut algorithm, warning in console.
+   */
+  public qualityTriangulate(): Poly2[] {
+    try {
+      interface V2WithId extends Vector2Json { id: number }
+      const outline: V2WithId[] = this.points.map(({ x, y }, id) => ({ x, y, id }));
+      let nextId = outline.length;
+      const holes: V2WithId[][] = this.holes
+        .map(hole => hole.map(({ x, y }) => ({ x, y, id: nextId++ })));
+
+      this._triangulationIds = new poly2tri.SweepContext(outline)
+        .addHoles(holes)
+        // Seen failures, but customTriangulation handles steiner points
+        // .addPoints(this.steinerPoints)
+        .triangulate()
+        .getTriangles()
+        .map(t => [t.getPoint(0), t.getPoint(1), t.getPoint(2)] as Triple<V2WithId>)
+        .map(([u, v, w]) => [u.id, v.id, w.id]);
+      
+      return this._triangulation = this.triangleIdsToPolys(this._triangulationIds);
+    } catch (e) {
+      console.error('Quality triangulation failed, falling back to earcut');
+      console.error(e);
+      return this.fastTriangulate();
+    }
+  }
+
   /** Mutates `ring` */
   public static removeColinear(ring: Vector2[], thresholdAngle: number): void {
     for(let i= ring.length - 1; ring.length > 3 && i >= 0; --i){
@@ -602,37 +633,6 @@ export class Poly2 {
    */
   private static triangleSign(p1: Vector2, p2: Vector2, p3: Vector2) {
     return (p1.x - p3.x) * (p2.y - p3.y) - (p1.y - p3.y) * (p2.x - p3.x);
-  }
-
-  /**
-   * Quality triangulation via constrained delaunay library 'poly2ti'.
-   * Can fail for 'non-wellformed polygons' e.g. given square
-   * with a hole, cut another hole meeting 1st hole at a point.
-   * On failure we fallback to earcut algorithm, warning in console.
-   */
-  public qualityTriangulate(): Poly2[] {
-    try {
-      interface V2WithId extends Vector2Json { id: number }
-      const outline: V2WithId[] = this.points.map(({ x, y }, id) => ({ x, y, id }));
-      let nextId = outline.length;
-      const holes: V2WithId[][] = this.holes
-        .map(hole => hole.map(({ x, y }) => ({ x, y, id: nextId++ })));
-
-      this._triangulationIds = new poly2tri.SweepContext(outline)
-        .addHoles(holes)
-        // Seen failures, but customTriangulation handles steiner points
-        // .addPoints(this.steinerPoints)
-        .triangulate()
-        .getTriangles()
-        .map(t => [t.getPoint(0), t.getPoint(1), t.getPoint(2)] as Triple<V2WithId>)
-        .map(([u, v, w]) => [u.id, v.id, w.id]);
-      
-      return this._triangulation = this.triangleIdsToPolys(this._triangulationIds);
-    } catch (e) {
-      console.error('Quality triangulation failed, falling back to earcut');
-      console.error(e);
-      return this.fastTriangulate();
-    }
   }
 
   public translate(dx: number, dy: number) {

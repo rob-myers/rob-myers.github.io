@@ -3,6 +3,7 @@ import { BaseNodeOpts, BaseNode, BaseEdgeOpts, BaseEdge, BaseGraph } from '@mode
 import { Rect2 } from '@model/rect2.model';
 import { Poly2 } from '@model/poly2.model';
 import { removeDups } from '@model/generic.model';
+import { Vector2 } from '@model/vec2.model';
 
 interface NavNodeOpts extends BaseNodeOpts {
   /** `${polyId}-${vertexId}` */
@@ -26,11 +27,18 @@ type NavEdgeOpts = BaseEdgeOpts<NavNode>;
 class NavEdge extends BaseEdge<NavNode, NavEdgeOpts> {}
 
 export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOpts> {
-  /**
-   * Rectangles partitioning `polys`.
-   * These play an auxiliary role.
-   */
+  
+  /** Rectangles partitioning `polys`. */
   public rects: Rect2[];
+  private nodeToPosition: Map<NavNode, Vector2>;
+  /** A node can be in 1, 2 or 3 rects. */
+  private nodeToRects: Map<NavNode, Rect2[]>;
+
+  /**
+   * Pointwise rectilinear inverses by cutting-out from bounds.
+   * One polygon can induce many polygons.
+   */
+  private invertedNavPolys: Poly2[][];
 
   constructor(
     /** Navigable rectilinear polygons */
@@ -40,6 +48,9 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   ) {
     super(NavEdge);
     this.rects = [];
+    this.nodeToRects = new Map;
+    this.nodeToPosition = new Map;
+    this.invertedNavPolys = [];
   }
 
   /**
@@ -63,17 +74,17 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   }
 
   /**
-   * Construct NavGraph from navmesh `navFloors`.
+   * Construct NavGraph from navmesh `navPolys`.
    */
-  public static from(navFloors: Poly2[]): NavGraph {
-    const groupedTris = navFloors.map(p => p.triangulation);
-    const graph = new NavGraph(navFloors, groupedTris);
+  public static from(navPolys: Poly2[]): NavGraph {
+    const groupedTris = navPolys.map(p => p.triangulation);
+    const graph = new NavGraph(navPolys, groupedTris);
     let globalId = 0;
 
     /**
      * `triangleIds` refer to points, holes and steiners of polygon.
      */
-    for (const [polyId, { allPoints, triangleIds }] of navFloors.entries()) {
+    for (const [polyId, { allPoints, triangleIds }] of navPolys.entries()) {
       // Create nodes
       for (const [vertexId] of allPoints.entries()) {
         graph.registerNode(new NavNode({
@@ -99,8 +110,33 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       globalId += allPoints.length;
     }
 
-    graph.rects = NavGraph.computeRects(navFloors).flatMap(rects => rects);
+    // Compute inverse for line-of-sight tests
+    graph.invertedNavPolys = navPolys.map(poly =>
+      Poly2.cutOut([poly], [poly.bounds.poly2]));
+
+    // Compute rectangular partition (as opposed to triangular one)
+    graph.rects = NavGraph.computeRects(navPolys).flatMap(rects => rects);
+
+    // Build lookups
+    graph.nodesArray.forEach((node) => {
+      const { polyId, vertexId } = node.opts;
+      const position = graph.navPolys[polyId].allPoints[vertexId];
+      graph.nodeToPosition.set(node, position);
+      // const rects = graph.rects.filter(r => r.contains(position));
+      // graph.nodeToRects.set(node, rects);
+    });
+
     return graph;
   }
   
+  /**
+   * TODO properly
+   * i.e. detect if line segment intersects this.invertedNavPolys
+   */
+  public isVisibleFrom(src: NavNode, dst: NavNode) {
+    const srcRects = this.nodeToRects.get(src) || [];
+    const dstRects = this.nodeToRects.get(dst) || [];
+    return srcRects.some(r => dstRects.includes(r)) ;
+  }
+
 }

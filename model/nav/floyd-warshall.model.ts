@@ -34,6 +34,11 @@ export class FloydWarshall {
     ]);
   }
 
+  /**
+   * TODO
+   * Need to pre-split the rectangles, so each point has a unique rect.
+   * Then find the point's rect and test the 4 points (16 tests in total)
+   */
   private findPathEndNodes(src: Vector2, dst: Vector2) {
     const srcTri = this.findTriangle(src);
     const dstTri = this.findTriangle(dst);
@@ -137,13 +142,20 @@ export class FloydWarshall {
 
     vs.forEach((vA, i) =>
       vs.forEach((vB, j) => {
-        if (vA === vB) {
+        if (i > j) {
+          return;
+        } else if (vA === vB) {
           this.dist[vA.id][vB.id] = 0;
           this.next[vA.id][vB.id] = vA.id;
-        } else if (this.navGraph.isConnected(vA, vB)) {
-          this.dist[vA.id][vB.id] = Math.round(
+        } else if (
+          this.navGraph.isConnected(vA, vB)
+          || this.navGraph.isVisibleFrom(vA, vB)
+        ) {
+          const dist = Math.round(
             this.tempPoint.copy(this.allPositions[j]).sub(this.allPositions[i]).length
           );
+          this.dist[vA.id][vB.id] = dist;
+          this.dist[vB.id][vA.id] = dist;
           this.next[vA.id][vB.id] = vB.id;
           this.next[vB.id][vA.id] = vA.id;
         }
