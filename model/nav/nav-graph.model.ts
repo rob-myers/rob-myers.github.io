@@ -30,15 +30,15 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   
   /** Rectangles partitioning `polys`. */
   public rects: Rect2[];
+  /** Rect to points on border. */
+  private rectToPoints: Map<Rect2, { polyId: number; nodes: NavNode[]; positions: Vector2[] }>;
+  /** Node to position lookup. */
   private nodeToPosition: Map<NavNode, Vector2>;
-  /** A node can be in 1, 2 or 3 rects. */
+  /** Rects this node belongs to. */
   private nodeToRects: Map<NavNode, Rect2[]>;
-
-  /**
-   * Pointwise rectilinear inverses by cutting-out from bounds.
-   * One polygon can induce many polygons.
-   */
+  /** Pointwise rectilinear inverses formed by cutting from bounds. */
   private invertedNavPolys: Poly2[][];
+  private tempPoint: Vector2;
 
   constructor(
     /** Navigable rectilinear polygons */
@@ -51,6 +51,8 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     this.nodeToRects = new Map;
     this.nodeToPosition = new Map;
     this.invertedNavPolys = [];
+    this.rectToPoints = new Map;
+    this.tempPoint = Vector2.zero;
   }
 
   /**
@@ -58,19 +60,51 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
    * is a list of rectangles partitioning respective poly.
    */
   public static computeRects(navPolys: Poly2[]) {
-    /**
-     * Npm module 'rectangle-decomposition' requires +ve coords,
-     * so we transform first, then apply inverse transform.
-     */
+    // Npm module 'rectangle-decomposition' requires +ve coords,
+    // so we transform first, then apply inverse transform.
     const bounds = Rect2.from(...navPolys.flatMap(({ bounds }) => bounds));
     const groupedLoops = navPolys
       .map(({ points, holes }) => [points].concat(holes))
       .map(loops => loops.map((loop) => loop.map(({ x, y }) =>
         [x - bounds.x, y - bounds.y] as [number, number])));
         
-    return groupedLoops.map(loops => 
+    const groupedRects = groupedLoops.map(loops => 
       rectDecompose(loops).map(([[x1, y1], [x2, y2]]) =>
         new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1)));
+
+    return groupedRects;
+  }
+
+  /** For each rect, collect points of all rects which lie on its border. */
+  private computeRectsPoints(groupedRects: Rect2[][]) {
+    // All points occuring on rectangles without dups, grouped by polyId
+    const groupedPoints = groupedRects
+      .map(rects => rects.flatMap(rect => rect.poly2.points)
+        .filter((p, i, array) => array.findIndex(q => p.equals(q)) === i));
+
+    for (const [polyId, rects] of groupedRects.entries()) {
+      for (const rect of rects) {
+        const positions = groupedPoints[polyId].filter(p => rect.contains(p));
+        // Assume every point on a rectangle occurs as a NavNode
+        const nodes = positions.map(p => this.positionToNode(polyId, p)!);
+        this.rectToPoints.set(rect, { polyId, nodes, positions });
+      }
+    }
+  }
+
+  public findNearbyPoints(point: Vector2) {
+    const rect = this.rects.find(r => r.contains(point));
+    if (rect) {
+      const { nodes, polyId, positions } = this.rectToPoints.get(rect)!;
+      return {
+        polyId,
+        choices: nodes.map((node, i) => ({
+          nodeId: node.id,
+          dist: this.tempPoint.copy(point).sub(positions[i]).length,
+        })),
+      };
+    }
+    return null;
   }
 
   /**
@@ -115,7 +149,9 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       Poly2.cutOut([poly], [poly.bounds.poly2]));
 
     // Compute rectangular partition (as opposed to triangular one)
-    graph.rects = NavGraph.computeRects(navPolys).flatMap(rects => rects);
+    const groupedRects = NavGraph.computeRects(navPolys);
+    graph.rects = groupedRects.flatMap(rects => rects);
+    graph.computeRectsPoints(groupedRects);
 
     // Build lookups
     graph.nodesArray.forEach((node) => {
@@ -137,6 +173,14 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     const srcRects = this.nodeToRects.get(src) || [];
     const dstRects = this.nodeToRects.get(dst) || [];
     return srcRects.some(r => dstRects.includes(r)) ;
+  }
+
+  private positionToNode(poly2: number, point: Vector2) {
+    const vertexId = this.navPolys[poly2].allPoints.findIndex(p => p.equals(point));
+    if (vertexId >= 0) {
+      return this.getNodeById(`${poly2}-${vertexId}`) || null;
+    }
+    return null;
   }
 
 }

@@ -1,12 +1,9 @@
 # TODO
 
-- split each rect via its neighbours, and use these 4 points as start/end points
-
 - fast line-of-sight test via rects for negation of nav polys.
 - Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
 - path simplification does line-of-sight simplification from endpoints
 
-- add refined rects in case of long corridor with doorways
 - fast 'point to rect' lookup
 - fast 'point to triangle' lookup
 - clean away old navigation
@@ -248,3 +245,4 @@
   - eliminate 2nd/penultimate intermediate point if a -> b -> c all in same rect
 - rects can induce extra steiners; currently commented out;
   we'll continue to manually specifiy steiner points
+- start/end points computed by considering all points along edge of local rectangle

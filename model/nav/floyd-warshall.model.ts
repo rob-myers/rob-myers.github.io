@@ -1,6 +1,5 @@
 import { NavGraph } from './nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
-import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
 
 export class FloydWarshall {
@@ -34,15 +33,13 @@ export class FloydWarshall {
     ]);
   }
 
-  /**
-   * TODO
-   * Need to pre-split the rectangles, so each point has a unique rect.
-   * Then find the point's rect and test the 4 points (16 tests in total)
-   */
   private findPathEndNodes(src: Vector2, dst: Vector2) {
-    const srcTri = this.findTriangle(src);
-    const dstTri = this.findTriangle(dst);
-    if (!srcTri || !dstTri || srcTri.polyId !== dstTri.polyId) {
+    const srcNearbys = this.navGraph.findNearbyPoints(src);
+    const dstNearbys = this.navGraph.findNearbyPoints(dst);
+
+    if (!srcNearbys || !dstNearbys) {
+      return { srcNode: null, dstNode : null };
+    } else if (srcNearbys.polyId !== dstNearbys.polyId) {
       return { srcNode: null, dstNode : null };
     }
     let closest = {
@@ -50,8 +47,8 @@ export class FloydWarshall {
       dstId: null as null | string,
       dist: Number.POSITIVE_INFINITY,
     };
-    srcTri.triple.forEach(({ nodeId: srcId, dist: srcDist }) =>
-      dstTri.triple.forEach(({ nodeId: dstId, dist: dstDist }) => {
+    srcNearbys.choices.forEach(({ nodeId: srcId, dist: srcDist }) =>
+      dstNearbys.choices.forEach(({ nodeId: dstId, dist: dstDist }) => {
         const dist = srcDist + this.dist[srcId][dstId] + dstDist;
         (dist < closest.dist ) && (closest = { srcId, dstId, dist });
       })
@@ -74,27 +71,6 @@ export class FloydWarshall {
       return this.navGraph.rects.find(r => input.every(p => r.contains(p))) || null;
     }
     return this.navGraph.rects.find(r => r.contains(input)) || null;
-  }
-
-  /**
-   * TODO better approach e.g. find rect and know intersecting tris.
-   */
-  private findTriangle(point: Vector2) {
-    for (const [polyId, tris] of this.navGraph.groupedTris.entries()) {
-      for (const [triId, { points: [u, v, w] }] of tris.entries()) {
-        if (Poly2.isPointInTriangle(point, u, v, w)) {
-          return {
-            polyId,
-            triple: this.navGraph.navPolys[polyId].triangleIds[triId].map((vertexId, i) => ({
-              nodeId: `${polyId}-${vertexId}`,
-              dist: this.tempPoint.copy(point)
-                .sub(this.navGraph.groupedTris[polyId][triId].points[i]).length,
-            })),
-          };
-        }
-      }
-    }
-    return null;
   }
 
   public static from(graph: NavGraph): FloydWarshall {
@@ -164,9 +140,8 @@ export class FloydWarshall {
   }
 
   /**
+   * TODO better method
    * Try to eliminate 2nd and/or penultimate point in path.
-   * TODO eliminate when in adjacent rects and lineSeg joining intersects their portal...
-   * TODO eliminate along whole path.
    */
   private simplifyPath(path: Vector2[]) {
     if (path.length >= 3) {
