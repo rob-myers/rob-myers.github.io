@@ -10,8 +10,9 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
-import { sendLevelAux, sendMetas } from './handle-requests';
+import { sendMetas } from './handle-requests';
 import { tileDim, smallTileDim, floorInset, navTags } from '@model/level/level-params';
+import { updateNavGraph } from './handle-nav';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -212,38 +213,4 @@ function updateLights(levelUid: string) {
   Object.values(metas)
     .filter((meta) => meta.validateLight(tileFloors))
     .forEach((meta) => meta.light?.computePolygon(lineSegs));
-}
-
-/**
- * Update navigation i.e. triangulation
- */
-function updateNavGraph(levelUid: string) {
-  const { floors, metas } = getLevel(levelUid)!;
-  // const allPoints = floors.flatMap(f => f.allPoints);
-
-  const steiners = Object.values(metas)
-    .filter(({ tags }) => tags.includes('steiner'))
-    // .filter(({ position }) => allPoints.every(p => !p.equals(position)))
-    .reduce((agg, { position: p }) => {
-      const polyId = floors.findIndex(floor => floor.contains(p));
-      return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;
-    }, {} as Record<number, Vector2[]>);
-
-  floors.flatMap((poly, polyId) => {
-    poly.removeSteiners();
-    if (steiners[polyId]) {
-      poly.addSteiners(steiners[polyId]).customTriangulate(0.01);
-    } else {
-      poly.customTriangulate();
-    }
-  });
-
-  ctxt.postMessage({ key: 'send-level-tris', levelUid, 
-    tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
-  });
-
-  // Clear ephemeral
-  dispatch(Act.clearLevelAux(levelUid));
-  sendLevelAux(levelUid);
-  sendMetas(levelUid);
 }

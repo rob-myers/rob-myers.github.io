@@ -42,19 +42,24 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     this.rects = [];
   }
 
-  private computeRects() {
+  /**
+   * Returns array aligned to navPolys, where each entry
+   * is a list of rectangles partitioning respective poly.
+   */
+  public static computeRects(navPolys: Poly2[]) {
     /**
      * Npm module 'rectangle-decomposition' requires +ve coords,
      * so we transform first, then apply inverse transform.
      */
-    const bounds = Rect2.from(...this.navPolys.flatMap(({ bounds }) => bounds));
-    const loops = this.navPolys
-      .flatMap(({ points, holes }) => [points].concat(holes))
-      .map((loop) => loop.map(({ x, y }) =>
-        [x - bounds.x, y - bounds.y] as [number, number]));
-
-    this.rects = rectDecompose(loops).map(([[x1, y1], [x2, y2]]) =>
-      new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1));
+    const bounds = Rect2.from(...navPolys.flatMap(({ bounds }) => bounds));
+    const groupedLoops = navPolys
+      .map(({ points, holes }) => [points].concat(holes))
+      .map(loops => loops.map((loop) => loop.map(({ x, y }) =>
+        [x - bounds.x, y - bounds.y] as [number, number])));
+        
+    return groupedLoops.map(loops => 
+      rectDecompose(loops).map(([[x1, y1], [x2, y2]]) =>
+        new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1)));
   }
 
   /**
@@ -94,7 +99,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       globalId += allPoints.length;
     }
 
-    graph.computeRects();
+    graph.rects = NavGraph.computeRects(navFloors).flatMap(rects => rects);
     return graph;
   }
   

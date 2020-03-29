@@ -1,9 +1,9 @@
 # TODO
+  
+- fast line-of-sight test via rects for negation of nav polys.
+- Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
+- path simplification does line-of-sight simplification from endpoints
 
-- discard subsequent path points in same rect
-- discard intermediate point if a -> c intersects portal
-
-- rects induce extra steiners to keep triangles inside rects
 - add refined rects in case of long corridor with doorways
 - fast 'point to rect' lookup
 - fast 'point to triangle' lookup
@@ -244,3 +244,5 @@
   and use triangulation with original polys
 - pick best start/end node by testing 3 in each triangle (9 distance lookups)
   - eliminate 2nd/penultimate intermediate point if a -> b -> c all in same rect
+- rects can induce extra steiners; currently commented out;
+  we'll continue to manually specifiy steiner points
