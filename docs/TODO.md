@@ -5,12 +5,13 @@
 - meta pickups `pickup` with arrow icon and touch radius
 - meta obstructions `block` with augmenting tags
 
+- clean away old navigation
 - fast line-of-sight test via negation of nav polys.
 - Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
 - path simplification does line-of-sight simplification from endpoints
 - fast 'point to rect' lookup
 - fast 'point to triangle' lookup
-- clean away old navigation
+- for start/end, avoid testing many border-points on currect rect e.g. by restricting along one dimension
 
 - clearer vision of site
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
