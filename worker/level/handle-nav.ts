@@ -48,11 +48,10 @@ export function updateNavGraph(levelUid: string) {
   /** Steiner points from metas */
   const steiners = Object.values(metas)
     .filter(({ tags }) => tags.includes('steiner'))
-    .reduce<{ [polyId: number]: Vector2[] }>(
-    (agg, { position: p }) => {
-      const polyId = floors.findIndex(floor => floor.contains(p));
-      return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;
-    }, {});
+    .reduce<{ [polyId: number]: Vector2[] }>((agg, { position: p }) => {
+    const polyId = floors.findIndex(floor => floor.contains(p));
+    return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;
+  }, {});
 
   /**
    * Ensure every point on a rectangle occurs as a NavNode
@@ -63,13 +62,14 @@ export function updateNavGraph(levelUid: string) {
     const rectSteiners = groupedRects[polyId].flatMap(x => x.poly2.points)
       .filter((x, i, array) =>
         !points.find(p => p.equals(x)) // hasn't occured before
-        && array.findIndex(q => q.equals(x)) === i); // remove dups
+        && array.findIndex(q => q.equals(x)) === i // remove dups
+      );
     steiners[polyId] = (steiners[polyId] || []).concat(rectSteiners);
   });
 
   floors.forEach((poly, polyId) => {
     poly.removeSteiners();
-    if (steiners[polyId]) {
+    if (steiners[polyId]?.length) {
       poly.addSteiners(steiners[polyId]).customTriangulate(0.01);
     } else {
       poly.customTriangulate();

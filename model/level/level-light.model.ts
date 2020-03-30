@@ -19,6 +19,21 @@ export class LevelLight {
   /** Bounds of range of light. */
   public rangeBounds: Rect2;
   
+  public get scale() {
+    const dim  = Math.max(this.polygon.bounds.width, this.polygon.bounds.height);
+    return (1 * this.range) / dim;
+  }
+
+  public get scaleX() {
+    const dim  = Math.max(this.polygon.bounds.width, this.polygon.bounds.height);
+    return this.polygon.bounds.width / dim;
+  }
+  
+  public get scaleY() {
+    const dim  = Math.max(this.polygon.bounds.width, this.polygon.bounds.height);
+    return this.polygon.bounds.height / dim;
+  }
+
   constructor(
     public position: Vector2,
     public range = 100,

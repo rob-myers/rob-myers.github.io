@@ -77,7 +77,7 @@ export function lightPolygon(
    * Should be large enough to cover everything in
    * line-of-sight of light, regardless of light radius.
    */
-  geometryRadius = 500
+  geometryRadius = 1000
 ) {
   // TODO restrict lineSegs to close ones
   const points = new Set(lineSegs.flatMap(x => x));

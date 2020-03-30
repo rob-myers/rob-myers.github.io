@@ -121,8 +121,13 @@ export function handleLevelToggles(levelUid: string) {
         const { tileFloors, wallSeg } = getLevel(levelUid)!;
         const outsetWalls = Poly2.union(Object.values(wallSeg).map(([u, v]) =>
           new Rect2(u.x - floorInset, u.y - floorInset, v.x - u.x + 2 * floorInset, v.y - u.y + 2 * floorInset).poly2));
-        // Smaller inset so steiners 'on edge' are actually inside
-        const navFloors = Poly2.cutOut(outsetWalls, tileFloors.flatMap(x => x.createInset(floorInset)));
+        
+        const navFloors = Poly2.cutOut(
+          outsetWalls,
+          tileFloors.flatMap(x => x.createInset(floorInset))
+        );
+
+
 
         dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
         ctxt.postMessage({ key: 'send-level-nav-floors', levelUid,
