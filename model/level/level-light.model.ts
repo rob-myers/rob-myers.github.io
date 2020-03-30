@@ -36,7 +36,7 @@ export class LevelLight {
 
   constructor(
     public position: Vector2,
-    public range = 100,
+    public range = 150,
     public polygon = redact(new Poly2()),
     /** e.g. (0.5, 0.5) means light positioned at center of polygon. */
     public sourceRatios = new Vector2(0.5, 0.5),

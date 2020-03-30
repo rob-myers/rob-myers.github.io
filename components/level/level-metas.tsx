@@ -117,20 +117,14 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   {
                     theme === 'light-mode' && (
                       <>
-                        <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0)' }} />
-                        <stop offset="100%" style={{ stopColor: 'rgba(0, 0, 0, 1)' }} />
-                        {/* <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.2)' }} />
-                        <stop offset="60%" style={{ stopColor: 'rgba(0, 0, 0, 0.2)' }} />
-                        <stop offset="100%" style={{ stopColor: 'rgba(0, 0, 0, 0)' }} /> */}
-                        {/* <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.2' }} />
-                        <stop offset="50%" style={{ stopColor: 'rgba(0, 0, 0, 0.1' }} />
-                        <stop offset="80%" style={{ stopColor: 'rgba(0, 0, 0, 0' }} /> */}
+                        <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} />
+                        <stop offset="95%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} />
+                        <stop offset="100%" style={{ stopColor: 'rgba(0, 0, 0, 0)' }} />
                       </>
                     ) || (
                       <>
-                        <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 230, 0.3)' }} />
-                        <stop offset="50%" style={{ stopColor: 'rgba(255, 255, 230, 0.25)' }} />
-                        <stop offset="70%" style={{ stopColor: 'rgba(255, 255, 255, 0.1)' }} />
+                        <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 230, 0.25)' }} />
+                        <stop offset="50%" style={{ stopColor: 'rgba(255, 255, 230, 0.1)' }} />
                         <stop offset="100%" style={{ stopColor: 'rgba(255, 255, 255, 0)' }} />
                       </>
                     )

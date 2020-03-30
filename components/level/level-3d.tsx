@@ -11,6 +11,7 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
   const tempPoint = useRef(Vector2.zero);
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const mouseWorld = useSelector(({ level: { instance } }) => instance[levelUid].mouseWorld);
+  const zoomFactor = useSelector(({ level: { instance } }) => instance[levelUid].zoomFactor);
   const [wallSegs, setWallSegs] = useState([] as { u: Vector2; v: Vector2; backface: boolean }[]);
   const [dimension, setDimension] = useState<Vector2>();
 
@@ -23,8 +24,8 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
         const outerWallSegs = ([] as [Vector2, Vector2][]).concat(
           ...msg.tileFloors.map(x => Poly2.fromJson(x)).map(({ lineSegs }) => lineSegs));
         setWallSegs(wallSegs.map(([u, v]) => ({ u, v, backface: true })).concat(
-          outerWallSegs.map(([u, v]) => ({ u, v, backface: false }))
-          // outerWallSegs.map(([u, v]) => ({ u, v, backface: true }))
+          // outerWallSegs.map(([u, v]) => ({ u, v, backface: false }))
+          outerWallSegs.map(([u, v]) => ({ u, v, backface: true }))
         ));
       }
     });
@@ -67,6 +68,7 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
         perspectiveOrigin: `${100 * (mouseWorld.x / dimension.x)}% ${100 * (mouseWorld.y / dimension.y)}%`,
         width: dimension.x,
         height: dimension.y,
+        perspective: 8000  - (500 * zoomFactor),
       }}
     >
       {geometry}

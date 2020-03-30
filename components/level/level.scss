@@ -318,13 +318,12 @@ html {
     .container-three-d {
       pointer-events: none;
       position: absolute;
-      perspective: 500px;
+      perspective: 1000px;
 
       .wall {
         position: absolute;
         transform-origin: top left;
-        // height: 20px;
-        height: 500px;
+        height: 100px;
 
         @at-root .light-mode .viewport .container-three-d .wall {
           background: #000;
