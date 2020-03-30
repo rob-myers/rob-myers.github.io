@@ -4,7 +4,6 @@ import { subscribeToWorker } from '@model/level/level.worker.model';
 import { Poly2 } from '@model/poly2.model';
 import { Vector2Json } from '@model/vec2.model';
 import css from './level.scss';
-import { Rect2Json } from '@model/rect2.model';
 
 const LevelContent: React.FC<Props> = ({ levelUid }) => {
   const worker = useSelector(({ level: { worker } }) => worker)!;
@@ -13,7 +12,6 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
   const [walls, setWalls] = useState([] as [Vector2Json, Vector2Json][]);
   const [floors, setFloors] = useState([] as string[]);
   const [triangles, setTriangles] = useState([] as string[]);
-  const [rects, setRects] = useState([] as Rect2Json[]);
 
   useEffect(() => {
     const sub = subscribeToWorker(worker, (msg) => {
@@ -33,10 +31,6 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
         }
         case 'send-level-tris': {
           setTriangles(msg.tris.map(x => Poly2.fromJson(x).svgPath));
-          break;
-        }
-        case 'send-level-nav-rects': {
-          setRects(msg.rects);
           break;
         }
       }
@@ -65,21 +59,6 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
       <g className={css.triangle}>
         {triangles.map((pathDef, i) => (
           <path key={i} d={pathDef} />
-        ))}
-      </g>
-      <g className={css.rects}>
-        {rects.map(([x, y, width, height], i) => (
-          <rect
-            key={i}
-            fill="none"
-            stroke="rgba(200, 0, 0, 0.5)"
-            strokeWidth={0.1}
-            strokeDasharray='0.75 2'
-            x={x}
-            y={y}
-            width={width}
-            height={height}
-          />
         ))}
       </g>
     </>

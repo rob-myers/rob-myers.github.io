@@ -11,7 +11,7 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
   const cursorType = useSelector(({ level: { instance } }) => instance[levelUid].cursorType);
   const mode = useSelector(({ level: { instance } }) => instance[levelUid].mode);
   const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
-  const showNavGraph = useSelector(({ level: { instance } }) => instance[levelUid].showNavGraph);
+  const showNavRects = useSelector(({ level: { instance } }) => instance[levelUid].showNavRects);
   const showThreeD = useSelector(({ level: { instance } }) => instance[levelUid].showThreeD);
   const notifyForwarder = useSelector(({ level: { instance } }) => instance[levelUid].notifyForwarder);
   const dispatch = useDispatch();
@@ -20,17 +20,13 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
   useEffect(() => {
     const sub = subscribeToWorker(worker!, (msg) => {
       if ('levelUid' in msg && msg.levelUid !== levelUid) return;
-      if (showNavGraph && msg.key === 'send-level-tris') {
-        // Showing visualisation of NavGraph, so request it whenever nav tris update
-        worker?.postMessage({ key: 'request-nav-view', levelUid });
-      }
       if (msg.key === 'floyd-warshall-ready') {
         msg.changed && notifyForwarder?.next({ key: 'floyd-warshall-ready', orig: msg });
         setCanSave(true);
       }
     });
     return () => sub.unsubscribe();
-  }, [showNavGraph, notifyForwarder]);
+  }, [showNavRects, notifyForwarder]);
 
   const save = async () => {
     setCanSave(false);
@@ -42,8 +38,8 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
   };
 
   const toggleNavView = () => {
-    !showNavGraph && worker?.postMessage({ key: 'request-nav-view', levelUid });
-    dispatch(Act.updateLevel(levelUid, { showNavGraph: !showNavGraph }));
+    !showNavRects && worker?.postMessage({ key: 'request-nav-rects', levelUid });
+    dispatch(Act.updateLevel(levelUid, { showNavRects: !showNavRects }));
   };
 
   return (
@@ -82,10 +78,10 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
                 dark
               </button>
               <button
-                className={classNames(css.button, showNavGraph && css.enabled)}
+                className={classNames(css.button, showNavRects && css.enabled)}
                 onClick={toggleNavView}
               >
-                nav
+                rects
               </button>
               <button
                 title="grid size"

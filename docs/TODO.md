@@ -1,17 +1,16 @@
 # TODO
 
-- fast line-of-sight test via rects for negation of nav polys.
-- Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
-- path simplification does line-of-sight simplification from endpoints
-
-- fast 'point to rect' lookup
-- fast 'point to triangle' lookup
-- clean away old navigation
-
 - meta tags for circular trigger `circ-$radius`
 - meta tags for rectangle trigger `rect-$width-$height`
 - meta pickups `pickup` with arrow icon and touch radius
 - meta obstructions `block` with augmenting tags
+
+- fast line-of-sight test via negation of nav polys.
+- Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
+- path simplification does line-of-sight simplification from endpoints
+- fast 'point to rect' lookup
+- fast 'point to triangle' lookup
+- clean away old navigation
 
 - clearer vision of site
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
@@ -64,8 +63,6 @@
 - can `click 2 | nav | goto`.
 
 - get pan-zoom working in safari
-
-
 
 - implement tab completion
 - implement `jq` using jq-web
@@ -246,3 +243,4 @@
 - rects can induce extra steiners; currently commented out;
   we'll continue to manually specifiy steiner points
 - start/end points computed by considering all points along edge of local rectangle
+- remove old nav view; show rects instead

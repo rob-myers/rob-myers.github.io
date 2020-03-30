@@ -75,22 +75,15 @@ interface SendLevelTris extends BaseMessage {
   levelUid: string;
   tris: Poly2Json[];
 }
+
+interface RequestNavRects extends BaseMessage {
+  key: 'request-nav-rects';
+  levelUid: string;
+}
 interface SendLevelNavRects extends BaseMessage {
   key: 'send-level-nav-rects';
   levelUid: string;
   rects: Rect2Json[];
-}
-
-/** Request visualisation of NavGraph */
-interface RequestNavView extends BaseMessage {
-  key: 'request-nav-view';
-  levelUid: string;
-}
-interface SendNavView extends BaseMessage {
-  key: 'send-nav-view';
-  levelUid: string;
-  centers: Vector2Json[];
-  segs: [Vector2Json, Vector2Json][];
 }
 
 interface AddLevelMeta extends BaseMessage {
@@ -177,7 +170,7 @@ export type MessageFromLevelParent = (
   | RemoveLevelMeta
   | EnsureFloydWarshall
   | RequestNavPath
-  | RequestNavView
+  | RequestNavRects
 );
 
 export type MessageFromLevelWorker = (
@@ -186,7 +179,6 @@ export type MessageFromLevelWorker = (
   | SendLevelLayers
   | SendLevelNavFloors
   | SendLevelTris
-  | SendNavView
   | SendLevelMetas
   | FloydWarshallReady
   | SendNavPath

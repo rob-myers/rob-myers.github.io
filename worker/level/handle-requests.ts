@@ -4,12 +4,12 @@ import { redact, addToLookup } from '@model/redux.model';
 import { mapValues } from '@model/generic.model';
 import { NavPath } from '@model/nav/nav-path.model';
 import { Vector2 } from '@model/vec2.model';
-import { OldNavGraph } from '@model/nav/old-nav-graph.model';
 import { LevelMeta } from '@model/level/level-meta.model';
 import { Act } from '@store/level/level.duck';
 import { store, getLevel, getLevelAux } from './create-store';
 import { handleLevelToggles, handleMetaUpdates } from './handle-edits';
 import { ensureFloydWarshall } from './handle-nav';
+import { NavGraph } from '@model/nav/nav-graph.model';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -72,15 +72,13 @@ export function listenForRequests() {
         ctxt.postMessage({ key: 'send-nav-path', levelUid: msg.levelUid, navPath: navPath.json });
         break;
       }
-      case 'request-nav-view': {
+      case 'request-nav-rects': {
         const { floors } = getLevel(msg.levelUid)!;
-        const { centers, segs } = OldNavGraph.from(floors).dualGraph(floors);
-  
+        const groupedRects = NavGraph.computeRects(floors);
         ctxt.postMessage({
-          key: 'send-nav-view',
+          key: 'send-level-nav-rects',
           levelUid: msg.levelUid,
-          centers: centers.map(c => c.json),
-          segs: segs.map(([u, v]) => [u.json, v.json]),
+          rects: groupedRects.flatMap(x => x).map(r => r.json),
         });
         break;
       }

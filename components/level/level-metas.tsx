@@ -4,12 +4,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { LevelState } from '@model/level/level.model';
 import { LevelMeta, metaPointRadius } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
-import { Vector2 } from '@model/vec2.model';
 import { Act } from '@store/level.duck';
 import { NavPath } from '@model/nav/nav-path.model';
 import { KeyedLookup, mapValues } from '@model/generic.model';
 import { addToLookup } from '@model/redux.model';
 import css from './level.scss';
+import { Rect2Json } from '@model/rect2.model';
 
 type MetaLookup = LevelState['metas'];
 
@@ -20,13 +20,12 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const mouseWorld = useSelector(({ level: { instance } }) => draggedMeta && instance[levelUid]?.mouseWorld);
   const wheelFowarder = useSelector(({ level: { instance } }) => instance[levelUid].wheelForwarder);
   const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
-  const showNavGraph = useSelector(({ level: { instance } }) => instance[levelUid].showNavGraph);
+  const showNavRects = useSelector(({ level: { instance } }) => instance[levelUid].showNavRects);
 
   const [levelMetas, setLevelMetas] = useState<MetaLookup>({});
   const [navPaths, setNavPaths] = useState<KeyedLookup<NavPath>>({});
+  const [rects, setRects] = useState([] as Rect2Json[]);
 
-  const [navCenters, setNavCenters] = useState([] as Vector2[]);
-  const [navSegs, setNavSegs] = useState([] as Vector2[][]);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -51,10 +50,9 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
           setNavPaths((prev) => addToLookup(NavPath.from(msg.navPath), prev));
           break;
         }
-        case 'send-nav-view': {
-          const { centers, segs } = msg;
-          setNavCenters(centers.map(c => Vector2.from(c)));
-          setNavSegs(segs.map(([u, v]) => [Vector2.from(u), Vector2.from(v)]));
+        case 'send-level-nav-rects': {
+          setRects(msg.rects);
+          break;
         }
       }
     });
@@ -166,21 +164,18 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
           </g>
         )}
       </g>
-      {showNavGraph && (
-        <g>
-          {navCenters.map(({ x, y }, i) => (
-            <circle
+      {showNavRects && (
+        <g className={css.rects}>
+          {rects.map(([x, y, width, height], i) => (
+            <rect
               key={i}
-              cx={x} cy={y} r={0.5}
-              className={css.navGraphNode}
-            />
-          ))}
-          {navSegs.map(([ src, dst ], i) => (
-            <line
-              key={i}
-              x1={src.x} y1={src.y}
-              x2={dst.x} y2={dst.y}
-              className={css.navGraphEdge}
+              fill="none"
+              stroke="rgba(200, 0, 0, 0.5)"
+              strokeWidth={0.5}
+              x={x}
+              y={y}
+              width={width}
+              height={height}
             />
           ))}
         </g>
