@@ -57,8 +57,9 @@ export function updateNavGraph(levelUid: string) {
    * Ensure every point on a rectangle occurs as a NavNode
    * by adding them as Steiner points.
    */
-  floors.forEach(({ allPoints }, polyId) => {
-    const points = allPoints.concat((steiners[polyId] || []));
+  floors.forEach((poly, polyId) => {
+    poly.removeSteiners(); // Remove previous steiners
+    const points = poly.allPoints.concat((steiners[polyId] || []));
     const rectSteiners = groupedRects[polyId].flatMap(x => x.poly2.points)
       .filter((x, i, array) =>
         !points.find(p => p.equals(x)) // hasn't occured before
@@ -68,19 +69,17 @@ export function updateNavGraph(levelUid: string) {
   });
 
   floors.forEach((poly, polyId) => {
-    poly.removeSteiners();
-    if (steiners[polyId]?.length) {
-      poly.addSteiners(steiners[polyId]).customTriangulate(0.01);
-    } else {
-      poly.customTriangulate();
-    }
+    poly.addSteiners(steiners[polyId]).customTriangulate(0.01);
   });
 
-  ctxt.postMessage({ key: 'send-level-tris', levelUid, 
+  ctxt.postMessage({
+    key: 'send-level-tris',
+    levelUid, 
     tris: floors.flatMap(x => x.triangulation).map(({ json }) => json),
   });
-
-  ctxt.postMessage({ key: 'send-level-nav-rects', levelUid,
+  ctxt.postMessage({
+    key: 'send-level-nav-rects',
+    levelUid,
     rects: groupedRects.flatMap(x => x).map(r => r.json),
   });
 

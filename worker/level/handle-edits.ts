@@ -28,9 +28,6 @@ export function handleLevelToggles(levelUid: string) {
         msg.key === 'toggle-level-tile' && msg.levelUid === levelUid
         || msg.key === 'toggle-level-wall' && msg.levelUid === levelUid
       ),
-      /**
-       * Update tileFloors or walls.
-       */
       map((msg) => {
         let { tileFloors, wallSeg } = getLevel(levelUid)!;
         switch (msg.key) {
@@ -101,8 +98,8 @@ export function handleLevelToggles(levelUid: string) {
         }
         // Clear cached
         dispatch(Act.updateLevel(levelUid, { floydWarshall: null }));
-
         dispatch(Act.updateLevel(levelUid, { tileFloors, wallSeg }));
+
         ctxt.postMessage({
           key: 'send-level-layers',
           levelUid,
@@ -119,26 +116,27 @@ export function handleLevelToggles(levelUid: string) {
        */
       map((_) => {
         const { tileFloors, wallSeg } = getLevel(levelUid)!;
-        const outsetWalls = Poly2.union(Object.values(wallSeg).map(([u, v]) =>
-          new Rect2(u.x - floorInset, u.y - floorInset, v.x - u.x + 2 * floorInset, v.y - u.y + 2 * floorInset).poly2));
-        
+        const outsetWalls = Poly2.union(Object.values(wallSeg)
+          .map(([u, v]) => new Rect2(
+            u.x - floorInset,
+            u.y - floorInset,
+            v.x - u.x + 2 * floorInset,
+            v.y - u.y + 2 * floorInset
+          ).poly2));
         const navFloors = Poly2.cutOut(
           outsetWalls,
           tileFloors.flatMap(x => x.createInset(floorInset))
         );
-
-
-
         dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
-        ctxt.postMessage({ key: 'send-level-nav-floors', levelUid,
+
+        ctxt.postMessage({
+          key: 'send-level-nav-floors',
+          levelUid,
           navFloors: navFloors.map(({ json }) => json),
         });
         return navFloors;
       }),
       auditTime(300),
-      /**
-       * Triangulate and construct NavGraph.
-       */
       tap((_) => {
         updateNavGraph(levelUid);
       }),
@@ -167,9 +165,8 @@ export function handleMetaUpdates(levelUid: string) {
         switch (msg.key) {
           case 'update-level-meta': {
             const { metaKey, update } = msg;
-            metas[metaKey].applyUpdates(update); // Mutate
-            return (
-              // Some updates can affect NavGraph
+            metas[metaKey].applyUpdates(update);// Mutate
+            return (// Some updates can affect NavGraph
               update.key === 'add-tag' && navTags.includes(update.tag)
               || update.key === 'remove-tag' && navTags.includes(update.tag)
               || update.key === 'set-position' && metas[metaKey].tags.some(tag => navTags.includes(tag))

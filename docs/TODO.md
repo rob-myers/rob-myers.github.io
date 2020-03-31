@@ -1,9 +1,6 @@
 # TODO
 
-- different approach to lighting e.g. negation of light polygons black
-- saw navigation bug: NEED ADDITIONAL UPDATE ON STEINER META CHANGE
 - add extra steiners i.e. on opposite side of rect
-
 
 - meta tags for circular trigger `circ-$radius`
 - meta tags for rectangle trigger `rect-$width-$height`
@@ -250,4 +247,5 @@
   we'll continue to manually specifiy steiner points
 - start/end points computed by considering all points along edge of local rectangle
 - remove old nav view; show rects instead
-- fix light radius issue 
+- fix light radius issue
+- saw navigation bug i.e. additional steiners just created

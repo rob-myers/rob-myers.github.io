@@ -323,7 +323,7 @@ html {
       .wall {
         position: absolute;
         transform-origin: top left;
-        height: 100px;
+        height: 10000px;
 
         @at-root .light-mode .viewport .container-three-d .wall {
           background: #000;
