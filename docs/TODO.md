@@ -8,6 +8,7 @@
 - meta obstructions `block` with augmenting tags
 
 - clean away old navigation
+
 - fast line-of-sight test via negation of nav polys.
 - Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
 - path simplification does line-of-sight simplification from endpoints

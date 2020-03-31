@@ -60,6 +60,9 @@ export function updateNavGraph(levelUid: string) {
   floors.forEach((poly, polyId) => {
     poly.removeSteiners(); // Remove previous steiners
     const points = poly.allPoints.concat((steiners[polyId] || []));
+    /**
+     * TODO get points on opposite side of rectangle too.
+     */
     const rectSteiners = groupedRects[polyId].flatMap(x => x.poly2.points)
       .filter((x, i, array) =>
         !points.find(p => p.equals(x)) // hasn't occured before
