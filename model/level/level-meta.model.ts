@@ -1,6 +1,7 @@
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { LevelLight, LevelLightJson } from './level-light.model';
 import { Poly2 } from '@model/poly2.model';
+import { Rect2Json, Rect2 } from '@model/rect2.model';
 
 export const metaPointRadius = 1;
 
@@ -12,6 +13,8 @@ export class LevelMeta {
       light: this.light ? this.light.json : null,
       position: this.position.json,
       tags: this.tags.slice(),
+      radius: this.triggerRadius === null ? null : this.triggerRadius,
+      rect: this.triggerRect?.json || null,
     };
   }
 
@@ -21,6 +24,8 @@ export class LevelMeta {
     public position: Vector2,
     public tags = [] as string[],
     public light: null | LevelLight = null,
+    public triggerRadius: null | number = null,
+    public triggerRect: null | Rect2 = null,
   ) {}
 
   public applyUpdates(update: LevelMetaUpdate): void {
@@ -44,12 +49,15 @@ export class LevelMeta {
   }
 
   public clone(newKey: string, position = this.position.clone()) {
-    const clone = new LevelMeta(newKey, position);
-    clone.tags = this.tags.slice();
-    if (this.light) {
-      clone.light = this.light.clone();
-      clone.light.setPosition(position);
-    }
+    const clone = new LevelMeta(
+      newKey,
+      position,
+      this.tags.slice(),
+      this.light?.clone() || null,
+      this.triggerRadius,
+      this.triggerRect?.clone() || null,
+    );
+    clone.light?.setPosition(position);
     return clone;
   }
 
@@ -59,6 +67,8 @@ export class LevelMeta {
       Vector2.from(json.position),
       json.tags.slice(),
       json.light ? LevelLight.fromJson(json.light) : null,
+      json.radius === null ? null : json.radius,
+      json.rect ? Rect2.fromJson(json.rect) : null,
     );
   }
 
@@ -77,6 +87,8 @@ export interface LevelMetaJson {
   position: Vector2Json;
   tags: string[];
   light: null | LevelLightJson;
+  radius: null | number;
+  rect: null | Rect2Json;
 }
 
 export type LevelMetaUpdate = (

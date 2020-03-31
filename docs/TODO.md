@@ -248,3 +248,6 @@
 - saw navigation bug i.e. additional steiners just created
 - tried add extra steiners i.e. on opposite side of rect.
   perhaps too many verts for Floyd-Warshall, so left commented out
+- clean away old navigation
+- metas can have radius and rects
+- fixed duplicate steiners

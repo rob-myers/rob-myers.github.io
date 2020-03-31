@@ -78,7 +78,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       rects.flatMap(rect => rect.poly2.points)
         .filter((p, i, array) => array.findIndex(q => p.equals(q)) === i));
 
-    this.rects = this.groupedRects.flatMap(rects => rects); // TODO remove
+    this.rects = this.groupedRects.flatMap(rects => rects);
   }
 
   private computeNodeToPosition() {
@@ -102,23 +102,30 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
 
   private computeRectsSteiners(metaSteiners: { [polyId: number]: Vector2[] }) {
     this.groupedSteiners = this.groupedRects.map((rects, polyId) => {
+      /** Points already in polygon */
+      const polyPoints = this.navPolys[polyId].allPoints
+        .reduce<Record<string, Vector2>>((agg, p) => ({ ...agg, [`${p}`]: p }), {});
+      /** Steiners so far. */
       const steiners = (metaSteiners[polyId] || [])
         .reduce<Record<string, Vector2>>((agg, p) => ({ ...agg, [`${p}`]: p }), {});
+
       const addSteiner = (p: Vector2) => steiners[`${p}`] = p;
 
       rects.forEach((rect) => {
-        this.groupRectsPoints[polyId].filter(p => rect.contains(p)).forEach(p => {
-          addSteiner(p.clone());
-          // if (p.y === rect.y) {
-          //   addSteiner(new Vector2(p.x, rect.bottom));
-          // } else if (p.x === rect.right) {
-          //   addSteiner(new Vector2(rect.x, p.y));
-          // } else if (p.y === rect.bottom) {
-          //   addSteiner(new Vector2(p.x, rect.y));
-          // } else if (p.x === rect.x) {
-          //   addSteiner(new Vector2(rect.right, p.y));
-          // }
-        });
+        this.groupRectsPoints[polyId]
+          .filter(p => rect.contains(p) && !polyPoints[`${p}`])
+          .forEach(p => {
+            addSteiner(p);
+            // if (p.y === rect.y) {
+            //   addSteiner(new Vector2(p.x, rect.bottom));
+            // } else if (p.x === rect.right) {
+            //   addSteiner(new Vector2(rect.x, p.y));
+            // } else if (p.y === rect.bottom) {
+            //   addSteiner(new Vector2(p.x, rect.y));
+            // } else if (p.x === rect.x) {
+            //   addSteiner(new Vector2(rect.right, p.y));
+            // }
+          });
       });
       return Object.values(steiners);
     });
@@ -133,8 +140,8 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
         polyId,
         choices: nodes.map((node) => ({
           nodeId: node.id,
-          dist: this.tempPoint.copy(point)
-            .sub(this.nodeToPosition.get(node)!).length,
+          dist: this.tempPoint
+            .copy(point).sub(this.nodeToPosition.get(node)!).length,
         })),
       };
     }
@@ -151,13 +158,14 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     const groupedTris = navPolys.map(p => p.triangulation);
     const graph = new NavGraph(navPolys, groupedTris);
     
+    navPolys.forEach((poly) => poly.removeSteiners());
+
     // Compute rectangular partition
     graph.computeRects(navPolys);
     graph.computeRectsSteiners(metaSteiners);
 
     // Ensure steiners i.e. metas, corners of rectangles, reflections
     navPolys.forEach((poly, polyId) => {
-      poly.removeSteiners(); // Remove previous steiners
       poly.addSteiners(graph.groupedSteiners[polyId]);
     });
 
@@ -188,7 +196,6 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       }
       globalId += allPoints.length;
     }
-
     // TODO only compute when needed
     // Compute inverse for line-of-sight tests
     // graph.invertedNavPolys = navPolys.map(poly =>
@@ -196,7 +203,6 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
 
     graph.computeRectsNavNodes();
     graph.computeNodeToPosition();
-
     return graph;
   }
   
