@@ -10,6 +10,10 @@ export class Rect2 {
     return this.width * this.height;
   }
 
+  public get bottom() {
+    return this.y + this.height;
+  }
+
   public get center() {
     return new Vector2(this.cx, this.cy);
   }
@@ -53,6 +57,10 @@ export class Rect2 {
         { x: this.x, y: this.y + this.height }
       ].map(Vector2.from)
     );
+  }
+
+  public get right() {
+    return this.x + this.width;
   }
 
   public get topLeft() {

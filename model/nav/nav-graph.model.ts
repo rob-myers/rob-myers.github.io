@@ -30,23 +30,15 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   public rects: Rect2[];
   /** Rectangles grouped by polygon id. */
   public groupedRects: Rect2[][];
-  /** The respective corner points of `this.groupedRects`. */
-  public groupedRectsPoints: Vector2[][];
-  /**
-   * `rect` to corners of all rects on border of `rect`.
-   * Each has a corresponding NavNode, which'll be 2nd/penultimate in NavPath.
-   */
-  private rectToNavPoints: Map<Rect2, { polyId: number; nodes: NavNode[] }>;
-  /**
-   * Rect to corners of rects on border and their 'mirror points'.
-   * These will be used as steiner points.
-   */
-  private rectToSteiners: Map<Rect2, { polyId: number; positions: Vector2[] }>;
-  
+  private groupRectsPoints: Vector2[][];
+  private groupedSteiners: Vector2[][];
+  /** Rectangle to NavNodes on its border (includes own corners). */
+  private rectToNavNodes: Map<Rect2, { polyId: number; nodes: NavNode[] }>;
   /** Node to position lookup. */
   private nodeToPosition: Map<NavNode, Vector2>;
   /** Pointwise rectilinear inverses formed by cutting from bounds. */
   private invertedNavPolys: Poly2[][];
+
   private tempPoint: Vector2;
 
   constructor(
@@ -58,18 +50,16 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     super(NavEdge);
     this.rects = [];
     this.groupedRects = [];
-    this.groupedRectsPoints = [];
+    this.groupRectsPoints = [];
+    this.groupedSteiners = [];
     this.nodeToPosition = new Map;
     this.invertedNavPolys = [];
-    this.rectToNavPoints = new Map;
+    this.rectToNavNodes = new Map;
     this.tempPoint = Vector2.zero;
   }
 
-  /**
-   * Returns array aligned to navPolys, where each entry
-   * is a list of rectangles partitioning respective poly.
-   */
-  public static computeRects(navPolys: Poly2[]) {
+  /** Returns rects partitioning navPolys, grouped by polygon id. */
+  public computeRects(navPolys: Poly2[]) {
     /**
      * Npm module 'rectangle-decomposition' requires +ve coords,
      * so we transform first, then apply inverse transform.
@@ -80,38 +70,71 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       .map(loops => loops.map((loop) => loop.map(({ x, y }) =>
         [x - bounds.x, y - bounds.y] as [number, number])));
 
-    const groupedRects = groupedLoops.map(loops => 
+    this.groupedRects = groupedLoops.map(loops => 
       rectDecompose(loops).map(([[x1, y1], [x2, y2]]) =>
         new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1)));
 
-    return groupedRects;
+    this.groupRectsPoints = this.groupedRects.map(rects =>
+      rects.flatMap(rect => rect.poly2.points)
+        .filter((p, i, array) => array.findIndex(q => p.equals(q)) === i));
+
+    this.rects = this.groupedRects.flatMap(rects => rects); // TODO remove
   }
 
-  private computeRectsNavPoints() {
+  private computeNodeToPosition() {
+    this.nodesArray.forEach((node) => {
+      const { polyId, vertexId } = node.opts;
+      const position = this.navPolys[polyId].allPoints[vertexId];
+      this.nodeToPosition.set(node, position);
+    });
+  }
+
+  private computeRectsNavNodes() {
     this.groupedRects.forEach((rects, polyId) => {
       rects.forEach((rect) => {
-        const positions = this.groupedRectsPoints[polyId].filter(p => rect.contains(p));
-        // Each corner of a rect occurs as a NavNode (see `updateNavGraph`)
-        const nodes = positions.map(p => this.positionToNode(polyId, p)!);
-        this.rectToNavPoints.set(rect, { polyId, nodes });
+        const nodes = this.groupRectsPoints[polyId]
+          .filter(p => rect.contains(p))
+          .map(p => this.positionToNode(polyId, p)!);
+        this.rectToNavNodes.set(rect, { polyId, nodes });
       });
     });
   }
 
-  private computeRectsSteiners() {
-    // TODO
+  private computeRectsSteiners(metaSteiners: { [polyId: number]: Vector2[] }) {
+    this.groupedSteiners = this.groupedRects.map((rects, polyId) => {
+      const steiners = (metaSteiners[polyId] || [])
+        .reduce<Record<string, Vector2>>((agg, p) => ({ ...agg, [`${p}`]: p }), {});
+      const addSteiner = (p: Vector2) => steiners[`${p}`] = p;
+
+      rects.forEach((rect) => {
+        this.groupRectsPoints[polyId].filter(p => rect.contains(p)).forEach(p => {
+          addSteiner(p.clone());
+          // if (p.y === rect.y) {
+          //   addSteiner(new Vector2(p.x, rect.bottom));
+          // } else if (p.x === rect.right) {
+          //   addSteiner(new Vector2(rect.x, p.y));
+          // } else if (p.y === rect.bottom) {
+          //   addSteiner(new Vector2(p.x, rect.y));
+          // } else if (p.x === rect.x) {
+          //   addSteiner(new Vector2(rect.right, p.y));
+          // }
+        });
+      });
+      return Object.values(steiners);
+    });
   }
 
   /** Get points on rectangle containing `point`. */
   public findNearbyPoints(point: Vector2) {
     const rect = this.rects.find(r => r.contains(point));
     if (rect) {
-      const { nodes, polyId } = this.rectToNavPoints.get(rect)!;
+      const { nodes, polyId } = this.rectToNavNodes.get(rect)!;
       return {
         polyId,
         choices: nodes.map((node) => ({
           nodeId: node.id,
-          dist: this.tempPoint.copy(point).sub(this.nodeToPosition.get(node)!).length,
+          dist: this.tempPoint.copy(point)
+            .sub(this.nodeToPosition.get(node)!).length,
         })),
       };
     }
@@ -121,12 +144,25 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   /**
    * Construct NavGraph from navmesh `navPolys`.
    */
-  public static from(navPolys: Poly2[]): NavGraph {
+  public static from(
+    navPolys: Poly2[],
+    metaSteiners: { [polyId: number]: Vector2[] },
+  ): NavGraph {
     const groupedTris = navPolys.map(p => p.triangulation);
     const graph = new NavGraph(navPolys, groupedTris);
-    let globalId = 0;
     
+    // Compute rectangular partition
+    graph.computeRects(navPolys);
+    graph.computeRectsSteiners(metaSteiners);
+
+    // Ensure steiners i.e. metas, corners of rectangles, reflections
+    navPolys.forEach((poly, polyId) => {
+      poly.removeSteiners(); // Remove previous steiners
+      poly.addSteiners(graph.groupedSteiners[polyId]);
+    });
+
     // `triangleIds` refer to points, holes and steiners of polygon
+    let globalId = 0;
     for (const [polyId, { allPoints, triangleIds }] of navPolys.entries()) {
       // Create nodes
       for (const [vertexId] of allPoints.entries()) {
@@ -153,24 +189,13 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       globalId += allPoints.length;
     }
 
+    // TODO only compute when needed
     // Compute inverse for line-of-sight tests
-    graph.invertedNavPolys = navPolys.map(poly =>
-      Poly2.cutOut([poly], [poly.bounds.poly2]));
+    // graph.invertedNavPolys = navPolys.map(poly =>
+    //   Poly2.cutOut([poly], [poly.bounds.poly2]));
 
-    // Compute rectangular partition (as opposed to triangular one)
-    graph.groupedRects = NavGraph.computeRects(navPolys);
-    graph.rects = graph.groupedRects.flatMap(rects => rects);
-    graph.groupedRectsPoints = graph.groupedRects
-      .map(rects => rects.flatMap(rect => rect.poly2.points)
-        .filter((p, i, array) => array.findIndex(q => p.equals(q)) === i));
-
-    graph.computeRectsNavPoints();
-
-    graph.nodesArray.forEach((node) => {
-      const { polyId, vertexId } = node.opts;
-      const position = graph.navPolys[polyId].allPoints[vertexId];
-      graph.nodeToPosition.set(node, position);
-    });
+    graph.computeRectsNavNodes();
+    graph.computeNodeToPosition();
 
     return graph;
   }

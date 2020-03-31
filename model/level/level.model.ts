@@ -1,4 +1,4 @@
-import { Redacted } from '@model/redux.model';
+import { Redacted, redact } from '@model/redux.model';
 import { Poly2 } from '@model/poly2.model';
 import { Subscription, Subject } from 'rxjs';
 import { Rect2 } from '@model/rect2.model';
@@ -8,6 +8,7 @@ import { LevelMetaUi, LevelMeta } from './level-meta.model';
 import { FloydWarshallReady } from './level.worker.model';
 import { smallTileDim } from './level-params';
 import { FloydWarshall } from '@model/nav/floyd-warshall.model';
+import { NavGraph } from '@model/nav/nav-graph.model';
 
 export type Direction = 'n' | 'e' | 's' | 'w'; 
 
@@ -29,8 +30,9 @@ export interface LevelState {
   /** Spawn points, steiner points, lights, interactives */
   metas: KeyedLookup<LevelMeta>;
   /** Pathfinder */
-  // floydWarshall: null | Redacted<OldFloydWarshall>;
   floydWarshall: null | Redacted<FloydWarshall>;
+  /** Used to generated FloydWarshall */
+  navGraph: Redacted<NavGraph>;
 }
 
 export function createLevelState(uid: string): LevelState {
@@ -43,6 +45,7 @@ export function createLevelState(uid: string): LevelState {
     metaUpdateSub: null,
     metas: {},
     floydWarshall: null,
+    navGraph: redact(NavGraph.from([], {})),
   };
 }
 

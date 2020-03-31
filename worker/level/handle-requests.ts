@@ -9,7 +9,6 @@ import { Act } from '@store/level/level.duck';
 import { store, getLevel, getLevelAux } from './create-store';
 import { handleLevelToggles, handleMetaUpdates } from './handle-edits';
 import { ensureFloydWarshall } from './handle-nav';
-import { NavGraph } from '@model/nav/nav-graph.model';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -73,8 +72,8 @@ export function listenForRequests() {
         break;
       }
       case 'request-nav-rects': {
-        const { floors } = getLevel(msg.levelUid)!;
-        const groupedRects = NavGraph.computeRects(floors);
+        const { navGraph } = getLevel(msg.levelUid)!;
+        const groupedRects = navGraph.groupedRects;
         ctxt.postMessage({
           key: 'send-level-nav-rects',
           levelUid: msg.levelUid,

@@ -24,8 +24,8 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
         const outerWallSegs = ([] as [Vector2, Vector2][]).concat(
           ...msg.tileFloors.map(x => Poly2.fromJson(x)).map(({ lineSegs }) => lineSegs));
         setWallSegs(wallSegs.map(([u, v]) => ({ u, v, backface: true })).concat(
-          // outerWallSegs.map(([u, v]) => ({ u, v, backface: false }))
-          outerWallSegs.map(([u, v]) => ({ u, v, backface: true }))
+          outerWallSegs.map(([u, v]) => ({ u, v, backface: false }))
+          // outerWallSegs.map(([u, v]) => ({ u, v, backface: true }))
         ));
       }
     });

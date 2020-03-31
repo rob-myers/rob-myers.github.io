@@ -13,7 +13,8 @@ const dispatch = store.dispatch as LevelDispatchOverload;
 
 export function ensureFloydWarshall(levelUid: string) {
   const { floors, floydWarshall } = getLevel(levelUid)!;
-  const navGraph = NavGraph.from(floors);
+  const metaSteiners = getMetaSteiners(levelUid);
+  const navGraph = NavGraph.from(floors, metaSteiners);
  
   // FloydWarshall.from is an expensive computation
   const nextFloydWarshall = floydWarshall || redact(FloydWarshall.from(navGraph));
@@ -37,44 +38,34 @@ export function ensureFloydWarshall(levelUid: string) {
   });
 }
 
-/**
- * Update navigation i.e. triangulation.
- * We also compute a rectangular partition.
- */
-export function updateNavGraph(levelUid: string) {
+/** Steiner points from metas */
+function getMetaSteiners(levelUid: string) {
   const { floors, metas } = getLevel(levelUid)!;
-  const groupedRects = NavGraph.computeRects(floors);
-
-  /** Steiner points from metas */
-  const steiners = Object.values(metas)
+  return  Object.values(metas)
     .filter(({ tags }) => tags.includes('steiner'))
     .reduce<{ [polyId: number]: Vector2[] }>((agg, { position: p }) => {
     const polyId = floors.findIndex(floor => floor.contains(p));
     return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;
   }, {});
+}
+
+/**
+ * Update navigation i.e. triangulation.
+ * We also compute a rectangular partition.
+ */
+export function updateNavGraph(levelUid: string) {
+  const { floors } = getLevel(levelUid)!;
 
   /**
-   * Ensure every point on a rectangle occurs as a NavNode
-   * by adding them as Steiner points.
+   * Build NavGraph using polys and steiner metas.
+   * We'll mutate the polys by adding steiner points.
    */
-  floors.forEach((poly, polyId) => {
-    poly.removeSteiners(); // Remove previous steiners
-    const points = poly.allPoints.concat((steiners[polyId] || []));
-    /**
-     * TODO get points on opposite side of rectangle too.
-     */
-    const rectSteiners = groupedRects[polyId].flatMap(x => x.poly2.points)
-      .filter((x, i, array) =>
-        !points.find(p => p.equals(x)) // hasn't occured before
-        && array.findIndex(q => q.equals(x)) === i // remove dups
-      );
-    steiners[polyId] = (steiners[polyId] || []).concat(rectSteiners);
-  });
+  const metaSteiners = getMetaSteiners(levelUid);
+  const navGraph = NavGraph.from(floors, metaSteiners);
+  dispatch(Act.updateLevel(levelUid, { navGraph: redact(navGraph) }));
 
-  floors.forEach((poly, polyId) => {
-    poly.addSteiners(steiners[polyId]).customTriangulate(0.01);
-  });
-
+  floors.forEach((poly) => poly.customTriangulate(0.01));
+  
   ctxt.postMessage({
     key: 'send-level-tris',
     levelUid, 
@@ -83,7 +74,7 @@ export function updateNavGraph(levelUid: string) {
   ctxt.postMessage({
     key: 'send-level-nav-rects',
     levelUid,
-    rects: groupedRects.flatMap(x => x).map(r => r.json),
+    rects: navGraph.groupedRects.flatMap(x => x).map(r => r.json),
   });
 
   // Clear ephemeral

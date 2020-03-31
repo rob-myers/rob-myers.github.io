@@ -1,7 +1,5 @@
 # TODO
 
-- add extra steiners i.e. on opposite side of rect
-
 - meta tags for circular trigger `circ-$radius`
 - meta tags for rectangle trigger `rect-$width-$height`
 - meta pickups `pickup` with arrow icon and touch radius
@@ -250,3 +248,5 @@
 - remove old nav view; show rects instead
 - fix light radius issue
 - saw navigation bug i.e. additional steiners just created
+- tried add extra steiners i.e. on opposite side of rect.
+  perhaps too many verts for Floyd-Warshall, so left commented out
