@@ -12,27 +12,25 @@ const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
 
 export function ensureFloydWarshall(levelUid: string) {
-  const { floors, floydWarshall } = getLevel(levelUid)!;
+  const { floors, floydWarshall: prevFloydWarshall } = getLevel(levelUid)!;
   const metaSteiners = getMetaSteiners(levelUid);
   const navGraph = NavGraph.from(floors, metaSteiners);
  
   // FloydWarshall.from is an expensive computation
-  const nextFloydWarshall = floydWarshall || redact(FloydWarshall.from(navGraph));
-  dispatch(Act.updateLevel(levelUid, { floydWarshall: nextFloydWarshall }));
+  const floydWarshall = prevFloydWarshall || redact(FloydWarshall.from(navGraph));
+  dispatch(Act.updateLevel(levelUid, { floydWarshall }));
 
   const [nodeCount, edgeCount, areaCount] = [
     navGraph.nodesArray.length,
     navGraph.edgesArray.length / 2, // Number of undirected edges
     navGraph.groupedTris.length,
   ];
-  const changed = floydWarshall !== nextFloydWarshall;
   ctxt.postMessage({ key: 'floyd-warshall-ready', levelUid,
-    changed,
+    changed: prevFloydWarshall !== floydWarshall,
     nodeCount,
     edgeCount,
     areaCount,
   });
-
   ctxt.postMessage({ key: 'send-level-nav-rects', levelUid,
     rects: navGraph.rects.map(r => r.json),
   });

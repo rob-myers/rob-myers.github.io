@@ -46,7 +46,7 @@ export class ExecBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.exec> {
     }
 
     // TODO ensure args[0] executable i.e. func, builtin, or binary (?)
-    dispatch(osExecTermThunk({ processKey, term }));
+    dispatch(osExecTermThunk({ processKey, term, command: null }));
     dispatch(osStartProcessThunk({ processKey }));
 
     yield this.exit(this.exitCode || 0); // Unreachable?
