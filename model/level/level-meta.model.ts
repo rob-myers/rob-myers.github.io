@@ -37,7 +37,6 @@ export class LevelMeta {
         if (radiusTagRegex.test(update.tag)) {
           this.triggerRadius = Number(update.tag.match(radiusTagRegex)![1]);
           this.tags = this.tags.filter((tag, i, tags) => !(radiusTagRegex.test(tag) && i < tags.length - 1));
-          console.log({ radius: this.triggerRadius });
         }
         break;
       }
