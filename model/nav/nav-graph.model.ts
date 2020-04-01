@@ -113,16 +113,16 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
 
       rects.forEach((rect) => {
         this.groupRectsPoints[polyId]
-          .filter(p => rect.contains(p) && !polyPoints[`${p}`])
+          .filter(p => rect.contains(p))
           .forEach(p => {
-            addSteiner(p);
-            // if (p.y === rect.y) {
+            !polyPoints[`${p}`] && addSteiner(p);
+            // if (p.y === rect.y && rect.x < p.x && p.x < rect.right) {
             //   addSteiner(new Vector2(p.x, rect.bottom));
-            // } else if (p.x === rect.right) {
+            // } else if (p.x === rect.right && rect.y < p.y && p.y < rect.bottom) {
             //   addSteiner(new Vector2(rect.x, p.y));
-            // } else if (p.y === rect.bottom) {
+            // } else if (p.y === rect.bottom && rect.x < p.x && p.x < rect.right) {
             //   addSteiner(new Vector2(p.x, rect.y));
-            // } else if (p.x === rect.x) {
+            // } else if (p.x === rect.x && rect.y < p.y && p.y < rect.bottom) {
             //   addSteiner(new Vector2(rect.right, p.y));
             // }
           });

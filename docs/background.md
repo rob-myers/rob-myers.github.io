@@ -1,17 +1,25 @@
-Nice to have a story as background.
+Themes
 
-However, our main aim is:
-> to study/compare/catalogue the game AI of top-down games,
-  more generally games where a player character ambles through some world
+- Illustrate algorithms via game
+- Illustrate state machines via game
+- Game AI/scripting/mechanics
+- Shell programming
 
----
+Originally:
+> website is a collection of Game AI behaviours; users can play with code and send comments with modifications/improvements/ideas.
 
-An abandoned lower city of The Last Redoubt.
-> Can draw inspiration from The Night Land.
+Instead:
+> illustrate data-structures/algorithms/state-machines via a top-down game.
 
-An ancient training facility.
-> Fits our interest in Game AI.
-
-An outside influence has awakened the facility AI.
-> Like [teleglitch](https://www.youtube.com/watch?v=y2wAPR44IOU).
-> Like 2001: A Space Odyssey.
+Why?
+- Far more content exists concerning data-structures and algorithms.
+- More educational.
+- Still relevant to Game AI (which is mainly scripting)
+- Examples:
+  - LIFO as lift or many people hiding in small space
+  - FIFO as queue for supermarket
+  - Grouping algorithm as coach splitting people into teams
+  - Sorting algorithms as stagehand telling actors to go on stage
+  - OBDD as factory with robots redirecting data
+- Can link up to academic work concerning nondeterministic automata
+- Could attempt compositionality
