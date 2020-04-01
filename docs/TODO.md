@@ -1,7 +1,5 @@
 # TODO
 
-- meta tags for circular trigger `circ-$radius`
-- meta tags for rectangle trigger `rect-$width-$height`
 - meta pickups `pickup` with arrow icon and touch radius
 - meta obstructions `block` with augmenting tags
 
@@ -251,3 +249,5 @@
 - clean away old navigation
 - metas can have radius and rects
 - fixed duplicate steiners
+- meta tags for rectangle trigger `r-$dim` `rect-$w-$h`
+- meta rectangular trigger can be circular via `circle`
