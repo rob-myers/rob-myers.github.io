@@ -8,4 +8,4 @@ yarn dev
 ```
 
 Open http://localhost:3001
-> Port could be `3000` or as specified in the [npm script dev](package.json))
+> Port could be `3000` or as specified in [npm script dev](package.json)
