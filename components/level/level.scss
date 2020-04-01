@@ -202,10 +202,24 @@ html {
     }
     
     .metas {
-      fill: white;
-      stroke: black;
-      stroke-width: 0.2;
-    
+      
+      .meta-handle {
+        fill: white;
+        stroke: black;
+        stroke-width: 0.2;
+      }
+
+      .meta-radius {
+        stroke: none;
+
+        @at-root .light-mode .viewport .meta-radius {
+          fill: rgba(200, 0, 0, 0.2);
+        }
+        @at-root .dark-mode .viewport .meta-radius {
+          fill: rgba(200, 200, 200, 0.3);
+        }
+      }
+
       .drag-indicator {
         stroke-width: 0.1;
 

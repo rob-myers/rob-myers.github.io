@@ -8,8 +8,8 @@ import { Act } from '@store/level.duck';
 import { NavPath } from '@model/nav/nav-path.model';
 import { KeyedLookup, mapValues } from '@model/generic.model';
 import { addToLookup } from '@model/redux.model';
-import css from './level.scss';
 import { Rect2Json } from '@model/rect2.model';
+import css from './level.scss';
 
 type MetaLookup = LevelState['metas'];
 
@@ -65,13 +65,22 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
 
   const addTag = (metaKey: string, tag: string) => {
     if (/^[a-z0-9][a-z0-9-]*$/.test(tag)) {
+      /**
+       * Standard tags are non-empty and use lowercase letters, digits and hyphens.
+       * Finally, they cannot start with a hyphen.
+       */
       worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'add-tag', tag }});
       return true;
     } else if (tag === '-') {
+      /**
+       * Given tag '-' then remove this meta.
+       */
       worker.postMessage({ key: 'remove-level-meta', levelUid, metaKey });
       focusLevelKeys();
     } else if (/^>[a-z0-9][a-z0-9-]*$/.test(tag)) {
-      // Draw navpath to first meta with tag `tag.slice(1)`;
+      /**
+       * Given tag '>foo' draw NavPath to 1st meta with tag 'foo'
+       */
       const { position } = levelMetas[metaKey];
       const dstMeta = Object.values(levelMetas).find(({ tags }) => tags.includes(tag.slice(1)));
       if (dstMeta) {
@@ -96,9 +105,10 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   return (
     <>
       <g className={css.metas}>
-        {Object.values(levelMetas).map(({ position, key, light }) =>
+        {Object.values(levelMetas).map(({ position, key, light, triggerRadius }) =>
           <g key={key}>
             <circle
+              className={css.metaHandle}
               cx={position.x}
               cy={position.y}
               r={metaPointRadius}
@@ -137,6 +147,14 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   strokeWidth={0}
                 />
               </>
+            )}
+            {triggerRadius && (
+              <circle
+                className={css.metaRadius}
+                cx={position.x}
+                cy={position.y}
+                r={triggerRadius}
+              />
             )}
           </g>
         )}

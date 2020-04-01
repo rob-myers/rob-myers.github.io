@@ -4,17 +4,18 @@ import { Poly2 } from '@model/poly2.model';
 import { Rect2Json, Rect2 } from '@model/rect2.model';
 
 export const metaPointRadius = 1;
+export const radiusTagRegex = /^(?:r|radius)-(\d+)$/;
 
 export class LevelMeta {
   
   public get json(): LevelMetaJson {
     return {
       key: this.key,
-      light: this.light ? this.light.json : null,
+      light: this.light?.json,
       position: this.position.json,
       tags: this.tags.slice(),
-      radius: this.triggerRadius === null ? null : this.triggerRadius,
-      rect: this.triggerRect?.json || null,
+      radius: this.triggerRadius??undefined,
+      rect: this.triggerRect?.json,
     };
   }
 
@@ -33,11 +34,17 @@ export class LevelMeta {
       case 'add-tag': {
         this.tags = this.tags.filter((tag) => tag !== update.tag).concat(update.tag);
         update.tag === 'light' && (this.light = new LevelLight(this.position));
+        if (radiusTagRegex.test(update.tag)) {
+          this.triggerRadius = Number(update.tag.match(radiusTagRegex)![1]);
+          this.tags = this.tags.filter((tag, i, tags) => !(radiusTagRegex.test(tag) && i < tags.length - 1));
+          console.log({ radius: this.triggerRadius });
+        }
         break;
       }
       case 'remove-tag': {
         this.tags = this.tags.filter((tag) => tag !== update.tag);
         update.tag === 'light' && (this.light = null);
+        radiusTagRegex.test(update.tag) && (this.triggerRadius = null);
         break;
       }
       case 'set-position': {
@@ -67,7 +74,7 @@ export class LevelMeta {
       Vector2.from(json.position),
       json.tags.slice(),
       json.light ? LevelLight.fromJson(json.light) : null,
-      json.radius === null ? null : json.radius,
+      json.radius??null,
       json.rect ? Rect2.fromJson(json.rect) : null,
     );
   }
@@ -86,9 +93,9 @@ export interface LevelMetaJson {
   key: string;
   position: Vector2Json;
   tags: string[];
-  light: null | LevelLightJson;
-  radius: null | number;
-  rect: null | Rect2Json;
+  light?: LevelLightJson;
+  radius?: number;
+  rect?: Rect2Json;
 }
 
 export type LevelMetaUpdate = (
