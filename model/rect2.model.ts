@@ -48,6 +48,10 @@ export class Rect2 {
     return `${this.x},${this.y},${this.width},${this.height}`;
   }
 
+  public get dimension() {
+    return Math.max(this.width, this.height);
+  }
+
   public get poly2(): Poly2 {
     return new Poly2(
       [
@@ -191,6 +195,12 @@ export class Rect2 {
     this.y *= k;
     this.width *= k;
     this.height *= k;
+    return this;
+  }
+
+  public setPosition({ x, y }: Vector2): this {
+    this.x = x;
+    this.y = y;
     return this;
   }
 

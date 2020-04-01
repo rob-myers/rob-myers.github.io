@@ -220,6 +220,17 @@ html {
         }
       }
 
+      .meta-rect {
+        stroke: none;
+
+        @at-root .light-mode .viewport .meta-rect {
+          fill: rgba(0, 0, 200, 0.2);
+        }
+        @at-root .dark-mode .viewport .meta-rect {
+          fill: rgba(200, 200, 200, 0.3);
+        }
+      }
+
       .drag-indicator {
         stroke-width: 0.1;
 

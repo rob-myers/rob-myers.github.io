@@ -4,7 +4,7 @@ import { Poly2 } from '@model/poly2.model';
 import { Rect2Json, Rect2 } from '@model/rect2.model';
 
 export const metaPointRadius = 1;
-export const radiusTagRegex = /^(?:r|radius)-(\d+)$/;
+export const rectTagRegex = /^r-(\d+)(?:-(\d+))?$/;
 
 export class LevelMeta {
   
@@ -14,8 +14,8 @@ export class LevelMeta {
       light: this.light?.json,
       position: this.position.json,
       tags: this.tags.slice(),
-      radius: this.triggerRadius??undefined,
       rect: this.triggerRect?.json,
+      circular: this.circular || undefined,
     };
   }
 
@@ -25,8 +25,9 @@ export class LevelMeta {
     public position: Vector2,
     public tags = [] as string[],
     public light: null | LevelLight = null,
-    public triggerRadius: null | number = null,
     public triggerRect: null | Rect2 = null,
+    /** Trigger is rectangular or circular  */
+    public circular: boolean = false,
   ) {}
 
   public applyUpdates(update: LevelMetaUpdate): void {
@@ -34,21 +35,26 @@ export class LevelMeta {
       case 'add-tag': {
         this.tags = this.tags.filter((tag) => tag !== update.tag).concat(update.tag);
         update.tag === 'light' && (this.light = new LevelLight(this.position));
-        if (radiusTagRegex.test(update.tag)) {
-          this.triggerRadius = Number(update.tag.match(radiusTagRegex)![1]);
-          this.tags = this.tags.filter((tag, i, tags) => !(radiusTagRegex.test(tag) && i < tags.length - 1));
+        update.tag === 'circle' && (this.circular = true);
+
+        if (rectTagRegex.test(update.tag)) {
+          const [, w, h = w, ] = update.tag.match(rectTagRegex)!;
+          this.triggerRect = new Rect2(this.position.x, this.position.y, Number(w), Number(h));
+          this.tags = this.tags.filter((tag, i) => !(rectTagRegex.test(tag) && i < this.tags.length - 1));
         }
         break;
       }
       case 'remove-tag': {
         this.tags = this.tags.filter((tag) => tag !== update.tag);
         update.tag === 'light' && (this.light = null);
-        radiusTagRegex.test(update.tag) && (this.triggerRadius = null);
+        update.tag === 'circle' && (this.circular = false);
+        rectTagRegex.test(update.tag) && (this.triggerRect = null);
         break;
       }
       case 'set-position': {
         this.position = Vector2.from(update.position);
         this.light?.setPosition(this.position);
+        this.triggerRect?.setPosition(this.position);
         break;
       }
     }
@@ -60,10 +66,11 @@ export class LevelMeta {
       position,
       this.tags.slice(),
       this.light?.clone() || null,
-      this.triggerRadius,
       this.triggerRect?.clone() || null,
+      this.circular,
     );
     clone.light?.setPosition(position);
+    clone.triggerRect?.setPosition(position);
     return clone;
   }
 
@@ -73,8 +80,8 @@ export class LevelMeta {
       Vector2.from(json.position),
       json.tags.slice(),
       json.light ? LevelLight.fromJson(json.light) : null,
-      json.radius??null,
       json.rect ? Rect2.fromJson(json.rect) : null,
+      json.circular??false,
     );
   }
 
@@ -93,7 +100,7 @@ export interface LevelMetaJson {
   position: Vector2Json;
   tags: string[];
   light?: LevelLightJson;
-  radius?: number;
+  circular?: true;
   rect?: Rect2Json;
 }
 
