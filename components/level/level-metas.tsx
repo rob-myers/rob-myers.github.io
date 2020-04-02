@@ -207,7 +207,10 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
           ))}
         </g>
       )}
-      {// Popovers
+      {
+      /**
+       * Popovers
+       */
         overlayRef.current && (
           ReactDOM.createPortal(
             Object.values(levelMetas).map(({ key, tags }) => (

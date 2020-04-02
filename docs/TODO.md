@@ -1,8 +1,11 @@
 # TODO
 
-- permit multiple metas at same position via submetas
+- multiple metas at same position via submetas
+  navigate via up/down inside input; placeholder `tag-2`
 - meta pickups `pickup` have arrow icon
 - meta obstruction `block`
+
+- start sketching blog posts
 
 - fast line-of-sight test via negation of nav polys.
 - Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
