@@ -259,11 +259,7 @@ export const osExpandFilepathThunk = createOsThunk<OsAct, ExpandFilepathThunk>(
     }
 
     /** Path to directory node we'll start from. */
-    const absPath = pattern.startsWith('/')
-      ? '/'
-      : dispatch(osExpandVarThunk({ processKey, varName: 'PWD' }));
-
-    // TODO Handle invalid PWD.
+    const absPath = pattern.startsWith('/') ? '/' : dispatch(osExpandVarThunk({ processKey, varName: 'PWD' }));
     const dirINode = dispatch(osAbsToINodeThunk({ absPath })) as DirectoryINode;
     const matches = dirINode.expandFilepath(pattern);
     return matches.length ? matches : null;

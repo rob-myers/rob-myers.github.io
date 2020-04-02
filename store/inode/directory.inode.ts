@@ -52,7 +52,7 @@ export class DirectoryINode extends BaseINode {
   }
 
   private expandFilepathParts(parts: string[]): string[] {
-    if (!parts.length || !parts[0]) {
+    if (!parts.length) {
       return [];
     }
 
@@ -61,6 +61,9 @@ export class DirectoryINode extends BaseINode {
       return this.expandFilepathParts(parts);
     } else if (first === '..') {
       return this.dotDot().expandFilepathParts(parts);
+    } else if (first === '') {
+      // This inode should be the root of the filesystem
+      return this.expandFilepathParts(parts).map(x => `/${x}`);
     }
 
     // Start with filenames in this directory.
