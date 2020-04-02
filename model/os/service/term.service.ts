@@ -710,7 +710,7 @@ export class TermService {
             }(( ${this.src(term.def.expr)} ))`;
           }
           case ExpandType.command: {
-            return `$( ${term.def.cs.map(c => this.src(c)).join(' ')} )`;
+            return `$( ${this.seqSrc(term.def.cs)} )`;
           }
           case ExpandType.doubleQuote: {
             return `"${term.def.cs.map(c => this.src(c)).join('')}"`;
@@ -769,9 +769,7 @@ export class TermService {
             return term.def.cs.map(c => this.src(c)).join('');
           }
           case ExpandType.process: {
-            return `${term.def.dir}( ${
-              term.def.cs.map(c => this.src(c)).join(' ')
-            } )`;
+            return `${term.def.dir}( ${this.seqSrc(term.def.cs)} )`;
           }
           case ExpandType.singleQuote: {
             return `${// Need $$ for literal $
