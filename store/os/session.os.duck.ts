@@ -272,16 +272,15 @@ interface EndSessionThunk extends OsThunkAct<OsAct, { sessionKey: string }, void
 
 /**
  * Signal foreground process-group in specified session.
- * Foreground group is either:
- * a process whose {term} is interactive bash,
- * a process whose binary was spawned via bash.
- * a set of binaries in a pipeline spawned via bash.
+ * Foreground group either:
+ * - has 1st process as interactive bash.
+ * - is a set of binaries in a pipeline spawned by bash.
  */
 export const osSignalForegroundThunk = createOsThunk<OsAct, SignalForegroundThunk>(
   OsAct.OS_SIGNAL_FOREGROUND_THUNK,
   ({ state: { os }, dispatch }, { sessionKey, signal }) => {
 
-    // Possibly no foreground e.g. 'init' has none.
+    // Possibly no foreground e.g. 'init' has none
     const { fgStack } = os.session[sessionKey];
     if (!fgStack.length) {
       return;
@@ -290,19 +289,19 @@ export const osSignalForegroundThunk = createOsThunk<OsAct, SignalForegroundThun
     const fgKey = last(fgStack) as string;
     const { procKeys } = os.procGrp[fgKey];
 
-    /**
-     * If foreground group is not singleton interactive bash, then
-     * expect that the parent of the 1st process in group _is_.
-     * We'll signal it after the others.
-     */
     const signalKeys = procKeys.slice();
     const first = os.proc[signalKeys[0]];
-
-    if (!(signalKeys.length === 1 && isInteractiveShell(first.term))) {
+    
+    /**
+     * If 1st process in foreground group is not interactive bash, expect
+     * parent of 1st process in group _is_. We'll signal it after others.
+     */
+    if (!isInteractiveShell(first.term)) {
       if (isInteractiveShell(os.proc[first.parentKey].term)) {
         signalKeys.push(first.parentKey); // Signal it last.
       } else {
-        console.log(`Signal '${signal}' for foreground of session '${sessionKey}' was ignored.`);
+        console.log(`Signal '${signal}' for foreground of session '${sessionKey}' was ignored`);
+        // console.log({ signalKeys, first });
         return;
       }
     }

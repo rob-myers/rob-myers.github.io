@@ -33,14 +33,8 @@ export class CommandExpand extends BaseExpandComposite<ExpandType.command> {
   }
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
-    /**
-     * Create temporary file for stdout.
-     */
     const { fd: tempFd, tempPath } = dispatch(osOpenTempThunk({ processKey }));
    
-    /**
-     * Spawn child with commands.
-     */
     this.launchedKey = `cmd-${this.termId}.${processKey}`;
 
     const { toPromise } = dispatch(osSpawnChildThunk({
@@ -51,37 +45,27 @@ export class CommandExpand extends BaseExpandComposite<ExpandType.command> {
         cs: this.def.cs.map((child) => dispatch(osCloneTerm({ term: child }))),
         sourceMap: this.def.sourceMap,
         comments: this.def.comments,
-        // Propagate distributed source to root term.
+        // Propagate distributed source to root term
         src: this.def.src,
       }),
-      /**
-       * Redirect stdout to temp file.
-       */
+      // Redirect stdout to temp file
       redirects: [{ fd: 1, mode: 'WRONLY', path: tempPath }],
-      /**
-       * Inherit +ve positionals $1, ($0 auto-inherited).
-       */
+      // Inherit +ve positionals ($0 auto-inherited)
       posPositionals: dispatch(osGetPositionalsThunk({ processKey })).slice(1),
     }));
 
-    /**
-     * Wait for child process to terminate.
-     */
+    // Wait for child process to terminate
     if (toPromise) {
       await toPromise();
     }
 
-    /**
-     * Expand contents i.e. store as {this.value}.
-     */
+    // Expand contents i.e. store as {this.value}
     const { iNode } = dispatch(osResolvePathThunk({ processKey, path: tempPath }));
     const contents = (iNode as RegularINode).data.join('\n');
     // Command substitution discards trailing newlines.
     this.value = contents.replace(/\n*$/, '');
 
-    /**
-     * Close and remove temporary file.
-     */
+    // Close and remove temporary file
     dispatch(osCloseFdAct({ processKey, fd: tempFd }));
     dispatch(osUnlinkFileThunk({ processKey, path: tempPath })); 
   }

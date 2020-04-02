@@ -1,5 +1,10 @@
 # TODO
 
+- BUG pipe terminates early `sleep 4 | echo foo`
+
+- BUG: process expansion is logging late for:
+  `cat <( sleep 2; echo foo; sleep 2 )`
+
 - multiple metas at same position via submetas
   navigate via up/down inside input; placeholder `tag-2`
 - meta pickups `pickup` have arrow icon
@@ -255,3 +260,9 @@
 - fixed duplicate steiners
 - meta tags for rectangle trigger `r-$dim` `rect-$w-$h`
 - meta rectangular trigger can be circular via `circle`
+- BUG: Ctrl-C not working for subshells, command subst
+  e.g. `( sleep 2 )`
+  e.g. `echo $( sleep 2; echo foo; sleep 2 )`
+  FIX: foreground can have multiple process keys where 1st is interactive bash
+- BUG: `bash; ( sleep 2) ^C`
+  FIX: by previous fix.

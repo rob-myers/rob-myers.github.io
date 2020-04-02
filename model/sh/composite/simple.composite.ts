@@ -363,19 +363,23 @@ export class SimpleComposite extends BaseCompositeTerm<CompositeType.simple> {
         .join(' '),
     }));
 
-    // Mustn't pop scope if it was changed by an exec
-    const prevRedirs = dispatch(osGetProcessThunk({ processKey })).nestedRedirs[0];
-    if (toPromise) {// Wait for child process to terminate
-      await toPromise(); // We resume after even if exec'd this process
+    /**
+     * We'll resume after child even if this process exec'd or terminated.
+     * To detect this we store process before and after.
+     */
+    const prevProc = dispatch(osGetProcessThunk({ processKey }));
+    if (toPromise) { // Wait for child process to terminate
+      await toPromise();
     }
-    const [postRedirs] = dispatch(osGetProcessThunk({ processKey })).nestedRedirs;
-
-    if (this.def.redirects.length && (prevRedirs === postRedirs)) {
-      // Forget redirections intended for child process only
-      dispatch(osPopRedirectScopeAct({ processKey }));
+    const postProc = dispatch(osGetProcessThunk({ processKey }));
+    
+    if (this.def.redirects.length) {
+      if (postProc && prevProc.term === postProc.term) {
+        dispatch(osPopRedirectScopeAct({ processKey }));
+      }
     }
 
-    yield this.exit(this.def.background ? 0 : dispatch(osGetProcessThunk({ processKey })).lastExitCode || 0);
+    yield this.exit(this.def.background ? 0 : prevProc.lastExitCode || 0);
   }
 
 }

@@ -25,8 +25,7 @@ export class SubshellComposite extends BaseCompositeTerm<CompositeType.subshell>
 
     const { def } = this;
     if (!def.cs.length) {
-      yield this.exit(0);
-      return;
+      yield this.exit();
     }
 
     const { toPromise } = dispatch(osSpawnChildThunk({
@@ -50,8 +49,7 @@ export class SubshellComposite extends BaseCompositeTerm<CompositeType.subshell>
 
     // TODO ensure last exit code available
     const child = dispatch(osGetProcessThunk({ processKey: this.childProcessKey }));
-    const exitCode = child ? child.lastExitCode || 0 : 0;
-    yield this.exit(exitCode);
+    yield this.exit(child ? child.lastExitCode || 0 : 0);
   }
 }
 
