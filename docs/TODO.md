@@ -1,7 +1,5 @@
 # TODO
 
-- BUG pipe terminates early `sleep 4 | echo foo`
-
 - BUG: process expansion is logging late for:
   `cat <( sleep 2; echo foo; sleep 2 )`
 
@@ -266,3 +264,5 @@
   FIX: foreground can have multiple process keys where 1st is interactive bash
 - BUG: `bash; ( sleep 2) ^C`
   FIX: by previous fix.
+- BUG: pipe terminates early `sleep 4 | echo foo`
+  FIX: wait for all children (could only wait for last via flag?)
