@@ -485,18 +485,24 @@ export const osReadThunk = createOsThunk<OsAct, ReadThunk>(
     const prevLength = buffer.length;
 
     if (!iNode.readBlocked) {
-      /** 0 iff EOF, otherwise the number of lines read. */
+      /** `0` iff EOF; otherwise it is the number of lines read. */
       const readReturn = iNode.read(buffer, maxLines, offset);
 
-      if (buffer.length > prevLength) {
-        // Only useful for 'regular' and 'history' ATOW
+      if (buffer.length > prevLength) { // At least one line was read
+        // Adjust offset for regular/history inodes
         dispatch(osOffsetOpenAct({ openKey, delta: buffer.length - prevLength }));
+
         if (iNode.type === INodeType.fifo) {
+          /**
+           * Provide data from pipe as soon as possible,
+           * also informing any pending writers.
+           */
           iNode.awakenWriters();
+          return { eof: false, toPromise: null };
         }
       }
 
-      if (readReturn) {// Not EOF.
+      if (readReturn) {// Not EOF
         if (readReturn < maxLines) {
           // Haven't read {maxLines}, will block below.
         } else {// Have read desired lines without reaching EOF.

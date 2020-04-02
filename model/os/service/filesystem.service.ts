@@ -151,7 +151,6 @@ export class FilesystemService {
 /**
  * Decrements {numLinks} in open file descriptions.
  * Also removes them when {numLinks} will be zero.
- * ~~For fifos also unregisters from read or write end.~~
  */
 export function closeFd({ fromFd, fd, ofd, warnNonExist = false }: {
   fromFd: FromFdToOpenKey;

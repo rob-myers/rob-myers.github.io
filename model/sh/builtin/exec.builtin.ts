@@ -25,27 +25,33 @@ export class ExecBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.exec> {
   }
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
-    if (!this.def.args[0]) {// If only redirects, apply in current scope
+    if (!this.def.args[0]) {
+      // If only redirects, apply in current scope
       for (const redirect of this.redirects) {
         yield* this.runChild({ child: redirect, dispatch, processKey });
       }
-      yield this.exit(0);
+      yield this.exit();
     }
 
     // Otherwise append redirect's source code to args and parse
     const src = this.def.args.concat(
       this.redirects.map((redirect) => redirect.def.src || '')).join(' ');
     const parse = dispatch(osParseShThunk({ src }));
-    if (parse.key === 'failed') return yield this.exit(1, parse.error);
+    if (parse.key === 'failed') {
+      yield this.exit(1, parse.error);
+      return; // For typescript
+    }
     const term = dispatch(osTranspileShThunk({ parsed: parse.parsed }));
     dispatch(osDistributeSrcThunk({ src, term }));
 
     // Ensure transpilation is a simple command (?)
     if (term.key !== CompositeType.simple) {
-      return yield this.exit(1, `'${src}' not recognised as simple command`);
+      yield this.exit(1, `'${src}' not recognised as simple command`);
     }
 
-    // TODO ensure args[0] executable i.e. func, builtin, or binary (?)
+    /**
+     * TODO ensure args[0] executable i.e. func, builtin, or binary (?)
+     */
     dispatch(osExecTermThunk({ processKey, term, command: null }));
     dispatch(osStartProcessThunk({ processKey }));
 

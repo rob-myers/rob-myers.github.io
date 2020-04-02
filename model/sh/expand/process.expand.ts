@@ -53,7 +53,7 @@ export class ProcessExpand extends BaseExpandComposite<ExpandType.process> {
      */
     // yield this.dispatch(unlinkFileThunk({ processKey, path: pipePath }));
 
-    yield this.exit(0);
+    yield this.exit();
   }
 }
 

@@ -7,16 +7,16 @@ import { osOpenFileThunk } from '@store/os/file.os.duck';
 export class CatBinary extends BaseBinaryComposite<BinaryExecType.cat> {
 
   private readonly maxIterations = 5000;
+  private readonly maxLines = 100;
 
   public specOpts() {
     return { string: [], boolean: [] };
   }
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
-    const maxLines = 100;
 
-    if (!this.operands.length) {// Read from stdin.
-      while (yield this.read(maxLines)) {
+    if (!this.operands.length) {// Read from stdin
+      while (yield this.read(this.maxLines)) {
         yield this.write();
       }
     }
@@ -32,12 +32,11 @@ export class CatBinary extends BaseBinaryComposite<BinaryExecType.cat> {
 
       /**
        * Basic protection against {cat foo >> foo}.
-       * Would be better to slow it down gracefully,
-       * permitting Ctrl + C.
+       * Would be better to slow it down gracefully, permitting Ctrl + C.
        */
       let numIterations = 0;
 
-      while (yield this.read(maxLines)) {
+      while (yield this.read(this.maxLines)) {
         yield this.write();
         if (numIterations++ > this.maxIterations) {
           yield this.exit(1, 'max iterations exceeded');
