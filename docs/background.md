@@ -1,25 +1,27 @@
-Themes
+## Possible Overall Approaches
 
-- Illustrate algorithms via game
-- Illustrate state machines via game
-- Game AI/scripting/mechanics
-- Shell programming
+### Website concerning Game AI behaviours.
 
-Originally:
-> website is a collection of Game AI behaviours; users can play with code and send comments with modifications/improvements/ideas.
+- Catalog of AI approaches.
 
-Instead:
-> illustrate data-structures/algorithms/state-machines via a top-down game.
+...
 
-Why?
-- Far more content exists concerning data-structures and algorithms.
-- More educational.
+### Illustrate data-structures/algorithms/state-machines.
+
 - Still relevant to Game AI (which is mainly scripting)
-- Examples:
-  - LIFO as lift or many people hiding in small space
+- Examples (rather simplistic):
+  - LIFO as lift, or many people hiding in small space
   - FIFO as queue for supermarket
   - Grouping algorithm as coach splitting people into teams
   - Sorting algorithms as stagehand telling actors to go on stage
   - OBDD as factory with robots redirecting data
-- Can link up to academic work concerning nondeterministic automata
-- Could attempt compositionality
+
+...
+
+### Make an actual game
+
+- Expose creation process.
+- Allow others to participate.
+- Clear objective.
+- More creative.
+

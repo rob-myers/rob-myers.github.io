@@ -1,16 +1,17 @@
 # TODO
 
-- meta pickups `pickup` with arrow icon and touch radius
-- meta obstructions `block` with augmenting tags
+- permit multiple metas at same position via submetas
+- meta pickups `pickup` have arrow icon
+- meta obstruction `block`
 
 - fast line-of-sight test via negation of nav polys.
 - Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
+  and skips further computation during algorithm
 - path simplification does line-of-sight simplification from endpoints
 - fast 'point to rect' lookup
 - fast 'point to triangle' lookup
-- for start/end, avoid testing many border-points on currect rect e.g. by restricting along one dimension
+- for start/end avoid testing many border-points by cutting rects along one dim
 
-- clearer vision of site
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground
 - for `goto` intend `STOP`/`CONT` to pause/continue animations
