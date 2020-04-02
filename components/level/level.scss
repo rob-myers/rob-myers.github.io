@@ -210,7 +210,8 @@ html {
       }
 
       .meta-radius {
-        stroke: none;
+        stroke-width: 0.1;
+        stroke: rgba(0, 0, 0, 0.5);
 
         @at-root .light-mode .viewport .meta-radius {
           fill: rgba(200, 0, 0, 0.2);
@@ -221,10 +222,11 @@ html {
       }
 
       .meta-rect {
-        stroke: none;
+        stroke: rgba(0, 0, 0, 0.5);
+        stroke-width: 0.1;
 
         @at-root .light-mode .viewport .meta-rect {
-          fill: rgba(0, 0, 200, 0.2);
+          fill: rgba(200, 0, 0, 0.2);
         }
         @at-root .dark-mode .viewport .meta-rect {
           fill: rgba(200, 200, 200, 0.3);

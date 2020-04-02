@@ -151,9 +151,9 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
             {rect && circular && (
               <circle
                 className={css.metaRadius}
-                cx={position.x + rect.dimension / 2}
-                cy={position.y + rect.dimension / 2}
-                r={rect.dimension / 2}
+                cx={position.x}
+                cy={position.y}
+                r={rect.dimension}
               />
             )}
             {rect && !circular && (
