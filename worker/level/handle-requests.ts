@@ -4,7 +4,7 @@ import { redact, addToLookup } from '@model/redux.model';
 import { mapValues } from '@model/generic.model';
 import { NavPath } from '@model/nav/nav-path.model';
 import { Vector2 } from '@model/vec2.model';
-import { LevelMeta } from '@model/level/level-meta.model';
+import { LevelMeta, LevelMetaGroup } from '@model/level/level-meta.model';
 import { Act } from '@store/level/level.duck';
 import { store, getLevel, getLevelAux } from './create-store';
 import { handleLevelToggles, handleMetaUpdates } from './handle-edits';
@@ -84,8 +84,12 @@ export function listenForRequests() {
       case 'add-level-meta': {
         // Snap to integers
         const [x, y] = [Math.round(msg.position.x), Math.round(msg.position.y)];
-        const lp = new LevelMeta(msg.metaKey, Vector2.from({ x, y }));
-        const metas = { ...getLevel(msg.levelUid)!.metas, [lp.key]: lp };
+        const lmg = new LevelMetaGroup(
+          msg.metaGroupKey,
+          [new LevelMeta(msg.metaKey)],
+          new Vector2(x, y),
+        );
+        const metas = { ...getLevel(msg.levelUid)!.metas, [lmg.key]: lmg };
         dispatch(Act.updateLevel(msg.levelUid, { metas: metas }));
         break;
       }

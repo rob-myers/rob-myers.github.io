@@ -40,7 +40,7 @@ export function ensureFloydWarshall(levelUid: string) {
 function getMetaSteiners(levelUid: string) {
   const { floors, metas } = getLevel(levelUid)!;
   return  Object.values(metas)
-    .filter(({ tags }) => tags.includes('steiner'))
+    .filter((metaGroup) => metaGroup.hasTag('steiner'))
     .reduce<{ [polyId: number]: Vector2[] }>((agg, { position: p }) => {
     const polyId = floors.findIndex(floor => floor.contains(p));
     return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;

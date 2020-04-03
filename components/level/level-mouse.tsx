@@ -35,14 +35,16 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const dispatch = useDispatch();
   const td = state.cursorType === 'refined' ? smallTileDim : tileDim;
 
-  useEffect(() => {// Handle fowarded pan-zooms from LevelMetas
+  useEffect(() => {
+    // Handle fowarded pan-zooms from LevelMetas
     const wheelForwarder = redact(new ReplaySubject<ForwardedWheelEvent>());
     const sub = wheelForwarder.subscribe((msg) => onWheel.current(msg.e));
     dispatch(Act.updateLevel(levelUid, { wheelForwarder }));
 
+    // Ensure rectangle 100% on resize
     const onResize = () => {
       const el = rectEl.current;
-      if (el && el.parentElement) {// Ensure rectangle 100% on resize
+      if (el && el.parentElement) {
         el.style.setProperty('width', `${el.parentElement.clientWidth}px`);
         el.style.setProperty('height', `${el.parentElement.clientHeight}px`);
       }
@@ -159,35 +161,37 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
           if (overMeta.current && overMeta.current !== state.draggedMeta ) {
             // NOOP
           } else if (e.shiftKey) {// Duplicate meta
-            const newMetaKey = `meta-${generate()}`;
+            const newMetaGroupKey = `mg-${generate()}`;
             worker.postMessage({
               key: 'duplicate-level-meta',
               levelUid,
               position: state.mouseWorld.json,
-              metaKey: state.draggedMeta,
-              newMetaKey,
+              metaGroupKey: state.draggedMeta,
+              newMetaGroupKey,
             });
             dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
-            dispatch(Act.updateMetaUi(levelUid, newMetaKey, { over: true }));
-            overMeta.current = newMetaKey;
+            dispatch(Act.updateMetaUi(levelUid, newMetaGroupKey, { over: true }));
+            overMeta.current = newMetaGroupKey;
             setCursor('pointer');
             worker.postMessage({ key: 'request-level-metas', levelUid });
           } else { // Move meta
-            dispatch(Thunk.moveMetaToMouse({ uid: levelUid, metaKey: state.draggedMeta }));
+            dispatch(Thunk.moveMetaToMouse({ uid: levelUid, metaGroupKey: state.draggedMeta }));
             dispatch(Act.updateMetaUi(levelUid, state.draggedMeta, { over: true }));
             dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
             overMeta.current = state.draggedMeta;
             setCursor('pointer');
           }
-        } else if (e.shiftKey) {// Create new meta
-          const metaKey = `meta-${generate()}`;
+        } else if (e.shiftKey) {// Create new meta group
+          const metaGroupKey = `mg-${generate()}`;
+          const metaKey = `m-${generate()}`;
           worker.postMessage({
             key: 'add-level-meta',
             levelUid,
+            metaGroupKey,
             position: state.mouseWorld.json,
             metaKey,
           });
-          overMeta.current = metaKey;
+          overMeta.current = metaGroupKey;
           setCursor('pointer');
           worker.postMessage({ key: 'request-level-metas', levelUid });
         }

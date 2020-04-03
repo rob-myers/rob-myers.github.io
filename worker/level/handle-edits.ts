@@ -164,25 +164,27 @@ export function handleMetaUpdates(levelUid: string) {
 
         switch (msg.key) {
           case 'update-level-meta': {
-            const { metaKey, update } = msg;
-            metas[metaKey].applyUpdates(update);// Mutate
+            const { metaGroupKey, update } = msg;
+            metas[metaGroupKey].applyUpdates(update);// Mutate
             return (// Some updates can affect NavGraph
-              update.key === 'add-tag' && navTags.includes(update.tag)
-              || update.key === 'remove-tag' && navTags.includes(update.tag)
-              || update.key === 'set-position' && metas[metaKey].tags.some(tag => navTags.includes(tag))
+              update.key === 'add-tag'
+                  && navTags.includes(update.tag)
+              || update.key === 'remove-tag'
+                  && navTags.includes(update.tag)
+              || update.key === 'set-position' && metas[metaGroupKey].hasSomeTag(navTags)
             );
           }
           case 'duplicate-level-meta': {
             // Snap position to integers
             const [x, y] = [Math.round(msg.position.x), Math.round(msg.position.y)];
-            const meta = metas[msg.metaKey].clone(msg.newMetaKey, Vector2.from({ x, y }));
-            dispatch(Act.updateLevel(levelUid, { metas: { ...metas, [meta.key]: meta }}));
-            return navTags.some(tag => meta.tags.includes(tag));
+            const mg = metas[msg.metaGroupKey].clone(msg.newMetaGroupKey, Vector2.from({ x, y }));
+            dispatch(Act.updateLevel(levelUid, { metas: { ...metas, [mg.key]: mg }}));
+            return mg.hasSomeTag(navTags);
           }
           case 'remove-level-meta': {
-            const nextMetas = removeFromLookup(msg.metaKey, metas);
+            const nextMetas = removeFromLookup(msg.metaGroupKey, metas);
             dispatch(Act.updateLevel(msg.levelUid, { metas: nextMetas }));
-            return navTags.some(tag => metas[msg.metaKey].tags.includes(tag));
+            return metas[msg.metaGroupKey].hasSomeTag(navTags);
           }
           default: throw testNever(msg);
         }
@@ -208,11 +210,14 @@ export function handleMetaUpdates(levelUid: string) {
  */
 function updateLights(levelUid: string) {
   const { tileFloors, wallSeg, metas } = getLevel(levelUid)!;
-  const lineSegs = ([] as [Vector2, Vector2][]).concat(
+  const lineSegs = (
+    [] as [Vector2, Vector2][]
+  ).concat(
     Object.values(wallSeg).map(([u, v]) => [Vector2.from(u), Vector2.from(v)]),
     tileFloors.flatMap(x => x.lineSegs),
   );
   Object.values(metas)
+    .flatMap(({ metas }) => metas)
     .filter((meta) => meta.validateLight(tileFloors))
     .forEach((meta) => meta.light?.computePolygon(lineSegs));
 }

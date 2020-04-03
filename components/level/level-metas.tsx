@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { LevelState } from '@model/level/level.model';
-import { LevelMeta, metaPointRadius } from '@model/level/level-meta.model';
+import { metaPointRadius, LevelMetaGroup } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
 import { Act } from '@store/level.duck';
 import { NavPath } from '@model/nav/nav-path.model';
@@ -22,7 +22,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
   const showNavRects = useSelector(({ level: { instance } }) => instance[levelUid].showNavRects);
 
-  const [levelMetas, setLevelMetas] = useState<MetaLookup>({});
+  const [metaGroups, setMetaGroups] = useState<MetaLookup>({});
   const [navPaths, setNavPaths] = useState<KeyedLookup<NavPath>>({});
   const [rects, setRects] = useState([] as Rect2Json[]);
 
@@ -35,9 +35,9 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
       }
       switch (msg.key) {
         case 'send-level-metas': {
-          const metas = msg.metas.map(p => LevelMeta.fromJson(p))
+          const metas = msg.metas.map(p => LevelMetaGroup.from(p))
             .reduce<MetaLookup>((agg, item) => ({ ...agg, [item.key]: item }), {}); 
-          setLevelMetas(metas);
+          setMetaGroups(metas);
           dispatch(Act.syncMetaUi(levelUid, Object.values(metas)));
           break;
         }
@@ -63,26 +63,33 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const focusLevelKeys = () =>
     overlayRef.current?.parentElement?.parentElement?.parentElement?.focus();
 
-  const addTag = (metaKey: string, tag: string) => {
+  const addTag = (metaGroupKey: string, metaKey: string, tag: string) => {
     if (/^[a-z0-9][a-z0-9-]*$/.test(tag)) {
       /**
        * Standard tags are non-empty and use lowercase letters, digits and hyphens.
        * Finally, they cannot start with a hyphen.
        */
-      worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'add-tag', tag }});
+      worker.postMessage({
+        key: 'update-level-meta',
+        levelUid,
+        metaGroupKey,
+        update: { key: 'add-tag', tag, metaKey },
+      });
       return true;
     } else if (tag === '-') {
       /**
        * Given tag '-' then remove this meta.
        */
-      worker.postMessage({ key: 'remove-level-meta', levelUid, metaKey });
+      worker.postMessage({ key: 'remove-level-meta', levelUid, metaGroupKey });
       focusLevelKeys();
     } else if (/^>[a-z0-9][a-z0-9-]*$/.test(tag)) {
       /**
        * Given tag '>foo' draw NavPath to 1st meta with tag 'foo'
        */
-      const { position } = levelMetas[metaKey];
-      const dstMeta = Object.values(levelMetas).find(({ tags }) => tags.includes(tag.slice(1)));
+      const { position } = metaGroups[metaGroupKey];
+      const dstMeta = Object.values(metaGroups)
+        .find(({ metas }) => metas.some(meta => meta.tags.includes(tag.slice(1))));
+      
       if (dstMeta) {
         worker.postMessage({ key: 'request-nav-path', levelUid,
           navPathUid: `${metaKey}>${dstMeta.key}`,
@@ -94,8 +101,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
     }
   };
 
-  const removeTag = (metaKey: string, tag: string) =>
-    worker.postMessage({ key: 'update-level-meta', levelUid, metaKey, update: { key: 'remove-tag', tag }});
+  const removeTag = (metaGroupKey: string, metaKey: string, tag: string) =>
+    worker.postMessage({ key: 'update-level-meta', levelUid, metaGroupKey, update: { key: 'remove-tag', tag, metaKey }});
 
   const closeMeta = (metaKey: string) => {
     dispatch(Act.updateMetaUi(levelUid, metaKey, { open: false }));
@@ -105,79 +112,84 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   return (
     <>
       <g className={css.metas}>
-        {Object.values(levelMetas).map(({ position, key, light, circular, triggerRect: rect }) =>
-          <g key={key}>
+        {/* {Object.values(metaGroups).map(({ position, key, light, circular, triggerRect: rect }) => */}
+        {Object.values(metaGroups).map(({ key: groupKey, position, metas }) =>
+          <g key={groupKey}>
             <circle
               className={css.metaHandle}
               cx={position.x}
               cy={position.y}
               r={metaPointRadius}
             />
-            {light && (
-              <>
-                <radialGradient
-                  id={`light-radial-${key}`}
-                  cx={0}
-                  cy={0}
-                  gradientTransform={`
-                    translate(${light.sourceRatios.x}, ${light.sourceRatios.y})
-                    scale(${light.scale / light.scaleX}, ${light.scale /light.scaleY})
-                  `}
-                >
-                  {
-                    theme === 'light-mode' && (
-                      <>
-                        <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} />
-                        <stop offset="95%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} />
-                        <stop offset="100%" style={{ stopColor: 'rgba(0, 0, 0, 0)' }} />
-                      </>
-                    ) || (
-                      <>
-                        <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 230, 0.25)' }} />
-                        <stop offset="50%" style={{ stopColor: 'rgba(255, 255, 230, 0.1)' }} />
-                        <stop offset="100%" style={{ stopColor: 'rgba(255, 255, 255, 0)' }} />
-                      </>
-                    )
-                  }
-                </radialGradient>
-                <path
-                  key={`light-${key}`}
-                  d={light.polygon.svgPath}
-                  fill={`url(#light-radial-${key})`}
-                  strokeWidth={0}
+            {metas.map(({ key, light, triggerRect: rect, circular }) => (
+              <g key={key}>
+                {light && (
+                  <>
+                    <radialGradient
+                      id={`light-radial-${key}`}
+                      cx={0}
+                      cy={0}
+                      gradientTransform={`
+                        translate(${light.sourceRatios.x}, ${light.sourceRatios.y})
+                        scale(${light.scale / light.scaleX}, ${light.scale /light.scaleY})
+                      `}
+                    >
+                      {
+                        theme === 'light-mode' && (
+                          <>
+                            <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} />
+                            <stop offset="95%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} />
+                            <stop offset="100%" style={{ stopColor: 'rgba(0, 0, 0, 0)' }} />
+                          </>
+                        ) || (
+                          <>
+                            <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 230, 0.25)' }} />
+                            <stop offset="50%" style={{ stopColor: 'rgba(255, 255, 230, 0.1)' }} />
+                            <stop offset="100%" style={{ stopColor: 'rgba(255, 255, 255, 0)' }} />
+                          </>
+                        )
+                      }
+                    </radialGradient>
+                    <path
+                      key={`light-${key}`}
+                      d={light.polygon.svgPath}
+                      fill={`url(#light-radial-${key})`}
+                      strokeWidth={0}
+                    />
+                  </>
+                )}
+                {rect && circular && (
+                  <circle
+                    className={css.metaRadius}
+                    cx={position.x}
+                    cy={position.y}
+                    r={rect.dimension}
+                  />
+                )}
+                {rect && !circular && (
+                  <rect
+                    className={css.metaRect}
+                    x={rect.x}
+                    y={rect.y}
+                    width={rect.width}
+                    height={rect.height}
+                  />
+                )}
+              </g>
+            ))}
+            {draggedMeta && mouseWorld &&
+              <g className={css.dragIndicator}>
+                <line
+                  x1={draggedMeta.position.x}
+                  y1={draggedMeta.position.y}
+                  x2={mouseWorld.x}
+                  y2={mouseWorld.y}
                 />
-              </>
-            )}
-            {rect && circular && (
-              <circle
-                className={css.metaRadius}
-                cx={position.x}
-                cy={position.y}
-                r={rect.dimension}
-              />
-            )}
-            {rect && !circular && (
-              <rect
-                className={css.metaRect}
-                x={rect.x}
-                y={rect.y}
-                width={rect.width}
-                height={rect.height}
-              />
-            )}
+                <circle cx={mouseWorld.x} cy={mouseWorld.y} r={1}/>
+              </g>
+            }
           </g>
         )}
-        {draggedMeta && mouseWorld &&
-          <g className={css.dragIndicator}>
-            <line
-              x1={draggedMeta.position.x}
-              y1={draggedMeta.position.y}
-              x2={mouseWorld.x}
-              y2={mouseWorld.y}
-            />
-            <circle cx={mouseWorld.x} cy={mouseWorld.y} r={1}/>
-          </g>
-        }
       </g>
       <g className={css.navPaths}>
         {Object.values(navPaths).map((navPath) =>
@@ -213,14 +225,14 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
        */
         overlayRef.current && (
           ReactDOM.createPortal(
-            Object.values(levelMetas).map(({ key, tags }) => (
-              metaUi[key] && metaUi[key].open && (
+            Object.values(metaGroups).map(({ key: groupKey, metas }) => (
+              metaUi[groupKey] && metaUi[groupKey].open && (
                 <section
-                  key={key}
+                  key={groupKey}
                   className={css.metaPopover}
                   style={{
-                    left: metaUi[key].dialogPosition.x,
-                    top: metaUi[key].dialogPosition.y,
+                    left: metaUi[groupKey].dialogPosition.x,
+                    top: metaUi[groupKey].dialogPosition.y,
                     pointerEvents: draggedMeta ? 'none' : 'all',
                   }}
                   onWheel={(e) => {
@@ -231,33 +243,37 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                     wheelFowarder?.next({ key: 'wheel', e });
                   }}
                 >
-                  <section className={css.content}>
-                    <input
-                      // Tab focus can break svg height due to parent with overflow hidden (?)
-                      tabIndex={-1}
-                      placeholder="tag"
-                      onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
-                        inputKey === 'Enter' && addTag(key, value) && (currentTarget.value = '')
-                      }
-                      // TODO prevent loss of key focus on 'Escape'
-                      onKeyDown={({ key: inputKey }) => inputKey === 'Escape' && closeMeta(key)}
-                      onKeyUp={(e) => e.stopPropagation()}
-                    />
-                    <section className={css.tags}>
-                      {tags.map((tag) =>
-                        <div
-                          key={tag}
-                          className={css.tag}
-                          onClick={() => removeTag(key, tag)}
-                        >
-                          {tag}
-                        </div>
-                      )}
+                  {
+                    // TODO only show one meta at a time
+                  }
+                  {metas.map(({ key, tags }) => (
+                    <section key={key} className={css.content}>
+                      <input
+                        // Tab focus can break svg height due to parent with overflow hidden (?)
+                        tabIndex={-1}
+                        placeholder="tag"
+                        onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
+                          inputKey === 'Enter' && addTag(groupKey, key, value) && (currentTarget.value = '')
+                        }
+                        // TODO prevent loss of key focus on 'Escape'
+                        onKeyDown={({ key: inputKey }) => inputKey === 'Escape' && closeMeta(key)}
+                        onKeyUp={(e) => e.stopPropagation()}
+                      />
+                      <section className={css.tags}>
+                        {tags.map((tag) =>
+                          <div
+                            key={tag}
+                            className={css.tag}
+                            onClick={() => removeTag(groupKey, key, tag)}
+                          >
+                            {tag}
+                          </div>
+                        )}
+                      </section>
                     </section>
-                  </section>
+                  ))}
                 </section>
               )
-              
             ))
             , overlayRef.current
           )

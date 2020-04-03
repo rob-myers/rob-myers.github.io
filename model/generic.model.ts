@@ -151,3 +151,7 @@ export function posModulo(x: number, modulus: number) {
 export function removeDups<T>(items: T[]) {
   return Array.from(new Set(items));
 }
+
+export function intersects<T>(items: T[], others: T[]) {
+  return items.some(item => others.includes(item));
+}

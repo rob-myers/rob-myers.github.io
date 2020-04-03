@@ -9,7 +9,7 @@ import { createThunk } from '@model/root.redux.model';
 import LevelWorkerClass from '@worker/level/level.worker';
 import { LevelUiState, createLevelUiState } from '@model/level/level.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
-import { LevelMetaUi, LevelMeta, syncLevelMetaUi } from '@model/level/level-meta.model';
+import { LevelMetaUi, syncLevelMetaUi, LevelMetaGroup } from '@model/level/level-meta.model';
 
 export interface State {
   worker: null | Redacted<LevelWorker>;
@@ -35,7 +35,7 @@ export const Act = {
     createAct('[Level] set status', { status }),
   storeWorker: (worker: Redacted<LevelWorker>) =>
     createAct('[Level] store worker', { worker }),
-  syncMetaUi: (uid: string, metas: LevelMeta[]) =>
+  syncMetaUi: (uid: string, metas: LevelMetaGroup[]) =>
     createAct('[Level] sync meta ui', { uid, metas }),
   updateMetaUi: (uid: string, key: string, updates: Partial<LevelMetaUi>) =>
     createAct('[Level] update meta ui', { uid, key, updates }),
@@ -92,10 +92,12 @@ export const Thunk = {
   ),
   moveMetaToMouse: createThunk(
     '[Level] move meta to mouse',
-    ({ state: { level } }, { uid, metaKey }: { uid: string; metaKey: string }) => {
+    ({ state: { level } }, { uid, metaGroupKey }: { uid: string; metaGroupKey: string }) => {
       const { worker, instance: { [uid]: state } } = level;
       state && worker?.postMessage({
-        key: 'update-level-meta', levelUid: uid, metaKey,
+        key: 'update-level-meta',
+        levelUid: uid,
+        metaGroupKey,
         update: { key: 'set-position', position: {
           x: Math.round(state.mouseWorld.x), // Snapped to nearest integers
           y: Math.round(state.mouseWorld.y),

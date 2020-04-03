@@ -3,7 +3,7 @@ import { map, tap } from 'rxjs/operators';
 import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
-import { LevelMetaJson, LevelMetaUpdate } from './level-meta.model';
+import { LevelMetaUpdate, LevelMetaGroupJson } from './level-meta.model';
 import { NavPathJson } from '@model/nav/nav-path.model';
 import { KeyedLookup } from '@model/generic.model';
 import { Rect2Json } from '@model/rect2.model';
@@ -90,19 +90,20 @@ interface AddLevelMeta extends BaseMessage {
   key: 'add-level-meta';
   levelUid: string;
   position: Vector2Json;
+  metaGroupKey: string;
   metaKey: string;
 }
 export interface DuplicateLevelMeta extends BaseMessage {
   key: 'duplicate-level-meta';
   levelUid: string;
   position: Vector2Json;
-  metaKey: string;
-  newMetaKey: string;
+  metaGroupKey: string;
+  newMetaGroupKey: string;
 }
 export interface RemoveLevelMeta extends BaseMessage {
   key: 'remove-level-meta';
   levelUid: string;
-  metaKey: string;
+  metaGroupKey: string;
 }
 interface RequestLevelData extends BaseMessage {
   key: 'request-level-data';
@@ -115,12 +116,12 @@ interface RequestLevelMetas extends BaseMessage {
 interface SendLevelMetas extends BaseMessage {
   key: 'send-level-metas';
   levelUid: string;
-  metas: LevelMetaJson[];
+  metas: LevelMetaGroupJson[];
 }
 export interface UpdateLevelMeta extends BaseMessage {
   key: 'update-level-meta';
   levelUid: string;
-  metaKey: string;
+  metaGroupKey: string;
   update: LevelMetaUpdate;
 }
 

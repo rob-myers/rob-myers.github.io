@@ -4,7 +4,7 @@ import { Subscription, Subject } from 'rxjs';
 import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { KeyedLookup } from '@model/generic.model';
-import { LevelMetaUi, LevelMeta } from './level-meta.model';
+import { LevelMetaUi, LevelMetaGroup } from './level-meta.model';
 import { FloydWarshallReady } from './level.worker.model';
 import { smallTileDim } from './level-params';
 import { FloydWarshall } from '@model/nav/floyd-warshall.model';
@@ -17,21 +17,21 @@ export type Direction = 'n' | 'e' | 's' | 'w';
  */
 export interface LevelState {
   key: string;
-  /** Floor induced by tiles */
+  /** Floor induced by tiles, including un-navigable areas */
   tileFloors: Redacted<Poly2>[];
   /** Line segments aligned to refined grid */
   wallSeg: Record<string, [Vector2Json, Vector2Json]>;
-  /** Navigable polygon induced by tileFloors and walls */
+  /** Navigable polygon induced by tileFloors, walls and inset amount */
   floors: Redacted<Poly2>[];
   /** Tile/wall toggle handler */
   tileToggleSub: null | Redacted<Subscription>;
   /** Meta update handler */
   metaUpdateSub: null | Redacted<Subscription>;
-  /** Spawn points, steiner points, lights, interactives */
-  metas: KeyedLookup<LevelMeta>;
+  /** Spawn points, steiner points, lights, triggers, obstructions */
+  metas: KeyedLookup<LevelMetaGroup>;
   /** Pathfinder */
   floydWarshall: null | Redacted<FloydWarshall>;
-  /** Used to generated FloydWarshall */
+  /** Navigation Graph used to generate `floydWarshall` */
   navGraph: Redacted<NavGraph>;
 }
 
