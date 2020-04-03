@@ -96,9 +96,10 @@ export class SimpleComposite extends BaseCompositeTerm<CompositeType.simple> {
       for (const pattern of fileArgs) {
         if (/\*|\?|\[/.test(pattern)) {
           // Could be a glob.
-          console.log('Applying filename expansion to:', JSON.stringify(pattern));// DEBUG
+          // console.log('Applying filename expansion to:', JSON.stringify(pattern));// DEBUG
           const result = dispatch(osExpandFilepathThunk({ processKey, pattern }));
-          console.log({ result });// DEBUG
+          result?.sort();
+          // console.log({ result });// DEBUG
           this.args.push(...(result || [pattern]));
         } else {
           this.args.push(pattern);

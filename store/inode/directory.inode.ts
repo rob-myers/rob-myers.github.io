@@ -1,6 +1,5 @@
 import { BaseINode, INodeType, BaseINodeDef } from './base-inode';
 import { INode } from '@model/os/file.model';
-import { flatten } from '@model/generic.model';
 import globRex from 'globrex';
 
 export class DirectoryINode extends BaseINode {
@@ -80,13 +79,12 @@ export class DirectoryINode extends BaseINode {
       return matches;
     }
 
-    return flatten(matches
+    return matches
       .filter((x) => this.to[x].type === INodeType.directory)
-      .map((dirname) => (this.to[dirname] as DirectoryINode)
+      .flatMap((dirname) => (this.to[dirname] as DirectoryINode)
         .expandFilepathParts(parts)
         .map((x) => `${dirname}/${x}`)
-      )
-    );
+      );
   }
   
   public read(): number {

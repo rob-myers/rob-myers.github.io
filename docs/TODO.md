@@ -1,7 +1,7 @@
 # TODO
 
 - multiple metas at same position via submetas
-  navigate via up/down inside input; placeholder `tag-2`
+  navigate via up/down inside input; placeholder `tag meta-2`
 - meta pickups `pickup` have arrow icon
 - meta obstruction `block`
 

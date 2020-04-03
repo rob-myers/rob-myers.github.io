@@ -6,10 +6,7 @@ import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osGetOfdThunk, osResolvePathThunk } from '@store/os/file.os.duck';
 import { INodeType } from '@store/inode/base-inode';
 
-export class LsBinary extends BaseBinaryComposite<
-  BinaryExecType.ls,
-  { boolean: ('1' | 'a' | 'l')[]; string: never[] }
-> {
+export class LsBinary extends BaseBinaryComposite<BinaryExecType.ls, { boolean: ('1' | 'a' | 'l')[]; string: never[] }> {
 
   public specOpts() {
     return { boolean: ['1', 'a', 'l'] as ('1' | 'a' | 'l')[], string: [] };
@@ -26,7 +23,6 @@ export class LsBinary extends BaseBinaryComposite<
     const columnWidth = (iNode.type === INodeType.tty) && iNode.cols || undefined;
     const onePerLine = this.opts[1] || this.opts.l;
     const filepaths = this.operands.length ? this.operands : ['.'];
-
     /**
      * Files are printed first, regardless of original order,
      * so we buffer all output before writing.
@@ -38,9 +34,7 @@ export class LsBinary extends BaseBinaryComposite<
       try {
         const { iNode } = dispatch(osResolvePathThunk({ processKey, path: filepath }));
         if (iNode.type === INodeType.directory) {
-          /**
-           * List filenames.
-           */
+          // List filenames
           let filenames = this.opts.a
             ? ['.', '..'].concat(Object.keys(iNode.to))
             : Object.keys(iNode.to).filter((x) => !x.startsWith('.'));
@@ -55,10 +49,7 @@ export class LsBinary extends BaseBinaryComposite<
             // yield this.write(filenames);
             dirsBuffer.push(filenames);
           }
-        } else {
-          /**
-           * Just echo filepath.
-           */
+        } else { // Just echo filepath
           filesBuffer.push(filepath);
         }
       } catch (e) {
