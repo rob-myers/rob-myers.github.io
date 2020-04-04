@@ -6,8 +6,9 @@ import { Rect2Json, Rect2 } from '@model/rect2.model';
 import { intersects, testNever } from '@model/generic.model';
 import { pointOnLineSeg } from './geom.model';
 
-export const metaPointRadius = 1;
 export const rectTagRegex = /^r-(\d+)(?:-(\d+))?$/;
+
+const specialTags = ['block', 'circ', 'light', 'pickup', 'rect'];
 
 export class LevelMeta {
   
@@ -69,6 +70,50 @@ export class LevelMeta {
       ? !input.includes(tag)
       : !input[0].test(tag)
     );
+  }
+
+  public setAs(
+    tag: 'block' | 'circ' | 'light' | 'pickup' | 'rect' | string,
+    position: Vector2,
+  ) {
+    if (!specialTags.includes(tag)) return;
+    this.removeTags(...specialTags.filter(x => x !== tag));
+
+    switch (tag) {
+      case 'block': {
+        this.light = null;
+        this.physical = 'block';
+        this.trigger = null;
+        break;
+      }
+      case 'circ': {
+        this.light = null;
+        this.physical = null;
+        this.trigger = 'circ';
+        break;
+      }
+      case 'light': {
+        this.physical = null;
+        this.trigger = null;
+        this.light = new LevelLight(
+          position,
+          this.rect ? this.rect.dimension : undefined
+        );
+        break;
+      }
+      case 'pickup': {
+        this.light = null;
+        this.physical = 'pickup';
+        this.trigger = 'circ';
+        break;
+      }
+      case 'rect': {
+        this.light = null;
+        this.physical = null;
+        this.trigger = 'rect';
+        break;
+      }
+    }
   }
 
   /**
@@ -144,53 +189,21 @@ export class LevelMetaGroup {
           meta.rect = new Rect2(this.position.x, this.position.y, Number(w), Number(h));
           meta.removeTags(rectTagRegex);
           meta.light?.setRange(meta.rect.dimension);
+          
+          meta.tags.forEach(tag => specialTags.includes(tag) && meta.setAs(tag, this.position));
         }
 
-        switch (update.tag) {
-          case 'block': {
-            meta.removeTags('circ', 'rect', 'light', 'pickup');
-            meta.light = null;
-            meta.physical = 'block';
-            meta.trigger = null;
-            break;
-          }
-          case 'circ': {
-            meta.removeTags('rect', 'light', 'block');
-            meta.light = null;
-            meta.physical = null;
-            meta.trigger = 'circ';
-            break;
-          }
-          case 'light': {
-            meta.removeTags('circ', 'rect', 'block');
-            meta.physical = null;
-            meta.trigger = null;
-            meta.light = new LevelLight(
-              this.position,
-              meta.rect ? meta.rect.dimension : undefined,
-            );
-            break;
-          }
-          case 'pickup': {
-            meta.removeTags('circ', 'rect', 'light', 'block');
-            meta.light = null;
-            meta.physical = 'pickup';
-            meta.trigger = 'circ';
-            break;
-          }
-          case 'rect': {
-            meta.removeTags('circ', 'light', 'pickup', 'block');
-            meta.light = null;
-            meta.physical = null;
-            meta.trigger = 'rect';
-            break;
-          }
-        }
+        meta.setAs(update.tag, this.position);
         meta.addTag(update.tag);
         break;
       }
       case 'remove-tag': {
         const meta = this.metas.find(({ key }) => key === update.metaKey)!;
+
+        if (rectTagRegex.test(update.tag)) {
+          meta.rect = null;
+          meta.light = null;
+        }
 
         switch (update.tag) {
           case 'block': {

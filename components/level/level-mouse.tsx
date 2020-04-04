@@ -7,9 +7,8 @@ import { Vector2 } from '@model/vec2.model';
 import { getRelativePos } from '@model/dom.model';
 import { LevelUiState, computeLineSegs, ForwardedWheelEvent } from '@model/level/level.model';
 import { posModulo } from '@model/generic.model';
-import { metaPointRadius } from '@model/level/level-meta.model';
 import { redact } from '@model/redux.model';
-import { wallDepth, tileDim, smallTileDim } from '@model/level/level-params';
+import { wallDepth, tileDim, smallTileDim, metaPointRadius } from '@model/level/level-params';
 import css from './level.scss';
 
 function snapToGrid({ x, y }: Vector2, td: number) {

@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { LevelState } from '@model/level/level.model';
-import { metaPointRadius, LevelMetaGroup } from '@model/level/level-meta.model';
+import { LevelMetaGroup } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
 import { Act } from '@store/level.duck';
 import { NavPath } from '@model/nav/nav-path.model';
 import { KeyedLookup, mapValues, posModulo } from '@model/generic.model';
 import { addToLookup } from '@model/redux.model';
 import { Rect2Json } from '@model/rect2.model';
+import { metaPointRadius } from '@model/level/level-params';
 import css from './level.scss';
 
 type MetaLookup = LevelState['metaGroups'];
@@ -243,7 +244,11 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                     x2={mouseWorld.x}
                     y2={mouseWorld.y}
                   />
-                  <circle cx={mouseWorld.x} cy={mouseWorld.y} r={1}/>
+                  <circle
+                    cx={mouseWorld.x}
+                    cy={mouseWorld.y}
+                    r={metaPointRadius}
+                  />
                 </g>
             }
           </g>

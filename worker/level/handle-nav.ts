@@ -49,6 +49,14 @@ function getMetaSteiners(levelUid: string) {
   }, {});
 }
 
+export function getMetaBlocks(levelUid: string) {
+  const { metaGroups } = getLevel(levelUid)!;
+  return Object.values(metaGroups)
+    .flatMap(({ metas }) => metas)
+    .filter(({ physical, rect }) => physical === 'block' && rect)
+    .map(({ rect }) => rect!.clone());
+}
+
 /**
  * Update navigation i.e. triangulation.
  */

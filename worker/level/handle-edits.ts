@@ -1,7 +1,15 @@
 import { fromEvent } from 'rxjs';
-import { filter, map, delay, auditTime, tap } from 'rxjs/operators';
+import { filter, map, auditTime, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
-import { MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall, LevelWorkerContext, UpdateLevelMeta, DuplicateLevelMeta, RemoveLevelMeta } from '@model/level/level.worker.model';
+import {
+  MessageFromLevelParent,
+  ToggleLevelTile,
+  ToggleLevelWall,
+  LevelWorkerContext,
+  UpdateLevelMeta,
+  DuplicateLevelMeta,
+  RemoveLevelMeta,
+} from '@model/level/level.worker.model';
 import { Rect2 } from '@model/rect2.model';
 import { Poly2 } from '@model/poly2.model';
 import { redact, removeFromLookup } from '@model/redux.model';
@@ -10,9 +18,9 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
+import { tileDim, smallTileDim, floorInset, navTags, rebuildTags } from '@model/level/level-params';
 import { sendMetas } from './handle-requests';
-import { tileDim, smallTileDim, floorInset, navTags } from '@model/level/level-params';
-import { updateNavGraph } from './handle-nav';
+import { updateNavGraph, getMetaBlocks } from './handle-nav';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -24,10 +32,13 @@ export function handleLevelToggles(levelUid: string) {
   return fromEvent<Message<MessageFromLevelParent>>(ctxt, 'message')
     .pipe(
       map(({ data }) => data),
-      filter((msg): msg is ToggleLevelTile | ToggleLevelWall =>
-        msg.key === 'toggle-level-tile' && msg.levelUid === levelUid
-        || msg.key === 'toggle-level-wall' && msg.levelUid === levelUid
-      ),
+      filter((msg): msg is ToggleLevelTile | ToggleLevelWall => {
+        if (msg.levelUid !== levelUid) return false;
+        return  (
+          msg.key === 'toggle-level-tile'
+          || msg.key === 'toggle-level-wall'
+        );
+      }),
       map((msg) => {
         let { tileFloors, wallSeg } = getLevel(levelUid)!;
         switch (msg.key) {
@@ -90,7 +101,6 @@ export function handleLevelToggles(levelUid: string) {
                   wallSeg[key] ? delete wallSeg[key] : wallSeg[key] = [u, v];
                 }
               }
-
             });
             break;
           }
@@ -108,54 +118,14 @@ export function handleLevelToggles(levelUid: string) {
         });
 
         updateLights(levelUid);
+        computeNavFloors(levelUid);
         return null;
-      }),
-      delay(20),
-      /**
-       * Compute navigable floor.
-       */
-      map((_) => {
-        const { tileFloors, wallSeg } = getLevel(levelUid)!;
-
-        const outsetWalls = Poly2.union(
-          Object.values(wallSeg)
-            .map(([u, v]) =>
-              new Rect2(
-                u.x - floorInset,
-                u.y - floorInset,
-                v.x - u.x + 2 * floorInset,
-                v.y - u.y + 2 * floorInset
-              ).poly2
-            ).concat(
-              // TODO block metas
-            )
-        );
-
-        const navFloors = Poly2.cutOut(
-          outsetWalls,
-          tileFloors.flatMap(x => x.createInset(floorInset))
-        );
-
-        dispatch(Act.updateLevel(levelUid, {
-          floors: navFloors.map(x => redact(x)),
-        }));
-
-        ctxt.postMessage({
-          key: 'send-level-nav-floors',
-          levelUid,
-          navFloors: navFloors.map(({ json }) => json),
-        });
-        return navFloors;
       }),
       auditTime(300),
       tap((_) => {
         updateNavGraph(levelUid);
       }),
     );
-}
-
-function edgeToKey(u: Vector2Json, v: Vector2Json) {
-  return `${u.x},${u.y};${v.x},${v.y}`;
 }
 
 /**
@@ -170,7 +140,6 @@ export function handleMetaUpdates(levelUid: string) {
         || msg.key === 'duplicate-level-meta' && levelUid === msg.levelUid
         || msg.key === 'remove-level-meta' && levelUid === msg.levelUid
       ),
-      // We'll return true iff should update nav
       map((msg) => {
         const { metaGroups } = getLevel(levelUid)!;
 
@@ -178,23 +147,30 @@ export function handleMetaUpdates(levelUid: string) {
           case 'update-level-meta': {
             const { metaGroupKey, update } = msg;
             // Mutate the meta groups
-            metaGroups[metaGroupKey].applyUpdates(update);
-            return (// Some updates can affect NavGraph
-              update.key === 'add-tag'
-                  && navTags.includes(update.tag)
-              || update.key === 'remove-tag'
-                  && navTags.includes(update.tag)
-              || update.key === 'set-position'
-                  && metaGroups[metaGroupKey].hasSomeTag(navTags)
-              || update.key === 'ensure-meta-index' && false
-            );
+            const group = metaGroups[metaGroupKey];
+            group.applyUpdates(update);
+            return {
+              rebuildFloors: (
+                update.key === 'add-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
+                || update.key === 'remove-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
+                || update.key === 'set-position' && group.hasSomeTag(rebuildTags)
+              ),
+              updateNav: (
+                update.key === 'add-tag' && navTags.includes(update.tag)
+                || update.key === 'remove-tag' && navTags.includes(update.tag)
+                || update.key === 'set-position' && group.hasSomeTag(navTags)
+              ),
+            };
           }
           case 'duplicate-level-meta': {
             // Snap position to integers
             const [x, y] = [Math.round(msg.position.x), Math.round(msg.position.y)];
-            const mg = metaGroups[msg.metaGroupKey].clone(msg.newMetaGroupKey, Vector2.from({ x, y }));
-            dispatch(Act.updateLevel(levelUid, { metaGroups: { ...metaGroups, [mg.key]: mg }}));
-            return mg.hasSomeTag(navTags);
+            const group = metaGroups[msg.metaGroupKey].clone(msg.newMetaGroupKey, Vector2.from({ x, y }));
+            dispatch(Act.updateLevel(levelUid, { metaGroups: { ...metaGroups, [group.key]: group }}));
+            return {
+              rebuildFloors: group.hasSomeTag(rebuildTags),
+              updateNav: group.hasSomeTag(navTags),
+            };
           }
           case 'remove-level-meta': {
             const group = metaGroups[msg.metaGroupKey];
@@ -204,17 +180,24 @@ export function handleMetaUpdates(levelUid: string) {
             } else {
               dispatch(Act.updateLevel(msg.levelUid, { metaGroups: removeFromLookup(msg.metaGroupKey, metaGroups) }));
             }
-            return group.hasSomeTag(navTags);
+            return {
+              rebuildFloors: group.hasSomeTag(rebuildTags),
+              updateNav: group.hasSomeTag(navTags),
+            };
           }
           default: throw testNever(msg);
         }
       }),
-      filter((updateNav) => {
-        if (updateNav) {// Clear cached
-          dispatch(Act.updateLevel(levelUid, { floydWarshall: null }));
-        }
+      filter(({ rebuildFloors, updateNav }) => {
         updateLights(levelUid);
         sendMetas(levelUid);
+
+        if (rebuildFloors) {
+          computeNavFloors(levelUid);
+        }
+        if (updateNav) {
+          dispatch(Act.updateLevel(levelUid, { floydWarshall: null }));
+        }
         return updateNav;
       }),
       auditTime(300),
@@ -222,6 +205,27 @@ export function handleMetaUpdates(levelUid: string) {
         updateNavGraph(levelUid);
       }),
     );
+}
+
+function computeNavFloors(levelUid: string) {
+  const { tileFloors, wallSeg } = getLevel(levelUid)!;
+
+  const outsetWalls = Poly2.union(
+    Object.values(wallSeg).map(([u, v]) =>
+      new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2
+    ).concat(getMetaBlocks(levelUid).map(rect => rect.outset(floorInset).poly2)),
+  );
+  const navFloors = Poly2.cutOut(outsetWalls,
+    tileFloors.flatMap(x => x.createInset(floorInset))
+  );
+  dispatch(Act.updateLevel(levelUid, {
+    floors: navFloors.map(x => redact(x)),
+  }));
+  ctxt.postMessage({ key: 'send-level-nav-floors', levelUid,
+    navFloors: navFloors.map(({ json }) => json),
+  });
+
+  return navFloors;
 }
 
 /**
@@ -240,4 +244,8 @@ function updateLights(levelUid: string) {
     .flatMap(({ metas }) => metas)
     .filter((meta) => meta.validateLight(outsetFloors, wallSegs))
     .forEach((meta) => meta.light!.computePolygon(lineSegs));
+}
+
+function edgeToKey(u: Vector2Json, v: Vector2Json) {
+  return `${u.x},${u.y};${v.x},${v.y}`;
 }

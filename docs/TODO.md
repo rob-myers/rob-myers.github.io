@@ -1,9 +1,10 @@
 # TODO
 
-- meta obstruction `block`
 - move meta dialog to front on open/click
 
 - start sketching blog posts
+- document why `wallSeg` is independent of `tileFloors`
+  i.e. walls can cut out another polygon.
 
 - fast line-of-sight test via negation of nav polys.
 - Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
@@ -280,3 +281,4 @@
 - `rect` and `light` are mutually exclusive
 - `r-x` and `r-x-y` specify light radius
 - meta pickups `pickup` have arrow icon
+- meta obstruction `block`

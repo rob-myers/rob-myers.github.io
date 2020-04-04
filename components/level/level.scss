@@ -204,9 +204,16 @@ html {
     .metas {
       
       .meta-handle {
-        fill: white;
-        stroke: black;
         stroke-width: 0.2;
+
+        @at-root .light-mode .viewport .meta-handle {
+          fill: white;
+          stroke: #555;
+        }
+        @at-root .dark-mode .viewport .meta-handle {
+          fill: black;
+          stroke: #666;
+        }
       }
 
       .meta-radius {
