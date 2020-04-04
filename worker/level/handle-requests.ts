@@ -82,13 +82,15 @@ export function listenForRequests() {
         break;
       }
       case 'add-level-meta': {
-        const lmg = new LevelMetaGroup(
-          msg.metaGroupKey,
-          [new LevelMeta(msg.metaKey)],
-          // Snap to integers
-          new Vector2(Math.round(msg.position.x), Math.round(msg.position.y)),
-        );
-        const metaGroups = { ...getLevel(msg.levelUid)!.metaGroups, [lmg.key]: lmg };
+        const metaGroups = {
+          ...getLevel(msg.levelUid)!.metaGroups,
+          [msg.metaGroupKey]: new LevelMetaGroup(
+            msg.metaGroupKey,
+            [new LevelMeta(msg.metaKey)],
+            // Snap to integers
+            new Vector2(Math.round(msg.position.x), Math.round(msg.position.y)),
+          ),
+        };
         dispatch(Act.updateLevel(msg.levelUid, { metaGroups }));
         break;
       }

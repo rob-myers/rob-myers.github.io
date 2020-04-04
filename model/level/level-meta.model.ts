@@ -1,8 +1,9 @@
+import { generate } from 'shortid';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { LevelLight, LevelLightJson } from './level-light.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2Json, Rect2 } from '@model/rect2.model';
-import { intersects } from '@model/generic.model';
+import { intersects, testNever } from '@model/generic.model';
 import { pointOnLineSeg } from './geom.model';
 
 export const metaPointRadius = 1;
@@ -22,7 +23,7 @@ export class LevelMeta {
 
   constructor(
     /** Unique identifier */
-    public key: string,
+    public key = `m-${generate()}`,
     public tags = [] as string[],
     public light: null | LevelLight = null,
     public triggerRect: null | Rect2 = null,
@@ -79,6 +80,7 @@ export type LevelMetaUpdate = (
   | { key: 'add-tag'; tag: string; metaKey: string }
   | { key: 'remove-tag'; tag: string; metaKey: string }
   | { key: 'set-position'; position: Vector2Json }
+  | { key: 'ensure-meta-index'; metaIndex: number }
 );
 
 export class LevelMetaGroup {
@@ -88,6 +90,7 @@ export class LevelMetaGroup {
       key: this.key,
       metas: this.metas.map(meta => meta.json),
       position: this.position.json,
+      metaIndex: this.metaIndex,
     };
   }
 
@@ -96,7 +99,13 @@ export class LevelMetaGroup {
     public key: string,
     public metas: LevelMeta[],
     public position: Vector2,
-  ) {}
+    public metaIndex = 0,
+  ) {
+    if (!this.metas.length) {
+      this.metas.push(new LevelMeta());
+      this.metaIndex = 0;
+    }
+  }
 
   public applyUpdates(update: LevelMetaUpdate): void {
     switch (update.key) {
@@ -113,7 +122,6 @@ export class LevelMetaGroup {
             meta.tags = meta.tags.filter((tag, i) => !(rectTagRegex.test(tag) && i < meta.tags.length - 1));
           }
         }
-
         break;
       }
       case 'remove-tag': {
@@ -134,6 +142,14 @@ export class LevelMetaGroup {
         });
         break;
       }
+      case 'ensure-meta-index': {
+        if (!this.metas[update.metaIndex]) {
+          this.metas[update.metaIndex] = new LevelMeta();
+        }
+        this.metaIndex = update.metaIndex;
+        break;
+      }
+      default: throw testNever(update);
     }
   }
 
@@ -161,11 +177,17 @@ export class LevelMetaGroup {
     return this.metas.some(meta => intersects(meta.tags, tags));
   }
 
-  public static from({ key, metas, position }: LevelMetaGroupJson): LevelMetaGroup {
+  public static from({
+    key,
+    metas,
+    position,
+    metaIndex,
+  }: LevelMetaGroupJson): LevelMetaGroup {
     return new LevelMetaGroup(
       key,
       metas.map(meta => LevelMeta.fromJson(meta)),
       Vector2.from(position),
+      metaIndex,
     );
   }
 
@@ -175,6 +197,7 @@ export interface LevelMetaGroupJson {
   key: string;
   metas: LevelMetaJson[];
   position: Vector2Json;
+  metaIndex: number;
 }
 
 
@@ -185,7 +208,6 @@ export interface LevelMetaGroupUi {
   over: boolean;
   position: Vector2;
   dialogPosition: Vector2;
-  metaIndex: number;
 }
 
 export function syncMetaGroupUi(src: LevelMetaGroup, dst?: LevelMetaGroupUi): LevelMetaGroupUi {
@@ -205,6 +227,5 @@ function createMetaGroupUi(key: string): LevelMetaGroupUi {
     over: true, // Expect initially mouseover
     dialogPosition: Vector2.zero,
     position: Vector2.zero,
-    metaIndex: 0,
   };
 }

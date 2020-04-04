@@ -6,7 +6,7 @@ import { metaPointRadius, LevelMetaGroup } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
 import { Act } from '@store/level.duck';
 import { NavPath } from '@model/nav/nav-path.model';
-import { KeyedLookup, mapValues } from '@model/generic.model';
+import { KeyedLookup, mapValues, posModulo } from '@model/generic.model';
 import { addToLookup } from '@model/redux.model';
 import { Rect2Json } from '@model/rect2.model';
 import css from './level.scss';
@@ -15,14 +15,14 @@ type MetaLookup = LevelState['metaGroups'];
 
 const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const worker = useSelector(({ level: { worker } }) => worker)!;
-  const metaGroupUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaGroupUi);
+  const groupUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaGroupUi);
   const draggedMeta = useSelector(({ level: { instance: { [levelUid]: level } } }) => level.draggedMeta ? level.metaGroupUi[level.draggedMeta] : null);
   const mouseWorld = useSelector(({ level: { instance } }) => draggedMeta && instance[levelUid]?.mouseWorld);
   const wheelFowarder = useSelector(({ level: { instance } }) => instance[levelUid].wheelForwarder);
   const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
   const showNavRects = useSelector(({ level: { instance } }) => instance[levelUid].showNavRects);
 
-  const [metaGroups, setMetaGroups] = useState<MetaLookup>({});
+  const [groups, setGroups] = useState<MetaLookup>({});
   const [navPaths, setNavPaths] = useState<KeyedLookup<NavPath>>({});
   const [rects, setRects] = useState([] as Rect2Json[]);
 
@@ -37,7 +37,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
         case 'send-level-metas': {
           const metas = msg.metas.map(p => LevelMetaGroup.from(p))
             .reduce<MetaLookup>((agg, item) => ({ ...agg, [item.key]: item }), {}); 
-          setMetaGroups(metas);
+          setGroups(metas);
           dispatch(Act.syncMetaUi(levelUid, Object.values(metas)));
           break;
         }
@@ -86,8 +86,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
       /**
        * Given tag '>foo' draw NavPath to 1st meta with tag 'foo'
        */
-      const { position } = metaGroups[metaGroupKey];
-      const dstMeta = Object.values(metaGroups)
+      const { position } = groups[metaGroupKey];
+      const dstMeta = Object.values(groups)
         .find(({ metas }) => metas.some(meta => meta.tags.includes(tag.slice(1))));
       
       if (dstMeta) {
@@ -101,18 +101,25 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
     }
   };
 
-  const removeTag = (metaGroupKey: string, metaKey: string, tag: string) =>
+  const removeTag = (metaGroupKey: string, metaKey: string, tag: string) => {
     worker.postMessage({ key: 'update-level-meta', levelUid, metaGroupKey, update: { key: 'remove-tag', tag, metaKey }});
+  };
 
   const closeMetaGroup = (metaGroupKey: string) => {
     dispatch(Act.updateMetaUi(levelUid, metaGroupKey, { open: false }));
     focusLevelKeys();
   };
 
+  const ensureMeta = (metaGroupKey: string, delta: -1 | 1) => {
+    const group = groups[metaGroupKey];
+    const metaIndex = delta === 1 ? group.metaIndex + 1 : posModulo(group.metaIndex - 1, group.metas.length);
+    worker.postMessage({ key: 'update-level-meta', levelUid, metaGroupKey, update: { key: 'ensure-meta-index', metaIndex }});
+  };
+
   return (
     <>
       <g className={css.metas}>
-        {Object.values(metaGroups).map(({ key: groupKey, position, metas }) =>
+        {Object.values(groups).map(({ key: groupKey, position, metas }) =>
           <g key={groupKey}>
             <circle
               className={css.metaHandle}
@@ -224,14 +231,14 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
        */
         overlayRef.current && (
           ReactDOM.createPortal(
-            Object.values(metaGroups).map(({ key: groupKey, metas }) => (
-              metaGroupUi[groupKey] && metaGroupUi[groupKey].open && (
+            Object.values(groups).map(({ key: groupKey, metas, metaIndex }) => (
+              groupUi[groupKey] && groupUi[groupKey].open && (
                 <section
                   key={groupKey}
                   className={css.metaPopover}
                   style={{
-                    left: metaGroupUi[groupKey].dialogPosition.x,
-                    top: metaGroupUi[groupKey].dialogPosition.y,
+                    left: groupUi[groupKey].dialogPosition.x,
+                    top: groupUi[groupKey].dialogPosition.y,
                     pointerEvents: draggedMeta ? 'none' : 'all',
                   }}
                   onWheel={(e) => {
@@ -243,17 +250,24 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   }}
                 >
                   {metas
-                    .filter((_, i) => i === metaGroupUi[groupKey].metaIndex)
+                    .filter((_, i) => i === metaIndex)
                     .map(({ key, tags }) => (
-                      <section key={key} className={css.content}>
+                      <section
+                        key={groupKey} // We use groupKey to keep the input focused
+                        className={css.content}
+                      >
                         <input
                           tabIndex={-1} // Offscreen focus can break things
-                          placeholder={`tag @${metaGroupUi[groupKey].metaIndex}`}
+                          placeholder={`tag @${metaIndex}`}
                           onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
-                            inputKey === 'Enter' && addTag(groupKey, key, value) && (currentTarget.value = '')
-                          }
-                          onKeyDown={({ key: inputKey }) => inputKey === 'Escape' && closeMetaGroup(groupKey)}
-                          onKeyUp={(e) => e.stopPropagation()}
+                            inputKey === 'Enter' && addTag(groupKey, key, value) && (currentTarget.value = '')}
+                          onKeyDown={({ key: inputKey }) =>
+                            inputKey === 'Escape' && closeMetaGroup(groupKey)}
+                          onKeyUp={(e) => {
+                            e.stopPropagation();
+                            e.key === 'ArrowDown' && ensureMeta(groupKey, +1);
+                            e.key === 'ArrowUp' && ensureMeta(groupKey, -1);
+                          }}
                         />
                         <section className={css.tags}>
                           {tags.map((tag) =>

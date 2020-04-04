@@ -159,13 +159,15 @@ export function handleMetaUpdates(levelUid: string) {
         || msg.key === 'duplicate-level-meta' && levelUid === msg.levelUid
         || msg.key === 'remove-level-meta' && levelUid === msg.levelUid
       ),
-      map((msg) => {// Return true iff should update nav
+      // We'll return true iff should update nav
+      map((msg) => {
         const { metaGroups } = getLevel(levelUid)!;
 
         switch (msg.key) {
           case 'update-level-meta': {
             const { metaGroupKey, update } = msg;
-            metaGroups[metaGroupKey].applyUpdates(update);// Mutate
+            // Mutate the meta groups
+            metaGroups[metaGroupKey].applyUpdates(update);
             return (// Some updates can affect NavGraph
               update.key === 'add-tag'
                   && navTags.includes(update.tag)
@@ -173,6 +175,7 @@ export function handleMetaUpdates(levelUid: string) {
                   && navTags.includes(update.tag)
               || update.key === 'set-position'
                   && metaGroups[metaGroupKey].hasSomeTag(navTags)
+              || update.key === 'ensure-meta-index' && false
             );
           }
           case 'duplicate-level-meta': {
