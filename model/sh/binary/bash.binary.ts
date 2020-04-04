@@ -67,7 +67,7 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
 
     // We set BASHPID here and also in subshells
     dispatch(osAssignVarThunk({ processKey, varName: 'BASHPID',
-      readonly: true, integer: true, force: true,
+      exported: true, readonly: true, force: true, integer: true,
       act: { key: 'default', value: pid.toString() },
     }));
 

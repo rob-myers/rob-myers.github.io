@@ -7,8 +7,8 @@ import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osAssignVarThunk } from '@store/os/declare.os.duck';
 
 export class PrintfBuiltin extends BaseBuiltinComposite<
-  BuiltinOtherType.printf,
-  { string: 'v'[]; boolean: never[] }
+BuiltinOtherType.printf,
+{ string: 'v'[]; boolean: never[] }
 > {
 
   public specOpts() {
@@ -36,7 +36,9 @@ export class PrintfBuiltin extends BaseBuiltinComposite<
           yield this.write(value.split('\n'), 1);
         }
       } catch (e) {
-        const errMsg = `${e}`.replace('SyntaxError: [sprintf] ', '');
+        const errMsg = `${e}`
+          .replace('SyntaxError: [sprintf] ', '')
+          .replace('TypeError: [sprintf] ', '');
         console.error(e);
         yield this.exit(1, errMsg);
       }

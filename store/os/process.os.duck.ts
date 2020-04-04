@@ -317,6 +317,7 @@ export const osUpdateProcessDef: SyncActDef<OsAct, UpdateProcessAct, State> = ({
 
 export type Thunk = (
   | ExecTermThunk
+  | FindAncestralProcessThunk
   | ForkProcessThunk
   | GetProcessThunk
   | GetProcessesMetaThunk
@@ -556,7 +557,7 @@ export const osSpawnChildThunk = createOsThunk<OsAct, SpawnChildThunk>(
       dispatch(osAssignVarThunk({
         processKey: childProcessKey,
         varName: 'BASHPID',
-        readonly: true, integer: true, force: true,
+        exported: true, readonly: true, force: true, integer: true,
         act: { key: 'default', value: childPid.toString() },
       }));
     } else {
