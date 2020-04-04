@@ -211,14 +211,15 @@ export function handleMetaUpdates(levelUid: string) {
  */
 function updateLights(levelUid: string) {
   const { tileFloors, wallSeg, metaGroups: metas } = getLevel(levelUid)!;
-  const lineSegs = (
-    [] as [Vector2, Vector2][]
-  ).concat(
-    Object.values(wallSeg).map(([u, v]) => [Vector2.from(u), Vector2.from(v)]),
-    tileFloors.flatMap(x => x.lineSegs),
-  );
+  
+  // Permit lights positioned on an outer wall by slightly outsetting them
+  const outsetFloors = tileFloors.map(floor => floor.createOutset(0.01)[0]);
+  // However, we don't permit lights positioned on an internal wall
+  const wallSegs = Object.values(wallSeg).map<[Vector2, Vector2]>(([u, v]) => [Vector2.from(u), Vector2.from(v)]);
+  const lineSegs = wallSegs.concat(outsetFloors.flatMap(x => x.lineSegs));
+
   Object.values(metas)
     .flatMap(({ metas }) => metas)
-    .filter((meta) => meta.validateLight(tileFloors))
-    .forEach((meta) => meta.light?.computePolygon(lineSegs));
+    .filter((meta) => meta.validateLight(outsetFloors, wallSegs))
+    .forEach((meta) => meta.light!.computePolygon(lineSegs));
 }

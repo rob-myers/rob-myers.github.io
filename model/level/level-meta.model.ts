@@ -3,6 +3,7 @@ import { LevelLight, LevelLightJson } from './level-light.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2Json, Rect2 } from '@model/rect2.model';
 import { intersects } from '@model/generic.model';
+import { pointOnLineSeg } from './geom.model';
 
 export const metaPointRadius = 1;
 export const rectTagRegex = /^r-(\d+)(?:-(\d+))?$/;
@@ -49,13 +50,20 @@ export class LevelMeta {
     );
   }
 
-  /** Sets light polygon empty if light position not inside {polys}. */
-  public validateLight(polys: Poly2[]) {
-    if (this.light && !polys.some(p => p.contains(this.light!.position))) {
-      this.light.resetPolygon();
+  /**
+   * Returns true iff light exists and is valid.
+   * We also clear the light polygon if light exists and is invalid.
+   */
+  public validateLight(polys: Poly2[], wallSegs: [Vector2, Vector2][]) {
+    if (
+      !this.light
+      || !polys.some(p => p.contains(this.light!.position))
+      || wallSegs.some(([u, v]) => pointOnLineSeg(this.light!.position, u, v))
+    ) {
+      this.light?.resetPolygon();
       return false;
     }
-    return !!this.light;
+    return true;
   }
 }
 
@@ -177,30 +185,26 @@ export interface LevelMetaGroupUi {
   over: boolean;
   position: Vector2;
   dialogPosition: Vector2;
-  currentMetaKey: string;
+  metaIndex: number;
 }
 
 export function syncMetaGroupUi(src: LevelMetaGroup, dst?: LevelMetaGroupUi): LevelMetaGroupUi {
   return {
-    ...(dst || createMetaGroupUi(src)),
+    ...(dst || createMetaGroupUi(src.key)),
     ...{
-      dialogPosition: src.position.clone().translate(-33.5, 0.5),
+      dialogPosition: src.position.clone().translate(-34, -0.5),
       position: src.position.clone(),
     } as LevelMetaGroupUi
   };
 }
 
-function createMetaGroupUi({
-  key,
-  // Assume has at least one LevelMeta
-  metas: [meta],
-}: LevelMetaGroup): LevelMetaGroupUi {
+function createMetaGroupUi(key: string): LevelMetaGroupUi {
   return {
     key,
     open: false,
     over: true, // Expect initially mouseover
     dialogPosition: Vector2.zero,
     position: Vector2.zero,
-    currentMetaKey: meta.key,
+    metaIndex: 0,
   };
 }

@@ -34,6 +34,10 @@ export class LevelLight {
     return this.polygon.bounds.height / dim;
   }
 
+  public get valid() {
+    return !!this.polygon.points.length;
+  }
+
   constructor(
     public position: Vector2,
     public range = 150,

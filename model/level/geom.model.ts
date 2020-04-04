@@ -1,6 +1,20 @@
 import { Vector2 } from '@model/vec2.model';
 import { Poly2 } from '@model/poly2.model';
 
+export function pointOnLineSeg(
+  p: Vector2,
+  u: Vector2,
+  v: Vector2,
+) {
+  if (v.x === u.x) {
+    if (v.y === u.y) return p.equals(u);
+    const lambda = (p.y - u.y) / (v.y - u.y);
+    return p.x === u.x && 0 <= lambda && lambda <= 1;
+  }
+  const lambda = (p.x - u.x) / (v.x - u.x);
+  return p.y === u.y && 0 <= lambda && lambda <= 1;
+}
+
 export function getLineLineSegIntersect(
   p: Vector2,
   d: Vector2,
@@ -11,16 +25,16 @@ export function getLineLineSegIntersect(
   // normal n = (-dy,dx)
   const dx = d.x, dy = d.y, px = p.x, py = p.y,
     // dot products (q0 - p).n and (q1 -p).n
-    k1 = (q0.x - px)*-dy + (q0.y - py)*dx, 
-    k2 = (q1.x - px)*-dy + (q1.y - py)*dx;
+    k1 = (q0.x - px) * -dy + (q0.y - py) * dx, 
+    k2 = (q1.x - px) * -dy + (q1.y - py) * dx;
   let dqx, dqy, z, s0, s1;
     
   // (q0 - p).n and (q1 - p).n are both zero
   // iff both q0 and q1 lie along the line p + lambda * d
   if (k1 === 0 && k2 === 0) {
     // return signed distance to closer point
-    s0 = (q0.x - px)*dx + (q0.y - py)*dy;
-    s1 = (q1.x - px)*dx + (q1.y - py)*dy;
+    s0 = (q0.x - px) * dx + (q0.y - py) * dy;
+    s1 = (q1.x - px) * dx + (q1.y - py) * dy;
     return (Math.abs(s0) < Math.abs(s1)) ? s0 : s1;
   }
   // if (q0 - p).n and (q1 - p).n have different signs
@@ -36,7 +50,7 @@ export function getLineLineSegIntersect(
     if(z === 0) return null;
     // otherwise have formula for signed distance
     // coming from two simultaneous equations for line vs line intersection
-    return (py*dqx + px*-dqy + (q0.x * q1.y - q0.y * q1.x)) / z;
+    return (py * dqx + px * -dqy + (q0.x * q1.y - q0.y * q1.x)) / z;
   }
   return null;
 }
@@ -47,8 +61,10 @@ export function getLineLineSegIntersect(
  * If intersects return a respective lambda, else null.
  */
 export function getLinesIntersection(
-  p0: Vector2, d0: Vector2,
-  p1: Vector2, d1: Vector2,
+  p0: Vector2,
+  d0: Vector2,
+  p1: Vector2,
+  d1: Vector2,
 ): null | number {
   const d0x = d0.x,
     d0y = d0.y,

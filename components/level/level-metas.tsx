@@ -122,7 +122,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
             />
             {metas.map(({ key, light, triggerRect: rect, circular }) => (
               <g key={key}>
-                {light && (
+                {light && light.valid && (
                   <>
                     <radialGradient
                       id={`light-radial-${key}`}
@@ -242,34 +242,32 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                     wheelFowarder?.next({ key: 'wheel', e });
                   }}
                 >
-                  {
-                    // TODO only show one meta at a time
-                  }
-                  {metas.map(({ key, tags }) => (
-                    <section key={key} className={css.content}>
-                      <input
-                        // Tab focus can break svg height due to parent with overflow hidden (?)
-                        tabIndex={-1}
-                        placeholder="tag"
-                        onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
-                          inputKey === 'Enter' && addTag(groupKey, key, value) && (currentTarget.value = '')
-                        }
-                        onKeyDown={({ key: inputKey }) => inputKey === 'Escape' && closeMetaGroup(groupKey)}
-                        onKeyUp={(e) => e.stopPropagation()}
-                      />
-                      <section className={css.tags}>
-                        {tags.map((tag) =>
-                          <div
-                            key={tag}
-                            className={css.tag}
-                            onClick={() => removeTag(groupKey, key, tag)}
-                          >
-                            {tag}
-                          </div>
-                        )}
+                  {metas
+                    .filter((_, i) => i === metaGroupUi[groupKey].metaIndex)
+                    .map(({ key, tags }) => (
+                      <section key={key} className={css.content}>
+                        <input
+                          tabIndex={-1} // Offscreen focus can break things
+                          placeholder={`tag @${metaGroupUi[groupKey].metaIndex}`}
+                          onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
+                            inputKey === 'Enter' && addTag(groupKey, key, value) && (currentTarget.value = '')
+                          }
+                          onKeyDown={({ key: inputKey }) => inputKey === 'Escape' && closeMetaGroup(groupKey)}
+                          onKeyUp={(e) => e.stopPropagation()}
+                        />
+                        <section className={css.tags}>
+                          {tags.map((tag) =>
+                            <div
+                              key={tag}
+                              className={css.tag}
+                              onClick={() => removeTag(groupKey, key, tag)}
+                            >
+                              {tag}
+                            </div>
+                          )}
+                        </section>
                       </section>
-                    </section>
-                  ))}
+                    ))}
                 </section>
               )
             ))

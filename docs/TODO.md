@@ -272,3 +272,4 @@
   `cat <( sleep 2; echo foo; sleep 2 )`
   FIX: `osReadThunk` ignores `maxLines` when reading from fifo
 - multiple metas at same position via `LevelMetaGroup`
+- lights work when placed on external walls, but not on internal walls
