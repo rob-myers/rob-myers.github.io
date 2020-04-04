@@ -214,7 +214,7 @@ html {
         stroke: rgba(0, 0, 0, 0.5);
 
         @at-root .light-mode .viewport .meta-radius {
-          fill: rgba(200, 0, 0, 0.2);
+          fill: rgba(200, 0, 0, 0.1);
         }
         @at-root .dark-mode .viewport .meta-radius {
           fill: rgba(200, 200, 200, 0.3);

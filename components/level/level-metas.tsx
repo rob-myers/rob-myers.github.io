@@ -14,19 +14,19 @@ import css from './level.scss';
 type MetaLookup = LevelState['metaGroups'];
 
 const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
-  const worker = useSelector(({ level: { worker } }) => worker)!;
-  const groupUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaGroupUi);
+
   const draggedMeta = useSelector(({ level: { instance: { [levelUid]: level } } }) => level.draggedMeta ? level.metaGroupUi[level.draggedMeta] : null);
+  const groupUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaGroupUi);
   const mouseWorld = useSelector(({ level: { instance } }) => draggedMeta && instance[levelUid]?.mouseWorld);
-  const wheelFowarder = useSelector(({ level: { instance } }) => instance[levelUid].wheelForwarder);
-  const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
   const showNavRects = useSelector(({ level: { instance } }) => instance[levelUid].showNavRects);
+  const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
+  const worker = useSelector(({ level: { worker } }) => worker)!;
+  const wheelFowarder = useSelector(({ level: { instance } }) => instance[levelUid].wheelForwarder);
+  const dispatch = useDispatch();
 
   const [groups, setGroups] = useState<MetaLookup>({});
   const [navPaths, setNavPaths] = useState<KeyedLookup<NavPath>>({});
   const [rects, setRects] = useState([] as Rect2Json[]);
-
-  const dispatch = useDispatch();
 
   useEffect(() => {
     const sub = subscribeToWorker(worker, (msg) => {
@@ -122,6 +122,22 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
       <g className={css.metas}>
         {Object.values(groups).map(({ key: groupKey, position, metas }) =>
           <g key={groupKey}>
+            <g>
+              {metas.map(({ key, rect, physical }) => (
+                // A meta can be a block
+                rect && physical === 'block' && (
+                  <rect
+                    key={key}
+                    strokeWidth={0}
+                    fill="rgba(0, 0, 0, 1)"
+                    x={rect.x}
+                    y={rect.y}
+                    width={rect.width}
+                    height={rect.height}
+                  />
+                )
+              ))}
+            </g>
             {
                 // We draw a line connecting meta's handle to popover
                 groupUi[groupKey]?.open && (

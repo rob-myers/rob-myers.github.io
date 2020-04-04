@@ -5,7 +5,7 @@ import { MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall, LevelWorkerCo
 import { Rect2 } from '@model/rect2.model';
 import { Poly2 } from '@model/poly2.model';
 import { redact, removeFromLookup } from '@model/redux.model';
-import { testNever, posModulo } from '@model/generic.model';
+import { testNever } from '@model/generic.model';
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2, Vector2Json } from '@model/vec2.model';
@@ -112,22 +112,33 @@ export function handleLevelToggles(levelUid: string) {
       }),
       delay(20),
       /**
-       * Update navigable floor.
+       * Compute navigable floor.
        */
       map((_) => {
         const { tileFloors, wallSeg } = getLevel(levelUid)!;
-        const outsetWalls = Poly2.union(Object.values(wallSeg)
-          .map(([u, v]) => new Rect2(
-            u.x - floorInset,
-            u.y - floorInset,
-            v.x - u.x + 2 * floorInset,
-            v.y - u.y + 2 * floorInset
-          ).poly2));
+
+        const outsetWalls = Poly2.union(
+          Object.values(wallSeg)
+            .map(([u, v]) =>
+              new Rect2(
+                u.x - floorInset,
+                u.y - floorInset,
+                v.x - u.x + 2 * floorInset,
+                v.y - u.y + 2 * floorInset
+              ).poly2
+            ).concat(
+              // TODO block metas
+            )
+        );
+
         const navFloors = Poly2.cutOut(
           outsetWalls,
           tileFloors.flatMap(x => x.createInset(floorInset))
         );
-        dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
+
+        dispatch(Act.updateLevel(levelUid, {
+          floors: navFloors.map(x => redact(x)),
+        }));
 
         ctxt.postMessage({
           key: 'send-level-nav-floors',
@@ -202,7 +213,6 @@ export function handleMetaUpdates(levelUid: string) {
         if (updateNav) {// Clear cached
           dispatch(Act.updateLevel(levelUid, { floydWarshall: null }));
         }
-        // Currently we update lights immediately
         updateLights(levelUid);
         sendMetas(levelUid);
         return updateNav;

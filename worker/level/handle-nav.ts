@@ -36,7 +36,9 @@ export function ensureFloydWarshall(levelUid: string) {
   });
 }
 
-/** Steiner points from metas */
+/**
+ * Compute steiner points from metas.
+ */
 function getMetaSteiners(levelUid: string) {
   const { floors, metaGroups } = getLevel(levelUid)!;
   return  Object.values(metaGroups)
@@ -49,21 +51,18 @@ function getMetaSteiners(levelUid: string) {
 
 /**
  * Update navigation i.e. triangulation.
- * We also compute a rectangular partition.
  */
 export function updateNavGraph(levelUid: string) {
   const { floors } = getLevel(levelUid)!;
 
   /**
    * Build NavGraph using polys and steiner metas.
-   * We'll mutate the polys by adding steiner points.
+   * NavGraph.from extends `floors` with steiners and re-triangulates.
    */
   const metaSteiners = getMetaSteiners(levelUid);
   const navGraph = NavGraph.from(floors, metaSteiners);
   dispatch(Act.updateLevel(levelUid, { navGraph: redact(navGraph) }));
 
-  floors.forEach((poly) => poly.customTriangulate(0.01));
-  
   ctxt.postMessage({
     key: 'send-level-tris',
     levelUid, 
@@ -72,7 +71,7 @@ export function updateNavGraph(levelUid: string) {
   ctxt.postMessage({
     key: 'send-level-nav-rects',
     levelUid,
-    rects: navGraph.groupedRects.flatMap(x => x).map(r => r.json),
+    rects: navGraph.rects.map(r => r.json),
   });
 
   // Clear ephemeral
