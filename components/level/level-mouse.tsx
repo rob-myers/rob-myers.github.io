@@ -31,7 +31,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
 
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
-  const metaUis = useMemo(() => Object.values(state.metaUi), [state.metaUi]);
+  const metaGroupUis = useMemo(() => Object.values(state.metaGroupUi), [state.metaGroupUi]);
   const dispatch = useDispatch();
   const td = state.cursorType === 'refined' ? smallTileDim : tileDim;
 
@@ -64,9 +64,9 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
 
   const trackMeta = () => {// Track meta under mouse
     const { mouseWorld } = state;
-    const nextMeta = metaUis.find(({ position: { x, y } }) =>
+    const nextMetaGroup = metaGroupUis.find(({ position: { x, y } }) =>
       Math.pow(mouseWorld.x - x, 2) + Math.pow(mouseWorld.y - y, 2) <= Math.pow(0.5 + metaPointRadius, 2));
-    const nextKey = nextMeta?.key;
+    const nextKey = nextMetaGroup?.key;
     if (nextKey !== overMeta.current) {
       overMeta.current && dispatch(Act.updateMetaUi(levelUid, overMeta.current, { over: false }));
       nextKey && dispatch(Act.updateMetaUi(levelUid, nextKey, { over: true }));
@@ -154,7 +154,7 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
         mouseIsDown.current = false;
         if (overMeta.current && !state.draggedMeta) {// Toggle meta dialog
           dispatch(Act.updateMetaUi(levelUid, overMeta.current, {
-            open: !state.metaUi[overMeta.current].open,
+            open: !state.metaGroupUi[overMeta.current].open,
           }));
           dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
         } else if (state.draggedMeta) {

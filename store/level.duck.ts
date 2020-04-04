@@ -9,7 +9,7 @@ import { createThunk } from '@model/root.redux.model';
 import LevelWorkerClass from '@worker/level/level.worker';
 import { LevelUiState, createLevelUiState } from '@model/level/level.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
-import { LevelMetaUi, syncLevelMetaUi, LevelMetaGroup } from '@model/level/level-meta.model';
+import { LevelMetaGroupUi, syncMetaGroupUi, LevelMetaGroup } from '@model/level/level-meta.model';
 
 export interface State {
   worker: null | Redacted<LevelWorker>;
@@ -37,7 +37,7 @@ export const Act = {
     createAct('[Level] store worker', { worker }),
   syncMetaUi: (uid: string, metas: LevelMetaGroup[]) =>
     createAct('[Level] sync meta ui', { uid, metas }),
-  updateMetaUi: (uid: string, key: string, updates: Partial<LevelMetaUi>) =>
+  updateMetaUi: (uid: string, key: string, updates: Partial<LevelMetaGroupUi>) =>
     createAct('[Level] update meta ui', { uid, key, updates }),
 };
 
@@ -132,15 +132,15 @@ export const reducer = (state = initialState, act: Action): State => {
       worker: act.pay.worker,
     };
     case '[Level] sync meta ui': return { ...state,
-      instance: updateLookup(act.pay.uid, state.instance, ({ metaUi }) => ({
-        metaUi: act.pay.metas.reduce((agg, meta) => ({ ...agg,
-          [meta.key]: syncLevelMetaUi(meta, metaUi[meta.key]),
+      instance: updateLookup(act.pay.uid, state.instance, ({ metaGroupUi }) => ({
+        metaGroupUi: act.pay.metas.reduce((agg, meta) => ({ ...agg,
+          [meta.key]: syncMetaGroupUi(meta, metaGroupUi[meta.key]),
         }), {}),
       })),
     };
     case '[Level] update meta ui': return { ...state,
-      instance: updateLookup(act.pay.uid, state.instance, ({ metaUi }) =>
-        ({ metaUi: updateLookup(act.pay.key, metaUi, () => act.pay.updates) })
+      instance: updateLookup(act.pay.uid, state.instance, ({ metaGroupUi }) =>
+        ({ metaGroupUi: updateLookup(act.pay.key, metaGroupUi, () => act.pay.updates) })
       ),
     };
     default: return state || testNever(act);

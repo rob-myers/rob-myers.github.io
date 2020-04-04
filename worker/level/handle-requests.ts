@@ -42,7 +42,7 @@ export function listenForRequests() {
             wallSegs: Object.values(level.wallSeg),
           });
           ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
-            metas: Object.values(level.metas).map(p => p.json),
+            metas: Object.values(level.metaGroups).map(p => p.json),
           });
           sendLevelAux(msg.levelUid);
         }
@@ -51,7 +51,7 @@ export function listenForRequests() {
       case 'request-level-metas': {
         const level = getLevel(msg.levelUid);
         level && ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
-          metas: Object.values(level.metas).map(p => p.json),
+          metas: Object.values(level.metaGroups).map(p => p.json),
         });
         break;
       }
@@ -82,15 +82,14 @@ export function listenForRequests() {
         break;
       }
       case 'add-level-meta': {
-        // Snap to integers
-        const [x, y] = [Math.round(msg.position.x), Math.round(msg.position.y)];
         const lmg = new LevelMetaGroup(
           msg.metaGroupKey,
           [new LevelMeta(msg.metaKey)],
-          new Vector2(x, y),
+          // Snap to integers
+          new Vector2(Math.round(msg.position.x), Math.round(msg.position.y)),
         );
-        const metas = { ...getLevel(msg.levelUid)!.metas, [lmg.key]: lmg };
-        dispatch(Act.updateLevel(msg.levelUid, { metas: metas }));
+        const metaGroups = { ...getLevel(msg.levelUid)!.metaGroups, [lmg.key]: lmg };
+        dispatch(Act.updateLevel(msg.levelUid, { metaGroups }));
         break;
       }
     }
@@ -105,8 +104,8 @@ export function sendLevelAux(levelUid: string) {
 }
 
 export function sendMetas(levelUid: string) {
-  const metas = getLevel(levelUid)?.metas;
-  metas && ctxt.postMessage({ key: 'send-level-metas', levelUid,
-    metas: Object.values(metas).map(p => p.json),
+  const metaGroups = getLevel(levelUid)?.metaGroups;
+  metaGroups && ctxt.postMessage({ key: 'send-level-metas', levelUid,
+    metas: Object.values(metaGroups).map(p => p.json),
   });
 }

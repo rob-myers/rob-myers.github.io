@@ -73,35 +73,6 @@ export type LevelMetaUpdate = (
   | { key: 'set-position'; position: Vector2Json }
 );
 
-export interface LevelMetaUi {
-  key: string;
-  open: boolean;
-  over: boolean;
-  position: Vector2;
-  dialogPosition: Vector2;
-}
-
-function createLevelMetaUi(key: string): LevelMetaUi {
-  return {
-    key,
-    open: false,
-    over: true, // Expect initially mouseover
-    dialogPosition: Vector2.zero,
-    position: Vector2.zero,
-  };
-}
-
-export function syncLevelMetaUi(src: LevelMetaGroup, dst?: LevelMetaUi): LevelMetaUi {
-  return {
-    ...(dst || createLevelMetaUi(src.key)),
-    ...{
-      // dialogPosition: src.position.clone().translate(2.5, -3),
-      dialogPosition: src.position.clone().translate(-33.5, 0.5),
-      position: src.position.clone(),
-    } as LevelMetaUi
-  };
-}
-
 export class LevelMetaGroup {
 
   public get json(): LevelMetaGroupJson {
@@ -196,4 +167,40 @@ export interface LevelMetaGroupJson {
   key: string;
   metas: LevelMetaJson[];
   position: Vector2Json;
+}
+
+
+export interface LevelMetaGroupUi {
+  /** metaGroupKey */
+  key: string;
+  open: boolean;
+  over: boolean;
+  position: Vector2;
+  dialogPosition: Vector2;
+  currentMetaKey: string;
+}
+
+export function syncMetaGroupUi(src: LevelMetaGroup, dst?: LevelMetaGroupUi): LevelMetaGroupUi {
+  return {
+    ...(dst || createMetaGroupUi(src)),
+    ...{
+      dialogPosition: src.position.clone().translate(-33.5, 0.5),
+      position: src.position.clone(),
+    } as LevelMetaGroupUi
+  };
+}
+
+function createMetaGroupUi({
+  key,
+  // Assume has at least one LevelMeta
+  metas: [meta],
+}: LevelMetaGroup): LevelMetaGroupUi {
+  return {
+    key,
+    open: false,
+    over: true, // Expect initially mouseover
+    dialogPosition: Vector2.zero,
+    position: Vector2.zero,
+    currentMetaKey: meta.key,
+  };
 }

@@ -4,7 +4,7 @@ import { Subscription, Subject } from 'rxjs';
 import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { KeyedLookup } from '@model/generic.model';
-import { LevelMetaUi, LevelMetaGroup } from './level-meta.model';
+import { LevelMetaGroupUi, LevelMetaGroup } from './level-meta.model';
 import { FloydWarshallReady } from './level.worker.model';
 import { smallTileDim } from './level-params';
 import { FloydWarshall } from '@model/nav/floyd-warshall.model';
@@ -28,7 +28,7 @@ export interface LevelState {
   /** Meta update handler */
   metaUpdateSub: null | Redacted<Subscription>;
   /** Spawn points, steiner points, lights, triggers, obstructions */
-  metas: KeyedLookup<LevelMetaGroup>;
+  metaGroups: KeyedLookup<LevelMetaGroup>;
   /** Pathfinder */
   floydWarshall: null | Redacted<FloydWarshall>;
   /** Navigation Graph used to generate `floydWarshall` */
@@ -43,7 +43,7 @@ export function createLevelState(uid: string): LevelState {
     floors: [],
     tileToggleSub: null,
     metaUpdateSub: null,
-    metas: {},
+    metaGroups: {},
     floydWarshall: null,
     navGraph: redact(NavGraph.from([], {})),
   };
@@ -61,7 +61,7 @@ export interface LevelUiState {
   /** Key of dragged meta, if any */
   draggedMeta: null | string;
   /** UIs for LevelState.metas */
-  metaUi: KeyedLookup<LevelMetaUi>;
+  metaGroupUi: KeyedLookup<LevelMetaGroupUi>;
   /** Editing or in live mode */
   mode: 'edit' | 'live';
   /** Mouse position in world coords */
@@ -99,7 +99,7 @@ export function createLevelUiState(uid: string): LevelUiState {
     cursorType: 'default',
     cursorHighlight: {},
     draggedMeta: null,
-    metaUi: {},
+    metaGroupUi: {},
     mode: 'edit',
     mouseWorld:  Vector2.zero,
     notifyForwarder: null,

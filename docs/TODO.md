@@ -1,7 +1,9 @@
 # TODO
 
-- multiple metas at same position via submetas
+- can tag multiple metas in `LevelMetaGroup`
   navigate via up/down inside input; placeholder `tag meta-2`
+- `circle`, `rect` (triggers) mutually exclusive with `light`
+- `r-x` and `r-x-y` specify light radius
 - meta pickups `pickup` have arrow icon
 - meta obstruction `block`
 
@@ -269,3 +271,4 @@
 - BUG: process expansion is logging late for:
   `cat <( sleep 2; echo foo; sleep 2 )`
   FIX: `osReadThunk` ignores `maxLines` when reading from fifo
+- multiple metas at same position via `LevelMetaGroup`

@@ -160,31 +160,32 @@ export function handleMetaUpdates(levelUid: string) {
         || msg.key === 'remove-level-meta' && levelUid === msg.levelUid
       ),
       map((msg) => {// Return true iff should update nav
-        const { metas } = getLevel(levelUid)!;
+        const { metaGroups } = getLevel(levelUid)!;
 
         switch (msg.key) {
           case 'update-level-meta': {
             const { metaGroupKey, update } = msg;
-            metas[metaGroupKey].applyUpdates(update);// Mutate
+            metaGroups[metaGroupKey].applyUpdates(update);// Mutate
             return (// Some updates can affect NavGraph
               update.key === 'add-tag'
                   && navTags.includes(update.tag)
               || update.key === 'remove-tag'
                   && navTags.includes(update.tag)
-              || update.key === 'set-position' && metas[metaGroupKey].hasSomeTag(navTags)
+              || update.key === 'set-position'
+                  && metaGroups[metaGroupKey].hasSomeTag(navTags)
             );
           }
           case 'duplicate-level-meta': {
             // Snap position to integers
             const [x, y] = [Math.round(msg.position.x), Math.round(msg.position.y)];
-            const mg = metas[msg.metaGroupKey].clone(msg.newMetaGroupKey, Vector2.from({ x, y }));
-            dispatch(Act.updateLevel(levelUid, { metas: { ...metas, [mg.key]: mg }}));
+            const mg = metaGroups[msg.metaGroupKey].clone(msg.newMetaGroupKey, Vector2.from({ x, y }));
+            dispatch(Act.updateLevel(levelUid, { metaGroups: { ...metaGroups, [mg.key]: mg }}));
             return mg.hasSomeTag(navTags);
           }
           case 'remove-level-meta': {
-            const nextMetas = removeFromLookup(msg.metaGroupKey, metas);
-            dispatch(Act.updateLevel(msg.levelUid, { metas: nextMetas }));
-            return metas[msg.metaGroupKey].hasSomeTag(navTags);
+            const nextMetaGroups = removeFromLookup(msg.metaGroupKey, metaGroups);
+            dispatch(Act.updateLevel(msg.levelUid, { metaGroups: nextMetaGroups }));
+            return metaGroups[msg.metaGroupKey].hasSomeTag(navTags);
           }
           default: throw testNever(msg);
         }
@@ -209,7 +210,7 @@ export function handleMetaUpdates(levelUid: string) {
  * Mutate the lights inside the store.
  */
 function updateLights(levelUid: string) {
-  const { tileFloors, wallSeg, metas } = getLevel(levelUid)!;
+  const { tileFloors, wallSeg, metaGroups: metas } = getLevel(levelUid)!;
   const lineSegs = (
     [] as [Vector2, Vector2][]
   ).concat(
