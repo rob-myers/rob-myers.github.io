@@ -108,7 +108,7 @@ export function createLevelUiState(uid: string): LevelUiState {
     showThreeD: false,
     theme: 'light-mode',
     wheelForwarder: null,
-    zoomFactor: 1,
+    zoomFactor: 1.5,
   };
 }
 

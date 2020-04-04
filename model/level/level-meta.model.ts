@@ -15,8 +15,9 @@ export class LevelMeta {
     return {
       key: this.key,
       light: this.light?.json,
-      tags: this.tags.slice(),
+      physical: this.physical??undefined,
       rect: this.rect?.json,
+      tags: this.tags.slice(),
       trigger: this.trigger??undefined,
     };
   }
@@ -29,6 +30,8 @@ export class LevelMeta {
     public rect: null | Rect2 = null,
     /** Trigger is rectangular or circular  */
     public trigger: null | 'rect' | 'circ' = null,
+    /** Pickup has circular trigger, block has no trigger */
+    public physical: null | 'pickup' | 'block' = null,
   ) {}
 
   public addTag(tag: string) {
@@ -42,6 +45,7 @@ export class LevelMeta {
       this.light?.clone() || null,
       this.rect?.clone() || null,
       this.trigger,
+      this.physical,
     );
   }
 
@@ -52,6 +56,7 @@ export class LevelMeta {
       json.light ? LevelLight.fromJson(json.light) : null,
       json.rect ? Rect2.fromJson(json.rect) : null,
       json.trigger??null,
+      json.physical??null,
     );
   }
 
@@ -85,10 +90,11 @@ export class LevelMeta {
 
 export interface LevelMetaJson {
   key: string;
-  tags: string[];
   light?: LevelLightJson;
-  trigger?: 'rect' | 'circ';
+  physical?: 'pickup' | 'block';
   rect?: Rect2Json;
+  tags: string[];
+  trigger?: 'rect' | 'circ';
 }
 
 export type LevelMetaUpdate = (
@@ -138,51 +144,78 @@ export class LevelMetaGroup {
           meta.rect = new Rect2(this.position.x, this.position.y, Number(w), Number(h));
           meta.removeTags(rectTagRegex);
           meta.light?.setRange(meta.rect.dimension);
-        } else {
-          switch (update.tag) {
-            case 'circ': {
-              meta.trigger = 'circ';
-              meta.removeTags('rect');
-              break;
-            }
-            case 'rect': {
-              meta.removeTags('circ', 'light');
-              meta.trigger = 'rect';
-              meta.light = null;
-              break;
-            }
-            case 'light': {
-              meta.light = new LevelLight(
-                this.position,
-                meta.rect ? meta.rect.dimension : undefined,
-              );
-              meta.trigger = 'circ';
-              meta.removeTags('rect');
-              break;
-            }
-          }
         }
 
+        switch (update.tag) {
+          case 'block': {
+            meta.removeTags('circ', 'rect', 'light', 'pickup');
+            meta.light = null;
+            meta.physical = 'block';
+            meta.trigger = null;
+            break;
+          }
+          case 'circ': {
+            meta.removeTags('rect', 'light', 'block');
+            meta.light = null;
+            meta.physical = null;
+            meta.trigger = 'circ';
+            break;
+          }
+          case 'light': {
+            meta.removeTags('circ', 'rect', 'block');
+            meta.physical = null;
+            meta.trigger = null;
+            meta.light = new LevelLight(
+              this.position,
+              meta.rect ? meta.rect.dimension : undefined,
+            );
+            break;
+          }
+          case 'pickup': {
+            meta.removeTags('circ', 'rect', 'light', 'block');
+            meta.light = null;
+            meta.physical = 'pickup';
+            meta.trigger = 'circ';
+            break;
+          }
+          case 'rect': {
+            meta.removeTags('circ', 'light', 'pickup', 'block');
+            meta.light = null;
+            meta.physical = null;
+            meta.trigger = 'rect';
+            break;
+          }
+        }
         meta.addTag(update.tag);
         break;
       }
       case 'remove-tag': {
         const meta = this.metas.find(({ key }) => key === update.metaKey)!;
-        meta.removeTags(update.tag);
+
         switch (update.tag) {
-          case 'circ': {
-            meta.trigger === 'circ' && (meta.trigger = null);
+          case 'block': {
+            meta.physical = null;
             break;
           }
-          case 'rect': {
-            meta.trigger === 'rect' && (meta.trigger = null);
+          case 'circ': {
+            meta.trigger = null;
             break;
           }
           case 'light': {
             meta.light = null;
             break;
           }
+          case 'pickup': {
+            meta.physical = null;
+            meta.trigger = null;
+            break;
+          }
+          case 'rect': {
+            meta.trigger = null;
+            break;
+          }
         }
+        meta.removeTags(update.tag);
         break;
       }
       case 'set-position': {

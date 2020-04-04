@@ -1,8 +1,7 @@
 # TODO
 
-- meta pickups `pickup` have arrow icon
 - meta obstruction `block`
-- meta dialog to front on open or click
+- move meta dialog to front on open/click
 
 - start sketching blog posts
 
@@ -20,7 +19,7 @@
 - can pause entire session -- but how to pause a `sleep`?
   - if finishes make it sleep the 'difference' and immediately pause it
 
-- can trigger circle moving along path via css
+- can trigger circle moving along path via CSS
   - adding tag `@bob>foo` spawns bob and sends him to some meta tagged `foo`
   - clicking on `bob` pauses/resumes animation
   - actors exist in `LevelAuxState`
@@ -280,3 +279,4 @@
 - `circ` and `rect` are mutually exclusive triggers
 - `rect` and `light` are mutually exclusive
 - `r-x` and `r-x-y` specify light radius
+- meta pickups `pickup` have arrow icon

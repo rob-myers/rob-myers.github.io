@@ -122,123 +122,152 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
       <g className={css.metas}>
         {Object.values(groups).map(({ key: groupKey, position, metas }) =>
           <g key={groupKey}>
-            {groupUi[groupKey]?.open && (
-              <line 
-                stroke="#999"
-                strokeWidth={0.3}
-                x1={position.x}
-                y1={position.y}
-                x2={position.x - 5}
-                y2={position.y}
-              />
-            )}
+            {
+                // We draw a line connecting meta's handle to popover
+                groupUi[groupKey]?.open && (
+                <line 
+                  stroke="#999"
+                  strokeWidth={0.3}
+                  x1={position.x}
+                  y1={position.y}
+                  x2={position.x - 5}
+                  y2={position.y}
+                />
+              )}
             <circle
+              // The meta's handle
               className={css.metaHandle}
               cx={position.x}
               cy={position.y}
               r={metaPointRadius}
             />
-            {metas.map(({ key, light, rect, trigger }) => (
+            {metas.map(({ key, light, rect, trigger, physical }) => (
               <g key={key}>
-                {light && light.valid && (
-                  <>
-                    <radialGradient
-                      id={`light-radial-${key}`}
-                      cx={0}
-                      cy={0}
-                      gradientTransform={`
-                        translate(${light.sourceRatios.x}, ${light.sourceRatios.y})
-                        scale(${light.scale / light.scaleX}, ${light.scale /light.scaleY})
-                      `}
-                    >
-                      {
-                        theme === 'light-mode' && (
-                          <>
-                            <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} />
-                            <stop offset="95%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} />
-                            <stop offset="100%" style={{ stopColor: 'rgba(0, 0, 0, 0)' }} />
-                          </>
-                        ) || (
-                          <>
-                            <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 230, 0.25)' }} />
-                            <stop offset="50%" style={{ stopColor: 'rgba(255, 255, 230, 0.1)' }} />
-                            <stop offset="100%" style={{ stopColor: 'rgba(255, 255, 255, 0)' }} />
-                          </>
-                        )
-                      }
-                    </radialGradient>
-                    <path
-                      key={`light-${key}`}
-                      d={light.polygon.svgPath}
-                      fill={`url(#light-radial-${key})`}
-                      strokeWidth={0}
+                {
+                  // A meta can have a light
+                  light && light.valid && (
+                    <>
+                      <radialGradient
+                        id={`light-radial-${key}`}
+                        cx={0}
+                        cy={0}
+                        gradientTransform={`
+                          translate(${light.sourceRatios.x}, ${light.sourceRatios.y})
+                          scale(${light.scale / light.scaleX}, ${light.scale /light.scaleY})
+                        `}
+                      >
+                        {
+                          theme === 'light-mode' && (
+                            <>
+                              <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} />
+                              <stop offset="95%" style={{ stopColor: 'rgba(0, 0, 0, 0.1)' }} />
+                              <stop offset="100%" style={{ stopColor: 'rgba(0, 0, 0, 0)' }} />
+                            </>
+                          ) || (
+                            <>
+                              <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 230, 0.25)' }} />
+                              <stop offset="50%" style={{ stopColor: 'rgba(255, 255, 230, 0.1)' }} />
+                              <stop offset="100%" style={{ stopColor: 'rgba(255, 255, 255, 0)' }} />
+                            </>
+                          )
+                        }
+                      </radialGradient>
+                      <path
+                        key={`light-${key}`}
+                        d={light.polygon.svgPath}
+                        fill={`url(#light-radial-${key})`}
+                        strokeWidth={0}
+                      />
+                    </>
+                  )
+                }
+                {
+                  // A meta can have a circular trigger
+                  rect && trigger === 'circ' && !light && (
+                    <circle
+                      className={css.metaRadius}
+                      cx={position.x}
+                      cy={position.y}
+                      r={rect.dimension}
                     />
-                  </>
-                )}
-                {rect && trigger === 'circ' && !light && (
-                  <circle
-                    className={css.metaRadius}
-                    cx={position.x}
-                    cy={position.y}
-                    r={rect.dimension}
-                  />
-                )}
-                {rect && trigger === 'rect' && (
-                  <rect
-                    className={css.metaRect}
-                    x={rect.x}
-                    y={rect.y}
-                    width={rect.width}
-                    height={rect.height}
-                  />
-                )}
+                  )
+                }
+                {
+                  // A meta can have a rectangular trigger
+                  rect && trigger === 'rect' && (
+                    <rect
+                      className={css.metaRect}
+                      x={rect.x}
+                      y={rect.y}
+                      width={rect.width}
+                      height={rect.height}
+                    />
+                  )
+                }
+                {
+                  // A meta can be a pickup
+                  rect && physical === 'pickup' && (
+                    <path
+                      strokeWidth={0.1}
+                      fill="#fff"
+                      stroke="#000"
+                      d={`M ${position.x},${position.y} l -1,-2 l 2,0 l -1,2`}
+                    />
+                  )
+                }
               </g>
             ))}
-            {draggedMeta && mouseWorld &&
-              <g className={css.dragIndicator}>
-                <line
-                  x1={draggedMeta.position.x}
-                  y1={draggedMeta.position.y}
-                  x2={mouseWorld.x}
-                  y2={mouseWorld.y}
-                />
-                <circle cx={mouseWorld.x} cy={mouseWorld.y} r={1}/>
-              </g>
+            {
+              // We indicate when a meta is being dragged
+              draggedMeta && mouseWorld &&
+                <g className={css.dragIndicator}>
+                  <line
+                    x1={draggedMeta.position.x}
+                    y1={draggedMeta.position.y}
+                    x2={mouseWorld.x}
+                    y2={mouseWorld.y}
+                  />
+                  <circle cx={mouseWorld.x} cy={mouseWorld.y} r={1}/>
+                </g>
             }
           </g>
         )}
       </g>
       <g className={css.navPaths}>
-        {Object.values(navPaths).map((navPath) =>
-          <g key={navPath.key}>
-            {navPath.points.map(({ x, y }, i) =>
-              <circle key={`node-${i}`} cx={x} cy={y} r={0.5} />
-            )}
-            {navPath.edges.map(({ src, dst }, i) =>
-              <line key={`edge-${i}`} x1={src.x} y1={src.y} x2={dst.x} y2={dst.y} />
-            )}
+        {
+          // We may draw NavPaths while debugging/desiging
+          Object.values(navPaths).map((navPath) =>
+            <g key={navPath.key}>
+              {navPath.points.map(({ x, y }, i) =>
+                <circle key={`node-${i}`} cx={x} cy={y} r={0.5} />
+              )}
+              {navPath.edges.map(({ src, dst }, i) =>
+                <line key={`edge-${i}`} x1={src.x} y1={src.y} x2={dst.x} y2={dst.y} />
+              )}
+            </g>
+          )}
+      </g>
+      {
+        // Can show rectangular partition used to pick NavPath endpoints
+        showNavRects && (
+          <g className={css.rects}>
+            {rects.map(([x, y, width, height], i) => (
+              <rect
+                key={i}
+                fill="none"
+                stroke="rgba(200, 0, 0, 0.5)"
+                strokeWidth={0.5}
+                x={x}
+                y={y}
+                width={width}
+                height={height}
+              />
+            ))}
           </g>
         )}
-      </g>
-      {showNavRects && (
-        <g className={css.rects}>
-          {rects.map(([x, y, width, height], i) => (
-            <rect
-              key={i}
-              fill="none"
-              stroke="rgba(200, 0, 0, 0.5)"
-              strokeWidth={0.5}
-              x={x}
-              y={y}
-              width={width}
-              height={height}
-            />
-          ))}
-        </g>
-      )}
       {
       /**
-       * Popovers
+       * The meta popovers (dialogs)
        */
         overlayRef.current && (
           ReactDOM.createPortal(
