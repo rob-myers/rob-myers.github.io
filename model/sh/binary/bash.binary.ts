@@ -65,7 +65,7 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
     const historyPath = `/home/${userKey}/.history`;
     const { iNode: historyINode } = dispatch(osResolvePathThunk({ processKey, path: historyPath }));
 
-    // Store BASHPID for subshells
+    // We set BASHPID here and also in subshells
     dispatch(osAssignVarThunk({ processKey, varName: 'BASHPID',
       readonly: true, integer: true, force: true,
       act: { key: 'default', value: pid.toString() },

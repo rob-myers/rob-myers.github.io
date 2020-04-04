@@ -7,7 +7,8 @@ import { ArithmOpComposite } from '../composite/arithm-op.composite';
 import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osGetPositionalsThunk, osLookupVarThunk, osAssignVarThunk, osFindVarNamesThunk } from '@store/os/declare.os.duck';
-import { osGetProcessThunk } from '@store/os/process.os.duck';
+import { osGetProcessThunk, osFindAncestralProcessThunk } from '@store/os/process.os.duck';
+import { isInteractiveShell } from '@model/os/service/term.util';
 
 export class ParameterExpand extends BaseExpandComposite<ExpandType.parameter> {
 
@@ -84,8 +85,12 @@ export class ParameterExpand extends BaseExpandComposite<ExpandType.parameter> {
               break;
             }
             case '$': {
-              const value = dispatch(osLookupVarThunk({ processKey, varName: 'BASHPID' }));
-              this.value = (typeof value === 'number' ? value : process.pid).toString();
+              if (isInteractiveShell(process.term)) {
+                this.value = process.pid.toString();
+              } else {
+                const ancestralProc = dispatch(osFindAncestralProcessThunk({ processKey, predicate: ({ term }) => isInteractiveShell(term) }));
+                this.value = (ancestralProc?.pid || process.pid).toString();
+              }
               break;
             }
             case '!': {

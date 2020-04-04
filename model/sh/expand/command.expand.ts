@@ -52,6 +52,8 @@ export class CommandExpand extends BaseExpandComposite<ExpandType.command> {
       redirects: [{ fd: 1, mode: 'WRONLY', path: tempPath }],
       // Inherit +ve positionals ($0 auto-inherited)
       posPositionals: dispatch(osGetPositionalsThunk({ processKey })).slice(1),
+      // Command substitution uses a subshell
+      subshell: true,
     }));
 
     // Wait for child process to terminate

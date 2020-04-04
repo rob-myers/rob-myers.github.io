@@ -276,3 +276,6 @@
 - can tag multiple metas in `LevelMetaGroup`
 - can navigate via up/down inside input; placeholder `tag meta-2`
 - can remove single meta or whole group
+- command substitution should spawn subshell
+- BASHPID should be pid of 'current bash', including subshell
+- Reimplement `$$` by checking ancestrol processes

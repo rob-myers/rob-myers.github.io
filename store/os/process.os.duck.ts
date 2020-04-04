@@ -375,6 +375,25 @@ interface ExecTermThunk extends OsThunkAct<OsAct, {
   type: OsAct.OS_EXEC_TERM_THUNK;
 }
 
+export const osFindAncestralProcessThunk = createOsThunk<OsAct, FindAncestralProcessThunk>(
+  OsAct.OS_FIND_ANCESTRAL_PROCESS_THUNK,
+  ({ state: { os: { proc } } }, { predicate, processKey }) => {
+    let process = proc[processKey];
+    // Since our 'init' is its own parent we terminate on self-parent
+    while (process !== (process = proc[process.parentKey])) {
+      if (predicate(process)) return process;
+    }
+    return null;
+  },
+);
+
+interface FindAncestralProcessThunk extends OsThunkAct<OsAct, {
+  processKey: string;
+  predicate: (state: ProcessState) => boolean;
+}, ProcessState | null> {
+  type: OsAct.OS_FIND_ANCESTRAL_PROCESS_THUNK;
+}
+
 /**
  * Fork a process.
  */
@@ -529,7 +548,17 @@ export const osSpawnChildThunk = createOsThunk<OsAct, SpawnChildThunk>(
     }
 
     if (subshell) {
-      // Subshells inherit everything (cloned), including positional params
+      /**
+       * Subshells inherit everything (cloned) including positional params.
+       * They are also endowed with BASHPID because $$ won't be their pid.
+       */
+      const childPid = dispatch(osGetProcessThunk({ processKey: childProcessKey })).pid;
+      dispatch(osAssignVarThunk({
+        processKey: childProcessKey,
+        varName: 'BASHPID',
+        readonly: true, integer: true, force: true,
+        act: { key: 'default', value: childPid.toString() },
+      }));
     } else {
       // Restrict child process to environment vars/functions, and set positionals
       dispatch(osRestrictToEnvThunk({ processKey: childProcessKey, posPositionals }));
