@@ -50,7 +50,8 @@ export class FloydWarshall {
     srcNearbys.choices.forEach(({ nodeId: srcId, dist: srcDist }) =>
       dstNearbys.choices.forEach(({ nodeId: dstId, dist: dstDist }) => {
         const dist = srcDist + this.dist[srcId][dstId] + dstDist;
-        (dist < closest.dist ) && (closest = { srcId, dstId, dist });
+        // console.log({ srcId, dstId, srcDist, midDst: this.dist[srcId][dstId], dstDist });
+        (dist < closest.dist) && (closest = { srcId, dstId, dist });
       })
     );
     return {

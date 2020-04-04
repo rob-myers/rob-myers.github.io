@@ -29,6 +29,7 @@ type TriangulationType = 'standard' | 'fast' | 'custom';
 /** A polygon with possibly many holes */
 export class Poly2 {
 
+  /** Smallest rectangle containing `this.points`. */
   public bounds!: Rect2;
 
   private cdt2dOpts: Cdt2dOptions = {

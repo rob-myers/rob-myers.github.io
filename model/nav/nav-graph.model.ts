@@ -74,8 +74,8 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       rectDecompose(loops).map(([[x1, y1], [x2, y2]]) =>
         new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1)));
 
-    this.groupRectsPoints = this.groupedRects.map(rects =>
-      rects.flatMap(rect => rect.poly2.points)
+    this.groupRectsPoints = this.groupedRects
+      .map(rects => rects.flatMap(rect => rect.poly2.points)
         .filter((p, i, array) => array.findIndex(q => p.equals(q)) === i));
 
     this.rects = this.groupedRects.flatMap(rects => rects);
@@ -102,13 +102,13 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
 
   private computeRectsSteiners(metaSteiners: { [polyId: number]: Vector2[] }) {
     this.groupedSteiners = this.groupedRects.map((rects, polyId) => {
-      /** Points already in polygon */
+      // Points already in polygon, where steiners should've been removed
       const polyPoints = this.navPolys[polyId].allPoints
         .reduce<Record<string, Vector2>>((agg, p) => ({ ...agg, [`${p}`]: p }), {});
-      /** Steiners so far. */
+      
+      // Steiners collected so far
       const steiners = (metaSteiners[polyId] || [])
         .reduce<Record<string, Vector2>>((agg, p) => ({ ...agg, [`${p}`]: p }), {});
-
       const addSteiner = (p: Vector2) => steiners[`${p}`] = p;
 
       rects.forEach((rect) => {
@@ -157,22 +157,25 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   ): NavGraph {
     const groupedTris = navPolys.map(p => p.triangulation);
     const graph = new NavGraph(navPolys, groupedTris);
-    
-    navPolys.forEach((poly) => poly.removeSteiners());
 
     // Compute rectangular partition
     graph.computeRects(navPolys);
+
+    navPolys.forEach((poly) => poly.removeSteiners());
     graph.computeRectsSteiners(metaSteiners);
 
-    // Ensure steiners i.e. metas, corners of rectangles, reflections
     navPolys.forEach((poly, polyId) => {
       poly.addSteiners(graph.groupedSteiners[polyId]);
+      /**
+       * Only custom triangulate supports steiners.
+       * Also use temporary tiny outset to permit steiners on edges.
+       */
+      poly.customTriangulate(0.01);
     });
 
-    // `triangleIds` refer to points, holes and steiners of polygon
     let globalId = 0;
+    // `triangleIds` refer to points, holes and steiners of polygon
     for (const [polyId, { allPoints, triangleIds }] of navPolys.entries()) {
-      // Create nodes
       for (const [vertexId] of allPoints.entries()) {
         graph.registerNode(new NavNode({
           id: `${polyId}-${vertexId}`,
@@ -184,7 +187,6 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
           globalId: globalId + vertexId,
         }));
       }
-      // Create edges
       for (const node of graph.nodesArray) {
         const { polyId, adjacentIds } = node.opts;
         for (const adjId of adjacentIds) {
@@ -196,7 +198,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       }
       globalId += allPoints.length;
     }
-    // TODO only compute when needed
+
     // Compute inverse for line-of-sight tests
     // graph.invertedNavPolys = navPolys.map(poly =>
     //   Poly2.cutOut([poly], [poly.bounds.poly2]));
