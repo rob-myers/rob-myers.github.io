@@ -16,8 +16,8 @@ export class LevelMeta {
       key: this.key,
       light: this.light?.json,
       tags: this.tags.slice(),
-      rect: this.triggerRect?.json,
-      circular: this.circular || undefined,
+      rect: this.rect?.json,
+      trigger: this.trigger??undefined,
     };
   }
 
@@ -26,28 +26,43 @@ export class LevelMeta {
     public key = `m-${generate()}`,
     public tags = [] as string[],
     public light: null | LevelLight = null,
-    public triggerRect: null | Rect2 = null,
+    public rect: null | Rect2 = null,
     /** Trigger is rectangular or circular  */
-    public circular: boolean = false,
+    public trigger: null | 'rect' | 'circ' = null,
   ) {}
+
+  public addTag(tag: string) {
+    this.tags = this.tags.filter((other) => other !== tag).concat(tag);
+  }
 
   public clone(newKey: string) {
     return new LevelMeta(
       newKey,
       this.tags.slice(),
       this.light?.clone() || null,
-      this.triggerRect?.clone() || null,
-      this.circular,
+      this.rect?.clone() || null,
+      this.trigger,
     );
   }
 
-  public static fromJson(json: LevelMetaJson): LevelMeta {
+  public static from(json: LevelMetaJson): LevelMeta {
     return new LevelMeta(
       json.key,
       json.tags.slice(),
       json.light ? LevelLight.fromJson(json.light) : null,
       json.rect ? Rect2.fromJson(json.rect) : null,
-      json.circular??false,
+      json.trigger??null,
+    );
+  }
+
+  /** Remove all tags matching `removeRegex` */
+  public removeTags(removeRegex: RegExp): void;
+  /** Remove all tags included in `tags` */
+  public removeTags(...tags: string[]): void;
+  public removeTags(...input: (string | RegExp)[]) {
+    this.tags = this.tags.filter(tag => typeof input[0] === 'string'
+      ? !input.includes(tag)
+      : !input[0].test(tag)
     );
   }
 
@@ -72,7 +87,7 @@ export interface LevelMetaJson {
   key: string;
   tags: string[];
   light?: LevelLightJson;
-  circular?: true;
+  trigger?: 'rect' | 'circ';
   rect?: Rect2Json;
 }
 
@@ -83,6 +98,9 @@ export type LevelMetaUpdate = (
   | { key: 'ensure-meta-index'; metaIndex: number }
 );
 
+/**
+ * A group of LevelMetas.
+ */
 export class LevelMetaGroup {
 
   public get json(): LevelMetaGroupJson {
@@ -107,38 +125,71 @@ export class LevelMetaGroup {
     }
   }
 
+  /**
+   * Core update handler
+   */
   public applyUpdates(update: LevelMetaUpdate): void {
     switch (update.key) {
       case 'add-tag': {
-        const meta = this.metas.find(({ key }) => key === update.metaKey);
-        if (meta) {
-          meta.tags = meta.tags.filter((tag) => tag !== update.tag).concat(update.tag);
-          update.tag === 'light' && (meta.light = new LevelLight(this.position));
-          update.tag === 'circle' && (meta.circular = true);
-  
-          if (rectTagRegex.test(update.tag)) {
-            const [, w, h = w, ] = update.tag.match(rectTagRegex)!;
-            meta.triggerRect = new Rect2(this.position.x, this.position.y, Number(w), Number(h));
-            meta.tags = meta.tags.filter((tag, i) => !(rectTagRegex.test(tag) && i < meta.tags.length - 1));
+        const meta = this.metas.find(({ key }) => key === update.metaKey)!;
+
+        if (rectTagRegex.test(update.tag)) {// Rectangle update
+          const [, w, h = w, ] = update.tag.match(rectTagRegex)!;
+          meta.rect = new Rect2(this.position.x, this.position.y, Number(w), Number(h));
+          meta.removeTags(rectTagRegex);
+          meta.light?.setRange(meta.rect.dimension);
+        } else {
+          switch (update.tag) {
+            case 'circ': {
+              meta.trigger = 'circ';
+              meta.removeTags('rect');
+              break;
+            }
+            case 'rect': {
+              meta.removeTags('circ', 'light');
+              meta.trigger = 'rect';
+              meta.light = null;
+              break;
+            }
+            case 'light': {
+              meta.light = new LevelLight(
+                this.position,
+                meta.rect ? meta.rect.dimension : undefined,
+              );
+              meta.trigger = 'circ';
+              meta.removeTags('rect');
+              break;
+            }
           }
         }
+
+        meta.addTag(update.tag);
         break;
       }
       case 'remove-tag': {
-        const meta = this.metas.find(({ key }) => key === update.metaKey);
-        if (meta) {
-          meta.tags = meta.tags.filter((tag) => tag !== update.tag);
-          update.tag === 'light' && (meta.light = null);
-          update.tag === 'circle' && (meta.circular = false);
-          rectTagRegex.test(update.tag) && (meta.triggerRect = null);
+        const meta = this.metas.find(({ key }) => key === update.metaKey)!;
+        meta.removeTags(update.tag);
+        switch (update.tag) {
+          case 'circ': {
+            meta.trigger === 'circ' && (meta.trigger = null);
+            break;
+          }
+          case 'rect': {
+            meta.trigger === 'rect' && (meta.trigger = null);
+            break;
+          }
+          case 'light': {
+            meta.light = null;
+            break;
+          }
         }
         break;
       }
       case 'set-position': {
         this.position = Vector2.from(update.position);
-        this.metas.forEach(({ light, triggerRect }) => {
+        this.metas.forEach(({ light, rect }) => {
           light?.setPosition(this.position);
-          triggerRect?.setPosition(this.position);
+          rect?.setPosition(this.position);
         });
         break;
       }
@@ -164,7 +215,7 @@ export class LevelMetaGroup {
     );
     clone.metas.forEach(meta => {
       meta.light?.setPosition(position);
-      meta.triggerRect?.setPosition(position);
+      meta.rect?.setPosition(position);
     });
     return clone;
   }
@@ -185,7 +236,7 @@ export class LevelMetaGroup {
   }: LevelMetaGroupJson): LevelMetaGroup {
     return new LevelMetaGroup(
       key,
-      metas.map(meta => LevelMeta.fromJson(meta)),
+      metas.map(meta => LevelMeta.from(meta)),
       Vector2.from(position),
       metaIndex,
     );

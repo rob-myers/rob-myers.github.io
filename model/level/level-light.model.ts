@@ -20,8 +20,8 @@ export class LevelLight {
   public rangeBounds: Rect2;
   
   public get scale() {
-    const dim  = Math.max(this.polygon.bounds.width, this.polygon.bounds.height);
-    return (1 * this.range) / dim;
+    const dim = Math.max(this.polygon.bounds.width, this.polygon.bounds.height);
+    return (2 * this.range) / dim; // Why *2 ?
   }
 
   public get scaleX() {
@@ -82,9 +82,14 @@ export class LevelLight {
       this.resetPolygon();
     }
     this.position.copy(position);
+    this.setRange(this.range);
+  }
+
+  public setRange(range: number) {
+    this.range = range;
     this.rangeBounds = new Rect2(
-      position.x - this.range,
-      position.y - this.range,
+      this.position.x - this.range,
+      this.position.y - this.range,
       2 * this.range,
       2 * this.range,
     );

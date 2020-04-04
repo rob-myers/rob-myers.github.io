@@ -138,7 +138,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
               cy={position.y}
               r={metaPointRadius}
             />
-            {metas.map(({ key, light, triggerRect: rect, circular }) => (
+            {metas.map(({ key, light, rect, trigger }) => (
               <g key={key}>
                 {light && light.valid && (
                   <>
@@ -175,7 +175,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                     />
                   </>
                 )}
-                {rect && circular && (
+                {rect && trigger === 'circ' && !light && (
                   <circle
                     className={css.metaRadius}
                     cx={position.x}
@@ -183,7 +183,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                     r={rect.dimension}
                   />
                 )}
-                {rect && !circular && (
+                {rect && trigger === 'rect' && (
                   <rect
                     className={css.metaRect}
                     x={rect.x}

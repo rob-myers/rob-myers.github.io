@@ -1,7 +1,5 @@
 # TODO
 
-- `circle`, `rect` (triggers) mutually exclusive with `light`
-- `r-x` and `r-x-y` specify light radius
 - meta pickups `pickup` have arrow icon
 - meta obstruction `block`
 - meta dialog to front on open or click
@@ -279,3 +277,6 @@
 - command substitution should spawn subshell
 - BASHPID should be pid of 'current bash', including subshell
 - Reimplement `$$` by checking ancestrol processes
+- `circ` and `rect` are mutually exclusive triggers
+- `rect` and `light` are mutually exclusive
+- `r-x` and `r-x-y` specify light radius
