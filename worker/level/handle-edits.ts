@@ -5,7 +5,7 @@ import { MessageFromLevelParent, ToggleLevelTile, ToggleLevelWall, LevelWorkerCo
 import { Rect2 } from '@model/rect2.model';
 import { Poly2 } from '@model/poly2.model';
 import { redact, removeFromLookup } from '@model/redux.model';
-import { testNever } from '@model/generic.model';
+import { testNever, posModulo } from '@model/generic.model';
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2, Vector2Json } from '@model/vec2.model';
@@ -186,9 +186,14 @@ export function handleMetaUpdates(levelUid: string) {
             return mg.hasSomeTag(navTags);
           }
           case 'remove-level-meta': {
-            const nextMetaGroups = removeFromLookup(msg.metaGroupKey, metaGroups);
-            dispatch(Act.updateLevel(msg.levelUid, { metaGroups: nextMetaGroups }));
-            return metaGroups[msg.metaGroupKey].hasSomeTag(navTags);
+            const group = metaGroups[msg.metaGroupKey];
+            if (msg.metaKey && group.metas.length > 1) {
+              group.metas = group.metas.filter(({ key }) => key !== msg.metaKey);
+              group.metaIndex = group.metaIndex ? group.metaIndex - 1 : 0;
+            } else {
+              dispatch(Act.updateLevel(msg.levelUid, { metaGroups: removeFromLookup(msg.metaGroupKey, metaGroups) }));
+            }
+            return group.hasSomeTag(navTags);
           }
           default: throw testNever(msg);
         }

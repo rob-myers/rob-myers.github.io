@@ -104,6 +104,7 @@ export interface RemoveLevelMeta extends BaseMessage {
   key: 'remove-level-meta';
   levelUid: string;
   metaGroupKey: string;
+  metaKey: null | string;
 }
 interface RequestLevelData extends BaseMessage {
   key: 'request-level-data';

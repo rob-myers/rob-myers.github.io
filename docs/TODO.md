@@ -1,6 +1,5 @@
 # TODO
 
-- can remove single meta or whole group
 - `circle`, `rect` (triggers) mutually exclusive with `light`
 - `r-x` and `r-x-y` specify light radius
 - meta pickups `pickup` have arrow icon
@@ -275,3 +274,4 @@
 - BUG: steiners weren't included in NavGraph
 - can tag multiple metas in `LevelMetaGroup`
 - can navigate via up/down inside input; placeholder `tag meta-2`
+- can remove single meta or whole group

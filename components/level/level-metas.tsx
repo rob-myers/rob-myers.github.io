@@ -77,15 +77,16 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
       });
       return true;
     } else if (tag === '-') {
-      /**
-       * Given tag '-' then remove this meta.
-       */
-      worker.postMessage({ key: 'remove-level-meta', levelUid, metaGroupKey });
+      // Remove a single meta, possibly entire group
+      worker.postMessage({ key: 'remove-level-meta', levelUid, metaGroupKey, metaKey });
+      groups[metaGroupKey].metas.length === 1 && focusLevelKeys();
+      return true;
+    } else if (tag === '--') {
+      // Remove an entire group
+      worker.postMessage({ key: 'remove-level-meta', levelUid, metaGroupKey, metaKey: null });
       focusLevelKeys();
     } else if (/^>[a-z0-9][a-z0-9-]*$/.test(tag)) {
-      /**
-       * Given tag '>foo' draw NavPath to 1st meta with tag 'foo'
-       */
+      // Given tag '>foo' draw NavPath to 1st meta with tag 'foo'
       const { position } = groups[metaGroupKey];
       const dstMeta = Object.values(groups)
         .find(({ metas }) => metas.some(meta => meta.tags.includes(tag.slice(1))));
