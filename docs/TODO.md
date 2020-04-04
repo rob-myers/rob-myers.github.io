@@ -4,6 +4,7 @@
 - `r-x` and `r-x-y` specify light radius
 - meta pickups `pickup` have arrow icon
 - meta obstruction `block`
+- meta dialog to front on open or click
 
 - start sketching blog posts
 

@@ -122,6 +122,16 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
       <g className={css.metas}>
         {Object.values(groups).map(({ key: groupKey, position, metas }) =>
           <g key={groupKey}>
+            {groupUi[groupKey]?.open && (
+              <line 
+                stroke="#999"
+                strokeWidth={0.3}
+                x1={position.x}
+                y1={position.y}
+                x2={position.x - 5}
+                y2={position.y}
+              />
+            )}
             <circle
               className={css.metaHandle}
               cx={position.x}
