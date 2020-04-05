@@ -1,11 +1,14 @@
 # TODO
 
-- meta `icon` shows svg icons
-  - place next to walls outside navigable
-  - modifiers choose icon e.g. `phone`
+- meta `icon` shows svg icon
+- place next to walls outside navigable
+- modifiers choose icon e.g. `phone`
+- Try icons 'essential pack' from https://flaticon.com 
+  > Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+
 - improve lights in light-mode
-  - shade level if lights are present
-  - lights lighten areas
+- shade level if lights are present
+- lights lighten areas
 - move meta dialog to front on open/click
 
 - navigation:

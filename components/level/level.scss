@@ -260,6 +260,7 @@ html {
       @at-root .light-mode .nav-paths {
         circle {
           fill: $level-navpath-light;
+          r: 0.2;
         }
         line {
           stroke-width: 0.1;

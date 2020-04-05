@@ -221,8 +221,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   rect && physical === 'door' && (
                     <rect
                       key={key}
-                      strokeWidth={0.2}
-                      stroke="rgba(0, 0, 0, 0.2)"
+                      strokeWidth={0}
+                      stroke="rgba(100, 0, 0, 0.4)"
                       fill="none"
                       x={rect.x}
                       y={rect.y}
@@ -276,7 +276,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                 key={i}
                 fill="none"
                 stroke="rgba(200, 0, 0, 0.5)"
-                strokeWidth={0.5}
+                strokeWidth={0.2}
                 x={x}
                 y={y}
                 width={width}

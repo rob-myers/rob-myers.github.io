@@ -188,14 +188,15 @@ export function handleMetaUpdates(levelUid: string) {
       }),
       filter(({ rebuildFloors, updateNav }) => {
 
-        updateLights(levelUid);
-        sendMetas(levelUid);
-
         if (rebuildFloors) {
           computeInternalWalls(levelUid);
           sendPreNavFloors(levelUid);
           computeNavFloors(levelUid);
         }
+
+        updateLights(levelUid);
+        sendMetas(levelUid);
+
         if (updateNav) {
           dispatch(Act.updateLevel(levelUid, { floydWarshall: null }));
         }
