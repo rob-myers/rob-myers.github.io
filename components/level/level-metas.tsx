@@ -123,22 +123,6 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
       <g className={css.metas}>
         {Object.values(groups).map(({ key: groupKey, position, metas }) =>
           <g key={groupKey}>
-            <g>
-              {metas.map(({ key, rect, physical }) => (
-                // A meta can be a block
-                rect && physical === 'block' && (
-                  <rect
-                    key={key}
-                    strokeWidth={0}
-                    fill="rgba(0, 0, 0, 1)"
-                    x={rect.x}
-                    y={rect.y}
-                    width={rect.width}
-                    height={rect.height}
-                  />
-                )
-              ))}
-            </g>
             {
                 // We draw a line connecting meta's handle to popover
                 groupUi[groupKey]?.open && (
@@ -229,6 +213,21 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                       fill="#fff"
                       stroke="#000"
                       d={`M ${position.x},${position.y} l -1,-2 l 2,0 l -1,2`}
+                    />
+                  )
+                }
+                {
+                  // A meta can be a door
+                  rect && physical === 'door' && (
+                    <rect
+                      key={key}
+                      strokeWidth={0.2}
+                      stroke="rgba(0, 0, 0, 0.2)"
+                      fill="none"
+                      x={rect.x}
+                      y={rect.y}
+                      width={rect.width}
+                      height={rect.height}
                     />
                   )
                 }

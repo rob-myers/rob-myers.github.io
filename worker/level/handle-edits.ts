@@ -18,9 +18,9 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
-import { tileDim, smallTileDim, floorInset, navTags, rebuildTags, blockInset } from '@model/level/level-params';
+import { tileDim, smallTileDim, floorInset, navTags, rebuildTags } from '@model/level/level-params';
 import { sendMetas } from './handle-requests';
-import { updateNavGraph, getMetaBlocks } from './handle-nav';
+import { updateNavGraph, getDoorRects } from './handle-nav';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -106,9 +106,7 @@ export function handleLevelToggles(levelUid: string) {
           }
           default: throw testNever(msg);
         }
-        // Clear cached
-        dispatch(Act.updateLevel(levelUid, { floydWarshall: null }));
-        dispatch(Act.updateLevel(levelUid, { tileFloors, wallSeg }));
+        dispatch(Act.updateLevel(levelUid, {  floydWarshall: null, tileFloors, wallSeg }));
 
         ctxt.postMessage({
           key: 'send-level-layers',
@@ -146,21 +144,19 @@ export function handleMetaUpdates(levelUid: string) {
         switch (msg.key) {
           case 'update-level-meta': {
             const { metaGroupKey, update } = msg;
-            // Mutate the meta groups
             const group = metaGroups[metaGroupKey];
+            const rebuildFloors = (
+              update.key === 'add-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
+              || update.key === 'remove-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
+              || update.key === 'set-position' && group.hasSomeTag(rebuildTags)
+            );
+            const updateNav = (
+              update.key === 'add-tag' && (navTags.includes(update.tag) || group.hasSomeTag(navTags))
+              || update.key === 'remove-tag' && (navTags.includes(update.tag) || group.hasSomeTag(navTags))
+              || update.key === 'set-position' && group.hasSomeTag(navTags)
+            );
             group.applyUpdates(update);
-            return {
-              rebuildFloors: (
-                update.key === 'add-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
-                || update.key === 'remove-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
-                || update.key === 'set-position' && group.hasSomeTag(rebuildTags)
-              ),
-              updateNav: (
-                update.key === 'add-tag' && navTags.includes(update.tag)
-                || update.key === 'remove-tag' && navTags.includes(update.tag)
-                || update.key === 'set-position' && group.hasSomeTag(navTags)
-              ),
-            };
+            return { rebuildFloors, updateNav };
           }
           case 'duplicate-level-meta': {
             // Snap position to integers
@@ -210,16 +206,21 @@ export function handleMetaUpdates(levelUid: string) {
 function computeNavFloors(levelUid: string) {
   const { tileFloors, wallSeg } = getLevel(levelUid)!;
 
-  const outsetWalls = Poly2.union(
+  /**
+   * Wall segs are line-segs so cannot be outset using Poly2.
+   * We draw`navFloors` above line segs i.e. latter aren't split.
+   * TODO ensure gap between navigable and walls e.g. via extra white rects
+   */
+  const outsetWalls = Poly2.cutOut(
+    getDoorRects(levelUid).map(rect => rect.poly2),
     Object.values(wallSeg).map(([u, v]) =>
       new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2
-    ).concat(
-      getMetaBlocks(levelUid).map(rect => rect.outset(blockInset).poly2)
-    ),
+    )
   );
+
   const navFloors = Poly2.cutOut(outsetWalls,
-    tileFloors.flatMap(x => x.createInset(floorInset))
-  );
+    tileFloors.flatMap(x => x.createInset(floorInset)));
+  
   dispatch(Act.updateLevel(levelUid, {
     floors: navFloors.map(x => redact(x)),
   }));
@@ -236,7 +237,7 @@ function computeNavFloors(levelUid: string) {
 function updateLights(levelUid: string) {
   const { tileFloors, wallSeg, metaGroups: metas } = getLevel(levelUid)!;
   
-  // Permit lights positioned on an outer wall by slightly outsetting them
+  // Permit lights positioned on an external wall by slightly outsetting
   const outsetFloors = tileFloors.map(floor => floor.createOutset(0.01)[0]);
   // However, we don't permit lights positioned on an internal wall
   const wallSegs = Object.values(wallSeg).map<[Vector2, Vector2]>(([u, v]) => [Vector2.from(u), Vector2.from(v)]);

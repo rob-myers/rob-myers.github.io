@@ -49,11 +49,11 @@ function getMetaSteiners(levelUid: string) {
   }, {});
 }
 
-export function getMetaBlocks(levelUid: string) {
+export function getDoorRects(levelUid: string) {
   const { metaGroups } = getLevel(levelUid)!;
   return Object.values(metaGroups)
     .flatMap(({ metas }) => metas)
-    .filter(({ physical, rect }) => physical === 'block' && rect)
+    .filter(({ physical, rect }) => physical === 'door' && rect)
     .map(({ rect }) => rect!.clone());
 }
 

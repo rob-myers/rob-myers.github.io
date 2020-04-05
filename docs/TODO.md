@@ -1,6 +1,9 @@
 # TODO
 
-- meta `door` replaces `block` and cuts through internal walls
+- meta `door`
+  - meta `door` replaces `block` and cuts through internal walls
+  - store and draw adjusted wall segs
+  - light travels through doors; 3d take account of doors
 - meta `icon` shows svg icons
   - place next to walls outside navigable
   - modifiers choose icon e.g. `phone`
@@ -9,25 +12,26 @@
   - lights lighten areas
 - move meta dialog to front on open/click
 
+- navigation:
+  - line-of-sight test via negation of nav polys.
+  - initially Floyd-Warshall does pairwise line-of-sight checks for connectivity,
+    skipping any further computation during algorithm
+  - path simplification does line-of-sight simplification
+  - reduce number of start/end point tested by cutting rects along one dim
+
+- shell signals
+  - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
+  - `fg` puts process into foreground
+  - for `goto` intend `STOP`/`CONT` to pause/continue animations
+  - can pause entire session -- but how to pause a `sleep`?
+    - if finishes make it sleep the 'difference' and immediately pause it
+
 - write docs:
   - describe level editor features
   - why `wallSeg` is independent of `tileFloors`
     i.e. walls can cut out another polygon
   - sketching blog posts
-
-- fast line-of-sight test via negation of nav polys.
-- Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
-  and skips further computation during algorithm
-- path simplification does line-of-sight simplification from endpoints
-- fast 'point to rect' lookup
-- fast 'point to triangle' lookup
-- reduce number of start/end point tested by cutting rects along one dim
-
-- implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
-- also need `fg` to put process into foreground
-- for `goto` intend `STOP`/`CONT` to pause/continue animations
-- can pause entire session -- but how to pause a `sleep`?
-  - if finishes make it sleep the 'difference' and immediately pause it
+  - "spiritual feeling" e.g. via chamber music, e.g. meaningful
 
 - can trigger circle moving along path via CSS
   - adding tag `@bob>foo` spawns bob and sends him to some meta tagged `foo`

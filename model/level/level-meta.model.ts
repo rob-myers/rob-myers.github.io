@@ -8,7 +8,13 @@ import { pointOnLineSeg } from './geom.model';
 
 export const rectTagRegex = /^r-(\d+)(?:-(\d+))?$/;
 
-const specialTags = ['block', 'circ', 'light', 'pickup', 'rect'];
+/**
+ * Tags which use `LevelMeta.rect`.
+ * They are mutually exclusive.
+ */
+const tagsUsingRect = ['circ', 'door', 'light', 'pickup', 'rect'];
+type TriggerType = 'circ' | 'rect';
+type PhysicalType = 'door' | 'pickup';
 
 export class LevelMeta {
   
@@ -30,9 +36,9 @@ export class LevelMeta {
     public light: null | LevelLight = null,
     public rect: null | Rect2 = null,
     /** Trigger is rectangular or circular  */
-    public trigger: null | 'rect' | 'circ' = null,
-    /** Pickup has circular trigger, block has no trigger */
-    public physical: null | 'pickup' | 'block' = null,
+    public trigger: null | TriggerType = null,
+    /** A pickup has a circular trigger, a door has no trigger */
+    public physical: null | PhysicalType = null,
   ) {}
 
   public addTag(tag: string) {
@@ -73,16 +79,16 @@ export class LevelMeta {
   }
 
   public setAs(
-    tag: 'block' | 'circ' | 'light' | 'pickup' | 'rect' | string,
+    tag: PhysicalType | TriggerType | 'light' | string,
     position: Vector2,
   ) {
-    if (!specialTags.includes(tag)) return;
-    this.removeTags(...specialTags.filter(x => x !== tag));
+    if (!tagsUsingRect.includes(tag)) return;
+    this.removeTags(...tagsUsingRect.filter(x => x !== tag));
 
     switch (tag) {
-      case 'block': {
+      case 'door': {
         this.light = null;
-        this.physical = 'block';
+        this.physical = 'door';
         this.trigger = null;
         break;
       }
@@ -136,10 +142,10 @@ export class LevelMeta {
 export interface LevelMetaJson {
   key: string;
   light?: LevelLightJson;
-  physical?: 'pickup' | 'block';
+  physical?: PhysicalType;
   rect?: Rect2Json;
   tags: string[];
-  trigger?: 'rect' | 'circ';
+  trigger?: TriggerType;
 }
 
 export type LevelMetaUpdate = (
@@ -190,7 +196,7 @@ export class LevelMetaGroup {
           meta.removeTags(rectTagRegex);
           meta.light?.setRange(meta.rect.dimension);
           
-          meta.tags.forEach(tag => specialTags.includes(tag) && meta.setAs(tag, this.position));
+          meta.tags.forEach(tag => tagsUsingRect.includes(tag) && meta.setAs(tag, this.position));
         }
 
         meta.setAs(update.tag, this.position);
@@ -206,12 +212,12 @@ export class LevelMetaGroup {
         }
 
         switch (update.tag) {
-          case 'block': {
-            meta.physical = null;
-            break;
-          }
           case 'circ': {
             meta.trigger = null;
+            break;
+          }
+          case 'door': {
+            meta.physical = null;
             break;
           }
           case 'light': {
