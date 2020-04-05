@@ -18,7 +18,7 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
-import { tileDim, smallTileDim, floorInset, navTags, rebuildTags } from '@model/level/level-params';
+import { tileDim, smallTileDim, floorInset, navTags, rebuildTags, blockInset } from '@model/level/level-params';
 import { sendMetas } from './handle-requests';
 import { updateNavGraph, getMetaBlocks } from './handle-nav';
 
@@ -213,7 +213,9 @@ function computeNavFloors(levelUid: string) {
   const outsetWalls = Poly2.union(
     Object.values(wallSeg).map(([u, v]) =>
       new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2
-    ).concat(getMetaBlocks(levelUid).map(rect => rect.outset(floorInset).poly2)),
+    ).concat(
+      getMetaBlocks(levelUid).map(rect => rect.outset(blockInset).poly2)
+    ),
   );
   const navFloors = Poly2.cutOut(outsetWalls,
     tileFloors.flatMap(x => x.createInset(floorInset))

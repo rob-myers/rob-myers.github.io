@@ -1,10 +1,19 @@
 # TODO
 
+- meta `door` replaces `block` and cuts through internal walls
+- meta `icon` shows svg icons
+  - place next to walls outside navigable
+  - modifiers choose icon e.g. `phone`
+- improve lights in light-mode
+  - shade level if lights are present
+  - lights lighten areas
 - move meta dialog to front on open/click
 
-- start sketching blog posts
-- document why `wallSeg` is independent of `tileFloors`
-  i.e. walls can cut out another polygon.
+- write docs:
+  - describe level editor features
+  - why `wallSeg` is independent of `tileFloors`
+    i.e. walls can cut out another polygon
+  - sketching blog posts
 
 - fast line-of-sight test via negation of nav polys.
 - Floyd-Warshall initialisation does pairwise line-of-sight checks for connectivity
@@ -12,7 +21,7 @@
 - path simplification does line-of-sight simplification from endpoints
 - fast 'point to rect' lookup
 - fast 'point to triangle' lookup
-- for start/end avoid testing many border-points by cutting rects along one dim
+- reduce number of start/end point tested by cutting rects along one dim
 
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
 - also need `fg` to put process into foreground

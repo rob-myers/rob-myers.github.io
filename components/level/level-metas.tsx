@@ -202,7 +202,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   // A meta can have a circular trigger
                   rect && trigger === 'circ' && !light && (
                     <circle
-                      className={css.metaRadius}
+                      className={css.metaCirc}
                       cx={position.x}
                       cy={position.y}
                       r={rect.dimension}
