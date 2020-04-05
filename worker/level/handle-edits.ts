@@ -18,7 +18,7 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
-import { tileDim, smallTileDim, floorInset, navTags, rebuildTags } from '@model/level/level-params';
+import { tileDim, smallTileDim, floorInset, navTags, rebuildTags, doorOutset } from '@model/level/level-params';
 import { sendMetas } from './handle-requests';
 import { updateNavGraph, getDoorRects } from './handle-nav';
 
@@ -41,14 +41,15 @@ export function handleLevelToggles(levelUid: string) {
       }),
       map((msg) => {
         let { tileFloors, wallSeg } = getLevel(levelUid)!;
+
         switch (msg.key) {
           case 'toggle-level-tile': {
             const td = msg.tileSize === 'large' ? tileDim : smallTileDim;
             const rect = new Rect2(msg.tile.x, msg.tile.y, td, td);
             tileFloors = Poly2.xor(tileFloors, rect.poly2).map(x => redact(x));
             /**
-             * The outer polygons `tileFloors` can self-intersect so we must
-             * use the fast triangulator. These polygons are used by `updateLights`.
+             * The outer polygons `tileFloors` can self-intersect at corners, so we
+             * must use the fast triangulator. These polys are used by `updateLights`.
              */
             tileFloors.forEach((p) => p.options.triangulationType = 'fast');
             /**
@@ -106,14 +107,15 @@ export function handleLevelToggles(levelUid: string) {
           }
           default: throw testNever(msg);
         }
-        dispatch(Act.updateLevel(levelUid, {  floydWarshall: null, tileFloors, wallSeg }));
 
-        ctxt.postMessage({
-          key: 'send-level-layers',
-          levelUid,
-          tileFloors: tileFloors.map(({ json }) => json),
-          wallSegs: Object.values(wallSeg),
-        });
+        dispatch(Act.updateLevel(levelUid, { 
+          floydWarshall: null,
+          tileFloors,
+          wallSeg,
+        }));
+
+        computeInternalWalls(levelUid);
+        sendPreNavFloors(levelUid);
 
         updateLights(levelUid);
         computeNavFloors(levelUid);
@@ -185,10 +187,13 @@ export function handleMetaUpdates(levelUid: string) {
         }
       }),
       filter(({ rebuildFloors, updateNav }) => {
+
         updateLights(levelUid);
         sendMetas(levelUid);
 
         if (rebuildFloors) {
+          computeInternalWalls(levelUid);
+          sendPreNavFloors(levelUid);
           computeNavFloors(levelUid);
         }
         if (updateNav) {
@@ -203,49 +208,86 @@ export function handleMetaUpdates(levelUid: string) {
     );
 }
 
+/**
+ * Compute internal walls, taking doorways into account.
+ * To use polygon operations we temp convert wall segs to thin rectangles.
+ * We treat horiz/vert separately to avoid them being joined together.
+ */
+function computeInternalWalls(levelUid: string) {
+  const { wallSeg } = getLevel(levelUid)!;
+  const doorPolys = getDoorRects(levelUid).map(rect => rect.outset(doorOutset).poly2);
+
+  const { hRects, vRects } = Object.values(wallSeg).reduce(
+    (agg, [u, v]) => ({
+      hRects: u.x === v.x ? agg.hRects
+        : agg.hRects.concat(new Rect2(u.x, u.y, v.x - u.x, 0.01)),
+      vRects: u.y === v.y ? agg.vRects
+        : agg.vRects.concat(new Rect2(u.x, u.y, 0.01, v.y - u.y))
+    }),
+    { hRects: [] as Rect2[], vRects: [] as Rect2[] },
+  );
+
+  const hWalls = Poly2.cutOut(doorPolys, hRects.map(rect => rect.poly2))
+    .map<[Vector2, Vector2]>(({ bounds }) => [bounds.topLeft, bounds.topRight]);
+  const vWalls = Poly2.cutOut(doorPolys, vRects.map(rect => rect.poly2))
+    .map<[Vector2, Vector2]>(({ bounds }) => [bounds.topLeft, bounds.bottomLeft]);
+
+  dispatch(Act.updateLevel(levelUid, { innerWalls: hWalls.concat(vWalls) }));
+}
+
+function sendPreNavFloors(levelUid: string) {
+  const { tileFloors, innerWalls } = getLevel(levelUid)!;
+  ctxt.postMessage({
+    key: 'send-level-layers',
+    levelUid,
+    tileFloors: tileFloors.map(({ json }) => json),
+    wallSegs: innerWalls.map(([u, v]) => [u.json, v.json]),
+  });
+}
+
 function computeNavFloors(levelUid: string) {
   const { tileFloors, wallSeg } = getLevel(levelUid)!;
-
   /**
-   * Wall segs are line-segs so cannot be outset using Poly2.
-   * We draw`navFloors` above line segs i.e. latter aren't split.
-   * TODO ensure gap between navigable and walls e.g. via extra white rects
+   * Compute unnavigable areas induced by internal walls i.e.
+   * 1. outset the walls (which are actually line segments).
+   * 2. cut out any doorways specified via metas.
    */
   const outsetWalls = Poly2.cutOut(
     getDoorRects(levelUid).map(rect => rect.poly2),
     Object.values(wallSeg).map(([u, v]) =>
-      new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2
-    )
+      new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2),
   );
-
-  const navFloors = Poly2.cutOut(outsetWalls,
-    tileFloors.flatMap(x => x.createInset(floorInset)));
+  /**
+   * The navigable area is obtained by:
+   * 1. insetting `tileFloors` (accounts for external walls).
+   * 2. cutting out `outsetWalls` (accounts for internal walls).
+   */
+  const navFloors = Poly2.cutOut(
+    outsetWalls,
+    tileFloors.flatMap(x => x.createInset(floorInset)),
+  );
   
-  dispatch(Act.updateLevel(levelUid, {
-    floors: navFloors.map(x => redact(x)),
-  }));
-  ctxt.postMessage({ key: 'send-level-nav-floors', levelUid,
+  dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
+  ctxt.postMessage({
+    key: 'send-level-nav-floors',
+    levelUid,
     navFloors: navFloors.map(({ json }) => json),
   });
-
   return navFloors;
 }
 
 /**
- * Mutate the lights inside the store.
+ * We permit lights positioned on an external wall via slight outset.
+ * However, we don't permit lights positioned on an internal wall.
  */
 function updateLights(levelUid: string) {
-  const { tileFloors, wallSeg, metaGroups: metas } = getLevel(levelUid)!;
-  
-  // Permit lights positioned on an external wall by slightly outsetting
+  const { tileFloors, innerWalls, metaGroups: metas } = getLevel(levelUid)!;
   const outsetFloors = tileFloors.map(floor => floor.createOutset(0.01)[0]);
-  // However, we don't permit lights positioned on an internal wall
-  const wallSegs = Object.values(wallSeg).map<[Vector2, Vector2]>(([u, v]) => [Vector2.from(u), Vector2.from(v)]);
-  const lineSegs = wallSegs.concat(outsetFloors.flatMap(x => x.lineSegs));
-
+  const lineSegs = innerWalls.concat(outsetFloors.flatMap(x => x.lineSegs));
+  
   Object.values(metas)
     .flatMap(({ metas }) => metas)
-    .filter((meta) => meta.validateLight(outsetFloors, wallSegs))
+    .filter((meta) => meta.validateLight(outsetFloors, innerWalls))
     .forEach((meta) => meta.light!.computePolygon(lineSegs));
 }
 

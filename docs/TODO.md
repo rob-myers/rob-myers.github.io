@@ -1,9 +1,5 @@
 # TODO
 
-- meta `door`
-  - meta `door` replaces `block` and cuts through internal walls
-  - store and draw adjusted wall segs
-  - light travels through doors; 3d take account of doors
 - meta `icon` shows svg icons
   - place next to walls outside navigable
   - modifiers choose icon e.g. `phone`
@@ -295,3 +291,6 @@
 - `r-x` and `r-x-y` specify light radius
 - meta pickups `pickup` have arrow icon
 - meta obstruction `block`
+- meta `door` replaces `block` and cuts through internal walls
+- store and draw adjusted `internalWalls`
+- light travels through doorways; 3d supports doorways

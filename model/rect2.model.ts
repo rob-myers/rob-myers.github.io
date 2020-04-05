@@ -14,6 +14,14 @@ export class Rect2 {
     return this.y + this.height;
   }
 
+  public get bottomLeft() {
+    return new Vector2(this.x, this.y + this.height);
+  }
+
+  public get bottomRight() {
+    return new Vector2(this.x + this.width, this.y + this.height);
+  }
+
   public get center() {
     return new Vector2(this.cx, this.cy);
   }

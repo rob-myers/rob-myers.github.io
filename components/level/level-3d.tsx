@@ -9,9 +9,11 @@ import css from './level.scss';
 const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
   const containerEl = useRef<HTMLDivElement>(null);
   const tempPoint = useRef(Vector2.zero);
-  const worker = useSelector(({ level: { worker } }) => worker)!;
+
   const mouseWorld = useSelector(({ level: { instance } }) => instance[levelUid].mouseWorld);
+  const worker = useSelector(({ level: { worker } }) => worker)!;
   const zoomFactor = useSelector(({ level: { instance } }) => instance[levelUid].zoomFactor);
+
   const [wallSegs, setWallSegs] = useState([] as { u: Vector2; v: Vector2; backface: boolean }[]);
   const [dimension, setDimension] = useState<Vector2>();
 
@@ -37,6 +39,7 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
     };
     window.addEventListener('resize', onResize);
     onResize();
+
     return () => {
       sub.unsubscribe();
       window.removeEventListener('resize', onResize);
