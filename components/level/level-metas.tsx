@@ -142,7 +142,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
               cy={position.y}
               r={metaPointRadius}
             />
-            {metas.map(({ key, light, rect, trigger, physical }) => (
+            {metas.map(({ key, light, rect, trigger, physical, icon }) => (
               <g key={key}>
                 {
                   // A meta can have a light
@@ -228,6 +228,14 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                       y={rect.y}
                       width={rect.width}
                       height={rect.height}
+                    />
+                  )
+                }
+                {
+                  icon && (
+                    <g
+                      style={{ transform: `translate(${position.x}px, ${position.y}px)` }}
+                      dangerouslySetInnerHTML={{ __html: icon.svg }}
                     />
                   )
                 }

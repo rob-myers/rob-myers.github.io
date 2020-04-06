@@ -6,15 +6,36 @@ import { Rect2Json, Rect2 } from '@model/rect2.model';
 import { intersects, testNever } from '@model/generic.model';
 import { pointOnLineSeg } from './geom.model';
 
-export const rectTagRegex = /^r-(\d+)(?:-(\d+))?$/;
+const iconLookup = {
+  'archive': require('../icon/archive.svg'),
+  'archive-1': require('../icon/archive-1.svg'),
+  'archive-2': require('../icon/archive-2.svg'),
+  'archive-3': require('../icon/archive-3.svg'),
+  'briefcase': require('../icon/briefcase.svg'),
+  'notebook': require('../icon/notebook.svg'),
+  'server': require('../icon/server.svg'),
+  'smartphone-1': require('../icon/smartphone-1.svg'),
+};
+type IconType = keyof typeof iconLookup;
+const isIconTag = (tag: string): tag is IconType => tag in iconLookup;
 
-/**
- * Tags which use `LevelMeta.rect`.
- * They are mutually exclusive.
- */
-const tagsUsingRect = ['circ', 'door', 'light', 'pickup', 'rect'];
-type TriggerType = 'circ' | 'rect';
-type PhysicalType = 'door' | 'pickup';
+const rectTagsLookup = {
+  circ: null,
+  door: null,
+  horiz: null,
+  light: null,
+  pickup: null,
+  rect: null,
+  vert: null,
+};
+/** Tags which use `LevelMeta.rect`. They are mutually exclusive. */
+const isRectTag = (tag: string): tag is RectTag => tag in rectTagsLookup;
+type RectTag = keyof typeof rectTagsLookup; 
+type TriggerType =  Extract<RectTag, 'circ' | 'rect'>;
+type PhysicalType = Extract<RectTag, 'door' | 'horiz' | 'pickup' | 'vert'>;
+
+export const dimTagRegex = /^r-(\d+)(?:-(\d+))?$/;
+const isDimTag = (tag: string) => dimTagRegex.test(tag);
 
 export class LevelMeta {
   
@@ -26,6 +47,7 @@ export class LevelMeta {
       rect: this.rect?.json,
       tags: this.tags.slice(),
       trigger: this.trigger??undefined,
+      icon: this.icon?.key,
     };
   }
 
@@ -39,6 +61,7 @@ export class LevelMeta {
     public trigger: null | TriggerType = null,
     /** A pickup has a circular trigger, a door has no trigger */
     public physical: null | PhysicalType = null,
+    public icon: null | { key: IconType; svg: string } = null,
   ) {}
 
   public addTag(tag: string) {
@@ -53,6 +76,7 @@ export class LevelMeta {
       this.rect?.clone() || null,
       this.trigger,
       this.physical,
+      this.icon,
     );
   }
 
@@ -64,6 +88,7 @@ export class LevelMeta {
       json.rect ? Rect2.fromJson(json.rect) : null,
       json.trigger??null,
       json.physical??null,
+      json.icon ? { key: json.icon, svg: iconLookup[json.icon] } : null
     );
   }
 
@@ -78,48 +103,32 @@ export class LevelMeta {
     );
   }
 
-  public setAs(
-    tag: PhysicalType | TriggerType | 'light' | string,
-    position: Vector2,
-  ) {
-    if (!tagsUsingRect.includes(tag)) return;
-    this.removeTags(...tagsUsingRect.filter(x => x !== tag));
+  public setRectTag(tag: RectTag, position: Vector2) {
+    this.tags = this.tags.filter(x => !isRectTag(x)).concat(tag);
+    this.light = null;
+    this.physical = null;
+    this.trigger = null;
 
-    switch (tag) {
-      case 'door': {
-        this.light = null;
-        this.physical = 'door';
-        this.trigger = null;
-        break;
-      }
-      case 'circ': {
-        this.light = null;
-        this.physical = null;
-        this.trigger = 'circ';
-        break;
-      }
-      case 'light': {
-        this.physical = null;
-        this.trigger = null;
-        this.light = new LevelLight(
-          position,
-          this.rect ? this.rect.dimension : undefined
-        );
-        break;
-      }
-      case 'pickup': {
-        this.light = null;
-        this.physical = 'pickup';
-        this.trigger = 'circ';
-        break;
-      }
-      case 'rect': {
-        this.light = null;
-        this.physical = null;
-        this.trigger = 'rect';
-        break;
-      }
+    if (tag === 'door') {
+      this.physical = 'door';
+    } else if (tag === 'circ') {
+      this.trigger = 'circ';
+    } else if (tag === 'light') {
+      this.light = new LevelLight(
+        position,
+        this.rect ? this.rect.dimension : undefined
+      );
+    } else if (tag === 'pickup') {
+      this.physical = 'pickup';
+      this.trigger = 'circ';
+    } else if (tag === 'rect') {
+      this.trigger = 'rect';
     }
+  }
+
+  public setIconTag(tag: IconType) {
+    this.tags = this.tags.filter(x => !isIconTag(x)).concat(tag);
+    this.icon = { key: tag, svg: iconLookup[tag] };
   }
 
   /**
@@ -146,6 +155,7 @@ export interface LevelMetaJson {
   rect?: Rect2Json;
   tags: string[];
   trigger?: TriggerType;
+  icon?: IconType;
 }
 
 export type LevelMetaUpdate = (
@@ -189,52 +199,52 @@ export class LevelMetaGroup {
     switch (update.key) {
       case 'add-tag': {
         const meta = this.metas.find(({ key }) => key === update.metaKey)!;
+        meta.addTag(update.tag);
 
-        if (rectTagRegex.test(update.tag)) {// Rectangle update
-          const [, w, h = w, ] = update.tag.match(rectTagRegex)!;
+        if (isDimTag(update.tag)) {
+          // Handle rect dimension add/update
+          const [, w, h = w, ] = update.tag.match(dimTagRegex)!;
           meta.rect = new Rect2(this.position.x, this.position.y, Number(w), Number(h));
-          meta.removeTags(rectTagRegex);
+          meta.tags = meta.tags.filter(x => !isDimTag(x)).concat(update.tag);
           meta.light?.setRange(meta.rect.dimension);
-          
-          meta.tags.forEach(tag => tagsUsingRect.includes(tag) && meta.setAs(tag, this.position));
+          // Detect if a rect tag already exists
+          for (const tag of meta.tags) {
+            if (isRectTag(tag)) {
+              meta.setRectTag(tag, this.position);
+              break;
+            }
+          }
+        } else if (isRectTag(update.tag)) {
+          meta.setRectTag(update.tag, this.position);
+        } else if (isIconTag(update.tag)) {
+          meta.tags.includes('icon') && meta.setIconTag(update.tag);
+        } else if (update.tag === 'icon') {
+          // Detect if icon tag already exists
+          for (const tag of meta.tags) {
+            if (isIconTag(tag)) {
+              meta.setIconTag(tag);
+              break;
+            }
+          }
         }
 
-        meta.setAs(update.tag, this.position);
-        meta.addTag(update.tag);
         break;
       }
       case 'remove-tag': {
         const meta = this.metas.find(({ key }) => key === update.metaKey)!;
-
-        if (rectTagRegex.test(update.tag)) {
-          meta.rect = null;
-          meta.light = null;
-        }
-
-        switch (update.tag) {
-          case 'circ': {
-            meta.trigger = null;
-            break;
-          }
-          case 'door': {
-            meta.physical = null;
-            break;
-          }
-          case 'light': {
-            meta.light = null;
-            break;
-          }
-          case 'pickup': {
-            meta.physical = null;
-            meta.trigger = null;
-            break;
-          }
-          case 'rect': {
-            meta.trigger = null;
-            break;
-          }
-        }
         meta.removeTags(update.tag);
+
+        if (dimTagRegex.test(update.tag)) {
+          meta.rect = null;
+          meta.trigger = null;
+          meta.physical = null;
+          meta.light = null;
+        } else if (isRectTag(update.tag)) {
+          meta.trigger = null;
+          meta.physical = null;
+        } else if (update.tag === 'icon' || isIconTag(update.tag)) {
+          meta.icon = null;
+        }
         break;
       }
       case 'set-position': {

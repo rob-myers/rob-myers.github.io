@@ -1,10 +1,8 @@
 # TODO
 
-- meta `icon` shows svg icon
-- place next to walls outside navigable
-- modifiers choose icon e.g. `phone`
-- Try icons 'essential pack' from https://flaticon.com 
-  > Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+- meta `icon` scaled/offset correctly
+- Try placing icons next to walls outside navigable
+- metas `horiz` and `vert` (rect tags)
 
 - improve lights in light-mode
 - shade level if lights are present
@@ -12,11 +10,12 @@
 - move meta dialog to front on open/click
 
 - navigation:
+  - line-of-walk test via negation of polys.
   - line-of-sight test via negation of nav polys.
-  - initially Floyd-Warshall does pairwise line-of-sight checks for connectivity,
+  - initially Floyd-Warshall does pairwise line-of-walk checks for connectivity,
     skipping any further computation during algorithm
-  - path simplification does line-of-sight simplification
-  - reduce number of start/end point tested by cutting rects along one dim
+  - path simplification does line-of-walk simplification
+  - reduce number of start/end point by restricting to 'closest 4 points' (needn't be a rect)
 
 - shell signals
   - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
@@ -297,3 +296,7 @@
 - meta `door` replaces `block` and cuts through internal walls
 - store and draw adjusted `internalWalls`
 - light travels through doorways; 3d supports doorways
+- meta `icon` shows svg icon
+- modifiers choose icon e.g. `phone`
+- Try icons 'essential pack' from https://flaticon.com 
+  > Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
