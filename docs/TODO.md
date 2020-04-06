@@ -1,7 +1,5 @@
 # TODO
 
-- meta `icon` scaled/offset correctly
-- Try placing icons next to walls outside navigable
 - metas `horiz` and `vert` (rect tags)
 
 - improve lights in light-mode
@@ -300,3 +298,5 @@
 - modifiers choose icon e.g. `phone`
 - Try icons 'essential pack' from https://flaticon.com 
   > Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
+- meta `icon` scaled/offset correctly
+- Try placing icons next to walls outside navigable

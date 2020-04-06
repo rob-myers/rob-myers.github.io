@@ -1,21 +1,12 @@
 import { generate } from 'shortid';
 import { Vector2, Vector2Json } from '@model/vec2.model';
-import { LevelLight, LevelLightJson } from './level-light.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2Json, Rect2 } from '@model/rect2.model';
 import { intersects, testNever } from '@model/generic.model';
+import { iconLookup } from '@model/icon/icon.model';
 import { pointOnLineSeg } from './geom.model';
+import { LevelLight, LevelLightJson } from './level-light.model';
 
-const iconLookup = {
-  'archive': require('../icon/archive.svg'),
-  'archive-1': require('../icon/archive-1.svg'),
-  'archive-2': require('../icon/archive-2.svg'),
-  'archive-3': require('../icon/archive-3.svg'),
-  'briefcase': require('../icon/briefcase.svg'),
-  'notebook': require('../icon/notebook.svg'),
-  'server': require('../icon/server.svg'),
-  'smartphone-1': require('../icon/smartphone-1.svg'),
-};
 type IconType = keyof typeof iconLookup;
 const isIconTag = (tag: string): tag is IconType => tag in iconLookup;
 
@@ -61,7 +52,13 @@ export class LevelMeta {
     public trigger: null | TriggerType = null,
     /** A pickup has a circular trigger, a door has no trigger */
     public physical: null | PhysicalType = null,
-    public icon: null | { key: IconType; svg: string } = null,
+    public icon: null | {
+      key: IconType;
+      svg: string;
+      rect: Rect2;
+      scale: number;
+      delta: Vector2;
+    } = null,
   ) {}
 
   public addTag(tag: string) {
@@ -81,6 +78,7 @@ export class LevelMeta {
   }
 
   public static from(json: LevelMetaJson): LevelMeta {
+    const icon = json.icon && iconLookup[json.icon];
     return new LevelMeta(
       json.key,
       json.tags.slice(),
@@ -88,7 +86,13 @@ export class LevelMeta {
       json.rect ? Rect2.fromJson(json.rect) : null,
       json.trigger??null,
       json.physical??null,
-      json.icon ? { key: json.icon, svg: iconLookup[json.icon] } : null
+      icon ? {
+        key: json.icon!,
+        svg: icon.svg,
+        rect: icon.rect,
+        scale: 4 / icon.rect.dimension,
+        delta: icon.rect.center.scale(4 / icon.rect.dimension),
+      } : null
     );
   }
 
@@ -128,7 +132,14 @@ export class LevelMeta {
 
   public setIconTag(tag: IconType) {
     this.tags = this.tags.filter(x => !isIconTag(x)).concat(tag);
-    this.icon = { key: tag, svg: iconLookup[tag] };
+    const icon = iconLookup[tag];
+    this.icon = {
+      key: tag,
+      svg: icon.svg,
+      rect: icon.rect,
+      scale: 4 / icon.rect.dimension,
+      delta: icon.rect.center.scale(4 / icon.rect.dimension),
+    };
   }
 
   /**
