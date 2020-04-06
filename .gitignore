@@ -10,5 +10,6 @@ jest.config.js
 next.config.js
 styles.config.js
 postcss.config.js
+image.config.js
 
 yarn-error.log

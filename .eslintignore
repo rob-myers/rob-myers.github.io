@@ -3,3 +3,4 @@ babel.config.js
 jest.config.js
 styles.config.js
 postcss.config.js
+image.config.js
