@@ -239,9 +239,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                 {
                   icon && (
                     <g
-                      style={{
-                        transform: `translate(${position.x - icon.delta.x}px, ${position.y - icon.delta.y}px) scale(${icon.scale})`
-                      }}
+                      style={{ transform: `translate(${position.x - icon.delta.x}px, ${position.y - icon.delta.y}px) scale(${icon.scale})`}}
                       dangerouslySetInnerHTML={{ __html: icon.svg }}
                     />
                   )

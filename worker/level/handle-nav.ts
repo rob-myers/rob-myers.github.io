@@ -57,6 +57,23 @@ export function getDoorRects(levelUid: string) {
     .map(({ rect }) => rect!.clone());
 }
 
+export function getHorizVertSegs(levelUid: string) {
+  const { metaGroups } = getLevel(levelUid)!;
+
+  return Object.values(metaGroups).reduce((agg, group) =>
+    agg.concat(
+      group.metas.reduce((agg, meta) => {
+        if (meta.physical === 'horiz' && meta.rect) {
+          agg.push([meta.rect.topLeft, meta.rect.topRight]);
+        } else if (meta.physical === 'vert' && meta.rect) {
+          agg.push([meta.rect.topLeft, meta.rect.bottomLeft]);
+        }
+        return agg;
+      }, [] as [Vector2, Vector2][])
+    )
+  , [] as [Vector2, Vector2][]);
+}
+
 /**
  * Update navigation i.e. triangulation.
  */

@@ -1,11 +1,8 @@
 # TODO
 
-- start designing simple `floor plan art` in svg
-  - e.g. crate, side-table, table, always rectangular
-  - don't bother using image -> svg converter
-- could place icons on table (at angle) e.g. smartphone, briefcase
+- avoid floor plan art, stick to icons
 - can navigate to icons with a `circ` intersecting navigable?
-- metas `horiz` and `vert` (rect tags)
+- icons have light/dark version
 - improve lights in light-mode
   - shade level if lights are present
   - lights lighten areas
@@ -304,3 +301,4 @@
   > Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
 - meta `icon` scaled/offset correctly
 - Try placing icons next to walls outside navigable
+- metas `horiz` and `vert` (rect tags)

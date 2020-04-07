@@ -3,13 +3,13 @@ import { KeyedLookup } from '@model/generic.model';
 
 export type IconType = (
   | 'briefcase'
-  | 'notebook'
-  | 'smartphone-1'
   | 'computer'
   | 'document-1'
   | 'document-2'
   | 'document-3'
+  | 'notebook'
   | 'smartphone'
+  | 'smartphone-1'
   | 'user-2'
   | 'user-3'
 );
@@ -87,4 +87,3 @@ export const iconLookup: KeyedLookup<IconMeta, IconType> = {
     dstRect: new Rect2(0, 0, 3, 3),
   },
 };
-

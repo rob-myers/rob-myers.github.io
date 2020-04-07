@@ -113,20 +113,40 @@ export class LevelMeta {
     this.physical = null;
     this.trigger = null;
 
-    if (tag === 'door') {
-      this.physical = 'door';
-    } else if (tag === 'circ') {
-      this.trigger = 'circ';
-    } else if (tag === 'light') {
-      this.light = new LevelLight(
-        position,
-        this.rect ? this.rect.dimension : undefined
-      );
-    } else if (tag === 'pickup') {
-      this.physical = 'pickup';
-      this.trigger = 'circ';
-    } else if (tag === 'rect') {
-      this.trigger = 'rect';
+    switch(tag) {
+      case 'circ': {
+        this.trigger = 'circ';
+        break;
+      }
+      case 'door': {
+        this.physical = 'door';
+        break;
+      }
+      case 'horiz': {
+        this.physical = 'horiz';
+        break;
+      }
+      case 'light': {
+        this.light = new LevelLight(
+          position,
+          this.rect ? this.rect.dimension : undefined,
+        );
+        break;
+      }
+      case 'pickup': {
+        this.physical = 'pickup';
+        this.trigger = 'circ';
+        break;
+      }
+      case 'rect': {
+        this.trigger = 'rect';
+        break;
+      }
+      case 'vert': {
+        this.physical = 'vert';
+        break;
+      }
+      default: throw testNever(tag);
     }
   }
 

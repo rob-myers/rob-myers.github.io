@@ -24,7 +24,10 @@ export function listenForRequests() {
           tileToggleSub: redact(handleLevelToggles(msg.levelUid).subscribe()),
           metaUpdateSub: redact(handleMetaUpdates(msg.levelUid).subscribe()),
         }));
-        ctxt.postMessage({ key: 'worker-created-level', levelUid: msg.levelUid });
+        ctxt.postMessage({
+          key: 'worker-created-level',
+          levelUid: msg.levelUid,
+        });
         break;
       }
       case 'request-destroy-level': {
@@ -37,22 +40,14 @@ export function listenForRequests() {
       case 'request-level-data': {
         const level = getLevel(msg.levelUid);
         if (level) {
-          ctxt.postMessage({ key: 'send-level-layers', levelUid: msg.levelUid,
-            tileFloors: level.tileFloors.map(({ json }) => json),
-            wallSegs: level.innerWalls.map(([u, v]) => [u.json, v.json]),
-          });
-          ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
-            metas: Object.values(level.metaGroups).map(p => p.json),
-          });
+          sendPreNavFloors(msg.levelUid);
+          sendMetas(msg.levelUid);
           sendLevelAux(msg.levelUid);
         }
         break;
       }
       case 'request-level-metas': {
-        const level = getLevel(msg.levelUid);
-        level && ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
-          metas: Object.values(level.metaGroups).map(p => p.json),
-        });
+        sendMetas(msg.levelUid);
         break;
       }
       case 'ensure-floyd-warshall': {
@@ -107,7 +102,17 @@ export function sendLevelAux(levelUid: string) {
 
 export function sendMetas(levelUid: string) {
   const metaGroups = getLevel(levelUid)?.metaGroups;
-  metaGroups && ctxt.postMessage({ key: 'send-level-metas', levelUid,
-    metas: Object.values(metaGroups).map(p => p.json),
+  ctxt.postMessage({ key: 'send-level-metas', levelUid,
+    metas: Object.values(metaGroups!).map(p => p.json),
+  });
+}
+
+export function sendPreNavFloors(levelUid: string) {
+  const { tileFloors, innerWalls } = getLevel(levelUid)!;
+  ctxt.postMessage({
+    key: 'send-level-layers',
+    levelUid,
+    tileFloors: tileFloors.map(({ json }) => json),
+    wallSegs: innerWalls.map(([u, v]) => [u.json, v.json]),
   });
 }

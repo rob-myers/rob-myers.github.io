@@ -13,9 +13,9 @@ export const tileDim = 60;
 export const smallTileDim = 20;
 
 /** Tags which require rebuild of floor */
-export const rebuildTags = ['door'];
+export const rebuildTags = ['door', 'horiz', 'vert'];
 
 /** Tags which can affect navigation */
-export const navTags = ['steiner', 'door'];
+export const navTags = ['steiner', 'door', 'horiz', 'vert'];
 
 export const metaPointRadius = 0.5;

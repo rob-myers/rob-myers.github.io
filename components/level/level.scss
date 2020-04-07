@@ -326,7 +326,7 @@ html {
           padding: 4px 2px;
 
           font-family: 'Courier New', Courier, monospace;
-          font-size: 5pt;
+          font-size: 4pt;
           user-select: none;
 
           input {
@@ -335,7 +335,7 @@ html {
             outline: none;
             border: none;
             padding: 0 0 2px;
-            font-size: 5pt;
+            font-size: 4pt;
           }
           .tags {
             display: flex;
@@ -343,6 +343,7 @@ html {
             user-select: none;
             max-width: 40px;
             overflow: hidden;
+            font-size: 5pt;
 
             .tag {
               cursor: pointer;

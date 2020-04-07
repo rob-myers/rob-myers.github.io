@@ -19,8 +19,8 @@ import { Act } from '@store/level/level.duck';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
 import { tileDim, smallTileDim, floorInset, navTags, rebuildTags, doorOutset } from '@model/level/level-params';
-import { sendMetas } from './handle-requests';
-import { updateNavGraph, getDoorRects } from './handle-nav';
+import { sendMetas, sendPreNavFloors } from './handle-requests';
+import { updateNavGraph, getDoorRects, getHorizVertSegs } from './handle-nav';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -55,15 +55,15 @@ export function handleLevelToggles(levelUid: string) {
             /**
              * If we removed a tile ensure any adjacent walls are removed too.
              */
-            if (!tileFloors.some(f => f.contains(rect.center))) {
-              const { x, y } = msg.tile;
-              const indices = td === tileDim ? [1, 2, 3] : [1];
-              [ ...indices.map((i) => edgeToKey({ x, y }, { x: x + i * smallTileDim, y })),
-                ...indices.map((i) => edgeToKey({ x: x + td, y }, { x: x + td, y: y + i * smallTileDim })),
-                ...indices.map((i) => edgeToKey({ x, y: y + td }, { x: x + i * smallTileDim, y: y + td })),
-                ...indices.map((i) => edgeToKey({ x, y }, { x, y: y + i * smallTileDim })),
-              ].forEach(key => delete wallSeg[key]);
-            }
+            // if (!tileFloors.some(f => f.contains(rect.center))) {
+            //   const { x, y } = msg.tile;
+            //   const indices = td === tileDim ? [1, 2, 3] : [1];
+            //   [ ...indices.map((i) => edgeToKey({ x, y }, { x: x + i * smallTileDim, y })),
+            //     ...indices.map((i) => edgeToKey({ x: x + td, y }, { x: x + td, y: y + i * smallTileDim })),
+            //     ...indices.map((i) => edgeToKey({ x, y: y + td }, { x: x + i * smallTileDim, y: y + td })),
+            //     ...indices.map((i) => edgeToKey({ x, y }, { x, y: y + i * smallTileDim })),
+            //   ].forEach(key => delete wallSeg[key]);
+            // }
             break;
           }
           case 'toggle-level-wall': {
@@ -210,15 +210,16 @@ export function handleMetaUpdates(levelUid: string) {
 }
 
 /**
- * Compute internal walls, taking doorways into account.
+ * Compute internal walls, taking door/horiz/vert into account.
  * To use polygon operations we temp convert wall segs to thin rectangles.
  * We treat horiz/vert separately to avoid them being joined together.
  */
 function computeInternalWalls(levelUid: string) {
   const { wallSeg } = getLevel(levelUid)!;
+  const wallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
   const doorPolys = getDoorRects(levelUid).map(rect => rect.outset(doorOutset).poly2);
 
-  const { hRects, vRects } = Object.values(wallSeg).reduce(
+  const { hRects, vRects } = wallSegs.reduce(
     (agg, [u, v]) => ({
       hRects: u.x === v.x ? agg.hRects
         : agg.hRects.concat(new Rect2(u.x, u.y, v.x - u.x, 0.01)),
@@ -236,18 +237,12 @@ function computeInternalWalls(levelUid: string) {
   dispatch(Act.updateLevel(levelUid, { innerWalls: hWalls.concat(vWalls) }));
 }
 
-function sendPreNavFloors(levelUid: string) {
-  const { tileFloors, innerWalls } = getLevel(levelUid)!;
-  ctxt.postMessage({
-    key: 'send-level-layers',
-    levelUid,
-    tileFloors: tileFloors.map(({ json }) => json),
-    wallSegs: innerWalls.map(([u, v]) => [u.json, v.json]),
-  });
-}
+
 
 function computeNavFloors(levelUid: string) {
   const { tileFloors, wallSeg } = getLevel(levelUid)!;
+  const wallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
+
   /**
    * Compute unnavigable areas induced by internal walls i.e.
    * 1. outset the walls (which are actually line segments).
@@ -255,7 +250,7 @@ function computeNavFloors(levelUid: string) {
    */
   const outsetWalls = Poly2.cutOut(
     getDoorRects(levelUid).map(rect => rect.poly2),
-    Object.values(wallSeg).map(([u, v]) =>
+    wallSegs.map(([u, v]) =>
       new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2),
   );
   /**
