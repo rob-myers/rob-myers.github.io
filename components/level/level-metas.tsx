@@ -137,7 +137,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
               )
             }
             {
-              !groups[groupKey].hasTag('icon') && (
+              !groups[groupKey].hasIcon() && (
                 <circle
                   // The meta's handle
                   className={css.metaHandle}

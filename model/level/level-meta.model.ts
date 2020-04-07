@@ -293,14 +293,6 @@ export class LevelMetaGroup {
     return clone;
   }
 
-  public hasTag(tag: string) {
-    return this.metas.some(meta => meta.tags.includes(tag));
-  }
-
-  public hasSomeTag(tags: string[]) {
-    return this.metas.some(meta => intersects(meta.tags, tags));
-  }
-
   public static from({
     key,
     metas,
@@ -313,6 +305,18 @@ export class LevelMetaGroup {
       Vector2.from(position),
       metaIndex,
     );
+  }
+
+  public hasIcon() {
+    return this.metas.some(({ icon }) => !!icon);
+  }
+
+  public hasTag(tag: string) {
+    return this.metas.some(meta => meta.tags.includes(tag));
+  }
+
+  public hasSomeTag(tags: string[]) {
+    return this.metas.some(meta => intersects(meta.tags, tags));
   }
 
 }
