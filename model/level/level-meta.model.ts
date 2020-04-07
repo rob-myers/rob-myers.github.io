@@ -90,8 +90,8 @@ export class LevelMeta {
         key: json.icon!,
         svg: icon.svg,
         rect: icon.rect,
-        scale: 4 / icon.rect.dimension,
-        delta: icon.rect.center.scale(4 / icon.rect.dimension),
+        scale: 3 / icon.rect.dimension,
+        delta: icon.rect.center.scale(3 / icon.rect.dimension),
       } : null
     );
   }
@@ -137,8 +137,8 @@ export class LevelMeta {
       key: tag,
       svg: icon.svg,
       rect: icon.rect,
-      scale: 4 / icon.rect.dimension,
-      delta: icon.rect.center.scale(4 / icon.rect.dimension),
+      scale: 3 / icon.rect.dimension,
+      delta: icon.rect.center.scale(3 / icon.rect.dimension),
     };
   }
 

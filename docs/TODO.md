@@ -1,10 +1,13 @@
 # TODO
 
+- start designing and using top-down-view icons
+  e.g. crate, bench, iphone on bench
+- non top-down-view icons should be e.g. signs
+- can navigate to icons with a `circ` intersecting navigable?
 - metas `horiz` and `vert` (rect tags)
-
 - improve lights in light-mode
-- shade level if lights are present
-- lights lighten areas
+  - shade level if lights are present
+  - lights lighten areas
 - move meta dialog to front on open/click
 
 - navigation:

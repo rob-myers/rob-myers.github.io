@@ -1,10 +1,10 @@
 /** Depth of cursor highlight */
-export const wallDepth = 2;
+export const wallDepth = 1;
 
 /** How far to inset when constructing navigable poly `floors` */
-export const floorInset = 5;
+export const floorInset = 2;
 
-export const doorOutset = 2;
+export const doorOutset = 1.999;
 
 /** Dimension of large tile in pixels */
 export const tileDim = 60;
