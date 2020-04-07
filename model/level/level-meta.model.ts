@@ -342,7 +342,7 @@ export function syncMetaGroupUi(src: LevelMetaGroup, dst?: LevelMetaGroupUi): Le
   return {
     ...(dst || createMetaGroupUi(src.key)),
     ...{
-      dialogPosition: src.position.clone().translate(-35, -5),
+      dialogPosition: src.position.clone().translate(-25, -5),
       position: src.position.clone(),
     } as LevelMetaGroupUi
   };

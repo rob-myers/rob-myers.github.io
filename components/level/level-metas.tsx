@@ -333,7 +333,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                       >
                         <input
                           tabIndex={-1} // Offscreen focus can break things
-                          placeholder={`tag @${metaIndex}`}
+                          placeholder={`tags ${metaIndex +  1}/${metas.length}`}
                           onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
                             inputKey === 'Enter' && addTag(groupKey, key, value) && (currentTarget.value = '')}
                           onKeyDown={({ key: inputKey }) =>
@@ -350,6 +350,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                               key={tag}
                               className={css.tag}
                               onClick={() => removeTag(groupKey, key, tag)}
+                              title={tag}
                             >
                               {tag}
                             </div>
