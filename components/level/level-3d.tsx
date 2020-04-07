@@ -19,16 +19,18 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
 
   useEffect(() => {
     const sub = subscribeToWorker(worker, (msg) => {
-      if ('levelUid' in msg && msg.levelUid !== levelUid) return;
-      if (msg.key === 'send-level-layers') {
+      if (msg.key === 'send-level-layers' && msg.levelUid === levelUid) {
         const wallSegs = msg.wallSegs.map<[Vector2, Vector2]>(
           ([u, v]) => [Vector2.from(u), Vector2.from(v)]);
         const outerWallSegs = ([] as [Vector2, Vector2][]).concat(
           ...msg.tileFloors.map(x => Poly2.fromJson(x)).map(({ lineSegs }) => lineSegs));
-        setWallSegs(wallSegs.map(([u, v]) => ({ u, v, backface: true })).concat(
-          outerWallSegs.map(([u, v]) => ({ u, v, backface: false }))
-          // outerWallSegs.map(([u, v]) => ({ u, v, backface: true }))
-        ));
+
+        setWallSegs(
+          wallSegs.map(([u, v]) => ({ u, v, backface: true })).concat(
+            outerWallSegs.map(([u, v]) => ({ u, v, backface: false }))
+            // outerWallSegs.map(([u, v]) => ({ u, v, backface: true }))
+          )
+        );
       }
     });
     worker.postMessage({ key: 'request-level-data', levelUid });

@@ -39,7 +39,7 @@ export function listenForRequests() {
         if (level) {
           ctxt.postMessage({ key: 'send-level-layers', levelUid: msg.levelUid,
             tileFloors: level.tileFloors.map(({ json }) => json),
-            wallSegs: Object.values(level.wallSeg),
+            wallSegs: level.innerWalls.map(([u, v]) => [u.json, v.json]),
           });
           ctxt.postMessage({ key: 'send-level-metas', levelUid: msg.levelUid,
             metas: Object.values(level.metaGroups).map(p => p.json),
