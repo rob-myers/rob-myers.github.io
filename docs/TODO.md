@@ -1,8 +1,9 @@
 # TODO
 
-- start designing and using top-down-view icons
-  e.g. crate, bench, iphone on bench
-- non top-down-view icons should be e.g. signs
+- start designing simple `floor plan art` in svg
+  - e.g. crate, side-table, table, always rectangular
+  - don't bother using image -> svg converter
+- could place icons on table (at angle) e.g. smartphone, briefcase
 - can navigate to icons with a `circ` intersecting navigable?
 - metas `horiz` and `vert` (rect tags)
 - improve lights in light-mode

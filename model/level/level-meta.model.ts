@@ -3,11 +3,10 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2Json, Rect2 } from '@model/rect2.model';
 import { intersects, testNever } from '@model/generic.model';
-import { iconLookup } from '@model/icon/icon.model';
+import { iconLookup, IconType } from '@model/icon/icon.model';
 import { pointOnLineSeg } from './geom.model';
 import { LevelLight, LevelLightJson } from './level-light.model';
 
-type IconType = keyof typeof iconLookup;
 const isIconTag = (tag: string): tag is IconType => tag in iconLookup;
 
 const rectTagsLookup = {
@@ -89,9 +88,10 @@ export class LevelMeta {
       icon ? {
         key: json.icon!,
         svg: icon.svg,
-        rect: icon.rect,
-        scale: 3 / icon.rect.dimension,
-        delta: icon.rect.center.scale(3 / icon.rect.dimension),
+        rect: icon.dstRect.clone(),
+        scale: icon.dstRect.dimension / icon.srcRect.dimension,
+        delta: icon.srcRect.center
+          .scale(icon.dstRect.dimension / icon.srcRect.dimension),
       } : null
     );
   }
@@ -136,9 +136,10 @@ export class LevelMeta {
     this.icon = {
       key: tag,
       svg: icon.svg,
-      rect: icon.rect,
-      scale: 3 / icon.rect.dimension,
-      delta: icon.rect.center.scale(3 / icon.rect.dimension),
+      rect: icon.dstRect.clone(),
+      scale: icon.dstRect.dimension / icon.srcRect.dimension,
+      delta: icon.srcRect.center
+        .scale(icon.dstRect.dimension / icon.srcRect.dimension),
     };
   }
 
