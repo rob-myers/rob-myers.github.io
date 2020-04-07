@@ -17,8 +17,8 @@ $level-wall-dark: white;
 $level-navigable-light: #eee;
 $level-navigable-dark: #222;
 
-$level-triangle-light: rgba(200, 200, 200, 1);
-$level-triangle-dark: #444;
+$level-triangle-light: rgba(200, 200, 200, 0.5);
+$level-triangle-dark: rgba(200, 200, 200, 0.1);
 
 $level-grid-light: rgba(0, 0, 0, 0.5);
 $level-grid-refined-light: rgba(0, 0, 0, 0.3);
@@ -27,7 +27,7 @@ $level-grid-dark: rgba(200, 200, 200,0.5);
 $level-grid-refined-dark: rgba(200, 200, 200,0.3);
 
 $level-navnode-light: rgba(200, 0, 0, 0.4);
-$level-navnode-dark: rgba(200, 200, 200, 0.3);;
+$level-navnode-dark: rgba(200, 200, 200, 0.2);;
 
 $level-drag-fill-light: white;
 $level-drag-stroke-light: black;
@@ -36,4 +36,4 @@ $level-drag-fill-dark: black;
 $level-drag-stroke-dark: white;
 
 $level-navpath-light: black;
-$level-navpath-dark: white;
+$level-navpath-dark: rgba(200, 200, 200, 0.5);

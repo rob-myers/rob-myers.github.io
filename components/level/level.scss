@@ -161,6 +161,9 @@ html {
     }
   
     .triangle {
+      fill: none;
+      stroke-width: 0.1;
+
       @at-root .light-mode .viewport .triangle {
         stroke: $level-triangle-light;
       }
@@ -168,9 +171,6 @@ html {
         stroke: $level-triangle-dark;
       }
 
-      fill: none;
-      stroke-width: 0.1;
-      // stroke-linecap: round;
     }
 
     .nav-graph-node {
@@ -221,7 +221,8 @@ html {
         
         @at-root .light-mode .viewport .meta-circ {
           stroke: rgba(0, 0, 0, 0.5);
-          fill: rgba(200, 0, 0, 0.1);
+          // fill: rgba(200, 0, 0, 0.1);
+          fill: none;
         }
         @at-root .dark-mode .viewport .meta-circ {
           stroke: rgba(200, 200, 200, 0.5);
