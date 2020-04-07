@@ -134,14 +134,19 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   x2={position.x - 5}
                   y2={position.y}
                 />
-              )}
-            <circle
-              // The meta's handle
-              className={css.metaHandle}
-              cx={position.x}
-              cy={position.y}
-              r={metaPointRadius}
-            />
+              )
+            }
+            {
+              !groups[groupKey].hasTag('icon') && (
+                <circle
+                  // The meta's handle
+                  className={css.metaHandle}
+                  cx={position.x}
+                  cy={position.y}
+                  r={metaPointRadius}
+                />
+              )
+            }
             {metas.map(({ key, light, rect, trigger, physical, icon }) => (
               <g key={key}>
                 {
