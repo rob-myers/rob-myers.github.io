@@ -1,8 +1,7 @@
 # TODO
 
 - avoid floor plan art, stick to icons
-- can navigate to icons with a `circ` intersecting navigable?
-- icons have light/dark version
+- more icons + each has light/dark version
 - improve lights in light-mode
   - shade level if lights are present
   - lights lighten areas
@@ -302,3 +301,4 @@
 - meta `icon` scaled/offset correctly
 - Try placing icons next to walls outside navigable
 - metas `horiz` and `vert` (rect tags)
+- meta `cut` (rect tag)

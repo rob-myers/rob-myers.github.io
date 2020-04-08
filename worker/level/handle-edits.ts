@@ -20,7 +20,7 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
 import { tileDim, smallTileDim, floorInset, navTags, rebuildTags, doorOutset } from '@model/level/level-params';
 import { sendMetas, sendPreNavFloors } from './handle-requests';
-import { updateNavGraph, getDoorRects, getHorizVertSegs } from './handle-nav';
+import { updateNavGraph, getDoorRects, getHorizVertSegs, getCutRects } from './handle-nav';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -93,11 +93,7 @@ export function handleLevelToggles(levelUid: string) {
                     : Rect2.from(Vector2.from(u).add(norm.clone().scale(smallTileDim)), Vector2.from(v));
                   tileFloors = Poly2.xor(tileFloors, rect.poly2).map(x => redact(x));
                 } else if (!(hasLeftTile || hasRightTile)) {
-                  /**
-                   * No adjacent tiles so ensure removed,
-                   * e.g. inverting large tile can leave hanging walls.
-                   */
-                  delete wallSeg[key];
+                  delete wallSeg[key]; // No adjacent tiles so ensure removed.
                 } else {
                   wallSeg[key] ? delete wallSeg[key] : wallSeg[key] = [u, v];
                 }
@@ -114,9 +110,9 @@ export function handleLevelToggles(levelUid: string) {
           wallSeg,
         }));
 
+        computeTilesSansCuts(levelUid);
         computeInternalWalls(levelUid);
         sendPreNavFloors(levelUid);
-
         updateLights(levelUid);
         computeNavFloors(levelUid);
         return null;
@@ -189,11 +185,11 @@ export function handleMetaUpdates(levelUid: string) {
       filter(({ rebuildFloors, updateNav }) => {
 
         if (rebuildFloors) {
+          computeTilesSansCuts(levelUid);
           computeInternalWalls(levelUid);
           sendPreNavFloors(levelUid);
           computeNavFloors(levelUid);
         }
-
         updateLights(levelUid);
         sendMetas(levelUid);
 
@@ -207,6 +203,15 @@ export function handleMetaUpdates(levelUid: string) {
         updateNavGraph(levelUid);
       }),
     );
+}
+
+function computeTilesSansCuts(levelUid: string) {
+  const { tileFloors } = getLevel(levelUid)!;
+  const tilesSansCuts = Poly2.cutOut(
+    getCutRects(levelUid).map(rect => rect.poly2),
+    tileFloors,
+  ).map(x => redact(x));
+  dispatch(Act.updateLevel(levelUid, { tilesSansCuts }));
 }
 
 /**
@@ -240,27 +245,26 @@ function computeInternalWalls(levelUid: string) {
 
 
 function computeNavFloors(levelUid: string) {
-  const { tileFloors, wallSeg } = getLevel(levelUid)!;
+  const { tilesSansCuts, wallSeg } = getLevel(levelUid)!;
   const wallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
 
   /**
    * Compute unnavigable areas induced by internal walls i.e.
    * 1. outset the walls (which are actually line segments).
-   * 2. cut out any doorways specified via metas.
+   * 2. cut out any doors specified via metas.
    */
   const outsetWalls = Poly2.cutOut(
     getDoorRects(levelUid).map(rect => rect.poly2),
-    wallSegs.map(([u, v]) =>
-      new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2),
+    wallSegs.map(([u, v]) => new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2),
   );
   /**
    * The navigable area is obtained by:
-   * 1. insetting `tileFloors` (accounts for external walls).
+   * 1. insetting `tileFloorsSansCuts` (accounts for external walls).
    * 2. cutting out `outsetWalls` (accounts for internal walls).
    */
   const navFloors = Poly2.cutOut(
     outsetWalls,
-    tileFloors.flatMap(x => x.createInset(floorInset)),
+    tilesSansCuts.flatMap(x => x.createInset(floorInset)),
   );
   
   dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));

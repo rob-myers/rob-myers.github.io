@@ -36,17 +36,11 @@ export function ensureFloydWarshall(levelUid: string) {
   });
 }
 
-/**
- * Compute steiner points from metas.
- */
-function getMetaSteiners(levelUid: string) {
-  const { floors, metaGroups } = getLevel(levelUid)!;
-  return  Object.values(metaGroups)
-    .filter((metaGroup) => metaGroup.hasTag('steiner'))
-    .reduce<{ [polyId: number]: Vector2[] }>((agg, { position: p }) => {
-    const polyId = floors.findIndex(floor => floor.contains(p));
-    return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;
-  }, {});
+export function getCutRects(levelUid: string) {
+  const { metaGroups } = getLevel(levelUid)!;
+  return Object.values(metaGroups)
+    .flatMap(({ metas }) => metas.filter(({ physical, rect }) => physical === 'cut' && rect))
+    .map(({ rect }) => rect!.clone());
 }
 
 export function getDoorRects(levelUid: string) {
@@ -73,6 +67,20 @@ export function getHorizVertSegs(levelUid: string) {
     )
   , [] as [Vector2, Vector2][]);
 }
+
+/**
+ * Compute steiner points from metas.
+ */
+function getMetaSteiners(levelUid: string) {
+  const { floors, metaGroups } = getLevel(levelUid)!;
+  return  Object.values(metaGroups)
+    .filter((metaGroup) => metaGroup.hasTag('steiner'))
+    .reduce<{ [polyId: number]: Vector2[] }>((agg, { position: p }) => {
+    const polyId = floors.findIndex(floor => floor.contains(p));
+    return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;
+  }, {});
+}
+
 
 /**
  * Update navigation i.e. triangulation.

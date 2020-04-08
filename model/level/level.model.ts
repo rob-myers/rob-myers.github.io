@@ -19,11 +19,13 @@ export interface LevelState {
   key: string;
   /** Floor induced by tiles, including un-navigable areas */
   tileFloors: Redacted<Poly2>[];
+  /** `tileFloors` without rects specified by 'cut' metas */
+  tilesSansCuts: Redacted<Poly2>[];
   /** Line segments aligned to refined grid */
   wallSeg: Record<string, [Vector2Json, Vector2Json]>;
   /** Actual wall line segments, taking doorways into account */
   innerWalls: [Vector2, Vector2][];
-  /** Navigable polygon induced by tileFloors, walls and inset amount */
+  /** Navigable polygon induced by tileFloors, walls, inset amount and metas */
   floors: Redacted<Poly2>[];
   /** Tile/wall toggle handler */
   tileToggleSub: null | Redacted<Subscription>;
@@ -41,6 +43,7 @@ export function createLevelState(uid: string): LevelState {
   return {
     key: uid,
     tileFloors: [],
+    tilesSansCuts: [],
     wallSeg: {},
     innerWalls: [],
     floors: [],

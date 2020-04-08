@@ -11,6 +11,7 @@ const isIconTag = (tag: string): tag is IconType => tag in iconLookup;
 
 const rectTagsLookup = {
   circ: null,
+  cut: null,
   door: null,
   horiz: null,
   light: null,
@@ -22,7 +23,7 @@ const rectTagsLookup = {
 const isRectTag = (tag: string): tag is RectTag => tag in rectTagsLookup;
 type RectTag = keyof typeof rectTagsLookup; 
 type TriggerType =  Extract<RectTag, 'circ' | 'rect'>;
-type PhysicalType = Extract<RectTag, 'door' | 'horiz' | 'pickup' | 'vert'>;
+type PhysicalType = Extract<RectTag, 'cut' | 'door' | 'horiz' | 'pickup' | 'vert'>;
 
 export const dimTagRegex = /^r-(\d+)(?:-(\d+))?$/;
 const isDimTag = (tag: string) => dimTagRegex.test(tag);
@@ -116,6 +117,10 @@ export class LevelMeta {
     switch(tag) {
       case 'circ': {
         this.trigger = 'circ';
+        break;
+      }
+      case 'cut': {
+        this.physical = 'cut';
         break;
       }
       case 'door': {
@@ -276,6 +281,8 @@ export class LevelMetaGroup {
           meta.physical = null;
         } else if (update.tag === 'icon' || isIconTag(update.tag)) {
           meta.icon = null;
+        } else if (update.tag === 'light') {
+          meta.light = null;
         }
         break;
       }

@@ -108,11 +108,11 @@ export function sendMetas(levelUid: string) {
 }
 
 export function sendPreNavFloors(levelUid: string) {
-  const { tileFloors, innerWalls } = getLevel(levelUid)!;
+  const { tilesSansCuts, innerWalls } = getLevel(levelUid)!;
   ctxt.postMessage({
     key: 'send-level-layers',
     levelUid,
-    tileFloors: tileFloors.map(({ json }) => json),
+    tileFloors: tilesSansCuts.map(({ json }) => json),
     wallSegs: innerWalls.map(([u, v]) => [u.json, v.json]),
   });
 }
