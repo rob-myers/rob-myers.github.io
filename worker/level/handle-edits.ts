@@ -215,14 +215,17 @@ function computeTilesSansCuts(levelUid: string) {
 }
 
 /**
- * Compute internal walls, taking door/horiz/vert into account.
+ * Compute internal walls, taking cut/door/horiz/vert metas into account.
  * To use polygon operations we temp convert wall segs to thin rectangles.
- * We treat horiz/vert separately to avoid them being joined together.
+ * We treat horizontal/vertical separately to avoid them being joined together.
  */
 function computeInternalWalls(levelUid: string) {
   const { wallSeg } = getLevel(levelUid)!;
+  /** Wall segs from grid, or 'horiz' or 'vert' metas */
   const wallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
-  const doorPolys = getDoorRects(levelUid).map(rect => rect.outset(doorOutset).poly2);
+  /** We'll cut out 'door' metas (outset) and 'cut' metas (not outset) */
+  const cuttingPolys = getDoorRects(levelUid).map(rect => rect.outset(doorOutset).poly2)
+    .concat(getCutRects(levelUid).map(rect => rect.poly2));
 
   const { hRects, vRects } = wallSegs.reduce(
     (agg, [u, v]) => ({
@@ -234,9 +237,9 @@ function computeInternalWalls(levelUid: string) {
     { hRects: [] as Rect2[], vRects: [] as Rect2[] },
   );
 
-  const hWalls = Poly2.cutOut(doorPolys, hRects.map(rect => rect.poly2))
+  const hWalls = Poly2.cutOut(cuttingPolys, hRects.map(rect => rect.poly2))
     .map<[Vector2, Vector2]>(({ bounds }) => [bounds.topLeft, bounds.topRight]);
-  const vWalls = Poly2.cutOut(doorPolys, vRects.map(rect => rect.poly2))
+  const vWalls = Poly2.cutOut(cuttingPolys, vRects.map(rect => rect.poly2))
     .map<[Vector2, Vector2]>(({ bounds }) => [bounds.topLeft, bounds.bottomLeft]);
 
   dispatch(Act.updateLevel(levelUid, { innerWalls: hWalls.concat(vWalls) }));
