@@ -5,7 +5,7 @@ import { createOsAct, createOsThunk, OsThunkAct } from '@model/os/os.redux.model
 import { ProcessVar, VarFlags, ToProcVar, NamedFunction, BasePositionalVar, PositionalProcVar } from '@model/os/process.model';
 import { State } from './os.duck';
 import { updateLookup, addToLookup } from '@model/redux.model';
-import { mapValues, testNever, last, flatten, withoutProperty } from '@model/generic.model';
+import { mapValues, testNever, last, flatten, withoutProperty, isStringInt } from '@model/generic.model';
 import { createPositional, cloneVar } from '@os-service/process-var.service';
 import { closeFd } from '@os-service/filesystem.service';
 import { osUpdateProcessAct } from './process.os.duck';
@@ -455,13 +455,24 @@ export const osAssignVarThunk = createOsThunk<OsAct, AssignVarThunk>(
         next = processVar.recastVar(curr, nextKey, flags);
 
         if (act.value !== undefined) {// Not `declare x`.
-          processVar.assignVarDefault(next, act.value);
-          if (act.append) {// x+=y.
-            if (curr.key === 'string' && next.key === 'string') {
-              next.value = (curr.value || '') + (next.value || '');
-            } else if (curr.key === 'integer' && next.key === 'integer') {
-              next.value = (curr.value || 0) + (next.value || 0);
-            } 
+          if (act.append && Array.isArray(curr.value) && Array.isArray(next.value)) {
+            // x+=y where x is an array
+            if (typeof curr.value[0] === 'string') {
+              processVar.assignVarItem(next, '0', curr.value[0] + act.value);
+            } else {
+              const delta = isStringInt(act.value) ? Number(act.value) : 0;
+              processVar.assignVarItem(next, '0', (curr.value[0] + delta).toString());
+            }
+          } else {
+            processVar.assignVarDefault(next, act.value);
+            if (act.append) {// x+=y
+              if (curr.key === 'string' && next.key === 'string') {
+                next.value = (curr.value || '') + (next.value || '');
+              } else if (curr.key === 'integer' && next.key === 'integer') {
+                next.value = (curr.value || 0) + (next.value || 0);
+              } 
+            }
+
           }
         }
         break;

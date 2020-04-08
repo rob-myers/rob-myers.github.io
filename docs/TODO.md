@@ -1,11 +1,9 @@
 # TODO
 
-- avoid floor plan art, stick to icons
-- more icons + each has light/dark version
-- improve lights in light-mode
-  - shade level if lights are present
-  - lights lighten areas
+- improve light-mode lights: shade level if lights are present, lights lighten areas
 - move meta dialog to front on open/click
+
+- in 3d, wall segs should be thin rects
 
 - navigation:
   - line-of-walk test via negation of polys.
@@ -21,6 +19,9 @@
   - for `goto` intend `STOP`/`CONT` to pause/continue animations
   - can pause entire session -- but how to pause a `sleep`?
     - if finishes make it sleep the 'difference' and immediately pause it
+
+- avoid floor plan art, stick to icons
+- more icons and each has light/dark version
 
 - write docs:
   - describe level editor features
@@ -302,3 +303,7 @@
 - Try placing icons next to walls outside navigable
 - metas `horiz` and `vert` (rect tags)
 - meta `cut` (rect tag)
+- BUG serialization of array `x=(foo bar baz)` and `x+=y`
+- BUG `x=(foo bar baz); x+=qux` not working (outputs `qux bar baz`)
+- BUG: declare doesn't print number arrays correctly
+- BUG `x=(foo bar baz); x+=( qux )` should append

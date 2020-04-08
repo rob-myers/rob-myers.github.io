@@ -639,17 +639,17 @@ export class TermService {
         const contents = term.def.pairs.map(({ key, value }) => key
           ? `[${this.src(key)}]=${this.src(value)}`
           : this.src(value));
-        return `(${contents})`;
+        return `(${contents.join(' ')})`;
       }
       case CompositeType.assign: {
-        const { def, def: { varName } } = term;
+        const { def, def: { varName,  } } = term;
         switch (def.subKey) {
           case 'array':
             return `${varName}=${this.src(def.array)}`;
           case 'item':
-            return `${varName}[${this.src(def.index)}]=${this.src(def.value)}`;
+            return `${varName}[${this.src(def.index)}]${def.append ? '+' : ''}=${this.src(def.value)}`;
           case 'var':
-            return `${varName}=${def.value ? this.src(def.value) : ''}`;
+            return `${varName}${def.append ? '+' : ''}=${def.value ? this.src(def.value) : ''}`;
           default: throw testNever(def);
         }
       }

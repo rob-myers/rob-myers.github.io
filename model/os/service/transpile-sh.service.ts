@@ -188,6 +188,8 @@ export class TranspileShService {
         array: this.ArrayExpr(Array),
         varName: Name.Value,
         naked: Naked,
+        // x+=(baz qux)
+        append: Append,
       });
     } else if (Index) {
       return new AssignComposite({
@@ -559,10 +561,7 @@ export class TranspileShService {
     }
 
     // Must assign below.
-    let sub = null as null | ParameterDef<
-      ExpandComposite,
-      ArithmOpComposite | ExpandComposite
-    >;
+    let sub = null as null | ParameterDef<ExpandComposite, ArithmOpComposite | ExpandComposite>;
     const base = {
       // subKey: 'parameter' as 'parameter',
       expandKey: ExpandType.parameter as ExpandType.parameter,

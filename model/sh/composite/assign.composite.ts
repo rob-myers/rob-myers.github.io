@@ -1,5 +1,5 @@
 import { testNever } from '@model/generic.model';
-import { BaseAssignOpts, osAssignVarThunk } from '@store/os/declare.os.duck';
+import { BaseAssignOpts, osAssignVarThunk, osLookupVarThunk } from '@store/os/declare.os.duck';
 import { BaseCompositeTerm } from './base-composite';
 import { CompositeType, ExpandComposite } from '@model/os/term.model';
 import { ArrayComposite } from './array.composite';
@@ -96,7 +96,6 @@ export class AssignComposite extends BaseCompositeTerm<CompositeType.assign> {
 
   private async *assignArray(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
     if (this.def.subKey === 'array') {
-
       yield* this.runChild({ child: this.def.array, dispatch, processKey });
       const { pairs } = this.def.array.def;
 
@@ -105,8 +104,8 @@ export class AssignComposite extends BaseCompositeTerm<CompositeType.assign> {
          * Associative array via {declare -A}.
          * We also forward {this.associative} flag via {baseAssignOpts}.
          */
-        // Even if integer-valued.
-        const value = {} as Record<string, string>;
+        
+        const value = {} as Record<string, string>; // Even if integer-valued
         for (const { key, value: v } of pairs) {
           if (!key) {
             yield this.warn(`${this.def.varName}: ${v.value}: must use subscript when assigning associative array`);
@@ -119,7 +118,7 @@ export class AssignComposite extends BaseCompositeTerm<CompositeType.assign> {
         /**
          * Vanilla array.
          */
-        const values = [] as string[];// Even if integer-valued.
+        const values = [] as string[];
         let index = 0;
         pairs.map(({ key, value: { value }}) => {
           index = key && (
@@ -129,6 +128,12 @@ export class AssignComposite extends BaseCompositeTerm<CompositeType.assign> {
           values[index] = value;
           index++;
         });
+
+        if (this.def.append) {
+          const prevValue = dispatch(osLookupVarThunk({ processKey, varName: this.def.varName }));
+          Array.isArray(prevValue) && values.unshift(...(prevValue as any[]).map(String));
+        }
+
         dispatch(osAssignVarThunk({ processKey, ...this.declOpts, varName: this.def.varName, act: { key: 'array', value: values } }));
       }
     }
@@ -140,8 +145,8 @@ type AssignCompositeDef = (
   & AssignDef<ArrayComposite, ArithmOpComposite | ExpandComposite, ExpandComposite>
 );
 type AssignDef<ArrayType, OpType, WordType> = BaseAssignDef & (
-  // x=(foo bar) or x=([foo]=bar)
-  | { subKey: 'array'; array: ArrayType }
+  // x=(foo bar) or x=([foo]=bar) or x+=(baz qux)
+  | { subKey: 'array'; array: ArrayType; append: boolean }
   // x[i]=y or x[i]= or x[i]+=
   | { subKey: 'item'; append: boolean; index: OpType; value: null | WordType }
   // x=y or x= or x+=

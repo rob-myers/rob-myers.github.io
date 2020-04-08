@@ -469,8 +469,17 @@ export function getVarPredicates(v: ProcessVar): ProcVarPredicate[] {
 export function printVar(v: ProcessVar): string {
   switch (v.key) {
     case 'integer[]':
+    case 'to-integer': {
+      const lookup = v.value as Record<string, number>;
+      if (lookup) {
+        return `(${Object.keys(lookup).map((i) =>
+          `[${i}]=${lookup[i]}`)
+          .join(' ')
+        })`;
+      }
+      return '';
+    }
     case 'string[]':
-    case 'to-integer':
     case 'to-string': {
       const lookup = v.value as Record<string, string>;
       if (lookup) {
