@@ -17,7 +17,7 @@ html {
     background: $level-bg-light; 
   }
   @at-root .root.dark-mode {
-    background: $level-bg-dark; 
+    background: $level-bg-dark;
   }
 
   .keys {
@@ -217,7 +217,7 @@ html {
           stroke: #555;
         }
         @at-root .dark-mode .viewport .meta-handle {
-          fill: #222;
+          fill: #888;
           stroke: #444;
         }
       }

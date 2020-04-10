@@ -1,3 +1,10 @@
-We need a story/theme/aim to bring it all to life.
+A catalogue of human behaviours, ranging from bot behaviours to arguments over who'll do the washing up.
 
-We can build the game openly on our website via our bash implementation, encouraging users to test and aid design. But there must be _imagination_ and _direction_.
+- Go to point
+- Find item and bring back
+- Following
+- Hiding
+- Argument over chores
+- Answering a phone
+
+Each behaviour will have variants and comments.

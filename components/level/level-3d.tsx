@@ -5,6 +5,7 @@ import { subscribeToWorker } from '@model/level/level.worker.model';
 import { Poly2 } from '@model/poly2.model';
 import { Vector2 } from '@model/vec2.model';
 import css from './level.scss';
+import { Rect2 } from '@model/rect2.model';
 
 const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
   const containerEl = useRef<HTMLDivElement>(null);
@@ -18,15 +19,26 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
   useEffect(() => {
     const sub = subscribeToWorker(worker, (msg) => {
       if (msg.key === 'send-level-layers' && msg.levelUid === levelUid) {
-        const wallSegs = msg.wallSegs.map<[Vector2, Vector2]>(
-          ([u, v]) => [Vector2.from(u), Vector2.from(v)]);
-        const outerWallSegs = ([] as [Vector2, Vector2][]).concat(
-          ...msg.tileFloors.map(x => Poly2.fromJson(x)).map(({ lineSegs }) => lineSegs));
+
+        // Each inner wall induces 4 planes
+        const innerWallSegs = msg.wallSegs
+          .map(([u, v]) => [Vector2.from(u), Vector2.from(v)])
+          .map(([u, v]) => Rect2.from(u, v).outset(0.5))
+          .flatMap(({ topLeft, topRight, bottomRight, bottomLeft }) => [
+            [topRight, topLeft],
+            [bottomRight, topRight],
+            [bottomLeft, bottomRight],
+            [topLeft, bottomLeft],
+          ] as [Vector2, Vector2][]);
+        
+        // Must inset outer walls to match inner walls
+        const outerWallSegs = msg.tileFloors
+          .flatMap(x => Poly2.fromJson(x).createInset(0.5))
+          .flatMap(({ lineSegs }) => lineSegs);
 
         setWallSegs(
-          wallSegs.map(([u, v]) => ({ u, v, backface: true })).concat(
+          innerWallSegs.map(([u, v]) => ({ u, v, backface: false })).concat(
             outerWallSegs.map(([u, v]) => ({ u, v, backface: false }))
-            // outerWallSegs.map(([u, v]) => ({ u, v, backface: true }))
           )
         );
       }
@@ -34,8 +46,8 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
     worker.postMessage({ key: 'request-level-data', levelUid });
 
     const onResize = () => {
-      const viewportEl = containerEl.current!.parentElement!.parentElement!;
-      setDimension(new Vector2(viewportEl.clientWidth, viewportEl.clientHeight));
+      const viewportEl = containerEl.current?.parentElement?.parentElement;
+      viewportEl && setDimension(new Vector2(viewportEl.clientWidth, viewportEl.clientHeight));
     };
     window.addEventListener('resize', onResize);
     onResize();
