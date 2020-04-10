@@ -152,7 +152,7 @@ html {
       }
       @at-root .dark-mode .viewport .navigable {
         fill: $level-navigable-dark;
-        stroke: rgba(0, 0, 0, 0.5);
+        stroke: rgba(100, 100, 100, 0.1);
       }
       
       stroke-width: 0.3;
@@ -193,26 +193,32 @@ html {
     }
   
     .cursor {
-      fill: rgba(180, 180, 220, 0.2);
       pointer-events: none;
     
       .highlight {
         fill: rgba(200, 0, 0, 0.5);
+      }
+
+      @at-root .light-mode .viewport .cursor {
+        fill: rgba(180, 180, 220, 0.2);
+      }
+      @at-root .dark-mode .viewport .cursor {
+        fill: none;
       }
     }
     
     .metas {
       
       .meta-handle {
-        stroke-width: 0.2;
+        stroke-width: 0.1;
 
         @at-root .light-mode .viewport .meta-handle {
           fill: white;
           stroke: #555;
         }
         @at-root .dark-mode .viewport .meta-handle {
-          fill: black;
-          stroke: #666;
+          fill: #222;
+          stroke: #444;
         }
       }
 
@@ -294,6 +300,7 @@ html {
           stroke: $level-grid-dark;
         }
         &-refined-path {
+          stroke-width: 0.2;
           stroke: $level-grid-refined-dark;
         }
       }
@@ -358,7 +365,7 @@ html {
     .container-three-d {
       pointer-events: none;
       position: absolute;
-      perspective: 1000px;
+      perspective: 10000px;
 
       .wall {
         position: absolute;
@@ -366,7 +373,7 @@ html {
         height: 10000px;
 
         @at-root .light-mode .viewport .container-three-d .wall {
-          background: #000;
+          background: #fff;
         }
         @at-root .dark-mode .viewport .container-three-d .wall {
           background: #fff;

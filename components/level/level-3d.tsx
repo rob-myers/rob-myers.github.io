@@ -12,8 +12,6 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
 
   const mouseWorld = useSelector(({ level: { instance } }) => instance[levelUid].mouseWorld);
   const worker = useSelector(({ level: { worker } }) => worker)!;
-  const zoomFactor = useSelector(({ level: { instance } }) => instance[levelUid].zoomFactor);
-
   const [wallSegs, setWallSegs] = useState([] as { u: Vector2; v: Vector2; backface: boolean }[]);
   const [dimension, setDimension] = useState<Vector2>();
 
@@ -73,7 +71,6 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
         perspectiveOrigin: `${100 * (mouseWorld.x / dimension.x)}% ${100 * (mouseWorld.y / dimension.y)}%`,
         width: dimension.x,
         height: dimension.y,
-        perspective: 8000  - (500 * zoomFactor),
       }}
     >
       {geometry}

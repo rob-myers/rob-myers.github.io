@@ -1,9 +1,11 @@
 # TODO
 
-- improve light-mode lights: shade level if lights are present, lights lighten areas
-- move meta dialog to front on open/click
-
-- in 3d, wall segs should be thin rects
+- shell signals
+  - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
+  - `fg` puts process into foreground
+  - for `goto` intend `STOP`/`CONT` to pause/continue animations
+  - can pause entire session -- but how to pause a `sleep`?
+    - if finishes make it sleep the 'difference' and immediately pause it
 
 - navigation:
   - line-of-walk test via negation of polys.
@@ -11,14 +13,13 @@
   - initially Floyd-Warshall does pairwise line-of-walk checks for connectivity,
     skipping any further computation during algorithm
   - path simplification does line-of-walk simplification
-  - reduce number of start/end point by restricting to 'closest 4 points' (needn't be a rect)
+  - reduce number of start/end point by restricting to 'closest 4 corner points' (needn't be a rect)
 
-- shell signals
-  - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
-  - `fg` puts process into foreground
-  - for `goto` intend `STOP`/`CONT` to pause/continue animations
-  - can pause entire session -- but how to pause a `sleep`?
-    - if finishes make it sleep the 'difference' and immediately pause it
+- improve light-mode lights:
+  - shade level if lights are present
+  - lights lighten areas
+- move meta dialog to front on open/click
+- in 3d, wall segs should be thin rects
 
 - avoid floor plan art, stick to icons
 - more icons and each has light/dark version
