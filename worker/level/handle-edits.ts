@@ -279,14 +279,17 @@ function computeNavFloors(levelUid: string) {
   return navFloors;
 }
 
-/**
- * We permit lights positioned on an external wall via slight outset.
- * However, we don't permit lights positioned on an internal wall.
- */
 function updateLights(levelUid: string) {
   const { tileFloors, innerWalls, metaGroups: metas } = getLevel(levelUid)!;
-  const outsetFloors = tileFloors.map(floor => floor.createOutset(0.01)[0]);
-  const lineSegs = innerWalls.concat(outsetFloors.flatMap(x => x.lineSegs));
+  const outsetFloors = tileFloors.flatMap(floor => floor.createInset(0.5));
+  const innerWallSegs = innerWalls.map(([u, v]) => Rect2.from(u, v).outset(0.5))
+    .flatMap(({ topLeft, topRight, bottomRight, bottomLeft }) => [
+      [topRight, topLeft],
+      [bottomRight, topRight],
+      [bottomLeft, bottomRight],
+      [topLeft, bottomLeft],
+    ] as [Vector2, Vector2][]);
+  const lineSegs = innerWallSegs.concat(outsetFloors.flatMap(x => x.lineSegs));
   
   Object.values(metas)
     .flatMap(({ metas }) => metas)

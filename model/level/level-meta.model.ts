@@ -132,10 +132,9 @@ export class LevelMeta {
         break;
       }
       case 'light': {
-        this.light = new LevelLight(
-          position,
-          this.rect ? this.rect.dimension : undefined,
-        );
+        if (this.rect) {
+          this.light = new LevelLight(position, this.rect.dimension);
+        }
         break;
       }
       case 'pickup': {
