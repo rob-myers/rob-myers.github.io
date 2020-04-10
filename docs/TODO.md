@@ -308,3 +308,4 @@
 - BUG `x=(foo bar baz); x+=qux` not working (outputs `qux bar baz`)
 - BUG: declare doesn't print number arrays correctly
 - BUG `x=(foo bar baz); x+=( qux )` should append
+- BUG: `cat` + enter + `foo` + enter should show `foo` immediately

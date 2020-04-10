@@ -499,6 +499,8 @@ export const osReadThunk = createOsThunk<OsAct, ReadThunk>(
            */
           iNode.awakenWriters();
           return { eof: false, toPromise: null };
+        } else if (iNode.type === INodeType.tty) {
+          return { eof: false, toPromise: null };
         }
       }
 
