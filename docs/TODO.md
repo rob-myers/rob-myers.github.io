@@ -15,11 +15,7 @@
   - path simplification does line-of-walk simplification
   - reduce number of start/end point by restricting to 'closest 4 corner points' (needn't be a rect)
 
-- improve light-mode lights:
-  - shade level if lights are present
-  - lights lighten areas
 - move meta dialog to front on open/click
-- in 3d, wall segs should be thin rects
 
 - avoid floor plan art, stick to icons
 - more icons and each has light/dark version
@@ -309,3 +305,4 @@
 - BUG: declare doesn't print number arrays correctly
 - BUG `x=(foo bar baz); x+=( qux )` should append
 - BUG: `cat` + enter + `foo` + enter should show `foo` immediately
+- in 3d, wall segs should be thin rects

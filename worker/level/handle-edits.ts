@@ -280,8 +280,8 @@ function computeNavFloors(levelUid: string) {
 }
 
 function updateLights(levelUid: string) {
-  const { tileFloors, innerWalls, metaGroups: metas } = getLevel(levelUid)!;
-  const outsetFloors = tileFloors.flatMap(floor => floor.createInset(0.5));
+  const { tilesSansCuts, innerWalls, metaGroups: metas } = getLevel(levelUid)!;
+  const outsetFloors = tilesSansCuts.flatMap(floor => floor.createInset(0.5));
   const innerWallSegs = innerWalls.map(([u, v]) => Rect2.from(u, v).outset(0.5))
     .flatMap(({ topLeft, topRight, bottomRight, bottomLeft }) => [
       [topRight, topLeft],
