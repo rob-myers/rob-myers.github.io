@@ -309,7 +309,7 @@ export class ParseShService {
     ...this.base({ Pos, End }),
     type: 'CoprocClause',
     Coproc: this.pos(Coproc),
-    Name: this.Lit(Name),
+    Name: Name ? this.Lit(Name) : null,
     Stmt: this.Stmt(Stmt),
   });
   

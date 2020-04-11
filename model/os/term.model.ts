@@ -82,6 +82,7 @@ import { TrueBuiltin } from '../sh/builtin/true.builtin';
 import { TypeBuiltin } from '../sh/builtin/type.builtin';
 import { UnsetBuiltin } from '../sh/builtin/unset.builtin';
 import { WcBinary } from '../sh/binary/wc.binary';
+import { CoprocComposite } from '@model/sh/composite/coproc.composite';
 
 export type Term = (
   // | LeafTermJSON
@@ -131,6 +132,7 @@ export type CompositeTerm = (
   | BlockComposite
   | CaseComposite
   | CompoundComposite
+  | CoprocComposite
   | DeclareBuiltinTerm
   | ExpandComposite
   | FunctionComposite
@@ -160,6 +162,7 @@ export enum CompositeType {
   builtin= 'builtin',
   case= 'case',
   compound= 'compound',
+  coproc= 'coproc',
   declare= 'declare',
   expand= 'expand',
   if= 'if',

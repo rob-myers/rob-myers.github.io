@@ -41,6 +41,7 @@ import { CaseComposite, CasePart } from '@model/sh/composite/case.composite';
 import { CompoundComposite } from '@model/sh/composite/compound.composite';
 import { FunctionComposite } from '@model/sh/composite/function.composite';
 import { IfComposite, IfPart } from '@model/sh/composite/if.composite';
+import { CoprocComposite } from '@model/sh/composite/coproc.composite';
 
 export class TranspileShService {
 
@@ -375,6 +376,7 @@ export class TranspileShService {
         /**
          * TODO
          */
+        child = this.CoprocClause(Cmd);
         break;
       }
       case 'DeclClause': child = this.DeclClause(Cmd); break;
@@ -400,6 +402,15 @@ export class TranspileShService {
       background,
       negated,
       sourceMap,
+    });
+  }
+
+  public CoprocClause({ Name, Stmt, Pos, End }: Sh.CoprocClause) {
+    return new CoprocComposite({
+      key: CompositeType.coproc,
+      child: this.Stmt(Stmt),
+      name: Name?.Value,
+      sourceMap: this.sourceMap({ Pos, End }),
     });
   }
 

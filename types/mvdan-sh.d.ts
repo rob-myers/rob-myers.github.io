@@ -477,7 +477,7 @@ declare namespace MvdanSh {
   type CoprocClauseGeneric<Base, Pos, Op> = Base & {
     type: 'CoprocClause';
     Coproc: Pos;
-    Name: LitGeneric<Base, Pos, Op>;
+    Name: null | LitGeneric<Base, Pos, Op>;
     Stmt: StmtGeneric<Base, Pos, Op>;
   }
   /**

@@ -13,29 +13,3 @@ _Ok, so... a bunch of Game AI articles?_
 
 
 ### Interactive programming language
-
-
-
-
-<!-- 
-
-some important problems in Game AI.
-
-> How can we simulate actors in a 2D top-down environment?
-
-> How can we share
-
-Often one tries
-
-
-Rather than relying upon pseudo-code
-
-
-implementing it, viewing it, debugging it, extending it:
-
-
-Instead of pseudo-code, one can run code directly on the site. 
-
-We need other sources to base our work on:
-- Game AI books
-- ... -->

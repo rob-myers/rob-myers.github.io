@@ -88,6 +88,7 @@ import { NamedFunction } from '@model/os/process.model';
 import { WcBinary } from '@model/sh/binary/wc.binary';
 import { GetOpts } from '../os.model';
 import { HistoryBuiltin } from '@model/sh/builtin/history.builtin';
+import { CoprocComposite } from '@model/sh/composite/coproc.composite';
 
 export type ObservedType = (
   | undefined
@@ -267,6 +268,13 @@ export class TermService {
         return new CompoundComposite({
           ...term.def,
           child: this.cloneTerm(term.def.child),
+        });
+      }
+      case CompositeType.coproc: {
+        return new CoprocComposite({
+          ...term.def,
+          child: this.cloneTerm(term.def.child),
+          name: term.def.name,
         });
       }
       case CompositeType.declare: {
@@ -692,6 +700,13 @@ export class TermService {
           term.def.background && '&',
         ].filter(Boolean).join(' ');
       }
+      case CompositeType.coproc: {
+        return [
+          'coproc',
+          term.def.name,
+          this.src(term.def.child),
+        ].filter(Boolean).join(' ');
+      }
       case CompositeType.declare: {
         // Needs clarification
         return [
@@ -943,6 +958,10 @@ export class TermService {
       case CompositeType.compound: {
         this.walkTerm(node.def.child, func);
         node.def.redirects.forEach((redirect) => this.walkTerm(redirect, func));
+        return;
+      }
+      case CompositeType.coproc: {
+        this.walkTerm(node.def.child, func);
         return;
       }
       case CompositeType.declare: {
