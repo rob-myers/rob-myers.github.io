@@ -28,9 +28,7 @@ export class TypeBuiltin extends BaseBuiltinComposite<BuiltinOtherType.type> {
         yield this.write(`${command} is a function`);
         yield this.write([
           `${namedFunc.key} ()`,
-          '{',
-          ...(namedFunc.src ? namedFunc.src.split('\n').map((line) => `  ${line}`) : []),
-          '}',
+          ...(namedFunc.src ? namedFunc.src.split('\n').map((line) => `${line}`) : ['{}']),
         ]);
       } else if (isBuiltinSpecialCommand(command) || isBuiltinOtherCommand(command)) {
         yield this.write(`${command} is a shell builtin`);
