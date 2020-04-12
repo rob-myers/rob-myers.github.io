@@ -1,7 +1,5 @@
 # TODO
 
-
-
 - shell signals
   - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
   - `fg` puts process into foreground

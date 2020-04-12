@@ -2,7 +2,6 @@ import { BaseIteratorTerm, BaseIteratorTermDef } from './base-iterator';
 import { IteratorType, Term } from '@model/os/term.model';
 import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
-import { pause } from '@model/generic.model';
 
 /**
  * while
@@ -19,12 +18,9 @@ export class WhileIterator extends BaseIteratorTerm<IteratorType.while> {
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
     const { guard, body } = this.def;
-    let numIterations = 0;
 
     while (true) {
-      if (!(numIterations++ % 10)) {
-        await pause(10); // Permit e.g. SIGINT
-      }
+      await this.throttle();
 
       yield* this.runChild({ child: guard, dispatch, processKey });
 

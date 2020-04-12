@@ -3,8 +3,12 @@ import { BaseTerm, BaseTermDef } from '@model/sh/base-term';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { ObservedType } from '@os-service/term.service';
 import { iterateTerm } from '@os-service/term.util';
+import { pause } from '@model/generic.model';
 
 export abstract class BaseIteratorTerm<ExactKey extends IteratorType> extends BaseTerm<ExactKey> {
+  protected pauseIterations = 1000;
+  protected numIterations = 0;
+
   public readonly type = 'iterator';
 
   constructor(public def: BaseIteratorTermDef<ExactKey>) {
@@ -35,6 +39,13 @@ export abstract class BaseIteratorTerm<ExactKey extends IteratorType> extends Ba
     processKey: string;
   }): AsyncIterableIterator<ObservedType> {
     yield* iterateTerm({term: child, dispatch, processKey});
+  }
+
+  protected async throttle() {
+    if (this.numIterations++ > this.pauseIterations) {
+      await pause(10); // Permit e.g. SIGINT
+      this.numIterations = 0;
+    }
   }
 
 }

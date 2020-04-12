@@ -12,12 +12,11 @@ export class ReadBuiltin extends BaseBuiltinComposite<BuiltinOtherType.read> {
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
     const buffer = [] as string[];
-
     // Read exactly one line, or EOF
     while((yield this.read(1, 0, buffer)) && !buffer.length);
     // Exit code 1 iff EOF
     this.exitCode = buffer.length ? 0 : 1;
-    
+
     // Extract words from line, handling undefined case (EOF).
     const [line] = buffer;
     const words = (line || '').trim().replace(/\s\s+/g, ' ').split(' ');

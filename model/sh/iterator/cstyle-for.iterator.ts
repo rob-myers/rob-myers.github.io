@@ -27,6 +27,8 @@ export class CstyleForIterator extends BaseIteratorTerm<IteratorType.cstyle_for>
     yield* this.runChild({ child: prior, ...base });
 
     while (true) {
+      await this.throttle();
+
       yield* this.runChild({ child: condition, ...base });
       if (condition.value === 0) {
         break;

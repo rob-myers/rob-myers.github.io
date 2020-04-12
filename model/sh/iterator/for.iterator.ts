@@ -25,6 +25,8 @@ export class ForIterator extends BaseIteratorTerm<IteratorType.for> {
     let stop = false;
 
     for (const item of items) {
+      await this.throttle();
+
       // Expand word.
       yield* this.runChild({ child: item, dispatch, processKey });
 
