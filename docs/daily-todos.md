@@ -6,3 +6,6 @@
 - Start implementing `ViewGraph` in `LevelWorker` i.e. data structure for ray-casting.
 
 ### Summary
+
+- Expand background: started explaining the language in more detail.
+- ...
