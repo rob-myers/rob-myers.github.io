@@ -1,4 +1,4 @@
-## Some slow exmaples
+## Some slow examples
 
 ```sh
 # 0.7s
@@ -40,7 +40,7 @@ time sum 100
 time sum 1000
 ```
 
-## Fast examples via new binary 'expr' (js eval wrapper)
+## Fast examples via binary `expr` (javascript eval wrapper)
 
 ```sh
 # 0.03s
@@ -55,4 +55,32 @@ time ( seq 100000 | expr -v 'x => eval(x.join("+"))' )
 time ( echo $( seq 100000 ) | expr -v '([x]) => eval(x.replace(new RegExp(" ", "g"), "+"))' )
 # 0.17s
 time ( seq 100000 | expr -vi 'x => x.reduce((sum, i) => sum + i, 0)' )
+```
+
+
+```sh
+# 0.24s
+time ( seq 100000 | expr -vi 'x => x.map(y => y + 1)' ) >foo
+# 0.2s
+time ( seq 100000 | expr -vi 'x => x.map(y => y + 1).toString()' ) >foo
+```
+
+
+## Useful functions
+
+```sh
+reverse() {
+  echo ${@} | expr -v '([x]) => Array.from(x).reverse().join("")'
+}
+reverse() {
+  expr "Array.from(\"${*}\").reverse().join('')"
+}
+sort() {
+  expr -v 'x => x.sort()'
+}
+cat unsorted | sort
+uniq() {
+  expr -v 'x => x.filter((y, i) => i === x.indexOf(y))'
+}
+cat duplicates | uniq
 ```

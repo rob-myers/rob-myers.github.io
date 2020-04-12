@@ -9,6 +9,7 @@ import { osMakeFifoThunk, osUnlinkFileThunk } from '@store/os/file.os.duck';
 import { osSpawnChildThunk, BaseSpawnDef, osStartProcessThunk, osWaiterThunk, osGetProcessThunk } from '@store/os/process.os.duck';
 import { osCloneTerm } from '@store/os/parse.os.duck';
 import { osSetSessionForegroundAct } from '@store/os/session.os.duck';
+import { osGetPositionalsThunk } from '@store/os/declare.os.duck';
 
 /**
  * pipe.
@@ -70,7 +71,7 @@ export class PipeComposite extends BaseCompositeTerm<CompositeType.pipe> {
         suspend: true,
         // If pipe launched interactively, put processes in new group `lastChildKey`
         specPgKey: interactive ? lastChildKey : undefined,
-        posPositionals: [],
+        posPositionals: dispatch(osGetPositionalsThunk({ processKey })).slice(1),
       }));
     }
 

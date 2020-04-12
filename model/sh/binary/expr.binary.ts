@@ -33,7 +33,19 @@ BinaryExecType.expr,
       input = this.operands.join(' ');
     }
 
-    yield this.write(`${eval(input)}`);
+    const result = eval(input);
+
+    if (typeof result === 'number' || typeof result === 'boolean') {
+      yield this.write(`${result}`);
+    } else if (Array.isArray(result)) {
+      if (typeof result[0] === 'number' || typeof result[0] === 'boolean') {
+        // Assume array has uniform type
+        yield this.write(result.map(x => `${x}`));
+      }
+      yield this.write(result.flatMap(x => `${x}`.replace(/\r+/g, '').split('\n')));
+    } else {
+      yield this.write(result.replace(/\r+/g, '').split('\n'));
+    }
   }
 
 }
