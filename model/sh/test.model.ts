@@ -51,5 +51,5 @@ export enum BinaryTestExtraType {
 }
 
 export function isExtraBinaryTest(x: string): x is BinaryTestExtraType {
-  return x in BinaryTestType || x in BinaryTestExtraType;
+  return x in BinaryTestExtraType;
 }

@@ -10,7 +10,7 @@ import { ProcessState, UnregisteredProcess, FromFdToOpenKey, ProcessSigHandler, 
 import { closeFd } from '@os-service/filesystem.service';
 import { State } from '@store/os/os.duck';
 import { osIncrementOpenAct, osReadThunk, osWriteThunk, IoToPromise, osOpenFileThunk } from '@store/os/file.os.duck';
-import { osExpandVarThunk, osAssignVarThunk, osRestrictToEnvThunk } from './declare.os.duck';
+import { osExpandVarThunk, osAssignVarThunk, osRestrictToEnvThunk, osPushPositionalsScopeAct } from './declare.os.duck';
 import { cloneVar } from '@os-service/process-var.service';
 import { OpenFileRequest } from '@model/os/file.model';
 import { osSetSessionForegroundAct } from './session.os.duck';
@@ -548,11 +548,16 @@ export const osSpawnChildThunk = createOsThunk<OsAct, SpawnChildThunk>(
       }
     }
 
+    // Replace cloned process with specified code
+    dispatch(osExecTermThunk({ processKey: childProcessKey, term, command }));
+
     if (subshell) {
       /**
        * Subshells inherit everything (cloned) including positional params.
        * They are also endowed with BASHPID because $$ won't be their pid.
        */
+      dispatch(osPushPositionalsScopeAct({ processKey: childProcessKey, posPositionals }));
+
       const childPid = dispatch(osGetProcessThunk({ processKey: childProcessKey })).pid;
       dispatch(osAssignVarThunk({
         processKey: childProcessKey,
@@ -564,7 +569,8 @@ export const osSpawnChildThunk = createOsThunk<OsAct, SpawnChildThunk>(
       // Restrict child process to environment vars/functions, and set positionals
       dispatch(osRestrictToEnvThunk({ processKey: childProcessKey, posPositionals }));
     }
-    // Export specified variables into child process
+
+    // Ensure specified env vars (can prefix a simple command)
     for (const { varName, varValue } of exportVars) {
       dispatch(osAssignVarThunk({
         processKey: childProcessKey,
@@ -573,15 +579,11 @@ export const osSpawnChildThunk = createOsThunk<OsAct, SpawnChildThunk>(
         exported: true,
       }));
     }
-    // Replace cloned process with specified code
-    dispatch(osExecTermThunk({ processKey: childProcessKey, term, command }));
 
-    if (!suspend) {
-      // Start child process
+    if (!suspend) { // Start child process
       dispatch(osStartProcessThunk({ processKey: childProcessKey }));
     }
-    if (!background) {
-      // Wait for child to terminate
+    if (!background) { // Wait for child to terminate
       return { ...dispatch(osWaiterThunk({ processKey, waitFor: [childProcessKey] })) };
     }
     // Inform parent of last background child

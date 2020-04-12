@@ -1,5 +1,7 @@
 # TODO
 
+
+
 - shell signals
   - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
   - `fg` puts process into foreground
@@ -306,3 +308,5 @@
 - BUG `x=(foo bar baz); x+=( qux )` should append
 - BUG: `cat` + enter + `foo` + enter should show `foo` immediately
 - in 3d, wall segs should be thin rects
+- Fix `foo() { echo ${1}; echo $(( 1 + $( echo $1 ) )); }`
+- Fix bug: `sum() { [[ ${1} -eq 0 ]] && { echo 0; return; }; echo $(( ${1} + $( sum $(( ${1} - 1 )) ) )); }`

@@ -26,16 +26,16 @@ _So... you're providing a bunch of Game AI articles?_
 
 ## The Language
 
-_What is an interactive programming language?_
+### _What is an interactive programming language?_
 
 A programming language usually amounts to:
 
 1. Rules for writing grammatically-correct text.
 1. An algorithm interpreting such text as commands in a pre-existing programming language (e.g. assembly language).
 
-_Interactivity_ means the program can be interpreted piecewise, like a conversation. Prominent amongst interactive languages are _shells_, used to manage Unix-like operating systems. They provide the oldest user interfaces in widespread use. Arguably the most popular shell is _bash_ (the default for Ubuntu and macOS).
+_Interactivity_ means the program can be interpreted piecewise, like a conversation. Prominent amongst interactive languages are _shells_, used to manage Unix-like operating systems. They provide the oldest user interfaces in widespread use (circa 1970). Arguably the most popular shell is _bash_ (the default for Ubuntu and macOS).
 
-_How can a shell run in a web browser?_
+### _How can a shell run in a web browser?_
 
 Bash is a programming language.
 
@@ -45,11 +45,11 @@ Bash is a programming language.
 
    - perform synchronous actions e.g. mount a file.
    - `await` asynchronous tasks e.g. for pipeline processes to terminate.
-   - `yield` certain instructions e.g. _read from file descriptor_ and _write to file descriptor_.
+   - `yield` certain instructions e.g. _read from file descriptor_ and _write to file descriptor_, to implement blocking IO.
 
 Real shells depend heavily upon a filesystem and process/session management. Since these are unavailable in the browser, we implemented them in a simplified fashion. Notably we provide no process scheduler, instead relying upon the browser's scheduler and the user's diligence. A shell also requires a terminal interface, which we built using the excellent [xterm.js](https://github.com/xtermjs/xterm.js/).
 
-_But __why__ have you implemented a shell in the browser?_
+### _Why have you implemented a shell in the browser?_
 
 - A standard language...
 - Better than behaviour trees...

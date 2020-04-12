@@ -212,8 +212,6 @@ export class TestOpComposite extends BaseCompositeTerm<CompositeType.test_op> {
             this.value = false;
             break;// At least one file n'exist pas.
           }
-
-
           break;
         }
         case BinaryTestType['=']:// Does `left` match the glob `right`?
