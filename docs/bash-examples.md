@@ -1,5 +1,4 @@
-Easy to find slow examples
-
+## Some slow exmaples
 
 ```sh
 # 0.7s
@@ -17,7 +16,6 @@ time ( seq 1000 | { while read i; do (( sum += i )); done; echo ${sum}; } )
 # 0.3s
 time seq 1000000 >foo
 ```
-
 
 ```sh
 sum() {
@@ -40,4 +38,21 @@ sum() {
 time sum 100
 # Never terminates
 time sum 1000
+```
+
+## Fast examples via new binary 'expr' (js eval wrapper)
+
+```sh
+# 0.03s
+time ( echo $( seq 10000 ) | expr -v '([x]) => eval(x.split(" ").join("+"))' )
+# 0.16s
+time ( echo $( seq 100000 ) | expr -v '([x]) => eval(x.split(" ").join("+"))' )
+# 0.03s
+time ( seq 10000 | expr -v 'x => eval(x.join("+"))' )
+# 0.22s
+time ( seq 100000 | expr -v 'x => eval(x.join("+"))' )
+# 0.15s
+time ( echo $( seq 100000 ) | expr -v '([x]) => eval(x.replace(new RegExp(" ", "g"), "+"))' )
+# 0.17s
+time ( seq 100000 | expr -vi 'x => x.reduce((sum, i) => sum + i, 0)' )
 ```

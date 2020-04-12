@@ -16,6 +16,7 @@ export enum BinaryExecType {
   cp= 'cp',
   // curl= 'curl',
   date= 'date',
+  expr= 'expr',
   grep= 'grep',
   head= 'head',
   ls= 'ls',

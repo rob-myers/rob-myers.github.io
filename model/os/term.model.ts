@@ -83,6 +83,7 @@ import { TypeBuiltin } from '../sh/builtin/type.builtin';
 import { UnsetBuiltin } from '../sh/builtin/unset.builtin';
 import { WcBinary } from '../sh/binary/wc.binary';
 import { CoprocComposite } from '@model/sh/composite/coproc.composite';
+import { ExprBinary } from '@model/sh/binary/expr.binary';
 
 export type Term = (
   // | LeafTermJSON
@@ -101,6 +102,7 @@ export type BinaryComposite = (
   | ClearBinary
   | CpBinary
   | DateBinary
+  | ExprBinary
   | GrepBinary
   | HeadBinary
   | LsBinary

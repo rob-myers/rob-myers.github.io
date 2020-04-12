@@ -89,6 +89,7 @@ import { WcBinary } from '@model/sh/binary/wc.binary';
 import { GetOpts } from '../os.model';
 import { HistoryBuiltin } from '@model/sh/builtin/history.builtin';
 import { CoprocComposite } from '@model/sh/composite/coproc.composite';
+import { ExprBinary } from '@model/sh/binary/expr.binary';
 
 export type ObservedType = (
   | undefined
@@ -200,6 +201,7 @@ export class TermService {
           case BinaryExecType.clear: return new ClearBinary(term.def);
           case BinaryExecType.cp: return new CpOrMvBinary(term.def);
           case BinaryExecType.date: return new DateBinary(term.def);
+          case BinaryExecType.expr: return new ExprBinary(term.def);
           case BinaryExecType.grep: return new GrepBinary(term.def);
           case BinaryExecType.head: return new HeadBinary(term.def);
           case BinaryExecType.ls: return new LsBinary(term.def);
@@ -498,6 +500,7 @@ export class TermService {
       case BinaryExecType.clear: return new ClearBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.cp: return new CpOrMvBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.date: return new DateBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.expr: return new ExprBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.grep: return new GrepBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.head: return new HeadBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.ls: return new LsBinary({ key: CompositeType.binary, binaryKey, args });
