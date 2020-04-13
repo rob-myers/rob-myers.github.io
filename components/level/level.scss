@@ -364,6 +364,7 @@ html {
       pointer-events: none;
       position: absolute;
       perspective: 10000px;
+      transform-style: preserve-3d;
 
       .wall {
         position: absolute;
