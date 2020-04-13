@@ -18,7 +18,7 @@ BinaryExecType.expr,
   private readonly maxLines = 1000000;
 
   public specOpts() {
-    return { string: [], boolean: ['v', 'i'] as ('v' | 'i')[] };
+    return { string: [], boolean: ['v', 'i', 'm'] as ('v' | 'i' | 'm')[] };
   }
 
   public async *semantics(): AsyncIterableIterator<ObservedType> {
@@ -34,7 +34,8 @@ BinaryExecType.expr,
       const unaryFuncText = this.operands.join('');
       while (yield this.read(this.maxLines, 0, buffer));
       const arrayArg = this.opts.i ? buffer.map(x => Number(x)) : buffer;
-      result = (arrayArg as any[]).map(Function(`"use strict"; return (${unaryFuncText})(arguments[0]);`) as any);
+      result = (arrayArg as any[])
+        .map(Function(`"use strict"; return (${unaryFuncText})(arguments[0]);`) as any);
     } else if (!this.operands.length) {
       while (yield this.read(this.maxLines, 0, buffer));
       result = Function(`"use strict"; return ${buffer.join('\n')};`)();

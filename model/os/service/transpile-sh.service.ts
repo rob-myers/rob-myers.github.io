@@ -43,6 +43,8 @@ import { FunctionComposite } from '@model/sh/composite/function.composite';
 import { IfComposite, IfPart } from '@model/sh/composite/if.composite';
 import { CoprocComposite } from '@model/sh/composite/coproc.composite';
 
+const pipeCapacity = 1000000;
+
 export class TranspileShService {
 
   public transpile(parsed: Sh.File): Term {
@@ -219,14 +221,19 @@ export class TranspileShService {
   }
   
   public BinaryCmd(cmd: Sh.BinaryCmd): Term {
-    // Collect all contiguous binary cmds for same operator.
+    // Collect all contiguous binary cmds for same operator
     const cmds = this.binaryCmds(cmd);
 
-    // Restrict to their leaves, assuming right-biased.
+    // 
+    /**
+     * Restrict to leaves of binary expression, assuming expression
+     * originally left-biased e.g. (((A * B) * C) * D) * E
+     */
     const lastCmd = last(cmds) as Sh.BinaryCmd;
-    const stmts = cmds.map(({ X }) => X).concat(lastCmd.Y);
+    const stmts = [cmds[0].X].concat(cmds.map(({ Y }) => Y));
+    // const stmts = cmds.map(({ X }) => X).concat(lastCmd.Y);
 
-    // Interval for all binary commands.
+    // Compute source map for all binary commands
     const [Pos, End] = [cmds[0].Pos, lastCmd.End];
     const sourceMap = this.sourceMap({ Pos, End },
       ...cmds.map(({ OpPos }) => ({ key: 'op', pos: OpPos })),
@@ -251,10 +258,7 @@ export class TranspileShService {
       case '|': {
         return new PipeComposite({
           key: CompositeType.pipe,
-          /**
-           * TODO Remove hard-coding.
-           */
-          capacity: 1000000,
+          capacity: pipeCapacity,
           cs: stmts.map((stmt) => this.Stmt(stmt)),
           sourceMap,
         });
@@ -1036,21 +1040,14 @@ export class TranspileShService {
   }
 
   /**
-   * Find contiguous binary commands, assuming...
+   * Collect contiguous binary commands.
    */
-  private binaryCmds(
-    cmd: Sh.BinaryCmd,
-    reverse = false,
-  ): Sh.BinaryCmd[] {
+  private binaryCmds(cmd: Sh.BinaryCmd): Sh.BinaryCmd[] {
     const { X, Y, Op } = cmd;
-    if (reverse) {
-      if (Y.Cmd && Y.Cmd.type === 'BinaryCmd' && Y.Cmd.Op === Op) {
-        return [cmd, ...this.binaryCmds(Y.Cmd)];
-      }
-      return [cmd];
-    }
     if (X.Cmd && X.Cmd.type === 'BinaryCmd' && X.Cmd.Op === Op) {
       return [...this.binaryCmds(X.Cmd), cmd];
+    } else if (Y.Cmd && Y.Cmd.type === 'BinaryCmd' && Y.Cmd.Op === Op) {
+      return [cmd, ...this.binaryCmds(Y.Cmd)];
     }
     return [cmd];
   }

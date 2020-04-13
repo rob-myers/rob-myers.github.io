@@ -308,3 +308,4 @@
 - in 3d, wall segs should be thin rects
 - Fix `foo() { echo ${1}; echo $(( 1 + $( echo $1 ) )); }`
 - Fix bug: `sum() { [[ ${1} -eq 0 ]] && { echo 0; return; }; echo $(( ${1} + $( sum $(( ${1} - 1 )) ) )); }`
+- BUG: transpile of pipe is wrong `echo foo | echo bar | echo baz`
