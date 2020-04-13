@@ -36,7 +36,8 @@
       }],
       "indent": "off",
       "@typescript-eslint/indent": ["error", 2, {
-        "SwitchCase": 1
+        "SwitchCase": 1,
+        "ignoredNodes": ["TSTypeParameterInstantiation"]
       }],
       "@typescript-eslint/no-explicit-any": ["off"],
       "@typescript-eslint/explicit-function-return-type": ["off"],
