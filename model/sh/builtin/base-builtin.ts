@@ -18,13 +18,9 @@ export abstract class BaseBuiltinComposite<
 > extends BaseCompositeTerm<CompositeType.builtin> {
 
   public builtinKey: ExactKey;
-  /**
-   * Computed via npm module getopts.
-   */
+  /** Computed via npm module getopts. */
   public opts: GetOpts<SpecOpts['string'][0], SpecOpts['boolean'][0]>;
-  /**
-   * Shortcut to {this.opts._}.
-   */
+  /** Shortcut to `this.opts._`. */
   public operands: string[];
 
   constructor(public def: BaseBuiltinCompositeDef<ExactKey>) {

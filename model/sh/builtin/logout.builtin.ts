@@ -4,7 +4,7 @@ import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osIsLoginShell, osSignalForegroundThunk } from '@store/os/session.os.duck';
 import { osGetProcessThunk } from '@store/os/process.os.duck';
-import { ProcessSignal } from '@model/os/process.model';
+import { SigEnum } from '@model/os/process.model';
 
 export class LogoutBuiltin extends BaseBuiltinComposite<BuiltinOtherType.logout> {
 
@@ -22,7 +22,7 @@ export class LogoutBuiltin extends BaseBuiltinComposite<BuiltinOtherType.logout>
 
     yield this.write('logout');
     const { sessionKey } = dispatch(osGetProcessThunk({ processKey }));
-    dispatch(osSignalForegroundThunk({ sessionKey, signal: ProcessSignal.TERM }));
+    dispatch(osSignalForegroundThunk({ sessionKey, signal: SigEnum.SIGTERM }));
     yield this.exit();
   }
 }

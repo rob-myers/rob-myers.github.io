@@ -5,7 +5,7 @@ import { OsWorkerContext, OsWorker } from '@model/os/os.worker.model';
 import { osInitializeThunk, osStorePingAct } from '@store/os/init.os.duck';
 import { OsSession, osCreateSessionThunk, osEndSessionThunk } from '@store/os/session.os.duck';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
-import { ProcessSignal } from '@model/os/process.model';
+import { SigEnum } from '@model/os/process.model';
 
 const ctxt: OsWorkerContext = self as any;
 
@@ -63,7 +63,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     case 'send-tty-signal': {
       // received signal from xterm
       return mutateSession(msg.sessionKey, store, ({ ttyINode }) => {
-        if (msg.signal === ProcessSignal.INT) {
+        if (msg.signal === SigEnum.SIGINT) {
           ttyINode?.sendSigInt();
         }
       });

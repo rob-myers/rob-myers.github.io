@@ -6,6 +6,7 @@ import { osOpenFileThunk, osGetOfdThunk } from '@store/os/file.os.duck';
 import { VoiceCommandSpeech } from '@model/xterm/voice.xterm';
 import { INodeType } from '@store/inode/base-inode';
 import { osSetSignalHandlerAct } from '@store/os/process.os.duck';
+import { SigEnum } from '@model/os/process.model';
 
 export class SayBinary extends BaseBinaryComposite<
   BinaryExecType.say,
@@ -34,7 +35,7 @@ export class SayBinary extends BaseBinaryComposite<
     }
 
     dispatch(osSetSignalHandlerAct({ processKey, handler: {
-      INT: { cleanup: () => iNode.cancelSpeech(processKey), do: 'terminate' },
+      [SigEnum.SIGINT]: { cleanup: () => iNode.cancelSpeech(processKey), do: 'terminate' },
     }}));
 
     if (!this.operands.length) {// Say lines from stdin

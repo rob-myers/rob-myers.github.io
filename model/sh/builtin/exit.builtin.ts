@@ -4,7 +4,7 @@ import { ObservedType } from '@os-service/term.service';
 import { osIsSessionLeaderThunk, osGetProcessThunk } from '@store/os/process.os.duck';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osSignalForegroundThunk } from '@store/os/session.os.duck';
-import { ProcessSignal } from '@model/os/process.model';
+import { SigEnum } from '@model/os/process.model';
 
 export class ExitBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.exit> {
 
@@ -23,7 +23,7 @@ export class ExitBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.exit> {
     
     const { lastExitCode, sessionKey } = dispatch(osGetProcessThunk({ processKey }));
     const exitCode = parseInt(this.def.args[0]) || lastExitCode || 0;
-    dispatch(osSignalForegroundThunk({ sessionKey, signal: ProcessSignal.TERM }));
+    dispatch(osSignalForegroundThunk({ sessionKey, signal: SigEnum.SIGTERM }));
     
     yield this.exit(exitCode);
   }

@@ -1,4 +1,4 @@
-import { ProcessSignal } from './process.model';
+import { SigEnum } from './process.model';
 import { VoiceCommandSpeech } from '@model/xterm/voice.xterm';
 import { BaseMessage, Message } from '@model/worker.model';
 
@@ -82,7 +82,7 @@ interface TtyReceivedLine extends BaseMessage {
 interface SendTtySignal extends BaseMessage {
   key: 'send-tty-signal';
   sessionKey: string;
-  signal: ProcessSignal;
+  signal: SigEnum;
 }
 
 /**

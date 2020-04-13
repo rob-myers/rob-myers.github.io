@@ -2,15 +2,80 @@ import { Term } from './term.model';
 import { ObservedType } from '@os-service/term.service';
 import { Subscription, ReplaySubject } from 'rxjs';
 
-export enum ProcessSignal {
-  ABRT= 'ABRT',
-  ALRM= 'ALRM',
-  HUP= 'HUP',
-  INT= 'INT',
-  KILL= 'KILL',
-  QUIT= 'QUIT',
-  TERM= 'TERM',
+export enum SigEnum {
+  SIGHUP='SIGHUP',
+  SIGINT='SIGINT',
+  SIGQUIT='SIGQUIT',
+  SIGILL='SIGILL',
+  SIGTRAP='SIGTRAP',
+  SIGART='SIGART',
+  SIGEMT='SIGEMT',
+  SIGFPE='SIGFPE',
+  SIGKILL='SIGKILL',
+  SIGBUS='SIGBUS',
+  SIGSEGV='SIGSEGV',
+  SIGSYS='SIGSYS',
+  SIGPIPE='SIGPIPE',
+  SIGALRM='SIGALRM',
+  SIGTERM='SIGTERM',
+  SIGURG='SIGURG', 
+  SIGSTOP='SIGSTOP',
+  SIGTSTP='SIGTSTP',
+  SIGCONT='SIGCONT',
+  SIGCHLD='SIGCHLD',
+  SIGTTIN='SIGTTIN',
+  SIGTTOU='SIGTTOU',
+  SIGIO='SIGIO',
+  SIGXCPU='SIGXCPU',
+  SIGXFSZ='SIGXFSZ',
+  SIGVTALRM='SIGVTALRM',
+  SIGPROF='SIGPROF',
+  SIGWINCH='SIGWINCH',
+  SIGINFO='SIGINFO',
+  SIGUSR1='SIGUSR1',
+  SIGUSR2='SIGUSR2',
 }
+
+export const sigEnumToInt = {
+  [SigEnum.SIGHUP]: 1,
+  [SigEnum.SIGINT]: 2,
+  [SigEnum.SIGQUIT]: 3,
+  [SigEnum.SIGILL]: 4,
+  [SigEnum.SIGTRAP]: 5,
+  [SigEnum.SIGART]: 6,
+  [SigEnum.SIGEMT]: 7,
+  [SigEnum.SIGFPE]: 8,
+  [SigEnum.SIGKILL]: 9,
+  [SigEnum.SIGBUS]: 10,
+  [SigEnum.SIGSEGV]: 11,
+  [SigEnum.SIGSYS]: 12,
+  [SigEnum.SIGPIPE]: 13,
+  [SigEnum.SIGALRM]: 14,
+  [SigEnum.SIGTERM]: 15,
+  [SigEnum.SIGURG]: 16,
+  [SigEnum.SIGSTOP]: 17,
+  [SigEnum.SIGTSTP]: 18,
+  [SigEnum.SIGCONT]: 19,
+  [SigEnum.SIGCHLD]: 20,
+  [SigEnum.SIGTTIN]: 21,
+  [SigEnum.SIGTTOU]: 22,
+  [SigEnum.SIGIO]: 23,
+  [SigEnum.SIGXCPU]: 24,
+  [SigEnum.SIGXFSZ]: 25,
+  [SigEnum.SIGVTALRM]: 26,
+  [SigEnum.SIGPROF]: 27,
+  [SigEnum.SIGWINCH]: 28,
+  [SigEnum.SIGINFO]: 29,
+  [SigEnum.SIGUSR1]: 30,
+  [SigEnum.SIGUSR2]: 31,
+};
+
+/** '1' ... '32' */
+export const sigIntsOpts = Object.values(sigEnumToInt).map(String);
+
+/** 'SIGHUP', 'HUP', ... */
+export const sigKeysOpts = Object.keys(sigEnumToInt)
+  .reduce<string[]>((agg, key) => agg.concat(key, key.slice(3)), []);
 
 /**
  * A spawned yet unregistered process.
@@ -183,7 +248,7 @@ export type CodeStackItem = (
 
 export type FromFdToOpenKey = Record<number, string>;
 
-export type ProcessSigHandler = Partial<Record<ProcessSignal, {
+export type ProcessSigHandler = Partial<Record<SigEnum, {
   cleanup: null | (() => void);
   do: SignalHandlerKey;
 }>>;

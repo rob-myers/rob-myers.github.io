@@ -1,6 +1,6 @@
-import { ProcessSignal } from '@model/os/process.model';
 import { BaseINode, INodeType, BaseINodeDef } from './base-inode';
 import { HistoryINode } from './history.inode';
+import { SigEnum } from '@model/os/process.model';
 
 /**
  * tty running in interactive mode.
@@ -67,7 +67,7 @@ export class TtyINode extends BaseINode {
    */
   public sendSigInt() {
     this.readResolvers.length = 0;
-    this.def.sendSignal(ProcessSignal.INT);
+    this.def.sendSignal(SigEnum.SIGINT);
   }
 
   public setColumns(cols: number) {
@@ -103,7 +103,7 @@ export interface TtyINodeDef extends BaseINodeDef {
   /**
    * Dispatch signal to foreground process group of parent session.
    */
-  sendSignal: (signal: ProcessSignal) => void;
+  sendSignal: (signal: SigEnum) => void;
   /**
    * Send prompt to xterm.
    */

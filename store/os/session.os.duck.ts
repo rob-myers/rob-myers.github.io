@@ -2,7 +2,7 @@ import { addToLookup, updateLookup, removeFromLookup, SyncAct, SyncActDef } from
 import { OsThunkAct, createOsThunk, createOsAct } from '@model/os/os.redux.model';
 import { OsAct } from '@model/os/os.model';
 import { BinaryExecType } from '@model/sh/binary.model';
-import { ProcessSignal } from '@model/os/process.model';
+import { SigEnum } from '@model/os/process.model';
 import { osCreateTtyThunk } from './tty.os.duck';
 import { State } from './os.duck';
 import { TtyINode } from '@store/inode/tty.inode';
@@ -338,7 +338,7 @@ export const osSignalForegroundThunk = createOsThunk<OsAct, SignalForegroundThun
   }
 );
 
-interface SignalForegroundThunk extends OsThunkAct<OsAct, { sessionKey: string; signal: ProcessSignal}, void> {
+interface SignalForegroundThunk extends OsThunkAct<OsAct, { sessionKey: string; signal: SigEnum}, void> {
   type: OsAct.OS_SIGNAL_FOREGROUND_THUNK;
 }
 

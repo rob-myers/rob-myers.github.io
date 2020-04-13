@@ -10,6 +10,7 @@ import { osPromptThunk } from '@store/os/tty.os.duck';
 import { osParseBufferThunk, osTranspileShThunk, osDistributeSrcThunk, osGetHistoricalSrc } from '@store/os/parse.os.duck';
 import { osResolvePathThunk } from '@store/os/file.os.duck';
 import { HistoryINode } from '@store/inode/history.inode';
+import { SigEnum } from '@model/os/process.model';
 
 /**
  * TODO support non-interactive (see repo for 'step')
@@ -42,9 +43,9 @@ export class BashBinary extends BaseBinaryComposite<BinaryExecType.bash> {
 
     dispatch(osSetSignalHandlerAct({ processKey, handler: {
       // handle SIGINT by resetting itself
-      INT: { cleanup: null, do: 'reset' },
+      [SigEnum.SIGINT]: { cleanup: null, do: 'reset' },
       // handle SIGTERM by ending session or self
-      TERM: { cleanup: () => {
+      [SigEnum.SIGTERM]: { cleanup: () => {
         if (dispatch(osIsSessionLeaderThunk({ processKey }))) {
           const { sessionKey } = dispatch(osGetProcessThunk({ processKey }));
           dispatch(osEndSessionThunk({ sessionKey }));
