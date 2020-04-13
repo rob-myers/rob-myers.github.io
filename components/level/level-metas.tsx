@@ -123,7 +123,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
       <g className={css.metas}>
         {Object.values(groups).map(({ key: groupKey, position, metas }) =>
           <g key={groupKey}>
-            {
+            {/* {
                 // We draw a line connecting meta's handle to popover
                 groupUi[groupKey]?.open && (
                 <line 
@@ -135,7 +135,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   y2={position.y}
                 />
               )
-            }
+            } */}
             {
               !groups[groupKey].hasIcon() && (
                 <circle
@@ -310,8 +310,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   key={groupKey}
                   className={css.metaPopover}
                   style={{
-                    left: groupUi[groupKey].dialogPosition.x,
-                    top: groupUi[groupKey].dialogPosition.y,
+                    transform: `translate(${groupUi[groupKey].dialogPosition.x}px, ${groupUi[groupKey].dialogPosition.y}px) scale(0.25)`,
                     pointerEvents: draggedMeta ? 'none' : 'all',
                   }}
                   onWheel={(e) => {

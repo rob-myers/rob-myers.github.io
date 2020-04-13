@@ -24,15 +24,12 @@ const Level: React.FC<Props> = ({ uid }) => {
   const showThreeD = useSelector(({ level: { instance } }) => instance[uid]?.showThreeD);
 
   useEffect(() => {
-    (async () => {
-      await dispatch(Thunk.createLevel({ uid }));
-    })();
+    dispatch(Thunk.createLevel({ uid })).then(/** Level created */);
     return () => void dispatch(Thunk.destroyLevel({ uid }));
   }, []);
 
-  const levelContent = useMemo(() => (
-    stateKey && <LevelContent levelUid={uid} />
-  ), [stateKey]);
+  const levelContent = useMemo(
+    () => stateKey && <LevelContent levelUid={uid} />, [stateKey]);
   
   const levelMetas = useMemo(() => (
     mode === 'edit' && <LevelMetas levelUid={uid} overlayRef={overlayRef} />
@@ -61,10 +58,15 @@ const Level: React.FC<Props> = ({ uid }) => {
                 </g>
               </svg>
               <div
-                className={css.overlayContainer}
+                className={css.threeDimContainer}
                 style={{ transform: `${scale} ${translate}` }}
               >
                 {showThreeD && <Level3d levelUid={uid} />}
+              </div>
+              <div
+                className={css.overlayContainer}
+                style={{ transform: `${scale} ${translate}` }}
+              >
                 <section className={css.overlay} ref={overlayRef} />
               </div>
             </section>

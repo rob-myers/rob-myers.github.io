@@ -78,7 +78,7 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
   return (
     <div
       ref={containerEl}
-      className={css.containerThreeD}
+      className={css.threeDimParent}
       style={dimension && {
         perspectiveOrigin: `${100 * (mouseWorld.x / dimension.x)}% ${100 * (mouseWorld.y / dimension.y)}%`,
         width: dimension.x,

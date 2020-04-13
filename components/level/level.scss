@@ -305,6 +305,38 @@ html {
     }
   }
 
+  .three-dim-container {
+    position: absolute;
+    top: 0px;
+
+    .three-dim-parent {
+      pointer-events: none;
+      perspective: 10000px;
+      transform-style: preserve-3d;
+      position: absolute;
+  
+      .wall {
+        position: absolute;
+        transform-origin: top left;
+        height: 10000px;
+  
+        @at-root .light-mode .viewport .three-dim-parent .wall {
+          background: #fff;
+        }
+        @at-root .dark-mode .viewport .three-dim-parent .wall {
+          background: #fff;
+        }
+      }
+  
+      .cull-backface {
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+      }
+    }
+
+  }
+
+
   .overlay-container {
     position: absolute;
     top: 0px;
@@ -317,10 +349,9 @@ html {
         position: absolute;
         background: white;
         border: 0.5px solid rgba(150, 150, 150, 0.5);
-        // border-radius: 1px;
         top: 0px;
         
-        transform: scale(0.5);
+        // transform: scale(0.25);
         transform-origin: top left;
 
         .content {
@@ -358,32 +389,6 @@ html {
           }
         }
       }
-    }
-
-    .container-three-d {
-      pointer-events: none;
-      position: absolute;
-      perspective: 10000px;
-      transform-style: preserve-3d;
-
-      .wall {
-        position: absolute;
-        transform-origin: top left;
-        height: 10000px;
-
-        @at-root .light-mode .viewport .container-three-d .wall {
-          background: #fff;
-        }
-        @at-root .dark-mode .viewport .container-three-d .wall {
-          background: #fff;
-        }
-      }
-
-      .cull-backface {
-        backface-visibility: hidden;
-        -webkit-backface-visibility: hidden;
-      }
-
     }
   }
 
