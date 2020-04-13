@@ -6,11 +6,8 @@ export const floorInset = 2;
 
 export const doorOutset = floorInset - 0.001;
 
-/** Dimension of large tile in pixels */
-export const tileDim = 60;
-
-/** `tileDim` divided by 3 */
-export const smallTileDim = 20;
+/** Dimension of tile */
+export const tileDim = 20;
 
 /** Tags which require rebuild of floor */
 export const rebuildTags = ['cut', 'door', 'horiz', 'vert'];

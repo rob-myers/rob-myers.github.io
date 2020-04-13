@@ -8,7 +8,6 @@ import css from './level.scss';
 
 const LevelMenu: React.FC<Props> = ({ levelUid }) => {
   const worker = useSelector(({ level: { worker } }) => worker);
-  const cursorType = useSelector(({ level: { instance } }) => instance[levelUid].cursorType);
   const mode = useSelector(({ level: { instance } }) => instance[levelUid].mode);
   const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
   const showNavRects = useSelector(({ level: { instance } }) => instance[levelUid].showNavRects);
@@ -82,17 +81,6 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
                 onClick={toggleNavView}
               >
                 rects
-              </button>
-              <button
-                title="grid size"
-                className={classNames(css.button, {
-                  [css.pressed]: cursorType === 'refined'
-                })}
-                onClick={(_e) => dispatch(Act.updateLevel(levelUid, {
-                  cursorType: cursorType === 'refined' ? 'default' : 'refined',
-                }))}
-              >
-                  ×{cursorType === 'refined' ? 3 : 1}
               </button>
             </section>
           </>

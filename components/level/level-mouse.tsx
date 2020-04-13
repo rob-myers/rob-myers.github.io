@@ -8,7 +8,7 @@ import { getRelativePos } from '@model/dom.model';
 import { LevelUiState, computeLineSegs, ForwardedWheelEvent } from '@model/level/level.model';
 import { posModulo } from '@model/generic.model';
 import { redact } from '@model/redux.model';
-import { wallDepth, tileDim, smallTileDim, metaPointRadius } from '@model/level/level-params';
+import { wallDepth, tileDim, metaPointRadius } from '@model/level/level-params';
 import css from './level.scss';
 
 function snapToGrid({ x, y }: Vector2, td: number) {
@@ -32,7 +32,6 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
   const state = useSelector(({ level: { instance } }) => instance[levelUid]);
   const metaGroupUis = useMemo(() => Object.values(state.metaGroupUi), [state.metaGroupUi]);
   const dispatch = useDispatch();
-  const td = state.cursorType === 'refined' ? smallTileDim : tileDim;
 
   useEffect(() => {
     // Handle fowarded pan-zooms from LevelMetas
@@ -77,24 +76,20 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
     }
   };
 
-  useEffect(() => {// Adjust cursor position on change cursor
-    dispatch(Act.updateLevel(levelUid, { cursor: snapToGrid(state.mouseWorld, td) }));
-  }, [state.cursorType]);
-
   const onMouseMove = (e: React.MouseEvent) => {
     const relPos = getRelativePos(e, rectEl.current!);
     const mouseWorld = new Vector2(
       state.renderBounds.x + (relPos.x / state.zoomFactor),
       state.renderBounds.y + (relPos.y / state.zoomFactor),
     );
-    dispatch(Act.updateLevel(levelUid, { cursor: snapToGrid(mouseWorld, td), mouseWorld }));
+    dispatch(Act.updateLevel(levelUid, { cursor: snapToGrid(mouseWorld, tileDim), mouseWorld }));
     
     // Track edge highlighting
-    const mm = new Vector2(posModulo(mouseWorld.x, td), posModulo(mouseWorld.y, td));
+    const mm = new Vector2(posModulo(mouseWorld.x, tileDim), posModulo(mouseWorld.y, tileDim));
     const highlight: LevelUiState['cursorHighlight'] = {
       n: mm.y <= wallDepth,
-      e: mm.x >= td - wallDepth,
-      s: mm.y >= td - wallDepth,
+      e: mm.x >= tileDim - wallDepth,
+      s: mm.y >= tileDim - wallDepth,
       w: mm.x <= wallDepth,
     };
     dispatch(Act.updateLevel(levelUid, { cursorHighlight: highlight }));
@@ -202,23 +197,21 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
         } else if (highlighted.current) {
           const { cursorHighlight: h  } = state;
           const segs = [] as [Vector2, Vector2][];
-          h.n && segs.push(...computeLineSegs(td, state.cursor, 'n'));
-          h.e && segs.push(...computeLineSegs(td, state.cursor, 'e'));
-          h.s && segs.push(...computeLineSegs(td, state.cursor, 's'));
-          h.w && segs.push(...computeLineSegs(td, state.cursor, 'w'));
+          h.n && segs.push(...computeLineSegs(tileDim, state.cursor, 'n'));
+          h.e && segs.push(...computeLineSegs(tileDim, state.cursor, 'e'));
+          h.s && segs.push(...computeLineSegs(tileDim, state.cursor, 's'));
+          h.w && segs.push(...computeLineSegs(tileDim, state.cursor, 'w'));
     
           worker.postMessage({
             key: 'toggle-level-wall',
             levelUid,
             segs: segs.map(([u, v]) => [u.json, v.json]),
-            tileSize: state.cursorType === 'default' ? 'large' : 'small',
           });
         } else {
           worker.postMessage({
             key: 'toggle-level-tile',
             levelUid,
             tile: state.cursor.json,
-            tileSize: state.cursorType === 'default' ? 'large' : 'small',
           });
         }
 

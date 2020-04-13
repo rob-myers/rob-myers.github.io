@@ -18,7 +18,7 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
-import { tileDim, smallTileDim, floorInset, navTags, rebuildTags, doorOutset } from '@model/level/level-params';
+import { tileDim, floorInset, navTags, rebuildTags, doorOutset } from '@model/level/level-params';
 import { sendMetas, sendPreNavFloors } from './handle-requests';
 import { updateNavGraph, getDoorRects, getHorizVertSegs, getCutRects } from './handle-nav';
 
@@ -44,26 +44,13 @@ export function handleLevelToggles(levelUid: string) {
 
         switch (msg.key) {
           case 'toggle-level-tile': {
-            const td = msg.tileSize === 'large' ? tileDim : smallTileDim;
-            const rect = new Rect2(msg.tile.x, msg.tile.y, td, td);
+            const rect = new Rect2(msg.tile.x, msg.tile.y, tileDim, tileDim);
             tileFloors = Poly2.xor(tileFloors, rect.poly2).map(x => redact(x));
             /**
              * The outer polygons `tileFloors` can self-intersect at corners, so we
              * must use the fast triangulator. These polys are used by `updateLights`.
              */
             tileFloors.forEach((p) => p.options.triangulationType = 'fast');
-            /**
-             * If we removed a tile ensure any adjacent walls are removed too.
-             */
-            // if (!tileFloors.some(f => f.contains(rect.center))) {
-            //   const { x, y } = msg.tile;
-            //   const indices = td === tileDim ? [1, 2, 3] : [1];
-            //   [ ...indices.map((i) => edgeToKey({ x, y }, { x: x + i * smallTileDim, y })),
-            //     ...indices.map((i) => edgeToKey({ x: x + td, y }, { x: x + td, y: y + i * smallTileDim })),
-            //     ...indices.map((i) => edgeToKey({ x, y: y + td }, { x: x + i * smallTileDim, y: y + td })),
-            //     ...indices.map((i) => edgeToKey({ x, y }, { x, y: y + i * smallTileDim })),
-            //   ].forEach(key => delete wallSeg[key]);
-            // }
             break;
           }
           case 'toggle-level-wall': {
@@ -76,27 +63,13 @@ export function handleLevelToggles(levelUid: string) {
               const hasLeftTile = tileFloors.some((f) => f.contains(left));
               const hasRightTile = tileFloors.some((f) => f.contains(right));
 
-              if (msg.tileSize === 'large') {
-                // For large tiles only toggle edges with both adjacent tiles
-                if (hasLeftTile && hasRightTile) {
-                  wallSeg[key] ? delete wallSeg[key] : wallSeg[key] = [u, v];
-                }
+              if (hasLeftTile !== hasRightTile) {
+                // If exactly one adjacent tile then wall already exists.
+                delete wallSeg[key]; // Ensure inner wall removed
+              } else if (!(hasLeftTile || hasRightTile)) {
+                delete wallSeg[key]; // No adjacent tiles so ensure removed
               } else {
-                if (hasLeftTile !== hasRightTile) {
-                  /**
-                   * If exactly one adjacent tile then wall already exists,
-                   * so assume we're removing it. Also remove adjacent tile.
-                   */
-                  delete wallSeg[key]; // Ensure wall removed
-                  const rect = hasLeftTile
-                    ? Rect2.from(Vector2.from(u).sub(norm.clone().scale(smallTileDim)), Vector2.from(v))
-                    : Rect2.from(Vector2.from(u).add(norm.clone().scale(smallTileDim)), Vector2.from(v));
-                  tileFloors = Poly2.xor(tileFloors, rect.poly2).map(x => redact(x));
-                } else if (!(hasLeftTile || hasRightTile)) {
-                  delete wallSeg[key]; // No adjacent tiles so ensure removed.
-                } else {
-                  wallSeg[key] ? delete wallSeg[key] : wallSeg[key] = [u, v];
-                }
+                wallSeg[key] ? delete wallSeg[key] : wallSeg[key] = [u, v];
               }
             });
             break;

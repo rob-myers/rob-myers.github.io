@@ -15,12 +15,6 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
         const state = dispatch(Thunk.getLevel({ levelUid }));
 
         switch (e.key.toLowerCase()) {
-          case '1': return mode === 'edit' && dispatch(Act.updateLevel(levelUid, {
-            cursorType: 'default',
-          }));
-          case '3': return mode === 'edit' && dispatch(Act.updateLevel(levelUid, {
-            cursorType: 'refined',
-          }));
           case 'w': return mode === 'edit' && dispatch(Act.updateLevel(levelUid, {
             showThreeD: !state.showThreeD,
           }));

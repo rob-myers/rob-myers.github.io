@@ -13,7 +13,8 @@
 - Start cleaning `LevelWorker`: what to clean?
 - Start implementing signal-handling properly in `OsWorker`.
 - Start implementing `ViewGraph` in `LevelWorker` i.e. data structure for ray-casting.
+- Revisit background document.
 
 ### Summary
 
-- What to clean: remove larger tiles
+- What to clean: removed larger tiles.
