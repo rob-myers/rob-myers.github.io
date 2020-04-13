@@ -103,7 +103,7 @@ html {
     }
 
     .base-floor {
-      stroke-width: 1;
+      stroke-width: 0.5;
 
       @at-root .light-mode .base-floor {
         fill: $level-floor-light;
@@ -125,7 +125,7 @@ html {
     }
   
     .wall-seg {
-      stroke-width: 1;
+      stroke-width: 0.5;
       // Ensures correct overlap
       stroke-linecap: square;
 
@@ -147,6 +147,8 @@ html {
     }
   
     .navigable {
+      stroke-width: 0.3;
+
       @at-root .light-mode .viewport .navigable {
         fill: $level-navigable-light;
       }
@@ -154,10 +156,6 @@ html {
         fill: $level-navigable-dark;
         stroke: rgba(100, 100, 100, 0.1);
       }
-      
-      stroke-width: 0.3;
-      // fill: url(#stripe-pattern);
-
     }
   
     .triangle {
