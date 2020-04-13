@@ -70,12 +70,17 @@ export const sigEnumToInt = {
   [SigEnum.SIGUSR2]: 31,
 };
 
-/** '1' ... '32' */
+export const sigIntToEnum = Object.entries(sigEnumToInt)
+  .reduce<Record<number, SigEnum>>((agg, [key, value]) =>
+    ({ ...agg, [value]: key as SigEnum }), {});
+
+/** '1' ... '31' */
 export const sigIntsOpts = Object.values(sigEnumToInt).map(String);
 
-/** 'SIGHUP', 'HUP', ... */
-export const sigKeysOpts = Object.keys(sigEnumToInt)
-  .reduce<string[]>((agg, key) => agg.concat(key, key.slice(3)), []);
+/** 'SIGHUP', ... */
+export const sigKeysOpts = Object.keys(sigEnumToInt);
+
+export const sigShortKeysOpts = sigKeysOpts.map(x => x.slice(3));
 
 /**
  * A spawned yet unregistered process.

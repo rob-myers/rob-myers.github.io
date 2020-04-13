@@ -1,9 +1,12 @@
 import { BaseBuiltinComposite } from './base-builtin';
 import { BuiltinOtherType } from '../builtin.model';
 import { ObservedType } from '@os-service/term.service';
-import { sigIntsOpts, sigKeysOpts } from '@model/os/process.model';
+import { sigIntsOpts, sigKeysOpts, SigEnum, sigIntToEnum, sigShortKeysOpts } from '@model/os/process.model';
 
 
+/**
+ * e.g. `kill -1 --SIGHUP --HUP {pid}`
+ */
 export class KillBuiltin extends BaseBuiltinComposite<
   BuiltinOtherType.kill,
   { string: never[]; boolean: ('l')[] }
@@ -12,7 +15,7 @@ export class KillBuiltin extends BaseBuiltinComposite<
   public specOpts() {
     return {
       string: [],
-      boolean: ['l', ...sigIntsOpts, ...sigKeysOpts] as 'l'[],
+      boolean: ['l', ...sigIntsOpts, ...sigKeysOpts, ...sigShortKeysOpts] as 'l'[],
     };
   }
 
@@ -22,6 +25,21 @@ export class KillBuiltin extends BaseBuiltinComposite<
       yield this.exit();
     }
 
+    const opts = Object.keys(this.opts).filter(x => (this.opts as any)[x]);
+    const sigs = ([] as SigEnum[]).concat(
+      opts.filter((x): x is SigEnum => x in SigEnum),
+      opts.filter((x) => sigIntsOpts.includes(x)).map(x => sigIntToEnum[Number(x)]),
+      opts.filter((x) => sigShortKeysOpts.includes(x)).map(x => `SIG${x}` as SigEnum)
+    ).reduce<{ [sig in SigEnum]?: true }>((agg, sig) => ({ ...agg, [sig]: true }), {});
+
+    console.log({ sigs });
+    /**
+     * TODO parse pid, pgid
+     * TODO implement SIGKILL
+     * TODO implement SIGTERM
+     * TODO implement SIGSTOP
+     * TODO implement SIGCONT
+     */
 
   }
 
