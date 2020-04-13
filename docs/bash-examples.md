@@ -43,26 +43,26 @@ time sum 1000
 ## Fast examples via binary `expr` (javascript eval wrapper)
 
 ```sh
+# 0.02s
+time ( seq 10000 | expr -v 'x => eval(x.join("+"))' )
+# 0.12s
+time ( seq 100000 | expr -v 'x => eval(x.join("+"))' )
 # 0.03s
 time ( echo $( seq 10000 ) | expr -v '([x]) => eval(x.split(" ").join("+"))' )
-# 0.16s
+# 0.13s
 time ( echo $( seq 100000 ) | expr -v '([x]) => eval(x.split(" ").join("+"))' )
-# 0.03s
-time ( seq 10000 | expr -v 'x => eval(x.join("+"))' )
-# 0.22s
-time ( seq 100000 | expr -v 'x => eval(x.join("+"))' )
-# 0.15s
+# 0.14s
 time ( echo $( seq 100000 ) | expr -v '([x]) => eval(x.replace(new RegExp(" ", "g"), "+"))' )
-# 0.17s
+# 0.08s
 time ( seq 100000 | expr -vi 'x => x.reduce((sum, i) => sum + i, 0)' )
 ```
 
 
 ```sh
-# 0.24s
-time ( seq 100000 | expr -vi 'x => x.map(y => y + 1)' ) >foo
-# 0.2s
-time ( seq 100000 | expr -vi 'x => x.map(y => y + 1).toString()' ) >foo
+# 1.3s
+time ( seq 1000000 | expr -vi 'x => x.map(y => y + 1)' ) >foo
+# 0.9s
+time ( seq 1000000 | expr -vi 'x => x.map(y => y + 1).toString()' ) >foo
 ```
 
 

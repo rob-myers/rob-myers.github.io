@@ -3,48 +3,57 @@ import { ObservedType } from '@os-service/term.service';
 import { BaseBinaryComposite } from './base-binary';
 
 /**
- * Wraps native javascript `eval`, so be careful.
+ * Permit arbitary functions via `Function('...')`,
+ * so need to be careful. Runs in web worker without window.
+ * 
+ * Examples
+ * - `seq 10 | expr -vi 'xs => xs.reduce((sum, x) => sum + x, 0)'`
+ * - `seq 10 | expr -vi 'xs => xs.map(x => x + 1)'`
+ * - `seq 10000 | expr -mi 'x => x + 1' >foo`
  */
 export class ExprBinary extends BaseBinaryComposite<
 BinaryExecType.expr,
-{ string: never[]; boolean: ('v' | 'i')[] }
+{ string: never[]; boolean: ('v' | 'i' | 'm')[] }
 > {
-  private readonly maxLines = 100;
+  private readonly maxLines = 1000000;
 
   public specOpts() {
     return { string: [], boolean: ['v', 'i'] as ('v' | 'i')[] };
   }
 
   public async *semantics(): AsyncIterableIterator<ObservedType> {
-    let input: string;
+    let result: any;
     const buffer = [] as string[];
 
-    if (this.opts.v) {
+    if (this.opts.v) {// Pass stdin as array of strings/integers
+      const unaryFuncText = this.operands.join('');
       while (yield this.read(this.maxLines, 0, buffer));
-      // We assume stdin doesn't mention single quotes
-      const arrayArg = this.opts.i
-        ? buffer.map(x => Number(x))
-        : buffer.map(x => `'${x}'`);
-      input = `(${this.operands.join('')})([${arrayArg}])`;
+      const arrayArg = this.opts.i ? buffer.map(x => Number(x)) : buffer;
+      result = Function(`"use strict"; return (${unaryFuncText})(arguments[0]);`)(arrayArg);
+    } else if (this.opts.m) {// Map stdin to stdout
+      const unaryFuncText = this.operands.join('');
+      while (yield this.read(this.maxLines, 0, buffer));
+      const arrayArg = this.opts.i ? buffer.map(x => Number(x)) : buffer;
+      result = (arrayArg as any[]).map(Function(`"use strict"; return (${unaryFuncText})(arguments[0]);`) as any);
     } else if (!this.operands.length) {
       while (yield this.read(this.maxLines, 0, buffer));
-      input = buffer.join('\n');
+      result = Function(`"use strict"; return ${buffer.join('\n')};`)();
     } else {
-      input = this.operands.join(' ');
+      result = Function(`"use strict"; return ${this.operands.join(' ')};`)();
     }
 
-    const result = eval(input);
+    yield this.write(this.transform(result));
+  }
 
-    if (typeof result === 'number' || typeof result === 'boolean') {
-      yield this.write(`${result}`);
-    } else if (Array.isArray(result)) {
-      if (typeof result[0] === 'number' || typeof result[0] === 'boolean') {
-        // Assume array has uniform type
-        yield this.write(result.map(x => `${x}`));
-      }
-      yield this.write(result.flatMap(x => `${x}`.replace(/\r+/g, '').split('\n')));
+  private transform(input: any): string | string[] {
+    if (typeof input === 'number' || typeof input === 'boolean') {
+      return `${input}`;
+    } else if (typeof input === 'string')  {
+      return input.replace(/\r+/g, '').split('\n');
+    } else if (Array.isArray(input)) {
+      return input.flatMap(x => this.transform(x));
     } else {
-      yield this.write(result.replace(/\r+/g, '').split('\n'));
+      return JSON.stringify(input);
     }
   }
 
