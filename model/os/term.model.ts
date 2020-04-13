@@ -84,6 +84,7 @@ import { UnsetBuiltin } from '../sh/builtin/unset.builtin';
 import { WcBinary } from '../sh/binary/wc.binary';
 import { CoprocComposite } from '@model/sh/composite/coproc.composite';
 import { ExprBinary } from '@model/sh/binary/expr.binary';
+import { KillBuiltin } from '@model/sh/builtin/kill.builtin';
 
 export type Term = (
   // | LeafTermJSON
@@ -228,6 +229,7 @@ export type OtherBuiltin = (
   | EchoBuiltin
   | FalseBuiltin
   | HistoryBuiltin
+  | KillBuiltin
   // LetBuiltin is LetComposite.
   | LocalBuiltin
   | PrintfBuiltin

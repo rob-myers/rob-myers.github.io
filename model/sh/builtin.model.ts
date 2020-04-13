@@ -6,18 +6,14 @@ import { TestBuiltin } from './builtin/test.builtin';
 
 export enum BuiltinSpecialType {
   break= 'break',
-  /**
-   * Actual command name is ':'.
-   */
+  /** Actual command name is `:`. */
   colon= 'colon',
   continue= 'continue',
   eval= 'eval',
   exec= 'exec',
   exit= 'exit',
   export= 'export',
-  /**
-   * Actual command name is '.'.
-   */
+  /** Actual command name is `.`. */
   period= 'period',
   readonly= 'readonly',
   return= 'return',
@@ -30,8 +26,8 @@ export enum BuiltinSpecialType {
 export function isBuiltinSpecialType (
   key: string,
   /**
-   * 'colon' corresponds to command ':'
-   * 'period' corresponds to command '.'
+   * 'colon' corresponds to command `:`
+   * 'period' corresponds to command `.`
    */
   requireIsCommand = false,
 ): key is BuiltinSpecialType {
@@ -81,10 +77,9 @@ export enum BuiltinOtherType {
   enable= 'enable',// TODO
   false= 'false',
   help= 'help',// TODO
-  history= 'history',// TODO
-  /**
-   * See LetComposite.
-   */
+  history= 'history',
+  kill= 'kill',
+  /** See LetComposite */
   let= 'let',
   local= 'local',
   logout= 'logout',
@@ -93,22 +88,15 @@ export enum BuiltinOtherType {
   pwd= 'pwd',
   read= 'read',
   readarray= 'readarray',// TODO
-  /**
-   * Same as '.'.
-   */
+  /** Same as '.' */
   source= 'source',
-  /**
-   * Similar to {test}.
-   * Actual command is [.
-   */
+  /** Similar to `test`; actual command is [. */
   squareBracket= 'squareBracket',
   test= 'test',
   times= 'times',// TODO
   true= 'true',
   type= 'type',
-  /**
-   * Same as {declare}.
-   */
+  /** Same as {declare}. */
   typeset= 'typeset',
   ulimit= 'ulimit',// TODO
   umask= 'umask',// TODO
@@ -149,6 +137,7 @@ export const builtinOtherBinaries: {
   [BuiltinOtherType.false]: true,
   [BuiltinOtherType.help]: true,
   [BuiltinOtherType.history]: true,
+  [BuiltinOtherType.kill]: true,
   [BuiltinOtherType.let]: true,
   [BuiltinOtherType.local]: true,
   [BuiltinOtherType.logout]: true,

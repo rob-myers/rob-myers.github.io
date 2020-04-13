@@ -90,6 +90,7 @@ import { GetOpts } from '../os.model';
 import { HistoryBuiltin } from '@model/sh/builtin/history.builtin';
 import { CoprocComposite } from '@model/sh/composite/coproc.composite';
 import { ExprBinary } from '@model/sh/binary/expr.binary';
+import { KillBuiltin } from '@model/sh/builtin/kill.builtin';
 
 export type ObservedType = (
   | undefined
@@ -232,6 +233,7 @@ export class TermService {
           case BuiltinOtherType.echo: return new EchoBuiltin(term.def);
           case BuiltinOtherType.false: return new FalseBuiltin(term.def);
           case BuiltinOtherType.history: return new HistoryBuiltin(term.def);
+          case BuiltinOtherType.kill: return new KillBuiltin(term.def);
           case BuiltinOtherType.printf: return new PrintfBuiltin(term.def);
           case BuiltinOtherType.pwd: return new PwdBuiltin(term.def);
           case BuiltinOtherType.read: return new ReadBuiltin(term.def);
@@ -538,6 +540,7 @@ export class TermService {
       case BuiltinOtherType.false: return new FalseBuiltin({ key: CompositeType.builtin, builtinKey, args });
       case BuiltinOtherType.help: throw Error(`builtinKey '${builtinKey}' not implemented`);
       case BuiltinOtherType.history: return new HistoryBuiltin({ key: CompositeType.builtin, builtinKey, args });
+      case BuiltinOtherType.kill: return new KillBuiltin({ key: CompositeType.builtin, builtinKey, args });
       case BuiltinOtherType.let: throw Error(`builtinKey '${builtinKey}' not implemented`);
       case BuiltinOtherType.logout: return new LogoutBuiltin({ key: CompositeType.builtin, builtinKey, args });
       case BuiltinOtherType.mapfile: throw Error(`builtinKey '${builtinKey}' not implemented`);
