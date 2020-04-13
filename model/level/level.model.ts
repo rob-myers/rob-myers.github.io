@@ -23,7 +23,7 @@ export interface LevelState {
   tilesSansCuts: Redacted<Poly2>[];
   /** Line segments aligned to refined grid */
   wallSeg: Record<string, [Vector2Json, Vector2Json]>;
-  /** Actual wall line segments, taking doorways into account */
+  /** Actual wall line segments, taking door/horiz/vert metas into account */
   innerWalls: [Vector2, Vector2][];
   /** Navigable polygon induced by tileFloors, walls, inset amount and metas */
   floors: Redacted<Poly2>[];

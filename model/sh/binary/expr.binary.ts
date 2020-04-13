@@ -25,6 +25,10 @@ BinaryExecType.expr,
     let result: any;
     const buffer = [] as string[];
 
+    if (this.opts.v && this.opts.m) {
+      yield this.exit(1, 'options -v and -m are incompatible');
+    }
+
     if (this.opts.v) {// Pass stdin as array of strings/integers
       const unaryFuncText = this.operands.join('');
       while (yield this.read(this.maxLines, 0, buffer));
