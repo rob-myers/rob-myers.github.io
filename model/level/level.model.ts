@@ -1,14 +1,14 @@
+import { Subscription, Subject } from 'rxjs';
 import { Redacted, redact } from '@model/redux.model';
 import { Poly2 } from '@model/poly2.model';
-import { Subscription, Subject } from 'rxjs';
 import { Rect2 } from '@model/rect2.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { KeyedLookup } from '@model/generic.model';
+import { FloydWarshall } from '@model/level/nav/floyd-warshall.model';
+import { NavGraph } from '@model/level/nav/nav-graph.model';
 import { LevelMetaGroupUi, LevelMetaGroup } from './level-meta.model';
 import { FloydWarshallReady } from './level.worker.model';
 import { tileDim } from './level-params';
-import { FloydWarshall } from '@model/nav/floyd-warshall.model';
-import { NavGraph } from '@model/nav/nav-graph.model';
 
 export type Direction = 'n' | 'e' | 's' | 'w'; 
 

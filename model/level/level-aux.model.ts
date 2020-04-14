@@ -1,5 +1,5 @@
 import { KeyedLookup } from '@model/generic.model';
-import { NavPath } from '@model/nav/nav-path.model';
+import { NavPath } from '@model/level/nav/nav-path.model';
 
 export interface LevelAuxState {
   /** Aligned to `LevelState` */

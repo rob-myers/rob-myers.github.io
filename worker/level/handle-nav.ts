@@ -2,8 +2,8 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { LevelWorkerContext } from '@model/level/level.worker.model';
 import { Act } from '@store/level/level.duck';
 import { redact } from '@model/redux.model';
-import { NavGraph } from '@model/nav/nav-graph.model';
-import { FloydWarshall } from '@model/nav/floyd-warshall.model';
+import { NavGraph } from '@model/level/nav/nav-graph.model';
+import { FloydWarshall } from '@model/level/nav/floyd-warshall.model';
 import { Vector2 } from '@model/vec2.model';
 import { store, getLevel } from './create-store';
 import { sendLevelAux, sendMetas } from './handle-requests';
@@ -76,9 +76,9 @@ function getMetaSteiners(levelUid: string) {
   return  Object.values(metaGroups)
     .filter((metaGroup) => metaGroup.hasTag('steiner'))
     .reduce<{ [polyId: number]: Vector2[] }>((agg, { position: p }) => {
-    const polyId = floors.findIndex(floor => floor.contains(p));
-    return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;
-  }, {});
+      const polyId = floors.findIndex(floor => floor.contains(p));
+      return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;
+    }, {});
 }
 
 

@@ -4,12 +4,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { LevelState } from '@model/level/level.model';
 import { LevelMetaGroup } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
-import { Act } from '@store/level.duck';
-import { NavPath } from '@model/nav/nav-path.model';
+import { NavPath } from '@model/level/nav/nav-path.model';
 import { KeyedLookup, mapValues, posModulo } from '@model/generic.model';
 import { addToLookup } from '@model/redux.model';
 import { Rect2Json } from '@model/rect2.model';
 import { metaPointRadius } from '@model/level/level-params';
+import { Act } from '@store/level.duck';
 import css from './level.scss';
 
 type MetaLookup = LevelState['metaGroups'];

@@ -2,7 +2,7 @@ import { LevelWorkerContext } from '@model/level/level.worker.model';
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { redact, addToLookup } from '@model/redux.model';
 import { mapValues } from '@model/generic.model';
-import { NavPath } from '@model/nav/nav-path.model';
+import { NavPath } from '@model/level/nav/nav-path.model';
 import { Vector2 } from '@model/vec2.model';
 import { LevelMeta, LevelMetaGroup } from '@model/level/level-meta.model';
 import { Act } from '@store/level/level.duck';

@@ -3,10 +3,10 @@ import { map, tap } from 'rxjs/operators';
 import { BaseMessage, Message } from '@model/worker.model';
 import { Vector2Json } from '@model/vec2.model';
 import { Poly2Json } from '@model/poly2.model';
-import { LevelMetaUpdate, LevelMetaGroupJson } from './level-meta.model';
-import { NavPathJson } from '@model/nav/nav-path.model';
+import { NavPathJson } from '@model/level/nav/nav-path.model';
 import { KeyedLookup } from '@model/generic.model';
 import { Rect2Json } from '@model/rect2.model';
+import { LevelMetaUpdate, LevelMetaGroupJson } from './level-meta.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {
