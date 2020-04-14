@@ -23,3 +23,7 @@
 
 - Continue implementing signal-handling.
 - Start implementing `ViewGraph` in `LevelWorker` i.e. data structure for ray-casting.
+
+#### Summary
+
+- Created `ViewGraph` and implemented `ViewGraph.from`.

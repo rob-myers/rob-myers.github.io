@@ -35,9 +35,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   /** Rectangle to NavNodes on its border (includes own corners). */
   private rectToNavNodes: Map<Rect2, { polyId: number; nodes: NavNode[] }>;
   /** Node to position lookup. */
-  private nodeToPosition: Map<NavNode, Vector2>;
-  /** Pointwise rectilinear inverses formed by cutting from bounds. */
-  private invertedNavPolys: Poly2[][];
+  public nodeToPosition: Map<NavNode, Vector2>;
 
   private tempPoint: Vector2;
 
@@ -53,7 +51,6 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     this.groupRectsPoints = [];
     this.groupedSteiners = [];
     this.nodeToPosition = new Map;
-    this.invertedNavPolys = [];
     this.rectToNavNodes = new Map;
     this.tempPoint = Vector2.zero;
   }
@@ -206,13 +203,6 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     graph.computeRectsNavNodes();
     graph.computeNodeToPosition();
     return graph;
-  }
-  
-  /**
-   * TODO detect if line segment intersects this.invertedNavPolys
-   */
-  public isVisibleFrom(_src: NavNode, _dst: NavNode) {
-    return false;
   }
 
   private positionToNode(polyId: number, point: Vector2) {

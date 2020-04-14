@@ -1,31 +1,29 @@
 # TODO
 
-- shell signals
-  - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
-  - `fg` puts process into foreground
-  - for `goto` intend `STOP`/`CONT` to pause/continue animations
-  - can pause entire session -- but how to pause a `sleep`?
-    - if finishes make it sleep the 'difference' and immediately pause it
+- Need outline of documentation e.g. nav, ray, triggers etc.
 
-- navigation:
-  - line-of-walk test via negation of polys.
-  - line-of-sight test via negation of nav polys.
-  - initially Floyd-Warshall does pairwise line-of-walk checks for connectivity,
-    skipping any further computation during algorithm
-  - path simplification does line-of-walk simplification
-  - reduce number of start/end point by restricting to 'closest 4 corner points' (needn't be a rect)
+- line-of-sight
+- `ViewGraph` detects intersection with walls, and close metas.
+- Then can test each actor against line seg from source to wall.
+- Could also 'search nearby' by considering nearby rects.
+
+- shell signals
+- implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
+- `fg` puts process into foreground
+- for `goto` intend `STOP`/`CONT` to pause/continue animations
+- can pause entire session -- but how to pause a `sleep`?
+  - if finishes make it sleep the 'difference' and immediately pause it
+
+- reduce number of start/end point by restricting to 'closest 4 corner points' (needn't be a rect)
 
 - move meta dialog to front on open/click
 
-- avoid floor plan art, stick to icons
 - more icons and each has light/dark version
 
 - write docs:
   - describe level editor features
   - why `wallSeg` is independent of `tileFloors`
     i.e. walls can cut out another polygon
-  - sketching blog posts
-  - "spiritual feeling" e.g. via chamber music, e.g. meaningful
 
 - can trigger circle moving along path via CSS
   - adding tag `@bob>foo` spawns bob and sends him to some meta tagged `foo`
@@ -309,3 +307,8 @@
 - Fix `foo() { echo ${1}; echo $(( 1 + $( echo $1 ) )); }`
 - Fix bug: `sum() { [[ ${1} -eq 0 ]] && { echo 0; return; }; echo $(( ${1} + $( sum $(( ${1} - 1 )) ) )); }`
 - BUG: transpile of pipe is wrong `echo foo | echo bar | echo baz`
+- avoid floor plan art, stick to icons
+- navigation:
+- line-of-walk test via negation of polys.
+- initially Floyd-Warshall does pairwise line-of-walk checks for connectivity,
+  skipping any further computation during algorithm
