@@ -18,8 +18,8 @@
 
 - What to clean: removed larger tile.
 - Signal handling: cleaner enum + started builtin `kill`
--  ...
 
 ### 14/4/2020
 
+- Continue implementing signal-handling.
 - Start implementing `ViewGraph` in `LevelWorker` i.e. data structure for ray-casting.

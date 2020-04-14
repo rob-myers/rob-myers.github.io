@@ -34,10 +34,7 @@ export function handleLevelToggles(levelUid: string) {
       map(({ data }) => data),
       filter((msg): msg is ToggleLevelTile | ToggleLevelWall => {
         if (msg.levelUid !== levelUid) return false;
-        return  (
-          msg.key === 'toggle-level-tile'
-          || msg.key === 'toggle-level-wall'
-        );
+        return  msg.key === 'toggle-level-tile' || msg.key === 'toggle-level-wall';
       }),
       map((msg) => {
         let { tileFloors, wallSeg } = getLevel(levelUid)!;
@@ -46,9 +43,18 @@ export function handleLevelToggles(levelUid: string) {
           case 'toggle-level-tile': {
             const rect = new Rect2(msg.tile.x, msg.tile.y, tileDim, tileDim);
             tileFloors = Poly2.xor(tileFloors, rect.poly2).map(x => redact(x));
+            // // If we removed a tile, ensure any inner walls are removed too
+            // if (!tileFloors.some(f => f.contains(rect.center))) {
+            //   const { x, y } = msg.tile;
+            //   [ edgeToKey({ x, y }, { x: x + tileDim, y }),
+            //     edgeToKey({ x: x + tileDim, y }, { x: x + tileDim, y: y + tileDim }),
+            //     edgeToKey({ x, y: y + tileDim }, { x: x + tileDim, y: y + tileDim }),
+            //     edgeToKey({ x, y }, { x, y: y + tileDim }),
+            //   ].forEach(key => delete wallSeg[key]);
+            // }
             /**
              * The outer polygons `tileFloors` can self-intersect at corners, so we
-             * must use the fast triangulator. These polys are used by `updateLights`.
+             * must use the fast triangulator. These polys are used by `computeLights`.
              */
             tileFloors.forEach((p) => p.options.triangulationType = 'fast');
             break;
@@ -86,8 +92,9 @@ export function handleLevelToggles(levelUid: string) {
         computeTilesSansCuts(levelUid);
         computeInternalWalls(levelUid);
         sendPreNavFloors(levelUid);
-        updateLights(levelUid);
+        computeLights(levelUid);
         computeNavFloors(levelUid);
+
         return null;
       }),
       auditTime(300),
@@ -116,18 +123,19 @@ export function handleMetaUpdates(levelUid: string) {
           case 'update-level-meta': {
             const { metaGroupKey, update } = msg;
             const group = metaGroups[metaGroupKey];
-            const rebuildFloors = (
-              update.key === 'add-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
-              || update.key === 'remove-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
-              || update.key === 'set-position' && group.hasSomeTag(rebuildTags)
-            );
-            const updateNav = (
-              update.key === 'add-tag' && (navTags.includes(update.tag) || group.hasSomeTag(navTags))
-              || update.key === 'remove-tag' && (navTags.includes(update.tag) || group.hasSomeTag(navTags))
-              || update.key === 'set-position' && group.hasSomeTag(navTags)
-            );
             group.applyUpdates(update);
-            return { rebuildFloors, updateNav };
+            return {
+              rebuildFloors: (
+                update.key === 'add-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
+                || update.key === 'remove-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
+                || update.key === 'set-position' && group.hasSomeTag(rebuildTags)
+              ),
+              updateNav: (
+                update.key === 'add-tag' && (navTags.includes(update.tag) || group.hasSomeTag(navTags))
+                || update.key === 'remove-tag' && (navTags.includes(update.tag) || group.hasSomeTag(navTags))
+                || update.key === 'set-position' && group.hasSomeTag(navTags)
+              ),
+            };
           }
           case 'duplicate-level-meta': {
             // Snap position to integers
@@ -156,19 +164,18 @@ export function handleMetaUpdates(levelUid: string) {
         }
       }),
       filter(({ rebuildFloors, updateNav }) => {
-
+        if (updateNav) {
+          dispatch(Act.updateLevel(levelUid, { floydWarshall: null }));
+        }
         if (rebuildFloors) {
           computeTilesSansCuts(levelUid);
           computeInternalWalls(levelUid);
           sendPreNavFloors(levelUid);
           computeNavFloors(levelUid);
         }
-        updateLights(levelUid);
+        computeLights(levelUid);
         sendMetas(levelUid);
 
-        if (updateNav) {
-          dispatch(Act.updateLevel(levelUid, { floydWarshall: null }));
-        }
         return updateNav;
       }),
       auditTime(300),
@@ -194,9 +201,9 @@ function computeTilesSansCuts(levelUid: string) {
  */
 function computeInternalWalls(levelUid: string) {
   const { wallSeg } = getLevel(levelUid)!;
-  /** Wall segs from grid, or 'horiz' or 'vert' metas */
+  /** Wall segs from grid and horiz/vert metas */
   const wallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
-  /** We'll cut out 'door' metas (outset) and 'cut' metas (not outset) */
+  /** We'll cut out door metas (outset) and cut metas (not outset) */
   const cuttingPolys = getDoorRects(levelUid).map(rect => rect.outset(doorOutset).poly2)
     .concat(getCutRects(levelUid).map(rect => rect.poly2));
 
@@ -218,12 +225,9 @@ function computeInternalWalls(levelUid: string) {
   dispatch(Act.updateLevel(levelUid, { innerWalls: hWalls.concat(vWalls) }));
 }
 
-
-
 function computeNavFloors(levelUid: string) {
   const { tilesSansCuts, wallSeg } = getLevel(levelUid)!;
   const wallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
-
   /**
    * Compute unnavigable areas induced by internal walls i.e.
    * 1. outset the walls (which are actually line segments).
@@ -252,7 +256,7 @@ function computeNavFloors(levelUid: string) {
   return navFloors;
 }
 
-function updateLights(levelUid: string) {
+function computeLights(levelUid: string) {
   const { tilesSansCuts, innerWalls, metaGroups: metas } = getLevel(levelUid)!;
   const outsetFloors = tilesSansCuts.flatMap(floor => floor.createInset(0.5));
   const innerWallSegs = innerWalls.map(([u, v]) => Rect2.from(u, v).outset(0.5))
