@@ -102,7 +102,6 @@ function getMetaSteiners(levelUid: string) {
  */
 export function updateNavGraph(levelUid: string) {
   const { floors } = getLevel(levelUid)!;
-
   /**
    * Build NavGraph using polys and steiner metas.
    * NavGraph.from extends `floors` with steiners and re-triangulates.

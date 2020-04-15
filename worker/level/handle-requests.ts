@@ -8,7 +8,7 @@ import { LevelMeta, LevelMetaGroup } from '@model/level/level-meta.model';
 import { Act } from '@store/level/level.duck';
 import { store, getLevel, getLevelAux } from './create-store';
 import { handleLevelToggles, handleMetaUpdates } from './handle-edits';
-import { ensureFloydWarshall } from './handle-nav';
+import { ensureFloydWarshall } from './nav-utils';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;

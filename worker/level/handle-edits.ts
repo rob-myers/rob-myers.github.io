@@ -20,7 +20,7 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
 import { tileDim, floorInset, navTags, rebuildTags, doorOutset } from '@model/level/level-params';
 import { sendMetas, sendPreNavFloors } from './handle-requests';
-import { updateNavGraph, getDoorRects, getHorizVertSegs, getCutRects } from './handle-nav';
+import { updateNavGraph, getDoorRects, getHorizVertSegs, getCutRects } from './nav-utils';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
