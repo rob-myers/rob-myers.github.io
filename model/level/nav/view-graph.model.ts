@@ -1,6 +1,6 @@
 import rectDecompose from 'rectangle-decomposition';
 import { mapValues } from '@model/generic.model';
-import { Vector2 } from '@model/vec2.model';
+import { Vector2, Vector2Json } from '@model/vec2.model';
 import { Rect2 } from '@model/rect2.model';
 import { Poly2 } from '@model/poly2.model';
 import { BaseNodeOpts, BaseNode, BaseEdgeOpts, BaseEdge, BaseGraph } from '@model/graph.model';
@@ -12,15 +12,15 @@ interface ViewNodeOpts extends BaseNodeOpts {
   rect: Rect2;
   /** Keys of metas which overlap `rect` */
   metaKeys: string[];
-  /** Adjacent ids grouped by top, right, bottom, left */
-  adjs: {
-    /** Keys of rectangles above `rect`. */
+  /** Ids of edges from `id` **/
+  edgeKeys: {
+    /** Keys of edges to rectangles above `rect`. */
     top: string[];
-    /** Keys of rectangles on right of `rect`. */
+    /** Keys of edges to rectangles on right of `rect`. */
     right: string[];
-    /** Keys of rectangles beneath `rect`. */
+    /** Keys of edges to rectangles beneath `rect`. */
     bottom: string[];
-    /** Keys of rectangles on left of `rect`. */
+    /** Keys of edges to rectangles on left of `rect`. */
     left: string[];
   };
 }
@@ -86,10 +86,14 @@ export class ViewGraph extends BaseGraph<
         left: adjRects.filter(other => other.right === rect.x),
       };
 
+      const id = `${rect}`;
       graph.registerNode(new ViewNode({
-        id: `${rect}`,
+        id,
         rect,
-        adjs: mapValues(adjs, rects => rects.map(({ key }) => key)),
+        edgeKeys: mapValues(
+          adjs, // Edge ids are set this way in BaseEdge
+          rects => rects.map(({ key }) => `${id}->${key}`),
+        ),
         metaKeys: metas
           .filter(({ rect: other }) => other?.intersects(rect))
           .map(({ key }) => key),
@@ -124,5 +128,46 @@ export class ViewGraph extends BaseGraph<
     });
 
     return graph;
+  }
+
+  public isVisibleFrom(
+    /** Source rectangle's key */
+    srcRectKey: string,
+    /** Position in source rectangle */
+    src: Vector2Json,
+    /** Destination rectangle's key */
+    dstRectKey: string,
+    /** Position in destination rectangle */
+    dst: Vector2Json,
+  ): boolean {
+    if (srcRectKey === dstRectKey) {
+      return true;
+    }
+    const { edgeKeys, rect } = this.getNodeById(srcRectKey)!.opts;
+    const [dx, dy] = [dst.x - src.x, dst.y - src.y];
+
+    if (dst.x !== src.x) {
+      const x = dst.x > src.x ? rect.right : rect.x;
+      for (const edgeKey of dst.x > src.x ? edgeKeys.right : edgeKeys.left) {
+        const { otherOpts: { portal }, dst: nextSrc } = this.getEdgeById(edgeKey)!;
+        const y = (x - src.x) * (dy / dx);
+        if (portal[0].y <= y && y <= portal[1].y) {
+          return this.isVisibleFrom(nextSrc.id, { x, y }, dstRectKey, dst);
+        }
+      }
+    }
+
+    if (dst.y !== src.y) {
+      const y = dst.y > src.y ? rect.bottom : rect.y;
+      for (const edgeKey of dst.y > src.y ? edgeKeys.bottom : edgeKeys.top) {
+        const { otherOpts: { portal }, dst: nextSrc } = this.getEdgeById(edgeKey)!;
+        const x = (y - src.y) * (dx / dy);
+        if (portal[0].x <= x && x <= portal[1].x) {
+          return this.isVisibleFrom(nextSrc.id, { x, y }, dstRectKey, dst);
+        }
+      }
+    }
+
+    return false;
   }
 }

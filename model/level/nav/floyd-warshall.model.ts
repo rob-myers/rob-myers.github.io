@@ -96,7 +96,7 @@ export class FloydWarshall {
   public static from(
     navGraph: NavGraph,
     viewGraph: ViewGraph,
-    unwalkable: Poly2[],
+    unwalkable: Poly2[], // TODO remove
   ): FloydWarshall {
     const fm = new FloydWarshall(navGraph, viewGraph);
     fm.unwalkable = unwalkable;
@@ -160,6 +160,7 @@ export class FloydWarshall {
   }
 
   /**
+   * TODO better approach via ViewGraph.
    * Can we walk in a straight line between NavNodes `src` and `dst`?
    */
   private nodesStraightWalkable(src: NavNode, dst: NavNode) {
@@ -170,8 +171,7 @@ export class FloydWarshall {
     const v = this.navGraph.nodeToPosition.get(dst)!;
     // Thin triangle so doesn't intersect border of outset navPolys
     const poly = new Poly2([u, v, v.clone().translate(-0.0001 * (v.y - u.y), 0.0001 * (v.x - u.x))]);
-    const isVisible = Poly2.intersect([poly], this.unwalkable).length === 0;
-    return isVisible;
+    return Poly2.intersect([poly], this.unwalkable).length === 0;
   }
 
   /**
