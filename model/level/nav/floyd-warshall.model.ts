@@ -2,12 +2,18 @@ import { NavGraph, NavNode } from './nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
 import { Rect2 } from '@model/rect2.model';
 import { Poly2 } from '@model/poly2.model';
+import { ViewGraph } from './view-graph.model';
 
 export class FloydWarshall {
-  
+  /**
+   * Shortest distance of a path between src and dst node,
+   * where each edge is a walkable straight line between nodes.
+   * If unreachable then the distance is positive infinity.
+   */
   public dist: { [srcId: string]: { [dstId: string]: number  } };
-  public next: { [srcId: string]: { [dstId: string]: string } };
-  /** Line of sight in navmesh */
+  /** Next node in shortest path from src to dst. */
+  public next: { [srcId: string]: { [dstId: string]: string | undefined } };
+  /** Line of sight in navmesh i.e. line of walk */
   public los: { [srcId: string]: { [distId: string]: true } };
   /** All node positions, aligned to `this.navGraph.nodesArray` */
   private allPositions: Vector2[];
@@ -16,7 +22,10 @@ export class FloydWarshall {
   // TODO remove
   private unwalkable: Poly2[];
 
-  constructor(public navGraph: NavGraph) {
+  constructor(
+    private navGraph: NavGraph,
+    private viewGraph: ViewGraph,
+  ) {
     this.dist = {};
     this.next = {};
     this.los = {};
@@ -25,16 +34,17 @@ export class FloydWarshall {
     this.unwalkable = [];
   }
 
+  /**
+   * Find path between two positions using precomputed paths.
+   */
   public findPath(src: Vector2, dst: Vector2): Vector2[] {
     const { srcNode, dstNode } = this.findPathEndNodes(src, dst);
-    if (!srcNode || !dstNode) {
-      return []; // Handle unnavigable nodes e.g. in disjoint polys
+    if (!srcNode || !dstNode) {// Handle unnavigable nodes
+      return [];
     }
     const nodes = [srcNode];
     let node = srcNode;
-    while (node !== dstNode) {
-      nodes.push(node = this.navGraph.getNodeById(this.next[node.id]![dstNode.id]!)!);
-    }
+    while (node !== dstNode) nodes.push(node = this.navGraph.getNodeById(this.next[node.id]![dstNode.id]!)!);
 
     return this.simplifyPath([
       src,
@@ -72,7 +82,7 @@ export class FloydWarshall {
 
   /**
    * Find some rectangle containing every point.
-   * NOTE a point might be contained in 1, 2 or 3 rects.
+   * NOTE a point might be contained in many rects
    */
   private findRect(points: Vector2[]): Rect2 | null;
   private findRect(point: Vector2): Rect2 | null;
@@ -83,15 +93,21 @@ export class FloydWarshall {
     return this.navGraph.rects.find(r => r.contains(input)) || null;
   }
 
-  public static from(graph: NavGraph, unwalkable: Poly2[]): FloydWarshall {
-    const fm = new FloydWarshall(graph);
+  public static from(
+    navGraph: NavGraph,
+    viewGraph: ViewGraph,
+    unwalkable: Poly2[],
+  ): FloydWarshall {
+    const fm = new FloydWarshall(navGraph, viewGraph);
     fm.unwalkable = unwalkable;
     fm.initialize();
     const [dist, next, los] = [fm.dist, fm.next, fm.los];
 
-    const groupedNodes = graph.navPolys.map(({ allPoints }, polyIndex) =>
-      allPoints.map(( _, vertexId) => graph.getNodeById(`${polyIndex}-${vertexId}`)!));
+    // NavNode's grouped by polygon id
+    const groupedNodes = navGraph.navPolys.map(({ allPoints }, polyIndex) =>
+      allPoints.map(( _, vertexId) => navGraph.getNodeById(`${polyIndex}-${vertexId}`)!));
 
+    // Floyd-Warshall algorithm
     groupedNodes.forEach((vs) => {
       vs.forEach(({ id: middleId }) => {
         vs.forEach(({ id: startId }) => {
@@ -119,10 +135,8 @@ export class FloydWarshall {
     const innerDist = vs.reduce<Record<string, number>>((agg, { id }) =>
       ({ ...agg, [id]: Number.POSITIVE_INFINITY }), {});
     this.dist = vs.reduce((agg, v) => ({ ...agg, [v.id]: { ...innerDist } }), {});
-
     this.next = vs.reduce((agg, v) => ({ ...agg, [v.id]: {} }), {});
     this.los = vs.reduce((agg, v) => ({ ...agg, [v.id]: {} }), {});
-    // Each NavNode correponds to a vertex in a polygon
     this.allPositions = this.navGraph.navPolys.flatMap(({ allPoints }) => allPoints);
 
     vs.forEach((vA, i) =>
@@ -133,7 +147,7 @@ export class FloydWarshall {
           this.dist[vA.id][vB.id] = 0;
           this.next[vA.id][vB.id] = vA.id;
           this.los[vA.id][vA.id] = true;
-        } else if (this.lineOfWalk(vA, vB)) {
+        } else if (this.nodesStraightWalkable(vA, vB)) {
           const dist = Math.round(this.tempPoint
             .copy(this.allPositions[j]).sub(this.allPositions[i]).length);
           this.dist[vA.id][vB.id] = this.dist[vB.id][vA.id] = dist;
@@ -145,8 +159,10 @@ export class FloydWarshall {
     );
   }
 
-  /** Can we walk in a straight line from `src` to `dst`. */
-  private lineOfWalk(src: NavNode, dst: NavNode) {
+  /**
+   * Can we walk in a straight line between NavNodes `src` and `dst`?
+   */
+  private nodesStraightWalkable(src: NavNode, dst: NavNode) {
     if (this.navGraph.isConnected(src, dst)) {
       return true;
     }

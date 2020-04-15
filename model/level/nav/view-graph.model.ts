@@ -1,10 +1,10 @@
 import rectDecompose from 'rectangle-decomposition';
+import { mapValues } from '@model/generic.model';
 import { Vector2 } from '@model/vec2.model';
 import { Rect2 } from '@model/rect2.model';
 import { Poly2 } from '@model/poly2.model';
 import { BaseNodeOpts, BaseNode, BaseEdgeOpts, BaseEdge, BaseGraph } from '@model/graph.model';
 import { LevelMeta } from '../level-meta.model';
-import { mapValues } from '@model/generic.model';
 
 interface ViewNodeOpts extends BaseNodeOpts {
   /** `${rect}` */
@@ -72,10 +72,7 @@ export class ViewGraph extends BaseGraph<
     this.rects = groupedRects.flatMap(rects => rects);
   }
 
-  public static from(
-    polys: Poly2[],
-    metas: LevelMeta[],
-  ): ViewGraph {
+  public static from(polys: Poly2[], metas: LevelMeta[]): ViewGraph {
     const graph = new ViewGraph(polys);
     graph.computeRects(polys);
 

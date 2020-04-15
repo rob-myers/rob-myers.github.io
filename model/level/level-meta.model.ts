@@ -33,10 +33,11 @@ export class LevelMeta {
   public get json(): LevelMetaJson {
     return {
       key: this.key,
+      tags: this.tags.slice(),
+      position: this.position.json,
       light: this.light?.json,
       physical: this.physical??undefined,
       rect: this.rect?.json,
-      tags: this.tags.slice(),
       trigger: this.trigger??undefined,
       icon: this.icon?.key,
     };
@@ -46,6 +47,8 @@ export class LevelMeta {
     /** Unique identifier */
     public key = `m-${generate()}`,
     public tags = [] as string[],
+    /** Useful when we ungroup metas in 'live' mode */
+    public position = Vector2.zero,
     public light: null | LevelLight = null,
     public rect: null | Rect2 = null,
     /** Trigger is rectangular or circular  */
@@ -69,6 +72,7 @@ export class LevelMeta {
     return new LevelMeta(
       newKey,
       this.tags.slice(),
+      this.position.clone(),
       this.light?.clone() || null,
       this.rect?.clone() || null,
       this.trigger,
@@ -82,6 +86,7 @@ export class LevelMeta {
     return new LevelMeta(
       json.key,
       json.tags.slice(),
+      Vector2.from(json.position),
       json.light ? LevelLight.fromJson(json.light) : null,
       json.rect ? Rect2.fromJson(json.rect) : null,
       json.trigger??null,
@@ -186,6 +191,7 @@ export class LevelMeta {
 
 export interface LevelMetaJson {
   key: string;
+  position: Vector2Json;
   light?: LevelLightJson;
   physical?: PhysicalType;
   rect?: Rect2Json;
@@ -287,7 +293,8 @@ export class LevelMetaGroup {
       }
       case 'set-position': {
         this.position = Vector2.from(update.position);
-        this.metas.forEach(({ light, rect }) => {
+        this.metas.forEach(({ position, light, rect }) => {
+          position.copy(update.position);
           light?.setPosition(this.position);
           rect?.setPosition(this.position);
         });
@@ -296,6 +303,7 @@ export class LevelMetaGroup {
       case 'ensure-meta-index': {
         if (!this.metas[update.metaIndex]) {
           this.metas[update.metaIndex] = new LevelMeta();
+          this.metas[update.metaIndex].position.copy(this.position);
         }
         this.metaIndex = update.metaIndex;
         break;
@@ -304,16 +312,14 @@ export class LevelMetaGroup {
     }
   }
 
-  public clone(
-    newKey: string,
-    position = this.position.clone(),
-  ) {
+  public clone(newKey: string, position = this.position.clone()) {
     const clone = new LevelMetaGroup(
       newKey,
       this.metas.map(meta => meta.clone(`${newKey}-${meta.key}`)),
       position.clone(),
     );
     clone.metas.forEach(meta => {
+      meta.position.copy(position);
       meta.light?.setPosition(position);
       meta.rect?.setPosition(position);
     });

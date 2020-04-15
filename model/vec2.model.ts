@@ -48,7 +48,7 @@ export class Vector2 {
     return new Vector2(this.x, this.y);
   }
 
-  public copy(p: Vector2) {
+  public copy(p: Vector2Json) {
     return this.set(p.x, p.y);
   }
 

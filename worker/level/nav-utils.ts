@@ -6,6 +6,7 @@ import { FloydWarshall } from '@model/level/nav/floyd-warshall.model';
 import { Vector2 } from '@model/vec2.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2 } from '@model/rect2.model';
+import { ViewGraph } from '@model/level/nav/view-graph.model';
 import { Act } from '@store/level/level.duck';
 import { store, getLevel } from './create-store';
 import { sendLevelAux, sendMetas } from './handle-requests';
@@ -14,13 +15,14 @@ const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
 
 export function ensureFloydWarshall(levelUid: string) {
-  const { floors, floydWarshall: prevFloydWarshall } = getLevel(levelUid)!;
+  const { floors, floydWarshall: prevFloydWarshall, metaGroups } = getLevel(levelUid)!;
   const metaSteiners = getMetaSteiners(levelUid);
   const navGraph = NavGraph.from(floors, metaSteiners);
+  const viewGraph = ViewGraph.from(floors, Object.values(metaGroups).flatMap(x => x.metas));
  
   // FloydWarshall.from is an expensive computation
   const floydWarshall = prevFloydWarshall || redact(
-    FloydWarshall.from(navGraph, getUnwalkable(levelUid)),
+    FloydWarshall.from(navGraph, viewGraph, getUnwalkable(levelUid)),
   );
   dispatch(Act.updateLevel(levelUid, { floydWarshall }));
 
@@ -95,7 +97,6 @@ function getMetaSteiners(levelUid: string) {
       return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;
     }, {});
 }
-
 
 /**
  * Update navigation i.e. triangulation.
