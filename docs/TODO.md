@@ -1,11 +1,10 @@
 # TODO
 
-- Need outline of documentation e.g. nav, ray, triggers etc.
-
-- line-of-sight
+- line-of-walk
 - `ViewGraph` detects intersection with walls, and close metas.
 - Then can test each actor against line seg from source to wall.
 - Could also 'search nearby' by considering nearby rects.
+- line-of-sight
 
 - shell signals
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
@@ -20,10 +19,10 @@
 
 - more icons and each has light/dark version
 
-- write docs:
-  - describe level editor features
-  - why `wallSeg` is independent of `tileFloors`
-    i.e. walls can cut out another polygon
+- describe level editor features
+- why `wallSeg` is independent of `tileFloors`
+  i.e. walls can cut out another polygon
+- Provide outline of documentation e.g. nav, ray, triggers etc.
 
 - can trigger circle moving along path via CSS
   - adding tag `@bob>foo` spawns bob and sends him to some meta tagged `foo`
@@ -84,8 +83,8 @@
 - merge this branch `fresh-start-2020` into new branch `dev`.
 
 - `exec`
-  - prevent execution if command not found
-  - handle error `exec <( sleep 2; echo foo; sleep 2 )`
+- prevent execution if command not found
+- handle error `exec <( sleep 2; echo foo; sleep 2 )`
 
 ## So far
 

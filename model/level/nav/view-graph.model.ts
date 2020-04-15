@@ -14,9 +14,13 @@ interface ViewNodeOpts extends BaseNodeOpts {
   metaKeys: string[];
   /** Adjacent ids grouped by top, right, bottom, left */
   adjs: {
+    /** Keys of rectangles above `rect`. */
     top: string[];
+    /** Keys of rectangles on right of `rect`. */
     right: string[];
+    /** Keys of rectangles beneath `rect`. */
     bottom: string[];
+    /** Keys of rectangles on left of `rect`. */
     left: string[];
   };
 }

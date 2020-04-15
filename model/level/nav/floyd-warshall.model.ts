@@ -6,12 +6,14 @@ import { Poly2 } from '@model/poly2.model';
 export class FloydWarshall {
   
   public dist: { [srcId: string]: { [dstId: string]: number  } };
-  public next: { [srcId: string]: { [dstId: string]: null | string } };
+  public next: { [srcId: string]: { [dstId: string]: string } };
   /** Line of sight in navmesh */
   public los: { [srcId: string]: { [distId: string]: true } };
   /** All node positions, aligned to `this.navGraph.nodesArray` */
   private allPositions: Vector2[];
   private tempPoint: Vector2;
+
+  // TODO remove
   private unwalkable: Poly2[];
 
   constructor(public navGraph: NavGraph) {
@@ -111,18 +113,15 @@ export class FloydWarshall {
   }
 
   private initialize() {
-    // Distances initially infinite
     const { nodesArray: vs } = this.navGraph;
+
+    // Distances initially infinite
     const innerDist = vs.reduce<Record<string, number>>((agg, { id }) =>
       ({ ...agg, [id]: Number.POSITIVE_INFINITY }), {});
     this.dist = vs.reduce((agg, v) => ({ ...agg, [v.id]: { ...innerDist } }), {});
 
-    // Next vertices initially null
-    const innerNext = vs.reduce<Record<string, null | string>>((agg, { id }) =>
-      ({ ...agg, [id]: null }), {});
-    this.next = vs.reduce((agg, v) => ({ ...agg, [v.id]: { ...innerNext } }), {});
-
-    this.los = vs.reduce((agg, v) => ({ ...agg, [v.id]: {}  }), {});
+    this.next = vs.reduce((agg, v) => ({ ...agg, [v.id]: {} }), {});
+    this.los = vs.reduce((agg, v) => ({ ...agg, [v.id]: {} }), {});
     // Each NavNode correponds to a vertex in a polygon
     this.allPositions = this.navGraph.navPolys.flatMap(({ allPoints }) => allPoints);
 
@@ -134,7 +133,7 @@ export class FloydWarshall {
           this.dist[vA.id][vB.id] = 0;
           this.next[vA.id][vB.id] = vA.id;
           this.los[vA.id][vA.id] = true;
-        } else if (this.checkWalkableFrom(vA, vB)) {
+        } else if (this.lineOfWalk(vA, vB)) {
           const dist = Math.round(this.tempPoint
             .copy(this.allPositions[j]).sub(this.allPositions[i]).length);
           this.dist[vA.id][vB.id] = this.dist[vB.id][vA.id] = dist;
@@ -146,7 +145,8 @@ export class FloydWarshall {
     );
   }
 
-  private checkWalkableFrom(src: NavNode, dst: NavNode) {
+  /** Can we walk in a straight line from `src` to `dst`. */
+  private lineOfWalk(src: NavNode, dst: NavNode) {
     if (this.navGraph.isConnected(src, dst)) {
       return true;
     }
