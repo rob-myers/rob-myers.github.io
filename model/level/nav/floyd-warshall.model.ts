@@ -7,8 +7,8 @@ export class FloydWarshall {
   
   public dist: { [srcId: string]: { [dstId: string]: number  } };
   public next: { [srcId: string]: { [dstId: string]: null | string } };
-  /** Line of sight */
-  public los: { [srcId: string]: { [distId: string]: boolean } };
+  /** Line of sight in navmesh */
+  public los: { [srcId: string]: { [distId: string]: true } };
   /** All node positions, aligned to `this.navGraph.nodesArray` */
   private allPositions: Vector2[];
   private tempPoint: Vector2;
@@ -128,7 +128,7 @@ export class FloydWarshall {
 
     vs.forEach((vA, i) =>
       vs.forEach((vB, j) => {
-        if (i > j) {
+        if (vA.id > vB.id) {
           return;
         } else if (vA === vB) {
           this.dist[vA.id][vB.id] = 0;
@@ -141,8 +141,6 @@ export class FloydWarshall {
           this.next[vA.id][vB.id] = vB.id;
           this.next[vB.id][vA.id] = vA.id;
           this.los[vA.id][vB.id] = this.los[vB.id][vA.id] = true;
-        } else {
-          this.los[vA.id][vB.id] = this.los[vB.id][vA.id] = false;
         }
       })
     );
@@ -161,7 +159,7 @@ export class FloydWarshall {
   }
 
   /**
-   * TODO better method?
+   * TODO raycasts via ViewGraph
    */
   private simplifyPath(path: Vector2[]) {
     if (path.length >= 3) {

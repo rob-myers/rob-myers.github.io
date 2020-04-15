@@ -128,7 +128,10 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     });
   }
 
-  /** Get points on rectangle containing `point`. */
+  /**
+   * TODO restrict to 4 on rect that 'surround' `point`.
+   * Get points on rectangle containing `point`.
+   */
   public findNearbyPoints(point: Vector2) {
     const rect = this.rects.find(r => r.contains(point));
     if (rect) {

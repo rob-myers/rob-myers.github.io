@@ -43,7 +43,11 @@ export function ensureFloydWarshall(levelUid: string) {
 function getUnwalkable(levelUid: string) {
   const { tilesSansCuts, floors } = getLevel(levelUid)!;
   const worldBounds = Rect2.from(...tilesSansCuts.map(({ bounds }) => bounds));
-  const unwalkable = Poly2.cutOut(floors.flatMap(x => x.createOutset(0.01)), [worldBounds.poly2]);
+  const cutRects = getCutRects(levelUid).map(x => x.poly2);
+  const unwalkable = Poly2.cutOut(
+    ([] as Poly2[]).concat(floors, cutRects).flatMap(x => x.createOutset(0.01)),
+    [worldBounds.poly2],
+  );
   return unwalkable;
 }
 

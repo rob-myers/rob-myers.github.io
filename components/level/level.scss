@@ -272,11 +272,13 @@ html {
         }
       }
       @at-root .dark-mode .nav-paths {
-        circle, line {
+        circle {
           fill: $level-navpath-dark;
+          r: 0.2;
         }
         line {
           stroke-width: 0.1;
+          fill: $level-navpath-dark;
           stroke: $level-navpath-dark;
         }
       }
