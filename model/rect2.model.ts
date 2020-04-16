@@ -179,8 +179,8 @@ export class Rect2 {
    */
   public intersects(other: Rect2) {
     return (
-      Math.abs(this.cx - other.cx) * 2 < this.width + other.width &&
-      Math.abs(this.cy - other.cy) * 2 < this.height + other.height
+      Math.abs(this.cx - other.cx) * 2 <= this.width + other.width &&
+      Math.abs(this.cy - other.cy) * 2 <= this.height + other.height
     );
   }
 
