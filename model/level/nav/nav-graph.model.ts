@@ -43,6 +43,11 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   }>;
   /** Node to position lookup. */
   public nodeToPosition: Map<NavNode, Vector2>;
+  /**
+   * Node to a rectangle containing it.
+   * Can be multiple rects containing a node via shared corners.
+   */
+  public nodeToRect: Map<NavNode, Rect2>;
 
   private tempPoint: Vector2;
 
@@ -60,6 +65,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     this.nodeToPosition = new Map;
     this.rectToNavNodes = new Map;
     this.tempPoint = Vector2.zero;
+    this.nodeToRect = new Map;
   }
 
   /** Returns rects partitioning navPolys, grouped by polygon id. */
@@ -73,15 +79,12 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       .map(({ points, holes }) => [points].concat(holes))
       .map(loops => loops.map((loop) => loop.map(({ x, y }) =>
         [x - bounds.x, y - bounds.y] as [number, number])));
-
     this.groupedRects = groupedLoops.map(loops => 
       rectDecompose(loops).map(([[x1, y1], [x2, y2]]) =>
         new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1)));
-
     this.groupRectsPoints = this.groupedRects
       .map(rects => rects.flatMap(rect => rect.poly2.points)
         .filter((p, i, array) => array.findIndex(q => p.equals(q)) === i));
-
     this.rects = this.groupedRects.flatMap(rects => rects);
   }
 
@@ -90,6 +93,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       const { polyId, vertexId } = node.opts;
       const position = this.navPolys[polyId].allPoints[vertexId];
       this.nodeToPosition.set(node, position);
+      this.nodeToRect.set(node, this.rects.find(r => r.contains(position))!);
     });
   }
 

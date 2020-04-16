@@ -139,7 +139,7 @@ export class FloydWarshall {
     this.los = vs.reduce((agg, v) => ({ ...agg, [v.id]: {} }), {});
     this.allPositions = this.navGraph.navPolys.flatMap(({ allPoints }) => allPoints);
 
-    vs.forEach((vA, i) =>
+    vs.forEach((vA, i) => {      
       vs.forEach((vB, j) => {
         if (vA.id > vB.id) {
           return;
@@ -147,7 +147,8 @@ export class FloydWarshall {
           this.dist[vA.id][vB.id] = 0;
           this.next[vA.id][vB.id] = vA.id;
           this.los[vA.id][vA.id] = true;
-        } else if (this.nodesStraightWalkable(vA, vB)) {
+        // } else if (this.nodesStraightWalkable(vA, vB)) {
+        } else if (this.altStraightWalkable(vA, vB)) {
           const dist = Math.round(this.tempPoint
             .copy(this.allPositions[j]).sub(this.allPositions[i]).length);
           this.dist[vA.id][vB.id] = this.dist[vB.id][vA.id] = dist;
@@ -155,8 +156,8 @@ export class FloydWarshall {
           this.next[vB.id][vA.id] = vA.id;
           this.los[vA.id][vB.id] = this.los[vB.id][vA.id] = true;
         }
-      })
-    );
+      });
+    });
   }
 
   /**
@@ -172,6 +173,17 @@ export class FloydWarshall {
     // Thin triangle so doesn't intersect border of outset navPolys
     const poly = new Poly2([u, v, v.clone().translate(-0.0001 * (v.y - u.y), 0.0001 * (v.x - u.x))]);
     return Poly2.intersect([poly], this.unwalkable).length === 0;
+  }
+
+  private altStraightWalkable(src: NavNode, dst: NavNode) {
+    if (this.navGraph.isConnected(src, dst)) {
+      return true;
+    }
+    const rectA = this.navGraph.nodeToRect.get(src)!;
+    const posA = this.navGraph.nodeToPosition.get(src)!;
+    const rectB = this.navGraph.nodeToRect.get(dst)!;
+    const posB = this.navGraph.nodeToPosition.get(dst)!;
+    return this.viewGraph.isVisibleFrom(`${rectA}`, posA, `${rectB}`, posB);
   }
 
   /**
