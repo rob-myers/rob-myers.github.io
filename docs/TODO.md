@@ -1,6 +1,5 @@
 # TODO
 
-- Cleanup initial/final bends in NavPaths.
 - For debug, can cast nav/sight ray between two metas.
 
 - shell signals
@@ -9,8 +8,6 @@
 - for `goto` intend `STOP`/`CONT` to pause/continue animations
 - can pause entire session -- but how to pause a `sleep`?
   - if finishes make it sleep the 'difference' and immediately pause it
-
-- reduce number of start/end point by restricting to 'closest 4 corner points' (needn't be a rect)
 
 - move meta dialog to front on open/click
 
@@ -310,3 +307,4 @@
   skipping any further computation during algorithm
 - `ViewGraph` has working `isVisibleFrom`.
 - Use `ViewGraph` of nav poly during `FloydWarshall`.
+- Cleanup initial/final bends in NavPaths.

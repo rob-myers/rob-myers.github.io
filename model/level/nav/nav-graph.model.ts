@@ -15,6 +15,9 @@ interface NavNodeOpts extends BaseNodeOpts {
   adjacentIds: number[];
   /** Global index in `polys.flatMap(({ allPoints }) => allPoints) */
   globalId: number;
+  /** Key of a rectangle containing NavNode */
+  rectKey: string;
+  position: Vector2;
 }
 
 export class NavNode extends BaseNode<NavNodeOpts> {} 
@@ -33,15 +36,6 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   private groupedSteiners: Vector2[][];
   /** Rectangle key to NavNodes on its border (includes own corners). */
   private rectToNavNodes: Map<string, { polyId: number; nodes: NavNode[] }>;
-  /** Node to position lookup. */
-  public nodeToPosition: Map<NavNode, Vector2>;
-  /**
-   * Node to a rectangle containing it.
-   * Can be multiple rects containing a node via shared corners.
-   */
-  public nodeToRect: Map<NavNode, Rect2>;
-
-  private tempPoint: Vector2;
 
   constructor(
     /** Navigable rectilinear polygons */
@@ -54,10 +48,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     this.groupedRects = [];
     this.groupRectsPoints = [];
     this.groupedSteiners = [];
-    this.nodeToPosition = new Map;
     this.rectToNavNodes = new Map;
-    this.tempPoint = Vector2.zero;
-    this.nodeToRect = new Map;
   }
 
   public storeRects(groupedRects: Rect2[][]) {
@@ -66,15 +57,6 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       .map(rects => rects.flatMap(rect => rect.poly2.points)
         .filter((p, i, array) => array.findIndex(q => p.equals(q)) === i));
     this.rects = groupedRects.flatMap(x => x);
-  }
-
-  private computeNodeToPosition() {
-    this.nodesArray.forEach((node) => {
-      const { polyId, vertexId } = node.opts;
-      const position = this.navPolys[polyId].allPoints[vertexId];
-      this.nodeToPosition.set(node, position);
-      this.nodeToRect.set(node, this.rects.find(r => r.contains(position))!);
-    });
   }
 
   private computeRectToNavNodes() {
@@ -126,7 +108,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     return { polyId,
       choices: nodes.map((node) => ({
         nodeId: node.id,
-        point: this.nodeToPosition.get(node)!,
+        point: node.opts.position,
       })),
     };
   }
@@ -157,7 +139,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     let globalId = 0;
     // `triangleIds` refer to points, holes and steiners of polygon
     for (const [polyId, { allPoints, triangleIds }] of navPolys.entries()) {
-      for (const [vertexId] of allPoints.entries()) {
+      for (const [vertexId, position] of allPoints.entries()) {
         graph.registerNode(new NavNode({
           id: `${polyId}-${vertexId}`,
           polyId,
@@ -166,6 +148,8 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
             ids.includes(vertexId) ? ids.filter(id => id !== vertexId) : []
           )),
           globalId: globalId + vertexId,
+          rectKey: graph.groupedRects[polyId].find(x => x.contains(position))!.key,
+          position: position.clone(),
         }));
       }
       for (const node of graph.nodesArray) {
@@ -181,7 +165,6 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     }
 
     graph.computeRectToNavNodes();
-    graph.computeNodeToPosition();
     return graph;
   }
 

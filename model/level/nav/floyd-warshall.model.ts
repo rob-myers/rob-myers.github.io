@@ -1,6 +1,6 @@
+/* eslint-disable no-cond-assign */
 import { NavGraph, NavNode } from './nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
-import { Rect2 } from '@model/rect2.model';
 import { ViewGraph } from './view-graph.model';
 
 export class FloydWarshall {
@@ -16,7 +16,6 @@ export class FloydWarshall {
   public los: { [srcId: string]: { [distId: string]: true } };
   /** All node positions, aligned to `this.navGraph.nodesArray` */
   private allPositions: Vector2[];
-  private tempPoint: Vector2;
 
   constructor(
     private navGraph: NavGraph,
@@ -26,12 +25,13 @@ export class FloydWarshall {
     this.next = {};
     this.los = {};
     this.allPositions = [];
-    this.tempPoint = Vector2.zero;
   }
 
-  /** Find path between two positions using precomputed paths. */
+  /**
+   * Find path between two positions using precomputed paths.
+   * TODO should already know rect of actor
+   */
   public findPath(src: Vector2, dst: Vector2): Vector2[] {
-    // TODO should already know rect of actor
     const srcRes = this.viewGraph.findRect(src);
     const dstRes = this.viewGraph.findRect(dst);
 
@@ -42,21 +42,26 @@ export class FloydWarshall {
     if (this.viewGraph.isVisibleFrom(srcKey, src, dstKey, dst)) {
       return [src, dst]; // Straight line walkable
     }
-    
-    // Find optimal nodes on rects containing `src` and `dst`
+
+    // Find optimal nodes on the rects containing `src` and `dst`
     const { srcNode, dstNode } = this.findClosestNavNodes(srcKey, src, dstKey, dst);
+
+    // Unravel Floyd-Warshall path
     const nodes = [srcNode];
     let node = srcNode;
     while (node !== dstNode) nodes.push(
       node = this.navGraph.getNodeById(this.next[node.id]![dstNode.id]!)!
     );
 
-    // TODO better simplify
-    return this.simplifyPath([
-      src,
-      ...nodes.map(({ opts: { globalId } }) => this.allPositions[globalId]),
-      dst,
-    ]);
+    // Fix initial/final bend if present
+    if ((node = nodes[1]) && this.viewGraph.isVisibleFrom(srcKey, src, node.opts.rectKey, node.opts.position)) {
+      nodes.shift();
+    }
+    if ((node = nodes[nodes.length - 2]) && this.viewGraph.isVisibleFrom(node.opts.rectKey, node.opts.position, dstKey, dst)) {
+      nodes.pop();
+    }
+
+    return [src, ...nodes.map(({ opts: { position } }) => position), dst];
   }
 
   private findClosestNavNodes(srcRectKey: string, src: Vector2, dstRectKey: string, dst: Vector2) {
@@ -77,23 +82,11 @@ export class FloydWarshall {
     };
   }
 
-  /**
-   * Find some rectangle containing every point.
-   */
-  private findRect(points: Vector2[]): Rect2 | null;
-  private findRect(point: Vector2): Rect2 | null;
-  private findRect(input: Vector2 | Vector2[]) {
-    if (Array.isArray(input)) {
-      return this.navGraph.rects.find(r => input.every(p => r.contains(p))) || null;
-    }
-    return this.navGraph.rects.find(r => r.contains(input)) || null;
-  }
-
   public static from(navGraph: NavGraph, viewGraph: ViewGraph): FloydWarshall {
     const fm = new FloydWarshall(navGraph, viewGraph);
     fm.initialize();
+    
     const [dist, next, los] = [fm.dist, fm.next, fm.los];
-
     // NavNode's grouped by polygon id
     const groupedNodes = navGraph.navPolys.map(({ allPoints }, polyIndex) =>
       allPoints.map(( _, vertexId) => navGraph.getNodeById(`${polyIndex}-${vertexId}`)!));
@@ -139,8 +132,8 @@ export class FloydWarshall {
           this.next[vA.id][vB.id] = vA.id;
           this.los[vA.id][vA.id] = true;
         } else if (this.nodesStraightWalkable(vA, vB)) {
-          const dist = Math.round(this.tempPoint
-            .copy(this.allPositions[j]).sub(this.allPositions[i]).length);
+          // const dist = Math.round(this.tempPoint.copy(this.allPositions[j]).sub(this.allPositions[i]).length);
+          const dist = this.allPositions[i].distanceTo(this.allPositions[j]);
           this.dist[vA.id][vB.id] = this.dist[vB.id][vA.id] = dist;
           this.next[vA.id][vB.id] = vB.id;
           this.next[vB.id][vA.id] = vA.id;
@@ -154,25 +147,11 @@ export class FloydWarshall {
     if (this.navGraph.isConnected(src, dst)) {
       return true;
     }
-    const rectA = this.navGraph.nodeToRect.get(src)!;
-    const posA = this.navGraph.nodeToPosition.get(src)!;
-    const rectB = this.navGraph.nodeToRect.get(dst)!;
-    const posB = this.navGraph.nodeToPosition.get(dst)!;
-    return this.viewGraph.isVisibleFrom(`${rectA}`, posA, `${rectB}`, posB);
-  }
-
-  /**
-   * TODO raycasts via ViewGraph
-   */
-  private simplifyPath(path: Vector2[]) {
-    if (path.length >= 3) {
-      if (this.findRect(path.slice(0, 3))) {
-        path.splice(1, 1);
-      }
-      if (path.length >= 3 && this.findRect(path.slice(-3))) {
-        path.splice(path.length - 2, 1);
-      }
-    }
-    return path;
+    return this.viewGraph.isVisibleFrom(
+      src.opts.rectKey,
+      src.opts.position,
+      dst.opts.rectKey,
+      dst.opts.position,
+    );
   }
 }
