@@ -29,29 +29,29 @@ export class FloydWarshall {
     this.tempPoint = Vector2.zero;
   }
 
-  /**
-   * TODO should already know rect containing src/dst
-   * Find path between two positions using precomputed paths.
-   */
+  /** Find path between two positions using precomputed paths. */
   public findPath(src: Vector2, dst: Vector2): Vector2[] {
+    // TODO should already know rect of actor
     const srcRes = this.viewGraph.findRect(src);
     const dstRes = this.viewGraph.findRect(dst);
 
     if (!srcRes || !dstRes || srcRes.polyId !== dstRes.polyId) {
-      return [];
-    } else if (this.viewGraph.isVisibleFrom(srcRes.rect.key, src, dstRes.rect.key, dst)) {
-      return [src, dst];
+      return []; // Unnavigable
+    }
+    const [srcKey, dstKey] = [srcRes.rect.key, dstRes.rect.key];
+    if (this.viewGraph.isVisibleFrom(srcKey, src, dstKey, dst)) {
+      return [src, dst]; // Straight line walkable
     }
     
-    // TODO cleanup below
-    const { srcNode, dstNode } = this.findPathEndNodes(src, dst);
-    if (!srcNode || !dstNode) {
-      return [];
-    }
+    // Find optimal nodes on rects containing `src` and `dst`
+    const { srcNode, dstNode } = this.findClosestNavNodes(srcKey, src, dstKey, dst);
     const nodes = [srcNode];
     let node = srcNode;
-    while (node !== dstNode) nodes.push(node = this.navGraph.getNodeById(this.next[node.id]![dstNode.id]!)!);
+    while (node !== dstNode) nodes.push(
+      node = this.navGraph.getNodeById(this.next[node.id]![dstNode.id]!)!
+    );
 
+    // TODO better simplify
     return this.simplifyPath([
       src,
       ...nodes.map(({ opts: { globalId } }) => this.allPositions[globalId]),
@@ -59,24 +59,15 @@ export class FloydWarshall {
     ]);
   }
 
-  private findPathEndNodes(src: Vector2, dst: Vector2) {
-    const srcNearbys = this.navGraph.findNearbyPoints(src);
-    const dstNearbys = this.navGraph.findNearbyPoints(dst);
-
-    if (!srcNearbys || !dstNearbys) {
-      return { srcNode: null, dstNode : null };
-    } else if (srcNearbys.polyId !== dstNearbys.polyId) {
-      return { srcNode: null, dstNode : null };
-    }
-    let closest = {
-      srcId: null as null | string,
-      dstId: null as null | string,
+  private findClosestNavNodes(srcRectKey: string, src: Vector2, dstRectKey: string, dst: Vector2) {
+    const { choices: srcChoices } = this.navGraph.findNearbyPoints(srcRectKey);
+    const { choices: dstChoices } = this.navGraph.findNearbyPoints(dstRectKey);
+    let closest: { srcId?: string; dstId?: string; dist: number } = {
       dist: Number.POSITIVE_INFINITY,
     };
-    srcNearbys.choices.forEach(({ nodeId: srcId, dist: srcDist }) =>
-      dstNearbys.choices.forEach(({ nodeId: dstId, dist: dstDist }) => {
-        const dist = srcDist + this.dist[srcId][dstId] + dstDist;
-        // console.log({ srcId, dstId, srcDist, midDst: this.dist[srcId][dstId], dstDist });
+    srcChoices.forEach(({ nodeId: srcId, point: srcPos }) =>
+      dstChoices.forEach(({ nodeId: dstId, point: dstPos }) => {
+        const dist = src.distanceTo(srcPos) + this.dist[srcId][dstId] + dst.distanceTo(dstPos);
         (dist < closest.dist) && (closest = { srcId, dstId, dist });
       })
     );
@@ -88,7 +79,6 @@ export class FloydWarshall {
 
   /**
    * Find some rectangle containing every point.
-   * NOTE a point might be contained in many rects
    */
   private findRect(points: Vector2[]): Rect2 | null;
   private findRect(point: Vector2): Rect2 | null;
@@ -99,10 +89,7 @@ export class FloydWarshall {
     return this.navGraph.rects.find(r => r.contains(input)) || null;
   }
 
-  public static from(
-    navGraph: NavGraph,
-    viewGraph: ViewGraph,
-  ): FloydWarshall {
+  public static from(navGraph: NavGraph, viewGraph: ViewGraph): FloydWarshall {
     const fm = new FloydWarshall(navGraph, viewGraph);
     fm.initialize();
     const [dist, next, los] = [fm.dist, fm.next, fm.los];

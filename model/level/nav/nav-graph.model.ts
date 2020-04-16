@@ -25,17 +25,14 @@ class NavEdge extends BaseEdge<NavNode, NavEdgeOpts> {}
 
 export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOpts> {
   
-  /** Rectangles partitioning `polys`. */
-  public rects: Rect2[];
-  /** Rectangles grouped by polygon id. */
+  /** Rectangle partitions grouped by polygon id. */
   public groupedRects: Rect2[][];
   private groupRectsPoints: Vector2[][];
+  /** Rectangles partitioning all navigable polygons. */
+  public rects: Rect2[];
   private groupedSteiners: Vector2[][];
-  /** Rectangle to NavNodes on its border (includes own corners). */
-  private rectToNavNodes: Map<Rect2, {
-    polyId: number;
-    nodes: NavNode[];
-  }>;
+  /** Rectangle key to NavNodes on its border (includes own corners). */
+  private rectToNavNodes: Map<string, { polyId: number; nodes: NavNode[] }>;
   /** Node to position lookup. */
   public nodeToPosition: Map<NavNode, Vector2>;
   /**
@@ -80,12 +77,12 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     });
   }
 
-  private computeRectsNavNodes() {
+  private computeRectToNavNodes() {
     this.groupedRects.forEach((rects, polyId) => {
       rects.forEach((rect) => {
         const points = this.groupRectsPoints[polyId].filter(p => rect.contains(p));
         const nodes = points.map(p => this.positionToNode(polyId, p)!);
-        this.rectToNavNodes.set(rect, { polyId, nodes });
+        this.rectToNavNodes.set(rect.key, { polyId, nodes });
       });
     });
   }
@@ -121,23 +118,17 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   }
 
   /**
-   * TODO should already know rect of actor.
    * Find all points of NavNodes on border of rect.
-   * Restricting to 'close points' might not work, so we'll
-   * avoid there being too many via level design.
+   * Restricting to 'close points' might not work.
    */
-  public findNearbyPoints(point: Vector2) {
-    const rect = this.rects.find(r => r.contains(point));
-    if (rect) {
-      const { nodes, polyId } = this.rectToNavNodes.get(rect)!;
-      return { polyId,
-        choices: nodes.map((node) => ({
-          nodeId: node.id,
-          dist: this.tempPoint.copy(point).sub(this.nodeToPosition.get(node)!).length,
-        })),
-      };
-    }
-    return null;
+  public findNearbyPoints(rectKey: string) {
+    const { nodes, polyId } = this.rectToNavNodes.get(rectKey)!;
+    return { polyId,
+      choices: nodes.map((node) => ({
+        nodeId: node.id,
+        point: this.nodeToPosition.get(node)!,
+      })),
+    };
   }
 
   /**
@@ -189,7 +180,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       globalId += allPoints.length;
     }
 
-    graph.computeRectsNavNodes();
+    graph.computeRectToNavNodes();
     graph.computeNodeToPosition();
     return graph;
   }

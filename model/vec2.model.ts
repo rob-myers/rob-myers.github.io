@@ -52,6 +52,13 @@ export class Vector2 {
     return this.set(p.x, p.y);
   }
 
+  public distanceTo(p: Vector2Json) {
+    return Math.sqrt(
+      Math.pow(p.x - this.x, 2)
+      + Math.pow(p.y - this.y, 2)
+    );
+  }
+
   public dot(other: Vector2): number {
     return this.x * other.x + this.y * other.y;
   }
