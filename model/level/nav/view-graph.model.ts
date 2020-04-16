@@ -134,7 +134,7 @@ export class ViewGraph extends BaseGraph<
   }
 
   /**
-   * TODO test this...
+   * TODO get this working...
    */
   public isVisibleFrom(
     /** Source rectangle's key */
