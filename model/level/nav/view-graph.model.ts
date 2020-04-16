@@ -47,10 +47,12 @@ export class ViewGraph extends BaseGraph<
 
   /** Rectangles partitioning `polys`. */
   public rects: Rect2[];
+  private groupedRects: Rect2[][];
 
   constructor(public polys: Poly2[]) {
     super(ViewEdge);
     this.rects = [];
+    this.groupedRects = [];
   }
 
   /**
@@ -63,19 +65,39 @@ export class ViewGraph extends BaseGraph<
       .map(({ points, holes }) => [points].concat(holes))
       .map(loops => loops.map((loop) => loop.map(({ x, y }) =>
         [x - bounds.x, y - bounds.y] as [number, number])));
-    const groupedRects = groupedLoops.map(loops => 
+    this.groupedRects = groupedLoops.map(loops => 
       rectDecompose(loops).map(([[x1, y1], [x2, y2]]) =>
         new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1)));
-    this.rects = groupedRects.flatMap(rects => rects);
+    this.rects = this.groupedRects.flatMap(rects => rects);
+  }
+
+  public findRect(point: Vector2Json) {
+    for (const [polyId, rects] of this.groupedRects.entries()) {
+      const found = rects.find(rect => rect.contains(point));
+      if (found) {
+        return { polyId, rect: found };
+      }
+    }
+    return null;
   }
 
   public static from(polys: Poly2[], metas: LevelMeta[]): ViewGraph {
     const graph = new ViewGraph(polys);
     graph.computeRects(polys);
 
-    const rectToAdjs = new Map<Rect2, { top: Rect2[]; right: Rect2[]; bottom: Rect2[]; left: Rect2[] }>();
+    const rectToAdjs = new Map<Rect2, {
+      /** Rects which are above. */
+      top: Rect2[];
+      /** Rects which are on right. */
+      right: Rect2[];
+      /** Rects which are below. */
+      bottom: Rect2[];
+      /** Rects which on left. */
+      left: Rect2[];
+    }>();
     graph.rects.forEach((rect) => {
-      const adjRects = graph.rects.filter(other => other.intersects(rect) && other !== rect);
+      const adjRects = graph.rects
+        .filter(other => other.intersects(rect) && other !== rect);
       rectToAdjs.set(rect, {
         top: adjRects.filter(other => other.bottom === rect.y),
         right: adjRects.filter(other => other.x === rect.right),
@@ -133,33 +155,38 @@ export class ViewGraph extends BaseGraph<
     return graph;
   }
 
-  /**
-   * TODO get this working...
-   */
   public isVisibleFrom(
     /** Source rectangle's key */
-    srcRectKey: string,
+    srcKey: string,
     /** Position in source rectangle */
     src: Vector2Json,
     /** Destination rectangle's key */
-    dstRectKey: string,
+    dstKey: string,
     /** Position in destination rectangle */
-    dst: Vector2Json,
+    dst: Vector2,
+    /**
+     * The rectangles we've seen:
+     * - used to prevent cycles at corner points i.e. 0-dim portals.
+     * - order of keys can be used to compute raycast.
+     */
+    seen: { [rectKey: string]: true } = {},
   ): boolean {
+    // console.log({ srcKey, src, dstKey, dst, seen });
 
-    if (srcRectKey === dstRectKey) {
+    seen[srcKey] = true;
+    if (srcKey === dstKey) {
       return true;
     }
-    const { edgeKeys, rect } = this.getNodeById(srcRectKey)!.opts;
+    const { edgeKeys, rect } = this.getNodeById(srcKey)!.opts;
     const [dx, dy] = [dst.x - src.x, dst.y - src.y];
 
     if (dst.x !== src.x) {
       const x = dst.x > src.x ? rect.right : rect.x;
       for (const edgeKey of dst.x > src.x ? edgeKeys.right : edgeKeys.left) {
         const { otherOpts: { portal }, dst: nextSrc } = this.getEdgeById(edgeKey)!;
-        const y = (x - src.x) * (dy / dx);
-        if (portal[0].y <= y && y <= portal[1].y) {
-          return this.isVisibleFrom(nextSrc.id, { x, y }, dstRectKey, dst);
+        const y = src.y + ((x - src.x) * (dy / dx));
+        if (portal[0].y <= y && y <= portal[1].y && !seen[nextSrc.id]) {
+          return this.isVisibleFrom(nextSrc.id, { x, y }, dstKey, dst, seen);
         }
       }
     }
@@ -168,9 +195,9 @@ export class ViewGraph extends BaseGraph<
       const y = dst.y > src.y ? rect.bottom : rect.y;
       for (const edgeKey of dst.y > src.y ? edgeKeys.bottom : edgeKeys.top) {
         const { otherOpts: { portal }, dst: nextSrc } = this.getEdgeById(edgeKey)!;
-        const x = (y - src.y) * (dx / dy);
-        if (portal[0].x <= x && x <= portal[1].x) {
-          return this.isVisibleFrom(nextSrc.id, { x, y }, dstRectKey, dst);
+        const x = src.x + ((y - src.y) * (dx / dy));
+        if (portal[0].x <= x && x <= portal[1].x && !seen[nextSrc.id]) {
+          return this.isVisibleFrom(nextSrc.id, { x, y }, dstKey, dst, seen);
         }
       }
     }

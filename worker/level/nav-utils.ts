@@ -4,8 +4,6 @@ import { redact } from '@model/redux.model';
 import { NavGraph } from '@model/level/nav/nav-graph.model';
 import { FloydWarshall } from '@model/level/nav/floyd-warshall.model';
 import { Vector2 } from '@model/vec2.model';
-import { Poly2 } from '@model/poly2.model';
-import { Rect2 } from '@model/rect2.model';
 import { ViewGraph } from '@model/level/nav/view-graph.model';
 import { Act } from '@store/level/level.duck';
 import { store, getLevel } from './create-store';
@@ -21,9 +19,7 @@ export function ensureFloydWarshall(levelUid: string) {
   const viewGraph = ViewGraph.from(floors, Object.values(metaGroups).flatMap(x => x.metas));
  
   // FloydWarshall.from is an expensive computation
-  const floydWarshall = prevFloydWarshall || redact(
-    FloydWarshall.from(navGraph, viewGraph, getUnwalkable(levelUid)),
-  );
+  const floydWarshall = prevFloydWarshall || redact(FloydWarshall.from(navGraph, viewGraph));
   dispatch(Act.updateLevel(levelUid, { floydWarshall }));
 
   const [nodeCount, edgeCount, areaCount] = [
@@ -40,17 +36,6 @@ export function ensureFloydWarshall(levelUid: string) {
   ctxt.postMessage({ key: 'send-level-nav-rects', levelUid,
     rects: navGraph.rects.map(r => r.json),
   });
-}
-
-function getUnwalkable(levelUid: string) {
-  const { tilesSansCuts, floors } = getLevel(levelUid)!;
-  const worldBounds = Rect2.from(...tilesSansCuts.map(({ bounds }) => bounds));
-  const cutRects = getCutRects(levelUid).map(x => x.poly2);
-  const unwalkable = Poly2.cutOut(
-    ([] as Poly2[]).concat(floors, cutRects).flatMap(x => x.createOutset(0.01)),
-    [worldBounds.poly2],
-  );
-  return unwalkable;
 }
 
 export function getCutRects(levelUid: string) {

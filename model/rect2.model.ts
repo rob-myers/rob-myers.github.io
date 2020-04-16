@@ -1,4 +1,4 @@
-import { Vector2 } from './vec2.model';
+import { Vector2, Vector2Json } from './vec2.model';
 import { GeoJsonPolygon, Poly2 } from './poly2.model';
 
 /**
@@ -98,7 +98,7 @@ export class Rect2 {
     return new Rect2(this.x, this.y, this.width, this.height);
   }
 
-  public contains({ x, y }: Vector2) {
+  public contains({ x, y }: Vector2Json) {
     return this.x <= x && x <= this.x + this.width && (this.y <= y && y <= this.y + this.height);
   }
 

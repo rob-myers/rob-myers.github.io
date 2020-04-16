@@ -1,7 +1,6 @@
 import { NavGraph, NavNode } from './nav-graph.model';
 import { Vector2 } from '@model/vec2.model';
 import { Rect2 } from '@model/rect2.model';
-import { Poly2 } from '@model/poly2.model';
 import { ViewGraph } from './view-graph.model';
 
 export class FloydWarshall {
@@ -19,9 +18,6 @@ export class FloydWarshall {
   private allPositions: Vector2[];
   private tempPoint: Vector2;
 
-  // TODO remove
-  private unwalkable: Poly2[];
-
   constructor(
     private navGraph: NavGraph,
     private viewGraph: ViewGraph,
@@ -31,15 +27,25 @@ export class FloydWarshall {
     this.los = {};
     this.allPositions = [];
     this.tempPoint = Vector2.zero;
-    this.unwalkable = [];
   }
 
   /**
+   * TODO should already know rect containing src/dst
    * Find path between two positions using precomputed paths.
    */
   public findPath(src: Vector2, dst: Vector2): Vector2[] {
+    const srcRes = this.viewGraph.findRect(src);
+    const dstRes = this.viewGraph.findRect(dst);
+
+    if (!srcRes || !dstRes || srcRes.polyId !== dstRes.polyId) {
+      return [];
+    } else if (this.viewGraph.isVisibleFrom(srcRes.rect.key, src, dstRes.rect.key, dst)) {
+      return [src, dst];
+    }
+    
+    // TODO cleanup below
     const { srcNode, dstNode } = this.findPathEndNodes(src, dst);
-    if (!srcNode || !dstNode) {// Handle unnavigable nodes
+    if (!srcNode || !dstNode) {
       return [];
     }
     const nodes = [srcNode];
@@ -96,10 +102,8 @@ export class FloydWarshall {
   public static from(
     navGraph: NavGraph,
     viewGraph: ViewGraph,
-    unwalkable: Poly2[], // TODO remove
   ): FloydWarshall {
     const fm = new FloydWarshall(navGraph, viewGraph);
-    fm.unwalkable = unwalkable;
     fm.initialize();
     const [dist, next, los] = [fm.dist, fm.next, fm.los];
 
@@ -147,8 +151,7 @@ export class FloydWarshall {
           this.dist[vA.id][vB.id] = 0;
           this.next[vA.id][vB.id] = vA.id;
           this.los[vA.id][vA.id] = true;
-        // } else if (this.nodesStraightWalkable(vA, vB)) {
-        } else if (this.altStraightWalkable(vA, vB)) {
+        } else if (this.nodesStraightWalkable(vA, vB)) {
           const dist = Math.round(this.tempPoint
             .copy(this.allPositions[j]).sub(this.allPositions[i]).length);
           this.dist[vA.id][vB.id] = this.dist[vB.id][vA.id] = dist;
@@ -160,22 +163,7 @@ export class FloydWarshall {
     });
   }
 
-  /**
-   * TODO better approach via ViewGraph.
-   * Can we walk in a straight line between NavNodes `src` and `dst`?
-   */
   private nodesStraightWalkable(src: NavNode, dst: NavNode) {
-    if (this.navGraph.isConnected(src, dst)) {
-      return true;
-    }
-    const u = this.navGraph.nodeToPosition.get(src)!;
-    const v = this.navGraph.nodeToPosition.get(dst)!;
-    // Thin triangle so doesn't intersect border of outset navPolys
-    const poly = new Poly2([u, v, v.clone().translate(-0.0001 * (v.y - u.y), 0.0001 * (v.x - u.x))]);
-    return Poly2.intersect([poly], this.unwalkable).length === 0;
-  }
-
-  private altStraightWalkable(src: NavNode, dst: NavNode) {
     if (this.navGraph.isConnected(src, dst)) {
       return true;
     }

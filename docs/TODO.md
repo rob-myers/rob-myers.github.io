@@ -1,10 +1,7 @@
 # TODO
 
-- line-of-walk
-- `ViewGraph` detects intersection with walls, and close metas.
-- Then can test each actor against line seg from source to wall.
-- Could also 'search nearby' by considering nearby rects.
-- line-of-sight
+- Cleanup initial/final bends in NavPaths.
+- For debug, can cast nav/sight ray between two metas.
 
 - shell signals
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
@@ -311,3 +308,5 @@
 - line-of-walk test via negation of polys.
 - initially Floyd-Warshall does pairwise line-of-walk checks for connectivity,
   skipping any further computation during algorithm
+- `ViewGraph` has working `isVisibleFrom`.
+- Use `ViewGraph` of nav poly during `FloydWarshall`.
