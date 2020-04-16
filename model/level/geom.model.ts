@@ -1,5 +1,7 @@
+import rectDecompose from 'rectangle-decomposition';
 import { Vector2 } from '@model/vec2.model';
 import { Poly2 } from '@model/poly2.model';
+import { Rect2 } from '@model/rect2.model';
 
 export function pointOnLineSeg(
   p: Vector2,
@@ -165,4 +167,24 @@ export function radRange(radian: number) {
 
 export function sign (p1: Vector2, p2: Vector2, p3: Vector2,) {
   return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+}
+
+/**
+ * Returns rects partitioning polys, grouped by polygon id.
+ * Npm module 'rectangle-decomposition' requires +ve coords,
+ * so we transform first, then apply inverse transform.
+ */
+export function computeRectPartition(polys: Poly2[]) {
+  const bounds = Rect2.from(...polys.flatMap(({ bounds }) => bounds));
+
+  const groupedLoops = polys
+    .map(({ points, holes }) => [points].concat(holes))
+    .map(loops => loops.map((loop) => loop.map(({ x, y }) =>
+      [x - bounds.x, y - bounds.y] as [number, number])));
+
+  const groupedRects = groupedLoops.map(loops => 
+    rectDecompose(loops).map(([[x1, y1], [x2, y2]]) =>
+      new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1)));
+
+  return groupedRects;
 }

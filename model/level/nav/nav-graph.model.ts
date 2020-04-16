@@ -1,4 +1,3 @@
-import rectDecompose from 'rectangle-decomposition';
 import { BaseNodeOpts, BaseNode, BaseEdgeOpts, BaseEdge, BaseGraph } from '@model/graph.model';
 import { Rect2 } from '@model/rect2.model';
 import { Poly2 } from '@model/poly2.model';
@@ -64,24 +63,12 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     this.nodeToRect = new Map;
   }
 
-  /** Returns rects partitioning navPolys, grouped by polygon id. */
-  public computeRects(navPolys: Poly2[]) {
-    /**
-     * Npm module 'rectangle-decomposition' requires +ve coords,
-     * so we transform first, then apply inverse transform.
-     */
-    const bounds = Rect2.from(...navPolys.flatMap(({ bounds }) => bounds));
-    const groupedLoops = navPolys
-      .map(({ points, holes }) => [points].concat(holes))
-      .map(loops => loops.map((loop) => loop.map(({ x, y }) =>
-        [x - bounds.x, y - bounds.y] as [number, number])));
-    this.groupedRects = groupedLoops.map(loops => 
-      rectDecompose(loops).map(([[x1, y1], [x2, y2]]) =>
-        new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1)));
+  public storeRects(groupedRects: Rect2[][]) {
+    this.groupedRects = groupedRects;
     this.groupRectsPoints = this.groupedRects
       .map(rects => rects.flatMap(rect => rect.poly2.points)
         .filter((p, i, array) => array.findIndex(q => p.equals(q)) === i));
-    this.rects = this.groupedRects.flatMap(rects => rects);
+    this.rects = groupedRects.flatMap(x => x);
   }
 
   private computeNodeToPosition() {
@@ -159,14 +146,14 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   public static from(
     navPolys: Poly2[],
     metaSteiners: { [polyId: number]: Vector2[] },
+    groupedRects: Rect2[][],
   ): NavGraph {
     const groupedTris = navPolys.map(p => p.triangulation);
     const graph = new NavGraph(navPolys, groupedTris);
-    graph.computeRects(navPolys); // Compute rect partition
+    graph.storeRects(groupedRects);
 
     navPolys.forEach((poly) => poly.removeSteiners());
     graph.computeRectsSteiners(metaSteiners);
-
     navPolys.forEach((poly, polyId) => {
       poly.addSteiners(graph.groupedSteiners[polyId]);
       /**

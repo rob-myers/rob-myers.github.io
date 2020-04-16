@@ -51,7 +51,7 @@ export function createLevelState(uid: string): LevelState {
     metaUpdateSub: null,
     metaGroups: {},
     floydWarshall: null,
-    navGraph: redact(NavGraph.from([], {})),
+    navGraph: redact(NavGraph.from([], {}, [])),
   };
 }
 

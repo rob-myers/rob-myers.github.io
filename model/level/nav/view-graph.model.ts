@@ -1,4 +1,3 @@
-import rectDecompose from 'rectangle-decomposition';
 import { mapValues } from '@model/generic.model';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { Rect2 } from '@model/rect2.model';
@@ -55,19 +54,8 @@ export class ViewGraph extends BaseGraph<
     this.groupedRects = [];
   }
 
-  /**
-   * Npm module 'rectangle-decomposition' requires +ve coords,
-   * so we transform first, then apply inverse transform.
-   */
-  private computeRects(polys: Poly2[]) {
-    const bounds = Rect2.from(...polys.flatMap(({ bounds }) => bounds));
-    const groupedLoops = polys
-      .map(({ points, holes }) => [points].concat(holes))
-      .map(loops => loops.map((loop) => loop.map(({ x, y }) =>
-        [x - bounds.x, y - bounds.y] as [number, number])));
-    this.groupedRects = groupedLoops.map(loops => 
-      rectDecompose(loops).map(([[x1, y1], [x2, y2]]) =>
-        new Rect2(bounds.x + x1, bounds.y + y1, x2 - x1, y2 - y1)));
+  private storeRects(groupedRects: Rect2[][]) {
+    this.groupedRects = groupedRects.slice();
     this.rects = this.groupedRects.flatMap(rects => rects);
   }
 
@@ -81,9 +69,13 @@ export class ViewGraph extends BaseGraph<
     return null;
   }
 
-  public static from(polys: Poly2[], metas: LevelMeta[]): ViewGraph {
+  public static from(
+    polys: Poly2[],
+    metas: LevelMeta[],
+    groupedRects: Rect2[][],
+  ): ViewGraph {
     const graph = new ViewGraph(polys);
-    graph.computeRects(polys);
+    graph.storeRects(groupedRects);
 
     const rectToAdjs = new Map<Rect2, {
       /** Rects which are above. */
@@ -165,7 +157,7 @@ export class ViewGraph extends BaseGraph<
     /** Position in destination rectangle */
     dst: Vector2,
     /**
-     * The rectangles we've seen:
+     * The rectangles we've seen so far:
      * - used to prevent cycles at corner points i.e. 0-dim portals.
      * - order of keys can be used to compute raycast.
      */

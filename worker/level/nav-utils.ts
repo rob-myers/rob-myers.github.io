@@ -8,15 +8,24 @@ import { ViewGraph } from '@model/level/nav/view-graph.model';
 import { Act } from '@store/level/level.duck';
 import { store, getLevel } from './create-store';
 import { sendLevelAux, sendMetas } from './handle-requests';
+import { computeRectPartition } from '@model/level/geom.model';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
 
 export function ensureFloydWarshall(levelUid: string) {
+  // Recall `floors` consists of the navigable polygons
   const { floors, floydWarshall: prevFloydWarshall, metaGroups } = getLevel(levelUid)!;
   const metaSteiners = getMetaSteiners(levelUid);
-  const navGraph = NavGraph.from(floors, metaSteiners);
-  const viewGraph = ViewGraph.from(floors, Object.values(metaGroups).flatMap(x => x.metas));
+  const metas = Object.values(metaGroups).flatMap(x => x.metas);
+  /**
+   * ViewGraph has the rects as nodes.
+   * NavGraph has `floors` vertices as nodes, but uses rects to find NavNodes near a point.
+   * Elsewhere we'll compute a rectangular partition of 'viewable space' (vs. navigable).
+   */
+  const groupedRects = computeRectPartition(floors);
+  const navGraph = NavGraph.from(floors, metaSteiners, groupedRects);
+  const viewGraph = ViewGraph.from(floors, metas, groupedRects);
  
   // FloydWarshall.from is an expensive computation
   const floydWarshall = prevFloydWarshall || redact(FloydWarshall.from(navGraph, viewGraph));
@@ -93,7 +102,8 @@ export function updateNavGraph(levelUid: string) {
    * NavGraph.from extends `floors` with steiners and re-triangulates.
    */
   const metaSteiners = getMetaSteiners(levelUid);
-  const navGraph = NavGraph.from(floors, metaSteiners);
+  const groupedRects = computeRectPartition(floors);
+  const navGraph = NavGraph.from(floors, metaSteiners, groupedRects);
   dispatch(Act.updateLevel(levelUid, { navGraph: redact(navGraph) }));
 
   ctxt.postMessage({
