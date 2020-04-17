@@ -138,7 +138,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
               <g key={key}>
                 {
                   // A meta can have a light
-                  theme === 'dark-mode' && light && light.valid && (
+                  light && light.valid && (
                     <>
                       <radialGradient
                         id={`light-radial-${key}`}
@@ -149,9 +149,21 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                           scale(${light.scale / light.scaleX}, ${light.scale /light.scaleY})
                         `}
                       >
-                        <stop offset="0%" style={{ stopColor: 'rgba(200, 200, 200, 0.3)' }} />
-                        <stop offset="80%" style={{ stopColor: 'rgba(32, 32, 32, 0.1)' }} />
-                        <stop offset="100%" style={{ stopColor: 'rgba(32, 32, 32, 0)' }} />
+                        {
+                          theme === 'dark-mode' && (
+                            <>
+                              <stop offset="0%" style={{ stopColor: 'rgba(200, 200, 200, 0.3)' }} />
+                              <stop offset="80%" style={{ stopColor: 'rgba(32, 32, 32, 0.1)' }} />
+                              <stop offset="100%" style={{ stopColor: 'rgba(32, 32, 32, 0)' }} />
+                            </>
+                          ) || (
+                            <>
+                              <stop offset="0%" style={{ stopColor: 'rgba(0, 0, 0, 0.05)' }} />
+                              <stop offset="100%" style={{ stopColor: 'rgba(0, 0, 0, 0.05)' }} />
+                              <stop offset="100%" style={{ stopColor: 'rgba(0, 0, 0, 0)' }} />
+                            </>
+                          )
+                        }
                       </radialGradient>
                       <path
                         key={`light-${key}`}
