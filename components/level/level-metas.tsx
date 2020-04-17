@@ -11,6 +11,7 @@ import { Rect2Json } from '@model/rect2.model';
 import { metaPointRadius } from '@model/level/level-params';
 import { Act, Thunk } from '@store/level.duck';
 import css from './level.scss';
+import { LevelIcon } from './level-icon';
 
 type MetaLookup = LevelState['metaGroups'];
 
@@ -121,18 +122,10 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
   return (
     <>
       <g className={css.metas}>
-        {Object.values(groups).map(({ key: groupKey, position, metas }) =>
+        {Object.values(groups).map(({ key: groupKey, position, metas, backupIcon }) =>
           <g key={groupKey}>
             {
-              !groups[groupKey].hasIcon() && (
-                <circle
-                  // The meta's handle
-                  className={css.metaHandle}
-                  cx={position.x}
-                  cy={position.y}
-                  r={metaPointRadius}
-                />
-              )
+              !groups[groupKey].hasIcon() && <LevelIcon position={position} icon={backupIcon} />
             }
             {metas.map(({ key, light, rect, trigger, physical, icon }) => (
               <g key={key}>
@@ -224,12 +217,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   )
                 }
                 {
-                  icon && (
-                    <g
-                      style={{ transform: `translate(${position.x - icon.delta.x}px, ${position.y - icon.delta.y}px) scale(${icon.scale})`}}
-                      dangerouslySetInnerHTML={{ __html: icon.svg }}
-                    />
-                  )
+                  // A meta can have an icon
+                  icon && <LevelIcon position={position} icon={icon} />
                 }
               </g>
             ))}

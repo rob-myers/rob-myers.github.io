@@ -1,6 +1,5 @@
 # TODO
 
-- Default meta icons: door, light, rectangle, circle, other
 - Remove meta `pickup`; add meta `table`
 - Live mode: exists, shows icons, and optionally defaulted icons.
 - Live mode: on hover meta shows read-only summary
@@ -310,3 +309,4 @@
 - Use `ViewGraph` of nav poly during `FloydWarshall`.
 - Cleanup initial/final bends in NavPaths.
 - move meta dialog to front on open/click
+- Default meta icons: door, light, rectangle, circle, other

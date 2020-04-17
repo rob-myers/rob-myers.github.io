@@ -3,7 +3,7 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2Json, Rect2 } from '@model/rect2.model';
 import { intersects, testNever } from '@model/generic.model';
-import { iconLookup, IconType } from '@model/icon/icon.model';
+import { iconLookup, IconType, Icon, createIcon } from '@model/icon/icon.model';
 import { pointOnLineSeg } from './geom.model';
 import { LevelLight, LevelLightJson } from './level-light.model';
 
@@ -55,13 +55,7 @@ export class LevelMeta {
     public trigger: null | TriggerType = null,
     /** A pickup has a circular trigger, a door has no trigger */
     public physical: null | PhysicalType = null,
-    public icon: null | {
-      key: IconType;
-      svg: string;
-      rect: Rect2;
-      scale: number;
-      delta: Vector2;
-    } = null,
+    public icon: null | Icon = null,
   ) {}
 
   public addTag(tag: string) {
@@ -91,15 +85,12 @@ export class LevelMeta {
       json.rect ? Rect2.fromJson(json.rect) : null,
       json.trigger??null,
       json.physical??null,
-      icon ? {
-        key: json.icon!,
-        svg: icon.svg,
-        rect: icon.dstRect.clone(),
-        scale: icon.dstRect.dimension / icon.srcRect.dimension,
-        delta: icon.srcRect.center
-          .scale(icon.dstRect.dimension / icon.srcRect.dimension),
-      } : null
+      icon ? createIcon(json.icon!) : null
     );
+  }
+  
+  public isRectMeta() {
+    return this.rect && this.tags.some(tag => isRectTag(tag));
   }
 
   /** Remove all tags matching `removeRegex` */
@@ -161,15 +152,7 @@ export class LevelMeta {
 
   public setIconTag(tag: IconType) {
     this.tags = this.tags.filter(x => !isIconTag(x)).concat(tag);
-    const icon = iconLookup[tag];
-    this.icon = {
-      key: tag,
-      svg: icon.svg,
-      rect: icon.dstRect.clone(),
-      scale: icon.dstRect.dimension / icon.srcRect.dimension,
-      delta: icon.srcRect.center
-        .scale(icon.dstRect.dimension / icon.srcRect.dimension),
-    };
+    this.icon = createIcon(tag);
   }
 
   /**
@@ -219,6 +202,7 @@ export class LevelMetaGroup {
       metas: this.metas.map(meta => meta.json),
       position: this.position.json,
       metaIndex: this.metaIndex,
+      backupIconKey: this.backupIcon.key,
     };
   }
 
@@ -227,7 +211,9 @@ export class LevelMetaGroup {
     public key: string,
     public metas: LevelMeta[],
     public position: Vector2,
+    /** Current meta index. */
     public metaIndex = 0,
+    public backupIcon = createIcon('meta-1'),
   ) {
     if (!this.metas.length) {
       this.metas.push(new LevelMeta());
@@ -270,7 +256,6 @@ export class LevelMetaGroup {
             }
           }
         }
-
         break;
       }
       case 'remove-tag': {
@@ -302,7 +287,8 @@ export class LevelMetaGroup {
       }
       case 'ensure-meta-index': {
         if (!this.metas[update.metaIndex]) {
-          this.metas[update.metaIndex] = new LevelMeta();
+          const meta = new LevelMeta();
+          this.metas[update.metaIndex] = meta;
           this.metas[update.metaIndex].position.copy(this.position);
         }
         this.metaIndex = update.metaIndex;
@@ -313,6 +299,10 @@ export class LevelMetaGroup {
       }
       default: throw testNever(update);
     }
+
+    if (!this.hasIcon()) {
+      this.ensureBackupIcon();
+    }
   }
 
   public clone(newKey: string, position = this.position.clone()) {
@@ -320,6 +310,8 @@ export class LevelMetaGroup {
       newKey,
       this.metas.map(meta => meta.clone(`${newKey}-${meta.key}`)),
       position.clone(),
+      0,
+      createIcon(this.backupIcon.key),
     );
     clone.metas.forEach(meta => {
       meta.position.copy(position);
@@ -334,13 +326,33 @@ export class LevelMetaGroup {
     metas,
     position,
     metaIndex,
+    backupIconKey: iconKey,
   }: LevelMetaGroupJson): LevelMetaGroup {
     return new LevelMetaGroup(
       key,
       metas.map(meta => LevelMeta.from(meta)),
       Vector2.from(position),
       metaIndex,
+      createIcon(iconKey),
     );
+  }
+
+  private ensureBackupIcon() {
+    const rectMetas = this.metas.filter(meta => meta.isRectMeta());
+    
+    if (rectMetas.length === 1) {
+      const [tag] = rectMetas[0].tags.filter(x => isRectTag(x)) as RectTag[];
+      switch (tag) {
+        case 'circ': this.backupIcon = createIcon('circ-1'); break;
+        case 'door': this.backupIcon = createIcon('door-1'); break;
+        case 'light': this.backupIcon = createIcon('light-1'); break;
+        case 'rect': this.backupIcon = createIcon('rect-1'); break;
+        default: this.backupIcon = createIcon('meta-1');
+      }
+    } else {
+      this.backupIcon = createIcon('meta-1');
+    }
+
   }
 
   public hasIcon() {
@@ -362,6 +374,7 @@ export interface LevelMetaGroupJson {
   metas: LevelMetaJson[];
   position: Vector2Json;
   metaIndex: number;
+  backupIconKey: IconType;
 }
 
 
