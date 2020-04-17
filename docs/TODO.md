@@ -1,6 +1,12 @@
 # TODO
 
-- For debug, can cast nav/sight ray between two metas.
+- move meta dialog to front on open/click
+
+- Default meta icons: door, light, rectangle, circle, question-mark
+- Live mode can optionally show defaulted meta icons.
+- Live mode on hover meta show read-only summary
+
+- For debugging, can cast nav-ray/sight-ray between two metas.
 
 - shell signals
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
@@ -8,10 +14,6 @@
 - for `goto` intend `STOP`/`CONT` to pause/continue animations
 - can pause entire session -- but how to pause a `sleep`?
   - if finishes make it sleep the 'difference' and immediately pause it
-
-- move meta dialog to front on open/click
-
-- more icons and each has light/dark version
 
 - describe level editor features
 - why `wallSeg` is independent of `tileFloors`

@@ -221,28 +221,18 @@ html {
       }
 
       .meta-circ {
-        stroke-width: 0.1;
-        
-        @at-root .light-mode .viewport .meta-circ {
-          stroke: rgba(0, 0, 0, 0.5);
-          fill: rgba(200, 0, 0, 0.1);
-        }
-        @at-root .dark-mode .viewport .meta-circ {
-          stroke: rgba(200, 200, 200, 0.5);
-          fill: none;
-        }
+        stroke-width: none;
+        fill: rgba(200, 0, 0, 0.1);
       }
 
       .meta-rect {
-        stroke-width: 0.1;
+        stroke: none;
         
         @at-root .light-mode .viewport .meta-rect {
-          stroke: rgba(0, 0, 0, 0.5);
           fill: rgba(200, 0, 0, 0.2);
         }
         @at-root .dark-mode .viewport .meta-rect {
-          stroke: rgba(200, 200, 200, 0.5);
-          fill: none;
+          fill: rgba(200, 0, 0, 0.2);
         }
       }
 
