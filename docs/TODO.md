@@ -1,7 +1,5 @@
 # TODO
 
-- move meta dialog to front on open/click
-
 - Default meta icons: door, light, rectangle, circle, question-mark
 - Live mode can optionally show defaulted meta icons.
 - Live mode on hover meta show read-only summary
@@ -310,3 +308,4 @@
 - `ViewGraph` has working `isVisibleFrom`.
 - Use `ViewGraph` of nav poly during `FloydWarshall`.
 - Cleanup initial/final bends in NavPaths.
+- move meta dialog to front on open/click

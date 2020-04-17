@@ -9,7 +9,7 @@ import { KeyedLookup, mapValues, posModulo } from '@model/generic.model';
 import { addToLookup } from '@model/redux.model';
 import { Rect2Json } from '@model/rect2.model';
 import { metaPointRadius } from '@model/level/level-params';
-import { Act } from '@store/level.duck';
+import { Act, Thunk } from '@store/level.duck';
 import css from './level.scss';
 
 type MetaLookup = LevelState['metaGroups'];
@@ -123,19 +123,6 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
       <g className={css.metas}>
         {Object.values(groups).map(({ key: groupKey, position, metas }) =>
           <g key={groupKey}>
-            {/* {
-                // We draw a line connecting meta's handle to popover
-                groupUi[groupKey]?.open && (
-                <line 
-                  stroke="#999"
-                  strokeWidth={0.3}
-                  x1={position.x}
-                  y1={position.y}
-                  x2={position.x - 5}
-                  y2={position.y}
-                />
-              )
-            } */}
             {
               !groups[groupKey].hasIcon() && (
                 <circle
@@ -151,7 +138,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
               <g key={key}>
                 {
                   // A meta can have a light
-                  light && light.valid && (
+                  theme === 'dark-mode' && light && light.valid && (
                     <>
                       <radialGradient
                         id={`light-radial-${key}`}
@@ -162,15 +149,9 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                           scale(${light.scale / light.scaleX}, ${light.scale /light.scaleY})
                         `}
                       >
-                        {
-                          theme === 'dark-mode' && (
-                            <>
-                              <stop offset="0%" style={{ stopColor: 'rgba(200, 200, 200, 0.3)' }} />
-                              <stop offset="80%" style={{ stopColor: 'rgba(32, 32, 32, 0.1)' }} />
-                              <stop offset="100%" style={{ stopColor: 'rgba(32, 32, 32, 0)' }} />
-                            </>
-                          )
-                        }
+                        <stop offset="0%" style={{ stopColor: 'rgba(200, 200, 200, 0.3)' }} />
+                        <stop offset="80%" style={{ stopColor: 'rgba(32, 32, 32, 0.1)' }} />
+                        <stop offset="100%" style={{ stopColor: 'rgba(32, 32, 32, 0)' }} />
                       </radialGradient>
                       <path
                         key={`light-${key}`}
@@ -275,7 +256,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
           )}
       </g>
       {
-        // Can show rectangular partition used to pick NavPath endpoints
+        // Can show rectangular partition of navigable polygons
         showNavRects && (
           <g className={css.rects}>
             {rects.map(([x, y, width, height], i) => (
@@ -321,6 +302,9 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                       <section
                         key={groupKey} // We use groupKey to keep the input focused
                         className={css.content}
+                        onClick={() => {
+                          dispatch(Thunk.metaDialogToFront({ uid: levelUid, metaGroupKey: groupKey }));
+                        }}
                       >
                         <input
                           tabIndex={-1} // Offscreen focus can break things

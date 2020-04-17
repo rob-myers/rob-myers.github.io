@@ -90,6 +90,18 @@ export const Thunk = {
       dispatch(Act.unregisterLevel(uid));
     },
   ),
+  metaDialogToFront: createThunk(
+    '[Level] meta dialog to front',
+    ({ state: { level } }, { uid, metaGroupKey }: { uid: string; metaGroupKey: string }) => {
+      const { worker, instance: { [uid]: state } } = level;
+      state && worker?.postMessage({
+        key: 'update-level-meta',
+        levelUid: uid,
+        metaGroupKey,
+        update: { key: 'dialog-to-front' },
+      });
+    },
+  ),
   moveMetaToMouse: createThunk(
     '[Level] move meta to mouse',
     ({ state: { level } }, { uid, metaGroupKey }: { uid: string; metaGroupKey: string }) => {

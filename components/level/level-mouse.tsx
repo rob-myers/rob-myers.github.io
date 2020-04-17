@@ -147,10 +147,10 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
       onMouseUp={(e) => {
         mouseIsDown.current = false;
         if (overMeta.current && !state.draggedMeta) {// Toggle meta dialog
-          dispatch(Act.updateMetaUi(levelUid, overMeta.current, {
-            open: !state.metaGroupUi[overMeta.current].open,
-          }));
+          const nextOpen = !state.metaGroupUi[overMeta.current].open;
+          dispatch(Act.updateMetaUi(levelUid, overMeta.current, { open: nextOpen }));
           dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
+          nextOpen && dispatch(Thunk.metaDialogToFront({ uid: levelUid, metaGroupKey: overMeta.current }));
         } else if (state.draggedMeta) {
           if (overMeta.current && overMeta.current !== state.draggedMeta ) {
             // NOOP
