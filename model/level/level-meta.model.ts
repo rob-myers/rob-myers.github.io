@@ -285,10 +285,9 @@ export class LevelMetaGroup {
         } else if (isRectTag(update.tag)) {
           meta.trigger = null;
           meta.physical = null;
+          meta.light = null;
         } else if (update.tag === 'icon' || isIconTag(update.tag)) {
           meta.icon = null;
-        } else if (update.tag === 'light') {
-          meta.light = null;
         }
         break;
       }

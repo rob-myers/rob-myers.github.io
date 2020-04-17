@@ -2,9 +2,8 @@
 
 - Default meta icons: door, light, rectangle, circle, other
 - Remove meta `pickup`; add meta `table`
-- Live mode exists
-- Live mode can optionally show defaulted meta icons.
-- Live mode on hover meta show read-only summary
+- Live mode: exists, shows icons, and optionally defaulted icons.
+- Live mode: on hover meta shows read-only summary
 
 - For debugging, can cast nav-ray/sight-ray between two metas.
 
