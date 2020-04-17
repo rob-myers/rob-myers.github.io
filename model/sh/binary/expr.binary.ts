@@ -1,6 +1,7 @@
 import { BinaryExecType } from '@model/sh/binary.model';
 import { ObservedType } from '@os-service/term.service';
 import { BaseBinaryComposite } from './base-binary';
+import { defaultMaxLines } from '@model/os/file.model';
 
 /**
  * Permit arbitary functions via `Function('...')`,
@@ -15,7 +16,7 @@ export class ExprBinary extends BaseBinaryComposite<
 BinaryExecType.expr,
 { string: never[]; boolean: ('v' | 'i' | 'm')[] }
 > {
-  private readonly maxLines = 1000000;
+  private readonly maxLines = defaultMaxLines;
 
   public specOpts() {
     return { string: [], boolean: ['v', 'i', 'm'] as ('v' | 'i' | 'm')[] };

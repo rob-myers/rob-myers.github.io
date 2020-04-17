@@ -1,12 +1,13 @@
 import { basename } from 'path';
 import { BinaryExecType } from '@model/sh/binary.model';
-import { BaseBinaryComposite } from './base-binary';
-import { ObservedType } from '@os-service/term.service';
+import { defaultMaxLines } from '@model/os/file.model';
 import { isStringInt } from '@model/generic.model';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osResolvePathThunk, osOpenFileThunk, osOffsetOpenAct, osGetOfdThunk } from '@store/os/file.os.duck';
 import { INodeType } from '@store/inode/base-inode';
 import { RegularINode } from '@store/inode/regular.inode';
+import { ObservedType } from '@os-service/term.service';
+import { BaseBinaryComposite } from './base-binary';
 
 /**
  * tail
@@ -66,7 +67,7 @@ export class TailBinary extends BaseBinaryComposite<
   }
 
   private async *tailStream(numLines: number): AsyncIterableIterator<ObservedType> {
-    const maxLines = 1000000;
+    const maxLines = defaultMaxLines;
     let buffer = [] as string[];
 
     while (yield this.read(maxLines, 0, buffer)) {

@@ -3,11 +3,12 @@ import { BaseBinaryComposite } from './base-binary';
 import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
 import { osOpenFileThunk } from '@store/os/file.os.duck';
+import { defaultMaxLines } from '@model/os/file.model';
 
 export class CatBinary extends BaseBinaryComposite<BinaryExecType.cat> {
 
   private readonly maxIterations = 5000;
-  private readonly maxLines = 100;
+  private readonly maxLines = defaultMaxLines;
 
   public specOpts() {
     return { string: [], boolean: [] };

@@ -1,6 +1,8 @@
 # TODO
 
-- Default meta icons: door, light, rectangle, circle, question-mark
+- Default meta icons: door, light, rectangle, circle, other
+- Remove meta `pickup`; add meta `table`
+- Live mode exists
 - Live mode can optionally show defaulted meta icons.
 - Live mode on hover meta show read-only summary
 

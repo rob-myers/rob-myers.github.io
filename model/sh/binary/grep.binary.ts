@@ -1,8 +1,9 @@
 import { BinaryExecType } from '@model/sh/binary.model';
-import { BaseBinaryComposite } from './base-binary';
+import { OsDispatchOverload } from '@model/os/os.redux.model';
+import { defaultMaxLines } from '@model/os/file.model';
 import { ObservedType } from '@os-service/term.service';
 import { osOpenFileThunk } from '@store/os/file.os.duck';
-import { OsDispatchOverload } from '@model/os/os.redux.model';
+import { BaseBinaryComposite } from './base-binary';
 
 export class GrepBinary extends BaseBinaryComposite<
   BinaryExecType.grep,
@@ -21,7 +22,7 @@ export class GrepBinary extends BaseBinaryComposite<
     }
 
     const regex = new RegExp(this.opts.E ? pattern : pattern.replace(/\\([?+{|()])/g, '$1'));
-    const maxLines = 100;
+    const maxLines = defaultMaxLines;
     const buffer = [] as string[];
 
     if (this.operands.length === 1) {// Read from stdin.

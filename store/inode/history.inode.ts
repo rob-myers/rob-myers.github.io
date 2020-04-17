@@ -1,14 +1,13 @@
 import { BaseINode, INodeType, BaseINodeDef } from './base-inode';
 import { RedactInReduxDevTools } from '@model/redux.model';
 
-const maxLines = 500;
-
 export class HistoryINode extends BaseINode implements RedactInReduxDevTools {
 
   public readonly devToolsRedaction = HistoryINode.name;  
   public readonly readBlocked = false;
   public readonly type = INodeType.history;
   public readonly writeBlocked = false;
+  private readonly maxLines = 500;
   
   constructor(
     public def: BaseINodeDef,
@@ -37,7 +36,7 @@ export class HistoryINode extends BaseINode implements RedactInReduxDevTools {
   public storeSrcLine(srcLine: string) {
     if (srcLine) {
       this.history.push(srcLine);
-      while (this.history.length > maxLines) this.history.shift();
+      while (this.history.length > this.maxLines) this.history.shift();
     }
   }
 

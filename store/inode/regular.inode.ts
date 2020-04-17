@@ -18,30 +18,24 @@ export class RegularINode extends BaseINode {
   }
 
   /**
-   * Read from regular file.
-   * {maxLines} must be positive.
-   * {offset} must be non-negative.
+   * Read from regular file:
+   * - `maxLines` must be positive.
+   * - `offset` must be non-negative.
    */
   public read(buffer: string[], maxLines: number, offset: number): number {
     if (this.binary && offset === 0) {
       buffer.push(`this is the binary '${this.def.binaryType}'`);
       return 0;
     }
-    /**
-     * We'll try to read {maxLines} lines,
-     * from {offset + 0} to {offset + maxLines - 1}
-     */
-    const maxLineNumber = offset + maxLines;
+    // We'll read `maxLines` lines from `offset` to `offset + maxLines - 1`
+    const maxLineNumber = Math.min(offset + maxLines, this.data.length);
     const readLines = this.data.slice(offset, maxLineNumber);
-    buffer.push(...readLines);
+    readLines.forEach(line => buffer.push(line));
 
-    // EOF iff have read final line iff {numLinesLeft} is zero.
-    const numLinesLeft = Math.max(0, this.data.length - maxLineNumber);
-    if (!numLinesLeft) {
-      return 0;
+    if (maxLineNumber === this.data.length) {
+      return 0; // EOF iff no lines left to read
     }
-
-    // Non-zero because 0 < {offset} < {maxLineNumber} < {data.length}.
+    // Non-zero because 0 < offset < maxLineNumber < data.length
     return readLines.length;
   }
 

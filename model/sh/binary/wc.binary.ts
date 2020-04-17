@@ -1,8 +1,9 @@
 import { BinaryExecType } from '@model/sh/binary.model';
-import { BaseBinaryComposite } from './base-binary';
-import { ObservedType } from '@os-service/term.service';
 import { OsDispatchOverload } from '@model/os/os.redux.model';
+import { defaultMaxLines } from '@model/os/file.model';
+import { ObservedType } from '@os-service/term.service';
 import { osOpenFileThunk } from '@store/os/file.os.duck';
+import { BaseBinaryComposite } from './base-binary';
 
 export class WcBinary extends BaseBinaryComposite<BinaryExecType.wc, { string: never[]; boolean: 'l'[] }> {
 
@@ -11,11 +12,10 @@ export class WcBinary extends BaseBinaryComposite<BinaryExecType.wc, { string: n
   }
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
-    const maxLines = 100;
     const buffer = [] as string[];
     
     if (!this.operands.length) {// Read from stdin
-      while (yield this.read(maxLines, 0, buffer)); // Terminates immediately?
+      while (yield this.read(defaultMaxLines, 0, buffer)); // Terminates immediately?
       const count = this.opts.l
         ? buffer.length
         // We add 1 to pretend there is a final newline
@@ -32,7 +32,7 @@ export class WcBinary extends BaseBinaryComposite<BinaryExecType.wc, { string: n
         continue;
       }
 
-      while (yield this.read(maxLines, 0, buffer));
+      while (yield this.read(defaultMaxLines, 0, buffer));
       const count = this.opts.l ? buffer.length : buffer.join('\n').length;
       yield this.write(`${filepath}: ${count}`);
     }

@@ -90,3 +90,5 @@ export interface OpenFileOpts {
    */
   truncateReg?: boolean;
 }
+
+export const defaultMaxLines = Math.pow(10, 6);
