@@ -5,17 +5,15 @@ import { Vector2 } from '@model/vec2.model';
 export type IconType = (
   | 'door-1'
   | 'light-1'
-  | 'rect-1'
-  | 'circ-1'
   | 'meta-1'
+  | 'empty-1'
 );
 
 export const iconLookup: KeyedLookup<IconMeta, IconType> = {
   ...addIcon('door-1'),
   ...addIcon('light-1'),
-  ...addIcon('rect-1'),
-  ...addIcon('circ-1'),
-  ...addIcon('meta-1'),
+  ...addIcon('meta-1', new Rect2(0, 0, 1, 1)),
+  ...addIcon('empty-1', new Rect2(0, 0, 1, 1)),
 };
 
 interface IconMeta {
@@ -31,14 +29,13 @@ interface IconMeta {
 
 function addIcon(
   key: IconType,
-  filename = key,
-  srcRect = new Rect2(0, 0, 100, 100),
   dstRect = new Rect2(0, 0, 2, 2),
+  srcRect = new Rect2(0, 0, 100, 100),
 ) {
   return {
     [key]: {
       key,
-      svg: require(`./${filename}.svg`),
+      svg: require(`./${key}.svg`),
       srcRect,
       dstRect,
     },

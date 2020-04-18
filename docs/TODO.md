@@ -44,6 +44,7 @@
   - could provide `/sbin/level-1/onload.sh`
   - users could save scripts to `/home/user/`
 
+- Directional lights via masks
 - tests for shell i.e. given env and command should provide output
 
 - Concerning future implementation of `goto`:

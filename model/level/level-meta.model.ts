@@ -343,10 +343,10 @@ export class LevelMetaGroup {
     if (rectMetas.length === 1) {
       const [tag] = rectMetas[0].tags.filter(x => isRectTag(x)) as RectTag[];
       switch (tag) {
-        case 'circ': this.backupIcon = createIcon('circ-1'); break;
+        case 'circ': this.backupIcon = createIcon('meta-1'); break;
         case 'door': this.backupIcon = createIcon('door-1'); break;
         case 'light': this.backupIcon = createIcon('light-1'); break;
-        case 'rect': this.backupIcon = createIcon('rect-1'); break;
+        case 'rect': this.backupIcon = createIcon('meta-1'); break;
         default: this.backupIcon = createIcon('meta-1');
       }
     } else {
