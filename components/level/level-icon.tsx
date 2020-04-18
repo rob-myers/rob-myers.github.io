@@ -4,7 +4,10 @@ import { Vector2 } from '@model/vec2.model';
 export const LevelIcon: React.FC<Props> = ({ icon, position }) => {
   return (
     <g
-      style={{ transform: `translate(${position.x - icon.delta.x}px, ${position.y - icon.delta.y}px) scale(${icon.scale})`}}
+      style={{
+        userSelect: 'none',
+        transform: `translate(${position.x - icon.delta.x}px, ${position.y - icon.delta.y}px) scale(${icon.scale})`,
+      }}
       dangerouslySetInnerHTML={{ __html: icon.svg }}
     />
   );
