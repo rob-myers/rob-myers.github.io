@@ -228,41 +228,40 @@ function computeInternalWalls(levelUid: string) {
 }
 
 /**
- * Compute navigable polygons using tiles without cuts,
- * internal walls (wallSeg/horiz/vert/door) and the 'table' metas.
+ * Compute rendered `innerFloors` and navigable polygons `navFloors` using
+ * tiles without cuts, internal walls (wallSeg/horiz/vert/door) and tables.
  */
 function computeNavFloors(levelUid: string) {
   const { tilesSansCuts, wallSeg } = getLevel(levelUid)!;
-  const innerWallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
   /**
-   * Compute unnavigable areas induced by internal walls i.e.
-   * 1. outset the wall segments.
+   * Compute unnavigable areas induced by internal walls:
+   * 1. outset the grid-based wall segments.
    * 2. cut out any doors specified via metas.
    */
+  const innerWallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
   const outsetWalls = Poly2.cutOut(
     getDoorRects(levelUid).map(rect => rect.poly2),
-    innerWallSegs.map(([u, v]) => new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2),
+    innerWallSegs.map(([u, v]) =>
+      new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2),
   );
-  const outsetTables = getTableRects(levelUid).map(rect => rect.outset(0.5).poly2);
-
-  // TODO rendered nav polygon should include space below tables
-
   /**
-   * The navigable area is obtained by:
+   * The rendered inner floors are obtained by:
    * 1. insetting `tileFloorsSansCuts` (accounts for external walls).
    * 2. cutting out `outsetWalls` (accounts for internal walls).
    */
-  const navFloors = Poly2.cutOut(
-    outsetWalls.concat(outsetTables),
+  const innerFloors = Poly2.cutOut(outsetWalls,
     tilesSansCuts.flatMap(x => x.createInset(floorInset)),
   );
-  
-  dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
-  ctxt.postMessage({
-    key: 'send-level-nav-floors',
-    levelUid,
-    navFloors: navFloors.map(({ json }) => json),
+  ctxt.postMessage({ key: 'send-inner-floors', levelUid,
+    navFloors: innerFloors.map(({ json }) => json),
   });
+  /**
+   * The navigable polygons are obtained from the innerFloors
+   * by removing the outset tables.
+   */
+  const outsetTables = getTableRects(levelUid).map(rect => rect.outset(1).poly2);
+  const navFloors = Poly2.cutOut(outsetTables, innerFloors);
+  dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
   return navFloors;
 }
 

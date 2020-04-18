@@ -62,8 +62,8 @@ interface SendLevelLayers extends BaseMessage {
   wallSegs: [Vector2Json, Vector2Json][];
 }
 
-interface SendLevelNavFloors extends BaseMessage {
-  key: 'send-level-nav-floors';
+interface SendInnerFloors extends BaseMessage {
+  key: 'send-inner-floors';
   levelUid: string;
   navFloors: Poly2Json[];
 }
@@ -177,7 +177,7 @@ export type MessageFromLevelWorker = (
   | LevelWorkerReady
   | WorkerCreatedLevel
   | SendLevelLayers
-  | SendLevelNavFloors
+  | SendInnerFloors
   | SendLevelTris
   | SendLevelMetas
   | FloydWarshallReady

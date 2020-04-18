@@ -25,7 +25,7 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
           setWalls(msg.wallSegs);
           break;
         }
-        case 'send-level-nav-floors': {
+        case 'send-inner-floors': {
           setFloors(msg.navFloors.map(x => Poly2.fromJson(x).svgPath));
           break;
         }
