@@ -5,11 +5,8 @@
 - In live mode, on click meta shows read-only summary
 - For debugging, can cast nav-ray/sight-ray between two metas.
 
-- Navigation issue involving coarse initial/final rectangle.
-  - eliminate nodes which don't touch other rects
-  - include nodes on current nav triangle?
-
 - 5 table shadows via tags: `shad-{ne,se,sw,nw,all}`
+- Can find metas outside navigable but on table
 
 - shell signals
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
@@ -319,3 +316,6 @@
 - Remove meta `pickup`; add meta `table`.
 - Live mode exists and hides defaulted icons.
 - Cannot edit level in live mode.
+- Navigation issue involving coarse initial/final rectangle:
+  - FIX: rect's nav nodes include steiner points.
+  - Also, we can ignore nodes inside only one rect (efficiency).

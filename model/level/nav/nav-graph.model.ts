@@ -30,11 +30,16 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
   
   /** Rectangle partitions grouped by polygon id. */
   public groupedRects: Rect2[][];
+  /**
+   * Points occurring on some rectangle in partition of polygon.
+   * There may be extra points not occuring on the polygon.
+   * We ensure there are no duplicate points.
+   */
   private groupRectsPoints: Vector2[][];
   /** Rectangles partitioning all navigable polygons. */
   public rects: Rect2[];
   private groupedSteiners: Vector2[][];
-  /** Rectangle key to NavNodes on its border (includes own corners). */
+  /** Rectangle key to 'close NavNodes'. */
   private rectToNavNodes: Map<string, { polyId: number; nodes: NavNode[] }>;
 
   constructor(
@@ -57,16 +62,6 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
       .map(rects => rects.flatMap(rect => rect.poly2.points)
         .filter((p, i, array) => array.findIndex(q => p.equals(q)) === i));
     this.rects = groupedRects.flatMap(x => x);
-  }
-
-  private computeRectToNavNodes() {
-    this.groupedRects.forEach((rects, polyId) => {
-      rects.forEach((rect) => {
-        const points = this.groupRectsPoints[polyId].filter(p => rect.contains(p));
-        const nodes = points.map(p => this.positionToNode(polyId, p)!);
-        this.rectToNavNodes.set(rect.key, { polyId, nodes });
-      });
-    });
   }
 
   private computeRectsSteiners(metaSteiners: { [polyId: number]: Vector2[] }) {
@@ -96,6 +91,31 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
           });
       });
       return Object.values(steiners);
+    });
+  }
+
+  /**
+   * Each rectangle has associated NavNodes:
+   * - those on its border and also another rect's border.
+   * - those steiners contained in the rectangle.
+   */
+  private computeRectToNavNodes() {
+    this.groupedRects.forEach((rects, polyId) => {
+      const [toRects, toPoints] = [new Map<Vector2, Rect2[]>(), new Map<Rect2, Vector2[]>()];
+      this.groupRectsPoints[polyId].forEach(p => {
+        const rs = rects.filter(r => r.contains(p));
+        toRects.set(p, rs);
+        rs.forEach(r => toPoints.set(r, (toPoints.get(r) || []).concat(p)));
+      });
+      rects.forEach((rect) => {
+        const points = toPoints.get(rect)!.filter(p => toRects.get(p)!.length > 1);
+        const steiners = this.groupedSteiners[polyId].filter(p =>
+          rect.contains(p) && !points.some(q => q.equals(p)));
+        const nodes = points.concat(steiners).map(p => this.positionToNode(p)!);
+        this.rectToNavNodes.set(rect.key, { polyId, nodes });
+
+        console.log(`${rect} has ${nodes.length} nodes`);
+      });
     });
   }
 
@@ -168,12 +188,8 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
     return graph;
   }
 
-  private positionToNode(polyId: number, point: Vector2) {
-    const vertexId = this.navPolys[polyId].allPoints.findIndex(p => p.equals(point));
-    if (vertexId >= 0) {
-      return this.getNodeById(`${polyId}-${vertexId}`) || null;
-    }
-    return null;
+  private positionToNode(point: Vector2) {
+    return this.nodesArray.find(node => node.opts.position.equals(point)) || null;
   }
 
 }
