@@ -1,7 +1,12 @@
-import { Icon } from '@model/icon/icon.model';
+import { Icon, createIcon } from '@model/icon/icon.model';
 import { Vector2 } from '@model/vec2.model';
 
-export const LevelIcon: React.FC<Props> = ({ icon, position }) => {
+const defaultIcon = createIcon('meta-1');
+
+export const LevelIcon: React.FC<Props> = ({
+  icon = defaultIcon,
+  position,
+}) => {
   return (
     <g
       style={{
@@ -14,6 +19,6 @@ export const LevelIcon: React.FC<Props> = ({ icon, position }) => {
 };
 
 interface Props {
-  icon: Icon;
+  icon?: Icon;
   position: Vector2;
 }

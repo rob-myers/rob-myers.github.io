@@ -1,9 +1,7 @@
 # TODO
 
-- Remove meta `pickup`; add meta `table`.
-- Live mode exists and hides defaulted icons.
-- Live mode: on hover meta shows read-only summary
-
+- Cannot edit level in level mode.
+- In live mode, on click meta shows read-only summary
 - For debugging, can cast nav-ray/sight-ray between two metas.
 
 - shell signals
@@ -311,3 +309,5 @@
 - Cleanup initial/final bends in NavPaths.
 - move meta dialog to front on open/click
 - Default meta icons: door, light, rectangle, circle, other
+- Remove meta `pickup`; add meta `table`.
+- Live mode exists and hides defaulted icons.

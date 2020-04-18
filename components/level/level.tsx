@@ -33,8 +33,8 @@ const Level: React.FC<Props> = ({ uid }) => {
     () => stateKey && <LevelContent levelUid={uid} />, [stateKey]);
   
   const levelMetas = useMemo(() => (
-    mode === 'edit' && <LevelMetas levelUid={uid} overlayRef={overlayRef} />
-  ), [mode, overlayRef]);
+    <LevelMetas levelUid={uid} overlayRef={overlayRef} />
+  ), [overlayRef]);
 
   const scale = `scale(${zoomFactor})`;
   const translate = renderBounds && `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;

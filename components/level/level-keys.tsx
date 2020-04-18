@@ -1,10 +1,9 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { Act, Thunk } from '@store/level.duck';
 import css from './level.scss';
 
 const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
-  const mode = useSelector(({ level: { instance } }) => instance[levelUid].mode);
   const dispatch = useDispatch();
 
   return (
@@ -15,11 +14,17 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
         const state = dispatch(Thunk.getLevel({ levelUid }));
 
         switch (e.key.toLowerCase()) {
-          case 'w': return mode === 'edit' && dispatch(Act.updateLevel(levelUid, {
+          case '1': return dispatch(Act.updateLevel(levelUid, {
+            mode: state.mode === 'edit' ? 'live' : 'edit',
+          }));
+          case '2': return dispatch(Act.updateLevel(levelUid, {
             showThreeD: !state.showThreeD,
           }));
-          case 'q': return mode === 'edit' && dispatch(Act.updateLevel(levelUid, {
+          case '3': return dispatch(Act.updateLevel(levelUid, {
             theme: state.theme === 'dark-mode' ? 'light-mode' : 'dark-mode',
+          }));
+          case '4': return dispatch(Act.updateLevel(levelUid, {
+            showNavRects: !state.showNavRects,
           }));
         }
       }}

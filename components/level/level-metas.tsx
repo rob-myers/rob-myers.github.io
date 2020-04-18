@@ -19,6 +19,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
 
   const draggedMeta = useSelector(({ level: { instance: { [levelUid]: level } } }) => level.draggedMeta ? level.metaGroupUi[level.draggedMeta] : null);
   const groupUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaGroupUi);
+  const mode = useSelector(({ level: { instance } }) => instance[levelUid]?.mode);
   const mouseWorld = useSelector(({ level: { instance } }) => draggedMeta && instance[levelUid]?.mouseWorld);
   const showNavRects = useSelector(({ level: { instance } }) => instance[levelUid].showNavRects);
   const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
@@ -125,7 +126,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
         {Object.values(groups).map(({ key: groupKey, position, metas, backupIcon }) =>
           <g key={groupKey}>
             {
-              !groups[groupKey].hasIcon() && <LevelIcon position={position} icon={backupIcon} />
+              mode === 'live' && <LevelIcon position={position} />
+              || !groups[groupKey].hasIcon() && <LevelIcon position={position} icon={backupIcon} />
             }
             {metas.map(({ key, light, rect, trigger, physical, icon }) => (
               <g key={key}>
@@ -219,8 +221,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   )
                 }
                 {
-                  // A meta can have an icon
-                  icon && <LevelIcon position={position} icon={icon} />
+                  // In edit-mode a meta can have an icon
+                  mode === 'edit' && icon && <LevelIcon position={position} icon={icon} />
                 }
               </g>
             ))}
@@ -266,8 +268,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
               <rect
                 key={i}
                 fill="none"
-                stroke="rgba(200, 0, 0, 0.5)"
-                strokeWidth={0.2}
+                stroke="rgba(180, 0, 0, 1)"
+                strokeWidth={0.1}
                 x={x}
                 y={y}
                 width={width}
