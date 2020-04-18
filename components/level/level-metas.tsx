@@ -17,7 +17,8 @@ type MetaLookup = LevelState['metaGroups'];
 
 const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
 
-  const draggedMeta = useSelector(({ level: { instance: { [levelUid]: level } } }) => level.draggedMeta ? level.metaGroupUi[level.draggedMeta] : null);
+  const draggedMeta = useSelector(({ level: { instance: { [levelUid]: level } } }) =>
+    level.draggedMeta ? level.metaGroupUi[level.draggedMeta] : null);
   const groupUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaGroupUi);
   const mode = useSelector(({ level: { instance } }) => instance[levelUid]?.mode);
   const mouseWorld = useSelector(({ level: { instance } }) => draggedMeta && instance[levelUid]?.mouseWorld);
@@ -282,9 +283,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
         )}
       </g>
       {
-      /**
-       * The meta popovers (dialogs)
-       */
+        // Meta groups have a dialog for editing/viewing tags
         overlayRef.current && (
           ReactDOM.createPortal(
             Object.values(groups).map(({ key: groupKey, metas, metaIndex }) => (
@@ -297,50 +296,45 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                     pointerEvents: draggedMeta ? 'none' : 'all',
                   }}
                   onWheel={(e) => {
-                    /**
-                     * Forward wheel events to LevelMouse,
-                     * so can pan/zoom over popover.
-                     */
+                    // Foward wheel events to LevelMouse so can pan/zoom over popover
                     wheelFowarder?.next({ key: 'wheel', e });
                   }}
                 >
-                  {metas
-                    .filter((_, i) => i === metaIndex)
-                    .map(({ key, tags }) => (
-                      <section
-                        key={groupKey} // We use groupKey to keep the input focused
-                        className={css.content}
-                        onClick={() => {
-                          dispatch(Thunk.metaDialogToFront({ uid: levelUid, metaGroupKey: groupKey }));
+                  {metas.filter((_, i) => i === metaIndex).map(({ key, tags }) => (
+                    <section
+                      key={groupKey} // We use groupKey to keep the input focused
+                      className={css.content}
+                      onClick={() => {
+                        dispatch(Thunk.metaDialogToFront({ uid: levelUid, metaGroupKey: groupKey }));
+                      }}
+                    >
+                      <input
+                        tabIndex={-1} // Offscreen focus can break things
+                        placeholder={`tags ${metaIndex +  1}/${metas.length}`}
+                        onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
+                          inputKey === 'Enter' && addTag(groupKey, key, value) && (currentTarget.value = '')}
+                        onKeyDown={({ key: inputKey }) =>
+                          inputKey === 'Escape' && closeMetaGroup(groupKey)}
+                        onKeyUp={(e) => {
+                          e.stopPropagation();
+                          e.key === 'ArrowDown' && ensureMeta(groupKey, +1);
+                          e.key === 'ArrowUp' && ensureMeta(groupKey, -1);
                         }}
-                      >
-                        <input
-                          tabIndex={-1} // Offscreen focus can break things
-                          placeholder={`tags ${metaIndex +  1}/${metas.length}`}
-                          onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
-                            inputKey === 'Enter' && addTag(groupKey, key, value) && (currentTarget.value = '')}
-                          onKeyDown={({ key: inputKey }) =>
-                            inputKey === 'Escape' && closeMetaGroup(groupKey)}
-                          onKeyUp={(e) => {
-                            e.stopPropagation();
-                            e.key === 'ArrowDown' && ensureMeta(groupKey, +1);
-                            e.key === 'ArrowUp' && ensureMeta(groupKey, -1);
-                          }}
-                        />
-                        <section className={css.tags}>
-                          {tags.map((tag) =>
-                            <div
-                              key={tag}
-                              className={css.tag}
-                              onClick={() => removeTag(groupKey, key, tag)}
-                              title={tag}
-                            >
-                              {tag}
-                            </div>
-                          )}
-                        </section>
+                      />
+                      <section className={css.tags}>
+                        {tags.map((tag) =>
+                          <div
+                            key={tag}
+                            className={css.tag}
+                            onClick={() => removeTag(groupKey, key, tag)}
+                            title={tag}
+                          >
+                            {tag}
+                          </div>
+                        )}
                       </section>
-                    ))}
+                    </section>
+                  ))}
                 </section>
               )
             ))

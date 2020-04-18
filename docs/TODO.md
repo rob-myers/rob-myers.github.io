@@ -1,9 +1,15 @@
 # TODO
 
+- New approach to meta popovers i.e. use sub-menu instead!
+
 - In live mode, on click meta shows read-only summary
 - For debugging, can cast nav-ray/sight-ray between two metas.
 
-- Consider navigation issue involving coarse initial/final rectangle.
+- Navigation issue involving coarse initial/final rectangle.
+  - eliminate nodes which don't touch other rects
+  - include nodes on current nav triangle?
+
+- 5 table shadows via tags: `shad-{ne,se,sw,nw,all}`
 
 - shell signals
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
