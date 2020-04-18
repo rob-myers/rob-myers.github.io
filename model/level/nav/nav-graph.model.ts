@@ -113,8 +113,6 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
           rect.contains(p) && !points.some(q => q.equals(p)));
         const nodes = points.concat(steiners).map(p => this.positionToNode(p)!);
         this.rectToNavNodes.set(rect.key, { polyId, nodes });
-
-        console.log(`${rect} has ${nodes.length} nodes`);
       });
     });
   }
