@@ -18,10 +18,10 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
             mode: state.mode === 'edit' ? 'live' : 'edit',
           }));
           case '2': return dispatch(Act.updateLevel(levelUid, {
-            showThreeD: !state.showThreeD,
+            theme: state.theme === 'dark-mode' ? 'light-mode' : 'dark-mode',
           }));
           case '3': return dispatch(Act.updateLevel(levelUid, {
-            theme: state.theme === 'dark-mode' ? 'light-mode' : 'dark-mode',
+            showThreeD: !state.showThreeD,
           }));
           case '4': return dispatch(Act.updateLevel(levelUid, {
             showNavRects: !state.showNavRects,
