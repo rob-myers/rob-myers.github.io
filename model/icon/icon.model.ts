@@ -29,7 +29,7 @@ interface IconMeta {
 
 function addIcon(
   key: IconType,
-  dstRect = new Rect2(0, 0, 2, 2),
+  dstRect = new Rect2(0, 0, 1.8, 1.8),
   srcRect = new Rect2(0, 0, 100, 100),
 ) {
   return {

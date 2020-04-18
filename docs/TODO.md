@@ -1,8 +1,9 @@
 # TODO
 
-- Cannot edit level in level mode.
 - In live mode, on click meta shows read-only summary
 - For debugging, can cast nav-ray/sight-ray between two metas.
+
+- Consider navigation issue involving coarse initial/final rectangle
 
 - shell signals
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
@@ -311,3 +312,4 @@
 - Default meta icons: door, light, rectangle, circle, other
 - Remove meta `pickup`; add meta `table`.
 - Live mode exists and hides defaulted icons.
+- Cannot edit level in live mode.
