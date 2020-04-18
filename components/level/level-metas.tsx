@@ -122,6 +122,25 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
 
   return (
     <>
+      {
+        // Can show rectangular partition of navigable polygons
+        showNavRects && (
+          <g className={css.rects}>
+            {rects.map(([x, y, width, height], i) => (
+              <rect
+                key={i}
+                fill="none"
+                stroke="rgba(180, 0, 0, 1)"
+                strokeWidth={0.1}
+                x={x}
+                y={y}
+                width={width}
+                height={height}
+              />
+            ))}
+          </g>
+        )
+      }
       <g className={css.metas}>
         {Object.values(groups).map(({ key: groupKey, position, metas, backupIcon }) =>
           <g key={groupKey}>
@@ -260,24 +279,6 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
             </g>
           )}
       </g>
-      {
-        // Can show rectangular partition of navigable polygons
-        showNavRects && (
-          <g className={css.rects}>
-            {rects.map(([x, y, width, height], i) => (
-              <rect
-                key={i}
-                fill="none"
-                stroke="rgba(180, 0, 0, 1)"
-                strokeWidth={0.1}
-                x={x}
-                y={y}
-                width={width}
-                height={height}
-              />
-            ))}
-          </g>
-        )}
       {
       /**
        * The meta popovers (dialogs)
