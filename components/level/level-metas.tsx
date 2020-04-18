@@ -146,7 +146,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                           theme === 'dark-mode' && (
                             <>
                               <stop offset="0%" style={{ stopColor: 'rgba(200, 200, 200, 0.3)' }} />
-                              <stop offset="80%" style={{ stopColor: 'rgba(32, 32, 32, 0.1)' }} />
+                              {/* <stop offset="10%" style={{ stopColor: 'rgba(100, 100, 100, 0.4)' }} /> */}
+                              <stop offset="90%" style={{ stopColor: 'rgba(32, 32, 32, 0.1)' }} />
                               <stop offset="100%" style={{ stopColor: 'rgba(32, 32, 32, 0)' }} />
                             </>
                           ) || (
@@ -168,52 +169,51 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                   )
                 }
                 {
-                  // A meta can have a circular trigger
-                  rect && trigger === 'circ' && !light && (
-                    <circle
-                      className={css.metaCirc}
-                      cx={position.x}
-                      cy={position.y}
-                      r={rect.dimension}
-                    />
-                  )
-                }
-                {
-                  // A meta can have a rectangular trigger
-                  rect && trigger === 'rect' && (
-                    <rect
-                      className={css.metaRect}
-                      x={rect.x}
-                      y={rect.y}
-                      width={rect.width}
-                      height={rect.height}
-                    />
-                  )
-                }
-                {
-                  // A meta can be a pickup
-                  rect && physical === 'pickup' && (
-                    <path
-                      strokeWidth={0.1}
-                      fill="#fff"
-                      stroke="#000"
-                      d={`M ${position.x},${position.y} l -1,-2 l 2,0 l -1,2`}
-                    />
-                  )
-                }
-                {
-                  // A meta can be a door
-                  rect && physical === 'door' && (
-                    <rect
-                      key={key}
-                      strokeWidth={0}
-                      stroke="rgba(100, 0, 0, 0.4)"
-                      fill="none"
-                      x={rect.x}
-                      y={rect.y}
-                      width={rect.width}
-                      height={rect.height}
-                    />
+                  rect && (
+                    // A meta can have a circular trigger
+                    trigger === 'circ' && (
+                      <circle
+                        className={css.metaCirc}
+                        cx={position.x}
+                        cy={position.y}
+                        r={rect.dimension}
+                      />
+                    ) || (
+                      // A meta can have a rectangular trigger
+                      trigger === 'rect' && (
+                        <rect
+                          className={css.metaRect}
+                          x={rect.x}
+                          y={rect.y}
+                          width={rect.width}
+                          height={rect.height}
+                        />
+                      )
+                    ) || (
+                      // A meta can be a pickup
+                      physical === 'pickup' && (
+                        <path
+                          strokeWidth={0.1}
+                          fill="#fff"
+                          stroke="#000"
+                          d={`M ${position.x},${position.y} l -1,-2 l 2,0 l -1,2`}
+                        />
+                      )
+                    ) || (
+                      // A meta can be a door
+                      physical === 'door' && (
+                        <rect
+                          key={key}
+                          strokeWidth={0}
+                          stroke="rgba(100, 0, 0, 0.4)"
+                          fill="none"
+                          x={rect.x}
+                          y={rect.y}
+                          width={rect.width}
+                          height={rect.height}
+                        />
+                      )
+                    )
                   )
                 }
                 {

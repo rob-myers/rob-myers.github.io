@@ -1,7 +1,7 @@
 # TODO
 
-- Remove meta `pickup`; add meta `table`
-- Live mode: exists, shows icons, and optionally defaulted icons.
+- Remove meta `pickup`; add meta `table`.
+- Live mode exists and hides defaulted icons.
 - Live mode: on hover meta shows read-only summary
 
 - For debugging, can cast nav-ray/sight-ray between two metas.
