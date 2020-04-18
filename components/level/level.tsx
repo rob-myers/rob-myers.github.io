@@ -11,6 +11,7 @@ import LevelMenu from './level-menu';
 import LevelMetas from './level-metas';
 import LevelNotify from './level-notify';
 import Level3d from './level-3d';
+import LevelSvgGlobals from './level-svg-globals';
 import css from './level.scss';
 
 const Level: React.FC<Props> = ({ uid }) => {
@@ -47,6 +48,7 @@ const Level: React.FC<Props> = ({ uid }) => {
             <LevelMenu levelUid={uid} />
             <section className={css.viewport}>
               <svg className={css.svg} preserveAspectRatio="none">
+                <LevelSvgGlobals />
                 <LevelMouse levelUid={uid} />
                 <g style={{ transform: scale }}>
                   <g style={{ transform: translate }}>
