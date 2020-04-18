@@ -5,7 +5,7 @@ import { ReplaySubject } from 'rxjs';
 import { Act, Thunk } from '@store/level.duck';
 import { Vector2 } from '@model/vec2.model';
 import { getRelativePos } from '@model/dom.model';
-import { LevelUiState, computeLineSegs, ForwardedWheelEvent } from '@model/level/level.model';
+import { LevelUiState, computeLineSeg, ForwardedWheelEvent } from '@model/level/level.model';
 import { posModulo } from '@model/generic.model';
 import { redact } from '@model/redux.model';
 import { wallDepth, tileDim, metaPointRadius } from '@model/level/level-params';
@@ -223,10 +223,10 @@ const LevelMouse: React.FC<Props> = ({ levelUid }) => {
           } else if (highlighted.current) {
             const { cursorHighlight: h  } = state;
             const segs = [] as [Vector2, Vector2][];
-            h.n && segs.push(...computeLineSegs(tileDim, state.cursor, 'n'));
-            h.e && segs.push(...computeLineSegs(tileDim, state.cursor, 'e'));
-            h.s && segs.push(...computeLineSegs(tileDim, state.cursor, 's'));
-            h.w && segs.push(...computeLineSegs(tileDim, state.cursor, 'w'));
+            h.n && segs.push(computeLineSeg(state.cursor, 'n'));
+            h.e && segs.push(computeLineSeg(state.cursor, 'e'));
+            h.s && segs.push(computeLineSeg(state.cursor, 's'));
+            h.w && segs.push(computeLineSeg(state.cursor, 'w'));
       
             worker.postMessage({
               key: 'toggle-level-wall',

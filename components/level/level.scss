@@ -27,6 +27,10 @@ html {
 
     .menu {
       display: flex;
+      height: 25px;
+
+      box-sizing: border-box;
+      padding: 2px;
       border-bottom: 1px solid #ddd;
 
       @at-root .light-mode .keys .menu {
@@ -35,10 +39,6 @@ html {
       @at-root .dark-mode .keys .menu {
         background: $level-menu-dark;
       }
-
-      box-sizing: border-box;
-      height: 25px;
-      padding: 2px;
 
       .main-menu {
         display: flex;
@@ -60,6 +60,8 @@ html {
         margin-left: 1px;
         outline: 0;
         border: 0;
+        cursor: pointer;
+        font-family: "Courier New", Courier, monospace;
 
         @at-root .light-mode .keys .menu .button {
           background: $level-bg-light;
@@ -70,9 +72,6 @@ html {
           color: $level-text-dark;
         }
 
-        cursor: pointer;
-        font-family: "Courier New", Courier, monospace;
-
         &:hover {
           font-weight: bold;
         }
@@ -81,12 +80,41 @@ html {
         }
       }
     }
+
+    .meta-menu {
+      display: flex;
+      height: 18px;
+      background: #fff;
+      border-bottom: 1px solid #999;
+
+      button {
+        font-family: "Courier New", Courier, monospace;
+        cursor: pointer;
+        margin-left: 1px;
+        outline: 0;
+        border: 0;
+
+        &:hover {
+          font-weight: bold;
+        }
+      }
+
+      .main-menu {
+        display: flex;
+        flex: 1;
+      }
+
+      .right-menu {
+        display: flex;
+      }
+    }
   }
 }
 
 .viewport {
   width: 100%;
-  height: calc(100% - 25px);
+  // TODO depends on meta-menu being open
+  height: calc(100% - 25px - 25px);
   position: relative;
   overflow: hidden;
 

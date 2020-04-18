@@ -8,6 +8,7 @@ import LevelKeys from './level-keys';
 import LevelContent from './level-content';
 import LevelCursor from './level-cursor';
 import LevelMenu from './level-menu';
+import LevelMetaMenu from './level-meta-menu';
 import LevelMetas from './level-metas';
 import LevelNotify from './level-notify';
 import Level3d from './level-3d';
@@ -46,6 +47,7 @@ const Level: React.FC<Props> = ({ uid }) => {
           <LevelNotify levelUid={uid} />
           <LevelKeys levelUid={uid}>
             <LevelMenu levelUid={uid} />
+            <LevelMetaMenu levelUid={uid} />
             <section className={css.viewport}>
               <svg className={css.svg} preserveAspectRatio="none">
                 <LevelSvgGlobals />

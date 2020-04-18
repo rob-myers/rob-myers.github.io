@@ -96,7 +96,7 @@ export class NavGraph extends BaseGraph<NavNode, NavNodeOpts, NavEdge, NavEdgeOp
 
   /**
    * Each rectangle has associated NavNodes:
-   * - those on its border and also another rect's border.
+   * - those on its border and on some other rect's border.
    * - those steiners contained in the rectangle.
    */
   private computeRectToNavNodes() {

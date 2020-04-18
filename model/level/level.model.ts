@@ -35,7 +35,7 @@ export interface LevelState {
   metaGroups: KeyedLookup<LevelMetaGroup>;
   /** Pathfinder */
   floydWarshall: null | Redacted<FloydWarshall>;
-  /** Navigation Graph used to generate `floydWarshall` */
+  /** Navigation graph used to generate `floydWarshall` */
   navGraph: Redacted<NavGraph>;
 }
 
@@ -74,6 +74,8 @@ export interface LevelUiState {
   notifyForwarder: null | Redacted<Subject<ForwardedNotification>>;
   /** Viewport bounds in world coords. */
   renderBounds: Rect2;
+  /** Show meta sub-menu */
+  showMetaMenu: boolean;
   /** Show rect partition? */
   showNavRects: boolean;
   /** Show 3d walls? */
@@ -107,6 +109,7 @@ export function createLevelUiState(uid: string): LevelUiState {
     mouseWorld:  Vector2.zero,
     notifyForwarder: null,
     renderBounds: Rect2.zero,
+    showMetaMenu: false,
     showNavRects: false,
     showThreeD: false,
     theme: 'light-mode',
@@ -115,24 +118,11 @@ export function createLevelUiState(uid: string): LevelUiState {
   };
 }
 
-/**
- * For large tiles we create 3 line segments.
- * Part of approach to avoid extruding 1-dim polygons.
- */
-export function computeLineSegs(td: number, from: Vector2, dir: Direction): [Vector2, Vector2][] {
-  let seg: [Vector2, Vector2];
+export function computeLineSeg(from: Vector2, dir: Direction): [Vector2, Vector2] {
   switch (dir) {
-    case 'n': seg = [new Vector2(from.x, from.y), new Vector2(from.x + tileDim, from.y)]; break;
-    case 'e': seg = [new Vector2(from.x + td, from.y), new Vector2(from.x + td, from.y + tileDim)]; break;
-    case 's': seg = [new Vector2(from.x, from.y + td), new Vector2(from.x + tileDim, from.y + td)]; break;
-    case 'w': seg = [new Vector2(from.x, from.y), new Vector2(from.x, from.y + tileDim)]; break;
+    case 'n': return [new Vector2(from.x, from.y), new Vector2(from.x + tileDim, from.y)];
+    case 'e': return [new Vector2(from.x + tileDim, from.y), new Vector2(from.x + tileDim, from.y + tileDim)];
+    case 's': return [new Vector2(from.x, from.y + tileDim), new Vector2(from.x + tileDim, from.y + tileDim)];
+    case 'w': return [new Vector2(from.x, from.y), new Vector2(from.x, from.y + tileDim)];
   }
-
-  if (td === tileDim) {
-    return [seg];
-  }
-  const d = dir === 'n' || dir === 's'
-    ? new Vector2(tileDim, 0) : new Vector2(0, tileDim);
-  return [seg, seg, seg].map(([u, v], i) =>
-    [u.clone().translate(i * d.x, i * d.y), v.clone().translate(i * d.x, i * d.y)]);
 }
