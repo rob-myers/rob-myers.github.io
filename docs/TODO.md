@@ -3,7 +3,7 @@
 - In live mode, on click meta shows read-only summary
 - For debugging, can cast nav-ray/sight-ray between two metas.
 
-- Consider navigation issue involving coarse initial/final rectangle
+- Consider navigation issue involving coarse initial/final rectangle.
 
 - shell signals
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`

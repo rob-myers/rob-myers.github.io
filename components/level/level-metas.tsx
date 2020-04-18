@@ -141,6 +141,22 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
           </g>
         )
       }
+      {
+        // We may draw NavPaths while debugging/designing
+        <g className={css.navPaths}>
+          {
+            Object.values(navPaths).map((navPath) =>
+              <g key={navPath.key}>
+                {navPath.points.map(({ x, y }, i) =>
+                  <circle key={`node-${i}`} cx={x} cy={y} r={0.5} />
+                )}
+                {navPath.edges.map(({ src, dst }, i) =>
+                  <line key={`edge-${i}`} x1={src.x} y1={src.y} x2={dst.x} y2={dst.y} />
+                )}
+              </g>
+            )}
+        </g>
+      }
       <g className={css.metas}>
         {Object.values(groups).map(({ key: groupKey, position, metas, backupIcon }) =>
           <g key={groupKey}>
@@ -264,20 +280,6 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
             }
           </g>
         )}
-      </g>
-      <g className={css.navPaths}>
-        {
-          // We may draw NavPaths while debugging/desiging
-          Object.values(navPaths).map((navPath) =>
-            <g key={navPath.key}>
-              {navPath.points.map(({ x, y }, i) =>
-                <circle key={`node-${i}`} cx={x} cy={y} r={0.5} />
-              )}
-              {navPath.edges.map(({ src, dst }, i) =>
-                <line key={`edge-${i}`} x1={src.x} y1={src.y} x2={dst.x} y2={dst.y} />
-              )}
-            </g>
-          )}
       </g>
       {
       /**
