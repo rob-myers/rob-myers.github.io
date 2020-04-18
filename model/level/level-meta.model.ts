@@ -15,16 +15,17 @@ const rectTagsLookup = {
   door: null,
   horiz: null,
   light: null,
-  pickup: null,
   rect: null,
+  table: null,
   vert: null,
 };
 /** Tags which use `LevelMeta.rect`. They are mutually exclusive. */
 const isRectTag = (tag: string): tag is RectTag => tag in rectTagsLookup;
 type RectTag = keyof typeof rectTagsLookup; 
 type TriggerType =  Extract<RectTag, 'circ' | 'rect'>;
-type PhysicalType = Extract<RectTag, 'cut' | 'door' | 'horiz' | 'pickup' | 'vert'>;
+type PhysicalType = Extract<RectTag, 'cut' | 'door' | 'horiz' | 'table' | 'vert'>;
 
+/** e.g. `r-4` or `r-4-2` */
 export const dimTagRegex = /^r-(\d+)(?:-(\d+))?$/;
 const isDimTag = (tag: string) => dimTagRegex.test(tag);
 
@@ -53,7 +54,6 @@ export class LevelMeta {
     public rect: null | Rect2 = null,
     /** Trigger is rectangular or circular  */
     public trigger: null | TriggerType = null,
-    /** A pickup has a circular trigger, a door has no trigger */
     public physical: null | PhysicalType = null,
     public icon: null | Icon = null,
   ) {}
@@ -106,46 +106,20 @@ export class LevelMeta {
 
   public setRectTag(tag: RectTag, position: Vector2) {
     this.tags = this.tags.filter(x => !isRectTag(x)).concat(tag);
-    this.light = null;
-    this.physical = null;
-    this.trigger = null;
+    this.light = this.physical = this.trigger = null;
 
     switch(tag) {
-      case 'circ': {
-        this.trigger = 'circ';
-        break;
-      }
-      case 'cut': {
-        this.physical = 'cut';
-        break;
-      }
-      case 'door': {
-        this.physical = 'door';
-        break;
-      }
-      case 'horiz': {
-        this.physical = 'horiz';
-        break;
-      }
+      case 'circ': this.trigger = 'circ'; break;
+      case 'cut': this.physical = 'cut'; break;
+      case 'door': this.physical = 'door'; break;
+      case 'horiz': this.physical = 'horiz'; break;
       case 'light': {
-        if (this.rect) {
-          this.light = new LevelLight(position, this.rect.dimension);
-        }
+        this.rect && (this.light = new LevelLight(position, this.rect.dimension));
         break;
       }
-      case 'pickup': {
-        this.physical = 'pickup';
-        this.trigger = 'circ';
-        break;
-      }
-      case 'rect': {
-        this.trigger = 'rect';
-        break;
-      }
-      case 'vert': {
-        this.physical = 'vert';
-        break;
-      }
+      case 'rect': this.trigger = 'rect'; break;
+      case 'table': this.physical = 'table'; break;
+      case 'vert': this.physical = 'vert'; break;
       default: throw testNever(tag);
     }
   }

@@ -1,4 +1,4 @@
-@import '../variables.scss';
+@import "../variables.scss";
 
 html {
   overscroll-behavior: none; // Firefox
@@ -14,7 +14,7 @@ html {
   border: 1px solid #000;
 
   @at-root .root.light-mode {
-    background: $level-bg-light; 
+    background: $level-bg-light;
   }
   @at-root .root.dark-mode {
     background: $level-bg-dark;
@@ -35,32 +35,32 @@ html {
       @at-root .dark-mode .keys .menu {
         background: $level-menu-dark;
       }
-      
+
       box-sizing: border-box;
       height: 25px;
       padding: 2px;
-    
+
       .main-menu {
         display: flex;
       }
-      
+
       .edit-menu {
         flex: 1;
         display: flex;
-    
+
         .filename-input {
           padding: 0 4px;
-          font-family: 'Courier New', Courier, monospace;
+          font-family: "Courier New", Courier, monospace;
           outline: none;
           width: 80px;
         }
       }
-    
+
       .button {
         margin-left: 1px;
         outline: 0;
         border: 0;
-    
+
         @at-root .light-mode .keys .menu .button {
           background: $level-bg-light;
           color: $level-text-light;
@@ -71,8 +71,8 @@ html {
         }
 
         cursor: pointer;
-        font-family: 'Courier New', Courier, monospace;
-    
+        font-family: "Courier New", Courier, monospace;
+
         &:hover {
           font-weight: bold;
         }
@@ -94,7 +94,7 @@ html {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    
+
     .mouse-rect {
       pointer-events: all;
       width: 100%;
@@ -123,7 +123,7 @@ html {
         stroke-width: 0.5;
       }
     }
-  
+
     .wall-seg {
       stroke-width: 0.5;
       // Ensures correct overlap
@@ -145,7 +145,7 @@ html {
         stroke-width: 0.5;
       }
     }
-  
+
     .navigable {
       stroke-width: 0.3;
 
@@ -157,7 +157,7 @@ html {
         stroke: rgba(100, 100, 100, 0.1);
       }
     }
-  
+
     .triangle {
       fill: none;
       stroke-width: 0.1;
@@ -168,7 +168,6 @@ html {
       @at-root .dark-mode .viewport .triangle {
         stroke: $level-triangle-dark;
       }
-
     }
 
     .nav-graph-node {
@@ -189,10 +188,10 @@ html {
         stroke: $level-navnode-dark;
       }
     }
-  
+
     .cursor {
       pointer-events: none;
-    
+
       .highlight {
         fill: rgba(200, 0, 0, 0.5);
       }
@@ -204,22 +203,8 @@ html {
         fill: none;
       }
     }
-    
+
     .metas {
-      
-      .meta-handle {
-        stroke-width: 0.1;
-
-        @at-root .light-mode .viewport .meta-handle {
-          fill: white;
-          stroke: #555;
-        }
-        @at-root .dark-mode .viewport .meta-handle {
-          fill: #888;
-          stroke: #444;
-        }
-      }
-
       .meta-circ {
         stroke-width: none;
         fill: rgba(200, 0, 0, 0.1);
@@ -227,12 +212,16 @@ html {
 
       .meta-rect {
         stroke: none;
-        
-        @at-root .light-mode .viewport .meta-rect {
-          fill: rgba(200, 0, 0, 0.2);
-        }
-        @at-root .dark-mode .viewport .meta-rect {
-          fill: rgba(200, 0, 0, 0.2);
+        fill: rgba(200, 0, 0, 0.2);
+      }
+
+      .meta-table {
+        stroke: #fff;
+        stroke-width: 0;
+        fill: #555;
+
+        &-shadow {
+          fill: #fff;
         }
       }
 
@@ -276,7 +265,7 @@ html {
 
     .svg-grid {
       pointer-events: none;
-    
+
       @at-root .light-mode .viewport .svg .svg-grid {
         &-path {
           stroke: $level-grid-light;
@@ -306,12 +295,12 @@ html {
       perspective: 10000px;
       transform-style: preserve-3d;
       position: absolute;
-  
+
       .wall {
         position: absolute;
         transform-origin: top left;
         height: 10000px;
-  
+
         @at-root .light-mode .viewport .three-dim-parent .wall {
           background: #000;
         }
@@ -319,15 +308,13 @@ html {
           background: #fff;
         }
       }
-  
+
       .cull-backface {
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
       }
     }
-
   }
-
 
   .overlay-container {
     position: absolute;
@@ -336,13 +323,13 @@ html {
 
     .overlay {
       position: relative;
-    
-      .meta-popover  {
+
+      .meta-popover {
         position: absolute;
         background: white;
         border: 0.5px solid rgba(150, 150, 150, 0.5);
         top: 0px;
-        
+
         // transform: scale(0.25);
         transform-origin: top left;
 
@@ -352,13 +339,13 @@ html {
           height: fit-content;
           padding: 4px 2px;
 
-          font-family: 'Courier New', Courier, monospace;
+          font-family: "Courier New", Courier, monospace;
           font-size: 4pt;
           user-select: none;
 
           input {
             width: 40px;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: "Courier New", Courier, monospace;
             outline: none;
             border: none;
             padding: 0 0 2px;
@@ -383,5 +370,4 @@ html {
       }
     }
   }
-
 }

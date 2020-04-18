@@ -190,13 +190,15 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                         />
                       )
                     ) || (
-                      // A meta can be a pickup
-                      physical === 'pickup' && (
-                        <path
-                          strokeWidth={0.1}
-                          fill="#fff"
-                          stroke="#000"
-                          d={`M ${position.x},${position.y} l -1,-2 l 2,0 l -1,2`}
+                      // A meta can be a table
+                      physical === 'table' && (
+                        <rect
+                          className={css.metaTable}
+                          x={rect.x}
+                          y={rect.y}
+                          width={rect.width}
+                          height={rect.height}
+                          filter="url(#svg-shadow-nw)"
                         />
                       )
                     ) || (

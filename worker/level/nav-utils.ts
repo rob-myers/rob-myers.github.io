@@ -56,8 +56,7 @@ export function getCutRects(levelUid: string) {
 
 export function getDoorRects(levelUid: string) {
   const { metaGroups } = getLevel(levelUid)!;
-  return Object.values(metaGroups)
-    .flatMap(({ metas }) => metas)
+  return Object.values(metaGroups).flatMap(({ metas }) => metas)
     .filter(({ physical, rect }) => physical === 'door' && rect)
     .map(({ rect }) => rect!.clone());
 }
@@ -79,6 +78,12 @@ export function getHorizVertSegs(levelUid: string) {
   , [] as [Vector2, Vector2][]);
 }
 
+export function getTableRects(levelUid: string) {
+  const { metaGroups } = getLevel(levelUid)!;
+  return Object.values(metaGroups).flatMap(({ metas }) => metas)
+    .filter(({ physical, rect }) => physical === 'table' && rect)
+    .map(({ rect }) => rect!.clone());
+}
 /**
  * Compute steiner points from metas.
  */

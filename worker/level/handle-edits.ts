@@ -16,11 +16,11 @@ import { redact, removeFromLookup } from '@model/redux.model';
 import { testNever } from '@model/generic.model';
 import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
-import { Vector2, Vector2Json } from '@model/vec2.model';
+import { Vector2 } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
 import { tileDim, floorInset, navTags, rebuildTags, doorOutset } from '@model/level/level-params';
 import { sendMetas, sendPreNavFloors } from './handle-requests';
-import { updateNavGraph, getDoorRects, getHorizVertSegs, getCutRects } from './nav-utils';
+import { updateNavGraph, getDoorRects, getHorizVertSegs, getCutRects, getTableRects } from './nav-utils';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -43,18 +43,9 @@ export function handleLevelToggles(levelUid: string) {
           case 'toggle-level-tile': {
             const rect = new Rect2(msg.tile.x, msg.tile.y, tileDim, tileDim);
             tileFloors = Poly2.xor(tileFloors, rect.poly2).map(x => redact(x));
-            // // If we removed a tile, ensure any inner walls are removed too
-            // if (!tileFloors.some(f => f.contains(rect.center))) {
-            //   const { x, y } = msg.tile;
-            //   [ edgeToKey({ x, y }, { x: x + tileDim, y }),
-            //     edgeToKey({ x: x + tileDim, y }, { x: x + tileDim, y: y + tileDim }),
-            //     edgeToKey({ x, y: y + tileDim }, { x: x + tileDim, y: y + tileDim }),
-            //     edgeToKey({ x, y }, { x, y: y + tileDim }),
-            //   ].forEach(key => delete wallSeg[key]);
-            // }
             /**
-             * The outer polygons `tileFloors` can self-intersect at corners, so we
-             * must use the fast triangulator. These polys are used by `computeLights`.
+             * The outer polygons `tileFloors` can self-intersect at corners, so must
+             * use the fast triangulator. These polys are used by `computeLights`.
              */
             tileFloors.forEach((p) => p.options.triangulationType = 'fast');
             break;
@@ -62,7 +53,7 @@ export function handleLevelToggles(levelUid: string) {
           case 'toggle-level-wall': {
             wallSeg = { ...wallSeg };
             msg.segs.forEach(([u, v]) => {
-              const key = edgeToKey(u, v);
+              const key = `${u.x},${u.y};${v.x},${v.y}`;
               const mid = Vector2.from(u).add(v).scale(1/2);
               const norm = Vector2.from(v).sub(u).rotate(Math.PI/2).normalize();
               const [left, right] = [mid.clone().sub(norm), mid.clone().add(norm)];
@@ -70,11 +61,12 @@ export function handleLevelToggles(levelUid: string) {
               const hasRightTile = tileFloors.some((f) => f.contains(right));
 
               if (hasLeftTile !== hasRightTile) {
-                // If exactly one adjacent tile then wall already exists.
-                delete wallSeg[key]; // Ensure inner wall removed
+                // Exactly one adjacent tile, so wall exists
+                delete wallSeg[key]; // Ensure inner wall  removed
               } else if (!(hasLeftTile || hasRightTile)) {
-                delete wallSeg[key]; // No adjacent tiles so ensure removed
-              } else {
+                // No adjacent tiles, so ensure inner wall removed
+                delete wallSeg[key];
+              } else {// Two adjacent tiles, so toggle inner wall
                 wallSeg[key] ? delete wallSeg[key] : wallSeg[key] = [u, v];
               }
             });
@@ -191,6 +183,10 @@ export function handleMetaUpdates(levelUid: string) {
     );
 }
 
+/**
+ * Remove rectangles from tiles, permitting e.g.
+ * smaller rooms, central pillars, thin corridosr.
+ */
 function computeTilesSansCuts(levelUid: string) {
   const { tileFloors } = getLevel(levelUid)!;
   const tilesSansCuts = Poly2.cutOut(
@@ -201,8 +197,8 @@ function computeTilesSansCuts(levelUid: string) {
 }
 
 /**
- * Compute internal walls, taking cut/door/horiz/vert metas into account.
- * To use polygon operations we temp convert wall segs to thin rectangles.
+ * Compute internal walls, taking metas cut/door/horiz/vert into account.
+ * To use polygonal operations we temp convert wall-segs to thin rectangles.
  * We treat horizontal/vertical separately to avoid them being joined together.
  */
 function computeInternalWalls(levelUid: string) {
@@ -231,25 +227,33 @@ function computeInternalWalls(levelUid: string) {
   dispatch(Act.updateLevel(levelUid, { innerWalls: hWalls.concat(vWalls) }));
 }
 
+/**
+ * Compute navigable polygons using tiles without cuts,
+ * internal walls (wallSeg/horiz/vert/door) and the 'table' metas.
+ */
 function computeNavFloors(levelUid: string) {
   const { tilesSansCuts, wallSeg } = getLevel(levelUid)!;
-  const wallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
+  const innerWallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
   /**
    * Compute unnavigable areas induced by internal walls i.e.
-   * 1. outset the walls (which are actually line segments).
+   * 1. outset the wall segments.
    * 2. cut out any doors specified via metas.
    */
   const outsetWalls = Poly2.cutOut(
     getDoorRects(levelUid).map(rect => rect.poly2),
-    wallSegs.map(([u, v]) => new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2),
+    innerWallSegs.map(([u, v]) => new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2),
   );
+  const outsetTables = getTableRects(levelUid).map(rect => rect.outset(0.5).poly2);
+
+  // TODO rendered nav polygon should include space below tables
+
   /**
    * The navigable area is obtained by:
    * 1. insetting `tileFloorsSansCuts` (accounts for external walls).
    * 2. cutting out `outsetWalls` (accounts for internal walls).
    */
   const navFloors = Poly2.cutOut(
-    outsetWalls,
+    outsetWalls.concat(outsetTables),
     tilesSansCuts.flatMap(x => x.createInset(floorInset)),
   );
   
@@ -278,8 +282,4 @@ function computeLights(levelUid: string) {
     .flatMap(({ metas }) => metas)
     .filter((meta) => meta.validateLight(outsetFloors, innerWalls))
     .forEach((meta) => meta.light!.computePolygon(lineSegs));
-}
-
-function edgeToKey(u: Vector2Json, v: Vector2Json) {
-  return `${u.x},${u.y};${v.x},${v.y}`;
 }

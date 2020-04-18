@@ -10,9 +10,9 @@ export const doorOutset = floorInset - 0.001;
 export const tileDim = 20;
 
 /** Tags which require rebuild of floor */
-export const rebuildTags = ['cut', 'door', 'horiz', 'vert'];
+export const rebuildTags = ['cut', 'door', 'horiz', 'table', 'vert'];
 
 /** Tags which can affect navigation */
-export const navTags = ['cut', 'door', 'horiz', 'steiner', 'vert'];
+export const navTags = rebuildTags.concat('steiner');
 
 export const metaPointRadius = 0.5;
