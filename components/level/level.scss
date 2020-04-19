@@ -84,24 +84,29 @@ html {
     }
   }
 
+  .keys .meta-menu-container {
+    position: relative;
+    width: 100%;
+  }
+
   .keys .meta-menu {
+    position: absolute;
+    width: 100%;
+    z-index: 1; // Better way?
+
     display: flex;
+    align-items: flex-start;
+
     transition: 0.2s height ease-in-out;
     background: #fff;
     border-bottom: 1px solid #999;
     overflow: hidden;
 
-    &.open {
-      height: 20px;
-    }
-    &.closed {
-      height: 0px;
-    }
-
     button {
       font-family: "Courier New", Courier, monospace;
       cursor: pointer;
       margin-left: 1px;
+      margin-top: 2px;
       outline: 0;
       border: 0;
 
@@ -191,7 +196,9 @@ html {
       }
       @at-root .dark-mode .viewport .navigable {
         fill: $level-navigable-dark;
-        stroke: rgba(100, 100, 100, 0.1);
+        // Outset navigable to pronounce tables
+        stroke-width: 0.75;
+        stroke: $level-navigable-dark;
       }
     }
 

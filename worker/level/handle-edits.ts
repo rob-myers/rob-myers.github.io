@@ -18,7 +18,7 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2 } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
-import { tileDim, floorInset, navTags, rebuildTags, doorOutset } from '@model/level/level-params';
+import { tileDim, floorInset, navTags, rebuildTags, doorOutset, tableOutset } from '@model/level/level-params';
 import { sendMetas, sendPreNavFloors } from './handle-requests';
 import { updateNavGraph, getDoorRects, getHorizVertSegs, getCutRects, getTableRects } from './nav-utils';
 
@@ -259,7 +259,7 @@ function computeNavFloors(levelUid: string) {
    * The navigable polygons are obtained from the innerFloors
    * by removing the outset tables.
    */
-  const outsetTables = getTableRects(levelUid).map(rect => rect.outset(0.75).poly2);
+  const outsetTables = getTableRects(levelUid).map(rect => rect.outset(tableOutset).poly2);
   const navFloors = Poly2.cutOut(outsetTables, innerFloors);
   dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
   return navFloors;

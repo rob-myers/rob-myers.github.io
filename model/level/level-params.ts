@@ -6,6 +6,8 @@ export const floorInset = 2;
 
 export const doorOutset = floorInset - 0.001;
 
+export const tableOutset = 1;
+
 /** Dimension of tile */
 export const tileDim = 20;
 
