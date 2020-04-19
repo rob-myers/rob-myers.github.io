@@ -1,6 +1,6 @@
 # TODO
 
-- New approach to meta popovers i.e. use sub-menu instead!
+- Sub-menu input focus/feedback needs thought
 
 - In live mode, on click meta shows read-only summary
 - For debugging, can cast nav-ray/sight-ray between two metas.
@@ -329,3 +329,4 @@
   - Also, we can ignore nodes inside only one rect (efficiency).
 - Move 3d container into `Level3d`, rename `LevelMouse` as `LevelSvgMouse`.
 - Move transformed svg content into `LevelSvgWorld`.
+- New approach to meta popovers i.e. use sub-menu instead

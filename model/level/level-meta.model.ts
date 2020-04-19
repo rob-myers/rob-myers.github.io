@@ -358,25 +358,29 @@ export interface LevelMetaGroupUi {
   open: boolean;
   over: boolean;
   position: Vector2;
-  dialogPosition: Vector2;
 }
 
-export function syncMetaGroupUi(src: LevelMetaGroup, dst?: LevelMetaGroupUi): LevelMetaGroupUi {
-  return {
-    ...(dst || createMetaGroupUi(src.key)),
-    ...{
-      dialogPosition: src.position.clone().translate(-46 * 0.25, 0.5),
-      position: src.position.clone(),
-    } as LevelMetaGroupUi
-  };
+export function syncMetaGroupUis(
+  metaGroups: LevelMetaGroup[],
+  toPrevUi: Record<string, LevelMetaGroupUi>,
+) {
+  return metaGroups.reduce(
+    (agg, metaGroup) => ({
+      ...agg,
+      [metaGroup.key]: {
+        ...(toPrevUi[metaGroup.key] || createMetaGroupUi(metaGroup.key)),
+        position: metaGroup.position.clone(),
+      },
+    }),
+    {} as Record<string, LevelMetaGroupUi>,
+  );
 }
 
 function createMetaGroupUi(key: string): LevelMetaGroupUi {
   return {
     key,
     open: false,
-    over: true, // Expect initially mouseover
-    dialogPosition: Vector2.zero,
+    over: false,
     position: Vector2.zero,
   };
 }

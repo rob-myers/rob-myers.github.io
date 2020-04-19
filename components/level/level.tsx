@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { Thunk } from '@store/level.duck';
@@ -14,20 +14,14 @@ import css from './level.scss';
 
 const Level: React.FC<Props> = ({ uid }) => {
   const dispatch = useDispatch();
-  const overlayRef = useRef<HTMLElement>(null);
-  const renderBounds = useSelector(({ level: { instance } }) => instance[uid]?.renderBounds);
   const showThreeD = useSelector(({ level: { instance } }) => instance[uid]?.showThreeD);
   const stateKey = useSelector(({ level: { instance } }) => instance[uid]?.key);
   const theme = useSelector(({ level: { instance } }) => instance[uid]?.theme);
-  const zoomFactor = useSelector(({ level: { instance } }) => instance[uid]?.zoomFactor);
 
   useEffect(() => {
     dispatch(Thunk.createLevel({ uid })).then(/** Level created */);
     return () => void dispatch(Thunk.destroyLevel({ uid }));
   }, []);
-
-  const scale = `scale(${zoomFactor})`;
-  const translate = renderBounds && `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
 
   return (
     <section className={classNames(css.root, css[theme], showThreeD && css.threeD)}>
@@ -41,15 +35,9 @@ const Level: React.FC<Props> = ({ uid }) => {
               <svg className={css.svg}>
                 <LevelSvgGlobals />
                 <LevelSvgMouse levelUid={uid} />
-                <LevelSvgWorld levelUid={uid} overlayRef={overlayRef} />
+                <LevelSvgWorld levelUid={uid} />
               </svg>
               {showThreeD && <Level3d levelUid={uid} />}
-              <div
-                className={css.overlayContainer}
-                style={{ transform: `${scale} ${translate}` }}
-              >
-                <section className={css.overlay} ref={overlayRef} />
-              </div>
             </section>
           </LevelKeys>
         </>

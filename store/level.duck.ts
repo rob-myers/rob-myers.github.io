@@ -9,7 +9,7 @@ import { createThunk } from '@model/root.redux.model';
 import LevelWorkerClass from '@worker/level/level.worker';
 import { LevelUiState, createLevelUiState } from '@model/level/level.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
-import { LevelMetaGroupUi, syncMetaGroupUi, LevelMetaGroup } from '@model/level/level-meta.model';
+import { LevelMetaGroupUi, LevelMetaGroup, syncMetaGroupUis } from '@model/level/level-meta.model';
 
 export interface State {
   worker: null | Redacted<LevelWorker>;
@@ -158,9 +158,7 @@ export const reducer = (state = initialState, act: Action): State => {
     };
     case '[Level] sync meta ui': return { ...state,
       instance: updateLookup(act.pay.uid, state.instance, ({ metaGroupUi }) => ({
-        metaGroupUi: act.pay.metas.reduce((agg, meta) => ({ ...agg,
-          [meta.key]: syncMetaGroupUi(meta, metaGroupUi[meta.key]),
-        }), {}),
+        metaGroupUi: syncMetaGroupUis(act.pay.metas, metaGroupUi),
       })),
     };
     case '[Level] update meta ui': return { ...state,

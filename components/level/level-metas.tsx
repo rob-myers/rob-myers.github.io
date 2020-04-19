@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { LevelState } from '@model/level/level.model';
 import { LevelMetaGroup } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
 import { NavPath } from '@model/level/nav/nav-path.model';
-import { KeyedLookup, mapValues, posModulo } from '@model/generic.model';
+import { KeyedLookup, mapValues } from '@model/generic.model';
 import { addToLookup } from '@model/redux.model';
 import { Rect2Json } from '@model/rect2.model';
 import { metaPointRadius } from '@model/level/level-params';
@@ -15,17 +14,15 @@ import { LevelIcon } from './level-icon';
 
 type MetaLookup = LevelState['metaGroups'];
 
-const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
+const LevelMetas: React.FC<Props> = ({ levelUid }) => {
 
   const draggedMeta = useSelector(({ level: { instance: { [levelUid]: level } } }) =>
     level.draggedMeta ? level.metaGroupUi[level.draggedMeta] : null);
-  const groupUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaGroupUi);
   const mode = useSelector(({ level: { instance } }) => instance[levelUid]?.mode);
   const mouseWorld = useSelector(({ level: { instance } }) => draggedMeta && instance[levelUid]?.mouseWorld);
   const showNavRects = useSelector(({ level: { instance } }) => instance[levelUid].showNavRects);
   const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
   const worker = useSelector(({ level: { worker } }) => worker)!;
-  const wheelFowarder = useSelector(({ level: { instance } }) => instance[levelUid].wheelForwarder);
   const dispatch = useDispatch();
 
   const [groups, setGroups] = useState<MetaLookup>({});
@@ -64,63 +61,6 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
     return () => sub.unsubscribe();
   }, []);
 
-  const focusLevelKeys = () =>
-    overlayRef.current?.parentElement?.parentElement?.parentElement?.focus();
-
-  const addTag = (metaGroupKey: string, metaKey: string, tag: string) => {
-    if (/^[a-z0-9][a-z0-9-]*$/.test(tag)) {
-      /**
-       * Standard tags are non-empty and use lowercase letters, digits and hyphens.
-       * Finally, they cannot start with a hyphen.
-       */
-      worker.postMessage({
-        key: 'update-level-meta',
-        levelUid,
-        metaGroupKey,
-        update: { key: 'add-tag', tag, metaKey },
-      });
-      return true;
-    } else if (tag === '-') {
-      // Remove a single meta, possibly entire group
-      worker.postMessage({ key: 'remove-level-meta', levelUid, metaGroupKey, metaKey });
-      groups[metaGroupKey].metas.length === 1 && focusLevelKeys();
-      return true;
-    } else if (tag === '--') {
-      // Remove an entire group
-      worker.postMessage({ key: 'remove-level-meta', levelUid, metaGroupKey, metaKey: null });
-      focusLevelKeys();
-    } else if (/^>[a-z0-9][a-z0-9-]*$/.test(tag)) {
-      // Given tag '>foo' draw NavPath to 1st meta with tag 'foo'
-      const { position } = groups[metaGroupKey];
-      const dstMeta = Object.values(groups)
-        .find(({ metas }) => metas.some(meta => meta.tags.includes(tag.slice(1))));
-      
-      if (dstMeta) {
-        worker.postMessage({ key: 'request-nav-path', levelUid,
-          navPathUid: `${metaKey}>${dstMeta.key}`,
-          src: position.json,
-          dst: dstMeta.position.json,
-        });
-        return true;
-      }
-    }
-  };
-
-  const removeTag = (metaGroupKey: string, metaKey: string, tag: string) => {
-    worker.postMessage({ key: 'update-level-meta', levelUid, metaGroupKey, update: { key: 'remove-tag', tag, metaKey }});
-  };
-
-  const closeMetaGroup = (metaGroupKey: string) => {
-    dispatch(Act.updateMetaUi(levelUid, metaGroupKey, { open: false }));
-    focusLevelKeys();
-  };
-
-  const ensureMeta = (metaGroupKey: string, delta: -1 | 1) => {
-    const group = groups[metaGroupKey];
-    const metaIndex = delta === 1 ? group.metaIndex + 1 : posModulo(group.metaIndex - 1, group.metas.length);
-    worker.postMessage({ key: 'update-level-meta', levelUid, metaGroupKey, update: { key: 'ensure-meta-index', metaIndex }});
-  };
-
   return (
     <>
       {
@@ -143,7 +83,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
         )
       }
       {
-        // We may draw NavPaths while debugging/designing
+        // Can draw NavPaths while debugging/designing
         <g className={css.navPaths}>
           {
             Object.values(navPaths).map((navPath) =>
@@ -282,73 +222,12 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
           </g>
         )}
       </g>
-      {
-        // Meta groups have a dialog for editing/viewing tags
-        overlayRef.current && (
-          ReactDOM.createPortal(
-            Object.values(groups).map(({ key: groupKey, metas, metaIndex }) => (
-              groupUi[groupKey] && groupUi[groupKey].open && (
-                <section
-                  key={groupKey}
-                  className={css.metaPopover}
-                  style={{
-                    transform: `translate(${groupUi[groupKey].dialogPosition.x}px, ${groupUi[groupKey].dialogPosition.y}px) scale(0.25)`,
-                    pointerEvents: draggedMeta ? 'none' : 'all',
-                  }}
-                  onWheel={(e) => {
-                    // Foward wheel events to LevelMouse so can pan/zoom over popover
-                    wheelFowarder?.next({ key: 'wheel', e });
-                  }}
-                >
-                  {metas.filter((_, i) => i === metaIndex).map(({ key, tags }) => (
-                    <section
-                      key={groupKey} // We use groupKey to keep the input focused
-                      className={css.content}
-                      // onClick={() => {
-                      //   dispatch(Thunk.metaDialogToFront({ uid: levelUid, metaGroupKey: groupKey }));
-                      // }}
-                    >
-                      <input
-                        tabIndex={-1} // Offscreen focus can break things
-                        placeholder={`tags ${metaIndex +  1}/${metas.length}`}
-                        onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
-                          inputKey === 'Enter' && addTag(groupKey, key, value) && (currentTarget.value = '')}
-                        onKeyDown={({ key: inputKey }) =>
-                          inputKey === 'Escape' && closeMetaGroup(groupKey)}
-                        onKeyUp={(e) => {
-                          e.stopPropagation();
-                          e.key === 'ArrowDown' && ensureMeta(groupKey, +1);
-                          e.key === 'ArrowUp' && ensureMeta(groupKey, -1);
-                        }}
-                      />
-                      <section className={css.tags}>
-                        {tags.map((tag) =>
-                          <div
-                            key={tag}
-                            className={css.tag}
-                            onClick={() => removeTag(groupKey, key, tag)}
-                            title={tag}
-                          >
-                            {tag}
-                          </div>
-                        )}
-                      </section>
-                    </section>
-                  ))}
-                </section>
-              )
-            ))
-            , overlayRef.current
-          )
-        )
-      }
     </>
   );
 };
 
 interface Props {
   levelUid: string;
-  overlayRef: React.RefObject<HTMLElement>;
 }
 
 export default LevelMetas;

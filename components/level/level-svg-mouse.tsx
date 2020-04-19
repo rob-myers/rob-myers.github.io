@@ -135,10 +135,10 @@ const LevelSvgMouse: React.FC<Props> = ({ levelUid }) => {
     <rect
       ref={rectEl}
       className={css.mouseRect}
-      onMouseEnter={
-        // Focus LevelKeys
-        () => rectEl.current?.parentElement?.parentElement?.parentElement?.focus()
-      }
+      // onMouseEnter={
+      //   // Focus LevelKeys
+      //   () => rectEl.current?.parentElement?.parentElement?.parentElement?.focus()
+      // }
       onMouseLeave={() => {
         // Cleanup state
         const overKey = overMeta.current;

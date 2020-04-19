@@ -5,7 +5,7 @@ import LevelMetas from './level-metas';
 import LevelCursor from './level-cursor';
 import LevelGrid from './level-grid';
 
-const LevelSvgWorld: React.FC<Props> = ({ levelUid, overlayRef }) => {
+const LevelSvgWorld: React.FC<Props> = ({ levelUid }) => {
   const mode = useSelector(({ level: { instance } }) => instance[levelUid]?.mode);
   const renderBounds = useSelector(({ level: { instance } }) => instance[levelUid]?.renderBounds);
   const zoomFactor = useSelector(({ level: { instance } }) => instance[levelUid]?.zoomFactor);
@@ -16,7 +16,7 @@ const LevelSvgWorld: React.FC<Props> = ({ levelUid, overlayRef }) => {
   const levelContent = useMemo(() =>
     <LevelContent levelUid={levelUid} />, []);
   const levelMetas = useMemo(() =>
-    <LevelMetas levelUid={levelUid} overlayRef={overlayRef} />, [overlayRef]);
+    <LevelMetas levelUid={levelUid} />, []);
 
   return (
     <g style={{ transform: scale }}>
@@ -32,7 +32,6 @@ const LevelSvgWorld: React.FC<Props> = ({ levelUid, overlayRef }) => {
 
 interface Props {
   levelUid: string;
-  overlayRef: React.RefObject<HTMLElement>; // TODO remove
 }
 
 export default LevelSvgWorld;
