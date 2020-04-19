@@ -259,7 +259,7 @@ function computeNavFloors(levelUid: string) {
    * The navigable polygons are obtained from the innerFloors
    * by removing the outset tables.
    */
-  const outsetTables = getTableRects(levelUid).map(rect => rect.outset(1).poly2);
+  const outsetTables = getTableRects(levelUid).map(rect => rect.outset(0.75).poly2);
   const navFloors = Poly2.cutOut(outsetTables, innerFloors);
   dispatch(Act.updateLevel(levelUid, { floors: navFloors.map(x => redact(x)) }));
   return navFloors;

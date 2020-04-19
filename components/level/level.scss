@@ -83,7 +83,7 @@ html {
 
     .meta-menu {
       display: flex;
-      height: 18px;
+      height: 20px;
       background: #fff;
       border-bottom: 1px solid #999;
 
@@ -114,7 +114,7 @@ html {
 .viewport {
   width: 100%;
   // TODO depends on meta-menu being open
-  height: calc(100% - 25px - 25px);
+  height: calc(100% - 25px - 20px);
   position: relative;
   overflow: hidden;
 
@@ -228,7 +228,7 @@ html {
         fill: rgba(180, 180, 220, 0.2);
       }
       @at-root .dark-mode .viewport .cursor {
-        fill: none;
+        fill: rgba(100, 100, 100, 0.1);
       }
     }
 
