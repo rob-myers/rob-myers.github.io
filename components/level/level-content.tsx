@@ -7,6 +7,7 @@ import css from './level.scss';
 
 const LevelContent: React.FC<Props> = ({ levelUid }) => {
   const worker = useSelector(({ level: { worker } }) => worker)!;
+  const showNavTris = useSelector(({ level: { instance } }) => instance[levelUid])!.showNavTris;
 
   const [tileFloors, setTileFloors] = useState([] as string[]);
   const [walls, setWalls] = useState([] as [Vector2Json, Vector2Json][]);
@@ -51,11 +52,15 @@ const LevelContent: React.FC<Props> = ({ levelUid }) => {
           <path key={i} d={pathDef} />
         )}
       </g>
-      <g className={css.triangle}>
-        {triangles.map((pathDef, i) => (
-          <path key={i} d={pathDef} />
-        ))}
-      </g>
+      {
+        showNavTris && (
+          <g className={css.triangle}>
+            {triangles.map((pathDef, i) => (
+              <path key={i} d={pathDef} />
+            ))}
+          </g>
+        )
+      }
       <g className={css.wallSeg}>
         {walls.map(([u, v], i) =>
           <line key={i} x1={u.x} y1={u.y} x2={v.x} y2={v.y} />

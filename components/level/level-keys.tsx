@@ -26,6 +26,9 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
           case '4': return dispatch(Act.updateLevel(levelUid, {
             showNavRects: !state.showNavRects,
           }));
+          case '5': return dispatch(Act.updateLevel(levelUid, {
+            showNavTris: !state.showNavTris,
+          }));
         }
       }}
       tabIndex={0}

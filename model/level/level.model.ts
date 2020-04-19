@@ -76,6 +76,8 @@ export interface LevelUiState {
   renderBounds: Rect2;
   /** Show rect partition? */
   showNavRects: boolean;
+  /** Show triangulation? */
+  showNavTris: boolean;
   /** Show 3d walls? */
   showThreeD: boolean;
   /** CSS theme */
@@ -108,6 +110,7 @@ export function createLevelUiState(uid: string): LevelUiState {
     notifyForwarder: null,
     renderBounds: Rect2.zero,
     showNavRects: false,
+    showNavTris: true,
     showThreeD: false,
     theme: 'light-mode',
     wheelForwarder: null,

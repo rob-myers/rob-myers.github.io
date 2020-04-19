@@ -12,6 +12,7 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
   const mode = useSelector(({ level: { instance } }) => instance[levelUid].mode);
   const theme = useSelector(({ level: { instance } }) => instance[levelUid].theme);
   const showNavRects = useSelector(({ level: { instance } }) => instance[levelUid].showNavRects);
+  const showNavTris = useSelector(({ level: { instance } }) => instance[levelUid].showNavTris);
   const showThreeD = useSelector(({ level: { instance } }) => instance[levelUid].showThreeD);
   
   const dispatch = useDispatch();
@@ -32,17 +33,25 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
     worker!.postMessage({ key: 'ensure-floyd-warshall', levelUid });
   };
 
+  const toggleMode = () => {
+    dispatch(Act.updateLevel(levelUid, { mode: mode === 'edit' ? 'live' : 'edit' }));
+  };
+
+  const toggleTheme = () => dispatch(Act.updateLevel(levelUid, {
+    theme: theme === 'dark-mode' ? 'light-mode' : 'dark-mode',
+  }));
+
   const toggle3dView = () => {
     dispatch(Act.updateLevel(levelUid, { showThreeD: !showThreeD }));
   };
 
-  const toggleNavView = () => {
+  const toggleNavRects = () => {
     !showNavRects && worker?.postMessage({ key: 'request-nav-rects', levelUid });
     dispatch(Act.updateLevel(levelUid, { showNavRects: !showNavRects }));
   };
 
-  const toggleMode = () => {
-    dispatch(Act.updateLevel(levelUid, { mode: mode === 'edit' ? 'live' : 'edit' }));
+  const toggleNavTris = () => {
+    dispatch(Act.updateLevel(levelUid, { showNavTris: !showNavTris }));
   };
 
   return (
@@ -71,9 +80,7 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
         </button>
         <button
           className={classNames(css.button, theme === 'dark-mode' && css.enabled)}
-          onClick={(_e) => dispatch(Act.updateLevel(levelUid, {
-            theme: theme === 'dark-mode' ? 'light-mode' : 'dark-mode',
-          }))}
+          onClick={toggleTheme}
         >
           dark
         </button>
@@ -85,9 +92,15 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
         </button>
         <button
           className={classNames(css.button, showNavRects && css.enabled)}
-          onClick={toggleNavView}
+          onClick={toggleNavRects}
         >
           rect
+        </button>
+        <button
+          className={classNames(css.button, showNavRects && css.enabled)}
+          onClick={toggleNavTris}
+        >
+          tris
         </button>
       </section>
     </section>
