@@ -44,6 +44,31 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  closeAllMetas: createThunk(
+    '[Level] close all metas',
+    ({ state: { level }, dispatch }, { levelUid }: { levelUid: string }) => {
+      const { metaGroupUi } = level.instance[levelUid];
+      Object.values(metaGroupUi).forEach(grp => grp.open = false);
+      dispatch(Act.updateLevel(levelUid, { metaGroupUi: { ...metaGroupUi } }));
+    },
+  ),
+  createLevel: createThunk(
+    '[Level] create',
+    async ({ dispatch }, { uid }: { uid: string }) => {
+      const worker = await dispatch(Thunk.ensureWorker({}));
+      worker.postMessage({ key: 'request-new-level', levelUid: uid });
+      await awaitWorker('worker-created-level', worker);
+      dispatch(Act.registerLevel(uid));
+    },
+  ),
+  destroyLevel: createThunk(
+    '[Level] destroy',
+    async ({ dispatch }, { uid }: { uid: string }) => {
+      const worker = await dispatch(Thunk.ensureWorker({}));
+      worker.postMessage({ key: 'request-destroy-level', levelUid: uid });
+      dispatch(Act.unregisterLevel(uid));
+    },
+  ),
   ensureWorker: createThunk(
     '[Level] ensure worker',
     async ({ dispatch, state: { level } }) => {
@@ -71,23 +96,6 @@ export const Thunk = {
           return level.worker!;
         }
       }
-    },
-  ),
-  createLevel: createThunk(
-    '[Level] create',
-    async ({ dispatch }, { uid }: { uid: string }) => {
-      const worker = await dispatch(Thunk.ensureWorker({}));
-      worker.postMessage({ key: 'request-new-level', levelUid: uid });
-      await awaitWorker('worker-created-level', worker);
-      dispatch(Act.registerLevel(uid));
-    },
-  ),
-  destroyLevel: createThunk(
-    '[Level] destroy',
-    async ({ dispatch }, { uid }: { uid: string }) => {
-      const worker = await dispatch(Thunk.ensureWorker({}));
-      worker.postMessage({ key: 'request-destroy-level', levelUid: uid });
-      dispatch(Act.unregisterLevel(uid));
     },
   ),
   metaDialogToFront: createThunk(
