@@ -10,20 +10,26 @@ import { Rect2 } from '@model/rect2.model';
 const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
   const containerEl = useRef<HTMLDivElement>(null);
   const tempPoint = useRef(Vector2.zero);
-
-  const mouseWorld = useSelector(({ level: { instance } }) => instance[levelUid].mouseWorld);
-  const worker = useSelector(({ level: { worker } }) => worker)!;
   const [wallSegs, setWallSegs] = useState([] as { u: Vector2; v: Vector2; backface: boolean }[]);
   const [dimension, setDimension] = useState<Vector2>();
+
+  const mouseWorld = useSelector(({ level: { instance } }) => instance[levelUid].mouseWorld);
+  const renderBounds = useSelector(({ level: { instance } }) => instance[levelUid].renderBounds);
+  const worker = useSelector(({ level: { worker } }) => worker)!;
+  const zoomFactor = useSelector(({ level: { instance } }) => instance[levelUid].zoomFactor);
+
+  const scale = `scale(${zoomFactor})`;
+  const translate = `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
 
   useEffect(() => {
     const sub = subscribeToWorker(worker, (msg) => {
       if (msg.key === 'send-level-layers' && msg.levelUid === levelUid) {
 
         // Each inner wall induces 4 planes
+        const outset = 0.5;
         const innerWallSegs = msg.wallSegs
           .map(([u, v]) => [Vector2.from(u), Vector2.from(v)])
-          .map(([u, v]) => Rect2.from(u, v).outset(0.5))
+          .map(([u, v]) => Rect2.from(u, v).outset(outset))
           .flatMap(({ topLeft, topRight, bottomRight, bottomLeft }) => [
             [topRight, topLeft],
             [bottomRight, topRight],
@@ -33,7 +39,7 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
         
         // Must inset outer walls to match inner walls
         const outerWallSegs = msg.tileFloors
-          .flatMap(x => Poly2.fromJson(x).createInset(0.5))
+          .flatMap(x => Poly2.fromJson(x).createInset(outset))
           .flatMap(({ lineSegs }) => lineSegs);
 
         setWallSegs(
@@ -77,15 +83,20 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
 
   return (
     <div
-      ref={containerEl}
-      className={css.threeDimParent}
-      style={dimension && {
-        perspectiveOrigin: `${100 * (mouseWorld.x / dimension.x)}% ${100 * (mouseWorld.y / dimension.y)}%`,
-        width: dimension.x,
-        height: dimension.y,
-      }}
+      className={css.threeDimContainer}
+      style={{ transform: `${scale} ${translate}` }}
     >
-      {geometry}
+      <div
+        ref={containerEl}
+        className={css.threeDimParent}
+        style={dimension && {
+          perspectiveOrigin: `${100 * (mouseWorld.x / dimension.x)}% ${100 * (mouseWorld.y / dimension.y)}%`,
+          width: dimension.x,
+          height: dimension.y,
+        }}
+      >
+        {geometry}
+      </div>
     </div>
   );
 };

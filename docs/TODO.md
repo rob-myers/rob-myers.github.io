@@ -1,5 +1,7 @@
 # TODO
 
+- Rename `LevelMouse` as `LevelSvgMouse`,
+  move transformed svg content into `LevelSvgWorld`.
 - New approach to meta popovers i.e. use sub-menu instead!
 
 - In live mode, on click meta shows read-only summary
@@ -7,6 +9,9 @@
 
 - 5 table shadows via tags: `shad-{ne,se,sw,nw,all}`
 - Can find metas outside navigable but on table
+
+- Light polygon defects at line seg corners, at edge of world poly
+  IDEA: use rects from ViewGraph of 'viewable space' instead.
 
 - shell signals
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
@@ -319,3 +324,4 @@
 - Navigation issue involving coarse initial/final rectangle:
   - FIX: rect's nav nodes include steiner points.
   - Also, we can ignore nodes inside only one rect (efficiency).
+- Move 3d container into `Level3d`

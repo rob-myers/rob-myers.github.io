@@ -49,7 +49,7 @@ const Level: React.FC<Props> = ({ uid }) => {
             <LevelMenu levelUid={uid} />
             <LevelMetaMenu levelUid={uid} />
             <section className={css.viewport}>
-              <svg className={css.svg} preserveAspectRatio="none">
+              <svg className={css.svg}>
                 <LevelSvgGlobals />
                 <LevelMouse levelUid={uid} />
                 <g style={{ transform: scale }}>
@@ -61,12 +61,7 @@ const Level: React.FC<Props> = ({ uid }) => {
                   {mode === 'edit' && <LevelGrid levelUid={uid} />}
                 </g>
               </svg>
-              <div
-                className={css.threeDimContainer}
-                style={{ transform: `${scale} ${translate}` }}
-              >
-                {showThreeD && <Level3d levelUid={uid} />}
-              </div>
+              {showThreeD && <Level3d levelUid={uid} />}
               <div
                 className={css.overlayContainer}
                 style={{ transform: `${scale} ${translate}` }}

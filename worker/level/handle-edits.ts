@@ -267,18 +267,24 @@ function computeNavFloors(levelUid: string) {
 
 function computeLights(levelUid: string) {
   const { tilesSansCuts, innerWalls, metaGroups: metas } = getLevel(levelUid)!;
-  const outsetFloors = tilesSansCuts.flatMap(floor => floor.createInset(0.5));
-  const innerWallSegs = innerWalls.map(([u, v]) => Rect2.from(u, v).outset(0.5))
+  const insetFloors = tilesSansCuts.flatMap(floor => floor.createInset(0.5));
+
+  /**
+   * TODO there are defects at edges.
+   * Instead, use rects of ViewGraph of 'viewable space'.
+   */
+  const innerWallSegs = innerWalls
+    .map(([u, v]) => Rect2.from(u, v).outset(0.5))
     .flatMap(({ topLeft, topRight, bottomRight, bottomLeft }) => [
       [topRight, topLeft],
       [bottomRight, topRight],
       [bottomLeft, bottomRight],
       [topLeft, bottomLeft],
     ] as [Vector2, Vector2][]);
-  const lineSegs = innerWallSegs.concat(outsetFloors.flatMap(x => x.lineSegs));
+  const lineSegs = innerWallSegs.concat(insetFloors.flatMap(x => x.lineSegs));
   
   Object.values(metas)
     .flatMap(({ metas }) => metas)
-    .filter((meta) => meta.validateLight(outsetFloors, innerWalls))
+    .filter((meta) => meta.validateLight(insetFloors, innerWalls))
     .forEach((meta) => meta.light!.computePolygon(lineSegs));
 }
