@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import { Thunk } from '@store/level.duck';
 import LevelGrid from './level-grid';
-import LevelMouse from './level-mouse';
+import LevelSvgMouse from './level-svg-mouse';
 import LevelKeys from './level-keys';
 import LevelContent from './level-content';
 import LevelCursor from './level-cursor';
@@ -51,7 +51,7 @@ const Level: React.FC<Props> = ({ uid }) => {
             <section className={css.viewport}>
               <svg className={css.svg}>
                 <LevelSvgGlobals />
-                <LevelMouse levelUid={uid} />
+                <LevelSvgMouse levelUid={uid} />
                 <g style={{ transform: scale }}>
                   <g style={{ transform: translate }}>
                     {levelContent}

@@ -15,7 +15,7 @@ function snapToGrid({ x, y }: Vector2, td: number) {
   return new Vector2(Math.floor(x / td) * td, Math.floor(y / td) * td);
 }
 
-const LevelMouse: React.FC<Props> = ({ levelUid }) => {
+const LevelSvgMouse: React.FC<Props> = ({ levelUid }) => {
   const rectEl = useRef<SVGRectElement>(null);
   /** Is a cursor border highlighted? */
   const highlighted = useRef(false);
@@ -252,4 +252,4 @@ interface Props {
 }
 
 
-export default LevelMouse;
+export default LevelSvgMouse;
