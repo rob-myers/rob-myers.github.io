@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { LevelMetaGroup } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
-import { Thunk, Act } from '@store/level.duck';
+import { Thunk } from '@store/level.duck';
 import css from './level.scss';
 import { LevelState } from '@model/level/level.model';
 import { posModulo } from '@model/generic.model';
@@ -12,6 +12,7 @@ type MetaLookup = LevelState['metaGroups'];
 const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
   const rootEl = useRef<HTMLDivElement>(null);
   const toInputEl = useRef({} as { [key: string]: HTMLElement });
+  const lastFocus = useRef(null as null | string);
 
   const [toGroup, setGroups] = useState<MetaLookup>({});
   const toGroupUi = useSelector(({ level: { instance } }) => instance[levelUid].metaGroupUi);
@@ -23,7 +24,7 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
       if (msg.key === 'send-level-metas' && msg.levelUid === levelUid) {
         const metas = msg.metas.map(p => LevelMetaGroup.from(p))
           .reduce<MetaLookup>((agg, item) => ({ ...agg, [item.key]: item }), {}); 
-        dispatch(Act.syncMetaUi(levelUid, Object.values(metas)));
+        // metaGroupUi are synced with LevelMetaGroups in LevelMetas
         setGroups(metas);
       }
     });
@@ -32,11 +33,15 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
   }, []);
 
   useEffect(() => {
-    /**
-     * TODO focus last changed...
-     */
-    // const found = Object.values(toGroupUi).find(x => x.justChanged);
-    // found && toInputEl.current[found.key]?.focus();
+    const groups = Object.values(toGroupUi);
+    const found = groups.find(({ over }) => over);
+    if (found) {
+      lastFocus.current = found.key;
+      toInputEl.current[found.key]?.focus();
+    } else if (lastFocus.current) {
+      lastFocus.current = null;
+      focusLevelKeys();
+    }
   }, [toGroupUi]);
 
   const openMetas = Object.values(toGroupUi)
@@ -83,10 +88,10 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
 
   const closeMenu = () => dispatch(Thunk.closeAllMetas({levelUid}));
 
-  const closeMetaGroup = (metaGroupKey: string) => {
-    dispatch(Act.updateMetaUi(levelUid, metaGroupKey, { open: false }));
-    focusLevelKeys();
-  };
+  // const closeMetaGroup = (metaGroupKey: string) => {
+  //   dispatch(Act.updateMetaUi(levelUid, metaGroupKey, { open: false }));
+  //   focusLevelKeys();
+  // };
 
   const ensureMeta = (metaGroupKey: string, delta: -1 | 1) => {
     const group = toGroup[metaGroupKey];
@@ -122,7 +127,8 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
                 onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
                   inputKey === 'Enter' && addTag(groupKey, metas[metaIndex].key, value) && (currentTarget.value = '')}
                 onKeyDown={({ key: inputKey }) =>
-                  inputKey === 'Escape' && closeMetaGroup(groupKey)}
+                  // inputKey === 'Escape' && closeMetaGroup(groupKey)}
+                  inputKey === 'Escape' && focusLevelKeys()}
                 onKeyUp={(e) => {
                   e.stopPropagation();
                   e.key === 'ArrowDown' && ensureMeta(groupKey, +1);

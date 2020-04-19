@@ -1,7 +1,5 @@
 # TODO
 
-- Sub-menu input focus/feedback needs thought
-
 - In live mode, on click meta shows read-only summary
 - For debugging, can cast nav-ray/sight-ray between two metas.
 
@@ -330,3 +328,4 @@
 - Move 3d container into `Level3d`, rename `LevelMouse` as `LevelSvgMouse`.
 - Move transformed svg content into `LevelSvgWorld`.
 - New approach to meta popovers i.e. use sub-menu instead
+- `LevelMetaMenu` auto-focus with icon highlighting

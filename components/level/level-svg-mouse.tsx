@@ -135,10 +135,10 @@ const LevelSvgMouse: React.FC<Props> = ({ levelUid }) => {
     <rect
       ref={rectEl}
       className={css.mouseRect}
-      // onMouseEnter={
-      //   // Focus LevelKeys
-      //   () => rectEl.current?.parentElement?.parentElement?.parentElement?.focus()
-      // }
+      onMouseEnter={
+        // Focus LevelKeys
+        () => rectEl.current?.parentElement?.parentElement?.parentElement?.focus()
+      }
       onMouseLeave={() => {
         // Cleanup state
         const overKey = overMeta.current;
@@ -162,7 +162,7 @@ const LevelSvgMouse: React.FC<Props> = ({ levelUid }) => {
             const nextOpen = !state.metaGroupUi[overMeta.current].open;
             dispatch(Act.updateMetaUi(levelUid, overMeta.current, { open: nextOpen }));
             dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
-            nextOpen && dispatch(Thunk.metaDialogToFront({ uid: levelUid, metaGroupKey: overMeta.current }));
+            nextOpen && dispatch(Thunk.putMetaUiLast({ uid: levelUid, metaGroupKey: overMeta.current }));
           } else if (state.draggedMeta) {
             if (overMeta.current && overMeta.current !== state.draggedMeta ) {
               // NOOP
@@ -210,7 +210,7 @@ const LevelSvgMouse: React.FC<Props> = ({ levelUid }) => {
             const nextOpen = !state.metaGroupUi[overMeta.current].open;
             dispatch(Act.updateMetaUi(levelUid, overMeta.current, { open: nextOpen }));
             dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
-            nextOpen && dispatch(Thunk.metaDialogToFront({ uid: levelUid, metaGroupKey: overMeta.current }));
+            nextOpen && dispatch(Thunk.putMetaUiLast({ uid: levelUid, metaGroupKey: overMeta.current }));
           }
         }
 

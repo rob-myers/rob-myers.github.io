@@ -117,11 +117,6 @@ export function handleMetaUpdates(levelUid: string) {
             const group = metaGroups[metaGroupKey];
             group.applyUpdates(update);
 
-            if (update.key === 'dialog-to-front') {
-              delete metaGroups[metaGroupKey];
-              metaGroups[metaGroupKey] = group;
-            }
-
             return {
               rebuildFloors: (
                 update.key === 'add-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))

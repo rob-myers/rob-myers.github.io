@@ -94,6 +94,8 @@ html {
     position: absolute;
     width: 100%;
     z-index: 1; // Better way?
+    box-sizing: border-box;
+    padding: 2px;
 
     display: flex;
     align-items: flex-start;
@@ -132,6 +134,7 @@ html {
       input {
         width: 70px;
         font-family: "Courier New", Courier, monospace;
+        font-size: 9pt;
         outline: none;
         border: none;
         padding: 2px 2px 2px 4px;
@@ -142,7 +145,7 @@ html {
         flex-wrap: wrap;
         user-select: none;
         overflow: hidden;
-        font-size: 8pt;
+        font-size: 9pt;
         font-weight: bold;
 
         .tag {

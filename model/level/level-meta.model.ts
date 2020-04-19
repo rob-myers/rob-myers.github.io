@@ -162,7 +162,6 @@ export type LevelMetaUpdate = (
   | { key: 'remove-tag'; tag: string; metaKey: string }
   | { key: 'set-position'; position: Vector2Json }
   | { key: 'ensure-meta-index'; metaIndex: number }
-  | { key: 'dialog-to-front' }
 );
 
 /**
@@ -268,9 +267,6 @@ export class LevelMetaGroup {
         this.metaIndex = update.metaIndex;
         break;
       }
-      case 'dialog-to-front': {
-        break;
-      }
       default: throw testNever(update);
     }
 
@@ -361,19 +357,30 @@ export interface LevelMetaGroupUi {
 }
 
 export function syncMetaGroupUis(
-  metaGroups: LevelMetaGroup[],
+  toGroup: Record<string, LevelMetaGroup>,
   toPrevUi: Record<string, LevelMetaGroupUi>,
 ) {
-  return metaGroups.reduce(
-    (agg, metaGroup) => ({
-      ...agg,
-      [metaGroup.key]: {
-        ...(toPrevUi[metaGroup.key] || createMetaGroupUi(metaGroup.key)),
-        position: metaGroup.position.clone(),
-      },
-    }),
-    {} as Record<string, LevelMetaGroupUi>,
-  );
+  /**
+   * We maintain ordering of meta uis,
+   * so last opened is last in LevelMetaMenu.
+   */
+  const next = {} as Record<string, LevelMetaGroupUi>;
+  Object.keys(toPrevUi).forEach((key) => {
+    if (toGroup[key]) {
+      next[key] = { ...toPrevUi[key],
+        position: toGroup[key].position.clone(),
+      };
+      delete toGroup[key];
+    }
+  });
+  // Append any new ones (expect at most one)
+  Object.keys(toGroup)
+    .forEach(key => next[key] = ({
+      ...createMetaGroupUi(key),
+      position: toGroup[key].position.clone(),
+      over: true, // Assume we're initially over
+    }));
+  return next;
 }
 
 function createMetaGroupUi(key: string): LevelMetaGroupUi {

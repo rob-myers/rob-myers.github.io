@@ -18,6 +18,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
 
   const draggedMeta = useSelector(({ level: { instance: { [levelUid]: level } } }) =>
     level.draggedMeta ? level.metaGroupUi[level.draggedMeta] : null);
+  const toGroupUi = useSelector(({ level: { instance } }) => instance[levelUid]?.metaGroupUi);
   const mode = useSelector(({ level: { instance } }) => instance[levelUid]?.mode);
   const mouseWorld = useSelector(({ level: { instance } }) => draggedMeta && instance[levelUid]?.mouseWorld);
   const showNavRects = useSelector(({ level: { instance } }) => instance[levelUid].showNavRects);
@@ -39,7 +40,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
           const metas = msg.metas.map(p => LevelMetaGroup.from(p))
             .reduce<MetaLookup>((agg, item) => ({ ...agg, [item.key]: item }), {}); 
           setGroups(metas);
-          dispatch(Act.syncMetaUi(levelUid, Object.values(metas)));
+          dispatch(Act.syncMetaUi(levelUid, { ...metas }));
           break;
         }
         case 'send-level-aux': {
@@ -103,7 +104,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
           <g key={groupKey}>
             {
               mode === 'live' && <LevelIcon position={position} />
-              || !groups[groupKey].hasIcon() && <LevelIcon position={position} icon={backupIcon} />
+              || !groups[groupKey].hasIcon()
+                && <LevelIcon position={position} icon={backupIcon} highlight={toGroupUi[groupKey]?.open} />
             }
             {metas.map(({ key, light, rect, trigger, physical, icon }) => (
               <g key={key}>

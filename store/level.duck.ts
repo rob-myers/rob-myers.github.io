@@ -35,7 +35,7 @@ export const Act = {
     createAct('[Level] set status', { status }),
   storeWorker: (worker: Redacted<LevelWorker>) =>
     createAct('[Level] store worker', { worker }),
-  syncMetaUi: (uid: string, metas: LevelMetaGroup[]) =>
+  syncMetaUi: (uid: string, metas: Record<string, LevelMetaGroup>) =>
     createAct('[Level] sync meta ui', { uid, metas }),
   updateMetaUi: (uid: string, key: string, updates: Partial<LevelMetaGroupUi>) =>
     createAct('[Level] update meta ui', { uid, key, updates }),
@@ -98,21 +98,15 @@ export const Thunk = {
       }
     },
   ),
-  metaDialogToFront: createThunk(
-    '[Level] meta dialog to front',
+  putMetaUiLast: createThunk(
+    '[Level] put meta ui last',
     ({ state: { level }, dispatch }, { uid, metaGroupKey }: { uid: string; metaGroupKey: string }) => {
       const { instance: { [uid]: { metaGroupUi } } } = level;
       const group = metaGroupUi[metaGroupKey];
       delete metaGroupUi[metaGroupKey];
       dispatch(Act.updateLevel(uid, {
-        metaGroupUi: { [metaGroupKey]: group, ...metaGroupUi },
+        metaGroupUi: { ...metaGroupUi, [metaGroupKey]: group },
       }));
-      // state && worker?.postMessage({
-      //   key: 'update-level-meta',
-      //   levelUid: uid,
-      //   metaGroupKey,
-      //   update: { key: 'dialog-to-front' }, // TODO remove
-      // });
     },
   ),
   moveMetaToMouse: createThunk(
