@@ -1,7 +1,5 @@
 # TODO
 
-- Rename `LevelMouse` as `LevelSvgMouse`,
-  move transformed svg content into `LevelSvgWorld`.
 - New approach to meta popovers i.e. use sub-menu instead!
 
 - In live mode, on click meta shows read-only summary
@@ -324,4 +322,5 @@
 - Navigation issue involving coarse initial/final rectangle:
   - FIX: rect's nav nodes include steiner points.
   - Also, we can ignore nodes inside only one rect (efficiency).
-- Move 3d container into `Level3d`
+- Move 3d container into `Level3d`, rename `LevelMouse` as `LevelSvgMouse`.
+- Move transformed svg content into `LevelSvgWorld`.
