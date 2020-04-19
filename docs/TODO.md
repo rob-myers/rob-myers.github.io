@@ -5,11 +5,16 @@
 - In live mode, on click meta shows read-only summary
 - For debugging, can cast nav-ray/sight-ray between two metas.
 
-- 5 table shadows via tags: `shad-{ne,se,sw,nw,all}`
+- Reconsider background.md e.g. we could examine game behaviours in the
+  context of creating our own game.
+
+- 5 table shadows via tags: `shad{-ne,-se,-sw,-n,}`
 - Can find metas outside navigable but on table
 
 - Light polygon defects at line seg corners, at edge of world poly
   IDEA: use rects from ViewGraph of 'viewable space' instead.
+
+- Try <spotLight/> for different lighting
 
 - shell signals
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`

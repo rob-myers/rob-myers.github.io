@@ -26,6 +26,7 @@ html {
     width: 100%;
     height: 100%;
     outline: none;
+    font-family: "Courier New", Courier, monospace;
   }
 
   .keys .menu {
@@ -97,7 +98,7 @@ html {
     display: flex;
     align-items: flex-start;
 
-    transition: 0.2s height ease-in-out;
+    // transition: 0.2s height ease-in-out;
     background: #fff;
     border-bottom: 1px solid #999;
     overflow: hidden;
@@ -119,6 +120,37 @@ html {
       display: flex;
       flex-direction: column;
       flex: 1;
+      height: 100%;
+    }
+
+    .main-menu .meta-group {
+      background: white;
+      display: flex;
+      align-items: center;
+      height: 100%;
+
+      input {
+        width: 70px;
+        font-family: "Courier New", Courier, monospace;
+        outline: none;
+        border: none;
+        padding: 2px 2px 2px 4px;
+      }
+
+      .tags {
+        display: flex;
+        flex-wrap: wrap;
+        user-select: none;
+        overflow: hidden;
+        font-size: 8pt;
+        font-weight: bold;
+
+        .tag {
+          cursor: pointer;
+          padding: 0 4px;
+          background: #eee;
+        }
+      }
     }
 
     .right-menu {

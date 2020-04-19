@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { LevelMetaGroup } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
@@ -10,12 +9,9 @@ import { LevelState } from '@model/level/level.model';
 type MetaLookup = LevelState['metaGroups'];
 
 const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
-  const [openMetas, setOpenMetas] = useState<LevelMetaGroup[]>([]);
   const [toGroup, setGroups] = useState<MetaLookup>({});
-
   const metaGroupUi = useSelector(({ level: { instance } }) => instance[levelUid].metaGroupUi);
   const worker = useSelector(({ level: { worker } }) => worker)!;
-
   const dispatch = useDispatch();
   const closeMenu = () => dispatch(Thunk.closeAllMetas({levelUid}));
 
@@ -24,32 +20,41 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
       if (msg.key === 'send-level-metas' && msg.levelUid === levelUid) {
         const metas = msg.metas.map(p => LevelMetaGroup.from(p))
           .reduce<MetaLookup>((agg, item) => ({ ...agg, [item.key]: item }), {}); 
-        setGroups(metas);
         dispatch(Act.syncMetaUi(levelUid, Object.values(metas)));
+        setGroups(metas);
       }
     });
     worker.postMessage({ key: 'request-level-metas', levelUid });
     return () => sub.unsubscribe();
   }, []);
 
-  useEffect(() => {
-    const openUis = Object.values(metaGroupUi).filter(({ open }) => open);
-    const openMetas = openUis.map(({ key }) => toGroup[key]).filter(Boolean);
-    // setOpenUis(openUis);
-    setOpenMetas(openMetas);
-  }, [metaGroupUi]);
+  const openMetas = Object.values(metaGroupUi)
+    .filter(x => x.open).map(({ key }) => toGroup[key]).filter(Boolean);
 
   return (
     <div className={css.metaMenuContainer}>
-      <div
-        className={classNames(css.metaMenu)}
-        style={{ height: openMetas.length * 20 }}
-      >
+      <div className={css.metaMenu}>
         <section className={css.mainMenu}>
-          {openMetas.map(({ key, metas, metaIndex }) => (
-            <section key={key} className={css.meta}>
+          {openMetas.map(({ key: groupKey, metas, metaIndex }) => (
+            <section key={groupKey} className={css.metaGroup}>
+              <input
+                placeholder={`tags ${metaIndex +  1}/${metas.length}`}
+              />
               {
-                metas.filter((_, i) => i === metaIndex).map(meta => meta.tags)
+                metas.filter((_, i) => i === metaIndex).map(({ tags }) => (
+                  <section key="unique" className={css.tags}>
+                    {tags.map((tag) =>
+                      <div
+                        key={tag}
+                        className={css.tag}
+                        // onClick={() => removeTag(groupKey, key, tag)}
+                        title={tag}
+                      >
+                        {tag}
+                      </div>
+                    )}
+                  </section>
+                ))
               }
             </section>
           ))}

@@ -9,7 +9,7 @@ import { KeyedLookup, mapValues, posModulo } from '@model/generic.model';
 import { addToLookup } from '@model/redux.model';
 import { Rect2Json } from '@model/rect2.model';
 import { metaPointRadius } from '@model/level/level-params';
-import { Act, Thunk } from '@store/level.duck';
+import { Act } from '@store/level.duck';
 import css from './level.scss';
 import { LevelIcon } from './level-icon';
 
@@ -304,9 +304,9 @@ const LevelMetas: React.FC<Props> = ({ levelUid, overlayRef }) => {
                     <section
                       key={groupKey} // We use groupKey to keep the input focused
                       className={css.content}
-                      onClick={() => {
-                        dispatch(Thunk.metaDialogToFront({ uid: levelUid, metaGroupKey: groupKey }));
-                      }}
+                      // onClick={() => {
+                      //   dispatch(Thunk.metaDialogToFront({ uid: levelUid, metaGroupKey: groupKey }));
+                      // }}
                     >
                       <input
                         tabIndex={-1} // Offscreen focus can break things

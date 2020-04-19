@@ -100,14 +100,19 @@ export const Thunk = {
   ),
   metaDialogToFront: createThunk(
     '[Level] meta dialog to front',
-    ({ state: { level } }, { uid, metaGroupKey }: { uid: string; metaGroupKey: string }) => {
-      const { worker, instance: { [uid]: state } } = level;
-      state && worker?.postMessage({
-        key: 'update-level-meta',
-        levelUid: uid,
-        metaGroupKey,
-        update: { key: 'dialog-to-front' },
-      });
+    ({ state: { level }, dispatch }, { uid, metaGroupKey }: { uid: string; metaGroupKey: string }) => {
+      const { instance: { [uid]: { metaGroupUi } } } = level;
+      const group = metaGroupUi[metaGroupKey];
+      delete metaGroupUi[metaGroupKey];
+      dispatch(Act.updateLevel(uid, {
+        metaGroupUi: { [metaGroupKey]: group, ...metaGroupUi },
+      }));
+      // state && worker?.postMessage({
+      //   key: 'update-level-meta',
+      //   levelUid: uid,
+      //   metaGroupKey,
+      //   update: { key: 'dialog-to-front' }, // TODO remove
+      // });
     },
   ),
   moveMetaToMouse: createThunk(
