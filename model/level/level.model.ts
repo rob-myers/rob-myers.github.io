@@ -74,8 +74,6 @@ export interface LevelUiState {
   notifyForwarder: null | Redacted<Subject<ForwardedNotification>>;
   /** Viewport bounds in world coords. */
   renderBounds: Rect2;
-  /** Show meta sub-menu */
-  showMetaMenu: boolean;
   /** Show rect partition? */
   showNavRects: boolean;
   /** Show 3d walls? */
@@ -109,7 +107,6 @@ export function createLevelUiState(uid: string): LevelUiState {
     mouseWorld:  Vector2.zero,
     notifyForwarder: null,
     renderBounds: Rect2.zero,
-    showMetaMenu: false,
     showNavRects: false,
     showThreeD: false,
     theme: 'light-mode',

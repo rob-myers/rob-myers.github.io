@@ -21,100 +21,109 @@ html {
   }
 
   .keys {
+    display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
     outline: none;
+  }
 
-    .menu {
+  .keys .menu {
+    display: flex;
+    height: 25px;
+
+    box-sizing: border-box;
+    padding: 2px;
+    border-bottom: 1px solid #ddd;
+
+    @at-root .light-mode .keys .menu {
+      background: $level-menu-light;
+    }
+    @at-root .dark-mode .keys .menu {
+      background: $level-menu-dark;
+    }
+
+    .main-menu {
       display: flex;
-      height: 25px;
+    }
 
-      box-sizing: border-box;
-      padding: 2px;
-      border-bottom: 1px solid #ddd;
+    .edit-menu {
+      flex: 1;
+      display: flex;
 
-      @at-root .light-mode .keys .menu {
-        background: $level-menu-light;
-      }
-      @at-root .dark-mode .keys .menu {
-        background: $level-menu-dark;
-      }
-
-      .main-menu {
-        display: flex;
-      }
-
-      .edit-menu {
-        flex: 1;
-        display: flex;
-
-        .filename-input {
-          padding: 0 4px;
-          font-family: "Courier New", Courier, monospace;
-          outline: none;
-          width: 80px;
-        }
-      }
-
-      .button {
-        margin-left: 1px;
-        outline: 0;
-        border: 0;
-        cursor: pointer;
+      .filename-input {
+        padding: 0 4px;
         font-family: "Courier New", Courier, monospace;
-
-        @at-root .light-mode .keys .menu .button {
-          background: $level-bg-light;
-          color: $level-text-light;
-        }
-        @at-root .dark-mode .keys .menu .button {
-          background: $level-bg-dark;
-          color: $level-text-dark;
-        }
-
-        &:hover {
-          font-weight: bold;
-        }
-        &.enabled {
-          text-decoration: underline;
-        }
+        outline: none;
+        width: 80px;
       }
     }
 
-    .meta-menu {
-      display: flex;
+    .button {
+      margin-left: 1px;
+      outline: 0;
+      border: 0;
+      cursor: pointer;
+      font-family: "Courier New", Courier, monospace;
+
+      @at-root .light-mode .keys .menu .button {
+        background: $level-bg-light;
+        color: $level-text-light;
+      }
+      @at-root .dark-mode .keys .menu .button {
+        background: $level-bg-dark;
+        color: $level-text-dark;
+      }
+
+      &:hover {
+        font-weight: bold;
+      }
+      &.enabled {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .keys .meta-menu {
+    display: flex;
+    transition: 0.2s height ease-in-out;
+    background: #fff;
+    border-bottom: 1px solid #999;
+    overflow: hidden;
+
+    &.open {
       height: 20px;
-      background: #fff;
-      border-bottom: 1px solid #999;
+    }
+    &.closed {
+      height: 0px;
+    }
 
-      button {
-        font-family: "Courier New", Courier, monospace;
-        cursor: pointer;
-        margin-left: 1px;
-        outline: 0;
-        border: 0;
+    button {
+      font-family: "Courier New", Courier, monospace;
+      cursor: pointer;
+      margin-left: 1px;
+      outline: 0;
+      border: 0;
 
-        &:hover {
-          font-weight: bold;
-        }
+      &:hover {
+        font-weight: bold;
       }
+    }
 
-      .main-menu {
-        display: flex;
-        flex: 1;
-      }
+    .main-menu {
+      display: flex;
+      flex: 1;
+    }
 
-      .right-menu {
-        display: flex;
-      }
+    .right-menu {
+      display: flex;
     }
   }
 }
 
 .viewport {
+  flex: 1; // inside .keys
   width: 100%;
-  // TODO depends on meta-menu being open
-  height: calc(100% - 25px - 20px);
   position: relative;
   overflow: hidden;
 
