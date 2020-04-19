@@ -196,9 +196,6 @@ html {
       }
       @at-root .dark-mode .viewport .navigable {
         fill: $level-navigable-dark;
-        // Outset navigable to pronounce tables
-        stroke-width: 0.75;
-        stroke: $level-navigable-dark;
       }
     }
 
@@ -251,7 +248,7 @@ html {
     .metas {
       .meta-circ {
         stroke-width: none;
-        fill: rgba(200, 0, 0, 0.1);
+        fill: rgba(200, 0, 0, 0.2);
       }
 
       .meta-rect {
