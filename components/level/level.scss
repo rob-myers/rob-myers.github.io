@@ -34,7 +34,7 @@ html {
     height: 25px;
 
     box-sizing: border-box;
-    padding: 2px;
+    // padding: 2px;
     border-bottom: 1px solid #ddd;
 
     @at-root .light-mode .keys .menu {
@@ -146,12 +146,17 @@ html {
         user-select: none;
         overflow: hidden;
         font-size: 9pt;
-        font-weight: bold;
 
         .tag {
           cursor: pointer;
           padding: 0 4px;
           background: #eee;
+          font-weight: bold;
+
+          &.live {
+            cursor: inherit;
+            font-weight: normal;
+          }
         }
       }
     }

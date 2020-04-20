@@ -103,9 +103,18 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
         {Object.values(groups).map(({ key: groupKey, position, metas, backupIcon }) =>
           <g key={groupKey}>
             {
-              mode === 'live' && <LevelIcon position={position} />
-              || !groups[groupKey].hasIcon()
-                && <LevelIcon position={position} icon={backupIcon} highlight={toGroupUi[groupKey]?.open} />
+              mode === 'live' && (
+                <LevelIcon
+                  position={position}
+                  highlight={toGroupUi[groupKey]?.open}
+                />
+              ) || !groups[groupKey].hasIcon() && (
+                <LevelIcon
+                  position={position}
+                  icon={backupIcon}
+                  highlight={toGroupUi[groupKey]?.open}
+                />
+              )
             }
             {metas.map(({ key, light, rect, trigger, physical, icon }) => (
               <g key={key}>
@@ -200,7 +209,12 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
                 }
                 {
                   // In edit-mode a meta can have an icon
-                  mode === 'edit' && icon && <LevelIcon position={position} icon={icon} />
+                  mode === 'edit' && icon &&
+                    <LevelIcon
+                      position={position}
+                      icon={icon}
+                      highlight={toGroupUi[groupKey]?.open}
+                    />
                 }
               </g>
             ))}

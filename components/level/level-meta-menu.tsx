@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import classNames from 'classnames';
 import { LevelMetaGroup } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
-import { Thunk } from '@store/level.duck';
+import { Thunk, Act } from '@store/level.duck';
 import css from './level.scss';
 import { LevelState } from '@model/level/level.model';
 import { posModulo } from '@model/generic.model';
@@ -15,6 +16,7 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
   const lastFocus = useRef(null as null | string);
 
   const [toGroup, setGroups] = useState<MetaLookup>({});
+  const mode = useSelector(({ level: { instance } }) => instance[levelUid].mode);
   const toGroupUi = useSelector(({ level: { instance } }) => instance[levelUid].metaGroupUi);
   const worker = useSelector(({ level: { worker } }) => worker)!;
   const dispatch = useDispatch();
@@ -88,10 +90,10 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
 
   const closeMenu = () => dispatch(Thunk.closeAllMetas({levelUid}));
 
-  // const closeMetaGroup = (metaGroupKey: string) => {
-  //   dispatch(Act.updateMetaUi(levelUid, metaGroupKey, { open: false }));
-  //   focusLevelKeys();
-  // };
+  const closeMetaGroup = (metaGroupKey: string) => {
+    dispatch(Act.updateMetaUi(levelUid, metaGroupKey, { open: false }));
+    focusLevelKeys();
+  };
 
   const ensureMeta = (metaGroupKey: string, delta: -1 | 1) => {
     const group = toGroup[metaGroupKey];
@@ -114,35 +116,36 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
     >
       <div
         className={css.metaMenu}
-        style={!openMetas.length ? { height: 0 } : undefined}
+        style={!openMetas.length ? { height: 0, padding: 0 } : undefined}
       >
         <section className={css.mainMenu}>
           {openMetas.map(({ key: groupKey, metas, metaIndex }) => (
             <section key={groupKey} className={css.metaGroup}>
-              <input
-                ref={(el) =>
-                  el ? (toInputEl.current[groupKey] = el) : (delete toInputEl.current[groupKey])
-                }
-                placeholder={`tags ${metaIndex +  1}/${metas.length}`}
-                onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
-                  inputKey === 'Enter' && addTag(groupKey, metas[metaIndex].key, value) && (currentTarget.value = '')}
-                onKeyDown={({ key: inputKey }) =>
-                  // inputKey === 'Escape' && closeMetaGroup(groupKey)}
-                  inputKey === 'Escape' && focusLevelKeys()}
-                onKeyUp={(e) => {
-                  e.stopPropagation();
-                  e.key === 'ArrowDown' && ensureMeta(groupKey, +1);
-                  e.key === 'ArrowUp' && ensureMeta(groupKey, -1);
-                }}
-              />
+              {mode === 'edit' && (
+                <input
+                  ref={(el) =>
+                    el ? (toInputEl.current[groupKey] = el) : (delete toInputEl.current[groupKey])
+                  }
+                  placeholder={`tags ${metaIndex +  1}/${metas.length}`}
+                  onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
+                    inputKey === 'Enter' && addTag(groupKey, metas[metaIndex].key, value) && (currentTarget.value = '')}
+                  onKeyDown={({ key: inputKey }) =>
+                    inputKey === 'Escape' && closeMetaGroup(groupKey)}
+                  onKeyUp={(e) => {
+                    e.stopPropagation();
+                    e.key === 'ArrowDown' && ensureMeta(groupKey, +1);
+                    e.key === 'ArrowUp' && ensureMeta(groupKey, -1);
+                  }}
+                />
+              )}
               {
                 metas.filter((_, i) => i === metaIndex).map(({ key, tags }) => (
                   <section key="unique" className={css.tags}>
                     {tags.map((tag) =>
                       <div
                         key={tag}
-                        className={css.tag}
-                        onClick={() => removeTag(groupKey, key, tag)}
+                        className={classNames(css.tag, mode === 'live' && css.live)}
+                        onClick={() => mode === 'edit' && removeTag(groupKey, key, tag)}
                         title={tag}
                       >
                         {tag}
