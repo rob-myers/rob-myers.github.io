@@ -1,15 +1,18 @@
 # TODO
 
-- For debugging, can cast nav-ray/sight-ray between two metas.
+- Start importing svgs as react components, to avoid using innerHTML
 
-- Reconsider background.md e.g. we could examine game behaviours in the
-  context of creating our own game.
+- Reconsider background.md
+  e.g. in the context of creating our own game.
+  e.g. if not, need other umbrella(s) for game behaviour
+
+- Compute 'viewable ViewGraph'
+- Light polygon defects at line seg corners, at edge of world poly
+  IDEA: use rects from ViewGraph of 'viewable space' instead.
+- For debugging, can cast nav-ray/sight-ray between two metas.
 
 - 5 table shadows via tags: `shad{-ne,-se,-sw,-n,}`
 - Can find metas outside navigable but on table
-
-- Light polygon defects at line seg corners, at edge of world poly
-  IDEA: use rects from ViewGraph of 'viewable space' instead.
 
 - Try <spotLight/> for different lighting
 

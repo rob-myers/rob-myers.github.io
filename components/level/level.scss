@@ -112,6 +112,7 @@ html {
       margin-top: 2px;
       outline: 0;
       border: 0;
+      user-select: none;
 
       &:hover {
         font-weight: bold;
@@ -143,7 +144,6 @@ html {
       .tags {
         display: flex;
         flex-wrap: wrap;
-        user-select: none;
         overflow: hidden;
         font-size: 9pt;
 
