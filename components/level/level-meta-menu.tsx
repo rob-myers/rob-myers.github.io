@@ -47,7 +47,9 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
   }, [toGroupUi]);
 
   const openMetas = Object.values(toGroupUi)
-    .filter(x => x.open).map(({ key }) => toGroup[key]).filter(Boolean);
+    .filter(x => x.open && !!toGroup[x.key])
+    .map(({ key }) => toGroup[key])
+    .filter(({ metas,  }) => mode === 'edit' || metas.some(x => x.tags.length > 0));
 
   const addTag = (metaGroupKey: string, metaKey: string, tag: string) => {
     if (/^[a-z0-9][a-z0-9-]*$/.test(tag)) {
