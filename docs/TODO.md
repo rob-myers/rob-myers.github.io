@@ -1,12 +1,10 @@
 # TODO
 
-- Start importing svgs as react components, to avoid using innerHTML
-
 - Reconsider background.md
   e.g. in the context of creating our own game.
   e.g. if not, need other umbrella(s) for game behaviour
 
-- Compute 'viewable ViewGraph'
+- Compute 'viewable ViewGraph' for raycasting
 - Light polygon defects at line seg corners, at edge of world poly
   IDEA: use rects from ViewGraph of 'viewable space' instead.
 - For debugging, can cast nav-ray/sight-ray between two metas.

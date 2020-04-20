@@ -187,7 +187,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
                           y={rect.y}
                           width={rect.width}
                           height={rect.height}
-                          filter="url(#svg-shadow-nw)"
+                          filter="url(#svg-shadow-all)"
                         />
                       )
                     ) || (
