@@ -9,7 +9,6 @@
   IDEA: use rects from ViewGraph of 'viewable space' instead.
 - For debugging, can cast nav-ray/sight-ray between two metas.
 
-- 5 table shadows via tags: `shad{-ne,-se,-sw,-n,}`
 - Can find metas outside navigable but on table
 
 - Try <spotLight/> for different lighting
