@@ -38,7 +38,7 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
       const found = Object.values(toGroupUi).find(({ over, open }) => over && open);
       found ? inputEl.current?.focus() : focusLevelKeys();
     }
-  }, [toGroupUi]);
+  }, [toGroupUi, mode]);
 
   /** Open meta group, if any. */
   const open = Object.values(toGroup).find(({ key }) => toGroupUi[key]?.open) || null;
@@ -130,21 +130,36 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
                   }}
                 />
               )}
-              {
+              {mode === 'edit' && (
                 open.metas.filter((_, i) => i === open.metaIndex).map(({ key, tags }) => (
                   <section key="unique" className={css.tags}>
                     {tags.map((tag) =>
                       <div
                         key={tag}
-                        className={classNames(css.tag, mode === 'live' && css.live)}
-                        onClick={() => mode === 'edit' && removeTag(open.key, key, tag)}
+                        // className={classNames(css.tag, mode === 'live' && css.live)}
+                        className={css.tag}
+                        onClick={() => removeTag(open.key, key, tag)}
                         title={tag}
                       >
                         {tag}
                       </div>
                     )}
                   </section>
-                ))
+                ))) || (
+                open.metas.map(({ key: metaKey, tags }) =>
+                  <section key={metaKey} className={css.tags}>
+                    {tags.map((tag) =>
+                      <div
+                        key={tag}
+                        className={classNames(css.tag, css.live)}
+                        title={tag}
+                      >
+                        {tag}
+                      </div>
+                    )}
+                  </section>
+                )
+              )
               }
             </section>
           )}
