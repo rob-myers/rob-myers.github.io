@@ -1,8 +1,6 @@
 # TODO
 
-- Reconsider background.md
-  e.g. in the context of creating our own game.
-  e.g. if not, need other umbrella(s) for game behaviour
+- Only one meta at a time; escape closes meta even when not focused
 
 - Compute 'viewable ViewGraph' for raycasting
 - Light polygon defects at line seg corners, at edge of world poly
@@ -10,6 +8,7 @@
 - For debugging, can cast nav-ray/sight-ray between two metas.
 
 - Can find metas outside navigable but on table
+  i.e. triggers (rect/circ) intersecting navigable
 
 - Try <spotLight/> for different lighting
 
@@ -329,3 +328,4 @@
 - New approach to meta popovers i.e. use sub-menu instead
 - `LevelMetaMenu` auto-focus with icon highlighting
 - In live mode, on click meta shows read-only summary
+- Reconsider background.md

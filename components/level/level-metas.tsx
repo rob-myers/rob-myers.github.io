@@ -134,9 +134,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
                         {
                           theme === 'dark-mode' && (
                             <>
-                              <stop offset="0%" style={{ stopColor: 'rgba(200, 200, 200, 0.3)' }} />
-                              {/* <stop offset="10%" style={{ stopColor: 'rgba(100, 100, 100, 0.4)' }} /> */}
-                              <stop offset="95%" style={{ stopColor: 'rgba(32, 32, 32, 0.2)' }} />
+                              <stop offset="0%" style={{ stopColor: 'rgba(200, 200, 200, 0.2)' }} />
+                              <stop offset="50%" style={{ stopColor: 'rgba(32, 32, 32, 0.2)' }} />
                               <stop offset="100%" style={{ stopColor: 'rgba(32, 32, 32, 0)' }} />
                             </>
                           ) || (
