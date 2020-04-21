@@ -4,16 +4,15 @@ import classNames from 'classnames';
 import { LevelMetaGroup } from '@model/level/level-meta.model';
 import { subscribeToWorker } from '@model/level/level.worker.model';
 import { Thunk, Act } from '@store/level.duck';
-import css from './level.scss';
 import { LevelState } from '@model/level/level.model';
 import { posModulo } from '@model/generic.model';
+import css from './level.scss';
 
 type MetaLookup = LevelState['metaGroups'];
 
 const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
   const rootEl = useRef<HTMLDivElement>(null);
-  const toInputEl = useRef({} as { [key: string]: HTMLElement });
-  const lastFocus = useRef(null as null | string);
+  const inputEl = useRef<HTMLInputElement>(null);
 
   const [toGroup, setGroups] = useState<MetaLookup>({});
   const mode = useSelector(({ level: { instance } }) => instance[levelUid].mode);
@@ -35,21 +34,14 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
   }, []);
 
   useEffect(() => {
-    const groups = Object.values(toGroupUi);
-    const found = groups.find(({ over }) => over);
-    if (found) {
-      lastFocus.current = found.key;
-      toInputEl.current[found.key]?.focus();
-    } else if (lastFocus.current) {
-      lastFocus.current = null;
-      focusLevelKeys();
+    if (inputEl.current) {
+      const found = Object.values(toGroupUi).find(({ over, open }) => over && open);
+      found ? inputEl.current?.focus() : focusLevelKeys();
     }
   }, [toGroupUi]);
 
-  const openMetas = Object.values(toGroupUi)
-    .filter(x => x.open && !!toGroup[x.key])
-    .map(({ key }) => toGroup[key])
-    .filter(({ metas,  }) => mode === 'edit' || metas.some(x => x.tags.length > 0));
+  /** Open meta group, if any. */
+  const open = Object.values(toGroup).find(({ key }) => toGroupUi[key]?.open) || null;
 
   const addTag = (metaGroupKey: string, metaKey: string, tag: string) => {
     if (/^[a-z0-9][a-z0-9-]*$/.test(tag)) {
@@ -90,7 +82,7 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
     }
   };
 
-  const closeMenu = () => dispatch(Thunk.closeAllMetas({levelUid}));
+  const closeMenu = () => dispatch(Thunk.closeMetaMenu({levelUid}));
 
   const closeMetaGroup = (metaGroupKey: string) => {
     dispatch(Act.updateMetaUi(levelUid, metaGroupKey, { open: false }));
@@ -118,36 +110,34 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
     >
       <div
         className={css.metaMenu}
-        style={!openMetas.length ? { height: 0, padding: 0 } : undefined}
+        style={open ? undefined : { height: 0, padding: 0 }}
       >
         <section className={css.mainMenu}>
-          {openMetas.map(({ key: groupKey, metas, metaIndex }) => (
-            <section key={groupKey} className={css.metaGroup}>
+          {open && (
+            <section key={open.key} className={css.metaGroup}>
               {mode === 'edit' && (
                 <input
-                  ref={(el) =>
-                    el ? (toInputEl.current[groupKey] = el) : (delete toInputEl.current[groupKey])
-                  }
-                  placeholder={`tags ${metaIndex +  1}/${metas.length}`}
+                  ref={inputEl}
+                  placeholder={`tags ${open.metaIndex +  1}/${open.metas.length}`}
                   onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
-                    inputKey === 'Enter' && addTag(groupKey, metas[metaIndex].key, value) && (currentTarget.value = '')}
+                    inputKey === 'Enter' && addTag(open.key, open.metas[open.metaIndex].key, value) && (currentTarget.value = '')}
                   onKeyDown={({ key: inputKey }) =>
-                    inputKey === 'Escape' && closeMetaGroup(groupKey)}
+                    inputKey === 'Escape' && closeMetaGroup(open.key)}
                   onKeyUp={(e) => {
                     e.stopPropagation();
-                    e.key === 'ArrowDown' && ensureMeta(groupKey, +1);
-                    e.key === 'ArrowUp' && ensureMeta(groupKey, -1);
+                    e.key === 'ArrowDown' && ensureMeta(open.key, +1);
+                    e.key === 'ArrowUp' && ensureMeta(open.key, -1);
                   }}
                 />
               )}
               {
-                metas.filter((_, i) => i === metaIndex).map(({ key, tags }) => (
+                open.metas.filter((_, i) => i === open.metaIndex).map(({ key, tags }) => (
                   <section key="unique" className={css.tags}>
                     {tags.map((tag) =>
                       <div
                         key={tag}
                         className={classNames(css.tag, mode === 'live' && css.live)}
-                        onClick={() => mode === 'edit' && removeTag(groupKey, key, tag)}
+                        onClick={() => mode === 'edit' && removeTag(open.key, key, tag)}
                         title={tag}
                       >
                         {tag}
@@ -157,11 +147,11 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
                 ))
               }
             </section>
-          ))}
+          )}
         </section>
         <section className={css.rightMenu}>
           <button onClick={closeMenu}>
-          close
+            hide
           </button>
         </section>
       </div>

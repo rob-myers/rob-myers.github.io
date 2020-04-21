@@ -44,12 +44,15 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
-  closeAllMetas: createThunk(
-    '[Level] close all metas',
+  closeMetaMenu: createThunk(
+    '[Level] close meta menu',
     ({ state: { level }, dispatch }, { levelUid }: { levelUid: string }) => {
       const { metaGroupUi } = level.instance[levelUid];
-      Object.values(metaGroupUi).forEach(grp => grp.open = false);
-      dispatch(Act.updateLevel(levelUid, { metaGroupUi: { ...metaGroupUi } }));
+      dispatch(Act.updateLevel(levelUid, {
+        metaGroupUi: Object.values(metaGroupUi).reduce((agg, group) => ({
+          ...agg, [group.key]: { ...group, open: false }
+        }), {} as Record<string, LevelMetaGroupUi>),
+      }));
     },
   ),
   createLevel: createThunk(
@@ -98,14 +101,22 @@ export const Thunk = {
       }
     },
   ),
-  putMetaUiLast: createThunk(
-    '[Level] put meta ui last',
-    ({ state: { level }, dispatch }, { uid, metaGroupKey }: { uid: string; metaGroupKey: string }) => {
+  /** Only one meta can be selected */
+  selectMeta: createThunk(
+    '[Level] select meta',
+    ({ state: { level }, dispatch }, { uid, groupKey, selected }: {
+      uid: string;
+      groupKey: string;
+      selected: boolean;
+    }) => {
       const { instance: { [uid]: { metaGroupUi } } } = level;
-      const group = metaGroupUi[metaGroupKey];
-      delete metaGroupUi[metaGroupKey];
       dispatch(Act.updateLevel(uid, {
-        metaGroupUi: { ...metaGroupUi, [metaGroupKey]: group },
+        metaGroupUi: Object.values(metaGroupUi).reduce((agg, group) => ({
+          ...agg,
+          [group.key]: selected
+            ? { ...group, open: group.key === groupKey } 
+            : group.key === groupKey ? { ...group, open: false } : group,
+        }), {} as Record<string, LevelMetaGroupUi>),
       }));
     },
   ),

@@ -1,7 +1,5 @@
 # TODO
 
-- Only one meta at a time; escape closes meta even when not focused
-
 - Compute 'viewable ViewGraph' for raycasting
 - Light polygon defects at line seg corners, at edge of world poly
   IDEA: use rects from ViewGraph of 'viewable space' instead.
@@ -329,3 +327,4 @@
 - `LevelMetaMenu` auto-focus with icon highlighting
 - In live mode, on click meta shows read-only summary
 - Reconsider background.md
+- Only one meta at a time; escape closes meta even when not focused

@@ -13,7 +13,7 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
         // console.log({ key: e.key });
         const state = dispatch(Thunk.getLevel({ levelUid }));
 
-        switch (e.key.toLowerCase()) {
+        switch (e.key) {
           case '1': return dispatch(Act.updateLevel(levelUid, {
             mode: state.mode === 'edit' ? 'live' : 'edit',
           }));
@@ -29,6 +29,7 @@ const LevelKeys: React.FC<Props> = ({ levelUid, children}) => {
           case '5': return dispatch(Act.updateLevel(levelUid, {
             showNavTris: !state.showNavTris,
           }));
+          case 'Escape': return dispatch(Thunk.closeMetaMenu({ levelUid }));
         }
       }}
       tabIndex={0}

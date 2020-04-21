@@ -159,10 +159,9 @@ const LevelSvgMouse: React.FC<Props> = ({ levelUid }) => {
         if (state.mode === 'edit') {
           if (overMeta.current && !state.draggedMeta) {
             // Toggle meta dialog
-            const nextOpen = !state.metaGroupUi[overMeta.current].open;
-            dispatch(Act.updateMetaUi(levelUid, overMeta.current, { open: nextOpen }));
+            const selected = !state.metaGroupUi[overMeta.current].open;
+            dispatch(Thunk.selectMeta({ uid: levelUid, groupKey: overMeta.current, selected }));
             dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
-            nextOpen && dispatch(Thunk.putMetaUiLast({ uid: levelUid, metaGroupKey: overMeta.current }));
           } else if (state.draggedMeta) {
             if (overMeta.current && overMeta.current !== state.draggedMeta ) {
               // NOOP
@@ -207,10 +206,9 @@ const LevelSvgMouse: React.FC<Props> = ({ levelUid }) => {
         } else {
           if (overMeta.current && !state.draggedMeta) {
             // Toggle meta dialog
-            const nextOpen = !state.metaGroupUi[overMeta.current].open;
-            dispatch(Act.updateMetaUi(levelUid, overMeta.current, { open: nextOpen }));
+            const selected = !state.metaGroupUi[overMeta.current].open;
+            dispatch(Thunk.selectMeta({ uid: levelUid, groupKey: overMeta.current, selected }));
             dispatch(Act.updateLevel(levelUid, { draggedMeta: undefined }));
-            nextOpen && dispatch(Thunk.putMetaUiLast({ uid: levelUid, metaGroupKey: overMeta.current }));
           }
         }
 
