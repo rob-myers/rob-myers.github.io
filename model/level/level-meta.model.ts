@@ -9,25 +9,44 @@ import { LevelLight, LevelLightJson } from './level-light.model';
 
 const isIconTag = (tag: string): tag is IconType => tag in iconLookup;
 
-const rectTagsLookup = {
-  circ: null,
+const rebuildTagsLookup = {
+  /** Rectangular hole */
   cut: null,
+  /** Rectangular hole in internal walls */
   door: null,
-  horiz: null,
+  /** Horizontal wall */
+  hz: null,
+  /** Rectangular table */
+  table: null,
+  /** Vertical wall */
+  vt: null,
+};
+export type RebuildTag = keyof typeof rebuildTagsLookup; 
+export const isRebuildTag = (tag: string): tag is RebuildTag => tag in rebuildTagsLookup;
+
+const rectTagsLookup = {
+  ...rebuildTagsLookup,
+  circ: null,
   light: null,
   rect: null,
-  table: null,
-  vert: null,
 };
 /** Tags which use `LevelMeta.rect`. They are mutually exclusive. */
 const isRectTag = (tag: string): tag is RectTag => tag in rectTagsLookup;
-type RectTag = keyof typeof rectTagsLookup; 
+export type RectTag = keyof typeof rectTagsLookup; 
+
 type TriggerType =  Extract<RectTag, 'circ' | 'rect'>;
-type PhysicalType = Extract<RectTag, 'cut' | 'door' | 'horiz' | 'table' | 'vert'>;
+type PhysicalType = Extract<RectTag, 'cut' | 'door' | 'hz' | 'table' | 'vt'>;
 
 /** e.g. `r-4` or `r-4-2` */
 export const dimTagRegex = /^r-(\d+)(?:-(\d+))?$/;
 const isDimTag = (tag: string) => dimTagRegex.test(tag);
+
+const navTagsLookup = {
+  ...rectTagsLookup,
+  steiner: null,
+};
+export type NavTag = keyof typeof navTagsLookup; 
+export const isNavTag = (tag: string): tag is NavTag => tag in navTagsLookup;
 
 export class LevelMeta {
   
@@ -112,14 +131,14 @@ export class LevelMeta {
       case 'circ': this.trigger = 'circ'; break;
       case 'cut': this.physical = 'cut'; break;
       case 'door': this.physical = 'door'; break;
-      case 'horiz': this.physical = 'horiz'; break;
+      case 'hz': this.physical = 'hz'; break;
       case 'light': {
         this.rect && (this.light = new LevelLight(position, this.rect.dimension));
         break;
       }
       case 'rect': this.trigger = 'rect'; break;
       case 'table': this.physical = 'table'; break;
-      case 'vert': this.physical = 'vert'; break;
+      case 'vt': this.physical = 'vt'; break;
       default: throw testNever(tag);
     }
   }

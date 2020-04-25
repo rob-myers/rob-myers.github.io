@@ -67,9 +67,9 @@ export function getHorizVertSegs(levelUid: string) {
   return Object.values(metaGroups).reduce((agg, group) =>
     agg.concat(
       group.metas.reduce((agg, meta) => {
-        if (meta.physical === 'horiz' && meta.rect) {
+        if (meta.physical === 'hz' && meta.rect) {
           agg.push([meta.rect.topLeft, meta.rect.topRight]);
-        } else if (meta.physical === 'vert' && meta.rect) {
+        } else if (meta.physical === 'vt' && meta.rect) {
           agg.push([meta.rect.topLeft, meta.rect.bottomLeft]);
         }
         return agg;

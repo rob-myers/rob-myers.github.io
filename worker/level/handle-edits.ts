@@ -21,6 +21,7 @@ import { getLevel, store } from './create-store';
 import { tileDim, floorInset, navTags, rebuildTags, doorOutset, tableOutset } from '@model/level/level-params';
 import { sendMetas, sendPreNavFloors } from './handle-requests';
 import { updateNavGraph, getDoorRects, getHorizVertSegs, getCutRects, getTableRects } from './nav-utils';
+import { isRebuildTag, isNavTag } from '@model/level/level-meta.model';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -119,13 +120,13 @@ export function handleMetaUpdates(levelUid: string) {
 
             return {
               rebuildFloors: (
-                update.key === 'add-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
-                || update.key === 'remove-tag' && (rebuildTags.includes(update.tag) || group.hasSomeTag(rebuildTags))
+                update.key === 'add-tag' && (isRebuildTag(update.tag) || group.hasSomeTag(rebuildTags))
+                || update.key === 'remove-tag' && (isRebuildTag(update.tag) || group.hasSomeTag(rebuildTags))
                 || update.key === 'set-position' && group.hasSomeTag(rebuildTags)
               ),
               updateNav: (
-                update.key === 'add-tag' && (navTags.includes(update.tag) || group.hasSomeTag(navTags))
-                || update.key === 'remove-tag' && (navTags.includes(update.tag) || group.hasSomeTag(navTags))
+                update.key === 'add-tag' && (isNavTag(update.tag) || group.hasSomeTag(navTags))
+                || update.key === 'remove-tag' && (isNavTag(update.tag) || group.hasSomeTag(navTags))
                 || update.key === 'set-position' && group.hasSomeTag(navTags)
               ),
             };

@@ -1,3 +1,5 @@
+import { RectTag, NavTag } from './level-meta.model';
+
 /** Depth of cursor highlight */
 export const wallDepth = 1;
 
@@ -12,9 +14,9 @@ export const tableOutset = 1;
 export const tileDim = 20;
 
 /** Tags which require rebuild of floor */
-export const rebuildTags = ['cut', 'door', 'horiz', 'table', 'vert'];
+export const rebuildTags: RectTag[] = ['cut', 'door', 'hz', 'table', 'vt'];
 
 /** Tags which can affect navigation */
-export const navTags = rebuildTags.concat('steiner');
+export const navTags = (rebuildTags as NavTag[]).concat('steiner');
 
 export const metaPointRadius = 0.5;
