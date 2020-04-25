@@ -7,7 +7,7 @@ The `Engine` amounts to:
 # Blog
 
 The `Blog` amounts to:
-- story
+- `Story`
 - incremental builds via blog posts using `Engine`.
 
 ## Story
