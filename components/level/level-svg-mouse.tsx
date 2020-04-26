@@ -56,6 +56,12 @@ const LevelSvgMouse: React.FC<Props> = ({ levelUid }) => {
     };
   }, []);
 
+  useEffect(() => {
+    if (overMeta.current && !state.metaGroupUi[overMeta.current]) {
+      overMeta.current = undefined;
+    }
+  }, [state.metaGroupUi]);
+
 
   const setCursor = (cursor: 'auto' | 'pointer') =>
     rectEl.current?.style.setProperty('cursor', cursor);
