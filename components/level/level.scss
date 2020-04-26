@@ -302,11 +302,17 @@ html {
       .meta-table {
         stroke: #fff;
         stroke-width: 0;
-        fill: #555;
 
         &-shadow {
           fill: #fff;
         }
+      }
+
+      @at-root .light-mode .viewport .meta-table {
+        fill: #fff;
+      }
+      @at-root .dark-mode .viewport .meta-table {
+        fill: #555;
       }
 
       .drag-indicator {
