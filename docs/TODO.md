@@ -1,14 +1,17 @@
 # TODO
 
+- `3d` modifier for `hz` and `vt` draws infinite 3d wall
+- floor decals via `icon`: dashed box, letters/digits
+
+- have camera modes `free`, `follow`
+- can set camera target via pseudo-tag `@`
+
 - Compute 'viewable ViewGraph' for raycasting
-- Light polygon defects at line seg corners, at edge of world poly
-  IDEA: use rects from ViewGraph of 'viewable space' instead.
 - For debugging, can cast nav-ray/sight-ray between two metas.
 
 - Can find metas outside navigable but on table
   i.e. triggers (rect/circ) intersecting navigable
 
-- Try <spotLight/> for different lighting
 
 - shell signals
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
@@ -84,6 +87,11 @@
 - `exec`
 - prevent execution if command not found
 - handle error `exec <( sleep 2; echo foo; sleep 2 )`
+
+- try lighting via SVG filter:
+  - each light poly can be restricted via circle and `feComposite`,
+    and possibly made into a spotlight.
+  - one filter per floor polygon
 
 ## So far
 
@@ -328,3 +336,4 @@
 - In live mode, on click meta shows read-only summary
 - Reconsider background.md
 - Only one meta at a time; escape closes meta even when not focused
+- Fix light polygon defects at line seg corners

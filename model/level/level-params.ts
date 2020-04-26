@@ -3,12 +3,14 @@ import { RectTag, NavTag } from './level-meta.model';
 /** Depth of cursor highlight */
 export const cursorWallDepth = 1;
 
-
+/** Issues with fractional 3d 'pixels' */
+export const wallDepth = 1;
 
 /** How far to inset when constructing navigable poly `floors` */
 export const floorInset = 2;
 
-export const doorOutset = floorInset - 0.001;
+// export const doorOutset = floorInset - 0.001;
+export const doorOutset = floorInset;
 
 export const tableOutset = 1;
 

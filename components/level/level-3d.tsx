@@ -6,6 +6,8 @@ import { Poly2 } from '@model/poly2.model';
 import { Vector2 } from '@model/vec2.model';
 import css from './level.scss';
 import { Rect2 } from '@model/rect2.model';
+import { wallDepth } from '@model/level/level-params';
+import { computeRectPartition } from '@model/level/geom.model';
 
 const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
   const containerEl = useRef<HTMLDivElement>(null);
@@ -25,11 +27,16 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
     const sub = subscribeToWorker(worker, (msg) => {
       if (msg.key === 'send-level-layers' && msg.levelUid === levelUid) {
 
-        // Each inner wall induces 4 planes
-        const outset = 0.5;
-        const innerWallSegs = msg.wallSegs
+        // TODO precompute rect partition
+        const tileFloors = msg.tileFloors.map(x => Poly2.fromJson(x));
+        const rectPolys = msg.wallSegs
           .map(([u, v]) => [Vector2.from(u), Vector2.from(v)])
-          .map(([u, v]) => Rect2.from(u, v).outset(outset))
+          .map(([u, v]) => Rect2.from(u, v).outset(wallDepth).poly2);
+        const restrictedRects = computeRectPartition(
+          Poly2.intersect(tileFloors, rectPolys)).flatMap(x => x);
+        
+        // Each inner wall induces 4 planes
+        const innerWallSegs = restrictedRects
           .flatMap(({ topLeft, topRight, bottomRight, bottomLeft }) => [
             [topRight, topLeft],
             [bottomRight, topRight],
@@ -39,7 +46,7 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
         
         // Must inset outer walls to match inner walls
         const outerWallSegs = msg.tileFloors
-          .flatMap(x => Poly2.fromJson(x).createInset(outset))
+          .flatMap(x => Poly2.fromJson(x).createInset(wallDepth))
           .flatMap(({ lineSegs }) => lineSegs);
 
         setWallSegs(

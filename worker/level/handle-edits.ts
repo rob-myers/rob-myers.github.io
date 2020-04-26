@@ -18,7 +18,7 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2 } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
-import { tileDim, floorInset, navTags, rebuildTags, doorOutset, tableOutset } from '@model/level/level-params';
+import { tileDim, floorInset, navTags, rebuildTags, doorOutset, tableOutset, wallDepth } from '@model/level/level-params';
 import { sendMetas, sendPreNavFloors } from './handle-requests';
 import { updateNavGraph, getDoorRects, getHorizVertSegs, getCutRects, getTableRects } from './nav-utils';
 import { isRebuildTag, isNavTag } from '@model/level/level-meta.model';
@@ -272,14 +272,14 @@ function computeNavFloors(levelUid: string) {
 
 function computeLights(levelUid: string) {
   const { tilesSansCuts, innerWalls, metaGroups: metas } = getLevel(levelUid)!;
-  const insetFloors = tilesSansCuts.flatMap(floor => floor.createInset(0.5));
+  const insetFloors = tilesSansCuts.flatMap(floor => floor.createInset(wallDepth));
 
   /**
    * TODO there are defects at edges.
    * Instead, use rects of ViewGraph of 'viewable space'.
    */
   const innerWallSegs = innerWalls
-    .map(([u, v]) => Rect2.from(u, v).outset(0.5))
+    .map(([u, v]) => Rect2.from(u, v).outset(wallDepth))
     .flatMap(({ topLeft, topRight, bottomRight, bottomLeft }) => [
       [topRight, topLeft],
       [bottomRight, topRight],
