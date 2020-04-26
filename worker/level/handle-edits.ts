@@ -118,6 +118,15 @@ export function handleMetaUpdates(levelUid: string) {
             const group = metaGroups[metaGroupKey];
             group.applyUpdates(update);
 
+            if (update.key === 'move-to-back' || update.key === 'move-to-front') {
+              delete metaGroups[metaGroupKey];
+              dispatch(Act.updateLevel(levelUid, {
+                metaGroups: update.key === 'move-to-back'
+                  ? { [metaGroupKey]: group, ...metaGroups }
+                  : { ...metaGroups, [metaGroupKey]: group }
+              }));
+            }
+
             return {
               rebuildFloors: (
                 update.key === 'add-tag' && (isRebuildTag(update.tag) || group.hasSomeTag(rebuildTags))

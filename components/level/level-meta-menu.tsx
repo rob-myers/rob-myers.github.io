@@ -65,6 +65,15 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
       // Remove an entire group
       worker.postMessage({ key: 'remove-level-meta', levelUid, metaGroupKey, metaKey: null });
       focusLevelKeys();
+    } else if (tag === '_' || tag === '^') {
+      // Move meta group behind/in-front-of all other metas
+      worker.postMessage({
+        key: 'update-level-meta',
+        levelUid,
+        metaGroupKey,
+        update: { key: tag === '_' ? 'move-to-back' : 'move-to-front' },
+      });
+      return true;
     } else if (/^>[a-z0-9][a-z0-9-]*$/.test(tag)) {
       // Given tag '>foo' draw NavPath to 1st meta with tag 'foo'
       const { position } = toGroup[metaGroupKey];

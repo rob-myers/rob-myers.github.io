@@ -176,11 +176,14 @@ export interface LevelMetaJson {
   icon?: IconType;
 }
 
+/** Apply an update to a LevelMetaGroup */
 export type LevelMetaUpdate = (
   | { key: 'add-tag'; tag: string; metaKey: string }
   | { key: 'remove-tag'; tag: string; metaKey: string }
   | { key: 'set-position'; position: Vector2Json }
   | { key: 'ensure-meta-index'; metaIndex: number }
+  | { key: 'move-to-back' }
+  | { key: 'move-to-front' }
 );
 
 /**
@@ -214,7 +217,7 @@ export class LevelMetaGroup {
   }
 
   /**
-   * Core update handler
+   * Handle updates local to a LevelMetaGroup.
    */
   public applyUpdates(update: LevelMetaUpdate): void {
     switch (update.key) {
@@ -286,6 +289,9 @@ export class LevelMetaGroup {
         this.metaIndex = update.metaIndex;
         break;
       }
+      case 'move-to-back':
+      case 'move-to-front':
+        break;
       default: throw testNever(update);
     }
 
@@ -356,6 +362,10 @@ export class LevelMetaGroup {
     return this.metas.some(meta => intersects(meta.tags, tags));
   }
 
+  public hideWhenLive() {
+    return !this.metas.some(x => x.trigger || x.icon);
+  }
+
 }
 
 export interface LevelMetaGroupJson {
@@ -379,34 +389,20 @@ export function syncMetaGroupUis(
   toGroup: Record<string, LevelMetaGroup>,
   toPrevUi: Record<string, LevelMetaGroupUi>,
 ) {
-  /**
-   * We maintain ordering of meta uis,
-   * so last opened is last in LevelMetaMenu.
-   */
-  const next = {} as Record<string, LevelMetaGroupUi>;
-  Object.keys(toPrevUi).forEach((key) => {
-    if (toGroup[key]) {
-      next[key] = { ...toPrevUi[key],
-        position: toGroup[key].position.clone(),
-      };
-      delete toGroup[key];
-    }
-  });
-  // Append any new ones (expect at most one)
-  Object.keys(toGroup)
-    .forEach(key => next[key] = ({
-      ...createMetaGroupUi(key),
-      position: toGroup[key].position.clone(),
-      over: true, // Assume we're initially over
-    }));
-  return next;
+  return Object.values(toGroup).reduce((agg, group) => ({
+    ...agg,
+    [group.key]: {
+      ...(toPrevUi[group.key] || createMetaGroupUi(group.key)),
+      position: group.position.clone(),
+    },
+  }), {} as Record<string, LevelMetaGroupUi>);
 }
 
 function createMetaGroupUi(key: string): LevelMetaGroupUi {
   return {
     key,
     open: false,
-    over: false,
+    over: true, // Assume initially over
     position: Vector2.zero,
   };
 }

@@ -40,7 +40,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
           const metas = msg.metas.map(p => LevelMetaGroup.from(p))
             .reduce<MetaLookup>((agg, item) => ({ ...agg, [item.key]: item }), {}); 
           setGroups(metas);
-          dispatch(Act.syncMetaUi(levelUid, { ...metas }));
+          dispatch(Act.syncMetaUi(levelUid, metas));
           break;
         }
         case 'send-level-aux': {
@@ -103,12 +103,12 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
         {Object.values(groups).map(({ key: groupKey, position, metas, backupIcon }) =>
           <g key={groupKey}>
             {
-              mode === 'live' && (
+              mode === 'live' && !groups[groupKey].hideWhenLive() && (
                 <LevelIcon
                   position={position}
                   highlight={toGroupUi[groupKey]?.open}
                 />
-              ) || !groups[groupKey].hasIcon() && (
+              ) || mode === 'edit' && !groups[groupKey].hasIcon() && (
                 <LevelIcon
                   position={position}
                   icon={backupIcon}
@@ -134,9 +134,9 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
                         {
                           theme === 'dark-mode' && (
                             <>
-                              <stop offset="0%" style={{ stopColor: 'rgba(200, 200, 200, 0.3)' }} />
-                              <stop offset="90%" style={{ stopColor: 'rgba(32, 32, 32, 0.3)' }} />
-                              <stop offset="100%" style={{ stopColor: 'rgba(32, 32, 32, 0)' }} />
+                              <stop offset="0%" style={{ stopColor: 'rgba(200, 200, 200, 0.2)' }} />
+                              <stop offset="90%" style={{ stopColor: 'rgba(200, 200, 200, 0.1)' }} />
+                              <stop offset="100%" style={{ stopColor: 'rgba(200, 200, 200, 0)' }} />
                             </>
                           ) || (
                             <>
