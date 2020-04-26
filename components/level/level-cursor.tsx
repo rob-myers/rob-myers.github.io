@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import classnames  from 'classnames';
-import { wallDepth, tileDim } from '@model/level/level-params';
+import { cursorWallDepth, tileDim } from '@model/level/level-params';
 import css from './level.scss';
 
 const LevelCursor: React.FC<Props> = ({ levelUid }) => {
@@ -20,23 +20,23 @@ const LevelCursor: React.FC<Props> = ({ levelUid }) => {
         <rect
           className={classnames({ [css.highlight]: highlight.n })}
           width={tileDim}
-          height={wallDepth}
+          height={cursorWallDepth}
         />
         <rect
           className={classnames({ [css.highlight]: highlight.e })}
-          width={wallDepth}
+          width={cursorWallDepth}
           height={tileDim}
-          x={tileDim - wallDepth}
+          x={tileDim - cursorWallDepth}
         />
         <rect
           className={classnames({ [css.highlight]: highlight.s })}
           width={tileDim}
-          height={wallDepth}
-          y={tileDim - wallDepth}
+          height={cursorWallDepth}
+          y={tileDim - cursorWallDepth}
         />
         <rect
           className={classnames({ [css.highlight]: highlight.w })}
-          width={wallDepth}
+          width={cursorWallDepth}
           height={tileDim}
         />
       </g>

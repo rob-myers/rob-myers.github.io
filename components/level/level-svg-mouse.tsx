@@ -8,7 +8,7 @@ import { getRelativePos } from '@model/dom.model';
 import { LevelUiState, computeLineSeg, ForwardedWheelEvent } from '@model/level/level.model';
 import { posModulo } from '@model/generic.model';
 import { redact } from '@model/redux.model';
-import { wallDepth, tileDim, metaPointRadius } from '@model/level/level-params';
+import { cursorWallDepth, tileDim, metaPointRadius } from '@model/level/level-params';
 import css from './level.scss';
 
 function snapToGrid({ x, y }: Vector2, td: number) {
@@ -97,10 +97,10 @@ const LevelSvgMouse: React.FC<Props> = ({ levelUid }) => {
       // Track edge highlighting
       const mm = new Vector2(posModulo(mouseWorld.x, tileDim), posModulo(mouseWorld.y, tileDim));
       const highlight: LevelUiState['cursorHighlight'] = {
-        n: mm.y <= wallDepth,
-        e: mm.x >= tileDim - wallDepth,
-        s: mm.y >= tileDim - wallDepth,
-        w: mm.x <= wallDepth,
+        n: mm.y <= cursorWallDepth,
+        e: mm.x >= tileDim - cursorWallDepth,
+        s: mm.y >= tileDim - cursorWallDepth,
+        w: mm.x <= cursorWallDepth,
       };
       dispatch(Act.updateLevel(levelUid, { cursorHighlight: highlight }));
       highlighted.current = highlight.n || highlight.e || highlight.s || highlight.w || false;

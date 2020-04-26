@@ -1,7 +1,9 @@
 import { RectTag, NavTag } from './level-meta.model';
 
 /** Depth of cursor highlight */
-export const wallDepth = 1;
+export const cursorWallDepth = 1;
+
+
 
 /** How far to inset when constructing navigable poly `floors` */
 export const floorInset = 2;
