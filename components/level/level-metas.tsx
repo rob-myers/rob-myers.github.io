@@ -103,17 +103,19 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
         {Object.values(groups).map(({ key: groupKey, position, metas, backupIcon }) =>
           <g key={groupKey}>
             {
-              mode === 'live' && !groups[groupKey].hideWhenLive() && (
-                <LevelIcon
-                  position={position}
-                  highlight={toGroupUi[groupKey]?.open}
-                />
-              ) || mode === 'edit' && !groups[groupKey].hasIcon() && (
-                <LevelIcon
-                  position={position}
-                  icon={backupIcon}
-                  highlight={toGroupUi[groupKey]?.open}
-                />
+              !groups[groupKey].hasIcon() && (
+                mode === 'live' && !groups[groupKey].hideWhenLive() && (
+                  <LevelIcon
+                    position={position}
+                    highlight={toGroupUi[groupKey]?.open}
+                  />
+                ) || mode === 'edit' && (
+                  <LevelIcon
+                    position={position}
+                    icon={backupIcon}
+                    highlight={toGroupUi[groupKey]?.open}
+                  />
+                )
               )
             }
             {metas.map(({ key, light, rect, trigger, physical, icon }) => (
@@ -134,7 +136,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
                         {
                           theme === 'dark-mode' && (
                             <>
-                              <stop offset="0%" style={{ stopColor: 'rgba(200, 200, 200, 0.2)' }} />
+                              <stop offset="0%" style={{ stopColor: 'rgba(200, 200, 200, 0.15)' }} />
                               <stop offset="90%" style={{ stopColor: 'rgba(200, 200, 200, 0.1)' }} />
                               <stop offset="100%" style={{ stopColor: 'rgba(200, 200, 200, 0)' }} />
                             </>
@@ -207,8 +209,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
                   )
                 }
                 {
-                  // In edit-mode a meta can have an icon
-                  mode === 'edit' && icon &&
+                  // A meta can have an icon
+                  icon &&
                     <LevelIcon
                       position={position}
                       icon={icon}
