@@ -1,5 +1,7 @@
 # Technical Background
 
+__TO BE REWRITTEN__
+
 ## Summary
 
 _What's this site about?_
@@ -57,3 +59,9 @@ Real shells depend heavily upon a filesystem and process/session management. Sin
 _Surely this javascript shell doesn't perform very well..._
 
 ...
+
+# Engine
+
+The `Engine` amounts to:
+- the `Level` component and `level.worker` webworker.
+- the `Session` component and `os.worker` webworker.

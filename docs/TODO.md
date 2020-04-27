@@ -1,6 +1,11 @@
 # TODO
 
-- `3d` modifier for `hz` and `vt` draws infinite 3d wall
+- 3d approach:
+  - `table` is 3d cuboid with height modifier `h-${h}`
+  - rename `door` as `way`
+  - `door` is 3d door linking to another polygon
+  - actor will be cuboid too
+
 - floor decals via `icon`: dashed box, letters/digits
 
 - have camera modes `free`, `follow`
