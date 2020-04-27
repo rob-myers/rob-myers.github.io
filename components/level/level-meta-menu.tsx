@@ -46,8 +46,8 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
   const addTag = (metaGroupKey: string, metaKey: string, tag: string) => {
     if (/^[a-z0-9][a-z0-9-]*$/.test(tag)) {
       /**
-       * Standard tags are non-empty and use lowercase letters, digits and hyphens.
-       * Finally, they cannot start with a hyphen.
+       * Standard tags are non-empty & use lowercase letters, digits, hyphens.
+       * They cannot start with a hyphen.
        */
       worker.postMessage({
         key: 'update-level-meta',
@@ -57,16 +57,22 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
       });
       return true;
     } else if (tag === '-') {
-      // Remove a single meta, possibly entire group
+      /**
+       * Remove a single meta, possibly entire group
+       */
       worker.postMessage({ key: 'remove-level-meta', levelUid, metaGroupKey, metaKey });
       toGroup[metaGroupKey].metas.length === 1 && focusLevelKeys();
       return true;
     } else if (tag === '--') {
-      // Remove an entire group
+      /**
+       * Remove an entire group
+       */
       worker.postMessage({ key: 'remove-level-meta', levelUid, metaGroupKey, metaKey: null });
       focusLevelKeys();
     } else if (tag === '_' || tag === '^') {
-      // Move meta group behind/in-front-of all other metas
+      /**
+       * Move meta group behind/in-front-of all other metas
+       */
       worker.postMessage({
         key: 'update-level-meta',
         levelUid,
@@ -75,7 +81,9 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
       });
       return true;
     } else if (/^>[a-z0-9][a-z0-9-]*$/.test(tag)) {
-      // Given tag '>foo' draw NavPath to 1st meta with tag 'foo'
+      /**
+       * Given tag '>foo' draw NavPath to 1st meta with tag 'foo'
+       */
       const { position } = toGroup[metaGroupKey];
       const dstMeta = Object.values(toGroup)
         .find(({ metas }) => metas.some(meta => meta.tags.includes(tag.slice(1))));

@@ -3,18 +3,24 @@ import { KeyedLookup } from '@model/generic.model';
 import { Vector2 } from '@model/vec2.model';
 
 export type IconType = (
+  | 'circ-1'
   | 'door-1'
+  | 'key-1'
   | 'light-1'
   | 'meta-1'
   | 'empty-1'
 );
 
 export const iconLookup: KeyedLookup<IconMeta, IconType> = {
+  ...addIcon('circ-1'),
   ...addIcon('door-1'),
+  ...addIcon('key-1'),
   ...addIcon('light-1'),
   ...addIcon('meta-1', new Rect2(0, 0, 1, 1).scale(5)),
   ...addIcon('empty-1', new Rect2(0, 0, 1, 1).scale(5)),
 };
+
+export const isIconTag = (tag: string): tag is IconType => tag in iconLookup;
 
 interface IconMeta {
   /** Unique identifier */
