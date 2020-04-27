@@ -2,7 +2,6 @@
 
 - 3d approach:
   - `table` is 3d cuboid with height modifier `h-${h}`
-  - rename `door` as `way`
   - `door` is 3d door linking to another polygon
   - actor will be cuboid too
 
@@ -342,3 +341,4 @@
 - Reconsider background.md
 - Only one meta at a time; escape closes meta even when not focused
 - Fix light polygon defects at line seg corners
+- rename `door` as `way`

@@ -18,10 +18,10 @@ import { LevelDispatchOverload } from '@model/level/level.redux.model';
 import { Act } from '@store/level/level.duck';
 import { Vector2 } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
-import { tileDim, floorInset, navTags, rebuildTags, doorOutset, tableOutset, wallDepth } from '@model/level/level-params';
+import { tileDim, floorInset, doorOutset, tableOutset, wallDepth } from '@model/level/level-params';
 import { sendMetas, sendPreNavFloors } from './handle-requests';
 import { updateNavGraph, getDoorRects, getHorizVertSegs, getCutRects, getTableRects } from './nav-utils';
-import { isRebuildTag, isNavTag } from '@model/level/level-meta.model';
+import { isRebuildTag, isNavTag, navTags, rebuildTags } from '@model/level/level-meta.model';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;

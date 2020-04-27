@@ -73,7 +73,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
                 key={i}
                 fill="none"
                 stroke="rgba(180, 0, 0, 1)"
-                strokeWidth={0.1}
+                strokeWidth={0.25}
                 x={x}
                 y={y}
                 width={width}
@@ -193,7 +193,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
                       )
                     ) || (
                       // A meta can be a door
-                      physical === 'door' && (
+                      physical === 'way' && (
                         <rect
                           key={key}
                           strokeWidth={0}

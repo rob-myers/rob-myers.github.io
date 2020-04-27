@@ -2,7 +2,7 @@ import { generate } from 'shortid';
 import { Vector2, Vector2Json } from '@model/vec2.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2Json, Rect2 } from '@model/rect2.model';
-import { intersects, testNever } from '@model/generic.model';
+import { intersects, testNever, keys } from '@model/generic.model';
 import { iconLookup, IconType, Icon, createIcon } from '@model/icon/icon.model';
 import { pointOnLineSeg } from './geom.model';
 import { LevelLight, LevelLightJson } from './level-light.model';
@@ -13,7 +13,7 @@ const rebuildTagsLookup = {
   /** Rectangular hole */
   cut: null,
   /** Rectangular hole in internal walls */
-  door: null,
+  way: null,
   /** Horizontal wall */
   hz: null,
   /** Rectangular table */
@@ -23,6 +23,7 @@ const rebuildTagsLookup = {
 };
 export type RebuildTag = keyof typeof rebuildTagsLookup; 
 export const isRebuildTag = (tag: string): tag is RebuildTag => tag in rebuildTagsLookup;
+export const rebuildTags = keys(rebuildTagsLookup);
 
 const rectTagsLookup = {
   ...rebuildTagsLookup,
@@ -35,7 +36,7 @@ const isRectTag = (tag: string): tag is RectTag => tag in rectTagsLookup;
 export type RectTag = keyof typeof rectTagsLookup; 
 
 type TriggerType =  Extract<RectTag, 'circ' | 'rect'>;
-type PhysicalType = Extract<RectTag, 'cut' | 'door' | 'hz' | 'table' | 'vt'>;
+type PhysicalType = Extract<RectTag, 'cut' | 'way' | 'hz' | 'table' | 'vt'>;
 
 /** e.g. `r-4` or `r-4-2` */
 export const dimTagRegex = /^r-(\d+)(?:-(\d+))?$/;
@@ -47,6 +48,7 @@ const navTagsLookup = {
 };
 export type NavTag = keyof typeof navTagsLookup; 
 export const isNavTag = (tag: string): tag is NavTag => tag in navTagsLookup;
+export const navTags = keys(navTagsLookup);
 
 export class LevelMeta {
   
@@ -130,7 +132,7 @@ export class LevelMeta {
     switch(tag) {
       case 'circ': this.trigger = 'circ'; break;
       case 'cut': this.physical = 'cut'; break;
-      case 'door': this.physical = 'door'; break;
+      case 'way': this.physical = 'way'; break;
       case 'hz': this.physical = 'hz'; break;
       case 'light': {
         this.rect && (this.light = new LevelLight(position, this.rect.dimension));
@@ -339,7 +341,7 @@ export class LevelMetaGroup {
       const [tag] = rectMetas[0].tags.filter(x => isRectTag(x)) as RectTag[];
       switch (tag) {
         case 'circ': this.backupIcon = createIcon('meta-1'); break;
-        case 'door': this.backupIcon = createIcon('door-1'); break;
+        case 'way': this.backupIcon = createIcon('door-1'); break;
         case 'light': this.backupIcon = createIcon('light-1'); break;
         case 'rect': this.backupIcon = createIcon('meta-1'); break;
         default: this.backupIcon = createIcon('meta-1');
