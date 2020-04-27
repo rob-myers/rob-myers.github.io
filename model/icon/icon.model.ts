@@ -12,8 +12,8 @@ export type IconType = (
 export const iconLookup: KeyedLookup<IconMeta, IconType> = {
   ...addIcon('door-1'),
   ...addIcon('light-1'),
-  ...addIcon('meta-1', new Rect2(0, 0, 1, 1)),
-  ...addIcon('empty-1', new Rect2(0, 0, 1, 1)),
+  ...addIcon('meta-1', new Rect2(0, 0, 1, 1).scale(5)),
+  ...addIcon('empty-1', new Rect2(0, 0, 1, 1).scale(5)),
 };
 
 interface IconMeta {
@@ -29,7 +29,7 @@ interface IconMeta {
 
 function addIcon(
   key: IconType,
-  dstRect = new Rect2(0, 0, 1.8, 1.8),
+  dstRect = new Rect2(0, 0, 1.8, 1.8).scale(5),
   srcRect = new Rect2(0, 0, 100, 100),
 ) {
   return {

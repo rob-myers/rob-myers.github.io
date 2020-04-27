@@ -330,23 +330,22 @@ html {
     }
 
     .nav-paths {
+      stroke-width: 0.5;
+      r: 1;
+
       @at-root .light-mode .nav-paths {
         circle {
           fill: $level-navpath-light;
-          r: 0.2;
         }
         line {
-          stroke-width: 0.1;
           stroke: $level-navpath-light;
         }
       }
       @at-root .dark-mode .nav-paths {
         circle {
           fill: $level-navpath-dark;
-          r: 0.2;
         }
         line {
-          stroke-width: 0.1;
           fill: $level-navpath-dark;
           stroke: $level-navpath-dark;
         }

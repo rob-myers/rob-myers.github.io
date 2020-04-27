@@ -24,7 +24,7 @@ export const LevelIcon: React.FC<Props> = ({
           r={icon.rect.dimension / 2}
           fill="none"
           stroke="red"
-          strokeWidth="0.1"
+          strokeWidth="0.5"
         />
       )}
     </>
