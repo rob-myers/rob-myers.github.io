@@ -3,11 +3,9 @@ import { Vector2, Vector2Json } from '@model/vec2.model';
 import { Poly2 } from '@model/poly2.model';
 import { Rect2Json, Rect2 } from '@model/rect2.model';
 import { intersects, testNever, keys } from '@model/generic.model';
-import { iconLookup, IconType, Icon, createIcon } from '@model/icon/icon.model';
+import { iconLookup, IconType, Icon, createIcon, isIconTag } from '@model/icon/icon.model';
 import { pointOnLineSeg } from './geom.model';
 import { LevelLight, LevelLightJson } from './level-light.model';
-
-const isIconTag = (tag: string): tag is IconType => tag in iconLookup;
 
 const rebuildTagsLookup = {
   /** Rectangular hole */
@@ -38,10 +36,6 @@ export type RectTag = keyof typeof rectTagsLookup;
 type TriggerType =  Extract<RectTag, 'circ' | 'rect'>;
 type PhysicalType = Extract<RectTag, 'cut' | 'way' | 'hz' | 'table' | 'vt'>;
 
-/** e.g. `r-4` or `r-4-2` */
-export const dimTagRegex = /^r-(\d+)(?:-(\d+))?$/;
-const isDimTag = (tag: string) => dimTagRegex.test(tag);
-
 const navTagsLookup = {
   ...rectTagsLookup,
   steiner: null,
@@ -50,8 +44,17 @@ export type NavTag = keyof typeof navTagsLookup;
 export const isNavTag = (tag: string): tag is NavTag => tag in navTagsLookup;
 export const navTags = keys(navTagsLookup);
 
+/** Tags defining a rectangle e.g. `r-4` or `r-4-2`. */
+export const dimTagRegex = /^r-(\d+)(?:-(\d+))?$/;
+const isDimTag = (tag: string) => dimTagRegex.test(tag);
+
+const heightTagRegex = /^h-(\d+)$/;
+export const isHeightTag = (tag: string) => heightTagRegex.test(tag);
+
 export class LevelMeta {
-  
+
+  public height = null as null | number;
+
   public get json(): LevelMetaJson {
     return {
       key: this.key,
@@ -109,7 +112,13 @@ export class LevelMeta {
       icon ? createIcon(json.icon!) : null
     );
   }
-  
+
+  public getCuboid() {
+    return this.rect && this.height
+      ? { base: this.rect.clone(), height: this.height }
+      : null;
+  }
+
   public isRectMeta() {
     return this.rect && this.tags.some(tag => isRectTag(tag));
   }
@@ -123,6 +132,16 @@ export class LevelMeta {
       ? !input.includes(tag)
       : !input[0].test(tag)
     );
+  }
+
+  public setHeightTag(tag: string) {
+    this.tags = this.tags.filter(x => !isHeightTag(x)).concat(tag);
+    this.height = Number(tag.slice(2));
+  }
+
+  public setIconTag(tag: IconType) {
+    this.tags = this.tags.filter(x => !isIconTag(x)).concat(tag);
+    this.icon = createIcon(tag);
   }
 
   public setRectTag(tag: RectTag, position: Vector2) {
@@ -143,11 +162,6 @@ export class LevelMeta {
       case 'vt': this.physical = 'vt'; break;
       default: throw testNever(tag);
     }
-  }
-
-  public setIconTag(tag: IconType) {
-    this.tags = this.tags.filter(x => !isIconTag(x)).concat(tag);
-    this.icon = createIcon(tag);
   }
 
   /**
@@ -252,6 +266,8 @@ export class LevelMetaGroup {
               break;
             }
           }
+        } else if (isHeightTag(update.tag)) {
+          meta.setHeightTag(update.tag);
         }
         break;
       }
@@ -270,6 +286,8 @@ export class LevelMetaGroup {
           meta.light = null;
         } else if (update.tag === 'icon' || isIconTag(update.tag)) {
           meta.icon = null;
+        } else if (isHeightTag(update.tag)) {
+          meta.height = null;
         }
         break;
       }

@@ -78,12 +78,6 @@ export function getHorizVertSegs(levelUid: string) {
   , [] as [Vector2, Vector2][]);
 }
 
-export function getTableRects(levelUid: string) {
-  const { metaGroups } = getLevel(levelUid)!;
-  return Object.values(metaGroups).flatMap(({ metas }) => metas)
-    .filter(({ physical, rect }) => physical === 'table' && rect)
-    .map(({ rect }) => rect!.clone());
-}
 /**
  * Compute steiner points from metas.
  */
@@ -95,6 +89,19 @@ function getMetaSteiners(levelUid: string) {
       const polyId = floors.findIndex(floor => floor.contains(p));
       return polyId >= 0 ? { ...agg, [polyId]: (agg[polyId] || []).concat(p) } : agg;
     }, {});
+}
+
+export function getTableRects(levelUid: string) {
+  const { metaGroups } = getLevel(levelUid)!;
+  return Object.values(metaGroups).flatMap(({ metas }) => metas)
+    .filter(({ physical, rect }) => physical === 'table' && rect)
+    .map(({ rect }) => rect!.clone());
+}
+
+export function getMetaCuboids(levelUid: string) {
+  const { metaGroups } = getLevel(levelUid)!;
+  return Object.values(metaGroups).flatMap(({ metas }) => metas)
+    .map((meta) => meta.getCuboid()!).filter(Boolean);
 }
 
 /**

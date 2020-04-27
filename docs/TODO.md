@@ -1,9 +1,9 @@
 # TODO
 
-- 3d approach:
-  - `table` is 3d cuboid with height modifier `h-${h}`
-  - `door` is 3d door linking to another polygon
-  - actor will be cuboid too
+- metas with rect and height modifier induce cuboids
+- `door` is 3d door linking to another polygon
+- icons will need 3d representation
+- actor will be cuboid too
 
 - floor decals via `icon`: dashed box, letters/digits
 
@@ -342,3 +342,4 @@
 - Only one meta at a time; escape closes meta even when not focused
 - Fix light polygon defects at line seg corners
 - rename `door` as `way`
+- metas can have height modifier `h-${h}`

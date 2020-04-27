@@ -34,8 +34,10 @@ export function handleLevelToggles(levelUid: string) {
     .pipe(
       map(({ data }) => data),
       filter((msg): msg is ToggleLevelTile | ToggleLevelWall => {
-        if (msg.levelUid !== levelUid) return false;
-        return  msg.key === 'toggle-level-tile' || msg.key === 'toggle-level-wall';
+        return (
+          (msg.key === 'toggle-level-tile' && msg.levelUid === levelUid)
+          || (msg.key === 'toggle-level-wall' && msg.levelUid === levelUid)
+        );
       }),
       map((msg) => {
         let { tileFloors, wallSeg } = getLevel(levelUid)!;
@@ -190,7 +192,7 @@ export function handleMetaUpdates(levelUid: string) {
 
 /**
  * Remove rectangles from tiles, permitting e.g.
- * smaller rooms, central pillars, thin corridosr.
+ * smaller rooms, central pillars, thin corridor
  */
 function computeTilesSansCuts(levelUid: string) {
   const { tileFloors } = getLevel(levelUid)!;
@@ -202,7 +204,7 @@ function computeTilesSansCuts(levelUid: string) {
 }
 
 /**
- * Compute internal walls, taking metas cut/door/horiz/vert into account.
+ * Compute internal walls, taking metas cut/hz/vt/way into account.
  * To use polygonal operations we temp convert wall-segs to thin rectangles.
  * We treat horizontal/vertical separately to avoid them being joined together.
  */
@@ -234,7 +236,7 @@ function computeInternalWalls(levelUid: string) {
 
 /**
  * Compute rendered `innerFloors` and navigable polygons `navFloors` using
- * tiles without cuts, internal walls (wallSeg/horiz/vert/door) and tables.
+ * tiles without cuts, internal walls (wallSeg/hz/vt/way) and tables.
  */
 function computeNavFloors(levelUid: string) {
   const { tilesSansCuts, wallSeg } = getLevel(levelUid)!;

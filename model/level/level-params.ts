@@ -5,11 +5,11 @@ export const cursorWallDepth = 2;
 export const wallDepth = 1;
 
 /** How far to inset when constructing navigable poly `floors` */
-export const floorInset = 10;
+export const floorInset = 6;
 
 export const doorOutset = floorInset - 0.01;
 
-export const tableOutset = 5;
+export const tableOutset = 4;
 
 /** Dimension of tile */
 export const tileDim = 100;
