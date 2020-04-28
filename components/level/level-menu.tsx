@@ -97,7 +97,7 @@ const LevelMenu: React.FC<Props> = ({ levelUid }) => {
           rect
         </button>
         <button
-          className={classNames(css.button, showNavRects && css.enabled)}
+          className={classNames(css.button, showNavTris && css.enabled)}
           onClick={toggleNavTris}
         >
           tris
