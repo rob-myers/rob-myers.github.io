@@ -72,7 +72,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
               <rect
                 key={i}
                 fill="none"
-                stroke="rgba(180, 0, 0, 1)"
+                // stroke="rgba(140, 0, 0, 1)"
+                stroke="rgba(60, 60, 60, 1)"
                 strokeWidth={0.25}
                 x={x}
                 y={y}
@@ -188,7 +189,7 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
                           y={rect.y}
                           width={rect.width}
                           height={rect.height}
-                          filter="url(#svg-shadow-all)"
+                          filter="url(#svg-filter-shadow)"
                         />
                       )
                     ) || (
