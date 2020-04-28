@@ -113,7 +113,7 @@ export class LevelMeta {
     );
   }
 
-  public getCuboid() {
+  public getCuboid(): Cuboid | null {
     return this.rect && this.height
       ? { base: this.rect.clone(), height: this.height }
       : null;
@@ -286,7 +286,7 @@ export class LevelMetaGroup {
           meta.light = null;
         } else if (update.tag === 'icon' || isIconTag(update.tag)) {
           meta.icon = null;
-        } else if (isHeightTag(update.tag)) {
+        } else if (isHeightTag(update.tag) || update.tag === 'table') {
           meta.height = null;
         }
         break;
@@ -328,10 +328,11 @@ export class LevelMetaGroup {
       0,
       createIcon(this.backupIcon.key),
     );
-    clone.metas.forEach(meta => {
+    clone.metas.forEach((meta, i) => {
       meta.position.copy(position);
       meta.light?.setPosition(position);
       meta.rect?.setPosition(position);
+      meta.height = this.metas[i].height;
     });
     return clone;
   }
@@ -386,6 +387,10 @@ export class LevelMetaGroup {
     return !this.metas.some(x => x.trigger || x.icon);
   }
 
+  public hasCuboid() {
+    return this.metas.some(x => x.getCuboid());
+  }
+
 }
 
 export interface LevelMetaGroupJson {
@@ -425,4 +430,13 @@ function createMetaGroupUi(key: string): LevelMetaGroupUi {
     over: true, // Assume initially over
     position: Vector2.zero,
   };
+}
+
+export interface Cuboid {
+  base: Rect2;
+  height: number;
+}
+export interface CuboidJson {
+  base: Rect2Json;
+  height: number;
 }

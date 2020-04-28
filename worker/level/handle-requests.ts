@@ -8,7 +8,7 @@ import { LevelMeta, LevelMetaGroup } from '@model/level/level-meta.model';
 import { Act } from '@store/level/level.duck';
 import { store, getLevel, getLevelAux } from './create-store';
 import { handleLevelToggles, handleMetaUpdates } from './handle-edits';
-import { ensureFloydWarshall } from './nav-utils';
+import { ensureFloydWarshall, getMetaCuboids } from './nav-utils';
 
 const ctxt: LevelWorkerContext = self as any;
 const dispatch = store.dispatch as LevelDispatchOverload;
@@ -115,5 +115,9 @@ export function sendPreNavFloors(levelUid: string) {
     levelUid,
     tileFloors: tilesSansCuts.map(({ json }) => json),
     wallSegs: innerWalls.map(([u, v]) => [u.json, v.json]),
+    cuboids: getMetaCuboids(levelUid).map(({ base, height }) => ({
+      base: base.json,
+      height,
+    })),
   });
 }

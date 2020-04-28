@@ -6,7 +6,7 @@ import { Poly2Json } from '@model/poly2.model';
 import { NavPathJson } from '@model/level/nav/nav-path.model';
 import { KeyedLookup } from '@model/generic.model';
 import { Rect2Json } from '@model/rect2.model';
-import { LevelMetaUpdate, LevelMetaGroupJson } from './level-meta.model';
+import { LevelMetaUpdate, LevelMetaGroupJson, CuboidJson } from './level-meta.model';
 
 /** A Worker instance in parent thread. */
 export interface LevelWorker extends Worker {
@@ -60,6 +60,7 @@ interface SendLevelLayers extends BaseMessage {
   levelUid: string;
   tileFloors: Poly2Json[];
   wallSegs: [Vector2Json, Vector2Json][];
+  cuboids: CuboidJson[];
 }
 
 interface SendInnerFloors extends BaseMessage {
