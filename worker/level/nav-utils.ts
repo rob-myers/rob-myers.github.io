@@ -54,7 +54,7 @@ export function getCutRects(levelUid: string) {
     .map(({ rect }) => rect!.clone());
 }
 
-export function getDoorRects(levelUid: string) {
+export function getWayRects(levelUid: string) {
   const { metaGroups } = getLevel(levelUid)!;
   return Object.values(metaGroups).flatMap(({ metas }) => metas)
     .filter(({ physical, rect }) => physical === 'way' && rect)
