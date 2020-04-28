@@ -13,8 +13,9 @@ type MetaLookup = LevelState['metaGroups'];
 const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
   const rootEl = useRef<HTMLDivElement>(null);
   const inputEl = useRef<HTMLInputElement>(null);
-
   const [toGroup, setGroups] = useState<MetaLookup>({});
+  const [overInput, setOverInput] = useState(false);
+
   const mode = useSelector(({ level: { instance } }) => instance[levelUid].mode);
   const toGroupUi = useSelector(({ level: { instance } }) => instance[levelUid].metaGroupUi);
   const worker = useSelector(({ level: { worker } }) => worker)!;
@@ -36,7 +37,7 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
   useEffect(() => {
     if (inputEl.current) {
       const found = Object.values(toGroupUi).find(({ over, open }) => over && open);
-      found ? inputEl.current?.focus() : focusLevelKeys();
+      found || overInput ? inputEl.current?.focus() : focusLevelKeys();
     }
   }, [toGroupUi, mode]);
 
@@ -137,7 +138,9 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
                   ref={inputEl}
                   placeholder={`tags ${open.metaIndex +  1}/${open.metas.length}`}
                   onKeyPress={({ key: inputKey, currentTarget, currentTarget: { value } }) =>
-                    inputKey === 'Enter' && addTag(open.key, open.metas[open.metaIndex].key, value) && (currentTarget.value = '')}
+                    inputKey === 'Enter'
+                      && addTag(open.key, open.metas[open.metaIndex].key, value)
+                      && (currentTarget.value = '')}
                   onKeyDown={({ key: inputKey }) =>
                     inputKey === 'Escape' && closeMetaGroup(open.key)}
                   onKeyUp={(e) => {
@@ -145,6 +148,8 @@ const LevelMetaMenu: React.FC<Props> = ({ levelUid }) => {
                     e.key === 'ArrowDown' && ensureMeta(open.key, +1);
                     e.key === 'ArrowUp' && ensureMeta(open.key, -1);
                   }}
+                  onMouseOver={() => setOverInput(true)}
+                  onMouseOut={() => setOverInput(false)}
                 />
               )}
               {mode === 'edit' && (
