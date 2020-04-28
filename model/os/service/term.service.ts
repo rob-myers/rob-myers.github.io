@@ -91,6 +91,7 @@ import { HistoryBuiltin } from '@model/sh/builtin/history.builtin';
 import { CoprocComposite } from '@model/sh/composite/coproc.composite';
 import { ExprBinary } from '@model/sh/binary/expr.binary';
 import { KillBuiltin } from '@model/sh/builtin/kill.builtin';
+import { MkFifoBinary } from '@model/sh/binary/mkfifo.binary';
 
 export type ObservedType = (
   | undefined
@@ -207,6 +208,7 @@ export class TermService {
           case BinaryExecType.head: return new HeadBinary(term.def);
           case BinaryExecType.ls: return new LsBinary(term.def);
           case BinaryExecType.mkdir: return new MkdirBinary(term.def);
+          case BinaryExecType.mkfifo: return new MkFifoBinary(term.def);
           case BinaryExecType.mv: return new MvBinary(term.def);
           case BinaryExecType.ps: return new PsBinary(term.def);
           case BinaryExecType.realpath: return new RealpathBinary(term.def);
@@ -507,6 +509,7 @@ export class TermService {
       case BinaryExecType.head: return new HeadBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.ls: return new LsBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.mkdir: return new MkdirBinary({ key: CompositeType.binary, binaryKey, args });
+      case BinaryExecType.mkfifo: return new MkFifoBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.mv: return new MvBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.ps: return new PsBinary({ key: CompositeType.binary, binaryKey, args });
       case BinaryExecType.realpath: return new RealpathBinary({ key: CompositeType.binary, binaryKey, args });

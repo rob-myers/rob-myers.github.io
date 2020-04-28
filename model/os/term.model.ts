@@ -85,6 +85,7 @@ import { WcBinary } from '../sh/binary/wc.binary';
 import { CoprocComposite } from '@model/sh/composite/coproc.composite';
 import { ExprBinary } from '@model/sh/binary/expr.binary';
 import { KillBuiltin } from '@model/sh/builtin/kill.builtin';
+import { MkFifoBinary } from '@model/sh/binary/mkfifo.binary';
 
 export type Term = (
   // | LeafTermJSON
@@ -108,6 +109,7 @@ export type BinaryComposite = (
   | HeadBinary
   | LsBinary
   | MkdirBinary
+  | MkFifoBinary
   | MvBinary
   | PsBinary
   | RealpathBinary

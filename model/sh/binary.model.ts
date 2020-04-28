@@ -21,6 +21,7 @@ export enum BinaryExecType {
   head= 'head',
   ls= 'ls',
   mkdir= 'mkdir',
+  mkfifo= 'mkfifo',
   mv= 'mv',
   ps= 'ps',
   realpath= 'realpath',
