@@ -109,10 +109,10 @@ export function createLevelUiState(uid: string): LevelUiState {
     mouseWorld:  Vector2.zero,
     notifyForwarder: null,
     renderBounds: Rect2.zero,
-    showNavRects: false,
-    showNavTris: true,
+    showNavRects: true,
+    showNavTris: false,
     showThreeD: false,
-    theme: 'light-mode',
+    theme: 'dark-mode',
     wheelForwarder: null,
     zoomFactor: 1,
   };
