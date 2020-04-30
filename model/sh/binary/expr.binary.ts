@@ -48,7 +48,7 @@ BinaryExecType.expr,
       result = Function(`"use strict"; return ${this.operands.join(' ')};`)();
     }
 
-    yield this.write(this.transform(result));
+    yield this.write(this.handleUndefined(this.transform(result)));
   }
 
   private transform(input: any): string | string[] {
@@ -57,10 +57,14 @@ BinaryExecType.expr,
     } else if (typeof input === 'string')  {
       return input.replace(/\r+/g, '').split('\n');
     } else if (Array.isArray(input)) {
-      return input.flatMap(x => this.transform(x));
-    } else {
+      return input.flatMap(x => this.transform(x)).filter(x => x !== undefined);
+    } {
       return JSON.stringify(input);
     }
+  }
+
+  private handleUndefined(output: undefined | string | string[]) {
+    return output === undefined ? [] : output;
   }
 
 }
