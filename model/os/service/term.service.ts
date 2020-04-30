@@ -795,10 +795,9 @@ export class TermService {
           case ExpandType.process: {
             return `${term.def.dir}( ${this.seqSrc(term.def.cs)} )`;
           }
-          case ExpandType.singleQuote: {
-            return `${// Need $$ for literal $
-              term.def.interpret ? '$' : ''
-            }'${term.def.value.replace(/\n/g, '\'$$\'\\n\'')}'`;
+          case ExpandType.singleQuote: {// Need $$ for literal $
+            const inner = term.def.value.replace(/\n/g, '$$\'\\n\'');
+            return term.def.interpret ? `$'${inner}'` : inner;
           }
           default: throw testNever(term);
         }
