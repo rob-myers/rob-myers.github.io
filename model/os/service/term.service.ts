@@ -773,7 +773,7 @@ export class TermService {
               case ParamType.pointer:
                 return `\${!${param}}`;
               case ParamType.position:
-                return `\${${param}}`;
+                return param.length === 1 ? `$${param}` : `\${${param}}`;
               case ParamType.remove:
                 return `\${${param}${
                   (def.dir === 1 ? '#' : '%').repeat(def.greedy ? 2 : 1)

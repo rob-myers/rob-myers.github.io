@@ -11,7 +11,7 @@ export class SetBuiltin extends BaseBuiltinComposite<BuiltinSpecialType.set> {
   }
 
   public async *semantics(dispatch: OsDispatchOverload, processKey: string): AsyncIterableIterator<ObservedType> {
-    dispatch(osSetPositionalsAct({ processKey, posPositionals: this.def.args }));
+    dispatch(osSetPositionalsAct({ processKey, posPositionals: this.operands }));
   }
 
 }

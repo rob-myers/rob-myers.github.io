@@ -325,7 +325,7 @@ export class ParameterExpand extends BaseExpandComposite<ExpandType.parameter> {
       }
       /**
        * substring:
-       * ${parameter:offset} e.g. ${x: -7} or
+       * ${parameter:offset} e.g. ${x: -7}.
        * ${parameter:offset:length}.
        * Also ${@:i:j}, ${x[@]:i:j} or ${x[*]:i:j}.
        */
@@ -337,19 +337,22 @@ export class ParameterExpand extends BaseExpandComposite<ExpandType.parameter> {
         if (length) {
           yield* this.runChild({ child: length, ...base });
         }
+
         const len = length
           ? parseInt(String(length.value)) || 0
-          : paramValues.join(' ').length;// ?
+          : paramValues.join(' ').length;
 
         if (this.def.param === '@' || this.def.param === '*') {
           if (len < 0) {
             yield this.exit(1, `${len}: substring expression < 0`);
           }
-          const result = dispatch(osGetPositionalsThunk({ processKey }));
-          const posPositionals = result.slice(1);
-          const values = posPositionals.slice(offset, (offset + len) % len);
+          const positionals = dispatch(osGetPositionalsThunk({ processKey })).slice();
+          const values = from
+            ? length
+              ? positionals.slice(offset, offset + len)
+              : positionals.slice(offset)
+            : positionals.slice(1); // positive positionals
           this.values = this.def.param === '@' ? values : [values.join(' ')];
-
         } else if (index === '@' || index === '*') {
           if (len < 0) {
             yield this.exit(1, `${len}: substring expression < 0`);

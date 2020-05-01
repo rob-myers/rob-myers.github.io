@@ -204,8 +204,8 @@ export function firstAvailableInteger(nonNegativeInts: number[]) {
 }
 
 /**
- * getopts (npm module) produces an array if an option appears
- * multiple times. We replace each array with its last element.
+ * getopts (npm module) produces an array if an option appears multiple times.
+ * We replace each array with its last element.
  */
 export function simplifyGetOpts<StringOpts extends string, BooleanOpts extends string>(
   parsed: GetOpts<StringOpts, BooleanOpts>
