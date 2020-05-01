@@ -79,7 +79,7 @@ export const osInitialState: State = {
 /**
  * Import actions etc. from files in subdirectory ./os.
  */
-import { Action as DeclareAction, Thunk as DeclareThunk, osUpdateNestedVarDef, osSetZeroethParamDef, osPushRedirectScopeDef, osPopRedirectScopeDef, osPushPositionalsScopeDef, osPopPositionalsScopeDef, osPushVarScopeDef, osPopVarScopeDef, osUpdateFunctionDef, osAddFunctionDef, osShiftPositionalsDef } from './declare.os.duck';
+import { Action as DeclareAction, Thunk as DeclareThunk, osUpdateNestedVarDef, osSetZeroethParamDef, osPushRedirectScopeDef, osPopRedirectScopeDef, osPushPositionalsScopeDef, osPopPositionalsScopeDef, osPushVarScopeDef, osPopVarScopeDef, osUpdateFunctionDef, osAddFunctionDef, osShiftPositionalsDef, osSetPositionalsDef } from './declare.os.duck';
 import { Action as FileAction, Thunk as FileThunk, osMountFileDef, osIncrementOpenDef, osRegisterOpenFileDef, osSetFileDescriptorDef, osCloseFdDef, osDupFileDescriptorDef, osOffsetOpenDef } from './file.os.duck';
 import { Action as InitAction, Thunk as InitThunk, osInitializedDef, osStoreLastPingDef } from './init.os.duck';
 import { Action as ProcessAction, Thunk as ProcessThunk, osStoreExitCodeDef, osRegisterProcessDef, osCloseProcessFdsDef, osSetProcessGroupDef, osUpdateProcessDef, osSetSignalHandlerDef, osStoreProcessSubscriptionDef, osClearBufferDef, osPushCodeStackDef, osPopCodeStackDef, osUnregisterProcessDef } from './process.os.duck';
@@ -94,7 +94,7 @@ export type Action = (
   | ProcessAction
   | SessionAction
   | UserAction
-  );
+);
   
 export type Thunk = (
   | DeclareThunk
@@ -182,6 +182,9 @@ export function reducer(state: State = osInitialState, action: Action): State {
     // }
     case OsAct.OS_SET_FD: {
       return osSetFileDescriptorDef(action.pay, state);
+    }
+    case OsAct.OS_SET_POSITIONALS_SCOPE: {
+      return osSetPositionalsDef(action.pay, state);
     }
     case OsAct.OS_SET_PROCESS_GROUP: {
       return osSetProcessGroupDef(action.pay, state);

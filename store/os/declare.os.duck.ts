@@ -21,7 +21,7 @@ export type Action = (
   | PushRedirectScopeAct
   | PushVarScopeAct
   // | RemoveFunctionAct
-  // | SetPositionalsAct
+  | SetPositionalsAct
   | SetZeroethParamAct
   | ShiftPositionalsAct
   | UpdateFunctionAct
@@ -132,9 +132,7 @@ interface PushPositionalsScopeAct extends SyncAct<OsAct, { processKey: string; p
   type: OsAct.OS_PUSH_POSITIONALS_SCOPE;
 }
 export const osPushPositionalsScopeDef: SyncActDef<OsAct, PushPositionalsScopeAct, State> = ({ processKey, posPositionals }, state) => {
-  /**
-   * Create new scope containing positive positionals.
-   */
+  // Create new scope containing positive positionals
   const toVar: ToProcVar = {};
   posPositionals.forEach((value, index) => toVar[index + 1] = {
     key: 'positional',
@@ -148,8 +146,7 @@ export const osPushPositionalsScopeDef: SyncActDef<OsAct, PushPositionalsScopeAc
   return { ...state,
     proc: updateLookup(processKey, state.proc, ({ nestedVars }) => ({
       nestedVars: [// Include clone of $0 from earliest scope.
-        Object.assign(
-          toVar,
+        Object.assign(toVar,
           { 0: cloneVar((last(nestedVars) as Record<string, ProcessVar>)[0]) }
         ),
         ...nestedVars,
@@ -194,6 +191,34 @@ export const osPushVarScopeDef: SyncActDef<OsAct, PushVarScopeAct, State> = ({ p
   })),
 });
 
+/**
+ * Set positive positionals in current scope in {processKey}.
+ */
+export const osSetPositionalsAct = createOsAct<OsAct, SetPositionalsAct>(
+  OsAct.OS_SET_POSITIONALS_SCOPE,
+);
+interface SetPositionalsAct extends SyncAct<OsAct, { processKey: string; posPositionals: string[] }> {
+  type: OsAct.OS_SET_POSITIONALS_SCOPE;
+}
+export const osSetPositionalsDef: SyncActDef<OsAct, SetPositionalsAct, State> = ({ processKey, posPositionals }, state) => {
+  // Create new scope containing positive positionals
+  const toVar: ToProcVar = {};
+  posPositionals.forEach((value, index) => toVar[index + 1] = {
+    key: 'positional',
+    index: index + 1,
+    varName: String(index + 1),
+    value,
+    exported: false,
+    readonly: true,
+    to: null,
+  });
+  // Merge into most recent scope
+  return { ...state,
+    proc: updateLookup(processKey, state.proc, ({ nestedVars }) => ({
+      nestedVars: [...Object.assign(nestedVars, { 0: { ...nestedVars[0], ...toVar } })],
+    })),
+  };
+};
 
 /**
  * Set zeroeth positional parameter.
@@ -552,9 +577,7 @@ export const osExpandVarThunk = createOsThunk<OsAct, ExpandVarThunk>(
   },
 );
 export interface ExpandVarThunk extends OsThunkAct<
-OsAct,
-{ processKey: string; varName: string; index?: string },
-string
+  OsAct, { processKey: string; varName: string; index?: string }, string
 >{
   type: OsAct.OS_EXPAND_VAR_THUNK;
 }
@@ -587,9 +610,8 @@ export const osGetFunctionThunk = createOsThunk<OsAct, GetFunctionThunk>(
     return proc[processKey].toFunc[functionName] || null;
   },
 );
-export interface GetFunctionThunk extends OsThunkAct<OsAct,
-{ processKey: string; functionName: string },
-NamedFunction | null
+export interface GetFunctionThunk extends OsThunkAct<
+  OsAct, { processKey: string; functionName: string }, NamedFunction | null
 > {
   type: OsAct.OS_GET_FUNCTION_THUNK;
 }
@@ -643,9 +665,9 @@ export const osGetVarsThunk = createOsThunk<OsAct, GetVarsThunk>(
     const { nestedVars } = proc[processKey];
     const tempLookup = nestedVars.slice().reverse()
       .reduce<Record<string, ProcessVar>>(
-      (agg, toVar) => ({ ...agg, ...toVar }),
-      {},
-    );
+        (agg, toVar) => ({ ...agg, ...toVar }),
+        {},
+      );
     return Object.values(tempLookup);
   },
 );
@@ -668,8 +690,8 @@ export const osLookupVarThunk = createOsThunk<OsAct, LookupVarThunk>(
   },
 );
 export interface LookupVarThunk extends OsThunkAct<OsAct,
-{ processKey: string; varName: string },
-ProcessVar['value'] | undefined
+  { processKey: string; varName: string },
+  ProcessVar['value'] | undefined
 > {
   type: OsAct.OS_LOOKUP_VAR_THUNK;
 }

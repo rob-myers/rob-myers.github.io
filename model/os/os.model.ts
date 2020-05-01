@@ -93,6 +93,7 @@ export enum OsAct {
    * Connect a process to an open file description.
    */
   OS_SET_FD= 'OS_SET_FD',
+  OS_SET_POSITIONALS_SCOPE= 'OS_SET_POSITIONALS_SCOPE',
   /**
    * Set process group of process.
    */
