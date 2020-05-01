@@ -325,7 +325,7 @@ export class ParameterExpand extends BaseExpandComposite<ExpandType.parameter> {
       }
       /**
        * substring:
-       * ${parameter:offset} or
+       * ${parameter:offset} e.g. ${x: -7} or
        * ${parameter:offset:length}.
        * Also ${@:i:j}, ${x[@]:i:j} or ${x[*]:i:j}.
        */

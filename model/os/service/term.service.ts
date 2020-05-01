@@ -782,8 +782,11 @@ export class TermService {
                 return `\${${param}${def.all ? '//' : '/'}${this.src(def.orig)}/${this.src(def.with)}}`;
               case ParamType.special:
                 return `$${def.param}`;
-              case ParamType.substring:
-                return `\${${param}:${this.src(def.from)}:${this.src(def.length)}}`;
+              case ParamType.substring: {
+                const from = Number(this.src(def.from));
+                const length = this.src(def.length);
+                return `\${${param}:${from < 0 ? ' ' : ''}${from}${length ? `:${length}` : ''}}`;
+              }
               case ParamType.vars:
                 return `\${!${param}${def.split ? '@' : '*'}}`;
               default: throw testNever(def);
