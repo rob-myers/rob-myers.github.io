@@ -1,8 +1,7 @@
 # TODO
 
-- metas with rect and height modifier induce cuboids
 - `door` is 3d door linking to another polygon
-- icons will need 3d representation
+- 3d icons via textured planes
 - actor will be cuboid too
 
 - floor decals via `icon`: dashed box, letters/digits
@@ -16,6 +15,8 @@
 - Can find metas outside navigable but on table
   i.e. triggers (rect/circ) intersecting navigable
 
+- Get background builtins working e.g. `source foo <>fifo &`.
+  Know that `{ source foo <>fifo; } &` works.
 
 - shell signals
 - implement `kill` with `SIGSTOP`, `SIGCONT`, `SIGINT,` `SIGTERM`
@@ -343,3 +344,6 @@
 - Fix light polygon defects at line seg corners
 - rename `door` as `way`
 - metas can have height modifier `h-${h}`
+- metas with rect and height modifier induce cuboids
+- 3d walls have lower part
+- Add binary `mkfifo`

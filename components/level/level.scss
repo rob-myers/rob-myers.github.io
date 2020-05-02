@@ -232,10 +232,11 @@ html {
     }
 
     .navigable {
-      stroke-width: 0.3;
+      stroke-width: 0.1;
 
       @at-root .light-mode .viewport .navigable {
         fill: $level-navigable-light;
+        stroke: rgba(0, 0, 0, 0.3);
       }
       @at-root .dark-mode .viewport .navigable {
         fill: $level-navigable-dark;
@@ -244,7 +245,7 @@ html {
 
     .triangle {
       fill: none;
-      stroke-width: 0.1;
+      stroke-width: 0.2;
 
       @at-root .light-mode .viewport .triangle {
         stroke: $level-triangle-light;
@@ -284,7 +285,7 @@ html {
         fill: rgba(180, 180, 220, 0.2);
       }
       @at-root .dark-mode .viewport .cursor {
-        fill: rgba(100, 100, 100, 0.1);
+        fill: rgba(100, 100, 100, 0.2);
       }
     }
 
@@ -330,7 +331,7 @@ html {
     }
 
     .nav-paths {
-      stroke-width: 0.5;
+      stroke-width: 0.1;
       r: 1;
 
       @at-root .light-mode .nav-paths {
@@ -368,7 +369,7 @@ html {
           stroke: $level-grid-dark;
         }
         &-refined-path {
-          stroke-width: 0.2;
+          stroke-width: 0.5;
           stroke: $level-grid-refined-dark;
         }
       }
@@ -381,19 +382,19 @@ html {
 
     .three-dim-parent {
       pointer-events: none;
-      perspective: 10000px;
+      perspective: 500px;
       transform-style: preserve-3d;
       position: absolute;
 
       .wall {
-        position: absolute;
         transform-origin: top left;
-        height: 10000px;
+        position: absolute;
+        height: 500px;
 
-        @at-root .light-mode .viewport .three-dim-parent .wall {
-          background: #000;
+        @at-root .light-mode .three-dim-parent .wall {
+          background: #222;
         }
-        @at-root .dark-mode .viewport .three-dim-parent .wall {
+        @at-root .dark-mode .three-dim-parent .wall {
           background: #fff;
         }
       }
@@ -402,58 +403,23 @@ html {
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
       }
-    }
-  }
 
-  .overlay-container {
-    position: absolute;
-    top: 0px;
-    pointer-events: none;
+      .cuboid {
+        position: relative;
 
-    .overlay {
-      position: relative;
+        div {
+          position: absolute;
+          transform-origin: top left;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
 
-      .meta-popover {
-        position: absolute;
-        background: white;
-        border: 0.5px solid rgba(150, 150, 150, 0.5);
-        top: 0px;
-
-        // transform: scale(0.25);
-        transform-origin: top left;
-
-        .content {
-          box-sizing: border-box;
-          width: fit-content;
-          height: fit-content;
-          padding: 4px 2px;
-
-          font-family: "Courier New", Courier, monospace;
-          font-size: 4pt;
-          user-select: none;
-
-          input {
-            width: 40px;
-            font-family: "Courier New", Courier, monospace;
-            outline: none;
-            border: none;
-            padding: 0 0 2px;
-            font-size: 4pt;
+          @at-root .light-mode .three-dim-parent .cuboid div {
+            background: #000;
           }
-          .tags {
-            display: flex;
-            flex-wrap: wrap;
-            user-select: none;
-            max-width: 40px;
-            overflow: hidden;
-            font-size: 5pt;
-
-            .tag {
-              cursor: pointer;
-              padding: 0 2px;
-              background: #eee;
-              font-size: smaller;
-            }
+          @at-root .dark-mode .three-dim-parent .cuboid div {
+            // background-image: url(../../model/icon/crate.jpg);
+            // background-size: 100%;
+            background: #000;
           }
         }
       }

@@ -20,7 +20,7 @@ import { Vector2 } from '@model/vec2.model';
 import { getLevel, store } from './create-store';
 import { tileDim, floorInset, doorOutset, tableOutset, wallDepth } from '@model/level/level-params';
 import { sendMetas, sendPreNavFloors } from './handle-requests';
-import { updateNavGraph, getDoorRects, getHorizVertSegs, getCutRects, getTableRects } from './nav-utils';
+import { updateNavGraph, getWayRects, getHorizVertSegs, getCutRects, getTableRects } from './nav-utils';
 import { isRebuildTag, isNavTag, navTags, rebuildTags } from '@model/level/level-meta.model';
 
 const ctxt: LevelWorkerContext = self as any;
@@ -154,6 +154,7 @@ export function handleMetaUpdates(levelUid: string) {
           }
           case 'remove-level-meta': {
             const group = metaGroups[msg.metaGroupKey];
+
             if (msg.metaKey && group.metas.length > 1) {
               group.metas = group.metas.filter(({ key }) => key !== msg.metaKey);
               group.metaIndex = group.metaIndex ? group.metaIndex - 1 : 0;
@@ -213,7 +214,7 @@ function computeInternalWalls(levelUid: string) {
   /** Wall segs from grid and horiz/vert metas */
   const wallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
   /** We'll cut out door metas (outset) and cut metas (not outset) */
-  const cuttingPolys = getDoorRects(levelUid).map(rect => rect.outset(doorOutset).poly2)
+  const cuttingPolys = getWayRects(levelUid).map(rect => rect.outset(doorOutset).poly2)
     .concat(getCutRects(levelUid).map(rect => rect.poly2));
 
   const { hRects, vRects } = wallSegs.reduce(
@@ -247,7 +248,7 @@ function computeNavFloors(levelUid: string) {
    */
   const innerWallSegs = Object.values(wallSeg).concat(getHorizVertSegs(levelUid));
   const outsetWalls = Poly2.cutOut(
-    getDoorRects(levelUid).map(rect => rect.poly2),
+    getWayRects(levelUid).map(rect => rect.poly2),
     innerWallSegs.map(([u, v]) =>
       new Rect2(u.x, u.y, v.x - u.x, v.y - u.y).outset(floorInset).poly2),
   );

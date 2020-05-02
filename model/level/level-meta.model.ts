@@ -113,9 +113,12 @@ export class LevelMeta {
     );
   }
 
-  public getCuboid(): Cuboid | null {
+  public getCuboid(): MetaCuboid | null {
     return this.rect && this.height
-      ? { base: this.rect.clone(), height: this.height }
+      ? {
+        base: this.rect.clone(),
+        height: this.height,
+      }
       : null;
   }
 
@@ -432,7 +435,7 @@ function createMetaGroupUi(key: string): LevelMetaGroupUi {
   };
 }
 
-export interface Cuboid {
+export interface MetaCuboid {
   base: Rect2;
   height: number;
 }

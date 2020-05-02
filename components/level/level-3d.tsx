@@ -8,10 +8,12 @@ import css from './level.scss';
 import { Rect2 } from '@model/rect2.model';
 import { wallDepth } from '@model/level/level-params';
 import { computeRectPartition } from '@model/level/geom.model';
+import { MetaCuboid } from '@model/level/level-meta.model';
 
 const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
   const containerEl = useRef<HTMLDivElement>(null);
   const tempPoint = useRef(Vector2.zero);
+  const [cuboids, setCuboids] = useState([] as MetaCuboid[]);
   const [wallSegs, setWallSegs] = useState([] as { u: Vector2; v: Vector2; backface: boolean }[]);
   const [dimension, setDimension] = useState<Vector2>();
 
@@ -27,16 +29,16 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
     const sub = subscribeToWorker(worker, (msg) => {
       if (msg.key === 'send-level-layers' && msg.levelUid === levelUid) {
 
-        // TODO precompute rect partition
         const tileFloors = msg.tileFloors.map(x => Poly2.fromJson(x));
         const rectPolys = msg.wallSegs
-          .map(([u, v]) => [Vector2.from(u), Vector2.from(v)])
+          .map((pair) => pair.map(x => Vector2.from(x)))
           .map(([u, v]) => Rect2.from(u, v).outset(wallDepth).poly2);
-        const restrictedRects = computeRectPartition(
+        /** Outset inner walls restricted to tiles */
+        const innerWallRects = computeRectPartition(
           Poly2.intersect(tileFloors, rectPolys)).flatMap(x => x);
         
         // Each inner wall induces 4 planes
-        const innerWallSegs = restrictedRects
+        const innerWallSegs = innerWallRects
           .flatMap(({ topLeft, topRight, bottomRight, bottomLeft }) => [
             [topRight, topLeft],
             [bottomRight, topRight],
@@ -54,6 +56,11 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
             outerWallSegs.map(([u, v]) => ({ u, v, backface: false }))
           )
         );
+
+        setCuboids(msg.cuboids.map(({ base, height }) => ({
+          base: Rect2.fromJson(base),
+          height,
+        })));
       }
     });
     worker.postMessage({ key: 'request-level-data', levelUid });
@@ -72,21 +79,50 @@ const Level3d: React.FC<{ levelUid: string }> = ({ levelUid }) => {
   }, []);
 
   const geometry = useMemo(() =>
-    wallSegs.map(({ u, v, backface }, i) => {
-      tempPoint.current.copy(u).sub(v);
-      return (
-        <div
-          key={i}
-          className={classNames(css.wall, !backface && css.cullBackface)}
-          style={{
-            transform: `translate(${v.x}px, ${v.y}px) rotateZ(${tempPoint.current.angle}rad) rotateX(90deg)`,
-            width: tempPoint.current.length,
-          }}
-        >
-        </div>
-      );
-    })
-  , [wallSegs]);
+    <>
+      {
+        wallSegs.map(({ u, v, backface }, i) => {
+          tempPoint.current.copy(u).sub(v);
+          return (
+            <div
+              key={`wall-${i}`}
+              className={classNames(css.wall, !backface && css.cullBackface)}
+              style={{
+                transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.current.angle}rad) rotateX(90deg)`,
+                width: tempPoint.current.length,
+              }}
+            />
+          );
+        })
+      }
+      {
+        cuboids.map(({ base, height }, i) => {
+          return (
+            <div
+              key={`cuboid-${i}`}
+              className={css.cuboid}
+            >
+              <div style={{ width: base.width, height: base.height, // top
+                transform: `translate3d(${base.x}px, ${base.y}px, ${height}px)`,
+              }} />
+              <div style={{ width: base.width, height, // north
+                transform: `translate(${base.x}px, ${base.y}px) rotateX(90deg)`,
+              }}/>
+              <div style={{ width: base.width, height, // south
+                transform: `translate(${base.right}px, ${base.bottom}px) rotateZ(180deg) rotateX(90deg)`,
+              }}/>
+              <div style={{ width: height, height: base.height, // west
+                transform: `translate(${base.x}px, ${base.y}px) rotateY(-90deg)`,
+              }}/>
+              <div style={{ width: height, height: base.height, // east
+                transform: `translate(${base.right}px, ${base.bottom}px) rotateZ(180deg) rotateY(-90deg)`,
+              }}/>
+            </div>
+          );
+        })
+      }
+    </>
+  , [wallSegs, cuboids]);
 
   return (
     <div

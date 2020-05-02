@@ -72,9 +72,8 @@ const LevelMetas: React.FC<Props> = ({ levelUid }) => {
               <rect
                 key={i}
                 fill="none"
-                // stroke="rgba(140, 0, 0, 1)"
-                stroke="rgba(60, 60, 60, 1)"
-                strokeWidth={0.25}
+                stroke="rgba(70, 70, 70, 0.5)"
+                strokeWidth={0.2}
                 x={x}
                 y={y}
                 width={width}
