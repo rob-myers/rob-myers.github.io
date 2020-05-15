@@ -38,13 +38,13 @@ export const createLevelThunk  = <
   Act extends LevelThunkAct<T, Act['args'], R>,
   R = void
 >(type: T, thunk: Act['thunk']) => (args: Act['args']) =>
-    ({
-      type,
-      thunk,
-      args
-    } as Act);
+  ({
+    type,
+    thunk,
+    args
+  } as Act);
 
 export interface LevelDispatchOverload {
-    <ActKey extends string = string, Payload = any>(action: SyncAct<ActKey, Payload>): void;
-    <ActKey extends string = string, ReturnValue = any>(action: LevelThunkAct<ActKey, any, ReturnValue>): ReturnValue;
+  <ActKey extends string = string, Payload = any>(action: SyncAct<ActKey, Payload>): void;
+  <ActKey extends string = string, ReturnValue = any>(action: LevelThunkAct<ActKey, any, ReturnValue>): ReturnValue;
 }

@@ -4,7 +4,7 @@ import {
   Action as LevelAction,
   // Thunk as LevelThunk,
   reducer as levelReducer,
-} from '@store/level/level.duck';
+} from '@worker/level/level.duck';
 
 export interface LevelWorkerState {
   level: LevelsState;
@@ -19,8 +19,6 @@ export type LevelWorkerThunk = (
   | never
 );
 
-const rootReducer = combineReducers<LevelWorkerState>({
+export default combineReducers<LevelWorkerState>({
   level: levelReducer,
 });
-
-export default rootReducer;

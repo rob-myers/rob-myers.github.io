@@ -1,8 +1,0 @@
-<svg viewBox="0 0 100 100" stroke-width="4" stroke="#fff">
-	<circle fill="#000"  cx="50" cy="50" r="47" />
-	<circle stroke-width="5" cx="50" cy="30" r="10" />
-	<g stroke-linecap="round">
-		<line x1="50" y1="40" x2="50" y2="80" />
-		<path stroke-width="3" d="M 50,73 l 8,0 m -8,-8 l 6,0" />
-	</g>
-</svg>

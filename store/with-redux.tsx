@@ -4,6 +4,7 @@ import { RootState } from './reducer';
 import { initializeStore, ReduxStore } from './create-store';
 
 const __NEXT_REDUX_STORE__ = '__NEXT_REDUX_STORE__';
+
 type Window = typeof window & { __NEXT_REDUX_STORE__: ReduxStore }
 
 const getOrInitializeStore = (initialState?: RootState) => {

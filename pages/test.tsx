@@ -5,13 +5,15 @@ import withRedux from '@store/with-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { Act } from '@store/test.duck';
 
+import css from './index.scss';
+
 const Test: React.FC = () => {
   // const [count, setCount] = useState(0);
   const count = useSelector(({ test }) => test.count);
   const dispatch = useDispatch();
 
   return (
-    <div>
+    <div className={css.root}>
       <h1>Welcome to the Test Page</h1>
       <div>
         <Link href="/about">

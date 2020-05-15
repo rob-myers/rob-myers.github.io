@@ -6,18 +6,14 @@ import rootReducer, { RootState, RootAction } from './reducer';
 import { RedactInReduxDevTools } from '@model/redux.model';
 import { RootThunkParams, ThunkAct } from '@model/root.redux.model';
 import { State as TestState } from '@store/test.duck';
-import { State as XTermState } from '@store/xterm.duck';
-import { State as LevelState } from '@store/level.duck';
+import { State as GlobalState } from '@store/global.duck';
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
     (next: Dispatch) =>
       (action: RootAction | ThunkAct<string, {}, any>) => {
         if ('thunk' in action) {
-          return action.thunk({
-            ...params,
-            state: params.getState(),
-          }, action.args);
+          return action.thunk({ ...params, state: params.getState() }, action.args);
         }
         next(action);
         return;
@@ -35,24 +31,13 @@ const persistedReducer = persistReducer({
       (state, _key) => state,
       { whitelist: ['test'] }
     ),
-    createTransform<XTermState, XTermState>(
-      (_state): XTermState => ({
-        instance: {},
-        worker: null,
-        voice: null,
-        status: 'initial',
+    createTransform<GlobalState, GlobalState>(
+      (_, _key) => ({
+        levelStatus: 'initial',
+        levelWorker: null,
       }),
-      (state) => state,
-      { whitelist: ['xterm'] }
-    ),
-    createTransform<LevelState, LevelState>(
-      (_state): LevelState => ({
-        worker: null,
-        status: 'initial',
-        instance: {},
-      }),
-      (state) => state,
-      { whitelist: ['level'] }
+      (state, _key) => state,
+      { whitelist: ['global'] }
     ),
   ],
 }, rootReducer);
@@ -65,13 +50,11 @@ export const initializeStore = (preloadedState?: RootState) =>
     composeWithDevTools({
       shouldHotReload: false,
       serialize: {
-        // Handle huge/cyclic objects by redacting them.
-        replacer: (_: any, value: RedactInReduxDevTools) => {
-          if (value && value.devToolsRedaction) {
-            return `Redacted<${value.devToolsRedaction}>`;
-          }
-          return value;
-        },
+        // Handle huge/cyclic objects by redacting them
+        replacer: (_: any, value: RedactInReduxDevTools) =>
+          value && value.devToolsRedaction
+            ? `Redacted<${value.devToolsRedaction}>`
+            : value,
         function: false
       } as EnhancerOptions['serialize']
     })(

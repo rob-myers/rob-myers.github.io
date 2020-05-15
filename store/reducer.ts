@@ -5,37 +5,29 @@ import {
   Action as TestAction,
 } from './test.duck';
 import {
-  reducer as xtermReducer,
-  State as XTermState, 
-  Action as XTermAction,
-} from './xterm.duck';
-import {
-  reducer as levelReducer,
-  State as LevelState, 
-  Action as LevelAction,
-  Thunk as LevelThunk,
-} from './level.duck';
+  reducer as globalReducer,
+  State as GlobalState, 
+  Action as GlobalAction,
+  Thunk as GlobalThunk,
+} from './global.duck';
 
 export interface RootState {
   test: TestState;
-  xterm: XTermState;
-  level: LevelState;
+  global: GlobalState;
 }
 
 export type RootAction = (
   | TestAction
-  | XTermAction
-  | LevelAction
+  | GlobalAction
 );
 
 export type RootThunk = (
-  | LevelThunk
+  | GlobalThunk
 );
 
 const rootReducer = combineReducers<RootState>({
   test: testReducer,
-  xterm: xtermReducer,
-  level: levelReducer,
+  global: globalReducer,
 });
 
 export default rootReducer;

@@ -18,10 +18,7 @@ export function traverseDom(el: HTMLElement, act: (el: HTMLElement) => void) {
   }
 }
 
-export function getRelativePos(
-  e: React.MouseEvent,
-  forwardedTo?: Element
-): Vector2 {
+export function getRelativePos(e: React.MouseEvent, forwardedTo?: Element): Vector2 {
   const { left, top } = e.currentTarget.getBoundingClientRect();
   const relPos = new Vector2(e.clientX - left, e.clientY - top);
   
