@@ -7137,6 +7137,16 @@ mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.1:
   dependencies:
     minimist "0.0.8"
 
+monaco-editor@^0.20.0:
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.20.0.tgz#5d5009343a550124426cb4d965a4d27a348b4dea"
+  integrity sha512-hkvf4EtPJRMQlPC3UbMoRs0vTAFAYdzFQ+gpMb8A+9znae1c43q8Mab9iVsgTcg/4PNiLGGn3SlDIa8uvK1FIQ==
+
+monaco-typescript@^3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/monaco-typescript/-/monaco-typescript-3.7.0.tgz#b201cb721406f27dc69449ec3551057b2856a5c2"
+  integrity sha512-xo+nHP7AOdFvHtMqg7hZquQziBuHsaG7hXGXiUuOHj9unJmIyi1uhGuvuQqIJWv+jHd19xGNWTF+KOdaXhksIw==
+
 morgan@^1.7.0:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/morgan/-/morgan-1.9.1.tgz#0a8d16734a1d9afbc824b99df87e738e58e2da59"

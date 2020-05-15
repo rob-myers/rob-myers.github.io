@@ -6,6 +6,8 @@
     "classnames": "^2.2.6",
     "earcut": "^2.2.2",
     "localforage": "^1.7.3",
+    "monaco-editor": "^0.20.0",
+    "monaco-typescript": "^3.7.0",
     "poly2tri": "^1.5.0",
     "polygon-clipping": "^0.14.3",
     "react": "16.12.0",
@@ -30,7 +32,8 @@
     "test": "jest --watch --verbose",
     "check-types": "tsc --noEmit",
     "level-remotedev": "remotedev --hostname=localhost --port=3002 --wsEngine=ws",
-    "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build"
+    "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build",
+    "monaco-task": "ts-node monaco/monaco-task"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "5.1.1",

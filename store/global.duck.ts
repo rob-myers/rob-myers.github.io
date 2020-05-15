@@ -17,9 +17,9 @@ const initialState: State = {
 
 export const Act = {
   setStatus: (status: WorkerStatus) =>
-    createAct('[global] set status', { status }),
+    createAct('[global] set level status', { status }),
   storeWorker: ({ worker }: { worker: Redacted<LevelWorker> }) =>
-    createAct('[global] store worker', { worker }),
+    createAct('[global] store level worker', { worker }),
 };
 
 export type Action = ActionsUnion<typeof Act>;
@@ -59,10 +59,10 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 
 export const reducer = (state = initialState, action: Action): State => {
   switch (action.type) {
-    case '[global] set status': return { ...state,
+    case '[global] set level status': return { ...state,
       levelStatus: action.pay.status,
     };
-    case '[global] store worker': return { ...state,
+    case '[global] store level worker': return { ...state,
       levelWorker: action.pay.worker,
     };
     default: return state;

@@ -50,7 +50,7 @@
     },
     "overrides": [
       {
-        "files": ["scripts/*.ts"],
+        "files": ["scripts/*.ts", "monaco/*.ts"],
         "env": {
           "node": true
         }
