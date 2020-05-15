@@ -13,7 +13,10 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "isolatedModules": true,
-    "outDir": ".."
+    "outDir": "..",
+    "typeRoots": [
+      "../types"
+    ]
   },
   "exclude": [
     "node_modules"

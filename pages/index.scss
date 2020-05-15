@@ -3,6 +3,13 @@
   display: flex;
   flex-direction: column;
   margin-left: 10px;
+
+  // TODO get a custom font working
+  // @font-face {
+  //   font-family: "MyWebFont";
+  //   src: url("../public/COMICATE.TTF") format("truetype");
+  // }
+  // font-family: "MyWebFont";
 }
 
 .links {

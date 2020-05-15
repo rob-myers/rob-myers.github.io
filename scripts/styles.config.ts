@@ -120,6 +120,21 @@ export default function({
           test: /node_modules.+\.css$/,
           use: defaultLoaders.npmCss
         },
+        {
+          test: /\.(woff|woff2|eot|ttf|otf)$/i,
+          use: [
+            {
+              loader: require.resolve('url-loader'),
+              options: {
+                limit: 8192,
+                fallback: require.resolve('file-loader'),
+                publicPath: `${''}/_next/static/chunks/fonts/`,
+                outputPath: `${isServer ? '../' : ''}static/chunks/fonts/`,
+                name: '[name]-[hash].[ext]'
+              }
+            }
+          ]
+        },
       ],
     }
   };

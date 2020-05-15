@@ -3,8 +3,9 @@ import webpackMerge from 'webpack-merge';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import configStyles from './styles.config';
 import configImage from './image.config';
-import configMonaco from './monaco.config';
 import { NextJsConfigCtxt, Phase, NextJsConfig } from './next.model';
+
+import configMonaco, { withMonaco } from './monaco.config';
 
 const production = process.env.NODE_ENV === 'production';
 console.log({ production });
@@ -14,7 +15,7 @@ export default (
   _nextCtxt: NextJsConfigCtxt
 ): NextJsConfig => {
 
-  return {
+  return withMonaco({
     webpack: (config, options) => {
       return webpackMerge(
         config,
@@ -85,5 +86,5 @@ export default (
         !options.isServer ? configMonaco(config) : {},
       );
     }
-  };
+  });
 };
