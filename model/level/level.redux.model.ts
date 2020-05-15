@@ -2,9 +2,6 @@ import { SyncAct } from '@model/redux.model';
 import { LevelWorkerAction, LevelWorkerState } from '@worker/level/reducer';
 import { LevelWorkerContext } from '@model/level/level.worker.model';
 
-/**
- * We create sync actions differently for operating system.
- */
 export function createLevelAct<
   T extends string,
   Act extends SyncAct<T, Act['pay']>
