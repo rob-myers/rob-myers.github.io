@@ -13,8 +13,8 @@ postcss.config.js
 image.config.js
 monaco.config.js
 
-monaco
-!scripts/monaco
+monaco/*/*
+monaco/*.js
 
 yarn-error.log
 

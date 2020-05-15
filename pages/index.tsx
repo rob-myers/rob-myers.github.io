@@ -1,11 +1,12 @@
 import { hot } from 'react-hot-loader/root';
-import Head from 'next/head';
-import withRedux from '@store/with-redux';
-import Link from 'next/link';
-import css from './index.scss';
 import { useEffect } from 'react';
-import { Thunk } from '@store/global.duck';
+import Head from 'next/head';
+import Link from 'next/link';
 import { useDispatch } from 'react-redux';
+
+import withRedux from '@store/with-redux';
+import { Thunk } from '@store/global.duck';
+import css from './index.scss';
 
 const Home: React.FC = () => {
   const dispatch = useDispatch();

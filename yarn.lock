@@ -1111,11 +1111,6 @@
     "@types/yargs" "^15.0.0"
     chalk "^3.0.0"
 
-"@microsoft/load-themed-styles@^1.10.46":
-  version "1.10.46"
-  resolved "https://registry.yarnpkg.com/@microsoft/load-themed-styles/-/load-themed-styles-1.10.46.tgz#c232b005aa6bad754de1f38b934ab0e7fc1d6f60"
-  integrity sha512-Zhu/rW6XwkQC9ZXt7IWxDpMAyYIyNsT5ZF0gMfFDXnZCKNPm9GZca8HV5AYB1X6gvPGiz8gV60I+o9+KSH+aTw==
-
 "@sheerun/mutationobserver-shim@^0.3.2":
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/@sheerun/mutationobserver-shim/-/mutationobserver-shim-0.3.2.tgz#8013f2af54a2b7d735f71560ff360d3a8176a87b"
@@ -7161,15 +7156,15 @@ mkdirp@0.5.1, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdirp@~0.5.1:
   dependencies:
     minimist "0.0.8"
 
-monaco-editor@0.19.0:
-  version "0.19.0"
-  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.19.0.tgz#c6e774210f3b292ff739e96f45a1cc78bf5ac2e7"
-  integrity sha512-ida++HI/s9V8ma8yYS9CAS0UJEFwW1gbt9G6oviEdv/aHhFd/kV3sXrINqC63TVdKzOZdKjPRRCOPJJ80zvLbw==
+monaco-editor@^0.20.0:
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/monaco-editor/-/monaco-editor-0.20.0.tgz#5d5009343a550124426cb4d965a4d27a348b4dea"
+  integrity sha512-hkvf4EtPJRMQlPC3UbMoRs0vTAFAYdzFQ+gpMb8A+9znae1c43q8Mab9iVsgTcg/4PNiLGGn3SlDIa8uvK1FIQ==
 
-monaco-typescript@3.6.1:
-  version "3.6.1"
-  resolved "https://registry.yarnpkg.com/monaco-typescript/-/monaco-typescript-3.6.1.tgz#69a545a45e2a6d036a50d78508792b856f9968d7"
-  integrity sha512-VXzS/s/YoQlolf7zRsM7PGVhY+HUTTHcLzFCx1QxuyOpoY1uFlUaMeTIV/AMYzMjSqHIiJ58kNiWjoP1YNsaAQ==
+monaco-typescript@^3.7.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/monaco-typescript/-/monaco-typescript-3.7.0.tgz#b201cb721406f27dc69449ec3551057b2856a5c2"
+  integrity sha512-xo+nHP7AOdFvHtMqg7hZquQziBuHsaG7hXGXiUuOHj9unJmIyi1uhGuvuQqIJWv+jHd19xGNWTF+KOdaXhksIw==
 
 morgan@^1.7.0:
   version "1.9.1"
