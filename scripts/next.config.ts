@@ -1,10 +1,10 @@
 import path from 'path';
-import webpack from 'webpack';
 import webpackMerge from 'webpack-merge';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-import nextConst from 'next/constants';
 import configStyles from './styles.config';
 import configImage from './image.config';
+import configMonaco from './monaco.config';
+import { NextJsConfigCtxt, Phase, NextJsConfig } from './next.model';
 
 const production = process.env.NODE_ENV === 'production';
 console.log({ production });
@@ -26,7 +26,6 @@ export default (
               '@store': path.resolve(__dirname, 'store'),
               '@model': path.resolve(__dirname, 'model'),
               '@worker': path.resolve(__dirname, 'worker'),
-              '@os-service': path.resolve(__dirname, 'model/os/service'),
             }
           },
         },
@@ -83,59 +82,8 @@ export default (
         } : {},
         configStyles(options),
         configImage(options),
+        !options.isServer ? configMonaco(config) : {},
       );
     }
   };
 };
-
-type Phase = (
-  | typeof nextConst.PHASE_DEVELOPMENT_SERVER
-  | typeof nextConst.PHASE_EXPORT
-  | typeof nextConst.PHASE_PRODUCTION_BUILD
-  | typeof nextConst.PHASE_PRODUCTION_SERVER
-)
-
-type NextJsConfig = Partial<{
-  env: string[];
-  webpack: (
-    config: webpack.Configuration,
-    opts: WebpackCtxt,
-  ) => webpack.Configuration;
-  webpackDevMiddleware: any;
-  /** e.g. '.next' */
-  distDir: string;
-  assetPrefix: string;
-  /** e.g. 'default' */
-  configOrigin: string;
-  /** e.g. true */
-  useFileSystemPublicRoutes: true;
-  generateBuildId: Function;
-  /** e.g. true */
-  generateEtags: boolean;
-  pageExtensions: any[];
-  /** e.g. 'server' */
-  target: string;
-  /** e.g. true */
-  poweredByHeader: boolean;
-  /** e.g. true */
-  compress: boolean;
-  devIndicators: Record<string, any>;
-  onDemandEntries: Record<string, any>;
-  amp: Record<string, any>;
-  /** e.g. false */
-  exportTrailingSlash: boolean;
-  experimental: Record<string, any>;
-  future: Record<string, any>;
-  serverRuntimeConfig: {};
-  publicRuntimeConfig: {};
-}>
-
-interface NextJsConfigCtxt {
-  defaultConfig: NextJsConfig;
-}
-
-export interface WebpackCtxt {
-  defaultLoaders: Record<string, webpack.RuleSetLoader[]>;
-  isServer: boolean;
-  dev: boolean;
-}

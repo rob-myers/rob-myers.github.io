@@ -6,7 +6,7 @@
 import webpack from 'webpack';
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 import OptimizeCssAssetsWebpackPlugin from 'optimize-css-assets-webpack-plugin';
-import { WebpackCtxt } from './next.config';
+import { WebpackCtxt } from './next.model';
 
 export default function({
   isServer,

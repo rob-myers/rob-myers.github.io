@@ -11,6 +11,10 @@ next.config.js
 styles.config.js
 postcss.config.js
 image.config.js
+monaco.config.js
+
+monaco
+!scripts/monaco
 
 yarn-error.log
 
