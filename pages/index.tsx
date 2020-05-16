@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader/root';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useDispatch } from 'react-redux';
@@ -8,11 +8,12 @@ import { Thunk } from '@store/global.duck';
 import css from './index.scss';
 
 import dynamic from 'next/dynamic';
-const MonacoEditor = dynamic(import('react-monaco-editor'), { ssr: false });
+// const MonacoEditor = dynamic(import('react-monaco-editor'), { ssr: false });
+const Editor = dynamic(import('@components/monaco-tsx/editor'), { ssr: false });
 
 const Home: React.FC = () => {
   const dispatch = useDispatch();
-  const [postBody, setPostBody] = useState('');
+  // const [postBody, setPostBody] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -25,7 +26,7 @@ const Home: React.FC = () => {
       <Head><title>rob-myers</title></Head>
       <h1>Robert S. R. Myers</h1>
 
-      <MonacoEditor
+      {/* <MonacoEditor
         editorWillMount={(monaco) => {
           monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
             target: monaco.languages.typescript.ScriptTarget.ES2016,
@@ -70,6 +71,14 @@ const Home: React.FC = () => {
           }
         }}
         onChange={setPostBody}
+      /> */}
+
+      <Editor
+        // width="800"
+        // height="600"
+        language="typescript"
+        theme="vs-dark"
+        // code='export const foo = ""'
       />
 
       <section className={css.links}>
