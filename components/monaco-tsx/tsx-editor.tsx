@@ -36,8 +36,7 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = (props: ITsxEditorPr
   // Set up type checking after globals are loaded
   const hasLoadedTypes = useTypes(supportedPackages, hasLoadedGlobals);
 
-  // Store the latest onChange in a ref to ensure that we get the latest values
-  // without forcing re-rendering
+  // Store latest onChange in ref, ensuring latest values without forced re-render
   const onChangeRef = React.useRef<IEditorProps['onChange']>();
   onChangeRef.current = (text: string) => {
     if (editorProps.onChange) {
@@ -117,7 +116,8 @@ function useCompilerOptions(compilerOptions: ICompilerOptions | undefined): void
 }
 
 function useTypes(supportedPackages: IPackageGroup[], isReady: boolean) {
-  const [hasLoadedTypes, setHasLoadedTypes] = React.useState<boolean>(false);
+  const [hasLoadedTypes, setHasLoadedTypes] = React.useState(false);
+
   React.useEffect(() => {
     if (!isReady) {
       return;
@@ -130,6 +130,7 @@ function useTypes(supportedPackages: IPackageGroup[], isReady: boolean) {
       setHasLoadedTypes(true);
     });
   }, [supportedPackages, isReady]);
+
   return hasLoadedTypes;
 }
 

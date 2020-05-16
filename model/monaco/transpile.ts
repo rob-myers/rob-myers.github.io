@@ -63,7 +63,7 @@ export function transpileAndEval(
   model: IMonacoTextModel,
   supportedPackages: IBasicPackageGroup[],
 ): Promise<ITransformedExample> {
-  const exampleTs = model.getValue();
+  const code = model.getValue();
   return transpile(model)
     .then(
       (transpileOutput: ITransformedCode): ITransformedExample => {
@@ -72,7 +72,7 @@ export function transpileAndEval(
           return transpileOutput;
         }
         const transformedExample = postTransform({
-          tsCode: exampleTs,
+          tsCode: code,
           jsCode: transpileOutput.output,
           returnFunction: true,
           supportedPackages,
