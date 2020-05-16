@@ -26,6 +26,18 @@ const Home: React.FC = () => {
       <h1>Robert S. R. Myers</h1>
 
       <MonacoEditor
+        editorWillMount={(monaco) => {
+          monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+            target: monaco.languages.typescript.ScriptTarget.ES2016,
+            allowNonTsExtensions: true,
+            moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+            module: monaco.languages.typescript.ModuleKind.CommonJS,
+            noEmit: true,
+            typeRoots: ['node_modules/@types'],
+            jsx: monaco.languages.typescript.JsxEmit.React,
+            jsxFactory: 'React.createElement',
+          });
+        }}
         editorDidMount={() => {
           // @ts-ignore
           window.MonacoEnvironment.getWorkerUrl = (
@@ -49,6 +61,7 @@ const Home: React.FC = () => {
         width="800"
         height="600"
         language="typescript"
+        // language="javascript"
         theme="vs-dark"
         value={postBody}
         options={{
