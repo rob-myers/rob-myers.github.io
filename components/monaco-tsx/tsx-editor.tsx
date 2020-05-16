@@ -18,9 +18,9 @@ const filename = filePrefix + 'main.tsx';
 
 /**
  * Wrapper for rendering a Monaco instance and also
- * ~~transpiling/eval-ing the React example code inside~~.
+ * transpiling/eval-ing the React example code inside.
  */
-export const TsxEditor: React.FunctionComponent<ITsxEditorProps> = (props: ITsxEditorProps) => {
+const TsxEditor: React.FunctionComponent<ITsxEditorProps> = (props: ITsxEditorProps) => {
   const { editorProps, onTransformFinished, compilerOptions, supportedPackages = SUPPORTED_PACKAGES } = props;
 
   const backupModelRef = React.useRef<IMonacoTextModel>();
@@ -191,3 +191,5 @@ function loadTypes(supportedPackages: IPackageGroup[]): Promise<void> {
     });
   });
 }
+
+export default TsxEditor;
