@@ -1,12 +1,12 @@
+// import * as React from 'react';
 import * as monaco from 'monaco-editor';
+import { getWindow } from '@model/dom.model';
+import { IMonacoTextModel, ITransformedCode, IBasicPackageGroup, ITransformedExample } from '@model/monaco';
 import { TypeScriptWorker, EmitOutput } from './monaco-typescript.d';
-// import { transformExample } from './exampleTransform';
 import { _getErrorMessages } from './transpile-helpers';
-import { IMonacoTextModel, ITransformedCode } from '@model/monaco';
+import { postTransform } from './post-transform';
 
-const win = (typeof window === 'undefined' ? undefined : window) as 
-  | (Window & { transpileLogging?: boolean })
-  | undefined;
+const win = getWindow<{ transpileLogging?: boolean }>();
 
 /**
  * Transpile the model's current code from TS to JS.
@@ -48,4 +48,55 @@ export function transpile(model: IMonacoTextModel): Promise<ITransformedCode> {
       transpiledOutput.error = ex.message;
       return transpiledOutput;
     });
+}
+
+/**
+ * Transpiles the code, does an additional transform to prepare for rendering, and evals the code.
+ *
+ * @param model - Current editor text model
+ * @param supportedPackages - Supported packages for imports, grouped by global name
+ * (React is implicitly supported)
+ * @returns Returns an object with the output string and component to render if successful,
+ * or error(s) if unsuccessful.
+ */
+export function transpileAndEval(
+  model: IMonacoTextModel,
+  supportedPackages: IBasicPackageGroup[],
+): Promise<ITransformedExample> {
+  const exampleTs = model.getValue();
+  return transpile(model)
+    .then(
+      (transpileOutput: ITransformedCode): ITransformedExample => {
+
+        if (transpileOutput.error) {
+          return transpileOutput;
+        }
+        const transformedExample = postTransform({
+          tsCode: exampleTs,
+          jsCode: transpileOutput.output,
+          returnFunction: true,
+          supportedPackages,
+        });
+
+        if (transformedExample.output) {
+          return {
+            ...transformedExample,
+            // Pass in the right React in case there's a different global one on the page...
+            /**
+             * TODO eval
+             */
+            // component: eval(transformedExample.output)(React),
+          };
+        } else {
+          return { error: transformedExample.error || 'Unknown error transforming example' };
+        }
+      },
+    )
+    .catch(
+      (err: string | Error): ITransformedExample => {
+        // Log the error to the console so people can see the full stack/etc if they want
+        console.error(err);
+        return { error: typeof err === 'string' ? err : err.message };
+      },
+    );
 }
