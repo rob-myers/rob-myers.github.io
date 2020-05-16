@@ -37,6 +37,9 @@ const Home: React.FC = () => {
         editorProps={{
           language:'typescript',
           theme: 'vs-dark',
+          editorOptions: {
+            //
+          },
         }}
         onTransformFinished={onTransformFinished}
         supportedPackages={[]}

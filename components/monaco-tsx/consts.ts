@@ -2,6 +2,6 @@
 export const CODE_FONT_FAMILY = 'Monaco, Menlo, Consolas, "Droid Sans Mono", "Inconsolata", "Courier New", monospace';
 
 /** Default editor width */
-export const DEFAULT_WIDTH = 'auto';
+export const DEFAULT_WIDTH = 800;
 /** Default editor height */
-export const DEFAULT_HEIGHT = 500;
+export const DEFAULT_HEIGHT = 400;
