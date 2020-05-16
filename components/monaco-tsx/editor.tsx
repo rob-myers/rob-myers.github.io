@@ -2,7 +2,7 @@ import * as monaco from 'monaco-editor';
 import * as React from 'react';
 import { IEditorProps } from './editor.model';
 import { CODE_FONT_FAMILY, DEFAULT_WIDTH, DEFAULT_HEIGHT } from './consts';
-import { IMonacoTextModel } from '@model/monaco/monaco.model';
+import { IMonacoTextModel } from '@model/monaco';
 
 /**
  * Language-agnostic wrapper for a Monaco editor instance.
