@@ -2,10 +2,11 @@ import path from 'path';
 import webpackMerge from 'webpack-merge';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import configStyles from './styles.config';
-import configImage from './image.config';
-import { NextJsConfigCtxt, Phase, NextJsConfig } from './next.model';
+import configOther from './other.config';
+import { NextJsConfigCtxt, Phase, NextJsConfig, WebpackCtxt } from './next.model';
 
 import configMonaco, { withMonaco } from './monaco.config';
+import webpack from 'webpack';
 
 const production = process.env.NODE_ENV === 'production';
 console.log({ production });
@@ -15,8 +16,8 @@ export default (
   _nextCtxt: NextJsConfigCtxt
 ): NextJsConfig => {
 
-  return withMonaco({
-    webpack: (config, options) => {
+  const nextJsConfig = {
+    webpack: (config: webpack.Configuration, options: WebpackCtxt) => {
       return webpackMerge(
         config,
         // Module aliases
@@ -82,9 +83,11 @@ export default (
           ]
         } : {},
         configStyles(options),
-        configImage(options),
+        configOther(options),
         !options.isServer ? configMonaco(config) : {},
       );
     }
-  });
+  };
+
+  return withMonaco(nextJsConfig);
 };

@@ -10,11 +10,8 @@ jest.config.js
 next.config.js
 styles.config.js
 postcss.config.js
-image.config.js
+other.config.js
 monaco.config.js
-
-monaco/*/*
-monaco/*.js
 
 yarn-error.log
 

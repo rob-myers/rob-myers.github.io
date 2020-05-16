@@ -3,7 +3,5 @@ babel.config.js
 jest.config.js
 styles.config.js
 postcss.config.js
-image.config.js
+other.config.js
 monaco.config.js
-
-monaco/**/*.js

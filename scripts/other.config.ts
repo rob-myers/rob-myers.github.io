@@ -3,6 +3,7 @@ import webpack from 'webpack';
 import { WebpackCtxt } from './next.model';
 
 export default function(_: WebpackCtxt): webpack.Configuration {
+
   return {
     module: {
       rules: [
@@ -12,7 +13,7 @@ export default function(_: WebpackCtxt): webpack.Configuration {
           options: {
             removingTagAttrs: ['viewBox'],
           }
-        }
+        },
       ],
     }
   };
