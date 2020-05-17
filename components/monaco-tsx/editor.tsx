@@ -66,6 +66,8 @@ const Editor: React.FC<IEditorProps> = (props: IEditorProps) => {
         currOnChange(model.getValue());
       }
     });
+    
+    theme && monaco.editor.setTheme(theme);
 
     return () => {
       clearTimeout(debounceTimeout);
@@ -73,12 +75,7 @@ const Editor: React.FC<IEditorProps> = (props: IEditorProps) => {
       editor.dispose();
       modelRef.current = undefined;
     };
-  }, [code, language, filename, modelRef, internalState, ariaLabel, editorOptions]);
-
-
-  React.useEffect(() => {
-    theme && monaco.editor.setTheme(theme);
-  }, [theme]);
+  }, [code, language, filename, modelRef, internalState, ariaLabel, editorOptions, theme]);
 
   return (
     <div

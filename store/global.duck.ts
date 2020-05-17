@@ -25,7 +25,7 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
-  ensureSetup: createThunk(
+  ensureGlobalSetup: createThunk(
     '[global] ensure level worker',
     async ({ dispatch, state: { global } }) => {
       if (typeof Worker === 'undefined') {

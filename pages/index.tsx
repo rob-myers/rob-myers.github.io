@@ -16,7 +16,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      await dispatch(Thunk.ensureSetup({}));
+      await dispatch(Thunk.ensureGlobalSetup({}));
     })();
   }, []);
 
@@ -38,7 +38,7 @@ const Home: React.FC = () => {
           language:'typescript',
           theme: 'vs-dark',
           editorOptions: {
-            //
+            // readOnly: true
           },
         }}
         onTransformFinished={onTransformFinished}
