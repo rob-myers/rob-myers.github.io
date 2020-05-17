@@ -9,6 +9,8 @@ Basically:
 > https://github.com/cancerberoSgx/jsx-alone/blob/master/jsx-explorer/HOWTO_JSX_MONACO.md
 
 
+## Can `react-refresh` run in the browser?
+
 ## Salvage bash implementation
 
 - can keep `xterm` + tty

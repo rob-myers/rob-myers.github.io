@@ -5,16 +5,16 @@ import { LanguageServiceDefaultsImpl as TypescriptDefaults } from '@model/monaco
 import { ITsxEditorProps } from './tsx-editor.model';
 import { transpileAndEval } from '@model/monaco/transpile';
 import { IMonacoTextModel, ICompilerOptions, IPackageGroup } from '@model/monaco';
-import Editor from './editor';
 import { SUPPORTED_PACKAGES } from '@model/monaco/supported-packages';
 import { IEditorProps } from './editor.model';
 import { getWindow } from '@model/dom.model';
+import Editor from './editor';
 
 const typescript = monaco.languages.typescript;
 const typescriptDefaults = typescript.typescriptDefaults as TypescriptDefaults;
 
 const filePrefix = 'file:///';
-const filename = filePrefix + 'main.tsx';
+const filename = `${filePrefix}main.tsx`;
 
 /**
  * Wrapper for rendering a Monaco instance and also
@@ -139,7 +139,7 @@ function useTypes(supportedPackages: IPackageGroup[], isReady: boolean) {
  */
 function loadTypes(supportedPackages: IPackageGroup[]): Promise<void> {
   const promises: Promise<void>[] = [];
-  const typesPrefix = filePrefix + 'node_modules/@types';
+  const typesPrefix = `${filePrefix}node_modules/@types`;
 
   // React types must be loaded first (don't use import() to avoid potential bundling issues)
   promises.push(
