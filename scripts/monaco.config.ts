@@ -11,14 +11,14 @@ export default function(
 ): webpack.Configuration {
 
   // Find the global CSS loader
-  const globalCssRule = module?.rules.find(rule => rule.oneOf)?.oneOf!.find(
+  const globalCssRule = module?.rules.find(rule => rule.oneOf)?.oneOf?.find(
     r => (r as Rule).issuer?.include?.includes('_app' as any)
   ) as Rule | undefined;
 
   if (globalCssRule) {
     globalCssRule.issuer.include = [
       globalCssRule.issuer.include,
-      // Allow `monaco-editor` to import global CSS:
+      // Allow monaco-editor to import global CSS
       /[\\/]node_modules[\\/]monaco-editor[\\/]/,
     ];
   }
