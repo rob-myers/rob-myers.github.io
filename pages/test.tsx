@@ -1,4 +1,3 @@
-import { hot } from 'react-hot-loader/root';
 // import { useState } from 'react';
 import Link from 'next/link';
 import withRedux from '@store/with-redux';
@@ -30,4 +29,4 @@ const Test: React.FC = () => {
   );
 };
 
-export default hot(withRedux(Test));
+export default withRedux(Test);

@@ -5,16 +5,13 @@ import configStyles from './styles.config';
 import configOther from './other.config';
 import { NextJsConfigCtxt, Phase, NextJsConfig, WebpackCtxt } from './next.model';
 
-import configMonaco, { withMonaco } from './monaco.config';
+import configMonaco from './monaco.config';
 import webpack from 'webpack';
 
 const production = process.env.NODE_ENV === 'production';
 console.log({ production });
 
-export default (
-  _phase: Phase,
-  _nextCtxt: NextJsConfigCtxt
-): NextJsConfig => {
+export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
 
   const nextJsConfig = {
     webpack: (config: webpack.Configuration, options: WebpackCtxt) => {
@@ -84,10 +81,11 @@ export default (
         } : {},
         configStyles(options),
         configOther(options),
+
         !options.isServer ? configMonaco(config) : {},
       );
     }
   };
 
-  return withMonaco(nextJsConfig);
+  return nextJsConfig;
 };

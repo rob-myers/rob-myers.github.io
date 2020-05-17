@@ -34,7 +34,6 @@ export default (api: Api): Config => {
       ],
     ],
     plugins: [
-      'react-hot-loader/babel',
       [
         'module-resolver',
         {

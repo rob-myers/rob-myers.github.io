@@ -1,13 +1,12 @@
-import { hot } from 'react-hot-loader/root';
-import { useEffect, useCallback } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import withRedux from '@store/with-redux';
 import { Thunk } from '@store/global.duck';
 import css from './index.scss';
 
-import dynamic from 'next/dynamic';
 // const Editor = dynamic(import('@components/monaco-tsx/editor'), { ssr: false });
 const TsxEditor = dynamic(import('@components/monaco-tsx/tsx-editor'), { ssr: false });
 
@@ -27,6 +26,7 @@ const Home: React.FC = () => {
   return (
     <section className={css.root}>
       <Head><title>rob-myers</title></Head>
+
       <h1>Robert S. R. Myers</h1>
 
       {/* <Editor
@@ -37,9 +37,7 @@ const Home: React.FC = () => {
         editorProps={{
           language:'typescript',
           theme: 'vs-dark',
-          editorOptions: {
-            // readOnly: true
-          },
+          editorOptions: {},
         }}
         onTransformFinished={onTransformFinished}
         supportedPackages={[]}
@@ -53,4 +51,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default hot(withRedux(Home));
+export default withRedux(Home);
