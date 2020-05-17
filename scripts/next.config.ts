@@ -54,6 +54,7 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
                       // inline: true, fallback: false,
                     }
                   },
+                  // TODO use defaultLoaders.babel ?
                   {
                     loader: 'babel-loader',
                     options: {

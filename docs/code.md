@@ -22,7 +22,6 @@ s1.src = URL.createObjectURL(blob1)
 document.body.appendChild(s1)
 
 blob2 = new Blob([
-  `console.log("hi");`,
   `import { foo } from '${s1.src}';`,
   `console.log({ foo })`,
 ], { type: 'text/javascript' })

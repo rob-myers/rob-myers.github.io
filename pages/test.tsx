@@ -14,14 +14,13 @@ const Test: React.FC = () => {
   return (
     <div className={css.root}>
       <h1>Welcome to the Test Page</h1>
-      <div>
+      <div style={{ marginBottom: 10 }}>
         <Link href="/about">
           <a>About</a>
         </Link>
       </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: 100 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: 200 }}>
         <div>{count}</div>
-        {/* <button onClick={() => setCount(count + 1)}>+1</button> */}
         <button onClick={() => dispatch(Act.testDecrement())}>-1</button>
         <button onClick={() => dispatch(Act.testIncrement())}>+1</button>
       </div>

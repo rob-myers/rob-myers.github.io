@@ -11,6 +11,15 @@ Basically:
 
 ## Can `react-refresh` run in the browser?
 
+Our runtime code could import from our own patched `react`:
+- our `useState` provides initial values from last version
+- our `useEffect` avoids unneeded iterations
+- our `useRef` remembers
+
+Perhaps can use intermediary 'manifest module' to avoid blob renaming problem.
+
+This is not a primary problem i.e. can revisit later.
+
 ## Salvage bash implementation
 
 - can keep `xterm` + tty
