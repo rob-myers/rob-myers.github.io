@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-import { gitalkOpts, GitalkOptions } from './gitalk-opts.model';
+import { GitalkOptions, getGitalkOpts } from './gitalk-opts.model';
 import { getWindow } from '@model/dom.model';
 
 const baseUrl = 'https://api.github.com';
@@ -19,10 +19,17 @@ function getAccessToken() {
 }
 
 function getRepoAppUserPass() {
+  const gitalkOpts = getGitalkOpts();
   return `${gitalkOpts.clientID}:${gitalkOpts.clientSecret}`;
 }
 
-interface GitHubComment {
+export interface GitHubUser {
+  avatarUrl: string;
+  login: string;
+  url: string;
+}
+
+export interface GitHubComment {
   id: number;
   gId: number;
   author: GitalkOptions['defaultAuthor'];
@@ -31,6 +38,7 @@ interface GitHubComment {
   body: any;
   bodyHTML: string;
   reactions: any[];
+  user: GitHubUser;
 }
 
 export interface GitHubIssue {
@@ -53,12 +61,7 @@ export interface GitHubMetaIssue {
   comments: number;
 }
 
-export interface GitHubUser {
-  login: string;
-  avatar_url: string;
-}
-
-function getMainQuery(
+function getCommentsQuery(
   opts: {
     owner: string;
     repo: string;
@@ -133,13 +136,13 @@ function getMainQuery(
 }
 
 
-export async function getComments (
+export async function getComments(
   issue: GitHubMetaIssue,
-  { cursor, comments }: { cursor?: string; comments: GitHubComment[] },
-  accessToken: string,
+  cursor?: string,
 ) {
+  const gitalkOpts = getGitalkOpts();
   const { owner, repo, perPage, pageDirection, defaultAuthor } = gitalkOpts;
-  const query = getMainQuery({
+  const query = getCommentsQuery({
     owner,
     repo,
     id: issue.number,
@@ -154,7 +157,7 @@ export async function getComments (
       body: JSON.stringify(query),
       headers: {
         ...fetchOptions?.headers,
-        Authorization: `bearer ${accessToken}`,
+        Authorization: `bearer ${getAccessToken()}`,
       },
     },
   );
@@ -171,8 +174,8 @@ export async function getComments (
       user: {
         avatarUrl: author.avatarUrl,
         login: author.login,
-        htmlUrl: author.url
-      },
+        url: author.url
+      } as GitHubUser,
       createdAt: node.createdAt,
       bodyHTML: node.bodyHTML,
       body: node.body,
@@ -182,9 +185,7 @@ export async function getComments (
   });
 
   return {
-    comments: pageDirection === 'last'
-      ? [...items, ...comments]
-      : [...comments, ...items],
+    comments: items,
     isLoadOver: pageInfo.hasPreviousPage === false || pageInfo.hasNextPage === false,
     cursor: pageInfo.startCursor || pageInfo.endCursor
   };
@@ -202,6 +203,7 @@ export async function getCommentsV3(
   if (!issue) {
     return;
   }
+  const gitalkOpts = getGitalkOpts();
   const response = await fetch(`${issue.comments_url}?${
     new URLSearchParams({
       page: `${page}`,
@@ -235,7 +237,7 @@ export async function getUserInfo () {
     }
   });
   return {
-    user: await response.json(),
+    user: await response.json() as GitHubUser,
   };
 }
 
@@ -243,7 +245,7 @@ export async function createIssue (
   {
     body,
     labels = [],
-    title = gitalkOpts.title,
+    title = getGitalkOpts().title,
     url = getWindow()?.location.href || '__URL__',
   }: Partial<{
     title: string;
@@ -252,7 +254,7 @@ export async function createIssue (
     url: string;
   }>,
 ) {
-  const { owner, repo, id } = gitalkOpts;
+  const { owner, repo, id } = getGitalkOpts();
   const response = await fetch(`${baseUrl}/repos/${owner}/${repo}/issues`, {
     ...fetchOptions,
     method: 'post',
@@ -275,6 +277,7 @@ export async function createIssue (
 export async function getIssueById (
   issueNumber: number,
 ) {
+  const gitalkOpts = getGitalkOpts();
   const getPath = `/repos/${gitalkOpts.owner}/${gitalkOpts.repo}/issues/${issueNumber}`;
 
   try {
@@ -308,6 +311,7 @@ export async function getIssueByLabels(
   user: null | GitHubUser,
   labels: string[],
 ) {
+  const gitalkOpts = getGitalkOpts();
   const getPath = `/repos/${gitalkOpts.owner}/${gitalkOpts.repo}/issues`;
 
   const response = await fetch(`${baseUrl}${getPath}?${new URLSearchParams({
@@ -384,11 +388,16 @@ export async function createComment(
   };
 }
 
-export function logout () {
+export function forgetAccessToken() {
   getWindow()?.localStorage.removeItem(GT_ACCESS_TOKEN);
 }
 
+export function storeAccessToken(accessToken: string) {
+  getWindow()?.localStorage.setItem(GT_ACCESS_TOKEN, accessToken);
+}
+
 export async function like(comment: GitHubComment) {
+  const gitalkOpts = getGitalkOpts();
   const response = await fetch(
     `${baseUrl}/repos/${gitalkOpts.owner}/${gitalkOpts.repo}/issues/comments/${comment.id}/reactions`,
     {
@@ -436,4 +445,19 @@ export  async function unlike(comment: GitHubComment) {
       body: JSON.stringify(getQL(comment.gId)),
     });
 
+}
+
+export function formatErrorMsg(err: any) {
+  let msg = 'Error: ';
+  if (err.response && err.response.data && err.response.data.message) {
+    msg += `${err.response.data.message}. `;
+    err.response.data.errors && (
+      msg += err.response.data.errors
+        .map((e: any) => e.message)
+        .join(', ')
+    );
+  } else {
+    msg += err.message;
+  }
+  return msg;
 }

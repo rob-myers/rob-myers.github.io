@@ -1,16 +1,11 @@
+/* eslint-disable @typescript-eslint/camelcase */
 import env from '@env/index';
+import { GitHubUser } from './gitalk.model';
 
-const defaultAuthor = {
+const defaultAuthor: GitHubUser = {
   avatarUrl: '//avatars1.githubusercontent.com/u/29697133?s=50',
   login: 'null',
   url: '',
-};
-
-const defaultFlipMoveOptions = {
-  staggerDelayBy: 150,
-  appearAnimation: 'accordionVertical',
-  enterAnimation: 'accordionVertical',
-  leaveAnimation: 'accordionVertical',
 };
 
 export interface GitalkRequiredOpts {
@@ -91,11 +86,6 @@ export interface GitalkOptions extends GitalkRequiredOpts {
    */
   oauthCorsProxy?: string;
   /**
-   *  Animation of the comment list.
-   *  Default is `defaultFlipMoveOptions`.
-   */  
-  flipMoveOptions?: typeof defaultFlipMoveOptions;
-  /**
    * Enable shortcut key (cmdctrl + enter) to submit comments.
    * Default `true`.
    */
@@ -103,7 +93,7 @@ export interface GitalkOptions extends GitalkRequiredOpts {
   /**
    * Default is `defaultAuthor`.
    */
-  defaultAuthor?: typeof defaultAuthor;
+  defaultAuthor?: GitHubUser;
 }
 
 function computeOpts(opts: GitalkOptions): Required<GitalkOptions> {
@@ -112,22 +102,25 @@ function computeOpts(opts: GitalkOptions): Required<GitalkOptions> {
     number: -1,
     labels: ['Gitalk'] ,
     title: document.title,
-    body: `${location.href} (issue)`,
+    body:  `${location.href} (issue)`,
     language: navigator.language,
     perPage: 10,
     distractionFreeMode: false,
     pageDirection: 'last',
     createIssueManually: false,
     oauthCorsProxy: 'https://cors-anywhere.herokuapp.com/https://github.com/login/oauth/access_token',
-    flipMoveOptions: defaultFlipMoveOptions,
     enableHotKey: true,
     defaultAuthor,
     ...opts,
   };
 }
 
-export const gitalkOpts = computeOpts({
-  ...env.gitalk,
-  id: 'test-page-id', // TODO
-  title: 'test-page-title' // TODO
-});
+let _gitalkOpts: Required<GitalkOptions>;
+
+export function getGitalkOpts() {
+  return _gitalkOpts || (_gitalkOpts = computeOpts({
+    ...env.gitalk,
+    id: 'test-page-id', // TODO
+    title: 'test-page-title' // TODO
+  }));
+}

@@ -1,7 +1,7 @@
 # Diffs
 
 _Premise_:
-- It can be hard to make web apps by yourself or in isolated groups.
+- It can be hard to make (web) apps by yourself or in isolated groups.
 - Let's make them together via GitHub comments.
 
 ### MVP Summary
@@ -16,3 +16,5 @@ _Premise_:
   export default Component;
   ```
 - Can edit code and send comment with diff. Can load diff from comment.
+
+Can also create CodePens e.g. as a backup.

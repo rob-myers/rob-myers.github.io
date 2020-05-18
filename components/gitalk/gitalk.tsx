@@ -1,11 +1,15 @@
-import { useState } from 'react';
-import {
-  // GT_ACCESS_TOKEN, GT_VERSION, GT_COMMENT,
-  GitHubUser,
-} from './gitalk.model';
+import { useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { Thunk } from '@store/gitalk.duck';
+import { getWindow } from '@model/dom.model';
 
 const Gitalk: React.FC = () => {
-  const [_user, _setUser] = useState<GitHubUser>();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const url = getWindow()?.location.href;
+    url && dispatch(Thunk.handleLogin({ url }));
+  }, []);
 
   return null;
 };

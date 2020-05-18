@@ -7,6 +7,7 @@ import { RedactInReduxDevTools } from '@model/redux.model';
 import { RootThunkParams, ThunkAct } from '@model/root.redux.model';
 import { State as TestState } from '@store/test.duck';
 import { State as GlobalState } from '@store/global.duck';
+import { State as GitalkState } from '@store/gitalk.duck';
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
@@ -38,6 +39,16 @@ const persistedReducer = persistReducer({
       }),
       (state, _key) => state,
       { whitelist: ['global'] }
+    ),
+    createTransform<GitalkState, GitalkState>(
+      (_, _key) => ({
+        user: null,
+        errorMsg: null,
+        status: 'initial',
+        issue: {},
+      }),
+      (state, _key) => state,
+      { whitelist: ['gitalk'] }
     ),
   ],
 }, rootReducer);
