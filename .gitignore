@@ -15,4 +15,6 @@ monaco.config.js
 
 yarn-error.log
 
+env/env.ts
+
 .DS_Store

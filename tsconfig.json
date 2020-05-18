@@ -31,6 +31,9 @@
       "@worker/*": [
         "worker/*"
       ],
+      "@env/*": [
+        "env/*"
+      ],
       "@rob-myers/monaco-editor/lib/*": ["./monaco/*"],
       "@rob-myers/monaco-editor": ["./monaco/monaco-bundle"]
     },
