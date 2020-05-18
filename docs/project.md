@@ -1,6 +1,8 @@
 # Diffs
 
-_Premise_: It can be hard to make web apps by yourself or in isolated groups. Let's make them together via GitHub comments.
+_Premise_:
+- It can be hard to make web apps by yourself or in isolated groups.
+- Let's make them together via GitHub comments.
 
 ### MVP Summary
 
