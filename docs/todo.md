@@ -1,4 +1,4 @@
-- [ ] Integrate our own version of `gitment`
+- [ ] Integrate our own version of `gitalk`
 - [ ] Mount transpiled react component (Dev)
 - [ ] Try `mdx`
 - [x] Upgrade next.js; get `react-refresh` working

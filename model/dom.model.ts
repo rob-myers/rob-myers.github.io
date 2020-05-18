@@ -23,8 +23,8 @@ export function getRelativePos(e: React.MouseEvent, forwardedTo?: Element): Vect
   const relPos = new Vector2(e.clientX - left, e.clientY - top);
   
   if (forwardedTo && (forwardedTo !== e.currentTarget)) {
-    // Adjust to receiver coords
-    relPos.add(e.currentTarget.getBoundingClientRect())
+    relPos // Adjust to receiver coords
+      .add(e.currentTarget.getBoundingClientRect())
       .sub(forwardedTo.getBoundingClientRect());
   }
   return relPos;
