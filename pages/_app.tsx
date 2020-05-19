@@ -1,47 +1,39 @@
-import App, { AppInitialProps } from 'next/app';
-import { Persistor, persistStore } from 'redux-persist';
-import { ReduxStore } from '@store/create-store';
-import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import withRedux from '@store/with-redux';
-import React from 'react';
 import { NextComponentType, NextPageContext } from 'next';
 import { Router } from 'next/dist/client/router';
 import Head from 'next/head';
+import { AppInitialProps } from 'next/app';
+import React, { useRef } from 'react';
+import { Provider } from 'react-redux';
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+import { ReduxStore } from '@store/create-store';
+import withRedux from '@store/with-redux';
 
-interface Props {
+type RootProps = AppInitialProps & {
+  Component: NextComponentType<NextPageContext, any, {}>;
+  router: Router;
   reduxStore: ReduxStore;
 }
 
-class MyApp extends App<Props> {
-  private persistor: Persistor;
+const RootApp: React.FC<RootProps> = ({
+  Component,
+  pageProps,
+  reduxStore,
+}) => {
+  const persistor = useRef(persistStore(reduxStore));
+  return (
+    <Provider store={reduxStore}>
+      <PersistGate
+        // loading={<Component {...pageProps} />}
+        persistor={persistor.current}
+      >
+        <Head>
+          <link rel="shortcut icon" href="/favicon.ico" />
+        </Head>
+        <Component {...pageProps} />
+      </PersistGate>
+    </Provider>
+  );
+};
 
-  constructor(
-    props: Props & AppInitialProps & {
-      Component: NextComponentType<NextPageContext, any, {}>;
-      router: Router;
-    }
-  ) {
-    super(props);
-    this.persistor = persistStore(props.reduxStore);
-  }
-
-  public render() {
-    const { Component, pageProps, reduxStore } = this.props;
-    return (
-      <Provider store={reduxStore}>
-        <PersistGate
-          // loading={<Component {...pageProps} />}
-          persistor={this.persistor}
-        >
-          <Head>
-            <link rel="shortcut icon" href="/favicon.ico" />
-          </Head>
-          <Component {...pageProps} />
-        </PersistGate>
-      </Provider>
-    );
-  }
-}
-
-export default withRedux(MyApp as any);
+export default withRedux(RootApp as any);
