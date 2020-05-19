@@ -1,12 +1,27 @@
 ## Improve Monaco JSX Syntax Highlighting
 
-Basically:
-- use a worker which parses JSX then applies decorations to each node i.e. use a css class derived from the name of the node.
-- the examples seem to be what we're looking for i.e. better colours for JSX component tags and their attribute names
-
+Some links:
 > https://blog.expo.io/building-a-code-editor-with-monaco-f84b3a06deaf
-
 > https://github.com/cancerberoSgx/jsx-alone/blob/master/jsx-explorer/HOWTO_JSX_MONACO.md
+
+Note that:
+- typescript tsx transpiler doesn't support comments inside jsx e.g. in:
+  ```tsx
+  <div>
+    // <span/>
+  </div>
+  ```
+  the `//` is viewed as literal text.
+- monaco editor syntax highlights as above i.e. it looks like a comment.
+- there are other issues, so we'll handle syntax highlighting ourselves
+
+The following approach looks best.
+
+- Syntax-highlighter for `tsx` which doesn't support comments inside jsx (what we want).
+  > https://prismjs.com/test.html#language=tsx
+- Example of using integrating prism with monaco editor.
+  > https://github.com/rekit/rekit-studio/blob/master/src/features/editor/workers/syntaxHighlighter.js
+  > https://github.com/rekit/rekit-studio/blob/master/src/features/editor/setupSyntaxWorker.js
 
 
 ## Can `react-refresh` run in the browser?
