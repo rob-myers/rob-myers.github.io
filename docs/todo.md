@@ -1,3 +1,4 @@
+- [ ] Implement TSX syntax-highlighting using prism in worker
 - [x] Rename global.duck as worker.duck and level.worker as syntax.worker
 - [ ] Understand why `react-refresh` is remounting index.tsx
 - [x] Start integrating our own version of `gitalk`
