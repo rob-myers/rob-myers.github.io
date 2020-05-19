@@ -1,6 +1,7 @@
 import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { BaseMessage, Message } from '@model/worker.model';
+import { Classification } from './highlight.model';
 
 /** A Worker instance in parent thread. */
 export interface SyntaxWorker extends Worker {
@@ -9,7 +10,6 @@ export interface SyntaxWorker extends Worker {
   addEventListener(type: 'message', object: EventListenerObject): void;
   removeEventListener(type: 'message', listener: (message: Message<MessageFromWorker>) => void): void;
   removeEventListener(type: 'message', object: EventListenerObject): void;
-
 }
 
 /** A web worker. */
@@ -26,14 +26,19 @@ interface WorkerReady extends BaseMessage {
 }
 interface SendHighlights extends BaseMessage {
   key: 'send-highlights';
+  classifications: Classification[];
 }
 
 interface RequestHighlights extends BaseMessage {
   key: 'request-highlights';
   code: string;
 }
+interface RequestStatus extends BaseMessage {
+  key: 'request-status';
+}
 
 type MessageFromParent = (
+  | RequestStatus
   | RequestHighlights
 );
 
