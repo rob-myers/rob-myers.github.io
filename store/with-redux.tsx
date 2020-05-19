@@ -1,39 +1,26 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { NextComponentType, NextPageContext } from 'next';
+import { getWindow } from '@model/dom.model';
 import { RootState } from './reducer';
 import { initializeStore, ReduxStore } from './create-store';
 
 const __NEXT_REDUX_STORE__ = '__NEXT_REDUX_STORE__';
 
-type Window = typeof window & { __NEXT_REDUX_STORE__: ReduxStore }
-
 const getOrInitializeStore = (initialState?: RootState) => {
-  if (typeof window === 'undefined') {
-    return initializeStore(initialState);
-  }
-  return (
-    (window as Window)[__NEXT_REDUX_STORE__]
-    || ((window as Window)[__NEXT_REDUX_STORE__] = initializeStore(initialState))
-  );
+  const win = getWindow<{ __NEXT_REDUX_STORE__: ReduxStore }>();
+  return win ? (
+    win[__NEXT_REDUX_STORE__]
+    || (win[__NEXT_REDUX_STORE__] = initializeStore(initialState))
+  ) : initializeStore(initialState);
 };
-
 
 type IProps = { initialReduxState: RootState }
 type Props = { pageProps?: any; reduxStore?: ReduxStore }
-// type AppContext = NextPageContext & { ctx: { reduxStore: ReduxStore }  }
 
 export default (App: NextComponentType<NextPageContext, IProps, Props>) => {
-  return class AppWithRedux extends React.Component<Props> {
-    private reduxStore: ReduxStore;
-
-    constructor(props: IProps & Props) {
-      super(props);
-      this.reduxStore = getOrInitializeStore(props.initialReduxState);
-    }
-
-    render() {
-      return <App {...this.props} reduxStore={this.reduxStore}  />;
-    }
+  // eslint-disable-next-line react/display-name
+  return (props: Props & IProps) => {
+    const reduxStore = useRef(getOrInitializeStore(props.initialReduxState));
+    return <App {...props} reduxStore={reduxStore.current}  />;
   };
 };
-

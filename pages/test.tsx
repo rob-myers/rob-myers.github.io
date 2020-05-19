@@ -1,6 +1,4 @@
-// import { useState } from 'react';
 import Link from 'next/link';
-import withRedux from '@store/with-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import { Act } from '@store/test.duck';
 
@@ -28,4 +26,4 @@ const Test: React.FC = () => {
   );
 };
 
-export default withRedux(Test);
+export default Test;
