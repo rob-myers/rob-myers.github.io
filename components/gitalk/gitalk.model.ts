@@ -153,7 +153,7 @@ export async function getComments(
   }
   if (!getAccessToken()) {
     return {
-      comments: await getCommentsV3(nextPage),
+      comments: await getCommentsV3(nextPage, issue),
       finished: false, // ?
       cursor, // Hasn't changed
       nextPage: nextPage + 1,
@@ -218,12 +218,8 @@ export async function getComments(
  */
 export async function getCommentsV3(
   page: number,
-  issueNumber?: number,
+  issue: GitHubMetaIssue,
 ) {
-  const { issue } = await getIssue(null, issueNumber);
-  if (!issue) {
-    return;
-  }
   const gitalkOpts = getGitalkOpts();
   const response = await fetch(`${issue.comments_url}?${
     new URLSearchParams({
