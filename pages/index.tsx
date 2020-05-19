@@ -4,8 +4,8 @@ import dynamic from 'next/dynamic';
 import { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Thunk } from '@store/global.duck';
-import Gitalk from '@components/gitalk/gitalk';
 import { SUPPORTED_PACKAGES } from '@model/monaco/supported-packages';
+import Gitalk from '@components/gitalk/gitalk';
 import { ITsxEditorProps } from '@components/monaco-tsx/tsx-editor.model';
 import css from './index.scss';
 
@@ -32,10 +32,11 @@ const Home: React.FC = () => {
     // NOOP
   }, []);
 
-  useEffect(() => {
-    console.log('mount root');
-    return () => console.log('unmount root');
-  }, []);
+  // // TODO react-refresh shouldn't remount?
+  // useEffect(() => {
+  //   console.log('mount root');
+  //   return () => console.log('unmount root');
+  // }, []);
 
   return (
     <section className={css.root}>
