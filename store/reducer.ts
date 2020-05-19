@@ -5,11 +5,11 @@ import {
   Action as TestAction,
 } from './test.duck';
 import {
-  reducer as globalReducer,
-  State as GlobalState, 
-  Action as GlobalAction,
-  Thunk as GlobalThunk,
-} from './global.duck';
+  reducer as workerReducer,
+  State as WorkerState, 
+  Action as WorkerAction,
+  Thunk as WorkerThunk,
+} from './worker.duck';
 import {
   reducer as gitalkReducer,
   State as GitalkState, 
@@ -19,24 +19,24 @@ import {
 
 export interface RootState {
   test: TestState;
-  global: GlobalState;
+  worker: WorkerState;
   gitalk: GitalkState;
 }
 
 export type RootAction = (
   | TestAction
-  | GlobalAction
+  | WorkerAction
   | GitalkAction
 );
 
 export type RootThunk = (
-  | GlobalThunk
+  | WorkerThunk
   | GitalkThunk
 );
 
 const rootReducer = combineReducers<RootState>({
   test: testReducer,
-  global: globalReducer,
+  worker: workerReducer,
   gitalk: gitalkReducer,
 });
 

@@ -26,7 +26,7 @@
     "node": ">=14.2.0"
   },
   "scripts": {
-    "dev": "yarn next-cfg && concurrently 'next -p 3001' 'yarn level-remotedev'",
+    "dev": "yarn next-cfg && concurrently 'next -p 3001' 'yarn syntax-remotedev'",
     "build": "yarn next-cfg && next build",
     "start": "yarn next-cfg && next start",
     "export": "next export",
@@ -35,7 +35,7 @@
     "gh-pages": "cd scripts && ts-node gh-pages.ts",
     "test": "jest --watch --verbose",
     "check-types": "tsc --noEmit",
-    "level-remotedev": "remotedev --hostname=localhost --port=3002 --wsEngine=ws",
+    "syntax-remotedev": "remotedev --hostname=localhost --port=3002 --wsEngine=ws",
     "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build"
   },
   "devDependencies": {

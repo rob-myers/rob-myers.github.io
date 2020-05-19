@@ -6,7 +6,7 @@ import rootReducer, { RootState, RootAction } from './reducer';
 import { RedactInReduxDevTools } from '@model/redux.model';
 import { RootThunkParams, ThunkAct } from '@model/root.redux.model';
 import { State as TestState } from '@store/test.duck';
-import { State as GlobalState } from '@store/global.duck';
+import { State as WorkerState } from '@store/worker.duck';
 import { State as GitalkState } from '@store/gitalk.duck';
 
 const thunkMiddleware = () =>
@@ -32,13 +32,12 @@ const persistedReducer = persistReducer({
       (state, _key) => state,
       { whitelist: ['test'] }
     ),
-    createTransform<GlobalState, GlobalState>(
+    createTransform<WorkerState, WorkerState>(
       (_, _key) => ({
-        levelStatus: 'initial',
-        levelWorker: null,
+        syntaxWorker: null,
       }),
       (state, _key) => state,
-      { whitelist: ['global'] }
+      { whitelist: ['worker'] }
     ),
     createTransform<GitalkState, GitalkState>(
       (_, _key) => ({

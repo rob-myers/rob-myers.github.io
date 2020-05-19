@@ -3,7 +3,7 @@ import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { Thunk } from '@store/global.duck';
+import { Thunk } from '@store/worker.duck';
 import { SUPPORTED_PACKAGES } from '@model/monaco/supported-packages';
 import Gitalk from '@components/gitalk/gitalk';
 import { ITsxEditorProps } from '@components/monaco-tsx/tsx-editor.model';
