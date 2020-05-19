@@ -61,11 +61,6 @@ export interface GitalkOptions extends GitalkRequiredOpts {
    */
   perPage?: number;
   /**
-   * Full-screen masking effect, similar to Facebook comment box.
-   * Default `false`.
-   */
-  distractionFreeMode?: boolean;
-  /**
    * Comment sorting method i.e. last/first created comment.
    * Default `last`.
    */
@@ -105,7 +100,6 @@ function computeOpts(opts: GitalkOptions): Required<GitalkOptions> {
     body:  `${location.href} (issue)`,
     language: navigator.language,
     perPage: 10,
-    distractionFreeMode: false,
     pageDirection: 'last',
     createIssueManually: false,
     oauthCorsProxy: 'https://cors-anywhere.herokuapp.com/https://github.com/login/oauth/access_token',

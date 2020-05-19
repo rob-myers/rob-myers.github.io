@@ -15,7 +15,7 @@ export const GT_VERSION = '0.0';
 export const GT_COMMENT = 'GT_COMMENT';
 
 function getAccessToken() {
-  return getWindow()?.localStorage.getItem(GT_ACCESS_TOKEN) || '__TOKEN_NOT_FOUND__';
+  return getWindow()?.localStorage.getItem(GT_ACCESS_TOKEN) || '';
 }
 
 function getRepoAppUserPass() {
@@ -138,8 +138,28 @@ function getCommentsQuery(
 
 export async function getComments(
   issue: GitHubMetaIssue,
-  cursor?: string,
+  { cursor, nextPage }: {
+    cursor?: string;
+    nextPage: number;
+  },
 ) {
+  if (!issue) {
+    return {
+      comments: [],
+      finished: false,
+      cursor: '',
+      nextPage,
+    };
+  }
+  if (!getAccessToken()) {
+    return {
+      comments: await getCommentsV3(nextPage),
+      finished: false, // ?
+      cursor, // Hasn't changed
+      nextPage: nextPage + 1,
+    };
+  }
+
   const gitalkOpts = getGitalkOpts();
   const { owner, repo, perPage, pageDirection, defaultAuthor } = gitalkOpts;
   const query = getCommentsQuery({
@@ -186,8 +206,9 @@ export async function getComments(
 
   return {
     comments: items,
-    isLoadOver: pageInfo.hasPreviousPage === false || pageInfo.hasNextPage === false,
-    cursor: pageInfo.startCursor || pageInfo.endCursor
+    finished: pageInfo.hasPreviousPage === false || pageInfo.hasNextPage === false,
+    cursor: pageInfo.startCursor || pageInfo.endCursor,
+    nextPage, // Hasn't changed
   };
 }
 
@@ -228,6 +249,10 @@ export async function getCommentsV3(
  * TODO logout on throw error.
  */
 export async function getUserInfo () {
+  if (!getAccessToken()) {
+    return null;
+  }
+
   const response = await fetch(`${baseUrl}/user`, {
     ...fetchOptions,
     method: 'get',
@@ -236,9 +261,12 @@ export async function getUserInfo () {
       Authorization: `token ${getAccessToken()}`,
     }
   });
-  return {
-    user: await response.json() as GitHubUser,
-  };
+
+  if (response.status === 200) {
+    return await response.json() as GitHubUser;
+  }
+  forgetAccessToken();
+  return null;
 }
 
 export async function createIssue (
@@ -313,11 +341,12 @@ export async function getIssueByLabels(
 ) {
   const gitalkOpts = getGitalkOpts();
   const getPath = `/repos/${gitalkOpts.owner}/${gitalkOpts.repo}/issues`;
-
-  const response = await fetch(`${baseUrl}${getPath}?${new URLSearchParams({
+  const getUrl = `${baseUrl}${getPath}?${new URLSearchParams({
     labels: [...labels, gitalkOpts.id].join(','),
     t: Date.now().toString(),
-  })}`, {
+  })}`;
+
+  const response = await fetch(getUrl, {
     ...fetchOptions,
     method: 'get',
     headers: {

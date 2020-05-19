@@ -38,10 +38,10 @@ export const Thunk = {
   initialFetch: createThunk(
     '[gitalk] initial fetch',
     async ({ dispatch }, _) => {
-      const { user } = await getUserInfo();
+      const user = await getUserInfo();
       const { issue } = await getIssue(user);
       if (issue) {
-        await getComments(issue);
+        await getComments(issue, { nextPage: 1 });
       }
       dispatch(Act.updateGitalk({ status: 'ready', user }));
       if (issue) {
@@ -55,48 +55,37 @@ export const Thunk = {
       const urlInstance = new URL(url);
       const code = urlInstance.searchParams.get('code');
 
-      if (code) {
-        urlInstance.searchParams.delete('code');
-        history.replaceState(null, 'Logged in via GitHub', `${urlInstance}`);
-  
-        const gitalkOpts = getGitalkOpts();
-        const response = await fetch(gitalkOpts.oauthCorsProxy, {
-          method: 'post',
-          body: JSON.stringify({
-            code,
-            client_id: gitalkOpts.clientID,
-            client_secret: gitalkOpts.clientSecret,
-          }),
-        });
-  
-        try {
+      try {
+        if (code) {
+          urlInstance.searchParams.delete('code');
+          history.replaceState(null, 'Logged in via GitHub', `${urlInstance}`);
+    
+          const gitalkOpts = getGitalkOpts();
+          const response = await fetch(gitalkOpts.oauthCorsProxy, {
+            method: 'post',
+            body: JSON.stringify({
+              code,
+              client_id: gitalkOpts.clientID,
+              client_secret: gitalkOpts.clientSecret,
+            }),
+          });
+    
           const { access_token } = await response.json() as { access_token: string };
           if (access_token) {
             storeAccessToken(access_token);
             dispatch(Thunk.initialFetch({}));
-          } else {// No access token
-            dispatch(Act.updateGitalk({
-              status: 'failed',
-              errorMsg: formatErrorMsg(new Error('no access token'))
-            }));
+          } else {
+            throw new Error('no access token');
           }
-        } catch (err) {
-          console.log('err:', err);
-          dispatch(Act.updateGitalk({
-            status: 'failed',
-            errorMsg: formatErrorMsg(err),
-          }));
-        }
-      } else {
-        try {
+        } else {
           dispatch(Thunk.initialFetch({}));
-        } catch (e) {
-          console.log('err:', e);
-          dispatch(Act.updateGitalk({
-            status: 'failed',
-            errorMsg: formatErrorMsg(e),
-          }));
         }
+      } catch (e) {
+        console.log('err:', e);
+        dispatch(Act.updateGitalk({
+          status: 'failed',
+          errorMsg: formatErrorMsg(e),
+        }));
       }
     }
   ),
