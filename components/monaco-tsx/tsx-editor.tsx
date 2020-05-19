@@ -20,9 +20,12 @@ const filename = `${filePrefix}main.tsx`;
  * Wrapper for rendering a Monaco instance and also
  * transpiling/eval-ing the React example code inside.
  */
-const TsxEditor: React.FunctionComponent<ITsxEditorProps> = (props: ITsxEditorProps) => {
-  const { editorProps, onTransformFinished, compilerOptions, supportedPackages = SUPPORTED_PACKAGES } = props;
-
+const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
+  editorProps,
+  onTransformFinished,
+  compilerOptions,
+  supportedPackages = SUPPORTED_PACKAGES,
+}) => {
   const backupModelRef = React.useRef<IMonacoTextModel>();
   const modelRef = editorProps.modelRef || backupModelRef;
 
@@ -65,7 +68,7 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = (props: ITsxEditorPr
 };
 
 function useGlobals(supportedPackages: IPackageGroup[]): boolean {
-  const [hasLoadedGlobals, setHasLoadedGlobals] = React.useState<boolean>(false);
+  const [hasLoadedGlobals, setHasLoadedGlobals] = React.useState(false);
   React.useEffect(() => {
     setHasLoadedGlobals(false);
     const win = getWindow<{ [key: string]: any }>();
