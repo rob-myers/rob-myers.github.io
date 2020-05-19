@@ -33,9 +33,7 @@
       ],
       "@env/*": [
         "env/*"
-      ],
-      "@rob-myers/monaco-editor/lib/*": ["./monaco/*"],
-      "@rob-myers/monaco-editor": ["./monaco/monaco-bundle"]
+      ]
     },
     "downlevelIteration": true
   },
