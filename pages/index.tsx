@@ -7,6 +7,7 @@ import { Thunk } from '@store/global.duck';
 import { SUPPORTED_PACKAGES } from '@model/monaco/supported-packages';
 import Gitalk from '@components/gitalk/gitalk';
 import { ITsxEditorProps } from '@components/monaco-tsx/tsx-editor.model';
+import { exampleTsx1 } from '@model/code/examples';
 import css from './index.scss';
 
 const TsxEditor = dynamic(import('@components/monaco-tsx/tsx-editor'), { ssr: false });
@@ -15,6 +16,7 @@ const editorProps: ITsxEditorProps['editorProps'] = {
   language:'typescript',
   theme: 'vs-dark',
   editorOptions: {},
+  code: exampleTsx1,
   // modelRef
 };
 
