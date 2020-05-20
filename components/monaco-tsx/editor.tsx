@@ -70,8 +70,6 @@ const Editor: React.FC<IEditorProps> = (props) => {
 
     return () => {
       clearTimeout(debounceTimeout);
-      model.dispose();
-      editor.dispose();
       dispatch(Thunk.clearMonaco({}));
     };
   // }, [code, language, filename, modelRef, internalState, editorOptions, theme]);

@@ -41,8 +41,10 @@ export type Action = ActionsUnion<typeof Act>;
 export const Thunk = {
   clearMonaco: createThunk(
     '[worker] clear monaco',
-    ({ dispatch, state }) => {
-      if (state.worker.monacoEditor) {
+    ({ dispatch, state: { worker: { monacoEditor } } }) => {
+      if (monacoEditor) {
+        monacoEditor.getModel()?.dispose();
+        monacoEditor.dispose();
         dispatch(Act.update({ monacoEditor: null }));
       }
     },

@@ -25,7 +25,6 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     (async () => {
-      // TODO rename 'global' reducer as 'worker' and simplify
       await dispatch(Thunk.ensureSyntaxWorker({}));
     })();
   }, []);
