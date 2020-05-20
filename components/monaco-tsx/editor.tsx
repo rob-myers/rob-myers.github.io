@@ -8,6 +8,7 @@ import { Thunk } from '@store/worker.duck';
 import { redact } from '@model/redux.model';
 
 import { LanguageServiceDefaultsImpl as TypescriptDefaults } from '@model/monaco/monaco-typescript.d';
+import { accessibilityHelpUrl } from '@model/monaco/supported-packages';
 // Must not be in main bundle (so, not in worker.duck)
 const typescript = monaco.languages.typescript;
 const typescriptDefaults = typescript.typescriptDefaults as TypescriptDefaults;
@@ -24,7 +25,7 @@ const Editor: React.FC<IEditorProps> = (props) => {
     language,
     filename,
     onChange,
-    debounceTime = 1000,
+    debounceMs = 1000,
     editorOptions,
     theme,
   } = props;
@@ -36,7 +37,7 @@ const Editor: React.FC<IEditorProps> = (props) => {
     const uri = filename ? monaco.Uri.parse(filename) : undefined;
     const editor = monaco.editor.create(divRef.current!, {
       fontFamily: CODE_FONT_FAMILY,
-      accessibilityHelpUrl: 'https://github.com/Microsoft/monaco-editor/wiki/Monaco-Editor-Accessibility-Guide',
+      accessibilityHelpUrl,
       ...editorOptions,
       model: monaco.editor.createModel(code, language, uri),
     });
@@ -46,7 +47,7 @@ const Editor: React.FC<IEditorProps> = (props) => {
       typescriptDefaults,
       typescript,
     }));
-    
+
     if (theme) {
       monaco.editor.setTheme(theme);
     }
@@ -57,13 +58,12 @@ const Editor: React.FC<IEditorProps> = (props) => {
   const editor = useSelector(({ worker }: RootState) => worker.monacoEditor);
 
   React.useEffect(() => {
-    let debounceId: any;
-    editor?.onDidChangeModelContent(() => {
-      const model = editor.getModel()!;
-      debounceId && clearTimeout(debounceId);
-      (debounceId = setTimeout(() => onChange(model.getValue()), debounceTime));
+    let id: number;
+    onChange && editor?.onDidChangeModelContent(() => {
+      clearTimeout(id);
+      id = window.setTimeout(() => onChange(editor.getModel()!.getValue()), debounceMs);
     });
-    return () => void clearTimeout(debounceId);
+    return () => void clearTimeout(id);
   }, [editor]);
 
   return (

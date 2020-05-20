@@ -1,4 +1,5 @@
 declare function importScripts(...urls: string[]): void;
+self.Prism = { disableWorkerMessageHandler: true } as any;
 importScripts('/prism.1-20-0.tsx.tomorrow-night.js');
 
 import { persistStore } from 'redux-persist';
