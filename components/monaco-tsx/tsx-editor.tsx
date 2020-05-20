@@ -25,15 +25,16 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
     transpileAndEval(model!, supportedPackages).then(onTransformFinished);
   } , [model]);
 
-  React.useEffect(() => {// Wait for globals and types before 1st transpile
+  React.useEffect(() => {
+    // Wait for globals and types before 1st transpile
     typesLoaded && model && onChange(model.getValue());
-  }, [onChange, typesLoaded, model]);
+  }, [typesLoaded, model]);
 
   return (
     <Editor
       {...editorProps}
-      filename={filename} // Don't track changes until types have loaded
-      onChange={typesLoaded ? onChange : undefined}
+      filename={filename}
+      onChange={onChange}
     />
   );
 };

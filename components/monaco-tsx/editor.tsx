@@ -2,7 +2,8 @@ import * as monaco from 'monaco-editor';
 import * as React from 'react';
 import { IEditorProps } from './editor.model';
 import { CODE_FONT_FAMILY, DEFAULT_WIDTH, DEFAULT_HEIGHT } from './consts';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@store/reducer';
 import { Thunk } from '@store/worker.duck';
 import { redact } from '@model/redux.model';
 
@@ -12,7 +13,7 @@ const typescript = monaco.languages.typescript;
 const typescriptDefaults = typescript.typescriptDefaults as TypescriptDefaults;
 
 /**
- * Language-agnostic wrapper for a Monaco editor instance.
+ * Wrapper for a Monaco editor instance.
  */
 const Editor: React.FC<IEditorProps> = (props) => {
   const {
@@ -33,12 +34,11 @@ const Editor: React.FC<IEditorProps> = (props) => {
 
   React.useEffect(() => {
     const uri = filename ? monaco.Uri.parse(filename) : undefined;
-    const model = monaco.editor.createModel(code, language, uri);
     const editor = monaco.editor.create(divRef.current!, {
       fontFamily: CODE_FONT_FAMILY,
       accessibilityHelpUrl: 'https://github.com/Microsoft/monaco-editor/wiki/Monaco-Editor-Accessibility-Guide',
       ...editorOptions,
-      model,
+      model: monaco.editor.createModel(code, language, uri),
     });
 
     dispatch(Thunk.ensureMonaco({
@@ -46,21 +46,25 @@ const Editor: React.FC<IEditorProps> = (props) => {
       typescriptDefaults,
       typescript,
     }));
+    
+    if (theme) {
+      monaco.editor.setTheme(theme);
+    }
 
+    return () => void dispatch(Thunk.clearMonaco({}));
+  }, [language, filename, theme]);
+
+  const editor = useSelector(({ worker }: RootState) => worker.monacoEditor);
+
+  React.useEffect(() => {
     let debounceId: any;
-    editor.onDidChangeModelContent(() => {
+    editor?.onDidChangeModelContent(() => {
+      const model = editor.getModel()!;
       debounceId && clearTimeout(debounceId);
-      onChange && (debounceId = setTimeout(() => onChange(model.getValue()), debounceTime));
+      (debounceId = setTimeout(() => onChange(model.getValue()), debounceTime));
     });
-
-    theme && monaco.editor.setTheme(theme);
-
-    return () => {
-      clearTimeout(debounceId);
-      dispatch(Thunk.clearMonaco({}));
-    };
-  // }, [code, language, filename, editorOptions, theme]);
-  }, []);
+    return () => void clearTimeout(debounceId);
+  }, [editor]);
 
   return (
     <div
