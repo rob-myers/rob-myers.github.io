@@ -1,11 +1,10 @@
 import * as React from 'react';
+import { useSelector } from 'react-redux';
 import { ITsxEditorProps } from './tsx-editor.model';
 import { transpileAndEval } from '@model/monaco/transpile';
 import { SUPPORTED_PACKAGES } from '@model/monaco/supported-packages';
-import { IEditorProps } from './editor.model';
-import Editor from './editor';
-import { useSelector } from 'react-redux';
 import { RootState } from '@store/reducer';
+import Editor from './editor';
 
 const filename = 'file:///main.tsx';
 
@@ -21,26 +20,20 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   const model = useSelector(({ worker }: RootState) => worker.monacoEditor?.getModel());
   const typesLoaded = useSelector(({ worker }: RootState) => worker.monacoTypesLoaded);
 
-  // Store latest onChange in ref, ensuring latest values without forced re-render
-  const onChangeRef = React.useRef<IEditorProps['onChange']>();
-  onChangeRef.current = (text: string) => {
+  const onChange = React.useCallback((text: string) => {
     editorProps.onChange && editorProps.onChange(text);
     transpileAndEval(model!, supportedPackages).then(onTransformFinished);
-  };
+  } , [model]);
 
-  // After type checking and globals are set up, call onChange to transpile
-  React.useEffect(() => {
-    if (typesLoaded && model) {
-      onChangeRef.current!(model.getValue());
-    }
-  }, [onChangeRef, typesLoaded, model]);
+  React.useEffect(() => {// Wait for globals and types before 1st transpile
+    typesLoaded && model && onChange(model.getValue());
+  }, [onChange, typesLoaded, model]);
 
   return (
     <Editor
       {...editorProps}
-      filename={filename}
-      // Don't track changes until types have loaded
-      onChange={typesLoaded ? onChangeRef.current : undefined}
+      filename={filename} // Don't track changes until types have loaded
+      onChange={typesLoaded ? onChange : undefined}
     />
   );
 };
