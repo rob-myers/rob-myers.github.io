@@ -28,10 +28,10 @@ const _dispatch = store.dispatch as SyntaxDispatchOverload;
 ctxt.addEventListener('message', ({ data }) => {
 
   switch (data.key) {
+    /**
+     * Source https://github.com/rekit/rekit-studio/blob/master/src/features/editor/workers/syntaxHighlighter.js
+     */
     case 'request-highlights': {
-      /**
-       * Source https://github.com/rekit/rekit-studio/blob/master/src/features/editor/workers/syntaxHighlighter.js
-       */
       try {
         const tokens = Prism.tokenize(data.code, Prism.languages.jsx);
         Prism.hooks.run('after-tokenize', {

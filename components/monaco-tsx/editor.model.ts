@@ -64,12 +64,5 @@ export interface IEditorProps {
    */
   debounceTime?: number;
 
-  /**
-   * Used to access the editor model.
-   * Cleared when editor component is disposed to avoid memory leaks.
-   * WARNING: Changing this will re-create the editor.
-   */
-  modelRef?: React.MutableRefObject<IMonacoTextModel | undefined>;
-
   theme?: string;
 }

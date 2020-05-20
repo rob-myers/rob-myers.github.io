@@ -2,12 +2,19 @@ import * as monaco from 'monaco-editor';
 import * as React from 'react';
 import { IEditorProps } from './editor.model';
 import { CODE_FONT_FAMILY, DEFAULT_WIDTH, DEFAULT_HEIGHT } from './consts';
-import { IMonacoTextModel } from '@model/monaco';
+import { useDispatch } from 'react-redux';
+import { Thunk } from '@store/worker.duck';
+import { redact } from '@model/redux.model';
+
+import { LanguageServiceDefaultsImpl as TypescriptDefaults } from '@model/monaco/monaco-typescript.d';
+// Mustn't be in main bundle (so, not in worker.duck)
+const typescript = monaco.languages.typescript;
+const typescriptDefaults = typescript.typescriptDefaults as TypescriptDefaults;
 
 /**
  * Language-agnostic wrapper for a Monaco editor instance.
  */
-const Editor: React.FC<IEditorProps> = (props: IEditorProps) => {
+const Editor: React.FC<IEditorProps> = (props) => {
   const {
     width = DEFAULT_WIDTH,
     height = DEFAULT_HEIGHT,
@@ -17,53 +24,45 @@ const Editor: React.FC<IEditorProps> = (props: IEditorProps) => {
     filename,
     onChange,
     debounceTime = 1000,
-    ariaLabel,
     editorOptions,
     theme,
   } = props;
-
-  const backupModelRef = React.useRef<IMonacoTextModel>();
-  const modelRef = props.modelRef || backupModelRef;
 
   // Can change onChange, debounceTime without editor restart
   const internalState = React.useRef<Pick<IEditorProps, 'onChange' | 'debounceTime'>>();
   internalState.current = { onChange, debounceTime };
 
   const divRef = React.useRef<HTMLDivElement>(null);
+  const dispatch = useDispatch();
 
   React.useEffect(() => {
-    const model = (modelRef.current = monaco.editor.createModel(
+    const model = monaco.editor.createModel(
       code,
       language,
       filename ? monaco.Uri.parse(filename) : undefined,
-    ));
+    );
     const editor = monaco.editor.create(divRef.current!, {
-      minimap: { enabled: false },
       fontFamily: CODE_FONT_FAMILY,
-      ariaLabel,
       accessibilityHelpUrl: 'https://github.com/Microsoft/monaco-editor/wiki/Monaco-Editor-Accessibility-Guide',
-      // add editorOptions default value here (NOT in main destructuring) to avoid re-calling the effect
-      ...(editorOptions || {}),
+      // add editorOptions default value here to avoid re-calling the effect
+      ...editorOptions,
       model,
     });
 
-    // Handle changes (debounced)
+    dispatch(Thunk.ensureMonaco({
+      editor: redact(editor),
+      typescriptDefaults,
+      typescript,
+    }));
+
     let debounceTimeout: any;
     editor.onDidChangeModelContent(() => {
-      // Destructure these locally to get the latest values
       const { debounceTime: currDebounceTime, onChange: currOnChange } = internalState.current!;
-      if (!currOnChange) {
-        return;
-      }
-
-      if (debounceTimeout) {
-        clearTimeout(debounceTimeout);
-      }
-
-      if (currDebounceTime) {
-        debounceTimeout = setTimeout(() => currOnChange(model.getValue()), currDebounceTime);
-      } else {
-        currOnChange(model.getValue());
+      if (currOnChange) {
+        debounceTimeout && clearTimeout(debounceTimeout);
+        if (currDebounceTime) {
+          debounceTimeout = setTimeout(() => currOnChange(model.getValue()), currDebounceTime);
+        } else currOnChange(model.getValue());
       }
     });
     
@@ -73,9 +72,10 @@ const Editor: React.FC<IEditorProps> = (props: IEditorProps) => {
       clearTimeout(debounceTimeout);
       model.dispose();
       editor.dispose();
-      modelRef.current = undefined;
+      dispatch(Thunk.clearMonaco({}));
     };
-  }, [code, language, filename, modelRef, internalState, ariaLabel, editorOptions, theme]);
+  // }, [code, language, filename, modelRef, internalState, editorOptions, theme]);
+  }, []);
 
   return (
     <div
