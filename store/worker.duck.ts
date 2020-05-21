@@ -6,7 +6,7 @@ import { createAct, ActionsUnion, Redacted, redact } from '@model/redux.model';
 import { createThunk } from '@model/root.redux.model';
 import { SyntaxWorker, awaitWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
-import { IPackageGroup, TypescriptDeps, TsDefaults } from '@model/monaco';
+import { IPackageGroup, TypescriptDeps, TsDefaults, SUPPORTED_PACKAGES } from '@model/monaco';
 import { loadTypes } from '@model/monaco/load-types';
 
 type Editor = monaco.editor.IStandaloneCodeEditor;
@@ -24,7 +24,7 @@ const initialState: State = {
   monacoEditor: null,
   monacoGlobalsLoaded: false,
   monacoTypesLoaded: false,
-  monacoSupportedPkgs: [],
+  monacoSupportedPkgs: SUPPORTED_PACKAGES,
 };
 
 export const Act = {
@@ -64,27 +64,27 @@ export const Thunk = {
       }
     },
   ),
+  /**
+   * NOTE supported packages currently empty. Examples at:
+   * https://github.com/microsoft/fluentui/blob/master/packages/tsx-editor/src/utilities/defaultSupportedPackages.ts
+   */
   ensureMonacoGlobals: createThunk(
     '[worker] ensure monaco globals',
     async ({ state: { worker }, dispatch }) => {
-      const win = getWindow();
-      if (win) {
-        !win.React && (win.React = React);
-        !win.ReactDOM && (win.ReactDOM = ReactDOM);
-        /**
-         * NOTE supported packages currently empty. Examples at:
-         * https://github.com/microsoft/fluentui/blob/master/packages/tsx-editor/src/utilities/defaultSupportedPackages.ts
-         */
+      const self = getWindow();
+      if (self) {
+        !self.React && (self.React = React);
+        !self.ReactDOM && (self.ReactDOM = ReactDOM);
         await Promise.all(
           worker.monacoSupportedPkgs.map(group => {
-            if (!win[group.globalName]) {
+            if (!self[group.globalName]) {
               return new Promise<any>(resolve => {
                 // handle either promise or callback function
                 const globalResult = group.loadGlobal(resolve);
                 if (globalResult && (globalResult as PromiseLike<any>).then) {
                   globalResult.then(resolve);
                 }
-              }).then((globalModule: any) => (win[group.globalName] = globalModule));
+              }).then((globalModule: any) => (self[group.globalName] = globalModule));
             }
           }),
         );

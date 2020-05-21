@@ -8,7 +8,7 @@ import { Thunk } from '@store/worker.duck';
 import { redact } from '@model/redux.model';
 
 import { LanguageServiceDefaultsImpl as TypescriptDefaults } from '@model/monaco/monaco-typescript.d';
-import { accessibilityHelpUrl } from '@model/monaco/supported-packages';
+import { accessibilityHelpUrl } from '@model/monaco';
 // Must not be in main bundle (so, not in worker.duck)
 const typescript = monaco.languages.typescript;
 const typescriptDefaults = typescript.typescriptDefaults as TypescriptDefaults;

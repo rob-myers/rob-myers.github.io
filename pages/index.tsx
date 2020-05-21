@@ -4,10 +4,10 @@ import dynamic from 'next/dynamic';
 import { useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Thunk } from '@store/worker.duck';
-import { SUPPORTED_PACKAGES } from '@model/monaco/supported-packages';
+import { SUPPORTED_PACKAGES } from '@model/monaco';
+import { exampleTsx1 } from '@model/code/examples';
 import Gitalk from '@components/gitalk/gitalk';
 import { ITsxEditorProps } from '@components/monaco-tsx/tsx-editor.model';
-import { exampleTsx1 } from '@model/code/examples';
 import css from './index.scss';
 
 const TsxEditor = dynamic(import('@components/monaco-tsx/tsx-editor'), { ssr: false });

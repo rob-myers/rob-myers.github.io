@@ -13,3 +13,11 @@ export interface TsDefaults {
 export interface TypescriptDeps extends TsDefaults {
   typescript: typeof monaco['languages']['typescript'];
 }
+
+/**
+ * TODO understand packages/tsx-editor/src/utilities/defaultSupportedPackages.ts
+ */
+import { IPackageGroup } from './packages.model';
+export const SUPPORTED_PACKAGES = [] as IPackageGroup[];
+
+export const accessibilityHelpUrl = 'https://github.com/Microsoft/monaco-editor/wiki/Monaco-Editor-Accessibility-Guide';

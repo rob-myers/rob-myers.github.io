@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { ITsxEditorProps } from './tsx-editor.model';
 import { transpileAndEval } from '@model/monaco/transpile';
-import { SUPPORTED_PACKAGES } from '@model/monaco/supported-packages';
+import { SUPPORTED_PACKAGES } from '@model/monaco';
 import { RootState } from '@store/reducer';
 import Editor from './editor';
 
