@@ -1,43 +1,29 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
-import { useEffect, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import { Thunk } from '@store/worker.duck';
+import { useCallback, useRef } from 'react';
 import { SUPPORTED_PACKAGES } from '@model/monaco';
 import { exampleTsx1 } from '@model/code/examples';
 import Gitalk from '@components/gitalk/gitalk';
-import { ITsxEditorProps } from '@components/monaco-tsx/tsx-editor.model';
+import { IEditorProps } from '@components/monaco-tsx/editor.model';
 import css from './index.scss';
 
 const TsxEditor = dynamic(import('@components/monaco-tsx/tsx-editor'), { ssr: false });
 
-const editorProps: ITsxEditorProps['editorProps'] = {
+const baseEditorProps: IEditorProps = {
   language:'typescript',
   theme: 'vs-dark',
   editorOptions: {},
   code: exampleTsx1,
-  // modelRef
+  filename: 'file:///main.tsx',
 };
 
 const Home: React.FC = () => {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    (async () => {
-      await dispatch(Thunk.ensureSyntaxWorker({}));
-    })();
-  }, []);
-
-  const onTransformFinished = useCallback(() => {
-    // NOOP
-  }, []);
-
-  // // TODO react-refresh shouldn't remount?
-  // useEffect(() => {
-  //   console.log('mount root');
-  //   return () => console.log('unmount root');
-  // }, []);
+  const onTransformFinished = useCallback(() => { /** */ }, []);
+  const editorProps = useRef<IEditorProps>({
+    ...baseEditorProps,
+    modelKey: 'demo-1',
+  });
 
   return (
     <section className={css.root}>
@@ -51,7 +37,16 @@ const Home: React.FC = () => {
       </section>
 
       <TsxEditor
-        editorProps={editorProps}
+        editorKey="editor-1"
+        modelKey="demo-1"
+        editorProps={editorProps.current}
+        onTransformFinished={onTransformFinished}
+        supportedPackages={SUPPORTED_PACKAGES}
+      />
+      <TsxEditor
+        editorKey="editor-2"
+        modelKey="demo-2"
+        editorProps={baseEditorProps}
         onTransformFinished={onTransformFinished}
         supportedPackages={SUPPORTED_PACKAGES}
       />

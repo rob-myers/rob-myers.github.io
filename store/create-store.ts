@@ -35,10 +35,11 @@ const persistedReducer = persistReducer({
     createTransform<WorkerState, WorkerState>(
       (_, _key) => ({
         syntaxWorker: null,
-        monacoEditor: null,
         monacoGlobalsLoaded: false,
         monacoTypesLoaded: false,
         monacoSupportedPkgs: [],
+        monacoEditor: {},
+        monacoModel: {},
       }),
       (state, _key) => state,
       { whitelist: ['worker'] }

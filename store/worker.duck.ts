@@ -2,36 +2,61 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as monaco from 'monaco-editor';
 import { getWindow } from '@model/dom.model';
-import { createAct, ActionsUnion, Redacted, redact } from '@model/redux.model';
+import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup } from '@model/redux.model';
 import { createThunk } from '@model/root.redux.model';
 import { SyntaxWorker, awaitWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
-import { IPackageGroup, TypescriptDeps, TsDefaults, SUPPORTED_PACKAGES } from '@model/monaco';
+import { IPackageGroup, TypescriptDeps, TsDefaults, SUPPORTED_PACKAGES, IMonacoTextModel } from '@model/monaco';
 import { loadTypes } from '@model/monaco/load-types';
+import { KeyedLookup, testNever } from '@model/generic.model';
 
 type Editor = monaco.editor.IStandaloneCodeEditor;
 
+interface MonacoEditorInstance {
+  key: string;
+  editor: Redacted<Editor>;
+}
+
+interface MonacoModelInstance {
+  key: string;
+  editorKey: string | null;
+  model: Redacted<IMonacoTextModel>;
+  filename: string;
+}
+
 export interface State {
   syntaxWorker: null | Redacted<SyntaxWorker>;
-  monacoEditor: null | Redacted<Editor>;
   monacoGlobalsLoaded: boolean;
   monacoTypesLoaded: boolean;
   monacoSupportedPkgs: IPackageGroup[];
+  monacoEditor: KeyedLookup<MonacoEditorInstance>;
+  monacoModel: KeyedLookup<MonacoModelInstance>;
 }
 
 const initialState: State = {
   syntaxWorker: null,
-  monacoEditor: null,
   monacoGlobalsLoaded: false,
   monacoTypesLoaded: false,
   monacoSupportedPkgs: SUPPORTED_PACKAGES,
+  monacoEditor: {},
+  monacoModel: {},
 };
 
 export const Act = {
   storeSyntaxWorker: ({ worker }: { worker: Redacted<SyntaxWorker> }) =>
     createAct('[worker] store syntax', { worker }),
-  storeMonacoEditor: ({ editor }: { editor: Redacted<Editor> }) =>
-    createAct('[worker] store monaco', { editor }),
+  storeMonacoEditor: ({ editorKey, editor }: {
+    editorKey: string;
+    editor: Redacted<Editor>;
+  }) =>
+    createAct('[worker] store monaco editor', { editorKey, editor }),
+  storeMonacoModel: ({ editorKey, model, modelKey, filename }: {
+    editorKey: null | string;
+    modelKey: string;
+    model: Redacted<IMonacoTextModel>;
+    filename: string;
+  }) =>
+    createAct('[worker] store monaco model', { editorKey, model, modelKey, filename }),
   update: (updates: Partial<State>) =>
     createAct('[worker] update', { updates }),
 };
@@ -39,28 +64,69 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
-  clearMonaco: createThunk(
-    '[worker] clear monaco',
-    ({ dispatch, state: { worker: { monacoEditor } } }) => {
-      if (monacoEditor) {
-        monacoEditor.getModel()?.dispose();
-        monacoEditor.dispose();
-        dispatch(Act.update({ monacoEditor: null }));
-      }
+  removeMonacoEditor: createThunk(
+    '[worker] remove monaco editor',
+    ({ dispatch, state: { worker: { monacoEditor, monacoModel } }}, { editorKey }: { editorKey: string }) => {
+      monacoEditor[editorKey]?.editor.dispose();
+      dispatch(Act.update({
+        monacoEditor: removeFromLookup(editorKey, monacoEditor),
+        monacoModel: Object.entries(monacoModel).reduce((agg, [key, value]) => ({
+          ...agg,
+          [key]: { ...value, ...(value.editorKey === editorKey && { editorKey: null }) },
+        }), {} as State['monacoModel']),
+      }));
     },
   ),
-  ensureMonaco: createThunk(
-    '[worker] ensure monaco',
-    async ({ dispatch, state }, {
+  removeMonacoModel: createThunk(
+    '[worker] remove monaco model',
+    ({
+      dispatch,
+      state: { worker: { monacoModel } }
+    }, { modelKey }: { modelKey: string }) => {
+      monacoModel[modelKey]?.model.dispose();
+      dispatch(Act.update({ monacoModel: removeFromLookup(modelKey, monacoModel) }));
+    },
+  ),
+  createMonacoEditor: createThunk(
+    '[worker] create monaco editor',
+    async ({ dispatch, state: { worker } }, {
       editor,
+      editorKey,
       typescript,
       typescriptDefaults,
-    }: TypescriptDeps & { editor: Redacted<Editor> }) => {
-      if (!state.worker.monacoEditor) {
+      model,
+      modelKey,
+      filename,
+    }: TypescriptDeps & {
+      editor: Redacted<Editor>;
+      editorKey: string;
+      modelKey: string;
+      model: Redacted<IMonacoTextModel>;
+      filename: string;
+    }) => {
+      if (!worker.monacoTypesLoaded) {
         dispatch(Thunk.setMonacoCompilerOptions({ typescript, typescriptDefaults }));
-        await dispatch(Act.storeMonacoEditor({ editor }));
+      }
+      dispatch(Act.storeMonacoEditor({ editor, editorKey }));
+      dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
+      if (!worker.monacoTypesLoaded) {
         await dispatch(Thunk.ensureMonacoGlobals({}));
         await dispatch(Thunk.ensureMonacoTypes({ typescriptDefaults }));
+      }
+      await dispatch(Thunk.ensureSyntaxWorker({}));
+    },
+  ),
+  useMonacoModel: createThunk(
+    '[worker] use monaco model',
+    ({ dispatch, state: { worker: { monacoEditor } } }, { editorKey, model, modelKey, filename }: {
+      editorKey: string;
+      modelKey: string;
+      model: Redacted<IMonacoTextModel>;
+      filename: string;
+    }) => {
+      if (monacoEditor[editorKey]) {
+        dispatch(Act.storeMonacoModel({ editorKey, modelKey, model: redact(model), filename }));
+        monacoEditor[editorKey].editor.setModel(model);
       }
     },
   ),
@@ -111,9 +177,7 @@ export const Thunk = {
         const syntaxWorker = redact(new SyntaxWorkerClass);
         dispatch(Act.storeSyntaxWorker({ worker: syntaxWorker }));
         await awaitWorker('worker-ready', syntaxWorker);
-      } else {
-        worker.syntaxWorker.postMessage({ key: 'request-status' });
-        await awaitWorker('worker-ready', worker.syntaxWorker);
+        await dispatch(Thunk.setupSyntaxWorker({}));
       }
     },
   ),
@@ -140,28 +204,43 @@ export const Thunk = {
       });
     },
   ),
+  /**
+   * Source https://github.com/rekit/rekit-studio/blob/master/src/features/editor/setupSyntaxWorker.js
+   */
   setupSyntaxWorker: createThunk(
     '[worker] setup syntax',
-    async ({ dispatch }) => {
-      await dispatch(Thunk.ensureSyntaxWorker({}));
-      // ....
+    async (_) => {
+      /**
+       * TODO
+       */
     },
   ),
 };
 
 export type Thunk = ActionsUnion<typeof Thunk>;
 
-export const reducer = (state = initialState, action: Action): State => {
-  switch (action.type) {
+export const reducer = (state = initialState, act: Action): State => {
+  switch (act.type) {
     case '[worker] store syntax': return { ...state,
-      syntaxWorker: action.pay.worker,
+      syntaxWorker: act.pay.worker,
     };
-    case '[worker] store monaco': return { ...state,
-      monacoEditor: action.pay.editor,
+    case '[worker] store monaco editor': return { ...state,
+      monacoEditor: addToLookup({
+        key: act.pay.editorKey,
+        editor: act.pay.editor,
+      }, state.monacoEditor),
+    };
+    case '[worker] store monaco model': return { ...state,
+      monacoModel: addToLookup({
+        key: act.pay.modelKey,
+        model: act.pay.model,
+        editorKey: act.pay.editorKey,
+        filename: act.pay.filename,
+      }, state.monacoModel),
     };
     case '[worker] update': return { ...state,
-      ...action.pay.updates,
+      ...act.pay.updates,
     };
-    default: return state;
+    default: return state || testNever(act);
   }
 };

@@ -2,6 +2,8 @@ import { IEditorProps } from './editor.model';
 import { ICompilerOptions, IPackageGroup, ITransformedExample } from '@model/monaco';
 
 export interface ITsxEditorProps {
+  editorKey: string;
+  modelKey: string;
   /**
    * Props to pass through to the editor, such as the code and editor size.
    * WARNING: Changing some of these props will re-create the editor. See IEditorProps docs for details.

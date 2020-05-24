@@ -6,18 +6,18 @@ import { SUPPORTED_PACKAGES } from '@model/monaco';
 import { RootState } from '@store/reducer';
 import Editor from './editor';
 
-const filename = 'file:///main.tsx';
-
 /**
  * Wrapper for rendering a Monaco instance and also
  * transpiling/eval-ing the React example code inside.
  */
 const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
+  editorKey,
+  modelKey,
   editorProps,
   onTransformFinished,
   supportedPackages = SUPPORTED_PACKAGES,
 }) => {
-  const model = useSelector(({ worker }: RootState) => worker.monacoEditor?.getModel());
+  const model = useSelector(({ worker }: RootState) => worker.monacoEditor[editorKey]?.editor.getModel());
   const typesLoaded = useSelector(({ worker }: RootState) => worker.monacoTypesLoaded);
 
   const onChange = React.useCallback((text: string) => {
@@ -33,7 +33,10 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   return (
     <Editor
       {...editorProps}
-      filename={filename}
+      editorKey={editorKey}
+      modelKey={modelKey}
+      filename={`file:///${modelKey}.main.tsx`}
+      // filename={'file://main.tsx'}
       onChange={onChange}
     />
   );

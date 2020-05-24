@@ -1,5 +1,6 @@
 import * as monaco from 'monaco-editor';
 import * as React from 'react';
+import shortid from 'shortid';
 import { IEditorProps } from './editor.model';
 import { CODE_FONT_FAMILY, DEFAULT_WIDTH, DEFAULT_HEIGHT } from './consts';
 import { useDispatch, useSelector } from 'react-redux';
@@ -28,43 +29,67 @@ const Editor: React.FC<IEditorProps> = (props) => {
     debounceMs = 1000,
     editorOptions,
     theme,
+    editorKey = 'editor-model',
+    modelKey = 'default-model',
   } = props;
 
+  const editorUid = React.useRef(`${editorKey}-${shortid.generate()}`);
   const divRef = React.useRef<HTMLDivElement>(null);
+  const monacoEditor = useSelector(({ worker }: RootState) => worker.monacoEditor[editorKey]);
+  const monacoModel = useSelector(({ worker }: RootState) => worker.monacoModel[modelKey]);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    const uri = filename ? monaco.Uri.parse(filename) : undefined;
-    const editor = monaco.editor.create(divRef.current!, {
-      fontFamily: CODE_FONT_FAMILY,
-      accessibilityHelpUrl,
-      ...editorOptions,
-      model: monaco.editor.createModel(code, language, uri),
-    });
+    const uri = monaco.Uri.parse(filename);
 
-    dispatch(Thunk.ensureMonaco({
-      editor: redact(editor),
-      typescriptDefaults,
-      typescript,
-    }));
+    if (!monacoEditor) {
+      const model = monacoModel?.model || monaco.editor.createModel(code, language, uri);
+      const editor = monaco.editor.create(divRef.current!, {
+        fontFamily: CODE_FONT_FAMILY,
+        accessibilityHelpUrl,
+        ...editorOptions,
+        model,
+      });
+      dispatch(Thunk.createMonacoEditor({
+        typescriptDefaults,
+        typescript,
+        editorKey: editorUid.current,
+        editor: redact(editor),
+        modelKey,
+        model: redact(model),
+        filename,
+      }));
+    } else if (!monacoModel) {
+      const model = monaco.editor.createModel(code, language, uri);
+      dispatch(Thunk.useMonacoModel({
+        editorKey: editorUid.current,
+        modelKey,
+        model: redact(model),
+        filename,
+      }));
+    }
 
     if (theme) {
       monaco.editor.setTheme(theme);
     }
 
-    return () => void dispatch(Thunk.clearMonaco({}));
-  }, [language, filename, theme]);
+    return () => {
+      dispatch(Thunk.removeMonacoEditor({ editorKey: editorUid.current, }));
+    };
+  }, [theme]);
 
-  const editor = useSelector(({ worker }: RootState) => worker.monacoEditor);
-
+  /**
+   * Handle updates e.g. transpile.
+   */
   React.useEffect(() => {
-    let id: number;
+    const editor = monacoEditor?.editor;
+    let debounceId: number;
     onChange && editor?.onDidChangeModelContent(() => {
-      clearTimeout(id);
-      id = window.setTimeout(() => onChange(editor.getModel()!.getValue()), debounceMs);
+      clearTimeout(debounceId);
+      debounceId = window.setTimeout(() => onChange(editor.getModel()!.getValue()), debounceMs);
     });
-    return () => void clearTimeout(id);
-  }, [editor]);
+    return () => void clearTimeout(debounceId);
+  }, [monacoEditor]);
 
   return (
     <div

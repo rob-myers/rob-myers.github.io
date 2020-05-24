@@ -2,6 +2,14 @@ import { IMonacoEditorOptions } from '@model/monaco/monaco.model';
 
 export interface IEditorProps {
   /**
+   * Defaults to `default-editor`.
+   */
+  editorKey?: string;
+  /**
+   * Defaults to `default-model`.
+   */
+  modelKey?: string;
+  /**
    * Editor height.
    * Changing this prop should not re-create the editor, but won't update layout.
    */
@@ -33,10 +41,10 @@ export interface IEditorProps {
   language?: string;
 
   /** 
-   * Name for the fake file.
+   * Name for the fake file e.g. `file:///main.tsx`.
    * WARNING: Changing this will re-create the editor.
    */
-  filename?: string;
+  filename: string;
 
   /**
    * Label for the editor for screen reader users.
