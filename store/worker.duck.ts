@@ -6,9 +6,10 @@ import { KeyedLookup, testNever } from '@model/generic.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup } from '@model/store/redux.model';
 import { createThunk } from '@model/store/root.redux.model';
 import { IPackageGroup, TypescriptDeps, TsDefaults, SUPPORTED_PACKAGES, IMonacoTextModel, loadTypes } from '@model/monaco';
-import { SyntaxWorker, awaitWorker } from '@worker/syntax/worker.model';
+import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
+import { Message } from '@model/worker.model';
 
 type Editor = monaco.editor.IStandaloneCodeEditor;
 
@@ -16,6 +17,7 @@ interface MonacoEditorInstance {
   key: string;
   editor: Redacted<Editor>;
   lastDecorations: string[];
+  unregisterSyntax: () => void;
 }
 interface MonacoModelInstance {
   key: string;
@@ -73,10 +75,11 @@ export const Thunk = {
     '[worker] remove monaco editor',
     ({ dispatch, state: { worker: { monacoEditor, monacoModel } }}, { editorKey }: { editorKey: string }) => {
       monacoEditor[editorKey]?.editor.dispose();
+      monacoEditor[editorKey]?.unregisterSyntax();
+
       dispatch(Act.update({
         monacoEditor: removeFromLookup(editorKey, monacoEditor),
-        monacoModel: Object.entries(monacoModel).reduce((agg, [key, value]) => ({
-          ...agg,
+        monacoModel: Object.entries(monacoModel).reduce((agg, [key, value]) => ({ ...agg,
           [key]: { ...value, ...(value.editorKey === editorKey && { editorKey: null }) },
         }), {} as State['monacoModel']),
       }));
@@ -84,9 +87,7 @@ export const Thunk = {
   ),
   removeMonacoModel: createThunk(
     '[worker] remove monaco model',
-    ({
-      dispatch,
-      state: { worker: { monacoModel } }
+    ({ dispatch, state: { worker: { monacoModel } }
     }, { modelKey }: { modelKey: string }) => {
       monacoModel[modelKey]?.model.dispose();
       dispatch(Act.update({ monacoModel: removeFromLookup(modelKey, monacoModel) }));
@@ -183,8 +184,8 @@ export const Thunk = {
         const syntaxWorker = redact(new SyntaxWorkerClass);
         dispatch(Act.storeSyntaxWorker({ worker: syntaxWorker }));
         await awaitWorker('worker-ready', syntaxWorker);
-        await dispatch(Thunk.setupSyntaxWorker({ editorKey }));
       }
+      await dispatch(Thunk.setupSyntaxWorker({ editorKey }));
     },
   ),
   setMonacoCompilerOptions: createThunk(
@@ -215,22 +216,22 @@ export const Thunk = {
   setupSyntaxWorker: createThunk(
     '[worker] setup syntax',
     async ({ state: { worker }, dispatch }, { editorKey }: { editorKey: string }) => {
-      worker.syntaxWorker!.addEventListener('message', ({ data }) => {
-        switch (data.key) {
-          case 'send-highlights': {
-            if (data.editorKey !== editorKey) return;
-            requestAnimationFrame(() => {
-              dispatch(Thunk.updateEditorDecorations({ editorKey, classifications: data.classifications }));
-            });
-            break;
-          }
+      const eventListener = ({ data }: Message<MessageFromWorker>) => {
+        if (data.key === 'send-highlights' && data.editorKey === editorKey) {
+          requestAnimationFrame(() =>
+            dispatch(Thunk.updateEditorDecorations({ editorKey, classifications: data.classifications })));
         }
-      });
+      };
+      worker.syntaxWorker!.addEventListener('message', eventListener);
       const syntaxHighlight = () => dispatch(Thunk.syntaxHighlight({ editorKey }));
       const { editor } = worker.monacoEditor[editorKey];
       editor.onDidChangeModelContent(syntaxHighlight);
       editor.onDidChangeModel(syntaxHighlight);
       requestAnimationFrame(syntaxHighlight); // For first time load
+
+      dispatch(Act.updateEditor(editorKey, {
+        unregisterSyntax: () => worker.syntaxWorker!.removeEventListener('message', eventListener),
+      }));
     },
   ),
   /**
@@ -289,6 +290,7 @@ export const reducer = (state = initialState, act: Action): State => {
         key: act.pay.editorKey,
         editor: act.pay.editor,
         lastDecorations: [],
+        unregisterSyntax: () => null,
       }, state.monacoEditor),
     };
     case '[worker] store monaco model': return { ...state,

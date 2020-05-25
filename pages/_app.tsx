@@ -9,6 +9,8 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ReduxStore } from '@store/create-store';
 import withRedux from '@store/with-redux';
 
+import '@public/monaco-syntax.css';
+
 type RootProps = AppInitialProps & {
   Component: NextComponentType<NextPageContext, any, {}>;
   router: Router;

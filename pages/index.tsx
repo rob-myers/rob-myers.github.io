@@ -16,6 +16,7 @@ const baseEditorProps: IEditorProps = {
   editorOptions: {},
   code: exampleTsx1,
   filename: 'file:///main.tsx',
+  className: 'monaco-tsx-editor'
 };
 
 const Home: React.FC = () => {

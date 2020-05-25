@@ -44,7 +44,7 @@ type MessageFromParent = (
   | RequestHighlights
 );
 
-type MessageFromWorker = (
+export type MessageFromWorker = (
   | WorkerReady
   | SendHighlights
 );

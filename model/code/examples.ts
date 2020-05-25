@@ -11,5 +11,13 @@ const App: React.FC = () => {
   );
 }
 
+export const Component: React.FC = () => {
+    return (
+        <div>
+            // foo
+        </div>
+    );
+};
+
 export default App;
 `.trim();
