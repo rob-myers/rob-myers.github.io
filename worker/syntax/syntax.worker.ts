@@ -34,18 +34,21 @@ ctxt.addEventListener('message', ({ data }) => {
      */
     case 'request-highlights': {
       try {
-        const tokens = Prism.tokenize(data.code, Prism.languages.jsx);
+        const tokens = Prism.tokenize(data.code, Prism.languages.tsx);
+        // See PR https://github.com/PrismJS/prism/pull/1357/files
         Prism.hooks.run('after-tokenize', {
           code: data.code,
-          grammar: Prism.languages.tsx, // jsx?
-          language: 'tsx', // jsx?
+          grammar: Prism.languages.tsx,
+          language: 'tsx',
           tokens,
         });
+        // console.log({ tokens });
     
         let pos = 0;
         const lines = data.code.split('\n').map(line => line.length);
-        
-        const classifications = flattenTokens(tokens).map(token => {
+        const classifications = [] as Classification[];
+
+        flattenTokens(tokens).forEach(token => {
           if (typeof token === 'string') {
             if (token === 'console') {
               token = {
@@ -72,16 +75,17 @@ ctxt.addEventListener('message', ({ data }) => {
             kind = 'arrow-operator';
           }
 
-          pos += token.length;
-          return {
+          classifications.push({
             start: pos + 1 - startOffset,
             end: pos + 1 + token.length - endOffset,
             kind,
             startLine,
             endLine,
-          };
-        }).filter(Boolean) as Classification[];
+          });
+          pos += token.length;
+        });
     
+        // console.log({ workerClassifications: classifications });
         ctxt.postMessage({
           key: 'send-highlights',
           classifications, 

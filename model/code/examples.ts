@@ -1,6 +1,20 @@
 export const exampleTsx1 = `
 import * as React from 'react';
 
+export const App: React.FC = () => {
+    return (
+        <div>
+            // foo
+        </div>
+    );
+};
+
+export default App;
+`.trim();
+
+export const exampleTsx2 = `
+import * as React from 'react';
+
 const App: React.FC = () => {
   return (
     <div className="App">

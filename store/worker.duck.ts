@@ -234,9 +234,6 @@ export const Thunk = {
       }));
     },
   ),
-  /**
-   * TODO only highlight when syntax correct?
-   */
   syntaxHighlight: createThunk(
     '[worker] syntax highlight',
     ({ state: { worker } }, { editorKey }: { editorKey: string }) => {
