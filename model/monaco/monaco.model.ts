@@ -9,6 +9,7 @@ import { LanguageServiceDefaultsImpl as TypescriptDefaults } from './monaco-type
 
 export interface TsDefaults {
   typescriptDefaults: TypescriptDefaults;
+  javascriptDefaults: TypescriptDefaults;
 }
 export interface TypescriptDeps extends TsDefaults {
   typescript: typeof monaco['languages']['typescript'];

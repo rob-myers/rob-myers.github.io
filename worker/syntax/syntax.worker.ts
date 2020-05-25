@@ -85,6 +85,7 @@ ctxt.addEventListener('message', ({ data }) => {
         ctxt.postMessage({
           key: 'send-highlights',
           classifications, 
+          editorKey: data.editorKey,
         });
       } catch (e) {
         /* Ignore error */

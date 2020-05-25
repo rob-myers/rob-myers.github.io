@@ -27,11 +27,13 @@ interface WorkerReady extends BaseMessage {
 interface SendHighlights extends BaseMessage {
   key: 'send-highlights';
   classifications: Classification[];
+  editorKey: string;
 }
 
 interface RequestHighlights extends BaseMessage {
   key: 'request-highlights';
   code: string;
+  editorKey: string;
 }
 interface RequestStatus extends BaseMessage {
   key: 'request-status';

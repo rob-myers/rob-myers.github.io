@@ -40,6 +40,7 @@ const persistedReducer = persistReducer({
         monacoSupportedPkgs: [],
         monacoEditor: {},
         monacoModel: {},
+        monacoRange: null,
       }),
       (state, _key) => state,
       { whitelist: ['worker'] }

@@ -12,6 +12,7 @@ import { accessibilityHelpUrl } from '@model/monaco';
 // Must not be in main bundle (so, not in worker.duck)
 const typescript = monaco.languages.typescript;
 const typescriptDefaults = typescript.typescriptDefaults as TypescriptDefaults;
+const javascriptDefaults = typescript.javascriptDefaults as TypescriptDefaults;
 
 /**
  * Wrapper for a Monaco editor instance.
@@ -50,8 +51,12 @@ const Editor: React.FC<IEditorProps> = (props) => {
         model,
       });
       dispatch(Thunk.createMonacoEditor({
+        // Ensure stuff outside main bundle
         typescriptDefaults,
+        javascriptDefaults,
         typescript,
+        monacoRange: redact(monaco.Range),
+        //
         editorKey: editorUid.current,
         editor: redact(editor),
         modelKey,
