@@ -112,12 +112,18 @@ export default function({
     module: {
       rules: [
         {
-          test: /\.(sa|sc|c)ss$/,
+          /**
+           * Currently only support SASS and SCSS for CSS-modules.
+           */
+          test: /\.(sa|sc)ss$/,
           exclude: /node_modules/,
           use: defaultLoaders.sass
         },
         {
-          test: /node_modules.+\.css$/,
+          /**
+           * Plain CSS should be stored in public directory.
+           */
+          test: [/node_modules.+\.css$/, /public\/.+\.css/],
           use: defaultLoaders.npmCss
         },
         {

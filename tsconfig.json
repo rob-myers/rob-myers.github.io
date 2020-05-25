@@ -19,21 +19,12 @@
     "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
-      "@components/*": [
-        "components/*"
-      ],
-      "@store/*": [
-        "store/*"
-      ],
-      "@model/*": [
-        "model/*"
-      ],
-      "@worker/*": [
-        "worker/*"
-      ],
-      "@env/*": [
-        "env/*"
-      ]
+      "@components/*": ["components/*"],
+      "@store/*": ["store/*"],
+      "@model/*": ["model/*"],
+      "@worker/*": ["worker/*"],
+      "@env/*": ["env/*"],
+      "@public/*": ["public/*"]
     },
     "downlevelIteration": true
   },
