@@ -1,4 +1,4 @@
-import { memoizeFunction } from '@model/memo.model';
+import { memoizeFunction } from '@model/monaco/memo.model';
 import { IBasicPackageGroup } from '@model/monaco';
 // Don't reference anything importing Monaco in this file!
 

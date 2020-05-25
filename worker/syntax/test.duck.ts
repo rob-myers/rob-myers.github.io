@@ -1,5 +1,5 @@
 import { testNever } from '@model/generic.model';
-import { createAct, ActionsUnion } from '@model/redux.model';
+import { createAct, ActionsUnion } from '@model/store/redux.model';
 
 /**
  * This state lives inside the syntax worker.

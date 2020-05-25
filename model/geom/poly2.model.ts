@@ -5,7 +5,7 @@ import cdt2d, { Cdt2dOptions } from 'cdt2d';
 
 import { Rect2 } from './rect2.model';
 import { Vector2, Coord, Vector2Json } from './vec2.model';
-import { chooseRandomItem, Triple } from './generic.model';
+import { chooseRandomItem, Triple } from '../generic.model';
 
 interface Options {
   /**

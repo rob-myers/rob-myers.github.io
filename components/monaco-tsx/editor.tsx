@@ -1,12 +1,11 @@
+import shortid from 'shortid';
 import * as monaco from 'monaco-editor';
 import * as React from 'react';
-import shortid from 'shortid';
+import { useDispatch, useSelector } from 'react-redux';
 import { IEditorProps } from './editor.model';
 import { CODE_FONT_FAMILY, DEFAULT_WIDTH, DEFAULT_HEIGHT } from './consts';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '@store/reducer';
 import { Thunk } from '@store/worker.duck';
-import { redact } from '@model/redux.model';
+import { redact } from '@model/store/redux.model';
 
 import { LanguageServiceDefaultsImpl as TypescriptDefaults } from '@model/monaco/monaco-typescript.d';
 import { accessibilityHelpUrl } from '@model/monaco';
@@ -35,8 +34,8 @@ const Editor: React.FC<IEditorProps> = (props) => {
 
   const editorUid = React.useRef(`${editorKey}-${shortid.generate()}`);
   const divRef = React.useRef<HTMLDivElement>(null);
-  const monacoEditor = useSelector(({ worker }: RootState) => worker.monacoEditor[editorKey]);
-  const monacoModel = useSelector(({ worker }: RootState) => worker.monacoModel[modelKey]);
+  const monacoEditor = useSelector(({ worker }) => worker.monacoEditor[editorKey]);
+  const monacoModel = useSelector(({ worker }) => worker.monacoModel[modelKey]);
   const dispatch = useDispatch();
 
   React.useEffect(() => {

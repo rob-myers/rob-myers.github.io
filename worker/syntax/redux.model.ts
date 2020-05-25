@@ -1,4 +1,4 @@
-import { SyncAct } from '@model/redux.model';
+import { SyncAct } from '@model/store/redux.model';
 import { SyntaxWorkerAction, SyntaxWorkerState } from './reducer';
 import { SyntaxWorkerContext } from './worker.model';
 

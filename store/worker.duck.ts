@@ -2,13 +2,12 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import * as monaco from 'monaco-editor';
 import { getWindow } from '@model/dom.model';
-import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup } from '@model/redux.model';
-import { createThunk } from '@model/root.redux.model';
+import { KeyedLookup, testNever } from '@model/generic.model';
+import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup } from '@model/store/redux.model';
+import { createThunk } from '@model/store/root.redux.model';
+import { IPackageGroup, TypescriptDeps, TsDefaults, SUPPORTED_PACKAGES, IMonacoTextModel, loadTypes } from '@model/monaco';
 import { SyntaxWorker, awaitWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
-import { IPackageGroup, TypescriptDeps, TsDefaults, SUPPORTED_PACKAGES, IMonacoTextModel } from '@model/monaco';
-import { loadTypes } from '@model/monaco/load-types';
-import { KeyedLookup, testNever } from '@model/generic.model';
 
 type Editor = monaco.editor.IStandaloneCodeEditor;
 

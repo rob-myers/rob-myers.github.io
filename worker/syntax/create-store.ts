@@ -2,7 +2,7 @@ import { MiddlewareAPI, Dispatch, createStore, applyMiddleware, Store } from 're
 import { persistReducer, createTransform } from 'redux-persist';
 import storage from 'localforage';
 import { composeWithDevTools } from 'remote-redux-devtools';
-import { Redacted, replacer } from '@model/redux.model';
+import { Redacted, replacer } from '@model/store/redux.model';
 import { SyntaxWorkerContext } from './worker.model';
 import { SyntaxDispatchOverload, SyntaxThunkAct } from './redux.model';
 import rootReducer, { SyntaxWorkerAction, SyntaxWorkerState, SyntaxWorkerThunk } from './reducer';

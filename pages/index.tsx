@@ -43,13 +43,6 @@ const Home: React.FC = () => {
         onTransformFinished={onTransformFinished}
         supportedPackages={SUPPORTED_PACKAGES}
       />
-      <TsxEditor
-        editorKey="editor-2"
-        modelKey="demo-2"
-        editorProps={baseEditorProps}
-        onTransformFinished={onTransformFinished}
-        supportedPackages={SUPPORTED_PACKAGES}
-      />
 
       <Gitalk />
     </section>  

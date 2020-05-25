@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/camelcase */
 import { KeyedLookup } from '@model/generic.model';
 import { GitHubUser, GitHubComment, getUserInfo, getIssue, getComments, formatErrorMsg, storeAccessToken } from '@components/gitalk/gitalk.model';
-import { createAct, ActionsUnion } from '@model/redux.model';
-import { createThunk } from '@model/root.redux.model';
+import { createAct, ActionsUnion } from '@model/store/redux.model';
+import { createThunk } from '@model/store/root.redux.model';
 import { getGitalkOpts } from '@components/gitalk/gitalk-opts.model';
 
 export interface State {

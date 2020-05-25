@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import { ITsxEditorProps } from './tsx-editor.model';
 import { transpileAndEval } from '@model/monaco/transpile';
 import { SUPPORTED_PACKAGES } from '@model/monaco';
-import { RootState } from '@store/reducer';
 import Editor from './editor';
 
 /**
@@ -17,8 +16,8 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   onTransformFinished,
   supportedPackages = SUPPORTED_PACKAGES,
 }) => {
-  const model = useSelector(({ worker }: RootState) => worker.monacoEditor[editorKey]?.editor.getModel());
-  const typesLoaded = useSelector(({ worker }: RootState) => worker.monacoTypesLoaded);
+  const model = useSelector(({ worker }) => worker.monacoEditor[editorKey]?.editor.getModel());
+  const typesLoaded = useSelector(({ worker }) => worker.monacoTypesLoaded);
 
   const onChange = React.useCallback((text: string) => {
     editorProps.onChange && editorProps.onChange(text);

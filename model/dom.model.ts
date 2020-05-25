@@ -1,4 +1,4 @@
-import { Vector2 } from './vec2.model';
+import { Vector2 } from './geom/vec2.model';
 
 /** Ancestors including {el} */
 export function getDomAncestors(el: Element): Element[] {
