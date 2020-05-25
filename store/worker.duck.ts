@@ -268,7 +268,7 @@ export const Thunk = {
           inlineClassName: classification.kind,
         },
       }));
-      console.log({ decorations });
+      // console.log({ decorations });
       const nextDecorations = editor.deltaDecorations(lastDecorations, decorations);
       dispatch(Act.updateEditor(editorKey, { lastDecorations: nextDecorations }));
     },
