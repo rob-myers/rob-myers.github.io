@@ -1,4 +1,3 @@
-import shortid from 'shortid';
 import * as monaco from 'monaco-editor';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -33,7 +32,6 @@ const Editor: React.FC<IEditorProps> = (props) => {
     modelKey = 'default-model',
   } = props;
 
-  const editorUid = React.useRef(`${editorKey}-${shortid.generate()}`);
   const divRef = React.useRef<HTMLDivElement>(null);
   const monacoEditor = useSelector(({ worker }) => worker.monacoEditor[editorKey]);
   const monacoModel = useSelector(({ worker }) => worker.monacoModel[modelKey]);
@@ -56,8 +54,7 @@ const Editor: React.FC<IEditorProps> = (props) => {
         javascriptDefaults,
         typescript,
         monacoRange: redact(monaco.Range),
-        //
-        editorKey: editorUid.current,
+        editorKey,
         editor: redact(editor),
         modelKey,
         model: redact(model),
@@ -66,7 +63,7 @@ const Editor: React.FC<IEditorProps> = (props) => {
     } else if (!monacoModel) {
       const model = monaco.editor.createModel(code, language, uri);
       dispatch(Thunk.useMonacoModel({
-        editorKey: editorUid.current,
+        editorKey,
         modelKey,
         model: redact(model),
         filename,
@@ -78,19 +75,22 @@ const Editor: React.FC<IEditorProps> = (props) => {
     }
 
     return () => {
-      dispatch(Thunk.removeMonacoEditor({ editorKey: editorUid.current, }));
+      dispatch(Thunk.removeMonacoEditor({ editorKey }));
     };
   }, [theme]);
 
   /**
    * Handle updates e.g. transpile.
+   * TODO clean this up
    */
   React.useEffect(() => {
     const editor = monacoEditor?.editor;
     let debounceId: number;
     onChange && editor?.onDidChangeModelContent(() => {
       clearTimeout(debounceId);
-      debounceId = window.setTimeout(() => onChange(editor.getModel()!.getValue()), debounceMs);
+      debounceId = window.setTimeout(() => {
+        onChange(editor.getModel()!.getValue());
+      }, debounceMs);
     });
     return () => void clearTimeout(debounceId);
   }, [monacoEditor]);

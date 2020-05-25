@@ -1,3 +1,4 @@
+import shortid from 'shortid';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { ITsxEditorProps } from './tsx-editor.model';
@@ -10,12 +11,15 @@ import Editor from './editor';
  * transpiling/eval-ing the React example code inside.
  */
 const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
-  editorKey,
+  editorKey: baseEditorKey,
   modelKey,
   editorProps,
   onTransformFinished,
   supportedPackages = SUPPORTED_PACKAGES,
 }) => {
+  const editorUid = React.useRef(`${baseEditorKey}-${shortid.generate()}`);
+  const editorKey = editorUid.current;
+
   const model = useSelector(({ worker }) => worker.monacoEditor[editorKey]?.editor.getModel());
   const typesLoaded = useSelector(({ worker }) => worker.monacoTypesLoaded);
 
@@ -24,8 +28,8 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
     transpileAndEval(model!, supportedPackages).then(onTransformFinished);
   } , [model]);
 
+  // Wait for globals and types before 1st transpile
   React.useEffect(() => {
-    // Wait for globals and types before 1st transpile
     typesLoaded && model && onChange(model.getValue());
   }, [typesLoaded, model]);
 
@@ -35,7 +39,6 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
       editorKey={editorKey}
       modelKey={modelKey}
       filename={`file:///${modelKey}.main.tsx`}
-      // filename={'file://main.tsx'}
       onChange={onChange}
     />
   );

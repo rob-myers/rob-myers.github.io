@@ -51,10 +51,7 @@ const initialState: State = {
 export const Act = {
   storeSyntaxWorker: ({ worker }: { worker: Redacted<SyntaxWorker> }) =>
     createAct('[worker] store syntax', { worker }),
-  storeMonacoEditor: ({ editorKey, editor }: {
-    editorKey: string;
-    editor: Redacted<Editor>;
-  }) =>
+  storeMonacoEditor: ({ editorKey, editor }: { editorKey: string; editor: Redacted<Editor> }) =>
     createAct('[worker] store monaco editor', { editorKey, editor }),
   storeMonacoModel: ({ editorKey, model, modelKey, filename }: {
     editorKey: null | string;
@@ -121,6 +118,7 @@ export const Thunk = {
       dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
       !worker.monacoGlobalsLoaded && await dispatch(Thunk.ensureMonacoGlobals({}));
       !worker.monacoTypesLoaded && await dispatch(Thunk.ensureMonacoTypes({ typescriptDefaults, javascriptDefaults }));
+
       await dispatch(Thunk.ensureSyntaxWorker({ editorKey }));
     },
   ),
@@ -272,7 +270,7 @@ export const Thunk = {
           inlineClassName: classification.kind,
         },
       }));
-      // console.log({ decorations });
+      console.log({ decorations });
       const nextDecorations = editor.deltaDecorations(lastDecorations, decorations);
       dispatch(Act.updateEditor(editorKey, { lastDecorations: nextDecorations }));
     },
