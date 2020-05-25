@@ -2,7 +2,7 @@
 - [ ] Get AWS-Lambda/S3 working
 - [ ] Get AWS-Lambda working
 - [ ] Implement TSX syntax-highlighting using prism in worker
-      > _got comments working properly_
+      > partially fixed comments, but will try another method
 - [x] Rename global.duck as worker.duck and level.worker as syntax.worker
 - [ ] Understand why `react-refresh` is remounting index.tsx
 - [x] Start integrating our own version of `gitalk`

@@ -61,6 +61,13 @@ export default function({
     // postCssLoader,
     { loader: 'sass-loader', options: {} }
   ];
+  
+  defaultLoaders.sassSansModules = [
+    ...(!isServer && !dev ? [eccLoader] : []),
+    ...(!isServer && dev ? [styleLoader] : []),
+    cssLoader({ useModules: false }),
+    { loader: 'sass-loader', options: {} }
+  ];
 
   defaultLoaders.npmCss = [
     ...(!isServer && !dev ? [eccLoader] : []),
@@ -112,19 +119,17 @@ export default function({
     module: {
       rules: [
         {
-          /**
-           * Currently only support SASS and SCSS for CSS-modules.
-           */
-          test: /\.(sa|sc)ss$/,
-          exclude: /node_modules/,
+          test: /\.(sa|sc|c)ss$/,
+          exclude: [/node_modules/, /public\//],
           use: defaultLoaders.sass
         },
         {
-          /**
-           * Plain CSS should be stored in public directory.
-           */
-          test: [/node_modules.+\.css$/, /public\/.+\.css/],
+          test: /node_modules.+\.css$/,
           use: defaultLoaders.npmCss
+        },
+        {
+          test: /public\/.+\.(sa|sc|c)ss$/,
+          use: defaultLoaders.sassSansModules
         },
         {
           test: /\.(woff|woff2|eot|ttf|otf)$/i,
