@@ -8,22 +8,19 @@ import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 import OptimizeCssAssetsWebpackPlugin from 'optimize-css-assets-webpack-plugin';
 import { WebpackCtxt } from './next.model';
 
+const noCssModulesRegex = /\/monaco-override\.scss$/;
+
 export default function({
   isServer,
   dev,
   defaultLoaders,
 }: WebpackCtxt): webpack.Configuration {
 
-  const cssLoader = (
-    { useModules }: { useModules: boolean }
-  ): webpack.RuleSetLoader => ({
+  const cssLoader = ({ useModules }: { useModules: boolean }): webpack.RuleSetLoader => ({
     loader: 'css-loader',
     options: {
       modules: useModules ? {
-        localIdentName: dev
-          // ? '[path][name]__[local]'
-          ? '[name]__[local]'
-          : '[hash:base64]',
+        localIdentName: dev ? '[name]__[local]' : '[hash:base64]',
       } : false,
       sourceMap: dev,
       // importLoaders: 2, // 'postcss-loader' and 'sass-loader'
@@ -59,13 +56,6 @@ export default function({
     ...(!isServer && dev ? [styleLoader] : []),
     cssLoader({ useModules: true }),
     // postCssLoader,
-    { loader: 'sass-loader', options: {} }
-  ];
-  
-  defaultLoaders.sassSansModules = [
-    ...(!isServer && !dev ? [eccLoader] : []),
-    ...(!isServer && dev ? [styleLoader] : []),
-    cssLoader({ useModules: false }),
     { loader: 'sass-loader', options: {} }
   ];
 
@@ -120,7 +110,7 @@ export default function({
       rules: [
         {
           test: /\.(sa|sc|c)ss$/,
-          exclude: [/node_modules/, /public\//],
+          exclude: [/node_modules/, noCssModulesRegex],
           use: defaultLoaders.sass
         },
         {
@@ -128,8 +118,12 @@ export default function({
           use: defaultLoaders.npmCss
         },
         {
-          test: /public\/.+\.(sa|sc|c)ss$/,
-          use: defaultLoaders.sassSansModules
+          test: noCssModulesRegex,
+          use: [
+            'style-loader',
+            { loader: 'css-loader', options: { importLoaders: 1 } },
+            'sass-loader',
+          ],
         },
         {
           test: /\.(woff|woff2|eot|ttf|otf)$/i,

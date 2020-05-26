@@ -7,6 +7,10 @@ import TsxEditor from '@components/monaco/tsx-editor';
 import Editor from '@components/monaco/editor';
 import css from './dev-env.scss';
 
+// For prismjs highlighting, so we must not use CSS modules.
+// See `styles.config.ts`. Using `require` prevents tree-shaking.
+require('./monaco-override.scss');
+
 const tsxEditorProps: IEditorProps = {
   language:'typescript',
   theme: 'vs-dark',
