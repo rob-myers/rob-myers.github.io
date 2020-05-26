@@ -54,6 +54,7 @@ const Editor: React.FC<IEditorProps> = (props) => {
         javascriptDefaults,
         typescript,
         monacoRange: redact(monaco.Range),
+        // 
         editorKey,
         editor: redact(editor),
         modelKey,
@@ -80,8 +81,8 @@ const Editor: React.FC<IEditorProps> = (props) => {
   }, [theme]);
 
   /**
+   * TODO clean
    * Handle updates e.g. transpile.
-   * TODO clean this up
    */
   React.useEffect(() => {
     const editor = monacoEditor?.editor;
@@ -93,7 +94,7 @@ const Editor: React.FC<IEditorProps> = (props) => {
       }, debounceMs);
     });
     return () => void clearTimeout(debounceId);
-  }, [monacoEditor]);
+  }, [monacoEditor?.key]);
 
   return (
     <div
