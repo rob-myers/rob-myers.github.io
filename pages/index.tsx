@@ -6,14 +6,14 @@ import TopMenu from '@components/top-menu/top-menu';
 const DevEnv = dynamic(import('@components/dev-env/dev-env'), { ssr: false });
 
 const Home: React.FC = () => {
-  const someEditorReady = useSelector(({ worker: { monacoTypesLoaded } }) => !!monacoTypesLoaded);
+  const ready = useSelector(({ worker: { monacoTypesLoaded } }) => !!monacoTypesLoaded);
 
   return (
     <section>
       <TopMenu
         title="rob-myers"
         label="Robert S. R. Myers"
-        disableLinks={!someEditorReady}
+        disableLinks={!ready}
       />
       <DevEnv />
       <Gitalk />

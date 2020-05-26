@@ -1,7 +1,14 @@
 .root {
-  display: flex;
+  .header {
+    width: 500px;
+    display: flex;
+    justify-content: flex-end;
 
-  div:first-child {
-    margin-right: 10px;
+    a {
+      font-family: "Courier New", Courier, monospace;
+      font-size: small;
+      color: #009;
+      cursor: pointer;
+    }
   }
 }
