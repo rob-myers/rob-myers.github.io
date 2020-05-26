@@ -1,6 +1,6 @@
 # Infrastructure
 
-- [ ] Create a Github App which can create gists for `rob-myers`
+- [ ] Create a Github App which can create gists for `@rob-myers`
 - [ ] Get AWS-Lambda/DynamoDB working
 - [ ] Get AWS-Lambda/DynamoDB working
 - [ ] Get AWS-Lambda/S3 working
@@ -8,6 +8,7 @@
 
 # Local
 
+- [ ] Can tab between `tsx` and `css`.
 - [x] Have CSS editor too
 - [ ] Mount transpiled react component (Dev)
 - [x] Implement TSX syntax-highlighting using prism in worker
