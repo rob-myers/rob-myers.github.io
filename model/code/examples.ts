@@ -25,13 +25,11 @@ const App: React.FC = () => {
   );
 }
 
-export const Component: React.FC = () => {
-    return (
-        <div>
-            // foo
-        </div>
-    );
-};
-
 export default App;
+`.trim();
+
+export const exampleCss1 = `
+.my-class {
+  background: red;
+}
 `.trim();
