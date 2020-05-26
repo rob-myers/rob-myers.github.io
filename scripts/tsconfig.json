@@ -16,6 +16,9 @@
     "outDir": "..",
     "typeRoots": [
       "../types"
+    ],
+    "types": [
+      "node"
     ]
   },
   "exclude": [
