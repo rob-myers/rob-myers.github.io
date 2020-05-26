@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { exampleCss1, exampleTsx1 } from '@model/code/examples';
+import { exampleScss1, exampleTsx1 } from '@model/code/examples';
 import { SUPPORTED_PACKAGES } from '@model/monaco';
 import { IEditorProps } from '@components/monaco/editor.model';
 import TsxEditor from '@components/monaco/tsx-editor';
@@ -21,9 +21,9 @@ const tsxEditorProps: IEditorProps = {
   width: 500,
 };
 
-type FileType = 'tsx' | 'css';
+type FileType = 'tsx' | 'scss';
 const permute = (type: FileType): FileType =>
-  type === 'css' ? 'tsx' : 'css';
+  type === 'scss' ? 'tsx' : 'scss';
 
 const DevEnv: React.FC = () => {
   const [editing, setEditing] = useState<FileType>('tsx');
@@ -46,13 +46,14 @@ const DevEnv: React.FC = () => {
             supportedPackages={SUPPORTED_PACKAGES}
           />
         )}
-        {editing === 'css' && (
+        {editing === 'scss' && (
           <Editor
             editorKey="editor-2"
             modelKey="demo-2"
-            filename="file:///main.css"
+            // filename="file:///main.css"
+            filename="file:///main.scss"
             width={500}
-            code={exampleCss1}
+            code={exampleScss1}
           />
         )}
       </div>

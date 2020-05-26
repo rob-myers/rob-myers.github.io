@@ -8,7 +8,8 @@
 
 # Local
 
-- [x] Can tab between `tsx` and `css`.
+- [ ] Syntax worker supports SASS -> CSS transpilation
+- [x] Can tab between `tsx` and `scss`.
 - [x] Have CSS editor too
 - [ ] Mount transpiled react component (Dev)
 - [x] Implement TSX syntax-highlighting using prism in worker

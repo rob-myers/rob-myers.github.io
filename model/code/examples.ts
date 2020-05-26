@@ -28,8 +28,10 @@ const App: React.FC = () => {
 export default App;
 `.trim();
 
-export const exampleCss1 = `
-.my-class {
-  background: red;
+export const exampleScss1 = `
+.my-ancestral-class {
+  .my-class {
+    background: red;
+  }
 }
 `.trim();

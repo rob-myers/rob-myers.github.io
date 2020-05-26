@@ -27,11 +27,10 @@ export default function(
     plugins: [
       new MonacoWebpackPlugin({
         languages: [
-          'json',
           'css',
+          'scss',
           'typescript',
           'javascript',
-          'html',
         ],
         filename: 'static/[name].worker.js',
       })
