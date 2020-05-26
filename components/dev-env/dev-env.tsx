@@ -3,6 +3,7 @@ import { exampleCss1, exampleTsx1 } from '@model/code/examples';
 import { IEditorProps } from '@components/monaco/editor.model';
 import TsxEditor from '@components/monaco/tsx-editor';
 import Editor from '@components/monaco/editor';
+import css from './dev-env.scss';
 
 const tsxEditorProps: IEditorProps = {
   language:'typescript',
@@ -17,8 +18,8 @@ const tsxEditorProps: IEditorProps = {
 const DevEnv: React.FC = () => {
 
   return (
-    <section style={{ display: 'flex' }}>
-      <div style={{ marginRight: 10 }}>
+    <section className={css.root}>
+      <div>
         <TsxEditor
           editorKey="editor-1"
           modelKey="demo-1"

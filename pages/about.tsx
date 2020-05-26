@@ -1,13 +1,11 @@
-import Head from 'next/head';
+import TopMenu from '@components/top-menu/top-menu';
 import css from './about.scss';
 
 const About: React.FC = () => {
   return (
-    <section className={css.root}>
-      <Head>
-        <title>About</title>
-      </Head>
-      <h1>About</h1>
+    <section>
+      <TopMenu title="about" label="About" />
+
       <section className={css.personalInfo}>
         <div>Robert S. R. Myers</div>
         <a href="mailto:me.robmyers@gmail.com">me.robmyers@gmail.com</a>

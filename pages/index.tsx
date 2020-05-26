@@ -1,25 +1,21 @@
-import Head from 'next/head';
-import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { useSelector } from 'react-redux';
 import Gitalk from '@components/gitalk/gitalk';
-import css from './index.scss';
+import TopMenu from '@components/top-menu/top-menu';
 
 const DevEnv = dynamic(import('@components/dev-env/dev-env'), { ssr: false });
 
 const Home: React.FC = () => {
+  const someEditorReady = useSelector(({ worker: { monacoTypesLoaded } }) => !!monacoTypesLoaded);
+
   return (
-    <section className={css.root}>
-      <Head><title>rob-myers</title></Head>
-
-      <h1>Robert S. R. Myers</h1>
-
-      <section className={css.links}>
-        <Link href="about"><a>About</a></Link>
-        <Link href="test"><a>Test</a></Link>
-      </section>
-
+    <section>
+      <TopMenu
+        title="rob-myers"
+        label="Robert S. R. Myers"
+        disableLinks={!someEditorReady}
+      />
       <DevEnv />
-
       <Gitalk />
     </section>  
   );

@@ -1,0 +1,17 @@
+.title {
+  margin: 0 0 5px;
+  font-size: 20pt;
+}
+.links {
+  margin-bottom: 20px;
+  * {
+    padding-right: 10px;
+  }
+
+  &.disabled {
+    * {
+      color: #777;
+      pointer-events: none;
+    }
+  }
+}

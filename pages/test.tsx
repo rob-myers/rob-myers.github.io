@@ -1,8 +1,6 @@
-import Link from 'next/link';
 import { useDispatch, useSelector } from 'react-redux';
 import { Act } from '@store/test.duck';
-
-import css from './index.scss';
+import TopMenu from '@components/top-menu/top-menu';
 
 const Test: React.FC = () => {
   // const [count, setCount] = useState(0);
@@ -10,14 +8,10 @@ const Test: React.FC = () => {
   const dispatch = useDispatch();
 
   return (
-    <div className={css.root}>
-      <h1>Welcome to the Test Page</h1>
-      <div style={{ marginBottom: 10 }}>
-        <Link href="/about">
-          <a>About</a>
-        </Link>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: 200 }}>
+    <div>
+      <TopMenu title="test" label="Welcome to the Test Page" />
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', width: 100 }}>
         <div>{count}</div>
         <button onClick={() => dispatch(Act.testDecrement())}>-1</button>
         <button onClick={() => dispatch(Act.testIncrement())}>+1</button>
