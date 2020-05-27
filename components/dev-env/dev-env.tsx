@@ -18,7 +18,7 @@ const tsxEditorProps: IEditorProps = {
   filename: 'file:///main.tsx',
   className: 'monaco-tsx-editor',
   code: exampleTsx1,
-  width: 500,
+  width: '100%',
 };
 
 type FileType = 'tsx' | 'scss';
@@ -52,7 +52,7 @@ const DevEnv: React.FC = () => {
             modelKey="demo-2"
             // filename="file:///main.css"
             filename="file:///main.scss"
-            width={500}
+            width={'100%'}
             code={exampleScss1}
           />
         )}
