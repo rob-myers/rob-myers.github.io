@@ -261,8 +261,7 @@ export const Thunk = {
       const { lastDecorations, editor } = worker.monacoEditor[editorKey];
       
       const decorations = classifications.map(classification => {
-        const inlineClassName = `${classification.kind} ${classification.parentKind} ${(classification.extra||[]).join(' ')}`;
-        // console.log({ inlineClassName, classification });
+        const inlineClassName = `is-${classification.kind} in-${classification.parentKind}`;
         return {
           range: new worker.monacoRange!(
             classification.startLineNumber,
@@ -275,7 +274,6 @@ export const Thunk = {
           },
         };
       });
-      // console.log({ decorations }); // TODO
       const nextDecorations = editor.deltaDecorations(lastDecorations, decorations);
       dispatch(Act.updateEditor(editorKey, { lastDecorations: nextDecorations }));
     },

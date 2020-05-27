@@ -1,15 +1,15 @@
 .monaco-tsx-editor {
-  .JsxOpeningElement,
-  .JsxClosingElement,
-  .JsxSelfClosingElement {
-    &.Identifier {
-      color: #f88;
+  .in-JsxOpeningElement,
+  .in-JsxClosingElement,
+  .in-JsxSelfClosingElement {
+    &.is-Identifier {
+      color: #f55;
     }
   }
-  .mtk7.JsxText:not(.JsxExpression) {
+  .is-JsxText:not(.in-JsxExpression) {
     color: #fff;
   }
-  .mtk1.JsxAttribute {
-    color: #9cc;
+  .in-JsxAttribute {
+    color: #dda;
   }
 }
