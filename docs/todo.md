@@ -8,7 +8,7 @@
 
 # Local
 
-- [ ] Auto-generate typescript definition files using:
+- [x] Auto-generate typescript definition files using:
   > https://stackoverflow.com/a/43776832/2917822
 - [ ] Redo syntax-highlighting
   > prismjs not good enough e.g. doesn't handle generics properly;

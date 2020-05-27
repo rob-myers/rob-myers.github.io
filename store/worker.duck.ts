@@ -207,6 +207,8 @@ export const Thunk = {
         baseUrl: 'file:///',
         // This is updated after types are loaded, so preserve the old setting
         paths: oldCompilerOptions.paths,
+        // Generate d.ts content in `emitOutput.outputFiles[1]`
+        declaration: true,
       });
     },
   ),

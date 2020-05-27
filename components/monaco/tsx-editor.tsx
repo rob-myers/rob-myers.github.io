@@ -2,7 +2,7 @@ import shortid from 'shortid';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { ITsxEditorProps } from './tsx-editor.model';
-import { transpileAndEval } from '@model/monaco/transpile';
+import { transpileAndPost } from '@model/monaco/transpile';
 import { SUPPORTED_PACKAGES } from '@model/monaco';
 import Editor from './editor';
 
@@ -25,7 +25,7 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
 
   const onChange = React.useCallback((text: string) => {
     editorProps.onChange && editorProps.onChange(text);
-    transpileAndEval(model!, supportedPackages).then(onTransformFinished);
+    transpileAndPost(model!, supportedPackages).then(onTransformFinished);
   } , [model]);
 
   // Wait for globals and types before 1st transpile

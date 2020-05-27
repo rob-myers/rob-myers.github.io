@@ -11,7 +11,7 @@ export function postTransform(params: PostTransformParams): ITransformedCode {
   } = params;
 
   const code = (jsCode || tsCode).trim();
-  console.log(jsCode);
+  console.log(code);
 
   return {
     output: code,

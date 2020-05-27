@@ -1,4 +1,3 @@
-// import * as React from 'react';
 import * as monaco from 'monaco-editor';
 import { getWindow } from '@model/dom.model';
 import { IMonacoTextModel, ITransformedCode, IBasicPackageGroup, ITransformedExample } from '@model/monaco';
@@ -22,6 +21,15 @@ export function transpile(model: IMonacoTextModel): Promise<ITransformedCode> {
     .then((getWorker: (uri: monaco.Uri) => Promise<TypeScriptWorker>) => getWorker(model.uri))
     .then(worker => {
       return worker.getEmitOutput(filename).then((output: EmitOutput) => {
+        /**
+         * TODO
+         * - typescript definition file (d.ts) content is in `output.outputFiles[1]`
+         *   because compilerOptions.declaration is `true`.
+         * - when storing a module remotely, should store both transpilation and this file
+         * - whilst mocking locally we'll need to use such files when working with multiple modules
+         */
+        // console.log({ output });
+
         // Get diagnostics to find out if there were any syntax errors (there's also getSemanticDiagnostics
         // for type errors etc, but it may be better to allow the user to just find and fix those
         // via intellisense rather than blocking compilation, since they may be non-fatal)
@@ -51,15 +59,9 @@ export function transpile(model: IMonacoTextModel): Promise<ITransformedCode> {
 }
 
 /**
- * Transpiles the code, does an additional transform to prepare for rendering, and evals the code.
- *
- * @param model - Current editor text model
- * @param supportedPackages - Supported packages for imports, grouped by global name
- * (React is implicitly supported)
- * @returns Returns an object with the output string and component to render if successful,
- * or error(s) if unsuccessful.
+ * Transpiles the code and performs post-processing.
  */
-export function transpileAndEval(
+export function transpileAndPost(
   model: IMonacoTextModel,
   supportedPackages: IBasicPackageGroup[],
 ): Promise<ITransformedExample> {
@@ -81,20 +83,18 @@ export function transpileAndEval(
         if (transformedExample.output) {
           return {
             ...transformedExample,
-            // Pass in the right React in case there's a different global one on the page...
             /**
              * TODO eval
              */
+            // Pass in the right React in case there's a different global one on the page...
             // component: eval(transformedExample.output)(React),
           };
-        } else {
-          return { error: transformedExample.error || 'Unknown error transforming example' };
         }
+        return { error: transformedExample.error || 'Unknown error transforming example' };
       },
     )
     .catch(
       (err: string | Error): ITransformedExample => {
-        // Log the error to the console so people can see the full stack/etc if they want
         console.error(err);
         return { error: typeof err === 'string' ? err : err.message };
       },
