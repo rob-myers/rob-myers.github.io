@@ -19,6 +19,7 @@
     "redux-persist": "^6.0.0",
     "remote-redux-devtools": "^0.5.16",
     "rxjs": "^6.5.4",
+    "sass.js": "^0.11.1",
     "shortid": "^2.2.15"
   },
   "engineStrict": true,
@@ -31,12 +32,13 @@
     "start": "yarn next-cfg && next start",
     "export": "next export",
     "deploy": "rm -rf .next && yarn build && yarn export && touch out/.nojekyll && yarn gh-pages",
-    "next-cfg": "tsc -p scripts",
+    "next-cfg": "tsc -p scripts && yarn copy-sass-js",
     "gh-pages": "cd scripts && ts-node gh-pages.ts",
     "test": "jest --watch --verbose",
     "check-types": "tsc --noEmit",
     "syntax-remotedev": "remotedev --hostname=localhost --port=3002 --wsEngine=ws",
-    "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build"
+    "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build",
+    "copy-sass-js": "cp node_modules/sass.js/dist/sass{,.worker}.js public"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "5.1.1",

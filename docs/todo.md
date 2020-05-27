@@ -8,7 +8,14 @@
 
 # Local
 
-- [ ] Syntax worker supports SASS -> CSS transpilation
+- [ ] Auto-generate typescript definition files using:
+  > https://stackoverflow.com/a/43776832/2917822
+- [ ] Redo syntax-highlighting
+  > prismjs not good enough,
+  > use this approach instead: https://github.com/microsoft/monaco-editor/issues/264#issuecomment-470777159
+- [ ] Import sass worker via module instead
+  > https://github.com/medialize/sass.js/blob/HEAD/docs/getting-started.md#using-sassjs-with-a-module-loader
+- [x] Syntax worker supports SASS -> CSS transpilation
 - [x] Can tab between `tsx` and `scss`.
 - [x] Have CSS editor too
 - [ ] Mount transpiled react component (Dev)
@@ -16,8 +23,8 @@
 - [x] Rename global.duck as worker.duck and level.worker as syntax.worker
 - [ ] Understand why `react-refresh` is remounting index.tsx
 - [x] Start integrating our own version of `gitalk`
-      > can retrieve issue and comments
+   > can retrieve issue and comments
 - [x] Upgrade next.js; get `react-refresh` working
-      > https://nextjs.org/blog/next-9-4
+   > https://nextjs.org/blog/next-9-4
 - [x] Prod monaco build
 - [x] Dev monaco build

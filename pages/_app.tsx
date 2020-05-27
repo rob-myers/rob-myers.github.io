@@ -29,6 +29,11 @@ const RootApp: React.FC<RootProps> = ({
       >
         <Head>
           <link rel="shortcut icon" href="/favicon.ico" />
+          {
+            // TODO require instead and attach to Window
+            // https://github.com/medialize/sass.js/blob/HEAD/docs/getting-started.md#using-sassjs-with-a-module-loader
+          }
+          <script src="/sass.js" />
         </Head>
         <Component {...pageProps} />
       </PersistGate>

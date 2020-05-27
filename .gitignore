@@ -17,4 +17,7 @@ yarn-error.log
 
 env/env.ts
 
+public/sass.js
+public/sass.worker.js
+
 .DS_Store

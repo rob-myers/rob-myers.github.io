@@ -5,3 +5,6 @@ styles.config.js
 postcss.config.js
 other.config.js
 monaco.config.js
+
+public/sass.js
+public/sass.worker.js
