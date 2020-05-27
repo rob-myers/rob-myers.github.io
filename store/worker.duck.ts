@@ -219,7 +219,7 @@ export const Thunk = {
     '[worker] setup syntax',
     async ({ state: { worker }, dispatch }, { editorKey }: { editorKey: string }) => {
       const eventListener = ({ data }: Message<MessageFromWorker>) => {
-        if (data.key === 'send-highlights' && data.editorKey === editorKey) {
+        if (data.key === 'send-tsx-highlights' && data.editorKey === editorKey) {
           requestAnimationFrame(() =>
             dispatch(Thunk.updateEditorDecorations({ editorKey, classifications: data.classifications })));
         }
@@ -245,7 +245,7 @@ export const Thunk = {
       }
       if (/typescript|javascript/i.test(editor.getModel()!.getModeId())) {
         worker.syntaxWorker!.postMessage({
-          key: 'request-highlights',
+          key: 'request-tsx-highlights',
           editorKey,
           code: editor.getValue(),
         });
@@ -259,18 +259,23 @@ export const Thunk = {
       classifications: Classification[];
     }) => {
       const { lastDecorations, editor } = worker.monacoEditor[editorKey];
-      const decorations = classifications.map(classification => ({
-        range: new worker.monacoRange!(
-          classification.startLine,
-          classification.start,
-          classification.endLine,
-          classification.end
-        ),
-        options: {
-          inlineClassName: classification.kind,
-        },
-      }));
-      // console.log({ decorations });
+      
+      const decorations = classifications.map(classification => {
+        const inlineClassName = `${classification.kind} ${classification.parentKind} ${(classification.extra||[]).join(' ')}`;
+        // console.log({ inlineClassName, classification });
+        return {
+          range: new worker.monacoRange!(
+            classification.startLineNumber,
+            classification.startColumn,
+            classification.endLineNumber,
+            classification.endColumn,
+          ),
+          options: {
+            inlineClassName,
+          },
+        };
+      });
+      // console.log({ decorations }); // TODO
       const nextDecorations = editor.deltaDecorations(lastDecorations, decorations);
       dispatch(Act.updateEditor(editorKey, { lastDecorations: nextDecorations }));
     },

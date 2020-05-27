@@ -1,59 +1,15 @@
 .monaco-tsx-editor {
-  .mtk1,
-  .attr-name {
-    color: #8ad3ff;
+  .JsxOpeningElement,
+  .JsxClosingElement,
+  .JsxSelfClosingElement {
+    &.Identifier {
+      color: #f88;
+    }
   }
-
-  .mtk1.tag,
-  .start-tag-name,
-  .end-tag-name {
-    color: #3dc1a0;
+  .mtk7.JsxText:not(.JsxExpression) {
+    color: #fff;
   }
-
-  .mtk9.tag,
-  .tag-start,
-  .tag-end,
-  .end-tag-start,
-  .end-tag-end {
-    color: #6d6d6d;
-  }
-
-  .as-keyword,
-  .await-keyword,
-  .catch-keyword,
-  .default-keyword,
-  .else-keyword,
-  .export-keyword,
-  .from-keyword,
-  .if-keyword,
-  .import-keyword,
-  .return-keyword,
-  .static-keyword,
-  .try-keyword {
-    color: #b86cb4;
-  }
-
-  .regex {
-    color: #d16969;
-  }
-  .function,
-  .function-variable {
-    color: #d4d797;
-  }
-
-  .class-name,
-  .builtin,
-  .globals {
-    color: #3dc1a0;
-  }
-  .arrow-operator,
-  .jsx-exp-start,
-  .jsx-exp-end {
-    color: #569cd6;
-  }
-
-  .jsx-text,
-  .plain-text {
-    color: #d4d4d4;
+  .mtk1.JsxAttribute {
+    color: #9cc;
   }
 }

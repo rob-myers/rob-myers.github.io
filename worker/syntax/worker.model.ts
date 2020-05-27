@@ -24,14 +24,14 @@ export interface SyntaxWorkerContext extends Worker {
 interface WorkerReady extends BaseMessage {
   key: 'worker-ready';
 }
-interface SendHighlights extends BaseMessage {
-  key: 'send-highlights';
+interface SendTsxHighlights extends BaseMessage {
+  key: 'send-tsx-highlights';
   classifications: Classification[];
   editorKey: string;
 }
 
-interface RequestHighlights extends BaseMessage {
-  key: 'request-highlights';
+interface RequestTsxHighlights extends BaseMessage {
+  key: 'request-tsx-highlights';
   code: string;
   editorKey: string;
 }
@@ -41,12 +41,12 @@ interface RequestStatus extends BaseMessage {
 
 type MessageFromParent = (
   | RequestStatus
-  | RequestHighlights
+  | RequestTsxHighlights
 );
 
 export type MessageFromWorker = (
   | WorkerReady
-  | SendHighlights
+  | SendTsxHighlights
 );
 
 type RefinedMessage<Key> = Extract<MessageFromWorker, { key: Key }>
