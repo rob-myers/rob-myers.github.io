@@ -1,12 +1,12 @@
 import { IPackageGroup } from './packages.model';
-import { TsDefaults } from './monaco.model';
+import { TypescriptDefaults } from './monaco.model';
 
 /**
  * Load types for React and any other packages.
  */
 export function loadTypes(
   supportedPackages: IPackageGroup[],
-  { typescriptDefaults }: TsDefaults,
+  typescriptDefaults: TypescriptDefaults,
 ): Promise<void> {
   const promises: Promise<void>[] = [];
   const typesPrefix = `${'file:///'}node_modules/@types`;

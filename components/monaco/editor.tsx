@@ -11,7 +11,6 @@ import { accessibilityHelpUrl } from '@model/monaco';
 // Must not be in main bundle (so, not in worker.duck)
 const typescript = monaco.languages.typescript;
 const typescriptDefaults = typescript.typescriptDefaults as TypescriptDefaults;
-const javascriptDefaults = typescript.javascriptDefaults as TypescriptDefaults;
 
 /**
  * Wrapper for a Monaco editor instance.
@@ -33,12 +32,21 @@ const Editor: React.FC<IEditorProps> = (props) => {
   } = props;
 
   const divRef = React.useRef<HTMLDivElement>(null);
+  const monacoBootstrapped = useSelector(({ worker }) => !!worker.monacoInternal);
   const monacoEditor = useSelector(({ worker }) => worker.monacoEditor[editorKey]);
   const monacoModel = useSelector(({ worker }) => worker.monacoModel[modelKey]);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     const uri = monaco.Uri.parse(filename);
+
+    if (!monacoBootstrapped) {
+      dispatch(Thunk.bootstrapMonaco({
+        rangeClass: redact(monaco.Range),
+        typescript: redact(typescript),
+        typescriptDefaults: redact(typescriptDefaults),
+      }));
+    }
 
     if (!monacoEditor) {
       const model = monacoModel?.model || monaco.editor.createModel(code, language, uri);
@@ -49,12 +57,6 @@ const Editor: React.FC<IEditorProps> = (props) => {
         model,
       });
       dispatch(Thunk.createMonacoEditor({
-        // Ensure stuff outside main bundle
-        typescriptDefaults,
-        javascriptDefaults,
-        typescript,
-        monacoRange: redact(monaco.Range),
-        // 
         editorKey,
         editor: redact(editor),
         modelKey,
@@ -81,7 +83,7 @@ const Editor: React.FC<IEditorProps> = (props) => {
   }, [theme]);
 
   /**
-   * TODO clean
+   * TODO perhaps set this up in redux?
    * Handle updates e.g. transpile.
    */
   React.useEffect(() => {
