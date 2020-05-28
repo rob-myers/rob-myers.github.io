@@ -10,6 +10,9 @@ export interface Classification {
   endLineNumber: number;
 }
 
+/**
+ * TODO new approach which precisely isolates
+ */
 export async function computeClassifications(code: string, classifications: Classification[]) {
   const project = new Project({
     compilerOptions: { jsx: ts.JsxEmit.React },
@@ -22,9 +25,21 @@ export async function computeClassifications(code: string, classifications: Clas
       const parent = node.getParent();
       const parentKind = parent && parent.getKindName();
       const kind = node.getKindName();
+      let start: number, end: number;
 
-      const start = node.getStart() - node.getLeadingTriviaWidth();
-      const end = node.getTrailingTriviaEnd();
+      switch (kind) {
+        case 'JsxText': {
+          start = node.getStart() - node.getLeadingTriviaWidth();
+          end = node.getTrailingTriviaEnd();
+          break;
+        }
+        default: {
+          start = node.getStart();
+          end = node.getEnd();
+          break;
+        }
+      }
+
       const { line: startLineNumber, column: startColumn } = srcFile.getLineAndColumnAtPos(start);
       const { line: endLineNumber, column: endColumn } = srcFile.getLineAndColumnAtPos(end);
 
@@ -41,19 +56,24 @@ export async function computeClassifications(code: string, classifications: Clas
       );
     });
 
-  console.log(classifications);
+  // console.log(classifications);
 }
 
-const permittedKinds = [
-  'JsxOpeningElement',
-  'JsxClosingElement',
-  'JsxSelfClosingElement',
-  'Identifier',
-  'JsxText',
-];
+const permittedKinds = {
+  'JsxOpeningElement': true,
+  'JsxClosingElement': true,
+  'JsxSelfClosingElement': true,
+  'Identifier': true,
+  'JsxText': true,
+  'JsxAttribute': true,
+  'DotToken': true,
+  'PropertyAccessExpression': true,
+  'OpenBraceToken': true,
+  'CloseBraceToken': true,
+};
 
 function filterNonJsxRelatedNodes(n: Node<ts.Node>) {
   // this is faster - we just dont want syntax list since they pollute a lot the JSX. 
   // return n.getKindName() !== 'SyntaxList';
-  return permittedKinds.includes(n.getKindName());
+  return n.getKindName() in permittedKinds;
 }

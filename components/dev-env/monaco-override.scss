@@ -9,7 +9,24 @@
   .is-JsxText:not(.in-JsxExpression) {
     color: #fff;
   }
-  .in-JsxAttribute {
+  .is-Identifier.in-JsxAttribute {
+    &.is-JsxOpeningElement {
+      color: #daa;
+    }
+    &.is-JsxSelfClosingElement {
+      color: #daa;
+    }
+  }
+  .in-JsxExpression.is-OpenBraceToken {
+    color: #99f;
+  }
+  .in-JsxExpression.is-CloseBraceToken {
+    color: #99f;
+  }
+  .is-DotToken + .is-PropertyAccessExpression {
     color: #dda;
+  }
+  .is-PropertyAccessExpression {
+    color: #abf;
   }
 }
