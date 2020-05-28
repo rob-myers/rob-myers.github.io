@@ -26,7 +26,6 @@ const Editor: React.FC<IEditorProps> = (props) => {
     onChange,
     debounceMs = 1000,
     editorOptions,
-    theme,
     editorKey = 'editor-model',
     modelKey = 'default-model',
   } = props;
@@ -46,15 +45,13 @@ const Editor: React.FC<IEditorProps> = (props) => {
           rangeClass: redact(monaco.Range),
           typescript: redact(typescript),
           typescriptDefaults: redact(typescriptDefaults),
+          monaco: redact(monaco),
         }));
       }
 
-      if (theme) {
-        monaco.editor.setTheme(theme);
-      }
-  
       if (!monacoEditor) {
-        const model = monacoModel?.model || monaco.editor.createModel(code, language, uri);
+        const model = monacoModel?.model
+          || monaco.editor.createModel(code, language, uri);
         const editor = monaco.editor.create(divRef.current!, {
           fontFamily: CODE_FONT_FAMILY,
           accessibilityHelpUrl,
@@ -77,25 +74,31 @@ const Editor: React.FC<IEditorProps> = (props) => {
           filename,
         }));
       }
-  
     })();
 
     return () => {
       dispatch(Thunk.removeMonacoEditor({ editorKey }));
     };
-  }, [theme]);
+  }, []);
 
   /**
-   * TODO perhaps set this up in redux?
    * Handle updates e.g. transpile.
    */
   React.useEffect(() => {
+    // /**
+    //  * TODO trigger rxjs stream via thunk.
+    //  */
+    // if (monacoEditor) {
+    //   const dispose = monacoEditor.editor.onDidChangeModelContent(() => {
+    //     dispatch(Thunk.onModelContentChanged({ editorKey, modelKey }));
+    //   });
+    // }
     const editor = monacoEditor?.editor;
     let debounceId: number;
     onChange && editor?.onDidChangeModelContent(() => {
       clearTimeout(debounceId);
       debounceId = window.setTimeout(() => {
-        onChange(editor.getModel()!.getValue());
+        onChange();
       }, debounceMs);
     });
     return () => void clearTimeout(debounceId);

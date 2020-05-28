@@ -8,6 +8,7 @@ export type IMonacoEditorOptions = monaco.editor.IEditorOptions;
 import monacoTs from './monaco-typescript.d';
 export type TypescriptDefaults = monacoTs.LanguageServiceDefaultsImpl;
 export type Typescript = typeof monaco['languages']['typescript'];
+export type Monaco = typeof monaco;
 
 /**
  * TODO understand:

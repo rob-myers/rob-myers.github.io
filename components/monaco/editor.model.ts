@@ -60,9 +60,8 @@ export interface IEditorProps {
 
   /**
    * Callback to notify when the text changes.
-   * Can be changed without re-creating the editor.
    */
-  onChange?: (text: string) => void;
+  onChange?: () => void;
 
   /**
    * Debounce `onChange` calls by this many milliseconds, or 0 to disable.

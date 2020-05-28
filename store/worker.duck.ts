@@ -1,13 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-// get sass.js from node_modules, but sass.worker.js from public/ 
+// Get sass.js from node_modules, but sass.worker.js from public/ 
 import Sass, { SassWorker } from 'sass.js/dist/sass';
 
 import { getWindow } from '@model/dom.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup } from '@model/store/redux.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { IPackageGroup, SUPPORTED_PACKAGES, IMonacoTextModel, loadTypes, MonacoRangeClass, Editor, TypescriptDefaults, Typescript } from '@model/monaco';
+import { IPackageGroup, SUPPORTED_PACKAGES, IMonacoTextModel, loadTypes, MonacoRangeClass, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
@@ -31,6 +31,7 @@ interface MonacoInternal {
   rangeClass: Redacted<MonacoRangeClass>;
   typescriptDefaults: Redacted<TypescriptDefaults>;
   typescript: Redacted<Typescript>;
+  monaco: Redacted<Monaco>;
 }
 
 interface MonacoEditorInstance {
@@ -89,6 +90,7 @@ export const Thunk = {
       dispatch(Thunk.setMonacoCompilerOptions({}));
       await dispatch(Thunk.ensureMonacoGlobals({}));
       await dispatch(Thunk.ensureMonacoTypes({}));
+      monacoInternal.monaco.editor.setTheme('vs-dark'); // Dark theme
     },
   ),
   createMonacoEditor: createThunk(

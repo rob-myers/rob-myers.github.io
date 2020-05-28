@@ -8,7 +8,7 @@ import Editor from './editor';
 
 /**
  * Wrapper for rendering a Monaco instance and also
- * transpiling/eval-ing the React example code inside.
+ * transpiling the React example code inside.
  */
 const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   editorKey: baseEditorKey,
@@ -19,18 +19,16 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
 }) => {
   const editorUid = React.useRef(`${baseEditorKey}-${shortid.generate()}`);
   const editorKey = editorUid.current;
-
   const model = useSelector(({ worker }) => worker.monacoEditor[editorKey]?.editor.getModel());
   const typesLoaded = useSelector(({ worker }) => worker.monacoTypesLoaded);
 
-  const onChange = React.useCallback((text: string) => {
-    editorProps.onChange && editorProps.onChange(text);
+  const onChange = React.useCallback(() => {
     transpileAndPost(model!, supportedPackages).then(onTransformFinished);
   } , [model]);
 
   // Wait for globals and types before 1st transpile
   React.useEffect(() => {
-    typesLoaded && model && onChange(model.getValue());
+    typesLoaded && model && onChange();
   }, [typesLoaded, model]);
 
   return (
