@@ -1,32 +1,17 @@
 .monaco-tsx-editor {
-  .in-JsxOpeningElement,
-  .in-JsxClosingElement,
-  .in-JsxSelfClosingElement {
-    &.is-Identifier {
-      color: #f55;
-    }
-  }
-  .is-JsxText:not(.in-JsxExpression) {
+  .jsx-text {
     color: #fff;
   }
-  .is-Identifier.in-JsxAttribute {
-    &.is-JsxOpeningElement {
-      color: #daa;
-    }
-    &.is-JsxSelfClosingElement {
-      color: #daa;
-    }
+  .jsx-tag {
+    color: #f55;
   }
-  .in-JsxExpression.is-OpenBraceToken {
+  .jsx-attr {
+    color: #daa;
+  }
+  .jsx-brace {
     color: #99f;
   }
-  .in-JsxExpression.is-CloseBraceToken {
-    color: #99f;
-  }
-  .is-DotToken + .is-PropertyAccessExpression {
+  .jsx-property {
     color: #dda;
-  }
-  .is-PropertyAccessExpression {
-    color: #abf;
   }
 }

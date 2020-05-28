@@ -261,7 +261,8 @@ export const Thunk = {
       const { lastDecorations, editor } = worker.monacoEditor[editorKey];
       
       const decorations = classifications.map(classification => {
-        const inlineClassName = `is-${classification.kind} in-${classification.parentKind}`;
+        // const inlineClassName = `is-${classification.kind} in-${classification.parentKind}`;
+        const inlineClassName = classification.kind;
         return {
           range: new worker.monacoRange!(
             classification.startLineNumber,
