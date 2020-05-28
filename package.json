@@ -39,7 +39,7 @@
     "check-types": "tsc --noEmit",
     "syntax-remotedev": "remotedev --hostname=localhost --port=3002 --wsEngine=ws",
     "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build",
-    "copy-sass-js": "cp node_modules/sass.js/dist/sass{,.worker}.js public"
+    "copy-sass-js": "cp node_modules/sass.js/dist/sass.worker.js public"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "5.1.1",

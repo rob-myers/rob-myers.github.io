@@ -1,4 +1,4 @@
-declare module 'sass.js' {
+declare module 'sass.js/dist/sass' {
   
   interface SassOutputOptions {
     // Format output: nested, expanded, compact, compressed
@@ -44,5 +44,12 @@ declare module 'sass.js' {
     options(arg: 'defaults' | SassOptions, callback: () => void): void;
     compile(source: string, callback: (result: SassResult) => void): void;
   }
-  export default { new(): Sass };
+
+  interface SassWorkerClass {
+    static setWorkerUrl: (url: string) => void;
+    new (): SassWorker;
+  }
+  const SassWorkerClass: SassWorkerClass;
+
+  export default SassWorkerClass;
 }

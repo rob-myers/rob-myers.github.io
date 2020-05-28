@@ -1,6 +1,8 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { SassWorker } from 'sass.js';
+// get sass.js from node_modules, but sass.worker.js from public/ 
+import Sass, { SassWorker } from 'sass.js/dist/sass';
+
 import { getWindow } from '@model/dom.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup } from '@model/store/redux.model';
@@ -14,15 +16,15 @@ import { Message } from '@model/worker.model';
 export interface State {
   /** Internal monaco structures */
   monacoInternal: null | MonacoInternal;
-  sassWorker: null | SassWorker;
-  syntaxWorker: null | Redacted<SyntaxWorker>;
   monacoGlobalsLoaded: boolean;
   monacoTypesLoaded: boolean;
   monacoSupportedPkgs: IPackageGroup[];
   /** Instances of monaco editor */
   monacoEditor: KeyedLookup<MonacoEditorInstance>;
-  /** Instances of monaco models. */
+  /** Instances of monaco models */
   monacoModel: KeyedLookup<MonacoModelInstance>;
+  sassWorker: null | Redacted<SassWorker>;
+  syntaxWorker: null | Redacted<SyntaxWorker>;
 }
 
 interface MonacoInternal {
@@ -45,23 +47,21 @@ interface MonacoModelInstance {
 }
 
 const initialState: State = {
-  sassWorker: null,
-  syntaxWorker: null,
   monacoGlobalsLoaded: false,
   monacoTypesLoaded: false,
   monacoSupportedPkgs: SUPPORTED_PACKAGES,
   monacoEditor: {},
   monacoModel: {},
   monacoInternal: null,
+  sassWorker: null,
+  syntaxWorker: null,
 };
 
 export const Act = {
-  setMonacoInternal: (monacoInternal: MonacoInternal) =>
-    createAct('[worker] store monaco core', { monacoInternal }),
-  storeSyntaxWorker: ({ worker }: { worker: Redacted<SyntaxWorker> }) =>
-    createAct('[worker] store syntax', { worker }),
   storeMonacoEditor: ({ editorKey, editor }: { editorKey: string; editor: Redacted<Editor> }) =>
     createAct('[worker] store monaco editor', { editorKey, editor }),
+  setMonacoInternal: (monacoInternal: MonacoInternal) =>
+    createAct('[worker] store monaco core', { monacoInternal }),
   storeMonacoModel: ({ editorKey, model, modelKey, filename }: {
     editorKey: null | string;
     modelKey: string;
@@ -69,6 +69,10 @@ export const Act = {
     filename: string;
   }) =>
     createAct('[worker] store monaco model', { editorKey, model, modelKey, filename }),
+  storeSassWorker: ({ worker }: { worker: Redacted<SassWorker> }) =>
+    createAct('[worker] store sass', { worker }),
+  storeSyntaxWorker: ({ worker }: { worker: Redacted<SyntaxWorker> }) =>
+    createAct('[worker] store syntax', { worker }),
   update: (updates: Partial<State>) =>
     createAct('[worker] update', { updates }),
   updateEditor: (editorKey: string, updates: Partial<MonacoEditorInstance>) =>
@@ -80,9 +84,11 @@ export type Action = ActionsUnion<typeof Act>;
 export const Thunk = {
   bootstrapMonaco: createThunk(
     '[worker] bootstrap monaco',
-    ({ dispatch }, monacoInternal: MonacoInternal) => {
+    async ({ dispatch }, monacoInternal: MonacoInternal) => {
       dispatch(Act.setMonacoInternal(monacoInternal));
       dispatch(Thunk.setMonacoCompilerOptions({}));
+      await dispatch(Thunk.ensureMonacoGlobals({}));
+      await dispatch(Thunk.ensureMonacoTypes({}));
     },
   ),
   createMonacoEditor: createThunk(
@@ -96,18 +102,20 @@ export const Thunk = {
     }) => {
       dispatch(Act.storeMonacoEditor({ editor, editorKey }));
       dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
-      !worker.monacoGlobalsLoaded && await dispatch(Thunk.ensureMonacoGlobals({}));
-      !worker.monacoTypesLoaded && await dispatch(Thunk.ensureMonacoTypes({}));
 
-      /**
-       * TODO ensure sass worker
-       */
       if (!worker.syntaxWorker) {
-        const syntaxWorker = redact(new SyntaxWorkerClass);
-        dispatch(Act.storeSyntaxWorker({ worker: syntaxWorker }));
+        const syntaxWorker = new SyntaxWorkerClass;
+        dispatch(Act.storeSyntaxWorker({ worker: redact(syntaxWorker) }));
         await awaitWorker('worker-ready', syntaxWorker);
       }
       await dispatch(Thunk.setupEditorHighlighting({ editorKey }));
+
+      if (!worker.sassWorker) {
+        Sass.setWorkerUrl('/sass.worker.js');
+        const sassWorker = new Sass;
+        dispatch(Act.storeSassWorker({ worker: redact(sassWorker) }));
+        // sassWorker.compile('.foo { .bar { color: red; } }', (result) => console.log({ result }));
+      }
     },
   ),
   removeMonacoEditor: createThunk(
@@ -288,9 +296,6 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[worker] store monaco core': return { ...state,
       monacoInternal: act.pay.monacoInternal,
     };
-    case '[worker] store syntax': return { ...state,
-      syntaxWorker: act.pay.worker,
-    };
     case '[worker] store monaco editor': return { ...state,
       monacoEditor: addToLookup({
         key: act.pay.editorKey,
@@ -306,6 +311,12 @@ export const reducer = (state = initialState, act: Action): State => {
         editorKey: act.pay.editorKey,
         filename: act.pay.filename,
       }, state.monacoModel),
+    };
+    case '[worker] store sass': return { ...state,
+      sassWorker: act.pay.worker,
+    };
+    case '[worker] store syntax': return { ...state,
+      syntaxWorker: act.pay.worker,
     };
     case '[worker] update': return { ...state,
       ...act.pay.updates,

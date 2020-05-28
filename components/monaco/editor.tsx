@@ -40,42 +40,45 @@ const Editor: React.FC<IEditorProps> = (props) => {
   React.useEffect(() => {
     const uri = monaco.Uri.parse(filename);
 
-    if (!monacoBootstrapped) {
-      dispatch(Thunk.bootstrapMonaco({
-        rangeClass: redact(monaco.Range),
-        typescript: redact(typescript),
-        typescriptDefaults: redact(typescriptDefaults),
-      }));
-    }
+    (async () => {
+      if (!monacoBootstrapped) {
+        await dispatch(Thunk.bootstrapMonaco({
+          rangeClass: redact(monaco.Range),
+          typescript: redact(typescript),
+          typescriptDefaults: redact(typescriptDefaults),
+        }));
+      }
 
-    if (!monacoEditor) {
-      const model = monacoModel?.model || monaco.editor.createModel(code, language, uri);
-      const editor = monaco.editor.create(divRef.current!, {
-        fontFamily: CODE_FONT_FAMILY,
-        accessibilityHelpUrl,
-        ...editorOptions,
-        model,
-      });
-      dispatch(Thunk.createMonacoEditor({
-        editorKey,
-        editor: redact(editor),
-        modelKey,
-        model: redact(model),
-        filename,
-      }));
-    } else if (!monacoModel) {
-      const model = monaco.editor.createModel(code, language, uri);
-      dispatch(Thunk.useMonacoModel({
-        editorKey,
-        modelKey,
-        model: redact(model),
-        filename,
-      }));
-    }
-
-    if (theme) {
-      monaco.editor.setTheme(theme);
-    }
+      if (theme) {
+        monaco.editor.setTheme(theme);
+      }
+  
+      if (!monacoEditor) {
+        const model = monacoModel?.model || monaco.editor.createModel(code, language, uri);
+        const editor = monaco.editor.create(divRef.current!, {
+          fontFamily: CODE_FONT_FAMILY,
+          accessibilityHelpUrl,
+          ...editorOptions,
+          model,
+        });
+        await dispatch(Thunk.createMonacoEditor({
+          editorKey,
+          editor: redact(editor),
+          modelKey,
+          model: redact(model),
+          filename,
+        }));
+      } else if (!monacoModel) {
+        const model = monaco.editor.createModel(code, language, uri);
+        dispatch(Thunk.useMonacoModel({
+          editorKey,
+          modelKey,
+          model: redact(model),
+          filename,
+        }));
+      }
+  
+    })();
 
     return () => {
       dispatch(Thunk.removeMonacoEditor({ editorKey }));
