@@ -48,9 +48,10 @@ export async function computeClassifications(code: string, classifications: Clas
         }
         case 'Identifier': {
           if (parentKind && parentKind in jsxTagKind) {
-            pending.push({ kind: 'jsx-tag', start: node.getStart(), end: node.getEnd() });
+            const kind = /^[A-Z]/.test(node.getText()) ? 'jsx-component' : 'jsx-tag';
+            pending.push({ kind, start: node.getStart(), end: node.getEnd() });
           } else if (parentKind === 'JsxAttribute') {
-            pending.push({ kind: 'jsx-attr', start: node.getStart(), end: node.getEnd() });
+            pending.push({ kind: 'jsx-attribute', start: node.getStart(), end: node.getEnd() });
           } else if (parentKind === 'PropertyAccessExpression' && !!node.getPreviousSibling()) {
             pending.push({ kind: 'jsx-property', start: node.getStart(), end: node.getEnd() });
           }

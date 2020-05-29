@@ -9,6 +9,7 @@
 # Local
 
 - [ ] Mount transpiled react component (Dev)
+- [ ] Clean up transpile and transform
 - [x] Auto-generate typescript definition files using:
   > https://stackoverflow.com/a/43776832/2917822
 - [x] Redo syntax-highlighting

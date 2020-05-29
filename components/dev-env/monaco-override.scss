@@ -10,8 +10,12 @@
   .jsx-tag {
     color: #f55;
   }
-  .jsx-attr {
-    color: #daa;
+  .jsx-component {
+    color: #f99;
+    // color: rgb(73, 226, 214);
+  }
+  .jsx-attribute {
+    color: rgb(200, 255, 200);
   }
   .jsx-brace {
     color: #99f;
