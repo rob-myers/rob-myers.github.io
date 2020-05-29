@@ -1,34 +1,41 @@
 import shortid from 'shortid';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { Subscription } from 'rxjs';
+import { debounceTime, filter } from 'rxjs/operators';
+
 import { ITsxEditorProps } from './tsx-editor.model';
-import { transpileAndPost } from '@model/monaco/transpile';
+import { transpileAndTransform } from '@model/monaco/transpile';
 import { SUPPORTED_PACKAGES } from '@model/monaco';
 import Editor from './editor';
 
 /**
- * Wrapper for rendering a Monaco instance and also
- * transpiling the React example code inside.
+ * Monaco editor for tsx which transpiles the code.
  */
 const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   editorKey: baseEditorKey,
   modelKey,
   editorProps,
-  onTransformFinished,
-  supportedPackages = SUPPORTED_PACKAGES,
+  onTransform = () => null,
+  packages = SUPPORTED_PACKAGES,
 }) => {
   const editorUid = React.useRef(`${baseEditorKey}-${shortid.generate()}`);
   const editorKey = editorUid.current;
   const model = useSelector(({ worker }) => worker.monacoEditor[editorKey]?.editor.getModel());
+  const stream = useSelector(({ worker }) => worker.monacoEditor[editorKey]?.stream);
   const typesLoaded = useSelector(({ worker }) => worker.monacoTypesLoaded);
 
-  const onChange = React.useCallback(() => {
-    transpileAndPost(model!, supportedPackages).then(onTransformFinished);
-  } , [model]);
-
-  // Wait for globals and types before 1st transpile
+  // Transpile and transform on model change
   React.useEffect(() => {
-    typesLoaded && model && onChange();
+    let sub: Subscription;
+    if (typesLoaded && model) {
+      sub = stream.pipe(
+        filter((msg) => msg.key === 'content-changed' && msg.editorKey === editorKey),
+        debounceTime(1000),
+      ).subscribe(async () => onTransform(await transpileAndTransform(model, packages)));
+      stream.next({ key: 'content-changed', editorKey, modelKey });
+    }
+    return () => sub?.unsubscribe();
   }, [typesLoaded, model]);
 
   return (
@@ -37,7 +44,6 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
       editorKey={editorKey}
       modelKey={modelKey}
       filename={`file:///${modelKey}.main.tsx`}
-      onChange={onChange}
     />
   );
 };

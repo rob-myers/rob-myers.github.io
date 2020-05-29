@@ -61,42 +61,40 @@ export function transpile(model: IMonacoTextModel): Promise<ITransformedCode> {
 /**
  * Transpiles the code and performs post-processing.
  */
-export function transpileAndPost(
+export function transpileAndTransform(
   model: IMonacoTextModel,
   supportedPackages: IBasicPackageGroup[],
 ): Promise<ITransformedExample> {
   const code = model.getValue();
-  return transpile(model)
-    .then(
-      (transpileOutput: ITransformedCode): ITransformedExample => {
+  return transpile(model).then(
+    (transpileOutput: ITransformedCode): ITransformedExample => {
 
-        if (transpileOutput.error) {
-          return transpileOutput;
-        }
-        const transformedExample = postTransform({
-          tsCode: code,
-          jsCode: transpileOutput.output,
-          returnFunction: true,
-          supportedPackages,
-        });
+      if (transpileOutput.error) {
+        return transpileOutput;
+      }
+      const transformedExample = postTransform({
+        tsCode: code,
+        jsCode: transpileOutput.output,
+        returnFunction: true,
+        supportedPackages,
+      });
 
-        if (transformedExample.output) {
-          return {
-            ...transformedExample,
-            /**
-             * TODO eval
-             */
-            // Pass in the right React in case there's a different global one on the page...
-            // component: eval(transformedExample.output)(React),
-          };
-        }
-        return { error: transformedExample.error || 'Unknown error transforming example' };
-      },
-    )
-    .catch(
-      (err: string | Error): ITransformedExample => {
-        console.error(err);
-        return { error: typeof err === 'string' ? err : err.message };
-      },
-    );
+      if (transformedExample.output) {
+        return {
+          ...transformedExample,
+          /**
+           * TODO eval
+           */
+          // Pass in the right React in case there's a different global one on the page...
+          // component: eval(transformedExample.output)(React),
+        };
+      }
+      return { error: transformedExample.error || 'Unknown error transforming example' };
+    },
+  ).catch(
+    (err: string | Error): ITransformedExample => {
+      console.error(err);
+      return { error: typeof err === 'string' ? err : err.message };
+    },
+  );
 }

@@ -1,14 +1,15 @@
 import * as monaco from 'monaco-editor';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { IEditorProps } from './editor.model';
 import { CODE_FONT_FAMILY, DEFAULT_WIDTH, DEFAULT_HEIGHT } from './consts';
 import { Thunk } from '@store/worker.duck';
 import { redact } from '@model/store/redux.model';
 
+// Must not be in main bundle (so, not in worker.duck)
 import { LanguageServiceDefaultsImpl as TypescriptDefaults } from '@model/monaco/monaco-typescript.d';
 import { accessibilityHelpUrl } from '@model/monaco';
-// Must not be in main bundle (so, not in worker.duck)
 const typescript = monaco.languages.typescript;
 const typescriptDefaults = typescript.typescriptDefaults as TypescriptDefaults;
 
@@ -23,8 +24,6 @@ const Editor: React.FC<IEditorProps> = (props) => {
     code = '',
     language,
     filename,
-    onChange,
-    debounceMs = 1000,
     editorOptions,
     editorKey = 'editor-model',
     modelKey = 'default-model',
@@ -80,27 +79,12 @@ const Editor: React.FC<IEditorProps> = (props) => {
     };
   }, []);
 
-  /**
-   * Handle updates e.g. transpile.
-   */
   React.useEffect(() => {
-    // /**
-    //  * TODO trigger rxjs stream via thunk.
-    //  */
-    // if (monacoEditor) {
-    //   const dispose = monacoEditor.editor.onDidChangeModelContent(() => {
-    //     dispatch(Thunk.onModelContentChanged({ editorKey, modelKey }));
-    //   });
-    // }
-    const editor = monacoEditor?.editor;
-    let debounceId: number;
-    onChange && editor?.onDidChangeModelContent(() => {
-      clearTimeout(debounceId);
-      debounceId = window.setTimeout(() => {
-        onChange();
-      }, debounceMs);
-    });
-    return () => void clearTimeout(debounceId);
+    let disposable: monaco.IDisposable;
+    monacoEditor && (disposable = monacoEditor.editor.onDidChangeModelContent(() => {
+      monacoEditor.stream.next({ key: 'content-changed', editorKey, modelKey });
+    }));
+    return () => disposable?.dispose();
   }, [monacoEditor?.key]);
 
   return (

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import { ReplaySubject } from 'rxjs';
 // Get sass.js from node_modules, but sass.worker.js from public/ 
 import Sass, { SassWorker } from 'sass.js/dist/sass';
 
@@ -38,6 +39,7 @@ interface MonacoEditorInstance {
   editor: Redacted<Editor>;
   lastDecorations: string[];
   unregisterSyntax: () => void;
+  stream: Redacted<EditorStream>;
 }
 interface MonacoModelInstance {
   key: string;
@@ -45,6 +47,11 @@ interface MonacoModelInstance {
   model: Redacted<IMonacoTextModel>;
   filename: string;
 }
+
+type EditorStream = ReplaySubject<EditorMessage>;
+type EditorMessage = (
+  | { key: 'content-changed'; editorKey: string; modelKey: string }
+)
 
 const initialState: State = {
   monacoGlobalsLoaded: false,
@@ -58,17 +65,21 @@ const initialState: State = {
 };
 
 export const Act = {
-  storeMonacoEditor: ({ editorKey, editor }: { editorKey: string; editor: Redacted<Editor> }) =>
-    createAct('[worker] store monaco editor', { editorKey, editor }),
+  storeMonacoEditor: (input: {
+    editorKey: string;
+    editor: Redacted<Editor>;
+    stream: Redacted<EditorStream>;
+  }) =>
+    createAct('[worker] store monaco editor', input),
   setMonacoInternal: (monacoInternal: MonacoInternal) =>
     createAct('[worker] store monaco core', { monacoInternal }),
-  storeMonacoModel: ({ editorKey, model, modelKey, filename }: {
+  storeMonacoModel: (input: {
     editorKey: null | string;
     modelKey: string;
     model: Redacted<IMonacoTextModel>;
     filename: string;
   }) =>
-    createAct('[worker] store monaco model', { editorKey, model, modelKey, filename }),
+    createAct('[worker] store monaco model', input),
   storeSassWorker: ({ worker }: { worker: Redacted<SassWorker> }) =>
     createAct('[worker] store sass', { worker }),
   storeSyntaxWorker: ({ worker }: { worker: Redacted<SyntaxWorker> }) =>
@@ -101,7 +112,9 @@ export const Thunk = {
       model: Redacted<IMonacoTextModel>; // TODO optional
       filename: string;
     }) => {
-      dispatch(Act.storeMonacoEditor({ editor, editorKey }));
+
+      const stream = new ReplaySubject<EditorMessage>();
+      dispatch(Act.storeMonacoEditor({ editor, editorKey, stream: redact(stream) }));
       dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
 
       if (!worker.syntaxWorker) {
@@ -303,6 +316,7 @@ export const reducer = (state = initialState, act: Action): State => {
         editor: act.pay.editor,
         lastDecorations: [],
         unregisterSyntax: () => null,
+        stream: act.pay.stream,
       }, state.monacoEditor),
     };
     case '[worker] store monaco model': return { ...state,

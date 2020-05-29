@@ -43,7 +43,7 @@ const DevEnv: React.FC = () => {
             editorKey="editor-1"
             modelKey="demo-1"
             editorProps={tsxEditorProps}
-            supportedPackages={SUPPORTED_PACKAGES}
+            packages={SUPPORTED_PACKAGES}
           />
         )}
         {editing === 'scss' && (

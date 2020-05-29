@@ -16,7 +16,7 @@ export interface ITsxEditorProps {
    * If successful, `result.component` will be the example component you should render.
    * (The editor doesn't render the component itself to avoid stomping on existing React-managed DOM.)
    */
-  onTransformFinished?: (result: ITransformedExample) => void;
+  onTransform?: (result: ITransformedExample) => void;
 
   /**
    * TS compiler option overrides. Overrides to certain options essential to the TsxEditor's
@@ -32,5 +32,5 @@ export interface ITsxEditorProps {
    * WARNING: Changing this prop will cause editor initialization to re-run.
    * (Save the value in a constant to prevent it from mutating every render.)
    */
-  supportedPackages?: IPackageGroup[];
+  packages?: IPackageGroup[];
 }
