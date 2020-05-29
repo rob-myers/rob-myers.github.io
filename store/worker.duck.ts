@@ -7,7 +7,7 @@ import { getWindow } from '@model/dom.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup } from '@model/store/redux.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { IPackageGroup, SUPPORTED_PACKAGES, IMonacoTextModel, loadTypes, MonacoRangeClass, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco';
+import { IPackageGroup, SUPPORTED_PACKAGES, IMonacoTextModel, loadTypes, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
@@ -28,7 +28,6 @@ export interface State {
 }
 
 interface MonacoInternal {
-  rangeClass: Redacted<MonacoRangeClass>;
   typescriptDefaults: Redacted<TypescriptDefaults>;
   typescript: Redacted<Typescript>;
   monaco: Redacted<Monaco>;
@@ -120,28 +119,6 @@ export const Thunk = {
       }
     },
   ),
-  removeMonacoEditor: createThunk(
-    '[worker] remove monaco editor',
-    ({ dispatch, state: { worker: { monacoEditor, monacoModel } }}, { editorKey }: { editorKey: string }) => {
-      monacoEditor[editorKey]?.editor.dispose();
-      monacoEditor[editorKey]?.unregisterSyntax();
-
-      dispatch(Act.update({
-        monacoEditor: removeFromLookup(editorKey, monacoEditor),
-        monacoModel: Object.entries(monacoModel).reduce((agg, [key, value]) => ({ ...agg,
-          [key]: { ...value, ...(value.editorKey === editorKey && { editorKey: null }) },
-        }), {} as State['monacoModel']),
-      }));
-    },
-  ),
-  removeMonacoModel: createThunk(
-    '[worker] remove monaco model',
-    ({ dispatch, state: { worker: { monacoModel } }
-    }, { modelKey }: { modelKey: string }) => {
-      monacoModel[modelKey]?.model.dispose();
-      dispatch(Act.update({ monacoModel: removeFromLookup(modelKey, monacoModel) }));
-    },
-  ),
   /**
    * NOTE supported packages currently empty. Examples at:
    * https://github.com/microsoft/fluentui/blob/master/packages/tsx-editor/src/utilities/defaultSupportedPackages.ts
@@ -181,6 +158,28 @@ export const Thunk = {
       await loadTypes(worker.monacoSupportedPkgs, typescriptDefaults);
       typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: false });
       dispatch(Act.update({ monacoTypesLoaded: true }));
+    },
+  ),
+  removeMonacoEditor: createThunk(
+    '[worker] remove monaco editor',
+    ({ dispatch, state: { worker: { monacoEditor, monacoModel } }}, { editorKey }: { editorKey: string }) => {
+      monacoEditor[editorKey]?.editor.dispose();
+      monacoEditor[editorKey]?.unregisterSyntax();
+
+      dispatch(Act.update({
+        monacoEditor: removeFromLookup(editorKey, monacoEditor),
+        monacoModel: Object.entries(monacoModel).reduce((agg, [key, value]) => ({ ...agg,
+          [key]: { ...value, ...(value.editorKey === editorKey && { editorKey: null }) },
+        }), {} as State['monacoModel']),
+      }));
+    },
+  ),
+  removeMonacoModel: createThunk(
+    '[worker] remove monaco model',
+    ({ dispatch, state: { worker: { monacoModel } }
+    }, { modelKey }: { modelKey: string }) => {
+      monacoModel[modelKey]?.model.dispose();
+      dispatch(Act.update({ monacoModel: removeFromLookup(modelKey, monacoModel) }));
     },
   ),
   setMonacoCompilerOptions: createThunk(
@@ -260,7 +259,7 @@ export const Thunk = {
         // const inlineClassName = `is-${classification.kind} in-${classification.parentKind}`;
         const inlineClassName = classification.kind;
         return {
-          range: new worker.monacoInternal!.rangeClass!(
+          range: new worker.monacoInternal!.monaco.Range(
             classification.startLineNumber,
             classification.startColumn,
             classification.endLineNumber,

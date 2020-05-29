@@ -42,7 +42,6 @@ const Editor: React.FC<IEditorProps> = (props) => {
     (async () => {
       if (!monacoBootstrapped) {
         await dispatch(Thunk.bootstrapMonaco({
-          rangeClass: redact(monaco.Range),
           typescript: redact(typescript),
           typescriptDefaults: redact(typescriptDefaults),
           monaco: redact(monaco),
