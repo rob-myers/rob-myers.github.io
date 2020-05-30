@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor';
-import { TypescriptDefaults, IMonacoTextModel, ITransformedCode, IDiagnostic } from './monaco.model';
+import { TypescriptDefaults, IMonacoTextModel, TranspiledCode, IDiagnostic } from './monaco.model';
 import { EmitOutput } from './monaco-typescript';
 
 const typesPrefix = 'file:///node_modules/@types';
@@ -14,7 +14,7 @@ export class MonacoService {
     );
   }
 
-  public async transpile(model: IMonacoTextModel): Promise<ITransformedCode> {
+  public async transpile(model: IMonacoTextModel): Promise<TranspiledCode> {
     const filename = model.uri.toString();
     const getWorker = await monaco.languages.typescript.getTypeScriptWorker();
     const worker = await getWorker(model.uri);

@@ -2,7 +2,7 @@ import shortid from 'shortid';
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { ITransformedCode, ICompilerOptions } from '@model/monaco/monaco.model';
+import { TranspiledCode, ICompilerOptions } from '@model/monaco/monaco.model';
 import { Thunk } from '@store/worker.duck';
 import Editor from './editor';
 import { IEditorProps } from './editor.model';
@@ -41,7 +41,7 @@ export interface ITsxEditorProps {
   editorKey: string;
   modelKey: string;
   editorProps: IEditorProps;
-  onTranspile?: (result: ITransformedCode) => void;
+  onTranspile?: (result: TranspiledCode) => void;
   compilerOptions?: ICompilerOptions;
 }
 
