@@ -8,7 +8,7 @@ import { getWindow } from '@model/dom.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup } from '@model/store/redux.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { IPackageGroup, SUPPORTED_PACKAGES, IMonacoTextModel, loadTypes, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco';
+import { IPackageGroup, SUPPORTED_PACKAGES, IMonacoTextModel, loadReactTypes, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
@@ -162,10 +162,9 @@ export const Thunk = {
     '[worker] ensure monaco types',
     async ({ state: { worker }, dispatch }) => {
       const { typescriptDefaults } = worker.monacoInternal!;
-      // Initially disable type checking
+      // Load types then turn type checking back on
       typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: true });
-      // Load types and then turn on full type checking
-      await loadTypes(worker.monacoSupportedPkgs, typescriptDefaults);
+      await loadReactTypes(typescriptDefaults);
       typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: false });
       dispatch(Act.update({ monacoTypesLoaded: true }));
     },
