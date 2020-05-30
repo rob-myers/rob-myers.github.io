@@ -1,5 +1,5 @@
 import { IEditorProps } from './editor.model';
-import { ICompilerOptions, ITransformedExample } from '@model/monaco';
+import { ICompilerOptions, ITransformedCode } from '@model/monaco/monaco.model';
 
 export interface ITsxEditorProps {
   editorKey: string;
@@ -16,7 +16,7 @@ export interface ITsxEditorProps {
    * If successful, `result.component` will be the example component you should render.
    * (The editor doesn't render the component itself to avoid stomping on existing React-managed DOM.)
    */
-  onTransform?: (result: ITransformedExample) => void;
+  onTransform?: (result: ITransformedCode) => void;
 
   /**
    * TS compiler option overrides. Overrides to certain options essential to the TsxEditor's

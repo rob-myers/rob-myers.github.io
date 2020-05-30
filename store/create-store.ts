@@ -36,12 +36,11 @@ const persistedReducer = persistReducer({
       (_, _key) => ({
         sassWorker: null,
         syntaxWorker: null,
-        monacoGlobalsLoaded: false,
-        monacoTypesLoaded: false,
-        monacoSupportedPkgs: [],
         monacoEditor: {},
-        monacoModel: {},
         monacoInternal: null,
+        monacoModel: {},
+        monacoService: null,
+        monacoTypesLoaded: false,
       }),
       (state, _key) => state,
       { whitelist: ['worker'] }

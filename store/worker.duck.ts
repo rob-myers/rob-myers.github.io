@@ -5,20 +5,22 @@ import Sass, { SassWorker } from 'sass.js/dist/sass';
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup } from '@model/store/redux.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { IMonacoTextModel, loadReactTypes, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco';
+import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco/monaco.model';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
 import { Message } from '@model/worker.model';
+import { MonacoService } from '@model/monaco/monaco.service';
 
 export interface State {
-  /** Internal monaco structures */
-  monacoInternal: null | MonacoInternal;
-  monacoTypesLoaded: boolean;
   /** Instances of monaco editor */
   monacoEditor: KeyedLookup<MonacoEditorInstance>;
+  /** Internal monaco structures */
+  monacoInternal: null | MonacoInternal;
   /** Instances of monaco models */
   monacoModel: KeyedLookup<MonacoModelInstance>;
+  monacoService: null | Redacted<MonacoService>;
+  monacoTypesLoaded: boolean;
   sassWorker: null | Redacted<SassWorker>;
   syntaxWorker: null | Redacted<SyntaxWorker>;
 }
@@ -45,10 +47,11 @@ interface MonacoModelInstance {
 }
 
 const initialState: State = {
-  monacoTypesLoaded: false,
   monacoEditor: {},
-  monacoModel: {},
   monacoInternal: null,
+  monacoModel: {},
+  monacoService: null,
+  monacoTypesLoaded: false,
   sassWorker: null,
   syntaxWorker: null,
 };
@@ -62,6 +65,8 @@ export const Act = {
     createAct('[worker] store monaco editor', input),
   setMonacoInternal: (monacoInternal: MonacoInternal) =>
     createAct('[worker] store monaco core', { monacoInternal }),
+  setMonacoService: (service: Redacted<MonacoService>) =>
+    createAct('[worker] store monaco service', { service }),
   storeMonacoModel: (input: {
     editorKey: null | string;
     modelKey: string;
@@ -85,6 +90,11 @@ export const Thunk = {
   bootstrapMonaco: createThunk(
     '[worker] bootstrap monaco',
     async ({ dispatch }, monacoInternal: MonacoInternal) => {
+      // Dynamic import keeps monaco out of main bundle
+      const { MonacoService } = await import('@model/monaco/monaco.service');
+      const service = redact(new MonacoService);
+      dispatch(Act.setMonacoService(service));
+
       dispatch(Act.setMonacoInternal(monacoInternal));
       dispatch(Thunk.setMonacoCompilerOptions({}));
       await dispatch(Thunk.ensureMonacoTypes({}));
@@ -127,7 +137,7 @@ export const Thunk = {
       const { typescriptDefaults } = worker.monacoInternal!;
       // Load types then turn type checking back on
       typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: true });
-      await loadReactTypes(typescriptDefaults);
+      await worker.monacoService!.loadReactTypes(typescriptDefaults);
       typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: false });
       dispatch(Act.update({ monacoTypesLoaded: true }));
     },
@@ -219,6 +229,13 @@ export const Thunk = {
       }
     },
   ),
+  transpileModel: createThunk(
+    '[worker] transpile monaco model',
+    async ({ state: { worker } }, { modelKey }: { modelKey: string }) => {
+      const model = worker.monacoModel[modelKey]?.model;
+      return await worker.monacoService!.transpileAndTransform(model);
+    },
+  ),
   updateEditorDecorations: createThunk(
     '[worker] update editor decorations',
     ({ state: { worker }, dispatch }, { editorKey, classifications }: {
@@ -285,6 +302,9 @@ export const reducer = (state = initialState, act: Action): State => {
         editorKey: act.pay.editorKey,
         filename: act.pay.filename,
       }, state.monacoModel),
+    };
+    case '[worker] store monaco service': return { ...state,
+      monacoService: act.pay.service,
     };
     case '[worker] store sass': return { ...state,
       sassWorker: act.pay.worker,

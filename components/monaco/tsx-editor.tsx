@@ -1,11 +1,11 @@
 import shortid from 'shortid';
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 import { ITsxEditorProps } from './tsx-editor.model';
-import { transpileAndTransform } from '@model/monaco/transpile';
+import { Thunk } from '@store/worker.duck';
 import Editor from './editor';
 
 /**
@@ -22,14 +22,15 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   const model = useSelector(({ worker }) => worker.monacoEditor[editorKey]?.editor.getModel());
   const stream = useSelector(({ worker }) => worker.monacoEditor[editorKey]?.stream);
   const typesLoaded = useSelector(({ worker }) => worker.monacoTypesLoaded);
+  const dispatch = useDispatch();
 
-  // Transpile and transform on model change
   React.useEffect(() => {
     let sub: Subscription;
     if (typesLoaded && model) {
-      sub = stream.pipe(debounceTime(1000)).subscribe(
-        async () => onTransform(await transpileAndTransform(model)));
-      stream.next(null);
+      sub = stream.pipe(debounceTime(1000)).subscribe(async () => {
+        onTransform(await dispatch(Thunk.transpileModel({ modelKey })));
+      });
+      stream.next(null); // Initial trigger
     }
     return () => sub?.unsubscribe();
   }, [typesLoaded, model]);

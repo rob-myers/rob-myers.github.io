@@ -9,7 +9,7 @@ import { redact } from '@model/store/redux.model';
 
 // Must not be in main bundle (so, not in worker.duck)
 import { LanguageServiceDefaultsImpl as TypescriptDefaults } from '@model/monaco/monaco-typescript.d';
-import { accessibilityHelpUrl } from '@model/monaco';
+import { accessibilityHelpUrl } from '@model/monaco/monaco.model';
 const typescript = monaco.languages.typescript;
 const typescriptDefaults = typescript.typescriptDefaults as TypescriptDefaults;
 
