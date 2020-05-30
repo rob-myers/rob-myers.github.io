@@ -79,12 +79,6 @@ const Editor: React.FC<IEditorProps> = (props) => {
     };
   }, []);
 
-  React.useEffect(() => {
-    const disposable = monacoEditor?.editor
-      .onDidChangeModelContent((_event) => monacoEditor.stream.next(null));
-    return () => disposable?.dispose();
-  }, [monacoEditor?.key]);
-
   return (
     <div
       ref={divRef}

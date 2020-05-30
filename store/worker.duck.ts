@@ -1,4 +1,3 @@
-import { ReplaySubject } from 'rxjs';
 // Get sass.js from node_modules, but sass.worker.js from public/ 
 import Sass, { SassWorker } from 'sass.js/dist/sass';
 
@@ -36,8 +35,6 @@ interface MonacoEditorInstance {
   editor: Redacted<Editor>;
   lastDecorations: string[];
   unregisterSyntax: () => void;
-  /** Triggered on model change */
-  stream: Redacted<ReplaySubject<null>>;
 }
 interface MonacoModelInstance {
   key: string;
@@ -60,7 +57,6 @@ export const Act = {
   storeMonacoEditor: (input: {
     editorKey: string;
     editor: Redacted<Editor>;
-    stream: MonacoEditorInstance['stream'];
   }) =>
     createAct('[worker] store monaco editor', input),
   setMonacoInternal: (monacoInternal: MonacoInternal) =>
@@ -111,8 +107,7 @@ export const Thunk = {
       filename: string;
     }) => {
 
-      const stream = new ReplaySubject<null>();
-      dispatch(Act.storeMonacoEditor({ editor, editorKey, stream: redact(stream) }));
+      dispatch(Act.storeMonacoEditor({ editor, editorKey }));
       dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
 
       if (!worker.syntaxWorker) {
@@ -140,6 +135,21 @@ export const Thunk = {
       await worker.monacoService!.loadReactTypes(typescriptDefaults);
       typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: false });
       dispatch(Act.update({ monacoTypesLoaded: true }));
+    },
+  ),
+  /** Execute a debounced action whenever editor model changes. */
+  onModelChange: createThunk(
+    '[worker] on model change',
+    ({ state: { worker: { monacoEditor } } }, { act, editorKey, debounceMs }: {
+      act: () => void;
+      debounceMs: number; 
+      editorKey: string;
+    }) => {
+      let debounceId: number;
+      monacoEditor[editorKey]?.editor.onDidChangeModelContent((_event) => {
+        window.clearTimeout(debounceId);
+        debounceId = window.setTimeout(act, debounceMs);
+      });
     },
   ),
   removeMonacoEditor: createThunk(
@@ -292,7 +302,6 @@ export const reducer = (state = initialState, act: Action): State => {
         editor: act.pay.editor,
         lastDecorations: [],
         unregisterSyntax: () => null,
-        stream: act.pay.stream,
       }, state.monacoEditor),
     };
     case '[worker] store monaco model': return { ...state,
