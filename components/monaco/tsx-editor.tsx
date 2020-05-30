@@ -2,15 +2,16 @@ import shortid from 'shortid';
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { ITsxEditorProps } from './tsx-editor.model';
+import { ITransformedCode, ICompilerOptions } from '@model/monaco/monaco.model';
 import { Thunk } from '@store/worker.duck';
 import Editor from './editor';
+import { IEditorProps } from './editor.model';
 
 const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   editorKey: baseEditorKey,
   modelKey,
   editorProps,
-  onTransform = () => null,
+  onTranspile: onTransform = () => null,
 }) => {
   const editorUid = React.useRef(`${baseEditorKey}-${shortid.generate()}`);
   const editorKey = editorUid.current;
@@ -35,5 +36,13 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
     />
   );
 };
+
+export interface ITsxEditorProps {
+  editorKey: string;
+  modelKey: string;
+  editorProps: IEditorProps;
+  onTranspile?: (result: ITransformedCode) => void;
+  compilerOptions?: ICompilerOptions;
+}
 
 export default TsxEditor;

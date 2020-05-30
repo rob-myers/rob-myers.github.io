@@ -9,7 +9,10 @@
 # Local
 
 - [ ] Mount transpiled react component (Dev)
-- [ ] Clean up transpile and transform
+  > transform `react` import path.
+  > create javascript module with `src` via `Blob`.
+  > import default export and render via `react-dom`.
+- [x] Clean up transpile and transform
 - [x] Auto-generate typescript definition files using:
   > https://stackoverflow.com/a/43776832/2917822
 - [x] Redo syntax-highlighting

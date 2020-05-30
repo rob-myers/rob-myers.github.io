@@ -42,6 +42,7 @@ const DevEnv: React.FC = () => {
             editorKey="editor-1"
             modelKey="demo-1"
             editorProps={tsxEditorProps}
+            onTranspile={(transpiled) => console.log({ transpiled })}
           />
         )}
         {editing === 'scss' && (

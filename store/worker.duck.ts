@@ -243,7 +243,7 @@ export const Thunk = {
     '[worker] transpile monaco model',
     async ({ state: { worker } }, { modelKey }: { modelKey: string }) => {
       const model = worker.monacoModel[modelKey]?.model;
-      return await worker.monacoService!.transpileAndTransform(model);
+      return await worker.monacoService!.transpile(model);
     },
   ),
   updateEditorDecorations: createThunk(

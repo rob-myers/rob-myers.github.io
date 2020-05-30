@@ -1,10 +1,8 @@
 import * as monaco from 'monaco-editor';
-import { getWindow } from '@model/dom.model';
-import { TypescriptDefaults, IMonacoTextModel, ITransformedCode, PostTransformParams, IDiagnostic } from './monaco.model';
-import { TypeScriptWorker, EmitOutput } from './monaco-typescript';
+import { TypescriptDefaults, IMonacoTextModel, ITransformedCode, IDiagnostic } from './monaco.model';
+import { EmitOutput } from './monaco-typescript';
 
 const typesPrefix = 'file:///node_modules/@types';
-const win = getWindow<{ transpileLogging?: boolean }>();
 
 export class MonacoService {
 
@@ -16,102 +14,33 @@ export class MonacoService {
     );
   }
 
-  // TODO clean
   public async transpile(model: IMonacoTextModel): Promise<ITransformedCode> {
-    const transpiledOutput: ITransformedCode = { error: undefined, output: undefined };
     const filename = model.uri.toString();
+    const getWorker = await monaco.languages.typescript.getTypeScriptWorker();
+    const worker = await getWorker(model.uri);
+    
+    try {
+      const emitOutput: EmitOutput = await worker.getEmitOutput(filename);
+      const diagnostics = await worker.getSyntacticDiagnostics(filename);
+      const errors = diagnostics.filter(d => d.category === 1);
+  
+      if (errors.length) {
+        return {
+          key: 'error',
+          message: this.getErrorMessages(diagnostics, model.getValue()),
+        };
+      }
 
-    return monaco.languages.typescript
-      .getTypeScriptWorker()
-      .then((getWorker: (uri: monaco.Uri) => Promise<TypeScriptWorker>) => getWorker(model.uri))
-      .then(worker => {
-        return worker.getEmitOutput(filename).then((output: EmitOutput) => {
-          /**
-           * TODO
-           * - typescript definition file (d.ts) content is in `output.outputFiles[1]`
-           *   because compilerOptions.declaration is `true`.
-           * - when storing a module remotely, should store both transpilation and this file
-           * - whilst mocking locally we'll need to use such files when working with multiple modules
-           */
-          // console.log({ output });
+      return {
+        key: 'success',
+        transpiledJs: emitOutput.outputFiles[0].text,
+        typings: emitOutput.outputFiles[1].text,
+      };
 
-          // Get diagnostics to find out if there were any syntax errors (there's also getSemanticDiagnostics
-          // for type errors etc, but it may be better to allow the user to just find and fix those
-          // via intellisense rather than blocking compilation, since they may be non-fatal)
-          return worker.getSyntacticDiagnostics(filename).then(syntacticDiagnostics => {
-            syntacticDiagnostics = syntacticDiagnostics.filter(d => d.category === 1 /*error*/);
-
-            if (syntacticDiagnostics.length) {
-              // Don't try to run the example if there's a syntax error
-              transpiledOutput.error = this.getErrorMessages(syntacticDiagnostics, model.getValue());
-            } else {
-              transpiledOutput.output = output.outputFiles[0].text;
-              if (win && win.transpileLogging) {
-                console.log('TRANSPILED:');
-                console.log(transpiledOutput.output);
-              }
-            }
-            return transpiledOutput;
-          });
-        });
-      })
-      .catch(ex => {
-        // Log the error to the console so people can see the full stack/etc if they want
-        console.error(ex);
-        transpiledOutput.error = ex.message;
-        return transpiledOutput;
-      });
-  }
-  
-  // TODO clean
-  public transpileAndTransform(model: IMonacoTextModel): Promise<ITransformedCode> {
-    const code = model.getValue();
-    return this.transpile(model).then(
-      (transpileOutput: ITransformedCode): ITransformedCode => {
-  
-        if (transpileOutput.error) {
-          return transpileOutput;
-        }
-        const transformedExample = this.postTransform({
-          tsCode: code,
-          jsCode: transpileOutput.output,
-          returnFunction: true,
-        });
-  
-        if (transformedExample.output) {
-          return {
-            ...transformedExample,
-            /**
-             * TODO eval
-             */
-            // Pass in the right React in case there's a different global one on the page...
-            // component: eval(transformedExample.output)(React),
-          };
-        }
-        return { error: transformedExample.error || 'Unknown error transforming example' };
-      },
-    ).catch(
-      (err: string | Error): ITransformedCode => {
-        console.error(err);
-        return { error: typeof err === 'string' ? err : err.message };
-      },
-    );
-  }
-
-  private postTransform(params: PostTransformParams): ITransformedCode {
-    const {
-      tsCode,
-      jsCode,
-      id: _ = 'content',
-      returnFunction: ___,
-    } = params;
-  
-    const code = (jsCode || tsCode).trim();
-    console.log(code);
-  
-    return {
-      output: code,
-    };
+    } catch (e) {
+      console.error(e);
+      return { key: 'error', message: e.message };
+    }
   }
 
   private getErrorMessages(errors: IDiagnostic[], text: string) {
