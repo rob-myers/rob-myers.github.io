@@ -20,11 +20,34 @@ export type TranspiledCode = (
   | { key: 'error'; message: string | string[] }
 );
 
-/** Partial ts.Diagnostic @internal */
 export interface IDiagnostic {
   category: number;
   code: number;
   start?: number;
   length?: number;
   messageText: string | { messageText: string; code: number };
+}
+
+import { IEditorProps } from '@components/monaco/editor.model';
+import { exampleTsx1 } from '@model/code/examples';
+
+export const tsxEditorProps: IEditorProps = {
+  language:'typescript',
+  theme: 'vs-dark',
+  editorOptions: {},
+  filename: 'file:///main.tsx',
+  className: 'monaco-tsx-editor',
+  code: exampleTsx1,
+  width: '100%',
+};
+
+export type FileType = 'tsx' | 'scss';
+export const permute = (type: FileType): FileType => type === 'scss' ? 'tsx' : 'scss';
+export const emptyTranspile: TranspiledCode = { key: 'success', transpiledJs: '', typings: '' };
+
+export interface DevModule {
+  key: string;
+  type: 'js' | 'css';
+  blobUrl: string;
+  code: string;
 }

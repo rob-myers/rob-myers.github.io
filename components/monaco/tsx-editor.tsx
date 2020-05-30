@@ -1,4 +1,3 @@
-import shortid from 'shortid';
 import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -8,13 +7,11 @@ import Editor from './editor';
 import { IEditorProps } from './editor.model';
 
 const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
-  editorKey: baseEditorKey,
+  editorKey,
   modelKey,
   editorProps,
   onTranspile: onTransform = () => null,
 }) => {
-  const editorUid = React.useRef(`${baseEditorKey}-${shortid.generate()}`);
-  const editorKey = editorUid.current;
   const model = useSelector(({ worker }) => worker.monacoEditor[editorKey]?.editor.getModel());
   const typesLoaded = useSelector(({ worker }) => worker.monacoTypesLoaded);
   const dispatch = useDispatch();

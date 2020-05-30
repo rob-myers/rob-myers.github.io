@@ -4,7 +4,7 @@ import Sass, { SassWorker } from 'sass.js/dist/sass';
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup } from '@model/store/redux.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco/monaco.model';
+import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco, DevModule } from '@model/monaco/monaco.model';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
@@ -12,6 +12,7 @@ import { Message } from '@model/worker.model';
 import { MonacoService } from '@model/monaco/monaco.service';
 
 export interface State {
+  devEnv: KeyedLookup<DevEnvInstance>;
   /** Instances of monaco editor */
   monacoEditor: KeyedLookup<MonacoEditorInstance>;
   /** Internal monaco structures */
@@ -24,10 +25,11 @@ export interface State {
   syntaxWorker: null | Redacted<SyntaxWorker>;
 }
 
-interface MonacoInternal {
-  typescriptDefaults: Redacted<TypescriptDefaults>;
-  typescript: Redacted<Typescript>;
-  monaco: Redacted<Monaco>;
+interface DevEnvInstance {
+  key: string;
+  tsxModule: DevModule;
+  sassModule: DevModule;
+  tsModule: DevModule;
 }
 
 interface MonacoEditorInstance {
@@ -42,8 +44,14 @@ interface MonacoModelInstance {
   model: Redacted<IMonacoTextModel>;
   filename: string;
 }
+interface MonacoInternal {
+  typescriptDefaults: Redacted<TypescriptDefaults>;
+  typescript: Redacted<Typescript>;
+  monaco: Redacted<Monaco>;
+}
 
 const initialState: State = {
+  devEnv: {},
   monacoEditor: {},
   monacoInternal: null,
   monacoModel: {},

@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { exampleScss1, exampleTsx1 } from '@model/code/examples';
-import { TranspiledCode } from '@model/monaco/monaco.model';
-import { IEditorProps } from '@components/monaco/editor.model';
+import { exampleScss1 } from '@model/code/examples';
+import { TranspiledCode, FileType, emptyTranspile, permute, tsxEditorProps } from '@model/monaco/monaco.model';
 import TsxEditor from '@components/monaco/tsx-editor';
 import Editor from '@components/monaco/editor';
 import css from './dev-env.scss';
@@ -11,26 +10,16 @@ import css from './dev-env.scss';
 // See `styles.config.ts`. Using `require` prevents tree-shaking.
 require('./monaco-override.scss');
 
-const tsxEditorProps: IEditorProps = {
-  language:'typescript',
-  theme: 'vs-dark',
-  editorOptions: {},
-  filename: 'file:///main.tsx',
-  className: 'monaco-tsx-editor',
-  code: exampleTsx1,
-  width: '100%',
-};
-
-type FileType = 'tsx' | 'scss';
-const permute = (type: FileType): FileType => type === 'scss' ? 'tsx' : 'scss';
-const emptyTranspile: TranspiledCode = { key: 'success', transpiledJs: '', typings: '' };
-
-const DevEnv: React.FC = () => {
+const DevEnv: React.FC<Props> = ({ uid }) => {
   const [editing, setEditing] = useState<FileType>('tsx');
-  const [transpile, setTranspile] = useState<TranspiledCode>(emptyTranspile);
+  const [transpile, setTranspile] = useState<TranspiledCode>(emptyTranspile);  
   const ready = useSelector(({ worker: { monacoTypesLoaded } }) => !!monacoTypesLoaded);
   const toggle = useCallback(() => ready && setEditing(permute(editing)), [ready, editing]);
   const onTranspile = useCallback((result: TranspiledCode) => setTranspile(result), []);
+
+  useEffect(() => {
+    // TODO create/destroy dev env
+  }, []);
 
   useEffect(() => {
     console.log({ tsxTranspile: transpile });
@@ -45,16 +34,16 @@ const DevEnv: React.FC = () => {
       <div className={css.editor}>
         {editing === 'tsx' && (
           <TsxEditor
-            editorKey="editor-1"
-            modelKey="demo-1"
+            editorKey={`${uid}-editor/tsx`}
+            modelKey={`${uid}-model/tsx`}
             editorProps={tsxEditorProps}
             onTranspile={onTranspile}
           />
         )}
         {editing === 'scss' && (
           <Editor
-            editorKey="editor-2"
-            modelKey="demo-2"
+            editorKey={`${uid}-editor/scss`}
+            modelKey={`${uid}-model/scss`}
             filename="file:///main.scss"
             width={'100%'}
             code={exampleScss1}
@@ -64,5 +53,9 @@ const DevEnv: React.FC = () => {
     </section>
   );
 };
+
+interface Props {
+  uid: string;
+}
 
 export default DevEnv;

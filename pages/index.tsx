@@ -16,7 +16,7 @@ const Home: React.FC = () => {
         label="Robert S. R. Myers"
         disableLinks={!ready}
       />
-      <DevEnv />
+      <DevEnv uid="demo" />
       <Gitalk />
     </Layout>  
   );
