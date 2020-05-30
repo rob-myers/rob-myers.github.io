@@ -39,7 +39,8 @@ interface MonacoEditorInstance {
   editor: Redacted<Editor>;
   lastDecorations: string[];
   unregisterSyntax: () => void;
-  stream: Redacted<EditorStream>;
+  /** Triggered on model change */
+  stream: Redacted<ReplaySubject<null>>;
 }
 interface MonacoModelInstance {
   key: string;
@@ -48,10 +49,6 @@ interface MonacoModelInstance {
   filename: string;
 }
 
-type EditorStream = ReplaySubject<EditorMessage>;
-type EditorMessage = (
-  | { key: 'content-changed'; editorKey: string; modelKey: string }
-)
 
 const initialState: State = {
   monacoGlobalsLoaded: false,
@@ -68,7 +65,7 @@ export const Act = {
   storeMonacoEditor: (input: {
     editorKey: string;
     editor: Redacted<Editor>;
-    stream: Redacted<EditorStream>;
+    stream: MonacoEditorInstance['stream'];
   }) =>
     createAct('[worker] store monaco editor', input),
   setMonacoInternal: (monacoInternal: MonacoInternal) =>
@@ -113,7 +110,7 @@ export const Thunk = {
       filename: string;
     }) => {
 
-      const stream = new ReplaySubject<EditorMessage>();
+      const stream = new ReplaySubject<null>();
       dispatch(Act.storeMonacoEditor({ editor, editorKey, stream: redact(stream) }));
       dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
 

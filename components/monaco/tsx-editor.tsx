@@ -2,7 +2,7 @@ import shortid from 'shortid';
 import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { Subscription } from 'rxjs';
-import { debounceTime, filter } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
 import { ITsxEditorProps } from './tsx-editor.model';
 import { transpileAndTransform } from '@model/monaco/transpile';
@@ -29,11 +29,9 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   React.useEffect(() => {
     let sub: Subscription;
     if (typesLoaded && model) {
-      sub = stream.pipe(
-        filter((msg) => msg.key === 'content-changed' && msg.editorKey === editorKey),
-        debounceTime(1000),
-      ).subscribe(async () => onTransform(await transpileAndTransform(model, packages)));
-      stream.next({ key: 'content-changed', editorKey, modelKey });
+      sub = stream.pipe(debounceTime(1000)).subscribe(
+        async () => onTransform(await transpileAndTransform(model, packages)));
+      stream.next(null);
     }
     return () => sub?.unsubscribe();
   }, [typesLoaded, model]);

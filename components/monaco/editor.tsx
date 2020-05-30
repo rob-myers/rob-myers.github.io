@@ -80,10 +80,8 @@ const Editor: React.FC<IEditorProps> = (props) => {
   }, []);
 
   React.useEffect(() => {
-    let disposable: monaco.IDisposable;
-    monacoEditor && (disposable = monacoEditor.editor.onDidChangeModelContent(() => {
-      monacoEditor.stream.next({ key: 'content-changed', editorKey, modelKey });
-    }));
+    const disposable = monacoEditor?.editor
+      .onDidChangeModelContent((_event) => monacoEditor.stream.next(null));
     return () => disposable?.dispose();
   }, [monacoEditor?.key]);
 
