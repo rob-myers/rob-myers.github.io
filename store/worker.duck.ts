@@ -1,10 +1,7 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
 import { ReplaySubject } from 'rxjs';
 // Get sass.js from node_modules, but sass.worker.js from public/ 
 import Sass, { SassWorker } from 'sass.js/dist/sass';
 
-import { getWindow } from '@model/dom.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup } from '@model/store/redux.model';
 import { createThunk } from '@model/store/root.redux.model';
@@ -17,7 +14,6 @@ import { Message } from '@model/worker.model';
 export interface State {
   /** Internal monaco structures */
   monacoInternal: null | MonacoInternal;
-  monacoGlobalsLoaded: boolean;
   monacoTypesLoaded: boolean;
   /** Instances of monaco editor */
   monacoEditor: KeyedLookup<MonacoEditorInstance>;
@@ -48,9 +44,7 @@ interface MonacoModelInstance {
   filename: string;
 }
 
-
 const initialState: State = {
-  monacoGlobalsLoaded: false,
   monacoTypesLoaded: false,
   monacoEditor: {},
   monacoModel: {},
@@ -93,7 +87,6 @@ export const Thunk = {
     async ({ dispatch }, monacoInternal: MonacoInternal) => {
       dispatch(Act.setMonacoInternal(monacoInternal));
       dispatch(Thunk.setMonacoCompilerOptions({}));
-      await dispatch(Thunk.ensureMonacoGlobals({}));
       await dispatch(Thunk.ensureMonacoTypes({}));
       monacoInternal.monaco.editor.setTheme('vs-dark'); // Dark theme
     },
@@ -124,18 +117,6 @@ export const Thunk = {
         const sassWorker = new Sass;
         dispatch(Act.storeSassWorker({ worker: redact(sassWorker) }));
         // sassWorker.compile('.foo { .bar { color: red; } }', (result) => console.log({ result }));
-      }
-    },
-  ),
-  // TODO needed?
-  ensureMonacoGlobals: createThunk(
-    '[worker] ensure monaco globals',
-    async ({ dispatch }) => {
-      const self = getWindow();
-      if (self) {
-        !self.React && (self.React = React);
-        !self.ReactDOM && (self.ReactDOM = ReactDOM);
-        dispatch(Act.update({ monacoGlobalsLoaded: true }));
       }
     },
   ),
