@@ -1,5 +1,5 @@
 import { IEditorProps } from './editor.model';
-import { ICompilerOptions, IPackageGroup, ITransformedExample } from '@model/monaco';
+import { ICompilerOptions, ITransformedExample } from '@model/monaco';
 
 export interface ITsxEditorProps {
   editorKey: string;
@@ -24,13 +24,4 @@ export interface ITsxEditorProps {
    * of options supported by TS, so some options (particularly `lib`) may not work as expected.
    */
   compilerOptions?: ICompilerOptions;
-
-  /**
-   * Supported packages for imports (React is implicitly supported).
-   * Defaults to `office-ui-fabric-react` (and everything it exports) plus `@uifabric/example-data`.
-   *
-   * WARNING: Changing this prop will cause editor initialization to re-run.
-   * (Save the value in a constant to prevent it from mutating every render.)
-   */
-  packages?: IPackageGroup[];
 }

@@ -1,12 +1,10 @@
 import { ITransformedCode } from './transformed.model';
-import { IBasicPackageGroup } from './packages.model';
 
 export function postTransform(params: PostTransformParams): ITransformedCode {
   const {
     tsCode,
     jsCode,
     id: _ = 'content',
-    supportedPackages: __,
     returnFunction: ___,
   } = params;
 
@@ -42,7 +40,4 @@ export interface PostTransformParams {
 
   /** ID for the component to be rendered into (required unless `returnFunction` is true) */
   id?: string;
-
-  /** Supported package groups (React is implicitly supported) */
-  supportedPackages: IBasicPackageGroup[];
 }

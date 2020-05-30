@@ -1,6 +1,6 @@
 import * as monaco from 'monaco-editor';
 import { getWindow } from '@model/dom.model';
-import { IMonacoTextModel, ITransformedCode, IBasicPackageGroup, ITransformedExample } from '@model/monaco';
+import { IMonacoTextModel, ITransformedCode, ITransformedExample } from '@model/monaco';
 import { TypeScriptWorker, EmitOutput } from './monaco-typescript.d';
 import { _getErrorMessages } from './transpile-helpers';
 import { postTransform } from './post-transform';
@@ -61,10 +61,7 @@ export function transpile(model: IMonacoTextModel): Promise<ITransformedCode> {
 /**
  * Transpiles the code and performs post-processing.
  */
-export function transpileAndTransform(
-  model: IMonacoTextModel,
-  supportedPackages: IBasicPackageGroup[],
-): Promise<ITransformedExample> {
+export function transpileAndTransform(model: IMonacoTextModel): Promise<ITransformedExample> {
   const code = model.getValue();
   return transpile(model).then(
     (transpileOutput: ITransformedCode): ITransformedExample => {
@@ -76,7 +73,6 @@ export function transpileAndTransform(
         tsCode: code,
         jsCode: transpileOutput.output,
         returnFunction: true,
-        supportedPackages,
       });
 
       if (transformedExample.output) {

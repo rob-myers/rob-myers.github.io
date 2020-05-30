@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { exampleScss1, exampleTsx1 } from '@model/code/examples';
-import { SUPPORTED_PACKAGES } from '@model/monaco';
 import { IEditorProps } from '@components/monaco/editor.model';
 import TsxEditor from '@components/monaco/tsx-editor';
 import Editor from '@components/monaco/editor';
@@ -43,7 +42,6 @@ const DevEnv: React.FC = () => {
             editorKey="editor-1"
             modelKey="demo-1"
             editorProps={tsxEditorProps}
-            packages={SUPPORTED_PACKAGES}
           />
         )}
         {editing === 'scss' && (

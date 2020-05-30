@@ -6,7 +6,6 @@ import { debounceTime } from 'rxjs/operators';
 
 import { ITsxEditorProps } from './tsx-editor.model';
 import { transpileAndTransform } from '@model/monaco/transpile';
-import { SUPPORTED_PACKAGES } from '@model/monaco';
 import Editor from './editor';
 
 /**
@@ -17,7 +16,6 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   modelKey,
   editorProps,
   onTransform = () => null,
-  packages = SUPPORTED_PACKAGES,
 }) => {
   const editorUid = React.useRef(`${baseEditorKey}-${shortid.generate()}`);
   const editorKey = editorUid.current;
@@ -30,7 +28,7 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
     let sub: Subscription;
     if (typesLoaded && model) {
       sub = stream.pipe(debounceTime(1000)).subscribe(
-        async () => onTransform(await transpileAndTransform(model, packages)));
+        async () => onTransform(await transpileAndTransform(model)));
       stream.next(null);
     }
     return () => sub?.unsubscribe();

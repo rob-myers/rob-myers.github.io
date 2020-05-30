@@ -8,7 +8,7 @@ import { getWindow } from '@model/dom.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup } from '@model/store/redux.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { IPackageGroup, SUPPORTED_PACKAGES, IMonacoTextModel, loadReactTypes, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco';
+import { IMonacoTextModel, loadReactTypes, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
@@ -19,7 +19,6 @@ export interface State {
   monacoInternal: null | MonacoInternal;
   monacoGlobalsLoaded: boolean;
   monacoTypesLoaded: boolean;
-  monacoSupportedPkgs: IPackageGroup[];
   /** Instances of monaco editor */
   monacoEditor: KeyedLookup<MonacoEditorInstance>;
   /** Instances of monaco models */
@@ -53,7 +52,6 @@ interface MonacoModelInstance {
 const initialState: State = {
   monacoGlobalsLoaded: false,
   monacoTypesLoaded: false,
-  monacoSupportedPkgs: SUPPORTED_PACKAGES,
   monacoEditor: {},
   monacoModel: {},
   monacoInternal: null,
@@ -129,30 +127,14 @@ export const Thunk = {
       }
     },
   ),
-  /**
-   * NOTE supported packages currently empty. Examples at:
-   * https://github.com/microsoft/fluentui/blob/master/packages/tsx-editor/src/utilities/defaultSupportedPackages.ts
-   */
+  // TODO needed?
   ensureMonacoGlobals: createThunk(
     '[worker] ensure monaco globals',
-    async ({ state: { worker }, dispatch }) => {
+    async ({ dispatch }) => {
       const self = getWindow();
       if (self) {
         !self.React && (self.React = React);
         !self.ReactDOM && (self.ReactDOM = ReactDOM);
-        await Promise.all(
-          worker.monacoSupportedPkgs.map(group => {
-            if (!self[group.globalName]) {
-              return new Promise<any>(resolve => {
-                // handle either promise or callback function
-                const globalResult = group.loadGlobal(resolve);
-                if (globalResult && (globalResult as PromiseLike<any>).then) {
-                  globalResult.then(resolve);
-                }
-              }).then((globalModule: any) => (self[group.globalName] = globalModule));
-            }
-          }),
-        );
         dispatch(Act.update({ monacoGlobalsLoaded: true }));
       }
     },
