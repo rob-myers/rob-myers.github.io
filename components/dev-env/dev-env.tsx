@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 
 import { exampleScss1 } from '@model/code/examples';
 import { TranspiledCode, FileType, tsxEditorProps } from '@model/monaco/monaco.model';
+import { bootstrapApp } from '@model/code/bootstrap';
 import { Thunk } from '@store/worker.duck';
 import TsxEditor from '@components/monaco/tsx-editor';
 import Editor from '@components/monaco/editor';
@@ -29,11 +30,8 @@ const DevEnv: React.FC<Props> = ({ uid }) => {
     }
   }, []);
 
-  const bootstrapCode = useMemo(() => [
-    `import App from '${codeEsmUrl}';`,
-    `import ReactDom from '${window.location.origin}/es-react/react-dom.js';`,
-    `ReactDom.render(App(), document.getElementById('${uid}-render-root'));`,
-  ].join('\n'), [codeEsmUrl]);
+  const bootstrapCode = useMemo(() =>
+    bootstrapApp(codeEsmUrl, `${uid}-render-root`), [codeEsmUrl]);
 
   return (
     <section className={css.root}>
@@ -77,7 +75,7 @@ const DevEnv: React.FC<Props> = ({ uid }) => {
               code={bootstrapCode}
               scriptId={`${uid}-bootstrap-app`}
             />
-          )}        
+          )}
         </div>
       </div>
     </section>
