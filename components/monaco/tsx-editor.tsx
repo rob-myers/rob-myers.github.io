@@ -6,6 +6,8 @@ import { Thunk } from '@store/worker.duck';
 import Editor from './editor';
 import { IEditorProps } from './editor.model';
 
+const transpileDebounceMs = 500;
+
 const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   editorKey,
   modelKey,
@@ -19,7 +21,7 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   React.useEffect(() => {
     if (typesLoaded && model) {
       const act = async () => onTransform(await dispatch(Thunk.transpileModel({ modelKey })));
-      dispatch(Thunk.onModelChange({ act, debounceMs: 1000, editorKey }));
+      dispatch(Thunk.onModelChange({ act, debounceMs: transpileDebounceMs, editorKey }));
       act();
     }
   }, [typesLoaded, model]);
