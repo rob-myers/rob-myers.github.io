@@ -247,6 +247,17 @@ export const Thunk = {
       }
     },
   ),
+  transformTranspiledTsx: createThunk(
+    '[worker] transform transpiled tsx',
+    ({ state: { worker: _ } }, { js }: { js: string }) => {
+      const transformedJs = js.replace(
+        /import \* as (\S+) from 'react'/g,
+        `import * as $1 from '${window.location.origin}/es-react/react.js'`,
+      );
+      console.log({ transformedJs });
+      return transformedJs;
+    },
+  ),
   transpileModel: createThunk(
     '[worker] transpile monaco model',
     async ({ state: { worker } }, { modelKey }: { modelKey: string }) => {

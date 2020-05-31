@@ -18,5 +18,6 @@ yarn-error.log
 env/env.ts
 
 public/sass.worker.js
+public/es-react/
 
 .DS_Store

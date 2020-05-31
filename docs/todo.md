@@ -8,7 +8,7 @@
 
 # Local
 
-- [ ] Mount transpiled react component (Dev)
+- [x] Mount transpiled react component (Dev)
   > transform `react` import path.
   > create javascript module with `src` via `Blob`.
   > import default export and render via `react-dom`.
