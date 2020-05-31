@@ -18,12 +18,13 @@ const DevEnv: React.FC<Props> = ({ uid }) => {
   const [editing, setEditing] = useState<FileType>('tsx');
   const [code, setCode] = useState('');
   const [codeEsmUrl, setCodeEsmUrl] = useState('');
-  // const ready = useSelector(({ worker: { monacoTypesLoaded } }) => !!monacoTypesLoaded);
+  const [ready, setReady] = useState(false);
   
   
   const dispatch = useDispatch();
   const onTranspile = useCallback((result: TranspiledCode) => {
     if (result?.key === 'success') {
+      setReady(true);
       setCode(dispatch(Thunk.transformTranspiledTsx({ js: result.transpiledJs })));
     }
   }, []);
@@ -37,8 +38,8 @@ const DevEnv: React.FC<Props> = ({ uid }) => {
   return (
     <section className={css.root}>
       <div className={css.header}>
-        <a onClick={() => setEditing('tsx')}>tsx</a>
-        <a onClick={() => setEditing('scss')}>scss</a>
+        <a onClick={() => ready && setEditing('tsx')}>tsx</a>
+        <a onClick={() => ready && setEditing('scss')}>scss</a>
       </div>
       <div className={css.editorAndView}>
         <div className={css.editor}>

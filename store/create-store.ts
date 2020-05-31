@@ -34,7 +34,6 @@ const persistedReducer = persistReducer({
     ),
     createTransform<WorkerState, WorkerState>(
       (_, _key) => ({
-        devEnv: {},
         monacoEditor: {},
         monacoInternal: null,
         monacoModel: {},
