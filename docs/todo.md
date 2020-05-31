@@ -8,6 +8,9 @@
 
 # Local
 
+- [ ] Rename worker.duck as dev-env.duck
+- [ ] Error boundary around mounted `App`
+- [ ] Syntax highlighting debounced and safer
 - [x] Mount transpiled react component (Dev)
   > transform `react` import path.
   > create javascript module with `src` via `Blob`.
