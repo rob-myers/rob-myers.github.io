@@ -29,7 +29,6 @@ const RootApp: React.FC<RootProps> = ({
       >
         <Head>
           <link rel="shortcut icon" href="/favicon.ico" />
-          <script type="module" src="./es-react/react.js" />
         </Head>
         <Component {...pageProps} />
       </PersistGate>
