@@ -193,6 +193,7 @@ export const Thunk = {
         paths: oldCompilerOptions.paths,
         // Generate d.ts content in `emitOutput.outputFiles[1]`
         declaration: true,
+        // allowSyntheticDefaultImports: true,
       });
     },
   ),
@@ -249,7 +250,6 @@ export const Thunk = {
     '[worker] transpile monaco model',
     async ({ state: { worker } }, { modelKey }: { modelKey: string }) => {
       const model = worker.monacoModel[modelKey]?.model;
-      console.log({ modelKey, model: worker.monacoModel[modelKey] });
       return await worker.monacoService!.transpile(model);
     },
   ),

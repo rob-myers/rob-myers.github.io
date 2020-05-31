@@ -15,13 +15,15 @@ export class MonacoService {
   }
 
   public async transpile(model: IMonacoTextModel): Promise<TranspiledCode> {
-    const filename = model.uri.toString();
-    const getWorker = await monaco.languages.typescript.getTypeScriptWorker();
-    const worker = await getWorker(model.uri);
-    
     try {
+      const filename = model.uri.toString();
+      const getWorker = await monaco.languages.typescript.getTypeScriptWorker();
+      const worker = await getWorker(model.uri);
       const emitOutput: EmitOutput = await worker.getEmitOutput(filename);
-      const diagnostics = await worker.getSyntacticDiagnostics(filename);
+      const diagnostics = (await Promise.all([
+        worker.getSyntacticDiagnostics(filename),
+        worker.getSemanticDiagnostics(filename),
+      ])).flatMap(x => x);
       const errors = diagnostics.filter(d => d.category === 1);
   
       if (errors.length) {
