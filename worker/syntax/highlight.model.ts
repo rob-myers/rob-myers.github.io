@@ -1,4 +1,4 @@
-import { Project, ts, Node, TypeGuards as _ } from 'ts-morph';
+import { Project, ts, Node } from 'ts-morph';
 
 export interface Classification {
   kind: string;
@@ -29,64 +29,67 @@ export async function computeClassifications(code: string, classifications: Clas
   const srcFile = project.createSourceFile('main.tsx', code);
   const pending = [] as PendingItem[];
 
-  srcFile.getDescendants()
-    .filter((x) => filterNonJsxRelatedNodes(x))
-    .forEach(node => {
-      const parent = node.getParent();
-      const parentKind = parent && parent.getKindName();
-      const kind = node.getKindName();
-      pending.length = 0;
-
-      switch (kind) {
-        case 'JsxText': {
-          pending.push({
-            kind: 'jsx-text',
-            start: node.getStart() - node.getLeadingTriviaWidth(),
-            end: node.getTrailingTriviaEnd(),
+  try {
+    srcFile.getDescendants()
+      .filter((x) => filterNonJsxRelatedNodes(x))
+      .forEach(node => {
+        const parent = node.getParent();
+        const parentKind = parent && parent.getKindName();
+        const kind = node.getKindName();
+        pending.length = 0;
+  
+        switch (kind) {
+          case 'JsxText': {
+            pending.push({
+              kind: 'jsx-text',
+              start: node.getStart() - node.getLeadingTriviaWidth(),
+              end: node.getTrailingTriviaEnd(),
+            });
+            break;
+          }
+          case 'Identifier': {
+            if (parentKind && parentKind in jsxTagKind) {
+              const kind = /^[A-Z]/.test(node.getText()) ? 'jsx-component' : 'jsx-tag';
+              pending.push({ kind, start: node.getStart(), end: node.getEnd() });
+            } else if (parentKind === 'JsxAttribute') {
+              pending.push({ kind: 'jsx-attribute', start: node.getStart(), end: node.getEnd() });
+            } else if (parentKind === 'PropertyAccessExpression' && !!node.getPreviousSibling()) {
+              pending.push({ kind: 'jsx-property', start: node.getStart(), end: node.getEnd() });
+            }
+            break;
+          }
+          case 'OpenBraceToken':
+          case 'CloseBraceToken': {
+            if (parentKind === 'JsxExpression') {
+              pending.push({ kind: 'jsx-brace', start: node.getStart(), end: node.getEnd() });
+            }
+            break;
+          }
+          default: {// TESTING
+            // console.log({ kind, parentKind, grandParentKind: parent?.getParent()?.getKindName() });
+            // pending.push({ kind, start: node.getStart(), end: node.getEnd() });
+            break;
+          }
+        }
+  
+        pending.forEach(({ kind, start, end }) => {
+          const { line: startLineNumber, column: startColumn } = srcFile.getLineAndColumnAtPos(start);
+          const { line: endLineNumber, column: endColumn } = srcFile.getLineAndColumnAtPos(end);
+          classifications.push({
+            startLineNumber,
+            endLineNumber,
+            startColumn,
+            endColumn,
+            kind,
+            parentKind,
+            extra: undefined,
           });
-          break;
-        }
-        case 'Identifier': {
-          if (parentKind && parentKind in jsxTagKind) {
-            const kind = /^[A-Z]/.test(node.getText()) ? 'jsx-component' : 'jsx-tag';
-            pending.push({ kind, start: node.getStart(), end: node.getEnd() });
-          } else if (parentKind === 'JsxAttribute') {
-            pending.push({ kind: 'jsx-attribute', start: node.getStart(), end: node.getEnd() });
-          } else if (parentKind === 'PropertyAccessExpression' && !!node.getPreviousSibling()) {
-            pending.push({ kind: 'jsx-property', start: node.getStart(), end: node.getEnd() });
-          }
-          break;
-        }
-        case 'OpenBraceToken':
-        case 'CloseBraceToken': {
-          if (parentKind === 'JsxExpression') {
-            pending.push({ kind: 'jsx-brace', start: node.getStart(), end: node.getEnd() });
-          }
-          break;
-        }
-        default: {// TESTING
-          // console.log({ kind, parentKind, grandParentKind: parent?.getParent()?.getKindName() });
-          // pending.push({ kind, start: node.getStart(), end: node.getEnd() });
-          break;
-        }
-      }
-
-      pending.forEach(({ kind, start, end }) => {
-        const { line: startLineNumber, column: startColumn } = srcFile.getLineAndColumnAtPos(start);
-        const { line: endLineNumber, column: endColumn } = srcFile.getLineAndColumnAtPos(end);
-        classifications.push({
-          startLineNumber,
-          endLineNumber,
-          startColumn,
-          endColumn,
-          kind,
-          parentKind,
-          extra: undefined,
         });
       });
-
-    });
-
+  } catch (e) {
+    console.error(`Syntax highlighting failed (${e.message})`);
+    console.error(e);
+  }
   // console.log(classifications);
 }
 
