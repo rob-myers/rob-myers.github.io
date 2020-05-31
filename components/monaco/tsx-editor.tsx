@@ -12,7 +12,7 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   editorProps,
   onTranspile: onTransform = () => null,
 }) => {
-  const model = useSelector(({ worker }) => worker.monacoEditor[editorKey]?.editor.getModel());
+  const model = useSelector(({ worker }) => worker.monacoModel[modelKey]?.model);
   const typesLoaded = useSelector(({ worker }) => worker.monacoTypesLoaded);
   const dispatch = useDispatch();
 
