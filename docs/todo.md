@@ -2,14 +2,15 @@
 
 - [ ] Create a Github App which can create gists for `@rob-myers`
 - [ ] Get AWS-Lambda/DynamoDB working
-- [ ] Get AWS-Lambda/DynamoDB working
 - [ ] Get AWS-Lambda/S3 working
+- [ ] Get AWS-Lambda working
 - [x] Create AWS account `rob-myers-2020`
 
 # Local
 
+- [ ] Integrate `golden-layout` via previous approach on new page `/dev-env`.
 - [ ] Rename worker.duck as dev-env.duck
-- [ ] Error boundary around mounted `App`
+- [x] Error boundary around mounted `App`
 - [ ] Syntax highlighting debounced and safer
 - [x] Mount transpiled react component (Dev)
   > transform `react` import path.
