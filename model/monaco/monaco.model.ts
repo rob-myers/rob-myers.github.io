@@ -29,7 +29,7 @@ export interface IDiagnostic {
 }
 
 import { IEditorProps } from '@components/monaco/editor.model';
-import { exampleTsx1 } from '@model/code/examples';
+import { exampleTsx3 } from '@model/code/examples';
 
 export const tsxEditorProps: IEditorProps = {
   language:'typescript',
@@ -37,7 +37,7 @@ export const tsxEditorProps: IEditorProps = {
   editorOptions: {},
   filename: 'file:///main.tsx',
   className: 'monaco-tsx-editor',
-  code: exampleTsx1,
+  code: exampleTsx3,
   width: '100%',
 };
 
