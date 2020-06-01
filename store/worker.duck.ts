@@ -105,8 +105,11 @@ export const Thunk = {
 
       dispatch(Act.storeMonacoEditor({ editor, editorKey }));
       dispatch(Act.updateEditor(editorKey, () => ({ cleanups: [() => editor.dispose()] })));
-      dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
 
+      if (!worker.monacoModel[modelKey]) {
+        model.updateOptions({ tabSize: 2 });
+        dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
+      }
       if (!worker.syntaxWorker) {
         const syntaxWorker = new SyntaxWorkerClass;
         dispatch(Act.storeSyntaxWorker({ worker: redact(syntaxWorker) }));

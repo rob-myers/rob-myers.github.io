@@ -32,31 +32,31 @@ export const exampleTsx3 = `
 import * as React from 'react';
 
 interface ItemProps {
-    id: number;
-    remove: () => void;
+  id: number;
+  remove: () => void;
 }
 
 const Item: React.FC<ItemProps> = (props) => (
-    <div
-        style={{ padding: 2, border: '1px solid #555' }}
-        onClick={props.remove}
-    >
-        {props.id}
-    </div>
+  <div
+    style={{ padding: 2, border: '1px solid #555' }}
+    onClick={props.remove}
+  >
+    {props.id}
+  </div>
 );
 
 export const App: React.FC = () => {
-    const [items, setItems] = React.useState([...Array(10)].map((_, i) => i));
-    return (
-        <div style={{ padding: 10 }}>
-            {items.map(x => (
-                <Item
-                	id={x}
-                	remove={() => setItems(items.filter(y => y !== x))}
-            	/>
-            ))}
-        </div>
-    );
+  const [items, setItems] = React.useState([...Array(10)].map((_, i) => i));
+  return (
+    <div style={{ padding: 10 }}>
+      {items.map(x => (
+        <Item
+          id={x}
+          remove={() => setItems(items.filter(y => y !== x))}
+        />
+      ))}
+    </div>
+  );
 };
 
 export default App;
