@@ -239,8 +239,8 @@ export const Thunk = {
     '[worker] transform transpiled tsx',
     ({ state: { worker: _ } }, { js }: { js: string }) => {
       const transformedJs = js.replace(
-        /import \* as (\S+) from 'react'/g,
-        `import * as $1 from '${window.location.origin}/es-react/react.js'`,
+        /import ([^\n]+) from 'react'/g, // TODO use syntax worker
+        `import $1 from '${window.location.origin}/es-react/react.js'`,
       );
       console.log({ transformedJs });
       return transformedJs;
