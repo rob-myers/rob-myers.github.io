@@ -20,7 +20,7 @@ export class ErrorBoundary extends React.Component {
       return React.createElement('div', { style: { padding: 10 } }, [
         React.createElement('div', null, 'Something went wrong.'),
         React.createElement('br'),
-        React.createElement('div', null, this.state.error.message),
+        React.createElement('div', { style: { fontStyle: 'italic' } }, this.state.error.message),
       ]);
     }
 

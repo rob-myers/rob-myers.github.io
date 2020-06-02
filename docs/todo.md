@@ -8,7 +8,7 @@
 
 # Local
 
-- [ ] Integrate `golden-layout` via previous approach on new page `/dev-env`.
+- [ ] Integrate `golden-layout` (use previous approach) on new page `/dev-env`.
 - [ ] Rename worker.duck as dev-env.duck
 - [x] Error boundary around mounted `App`
 - [ ] Syntax highlighting debounced and safer

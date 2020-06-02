@@ -1,15 +1,15 @@
-// Get sass.js from node_modules, but sass.worker.js from public/ 
+// Get sass.js from node_modules, but sass.worker.js from public folder 
 import Sass, { SassWorker } from 'sass.js/dist/sass';
 
 import { KeyedLookup, testNever } from '@model/generic.model';
+import { Message } from '@model/worker.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
 import { createThunk } from '@model/store/root.redux.model';
 import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco/monaco.model';
+import { MonacoService } from '@model/monaco/monaco.service';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
-import { Message } from '@model/worker.model';
-import { MonacoService } from '@model/monaco/monaco.service';
 
 export interface State {
   /** Instances of monaco editor */
@@ -103,11 +103,16 @@ export const Thunk = {
       filename: string;
     }) => {
 
+      editor.trigger('keyboard', 'editor.action.fontZoomOut', {});
       dispatch(Act.storeMonacoEditor({ editor, editorKey }));
       dispatch(Act.updateEditor(editorKey, () => ({ cleanups: [() => editor.dispose()] })));
 
       if (!worker.monacoModel[modelKey]) {
-        model.updateOptions({ tabSize: 2 });
+        model.updateOptions({
+          tabSize: 2,
+          indentSize: 2,
+          trimAutoWhitespace: true,
+        });
         dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
       }
       if (!worker.syntaxWorker) {
@@ -252,7 +257,7 @@ export const Thunk = {
   transpileModel: createThunk(
     '[worker] transpile monaco model',
     async ({ state: { worker } }, { modelKey }: { modelKey: string }) => {
-      const model = worker.monacoModel[modelKey]?.model;
+      const { model } = worker.monacoModel[modelKey];
       return await worker.monacoService!.transpile(model);
     },
   ),
