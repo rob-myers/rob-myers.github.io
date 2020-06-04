@@ -12,6 +12,7 @@ import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
 
 export interface State {
+  hasTranspiled: boolean;
   /** Instances of monaco editor */
   monacoEditor: KeyedLookup<MonacoEditorInstance>;
   /** Internal monaco structures */
@@ -43,6 +44,7 @@ interface MonacoInternal {
 }
 
 const initialState: State = {
+  hasTranspiled: false,
   monacoEditor: {},
   monacoInternal: null,
   monacoModel: {},
@@ -257,9 +259,13 @@ export const Thunk = {
   ),
   transpileModel: createThunk(
     '[worker] transpile monaco model',
-    async ({ state: { worker } }, { modelKey }: { modelKey: string }) => {
+    async ({ state: { worker }, dispatch }, { modelKey }: { modelKey: string }) => {
       const { model } = worker.monacoModel[modelKey];
-      return await worker.monacoService!.transpile(model);
+      const result = await worker.monacoService!.transpile(model);
+      if (!worker.hasTranspiled) {
+        dispatch(Act.update({ hasTranspiled: true }));
+      }
+      return result;
     },
   ),
   updateEditorDecorations: createThunk(

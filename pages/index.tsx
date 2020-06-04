@@ -7,7 +7,7 @@ import Gitalk from '@components/gitalk/gitalk';
 const DevEnv = dynamic(import('@components/dev-env/dev-env'), { ssr: false });
 
 const Home: React.FC = () => {
-  const ready = useSelector(({ worker: { monacoTypesLoaded } }) => !!monacoTypesLoaded);
+  const ready = useSelector(({ worker: { hasTranspiled } }) => !!hasTranspiled);
 
   return (
     <Layout>
