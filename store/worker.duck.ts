@@ -103,7 +103,6 @@ export const Thunk = {
       filename: string;
     }) => {
 
-      editor.trigger('keyboard', 'editor.action.fontZoomOut', {});
       dispatch(Act.storeMonacoEditor({ editor, editorKey }));
       dispatch(Act.updateEditor(editorKey, () => ({ cleanups: [() => editor.dispose()] })));
 
@@ -119,6 +118,8 @@ export const Thunk = {
         const syntaxWorker = new SyntaxWorkerClass;
         dispatch(Act.storeSyntaxWorker({ worker: redact(syntaxWorker) }));
         await awaitWorker('worker-ready', syntaxWorker);
+        // Zoom out once initially
+        editor.trigger('keyboard', 'editor.action.fontZoomOut', {});
       }
       if (filename.endsWith('.tsx')) {
         await dispatch(Thunk.setupEditorHighlighting({ editorKey }));

@@ -55,10 +55,10 @@ class Transform {
     this.refreshSig = t.identifier(opts.refreshSig || '$RefreshSig$');
   }
   
-  public run(code: string) {
+  public run(code: string, filename: string) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const parsed = babel.parseSync(code, {
-      filename: 'fake.tsx',
+      filename,
       plugins: [
         ['@babel/plugin-transform-typescript', { isTSX: true }],
       ],
@@ -334,7 +334,7 @@ const singleton = new Transform();
 export default singleton;
 
 // Test
-singleton.run(exampleTsx1);
+singleton.run(exampleTsx1, 'fake.tsx');
 
 
 // export function transform(opts = {}) {

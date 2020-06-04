@@ -1,11 +1,3 @@
-# Infrastructure
-
-- [ ] Create a Github App which can create gists for `@rob-myers`
-- [ ] Get AWS-Lambda/DynamoDB working
-- [ ] Get AWS-Lambda/S3 working
-- [ ] Get AWS-Lambda working
-- [x] Create AWS account `rob-myers-2020`
-
 # Local
 
 - [ ] Can transpile arbitrary tsx via 'hidden' monaco model
@@ -37,3 +29,11 @@
    > https://nextjs.org/blog/next-9-4
 - [x] Prod monaco build
 - [x] Dev monaco build
+
+# Infrastructure
+
+- [ ] Create a Github App which can create gists for `@rob-myers`
+- [ ] Get AWS-Lambda/DynamoDB working
+- [ ] Get AWS-Lambda/S3 working
+- [ ] Get AWS-Lambda working
+- [x] Create AWS account `rob-myers-2020`
