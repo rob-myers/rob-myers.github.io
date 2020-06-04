@@ -8,10 +8,11 @@
 
 # Local
 
+- [ ] Can transpile arbitrary tsx via 'hidden' monaco model
 - [ ] Integrate `golden-layout` (use previous approach) on new page `/dev-env`.
 - [ ] Rename worker.duck as dev-env.duck
 - [x] Error boundary around mounted `App`
-- [ ] Syntax highlighting debounced and safer
+- [ ] Syntax highlighting debounced, better and safer
 - [x] Mount transpiled react component (Dev)
   > transform `react` import path.
   > create javascript module with `src` via `Blob`.
