@@ -8,6 +8,7 @@ import { RootThunkParams, ThunkAct } from '@model/store/root.redux.model';
 import { State as TestState } from '@store/test.duck';
 import { State as WorkerState } from '@store/worker.duck';
 import { State as GitalkState } from '@store/gitalk.duck';
+import { State as LayoutState } from '@store/layout.duck';
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
@@ -55,6 +56,15 @@ const persistedReducer = persistReducer({
       }),
       (state, _key) => state,
       { whitelist: ['gitalk'] }
+    ),
+    createTransform<LayoutState, LayoutState>(
+      (_, _key) => ({
+        goldenLayout: null,
+        initConfig: null,
+        panel: {},
+      }),
+      (state, _key) => state,
+      { whitelist: ['layout'] }
     ),
   ],
 }, rootReducer);

@@ -16,28 +16,38 @@ import {
   Action as GitalkAction,
   Thunk as GitalkThunk,
 } from './gitalk.duck';
+import {
+  reducer as layoutReducer,
+  State as LayoutState, 
+  Action as LayoutAction,
+  Thunk as LayoutThunk,
+} from './layout.duck';
 
 export interface RootState {
   test: TestState;
   worker: WorkerState;
   gitalk: GitalkState;
+  layout: LayoutState;
 }
 
 export type RootAction = (
   | TestAction
   | WorkerAction
   | GitalkAction
+  | LayoutAction
 );
 
 export type RootThunk = (
   | WorkerThunk
   | GitalkThunk
+  | LayoutThunk
 );
 
 const rootReducer = combineReducers<RootState>({
   test: testReducer,
   worker: workerReducer,
   gitalk: gitalkReducer,
+  layout: layoutReducer,
 });
 
 export default rootReducer;

@@ -27,6 +27,12 @@ export interface GoldenLayoutConfig<PanelMetaKey extends string>  extends Golden
   content: GoldenLayoutConfigItem<PanelMetaKey>[];
 }
 
+export interface ExtendedContainer extends GoldenLayout.Container {
+  container: GoldenLayout.ContentItem;
+  config: GoldenLayoutConfigItem<any>;
+  element: JQuery<HTMLElement>;
+}
+
 export type GoldenLayoutConfigItem<PanelMetaKey extends string> =
 | RowConfig<PanelMetaKey>
 | ColumnConfig<PanelMetaKey>

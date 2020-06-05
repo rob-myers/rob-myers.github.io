@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom';
 import GoldenLayout from 'golden-layout';
 import * as shortId from 'shortid';
 import { deepClone, assign } from '@model/generic.model';
-import { GoldenLayoutConfig, GoldenLayoutConfigItem, ReactComponentConfig } from '@model/layout/layout.model';
+import { GoldenLayoutConfig, GoldenLayoutConfigItem, ReactComponentConfig, ExtendedContainer } from '@model/layout/layout.model';
 import { ReactComponentHandlerPatched } from './golden-layout.patch';
 
 require('./golden-layout.scss');
@@ -24,12 +24,6 @@ interface Props {
   onComponentCreated: (component: ExtendedContainer) => void;
   /** Invoked on commence dragging of a tab. */
   onDragStart: (component: ExtendedContainer) => void;
-}
-
-interface ExtendedContainer extends GoldenLayout.Container {
-  container: GoldenLayout.ContentItem;
-  config: GoldenLayoutConfigItem<any>;
-  element: JQuery<HTMLElement>;
 }
 
 interface State {
