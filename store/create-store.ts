@@ -58,9 +58,9 @@ const persistedReducer = persistReducer({
       { whitelist: ['gitalk'] }
     ),
     createTransform<LayoutState, LayoutState>(
-      (_, _key) => ({
+      ({ goldenLayout, initConfig }, _key) => ({
         goldenLayout: null,
-        initConfig: null,
+        initConfig: goldenLayout ? goldenLayout.toConfig() : initConfig,
         panel: {},
       }),
       (state, _key) => state,

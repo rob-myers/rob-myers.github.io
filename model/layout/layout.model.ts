@@ -23,7 +23,7 @@ export type LayoutItemKey = keyof typeof LayoutItemType;
  * - Extended because want e.g. `props.panelKey`, so React
  * component knows which panel it is in.
  */
-export interface GoldenLayoutConfig<PanelMetaKey extends string>  extends GoldenLayout.Config {
+export interface GoldenLayoutConfig<PanelMetaKey extends string = string>  extends GoldenLayout.Config {
   content: GoldenLayoutConfigItem<PanelMetaKey>[];
 }
 

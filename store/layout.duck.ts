@@ -1,13 +1,14 @@
 import * as GoldenLayout from 'golden-layout';
 import { Redacted, ActionsUnion, createAct, updateLookup, redact, removeFromLookup, addToLookup } from '@model/store/redux.model';
 import { KeyedLookup, testNever, deepClone } from '@model/generic.model';
-import { LayoutPanelMeta, ExtendedContainer } from '@model/layout/layout.model';
+import { LayoutPanelMeta, ExtendedContainer, GoldenLayoutConfig } from '@model/layout/layout.model';
 import { createThunk } from '@model/store/root.redux.model';
+import { initLayoutConfig } from '@model/layout/example-layout.model';
 
 /** Assume exactly one layout. */
 export interface State {
   /** Initial config inducing `goldenLayout`. */
-  initConfig: null | GoldenLayout.Config;
+  initConfig: GoldenLayoutConfig;
   /** Native instance of `GoldenLayout`. */
   goldenLayout: null | Redacted<GoldenLayout>;
   /** Lookup to keep track of layout panels. */
@@ -37,7 +38,7 @@ export interface LayoutPanelState {
 }
 
 const initialState: State = {
-  initConfig: null,
+  initConfig: initLayoutConfig,
   goldenLayout: null,
   panel: {},
 };
@@ -48,7 +49,7 @@ export const Act = {
     panelMeta: { [panelMetaKey in string]?: string; };
   }) => createAct('[layout] assign panel metas', input),
   initialized: (input: {
-    config: GoldenLayout.Config;
+    config: GoldenLayoutConfig;
     goldenLayout: Redacted<GoldenLayout>;
   }) => createAct('[layout] initialized', input),
   panelOpened: (input: {
