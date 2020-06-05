@@ -1,0 +1,17 @@
+//#region golden-layout
+@import "../../node_modules/golden-layout/src/css/goldenlayout-base.css";
+@import "../../node_modules/golden-layout/src/css/goldenlayout-dark-theme.css";
+
+body {
+  margin: 0;
+}
+
+.lm_header {
+  .lm_tab {
+    border: 1px solid #333;
+    border-width: 1px 1px 0 0;
+    // &.lm_active {}
+  }
+}
+
+//#endregion

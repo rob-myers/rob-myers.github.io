@@ -155,3 +155,9 @@ export function removeDups<T>(items: T[]) {
 export function intersects<T>(items: T[], others: T[]) {
   return items.some(item => others.includes(item));
 }
+
+export function assign<Dst extends {}, Src extends {}>(
+  dst: Dst, src: Src,
+): Dst & Src {
+  return Object.assign<Dst, Src>(dst, src);
+}

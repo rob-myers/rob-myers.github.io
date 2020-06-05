@@ -8,7 +8,10 @@ import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 import OptimizeCssAssetsWebpackPlugin from 'optimize-css-assets-webpack-plugin';
 import { WebpackCtxt } from './next.model';
 
-const noCssModulesRegex = /\/monaco-override\.scss$/;
+const noCssModulesRegexes = [
+  /\/monaco-override\.scss$/,
+  /\/golden-layout\.scss$/,
+];
 
 export default function({
   isServer,
@@ -110,7 +113,7 @@ export default function({
       rules: [
         {
           test: /\.(sa|sc|c)ss$/,
-          exclude: [/node_modules/, noCssModulesRegex],
+          exclude: { or: [/node_modules/].concat(noCssModulesRegexes) },
           use: defaultLoaders.sass
         },
         {
@@ -118,7 +121,7 @@ export default function({
           use: defaultLoaders.npmCss
         },
         {
-          test: noCssModulesRegex,
+          test: { or: noCssModulesRegexes },
           use: [
             'style-loader',
             { loader: 'css-loader', options: { importLoaders: 1 } },
