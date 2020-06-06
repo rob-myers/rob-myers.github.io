@@ -104,9 +104,9 @@ export const Thunk = {
       model: Redacted<IMonacoTextModel>;
       filename: string;
     }) => {
-
       dispatch(Act.storeMonacoEditor({ editor, editorKey }));
       dispatch(Act.updateEditor(editorKey, () => ({ cleanups: [() => editor.dispose()] })));
+      dispatch(Thunk.tsxEditorInstanceSetup({ editor }));
 
       if (!worker.monacoModel[modelKey]) {
         model.updateOptions({
@@ -120,8 +120,6 @@ export const Thunk = {
         const syntaxWorker = new SyntaxWorkerClass;
         dispatch(Act.storeSyntaxWorker({ worker: redact(syntaxWorker) }));
         await awaitWorker('worker-ready', syntaxWorker);
-        // Zoom out once initially
-        editor.trigger('keyboard', 'editor.action.fontZoomOut', {});
       }
       if (filename.endsWith('.tsx')) {
         await dispatch(Thunk.setupEditorHighlighting({ editorKey }));
@@ -266,6 +264,20 @@ export const Thunk = {
         dispatch(Act.update({ hasTranspiled: true }));
       }
       return result;
+    },
+  ),
+  tsxEditorInstanceSetup: createThunk(
+    '[worker] editor instance setup',
+    ({ state: { worker } }, { editor }: { editor: MonacoEditorInstance['editor'] }) => {
+      const { monaco } = worker.monacoInternal!;
+      editor.addAction({
+        id: 'editor.action.commentLine',
+        label: 'Custom Toggle Line Comment',
+        run: (editor) => { 
+          console.log('TODO comment line', editor.getPosition(), editor.getSelection());
+        },
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_SLASH],
+      });
     },
   ),
   updateEditorDecorations: createThunk(

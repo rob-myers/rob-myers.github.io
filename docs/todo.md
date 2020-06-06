@@ -1,6 +1,8 @@
 # Local
 
-- [ ] Fix auto-commenting i.e. when directly inside JSX tags using (multiline) brace-comments
+- [ ] Fix auto-commenting i.e. when directly inside JSX tags use (multiline) brace-comments
+  > replaced code action by dummy console.log
+  > NEXT: send code/position/selection to worker to figure out new code
 - [ ] Can transpile arbitrary tsx via 'hidden' monaco model
 - [ ] Integrate `golden-layout` (use previous approach) on new page `/dev-env`.
 - [ ] Rename worker.duck as dev-env.duck

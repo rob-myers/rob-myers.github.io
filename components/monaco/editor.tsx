@@ -52,6 +52,7 @@ const Editor: React.FC<IEditorProps> = (props) => {
           || monaco.editor.createModel(code, language, uri);
         const editor = monaco.editor.create(divRef.current!, {
           fontFamily: CODE_FONT_FAMILY,
+          fontSize: 11,
           accessibilityHelpUrl,
           ...editorOptions,
           model,
