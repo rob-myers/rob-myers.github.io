@@ -8,20 +8,18 @@ import { Thunk } from '@store/worker.duck';
 import TsxEditor from '@components/monaco/tsx-editor';
 import Editor from '@components/monaco/editor';
 import EsModule from './es-module';
-import css from './dev-env.scss';
+import css from './dev-env-demo.scss';
 
 // Used to fix JSX syntax highlighting of monaco editor.
 // We mustn't use CSS modules (see `styles.config.ts`).
-// Using `require` prevents tree-shaking.
-require('./monaco-override.scss');
+import './monaco-override.scss';
 
-const DevEnv: React.FC<Props> = ({ uid, initialTsx }) => {
+const DevEnvDemo: React.FC<Props> = ({ uid, initialTsx }) => {
   const tsxEditorProps = useRef({ ...baseTsxEditorProps, code: initialTsx });
   const [editing, setEditing] = useState<FileType>('tsx');
   const [code, setCode] = useState(''); // Code transpiled from tsx
   const [codeEsmUrl, setCodeEsmUrl] = useState('');
   const [ready, setReady] = useState(false);
-  
   
   const dispatch = useDispatch();
   const onTranspile = useCallback((result: TranspiledCode) => {
@@ -88,4 +86,4 @@ interface Props {
   initialTsx: string;
 }
 
-export default DevEnv;
+export default DevEnvDemo;
