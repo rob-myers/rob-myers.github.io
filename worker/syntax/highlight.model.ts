@@ -37,7 +37,7 @@ export async function computeClassifications(code: string, classifications: Clas
         const parentKind = parent && parent.getKindName();
         const kind = node.getKindName();
         pending.length = 0;
-  
+
         switch (kind) {
           case 'JsxText': {
             pending.push({

@@ -1,5 +1,6 @@
 # Local
 
+- [ ] Fix auto-commenting i.e. when directly inside JSX tags using (multiline) brace-comments
 - [ ] Can transpile arbitrary tsx via 'hidden' monaco model
 - [ ] Integrate `golden-layout` (use previous approach) on new page `/dev-env`.
 - [ ] Rename worker.duck as dev-env.duck
@@ -37,3 +38,8 @@
 - [ ] Get AWS-Lambda/S3 working
 - [ ] Get AWS-Lambda working
 - [x] Create AWS account `rob-myers-2020`
+
+# Notes
+
+Highlight fails e.g. `// {props.id}` but unlikely to happen and can be fixed via `{'//'} {props.id}`.
+However, these cases do arise via auto-commenting, so we need to fix that.

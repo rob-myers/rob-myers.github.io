@@ -4,7 +4,9 @@ import * as React from 'react';
 export const App: React.FC = () => {
     return (
         <div>
-            // foo
+            // foo {0 + 0}
+            <br/>
+            {'//'} foo {0 + 0}
         </div>
     );
 };
