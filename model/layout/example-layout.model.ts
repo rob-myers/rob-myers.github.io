@@ -1,8 +1,8 @@
 import { GoldenLayoutConfig, LayoutItemType } from './layout.model';
 
-type ExamplePanelMetaKey = 'title' | 'filename'; // ?
+export type CustomPanelMetaKey = 'title' | 'filename';
 
-export const initLayoutConfig: GoldenLayoutConfig<ExamplePanelMetaKey> = {
+export const initLayoutConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
   settings: {
     showPopoutIcon: false,
     popoutWholeStack: false,
@@ -28,6 +28,9 @@ export const initLayoutConfig: GoldenLayoutConfig<ExamplePanelMetaKey> = {
                 component: 'window-panel',
                 props: {
                   panelKey: 'tsx',
+                  panelMeta: {
+                    filename: 'index.tsx',
+                  },
                 },
               },
               {
@@ -35,7 +38,10 @@ export const initLayoutConfig: GoldenLayoutConfig<ExamplePanelMetaKey> = {
                 title: 'Sass editor',
                 component: 'window-panel',
                 props: {
-                  panelKey: 'sass',
+                  panelKey: 'scss',
+                  panelMeta: {
+                    filename: 'index.scss',
+                  },
                 },
               },
             ],
@@ -46,6 +52,9 @@ export const initLayoutConfig: GoldenLayoutConfig<ExamplePanelMetaKey> = {
             component: 'window-panel',
             props: {
               panelKey: 'app',
+              panelMeta: {
+                //
+              },
             },
           },
         ],
@@ -55,7 +64,7 @@ export const initLayoutConfig: GoldenLayoutConfig<ExamplePanelMetaKey> = {
   }],
 };
 
-export const initLayoutConfig2: GoldenLayoutConfig<ExamplePanelMetaKey> = {
+export const initLayoutConfig2: GoldenLayoutConfig<CustomPanelMetaKey> = {
   settings: {
     showPopoutIcon: false,
     popoutWholeStack: false,

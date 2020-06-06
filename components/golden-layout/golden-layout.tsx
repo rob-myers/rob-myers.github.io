@@ -95,7 +95,7 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
 
       // Listen for commencement of tab dragging.
       (tab as any)['_dragListener'].on('dragStart', () => {
-        console.log('dragStart', tab.contentItem);
+        // console.log('dragStart', tab.contentItem);
         this.props.onDragStart(tab.contentItem);
       });
 

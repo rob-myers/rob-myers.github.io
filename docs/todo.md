@@ -4,7 +4,7 @@
   > replaced code action by dummy console.log
   > NEXT: send code/position/selection to worker to figure out new code
 - [ ] Can transpile arbitrary tsx via 'hidden' monaco model
-- [ ] Integrate `golden-layout` (use previous approach) on new page `/dev-env`.
+- [ ] Integrate `golden-layout` (use previous approach) on new page `/dev`.
 - [ ] Rename worker.duck as dev-env.duck
 - [x] Error boundary around mounted `App`
 - [ ] Syntax highlighting debounced, better and safer
