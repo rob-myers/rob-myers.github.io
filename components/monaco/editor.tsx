@@ -48,7 +48,7 @@ const Editor: React.FC<IEditorProps> = (props) => {
       }
 
       if (!monacoEditor) {
-        const model = monacoModel?.model
+        const model = monaco.editor.getModel(uri)
           || monaco.editor.createModel(code, language, uri);
         const editor = monaco.editor.create(divRef.current!, {
           fontFamily: CODE_FONT_FAMILY,

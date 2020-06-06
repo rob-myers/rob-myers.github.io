@@ -1,5 +1,7 @@
 // Get sass.js from node_modules, but sass.worker.js from public folder 
 import Sass, { SassWorker } from 'sass.js/dist/sass';
+import { combineEpics, StateObservable, ActionsObservable } from 'redux-observable';
+import { map, filter } from 'rxjs/operators';
 
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { Message } from '@model/worker.model';
@@ -10,6 +12,8 @@ import { MonacoService } from '@model/monaco/monaco.service';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
+
+import { RootState, RootAction, RootThunk, filterAct } from './reducer';
 
 export interface State {
   hasTranspiled: boolean;
@@ -178,6 +182,12 @@ export const Thunk = {
     }, { modelKey }: { modelKey: string }) => {
       monacoModel[modelKey]?.model.dispose();
       dispatch(Act.update({ monacoModel: removeFromLookup(modelKey, monacoModel) }));
+    },
+  ),
+  resizeEditor: createThunk(
+    '[worker] resize editor',
+    ({ state: { worker } }, { editorKey }: { editorKey: string }) => {
+      worker.monacoEditor[editorKey].editor.layout();
     },
   ),
   setMonacoCompilerOptions: createThunk(
@@ -364,3 +374,19 @@ export const reducer = (state = initialState, act: Action): State => {
     default: return state || testNever(act);
   }
 };
+
+const resizeMonacoEpic = (
+  action$: ActionsObservable<RootAction | RootThunk>,
+  state$: StateObservable<RootState>,
+) =>
+  action$.pipe(
+    filterAct('[layout] panel resized'),
+    filter(({ pay: { panelKey } }) =>
+      !!state$.value.worker.monacoEditor[`tsx-editor-${panelKey}`]),
+    map(({ pay: { panelKey } }) =>
+      Thunk.resizeEditor({ editorKey: `tsx-editor-${panelKey}` })),
+  );
+
+export const epic = combineEpics(
+  resizeMonacoEpic,
+);

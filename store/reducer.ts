@@ -1,4 +1,7 @@
 import { combineReducers } from 'redux';
+import { combineEpics } from 'redux-observable';
+import { epic as workerEpic } from './worker.duck';
+
 import {
   reducer as testReducer,
   State as TestState, 
@@ -22,6 +25,7 @@ import {
   Action as LayoutAction,
   Thunk as LayoutThunk,
 } from './layout.duck';
+import { filter } from 'rxjs/operators';
 
 export interface RootState {
   test: TestState;
@@ -51,3 +55,16 @@ const rootReducer = combineReducers<RootState>({
 });
 
 export default rootReducer;
+
+//#region redux-observable
+export type GetAct<T extends RootAction['type']> = Extract<RootAction, { type: T }>;
+
+/** Replacement for `ofType` which refines action type as expected. */
+export const filterAct = <T extends RootAction['type']>(type: T) =>
+  filter((action: RootAction | RootThunk): action is GetAct<T> =>
+    action.type === type);
+
+export const rootEpic = combineEpics(
+  workerEpic,
+);
+//#endregion

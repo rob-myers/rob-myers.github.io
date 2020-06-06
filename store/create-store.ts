@@ -2,9 +2,12 @@ import { createStore, applyMiddleware, Dispatch } from 'redux';
 import { composeWithDevTools, EnhancerOptions } from 'redux-devtools-extension';
 import { persistReducer, createTransform } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import rootReducer, { RootState, RootAction } from './reducer';
+import { createEpicMiddleware } from 'redux-observable';
+
 import { RedactInReduxDevTools } from '@model/store/redux.model';
 import { RootThunkParams, ThunkAct } from '@model/store/root.redux.model';
+
+import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
 import { State as TestState } from '@store/test.duck';
 import { State as WorkerState } from '@store/worker.duck';
 import { State as GitalkState } from '@store/gitalk.duck';
@@ -69,8 +72,10 @@ const persistedReducer = persistReducer({
   ],
 }, rootReducer);
 
-export const initializeStore = (preloadedState?: RootState) =>
-  createStore(
+const epicMiddleware = createEpicMiddleware<RootAction | RootThunk, RootAction | RootThunk, RootState, any>();
+
+export const initializeStore = (preloadedState?: RootState) => {
+  const store = createStore(
     // rootReducer,
     persistedReducer,
     preloadedState,
@@ -86,9 +91,13 @@ export const initializeStore = (preloadedState?: RootState) =>
       } as EnhancerOptions['serialize']
     })(
       applyMiddleware(
+        epicMiddleware,
         thunkMiddleware(),
       )
     )
   );
+  epicMiddleware.run(rootEpic);
+  return store;
+};
 
 export type ReduxStore = ReturnType<typeof initializeStore>;

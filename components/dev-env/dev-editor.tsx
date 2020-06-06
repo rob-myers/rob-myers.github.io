@@ -26,14 +26,13 @@ const DevEditor: React.FC<Props> = ({ filename, panelKey }) => {
     dispatch(LayoutThunk.setPanelTitle({ panelKey, title: filename }));
   }, []);
 
-
   const tsxEditorProps = useRef({ ...baseTsxEditorProps, code: exampleTsx1 });
 
   return (
     <div className={css.editor}>
       {filename.endsWith('.tsx') && (
         <TsxEditor
-          editorKey={`tsx-editor-${filename}`}
+          editorKey={`tsx-editor-${panelKey}`}
           modelKey={`tsx-model-${filename}`}
           editorProps={tsxEditorProps.current}
           onTranspile={onTranspileTsx}
@@ -41,7 +40,7 @@ const DevEditor: React.FC<Props> = ({ filename, panelKey }) => {
       )}
       {filename.endsWith('.scss') && (
         <Editor
-          editorKey={`sass-editor-${filename}`}
+          editorKey={`sass-editor-${panelKey}`}
           modelKey={`sass-model-${filename}`}
           filename={`file:///${filename}`}
           width={'100%'}

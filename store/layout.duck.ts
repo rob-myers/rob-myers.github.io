@@ -82,7 +82,7 @@ export const Thunk = {
       panelKey: string;
       title: string;
     }) => {
-      panel[input.panelKey].container.setTitle(input.title);
+      panel[input.panelKey]?.container.setTitle(input.title);
     },
   ),
 };
