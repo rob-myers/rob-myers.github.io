@@ -15,7 +15,7 @@ import css from './dev-env-demo.scss';
 import './monaco-override.scss';
 
 const DevEnvDemo: React.FC<Props> = ({ uid, initialTsx }) => {
-  const tsxEditorProps = useRef({ ...baseTsxEditorProps, code: initialTsx });
+  const tsxEditorProps = useRef({ ...baseTsxEditorProps, code: initialTsx, height: 500 });
   const [editing, setEditing] = useState<FileType>('tsx');
   const [code, setCode] = useState(''); // Code transpiled from tsx
   const [codeEsmUrl, setCodeEsmUrl] = useState('');

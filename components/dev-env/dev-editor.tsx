@@ -9,7 +9,7 @@ import Editor from '@components/monaco/editor';
 // Used to fix JSX syntax highlighting of monaco editor.
 // We mustn't use CSS modules -- see styles.config.ts.
 import './monaco-override.scss';
-import css from './dev-env-demo.scss';
+import css from './dev-editor.scss';
 
 const DevEditor: React.FC<Props> = ({ filename }) => {
 

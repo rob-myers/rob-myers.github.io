@@ -37,6 +37,7 @@ export const baseTsxEditorProps: IEditorProps = {
   filename: 'file:///main.tsx',
   className: 'monaco-tsx-editor',
   width: '100%',
+  height: '100%',
 };
 
 export type FileType = 'tsx' | 'scss';
