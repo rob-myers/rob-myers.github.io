@@ -1,8 +1,61 @@
 import { GoldenLayoutConfig, LayoutItemType } from './layout.model';
 
-type ExamplePanelMetaKey = 'title' | 'filename';
+type ExamplePanelMetaKey = 'title' | 'filename'; // ?
 
 export const initLayoutConfig: GoldenLayoutConfig<ExamplePanelMetaKey> = {
+  settings: {
+    showPopoutIcon: false,
+    popoutWholeStack: false,
+  },
+  dimensions: {
+    borderWidth: 1,
+    minItemWidth: 200,
+    dragProxyWidth: 200,
+    dragProxyHeight: 100,
+  },
+  content: [{
+    type: LayoutItemType.column,
+    content: [
+      {
+        type: LayoutItemType.row,
+        content: [
+          {
+            type: LayoutItemType.stack,
+            content: [
+              {
+                type: LayoutItemType['react-component'],
+                title: 'Tsx editor',
+                component: 'window-panel',
+                props: {
+                  panelKey: 'tsx',
+                },
+              },
+              {
+                type: LayoutItemType['react-component'],
+                title: 'Sass editor',
+                component: 'window-panel',
+                props: {
+                  panelKey: 'sass',
+                },
+              },
+            ],
+          },
+          {
+            type: LayoutItemType['react-component'],
+            title: 'App',
+            component: 'window-panel',
+            props: {
+              panelKey: 'app',
+            },
+          },
+        ],
+      }
+    ],
+
+  }],
+};
+
+export const initLayoutConfig2: GoldenLayoutConfig<ExamplePanelMetaKey> = {
   settings: {
     showPopoutIcon: false,
     popoutWholeStack: false,

@@ -1,4 +1,13 @@
 .root {
   background: #000;
   height: 100vh;
+
+  .menu {
+    background: #555;
+    color: #ddd;
+    box-sizing: border-box;
+    padding: 5px;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 12px;
+  }
 }
