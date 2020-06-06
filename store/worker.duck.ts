@@ -21,6 +21,7 @@ export interface State {
   monacoEditor: KeyedLookup<MonacoEditorInstance>;
   /** Internal monaco structures */
   monacoInternal: null | MonacoInternal;
+  monacoLoading: boolean;
   /** Instances of monaco models */
   monacoModel: KeyedLookup<MonacoModelInstance>;
   monacoService: null | Redacted<MonacoService>;
@@ -51,6 +52,7 @@ const initialState: State = {
   hasTranspiled: false,
   monacoEditor: {},
   monacoInternal: null,
+  monacoLoading: false,
   monacoModel: {},
   monacoService: null,
   monacoTypesLoaded: false,
@@ -88,6 +90,7 @@ export const Thunk = {
   bootstrapMonaco: createThunk(
     '[worker] bootstrap monaco',
     async ({ dispatch }, monacoInternal: MonacoInternal) => {
+      dispatch(Act.update({ monacoLoading: true }));
       // Dynamic import keeps monaco out of main bundle
       const { MonacoService } = await import('@model/monaco/monaco.service');
       const service = redact(new MonacoService);
@@ -113,11 +116,7 @@ export const Thunk = {
       dispatch(Thunk.tsxEditorInstanceSetup({ editor }));
 
       if (!worker.monacoModel[modelKey]) {
-        model.updateOptions({
-          tabSize: 2,
-          indentSize: 2,
-          trimAutoWhitespace: true,
-        });
+        model.updateOptions({ tabSize: 2, indentSize: 2, trimAutoWhitespace: true });
         dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
       }
       if (!worker.syntaxWorker) {
@@ -127,6 +126,9 @@ export const Thunk = {
       }
       if (filename.endsWith('.tsx')) {
         await dispatch(Thunk.setupEditorHighlighting({ editorKey }));
+      }
+      if (worker.monacoLoading) {
+        dispatch(Act.update({ monacoLoading: false }));
       }
       if (!worker.sassWorker) {
         Sass.setWorkerUrl('/sass.worker.js');

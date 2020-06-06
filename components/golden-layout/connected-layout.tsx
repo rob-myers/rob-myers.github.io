@@ -13,7 +13,7 @@ const GoldenLayoutComponent = dynamic(import('@components/golden-layout/golden-l
  * Golden layout connected to redux state.
  * We expect at most one instance on the page.
  */
-const ConnectedLayout: React.FC<Props> = ({ width, height }) => {
+const ConnectedLayout: React.FC<Props> = ({ width, height, disabled }) => {
   const dispatch = useDispatch();
   const initConfig = useSelector(({ layout }) => layout.initConfig);
 
@@ -75,6 +75,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height }) => {
         htmlAttrs={{ style: {
           height,
           width,
+          ...(disabled && { pointerEvents: 'none' })
         }}}
         initConfig={initConfig}
         onComponentCreated={onComponentCreated}
@@ -86,6 +87,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height }) => {
 };
 
 interface Props {
+  disabled: boolean;
   width: string;
   height: string;
 }

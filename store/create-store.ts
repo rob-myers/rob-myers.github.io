@@ -41,6 +41,7 @@ const persistedReducer = persistReducer({
         hasTranspiled: false,
         monacoEditor: {},
         monacoInternal: null,
+        monacoLoading: false,
         monacoModel: {},
         monacoService: null,
         monacoTypesLoaded: false,
