@@ -2,7 +2,7 @@ import * as monaco from 'monaco-editor';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { IEditorProps } from './editor.model';
+import { EditorProps } from './editor.model';
 import { CODE_FONT_FAMILY, DEFAULT_WIDTH, DEFAULT_HEIGHT } from './consts';
 import { Thunk } from '@store/worker.duck';
 import { redact } from '@model/store/redux.model';
@@ -16,10 +16,12 @@ const typescriptDefaults = typescript.typescriptDefaults as TypescriptDefaults;
 /**
  * Wrapper for a Monaco editor instance.
  */
-const Editor: React.FC<IEditorProps> = (props) => {
+const Editor: React.FC<EditorProps> = (props) => {
   const {
     width = DEFAULT_WIDTH,
     height = DEFAULT_HEIGHT,
+    // Relevant to golden-layout mini-view
+    minHeight = 100,
     className,
     code = '',
     language,
@@ -83,7 +85,11 @@ const Editor: React.FC<IEditorProps> = (props) => {
   return (
     <div
       ref={divRef}
-      style={{ width, height }}
+      style={{
+        width,
+        height,
+        minHeight,
+      }}
       className={className}
     />
   );

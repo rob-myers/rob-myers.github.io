@@ -64,6 +64,10 @@ export const filterAct = <T extends RootAction['type']>(type: T) =>
   filter((action: RootAction | RootThunk): action is GetAct<T> =>
     action.type === type);
 
+export const filterActs = <T extends RootAction['type']>(...types: T[]) =>
+  filter((action: RootAction | RootThunk): action is GetAct<T> =>
+    types.includes(action.type as T));
+
 export const rootEpic = combineEpics(
   workerEpic,
 );

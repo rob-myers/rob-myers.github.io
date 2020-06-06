@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic';
 import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
 import GoldenLayout from 'golden-layout';
+import classNames from 'classnames';
 import { redact } from '@model/store/redux.model';
 import { Act } from '@store/layout.duck';
 
@@ -13,7 +14,7 @@ const GoldenLayoutComponent = dynamic(import('@components/golden-layout/golden-l
  * Golden layout connected to redux state.
  * We expect at most one instance on the page.
  */
-const ConnectedLayout: React.FC<Props> = ({ width, height, disabled }) => {
+const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable }) => {
   const dispatch = useDispatch();
   const initConfig = useSelector(({ layout }) => layout.initConfig);
 
@@ -54,15 +55,14 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled }) => {
       });
       // glCmp.container.on('hide', () => console.log('hide', glCmp));
 
+      // Fired just before show.
       glCmp.container.on('show', () => {
-        // Fired just before show.
-        // Use setTimeout else terminal doesn't appear in draggable.
         setTimeout(() =>
           dispatch(Act.panelShown({
             panelKey,
             width: el.clientWidth,
             height: el.clientHeight,
-          })));
+          })), 200);
       });
     }
   }, []);
@@ -70,23 +70,28 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled }) => {
   const onDragStart = useCallback(() => null, []);
 
   return (
-    <div>
-      <GoldenLayoutComponent
-        htmlAttrs={{ style: {
-          height,
-          width,
-          ...(disabled && { pointerEvents: 'none' })
-        }}}
-        initConfig={initConfig}
-        onComponentCreated={onComponentCreated}
-        registerComponents={registerComponents}
-        onDragStart={onDragStart}
-      />
+    <div className="connected-golden-layout">
+      <div className={classNames({
+        disabled,
+        'no-closing': !closable,
+      })}>
+        <GoldenLayoutComponent
+          htmlAttrs={{ style: {
+            height,
+            width,
+          }}}
+          initConfig={initConfig}
+          onComponentCreated={onComponentCreated}
+          registerComponents={registerComponents}
+          onDragStart={onDragStart}
+        />
+      </div>
     </div>
   );
 };
 
 interface Props {
+  closable: boolean;
   disabled: boolean;
   width: string;
   height: string;

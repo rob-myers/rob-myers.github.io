@@ -6,6 +6,7 @@ const menuHeightPx = 25;
 
 const DevEnvPage: React.FC = () => {
   const loadingMonaco = useSelector(({ worker: { monacoLoading } }) => monacoLoading);
+  const closable = useSelector(({ layout: { panel } }) => Object.keys(panel).length > 1);
 
   return (
     <div className={css.root}>
@@ -16,6 +17,7 @@ const DevEnvPage: React.FC = () => {
         width="100vw"
         height={`calc(100vh - ${menuHeightPx}px)`}
         disabled={loadingMonaco}
+        closable={closable}
       />
     </div>
   );

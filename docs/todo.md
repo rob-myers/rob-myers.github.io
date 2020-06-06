@@ -1,5 +1,6 @@
 # Local
 
+- [ ] Don't transpile multiple editors with same model
 - [ ] Fix auto-commenting i.e. when directly inside JSX tags use (multiline) brace-comments
   > replaced code action by dummy console.log
   > NEXT: send code/position/selection to worker to figure out new code

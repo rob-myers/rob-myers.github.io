@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { TranspiledCode, ICompilerOptions } from '@model/monaco/monaco.model';
 import { Thunk } from '@store/worker.duck';
 import Editor from './editor';
-import { IEditorProps } from './editor.model';
+import { EditorProps } from './editor.model';
 
 const transpileDebounceMs = 500;
 
@@ -39,7 +39,7 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
 export interface ITsxEditorProps {
   editorKey: string;
   modelKey: string;
-  editorProps: IEditorProps;
+  editorProps: EditorProps;
   onTranspile?: (result: TranspiledCode) => void;
   compilerOptions?: ICompilerOptions;
 }

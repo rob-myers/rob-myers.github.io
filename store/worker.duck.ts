@@ -13,7 +13,7 @@ import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/wor
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
 
-import { RootState, RootAction, RootThunk, filterAct } from './reducer';
+import { RootState, RootAction, RootThunk, filterActs } from './reducer';
 
 export interface State {
   hasTranspiled: boolean;
@@ -382,11 +382,11 @@ const resizeMonacoEpic = (
   state$: StateObservable<RootState>,
 ) =>
   action$.pipe(
-    filterAct('[layout] panel resized'),
+    filterActs('[layout] panel resized'),
     filter(({ pay: { panelKey } }) =>
-      !!state$.value.worker.monacoEditor[`tsx-editor-${panelKey}`]),
+      !!state$.value.worker.monacoEditor[`editor-${panelKey}`]),
     map(({ pay: { panelKey } }) =>
-      Thunk.resizeEditor({ editorKey: `tsx-editor-${panelKey}` })),
+      Thunk.resizeEditor({ editorKey: `editor-${panelKey}` })),
   );
 
 export const epic = combineEpics(

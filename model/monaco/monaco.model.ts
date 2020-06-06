@@ -28,9 +28,9 @@ export interface IDiagnostic {
   messageText: string | { messageText: string; code: number };
 }
 
-import { IEditorProps } from '@components/monaco/editor.model';
+import { EditorProps } from '@components/monaco/editor.model';
 
-export const baseTsxEditorProps: IEditorProps = {
+export const baseTsxEditorProps: EditorProps = {
   language:'typescript',
   theme: 'vs-dark',
   editorOptions: {},

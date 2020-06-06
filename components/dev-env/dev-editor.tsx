@@ -32,18 +32,19 @@ const DevEditor: React.FC<Props> = ({ filename, panelKey }) => {
     <div className={css.editor}>
       {filename.endsWith('.tsx') && (
         <TsxEditor
-          editorKey={`tsx-editor-${panelKey}`}
-          modelKey={`tsx-model-${filename}`}
+          editorKey={`editor-${panelKey}`}
+          modelKey={`model-${filename}`}
           editorProps={tsxEditorProps.current}
           onTranspile={onTranspileTsx}
         />
       )}
       {filename.endsWith('.scss') && (
         <Editor
-          editorKey={`sass-editor-${panelKey}`}
-          modelKey={`sass-model-${filename}`}
+          editorKey={`editor-${panelKey}`}
+          modelKey={`model-${filename}`}
           filename={`file:///${filename}`}
-          width={'100%'}
+          width="100%"
+          height="100%"
           code={exampleScss1}
         />
       )}
