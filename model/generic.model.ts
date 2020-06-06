@@ -161,3 +161,15 @@ export function assign<Dst extends {}, Src extends {}>(
 ): Dst & Src {
   return Object.assign<Dst, Src>(dst, src);
 }
+
+/**
+ * First available non-negative integer given a
+ * pre-existing list of non-negative integers.
+ */
+export function firstAvailableInteger(nonNegativeInts: number[]) {
+  if (nonNegativeInts.length) {
+    const extended = nonNegativeInts.concat(NaN);
+    return extended.findIndex((_, i) => !extended.includes(i));
+  }
+  return 0;
+}

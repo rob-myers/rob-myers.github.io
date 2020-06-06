@@ -19,12 +19,14 @@ const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
       />
     );
   } else if (panelKey.startsWith('app')) {
-    return <div style={{ padding: 8, color: 'white' }}>App</div>;
+    return <div style={{ padding: 8, color: 'white' }}>
+      App ({panelKey})
+    </div>;
   }
+
   return <div className={css.errorMessage}>{
     `Unsupported panel "${panelKey}" with meta "${JSON.stringify(panelMeta)}"`
   }</div>;
-  
 };
 
 interface Props {
