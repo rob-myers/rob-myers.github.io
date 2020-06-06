@@ -12,7 +12,8 @@ import css from './dev-env-demo.scss';
 
 // Used to fix JSX syntax highlighting of monaco editor.
 // We mustn't use CSS modules (see `styles.config.ts`).
-import './monaco-override.scss';
+// Must require to avoid tree-shaking in production.
+require('./monaco-override.scss');
 
 const DevEnvDemo: React.FC<Props> = ({ uid, initialTsx }) => {
   const tsxEditorProps = useRef({ ...baseTsxEditorProps, code: initialTsx, height: 500 });

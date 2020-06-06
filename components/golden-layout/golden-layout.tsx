@@ -6,7 +6,8 @@ import { deepClone, assign } from '@model/generic.model';
 import { GoldenLayoutConfig, GoldenLayoutConfigItem, ReactComponentConfig, ExtendedContainer } from '@model/layout/layout.model';
 import { ReactComponentHandlerPatched } from './golden-layout.patch';
 
-import './golden-layout.scss';
+// Must require to avoid tree-shaking in production
+require('./golden-layout.scss');
 
 // Apply patch
 (GoldenLayout as any)['__lm'].utils.ReactComponentHandler = ReactComponentHandlerPatched;
