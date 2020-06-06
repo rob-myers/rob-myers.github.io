@@ -9,7 +9,10 @@ const DevEnvPage: React.FC = () => {
       <div className={css.menu} style={{ height: menuHeightPx }}>
         Menu goes here
       </div>
-      <ConnectedLayout width="100vw" height={`calc(100vh - ${menuHeightPx}px)`} />
+      <ConnectedLayout
+        width="100vw"
+        height={`calc(100vh - ${menuHeightPx}px)`}
+      />
     </div>
   );
 };

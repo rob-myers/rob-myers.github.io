@@ -1,37 +1,30 @@
+import dynamic from 'next/dynamic';
 import { useSelector } from 'react-redux';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
+const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false });
+
 import css from './window-panel.scss';
-
-const Error: React.FC<{ message: string }> = ({ message }) => (
-  <div className={css.errorMessage}>{message}</div>
-);
-
-const extensions = ['tsx', 'scss', 'ts'];
 
 const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
   if (!useSelector(({ layout: { panel } }) => panel[panelKey]?.initialized)) {
     return null;
   }
-
-  const [panelType] = panelKey.split('-');
-  const filename = panelMeta?.filename || null;
   
-  if (extensions.includes(panelType)) {
-    return filename
-      ? <div>File: {panelKey} {filename}</div>
-      : <Error message={`File panel "${panelKey}" needs panelMeta.filename`} />;
-  }
-  
-  if (panelType === 'app') {
+  if (isFilePanel(panelKey, panelMeta?.filename)) {
     return (
-      <div style={{ padding: 8, color: 'white' }}>App</div>
+      <DevEditor
+        filename={panelMeta!.filename!}
+        panelKey={panelKey}
+      />
     );
+  } else if (panelKey.startsWith('app')) {
+    return <div style={{ padding: 8, color: 'white' }}>App</div>;
   }
-
-  return <Error
-    message={`Panel "${panelKey}" has unknown type "${panelType}"`}
-  />;
+  return <div className={css.errorMessage}>{
+    `Unsupported panel "${panelKey}" with meta "${JSON.stringify(panelMeta)}"`
+  }</div>;
+  
 };
 
 interface Props {
@@ -40,3 +33,15 @@ interface Props {
 }
 
 export default WindowPanel;
+
+
+const supportedFileMetas = [
+  { filenameExt: '.tsx', panelKeyPrefix: 'tsx' },
+  { filenameExt: '.scss', panelKeyPrefix: 'scss'},
+  { filenameExt: '.ts', panelKeyPrefix: 'ts'},
+];
+
+function isFilePanel(panelKey: string, filename?: string) {
+  return supportedFileMetas.some(({ filenameExt, panelKeyPrefix }) =>
+    panelKey.startsWith(panelKeyPrefix) && filename?.endsWith(filenameExt));
+}
