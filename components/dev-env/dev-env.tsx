@@ -1,8 +1,8 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
 import { exampleScss1 } from '@model/code/examples';
-import { TranspiledCode, FileType, tsxEditorProps } from '@model/monaco/monaco.model';
+import { TranspiledCode, FileType, baseTsxEditorProps } from '@model/monaco/monaco.model';
 import { bootstrapApp } from '@model/code/bootstrap';
 import { Thunk } from '@store/worker.duck';
 import TsxEditor from '@components/monaco/tsx-editor';
@@ -15,9 +15,10 @@ import css from './dev-env.scss';
 // Using `require` prevents tree-shaking.
 require('./monaco-override.scss');
 
-const DevEnv: React.FC<Props> = ({ uid }) => {
+const DevEnv: React.FC<Props> = ({ uid, initialTsx }) => {
+  const tsxEditorProps = useRef({ ...baseTsxEditorProps, code: initialTsx });
   const [editing, setEditing] = useState<FileType>('tsx');
-  const [code, setCode] = useState('');
+  const [code, setCode] = useState(''); // Code transpiled from tsx
   const [codeEsmUrl, setCodeEsmUrl] = useState('');
   const [ready, setReady] = useState(false);
   
@@ -45,7 +46,7 @@ const DevEnv: React.FC<Props> = ({ uid }) => {
             <TsxEditor
               editorKey={`${uid}-tsx-editor`}
               modelKey={`${uid}-tsx-model`}
-              editorProps={tsxEditorProps}
+              editorProps={tsxEditorProps.current}
               onTranspile={onTranspile}
             />
           )}
@@ -84,6 +85,7 @@ const DevEnv: React.FC<Props> = ({ uid }) => {
 
 interface Props {
   uid: string;
+  initialTsx: string;
 }
 
 export default DevEnv;
