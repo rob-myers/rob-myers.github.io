@@ -6,29 +6,10 @@ import { deepClone, assign } from '@model/generic.model';
 import { GoldenLayoutConfig, GoldenLayoutConfigItem, ReactComponentConfig, ExtendedContainer } from '@model/layout/layout.model';
 import { ReactComponentHandlerPatched } from './golden-layout.patch';
 
-require('./golden-layout.scss');
+import './golden-layout.scss';
 
 // Apply patch
 (GoldenLayout as any)['__lm'].utils.ReactComponentHandler = ReactComponentHandlerPatched;
-
-interface Props {
-  htmlAttrs: React.HTMLAttributes<any>; 
-  /**
-   * Initial layout config, subsequent changes ignored.
-   * In accordance with 'golden-layout' API.
-   */
-  initConfig: GoldenLayoutConfig<any>;
-  /** Registration of React components. */
-  registerComponents: (layout: GoldenLayout) => void;
-  /** https://golden-layout.com/docs/GoldenLayout.html#Events  */
-  onComponentCreated: (component: ExtendedContainer) => void;
-  /** Invoked on commence dragging of a tab. */
-  onDragStart: (component: ExtendedContainer) => void;
-}
-
-interface State {
-  renderPanels: Set<ReactComponentHandlerPatched>;
-}
 
 export default class GoldenLayoutComponent extends React.Component<Props, State> {
   public state: State = { renderPanels: new Set() };
@@ -41,10 +22,8 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
       return ReactDOM.createPortal(
         panel._getReactComponent(),
         panel._container.getElement()[0],
-        /**
-         * Panels must have respective keys.
-         * Otherwise on destroy window-pane, every window-pane to the right is remounted (?)
-         */
+        // Panels must have respective keys.
+        // Otherwise on destroy window-pane, each window-pane on right is remounted (?)
         panel.id,
       );
     });
@@ -126,8 +105,6 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
           };
           this.goldenLayoutInstance.on('stackCreated', onDropDuplicate);
         });
-
-        // DEBUG
         // buttonEl.addEventListener('click', () =>
         //   console.log(this.goldenLayoutInstance.toConfig()));
       }
@@ -177,7 +154,6 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
   }
 
   private removeDragSource(dragSourceEl: HTMLElement) {
-    // Find respective dragSource.
     const dragSources = (this.goldenLayoutInstance as any)['_dragSources'] as {
       _dragListener: { destroy: () => void };
       _element: JQuery<HTMLElement>;
@@ -195,6 +171,9 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
   }
 
   /**
+   * Attach a "drag detector" (drag source) to specific button element.
+   * We specify the newPanelKey which'll only be instantiated if the user drags and drops.
+   * 
    * Create new dragSource using `config` as template, but:
    * 1. Use new distinct `panelKey`.
    * 2. Change 'component' back to 'react-component'.
@@ -202,12 +181,9 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
   private createDragSource(buttonEl: HTMLElement, config: GoldenLayoutConfigItem<any>) {
     // 'react-component' becomes 'component' internally.
     if (config.type === 'component') {
-      // origPanelKey needn't be defined in original config,
-      // but will be from now on (see below).
+      // origPanelKey needn't be defined in original config, but will from now on.
       const origPanelKey = config.origPanelKey || config.props.panelKey;
-
       const newPanelKey = `${origPanelKey}-${shortId.generate()}`;
-      // console.log({ newPanelKey });
 
       const dupConfig: ReactComponentConfig<any> = assign(
         deepClone(config),
@@ -227,4 +203,23 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
     li.className = 'lm_popout';
     return li;
   }
+}
+
+interface Props {
+  htmlAttrs: React.HTMLAttributes<any>; 
+  /**
+   * Initial layout config, subsequent changes ignored.
+   * In accordance with 'golden-layout' API.
+   */
+  initConfig: GoldenLayoutConfig<any>;
+  /** Registration of React components. */
+  registerComponents: (layout: GoldenLayout) => void;
+  /** https://golden-layout.com/docs/GoldenLayout.html#Events  */
+  onComponentCreated: (component: ExtendedContainer) => void;
+  /** Invoked on commence dragging of a tab. */
+  onDragStart: (component: ExtendedContainer) => void;
+}
+
+interface State {
+  renderPanels: Set<ReactComponentHandlerPatched>;
 }
