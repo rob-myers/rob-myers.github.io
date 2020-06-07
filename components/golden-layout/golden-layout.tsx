@@ -1,7 +1,7 @@
+import * as shortId from 'shortid';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import GoldenLayout from 'golden-layout';
-import * as shortId from 'shortid';
 import { deepClone, assign } from '@model/generic.model';
 import { GoldenLayoutConfig, GoldenLayoutConfigItem, ReactComponentConfig, ExtendedContainer } from '@model/layout/layout.model';
 import { ReactComponentHandlerPatched } from './golden-layout.patch';
@@ -61,72 +61,58 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
       this.props.initConfig,
       this.containerRef.current || undefined,
     );
-
     // Resize with window
-    window.addEventListener('resize', () =>
-      this.goldenLayoutInstance.updateSize()
-    );
+    window.addEventListener('resize', () => this.goldenLayoutInstance.updateSize());
 
-    // Add duplication button on tab creation.
-    this.goldenLayoutInstance.on('tabCreated', (tab: GoldenLayout.Tab & {
-      contentItem: ExtendedContainer;
-    }) => {
-      // console.log({ tab }, tab.contentItem);
+    // Add duplication button on tab creation
+    this.goldenLayoutInstance.on('tabCreated',
+      (tab: GoldenLayout.Tab & { contentItem: ExtendedContainer }) => {
 
-      // Listen for commencement of tab dragging.
-      (tab as any)['_dragListener'].on('dragStart', () => {
-        // console.log('dragStart', tab.contentItem);
-        this.props.onDragStart(tab.contentItem);
+        // Listen for commencement of tab dragging
+        (tab as any)['_dragListener'].on('dragStart', () => {
+          this.props.onDragStart(tab.contentItem);
+        });
+
+        // Add 'duplication' button to stack header if haven't already
+        const { controlsContainer } = tab.header;
+        if (controlsContainer.find('.lm_popout').length === 0) {
+          const buttonEl = this.createDuplicationButton();
+          controlsContainer.prepend(buttonEl);
+
+          // We want to duplicate the tab's component
+          // when the user drags the 'duplication' button
+          const config =  tab.contentItem.config as GoldenLayoutConfigItem<any>;
+          this.createDragSource(buttonEl, config);
+
+          // Show/hide 'duplication' button on maximise/minimise
+          controlsContainer.find('.lm_maximise')
+            .click(() => buttonEl.hidden = !buttonEl.hidden);
+
+          // Refresh config inside dragSource after use,
+          // thereby avoiding duplicate panelKeys
+          buttonEl.addEventListener('mousedown', () => {
+            const onDropDuplicate = () => {
+              this.removeDragSource(buttonEl);
+              this.createDragSource(buttonEl, config);
+              this.goldenLayoutInstance.off('stackCreated', onDropDuplicate);
+            };
+            this.goldenLayoutInstance.on('stackCreated', onDropDuplicate);
+          });
+        }
       });
 
-      // Add 'duplication' button to stack header if haven't already.
-      const { controlsContainer } = tab.header;
-      if (controlsContainer.find('.lm_popout').length === 0) {
-        const buttonEl = this.createDuplicationButton();
-        controlsContainer.prepend(buttonEl);
-
-        // We want to duplicate the tab's component
-        // when the user drags the 'duplication' button.
-        const config =  tab.contentItem.config as GoldenLayoutConfigItem<any>;
-        this.createDragSource(buttonEl, config);
-
-        // Show/hide 'duplication' button on maximise/minimise.
-        controlsContainer
-          .find('.lm_maximise')
-          .click(() => buttonEl.hidden = !buttonEl.hidden);
-
-        // Refresh config inside dragSource after use,
-        // thereby avoiding duplicate panelKey's.
-        buttonEl.addEventListener('mousedown', () => {
-          const onDropDuplicate = () => {
-            // console.log('DROPPED ELEMENT');
-            this.removeDragSource(buttonEl);
-            this.createDragSource(buttonEl, config);
-            this.goldenLayoutInstance.off('stackCreated', onDropDuplicate);
-          };
-          this.goldenLayoutInstance.on('stackCreated', onDropDuplicate);
-        });
-        // buttonEl.addEventListener('click', () =>
-        //   console.log(this.goldenLayoutInstance.toConfig()));
-      }
-    });
-
-    // Detect when GoldenLayout has initialized.
+    // Detect when GoldenLayout has initialized
     let initialized = false;
-    const onInitialized = () => {
-      initialized = true;
-      this.goldenLayoutInstance.off('initialised', onInitialized);
-    };
+    const onInitialized = () => (initialized = true)
+      && this.goldenLayoutInstance.off('initialised', onInitialized);
     this.goldenLayoutInstance.on('initialised', onInitialized);
 
-    // Detect changes to all stacks created.
-    // However, we only act post-initialization.
+    // Detect changes to active stack, post-initialization
     this.goldenLayoutInstance.on('stackCreated', (stack: GoldenLayout.ContentItem) => {
-      // Detect if selected child has changed.
       stack.on('activeContentItemChanged', (child: ExtendedContainer) => {
         if (initialized) {
           if (child.parent.contentItems.length === 1) {
-            return; // Ignore degenerate case where no siblings.
+            return; // Ignore degenerate case where no siblings
           }
           // Find duplication button.
           const { controlsContainer } = child.tab.header;
@@ -134,23 +120,26 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
           if (!buttonEl) {
             return console.error('Expected \'.lm_popout\' inside stack\'s controlsContainer.');
           }
-          // Replace previous dragSource.
-          this.removeDragSource(buttonEl);
+          this.removeDragSource(buttonEl); // Replace previous
           this.createDragSource(buttonEl, child.config);
         }
       });
     });
 
-    this.goldenLayoutInstance.on('componentCreated',
-      (cmp: ExtendedContainer) => this.props.onComponentCreated(cmp));
+    this.goldenLayoutInstance.on('componentCreated', (cmp: ExtendedContainer) => {
+      const titleEl = cmp.tab.element.children('.lm_title');
+      const panelKey = (cmp.config as any)?.props.panelKey;
+      panelKey && titleEl?.click(() => this.props.onClickTitle(panelKey));
+
+      this.props.onComponentCreated(cmp);
+    });
     
-    // Register React components.
+    // Register React components
     if (this.props.registerComponents instanceof Function) {
       this.props.registerComponents(this.goldenLayoutInstance);
     }
     (this.goldenLayoutInstance as any)['reactContainer'] = this;
 
-    // Finally, render the layout.
     this.goldenLayoutInstance.init();
   }
 
@@ -180,9 +169,9 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
    * 2. Change 'component' back to 'react-component'.
    */
   private createDragSource(buttonEl: HTMLElement, config: GoldenLayoutConfigItem<any>) {
-    // 'react-component' becomes 'component' internally.
+    // 'react-component' becomes 'component' internally
     if (config.type === 'component') {
-      // origPanelKey needn't be defined in original config, but will from now on.
+      // origPanelKey needn't be in original config, but will from now on
       const origPanelKey = config.origPanelKey || config.props.panelKey;
       const newPanelKey = `${origPanelKey}-${shortId.generate()}`;
 
@@ -219,6 +208,8 @@ interface Props {
   onComponentCreated: (component: ExtendedContainer) => void;
   /** Invoked on commence dragging of a tab. */
   onDragStart: (component: ExtendedContainer) => void;
+  /** Invoked on click title of shown panel. */
+  onClickTitle: (panelKey: string) => void;
 }
 
 interface State {

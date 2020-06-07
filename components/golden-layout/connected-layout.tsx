@@ -1,8 +1,8 @@
 import dynamic from 'next/dynamic';
-import { useDispatch, useSelector } from 'react-redux';
 import { useCallback } from 'react';
-import GoldenLayout from 'golden-layout';
+import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
+import GoldenLayout from 'golden-layout';
 import { redact } from '@model/store/redux.model';
 import { Act } from '@store/layout.duck';
 
@@ -28,6 +28,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
 
   const onComponentCreated = useCallback((glCmp: ExtendedContainer) => {
     const { config, element: [el] } = glCmp;
+        
     if (config.type === 'component') {
       const { props: { panelKey } } = config;
       dispatch(Act.panelOpened({
@@ -68,6 +69,9 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
   }, []);
 
   const onDragStart = useCallback(() => null, []);
+  // TODO dispatch act to state, show/hide menu in WindowPanel
+  const onClickTitle = useCallback((panelKey) =>
+    console.log({ panelKey }), []);
 
   return (
     <div className="connected-golden-layout">
@@ -84,6 +88,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
           onComponentCreated={onComponentCreated}
           registerComponents={registerComponents}
           onDragStart={onDragStart}
+          onClickTitle={onClickTitle}
         />
       </div>
     </div>
