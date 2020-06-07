@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { exampleScss1 } from '@model/code/examples';
 import { TranspiledCode, FileType, baseTsxEditorProps } from '@model/monaco/monaco.model';
 import { bootstrapApp } from '@model/code/bootstrap';
-import { Thunk } from '@store/worker.duck';
+import { Thunk } from '@store/editor.duck';
 import TsxEditor from '@components/monaco/tsx-editor';
 import Editor from '@components/monaco/editor';
 import EsModule from './es-module';

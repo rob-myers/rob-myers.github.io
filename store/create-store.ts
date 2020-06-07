@@ -9,7 +9,7 @@ import { RootThunkParams, ThunkAct } from '@model/store/root.redux.model';
 
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
 import { State as TestState } from '@store/test.duck';
-import { State as WorkerState } from '@store/worker.duck';
+import { State as WorkerState } from '@store/editor.duck';
 import { State as GitalkState } from '@store/gitalk.duck';
 import { State as LayoutState } from '@store/layout.duck';
 
@@ -39,17 +39,17 @@ const persistedReducer = persistReducer({
     createTransform<WorkerState, WorkerState>(
       (_, _key) => ({
         hasTranspiled: false,
-        monacoEditor: {},
-        monacoInternal: null,
+        editor: {},
+        internal: null,
         monacoLoading: false,
-        monacoModel: {},
+        model: {},
         monacoService: null,
-        monacoTypesLoaded: false,
+        typesLoaded: false,
         sassWorker: null,
         syntaxWorker: null,
       }),
       (state, _key) => state,
-      { whitelist: ['worker'] }
+      { whitelist: ['editor'] }
     ),
     createTransform<GitalkState, GitalkState>(
       (_, _key) => ({

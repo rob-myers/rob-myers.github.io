@@ -18,25 +18,25 @@ import { RootState, filterActs, RootActOrThunk } from './reducer';
 export interface State {
   hasTranspiled: boolean;
   /** Instances of monaco editor */
-  monacoEditor: KeyedLookup<MonacoEditorInstance>;
+  editor: KeyedLookup<EditorInstance>;
   /** Internal monaco structures */
-  monacoInternal: null | MonacoInternal;
+  internal: null | MonacoInternal;
   monacoLoading: boolean;
   /** Instances of monaco models */
-  monacoModel: KeyedLookup<MonacoModelInstance>;
+  model: KeyedLookup<ModelInstance>;
   monacoService: null | Redacted<MonacoService>;
-  monacoTypesLoaded: boolean;
+  typesLoaded: boolean;
   sassWorker: null | Redacted<SassWorker>;
   syntaxWorker: null | Redacted<SyntaxWorker>;
 }
 
-interface MonacoEditorInstance {
+interface EditorInstance {
   key: string;
   editor: Redacted<Editor>;
   lastDecorations: string[];
   cleanups: (() => void)[];
 }
-interface MonacoModelInstance {
+interface ModelInstance {
   key: string;
   editorKey: string | null;
   model: Redacted<IMonacoTextModel>;
@@ -50,12 +50,12 @@ interface MonacoInternal {
 
 const initialState: State = {
   hasTranspiled: false,
-  monacoEditor: {},
-  monacoInternal: null,
+  editor: {},
+  internal: null,
   monacoLoading: false,
-  monacoModel: {},
+  model: {},
   monacoService: null,
-  monacoTypesLoaded: false,
+  typesLoaded: false,
   sassWorker: null,
   syntaxWorker: null,
 };
@@ -80,7 +80,7 @@ export const Act = {
     createAct('[worker] store syntax', { worker }),
   update: (updates: Partial<State>) =>
     createAct('[worker] update', { updates }),
-  updateEditor: (editorKey: string, updates: ReduxUpdater<MonacoEditorInstance>) =>
+  updateEditor: (editorKey: string, updates: ReduxUpdater<EditorInstance>) =>
     createAct('[worker] update editor', { editorKey, updates }),
 };
 
@@ -104,7 +104,7 @@ export const Thunk = {
   ),
   createMonacoEditor: createThunk(
     '[worker] create monaco editor',
-    async ({ dispatch, state: { worker } }, { editor, editorKey, model, modelKey, filename }: {
+    async ({ dispatch, state: { editor: worker } }, { editor, editorKey, model, modelKey, filename }: {
       editor: Redacted<Editor>;
       editorKey: string;
       modelKey: string;
@@ -115,7 +115,7 @@ export const Thunk = {
       dispatch(Act.updateEditor(editorKey, () => ({ cleanups: [() => editor.dispose()] })));
       dispatch(Thunk.tsxEditorInstanceSetup({ editor }));
 
-      if (!worker.monacoModel[modelKey]) {
+      if (!worker.model[modelKey]) {
         model.updateOptions({ tabSize: 2, indentSize: 2, trimAutoWhitespace: true });
         dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
       }
@@ -141,25 +141,25 @@ export const Thunk = {
   /** Ensures types associated to globals */
   ensureMonacoTypes: createThunk(
     '[worker] ensure monaco types',
-    async ({ state: { worker }, dispatch }) => {
-      const { typescriptDefaults } = worker.monacoInternal!;
+    async ({ state: { editor: worker }, dispatch }) => {
+      const { typescriptDefaults } = worker.internal!;
       // Load types then turn type checking back on
       typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: true });
       await worker.monacoService!.loadReactTypes(typescriptDefaults);
       typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: false });
-      dispatch(Act.update({ monacoTypesLoaded: true }));
+      dispatch(Act.update({ typesLoaded: true }));
     },
   ),
   /** Execute a debounced action whenever editor model changes. */
   onModelChange: createThunk(
     '[worker] on model change',
-    ({ state: { worker: { monacoEditor } } }, { act, editorKey, debounceMs }: {
+    ({ state: { editor: { editor } } }, { act, editorKey, debounceMs }: {
       act: () => void;
       debounceMs: number; 
       editorKey: string;
     }) => {
       let debounceId: number;
-      monacoEditor[editorKey]?.editor.onDidChangeModelContent((_event) => {
+      editor[editorKey]?.editor.onDidChangeModelContent((_event) => {
         window.clearTimeout(debounceId);
         debounceId = window.setTimeout(act, debounceMs);
       });
@@ -167,34 +167,34 @@ export const Thunk = {
   ),
   removeMonacoEditor: createThunk(
     '[worker] remove monaco editor',
-    ({ dispatch, state: { worker: { monacoEditor, monacoModel } }}, { editorKey }: { editorKey: string }) => {
-      monacoEditor[editorKey].cleanups.forEach(cleanup => cleanup());
+    ({ dispatch, state: { editor: { editor, model: monacoModel } }}, { editorKey }: { editorKey: string }) => {
+      editor[editorKey].cleanups.forEach(cleanup => cleanup());
       dispatch(Act.update({
-        monacoEditor: removeFromLookup(editorKey, monacoEditor),
+        editor: removeFromLookup(editorKey, editor),
         // Remove stale editorKey for extant models
-        monacoModel: Object.entries(monacoModel).reduce((agg, [key, value]) => ({ ...agg,
+        model: Object.entries(monacoModel).reduce((agg, [key, value]) => ({ ...agg,
           [key]: { ...value, ...(value.editorKey === editorKey && { editorKey: null }) },
-        }), {} as State['monacoModel']),
+        }), {} as State['model']),
       }));
     },
   ),
   removeMonacoModel: createThunk(
     '[worker] remove monaco model',
-    ({ dispatch, state: { worker: { monacoModel } }
+    ({ dispatch, state: { editor: { model } }
     }, { modelKey }: { modelKey: string }) => {
-      monacoModel[modelKey]?.model.dispose();
-      dispatch(Act.update({ monacoModel: removeFromLookup(modelKey, monacoModel) }));
+      model[modelKey]?.model.dispose();
+      dispatch(Act.update({ model: removeFromLookup(modelKey, model) }));
     },
   ),
   resizeEditor: createThunk(
     '[worker] resize editor',
-    ({ state: { worker } }, { editorKey }: { editorKey: string }) => {
-      worker.monacoEditor[editorKey].editor.layout();
+    ({ state: { editor: worker } }, { editorKey }: { editorKey: string }) => {
+      worker.editor[editorKey].editor.layout();
     },
   ),
   setMonacoCompilerOptions: createThunk(
     '[worker] set monaco compiler options',
-    ({ state: { worker: { monacoInternal } } }) => {
+    ({ state: { editor: { internal: monacoInternal } } }) => {
       const { typescriptDefaults, typescript } = monacoInternal!;
       const oldCompilerOptions = typescriptDefaults.getCompilerOptions();
       typescriptDefaults.setCompilerOptions({
@@ -220,7 +220,7 @@ export const Thunk = {
   ),
   setupEditorHighlighting: createThunk(
     '[worker] setup syntax',
-    async ({ state: { worker }, dispatch }, { editorKey }: { editorKey: string }) => {
+    async ({ state: { editor: worker }, dispatch }, { editorKey }: { editorKey: string }) => {
       const eventListener = ({ data }: Message<MessageFromWorker>) => {
         if (data.key === 'send-tsx-highlights' && data.editorKey === editorKey) {
           requestAnimationFrame(() =>
@@ -229,7 +229,7 @@ export const Thunk = {
       };
       worker.syntaxWorker!.addEventListener('message', eventListener);
       const syntaxHighlight = () => dispatch(Thunk.syntaxHighlight({ editorKey }));
-      const disposable = worker.monacoEditor[editorKey].editor.onDidChangeModelContent(syntaxHighlight);
+      const disposable = worker.editor[editorKey].editor.onDidChangeModelContent(syntaxHighlight);
       requestAnimationFrame(syntaxHighlight); // For first time load
 
       dispatch(Act.updateEditor(editorKey, ({ cleanups }) => ({
@@ -242,8 +242,8 @@ export const Thunk = {
   ),
   syntaxHighlight: createThunk(
     '[worker] syntax highlight',
-    ({ state: { worker } }, { editorKey }: { editorKey: string }) => {
-      const { editor } = worker.monacoEditor[editorKey];
+    ({ state: { editor: worker } }, { editorKey }: { editorKey: string }) => {
+      const { editor } = worker.editor[editorKey];
       if (!editor.getModel()) {
         return;
       }
@@ -258,7 +258,7 @@ export const Thunk = {
   ),
   transformTranspiledTsx: createThunk(
     '[worker] transform transpiled tsx',
-    ({ state: { worker: _ } }, { js }: { js: string }) => {
+    ({ state: { editor: _ } }, { js }: { js: string }) => {
       const transformedJs = js.replace(
         /import ([^\n]+) from 'react'/g, // TODO use syntax worker
         `import $1 from '${window.location.origin}/es-react/react.js'`,
@@ -269,8 +269,8 @@ export const Thunk = {
   ),
   transpileModel: createThunk(
     '[worker] transpile monaco model',
-    async ({ state: { worker }, dispatch }, { modelKey }: { modelKey: string }) => {
-      const { model } = worker.monacoModel[modelKey];
+    async ({ state: { editor: worker }, dispatch }, { modelKey }: { modelKey: string }) => {
+      const { model } = worker.model[modelKey];
       const result = await worker.monacoService!.transpile(model);
       if (!worker.hasTranspiled) {
         dispatch(Act.update({ hasTranspiled: true }));
@@ -280,8 +280,8 @@ export const Thunk = {
   ),
   tsxEditorInstanceSetup: createThunk(
     '[worker] editor instance setup',
-    ({ state: { worker } }, { editor }: { editor: MonacoEditorInstance['editor'] }) => {
-      const { monaco } = worker.monacoInternal!;
+    ({ state: { editor: worker } }, { editor }: { editor: EditorInstance['editor'] }) => {
+      const { monaco } = worker.internal!;
       editor.addAction({
         id: 'editor.action.commentLine',
         label: 'Custom Toggle Line Comment',
@@ -294,17 +294,17 @@ export const Thunk = {
   ),
   updateEditorDecorations: createThunk(
     '[worker] update editor decorations',
-    ({ state: { worker }, dispatch }, { editorKey, classifications }: {
+    ({ state: { editor: worker }, dispatch }, { editorKey, classifications }: {
       editorKey: string;
       classifications: Classification[];
     }) => {
-      const { lastDecorations, editor } = worker.monacoEditor[editorKey];
+      const { lastDecorations, editor } = worker.editor[editorKey];
       
       const decorations = classifications.map(classification => {
         // const inlineClassName = `is-${classification.kind} in-${classification.parentKind}`;
         const inlineClassName = classification.kind;
         return {
-          range: new worker.monacoInternal!.monaco.Range(
+          range: new worker.internal!.monaco.Range(
             classification.startLineNumber,
             classification.startColumn,
             classification.endLineNumber,
@@ -321,15 +321,15 @@ export const Thunk = {
   ),
   useMonacoModel: createThunk(
     '[worker] use monaco model',
-    ({ dispatch, state: { worker: { monacoEditor } } }, { editorKey, model, modelKey, filename }: {
+    ({ dispatch, state: { editor: { editor } } }, { editorKey, model, modelKey, filename }: {
       editorKey: string;
       modelKey: string;
       model: Redacted<IMonacoTextModel>;
       filename: string;
     }) => {
-      if (monacoEditor[editorKey]) {
+      if (editor[editorKey]) {
         dispatch(Act.storeMonacoModel({ editorKey, modelKey, model: redact(model), filename }));
-        monacoEditor[editorKey].editor.setModel(model);
+        editor[editorKey].editor.setModel(model);
       }
     },
   ),
@@ -340,23 +340,23 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
     case '[worker] store monaco core': return { ...state,
-      monacoInternal: act.pay.monacoInternal,
+      internal: act.pay.monacoInternal,
     };
     case '[worker] store monaco editor': return { ...state,
-      monacoEditor: addToLookup({
+      editor: addToLookup({
         key: act.pay.editorKey,
         editor: act.pay.editor,
         lastDecorations: [],
         cleanups: [],
-      }, state.monacoEditor),
+      }, state.editor),
     };
     case '[worker] store monaco model': return { ...state,
-      monacoModel: addToLookup({
+      model: addToLookup({
         key: act.pay.modelKey,
         model: act.pay.model,
         editorKey: act.pay.editorKey,
         filename: act.pay.filename,
-      }, state.monacoModel),
+      }, state.model),
     };
     case '[worker] store monaco service': return { ...state,
       monacoService: act.pay.service,
@@ -371,7 +371,7 @@ export const reducer = (state = initialState, act: Action): State => {
       ...act.pay.updates,
     };
     case '[worker] update editor': return { ...state,
-      monacoEditor: updateLookup(act.pay.editorKey, state.monacoEditor, act.pay.updates),
+      editor: updateLookup(act.pay.editorKey, state.editor, act.pay.updates),
     };
     default: return state || testNever(act);
   }
@@ -384,7 +384,7 @@ const resizeMonacoEpic = (
   action$.pipe(
     filterActs('[layout] panel resized'),
     filter(({ pay: { panelKey } }) =>
-      !!state$.value.worker.monacoEditor[`editor-${panelKey}`]),
+      !!state$.value.editor.editor[`editor-${panelKey}`]),
     map(({ pay: { panelKey } }) =>
       Thunk.resizeEditor({ editorKey: `editor-${panelKey}` })),
   );

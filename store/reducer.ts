@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { combineEpics } from 'redux-observable';
-import { epic as workerEpic } from './worker.duck';
+import { epic as workerEpic } from './editor.duck';
 
 import {
   reducer as testReducer,
@@ -8,11 +8,11 @@ import {
   Action as TestAction,
 } from './test.duck';
 import {
-  reducer as workerReducer,
-  State as WorkerState, 
-  Action as WorkerAction,
-  Thunk as WorkerThunk,
-} from './worker.duck';
+  reducer as editorReducer,
+  State as EditorState, 
+  Action as EditorAction,
+  Thunk as EditorThunk,
+} from './editor.duck';
 import {
   reducer as gitalkReducer,
   State as GitalkState, 
@@ -29,27 +29,27 @@ import { filter } from 'rxjs/operators';
 
 export interface RootState {
   test: TestState;
-  worker: WorkerState;
+  editor: EditorState;
   gitalk: GitalkState;
   layout: LayoutState;
 }
 
 export type RootAction = (
   | TestAction
-  | WorkerAction
+  | EditorAction
   | GitalkAction
   | LayoutAction
 );
 
 export type RootThunk = (
-  | WorkerThunk
+  | EditorThunk
   | GitalkThunk
   | LayoutThunk
 );
 
 const rootReducer = combineReducers<RootState>({
   test: testReducer,
-  worker: workerReducer,
+  editor: editorReducer,
   gitalk: gitalkReducer,
   layout: layoutReducer,
 });

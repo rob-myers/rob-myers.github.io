@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { TranspiledCode, ICompilerOptions } from '@model/monaco/monaco.model';
-import { Thunk } from '@store/worker.duck';
+import { Thunk } from '@store/editor.duck';
 import Editor from './editor';
 import { EditorProps } from './editor.model';
 
@@ -14,8 +14,8 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   editorProps,
   onTranspile: onTransform = () => null,
 }) => {
-  const model = useSelector(({ worker }) => worker.monacoModel[modelKey]?.model);
-  const typesLoaded = useSelector(({ worker }) => worker.monacoTypesLoaded);
+  const model = useSelector(({ editor: worker }) => worker.model[modelKey]?.model);
+  const typesLoaded = useSelector(({ editor: worker }) => worker.typesLoaded);
   const dispatch = useDispatch();
 
   React.useEffect(() => {

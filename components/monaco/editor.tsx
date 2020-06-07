@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { EditorProps } from './editor.model';
 import { CODE_FONT_FAMILY, DEFAULT_WIDTH, DEFAULT_HEIGHT } from './consts';
-import { Thunk } from '@store/worker.duck';
+import { Thunk } from '@store/editor.duck';
 import { redact } from '@model/store/redux.model';
 
 // Must not be in main bundle (so, not in worker.duck)
@@ -32,16 +32,16 @@ const Editor: React.FC<EditorProps> = (props) => {
   } = props;
 
   const divRef = React.useRef<HTMLDivElement>(null);
-  const monacoBootstrapped = useSelector(({ worker }) => !!worker.monacoInternal);
-  const monacoEditor = useSelector(({ worker }) => worker.monacoEditor[editorKey]);
-  const monacoModel = useSelector(({ worker }) => worker.monacoModel[modelKey]);
+  const bootstrapped = useSelector(({ editor: worker }) => !!worker.internal);
+  const editor = useSelector(({ editor: worker }) => worker.editor[editorKey]);
+  const monacoModel = useSelector(({ editor: worker }) => worker.model[modelKey]);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     const uri = monaco.Uri.parse(filename);
 
     (async () => {
-      if (!monacoBootstrapped) {
+      if (!bootstrapped) {
         await dispatch(Thunk.bootstrapMonaco({
           typescript: redact(typescript),
           typescriptDefaults: redact(typescriptDefaults),
@@ -49,21 +49,21 @@ const Editor: React.FC<EditorProps> = (props) => {
         }));
       }
 
-      if (!monacoEditor) {
-        const model = monaco.editor.getModel(uri)
+      if (!editor) {
+        const monacoModel = monaco.editor.getModel(uri)
           || monaco.editor.createModel(code, language, uri);
-        const editor = monaco.editor.create(divRef.current!, {
+        const monacoEditor = monaco.editor.create(divRef.current!, {
           fontFamily: CODE_FONT_FAMILY,
           fontSize: 11,
           accessibilityHelpUrl,
           ...editorOptions,
-          model,
+          model: monacoModel,
         });
         await dispatch(Thunk.createMonacoEditor({
           editorKey,
-          editor: redact(editor),
+          editor: redact(monacoEditor),
           modelKey,
-          model: redact(model),
+          model: redact(monacoModel),
           filename,
         }));
       } else if (!monacoModel) {

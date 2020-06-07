@@ -2,7 +2,7 @@ import { useCallback, useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { exampleScss1, exampleTsx1 } from '@model/code/examples';
 import { TranspiledCode, baseTsxEditorProps } from '@model/monaco/monaco.model';
-import { Thunk } from '@store/worker.duck';
+import { Thunk } from '@store/editor.duck';
 import { Thunk as LayoutThunk } from '@store/layout.duck';
 import TsxEditor from '@components/monaco/tsx-editor';
 import Editor from '@components/monaco/editor';
