@@ -76,6 +76,10 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  clickedPanelTitle: createThunk(
+    '[layout] clicked panel title',
+    (_, __: { panelKey: string }) => null,
+  ),
   setPanelTitle: createThunk(
     '[layout] set panel title thunk',
     ({ state: { layout: { panel }}}, input: {

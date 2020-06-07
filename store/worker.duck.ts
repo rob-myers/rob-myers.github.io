@@ -13,7 +13,7 @@ import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/wor
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
 
-import { RootState, RootAction, RootThunk, filterActs } from './reducer';
+import { RootState, filterActs, RootActOrThunk } from './reducer';
 
 export interface State {
   hasTranspiled: boolean;
@@ -378,7 +378,7 @@ export const reducer = (state = initialState, act: Action): State => {
 };
 
 const resizeMonacoEpic = (
-  action$: ActionsObservable<RootAction | RootThunk>,
+  action$: ActionsObservable<RootActOrThunk>,
   state$: StateObservable<RootState>,
 ) =>
   action$.pipe(
@@ -389,6 +389,21 @@ const resizeMonacoEpic = (
       Thunk.resizeEditor({ editorKey: `editor-${panelKey}` })),
   );
 
+// TODO move to new duck i.e. dev-env.duck
+// TODO rename worker.duck as editor.duck
+const togglePanelMenuEpic = (
+  action$: ActionsObservable<RootActOrThunk>,
+  _state$: StateObservable<RootState>,
+) =>
+  action$.pipe(
+    filterActs('[layout] clicked panel title'),
+    map(({ args: { panelKey } }) => {
+      console.log({ detectedTitleClick: panelKey });
+      return { type: 'fake' } as any;
+    })
+  );
+
 export const epic = combineEpics(
   resizeMonacoEpic,
+  togglePanelMenuEpic,
 );

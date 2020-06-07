@@ -126,13 +126,8 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
       });
     });
 
-    this.goldenLayoutInstance.on('componentCreated', (cmp: ExtendedContainer) => {
-      const titleEl = cmp.tab.element.children('.lm_title');
-      const panelKey = (cmp.config as any)?.props.panelKey;
-      panelKey && titleEl?.click(() => this.props.onClickTitle(panelKey));
-
-      this.props.onComponentCreated(cmp);
-    });
+    this.goldenLayoutInstance.on('componentCreated', (cmp: ExtendedContainer) =>
+      this.props.onComponentCreated(cmp));
     
     // Register React components
     if (this.props.registerComponents instanceof Function) {
@@ -208,8 +203,6 @@ interface Props {
   onComponentCreated: (component: ExtendedContainer) => void;
   /** Invoked on commence dragging of a tab. */
   onDragStart: (component: ExtendedContainer) => void;
-  /** Invoked on click title of shown panel. */
-  onClickTitle: (panelKey: string) => void;
 }
 
 interface State {

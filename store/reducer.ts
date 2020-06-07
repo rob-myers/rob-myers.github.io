@@ -57,15 +57,18 @@ const rootReducer = combineReducers<RootState>({
 export default rootReducer;
 
 //#region redux-observable
-export type GetAct<T extends RootAction['type']> = Extract<RootAction, { type: T }>;
+export type RootActOrThunk = RootAction | RootThunk
+
+export type GetActOrThunk<T extends RootActOrThunk['type']> =
+Extract<RootActOrThunk, { type: T }>;
 
 /** Replacement for `ofType` which refines action type as expected. */
-export const filterAct = <T extends RootAction['type']>(type: T) =>
-  filter((action: RootAction | RootThunk): action is GetAct<T> =>
+export const filterAct = <T extends RootActOrThunk['type']>(type: T) =>
+  filter((action: RootActOrThunk): action is GetActOrThunk<T> =>
     action.type === type);
 
-export const filterActs = <T extends RootAction['type']>(...types: T[]) =>
-  filter((action: RootAction | RootThunk): action is GetAct<T> =>
+export const filterActs = <T extends RootActOrThunk['type']>(...types: T[]) =>
+  filter((action: RootActOrThunk): action is GetActOrThunk<T> =>
     types.includes(action.type as T));
 
 export const rootEpic = combineEpics(

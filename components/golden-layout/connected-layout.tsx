@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import GoldenLayout from 'golden-layout';
 import { redact } from '@model/store/redux.model';
-import { Act } from '@store/layout.duck';
+import { Act, Thunk } from '@store/layout.duck';
 
 import WindowPanel from '@components/golden-layout/window-panel';
 import { ExtendedContainer } from '@model/layout/layout.model';
@@ -27,7 +27,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
   },[]);
 
   const onComponentCreated = useCallback((glCmp: ExtendedContainer) => {
-    const { config, element: [el] } = glCmp;
+    const { config, element: [el], tab  } = glCmp;
         
     if (config.type === 'component') {
       const { props: { panelKey } } = config;
@@ -65,13 +65,13 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
             height: el.clientHeight,
           })), 200);
       });
+      
+      tab.element.children('.lm_title')?.click(() =>
+        dispatch(Thunk.clickedPanelTitle({ panelKey })));
     }
   }, []);
 
   const onDragStart = useCallback(() => null, []);
-  // TODO dispatch act to state, show/hide menu in WindowPanel
-  const onClickTitle = useCallback((panelKey) =>
-    console.log({ panelKey }), []);
 
   return (
     <div className="connected-golden-layout">
@@ -88,7 +88,6 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
           onComponentCreated={onComponentCreated}
           registerComponents={registerComponents}
           onDragStart={onDragStart}
-          onClickTitle={onClickTitle}
         />
       </div>
     </div>
