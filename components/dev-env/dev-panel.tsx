@@ -4,8 +4,6 @@ import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
 const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false });
 
-import css from './window-panel.scss';
-
 const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
   if (!useSelector(({ layout: { panel } }) => panel[panelKey]?.initialized)) {
     return null;
@@ -24,9 +22,11 @@ const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
     </div>;
   }
 
-  return <div className={css.errorMessage}>{
-    `Unsupported panel "${panelKey}" with meta "${JSON.stringify(panelMeta)}"`
-  }</div>;
+  return (
+    <div style={{ color: 'red', padding: '8px 0 0 8px' }}>{
+      `Unsupported panel "${panelKey}" with meta "${JSON.stringify(panelMeta)}"`
+    }</div>
+  );  
 };
 
 interface Props {

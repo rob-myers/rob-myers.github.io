@@ -6,7 +6,7 @@ import GoldenLayout from 'golden-layout';
 import { redact } from '@model/store/redux.model';
 import { Act, Thunk } from '@store/layout.duck';
 
-import WindowPanel from '@components/golden-layout/window-panel';
+import WindowPanel from '@components/dev-env/dev-panel';
 import { ExtendedContainer } from '@model/layout/layout.model';
 const GoldenLayoutComponent = dynamic(import('@components/golden-layout/golden-layout'), { ssr: false });
 
