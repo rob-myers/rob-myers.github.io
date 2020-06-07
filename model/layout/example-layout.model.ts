@@ -10,6 +10,7 @@ export const initLayoutConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
   dimensions: {
     borderWidth: 1,
     minItemWidth: 200,
+    minItemHeight: 200,
     dragProxyWidth: 200,
     dragProxyHeight: 100,
   },

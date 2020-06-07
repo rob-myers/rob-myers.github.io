@@ -5,6 +5,7 @@ import TopMenu from '@components/top-menu/top-menu';
 import Gitalk from '@components/gitalk/gitalk';
 import { exampleTsx1 } from '@model/code/examples';
 
+import './index.scss';
 const DevEnvDemo = dynamic(import('@components/dev-env/dev-env-demo'), { ssr: false });
 
 const Home: React.FC = () => {
