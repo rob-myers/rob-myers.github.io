@@ -11,6 +11,7 @@ import { exampleTsx1 } from './examples';
 interface Options {
   refreshReg?: string;
   refreshSig?: string;
+  emitFullSignatures?: boolean;
 }
 interface Registration {
   handle: t.Identifier;
@@ -30,10 +31,19 @@ type BuiltinHookName = (
 );
 
 interface HookCall {
+  key: string;
   callee: t.CallExpression['callee'];
   name: string;
-  key: string;
 }
+
+interface Signature {
+ key: string;
+ customHooks: HookCall['callee'][];
+}
+
+type Visitor = Parameters<typeof babel.traverse>[1];
+
+type SansV8<T> = Exclude<T, t.V8IntrinsicIdentifier>;
 
 /**
  * There should be a single instance of this class.
@@ -49,10 +59,15 @@ class Transform {
   private seenForOutro = new WeakSet();
   private hookCalls = new WeakMap<t.Function, HookCall[]>();
   private hasForceResetCommentByFile = new WeakMap<any, boolean>();
-
-  constructor(opts: Options = {}) {
+  private hooksCallsVisitor!: Visitor;
+  private visitor!: Visitor;
+  
+  constructor(private opts: Options = {}) {
     this.refreshReg = t.identifier(opts.refreshReg || '$RefreshReg$');
     this.refreshSig = t.identifier(opts.refreshSig || '$RefreshSig$');
+    if (typeof opts.emitFullSignatures === 'undefined') {
+      this.opts.emitFullSignatures = true;
+    }
   }
   
   public run(code: string, filename: string) {
@@ -63,9 +78,433 @@ class Transform {
         ['@babel/plugin-transform-typescript', { isTSX: true }],
       ],
     })!;
-  
+
     // TEMP
     console.log({ code: generate(parsed!) });
+
+
+    // babel.traverse(parsed!, {
+    //   Identifier(path) {
+    //     path.node.name = 'FOO';
+    //   },
+    // });
+    // console.log({ code: generate(parsed!) });
+  }
+
+  public setupVisitors() {
+    this.hooksCallsVisitor = {
+      CallExpression: (path) => {
+        const node = path.node;
+        const callee = node.callee;
+    
+        // Note: this visitor MUST NOT mutate the tree in any way.
+        // It runs early in a separate traversal and should be very fast.
+        let name = null;
+        switch (callee.type) {
+          case 'Identifier':
+            name = callee.name;
+            break;
+          case 'MemberExpression':
+            name = callee.property.name;
+            break;
+        }
+        if (name === null || !/^use[A-Z]/.test(name)) {
+          return;
+        }
+        const fnScope = path.scope.getFunctionParent();
+        if (fnScope === null) {
+          return;
+        }
+    
+        // This is a Hook call. Record it.
+        const fnNode = fnScope.block as t.Function; // Type correct?
+        if (!this.hookCalls.has(fnNode)) {
+          this.hookCalls.set(fnNode, []);
+        }
+        const hookCallsForFn = this.hookCalls.get(fnNode)!;
+        let key = '';
+        if (path.parent.type === 'VariableDeclarator') {
+          // TODO: if there is no LHS, consider some other heuristic.
+          key = (path.parentPath.get('id') as babel.NodePath).getSource();
+        }
+    
+        // Some built-in Hooks reset on edits to arguments.
+        const args = path.get('arguments');
+        if (name === 'useState' && args.length > 0) {
+          // useState second argument is initial state.
+          key += '(' + args[0].getSource() + ')';
+        } else if (name === 'useReducer' && args.length > 1) {
+          // useReducer second argument is initial state.
+          key += '(' + args[1].getSource() + ')';
+        }
+    
+        hookCallsForFn.push({
+          callee: path.node.callee,
+          name,
+          key,
+        });
+      }
+    };
+
+    this.visitor = {
+      ExportDefaultDeclaration: (path) => {
+        const node = path.node;
+        const decl = node.declaration;
+        const declPath = path.get('declaration');
+        if (decl.type !== 'CallExpression') {
+          // For now, we only support possible HOC calls here.
+          // Named function declarations are handled in FunctionDeclaration.
+          // Anonymous direct exports like export default function() {}
+          // are currently ignored.
+          return;
+        }
+
+        // Make sure we're not mutating the same tree twice.
+        // This can happen if another Babel plugin replaces parents.
+        if (this.seenForRegistration.has(node)) {
+          return;
+        }
+        this.seenForRegistration.add(node);
+        // Don't mutate the tree above this point.
+
+        // This code path handles nested cases like:
+        // export default memo(() => {})
+        // In those cases it is more plausible people will omit names
+        // so they're worth handling despite possible false positives.
+        // More importantly, it handles the named case:
+        // export default memo(function Named() {})
+        const inferredName = '%default%';
+        const programPath = path.parentPath;
+        this.findInnerComponents(
+          inferredName,
+          declPath,
+          (persistentID, targetExpr, targetPath) => {
+            if (targetPath === null) {
+              // For case like:
+              // export default hoc(Foo)
+              // we don't want to wrap Foo inside the call.
+              // Instead we assume it's registered at definition.
+              return;
+            }
+            const handle = this.createRegistration(programPath, persistentID);
+            targetPath.replaceWith(
+              t.assignmentExpression('=', handle, targetExpr as SansV8<t.Expression>),
+            );
+          },
+        );
+      },
+      // FunctionDeclaration: {
+      //   enter(path) {
+      //     const node = path.node;
+      //     let programPath;
+      //     let insertAfterPath;
+      //     switch (path.parent.type) {
+      //       case 'Program':
+      //         insertAfterPath = path;
+      //         programPath = path.parentPath;
+      //         break;
+      //       case 'ExportNamedDeclaration':
+      //         insertAfterPath = path.parentPath;
+      //         programPath = insertAfterPath.parentPath;
+      //         break;
+      //       case 'ExportDefaultDeclaration':
+      //         insertAfterPath = path.parentPath;
+      //         programPath = insertAfterPath.parentPath;
+      //         break;
+      //       default:
+      //         return;
+      //     }
+      //     const id = node.id;
+      //     if (id === null) {
+      //       // We don't currently handle anonymous default exports.
+      //       return;
+      //     }
+      //     const inferredName = id.name;
+      //     if (!isComponentishName(inferredName)) {
+      //       return;
+      //     }
+
+      //     // Make sure we're not mutating the same tree twice.
+      //     // This can happen if another Babel plugin replaces parents.
+      //     if (seenForRegistration.has(node)) {
+      //       return;
+      //     }
+      //     seenForRegistration.add(node);
+      //     // Don't mutate the tree above this point.
+
+      //     // export function Named() {}
+      //     // function Named() {}
+      //     findInnerComponents(
+      //       inferredName,
+      //       path,
+      //       (persistentID, targetExpr) => {
+      //         const handle = createRegistration(programPath, persistentID);
+      //         insertAfterPath.insertAfter(
+      //           t.expressionStatement(
+      //             t.assignmentExpression('=', handle, targetExpr),
+      //           ),
+      //         );
+      //       },
+      //     );
+      //   },
+      //   exit(path) {
+      //     const node = path.node;
+      //     const id = node.id;
+      //     if (id === null) {
+      //       return;
+      //     }
+      //     const signature = getHookCallsSignature(node);
+      //     if (signature === null) {
+      //       return;
+      //     }
+
+      //     // Make sure we're not mutating the same tree twice.
+      //     // This can happen if another Babel plugin replaces parents.
+      //     if (seenForSignature.has(node)) {
+      //       return;
+      //     }
+      //     seenForSignature.add(node);
+      //     // Don't mutate the tree above this point.
+
+      //     const sigCallID = path.scope.generateUidIdentifier('_s');
+      //     path.scope.parent.push({
+      //       id: sigCallID,
+      //       init: t.callExpression(refreshSig, []),
+      //     });
+
+      //     // The signature call is split in two parts. One part is called inside the function.
+      //     // This is used to signal when first render happens.
+      //     path
+      //       .get('body')
+      //       .unshiftContainer(
+      //         'body',
+      //         t.expressionStatement(t.callExpression(sigCallID, [])),
+      //       );
+
+      //     // The second call is around the function itself.
+      //     // This is used to associate a type with a signature.
+
+      //     // Unlike with $RefreshReg$, this needs to work for nested
+      //     // declarations too. So we need to search for a path where
+      //     // we can insert a statement rather than hardcoding it.
+      //     let insertAfterPath = null;
+      //     path.find(p => {
+      //       if (p.parentPath.isBlock()) {
+      //         insertAfterPath = p;
+      //         return true;
+      //       }
+      //     });
+      //     if (insertAfterPath === null) {
+      //       return;
+      //     }
+
+      //     insertAfterPath.insertAfter(
+      //       t.expressionStatement(
+      //         t.callExpression(
+      //           sigCallID,
+      //           createArgumentsForSignature(
+      //             id,
+      //             signature,
+      //             insertAfterPath.scope,
+      //           ),
+      //         ),
+      //       ),
+      //     );
+      //   },
+      // },
+      // 'ArrowFunctionExpression|FunctionExpression': {
+      //   exit(path) {
+      //     const node = path.node;
+      //     const signature = getHookCallsSignature(node);
+      //     if (signature === null) {
+      //       return;
+      //     }
+
+      //     // Make sure we're not mutating the same tree twice.
+      //     // This can happen if another Babel plugin replaces parents.
+      //     if (seenForSignature.has(node)) {
+      //       return;
+      //     }
+      //     seenForSignature.add(node);
+      //     // Don't mutate the tree above this point.
+
+      //     const sigCallID = path.scope.generateUidIdentifier('_s');
+      //     path.scope.parent.push({
+      //       id: sigCallID,
+      //       init: t.callExpression(refreshSig, []),
+      //     });
+
+      //     // The signature call is split in two parts. One part is called inside the function.
+      //     // This is used to signal when first render happens.
+      //     if (path.node.body.type !== 'BlockStatement') {
+      //       path.node.body = t.blockStatement([
+      //         t.returnStatement(path.node.body),
+      //       ]);
+      //     }
+      //     path
+      //       .get('body')
+      //       .unshiftContainer(
+      //         'body',
+      //         t.expressionStatement(t.callExpression(sigCallID, [])),
+      //       );
+
+      //     // The second call is around the function itself.
+      //     // This is used to associate a type with a signature.
+
+      //     if (path.parent.type === 'VariableDeclarator') {
+      //       let insertAfterPath = null;
+      //       path.find(p => {
+      //         if (p.parentPath.isBlock()) {
+      //           insertAfterPath = p;
+      //           return true;
+      //         }
+      //       });
+      //       if (insertAfterPath === null) {
+      //         return;
+      //       }
+      //       // Special case when a function would get an inferred name:
+      //       // let Foo = () => {}
+      //       // let Foo = function() {}
+      //       // We'll add signature it on next line so that
+      //       // we don't mess up the inferred 'Foo' function name.
+      //       insertAfterPath.insertAfter(
+      //         t.expressionStatement(
+      //           t.callExpression(
+      //             sigCallID,
+      //             createArgumentsForSignature(
+      //               path.parent.id,
+      //               signature,
+      //               insertAfterPath.scope,
+      //             ),
+      //           ),
+      //         ),
+      //       );
+      //       // Result: let Foo = () => {}; __signature(Foo, ...);
+      //     } else {
+      //       // let Foo = hoc(() => {})
+      //       path.replaceWith(
+      //         t.callExpression(
+      //           sigCallID,
+      //           createArgumentsForSignature(node, signature, path.scope),
+      //         ),
+      //       );
+      //       // Result: let Foo = hoc(__signature(() => {}, ...))
+      //     }
+      //   },
+      // },
+      // VariableDeclaration(path) {
+      //   const node = path.node;
+      //   let programPath;
+      //   let insertAfterPath;
+      //   switch (path.parent.type) {
+      //     case 'Program':
+      //       insertAfterPath = path;
+      //       programPath = path.parentPath;
+      //       break;
+      //     case 'ExportNamedDeclaration':
+      //       insertAfterPath = path.parentPath;
+      //       programPath = insertAfterPath.parentPath;
+      //       break;
+      //     case 'ExportDefaultDeclaration':
+      //       insertAfterPath = path.parentPath;
+      //       programPath = insertAfterPath.parentPath;
+      //       break;
+      //     default:
+      //       return;
+      //   }
+
+      //   // Make sure we're not mutating the same tree twice.
+      //   // This can happen if another Babel plugin replaces parents.
+      //   if (seenForRegistration.has(node)) {
+      //     return;
+      //   }
+      //   seenForRegistration.add(node);
+      //   // Don't mutate the tree above this point.
+
+      //   const declPaths = path.get('declarations');
+      //   if (declPaths.length !== 1) {
+      //     return;
+      //   }
+      //   const declPath = declPaths[0];
+      //   const inferredName = declPath.node.id.name;
+      //   findInnerComponents(
+      //     inferredName,
+      //     declPath,
+      //     (persistentID, targetExpr, targetPath) => {
+      //       if (targetPath === null) {
+      //         // For case like:
+      //         // export const Something = hoc(Foo)
+      //         // we don't want to wrap Foo inside the call.
+      //         // Instead we assume it's registered at definition.
+      //         return;
+      //       }
+      //       const handle = createRegistration(programPath, persistentID);
+      //       if (targetPath.parent.type === 'VariableDeclarator') {
+      //         // Special case when a variable would get an inferred name:
+      //         // let Foo = () => {}
+      //         // let Foo = function() {}
+      //         // let Foo = styled.div``;
+      //         // We'll register it on next line so that
+      //         // we don't mess up the inferred 'Foo' function name.
+      //         // (eg: with @babel/plugin-transform-react-display-name or
+      //         // babel-plugin-styled-components)
+      //         insertAfterPath.insertAfter(
+      //           t.expressionStatement(
+      //             t.assignmentExpression('=', handle, declPath.node.id),
+      //           ),
+      //         );
+      //         // Result: let Foo = () => {}; _c1 = Foo;
+      //       } else {
+      //         // let Foo = hoc(() => {})
+      //         targetPath.replaceWith(
+      //           t.assignmentExpression('=', handle, targetExpr),
+      //         );
+      //         // Result: let Foo = hoc(_c1 = () => {})
+      //       }
+      //     },
+      //   );
+      // },
+      // Program: {
+      //   enter(path) {
+      //     // This is a separate early visitor because we need to collect Hook calls
+      //     // and "const [foo, setFoo] = ..." signatures before the destructuring
+      //     // transform mangles them. This extra traversal is not ideal for perf,
+      //     // but it's the best we can do until we stop transpiling destructuring.
+      //     path.traverse(HookCallsVisitor);
+      //   },
+      //   exit(path) {
+      //     const registrations = registrationsByProgramPath.get(path);
+      //     if (registrations === undefined) {
+      //       return;
+      //     }
+
+      //     // Make sure we're not mutating the same tree twice.
+      //     // This can happen if another Babel plugin replaces parents.
+      //     const node = path.node;
+      //     if (seenForOutro.has(node)) {
+      //       return;
+      //     }
+      //     seenForOutro.add(node);
+      //     // Don't mutate the tree above this point.
+
+      //     registrationsByProgramPath.delete(path);
+      //     const declarators = [];
+      //     path.pushContainer('body', t.variableDeclaration('var', declarators));
+      //     registrations.forEach(({handle, persistentID}) => {
+      //       path.pushContainer(
+      //         'body',
+      //         t.expressionStatement(
+      //           t.callExpression(refreshReg, [
+      //             handle,
+      //             t.stringLiteral(persistentID),
+      //           ]),
+      //         ),
+      //       );
+      //       declarators.push(t.variableDeclarator(handle));
+      //     });
+      //   },
+      // },
+    };
   }
 
   private createRegistration(programPath: babel.NodePath, persistentID: string) {
@@ -287,7 +726,7 @@ class Transform {
     }
   }
 
-  private getHookCallsSignature(functionNode: t.Function) {
+  private getHookCallsSignature(functionNode: t.Function): null | Signature {
     const fnHookCalls = this.hookCalls.get(functionNode);
     if (fnHookCalls === undefined) {
       return null;
@@ -322,500 +761,73 @@ class Transform {
     return hasForceReset;
   }
 
-  // babel.traverse(parsed!, {
-  //   Identifier(path) {
-  //     path.node.name = 'FOO';
-  //   },
-  // });
-  // console.log({ code: generate(parsed!) });
+  private createArgumentsForSignature(
+    node: t.Node,
+    signature: Signature,
+    scope: babel.NodePath['scope'],
+  ) {
+    const {key, customHooks} = signature;
+  
+    let forceReset = this.hasForceResetComment(scope.path);
+    const customHooksInScope = [] as HookCall['callee'][];
+    customHooks.forEach(callee => {
+      // Check if a corresponding binding exists where we emit the signature.
+      let bindingName;
+      switch (callee.type) {
+        case 'MemberExpression':
+          if (callee.object.type === 'Identifier') {
+            bindingName = callee.object.name;
+          }
+          break;
+        case 'Identifier':
+          bindingName = callee.name;
+          break;
+      }
+      if (scope.hasBinding(bindingName)) {
+        customHooksInScope.push(callee);
+      } else {
+        // We don't have anything to put in the array because Hook is out of scope.
+        // Since it could potentially have been edited, remount the component.
+        forceReset = true;
+      }
+    });
+  
+    let finalKey = key;
+    if (typeof require === 'function' && !this.opts.emitFullSignatures) {
+      // Prefer to hash when we can (e.g. outside of ASTExplorer).
+      // This makes it deterministically compact, even if there's
+      // e.g. a useState ininitalizer with some code inside.
+      // We also need it for www that has transforms like cx()
+      // that don't understand if something is part of a string.
+      finalKey = require('spark-md5').hash(key);
+    }
+  
+    const args = [node, t.stringLiteral(finalKey)];
+    if (forceReset || customHooksInScope.length > 0) {
+      args.push(t.booleanLiteral(forceReset));
+    }
+    if (customHooksInScope.length > 0) {
+      args.push(
+        // TODO: We could use an arrow here to be more compact.
+        // However, don't do it until AMA can run them natively.
+        t.functionExpression(
+          null,
+          [],
+          t.blockStatement([
+            t.returnStatement(t.arrayExpression(
+              customHooksInScope as SansV8<t.CallExpression['callee']>[]
+            )),
+          ]),
+        ),
+      );
+    }
+    return args;
+  }
 }
 
 const singleton = new Transform();
+singleton.setupVisitors();
 export default singleton;
 
 // Test
 singleton.run(exampleTsx1, 'fake.tsx');
-
-
-// export function transform(opts = {}) {
-
-
-
-  // function createArgumentsForSignature(node, signature, scope) {
-  //   const {key, customHooks} = signature;
-
-  //   let forceReset = hasForceResetComment(scope.path);
-  //   const customHooksInScope = [];
-  //   customHooks.forEach(callee => {
-  //     // Check if a corresponding binding exists where we emit the signature.
-  //     let bindingName;
-  //     switch (callee.type) {
-  //       case 'MemberExpression':
-  //         if (callee.object.type === 'Identifier') {
-  //           bindingName = callee.object.name;
-  //         }
-  //         break;
-  //       case 'Identifier':
-  //         bindingName = callee.name;
-  //         break;
-  //     }
-  //     if (scope.hasBinding(bindingName)) {
-  //       customHooksInScope.push(callee);
-  //     } else {
-  //       // We don't have anything to put in the array because Hook is out of scope.
-  //       // Since it could potentially have been edited, remount the component.
-  //       forceReset = true;
-  //     }
-  //   });
-
-  //   let finalKey = key;
-  //   if (typeof require === 'function' && !opts.emitFullSignatures) {
-  //     // Prefer to hash when we can (e.g. outside of ASTExplorer).
-  //     // This makes it deterministically compact, even if there's
-  //     // e.g. a useState ininitalizer with some code inside.
-  //     // We also need it for www that has transforms like cx()
-  //     // that don't understand if something is part of a string.
-  //     finalKey = require('crypto')
-  //       .createHash('sha1')
-  //       .update(key)
-  //       .digest('base64');
-  //   }
-
-  //   const args = [node, t.stringLiteral(finalKey)];
-  //   if (forceReset || customHooksInScope.length > 0) {
-  //     args.push(t.booleanLiteral(forceReset));
-  //   }
-  //   if (customHooksInScope.length > 0) {
-  //     args.push(
-  //       // TODO: We could use an arrow here to be more compact.
-  //       // However, don't do it until AMA can run them natively.
-  //       t.functionExpression(
-  //         null,
-  //         [],
-  //         t.blockStatement([
-  //           t.returnStatement(t.arrayExpression(customHooksInScope)),
-  //         ]),
-  //       ),
-  //     );
-  //   }
-  //   return args;
-  // }
-
-
-  // const HookCallsVisitor = {
-  //   CallExpression(path) {
-  //     const node = path.node;
-  //     const callee = node.callee;
-
-  //     // Note: this visitor MUST NOT mutate the tree in any way.
-  //     // It runs early in a separate traversal and should be very fast.
-
-  //     let name = null;
-  //     switch (callee.type) {
-  //       case 'Identifier':
-  //         name = callee.name;
-  //         break;
-  //       case 'MemberExpression':
-  //         name = callee.property.name;
-  //         break;
-  //     }
-  //     if (name === null || !/^use[A-Z]/.test(name)) {
-  //       return;
-  //     }
-  //     const fnScope = path.scope.getFunctionParent();
-  //     if (fnScope === null) {
-  //       return;
-  //     }
-
-  //     // This is a Hook call. Record it.
-  //     const fnNode = fnScope.block;
-  //     if (!hookCalls.has(fnNode)) {
-  //       hookCalls.set(fnNode, []);
-  //     }
-  //     const hookCallsForFn = hookCalls.get(fnNode);
-  //     let key = '';
-  //     if (path.parent.type === 'VariableDeclarator') {
-  //       // TODO: if there is no LHS, consider some other heuristic.
-  //       key = path.parentPath.get('id').getSource();
-  //     }
-
-  //     // Some built-in Hooks reset on edits to arguments.
-  //     const args = path.get('arguments');
-  //     if (name === 'useState' && args.length > 0) {
-  //       // useState second argument is initial state.
-  //       key += '(' + args[0].getSource() + ')';
-  //     } else if (name === 'useReducer' && args.length > 1) {
-  //       // useReducer second argument is initial state.
-  //       key += '(' + args[1].getSource() + ')';
-  //     }
-
-  //     hookCallsForFn.push({
-  //       callee: path.node.callee,
-  //       name,
-  //       key,
-  //     });
-  //   },
-  // };
-
-  // return {
-  //   visitor: {
-  //     ExportDefaultDeclaration(path) {
-  //       const node = path.node;
-  //       const decl = node.declaration;
-  //       const declPath = path.get('declaration');
-  //       if (decl.type !== 'CallExpression') {
-  //         // For now, we only support possible HOC calls here.
-  //         // Named function declarations are handled in FunctionDeclaration.
-  //         // Anonymous direct exports like export default function() {}
-  //         // are currently ignored.
-  //         return;
-  //       }
-
-  //       // Make sure we're not mutating the same tree twice.
-  //       // This can happen if another Babel plugin replaces parents.
-  //       if (seenForRegistration.has(node)) {
-  //         return;
-  //       }
-  //       seenForRegistration.add(node);
-  //       // Don't mutate the tree above this point.
-
-  //       // This code path handles nested cases like:
-  //       // export default memo(() => {})
-  //       // In those cases it is more plausible people will omit names
-  //       // so they're worth handling despite possible false positives.
-  //       // More importantly, it handles the named case:
-  //       // export default memo(function Named() {})
-  //       const inferredName = '%default%';
-  //       const programPath = path.parentPath;
-  //       findInnerComponents(
-  //         inferredName,
-  //         declPath,
-  //         (persistentID, targetExpr, targetPath) => {
-  //           if (targetPath === null) {
-  //             // For case like:
-  //             // export default hoc(Foo)
-  //             // we don't want to wrap Foo inside the call.
-  //             // Instead we assume it's registered at definition.
-  //             return;
-  //           }
-  //           const handle = createRegistration(programPath, persistentID);
-  //           targetPath.replaceWith(
-  //             t.assignmentExpression('=', handle, targetExpr),
-  //           );
-  //         },
-  //       );
-  //     },
-  //     FunctionDeclaration: {
-  //       enter(path) {
-  //         const node = path.node;
-  //         let programPath;
-  //         let insertAfterPath;
-  //         switch (path.parent.type) {
-  //           case 'Program':
-  //             insertAfterPath = path;
-  //             programPath = path.parentPath;
-  //             break;
-  //           case 'ExportNamedDeclaration':
-  //             insertAfterPath = path.parentPath;
-  //             programPath = insertAfterPath.parentPath;
-  //             break;
-  //           case 'ExportDefaultDeclaration':
-  //             insertAfterPath = path.parentPath;
-  //             programPath = insertAfterPath.parentPath;
-  //             break;
-  //           default:
-  //             return;
-  //         }
-  //         const id = node.id;
-  //         if (id === null) {
-  //           // We don't currently handle anonymous default exports.
-  //           return;
-  //         }
-  //         const inferredName = id.name;
-  //         if (!isComponentishName(inferredName)) {
-  //           return;
-  //         }
-
-  //         // Make sure we're not mutating the same tree twice.
-  //         // This can happen if another Babel plugin replaces parents.
-  //         if (seenForRegistration.has(node)) {
-  //           return;
-  //         }
-  //         seenForRegistration.add(node);
-  //         // Don't mutate the tree above this point.
-
-  //         // export function Named() {}
-  //         // function Named() {}
-  //         findInnerComponents(
-  //           inferredName,
-  //           path,
-  //           (persistentID, targetExpr) => {
-  //             const handle = createRegistration(programPath, persistentID);
-  //             insertAfterPath.insertAfter(
-  //               t.expressionStatement(
-  //                 t.assignmentExpression('=', handle, targetExpr),
-  //               ),
-  //             );
-  //           },
-  //         );
-  //       },
-  //       exit(path) {
-  //         const node = path.node;
-  //         const id = node.id;
-  //         if (id === null) {
-  //           return;
-  //         }
-  //         const signature = getHookCallsSignature(node);
-  //         if (signature === null) {
-  //           return;
-  //         }
-
-  //         // Make sure we're not mutating the same tree twice.
-  //         // This can happen if another Babel plugin replaces parents.
-  //         if (seenForSignature.has(node)) {
-  //           return;
-  //         }
-  //         seenForSignature.add(node);
-  //         // Don't mutate the tree above this point.
-
-  //         const sigCallID = path.scope.generateUidIdentifier('_s');
-  //         path.scope.parent.push({
-  //           id: sigCallID,
-  //           init: t.callExpression(refreshSig, []),
-  //         });
-
-  //         // The signature call is split in two parts. One part is called inside the function.
-  //         // This is used to signal when first render happens.
-  //         path
-  //           .get('body')
-  //           .unshiftContainer(
-  //             'body',
-  //             t.expressionStatement(t.callExpression(sigCallID, [])),
-  //           );
-
-  //         // The second call is around the function itself.
-  //         // This is used to associate a type with a signature.
-
-  //         // Unlike with $RefreshReg$, this needs to work for nested
-  //         // declarations too. So we need to search for a path where
-  //         // we can insert a statement rather than hardcoding it.
-  //         let insertAfterPath = null;
-  //         path.find(p => {
-  //           if (p.parentPath.isBlock()) {
-  //             insertAfterPath = p;
-  //             return true;
-  //           }
-  //         });
-  //         if (insertAfterPath === null) {
-  //           return;
-  //         }
-
-  //         insertAfterPath.insertAfter(
-  //           t.expressionStatement(
-  //             t.callExpression(
-  //               sigCallID,
-  //               createArgumentsForSignature(
-  //                 id,
-  //                 signature,
-  //                 insertAfterPath.scope,
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     },
-  //     'ArrowFunctionExpression|FunctionExpression': {
-  //       exit(path) {
-  //         const node = path.node;
-  //         const signature = getHookCallsSignature(node);
-  //         if (signature === null) {
-  //           return;
-  //         }
-
-  //         // Make sure we're not mutating the same tree twice.
-  //         // This can happen if another Babel plugin replaces parents.
-  //         if (seenForSignature.has(node)) {
-  //           return;
-  //         }
-  //         seenForSignature.add(node);
-  //         // Don't mutate the tree above this point.
-
-  //         const sigCallID = path.scope.generateUidIdentifier('_s');
-  //         path.scope.parent.push({
-  //           id: sigCallID,
-  //           init: t.callExpression(refreshSig, []),
-  //         });
-
-  //         // The signature call is split in two parts. One part is called inside the function.
-  //         // This is used to signal when first render happens.
-  //         if (path.node.body.type !== 'BlockStatement') {
-  //           path.node.body = t.blockStatement([
-  //             t.returnStatement(path.node.body),
-  //           ]);
-  //         }
-  //         path
-  //           .get('body')
-  //           .unshiftContainer(
-  //             'body',
-  //             t.expressionStatement(t.callExpression(sigCallID, [])),
-  //           );
-
-  //         // The second call is around the function itself.
-  //         // This is used to associate a type with a signature.
-
-  //         if (path.parent.type === 'VariableDeclarator') {
-  //           let insertAfterPath = null;
-  //           path.find(p => {
-  //             if (p.parentPath.isBlock()) {
-  //               insertAfterPath = p;
-  //               return true;
-  //             }
-  //           });
-  //           if (insertAfterPath === null) {
-  //             return;
-  //           }
-  //           // Special case when a function would get an inferred name:
-  //           // let Foo = () => {}
-  //           // let Foo = function() {}
-  //           // We'll add signature it on next line so that
-  //           // we don't mess up the inferred 'Foo' function name.
-  //           insertAfterPath.insertAfter(
-  //             t.expressionStatement(
-  //               t.callExpression(
-  //                 sigCallID,
-  //                 createArgumentsForSignature(
-  //                   path.parent.id,
-  //                   signature,
-  //                   insertAfterPath.scope,
-  //                 ),
-  //               ),
-  //             ),
-  //           );
-  //           // Result: let Foo = () => {}; __signature(Foo, ...);
-  //         } else {
-  //           // let Foo = hoc(() => {})
-  //           path.replaceWith(
-  //             t.callExpression(
-  //               sigCallID,
-  //               createArgumentsForSignature(node, signature, path.scope),
-  //             ),
-  //           );
-  //           // Result: let Foo = hoc(__signature(() => {}, ...))
-  //         }
-  //       },
-  //     },
-  //     VariableDeclaration(path) {
-  //       const node = path.node;
-  //       let programPath;
-  //       let insertAfterPath;
-  //       switch (path.parent.type) {
-  //         case 'Program':
-  //           insertAfterPath = path;
-  //           programPath = path.parentPath;
-  //           break;
-  //         case 'ExportNamedDeclaration':
-  //           insertAfterPath = path.parentPath;
-  //           programPath = insertAfterPath.parentPath;
-  //           break;
-  //         case 'ExportDefaultDeclaration':
-  //           insertAfterPath = path.parentPath;
-  //           programPath = insertAfterPath.parentPath;
-  //           break;
-  //         default:
-  //           return;
-  //       }
-
-  //       // Make sure we're not mutating the same tree twice.
-  //       // This can happen if another Babel plugin replaces parents.
-  //       if (seenForRegistration.has(node)) {
-  //         return;
-  //       }
-  //       seenForRegistration.add(node);
-  //       // Don't mutate the tree above this point.
-
-  //       const declPaths = path.get('declarations');
-  //       if (declPaths.length !== 1) {
-  //         return;
-  //       }
-  //       const declPath = declPaths[0];
-  //       const inferredName = declPath.node.id.name;
-  //       findInnerComponents(
-  //         inferredName,
-  //         declPath,
-  //         (persistentID, targetExpr, targetPath) => {
-  //           if (targetPath === null) {
-  //             // For case like:
-  //             // export const Something = hoc(Foo)
-  //             // we don't want to wrap Foo inside the call.
-  //             // Instead we assume it's registered at definition.
-  //             return;
-  //           }
-  //           const handle = createRegistration(programPath, persistentID);
-  //           if (targetPath.parent.type === 'VariableDeclarator') {
-  //             // Special case when a variable would get an inferred name:
-  //             // let Foo = () => {}
-  //             // let Foo = function() {}
-  //             // let Foo = styled.div``;
-  //             // We'll register it on next line so that
-  //             // we don't mess up the inferred 'Foo' function name.
-  //             // (eg: with @babel/plugin-transform-react-display-name or
-  //             // babel-plugin-styled-components)
-  //             insertAfterPath.insertAfter(
-  //               t.expressionStatement(
-  //                 t.assignmentExpression('=', handle, declPath.node.id),
-  //               ),
-  //             );
-  //             // Result: let Foo = () => {}; _c1 = Foo;
-  //           } else {
-  //             // let Foo = hoc(() => {})
-  //             targetPath.replaceWith(
-  //               t.assignmentExpression('=', handle, targetExpr),
-  //             );
-  //             // Result: let Foo = hoc(_c1 = () => {})
-  //           }
-  //         },
-  //       );
-  //     },
-  //     Program: {
-  //       enter(path) {
-  //         // This is a separate early visitor because we need to collect Hook calls
-  //         // and "const [foo, setFoo] = ..." signatures before the destructuring
-  //         // transform mangles them. This extra traversal is not ideal for perf,
-  //         // but it's the best we can do until we stop transpiling destructuring.
-  //         path.traverse(HookCallsVisitor);
-  //       },
-  //       exit(path) {
-  //         const registrations = registrationsByProgramPath.get(path);
-  //         if (registrations === undefined) {
-  //           return;
-  //         }
-
-  //         // Make sure we're not mutating the same tree twice.
-  //         // This can happen if another Babel plugin replaces parents.
-  //         const node = path.node;
-  //         if (seenForOutro.has(node)) {
-  //           return;
-  //         }
-  //         seenForOutro.add(node);
-  //         // Don't mutate the tree above this point.
-
-  //         registrationsByProgramPath.delete(path);
-  //         const declarators = [];
-  //         path.pushContainer('body', t.variableDeclaration('var', declarators));
-  //         registrations.forEach(({handle, persistentID}) => {
-  //           path.pushContainer(
-  //             'body',
-  //             t.expressionStatement(
-  //               t.callExpression(refreshReg, [
-  //                 handle,
-  //                 t.stringLiteral(persistentID),
-  //               ]),
-  //             ),
-  //           );
-  //           declarators.push(t.variableDeclarator(handle));
-  //         });
-  //       },
-  //     },
-  //   },
-  // };
-// }
