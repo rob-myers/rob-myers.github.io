@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { combineEpics } from 'redux-observable';
+import { filter } from 'rxjs/operators';
 import { epic as workerEpic } from './editor.duck';
 
 import {
@@ -25,13 +26,19 @@ import {
   Action as LayoutAction,
   Thunk as LayoutThunk,
 } from './layout.duck';
-import { filter } from 'rxjs/operators';
+import {
+  reducer as devEnvReducer,
+  State as DevEnvState, 
+  Action as DevEnvAction,
+  Thunk as DevEnvThunk,
+} from './dev-env.duck';
 
 export interface RootState {
   test: TestState;
   editor: EditorState;
   gitalk: GitalkState;
   layout: LayoutState;
+  devEnv: DevEnvState;
 }
 
 export type RootAction = (
@@ -39,12 +46,14 @@ export type RootAction = (
   | EditorAction
   | GitalkAction
   | LayoutAction
+  | DevEnvAction
 );
 
 export type RootThunk = (
   | EditorThunk
   | GitalkThunk
   | LayoutThunk
+  | DevEnvThunk
 );
 
 const rootReducer = combineReducers<RootState>({
@@ -52,6 +61,7 @@ const rootReducer = combineReducers<RootState>({
   editor: editorReducer,
   gitalk: gitalkReducer,
   layout: layoutReducer,
+  devEnv: devEnvReducer,
 });
 
 export default rootReducer;

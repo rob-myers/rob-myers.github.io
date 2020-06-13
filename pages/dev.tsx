@@ -1,4 +1,6 @@
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { Thunk } from '@store/dev-env.duck';
 import ConnectedLayout from '@components/golden-layout/connected-layout';
 import css from './dev.scss';
 
@@ -7,6 +9,15 @@ const menuHeightPx = 25;
 const DevEnvPage: React.FC = () => {
   const loadingMonaco = useSelector(({ editor: { monacoLoading } }) => monacoLoading);
   const closable = useSelector(({ layout: { panel } }) => Object.keys(panel).length > 1);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    /**
+     * TODO ensure files mentioned in panel,
+     * remembering previous contents if exists.
+     */
+    dispatch(Thunk.initFilesystem({}));
+  }, []);
 
   return (
     <div className={css.root}>

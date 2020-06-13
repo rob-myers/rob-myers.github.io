@@ -12,6 +12,7 @@ import { State as TestState } from '@store/test.duck';
 import { State as WorkerState } from '@store/editor.duck';
 import { State as GitalkState } from '@store/gitalk.duck';
 import { State as LayoutState } from '@store/layout.duck';
+import { State as DevEnvState } from '@store/dev-env.duck';
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
@@ -68,7 +69,15 @@ const persistedReducer = persistReducer({
         panel: {},
       }),
       (state, _key) => state,
-      { whitelist: ['layout'] }
+      { whitelist: ['layout'] },
+    ),
+    createTransform<DevEnvState, DevEnvState>(
+      (_, _key) => ({
+        file: {}, // TODO remember files
+        panelToFile: {},
+      }),
+      (state, _key) => state,
+      { whitelist: ['dev-env'] },
     ),
   ],
 }, rootReducer);

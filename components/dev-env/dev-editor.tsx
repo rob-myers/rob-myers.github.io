@@ -27,7 +27,13 @@ const DevEditor: React.FC<Props> = ({ filename, panelKey }) => {
     dispatch(LayoutThunk.setPanelTitle({ panelKey, title: filename }));
   }, []);
 
-  const tsxEditorProps = useRef({ ...baseTsxEditorProps, code: exampleTsx1 });
+  const tsxEditorProps = useRef({
+    ...baseTsxEditorProps,
+    /**
+     * TODO code initially set via dev-env.duck.
+     */
+    code: exampleTsx1,
+  });
 
   return (
     <div className={css.editor}>
