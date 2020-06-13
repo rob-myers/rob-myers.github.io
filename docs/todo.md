@@ -1,5 +1,7 @@
 # Local
 
+- [ ] Create `dev-env.duck`.
+- [ ] Can toggle sub-menu.
 - [x] Migrate `ReactFreshBabelPlugin.js` to singleton class written in typescript.
 - [ ] Don't transpile multiple editors with same model
 - [ ] Fix auto-commenting i.e. when directly inside JSX tags use (multiline) brace-comments
@@ -7,10 +9,9 @@
   > NEXT: send code/position/selection to worker to figure out new code
 - [ ] Can transpile arbitrary tsx via 'hidden' monaco model
 - [x] Integrate `golden-layout` (use previous approach) on new page `/dev`.
-- [ ] Create `dev-env.duck`.
 - [x] Rename worker.duck as editor.duck
 - [x] Error boundary around mounted `App`
-- [ ] Syntax highlighting debounced, better and safer
+- [ ] Syntax highlighting should be debounced
 - [x] Mount transpiled react component (Dev)
   > transform `react` import path.
   > create javascript module with `src` via `Blob`.

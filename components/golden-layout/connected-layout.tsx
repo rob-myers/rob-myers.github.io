@@ -27,10 +27,14 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
   },[]);
 
   const onComponentCreated = useCallback((glCmp: ExtendedContainer) => {
-    const { config, element: [el], tab  } = glCmp;
-        
+    const { config, element: [el], tab } = glCmp;
+      
     if (config.type === 'component') {
       const { props: { panelKey } } = config;
+
+      const onClickTitle = () => dispatch(Thunk.clickedPanelTitle({ panelKey }));
+      tab?.element.children('.lm_title')?.on('click', onClickTitle);
+
       dispatch(Act.panelOpened({
         panelKey,
         width: el.clientWidth,
@@ -48,6 +52,9 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
       // Doesn't fire for dragged element when begin drag.
       glCmp.container.on('resize', () => {
         // console.log('resize', glCmp.config.title, el.clientWidth, el.clientHeight);
+        glCmp.tab?.element.children('.lm_title')?.off('click', onClickTitle);
+        glCmp.tab?.element.children('.lm_title')?.on('click', onClickTitle);
+
         dispatch(Act.panelResized({
           panelKey,
           width: el.clientWidth,
@@ -65,9 +72,6 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
             height: el.clientHeight,
           })), 200);
       });
-      
-      tab.element.children('.lm_title')?.click(() =>
-        dispatch(Thunk.clickedPanelTitle({ panelKey })));
     }
   }, []);
 
