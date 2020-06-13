@@ -1,5 +1,6 @@
 # Local
 
+- [ ] Can see app.
 - [ ] Create `dev-env.duck`.
 - [ ] Can toggle sub-menu.
 - [x] Migrate `ReactFreshBabelPlugin.js` to singleton class written in typescript.

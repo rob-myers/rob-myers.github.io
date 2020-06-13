@@ -11,7 +11,7 @@ const DevEnvPage: React.FC = () => {
   return (
     <div className={css.root}>
       <div className={css.menu} style={{ height: menuHeightPx }}>
-        Menu goes here
+        Com(mit|ment)
       </div>
       <ConnectedLayout
         width="100vw"
