@@ -1,5 +1,6 @@
 # Local
 
+- [x] Migrate `ReactFreshBabelPlugin.js` to singleton class written in typescript.
 - [ ] Don't transpile multiple editors with same model
 - [ ] Fix auto-commenting i.e. when directly inside JSX tags use (multiline) brace-comments
   > replaced code action by dummy console.log

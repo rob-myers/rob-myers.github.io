@@ -7,7 +7,7 @@ import * as babel from '@babel/core';
 import { types as t } from '@babel/core';
 import generate from '@babel/generator';
 //@ts-ignore
-import File from '@babel/core/lib/transformation/file/file';
+import InternalFile from '@babel/core/lib/transformation/file/file';
 
 import { exampleTsx3 } from './examples';
 
@@ -84,10 +84,10 @@ class Transform {
     })!;
 
     // Ensure hub so e.g. .getSource() works
-    const _file = new File({ filename }, { code, ast: parsed });
+    const _file = new InternalFile({ filename }, { code, ast: parsed });
 
     babel.traverse(parsed, this.visitor);
-    console.log({ code: generate(parsed!) });
+    console.log({ code: generate(parsed) });
   }
 
   public setupVisitors() {
