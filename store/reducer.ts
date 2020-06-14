@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux';
 import { combineEpics } from 'redux-observable';
 import { filter } from 'rxjs/operators';
-import { epic as workerEpic } from './editor.duck';
 
 import {
   reducer as testReducer,
@@ -13,6 +12,7 @@ import {
   State as EditorState, 
   Action as EditorAction,
   Thunk as EditorThunk,
+  epic as editorEpic,
 } from './editor.duck';
 import {
   reducer as gitalkReducer,
@@ -31,6 +31,7 @@ import {
   State as DevEnvState, 
   Action as DevEnvAction,
   Thunk as DevEnvThunk,
+  epic as devEnvEpic,
 } from './dev-env.duck';
 
 export interface RootState {
@@ -82,6 +83,7 @@ export const filterActs = <T extends RootActOrThunk['type']>(...types: T[]) =>
     types.includes(action.type as T));
 
 export const rootEpic = combineEpics(
-  workerEpic,
+  editorEpic,
+  devEnvEpic,
 );
 //#endregion
