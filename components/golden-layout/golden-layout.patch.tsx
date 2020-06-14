@@ -2,14 +2,14 @@ import * as $ from 'jquery';
 import * as React from 'react';
 import * as GoldenLayout from 'golden-layout';
 
-// We'll patch internal GoldenLayout.__lm.utils.ReactComponentHandler.
-const ReactComponentHandler = (GoldenLayout as any)['__lm'].utils.ReactComponentHandler;
+/** Internal class we're going to patch */
+const ReactComponentHandler = (GoldenLayout as any).__lm.utils.ReactComponentHandler;
 
 export class ReactComponentHandlerPatched extends ReactComponentHandler {
   public static nextId = 0;
   /** Used in portal to prevent remounting. */
   public id: string;
-  // Must not redeclare _container: gets overwritten after `super`!
+  // Must not redeclare _container because it overwrites after `super`.
 
   constructor(...x: any[]) {
     super(...x);
@@ -23,6 +23,7 @@ export class ReactComponentHandlerPatched extends ReactComponentHandler {
       reactContainer.componentRender(this);
     }
   }
+
   _destroy() {
     const reactContainer = this._container.layoutManager.reactContainer;
     if (reactContainer && reactContainer.componentDestroy) {
@@ -34,7 +35,10 @@ export class ReactComponentHandlerPatched extends ReactComponentHandler {
   }
 
   _getReactComponent() {
-    //the following method is absolute copy of the original, provided to prevent depenency on window.React
+    /**
+     * The following method is a copy of the original,
+     * provided to prevent dependency on window.React.
+     */
     const defaultProps = {
       glEventHub: this._container.layoutManager.eventHub,
       glContainer: this._container,
