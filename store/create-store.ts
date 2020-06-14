@@ -72,8 +72,8 @@ const persistedReducer = persistReducer({
       { whitelist: ['layout'] },
     ),
     createTransform<DevEnvState, DevEnvState>(
-      (_, _key) => ({
-        file: {}, // TODO remember files
+      ({ file }, _key) => ({
+        file,
         panelToFile: {},
       }),
       (state, _key) => state,
@@ -82,7 +82,12 @@ const persistedReducer = persistReducer({
   ],
 }, rootReducer);
 
-const epicMiddleware = createEpicMiddleware<RootAction | RootThunk, RootAction | RootThunk, RootState, any>();
+const epicMiddleware = createEpicMiddleware<
+  RootAction | RootThunk,
+  RootAction | RootThunk,
+  RootState,
+  any
+>();
 
 export const initializeStore = (preloadedState?: RootState) => {
   const store = createStore(

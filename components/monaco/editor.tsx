@@ -24,7 +24,6 @@ const Editor: React.FC<EditorProps> = (props) => {
     minHeight = 100,
     className,
     code = '',
-    language,
     filename,
     editorOptions,
     editorKey = 'editor-model',
@@ -38,7 +37,8 @@ const Editor: React.FC<EditorProps> = (props) => {
   const dispatch = useDispatch();
 
   React.useEffect(() => {
-    const uri = monaco.Uri.parse(filename);
+    /** Note the additional prefix file:/// */
+    const uri = monaco.Uri.parse(`file:///${filename}`);
 
     (async () => {
       if (!bootstrapped) {
@@ -51,7 +51,7 @@ const Editor: React.FC<EditorProps> = (props) => {
 
       if (!editor) {
         const monacoModel = monaco.editor.getModel(uri)
-          || monaco.editor.createModel(code, language, uri);
+          || monaco.editor.createModel(code, undefined, uri);
         const monacoEditor = monaco.editor.create(divRef.current!, {
           fontFamily: CODE_FONT_FAMILY,
           fontSize: 11,
@@ -67,7 +67,7 @@ const Editor: React.FC<EditorProps> = (props) => {
           filename,
         }));
       } else if (!monacoModel) {
-        const model = monaco.editor.createModel(code, language, uri);
+        const model = monaco.editor.createModel(code, undefined, uri);
         dispatch(Thunk.useMonacoModel({
           editorKey,
           modelKey,

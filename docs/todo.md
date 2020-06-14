@@ -1,6 +1,6 @@
 # Local
 
-- [ ] Track panel/file relationship in `dev-env.duck`.
+- [x] Track panel/file relationship in `dev-env.duck`.
 - [ ] Can see app.
 - [x] Create `dev-env.duck`.
 - [ ] Can toggle sub-menu.

@@ -12,10 +12,6 @@ const DevEnvPage: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    /**
-     * TODO ensure files mentioned in panel,
-     * remembering previous contents if exists.
-     */
     dispatch(Thunk.initFilesystem({}));
   }, []);
 

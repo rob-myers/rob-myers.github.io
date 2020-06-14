@@ -9,7 +9,7 @@ import Editor from '@components/monaco/editor';
 
 // Used to (partially) fix JSX syntax highlighting of monaco editor.
 // We mustn't use CSS modules -- see styles.config.ts.
-// Must require to avoid tree-shaking in production.
+// Must `require` to avoid tree-shaking in production.
 require('./monaco-override.scss');
 import css from './dev-editor.scss';
 
@@ -41,6 +41,7 @@ const DevEditor: React.FC<Props> = ({ filename, panelKey }) => {
         <TsxEditor
           editorKey={`editor-${panelKey}`}
           modelKey={`model-${filename}`}
+          filename={filename}
           editorProps={tsxEditorProps.current}
           onTranspile={onTranspileTsx}
         />
@@ -48,11 +49,10 @@ const DevEditor: React.FC<Props> = ({ filename, panelKey }) => {
       {filename.endsWith('.scss') && (
         <Editor
           editorKey={`editor-${panelKey}`}
+          filename={filename}
           modelKey={`model-${filename}`}
-          filename={`file:///${filename}`}
           width="100%"
           height="100%"
-          code={exampleScss1}
         />
       )}
     </div>

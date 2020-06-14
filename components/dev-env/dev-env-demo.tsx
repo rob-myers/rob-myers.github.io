@@ -47,13 +47,14 @@ const DevEnvDemo: React.FC<Props> = ({ uid, initialTsx }) => {
               modelKey={`${uid}-tsx-model`}
               editorProps={tsxEditorProps.current}
               onTranspile={onTranspile}
+              filename="demo.tsx"
             />
           )}
           {editing === 'scss' && (
             <Editor
               editorKey={`${uid}-sass-editor`}
               modelKey={`${uid}-sass-model`}
-              filename="file:///main.scss"
+              filename="demo.scss"
               width={'100%'}
               code={exampleScss1}
             />

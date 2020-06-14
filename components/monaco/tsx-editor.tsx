@@ -10,6 +10,7 @@ const transpileDebounceMs = 500;
 
 const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
   editorKey,
+  filename,
   modelKey,
   editorProps,
   onTranspile: onTransform = () => null,
@@ -30,14 +31,15 @@ const TsxEditor: React.FunctionComponent<ITsxEditorProps> = ({
     <Editor
       {...editorProps}
       editorKey={editorKey}
+      filename={filename}
       modelKey={modelKey}
-      filename={`file:///${modelKey}.main.tsx`}
     />
   );
 };
 
 export interface ITsxEditorProps {
   editorKey: string;
+  filename: string;
   modelKey: string;
   editorProps: EditorProps;
   onTranspile?: (result: TranspiledCode) => void;
