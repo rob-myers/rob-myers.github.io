@@ -61,6 +61,8 @@ const initialState: State = {
 };
 
 export const Act = {
+  addEditorCleanups: (input: { editorKey: string; cleanups: (() => void)[] }) =>
+    createAct('[editor] add editor cleanups', input),
   storeMonacoEditor: (input: { editorKey: string; editor: Redacted<Editor> }) =>
     createAct('[editor] store monaco editor', input),
   setMonacoInternal: (monacoInternal: MonacoInternal) =>
@@ -68,7 +70,7 @@ export const Act = {
   setMonacoService: (service: Redacted<MonacoService>) =>
     createAct('[editor] store monaco service', { service }),
   storeMonacoModel: (input: {
-    editorKey: null | string;
+    editorKey: string;
     modelKey: string;
     model: Redacted<IMonacoTextModel>;
     filename: string;
@@ -112,7 +114,7 @@ export const Thunk = {
       filename: string;
     }) => {
       dispatch(Act.storeMonacoEditor({ editor, editorKey }));
-      dispatch(Act.updateEditor(editorKey, () => ({ cleanups: [() => editor.dispose()] })));
+      dispatch(Act.addEditorCleanups({ editorKey, cleanups: [() => editor.dispose()] }));
       dispatch(Thunk.tsxEditorInstanceSetup({ editor }));
 
       if (!e.model[modelKey]) {
@@ -154,15 +156,16 @@ export const Thunk = {
   /** Execute a debounced action whenever editor model changes. */
   onModelChange: createThunk(
     '[editor] on model change',
-    ({ state: { editor: { editor } } }, { act, editorKey, debounceMs }: {
-      act: () => void;
+    ({ state: { editor: { editor } } }, { do: act, editorKey, debounceMs }: {
+      do: (newValue: string) => void;
       debounceMs: number; 
       editorKey: string;
     }) => {
       let debounceId: number;
-      editor[editorKey]?.editor.onDidChangeModelContent((_event) => {
+      return editor[editorKey]?.editor.onDidChangeModelContent((_event) => {
         window.clearTimeout(debounceId);
-        debounceId = window.setTimeout(act, debounceMs);
+        const newValue = editor[editorKey].editor.getValue();
+        debounceId = window.setTimeout(() => act(newValue), debounceMs);
       });
     },
   ),
@@ -233,12 +236,10 @@ export const Thunk = {
       const disposable = worker.editor[editorKey].editor.onDidChangeModelContent(syntaxHighlight);
       requestAnimationFrame(syntaxHighlight); // For first time load
 
-      dispatch(Act.updateEditor(editorKey, ({ cleanups }) => ({
-        cleanups: cleanups.concat(
-          () => worker.syntaxWorker?.removeEventListener('message', eventListener),
-          () => disposable.dispose(),
-        ),
-      })));
+      dispatch(Act.addEditorCleanups({ editorKey, cleanups: [
+        () => worker.syntaxWorker?.removeEventListener('message', eventListener),
+        () => disposable.dispose(),
+      ]}));
     },
   ),
   syntaxHighlight: createThunk(
@@ -338,6 +339,11 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
+    case '[editor] add editor cleanups': return { ...state,
+      editor: updateLookup(act.pay.editorKey, state.editor, ({ cleanups }) => ({
+        cleanups: cleanups.concat(act.pay.cleanups),
+      }))
+    };
     case '[editor] store monaco core': return { ...state,
       internal: act.pay.monacoInternal,
     };
