@@ -4,7 +4,7 @@ import { Thunk } from '@store/dev-env.duck';
 import ConnectedLayout from '@components/golden-layout/connected-layout';
 import css from './dev.scss';
 
-const menuHeightPx = 25;
+const menuHeightPx = 30;
 
 const DevEnvPage: React.FC = () => {
   const loadingMonaco = useSelector(({ editor: { monacoLoading } }) => monacoLoading);

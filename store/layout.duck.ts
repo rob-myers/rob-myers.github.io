@@ -3,7 +3,7 @@ import { Redacted, ActionsUnion, createAct, updateLookup, redact, removeFromLook
 import { KeyedLookup, testNever, deepClone } from '@model/generic.model';
 import { LayoutPanelMeta, ExtendedContainer, GoldenLayoutConfig } from '@model/layout/layout.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { initLayoutConfig } from '@model/layout/example-layout.model';
+import { initLayoutConfig, CustomPanelMetaKey } from '@model/layout/example-layout.model';
 
 /** Assume exactly one layout. */
 export interface State {
@@ -52,12 +52,13 @@ export const Act = {
     config: GoldenLayoutConfig;
     goldenLayout: Redacted<GoldenLayout>;
   }) => createAct('[layout] initialized', input),
-  panelOpened: (input: {
+  panelCreated: (input: {
     panelKey: string;
     width: number;
     height: number;
     container: Redacted<ExtendedContainer>;
-  }) => createAct('[layout] panel opened', input),
+    panelMeta: LayoutPanelMeta<CustomPanelMetaKey>;
+  }) => createAct('[layout] panel created', input),
   panelClosed: (input: {
     panelKey: string;
   }) => createAct('[layout] panel closed', input),
@@ -110,15 +111,15 @@ export const reducer = (state = initialState, act: Action): State => {
         goldenLayout: redact(goldenLayout, 'GoldenLayout'),
       };
     }
-    case '[layout] panel opened': {
-      const { panelKey, width, height, container } = act.pay;
+    case '[layout] panel created': {
+      const { panelKey, width, height, container, panelMeta } = act.pay;
       const newPanel: LayoutPanelState = {
         key: panelKey,
         initialized: (width && height) ? true : false,
         width,
         height,
         resizedAt: null,
-        panelMeta: {},
+        panelMeta,
         container,
       };
       return { ...state,

@@ -30,28 +30,27 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
     const { config, element: [el], tab } = glCmp;
       
     if (config.type === 'component') {
-      const { props: { panelKey } } = config;
+      const { props: { panelKey, panelMeta } } = config;
 
       const onClickTitle = () => dispatch(Thunk.clickedPanelTitle({ panelKey }));
       tab?.element.children('.lm_title')?.on('click', onClickTitle);
 
-      dispatch(Act.panelOpened({
+      dispatch(Act.panelCreated({
         panelKey,
         width: el.clientWidth,
         height: el.clientHeight,
         container: redact(glCmp, 'GoldenLayout.Container'),
+        panelMeta: panelMeta || {},
       }));
       
       // Track panel closure in state.
       glCmp.container.on('destroy', () => {
-        // console.log('destroy', glCmp);
         dispatch(Act.panelClosed({ panelKey }));
       });
 
       // Track panel resize.
       // Doesn't fire for dragged element when begin drag.
       glCmp.container.on('resize', () => {
-        // console.log('resize', glCmp.config.title, el.clientWidth, el.clientHeight);
         glCmp.tab?.element.children('.lm_title')?.off('click', onClickTitle);
         glCmp.tab?.element.children('.lm_title')?.on('click', onClickTitle);
 
@@ -61,7 +60,6 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
           height: el.clientHeight,
         }));
       });
-      // glCmp.container.on('hide', () => console.log('hide', glCmp));
 
       // Fired just before show.
       glCmp.container.on('show', () => {

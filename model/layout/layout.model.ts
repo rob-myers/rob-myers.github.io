@@ -107,4 +107,6 @@ export interface LayoutPanelBaseProps<PanelMetaKey extends string> {
   panelMeta?: LayoutPanelMeta<PanelMetaKey>;
 }
 
-export type LayoutPanelMeta<PanelMetaKey extends string> = { [key in PanelMetaKey]?: string; }
+export type LayoutPanelMeta<PanelMetaKey extends string> = {
+  [key in PanelMetaKey]?: string;
+}
