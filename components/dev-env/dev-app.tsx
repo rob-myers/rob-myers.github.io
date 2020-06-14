@@ -1,12 +1,19 @@
+import { panelKeyToRootId } from './dev-env.model';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Thunk } from '@store/dev-env.duck';
+
 const DevApp: React.FC<Props> = ({ panelKey }) => {
-  /**
-   * TODO bootstrap script on mount/unmount
-   * via thunk to redux state 'dev-env'.
-   */
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(Thunk.bootstrapApp({ panelKey }));
+    return () => dispatch(Thunk.unmountApp({ panelKey }));
+  }, []);
 
   return (
     <div
-      id={`app-render-root-${panelKey}`}
+      id={panelKeyToRootId(panelKey)}
       style={{ padding: 8, color: 'white' }}
     >
       App ({panelKey})

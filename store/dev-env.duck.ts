@@ -7,6 +7,7 @@ import { filterActs } from './reducer';
 import { exampleTsx3, exampleScss1 } from '@model/code/examples';
 
 import { Thunk as EditorThunk } from './editor.duck';
+import { panelKeyToRootId } from '@components/dev-env/dev-env.model';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -56,7 +57,9 @@ export const Thunk = {
   /** Bootstrap an instance of the app */
   bootstrapApp: createThunk(
     '[dev-env] bootstrap app instance',
-    (_, __) => {
+    (_, { panelKey }: { panelKey: string }) => {
+      const el = document.getElementById(panelKeyToRootId(panelKey));
+      console.log({ mountAppAt: el });
       // TODO
     }),
   initFilesystem: createThunk(
@@ -85,7 +88,9 @@ export const Thunk = {
   ),
   unmountApp: createThunk(
     '[dev-env] unmount app instance',
-    () => {
+    (_, { panelKey }: { panelKey: string }) => {
+      const el = document.getElementById(panelKeyToRootId(panelKey));
+      console.log({ unmountAppAt: el });
       // TODO
     },
   ),
@@ -136,7 +141,27 @@ const initializeFileSystem = createEpic(
   ),
 );
 
-const trackMonacoModelsContents = createEpic(
+const trackFilePanelMeta = createEpic(
+  (action$, state$) => action$.pipe(
+    filterActs('[layout] panel created', '[layout] panel closed'),
+    filter((act) => act.type === '[layout] panel created'
+      ? !!act.pay.panelMeta.filename : true),
+    flatMap((act) => {
+      const { panelKey } = act.pay;
+      if (act.type === '[layout] panel created') {
+        const { file } = state$.value.devEnv;
+        const filename = act.pay.panelMeta.filename!;
+        return [
+          Act.filePanelCreated({ filename, panelKey }),
+          ...(file[filename] ? [] : [Act.createFile({ filename, contents: '' })]),
+        ];
+      }
+      return [Act.filePanelClosed({ panelKey })];
+    }),
+  ),
+);
+
+const trackFileContents = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[editor] store monaco model'),
     flatMap(({ pay: { model, filename, editorKey } }) => {
@@ -162,31 +187,9 @@ const togglePanelMenuEpic = createEpic(
   ),
 );
 
-const trackFilePanelMeta = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs('[layout] panel created', '[layout] panel closed'),
-    filter((act) => act.type === '[layout] panel created'
-      ? !!act.pay.panelMeta.filename
-      : true),
-    flatMap((act) => {
-      const { panelKey } = act.pay;
-      
-      if (act.type === '[layout] panel created') {
-        const { file } = state$.value.devEnv;
-        const filename = act.pay.panelMeta.filename!;
-        return [
-          Act.filePanelCreated({ filename, panelKey }),
-          ...(file[filename] ? [] : [Act.createFile({ filename, contents: '' })]),
-        ];
-      }
-      return [Act.filePanelClosed({ panelKey })];
-    }),
-  ),
-);
-
 export const epic = combineEpics(
   initializeFileSystem,
-  trackMonacoModelsContents,
-  togglePanelMenuEpic,
   trackFilePanelMeta,
+  trackFileContents,
+  togglePanelMenuEpic,
 );

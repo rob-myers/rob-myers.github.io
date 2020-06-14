@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
 import DevApp from './dev-app';
+import { isAppPanel, isFilePanel } from './dev-env.model';
+
 const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false });
 
 const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
@@ -17,7 +19,7 @@ const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
         panelKey={panelKey}
       />
     );
-  } else if (/^app(-|$)/.test(panelKey)) {
+  } else if (isAppPanel(panelKey)) {
     return (
       <DevApp
         panelKey={panelKey}
@@ -37,15 +39,5 @@ interface Props {
   panelMeta?: LayoutPanelMeta<CustomPanelMetaKey>;
 }
 
-const supportedFileMetas = [
-  { filenameExt: '.tsx', panelKeyPrefix: 'tsx' },
-  { filenameExt: '.scss', panelKeyPrefix: 'scss'},
-  { filenameExt: '.ts', panelKeyPrefix: 'ts'},
-];
-
-function isFilePanel(panelKey: string, filename?: string) {
-  return supportedFileMetas.some(({ filenameExt, panelKeyPrefix }) =>
-    panelKey.startsWith(panelKeyPrefix) && filename?.endsWith(filenameExt));
-}
 
 export default WindowPanel;

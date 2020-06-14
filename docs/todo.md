@@ -1,5 +1,6 @@
 # Local
 
+- [ ] Transpile via epic and store, so can bootstrap app.
 - [x] Track panel/file relationship in `dev-env.duck`.
 - [ ] Can see app.
 - [x] Create `dev-env.duck`.

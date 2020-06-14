@@ -68,7 +68,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
             panelKey,
             width: el.clientWidth,
             height: el.clientHeight,
-          })), 200);
+          })), 0);
       });
     }
   }, []);
