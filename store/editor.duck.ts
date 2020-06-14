@@ -1,19 +1,19 @@
 // Get sass.js from node_modules, but sass.worker.js from public folder 
 import Sass, { SassWorker } from 'sass.js/dist/sass';
-import { combineEpics, StateObservable, ActionsObservable } from 'redux-observable';
+import { combineEpics } from 'redux-observable';
 import { map, filter } from 'rxjs/operators';
 
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { Message } from '@model/worker.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
-import { createThunk } from '@model/store/root.redux.model';
+import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco/monaco.model';
 import { MonacoService } from '@model/monaco/monaco.service';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
+import { filterActs } from './reducer';
 
-import { RootState, filterActs, RootActOrThunk } from './reducer';
 
 export interface State {
   hasTranspiled: boolean;
@@ -62,33 +62,33 @@ const initialState: State = {
 
 export const Act = {
   storeMonacoEditor: (input: { editorKey: string; editor: Redacted<Editor> }) =>
-    createAct('[worker] store monaco editor', input),
+    createAct('[editor] store monaco editor', input),
   setMonacoInternal: (monacoInternal: MonacoInternal) =>
-    createAct('[worker] store monaco core', { monacoInternal }),
+    createAct('[editor] store monaco core', { monacoInternal }),
   setMonacoService: (service: Redacted<MonacoService>) =>
-    createAct('[worker] store monaco service', { service }),
+    createAct('[editor] store monaco service', { service }),
   storeMonacoModel: (input: {
     editorKey: null | string;
     modelKey: string;
     model: Redacted<IMonacoTextModel>;
     filename: string;
   }) =>
-    createAct('[worker] store monaco model', input),
+    createAct('[editor] store monaco model', input),
   storeSassWorker: ({ worker }: { worker: Redacted<SassWorker> }) =>
-    createAct('[worker] store sass', { worker }),
+    createAct('[editor] store sass', { worker }),
   storeSyntaxWorker: ({ worker }: { worker: Redacted<SyntaxWorker> }) =>
-    createAct('[worker] store syntax', { worker }),
+    createAct('[editor] store syntax', { worker }),
   update: (updates: Partial<State>) =>
-    createAct('[worker] update', { updates }),
+    createAct('[editor] update', { updates }),
   updateEditor: (editorKey: string, updates: ReduxUpdater<EditorInstance>) =>
-    createAct('[worker] update editor', { editorKey, updates }),
+    createAct('[editor] update editor', { editorKey, updates }),
 };
 
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
   bootstrapMonaco: createThunk(
-    '[worker] bootstrap monaco',
+    '[editor] bootstrap monaco',
     async ({ dispatch }, monacoInternal: MonacoInternal) => {
       dispatch(Act.update({ monacoLoading: true }));
       // Dynamic import keeps monaco out of main bundle
@@ -103,8 +103,8 @@ export const Thunk = {
     },
   ),
   createMonacoEditor: createThunk(
-    '[worker] create monaco editor',
-    async ({ dispatch, state: { editor: worker } }, { editor, editorKey, model, modelKey, filename }: {
+    '[editor] create monaco editor',
+    async ({ dispatch, state: { editor: e } }, { editor, editorKey, model, modelKey, filename }: {
       editor: Redacted<Editor>;
       editorKey: string;
       modelKey: string;
@@ -115,11 +115,12 @@ export const Thunk = {
       dispatch(Act.updateEditor(editorKey, () => ({ cleanups: [() => editor.dispose()] })));
       dispatch(Thunk.tsxEditorInstanceSetup({ editor }));
 
-      if (!worker.model[modelKey]) {
+      if (!e.model[modelKey]) {
         model.updateOptions({ tabSize: 2, indentSize: 2, trimAutoWhitespace: true });
         dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
       }
-      if (!worker.syntaxWorker) {
+
+      if (!e.syntaxWorker) {
         const syntaxWorker = new SyntaxWorkerClass;
         dispatch(Act.storeSyntaxWorker({ worker: redact(syntaxWorker) }));
         await awaitWorker('worker-ready', syntaxWorker);
@@ -127,10 +128,10 @@ export const Thunk = {
       if (filename.endsWith('.tsx')) {
         await dispatch(Thunk.setupEditorHighlighting({ editorKey }));
       }
-      if (worker.monacoLoading) {
+      if (e.monacoLoading) {
         dispatch(Act.update({ monacoLoading: false }));
       }
-      if (!worker.sassWorker) {
+      if (!e.sassWorker) {
         Sass.setWorkerUrl('/sass.worker.js');
         const sassWorker = new Sass;
         dispatch(Act.storeSassWorker({ worker: redact(sassWorker) }));
@@ -140,7 +141,7 @@ export const Thunk = {
   ),
   /** Ensures types associated to globals */
   ensureMonacoTypes: createThunk(
-    '[worker] ensure monaco types',
+    '[editor] ensure monaco types',
     async ({ state: { editor: worker }, dispatch }) => {
       const { typescriptDefaults } = worker.internal!;
       // Load types then turn type checking back on
@@ -152,7 +153,7 @@ export const Thunk = {
   ),
   /** Execute a debounced action whenever editor model changes. */
   onModelChange: createThunk(
-    '[worker] on model change',
+    '[editor] on model change',
     ({ state: { editor: { editor } } }, { act, editorKey, debounceMs }: {
       act: () => void;
       debounceMs: number; 
@@ -166,7 +167,7 @@ export const Thunk = {
     },
   ),
   removeMonacoEditor: createThunk(
-    '[worker] remove monaco editor',
+    '[editor] remove monaco editor',
     ({ dispatch, state: { editor: { editor, model: monacoModel } }}, { editorKey }: { editorKey: string }) => {
       editor[editorKey].cleanups.forEach(cleanup => cleanup());
       dispatch(Act.update({
@@ -179,7 +180,7 @@ export const Thunk = {
     },
   ),
   removeMonacoModel: createThunk(
-    '[worker] remove monaco model',
+    '[editor] remove monaco model',
     ({ dispatch, state: { editor: { model } }
     }, { modelKey }: { modelKey: string }) => {
       model[modelKey]?.model.dispose();
@@ -187,13 +188,13 @@ export const Thunk = {
     },
   ),
   resizeEditor: createThunk(
-    '[worker] resize editor',
+    '[editor] resize editor',
     ({ state: { editor: worker } }, { editorKey }: { editorKey: string }) => {
       worker.editor[editorKey].editor.layout();
     },
   ),
   setMonacoCompilerOptions: createThunk(
-    '[worker] set monaco compiler options',
+    '[editor] set monaco compiler options',
     ({ state: { editor: { internal: monacoInternal } } }) => {
       const { typescriptDefaults, typescript } = monacoInternal!;
       const oldCompilerOptions = typescriptDefaults.getCompilerOptions();
@@ -219,7 +220,7 @@ export const Thunk = {
     },
   ),
   setupEditorHighlighting: createThunk(
-    '[worker] setup syntax',
+    '[editor] setup syntax',
     async ({ state: { editor: worker }, dispatch }, { editorKey }: { editorKey: string }) => {
       const eventListener = ({ data }: Message<MessageFromWorker>) => {
         if (data.key === 'send-tsx-highlights' && data.editorKey === editorKey) {
@@ -241,7 +242,7 @@ export const Thunk = {
     },
   ),
   syntaxHighlight: createThunk(
-    '[worker] syntax highlight',
+    '[editor] syntax highlight',
     ({ state: { editor: worker } }, { editorKey }: { editorKey: string }) => {
       const { editor } = worker.editor[editorKey];
       if (!editor.getModel()) {
@@ -257,7 +258,7 @@ export const Thunk = {
     },
   ),
   transformTranspiledTsx: createThunk(
-    '[worker] transform transpiled tsx',
+    '[editor] transform transpiled tsx',
     ({ state: { editor: _ } }, { js }: { js: string }) => {
       const transformedJs = js.replace(
         /import ([^\n]+) from 'react'/g, // TODO use syntax worker
@@ -268,7 +269,7 @@ export const Thunk = {
     },
   ),
   transpileModel: createThunk(
-    '[worker] transpile monaco model',
+    '[editor] transpile monaco model',
     async ({ state: { editor: worker }, dispatch }, { modelKey }: { modelKey: string }) => {
       const { model } = worker.model[modelKey];
       const result = await worker.monacoService!.transpile(model);
@@ -279,7 +280,7 @@ export const Thunk = {
     },
   ),
   tsxEditorInstanceSetup: createThunk(
-    '[worker] editor instance setup',
+    '[editor] editor instance setup',
     ({ state: { editor: worker } }, { editor }: { editor: EditorInstance['editor'] }) => {
       const { monaco } = worker.internal!;
       editor.addAction({
@@ -293,7 +294,7 @@ export const Thunk = {
     },
   ),
   updateEditorDecorations: createThunk(
-    '[worker] update editor decorations',
+    '[editor] update editor decorations',
     ({ state: { editor: worker }, dispatch }, { editorKey, classifications }: {
       editorKey: string;
       classifications: Classification[];
@@ -301,8 +302,6 @@ export const Thunk = {
       const { lastDecorations, editor } = worker.editor[editorKey];
       
       const decorations = classifications.map(classification => {
-        // const inlineClassName = `is-${classification.kind} in-${classification.parentKind}`;
-        const inlineClassName = classification.kind;
         return {
           range: new worker.internal!.monaco.Range(
             classification.startLineNumber,
@@ -311,7 +310,7 @@ export const Thunk = {
             classification.endColumn,
           ),
           options: {
-            inlineClassName,
+            inlineClassName: classification.kind,
           },
         };
       });
@@ -320,7 +319,7 @@ export const Thunk = {
     },
   ),
   useMonacoModel: createThunk(
-    '[worker] use monaco model',
+    '[editor] use monaco model',
     ({ dispatch, state: { editor: { editor } } }, { editorKey, model, modelKey, filename }: {
       editorKey: string;
       modelKey: string;
@@ -339,10 +338,10 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
-    case '[worker] store monaco core': return { ...state,
+    case '[editor] store monaco core': return { ...state,
       internal: act.pay.monacoInternal,
     };
-    case '[worker] store monaco editor': return { ...state,
+    case '[editor] store monaco editor': return { ...state,
       editor: addToLookup({
         key: act.pay.editorKey,
         editor: act.pay.editor,
@@ -350,7 +349,7 @@ export const reducer = (state = initialState, act: Action): State => {
         cleanups: [],
       }, state.editor),
     };
-    case '[worker] store monaco model': return { ...state,
+    case '[editor] store monaco model': return { ...state,
       model: addToLookup({
         key: act.pay.modelKey,
         model: act.pay.model,
@@ -358,52 +357,35 @@ export const reducer = (state = initialState, act: Action): State => {
         filename: act.pay.filename,
       }, state.model),
     };
-    case '[worker] store monaco service': return { ...state,
+    case '[editor] store monaco service': return { ...state,
       monacoService: act.pay.service,
     };
-    case '[worker] store sass': return { ...state,
+    case '[editor] store sass': return { ...state,
       sassWorker: act.pay.worker,
     };
-    case '[worker] store syntax': return { ...state,
+    case '[editor] store syntax': return { ...state,
       syntaxWorker: act.pay.worker,
     };
-    case '[worker] update': return { ...state,
+    case '[editor] update': return { ...state,
       ...act.pay.updates,
     };
-    case '[worker] update editor': return { ...state,
+    case '[editor] update editor': return { ...state,
       editor: updateLookup(act.pay.editorKey, state.editor, act.pay.updates),
     };
     default: return state || testNever(act);
   }
 };
 
-const resizeMonacoEpic = (
-  action$: ActionsObservable<RootActOrThunk>,
-  state$: StateObservable<RootState>,
-) =>
-  action$.pipe(
-    filterActs('[layout] panel resized'),
-    filter(({ pay: { panelKey } }) =>
-      !!state$.value.editor.editor[`editor-${panelKey}`]),
-    map(({ pay: { panelKey } }) =>
-      Thunk.resizeEditor({ editorKey: `editor-${panelKey}` })),
-  );
-
-// TODO move to new duck i.e. dev-env.duck
-// TODO rename worker.duck as editor.duck
-const togglePanelMenuEpic = (
-  action$: ActionsObservable<RootActOrThunk>,
-  _state$: StateObservable<RootState>,
-) =>
-  action$.pipe(
-    filterActs('[layout] clicked panel title'),
-    map(({ args: { panelKey } }) => {
-      console.log({ detectedTitleClick: panelKey });
-      return { type: 'fake' } as any;
-    })
-  );
+const resizeMonacoEpic = createEpic(
+  (action$, state$) =>
+    action$.pipe(
+      filterActs('[layout] panel resized'),
+      filter(({ pay: { panelKey } }) =>
+        !!state$.value.editor.editor[`editor-${panelKey}`]),
+      map(({ pay: { panelKey } }) =>
+        Thunk.resizeEditor({ editorKey: `editor-${panelKey}` })),
+    ));
 
 export const epic = combineEpics(
   resizeMonacoEpic,
-  togglePanelMenuEpic,
 );
