@@ -6,7 +6,6 @@ import Gitalk from '@components/gitalk/gitalk';
 import { exampleTsx1 } from '@model/code/examples';
 
 const DevEnvDemo = dynamic(import('@components/dev-env/dev-env-demo'), { ssr: false });
-import './index.scss';
 
 const Home: React.FC = () => {
   const ready = useSelector(({ editor: { hasTranspiled } }) => !!hasTranspiled);
