@@ -7,12 +7,12 @@ import { createEpicMiddleware } from 'redux-observable';
 import { RedactInReduxDevTools } from '@model/store/redux.model';
 import { RootThunkParams, ThunkAct } from '@model/store/root.redux.model';
 
+import { State as TestState } from './test.duck';
+import { State as WorkerState } from './editor.duck';
+import { State as GitalkState } from './gitalk.duck';
+import { State as LayoutState } from './layout.duck';
+import { State as DevEnvState } from './dev-env.duck';
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
-import { State as TestState } from '@store/test.duck';
-import { State as WorkerState } from '@store/editor.duck';
-import { State as GitalkState } from '@store/gitalk.duck';
-import { State as LayoutState } from '@store/layout.duck';
-import { State as DevEnvState } from '@store/dev-env.duck';
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
@@ -102,7 +102,6 @@ export const initializeStore = (preloadedState?: RootState) => {
           value && value.devToolsRedaction
             ? `Redacted<${value.devToolsRedaction}>`
             : value,
-        function: false
       } as EnhancerOptions['serialize']
     })(
       applyMiddleware(
