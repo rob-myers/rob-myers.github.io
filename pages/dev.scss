@@ -3,12 +3,42 @@
   height: 100vh;
 
   .menu {
-    background: #222;
-    color: #fff;
-    box-sizing: border-box;
-    padding: 8px 6px;
-    font-family: "Courier New", Courier, monospace;
-    font-size: 13px;
-    font-weight: bold;
+    display: flex;
+    background: #111;
+    // box-sizing: border-box;
+    border: 1px solid #222;
+    border-width: 8px 1px;
+
+    .logo {
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+
+      font-family: "Courier New", Courier, monospace;
+      font-size: 14px;
+      color: #fff;
+
+      background-image: linear-gradient(
+        135deg,
+        #111111 40%,
+        #333333 40%,
+        #333333 50%,
+        #111111 50%,
+        #111111 90%,
+        #333333 90%,
+        #333333 100%
+      );
+      background-size: 7.07px 7.07px;
+      border: 0px solid #222;
+      border-right-width: 1px;
+
+      span {
+        color: #3ff;
+      }
+    }
+
+    .content {
+      flex: 1;
+    }
   }
 }

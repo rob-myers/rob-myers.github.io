@@ -3,6 +3,7 @@
 - [x] Transpile via epic and store result, so can bootstrap app.
 - [x] Track panel/file relationship in `dev-env.duck`.
 - [ ] Can see app.
+  > could re-bootstrap app pre-transpile, if all others transpiled/up-to-date too
 - [x] Create `dev-env.duck`.
 - [ ] Can toggle sub-menu.
 - [x] Migrate `ReactFreshBabelPlugin.js` to singleton class written in typescript.
