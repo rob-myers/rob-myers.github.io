@@ -42,7 +42,7 @@ export const baseTsxEditorProps: EditorProps = {
 
 export type FileType = 'tsx' | 'scss';
 export const permute = (type: FileType): FileType => type === 'scss' ? 'tsx' : 'scss';
-export const emptyTranspile: TranspiledCode = { key: 'success', transpiledJs: '', typings: '' };
+export const emptyTranspile: TranspiledCode = { key: 'success', src: '', transpiledJs: '', typings: '' };
 
 export interface DevModule {
   key: string;
