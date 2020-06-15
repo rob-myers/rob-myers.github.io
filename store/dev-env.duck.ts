@@ -11,6 +11,11 @@ import { Thunk as LayoutThunk } from './layout.duck';
 import { panelKeyToRootId } from '@components/dev-env/dev-env.model';
 
 export interface State {
+  /**
+   * TODO (?) true iff all files successfully transpiled and
+   * each `contents === transpilation.src`.
+   */
+  allCodeValid: boolean;
   file: KeyedLookup<FileState>;
   panelToFile: KeyedLookup<PanelFile>;
 }
@@ -40,6 +45,7 @@ interface FileState {
 }
 
 const initialState: State = {
+  allCodeValid: false,
   file: {},
   panelToFile: {},
 };

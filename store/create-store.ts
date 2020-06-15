@@ -72,6 +72,7 @@ const persistedReducer = persistReducer({
     ),
     createTransform<DevEnvState, DevEnvState>(
       ({ file }, _key) => ({
+        allCodeValid: false,
         file,
         panelToFile: {},
       }),
