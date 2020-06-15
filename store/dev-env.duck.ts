@@ -7,6 +7,7 @@ import { filterActs } from './reducer';
 import { exampleTsx3, exampleScss1 } from '@model/code/examples';
 
 import { Thunk as EditorThunk } from './editor.duck';
+import { Thunk as LayoutThunk } from './layout.duck';
 import { panelKeyToRootId } from '@components/dev-env/dev-env.model';
 
 export interface State {
@@ -27,6 +28,15 @@ interface FileState {
   key: string;
   /** Debounced value (doesn't drive editor) */
   contents: string;
+  extension: 'tsx' | 'ts' | 'scss';
+  /** Last transpilation */
+  transpilation: null | {
+    src: string;
+    dst: string;
+    type: 'js' | 'css';
+  };
+  /** Keys of models for this filename */
+  modelKeys: string[];
 }
 
 const initialState: State = {
@@ -35,8 +45,8 @@ const initialState: State = {
 };
 
 export const Act = {
-  addFilePanelCleanups: (input: { panelKey: string; cleanups: (() => void)[] }) =>
-    createAct('[dev-env] add file panel cleanups', input),
+  addPanelCleanups: (input: { panelKey: string; cleanups: (() => void)[] }) =>
+    createAct('[dev-env] add panel cleanups', input),
   createFile: (input: { filename: string; contents: string }) =>
     createAct('[dev-env] create file', input),
   deleteFile: (input: { filename: string }) =>
@@ -59,39 +69,62 @@ export const Thunk = {
     '[dev-env] bootstrap app instance',
     (_, { panelKey }: { panelKey: string }) => {
       const el = document.getElementById(panelKeyToRootId(panelKey));
+      /**
+       * TODO
+       */
       console.log({ mountAppAt: el });
-      // TODO
     }),
   initFilesystem: createThunk(
     '[dev-env] init filesystem',
     ({ dispatch, state: { devEnv } }) => {
-      // TODO only when files n'exist pas
+      /**
+       * TODO only when files n'exist pas
+       */
       !devEnv.file['index.tsx']?.contents &&
         dispatch(Act.createFile({ filename: 'index.tsx', contents: exampleTsx3 }));
       !devEnv.file['index.scss']?.contents &&
         dispatch(Act.createFile({ filename: 'index.scss', contents: exampleScss1 }));
     },
   ),
-  trackFileContents: createThunk(
-    '[dev-env] track file contents',
-    ({ dispatch, state: { devEnv } }, { editorKey, filename }: { editorKey: string; filename: string }) => {
-      const found = Object.entries(devEnv.panelToFile).find(([_, { filename: f }]) => filename === f);
-      if (found) {
-        const [panelKey] = found;
-        const act = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
-        const disposable = dispatch(EditorThunk.onModelChange({ do: act, debounceMs: 1000, editorKey }));
-        dispatch(Act.addFilePanelCleanups({ panelKey, cleanups: [() => disposable.dispose()] }));
-      } else {
-        console.warn(`Ignored filename "${filename}" from editor "${editorKey}" (panel unknown)`);
-      }
+  filenameToPanelKey: createThunk(
+    '[dev-env] filename to panel key',
+    ({ state: { devEnv } }, { filename }: { filename: string }) =>
+      Object.entries(devEnv.panelToFile)
+        .find(([_, { filename: f }]) => filename === f)?.[0] || null
+  ),
+  setupFileUpdateTranspile: createThunk(
+    '[dev-env] setup file update/transpile',
+    ({ dispatch }, { editorKey, filename, modelKey }: {
+      editorKey: string;
+      filename: string;
+      modelKey: string;
+    }) => {
+      const panelKey = dispatch(Thunk.filenameToPanelKey({ filename }))!;
+      const updateCode = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
+      const dA = dispatch(EditorThunk.onModelChange({ do: updateCode, debounceMs: 500, editorKey }));
+
+      const transpileCode = async () => {
+        const result = await dispatch(EditorThunk.transpileModel({ modelKey }));
+        if (result?.key === 'success') {
+          const transformed = dispatch(EditorThunk.transformTranspiledTsx({ js: result.transpiledJs }));
+          dispatch(Act.updateFile(filename, { transpilation: { src: result.src, dst: transformed, type: 'js' } }));
+          console.log({ transformed });
+        }
+      };
+      const dB = dispatch(EditorThunk.onModelChange({ do: transpileCode, debounceMs: 500, editorKey }));
+      transpileCode(); // Initial transpile
+
+      dispatch(Act.addPanelCleanups({ panelKey, cleanups: [() => dA.dispose(), () => dB.dispose()] }));
     },
   ),
   unmountApp: createThunk(
     '[dev-env] unmount app instance',
     (_, { panelKey }: { panelKey: string }) => {
       const el = document.getElementById(panelKeyToRootId(panelKey));
+      /**
+       * TODO
+       */
       console.log({ unmountAppAt: el });
-      // TODO
     },
   ),
 };
@@ -100,15 +133,18 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
-    case '[dev-env] add file panel cleanups': return { ...state,
+    case '[dev-env] add panel cleanups': return { ...state,
       panelToFile: updateLookup(act.pay.panelKey, state.panelToFile, ({ cleanups }) => ({
         cleanups: cleanups.concat(act.pay.cleanups),
-      }))
+      })),
     };
     case '[dev-env] create file': return { ...state,
       file: addToLookup({
         key: act.pay.filename,
         contents: act.pay.contents,
+        extension: act.pay.filename.split('.').pop() as any,
+        transpilation: null,
+        modelKeys: [],
       }, state.file),
     };
     case '[dev-env] remove file': return { ...state,
@@ -141,7 +177,7 @@ const initializeFileSystem = createEpic(
   ),
 );
 
-const trackFilePanelMeta = createEpic(
+const trackFilePanels = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[layout] panel created', '[layout] panel closed'),
     filter((act) => act.type === '[layout] panel created'
@@ -152,6 +188,7 @@ const trackFilePanelMeta = createEpic(
         const { file } = state$.value.devEnv;
         const filename = act.pay.panelMeta.filename!;
         return [
+          LayoutThunk.setPanelTitle({ panelKey, title: filename }),
           Act.filePanelCreated({ filename, panelKey }),
           ...(file[filename] ? [] : [Act.createFile({ filename, contents: '' })]),
         ];
@@ -164,13 +201,13 @@ const trackFilePanelMeta = createEpic(
 const trackFileContents = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[editor] store monaco model'),
-    flatMap(({ pay: { model, filename, editorKey } }) => {
+    flatMap(({ pay: { model, filename, editorKey, modelKey } }) => {
       const { file } = state$.value.devEnv;
       if (file[filename]) {
         model.setValue(file[filename].contents);
-        return [Thunk.trackFileContents({ editorKey, filename })];
+        return [Thunk.setupFileUpdateTranspile({ editorKey, filename, modelKey })];
       } else {
-        console.warn(`Ignored untracked filename "${filename}" of monaco model`);
+        console.warn(`Ignored filename "${filename}" (untracked)`);
       }
       return [];
     }),
@@ -182,14 +219,17 @@ const togglePanelMenuEpic = createEpic(
     filterActs('[layout] clicked panel title'),
     map(({ args: { panelKey } }) => {
       console.log({ detectedTitleClick: panelKey });
-      return { type: 'fake' } as any; // TODO
+      /**
+       * TODO
+       */
+      return { type: 'fake' } as any;
     }),
   ),
 );
 
 export const epic = combineEpics(
   initializeFileSystem,
-  trackFilePanelMeta,
+  trackFilePanels,
   trackFileContents,
   togglePanelMenuEpic,
 );

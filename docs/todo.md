@@ -1,12 +1,12 @@
 # Local
 
-- [ ] Transpile via epic and store, so can bootstrap app.
+- [x] Transpile via epic and store result, so can bootstrap app.
 - [x] Track panel/file relationship in `dev-env.duck`.
 - [ ] Can see app.
 - [x] Create `dev-env.duck`.
 - [ ] Can toggle sub-menu.
 - [x] Migrate `ReactFreshBabelPlugin.js` to singleton class written in typescript.
-- [ ] Don't transpile multiple editors with same model
+- [x] Don't transpile multiple editors with same model
 - [ ] Fix auto-commenting i.e. when directly inside JSX tags use (multiline) brace-comments
   > replaced code action by dummy console.log
   > NEXT: send code/position/selection to worker to figure out new code

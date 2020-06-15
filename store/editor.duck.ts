@@ -16,14 +16,13 @@ import { filterActs } from './reducer';
 
 
 export interface State {
-  hasTranspiled: boolean;
   /** Instances of monaco editor */
   editor: KeyedLookup<EditorInstance>;
   /** Internal monaco structures */
   internal: null | MonacoInternal;
-  monacoLoading: boolean;
   /** Instances of monaco models */
   model: KeyedLookup<ModelInstance>;
+  monacoLoading: boolean;
   monacoService: null | Redacted<MonacoService>;
   typesLoaded: boolean;
   sassWorker: null | Redacted<SassWorker>;
@@ -49,7 +48,6 @@ interface MonacoInternal {
 }
 
 const initialState: State = {
-  hasTranspiled: false,
   editor: {},
   internal: null,
   monacoLoading: false,
@@ -260,25 +258,19 @@ export const Thunk = {
   ),
   transformTranspiledTsx: createThunk(
     '[editor] transform transpiled tsx',
-    ({ state: { editor: _ } }, { js }: { js: string }) => {
+    (_, { js }: { js: string }) => {
       const transformedJs = js.replace(
         /import ([^\n]+) from 'react'/g, // TODO use syntax worker
         `import $1 from '${window.location.origin}/es-react/react.js'`,
       );
-      console.log({ transformedJs });
+      // console.log({ transformedJs });
       return transformedJs;
     },
   ),
   transpileModel: createThunk(
     '[editor] transpile monaco model',
-    async ({ state: { editor: worker }, dispatch }, { modelKey }: { modelKey: string }) => {
-      const { model } = worker.model[modelKey];
-      const result = await worker.monacoService!.transpile(model);
-      if (!worker.hasTranspiled) {
-        dispatch(Act.update({ hasTranspiled: true }));
-      }
-      return result;
-    },
+    async ({ state: { editor: e } }, { modelKey }: { modelKey: string }) =>
+      await e.monacoService!.transpile(e.model[modelKey].model)
   ),
   tsxEditorInstanceSetup: createThunk(
     '[editor] editor instance setup',

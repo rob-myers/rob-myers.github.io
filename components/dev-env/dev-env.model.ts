@@ -4,6 +4,10 @@ const supportedFileMetas = [
   { filenameExt: '.ts', panelKeyPrefix: 'ts'},
 ];
 
+export function hasSupportedExtension(filename: string) {
+  return supportedFileMetas.some(({ filenameExt }) => filename.endsWith(filenameExt));
+}
+
 export function isFilePanel(panelKey: string, filename?: string) {
   return supportedFileMetas.some(({ filenameExt, panelKeyPrefix }) =>
     panelKey.startsWith(panelKeyPrefix) && filename?.endsWith(filenameExt));

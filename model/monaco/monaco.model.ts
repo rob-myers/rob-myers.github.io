@@ -16,7 +16,7 @@ export type Editor = monaco.editor.IStandaloneCodeEditor;
 
 /** Result of transpiling and/or transforming code */
 export type TranspiledCode = (
-  | { key: 'success'; transpiledJs: string; typings: string }
+  | { key: 'success'; src: string; transpiledJs: string; typings: string }
   | { key: 'error'; message: string | string[] }
 );
 

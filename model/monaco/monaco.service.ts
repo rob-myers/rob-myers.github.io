@@ -19,7 +19,9 @@ export class MonacoService {
       const filename = model.uri.toString();
       const getWorker = await monaco.languages.typescript.getTypeScriptWorker();
       const worker = await getWorker(model.uri);
+      const src = model.getValue();
       const emitOutput: EmitOutput = await worker.getEmitOutput(filename);
+
       const diagnostics = (await Promise.all([
         worker.getSyntacticDiagnostics(filename),
         worker.getSemanticDiagnostics(filename),
@@ -35,6 +37,7 @@ export class MonacoService {
 
       return {
         key: 'success',
+        src,
         transpiledJs: emitOutput.outputFiles[0].text,
         typings: emitOutput.outputFiles[1].text,
       };

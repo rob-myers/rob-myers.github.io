@@ -8,7 +8,7 @@ import { RedactInReduxDevTools } from '@model/store/redux.model';
 import { RootThunkParams, ThunkAct } from '@model/store/root.redux.model';
 
 import { State as TestState } from './test.duck';
-import { State as WorkerState } from './editor.duck';
+import { State as EditorState } from './editor.duck';
 import { State as GitalkState } from './gitalk.duck';
 import { State as LayoutState } from './layout.duck';
 import { State as DevEnvState } from './dev-env.duck';
@@ -37,9 +37,8 @@ const persistedReducer = persistReducer({
       (state, _key) => state,
       { whitelist: ['test'] }
     ),
-    createTransform<WorkerState, WorkerState>(
+    createTransform<EditorState, EditorState>(
       (_, _key) => ({
-        hasTranspiled: false,
         editor: {},
         internal: null,
         monacoLoading: false,
@@ -101,7 +100,7 @@ export const initializeStore = (preloadedState?: RootState) => {
         replacer: (_: any, value: RedactInReduxDevTools) =>
           value && value.devToolsRedaction
             ? `Redacted<${value.devToolsRedaction}>`
-            : value,
+            : typeof value === 'function' ? 'Redacted<function>' : value,
       } as EnhancerOptions['serialize']
     })(
       applyMiddleware(
