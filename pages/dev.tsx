@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import ConnectedLayout from '@components/golden-layout/connected-layout';
 import css from './dev.scss';
 
-const menuHeightPx = 32;
+const menuHeightPx = 36;
 
 const DevEnvPage: React.FC = () => {
   const loadingMonaco = useSelector(({ editor: { monacoLoading } }) => monacoLoading);
