@@ -72,9 +72,11 @@ const persistedReducer = persistReducer({
     ),
     createTransform<DevEnvState, DevEnvState>(
       ({ file }, _key) => ({
-        allCodeValid: false,
         file,
+        initialized: false,
         panelToFile: {},
+        panelToApp: {},
+        tsAndTsxValid: false,
       }),
       (state, _key) => state,
       { whitelist: ['dev-env'] },

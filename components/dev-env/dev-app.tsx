@@ -1,14 +1,22 @@
-import { panelKeyToRootId } from './dev-env.model';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { panelKeyToAppElId } from './dev-env.model';
+import { Act } from '@store/dev-env.duck';
 
 const DevApp: React.FC<Props> = ({ panelKey }) => {
-  // useEffect(() => {
-  //   // dispatch(Thunk.bootstrapApp({ panelKey }));
-  //   // dispatch(Thunk.unmountApp({ panelKey }));
-  // }, []);
+  const initialized = useSelector(({ devEnv }) => devEnv.initialized);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    initialized && dispatch(Act.rememberAppPanel({ panelKey }));
+    return () => {
+      initialized && dispatch(Act.forgetAppPanel({ panelKey }));
+    };
+  }, [initialized]);
 
   return (
     <div
-      id={panelKeyToRootId(panelKey)}
+      id={panelKeyToAppElId(panelKey)}
       style={{ padding: 8, color: 'white' }}
     >
       App ({panelKey})

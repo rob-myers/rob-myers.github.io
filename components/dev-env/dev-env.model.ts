@@ -17,6 +17,6 @@ export function isAppPanel(panelKey: string) {
   return /^app(-|$)/.test(panelKey);
 }
 
-export function panelKeyToRootId(panelKey: string) {
+export function panelKeyToAppElId(panelKey: string) {
   return `app-render-root-${panelKey}`;
 }
