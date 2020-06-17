@@ -28,7 +28,7 @@ interface PanelFile {
 interface PanelApp {
   /** Panel key */
   key: string;
-  appElId: string;
+  elementId: string;
 }
 
 interface FileState {
@@ -51,8 +51,8 @@ interface Transpilation {
 const initialState: State = {
   file: {},
   initialized: false,
-  panelToFile: {},
   panelToApp: {},
+  panelToFile: {},
   tsAndTsxValid: false,
 };
 
@@ -69,12 +69,12 @@ export const Act = {
     createAct('[dev-env] forget app panel', input),
   initialized: () =>
     createAct('[dev-env] initialized', {}),
-  setTsAndTsxValidity: (isValid: boolean) =>
-    createAct('[dev-env] set ts/tsx validity', { isValid }),
   rememberAppPanel: (input: { panelKey: string }) =>
     createAct('[dev-env] remember app panel', input),
   rememberFilePanel: (input: { panelKey: string; filename: string }) =>
     createAct('[dev-env] remember file panel', input),
+  setTsAndTsxValidity: (isValid: boolean) =>
+    createAct('[dev-env] set ts/tsx validity', { isValid }),
   storeTranspilation: (filename: string, transpilation: Transpilation) =>
     createAct('[dev-env] store transpilation', { filename, transpilation }),
   updateFile: (filename: string, updates: Partial<FileState>) =>
@@ -185,7 +185,7 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] remember app panel': return { ...state,
       panelToApp: addToLookup({
         key: act.pay.panelKey,
-        appElId: panelKeyToAppElId(act.pay.panelKey),
+        elementId: panelKeyToAppElId(act.pay.panelKey),
       }, state.panelToApp),
     };
     case '[dev-env] remember file panel': return { ...state,
