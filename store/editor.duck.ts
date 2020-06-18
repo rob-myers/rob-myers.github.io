@@ -23,6 +23,7 @@ export interface State {
   internal: null | MonacoInternal;
   /** Instances of monaco models */
   model: KeyedLookup<ModelInstance>;
+  monacoLoaded: boolean;
   monacoLoading: boolean;
   monacoService: null | Redacted<MonacoService>;
   sassWorker: null | Redacted<SassWorker>;
@@ -51,6 +52,7 @@ const initialState: State = {
   editor: {},
   internal: null,
   monacoLoading: false,
+  monacoLoaded: false,
   model: {},
   monacoService: null,
   globalTypesLoaded: false,
@@ -67,6 +69,12 @@ export const Act = {
     createAct('[editor] store monaco core', { monacoInternal }),
   setMonacoService: (service: Redacted<MonacoService>) =>
     createAct('[editor] store monaco service', { service }),
+  setMonacoLoaded: (loaded: boolean) =>
+    createAct('[editor] set monaco loaded', { loaded }),
+  setGlobalTypesLoaded: (loaded: boolean) =>
+    createAct('[editor] set global types loaded', { loaded }),
+  setMonacoLoading: (loading: boolean) =>
+    createAct('[editor] set monaco loading', { loading }),
   storeMonacoModel: (input: {
     editorKey: string;
     modelKey: string;
@@ -96,7 +104,7 @@ export const Thunk = {
   bootstrapMonaco: createThunk(
     '[editor] bootstrap monaco',
     async ({ dispatch }, monacoInternal: MonacoInternal) => {
-      dispatch(Act.update({ monacoLoading: true }));
+      dispatch(Act.setMonacoLoading(true));
       // Dynamic import keeps monaco out of main bundle
       const { MonacoService } = await import('@model/monaco/monaco.service');
       const service = redact(new MonacoService);
@@ -144,7 +152,8 @@ export const Thunk = {
         await dispatch(Thunk.setupEditorHighlighting({ editorKey }));
       }
       if (e.monacoLoading) {
-        dispatch(Act.update({ monacoLoading: false }));
+        dispatch(Act.setMonacoLoading(false));
+        dispatch(Act.setMonacoLoaded(true));
       }
       if (!e.sassWorker) {
         Sass.setWorkerUrl('/sass.worker.js');
@@ -154,19 +163,38 @@ export const Thunk = {
       }
     },
   ),
+  ensureMonacoModel: createThunk(
+    '[editor] ensure monaco model',
+    ({ state: { editor } }, { filename, code }: { filename: string; code: string }) => {
+      const { monaco } = editor.internal!;
+      /** Note the additional prefix file:/// */
+      const uri = monaco.Uri.parse(`file:///${filename}`);
+      return monaco.editor.getModel(uri)
+        || monaco.editor.createModel(code, undefined, uri);
+    },
+  ),
   /** Ensures types associated to globals */
   ensureGlobalTypes: createThunk(
     '[editor] ensure monaco types',
     async ({ state: { editor: worker }, dispatch }) => {
       const { typescriptDefaults } = worker.internal!;
-      typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: true });
+      dispatch(Thunk.setTypescriptDiagnostics({ mode: 'off' }));
       await worker.monacoService!.loadReactTypes(typescriptDefaults);
-      typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: false });
-      dispatch(Act.update({ globalTypesLoaded: true }));
+      dispatch(Thunk.setTypescriptDiagnostics({ mode: 'on' }));
+      dispatch(Act.setGlobalTypesLoaded(true));
+    },
+  ),
+  setTypescriptDiagnostics: createThunk(
+    '[editor] set ts diagnostics',
+    ({ state: { editor } }, { mode }: { mode: 'on' | 'off' }) => {
+      editor.internal!.typescriptDefaults.setDiagnosticsOptions({
+        noSemanticValidation: mode === 'off',
+        noSyntaxValidation: mode === 'off',
+      });
     },
   ),
   /** Execute a debounced action whenever editor model changes. */
-  onModelChange: createThunk(
+  trackModelChange: createThunk(
     '[editor] on model change',
     ({ state: { editor: { editor } } }, { do: act, editorKey, debounceMs }: {
       do: (newValue: string) => void;
@@ -352,6 +380,15 @@ export const reducer = (state = initialState, act: Action): State => {
       editor: updateLookup(act.pay.editorKey, state.editor, ({ cleanups }) => ({
         cleanups: cleanups.concat(act.pay.cleanups),
       }))
+    };
+    case '[editor] set monaco loaded': return { ...state,
+      monacoLoaded: act.pay.loaded,
+    };
+    case '[editor] set monaco loading': return { ...state,
+      monacoLoading: act.pay.loading,
+    };
+    case '[editor] set global types loaded': return { ...state,
+      globalTypesLoaded: act.pay.loaded,
     };
     case '[editor] store monaco core': return { ...state,
       internal: act.pay.monacoInternal,

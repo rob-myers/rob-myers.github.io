@@ -41,6 +41,7 @@ const persistedReducer = persistReducer({
       (_, _key) => ({
         editor: {},
         internal: null,
+        monacoLoaded: false,
         monacoLoading: false,
         model: {},
         monacoService: null,

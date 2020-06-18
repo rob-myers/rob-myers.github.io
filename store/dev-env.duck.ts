@@ -100,7 +100,7 @@ export const Thunk = {
     '[dev-env] initialize',
     ({ dispatch, state: { devEnv } }) => {
       /**
-       * TODO only when files n'exist pas
+       * TEMP provide demo files.
        */
       !devEnv.file['index.tsx']?.contents &&
         dispatch(Act.createFile({ filename: 'index.tsx', contents: exampleTsx3 }));
@@ -126,15 +126,15 @@ export const Thunk = {
     }) => {
       const panelKey = dispatch(Thunk.filenameToPanelKey({ filename }))!;
       const updateCode = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
-      const dA = dispatch(EditorThunk.onModelChange({ do: updateCode, debounceMs: 500, editorKey }));
+      const dA = dispatch(EditorThunk.trackModelChange({ do: updateCode, debounceMs: 500, editorKey }));
 
       const transpileCode = async () => {
         const result = await dispatch(EditorThunk.transpileModel({ modelKey }));
         if (result?.key === 'success') {
           /**
-           * TODO extract import/export data.
-           * - maintain an implicit DAG
-           * - cycles not permitted due to way we construct blob urls
+           * TODO extract import/export data
+           * - maintain implicit DAG
+           * - cycles not permitted because we use blob urls
            */
           const _importExportMeta = await dispatch(EditorThunk.computeImportExportMeta({ filename, code: result.transpiledJs }));
           // ...
@@ -143,7 +143,7 @@ export const Thunk = {
           dispatch(Thunk.updateTranspilation({ filename, src: result.src, dst: patchedJs, typings: result.typings }));
         }
       };
-      const dB = dispatch(EditorThunk.onModelChange({ do: transpileCode, debounceMs: 500, editorKey }));
+      const dB = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, editorKey }));
       transpileCode(); // Initial transpile
 
       dispatch(Act.addPanelCleanups({ panelKey, cleanups: [() => dA.dispose(), () => dB.dispose()] }));
@@ -274,6 +274,20 @@ const initializeFileSystem = createEpic(
   ),
 );
 
+const initializeMonacoModels = createEpic(
+  (action$, state$) => action$.pipe(
+    filterActs('[editor] set monaco loaded'),
+    filter(({ pay: { loaded } }) => loaded),
+    flatMap(() => [
+      EditorThunk.setTypescriptDiagnostics({ mode: 'off' }),
+      ...Object.values(state$.value.devEnv.file).flatMap((file) => [
+        EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
+      ]),
+      EditorThunk.setTypescriptDiagnostics({ mode: 'on' }),
+    ]),
+  ),
+);
+
 const trackFilePanels = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[layout] panel created', '[layout] panel closed'),
@@ -327,6 +341,7 @@ const togglePanelMenuEpic = createEpic(
 export const epic = combineEpics(
   bootstrapAppInstances,
   initializeFileSystem,
+  initializeMonacoModels,
   trackFilePanels,
   trackFileContents,
   togglePanelMenuEpic,
