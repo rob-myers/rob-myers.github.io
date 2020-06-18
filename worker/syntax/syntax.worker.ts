@@ -4,6 +4,7 @@ import { SyntaxDispatchOverload } from './redux.model';
 import { initializeStore } from './create-store';
 import { testNever } from '@model/generic.model';
 import { computeClassifications } from './highlight.model';
+import { analyzeImportsExports } from './analyze.model';
 
 const ctxt: SyntaxWorkerContext = self as any;
 
@@ -28,7 +29,14 @@ ctxt.addEventListener('message', ({ data }) => {
        * TODO analyze transpiled javascript,
        * running information about imports/exports
        */
-      console.log({ requestedImportsExports: data.filename });
+      analyzeImportsExports(data.filename, data.code);
+      
+      ctxt.postMessage({
+        key: 'send-import-export-meta',
+        export: { key: data.filename, items: [] },
+        import: { key: data.filename, items: [] },
+        origCode: data.code,
+      });
       break;
     }
     case 'request-tsx-highlights': {
