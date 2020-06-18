@@ -21,13 +21,16 @@ const jsxTagKind = {
   'JsxClosingElement': true,
   'JsxSelfClosingElement': true,
 };
-
-export async function computeClassifications(code: string, classifications: Classification[]) {
+/**
+ * Based on https://github.com/cancerberoSgx/jsx-alone/blob/master/jsx-explorer/src/codeWorker/extractCodeDecorations.ts
+ */
+export function computeClassifications(code: string) {
   const project = new Project({
     compilerOptions: { jsx: ts.JsxEmit.React },
   });
   const srcFile = project.createSourceFile('main.tsx', code);
   const pending = [] as PendingItem[];
+  const classifications = [] as Classification[];
 
   try {
     srcFile.getDescendants()
@@ -91,6 +94,7 @@ export async function computeClassifications(code: string, classifications: Clas
     console.error(e);
   }
   // console.log(classifications);
+  return classifications;
 }
 
 function filterNonJsxRelatedNodes(node: Node<ts.Node>) {

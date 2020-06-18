@@ -109,6 +109,14 @@ export const Thunk = {
       monacoInternal.monaco.editor.setTheme('vs-dark'); // Dark theme
     },
   ),
+  computeImportExportMeta: createThunk(
+    '[editor] compute import/export meta',
+    async ({ state: { editor } }, { code, filename }: { filename: string; code: string }) => {
+      const worker = editor.syntaxWorker!;
+      worker.postMessage({ key: 'request-import-exports', code, filename });
+      return await awaitWorker('send-import-export-meta', worker, ({ origCode }) => code === origCode);
+    },
+  ),
   createMonacoEditor: createThunk(
     '[editor] create monaco editor',
     async ({ dispatch, state: { editor: e } }, { editor, editorKey, model, modelKey, filename }: {

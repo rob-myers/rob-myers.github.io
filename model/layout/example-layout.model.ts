@@ -47,12 +47,12 @@ export const initLayoutConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
               },
               {
                 type: LayoutItemType['react-component'],
-                title: 'reducer.ts',
+                title: 'model.ts',
                 component: 'window-panel',
                 props: {
                   panelKey: 'ts',
                   panelMeta: {
-                    filename: 'reducer.ts',
+                    filename: 'model.ts',
                   },
                 },
               },

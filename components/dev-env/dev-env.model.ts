@@ -20,3 +20,27 @@ export function isAppPanel(panelKey: string) {
 export function panelKeyToAppElId(panelKey: string) {
   return `app-render-root-${panelKey}`;
 }
+
+export interface ImportMeta {
+  /** Filename */
+  key: string;
+  items: {
+    /** e.g. `react` or `./index` */
+    canonicalPath: string;
+    /** First character of path including quotes */
+    pathStart: number;
+    /** Final character of path including quotes */
+    pathEnd: number;
+    identifier: string;
+    alias: null | string;
+  }[];
+}
+
+export interface ExportMeta {
+  /** Filename */
+  key: string;
+  items: {
+    identifier: string;
+    alias: null | string;
+  }[];
+}

@@ -104,8 +104,8 @@ export const Thunk = {
        */
       !devEnv.file['index.tsx']?.contents &&
         dispatch(Act.createFile({ filename: 'index.tsx', contents: exampleTsx3 }));
-      !devEnv.file['reducer.ts']?.contents &&
-        dispatch(Act.createFile({ filename: 'reducer.ts', contents: exampleTs1 }));
+      !devEnv.file['model.ts']?.contents &&
+        dispatch(Act.createFile({ filename: 'model.ts', contents: exampleTs1 }));
       !devEnv.file['index.scss']?.contents &&
         dispatch(Act.createFile({ filename: 'index.scss', contents: exampleScss1 }));
       dispatch(Act.initialized());
@@ -131,6 +131,13 @@ export const Thunk = {
       const transpileCode = async () => {
         const result = await dispatch(EditorThunk.transpileModel({ modelKey }));
         if (result?.key === 'success') {
+          /**
+           * TODO extract import/export data.
+           * - maintain an implicit DAG
+           * - cycles not permitted due to way we construct blob urls
+           */
+          const _importExportMeta = await dispatch(EditorThunk.computeImportExportMeta({ filename, code: result.transpiledJs }));
+          // ...
           const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: result.transpiledJs }));
           console.log({ transpiled: patchedJs });
           dispatch(Thunk.updateTranspilation({ filename, src: result.src, dst: patchedJs, typings: result.typings }));

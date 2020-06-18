@@ -1,7 +1,8 @@
 import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { BaseMessage, Message } from '@model/worker.model';
+import { Message } from '@model/worker.model';
 import { Classification } from './highlight.model';
+import { ImportMeta, ExportMeta } from '@components/dev-env/dev-env.model';
 
 /** A Worker instance in parent thread. */
 export interface SyntaxWorker extends Worker {
@@ -21,32 +22,45 @@ export interface SyntaxWorkerContext extends Worker {
   removeEventListener(type: 'message', object: EventListenerObject): void;
 }
 
-interface WorkerReady extends BaseMessage {
+interface WorkerReady {
   key: 'worker-ready';
 }
-interface SendTsxHighlights extends BaseMessage {
+interface SendTsxHighlights {
   key: 'send-tsx-highlights';
   classifications: Classification[];
   editorKey: string;
 }
+interface SendImportExportMeta {
+  key: 'send-import-export-meta';
+  origCode: string;
+  import: ImportMeta;
+  export: ExportMeta;
+}
 
-interface RequestTsxHighlights extends BaseMessage {
+interface RequestTsxHighlights {
   key: 'request-tsx-highlights';
   code: string;
   editorKey: string;
 }
-interface RequestStatus extends BaseMessage {
+interface RequestStatus {
   key: 'request-status';
+}
+interface RequestImportExportMeta {
+  key: 'request-import-exports';
+  code: string;
+  filename: string;
 }
 
 type MessageFromParent = (
   | RequestStatus
   | RequestTsxHighlights
+  | RequestImportExportMeta
 );
 
 export type MessageFromWorker = (
   | WorkerReady
   | SendTsxHighlights
+  | SendImportExportMeta
 );
 
 type RefinedMessage<Key> = Extract<MessageFromWorker, { key: Key }>

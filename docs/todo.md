@@ -1,7 +1,8 @@
 # Local
 
-- [x] multiple typescript files which can import from each other
-  > default layout contains two files `index.tsx` and `reducer.ts`
+- [ ] syntax worker analyzes transpiled js and extracts import/exports
+- [x] typescript files can import from each other
+  > default layout contains two files `index.tsx` and `model.ts`
 - [x] Transpile via epic and store result, so can bootstrap app.
 - [x] Track panel/file relationship in `dev-env.duck`.
 - [ ] Can see app.
