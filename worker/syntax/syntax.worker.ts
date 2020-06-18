@@ -24,18 +24,11 @@ const _dispatch = store.dispatch as SyntaxDispatchOverload;
  */
 ctxt.addEventListener('message', ({ data }) => {
   switch (data.key) {
-    case 'request-import-exports': {
-      /**
-       * TODO analyze transpiled javascript,
-       * running information about imports/exports
-       */
-      analyzeImportsExports(data.filename, data.code);
-      
+    case 'request-import-exports': {      
       ctxt.postMessage({
         key: 'send-import-export-meta',
-        export: { key: data.filename, items: [] },
-        import: { key: data.filename, items: [] },
         origCode: data.code,
+        ...analyzeImportsExports(data.filename, data.code),
       });
       break;
     }

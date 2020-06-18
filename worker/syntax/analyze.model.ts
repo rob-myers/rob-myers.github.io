@@ -1,58 +1,73 @@
 import { Project } from 'ts-morph';
+import { FileImportsMeta, FileExportsMeta } from '@components/dev-env/dev-env.model';
 
-export function analyzeImportsExports(filename: string, code: string) {
-  const project = new Project({
-    compilerOptions: {},
-  });
+export function analyzeImportsExports(filename: string, code: string): {
+  imports: FileImportsMeta;
+  exports: FileExportsMeta;
+} {
+  const project = new Project({ compilerOptions: {} });
   const srcFile = project.createSourceFile(filename, code);
 
-  const imports = srcFile.getImportDeclarations();
+  const importItems = [] as FileImportsMeta['items'];
+  const exportItems = [] as FileExportsMeta['items'];
+
+  const importDecs = srcFile.getImportDeclarations();
   const exportDecs = srcFile.getExportDeclarations();
   const exportAssigns = srcFile.getExportAssignments();
   const exportSymbols = srcFile.getExportSymbols();
 
-  /**
-   * TODO collect this information
-   */
-
   // e.g. export const foo = 'bar';
-  console.log({ exportSymbols: exportSymbols.map(x => ({
-    name: x.getName(),
-    isAlias: x.isAlias(),
-    aliased: x.getAliasedSymbol()?.getName() || null,
-  }))});
-
-  console.log({ filename, code, imports, exportDecs, exportAssigns });
-
-  imports.forEach(x  => {
-    console.log({
-      kind: 'import',
-      // e.g. `react` sans quotes
-      moduleSpecifier: x.getModuleSpecifier().getLiteralValue(),
-      // e.g. `* as React`
-      importClause: x.getImportClause()?.getText() || null,
+  exportSymbols.forEach((item) => {
+    exportItems.push({
+      names: [{
+        name: item.getName(), // alias always undefined
+        alias: item.getAliasedSymbol()?.getName(),
+      }],
     });
   });
 
-  exportDecs.forEach(x => {
-    console.log({
-      kind: 'export-dec',
-      namespaceExport: x.getNamespaceExport()?.getText() || null,
-      moduleSpecifier: x.getModuleSpecifierValue() || null,
-      namedExports: x.getNamedExports().map(y => ({
-        name: y.getName(),
-        alias: y.getAliasNode()?.getText() || null,
-      }))
+  importDecs.forEach((item) => {
+    const moduleSpecifier = item.getModuleSpecifier();
+    importItems.push({
+      path: moduleSpecifier.getLiteralValue(),
+      pathStart: moduleSpecifier.getPos() - 1,
+      pathEnd: moduleSpecifier.getEnd() + 1,
+      names: item.getNamedImports().map(x => ({
+        name: x.getName(),
+        alias: x.getAliasNode()?.getText(),
+      })),
     });
   });
 
-  exportAssigns.forEach((x) => {
-    console.log({
-      kind: 'export-assign',
-      default: !x.isExportEquals(),
-      name: x.isExportEquals()
-        ? x.getFirstChild()?.getText()
-        : null
+  exportDecs.forEach((item) => {
+    exportItems.push({
+      names: item.getNamedExports().map((x) => ({
+        name: x.getName(),
+        alias: x.getAliasNode()?.getText(),
+      })),
+      namespace: item.getNamespaceExport() && true,
+      from: item.getModuleSpecifierValue(),
     });
   });
+
+  exportAssigns.forEach((item) => {
+    exportItems.push({
+      names: [{
+        name: item.isExportEquals()
+          ? item.getFirstChild()?.getText()!
+          : 'default',
+      }],
+    });
+  });
+
+  return {
+    exports: {
+      key: filename,
+      items: exportItems,
+    },
+    imports: {
+      key: filename,
+      items: importItems,
+    },
+  };
 }

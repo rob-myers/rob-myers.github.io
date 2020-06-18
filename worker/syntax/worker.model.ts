@@ -2,7 +2,7 @@ import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
 import { Classification } from './highlight.model';
-import { ImportMeta, ExportMeta } from '@components/dev-env/dev-env.model';
+import { FileImportsMeta, FileExportsMeta } from '@components/dev-env/dev-env.model';
 
 /** A Worker instance in parent thread. */
 export interface SyntaxWorker extends Worker {
@@ -33,8 +33,8 @@ interface SendTsxHighlights {
 interface SendImportExportMeta {
   key: 'send-import-export-meta';
   origCode: string;
-  import: ImportMeta;
-  export: ExportMeta;
+  imports: FileImportsMeta;
+  exports: FileExportsMeta;
 }
 
 interface RequestTsxHighlights {

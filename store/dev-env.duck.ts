@@ -128,25 +128,34 @@ export const Thunk = {
       const updateCode = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
       const dA = dispatch(EditorThunk.trackModelChange({ do: updateCode, debounceMs: 500, editorKey }));
 
-      const transpileCode = async () => {
-        const result = await dispatch(EditorThunk.transpileModel({ modelKey }));
-        if (result?.key === 'success') {
-          /**
-           * TODO extract import/export data
-           * - maintain implicit DAG
-           * - cycles not permitted because we use blob urls
-           */
-          const _importExportMeta = await dispatch(EditorThunk.computeImportExportMeta({ filename, code: result.transpiledJs }));
-          // ...
-          const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: result.transpiledJs }));
-          console.log({ transpiled: patchedJs });
-          dispatch(Thunk.updateTranspilation({ filename, src: result.src, dst: patchedJs, typings: result.typings }));
-        }
-      };
+      const transpileCode = () => dispatch(Thunk.tryTranspileModel({ filename, modelKey }));
       const dB = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, editorKey }));
       transpileCode(); // Initial transpile
 
       dispatch(Act.addPanelCleanups({ panelKey, cleanups: [() => dA.dispose(), () => dB.dispose()] }));
+    },
+  ),
+  tryTranspileModel: createThunk(
+    '[dev-env] try transpile model',
+    async ({ dispatch }, { filename, modelKey }: {
+      filename: string;
+      modelKey: string;
+    }) => {
+      const result = await dispatch(EditorThunk.transpileModel({ modelKey }));
+
+      if (result?.key === 'success') {
+        /**
+         * TODO extract import/export data
+         * - maintain implicit DAG
+         * - cycles not permitted because we use blob urls
+         */
+        const importExportMeta = await dispatch(EditorThunk.computeImportExportMeta({ filename, code: result.transpiledJs }));
+        console.log({ importExportMeta });
+
+        const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: result.transpiledJs }));
+        console.log({ transpiled: patchedJs });
+        dispatch(Thunk.updateTranspilation({ filename, src: result.src, dst: patchedJs, typings: result.typings }));
+      }
     },
   ),
   unmountApp: createThunk(
@@ -168,7 +177,7 @@ export const Thunk = {
       typings: string;
     }) => {
       devEnv.file[filename]?.transpiled?.cleanups.forEach(cleanup => cleanup());
-      const typesFilename = filename.replace(/\.tsx?$/, '.d.ts'); // Needs file:/// ?
+      const typesFilename = filename.replace(/\.tsx?$/, '.d.ts');
       const disposable = dispatch(EditorThunk.addTypings({ filename: typesFilename, typings }));
       const cleanups = [() => disposable.dispose()];
       dispatch(Act.storeTranspilation(filename, { src, dst, type: 'js', cleanups }));
@@ -279,11 +288,12 @@ const initializeMonacoModels = createEpic(
     filterActs('[editor] set monaco loaded'),
     filter(({ pay: { loaded } }) => loaded),
     flatMap(() => [
-      EditorThunk.setTypescriptDiagnostics({ mode: 'off' }),
+      // NOTE turning off diagnostics causes initial tryTranspileModel to hang
+      // EditorThunk.setTypescriptDiagnostics({ mode: 'off' }),
       ...Object.values(state$.value.devEnv.file).flatMap((file) => [
         EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
       ]),
-      EditorThunk.setTypescriptDiagnostics({ mode: 'on' }),
+      // EditorThunk.setTypescriptDiagnostics({ mode: 'on' }),
     ]),
   ),
 );
@@ -315,11 +325,11 @@ const trackFileContents = createEpic(
     flatMap(({ pay: { model, filename, editorKey, modelKey } }) => {
       const { file } = state$.value.devEnv;
       if (file[filename]) {
+        console.log('tracking', filename);
         model.setValue(file[filename].contents);
         return [Thunk.setupFileUpdateTranspile({ editorKey, filename, modelKey })];
-      } else {
-        console.warn(`Ignored filename "${filename}" (untracked)`);
       }
+      console.warn(`Ignored filename "${filename}" (untracked)`);
       return [];
     }),
   ),

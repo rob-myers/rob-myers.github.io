@@ -73,9 +73,8 @@ const persistedReducer = persistReducer({
     ),
     createTransform<DevEnvState, DevEnvState>(
       ({ file }, _key) => ({
-        file: Object.values(file).reduce((agg, item) => ({
-          ...agg,
-          // Forget transpilation, including cleanups
+        // Remember files but forget transpilation (& cleanups)
+        file: Object.values(file).reduce((agg, item) => ({ ...agg,
           [item.key]: { ...item, transpiled: null },
         }), {} as DevEnvState['file']),
         initialized: false,

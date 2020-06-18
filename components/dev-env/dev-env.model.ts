@@ -21,26 +21,33 @@ export function panelKeyToAppElId(panelKey: string) {
   return `app-render-root-${panelKey}`;
 }
 
-export interface ImportMeta {
+export interface FileImportsMeta {
   /** Filename */
   key: string;
   items: {
     /** e.g. `react` or `./index` */
-    canonicalPath: string;
+    path: string;
     /** First character of path including quotes */
     pathStart: number;
     /** Final character of path including quotes */
     pathEnd: number;
-    identifier: string;
-    alias: null | string;
+    names: {
+      name: string;
+      alias?: string;
+    }[];
   }[];
 }
 
-export interface ExportMeta {
+export interface FileExportsMeta {
   /** Filename */
   key: string;
   items: {
-    identifier: string;
-    alias: null | string;
+    names: {
+      name: string;
+      alias?: string;
+    }[];
+    namespace?: true;
+    /** Can export from another module */
+    from?: string;
   }[];
 }
