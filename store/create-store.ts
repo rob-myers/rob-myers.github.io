@@ -86,7 +86,7 @@ const persistedReducer = persistReducer({
       { whitelist: ['devEnv'] },
     ),
   ],
-}, rootReducer);
+}, rootReducer());
 
 const epicMiddleware = createEpicMiddleware<
   RootAction | RootThunk,
@@ -116,7 +116,7 @@ export const initializeStore = (preloadedState?: RootState) => {
       )
     )
   );
-  epicMiddleware.run(rootEpic);
+  epicMiddleware.run(rootEpic());
   return store;
 };
 

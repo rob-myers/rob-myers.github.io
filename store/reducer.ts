@@ -57,7 +57,7 @@ export type RootThunk = (
   | DevEnvThunk
 );
 
-const rootReducer = combineReducers<RootState>({
+const rootReducer = () => combineReducers<RootState>({
   test: testReducer,
   editor: editorReducer,
   gitalk: gitalkReducer,
@@ -82,7 +82,7 @@ export const filterActs = <T extends RootActOrThunk['type']>(...types: T[]) =>
   filter((action: RootActOrThunk): action is GetActOrThunk<T> =>
     types.includes(action.type as T));
 
-export const rootEpic = combineEpics(
+export const rootEpic = () => combineEpics(
   editorEpic,
   devEnvEpic,
 );
