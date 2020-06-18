@@ -30,8 +30,8 @@ export function analyzeImportsExports(filename: string, code: string): {
     const moduleSpecifier = item.getModuleSpecifier();
     importItems.push({
       path: moduleSpecifier.getLiteralValue(),
-      pathStart: moduleSpecifier.getPos() - 1,
-      pathEnd: moduleSpecifier.getEnd() + 1,
+      pathStart: moduleSpecifier.getPos() + 1,
+      pathEnd: moduleSpecifier.getEnd(),
       names: item.getNamedImports().map(x => ({
         name: x.getName(),
         alias: x.getAliasNode()?.getText(),

@@ -117,7 +117,7 @@ export const Thunk = {
       monacoInternal.monaco.editor.setTheme('vs-dark'); // Dark theme
     },
   ),
-  computeImportExportMeta: createThunk(
+  computeImportExports: createThunk(
     '[editor] compute import/export meta',
     async ({ state: { editor } }, { code, filename }: { filename: string; code: string }) => {
       const worker = editor.syntaxWorker!;

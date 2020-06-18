@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { panelKeyToAppElId } from './dev-env.model';
 import { Act } from '@store/dev-env.duck';
+import { panelKeyToAppElId } from './dev-env.model';
 
 const DevApp: React.FC<Props> = ({ panelKey }) => {
   const initialized = useSelector(({ devEnv }) => devEnv.initialized);

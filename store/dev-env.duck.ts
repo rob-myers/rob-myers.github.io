@@ -8,7 +8,7 @@ import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
 
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
-import { panelKeyToAppElId } from '@components/dev-env/dev-env.model';
+import { panelKeyToAppElId, FileImportsMeta, FileExportsMeta } from '@components/dev-env/dev-env.model';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -141,21 +141,39 @@ export const Thunk = {
       filename: string;
       modelKey: string;
     }) => {
-      const result = await dispatch(EditorThunk.transpileModel({ modelKey }));
-
-      if (result?.key === 'success') {
-        /**
-         * TODO extract import/export data
-         * - maintain implicit DAG
-         * - cycles not permitted because we use blob urls
-         */
-        const importExportMeta = await dispatch(EditorThunk.computeImportExportMeta({ filename, code: result.transpiledJs }));
-        console.log({ importExportMeta });
-
-        const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: result.transpiledJs }));
-        console.log({ transpiled: patchedJs });
-        dispatch(Thunk.updateTranspilation({ filename, src: result.src, dst: patchedJs, typings: result.typings }));
+      const transpiled = await dispatch(EditorThunk.transpileModel({ modelKey }));
+      if (transpiled?.key === 'success') {
+        const { imports, exports } = await dispatch(EditorThunk.computeImportExports({
+          filename,
+          code: transpiled.transpiledJs,
+        }));
+        if (dispatch(Thunk.tryUpdateDependencyGraph({ filename, imports, exports }))) {
+          const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: transpiled.transpiledJs }));
+          console.log({ transpiled: patchedJs });
+          dispatch(Thunk.updateTranspilation({
+            filename,
+            src: transpiled.src,
+            dst: patchedJs,
+            typings: transpiled.typings,
+          }));
+        }
       }
+    },
+  ),
+  /**
+   * TODO
+   * - maintain implicit DAG
+   * - cycles not permitted because we use blob urls
+   */
+  tryUpdateDependencyGraph: createThunk(
+    '[dev-env] try update dependency graph',
+    (_, { filename, exports, imports }: {
+      filename: string;
+      imports: FileImportsMeta;
+      exports: FileExportsMeta;
+    }) => {
+      console.log({ filename, exports, imports });
+      return true;
     },
   ),
   unmountApp: createThunk(
@@ -325,7 +343,6 @@ const trackFileContents = createEpic(
     flatMap(({ pay: { model, filename, editorKey, modelKey } }) => {
       const { file } = state$.value.devEnv;
       if (file[filename]) {
-        console.log('tracking', filename);
         model.setValue(file[filename].contents);
         return [Thunk.setupFileUpdateTranspile({ editorKey, filename, modelKey })];
       }
