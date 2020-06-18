@@ -30,12 +30,12 @@ export function analyzeImportsExports(filename: string, code: string): {
     const moduleSpecifier = item.getModuleSpecifier();
     importItems.push({
       path: moduleSpecifier.getLiteralValue(),
-      pathStart: moduleSpecifier.getPos() + 1,
-      pathEnd: moduleSpecifier.getEnd(),
+      pathStart: moduleSpecifier.getPos() + 2,
       names: item.getNamedImports().map(x => ({
         name: x.getName(),
         alias: x.getAliasNode()?.getText(),
       })),
+      namespace: item.getNamespaceImport()?.getText(),
     });
   });
 
@@ -45,7 +45,7 @@ export function analyzeImportsExports(filename: string, code: string): {
         name: x.getName(),
         alias: x.getAliasNode()?.getText(),
       })),
-      namespace: item.getNamespaceExport() && true,
+      namespace: item.getNamespaceExport()?.getName(),
       from: item.getModuleSpecifierValue(),
     });
   });
