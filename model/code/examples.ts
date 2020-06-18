@@ -64,6 +64,11 @@ export const App: React.FC = () => {
 export default App;
 `.trim();
 
+export const exampleTs1 = `
+export const foo = 'bar';
+export const baz = 'qux';
+`.trim();
+
 export const exampleScss1 = `
 .my-ancestral-class {
   .my-class {

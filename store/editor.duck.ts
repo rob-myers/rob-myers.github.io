@@ -97,6 +97,7 @@ export const Thunk = {
       dispatch(Act.setMonacoService(service));
 
       dispatch(Act.setMonacoInternal(monacoInternal));
+      monacoInternal.typescriptDefaults.setEagerModelSync(true);
       dispatch(Thunk.setMonacoCompilerOptions({}));
       await dispatch(Thunk.ensureMonacoTypes({}));
       monacoInternal.monaco.editor.setTheme('vs-dark'); // Dark theme

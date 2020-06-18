@@ -4,7 +4,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { filterActs } from './reducer';
-import { exampleTsx3, exampleScss1 } from '@model/code/examples';
+import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
 
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
@@ -104,6 +104,8 @@ export const Thunk = {
        */
       !devEnv.file['index.tsx']?.contents &&
         dispatch(Act.createFile({ filename: 'index.tsx', contents: exampleTsx3 }));
+      !devEnv.file['reducer.ts']?.contents &&
+        dispatch(Act.createFile({ filename: 'reducer.ts', contents: exampleTs1 }));
       !devEnv.file['index.scss']?.contents &&
         dispatch(Act.createFile({ filename: 'index.scss', contents: exampleScss1 }));
       dispatch(Act.initialized());

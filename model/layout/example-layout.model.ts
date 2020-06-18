@@ -36,12 +36,23 @@ export const initLayoutConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
               },
               {
                 type: LayoutItemType['react-component'],
-                title: 'Sass editor',
+                title: 'index.scss',
                 component: 'window-panel',
                 props: {
                   panelKey: 'scss',
                   panelMeta: {
                     filename: 'index.scss',
+                  },
+                },
+              },
+              {
+                type: LayoutItemType['react-component'],
+                title: 'reducer.ts',
+                component: 'window-panel',
+                props: {
+                  panelKey: 'ts',
+                  panelMeta: {
+                    filename: 'reducer.ts',
                   },
                 },
               },

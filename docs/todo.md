@@ -1,9 +1,12 @@
 # Local
 
+- [ ] multiple typescript files, can import from each other
+  > default layout contains two files `index.tsx` and `reducer.ts`
 - [x] Transpile via epic and store result, so can bootstrap app.
 - [x] Track panel/file relationship in `dev-env.duck`.
 - [ ] Can see app.
-  > could re-bootstrap app pre-transpile, if all others transpiled/up-to-date too
+  > could re-bootstrap app pre-transpile, if all others transpiled/up-to-date too.
+  > need to know which imports js has, and must prevent cycles.
 - [x] Create `dev-env.duck`.
 - [ ] Can toggle sub-menu.
 - [x] Migrate `ReactFreshBabelPlugin.js` to singleton class written in typescript.
@@ -53,3 +56,6 @@
 
 Highlight fails e.g. `// {props.id}` but unlikely to happen and can be fixed via `{'//'} {props.id}`.
 However, these cases do arise via auto-commenting, so we need to fix that.
+
+Avoid having `index.tsx` and `index.ts` -- they both transpile to `index.js`,
+leading to `emitSkipped` in monaco emit output.
