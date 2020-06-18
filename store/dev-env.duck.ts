@@ -39,13 +39,13 @@ interface FileState {
   ext: 'tsx' | 'ts' | 'scss';
   /** Last transpilation */
   transpiled: null | Transpilation;
-  /** Keys of models for this filename */
-  modelKeys: string[];
 }
-interface Transpilation {
+type Transpilation = {
   src: string;
   dst: string;
   type: 'js' | 'css';
+  /** e.g. remove previous typings (js only) */
+  cleanups: (() => void)[];
 }
 
 const initialState: State = {
@@ -131,9 +131,9 @@ export const Thunk = {
       const transpileCode = async () => {
         const result = await dispatch(EditorThunk.transpileModel({ modelKey }));
         if (result?.key === 'success') {
-          const transformed = dispatch(EditorThunk.transformTranspiledTsx({ js: result.transpiledJs }));
-          console.log({ transformed });
-          dispatch(Act.storeTranspilation(filename,{ src: result.src, dst: transformed, type: 'js' }));
+          const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: result.transpiledJs }));
+          console.log({ transpiled: patchedJs });
+          dispatch(Thunk.updateTranspilation({ filename, src: result.src, dst: patchedJs, typings: result.typings }));
         }
       };
       const dB = dispatch(EditorThunk.onModelChange({ do: transpileCode, debounceMs: 500, editorKey }));
@@ -150,6 +150,21 @@ export const Thunk = {
        * TODO
        */
       console.log({ unmountAppAt: el });
+    },
+  ),
+  updateTranspilation: createThunk(
+    '[dev-env] update transpilation',
+    ({ dispatch, state: { devEnv } }, { filename, src, dst, typings }: {
+      filename: string;
+      src: string;
+      dst: string;
+      typings: string;
+    }) => {
+      devEnv.file[filename]?.transpiled?.cleanups.forEach(cleanup => cleanup());
+      const typesFilename = filename.replace(/\.tsx?$/, '.d.ts'); // Needs file:/// ?
+      const disposable = dispatch(EditorThunk.addTypings({ filename: typesFilename, typings }));
+      const cleanups = [() => disposable.dispose()];
+      dispatch(Act.storeTranspilation(filename, { src, dst, type: 'js', cleanups }));
     },
   ),
 };
@@ -169,7 +184,6 @@ export const reducer = (state = initialState, act: Action): State => {
         contents: act.pay.contents,
         ext: act.pay.filename.split('.').pop() as any,
         transpiled: null,
-        modelKeys: [],
       }, state.file),
     };
     case '[dev-env] remove file': return { ...state,

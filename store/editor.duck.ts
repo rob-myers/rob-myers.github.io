@@ -18,13 +18,13 @@ import { filterActs } from './reducer';
 export interface State {
   /** Instances of monaco editor */
   editor: KeyedLookup<EditorInstance>;
+  globalTypesLoaded: boolean;
   /** Internal monaco structures */
   internal: null | MonacoInternal;
   /** Instances of monaco models */
   model: KeyedLookup<ModelInstance>;
   monacoLoading: boolean;
   monacoService: null | Redacted<MonacoService>;
-  typesLoaded: boolean;
   sassWorker: null | Redacted<SassWorker>;
   syntaxWorker: null | Redacted<SyntaxWorker>;
 }
@@ -53,7 +53,7 @@ const initialState: State = {
   monacoLoading: false,
   model: {},
   monacoService: null,
-  typesLoaded: false,
+  globalTypesLoaded: false,
   sassWorker: null,
   syntaxWorker: null,
 };
@@ -87,6 +87,12 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  addTypings: createThunk(
+    '[editor] add typings',
+    ({ state: { editor } }, { filename, typings }: { filename: string; typings: string }) => {
+      return editor.internal!.typescriptDefaults.addExtraLib(typings, filename);
+    },
+  ),
   bootstrapMonaco: createThunk(
     '[editor] bootstrap monaco',
     async ({ dispatch }, monacoInternal: MonacoInternal) => {
@@ -99,7 +105,7 @@ export const Thunk = {
       dispatch(Act.setMonacoInternal(monacoInternal));
       monacoInternal.typescriptDefaults.setEagerModelSync(true);
       dispatch(Thunk.setMonacoCompilerOptions({}));
-      await dispatch(Thunk.ensureMonacoTypes({}));
+      await dispatch(Thunk.ensureGlobalTypes({}));
       monacoInternal.monaco.editor.setTheme('vs-dark'); // Dark theme
     },
   ),
@@ -141,15 +147,14 @@ export const Thunk = {
     },
   ),
   /** Ensures types associated to globals */
-  ensureMonacoTypes: createThunk(
+  ensureGlobalTypes: createThunk(
     '[editor] ensure monaco types',
     async ({ state: { editor: worker }, dispatch }) => {
       const { typescriptDefaults } = worker.internal!;
-      // Load types then turn type checking back on
       typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: true });
       await worker.monacoService!.loadReactTypes(typescriptDefaults);
       typescriptDefaults.setDiagnosticsOptions({ noSemanticValidation: false });
-      dispatch(Act.update({ typesLoaded: true }));
+      dispatch(Act.update({ globalTypesLoaded: true }));
     },
   ),
   /** Execute a debounced action whenever editor model changes. */
@@ -257,15 +262,18 @@ export const Thunk = {
       }
     },
   ),
-  transformTranspiledTsx: createThunk(
-    '[editor] transform transpiled tsx',
+  patchTranspiledImports: createThunk(
+    '[editor] patch transpiled imports',
     (_, { js }: { js: string }) => {
-      const transformedJs = js.replace(
-        /import ([^\n]+) from 'react'/g, // TODO use syntax worker
+      const patchedJs = js.replace(
+        /import ([^\n]+) from 'react'/g,
         `import $1 from '${window.location.origin}/es-react/react.js'`,
       );
-      // console.log({ transformedJs });
-      return transformedJs;
+      /**
+       * TODO patch imports from other files
+       */
+      // console.log({ patchedJs });
+      return patchedJs;
     },
   ),
   transpileModel: createThunk(

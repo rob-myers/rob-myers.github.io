@@ -26,7 +26,7 @@ const DevEnvDemo: React.FC<Props> = ({ uid, initialTsx }) => {
   const onTranspile = useCallback((result: TranspiledCode) => {
     if (result?.key === 'success') {
       setReady(true);
-      setCode(dispatch(Thunk.transformTranspiledTsx({ js: result.transpiledJs })));
+      setCode(dispatch(Thunk.patchTranspiledImports({ js: result.transpiledJs })));
     }
   }, []);
 

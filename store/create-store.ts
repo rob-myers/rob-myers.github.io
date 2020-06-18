@@ -44,7 +44,7 @@ const persistedReducer = persistReducer({
         monacoLoading: false,
         model: {},
         monacoService: null,
-        typesLoaded: false,
+        globalTypesLoaded: false,
         sassWorker: null,
         syntaxWorker: null,
       }),
@@ -72,14 +72,18 @@ const persistedReducer = persistReducer({
     ),
     createTransform<DevEnvState, DevEnvState>(
       ({ file }, _key) => ({
-        file,
+        file: Object.values(file).reduce((agg, item) => ({
+          ...agg,
+          // Forget transpilation, including cleanups
+          [item.key]: { ...item, transpiled: null },
+        }), {} as DevEnvState['file']),
         initialized: false,
         panelToFile: {},
         panelToApp: {},
         tsAndTsxValid: false,
       }),
       (state, _key) => state,
-      { whitelist: ['dev-env'] },
+      { whitelist: ['devEnv'] },
     ),
   ],
 }, rootReducer);
