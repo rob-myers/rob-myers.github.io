@@ -8,7 +8,7 @@ import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
 
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
-import { panelKeyToAppElId, FileImportsMeta, FileExportsMeta } from '@components/dev-env/dev-env.model';
+import { panelKeyToAppElId, JsImportMeta, JsExportMeta } from '@components/dev-env/dev-env.model';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -43,10 +43,12 @@ interface FileState {
 type Transpilation = {
   src: string;
   dst: string;
-  type: 'js' | 'css';
   /** e.g. remove previous typings (js only) */
   cleanups: (() => void)[];
-}
+} & (
+  | { type: 'js'; exports: JsExportMeta[]; imports: JsImportMeta[] }
+  | { type: 'css' }
+)
 
 const initialState: State = {
   file: {},
@@ -147,13 +149,20 @@ export const Thunk = {
           filename,
           code: transpiled.transpiledJs,
         }));
-        if (dispatch(Thunk.tryUpdateDependencyGraph({ filename, imports, exports }))) {
+        const { noCycles } = dispatch(Thunk.checkNoDependencyCycles({ filename, imports, exports }));
+        if (noCycles) {
+          /**
+           * TODO Thunk.patchTranspilations,
+           * using import specifier locations from `imports`
+           */
           const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: transpiled.transpiledJs }));
           console.log({ transpiled: patchedJs });
           dispatch(Thunk.updateTranspilation({
             filename,
             src: transpiled.src,
             dst: patchedJs,
+            imports,
+            exports,
             typings: transpiled.typings,
           }));
         }
@@ -161,19 +170,17 @@ export const Thunk = {
     },
   ),
   /**
-   * TODO
-   * - maintain implicit DAG
-   * - cycles not permitted because we use blob urls
+   * TODO cycles not permitted because we use blob urls
    */
-  tryUpdateDependencyGraph: createThunk(
-    '[dev-env] try update dependency graph',
+  checkNoDependencyCycles: createThunk(
+    '[dev-env] check dependency cycles',
     (_, { filename, exports, imports }: {
       filename: string;
-      imports: FileImportsMeta;
-      exports: FileExportsMeta;
+      imports: JsImportMeta[];
+      exports: JsExportMeta[];
     }) => {
       console.log({ filename, exports, imports });
-      return true;
+      return { noCycles: true };
     },
   ),
   unmountApp: createThunk(
@@ -188,17 +195,19 @@ export const Thunk = {
   ),
   updateTranspilation: createThunk(
     '[dev-env] update transpilation',
-    ({ dispatch, state: { devEnv } }, { filename, src, dst, typings }: {
+    ({ dispatch, state: { devEnv } }, { filename, ...rest }: {
       filename: string;
       src: string;
       dst: string;
       typings: string;
+      imports: JsImportMeta[];
+      exports: JsExportMeta[];
     }) => {
       devEnv.file[filename]?.transpiled?.cleanups.forEach(cleanup => cleanup());
       const typesFilename = filename.replace(/\.tsx?$/, '.d.ts');
-      const disposable = dispatch(EditorThunk.addTypings({ filename: typesFilename, typings }));
+      const disposable = dispatch(EditorThunk.addTypings({ filename: typesFilename, typings: rest.typings }));
       const cleanups = [() => disposable.dispose()];
-      dispatch(Act.storeTranspilation(filename, { src, dst, type: 'js', cleanups }));
+      dispatch(Act.storeTranspilation(filename, { type: 'js', ...rest, cleanups }));
     },
   ),
 };
