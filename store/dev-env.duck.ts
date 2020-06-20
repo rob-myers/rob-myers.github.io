@@ -3,12 +3,12 @@ import { map, filter, flatMap } from 'rxjs/operators';
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
-import { filterActs } from './reducer';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
+import { panelKeyToAppElId, JsImportMeta, JsExportMeta, importPathsToFilenames, FileState, Transpilation, traverseDeps } from '@model/code/dev-env.model';
 
+import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
-import { panelKeyToAppElId, JsImportMeta, JsExportMeta, importPathsToFilenames, FileState, Transpilation, traverseDeps } from '@model/code/dev-env.model';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -30,8 +30,6 @@ interface PanelApp {
   key: string;
   elementId: string;
 }
-
-
 
 const initialState: State = {
   file: {},
@@ -120,6 +118,16 @@ export const Thunk = {
       dispatch(Act.addPanelCleanups({ panelKey, cleanups: [() => dA.dispose(), () => dB.dispose()] }));
     },
   ),
+  rememberUntranspiledImports: createThunk(
+    '[dev-env] remember untranspiled imports',
+    async ({ dispatch }, { filename, modelKey }: { filename: string; modelKey: string }) => {
+      const { imports } = await dispatch(EditorThunk.computeImportExports({ filename, modelKey }));
+      const importPaths: FileState['importPaths'] = imports
+        .map(({ path, pathStart }) => ({ path, start: pathStart }));
+      dispatch(Act.updateFile(filename, { importPaths }));
+      console.log({ importPaths });
+    },
+  ),
   tryTranspileModel: createThunk(
     '[dev-env] try transpile model',
     async ({ dispatch }, { filename, modelKey }: {
@@ -128,6 +136,9 @@ export const Thunk = {
     }) => {
       const transpiled = await dispatch(EditorThunk.transpileModel({ modelKey }));
       if (transpiled?.key === 'success') {
+        await dispatch(Thunk.rememberUntranspiledImports({ filename, modelKey }));
+
+        // Compute imports/exports of transpiled code
         const { imports, exports } = await dispatch(EditorThunk.computeImportExports({
           filename,
           code: transpiled.transpiledJs,
@@ -149,14 +160,18 @@ export const Thunk = {
             typings: transpiled.typings,
           }));
         } else {
+          await dispatch(Thunk.rememberUntranspiledImports({ filename, modelKey }));
+          /**
+           * TODO show error via monaco
+           */
           console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(error)}`);
         }
       }
     },
   ),
   /**
-   * Cycles not permitted in transpiled js
-   * due to the way we use blob urls.
+   * Ensure no cycles in transpiled js.
+   * We don't support them because we use blob urls for modules.
    */
   ensureNoDependencyCycles: createThunk(
     '[dev-env] check dependency cycles',
@@ -226,8 +241,10 @@ export const reducer = (state = initialState, act: Action): State => {
       file: addToLookup({
         key: act.pay.filename,
         contents: act.pay.contents,
+        // Does not include dot
         ext: act.pay.filename.split('.').pop() as any,
         transpiled: null,
+        importPaths: [],
       }, state.file),
     };
     case '[dev-env] remove file': return { ...state,

@@ -1,6 +1,6 @@
 # Local
 
-- [ ] graphically depict cyclic dependency; auto-update module when other one fixed
+- [ ] show code errors on cyclic dependency by recording imports in non-transpiled code too; cascade transpile to untranspiled dependents (?)
 - [x] store imports/exports ensuring acyclic, logging error
 - [x] syntax worker analyzes transpiled js and extracts import/exports
 - [x] typescript files can import from each other

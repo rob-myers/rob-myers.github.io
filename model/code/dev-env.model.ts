@@ -56,6 +56,8 @@ export interface FileState {
   /** Debounced value (doesn't drive editor) */
   contents: string;
   ext: 'tsx' | 'ts' | 'scss';
+  /** Code intervals in untranspiled code used to indicate errors */
+  importPaths: UntranspiledImportPath[];
   /** Last transpilation */
   transpiled: null | Transpilation;
 }
@@ -75,7 +77,13 @@ export type Transpilation = {
   | { type: 'css' }
 )
 
-export type TranspiledJs = Extract<Transpilation, { type: 'js' }>;
+type TranspiledJs = Extract<Transpilation, { type: 'js' }>;
+
+interface UntranspiledImportPath {
+  path: string;
+  /** First character of path in untranspiled code */
+  start: number;
+}
 
 /**
  * Is some `dependent` a transitive-dependency of `f`?

@@ -119,10 +119,14 @@ export const Thunk = {
   ),
   computeImportExports: createThunk(
     '[editor] compute import/export meta',
-    async ({ state: { editor } }, { code, filename }: { filename: string; code: string }) => {
+    async ({ state: { editor } }, input: { filename: string } & (
+      { code: string } | { modelKey: string }
+    )) => {
+      const code = 'code' in input ? input.code : editor.model[input.modelKey].model.getValue();
       const worker = editor.syntaxWorker!;
-      worker.postMessage({ key: 'request-import-exports', code, filename });
-      return await awaitWorker('send-import-export-meta', worker, ({ origCode }) => code === origCode);
+
+      worker.postMessage({ key: 'request-import-exports', code, filename: input.filename });
+      return await awaitWorker('send-import-exports', worker, ({ origCode }) => code === origCode);
     },
   ),
   createMonacoEditor: createThunk(

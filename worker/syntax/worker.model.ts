@@ -31,7 +31,7 @@ interface SendTsxHighlights {
   editorKey: string;
 }
 interface SendImportExportMeta {
-  key: 'send-import-export-meta';
+  key: 'send-import-exports';
   origCode: string;
   imports: JsImportMeta[];
   exports: JsExportMeta[];

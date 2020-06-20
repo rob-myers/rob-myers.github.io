@@ -26,7 +26,7 @@ ctxt.addEventListener('message', ({ data }) => {
   switch (data.key) {
     case 'request-import-exports': {      
       ctxt.postMessage({
-        key: 'send-import-export-meta',
+        key: 'send-import-exports',
         origCode: data.code,
         ...analyzeImportsExports(data.filename, data.code),
       });
