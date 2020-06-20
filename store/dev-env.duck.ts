@@ -8,7 +8,7 @@ import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
 
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
-import { panelKeyToAppElId, JsImportMeta, JsExportMeta } from '@components/dev-env/dev-env.model';
+import { panelKeyToAppElId, JsImportMeta, JsExportMeta, importPathsToFilenames, FileState, Transpilation, traverseDeps } from '@model/code/dev-env.model';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -31,24 +31,7 @@ interface PanelApp {
   elementId: string;
 }
 
-interface FileState {
-  /** Filename */
-  key: string;
-  /** Debounced value (doesn't drive editor) */
-  contents: string;
-  ext: 'tsx' | 'ts' | 'scss';
-  /** Last transpilation */
-  transpiled: null | Transpilation;
-}
-type Transpilation = {
-  src: string;
-  dst: string;
-  /** e.g. remove previous typings (js only) */
-  cleanups: (() => void)[];
-} & (
-  | { type: 'js'; exports: JsExportMeta[]; imports: JsImportMeta[] }
-  | { type: 'css' }
-)
+
 
 const initialState: State = {
   file: {},
@@ -149,8 +132,8 @@ export const Thunk = {
           filename,
           code: transpiled.transpiledJs,
         }));
-        const { noCycles } = dispatch(Thunk.checkNoDependencyCycles({ filename, imports, exports }));
-        if (noCycles) {
+        const error = dispatch(Thunk.ensureNoDependencyCycles({ filename, imports }));
+        if (!error) {
           /**
            * TODO Thunk.patchTranspilations,
            * using import specifier locations from `imports`
@@ -165,22 +148,39 @@ export const Thunk = {
             exports,
             typings: transpiled.typings,
           }));
+        } else {
+          console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(error)}`);
         }
       }
     },
   ),
   /**
-   * TODO cycles not permitted because we use blob urls
+   * Cycles not permitted in transpiled js
+   * due to the way we use blob urls.
    */
-  checkNoDependencyCycles: createThunk(
+  ensureNoDependencyCycles: createThunk(
     '[dev-env] check dependency cycles',
-    (_, { filename, exports, imports }: {
+    ({ state: { devEnv } }, { filename, imports }: {
       filename: string;
       imports: JsImportMeta[];
-      exports: JsExportMeta[];
     }) => {
-      console.log({ filename, exports, imports });
-      return { noCycles: true };
+      const { file } = devEnv;
+      const dependencyPaths = importPathsToFilenames(imports.map(({ path }) => path), Object.keys(file));
+      const dependencyFiles = dependencyPaths.map(filename => file[filename]);
+      const dependentFiles = Object.values(file).filter(({ key }) => key !== filename)
+        .filter(({ transpiled }) => transpiled?.type === 'js' && transpiled.importPaths.includes(filename));
+      const dependentPaths = dependentFiles.map(({ key }) => key);
+      const dependents = dependentFiles.reduce((agg, item) => ({ ...agg, [item.key]: item }), {} as State['file']);
+      const maxDepth = Object.keys(devEnv).length;
+
+      console.log({ filename, dependencies: dependencyPaths, dependents: dependentPaths });
+
+      for (const dependencyFile of dependencyFiles) {
+        const error = traverseDeps(dependencyFile, devEnv.file, dependents, maxDepth);
+        if (error) return error;
+      }
+
+      return null;
     },
   ),
   unmountApp: createThunk(
@@ -207,7 +207,8 @@ export const Thunk = {
       const typesFilename = filename.replace(/\.tsx?$/, '.d.ts');
       const disposable = dispatch(EditorThunk.addTypings({ filename: typesFilename, typings: rest.typings }));
       const cleanups = [() => disposable.dispose()];
-      dispatch(Act.storeTranspilation(filename, { type: 'js', ...rest, cleanups }));
+      const importPaths = importPathsToFilenames(rest.imports.map(({ path }) => path), Object.keys(devEnv.file));
+      dispatch(Act.storeTranspilation(filename, { type: 'js', ...rest, cleanups, importPaths }));
     },
   ),
 };

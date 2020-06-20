@@ -1,6 +1,7 @@
 # Local
 
-- [ ] store imports/exports & transitive closure of `imports from`; ensure acyclic
+- [ ] graphically depict cyclic dependency; auto-update module when other one fixed
+- [x] store imports/exports ensuring acyclic, logging error
 - [x] syntax worker analyzes transpiled js and extracts import/exports
 - [x] typescript files can import from each other
   > default layout contains two files `index.tsx` and `model.ts`

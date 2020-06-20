@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { hasSupportedExtension } from './dev-env.model';
+import { hasSupportedExtension } from '@model/code/dev-env.model';
 import Editor from '@components/monaco/editor';
 
 // Used to fix TSX syntax highlighting of monaco editor.

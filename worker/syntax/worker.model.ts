@@ -1,8 +1,8 @@
 import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
+import { JsImportMeta, JsExportMeta } from '@model/code/dev-env.model';
 import { Classification } from './highlight.model';
-import { JsImportMeta, JsExportMeta } from '@components/dev-env/dev-env.model';
 
 /** A Worker instance in parent thread. */
 export interface SyntaxWorker extends Worker {
