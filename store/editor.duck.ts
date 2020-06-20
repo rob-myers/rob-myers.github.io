@@ -7,7 +7,7 @@ import { KeyedLookup, testNever } from '@model/generic.model';
 import { Message } from '@model/worker.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
-import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco } from '@model/monaco/monaco.model';
+import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco, Uri, IMarkerData } from '@model/monaco/monaco.model';
 import { MonacoService } from '@model/monaco/monaco.service';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
@@ -41,6 +41,7 @@ interface ModelInstance {
   editorKey: string | null;
   model: Redacted<IMonacoTextModel>;
   filename: string;
+  uri: Redacted<Uri>;
 }
 interface MonacoInternal {
   typescriptDefaults: Redacted<TypescriptDefaults>;
@@ -80,6 +81,7 @@ export const Act = {
     modelKey: string;
     model: Redacted<IMonacoTextModel>;
     filename: string;
+    uri: Redacted<Uri>;
   }) =>
     createAct('[editor] store monaco model', input),
   storeSassWorker: ({ worker }: { worker: Redacted<SassWorker> }) =>
@@ -144,7 +146,8 @@ export const Thunk = {
 
       if (!e.model[modelKey]) {
         model.updateOptions({ tabSize: 2, indentSize: 2, trimAutoWhitespace: true });
-        dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename }));
+        const uri = redact(e.internal!.monaco.Uri.parse(`file:///${filename}`));
+        dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename, uri }));
       }
 
       if (!e.syntaxWorker) {
@@ -240,6 +243,14 @@ export const Thunk = {
       worker.editor[editorKey].editor.layout();
     },
   ),
+  setModelMarkers: createThunk(
+    '[editor] set model markers',
+    ({ state: { editor: e } }, { modelKey, markers }: { modelKey: string; markers: IMarkerData[] }) => {
+      const { model } = e.model[modelKey];
+      // const modelMarkers = e.internal!.monaco.editor.getModelMarkers({ resource: uri });
+      e.internal!.monaco.editor.setModelMarkers(model, 'eslint', markers);
+    },
+  ),
   setMonacoCompilerOptions: createThunk(
     '[editor] set monaco compiler options',
     ({ state: { editor: { internal: monacoInternal } } }) => {
@@ -302,6 +313,9 @@ export const Thunk = {
       }
     },
   ),
+  /**
+   * TODO patch imports using code intervals
+   */
   patchTranspiledImports: createThunk(
     '[editor] patch transpiled imports',
     (_, { js }: { js: string }) => {
@@ -309,9 +323,6 @@ export const Thunk = {
         /import ([^\n]+) from 'react'/g,
         `import $1 from '${window.location.origin}/es-react/react.js'`,
       );
-      /**
-       * TODO patch imports from other files
-       */
       // console.log({ patchedJs });
       return patchedJs;
     },
@@ -362,14 +373,15 @@ export const Thunk = {
   ),
   useMonacoModel: createThunk(
     '[editor] use monaco model',
-    ({ dispatch, state: { editor: { editor } } }, { editorKey, model, modelKey, filename }: {
+    ({ dispatch, state: { editor: { editor, internal } } }, { editorKey, model, modelKey, filename }: {
       editorKey: string;
       modelKey: string;
       model: Redacted<IMonacoTextModel>;
       filename: string;
     }) => {
       if (editor[editorKey]) {
-        dispatch(Act.storeMonacoModel({ editorKey, modelKey, model: redact(model), filename }));
+        const uri = redact(internal!.monaco.Uri.parse(`file:///${filename}`));
+        dispatch(Act.storeMonacoModel({ editorKey, modelKey, model: redact(model), filename, uri }));
         editor[editorKey].editor.setModel(model);
       }
     },
@@ -411,6 +423,7 @@ export const reducer = (state = initialState, act: Action): State => {
         model: act.pay.model,
         editorKey: act.pay.editorKey,
         filename: act.pay.filename,
+        uri: act.pay.uri,
       }, state.model),
     };
     case '[editor] store monaco service': return { ...state,

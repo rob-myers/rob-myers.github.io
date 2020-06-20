@@ -25,10 +25,14 @@ export function panelKeyToAppElId(panelKey: string) {
 
 export interface JsImportMeta {
   type: 'import-decl';
-  /** e.g. `react` or `./index` */
-  path: string;
-  /** First character of path excluding quotes */
-  pathStart: number;
+  path: {
+    /** e.g. `react` or `./index` */
+    value: string;
+    /** First character of path excluding quotes */
+    start: number;
+    startLine: number;
+    startCol: number;
+  };
   names: { name: string; alias?: string }[];
   namespace?: string;
 }
@@ -80,9 +84,12 @@ export type Transpilation = {
 type TranspiledJs = Extract<Transpilation, { type: 'js' }>;
 
 interface UntranspiledImportPath {
+  /** e.g. `react` or `./index` */
   path: string;
   /** First character of path in untranspiled code */
   start: number;
+  startLine: number;
+  startCol: number;
 }
 
 /**
@@ -93,13 +100,15 @@ export function traverseDeps(
   file: KeyedLookup<FileState>,
   dependents: KeyedLookup<FileState>,
   maxDepth: number
-): null | { key: 'dep-cycle'; filename: string } {
+): null | { key: 'dep-cycle'; dependent: string } {
   if (maxDepth <= 0) return null;
   // Ignore untranspiled (?)
   if (!f.transpiled) return null;
 
   const { importPaths } = f.transpiled as TranspiledJs;
-  if (dependents[f.key]) return { key: 'dep-cycle', filename: f.key };
+  if (dependents[f.key]) {
+    return { key: 'dep-cycle', dependent: f.key };
+  }
 
   for (const depPath of importPaths) {
     const error = traverseDeps(file[depPath], file, dependents, maxDepth - 1);

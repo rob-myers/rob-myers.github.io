@@ -26,10 +26,17 @@ export function analyzeImportsExports(filename: string, code: string) {
 
   importDecs.forEach((item) => {
     const moduleSpecifier = item.getModuleSpecifier();
+    const { line, column } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
+
     importItems.push({
       type: 'import-decl',
-      path: moduleSpecifier.getLiteralValue(),
-      pathStart: moduleSpecifier.getPos() + 2,
+      /** Module specifier e.g. `./index` */
+      path: {
+        value: moduleSpecifier.getLiteralValue(),
+        start: moduleSpecifier.getPos() + 2,
+        startLine: line,
+        startCol: column,
+      },
       names: item.getNamedImports().map(x => ({
         name: x.getName(),
         alias: x.getAliasNode()?.getText(),

@@ -1,7 +1,7 @@
 import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
-import { KeyedLookup, testNever } from '@model/generic.model';
+import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
 import { panelKeyToAppElId, JsImportMeta, JsExportMeta, importPathsToFilenames, FileState, Transpilation, traverseDeps } from '@model/code/dev-env.model';
@@ -122,10 +122,11 @@ export const Thunk = {
     '[dev-env] remember untranspiled imports',
     async ({ dispatch }, { filename, modelKey }: { filename: string; modelKey: string }) => {
       const { imports } = await dispatch(EditorThunk.computeImportExports({ filename, modelKey }));
-      const importPaths: FileState['importPaths'] = imports
-        .map(({ path, pathStart }) => ({ path, start: pathStart }));
+      const importPaths = imports.map(({ path: { value, start, startCol, startLine } }) =>
+        ({ path: value, start, startCol, startLine }));
       dispatch(Act.updateFile(filename, { importPaths }));
       console.log({ importPaths });
+      return { importPaths };
     },
   ),
   tryTranspileModel: createThunk(
@@ -146,8 +147,11 @@ export const Thunk = {
         const error = dispatch(Thunk.ensureNoDependencyCycles({ filename, imports }));
         if (!error) {
           /**
-           * TODO Thunk.patchTranspilations,
-           * using import specifier locations from `imports`
+           * TODO transpile any out-of-date transitive-dependency.
+           */
+          dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
+          /**
+           * TODO patch transpiled js using `imports`
            */
           const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: transpiled.transpiledJs }));
           console.log({ transpiled: patchedJs });
@@ -160,11 +164,27 @@ export const Thunk = {
             typings: transpiled.typings,
           }));
         } else {
-          await dispatch(Thunk.rememberUntranspiledImports({ filename, modelKey }));
-          /**
-           * TODO show error via monaco
-           */
           console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(error)}`);
+
+          // Expect importPaths like ./foo-bar
+          const { importPaths } = await dispatch(Thunk.rememberUntranspiledImports({ filename, modelKey }));
+          const badPaths = importPaths.filter(x => error.dependency.startsWith(x.path.slice(2)));
+
+          dispatch(EditorThunk.setModelMarkers({
+            modelKey,
+            markers: badPaths.map(({ path, startLine, startCol }) => ({
+              message: [
+                'Cyclic dependencies are unsupported',
+                'because we dynamically create ES modules.',
+                '',
+                'Typings may be arbitrarily imported/exported.'
+              ].join('\n'),
+              startLineNumber: startLine,
+              startColumn: startCol,
+              endLineNumber: startLine,
+              endColumn: startCol + path.length + 2,
+              severity: 8,
+            }))}));
         }
       }
     },
@@ -179,22 +199,20 @@ export const Thunk = {
       filename: string;
       imports: JsImportMeta[];
     }) => {
-      const { file } = devEnv;
-      const dependencyPaths = importPathsToFilenames(imports.map(({ path }) => path), Object.keys(file));
-      const dependencyFiles = dependencyPaths.map(filename => file[filename]);
-      const dependentFiles = Object.values(file).filter(({ key }) => key !== filename)
+      const filenames = Object.keys(devEnv.file);
+      const dependencyPaths = importPathsToFilenames(imports.map(({ path }) => path.value), filenames);
+      const dependencies = dependencyPaths.map(filename => devEnv.file[filename]);
+      const dependents = Object.values(devEnv.file).filter(({ key }) => key !== filename)
         .filter(({ transpiled }) => transpiled?.type === 'js' && transpiled.importPaths.includes(filename));
-      const dependentPaths = dependentFiles.map(({ key }) => key);
-      const dependents = dependentFiles.reduce((agg, item) => ({ ...agg, [item.key]: item }), {} as State['file']);
-      const maxDepth = Object.keys(devEnv).length;
-
+      const dependentPaths = dependents.map(({ key }) => key);
       console.log({ filename, dependencies: dependencyPaths, dependents: dependentPaths });
 
-      for (const dependencyFile of dependencyFiles) {
-        const error = traverseDeps(dependencyFile, devEnv.file, dependents, maxDepth);
-        if (error) return error;
+      for (const dependencyFile of dependencies) {
+        const error = traverseDeps(dependencyFile, devEnv.file, lookupFromValues(dependents), filenames.length);
+        if (error) {
+          return { ...error, dependency: dependencyFile.key };
+        }
       }
-
       return null;
     },
   ),
@@ -222,7 +240,7 @@ export const Thunk = {
       const typesFilename = filename.replace(/\.tsx?$/, '.d.ts');
       const disposable = dispatch(EditorThunk.addTypings({ filename: typesFilename, typings: rest.typings }));
       const cleanups = [() => disposable.dispose()];
-      const importPaths = importPathsToFilenames(rest.imports.map(({ path }) => path), Object.keys(devEnv.file));
+      const importPaths = importPathsToFilenames(rest.imports.map(({ path }) => path.value), Object.keys(devEnv.file));
       dispatch(Act.storeTranspilation(filename, { type: 'js', ...rest, cleanups, importPaths }));
     },
   ),

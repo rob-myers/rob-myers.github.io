@@ -173,3 +173,7 @@ export function firstAvailableInteger(nonNegativeInts: number[]) {
   }
   return 0;
 }
+
+export function lookupFromValues<T extends { key: string }>(values: T[]): KeyedLookup<T> {
+  return values.reduce((agg, item) => ({ ...agg, [item.key]: item }), {} as KeyedLookup<T>);
+}

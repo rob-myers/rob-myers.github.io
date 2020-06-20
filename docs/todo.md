@@ -1,6 +1,7 @@
 # Local
 
-- [ ] show code errors on cyclic dependency by recording imports in non-transpiled code too; cascade transpile to untranspiled dependents (?)
+- [ ] recover from cyclic dependency via cascade transpile of untranspiled dependencies
+- [x] show code errors on cyclic dependency by recording imports in non-transpiled code too
 - [x] store imports/exports ensuring acyclic, logging error
 - [x] syntax worker analyzes transpiled js and extracts import/exports
 - [x] typescript files can import from each other

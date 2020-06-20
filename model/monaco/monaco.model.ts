@@ -50,3 +50,7 @@ export interface DevModule {
   blobUrl: string;
   code: string;
 }
+
+export type Uri = monaco.Uri;
+
+export type IMarkerData = monaco.editor.IMarkerData;
