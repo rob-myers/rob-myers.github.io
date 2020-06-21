@@ -118,7 +118,7 @@ export const Thunk = {
       dispatch(Act.addPanelCleanups({ panelKey, cleanups: [() => dA.dispose(), () => dB.dispose()] }));
     },
   ),
-  rememberUntranspiledImports: createThunk(
+  rememberSrcImports: createThunk(
     '[dev-env] remember untranspiled imports',
     async ({ dispatch }, { filename, modelKey }: { filename: string; modelKey: string }) => {
       const { imports } = await dispatch(EditorThunk.computeImportExports({ filename, modelKey }));
@@ -137,48 +137,46 @@ export const Thunk = {
     }) => {
       const transpiled = await dispatch(EditorThunk.transpileModel({ modelKey }));
       if (transpiled?.key === 'success') {
-        await dispatch(Thunk.rememberUntranspiledImports({ filename, modelKey }));
+        await dispatch(Thunk.rememberSrcImports({ filename, modelKey }));
+        /**
+         * TODO patch transpiled js using `imports`
+         */
+        const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: transpiled.transpiledJs }));
+        console.log({ transpiled: patchedJs });
 
-        // Compute imports/exports of transpiled code
-        const { imports, exports } = await dispatch(EditorThunk.computeImportExports({
+        const { imports, exports } = await dispatch(EditorThunk
+          .computeImportExports({ filename, code: transpiled.transpiledJs }));
+        const error = dispatch(Thunk.detectDependencyCycles({ filename, imports }));
+
+        dispatch(Thunk.updateTranspilation({
           filename,
-          code: transpiled.transpiledJs,
+          src: transpiled.src,
+          dst: patchedJs,
+          imports,
+          exports,
+          typings: transpiled.typings,
+          cyclicDepError: !!error,
         }));
-        const error = dispatch(Thunk.ensureNoDependencyCycles({ filename, imports }));
+
         if (!error) {
+          dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
           /**
            * TODO transpile any out-of-date transitive-dependency.
            */
-          dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
-          /**
-           * TODO patch transpiled js using `imports`
-           */
-          const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: transpiled.transpiledJs }));
-          console.log({ transpiled: patchedJs });
-          dispatch(Thunk.updateTranspilation({
-            filename,
-            src: transpiled.src,
-            dst: patchedJs,
-            imports,
-            exports,
-            typings: transpiled.typings,
-          }));
         } else {
           console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(error)}`);
 
           // Expect importPaths like ./foo-bar
-          const { importPaths } = await dispatch(Thunk.rememberUntranspiledImports({ filename, modelKey }));
+          const { importPaths } = await dispatch(Thunk.rememberSrcImports({ filename, modelKey }));
           const badPaths = importPaths.filter(x => error.dependency.startsWith(x.path.slice(2)));
 
           dispatch(EditorThunk.setModelMarkers({
             modelKey,
             markers: badPaths.map(({ path, startLine, startCol }) => ({
               message: [
-                'Cyclic dependencies are unsupported',
-                'because we dynamically create ES modules.',
-                '',
-                'Typings may be arbitrarily imported/exported.'
-              ].join('\n'),
+                'Cyclic dependencies are unsupported,',
+                'although typings may be arbitrarily imported/exported.'
+              ].join(' '),
               startLineNumber: startLine,
               startColumn: startCol,
               endLineNumber: startLine,
@@ -186,14 +184,17 @@ export const Thunk = {
               severity: 8,
             }))}));
         }
+      } else {
+        // Don't show cyclic dependency error if transpile failed
+        dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
       }
     },
   ),
   /**
-   * Ensure no cycles in transpiled js.
+   * Detect dependency cycles in transpiled js.
    * We don't support them because we use blob urls for modules.
    */
-  ensureNoDependencyCycles: createThunk(
+  detectDependencyCycles: createThunk(
     '[dev-env] check dependency cycles',
     ({ state: { devEnv } }, { filename, imports }: {
       filename: string;
@@ -235,6 +236,7 @@ export const Thunk = {
       typings: string;
       imports: JsImportMeta[];
       exports: JsExportMeta[];
+      cyclicDepError: boolean;
     }) => {
       devEnv.file[filename]?.transpiled?.cleanups.forEach(cleanup => cleanup());
       const typesFilename = filename.replace(/\.tsx?$/, '.d.ts');
@@ -319,8 +321,13 @@ const bootstrapAppInstances = createEpic(
       const { file, panelToApp, tsAndTsxValid } = state$.value.devEnv;
       if (act.type === '[dev-env] store transpilation') {
         if (Object.values(file).every(({ ext, contents, transpiled }) =>
-          ext === 'scss' || contents === transpiled?.src
+          ext === 'scss' || (
+            transpiled?.type === 'js'
+            && transpiled.src === contents
+            && !transpiled.cyclicDepError
+          )
         )) {
+          // All code is valid so can bootstrap app
           return [Act.setTsAndTsxValidity(true),
             ...Object.values(panelToApp).map(({ key }) =>
               Thunk.bootstrapApp({ panelKey: key }))];

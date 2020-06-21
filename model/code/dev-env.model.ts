@@ -50,7 +50,8 @@ export interface JsExportMeta {
 export function importPathsToFilenames(importPaths: string[], filenames: string[]) {
   return importPaths
     .filter((x, i) => x.startsWith('./') && i === importPaths.indexOf(x))
-    .map(x => x.slice(2)) // TODO handle prefixes of others
+    .map(x => x.slice(2))
+    // TODO handle case where one filename is a prefix of another
     .map(x => filenames.find(y => y.startsWith(x))!);
 }
 
@@ -59,6 +60,7 @@ export interface FileState {
   key: string;
   /** Debounced value (doesn't drive editor) */
   contents: string;
+  /** Filename extension (suffix of `key`) */
   ext: 'tsx' | 'ts' | 'scss';
   /** Code intervals in untranspiled code used to indicate errors */
   importPaths: UntranspiledImportPath[];
@@ -68,6 +70,7 @@ export interface FileState {
 
 export type Transpilation = {
   src: string;
+  /** Transpiled code */
   dst: string;
   /** e.g. remove previous typings (js only) */
   cleanups: (() => void)[];
@@ -77,6 +80,8 @@ export type Transpilation = {
     exports: JsExportMeta[];
     imports: JsImportMeta[];
     importPaths: string[];
+    /** Is there a cyclic dependency in transpiled code? */
+    cyclicDepError: boolean;
   }
   | { type: 'css' }
 )
