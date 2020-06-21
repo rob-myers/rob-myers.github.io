@@ -22,8 +22,6 @@ interface PanelFile {
   /** Panel key */
   key: string;
   filename: string;
-  /** If a new file is stored in panel we'll need to cleanup */
-  cleanups: (() => void)[];
 }
 interface PanelApp {
   /** Panel key */
@@ -40,8 +38,6 @@ const initialState: State = {
 };
 
 export const Act = {
-  addPanelCleanups: (input: { panelKey: string; cleanups: (() => void)[] }) =>
-    createAct('[dev-env] add panel cleanups', input),
   createFile: (input: { filename: string; contents: string }) =>
     createAct('[dev-env] create file', input),
   deleteFile: (input: { filename: string }) =>
@@ -78,7 +74,8 @@ export const Thunk = {
        * TODO
        */
       console.log({ mountAppAt: el });
-    }),
+    },
+  ),
   initialize: createThunk(
     '[dev-env] initialize',
     ({ dispatch, state: { devEnv } }) => {
@@ -103,7 +100,6 @@ export const Thunk = {
   setupFileUpdateTranspile: createThunk(
     '[dev-env] setup file update/transpile',
     ({ dispatch }, { editorKey, filename }: { editorKey: string; filename: string }) => {
-      const panelKey = dispatch(Thunk.filenameToPanelKey({ filename }))!;
       const updateCode = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
       const dA = dispatch(EditorThunk.trackModelChange({ do: updateCode, debounceMs: 500, editorKey }));
 
@@ -111,7 +107,7 @@ export const Thunk = {
       const dB = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, editorKey }));
       transpileCode(); // Initial transpile
 
-      dispatch(Act.addPanelCleanups({ panelKey, cleanups: [() => dA.dispose(), () => dB.dispose()] }));
+      dispatch(Act.updateFile(filename, { cleanupTrackers: [() => dA.dispose(), () => dB.dispose()] }));
     },
   ),
   rememberSrcImports: createThunk(
@@ -250,11 +246,6 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
-    case '[dev-env] add panel cleanups': return { ...state,
-      panelToFile: updateLookup(act.pay.panelKey, state.panelToFile, ({ cleanups }) => ({
-        cleanups: cleanups.concat(act.pay.cleanups),
-      })),
-    };
     case '[dev-env] create file': return { ...state,
       file: addToLookup({
         key: act.pay.filename,
@@ -263,6 +254,7 @@ export const reducer = (state = initialState, act: Action): State => {
         ext: act.pay.filename.split('.').pop() as any,
         transpiled: null,
         importPaths: [],
+        cleanupTrackers: [],
       }, state.file),
     };
     case '[dev-env] remove file': return { ...state,
@@ -287,7 +279,6 @@ export const reducer = (state = initialState, act: Action): State => {
       panelToFile: addToLookup({
         key: act.pay.panelKey,
         filename: act.pay.filename,
-        cleanups: [],
       }, state.panelToFile)
     };
     case '[dev-env] set ts/tsx validity': return { ...state,

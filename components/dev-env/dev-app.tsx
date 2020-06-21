@@ -1,18 +1,17 @@
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { panelKeyToAppElId } from '@model/code/dev-env.model';
 import { Act } from '@store/dev-env.duck';
 
 const DevApp: React.FC<Props> = ({ panelKey }) => {
-  const initialized = useSelector(({ devEnv }) => devEnv.initialized);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    initialized && dispatch(Act.rememberAppPanel({ panelKey }));
+    dispatch(Act.rememberAppPanel({ panelKey }));
     return () => {
-      initialized && dispatch(Act.forgetAppPanel({ panelKey }));
+      dispatch(Act.forgetAppPanel({ panelKey }));
     };
-  }, [initialized]);
+  }, []);
 
   return (
     <div

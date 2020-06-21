@@ -78,6 +78,8 @@ export interface FileState {
   importPaths: UntranspiledImportPath[];
   /** Last transpilation */
   transpiled: null | Transpilation;
+  /** Can dispose model code/transpile trackers */
+  cleanupTrackers: (() => void)[];
 }
 
 export type Transpilation = {
@@ -119,9 +121,7 @@ export function traverseDeps(
   dependents: KeyedLookup<FileState>,
   maxDepth: number
 ): null | TraverseDepsError {
-  if (maxDepth <= 0) return null;
-  // Ignore untranspiled (?)
-  if (!f.transpiled) return null;
+  if (maxDepth <= 0 || !f.transpiled) return null;
 
   const { importPaths } = f.transpiled as TranspiledJs;
   if (dependents[f.key]) {
@@ -136,10 +136,7 @@ export function traverseDeps(
 }
 
 type TraverseDepsError = { key: 'dep-cycle'; dependent: string };
-
-export type CyclicDepError = TraverseDepsError & {
-  dependency: string;
-};
+export type CyclicDepError = TraverseDepsError & { dependency: string };
 
 export function getCyclicDepMarker(
   { path, startLine, startCol }: UntranspiledImportPath,

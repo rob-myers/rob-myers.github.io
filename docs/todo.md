@@ -1,5 +1,7 @@
 # Local
 
+- [ ] drag indicator should correspond to open file
+- [x] move code/transpile disposables into `FileState`
 - [x] recover from cyclic dependency via transpile invalid dependency
 - [x] show code errors on cyclic dependency by recording imports in non-transpiled code too
 - [x] store imports/exports ensuring acyclic, logging error
