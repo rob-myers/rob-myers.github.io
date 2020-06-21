@@ -56,12 +56,15 @@ export interface JsExportMeta {
 }
 
 /** Returns filenames without dups */
-export function importPathsToFilenames(importPaths: string[], filenames: string[]) {
+export function importPathsToFilenames(
+  importPaths: string[],
+  allFilenames: string[],
+) {
   return importPaths
     .filter((x, i) => x.startsWith('./') && i === importPaths.indexOf(x))
     .map(x => x.slice(2))
     // TODO handle case where one filename is a prefix of another
-    .map(x => filenames.find(y => y.startsWith(x))!);
+    .map(x => allFilenames.find(y => y.startsWith(x))!);
 }
 
 export interface FileState {
@@ -90,12 +93,12 @@ export type Transpilation = {
     imports: JsImportMeta[];
     importPaths: string[];
     /** Is there a cyclic dependency in transpiled code? */
-    cyclicDepError: boolean;
+    cyclicDepError: null | CyclicDepError;
   }
   | { type: 'css' }
 )
 
-type TranspiledJs = Extract<Transpilation, { type: 'js' }>;
+export type TranspiledJs = Extract<Transpilation, { type: 'js' }>;
 
 export interface UntranspiledImportPath {
   /** e.g. `react` or `./index` */
@@ -115,7 +118,7 @@ export function traverseDeps(
   file: KeyedLookup<FileState>,
   dependents: KeyedLookup<FileState>,
   maxDepth: number
-): null | { key: 'dep-cycle'; dependent: string } {
+): null | TraverseDepsError {
   if (maxDepth <= 0) return null;
   // Ignore untranspiled (?)
   if (!f.transpiled) return null;
@@ -131,6 +134,12 @@ export function traverseDeps(
   }
   return null;
 }
+
+type TraverseDepsError = { key: 'dep-cycle'; dependent: string };
+
+export type CyclicDepError = TraverseDepsError & {
+  dependency: string;
+};
 
 export function getCyclicDepMarker(
   { path, startLine, startCol }: UntranspiledImportPath,

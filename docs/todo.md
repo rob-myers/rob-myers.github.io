@@ -1,6 +1,6 @@
 # Local
 
-- [ ] recover from cyclic dependency via cascade transpile of untranspiled dependencies
+- [x] recover from cyclic dependency via transpile invalid dependency
 - [x] show code errors on cyclic dependency by recording imports in non-transpiled code too
 - [x] store imports/exports ensuring acyclic, logging error
 - [x] syntax worker analyzes transpiled js and extracts import/exports

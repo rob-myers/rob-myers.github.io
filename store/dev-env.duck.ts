@@ -4,7 +4,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
-import { panelKeyToAppElId, JsImportMeta, JsExportMeta, importPathsToFilenames, FileState, Transpilation, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, filenameToModelKey, isFileValid } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, JsImportMeta, JsExportMeta, importPathsToFilenames, FileState, Transpilation, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, filenameToModelKey, isFileValid, CyclicDepError, TranspiledJs } from '@model/code/dev-env.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
@@ -150,6 +150,7 @@ export const Thunk = {
         const { imports, exports } = await dispatch(EditorThunk
           .computeImportExports({ filename, code: transpiled.transpiledJs }));
         const error = dispatch(Thunk.detectDependencyCycles({ filename, imports }));
+        const prevError = (devEnv.file[filename]?.transpiled as TranspiledJs)?.cyclicDepError || null;
 
         dispatch(Thunk.updateTranspilation({
           filename,
@@ -158,14 +159,14 @@ export const Thunk = {
           imports,
           exports,
           typings: transpiled.typings,
-          cyclicDepError: !!error,
+          cyclicDepError: error,
         }));
 
         if (!error) {
           dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
-          /**
-           * TODO transpile any out-of-date transitive-dependency.
-           */
+          if (prevError) {// Retranspile invalid dependency
+            dispatch(Thunk.tryTranspileModel({ filename: prevError.dependency, onlyIf: 'invalid' }));
+          }
         } else {
           console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(error)}`);
 
@@ -176,12 +177,11 @@ export const Thunk = {
             modelKey,
             markers: badPaths.map((importPath) => getCyclicDepMarker(importPath)),
           }));
-          // Retranspile filename correspond to bad path(s)
-          // TODO prevent cycle!
+          // Retranspile cyclic dependency if currently valid
+          // NOTE ignoring other invalid files in cycle
           dispatch(Thunk.tryTranspileModel({ filename: error.dependency, onlyIf: 'valid' }));
         }
-      } else {
-        // Don't show cyclic dependency error if transpile failed
+      } else {// Don't show cyclic dependency error if transpile failed
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
       }
     },
@@ -195,11 +195,13 @@ export const Thunk = {
     ({ state: { devEnv } }, { filename, imports }: {
       filename: string;
       imports: JsImportMeta[];
-    }) => {
+    }): null | CyclicDepError => {
       const filenames = Object.keys(devEnv.file);
-      const dependencyPaths = importPathsToFilenames(imports.map(({ path }) => path.value), filenames);
+      const dependencyPaths = importPathsToFilenames(imports.map(({ path }) => path.value), filenames)
+        .filter((path) => path !== filename); // permit reflexive dependency e.g. alias
       const dependencies = dependencyPaths.map(filename => devEnv.file[filename]);
-      const dependents = Object.values(devEnv.file).filter(({ key }) => key !== filename)
+      const dependents = Object.values(devEnv.file)
+        .filter(({ key }) => key !== filename) // permit reflexive dependent e.g. alias
         .filter(({ transpiled }) => transpiled?.type === 'js' && transpiled.importPaths.includes(filename));
       const dependentPaths = dependents.map(({ key }) => key);
       console.log({ filename, dependencies: dependencyPaths, dependents: dependentPaths });
@@ -232,7 +234,7 @@ export const Thunk = {
       typings: string;
       imports: JsImportMeta[];
       exports: JsExportMeta[];
-      cyclicDepError: boolean;
+      cyclicDepError: null | CyclicDepError;
     }) => {
       devEnv.file[filename]?.transpiled?.cleanups.forEach(cleanup => cleanup());
       const typesFilename = filename.replace(/\.tsx?$/, '.d.ts');
