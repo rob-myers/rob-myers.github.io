@@ -1,4 +1,5 @@
 import { KeyedLookup } from '@model/generic.model';
+import { IMarkerData } from '@model/monaco/monaco.model';
 
 const supportedFileMetas = [
   { filenameExt: '.tsx', panelKeyPrefix: 'tsx' },
@@ -21,6 +22,14 @@ export function isAppPanel(panelKey: string) {
 
 export function panelKeyToAppElId(panelKey: string) {
   return `app-render-root-${panelKey}`;
+}
+
+export function panelKeyToEditorKey(panelKey: string) {
+  return `editor-${panelKey}`;
+}
+
+export function filenameToModelKey(filename: string) {
+  return `model-${filename}`;
 }
 
 export interface JsImportMeta {
@@ -88,7 +97,7 @@ export type Transpilation = {
 
 type TranspiledJs = Extract<Transpilation, { type: 'js' }>;
 
-interface UntranspiledImportPath {
+export interface UntranspiledImportPath {
   /** e.g. `react` or `./index` */
   path: string;
   /** First character of path in untranspiled code */
@@ -99,6 +108,7 @@ interface UntranspiledImportPath {
 
 /**
  * Is some `dependent` a transitive-dependency of `f`?
+ * If so we return the first one found.
  */
 export function traverseDeps(
   f: FileState,
@@ -120,4 +130,28 @@ export function traverseDeps(
     if (error) return error;
   }
   return null;
+}
+
+export function getCyclicDepMarker(
+  { path, startLine, startCol }: UntranspiledImportPath,
+): IMarkerData {
+  return {
+    message: [
+      'Cyclic dependencies are unsupported.',
+      'However, there is no restriction on typings.'
+    ].join(' '),
+    startLineNumber: startLine,
+    startColumn: startCol,
+    endLineNumber: startLine,
+    endColumn: startCol + path.length + 2,
+    severity: 8,
+  };
+}
+
+export function isFileValid(file: FileState) {
+  return file.ext === 'scss' || (
+    file.transpiled?.type === 'js'
+    && !file.transpiled.cyclicDepError
+    && file.transpiled.src === file.contents
+  );
 }

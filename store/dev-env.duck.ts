@@ -4,7 +4,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
-import { panelKeyToAppElId, JsImportMeta, JsExportMeta, importPathsToFilenames, FileState, Transpilation, traverseDeps } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, JsImportMeta, JsExportMeta, importPathsToFilenames, FileState, Transpilation, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, filenameToModelKey, isFileValid } from '@model/code/dev-env.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
@@ -102,16 +102,12 @@ export const Thunk = {
   ),
   setupFileUpdateTranspile: createThunk(
     '[dev-env] setup file update/transpile',
-    ({ dispatch }, { editorKey, filename, modelKey }: {
-      editorKey: string;
-      filename: string;
-      modelKey: string;
-    }) => {
+    ({ dispatch }, { editorKey, filename }: { editorKey: string; filename: string }) => {
       const panelKey = dispatch(Thunk.filenameToPanelKey({ filename }))!;
       const updateCode = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
       const dA = dispatch(EditorThunk.trackModelChange({ do: updateCode, debounceMs: 500, editorKey }));
 
-      const transpileCode = () => dispatch(Thunk.tryTranspileModel({ filename, modelKey }));
+      const transpileCode = () => dispatch(Thunk.tryTranspileModel({ filename }));
       const dB = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, editorKey }));
       transpileCode(); // Initial transpile
 
@@ -122,8 +118,9 @@ export const Thunk = {
     '[dev-env] remember untranspiled imports',
     async ({ dispatch }, { filename, modelKey }: { filename: string; modelKey: string }) => {
       const { imports } = await dispatch(EditorThunk.computeImportExports({ filename, modelKey }));
-      const importPaths = imports.map(({ path: { value, start, startCol, startLine } }) =>
-        ({ path: value, start, startCol, startLine }));
+      const importPaths: UntranspiledImportPath[] = imports
+        .map(({ path: { value, start, startCol, startLine } }) =>
+          ({ path: value, start, startCol, startLine }));
       dispatch(Act.updateFile(filename, { importPaths }));
       console.log({ importPaths });
       return { importPaths };
@@ -131,10 +128,16 @@ export const Thunk = {
   ),
   tryTranspileModel: createThunk(
     '[dev-env] try transpile model',
-    async ({ dispatch }, { filename, modelKey }: {
+    async ({ dispatch, state: { devEnv } }, { filename, onlyIf }: {
       filename: string;
-      modelKey: string;
+      onlyIf?: 'valid' | 'invalid';
     }) => {
+      const isValid = isFileValid(devEnv.file[filename]);
+      if (onlyIf === 'valid' && !isValid || onlyIf === 'invalid' && isValid) {
+        return;
+      }
+
+      const modelKey = filenameToModelKey(filename);
       const transpiled = await dispatch(EditorThunk.transpileModel({ modelKey }));
       if (transpiled?.key === 'success') {
         await dispatch(Thunk.rememberSrcImports({ filename, modelKey }));
@@ -169,20 +172,13 @@ export const Thunk = {
           // Expect importPaths like ./foo-bar
           const { importPaths } = await dispatch(Thunk.rememberSrcImports({ filename, modelKey }));
           const badPaths = importPaths.filter(x => error.dependency.startsWith(x.path.slice(2)));
-
           dispatch(EditorThunk.setModelMarkers({
             modelKey,
-            markers: badPaths.map(({ path, startLine, startCol }) => ({
-              message: [
-                'Cyclic dependencies are unsupported,',
-                'although typings may be arbitrarily imported/exported.'
-              ].join(' '),
-              startLineNumber: startLine,
-              startColumn: startCol,
-              endLineNumber: startLine,
-              endColumn: startCol + path.length + 2,
-              severity: 8,
-            }))}));
+            markers: badPaths.map((importPath) => getCyclicDepMarker(importPath)),
+          }));
+          // Retranspile filename correspond to bad path(s)
+          // TODO prevent cycle!
+          dispatch(Thunk.tryTranspileModel({ filename: error.dependency, onlyIf: 'valid' }));
         }
       } else {
         // Don't show cyclic dependency error if transpile failed
@@ -320,13 +316,7 @@ const bootstrapAppInstances = createEpic(
     flatMap((act) => {
       const { file, panelToApp, tsAndTsxValid } = state$.value.devEnv;
       if (act.type === '[dev-env] store transpilation') {
-        if (Object.values(file).every(({ ext, contents, transpiled }) =>
-          ext === 'scss' || (
-            transpiled?.type === 'js'
-            && transpiled.src === contents
-            && !transpiled.cyclicDepError
-          )
-        )) {
+        if (Object.values(file).every((f) => isFileValid(f))) {
           // All code is valid so can bootstrap app
           return [Act.setTsAndTsxValidity(true),
             ...Object.values(panelToApp).map(({ key }) =>
@@ -392,11 +382,11 @@ const trackFilePanels = createEpic(
 const trackFileContents = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[editor] store monaco model'),
-    flatMap(({ pay: { model, filename, editorKey, modelKey } }) => {
+    flatMap(({ pay: { model, filename, editorKey } }) => {
       const { file } = state$.value.devEnv;
       if (file[filename]) {
         model.setValue(file[filename].contents);
-        return [Thunk.setupFileUpdateTranspile({ editorKey, filename, modelKey })];
+        return [Thunk.setupFileUpdateTranspile({ editorKey, filename })];
       }
       console.warn(`Ignored filename "${filename}" (untracked)`);
       return [];

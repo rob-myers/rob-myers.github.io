@@ -1,5 +1,5 @@
 import classNames from 'classnames';
-import { hasSupportedExtension } from '@model/code/dev-env.model';
+import { hasSupportedExtension, panelKeyToEditorKey, filenameToModelKey } from '@model/code/dev-env.model';
 import Editor from '@components/monaco/editor';
 
 // Used to fix TSX syntax highlighting of monaco editor.
@@ -13,12 +13,14 @@ const DevEditor: React.FC<Props> = ({ filename, panelKey }) => {
     <div className={css.editor}>
       {hasSupportedExtension(filename) && (
         <Editor
-          editorKey={`editor-${panelKey}`}
+          editorKey={panelKeyToEditorKey(panelKey)}
           filename={filename}
-          modelKey={`model-${filename}`}
+          modelKey={filenameToModelKey(filename)}
           width="100%"
           height="100%"
-          className={classNames({ 'monaco-tsx-editor': filename.endsWith('.tsx') })}
+          className={classNames({
+            'monaco-tsx-editor': filename.endsWith('.tsx'),
+          })}
         />
       )}
     </div>
