@@ -101,28 +101,21 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
         }
       });
 
-    // Detect when GoldenLayout has initialized
-    let initialized = false;
-    const onInitialized = () => (initialized = true)
-      && this.goldenLayoutInstance.off('initialised', onInitialized);
-    this.goldenLayoutInstance.on('initialised', onInitialized);
-
     // Detect changes to active stack, post-initialization
     this.goldenLayoutInstance.on('stackCreated', (stack: GoldenLayout.ContentItem) => {
       stack.on('activeContentItemChanged', (child: ExtendedContainer) => {
-        if (initialized) {
-          if (child.parent.contentItems.length === 1) {
-            return; // Ignore degenerate case where no siblings
-          }
-          // Find duplication button.
-          const { controlsContainer } = child.tab.header;
-          const [buttonEl] = controlsContainer.find('.lm_popout');
-          if (!buttonEl) {
-            return console.error('Expected \'.lm_popout\' inside stack\'s controlsContainer.');
-          }
-          this.removeDragSource(buttonEl); // Replace previous
-          this.createDragSource(buttonEl, child.config);
+
+        if (child.parent.contentItems.length === 1) {
+          return; // Ignore degenerate case where no siblings
         }
+        // Find duplication button
+        const { controlsContainer } = child.tab.header;
+        const [buttonEl] = controlsContainer.find('.lm_popout');
+        if (!buttonEl) {
+          return console.error('Expected \'.lm_popout\' inside stack\'s controlsContainer.');
+        }
+        this.removeDragSource(buttonEl); // Replace previous
+        this.createDragSource(buttonEl, child.config);
       });
     });
 
