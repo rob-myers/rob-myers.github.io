@@ -75,14 +75,14 @@ export interface FileState {
   /** Filename extension (suffix of `key`) */
   ext: 'tsx' | 'ts' | 'scss';
   /** Code intervals in untranspiled code used to indicate errors */
-  importPaths: UntranspiledImportPath[];
+  importIntervals: UntranspiledImportPath[];
   /** Last transpilation */
   transpiled: null | Transpilation;
   /** Can dispose model code/transpile trackers */
   cleanupTrackers: (() => void)[];
 }
 
-export type TranspiledFile = FileState & { transpiled: TranspiledJs };
+export type TranspiledJsFile = FileState & { transpiled: TranspiledJs };
 
 export type Transpilation = {
   src: string;
@@ -168,14 +168,30 @@ export function isFileValid(file: FileState) {
  * Stratify files by dependencies.
  * We've ensured they are non-cyclic and valid.
  */
-export function stratifyJsFiles(
-  jsFiles: (FileState & { transpiled: TranspiledJs })[],
-) {
-  const _permittedDeps = { react: true } as Record<string, true>;
-  const items = jsFiles.map(({ key, transpiled: { importFilenames } }) => ({
-    filename: key,
-    dependencies: importFilenames,
-  }));
+export function stratifyJsFiles(jsFiles: TranspiledJsFile[]) {
+  const stratification = [] as string[][];
+  const permittedDeps = { react: true } as Record<string, true>;
 
-  console.log({ preStratifyItems: items });
+  const lookup = jsFiles.reduce((agg, { key, transpiled: { importFilenames } }) => ({
+    ...agg, [key]: { filename: key, dependencies: importFilenames }
+  }), {} as Record<string, { filename: string; dependencies: string[] }>);
+  
+  let values = Object.values(lookup);
+
+  while (values.length) {
+    const level = values
+      .filter(({ dependencies, filename }) =>
+        dependencies.every(dep => dep === filename || dep in permittedDeps))
+      .map(({ filename }) => filename);
+    stratification.push(level);
+
+    level.forEach((filename) => {
+      delete lookup[filename];
+      permittedDeps[filename] = true;
+    });
+    values = Object.values(lookup);
+  }
+
+  console.log({ stratification });
+  return stratification;
 }
