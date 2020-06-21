@@ -82,6 +82,8 @@ export interface FileState {
   cleanupTrackers: (() => void)[];
 }
 
+export type TranspiledFile = FileState & { transpiled: TranspiledJs };
+
 export type Transpilation = {
   src: string;
   /** Transpiled code */
@@ -93,7 +95,7 @@ export type Transpilation = {
     type: 'js';
     exports: JsExportMeta[];
     imports: JsImportMeta[];
-    importPaths: string[];
+    importFilenames: string[];
     /** Is there a cyclic dependency in transpiled code? */
     cyclicDepError: null | CyclicDepError;
   }
@@ -123,13 +125,13 @@ export function traverseDeps(
 ): null | TraverseDepsError {
   if (maxDepth <= 0 || !f.transpiled) return null;
 
-  const { importPaths } = f.transpiled as TranspiledJs;
+  const { importFilenames } = f.transpiled as TranspiledJs;
   if (dependents[f.key]) {
     return { key: 'dep-cycle', dependent: f.key };
   }
 
-  for (const depPath of importPaths) {
-    const error = traverseDeps(file[depPath], file, dependents, maxDepth - 1);
+  for (const importFilename of importFilenames) {
+    const error = traverseDeps(file[importFilename], file, dependents, maxDepth - 1);
     if (error) return error;
   }
   return null;
@@ -160,4 +162,20 @@ export function isFileValid(file: FileState) {
     && !file.transpiled.cyclicDepError
     && file.transpiled.src === file.contents
   );
+}
+
+/**
+ * Stratify files by dependencies.
+ * We've ensured they are non-cyclic and valid.
+ */
+export function stratifyJsFiles(
+  jsFiles: (FileState & { transpiled: TranspiledJs })[],
+) {
+  const _permittedDeps = { react: true } as Record<string, true>;
+  const items = jsFiles.map(({ key, transpiled: { importFilenames } }) => ({
+    filename: key,
+    dependencies: importFilenames,
+  }));
+
+  console.log({ preStratifyItems: items });
 }

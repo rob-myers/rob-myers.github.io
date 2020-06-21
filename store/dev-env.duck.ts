@@ -4,7 +4,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
-import { panelKeyToAppElId, JsImportMeta, JsExportMeta, importPathsToFilenames, FileState, Transpilation, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, filenameToModelKey, isFileValid, CyclicDepError, TranspiledJs } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, JsImportMeta, JsExportMeta, importPathsToFilenames, FileState, Transpilation, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, filenameToModelKey, isFileValid, CyclicDepError, TranspiledJs, stratifyJsFiles, TranspiledFile } from '@model/code/dev-env.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
@@ -65,15 +65,52 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
-  /** Bootstrap an instance of the app */
   bootstrapApp: createThunk(
-    '[dev-env] bootstrap app instance',
+    '[dev-env] bootstrap app',
     (_, { panelKey }: { panelKey: string }) => {
       const el = document.getElementById(panelKeyToAppElId(panelKey));
       /**
        * TODO
        */
       console.log({ mountAppAt: el });
+    },
+  ),
+  bootstrapApps: createThunk(
+    '[dev-env] bootstrap apps',
+    ({ dispatch, state: { devEnv } }) => {
+      dispatch(Thunk.patchAllTranspiledJs({}));
+      for (const { key: panelKey } of Object.values(devEnv.panelToApp)) {
+        dispatch(Thunk.bootstrapApp({ panelKey }));
+      }
+    },
+  ),
+  /**
+   * Detect dependency cycles in transpiled js.
+   * We don't support them because we use blob urls for modules.
+   */
+  detectDependencyCycles: createThunk(
+    '[dev-env] check dependency cycles',
+    ({ state: { devEnv } }, { filename, imports }: {
+      filename: string;
+      imports: JsImportMeta[];
+    }): null | CyclicDepError => {
+      const filenames = Object.keys(devEnv.file);
+      const dependencyPaths = importPathsToFilenames(imports.map(({ path }) => path.value), filenames)
+        .filter((path) => path !== filename); // permit reflexive dependency e.g. alias
+      const dependencies = dependencyPaths.map(filename => devEnv.file[filename]);
+      const dependents = Object.values(devEnv.file)
+        .filter(({ key }) => key !== filename) // permit reflexive dependent e.g. alias
+        .filter(({ transpiled }) => transpiled?.type === 'js' && transpiled.importFilenames.includes(filename));
+      const dependentPaths = dependents.map(({ key }) => key);
+      console.log({ filename, dependencies: dependencyPaths, dependents: dependentPaths });
+
+      for (const dependencyFile of dependencies) {
+        const error = traverseDeps(dependencyFile, devEnv.file, lookupFromValues(dependents), filenames.length);
+        if (error) {
+          return { ...error, dependency: dependencyFile.key };
+        }
+      }
+      return null;
     },
   ),
   initialize: createThunk(
@@ -97,17 +134,18 @@ export const Thunk = {
       Object.entries(devEnv.panelToFile)
         .find(([_, { filename: f }]) => filename === f)?.[0] || null
   ),
-  setupFileUpdateTranspile: createThunk(
-    '[dev-env] setup file update/transpile',
-    ({ dispatch }, { editorKey, filename }: { editorKey: string; filename: string }) => {
-      const updateCode = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
-      const dA = dispatch(EditorThunk.trackModelChange({ do: updateCode, debounceMs: 500, editorKey }));
-
-      const transpileCode = () => dispatch(Thunk.tryTranspileModel({ filename }));
-      const dB = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, editorKey }));
-      transpileCode(); // Initial transpile
-
-      dispatch(Act.updateFile(filename, { cleanupTrackers: [() => dA.dispose(), () => dB.dispose()] }));
+  /** Patch import specifiers i.e. convert to blob urls */
+  patchAllTranspiledJs: createThunk(
+    '[dev-env] patch transpiled js',
+    ({ dispatch: _, state: { devEnv } }) => {
+      const jsFiles = Object.values(devEnv.file)
+        .filter(({ ext }) => ext === 'ts' || ext === 'tsx') as TranspiledFile[];
+      const _stratification = stratifyJsFiles(jsFiles);
+      /**
+       * TODO patch files and mount <script>'s in order induced by stratification
+       */
+      // const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: transpiled.transpiledJs }));
+      // console.log({ transpiled: patchedJs });
     },
   ),
   rememberSrcImports: createThunk(
@@ -120,6 +158,19 @@ export const Thunk = {
       dispatch(Act.updateFile(filename, { importPaths }));
       console.log({ importPaths });
       return { importPaths };
+    },
+  ),
+  setupFileUpdateTranspile: createThunk(
+    '[dev-env] setup file update/transpile',
+    ({ dispatch }, { editorKey, filename }: { editorKey: string; filename: string }) => {
+      const updateCode = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
+      const dA = dispatch(EditorThunk.trackModelChange({ do: updateCode, debounceMs: 500, editorKey }));
+
+      const transpileCode = () => dispatch(Thunk.tryTranspileModel({ filename }));
+      const dB = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, editorKey }));
+      transpileCode(); // Initial transpile
+
+      dispatch(Act.updateFile(filename, { cleanupTrackers: [() => dA.dispose(), () => dB.dispose()] }));
     },
   ),
   tryTranspileModel: createThunk(
@@ -135,80 +186,48 @@ export const Thunk = {
 
       const modelKey = filenameToModelKey(filename);
       const transpiled = await dispatch(EditorThunk.transpileModel({ modelKey }));
-      if (transpiled?.key === 'success') {
-        await dispatch(Thunk.rememberSrcImports({ filename, modelKey }));
-        /**
-         * TODO patch transpiled js using `imports`
-         */
-        const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: transpiled.transpiledJs }));
-        console.log({ transpiled: patchedJs });
 
-        const { imports, exports } = await dispatch(EditorThunk
-          .computeImportExports({ filename, code: transpiled.transpiledJs }));
-        const error = dispatch(Thunk.detectDependencyCycles({ filename, imports }));
-        const prevError = (devEnv.file[filename]?.transpiled as TranspiledJs)?.cyclicDepError || null;
-
-        dispatch(Thunk.updateTranspilation({
-          filename,
-          src: transpiled.src,
-          dst: patchedJs,
-          imports,
-          exports,
-          typings: transpiled.typings,
-          cyclicDepError: error,
-        }));
-
-        if (!error) {
-          dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
-          if (prevError) {// Retranspile invalid dependency
-            dispatch(Thunk.tryTranspileModel({ filename: prevError.dependency, onlyIf: 'invalid' }));
-          }
-        } else {
-          console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(error)}`);
-
-          // Expect importPaths like ./foo-bar
-          const { importPaths } = await dispatch(Thunk.rememberSrcImports({ filename, modelKey }));
-          const badPaths = importPaths.filter(x => error.dependency.startsWith(x.path.slice(2)));
-          dispatch(EditorThunk.setModelMarkers({
-            modelKey,
-            markers: badPaths.map((importPath) => getCyclicDepMarker(importPath)),
-          }));
-          // Retranspile cyclic dependency if currently valid
-          // NOTE ignoring other invalid files in cycle
-          dispatch(Thunk.tryTranspileModel({ filename: error.dependency, onlyIf: 'valid' }));
-        }
-      } else {// Don't show cyclic dependency error if transpile failed
+      if (transpiled.key !== 'success') {
+        // Don't show cyclic dependency error if transpile failed
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
+        return ;
       }
-    },
-  ),
-  /**
-   * Detect dependency cycles in transpiled js.
-   * We don't support them because we use blob urls for modules.
-   */
-  detectDependencyCycles: createThunk(
-    '[dev-env] check dependency cycles',
-    ({ state: { devEnv } }, { filename, imports }: {
-      filename: string;
-      imports: JsImportMeta[];
-    }): null | CyclicDepError => {
-      const filenames = Object.keys(devEnv.file);
-      const dependencyPaths = importPathsToFilenames(imports.map(({ path }) => path.value), filenames)
-        .filter((path) => path !== filename); // permit reflexive dependency e.g. alias
-      const dependencies = dependencyPaths.map(filename => devEnv.file[filename]);
-      const dependents = Object.values(devEnv.file)
-        .filter(({ key }) => key !== filename) // permit reflexive dependent e.g. alias
-        .filter(({ transpiled }) => transpiled?.type === 'js' && transpiled.importPaths.includes(filename));
-      const dependentPaths = dependents.map(({ key }) => key);
-      console.log({ filename, dependencies: dependencyPaths, dependents: dependentPaths });
 
-      for (const dependencyFile of dependencies) {
-        const error = traverseDeps(dependencyFile, devEnv.file, lookupFromValues(dependents), filenames.length);
-        if (error) {
-          return { ...error, dependency: dependencyFile.key };
-        }
+      await dispatch(Thunk.rememberSrcImports({ filename, modelKey }));
+
+      const { imports, exports } = await dispatch(EditorThunk
+        .computeImportExports({ filename, code: transpiled.transpiledJs }));
+      const error = dispatch(Thunk.detectDependencyCycles({ filename, imports }));
+      const prevError = (devEnv.file[filename]?.transpiled as TranspiledJs)?.cyclicDepError || null;
+
+      dispatch(Thunk.updateTranspilation({
+        filename,
+        src: transpiled.src,
+        dst: transpiled.transpiledJs, // Unpatched code
+        imports,
+        exports,
+        typings: transpiled.typings,
+        cyclicDepError: error,
+      }));
+
+      if (!error) {
+        dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
+        // Retranspile invalid dependency
+        prevError && dispatch(Thunk.tryTranspileModel({ filename: prevError.dependency, onlyIf: 'invalid' }));
+      } else {
+        console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(error)}`);
+
+        // Expect importPaths like ./foo-bar
+        const { importPaths } = await dispatch(Thunk.rememberSrcImports({ filename, modelKey }));
+        const badPaths = importPaths.filter(x => error.dependency.startsWith(x.path.slice(2)));
+        dispatch(EditorThunk.setModelMarkers({
+          modelKey,
+          markers: badPaths.map((importPath) => getCyclicDepMarker(importPath)),
+        }));
+        // Retranspile cyclic dependency if currently valid
+        dispatch(Thunk.tryTranspileModel({ filename: error.dependency, onlyIf: 'valid' }));
       }
-      return null;
+
     },
   ),
   unmountApp: createThunk(
@@ -236,8 +255,8 @@ export const Thunk = {
       const typesFilename = filename.replace(/\.tsx?$/, '.d.ts');
       const disposable = dispatch(EditorThunk.addTypings({ filename: typesFilename, typings: rest.typings }));
       const cleanups = [() => disposable.dispose()];
-      const importPaths = importPathsToFilenames(rest.imports.map(({ path }) => path.value), Object.keys(devEnv.file));
-      dispatch(Act.storeTranspilation(filename, { type: 'js', ...rest, cleanups, importPaths }));
+      const importFilenames = importPathsToFilenames(rest.imports.map(({ path }) => path.value), Object.keys(devEnv.file));
+      dispatch(Act.storeTranspilation(filename, { type: 'js', ...rest, cleanups, importFilenames }));
     },
   ),
 };
@@ -307,13 +326,14 @@ const bootstrapAppInstances = createEpic(
       '[dev-env] forget app panel',
     ),
     flatMap((act) => {
-      const { file, panelToApp, tsAndTsxValid } = state$.value.devEnv;
+      const { file, tsAndTsxValid } = state$.value.devEnv;
       if (act.type === '[dev-env] store transpilation') {
         if (Object.values(file).every((f) => isFileValid(f))) {
           // All code is valid so can bootstrap app
-          return [Act.setTsAndTsxValidity(true),
-            ...Object.values(panelToApp).map(({ key }) =>
-              Thunk.bootstrapApp({ panelKey: key }))];
+          return [
+            Act.setTsAndTsxValidity(true),
+            Thunk.bootstrapApps({}),
+          ];
         } else if (tsAndTsxValid) {
           return [Act.setTsAndTsxValidity(false)];
         }
