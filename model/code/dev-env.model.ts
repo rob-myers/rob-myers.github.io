@@ -32,6 +32,10 @@ export function filenameToModelKey(filename: string) {
   return `model-${filename}`;
 }
 
+export function filenameToScriptId(filename: string) {
+  return `esm-script-${filename}`;
+}
+
 export interface FileState {
   /** Filename */
   key: string;
@@ -45,11 +49,7 @@ export interface FileState {
   transpiled: null | Transpilation;
   /** Can dispose model code/transpile trackers */
   cleanupTrackers: (() => void)[];
-  /**
-   * Actual code inside <script> or <style>.
-   * For js this is `transpiled.dst` with import specifiers replaced by blob urls.
-   */
-  patchedCode: null | string;
+  esm: null | FileEsm;
 }
 
 export type TranspiledJsFile = FileState & { transpiled: TranspiledJs };
@@ -74,6 +74,15 @@ export type Transpilation = {
 )
 
 export type TranspiledJs = Extract<Transpilation, { type: 'js' }>;
+
+export interface FileEsm {
+  /**
+   * Actual code inside <script> i.e. `transpiled.dst`
+   * with import specifiers replaced by blob urls.
+   */
+  patchedCode: string;
+  blobUrl: string;
+}
 
 export function isFileValid(file: FileState) {
   return file.ext === 'scss' || (

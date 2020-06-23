@@ -1,6 +1,8 @@
 # Local
 
-- [ ] patch import specifiers of transpiled js
+- [ ] add home icon returning to `/`
+- [ ] mount/unmount es modules via `<script>`s
+- [x] patch import specifiers of transpiled js
 - [ ] fix sporadic bug: drag indicator corresponds to open file
 - [x] move code/transpile disposables into `FileState`
 - [x] recover from cyclic dependency via transpile invalid dependency

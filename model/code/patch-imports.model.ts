@@ -1,6 +1,6 @@
 import { KeyedLookup } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { FileState, TranspiledJs, TranspiledJsFile } from './dev-env.model';
+import { FileState, TranspiledJs, TranspiledJsFile, FileEsm } from './dev-env.model';
 
 export interface JsImportMeta {
   type: 'import-decl';
@@ -126,9 +126,8 @@ export function patchTranspilations(
   jsFile: KeyedLookup<TranspiledJsFile>,
   stratification: string[][],
 ) {
-  const filenameToBlobUrl = {} as Record<string, string>;
   const jsFilenames = Object.keys(jsFile);
-  const filenameToPatchedCode = {} as Record<string, string>;
+  const filenameToPatched = {} as Record<string, FileEsm>;
 
   for (const level of stratification) {
     for (const filename of level) {
@@ -136,24 +135,23 @@ export function patchTranspilations(
       const patchedCode = patchTranspiledCode(
         transpiled.dst,
         transpiled.imports,
-        filenameToBlobUrl,
+        filenameToPatched, // Only need the blobUrls
         jsFilenames,
       );
-      filenameToPatchedCode[filename] = patchedCode;
       const blob = new Blob([patchedCode], { type: 'text/javascript' });
-      const url = URL.createObjectURL(blob);
-      filenameToBlobUrl[filename] = url;
+      const blobUrl = URL.createObjectURL(blob);
+      filenameToPatched[filename] = { patchedCode, blobUrl };
       console.log({ patchedCode });
     }
   }
 
-  return filenameToPatchedCode;
+  return filenameToPatched;
 }
 
 function patchTranspiledCode(
   transpiledCode: string,
   importMetas: JsImportMeta[],
-  filenameToBlobUrl: Record<string, string>,
+  filenameToPatched: Record<string, FileEsm>,
   jsFilenames: string[],
 ): string {
   let offset = 0, next: string;
@@ -163,8 +161,8 @@ function patchTranspiledCode(
     const filename = relPathToFilename(value, jsFilenames);
     if (value === 'react') {
       next = `${window.location.origin}/es-react/react.js`;
-    } else if (filename && filenameToBlobUrl[filename]) {
-      next = filenameToBlobUrl[filename];
+    } else if (filename && filenameToPatched[filename]) {
+      next = filenameToPatched[filename].blobUrl;
     } else {
       throw Error(`Unexpected import meta ${JSON.stringify(importMeta)}`);
     }

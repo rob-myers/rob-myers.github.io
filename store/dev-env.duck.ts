@@ -4,7 +4,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, Transpilation, filenameToModelKey, TranspiledJs, TranspiledJsFile, isFileValid, getReachableJsFiles } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, Transpilation, filenameToModelKey, TranspiledJs, TranspiledJsFile, isFileValid, getReachableJsFiles, filenameToScriptId } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, importPathsToFilenames, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspilations, relPathToFilename } from '@model/code/patch-imports.model';
 
 import { filterActs } from './reducer';
@@ -80,9 +80,12 @@ export const Thunk = {
     '[dev-env] bootstrap apps',
     ({ dispatch, state: { devEnv } }) => {
       dispatch(Thunk.patchAllTranspiledJs({}));
-      /**
-       * TODO mount <script>'s
-       */
+      const jsFiles = getReachableJsFiles(devEnv.file);
+      for (const { key: filename } of jsFiles) {
+        const elId = filenameToScriptId(filename);
+        document.getElementById(elId)?.remove();
+        // TODO append <script> using patchedCode
+      }
       for (const { key: panelKey } of Object.values(devEnv.panelToApp)) {
         dispatch(Thunk.bootstrapApp({ panelKey }));
       }
@@ -145,8 +148,8 @@ export const Thunk = {
       const jsFiles = getReachableJsFiles(devEnv.file) as TranspiledJsFile[];
       const stratification = stratifyJsFiles(jsFiles);
       const filenameToPatched = patchTranspilations(lookupFromValues(jsFiles), stratification);
-      for (const [filename, patchedCode] of Object.entries(filenameToPatched)) {
-        dispatch(Act.updateFile(filename, { patchedCode }));
+      for (const [filename, { patchedCode, blobUrl }] of Object.entries(filenameToPatched)) {
+        dispatch(Act.updateFile(filename, { esm: { patchedCode, blobUrl } }));
       }
     },
   ),
@@ -280,7 +283,7 @@ export const reducer = (state = initialState, act: Action): State => {
         transpiled: null,
         importIntervals: [],
         cleanupTrackers: [],
-        patchedCode: null,
+        esm: null,
       }, state.file),
     };
     case '[dev-env] remove file': return { ...state,
