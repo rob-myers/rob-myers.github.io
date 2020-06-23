@@ -28,7 +28,7 @@ export const DevMenu = () => {
         <div className={classNames(css.controls, {
           [css.controlsDisabled]: loadingMonaco || disabled,
         })}>
-          <Link href="/"><a>🏠</a></Link>
+          <Link href="/"><a className={css.houseIcon}>🏠</a></Link>
         </div>
       </div>
       <div className={css.content} />
