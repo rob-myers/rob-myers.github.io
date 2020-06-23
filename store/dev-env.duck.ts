@@ -1,16 +1,18 @@
 import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
+import { ReactDOM } from '../public/es-react'; // Runtime react
+
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
 import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
 import { panelKeyToAppElId, FileState, Transpilation, filenameToModelKey, TranspiledJs, TranspiledJsFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, importPathsToFilenames, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspilations, relPathToFilename } from '@model/code/patch-imports.model';
+import { getBootstrapAppCode } from '@model/code/bootstrap';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
-import { getBootstrapAppCode } from '@model/code/bootstrap';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -71,7 +73,6 @@ export const Thunk = {
     '[dev-env] bootstrap app',
     ({ state: { devEnv } }, { panelKey }: { panelKey: string }) => {
       const appInstanceElId = panelKeyToAppElId(panelKey);
-      const el = document.getElementById(appInstanceElId);
       const { blobUrl: appBlobUrl } = devEnv.file['index.tsx'].esm!;
       
       const bootstrapCode = getBootstrapAppCode(appBlobUrl, appInstanceElId);
@@ -80,7 +81,7 @@ export const Thunk = {
       
       const bootstrapScriptId = panelKeyToAppScriptId(panelKey);
       appendEsmModule({ scriptId: bootstrapScriptId, scriptSrcUrl: bootstrapUrl });
-      console.log({ mountedAppAt: el });
+      // console.log({ mountedAppAt: document.getElementById(appInstanceElId) });
     },
   ),
   bootstrapApps: createThunk(
@@ -90,8 +91,10 @@ export const Thunk = {
       const { devEnv } = getState();
       const jsFiles = getReachableJsFiles(devEnv.file).reverse();
       for (const { key: filename, esm } of jsFiles) {
-        const elId = filenameToScriptId(filename);
-        appendEsmModule({ scriptId: elId, scriptSrcUrl: esm!.blobUrl });
+        appendEsmModule({
+          scriptId: filenameToScriptId(filename),
+          scriptSrcUrl: esm!.blobUrl,
+        });
       }
       for (const { key: panelKey } of Object.values(devEnv.panelToApp)) {
         dispatch(Thunk.bootstrapApp({ panelKey }));
@@ -251,11 +254,12 @@ export const Thunk = {
   unmountApp: createThunk(
     '[dev-env] unmount app instance',
     (_, { panelKey }: { panelKey: string }) => {
+      // Remove bootstrap script
+      document.getElementById(panelKeyToAppScriptId(panelKey))?.remove();
+      // Unmount react app
       const el = document.getElementById(panelKeyToAppElId(panelKey));
-      /**
-       * TODO
-       */
-      console.log({ unmountAppAt: el });
+      el && ReactDOM.unmountComponentAtNode(el);
+      // console.log({ unmountedAppAt: el });
     },
   ),
   updateTranspilation: createThunk(
@@ -389,7 +393,10 @@ const initializeMonacoModels = createEpic(
 
 const trackFilePanels = createEpic(
   (action$, state$) => action$.pipe(
-    filterActs('[layout] panel created', '[layout] panel closed'),
+    filterActs(
+      '[layout] panel created',
+      '[layout] panel closed',
+    ),
     filter((act) => act.type === '[layout] panel created'
       ? !!act.pay.panelMeta.filename : true),
     flatMap((act) => {
@@ -426,12 +433,12 @@ const trackFileContents = createEpic(
 const togglePanelMenuEpic = createEpic(
   (action$, _state$) => action$.pipe(
     filterActs('[layout] clicked panel title'),
-    map(({ args: { panelKey } }) => {
+    flatMap(({ args: { panelKey } }) => {
       console.log({ detectedTitleClick: panelKey });
       /**
        * TODO
        */
-      return { type: 'fake' } as any;
+      return [];
     }),
   ),
 );
