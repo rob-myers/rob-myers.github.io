@@ -62,6 +62,7 @@ export interface FileState {
   transpiled: null | Transpilation;
   /** Can dispose model code/transpile trackers */
   cleanupTrackers: (() => void)[];
+  /** es module */
   esm: null | FileEsm;
 }
 

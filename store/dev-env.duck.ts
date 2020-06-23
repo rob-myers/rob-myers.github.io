@@ -180,12 +180,12 @@ export const Thunk = {
   ),
   setupFileUpdateTranspile: createThunk(
     '[dev-env] setup file update/transpile',
-    ({ dispatch }, { editorKey, filename }: { editorKey: string; filename: string }) => {
+    ({ dispatch }, { modelKey, filename }: { modelKey: string; filename: string }) => {
       const updateCode = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
-      const dA = dispatch(EditorThunk.trackModelChange({ do: updateCode, debounceMs: 500, editorKey }));
+      const dA = dispatch(EditorThunk.trackModelChange({ do: updateCode, debounceMs: 500, modelKey }));
 
       const transpileCode = () => dispatch(Thunk.tryTranspileModel({ filename }));
-      const dB = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, editorKey }));
+      const dB = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, modelKey }));
       transpileCode(); // Initial transpile
 
       dispatch(Act.updateFile(filename, { cleanupTrackers: [() => dA.dispose(), () => dB.dispose()] }));
@@ -230,6 +230,7 @@ export const Thunk = {
 
       if (!error) {
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
+
         if (prevError) {// Just recovered from cyclic dependency
           dispatch(Thunk.tryTranspileModel({ filename: prevError.dependency, onlyIf: 'invalid' }));
         }
@@ -377,13 +378,11 @@ const initializeMonacoModels = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[editor] set monaco loaded'),
     filter(({ pay: { loaded } }) => loaded),
+    // NOTE turning off diagnostics causes initial tryTranspileModel to hang
     flatMap(() => [
-      // NOTE turning off diagnostics causes initial tryTranspileModel to hang
-      // EditorThunk.setTypescriptDiagnostics({ mode: 'off' }),
       ...Object.values(state$.value.devEnv.file).flatMap((file) => [
         EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
       ]),
-      // EditorThunk.setTypescriptDiagnostics({ mode: 'on' }),
     ]),
   ),
 );
@@ -412,11 +411,11 @@ const trackFilePanels = createEpic(
 const trackFileContents = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[editor] store monaco model'),
-    flatMap(({ pay: { model, filename, editorKey } }) => {
+    flatMap(({ pay: { model, filename, modelKey } }) => {
       const { file } = state$.value.devEnv;
       if (file[filename]) {
         model.setValue(file[filename].contents);
-        return [Thunk.setupFileUpdateTranspile({ editorKey, filename })];
+        return [Thunk.setupFileUpdateTranspile({ modelKey, filename })];
       }
       console.warn(`Ignored filename "${filename}" (untracked)`);
       return [];

@@ -75,7 +75,11 @@ const persistedReducer = persistReducer({
       ({ file }, _key) => ({
         // Remember files but forget transpilation (& cleanups)
         file: Object.values(file).reduce((agg, item) => ({ ...agg,
-          [item.key]: { ...item, transpiled: null },
+          [item.key]: {
+            ...item,
+            transpiled: null,
+            esm: null,
+          },
         }), {} as DevEnvState['file']),
         initialized: false,
         panelToFile: {},

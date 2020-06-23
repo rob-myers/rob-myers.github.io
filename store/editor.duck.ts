@@ -13,6 +13,7 @@ import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/wor
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
 import { filterActs } from './reducer';
+import { filenameToModelKey } from '@model/code/dev-env.model';
 
 
 export interface State {
@@ -38,7 +39,6 @@ interface EditorInstance {
 }
 interface ModelInstance {
   key: string;
-  editorKey: string | null;
   model: Redacted<IMonacoTextModel>;
   filename: string;
   uri: Redacted<Uri>;
@@ -77,7 +77,6 @@ export const Act = {
   setMonacoLoading: (loading: boolean) =>
     createAct('[editor] set monaco loading', { loading }),
   storeMonacoModel: (input: {
-    editorKey: string;
     modelKey: string;
     model: Redacted<IMonacoTextModel>;
     filename: string;
@@ -147,7 +146,7 @@ export const Thunk = {
       if (!e.model[modelKey]) {
         model.updateOptions({ tabSize: 2, indentSize: 2, trimAutoWhitespace: true });
         const uri = redact(e.internal!.monaco.Uri.parse(`file:///${filename}`));
-        dispatch(Act.storeMonacoModel({ model, modelKey, editorKey, filename, uri }));
+        dispatch(Act.storeMonacoModel({ model, modelKey, filename, uri }));
       }
 
       if (!e.syntaxWorker) {
@@ -172,12 +171,24 @@ export const Thunk = {
   ),
   ensureMonacoModel: createThunk(
     '[editor] ensure monaco model',
-    ({ state: { editor } }, { filename, code }: { filename: string; code: string }) => {
-      const { monaco } = editor.internal!;
+    ({ state: { editor }, dispatch }, { filename, code }: { filename: string; code: string }) => {
+      const { internal, model: m } = editor;
+      const { monaco } = internal!;
       /** Note the additional prefix file:/// */
       const uri = monaco.Uri.parse(`file:///${filename}`);
-      return monaco.editor.getModel(uri)
-        || monaco.editor.createModel(code, undefined, uri);
+      const model = monaco.editor.getModel(uri) || monaco.editor.createModel(code, undefined, uri);
+      
+      // Ensure model is stored in the state
+      const modelKey = filenameToModelKey(filename);
+      if (!(modelKey in m)) {
+        dispatch(Act.storeMonacoModel({
+          modelKey,
+          model: redact(model),
+          filename,
+          uri: redact(uri),
+        }));
+      }
+      return model;
     },
   ),
   /** Ensures types associated to globals */
@@ -203,30 +214,24 @@ export const Thunk = {
   /** Execute a debounced action whenever editor model changes. */
   trackModelChange: createThunk(
     '[editor] on model change',
-    ({ state: { editor: { editor } } }, { do: act, editorKey, debounceMs }: {
+    ({ state: { editor: { model } } }, { do: act, modelKey, debounceMs }: {
       do: (newValue: string) => void;
       debounceMs: number; 
-      editorKey: string;
+      modelKey: string;
     }) => {
       let debounceId: number;
-      return editor[editorKey]?.editor.onDidChangeModelContent((_event) => {
+      return model[modelKey]?.model.onDidChangeContent((_event) => {
         window.clearTimeout(debounceId);
-        const newValue = editor[editorKey].editor.getValue();
+        const newValue = model[modelKey].model.getValue();
         debounceId = window.setTimeout(() => act(newValue), debounceMs);
       });
     },
   ),
   removeMonacoEditor: createThunk(
     '[editor] remove monaco editor',
-    ({ dispatch, state: { editor: { editor, model: monacoModel } }}, { editorKey }: { editorKey: string }) => {
+    ({ dispatch, state: { editor: { editor } }}, { editorKey }: { editorKey: string }) => {
       editor[editorKey].cleanups.forEach(cleanup => cleanup());
-      dispatch(Act.update({
-        editor: removeFromLookup(editorKey, editor),
-        // Remove stale editorKey for extant models
-        model: Object.entries(monacoModel).reduce((agg, [key, value]) => ({ ...agg,
-          [key]: { ...value, ...(value.editorKey === editorKey && { editorKey: null }) },
-        }), {} as State['model']),
-      }));
+      dispatch(Act.update({ editor: removeFromLookup(editorKey, editor) }));
     },
   ),
   removeMonacoModel: createThunk(
@@ -367,7 +372,7 @@ export const Thunk = {
     }) => {
       if (editor[editorKey]) {
         const uri = redact(internal!.monaco.Uri.parse(`file:///${filename}`));
-        dispatch(Act.storeMonacoModel({ editorKey, modelKey, model: redact(model), filename, uri }));
+        dispatch(Act.storeMonacoModel({ modelKey, model: redact(model), filename, uri }));
         editor[editorKey].editor.setModel(model);
       }
     },
@@ -407,7 +412,6 @@ export const reducer = (state = initialState, act: Action): State => {
       model: addToLookup({
         key: act.pay.modelKey,
         model: act.pay.model,
-        editorKey: act.pay.editorKey,
         filename: act.pay.filename,
         uri: act.pay.uri,
       }, state.model),
