@@ -33,6 +33,9 @@ export default App;
 export const exampleTsx3 = `
 import * as React from 'react';
 
+import { baz } from './model';
+console.log({ baz })
+
 interface ItemProps {
   id: number;
   remove: () => void;
@@ -50,7 +53,7 @@ const Item: React.FC<ItemProps> = (props) => (
 export const App: React.FC = () => {
   const [items, setItems] = React.useState([...Array(10)].map((_, i) => i));
   return (
-    <div style={{ padding: 10 }}>
+    <div style={{ padding: 20 }}>
       {items.map(x => (
         <Item
           id={x}

@@ -18,7 +18,7 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
       id={panelKeyToAppElId(panelKey)}
       style={{ padding: 8, color: 'white' }}
     >
-      App ({panelKey})
+      App not mounted
     </div>
   );
 };
