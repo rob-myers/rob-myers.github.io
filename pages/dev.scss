@@ -9,31 +9,47 @@
     border: 1px solid #222;
     border-width: 4px 1px;
 
-    .logo {
+    .toolbar {
       display: flex;
-      align-items: center;
-      padding: 0 8px;
+      width: 100%;
 
-      font-family: "Courier New", Courier, monospace;
-      font-size: 14px;
-      color: #fff;
+      .logo {
+        display: flex;
+        align-items: center;
+        padding: 0 8px;
 
-      background-image: linear-gradient(
-        135deg,
-        #111111 40%,
-        #333333 40%,
-        #333333 50%,
-        #111111 50%,
-        #111111 90%,
-        #333333 90%,
-        #333333 100%
-      );
-      background-size: 5.07px 5.07px;
-      border: 0px solid #222;
-      border-right-width: 2px;
+        font-family: "Courier New", Courier, monospace;
+        font-size: 14px;
+        color: #fff;
 
-      span {
-        color: #888;
+        background-image: linear-gradient(
+          135deg,
+          #111111 40%,
+          #333333 40%,
+          #333333 50%,
+          #111111 50%,
+          #111111 90%,
+          #333333 90%,
+          #333333 100%
+        );
+        background-size: 5.07px 5.07px;
+        border: 0px solid #222;
+        border-right-width: 2px;
+
+        span {
+          color: #888;
+        }
+      }
+
+      .controls {
+        display: flex;
+        width: 100%;
+        justify-content: flex-end;
+        align-items: center;
+
+        a {
+          text-decoration: none;
+        }
       }
     }
 

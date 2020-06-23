@@ -1,7 +1,8 @@
 # Local
 
-- [ ] ensure initial mount without opening unseen files
-- [ ] add home icon returning to `/`
+- [ ] permit css module import from `scss`
+- [x] ensure initial mount without opening unseen files
+- [x] add home icon returning to `/`
 - [x] mount/unmount es modules via `<script>`s
 - [x] patch import specifiers of transpiled js
 - [ ] fix sporadic bug: drag indicator corresponds to open file

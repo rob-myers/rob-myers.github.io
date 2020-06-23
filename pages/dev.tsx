@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import Link from 'next/link';
 import ConnectedLayout from '@components/golden-layout/connected-layout';
 import css from './dev.scss';
 
@@ -11,8 +12,13 @@ const DevEnvPage: React.FC = () => {
   return (
     <div className={css.root}>
       <div className={css.menu} style={{ height: menuHeightPx }}>
-        <div className={css.logo}>
-          com<span>(</span>mit<span>|</span>ment<span>)</span>
+        <div className={css.toolbar}>
+          <div className={css.logo}>
+            com<span>(</span>mit<span>|</span>ment<span>)</span>
+          </div>
+          <div className={css.controls}>
+            <Link href="/"><a>🏠</a></Link>
+          </div>
         </div>
         <div className={css.content} />
       </div>
