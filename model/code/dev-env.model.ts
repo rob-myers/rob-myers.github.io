@@ -1,6 +1,8 @@
 import { CyclicDepError, UntranspiledImportPath, JsExportMeta, JsImportMeta } from './patch-imports.model';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 
+export const menuHeightPx = 32;
+
 const supportedFileMetas = [
   { filenameExt: '.tsx', panelKeyPrefix: 'tsx' },
   { filenameExt: '.scss', panelKeyPrefix: 'scss'},

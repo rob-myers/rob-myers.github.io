@@ -1,9 +1,8 @@
 import { useSelector } from 'react-redux';
-import Link from 'next/link';
 import ConnectedLayout from '@components/golden-layout/connected-layout';
+import { DevMenu } from '@components/dev-env/dev-menu';
 import css from './dev.scss';
-
-const menuHeightPx = 32;
+import { menuHeightPx } from '@model/code/dev-env.model';
 
 const DevEnvPage: React.FC = () => {
   const loadingMonaco = useSelector(({ editor: { monacoLoading } }) => monacoLoading);
@@ -11,17 +10,7 @@ const DevEnvPage: React.FC = () => {
 
   return (
     <div className={css.root}>
-      <div className={css.menu} style={{ height: menuHeightPx }}>
-        <div className={css.toolbar}>
-          <div className={css.logo}>
-            com<span>(</span>mit<span>|</span>ment<span>)</span>
-          </div>
-          <div className={css.controls}>
-            <Link href="/"><a>🏠</a></Link>
-          </div>
-        </div>
-        <div className={css.content} />
-      </div>
+      <DevMenu />
       <ConnectedLayout
         width="100vw"
         height={`calc(100vh - ${menuHeightPx}px)`}
