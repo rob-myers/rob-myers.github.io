@@ -4,7 +4,8 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
-import { panelKeyToAppElId, JsImportMeta, JsExportMeta, importPathsToFilenames, FileState, Transpilation, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, filenameToModelKey, isFileValid, CyclicDepError, TranspiledJs, stratifyJsFiles, TranspiledJsFile } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, Transpilation, filenameToModelKey, TranspiledJs, TranspiledJsFile, isFileValid, getReachableJsFiles } from '@model/code/dev-env.model';
+import { JsImportMeta, JsExportMeta, importPathsToFilenames, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspilations, relPathToFilename } from '@model/code/patch-imports.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
@@ -79,13 +80,16 @@ export const Thunk = {
     '[dev-env] bootstrap apps',
     ({ dispatch, state: { devEnv } }) => {
       dispatch(Thunk.patchAllTranspiledJs({}));
+      /**
+       * TODO mount <script>'s
+       */
       for (const { key: panelKey } of Object.values(devEnv.panelToApp)) {
         dispatch(Thunk.bootstrapApp({ panelKey }));
       }
     },
   ),
   /**
-   * Detect dependency cycles in transpiled js.
+   * Detect dependency cycles in transpiled js, including reflexive.
    * We don't support them because we use blob urls for modules.
    */
   detectDependencyCycles: createThunk(
@@ -95,14 +99,15 @@ export const Thunk = {
       imports: JsImportMeta[];
     }): null | CyclicDepError => {
       const filenames = Object.keys(devEnv.file);
-      const dependencyPaths = importPathsToFilenames(imports.map(({ path }) => path.value), filenames)
-        .filter((path) => path !== filename); // permit reflexive dependency (alias)
+      const dependencyPaths = importPathsToFilenames(imports.map(({ path }) => path.value), filenames);
       const dependencies = dependencyPaths.map(filename => devEnv.file[filename]);
       const dependents = Object.values(devEnv.file)
-        .filter(({ key }) => key !== filename) // permit reflexive dependent (alias)
         .filter(({ transpiled }) => transpiled?.type === 'js' && transpiled.importFilenames.includes(filename));
       // console.log({ filename, dependencies: dependencyPaths, dependents: dependents.map(({ key }) => key) });
 
+      if (dependencyPaths.includes(filename)) {// Reflexive
+        return { key: 'dep-cycle', dependency: filename, dependent: filename };
+      }
       for (const dependencyFile of dependencies) {
         const error = traverseDeps(dependencyFile, devEnv.file, lookupFromValues(dependents), filenames.length);
         if (error) {
@@ -137,24 +142,28 @@ export const Thunk = {
   patchAllTranspiledJs: createThunk(
     '[dev-env] patch transpiled js',
     ({ dispatch: _, state: { devEnv } }) => {
-      const jsFiles = Object.values(devEnv.file)
-        .filter(({ ext }) => ext === 'ts' || ext === 'tsx') as TranspiledJsFile[];
-      const _stratification = stratifyJsFiles(jsFiles);
+      const jsFiles = getReachableJsFiles(devEnv.file) as TranspiledJsFile[];
+      const stratification = stratifyJsFiles(jsFiles);
+      const _result = patchTranspilations(lookupFromValues(jsFiles), stratification);
       /**
-       * TODO patch files and mount <script>'s in stratification order
+       * TODO store patches in state
        */
-      // const patchedJs = dispatch(EditorThunk.patchTranspiledImports({ js: transpiled.transpiledJs }));
-      // console.log({ transpiled: patchedJs });
     },
   ),
   rememberSrcImports: createThunk(
     '[dev-env] remember untranspiled imports',
-    async ({ dispatch }, { filename, modelKey }: { filename: string; modelKey: string }) => {
+    async ({ dispatch, state: { devEnv } }, { filename, modelKey }: { filename: string; modelKey: string }) => {
       const { imports } = await dispatch(EditorThunk.computeImportExports({ filename, modelKey }));
+      const filenames = Object.keys(devEnv.file);
       const importIntervals: UntranspiledImportPath[] = imports
-        .map(({ path: { value, start, startCol, startLine } }) =>
-          ({ path: value, start, startCol, startLine }));
-      dispatch(Act.updateFile(filename, { importIntervals: importIntervals }));
+        .map(({ path: { value, start, startCol, startLine } }) => ({
+          path: value,
+          start, startCol, startLine,
+          filename: value === 'react'
+            ? null
+            : relPathToFilename(value, filenames) || null,
+        }));
+      dispatch(Act.updateFile(filename, { importIntervals }));
       console.log({ importIntervals });
       return { importIntervals };
     },
@@ -178,6 +187,7 @@ export const Thunk = {
       filename: string;
       onlyIf?: 'valid' | 'invalid';
     }) => {
+      // Can specifiy whether should be valid/invalid to break cycles
       const isValid = isFileValid(devEnv.file[filename]);
       if (onlyIf === 'valid' && !isValid || onlyIf === 'invalid' && isValid) {
         return;
@@ -185,14 +195,13 @@ export const Thunk = {
 
       const modelKey = filenameToModelKey(filename);
       const transpiled = await dispatch(EditorThunk.transpileModel({ modelKey }));
-
       if (transpiled.key !== 'success') {
         // Don't show cyclic dependency error if transpile failed
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
-        return ;
+        return;
       }
 
-      await dispatch(Thunk.rememberSrcImports({ filename, modelKey }));
+      const { importIntervals } = await dispatch(Thunk.rememberSrcImports({ filename, modelKey }));
 
       const { imports, exports } = await dispatch(EditorThunk
         .computeImportExports({ filename, code: transpiled.transpiledJs }));
@@ -211,13 +220,13 @@ export const Thunk = {
 
       if (!error) {
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
-        // Retranspile invalid dependency
-        prevError && dispatch(Thunk.tryTranspileModel({ filename: prevError.dependency, onlyIf: 'invalid' }));
+        if (prevError) {// Just recovered from cyclic dependency
+          dispatch(Thunk.tryTranspileModel({ filename: prevError.dependency, onlyIf: 'invalid' }));
+        }
       } else {
         console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(error)}`);
 
-        // Expect importPaths like ./foo-bar
-        const { importIntervals } = await dispatch(Thunk.rememberSrcImports({ filename, modelKey }));
+        // Expect importIntervals paths like ./foo-bar
         const badPaths = importIntervals.filter(x => error.dependency.startsWith(x.path.slice(2)));
         dispatch(EditorThunk.setModelMarkers({
           modelKey,
@@ -226,7 +235,6 @@ export const Thunk = {
         // Retranspile cyclic dependency if currently valid
         dispatch(Thunk.tryTranspileModel({ filename: error.dependency, onlyIf: 'valid' }));
       }
-
     },
   ),
   unmountApp: createThunk(
@@ -268,11 +276,11 @@ export const reducer = (state = initialState, act: Action): State => {
       file: addToLookup({
         key: act.pay.filename,
         contents: act.pay.contents,
-        // Does not include dot
-        ext: act.pay.filename.split('.').pop() as any,
+        ext: act.pay.filename.split('.').pop() as any, // no dot
         transpiled: null,
         importIntervals: [],
         cleanupTrackers: [],
+        mountedCode: null,
       }, state.file),
     };
     case '[dev-env] remove file': return { ...state,
@@ -327,7 +335,7 @@ const bootstrapAppInstances = createEpic(
     flatMap((act) => {
       const { file, tsAndTsxValid } = state$.value.devEnv;
       if (act.type === '[dev-env] store transpilation') {
-        if (Object.values(file).every((f) => isFileValid(f))) {
+        if (getReachableJsFiles(file).every((f) => isFileValid(f))) {
           // All code is valid so can bootstrap app
           return [
             Act.setTsAndTsxValidity(true),

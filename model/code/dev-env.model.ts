@@ -1,5 +1,5 @@
-import { KeyedLookup } from '@model/generic.model';
-import { IMarkerData } from '@model/monaco/monaco.model';
+import { CyclicDepError, UntranspiledImportPath, JsExportMeta, JsImportMeta } from './patch-imports.model';
+import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 
 const supportedFileMetas = [
   { filenameExt: '.tsx', panelKeyPrefix: 'tsx' },
@@ -32,41 +32,6 @@ export function filenameToModelKey(filename: string) {
   return `model-${filename}`;
 }
 
-export interface JsImportMeta {
-  type: 'import-decl';
-  path: {
-    /** e.g. `react` or `./index` */
-    value: string;
-    /** First character of path excluding quotes */
-    start: number;
-    startLine: number;
-    startCol: number;
-  };
-  names: { name: string; alias?: string }[];
-  namespace?: string;
-}
-
-/** All exports inside file `key`. */
-export interface JsExportMeta {
-  type: 'export-symb' | 'export-decl' | 'export-asgn';
-  names: { name: string; alias?: string }[];
-  namespace?: string;
-  /** Can export from another module */
-  from?: string;
-}
-
-/** Returns filenames without dups */
-export function importPathsToFilenames(
-  importPaths: string[],
-  allFilenames: string[],
-) {
-  return importPaths
-    .filter((x, i) => x.startsWith('./') && i === importPaths.indexOf(x))
-    .map(x => x.slice(2))
-    // TODO handle case where one filename is a prefix of another
-    .map(x => allFilenames.find(y => y.startsWith(x))!);
-}
-
 export interface FileState {
   /** Filename */
   key: string;
@@ -80,9 +45,15 @@ export interface FileState {
   transpiled: null | Transpilation;
   /** Can dispose model code/transpile trackers */
   cleanupTrackers: (() => void)[];
+  /**
+   * Actual code inside <script> or <style>.
+   * For js this is `transpiled.dst` with import specifiers replaced by blob urls.
+   */
+  mountedCode: null | string;
 }
 
 export type TranspiledJsFile = FileState & { transpiled: TranspiledJs };
+export type JsFileState = FileState & { ext: 'ts' | 'tsx'; transpiled: null | TranspiledJs }
 
 export type Transpilation = {
   src: string;
@@ -104,58 +75,6 @@ export type Transpilation = {
 
 export type TranspiledJs = Extract<Transpilation, { type: 'js' }>;
 
-export interface UntranspiledImportPath {
-  /** e.g. `react` or `./index` */
-  path: string;
-  /** First character of path in untranspiled code */
-  start: number;
-  startLine: number;
-  startCol: number;
-}
-
-/**
- * Is some `dependent` a transitive-dependency of `f`?
- * If so we return the first one found.
- */
-export function traverseDeps(
-  f: FileState,
-  file: KeyedLookup<FileState>,
-  dependents: KeyedLookup<FileState>,
-  maxDepth: number
-): null | TraverseDepsError {
-  if (maxDepth <= 0 || !f.transpiled) return null;
-
-  const { importFilenames } = f.transpiled as TranspiledJs;
-  if (dependents[f.key]) {
-    return { key: 'dep-cycle', dependent: f.key };
-  }
-
-  for (const importFilename of importFilenames) {
-    const error = traverseDeps(file[importFilename], file, dependents, maxDepth - 1);
-    if (error) return error;
-  }
-  return null;
-}
-
-type TraverseDepsError = { key: 'dep-cycle'; dependent: string };
-export type CyclicDepError = TraverseDepsError & { dependency: string };
-
-export function getCyclicDepMarker(
-  { path, startLine, startCol }: UntranspiledImportPath,
-): IMarkerData {
-  return {
-    message: [
-      'Cyclic dependencies are unsupported.',
-      'However, there is no restriction on typings.'
-    ].join(' '),
-    startLineNumber: startLine,
-    startColumn: startCol,
-    endLineNumber: startLine,
-    endColumn: startCol + path.length + 2,
-    severity: 8,
-  };
-}
-
 export function isFileValid(file: FileState) {
   return file.ext === 'scss' || (
     file.transpiled?.type === 'js'
@@ -164,34 +83,20 @@ export function isFileValid(file: FileState) {
   );
 }
 
-/**
- * Stratify files by dependencies.
- * We've ensured they are non-cyclic and valid.
- */
-export function stratifyJsFiles(jsFiles: TranspiledJsFile[]) {
-  const stratification = [] as string[][];
-  const permittedDeps = { react: true } as Record<string, true>;
-
-  const lookup = jsFiles.reduce((agg, { key, transpiled: { importFilenames } }) => ({
-    ...agg, [key]: { filename: key, dependencies: importFilenames }
-  }), {} as Record<string, { filename: string; dependencies: string[] }>);
-  
-  let values = Object.values(lookup);
-
-  while (values.length) {
-    const level = values
-      .filter(({ dependencies, filename }) =>
-        dependencies.every(dep => dep === filename || dep in permittedDeps))
-      .map(({ filename }) => filename);
-    stratification.push(level);
-
-    level.forEach((filename) => {
-      delete lookup[filename];
-      permittedDeps[filename] = true;
+/** Get ts/tsx files reachable from index.tsx */
+export function getReachableJsFiles(file: KeyedLookup<FileState>) {
+  const frontier = [file['index.tsx']] as JsFileState[];
+  const reachable = lookupFromValues(frontier);
+  while (frontier.length) {
+    const prevFrontier = frontier.slice();
+    frontier.length = 0;
+    prevFrontier.forEach((node) => {
+      const newAdjs = (node.transpiled?.importFilenames || [])
+        .filter(filename => !(filename in reachable))
+        .map(filename => file[filename] as JsFileState);
+      frontier.push(...newAdjs);
+      newAdjs.forEach(f => reachable[f.key] = f);
     });
-    values = Object.values(lookup);
   }
-
-  console.log({ stratification });
-  return stratification;
+  return Object.values(reachable);
 }

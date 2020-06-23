@@ -12,7 +12,7 @@ const DevEnvPage: React.FC = () => {
     <div className={css.root}>
       <div className={css.menu} style={{ height: menuHeightPx }}>
         <div className={css.logo}>
-          Com<span>(</span>mit<span>|</span>ment<span>)</span>
+          com<span>(</span>mit<span>|</span>ment<span>)</span>
         </div>
         <div className={css.content} />
       </div>
