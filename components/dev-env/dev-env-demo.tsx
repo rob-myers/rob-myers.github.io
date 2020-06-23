@@ -1,10 +1,10 @@
 import { useState, useCallback, useMemo, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+// import { useDispatch } from 'react-redux';
 
 import { exampleScss1 } from '@model/code/examples';
 import { TranspiledCode, FileType, baseTsxEditorProps } from '@model/monaco/monaco.model';
 import { bootstrapApp } from '@model/code/bootstrap';
-import { Thunk } from '@store/editor.duck';
+// import { Thunk } from '@store/editor.duck';
 import TsxEditor from '@components/monaco/tsx-editor';
 import Editor from '@components/monaco/editor';
 import EsModule from './es-module';
@@ -18,15 +18,15 @@ require('./monaco-override.scss');
 const DevEnvDemo: React.FC<Props> = ({ uid, initialTsx }) => {
   const tsxEditorProps = useRef({ ...baseTsxEditorProps, code: initialTsx, height: 500 });
   const [editing, setEditing] = useState<FileType>('tsx');
-  const [code, setCode] = useState(''); // Code transpiled from tsx
+  const [code, _setCode] = useState(''); // Code transpiled from tsx
   const [codeEsmUrl, setCodeEsmUrl] = useState('');
   const [ready, setReady] = useState(false);
   
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const onTranspile = useCallback((result: TranspiledCode) => {
     if (result?.key === 'success') {
       setReady(true);
-      setCode(dispatch(Thunk.patchTranspiledImports({ js: result.transpiledJs })));
+      // setCode(dispatch(Thunk.patchTranspiledImports({ js: result.transpiledJs })));
     }
   }, []);
 

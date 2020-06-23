@@ -49,7 +49,7 @@ export interface FileState {
    * Actual code inside <script> or <style>.
    * For js this is `transpiled.dst` with import specifiers replaced by blob urls.
    */
-  mountedCode: null | string;
+  patchedCode: null | string;
 }
 
 export type TranspiledJsFile = FileState & { transpiled: TranspiledJs };

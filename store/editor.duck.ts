@@ -313,20 +313,6 @@ export const Thunk = {
       }
     },
   ),
-  /**
-   * TODO patch imports using code intervals
-   */
-  patchTranspiledImports: createThunk(
-    '[editor] patch transpiled imports',
-    (_, { js }: { js: string }) => {
-      const patchedJs = js.replace(
-        /import ([^\n]+) from 'react'/g,
-        `import $1 from '${window.location.origin}/es-react/react.js'`,
-      );
-      // console.log({ patchedJs });
-      return patchedJs;
-    },
-  ),
   transpileModel: createThunk(
     '[editor] transpile monaco model',
     async ({ state: { editor: e } }, { modelKey }: { modelKey: string }) =>

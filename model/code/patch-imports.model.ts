@@ -128,6 +128,7 @@ export function patchTranspilations(
 ) {
   const filenameToBlobUrl = {} as Record<string, string>;
   const jsFilenames = Object.keys(jsFile);
+  const filenameToPatchedCode = {} as Record<string, string>;
 
   for (const level of stratification) {
     for (const filename of level) {
@@ -138,12 +139,15 @@ export function patchTranspilations(
         filenameToBlobUrl,
         jsFilenames,
       );
+      filenameToPatchedCode[filename] = patchedCode;
       const blob = new Blob([patchedCode], { type: 'text/javascript' });
       const url = URL.createObjectURL(blob);
       filenameToBlobUrl[filename] = url;
       console.log({ patchedCode });
     }
   }
+
+  return filenameToPatchedCode;
 }
 
 function patchTranspiledCode(

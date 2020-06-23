@@ -141,13 +141,13 @@ export const Thunk = {
   /** Patch import specifiers i.e. convert to blob urls */
   patchAllTranspiledJs: createThunk(
     '[dev-env] patch transpiled js',
-    ({ dispatch: _, state: { devEnv } }) => {
+    ({ dispatch, state: { devEnv } }) => {
       const jsFiles = getReachableJsFiles(devEnv.file) as TranspiledJsFile[];
       const stratification = stratifyJsFiles(jsFiles);
-      const _result = patchTranspilations(lookupFromValues(jsFiles), stratification);
-      /**
-       * TODO store patches in state
-       */
+      const filenameToPatched = patchTranspilations(lookupFromValues(jsFiles), stratification);
+      for (const [filename, patchedCode] of Object.entries(filenameToPatched)) {
+        dispatch(Act.updateFile(filename, { patchedCode }));
+      }
     },
   ),
   rememberSrcImports: createThunk(
@@ -280,7 +280,7 @@ export const reducer = (state = initialState, act: Action): State => {
         transpiled: null,
         importIntervals: [],
         cleanupTrackers: [],
-        mountedCode: null,
+        patchedCode: null,
       }, state.file),
     };
     case '[dev-env] remove file': return { ...state,
