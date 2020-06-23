@@ -1,4 +1,4 @@
-export const bootstrapApp = (appEsmUrl: string, elementId: string) => `
+export const getBootstrapAppCode = (appEsmUrl: string, elementId: string) => `
 import App from '${appEsmUrl}';
 import React from '${window.location.origin}/es-react/react.js';
 import ReactDOM from '${window.location.origin}/es-react/react-dom.js';

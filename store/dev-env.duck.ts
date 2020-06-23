@@ -4,12 +4,13 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, Transpilation, filenameToModelKey, TranspiledJs, TranspiledJsFile, isFileValid, getReachableJsFiles, filenameToScriptId } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, Transpilation, filenameToModelKey, TranspiledJs, TranspiledJsFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, importPathsToFilenames, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspilations, relPathToFilename } from '@model/code/patch-imports.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
+import { getBootstrapAppCode } from '@model/code/bootstrap';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -68,23 +69,29 @@ export type Action = ActionsUnion<typeof Act>;
 export const Thunk = {
   bootstrapApp: createThunk(
     '[dev-env] bootstrap app',
-    (_, { panelKey }: { panelKey: string }) => {
-      const el = document.getElementById(panelKeyToAppElId(panelKey));
-      /**
-       * TODO
-       */
-      console.log({ mountAppAt: el });
+    ({ state: { devEnv } }, { panelKey }: { panelKey: string }) => {
+      const appInstanceElId = panelKeyToAppElId(panelKey);
+      const el = document.getElementById(appInstanceElId);
+      const { blobUrl: appBlobUrl } = devEnv.file['index.tsx'].esm!;
+      
+      const bootstrapCode = getBootstrapAppCode(appBlobUrl, appInstanceElId);
+      const bootstrapBlob = new Blob([bootstrapCode], { type: 'text/javascript' });
+      const bootstrapUrl = URL.createObjectURL(bootstrapBlob);      
+      
+      const bootstrapScriptId = panelKeyToAppScriptId(panelKey);
+      appendEsmModule({ scriptId: bootstrapScriptId, scriptSrcUrl: bootstrapUrl });
+      console.log({ mountedAppAt: el });
     },
   ),
   bootstrapApps: createThunk(
     '[dev-env] bootstrap apps',
-    ({ dispatch, state: { devEnv } }) => {
+    ({ dispatch, getState }) => {
       dispatch(Thunk.patchAllTranspiledJs({}));
-      const jsFiles = getReachableJsFiles(devEnv.file);
-      for (const { key: filename } of jsFiles) {
+      const { devEnv } = getState();
+      const jsFiles = getReachableJsFiles(devEnv.file).reverse();
+      for (const { key: filename, esm } of jsFiles) {
         const elId = filenameToScriptId(filename);
-        document.getElementById(elId)?.remove();
-        // TODO append <script> using patchedCode
+        appendEsmModule({ scriptId: elId, scriptSrcUrl: esm!.blobUrl });
       }
       for (const { key: panelKey } of Object.values(devEnv.panelToApp)) {
         dispatch(Thunk.bootstrapApp({ panelKey }));

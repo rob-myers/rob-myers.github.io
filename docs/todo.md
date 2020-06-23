@@ -1,7 +1,8 @@
 # Local
 
+- [ ] ensure initial mount without opening unseen files
 - [ ] add home icon returning to `/`
-- [ ] mount/unmount es modules via `<script>`s
+- [x] mount/unmount es modules via `<script>`s
 - [x] patch import specifiers of transpiled js
 - [ ] fix sporadic bug: drag indicator corresponds to open file
 - [x] move code/transpile disposables into `FileState`
@@ -13,7 +14,7 @@
   > default layout contains two files `index.tsx` and `model.ts`
 - [x] Transpile via epic and store result, so can bootstrap app.
 - [x] Track panel/file relationship in `dev-env.duck`.
-- [ ] Can see app.
+- [x] Can see app.
   > could re-bootstrap app pre-transpile, if all others transpiled/up-to-date too.
   > need to know which imports js has, and must prevent cycles.
 - [x] Create `dev-env.duck`.

@@ -3,7 +3,7 @@ import { useState, useCallback, useMemo, useRef } from 'react';
 
 import { exampleScss1 } from '@model/code/examples';
 import { TranspiledCode, FileType, baseTsxEditorProps } from '@model/monaco/monaco.model';
-import { bootstrapApp } from '@model/code/bootstrap';
+import { getBootstrapAppCode } from '@model/code/bootstrap';
 // import { Thunk } from '@store/editor.duck';
 import TsxEditor from '@components/monaco/tsx-editor';
 import Editor from '@components/monaco/editor';
@@ -31,7 +31,7 @@ const DevEnvDemo: React.FC<Props> = ({ uid, initialTsx }) => {
   }, []);
 
   const bootstrapCode = useMemo(() =>
-    bootstrapApp(codeEsmUrl, `${uid}-render-root`), [codeEsmUrl]);
+    getBootstrapAppCode(codeEsmUrl, `${uid}-render-root`), [codeEsmUrl]);
 
   return (
     <section className={css.root}>

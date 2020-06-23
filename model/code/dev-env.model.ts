@@ -24,6 +24,10 @@ export function panelKeyToAppElId(panelKey: string) {
   return `app-render-root-${panelKey}`;
 }
 
+export function panelKeyToAppScriptId(panelKey: string) {
+  return `bootstrap-app-${panelKey}`;
+}
+
 export function panelKeyToEditorKey(panelKey: string) {
   return `editor-${panelKey}`;
 }
@@ -34,6 +38,15 @@ export function filenameToModelKey(filename: string) {
 
 export function filenameToScriptId(filename: string) {
   return `esm-script-${filename}`;
+}
+
+export function appendEsmModule(input: { scriptId: string; scriptSrcUrl: string }) {
+  document.getElementById(input.scriptId)?.remove();
+  const el = document.createElement('script');
+  el.id = input.scriptId;
+  el.setAttribute('type', 'module');
+  el.src = input.scriptSrcUrl;
+  document.head.appendChild(el);
 }
 
 export interface FileState {
