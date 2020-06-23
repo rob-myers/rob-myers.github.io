@@ -1,4 +1,4 @@
-# CommitMent
+# Com|mit|ment
 
 ### Premise
 
