@@ -143,10 +143,10 @@ export const Thunk = {
       dispatch(Thunk.tsxEditorInstanceSetup({ editor }));
 
       if (!e.model[modelKey]) {
-        model.updateOptions({ tabSize: 2, indentSize: 2, trimAutoWhitespace: true });
         const uri = redact(e.internal!.monaco.Uri.parse(`file:///${filename}`));
         dispatch(Act.storeMonacoModel({ model, modelKey, filename, uri }));
       }
+      model.updateOptions({ tabSize: 2, indentSize: 2, trimAutoWhitespace: true });
 
       if (!e.syntaxWorker) {
         const syntaxWorker = new SyntaxWorkerClass;
@@ -154,7 +154,7 @@ export const Thunk = {
         await awaitWorker('worker-ready', syntaxWorker);
       }
       if (filename.endsWith('.tsx')) {
-        await dispatch(Thunk.setupEditorHighlighting({ editorKey }));
+        await dispatch(Thunk.setupTsxEditorHighlighting({ editorKey }));
       }
       if (e.monacoLoading) {
         dispatch(Act.setMonacoLoading(false));
@@ -281,7 +281,7 @@ export const Thunk = {
       });
     },
   ),
-  setupEditorHighlighting: createThunk(
+  setupTsxEditorHighlighting: createThunk(
     '[editor] setup syntax',
     async ({ state: { editor: worker }, dispatch }, { editorKey }: { editorKey: string }) => {
       const eventListener = ({ data }: Message<MessageFromWorker>) => {

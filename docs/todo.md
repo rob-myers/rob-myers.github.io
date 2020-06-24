@@ -1,5 +1,6 @@
 # Local
 
+- [ ] handle persistence across multiple tabs
 - [x] aim towards 'properly hmr' top-down svg/css 3d agent engine
   > see project.md
 - [ ] can import `scss` into `tsx` as css module

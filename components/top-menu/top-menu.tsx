@@ -22,7 +22,7 @@ const TopMenu: React.FC<Props> = ({
         <Link  href="/"><a>home</a></Link>
         <Link href="about"><a>about</a></Link>
         {/* <Link href="test"><a>Test</a></Link> */}
-        <Link href="dev"><a>com | mit | ment</a></Link>
+        <Link href="dev"><a>com( mit | ment )</a></Link>
       </section>
     </>
   );

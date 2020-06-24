@@ -42,6 +42,8 @@ const initialState: State = {
 };
 
 export const Act = {
+  addFileCleanups: (filename: string, cleanups: (() => void)[]) =>
+    createAct('[dev-env] add file cleanups', { filename, cleanups }),
   createFile: (input: { filename: string; contents: string }) =>
     createAct('[dev-env] create file', input),
   deleteFile: (input: { filename: string }) =>
@@ -183,19 +185,25 @@ export const Thunk = {
   ),
   /**
    * Debounced storage of model contents on model change.
+   */
+  setupRememberFileContents: createThunk(
+    '[dev-env] setup remember file contents',
+    ({ dispatch }, { filename, modelKey }: { filename: string; modelKey: string }) => {
+      const storeFileContents = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
+      const disposable = dispatch(EditorThunk.trackModelChange({ do: storeFileContents, debounceMs: 500, modelKey }));
+      dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
+    },
+  ),
+  /**
    * Debounced transpilation of model contents on model change.
    */
   setupCodeFileTranspile: createThunk(
     '[dev-env] setup code file transpile',
     ({ dispatch }, { modelKey, filename }: { modelKey: string; filename: string }) => {
-      const storeSrcCode = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
-      const dA = dispatch(EditorThunk.trackModelChange({ do: storeSrcCode, debounceMs: 500, modelKey }));
-
       const transpileCode = () => dispatch(Thunk.tryTranspileCodeModel({ filename }));
-      const dB = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, modelKey }));
+      const disposable = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, modelKey }));
       transpileCode(); // Initial transpile
-
-      dispatch(Act.updateFile(filename, { cleanupTrackers: [() => dA.dispose(), () => dB.dispose()] }));
+      dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
     },
   ),
   tryTranspileCodeModel: createThunk(
@@ -288,6 +296,11 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
+    case '[dev-env] add file cleanups': return { ...state,
+      file: updateLookup(act.pay.filename, state.file, ({ cleanupTrackers }) => ({
+        cleanupTrackers: cleanupTrackers.concat(act.pay.cleanups),
+      })),
+    };
     case '[dev-env] create file': return { ...state,
       file: addToLookup({
         key: act.pay.filename,
@@ -421,10 +434,16 @@ const trackCodeFileContents = createEpic(
     flatMap(({ pay: { model, filename, modelKey } }) => {
       const { file } = state$.value.devEnv;
       if (file[filename]) {
+        // Initially load file contents
         model.setValue(file[filename].contents);
-        return [Thunk.setupCodeFileTranspile({ modelKey, filename })];
+        return [// Setup tracking
+          Thunk.setupRememberFileContents({ modelKey, filename }),
+          ...(/\.tsx?$/.test(filename)
+            ? [Thunk.setupCodeFileTranspile({ modelKey, filename })]
+            : []), // TODO transpile scss
+        ];
       }
-      console.warn(`Ignored filename "${filename}" (untracked)`);
+      console.warn(`Ignored filename "${filename}" (not found in state)`);
       return [];
     }),
   ),
