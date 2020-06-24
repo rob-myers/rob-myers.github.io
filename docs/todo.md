@@ -1,5 +1,7 @@
 # Local
 
+- [x] aim towards 'properly hmr' top-down svg/css 3d agent engine
+  > see project.md
 - [ ] can import `scss` into `tsx` as css module
 - [ ] `scss` supports imports
 - [ ] `scss` gets transpiled too
@@ -21,7 +23,7 @@
   > could re-bootstrap app pre-transpile, if all others transpiled/up-to-date too.
   > need to know which imports js has, and must prevent cycles.
 - [x] Create `dev-env.duck`.
-- [ ] Can toggle sub-menu.
+- [ ] Can toggle per-panel menu.
 - [x] Migrate `ReactFreshBabelPlugin.js` to singleton class written in typescript.
 - [x] Don't transpile multiple editors with same model
 - [ ] Fix auto-commenting i.e. when directly inside JSX tags use (multiline) brace-comments
