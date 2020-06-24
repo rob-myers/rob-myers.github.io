@@ -7,7 +7,7 @@ import { CODE_FONT_FAMILY, DEFAULT_WIDTH, DEFAULT_HEIGHT } from './consts';
 import { Thunk } from '@store/editor.duck';
 import { redact } from '@model/store/redux.model';
 
-// Must not be in main bundle (so, not in worker.duck)
+// Must not be in main bundle (so, not in editor.duck)
 import { LanguageServiceDefaultsImpl as TypescriptDefaults } from '@model/monaco/monaco-typescript.d';
 import { accessibilityHelpUrl } from '@model/monaco/monaco.model';
 const typescript = monaco.languages.typescript;

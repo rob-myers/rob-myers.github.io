@@ -118,14 +118,13 @@ export const Thunk = {
       monacoInternal.monaco.editor.setTheme('vs-dark'); // Dark theme
     },
   ),
-  computeImportExports: createThunk(
-    '[editor] compute import/export meta',
+  computeTsImportExports: createThunk(
+    '[editor] compute ts import/export meta',
     async ({ state: { editor } }, input: { filename: string } & (
       { code: string } | { modelKey: string }
     )) => {
       const code = 'code' in input ? input.code : editor.model[input.modelKey].model.getValue();
       const worker = editor.syntaxWorker!;
-
       worker.postMessage({ key: 'request-import-exports', code, filename: input.filename });
       return await awaitWorker('send-import-exports', worker, ({ origCode }) => code === origCode);
     },
@@ -318,10 +317,10 @@ export const Thunk = {
       }
     },
   ),
-  transpileModel: createThunk(
-    '[editor] transpile monaco model',
+  transpileTsMonacoModel: createThunk(
+    '[editor] transpile ts monaco model',
     async ({ state: { editor: e } }, { modelKey }: { modelKey: string }) =>
-      await e.monacoService!.transpile(e.model[modelKey].model)
+      await e.monacoService!.transpileTsModel(e.model[modelKey].model)
   ),
   tsxEditorInstanceSetup: createThunk(
     '[editor] editor instance setup',

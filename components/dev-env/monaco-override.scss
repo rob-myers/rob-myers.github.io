@@ -1,7 +1,7 @@
 /**
  * This CSS is loaded without using CSS modules,
  * so it can affect the monaco editor. We decorate
- * the latter with these classes in worker.duck.ts.
+ * the latter with these classes in editor.duck.ts.
  */
 .monaco-tsx-editor {
   .jsx-text {

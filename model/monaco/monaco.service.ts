@@ -14,7 +14,7 @@ export class MonacoService {
     );
   }
 
-  public async transpile(model: IMonacoTextModel): Promise<TranspiledCode> {
+  public async transpileTsModel(model: IMonacoTextModel): Promise<TranspiledCode> {
     try {
       const filename = model.uri.toString();
       const getWorker = await monaco.languages.typescript.getTypeScriptWorker();
