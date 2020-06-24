@@ -51,53 +51,62 @@ export function appendEsmModule(input: { scriptId: string; scriptSrcUrl: string 
   document.head.appendChild(el);
 }
 
-export interface FileState {
+export type FileState = CodeFile | StyleFile;
+export type TranspiledCodeFile = CodeFile & { transpiled: CodeTranspilation }
+
+interface BaseFile {
   /** Filename */
   key: string;
   /** Debounced value (doesn't drive editor) */
   contents: string;
+  /** Can dispose model code/transpile trackers */
+  cleanupTrackers: (() => void)[];
+}
+export interface CodeFile extends BaseFile {
   /** Filename extension (suffix of `key`) */
-  ext: 'tsx' | 'ts' | 'scss';
+  ext: 'tsx' | 'ts';
   /** Code intervals in untranspiled code used to indicate errors */
   importIntervals: UntranspiledImportPath[];
   /** Last transpilation */
-  transpiled: null | Transpilation;
-  /** Can dispose model code/transpile trackers */
-  cleanupTrackers: (() => void)[];
+  transpiled: null | CodeTranspilation;
   /** es module */
-  esm: null | FileEsm;
+  esm: null | CodeFileEsm;
 }
-
-export type TranspiledJsFile = FileState & { transpiled: TranspiledJs };
-export type JsFileState = FileState & { ext: 'ts' | 'tsx'; transpiled: null | TranspiledJs }
-
-export type Transpilation = {
-  src: string;
-  /** Transpiled code */
-  dst: string;
-  /** e.g. remove previous typings (js only) */
-  cleanups: (() => void)[];
-} & (
-  | {
-    type: 'js';
-    exports: JsExportMeta[];
-    imports: JsImportMeta[];
-    importFilenames: string[];
-    /** Is there a cyclic dependency in transpiled code? */
-    cyclicDepError: null | CyclicDepError;
-  }
-  | { type: 'css' }
-)
-
-export type TranspiledJs = Extract<Transpilation, { type: 'js' }>;
-
-export interface FileEsm {
+export interface CodeFileEsm {
   /**
    * Actual code inside <script> i.e. `transpiled.dst`
    * with import specifiers replaced by blob urls.
    */
   patchedCode: string;
   blobUrl: string;
+}
+interface StyleFile extends BaseFile {
+  ext: 'scss';
+  /** Last transpilation */
+  transpiled: null | StyleTranspilation;
+}
+
+
+export type Transpilation = CodeTranspilation | StyleTranspilation;
+
+interface BaseTranspilation {
+  /** Untranspiled code */
+  src: string;
+  /** Transpiled code */
+  dst: string;
+  /** e.g. remove previous typings (js only) */
+  cleanups: (() => void)[];
+}
+export interface CodeTranspilation extends BaseTranspilation {
+  type: 'js';
+  exports: JsExportMeta[];
+  imports: JsImportMeta[];
+  importFilenames: string[];
+  /** Is there a cyclic dependency in transpiled code? */
+  cyclicDepError: null | CyclicDepError;
+}
+interface StyleTranspilation extends BaseTranspilation {
+  type: 'css';
 }
 
 export function isFileValid(file: FileState) {
@@ -110,7 +119,7 @@ export function isFileValid(file: FileState) {
 
 /** Get ts/tsx files reachable from index.tsx */
 export function getReachableJsFiles(file: KeyedLookup<FileState>) {
-  const frontier = [file['index.tsx']] as JsFileState[];
+  const frontier = [file['index.tsx']] as CodeFile[];
   const reachable = lookupFromValues(frontier);
   while (frontier.length) {
     const prevFrontier = frontier.slice();
@@ -118,7 +127,7 @@ export function getReachableJsFiles(file: KeyedLookup<FileState>) {
     prevFrontier.forEach((node) => {
       const newAdjs = (node.transpiled?.importFilenames || [])
         .filter(filename => !(filename in reachable))
-        .map(filename => file[filename] as JsFileState);
+        .map(filename => file[filename] as CodeFile);
       frontier.push(...newAdjs);
       newAdjs.forEach(f => reachable[f.key] = f);
     });

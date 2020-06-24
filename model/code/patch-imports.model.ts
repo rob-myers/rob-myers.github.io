@@ -1,6 +1,6 @@
 import { KeyedLookup } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { FileState, TranspiledJs, TranspiledJsFile, FileEsm } from './dev-env.model';
+import { FileState, TranspiledCodeFile, CodeFileEsm, CodeFile, CodeTranspilation } from './dev-env.model';
 
 export interface JsImportMeta {
   type: 'import-decl';
@@ -53,20 +53,20 @@ export interface UntranspiledImportPath {
  * If so we return the first one found.
  */
 export function traverseDeps(
-  f: FileState,
+  f: CodeFile,
   file: KeyedLookup<FileState>,
-  dependents: KeyedLookup<FileState>,
+  dependents: KeyedLookup<CodeFile>,
   maxDepth: number
 ): null | TraverseDepsError {
   if (maxDepth <= 0 || !f.transpiled) return null;
 
-  const { importFilenames } = f.transpiled as TranspiledJs;
+  const { importFilenames } = f.transpiled as CodeTranspilation;
   if (dependents[f.key]) {
     return { key: 'dep-cycle', dependent: f.key };
   }
 
   for (const importFilename of importFilenames) {
-    const error = traverseDeps(file[importFilename], file, dependents, maxDepth - 1);
+    const error = traverseDeps(file[importFilename] as CodeFile, file, dependents, maxDepth - 1);
     if (error) return error;
   }
   return null;
@@ -95,7 +95,7 @@ export function getCyclicDepMarker(
  * Stratify files by dependencies.
  * We've ensured they are non-cyclic and valid.
  */
-export function stratifyJsFiles(jsFiles: TranspiledJsFile[]) {
+export function stratifyJsFiles(jsFiles: TranspiledCodeFile[]) {
   const stratification = [] as string[][];
   const permittedDeps = { react: true } as Record<string, true>;
 
@@ -123,11 +123,11 @@ export function stratifyJsFiles(jsFiles: TranspiledJsFile[]) {
 }
 
 export function patchTranspilations(
-  jsFile: KeyedLookup<TranspiledJsFile>,
+  jsFile: KeyedLookup<TranspiledCodeFile>,
   stratification: string[][],
 ) {
   const jsFilenames = Object.keys(jsFile);
-  const filenameToPatched = {} as Record<string, FileEsm>;
+  const filenameToPatched = {} as Record<string, CodeFileEsm>;
 
   for (const level of stratification) {
     for (const filename of level) {
@@ -151,24 +151,24 @@ export function patchTranspilations(
 function patchTranspiledCode(
   transpiledCode: string,
   importMetas: JsImportMeta[],
-  filenameToPatched: Record<string, FileEsm>,
+  filenameToPatched: Record<string, CodeFileEsm>,
   jsFilenames: string[],
 ): string {
-  let offset = 0, next: string;
+  let offset = 0, nextValue: string;
   let patched = transpiledCode;
   importMetas.forEach((importMeta) => {
     const { value, start } = importMeta.path;
     const filename = relPathToFilename(value, jsFilenames);
     if (value === 'react') {
-      next = `${window.location.origin}/es-react/react.js`;
+      nextValue = `${window.location.origin}/es-react/react.js`;
     } else if (filename && filenameToPatched[filename]) {
-      next = filenameToPatched[filename].blobUrl;
+      nextValue = filenameToPatched[filename].blobUrl;
     } else {
       throw Error(`Unexpected import meta ${JSON.stringify(importMeta)}`);
     }
     
-    patched = replaceImportAt(patched, value, start + offset, next);
-    offset += (next.length - value.length - 1);
+    patched = replaceImportAt(patched, value, start + offset, nextValue);
+    offset += (nextValue.length - value.length - 1);
   });
   return patched;
 }

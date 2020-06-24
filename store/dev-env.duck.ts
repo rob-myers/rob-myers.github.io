@@ -6,7 +6,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, Transpilation, filenameToModelKey, TranspiledJs, TranspiledJsFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, importPathsToFilenames, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspilations, relPathToFilename } from '@model/code/patch-imports.model';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 
@@ -58,7 +58,7 @@ export const Act = {
     createAct('[dev-env] remember file panel', input),
   setTsAndTsxValidity: (isValid: boolean) =>
     createAct('[dev-env] set ts/tsx validity', { isValid }),
-  storeTranspilation: (filename: string, transpilation: Transpilation) =>
+  storeTranspilation: (filename: string, transpilation: CodeTranspilation) =>
     createAct('[dev-env] store transpilation', { filename, transpilation }),
   updateFile: (filename: string, updates: Partial<FileState>) =>
     createAct('[dev-env] update file', { filename, updates }),
@@ -73,7 +73,7 @@ export const Thunk = {
     '[dev-env] bootstrap app',
     ({ state: { devEnv } }, { panelKey }: { panelKey: string }) => {
       const appInstanceElId = panelKeyToAppElId(panelKey);
-      const { blobUrl: appBlobUrl } = devEnv.file['index.tsx'].esm!;
+      const { blobUrl: appBlobUrl } = (devEnv.file['index.tsx'] as CodeFile).esm!;
       
       const bootstrapCode = getBootstrapAppCode(appBlobUrl, appInstanceElId);
       const bootstrapBlob = new Blob([bootstrapCode], { type: 'text/javascript' });
@@ -113,9 +113,9 @@ export const Thunk = {
     }): null | CyclicDepError => {
       const filenames = Object.keys(devEnv.file);
       const dependencyPaths = importPathsToFilenames(imports.map(({ path }) => path.value), filenames);
-      const dependencies = dependencyPaths.map(filename => devEnv.file[filename]);
-      const dependents = Object.values(devEnv.file)
-        .filter(({ transpiled }) => transpiled?.type === 'js' && transpiled.importFilenames.includes(filename));
+      const dependencies = dependencyPaths.map(filename => devEnv.file[filename] as CodeFile);
+      const dependents = Object.values(devEnv.file).filter(({ transpiled }) =>
+        transpiled?.type === 'js' && transpiled.importFilenames.includes(filename)) as CodeFile[];
       // console.log({ filename, dependencies: dependencyPaths, dependents: dependents.map(({ key }) => key) });
 
       if (dependencyPaths.includes(filename)) {// Reflexive
@@ -155,7 +155,7 @@ export const Thunk = {
   patchAllTranspiledJs: createThunk(
     '[dev-env] patch transpiled js',
     ({ dispatch, state: { devEnv } }) => {
-      const jsFiles = getReachableJsFiles(devEnv.file) as TranspiledJsFile[];
+      const jsFiles = getReachableJsFiles(devEnv.file) as TranspiledCodeFile[];
       const stratification = stratifyJsFiles(jsFiles);
       const filenameToPatched = patchTranspilations(lookupFromValues(jsFiles), stratification);
       for (const [filename, { patchedCode, blobUrl }] of Object.entries(filenameToPatched)) {
@@ -219,7 +219,7 @@ export const Thunk = {
       const { imports, exports } = await dispatch(EditorThunk
         .computeImportExports({ filename, code: transpiled.transpiledJs }));
       const error = dispatch(Thunk.detectDependencyCycles({ filename, imports }));
-      const prevError = (devEnv.file[filename]?.transpiled as TranspiledJs)?.cyclicDepError || null;
+      const prevError = (devEnv.file[filename]?.transpiled as CodeTranspilation)?.cyclicDepError || null;
 
       dispatch(Thunk.updateTranspilation({
         filename,
