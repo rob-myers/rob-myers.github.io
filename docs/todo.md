@@ -1,8 +1,10 @@
 # Local
 
 - [ ] handle persistence across multiple tabs
+  > don't sync; create multiple persisted stores and can save/select
+  > warn if multiple unsaved projects open
 - [x] aim towards 'properly hmr' top-down svg/css 3d agent engine
-  > see project.md
+  > see project.md; see `with-bash-and-level` branch
 - [ ] can import `scss` into `tsx` as css module
 - [ ] `scss` supports imports
 - [ ] `scss` gets transpiled too
