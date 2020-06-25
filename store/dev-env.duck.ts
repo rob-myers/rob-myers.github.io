@@ -7,7 +7,7 @@ import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
 import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation } from '@model/code/dev-env.model';
-import { JsImportMeta, JsExportMeta, importPathsToFilenames, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspilations, relPathToFilename } from '@model/code/patch-imports.model';
+import { JsImportMeta, JsExportMeta, importPathsToFilenames, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-imports.model';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 
 import { filterActs } from './reducer';
@@ -161,7 +161,7 @@ export const Thunk = {
     ({ dispatch, state: { devEnv } }) => {
       const jsFiles = getReachableJsFiles(devEnv.file) as TranspiledCodeFile[];
       const stratification = stratifyJsFiles(jsFiles);
-      const filenameToPatched = patchTranspilations(lookupFromValues(jsFiles), stratification);
+      const filenameToPatched = patchTranspiledJsFiles(lookupFromValues(jsFiles), stratification);
       for (const [filename, { patchedCode, blobUrl }] of Object.entries(filenameToPatched)) {
         dispatch(Act.updateFile(filename, { esm: { patchedCode, blobUrl } }));
       }

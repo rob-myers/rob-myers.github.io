@@ -1,12 +1,14 @@
 # Local
 
+- [ ] detect `js` cyclic dep caused by `export { App } from './index'`
 - [ ] handle persistence across multiple tabs
   > don't sync; create multiple persisted stores and can save/select
   > warn if multiple unsaved projects open
 - [x] aim towards 'properly hmr' top-down svg/css 3d agent engine
   > see project.md; see `with-bash-and-level` branch
 - [ ] can import `scss` into `tsx` as css module
-- [ ] `scss` supports `@import`
+- [ ] `scss` supports `@use` when no cyclic deps
+  > we do not support `@import`
 - [ ] `scss` gets mounted inside `style` tag
 - [x] `scss` gets transpiled too
 - [x] ensure initial mount without opening unseen files

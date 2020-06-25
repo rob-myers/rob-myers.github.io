@@ -24,13 +24,16 @@ export interface JsExportMeta {
   from?: string;
 }
 
-/** Returns filenames without dups, ignoring 'react' */
+/** Relative paths to filenames, ignoring 'react' */
 export function importPathsToFilenames(importPaths: string[], allFilenames: string[]) {
   return importPaths
     .filter((x, i) => x.startsWith('./') && i === importPaths.indexOf(x))
     .map(x => relPathToFilename(x, allFilenames));
 }
 
+/**
+ * e.g. `./index` to `index.tsx` and `./model` to `model.ts`.
+ */
 export function relPathToFilename(relPath: string, allFilenames: string[]) {
   const filenamePrefix = relPath.slice(2);
   // TODO handle case where one filename is a prefix of another
@@ -91,6 +94,8 @@ export function getCyclicDepMarker(
   };
 }
 
+type DepNode = { filename: string; dependencies: string[] };
+
 /**
  * Stratify files by dependencies.
  * We've ensured they are non-cyclic and valid.
@@ -101,9 +106,9 @@ export function stratifyJsFiles(jsFiles: TranspiledCodeFile[]) {
 
   const lookup = jsFiles.reduce((agg, { key, transpiled: { importFilenames } }) => ({
     ...agg, [key]: { filename: key, dependencies: importFilenames }
-  }), {} as Record<string, { filename: string; dependencies: string[] }>);
+  }), {} as Record<string, DepNode>);
   
-  let values: (typeof lookup[0])[];
+  let values: DepNode[];
 
   while ((values = Object.values(lookup)).length) {
     const level = values
@@ -122,7 +127,7 @@ export function stratifyJsFiles(jsFiles: TranspiledCodeFile[]) {
   return stratification;
 }
 
-export function patchTranspilations(
+export function patchTranspiledJsFiles(
   jsFile: KeyedLookup<TranspiledCodeFile>,
   stratification: string[][],
 ) {
@@ -148,6 +153,10 @@ export function patchTranspilations(
   return filenameToPatched;
 }
 
+/**
+ * Replace 'react' with asset path.
+ * Replace relative paths with blob urls.
+ */
 function patchTranspiledCode(
   transpiledCode: string,
   importMetas: JsImportMeta[],
