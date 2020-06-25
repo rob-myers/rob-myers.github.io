@@ -14,6 +14,9 @@ export class MonacoService {
     );
   }
 
+  /**
+   * NOTE sass worker not exposed, so can't do this for styles.
+   */
   public async transpileTsModel(model: IMonacoTextModel): Promise<TranspiledCode> {
     try {
       const filename = model.uri.toString();

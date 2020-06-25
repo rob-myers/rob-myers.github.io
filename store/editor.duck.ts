@@ -114,7 +114,7 @@ export const Thunk = {
       dispatch(Act.setMonacoInternal(monacoInternal));
       monacoInternal.typescriptDefaults.setEagerModelSync(true);
       dispatch(Thunk.setMonacoCompilerOptions({}));
-      await dispatch(Thunk.ensureGlobalTypes({}));
+      await dispatch(Thunk.loadGlobalTypes({}));
       monacoInternal.monaco.editor.setTheme('vs-dark'); // Dark theme
     },
   ),
@@ -154,17 +154,17 @@ export const Thunk = {
         await awaitWorker('worker-ready', syntaxWorker);
       }
       if (filename.endsWith('.tsx')) {
-        await dispatch(Thunk.setupTsxEditorHighlighting({ editorKey }));
-      }
-      if (e.monacoLoading) {
-        dispatch(Act.setMonacoLoading(false));
-        dispatch(Act.setMonacoLoaded(true));
+        await dispatch(Thunk.setupTsxHighlighting({ editorKey }));
       }
       if (!e.sassWorker) {
         Sass.setWorkerUrl('/sass.worker.js');
         const sassWorker = new Sass;
         dispatch(Act.storeSassWorker({ worker: redact(sassWorker) }));
         // sassWorker.compile('.foo { .bar { color: red; } }', (result) => console.log({ result }));
+      }
+      if (e.monacoLoading) {
+        dispatch(Act.setMonacoLoading(false));
+        dispatch(Act.setMonacoLoaded(true));
       }
     },
   ),
@@ -190,40 +190,29 @@ export const Thunk = {
       return model;
     },
   ),
-  /** Ensures types associated to globals */
-  ensureGlobalTypes: createThunk(
+  /** Load types associated to globals */
+  loadGlobalTypes: createThunk(
     '[editor] ensure monaco types',
     async ({ state: { editor: worker }, dispatch }) => {
       const { typescriptDefaults } = worker.internal!;
-      dispatch(Thunk.setTypescriptDiagnostics({ mode: 'off' }));
+      dispatch(Thunk.setTsDiagnostics({ mode: 'off' }));
       await worker.monacoService!.loadReactTypes(typescriptDefaults);
-      dispatch(Thunk.setTypescriptDiagnostics({ mode: 'on' }));
+      dispatch(Thunk.setTsDiagnostics({ mode: 'on' }));
       dispatch(Act.setGlobalTypesLoaded(true));
     },
   ),
-  setTypescriptDiagnostics: createThunk(
-    '[editor] set ts diagnostics',
-    ({ state: { editor } }, { mode }: { mode: 'on' | 'off' }) => {
-      editor.internal!.typescriptDefaults.setDiagnosticsOptions({
-        noSemanticValidation: mode === 'off',
-        noSyntaxValidation: mode === 'off',
-      });
-    },
-  ),
-  /** Execute a debounced action whenever editor model changes. */
-  trackModelChange: createThunk(
-    '[editor] on model change',
-    ({ state: { editor: { model } } }, { do: act, modelKey, debounceMs }: {
-      do: (newValue: string) => void;
-      debounceMs: number; 
-      modelKey: string;
-    }) => {
-      let debounceId: number;
-      return model[modelKey]?.model.onDidChangeContent((_event) => {
-        window.clearTimeout(debounceId);
-        const newValue = model[modelKey].model.getValue();
-        debounceId = window.setTimeout(() => act(newValue), debounceMs);
-      });
+  highlightTsxSyntax: createThunk(
+    '[editor] highlight tsx syntax',
+    ({ state: { editor: worker } }, { editorKey }: { editorKey: string }) => {
+      const { editor } = worker.editor[editorKey];
+      const model = editor.getModel();
+      if (model && /typescript|javascript/i.test(model.getModeId())) {
+        worker.syntaxWorker!.postMessage({
+          key: 'request-tsx-highlights',
+          editorKey,
+          code: editor.getValue(),
+        });
+      }
     },
   ),
   removeMonacoEditor: createThunk(
@@ -281,8 +270,8 @@ export const Thunk = {
       });
     },
   ),
-  setupTsxEditorHighlighting: createThunk(
-    '[editor] setup syntax',
+  setupTsxHighlighting: createThunk(
+    '[editor] setup tsx highlighting',
     async ({ state: { editor: worker }, dispatch }, { editorKey }: { editorKey: string }) => {
       const eventListener = ({ data }: Message<MessageFromWorker>) => {
         if (data.key === 'send-tsx-highlights' && data.editorKey === editorKey) {
@@ -291,7 +280,7 @@ export const Thunk = {
         }
       };
       worker.syntaxWorker!.addEventListener('message', eventListener);
-      const syntaxHighlight = () => dispatch(Thunk.syntaxHighlight({ editorKey }));
+      const syntaxHighlight = () => dispatch(Thunk.highlightTsxSyntax({ editorKey }));
       const disposable = worker.editor[editorKey].editor.onDidChangeModelContent(syntaxHighlight);
       requestAnimationFrame(syntaxHighlight); // For first time load
 
@@ -301,26 +290,57 @@ export const Thunk = {
       ]}));
     },
   ),
-  syntaxHighlight: createThunk(
-    '[editor] syntax highlight',
-    ({ state: { editor: worker } }, { editorKey }: { editorKey: string }) => {
-      const { editor } = worker.editor[editorKey];
-      if (!editor.getModel()) {
-        return;
-      }
-      if (/typescript|javascript/i.test(editor.getModel()!.getModeId())) {
-        worker.syntaxWorker!.postMessage({
-          key: 'request-tsx-highlights',
-          editorKey,
-          code: editor.getValue(),
-        });
-      }
+  setTsDiagnostics: createThunk(
+    '[editor] set ts diagnostics',
+    ({ state: { editor } }, { mode }: { mode: 'on' | 'off' }) => {
+      editor.internal!.typescriptDefaults.setDiagnosticsOptions({
+        noSemanticValidation: mode === 'off',
+        noSyntaxValidation: mode === 'off',
+      });
     },
+  ),
+  /** Execute a debounced action whenever editor model changes. */
+  trackModelChange: createThunk(
+    '[editor] on model change',
+    ({ state: { editor: { model } } }, { do: act, modelKey, debounceMs }: {
+      do: (newValue: string) => void;
+      debounceMs: number; 
+      modelKey: string;
+    }) => {
+      let debounceId: number;
+      return model[modelKey]?.model.onDidChangeContent((_event) => {
+        window.clearTimeout(debounceId);
+        const newValue = model[modelKey].model.getValue();
+        debounceId = window.setTimeout(() => act(newValue), debounceMs);
+      });
+    },
+  ),
+  transpileScssMonacoModel: createThunk(
+    '[editor] transpile scss monaco model',
+    async ({ state: { editor } }, { modelKey }: { modelKey: string }) => {
+      const { sassWorker, model: m } = editor;
+      const contents = m[modelKey].model.getValue();
+      /**
+       * TODO write deps so can @import
+       */
+      // sassWorker.writeFile('one.scss', '.one { width: 123px; }');
+      return new Promise<{ src: string; dst: string }>(
+        (resolve, reject) => {
+          sassWorker?.compile(contents, (result) => {
+            console.log({ sassWorkerResult: result });
+            if ('text' in result) {
+              resolve({ src: contents, dst: result.text });
+            } else {
+              reject(result.formatted);
+            }
+          });
+        });
+    }
   ),
   transpileTsMonacoModel: createThunk(
     '[editor] transpile ts monaco model',
-    async ({ state: { editor: e } }, { modelKey }: { modelKey: string }) =>
-      await e.monacoService!.transpileTsModel(e.model[modelKey].model)
+    ({ state: { editor: e } }, { modelKey }: { modelKey: string }) =>
+      e.monacoService!.transpileTsModel(e.model[modelKey].model)
   ),
   tsxEditorInstanceSetup: createThunk(
     '[editor] editor instance setup',

@@ -80,12 +80,11 @@ export interface CodeFileEsm {
   patchedCode: string;
   blobUrl: string;
 }
-interface StyleFile extends BaseFile {
+export interface StyleFile extends BaseFile {
   ext: 'scss';
   /** Last transpilation */
   transpiled: null | StyleTranspilation;
 }
-
 
 export type Transpilation = CodeTranspilation | StyleTranspilation;
 
@@ -105,7 +104,7 @@ export interface CodeTranspilation extends BaseTranspilation {
   /** Is there a cyclic dependency in transpiled code? */
   cyclicDepError: null | CyclicDepError;
 }
-interface StyleTranspilation extends BaseTranspilation {
+export interface StyleTranspilation extends BaseTranspilation {
   type: 'css';
 }
 

@@ -20,10 +20,15 @@ declare module 'sass.js/dist/sass' {
     indentedSyntax?: boolean;
   }
 
-  interface SassResult {
+  type SassResult = (
+    | SassResultSuccess
+    | SassResultError
+  );
+
+  interface SassResultSuccess {
     // status 0 means everything is ok,
     // any other value means an error occurred
-    status: number;
+    status: 0;
     // the compiled CSS
     text: string;
     // the SourceMap for this compilation
@@ -38,6 +43,21 @@ declare module 'sass.js/dist/sass' {
     };
     // the files that were used during the compilation
     files: any[];
+  }
+
+  interface SassResultError {
+    // status other than 0 means an error occured
+    status: number;
+    // the file the problem occurred in
+    file: string | 'stdin';
+    // the line the problem occurred on
+    line: number;
+    // the character on the line the problem started with
+    column: number;
+    // the problem description
+    message: string;
+    // human readable formatting of the error
+    formatted: string;
   }
 
   export interface SassWorker {

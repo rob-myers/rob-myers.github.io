@@ -7,7 +7,7 @@
   > see project.md; see `with-bash-and-level` branch
 - [ ] can import `scss` into `tsx` as css module
 - [ ] `scss` supports imports
-- [ ] `scss` gets transpiled too
+- [x] `scss` gets transpiled too
 - [x] ensure initial mount without opening unseen files
 - [x] add home icon returning to `/`
 - [x] mount/unmount es modules via `<script>`s

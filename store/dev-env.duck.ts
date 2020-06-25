@@ -6,7 +6,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, importPathsToFilenames, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspilations, relPathToFilename } from '@model/code/patch-imports.model';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 
@@ -62,6 +62,8 @@ export const Act = {
     createAct('[dev-env] set ts/tsx validity', { isValid }),
   storeCodeTranspilation: (filename: string, transpilation: CodeTranspilation) =>
     createAct('[dev-env] store code transpilation', { filename, transpilation }),
+  storeStyleTranspilation: (filename: string, transpilation: StyleTranspilation) =>
+    createAct('[dev-env] store style transpilation', { filename, transpilation }),
   updateFile: (filename: string, updates: Partial<FileState>) =>
     createAct('[dev-env] update file', { filename, updates }),
   updatePanelFileMeta: (panelKey: string, updates: ReduxUpdater<PanelFile>) =>
@@ -197,12 +199,13 @@ export const Thunk = {
   /**
    * Debounced transpilation of model contents on model change.
    */
-  setupCodeFileTranspile: createThunk(
+  setupFileTranspile: createThunk(
     '[dev-env] setup code file transpile',
     ({ dispatch }, { modelKey, filename }: { modelKey: string; filename: string }) => {
-      const transpileCode = () => dispatch(Thunk.tryTranspileCodeModel({ filename }));
+      const transpileCode = /\.tsx?$/.test(filename)
+        ? () => dispatch(Thunk.tryTranspileCodeModel({ filename }))
+        : () => dispatch(Thunk.tryTranspileStyleModel({ filename }));
       const disposable = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, modelKey }));
-      transpileCode(); // Initial transpile
       dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
     },
   ),
@@ -212,7 +215,7 @@ export const Thunk = {
       filename: string;
       onlyIf?: 'valid' | 'invalid';
     }) => {
-      // Can specifiy whether should be valid/invalid to break cycles
+      // Can specify whether currently valid/invalid to break cycles
       const isValid = isFileValid(devEnv.file[filename]);
       if (onlyIf === 'valid' && !isValid || onlyIf === 'invalid' && isValid) {
         return;
@@ -257,6 +260,26 @@ export const Thunk = {
         }));
         // Retranspile cyclic dependency if currently valid
         dispatch(Thunk.tryTranspileCodeModel({ filename: error.dependency, onlyIf: 'valid' }));
+      }
+    },
+  ),
+  tryTranspileStyleModel: createThunk(
+    '[dev-env] try transpile style model',
+    async ({ dispatch }, { filename }: { filename: string }) => {
+      // No natural way to get synced 'scss' model error markers,
+      // so catch errors via transpilation instead.
+      try {
+        const modelKey = filenameToModelKey(filename);
+        const transpiled = await dispatch(EditorThunk.transpileScssMonacoModel({ modelKey }));
+  
+        dispatch(Act.storeStyleTranspilation(filename, {
+          type: 'css',
+          src: transpiled.src,
+          dst: transpiled.dst,
+          cleanups: [],
+        }));
+      } catch (e) {
+        console.error(e);
       }
     },
   ),
@@ -339,6 +362,11 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] set ts/tsx validity': return { ...state,
       tsAndTsxValid: act.pay.isValid,
     };
+    case '[dev-env] store style transpilation': return { ...state,
+      file: updateLookup(act.pay.filename, state.file, () => ({
+        transpiled: act.pay.transpilation,
+      })),
+    };
     case '[dev-env] store code transpilation': return { ...state,
       file: updateLookup(act.pay.filename, state.file, () => ({
         transpiled: act.pay.transpilation,
@@ -399,6 +427,10 @@ const initializeMonacoModels = createEpic(
     flatMap(() => [
       ...Object.values(state$.value.devEnv.file).flatMap((file) => [
         EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
+        // Initial transpile
+        ...file.ext === 'scss'
+          ? [Thunk.tryTranspileStyleModel({ filename: file.key })]
+          : [Thunk.tryTranspileCodeModel({ filename: file.key })],
       ]),
     ]),
   ),
@@ -438,9 +470,7 @@ const trackCodeFileContents = createEpic(
         model.setValue(file[filename].contents);
         return [// Setup tracking
           Thunk.setupRememberFileContents({ modelKey, filename }),
-          ...(/\.tsx?$/.test(filename)
-            ? [Thunk.setupCodeFileTranspile({ modelKey, filename })]
-            : []), // TODO transpile scss
+          Thunk.setupFileTranspile({ modelKey, filename }),
         ];
       }
       console.warn(`Ignored filename "${filename}" (not found in state)`);
