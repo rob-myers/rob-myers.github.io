@@ -6,8 +6,8 @@
 import * as babel from '@babel/core';
 import { types as t } from '@babel/core';
 import generate from '@babel/generator';
-//@ts-ignore
-import InternalFile from '@babel/core/lib/transformation/file/file';
+// import InternalFile from '@babel/core/lib/transformation/file/file';
+const InternalFile = (babel as any).File;
 
 import { exampleTsx3 } from './examples';
 

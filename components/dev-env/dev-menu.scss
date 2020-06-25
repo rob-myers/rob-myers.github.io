@@ -17,7 +17,7 @@
 
     font-family: "Courier New", Courier, monospace;
     font-size: 14px;
-    color: #bba;
+    color: #ccd;
 
     background-image: linear-gradient(
       135deg,
@@ -51,8 +51,7 @@
     .house-icon {
       width: 16px;
       padding: 0px 8px;
-      border: 0 solid #333;
-      border-left-width: 1px;
+      background: #000;
     }
 
     &.controls-disabled {
