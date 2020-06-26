@@ -131,7 +131,7 @@ export const Thunk = {
   ),
   createMonacoEditor: createThunk(
     '[editor] create monaco editor',
-    async ({ dispatch, state: { editor: e } }, { editor, editorKey, model, modelKey, filename }: {
+    async ({ dispatch, state: { editor: e }, getState }, { editor, editorKey, model, modelKey, filename }: {
       editor: Redacted<Editor>;
       editorKey: string;
       modelKey: string;
@@ -156,13 +156,13 @@ export const Thunk = {
       if (filename.endsWith('.tsx')) {
         await dispatch(Thunk.setupTsxHighlighting({ editorKey }));
       }
-      if (!e.sassWorker) {
+      if (!getState().editor.sassWorker) {
         Sass.setWorkerUrl('/sass.worker.js');
         const sassWorker = new Sass;
         dispatch(Act.storeSassWorker({ worker: redact(sassWorker) }));
         // sassWorker.compile('.foo { .bar { color: red; } }', (result) => console.log({ result }));
       }
-      if (e.monacoLoading) {
+      if (getState().editor.monacoLoading) {
         dispatch(Act.setMonacoLoading(false));
         dispatch(Act.setMonacoLoaded(true));
       }
