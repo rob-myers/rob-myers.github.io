@@ -10,7 +10,7 @@
 - [ ] `scss` gets mounted inside `style` tag
 - [ ] `scss` supports `@import` when no cyclic deps
   > sass.js does not support `@use`
-  > sass files need to be stratified, rather than transpiled css
+  > sass files need to be stratified (not transpiled css)
 - [x] `scss` gets transpiled too
 - [x] ensure initial mount without opening unseen files
 - [x] add home icon returning to `/`

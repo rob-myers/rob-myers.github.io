@@ -7,7 +7,7 @@ import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
 import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation } from '@model/code/dev-env.model';
-import { JsImportMeta, JsExportMeta, relPathsToFilenames, traverseDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-imports.model';
+import { JsImportMeta, JsExportMeta, relPathsToFilenames, traverseDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 
 import { filterActs } from './reducer';

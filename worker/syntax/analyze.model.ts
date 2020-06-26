@@ -1,5 +1,5 @@
 import { Project } from 'ts-morph';
-import { JsImportMeta, JsExportMeta, ModuleSpecifierMeta } from '@model/code/patch-imports.model';
+import { JsImportMeta, JsExportMeta, ModuleSpecifierMeta } from '@model/code/patch-js-imports';
 
 export function analyzeImportsExports(filename: string, code: string) {
   const project = new Project({ compilerOptions: {} });

@@ -1,7 +1,7 @@
 import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
-import { JsImportMeta, JsExportMeta } from '@model/code/patch-imports.model';
+import { JsImportMeta, JsExportMeta } from '@model/code/patch-js-imports';
 import { Classification } from './highlight.model';
 
 /** A Worker instance in parent thread. */

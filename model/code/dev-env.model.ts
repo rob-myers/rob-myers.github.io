@@ -1,4 +1,4 @@
-import { CyclicDepError, UntranspiledPathInterval, JsExportMeta, JsImportMeta } from './patch-imports.model';
+import { CyclicDepError, UntranspiledPathInterval, JsExportMeta, JsImportMeta } from './patch-js-imports';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 
 export const menuHeightPx = 32;

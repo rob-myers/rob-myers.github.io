@@ -319,11 +319,14 @@ export const Thunk = {
   transpileScssMonacoModel: createThunk(
     '[editor] transpile scss monaco model',
     async ({ state: { editor } }, { modelKey }: { modelKey: string }) => {
-      const { sassWorker, model: m } = editor;
+      const { sassWorker, model: m, monacoService } = editor;
       const contents = m[modelKey].model.getValue();
       /**
        * TODO write deps so can @import
        */
+      const importIntervals = monacoService!.getScssImportIntervals(contents);
+      console.log({ sassImportIntervals: importIntervals });
+
       // sassWorker.writeFile('one.scss', '.one { width: 123px; }');
       return new Promise<{ src: string; dst: string }>(
         (resolve, reject) => {
@@ -332,7 +335,7 @@ export const Thunk = {
             if ('text' in result) {
               resolve({ src: contents, dst: result.text });
             } else {
-              reject(result.formatted);
+              reject({ key: 'sass.js-error', ...result });
             }
           });
         });

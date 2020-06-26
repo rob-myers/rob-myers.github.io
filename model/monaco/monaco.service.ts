@@ -51,6 +51,32 @@ export class MonacoService {
     }
   }
 
+  public getScssImportIntervals(contents: string) {
+    const lineStarts = this.getLineStarts(contents);
+    return Array.from(contents.matchAll(
+      /@import\s+((?:"[^\s"]+")|(?:'[^\s']+'))/g
+    )).map(({ 0: match, index }) => {
+      const prefixLength = match.match(/^(@import\s+)/)![1].length;
+      const start = index! + prefixLength;
+      const { lineNumber, column } = this.getLineCol(start, lineStarts);
+      return {
+        value: match,
+        start,
+        startLineNumber: lineNumber,
+        startColumn: column,
+      };
+    });
+  }
+  
+  private getLineCol(index: number, lineStarts: number[]) {
+    const lineCount = lineStarts.length;
+    const lineNumber = lineStarts.find((x, i) => i + 1 === lineCount || x < lineStarts[i + 1])!;
+    return {
+      lineNumber,
+      column: index - lineStarts[lineNumber],
+    };
+  }
+
   private getErrorMessages(errors: IDiagnostic[], text: string) {
     const lineStarts = this.getLineStarts(text);
     return errors.map(error => {
