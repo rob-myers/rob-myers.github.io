@@ -7,7 +7,7 @@ import { KeyedLookup, testNever } from '@model/generic.model';
 import { Message } from '@model/worker.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
-import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco, Uri, IMarkerData } from '@model/monaco/monaco.model';
+import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco, Uri, IMarkerData, ScssTranspilationResult } from '@model/monaco/monaco.model';
 import { MonacoService } from '@model/monaco/monaco.service';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
@@ -318,24 +318,38 @@ export const Thunk = {
   ),
   transpileScssMonacoModel: createThunk(
     '[editor] transpile scss monaco model',
-    async ({ state: { editor } }, { modelKey }: { modelKey: string }) => {
+    async (
+      { state: { editor } },
+      { modelKey }: { modelKey: string },
+    ): Promise<ScssTranspilationResult> => {
       const { sassWorker, model: m, monacoService } = editor;
       const contents = m[modelKey].model.getValue();
+
       /**
-       * TODO write deps so can @import
+       * TODO transitive @imports
+       * - try to build filename stratification: string[][]
+       * - if successful inductively add files then compile
        */
       const importIntervals = monacoService!.getScssImportIntervals(contents);
-      console.log({ sassImportIntervals: importIntervals });
+      const importedFilenames = importIntervals.map(({ value }) => value);
+      console.log({ sassImported: importedFilenames });
+
+      // for (const importedFilename of importedFilenames) {
+      //   const model = m[filenameToModelKey(importedFilename)];
+      //   if (!model) {
+      //     return { key: 'error', errorKey: 'missing-import', dependency: importedFilename };
+      //   }
+      // }
 
       // sassWorker.writeFile('one.scss', '.one { width: 123px; }');
-      return new Promise<{ src: string; dst: string }>(
-        (resolve, reject) => {
+      return new Promise(
+        (resolve, _reject) => {
           sassWorker?.compile(contents, (result) => {
             console.log({ sassWorkerResult: result });
             if ('text' in result) {
-              resolve({ src: contents, dst: result.text });
+              resolve({ key: 'success', src: contents, dst: result.text });
             } else {
-              reject({ key: 'sass.js-error', ...result });
+              resolve({ key: 'error', errorKey: 'sass.js', error: result });
             }
           });
         });

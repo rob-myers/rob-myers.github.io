@@ -15,7 +15,7 @@ export const accessibilityHelpUrl = 'https://github.com/Microsoft/monaco-editor/
 export type Editor = monaco.editor.IStandaloneCodeEditor;
 
 /** Result of transpiling and/or transforming code */
-export type TranspilationResult = (
+export type TsTranspilationResult = (
   | { key: 'success'; src: string; transpiledJs: string; typings: string }
   | { key: 'error'; message: string | string[] }
 );
@@ -29,6 +29,7 @@ export interface IDiagnostic {
 }
 
 import { EditorProps } from '@components/monaco/editor.model';
+import { SassResultError } from 'sass.js/dist/sass';
 
 export const baseTsxEditorProps: EditorProps = {
   language:'typescript',
@@ -42,7 +43,7 @@ export const baseTsxEditorProps: EditorProps = {
 
 export type FileType = 'tsx' | 'scss';
 export const permute = (type: FileType): FileType => type === 'scss' ? 'tsx' : 'scss';
-export const emptyTranspile: TranspilationResult = { key: 'success', src: '', transpiledJs: '', typings: '' };
+export const emptyTranspile: TsTranspilationResult = { key: 'success', src: '', transpiledJs: '', typings: '' };
 
 export interface DevModule {
   key: string;
@@ -54,3 +55,12 @@ export interface DevModule {
 export type Uri = monaco.Uri;
 
 export type IMarkerData = monaco.editor.IMarkerData;
+
+export type ScssTranspilationResult = (
+  | { key: 'success'; src: string; dst: string }
+  | { key: 'error' } & (
+    | { errorKey: 'sass.js'; error: SassResultError }
+    | { errorKey: 'missing-import'; dependency: string }
+    | { errorKey: 'cyclic-dep'; dependency: string }
+  )
+);

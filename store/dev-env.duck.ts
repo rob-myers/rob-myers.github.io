@@ -13,7 +13,7 @@ import { getBootstrapAppCode } from '@model/code/bootstrap';
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
-import { TranspilationResult } from '@model/monaco/monaco.model';
+import { TsTranspilationResult } from '@model/monaco/monaco.model';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -275,7 +275,7 @@ export const Thunk = {
       const modelKey = filenameToModelKey(filename);
       const currFile = devEnv.file[filename] as CodeFile;
       const needsTranspile = currFile.transpiled?.src !== currFile.contents;
-      const transpiled: TranspilationResult = currFile.transpiled && !needsTranspile
+      const transpiled: TsTranspilationResult = currFile.transpiled && !needsTranspile
         ? { key: 'success', src: currFile.contents, transpiledJs: currFile.transpiled.dst, typings: currFile.transpiled.typings }
         : await dispatch(EditorThunk.transpileTsMonacoModel({ modelKey }));
 
@@ -331,21 +331,18 @@ export const Thunk = {
        * No natural way to get synced 'scss' model error markers,
        * so catch errors via transpilation instead.
        */
-      try {
-        const modelKey = filenameToModelKey(filename);
-        /**
-         * TODO test for @import cycles.
-         */
-        const transpiled = await dispatch(EditorThunk.transpileScssMonacoModel({ modelKey }));
+      const modelKey = filenameToModelKey(filename);
+      const result = await dispatch(EditorThunk.transpileScssMonacoModel({ modelKey }));
 
+      if (result.key === 'success') {
         dispatch(Act.storeStyleTranspilation(filename, {
           type: 'css',
-          src: transpiled.src,
-          dst: transpiled.dst,
+          src: result.src,
+          dst: result.dst,
           cleanups: [],
         }));
-      } catch (e) {
-        console.error(e);
+      } else {
+        console.error(result);
       }
     },
   ),
@@ -521,7 +518,8 @@ const trackFilePanels = createEpic(
       '[layout] panel closed',
     ),
     filter((act) => act.type === '[layout] panel created'
-      ? !!act.pay.panelMeta.filename : true),
+      ? !!act.pay.panelMeta.filename
+      : true),
     flatMap((act) => {
       const { panelKey } = act.pay;
       if (act.type === '[layout] panel created') {

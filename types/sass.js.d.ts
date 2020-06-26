@@ -45,7 +45,7 @@ declare module 'sass.js/dist/sass' {
     files: any[];
   }
 
-  interface SassResultError {
+  export interface SassResultError {
     // status other than 0 means an error occured
     status: number;
     // the file the problem occurred in
