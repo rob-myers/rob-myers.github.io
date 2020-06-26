@@ -15,7 +15,7 @@ export const accessibilityHelpUrl = 'https://github.com/Microsoft/monaco-editor/
 export type Editor = monaco.editor.IStandaloneCodeEditor;
 
 /** Result of transpiling and/or transforming code */
-export type TranspiledCode = (
+export type TranspilationResult = (
   | { key: 'success'; src: string; transpiledJs: string; typings: string }
   | { key: 'error'; message: string | string[] }
 );
@@ -42,7 +42,7 @@ export const baseTsxEditorProps: EditorProps = {
 
 export type FileType = 'tsx' | 'scss';
 export const permute = (type: FileType): FileType => type === 'scss' ? 'tsx' : 'scss';
-export const emptyTranspile: TranspiledCode = { key: 'success', src: '', transpiledJs: '', typings: '' };
+export const emptyTranspile: TranspilationResult = { key: 'success', src: '', transpiledJs: '', typings: '' };
 
 export interface DevModule {
   key: string;

@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor';
-import { TypescriptDefaults, IMonacoTextModel, TranspiledCode, IDiagnostic } from './monaco.model';
+import { TypescriptDefaults, IMonacoTextModel, TranspilationResult, IDiagnostic } from './monaco.model';
 import { EmitOutput } from './monaco-typescript';
 
 const typesPrefix = 'file:///node_modules/@types';
@@ -17,7 +17,7 @@ export class MonacoService {
   /**
    * NOTE sass worker not exposed, so can't do this for styles.
    */
-  public async transpileTsModel(model: IMonacoTextModel): Promise<TranspiledCode> {
+  public async transpileTsModel(model: IMonacoTextModel): Promise<TranspilationResult> {
     try {
       const filename = model.uri.toString();
       const getWorker = await monaco.languages.typescript.getTypeScriptWorker();

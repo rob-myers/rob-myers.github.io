@@ -1,44 +1,6 @@
 import { KeyedLookup } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { FileState, TranspiledCodeFile, CodeFileEsm, CodeFile, CodeTranspilation } from './dev-env.model';
-
-export interface JsImportMeta {
-  type: 'import-decl';
-  path: {
-    /** e.g. `react` or `./index` */
-    value: string;
-    /** First character of path excluding quotes */
-    start: number;
-    startLine: number;
-    startCol: number;
-  };
-  names: { name: string; alias?: string }[];
-  namespace?: string;
-}
-
-export interface JsExportMeta {
-  type: 'export-symb' | 'export-decl' | 'export-asgn';
-  names: { name: string; alias?: string }[];
-  namespace?: string;
-  /** Can export from another module */
-  from?: string;
-}
-
-/** Relative paths to filenames, ignoring 'react' */
-export function importPathsToFilenames(importPaths: string[], allFilenames: string[]) {
-  return importPaths
-    .filter((x, i) => x.startsWith('./') && i === importPaths.indexOf(x))
-    .map(x => relPathToFilename(x, allFilenames));
-}
-
-/**
- * e.g. `./index` to `index.tsx` and `./model` to `model.ts`.
- */
-export function relPathToFilename(relPath: string, allFilenames: string[]) {
-  const filenamePrefix = relPath.slice(2);
-  // TODO handle case where one filename is a prefix of another
-  return allFilenames.find(y => y.startsWith(filenamePrefix))!;
-}
+import { FileState, TranspiledCodeFile, CodeFileEsm, CodeFile } from './dev-env.model';
 
 export interface UntranspiledImportPath {
   /** e.g. `react` or `./index` */
@@ -50,33 +12,6 @@ export interface UntranspiledImportPath {
   startLine: number;
   startCol: number;
 }
-
-/**
- * Is some `dependent` a transitive-dependency of `f`?
- * If so we return the first one found.
- */
-export function traverseDeps(
-  f: CodeFile,
-  file: KeyedLookup<FileState>,
-  dependents: KeyedLookup<CodeFile>,
-  maxDepth: number
-): null | TraverseDepsError {
-  if (maxDepth <= 0 || !f.transpiled) return null;
-
-  const { importFilenames } = f.transpiled as CodeTranspilation;
-  if (dependents[f.key]) {
-    return { key: 'dep-cycle', dependent: f.key };
-  }
-
-  for (const importFilename of importFilenames) {
-    const error = traverseDeps(file[importFilename] as CodeFile, file, dependents, maxDepth - 1);
-    if (error) return error;
-  }
-  return null;
-}
-
-type TraverseDepsError = { key: 'dep-cycle'; dependent: string };
-export type CyclicDepError = TraverseDepsError & { dependency: string };
 
 export function getCyclicDepMarker(
   { path, startLine, startCol }: UntranspiledImportPath,
@@ -93,6 +28,77 @@ export function getCyclicDepMarker(
     severity: 8,
   };
 }
+
+export interface JsImportMeta {
+  type: 'import-decl';
+  path: ModuleSpecifierMeta;
+  names: { name: string; alias?: string }[];
+  namespace?: string;
+}
+
+export interface JsExportMeta {
+  type: 'export-symb' | 'export-decl' | 'export-asgn';
+  names: { name: string; alias?: string }[];
+  namespace?: string;
+  /** Can export from another module */
+  from?: ModuleSpecifierMeta;
+}
+
+export interface ModuleSpecifierMeta {
+  /** e.g. `react` or `./index` */
+  value: string;
+  /** First character of path excluding quotes */
+  start: number;
+  startLine: number;
+  startCol: number;
+}
+
+/** Relative paths to filenames, ignoring 'react' */
+export function relPathsToFilenames(importPaths: string[], allFilenames: string[]) {
+  return importPaths
+    .filter((x, i) => x.startsWith('./') && i === importPaths.indexOf(x))
+    .map(x => relPathToFilename(x, allFilenames));
+}
+
+/**
+ * e.g. `./index` to `index.tsx` and `./model` to `model.ts`.
+ */
+export function relPathToFilename(relPath: string, allFilenames: string[]) {
+  const filenamePrefix = relPath.slice(2);
+  // TODO handle case where one filename is a prefix of another
+  return allFilenames.find(y => y.startsWith(filenamePrefix))!;
+}
+
+/**
+ * Is some `dependent` a transitive-dependency of `f`?
+ * If so we return the first one found.
+ */
+export function traverseDeps(
+  f: CodeFile,
+  file: KeyedLookup<FileState>,
+  dependents: KeyedLookup<CodeFile>,
+  maxDepth: number
+): null | TraverseDepsError {
+  if (maxDepth <= 0 || !f.transpiled) {
+    return null;
+  } else if (f.key in dependents) {
+    return { key: 'dep-cycle', dependent: f.key };
+  }
+
+  for (const filename of f.transpiled!.exportFilenames) {
+    if (filename in dependents) {
+      return { key: 'dep-cycle', dependent: f.key };
+    }
+  }
+  for (const filename of f.transpiled!.importFilenames) {
+    const error = traverseDeps(file[filename] as CodeFile, file, dependents, maxDepth - 1);
+    if (error) return error;
+  }
+  return null;
+}
+
+type TraverseDepsError = { key: 'dep-cycle'; dependent: string };
+export type CyclicDepError = TraverseDepsError & { dependency: string };
 
 type DepNode = { filename: string; dependencies: string[] };
 
@@ -165,6 +171,7 @@ function patchTranspiledCode(
 ): string {
   let offset = 0, nextValue: string;
   let patched = transpiledCode;
+
   importMetas.forEach((importMeta) => {
     const { value, start } = importMeta.path;
     const filename = relPathToFilename(value, jsFilenames);

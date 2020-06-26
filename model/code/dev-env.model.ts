@@ -1,4 +1,4 @@
-import { CyclicDepError, UntranspiledImportPath, JsExportMeta, JsImportMeta } from './patch-imports.model';
+import { CyclicDepError, UntranspiledImportPath as UntranspiledPathSpecifier, JsExportMeta, JsImportMeta } from './patch-imports.model';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 
 export const menuHeightPx = 32;
@@ -65,8 +65,11 @@ interface BaseFile {
 export interface CodeFile extends BaseFile {
   /** Filename extension (suffix of `key`) */
   ext: 'tsx' | 'ts';
-  /** Code intervals in untranspiled code used to indicate errors */
-  importIntervals: UntranspiledImportPath[];
+  /**
+   * Code intervals in untranspiled code used to indicate errors.
+   * They are the paths specified in an import or export.
+   */
+  pathIntervals: UntranspiledPathSpecifier[];
   /** Last transpilation */
   transpiled: null | CodeTranspilation;
   /** es module */
@@ -101,8 +104,10 @@ export interface CodeTranspilation extends BaseTranspilation {
   exports: JsExportMeta[];
   imports: JsImportMeta[];
   importFilenames: string[];
+  exportFilenames: string[];
   /** Is there a cyclic dependency in transpiled code? */
   cyclicDepError: null | CyclicDepError;
+  typings: string;
 }
 export interface StyleTranspilation extends BaseTranspilation {
   type: 'css';

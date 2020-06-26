@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { ICompilerOptions, TranspiledCode } from '@model/monaco/monaco.model';
+import { ICompilerOptions, TranspilationResult } from '@model/monaco/monaco.model';
 import Editor from './editor';
 import { EditorProps } from './editor.model';
 
@@ -28,7 +28,7 @@ export interface ITsxEditorProps {
   filename: string;
   modelKey: string;
   editorProps: EditorProps;
-  onTranspile?: (result: TranspiledCode) => void;
+  onTranspile?: (result: TranspilationResult) => void;
   compilerOptions?: ICompilerOptions;
 }
 

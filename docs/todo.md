@@ -1,6 +1,6 @@
 # Local
 
-- [ ] detect `js` cyclic dep caused by `export { App } from './index'`
+- [x] detect `js` cyclic dep caused by `export { App } from './index'`
 - [ ] handle persistence across multiple tabs
   > don't sync; create multiple persisted stores and can save/select
   > warn if multiple unsaved projects open

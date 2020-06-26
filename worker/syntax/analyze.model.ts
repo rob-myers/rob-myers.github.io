@@ -1,5 +1,5 @@
 import { Project } from 'ts-morph';
-import { JsImportMeta, JsExportMeta } from '@model/code/patch-imports.model';
+import { JsImportMeta, JsExportMeta, ModuleSpecifierMeta } from '@model/code/patch-imports.model';
 
 export function analyzeImportsExports(filename: string, code: string) {
   const project = new Project({ compilerOptions: {} });
@@ -46,6 +46,19 @@ export function analyzeImportsExports(filename: string, code: string) {
   });
 
   exportDecs.forEach((item) => {
+    // export { foo } from './other-module'
+    let from = undefined as undefined | ModuleSpecifierMeta;
+    if (item.hasModuleSpecifier()) {
+      const moduleSpecifier = item.getModuleSpecifier()!;
+      const { line, column } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
+      from = {
+        value: moduleSpecifier.getLiteralValue(),
+        start: moduleSpecifier.getPos() + 2,
+        startLine: line,
+        startCol: column,
+      };
+    }
+
     exportItems.push({
       type: 'export-decl',
       names: item.getNamedExports().map((x) => ({
@@ -53,7 +66,7 @@ export function analyzeImportsExports(filename: string, code: string) {
         alias: x.getAliasNode()?.getText(),
       })),
       namespace: item.getNamespaceExport()?.getName(),
-      from: item.getModuleSpecifierValue(),
+      from,
     });
   });
 

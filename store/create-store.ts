@@ -84,7 +84,7 @@ const persistedReducer = persistReducer({
         initialized: false,
         panelToFile: {},
         panelToApp: {},
-        tsAndTsxValid: false,
+        bootstrapped: false,
       }),
       (state, _key) => state,
       { whitelist: ['devEnv'] },
