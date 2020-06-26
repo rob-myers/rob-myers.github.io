@@ -7,7 +7,7 @@ import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
 import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation } from '@model/code/dev-env.model';
-import { JsImportMeta, JsExportMeta, relPathsToFilenames, traverseDeps, UntranspiledImportPath, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-imports.model';
+import { JsImportMeta, JsExportMeta, relPathsToFilenames, traverseDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-imports.model';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 
 import { filterActs } from './reducer';
@@ -94,9 +94,8 @@ export const Thunk = {
     async ({ dispatch, getState }) => {
       /**
        * Files reachable from `index.tsx` have acyclic dependencies, modulo
-       * untranspiled transitive-dependencies at the time they were checked.
-       * We now know all reachable files have been transpiled.
-       * Thus we should again check for cyclic dependencies.
+       * untranspiled transitive-dependencies at time they were checked.
+       * All reachable files are now transpiled, so can now test for cycles.
        */
       const { cyclicDepError } = await dispatch(Thunk.testCyclicJsDependency({ filename: 'index.tsx' }));
       if (cyclicDepError) {
@@ -145,15 +144,18 @@ export const Thunk = {
           || transpiled.exportFilenames.includes(filename)
         ))
       ) as CodeFile[];
-      // console.log({ filename, dependencies: dependencyPaths, dependents: dependents.map(({ key }) => key) });
-
       /**
        * Error iff adding this module creates a cycle i.e.
        * some _direct dependency_ of `filename` has
        * some _direct dependent_ of `filename` as a transitive-dependency.
        */
       for (const dependencyFile of dependencies) {
-        const error = traverseDeps(dependencyFile, devEnv.file, lookupFromValues(dependents), filenames.length);
+        const error = traverseDeps(
+          dependencyFile,
+          devEnv.file as KeyedLookup<CodeFile>,
+          lookupFromValues(dependents),
+          filenames.length,
+        );
         if (error) {
           return { ...error, dependency: dependencyFile.key };
         }
@@ -206,8 +208,7 @@ export const Thunk = {
       const metas = imports.map(({ path }) => path).concat(
         exports.map(({ from }) => from!).filter(Boolean)
       );
-
-      const intervals: UntranspiledImportPath[] = metas
+      const pathIntervals: UntranspiledPathInterval[] = metas
         .map(({ value, start, startCol, startLine }) => ({
           path: value,
           start, startCol, startLine,
@@ -215,9 +216,9 @@ export const Thunk = {
             ? null
             : relPathToFilename(value, filenames) || null,
         }));
-      dispatch(Act.updateFile(filename, { pathIntervals: intervals }));
-      // console.log({ importIntervals });
-      return { pathIntervals: intervals };
+
+      dispatch(Act.updateFile(filename, { pathIntervals }));
+      return { pathIntervals };
     },
   ),
   /** Initialize (debounced) storage of model contents on model change. */
@@ -310,8 +311,7 @@ export const Thunk = {
         console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(cyclicDepError)}`);
         // Expect importIntervals paths like ./foo-bar
         const badIntervals = importIntervals.filter(({ path }) => cyclicDepError.dependency.startsWith(path.slice(2)));
-        dispatch(EditorThunk.setModelMarkers({
-          modelKey,
+        dispatch(EditorThunk.setModelMarkers({ modelKey,
           markers: badIntervals.map((interval) => getCyclicDepMarker(interval)),
         })); // Retranspile cyclic dependency if currently valid
         dispatch(Thunk.tryTranspileCodeModel({ filename: cyclicDepError.dependency, onlyIf: 'valid' }));
@@ -333,8 +333,11 @@ export const Thunk = {
        */
       try {
         const modelKey = filenameToModelKey(filename);
+        /**
+         * TODO test for @import cycles.
+         */
         const transpiled = await dispatch(EditorThunk.transpileScssMonacoModel({ modelKey }));
-  
+
         dispatch(Act.storeStyleTranspilation(filename, {
           type: 'css',
           src: transpiled.src,

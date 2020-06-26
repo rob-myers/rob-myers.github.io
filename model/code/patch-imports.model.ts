@@ -1,8 +1,8 @@
 import { KeyedLookup } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { FileState, TranspiledCodeFile, CodeFileEsm, CodeFile } from './dev-env.model';
+import { TranspiledCodeFile, CodeFileEsm, CodeFile } from './dev-env.model';
 
-export interface UntranspiledImportPath {
+export interface UntranspiledPathInterval {
   /** e.g. `react` or `./index` */
   path: string;
   /** e.g. `index.tsx` or `model.ts` */
@@ -14,7 +14,7 @@ export interface UntranspiledImportPath {
 }
 
 export function getCyclicDepMarker(
-  { path, startLine, startCol }: UntranspiledImportPath,
+  { path, startLine, startCol }: UntranspiledPathInterval,
 ): IMarkerData {
   return {
     message: [
@@ -70,28 +70,28 @@ export function relPathToFilename(relPath: string, allFilenames: string[]) {
 }
 
 /**
- * Is some `dependent` a transitive-dependency of `f`?
+ * Is some `dependent` a transitive-dependency of file `f`?
  * If so we return the first one found.
  */
 export function traverseDeps(
   f: CodeFile,
-  file: KeyedLookup<FileState>,
+  file: KeyedLookup<CodeFile>,
   dependents: KeyedLookup<CodeFile>,
   maxDepth: number
 ): null | TraverseDepsError {
-  if (maxDepth <= 0 || !f.transpiled) {
+  if (!f.transpiled || maxDepth <= 0) {
     return null;
   } else if (f.key in dependents) {
     return { key: 'dep-cycle', dependent: f.key };
   }
 
-  for (const filename of f.transpiled!.exportFilenames) {
+  for (const filename of f.transpiled.exportFilenames) {
     if (filename in dependents) {
       return { key: 'dep-cycle', dependent: f.key };
     }
   }
-  for (const filename of f.transpiled!.importFilenames) {
-    const error = traverseDeps(file[filename] as CodeFile, file, dependents, maxDepth - 1);
+  for (const filename of f.transpiled.importFilenames) {
+    const error = traverseDeps(file[filename], file, dependents, maxDepth - 1);
     if (error) return error;
   }
   return null;

@@ -160,7 +160,8 @@ export const Thunk = {
         Sass.setWorkerUrl('/sass.worker.js');
         const sassWorker = new Sass;
         dispatch(Act.storeSassWorker({ worker: redact(sassWorker) }));
-        // sassWorker.compile('.foo { .bar { color: red; } }', (result) => console.log({ result }));
+        // sassWorker.writeFile('test.scss', '@mixin myMixin { width: 123px; }');
+        // sassWorker.compile('@import "test.scss"; .foo { @include myMixin; .bar { color: red; } }', (sassTestResult) => console.log({ sassTestResult }));
       }
       if (getState().editor.monacoLoading) {
         dispatch(Act.setMonacoLoading(false));

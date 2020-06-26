@@ -63,6 +63,7 @@ declare module 'sass.js/dist/sass' {
   export interface SassWorker {
     options(arg: 'defaults' | SassOptions, callback: () => void): void;
     compile(source: string, callback: (result: SassResult) => void): void;
+    writeFile(filename: string, contents: string): void;
   }
 
   interface SassWorkerClass {

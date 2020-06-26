@@ -7,9 +7,10 @@
 - [x] aim towards 'properly hmr' top-down svg/css 3d agent engine
   > see project.md; see `with-bash-and-level` branch
 - [ ] can import `scss` into `tsx` as css module
-- [ ] `scss` supports `@use` when no cyclic deps
-  > we do not support `@import`
 - [ ] `scss` gets mounted inside `style` tag
+- [ ] `scss` supports `@import` when no cyclic deps
+  > sass.js does not support `@use`
+  > sass files need to be stratified, rather than transpiled css
 - [x] `scss` gets transpiled too
 - [x] ensure initial mount without opening unseen files
 - [x] add home icon returning to `/`

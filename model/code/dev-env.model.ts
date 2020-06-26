@@ -1,4 +1,4 @@
-import { CyclicDepError, UntranspiledImportPath as UntranspiledPathSpecifier, JsExportMeta, JsImportMeta } from './patch-imports.model';
+import { CyclicDepError, UntranspiledPathInterval, JsExportMeta, JsImportMeta } from './patch-imports.model';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 
 export const menuHeightPx = 32;
@@ -51,8 +51,34 @@ export function appendEsmModule(input: { scriptId: string; scriptSrcUrl: string 
   document.head.appendChild(el);
 }
 
-export type FileState = CodeFile | StyleFile;
-export type TranspiledCodeFile = CodeFile & { transpiled: CodeTranspilation }
+export type FileState = (
+  | CodeFile
+  | StyleFile
+);
+
+export interface TranspiledCodeFile extends CodeFile {
+  transpiled: CodeTranspilation;
+}
+
+export interface CodeFile extends BaseFile {
+  /** Filename extension (suffix of `key`) */
+  ext: 'tsx' | 'ts';
+  /**
+   * Code intervals in untranspiled code used to indicate errors.
+   * They are the paths specified in an import or export.
+   */
+  pathIntervals: UntranspiledPathInterval[];
+  /** Last transpilation */
+  transpiled: null | CodeTranspilation;
+  /** es module */
+  esm: null | CodeFileEsm;
+}
+
+export interface StyleFile extends BaseFile {
+  ext: 'scss';
+  /** Last transpilation */
+  transpiled: null | StyleTranspilation;
+}
 
 interface BaseFile {
   /** Filename */
@@ -62,34 +88,26 @@ interface BaseFile {
   /** Can dispose model code/transpile trackers */
   cleanupTrackers: (() => void)[];
 }
-export interface CodeFile extends BaseFile {
-  /** Filename extension (suffix of `key`) */
-  ext: 'tsx' | 'ts';
-  /**
-   * Code intervals in untranspiled code used to indicate errors.
-   * They are the paths specified in an import or export.
-   */
-  pathIntervals: UntranspiledPathSpecifier[];
-  /** Last transpilation */
-  transpiled: null | CodeTranspilation;
-  /** es module */
-  esm: null | CodeFileEsm;
-}
-export interface CodeFileEsm {
-  /**
-   * Actual code inside <script> i.e. `transpiled.dst`
-   * with import specifiers replaced by blob urls.
-   */
-  patchedCode: string;
-  blobUrl: string;
-}
-export interface StyleFile extends BaseFile {
-  ext: 'scss';
-  /** Last transpilation */
-  transpiled: null | StyleTranspilation;
+
+export type Transpilation = (
+  | CodeTranspilation
+  | StyleTranspilation
+);
+
+export interface CodeTranspilation extends BaseTranspilation {
+  type: 'js';
+  exports: JsExportMeta[];
+  imports: JsImportMeta[];
+  /** Is there a cyclic dependency in transpiled code? */
+  cyclicDepError: null | CyclicDepError;
+  typings: string;
+  importFilenames: string[];
+  exportFilenames: string[];
 }
 
-export type Transpilation = CodeTranspilation | StyleTranspilation;
+export interface StyleTranspilation extends BaseTranspilation {
+  type: 'css';
+}
 
 interface BaseTranspilation {
   /** Untranspiled code */
@@ -99,18 +117,14 @@ interface BaseTranspilation {
   /** e.g. remove previous typings (js only) */
   cleanups: (() => void)[];
 }
-export interface CodeTranspilation extends BaseTranspilation {
-  type: 'js';
-  exports: JsExportMeta[];
-  imports: JsImportMeta[];
-  importFilenames: string[];
-  exportFilenames: string[];
-  /** Is there a cyclic dependency in transpiled code? */
-  cyclicDepError: null | CyclicDepError;
-  typings: string;
-}
-export interface StyleTranspilation extends BaseTranspilation {
-  type: 'css';
+
+export interface CodeFileEsm {
+  /**
+   * Actual code inside <script> i.e. `transpiled.dst`
+   * with import specifiers replaced by blob urls.
+   */
+  patchedCode: string;
+  blobUrl: string;
 }
 
 export function isFileValid(file: FileState) {
