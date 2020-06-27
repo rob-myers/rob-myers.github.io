@@ -78,7 +78,7 @@ const persistedReducer = persistReducer({
           [item.key]: {
             ...item,
             ...(item.ext === 'scss'
-              ? { importIntervals: [] }
+              ? { prefixed: null }
               : { esm: null, pathIntervals: [] }
             ),
             cleanupTrackers: [],

@@ -72,3 +72,7 @@ export type ScssTranspilationResult = (
     | { errorKey: 'cyclic-dep'; dependency: string }
   )
 );
+
+export function addScssPrefixes(contents: string, filename: string) {
+  return contents.replace(/(\.\S+)/g, `${filename}__$1`);
+}

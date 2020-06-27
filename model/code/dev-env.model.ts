@@ -77,7 +77,13 @@ export interface CodeFile extends BaseFile {
 
 export interface StyleFile extends BaseFile {
   ext: 'scss';
-  importIntervals: ScssImportInterval[];
+  prefixed: null | {
+    src: string;
+    /** Contents with classes prefixed by filename */
+    dst: string;
+    /** @import path intervals in `prefixedContents` */
+    importIntervals: ScssImportInterval[];
+  };
   /** Last transpilation */
   transpiled: null | StyleTranspilation;
 }

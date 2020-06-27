@@ -193,9 +193,8 @@ export const Thunk = {
   ),
   getScssImportIntervals: createThunk(
     '[editor] get scss import intervals',
-    ({ state: { editor } }, { modelKey }: { modelKey: string }) => {
-      const contents = editor.model[modelKey].model.getValue();
-      return editor.monacoService!.getScssImportIntervals(contents);
+    ({ state: { editor } }, { scssText }: { scssText: string }) => {
+      return editor.monacoService!.getScssImportIntervals(scssText);
     },
   ),
   /** Load types associated to globals */
@@ -331,7 +330,6 @@ export const Thunk = {
     ): Promise<ScssTranspilationResult> => {
       const { sassWorker, model: m, monacoService } = editor;
       const contents = m[modelKey].model.getValue();
-
       /**
        * TODO transitive @imports
        * - try to build filename stratification: string[][]
@@ -347,20 +345,17 @@ export const Thunk = {
       //     return { key: 'error', errorKey: 'missing-import', dependency: importedFilename };
       //   }
       // }
-
       // sassWorker.writeFile('one.scss', '.one { width: 123px; }');
 
-      return new Promise(
-        (resolve, _reject) => {
-          sassWorker?.compile(contents, (result) => {
-            console.log({ sassWorkerResult: result });
-            if ('text' in result) {
-              resolve({ key: 'success', src: contents, dst: result.text });
-            } else {
-              resolve({ key: 'error', errorKey: 'sass.js', error: result });
-            }
-          });
+      return new Promise((resolve, _reject) => {
+        sassWorker?.compile(contents, (result) => {
+          console.log({ sassWorkerResult: result });
+          resolve('text' in result
+            ? { key: 'success', src: contents, dst: result.text }
+            : { key: 'error', errorKey: 'sass.js', error: result }
+          );
         });
+      });
     }
   ),
   transpileTsMonacoModel: createThunk(

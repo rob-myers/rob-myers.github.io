@@ -13,7 +13,7 @@ import { getBootstrapAppCode } from '@model/code/bootstrap';
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
-import { TsTranspilationResult } from '@model/monaco/monaco.model';
+import { TsTranspilationResult, addScssPrefixes } from '@model/monaco/monaco.model';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -243,14 +243,6 @@ export const Thunk = {
       dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
     },
   ),
-  storeScssImportIntervals: createThunk(
-    '[dev-env] store scss import intervals',
-    ({ dispatch }, { filename }: { filename: string }) => {
-      const modelKey = filenameToModelKey(filename);
-      const importIntervals = dispatch(EditorThunk.getScssImportIntervals({ modelKey }));
-      dispatch(Act.updateFile(filename, { importIntervals } as StyleFile));
-    },
-  ),
   testCyclicJsDependency: createThunk(
     '[dev-env] test cyclic dependency',
     async ({ dispatch, state: { devEnv } }, { filename, nextTranspiledJs }: { filename: string; nextTranspiledJs?: string }) => {
@@ -266,6 +258,14 @@ export const Thunk = {
         /** True iff previous transpilation exists and had `cyclicDepError` */
         prevCyclicError: file.transpiled?.cyclicDepError || null,
       };
+    },
+  ),
+  testCylicScssDependency: createThunk(
+    '[dev-env] test cyclic scss dependency',
+    () => {
+      /**
+       * TODO
+       */
     },
   ),
   /** Returns true iff is valid */
@@ -332,10 +332,20 @@ export const Thunk = {
   ),
   tryTranspileStyleModel: createThunk(
     '[dev-env] try transpile style model',
-    async ({ dispatch }, { filename }: { filename: string }) => {
+    async ({ dispatch, state: { devEnv } }, { filename }: { filename: string }) => {
 
-      dispatch(Thunk.storeScssImportIntervals({ filename }));
+      const { contents } = devEnv.file[filename];
+      const prefixed = addScssPrefixes(contents, filename);
+      const importIntervals = dispatch(EditorThunk.getScssImportIntervals({ scssText: prefixed }));
+      dispatch(Act.updateFile(filename, { prefixed: { src: contents, dst: prefixed, importIntervals} } as StyleFile));
 
+      // TODO compute transitive-dependencies ensuring importIntervals
+      // TODO detect cycle or missing file and indicate error
+      dispatch(Thunk.testCylicScssDependency({}));
+
+      // TODO attempt to transpile
+
+      // TODO can't use modelKey
       const modelKey = filenameToModelKey(filename);
       const result = await dispatch(EditorThunk.transpileScssMonacoModel({ modelKey }));
 
@@ -413,9 +423,9 @@ export const reducer = (state = initialState, act: Action): State => {
         key: act.pay.filename,
         contents: act.pay.contents,
         ext: 'scss',
-        importIntervals: [],
         cleanupTrackers: [],
         transpiled: null,
+        prefixed: null,
       } as StyleFile, state.file),
     };
     case '[dev-env] remove file': return { ...state,
