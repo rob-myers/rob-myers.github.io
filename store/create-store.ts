@@ -77,8 +77,12 @@ const persistedReducer = persistReducer({
         file: Object.values(file).reduce((agg, item) => ({ ...agg,
           [item.key]: {
             ...item,
+            ...(item.ext === 'scss'
+              ? { importIntervals: [] }
+              : { esm: null, pathIntervals: [] }
+            ),
+            cleanupTrackers: [],
             transpiled: null,
-            esm: null,
           },
         }), {} as DevEnvState['file']),
         initialized: false,

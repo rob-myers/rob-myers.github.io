@@ -191,6 +191,13 @@ export const Thunk = {
       return model;
     },
   ),
+  getScssImportIntervals: createThunk(
+    '[editor] get scss import intervals',
+    ({ state: { editor } }, { modelKey }: { modelKey: string }) => {
+      const contents = editor.model[modelKey].model.getValue();
+      return editor.monacoService!.getScssImportIntervals(contents);
+    },
+  ),
   /** Load types associated to globals */
   loadGlobalTypes: createThunk(
     '[editor] ensure monaco types',
@@ -342,6 +349,7 @@ export const Thunk = {
       // }
 
       // sassWorker.writeFile('one.scss', '.one { width: 123px; }');
+
       return new Promise(
         (resolve, _reject) => {
           sassWorker?.compile(contents, (result) => {

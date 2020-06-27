@@ -56,6 +56,14 @@ export type Uri = monaco.Uri;
 
 export type IMarkerData = monaco.editor.IMarkerData;
 
+export interface ScssImportInterval {
+  value: string;
+  match: string;
+  start: number;
+  startLineNumber: number;
+  startColumn: number;
+}
+
 export type ScssTranspilationResult = (
   | { key: 'success'; src: string; dst: string }
   | { key: 'error' } & (

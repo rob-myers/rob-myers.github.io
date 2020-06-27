@@ -1,5 +1,5 @@
 import * as monaco from 'monaco-editor';
-import { TypescriptDefaults, IMonacoTextModel, TsTranspilationResult, IDiagnostic } from './monaco.model';
+import { TypescriptDefaults, IMonacoTextModel, TsTranspilationResult, IDiagnostic, ScssImportInterval } from './monaco.model';
 import { EmitOutput } from './monaco-typescript';
 
 const typesPrefix = 'file:///node_modules/@types';
@@ -51,7 +51,7 @@ export class MonacoService {
     }
   }
 
-  public getScssImportIntervals(contents: string) {
+  public getScssImportIntervals(contents: string): ScssImportInterval[] {
     const lineStarts = this.getLineStarts(contents);
     return Array.from(contents.matchAll(
       /@import\s+((?:"[^\s"]+")|(?:'[^\s']+'))/g

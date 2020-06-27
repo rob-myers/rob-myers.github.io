@@ -6,7 +6,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, relPathsToFilenames, traverseDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 
@@ -45,8 +45,10 @@ const initialState: State = {
 export const Act = {
   addFileCleanups: (filename: string, cleanups: (() => void)[]) =>
     createAct('[dev-env] add file cleanups', { filename, cleanups }),
-  createFile: (input: { filename: string; contents: string }) =>
-    createAct('[dev-env] create file', input),
+  createCodeFile: (input: { filename: string; contents: string }) =>
+    createAct('[dev-env] create code file', input),
+  createStyleFile: (input: { filename: string; contents: string }) =>
+    createAct('[dev-env] create style file', input),
   deleteFile: (input: { filename: string }) =>
     createAct('[dev-env] remove file', input),
   forgetFilePanel: (input: { panelKey: string }) =>
@@ -170,11 +172,11 @@ export const Thunk = {
        * TEMP provide demo files.
        */
       !devEnv.file['index.tsx']?.contents &&
-        dispatch(Act.createFile({ filename: 'index.tsx', contents: exampleTsx3 }));
+        dispatch(Act.createCodeFile({ filename: 'index.tsx', contents: exampleTsx3 }));
       !devEnv.file['model.ts']?.contents &&
-        dispatch(Act.createFile({ filename: 'model.ts', contents: exampleTs1 }));
+        dispatch(Act.createCodeFile({ filename: 'model.ts', contents: exampleTs1 }));
       !devEnv.file['index.scss']?.contents &&
-        dispatch(Act.createFile({ filename: 'index.scss', contents: exampleScss1 }));
+        dispatch(Act.createStyleFile({ filename: 'index.scss', contents: exampleScss1 }));
       dispatch(Act.initialized());
     },
   ),
@@ -241,6 +243,14 @@ export const Thunk = {
       dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
     },
   ),
+  storeScssImportIntervals: createThunk(
+    '[dev-env] store scss import intervals',
+    ({ dispatch }, { filename }: { filename: string }) => {
+      const modelKey = filenameToModelKey(filename);
+      const importIntervals = dispatch(EditorThunk.getScssImportIntervals({ modelKey }));
+      dispatch(Act.updateFile(filename, { importIntervals } as StyleFile));
+    },
+  ),
   testCyclicJsDependency: createThunk(
     '[dev-env] test cyclic dependency',
     async ({ dispatch, state: { devEnv } }, { filename, nextTranspiledJs }: { filename: string; nextTranspiledJs?: string }) => {
@@ -293,10 +303,6 @@ export const Thunk = {
       const { imports, exports, cyclicDepError, prevCyclicError } =
         await dispatch(Thunk.testCyclicJsDependency({ filename, nextTranspiledJs: transpiled.transpiledJs }));
 
-      if (!needsTranspile && cyclicDepError === prevCyclicError) {
-        return; // Needed?
-      }
-
       dispatch(Thunk.updateCodeTranspilation({
         filename,
         src: transpiled.src,
@@ -327,10 +333,9 @@ export const Thunk = {
   tryTranspileStyleModel: createThunk(
     '[dev-env] try transpile style model',
     async ({ dispatch }, { filename }: { filename: string }) => {
-      /**
-       * No natural way to get synced 'scss' model error markers,
-       * so catch errors via transpilation instead.
-       */
+
+      dispatch(Thunk.storeScssImportIntervals({ filename }));
+
       const modelKey = filenameToModelKey(filename);
       const result = await dispatch(EditorThunk.transpileScssMonacoModel({ modelKey }));
 
@@ -392,7 +397,7 @@ export const reducer = (state = initialState, act: Action): State => {
         cleanupTrackers: cleanupTrackers.concat(act.pay.cleanups),
       })),
     };
-    case '[dev-env] create file': return { ...state,
+    case '[dev-env] create code file': return { ...state,
       file: addToLookup({
         key: act.pay.filename,
         contents: act.pay.contents,
@@ -402,6 +407,16 @@ export const reducer = (state = initialState, act: Action): State => {
         cleanupTrackers: [],
         esm: null,
       }, state.file),
+    };
+    case '[dev-env] create style file': return { ...state,
+      file: addToLookup({
+        key: act.pay.filename,
+        contents: act.pay.contents,
+        ext: 'scss',
+        importIntervals: [],
+        cleanupTrackers: [],
+        transpiled: null,
+      } as StyleFile, state.file),
     };
     case '[dev-env] remove file': return { ...state,
       file: removeFromLookup(act.pay.filename, state.file),
@@ -528,7 +543,7 @@ const trackFilePanels = createEpic(
         return [
           LayoutThunk.setPanelTitle({ panelKey, title: filename }),
           Act.rememberFilePanel({ filename, panelKey }),
-          ...(file[filename] ? [] : [Act.createFile({ filename, contents: '' })]),
+          ...(file[filename] ? [] : [Act.createCodeFile({ filename, contents: '' })]),
         ];
       }
       return [Act.forgetFilePanel({ panelKey })];
