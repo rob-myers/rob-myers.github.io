@@ -161,7 +161,8 @@ export const Thunk = {
         const sassWorker = new Sass;
         dispatch(Act.storeSassWorker({ worker: redact(sassWorker) }));
         // sassWorker.writeFile('test.scss', '@mixin myMixin { width: 123px; }');
-        // sassWorker.compile('@import "test.scss"; .foo { @include myMixin; .bar { color: red; } }', (sassTestResult) => console.log({ sassTestResult }));
+        // sassWorker.compile('@import "test.scss"; .foo { @include myMixin; .bar { color: red; } }',
+        //   (sassTestResult) => console.log({ sassTestResult }));
       }
       if (getState().editor.monacoLoading) {
         dispatch(Act.setMonacoLoading(false));
@@ -324,34 +325,17 @@ export const Thunk = {
   ),
   transpileScssMonacoModel: createThunk(
     '[editor] transpile scss monaco model',
-    async (
-      { state: { editor } },
-      { modelKey }: { modelKey: string },
+    async ({ state: { editor } },
+      { src, files }: { src: string; files: { filename: string; contents: string }[] },
     ): Promise<ScssTranspilationResult> => {
-      const { sassWorker, model: m, monacoService } = editor;
-      const contents = m[modelKey].model.getValue();
-      /**
-       * TODO transitive @imports
-       * - try to build filename stratification: string[][]
-       * - if successful inductively add files then compile
-       */
-      const importIntervals = monacoService!.getScssImportIntervals(contents);
-      const importedFilenames = importIntervals.map(({ value }) => value);
-      console.log({ sassImported: importedFilenames });
-
-      // for (const importedFilename of importedFilenames) {
-      //   const model = m[filenameToModelKey(importedFilename)];
-      //   if (!model) {
-      //     return { key: 'error', errorKey: 'missing-import', dependency: importedFilename };
-      //   }
-      // }
-      // sassWorker.writeFile('one.scss', '.one { width: 123px; }');
+      const sassWorker = editor.sassWorker!;
+      files.forEach(({ contents, filename }) => sassWorker.writeFile(filename, contents));
 
       return new Promise((resolve, _reject) => {
-        sassWorker?.compile(contents, (result) => {
+        sassWorker?.compile(src, (result) => {
           console.log({ sassWorkerResult: result });
           resolve('text' in result
-            ? { key: 'success', src: contents, dst: result.text }
+            ? { key: 'success', src, dst: result.text }
             : { key: 'error', errorKey: 'sass.js', error: result }
           );
         });

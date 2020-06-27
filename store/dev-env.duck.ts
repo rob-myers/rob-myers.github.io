@@ -152,17 +152,34 @@ export const Thunk = {
        * some _direct dependent_ of `filename` as a transitive-dependency.
        */
       for (const dependencyFile of dependencies) {
-        const error = traverseDeps(
-          dependencyFile,
-          devEnv.file as KeyedLookup<CodeFile>,
-          lookupFromValues(dependents),
-          filenames.length,
-        );
+        const error = traverseDeps(dependencyFile, devEnv.file as KeyedLookup<CodeFile>, lookupFromValues(dependents), filenames.length);
         if (error) {
           return { ...error, dependency: dependencyFile.key };
         }
       }
       return null;
+    },
+  ),
+  /**
+   * Detect dependency cycles in scss, assuming each `prefixed` is up to date.
+   */
+  detectScssDependencyCycles: createThunk(
+    '[dev-env] detect scss dependency cycles',
+    (_, { file: __, filename: ___ }: { filename: string; file: KeyedLookup<StyleFile>}) => {
+      /**
+       * TODO
+       */
+    },
+  ),
+  ensurePrefixedStyleFile: createThunk(
+    '[dev-env] ensure prefixed style file',
+    ({ state: { devEnv }, dispatch }, { filename }: { filename: string }) => {
+      const { contents, prefixed } = devEnv.file[filename] as StyleFile;
+      if (contents !== prefixed?.src) {
+        const prefixedScss = addScssPrefixes(contents, filename);
+        const importIntervals = dispatch(EditorThunk.getScssImportIntervals({ scssText: prefixedScss }));
+        dispatch(Act.updateFile(filename, { prefixed: { src: contents, dst: prefixedScss, importIntervals} }));
+      }
     },
   ),
   initialize: createThunk(
@@ -202,7 +219,7 @@ export const Thunk = {
     },
   ),
   rememberSrcCodeImportsExports: createThunk(
-    '[dev-env] remember src code import/exports',
+    '[dev-env] remember src code imports/exports',
     async ({ dispatch, state: { devEnv } }, { filename, modelKey }: { filename: string; modelKey: string }) => {
       const { imports, exports } = await dispatch(EditorThunk.computeTsImportExports({ filename, modelKey }));
       const filenames = Object.keys(devEnv.file);
@@ -247,7 +264,7 @@ export const Thunk = {
     '[dev-env] test cyclic dependency',
     async ({ dispatch, state: { devEnv } }, { filename, nextTranspiledJs }: { filename: string; nextTranspiledJs?: string }) => {
       const file = devEnv.file[filename] as CodeFile;
-      /** Code defaults to previously transpiled js */
+      /** Defaults to previously transpiled js */
       const code = nextTranspiledJs || file.transpiled!.dst;
       const { imports, exports } = await dispatch(EditorThunk.computeTsImportExports({ filename, code }));
       const cyclicDepError = dispatch(Thunk.detectCodeDependencyCycles({ filename, imports, exports })) as null | CyclicDepError;
@@ -262,10 +279,18 @@ export const Thunk = {
   ),
   testCylicScssDependency: createThunk(
     '[dev-env] test cyclic scss dependency',
-    () => {
+    ({ state: { devEnv }, dispatch, getState }, { filename }: { filename: string }) => {
+      // Ensure all scss files have up-to-date `prefixed`
+      Object.values(devEnv.file).filter(({ ext }) => ext === 'scss')
+        .forEach(({ key: filename }) => dispatch(Thunk.ensurePrefixedStyleFile({ filename })));
+
       /**
        * TODO
+       * - check stratified and return stratification
+       * - error if @import references missing file, or cyclic dep exists
        */
+      const file = getState().devEnv.file as KeyedLookup<StyleFile>;
+      const _result = dispatch(Thunk.detectScssDependencyCycles({ filename, file }));
     },
   ),
   /** Returns true iff is valid */
@@ -334,20 +359,15 @@ export const Thunk = {
     '[dev-env] try transpile style model',
     async ({ dispatch, state: { devEnv } }, { filename }: { filename: string }) => {
 
-      const { contents } = devEnv.file[filename];
-      const prefixed = addScssPrefixes(contents, filename);
-      const importIntervals = dispatch(EditorThunk.getScssImportIntervals({ scssText: prefixed }));
-      dispatch(Act.updateFile(filename, { prefixed: { src: contents, dst: prefixed, importIntervals} } as StyleFile));
-
       // TODO compute transitive-dependencies ensuring importIntervals
       // TODO detect cycle or missing file and indicate error
-      dispatch(Thunk.testCylicScssDependency({}));
+      dispatch(Thunk.testCylicScssDependency({ filename }));
 
-      // TODO attempt to transpile
-
-      // TODO can't use modelKey
-      const modelKey = filenameToModelKey(filename);
-      const result = await dispatch(EditorThunk.transpileScssMonacoModel({ modelKey }));
+      const { contents: src } = devEnv.file[filename];
+      const result = await dispatch(EditorThunk.transpileScssMonacoModel({
+        src,
+        files: [], // TODO via stratification
+      }));
 
       if (result.key === 'success') {
         dispatch(Act.storeStyleTranspilation(filename, {
