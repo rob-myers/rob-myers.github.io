@@ -9,11 +9,13 @@ import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLooku
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco, Uri, IMarkerData, ScssTranspilationResult } from '@model/monaco/monaco.model';
 import { MonacoService } from '@model/monaco/monaco.service';
+import { accessibilityHelpUrl } from '@model/monaco/monaco.model';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
 import { filterActs } from './reducer';
 import { filenameToModelKey } from '@model/code/dev-env.model';
+import { CODE_FONT_FAMILY } from '@components/monaco/consts';
 
 
 export interface State {
@@ -102,20 +104,74 @@ export const Thunk = {
       return editor.internal!.typescriptDefaults.addExtraLib(typings, filename);
     },
   ),
+  bootstrapEditor: createThunk(
+    '[editor] bootstrap editor',
+    async (
+      { state: { editor }, dispatch, getState },
+      input: MonacoInternal & {
+        editorKey: string;
+        modelKey: string;
+        div: HTMLDivElement;
+        filename: string;
+        code: string;
+      },
+    ) => {
+      if (editor.monacoLoading) {
+        // Wait for 1st load
+        return false;
+      } else if (!editor.monacoLoaded) {
+        // Commence 1st load
+        dispatch(Act.setMonacoLoading(true));
+      }
+
+      if (!editor.internal) {
+        await dispatch(Thunk.bootstrapMonaco({
+          typescript: redact(input.typescript),
+          typescriptDefaults: redact(input.typescriptDefaults),
+          monaco: redact(input.monaco),
+        }));
+      }
+
+      const monacoModel = dispatch(Thunk.ensureMonacoModel({
+        filename: input.filename,
+        code: input.code,
+      }));
+      const monacoEditor = input.monaco.editor.create(input.div, {
+        fontFamily: CODE_FONT_FAMILY,
+        fontSize: 11,
+        model: monacoModel,
+        accessibilityHelpUrl,
+      });
+
+      await dispatch(Thunk.createMonacoEditor({
+        editorKey: input.editorKey,
+        editor: redact(monacoEditor),
+        modelKey: input.modelKey,
+        model: redact(monacoModel),
+        filename: input.filename,
+      }));
+
+      if (getState().editor.monacoLoading) {
+        dispatch(Act.setMonacoLoading(false));
+        dispatch(Act.setMonacoLoaded(true));
+      }
+
+      return true;
+    },
+  ),
   bootstrapMonaco: createThunk(
     '[editor] bootstrap monaco',
     async ({ dispatch }, monacoInternal: MonacoInternal) => {
-      dispatch(Act.setMonacoLoading(true));
       // Dynamic import keeps monaco out of main bundle
       const { MonacoService } = await import('@model/monaco/monaco.service');
-      const service = redact(new MonacoService);
-      dispatch(Act.setMonacoService(service));
 
+      dispatch(Act.setMonacoService(redact(new MonacoService)));
       dispatch(Act.setMonacoInternal(monacoInternal));
-      monacoInternal.typescriptDefaults.setEagerModelSync(true);
       dispatch(Thunk.setMonacoCompilerOptions({}));
+      monacoInternal.typescriptDefaults.setEagerModelSync(true);
+
       await dispatch(Thunk.loadGlobalTypes({}));
-      monacoInternal.monaco.editor.setTheme('vs-dark'); // Dark theme
+      monacoInternal.monaco.editor.setTheme('vs-dark');
     },
   ),
   computeTsImportExports: createThunk(
@@ -140,7 +196,6 @@ export const Thunk = {
     }) => {
       dispatch(Act.storeMonacoEditor({ editor, editorKey }));
       dispatch(Act.addEditorCleanups({ editorKey, cleanups: [() => editor.dispose()] }));
-      dispatch(Thunk.tsxEditorInstanceSetup({ editor }));
 
       if (!e.model[modelKey]) {
         const uri = redact(e.internal!.monaco.Uri.parse(`file:///${filename}`));
@@ -154,6 +209,7 @@ export const Thunk = {
         await awaitWorker('worker-ready', syntaxWorker);
       }
       if (filename.endsWith('.tsx')) {
+        dispatch(Thunk.tsxEditorInstanceSetup({ editor }));
         await dispatch(Thunk.setupTsxHighlighting({ editorKey }));
       }
       if (!getState().editor.sassWorker) {
@@ -163,10 +219,6 @@ export const Thunk = {
         // sassWorker.writeFile('test.scss', '@mixin myMixin { width: 123px; }');
         // sassWorker.compile('@import "test.scss"; .foo { @include myMixin; .bar { color: red; } }',
         //   (sassTestResult) => console.log({ sassTestResult }));
-      }
-      if (getState().editor.monacoLoading) {
-        dispatch(Act.setMonacoLoading(false));
-        dispatch(Act.setMonacoLoaded(true));
       }
     },
   ),
@@ -181,8 +233,10 @@ export const Thunk = {
       const model = monaco.editor.getModel(uri) || monaco.editor.createModel(code, undefined, uri);
       
       if (filename === '_bootstrap.ts') {
-        // Special model which ensures monaco is bootstrapped
-        // when no other editor is initially open.
+        /**
+         * Don't track special model which ensures monaco
+         * is bootstrapped if no other editor initially open.
+         */
         return model;
       }
 
@@ -219,11 +273,11 @@ export const Thunk = {
   ),
   highlightTsxSyntax: createThunk(
     '[editor] highlight tsx syntax',
-    ({ state: { editor: worker } }, { editorKey }: { editorKey: string }) => {
-      const { editor } = worker.editor[editorKey];
+    ({ state: { editor: e } }, { editorKey }: { editorKey: string }) => {
+      const { editor } = e.editor[editorKey];
       const model = editor.getModel();
       if (model && /typescript|javascript/i.test(model.getModeId())) {
-        worker.syntaxWorker!.postMessage({
+        e.syntaxWorker!.postMessage({
           key: 'request-tsx-highlights',
           editorKey,
           code: editor.getValue(),
@@ -234,8 +288,10 @@ export const Thunk = {
   removeMonacoEditor: createThunk(
     '[editor] remove monaco editor',
     ({ dispatch, state: { editor: { editor } }}, { editorKey }: { editorKey: string }) => {
-      editor[editorKey].cleanups.forEach(cleanup => cleanup());
-      dispatch(Act.update({ editor: removeFromLookup(editorKey, editor) }));
+      if (editor[editorKey]) {
+        editor[editorKey]?.cleanups.forEach(cleanup => cleanup());
+        dispatch(Act.update({ editor: removeFromLookup(editorKey, editor) }));
+      }
     },
   ),
   removeMonacoModel: createThunk(
@@ -288,20 +344,20 @@ export const Thunk = {
   ),
   setupTsxHighlighting: createThunk(
     '[editor] setup tsx highlighting',
-    async ({ state: { editor: worker }, dispatch }, { editorKey }: { editorKey: string }) => {
+    async ({ state: { editor }, dispatch }, { editorKey }: { editorKey: string }) => {
       const eventListener = ({ data }: Message<MessageFromWorker>) => {
         if (data.key === 'send-tsx-highlights' && data.editorKey === editorKey) {
           requestAnimationFrame(() =>
             dispatch(Thunk.updateEditorDecorations({ editorKey, classifications: data.classifications })));
         }
       };
-      worker.syntaxWorker!.addEventListener('message', eventListener);
+      editor.syntaxWorker!.addEventListener('message', eventListener);
       const syntaxHighlight = () => dispatch(Thunk.highlightTsxSyntax({ editorKey }));
-      const disposable = worker.editor[editorKey].editor.onDidChangeModelContent(syntaxHighlight);
+      const disposable = editor.editor[editorKey].editor.onDidChangeModelContent(syntaxHighlight);
       requestAnimationFrame(syntaxHighlight); // For first time load
 
       dispatch(Act.addEditorCleanups({ editorKey, cleanups: [
-        () => worker.syntaxWorker?.removeEventListener('message', eventListener),
+        () => editor.syntaxWorker?.removeEventListener('message', eventListener),
         () => disposable.dispose(),
       ]}));
     },

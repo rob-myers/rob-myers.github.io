@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { panelKeyToAppElId } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, panelKeyToEditorKey, filenameToModelKey } from '@model/code/dev-env.model';
 import { Act } from '@store/dev-env.duck';
 import Editor from '@components/monaco/editor';
 
@@ -30,8 +30,8 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
          */
         <div style={{ display: 'none' }}>
           <Editor
-            editorKey={'_bootstrap-editor'}
-            modelKey={'_bootstrap-model'}
+            editorKey={panelKeyToEditorKey(panelKey)}
+            modelKey={filenameToModelKey('_bootstrap.ts')}
             filename={'_bootstrap.ts'}
           />
         </div>

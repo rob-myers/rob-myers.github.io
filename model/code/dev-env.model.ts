@@ -43,6 +43,10 @@ export function filenameToScriptId(filename: string) {
   return `esm-script-${filename}`;
 }
 
+export function filenameToClassPrefix(filename: string) {
+  return `${filename.replace(/\.scss$/, '').replace(/\./g, '_')}__`;
+}
+
 export function appendEsmModule(input: { scriptId: string; scriptSrcUrl: string }) {
   document.getElementById(input.scriptId)?.remove();
   const el = document.createElement('script');

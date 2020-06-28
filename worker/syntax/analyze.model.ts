@@ -2,6 +2,7 @@ import { Project } from 'ts-morph';
 import { JsImportMeta, JsExportMeta, ModuleSpecifierMeta } from '@model/code/patch-js-imports';
 
 import { parse, stringify } from 'scss-parser';
+import { filenameToClassPrefix } from '@model/code/dev-env.model';
 
 /**
  * Analyze imports/exports of typescript file.
@@ -100,7 +101,7 @@ interface ScssAstNode {
 }
 
 export function prefixScssClasses(scssContents: string, filename: string) {
-  const prefix = `${filename.replace(/\./g, '_')}__`;
+  const prefix = filenameToClassPrefix(filename);
   const ast = parse(scssContents);
   
   traverseScss((node) => {

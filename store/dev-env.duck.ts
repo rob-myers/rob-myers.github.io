@@ -123,6 +123,12 @@ export const Thunk = {
       dispatch(Act.setBootstrapped(true));
     },
   ),
+  bootstrapCssModule: createThunk(
+    '[dev-env] bootstrap css module',
+    () => {
+      // TODO
+    },
+  ),
   /**
    * Detect dependency cycles in transpiled js, including reflexive.
    * We don't support cycles because we use blob urls to resolve modules.
