@@ -6,7 +6,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, codeRelPathsToFilenames, traverseDeps as traverseCodeDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 
@@ -125,8 +125,14 @@ export const Thunk = {
   ),
   bootstrapCssModule: createThunk(
     '[dev-env] bootstrap css module',
-    () => {
-      // TODO
+    ({ state: { devEnv } }, { filename }: { filename: string }) => {
+      // Ensure styles
+      const styleElId = filenameToStyleId(filename);
+      const styles = (devEnv.file[filename] as TranspiledStyleFile).transpiled.dst;
+      appendStyleTag({ styleId: styleElId, styles });
+      /**
+       * TODO css module and typings
+       */
     },
   ),
   /**
@@ -569,6 +575,15 @@ const bootstrapAppInstances = createEpic(
   ),
 );
 
+const bootstrapStyles = createEpic(
+  (action$, _state$) => action$.pipe(
+    filterActs('[dev-env] store style transpilation'),
+    map(({ pay: { filename } }) => {
+      return Thunk.bootstrapCssModule({ filename });
+    }),
+  ),
+);
+
 const initializeFileSystem = createEpic(
   (action$, _state$) => action$.pipe(
     filterActs('persist/REHYDRATE' as any),
@@ -653,6 +668,7 @@ const togglePanelMenuEpic = createEpic(
 
 export const epic = combineEpics(
   bootstrapAppInstances,
+  bootstrapStyles,
   initializeFileSystem,
   initializeMonacoModels,
   trackFilePanels,

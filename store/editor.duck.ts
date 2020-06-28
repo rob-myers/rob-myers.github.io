@@ -228,15 +228,13 @@ export const Thunk = {
       const { internal, model: m } = editor;
       const { monaco } = internal!;
 
-      /** Note the additional prefix file:/// */
+      /** Note the additional prefix `file:///` */
       const uri = monaco.Uri.parse(`file:///${filename}`);
       const model = monaco.editor.getModel(uri) || monaco.editor.createModel(code, undefined, uri);
       
       if (filename === '_bootstrap.ts') {
-        /**
-         * Don't track special model which ensures monaco
-         * is bootstrapped if no other editor initially open.
-         */
+        // Don't track special model which ensures monaco
+        // is bootstrapped if no other editor initially open.
         return model;
       }
 
@@ -288,8 +286,9 @@ export const Thunk = {
   removeMonacoEditor: createThunk(
     '[editor] remove monaco editor',
     ({ dispatch, state: { editor: { editor } }}, { editorKey }: { editorKey: string }) => {
+      // editor might not have loaded before dismount
       if (editor[editorKey]) {
-        editor[editorKey]?.cleanups.forEach(cleanup => cleanup());
+        editor[editorKey].cleanups.forEach(cleanup => cleanup());
         dispatch(Act.update({ editor: removeFromLookup(editorKey, editor) }));
       }
     },

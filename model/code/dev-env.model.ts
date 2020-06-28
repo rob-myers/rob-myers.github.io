@@ -40,11 +40,15 @@ export function filenameToModelKey(filename: string) {
 }
 
 export function filenameToScriptId(filename: string) {
-  return `esm-script-${filename}`;
+  return `module-for-${filename}`;
 }
 
 export function filenameToClassPrefix(filename: string) {
   return `${filename.replace(/\.scss$/, '').replace(/\./g, '_')}__`;
+}
+
+export function filenameToStyleId(filename: string) {
+  return `styles-for-${filename}`;
 }
 
 export function appendEsmModule(input: { scriptId: string; scriptSrcUrl: string }) {
@@ -56,6 +60,14 @@ export function appendEsmModule(input: { scriptId: string; scriptSrcUrl: string 
   document.head.appendChild(el);
 }
 
+export function appendStyleTag(input: { styleId: string; styles: string }) {
+  document.getElementById(input.styleId)?.remove();
+  const el = document.createElement('style');
+  el.id = input.styleId;
+  el.textContent = input.styles;
+  document.head.appendChild(el);
+}
+
 export type FileState = (
   | CodeFile
   | StyleFile
@@ -63,6 +75,10 @@ export type FileState = (
 
 export interface TranspiledCodeFile extends CodeFile {
   transpiled: CodeTranspilation;
+}
+
+export interface TranspiledStyleFile extends StyleFile {
+  transpiled: StyleTranspilation;
 }
 
 export interface CodeFile extends BaseFile {

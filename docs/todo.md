@@ -10,7 +10,7 @@
 - [ ] can import `scss` into `tsx` as css module
   > `scss` has associated esm module defined using filename alone.
   > achievable using ES6 proxy https://stackoverflow.com/a/7891968/2917822
-- [ ] `scss` gets mounted inside `style` tag
+- [x] `scss` gets mounted inside `style` tag
 - [x] `scss` supports `@import` when no cyclic deps
   > sass.js does not support `@use`
   > sass files need to be stratified (not transpiled css)
