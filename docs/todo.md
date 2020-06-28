@@ -11,6 +11,8 @@
 - [ ] `scss` supports `@import` when no cyclic deps
   > sass.js does not support `@use`
   > sass files need to be stratified (not transpiled css)
+- [x] prefix sass classes using a sass parser
+  > https://www.npmjs.com/package/scss-parser
 - [x] `scss` gets transpiled too
 - [x] ensure initial mount without opening unseen files
 - [x] add home icon returning to `/`

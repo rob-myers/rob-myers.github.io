@@ -1,6 +1,6 @@
 import { CyclicDepError, UntranspiledPathInterval, JsExportMeta, JsImportMeta } from './patch-js-imports';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
-import { ScssImportInterval } from '@model/monaco/monaco.model';
+import { ScssImportPathInterval } from '@worker/syntax/analyze.model';
 
 export const menuHeightPx = 32;
 
@@ -82,7 +82,7 @@ export interface StyleFile extends BaseFile {
     /** Contents with classes prefixed by filename */
     dst: string;
     /** @import path intervals in `prefixedContents` */
-    importIntervals: ScssImportInterval[];
+    importIntervals: ScssImportPathInterval[];
   };
   /** Last transpilation */
   transpiled: null | StyleTranspilation;

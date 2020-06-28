@@ -13,7 +13,8 @@ import { getBootstrapAppCode } from '@model/code/bootstrap';
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
-import { TsTranspilationResult, addScssPrefixes } from '@model/monaco/monaco.model';
+import { TsTranspilationResult } from '@model/monaco/monaco.model';
+import { awaitWorker } from '@worker/syntax/worker.model';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -123,7 +124,7 @@ export const Thunk = {
   ),
   /**
    * Detect dependency cycles in transpiled js, including reflexive.
-   * We don't support them because we use blob urls to resolve modules.
+   * We don't support cycles because we use blob urls to resolve modules.
    */
   detectCodeDependencyCycles: createThunk(
     '[dev-env] detect code dependency cycles',
@@ -169,17 +170,7 @@ export const Thunk = {
       /**
        * TODO
        */
-    },
-  ),
-  ensurePrefixedStyleFile: createThunk(
-    '[dev-env] ensure prefixed style file',
-    ({ state: { devEnv }, dispatch }, { filename }: { filename: string }) => {
-      const { contents, prefixed } = devEnv.file[filename] as StyleFile;
-      if (contents !== prefixed?.src) {
-        const prefixedScss = addScssPrefixes(contents, filename);
-        const importIntervals = dispatch(EditorThunk.getScssImportIntervals({ scssText: prefixedScss }));
-        dispatch(Act.updateFile(filename, { prefixed: { src: contents, dst: prefixedScss, importIntervals} }));
-      }
+      return { stratification: [] as string[][] };
     },
   ),
   initialize: createThunk(
@@ -277,20 +268,22 @@ export const Thunk = {
       };
     },
   ),
-  testCylicScssDependency: createThunk(
-    '[dev-env] test cyclic scss dependency',
-    ({ state: { devEnv }, dispatch, getState }, { filename }: { filename: string }) => {
-      // Ensure all scss files have up-to-date `prefixed`
-      Object.values(devEnv.file).filter(({ ext }) => ext === 'scss')
-        .forEach(({ key: filename }) => dispatch(Thunk.ensurePrefixedStyleFile({ filename })));
+  tryPrefixStyleFile: createThunk(
+    '[dev-env] try prefix style file',
+    async ({ state: { devEnv, editor: { syntaxWorker } }, dispatch }, { filename }: { filename: string }) => {
+      const { contents, prefixed } = devEnv.file[filename] as StyleFile;
+      if (contents !== prefixed?.src) {
+        syntaxWorker!.postMessage({ key: 'request-scss-prefixing', filename, scss: contents });
+        const result = await awaitWorker('send-prefixed-scss', syntaxWorker!, ({ origScss }) => contents === origScss);
 
-      /**
-       * TODO
-       * - check stratified and return stratification
-       * - error if @import references missing file, or cyclic dep exists
-       */
-      const file = getState().devEnv.file as KeyedLookup<StyleFile>;
-      const _result = dispatch(Thunk.detectScssDependencyCycles({ filename, file }));
+        if (result.prefixedScss) {
+          const { prefixedScss, importIntervals } = result;
+          dispatch(Act.updateFile(filename, { prefixed: { src: contents, dst: prefixedScss, importIntervals } }));
+        } else {
+          console.error({ prefixScssError: result });
+          throw Error(result.error!);
+        }
+      }
     },
   ),
   /** Returns true iff is valid */
@@ -357,27 +350,35 @@ export const Thunk = {
   ),
   tryTranspileStyleModel: createThunk(
     '[dev-env] try transpile style model',
-    async ({ dispatch, state: { devEnv } }, { filename }: { filename: string }) => {
+    async ({ dispatch, state: { devEnv }, getState }, { filename }: { filename: string }) => {
+      try {
+        // Ensure all scss files have been `prefixed`
+        const scssFiles = Object.values(devEnv.file).filter(({ ext }) => ext === 'scss');
+        for (const { key: filename } of scssFiles) {
+          await dispatch(Thunk.tryPrefixStyleFile({ filename }));
+        }
 
-      // TODO compute transitive-dependencies ensuring importIntervals
-      // TODO detect cycle or missing file and indicate error
-      dispatch(Thunk.testCylicScssDependency({ filename }));
+        const currFile = getState().devEnv.file as KeyedLookup<StyleFile>;
+        const { stratification } = dispatch(Thunk.detectScssDependencyCycles({ filename, file: currFile }));
+        console.log({ scssStratification: stratification });
 
-      const { contents: src } = devEnv.file[filename];
-      const result = await dispatch(EditorThunk.transpileScssMonacoModel({
-        src,
-        files: [], // TODO via stratification
-      }));
-
-      if (result.key === 'success') {
-        dispatch(Act.storeStyleTranspilation(filename, {
-          type: 'css',
-          src: result.src,
-          dst: result.dst,
-          cleanups: [],
+        const transpiled = await dispatch(EditorThunk.transpileScssMonacoModel({
+          src: currFile[filename].prefixed!.dst,
+          files: [], // TODO via stratification
         }));
-      } else {
-        console.error(result);
+
+        if (transpiled.key === 'success') {
+          dispatch(Act.storeStyleTranspilation(filename, {
+            type: 'css',
+            src: transpiled.src,
+            dst: transpiled.dst,
+            cleanups: [],
+          }));
+        } else {
+          console.error({ scssTranspileError: transpiled });
+        }
+      } catch (e) {
+        console.error({ scssTranspileGeneralError: e });
       }
     },
   ),

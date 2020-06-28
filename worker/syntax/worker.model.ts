@@ -3,6 +3,7 @@ import { map, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
 import { JsImportMeta, JsExportMeta } from '@model/code/patch-js-imports';
 import { Classification } from './highlight.model';
+import { ScssImportPathInterval } from './analyze.model';
 
 /** A Worker instance in parent thread. */
 export interface SyntaxWorker extends Worker {
@@ -25,17 +26,6 @@ export interface SyntaxWorkerContext extends Worker {
 interface WorkerReady {
   key: 'worker-ready';
 }
-interface SendTsxHighlights {
-  key: 'send-tsx-highlights';
-  classifications: Classification[];
-  editorKey: string;
-}
-interface SendImportExportMeta {
-  key: 'send-import-exports';
-  origCode: string;
-  imports: JsImportMeta[];
-  exports: JsExportMeta[];
-}
 
 interface RequestTsxHighlights {
   key: 'request-tsx-highlights';
@@ -50,17 +40,44 @@ interface RequestImportExportMeta {
   code: string;
   filename: string;
 }
+interface RequestScssPrefixing {
+  key: 'request-scss-prefixing';
+  scss: string;
+  /** Induces prefix `${filename}__` */
+  filename: string;
+}
+
+interface SendTsxHighlights {
+  key: 'send-tsx-highlights';
+  classifications: Classification[];
+  editorKey: string;
+}
+interface SendImportExportMeta {
+  key: 'send-import-exports';
+  origCode: string;
+  imports: JsImportMeta[];
+  exports: JsExportMeta[];
+}
+interface SendPrefixedScss {
+  key: 'send-prefixed-scss';
+  origScss: string;
+  prefixedScss: null | string;
+  importIntervals: ScssImportPathInterval[];
+  error: null | string;
+}
 
 type MessageFromParent = (
   | RequestStatus
   | RequestTsxHighlights
   | RequestImportExportMeta
+  | RequestScssPrefixing
 );
 
 export type MessageFromWorker = (
   | WorkerReady
   | SendTsxHighlights
   | SendImportExportMeta
+  | SendPrefixedScss
 );
 
 type RefinedMessage<Key> = Extract<MessageFromWorker, { key: Key }>

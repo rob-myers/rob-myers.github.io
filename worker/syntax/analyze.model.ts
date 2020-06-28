@@ -1,6 +1,11 @@
 import { Project } from 'ts-morph';
 import { JsImportMeta, JsExportMeta, ModuleSpecifierMeta } from '@model/code/patch-js-imports';
 
+import { parse, stringify } from 'scss-parser';
+
+/**
+ * Analyze imports/exports of typescript file.
+ */
 export function analyzeImportsExports(filename: string, code: string) {
   const project = new Project({ compilerOptions: {} });
   const srcFile = project.createSourceFile(filename, code);
@@ -85,4 +90,64 @@ export function analyzeImportsExports(filename: string, code: string) {
     exports: exportItems,
     imports: importItems,
   };
+}
+
+interface ScssAstNode {
+  type: string;
+  start?: { column: number; cursor: number; line: number };
+  next?: { column: number; cursor: number; line: number };
+  value: ScssAstNode[] | string;
+}
+
+export function prefixScssClasses(scssContents: string, filename: string) {
+  const prefix = `${filename.replace(/\./g, '_')}__`;
+  const ast = parse(scssContents);
+
+  traverseScss((node) => {
+    if (node.type === 'class') {
+      const classNode = node as ScssAstNode & { value: [ScssAstNode & { value: string }] };
+      // Must mutate array and clone because `value` is a readonly property
+      classNode.value[0] = { ...classNode.value[0], value: `${prefix}${classNode.value[0].value}`};
+    }
+  }, ast);
+
+  const prefixedScss = stringify(ast);
+
+  return {
+    prefixedScss,
+    importIntervals: extractScssImportIntervals(prefixedScss),
+  };
+}
+
+export interface ScssImportPathInterval {
+  value: string;
+  line: number;
+  startCol: number;
+  endCol: number;
+}
+
+function extractScssImportIntervals(scssContents: string) {
+  const importIntervals = [] as ScssImportPathInterval[];
+  const ast = parse(scssContents);
+
+  traverseScss((node) => {
+    if (node.type === 'atrule' && Array.isArray(node.value)) {
+      const [first, second, third] = node.value;
+      (first.type === 'atkeyword' && first.value === 'import' && second.type === 'space'
+        && (third.type === 'string_double' || third.type === 'string_single')
+      ) && importIntervals.push({
+        value: third.value as string,
+        line: third.start!.line,
+        startCol: third.start!.column - 1,
+        endCol: third.start!.column + (third.value as string).length,
+      });
+    }
+  }, ast);
+
+  return importIntervals;
+}
+
+function traverseScss(act: (node: ScssAstNode) => void, node: ScssAstNode) {
+  act(node);
+  Array.isArray(node.value) && node.value.forEach((child) => traverseScss(act, child));
 }

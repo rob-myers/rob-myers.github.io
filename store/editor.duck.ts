@@ -192,12 +192,6 @@ export const Thunk = {
       return model;
     },
   ),
-  getScssImportIntervals: createThunk(
-    '[editor] get scss import intervals',
-    ({ state: { editor } }, { scssText }: { scssText: string }) => {
-      return editor.monacoService!.getScssImportIntervals(scssText);
-    },
-  ),
   /** Load types associated to globals */
   loadGlobalTypes: createThunk(
     '[editor] ensure monaco types',

@@ -56,14 +56,6 @@ export type Uri = monaco.Uri;
 
 export type IMarkerData = monaco.editor.IMarkerData;
 
-export interface ScssImportInterval {
-  value: string;
-  match: string;
-  start: number;
-  startLineNumber: number;
-  startColumn: number;
-}
-
 export type ScssTranspilationResult = (
   | { key: 'success'; src: string; dst: string }
   | { key: 'error' } & (
@@ -72,7 +64,3 @@ export type ScssTranspilationResult = (
     | { errorKey: 'cyclic-dep'; dependency: string }
   )
 );
-
-export function addScssPrefixes(contents: string, filename: string) {
-  return contents.replace(/(\.\S+)/g, `${filename}__$1`);
-}

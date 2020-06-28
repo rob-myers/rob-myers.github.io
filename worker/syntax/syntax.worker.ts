@@ -4,7 +4,7 @@ import { SyntaxDispatchOverload } from './redux.model';
 import { initializeStore } from './create-store';
 import { testNever } from '@model/generic.model';
 import { computeClassifications } from './highlight.model';
-import { analyzeImportsExports } from './analyze.model';
+import { analyzeImportsExports, prefixScssClasses } from './analyze.model';
 
 const ctxt: SyntaxWorkerContext = self as any;
 
@@ -42,6 +42,25 @@ ctxt.addEventListener('message', ({ data }) => {
     }
     case 'request-status': {
       ctxt.postMessage({ key: 'worker-ready' });
+      break;
+    }
+    case 'request-scss-prefixing': {
+      try {
+        ctxt.postMessage({
+          key: 'send-prefixed-scss',
+          origScss: data.scss,
+          ...prefixScssClasses(data.scss, data.filename),
+          error: null,
+        });
+      } catch (e) {
+        ctxt.postMessage({
+          key: 'send-prefixed-scss',
+          origScss: data.scss,
+          prefixedScss: null,
+          importIntervals: [],
+          error: `${e}`,
+        });
+      }
       break;
     }
     default: throw testNever(data);
