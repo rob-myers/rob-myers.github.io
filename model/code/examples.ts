@@ -31,7 +31,9 @@ export default App;
 `.trim();
 
 export const exampleTsx3 = `
+
 import * as React from 'react';
+import css from './index.scss';
 
 import { baz } from './model';
 console.log({ baz })
@@ -45,6 +47,7 @@ const Item: React.FC<ItemProps> = (props) => (
   <div
     style={{ padding: 2, border: '1px solid #555' }}
     onClick={props.remove}
+    className={css.myClass}
   >
     {props.id}
   </div>
@@ -53,7 +56,10 @@ const Item: React.FC<ItemProps> = (props) => (
 export const App: React.FC = () => {
   const [items, setItems] = React.useState([...Array(10)].map((_, i) => i));
   return (
-    <div style={{ padding: 20 }}>
+    <div
+      style={{ padding: 20 }}
+      className={css.myAncestralClass}
+    >
       {items.map(x => (
         <Item
           id={x}
@@ -77,7 +83,8 @@ export const exampleScss1 = `
 
 .my-ancestral-class {
   .my-class {
-    background: red;
+    margin: 10px;
+    background: rgba(255, 0, 0, 0.623);
   }
 }
 `.trim();
