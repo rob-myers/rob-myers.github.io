@@ -1,6 +1,6 @@
-import { KeyedLookup } from '@model/generic.model';
+import { KeyedLookup, pluck } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { TranspiledCodeFile, CodeFileEsm, CodeFile } from './dev-env.model';
+import { TranspiledCodeFile, CodeFileEsm, CodeFile, StyleFile, FileState } from './dev-env.model';
 
 export interface UntranspiledPathInterval {
   /** e.g. `react` or `./index` */
@@ -53,11 +53,16 @@ export interface ModuleSpecifierMeta {
   startCol: number;
 }
 
-/** Relative paths to filenames, ignoring 'react' */
-export function codeRelPathsToFilenames(importPaths: string[], allFilenames: string[]) {
+/** Relative paths to code filenames, ignoring 'react' */
+export function importPathsToCodeFilenames(
+  /** May include .scss */
+  importPaths: string[],
+  allFilenames: string[]
+) {
   return importPaths
     .filter((x, i) => x.startsWith('./') && i === importPaths.indexOf(x))
-    .map(x => relPathToFilename(x, allFilenames));
+    .map(x => relPathToFilename(x, allFilenames))
+    .filter(x => /\.tsx?$/.test(x));
 }
 
 /**
@@ -110,8 +115,8 @@ export function stratifyJsFiles(jsFiles: TranspiledCodeFile[]) {
   const stratification = [] as string[][];
   const permittedDeps = { react: true } as Record<string, true>;
 
-  const lookup = jsFiles.reduce((agg, { key, transpiled: { importFilenames } }) => ({
-    ...agg, [key]: { filename: key, dependencies: importFilenames }
+  const lookup = jsFiles.reduce(( agg, { key, transpiled: { importFilenames } }) => ({
+    ...agg, [key]: { filename: key, dependencies: importFilenames },
   }), {} as Record<string, DepNode>);
   
   let values: DepNode[];
@@ -134,20 +139,22 @@ export function stratifyJsFiles(jsFiles: TranspiledCodeFile[]) {
 }
 
 export function patchTranspiledJsFiles(
-  jsFile: KeyedLookup<TranspiledCodeFile>,
+  file: KeyedLookup<FileState>,
   stratification: string[][],
 ) {
-  const jsFilenames = Object.keys(jsFile);
+  const allFilenames = Object.keys(file);
   const filenameToPatched = {} as Record<string, CodeFileEsm>;
+  const scssFile = pluck(file, ({ ext }) => ext === 'scss') as KeyedLookup<StyleFile>;
 
   for (const level of stratification) {
     for (const filename of level) {
-      const { transpiled } = jsFile[filename];
+      const { transpiled } = file[filename] as TranspiledCodeFile;
       const patchedCode = patchTranspiledCode(
         transpiled.dst,
         transpiled.imports,
-        filenameToPatched, // Only need the blobUrls
-        jsFilenames,
+        filenameToPatched, // Only need blobUrls
+        allFilenames,
+        scssFile, // Only need blobUrls
       );
       const blob = new Blob([patchedCode], { type: 'text/javascript' });
       const blobUrl = URL.createObjectURL(blob);
@@ -167,18 +174,21 @@ function patchTranspiledCode(
   transpiledCode: string,
   importMetas: JsImportMeta[],
   filenameToPatched: Record<string, CodeFileEsm>,
-  jsFilenames: string[],
+  allFilenames: string[],
+  scssFile: KeyedLookup<StyleFile>,
 ): string {
   let offset = 0, nextValue: string;
   let patched = transpiledCode;
 
   importMetas.forEach((importMeta) => {
     const { value, start } = importMeta.path;
-    const filename = relPathToFilename(value, jsFilenames);
+    const filename = relPathToFilename(value, allFilenames);
     if (value === 'react') {
       nextValue = `${window.location.origin}/es-react/react.js`;
     } else if (filename && filenameToPatched[filename]) {
       nextValue = filenameToPatched[filename].blobUrl;
+    } else if (filename.endsWith('.scss')) {
+      nextValue = scssFile[filename].cssModule!.blobUrl;
     } else {
       throw Error(`Unexpected import meta ${JSON.stringify(importMeta)}`);
     }

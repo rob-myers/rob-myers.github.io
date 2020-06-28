@@ -1,5 +1,7 @@
 # Local
 
+- [ ] force scss files existence (else show error)
+- [ ] force code/style import paths to be relative (else show error)
 - [x] bootstrap app even when no monaco editor panel initially open
 - [x] detect `js` cyclic dep caused by `export { App } from './index'`
 - [ ] handle persistence across multiple tabs
@@ -7,7 +9,7 @@
   > warn if multiple unsaved projects open
 - [x] aim towards 'properly hmr' top-down svg/css 3d agent engine
   > see project.md; see `with-bash-and-level` branch
-- [ ] can import `scss` into `tsx` as css module
+- [x] can import `scss` into `tsx` as css module
   > `scss` has associated esm module defined using filename alone.
   > achievable using ES6 proxy https://stackoverflow.com/a/7891968/2917822
 - [x] `scss` gets mounted inside `style` tag

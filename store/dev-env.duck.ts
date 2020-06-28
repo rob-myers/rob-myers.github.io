@@ -7,7 +7,7 @@ import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
 import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag } from '@model/code/dev-env.model';
-import { JsImportMeta, JsExportMeta, codeRelPathsToFilenames, traverseDeps as traverseCodeDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
+import { JsImportMeta, JsExportMeta, importPathsToCodeFilenames, traverseDeps as traverseCodeDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 
 import { filterActs } from './reducer';
@@ -16,6 +16,7 @@ import { Thunk as LayoutThunk } from './layout.duck';
 import { TsTranspilationResult } from '@model/monaco/monaco.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
 import { findUnknownScssImport, CyclicScssResult, traverseScssDeps, stratifyScssFiles } from '@model/code/handle-scss-imports';
+import { getCssModuleCode } from '@model/code/css-module';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -123,20 +124,32 @@ export const Thunk = {
       dispatch(Act.setBootstrapped(true));
     },
   ),
-  bootstrapCssModule: createThunk(
-    '[dev-env] bootstrap css module',
+  /**
+   * Store transpiled scss in a <style>.
+   */
+  bootstrapStyles: createThunk(
+    '[dev-env] bootstrap styles',
     ({ state: { devEnv } }, { filename }: { filename: string }) => {
-      // Ensure styles
       const styleElId = filenameToStyleId(filename);
       const styles = (devEnv.file[filename] as TranspiledStyleFile).transpiled.dst;
       appendStyleTag({ styleId: styleElId, styles });
-      /**
-       * TODO css module and typings
-       */
     },
   ),
   /**
-   * Detect dependency cycles in transpiled js, including reflexive.
+   * Can create css module code/url as soon as scss file created.
+   * We won't mount it until it is used.
+   */
+  createCssModule: createThunk(
+    '[dev-env] create css module',
+    ({ dispatch }, { filename }: { filename: string }) => {
+      const code = getCssModuleCode(filename);
+      const blob = new Blob([code], { type: 'text/javascript' });
+      const blobUrl = URL.createObjectURL(blob);
+      dispatch(Act.updateFile(filename, { cssModule: { code, blobUrl } } as StyleFile));
+    },
+  ),
+  /**
+   * Detect dependency cycles in transpiled js.
    * We don't support cycles because we use blob urls to resolve modules.
    */
   detectCodeDependencyCycles: createThunk(
@@ -147,7 +160,7 @@ export const Thunk = {
       exports: JsExportMeta[];
     }): null | CyclicDepError => {
       const filenames = Object.keys(devEnv.file);
-      const dependencyPaths = codeRelPathsToFilenames(([] as string[]).concat(
+      const dependencyPaths = importPathsToCodeFilenames(([] as string[]).concat(
         imports.map(({ path }) => path.value),
         exports.map(({ from }) => from?.value as string).filter(Boolean),
       ), filenames);
@@ -230,6 +243,13 @@ export const Thunk = {
       Object.entries(devEnv.panelToFile)
         .find(([_, { filename: f }]) => filename === f)?.[0] || null
   ),
+  forgetCodeTranspilation: createThunk(
+    '[dev-env] forget code transpilation',
+    ({ dispatch, state: { devEnv } }, { filename }: { filename: string }) => {
+      devEnv.file[filename]?.transpiled?.cleanups.forEach(cleanup => cleanup());
+      dispatch(Act.updateFile(filename, { transpiled: null, pathIntervals: [] }));
+    },
+  ),
   /**
    * To display app need to replace import/export specifers in transpiled js by
    * valid urls. We use (a) an asset url for react, (b) blob urls for relative paths.
@@ -239,13 +259,13 @@ export const Thunk = {
     ({ dispatch, state: { devEnv } }) => {
       const jsFiles = getReachableJsFiles(devEnv.file) as TranspiledCodeFile[];
       const stratification = stratifyJsFiles(jsFiles);
-      const filenameToPatched = patchTranspiledJsFiles(lookupFromValues(jsFiles), stratification);
+      const filenameToPatched = patchTranspiledJsFiles(devEnv.file, stratification);
       for (const [filename, { patchedCode, blobUrl }] of Object.entries(filenameToPatched)) {
         dispatch(Act.updateFile(filename, { esm: { patchedCode, blobUrl } }));
       }
     },
   ),
-  rememberSrcCodeImportsExports: createThunk(
+  rememberSrcPathIntervals: createThunk(
     '[dev-env] remember src code imports/exports',
     async ({ dispatch, state: { devEnv } }, { filename, modelKey }: { filename: string; modelKey: string }) => {
       const { imports, exports } = await dispatch(EditorThunk.computeTsImportExports({ filename, modelKey }));
@@ -258,9 +278,7 @@ export const Thunk = {
         .map(({ value, start, startCol, startLine }) => ({
           path: value,
           start, startCol, startLine,
-          filename: value === 'react'
-            ? null
-            : relPathToFilename(value, filenames) || null,
+          filename: value === 'react' ? null : relPathToFilename(value, filenames) || null,
         }));
 
       dispatch(Act.updateFile(filename, { pathIntervals }));
@@ -322,7 +340,9 @@ export const Thunk = {
       }
     },
   ),
-  /** Returns true iff is valid */
+  /**
+   * Try to transpile ts/tsx `filename`.
+   */
   tryTranspileCodeModel: createThunk(
     '[dev-env] try transpile code model',
     async ({ dispatch, state: { devEnv } }, { filename, onlyIf }: {
@@ -346,13 +366,17 @@ export const Thunk = {
       if (transpiled.key !== 'success') {
         // Don't show cyclic dependency error if transpile failed
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
-        // Clear previous state for cleanliness
-        dispatch(Act.updateFile(filename, { transpiled: null, pathIntervals: [] }));
+        dispatch(Thunk.forgetCodeTranspilation({ filename })); // Cleanliness
         return;
       }
       
-      // Remember code intervals of import/export specifiers so can show errors there
-      const { pathIntervals: importIntervals } = await dispatch(Thunk.rememberSrcCodeImportsExports({ filename, modelKey }));
+      // Remember code intervals of import/export specifiers (so can show errors)
+      const { pathIntervals } = await dispatch(Thunk.rememberSrcPathIntervals({ filename, modelKey }));
+
+      // TODO all path intervals must be relative
+
+      // TODO all scss imports must refer to existing files
+
       // Test for cyclic dependency
       const { imports, exports, cyclicDepError, prevCyclicError } =
         await dispatch(Thunk.testCyclicJsDependency({ filename, nextTranspiledJs: transpiled.transpiledJs }));
@@ -370,7 +394,7 @@ export const Thunk = {
       if (cyclicDepError) {
         console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(cyclicDepError)}`);
         // Expect importIntervals paths like ./foo-bar
-        const badIntervals = importIntervals.filter(({ path }) => cyclicDepError.dependency.startsWith(path.slice(2)));
+        const badIntervals = pathIntervals.filter(({ path }) => cyclicDepError.dependency.startsWith(path.slice(2)));
         dispatch(EditorThunk.setModelMarkers({ modelKey,
           markers: badIntervals.map((interval) => getCyclicDepMarker(interval)),
         })); // Retranspile cyclic dependency if currently valid
@@ -384,11 +408,15 @@ export const Thunk = {
       }
     },
   ),
+  /**
+   * Try to transpile scss `filename`.
+   */
   tryTranspileStyleModel: createThunk(
     '[dev-env] try transpile style model',
     async ({ dispatch, state: { devEnv }, getState }, { filename }: { filename: string }) => {
       
-      try {// Ensure all scss files have been `prefixed`
+      // Ensure all scss files have been `prefixed`
+      try {
         const scssFiles = Object.values(devEnv.file).filter(({ ext }) => ext === 'scss');
         for (const { key: filename } of scssFiles) {
           await dispatch(Thunk.tryPrefixStyleFile({ filename }));
@@ -453,10 +481,8 @@ export const Thunk = {
       const filenames = Object.keys(devEnv.file);
       dispatch(Act.storeCodeTranspilation(filename, { type: 'js', ...rest,
         cleanups: [() => disposable.dispose()],
-        importFilenames: codeRelPathsToFilenames(
-          rest.imports.map(({ path }) => path.value), filenames),
-        exportFilenames: codeRelPathsToFilenames(
-          rest.exports.map(({ from }) => from?.value as string).filter(Boolean), filenames),
+        importFilenames: importPathsToCodeFilenames(rest.imports.map(({ path }) => path.value), filenames),
+        exportFilenames: importPathsToCodeFilenames(rest.exports.map(({ from }) => from?.value as string).filter(Boolean), filenames),
       }));
     },
   ),
@@ -490,6 +516,7 @@ export const reducer = (state = initialState, act: Action): State => {
         cleanupTrackers: [],
         transpiled: null,
         prefixed: null,
+        cssModule: null,
       } as StyleFile, state.file),
     };
     case '[dev-env] remove file': return { ...state,
@@ -579,7 +606,7 @@ const bootstrapStyles = createEpic(
   (action$, _state$) => action$.pipe(
     filterActs('[dev-env] store style transpilation'),
     map(({ pay: { filename } }) => {
-      return Thunk.bootstrapCssModule({ filename });
+      return Thunk.bootstrapStyles({ filename });
     }),
   ),
 );
@@ -642,12 +669,15 @@ const trackCodeFileContents = createEpic(
       if (file[filename]) {
         // Initially load file contents
         model.setValue(file[filename].contents);
-        return [// Setup tracking
+        return [
+          ...(file[filename].ext === 'scss'
+            ? [Thunk.createCssModule({ filename })] : []),
+          // Setup tracking
           Thunk.setupRememberFileContents({ modelKey, filename }),
           Thunk.setupFileTranspile({ modelKey, filename }),
         ];
       }
-      console.warn(`Ignored filename "${filename}" (not found in state)`);
+      console.warn(`Ignored file "${filename}" (not found in state)`);
       return [];
     }),
   ),

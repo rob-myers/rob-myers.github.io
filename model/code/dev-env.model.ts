@@ -97,6 +97,11 @@ export interface CodeFile extends BaseFile {
 
 export interface StyleFile extends BaseFile {
   ext: 'scss';
+  cssModule: null | {
+    /** Completely determined by `filename` */
+    code: string;
+    blobUrl: string;
+  };
   prefixed: null | {
     src: string;
     /** Contents with classes prefixed by filename */

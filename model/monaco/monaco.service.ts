@@ -6,12 +6,18 @@ const typesPrefix = 'file:///node_modules/@types';
 
 export class MonacoService {
 
-  public async loadReactTypes(typescriptDefaults: TypescriptDefaults) {
+  public async loadGlobalTypes(typescriptDefaults: TypescriptDefaults) {
     typescriptDefaults.addExtraLib(
       //@ts-ignore
       (await import('!raw-loader!@types/react/index.d.ts')).default,
       `${typesPrefix}/react/index.d.ts`,
     );
+    typescriptDefaults.addExtraLib(`
+      declare module '*.scss' {
+        const content: {[className: string]: string};
+        export default content;
+      }
+    `);
   }
 
   /**

@@ -264,7 +264,7 @@ export const Thunk = {
     async ({ state: { editor: worker }, dispatch }) => {
       const { typescriptDefaults } = worker.internal!;
       dispatch(Thunk.setTsDiagnostics({ mode: 'off' }));
-      await worker.monacoService!.loadReactTypes(typescriptDefaults);
+      await worker.monacoService!.loadGlobalTypes(typescriptDefaults);
       dispatch(Thunk.setTsDiagnostics({ mode: 'on' }));
       dispatch(Act.setGlobalTypesLoaded(true));
     },
