@@ -73,9 +73,21 @@ export const baz = 'qux';
 `.trim();
 
 export const exampleScss1 = `
+@import "other.scss"
+
 .my-ancestral-class {
   .my-class {
     background: red;
   }
+}
+`.trim();
+
+export const exampleScss2 = `
+.other-class {
+  color: green;
+}
+
+@mixin myMixin {
+  color: blue;
 }
 `.trim();

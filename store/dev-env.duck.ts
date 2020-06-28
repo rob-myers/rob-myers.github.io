@@ -3,9 +3,9 @@ import { map, filter, flatMap } from 'rxjs/operators';
 import { ReactDOM } from '../public/es-react'; // Runtime react
 
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
-import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
+import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
-import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
+import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
 import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, codeRelPathsToFilenames, traverseDeps as traverseCodeDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
@@ -169,7 +169,7 @@ export const Thunk = {
   detectScssDependencyCycles: createThunk(
     '[dev-env] detect scss dependency cycles',
     ({ state: { devEnv } }, { filename }: { filename: string }): CyclicScssResult => {
-      const file = devEnv.file as KeyedLookup<PrefixedStyleFile>;
+      const file = pluck(devEnv.file, ({ ext }) => ext === 'scss') as KeyedLookup<PrefixedStyleFile>;
       const f = file[filename];
 
       const unknownImport = findUnknownScssImport(filename, file);
@@ -208,6 +208,8 @@ export const Thunk = {
         dispatch(Act.createCodeFile({ filename: 'model.ts', contents: exampleTs1 }));
       !devEnv.file['index.scss']?.contents &&
         dispatch(Act.createStyleFile({ filename: 'index.scss', contents: exampleScss1 }));
+      !devEnv.file['other.scss']?.contents &&
+        dispatch(Act.createStyleFile({ filename: 'other.scss', contents: exampleScss2 }));
       dispatch(Act.initialized());
     },
   ),
@@ -377,10 +379,12 @@ export const Thunk = {
       
       try {// Ensure all scss files have been `prefixed`
         const scssFiles = Object.values(devEnv.file).filter(({ ext }) => ext === 'scss');
-        for (const { key: filename } of scssFiles)
+        for (const { key: filename } of scssFiles) {
           await dispatch(Thunk.tryPrefixStyleFile({ filename }));
+        }
       } catch (e) {
         console.error({ scssPrefixError: e });
+        return;
       }
 
       const cyclicResult = dispatch(Thunk.detectScssDependencyCycles({ filename }));

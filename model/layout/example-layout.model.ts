@@ -69,6 +69,17 @@ export const initLayoutConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
               },
             },
           },
+          {
+            type: LayoutItemType['react-component'],
+            title: 'other.scss',
+            component: 'window-panel',
+            props: {
+              panelKey: 'scss-other',
+              panelMeta: {
+                filename: 'other.scss',
+              },
+            },
+          },
         ],
       }
     ],

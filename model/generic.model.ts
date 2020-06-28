@@ -177,3 +177,12 @@ export function firstAvailableInteger(nonNegativeInts: number[]) {
 export function lookupFromValues<T extends { key: string }>(values: T[]): KeyedLookup<T> {
   return values.reduce((agg, item) => ({ ...agg, [item.key]: item }), {} as KeyedLookup<T>);
 }
+
+export function pluck<T extends { key: string }>(
+  lookup: KeyedLookup<T>,
+  test: (item: T) => boolean 
+) {
+  const shallow = { ...lookup };
+  Object.values(lookup).forEach((item) => !test(item) && delete shallow[item.key]);
+  return shallow;
+}
