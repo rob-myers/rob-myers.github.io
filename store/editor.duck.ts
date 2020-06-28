@@ -192,6 +192,13 @@ export const Thunk = {
       return model;
     },
   ),
+  getModelMarkers: createThunk(
+    '[editor] get model markers',
+    ({ state: { editor: e } }, { modelKey }: { modelKey: string }) => {
+      const { model } = e.model[modelKey];
+      return e.internal!.monaco.editor.getModelMarkers({ resource: model.uri });
+    },
+  ),
   /** Load types associated to globals */
   loadGlobalTypes: createThunk(
     '[editor] ensure monaco types',

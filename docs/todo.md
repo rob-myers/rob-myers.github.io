@@ -8,7 +8,7 @@
   > see project.md; see `with-bash-and-level` branch
 - [ ] can import `scss` into `tsx` as css module
 - [ ] `scss` gets mounted inside `style` tag
-- [ ] `scss` supports `@import` when no cyclic deps
+- [x] `scss` supports `@import` when no cyclic deps
   > sass.js does not support `@use`
   > sass files need to be stratified (not transpiled css)
 - [x] prefix sass classes using a sass parser

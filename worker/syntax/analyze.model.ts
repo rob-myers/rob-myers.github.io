@@ -102,12 +102,19 @@ interface ScssAstNode {
 export function prefixScssClasses(scssContents: string, filename: string) {
   const prefix = `${filename.replace(/\./g, '_')}__`;
   const ast = parse(scssContents);
-
+  
   traverseScss((node) => {
-    if (node.type === 'class') {
+    if (node.type === 'class') {// Apply prefixing
       const classNode = node as ScssAstNode & { value: [ScssAstNode & { value: string }] };
-      // Must mutate array and clone because `value` is a readonly property
       classNode.value[0] = { ...classNode.value[0], value: `${prefix}${classNode.value[0].value}`};
+    }
+
+    if (node.type === 'selector' && (node.value as ScssAstNode[])[0]?.type === 'number') {
+      /**
+       * Monaco disallows selectors starting with a number via
+       * `scss(css-rcurlyexpected)`. We throw to keep in sync.
+       */
+      throw Error('selector cannot start with a number');
     }
   }, ast);
 
@@ -131,11 +138,12 @@ function extractScssImportIntervals(scssContents: string) {
   const ast = parse(scssContents);
 
   traverseScss((node) => {
-    if (node.type === 'atrule' && Array.isArray(node.value)) {
-      const [first, second, third] = node.value;
+    if (node.type === 'atrule') {
+      const [first, second, third] = node.value as ScssAstNode[];
       (first.type === 'atkeyword' && first.value === 'import' && second.type === 'space'
         && (third.type === 'string_double' || third.type === 'string_single')
       ) && importIntervals.push({
+        // Remember import filename code interval
         value: third.value as string,
         line: third.start!.line,
         startCol: third.start!.column - 1,

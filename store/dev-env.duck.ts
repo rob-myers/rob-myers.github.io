@@ -392,12 +392,12 @@ export const Thunk = {
         return;
       }
 
-      const currFile = getState().devEnv.file as KeyedLookup<PrefixedStyleFile>;
+      const file = getState().devEnv.file as KeyedLookup<PrefixedStyleFile>;
       const transpiled = await dispatch(EditorThunk.transpileScssMonacoModel({
-        src: currFile[filename].prefixed.dst,
+        src: file[filename].prefixed.dst,
         files: cyclicResult.stratification.flatMap(x => x).map(filename => ({
           filename,
-          contents: currFile[filename].prefixed.dst,
+          contents: file[filename].prefixed.dst,
         })),
       }));
 
