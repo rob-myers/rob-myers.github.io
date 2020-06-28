@@ -3,9 +3,9 @@ import { useSelector } from 'react-redux';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
 import { isAppPanel, isFilePanel } from '@model/code/dev-env.model';
-import DevApp from './dev-app';
 
 const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false });
+const DevApp = dynamic(import('@components/dev-env/dev-app'), { ssr: false });
 
 const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
   if (!useSelector(({ layout: { panel } }) => panel[panelKey]?.initialized)) {

@@ -175,10 +175,17 @@ export const Thunk = {
     ({ state: { editor }, dispatch }, { filename, code }: { filename: string; code: string }) => {
       const { internal, model: m } = editor;
       const { monaco } = internal!;
+
       /** Note the additional prefix file:/// */
       const uri = monaco.Uri.parse(`file:///${filename}`);
       const model = monaco.editor.getModel(uri) || monaco.editor.createModel(code, undefined, uri);
       
+      if (filename === '_bootstrap.ts') {
+        // Special model which ensures monaco is bootstrapped
+        // when no other editor is initially open.
+        return model;
+      }
+
       // Ensure model is stored in the state
       const modelKey = filenameToModelKey(filename);
       if (!(modelKey in m)) {
