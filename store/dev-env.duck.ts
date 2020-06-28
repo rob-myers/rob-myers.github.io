@@ -15,7 +15,7 @@ import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
 import { TsTranspilationResult } from '@model/monaco/monaco.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
-import { findUnknownScssImport, CyclicScssResult, traverseScssDeps } from '@model/code/handle-scss-imports';
+import { findUnknownScssImport, CyclicScssResult, traverseScssDeps, stratifyScssFiles } from '@model/code/handle-scss-imports';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -174,7 +174,7 @@ export const Thunk = {
 
       const unknownImport = findUnknownScssImport(filename, file);
       if (unknownImport) {
-        return { key: 'error', errorKey: 'import-unknown', filename, unknownImport };
+        return { key: 'error', errorKey: 'import-unknown', dependency: filename, inFilename: filename, fromFilename: unknownImport };
       }
 
       const dependencyPaths = f.prefixed.importIntervals.map(({ value }) => value);
@@ -191,9 +191,8 @@ export const Thunk = {
         }
       }
 
-      // TODO compute stratification here
-
-      return { key: 'success', stratification: [] as string[][] };
+      const stratification = stratifyScssFiles(Object.values(file));
+      return { key: 'success', stratification };
     },
   ),
   initialize: createThunk(
@@ -393,12 +392,13 @@ export const Thunk = {
         return;
       }
 
-      console.log({ scssStratification: cyclicResult.stratification });
-
-      const currFile = getState().devEnv.file[filename] as PrefixedStyleFile;
+      const currFile = getState().devEnv.file as KeyedLookup<PrefixedStyleFile>;
       const transpiled = await dispatch(EditorThunk.transpileScssMonacoModel({
-        src: currFile.prefixed.dst,
-        files: [], // TODO via stratification
+        src: currFile[filename].prefixed.dst,
+        files: cyclicResult.stratification.flatMap(x => x).map(filename => ({
+          filename,
+          contents: currFile[filename].prefixed.dst,
+        })),
       }));
 
       if (transpiled.key === 'success') {

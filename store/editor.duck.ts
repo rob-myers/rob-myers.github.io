@@ -319,14 +319,15 @@ export const Thunk = {
   ),
   transpileScssMonacoModel: createThunk(
     '[editor] transpile scss monaco model',
-    async ({ state: { editor } },
+    async (
+      { state: { editor } },
       { src, files }: { src: string; files: { filename: string; contents: string }[] },
     ): Promise<ScssTranspilationResult> => {
-      const sassWorker = editor.sassWorker!;
-      files.forEach(({ contents, filename }) => sassWorker.writeFile(filename, contents));
+      files.forEach(({ contents, filename }) =>
+        editor.sassWorker!.writeFile(filename, contents));
 
       return new Promise((resolve, _reject) => {
-        sassWorker?.compile(src, (result) => {
+        editor.sassWorker!.compile(src, (result) => {
           console.log({ sassWorkerResult: result });
           resolve('text' in result
             ? { key: 'success', src, dst: result.text }

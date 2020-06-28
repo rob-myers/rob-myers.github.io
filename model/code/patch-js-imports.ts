@@ -129,7 +129,7 @@ export function stratifyJsFiles(jsFiles: TranspiledCodeFile[]) {
     });
   }
 
-  console.log({ stratification });
+  console.log({ jsStratification: stratification });
   return stratification;
 }
 

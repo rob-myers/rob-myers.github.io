@@ -73,7 +73,7 @@ export const baz = 'qux';
 `.trim();
 
 export const exampleScss1 = `
-@import "other.scss"
+@import "other.scss";
 
 .my-ancestral-class {
   .my-class {

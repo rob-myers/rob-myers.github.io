@@ -9,26 +9,64 @@ export function findUnknownScssImport(filename: string, file: KeyedLookup<Prefix
 
 export type CyclicScssResult = (
   | { key: 'success'; stratification: string[][] }
-  | { key: 'error' } & (
-    | { errorKey: 'import-unknown'; filename: string; unknownImport: string }
-    | { errorKey: 'cyclic-dep'; dependency: string; dependent: string }
-  )
+  | TraverseScssError & { dependency: string }
 );
 
 export function traverseScssDeps(
-  _f: PrefixedStyleFile,
-  _file: KeyedLookup<PrefixedStyleFile>,
-  _dependents: KeyedLookup<PrefixedStyleFile>,
-  _maxDepth: number
-): null | TraverseScssResult {
+  f: PrefixedStyleFile,
+  file: KeyedLookup<PrefixedStyleFile>,
+  dependents: KeyedLookup<PrefixedStyleFile>,
+  maxDepth: number
+): null | TraverseScssError {
+  if (maxDepth <= 0) {
+    return null;
+  } 
+  
+  const unknownImport = findUnknownScssImport(f.key, file);
+  if (unknownImport) {
+    return { key: 'error', errorKey: 'import-unknown', inFilename: f.key, fromFilename: unknownImport };
+  } else if (f.key in dependents) {
+    return { key: 'error', errorKey: 'cyclic-dep', dependent: f.key };
+  }
+  
+  for (const { value: filename } of f.prefixed.importIntervals) {
+    const error = traverseScssDeps(file[filename], file, dependents, maxDepth - 1);
+    if (error) return error;
+  }
 
-  return {
-    key: 'error',
-    errorKey: 'cyclic-dep',
-    dependent: 'fake.file',
-  };
+  return null;
 }
 
-type TraverseScssResult = (
-  | { key: 'error'; errorKey: 'cyclic-dep'; dependent: string }
+type TraverseScssError = { key: 'error' } & (
+  | { errorKey: 'cyclic-dep'; dependent: string }
+  | { errorKey: 'import-unknown'; inFilename: string; fromFilename: string }
 );
+
+type DepNode = { filename: string; dependencies: string[] };
+
+export function stratifyScssFiles(scssFiles: PrefixedStyleFile[]) {
+  const stratification = [] as string[][];
+  const permittedDeps = {} as Record<string, true>;
+
+  const lookup = scssFiles.reduce((agg, { key, prefixed: { importIntervals } }) => ({
+    ...agg, [key]: { filename: key, dependencies: importIntervals.map(({ value }) => value) }
+  }), {} as Record<string, DepNode>);
+  
+  let values: DepNode[];
+
+  while ((values = Object.values(lookup)).length) {
+    const level = values
+      .filter(({ dependencies, filename }) =>
+        dependencies.every(dep => dep === filename || dep in permittedDeps))
+      .map(({ filename }) => filename);
+    stratification.push(level);
+
+    level.forEach((filename) => {
+      delete lookup[filename];
+      permittedDeps[filename] = true;
+    });
+  }
+
+  console.log({ scssStratification: stratification });
+  return stratification;
+}
