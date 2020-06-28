@@ -97,6 +97,10 @@ interface BaseFile {
   cleanupTrackers: (() => void)[];
 }
 
+export interface PrefixedStyleFile extends StyleFile {
+  prefixed: Exclude<StyleFile['prefixed'], null>;
+}
+
 export type Transpilation = (
   | CodeTranspilation
   | StyleTranspilation

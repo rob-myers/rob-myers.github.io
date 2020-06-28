@@ -6,8 +6,8 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile } from '@model/code/dev-env.model';
-import { JsImportMeta, JsExportMeta, relPathsToFilenames, traverseDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile } from '@model/code/dev-env.model';
+import { JsImportMeta, JsExportMeta, codeRelPathsToFilenames, traverseDeps as traverseCodeDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 
 import { filterActs } from './reducer';
@@ -15,6 +15,7 @@ import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
 import { TsTranspilationResult } from '@model/monaco/monaco.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
+import { findUnknownScssImport, CyclicScssResult, traverseScssDeps } from '@model/code/handle-scss-imports';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -134,7 +135,7 @@ export const Thunk = {
       exports: JsExportMeta[];
     }): null | CyclicDepError => {
       const filenames = Object.keys(devEnv.file);
-      const dependencyPaths = relPathsToFilenames(([] as string[]).concat(
+      const dependencyPaths = codeRelPathsToFilenames(([] as string[]).concat(
         imports.map(({ path }) => path.value),
         exports.map(({ from }) => from?.value as string).filter(Boolean),
       ), filenames);
@@ -153,7 +154,7 @@ export const Thunk = {
        * some _direct dependent_ of `filename` as a transitive-dependency.
        */
       for (const dependencyFile of dependencies) {
-        const error = traverseDeps(dependencyFile, devEnv.file as KeyedLookup<CodeFile>, lookupFromValues(dependents), filenames.length);
+        const error = traverseCodeDeps(dependencyFile, devEnv.file as KeyedLookup<CodeFile>, lookupFromValues(dependents), filenames.length);
         if (error) {
           return { ...error, dependency: dependencyFile.key };
         }
@@ -162,15 +163,37 @@ export const Thunk = {
     },
   ),
   /**
-   * Detect dependency cycles in scss, assuming each `prefixed` is up to date.
+   * Detect dependency cycles in scss, given each `prefixed` is up to date.
+   * Provide stratification if successful.
    */
   detectScssDependencyCycles: createThunk(
     '[dev-env] detect scss dependency cycles',
-    (_, { file: __, filename: ___ }: { filename: string; file: KeyedLookup<StyleFile>}) => {
-      /**
-       * TODO
-       */
-      return { stratification: [] as string[][] };
+    ({ state: { devEnv } }, { filename }: { filename: string }): CyclicScssResult => {
+      const file = devEnv.file as KeyedLookup<PrefixedStyleFile>;
+      const f = file[filename];
+
+      const unknownImport = findUnknownScssImport(filename, file);
+      if (unknownImport) {
+        return { key: 'error', errorKey: 'import-unknown', filename, unknownImport };
+      }
+
+      const dependencyPaths = f.prefixed.importIntervals.map(({ value }) => value);
+      const dependencies = dependencyPaths.map(filename => file[filename]);
+      const dependents = Object.values(file).filter(({ key, prefixed }) =>
+        key === filename || prefixed.importIntervals.some(({ value }) => value === filename)
+      );
+
+      const fileCount = Object.keys(file).length;
+      for (const dependencyFile of dependencies) {
+        const error = traverseScssDeps(dependencyFile, file, lookupFromValues(dependents), fileCount);
+        if (error) {
+          return { ...error, dependency: dependencyFile.key };
+        }
+      }
+
+      // TODO compute stratification here
+
+      return { key: 'success', stratification: [] as string[][] };
     },
   ),
   initialize: createThunk(
@@ -351,34 +374,38 @@ export const Thunk = {
   tryTranspileStyleModel: createThunk(
     '[dev-env] try transpile style model',
     async ({ dispatch, state: { devEnv }, getState }, { filename }: { filename: string }) => {
-      try {
-        // Ensure all scss files have been `prefixed`
+      
+      try {// Ensure all scss files have been `prefixed`
         const scssFiles = Object.values(devEnv.file).filter(({ ext }) => ext === 'scss');
-        for (const { key: filename } of scssFiles) {
+        for (const { key: filename } of scssFiles)
           await dispatch(Thunk.tryPrefixStyleFile({ filename }));
-        }
-
-        const currFile = getState().devEnv.file as KeyedLookup<StyleFile>;
-        const { stratification } = dispatch(Thunk.detectScssDependencyCycles({ filename, file: currFile }));
-        console.log({ scssStratification: stratification });
-
-        const transpiled = await dispatch(EditorThunk.transpileScssMonacoModel({
-          src: currFile[filename].prefixed!.dst,
-          files: [], // TODO via stratification
-        }));
-
-        if (transpiled.key === 'success') {
-          dispatch(Act.storeStyleTranspilation(filename, {
-            type: 'css',
-            src: transpiled.src,
-            dst: transpiled.dst,
-            cleanups: [],
-          }));
-        } else {
-          console.error({ scssTranspileError: transpiled });
-        }
       } catch (e) {
-        console.error({ scssTranspileGeneralError: e });
+        console.error({ scssPrefixError: e });
+      }
+
+      const cyclicResult = dispatch(Thunk.detectScssDependencyCycles({ filename }));
+      if (cyclicResult.key === 'error') {
+        console.error({ scssCyclicError: cyclicResult });
+        return;
+      }
+
+      console.log({ scssStratification: cyclicResult.stratification });
+
+      const currFile = getState().devEnv.file[filename] as PrefixedStyleFile;
+      const transpiled = await dispatch(EditorThunk.transpileScssMonacoModel({
+        src: currFile.prefixed.dst,
+        files: [], // TODO via stratification
+      }));
+
+      if (transpiled.key === 'success') {
+        dispatch(Act.storeStyleTranspilation(filename, {
+          type: 'css',
+          src: transpiled.src,
+          dst: transpiled.dst,
+          cleanups: [],
+        }));
+      } else {
+        console.error({ sassJsTranspileError: transpiled });
       }
     },
   ),
@@ -410,9 +437,9 @@ export const Thunk = {
       const filenames = Object.keys(devEnv.file);
       dispatch(Act.storeCodeTranspilation(filename, { type: 'js', ...rest,
         cleanups: [() => disposable.dispose()],
-        importFilenames: relPathsToFilenames(
+        importFilenames: codeRelPathsToFilenames(
           rest.imports.map(({ path }) => path.value), filenames),
-        exportFilenames: relPathsToFilenames(
+        exportFilenames: codeRelPathsToFilenames(
           rest.exports.map(({ from }) => from?.value as string).filter(Boolean), filenames),
       }));
     },

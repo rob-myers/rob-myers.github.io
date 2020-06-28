@@ -54,7 +54,7 @@ export interface ModuleSpecifierMeta {
 }
 
 /** Relative paths to filenames, ignoring 'react' */
-export function relPathsToFilenames(importPaths: string[], allFilenames: string[]) {
+export function codeRelPathsToFilenames(importPaths: string[], allFilenames: string[]) {
   return importPaths
     .filter((x, i) => x.startsWith('./') && i === importPaths.indexOf(x))
     .map(x => relPathToFilename(x, allFilenames));
