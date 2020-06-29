@@ -210,7 +210,7 @@ export const Thunk = {
       }
       if (filename.endsWith('.tsx')) {
         dispatch(Thunk.tsxEditorInstanceSetup({ editor }));
-        await dispatch(Thunk.setupTsxHighlighting({ editorKey }));
+        dispatch(Thunk.setupTsxHighlighting({ editorKey }));
       }
       if (!getState().editor.sassWorker) {
         Sass.setWorkerUrl('/sass.worker.js');
@@ -273,14 +273,11 @@ export const Thunk = {
     '[editor] highlight tsx syntax',
     ({ state: { editor: e } }, { editorKey }: { editorKey: string }) => {
       const { editor } = e.editor[editorKey];
-      const model = editor.getModel();
-      if (model && /typescript|javascript/i.test(model.getModeId())) {
-        e.syntaxWorker!.postMessage({
-          key: 'request-tsx-highlights',
-          editorKey,
-          code: editor.getValue(),
-        });
-      }
+      e.syntaxWorker!.postMessage({
+        key: 'request-tsx-highlights',
+        editorKey,
+        code: editor.getValue(),
+      });
     },
   ),
   removeMonacoEditor: createThunk(
@@ -343,20 +340,21 @@ export const Thunk = {
   ),
   setupTsxHighlighting: createThunk(
     '[editor] setup tsx highlighting',
-    async ({ state: { editor }, dispatch }, { editorKey }: { editorKey: string }) => {
+    ({ state: { editor: e }, dispatch }, { editorKey }: { editorKey: string }) => {
       const eventListener = ({ data }: Message<MessageFromWorker>) => {
         if (data.key === 'send-tsx-highlights' && data.editorKey === editorKey) {
           requestAnimationFrame(() =>
             dispatch(Thunk.updateEditorDecorations({ editorKey, classifications: data.classifications })));
         }
       };
-      editor.syntaxWorker!.addEventListener('message', eventListener);
+      e.syntaxWorker!.addEventListener('message', eventListener);
       const syntaxHighlight = () => dispatch(Thunk.highlightTsxSyntax({ editorKey }));
-      const disposable = editor.editor[editorKey].editor.onDidChangeModelContent(syntaxHighlight);
+      // Perhaps group instead of debounce?
+      const disposable = dispatch(Thunk.trackModelChange({ editorKey, debounceMs: 300, do: syntaxHighlight }));
       requestAnimationFrame(syntaxHighlight); // For first time load
 
       dispatch(Act.addEditorCleanups({ editorKey, cleanups: [
-        () => editor.syntaxWorker?.removeEventListener('message', eventListener),
+        () => e.syntaxWorker?.removeEventListener('message', eventListener),
         () => disposable.dispose(),
       ]}));
     },
@@ -373,15 +371,16 @@ export const Thunk = {
   /** Execute a debounced action whenever editor model changes. */
   trackModelChange: createThunk(
     '[editor] on model change',
-    ({ state: { editor: { model } } }, { do: act, modelKey, debounceMs }: {
+    ({ state: { editor: { model: m, editor: e } } }, arg: {
       do: (newValue: string) => void;
       debounceMs: number; 
-      modelKey: string;
-    }) => {
+    } & ({ modelKey: string } | { editorKey: string })) => {
+      const { do: act, debounceMs } = arg;
       let debounceId: number;
-      return model[modelKey]?.model.onDidChangeContent((_event) => {
+      const model = 'modelKey' in arg ? m[arg.modelKey].model : e[arg.editorKey].editor.getModel()!;
+      return model.onDidChangeContent((_event) => {
         window.clearTimeout(debounceId);
-        const newValue = model[modelKey].model.getValue();
+        const newValue = model.getValue();
         debounceId = window.setTimeout(() => act(newValue), debounceMs);
       });
     },
