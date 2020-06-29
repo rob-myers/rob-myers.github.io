@@ -1,5 +1,12 @@
-# Local
+# Blog -- A collaborative game engine
 
+See [blog notes](./blog.md).
+
+# Local Dev Environment
+
+- [ ] persisted state has version and old versions are cleared
+- [ ] menu button to reset layout
+- [ ] refresh css when scss dependency is updated
 - [ ] force scss files existence (else show error)
 - [ ] force code/style import paths to be relative (else show error)
 - [x] bootstrap app even when no monaco editor panel initially open
@@ -23,7 +30,8 @@
 - [x] add home icon returning to `/`
 - [x] mount/unmount es modules via `<script>`s
 - [x] patch import specifiers of transpiled js
-- [ ] fix sporadic bug: drag indicator corresponds to open file
+- [x] fix sporadic bug: drag indicator corresponds to open file
+  > haven't seen it for a while
 - [x] move code/transpile disposables into `FileState`
 - [x] recover from cyclic dependency via transpile invalid dependency
 - [x] show code errors on cyclic dependency by recording imports in non-transpiled code too
@@ -84,8 +92,7 @@
 
 # Notes
 
-Highlight fails e.g. `// {props.id}` but unlikely to happen and can be fixed via `{'//'} {props.id}`.
-However, these cases do arise via auto-commenting, so we need to fix that.
+Highlight fails e.g. `// {props.id}` but unlikely to happen and can be fixed via `{'//'} {props.id}`. However, these cases do arise via auto-commenting, so we need to fix that.
 
 Avoid having `index.tsx` and `index.ts` -- they both transpile to `index.js`,
-leading to `emitSkipped` in monaco emit output.
+leading to `emitSkipped` in monaco emit output. Prevent files that are prefixes of others, or fix this assumption in code.
