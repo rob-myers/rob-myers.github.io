@@ -1,16 +1,24 @@
 import { KeyedLookup } from '@model/generic.model';
 import { PrefixedStyleFile } from './dev-env.model';
 
-/** Assume import paths are filenames (no relative paths) */
-export function findUnknownScssImport(filename: string, file: KeyedLookup<PrefixedStyleFile>) {
-  const found = file[filename].prefixed.importIntervals.find(x => !(x.value in file));
-  return found?.value || null;
+/**
+ * Valid import paths are relative paths `./${filename}`
+ * where `filename` exists and has extension `scss`.
+ */
+export function detectInvalidScssImport(
+  filename: string,
+  file: KeyedLookup<PrefixedStyleFile>,
+) {
+  return file[filename].prefixed.importIntervals.find(({ value }) =>
+    !(/^\.\/.+\.scss$/.test(value) && value.slice(2) in file))?.value || null;
 }
 
-export type CyclicScssResult = (
+export type ScssImportsResult = (
   | { key: 'success'; stratification: string[][] }
-  | TraverseScssError & { dependency: string }
+  | SccsImportsError
 );
+
+export type SccsImportsError = TraverseScssError & { dependency: string };
 
 export function traverseScssDeps(
   f: PrefixedStyleFile,
@@ -22,14 +30,15 @@ export function traverseScssDeps(
     return null;
   } 
   
-  const unknownImport = findUnknownScssImport(f.key, file);
+  const unknownImport = detectInvalidScssImport(f.key, file);
   if (unknownImport) {
     return { key: 'error', errorKey: 'import-unknown', inFilename: f.key, fromFilename: unknownImport };
   } else if (f.key in dependents) {
     return { key: 'error', errorKey: 'cyclic-dep', dependent: f.key };
   }
   
-  for (const { value: filename } of f.prefixed.importIntervals) {
+  for (const { value } of f.prefixed.importIntervals) {
+    const filename = value.slice(2);
     const error = traverseScssDeps(file[filename], file, dependents, maxDepth - 1);
     if (error) return error;
   }
@@ -49,7 +58,9 @@ export function stratifyScssFiles(scssFiles: PrefixedStyleFile[]) {
   const permittedDeps = {} as Record<string, true>;
 
   const lookup = scssFiles.reduce((agg, { key, prefixed: { importIntervals } }) => ({
-    ...agg, [key]: { filename: key, dependencies: importIntervals.map(({ value }) => value) }
+    ...agg, [key]: { filename: key,
+      dependencies: importIntervals.map(({ value }) => value.slice(2)),
+    }
   }), {} as Record<string, DepNode>);
   
   let values: DepNode[];

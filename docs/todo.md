@@ -4,11 +4,14 @@ See [blog notes](./blog.md).
 
 # Local Dev Environment
 
+- [ ] using relative path `./other.scss` and leaving context menu open for `red` in `other.scss` crashes the app.
 - [ ] persisted state has version and old versions are cleared
 - [ ] menu button to reset layout
 - [ ] refresh css when scss dependency is updated
 - [ ] force scss files existence (else show error)
-- [ ] force code/style import paths to be relative (else show error)
+- [ ] force code import paths to be relative (else show error)
+- [ ] force style import paths to be relative (else show error)
+  > TODO show error
 - [x] bootstrap app even when no monaco editor panel initially open
 - [x] detect `js` cyclic dep caused by `export { App } from './index'`
 - [ ] handle persistence across multiple tabs
