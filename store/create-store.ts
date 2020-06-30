@@ -78,10 +78,11 @@ const persistedReducer = persistReducer({
           [item.key]: {
             ...item,
             ...(item.ext === 'scss'
-              ? { prefixed: null }
-              : { esm: null, pathIntervals: [] }
+              ? { prefixed: null, cssModule: null }
+              : { esModule: null }
             ),
-            cleanupTrackers: [],
+            pathIntervals: [],
+            cleanups: [],
             transpiled: null,
           },
         }), {} as DevEnvState['file']),

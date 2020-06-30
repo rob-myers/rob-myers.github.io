@@ -92,7 +92,7 @@ export interface CodeFile extends BaseFile {
   /** Last transpilation */
   transpiled: null | CodeTranspilation;
   /** es module */
-  esm: null | CodeFileEsm;
+  esModule: null | CodeFileEsm;
 }
 
 export interface StyleFile extends BaseFile {
@@ -102,12 +102,12 @@ export interface StyleFile extends BaseFile {
     code: string;
     blobUrl: string;
   };
+  /** @import path intervals in source scss */
+  pathIntervals: ScssImportPathInterval[];
   prefixed: null | {
     src: string;
     /** Contents with classes prefixed by filename */
     dst: string;
-    /** @import path intervals in `prefixedContents` */
-    importIntervals: ScssImportPathInterval[];
   };
   /** Last transpilation */
   transpiled: null | StyleTranspilation;
@@ -119,7 +119,7 @@ interface BaseFile {
   /** Debounced value (doesn't drive editor) */
   contents: string;
   /** Can dispose model code/transpile trackers */
-  cleanupTrackers: (() => void)[];
+  cleanups: (() => void)[];
 }
 
 export interface PrefixedStyleFile extends StyleFile {

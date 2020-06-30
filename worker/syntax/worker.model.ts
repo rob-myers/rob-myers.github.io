@@ -62,7 +62,7 @@ interface SendPrefixedScss {
   key: 'send-prefixed-scss';
   origScss: string;
   prefixedScss: null | string;
-  importIntervals: ScssImportPathInterval[];
+  pathIntervals: ScssImportPathInterval[];
   error: null | string;
 }
 

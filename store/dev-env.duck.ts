@@ -83,7 +83,7 @@ export const Thunk = {
     '[dev-env] bootstrap app instance',
     ({ state: { devEnv } }, { panelKey }: { panelKey: string }) => {
       const appInstanceElId = panelKeyToAppElId(panelKey);
-      const { blobUrl: appBlobUrl } = (devEnv.file['index.tsx'] as CodeFile).esm!;
+      const { blobUrl: appBlobUrl } = (devEnv.file['index.tsx'] as CodeFile).esModule!;
       
       const bootstrapCode = getBootstrapAppCode(appBlobUrl, appInstanceElId);
       const bootstrapBlob = new Blob([bootstrapCode], { type: 'text/javascript' });
@@ -112,7 +112,7 @@ export const Thunk = {
       dispatch(Thunk.patchAllTranspiledCode({}));
       const { devEnv } = getState();
       const jsFiles = getReachableJsFiles(devEnv.file).reverse();
-      for (const { key: filename, esm } of jsFiles) {
+      for (const { key: filename, esModule: esm } of jsFiles) {
         appendEsmModule({
           scriptId: filenameToScriptId(filename),
           scriptSrcUrl: esm!.blobUrl,
@@ -202,10 +202,10 @@ export const Thunk = {
         return { key: 'error', errorKey: 'import-unknown', dependency: filename, inFilename: filename, fromFilename: invalidImport };
       }
 
-      const dependencyPaths = f.prefixed.importIntervals.map(({ value }) => value.slice(2));
+      const dependencyPaths = f.pathIntervals.map(({ value }) => value.slice(2));
       const dependencies = dependencyPaths.map(filename => file[filename]);
-      const dependents = Object.values(file).filter(({ key, prefixed }) =>
-        key === filename || prefixed.importIntervals.some(({ value }) => value === filename)
+      const dependents = Object.values(file).filter(({ key, pathIntervals }) =>
+        key === filename || pathIntervals.some(({ value }) => value === filename)
       );
 
       const fileCount = Object.keys(file).length;
@@ -275,7 +275,7 @@ export const Thunk = {
       console.error(`Scss import error for ${filename}: ${JSON.stringify(importError)}`);
       const modelKey = filenameToModelKey(filename);
       /**
-       * TODO can't use import intervals in patched code
+       * TODO use pathIntervals to construct markers
        */
       dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
     },
@@ -291,7 +291,7 @@ export const Thunk = {
       const stratification = stratifyJsFiles(jsFiles);
       const filenameToPatched = patchTranspiledJsFiles(devEnv.file, stratification);
       for (const [filename, { patchedCode, blobUrl }] of Object.entries(filenameToPatched)) {
-        dispatch(Act.updateFile(filename, { esm: { patchedCode, blobUrl } }));
+        dispatch(Act.updateFile(filename, { esModule: { patchedCode, blobUrl } }));
       }
     },
   ),
@@ -361,8 +361,8 @@ export const Thunk = {
         const result = await awaitWorker('send-prefixed-scss', syntaxWorker!, ({ origScss }) => contents === origScss);
 
         if (result.prefixedScss) {
-          const { prefixedScss, importIntervals } = result;
-          dispatch(Act.updateFile(filename, { prefixed: { src: contents, dst: prefixedScss, importIntervals } }));
+          const { prefixedScss, pathIntervals } = result;
+          dispatch(Act.updateFile(filename, { pathIntervals, prefixed: { src: contents, dst: prefixedScss } }));
         } else {
           console.error({ prefixScssError: result });
           throw Error(result.error!);
@@ -518,8 +518,8 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
     case '[dev-env] add file cleanups': return { ...state,
-      file: updateLookup(act.pay.filename, state.file, ({ cleanupTrackers }) => ({
-        cleanupTrackers: cleanupTrackers.concat(act.pay.cleanups),
+      file: updateLookup(act.pay.filename, state.file, ({ cleanups: cleanupTrackers }) => ({
+        cleanups: cleanupTrackers.concat(act.pay.cleanups),
       })),
     };
     case '[dev-env] create code file': return { ...state,
@@ -529,8 +529,8 @@ export const reducer = (state = initialState, act: Action): State => {
         ext: act.pay.filename.split('.').pop() as any, // no dot
         transpiled: null,
         pathIntervals: [],
-        cleanupTrackers: [],
-        esm: null,
+        cleanups: [],
+        esModule: null,
       }, state.file),
     };
     case '[dev-env] create style file': return { ...state,
@@ -538,10 +538,11 @@ export const reducer = (state = initialState, act: Action): State => {
         key: act.pay.filename,
         contents: act.pay.contents,
         ext: 'scss',
-        cleanupTrackers: [],
+        cleanups: [],
         transpiled: null,
         prefixed: null,
         cssModule: null,
+        pathIntervals: [],
       } as StyleFile, state.file),
     };
     case '[dev-env] remove file': return { ...state,

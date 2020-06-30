@@ -4,7 +4,7 @@ import { SyntaxDispatchOverload } from './redux.model';
 import { initializeStore } from './create-store';
 import { testNever } from '@model/generic.model';
 import { computeClassifications } from './highlight.model';
-import { analyzeImportsExports, prefixScssClasses } from './analyze.model';
+import { analyzeImportsExports, prefixScssClasses, extractScssImportIntervals } from './analyze.model';
 
 const ctxt: SyntaxWorkerContext = self as any;
 
@@ -49,7 +49,8 @@ ctxt.addEventListener('message', ({ data }) => {
         ctxt.postMessage({
           key: 'send-prefixed-scss',
           origScss: data.scss,
-          ...prefixScssClasses(data.scss, data.filename),
+          prefixedScss: prefixScssClasses(data.scss, data.filename),
+          pathIntervals: extractScssImportIntervals(data.scss),
           error: null,
         });
       } catch (e) {
@@ -57,7 +58,7 @@ ctxt.addEventListener('message', ({ data }) => {
           key: 'send-prefixed-scss',
           origScss: data.scss,
           prefixedScss: null,
-          importIntervals: [],
+          pathIntervals: [],
           error: `${e}`,
         });
       }

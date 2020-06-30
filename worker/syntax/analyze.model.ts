@@ -119,12 +119,7 @@ export function prefixScssClasses(scssContents: string, filename: string) {
     }
   }, ast);
 
-  const prefixedScss = stringify(ast);
-
-  return {
-    prefixedScss,
-    importIntervals: extractScssImportIntervals(prefixedScss),
-  };
+  return stringify(ast);
 }
 
 export interface ScssImportPathInterval {
@@ -134,7 +129,7 @@ export interface ScssImportPathInterval {
   endCol: number;
 }
 
-function extractScssImportIntervals(scssContents: string) {
+export function extractScssImportIntervals(scssContents: string) {
   const importIntervals = [] as ScssImportPathInterval[];
   const ast = parse(scssContents);
 
