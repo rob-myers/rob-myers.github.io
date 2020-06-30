@@ -4,7 +4,8 @@ import { SyntaxDispatchOverload } from './redux.model';
 import { initializeStore } from './create-store';
 import { testNever } from '@model/generic.model';
 import { computeClassifications } from './highlight.model';
-import { analyzeImportsExports, prefixScssClasses, extractScssImportIntervals } from './analyze.model';
+import { analyzeTsImportsExports } from './analyze-ts.model';
+import { prefixScssClasses, extractScssImportIntervals } from './analyze-scss.model';
 
 const ctxt: SyntaxWorkerContext = self as any;
 
@@ -28,7 +29,7 @@ ctxt.addEventListener('message', ({ data }) => {
       ctxt.postMessage({
         key: 'send-import-exports',
         origCode: data.code,
-        ...analyzeImportsExports(data.filename, data.code),
+        ...analyzeTsImportsExports(data.filename, data.code),
       });
       break;
     }

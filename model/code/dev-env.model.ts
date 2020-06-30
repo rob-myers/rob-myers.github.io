@@ -1,6 +1,6 @@
 import { CyclicDepError, UntranspiledPathInterval, JsExportMeta, JsImportMeta } from './patch-js-imports';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
-import { ScssImportPathInterval } from '@worker/syntax/analyze.model';
+import { ScssImportPathInterval } from '@worker/syntax/analyze-scss.model';
 
 export const menuHeightPx = 32;
 
