@@ -33,7 +33,7 @@ const persistedReducer = persistReducer({
   migrate: async (state, currentVersion) => {
     const prevVersion = state?._persist.version;
     if (prevVersion !== currentVersion) {
-      console.warn(`State version changed from "${prevVersion}" to "${currentVersion}"`);
+      console.warn(`Persisted store version changed from "${prevVersion}" to "${currentVersion}"`);
       return {} as any;
     }
     return state;
