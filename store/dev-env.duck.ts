@@ -6,7 +6,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, importPathsToCodeFilenames, traverseDeps as traverseCodeDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 
@@ -137,7 +137,6 @@ export const Thunk = {
   ),
   /**
    * Can create css module code/url as soon as scss file created.
-   * We won't mount it until it is used.
    */
   createCssModule: createThunk(
     '[dev-env] create css module',
@@ -199,14 +198,13 @@ export const Thunk = {
 
       const invalidImport = detectInvalidScssImport(filename, file);
       if (invalidImport) {
-        return { key: 'error', errorKey: 'import-unknown', dependency: filename, inFilename: filename, fromFilename: invalidImport };
+        return { key: 'error', errorKey: 'import-unknown', dependency: filename, inFilename: filename, fromFilename: invalidImport.value };
       }
 
       const dependencyPaths = f.pathIntervals.map(({ value }) => value.slice(2));
       const dependencies = dependencyPaths.map(filename => file[filename]);
       const dependents = Object.values(file).filter(({ key, pathIntervals }) =>
-        key === filename || pathIntervals.some(({ value }) => value === filename)
-      );
+        key === filename || pathIntervals.some(({ value }) => value === filename));
 
       const fileCount = Object.keys(file).length;
       for (const dependencyFile of dependencies) {
@@ -216,7 +214,8 @@ export const Thunk = {
         }
       }
 
-      const stratification = stratifyScssFiles(Object.values(file));
+      const reachableScssFiles = getReachableScssFiles(filename, file);
+      const stratification = stratifyScssFiles(reachableScssFiles);
       return { key: 'success', stratification };
     },
   ),
@@ -261,23 +260,35 @@ export const Thunk = {
       // Expect pathIntervals paths to be relative e.g. ./foo-bar
       const pathIntervals = (devEnv.file[filename] as CodeFile).pathIntervals;
       const badIntervals = pathIntervals.filter(({ path }) => cyclicDepError.dependency.startsWith(path.slice(2)));
-      dispatch(EditorThunk.setModelMarkers({ modelKey, markers: badIntervals.map((interval) => getCyclicDepMarker(interval)) }));
+      const markers = badIntervals.map((interval) => getCyclicDepMarker(interval));
+      dispatch(EditorThunk.setModelMarkers({ modelKey, markers }));
       // Retranspile cyclic dependency if currently valid
       dispatch(Thunk.tryTranspileCodeModel({ filename: cyclicDepError.dependency, onlyIf: 'valid' }));
     },
   ),
   handleScssImportError: createThunk(
     '[dev-env] handle scss import error',
-    ({ dispatch }, { filename, importError }: {
+    ({ dispatch, state: { devEnv } }, { filename, importError }: {
       filename: string;
       importError: SccsImportsError;
     }) => {
+      // const modelKey = filenameToModelKey(filename);
       console.error(`Scss import error for ${filename}: ${JSON.stringify(importError)}`);
-      const modelKey = filenameToModelKey(filename);
+      const pathIntervals = (devEnv.file[filename] as StyleFile).pathIntervals;
       /**
        * TODO use pathIntervals to construct markers
        */
-      dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
+      if (importError.errorKey === 'import-unknown') {
+        // Malformed import either in `filename` or reachable from valid import
+        if (importError.dependency === filename) {
+          const badIntervals = pathIntervals.filter(({ value }) => value === importError.fromFilename);
+          console.log({ scssImportUnknown: badIntervals });
+        } else {
+          const badIntervals = pathIntervals.filter(({ value }) => value.slice(2) === importError.dependency);
+          console.log({ scssTransitiveImportUnknown: badIntervals });
+        }
+        // dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
+      }
     },
   ),
   /**
@@ -354,11 +365,13 @@ export const Thunk = {
   ),
   tryPrefixStyleFile: createThunk(
     '[dev-env] try prefix style file',
-    async ({ state: { devEnv, editor: { syntaxWorker } }, dispatch }, { filename }: { filename: string }) => {
+    async ({ state: { devEnv, editor: e }, dispatch }, { filename }: { filename: string }) => {
       const { contents, prefixed } = devEnv.file[filename] as StyleFile;
+      const syntaxWorker = e.syntaxWorker!;
+
       if (contents !== prefixed?.src) {
-        syntaxWorker!.postMessage({ key: 'request-scss-prefixing', filename, scss: contents });
-        const result = await awaitWorker('send-prefixed-scss', syntaxWorker!, ({ origScss }) => contents === origScss);
+        syntaxWorker.postMessage({ key: 'request-scss-prefixing', filename, scss: contents });
+        const result = await awaitWorker('send-prefixed-scss', syntaxWorker, ({ origScss }) => contents === origScss);
 
         if (result.prefixedScss) {
           const { prefixedScss, pathIntervals } = result;
@@ -438,9 +451,9 @@ export const Thunk = {
   tryTranspileStyleModel: createThunk(
     '[dev-env] try transpile style model',
     async ({ dispatch, state: { devEnv }, getState }, { filename }: { filename: string }) => {
-      const modelKey = filenameToModelKey(filename);
-      
-      try {// Ensure all scss files have been `prefixed`
+      // const modelKey = filenameToModelKey(filename);
+      try {
+        // Ensure all scss files have been `prefixed` and compute `pathIntervals`
         const scssFiles = Object.values(devEnv.file).filter(({ ext }) => ext === 'scss');
         for (const { key: filename } of scssFiles)
           await dispatch(Thunk.tryPrefixStyleFile({ filename }));
@@ -449,23 +462,24 @@ export const Thunk = {
         return;
       }
 
-      const importError = dispatch(Thunk.detectScssImportError({ filename }));
-      if (importError.key === 'error') {
-        dispatch(Thunk.handleScssImportError({ filename, importError }));
+      const importsResult = dispatch(Thunk.detectScssImportError({ filename }));
+      if (importsResult.key === 'error') {
+        dispatch(Thunk.handleScssImportError({ filename, importError: importsResult }));
         return;
       }
 
       const file = getState().devEnv.file as KeyedLookup<PrefixedStyleFile>;
-      const transpiled = await dispatch(EditorThunk.transpileScssMonacoModel({
+      const transpiled = await dispatch(EditorThunk.transpileScss({
         src: file[filename].prefixed.dst,
-        files: importError.stratification.flatMap(x => x).map(filename => ({
+        files: importsResult.stratification.flatMap(x => x).map(filename => ({
           filename,
           contents: file[filename].prefixed.dst,
         })),
       }));
 
       if (transpiled.key === 'success') {
-        dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
+        // TODO clear markers matching tag
+        // dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
         dispatch(Act.storeStyleTranspilation(filename, {
           type: 'css',
           src: transpiled.src,
@@ -474,7 +488,7 @@ export const Thunk = {
         }));
       } else {
         console.error({ sassJsTranspileError: transpiled }); // TODO
-        dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
+        // dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
       }
     },
   ),
@@ -600,7 +614,7 @@ const bootstrapAppInstances = createEpic(
       '[dev-env] forget app panel',
     ),
     flatMap((act) => {
-      const { file, bootstrapped: tsAndTsxValid } = state$.value.devEnv;
+      const { file, bootstrapped } = state$.value.devEnv;
 
       if (act.type === '[dev-env] store code transpilation') {
         const reachableJsFiles = getReachableJsFiles(file);
@@ -613,11 +627,11 @@ const bootstrapAppInstances = createEpic(
             // Act.setTsAndTsxValidity(true),
             Thunk.bootstrapApps({}),
           ];
-        } else if (tsAndTsxValid) {
+        } else if (bootstrapped) {
           return [Act.setBootstrapped(false)];
         }
       } else if (act.type === '[dev-env] remember app panel') {
-        if (tsAndTsxValid) {
+        if (bootstrapped) {
           return [Thunk.bootstrapAppInstance({ panelKey: act.pay.panelKey })];
         }
       } else {
@@ -628,11 +642,21 @@ const bootstrapAppInstances = createEpic(
   ),
 );
 
+/**
+ * Currently we append a <style> for *.scss, even if unused by App.
+ * We also attempt to retranspile any immediate ancestor.
+ */
 const bootstrapStyles = createEpic(
-  (action$, _state$) => action$.pipe(
+  (action$, state$) => action$.pipe(
     filterActs('[dev-env] store style transpilation'),
-    map(({ pay: { filename } }) => {
-      return Thunk.bootstrapStyles({ filename });
+    flatMap(({ pay: { filename } }) => {
+      const file = pluck(state$.value.devEnv.file, ({ ext }) => ext === 'scss') as KeyedLookup<PrefixedStyleFile>;
+      const parentFiles = Object.values(file).filter(({ key, pathIntervals }) =>
+        key !== filename && pathIntervals.some(({ value }) => value === `./${filename}`));
+      return [
+        Thunk.bootstrapStyles({ filename }),
+        ...parentFiles.map(({ key }) => Thunk.tryTranspileStyleModel({ filename: key })),
+      ];
     }),
   ),
 );

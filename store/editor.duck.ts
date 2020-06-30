@@ -390,8 +390,8 @@ export const Thunk = {
       });
     },
   ),
-  transpileScssMonacoModel: createThunk(
-    '[editor] transpile scss monaco model',
+  transpileScss: createThunk(
+    '[editor] transpile scss',
     async (
       { state: { editor } },
       { src, files }: { src: string; files: { filename: string; contents: string }[] },

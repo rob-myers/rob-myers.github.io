@@ -189,3 +189,20 @@ export function getReachableJsFiles(file: KeyedLookup<FileState>) {
   }
   return Object.values(reachable);
 }
+
+export function getReachableScssFiles(rootFilename: string, file: KeyedLookup<PrefixedStyleFile>) {
+  const frontier = [file[rootFilename]] as PrefixedStyleFile[];
+  const reachable = lookupFromValues(frontier);
+  while (frontier.length) {
+    const prevFrontier = frontier.slice();
+    frontier.length = 0;
+    prevFrontier.forEach((node) => {
+      const newAdjs = (node.pathIntervals || [])
+        .filter(({ value: relPath }) => !(relPath.slice(2) in reachable))
+        .map(({ value }) => file[value.slice(2)] as PrefixedStyleFile);
+      frontier.push(...newAdjs);
+      newAdjs.forEach(f => reachable[f.key] = f);
+    });
+  }
+  return Object.values(reachable);
+}

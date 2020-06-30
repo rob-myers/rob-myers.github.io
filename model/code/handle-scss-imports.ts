@@ -10,7 +10,7 @@ export function detectInvalidScssImport(
   file: KeyedLookup<PrefixedStyleFile>,
 ) {
   return file[filename].pathIntervals.find(({ value }) =>
-    !(/^\.\/.+\.scss$/.test(value) && value.slice(2) in file))?.value || null;
+    !(/^\.\/.+\.scss$/.test(value) && value.slice(2) in file)) || null;
 }
 
 export type ScssImportsResult = (
@@ -29,10 +29,10 @@ export function traverseScssDeps(
   if (maxDepth <= 0) {
     return null;
   } 
-  
+
   const unknownImport = detectInvalidScssImport(f.key, file);
   if (unknownImport) {
-    return { key: 'error', errorKey: 'import-unknown', inFilename: f.key, fromFilename: unknownImport };
+    return { key: 'error', errorKey: 'import-unknown', inFilename: f.key, fromFilename: unknownImport.value };
   } else if (f.key in dependents) {
     return { key: 'error', errorKey: 'cyclic-dep', dependent: f.key };
   }

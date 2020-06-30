@@ -4,10 +4,11 @@ See [blog notes](./blog.md).
 
 # Local Dev Environment
 
-- [ ] using relative path `./other.scss` and leaving context menu open for `red` in `other.scss` crashes the app.
+- [x] initial relative path `./other.scss` inside sass crashes the app.
+  > Fixed by restricting to reachable scss files in `detectScssImportError`.
 - [ ] persisted state has version and old versions are cleared
 - [ ] menu button to reset layout
-- [ ] refresh css when scss dependency is updated
+- [x] refresh css when scss dependency is updated
 - [ ] force scss files existence (else show error)
 - [ ] force code import paths to be relative (else show error)
 - [ ] force style import paths to be relative (else show error)
