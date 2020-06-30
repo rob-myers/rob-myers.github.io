@@ -4,6 +4,7 @@ See [blog notes](./blog.md).
 
 # Local Dev Environment
 
+- [x] store has version and wipes previous when version changes
 - [x] initial relative path `./other.scss` inside sass crashes the app.
   > Fixed by restricting to reachable scss files in `detectScssImportError`.
 - [ ] persisted state has version and old versions are cleared

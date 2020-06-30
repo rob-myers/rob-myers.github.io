@@ -14,6 +14,8 @@ import { State as LayoutState } from './layout.duck';
 import { State as DevEnvState } from './dev-env.duck';
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
 
+const storeVersion = 0.1;
+
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
     (next: Dispatch) =>
@@ -27,6 +29,15 @@ const thunkMiddleware = () =>
 
 const persistedReducer = persistReducer({
   key: 'primary',
+  version: storeVersion,
+  migrate: async (state, currentVersion) => {
+    const prevVersion = state?._persist.version;
+    if (prevVersion !== currentVersion) {
+      console.warn(`State version changed from "${prevVersion}" to "${currentVersion}"`);
+      return {} as any;
+    }
+    return state;
+  },
   storage,
   transforms: [
     createTransform<TestState, TestState & { lastPing: null }>(
@@ -97,7 +108,7 @@ const persistedReducer = persistReducer({
   ],
 }, rootReducer());
 
-const epicMiddleware = createEpicMiddleware<
+const epicMiddlewareFactory = () => createEpicMiddleware<
   RootAction | RootThunk,
   RootAction | RootThunk,
   RootState,
@@ -105,6 +116,8 @@ const epicMiddleware = createEpicMiddleware<
 >();
 
 export const initializeStore = (preloadedState?: RootState) => {
+  const epicMiddleware = epicMiddlewareFactory();
+
   const store = createStore(
     // rootReducer,
     persistedReducer,
