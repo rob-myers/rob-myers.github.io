@@ -57,7 +57,7 @@ See [blog notes](./blog.md).
 - [x] Integrate `golden-layout` (use previous approach) on new page `/dev`.
 - [x] Rename worker.duck as editor.duck
 - [x] Error boundary around mounted `App`
-- [x] Syntax highlighting should be debounced
+- [x] Syntax highlighting should be throttled
 - [x] Mount transpiled react component (Dev)
   > transform `react` import path.
   > create javascript module with `src` via `Blob`.

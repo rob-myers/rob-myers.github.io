@@ -349,8 +349,7 @@ export const Thunk = {
       };
       e.syntaxWorker!.addEventListener('message', eventListener);
       const syntaxHighlight = () => dispatch(Thunk.highlightTsxSyntax({ editorKey }));
-      // Perhaps group instead of debounce?
-      const disposable = dispatch(Thunk.trackModelChange({ editorKey, debounceMs: 300, do: syntaxHighlight }));
+      const disposable = dispatch(Thunk.trackModelChange({ editorKey, delayMs: 300, delayType: 'throttle', do: syntaxHighlight }));
       requestAnimationFrame(syntaxHighlight); // For first time load
 
       dispatch(Act.addEditorCleanups({ editorKey, cleanups: [
@@ -368,20 +367,26 @@ export const Thunk = {
       });
     },
   ),
-  /** Execute a debounced action whenever editor model changes. */
+  /**
+   * Execute a debounced or throttled action whenever editor model changes.
+   */
   trackModelChange: createThunk(
     '[editor] on model change',
     ({ state: { editor: { model: m, editor: e } } }, arg: {
       do: (newValue: string) => void;
-      debounceMs: number; 
+      delayMs: number;
+      delayType: 'debounce' | 'throttle';
     } & ({ modelKey: string } | { editorKey: string })) => {
-      const { do: act, debounceMs } = arg;
-      let debounceId: number;
+      let [debounceId, running] = [0, false];
       const model = 'modelKey' in arg ? m[arg.modelKey].model : e[arg.editorKey].editor.getModel()!;
       return model.onDidChangeContent((_event) => {
+        if (arg.delayType === 'throttle' && running) return;
         window.clearTimeout(debounceId);
-        const newValue = model.getValue();
-        debounceId = window.setTimeout(() => act(newValue), debounceMs);
+        running = true;
+        debounceId = window.setTimeout(() => {
+          arg.do(model.getValue());
+          running = false;
+        }, arg.delayMs);
       });
     },
   ),

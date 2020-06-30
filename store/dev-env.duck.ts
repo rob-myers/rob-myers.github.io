@@ -320,7 +320,7 @@ export const Thunk = {
     '[dev-env] setup remember file contents',
     ({ dispatch }, { filename, modelKey }: { filename: string; modelKey: string }) => {
       const storeFileContents = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
-      const disposable = dispatch(EditorThunk.trackModelChange({ do: storeFileContents, debounceMs: 500, modelKey }));
+      const disposable = dispatch(EditorThunk.trackModelChange({ do: storeFileContents, delayType: 'debounce', delayMs: 500, modelKey }));
       dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
     },
   ),
@@ -331,7 +331,7 @@ export const Thunk = {
       const transpileCode = /\.tsx?$/.test(filename)
         ? () => dispatch(Thunk.tryTranspileCodeModel({ filename }))
         : () => dispatch(Thunk.tryTranspileStyleModel({ filename }));
-      const disposable = dispatch(EditorThunk.trackModelChange({ do: transpileCode, debounceMs: 500, modelKey }));
+      const disposable = dispatch(EditorThunk.trackModelChange({ do: transpileCode, delayType: 'debounce', delayMs: 500, modelKey }));
       dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
     },
   ),
