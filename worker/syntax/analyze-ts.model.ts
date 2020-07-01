@@ -107,9 +107,11 @@ export function toggleTsxComment(
     throw Error(`Expected code position "${startLineStartPos}" inside ${JSON.stringify(code)}`);
   }
 
+  const { line } = srcFile.getLineAndColumnAtPos(startLineStartPos);
   const [first, second, third] = node.getAncestors();
   const isJsxCommentCtxt = third && (node instanceof JsxText || (
-    !(first instanceof JsxAttribute) && areJsxNodes([first, second])
+    areJsxNodes([first, second])
+    && first.getStartLineNumber() === line
     && (node.getKindName() === 'OpenBraceToken' || areJsxNodes([third]))
   ));
 
@@ -118,12 +120,14 @@ export function toggleTsxComment(
   console.log({ isJsxCommentCtxt, node, kind: node.getKindName(), ancestors: node.getAncestors() });
 
   if (isJsxCommentCtxt) {
-    nextSelection = nextSelection.replace(/^(\s*)\{\/\* (.*) \*\/\}(\s*)$/s, '$1$2$3');
+    nextSelection = nextSelection.replace(/^(\s*)\{\/\*(.*)\*\/\}(\s*)$/s, '$1$2$3');
     if (nextSelection === selectedCode) {
       nextSelection = nextSelection.replace(/^(\s*)(.*)(\s*)$/s, '$1{/* $2 */}$3');
+    } else {
+      nextSelection.slice(-1) === ' ' && (nextSelection = nextSelection.slice(0, -1));
+      nextSelection.slice(0, 1) === ' ' && (nextSelection = nextSelection.slice(1));
     }
   }
-  // console.log({ isJsxCommentCtxt, selectedCode, nextSelection });
 
   return isJsxCommentCtxt
     ? { key: 'jsx-comment', nextSelection }
@@ -136,5 +140,5 @@ export type ToggleTsxCommentResult = (
 );
 
 function areJsxNodes(nodes: Node[]) {
-  return nodes.every(x => x.getKindName().startsWith('Jsx'));
+  return nodes.every(x => x.getKindName().startsWith('Jsx') && !(x instanceof JsxAttribute));
 }
