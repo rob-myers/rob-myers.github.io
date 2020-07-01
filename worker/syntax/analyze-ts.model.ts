@@ -1,4 +1,4 @@
-import { Project, ts, Node, JsxText, JsxAttribute } from 'ts-morph';
+import { Project, ts, Node, JsxText, JsxAttribute, JsxSelfClosingElement } from 'ts-morph';
 import { JsImportMeta, JsExportMeta, ModuleSpecifierMeta } from '@model/code/patch-js-imports';
 
 /**
@@ -111,13 +111,14 @@ export function toggleTsxComment(
   const [first, second, third] = node.getAncestors();
   const isJsxCommentCtxt = third && (node instanceof JsxText || (
     areJsxNodes([first, second])
-    && first.getStartLineNumber() === line
-    && (node.getKindName() === 'OpenBraceToken' || areJsxNodes([third]))
+    && first.getStartLineNumber() <= line // Avoid Jsx-commenting comments
+    && (node.getKindName() === 'OpenBraceToken' || first instanceof JsxSelfClosingElement || areJsxNodes([third]))
   ));
 
   const selectedCode = code.slice(startLineStartPos, endLineEndPos + 1);
   let nextSelection = selectedCode;
   console.log({ isJsxCommentCtxt, node, kind: node.getKindName(), ancestors: node.getAncestors() });
+
 
   if (isJsxCommentCtxt) {
     nextSelection = nextSelection.replace(/^(\s*)\{\/\*(.*)\*\/\}(\s*)$/s, '$1$2$3');

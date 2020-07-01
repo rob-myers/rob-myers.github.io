@@ -1,4 +1,4 @@
-# Blog -- A collaborative game engine
+# A collaborative game engine
 
 See [blog notes](./blog.md).
 
