@@ -1,4 +1,4 @@
-import { Project, ts, JsxText } from 'ts-morph';
+import { Project, ts, Node, JsxText, JsxAttribute } from 'ts-morph';
 import { JsImportMeta, JsExportMeta, ModuleSpecifierMeta } from '@model/code/patch-js-imports';
 
 /**
@@ -90,6 +90,10 @@ export function analyzeTsImportsExports(filename: string, code: string) {
   };
 }
 
+/**
+ * Detect if `startLineStartPos` should be commented in JSX-style.
+ * If so, provide the text which will replace the selection.
+ */
 export function toggleTsxComment(
   code: string,
   startLineStartPos: number,
@@ -103,15 +107,20 @@ export function toggleTsxComment(
     throw Error(`Expected code position "${startLineStartPos}" inside ${JSON.stringify(code)}`);
   }
 
-  const isJsxCommentCtxt = [node].concat(node.getAncestors()).some(node =>
-    node instanceof JsxText && node.containsRange(startLineStartPos, startLineStartPos));
+  const [first, second, third] = node.getAncestors();
+  const isJsxCommentCtxt = third && (node instanceof JsxText || (
+    !(first instanceof JsxAttribute) && areJsxNodes([first, second])
+    && (node.getKindName() === 'OpenBraceToken' || areJsxNodes([third]))
+  ));
+
   const selectedCode = code.slice(startLineStartPos, endLineEndPos + 1);
   let nextSelection = selectedCode;
+  console.log({ isJsxCommentCtxt, node, kind: node.getKindName(), ancestors: node.getAncestors() });
 
   if (isJsxCommentCtxt) {
     nextSelection = nextSelection.replace(/^(\s*)\{\/\* (.*) \*\/\}(\s*)$/s, '$1$2$3');
     if (nextSelection === selectedCode) {
-      nextSelection = nextSelection.replace(/^(\s*)(.+)(\s*)$/s, '$1{/* $2 */}$3');
+      nextSelection = nextSelection.replace(/^(\s*)(.*)(\s*)$/s, '$1{/* $2 */}$3');
     }
   }
   // console.log({ isJsxCommentCtxt, selectedCode, nextSelection });
@@ -125,3 +134,7 @@ export type ToggleTsxCommentResult = (
   | { key: 'jsx-comment'; nextSelection: string }
   | { key: 'js-comment'; nextSelection: null }
 );
+
+function areJsxNodes(nodes: Node[]) {
+  return nodes.every(x => x.getKindName().startsWith('Jsx'));
+}

@@ -7,7 +7,6 @@ See [blog notes](./blog.md).
 - [x] store has version and wipes previous when version changes
 - [x] initial relative path `./other.scss` inside sass crashes the app.
   > Fixed by restricting to reachable scss files in `detectScssImportError`.
-- [ ] persisted state has version and old versions are cleared
 - [ ] menu button to reset layout
 - [x] refresh css when scss dependency is updated
 - [ ] force scss files existence (else show error)
