@@ -44,7 +44,7 @@ interface RequestImportExportMeta {
 interface RequestScssPrefixing {
   key: 'request-scss-prefixing';
   scss: string;
-  /** Induces prefix `${filename}__` */
+  /** `file.scss` induces prefix `file__` */
   filename: string;
 }
 interface ToggleTsxComment {

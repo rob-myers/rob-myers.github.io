@@ -209,7 +209,7 @@ export const Thunk = {
         await awaitWorker('worker-ready', syntaxWorker);
       }
       if (filename.endsWith('.tsx')) {
-        dispatch(Thunk.tsxEditorInstanceSetup({ editor }));
+        dispatch(Thunk.setupTsxCommentToggling({ editor, editorKey }));
         dispatch(Thunk.setupTsxHighlighting({ editorKey }));
       }
       if (!getState().editor.sassWorker) {
@@ -415,15 +415,16 @@ export const Thunk = {
     ({ state: { editor: e } }, { modelKey }: { modelKey: string }) =>
       e.monacoService!.transpileTsModel(e.model[modelKey].model)
   ),
-  tsxEditorInstanceSetup: createThunk(
-    '[editor] editor instance setup',
-    ({ state: { editor: { internal, syntaxWorker } } }, { editor }: {
+  setupTsxCommentToggling: createThunk(
+    '[editor] setup tsx comment toggling',
+    ({ state: { editor: { internal, syntaxWorker } }, dispatch }, { editor, editorKey }: {
       editor: EditorInstance['editor'];
+      editorKey: string;
     }) => {
       const { monaco } = internal!;
       editor.addAction({
         id: 'editor.action.commentLine-tsx',
-        label: 'Custom Toggle Line Comment',
+        label: 'Custom Toggle Line Comment for Tsx',
         run: async (editor) => { 
           const model = editor.getModel()!;
           const { startLineNumber, endLineNumber } = editor.getSelection()!;
@@ -439,7 +440,7 @@ export const Thunk = {
             code,
             startLineStartPos,
             endLineEndPos,
-          });
+          });        
           const { result } = await awaitWorker(
             'send-tsx-commented', syntaxWorker!, ({ origCode }) => code === origCode);
 
@@ -449,9 +450,12 @@ export const Thunk = {
               text: result.nextSelection,
               forceMoveMarkers: true,
             }]);
+            editor.setSelection(new monaco.Selection(
+              startLineNumber, 0, endLineNumber, model.getLineMaxColumn(endLineNumber)));
           } else {
-            editor.getAction('editor.action.commentLine').run();
+            await editor.getAction('editor.action.commentLine').run();
           }
+          dispatch(Thunk.highlightTsxSyntax({ editorKey }));
         },
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_SLASH],
       });

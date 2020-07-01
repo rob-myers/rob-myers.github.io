@@ -49,7 +49,9 @@ const Item: React.FC<ItemProps> = (props) => (
     onClick={props.remove}
     className={css.myClass}
   >
-    {props.id}
+    <div>
+      {props.id}
+    </div>
   </div>
 );
 
@@ -83,6 +85,7 @@ export const exampleScss1 = `
 
 .my-ancestral-class {
   .my-class {
+    @include myMixin;
     margin: 10px;
     background: rgba(255, 0, 0, 0.623);
   }
@@ -95,6 +98,6 @@ export const exampleScss2 = `
 }
 
 @mixin myMixin {
-  color: blue;
+  color: #ccc;
 }
 `.trim();
