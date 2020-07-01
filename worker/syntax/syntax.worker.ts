@@ -4,7 +4,7 @@ import { SyntaxDispatchOverload } from './redux.model';
 import { initializeStore } from './create-store';
 import { testNever } from '@model/generic.model';
 import { computeClassifications } from './highlight.model';
-import { analyzeTsImportsExports } from './analyze-ts.model';
+import { analyzeTsImportsExports, toggleTsxComment } from './analyze-ts.model';
 import { prefixScssClasses, extractScssImportIntervals } from './analyze-scss.model';
 
 const ctxt: SyntaxWorkerContext = self as any;
@@ -63,6 +63,18 @@ ctxt.addEventListener('message', ({ data }) => {
           error: `${e}`,
         });
       }
+      break;
+    }
+    case 'toggle-tsx-comments': {
+      ctxt.postMessage({
+        key: 'send-tsx-commented',
+        origCode: data.code,
+        result: toggleTsxComment(
+          data.code,
+          data.startLineStartPos,
+          data.endLineEndPos,
+        ),
+      });
       break;
     }
     default: throw testNever(data);

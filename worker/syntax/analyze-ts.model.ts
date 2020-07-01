@@ -1,4 +1,4 @@
-import { Project } from 'ts-morph';
+import { Project, ts, JsxText } from 'ts-morph';
 import { JsImportMeta, JsExportMeta, ModuleSpecifierMeta } from '@model/code/patch-js-imports';
 
 /**
@@ -89,3 +89,39 @@ export function analyzeTsImportsExports(filename: string, code: string) {
     imports: importItems,
   };
 }
+
+export function toggleTsxComment(
+  code: string,
+  startLineStartPos: number,
+  endLineEndPos: number,
+): ToggleTsxCommentResult {
+  const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
+  const srcFile = project.createSourceFile('main.tsx', code);
+
+  const node = srcFile.getDescendantAtPos(startLineStartPos);
+  if (!node) {
+    throw Error(`Expected code position "${startLineStartPos}" inside ${JSON.stringify(code)}`);
+  }
+
+  const isJsxCommentCtxt = [node].concat(node.getAncestors()).some(node =>
+    node instanceof JsxText && node.containsRange(startLineStartPos, startLineStartPos));
+  const selectedCode = code.slice(startLineStartPos, endLineEndPos + 1);
+  let nextSelection = selectedCode;
+
+  if (isJsxCommentCtxt) {
+    nextSelection = nextSelection.replace(/^(\s*)\{\/\* (.*) \*\/\}(\s*)$/s, '$1$2$3');
+    if (nextSelection === selectedCode) {
+      nextSelection = nextSelection.replace(/^(\s*)(.+)(\s*)$/s, '$1{/* $2 */}$3');
+    }
+  }
+  // console.log({ isJsxCommentCtxt, selectedCode, nextSelection });
+
+  return isJsxCommentCtxt
+    ? { key: 'jsx-comment', nextSelection }
+    : { key: 'js-comment', nextSelection: null };
+}
+
+export type ToggleTsxCommentResult = (
+  | { key: 'jsx-comment'; nextSelection: string }
+  | { key: 'js-comment'; nextSelection: null }
+);

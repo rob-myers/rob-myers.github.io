@@ -53,7 +53,7 @@ See [blog notes](./blog.md).
 - [ ] Can toggle per-panel menu.
 - [x] Migrate `ReactFreshBabelPlugin.js` to singleton class written in typescript.
 - [x] Don't transpile multiple editors with same model
-- [ ] Fix auto-commenting i.e. when directly inside JSX tags use (multiline) brace-comments
+- [x] Fix auto-commenting i.e. when directly inside JSX tags use (multiline) brace-comments
   > replaced code action by dummy console.log
   > NEXT: send code/position/selection to worker to figure out new code
 - [x] Integrate `golden-layout` (use previous approach) on new page `/dev`.

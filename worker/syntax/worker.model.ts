@@ -4,6 +4,7 @@ import { Message } from '@model/worker.model';
 import { JsImportMeta, JsExportMeta } from '@model/code/patch-js-imports';
 import { Classification } from './highlight.model';
 import { ScssImportPathInterval } from './analyze-scss.model';
+import { ToggleTsxCommentResult } from './analyze-ts.model';
 
 /** A Worker instance in parent thread. */
 export interface SyntaxWorker extends Worker {
@@ -46,6 +47,12 @@ interface RequestScssPrefixing {
   /** Induces prefix `${filename}__` */
   filename: string;
 }
+interface ToggleTsxComment {
+  key: 'toggle-tsx-comments';
+  code: string;
+  startLineStartPos: number;
+  endLineEndPos: number;
+}
 
 interface SendTsxHighlights {
   key: 'send-tsx-highlights';
@@ -65,12 +72,18 @@ interface SendPrefixedScss {
   pathIntervals: ScssImportPathInterval[];
   error: null | string;
 }
+interface SendTsxCommented {
+  key: 'send-tsx-commented';
+  origCode: string;
+  result: ToggleTsxCommentResult; 
+}
 
 type MessageFromParent = (
   | RequestStatus
   | RequestTsxHighlights
   | RequestImportExportMeta
   | RequestScssPrefixing
+  | ToggleTsxComment
 );
 
 export type MessageFromWorker = (
@@ -78,6 +91,7 @@ export type MessageFromWorker = (
   | SendTsxHighlights
   | SendImportExportMeta
   | SendPrefixedScss
+  | SendTsxCommented
 );
 
 type RefinedMessage<Key> = Extract<MessageFromWorker, { key: Key }>

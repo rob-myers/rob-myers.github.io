@@ -57,15 +57,6 @@ export class MonacoService {
     }
   }
 
-  private getLineCol(index: number, lineStarts: number[]) {
-    const lineCount = lineStarts.length;
-    const lineNumber = lineStarts.find((x, i) => i + 1 === lineCount || x < lineStarts[i + 1])!;
-    return {
-      lineNumber,
-      column: index - lineStarts[lineNumber],
-    };
-  }
-
   private getErrorMessages(errors: IDiagnostic[], text: string) {
     const lineStarts = this.getLineStarts(text);
     return errors.map(error => {

@@ -417,13 +417,41 @@ export const Thunk = {
   ),
   tsxEditorInstanceSetup: createThunk(
     '[editor] editor instance setup',
-    ({ state: { editor: worker } }, { editor }: { editor: EditorInstance['editor'] }) => {
-      const { monaco } = worker.internal!;
+    ({ state: { editor: { internal, syntaxWorker } } }, { editor }: {
+      editor: EditorInstance['editor'];
+    }) => {
+      const { monaco } = internal!;
       editor.addAction({
-        id: 'editor.action.commentLine',
+        id: 'editor.action.commentLine-tsx',
         label: 'Custom Toggle Line Comment',
-        run: (editor) => { 
-          console.log('TODO comment line', editor.getPosition(), editor.getSelection());
+        run: async (editor) => { 
+          const model = editor.getModel()!;
+          const { startLineNumber, endLineNumber } = editor.getSelection()!;
+          const startLineStartPos = model.getOffsetAt({ lineNumber: startLineNumber, column: 0 });
+          const endLineEndCol = model.getLineMaxColumn(endLineNumber);
+          let endLineEndPos = model.getOffsetAt({ lineNumber: endLineNumber, column: 0 }) + endLineEndCol - 1;
+          if (model.getValue().substr(endLineEndPos, 1) === '\n') endLineEndPos--;
+          const code = editor.getValue() || '';
+          // console.log('TODO commenting at', { startLineStartPos, startLineNumber, endLineNumber, endLineEndPos });
+          
+          syntaxWorker!.postMessage({
+            key: 'toggle-tsx-comments',
+            code,
+            startLineStartPos,
+            endLineEndPos,
+          });
+          const { result } = await awaitWorker(
+            'send-tsx-commented', syntaxWorker!, ({ origCode }) => code === origCode);
+
+          if (result.key === 'jsx-comment') {
+            editor.executeEdits('tsx-comment-edit', [{
+              range: new monaco.Range(startLineNumber, 0, endLineNumber, endLineEndCol),
+              text: result.nextSelection,
+              forceMoveMarkers: true,
+            }]);
+          } else {
+            editor.getAction('editor.action.commentLine').run();
+          }
         },
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_SLASH],
       });
