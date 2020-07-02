@@ -85,7 +85,6 @@ export const exampleScss1 = `
 
   .my-class {
     @include myMixin;
-    margin: 10px;
     background: rgba(255, 0, 0, 0.623);
   }
 }
@@ -100,5 +99,6 @@ export const exampleScss2 = `
   color: #ccc;
   border: 1px solid black;
   cursor: pointer;
+  padding: 2px 8px;
 }
 `.trim();
