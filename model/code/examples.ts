@@ -98,6 +98,7 @@ export const exampleScss2 = `
 
 @mixin myMixin {
   color: #ccc;
-  border: 5px solid white;
+  border: 1px solid black;
+  cursor: pointer;
 }
 `.trim();
