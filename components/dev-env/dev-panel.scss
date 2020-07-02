@@ -1,0 +1,16 @@
+.unsupported-panel {
+  color: red;
+  background: white;
+  padding: 8px;
+}
+
+.menu-container {
+  position: absolute;
+  left: 8px;
+  top: 4px;
+  background: #222;
+  color: #fff;
+  width: 120px;
+  z-index: 1;
+  padding: 8px;
+}

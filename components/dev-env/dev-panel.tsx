@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
 import { isAppPanel, isFilePanel } from '@model/code/dev-env.model';
+import DevPanelMenu from './dev-panel-menu';
+import css from './dev-panel.scss';
 
 const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false });
 const DevApp = dynamic(import('@components/dev-env/dev-app'), { ssr: false });
@@ -12,26 +14,25 @@ const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
     return null;
   }
   
-  if (isFilePanel(panelKey, panelMeta?.filename)) {
-    return (
-      <DevEditor
-        filename={panelMeta!.filename!}
-        panelKey={panelKey}
-      />
-    );
-  } else if (isAppPanel(panelKey)) {
-    return (
-      <DevApp
-        panelKey={panelKey}
-      />
-    );
-  }
-
   return (
-    <div style={{ color: 'red', background: 'white', padding: 8 }}>{
-      `Unsupported panel "${panelKey}" with meta "${JSON.stringify(panelMeta)}"`
-    }</div>
-  );  
+    <>
+      <DevPanelMenu panelKey={panelKey} />
+      {isFilePanel(panelKey, panelMeta?.filename) && (
+        <DevEditor
+          filename={panelMeta!.filename!}
+          panelKey={panelKey}
+        />
+      ) || isAppPanel(panelKey) && (
+        <DevApp
+          panelKey={panelKey}
+        />
+      ) || (
+        <div className={css.unsupportedPanel}>{
+          `Unsupported panel "${panelKey}" with meta "${JSON.stringify(panelMeta)}"`
+        }</div>
+      )}
+    </>
+  );
 };
 
 interface Props {

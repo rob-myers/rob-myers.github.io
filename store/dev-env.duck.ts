@@ -30,11 +30,13 @@ interface PanelFile {
   /** Panel key */
   key: string;
   filename: string;
+  menuOpen: boolean;
 }
 interface PanelApp {
   /** Panel key */
   key: string;
   elementId: string;
+  menuOpen: boolean;
 }
 
 const initialState: State = {
@@ -268,7 +270,7 @@ export const Thunk = {
   ),
   handleScssImportError: createThunk(
     '[dev-env] handle scss import error',
-    ({ dispatch, state: { devEnv } }, { filename, importError }: {
+    ({ state: { devEnv } }, { filename, importError }: {
       filename: string;
       importError: SccsImportsError;
     }) => {
@@ -575,12 +577,14 @@ export const reducer = (state = initialState, act: Action): State => {
       panelToApp: addToLookup({
         key: act.pay.panelKey,
         elementId: panelKeyToAppElId(act.pay.panelKey),
+        menuOpen: false,
       }, state.panelToApp),
     };
     case '[dev-env] remember file panel': return { ...state,
       panelToFile: addToLookup({
         key: act.pay.panelKey,
         filename: act.pay.filename,
+        menuOpen: false,
       }, state.panelToFile)
     };
     case '[dev-env] set ts/tsx validity': return { ...state,
@@ -739,8 +743,13 @@ const togglePanelMenuEpic = createEpic(
     flatMap(({ args: { panelKey } }) => {
       console.log({ detectedTitleClick: panelKey });
       /**
-       * TODO
+       * TODO toggle panel
+       * But 1st let's merge `panelToApp` and `panelToFile`.
        */
+      // const { panelToApp, panelToFile } = state$.value.devEnv;
+      // if (panelKey in panelToApp) {
+      //   return [];
+      // }
       return [];
     }),
   ),
