@@ -425,6 +425,7 @@ export const Thunk = {
       editor.addAction({
         id: 'editor.action.commentLine-tsx',
         label: 'Custom Toggle Line Comment for Tsx',
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_SLASH],
         run: async (editor) => { 
           const model = editor.getModel()!;
           const { startLineNumber, endLineNumber } = editor.getSelection()!;
@@ -457,7 +458,6 @@ export const Thunk = {
           }
           dispatch(Thunk.highlightTsxSyntax({ editorKey }));
         },
-        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_SLASH],
       });
     },
   ),

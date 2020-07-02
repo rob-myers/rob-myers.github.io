@@ -110,9 +110,10 @@ export function toggleTsxComment(
   const { line } = srcFile.getLineAndColumnAtPos(startLineStartPos);
   const [first, second, third] = node.getAncestors();
   const isJsxCommentCtxt = third && (node instanceof JsxText || (
-    areJsxNodes([first, second])
-    && first.getStartLineNumber() <= line // Avoid Jsx-commenting comments
-    && (node.getKindName() === 'OpenBraceToken' || first instanceof JsxSelfClosingElement || areJsxNodes([third]))
+    areJsxNodes([first, second]) && node.getStartLineNumber() <= line
+    && (areJsxNodes([third]))
+      || first instanceof JsxSelfClosingElement
+      || node.getKindName() === 'OpenBraceToken'
   ));
 
   const selectedCode = code.slice(startLineStartPos, endLineEndPos + 1);
