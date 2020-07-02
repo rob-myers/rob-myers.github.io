@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { panelKeyToAppElId, panelKeyToEditorKey, filenameToModelKey } from '@model/code/dev-env.model';
 import { Act } from '@store/dev-env.duck';
 import Editor from '@components/monaco/editor';
+import css from './dev-app.scss';
 
 const DevApp: React.FC<Props> = ({ panelKey }) => {
   const dispatch = useDispatch();
@@ -16,19 +17,21 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
   }, []);
 
   return (
-    <div>
-      <div
-        id={panelKeyToAppElId(panelKey)}
-        style={{ padding: 8, color: 'white' }}
-      >
-        App not mounted
+    <>
+      <div id={panelKeyToAppElId(panelKey)} style={{ height: '100%' }}>
+
+        {/* This placeholder is removed via react app mount */}
+        <div className={css.appNotMounted}>
+          App not mounted
+        </div>
       </div>
+
       {!monacoLoaded && (
         /**
-         * In case no monaco editor panel is initially open,
+         * In case no monaco editor panel initially open,
          * we ensure monaco is bootstrapped via hidden editor.
          */
-        <div style={{ display: 'none' }}>
+        <div className={css.hiddenMonacoEditor}>
           <Editor
             editorKey={panelKeyToEditorKey(panelKey)}
             modelKey={filenameToModelKey('_bootstrap.ts')}
@@ -36,7 +39,7 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
           />
         </div>
       )}
-    </div>
+    </>
   );
 };
 

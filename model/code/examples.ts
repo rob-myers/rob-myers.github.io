@@ -45,7 +45,6 @@ interface ItemProps {
 
 const Item: React.FC<ItemProps> = (props) => (
   <div
-    style={{ padding: 2, border: '1px solid #555' }}
     onClick={props.remove}
     className={css.myClass}
   >
@@ -56,12 +55,9 @@ const Item: React.FC<ItemProps> = (props) => (
 );
 
 export const App: React.FC = () => {
-  const [items, setItems] = React.useState([...Array(10)].map((_, i) => i));
+  const [items, setItems] = React.useState([...Array(100)].map((_, i) => i));
   return (
-    <div
-      style={{ padding: 20 }}
-      className={css.myAncestralClass}
-    >
+    <div className={css.myAncestralClass}>
       {items.map(x => (
         <Item
           id={x}
@@ -84,6 +80,9 @@ export const exampleScss1 = `
 @import "./other.scss";
 
 .my-ancestral-class {
+  overflow: auto;
+  height: 100%;
+
   .my-class {
     @include myMixin;
     margin: 10px;
@@ -99,5 +98,6 @@ export const exampleScss2 = `
 
 @mixin myMixin {
   color: #ccc;
+  border: 5px solid white;
 }
 `.trim();

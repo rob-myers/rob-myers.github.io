@@ -24,7 +24,7 @@ export function isAppPanel(panelKey: string) {
 }
 
 export function panelKeyToAppElId(panelKey: string) {
-  return `app-render-root-${panelKey}`;
+  return `app-instance-${panelKey}`;
 }
 
 export function panelKeyToAppScriptId(panelKey: string) {
