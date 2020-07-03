@@ -1,17 +1,9 @@
-import { GitalkRequiredOpts } from '@components/gitalk/gitalk-opts.model';
-
 export interface Env {
-  gitalk: GitalkRequiredOpts;
+  key: string;
 }
 
 const defaultEnv: Env = {
-  gitalk:  {
-    admin: ['__ADMIN__'],
-    clientID: '__CLIENT_ID__',
-    clientSecret: '__CLIENT_SECRET__',
-    owner: '__OWNER__',
-    repo: '__REPO__',
-  },
+  key: 'default',
 };
 
 try {

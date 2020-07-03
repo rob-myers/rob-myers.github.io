@@ -9,7 +9,6 @@ import { RootThunkParams, ThunkAct } from '@model/store/root.redux.model';
 
 import { State as TestState } from './test.duck';
 import { State as EditorState } from './editor.duck';
-import { State as GitalkState } from './gitalk.duck';
 import { State as LayoutState } from './layout.duck';
 import { State as DevEnvState } from './dev-env.duck';
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
@@ -62,16 +61,6 @@ const persistedReducer = persistReducer({
       }),
       (state, _key) => state,
       { whitelist: ['editor'] }
-    ),
-    createTransform<GitalkState, GitalkState>(
-      (_, _key) => ({
-        user: null,
-        errorMsg: null,
-        status: 'initial',
-        issue: {},
-      }),
-      (state, _key) => state,
-      { whitelist: ['gitalk'] }
     ),
     createTransform<LayoutState, LayoutState>(
       ({ goldenLayout, initConfig }, _key) => ({

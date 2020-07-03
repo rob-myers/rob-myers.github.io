@@ -15,12 +15,6 @@ import {
   epic as editorEpic,
 } from './editor.duck';
 import {
-  reducer as gitalkReducer,
-  State as GitalkState, 
-  Action as GitalkAction,
-  Thunk as GitalkThunk,
-} from './gitalk.duck';
-import {
   reducer as layoutReducer,
   State as LayoutState, 
   Action as LayoutAction,
@@ -37,7 +31,6 @@ import {
 export interface RootState {
   test: TestState;
   editor: EditorState;
-  gitalk: GitalkState;
   layout: LayoutState;
   devEnv: DevEnvState;
 }
@@ -45,14 +38,12 @@ export interface RootState {
 export type RootAction = (
   | TestAction
   | EditorAction
-  | GitalkAction
   | LayoutAction
   | DevEnvAction
 );
 
 export type RootThunk = (
   | EditorThunk
-  | GitalkThunk
   | LayoutThunk
   | DevEnvThunk
 );
@@ -60,7 +51,6 @@ export type RootThunk = (
 const rootReducer = () => combineReducers<RootState>({
   test: testReducer,
   editor: editorReducer,
-  gitalk: gitalkReducer,
   layout: layoutReducer,
   devEnv: devEnvReducer,
 });

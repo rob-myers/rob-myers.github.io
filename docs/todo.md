@@ -4,7 +4,7 @@ See [blog notes](./blog.md).
 
 # Local Dev Environment
 
-- [ ] remove reducer `gitment`
+- [x] remove reducer `gitalk`
 - [ ] can change current file in panel menu
 - [x] merge `panelToApp` and `panelToFile` inside dev-env.duck.
 - [x] store has version and wipes previous when version changes
