@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import GoldenLayout from 'golden-layout';
@@ -16,12 +16,18 @@ const GoldenLayoutComponent = dynamic(import('@components/golden-layout/golden-l
  */
 const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable }) => {
   const dispatch = useDispatch();
-  const initConfig = useSelector(({ layout }) => layout.initConfig);
+  const nextConfig = useSelector(({ layout }) => layout.nextConfig);
+  /** Used to remount on layout change */
+  const [numChanges, setNumChanges] = useState(0);
+
+  useEffect(() => {
+    setNumChanges(numChanges + 1);
+  }, [nextConfig]);
 
   const registerComponents = useCallback((gl: GoldenLayout) => {
     gl.registerComponent('window-panel', WindowPanel);
     dispatch(Act.initialized({
-      config: initConfig,
+      config: nextConfig,
       goldenLayout: redact(gl, 'GoldenLayout'),
     }));
   },[]);
@@ -82,11 +88,12 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
         'no-closing': !closable,
       })}>
         <GoldenLayoutComponent
+          key={`gl-${numChanges}`}
           htmlAttrs={{ style: {
             height,
             width,
           }}}
-          initConfig={initConfig}
+          initConfig={nextConfig}
           onComponentCreated={onComponentCreated}
           registerComponents={registerComponents}
           onDragStart={onDragStart}

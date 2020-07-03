@@ -14,7 +14,7 @@ import { State as LayoutState } from './layout.duck';
 import { State as DevEnvState } from './dev-env.duck';
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
 
-const storeVersion = 0;
+const storeVersion = 0.1;
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
@@ -76,7 +76,8 @@ const persistedReducer = persistReducer({
     createTransform<LayoutState, LayoutState>(
       ({ goldenLayout, initConfig }, _key) => ({
         goldenLayout: null,
-        initConfig: goldenLayout ? goldenLayout.toConfig() : initConfig,
+        initConfig,
+        nextConfig: goldenLayout ? goldenLayout.toConfig() : initConfig,
         panel: {},
       }),
       (state, _key) => state,

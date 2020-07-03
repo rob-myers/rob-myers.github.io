@@ -3,12 +3,14 @@ import { Redacted, ActionsUnion, createAct, updateLookup, redact, removeFromLook
 import { KeyedLookup, testNever, deepClone } from '@model/generic.model';
 import { LayoutPanelMeta, ExtendedContainer, GoldenLayoutConfig } from '@model/layout/layout.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { initLayoutConfig, CustomPanelMetaKey } from '@model/layout/example-layout.model';
+import { CustomPanelMetaKey, exampleLayoutConfigB } from '@model/layout/example-layout.model';
 
 /** Assume exactly one layout. */
 export interface State {
-  /** Initial config inducing `goldenLayout`. */
+  /** Immutable default config. */
   initConfig: GoldenLayoutConfig;
+  /** We use this config to change configs. */
+  nextConfig: GoldenLayoutConfig;
   /** Native instance of `GoldenLayout`. */
   goldenLayout: null | Redacted<GoldenLayout>;
   /** Lookup to keep track of layout panels. */
@@ -28,20 +30,18 @@ export interface LayoutPanelState {
   height: number;
   /** Last time panel was resized (epoch ms). */
   resizedAt: null | number;
-  /**
-   * Metadata concerning panel, e.g.
-   * login session panels have a `sessionKey`.
-   */
+  /** Metadata concerning panel e.g. filename. */
   panelMeta: LayoutPanelMeta<string>;
   /** Store native container in state, so can e.g. set title. */
   container: Redacted<ExtendedContainer>;
 }
 
-const initialState: State = {
-  initConfig: initLayoutConfig,
+const getInitialState = (): State => ({
+  initConfig: deepClone(exampleLayoutConfigB),
+  nextConfig: deepClone(exampleLayoutConfigB),
   goldenLayout: null,
   panel: {},
-};
+});
 
 export const Act = {
   assignPanelMetas: (input: {
@@ -72,6 +72,9 @@ export const Act = {
     width: number;
     height: number;
   }) => createAct('[layout] panel shown', input),
+  setNextConfig: (input: {
+    nextConfig: GoldenLayoutConfig;
+  }) => createAct('[layout] set next config', input),
 };
 
 export type Action = ActionsUnion<typeof Act>;
@@ -80,6 +83,16 @@ export const Thunk = {
   clickedPanelTitle: createThunk(
     '[layout] clicked panel title',
     (_, __: { panelKey: string }) => null,
+  ),
+  setLayout: createThunk(
+    '[layout] set layout',
+    ({ dispatch, state: { layout: { initConfig } } }, { layoutId }: { layoutId: string }) => {
+      if (layoutId === 'default-layout') {
+        dispatch(Act.setNextConfig({ nextConfig: deepClone(initConfig) }));
+      } else {
+        console.warn(`unrecognised layout id "${layoutId}" was ignored`);
+      }
+    },
   ),
   setPanelTitle: createThunk(
     '[layout] set panel title thunk',
@@ -94,7 +107,7 @@ export const Thunk = {
 
 export type Thunk = ActionsUnion<typeof Thunk>;
 
-export const reducer = (state = initialState, act: Action): State => {
+export const reducer = (state = getInitialState(), act: Action): State => {
   switch (act.type) {
     case '[layout] assign panel metas': {
       const { panelMeta: next, panelKey } = act.pay;
@@ -149,6 +162,11 @@ export const reducer = (state = initialState, act: Action): State => {
           initialized: initialized || (width && height ? true : false),
           width, height,
         }))
+      };
+    }
+    case '[layout] set next config': {
+      return { ...state,
+        nextConfig: act.pay.nextConfig,
       };
     }
     default: return state || testNever(act);

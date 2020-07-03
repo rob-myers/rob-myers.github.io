@@ -2,20 +2,12 @@ import * as GoldenLayout from 'golden-layout';
 
 /**
  * To define a layout for golden-layout, one must define
- * a `GoldenLayoutConfig`.
- * - Its `content` field is built
+ * a `GoldenLayoutConfig`. Its `content` field is built
  * recursively from `GoldenLayoutConfigItem`s.
- * - Each of the latter has a `type` in `LayoutItemType`.
+ * Each of the latter has a `type` i.e.
+ * 'row', 'column', 'stack', 'component' or 'react-component'.
+ * The latter normalises to 'component' in golden-layout.
  */
-export enum LayoutItemType {
-  'row'= 'row',
-  'column'= 'column',
-  'stack'= 'stack',
-  'component'= 'component',
-  /** Normalises to 'component' in golden-layout. */
-  'react-component'= 'react-component',
-}
-export type LayoutItemKey = keyof typeof LayoutItemType;
 
 /**
  * Extends native with stricter/extended `content` field.
@@ -23,8 +15,30 @@ export type LayoutItemKey = keyof typeof LayoutItemType;
  * - Extended because want e.g. `props.panelKey`, so React
  * component knows which panel it is in.
  */
-export interface GoldenLayoutConfig<PanelMetaKey extends string = string>  extends GoldenLayout.Config {
+export interface GoldenLayoutConfig<PanelMetaKey extends string = string> extends GoldenLayout.Config, GeneralOptions {
   content: GoldenLayoutConfigItem<PanelMetaKey>[];
+  settings?: GoldenLayout.Config['settings'] & {
+    responsiveMode?: string;
+    tabOverlapAllowance?: number;
+    reorderOnTabMenuClick?: boolean;
+    tabControlOffset?: number;
+  };
+  dimensions?: GoldenLayout.Config['dimensions'] & {
+    borderGrabWidth?: number;
+  };
+  labels?: GoldenLayout.Config['labels'] & {
+    popin?: string;
+    tabDropdown?: string;
+  };
+
+  title?: string;
+  maximisedItemId?: null | string;
+  openPopouts?: [];
+}
+
+interface GeneralOptions {
+  isClosable?: boolean;
+  reorderEnabled?: boolean;
 }
 
 export interface ExtendedContainer extends GoldenLayout.Container {
@@ -41,19 +55,21 @@ export type GoldenLayoutConfigItem<PanelMetaKey extends string> =
 | ReactComponentConfig<PanelMetaKey>;
 
 
-export interface RowConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig {
+export interface RowConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig, GeneralOptions {
   // Native value, now with literal type.
-  type: LayoutItemType.row;
+  type: 'row';
   // Now required.
   content: GoldenLayoutConfigItem<PanelMetaKey>[];
 }
-export interface ColumnConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig {
-  type: LayoutItemType.column;
+export interface ColumnConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig, GeneralOptions {
+  type: 'column';
   content: GoldenLayoutConfigItem<PanelMetaKey>[];
 }
-export interface StackConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig {
-  type: LayoutItemType.stack;
+export interface StackConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig, GeneralOptions {
+  type: 'stack';
   content: GoldenLayoutConfigItem<PanelMetaKey>[];
+  activeItemIndex?: number;
+  header?: {};
 }
 
 /**
@@ -75,7 +91,7 @@ export type ComponentConfig<PanelMetaKey extends string> =
 & { type: 'component' };
 
 
-export interface BaseComponentConfig<PanelMetaKey extends string> {
+export interface BaseComponentConfig<PanelMetaKey extends string> extends GeneralOptions {
   /** Native optional `title` is now required. */
   title: string;
   /**
@@ -93,6 +109,8 @@ export interface BaseComponentConfig<PanelMetaKey extends string> {
   props: LayoutPanelBaseProps<PanelMetaKey> & {
     [key: string]: any;
   };
+
+  component?: string;
 }
 
 export interface LayoutPanelBaseProps<PanelMetaKey extends string> {

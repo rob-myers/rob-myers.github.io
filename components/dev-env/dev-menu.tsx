@@ -1,9 +1,11 @@
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
+import { useState, useEffect, ChangeEvent } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
-import css from './dev-menu.scss';
 import { menuHeightPx } from '@model/code/dev-env.model';
-import { useState, useEffect } from 'react';
+import { Thunk as LayoutThunk } from '@store/layout.duck';
+import css from './dev-menu.scss';
+
 
 export const DevMenu = () => {
   const [disabled, setDisabled] = useState(true);
@@ -19,6 +21,11 @@ export const DevMenu = () => {
     return () => clearTimeout(id);
   }, []);
 
+  const dispatch = useDispatch();
+  const handleLayoutChange = ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
+    dispatch(LayoutThunk.setLayout({ layoutId: value }));
+  };
+
   return (
     <div className={css.menu} style={{ height: menuHeightPx }}>
       <div className={css.toolbar}>
@@ -28,7 +35,15 @@ export const DevMenu = () => {
         <div className={classNames(css.controls, {
           [css.controlsDisabled]: loadingMonaco || disabled,
         })}>
-          <Link href="/"><a className={css.houseIcon}>🏠</a></Link>
+          <select
+            className={css.selectLayout} value={''}
+            onChange={handleLayoutChange}
+          >
+            <option value={''}>layout</option>
+            <option value={'default-layout'}>default layout</option>
+          </select>
+          <div className={css.separator}>|</div>
+          <Link href="/"><a>home</a></Link>
         </div>
       </div>
       <div className={css.content} />

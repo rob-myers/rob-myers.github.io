@@ -4,12 +4,13 @@ See [blog notes](./blog.md).
 
 # Local Dev Environment
 
+- [ ] remove reducer `gitment`
 - [ ] can change current file in panel menu
 - [x] merge `panelToApp` and `panelToFile` inside dev-env.duck.
 - [x] store has version and wipes previous when version changes
 - [x] initial relative path `./other.scss` inside sass crashes the app.
   > Fixed by restricting to reachable scss files in `detectScssImportError`.
-- [ ] menu button to reset layout
+- [x] can reset layout in menu
 - [x] refresh css when scss dependency is updated
 - [ ] force scss files existence (else show error)
 - [ ] force code import paths to be relative (else show error)
