@@ -10,7 +10,7 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
   const monacoLoaded = useSelector(({ editor: { monacoLoaded } }) => monacoLoaded);
 
   useEffect(() => {
-    dispatch(Act.rememberAppPanel({ panelKey }));
+    dispatch(Act.createAppPanelMeta({ panelKey }));
     return () => {
       dispatch(Act.forgetPanelMeta({ panelKey }));
     };

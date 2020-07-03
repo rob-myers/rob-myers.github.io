@@ -45,10 +45,10 @@ export const Act = {
     createAct('[dev-env] forget panel meta', input),
   initialized: () =>
     createAct('[dev-env] initialized', {}),
-  rememberAppPanel: (input: { panelKey: string }) =>
-    createAct('[dev-env] remember app panel', input),
-  rememberFilePanel: (input: { panelKey: string; filename: string }) =>
-    createAct('[dev-env] remember file panel', input),
+  createAppPanelMeta: (input: { panelKey: string }) =>
+    createAct('[dev-env] create app panel meta', input),
+  createFilePanelMeta: (input: { panelKey: string; filename: string }) =>
+    createAct('[dev-env] create file panel meta', input),
   setBootstrapped: (isValid: boolean) =>
     createAct('[dev-env] set ts/tsx validity', { isValid }),
   storeCodeTranspilation: (filename: string, transpilation: CodeTranspilation) =>
@@ -554,7 +554,7 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] initialized': return { ...state,
       initialized: true,
     };
-    case '[dev-env] remember app panel': return { ...state,
+    case '[dev-env] create app panel meta': return { ...state,
       panelToMeta: addToLookup({
         key: act.pay.panelKey,
         panelType: 'app',
@@ -562,7 +562,7 @@ export const reducer = (state = initialState, act: Action): State => {
         menuOpen: false,
       }, state.panelToMeta),
     };
-    case '[dev-env] remember file panel': return { ...state,
+    case '[dev-env] create file panel meta': return { ...state,
       panelToMeta: addToLookup({
         key: act.pay.panelKey,
         panelType: 'file',
@@ -597,7 +597,7 @@ const bootstrapAppInstances = createEpic(
   (action$, state$) => action$.pipe(
     filterActs(
       '[dev-env] store code transpilation',
-      '[dev-env] remember app panel',
+      '[dev-env] create app panel meta',
       '[dev-env] forget panel meta',
     ),
     flatMap((act) => {
@@ -615,7 +615,7 @@ const bootstrapAppInstances = createEpic(
         } else if (bootstrapped) {
           return [Act.setBootstrapped(false)];
         }
-      } else if (act.type === '[dev-env] remember app panel') {
+      } else if (act.type === '[dev-env] create app panel meta') {
         if (bootstrapped) {
           return [Thunk.bootstrapAppInstance({ panelKey: act.pay.panelKey })];
         }
@@ -687,7 +687,7 @@ const trackFilePanels = createEpic(
         const filename = act.pay.panelMeta.filename!;
         return [
           LayoutThunk.setPanelTitle({ panelKey, title: filename }),
-          Act.rememberFilePanel({ filename, panelKey }),
+          Act.createFilePanelMeta({ filename, panelKey }),
           ...(file[filename] ? [] : [Act.createCodeFile({ filename, contents: '' })]),
         ];
       }
@@ -722,16 +722,8 @@ const togglePanelMenuEpic = createEpic(
   (action$, _state$) => action$.pipe(
     filterActs('[layout] clicked panel title'),
     flatMap(({ args: { panelKey } }) => {
-      console.log({ detectedTitleClick: panelKey });
-      /**
-       * TODO toggle panel
-       * But 1st let's merge `panelToApp` and `panelToFile`.
-       */
-      // const { panelToApp, panelToFile } = state$.value.devEnv;
-      // if (panelKey in panelToApp) {
-      //   return [];
-      // }
-      return [];
+      // console.log({ detectedTitleClick: panelKey });
+      return [Act.updatePanelMeta(panelKey, ({ menuOpen }) => ({ menuOpen: !menuOpen }))];
     }),
   ),
 );

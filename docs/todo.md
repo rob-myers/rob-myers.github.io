@@ -4,6 +4,7 @@ See [blog notes](./blog.md).
 
 # Local Dev Environment
 
+- [ ] can change current file in panel menu
 - [x] merge `panelToApp` and `panelToFile` inside dev-env.duck.
 - [x] store has version and wipes previous when version changes
 - [x] initial relative path `./other.scss` inside sass crashes the app.
@@ -50,7 +51,7 @@ See [blog notes](./blog.md).
   > could re-bootstrap app pre-transpile, if all others transpiled/up-to-date too.
   > need to know which imports js has, and must prevent cycles.
 - [x] Create `dev-env.duck`.
-- [ ] Can toggle per-panel menu.
+- [x] Can toggle per-panel menu.
 - [x] Migrate `ReactFreshBabelPlugin.js` to singleton class written in typescript.
 - [x] Don't transpile multiple editors with same model
 - [x] Fix auto-commenting i.e. when directly inside JSX tags use (multiline) brace-comments
