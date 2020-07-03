@@ -10,13 +10,15 @@ const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false
 const DevApp = dynamic(import('@components/dev-env/dev-app'), { ssr: false });
 
 const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
-  if (!useSelector(({ layout: { panel } }) => panel[panelKey]?.initialized)) {
-    return null;
-  }
+  // Ensure layout tracks panel before mounting
+  const panelTracked = useSelector(({ layout: { panel } }) => panel[panelKey]?.initialized);
+
+  // Ensure dev-env tracks panel before mounting panel menu
+  const devPanelTracked = useSelector(({ devEnv }) => !!devEnv.panelToMeta[panelKey]);
   
-  return (
+  return panelTracked ? (
     <>
-      <DevPanelMenu panelKey={panelKey} />
+      {devPanelTracked && <DevPanelMenu panelKey={panelKey} />}
       {isFilePanel(panelKey, panelMeta?.filename) && (
         <DevEditor
           filename={panelMeta!.filename!}
@@ -32,7 +34,7 @@ const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
         }</div>
       )}
     </>
-  );
+  ) : null;
 };
 
 interface Props {

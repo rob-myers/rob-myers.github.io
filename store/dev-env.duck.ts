@@ -39,16 +39,16 @@ export const Act = {
     createAct('[dev-env] create code file', input),
   createStyleFile: (input: { filename: string; contents: string }) =>
     createAct('[dev-env] create style file', input),
+  createAppPanelMeta: (input: { panelKey: string }) =>
+    createAct('[dev-env] create app panel meta', input),
+  createFilePanelMeta: (input: { panelKey: string; filename: string }) =>
+    createAct('[dev-env] create file panel meta', input),
   deleteFile: (input: { filename: string }) =>
     createAct('[dev-env] remove file', input),
   forgetPanelMeta: (input: { panelKey: string }) =>
     createAct('[dev-env] forget panel meta', input),
   initialized: () =>
     createAct('[dev-env] initialized', {}),
-  createAppPanelMeta: (input: { panelKey: string }) =>
-    createAct('[dev-env] create app panel meta', input),
-  createFilePanelMeta: (input: { panelKey: string; filename: string }) =>
-    createAct('[dev-env] create file panel meta', input),
   setBootstrapped: (isValid: boolean) =>
     createAct('[dev-env] set ts/tsx validity', { isValid }),
   storeCodeTranspilation: (filename: string, transpilation: CodeTranspilation) =>
@@ -119,6 +119,19 @@ export const Thunk = {
       const styleElId = filenameToStyleId(filename);
       const styles = (devEnv.file[filename] as TranspiledStyleFile).transpiled.dst;
       appendStyleTag({ styleId: styleElId, styles });
+    },
+  ),
+  changePanel: createThunk(
+    '[dev-env] change panel contents',
+    (_, input: { panelKey: string } & (
+      | { to: 'App' }
+      | { to: 'file'; filename: string }
+    )) => {
+      if (input.to === 'App') {
+        // TODO
+      } else {
+        // TODO
+      }
     },
   ),
   /**

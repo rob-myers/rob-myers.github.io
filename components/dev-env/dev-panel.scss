@@ -6,11 +6,32 @@
 
 .menu-container {
   position: absolute;
-  left: 8px;
-  top: 4px;
+  z-index: 1;
+  width: 100%;
+  height: 30px;
+  padding: 8px 0;
+
   background: #222;
   color: #fff;
-  width: 120px;
-  z-index: 1;
-  padding: 8px;
+  border: 1px solid #323232;
+  border-radius: 2px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .select-file {
+    margin-left: 8px;
+    background: none;
+    color: #aaa;
+    border-color: #666;
+    outline-color: #999;
+  }
+
+  .exit-button {
+    margin-right: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    color: #999;
+  }
 }
