@@ -6,6 +6,8 @@ See [blog notes](./blog.md).
 
 - [x] remove reducer `gitalk`
 - [ ] can change current file in panel menu
+  > todo: panelKey independent of app/file panel
+  > todo: DevPanel determined by devEnv.panelMeta[panelKey]
 - [x] merge `panelToApp` and `panelToFile` inside dev-env.duck.
 - [x] store has version and wipes previous when version changes
 - [x] initial relative path `./other.scss` inside sass crashes the app.

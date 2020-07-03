@@ -18,13 +18,15 @@ const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
   
   return panelTracked ? (
     <>
-      {devPanelTracked && <DevPanelMenu panelKey={panelKey} />}
-      {isFilePanel(panelKey, panelMeta?.filename) && (
+      {devPanelTracked &&
+        <DevPanelMenu panelKey={panelKey} />
+      }
+      {isFilePanel(panelMeta!) && (
         <DevEditor
-          filename={panelMeta!.filename!}
+          filename={panelMeta.filename}
           panelKey={panelKey}
         />
-      ) || isAppPanel(panelKey) && (
+      ) || isAppPanel(panelMeta!) && (
         <DevApp
           panelKey={panelKey}
         />

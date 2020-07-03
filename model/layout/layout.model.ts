@@ -47,25 +47,25 @@ export interface ExtendedContainer extends GoldenLayout.Container {
   element: JQuery<HTMLElement>;
 }
 
-export type GoldenLayoutConfigItem<PanelMetaKey extends string> =
-| RowConfig<PanelMetaKey>
-| ColumnConfig<PanelMetaKey>
-| StackConfig<PanelMetaKey>
-| ComponentConfig<PanelMetaKey>
-| ReactComponentConfig<PanelMetaKey>;
+export type GoldenLayoutConfigItem<PanelMetaKey extends string> = GeneralOptions & (
+  | RowConfig<PanelMetaKey>
+  | ColumnConfig<PanelMetaKey>
+  | StackConfig<PanelMetaKey>
+  | ComponentConfig<PanelMetaKey>
+  | ReactComponentConfig<PanelMetaKey>
+);
 
-
-export interface RowConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig, GeneralOptions {
+export interface RowConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig {
   // Native value, now with literal type.
   type: 'row';
   // Now required.
   content: GoldenLayoutConfigItem<PanelMetaKey>[];
 }
-export interface ColumnConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig, GeneralOptions {
+export interface ColumnConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig {
   type: 'column';
   content: GoldenLayoutConfigItem<PanelMetaKey>[];
 }
-export interface StackConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig, GeneralOptions {
+export interface StackConfig<PanelMetaKey extends string> extends GoldenLayout.ItemConfig {
   type: 'stack';
   content: GoldenLayoutConfigItem<PanelMetaKey>[];
   activeItemIndex?: number;
@@ -91,7 +91,7 @@ export type ComponentConfig<PanelMetaKey extends string> =
 & { type: 'component' };
 
 
-export interface BaseComponentConfig<PanelMetaKey extends string> extends GeneralOptions {
+export interface BaseComponentConfig<PanelMetaKey extends string> {
   /** Native optional `title` is now required. */
   title: string;
   /**

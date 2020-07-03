@@ -13,7 +13,7 @@ import { State as LayoutState } from './layout.duck';
 import { State as DevEnvState } from './dev-env.duck';
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
 
-const storeVersion = 0.1;
+const storeVersion = 0.11;
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>

@@ -1,26 +1,26 @@
 import { CyclicDepError, UntranspiledPathInterval, JsExportMeta, JsImportMeta } from './patch-js-imports';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 import { ScssImportPathInterval } from '@worker/syntax/analyze-scss.model';
+import { LayoutPanelMeta } from '@model/layout/layout.model';
+import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
 
 export const menuHeightPx = 32;
 
-const supportedFileMetas = [
-  { filenameExt: '.tsx', panelKeyPrefix: 'tsx' },
-  { filenameExt: '.scss', panelKeyPrefix: 'scss'},
-  { filenameExt: '.ts', panelKeyPrefix: 'ts'},
-];
+const supportedFileMetas = ['.tsx', '.scss', '.ts'];
 
 export function hasSupportedExtension(filename: string) {
-  return supportedFileMetas.some(({ filenameExt }) => filename.endsWith(filenameExt));
+  return supportedFileMetas.some((filenameExt) => filename.endsWith(filenameExt));
 }
 
-export function isFilePanel(panelKey: string, filename?: string) {
-  return supportedFileMetas.some(({ filenameExt, panelKeyPrefix }) =>
-    panelKey.startsWith(panelKeyPrefix) && filename?.endsWith(filenameExt));
+type Meta = LayoutPanelMeta<CustomPanelMetaKey>
+
+export function isFilePanel(panelMeta: Meta): panelMeta is Meta & { filename: string } {
+  return supportedFileMetas.some((filenameExt) =>
+    panelMeta?.filename?.endsWith(filenameExt));
 }
 
-export function isAppPanel(panelKey: string) {
-  return /^app(-|$)/.test(panelKey);
+export function isAppPanel(panelMeta: Meta) {
+  return panelMeta?.devEnvComponent === 'App';
 }
 
 export function panelKeyToAppElId(panelKey: string) {

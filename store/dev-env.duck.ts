@@ -6,7 +6,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles, PanelMeta, isAppPanel } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles, PanelMeta } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, importPathsToCodeFilenames, traverseDeps as traverseCodeDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 import { TsTranspilationResult } from '@model/monaco/monaco.model';
@@ -491,12 +491,17 @@ export const Thunk = {
       }
     },
   ),
-  unmountAppInstance: createThunk(
+  /**
+   * If `panelKey` an app panel & app mounted, we unmount it.
+   * Has no effect if not an app panel or not mounted.
+   * We handles all cases because, once removed, we don't know what it was.
+   */
+  tryUnmountAppInstance: createThunk(
     '[dev-env] unmount app instance',
     (_, { panelKey }: { panelKey: string }) => {
-      // Remove bootstrap script
+      // Ensure bootstrap script removed
       document.getElementById(panelKeyToAppScriptId(panelKey))?.remove();
-      // Unmount react app
+      // Ensure react app is unmounted.
       const el = document.getElementById(panelKeyToAppElId(panelKey));
       el && ReactDOM.unmountComponentAtNode(el);
       // console.log({ unmountedAppAt: el });
@@ -632,8 +637,8 @@ const bootstrapAppInstances = createEpic(
         if (bootstrapped) {
           return [Thunk.bootstrapAppInstance({ panelKey: act.pay.panelKey })];
         }
-      } else if (isAppPanel(act.pay.panelKey)) {
-        return [Thunk.unmountAppInstance({ panelKey: act.pay.panelKey })];
+      } else {
+        return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
       }
       return [];
     }),
@@ -691,8 +696,7 @@ const trackFilePanels = createEpic(
       '[layout] panel closed',
     ),
     filter((act) => act.type === '[layout] panel created'
-      ? !!act.pay.panelMeta.filename
-      : true),
+      ? !!act.pay.panelMeta.filename : true),
     flatMap((act) => {
       const { panelKey } = act.pay;
       if (act.type === '[layout] panel created') {
