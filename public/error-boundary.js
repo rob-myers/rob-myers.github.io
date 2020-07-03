@@ -18,9 +18,11 @@ export class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return React.createElement('div', { style: { padding: 10 } }, [
-        React.createElement('div', null, 'Something went wrong.'),
-        React.createElement('br'),
-        React.createElement('div', { style: { fontStyle: 'italic' } }, this.state.error.message),
+        React.createElement('div', { style: { background: 'white', padding: 10, overflow: 'auto' } }, [
+          React.createElement('div', { style: { fontWeight: 'bold' } }, 'React threw a rendering error...'),
+          React.createElement('br'),
+          React.createElement('div', { style: { color: '#500', fontFamily: 'monospace' } }, this.state.error.message),
+        ]),
       ]);
     }
 
