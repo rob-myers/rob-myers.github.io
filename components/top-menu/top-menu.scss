@@ -4,8 +4,9 @@
 }
 
 .links {
-  * {
-    padding-right: 10px;
+  > * {
+    color: #333;
+    margin-right: 10px;
   }
 
   &.disabled {
