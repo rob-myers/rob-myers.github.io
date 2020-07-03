@@ -14,7 +14,7 @@ import { State as LayoutState } from './layout.duck';
 import { State as DevEnvState } from './dev-env.duck';
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
 
-const storeVersion = 0.2;
+const storeVersion = 0;
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
@@ -98,8 +98,7 @@ const persistedReducer = persistReducer({
           },
         }), {} as DevEnvState['file']),
         initialized: false,
-        panelToFile: {},
-        panelToApp: {},
+        panelToMeta: {},
         bootstrapped: false,
       }),
       (state, _key) => state,

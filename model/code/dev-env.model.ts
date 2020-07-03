@@ -206,3 +206,19 @@ export function getReachableScssFiles(rootFilename: string, file: KeyedLookup<Pr
   }
   return Object.values(reachable);
 }
+
+export type PanelMeta = PanelFile | PanelApp;
+
+export interface PanelFile extends BasePanelMeta {
+  panelType: 'file';
+  filename: string;
+}
+export interface PanelApp extends BasePanelMeta {
+  panelType: 'app';
+  elementId: string;
+}
+interface BasePanelMeta {
+  /** Panel key */
+  key: string;
+  menuOpen: boolean;
+}

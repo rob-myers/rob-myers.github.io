@@ -12,25 +12,22 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
   useEffect(() => {
     dispatch(Act.rememberAppPanel({ panelKey }));
     return () => {
-      dispatch(Act.forgetAppPanel({ panelKey }));
+      dispatch(Act.forgetPanelMeta({ panelKey }));
     };
   }, []);
 
   return (
     <>
       <div id={panelKeyToAppElId(panelKey)} style={{ height: '100%' }}>
-
-        {/* This placeholder is removed via react app mount */}
-        <div className={css.appNotMounted}>
+        <div // This placeholder is removed via react app mount
+          className={css.appNotMounted}
+        >
           App not mounted
         </div>
       </div>
 
       {!monacoLoaded && (
-        /**
-         * In case no monaco editor panel initially open,
-         * we ensure monaco is bootstrapped via hidden editor.
-         */
+        // Ensure monaco is bootstrapped via hidden editor.
         <div className={css.hiddenMonacoEditor}>
           <Editor
             editorKey={panelKeyToEditorKey(panelKey)}

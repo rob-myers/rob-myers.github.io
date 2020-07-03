@@ -55,7 +55,7 @@ const Item: React.FC<ItemProps> = (props) => (
 );
 
 export const App: React.FC = () => {
-  const [items, setItems] = React.useState([...Array(100)].map((_, i) => i));
+  const [items, setItems] = React.useState([...Array(20)].map((_, i) => i));
   return (
     <div className={css.myAncestralClass}>
       {items.map(x => (
@@ -99,6 +99,6 @@ export const exampleScss2 = `
   color: #ccc;
   border: 1px solid black;
   cursor: pointer;
-  padding: 2px 8px;
+  padding: 2px 12px;
 }
 `.trim();

@@ -6,44 +6,29 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles, PanelMeta, isAppPanel } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, importPathsToCodeFilenames, traverseDeps as traverseCodeDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
+import { TsTranspilationResult } from '@model/monaco/monaco.model';
+import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/code/handle-scss-imports';
+import { getCssModuleCode } from '@model/code/css-module';
+import { awaitWorker } from '@worker/syntax/worker.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk } from './layout.duck';
-import { TsTranspilationResult } from '@model/monaco/monaco.model';
-import { awaitWorker } from '@worker/syntax/worker.model';
-import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/code/handle-scss-imports';
-import { getCssModuleCode } from '@model/code/css-module';
 
 export interface State {
   file: KeyedLookup<FileState>;
   initialized: boolean;
-  panelToApp: KeyedLookup<PanelApp>;
-  panelToFile: KeyedLookup<PanelFile>;
+  panelToMeta: KeyedLookup<PanelMeta>;
   bootstrapped: boolean;
-}
-
-interface PanelFile {
-  /** Panel key */
-  key: string;
-  filename: string;
-  menuOpen: boolean;
-}
-interface PanelApp {
-  /** Panel key */
-  key: string;
-  elementId: string;
-  menuOpen: boolean;
 }
 
 const initialState: State = {
   file: {},
   initialized: false,
-  panelToApp: {},
-  panelToFile: {},
+  panelToMeta: {},
   bootstrapped: false,
 };
 
@@ -56,10 +41,8 @@ export const Act = {
     createAct('[dev-env] create style file', input),
   deleteFile: (input: { filename: string }) =>
     createAct('[dev-env] remove file', input),
-  forgetFilePanel: (input: { panelKey: string }) =>
-    createAct('[dev-env] forget file panel', input),
-  forgetAppPanel: (input: { panelKey: string }) =>
-    createAct('[dev-env] forget app panel', input),
+  forgetPanelMeta: (input: { panelKey: string }) =>
+    createAct('[dev-env] forget panel meta', input),
   initialized: () =>
     createAct('[dev-env] initialized', {}),
   rememberAppPanel: (input: { panelKey: string }) =>
@@ -74,8 +57,8 @@ export const Act = {
     createAct('[dev-env] store style transpilation', { filename, transpilation }),
   updateFile: (filename: string, updates: Partial<FileState>) =>
     createAct('[dev-env] update file', { filename, updates }),
-  updatePanelFileMeta: (panelKey: string, updates: ReduxUpdater<PanelFile>) =>
-    createAct('[dev-env] update panel file meta', { panelKey, updates }),
+  updatePanelMeta: (panelKey: string, updates: ReduxUpdater<PanelMeta>) =>
+    createAct('[dev-env] update panel meta', { panelKey, updates }),
 };
 
 export type Action = ActionsUnion<typeof Act>;
@@ -112,6 +95,7 @@ export const Thunk = {
       }
 
       dispatch(Thunk.patchAllTranspiledCode({}));
+
       const { devEnv } = getState();
       const jsFiles = getReachableJsFiles(devEnv.file).reverse();
       for (const { key: filename, esModule: esm } of jsFiles) {
@@ -120,9 +104,9 @@ export const Thunk = {
           scriptSrcUrl: esm!.blobUrl,
         });
       }
-      for (const { key: panelKey } of Object.values(devEnv.panelToApp)) {
-        dispatch(Thunk.bootstrapAppInstance({ panelKey }));
-      }
+      Object.values(devEnv.panelToMeta).filter(({ panelType }) => panelType === 'app')
+        .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
+
       dispatch(Act.setBootstrapped(true));
     },
   ),
@@ -241,8 +225,8 @@ export const Thunk = {
   filenameToPanelKey: createThunk(
     '[dev-env] filename to panel key',
     ({ state: { devEnv } }, { filename }: { filename: string }) =>
-      Object.entries(devEnv.panelToFile)
-        .find(([_, { filename: f }]) => filename === f)?.[0] || null
+      Object.values(devEnv.panelToMeta)
+        .find((meta) => meta.panelType === 'file' && meta.filename === filename)?.key || null
   ),
   forgetCodeTranspilation: createThunk(
     '[dev-env] forget code transpilation',
@@ -564,28 +548,27 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] remove file': return { ...state,
       file: removeFromLookup(act.pay.filename, state.file),
     };
-    case '[dev-env] forget file panel': return { ...state,
-      panelToFile: removeFromLookup(act.pay.panelKey, state.panelToFile),
-    };
-    case '[dev-env] forget app panel': return { ...state,
-      panelToApp: removeFromLookup(act.pay.panelKey, state.panelToApp),
+    case '[dev-env] forget panel meta': return { ...state,
+      panelToMeta: removeFromLookup(act.pay.panelKey, state.panelToMeta),
     };
     case '[dev-env] initialized': return { ...state,
       initialized: true,
     };
     case '[dev-env] remember app panel': return { ...state,
-      panelToApp: addToLookup({
+      panelToMeta: addToLookup({
         key: act.pay.panelKey,
+        panelType: 'app',
         elementId: panelKeyToAppElId(act.pay.panelKey),
         menuOpen: false,
-      }, state.panelToApp),
+      }, state.panelToMeta),
     };
     case '[dev-env] remember file panel': return { ...state,
-      panelToFile: addToLookup({
+      panelToMeta: addToLookup({
         key: act.pay.panelKey,
+        panelType: 'file',
         filename: act.pay.filename,
         menuOpen: false,
-      }, state.panelToFile)
+      }, state.panelToMeta)
     };
     case '[dev-env] set ts/tsx validity': return { ...state,
       bootstrapped: act.pay.isValid,
@@ -603,8 +586,8 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] update file': return { ...state,
       file: updateLookup(act.pay.filename, state.file, () => act.pay.updates),
     };
-    case '[dev-env] update panel file meta': return { ...state,
-      panelToFile: updateLookup(act.pay.panelKey, state.panelToFile, act.pay.updates),
+    case '[dev-env] update panel meta': return { ...state,
+      panelToMeta: updateLookup(act.pay.panelKey, state.panelToMeta, act.pay.updates),
     };    
     default: return state || testNever(act);
   }
@@ -615,7 +598,7 @@ const bootstrapAppInstances = createEpic(
     filterActs(
       '[dev-env] store code transpilation',
       '[dev-env] remember app panel',
-      '[dev-env] forget app panel',
+      '[dev-env] forget panel meta',
     ),
     flatMap((act) => {
       const { file, bootstrapped } = state$.value.devEnv;
@@ -626,9 +609,7 @@ const bootstrapAppInstances = createEpic(
           return []; // Ignore files unreachable from index.tsx
         }
         if (reachableJsFiles.every((f) => isFileValid(f))) {
-          // console.log('triggered by', act.pay.filename);
-          return [// All reachable code is valid so can bootstrap app
-            // Act.setTsAndTsxValidity(true),
+          return [// All reachable code locally valid so try bootstrap app
             Thunk.bootstrapApps({}),
           ];
         } else if (bootstrapped) {
@@ -638,7 +619,7 @@ const bootstrapAppInstances = createEpic(
         if (bootstrapped) {
           return [Thunk.bootstrapAppInstance({ panelKey: act.pay.panelKey })];
         }
-      } else {
+      } else if (isAppPanel(act.pay.panelKey)) {
         return [Thunk.unmountAppInstance({ panelKey: act.pay.panelKey })];
       }
       return [];
@@ -710,7 +691,7 @@ const trackFilePanels = createEpic(
           ...(file[filename] ? [] : [Act.createCodeFile({ filename, contents: '' })]),
         ];
       }
-      return [Act.forgetFilePanel({ panelKey })];
+      return [Act.forgetPanelMeta({ panelKey })];
     }),
   ),
 );
