@@ -81,7 +81,8 @@ export function updateLookup<LookupItem extends { key: string }>(
     ...lookup,
     [itemKey]: {
       ...lookup[itemKey],
-      ...updates
+      ...updates,
+      key: itemKey, // Prevent key overwrite
     }
   };
 }
