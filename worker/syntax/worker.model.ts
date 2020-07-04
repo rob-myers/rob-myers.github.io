@@ -2,8 +2,8 @@ import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
 import { JsImportMeta, JsExportMeta } from '@model/code/patch-js-imports';
+import { SourcePathInterval } from '@model/code/dev-env.model';
 import { Classification } from './highlight.model';
-import { ScssImportPathInterval } from './analyze-scss.model';
 import { ToggleTsxCommentResult } from './analyze-ts.model';
 
 /** A Worker instance in parent thread. */
@@ -69,7 +69,7 @@ interface SendPrefixedScss {
   key: 'send-prefixed-scss';
   origScss: string;
   prefixedScss: null | string;
-  pathIntervals: ScssImportPathInterval[];
+  pathIntervals: SourcePathInterval[];
   error: null | string;
 }
 interface SendTsxCommented {

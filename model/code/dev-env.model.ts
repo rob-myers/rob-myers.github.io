@@ -1,8 +1,7 @@
-import { CyclicDepError, UntranspiledPathInterval, JsExportMeta, JsImportMeta } from './patch-js-imports';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
-import { ScssImportPathInterval } from '@worker/syntax/analyze-scss.model';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
+import { CyclicDepError, JsExportMeta, JsImportMeta } from './patch-js-imports';
 
 export const menuHeightPx = 32;
 
@@ -84,11 +83,6 @@ export interface TranspiledStyleFile extends StyleFile {
 export interface CodeFile extends BaseFile {
   /** Filename extension (suffix of `key`) */
   ext: 'tsx' | 'ts';
-  /**
-   * Code intervals in untranspiled code used to indicate errors.
-   * They are the paths specified in an import or export.
-   */
-  pathIntervals: UntranspiledPathInterval[];
   /** Last transpilation */
   transpiled: null | CodeTranspilation;
   /** es module */
@@ -97,19 +91,26 @@ export interface CodeFile extends BaseFile {
 
 export interface StyleFile extends BaseFile {
   ext: 'scss';
+  /**
+   * Completely determined by filename.
+   * This is attached immediately after creation.
+   */
   cssModule: null | {
-    /** Completely determined by `filename` */
     code: string;
     blobUrl: string;
   };
-  /** @import path intervals in source scss */
-  pathIntervals: ScssImportPathInterval[];
+
+  /**
+   * Contains original scss and prefixed scss
+   * i.e. each class is prefixed using filename.
+   */
   prefixed: null | {
     src: string;
-    /** Contents with classes prefixed by filename */
     dst: string;
   };
-  /** Last transpilation */
+  /**
+   * Last transpiled css.
+   */
   transpiled: null | StyleTranspilation;
 }
 
@@ -120,6 +121,10 @@ interface BaseFile {
   contents: string;
   /** Can dispose model code/transpile trackers */
   cleanups: (() => void)[];
+  /**
+   * Code intervals of paths specifiers in import/export/@import's
+   */
+  pathIntervals: SourcePathInterval[];
 }
 
 export interface PrefixedStyleFile extends StyleFile {
@@ -135,7 +140,9 @@ export interface CodeTranspilation extends BaseTranspilation {
   type: 'js';
   exports: JsExportMeta[];
   imports: JsImportMeta[];
-  /** Is there a cyclic dependency in transpiled code? */
+  /**
+   * First discovered cyclic dependency in transpiled code.
+   */
   cyclicDepError: null | CyclicDepError;
   typings: string;
   importFilenames: string[];
@@ -162,6 +169,15 @@ export interface CodeFileEsm {
    */
   patchedCode: string;
   blobUrl: string;
+}
+
+export interface SourcePathInterval {
+  /** e.g. `react` or `./index` or `./index.scss`  */
+  path: string;
+  /** First character of path in untranspiled code */
+  start: number;
+  line: number;
+  startCol: number;
 }
 
 export function isFileValid(file: FileState) {
@@ -198,8 +214,8 @@ export function getReachableScssFiles(rootFilename: string, file: KeyedLookup<Pr
     frontier.length = 0;
     prevFrontier.forEach((node) => {
       const newAdjs = (node.pathIntervals || [])
-        .filter(({ value: relPath }) => !(relPath.slice(2) in reachable))
-        .map(({ value }) => file[value.slice(2)] as PrefixedStyleFile);
+        .filter(({ path }) => !(path.slice(2) in reachable))
+        .map(({ path }) => file[path.slice(2)] as PrefixedStyleFile);
       frontier.push(...newAdjs);
       newAdjs.forEach(f => reachable[f.key] = f);
     });

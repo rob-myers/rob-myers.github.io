@@ -1,5 +1,5 @@
 import { parse, stringify } from 'scss-parser';
-import { filenameToClassPrefix } from '@model/code/dev-env.model';
+import { filenameToClassPrefix, SourcePathInterval } from '@model/code/dev-env.model';
 
 interface ScssAstNode {
   type: string;
@@ -30,15 +30,8 @@ export function prefixScssClasses(scssContents: string, filename: string) {
   return stringify(ast);
 }
 
-export interface ScssImportPathInterval {
-  value: string;
-  line: number;
-  startCol: number;
-  endCol: number;
-}
-
 export function extractScssImportIntervals(scssContents: string) {
-  const importIntervals = [] as ScssImportPathInterval[];
+  const importIntervals = [] as SourcePathInterval[];
   const ast = parse(scssContents);
 
   traverseScss((node) => {
@@ -48,10 +41,10 @@ export function extractScssImportIntervals(scssContents: string) {
         && (third.type === 'string_double' || third.type === 'string_single')
       ) && importIntervals.push({
         // Remember import filename code interval
-        value: third.value as string,
+        path: third.value as string,
+        start: third.start!.cursor,
         line: third.start!.line,
         startCol: third.start!.column - 1,
-        endCol: third.start!.column + (third.value as string).length,
       });
     }
   }, ast);

@@ -18,7 +18,9 @@ See [blog notes](./blog.md).
 - [ ] force scss files existence (else show error)
 - [ ] force code import paths to be relative (else show error)
 - [ ] force style import paths to be relative (else show error)
-  > TODO show error
+  > merge `pathIntervals` type in CodeFile and StyleFile
+  > todo: add filepath error to CodeFile and StyleFile
+  > todo: show error
 - [x] bootstrap app even when no monaco editor panel initially open
 - [x] detect `js` cyclic dep caused by `export { App } from './index'`
 - [ ] handle persistence across multiple tabs

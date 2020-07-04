@@ -6,8 +6,8 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles, DevPanelMeta, getDevPanelMetaState, createDevPanelAppMeta, createDevPanelFileMeta, isAppPanel, isFilePanel } from '@model/code/dev-env.model';
-import { JsImportMeta, JsExportMeta, importPathsToCodeFilenames, traverseDeps as traverseCodeDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles, DevPanelMeta, getDevPanelMetaState, createDevPanelAppMeta, createDevPanelFileMeta, isAppPanel, isFilePanel, SourcePathInterval } from '@model/code/dev-env.model';
+import { JsImportMeta, JsExportMeta, importPathsToCodeFilenames, traverseDeps as traverseCodeDeps, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 import { TsTranspilationResult } from '@model/monaco/monaco.model';
 import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/code/handle-scss-imports';
@@ -215,13 +215,13 @@ export const Thunk = {
 
       const invalidImport = detectInvalidScssImport(filename, file);
       if (invalidImport) {
-        return { key: 'error', errorKey: 'import-unknown', dependency: filename, inFilename: filename, fromFilename: invalidImport.value };
+        return { key: 'error', errorKey: 'import-unknown', dependency: filename, inFilename: filename, fromFilename: invalidImport.path };
       }
 
-      const dependencyPaths = f.pathIntervals.map(({ value }) => value.slice(2));
+      const dependencyPaths = f.pathIntervals.map(({ path }) => path.slice(2));
       const dependencies = dependencyPaths.map(filename => file[filename]);
       const dependents = Object.values(file).filter(({ key, pathIntervals }) =>
-        key === filename || pathIntervals.some(({ value }) => value === filename));
+        key === filename || pathIntervals.some(({ path }) => path === filename));
 
       const fileCount = Object.keys(file).length;
       for (const dependencyFile of dependencies) {
@@ -298,10 +298,10 @@ export const Thunk = {
       if (importError.errorKey === 'import-unknown') {
         // Malformed import either in `filename` or reachable from valid import
         if (importError.dependency === filename) {
-          const badIntervals = pathIntervals.filter(({ value }) => value === importError.fromFilename);
+          const badIntervals = pathIntervals.filter(({ path }) => path === importError.fromFilename);
           console.log({ scssImportUnknown: badIntervals });
         } else {
-          const badIntervals = pathIntervals.filter(({ value }) => value.slice(2) === importError.dependency);
+          const badIntervals = pathIntervals.filter(({ path }) => path.slice(2) === importError.dependency);
           console.log({ scssTransitiveImportUnknown: badIntervals });
         }
         // dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
@@ -325,18 +325,18 @@ export const Thunk = {
   ),
   rememberSrcPathIntervals: createThunk(
     '[dev-env] remember src code imports/exports',
-    async ({ dispatch, state: { devEnv } }, { filename, modelKey }: { filename: string; modelKey: string }) => {
+    async ({ dispatch }, { filename, modelKey }: { filename: string; modelKey: string }) => {
       const { imports, exports } = await dispatch(EditorThunk.computeTsImportExports({ filename, modelKey }));
-      const filenames = Object.keys(devEnv.file);
 
       const metas = imports.map(({ path }) => path).concat(
         exports.map(({ from }) => from!).filter(Boolean)
       );
-      const pathIntervals: UntranspiledPathInterval[] = metas
+      const pathIntervals: SourcePathInterval[] = metas
         .map(({ value, start, startCol, startLine }) => ({
           path: value,
-          start, startCol, startLine,
-          filename: value === 'react' ? null : relPathToFilename(value, filenames) || null,
+          start,
+          line: startLine,
+          startCol,
         }));
 
       dispatch(Act.updateFile(filename, { pathIntervals }));
@@ -681,7 +681,7 @@ const bootstrapStyles = createEpic(
     flatMap(({ pay: { filename } }) => {
       const file = pluck(state$.value.devEnv.file, ({ ext }) => ext === 'scss') as KeyedLookup<PrefixedStyleFile>;
       const parentFiles = Object.values(file).filter(({ key, pathIntervals }) =>
-        key !== filename && pathIntervals.some(({ value }) => value === `./${filename}`));
+        key !== filename && pathIntervals.some(({ path }) => path === `./${filename}`));
       return [
         Thunk.bootstrapStyles({ filename }),
         ...parentFiles.map(({ key }) => Thunk.tryTranspileStyleModel({ filename: key })),

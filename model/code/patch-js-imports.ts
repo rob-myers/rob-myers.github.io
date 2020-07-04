@@ -1,20 +1,9 @@
 import { KeyedLookup, pluck } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { TranspiledCodeFile, CodeFileEsm, CodeFile, StyleFile, FileState } from './dev-env.model';
-
-export interface UntranspiledPathInterval {
-  /** e.g. `react` or `./index` */
-  path: string;
-  /** e.g. `index.tsx` or `model.ts` */
-  filename: null | string;
-  /** First character of path in untranspiled code */
-  start: number;
-  startLine: number;
-  startCol: number;
-}
+import { TranspiledCodeFile, CodeFileEsm, CodeFile, StyleFile, FileState, SourcePathInterval } from './dev-env.model';
 
 export function getCyclicDepMarker(
-  { path, startLine, startCol }: UntranspiledPathInterval,
+  { path, line: startLine, startCol }: SourcePathInterval,
 ): IMarkerData {
   return {
     message: [

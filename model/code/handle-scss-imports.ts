@@ -9,8 +9,8 @@ export function detectInvalidScssImport(
   filename: string,
   file: KeyedLookup<PrefixedStyleFile>,
 ) {
-  return file[filename].pathIntervals.find(({ value }) =>
-    !(/^\.\/.+\.scss$/.test(value) && value.slice(2) in file)) || null;
+  return file[filename].pathIntervals.find(({ path }) =>
+    !(/^\.\/.+\.scss$/.test(path) && path.slice(2) in file)) || null;
 }
 
 export type ScssImportsResult = (
@@ -32,13 +32,13 @@ export function traverseScssDeps(
 
   const unknownImport = detectInvalidScssImport(f.key, file);
   if (unknownImport) {
-    return { key: 'error', errorKey: 'import-unknown', inFilename: f.key, fromFilename: unknownImport.value };
+    return { key: 'error', errorKey: 'import-unknown', inFilename: f.key, fromFilename: unknownImport.path };
   } else if (f.key in dependents) {
     return { key: 'error', errorKey: 'cyclic-dep', dependent: f.key };
   }
   
-  for (const { value } of f.pathIntervals) {
-    const filename = value.slice(2);
+  for (const { path } of f.pathIntervals) {
+    const filename = path.slice(2);
     const error = traverseScssDeps(file[filename], file, dependents, maxDepth - 1);
     if (error) return error;
   }
@@ -59,7 +59,7 @@ export function stratifyScssFiles(scssFiles: PrefixedStyleFile[]) {
 
   const lookup = scssFiles.reduce((agg, { key, pathIntervals }) => ({
     ...agg, [key]: { filename: key,
-      dependencies: pathIntervals.map(({ value }) => value.slice(2)),
+      dependencies: pathIntervals.map(({ path: value }) => value.slice(2)),
     }
   }), {} as Record<string, DepNode>);
   
