@@ -59,6 +59,9 @@ const Editor: React.FC<EditorProps> = (props) => {
   React.useEffect(() => {
     if (bootstrapped) {
       dispatch(Thunk.changeEditorModel({ editorKey, nextFilename: filename }));
+      if (filename.endsWith('.tsx')) {
+        dispatch(Thunk.highlightTsxSyntax({ editorKey }));
+      }
     }
   }, [filename]);
 

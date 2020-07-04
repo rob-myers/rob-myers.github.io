@@ -17,14 +17,13 @@ const DevPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
     !!(panel[panelKey]?.initialized));
   const devMeta = useSelector(({ devEnv: { panelToMeta } }) =>
     panelKey in panelToMeta ? panelToMeta[panelKey] : null);
-  
-  const dispatch = useDispatch();
 
   /**
-   * When panel initialized create DevPanelMeta in devEnv.panelToMeta.
-   * We drive the rendering using the latter meta.
+   * When panel initialized we create DevPanelMeta in devEnv.panelToMeta.
+   * We then drive the panel's rendering using the latter meta.
    * This permits us to change the contents of the panel.
    */
+  const dispatch = useDispatch();
   useEffect(() => {
     if (initialized) {
       if (panelMeta && isFilePanel(panelMeta)) {
