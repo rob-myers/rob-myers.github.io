@@ -6,7 +6,7 @@ import GoldenLayout from 'golden-layout';
 import { redact } from '@model/store/redux.model';
 import { Act, Thunk } from '@store/layout.duck';
 
-import WindowPanel from '@components/dev-env/dev-panel';
+import DevPanel from '@components/dev-env/dev-panel';
 import { ExtendedContainer } from '@model/layout/layout.model';
 const GoldenLayoutComponent = dynamic(import('@components/golden-layout/golden-layout'), { ssr: false });
 
@@ -25,7 +25,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
   }, [nextConfig]);
 
   const registerComponents = useCallback((gl: GoldenLayout) => {
-    gl.registerComponent('window-panel', WindowPanel);
+    gl.registerComponent('window-panel', DevPanel);
     dispatch(Act.initialized({
       config: nextConfig,
       goldenLayout: redact(gl, 'GoldenLayout'),

@@ -4,8 +4,10 @@ import { Thunk, Act } from '@store/dev-env.duck';
 import css from './dev-panel.scss';
 
 const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
+
   const filenames = useSelector(({ devEnv }) => Object.keys(devEnv.file));
   const open = useSelector(({ devEnv }) => devEnv.panelToMeta[panelKey]?.menuOpen || false);
+
   const currentValue = useSelector(({ devEnv }) => {
     const meta = devEnv.panelToMeta[panelKey];
     return meta.panelType === 'app' ? 'App' : meta.filename;

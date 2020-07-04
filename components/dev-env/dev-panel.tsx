@@ -9,7 +9,14 @@ import css from './dev-panel.scss';
 const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false });
 const DevApp = dynamic(import('@components/dev-env/dev-app'), { ssr: false });
 
-const WindowPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
+/**
+ * TODO
+ * - create/forget devEnv.panelMeta here (not in dev-env.duck or DevApp)
+ * - use it to decide on DevEditor or DevApp.
+ * - can then change this meta to change panel contents,
+ *   in which case we should also mutate gl config
+ */
+const DevPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
   // Ensure layout tracks panel before mounting
   const panelTracked = useSelector(({ layout: { panel } }) => panel[panelKey]?.initialized);
 
@@ -45,4 +52,4 @@ interface Props {
 }
 
 
-export default WindowPanel;
+export default DevPanel;

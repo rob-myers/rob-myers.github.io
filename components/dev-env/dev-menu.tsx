@@ -6,7 +6,6 @@ import { menuHeightPx } from '@model/code/dev-env.model';
 import { Thunk as LayoutThunk } from '@store/layout.duck';
 import css from './dev-menu.scss';
 
-
 export const DevMenu = () => {
   const [disabled, setDisabled] = useState(true);
   const monacoLoaded = useSelector(({ editor: { monacoLoaded } }) => monacoLoaded);
