@@ -28,7 +28,7 @@ export const exampleLayoutConfigA: GoldenLayoutConfig<CustomPanelMetaKey> = {
                 title: 'Tsx editor',
                 component: 'window-panel',
                 props: {
-                  panelKey: 'tsx',
+                  panelKey: 'panel-1',
                   panelMeta: {
                     filename: 'index.tsx',
                   },
@@ -39,7 +39,7 @@ export const exampleLayoutConfigA: GoldenLayoutConfig<CustomPanelMetaKey> = {
                 title: 'index.scss',
                 component: 'window-panel',
                 props: {
-                  panelKey: 'scss',
+                  panelKey: 'panel-2',
                   panelMeta: {
                     filename: 'index.scss',
                   },
@@ -50,7 +50,7 @@ export const exampleLayoutConfigA: GoldenLayoutConfig<CustomPanelMetaKey> = {
                 title: 'model.ts',
                 component: 'window-panel',
                 props: {
-                  panelKey: 'ts',
+                  panelKey: 'panel-3',
                   panelMeta: {
                     filename: 'model.ts',
                   },
@@ -63,7 +63,7 @@ export const exampleLayoutConfigA: GoldenLayoutConfig<CustomPanelMetaKey> = {
             title: 'App',
             component: 'window-panel',
             props: {
-              panelKey: 'app',
+              panelKey: 'panel-4',
               panelMeta: {
                 devEnvComponent: 'App',
               },
@@ -74,7 +74,7 @@ export const exampleLayoutConfigA: GoldenLayoutConfig<CustomPanelMetaKey> = {
             title: 'other.scss',
             component: 'window-panel',
             props: {
-              panelKey: 'scss-other',
+              panelKey: 'panel-5',
               panelMeta: {
                 filename: 'other.scss',
               },
@@ -148,7 +148,7 @@ export const exampleLayoutConfigB: GoldenLayoutConfig<CustomPanelMetaKey> = {
                   title: 'index.tsx',
                   component: 'window-panel',
                   props: {
-                    panelKey: 'tsx',
+                    panelKey: 'panel-1',
                     panelMeta: {
                       filename: 'index.tsx',
                     },
@@ -162,7 +162,7 @@ export const exampleLayoutConfigB: GoldenLayoutConfig<CustomPanelMetaKey> = {
                   title: 'model.ts',
                   component: 'window-panel',
                   props: {
-                    panelKey: 'ts',
+                    panelKey: 'panel-2',
                     panelMeta: {
                       filename: 'model.ts',
                     },
@@ -195,7 +195,7 @@ export const exampleLayoutConfigB: GoldenLayoutConfig<CustomPanelMetaKey> = {
                       title: 'App',
                       component: 'window-panel',
                       props: {
-                        panelKey: 'app',
+                        panelKey: 'panel-3',
                         panelMeta: {
                           devEnvComponent: 'App',
                         }
@@ -227,7 +227,7 @@ export const exampleLayoutConfigB: GoldenLayoutConfig<CustomPanelMetaKey> = {
                           title: 'index.scss',
                           component: 'window-panel',
                           props: {
-                            panelKey: 'scss',
+                            panelKey: 'panel-4',
                             panelMeta: {
                               filename: 'index.scss',
                             },
@@ -253,7 +253,7 @@ export const exampleLayoutConfigB: GoldenLayoutConfig<CustomPanelMetaKey> = {
                           title: 'other.scss',
                           component: 'window-panel',
                           props: {
-                            panelKey: 'scss-other',
+                            panelKey: 'panel-5',
                             panelMeta: {
                               filename: 'other.scss',
                             },
