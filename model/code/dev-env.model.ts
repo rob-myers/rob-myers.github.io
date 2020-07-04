@@ -121,10 +121,9 @@ interface BaseFile {
   contents: string;
   /** Can dispose model code/transpile trackers */
   cleanups: (() => void)[];
-  /**
-   * Code intervals of paths specifiers in import/export/@import's
-   */
+  /** Code intervals of paths specifiers in import/export/@import's */
   pathIntervals: SourcePathInterval[];
+  pathErrors: SourcePathError[];
 }
 
 export interface PrefixedStyleFile extends StyleFile {
@@ -179,6 +178,13 @@ export interface SourcePathInterval {
   line: number;
   startCol: number;
 }
+
+export type SourcePathError = (
+  | { key: 'path-must-be-relative'; path: string }
+  | { key: 'file-does-not-exist'; path: string }
+  | { key: 'ext-must-be-scss'; path: string }
+  | { key: 'ext-must-not-exist'; path: string }
+);
 
 export function isFileValid(file: FileState) {
   return file.ext === 'scss' || (

@@ -574,6 +574,7 @@ export const reducer = (state = initialState, act: Action): State => {
         ext: act.pay.filename.split('.').pop() as any, // no dot
         transpiled: null,
         pathIntervals: [],
+        pathErrors: [],
         cleanups: [],
         esModule: null,
       }, state.file),
@@ -585,9 +586,10 @@ export const reducer = (state = initialState, act: Action): State => {
         ext: 'scss',
         cleanups: [],
         transpiled: null,
+        pathIntervals: [],
+        pathErrors: [],
         prefixed: null,
         cssModule: null,
-        pathIntervals: [],
       } as StyleFile, state.file),
     };
     case '[dev-env] remove file': return { ...state,
