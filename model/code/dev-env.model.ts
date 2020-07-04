@@ -207,13 +207,13 @@ export function getReachableScssFiles(rootFilename: string, file: KeyedLookup<Pr
   return Object.values(reachable);
 }
 
-export type DevPanelMeta = DevPanelFile | DevPanelApp;
+export type DevPanelMeta = DevPanelFileMeta | DevPanelAppMeta;
 
-export interface DevPanelFile extends BasePanelMeta {
+interface DevPanelFileMeta extends BasePanelMeta {
   panelType: 'file';
   filename: string;
 }
-export interface DevPanelApp extends BasePanelMeta {
+interface DevPanelAppMeta extends BasePanelMeta {
   panelType: 'app';
   elementId: string;
 }
@@ -221,4 +221,26 @@ interface BasePanelMeta {
   /** Panel key */
   key: string;
   menuOpen: boolean;
+}
+
+export function getDevPanelMetaState({ menuOpen }: DevPanelMeta) {
+  return { menuOpen };
+}
+
+export function createDevPanelAppMeta(panelKey: string): DevPanelAppMeta {
+  return {
+    key: panelKey,
+    panelType: 'app',
+    elementId: panelKeyToAppElId(panelKey),
+    menuOpen: false,
+  };
+}
+
+export function createDevPanelFileMeta(panelKey: string, filename: string): DevPanelFileMeta {
+  return {
+    key: panelKey,
+    panelType: 'file',
+    filename: filename,
+    menuOpen: false,
+  };
 }

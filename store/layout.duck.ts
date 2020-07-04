@@ -1,14 +1,12 @@
 import * as GoldenLayout from 'golden-layout';
 import { Redacted, ActionsUnion, createAct, updateLookup, redact, removeFromLookup, addToLookup } from '@model/store/redux.model';
-import { KeyedLookup, testNever, deepClone } from '@model/generic.model';
+import { KeyedLookup, testNever } from '@model/generic.model';
 import { LayoutPanelMeta, ExtendedContainer, GoldenLayoutConfig } from '@model/layout/layout.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { CustomPanelMetaKey, exampleLayoutConfigB } from '@model/layout/example-layout.model';
+import { CustomPanelMetaKey, getDefaultLayoutConfig } from '@model/layout/example-layout.model';
 
 /** Assume exactly one layout. */
 export interface State {
-  /** Immutable default config. */
-  initConfig: GoldenLayoutConfig;
   /** We use this config to change configs. */
   nextConfig: GoldenLayoutConfig;
   /** Native instance of `GoldenLayout`. */
@@ -37,8 +35,7 @@ export interface LayoutPanelState {
 }
 
 const getInitialState = (): State => ({
-  initConfig: deepClone(exampleLayoutConfigB),
-  nextConfig: deepClone(exampleLayoutConfigB),
+  nextConfig: getDefaultLayoutConfig(),
   goldenLayout: null,
   panel: {},
 });
@@ -48,10 +45,8 @@ export const Act = {
     panelKey: string;
     panelMeta: { [panelMetaKey in string]?: string; };
   }) => createAct('[layout] assign panel metas', input),
-  initialized: (input: {
-    config: GoldenLayoutConfig;
-    goldenLayout: Redacted<GoldenLayout>;
-  }) => createAct('[layout] initialized', input),
+  initialized: (input: { goldenLayout: Redacted<GoldenLayout> }) =>
+    createAct('[layout] initialized', input),
   panelCreated: (input: {
     panelKey: string;
     width: number;
@@ -75,6 +70,8 @@ export const Act = {
   setNextConfig: (input: {
     nextConfig: GoldenLayoutConfig;
   }) => createAct('[layout] set next config', input),
+  triggerPersist: () =>
+    createAct('[layout] trigger persist', {}),
 };
 
 export type Action = ActionsUnion<typeof Act>;
@@ -86,9 +83,9 @@ export const Thunk = {
   ),
   setLayout: createThunk(
     '[layout] set layout',
-    ({ dispatch, state: { layout: { initConfig } } }, { layoutId }: { layoutId: string }) => {
+    ({ dispatch }, { layoutId }: { layoutId: string }) => {
       if (layoutId === 'default-layout') {
-        dispatch(Act.setNextConfig({ nextConfig: deepClone(initConfig) }));
+        dispatch(Act.setNextConfig({ nextConfig: getDefaultLayoutConfig() }));
       } else {
         console.warn(`unrecognised layout id "${layoutId}" was ignored`);
       }
@@ -117,10 +114,9 @@ export const reducer = (state = getInitialState(), act: Action): State => {
       };
     }
     case '[layout] initialized': {
-      const { config, goldenLayout } = act.pay;
+      const { goldenLayout } = act.pay;
       return {
         ...state,
-        initConfig: deepClone(config),
         goldenLayout: redact(goldenLayout, 'GoldenLayout'),
       };
     }
@@ -168,6 +164,9 @@ export const reducer = (state = getInitialState(), act: Action): State => {
       return { ...state,
         nextConfig: act.pay.nextConfig,
       };
+    }
+    case '[layout] trigger persist': {
+      return { ...state };
     }
     default: return state || testNever(act);
   }

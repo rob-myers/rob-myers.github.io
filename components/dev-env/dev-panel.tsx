@@ -20,6 +20,11 @@ const DevPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
   
   const dispatch = useDispatch();
 
+  /**
+   * When panel initialized create DevPanelMeta in devEnv.panelToMeta.
+   * We drive the rendering using the latter meta.
+   * This permits us to change the contents of the panel.
+   */
   useEffect(() => {
     if (initialized) {
       if (panelMeta && isFilePanel(panelMeta)) {
@@ -43,7 +48,7 @@ const DevPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
       )}
       {failed && (
         <div className={css.unsupportedPanel}>
-          {`Unsupported panel "${panelKey}" with meta "${JSON.stringify(panelMeta)}"`}
+          {`Unsupported panel '${panelKey}' with meta '${JSON.stringify(panelMeta)}'`}
         </div>
       )}
     </>

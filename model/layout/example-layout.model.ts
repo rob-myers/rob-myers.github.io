@@ -1,8 +1,9 @@
 import { GoldenLayoutConfig } from './layout.model';
+import { deepClone } from '@model/generic.model';
 
 export type CustomPanelMetaKey = 'title' | 'filename' | 'devEnvComponent';
 
-export const exampleLayoutConfigA: GoldenLayoutConfig<CustomPanelMetaKey> = {
+const _exampleLayoutConfigA: GoldenLayoutConfig<CustomPanelMetaKey> = {
   settings: {
     showPopoutIcon: false,
     popoutWholeStack: false,
@@ -83,11 +84,10 @@ export const exampleLayoutConfigA: GoldenLayoutConfig<CustomPanelMetaKey> = {
         ],
       }
     ],
-
   }],
 };
 
-export const exampleLayoutConfigB: GoldenLayoutConfig<CustomPanelMetaKey> = {
+const exampleLayoutConfigB: GoldenLayoutConfig<CustomPanelMetaKey> = {
   settings: {
     hasHeaders: true,
     constrainDragToContainer: false,
@@ -279,3 +279,7 @@ export const exampleLayoutConfigB: GoldenLayoutConfig<CustomPanelMetaKey> = {
   openPopouts: [],
   maximisedItemId: null
 };
+
+export function getDefaultLayoutConfig() {
+  return deepClone(exampleLayoutConfigB);
+}

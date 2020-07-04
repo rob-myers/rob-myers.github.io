@@ -10,15 +10,15 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
 
   const currentValue = useSelector(({ devEnv }) => {
     const meta = devEnv.panelToMeta[panelKey];
-    return meta.panelType === 'app' ? 'App' : meta.filename;
+    return meta.panelType === 'app' ? 'app' : meta.filename;
   });
 
   const dispatch = useDispatch();
   const handleFileChange = ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
-    if (value === 'App') {
-      dispatch(Thunk.changePanel({ panelKey, to: 'App' }));
+    if (value === 'app') {
+      dispatch(Thunk.changePanel({ panelKey, next: { to: 'app' } }));
     } else {
-      dispatch(Thunk.changePanel({ panelKey, to: 'file', filename: value }));
+      dispatch(Thunk.changePanel({ panelKey, next: { to: 'filename', filename: value } }));
     }
   };
   const closePanelMenu = () =>
@@ -31,7 +31,7 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
         value={currentValue}
         onChange={handleFileChange}
       >
-        <option value={'App'}>App</option>
+        <option value="app">App</option>
         {filenames.map(filename =>
           <option key={filename} value={filename}>{filename}</option>)}
       </select>

@@ -128,3 +128,12 @@ export interface LayoutPanelBaseProps<PanelMetaKey extends string> {
 export type LayoutPanelMeta<PanelMetaKey extends string> = {
   [key in PanelMetaKey]?: string;
 }
+
+export function traverseGlConfig<PanelMetaKey extends string>(
+  node: GoldenLayoutConfig<PanelMetaKey> | GoldenLayoutConfigItem<PanelMetaKey>,
+  act: (x: typeof node) => void,
+) {
+  act(node);
+  (node.content || []).forEach(child =>
+    traverseGlConfig(child as GoldenLayoutConfigItem<PanelMetaKey>, act));
+}

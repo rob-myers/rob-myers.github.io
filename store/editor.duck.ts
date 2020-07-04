@@ -174,6 +174,19 @@ export const Thunk = {
       monacoInternal.monaco.editor.setTheme('vs-dark');
     },
   ),
+  changeEditorModel: createThunk(
+    '[editor] change editor model',
+    (_, { editorKey, nextFilename, nextModelKey }: {
+      editorKey: string;
+      nextFilename: string;
+      nextModelKey: string;
+    }) => {
+      /**
+       * TODO
+       */
+      console.log('changeEditorModel', { editorKey, nextFilename, nextModelKey });
+    },
+  ),
   computeTsImportExports: createThunk(
     '[editor] compute ts import/export meta',
     async ({ state: { editor } }, input: { filename: string } & (

@@ -26,10 +26,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
 
   const registerComponents = useCallback((gl: GoldenLayout) => {
     gl.registerComponent('window-panel', DevPanel);
-    dispatch(Act.initialized({
-      config: nextConfig,
-      goldenLayout: redact(gl, 'GoldenLayout'),
-    }));
+    dispatch(Act.initialized({ goldenLayout: redact(gl, 'GoldenLayout')  }));
   },[]);
 
   const onComponentCreated = useCallback((glCmp: ExtendedContainer) => {

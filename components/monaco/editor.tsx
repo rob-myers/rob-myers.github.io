@@ -56,6 +56,12 @@ const Editor: React.FC<EditorProps> = (props) => {
     };
   }, [monacoLoaded]);
 
+  React.useEffect(() => {
+    if (bootstrapped) {
+      dispatch(Thunk.changeEditorModel({ editorKey, nextFilename: filename, nextModelKey: modelKey }));
+    }
+  }, [filename]);
+
   return (
     <div
       ref={divRef}

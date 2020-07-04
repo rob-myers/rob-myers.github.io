@@ -6,7 +6,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles, DevPanelMeta } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles, DevPanelMeta, getDevPanelMetaState, createDevPanelAppMeta, createDevPanelFileMeta, isAppPanel, isFilePanel } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, importPathsToCodeFilenames, traverseDeps as traverseCodeDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 import { TsTranspilationResult } from '@model/monaco/monaco.model';
@@ -16,7 +16,9 @@ import { awaitWorker } from '@worker/syntax/worker.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
-import { Thunk as LayoutThunk } from './layout.duck';
+import { Thunk as LayoutThunk, Act as LayoutAct } from './layout.duck';
+import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
+import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -35,6 +37,10 @@ const initialState: State = {
 export const Act = {
   addFileCleanups: (filename: string, cleanups: (() => void)[]) =>
     createAct('[dev-env] add file cleanups', { filename, cleanups }),
+  changePanelMeta: (panelKey: string, input: (
+    | { to: 'app' }
+    | { to: 'filename'; filename: string }
+  )) => createAct('[dev-env] change panel meta', { panelKey, ...input }),
   createCodeFile: (input: { filename: string; contents: string }) =>
     createAct('[dev-env] create code file', input),
   createStyleFile: (input: { filename: string; contents: string }) =>
@@ -123,15 +129,27 @@ export const Thunk = {
   ),
   changePanel: createThunk(
     '[dev-env] change panel contents',
-    (_, input: { panelKey: string } & (
-      | { to: 'App' }
-      | { to: 'file'; filename: string }
-    )) => {
-      if (input.to === 'App') {
-        // TODO
-      } else {
-        // TODO
-      }
+    ({ dispatch, state: { layout } }, { panelKey, next }: {
+      panelKey: string;
+      next: { to: 'app' } | { to: 'filename'; filename: string };
+    }) => {
+      dispatch(Act.changePanelMeta(panelKey, next));
+
+      // Mutate golden-layout config so change remembered on persist
+      const glConfig = layout.goldenLayout!.config as GoldenLayoutConfig<CustomPanelMetaKey>;
+      traverseGlConfig(glConfig, (node) => {
+        if ('type' in node && node.type === 'component' && node.props.panelKey === panelKey) {
+          const panelMeta = node.props.panelMeta!;
+          if (next.to === 'app') {
+            delete panelMeta.filename;
+            panelMeta.devEnvComponent = node.title = 'App';
+          } else {
+            delete panelMeta.devEnvComponent;
+            panelMeta.filename = node.title = next.filename;
+          }
+        }
+      });
+      dispatch(LayoutAct.triggerPersist());
     },
   ),
   /**
@@ -540,6 +558,15 @@ export const reducer = (state = initialState, act: Action): State => {
         cleanups: cleanupTrackers.concat(act.pay.cleanups),
       })),
     };
+    case '[dev-env] change panel meta': {
+      const metaState = getDevPanelMetaState(state.panelToMeta[act.pay.panelKey]);
+      return { ...state,
+        panelToMeta: addToLookup(act.pay.to === 'app'
+          ? { ...createDevPanelAppMeta(act.pay.panelKey), ...metaState }
+          : { ...createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), ...metaState }
+        , state.panelToMeta),
+      };
+    }
     case '[dev-env] create code file': return { ...state,
       file: addToLookup({
         key: act.pay.filename,
@@ -573,20 +600,12 @@ export const reducer = (state = initialState, act: Action): State => {
       initialized: true,
     };
     case '[dev-env] create app panel meta': return { ...state,
-      panelToMeta: addToLookup({
-        key: act.pay.panelKey,
-        panelType: 'app',
-        elementId: panelKeyToAppElId(act.pay.panelKey),
-        menuOpen: false,
-      }, state.panelToMeta),
+      panelToMeta: addToLookup(
+        createDevPanelAppMeta(act.pay.panelKey), state.panelToMeta),
     };
     case '[dev-env] create file panel meta': return { ...state,
-      panelToMeta: addToLookup({
-        key: act.pay.panelKey,
-        panelType: 'file',
-        filename: act.pay.filename,
-        menuOpen: false,
-      }, state.panelToMeta)
+      panelToMeta: addToLookup(
+        createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), state.panelToMeta)
     };
     case '[dev-env] set ts/tsx validity': return { ...state,
       bootstrapped: act.pay.isValid,
@@ -616,6 +635,7 @@ const bootstrapAppInstances = createEpic(
     filterActs(
       '[dev-env] store code transpilation',
       '[dev-env] create app panel meta',
+      '[dev-env] change panel meta',
       '[dev-env] forget panel meta',
     ),
     flatMap((act) => {
@@ -636,6 +656,12 @@ const bootstrapAppInstances = createEpic(
       } else if (act.type === '[dev-env] create app panel meta') {
         if (bootstrapped) {
           return [Thunk.bootstrapAppInstance({ panelKey: act.pay.panelKey })];
+        }
+      } else if (act.type === '[dev-env] change panel meta') {
+        if (bootstrapped && act.pay.to === 'app') {
+          return [Thunk.bootstrapAppInstance({ panelKey: act.pay.panelKey })];
+        } else if (act.pay.to === 'filename') {
+          return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
         }
       } else {
         return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
@@ -689,17 +715,31 @@ const initializeMonacoModels = createEpic(
   ),
 );
 
-const onCreateFilePanel = createEpic(
+const onChangePanel = createEpic(
   (action$, state$) => action$.pipe(
-    filterActs('[layout] panel created'),
-    filter((act) => !!act.pay.panelMeta.filename),
-    flatMap(({ pay: { panelKey, panelMeta } }) => {
-      const { file } = state$.value.devEnv;
-      const filename = panelMeta.filename!;
-      return [
-        LayoutThunk.setPanelTitle({ panelKey, title: filename }),
-        ...(file[filename] ? [] : [Act.createCodeFile({ filename, contents: '' })]),
-      ];
+    filterActs(
+      '[layout] panel created',
+      '[dev-env] change panel meta',
+    ),
+    flatMap((act) => {
+      const { panelKey } = act.pay;
+      if (act.type === '[layout] panel created') {
+        const { file } = state$.value.devEnv;
+        if (isAppPanel(act.pay.panelMeta)) {
+          return [LayoutThunk.setPanelTitle({ panelKey, title: 'App' })];
+        } else if (isFilePanel(act.pay.panelMeta)) {
+          const { filename } = act.pay.panelMeta;
+          return [
+            LayoutThunk.setPanelTitle({ panelKey, title: filename }),
+            ...(file[filename] ? [] : [Act.createCodeFile({ filename, contents: '' })]),
+          ];
+        }
+      } else {
+        return [LayoutThunk.setPanelTitle({ panelKey,
+          title: act.pay.to === 'app' ? 'App' : act.pay.filename,
+        })];
+      }
+      return [];
     }),
   ),
 );
@@ -741,7 +781,7 @@ export const epic = combineEpics(
   bootstrapStyles,
   initializeFileSystem,
   initializeMonacoModels,
-  onCreateFilePanel,
+  onChangePanel,
   trackCodeFileContents,
   togglePanelMenuEpic,
 );
