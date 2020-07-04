@@ -2,13 +2,13 @@
 
 See [blog notes](./blog.md).
 
-# Local Dev Environment
+# Online Dev Environment
 
 - [x] remove reducer `gitalk`
-- [ ] can change current file in panel menu
+- [x] can change current file or switch to App in panel menu
   > panelKey independent of app/file panel
   > DevPanel determined by devEnv.panelMeta[panelKey]
-  > todo: can switch between different files
+  > can switch between different files
 - [x] merge `panelToApp` and `panelToFile` inside dev-env.duck.
 - [x] store has version and wipes previous when version changes
 - [x] initial relative path `./other.scss` inside sass crashes the app.

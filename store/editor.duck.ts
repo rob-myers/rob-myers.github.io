@@ -176,15 +176,12 @@ export const Thunk = {
   ),
   changeEditorModel: createThunk(
     '[editor] change editor model',
-    (_, { editorKey, nextFilename, nextModelKey }: {
+    ({ dispatch, state: { editor: e } }, { editorKey, nextFilename }: {
       editorKey: string;
       nextFilename: string;
-      nextModelKey: string;
     }) => {
-      /**
-       * TODO
-       */
-      console.log('changeEditorModel', { editorKey, nextFilename, nextModelKey });
+      const model = dispatch(Thunk.ensureMonacoModel({ filename: nextFilename, code: '' }));
+      e.editor[editorKey].editor.setModel(model);
     },
   ),
   computeTsImportExports: createThunk(

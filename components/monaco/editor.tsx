@@ -58,7 +58,7 @@ const Editor: React.FC<EditorProps> = (props) => {
 
   React.useEffect(() => {
     if (bootstrapped) {
-      dispatch(Thunk.changeEditorModel({ editorKey, nextFilename: filename, nextModelKey: modelKey }));
+      dispatch(Thunk.changeEditorModel({ editorKey, nextFilename: filename }));
     }
   }, [filename]);
 
