@@ -42,18 +42,3 @@ Our runtime code could import from our own patched `react`:
 
 Perhaps can use intermediary 'manifest module' to avoid blob renaming problem.
 This is not urgent e.g. not part of MVP.
-
-## Salvage bash implementation
-
-- can keep `xterm` + tty
-- vastly simplified language:
-  - simple commands without redirects
-  - simple parameter expansion
-  - pipes, &&, ||
-- flat filesystem with regular inodes only:
-  - binary (e.g. image)
-  - script (i.e. javascript function)
-  - text (i.e. string)
-- designed to be fast
-
-But why do we need it?

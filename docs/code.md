@@ -10,7 +10,7 @@ document.body.appendChild(s);
 // foo
 ```
 
-## Dynamic javascript modules!
+## Dynamic javascript modules
 
 ```ts
 blob1 = new Blob([

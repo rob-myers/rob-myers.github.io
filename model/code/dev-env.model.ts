@@ -180,10 +180,21 @@ export interface SourcePathInterval {
 }
 
 export type SourcePathError = (
-  | { key: 'path-must-be-relative'; path: string }
-  | { key: 'file-does-not-exist'; path: string }
-  | { key: 'ext-must-be-scss'; path: string }
-  | { key: 'ext-must-not-exist'; path: string }
+  | {key: 'scss-must-be-relative'; path: string;
+    info: 'We require @imports to be relative'; }
+  | { key: 'ts-must-be-relative'; path: string; 
+    info: 'We require ts/tsx imports/exports to be relative'; }
+  | { key: 'file-does-not-exist'; path: string;
+    info: 'Specified file not found'; }
+  | { key: 'ext-must-be-scss'; path: string;
+    info: 'An scss file can only @import other scss files'; }
+  | { key: 'no-ts-ext-allowed'; path: string;
+    info: 'We require ts/tsx imports/exports to omit the extension'; }
+  /**
+   * TODO ts can only import/export other ts (special constraint) 
+   * TODO tsx can only import/export other tsx (special constraint) 
+   * TODO tsx only only export react components (special constraint)
+   */
 );
 
 export function isFileValid(file: FileState) {
