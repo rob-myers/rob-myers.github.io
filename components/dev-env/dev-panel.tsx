@@ -1,46 +1,50 @@
 import dynamic from 'next/dynamic';
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
 import { isAppPanel, isFilePanel } from '@model/code/dev-env.model';
+import { Act } from '@store/dev-env.duck';
 import DevPanelMenu from './dev-panel-menu';
 import css from './dev-panel.scss';
 
 const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false });
 const DevApp = dynamic(import('@components/dev-env/dev-app'), { ssr: false });
 
-/**
- * TODO
- * - create/forget devEnv.panelMeta here (not in dev-env.duck or DevApp)
- * - use it to decide on DevEditor or DevApp.
- * - can then change this meta to change panel contents,
- *   in which case we should also mutate gl config
- */
 const DevPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
-  // Ensure layout tracks panel before mounting
-  const panelTracked = useSelector(({ layout: { panel } }) => panel[panelKey]?.initialized);
-
-  // Ensure dev-env tracks panel before mounting panel menu
-  const devPanelTracked = useSelector(({ devEnv }) => !!devEnv.panelToMeta[panelKey]);
+  const [failed, setFailed] = useState(false);
+  const initialized = useSelector(({ layout: { panel } }) =>
+    !!(panel[panelKey]?.initialized));
+  const devMeta = useSelector(({ devEnv: { panelToMeta } }) =>
+    panelKey in panelToMeta ? panelToMeta[panelKey] : null);
   
-  return panelTracked ? (
-    <>
-      {devPanelTracked &&
-        <DevPanelMenu panelKey={panelKey} />
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (initialized) {
+      if (panelMeta && isFilePanel(panelMeta)) {
+        dispatch(Act.createFilePanelMeta({ filename: panelMeta.filename, panelKey }));
+      } else if (panelMeta && isAppPanel(panelMeta)) {
+        dispatch(Act.createAppPanelMeta({ panelKey }));
+      } else {
+        setFailed(true);
       }
-      {isFilePanel(panelMeta!) && (
-        <DevEditor
-          filename={panelMeta.filename}
-          panelKey={panelKey}
-        />
-      ) || isAppPanel(panelMeta!) && (
-        <DevApp
-          panelKey={panelKey}
-        />
+    }
+    return () => initialized && dispatch(Act.forgetPanelMeta({ panelKey }));
+  }, [initialized]);
+
+  return devMeta ? (
+    <>
+      <DevPanelMenu panelKey={panelKey} />
+      {devMeta.panelType === 'file' && (
+        <DevEditor panelKey={panelKey} filename={devMeta.filename} />
       ) || (
-        <div className={css.unsupportedPanel}>{
-          `Unsupported panel "${panelKey}" with meta "${JSON.stringify(panelMeta)}"`
-        }</div>
+        <DevApp panelKey={panelKey} />
+      )}
+      {failed && (
+        <div className={css.unsupportedPanel}>
+          {`Unsupported panel "${panelKey}" with meta "${JSON.stringify(panelMeta)}"`}
+        </div>
       )}
     </>
   ) : null;
@@ -50,6 +54,5 @@ interface Props {
   panelKey: string;
   panelMeta?: LayoutPanelMeta<CustomPanelMetaKey>;
 }
-
 
 export default DevPanel;

@@ -6,7 +6,7 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles, PanelMeta } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles, DevPanelMeta } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, importPathsToCodeFilenames, traverseDeps as traverseCodeDeps, UntranspiledPathInterval, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles, relPathToFilename } from '@model/code/patch-js-imports';
 import { getBootstrapAppCode } from '@model/code/bootstrap';
 import { TsTranspilationResult } from '@model/monaco/monaco.model';
@@ -21,7 +21,7 @@ import { Thunk as LayoutThunk } from './layout.duck';
 export interface State {
   file: KeyedLookup<FileState>;
   initialized: boolean;
-  panelToMeta: KeyedLookup<PanelMeta>;
+  panelToMeta: KeyedLookup<DevPanelMeta>;
   bootstrapped: boolean;
 }
 
@@ -57,7 +57,7 @@ export const Act = {
     createAct('[dev-env] store style transpilation', { filename, transpilation }),
   updateFile: (filename: string, updates: Partial<FileState>) =>
     createAct('[dev-env] update file', { filename, updates }),
-  updatePanelMeta: (panelKey: string, updates: ReduxUpdater<PanelMeta>) =>
+  updatePanelMeta: (panelKey: string, updates: ReduxUpdater<DevPanelMeta>) =>
     createAct('[dev-env] update panel meta', { panelKey, updates }),
 };
 
@@ -689,26 +689,17 @@ const initializeMonacoModels = createEpic(
   ),
 );
 
-const trackFilePanels = createEpic(
+const onCreateFilePanel = createEpic(
   (action$, state$) => action$.pipe(
-    filterActs(
-      '[layout] panel created',
-      '[layout] panel closed',
-    ),
-    filter((act) => act.type === '[layout] panel created'
-      ? !!act.pay.panelMeta.filename : true),
-    flatMap((act) => {
-      const { panelKey } = act.pay;
-      if (act.type === '[layout] panel created') {
-        const { file } = state$.value.devEnv;
-        const filename = act.pay.panelMeta.filename!;
-        return [
-          LayoutThunk.setPanelTitle({ panelKey, title: filename }),
-          Act.createFilePanelMeta({ filename, panelKey }),
-          ...(file[filename] ? [] : [Act.createCodeFile({ filename, contents: '' })]),
-        ];
-      }
-      return [Act.forgetPanelMeta({ panelKey })];
+    filterActs('[layout] panel created'),
+    filter((act) => !!act.pay.panelMeta.filename),
+    flatMap(({ pay: { panelKey, panelMeta } }) => {
+      const { file } = state$.value.devEnv;
+      const filename = panelMeta.filename!;
+      return [
+        LayoutThunk.setPanelTitle({ panelKey, title: filename }),
+        ...(file[filename] ? [] : [Act.createCodeFile({ filename, contents: '' })]),
+      ];
     }),
   ),
 );
@@ -750,7 +741,7 @@ export const epic = combineEpics(
   bootstrapStyles,
   initializeFileSystem,
   initializeMonacoModels,
-  trackFilePanels,
+  onCreateFilePanel,
   trackCodeFileContents,
   togglePanelMenuEpic,
 );

@@ -1,27 +1,17 @@
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { panelKeyToAppElId, panelKeyToEditorKey, filenameToModelKey } from '@model/code/dev-env.model';
-import { Act } from '@store/dev-env.duck';
 import Editor from '@components/monaco/editor';
 import css from './dev-app.scss';
 
 const DevApp: React.FC<Props> = ({ panelKey }) => {
-  const dispatch = useDispatch();
   const monacoLoaded = useSelector(({ editor: { monacoLoaded } }) => monacoLoaded);
-
-  useEffect(() => {
-    dispatch(Act.createAppPanelMeta({ panelKey }));
-    return () => {
-      dispatch(Act.forgetPanelMeta({ panelKey }));
-    };
-  }, []);
 
   return (
     <>
+      {/* App is mounted into this div */}
       <div id={panelKeyToAppElId(panelKey)} style={{ height: '100%' }}>
-        <div // This placeholder is removed via react app mount
-          className={css.appNotMounted}
-        >
+        {/* This placeholder is removed via app mount */}
+        <div className={css.appNotMounted}>
           App not mounted
         </div>
       </div>
