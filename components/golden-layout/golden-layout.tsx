@@ -172,6 +172,7 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
         } as ReactComponentConfig<any>,
       );
       this.goldenLayoutInstance.createDragSource(buttonEl, dupConfig);
+      buttonEl.style.setProperty('touch-action', 'none');
     }
   }
   
