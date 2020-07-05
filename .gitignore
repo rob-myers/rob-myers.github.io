@@ -19,5 +19,6 @@ env/env.ts
 
 public/sass.worker.js
 public/es-react/
+public/es-redux/
 
 .DS_Store

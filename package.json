@@ -48,9 +48,10 @@
     "check-types": "tsc --noEmit",
     "syntax-remotedev": "remotedev --hostname=localhost --port=3002 --wsEngine=ws",
     "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build",
-    "ensure-public-js": "yarn cp-sass-worker && yarn cp-es-react",
+    "ensure-public-js": "yarn cp-sass-worker && yarn cp-es-react && yarn cp-es-redux",
     "cp-sass-worker": "cp node_modules/sass.js/dist/sass.worker.js public",
     "cp-es-react": "mkdir -p public/es-react && cp node_modules/es-react/*.js public/es-react",
+    "cp-es-redux": "mkdir -p public/es-redux && cp node_modules/redux/es/redux.mjs public/es-redux",
     "react-refresh-test": "TS_NODE_PROJECT='./model/code/tsconfig.code.json' ts-node model/code/react-refresh-transform"
   },
   "devDependencies": {

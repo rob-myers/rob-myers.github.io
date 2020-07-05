@@ -4,6 +4,8 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [ ] provide redux/react-redux typings and can import
+- [x] provide es modules redux and react-redux
 - [ ] document the steps needed to implement reach-refresh
 - [ ] implement react-refresh transform in syntax worker
 - [x] remove reducer `gitalk`
