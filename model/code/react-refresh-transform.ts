@@ -7,6 +7,7 @@
 import * as babel from '@babel/core';
 import { types as t } from '@babel/core';
 import generate from '@babel/generator';
+import { REFRESH_REG, REFRESH_SIG } from './dev-env.model';
 // import InternalFile from '@babel/core/lib/transformation/file/file';
 const InternalFile = (babel as any).File;
 
@@ -833,7 +834,10 @@ class ReactRefreshTransform {
   }
 }
 
-const reactRefreshTransform = new ReactRefreshTransform();
+const reactRefreshTransform = new ReactRefreshTransform({
+  refreshReg: REFRESH_REG,
+  refreshSig: REFRESH_SIG,
+});
 reactRefreshTransform.setupVisitors();
 export default reactRefreshTransform;
  

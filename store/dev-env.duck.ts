@@ -6,19 +6,20 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, appendEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, appendStyleTag, getReachableScssFiles, DevPanelMeta, getDevPanelMetaState, createDevPanelAppMeta, createDevPanelFileMeta, isAppPanel, isFilePanel, SourcePathInterval } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, ensureEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, ensureStyleTag, getReachableScssFiles, DevPanelMeta, getDevPanelMetaState, createDevPanelAppMeta, createDevPanelFileMeta, isAppPanel, isFilePanel, SourcePathInterval, getBlobUrl } from '@model/code/dev-env.model';
 import { JsImportMeta, JsExportMeta, importPathsToCodeFilenames, traverseDeps as traverseCodeDeps, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles } from '@model/code/patch-js-imports';
-import { getBootstrapAppCode } from '@model/code/bootstrap';
+import { getAppBootstrapCode, getReactRefreshBootstrapCode } from '@model/code/bootstrap';
 import { TsTranspilationResult } from '@model/monaco/monaco.model';
 import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/code/handle-scss-imports';
 import { getCssModuleCode } from '@model/code/css-module';
+import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
+import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
+import { getWindow } from '@model/dom.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk, Act as LayoutAct } from './layout.duck';
-import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
-import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
 
 export interface State {
   file: KeyedLookup<FileState>;
@@ -76,12 +77,12 @@ export const Thunk = {
       const appInstanceElId = panelKeyToAppElId(panelKey);
       const { blobUrl: appBlobUrl } = (devEnv.file['index.tsx'] as CodeFile).esModule!;
       
-      const bootstrapCode = getBootstrapAppCode(appBlobUrl, appInstanceElId);
+      const bootstrapCode = getAppBootstrapCode(appBlobUrl, appInstanceElId);
       const bootstrapBlob = new Blob([bootstrapCode], { type: 'text/javascript' });
       const bootstrapUrl = URL.createObjectURL(bootstrapBlob);      
       
       const bootstrapScriptId = panelKeyToAppScriptId(panelKey);
-      appendEsmModule({ scriptId: bootstrapScriptId, scriptSrcUrl: bootstrapUrl });
+      ensureEsmModule({ scriptId: bootstrapScriptId, scriptSrcUrl: bootstrapUrl });
       // console.log({ mountedAppAt: document.getElementById(appInstanceElId) });
     },
   ),
@@ -108,7 +109,7 @@ export const Thunk = {
       const { devEnv } = getState();
       const jsFiles = getReachableJsFiles(devEnv.file).reverse();
       for (const { key: filename, esModule: esm } of jsFiles) {
-        appendEsmModule({
+        ensureEsmModule({
           scriptId: filenameToScriptId(filename),
           scriptSrcUrl: esm!.blobUrl,
         });
@@ -127,7 +128,7 @@ export const Thunk = {
     ({ state: { devEnv } }, { filename }: { filename: string }) => {
       const styleElId = filenameToStyleId(filename);
       const styles = (devEnv.file[filename] as TranspiledStyleFile).transpiled.dst;
-      appendStyleTag({ styleId: styleElId, styles });
+      ensureStyleTag({ styleId: styleElId, styles });
     },
   ),
   changePanel: createThunk(
@@ -254,6 +255,11 @@ export const Thunk = {
       !devEnv.file['other.scss']?.contents &&
         dispatch(Act.createStyleFile({ filename: 'other.scss', contents: exampleScss2 }));
       dispatch(Act.initialized());
+
+      getWindow() && ensureEsmModule({
+        scriptId: 'bootstrap-react-refresh',
+        scriptSrcUrl: getBlobUrl(getReactRefreshBootstrapCode()),
+      });
     },
   ),
   filenameToPanelKey: createThunk(

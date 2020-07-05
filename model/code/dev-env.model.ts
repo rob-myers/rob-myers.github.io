@@ -50,7 +50,12 @@ export function filenameToStyleId(filename: string) {
   return `styles-for-${filename}`;
 }
 
-export function appendEsmModule(input: { scriptId: string; scriptSrcUrl: string }) {
+export function getBlobUrl(jsCode: string) {
+  const bootstrapBlob = new Blob([jsCode], { type: 'text/javascript' });
+  return URL.createObjectURL(bootstrapBlob);     
+}
+
+export function ensureEsmModule(input: { scriptId: string; scriptSrcUrl: string }) {
   document.getElementById(input.scriptId)?.remove();
   const el = document.createElement('script');
   el.id = input.scriptId;
@@ -59,7 +64,7 @@ export function appendEsmModule(input: { scriptId: string; scriptSrcUrl: string 
   document.head.appendChild(el);
 }
 
-export function appendStyleTag(input: { styleId: string; styles: string }) {
+export function ensureStyleTag(input: { styleId: string; styles: string }) {
   document.getElementById(input.styleId)?.remove();
   const el = document.createElement('style');
   el.id = input.styleId;
@@ -277,3 +282,12 @@ export function createDevPanelFileMeta(panelKey: string, filename: string): DevP
     menuOpen: false,
   };
 }
+
+/**
+ * We'll use react-refresh in production as part of dev-env.
+ * We avoid name collision with next.js.
+ */
+export const REFRESH_REG = '$RefreshRegProd$';
+export const REFRESH_SIG = '$RefreshSigProd$';
+export const REFRESH_HELPERS = '$RefreshHelpersProd$';
+export const REFRESH_INTERCEPT_MODULE_EXECUTION = '$RefreshInterceptModuleExecutionProd$';

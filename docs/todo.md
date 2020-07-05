@@ -4,6 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [x] bootstrap react-refresh
 - [ ] provide redux/react-redux typings and can import
 - [x] provide es modules redux and react-redux
 - [ ] document the steps needed to implement react-refresh
