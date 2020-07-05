@@ -1,3 +1,6 @@
+/**
+ * Files from react-redux@7.1.7/es without exports connectAdvanced and connect.
+ */
 import Provider from './components/Provider';
 import { ReactReduxContext } from './components/Context';
 import { useDispatch, createDispatchHook } from './hooks/useDispatch';

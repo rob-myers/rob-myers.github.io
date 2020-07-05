@@ -6,8 +6,8 @@ See [blog notes](./blog.md).
 
 - [ ] provide redux/react-redux typings and can import
 - [x] provide es modules redux and react-redux
-- [ ] document the steps needed to implement reach-refresh
-- [ ] implement react-refresh transform in syntax worker
+- [ ] document the steps needed to implement react-refresh
+- [ ] implement `react-refresh` transform in syntax worker
 - [x] remove reducer `gitalk`
 - [x] can change current file or switch to App in panel menu
   > panelKey independent of app/file panel

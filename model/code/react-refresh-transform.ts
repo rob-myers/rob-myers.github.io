@@ -1,6 +1,7 @@
 /**
  * This is https://github.com/facebook/react/blob/master/packages/react-refresh/src/ReactFreshBabelPlugin.js
- * rewritten using typescript, and no longer a babel plugin.
+ * rewritten using typescript (no longer a babel plugin).
+ * Up-to-date on 5th July 2020.
  */
 /* eslint-disable @typescript-eslint/indent */
 import * as babel from '@babel/core';
@@ -8,8 +9,6 @@ import { types as t } from '@babel/core';
 import generate from '@babel/generator';
 // import InternalFile from '@babel/core/lib/transformation/file/file';
 const InternalFile = (babel as any).File;
-
-import { exampleTsx3 } from './examples';
 
 interface Options {
   refreshReg?: string;
@@ -74,20 +73,23 @@ class Transform {
     }
   }
   
-  public run(code: string, filename: string) {
+  public async run(code: string, filename: string) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const parsed = babel.parseSync(code, {
+    const parsed = (await babel.parseAsync(code, {
       filename,
       plugins: [
+        /**
+         * TODO probably only need to transpile ES2015
+         */
         ['@babel/plugin-transform-typescript', { isTSX: true }],
       ],
-    })!;
+    }))!;
 
     // Ensure hub so e.g. .getSource() works
     const _file = new InternalFile({ filename }, { code, ast: parsed });
 
     babel.traverse(parsed, this.visitor);
-    console.log({ code: generate(parsed) });
+    return generate(parsed);
   }
 
   public setupVisitors() {
@@ -368,7 +370,7 @@ class Transform {
 
           // Unlike with $RefreshReg$, this needs to work for nested
           // declarations too. So we need to search for a path where
-          // we can insert a statement rather than hardcoding it.
+          // we can insert a statement rather than hard coding it.
           let insertAfterPath = null as null | babel.NodePath;
           path.find(p => {
             if (p.parentPath.isBlock()) {
@@ -801,9 +803,13 @@ class Transform {
     if (typeof require === 'function' && !this.opts.emitFullSignatures) {
       // Prefer to hash when we can (e.g. outside of ASTExplorer).
       // This makes it deterministically compact, even if there's
-      // e.g. a useState ininitalizer with some code inside.
+      // e.g. a useState initializer with some code inside.
       // We also need it for www that has transforms like cx()
       // that don't understand if something is part of a string.
+      // finalKey = require('crypto')
+      //   .createHash('sha1')
+      //   .update(key)
+      //   .digest('base64');
       finalKey = require('spark-md5').hash(key);
     }
   
@@ -833,8 +839,9 @@ class Transform {
 const singleton = new Transform();
 singleton.setupVisitors();
 export default singleton;
-
+ 
 // Test
-// singleton.run(exampleTsx1, 'fake.tsx');
-// singleton.run(exampleTsx2, 'fake.tsx');
-singleton.run(exampleTsx3, 'fake.tsx');
+// import { exampleTsx3 } from './examples';
+// singleton.run(exampleTsx3, 'fake.tsx').then(
+//   ({ code }) => console.log({ code })
+// );
