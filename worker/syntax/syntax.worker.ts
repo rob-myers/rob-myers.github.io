@@ -1,11 +1,13 @@
 import { persistStore } from 'redux-persist';
+import { testNever } from '@model/generic.model';
+import reactRefreshTransform from '@model/code/react-refresh-transform';
 import { SyntaxWorker, SyntaxWorkerContext } from './worker.model';
 import { SyntaxDispatchOverload } from './redux.model';
-import { initializeStore } from './create-store';
-import { testNever } from '@model/generic.model';
-import { computeClassifications } from './highlight.model';
-import { analyzeTsImportsExports, toggleTsxComment } from './analyze-ts.model';
 import { prefixScssClasses, extractScssImportIntervals } from './analyze-scss.model';
+import { computeClassifications } from './highlight.model';
+import { initializeStore } from './create-store';
+import { analyzeTsImportsExports, toggleTsxComment } from './analyze-ts.model';
+
 
 const ctxt: SyntaxWorkerContext = self as any;
 
@@ -23,7 +25,7 @@ const _dispatch = store.dispatch as SyntaxDispatchOverload;
 /**
  * Listen for messages
  */
-ctxt.addEventListener('message', ({ data }) => {
+ctxt.addEventListener('message', async ({ data }) => {
   switch (data.key) {
     case 'request-import-exports': {      
       ctxt.postMessage({
@@ -65,7 +67,7 @@ ctxt.addEventListener('message', ({ data }) => {
       }
       break;
     }
-    case 'toggle-tsx-comments': {
+    case 'request-toggled-tsx-comment': {
       ctxt.postMessage({
         key: 'send-tsx-commented',
         origCode: data.code,
@@ -74,6 +76,16 @@ ctxt.addEventListener('message', ({ data }) => {
           data.startLineStartPos,
           data.endLineEndPos,
         ),
+      });
+      break;
+    }
+    case 'request-react-refresh-transform': {
+      const { code } = await (reactRefreshTransform.run(data.code, data.filename));
+      // console.log({ transformedJsCode: code });
+      ctxt.postMessage({
+        key: 'send-react-refresh-transform',
+        origCode: data.code,
+        transformedCode: code,
       });
       break;
     }

@@ -1,6 +1,6 @@
 import { KeyedLookup, pluck } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { TranspiledCodeFile, CodeFileEsm, CodeFile, StyleFile, FileState, SourcePathInterval } from './dev-env.model';
+import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, SourcePathInterval } from './dev-env.model';
 
 export function getCyclicDepMarker(
   { path, line: startLine, startCol }: SourcePathInterval,
@@ -132,7 +132,7 @@ export function patchTranspiledJsFiles(
   stratification: string[][],
 ) {
   const allFilenames = Object.keys(file);
-  const filenameToPatched = {} as Record<string, CodeFileEsm>;
+  const filenameToPatched = {} as Record<string, CodeFileEsModule>;
   const scssFile = pluck(file, ({ ext }) => ext === 'scss') as KeyedLookup<StyleFile>;
 
   for (const level of stratification) {
@@ -162,7 +162,7 @@ export function patchTranspiledJsFiles(
 function patchTranspiledCode(
   transpiledCode: string,
   importMetas: JsImportMeta[],
-  filenameToPatched: Record<string, CodeFileEsm>,
+  filenameToPatched: Record<string, CodeFileEsModule>,
   allFilenames: string[],
   scssFile: KeyedLookup<StyleFile>,
 ): string {

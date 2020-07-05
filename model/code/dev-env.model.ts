@@ -86,7 +86,7 @@ export interface CodeFile extends BaseFile {
   /** Last transpilation */
   transpiled: null | CodeTranspilation;
   /** es module */
-  esModule: null | CodeFileEsm;
+  esModule: null | CodeFileEsModule;
 }
 
 export interface StyleFile extends BaseFile {
@@ -161,13 +161,13 @@ interface BaseTranspilation {
   cleanups: (() => void)[];
 }
 
-export interface CodeFileEsm {
+export interface CodeFileEsModule {
+  blobUrl: string;
   /**
-   * Actual code inside <script> i.e. `transpiled.dst`
-   * with import specifiers replaced by blob urls.
+   * Obtained from `transpiled.dst` by replacing import/export
+   * specifiers e.g. relative paths become blob urls.
    */
   patchedCode: string;
-  blobUrl: string;
 }
 
 export interface SourcePathInterval {

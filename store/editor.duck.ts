@@ -447,7 +447,7 @@ export const Thunk = {
           // console.log('TODO commenting at', { startLineStartPos, startLineNumber, endLineNumber, endLineEndPos });
           
           syntaxWorker!.postMessage({
-            key: 'toggle-tsx-comments',
+            key: 'request-toggled-tsx-comment',
             code,
             startLineStartPos,
             endLineEndPos,

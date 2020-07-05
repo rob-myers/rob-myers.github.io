@@ -51,7 +51,7 @@ type SansV8<T> = Exclude<T, t.V8IntrinsicIdentifier>;
 /**
  * There should be a single instance of this class.
  */
-class Transform {
+class ReactRefreshTransform {
 
   private refreshReg: t.Identifier;
   private refreshSig: t.Identifier;
@@ -78,10 +78,7 @@ class Transform {
     const parsed = (await babel.parseAsync(code, {
       filename,
       plugins: [
-        /**
-         * TODO probably only need to transpile ES2015
-         */
-        ['@babel/plugin-transform-typescript', { isTSX: true }],
+        // ['@babel/plugin-transform-typescript', { isTSX: true }],
       ],
     }))!;
 
@@ -836,12 +833,12 @@ class Transform {
   }
 }
 
-const singleton = new Transform();
-singleton.setupVisitors();
-export default singleton;
+const reactRefreshTransform = new ReactRefreshTransform();
+reactRefreshTransform.setupVisitors();
+export default reactRefreshTransform;
  
 // Test
 // import { exampleTsx3 } from './examples';
-// singleton.run(exampleTsx3, 'fake.tsx').then(
+// reactRefreshTransform.run(exampleTsx3, 'fake.tsx').then(
 //   ({ code }) => console.log({ code })
 // );

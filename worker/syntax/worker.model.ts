@@ -47,11 +47,16 @@ interface RequestScssPrefixing {
   /** `file.scss` induces prefix `file__` */
   filename: string;
 }
-interface ToggleTsxComment {
-  key: 'toggle-tsx-comments';
+interface RequestToggledTsxComment {
+  key: 'request-toggled-tsx-comment';
   code: string;
   startLineStartPos: number;
   endLineEndPos: number;
+}
+interface RequestReactRefreshTransform {
+  key: 'request-react-refresh-transform';
+  code: string;
+  filename: string;
 }
 
 interface SendTsxHighlights {
@@ -77,13 +82,19 @@ interface SendTsxCommented {
   origCode: string;
   result: ToggleTsxCommentResult; 
 }
+interface SendReactRefreshTransform {
+  key: 'send-react-refresh-transform';
+  origCode: string;
+  transformedCode: string;
+}
 
 type MessageFromParent = (
   | RequestStatus
   | RequestTsxHighlights
   | RequestImportExportMeta
   | RequestScssPrefixing
-  | ToggleTsxComment
+  | RequestToggledTsxComment
+  | RequestReactRefreshTransform
 );
 
 export type MessageFromWorker = (
@@ -92,6 +103,7 @@ export type MessageFromWorker = (
   | SendImportExportMeta
   | SendPrefixedScss
   | SendTsxCommented
+  | SendReactRefreshTransform
 );
 
 type RefinedMessage<Key> = Extract<MessageFromWorker, { key: Key }>

@@ -100,7 +100,10 @@ export const Thunk = {
         return;
       }
 
-      dispatch(Thunk.patchAllTranspiledCode({}));
+      /**
+       * Patch import/export paths and apply react-refresh transform.
+       */
+      await dispatch(Thunk.patchAllTranspiledCode({}));
 
       const { devEnv } = getState();
       const jsFiles = getReachableJsFiles(devEnv.file).reverse();
@@ -314,10 +317,15 @@ export const Thunk = {
    */
   patchAllTranspiledCode: createThunk(
     '[dev-env] patch all transpiled code',
-    ({ dispatch, state: { devEnv } }) => {
+    async ({ dispatch, state: { devEnv } }) => {
+      /**
+       * Stratify transpiled javascript files and apply import/export patches.
+       * We'll use code-intervals already stored in transpiled.imports.
+       */
       const jsFiles = getReachableJsFiles(devEnv.file) as TranspiledCodeFile[];
       const stratification = stratifyJsFiles(jsFiles);
       const filenameToPatched = patchTranspiledJsFiles(devEnv.file, stratification);
+        
       for (const [filename, { patchedCode, blobUrl }] of Object.entries(filenameToPatched)) {
         dispatch(Act.updateFile(filename, { esModule: { patchedCode, blobUrl } }));
       }
@@ -401,11 +409,11 @@ export const Thunk = {
     },
   ),
   /**
-   * Try to transpile ts/tsx `filename`.
+   * Try to transpile a ts/tsx file.
    */
   tryTranspileCodeModel: createThunk(
     '[dev-env] try transpile code model',
-    async ({ dispatch, state: { devEnv } }, { filename, onlyIf }: {
+    async ({ dispatch, state: { devEnv, editor: { syntaxWorker } } }, { filename, onlyIf }: {
       filename: string;
       onlyIf?: 'valid' | 'invalid';
     }) => {
@@ -430,21 +438,25 @@ export const Thunk = {
         dispatch(Thunk.forgetCodeTranspilation({ filename })); // Cleanliness
         return;
       }
+
+      // Transform transpiled js via ReactFreshBabelPlugin
+      const jsFilename = filename.replace(/\.tsx?$/, '.js');
+      syntaxWorker!.postMessage({ key: 'request-react-refresh-transform', filename: jsFilename, code: transpiled.transpiledJs });
+      const { transformedCode } = await awaitWorker('send-react-refresh-transform', syntaxWorker!, ({ origCode }) => origCode === transpiled.transpiledJs);
       
-      // Remember intervals of import/export specifiers so can show errors
+      // Remember source-code-intervals of import/export specifiers so can show errors
       await dispatch(Thunk.rememberSrcPathIntervals({ filename, modelKey }));
 
       // TODO all path intervals must be relative
-
       // TODO all scss imports must refer to existing files
 
-      const { imports, exports, cyclicDepError, prevCyclicError } =
-        await dispatch(Thunk.testCyclicJsDependency({ filename, nextTranspiledJs: transpiled.transpiledJs }));
+      const { imports, exports, cyclicDepError, prevCyclicError } = await dispatch(
+        Thunk.testCyclicJsDependency({ filename, nextTranspiledJs: transformedCode }));
 
       dispatch(Thunk.updateCodeTranspilation({
         filename,
         src: transpiled.src,
-        dst: transpiled.transpiledJs, // Unpatched code
+        dst: transformedCode, // transpiled & transformed, yet unpatched
         imports,
         exports,
         typings: transpiled.typings,
