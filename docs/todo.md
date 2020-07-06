@@ -4,6 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [x] avoid changing `$RefreshReg$` (try-finally can't contain imports)
 - [x] bootstrap react-refresh
 - [ ] provide redux/react-redux typings and can import
 - [x] provide es modules redux and react-redux

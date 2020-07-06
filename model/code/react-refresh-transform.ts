@@ -1,13 +1,15 @@
 /**
  * This is https://github.com/facebook/react/blob/master/packages/react-refresh/src/ReactFreshBabelPlugin.js
  * rewritten using typescript (no longer a babel plugin).
- * Up-to-date on 5th July 2020.
+ * - Up-to-date on 5th July 2020.
+ * - Added argument to this.refreshReg invocation i.e. `this.lastFilename`.
  */
 /* eslint-disable @typescript-eslint/indent */
 import * as babel from '@babel/core';
 import { types as t } from '@babel/core';
 import generate from '@babel/generator';
 import { REFRESH_REG, REFRESH_SIG } from './dev-env.model';
+
 // import InternalFile from '@babel/core/lib/transformation/file/file';
 const InternalFile = (babel as any).File;
 
@@ -65,6 +67,8 @@ class ReactRefreshTransform {
   private hasForceResetCommentByFile = new WeakMap<any, boolean>();
   private hooksCallsVisitor!: Visitor;
   private visitor!: Visitor;
+
+  private lastFilename!: string;
   
   constructor(private opts: Options = {}) {
     this.refreshReg = t.identifier(opts.refreshReg || '$RefreshReg$');
@@ -86,6 +90,7 @@ class ReactRefreshTransform {
     // Ensure hub so e.g. .getSource() works
     const _file = new InternalFile({ filename }, { code, ast: parsed });
 
+    this.lastFilename = filename;
     babel.traverse(parsed, this.visitor);
     return generate(parsed);
   }
@@ -500,6 +505,11 @@ class ReactRefreshTransform {
               'body',
               t.expressionStatement(
                 t.callExpression(this.refreshReg, [
+                  /**
+                   * NOTE this.lastFilename was set just before this traversal.
+                   * This argument is not provided in original ReactRefreshTransform.
+                   */
+                  t.stringLiteral(this.lastFilename),
                   handle,
                   t.stringLiteral(persistentID),
                 ]),

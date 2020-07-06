@@ -1,4 +1,4 @@
-import { REFRESH_REG, REFRESH_SIG, REFRESH_HELPERS, REFRESH_INTERCEPT_MODULE_EXECUTION } from './dev-env.model';
+import { REFRESH_REG, REFRESH_SIG, REFRESH_HELPERS } from './dev-env.model';
 
 /**
  * Get code for a module which will bootstrap a single instance of the App.
@@ -30,32 +30,12 @@ const self = window;
 // Hook into ReactDOM initialization
 RefreshRuntime.injectIntoGlobalHook(self)
 
-// noop fns to prevent runtime errors during initialization
-self.${REFRESH_REG} = function () {}
-self.${REFRESH_SIG} = function () {
-  return function (type) {
-    return type
-  }
+self.${REFRESH_REG} = function (filename, type, id) {
+  RefreshRuntime.register(type, filename + ' ' + id)
 }
+self.${REFRESH_SIG} = RefreshRuntime.createSignatureFunctionForTransform
 
 // Register global helpers
 // self.${REFRESH_HELPERS} = RefreshHelpers
 
-// Register a helper for module execution interception
-self.${REFRESH_INTERCEPT_MODULE_EXECUTION} = function (filename) {
-  var prevRefreshReg = self.${REFRESH_REG}
-  var prevRefreshSig = self.${REFRESH_SIG}
-
-  self.${REFRESH_REG} = function (type, id) {
-    RefreshRuntime.register(type, filename + ' ' + id)
-  }
-  self.${REFRESH_SIG} = RefreshRuntime.createSignatureFunctionForTransform
-
-  // Modeled after \`useEffect\` cleanup pattern:
-  // https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
-  return function () {
-    self.${REFRESH_SIG} = prevRefreshReg
-    self.${REFRESH_SIG} = prevRefreshSig
-  }
-}
 `.trim();

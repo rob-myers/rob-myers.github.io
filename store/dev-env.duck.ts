@@ -528,9 +528,9 @@ export const Thunk = {
     },
   ),
   /**
-   * If `panelKey` an app panel & app mounted, we unmount it.
+   * If `panelKey` an app panel and mounted, we unmount it.
    * Has no effect if not an app panel or not mounted.
-   * We handles all cases because, once removed, we don't know what it was.
+   * Handles all cases because, once removed, we don't know what it was.
    */
   tryUnmountAppInstance: createThunk(
     '[dev-env] unmount app instance',

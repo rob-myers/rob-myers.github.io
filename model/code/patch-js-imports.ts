@@ -1,6 +1,6 @@
 import { KeyedLookup, pluck } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, SourcePathInterval } from './dev-env.model';
+import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, SourcePathInterval, getBlobUrl } from './dev-env.model';
 
 export function getCyclicDepMarker(
   { path, line: startLine, startCol }: SourcePathInterval,
@@ -145,9 +145,8 @@ export function patchTranspiledJsFiles(
         allFilenames,
         scssFile, // Only need blobUrls
       );
-      const blob = new Blob([patchedCode], { type: 'text/javascript' });
-      const blobUrl = URL.createObjectURL(blob);
-      filenameToPatched[filename] = { patchedCode, blobUrl };
+
+      filenameToPatched[filename] = { patchedCode, blobUrl: getBlobUrl(patchedCode) };
       console.log({ patchedCode });
     }
   }
