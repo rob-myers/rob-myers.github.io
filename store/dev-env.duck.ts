@@ -6,10 +6,10 @@ import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, R
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
-import { panelKeyToAppElId, FileState, filenameToModelKey, TranspiledCodeFile, isFileValid, getReachableJsFiles, filenameToScriptId, ensureEsmModule, panelKeyToAppScriptId, CodeFile, CodeTranspilation, StyleTranspilation, StyleFile, PrefixedStyleFile, filenameToStyleId, TranspiledStyleFile, ensureStyleTag, getReachableScssFiles, DevPanelMeta, getDevPanelMetaState, createDevPanelAppMeta, createDevPanelFileMeta, isAppPanel, isFilePanel, SourcePathInterval, getBlobUrl } from '@model/code/dev-env.model';
-import { JsImportMeta, JsExportMeta, importPathsToCodeFilenames, traverseDeps as traverseCodeDeps, getCyclicDepMarker, CyclicDepError, stratifyJsFiles, patchTranspiledJsFiles } from '@model/code/patch-js-imports';
+import * as Dev from '@model/code/dev-env.model';
 import { getAppBootstrapCode, getReactRefreshBootstrapCode } from '@model/code/bootstrap';
 import { TsTranspilationResult } from '@model/monaco/monaco.model';
+import * as PatchJs from '@model/code/patch-js-imports';
 import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/code/handle-scss-imports';
 import { getCssModuleCode } from '@model/code/css-module';
 import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
@@ -22,9 +22,9 @@ import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk, Act as LayoutAct } from './layout.duck';
 
 export interface State {
-  file: KeyedLookup<FileState>;
+  file: KeyedLookup<Dev.FileState>;
   initialized: boolean;
-  panelToMeta: KeyedLookup<DevPanelMeta>;
+  panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
   bootstrapped: boolean;
 }
 
@@ -58,13 +58,13 @@ export const Act = {
     createAct('[dev-env] initialized', {}),
   setBootstrapped: (isValid: boolean) =>
     createAct('[dev-env] set ts/tsx validity', { isValid }),
-  storeCodeTranspilation: (filename: string, transpilation: CodeTranspilation) =>
+  storeCodeTranspilation: (filename: string, transpilation: Dev.CodeTranspilation) =>
     createAct('[dev-env] store code transpilation', { filename, transpilation }),
-  storeStyleTranspilation: (filename: string, transpilation: StyleTranspilation) =>
+  storeStyleTranspilation: (filename: string, transpilation: Dev.StyleTranspilation) =>
     createAct('[dev-env] store style transpilation', { filename, transpilation }),
-  updateFile: (filename: string, updates: Partial<FileState>) =>
+  updateFile: (filename: string, updates: Partial<Dev.FileState>) =>
     createAct('[dev-env] update file', { filename, updates }),
-  updatePanelMeta: (panelKey: string, updates: ReduxUpdater<DevPanelMeta>) =>
+  updatePanelMeta: (panelKey: string, updates: ReduxUpdater<Dev.DevPanelMeta>) =>
     createAct('[dev-env] update panel meta', { panelKey, updates }),
 };
 
@@ -74,15 +74,15 @@ export const Thunk = {
   bootstrapAppInstance: createThunk(
     '[dev-env] bootstrap app instance',
     ({ state: { devEnv } }, { panelKey }: { panelKey: string }) => {
-      const appInstanceElId = panelKeyToAppElId(panelKey);
-      const { blobUrl: appBlobUrl } = (devEnv.file['index.tsx'] as CodeFile).esModule!;
+      const appInstanceElId = Dev.panelKeyToAppElId(panelKey);
+      const { blobUrl: appBlobUrl } = (devEnv.file['index.tsx'] as Dev.CodeFile).esModule!;
       
       const bootstrapCode = getAppBootstrapCode(appBlobUrl, appInstanceElId);
       const bootstrapBlob = new Blob([bootstrapCode], { type: 'text/javascript' });
       const bootstrapUrl = URL.createObjectURL(bootstrapBlob);      
       
-      const bootstrapScriptId = panelKeyToAppScriptId(panelKey);
-      ensureEsmModule({ scriptId: bootstrapScriptId, scriptSrcUrl: bootstrapUrl });
+      const bootstrapScriptId = Dev.panelKeyToAppScriptId(panelKey);
+      Dev.ensureEsmModule({ scriptId: bootstrapScriptId, scriptSrcUrl: bootstrapUrl });
       // console.log({ mountedAppAt: document.getElementById(appInstanceElId) });
     },
   ),
@@ -107,10 +107,10 @@ export const Thunk = {
       await dispatch(Thunk.patchAllTranspiledCode({}));
 
       const { devEnv } = getState();
-      const jsFiles = getReachableJsFiles(devEnv.file).reverse();
+      const jsFiles = Dev.getReachableJsFiles(devEnv.file).reverse();
       for (const { key: filename, esModule: esm } of jsFiles) {
-        ensureEsmModule({
-          scriptId: filenameToScriptId(filename),
+        Dev.ensureEsmModule({
+          scriptId: Dev.filenameToScriptId(filename),
           scriptSrcUrl: esm!.blobUrl,
         });
       }
@@ -126,9 +126,9 @@ export const Thunk = {
   bootstrapStyles: createThunk(
     '[dev-env] bootstrap styles',
     ({ state: { devEnv } }, { filename }: { filename: string }) => {
-      const styleElId = filenameToStyleId(filename);
-      const styles = (devEnv.file[filename] as TranspiledStyleFile).transpiled.dst;
-      ensureStyleTag({ styleId: styleElId, styles });
+      const styleElId = Dev.filenameToStyleId(filename);
+      const styles = (devEnv.file[filename] as Dev.TranspiledStyleFile).transpiled.dst;
+      Dev.ensureStyleTag({ styleId: styleElId, styles });
     },
   ),
   changePanel: createThunk(
@@ -165,7 +165,7 @@ export const Thunk = {
       const code = getCssModuleCode(filename);
       const blob = new Blob([code], { type: 'text/javascript' });
       const blobUrl = URL.createObjectURL(blob);
-      dispatch(Act.updateFile(filename, { cssModule: { code, blobUrl } } as StyleFile));
+      dispatch(Act.updateFile(filename, { cssModule: { code, blobUrl } } as Dev.StyleFile));
     },
   ),
   /**
@@ -176,30 +176,30 @@ export const Thunk = {
     '[dev-env] detect code dependency cycles',
     ({ state: { devEnv } }, { filename, imports, exports }: {
       filename: string;
-      imports: JsImportMeta[];
-      exports: JsExportMeta[];
-    }): null | CyclicDepError => {
+      imports: PatchJs.JsImportMeta[];
+      exports: PatchJs.JsExportMeta[];
+    }): null | PatchJs.CyclicDepError => {
       const filenames = Object.keys(devEnv.file);
-      const dependencyPaths = importPathsToCodeFilenames(([] as string[]).concat(
+      const dependencyPaths = PatchJs.importPathsToCodeFilenames(([] as string[]).concat(
         imports.map(({ path }) => path.value),
         exports.map(({ from }) => from?.value as string).filter(Boolean),
       ), filenames);
       /** Files that `filename` imports/exports */
-      const dependencies = dependencyPaths.map(filename => devEnv.file[filename] as CodeFile);
+      const dependencies = dependencyPaths.map(filename => devEnv.file[filename] as Dev.CodeFile);
       /** Files that import/export `filename`, and `filename` itself */
       const dependents = Object.values(devEnv.file).filter(({ key, transpiled }) =>
         key === filename || (transpiled?.type === 'js' && (
           transpiled.importFilenames.includes(filename)
           || transpiled.exportFilenames.includes(filename)
         ))
-      ) as CodeFile[];
+      ) as Dev.CodeFile[];
       /**
        * Error iff adding this module creates a cycle i.e.
        * some _direct dependency_ of `filename` has
        * some _direct dependent_ of `filename` as a transitive-dependency.
        */
       for (const dependencyFile of dependencies) {
-        const error = traverseCodeDeps(dependencyFile, devEnv.file as KeyedLookup<CodeFile>, lookupFromValues(dependents), filenames.length);
+        const error = PatchJs.traverseDeps(dependencyFile, devEnv.file as KeyedLookup<Dev.CodeFile>, lookupFromValues(dependents), filenames.length);
         if (error) {
           return { ...error, dependency: dependencyFile.key };
         }
@@ -214,7 +214,7 @@ export const Thunk = {
   detectScssImportError: createThunk(
     '[dev-env] detect scss dependency cycles',
     ({ state: { devEnv } }, { filename }: { filename: string }): ScssImportsResult => {
-      const file = pluck(devEnv.file, ({ ext }) => ext === 'scss') as KeyedLookup<PrefixedStyleFile>;
+      const file = pluck(devEnv.file, ({ ext }) => ext === 'scss') as KeyedLookup<Dev.PrefixedStyleFile>;
       const f = file[filename];
 
       const invalidImport = detectInvalidScssImport(filename, file);
@@ -235,7 +235,7 @@ export const Thunk = {
         }
       }
 
-      const reachableScssFiles = getReachableScssFiles(filename, file);
+      const reachableScssFiles = Dev.getReachableScssFiles(filename, file);
       const stratification = stratifyScssFiles(reachableScssFiles);
       return { key: 'success', stratification };
     },
@@ -256,9 +256,9 @@ export const Thunk = {
         dispatch(Act.createStyleFile({ filename: 'other.scss', contents: exampleScss2 }));
       dispatch(Act.initialized());
 
-      getWindow() && ensureEsmModule({
+      getWindow() && Dev.ensureEsmModule({
         scriptId: 'bootstrap-react-refresh',
-        scriptSrcUrl: getBlobUrl(getReactRefreshBootstrapCode()),
+        scriptSrcUrl: Dev.getBlobUrl(getReactRefreshBootstrapCode()),
       });
     },
   ),
@@ -279,14 +279,14 @@ export const Thunk = {
     '[dev-env] handle cyclic js dep error',
     ({ dispatch, state: { devEnv } }, { filename, cyclicDepError }: {
       filename: string;
-      cyclicDepError: CyclicDepError;
+      cyclicDepError: PatchJs.CyclicDepError;
     }) => {
       console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(cyclicDepError)}`);
-      const modelKey = filenameToModelKey(filename);
+      const modelKey = Dev.filenameToModelKey(filename);
       // Expect pathIntervals paths to be relative e.g. ./foo-bar
-      const pathIntervals = (devEnv.file[filename] as CodeFile).pathIntervals;
+      const pathIntervals = (devEnv.file[filename] as Dev.CodeFile).pathIntervals;
       const badIntervals = pathIntervals.filter(({ path }) => cyclicDepError.dependency.startsWith(path.slice(2)));
-      const markers = badIntervals.map((interval) => getCyclicDepMarker(interval));
+      const markers = badIntervals.map((interval) => PatchJs.getCyclicDepMarker(interval));
       dispatch(EditorThunk.setModelMarkers({ modelKey, markers }));
       // Retranspile cyclic dependency if currently valid
       dispatch(Thunk.tryTranspileCodeModel({ filename: cyclicDepError.dependency, onlyIf: 'valid' }));
@@ -300,7 +300,7 @@ export const Thunk = {
     }) => {
       // const modelKey = filenameToModelKey(filename);
       console.error(`Scss import error for ${filename}: ${JSON.stringify(importError)}`);
-      const pathIntervals = (devEnv.file[filename] as StyleFile).pathIntervals;
+      const pathIntervals = (devEnv.file[filename] as Dev.StyleFile).pathIntervals;
       /**
        * TODO use pathIntervals to construct markers
        */
@@ -328,9 +328,9 @@ export const Thunk = {
        * Stratify transpiled javascript files and apply import/export patches.
        * We'll use code-intervals already stored in transpiled.imports.
        */
-      const jsFiles = getReachableJsFiles(devEnv.file) as TranspiledCodeFile[];
-      const stratification = stratifyJsFiles(jsFiles);
-      const filenameToPatched = patchTranspiledJsFiles(devEnv.file, stratification);
+      const jsFiles = Dev.getReachableJsFiles(devEnv.file) as Dev.TranspiledCodeFile[];
+      const stratification = PatchJs.stratifyJsFiles(jsFiles);
+      const filenameToPatched = PatchJs.patchTranspiledJsFiles(devEnv.file, stratification);
         
       for (const [filename, { patchedCode, blobUrl }] of Object.entries(filenameToPatched)) {
         dispatch(Act.updateFile(filename, { esModule: { patchedCode, blobUrl } }));
@@ -345,7 +345,7 @@ export const Thunk = {
       const metas = imports.map(({ path }) => path).concat(
         exports.map(({ from }) => from!).filter(Boolean)
       );
-      const pathIntervals: SourcePathInterval[] = metas
+      const pathIntervals: Dev.SourcePathInterval[] = metas
         .map(({ value, start, startCol, startLine }) => ({
           path: value,
           start,
@@ -380,11 +380,11 @@ export const Thunk = {
   testCyclicJsDependency: createThunk(
     '[dev-env] test cyclic dependency',
     async ({ dispatch, state: { devEnv } }, { filename, nextTranspiledJs }: { filename: string; nextTranspiledJs?: string }) => {
-      const file = devEnv.file[filename] as CodeFile;
+      const file = devEnv.file[filename] as Dev.CodeFile;
       /** Defaults to previously transpiled js */
       const code = nextTranspiledJs || file.transpiled!.dst;
       const { imports, exports } = await dispatch(EditorThunk.computeTsImportExports({ filename, code }));
-      const cyclicDepError = dispatch(Thunk.detectCodeDependencyCycles({ filename, imports, exports })) as null | CyclicDepError;
+      const cyclicDepError = dispatch(Thunk.detectCodeDependencyCycles({ filename, imports, exports })) as null | PatchJs.CyclicDepError;
       return {
         imports,
         exports,
@@ -397,7 +397,7 @@ export const Thunk = {
   tryPrefixStyleFile: createThunk(
     '[dev-env] try prefix style file',
     async ({ state: { devEnv, editor: e }, dispatch }, { filename }: { filename: string }) => {
-      const { contents, prefixed } = devEnv.file[filename] as StyleFile;
+      const { contents, prefixed } = devEnv.file[filename] as Dev.StyleFile;
       const syntaxWorker = e.syntaxWorker!;
 
       if (contents !== prefixed?.src) {
@@ -423,17 +423,17 @@ export const Thunk = {
       filename: string;
       onlyIf?: 'valid' | 'invalid';
     }) => {
-      const modelKey = filenameToModelKey(filename);
-     
+      const currFile = devEnv.file[filename] as Dev.CodeFile;
+
       // Can require file currently valid/invalid to break cycles
-      const isValid = isFileValid(devEnv.file[filename]);
+      const isValid = Dev.isFileValid(currFile);
       if (onlyIf === 'valid' && !isValid || onlyIf === 'invalid' && isValid) {
         return;
       }
 
       // Transpile if needed
-      const currFile = devEnv.file[filename] as CodeFile;
       const needsTranspile = currFile.transpiled?.src !== currFile.contents;
+      const modelKey = Dev.filenameToModelKey(filename);
       const transpiled: TsTranspilationResult = currFile.transpiled && !needsTranspile
         ? { key: 'success', src: currFile.contents, transpiledJs: currFile.transpiled.dst, typings: currFile.transpiled.typings }
         : await dispatch(EditorThunk.transpileTsMonacoModel({ modelKey }));
@@ -449,6 +449,12 @@ export const Thunk = {
       const jsFilename = filename.replace(/\.tsx?$/, '.js');
       syntaxWorker!.postMessage({ key: 'request-react-refresh-transform', filename: jsFilename, code: transpiled.transpiledJs });
       const { transformedCode } = await awaitWorker('send-react-refresh-transform', syntaxWorker!, ({ origCode }) => origCode === transpiled.transpiledJs);
+
+      /**
+       * TODO append export-tracking-code:
+       * - can signal that a full refresh is needed
+       * - can trigger RefreshRuntime.performReactRefresh
+       */
       
       // Remember source-code-intervals of import/export specifiers so can show errors
       await dispatch(Thunk.rememberSrcPathIntervals({ filename, modelKey }));
@@ -503,7 +509,7 @@ export const Thunk = {
         return;
       }
 
-      const file = getState().devEnv.file as KeyedLookup<PrefixedStyleFile>;
+      const file = getState().devEnv.file as KeyedLookup<Dev.PrefixedStyleFile>;
       const transpiled = await dispatch(EditorThunk.transpileScss({
         src: file[filename].prefixed.dst,
         files: importsResult.stratification.flatMap(x => x).map(filename => ({
@@ -536,9 +542,9 @@ export const Thunk = {
     '[dev-env] unmount app instance',
     (_, { panelKey }: { panelKey: string }) => {
       // Ensure bootstrap script removed
-      document.getElementById(panelKeyToAppScriptId(panelKey))?.remove();
+      document.getElementById(Dev.panelKeyToAppScriptId(panelKey))?.remove();
       // Ensure react app is unmounted.
-      const el = document.getElementById(panelKeyToAppElId(panelKey));
+      const el = document.getElementById(Dev.panelKeyToAppElId(panelKey));
       el && ReactDOM.unmountComponentAtNode(el);
       // console.log({ unmountedAppAt: el });
     },
@@ -550,9 +556,9 @@ export const Thunk = {
       src: string;
       dst: string;
       typings: string;
-      imports: JsImportMeta[];
-      exports: JsExportMeta[];
-      cyclicDepError: null | CyclicDepError;
+      imports: PatchJs.JsImportMeta[];
+      exports: PatchJs.JsExportMeta[];
+      cyclicDepError: null | PatchJs.CyclicDepError;
     }) => {
       devEnv.file[filename]?.transpiled?.cleanups.forEach(cleanup => cleanup());
       const typesFilename = filename.replace(/\.tsx?$/, '.d.ts');
@@ -560,8 +566,8 @@ export const Thunk = {
       const filenames = Object.keys(devEnv.file);
       dispatch(Act.storeCodeTranspilation(filename, { type: 'js', ...rest,
         cleanups: [() => disposable.dispose()],
-        importFilenames: importPathsToCodeFilenames(rest.imports.map(({ path }) => path.value), filenames),
-        exportFilenames: importPathsToCodeFilenames(rest.exports.map(({ from }) => from?.value as string).filter(Boolean), filenames),
+        importFilenames: PatchJs.importPathsToCodeFilenames(rest.imports.map(({ path }) => path.value), filenames),
+        exportFilenames: PatchJs.importPathsToCodeFilenames(rest.exports.map(({ from }) => from?.value as string).filter(Boolean), filenames),
       }));
     },
   ),
@@ -577,11 +583,11 @@ export const reducer = (state = initialState, act: Action): State => {
       })),
     };
     case '[dev-env] change panel meta': {
-      const metaState = getDevPanelMetaState(state.panelToMeta[act.pay.panelKey]);
+      const metaState = Dev.getDevPanelMetaState(state.panelToMeta[act.pay.panelKey]);
       return { ...state,
         panelToMeta: addToLookup(act.pay.to === 'app'
-          ? { ...createDevPanelAppMeta(act.pay.panelKey), ...metaState }
-          : { ...createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), ...metaState }
+          ? { ...Dev.createDevPanelAppMeta(act.pay.panelKey), ...metaState }
+          : { ...Dev.createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), ...metaState }
         , state.panelToMeta),
       };
     }
@@ -608,7 +614,7 @@ export const reducer = (state = initialState, act: Action): State => {
         pathErrors: [],
         prefixed: null,
         cssModule: null,
-      } as StyleFile, state.file),
+      } as Dev.StyleFile, state.file),
     };
     case '[dev-env] remove file': return { ...state,
       file: removeFromLookup(act.pay.filename, state.file),
@@ -621,11 +627,11 @@ export const reducer = (state = initialState, act: Action): State => {
     };
     case '[dev-env] create app panel meta': return { ...state,
       panelToMeta: addToLookup(
-        createDevPanelAppMeta(act.pay.panelKey), state.panelToMeta),
+        Dev.createDevPanelAppMeta(act.pay.panelKey), state.panelToMeta),
     };
     case '[dev-env] create file panel meta': return { ...state,
       panelToMeta: addToLookup(
-        createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), state.panelToMeta)
+        Dev.createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), state.panelToMeta)
     };
     case '[dev-env] set ts/tsx validity': return { ...state,
       bootstrapped: act.pay.isValid,
@@ -662,11 +668,11 @@ const bootstrapAppInstances = createEpic(
       const { file, bootstrapped } = state$.value.devEnv;
 
       if (act.type === '[dev-env] store code transpilation') {
-        const reachableJsFiles = getReachableJsFiles(file);
-        if (!reachableJsFiles.includes(file[act.pay.filename] as CodeFile)) {
+        const reachableJsFiles = Dev.getReachableJsFiles(file);
+        if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
           return []; // Ignore files unreachable from index.tsx
         }
-        if (reachableJsFiles.every((f) => isFileValid(f))) {
+        if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
           return [// All reachable code locally valid so try bootstrap app
             Thunk.bootstrapApps({}),
           ];
@@ -699,7 +705,7 @@ const bootstrapStyles = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[dev-env] store style transpilation'),
     flatMap(({ pay: { filename } }) => {
-      const file = pluck(state$.value.devEnv.file, ({ ext }) => ext === 'scss') as KeyedLookup<PrefixedStyleFile>;
+      const file = pluck(state$.value.devEnv.file, ({ ext }) => ext === 'scss') as KeyedLookup<Dev.PrefixedStyleFile>;
       const parentFiles = Object.values(file).filter(({ key, pathIntervals }) =>
         key !== filename && pathIntervals.some(({ path }) => path === `./${filename}`));
       return [
@@ -745,9 +751,9 @@ const onChangePanel = createEpic(
       const { panelKey } = act.pay;
       if (act.type === '[layout] panel created') {
         const { file } = state$.value.devEnv;
-        if (isAppPanel(act.pay.panelMeta)) {
+        if (Dev.isAppPanel(act.pay.panelMeta)) {
           return [LayoutThunk.setPanelTitle({ panelKey, title: 'App' })];
-        } else if (isFilePanel(act.pay.panelMeta)) {
+        } else if (Dev.isFilePanel(act.pay.panelMeta)) {
           const { filename } = act.pay.panelMeta;
           return [
             LayoutThunk.setPanelTitle({ panelKey, title: filename }),

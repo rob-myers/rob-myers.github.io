@@ -23,7 +23,7 @@ ReactDOM.render(WrappedApp, rootEl);
 export const getReactRefreshBootstrapCode = () => `
 
 import RefreshRuntime from '${window.location.origin}/es-react-refresh/runtime.js'
-// import RefreshHelpers from '${window.location.origin}/es-react-refresh/helpers.js'
+import RefreshHelpers from '${window.location.origin}/es-react-refresh/helpers.js'
 
 const self = window;
 
@@ -36,6 +36,6 @@ self.${REFRESH_REG} = function (filename, type, id) {
 self.${REFRESH_SIG} = RefreshRuntime.createSignatureFunctionForTransform
 
 // Register global helpers
-// self.${REFRESH_HELPERS} = RefreshHelpers
+self.${REFRESH_HELPERS} = RefreshHelpers
 
 `.trim();
