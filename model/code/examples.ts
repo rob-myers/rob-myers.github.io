@@ -61,6 +61,7 @@ export const App: React.FC = () => {
       {items.map(x => (
         <Item
           id={x}
+          key={x}
           remove={() => setItems(items.filter(y => y !== x))}
         />
       ))}

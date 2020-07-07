@@ -4,6 +4,9 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [ ] enrich import metas so we can rewrite imports from react
+- [ ] ensure next.js is not conflicting with our hook into react-refresh
+- [ ] garbage-collect blob urls
 - [x] avoid changing `$RefreshReg$` (try-finally can't contain imports)
 - [x] bootstrap react-refresh
 - [ ] provide redux/react-redux typings and can import
