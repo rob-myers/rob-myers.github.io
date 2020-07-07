@@ -26,10 +26,6 @@ export function panelKeyToAppElId(panelKey: string) {
   return `app-instance-${panelKey}`;
 }
 
-export function panelKeyToAppScriptId(panelKey: string) {
-  return `bootstrap-app-${panelKey}`;
-}
-
 export function panelKeyToEditorKey(panelKey: string) {
   return `editor-${panelKey}`;
 }
@@ -55,7 +51,7 @@ export function getBlobUrl(jsCode: string) {
   return URL.createObjectURL(bootstrapBlob);     
 }
 
-export function ensureEsmModule(input: { scriptId: string; scriptSrcUrl: string }) {
+export function ensureEsModule(input: { scriptId: string; scriptSrcUrl: string }) {
   document.getElementById(input.scriptId)?.remove();
   const el = document.createElement('script');
   el.id = input.scriptId;
@@ -282,12 +278,3 @@ export function createDevPanelFileMeta(panelKey: string, filename: string): DevP
     menuOpen: false,
   };
 }
-
-/**
- * We'll use react-refresh in production as part of dev-env.
- * We avoid name collision with next.js.
- */
-export const REFRESH_REG = '$RefreshRegProd$';
-export const REFRESH_SIG = '$RefreshSigProd$';
-export const REFRESH_HELPERS = '$RefreshHelpersProd$';
-export const REFRESH_INTERCEPT_MODULE_EXECUTION = '$RefreshInterceptModuleExecutionProd$';

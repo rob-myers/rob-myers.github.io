@@ -1,20 +1,18 @@
 import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
-import { ReactDOM } from '../public/es-react'; // Runtime react
+import { renderAppAt, storeAppFromBlobUrl, unmountAppAt } from '../public/render-app';
 
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
 import * as Dev from '@model/code/dev-env.model';
-import { getAppBootstrapCode, getReactRefreshBootstrapCode } from '@model/code/bootstrap';
 import { TsTranspilationResult } from '@model/monaco/monaco.model';
 import * as PatchJs from '@model/code/patch-js-imports';
 import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/code/handle-scss-imports';
 import { getCssModuleCode } from '@model/code/css-module';
 import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
-import { getWindow } from '@model/dom.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
 
 import { filterActs } from './reducer';
@@ -73,16 +71,9 @@ export type Action = ActionsUnion<typeof Act>;
 export const Thunk = {
   bootstrapAppInstance: createThunk(
     '[dev-env] bootstrap app instance',
-    ({ state: { devEnv } }, { panelKey }: { panelKey: string }) => {
+    (_, { panelKey }: { panelKey: string }) => {
       const appInstanceElId = Dev.panelKeyToAppElId(panelKey);
-      const { blobUrl: appBlobUrl } = (devEnv.file['index.tsx'] as Dev.CodeFile).esModule!;
-      
-      const bootstrapCode = getAppBootstrapCode(appBlobUrl, appInstanceElId);
-      const bootstrapBlob = new Blob([bootstrapCode], { type: 'text/javascript' });
-      const bootstrapUrl = URL.createObjectURL(bootstrapBlob);      
-      
-      const bootstrapScriptId = Dev.panelKeyToAppScriptId(panelKey);
-      Dev.ensureEsmModule({ scriptId: bootstrapScriptId, scriptSrcUrl: bootstrapUrl });
+      renderAppAt(appInstanceElId);
       // console.log({ mountedAppAt: document.getElementById(appInstanceElId) });
     },
   ),
@@ -101,23 +92,29 @@ export const Thunk = {
         return;
       }
 
-      /**
-       * Patch import/export paths and apply react-refresh transform.
-       */
+      // Patch import/export paths and apply react-refresh transform
       await dispatch(Thunk.patchAllTranspiledCode({}));
 
+      // Attach/replace all ES modules as script's with blob urls
       const { devEnv } = getState();
       const jsFiles = Dev.getReachableJsFiles(devEnv.file).reverse();
       for (const { key: filename, esModule: esm } of jsFiles) {
-        Dev.ensureEsmModule({
+        Dev.ensureEsModule({
           scriptId: Dev.filenameToScriptId(filename),
           scriptSrcUrl: esm!.blobUrl,
         });
       }
+
+      // Store App (from dynamic module) inside static module
+      const appUrl = (devEnv.file['index.tsx'] as Dev.CodeFile).esModule!.blobUrl;
+      await storeAppFromBlobUrl(appUrl);
+
+      // Render App in each panel
       Object.values(devEnv.panelToMeta).filter(({ panelType }) => panelType === 'app')
         .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
-
+  
       dispatch(Act.setBootstrapped(true));
+
     },
   ),
   /**
@@ -255,11 +252,6 @@ export const Thunk = {
       !devEnv.file['other.scss']?.contents &&
         dispatch(Act.createStyleFile({ filename: 'other.scss', contents: exampleScss2 }));
       dispatch(Act.initialized());
-
-      getWindow() && Dev.ensureEsmModule({
-        scriptId: 'bootstrap-react-refresh',
-        scriptSrcUrl: Dev.getBlobUrl(getReactRefreshBootstrapCode()),
-      });
     },
   ),
   filenameToPanelKey: createThunk(
@@ -541,12 +533,7 @@ export const Thunk = {
   tryUnmountAppInstance: createThunk(
     '[dev-env] unmount app instance',
     (_, { panelKey }: { panelKey: string }) => {
-      // Ensure bootstrap script removed
-      document.getElementById(Dev.panelKeyToAppScriptId(panelKey))?.remove();
-      // Ensure react app is unmounted.
-      const el = document.getElementById(Dev.panelKeyToAppElId(panelKey));
-      el && ReactDOM.unmountComponentAtNode(el);
-      // console.log({ unmountedAppAt: el });
+      unmountAppAt(Dev.panelKeyToAppElId(panelKey));
     },
   ),
   updateCodeTranspilation: createThunk(

@@ -8,7 +8,7 @@
 import * as babel from '@babel/core';
 import { types as t } from '@babel/core';
 import generate from '@babel/generator';
-import { REFRESH_REG, REFRESH_SIG } from './dev-env.model';
+import { REFRESH_REG, REFRESH_SIG } from '../../public/constants';
 
 // import InternalFile from '@babel/core/lib/transformation/file/file';
 const InternalFile = (babel as any).File;

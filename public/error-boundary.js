@@ -1,4 +1,4 @@
-import * as React from './es-react/react.js';
+import * as React from './es-react/react';
 
 export class ErrorBoundary extends React.Component {
   constructor(props) {
