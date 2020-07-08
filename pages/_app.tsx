@@ -1,5 +1,3 @@
-// require avoids tree-shake in production
-require('@public/es-react-refresh/bootstrap');
 import { NextComponentType, NextPageContext } from 'next';
 import { Router } from 'next/dist/client/router';
 import Head from 'next/head';

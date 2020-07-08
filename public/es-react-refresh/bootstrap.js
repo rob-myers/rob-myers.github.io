@@ -1,17 +1,19 @@
 import RefreshRuntime from './runtime';
+
+if (typeof window !== 'undefined') {
+  /**
+   * Hook into ReactDOM initialization, see also
+   * @next/react-refresh-utils/runtime.js
+   */
+  // console.log('injecting prod RefreshRuntime into global hook');
+  RefreshRuntime.injectIntoGlobalHook(window);
+}
+
 import RefreshHelpers from './helpers';
 import React from '../es-react/react';
 import { REFRESH_HELPERS, REFRESH_REG, REFRESH_SIG, LIVE_REACT } from '../constants';
 
-if (typeof window !== 'undefined') {
-  /**
-   * Hook into ReactDOM initialization
-   * See also @next/react-refresh-utils/runtime.js
-   * which also injects into global hook.
-   */
-  // console.log('RefreshRuntime injecting into global hook')
-  RefreshRuntime.injectIntoGlobalHook(window)
-  
+if (typeof window !== 'undefined') {    
   window[REFRESH_REG] = function (filename, type, id) {
     RefreshRuntime.register(type, filename + ' ' + id)
   }
@@ -28,3 +30,5 @@ if (typeof window !== 'undefined') {
    */
   window[LIVE_REACT] = React;
 }
+
+export default function preventTreeShake() {}

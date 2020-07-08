@@ -1,3 +1,6 @@
+import preventTreeShake from './es-react-refresh/bootstrap';
+preventTreeShake();
+
 import React from './es-react/react';
 import ReactDOM from './es-react/react-dom';
 import { ErrorBoundary } from './error-boundary';
