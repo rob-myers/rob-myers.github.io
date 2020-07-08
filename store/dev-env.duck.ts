@@ -78,13 +78,15 @@ export const Thunk = {
   ),
   bootstrapAppInstance: createThunk(
     '[dev-env] bootstrap app instance',
-    ({ state: { devEnv } }, { panelKey }: { panelKey: string }) => {
+    ({ state: { devEnv }, dispatch }, { panelKey }: { panelKey: string }) => {
       /**
        * 1st attempt at implementing react-refresh
-       * TODO can invalidate via changing exports
+       * - TODO can invalidate via changing exports
        */
-      if (!devEnv.bootstrapped) {
+      const meta = devEnv.panelToMeta[panelKey] as Dev.DevPanelAppMeta;
+      if (!devEnv.bootstrapped || !meta.appRendered) {
         renderAppAt(Dev.panelKeyToAppElId(panelKey));
+        dispatch(Act.updatePanelMeta(panelKey, () => ({ appRendered: true })));
       } else {
         RefreshRuntime.performReactRefresh();
       }

@@ -251,6 +251,7 @@ export interface DevPanelAppMeta extends BasePanelMeta {
   panelType: 'app';
   elementId: string;
   panelMounted: boolean;
+  appRendered: boolean;
 }
 interface BasePanelMeta {
   /** Panel key */
@@ -269,6 +270,7 @@ export function createDevPanelAppMeta(panelKey: string): DevPanelAppMeta {
     elementId: panelKeyToAppElId(panelKey),
     menuOpen: false,
     panelMounted: false,
+    appRendered: false,
   };
 }
 
