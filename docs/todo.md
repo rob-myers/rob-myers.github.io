@@ -4,7 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
-- [ ] enrich import metas so we can rewrite imports from react
+- [x] react facade for dynamic modules, providing react from render-react.js
 - [ ] ensure next.js is not conflicting with our hook into react-refresh
 - [ ] garbage-collect blob urls
 - [x] avoid changing `$RefreshReg$` (try-finally can't contain imports)

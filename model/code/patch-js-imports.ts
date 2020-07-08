@@ -172,12 +172,7 @@ function patchTranspiledCode(
     const { value, start } = importMeta.path;
     const filename = relPathToFilename(value, allFilenames);
     if (value === 'react') {
-      /**
-       * See below. Originally we used:
-       * `nextValue = `${window.location.origin}/es-react/react.js`;`
-       * but this resolves a different instance of react than dev-env.duck's.
-       */
-      return; 
+      nextValue = `${window.location.origin}/runtime-modules/react-facade.js`;
     } else if (filename && filenameToPatched[filename]) {
       nextValue = filenameToPatched[filename].blobUrl;
     } else if (filename.endsWith('.scss')) {
@@ -189,21 +184,6 @@ function patchTranspiledCode(
     patched = replaceImportAt(patched, value, start + offset, nextValue);
     offset += (nextValue.length - value.length - 1);
   });
-
-  /**
-   * Currently we only support the standard namespace import of react.
-   * Technically could support e.g. `import { useState } from 'react'`
-   * via `const useState = window.__LIVE_REACT__.useState`.
-   * 
-   * TODO
-   * - provide lineStartPos, lineEndPos, (name, alias)'s in importMeta above
-   * - replace these imports appropriately
-   */
-  patched = patched
-    .replace(
-      /import\s+\*\s+as\s+React\s+from\s+('react')|("react")/,
-      'const React = window.__LIVE_REACT__',
-    );
 
   return patched;
 }

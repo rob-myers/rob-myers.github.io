@@ -1,6 +1,6 @@
 import RefreshRuntime from './es-react-refresh/runtime'
 import RefreshHelpers from './es-react-refresh/helpers'
-import { REFRESH_HELPERS, REFRESH_REG, REFRESH_SIG } from './constants';
+import { REFRESH_HELPERS, REFRESH_REG, REFRESH_SIG, LIVE_REACT } from './constants';
 
 import React from './es-react/react';
 import ReactDOM from './es-react/react-dom';
@@ -21,11 +21,11 @@ if (typeof window !== 'undefined') {
   
   /**
    * We need the dynamic app module to refer to the same `react`.
-   * Tried `import * as React from ${window.location.origin}/es-react/react.js`
-   * inside dynamic module. However this yields a different copy of react,
-   * because module specifier different.
+   * We tried `import * as React from ${window.location.origin}/es-react/react.js`
+   * inside dynamic module but it yields a different copy of react,
+   * because the module specifier is different.
    */
-  typeof window !== 'undefined' && (window.__LIVE_REACT__ = React);
+  window[LIVE_REACT] = React;
 }
 
 let App;
