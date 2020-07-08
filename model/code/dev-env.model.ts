@@ -247,9 +247,10 @@ interface DevPanelFileMeta extends BasePanelMeta {
   panelType: 'file';
   filename: string;
 }
-interface DevPanelAppMeta extends BasePanelMeta {
+export interface DevPanelAppMeta extends BasePanelMeta {
   panelType: 'app';
   elementId: string;
+  panelMounted: boolean;
 }
 interface BasePanelMeta {
   /** Panel key */
@@ -267,6 +268,7 @@ export function createDevPanelAppMeta(panelKey: string): DevPanelAppMeta {
     panelType: 'app',
     elementId: panelKeyToAppElId(panelKey),
     menuOpen: false,
+    panelMounted: false,
   };
 }
 

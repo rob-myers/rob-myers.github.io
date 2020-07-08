@@ -69,6 +69,12 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  appPanelMounted: createThunk(
+    '[dev-env] app panel mounted',
+    ({ dispatch }, { panelKey }: { panelKey: string }) => {
+      dispatch(Act.updatePanelMeta(panelKey, () => ({ panelMounted: true }) as Dev.DevPanelAppMeta));
+    },
+  ),
   bootstrapAppInstance: createThunk(
     '[dev-env] bootstrap app instance',
     (_, { panelKey }: { panelKey: string }) => {
@@ -647,7 +653,7 @@ const bootstrapAppInstances = createEpic(
   (action$, state$) => action$.pipe(
     filterActs(
       '[dev-env] store code transpilation',
-      '[dev-env] create app panel meta',
+      '[dev-env] app panel mounted',
       '[dev-env] change panel meta',
       '[dev-env] forget panel meta',
     ),
@@ -666,9 +672,13 @@ const bootstrapAppInstances = createEpic(
         } else if (bootstrapped) {
           return [Act.setBootstrapped(false)];
         }
-      } else if (act.type === '[dev-env] create app panel meta') {
+      } else if (act.type === '[dev-env] app panel mounted') {
         if (bootstrapped) {
-          return [Thunk.bootstrapAppInstance({ panelKey: act.pay.panelKey })];
+          console.log('HERE');
+          /**
+           * TODO too early
+           */
+          return [Thunk.bootstrapAppInstance({ panelKey: act.args.panelKey })];
         }
       } else if (act.type === '[dev-env] change panel meta') {
         if (bootstrapped && act.pay.to === 'app') {

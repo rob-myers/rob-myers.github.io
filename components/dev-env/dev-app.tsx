@@ -1,10 +1,17 @@
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { panelKeyToAppElId, panelKeyToEditorKey, filenameToModelKey } from '@model/code/dev-env.model';
+import { Thunk } from '@store/dev-env.duck';
 import Editor from '@components/monaco/editor';
 import css from './dev-app.scss';
 
 const DevApp: React.FC<Props> = ({ panelKey }) => {
   const monacoLoaded = useSelector(({ editor: { monacoLoaded } }) => monacoLoaded);
+  const dispatch = useDispatch();
+
+  useEffect(() => {// Need this signal to trigger app bootstrap
+    dispatch(Thunk.appPanelMounted({ panelKey }));
+  }, []);
 
   return (
     <>
@@ -17,7 +24,7 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
       </div>
 
       {!monacoLoaded && (
-        // Ensure monaco is bootstrapped via hidden editor.
+        // Ensure monaco is bootstrapped via hidden editor
         <div className={css.hiddenMonacoEditor}>
           <Editor
             editorKey={panelKeyToEditorKey(panelKey)}
