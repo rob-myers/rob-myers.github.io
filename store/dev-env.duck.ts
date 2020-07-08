@@ -1,7 +1,8 @@
-import RefreshRuntime from '../public/es-react-refresh/runtime';
 import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
-import { renderAppAt, storeAppFromBlobUrl, unmountAppAt } from '../public/render-app';
+
+import { renderAppAt, storeAppFromBlobUrl, unmountAppAt } from '@public/render-app';
+import RefreshRuntime from '@public/es-react-refresh/runtime';
 
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';

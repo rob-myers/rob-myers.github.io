@@ -4,6 +4,9 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [x] react-refresh works without react dev-tools
+- [ ] react-refresh can recover from render error
+  > perhaps can revert to previous registrations?
 - [ ] can invalidate react-refresh via changing exports
 - [x] 1st working implementation of `react-refresh`.
 - [x] react facade for dynamic modules, providing react from render-react.js

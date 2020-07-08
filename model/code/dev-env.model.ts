@@ -259,6 +259,9 @@ interface BasePanelMeta {
   menuOpen: boolean;
 }
 
+/**
+ * State shared by panels of different types.
+ */
 export function getDevPanelMetaState({ menuOpen }: DevPanelMeta) {
   return { menuOpen };
 }
