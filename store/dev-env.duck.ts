@@ -1,3 +1,4 @@
+import RefreshRuntime from '../public/es-react-refresh/runtime';
 import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
 import { renderAppAt, storeAppFromBlobUrl, unmountAppAt } from '../public/render-app';
@@ -77,10 +78,16 @@ export const Thunk = {
   ),
   bootstrapAppInstance: createThunk(
     '[dev-env] bootstrap app instance',
-    (_, { panelKey }: { panelKey: string }) => {
-      const appInstanceElId = Dev.panelKeyToAppElId(panelKey);
-      renderAppAt(appInstanceElId);
-      // console.log({ mountedAppAt: document.getElementById(appInstanceElId) });
+    ({ state: { devEnv } }, { panelKey }: { panelKey: string }) => {
+      /**
+       * 1st attempt at implementing react-refresh
+       * TODO can invalidate via changing exports
+       */
+      if (!devEnv.bootstrapped) {
+        renderAppAt(Dev.panelKeyToAppElId(panelKey));
+      } else {
+        RefreshRuntime.performReactRefresh();
+      }
     },
   ),
   bootstrapApps: createThunk(
@@ -674,10 +681,6 @@ const bootstrapAppInstances = createEpic(
         }
       } else if (act.type === '[dev-env] app panel mounted') {
         if (bootstrapped) {
-          console.log('HERE');
-          /**
-           * TODO too early
-           */
           return [Thunk.bootstrapAppInstance({ panelKey: act.args.panelKey })];
         }
       } else if (act.type === '[dev-env] change panel meta') {

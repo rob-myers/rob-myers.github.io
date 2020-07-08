@@ -7,8 +7,12 @@ import ReactDOM from './es-react/react-dom';
 import { ErrorBoundary } from './error-boundary';
 
 if (typeof window !== 'undefined') {
-  // Hook into ReactDOM initialization
-  console.log('[commitment] react-refresh injecting into global hook')
+  /**
+   * Hook into ReactDOM initialization
+   * See also @next/react-refresh-utils/runtime.js
+   * which also injects into global hook.
+   */
+  // console.log('RefreshRuntime injecting into global hook')
   RefreshRuntime.injectIntoGlobalHook(window)
   
   window[REFRESH_REG] = function (filename, type, id) {

@@ -4,14 +4,15 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [ ] can invalidate react-refresh via changing exports
+- [x] 1st working implementation of `react-refresh`.
 - [x] react facade for dynamic modules, providing react from render-react.js
-- [ ] ensure next.js is not conflicting with our hook into react-refresh
+- [x] ensure next.js is not conflicting with our hook into react-refresh
 - [ ] garbage-collect blob urls
 - [x] avoid changing `$RefreshReg$` (try-finally can't contain imports)
 - [x] bootstrap react-refresh
 - [ ] provide redux/react-redux typings and can import
 - [x] provide es modules redux and react-redux
-- [ ] document the steps needed to implement react-refresh
 - [x] implement `react-refresh` transform in syntax worker
 - [x] remove reducer `gitalk`
 - [x] can change current file or switch to App in panel menu
