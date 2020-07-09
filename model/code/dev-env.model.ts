@@ -30,10 +30,6 @@ export function panelKeyToEditorKey(panelKey: string) {
   return `editor-${panelKey}`;
 }
 
-export function filenameToModelKey(filename: string) {
-  return `model-${filename}`;
-}
-
 export function filenameToScriptId(filename: string) {
   return `module-for-${filename}`;
 }

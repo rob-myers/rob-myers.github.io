@@ -9,7 +9,7 @@ import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
 import * as Dev from '@model/code/dev-env.model';
-import { TsTranspilationResult } from '@model/monaco/monaco.model';
+import { TsTranspilationResult, filenameToModelKey } from '@model/monaco/monaco.model';
 import * as PatchJs from '@model/code/patch-js-imports';
 import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/code/handle-scss-imports';
 import { getCssModuleCode } from '@model/code/css-module';
@@ -290,7 +290,7 @@ export const Thunk = {
       cyclicDepError: PatchJs.CyclicDepError;
     }) => {
       console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(cyclicDepError)}`);
-      const modelKey = Dev.filenameToModelKey(filename);
+      const modelKey = filenameToModelKey(filename);
       // Expect pathIntervals paths to be relative e.g. ./foo-bar
       const pathIntervals = (devEnv.file[filename] as Dev.CodeFile).pathIntervals;
       const badIntervals = pathIntervals.filter(({ path }) => cyclicDepError.dependency.startsWith(path.slice(2)));
@@ -441,7 +441,7 @@ export const Thunk = {
 
       // Transpile if needed
       const needsTranspile = currFile.transpiled?.src !== currFile.contents;
-      const modelKey = Dev.filenameToModelKey(filename);
+      const modelKey = filenameToModelKey(filename);
       const transpiled: TsTranspilationResult = currFile.transpiled && !needsTranspile
         ? { key: 'success', src: currFile.contents, transpiledJs: currFile.transpiled.dst, typings: currFile.transpiled.typings }
         : await dispatch(EditorThunk.transpileTsMonacoModel({ modelKey }));
@@ -665,6 +665,11 @@ const bootstrapAppInstances = createEpic(
       '[dev-env] store code transpilation',
       '[dev-env] app panel mounted',
       '[dev-env] change panel meta',
+      /**
+       * TODO only dismount if explicitly closed panel
+       * - if changing layout we'll reparent sequentially
+       * - if switch pages we'll remember if switch back
+       */
       '[dev-env] forget panel meta',
     ),
     flatMap((act) => {
@@ -771,6 +776,16 @@ const onChangePanel = createEpic(
   ),
 );
 
+const resizeMonacoEpic = createEpic(
+  (action$, state$) =>
+    action$.pipe(
+      filterActs('[layout] panel resized'),
+      filter(({ pay: { panelKey } }) =>
+        !!state$.value.editor.editor[Dev.panelKeyToEditorKey(panelKey)]),
+      map(({ pay: { panelKey } }) =>
+        EditorThunk.resizeEditor({ editorKey: Dev.panelKeyToEditorKey(panelKey) })),
+    ));
+
 const trackCodeFileContents = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[editor] store monaco model'),
@@ -809,6 +824,7 @@ export const epic = combineEpics(
   initializeFileSystem,
   initializeMonacoModels,
   onChangePanel,
+  resizeMonacoEpic,
   trackCodeFileContents,
   togglePanelMenuEpic,
 );

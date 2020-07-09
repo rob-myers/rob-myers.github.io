@@ -4,6 +4,8 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [ ] react-refresh invalidated on change exports
+- [ ] perhaps always show panel-menu
 - [x] fix App switch from panel menu
 - [ ] persist apps on change layout (as much as possible)
 - [ ] persist app when switch page

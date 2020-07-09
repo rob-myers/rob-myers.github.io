@@ -64,3 +64,7 @@ export type ScssTranspilationResult = (
     | { errorKey: 'cyclic-dep'; dependency: string }
   )
 );
+
+export function filenameToModelKey(filename: string) {
+  return `model-${filename}`;
+}

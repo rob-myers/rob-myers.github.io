@@ -1,21 +1,17 @@
 // Get sass.js from node_modules, but sass.worker.js from public folder 
 import Sass, { SassWorker } from 'sass.js/dist/sass';
 import { combineEpics } from 'redux-observable';
-import { map, filter } from 'rxjs/operators';
 
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { Message } from '@model/worker.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
-import { createThunk, createEpic } from '@model/store/root.redux.model';
-import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco, Uri, IMarkerData, ScssTranspilationResult } from '@model/monaco/monaco.model';
+import { createThunk } from '@model/store/root.redux.model';
+import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco, Uri, IMarkerData, ScssTranspilationResult, filenameToModelKey } from '@model/monaco/monaco.model';
 import { MonacoService } from '@model/monaco/monaco.service';
 import { accessibilityHelpUrl } from '@model/monaco/monaco.model';
-// TODO remove connection to dev-env.model
-import { filenameToModelKey, panelKeyToEditorKey } from '@model/code/dev-env.model';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
-import { filterActs } from './reducer';
 import { CODE_FONT_FAMILY } from '@components/monaco/consts';
 
 
@@ -569,16 +565,6 @@ export const reducer = (state = initialState, act: Action): State => {
   }
 };
 
-const resizeMonacoEpic = createEpic(
-  (action$, state$) =>
-    action$.pipe(
-      filterActs('[layout] panel resized'),
-      filter(({ pay: { panelKey } }) =>
-        !!state$.value.editor.editor[panelKeyToEditorKey(panelKey)]),
-      map(({ pay: { panelKey } }) =>
-        Thunk.resizeEditor({ editorKey: panelKeyToEditorKey(panelKey) })),
-    ));
-
 export const epic = combineEpics(
-  resizeMonacoEpic,
+  // ...
 );

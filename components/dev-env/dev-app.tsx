@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { panelKeyToAppElId, panelKeyToEditorKey, filenameToModelKey } from '@model/code/dev-env.model';
+import { panelKeyToAppElId, panelKeyToEditorKey } from '@model/code/dev-env.model';
+import { filenameToModelKey } from '@model/monaco/monaco.model';
 import { Thunk } from '@store/dev-env.duck';
 import Editor from '@components/monaco/editor';
 import css from './dev-app.scss';
