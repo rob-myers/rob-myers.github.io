@@ -687,9 +687,7 @@ const bootstrapAppInstances = createEpic(
           return [Thunk.bootstrapAppInstance({ panelKey: act.args.panelKey })];
         }
       } else if (act.type === '[dev-env] change panel meta') {
-        if (bootstrapped && act.pay.to === 'app') {
-          return [Thunk.bootstrapAppInstance({ panelKey: act.pay.panelKey })];
-        } else if (act.pay.to === 'filename') {
+        if (act.pay.to === 'filename') {
           return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
         }
       } else {
