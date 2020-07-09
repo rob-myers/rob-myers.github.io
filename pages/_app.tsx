@@ -2,7 +2,7 @@ import { NextComponentType, NextPageContext } from 'next';
 import { Router } from 'next/dist/client/router';
 import Head from 'next/head';
 import { AppInitialProps } from 'next/app';
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
@@ -21,6 +21,14 @@ const RootApp: React.FC<RootProps> = ({
   reduxStore,
 }) => {
   const persistor = useRef(persistStore(reduxStore));
+
+  useEffect(() => {
+    const hiddenAppsEl = document.body.appendChild(document.createElement('div'));
+    hiddenAppsEl.id = 'hidden-apps-container';
+    hiddenAppsEl.style.setProperty('display', 'none');
+    return () => void hiddenAppsEl.remove();
+  }, []);
+
   return (
     <Provider store={reduxStore}>
       <PersistGate
