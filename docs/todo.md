@@ -4,6 +4,10 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [x] fix App switch from panel menu
+- [ ] persist apps on change layout (as much as possible)
+- [ ] persist app when switch page
+  > try https://github.com/httptoolkit/react-reverse-portal
 - [x] react-refresh works without react dev-tools
 - [ ] react-refresh can recover from render error
   > perhaps can revert to previous registrations?
