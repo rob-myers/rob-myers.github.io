@@ -541,11 +541,6 @@ export const Thunk = {
       }
     },
   ),
-  /**
-   * If `panelKey` an app panel and mounted, we unmount it.
-   * Has no effect if not an app panel or not mounted.
-   * Handles all cases because, once removed, we don't know what it was.
-   */
   tryUnmountAppInstance: createThunk(
     '[dev-env] unmount app instance',
     (_, { panelKey }: { panelKey: string }) => {
@@ -665,11 +660,6 @@ const bootstrapAppInstances = createEpic(
       '[dev-env] store code transpilation',
       '[dev-env] app panel mounted',
       '[dev-env] change panel meta',
-      /**
-       * TODO only dismount if explicitly closed panel
-       * - if changing layout we'll reparent sequentially
-       * - if switch pages we'll remember if switch back
-       */
       '[dev-env] forget panel meta',
     ),
     flatMap((act) => {
@@ -696,7 +686,11 @@ const bootstrapAppInstances = createEpic(
           return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
         }
       } else {
-        return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
+        /**
+         * Don't unmount in case we want to reparent later.
+         * Explicitly closed panels will unmount naturally anyway.
+         */
+        // return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
       }
       return [];
     }),
