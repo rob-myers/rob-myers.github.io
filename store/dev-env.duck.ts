@@ -1,10 +1,11 @@
 import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
+import * as portals from 'react-reverse-portal';
 
 import { renderAppAt, storeAppFromBlobUrl, unmountAppAt } from '@public/render-app';
 import RefreshRuntime from '@public/es-react-refresh/runtime';
 
-import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
+import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact } from '@model/store/redux.model';
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
@@ -24,8 +25,11 @@ import { Thunk as LayoutThunk, Act as LayoutAct } from './layout.duck';
 export interface State {
   file: KeyedLookup<Dev.FileState>;
   initialized: boolean;
+  /** Mirrors layout.panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
   bootstrapped: boolean;
+  /** So can persist App instances across site */
+  appPortal: KeyedLookup<Dev.AppPortal>;
 }
 
 const initialState: State = {
@@ -33,9 +37,12 @@ const initialState: State = {
   initialized: false,
   panelToMeta: {},
   bootstrapped: false,
+  appPortal: {},
 };
 
 export const Act = {
+  addAppPortal: (panelKey: string, portalNode: portals.HtmlPortalNode) =>
+    createAct('[dev-env] add app portal', { panelKey, portalNode: redact(portalNode) }),
   addFileCleanups: (filename: string, cleanups: (() => void)[]) =>
     createAct('[dev-env] add file cleanups', { filename, cleanups }),
   changePanelMeta: (panelKey: string, input: (
@@ -56,8 +63,14 @@ export const Act = {
     createAct('[dev-env] forget panel meta', input),
   initialized: () =>
     createAct('[dev-env] initialized', {}),
+  removeAppPortal: (panelKey: string) =>
+    createAct('[dev-env] remove app portal', { panelKey }),
+  rememberRenderedApp: (panelKey: string) =>
+    createAct('[dev-env] remember rendered app', { panelKey }),
+  restrictAppPortals: (input: { panelKeys: string[] }) =>
+    createAct('[dev-env] restrict app portals', input),
   setBootstrapped: (isValid: boolean) =>
-    createAct('[dev-env] set ts/tsx validity', { isValid }),
+    createAct('[dev-env] set bootstrapped', { isValid }),
   storeCodeTranspilation: (filename: string, transpilation: Dev.CodeTranspilation) =>
     createAct('[dev-env] store code transpilation', { filename, transpilation }),
   storeStyleTranspilation: (filename: string, transpilation: Dev.StyleTranspilation) =>
@@ -71,23 +84,23 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
-  appPanelMounted: createThunk(
-    '[dev-env] app panel mounted',
-    ({ dispatch }, { panelKey }: { panelKey: string }) => {
-      dispatch(Act.updatePanelMeta(panelKey, () => ({ panelMounted: true }) as Dev.DevPanelAppMeta));
-    },
+  appPortalIsReady: createThunk(
+    /**
+     * NOOP used to trigger bootstrapAppInstance
+     */
+    '[dev-env] app portal is ready',
+    (_, _input: { panelKey: string }) => void null,
   ),
   bootstrapAppInstance: createThunk(
     '[dev-env] bootstrap app instance',
     ({ state: { devEnv }, dispatch }, { panelKey }: { panelKey: string }) => {
       /**
        * 1st attempt at implementing react-refresh
-       * - TODO can invalidate via changing exports
+       * TODO invalidate when exports change
        */
-      const meta = devEnv.panelToMeta[panelKey] as Dev.DevPanelAppMeta;
-      if (!devEnv.bootstrapped || !meta.appRendered) {
+      if (!devEnv.bootstrapped || !devEnv.appPortal[panelKey].rendered) {
         renderAppAt(Dev.panelKeyToAppElId(panelKey));
-        dispatch(Act.updatePanelMeta(panelKey, () => ({ appRendered: true })));
+        dispatch(Act.rememberRenderedApp(panelKey));
       } else {
         RefreshRuntime.performReactRefresh();
       }
@@ -580,6 +593,13 @@ export const reducer = (state = initialState, act: Action): State => {
         cleanups: cleanupTrackers.concat(act.pay.cleanups),
       })),
     };
+    case '[dev-env] add app portal': return { ...state,
+      appPortal: addToLookup({
+        key: act.pay.panelKey,
+        portalNode: act.pay.portalNode,
+        rendered: false,
+      }, state.appPortal),
+    };    
     case '[dev-env] change panel meta': {
       const metaState = Dev.getDevPanelMetaState(state.panelToMeta[act.pay.panelKey]);
       return { ...state,
@@ -589,6 +609,10 @@ export const reducer = (state = initialState, act: Action): State => {
         , state.panelToMeta),
       };
     }
+    case '[dev-env] create app panel meta': return { ...state,
+      panelToMeta: addToLookup(
+        Dev.createDevPanelAppMeta(act.pay.panelKey), state.panelToMeta),
+    };
     case '[dev-env] create code file': return { ...state,
       file: addToLookup({
         key: act.pay.filename,
@@ -600,6 +624,10 @@ export const reducer = (state = initialState, act: Action): State => {
         cleanups: [],
         esModule: null,
       }, state.file),
+    };
+    case '[dev-env] create file panel meta': return { ...state,
+      panelToMeta: addToLookup(
+        Dev.createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), state.panelToMeta)
     };
     case '[dev-env] create style file': return { ...state,
       file: addToLookup({
@@ -614,24 +642,27 @@ export const reducer = (state = initialState, act: Action): State => {
         cssModule: null,
       } as Dev.StyleFile, state.file),
     };
-    case '[dev-env] remove file': return { ...state,
-      file: removeFromLookup(act.pay.filename, state.file),
-    };
     case '[dev-env] forget panel meta': return { ...state,
       panelToMeta: removeFromLookup(act.pay.panelKey, state.panelToMeta),
     };
     case '[dev-env] initialized': return { ...state,
       initialized: true,
     };
-    case '[dev-env] create app panel meta': return { ...state,
-      panelToMeta: addToLookup(
-        Dev.createDevPanelAppMeta(act.pay.panelKey), state.panelToMeta),
+    case '[dev-env] remember rendered app': return { ...state,
+      appPortal: updateLookup(act.pay.panelKey, state.appPortal, () => ({
+        rendered: true,
+      })),
     };
-    case '[dev-env] create file panel meta': return { ...state,
-      panelToMeta: addToLookup(
-        Dev.createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), state.panelToMeta)
+    case '[dev-env] remove file': return { ...state,
+      file: removeFromLookup(act.pay.filename, state.file),
     };
-    case '[dev-env] set ts/tsx validity': return { ...state,
+    case '[dev-env] remove app portal': return { ...state,
+      appPortal: removeFromLookup(act.pay.panelKey, state.appPortal),
+    };
+    case '[dev-env] restrict app portals': return { ...state,
+      appPortal: pluck(state.appPortal, ({ key }) => act.pay.panelKeys.includes(key)),
+    };
+    case '[dev-env] set bootstrapped': return { ...state,
       bootstrapped: act.pay.isValid,
     };
     case '[dev-env] store style transpilation': return { ...state,
@@ -658,9 +689,8 @@ const bootstrapAppInstances = createEpic(
   (action$, state$) => action$.pipe(
     filterActs(
       '[dev-env] store code transpilation',
-      '[dev-env] app panel mounted',
+      '[dev-env] app portal is ready',
       '[dev-env] change panel meta',
-      '[dev-env] forget panel meta',
     ),
     flatMap((act) => {
       const { file, bootstrapped } = state$.value.devEnv;
@@ -677,7 +707,7 @@ const bootstrapAppInstances = createEpic(
         } else if (bootstrapped) {
           return [Act.setBootstrapped(false)];
         }
-      } else if (act.type === '[dev-env] app panel mounted') {
+      } else if (act.type === '[dev-env] app portal is ready') {
         if (bootstrapped) {
           return [Thunk.bootstrapAppInstance({ panelKey: act.args.panelKey })];
         }
@@ -685,12 +715,6 @@ const bootstrapAppInstances = createEpic(
         if (act.pay.to === 'filename') {
           return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
         }
-      } else {
-        /**
-         * Don't unmount in case we want to reparent later.
-         * Explicitly closed panels will unmount naturally anyway.
-         */
-        // return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
       }
       return [];
     }),
@@ -699,7 +723,7 @@ const bootstrapAppInstances = createEpic(
 
 /**
  * Currently we append a <style> for *.scss, even if unused by App.
- * We also attempt to retranspile any immediate ancestor.
+ * We also attempt to retranspile any immediate ancestor (i.e. parent).
  */
 const bootstrapStyles = createEpic(
   (action$, state$) => action$.pipe(
@@ -741,6 +765,37 @@ const initializeMonacoModels = createEpic(
   ),
 );
 
+const manageAppPortals = createEpic(
+  (action$, state$) => action$.pipe(
+    filterActs(
+      '[dev-env] create app panel meta',
+      '[dev-env] change panel meta',
+      '[layout] panel closed', // App explicitly closed
+    ),
+    flatMap((act) => {
+      const { panelKey } = act.pay;
+      if (act.type === '[dev-env] create app panel meta') {
+        if (!state$.value.devEnv.appPortal[panelKey]) {
+          const portalNode = portals.createHtmlPortalNode();
+          portalNode.element.style.height = '100%';
+          return [Act.addAppPortal(panelKey, portalNode)];
+        }
+        return [];
+      } else if (act.type === '[dev-env] change panel meta') {
+        if (act.pay.to === 'app') {
+          const portalNode = portals.createHtmlPortalNode();
+          portalNode.element.style.height = '100%';
+          return [Act.addAppPortal(panelKey, portalNode)];
+        } else {
+          return [Act.removeAppPortal(panelKey)];
+        }
+      } else {
+        return [Act.removeAppPortal(panelKey)];
+      }
+    })
+  ),
+);
+
 const onChangePanel = createEpic(
   (action$, state$) => action$.pipe(
     filterActs(
@@ -770,7 +825,7 @@ const onChangePanel = createEpic(
   ),
 );
 
-const resizeMonacoEpic = createEpic(
+const resizeMonacoWithPanel = createEpic(
   (action$, state$) =>
     action$.pipe(
       filterActs('[layout] panel resized'),
@@ -817,8 +872,9 @@ export const epic = combineEpics(
   bootstrapStyles,
   initializeFileSystem,
   initializeMonacoModels,
+  manageAppPortals,
   onChangePanel,
-  resizeMonacoEpic,
+  resizeMonacoWithPanel,
   trackCodeFileContents,
   togglePanelMenuEpic,
 );

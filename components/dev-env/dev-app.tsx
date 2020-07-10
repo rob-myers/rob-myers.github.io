@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { panelKeyToAppElId, panelKeyToEditorKey } from '@model/code/dev-env.model';
+import * as portals from 'react-reverse-portal';
+
+import { panelKeyToEditorKey } from '@model/code/dev-env.model';
 import { filenameToModelKey } from '@model/monaco/monaco.model';
 import { Thunk } from '@store/dev-env.duck';
 import Editor from '@components/monaco/editor';
@@ -8,21 +10,18 @@ import css from './dev-app.scss';
 
 const DevApp: React.FC<Props> = ({ panelKey }) => {
   const monacoLoaded = useSelector(({ editor: { monacoLoaded } }) => monacoLoaded);
+  const portalNode = useSelector(({ devEnv }) => devEnv.appPortal[panelKey]?.portalNode);
   const dispatch = useDispatch();
 
   useEffect(() => {// Need this signal to trigger app bootstrap
-    dispatch(Thunk.appPanelMounted({ panelKey }));
-  }, []);
+    portalNode && dispatch(Thunk.appPortalIsReady({ panelKey }));
+  }, [portalNode]);
 
   return (
     <>
-      {/* App is mounted into this div */}
-      <div id={panelKeyToAppElId(panelKey)} style={{ height: '100%' }}>
-        {/* This placeholder is removed via app mount */}
-        <div className={css.appNotMounted}>
-          App not mounted
-        </div>
-      </div>
+      {portalNode && (// App instance (see AppPortals)
+        <portals.OutPortal node={portalNode} />
+      )}
 
       {!monacoLoaded && (
         // Ensure monaco is bootstrapped via hidden editor

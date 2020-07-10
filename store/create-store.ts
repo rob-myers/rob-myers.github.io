@@ -66,9 +66,7 @@ const persistedReducer = persistReducer({
     createTransform<LayoutState, LayoutState>(
       ({ goldenLayout }, _key) => ({
         goldenLayout: null,
-        nextConfig: goldenLayout
-          ? goldenLayout.toConfig()
-          : getDefaultLayoutConfig(),
+        nextConfig: goldenLayout?.toConfig() || getDefaultLayoutConfig(),
         panel: {},
       }),
       (state, _key) => state,
@@ -92,6 +90,7 @@ const persistedReducer = persistReducer({
         initialized: false,
         panelToMeta: {},
         bootstrapped: false,
+        appPortal: {},
       }),
       (state, _key) => state,
       { whitelist: ['devEnv'] },

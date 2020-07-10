@@ -1,4 +1,4 @@
-import { GoldenLayoutConfig } from './layout.model';
+import { GoldenLayoutConfig, traverseGlConfig } from './layout.model';
 import { deepClone } from '@model/generic.model';
 
 export type CustomPanelMetaKey = 'title' | 'filename' | 'devEnvComponent';
@@ -351,6 +351,15 @@ export function getDefaultLayoutConfig() {
 }
 
 function screenHasSmallWidth() {
-  return typeof window !== 'undefined'
-    && window.matchMedia('(max-width: 600px)').matches;
+  return typeof window !== 'undefined' && window.matchMedia('(max-width: 600px)').matches;
+}
+
+export function getConfigPanelKeys(config: GoldenLayoutConfig<CustomPanelMetaKey>) {
+  const panelKeys = [] as string[];
+  traverseGlConfig(config, (node) => {
+    if ('type' in node && node.type === 'component' && node.props.panelKey) {
+      panelKeys.push(node.props.panelKey);
+    }
+  });
+  return panelKeys;
 }

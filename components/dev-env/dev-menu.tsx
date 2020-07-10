@@ -1,10 +1,13 @@
 import Link from 'next/link';
 import { useState, useEffect, ChangeEvent } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+
 import classNames from 'classnames';
 import { menuHeightPx } from '@model/code/dev-env.model';
 import { Thunk as LayoutThunk } from '@store/layout.duck';
+import { Act } from '@store/dev-env.duck';
 import css from './dev-menu.scss';
+import { getConfigPanelKeys } from '@model/layout/example-layout.model';
 
 export const DevMenu = () => {
   const [disabled, setDisabled] = useState(true);
@@ -22,7 +25,9 @@ export const DevMenu = () => {
 
   const dispatch = useDispatch();
   const handleLayoutChange = ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
-    dispatch(LayoutThunk.setLayout({ layoutId: value }));
+    const nextLayout = dispatch(LayoutThunk.setLayout({ layoutId: value }));
+    const nextPanelKeys = getConfigPanelKeys(nextLayout);
+    dispatch(Act.restrictAppPortals({ panelKeys: nextPanelKeys }));
   };
 
   return (

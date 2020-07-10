@@ -81,13 +81,26 @@ export const Thunk = {
     '[layout] clicked panel title',
     (_, __: { panelKey: string }) => null,
   ),
+  /**
+   * When switching between pages we cannot rely on rehydrate.
+   */
+  saveCurrentLayout: createThunk(
+    '[layout] save current layout',
+    ({ state: { layout: { goldenLayout } }, dispatch }) => {
+      dispatch(Act.setNextConfig({
+        nextConfig: goldenLayout?.toConfig() || getDefaultLayoutConfig(),
+      }));
+    },
+  ),
   setLayout: createThunk(
     '[layout] set layout',
     ({ dispatch }, { layoutId }: { layoutId: string }) => {
       if (layoutId === 'default-layout') {
-        dispatch(Act.setNextConfig({ nextConfig: getDefaultLayoutConfig() }));
+        const nextConfig = getDefaultLayoutConfig();
+        dispatch(Act.setNextConfig({ nextConfig }));
+        return nextConfig;
       } else {
-        console.warn(`unrecognised layout id "${layoutId}" was ignored`);
+        throw Error(`unrecognised layout id "${layoutId}" was ignored`);
       }
     },
   ),

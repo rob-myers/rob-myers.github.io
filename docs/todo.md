@@ -7,8 +7,8 @@ See [blog notes](./blog.md).
 - [ ] react-refresh invalidated on change exports
 - [ ] perhaps always show panel-menu
 - [x] fix App switch from panel menu
-- [ ] persist apps on change layout (as much as possible)
-- [ ] persist app when switch page
+- [x] persist app panels on change layout (if same panelKey)
+- [x] persist app when switch page
   > try https://github.com/httptoolkit/react-reverse-portal
 - [x] react-refresh works without react dev-tools
 - [ ] react-refresh can recover from render error

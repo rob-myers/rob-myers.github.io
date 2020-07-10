@@ -1,7 +1,9 @@
+import { HtmlPortalNode } from 'react-reverse-portal';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
 import { CyclicDepError, JsExportMeta, JsImportMeta } from './patch-js-imports';
+import { Redacted } from '@model/store/redux.model';
 
 export const menuHeightPx = 32;
 
@@ -246,8 +248,6 @@ interface DevPanelFileMeta extends BasePanelMeta {
 export interface DevPanelAppMeta extends BasePanelMeta {
   panelType: 'app';
   elementId: string;
-  panelMounted: boolean;
-  appRendered: boolean;
 }
 interface BasePanelMeta {
   /** Panel key */
@@ -268,8 +268,6 @@ export function createDevPanelAppMeta(panelKey: string): DevPanelAppMeta {
     panelType: 'app',
     elementId: panelKeyToAppElId(panelKey),
     menuOpen: false,
-    panelMounted: false,
-    appRendered: false,
   };
 }
 
@@ -280,4 +278,14 @@ export function createDevPanelFileMeta(panelKey: string, filename: string): DevP
     filename: filename,
     menuOpen: false,
   };
+}
+
+/**
+ * Persists across different pages, unlike DevPanelAppMeta.
+ */
+export interface AppPortal {
+  /** Panel key */
+  key: string;
+  portalNode: Redacted<HtmlPortalNode>;
+  rendered: boolean;
 }
