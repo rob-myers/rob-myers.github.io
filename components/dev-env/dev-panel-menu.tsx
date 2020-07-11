@@ -46,7 +46,7 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
       )}
       {
         <div className={css.toggleIndicator}>
-          {open ? '⇧' : '⋯'}
+          {open ? '✕' : '⋯'}
         </div>
       }
     </div>
