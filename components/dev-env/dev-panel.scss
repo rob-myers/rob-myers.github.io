@@ -20,6 +20,7 @@
 
   &:hover {
     color: white;
+    background: rgb(45, 40, 40);
   }
 
   .menu-options {
@@ -27,6 +28,7 @@
   }
 
   .select-file {
+    margin-left: 8px;
     background: none;
     color: #aaa;
     border-color: #444;
