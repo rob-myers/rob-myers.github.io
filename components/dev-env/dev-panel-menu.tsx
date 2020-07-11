@@ -1,4 +1,5 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, MouseEvent } from 'react';
+import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { Thunk, Act } from '@store/dev-env.duck';
 import css from './dev-panel.scss';
@@ -19,29 +20,36 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
       dispatch(Thunk.changePanel({ panelKey, next: { to: 'filename', filename: value } }));
     }
   };
-  const closePanelMenu = () =>
-    dispatch(Act.updatePanelMeta(panelKey, () => ({ menuOpen: false })));
+  const toggle = () => dispatch(Act.updatePanelMeta(panelKey, () => ({ menuOpen: !open })));
+  const preventToggle = (e: MouseEvent) => e.stopPropagation();
 
-  return open && (
-    <div className={css.menuContainer}>
-      <select
-        className={css.selectFile}
-        value={currentValue}
-        onChange={handleFileChange}
-      >
-        <option value="app">App</option>
-        {filenames.map(filename =>
-          <option key={filename} value={filename}>{filename}</option>)}
-      </select>
-
-      <div
-        className={css.exitButton}
-        onClick={closePanelMenu}
-      >
-        ✕
-      </div>
+  return (
+    <div
+      onClick={toggle}
+      className={classNames(css.menuContainer, {
+        [css.menuClosed]: !open,
+      })}
+    >
+      {open && (
+        <div className={css.menuOptions}>
+          <select
+            className={css.selectFile}
+            value={currentValue}
+            onChange={handleFileChange}
+            onClick={preventToggle}
+          >
+            <option value="app">App</option>
+            {filenames.map(filename =>
+              <option key={filename} value={filename}>{filename}</option>)}
+          </select>
+        </div>
+      ) || (
+        <div className={css.toggleIndicator}>
+          ⋯
+        </div>
+      )}
     </div>
-  ) || null;
+  );
 };
 
 interface Props {

@@ -177,8 +177,20 @@ export const Thunk = {
       editorKey: string;
       nextFilename: string;
     }) => {
+      dispatch(Thunk.cleanupEditor({ editorKey }));
       const model = dispatch(Thunk.ensureMonacoModel({ filename: nextFilename, code: '' }));
-      e.editor[editorKey].editor.setModel(model);
+      const editor = e.editor[editorKey].editor;
+      editor.setModel(model);
+      if (nextFilename.endsWith('.tsx')) {
+        dispatch(Thunk.setupTsxCommentToggling({ editor, editorKey }));
+        dispatch(Thunk.setupTsxHighlighting({ editorKey }));        
+      }
+    },
+  ),
+  cleanupEditor: createThunk(
+    '[editor] cleanup editor',
+    ({ state: { editor } }, { editorKey }: { editorKey: string }) => {
+      editor.editor[editorKey]?.cleanups.forEach(cleanup => cleanup());
     },
   ),
   computeTsImportExports: createThunk(
@@ -202,7 +214,6 @@ export const Thunk = {
       filename: string;
     }) => {
       dispatch(Act.storeMonacoEditor({ editor, editorKey }));
-      dispatch(Act.addEditorCleanups({ editorKey, cleanups: [() => editor.dispose()] }));
 
       if (!e.model[modelKey]) {
         const uri = redact(e.internal!.monaco.Uri.parse(`file:///${filename}`));
@@ -292,7 +303,8 @@ export const Thunk = {
     ({ dispatch, state: { editor: { editor } }}, { editorKey }: { editorKey: string }) => {
       // editor might not have loaded before dismount
       if (editor[editorKey]) {
-        editor[editorKey].cleanups.forEach(cleanup => cleanup());
+        dispatch(Thunk.cleanupEditor({ editorKey }));
+        editor[editorKey].editor.dispose();
         dispatch(Act.update({ editor: removeFromLookup(editorKey, editor) }));
       }
     },
@@ -428,7 +440,7 @@ export const Thunk = {
       editorKey: string;
     }) => {
       const { monaco } = internal!;
-      editor.addAction({
+      const disposable = editor.addAction({
         id: 'editor.action.commentLine-tsx',
         label: 'Custom Toggle Line Comment for Tsx',
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.US_SLASH],
@@ -440,7 +452,6 @@ export const Thunk = {
           let endLineEndPos = model.getOffsetAt({ lineNumber: endLineNumber, column: 0 }) + endLineEndCol - 1;
           if (model.getValue().substr(endLineEndPos, 1) === '\n') endLineEndPos--;
           const code = editor.getValue() || '';
-          // console.log('TODO commenting at', { startLineStartPos, startLineNumber, endLineNumber, endLineEndPos });
           
           syntaxWorker!.postMessage({
             key: 'request-toggled-tsx-comment',
@@ -448,8 +459,7 @@ export const Thunk = {
             startLineStartPos,
             endLineEndPos,
           });        
-          const { result } = await awaitWorker(
-            'send-tsx-commented', syntaxWorker!, ({ origCode }) => code === origCode);
+          const { result } = await awaitWorker('send-tsx-commented', syntaxWorker!, ({ origCode }) => code === origCode);
 
           if (result.key === 'jsx-comment') {
             editor.executeEdits('tsx-comment-edit', [{
@@ -457,14 +467,14 @@ export const Thunk = {
               text: result.nextSelection,
               forceMoveMarkers: true,
             }]);
-            editor.setSelection(new monaco.Selection(
-              startLineNumber, 0, endLineNumber, model.getLineMaxColumn(endLineNumber)));
+            editor.setSelection(new monaco.Selection(startLineNumber, 0, endLineNumber, model.getLineMaxColumn(endLineNumber)));
           } else {
             await editor.getAction('editor.action.commentLine').run();
           }
           dispatch(Thunk.highlightTsxSyntax({ editorKey }));
         },
       });
+      dispatch(Act.addEditorCleanups({ editorKey, cleanups: [() => disposable.dispose()] }));
     },
   ),
   updateEditorDecorations: createThunk(

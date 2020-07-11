@@ -468,14 +468,13 @@ export const Thunk = {
 
       // Transform transpiled js via ReactFreshBabelPlugin
       const jsFilename = filename.replace(/\.tsx?$/, '.js');
-      syntaxWorker!.postMessage({ key: 'request-react-refresh-transform', filename: jsFilename, code: transpiled.transpiledJs });
-      const { transformedCode } = await awaitWorker('send-react-refresh-transform', syntaxWorker!, ({ origCode }) => origCode === transpiled.transpiledJs);
-
-      /**
-       * TODO append export-tracking-code:
-       * - can signal that a full refresh is needed
-       * - can trigger RefreshRuntime.performReactRefresh
-       */
+      syntaxWorker!.postMessage({
+        key: 'request-react-refresh-transform',
+        filename: jsFilename,
+        code: transpiled.transpiledJs,
+      });
+      const { transformedCode } = await awaitWorker('send-react-refresh-transform', syntaxWorker!,
+        ({ origCode }) => origCode === transpiled.transpiledJs);
       
       // Remember source-code-intervals of import/export specifiers so can show errors
       await dispatch(Thunk.rememberSrcPathIntervals({ filename, modelKey }));
@@ -857,16 +856,6 @@ const trackCodeFileContents = createEpic(
   ),
 );
 
-const togglePanelMenuEpic = createEpic(
-  (action$, _state$) => action$.pipe(
-    filterActs('[layout] clicked panel title'),
-    flatMap(({ args: { panelKey } }) => {
-      // console.log({ detectedTitleClick: panelKey });
-      return [Act.updatePanelMeta(panelKey, ({ menuOpen }) => ({ menuOpen: !menuOpen }))];
-    }),
-  ),
-);
-
 export const epic = combineEpics(
   bootstrapAppInstances,
   bootstrapStyles,
@@ -876,5 +865,4 @@ export const epic = combineEpics(
   onChangePanel,
   resizeMonacoWithPanel,
   trackCodeFileContents,
-  togglePanelMenuEpic,
 );

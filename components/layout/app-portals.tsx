@@ -20,7 +20,7 @@ const AppPortals: React.FC = ({ children }) => {
           <portals.InPortal key={panelKey} node={portalNode}>
             <div id={panelKeyToAppElId(panelKey)} style={{ height: '100%' }}>
               <div className={css.appNotMounted}>
-                App not mounted...
+                App is not mounted.
               </div>
             </div>
           </portals.InPortal>

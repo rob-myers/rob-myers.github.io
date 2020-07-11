@@ -4,8 +4,8 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
-- [ ] react-refresh invalidated on change exports
-- [ ] perhaps always show panel-menu
+- [x] fix syntax highlighting when switch to tsx
+- [x] always show panel-menu and can toggle open 
 - [x] fix App switch from panel menu
 - [x] persist app panels on change layout (if same panelKey)
 - [x] persist app when switch page

@@ -30,14 +30,14 @@ const Editor: React.FC<EditorProps> = (props) => {
   } = props;
 
   const divRef = React.useRef<HTMLDivElement>(null);
-  const [bootstrapped, setBootstrapped] = React.useState(false);
+  const [ready, setReady] = React.useState(false);
   const monacoLoaded = useSelector(({ editor }) => editor.monacoLoaded);
   const dispatch = useDispatch();
 
   React.useEffect(() => {
     (async () => {
-      if (!bootstrapped && divRef.current) {
-        const next = await dispatch(Thunk.bootstrapEditor({
+      if (!ready && divRef.current) {
+        const nextReady = await dispatch(Thunk.bootstrapEditor({
           monaco: redact(monaco),
           typescript: redact(typescript),
           typescriptDefaults: redact(typescriptDefaults),
@@ -47,21 +47,15 @@ const Editor: React.FC<EditorProps> = (props) => {
           filename,
           code,
         }));
-        divRef.current && setBootstrapped(next);
+        divRef.current && setReady(nextReady);
       }
     })();
-
-    return () => {
-      dispatch(Thunk.removeMonacoEditor({ editorKey }));
-    };
+    return () => void dispatch(Thunk.removeMonacoEditor({ editorKey }));
   }, [monacoLoaded]);
 
   React.useEffect(() => {
-    if (bootstrapped) {
+    if (ready) {
       dispatch(Thunk.changeEditorModel({ editorKey, nextFilename: filename }));
-      if (filename.endsWith('.tsx')) {
-        dispatch(Thunk.highlightTsxSyntax({ editorKey }));
-      }
     }
   }, [filename]);
 
