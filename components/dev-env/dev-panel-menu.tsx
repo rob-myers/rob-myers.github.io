@@ -43,11 +43,12 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
               <option key={filename} value={filename}>{filename}</option>)}
           </select>
         </div>
-      ) || (
-        <div className={css.toggleIndicator}>
-          ⋯
-        </div>
       )}
+      {
+        <div className={css.toggleIndicator}>
+          {open ? '⇧' : '⋯'}
+        </div>
+      }
     </div>
   );
 };
