@@ -19,10 +19,10 @@ const TopMenu: React.FC<Props> = ({
       <section className={classNames(css.links, {
         [css.disabled]: disableLinks,
       })}>
-        <Link  href="/"><a>home</a></Link>
+        <Link href="/"><a>home</a></Link>
         <Link href="about"><a>about</a></Link>
-        {/* <Link href="test"><a>Test</a></Link> */}
-        <Link href="dev"><a>commitment</a></Link>
+        <Link href="dev"><a>development</a></Link>
+        <Link href="test"><a>test</a></Link>
       </section>
     </>
   );
