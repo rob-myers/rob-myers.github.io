@@ -4,7 +4,6 @@
   "dependencies": {
     "@babel/core": "^7.10.2",
     "@babel/generator": "^7.10.2",
-    "@babel/plugin-transform-typescript": "^7.10.1",
     "cdt2d": "^1.0.0",
     "classnames": "^2.2.6",
     "earcut": "^2.2.2",

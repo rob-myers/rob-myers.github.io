@@ -43,8 +43,9 @@ See [blog notes](./blog.md).
 - [x] bootstrap app even when no monaco editor panel initially open
 - [x] detect `js` cyclic dep caused by `export { App } from './index'`
 - [ ] handle persistence across multiple tabs
-  > don't sync; create multiple persisted stores and can save/select
-  > warn if multiple unsaved projects open
+  > don't sync; create multiple persisted stores which can save/select
+  > don't permit same 'project' open twice
+  > use shared web-worker to detect others and amalgamate persist 
 - [x] aim towards 'properly hmr' top-down svg/css 3d agent engine
   > see project.md; see `with-bash-and-level` branch
 - [x] can import `scss` into `tsx` as css module

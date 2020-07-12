@@ -78,13 +78,18 @@ class ReactRefreshTransform {
     }
   }
   
+  /**
+   * Technically appears to support jsx, although we'll only run it
+   * against js transpiled from tsx. Perhaps could support tsx directly
+   * if we added the plugin @babel/plugin-transform-typescript.
+   */
   public async run(code: string, filename: string) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const parsed = (await babel.parseAsync(code, {
       filename,
-      plugins: [
-        // ['@babel/plugin-transform-typescript', { isTSX: true }],
-      ],
+      // plugins: [
+      //   ['@babel/plugin-transform-typescript', { isTSX: true }],
+      // ],
     }))!;
 
     // Ensure hub so e.g. .getSource() works
