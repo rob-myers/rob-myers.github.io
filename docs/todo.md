@@ -4,6 +4,10 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [ ] custom dropdown for better cross-browser experience
+- [ ] support multiple projects
+- [ ] new panel type `doc` e.g. for blog and README
+- [x] setup `mdx` and create demo test entry
 - [x] fix syntax highlighting when switch to tsx
 - [x] always show panel-menu and can toggle open 
 - [x] fix App switch from panel menu
