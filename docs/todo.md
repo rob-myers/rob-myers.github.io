@@ -4,7 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
-- [ ] custom dropdown for better cross-browser experience
+- [ ] custom dropdown for better x-browser experience
 - [ ] support multiple projects
 - [ ] new panel type `doc` e.g. for blog and README
 - [x] setup `mdx` and create demo test entry
