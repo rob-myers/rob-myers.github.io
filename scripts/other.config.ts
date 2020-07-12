@@ -2,7 +2,7 @@
 import webpack from 'webpack';
 import { WebpackCtxt } from './next.model';
 
-export default function(_: WebpackCtxt): webpack.Configuration {
+export default function(options: WebpackCtxt): webpack.Configuration {
 
   return {
     module: {
@@ -14,6 +14,18 @@ export default function(_: WebpackCtxt): webpack.Configuration {
             removingTagAttrs: ['viewBox'],
           }
         },
+        {
+          test: /\.mdx$/,
+          use: [
+            options.defaultLoaders.babel as any,
+            {
+              loader: '@mdx-js/loader',
+              options: {
+                // ...
+              }
+            },
+          ],
+        }
       ],
     }
   };

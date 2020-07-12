@@ -84,7 +84,6 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
         } : {},
         configStyles(options),
         configOther(options),
-
         !options.isServer ? configMonaco(config) : {},
       );
     }
