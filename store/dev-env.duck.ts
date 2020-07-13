@@ -322,12 +322,25 @@ export const Thunk = {
       dispatch(Act.updateFile(filename, { transpiled: null, pathIntervals: [] }));
     },
   ),
-  handleCodeAnalyze: createThunk(
+  /**
+   * IN PROGRESS
+   */
+  handleCodeAnalysis: createThunk(
     '[dev-env] handle code errors',
-    async (_, __: any) => {
-      /**
-       * TODO
-       */
+    async ({ dispatch }, {
+      cyclicDepError,
+      prevCyclicError,
+      filename,
+    }: { filename: string } & Dev.AnalyzeNextCode) => {
+      const modelKey = filenameToModelKey(filename);
+      if (cyclicDepError) {
+        dispatch(Thunk.handleCyclicJsDepError({ filename, cyclicDepError }));
+      } else {
+        dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
+        if (prevCyclicError) {
+          dispatch(Thunk.tryTranspileCodeModel({ filename: prevCyclicError.path, onlyIf: 'invalid' }));
+        }
+      }      
     },
   ),
   handleCyclicJsDepError: createThunk(
@@ -513,31 +526,23 @@ export const Thunk = {
         return;
       }
       
-      // Must transform 1st because later will patch code-intervals `imports`, `exports`
+      // Must transform 1st -- we'll patch code-intervals
+      // later using `analyzed.imports` and `analyzed.exports`.
       const { transformedCode } = await dispatch(Thunk.applyReactRefreshTransform({ filename, js: transpiled.js }));
-      const { imports, exports, jsPathErrors, cyclicDepError, prevCyclicError } =
-        await dispatch(Thunk.analyzeTranspiledJs({ filename, nextTranspiledJs: transformedCode }));
+      const analyzed = await dispatch(Thunk.analyzeTranspiledJs({ filename, nextTranspiledJs: transformedCode }));
 
       dispatch(Thunk.updateCodeTranspilation({
         filename,
         src: transpiled.src,
         // transpiled & transformed, yet imports/exports unpatched
         dst: transformedCode,
-        imports,
-        exports,
+        imports: analyzed.imports,
+        exports: analyzed.exports,
         typings: transpiled.typings,
-        jsPathErrors,
+        jsPathErrors: analyzed.jsPathErrors,
       }));
 
-      // TODO handleCodeAnalyze thunk
-      if (cyclicDepError) {
-        dispatch(Thunk.handleCyclicJsDepError({ filename, cyclicDepError }));
-      } else {
-        dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
-        if (prevCyclicError) {
-          dispatch(Thunk.tryTranspileCodeModel({ filename: prevCyclicError.path, onlyIf: 'invalid' }));
-        }
-      }
+      dispatch(Thunk.handleCodeAnalysis({ filename, ...analyzed }));
     },
   ),
   /**
