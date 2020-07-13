@@ -284,3 +284,11 @@ export interface AppPortal {
   portalNode: Redacted<HtmlPortalNode>;
   rendered: boolean;
 }
+
+export interface AnalyzeNextCode {
+  jsPathErrors: JsPathError[];
+  imports: JsImportMeta[];
+  exports: JsExportMeta[];
+  cyclicDepError: CyclicDepError | null;
+  prevCyclicError: CyclicDepError | null;
+}

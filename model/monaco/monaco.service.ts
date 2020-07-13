@@ -47,7 +47,7 @@ export class MonacoService {
       return {
         key: 'success',
         src,
-        transpiledJs: emitOutput.outputFiles[0].text,
+        js: emitOutput.outputFiles[0].text,
         typings: emitOutput.outputFiles[1].text,
       };
 

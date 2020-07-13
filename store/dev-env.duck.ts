@@ -84,6 +84,46 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  /**
+   * IN PROGRESS
+   */
+  analyzeTranspiledJs: createThunk(
+    '[dev-env] analyze transpiled js',
+    async ({ dispatch }, { filename, nextTranspiledJs }: {
+      filename: string;
+      nextTranspiledJs: string;
+    }): Promise<Dev.AnalyzeNextCode> => {
+      const modelKey = filenameToModelKey(filename);
+      // Remember code-intervals of source import/export specifiers so can show errors
+      await dispatch(Thunk.rememberSrcPathIntervals({ filename, modelKey }));
+
+      // TODO source path errors i.e. paths must be relative
+      // TODO transpiled js errors
+      const jsPathErrors = [] as Dev.JsPathError[];
+      const { imports, exports, cyclicDepError, prevCyclicError } = await dispatch(
+        Thunk.testCyclicJsDependency({ filename, nextTranspiledJs }));
+      cyclicDepError && jsPathErrors.push(cyclicDepError);
+
+      return {
+        jsPathErrors,
+        imports,
+        exports,
+        cyclicDepError,
+        prevCyclicError,
+      };
+    },
+  ),
+  /**
+   * Transform transpiled js via ReactFreshBabelPlugin.
+   */
+  applyReactRefreshTransform: createThunk(
+    '[dev-env] apply react refresh transform',
+    ({ state: { editor: { syntaxWorker } } }, { filename, js }: { filename: string; js: string }) => {
+      const jsFilename = filename.replace(/\.tsx?$/, '.js');
+      syntaxWorker!.postMessage({ key: 'request-react-refresh-transform', filename: jsFilename, code: js });
+      return awaitWorker('send-react-refresh-transform', syntaxWorker!, ({ origCode }) => origCode === js);
+    },
+  ),
   appPortalIsReady: createThunk(
     /**
      * NOOP used to trigger bootstrapAppInstance
@@ -134,7 +174,7 @@ export const Thunk = {
         });
       }
 
-      // Store App (from dynamic module) inside static module
+      // Get App from dynamic module and store inside static module
       const appUrl = (devEnv.file['index.tsx'] as Dev.CodeFile).esModule!.blobUrl;
       await storeAppFromBlobUrl(appUrl);
 
@@ -143,7 +183,6 @@ export const Thunk = {
         .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
   
       dispatch(Act.setBootstrapped(true));
-
     },
   ),
   /**
@@ -189,8 +228,7 @@ export const Thunk = {
     '[dev-env] create css module',
     ({ dispatch }, { filename }: { filename: string }) => {
       const code = getCssModuleCode(filename);
-      const blob = new Blob([code], { type: 'text/javascript' });
-      const blobUrl = URL.createObjectURL(blob);
+      const blobUrl = Dev.getBlobUrl(code);
       dispatch(Act.updateFile(filename, { cssModule: { code, blobUrl } } as Dev.StyleFile));
     },
   ),
@@ -220,7 +258,7 @@ export const Thunk = {
         ))
       ) as Dev.CodeFile[];
       /**
-       * Error iff adding this module creates a cycle i.e.
+       * Error iff adding this module creates a cycle:
        * some _direct dependency_ of `filename` has
        * some _direct dependent_ of `filename` as a transitive-dependency.
        */
@@ -271,23 +309,6 @@ export const Thunk = {
       return { key: 'success', stratification };
     },
   ),
-  initialize: createThunk(
-    '[dev-env] initialize',
-    ({ dispatch, state: { devEnv } }) => {
-      /**
-       * TEMP provide demo files.
-       */
-      !devEnv.file['index.tsx']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'index.tsx', contents: exampleTsx3 }));
-      !devEnv.file['model.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'model.ts', contents: exampleTs1 }));
-      !devEnv.file['index.scss']?.contents &&
-        dispatch(Act.createStyleFile({ filename: 'index.scss', contents: exampleScss1 }));
-      !devEnv.file['other.scss']?.contents &&
-        dispatch(Act.createStyleFile({ filename: 'other.scss', contents: exampleScss2 }));
-      dispatch(Act.initialized());
-    },
-  ),
   filenameToPanelKey: createThunk(
     '[dev-env] filename to panel key',
     ({ state: { devEnv } }, { filename }: { filename: string }) =>
@@ -299,6 +320,14 @@ export const Thunk = {
     ({ dispatch, state: { devEnv } }, { filename }: { filename: string }) => {
       devEnv.file[filename]?.transpiled?.cleanups.forEach(cleanup => cleanup());
       dispatch(Act.updateFile(filename, { transpiled: null, pathIntervals: [] }));
+    },
+  ),
+  handleCodeAnalyze: createThunk(
+    '[dev-env] handle code errors',
+    async (_, __: any) => {
+      /**
+       * TODO
+       */
     },
   ),
   handleCyclicJsDepError: createThunk(
@@ -341,6 +370,23 @@ export const Thunk = {
         }
         // dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
       }
+    },
+  ),
+  initialize: createThunk(
+    '[dev-env] initialize',
+    ({ dispatch, state: { devEnv } }) => {
+      /**
+       * TEMP provide demo files.
+       */
+      !devEnv.file['index.tsx']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'index.tsx', contents: exampleTsx3 }));
+      !devEnv.file['model.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'model.ts', contents: exampleTs1 }));
+      !devEnv.file['index.scss']?.contents &&
+        dispatch(Act.createStyleFile({ filename: 'index.scss', contents: exampleScss1 }));
+      !devEnv.file['other.scss']?.contents &&
+        dispatch(Act.createStyleFile({ filename: 'other.scss', contents: exampleScss2 }));
+      dispatch(Act.initialized());
     },
   ),
   /**
@@ -414,8 +460,9 @@ export const Thunk = {
         exports,
         cyclicDepError,
         /** Truthy iff previous transpilation exists and had `cyclicDepError` */
-        prevCyclicError: file.transpiled?.jsPathErrors
-          .find(x => x.key === 'cyclic-dependency') || null,
+        prevCyclicError: (
+          file.transpiled?.jsPathErrors.find(x => x.key === 'cyclic-dependency') || null
+        ) as null | Dev.CyclicDepError,
       };
     },
   ),
@@ -444,7 +491,7 @@ export const Thunk = {
    */
   tryTranspileCodeModel: createThunk(
     '[dev-env] try transpile code model',
-    async ({ dispatch, state: { devEnv, editor: { syntaxWorker } } }, { filename, onlyIf }: {
+    async ({ dispatch, state: { devEnv } }, { filename, onlyIf }: {
       filename: string;
       /** Used to break cycles */
       onlyIf?: 'valid' | 'invalid';
@@ -456,7 +503,7 @@ export const Thunk = {
       const needsTranspile = currFile.transpiled?.src !== currFile.contents;
       const modelKey = filenameToModelKey(filename);
       const transpiled: TsTranspilationResult = currFile.transpiled && !needsTranspile
-        ? { key: 'success', src: currFile.contents, transpiledJs: currFile.transpiled.dst, typings: currFile.transpiled.typings }
+        ? { key: 'success', src: currFile.contents, js: currFile.transpiled.dst, typings: currFile.transpiled.typings }
         : await dispatch(EditorThunk.transpileTsMonacoModel({ modelKey }));
 
       if (transpiled.key !== 'success') {
@@ -465,34 +512,24 @@ export const Thunk = {
         dispatch(Thunk.forgetCodeTranspilation({ filename })); // Cleanliness
         return;
       }
-
-      // Transform transpiled js via ReactFreshBabelPlugin
-      const jsFilename = filename.replace(/\.tsx?$/, '.js');
-      const { transpiledJs } = transpiled;
-      syntaxWorker!.postMessage({ key: 'request-react-refresh-transform', filename: jsFilename, code: transpiledJs });
-      const { transformedCode } = await awaitWorker('send-react-refresh-transform', syntaxWorker!, ({ origCode }) => origCode === transpiledJs);
       
-      // TODO detectCodeErrors thunk
-      // Remember code-intervals of source import/export specifiers so can show errors
-      await dispatch(Thunk.rememberSrcPathIntervals({ filename, modelKey }));
-      // TODO source path errors i.e. paths must be relative
-      // TODO transpiled js errors
-      const jsPathErrors = [] as Dev.JsPathError[];
-      const { imports, exports, cyclicDepError, prevCyclicError } = await dispatch(
-        Thunk.testCyclicJsDependency({ filename, nextTranspiledJs: transformedCode }));
-      cyclicDepError && jsPathErrors.push(cyclicDepError);
+      // Must transform 1st because later will patch code-intervals `imports`, `exports`
+      const { transformedCode } = await dispatch(Thunk.applyReactRefreshTransform({ filename, js: transpiled.js }));
+      const { imports, exports, jsPathErrors, cyclicDepError, prevCyclicError } =
+        await dispatch(Thunk.analyzeTranspiledJs({ filename, nextTranspiledJs: transformedCode }));
 
       dispatch(Thunk.updateCodeTranspilation({
         filename,
         src: transpiled.src,
-        dst: transformedCode, // transpiled & transformed, yet unpatched
+        // transpiled & transformed, yet imports/exports unpatched
+        dst: transformedCode,
         imports,
         exports,
         typings: transpiled.typings,
         jsPathErrors,
       }));
 
-      // TODO handleCodeErrors thunk
+      // TODO handleCodeAnalyze thunk
       if (cyclicDepError) {
         dispatch(Thunk.handleCyclicJsDepError({ filename, cyclicDepError }));
       } else {

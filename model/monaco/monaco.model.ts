@@ -16,7 +16,7 @@ export type Editor = monaco.editor.IStandaloneCodeEditor;
 
 /** Result of transpiling and/or transforming code */
 export type TsTranspilationResult = (
-  | { key: 'success'; src: string; transpiledJs: string; typings: string }
+  | { key: 'success'; src: string; js: string; typings: string }
   | { key: 'error'; message: string | string[] }
 );
 
@@ -43,7 +43,7 @@ export const baseTsxEditorProps: EditorProps = {
 
 export type FileType = 'tsx' | 'scss';
 export const permute = (type: FileType): FileType => type === 'scss' ? 'tsx' : 'scss';
-export const emptyTranspile: TsTranspilationResult = { key: 'success', src: '', transpiledJs: '', typings: '' };
+export const emptyTranspile: TsTranspilationResult = { key: 'success', src: '', js: '', typings: '' };
 
 export interface DevModule {
   key: string;
