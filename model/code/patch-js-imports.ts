@@ -72,7 +72,7 @@ export function traverseDeps(
   file: KeyedLookup<CodeFile>,
   dependents: KeyedLookup<CodeFile>,
   maxDepth: number
-): null | TraverseDepsError {
+): null | { key: 'dep-cycle'; dependent: string } {
   if (!f.transpiled || maxDepth <= 0) {
     return null;
   } else if (f.key in dependents) {
@@ -90,9 +90,6 @@ export function traverseDeps(
   }
   return null;
 }
-
-type TraverseDepsError = { key: 'dep-cycle'; dependent: string };
-export type CyclicDepError = TraverseDepsError & { dependency: string };
 
 type DepNode = { filename: string; dependencies: string[] };
 

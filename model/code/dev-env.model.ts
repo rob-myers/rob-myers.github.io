@@ -2,7 +2,7 @@ import { HtmlPortalNode } from 'react-reverse-portal';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
-import { CyclicDepError, JsExportMeta, JsImportMeta } from './patch-js-imports';
+import { JsExportMeta, JsImportMeta } from './patch-js-imports';
 import { Redacted } from '@model/store/redux.model';
 
 export const menuHeightPx = 32;
@@ -71,20 +71,11 @@ export type FileState = (
   | StyleFile
 );
 
-export interface TranspiledCodeFile extends CodeFile {
-  transpiled: CodeTranspilation;
-}
-
-export interface TranspiledStyleFile extends StyleFile {
-  transpiled: StyleTranspilation;
-}
-
 export interface CodeFile extends BaseFile {
   /** Filename extension (suffix of `key`) */
   ext: 'tsx' | 'ts';
   /** Last transpilation */
   transpiled: null | CodeTranspilation;
-  /** es module */
   esModule: null | CodeFileEsModule;
 }
 
@@ -98,7 +89,6 @@ export interface StyleFile extends BaseFile {
     code: string;
     blobUrl: string;
   };
-
   /**
    * Contains original scss and prefixed scss
    * i.e. each class is prefixed using filename.
@@ -107,9 +97,7 @@ export interface StyleFile extends BaseFile {
     src: string;
     dst: string;
   };
-  /**
-   * Last transpiled css.
-   */
+  /** Last transpiled css. */
   transpiled: null | StyleTranspilation;
 }
 
@@ -122,26 +110,18 @@ interface BaseFile {
   cleanups: (() => void)[];
   /** Code intervals of paths specifiers in import/export/@import's */
   pathIntervals: SourcePathInterval[];
+  /**
+   * Module specifier errors for untranspiled ts/tsx/scss.
+   * We store js-specific errors in `CodeTranspilation`.
+   */
   pathErrors: SourcePathError[];
 }
-
-export interface PrefixedStyleFile extends StyleFile {
-  prefixed: Exclude<StyleFile['prefixed'], null>;
-}
-
-export type Transpilation = (
-  | CodeTranspilation
-  | StyleTranspilation
-);
 
 export interface CodeTranspilation extends BaseTranspilation {
   type: 'js';
   exports: JsExportMeta[];
   imports: JsImportMeta[];
-  /**
-   * First discovered cyclic dependency in transpiled code.
-   */
-  cyclicDepError: null | CyclicDepError;
+  jsPathErrors: JsPathError[];
   typings: string;
   importFilenames: string[];
   exportFilenames: string[];
@@ -178,30 +158,45 @@ export interface SourcePathInterval {
   startCol: number;
 }
 
+/** Untranspiled module specifier errors */
 export type SourcePathError = (
-  | {key: 'scss-must-be-relative'; path: string;
-    info: 'We require @imports to be relative'; }
-  | { key: 'ts-must-be-relative'; path: string; 
-    info: 'We require ts/tsx imports/exports to be relative'; }
-  | { key: 'file-does-not-exist'; path: string;
-    info: 'Specified file not found'; }
-  | { key: 'ext-must-be-scss'; path: string;
-    info: 'An scss file can only @import other scss files'; }
-  | { key: 'no-ts-ext-allowed'; path: string;
-    info: 'We require ts/tsx imports/exports to omit the extension'; }
-  /**
-   * TODO ts can only import/export other ts (special constraint) 
-   * TODO tsx can only import/export other tsx (special constraint) 
-   * TODO tsx only only export react components (special constraint)
-   */
+  | { key: 'require-scss-relative'; path: string; info: 'We require @imports to be relative' }
+  | { key: 'require-ts-relative'; path: string; info: 'We require ts/tsx imports/exports to be relative' }
+  | { key: 'file-must-exist'; path: string; info: 'Specified file not found' }
+  | { key: 'require-scss-ext'; path: string; info: 'An scss file can only @import other scss files' }
 );
 
+/** Transpiled js error, although errors will be shown in source */
+export type JsPathError = (
+  | { key: 'cyclic-dependency'; path: string; info: 'Cyclic dependencies are unsupported; types are unrestricted.'; dependent: string }
+  | { key: 'only-import-ts'; path: string; info: 'ts files can only import values from other ts files' }
+  | { key: 'only-export-ts'; path: string; info: 'ts files can only export values from other ts files' }
+  | { key: 'only-import-tsx'; path: string; info: 'tsx files can only import values from other tsx files' }
+  | { key: 'only-export-tsx'; path: string; info: 'tsx files can only export values from other tsx files' }
+  // TODO try to detect using ts-morph
+  | { key: 'only-export-cmp'; path: string; info: 'tsx export values must be react components' }
+);
+export type CyclicDepError = Extract<JsPathError, { key: 'cyclic-dependency' }>;
+
+export interface TranspiledCodeFile extends CodeFile {
+  transpiled: CodeTranspilation;
+}
+
+export interface TranspiledStyleFile extends StyleFile {
+  transpiled: StyleTranspilation;
+}
+
+export interface PrefixedStyleFile extends StyleFile {
+  prefixed: Exclude<StyleFile['prefixed'], null>;
+}
+
 export function isFileValid(file: FileState) {
-  return file.ext === 'scss' || (
-    file.transpiled?.type === 'js'
-    && !file.transpiled.cyclicDepError
-    && file.transpiled.src === file.contents
-  );
+  return !file.pathErrors.length && (
+    file.ext === 'scss' || (
+      file.transpiled?.type === 'js'
+      && !file.transpiled.jsPathErrors.length
+      && file.transpiled.src === file.contents
+    ));
 }
 
 /** Get ts/tsx files reachable from index.tsx */
