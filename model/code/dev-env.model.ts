@@ -160,10 +160,9 @@ export interface SourcePathInterval {
 
 /** Untranspiled module specifier errors */
 export type SourcePathError = (
-  | { key: 'require-scss-relative'; path: string; info: 'We require @imports to be relative' }
-  | { key: 'require-ts-relative'; path: string; info: 'We require ts/tsx imports/exports to be relative' }
-  | { key: 'file-must-exist'; path: string; info: 'Specified file not found' }
-  | { key: 'require-scss-ext'; path: string; info: 'An scss file can only @import other scss files' }
+  | { key: 'require-scss-relative'; path: string; info: '@imports must be relative with scss extension' }
+  | { key: 'require-ts-relative'; path: string; info: 'local imports/exports must be relative without extension' }
+  | { key: 'require-scss-exists'; path: string; info: 'scss file not found' }
 );
 
 /** Transpiled js error, although errors will be shown in source */
@@ -286,6 +285,7 @@ export interface AppPortal {
 }
 
 export interface AnalyzeNextCode {
+  srcPathErrors: SourcePathError[];
   jsPathErrors: JsPathError[];
   imports: JsImportMeta[];
   exports: JsExportMeta[];
