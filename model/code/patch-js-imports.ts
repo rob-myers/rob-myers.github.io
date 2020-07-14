@@ -101,16 +101,17 @@ export function stratifyJsFiles(jsFiles: TranspiledCodeFile[]) {
   const stratification = [] as string[][];
   const permittedDeps = { react: true } as Record<string, true>;
 
-  const lookup = jsFiles.reduce(( agg, { key, transpiled: { importFilenames } }) => ({
-    ...agg, [key]: { filename: key, dependencies: importFilenames },
+  const lookup = jsFiles.reduce(( agg, { key, transpiled: { importFilenames, exportFilenames } }) => ({
+    ...agg, [key]: {
+      filename: key,
+      dependencies: importFilenames.concat(exportFilenames),
+    },
   }), {} as Record<string, DepNode>);
   
   let values: DepNode[];
-
   while ((values = Object.values(lookup)).length) {
     const level = values
-      .filter(({ dependencies, filename }) =>
-        dependencies.every(dep => dep === filename || dep in permittedDeps))
+      .filter(({ dependencies }) => dependencies.every(dep => dep in permittedDeps))
       .map(({ filename }) => filename);
     stratification.push(level);
 
@@ -138,6 +139,7 @@ export function patchTranspiledJsFiles(
       const patchedCode = patchTranspiledCode(
         transpiled.dst,
         transpiled.imports,
+        transpiled.exports,
         filenameToPatched, // Only need blobUrls
         allFilenames,
         scssFile, // Only need blobUrls
@@ -152,12 +154,13 @@ export function patchTranspiledJsFiles(
 }
 
 /**
- * Replace 'react' with asset path.
- * Replace relative paths with blob urls.
+ * Replace 'react' with static module path.
+ * Replace import/export module specifiers with blob urls.
  */
 function patchTranspiledCode(
   transpiledCode: string,
   importMetas: JsImportMeta[],
+  exportMetas: JsExportMeta[],
   filenameToPatched: Record<string, CodeFileEsModule>,
   allFilenames: string[],
   scssFile: KeyedLookup<StyleFile>,
@@ -165,8 +168,10 @@ function patchTranspiledCode(
   let offset = 0, nextValue: string;
   let patched = transpiledCode;
 
-  importMetas.forEach((importMeta) => {
-    const { value, start } = importMeta.path;
+  importMetas.map(x => x.path).concat(
+    exportMetas.filter(x => x.from).map(x => x.from!),
+  ).forEach((meta) => {
+    const { value, start } = meta;
     const filename = relPathToFilename(value, allFilenames);
     if (value === 'react') {
       nextValue = `${window.location.origin}/runtime-modules/react-facade.js`;
@@ -175,7 +180,7 @@ function patchTranspiledCode(
     } else if (filename.endsWith('.scss')) {
       nextValue = scssFile[filename].cssModule!.blobUrl;
     } else {
-      throw Error(`Unexpected import meta ${JSON.stringify(importMeta)}`);
+      throw Error(`Unexpected import/export meta ${JSON.stringify(meta)}`);
     }
     
     patched = replaceImportAt(patched, value, start + offset, nextValue);

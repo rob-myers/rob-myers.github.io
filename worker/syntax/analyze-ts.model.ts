@@ -1,11 +1,31 @@
 import { Project, ts, Node, JsxText, JsxAttribute, JsxSelfClosingElement } from 'ts-morph';
-import { JsImportMeta, JsExportMeta, ModuleSpecifierMeta } from '@model/code/patch-js-imports';
+import { JsImportMeta, JsExportMeta } from '@model/code/patch-js-imports';
+
+const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
 
 /**
- * Analyze imports/exports of ts/tsx file.
+ * Analyze imports/exports of ts/tsx/js file.
+ *
+ * TODO
+ * - detect if path is not of form `./index`
+ * - detect if ts file imports value from tsx
+ * - detect if tsx file imports value from ts
+ * - detect if tsx file exports non-react-component value
  */
-export function analyzeTsImportsExports(filename: string, code: string) {
-  const project = new Project({ compilerOptions: {} });
+export function analyzeTsImportsExports(
+  filename: string,
+  code: string,
+  _allFilenames: { [filename: string]: true },
+) {
+  // console.log('analyzeTsImportsExports', 'for', filename);
+  const isTsx = filename.endsWith('.tsx');
+  if (isTsx) {
+    /**
+     * Add basic typings for React.FC so can recognise type.
+     * Must apply as suffix to preserve import/export code intervals.
+     */
+    code = [code, 'declare namespace React { type FC<P = {}> = (x: P) => {} }'].join('\n');
+  }
   const srcFile = project.createSourceFile(filename, code);
 
   const importItems = [] as JsImportMeta[];
@@ -18,6 +38,15 @@ export function analyzeTsImportsExports(filename: string, code: string) {
 
   // e.g. export const foo = 'bar';
   exportSymbols.forEach((item) => {
+    if (isTsx) {
+      console.log({
+        key: 'export-symb',
+        name: item.getName(),
+        alias: item.getAliasedSymbol()?.getName(),
+        type: item.getValueDeclaration()?.getType().getText(),
+      });
+    }
+
     exportItems.push({
       type: 'export-symb',
       names: [{
@@ -48,19 +77,19 @@ export function analyzeTsImportsExports(filename: string, code: string) {
     });
   });
 
+  /**
+   * e.g. export { foo } from './other-module'
+   * 
+   * For tsx there is no need to enforce React components,
+   * because they'll be enforced when exporting from original file.
+   */
   exportDecs.forEach((item) => {
-    // export { foo } from './other-module'
-    let from = undefined as undefined | ModuleSpecifierMeta;
-    if (item.hasModuleSpecifier()) {
-      const moduleSpecifier = item.getModuleSpecifier()!;
-      const { line, column } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
-      from = {
-        value: moduleSpecifier.getLiteralValue(),
-        start: moduleSpecifier.getPos() + 2,
-        startLine: line,
-        startCol: column,
-      };
+    if (!item.hasModuleSpecifier()) {
+      return console.warn('ignored unexpected export declaration without module specifier');
     }
+
+    const moduleSpecifier = item.getModuleSpecifier()!;
+    const { line, column } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
 
     exportItems.push({
       type: 'export-decl',
@@ -69,11 +98,24 @@ export function analyzeTsImportsExports(filename: string, code: string) {
         alias: x.getAliasNode()?.getText(),
       })),
       namespace: item.getNamespaceExport()?.getName(),
-      from,
+      from: {
+        value: moduleSpecifier.getLiteralValue(),
+        start: moduleSpecifier.getPos() + 2,
+        startLine: line,
+        startCol: column,
+      },
     });
   });
 
+  // e.g. export default App
   exportAssigns.forEach((item) => {
+    if (isTsx) {
+      console.log({
+        key: 'export-asgn',
+        types: item.getDescendants().map(x => ({ kind: x.getKindName(), type: x.getType().getText() })),
+      });
+    }
+
     exportItems.push({
       type: 'export-asgn',
       names: [{
@@ -83,6 +125,8 @@ export function analyzeTsImportsExports(filename: string, code: string) {
       }],
     });
   });
+
+  project.removeSourceFile(srcFile);
 
   return {
     exports: exportItems,
@@ -99,8 +143,7 @@ export function toggleTsxComment(
   startLineStartPos: number,
   endLineEndPos: number,
 ): ToggleTsxCommentResult {
-  const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
-  const srcFile = project.createSourceFile('main.tsx', code);
+  const srcFile = project.createSourceFile('__temp.tsx', code, { overwrite: true });
 
   const node = srcFile.getDescendantAtPos(startLineStartPos);
   if (!node) {

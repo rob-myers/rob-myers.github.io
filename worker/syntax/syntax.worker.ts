@@ -8,7 +8,6 @@ import { computeClassifications } from './highlight.model';
 import { initializeStore } from './create-store';
 import { analyzeTsImportsExports, toggleTsxComment } from './analyze-ts.model';
 
-
 const ctxt: SyntaxWorkerContext = self as any;
 
 /**
@@ -16,23 +15,35 @@ const ctxt: SyntaxWorkerContext = self as any;
  */
 const store = initializeStore(ctxt);
 const persistor = persistStore(store as any, null,
-  () =>  ctxt.postMessage({ key: 'worker-ready' }),
+  // () => ctxt.postMessage({ key: 'worker-ready' }),
 );
 
 persistor.pause(); // We save manually
 const _dispatch = store.dispatch as SyntaxDispatchOverload;
 
-/**
- * Listen for messages
- */
 ctxt.addEventListener('message', async ({ data }) => {
   switch (data.key) {
-    case 'request-import-exports': {      
+    /**
+     * Two use cases:
+     * 1. For ts/tsx we check for errors in our particular sense, and
+     *    provide code-intervals of module specifiers for error markers.
+     * 2. For js we record code-intervals of module specifiers so they can be
+     *   replaced by blob urls when mounted on the page.
+     */
+    case 'request-import-exports': {
       ctxt.postMessage({
         key: 'send-import-exports',
         origCode: data.code,
-        ...analyzeTsImportsExports(data.filename, data.code),
+        ...analyzeTsImportsExports(
+          data.filename,
+          data.code,
+          data.allFilenames,
+        ),
       });
+      break;
+    }
+    case 'request-status': {
+      ctxt.postMessage({ key: 'worker-ready' });
       break;
     }
     case 'request-tsx-highlights': {
@@ -41,10 +52,6 @@ ctxt.addEventListener('message', async ({ data }) => {
         classifications: computeClassifications(data.code),
         editorKey: data.editorKey,
       });
-      break;
-    }
-    case 'request-status': {
-      ctxt.postMessage({ key: 'worker-ready' });
       break;
     }
     case 'request-scss-prefixing': {

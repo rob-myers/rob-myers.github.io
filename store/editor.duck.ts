@@ -2,7 +2,7 @@
 import Sass, { SassWorker } from 'sass.js/dist/sass';
 import { combineEpics } from 'redux-observable';
 
-import { KeyedLookup, testNever } from '@model/generic.model';
+import { KeyedLookup, testNever, mapValues } from '@model/generic.model';
 import { Message } from '@model/worker.model';
 import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
 import { createThunk } from '@model/store/root.redux.model';
@@ -113,11 +113,9 @@ export const Thunk = {
         code: string;
       },
     ) => {
-      if (editor.monacoLoading) {
-        // Wait for 1st load
+      if (editor.monacoLoading) {// Wait for 1st load
         return false;
-      } else if (!editor.monacoLoaded) {
-        // Commence 1st load
+      } else if (!editor.monacoLoaded) {// Commence 1st load
         dispatch(Act.setMonacoLoading(true));
       }
 
@@ -139,7 +137,6 @@ export const Thunk = {
         model: monacoModel,
         accessibilityHelpUrl,
       });
-
       await dispatch(Thunk.createMonacoEditor({
         editorKey: input.editorKey,
         editor: redact(monacoEditor),
@@ -152,7 +149,6 @@ export const Thunk = {
         dispatch(Act.setMonacoLoading(false));
         dispatch(Act.setMonacoLoaded(true));
       }
-
       return true;
     },
   ),
@@ -169,6 +165,15 @@ export const Thunk = {
 
       await dispatch(Thunk.loadGlobalTypes({}));
       monacoInternal.monaco.editor.setTheme('vs-dark');
+
+      const syntaxWorker = new SyntaxWorkerClass;
+      dispatch(Act.storeSyntaxWorker({ worker: redact(syntaxWorker) }));
+      syntaxWorker.postMessage({ key: 'request-status' });
+      await awaitWorker('worker-ready', syntaxWorker);
+
+      Sass.setWorkerUrl('/sass.worker.js');
+      const sassWorker = new Sass;
+      dispatch(Act.storeSassWorker({ worker: redact(sassWorker) }));
     },
   ),
   changeEditorModel: createThunk(
@@ -193,50 +198,47 @@ export const Thunk = {
       editor.editor[editorKey]?.cleanups.forEach(cleanup => cleanup());
     },
   ),
+  computeJsImportExports: createThunk(
+    '[editor] compute js import/export meta',
+    async ({ state: { editor, devEnv } }, { jsFilename, code }: { jsFilename: string; code: string }) => {
+      const worker = editor.syntaxWorker!;
+      worker.postMessage({ key: 'request-import-exports', code, filename: jsFilename, allFilenames: mapValues(devEnv.file, () => true) });
+      return await awaitWorker('send-import-exports', worker, ({ origCode }) => code === origCode);
+    },
+  ),
   computeTsImportExports: createThunk(
     '[editor] compute ts import/export meta',
-    async ({ state: { editor } }, input: { filename: string } & (
-      { code: string } | { modelKey: string }
-    )) => {
-      const code = 'code' in input ? input.code : editor.model[input.modelKey].model.getValue();
+    async ({ state: { editor, devEnv } }, { filename }: { filename: string }) => {
       const worker = editor.syntaxWorker!;
-      worker.postMessage({ key: 'request-import-exports', code, filename: input.filename });
+      const code = editor.model[filenameToModelKey(filename)].model.getValue();
+      worker.postMessage({ key: 'request-import-exports', code, filename, allFilenames: mapValues(devEnv.file, () => true) });
       return await awaitWorker('send-import-exports', worker, ({ origCode }) => code === origCode);
     },
   ),
   createMonacoEditor: createThunk(
     '[editor] create monaco editor',
-    async ({ dispatch, state: { editor: e }, getState }, { editor, editorKey, model, modelKey, filename }: {
+    async ({ dispatch, state: { editor: e } }, { editor, editorKey, model, modelKey, filename }: {
       editor: Redacted<Editor>;
       editorKey: string;
       modelKey: string;
       model: Redacted<IMonacoTextModel>;
       filename: string;
     }) => {
-      dispatch(Act.storeMonacoEditor({ editor, editorKey }));
+      dispatch(Act.storeMonacoEditor({ editorKey, editor }));
 
       if (!e.model[modelKey]) {
-        const uri = redact(e.internal!.monaco.Uri.parse(`file:///${filename}`));
-        dispatch(Act.storeMonacoModel({ model, modelKey, filename, uri }));
+        dispatch(Act.storeMonacoModel({
+          modelKey,
+          model,
+          filename,
+          uri: redact(e.internal!.monaco.Uri.parse(`file:///${filename}`)),
+        }));
       }
       model.updateOptions({ tabSize: 2, indentSize: 2, trimAutoWhitespace: true });
 
-      if (!e.syntaxWorker) {
-        const syntaxWorker = new SyntaxWorkerClass;
-        dispatch(Act.storeSyntaxWorker({ worker: redact(syntaxWorker) }));
-        await awaitWorker('worker-ready', syntaxWorker);
-      }
       if (filename.endsWith('.tsx')) {
         dispatch(Thunk.setupTsxCommentToggling({ editor, editorKey }));
         dispatch(Thunk.setupTsxHighlighting({ editorKey }));
-      }
-      if (!getState().editor.sassWorker) {
-        Sass.setWorkerUrl('/sass.worker.js');
-        const sassWorker = new Sass;
-        dispatch(Act.storeSassWorker({ worker: redact(sassWorker) }));
-        // sassWorker.writeFile('test.scss', '@mixin myMixin { width: 123px; }');
-        // sassWorker.compile('@import "test.scss"; .foo { @include myMixin; .bar { color: red; } }',
-        //   (sassTestResult) => console.log({ sassTestResult }));
       }
     },
   ),
@@ -246,13 +248,11 @@ export const Thunk = {
       const { internal, model: m } = editor;
       const { monaco } = internal!;
 
-      /** Note the additional prefix `file:///` */
       const uri = monaco.Uri.parse(`file:///${filename}`);
       const model = monaco.editor.getModel(uri) || monaco.editor.createModel(code, undefined, uri);
       
+      // Don't track special model ensuring bootstrapped if no editor panel initially open
       if (filename === '_bootstrap.ts') {
-        // Don't track special model which ensures monaco
-        // is bootstrapped if no other editor initially open.
         return model;
       }
 

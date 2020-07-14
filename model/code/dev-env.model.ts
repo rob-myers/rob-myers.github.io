@@ -206,8 +206,9 @@ export function getReachableJsFiles(file: KeyedLookup<FileState>) {
     const prevFrontier = frontier.slice();
     frontier.length = 0;
     prevFrontier.forEach((node) => {
-      const newAdjs = (node.transpiled?.importFilenames || [])
-        .filter(filename => !(filename in reachable))
+      const newAdjs = (
+        node.transpiled?.importFilenames.concat(node.transpiled.exportFilenames) || []
+      ).filter(filename => !(filename in reachable))
         .map(filename => file[filename] as CodeFile);
       frontier.push(...newAdjs);
       newAdjs.forEach(f => reachable[f.key] = f);

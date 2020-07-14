@@ -40,6 +40,7 @@ interface RequestImportExportMeta {
   key: 'request-import-exports';
   code: string;
   filename: string;
+  allFilenames: { [filename: string]: true };
 }
 interface RequestScssPrefixing {
   key: 'request-scss-prefixing';
