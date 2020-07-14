@@ -18,19 +18,44 @@ export function getCyclicDepMarker(
   };
 }
 
-export interface JsImportMeta {
-  type: 'import-decl';
+export type JsImportMeta = {
+  key: 'import-decl';
   path: ModuleSpecifierMeta;
-  names: { name: string; alias?: string }[];
-  namespace?: string;
+} & (
+  | { names: { name: string; alias: string | null }[] }
+  | { namespace: string }
+  | { defaultAlias: string }
+)
+
+export type JsExportMeta = (
+  | TsExportSymb
+  | TsExportDecl
+  | TsExportAsgn
+);
+
+interface TsExportSymb {
+  key: 'export-symb';
+  name: string;
+  type: string | null;
 }
 
-export interface JsExportMeta {
-  type: 'export-symb' | 'export-decl' | 'export-asgn';
-  names: { name: string; alias?: string }[];
-  namespace?: string;
+type TsExportDecl = {
+  key: 'export-decl';
   /** Can export from another module */
-  from?: ModuleSpecifierMeta;
+  from: ModuleSpecifierMeta;
+} & (
+  | { names: { name: string; alias: string | null }[] }
+  | { namespace: string }
+)
+
+interface TsExportAsgn {
+  key: 'export-asgn';
+  name: 'default';
+  type: string;
+}
+
+export function isTsExportDecl(x: JsExportMeta): x is TsExportDecl {
+  return x.key === 'export-decl';
 }
 
 export interface ModuleSpecifierMeta {
@@ -169,7 +194,7 @@ function patchTranspiledCode(
   let patched = transpiledCode;
 
   importMetas.map(x => x.path).concat(
-    exportMetas.filter(x => x.from).map(x => x.from!),
+    exportMetas.filter(isTsExportDecl).map(x => x.from),
   ).forEach((meta) => {
     const { value, start } = meta;
     const filename = relPathToFilename(value, allFilenames);

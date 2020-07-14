@@ -256,7 +256,7 @@ export const Thunk = {
       const filenames = Object.keys(devEnv.file);
       const dependencyPaths = PatchJs.importPathsToCodeFilenames(([] as string[]).concat(
         imports.map(({ path }) => path.value),
-        exports.map(({ from }) => from?.value as string).filter(Boolean),
+        exports.filter(PatchJs.isTsExportDecl).map(({ from }) => from.value),
       ), filenames);
 
       /** Files that `filename` imports/exports */
@@ -436,7 +436,8 @@ export const Thunk = {
     '[dev-env] remember src code imports/exports',
     async ({ dispatch }, { filename }: { filename: string }) => {
       const { imports, exports } = await dispatch(EditorThunk.computeTsImportExports({ filename }));
-      const metas = imports.map(({ path }) => path).concat(exports.map(({ from }) => from!).filter(Boolean));
+      const metas = imports.map(({ path }) => path).concat(
+        exports.filter(PatchJs.isTsExportDecl).map(({ from }) => from));
       const pathIntervals: Dev.SourcePathInterval[] = metas
         .map(({ value, start, startCol, startLine }) => ({
           path: value,
@@ -618,7 +619,8 @@ export const Thunk = {
         ...rest,
         cleanups: [() => disposable.dispose()],
         importFilenames: PatchJs.importPathsToCodeFilenames(rest.imports.map(({ path }) => path.value), allFilenames),
-        exportFilenames: PatchJs.importPathsToCodeFilenames(rest.exports.map(({ from }) => from?.value as string).filter(Boolean), allFilenames),
+        exportFilenames: PatchJs.importPathsToCodeFilenames(rest.exports
+          .filter(PatchJs.isTsExportDecl).map(({ from }) => from.value), allFilenames),
       }));
     },
   ),

@@ -1,5 +1,7 @@
 import { Project, ts, Node } from 'ts-morph';
 
+const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
+
 export interface Classification {
   kind: string;
   parentKind?: string;
@@ -25,9 +27,6 @@ const jsxTagKind = {
  * Based on https://github.com/cancerberoSgx/jsx-alone/blob/master/jsx-explorer/src/codeWorker/extractCodeDecorations.ts
  */
 export function computeClassifications(code: string) {
-  const project = new Project({
-    compilerOptions: { jsx: ts.JsxEmit.React },
-  });
   const srcFile = project.createSourceFile('main.tsx', code);
   const pending = [] as PendingItem[];
   const classifications = [] as Classification[];
@@ -93,6 +92,9 @@ export function computeClassifications(code: string) {
     console.error(`Syntax highlighting failed (${e.message})`);
     console.error(e);
   }
+
+  project.removeSourceFile(srcFile);
+
   // console.log(classifications);
   return classifications;
 }

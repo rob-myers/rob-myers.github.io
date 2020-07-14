@@ -1,5 +1,6 @@
 import { Project, ts, Node, JsxText, JsxAttribute, JsxSelfClosingElement } from 'ts-morph';
 import { JsImportMeta, JsExportMeta } from '@model/code/patch-js-imports';
+import { SourcePathError } from '@model/code/dev-env.model';
 
 const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
 
@@ -17,42 +18,30 @@ export function analyzeTsImportsExports(
   code: string,
   _allFilenames: { [filename: string]: true },
 ) {
-  // console.log('analyzeTsImportsExports', 'for', filename);
   const isTsx = filename.endsWith('.tsx');
   if (isTsx) {
-    /**
-     * Add basic typings for React.FC so can recognise type.
-     * Must apply as suffix to preserve import/export code intervals.
-     */
+    // Add basic typings for React.FC so can recognise type.
+    // Must apply as suffix to preserve import/export code intervals.
     code = [code, 'declare namespace React { type FC<P = {}> = (x: P) => {} }'].join('\n');
   }
   const srcFile = project.createSourceFile(filename, code);
 
   const importItems = [] as JsImportMeta[];
   const exportItems = [] as JsExportMeta[];
-
   const importDecs = srcFile.getImportDeclarations();
   const exportDecs = srcFile.getExportDeclarations();
   const exportAssigns = srcFile.getExportAssignments();
   const exportSymbols = srcFile.getExportSymbols();
 
+  const srcErrors = [] as SourcePathError[];
+  const isSrc = isTsx || filename.endsWith('.ts');
+
   // e.g. export const foo = 'bar';
   exportSymbols.forEach((item) => {
-    if (isTsx) {
-      console.log({
-        key: 'export-symb',
-        name: item.getName(),
-        alias: item.getAliasedSymbol()?.getName(),
-        type: item.getValueDeclaration()?.getType().getText(),
-      });
-    }
-
     exportItems.push({
-      type: 'export-symb',
-      names: [{
-        name: item.getName(), // alias always undefined
-        alias: item.getAliasedSymbol()?.getName(),
-      }],
+      key: 'export-symb',
+      name: item.getName(),
+      type: item.getValueDeclaration()?.getType().getText() || null,
     });
   });
 
@@ -61,7 +50,7 @@ export function analyzeTsImportsExports(
     const { line, column } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
 
     importItems.push({
-      type: 'import-decl',
+      key: 'import-decl',
       /** Module specifier e.g. `./index` */
       path: {
         value: moduleSpecifier.getLiteralValue(),
@@ -69,19 +58,25 @@ export function analyzeTsImportsExports(
         startLine: line,
         startCol: column,
       },
-      names: item.getNamedImports().map(x => ({
-        name: x.getName(),
-        alias: x.getAliasNode()?.getText(),
-      })),
-      namespace: item.getNamespaceImport()?.getText(),
+      ...(item.getNamespaceImport()
+        ? { namespace: item.getNamespaceImport()!.getText() }
+        : item.getDefaultImport()
+          ? { defaultAlias: item.getDefaultImport()!.getText() }
+          : {
+            names: item.getNamedImports().map((x) => ({
+              name: x.getName(),
+              alias: x.getAliasNode()?.getText() || null,
+            }))
+          }
+      ),
     });
   });
 
   /**
    * e.g. export { foo } from './other-module'
    * 
-   * For tsx there is no need to enforce React components,
-   * because they'll be enforced when exporting from original file.
+   * For tsx there is no need to enforce React components:
+   * they'll be enforced when exporting from original file.
    */
   exportDecs.forEach((item) => {
     if (!item.hasModuleSpecifier()) {
@@ -92,41 +87,44 @@ export function analyzeTsImportsExports(
     const { line, column } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
 
     exportItems.push({
-      type: 'export-decl',
-      names: item.getNamedExports().map((x) => ({
-        name: x.getName(),
-        alias: x.getAliasNode()?.getText(),
-      })),
-      namespace: item.getNamespaceExport()?.getName(),
+      key: 'export-decl',
       from: {
         value: moduleSpecifier.getLiteralValue(),
         start: moduleSpecifier.getPos() + 2,
         startLine: line,
         startCol: column,
       },
+      ...(item.getNamedExports().length
+        ? {
+          names: item.getNamedExports().map((x) => ({
+            name: x.getName(),
+            alias: x.getAliasNode()?.getText() || null,
+          }))
+        } : { namespace: item.getNamespaceExport()?.getName()! }
+      ),
     });
   });
 
   // e.g. export default App
   exportAssigns.forEach((item) => {
-    if (isTsx) {
-      console.log({
+    if (item.isExportEquals()) {
+      return console.warn('ignored unexpected export assignment which is not default export');
+    }
+    if (isSrc) {
+      exportItems.push({
         key: 'export-asgn',
-        types: item.getDescendants().map(x => ({ kind: x.getKindName(), type: x.getType().getText() })),
+        name: 'default',
+        type: item.getDescendants()[2].getType().getText(),
       });
     }
-
-    exportItems.push({
-      type: 'export-asgn',
-      names: [{
-        name: item.isExportEquals()
-          ? item.getFirstChild()?.getText()!
-          : 'default',
-      }],
-    });
   });
 
   project.removeSourceFile(srcFile);
+
+  if (isSrc) {
+    console.log({ filename, importItems, exportItems});
+    console.log({ srcErrors });
+  }
 
   return {
     exports: exportItems,
