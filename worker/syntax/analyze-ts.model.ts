@@ -52,7 +52,12 @@ export function analyzeTsImportsExports(filename: string, code: string) {
   // e.g. export const foo = 'bar';
   srcFile.getExportSymbols().forEach((item) => {
     if (!item.getValueDeclaration()) {
-      return console.warn('ignored unexpected export symbol without value declaration');
+      // Ignore e.g.
+      // - export interface Foo {}
+      // - export { foo } from './bar' (handled by export-decl)
+      // - export default App (handled by export-asgn)
+      // return console.warn('ignored export symbol without value declaration');
+      return;
     }
     const node = item.getValueDeclaration()!;
     const { line: startLine, column: startCol } = srcFile.getLineAndColumnAtPos(node.getStart());
@@ -147,15 +152,10 @@ export function computeTsImportExportErrors(
 ) {
   const errors = [] as SourcePathError[];
   /**
-   * NOTE cannot detect if ts (resp. tsx) imports tsx (resp. ts) because
-   * need to know typings from another file. We'll analyze transpiled js instead.
+   * Cannot detect if tsx imports ts (or ts imports tsx) because don't know
+   * types from other file. We'll analyze transpiled js later instead.
    * 
-   * NOTE We don't enforce React component imports; we'll enforce exports.
-   * 
-   * TODO
-   * - detect if ts file imports/exports value from tsx
-   * - detect if tsx file imports/exports value from ts
-   * - detect if tsx file exports non-react-component value
+   * TODO require tsx to export types or react components only
    */
   const imports = analyzed.imports.filter(x => x.from.value !== 'react');
 
