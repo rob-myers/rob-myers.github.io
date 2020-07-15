@@ -1,8 +1,8 @@
 import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
-import { JsImportMeta, JsExportMeta } from '@model/code/patch-js-imports';
-import { SourcePathInterval, SourcePathError } from '@model/code/dev-env.model';
+import { TsImportMeta, TsExportMeta } from '@model/code/patch-js-imports';
+import { SourcePathError, ModuleSpecifierInterval } from '@model/code/dev-env.model';
 import { Classification } from './highlight.model';
 import { ToggleTsxCommentResult } from './analyze-ts.model';
 
@@ -68,8 +68,8 @@ interface SendTsxHighlights {
 interface SendImportExportMeta {
   key: 'send-import-exports';
   origCode: string;
-  imports: JsImportMeta[];
-  exports: JsExportMeta[];
+  imports: TsImportMeta[];
+  exports: TsExportMeta[];
   /** Only for ts/tsx */
   srcErrors?: SourcePathError[]; 
 }
@@ -77,7 +77,7 @@ interface SendPrefixedScss {
   key: 'send-prefixed-scss';
   origScss: string;
   prefixedScss: null | string;
-  pathIntervals: SourcePathInterval[];
+  pathIntervals: ModuleSpecifierInterval[];
   error: null | string;
 }
 interface SendTsxCommented {

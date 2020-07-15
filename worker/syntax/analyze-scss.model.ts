@@ -1,5 +1,5 @@
 import { parse, stringify } from 'scss-parser';
-import { filenameToClassPrefix, SourcePathInterval } from '@model/code/dev-env.model';
+import { filenameToClassPrefix, ModuleSpecifierInterval } from '@model/code/dev-env.model';
 
 interface ScssAstNode {
   type: string;
@@ -31,21 +31,29 @@ export function prefixScssClasses(scssContents: string, filename: string) {
 }
 
 export function extractScssImportIntervals(scssContents: string) {
-  const importIntervals = [] as SourcePathInterval[];
+  const importIntervals = [] as ModuleSpecifierInterval[];
   const ast = parse(scssContents);
 
   traverseScss((node) => {
     if (node.type === 'atrule') {
       const [first, second, third] = node.value as ScssAstNode[];
-      (first.type === 'atkeyword' && first.value === 'import' && second.type === 'space'
+      if ((first.type === 'atkeyword' && first.value === 'import' && second.type === 'space'
         && (third.type === 'string_double' || third.type === 'string_single')
-      ) && importIntervals.push({
+      ) && third.start) {
         // Remember import filename code interval
-        path: third.value as string,
-        start: third.start!.cursor,
-        line: third.start!.line,
-        startCol: third.start!.column - 1,
-      });
+        const value = third.value as string;
+        importIntervals.push({
+          value,
+          interval: {
+            start: third.start.cursor,
+            end: third.start.cursor + value.length - 1,
+            startLine: third.start.line,
+            startCol: third.start.column - 1,
+            endLine: third.start.line,
+            endCol: third.start.column + value.length - 1,
+          },
+        });
+      }
     }
   }, ast);
 

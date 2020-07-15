@@ -2,7 +2,7 @@ import { HtmlPortalNode } from 'react-reverse-portal';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
-import { JsExportMeta, JsImportMeta } from './patch-js-imports';
+import { TsExportMeta, TsImportMeta } from './patch-js-imports';
 import { Redacted } from '@model/store/redux.model';
 
 export const menuHeightPx = 32;
@@ -109,7 +109,7 @@ interface BaseFile {
   /** Can dispose model code/transpile trackers */
   cleanups: (() => void)[];
   /** Code intervals of paths specifiers in import/export/@import's */
-  pathIntervals: SourcePathInterval[];
+  pathIntervals: ModuleSpecifierInterval[];
   /**
    * Module specifier errors for untranspiled ts/tsx/scss.
    * We store js-specific errors in `CodeTranspilation`.
@@ -119,8 +119,8 @@ interface BaseFile {
 
 export interface CodeTranspilation extends BaseTranspilation {
   type: 'js';
-  exports: JsExportMeta[];
-  imports: JsImportMeta[];
+  exports: TsExportMeta[];
+  imports: TsImportMeta[];
   jsPathErrors: JsPathError[];
   typings: string;
   importFilenames: string[];
@@ -149,31 +149,24 @@ export interface CodeFileEsModule {
   patchedCode: string;
 }
 
-export interface SourcePathInterval {
-  /** e.g. `react` or `./index` or `./index.scss`  */
-  path: string;
-  /** First character of path in untranspiled code */
-  start: number;
-  line: number;
-  startCol: number;
-}
-
 /** Untranspiled module specifier errors */
-export type SourcePathError = (
-  | { key: 'require-scss-relative'; path: string; info: '@imports must be relative with scss extension' }
-  | { key: 'require-ts-relative'; path: string; info: 'local imports/exports must be relative without extension' }
-  | { key: 'require-scss-exists'; path: string; info: 'scss file not found' }
+export type SourcePathError = { meta: ModuleSpecifierInterval } & (
+  | { key: 'require-import-relative'; info: 'local imports must be relative' }
+  | { key: 'require-export-relative'; info: 'exports must be relative' }
+  | { key: 'require-scss-exists'; info: 'scss file not found' }
+  | { key: 'only-export-cmp'; info: 'tsx export values must be react components' }
 );
-
-/** Transpiled js error, although errors will be shown in source */
+  
+/**
+ * Transpiled js error.
+ * Errors will be shown in source by matching `path`.
+ */
 export type JsPathError = (
   | { key: 'cyclic-dependency'; path: string; info: 'Cyclic dependencies are unsupported; types are unrestricted.'; dependent: string }
   | { key: 'only-import-ts'; path: string; info: 'ts files can only import values from other ts files' }
   | { key: 'only-export-ts'; path: string; info: 'ts files can only export values from other ts files' }
   | { key: 'only-import-tsx'; path: string; info: 'tsx files can only import values from other tsx files' }
   | { key: 'only-export-tsx'; path: string; info: 'tsx files can only export values from other tsx files' }
-  // TODO try to detect using ts-morph
-  | { key: 'only-export-cmp'; path: string; info: 'tsx export values must be react components' }
 );
 export type CyclicDepError = Extract<JsPathError, { key: 'cyclic-dependency' }>;
 
@@ -225,8 +218,8 @@ export function getReachableScssFiles(rootFilename: string, file: KeyedLookup<Pr
     frontier.length = 0;
     prevFrontier.forEach((node) => {
       const newAdjs = (node.pathIntervals || [])
-        .filter(({ path }) => !(path.slice(2) in reachable))
-        .map(({ path }) => file[path.slice(2)] as PrefixedStyleFile);
+        .filter(({ value }) => !(value.slice(2) in reachable))
+        .map(({ value }) => file[value.slice(2)] as PrefixedStyleFile);
       frontier.push(...newAdjs);
       newAdjs.forEach(f => reachable[f.key] = f);
     });
@@ -288,8 +281,23 @@ export interface AppPortal {
 export interface AnalyzeNextCode {
   srcPathErrors: SourcePathError[];
   jsPathErrors: JsPathError[];
-  imports: JsImportMeta[];
-  exports: JsExportMeta[];
+  imports: TsImportMeta[];
+  exports: TsExportMeta[];
   cyclicDepError: CyclicDepError | null;
   prevCyclicError: CyclicDepError | null;
+}
+
+export interface ModuleSpecifierInterval {
+  /** e.g. `react` or `./index` */
+  value: string;
+  interval: CodeInterval;
+}
+
+export interface CodeInterval {
+  start: number;
+  end: number;
+  startLine: number;
+  startCol: number;
+  endLine: number;
+  endCol: number;
 }

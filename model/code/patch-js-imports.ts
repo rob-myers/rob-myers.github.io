@@ -1,9 +1,9 @@
 import { KeyedLookup, pluck } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, SourcePathInterval, getBlobUrl } from './dev-env.model';
+import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, getBlobUrl, ModuleSpecifierInterval, CodeInterval } from './dev-env.model';
 
 export function getCyclicDepMarker(
-  { path, line: startLine, startCol }: SourcePathInterval,
+  { value, interval: { startLine, startCol} }: ModuleSpecifierInterval,
 ): IMarkerData {
   return {
     message: [
@@ -13,21 +13,21 @@ export function getCyclicDepMarker(
     startLineNumber: startLine,
     startColumn: startCol,
     endLineNumber: startLine,
-    endColumn: startCol + path.length + 2,
+    endColumn: startCol + value.length + 2,
     severity: 8,
   };
 }
 
-export type JsImportMeta = {
+export type TsImportMeta = {
   key: 'import-decl';
-  path: ModuleSpecifierMeta;
+  from: ModuleSpecifierInterval;
 } & (
   | { names: { name: string; alias: string | null }[] }
   | { namespace: string }
   | { defaultAlias: string }
 )
 
-export type JsExportMeta = (
+export type TsExportMeta = (
   | TsExportSymb
   | TsExportDecl
   | TsExportAsgn
@@ -37,12 +37,13 @@ interface TsExportSymb {
   key: 'export-symb';
   name: string;
   type: string | null;
+  interval: CodeInterval;
 }
 
 type TsExportDecl = {
   key: 'export-decl';
   /** Can export from another module */
-  from: ModuleSpecifierMeta;
+  from: ModuleSpecifierInterval;
 } & (
   | { names: { name: string; alias: string | null }[] }
   | { namespace: string }
@@ -52,19 +53,11 @@ interface TsExportAsgn {
   key: 'export-asgn';
   name: 'default';
   type: string | null;
+  interval: CodeInterval;
 }
 
-export function isTsExportDecl(x: JsExportMeta): x is TsExportDecl {
+export function isTsExportDecl(x: TsExportMeta): x is TsExportDecl {
   return x.key === 'export-decl';
-}
-
-export interface ModuleSpecifierMeta {
-  /** e.g. `react` or `./index` */
-  value: string;
-  /** First character of path excluding quotes */
-  start: number;
-  startLine: number;
-  startCol: number;
 }
 
 /** Relative paths to code filenames, ignoring 'react' */
@@ -184,8 +177,8 @@ export function patchTranspiledJsFiles(
  */
 function patchTranspiledCode(
   transpiledCode: string,
-  importMetas: JsImportMeta[],
-  exportMetas: JsExportMeta[],
+  importMetas: TsImportMeta[],
+  exportMetas: TsExportMeta[],
   filenameToPatched: Record<string, CodeFileEsModule>,
   allFilenames: string[],
   scssFile: KeyedLookup<StyleFile>,
@@ -193,10 +186,10 @@ function patchTranspiledCode(
   let offset = 0, nextValue: string;
   let patched = transpiledCode;
 
-  importMetas.map(x => x.path).concat(
+  importMetas.map(x => x.from).concat(
     exportMetas.filter(isTsExportDecl).map(x => x.from),
   ).forEach((meta) => {
-    const { value, start } = meta;
+    const { value, interval: { start } } = meta;
     const filename = relPathToFilename(value, allFilenames);
     if (value === 'react') {
       nextValue = `${window.location.origin}/runtime-modules/react-facade.js`;

@@ -1,5 +1,5 @@
 import { Project, ts, Node, JsxText, JsxAttribute, JsxSelfClosingElement } from 'ts-morph';
-import { JsImportMeta, JsExportMeta } from '@model/code/patch-js-imports';
+import { TsImportMeta, TsExportMeta } from '@model/code/patch-js-imports';
 import { SourcePathError } from '@model/code/dev-env.model';
 
 const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
@@ -14,20 +14,26 @@ export function analyzeTsImportsExports(filename: string, code: string) {
     code = [code, 'declare namespace React { type FC<P = {}> = (x: P) => {} }'].join('\n');
   }
   const srcFile = project.createSourceFile(filename, code, { overwrite: true });
-  const [imports, exports] = [[] as JsImportMeta[], [] as JsExportMeta[]];
+  const [imports, exports] = [[] as TsImportMeta[], [] as TsExportMeta[]];
 
   srcFile.getImportDeclarations().forEach((item) => {
     const moduleSpecifier = item.getModuleSpecifier();
-    const { line, column } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
+    const { line: startLine, column: startCol } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
+    const { line: endLine, column: endCol } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getEnd());
 
     imports.push({
       key: 'import-decl',
-      /** Module specifier e.g. `./index` */
-      path: {
+      from: {
+        /** Module specifier e.g. `./index` */
         value: moduleSpecifier.getLiteralValue(),
-        start: moduleSpecifier.getPos() + 2,
-        startLine: line,
-        startCol: column,
+        interval: {
+          start: moduleSpecifier.getPos() + 2,
+          end: moduleSpecifier.getEnd(),
+          startLine,
+          startCol,
+          endLine,
+          endCol,
+        },
       },
       ...(item.getNamespaceImport()
         ? { namespace: item.getNamespaceImport()!.getText() }
@@ -45,10 +51,25 @@ export function analyzeTsImportsExports(filename: string, code: string) {
 
   // e.g. export const foo = 'bar';
   srcFile.getExportSymbols().forEach((item) => {
+    if (!item.getValueDeclaration()) {
+      return console.warn('ignored unexpected export symbol without value declaration');
+    }
+    const node = item.getValueDeclaration()!;
+    const { line: startLine, column: startCol } = srcFile.getLineAndColumnAtPos(node.getStart());
+    const { line: endLine, column: endCol } = srcFile.getLineAndColumnAtPos(node.getEnd());
+
     exports.push({
       key: 'export-symb',
       name: item.getName(),
-      type: item.getValueDeclaration()?.getType().getText() || null,
+      type: node.getType().getText() || null,
+      interval: {
+        start: node.getPos(),
+        end: node.getEnd(),
+        startLine,
+        startCol,
+        endLine,
+        endCol,
+      },
     });
   });
 
@@ -58,15 +79,21 @@ export function analyzeTsImportsExports(filename: string, code: string) {
       return console.warn('ignored unexpected export declaration without module specifier');
     }
     const moduleSpecifier = item.getModuleSpecifier()!;
-    const { line, column } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
+    const { line: startLine, column: startCol } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
+    const { line: endLine, column: endCol } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getEnd());
 
     exports.push({
       key: 'export-decl',
       from: {
         value: moduleSpecifier.getLiteralValue(),
-        start: moduleSpecifier.getPos() + 2,
-        startLine: line,
-        startCol: column,
+        interval: {
+          start: moduleSpecifier.getPos() + 2,
+          end: moduleSpecifier.getEnd(),
+          startLine,
+          startCol,
+          endLine,
+          endCol,
+        },
       },
       ...(item.getNamedExports().length
         ? {
@@ -86,10 +113,22 @@ export function analyzeTsImportsExports(filename: string, code: string) {
     if (item.isExportEquals()) {
       return console.warn('ignored unexpected export assignment which is not default export');
     }
+    const identifier = item.getDescendants()[2];
+    const { line: startLine, column: startCol } = srcFile.getLineAndColumnAtPos(identifier.getStart());
+    const { line: endLine, column: endCol } = srcFile.getLineAndColumnAtPos(identifier.getEnd());
+
     exports.push({
       key: 'export-asgn',
       name: 'default',
-      type: isTyped ? item.getDescendants()[2].getType().getText() : null,
+      type: isTyped ? identifier.getType().getText() : null,
+      interval: {
+        start: identifier.getPos(),
+        end: identifier.getEnd(),
+        startLine,
+        startCol,
+        endLine,
+        endCol,
+      },
     });
   });
 
@@ -104,18 +143,47 @@ export function analyzeTsImportsExports(filename: string, code: string) {
 
 export function computeTsImportExportErrors(
   analyzed: ReturnType<typeof analyzeTsImportsExports>,
-  _allFilenames: { [filename: string]: true },
+  allFilenames: { [filename: string]: true },
 ) {
   const errors = [] as SourcePathError[];
   /**
+   * NOTE cannot detect if ts (resp. tsx) imports tsx (resp. ts) because
+   * need to know typings from another file. We'll analyze transpiled js instead.
+   * 
+   * NOTE We don't enforce React component imports; we'll enforce exports.
+   * 
    * TODO
-   * - detect if path is not of form `./index`
-   * - detect if ts file imports value from tsx
-   * - detect if tsx file imports value from ts
+   * - detect if ts file imports/exports value from tsx
+   * - detect if tsx file imports/exports value from ts
    * - detect if tsx file exports non-react-component value
    */
-  // NOTE for tsx no need to enforce React component imports:
-  // they'll be enforced when exporting from original file.
+  const imports = analyzed.imports.filter(x => x.from.value !== 'react');
+
+  for (const imp of imports) {
+    const { value } = imp.from;
+    if (!value.startsWith('./')) {
+      errors.push({ key: 'require-import-relative', info: 'local imports must be relative', meta: imp.from });
+    } else if (value.endsWith('.scss') && !(value.slice(2) in allFilenames)) {
+      errors.push({ key: 'require-scss-exists', info: 'scss file not found', meta: imp.from });
+    }
+  }
+
+  if (analyzed.filename.endsWith('.tsx')) {
+    // else if (!(`${value.slice(2)}.tsx` in allFilenames)) {
+    //   errors.push({ key: 'only-import-tsx', info: 'tsx files can only import values from other tsx files', meta: imp.from });
+    // }
+    for (const exp of analyzed.exports) {
+      if (exp.key === 'export-symb') {
+        // TODO
+      } else if (exp.key === 'export-decl') {
+        // TODO
+      }
+    }
+
+  } else if (analyzed.filename.endsWith('.ts')) {
+    // for (const exp of analyzed.exports) {
+    // }
+  }
 
   console.log({ ...analyzed, errors });
   return errors;

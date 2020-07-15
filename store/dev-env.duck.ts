@@ -96,7 +96,6 @@ export const Thunk = {
       /**
        * TODO 
        * - ts/tsx must be relative without extension
-       *   > .filter(x => !x.path.startsWith('./') || !(x.path.slice(2) in devEnv.file))
        * - ts only import/export values from ts (can import 'redux')
        * - tsx only import/export values from tsx (can import 'react', 'react-redux')
        * - tsx only import/export React component values (ditto)
@@ -250,17 +249,17 @@ export const Thunk = {
     '[dev-env] detect code dependency cycles',
     ({ state: { devEnv } }, { filename, imports, exports }: {
       filename: string;
-      imports: PatchJs.JsImportMeta[];
-      exports: PatchJs.JsExportMeta[];
+      imports: PatchJs.TsImportMeta[];
+      exports: PatchJs.TsExportMeta[];
     }): null | Dev.CyclicDepError => {
       const filenames = Object.keys(devEnv.file);
-      const dependencyPaths = PatchJs.importPathsToCodeFilenames(([] as string[]).concat(
-        imports.map(({ path }) => path.value),
+      const dependencyFilenames = PatchJs.importPathsToCodeFilenames(([] as string[]).concat(
+        imports.map(({ from }) => from.value),
         exports.filter(PatchJs.isTsExportDecl).map(({ from }) => from.value),
       ), filenames);
 
       /** Files that `filename` imports/exports */
-      const dependencies = dependencyPaths.map(filename => devEnv.file[filename] as Dev.CodeFile);
+      const dependencies = dependencyFilenames.map(filename => devEnv.file[filename] as Dev.CodeFile);
       /** Files that import/export `filename`, and `filename` itself */
       const dependents = Object.values(devEnv.file).filter(({ key, transpiled }) =>
         key === filename || (transpiled?.type === 'js' && (
@@ -288,7 +287,8 @@ export const Thunk = {
     },
   ),
   /**
-   * Detect dependency cycles in scss (assuming `prefixed`).
+   * Detect dependency cycles in scss, assuming `prefixed`.
+   * Also detects valid @import-module-specifier.
    * Provide stratification if successful.
    */
   detectScssImportError: createThunk(
@@ -299,13 +299,13 @@ export const Thunk = {
 
       const invalidImport = detectInvalidScssImport(filename, files);
       if (invalidImport) {
-        return { key: 'error', errorKey: 'import-unknown', dependency: filename, inFilename: filename, fromFilename: invalidImport.path };
+        return { key: 'error', errorKey: 'import-unknown', dependency: filename, inFilename: filename, fromFilename: invalidImport.value };
       }
 
-      const dependencyPaths = file.pathIntervals.map(({ path }) => path.slice(2));
+      const dependencyPaths = file.pathIntervals.map(({ value }) => value.slice(2));
       const dependencies = dependencyPaths.map(filename => files[filename]);
       const dependents = Object.values(files).filter(({ key, pathIntervals }) =>
-        key === filename || pathIntervals.some(({ path }) => path === filename));
+        key === filename || pathIntervals.some(({ value }) => value === filename));
 
       const fileCount = Object.keys(files).length;
       for (const dependencyFile of dependencies) {
@@ -362,9 +362,9 @@ export const Thunk = {
       console.error(`Cyclic dependency for ${filename}: ${JSON.stringify(cyclicDepError)}`);
       const modelKey = filenameToModelKey(filename);
       // Expect pathIntervals paths to be relative e.g. ./foo-bar
-      const pathIntervals = (devEnv.file[filename] as Dev.CodeFile).pathIntervals;
-      const badIntervals = pathIntervals.filter(({ path }) => cyclicDepError.path.startsWith(path.slice(2)));
-      const markers = badIntervals.map((interval) => PatchJs.getCyclicDepMarker(interval));
+      const moduleSpecs = (devEnv.file[filename] as Dev.CodeFile).pathIntervals;
+      const badSpecs = moduleSpecs.filter(({ value }) => cyclicDepError.path.startsWith(value.slice(2)));
+      const markers = badSpecs.map((spec) => PatchJs.getCyclicDepMarker(spec));
       dispatch(EditorThunk.setModelMarkers({ modelKey, markers }));
       // Retranspile cyclic dependency if currently valid
       dispatch(Thunk.tryTranspileCodeModel({ filename: cyclicDepError.path, onlyIf: 'valid' }));
@@ -384,10 +384,10 @@ export const Thunk = {
       if (importError.errorKey === 'import-unknown') {
         // Malformed import either in `filename` or reachable from valid import
         if (importError.dependency === filename) {
-          const badIntervals = pathIntervals.filter(({ path }) => path === importError.fromFilename);
+          const badIntervals = pathIntervals.filter(({ value }) => value === importError.fromFilename);
           console.log({ scssImportUnknown: badIntervals });
         } else {
-          const badIntervals = pathIntervals.filter(({ path }) => path.slice(2) === importError.dependency);
+          const badIntervals = pathIntervals.filter(({ value }) => value.slice(2) === importError.dependency);
           console.log({ scssTransitiveImportUnknown: badIntervals });
         }
         // dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
@@ -436,18 +436,11 @@ export const Thunk = {
     '[dev-env] remember src code imports/exports',
     async ({ dispatch }, { filename }: { filename: string }) => {
       const { imports, exports } = await dispatch(EditorThunk.computeTsImportExports({ filename }));
-      const metas = imports.map(({ path }) => path).concat(
+      const moduleSpecifiers = imports.map(({ from: path }) => path).concat(
         exports.filter(PatchJs.isTsExportDecl).map(({ from }) => from));
-      const pathIntervals: Dev.SourcePathInterval[] = metas
-        .map(({ value, start, startCol, startLine }) => ({
-          path: value,
-          start,
-          line: startLine,
-          startCol,
-        }));
 
-      dispatch(Act.updateFile(filename, { pathIntervals }));
-      return { pathIntervals };
+      dispatch(Act.updateFile(filename, { pathIntervals: moduleSpecifiers }));
+      return { pathIntervals: moduleSpecifiers };
     },
   ),
   /** Initialize (debounced) storage of model contents on model change. */
@@ -606,8 +599,8 @@ export const Thunk = {
       src: string;
       dst: string;
       typings: string;
-      imports: PatchJs.JsImportMeta[];
-      exports: PatchJs.JsExportMeta[];
+      imports: PatchJs.TsImportMeta[];
+      exports: PatchJs.TsExportMeta[];
       jsPathErrors: Dev.JsPathError[];
     }) => {
       devEnv.file[filename]?.transpiled?.cleanups.forEach(cleanup => cleanup());
@@ -618,7 +611,7 @@ export const Thunk = {
         type: 'js',
         ...rest,
         cleanups: [() => disposable.dispose()],
-        importFilenames: PatchJs.importPathsToCodeFilenames(rest.imports.map(({ path }) => path.value), allFilenames),
+        importFilenames: PatchJs.importPathsToCodeFilenames(rest.imports.map(({ from: path }) => path.value), allFilenames),
         exportFilenames: PatchJs.importPathsToCodeFilenames(rest.exports
           .filter(PatchJs.isTsExportDecl).map(({ from }) => from.value), allFilenames),
       }));
@@ -773,7 +766,7 @@ const bootstrapStyles = createEpic(
     flatMap(({ pay: { filename } }) => {
       const file = pluck(state$.value.devEnv.file, ({ ext }) => ext === 'scss') as KeyedLookup<Dev.PrefixedStyleFile>;
       const parentFiles = Object.values(file).filter(({ key, pathIntervals }) =>
-        key !== filename && pathIntervals.some(({ path }) => path === `./${filename}`));
+        key !== filename && pathIntervals.some(({ value }) => value === `./${filename}`));
       return [
         Thunk.bootstrapStyles({ filename }),
         ...parentFiles.map(({ key }) => Thunk.tryTranspileStyleModel({ filename: key })),
