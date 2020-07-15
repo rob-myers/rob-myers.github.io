@@ -6,50 +6,21 @@ const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
 
 /**
  * Analyze imports/exports of ts/tsx/js file.
- *
- * TODO
- * - detect if path is not of form `./index`
- * - detect if ts file imports value from tsx
- * - detect if tsx file imports value from ts
- * - detect if tsx file exports non-react-component value
  */
-export function analyzeTsImportsExports(
-  filename: string,
-  code: string,
-  _allFilenames: { [filename: string]: true },
-) {
-  const isTsx = filename.endsWith('.tsx');
-  if (isTsx) {
+export function analyzeTsImportsExports(filename: string, code: string) {
+  if (filename.endsWith('.tsx')) {
     // Add basic typings for React.FC so can recognise type.
     // Must apply as suffix to preserve import/export code intervals.
     code = [code, 'declare namespace React { type FC<P = {}> = (x: P) => {} }'].join('\n');
   }
-  const srcFile = project.createSourceFile(filename, code);
+  const srcFile = project.createSourceFile(filename, code, { overwrite: true });
+  const [imports, exports] = [[] as JsImportMeta[], [] as JsExportMeta[]];
 
-  const importItems = [] as JsImportMeta[];
-  const exportItems = [] as JsExportMeta[];
-  const importDecs = srcFile.getImportDeclarations();
-  const exportDecs = srcFile.getExportDeclarations();
-  const exportAssigns = srcFile.getExportAssignments();
-  const exportSymbols = srcFile.getExportSymbols();
-
-  const srcErrors = [] as SourcePathError[];
-  const isSrc = isTsx || filename.endsWith('.ts');
-
-  // e.g. export const foo = 'bar';
-  exportSymbols.forEach((item) => {
-    exportItems.push({
-      key: 'export-symb',
-      name: item.getName(),
-      type: item.getValueDeclaration()?.getType().getText() || null,
-    });
-  });
-
-  importDecs.forEach((item) => {
+  srcFile.getImportDeclarations().forEach((item) => {
     const moduleSpecifier = item.getModuleSpecifier();
     const { line, column } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
 
-    importItems.push({
+    imports.push({
       key: 'import-decl',
       /** Module specifier e.g. `./index` */
       path: {
@@ -72,21 +43,24 @@ export function analyzeTsImportsExports(
     });
   });
 
-  /**
-   * e.g. export { foo } from './other-module'
-   * 
-   * For tsx there is no need to enforce React components:
-   * they'll be enforced when exporting from original file.
-   */
-  exportDecs.forEach((item) => {
+  // e.g. export const foo = 'bar';
+  srcFile.getExportSymbols().forEach((item) => {
+    exports.push({
+      key: 'export-symb',
+      name: item.getName(),
+      type: item.getValueDeclaration()?.getType().getText() || null,
+    });
+  });
+
+  // e.g. export { foo } from './other-module'
+  srcFile.getExportDeclarations().forEach((item) => {
     if (!item.hasModuleSpecifier()) {
       return console.warn('ignored unexpected export declaration without module specifier');
     }
-
     const moduleSpecifier = item.getModuleSpecifier()!;
     const { line, column } = srcFile.getLineAndColumnAtPos(moduleSpecifier.getStart());
 
-    exportItems.push({
+    exports.push({
       key: 'export-decl',
       from: {
         value: moduleSpecifier.getLiteralValue(),
@@ -104,32 +78,47 @@ export function analyzeTsImportsExports(
       ),
     });
   });
+  
+  const isTyped = /\.tsx?$/.test(filename);
 
   // e.g. export default App
-  exportAssigns.forEach((item) => {
+  srcFile.getExportAssignments().forEach((item) => {
     if (item.isExportEquals()) {
       return console.warn('ignored unexpected export assignment which is not default export');
     }
-    if (isSrc) {
-      exportItems.push({
-        key: 'export-asgn',
-        name: 'default',
-        type: item.getDescendants()[2].getType().getText(),
-      });
-    }
+    exports.push({
+      key: 'export-asgn',
+      name: 'default',
+      type: isTyped ? item.getDescendants()[2].getType().getText() : null,
+    });
   });
 
   project.removeSourceFile(srcFile);
 
-  if (isSrc) {
-    console.log({ filename, importItems, exportItems});
-    console.log({ srcErrors });
-  }
-
   return {
-    exports: exportItems,
-    imports: importItems,
+    filename,
+    imports,
+    exports,
   };
+}
+
+export function computeTsImportExportErrors(
+  analyzed: ReturnType<typeof analyzeTsImportsExports>,
+  _allFilenames: { [filename: string]: true },
+) {
+  const errors = [] as SourcePathError[];
+  /**
+   * TODO
+   * - detect if path is not of form `./index`
+   * - detect if ts file imports value from tsx
+   * - detect if tsx file imports value from ts
+   * - detect if tsx file exports non-react-component value
+   */
+  // NOTE for tsx no need to enforce React component imports:
+  // they'll be enforced when exporting from original file.
+
+  console.log({ ...analyzed, errors });
+  return errors;
 }
 
 /**

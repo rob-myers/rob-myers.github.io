@@ -51,7 +51,7 @@ type TsExportDecl = {
 interface TsExportAsgn {
   key: 'export-asgn';
   name: 'default';
-  type: string;
+  type: string | null;
 }
 
 export function isTsExportDecl(x: JsExportMeta): x is TsExportDecl {

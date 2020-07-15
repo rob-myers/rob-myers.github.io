@@ -6,7 +6,7 @@ import { SyntaxDispatchOverload } from './redux.model';
 import { prefixScssClasses, extractScssImportIntervals } from './analyze-scss.model';
 import { computeClassifications } from './highlight.model';
 import { initializeStore } from './create-store';
-import { analyzeTsImportsExports, toggleTsxComment } from './analyze-ts.model';
+import { analyzeTsImportsExports, toggleTsxComment, computeTsImportExportErrors } from './analyze-ts.model';
 
 const ctxt: SyntaxWorkerContext = self as any;
 
@@ -31,14 +31,14 @@ ctxt.addEventListener('message', async ({ data }) => {
      *   replaced by blob urls when mounted on the page.
      */
     case 'request-import-exports': {
+      const analyzed = analyzeTsImportsExports(data.filename, data.code);
       ctxt.postMessage({
         key: 'send-import-exports',
         origCode: data.code,
-        ...analyzeTsImportsExports(
-          data.filename,
-          data.code,
-          data.allFilenames,
-        ),
+        ...analyzed,
+        ...(data.filename.match(/\.tsx?$/) && {
+          srcErrors: computeTsImportExportErrors(analyzed, data.allFilenames),
+        }),
       });
       break;
     }
