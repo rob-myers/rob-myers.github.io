@@ -16,12 +16,16 @@ export function hasSupportedExtension(filename: string) {
 type Meta = LayoutPanelMeta<CustomPanelMetaKey>
 
 export function isFilePanel(panelMeta: Meta): panelMeta is Meta & { filename: string } {
-  return supportedFileMetas.some((filenameExt) =>
-    panelMeta?.filename?.endsWith(filenameExt));
+  return !panelMeta?.devEnvComponent && supportedFileMetas
+    .some((filenameExt) => panelMeta?.filename?.endsWith(filenameExt));
 }
 
 export function isAppPanel(panelMeta: Meta) {
   return panelMeta?.devEnvComponent === 'App';
+}
+
+export function isDocPanel(panelMeta: Meta): panelMeta is Meta & { filename: string } {
+  return panelMeta?.devEnvComponent === 'Doc';
 }
 
 export function panelKeyToAppElId(panelKey: string) {
@@ -267,16 +271,29 @@ export function getReachableScssFiles(rootFilename: string, file: KeyedLookup<Pr
   return Object.values(reachable);
 }
 
-export type DevPanelMeta = DevPanelFileMeta | DevPanelAppMeta;
+export type DevPanelMeta = (
+  | DevPanelFileMeta
+  | DevPanelAppMeta
+  | DevPanelDocMeta
+);
 
+/** A file in the project */
 interface DevPanelFileMeta extends BasePanelMeta {
   panelType: 'file';
   filename: string;
 }
+/** An instance of the App defined by project */
 export interface DevPanelAppMeta extends BasePanelMeta {
   panelType: 'app';
   elementId: string;
 }
+/** A blog entry (external doc) or README (project doc) */
+export interface DevPanelDocMeta extends BasePanelMeta {
+  panelType: 'doc';
+  /** e.g. docs/foo */
+  filename: string;
+}
+
 interface BasePanelMeta {
   /** Panel key */
   key: string;
@@ -303,6 +320,15 @@ export function createDevPanelFileMeta(panelKey: string, filename: string): DevP
   return {
     key: panelKey,
     panelType: 'file',
+    filename: filename,
+    menuOpen: false,
+  };
+}
+
+export function createDevPanelDocMeta(panelKey: string, filename: string): DevPanelDocMeta {
+  return {
+    key: panelKey,
+    panelType: 'doc',
     filename: filename,
     menuOpen: false,
   };

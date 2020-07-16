@@ -8,11 +8,11 @@
 .menu-container {
   display: flex;
   justify-content: space-between;
-  // align-items: center;
   cursor: pointer;
 
   color: #aaa;
-  background: rgb(35, 30, 30);
+  background-color: rgb(35, 30, 30);
+  transition: background-color 200ms ease-out;
 
   &.menu-closed {
     justify-content: flex-end;
@@ -20,7 +20,8 @@
 
   &:hover {
     color: white;
-    background: rgb(45, 40, 40);
+    background-color: rgb(45, 40, 40);
+    transition: background-color 500ms ease-in;
   }
 
   .menu-options {
@@ -38,6 +39,7 @@
   .toggle-indicator {
     margin-right: 8px;
     font-size: 10px;
+    user-select: none;
   }
 
   &:not(.menu-closed) .toggle-indicator {

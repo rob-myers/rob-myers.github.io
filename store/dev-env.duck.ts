@@ -52,14 +52,17 @@ export const Act = {
     createAct('[dev-env] add file cleanups', { filename, cleanups }),
   changePanelMeta: (panelKey: string, input: (
     | { to: 'app' }
-    | { to: 'filename'; filename: string }
+    | { to: 'doc'; filename: string }
+    | { to: 'file'; filename: string }
   )) => createAct('[dev-env] change panel meta', { panelKey, ...input }),
+  createAppPanelMeta: (input: { panelKey: string }) =>
+    createAct('[dev-env] create app panel meta', input),
+  createDocPanelMeta: (input: { panelKey: string; filename: string }) =>
+    createAct('[dev-env] create doc panel meta', input),
   createCodeFile: (input: { filename: string; contents: string }) =>
     createAct('[dev-env] create code file', input),
   createStyleFile: (input: { filename: string; contents: string }) =>
     createAct('[dev-env] create style file', input),
-  createAppPanelMeta: (input: { panelKey: string }) =>
-    createAct('[dev-env] create app panel meta', input),
   createFilePanelMeta: (input: { panelKey: string; filename: string }) =>
     createAct('[dev-env] create file panel meta', input),
   deleteFile: (input: { filename: string }) =>
@@ -206,7 +209,11 @@ export const Thunk = {
     '[dev-env] change panel contents',
     ({ dispatch, state: { layout } }, { panelKey, next }: {
       panelKey: string;
-      next: { to: 'app' } | { to: 'filename'; filename: string };
+      next: (
+        | { to: 'app' }
+        | { to: 'doc'; filename: string }
+        | { to: 'file'; filename: string }
+      );
     }) => {
       dispatch(Act.changePanelMeta(panelKey, next));
 
@@ -218,6 +225,9 @@ export const Thunk = {
           if (next.to === 'app') {
             delete panelMeta.filename;
             panelMeta.devEnvComponent = node.title = 'App';
+          } else if (next.to === 'doc') {
+            panelMeta.devEnvComponent = 'Doc';
+            panelMeta.filename = node.title = next.filename;
           } else {
             delete panelMeta.devEnvComponent;
             panelMeta.filename = node.title = next.filename;
@@ -643,10 +653,12 @@ export const reducer = (state = initialState, act: Action): State => {
     };    
     case '[dev-env] change panel meta': {
       const metaState = Dev.getDevPanelMetaState(state.panelToMeta[act.pay.panelKey]);
-      return { ...state,
-        panelToMeta: addToLookup(act.pay.to === 'app'
+      return { ...state, panelToMeta: addToLookup(
+        act.pay.to === 'app'
           ? { ...Dev.createDevPanelAppMeta(act.pay.panelKey), ...metaState }
-          : { ...Dev.createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), ...metaState }
+          : act.pay.to ===  'doc'
+            ? { ...Dev.createDevPanelDocMeta(act.pay.panelKey, act.pay.filename), ...metaState }
+            : { ...Dev.createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), ...metaState }
         , state.panelToMeta),
       };
     }
@@ -665,6 +677,10 @@ export const reducer = (state = initialState, act: Action): State => {
         cleanups: [],
         esModule: null,
       }, state.file),
+    };
+    case '[dev-env] create doc panel meta': return { ...state,
+      panelToMeta: addToLookup(
+        Dev.createDevPanelDocMeta(act.pay.panelKey, act.pay.filename), state.panelToMeta)
     };
     case '[dev-env] create file panel meta': return { ...state,
       panelToMeta: addToLookup(
@@ -753,7 +769,7 @@ const bootstrapAppInstances = createEpic(
           return [Thunk.bootstrapAppInstance({ panelKey: act.args.panelKey })];
         }
       } else if (act.type === '[dev-env] change panel meta') {
-        if (act.pay.to === 'filename') {
+        if (act.pay.to === 'file' || act.pay.to === 'doc') {
           return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
         }
       }
@@ -857,7 +873,8 @@ const onChangePanel = createEpic(
           ];
         }
       } else {
-        return [LayoutThunk.setPanelTitle({ panelKey,
+        return [LayoutThunk.setPanelTitle({
+          panelKey,
           title: act.pay.to === 'app' ? 'App' : act.pay.filename,
         })];
       }

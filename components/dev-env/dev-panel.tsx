@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
-import { isAppPanel, isFilePanel } from '@model/code/dev-env.model';
+import { isAppPanel, isFilePanel, isDocPanel } from '@model/code/dev-env.model';
 import { Act } from '@store/dev-env.duck';
 import DevPanelMenu from './dev-panel-menu';
+import DevDoc from './dev-doc';
 import css from './dev-panel.scss';
 
 const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false });
@@ -30,6 +31,8 @@ const DevPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
         dispatch(Act.createFilePanelMeta({ filename: panelMeta.filename, panelKey }));
       } else if (panelMeta && isAppPanel(panelMeta)) {
         dispatch(Act.createAppPanelMeta({ panelKey }));
+      } else if (panelMeta && isDocPanel(panelMeta)) {
+        dispatch(Act.createDocPanelMeta({ panelKey, filename: panelMeta.filename }));
       } else {
         setFailed(true);
       }
@@ -40,11 +43,12 @@ const DevPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
   return devMeta ? (
     <>
       <DevPanelMenu panelKey={panelKey} />
-      {devMeta.panelType === 'file' && (
-        <DevEditor panelKey={panelKey} filename={devMeta.filename} />
-      ) || (
-        <DevApp panelKey={panelKey} />
-      )}
+      {devMeta.panelType === 'file' &&
+        <DevEditor panelKey={panelKey} filename={devMeta.filename} />}
+      {devMeta.panelType === 'doc' &&
+        <DevDoc panelKey={panelKey} filename={devMeta.filename} />}
+      {devMeta.panelType === 'app' &&
+        <DevApp panelKey={panelKey} />}
       {failed && (
         <div className={css.unsupportedPanel}>
           {`Unsupported panel '${panelKey}' with meta '${JSON.stringify(panelMeta)}'`}
