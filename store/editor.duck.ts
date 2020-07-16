@@ -256,7 +256,7 @@ export const Thunk = {
       const uri = monaco.Uri.parse(`file:///${filename}`);
       const model = monaco.editor.getModel(uri) || monaco.editor.createModel(code, undefined, uri);
       
-      // Don't track special model ensuring bootstrapped if no editor panel initially open
+      // Don't track special model which ensures monaco is bootstrapped
       if (filename === '_bootstrap.ts') {
         return model;
       }

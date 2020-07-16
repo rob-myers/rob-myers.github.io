@@ -28,7 +28,11 @@ export interface State {
   initialized: boolean;
   /** Mirrors layout.panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
-  bootstrapped: boolean;
+  /**
+   * True if after last transpilation, all code reachable
+   * from index.tsx was deemed collectively valid.
+   */
+  appValid: boolean;
   /** So can persist App instances across site */
   appPortal: KeyedLookup<Dev.AppPortal>;
 }
@@ -37,7 +41,7 @@ const initialState: State = {
   file: {},
   initialized: false,
   panelToMeta: {},
-  bootstrapped: false,
+  appValid: false,
   appPortal: {},
 };
 
@@ -64,14 +68,14 @@ export const Act = {
     createAct('[dev-env] forget panel meta', input),
   initialized: () =>
     createAct('[dev-env] initialized', {}),
-  removeAppPortal: (panelKey: string) =>
-    createAct('[dev-env] remove app portal', { panelKey }),
+  rememberAppValid: (isValid: boolean) =>
+    createAct('[dev-env] remember app valid', { isValid }),
   rememberRenderedApp: (panelKey: string) =>
     createAct('[dev-env] remember rendered app', { panelKey }),
+  removeAppPortal: (panelKey: string) =>
+    createAct('[dev-env] remove app portal', { panelKey }),
   restrictAppPortals: (input: { panelKeys: string[] }) =>
     createAct('[dev-env] restrict app portals', input),
-  setBootstrapped: (isValid: boolean) =>
-    createAct('[dev-env] set bootstrapped', { isValid }),
   storeCodeTranspilation: (filename: string, transpilation: Dev.CodeTranspilation) =>
     createAct('[dev-env] store code transpilation', { filename, transpilation }),
   storeStyleTranspilation: (filename: string, transpilation: Dev.StyleTranspilation) =>
@@ -85,6 +89,9 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  /**
+   * Analyze transpiled javascript before we store it.
+   */
   analyzeJsCode: createThunk(
     '[dev-env] analyze code file',
     async ({ dispatch, state: { devEnv } }, { filename, nextTranspiledJs }: {
@@ -125,21 +132,23 @@ export const Thunk = {
       return awaitWorker('send-react-refresh-transform', syntaxWorker!, ({ origCode }) => origCode === js);
     },
   ),
+  /**
+   * NOOP used to trigger bootstrapAppInstance
+   */
   appPortalIsReady: createThunk(
-    /**
-     * NOOP used to trigger bootstrapAppInstance
-     */
     '[dev-env] app portal is ready',
     (_, _input: { panelKey: string }) => void null,
   ),
+  /**
+   * Mount or update an app instance, either via
+   * code update or newly created app panel.
+   */
   bootstrapAppInstance: createThunk(
     '[dev-env] bootstrap app instance',
     ({ state: { devEnv }, dispatch }, { panelKey }: { panelKey: string }) => {
-      /**
-       * 1st attempt at implementing react-refresh
-       * TODO invalidate when exports change
-       */
-      if (!devEnv.bootstrapped || !devEnv.appPortal[panelKey].rendered) {
+      // 1st attempt at implementing react-refresh
+      // TODO invalidate when exports change
+      if (!devEnv.appPortal[panelKey].rendered) {
         renderAppAt(Dev.panelKeyToAppElId(panelKey));
         dispatch(Act.rememberRenderedApp(panelKey));
       } else {
@@ -179,11 +188,11 @@ export const Thunk = {
       Object.values(devEnv.panelToMeta).filter(({ panelType }) => panelType === 'app')
         .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
   
-      dispatch(Act.setBootstrapped(true));
+      dispatch(Act.rememberAppValid(true));
     },
   ),
   /**
-   * Store transpiled scss in a <style>.
+   * Mount transpiled scss on the page using a style tag.
    */
   bootstrapStyles: createThunk(
     '[dev-env] bootstrap styles',
@@ -680,22 +689,22 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] initialized': return { ...state,
       initialized: true,
     };
+    case '[dev-env] remember app valid': return { ...state,
+      appValid: act.pay.isValid,
+    };
     case '[dev-env] remember rendered app': return { ...state,
       appPortal: updateLookup(act.pay.panelKey, state.appPortal, () => ({
         rendered: true,
       })),
     };
-    case '[dev-env] remove file': return { ...state,
-      file: removeFromLookup(act.pay.filename, state.file),
-    };
     case '[dev-env] remove app portal': return { ...state,
       appPortal: removeFromLookup(act.pay.panelKey, state.appPortal),
     };
+    case '[dev-env] remove file': return { ...state,
+      file: removeFromLookup(act.pay.filename, state.file),
+    };
     case '[dev-env] restrict app portals': return { ...state,
       appPortal: pluck(state.appPortal, ({ key }) => act.pay.panelKeys.includes(key)),
-    };
-    case '[dev-env] set bootstrapped': return { ...state,
-      bootstrapped: act.pay.isValid,
     };
     case '[dev-env] store style transpilation': return { ...state,
       file: updateLookup(act.pay.filename, state.file, () => ({
@@ -725,7 +734,7 @@ const bootstrapAppInstances = createEpic(
       '[dev-env] change panel meta',
     ),
     flatMap((act) => {
-      const { file, bootstrapped } = state$.value.devEnv;
+      const { file, appValid } = state$.value.devEnv;
 
       if (act.type === '[dev-env] store code transpilation') {
         const reachableJsFiles = Dev.getReachableJsFiles(file);
@@ -736,11 +745,11 @@ const bootstrapAppInstances = createEpic(
           return [// All reachable code locally valid so try bootstrap app
             Thunk.bootstrapApps({}),
           ];
-        } else if (bootstrapped) {
-          return [Act.setBootstrapped(false)];
+        } else if (appValid) {
+          return [Act.rememberAppValid(false)];
         }
       } else if (act.type === '[dev-env] app portal is ready') {
-        if (bootstrapped) {
+        if (appValid) {
           return [Thunk.bootstrapAppInstance({ panelKey: act.args.panelKey })];
         }
       } else if (act.type === '[dev-env] change panel meta') {
@@ -783,7 +792,7 @@ const initializeMonacoModels = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[editor] set monaco loaded'),
     filter(({ pay: { loaded } }) => loaded),
-    // NOTE turning off diagnostics causes initial tryTranspileModel to hang
+    // NOTE turning off diagnostics can cause code transpilation to hang
     flatMap(() => [
       ...Object.values(state$.value.devEnv.file).flatMap((file) => [
         EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),

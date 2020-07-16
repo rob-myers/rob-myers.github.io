@@ -35,8 +35,8 @@ export const exampleTsx3 = `
 import * as React from 'react';
 import css from './index.scss';
 
-import { baz } from './model';
-console.log({ baz })
+// import { baz } from './model';
+// console.log({ baz })
 
 interface ItemProps {
   id: number;

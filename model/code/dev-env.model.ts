@@ -161,7 +161,7 @@ type SourceFileErrorKey = (
   | 'only-export-cmp'
 );
 
-export const getSourceFileError = (key: SourceFileErrorKey): string => {
+export const getSourceFileErrorInfo = (key: SourceFileErrorKey): string => {
   switch (key) {
     case 'only-export-cmp': return 'We only permit tsx files to export values which are React components.';
     case 'require-export-relative': return 'Exports must be relative.';
@@ -193,12 +193,12 @@ type JsPathErrorKey = (
   | 'only-export-tsx'
 );
 
-export const getJsPathError = (key: JsPathErrorKey): string => {
+export const getJsPathErrorInfo = (key: JsPathErrorKey): string => {
   switch (key) {
     case 'cyclic-dependency': return 'Cyclic dependencies are unsupported; types are unrestricted.';
-    case 'only-export-ts': return 'We only permit ts files to import values from other ts files.';
+    case 'only-export-ts': return 'We only permit ts files to export values from other ts files.';
     case 'only-export-tsx': return 'We only permit tsx files to export values from other tsx files.';
-    case 'only-import-ts': return 'We only permit ts files to export values from other ts files.';
+    case 'only-import-ts': return 'We only permit ts files to import values from other ts files.';
     case 'only-import-tsx': return 'We only permit tsx files to import values from other tsx files.';
     default: throw testNever(key);
   }
@@ -344,7 +344,7 @@ export interface CodeInterval {
 
 export function getSrcErrorMarker({ key, interval }: SourceFileError): IMarkerData {
   return {
-    message: getSourceFileError(key),
+    message: getSourceFileErrorInfo(key),
     startLineNumber: interval.startLine,
     startColumn: interval.startCol,
     endLineNumber: interval.startLine,
@@ -357,7 +357,7 @@ export function getJsPathErrorMarkers(jsErrors: JsPathError[], metas: ModuleSpec
   const metaErrors = metas.map((meta) => ({ meta, jsErrors: jsErrors.filter(x => x.path === meta.value) }));
   return metaErrors.flatMap(({ meta: { interval }, jsErrors }) =>
     jsErrors.map(({ key }) => ({
-      message: getJsPathError(key),
+      message: getJsPathErrorInfo(key),
       startLineNumber: interval.startLine,
       startColumn: interval.startCol,
       endLineNumber: interval.startLine,
