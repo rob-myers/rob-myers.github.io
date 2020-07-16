@@ -4,6 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [ ] show error on ts importing tsx values (or vice-versa)
 - [x] collect ts/tsx/js errors during import/export analysis in webworker
 - [ ] custom dropdown for better x-browser experience
 - [ ] support multiple projects
@@ -39,9 +40,9 @@ See [blog notes](./blog.md).
   > Fixed by restricting to reachable scss files in `detectScssImportError`.
 - [x] can reset layout in menu
 - [x] refresh css when scss dependency is updated
-- [ ] force scss files existence (else show error)
-- [ ] force code import paths to be relative (else show error)
-- [ ] force style import paths to be relative (else show error)
+- [x] force scss files existence (else show error)
+- [x] force code import paths to be relative (else show error)
+- [x] force style import paths to be relative (else show error)
   > merge `pathIntervals` type in CodeFile and StyleFile
   > todo: add filepath error to CodeFile and StyleFile
   > todo: show error

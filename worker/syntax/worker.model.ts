@@ -1,8 +1,7 @@
 import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
-import { TsImportMeta, TsExportMeta } from '@model/code/patch-js-imports';
-import { SourcePathError, ModuleSpecifierInterval, JsPathError } from '@model/code/dev-env.model';
+import { SourceFileError, ModuleSpecifierInterval, JsPathError, TsImportMeta, TsExportMeta } from '@model/code/dev-env.model';
 import { Classification } from './highlight.model';
 import { ToggleTsxCommentResult } from './analyze-ts.model';
 
@@ -73,7 +72,7 @@ interface SendImportExportMeta {
   imports: TsImportMeta[];
   exports: TsExportMeta[];
   /** Only for ts/tsx */
-  srcErrors: SourcePathError[]; 
+  srcErrors: SourceFileError[]; 
   /** Only for transpiled ts/tsx */
   jsErrors: JsPathError[];
 }
@@ -92,7 +91,7 @@ interface SendTsxCommented {
 interface SendReactRefreshTransform {
   key: 'send-react-refresh-transform';
   origCode: string;
-  transformedCode: string;
+  transformedJs: string;
 }
 
 type MessageFromParent = (

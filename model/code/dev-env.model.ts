@@ -1,9 +1,9 @@
 import { HtmlPortalNode } from 'react-reverse-portal';
-import { KeyedLookup, lookupFromValues } from '@model/generic.model';
+import { KeyedLookup, lookupFromValues, testNever } from '@model/generic.model';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
-import { TsExportMeta, TsImportMeta } from './patch-js-imports';
 import { Redacted } from '@model/store/redux.model';
+import { IMarkerData } from '@model/monaco/monaco.model';
 
 export const menuHeightPx = 32;
 
@@ -85,18 +85,12 @@ export interface StyleFile extends BaseFile {
    * Completely determined by filename.
    * This is attached immediately after creation.
    */
-  cssModule: null | {
-    code: string;
-    blobUrl: string;
-  };
+  cssModule: null | { code: string; blobUrl: string };
   /**
    * Contains original scss and prefixed scss
    * i.e. each class is prefixed using filename.
    */
-  prefixed: null | {
-    src: string;
-    dst: string;
-  };
+  prefixed: null | { src: string; dst: string };
   /** Last transpiled css. */
   transpiled: null | StyleTranspilation;
 }
@@ -108,13 +102,13 @@ interface BaseFile {
   contents: string;
   /** Can dispose model code/transpile trackers */
   cleanups: (() => void)[];
-  /** Code intervals of paths specifiers in import/export/@import's */
+  /** Code intervals of module specifiers in import/export/@import's */
   pathIntervals: ModuleSpecifierInterval[];
   /**
    * Module specifier errors for untranspiled ts/tsx/scss.
    * We store js-specific errors in `CodeTranspilation`.
    */
-  pathErrors: SourcePathError[];
+  srcErrors: SourceFileError[];
 }
 
 export interface CodeTranspilation extends BaseTranspilation {
@@ -149,14 +143,35 @@ export interface CodeFileEsModule {
   patchedCode: string;
 }
 
-/** Untranspiled module specifier errors */
-export type SourcePathError = { label: string; interval: CodeInterval } & (
-  | { key: 'require-import-relative'; info: 'local imports must be relative' }
-  | { key: 'require-export-relative'; info: 'exports must be relative' }
-  | { key: 'require-scss-exists'; info: 'scss file not found' }
-  | { key: 'only-export-cmp'; info: 'tsx export values must be react components' }
+/**
+ * Source file errors.
+ * Mostly about module specifiers, except `only-export-cmp`.
+ */
+export interface SourceFileError {
+  key: SourceFileErrorType;
+  label: string;
+  interval: CodeInterval;
+}
+
+type SourceFileErrorType = (
+  | 'require-import-relative'
+  | 'require-export-relative'
+  | 'require-scss-exists'
+  | 'require-normalised-path'
+  | 'only-export-cmp'
 );
-  
+
+export const getSourceFileError = (key: SourceFileErrorType): string => {
+  switch (key) {
+    case 'only-export-cmp': return 'Tsx value exports must be React components.';
+    case 'require-export-relative': return 'Exports must be relative.';
+    case 'require-import-relative': return 'Local imports must be relative.';
+    case 'require-normalised-path': return 'Write ts and tsx import paths as ./${basename} without extension.';
+    case 'require-scss-exists': return 'Scss file not found.';
+    default: throw testNever(key);
+  }
+};
+
 /**
  * Transpiled js error.
  * Errors will be shown in source by matching `path`.
@@ -183,7 +198,7 @@ export interface PrefixedStyleFile extends StyleFile {
 }
 
 export function isFileValid(file: FileState) {
-  return !file.pathErrors.length && (
+  return !file.srcErrors.length && (
     file.ext === 'scss' || (
       file.transpiled?.type === 'js'
       && !file.transpiled.jsPathErrors.length
@@ -279,10 +294,10 @@ export interface AppPortal {
 }
 
 export interface AnalyzeNextCode {
-  srcPathErrors: SourcePathError[];
+  transformedJs: string;
   jsPathErrors: JsPathError[];
-  imports: TsImportMeta[];
-  exports: TsExportMeta[];
+  jsImports: TsImportMeta[];
+  jsExports: TsExportMeta[];
   cyclicDepError: CyclicDepError | null;
   prevCyclicError: CyclicDepError | null;
 }
@@ -300,4 +315,55 @@ export interface CodeInterval {
   startCol: number;
   endLine: number;
   endCol: number;
+}
+
+export function getSrcErrorMarker({ key, interval }: SourceFileError): IMarkerData {
+  return {
+    message: getSourceFileError(key),
+    startLineNumber: interval.startLine,
+    startColumn: interval.startCol,
+    endLineNumber: interval.startLine,
+    endColumn: interval.endCol,
+    severity: 8,
+  };
+}
+
+export type TsImportMeta = {
+  key: 'import-decl';
+  from: ModuleSpecifierInterval;
+} & (
+  | { names: { name: string; alias: string | null }[] }
+  | { namespace: string }
+  | { defaultAlias: string }
+)
+
+export type TsExportMeta = (
+  | TsExportSymb
+  | TsExportDecl
+  | TsExportAsgn
+);
+
+interface TsExportSymb {
+  key: 'export-symb';
+  name: string;
+  type: string | null;
+  interval: CodeInterval;
+}
+type TsExportDecl = {
+  key: 'export-decl';
+  /** Can export from another module */
+  from: ModuleSpecifierInterval;
+} & (
+  | { names: { name: string; alias: string | null }[] }
+  | { namespace: string }
+)
+interface TsExportAsgn {
+  key: 'export-asgn';
+  name: 'default';
+  type: string | null;
+  interval: CodeInterval;
+}
+
+export function isTsExportDecl(x: TsExportMeta): x is TsExportDecl {
+  return x.key === 'export-decl';
 }

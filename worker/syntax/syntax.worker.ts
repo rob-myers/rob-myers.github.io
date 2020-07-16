@@ -91,7 +91,7 @@ ctxt.addEventListener('message', async ({ data }) => {
       ctxt.postMessage({
         key: 'send-react-refresh-transform',
         origCode: data.code,
-        transformedCode: code,
+        transformedJs: code,
       });
       break;
     }

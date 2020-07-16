@@ -1,6 +1,6 @@
 import { KeyedLookup, pluck } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, getBlobUrl, ModuleSpecifierInterval, CodeInterval } from './dev-env.model';
+import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, getBlobUrl, ModuleSpecifierInterval, isTsExportDecl, TsExportMeta, TsImportMeta } from './dev-env.model';
 
 export function getCyclicDepMarker(
   { value, interval: { startLine, startCol} }: ModuleSpecifierInterval,
@@ -16,48 +16,6 @@ export function getCyclicDepMarker(
     endColumn: startCol + value.length + 2,
     severity: 8,
   };
-}
-
-export type TsImportMeta = {
-  key: 'import-decl';
-  from: ModuleSpecifierInterval;
-} & (
-  | { names: { name: string; alias: string | null }[] }
-  | { namespace: string }
-  | { defaultAlias: string }
-)
-
-export type TsExportMeta = (
-  | TsExportSymb
-  | TsExportDecl
-  | TsExportAsgn
-);
-
-interface TsExportSymb {
-  key: 'export-symb';
-  name: string;
-  type: string | null;
-  interval: CodeInterval;
-}
-
-type TsExportDecl = {
-  key: 'export-decl';
-  /** Can export from another module */
-  from: ModuleSpecifierInterval;
-} & (
-  | { names: { name: string; alias: string | null }[] }
-  | { namespace: string }
-)
-
-interface TsExportAsgn {
-  key: 'export-asgn';
-  name: 'default';
-  type: string | null;
-  interval: CodeInterval;
-}
-
-export function isTsExportDecl(x: TsExportMeta): x is TsExportDecl {
-  return x.key === 'export-decl';
 }
 
 /** Relative paths to code filenames, ignoring 'react' */
@@ -195,7 +153,7 @@ function patchTranspiledCode(
       nextValue = `${window.location.origin}/runtime-modules/react-facade.js`;
     } else if (filename && filenameToPatched[filename]) {
       nextValue = filenameToPatched[filename].blobUrl;
-    } else if (filename.endsWith('.scss')) {
+    } else if (filename && filename.endsWith('.scss')) {
       nextValue = scssFile[filename].cssModule!.blobUrl;
     } else {
       throw Error(`Unexpected import/export meta ${JSON.stringify(meta)}`);

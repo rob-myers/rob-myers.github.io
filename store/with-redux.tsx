@@ -7,11 +7,12 @@ import { initializeStore, ReduxStore } from './create-store';
 const __NEXT_REDUX_STORE__ = '__NEXT_REDUX_STORE__';
 
 const getOrInitializeStore = (initialState?: RootState) => {
-  const win = getWindow<{ __NEXT_REDUX_STORE__: ReduxStore }>();
-  return win ? (
-    win[__NEXT_REDUX_STORE__]
-    || (win[__NEXT_REDUX_STORE__] = initializeStore(initialState))
-  ) : initializeStore(initialState);
+  const w = getWindow<{ __NEXT_REDUX_STORE__: ReduxStore }>();
+  return w
+    ? w[__NEXT_REDUX_STORE__] || (
+      w[__NEXT_REDUX_STORE__] = initializeStore(initialState)
+    ) 
+    : initializeStore(initialState);
 };
 
 type IProps = { initialReduxState: RootState }

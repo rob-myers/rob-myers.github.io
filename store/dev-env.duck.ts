@@ -87,35 +87,34 @@ export const Thunk = {
   /**
    * IN PROGRESS
    */
-  analyzeTranspiledJs: createThunk(
-    '[dev-env] analyze transpiled js',
+  analyzeJsCode: createThunk(
+    '[dev-env] analyze code file',
     async ({ dispatch, state: { devEnv } }, { filename, nextTranspiledJs }: {
       filename: string;
       nextTranspiledJs: string;
     }): Promise<Dev.AnalyzeNextCode> => {
       /**
-       * TODO 
-       * - ts/tsx must be relative without extension
-       * - ts only import/export values from ts (can import 'redux')
-       * - tsx only import/export values from tsx (can import 'react', 'react-redux')
-       * - tsx only import/export React component values (ditto)
-       * 
-       * We'll detect these during `computeTsImportsExports`.
+       * Must apply react-refresh transform before checking for cyclic deps,
+       * because later we'll patch code-intervals using `imports` and `exports`.
        */
-      await dispatch(Thunk.rememberSrcPathIntervals({ filename }));
-      const srcPathErrors = [] as Dev.SourcePathError[]; // TODO
-      const jsPathErrors = [] as Dev.JsPathError[]; // TODO
+      const { transformedJs } = await dispatch(Thunk.applyReactRefreshTransform({
+        filename,
+        js: nextTranspiledJs,
+      }));
 
-      // Also detect cyclic dependencies
+      const jsPathErrors = [] as Dev.JsPathError[]; // TODO
       const { imports, exports, cyclicDepError } = await dispatch(
-        Thunk.testCyclicJsDependency({ filename, nextTranspiledJs }));
+        Thunk.testCyclicJsDependency({
+          filename,
+          nextTranspiledJs: transformedJs,
+        }));
       cyclicDepError && jsPathErrors.push(cyclicDepError);
 
       return {
-        srcPathErrors,
+        transformedJs,
         jsPathErrors,
-        imports,
-        exports,
+        jsImports: imports,
+        jsExports: exports,
         cyclicDepError,
         prevCyclicError: ((devEnv.file[filename] as Dev.CodeFile).transpiled?.jsPathErrors
           .find((x): x is Dev.CyclicDepError => x.key === 'cyclic-dependency') || null),
@@ -249,13 +248,13 @@ export const Thunk = {
     '[dev-env] detect code dependency cycles',
     ({ state: { devEnv } }, { filename, imports, exports }: {
       filename: string;
-      imports: PatchJs.TsImportMeta[];
-      exports: PatchJs.TsExportMeta[];
+      imports: Dev.TsImportMeta[];
+      exports: Dev.TsExportMeta[];
     }): null | Dev.CyclicDepError => {
       const filenames = Object.keys(devEnv.file);
       const dependencyFilenames = PatchJs.importPathsToCodeFilenames(([] as string[]).concat(
         imports.map(({ from }) => from.value),
-        exports.filter(PatchJs.isTsExportDecl).map(({ from }) => from.value),
+        exports.filter(Dev.isTsExportDecl).map(({ from }) => from.value),
       ), filenames);
 
       /** Files that `filename` imports/exports */
@@ -431,23 +430,30 @@ export const Thunk = {
       }
     },
   ),
-  /** Remember code-intervals of source import/exports, so can show errors. */
-  rememberSrcPathIntervals: createThunk(
-    '[dev-env] remember src code imports/exports',
+  /**
+   * Analyze source code, storing errors and also module specifier code-intervals,
+   * so can source-map errors found in transpiled js (always tied to an import/export).
+   */
+  analyzeSrcCode: createThunk(
+    '[dev-env] analyze code file src',
     async ({ dispatch }, { filename }: { filename: string }) => {
       const { imports, exports, srcErrors } = await dispatch(EditorThunk.computeTsImportExports({ filename }));
       console.log({
-        key: 'rememberSrcPathIntervals',
+        key: 'analyzeSrcCode',
         filename,
         srcErrors,
         imports,
         exports
       });
-      const moduleSpecifiers = imports.map(({ from: path }) => path).concat(
-        exports.filter(PatchJs.isTsExportDecl).map(({ from }) => from));
-
-      dispatch(Act.updateFile(filename, { pathIntervals: moduleSpecifiers }));
-      return { pathIntervals: moduleSpecifiers };
+      const updates = {
+        pathIntervals: [
+          ...imports.map(({ from: path }) => path),
+          ...exports.filter(Dev.isTsExportDecl).map(({ from }) => from),
+        ],
+        srcErrors,
+      };
+      dispatch(Act.updateFile(filename, updates));
+      return updates;
     },
   ),
   /** Initialize (debounced) storage of model contents on model change. */
@@ -519,12 +525,14 @@ export const Thunk = {
       filename: string;
       onlyIf?: 'valid' | 'invalid'; // Used to break cycles
     }) => {
+      const modelKey = filenameToModelKey(filename);
       const currFile = devEnv.file[filename] as Dev.CodeFile;
       const isValid = Dev.isFileValid(currFile);
-      if (onlyIf === 'valid' && !isValid || onlyIf === 'invalid' && isValid) return;
+      if (onlyIf === 'valid' && !isValid || onlyIf === 'invalid' && isValid) {
+        return;
+      }
 
       const needsTranspile = currFile.transpiled?.src !== currFile.contents;
-      const modelKey = filenameToModelKey(filename);
       const transpiled: TsTranspilationResult = currFile.transpiled && !needsTranspile
         ? { key: 'success', src: currFile.contents, js: currFile.transpiled.dst, typings: currFile.transpiled.typings }
         : await dispatch(EditorThunk.transpileTsMonacoModel({ modelKey }));
@@ -536,18 +544,25 @@ export const Thunk = {
         return;
       }
       
-      // Must apply transform 1st -- we'll patch code-intervals
-      // later using `analyzed.imports` and `analyzed.exports`.
-      const { transformedCode } = await dispatch(Thunk.applyReactRefreshTransform({ filename, js: transpiled.js }));
-      const analyzed = await dispatch(Thunk.analyzeTranspiledJs({ filename, nextTranspiledJs: transformedCode }));
+      const { srcErrors } = await dispatch(Thunk.analyzeSrcCode({ filename }));
+      if (srcErrors.length) {
+        console.error({ filename, srcErrors }); // TODO show errors
+        dispatch(EditorThunk.setModelMarkers({
+          modelKey,
+          markers: srcErrors.map(e => Dev.getSrcErrorMarker(e)),
+        }));
+        return;
+      }
+
+      const analyzed = await dispatch(Thunk.analyzeJsCode({ filename, nextTranspiledJs: transpiled.js }));
 
       dispatch(Thunk.updateCodeTranspilation({
         filename,
         src: transpiled.src,
-        // transpiled & transformed, yet imports/exports unpatched
-        dst: transformedCode,
-        imports: analyzed.imports,
-        exports: analyzed.exports,
+        // transpiled and transformed, but imports/exports are unpatched
+        dst: analyzed.transformedJs,
+        imports: analyzed.jsImports,
+        exports: analyzed.jsExports,
         typings: transpiled.typings,
         jsPathErrors: analyzed.jsPathErrors,
       }));
@@ -612,8 +627,8 @@ export const Thunk = {
       src: string;
       dst: string;
       typings: string;
-      imports: PatchJs.TsImportMeta[];
-      exports: PatchJs.TsExportMeta[];
+      imports: Dev.TsImportMeta[];
+      exports: Dev.TsExportMeta[];
       jsPathErrors: Dev.JsPathError[];
     }) => {
       devEnv.file[filename]?.transpiled?.cleanups.forEach(cleanup => cleanup());
@@ -626,7 +641,7 @@ export const Thunk = {
         cleanups: [() => disposable.dispose()],
         importFilenames: PatchJs.importPathsToCodeFilenames(rest.imports.map(({ from: path }) => path.value), allFilenames),
         exportFilenames: PatchJs.importPathsToCodeFilenames(rest.exports
-          .filter(PatchJs.isTsExportDecl).map(({ from }) => from.value), allFilenames),
+          .filter(Dev.isTsExportDecl).map(({ from }) => from.value), allFilenames),
       }));
     },
   ),
@@ -668,7 +683,7 @@ export const reducer = (state = initialState, act: Action): State => {
         ext: act.pay.filename.split('.').pop() as any, // no dot
         transpiled: null,
         pathIntervals: [],
-        pathErrors: [],
+        srcErrors: [],
         cleanups: [],
         esModule: null,
       }, state.file),
@@ -685,7 +700,7 @@ export const reducer = (state = initialState, act: Action): State => {
         cleanups: [],
         transpiled: null,
         pathIntervals: [],
-        pathErrors: [],
+        srcErrors: [],
         prefixed: null,
         cssModule: null,
       } as Dev.StyleFile, state.file),

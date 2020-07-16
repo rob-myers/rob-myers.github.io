@@ -1,6 +1,5 @@
 import { Project, ts, Node, JsxText, JsxAttribute, JsxSelfClosingElement } from 'ts-morph';
-import { TsImportMeta, TsExportMeta } from '@model/code/patch-js-imports';
-import { SourcePathError, JsPathError } from '@model/code/dev-env.model';
+import { SourceFileError, JsPathError, ModuleSpecifierInterval, TsImportMeta, TsExportMeta, isTsExportDecl } from '@model/code/dev-env.model';
 
 const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
 
@@ -155,18 +154,26 @@ export function computeTsImportExportErrors(
   analyzed: AnalyzedImportsExports,
   filenames: { [filename: string]: true },
 ) {
-  const errors = [] as SourcePathError[];
-  const imports = analyzed.imports.filter(x => x.from.value !== 'react');
-  
+  const errors = [] as SourceFileError[];
+  const pathIntervals = ([] as { meta: ModuleSpecifierInterval; kind: 'import' | 'export' }[]).concat(
+    analyzed.imports.filter(x => x.from.value !== 'react').map(x => ({ meta: x.from, kind: 'import' })),
+    analyzed.exports.filter(isTsExportDecl).map(x => ({ meta: x.from, kind: 'export' })),
+  );
   /**
    * Cannot detect tsx importing ts (or ts importing tsx) yet because don't
    * know types from other file. We'll analyze transpiled js later instead.
    */
-  for (const { from: { value, interval } } of imports) {
+  for (const { meta: { value, interval }, kind } of pathIntervals) {
     if (!value.startsWith('./')) {
-      errors.push({ key: 'require-import-relative', info: 'local imports must be relative', interval, label: value });
-    } else if (value.endsWith('.scss') && !(value.slice(2) in filenames)) {
-      errors.push({ key: 'require-scss-exists', info: 'scss file not found', interval, label: value });
+      errors.push(kind === 'import'
+        ? { key: 'require-import-relative', interval, label: value }
+        : { key: 'require-export-relative', interval, label: value });
+    } else if (value.endsWith('.scss')) {
+      if (!(value.slice(2) in filenames)) {
+        errors.push({ key: 'require-scss-exists', interval, label: value });
+      }
+    } else if (!(`${value.slice(2)}.tsx` in filenames) && !(`${value.slice(2)}.ts` in filenames)) {
+      errors.push({ key: 'require-normalised-path', interval, label: value });
     }
   }
 
@@ -177,15 +184,18 @@ export function computeTsImportExportErrors(
      */
     for (const exp of analyzed.exports) {
       if (exp.key === 'export-symb' && exp.type !== 'React.FC<{}>') {
-        errors.push({ key: 'only-export-cmp', info: 'tsx export values must be react components', interval: exp.interval, label: exp.name });
+        errors.push({ key: 'only-export-cmp', interval: exp.interval, label: exp.name });
       } else if (exp.key === 'export-asgn' && exp.type !== 'React.FC<{}>') {
-        errors.push({ key: 'only-export-cmp', info: 'tsx export values must be react components', interval: exp.interval, label: 'default' });
+        errors.push({ key: 'only-export-cmp', interval: exp.interval, label: 'default' });
       }
     }
   }
   return errors;
 }
 
+/**
+ * Cyclic dependency errors are computed elsewhere.
+ */
 export function computeJsImportExportErrors(
   analyzed: AnalyzedImportsExports,
   filenames: { [filename: string]: true },
