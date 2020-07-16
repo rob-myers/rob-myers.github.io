@@ -13,6 +13,7 @@ import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/wor
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
 import { CODE_FONT_FAMILY } from '@components/monaco/consts';
+import { TranspiledCodeFile } from '@model/code/dev-env.model';
 
 
 export interface State {
@@ -201,6 +202,10 @@ export const Thunk = {
   computeJsImportExports: createThunk(
     '[editor] compute js import/export meta',
     async ({ state: { editor, devEnv } }, { filename, code }: { filename: string; code: string }) => {
+      const { transpiled } = devEnv.file[filename] as TranspiledCodeFile;
+      if (transpiled?.src === code) {// Avoid recomputation
+        return { imports: transpiled.imports, exports: transpiled.exports, jsErrors: transpiled.jsPathErrors };
+      }
       const worker = editor.syntaxWorker!;
       worker.postMessage({ key: 'request-import-exports', code, filename, as: 'js', filenames: mapValues(devEnv.file, () => true) });
       return await awaitWorker('send-import-exports', worker, ({ origCode }) => code === origCode);

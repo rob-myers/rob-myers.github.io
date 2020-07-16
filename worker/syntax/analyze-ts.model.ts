@@ -205,16 +205,16 @@ export function computeJsImportExportErrors(
 
   if (analyzed.filename.endsWith('.tsx')) {
     imports.filter(({ from }) => !from.value.endsWith('.scss') && !(`${from.value.slice(2)}.tsx` in filenames))
-      .forEach((meta) =>errors.push({ key: 'only-import-tsx', info: 'tsx files can only import values from other tsx files', path: meta.from.value, }));
+      .forEach((meta) => errors.push({ key: 'only-import-tsx', path: meta.from.value, }));
     analyzed.exports.forEach((meta) => meta.key === 'export-decl' && !(`${meta.from.value.slice(2)}.tsx` in filenames) &&
-      errors.push({ key: 'only-export-tsx', info: 'tsx files can only export values from other tsx files', path: meta.from.value }));
+      errors.push({ key: 'only-export-tsx', path: meta.from.value }));
   }
 
   if (analyzed.filename.endsWith('.ts')) {
     imports.filter(({ from }) => !from.value.endsWith('.scss') && !(`${from.value.slice(2)}.ts` in filenames)).forEach((meta) =>
-      errors.push({ key: 'only-import-ts', info: 'ts files can only import values from other ts files', path: meta.from.value }));
+      errors.push({ key: 'only-import-ts', path: meta.from.value }));
     analyzed.exports.forEach((meta) => meta.key === 'export-decl' && !(`${meta.from.value.slice(2)}.ts` in filenames) &&
-      errors.push({ key: 'only-export-ts', info: 'ts files can only export values from other ts files', path: meta.from.value }));
+      errors.push({ key: 'only-export-ts', path: meta.from.value }));
   }
 
   return errors;

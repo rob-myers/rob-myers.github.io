@@ -4,7 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
-- [ ] show error on ts importing tsx values (or vice-versa)
+- [x] show error on ts importing tsx values (or vice-versa)
 - [x] collect ts/tsx/js errors during import/export analysis in webworker
 - [ ] custom dropdown for better x-browser experience
 - [ ] support multiple projects

@@ -148,12 +148,12 @@ export interface CodeFileEsModule {
  * Mostly about module specifiers, except `only-export-cmp`.
  */
 export interface SourceFileError {
-  key: SourceFileErrorType;
+  key: SourceFileErrorKey;
   label: string;
   interval: CodeInterval;
 }
 
-type SourceFileErrorType = (
+type SourceFileErrorKey = (
   | 'require-import-relative'
   | 'require-export-relative'
   | 'require-scss-exists'
@@ -161,12 +161,15 @@ type SourceFileErrorType = (
   | 'only-export-cmp'
 );
 
-export const getSourceFileError = (key: SourceFileErrorType): string => {
+export const getSourceFileError = (key: SourceFileErrorKey): string => {
   switch (key) {
-    case 'only-export-cmp': return 'Tsx value exports must be React components.';
+    case 'only-export-cmp': return 'We only permit tsx files to export values which are React components.';
     case 'require-export-relative': return 'Exports must be relative.';
     case 'require-import-relative': return 'Local imports must be relative.';
-    case 'require-normalised-path': return 'Write ts and tsx import paths as ./${basename} without extension.';
+    case 'require-normalised-path': return [
+      'Write ts and tsx import paths relatively without extension,',
+      'e.g. `./index` or `./model/my.service`.',
+    ].join(' ');
     case 'require-scss-exists': return 'Scss file not found.';
     default: throw testNever(key);
   }
@@ -177,13 +180,35 @@ export const getSourceFileError = (key: SourceFileErrorType): string => {
  * Errors will be shown in source by matching `path`.
  */
 export type JsPathError = (
-  | { key: 'cyclic-dependency'; path: string; info: 'Cyclic dependencies are unsupported; types are unrestricted.'; dependent: string }
-  | { key: 'only-import-ts'; path: string; info: 'ts files can only import values from other ts files' }
-  | { key: 'only-export-ts'; path: string; info: 'ts files can only export values from other ts files' }
-  | { key: 'only-import-tsx'; path: string; info: 'tsx files can only import values from other tsx files' }
-  | { key: 'only-export-tsx'; path: string; info: 'tsx files can only export values from other tsx files' }
+  | BaseJsPathError<Exclude<JsPathErrorKey, 'cyclic-dependency'>> 
+  | (BaseJsPathError<'cyclic-dependency'> & { dependent: string })
 );
+
+type BaseJsPathError<T extends JsPathErrorKey> = { key: T; path: string }
+type JsPathErrorKey = (
+  | 'cyclic-dependency'
+  | 'only-import-ts'
+  | 'only-export-ts'
+  | 'only-import-tsx'
+  | 'only-export-tsx'
+);
+
+export const getJsPathError = (key: JsPathErrorKey): string => {
+  switch (key) {
+    case 'cyclic-dependency': return 'Cyclic dependencies are unsupported; types are unrestricted.';
+    case 'only-export-ts': return 'We only permit ts files to import values from other ts files.';
+    case 'only-export-tsx': return 'We only permit tsx files to export values from other tsx files.';
+    case 'only-import-ts': return 'We only permit ts files to export values from other ts files.';
+    case 'only-import-tsx': return 'We only permit tsx files to import values from other tsx files.';
+    default: throw testNever(key);
+  }
+};
+
 export type CyclicDepError = Extract<JsPathError, { key: 'cyclic-dependency' }>;
+
+export function isCyclicDepError(x: JsPathError): x is CyclicDepError {
+  return x.key === 'cyclic-dependency';
+}
 
 export interface TranspiledCodeFile extends CodeFile {
   transpiled: CodeTranspilation;
@@ -298,7 +323,7 @@ export interface AnalyzeNextCode {
   jsPathErrors: JsPathError[];
   jsImports: TsImportMeta[];
   jsExports: TsExportMeta[];
-  cyclicDepError: CyclicDepError | null;
+  // cyclicDepError: CyclicDepError | null;
   prevCyclicError: CyclicDepError | null;
 }
 
@@ -326,6 +351,19 @@ export function getSrcErrorMarker({ key, interval }: SourceFileError): IMarkerDa
     endColumn: interval.endCol,
     severity: 8,
   };
+}
+
+export function getJsPathErrorMarkers(jsErrors: JsPathError[], metas: ModuleSpecifierInterval[]): IMarkerData[] {
+  const metaErrors = metas.map((meta) => ({ meta, jsErrors: jsErrors.filter(x => x.path === meta.value) }));
+  return metaErrors.flatMap(({ meta: { interval }, jsErrors }) =>
+    jsErrors.map(({ key }) => ({
+      message: getJsPathError(key),
+      startLineNumber: interval.startLine,
+      startColumn: interval.startCol,
+      endLineNumber: interval.startLine,
+      endColumn: interval.endCol,
+      severity: 8,
+    })));
 }
 
 export type TsImportMeta = {
