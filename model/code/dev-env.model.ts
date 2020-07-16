@@ -150,7 +150,7 @@ export interface CodeFileEsModule {
 }
 
 /** Untranspiled module specifier errors */
-export type SourcePathError = { meta: ModuleSpecifierInterval } & (
+export type SourcePathError = { label: string; interval: CodeInterval } & (
   | { key: 'require-import-relative'; info: 'local imports must be relative' }
   | { key: 'require-export-relative'; info: 'exports must be relative' }
   | { key: 'require-scss-exists'; info: 'scss file not found' }

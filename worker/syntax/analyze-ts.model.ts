@@ -1,14 +1,20 @@
 import { Project, ts, Node, JsxText, JsxAttribute, JsxSelfClosingElement } from 'ts-morph';
 import { TsImportMeta, TsExportMeta } from '@model/code/patch-js-imports';
-import { SourcePathError } from '@model/code/dev-env.model';
+import { SourcePathError, JsPathError } from '@model/code/dev-env.model';
 
 const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
+
+interface AnalyzedImportsExports {
+  filename: string;
+  imports: TsImportMeta[];
+  exports: TsExportMeta[];
+}
 
 /**
  * Analyze imports/exports of ts/tsx/js file.
  */
-export function analyzeTsImportsExports(filename: string, code: string) {
-  if (filename.endsWith('.tsx')) {
+export function analyzeCodeImportsExports(filename: string, as: 'js' | 'src', code: string): AnalyzedImportsExports {
+  if (filename.endsWith('.tsx') && as === 'src') {
     // Add basic typings for React.FC so can recognise type.
     // Must apply as suffix to preserve import/export code intervals.
     code = [code, 'declare namespace React { type FC<P = {}> = (x: P) => {} }'].join('\n');
@@ -56,7 +62,7 @@ export function analyzeTsImportsExports(filename: string, code: string) {
       // - export interface Foo {}
       // - export { foo } from './bar' (handled by export-decl)
       // - export default App (handled by export-asgn)
-      // return console.warn('ignored export symbol without value declaration');
+      // console.log({ item, name: item.getName() });
       return;
     }
     const node = item.getValueDeclaration()!;
@@ -79,6 +85,7 @@ export function analyzeTsImportsExports(filename: string, code: string) {
   });
 
   // e.g. export { foo } from './other-module'
+  // e.g. export * from './other-module'
   srcFile.getExportDeclarations().forEach((item) => {
     if (!item.hasModuleSpecifier()) {
       return console.warn('ignored unexpected export declaration without module specifier');
@@ -106,13 +113,11 @@ export function analyzeTsImportsExports(filename: string, code: string) {
             name: x.getName(),
             alias: x.getAliasNode()?.getText() || null,
           }))
-        } : { namespace: item.getNamespaceExport()?.getName()! }
+        } : { namespace: item.getNamespaceExport()?.getName() || '*' }
       ),
     });
   });
   
-  const isTyped = /\.tsx?$/.test(filename);
-
   // e.g. export default App
   srcFile.getExportAssignments().forEach((item) => {
     if (item.isExportEquals()) {
@@ -125,7 +130,7 @@ export function analyzeTsImportsExports(filename: string, code: string) {
     exports.push({
       key: 'export-asgn',
       name: 'default',
-      type: isTyped ? identifier.getType().getText() : null,
+      type: as === 'src' ? identifier.getType().getText() : null,
       interval: {
         start: identifier.getPos(),
         end: identifier.getEnd(),
@@ -147,45 +152,61 @@ export function analyzeTsImportsExports(filename: string, code: string) {
 }
 
 export function computeTsImportExportErrors(
-  analyzed: ReturnType<typeof analyzeTsImportsExports>,
-  allFilenames: { [filename: string]: true },
+  analyzed: AnalyzedImportsExports,
+  filenames: { [filename: string]: true },
 ) {
   const errors = [] as SourcePathError[];
-  /**
-   * Cannot detect if tsx imports ts (or ts imports tsx) because don't know
-   * types from other file. We'll analyze transpiled js later instead.
-   * 
-   * TODO require tsx to export types or react components only
-   */
   const imports = analyzed.imports.filter(x => x.from.value !== 'react');
-
-  for (const imp of imports) {
-    const { value } = imp.from;
+  
+  /**
+   * Cannot detect tsx importing ts (or ts importing tsx) yet because don't
+   * know types from other file. We'll analyze transpiled js later instead.
+   */
+  for (const { from: { value, interval } } of imports) {
     if (!value.startsWith('./')) {
-      errors.push({ key: 'require-import-relative', info: 'local imports must be relative', meta: imp.from });
-    } else if (value.endsWith('.scss') && !(value.slice(2) in allFilenames)) {
-      errors.push({ key: 'require-scss-exists', info: 'scss file not found', meta: imp.from });
+      errors.push({ key: 'require-import-relative', info: 'local imports must be relative', interval, label: value });
+    } else if (value.endsWith('.scss') && !(value.slice(2) in filenames)) {
+      errors.push({ key: 'require-scss-exists', info: 'scss file not found', interval, label: value });
     }
   }
 
   if (analyzed.filename.endsWith('.tsx')) {
-    // else if (!(`${value.slice(2)}.tsx` in allFilenames)) {
-    //   errors.push({ key: 'only-import-tsx', info: 'tsx files can only import values from other tsx files', meta: imp.from });
-    // }
+    /**
+     * Require tsx to export types or react components only.
+     * We handle `export { foo } from './bar` later, when transpiled.
+     */
     for (const exp of analyzed.exports) {
-      if (exp.key === 'export-symb') {
-        // TODO
-      } else if (exp.key === 'export-decl') {
-        // TODO
+      if (exp.key === 'export-symb' && exp.type !== 'React.FC<{}>') {
+        errors.push({ key: 'only-export-cmp', info: 'tsx export values must be react components', interval: exp.interval, label: exp.name });
+      } else if (exp.key === 'export-asgn' && exp.type !== 'React.FC<{}>') {
+        errors.push({ key: 'only-export-cmp', info: 'tsx export values must be react components', interval: exp.interval, label: 'default' });
       }
     }
+  }
+  return errors;
+}
 
-  } else if (analyzed.filename.endsWith('.ts')) {
-    // for (const exp of analyzed.exports) {
-    // }
+export function computeJsImportExportErrors(
+  analyzed: AnalyzedImportsExports,
+  filenames: { [filename: string]: true },
+) {
+  const errors = [] as JsPathError[];
+  const imports = analyzed.imports.filter(x => x.from.value !== 'react');
+
+  if (analyzed.filename.endsWith('.tsx')) {
+    imports.filter(({ from }) => !from.value.endsWith('.scss') && !(`${from.value.slice(2)}.tsx` in filenames))
+      .forEach((meta) =>errors.push({ key: 'only-import-tsx', info: 'tsx files can only import values from other tsx files', path: meta.from.value, }));
+    analyzed.exports.forEach((meta) => meta.key === 'export-decl' && !(`${meta.from.value.slice(2)}.tsx` in filenames) &&
+      errors.push({ key: 'only-export-tsx', info: 'tsx files can only export values from other tsx files', path: meta.from.value }));
   }
 
-  console.log({ ...analyzed, errors });
+  if (analyzed.filename.endsWith('.ts')) {
+    imports.filter(({ from }) => !from.value.endsWith('.scss') && !(`${from.value.slice(2)}.ts` in filenames)).forEach((meta) =>
+      errors.push({ key: 'only-import-ts', info: 'ts files can only import values from other ts files', path: meta.from.value }));
+    analyzed.exports.forEach((meta) => meta.key === 'export-decl' && !(`${meta.from.value.slice(2)}.ts` in filenames) &&
+      errors.push({ key: 'only-export-ts', info: 'ts files can only export values from other ts files', path: meta.from.value }));
+  }
+
   return errors;
 }
 
@@ -216,8 +237,7 @@ export function toggleTsxComment(
 
   const selectedCode = code.slice(startLineStartPos, endLineEndPos + 1);
   let nextSelection = selectedCode;
-  console.log({ isJsxCommentCtxt, node, kind: node.getKindName(), ancestors: node.getAncestors() });
-
+  // console.log({ isJsxCommentCtxt, node, kind: node.getKindName(), ancestors: node.getAncestors() });
 
   if (isJsxCommentCtxt) {
     nextSelection = nextSelection.replace(/^(\s*)\{\/\*(.*)\*\/\}(\s*)$/s, '$1$2$3');

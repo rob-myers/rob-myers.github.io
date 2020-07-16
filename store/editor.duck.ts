@@ -200,9 +200,9 @@ export const Thunk = {
   ),
   computeJsImportExports: createThunk(
     '[editor] compute js import/export meta',
-    async ({ state: { editor, devEnv } }, { jsFilename, code }: { jsFilename: string; code: string }) => {
+    async ({ state: { editor, devEnv } }, { filename, code }: { filename: string; code: string }) => {
       const worker = editor.syntaxWorker!;
-      worker.postMessage({ key: 'request-import-exports', code, filename: jsFilename, allFilenames: mapValues(devEnv.file, () => true) });
+      worker.postMessage({ key: 'request-import-exports', code, filename, as: 'js', filenames: mapValues(devEnv.file, () => true) });
       return await awaitWorker('send-import-exports', worker, ({ origCode }) => code === origCode);
     },
   ),
@@ -211,7 +211,7 @@ export const Thunk = {
     async ({ state: { editor, devEnv } }, { filename }: { filename: string }) => {
       const worker = editor.syntaxWorker!;
       const code = editor.model[filenameToModelKey(filename)].model.getValue();
-      worker.postMessage({ key: 'request-import-exports', code, filename, allFilenames: mapValues(devEnv.file, () => true) });
+      worker.postMessage({ key: 'request-import-exports', code, filename, as: 'src', filenames: mapValues(devEnv.file, () => true) });
       return await awaitWorker('send-import-exports', worker, ({ origCode }) => code === origCode);
     },
   ),

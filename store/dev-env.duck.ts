@@ -435,7 +435,14 @@ export const Thunk = {
   rememberSrcPathIntervals: createThunk(
     '[dev-env] remember src code imports/exports',
     async ({ dispatch }, { filename }: { filename: string }) => {
-      const { imports, exports } = await dispatch(EditorThunk.computeTsImportExports({ filename }));
+      const { imports, exports, srcErrors } = await dispatch(EditorThunk.computeTsImportExports({ filename }));
+      console.log({
+        key: 'rememberSrcPathIntervals',
+        filename,
+        srcErrors,
+        imports,
+        exports
+      });
       const moduleSpecifiers = imports.map(({ from: path }) => path).concat(
         exports.filter(PatchJs.isTsExportDecl).map(({ from }) => from));
 
@@ -467,10 +474,16 @@ export const Thunk = {
     '[dev-env] test cyclic dependency',
     async ({ dispatch, state: { devEnv } }, { filename, nextTranspiledJs }: { filename: string; nextTranspiledJs?: string }) => {
       const file = devEnv.file[filename] as Dev.CodeFile;
-      const jsFilename = filename.replace(/\.tsx?$/, '.js');
       /** Defaults to previously transpiled js */
       const code = nextTranspiledJs || file.transpiled!.dst;
-      const { imports, exports } = await dispatch(EditorThunk.computeJsImportExports({ jsFilename, code }));
+      const { imports, exports, jsErrors } = await dispatch(EditorThunk.computeJsImportExports({ filename, code }));
+      console.log({
+        key: 'testCyclicJsDependency',
+        filename,
+        jsErrors,
+        imports,
+        exports,
+      });
       const cyclicDepError = dispatch(Thunk.detectCodeDependencyCycles({ filename, imports, exports })) as null | Dev.CyclicDepError;
       return {
         imports,
