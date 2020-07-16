@@ -167,7 +167,7 @@ type SourceFileErrorKey = (
 
 export const getSourceFileErrorInfo = (key: SourceFileErrorKey): string => {
   switch (key) {
-    case 'only-export-cmp': return 'We only permit tsx files to export values which are React components.';
+    case 'only-export-cmp': return 'We require every value exported by a tsx file to have type React.FC<Props>.';
     case 'require-export-relative': return 'Exports must be relative.';
     case 'require-import-relative': return 'Local imports must be relative.';
     case 'require-normalised-path': return [

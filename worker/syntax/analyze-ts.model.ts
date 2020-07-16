@@ -56,7 +56,7 @@ export function analyzeCodeImportsExports(filename: string, as: 'js' | 'src', co
 
   // e.g. export const foo = 'bar';
   srcFile.getExportSymbols().forEach((item) => {
-    if (!item.getValueDeclaration()) {
+    if (!item.getValueDeclaration() || !item.getDeclarations()[0]) {
       // Ignore e.g.
       // - export interface Foo {}
       // - export { foo } from './bar' (handled by export-decl)
@@ -64,7 +64,8 @@ export function analyzeCodeImportsExports(filename: string, as: 'js' | 'src', co
       // console.log({ item, name: item.getName() });
       return;
     }
-    const node = item.getValueDeclaration()!;
+
+    const node = item.getDeclarations()[0].getFirstChild()!;
     const { line: startLine, column: startCol } = srcFile.getLineAndColumnAtPos(node.getStart());
     const { line: endLine, column: endCol } = srcFile.getLineAndColumnAtPos(node.getEnd());
 
@@ -183,9 +184,9 @@ export function computeTsImportExportErrors(
      * We handle `export { foo } from './bar` later, when transpiled.
      */
     for (const exp of analyzed.exports) {
-      if (exp.key === 'export-symb' && exp.type !== 'React.FC<{}>') {
+      if (exp.key === 'export-symb' && !exp.type?.startsWith('React.FC<')) {
         errors.push({ key: 'only-export-cmp', interval: exp.interval, label: exp.name });
-      } else if (exp.key === 'export-asgn' && exp.type !== 'React.FC<{}>') {
+      } else if (exp.key === 'export-asgn' && !exp.type?.startsWith('React.FC<')) {
         errors.push({ key: 'only-export-cmp', interval: exp.interval, label: 'default' });
       }
     }
