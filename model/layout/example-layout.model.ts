@@ -1,5 +1,6 @@
 import { GoldenLayoutConfig, traverseGlConfig } from './layout.model';
 import { deepClone } from '@model/generic.model';
+import { rootAppFilename } from '@model/code/dev-env.model';
 
 export type CustomPanelMetaKey = 'title' | 'filename' | 'devEnvComponent';
 
@@ -57,12 +58,12 @@ const defaultMobileConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
           'content': [
             {
               'type': 'component',
-              'title': 'index.tsx',
+              'title': rootAppFilename,
               'component': 'window-panel',
               'props': {
                 'panelKey': 'panel-1',
                 'panelMeta': {
-                  'filename': 'index.tsx'
+                  'filename': rootAppFilename
                 }
               },
               'componentName': 'lm-react-component',
@@ -206,12 +207,12 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
               content: [
                 {
                   type: 'component',
-                  title: 'index.tsx',
+                  title: rootAppFilename,
                   component: 'window-panel',
                   props: {
                     panelKey: 'panel-1',
                     panelMeta: {
-                      filename: 'index.tsx',
+                      filename: rootAppFilename,
                     },
                   },
                   componentName: 'lm-react-component',

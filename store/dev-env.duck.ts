@@ -30,7 +30,7 @@ export interface State {
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
   /**
    * True if after last transpilation, all code reachable
-   * from index.tsx was deemed collectively valid.
+   * from app.tsx was deemed collectively valid.
    */
   appValid: boolean;
   /** So can persist App instances across site */
@@ -163,14 +163,14 @@ export const Thunk = {
     '[dev-env] bootstrap apps',
     async ({ dispatch, getState }) => {
       /**
-       * Files reachable from `index.tsx` have acyclic dependencies, modulo
+       * Files reachable from `app.tsx` have acyclic dependencies, modulo
        * untranspiled transitive-dependencies at time they were checked.
        * All reachable files are now transpiled, so can now test for cycles.
        */
-      const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: 'index.tsx' }));
+      const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: Dev.rootAppFilename }));
       if (jsErrors.find(isCyclicDepError)) {
         console.error('Bootstrap failed due to cyclic dependency');
-        dispatch(Thunk.tryTranspileCodeModel({ filename: 'index.tsx' }));
+        dispatch(Thunk.tryTranspileCodeModel({ filename: Dev.rootAppFilename }));
         return;
       }
 
@@ -184,7 +184,7 @@ export const Thunk = {
         Dev.ensureEsModule({ scriptId: Dev.filenameToScriptId(filename), scriptSrcUrl: esm!.blobUrl });
 
       // Get App from dynamic module and store inside static module
-      const appUrl = (devEnv.file['index.tsx'] as Dev.CodeFile).esModule!.blobUrl;
+      const appUrl = (devEnv.file[Dev.rootAppFilename] as Dev.CodeFile).esModule!.blobUrl;
       await storeAppFromBlobUrl(appUrl);
 
       // Render App in each panel
@@ -393,8 +393,8 @@ export const Thunk = {
       /**
        * TEMP provide demo files.
        */
-      !devEnv.file['index.tsx']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'index.tsx', contents: exampleTsx3 }));
+      !devEnv.file[Dev.rootAppFilename]?.contents &&
+        dispatch(Act.createCodeFile({ filename: Dev.rootAppFilename, contents: exampleTsx3 }));
       !devEnv.file['model.ts']?.contents &&
         dispatch(Act.createCodeFile({ filename: 'model.ts', contents: exampleTs1 }));
       !devEnv.file['index.scss']?.contents &&
@@ -755,7 +755,7 @@ const bootstrapAppInstances = createEpic(
       if (act.type === '[dev-env] store code transpilation') {
         const reachableJsFiles = Dev.getReachableJsFiles(file);
         if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
-          return []; // Ignore files unreachable from index.tsx
+          return []; // Ignore files unreachable from app.tsx
         }
         if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
           return [// All reachable code locally valid so try bootstrap app

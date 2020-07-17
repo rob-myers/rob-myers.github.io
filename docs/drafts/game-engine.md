@@ -19,7 +19,7 @@ The varied approaches to infrastructure serve to isolate any two distinct game e
 Non-standard constraints:
 
 - only support file extensions `ts`, `tsx` and `scss`.
-- `tsx` can only import other `tsx`; exactly one entrypoint `index.tsx`.
+- `tsx` can only import other `tsx`; exactly one entrypoint `app.tsx`.
 
 - `ts` can only import from other `ts`; at most one entrypoint `reducer.ts`.
 

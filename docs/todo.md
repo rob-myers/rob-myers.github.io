@@ -6,7 +6,7 @@ See [blog notes](./blog.md).
 
 https://react-redux.js.org/using-react-redux/accessing-store#multiple-stores
 
-- [ ] rename `index.tsx` as `app.tsx`
+- [x] rename `index.tsx` as `app.tsx`
 - [ ] resolve module specifiers properly e.g. ../foo
   > check folders are supported by monaco
   > represent via nested objects with cached lookups

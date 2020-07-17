@@ -26,7 +26,7 @@ Top down agent engine via SVG and CSS.
 We want to maximize effectiveness of react-refresh and hot-reloading e.g. for interactive game development. We propose the following:
 
 - no reflexive/cyclic dependencies (required due to blob urls).
-- `index.tsx` is root component and all `tsx` files have it as an ancestor.
+- `app.tsx` is root component and all `tsx` files have it as an ancestor.
 - `reducer.ts` is root reducer and all `ts` files have it as an ancestor.
 - `ts` and `tsx` trees are disjoint i.e. neither imports from the other.
 - `tsx` files only export React components.

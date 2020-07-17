@@ -31,7 +31,7 @@ export function importPathsToCodeFilenames(
 }
 
 /**
- * e.g. `./index` to `index.tsx` and `./model` to `model.ts`.
+ * e.g. `./app` to `app.tsx` and `./model` to `model.ts`.
  */
 export function relPathToFilename(relPath: string, allFilenames: string[]) {
   const filenamePrefix = relPath.slice(2);

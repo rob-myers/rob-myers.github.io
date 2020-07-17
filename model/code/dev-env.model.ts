@@ -9,6 +9,8 @@ export const menuHeightPx = 32;
 
 const supportedFileMetas = ['.tsx', '.scss', '.ts'];
 
+export const rootAppFilename = 'app.tsx';
+
 export function hasSupportedExtension(filename: string) {
   return supportedFileMetas.some((filenameExt) => filename.endsWith(filenameExt));
 }
@@ -235,9 +237,9 @@ export function isFileValid(file: FileState) {
     ));
 }
 
-/** Get ts/tsx files reachable from index.tsx */
+/** Get ts/tsx files reachable from app.tsx */
 export function getReachableJsFiles(file: KeyedLookup<FileState>) {
-  const frontier = [file['index.tsx']] as CodeFile[];
+  const frontier = [file[rootAppFilename]] as CodeFile[];
   const reachable = lookupFromValues(frontier);
   while (frontier.length) {
     const prevFrontier = frontier.slice();
