@@ -4,11 +4,20 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+https://react-redux.js.org/using-react-redux/accessing-store#multiple-stores
+
+- [ ] rename `index.tsx` as `app.tsx`
+- [ ] resolve module specifiers properly e.g. ../foo
+  > check folders are supported by monaco
+  > represent via nested objects with cached lookups
+- [ ] new setup: extra 'hidden' runtime modules:
+  > wrap App in react-redux Provider in runtime-modules/render-app.js
+  > store creation methods in runtime-modules/create-store.js
 - [x] show error on ts importing tsx values (or vice-versa)
 - [x] collect ts/tsx/js errors during import/export analysis in webworker
 - [ ] custom dropdown for better x-browser experience
 - [ ] support multiple projects
-- [ ] new panel type `doc` e.g. for blog and README
+- [x] new panel type `doc` e.g. for blog and README
 - [x] setup `mdx` and create demo test entry
 - [x] fix syntax highlighting when switch to tsx
 - [x] always show panel-menu and can toggle open 

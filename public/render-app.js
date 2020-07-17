@@ -26,7 +26,6 @@ export function renderAppAt(elementId) {
   ReactDOM.unmountComponentAtNode(rootEl);
   const WrappedApp = React.createElement(ErrorBoundary, null, React.createElement(App));
   ReactDOM.render(WrappedApp, rootEl);
-  // ReactDOM.render(React.createElement(App), rootEl)
 }
 
 export function unmountAppAt(elementId) {

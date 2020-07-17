@@ -1,6 +1,6 @@
 import { Project, ts, Node } from 'ts-morph';
 
-const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
+let project: Project;
 
 export interface Classification {
   kind: string;
@@ -27,6 +27,7 @@ const jsxTagKind = {
  * Based on https://github.com/cancerberoSgx/jsx-alone/blob/master/jsx-explorer/src/codeWorker/extractCodeDecorations.ts
  */
 export function computeClassifications(code: string) {
+  project = project || new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
   const srcFile = project.createSourceFile('main.tsx', code);
   const pending = [] as PendingItem[];
   const classifications = [] as Classification[];

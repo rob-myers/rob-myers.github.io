@@ -1,7 +1,7 @@
 import { Project, ts, Node, JsxText, JsxAttribute, JsxSelfClosingElement } from 'ts-morph';
 import { SourceFileError, JsPathError, ModuleSpecifierInterval, TsImportMeta, TsExportMeta, isTsExportDecl } from '@model/code/dev-env.model';
 
-const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
+let project: Project;
 
 interface AnalyzedImportsExports {
   filename: string;
@@ -13,6 +13,8 @@ interface AnalyzedImportsExports {
  * Analyze imports/exports of ts/tsx/js file.
  */
 export function analyzeCodeImportsExports(filename: string, as: 'js' | 'src', code: string): AnalyzedImportsExports {
+  project = project || new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
+
   if (filename.endsWith('.tsx') && as === 'src') {
     // Add basic typings for React.FC so can recognise type.
     // Must apply as suffix to preserve import/export code intervals.
@@ -230,6 +232,7 @@ export function toggleTsxComment(
   startLineStartPos: number,
   endLineEndPos: number,
 ): ToggleTsxCommentResult {
+  project = project || new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
   const srcFile = project.createSourceFile('__temp.tsx', code, { overwrite: true });
 
   const node = srcFile.getDescendantAtPos(startLineStartPos);
