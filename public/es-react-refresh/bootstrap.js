@@ -11,7 +11,8 @@ if (typeof window !== 'undefined') {
 
 import RefreshHelpers from './helpers';
 import React from '../es-react/react';
-import { REFRESH_HELPERS, REFRESH_REG, REFRESH_SIG, LIVE_REACT } from '../constants';
+import * as Redux from '../es-redux/redux';
+import { REFRESH_HELPERS, REFRESH_REG, REFRESH_SIG, LIVE_REACT, LIVE_REDUX } from '../constants';
 
 if (typeof window !== 'undefined') {    
   window[REFRESH_REG] = function (filename, type, id) {
@@ -19,7 +20,7 @@ if (typeof window !== 'undefined') {
   }
   window[REFRESH_SIG] = RefreshRuntime.createSignatureFunctionForTransform
   
-  // Register global helpers
+  // Register global helpers (unused?)
   window[REFRESH_HELPERS] = RefreshHelpers
   
   /**
@@ -29,6 +30,8 @@ if (typeof window !== 'undefined') {
    * because the module specifier is different.
    */
   window[LIVE_REACT] = React;
+
+  window[LIVE_REDUX] = Redux;
 }
 
 export default function preventTreeShake() {}

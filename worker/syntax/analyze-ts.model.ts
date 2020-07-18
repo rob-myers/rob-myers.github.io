@@ -1,5 +1,5 @@
 import { Project, ts, Node, JsxText, JsxAttribute, JsxSelfClosingElement } from 'ts-morph';
-import { SourceFileError, JsPathError, ModuleSpecifierInterval, TsImportMeta, TsExportMeta, isTsExportDecl, isRelativePath, resolveRelativePath } from '@model/code/dev-env.model';
+import { SourceFileError, JsPathError, ModuleSpecifierInterval, TsImportMeta, TsExportMeta, isTsExportDecl, isRelativePath, resolveRelativePath, isRuntimeNpmModule } from '@model/code/dev-env.model';
 
 let project: Project;
 
@@ -159,7 +159,8 @@ export function computeTsImportExportErrors(
 ) {
   const errors = [] as SourceFileError[];
   const pathIntervals = ([] as { meta: ModuleSpecifierInterval; kind: 'import' | 'export' }[]).concat(
-    analyzed.imports.filter(x => x.from.value !== 'react').map(x => ({ meta: x.from, kind: 'import' })),
+    analyzed.imports.filter((x) => !isRuntimeNpmModule(x.from.value))
+      .map(x => ({ meta: x.from, kind: 'import' })),
     analyzed.exports.filter(isTsExportDecl).map(x => ({ meta: x.from, kind: 'export' })),
   );
   /**
@@ -208,7 +209,7 @@ export function computeJsImportExportErrors(
   filenames: { [filename: string]: true },
 ) {
   const errors = [] as JsPathError[];
-  const imports = analyzed.imports.filter(x => x.from.value !== 'react');
+  const imports = analyzed.imports.filter((x) => !isRuntimeNpmModule(x.from.value));
   const { filename } = analyzed;
 
   if (filename.endsWith('.tsx')) {

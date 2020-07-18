@@ -6,13 +6,12 @@ See [blog notes](./blog.md).
 
 https://react-redux.js.org/using-react-redux/accessing-store#multiple-stores
 
+- [ ] create runtime redux store and wrap app in provider
+- [x] integrate reducer, store/redux.model store/test.duck
 - [x] rename `index.tsx` as `app.tsx`
 - [x] resolve module specifiers properly e.g. ../foo
   > folders are supported by monaco
   > cached lookups
-- [ ] new setup: extra 'hidden' runtime modules:
-  > wrap App in react-redux Provider in runtime-modules/render-app.js
-  > store creation methods in runtime-modules/create-store.js
 - [x] show error on ts importing tsx values (or vice-versa)
 - [x] collect ts/tsx/js errors during import/export analysis in webworker
 - [ ] custom dropdown for better x-browser experience

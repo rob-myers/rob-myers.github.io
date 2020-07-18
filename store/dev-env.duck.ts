@@ -8,7 +8,7 @@ import RefreshRuntime from '@public/es-react-refresh/runtime';
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact } from '@model/store/redux.model';
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
-import { exampleTsx3, exampleScss1, exampleTs1, exampleScss2 } from '@model/code/examples';
+import { exampleTsx3, exampleScss1, defaultTestDuckTs, exampleScss2, defaultReducerTs, defaultReduxModelTs, defaultUtilTs } from '@model/code/examples';
 import * as Dev from '@model/code/dev-env.model';
 import { TsTranspilationResult, filenameToModelKey } from '@model/monaco/monaco.model';
 import * as PatchJs from '@model/code/patch-js-imports';
@@ -294,9 +294,9 @@ export const Thunk = {
     },
   ),
   /**
-   * Detect dependency cycles in scss, assuming `prefixed`.
-   * Also detects valid @import-module-specifier.
-   * Provide stratification if successful.
+   * Detect dependency cycles in scss, assuming they are `prefixed`,
+   * providing stratification if successful.
+   * We also detect invalid @import-module-specifier.
    */
   detectScssImportError: createThunk(
     '[dev-env] detect scss dependency cycles',
@@ -392,10 +392,14 @@ export const Thunk = {
        */
       !devEnv.file[Dev.rootAppFilename]?.contents &&
         dispatch(Act.createCodeFile({ filename: Dev.rootAppFilename, contents: exampleTsx3 }));
-      !devEnv.file['model.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'model.ts', contents: exampleTs1 }));
-      !devEnv.file['test/index.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'test/index.ts', contents: exampleTs1 }));
+      !devEnv.file['util.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'util.ts', contents: defaultUtilTs }));
+      !devEnv.file['store/reducer.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'reducer.ts', contents: defaultReducerTs }));
+      !devEnv.file['store/redux.model.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'store/redux.model.ts', contents: defaultReduxModelTs }));
+      !devEnv.file['store/test.duck.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'store/test.duck.ts', contents: defaultTestDuckTs }));
       !devEnv.file['index.scss']?.contents &&
         dispatch(Act.createStyleFile({ filename: 'index.scss', contents: exampleScss1 }));
       !devEnv.file['other.scss']?.contents &&

@@ -1,3 +1,104 @@
+
+export const defaultUtilTs = `
+/**
+ * Can be used as a NOOP, testing whether a type is never,
+ * e.g. \`default: return state || testNever(act)\`.
+ */
+export function testNever(x: never, shouldThrow = false): any {
+  if (shouldThrow) {
+    throw new Error(\`testNever: \${JSON.stringify(x)} not implemented.\`);
+  }
+  return null;
+}
+
+`.trim();
+
+export const defaultReducerTs = `
+
+import { combineReducers } from 'redux';
+
+import {
+  reducer as testReducer,
+  State as TestState, 
+  Action as TestAction,
+} from './store/test.duck';
+
+export interface RootState {
+  test: TestState;
+  // ...
+}
+
+export type RootAction = (
+  | TestAction
+  // ...
+);
+
+const rootReducer = () => combineReducers({
+  test: testReducer,
+  // ...
+});
+
+export default rootReducer;
+
+`.trim();
+
+export const defaultReduxModelTs = `
+export const createSync = <T extends string, P extends object = {}>(
+  type: T,
+  payload: P
+): SyncAct<T, P> => ({ type, payload });
+
+export interface SyncAct<T extends string, Payload extends null | {}> {
+  type: T;
+  payload: Payload;
+}
+
+interface ActionCreatorsMapObject {
+  [actionCreator: string]: (...args: any[]) => any
+}
+
+export type ActionsUnion<A extends ActionCreatorsMapObject> =
+  ReturnType<A[keyof A]>;
+
+`.trim();
+
+export const defaultTestDuckTs = `
+import { testNever } from '../util';
+import { createSync, ActionsUnion } from './redux.model';
+
+export interface State {
+  count: number;
+}
+
+const initialState: State = {
+  count: 0,
+};
+
+export const Act = {
+  increment: () => createSync('[test] increment', {}),
+  reset: () => createSync('[test] reset', {}),
+};
+
+export type Action = ActionsUnion<typeof Act>;
+
+export const reducer = (state = initialState, act: Action): State => {
+  switch (act.type) {
+    case '[test] increment': return { ...state,
+      count: state.count + 1,
+    };
+    case '[test] reset': return { ...state,
+      count: 0,
+    };
+    default: return state || testNever(act);
+  }
+};
+
+`.trim();
+
+/**
+ * EXAMPLES BELOW
+ */
+
 export const exampleTsx1 = `
 import * as React from 'react';
 
@@ -70,11 +171,6 @@ export const App: React.FC = () => {
 };
 
 export default App;
-`.trim();
-
-export const exampleTs1 = `
-export const foo = 'bar';
-export const baz = 'qux';
 `.trim();
 
 export const exampleScss1 = `

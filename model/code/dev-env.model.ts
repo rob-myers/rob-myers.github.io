@@ -76,6 +76,10 @@ export function isRelativePath(path: string) {
   return path.startsWith('./') || path.startsWith('../');
 }
 
+export function isRuntimeNpmModule(moduleSpecifier: string) {
+  return moduleSpecifier === 'react' || moduleSpecifier === 'redux';
+}
+
 const resolveCache = {} as Record<string, string>;
 
 export function resolveRelativePath(absPath: string, relPath: string) {

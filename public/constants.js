@@ -8,3 +8,4 @@ export const REFRESH_HELPERS = '$RefreshHelpersProd$';
 export const REFRESH_INTERCEPT_MODULE_EXECUTION = '$RefreshInterceptModuleExecutionProd$';
 
 export const LIVE_REACT = '__LIVE_REACT__';
+export const LIVE_REDUX = '__LIVE_REDUX__';

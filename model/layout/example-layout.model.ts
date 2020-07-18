@@ -134,9 +134,7 @@ const defaultMobileConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                 }
               },
               'componentName': 'lm-react-component',
-              'isClosable': true,
-              'reorderEnabled': true
-            }
+            },
           ]
         }
       ]
@@ -213,24 +211,36 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                 },
                 {
                   type: 'component',
-                  title: 'model.ts',
+                  title: 'reducer.ts',
                   component: 'window-panel',
                   props: {
                     panelKey: 'panel-2',
                     panelMeta: {
-                      filename: 'model.ts',
+                      filename: 'reducer.ts',
                     },
                   },
                   componentName: 'lm-react-component',
                 },
                 {
                   type: 'component',
-                  title: 'test/index.ts',
+                  title: 'store/redux.model.ts',
                   component: 'window-panel',
                   props: {
                     panelKey: 'panel-2a',
                     panelMeta: {
-                      filename: 'test/index.ts',
+                      filename: 'store/redux.model.ts',
+                    },
+                  },
+                  componentName: 'lm-react-component',
+                },
+                {
+                  type: 'component',
+                  title: 'store/test.duck.ts',
+                  component: 'window-panel',
+                  props: {
+                    panelKey: 'panel-2b',
+                    panelMeta: {
+                      filename: 'store/test.duck.ts',
                     },
                   },
                   componentName: 'lm-react-component',
@@ -261,7 +271,19 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                         }
                       },
                       componentName: 'lm-react-component',
-                    }
+                    },
+                    {
+                      type: 'component',
+                      title: 'util.ts',
+                      component: 'window-panel',
+                      props: {
+                        panelKey: 'panel-3a',
+                        panelMeta: {
+                          filename: 'util.ts'
+                        }
+                      },
+                      componentName: 'lm-react-component',
+                    },
                   ]
                 },
                 {
