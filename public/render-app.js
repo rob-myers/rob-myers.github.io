@@ -7,7 +7,7 @@ import ReactDOM from './es-react/react-dom';
 import { Provider } from './es-react-redux/index';
 import { ErrorBoundary } from './error-boundary';
 
-let rootReducer = combineReducers({});
+let rootReducer;
 
 /** We store thunks here for better hot-reloading. */
 let thunkLookup = {};
@@ -37,6 +37,7 @@ export function initializeRuntimeStore(preloadedState) {
   if (store || typeof window === 'undefined') {
     return;
   }
+  rootReducer = combineReducers({});
   const composeWithDevTools = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
       shouldHotReload: false,
