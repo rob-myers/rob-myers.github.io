@@ -3,7 +3,7 @@ import * as React from './es-react/react';
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, componentStack: null };
   }
 
   static getDerivedStateFromError(error) {
@@ -11,6 +11,7 @@ export class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
+    this.setState({ componentStack: errorInfo.componentStack })
     console.log({ error });
     console.log({ errorInfo });
   }
@@ -22,6 +23,7 @@ export class ErrorBoundary extends React.Component {
           React.createElement('div', { style: { fontWeight: 'bold' } }, 'React threw a rendering error...'),
           React.createElement('br'),
           React.createElement('div', { style: { color: '#500', fontFamily: 'monospace' } }, this.state.error.message),
+          React.createElement('plaintext', { style: { color: '#000', fontFamily: 'monospace' } }, this.state.componentStack),
         ]),
       ]);
     }
