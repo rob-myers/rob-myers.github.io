@@ -60,7 +60,8 @@ export function initializeRuntimeStore(preloadedState) {
 export function updateRootReducerFromBlobUrl(blobUrl) {
   return new Promise((resolve) => eval(`
     import('${blobUrl}').then((imported) => {
-      store.replaceReducer(imported.default);
+      const createRootReducer = imported.default;
+      store.replaceReducer(createRootReducer());
       resolve();
     });
   `)

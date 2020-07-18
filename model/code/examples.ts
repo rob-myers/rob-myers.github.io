@@ -1,4 +1,6 @@
-
+/**
+ * util.ts
+ */
 export const defaultUtilTs = `
 /**
  * Can be used as a NOOP, testing whether a type is never,
@@ -13,6 +15,9 @@ export function testNever(x: never, shouldThrow = false): any {
 
 `.trim();
 
+/**
+ * reducer.ts
+ */
 export const defaultReducerTs = `
 
 import { combineReducers } from 'redux';
@@ -33,16 +38,20 @@ export type RootAction = (
   // ...
 );
 
-const rootReducer = () => combineReducers({
+const createRootReducer = () => combineReducers({
   test: testReducer,
   // ...
 });
 
-export default rootReducer;
+export default createRootReducer;
 
 `.trim();
 
+/**
+ * store/redux.model.ts
+ */
 export const defaultReduxModelTs = `
+
 export const createSync = <T extends string, P extends object = {}>(
   type: T,
   payload: P
@@ -62,6 +71,9 @@ export type ActionsUnion<A extends ActionCreatorsMapObject> =
 
 `.trim();
 
+/**
+ * store/test.duck.ts
+ */
 export const defaultTestDuckTs = `
 import { testNever } from '../util';
 import { createSync, ActionsUnion } from './redux.model';

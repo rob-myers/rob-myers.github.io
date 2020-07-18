@@ -4,8 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
-https://react-redux.js.org/using-react-redux/accessing-store#multiple-stores
-
+- [ ] separate bootstrap for transpiled ts files with entrypoint `reducer.ts`
 - [ ] create runtime redux store and wrap app in provider
 - [x] integrate reducer, store/redux.model store/test.duck
 - [x] rename `index.tsx` as `app.tsx`
