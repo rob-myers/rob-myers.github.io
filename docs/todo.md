@@ -4,7 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
-- [ ] separate bootstrap for transpiled ts files with entrypoint `reducer.ts`
+- [x] separate bootstrap for transpiled ts files with entrypoint `reducer.ts`
 - [ ] create runtime redux store and wrap app in provider
 - [x] integrate reducer, store/redux.model store/test.duck
 - [x] rename `index.tsx` as `app.tsx`

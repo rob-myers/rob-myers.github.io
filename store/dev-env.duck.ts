@@ -2,7 +2,7 @@ import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
 import * as portals from 'react-reverse-portal';
 
-import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, initializeRuntimeStore } from '@public/render-app';
+import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, initializeRuntimeStore, replaceRootReducerFromBlobUrl } from '@public/render-app';
 import RefreshRuntime from '@public/es-react-refresh/runtime';
 
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact } from '@model/store/redux.model';
@@ -23,11 +23,7 @@ import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk, Act as LayoutAct } from './layout.duck';
 
-export interface State {
-  file: KeyedLookup<Dev.FileState>;
-  initialized: boolean;
-  /** Mirrors layout.panel */
-  panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
+export interface State {  
   /**
    * True iff, after most recent transpilation, all code reachable
    * from app.tsx was deemed collectively valid.
@@ -35,6 +31,11 @@ export interface State {
   appValid: boolean;
   /** So can persist App instances across site */
   appPortal: KeyedLookup<Dev.AppPortal>;
+  /** File lookup. */
+  file: KeyedLookup<Dev.FileState>;
+  initialized: boolean;
+  /** Mirrors layout.panel */
+  panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
   /**
    * True iff, after most recent transpilation, all code reachable
    * from reducer.ts was deemed collectively valid.
@@ -193,7 +194,7 @@ export const Thunk = {
         Dev.ensureEsModule({ scriptId: Dev.filenameToScriptId(filename), scriptSrcUrl: esm!.blobUrl });
 
       // Get App from dynamic module and store inside static module
-      const appUrl = (devEnv.file[Dev.rootAppFilename] as Dev.CodeFile).esModule!.blobUrl;
+      const { blobUrl: appUrl } = (devEnv.file[Dev.rootAppFilename] as Dev.CodeFile).esModule!;
       await storeAppFromBlobUrl(appUrl);
 
       // Render App in each panel
@@ -205,7 +206,7 @@ export const Thunk = {
   ),
   bootstrapRootReducer: createThunk(
     '[dev-env] bootstrap root reducer',
-    async ({ dispatch }) => {
+    async ({ dispatch, getState }) => {
 
       // We verify dependencies are acyclic
       const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: Dev.rootReducerFilename }));
@@ -215,10 +216,18 @@ export const Thunk = {
         dispatch(Thunk.tryTranspileCodeModel({ filename: Dev.rootReducerFilename }));
         return;
       }
+      // Replace module specifiers with blob urls so can dynamically load
+      await dispatch(Thunk.patchAllTranspiledCode({ rootFilename: Dev.rootReducerFilename }));
 
-      // TODO patch module specifiers
-      // TODO mount scripts
-      // TODO replace root reducer
+      // Mount scripts
+      const { devEnv } = getState();
+      const jsFiles = Dev.getReachableJsFiles(Dev.rootReducerFilename, devEnv.file).reverse();
+      for (const { key: filename, esModule: esm } of jsFiles)
+        Dev.ensureEsModule({ scriptId: Dev.filenameToScriptId(filename), scriptSrcUrl: esm!.blobUrl });
+      
+      // Replace root reducer
+      const { blobUrl: reducerUrl } = (devEnv.file[Dev.rootReducerFilename] as Dev.CodeFile).esModule!;
+      await replaceRootReducerFromBlobUrl(reducerUrl);
 
       dispatch(Act.rememberReducerValid(true));
     },
@@ -828,7 +837,7 @@ const bootstrapReducers = createEpic(
       '[dev-env] store code transpilation',
     ),
     flatMap((act) => {
-      const { file } = state$.value.devEnv;
+      const { file, reducerValid } = state$.value.devEnv;
 
       if (act.type === '[dev-env] store code transpilation') {
         if (act.pay.filename.endsWith('.ts')) {
@@ -838,11 +847,14 @@ const bootstrapReducers = createEpic(
           }
 
           const invalid = reachableJsFiles.find((f) => !Dev.isFileValid(f));
-          if (!invalid) {// All reachable code locally valid, so replace reducer
-            return [Thunk.bootstrapRootReducer({}),];
-          } else {// DEBUG
+          if (invalid) {// DEBUG
             // console.log({ foundInvalid: invalid.key, validities: reachableJsFiles.map(x => ({ filename: x.key, valid: Dev.isFileValid(x) }))
             // return [Thunk.tryTranspileCodeModel({ filename: invalid.key, onlyIf: 'valid' })];
+          }
+          if (!invalid) {// All reachable code locally valid, so replace reducer
+            return [Thunk.bootstrapRootReducer({})];
+          } else if (reducerValid) {
+            return [Act.rememberReducerValid(false)];
           }
         }
       }
