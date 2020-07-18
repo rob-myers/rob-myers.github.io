@@ -2,17 +2,16 @@ import RefreshRuntime from './runtime';
 
 if (typeof window !== 'undefined') {
   /**
-   * Hook into ReactDOM initialization, see also
+   * Hook into ReactDOM initialization, see also:
    * @next/react-refresh-utils/runtime.js
    */
-  // console.log('injecting prod RefreshRuntime into global hook');
   RefreshRuntime.injectIntoGlobalHook(window);
 }
 
 import RefreshHelpers from './helpers';
 import React from '../es-react/react';
 import * as Redux from '../es-redux/redux';
-import * as ReactRedux from '../es-react-redux/index';
+
 import { REFRESH_HELPERS, REFRESH_REG, REFRESH_SIG, LIVE_REACT, LIVE_REDUX, LIVE_REACT_REDUX } from '../constants';
 
 if (typeof window !== 'undefined') {    
@@ -34,7 +33,13 @@ if (typeof window !== 'undefined') {
 
   window[LIVE_REDUX] = Redux;
 
-  window[LIVE_REACT_REDUX] = ReactRedux;
+  /**
+   * Import dynamically because was silently breaking react-refresh,
+   * presumably via early reference to es-react/react-dom inside
+   * public/es-react-redux/utils/reactBatchedUpdates.js.
+   */
+  import('../es-react-redux/index').then((imported) =>
+    window[LIVE_REACT_REDUX] = imported);
 }
 
 export default function preventTreeShake() {}
