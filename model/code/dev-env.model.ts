@@ -7,18 +7,20 @@ import { IMarkerData } from '@model/monaco/monaco.model';
 
 export const menuHeightPx = 32;
 
-const supportedFileMetas = ['.tsx', '.scss', '.ts'];
+const supportedFileExts = ['.tsx', '.scss', '.ts'];
 
 export const rootAppFilename = 'app.tsx';
 
+export const rootReducerFilename = 'reducer.ts';
+
 export function hasSupportedExtension(filename: string) {
-  return supportedFileMetas.some((filenameExt) => filename.endsWith(filenameExt));
+  return supportedFileExts.some((filenameExt) => filename.endsWith(filenameExt));
 }
 
 type Meta = LayoutPanelMeta<CustomPanelMetaKey>
 
 export function isFilePanel(panelMeta: Meta): panelMeta is Meta & { filename: string } {
-  return !panelMeta?.devEnvComponent && supportedFileMetas
+  return !panelMeta?.devEnvComponent && supportedFileExts
     .some((filenameExt) => panelMeta?.filename?.endsWith(filenameExt));
 }
 
@@ -99,6 +101,10 @@ export function resolveRelativePath(absPath: string, relPath: string) {
     }
   }
   return resolveCache[key] = parts.join('/');
+}
+
+export function withoutFileExtension(filename: string) {
+  return filename.split('.').slice(0, -1).join('.');
 }
 
 export type FileState = (
@@ -216,7 +222,12 @@ export type JsPathError = (
   | (BaseJsPathError<'cyclic-dependency'> & { dependent: string })
 );
 
-type BaseJsPathError<T extends JsPathErrorKey> = { key: T; path: string }
+interface BaseJsPathError<T extends JsPathErrorKey> {
+  key: T;
+  path: string;
+  /** Resolved filename without extension */
+  resolved: string;
+}
 type JsPathErrorKey = (
   | 'cyclic-dependency'
   | 'only-import-ts'
@@ -264,8 +275,8 @@ export function isFileValid(file: FileState) {
 }
 
 /** Get ts/tsx files reachable from app.tsx */
-export function getReachableJsFiles(file: KeyedLookup<FileState>) {
-  const frontier = [file[rootAppFilename]] as CodeFile[];
+export function getReachableJsFiles(rootFilename: string, file: KeyedLookup<FileState>) {
+  const frontier = [file[rootFilename]] as CodeFile[];
   const reachable = lookupFromValues(frontier);
   while (frontier.length) {
     const prevFrontier = frontier.slice();
@@ -407,8 +418,14 @@ export function getSrcErrorMarker({ key, interval }: SourceFileError): IMarkerDa
   };
 }
 
-export function getJsPathErrorMarkers(jsErrors: JsPathError[], metas: ModuleSpecifierInterval[]): IMarkerData[] {
-  const metaErrors = metas.map((meta) => ({ meta, jsErrors: jsErrors.filter(x => x.path === meta.value) }));
+export function getJsPathErrorMarkers(
+  filename: string,
+  jsErrors: JsPathError[],
+  metas: ModuleSpecifierInterval[],
+): IMarkerData[] {
+  const metaErrors = metas.map((meta) => ({ meta, jsErrors: jsErrors.filter(x =>
+    x.resolved === resolveRelativePath(filename, meta.value)),
+  }));
   return metaErrors.flatMap(({ meta: { interval }, jsErrors }) =>
     jsErrors.map(({ key }) => ({
       message: getJsPathErrorInfo(key),

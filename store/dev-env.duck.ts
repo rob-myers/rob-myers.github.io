@@ -16,12 +16,12 @@ import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyS
 import { getCssModuleCode } from '@model/code/css-module';
 import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
+import { isCyclicDepError } from '@model/code/dev-env.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk, Act as LayoutAct } from './layout.duck';
-import { isCyclicDepError } from '@model/code/dev-env.model';
 
 export interface State {
   file: KeyedLookup<Dev.FileState>;
@@ -29,12 +29,17 @@ export interface State {
   /** Mirrors layout.panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
   /**
-   * True iff after most recent transpilation, all code reachable
+   * True iff, after most recent transpilation, all code reachable
    * from app.tsx was deemed collectively valid.
    */
   appValid: boolean;
   /** So can persist App instances across site */
   appPortal: KeyedLookup<Dev.AppPortal>;
+  /**
+   * True iff, after most recent transpilation, all code reachable
+   * from reducer.ts was deemed collectively valid.
+   */
+  reducerValid: boolean;
 }
 
 const initialState: State = {
@@ -43,6 +48,7 @@ const initialState: State = {
   panelToMeta: {},
   appValid: false,
   appPortal: {},
+  reducerValid: false,
 };
 
 export const Act = {
@@ -73,6 +79,8 @@ export const Act = {
     createAct('[dev-env] initialized', {}),
   rememberAppValid: (isValid: boolean) =>
     createAct('[dev-env] remember app valid', { isValid }),
+  rememberReducerValid: (isValid: boolean) =>
+    createAct('[dev-env] remember reducer valid', { isValid }),
   rememberRenderedApp: (panelKey: string) =>
     createAct('[dev-env] remember rendered app', { panelKey }),
   removeAppPortal: (panelKey: string) =>
@@ -102,8 +110,8 @@ export const Thunk = {
       nextTranspiledJs: string;
     }): Promise<Dev.AnalyzeNextCode> => {
       /**
-       * Must apply react-refresh transform before checking for cyclic deps,
-       * because later we'll patch code-intervals using `imports` and `exports`.
+       * Must apply react-refresh transform before checking for cyclic dependencies,
+       * because later we'll patch code-intervals using computed `imports` and `exports`.
        */
       const { transformedJs } = await dispatch(Thunk.applyReactRefreshTransform({
         filename,
@@ -130,27 +138,27 @@ export const Thunk = {
   applyReactRefreshTransform: createThunk(
     '[dev-env] apply react refresh transform',
     ({ state: { editor: { syntaxWorker } } }, { filename, js }: { filename: string; js: string }) => {
-      const jsFilename = filename.replace(/\.tsx?$/, '.js');
-      syntaxWorker!.postMessage({ key: 'request-react-refresh-transform', filename: jsFilename, code: js });
+      syntaxWorker!.postMessage({ key: 'request-react-refresh-transform', filename, code: js });
       return awaitWorker('send-react-refresh-transform', syntaxWorker!, ({ origCode }) => origCode === js);
     },
   ),
   /**
-   * NOOP used to trigger bootstrapAppInstance
+   * NOOP used to trigger bootstrapAppInstance.
    */
   appPortalIsReady: createThunk(
     '[dev-env] app portal is ready',
     (_, _input: { panelKey: string }) => void null,
   ),
   /**
-   * Mount or update an app instance, either via
-   * code update or newly created app panel.
+   * Mount or update an app instance, either
+   * via code update or newly created app panel.
    */
   bootstrapAppInstance: createThunk(
     '[dev-env] bootstrap app instance',
     ({ state: { devEnv }, dispatch }, { panelKey }: { panelKey: string }) => {
-      // 1st attempt at implementing react-refresh
-      // TODO invalidate when exports change
+      /**
+       * TODO invalidate react-refresh when exports change
+       */
       if (!devEnv.appPortal[panelKey].rendered) {
         renderAppAt(Dev.panelKeyToAppElId(panelKey));
         dispatch(Act.rememberRenderedApp(panelKey));
@@ -169,17 +177,18 @@ export const Thunk = {
        */
       const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: Dev.rootAppFilename }));
       if (jsErrors.find(isCyclicDepError)) {
-        console.error('Bootstrap failed due to cyclic dependency');
+        console.error('App bootstrap failed due to cyclic dependency');
+        dispatch(Act.rememberAppValid(false));
         dispatch(Thunk.tryTranspileCodeModel({ filename: Dev.rootAppFilename }));
         return;
       }
 
       // Replace module specifiers with blob urls so can dynamically load
-      await dispatch(Thunk.patchAllTranspiledCode({}));
+      await dispatch(Thunk.patchAllTranspiledCode({ rootFilename: Dev.rootAppFilename }));
 
       // Mount the respective es modules as <script>'s of type "module"
       const { devEnv } = getState();
-      const jsFiles = Dev.getReachableJsFiles(devEnv.file).reverse();
+      const jsFiles = Dev.getReachableJsFiles(Dev.rootAppFilename, devEnv.file).reverse();
       for (const { key: filename, esModule: esm } of jsFiles)
         Dev.ensureEsModule({ scriptId: Dev.filenameToScriptId(filename), scriptSrcUrl: esm!.blobUrl });
 
@@ -192,6 +201,26 @@ export const Thunk = {
         .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
   
       dispatch(Act.rememberAppValid(true));
+    },
+  ),
+  bootstrapRootReducer: createThunk(
+    '[dev-env] bootstrap root reducer',
+    async ({ dispatch }) => {
+
+      // We verify dependencies are acyclic
+      const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: Dev.rootReducerFilename }));
+      if (jsErrors.find(isCyclicDepError)) {
+        console.error('Root reducer bootstrap failed due to cyclic dependency');
+        dispatch(Act.rememberReducerValid(false));
+        dispatch(Thunk.tryTranspileCodeModel({ filename: Dev.rootReducerFilename }));
+        return;
+      }
+
+      // TODO patch module specifiers
+      // TODO mount scripts
+      // TODO replace root reducer
+
+      dispatch(Act.rememberReducerValid(true));
     },
   ),
   /**
@@ -285,8 +314,9 @@ export const Thunk = {
         if (error) {
           return {
             key: 'cyclic-dependency',
-            path: dependencyFile.key,
+            path: dependencyFile.key, // TODO module specifier instead?
             dependent: error.dependent,
+            resolved: Dev.withoutFileExtension(dependencyFile.key),
           };
         }
       }
@@ -352,8 +382,11 @@ export const Thunk = {
       const modelKey = filenameToModelKey(filename);
       
       if (jsPathErrors.length) {
-        const markers = Dev.getJsPathErrorMarkers(jsPathErrors, pathIntervals);
+        // console.log({ filename, handlingJsErrors: jsPathErrors });
+        const markers = Dev.getJsPathErrorMarkers(filename, jsPathErrors, pathIntervals);
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers }));
+        const cyclicError = jsPathErrors.find(isCyclicDepError);
+        cyclicError && dispatch(Thunk.tryTranspileCodeModel({ filename: cyclicError.path, onlyIf: 'valid' }));
       } else {
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
         if (prevCyclicError) {
@@ -414,12 +447,12 @@ export const Thunk = {
    */
   patchAllTranspiledCode: createThunk(
     '[dev-env] patch all transpiled code',
-    async ({ dispatch, state: { devEnv } }) => {
+    async ({ dispatch, state: { devEnv } }, { rootFilename }: { rootFilename: string }) => {
       /**
        * Stratify transpiled javascript files and apply import/export patches.
        * We'll use code-intervals already stored in transpiled.imports.
        */
-      const jsFiles = Dev.getReachableJsFiles(devEnv.file) as Dev.TranspiledCodeFile[];
+      const jsFiles = Dev.getReachableJsFiles(rootFilename, devEnv.file) as Dev.TranspiledCodeFile[];
       const stratification = PatchJs.stratifyJsFiles(jsFiles);
       const filenameToPatched = PatchJs.patchTranspiledJsFiles(devEnv.file, stratification);
         
@@ -561,7 +594,10 @@ export const Thunk = {
       dispatch(Thunk.handleCodeAnalysis({ filename, analyzed }));
     },
   ),
-  /** Try to transpile scss. */
+  /**
+   * Try to transpile scss.
+   * TODO clean up
+   */
   tryTranspileStyleModel: createThunk(
     '[dev-env] try transpile style model',
     async ({ dispatch, state: { devEnv }, getState }, { filename }: { filename: string }) => {
@@ -711,6 +747,9 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] remember app valid': return { ...state,
       appValid: act.pay.isValid,
     };
+    case '[dev-env] remember reducer valid': return { ...state,
+      appValid: act.pay.isValid,
+    };
     case '[dev-env] remember rendered app': return { ...state,
       appPortal: updateLookup(act.pay.panelKey, state.appPortal, () => ({
         rendered: true,
@@ -745,7 +784,7 @@ export const reducer = (state = initialState, act: Action): State => {
   }
 };
 
-const bootstrapAppInstances = createEpic(
+const bootstrapApp = createEpic(
   (action$, state$) => action$.pipe(
     filterActs(
       '[dev-env] store code transpilation',
@@ -756,16 +795,18 @@ const bootstrapAppInstances = createEpic(
       const { file, appValid } = state$.value.devEnv;
 
       if (act.type === '[dev-env] store code transpilation') {
-        const reachableJsFiles = Dev.getReachableJsFiles(file);
-        if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
-          return []; // Ignore files unreachable from app.tsx
-        }
-        if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
-          return [// All reachable code locally valid so try bootstrap app
-            Thunk.bootstrapApps({}),
-          ];
-        } else if (appValid) {
-          return [Act.rememberAppValid(false)];
+        if (act.pay.filename.endsWith('.tsx')) {
+          const reachableJsFiles = Dev.getReachableJsFiles(Dev.rootAppFilename, file);
+          if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
+            return []; // Ignore files unreachable from app.tsx
+          }
+          if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
+            return [// All reachable code locally valid so try bootstrap app
+              Thunk.bootstrapApps({}),
+            ];
+          } else if (appValid) {
+            return [Act.rememberAppValid(false)];
+          }
         }
       } else if (act.type === '[dev-env] app portal is ready') {
         if (appValid) {
@@ -774,6 +815,35 @@ const bootstrapAppInstances = createEpic(
       } else if (act.type === '[dev-env] change panel meta') {
         if (act.pay.to === 'file' || act.pay.to === 'doc') {
           return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
+        }
+      }
+      return [];
+    }),
+  ),
+);
+
+const bootstrapReducers = createEpic(
+  (action$, state$) => action$.pipe(
+    filterActs(
+      '[dev-env] store code transpilation',
+    ),
+    flatMap((act) => {
+      const { file } = state$.value.devEnv;
+
+      if (act.type === '[dev-env] store code transpilation') {
+        if (act.pay.filename.endsWith('.ts')) {
+          const reachableJsFiles = Dev.getReachableJsFiles(Dev.rootReducerFilename, file);
+          if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
+            return []; // Ignore files unreachable from reducer.ts
+          }
+
+          const invalid = reachableJsFiles.find((f) => !Dev.isFileValid(f));
+          if (!invalid) {// All reachable code locally valid, so replace reducer
+            return [Thunk.bootstrapRootReducer({}),];
+          } else {// DEBUG
+            // console.log({ foundInvalid: invalid.key, validities: reachableJsFiles.map(x => ({ filename: x.key, valid: Dev.isFileValid(x) }))
+            // return [Thunk.tryTranspileCodeModel({ filename: invalid.key, onlyIf: 'valid' })];
+          }
         }
       }
       return [];
@@ -919,7 +989,8 @@ const trackCodeFileContents = createEpic(
 );
 
 export const epic = combineEpics(
-  bootstrapAppInstances,
+  bootstrapApp,
+  bootstrapReducers,
   bootstrapStyles,
   initializeFileSystem,
   initializeMonacoModels,

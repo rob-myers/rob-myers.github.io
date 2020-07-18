@@ -215,19 +215,19 @@ export function computeJsImportExportErrors(
   if (filename.endsWith('.tsx')) {
     imports.filter(({ from }) => !from.value.endsWith('.scss')
       && !(`${resolveRelativePath(filename, from.value)}.tsx` in filenames))
-      .forEach((meta) => errors.push({ key: 'only-import-tsx', path: meta.from.value, }));
+      .forEach((meta) => errors.push({ key: 'only-import-tsx', path: meta.from.value, resolved: resolveRelativePath(filename, meta.from.value) }));
     analyzed.exports.forEach((meta) => meta.key === 'export-decl'
       && !(`${resolveRelativePath(filename, meta.from.value)}.tsx` in filenames) &&
-      errors.push({ key: 'only-export-tsx', path: meta.from.value }));
+      errors.push({ key: 'only-export-tsx', path: meta.from.value, resolved: resolveRelativePath(filename, meta.from.value) }));
   }
 
   if (filename.endsWith('.ts')) {
     imports.filter(({ from }) => !from.value.endsWith('.scss')
       && !(`${resolveRelativePath(filename, from.value)}.ts` in filenames)).forEach((meta) =>
-      errors.push({ key: 'only-import-ts', path: meta.from.value }));
+      errors.push({ key: 'only-import-ts', path: meta.from.value, resolved: resolveRelativePath(filename, meta.from.value) }));
     analyzed.exports.forEach((meta) => meta.key === 'export-decl'
       && !(`${resolveRelativePath(filename, meta.from.value)}.ts` in filenames) &&
-      errors.push({ key: 'only-export-ts', path: meta.from.value }));
+      errors.push({ key: 'only-export-ts', path: meta.from.value, resolved: resolveRelativePath(filename, meta.from.value) }));
   }
 
   return errors;

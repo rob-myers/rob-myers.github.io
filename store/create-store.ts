@@ -14,7 +14,7 @@ import { State as DevEnvState } from './dev-env.duck';
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
 import { getDefaultLayoutConfig } from '@model/layout/example-layout.model';
 
-const storeVersion = 0.24;
+const storeVersion = 0.25;
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
@@ -91,6 +91,7 @@ const persistedReducer = persistReducer({
         panelToMeta: {},
         appValid: false,
         appPortal: {},
+        reducerValid: false,
       }),
       (state, _key) => state,
       { whitelist: ['devEnv'] },
