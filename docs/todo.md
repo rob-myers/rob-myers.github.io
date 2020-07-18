@@ -7,9 +7,9 @@ See [blog notes](./blog.md).
 https://react-redux.js.org/using-react-redux/accessing-store#multiple-stores
 
 - [x] rename `index.tsx` as `app.tsx`
-- [ ] resolve module specifiers properly e.g. ../foo
-  > check folders are supported by monaco
-  > represent via nested objects with cached lookups
+- [x] resolve module specifiers properly e.g. ../foo
+  > folders are supported by monaco
+  > cached lookups
 - [ ] new setup: extra 'hidden' runtime modules:
   > wrap App in react-redux Provider in runtime-modules/render-app.js
   > store creation methods in runtime-modules/create-store.js

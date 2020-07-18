@@ -1,6 +1,6 @@
 import { KeyedLookup, pluck } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, getBlobUrl, ModuleSpecifierInterval, isTsExportDecl, TsExportMeta, TsImportMeta } from './dev-env.model';
+import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, getBlobUrl, ModuleSpecifierInterval, isTsExportDecl, resolveRelativePath, CodeTranspilation } from './dev-env.model';
 
 export function getCyclicDepMarker(
   { value, interval: { startLine, startCol} }: ModuleSpecifierInterval,
@@ -18,25 +18,38 @@ export function getCyclicDepMarker(
   };
 }
 
-/** Relative paths to code filenames, ignoring 'react' */
-export function importPathsToCodeFilenames(
-  /** May include .scss */
-  importPaths: string[],
-  allFilenames: string[]
+/**
+ * We ignore module specifiers that don't resolve to a code file.
+ * We also remove any duplicates.
+ */
+export function moduleSpecsToCodeFilenames(
+  filename: string,
+  file: Record<string, FileState>,
+  moduleSpecs: string[],
 ) {
-  return importPaths
-    .filter((x, i) => x.startsWith('./') && i === importPaths.indexOf(x))
-    .map(x => relPathToFilename(x, allFilenames))
-    .filter(x => /\.tsx?$/.test(x));
+  return moduleSpecs.map(x => resolveRelativePath(filename, x))
+    .filter((x, i, xs) => !x.endsWith('.scss') && i === xs.indexOf(x))
+    .map(x => file[`${x}.tsx`]?.key || file[`${x}.ts`]?.key)
+    .filter(Boolean);
 }
 
 /**
- * e.g. `./app` to `app.tsx` and `./model` to `model.ts`.
+ * For example:
+ * - `./app` to `app.tsx`
+ * - `./foo/model` to `foo/model.ts`.
+ * - `../index.scss` to `index.scss`.
  */
-export function relPathToFilename(relPath: string, allFilenames: string[]) {
-  const filenamePrefix = relPath.slice(2);
-  // TODO handle case where one filename is a prefix of another
-  return allFilenames.find(y => y.startsWith(filenamePrefix))!;
+function moduleSpecToFilename(
+  filename: string,
+  file: Record<string, FileState>,
+  moduleSpec: string,
+) {
+  const resolved = resolveRelativePath(filename, moduleSpec);
+  return (
+    file[resolved]?.key
+    || file[`${resolved}.tsx`]?.key
+    || file[`${resolved}.ts`]?.key
+  );
 }
 
 /**
@@ -105,7 +118,6 @@ export function patchTranspiledJsFiles(
   file: KeyedLookup<FileState>,
   stratification: string[][],
 ) {
-  const allFilenames = Object.keys(file);
   const filenameToPatched = {} as Record<string, CodeFileEsModule>;
   const scssFile = pluck(file, ({ ext }) => ext === 'scss') as KeyedLookup<StyleFile>;
 
@@ -113,11 +125,10 @@ export function patchTranspiledJsFiles(
     for (const filename of level) {
       const { transpiled } = file[filename] as TranspiledCodeFile;
       const patchedCode = patchTranspiledCode(
-        transpiled.dst,
-        transpiled.imports,
-        transpiled.exports,
+        filename,
+        file,
+        transpiled,
         filenameToPatched, // Only need blobUrls
-        allFilenames,
         scssFile, // Only need blobUrls
       );
 
@@ -134,27 +145,26 @@ export function patchTranspiledJsFiles(
  * Replace import/export module specifiers with blob urls.
  */
 function patchTranspiledCode(
-  transpiledCode: string,
-  importMetas: TsImportMeta[],
-  exportMetas: TsExportMeta[],
+  filename: string,
+  file: KeyedLookup<FileState>,
+  transpiled: CodeTranspilation,
   filenameToPatched: Record<string, CodeFileEsModule>,
-  allFilenames: string[],
   scssFile: KeyedLookup<StyleFile>,
 ): string {
   let offset = 0, nextValue: string;
-  let patched = transpiledCode;
+  let patched = transpiled.dst;
 
-  importMetas.map(x => x.from).concat(
-    exportMetas.filter(isTsExportDecl).map(x => x.from),
+  transpiled.imports.map(x => x.from).concat(
+    transpiled.exports.filter(isTsExportDecl).map(x => x.from),
   ).forEach((meta) => {
     const { value, interval: { start } } = meta;
-    const filename = relPathToFilename(value, allFilenames);
+    const resolved = moduleSpecToFilename(filename, file, value);
     if (value === 'react') {
       nextValue = `${window.location.origin}/runtime-modules/react-facade.js`;
-    } else if (filename && filenameToPatched[filename]) {
-      nextValue = filenameToPatched[filename].blobUrl;
-    } else if (filename && filename.endsWith('.scss')) {
-      nextValue = scssFile[filename].cssModule!.blobUrl;
+    } else if (resolved && filenameToPatched[resolved]) {
+      nextValue = filenameToPatched[resolved].blobUrl;
+    } else if (resolved && resolved.endsWith('.scss')) {
+      nextValue = scssFile[resolved].cssModule!.blobUrl;
     } else {
       throw Error(`Unexpected import/export meta ${JSON.stringify(meta)}`);
     }

@@ -72,6 +72,31 @@ export function ensureStyleTag(input: { styleId: string; styles: string }) {
   document.head.appendChild(el);
 }
 
+export function isRelativePath(path: string) {
+  return path.startsWith('./') || path.startsWith('../');
+}
+
+const resolveCache = {} as Record<string, string>;
+
+export function resolveRelativePath(absPath: string, relPath: string) {
+  const key = `${absPath} ${relPath}`;
+  if (resolveCache[key]) {
+    return resolveCache[key];
+  }
+  const parts = absPath.split('/');
+  parts.pop();
+  for (const x of relPath.split('/')) {
+    if (x === '.') {
+      continue;
+    } else if (x === '..' && parts.length) {
+      parts.pop();
+    } else {
+      parts.push(x);
+    }
+  }
+  return resolveCache[key] = parts.join('/');
+}
+
 export type FileState = (
   | CodeFile
   | StyleFile
@@ -172,10 +197,7 @@ export const getSourceFileErrorInfo = (key: SourceFileErrorKey): string => {
     case 'only-export-cmp': return 'We require every value exported by a tsx file to have type React.FC<Props>.';
     case 'require-export-relative': return 'Exports must be relative.';
     case 'require-import-relative': return 'Local imports must be relative.';
-    case 'require-normalised-path': return [
-      'Write ts and tsx import paths relatively without extension,',
-      'e.g. `./index` or `./model/my.service`.',
-    ].join(' ');
+    case 'require-normalised-path': return 'Relative path not found.';
     case 'require-scss-exists': return 'Scss file not found.';
     default: throw testNever(key);
   }
@@ -257,15 +279,15 @@ export function getReachableJsFiles(file: KeyedLookup<FileState>) {
 }
 
 export function getReachableScssFiles(rootFilename: string, file: KeyedLookup<PrefixedStyleFile>) {
-  const frontier = [file[rootFilename]] as PrefixedStyleFile[];
+  const frontier = [file[rootFilename]];
   const reachable = lookupFromValues(frontier);
   while (frontier.length) {
     const prevFrontier = frontier.slice();
     frontier.length = 0;
     prevFrontier.forEach((node) => {
       const newAdjs = (node.pathIntervals || [])
-        .filter(({ value }) => !(value.slice(2) in reachable))
-        .map(({ value }) => file[value.slice(2)] as PrefixedStyleFile);
+        .filter(({ value }) => !(resolveRelativePath(node.key, value) in reachable))
+        .map(({ value }) => file[resolveRelativePath(node.key, value)] as PrefixedStyleFile);
       frontier.push(...newAdjs);
       newAdjs.forEach(f => reachable[f.key] = f);
     });

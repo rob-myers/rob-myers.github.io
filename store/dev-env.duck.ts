@@ -29,7 +29,7 @@ export interface State {
   /** Mirrors layout.panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
   /**
-   * True if after last transpilation, all code reachable
+   * True iff after most recent transpilation, all code reachable
    * from app.tsx was deemed collectively valid.
    */
   appValid: boolean;
@@ -261,13 +261,13 @@ export const Thunk = {
     }): null | Dev.CyclicDepError => {
       const file = devEnv.file as KeyedLookup<Dev.CodeFile>;
       const filenames = Object.keys(file);
-      const dependencyFilenames = PatchJs.importPathsToCodeFilenames(([] as string[]).concat(
-        imports.map(({ from }) => from.value),
-        exports.filter(Dev.isTsExportDecl).map(({ from }) => from.value),
-      ), filenames);
 
-      /** Files that `filename` imports or exports */
-      const dependencies = dependencyFilenames.map(filename => devEnv.file[filename] as Dev.CodeFile);
+      /** Dependencies are files that `filename` imports or exports */
+      const moduleSpecs = imports.map(({ from }) => from.value)
+        .concat(exports.filter(Dev.isTsExportDecl).map(({ from }) => from.value));
+      const dependencies = PatchJs.moduleSpecsToCodeFilenames(filename, file, moduleSpecs)
+        .map(filename => file[filename]);
+
       /** Files that import or export `filename`, and `filename` itself */
       const dependents = lookupFromValues(Object.values(file).filter(({ key, transpiled }) =>
         key === filename || (transpiled?.type === 'js' && (
@@ -309,8 +309,7 @@ export const Thunk = {
         return { key: 'error', errorKey: 'import-unknown', dependency: filename, inFilename: filename, fromFilename: invalidImport.value };
       }
 
-      const dependencyPaths = file.pathIntervals.map(({ value }) => value.slice(2));
-      const dependencies = dependencyPaths.map(filename => files[filename]);
+      const dependencies = file.pathIntervals.map(({ value }) => files[Dev.resolveRelativePath(filename, value)]);
       const dependents = Object.values(files).filter(({ key, pathIntervals }) =>
         key === filename || pathIntervals.some(({ value }) => value === filename));
 
@@ -363,6 +362,9 @@ export const Thunk = {
       }
     },
   ),
+  /**
+   * TODO improve
+   */
   handleScssImportError: createThunk(
     '[dev-env] handle scss import error',
     ({ state: { devEnv } }, { filename, importError }: {
@@ -370,18 +372,13 @@ export const Thunk = {
       importError: SccsImportsError;
     }) => {
       console.error(`Scss import error for ${filename}: ${JSON.stringify(importError)}`);
-      const pathIntervals = (devEnv.file[filename] as Dev.StyleFile).pathIntervals;
-      /**
-       * TODO use pathIntervals to construct markers
-       */
+      const { pathIntervals } = devEnv.file[filename] as Dev.StyleFile;
       if (importError.errorKey === 'import-unknown') {
-        // Malformed import either in `filename` or reachable from valid import
         if (importError.dependency === filename) {
-          const badIntervals = pathIntervals.filter(({ value }) => value === importError.fromFilename);
-          console.log({ scssImportUnknown: badIntervals });
+          console.log({ scssImportUnknown: pathIntervals.filter(({ value }) => value === importError.fromFilename) });
         } else {
-          const badIntervals = pathIntervals.filter(({ value }) => value.slice(2) === importError.dependency);
-          console.log({ scssTransitiveImportUnknown: badIntervals });
+          console.log({ scssTransitiveImportUnknown: pathIntervals.filter(({ value }) =>
+            Dev.resolveRelativePath(filename, value) === importError.dependency) });
         }
         // dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
       }
@@ -397,6 +394,8 @@ export const Thunk = {
         dispatch(Act.createCodeFile({ filename: Dev.rootAppFilename, contents: exampleTsx3 }));
       !devEnv.file['model.ts']?.contents &&
         dispatch(Act.createCodeFile({ filename: 'model.ts', contents: exampleTs1 }));
+      !devEnv.file['test/index.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'test/index.ts', contents: exampleTs1 }));
       !devEnv.file['index.scss']?.contents &&
         dispatch(Act.createStyleFile({ filename: 'index.scss', contents: exampleScss1 }));
       !devEnv.file['other.scss']?.contents &&
@@ -495,11 +494,10 @@ export const Thunk = {
     '[dev-env] try prefix style file',
     async ({ state: { devEnv, editor: e }, dispatch }, { filename }: { filename: string }) => {
       const { contents, prefixed } = devEnv.file[filename] as Dev.StyleFile;
-      const syntaxWorker = e.syntaxWorker!;
 
       if (contents !== prefixed?.src) {
-        syntaxWorker.postMessage({ key: 'request-scss-prefixing', filename, scss: contents });
-        const result = await awaitWorker('send-prefixed-scss', syntaxWorker, ({ origScss }) => contents === origScss);
+        e.syntaxWorker!.postMessage({ key: 'request-scss-prefixing', filename, scss: contents });
+        const result = await awaitWorker('send-prefixed-scss', e.syntaxWorker!, ({ origScss }) => contents === origScss);
 
         if (result.prefixedScss) {
           const { prefixedScss, pathIntervals } = result;
@@ -622,14 +620,14 @@ export const Thunk = {
       devEnv.file[filename]?.transpiled?.cleanups.forEach(cleanup => cleanup());
       const typesFilename = filename.replace(/\.tsx?$/, '.d.ts');
       const disposable = dispatch(EditorThunk.addTypings({ filename: typesFilename, typings: rest.typings }));
-      const allFilenames = Object.keys(devEnv.file);
       dispatch(Act.storeCodeTranspilation(filename, {
         type: 'js',
         ...rest,
         cleanups: [() => disposable.dispose()],
-        importFilenames: PatchJs.importPathsToCodeFilenames(rest.imports.map(({ from: path }) => path.value), allFilenames),
-        exportFilenames: PatchJs.importPathsToCodeFilenames(rest.exports
-          .filter(Dev.isTsExportDecl).map(({ from }) => from.value), allFilenames),
+        importFilenames: PatchJs.moduleSpecsToCodeFilenames(filename, devEnv.file,
+          rest.imports.map(({ from: path }) => path.value)),
+        exportFilenames: PatchJs.moduleSpecsToCodeFilenames(filename, devEnv.file,
+          rest.exports.filter(Dev.isTsExportDecl).map(({ from }) => from.value)),
       }));
     },
   ),

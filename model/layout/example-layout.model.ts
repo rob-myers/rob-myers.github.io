@@ -186,21 +186,15 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
   content: [
     {
       type: 'column',
-      isClosable: true,
-      reorderEnabled: true,
       title: '',
       content: [
         {
           type: 'row',
-          isClosable: true,
-          reorderEnabled: true,
           title: '',
           height: 100,
           content: [
             {
               type: 'stack',
-              isClosable: true,
-              reorderEnabled: true,
               title: '',
               width: 50,
               activeItemIndex: 0,
@@ -216,8 +210,6 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                     },
                   },
                   componentName: 'lm-react-component',
-                  isClosable: true,
-                  reorderEnabled: true
                 },
                 {
                   type: 'component',
@@ -230,23 +222,29 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                     },
                   },
                   componentName: 'lm-react-component',
-                  isClosable: true,
-                  reorderEnabled: true
-                }
+                },
+                {
+                  type: 'component',
+                  title: 'test/index.ts',
+                  component: 'window-panel',
+                  props: {
+                    panelKey: 'panel-2a',
+                    panelMeta: {
+                      filename: 'test/index.ts',
+                    },
+                  },
+                  componentName: 'lm-react-component',
+                },
               ]
             },
             {
               type: 'column',
-              isClosable: true,
-              reorderEnabled: true,
               title: '',
               width: 50,
               content: [
                 {
                   type: 'stack',
                   header: {},
-                  isClosable: true,
-                  reorderEnabled: true,
                   title: '',
                   activeItemIndex: 0,
                   width: 50,
@@ -263,23 +261,17 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                         }
                       },
                       componentName: 'lm-react-component',
-                      isClosable: true,
-                      reorderEnabled: true,
                     }
                   ]
                 },
                 {
                   type: 'row',
-                  isClosable: true,
-                  reorderEnabled: true,
                   title: '',
                   height: 50,
                   content: [
                     {
                       type: 'stack',
                       header: {},
-                      isClosable: true,
-                      reorderEnabled: true,
                       title: '',
                       activeItemIndex: 0,
                       width: 50,
@@ -303,8 +295,6 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                     {
                       type: 'stack',
                       header: {},
-                      isClosable: true,
-                      reorderEnabled: true,
                       title: '',
                       activeItemIndex: 0,
                       height: 50,
@@ -321,8 +311,6 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                             },
                           },
                           componentName: 'lm-react-component',
-                          isClosable: true,
-                          reorderEnabled: true
                         }
                       ]
                     }
@@ -335,8 +323,6 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
       ]
     }
   ],
-  isClosable: true,
-  reorderEnabled: true,
   title: '',
   openPopouts: [],
   maximisedItemId: null
