@@ -20,7 +20,7 @@
 
   &:hover {
     color: white;
-    background-color: rgb(45, 40, 40);
+    background-color: rgb(40, 40, 40);
     transition: background-color 500ms ease-in;
   }
 
@@ -33,7 +33,8 @@
     background: none;
     color: #aaa;
     border-color: #444;
-    outline-color: #999;
+    outline-offset: 0;
+    outline-width: 0.5;
   }
 
   .toggle-indicator {
@@ -42,7 +43,21 @@
     user-select: none;
   }
 
-  &:not(.menu-closed) .toggle-indicator {
-    margin-top: 2px;
+  &:not(.menu-closed) {
+    background-image: linear-gradient(
+      135deg,
+      #333333 16.67%,
+      #111111 16.67%,
+      #111111 50%,
+      #333333 50%,
+      #333333 66.67%,
+      #111111 66.67%,
+      #111111 100%
+    );
+    background-size: 4.24px 4.24px;
+
+    .toggle-indicator {
+      margin-top: 2px;
+    }
   }
 }
