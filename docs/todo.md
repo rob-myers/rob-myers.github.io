@@ -4,6 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [x] prevent app from rendering whilst reducer currently invalid
 - [ ] better useDispatch typings and support thunks
 - [x] type `useDispatch` and `useSelector`
 - [x] `useDispatch` and `useSelector` are working

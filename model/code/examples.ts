@@ -40,17 +40,17 @@ export type RootAction = (
 
 type Dispatchable<T> = any; // TODO
 
+declare module 'react-redux' {
+  function useSelector<T = any>(selector: (state: RootState) => T, equalityFn?: Function): T;
+  function useDispatch(): <T>(arg: Dispatchable<T>) => Dispatchable<T>['returns'];
+}
+
 const createRootReducer = () => combineReducers({
   test: testReducer,
   // ...
 });
 
 export default createRootReducer;
-
-declare module 'react-redux' {
-  function useSelector<T = any>(selector: (state: RootState) => T, equalityFn?: Function): T;
-  function useDispatch(): <T>(arg: Dispatchable<T>) => Dispatchable<T>['returns'];
-}
 `.trim();
 
 /**

@@ -74,8 +74,12 @@ const persistedReducer = persistReducer({
     ),
     createTransform<DevEnvState, DevEnvState>(
       ({ file }, _key) => ({
+        appPortal: {},
+        appValid: false,
+        appWasValid: false,
         // Remember files but forget transpilation (& cleanups)
-        file: Object.values(file).reduce((agg, item) => ({ ...agg,
+        file: Object.values(file).reduce((agg, item) => ({
+          ...agg,
           [item.key]: {
             ...item,
             ...(item.ext === 'scss'
@@ -89,8 +93,6 @@ const persistedReducer = persistReducer({
         }), {} as DevEnvState['file']),
         initialized: false,
         panelToMeta: {},
-        appValid: false,
-        appPortal: {},
         reducerValid: false,
       }),
       (state, _key) => state,

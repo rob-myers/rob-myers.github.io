@@ -24,31 +24,34 @@ import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk, Act as LayoutAct } from './layout.duck';
 
 export interface State {  
-  /**
-   * True iff, after most recent transpilation, all code reachable
-   * from app.tsx was deemed collectively valid.
-   */
-  appValid: boolean;
   /** So can persist App instances across site */
   appPortal: KeyedLookup<Dev.AppPortal>;
+  /**
+   * True iff all code reachable from app.tsx was deemed
+   * collectively valid after most recent transpilation.
+   */
+  appValid: boolean;
+  /** Has app ever been valid? */
+  appWasValid: boolean;
   /** File lookup. */
   file: KeyedLookup<Dev.FileState>;
   initialized: boolean;
   /** Mirrors layout.panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
   /**
-   * True iff, after most recent transpilation, all code reachable
-   * from reducer.ts was deemed collectively valid.
+   * True iff all code reachable from reducer.ts was deemed
+   * collectively valid after most recent transpilation.
    */
   reducerValid: boolean;
 }
 
 const initialState: State = {
+  appPortal: {},
+  appValid: false,
+  appWasValid: false,
   file: {},
   initialized: false,
   panelToMeta: {},
-  appValid: false,
-  appPortal: {},
   reducerValid: false,
 };
 
@@ -57,6 +60,8 @@ export const Act = {
     createAct('[dev-env] add app portal', { panelKey, portalNode: redact(portalNode) }),
   addFileCleanups: (filename: string, cleanups: (() => void)[]) =>
     createAct('[dev-env] add file cleanups', { filename, cleanups }),
+  appWasValid: () =>
+    createAct('[dev-env] app was valid', {}),
   changePanelMeta: (panelKey: string, input: (
     | { to: 'app' }
     | { to: 'doc'; filename: string }
@@ -202,6 +207,7 @@ export const Thunk = {
         .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
   
       dispatch(Act.rememberAppValid(true));
+      !getState().devEnv.appWasValid && dispatch(Act.appWasValid());
     },
   ),
   bootstrapRootReducer: createThunk(
@@ -230,6 +236,9 @@ export const Thunk = {
       await replaceRootReducerFromBlobUrl(reducerUrl);
 
       dispatch(Act.rememberReducerValid(true));
+      if (!devEnv.appWasValid) {
+        dispatch(Thunk.bootstrapApps({}));
+      }
     },
   ),
   /**
@@ -703,7 +712,10 @@ export const reducer = (state = initialState, act: Action): State => {
         portalNode: act.pay.portalNode,
         rendered: false,
       }, state.appPortal),
-    };    
+    };
+    case '[dev-env] app was valid': return { ...state,
+      appWasValid: true,
+    };
     case '[dev-env] change panel meta': {
       const metaState = Dev.getDevPanelMetaState(state.panelToMeta[act.pay.panelKey]);
       return { ...state, panelToMeta: addToLookup(
@@ -762,7 +774,7 @@ export const reducer = (state = initialState, act: Action): State => {
       appValid: act.pay.isValid,
     };
     case '[dev-env] remember reducer valid': return { ...state,
-      appValid: act.pay.isValid,
+      reducerValid: act.pay.isValid,
     };
     case '[dev-env] remember rendered app': return { ...state,
       appPortal: updateLookup(act.pay.panelKey, state.appPortal, () => ({
@@ -806,7 +818,7 @@ const bootstrapApp = createEpic(
       '[dev-env] change panel meta',
     ),
     flatMap((act) => {
-      const { file, appValid } = state$.value.devEnv;
+      const { file, appValid, reducerValid } = state$.value.devEnv;
 
       if (act.type === '[dev-env] store code transpilation') {
         if (act.pay.filename.endsWith('.tsx')) {
@@ -814,10 +826,11 @@ const bootstrapApp = createEpic(
           if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
             return []; // Ignore files unreachable from app.tsx
           }
-          if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
-            return [// All reachable code locally valid so try bootstrap app
-              Thunk.bootstrapApps({}),
-            ];
+          if (!reducerValid) {
+            return []; // Don't render under state is 'valid'
+          } else if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
+            // All reachable code locally valid so try bootstrap app
+            return [Thunk.bootstrapApps({})];
           } else if (appValid) {
             return [Act.rememberAppValid(false)];
           }
@@ -842,22 +855,23 @@ const bootstrapReducers = createEpic(
       '[dev-env] store code transpilation',
     ),
     flatMap((act) => {
-      const { file, reducerValid } = state$.value.devEnv;
-
       if (act.type === '[dev-env] store code transpilation') {
         if (act.pay.filename.endsWith('.ts')) {
+          const { file, reducerValid } = state$.value.devEnv;
+
           const reachableJsFiles = Dev.getReachableJsFiles(Dev.rootReducerFilename, file);
           if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
             return []; // Ignore files unreachable from reducer.ts
           }
-
-          const invalid = reachableJsFiles.find((f) => !Dev.isFileValid(f));
-          if (invalid) {// DEBUG
+          const invalidFile = reachableJsFiles.find((f) => !Dev.isFileValid(f));
+          if (invalidFile) {// DEBUG
             // console.log({ foundInvalid: invalid.key, validities: reachableJsFiles.map(x => ({ filename: x.key, valid: Dev.isFileValid(x) }))
             // return [Thunk.tryTranspileCodeModel({ filename: invalid.key, onlyIf: 'valid' })];
           }
-          if (!invalid) {// All reachable code locally valid, so replace reducer
-            return [Thunk.bootstrapRootReducer({})];
+          if (!invalidFile) {
+            return [// All reachable code locally valid, so replace reducer
+              Thunk.bootstrapRootReducer({}),
+            ];
           } else if (reducerValid) {
             return [Act.rememberReducerValid(false)];
           }
