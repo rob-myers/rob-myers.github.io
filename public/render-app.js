@@ -37,11 +37,8 @@ export function initializeRuntimeStore(preloadedState) {
   if (store || typeof window === 'undefined') {
     return;
   }
-  const composeWithDevTools = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-  store = createStore(
-    rootReducer,
-    preloadedState,
-    composeWithDevTools({
+  const composeWithDevTools = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
+    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
       shouldHotReload: false,
       serialize: {
         // Handle huge/cyclic objects by redacting them
@@ -50,11 +47,16 @@ export function initializeRuntimeStore(preloadedState) {
             ? `Redacted<${value.devToolsRedaction}>`
             : typeof value === 'function' ? 'Redacted<function>' : value,
       },
-    })(
+    }) || compose;
+  
+  store = createStore(
+    rootReducer,
+    preloadedState,
+    composeWithDevTools(
       applyMiddleware(
         thunkMiddleware(),
       ),
-    )
+    ),
   );
 }
 
