@@ -147,6 +147,7 @@ export const exampleTsx3 = `
 
 import * as React from 'react';
 import css from './index.scss';
+import { useDispatch } from 'react-redux';
 
 // import { baz } from './model';
 // console.log({ baz })
@@ -169,13 +170,19 @@ const Item: React.FC<ItemProps> = (props) => (
 
 export const App: React.FC = () => {
   const [items, setItems] = React.useState([...Array(20)].map((_, i) => i));
+
+  const dispatch = useDispatch();
+
   return (
     <div className={css.myAncestralClass}>
       {items.map(x => (
         <Item
           id={x}
           key={x}
-          remove={() => setItems(items.filter(y => y !== x))}
+          remove={() => {
+            setItems(items.filter(y => y !== x));
+            dispatch({ type: '[test] increment' });
+          }}
         />
       ))}
     </div>

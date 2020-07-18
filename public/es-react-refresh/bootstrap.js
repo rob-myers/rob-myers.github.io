@@ -12,7 +12,8 @@ if (typeof window !== 'undefined') {
 import RefreshHelpers from './helpers';
 import React from '../es-react/react';
 import * as Redux from '../es-redux/redux';
-import { REFRESH_HELPERS, REFRESH_REG, REFRESH_SIG, LIVE_REACT, LIVE_REDUX } from '../constants';
+import * as ReactRedux from '../es-react-redux/index';
+import { REFRESH_HELPERS, REFRESH_REG, REFRESH_SIG, LIVE_REACT, LIVE_REDUX, LIVE_REACT_REDUX } from '../constants';
 
 if (typeof window !== 'undefined') {    
   window[REFRESH_REG] = function (filename, type, id) {
@@ -32,6 +33,8 @@ if (typeof window !== 'undefined') {
   window[LIVE_REACT] = React;
 
   window[LIVE_REDUX] = Redux;
+
+  window[LIVE_REACT_REDUX] = ReactRedux;
 }
 
 export default function preventTreeShake() {}

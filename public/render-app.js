@@ -4,6 +4,7 @@ preventTreeShake();
 import { compose, createStore, combineReducers, applyMiddleware } from './es-redux/redux';
 import React from './es-react/react';
 import ReactDOM from './es-react/react-dom';
+import { Provider } from './es-react-redux/index';
 import { ErrorBoundary } from './error-boundary';
 
 let rootReducer = combineReducers({});
@@ -87,8 +88,9 @@ export function storeAppFromBlobUrl(blobUrl) {
 export function renderAppAt(elementId) {
   const rootEl = document.getElementById(elementId);
   ReactDOM.unmountComponentAtNode(rootEl);
-  const WrappedApp = React.createElement(ErrorBoundary, null, React.createElement(App));
-  ReactDOM.render(WrappedApp, rootEl);
+  const ErrorBoundedApp = React.createElement(ErrorBoundary, null, React.createElement(App));
+  const ProvidedApp = React.createElement(Provider, { store }, ErrorBoundedApp);
+  ReactDOM.render(ProvidedApp, rootEl);
 }
 
 export function unmountAppAt(elementId) {

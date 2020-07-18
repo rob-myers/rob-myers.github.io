@@ -79,7 +79,7 @@ export function isRelativePath(path: string) {
 }
 
 export function isRuntimeNpmModule(moduleSpecifier: string) {
-  return moduleSpecifier === 'react' || moduleSpecifier === 'redux';
+  return moduleSpecifier === 'react' || moduleSpecifier === 'redux' || moduleSpecifier === 'react-redux';
 }
 
 const resolveCache = {} as Record<string, string>;

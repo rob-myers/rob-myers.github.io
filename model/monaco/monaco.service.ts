@@ -17,6 +17,11 @@ export class MonacoService {
       (await import('!raw-loader!redux/index.d.ts')).default,
       `${typesPrefix}/redux/index.d.ts`,
     );
+    typescriptDefaults.addExtraLib(
+      //@ts-ignore
+      (await import('!raw-loader!@types/react-redux/index.d.ts')).default,
+      `${typesPrefix}/react-redux/index.d.ts`,
+    );
     typescriptDefaults.addExtraLib(`
       declare module '*.scss' {
         const content: {[className: string]: string};
