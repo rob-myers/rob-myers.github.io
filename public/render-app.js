@@ -17,8 +17,7 @@ const thunkMiddleware = () =>
     (next) => // native dispatch
       (action) => { // received action
         if ('args' in action && action.type in thunkLookup) {
-          // provide ({ dispatch, getState, state }, actionArgs)
-          return thunkLookup[action.type](
+          return thunkLookup[action.type](action.args).thunk(
             { ...params, state: params.getState() },
             action.args,
           );
@@ -27,8 +26,19 @@ const thunkMiddleware = () =>
         return;
       };
 
-export function updateThunks(nextThunkLookup) {
-  thunkLookup = nextThunkLookup;
+export function updateThunkLookupFromBlobUrl(blobUrl) {
+  return new Promise((resolve) => eval(`
+  import('${blobUrl}').then((imported) => {
+    if ('Thunk' in imported) {
+      thunkLookup = Object.values(imported.Thunk)
+        .reduce((agg, fn) => ({ ...agg, [fn.type]: fn }), {});
+    } else {
+      console.warn("Couldn't find export 'Thunk' of reducer.ts");
+    }
+    resolve();
+  });
+`)
+);
 }
 
 let store;

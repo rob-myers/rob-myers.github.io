@@ -26,6 +26,7 @@ import {
   reducer as testReducer,
   State as TestState, 
   Action as TestAction,
+  Thunk as TestThunk,
 } from './store/test.duck';
 
 export interface RootState {
@@ -38,11 +39,28 @@ export type RootAction = (
   // ...
 );
 
-type Dispatchable<T> = any; // TODO
+export type ThunkAction = (
+  | TestThunk
+  // ...
+);
+
+/** Used by our thunk middleware */
+export const Thunk = {
+  ...TestThunk,
+  // ...
+};
+
+type Dispatchable = (
+  | RootAction
+  | Omit<ThunkAction, 'thunk'>
+)
 
 declare module 'react-redux' {
   function useSelector<T = any>(selector: (state: RootState) => T, equalityFn?: Function): T;
-  function useDispatch(): <T>(arg: Dispatchable<T>) => Dispatchable<T>['returns'];
+  function useDispatch(): <T extends Dispatchable>(arg: T) =>
+    T['type'] extends ThunkAction['type']
+      ? ReturnType<Extract<ThunkAction, { type: T['type'] }>['thunk']>
+      : void;
 }
 
 const createRootReducer = () => combineReducers({
@@ -51,6 +69,7 @@ const createRootReducer = () => combineReducers({
 });
 
 export default createRootReducer;
+
 `.trim();
 
 /**
@@ -58,6 +77,7 @@ export default createRootReducer;
  */
 export const defaultReduxModelTs = `
 
+//#region sync
 export const createSync = <T extends string, P extends object = {}>(
   type: T,
   payload: P
@@ -67,6 +87,36 @@ export interface SyncAct<T extends string, Payload extends null | {}> {
   type: T;
   payload: Payload;
 }
+//#endregion
+
+//#region thunk
+import { RootState, RootAction } from '../reducer';
+
+export interface RootThunkParams {
+  dispatch: <T extends RootAction | ThunkAct<string, any, any>>(arg: T) => ThunkActReturnType<T>;
+  getState: () => RootState;
+  state: RootState;
+}
+
+export type ThunkActReturnType<T> = T extends ThunkAct<string, any, infer R> ? R : any;
+
+export interface ThunkAct<T extends string, A extends {}, R> {
+  type: T;
+  thunk: (params: RootThunkParams, args: A) => R;
+  args: A;
+}
+
+export const createThunk = <T extends string, A extends {} = {}, R = void>(
+  type: T,
+  thunk: ThunkAct<T, A, R>['thunk']
+) => Object.assign((args: A) =>
+  ({
+    type,
+    thunk,
+    args
+  } as ThunkAct<T, A, R>), { type });
+
+//#endregion
 
 interface ActionCreatorsMapObject {
   [actionCreator: string]: (...args: any[]) => any
@@ -75,6 +125,7 @@ interface ActionCreatorsMapObject {
 export type ActionsUnion<A extends ActionCreatorsMapObject> =
   ReturnType<A[keyof A]>;
 
+
 `.trim();
 
 /**
@@ -82,7 +133,7 @@ export type ActionsUnion<A extends ActionCreatorsMapObject> =
  */
 export const defaultTestDuckTs = `
 import { testNever } from '../util';
-import { createSync, ActionsUnion } from './redux.model';
+import { createSync, ActionsUnion, createThunk } from './redux.model';
 
 export interface State {
   count: number;
@@ -99,6 +150,16 @@ export const Act = {
 
 export type Action = ActionsUnion<typeof Act>;
 
+export const Thunk = {
+  delayedIncrement: createThunk(
+    '[test] delayed increment',
+    ({ dispatch }, { delayMs }: { delayMs: number }) =>
+      window.setTimeout(() => dispatch({ type: '[test] increment', payload: {} }), delayMs),
+  ),
+};
+
+export type Thunk = ActionsUnion<typeof Thunk>;
+
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
     case '[test] increment': return { ...state,
@@ -110,7 +171,6 @@ export const reducer = (state = initialState, act: Action): State => {
     default: return state || testNever(act);
   }
 };
-
 `.trim();
 
 /**
@@ -188,7 +248,8 @@ export const App: React.FC = () => {
           key={x}
           remove={() => {
             setItems(items.filter(y => y !== x));
-            dispatch({ type: '[test] increment' });
+            dispatch({ type: '[test] increment', payload: {} });
+            dispatch({ type: '[test] delayed increment', args: { delayMs: 1000 } });
           }}
         />
       ))}

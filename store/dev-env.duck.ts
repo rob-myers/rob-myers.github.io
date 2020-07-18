@@ -2,7 +2,7 @@ import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
 import * as portals from 'react-reverse-portal';
 
-import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, initializeRuntimeStore, replaceRootReducerFromBlobUrl } from '@public/render-app';
+import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, initializeRuntimeStore, replaceRootReducerFromBlobUrl, updateThunkLookupFromBlobUrl } from '@public/render-app';
 import RefreshRuntime from '@public/es-react-refresh/runtime';
 
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact } from '@model/store/redux.model';
@@ -231,13 +231,14 @@ export const Thunk = {
       for (const { key: filename, esModule: esm } of jsFiles)
         Dev.ensureEsModule({ scriptId: Dev.filenameToScriptId(filename), scriptSrcUrl: esm!.blobUrl });
       
-      // Replace root reducer
+      // Replace root reducer and thunk lookup
       const { blobUrl: reducerUrl } = (devEnv.file[Dev.rootReducerFilename] as Dev.CodeFile).esModule!;
       await replaceRootReducerFromBlobUrl(reducerUrl);
+      await updateThunkLookupFromBlobUrl(reducerUrl);
 
       dispatch(Act.rememberReducerValid(true));
       if (!devEnv.appWasValid) {
-        dispatch(Thunk.bootstrapApps({}));
+        dispatch(Thunk.tryTranspileCodeModel({ filename: 'app.tsx' }));
       }
     },
   ),

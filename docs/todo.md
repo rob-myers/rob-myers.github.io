@@ -5,7 +5,7 @@ See [blog notes](./blog.md).
 # Online Dev Environment
 
 - [x] prevent app from rendering whilst reducer currently invalid
-- [ ] better useDispatch typings and support thunks
+- [x] better useDispatch typings, supporting thunks
 - [x] type `useDispatch` and `useSelector`
 - [x] `useDispatch` and `useSelector` are working
 - [x] separate bootstrap for transpiled ts files with entrypoint `reducer.ts`
