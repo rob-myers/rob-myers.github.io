@@ -430,6 +430,7 @@ export const Thunk = {
     '[dev-env] initialize',
     ({ dispatch, state: { devEnv } }) => {
       initializeRuntimeStore();
+
       /**
        * TEMP provide demo files.
        */
@@ -447,6 +448,7 @@ export const Thunk = {
         dispatch(Act.createStyleFile({ filename: 'index.scss', contents: exampleScss1 }));
       !devEnv.file['other.scss']?.contents &&
         dispatch(Act.createStyleFile({ filename: 'other.scss', contents: exampleScss2 }));
+
       dispatch(Act.initialized());
     },
   ),
@@ -509,6 +511,9 @@ export const Thunk = {
   setupFileTranspile: createThunk(
     '[dev-env] setup code file transpile',
     ({ dispatch }, { modelKey, filename }: { modelKey: string; filename: string }) => {
+      if (filename.endsWith('.d.ts')) {
+        return; // No need to transpile *.d.ts
+      }
       const transpileCode = /\.tsx?$/.test(filename)
         ? () => dispatch(Thunk.tryTranspileCodeModel({ filename }))
         : () => dispatch(Thunk.tryTranspileStyleModel({ filename }));
@@ -900,7 +905,9 @@ const initializeMonacoModels = createEpic(
         // Initial transpile
         ...file.ext === 'scss'
           ? [Thunk.tryTranspileStyleModel({ filename: file.key })]
-          : [Thunk.tryTranspileCodeModel({ filename: file.key })],
+          : !file.key.endsWith('.d.ts')
+            ? [Thunk.tryTranspileCodeModel({ filename: file.key })]
+            : []
       ]),
     ]
     ),

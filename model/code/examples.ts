@@ -38,6 +38,8 @@ export type RootAction = (
   // ...
 );
 
+type Dispatchable<T> = any; // TODO
+
 const createRootReducer = () => combineReducers({
   test: testReducer,
   // ...
@@ -45,6 +47,10 @@ const createRootReducer = () => combineReducers({
 
 export default createRootReducer;
 
+declare module 'react-redux' {
+  function useSelector<T = any>(selector: (state: RootState) => T, equalityFn?: Function): T;
+  function useDispatch(): <T>(arg: Dispatchable<T>) => Dispatchable<T>['returns'];
+}
 `.trim();
 
 /**
@@ -146,8 +152,8 @@ export default App;
 export const exampleTsx3 = `
 
 import * as React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import css from './index.scss';
-import { useDispatch } from 'react-redux';
 
 // import { baz } from './model';
 // console.log({ baz })
@@ -172,6 +178,7 @@ export const App: React.FC = () => {
   const [items, setItems] = React.useState([...Array(20)].map((_, i) => i));
 
   const dispatch = useDispatch();
+  const count = useSelector(({ test }) => test.count);
 
   return (
     <div className={css.myAncestralClass}>

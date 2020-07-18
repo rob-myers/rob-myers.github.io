@@ -41,10 +41,6 @@ export const baseTsxEditorProps: EditorProps = {
   height: '100%',
 };
 
-export type FileType = 'tsx' | 'scss';
-export const permute = (type: FileType): FileType => type === 'scss' ? 'tsx' : 'scss';
-export const emptyTranspile: TsTranspilationResult = { key: 'success', src: '', js: '', typings: '' };
-
 export interface DevModule {
   key: string;
   type: 'js' | 'css';

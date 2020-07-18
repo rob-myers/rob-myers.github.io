@@ -4,8 +4,8 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
-- [ ] support thunks
-- [ ] type `useDispatch` and `useSelector`
+- [ ] better useDispatch typings and support thunks
+- [x] type `useDispatch` and `useSelector`
 - [x] `useDispatch` and `useSelector` are working
 - [x] separate bootstrap for transpiled ts files with entrypoint `reducer.ts`
 - [x] create runtime redux store and wrap app in provider
