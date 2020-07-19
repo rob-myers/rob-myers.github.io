@@ -4,6 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [ ] mobile view prevents tab dragging and duplicating
 - [ ] draft a blog entry via doc panel
 - [x] prevent app from rendering whilst reducer currently invalid
 - [x] better useDispatch typings, supporting thunks
@@ -21,6 +22,7 @@ See [blog notes](./blog.md).
 - [ ] custom dropdown for better x-browser experience
 - [ ] support multiple projects
   > base project can have different 'branches'
+  > support for multiple tabs/windows
 - [x] new panel type `doc` e.g. for blog and README
 - [x] setup `mdx` and create demo test entry
 - [x] fix syntax highlighting when switch to tsx
@@ -39,7 +41,7 @@ See [blog notes](./blog.md).
 - [ ] garbage-collect blob urls
 - [x] avoid changing `$RefreshReg$` (try-finally can't contain imports)
 - [x] bootstrap react-refresh
-- [ ] provide redux/react-redux typings and can import
+- [x] provide redux/react-redux typings and can import
 - [x] provide es modules redux and react-redux
 - [x] implement `react-refresh` transform in syntax worker
 - [x] remove reducer `gitalk`
@@ -62,9 +64,8 @@ See [blog notes](./blog.md).
 - [x] bootstrap app even when no monaco editor panel initially open
 - [x] detect `js` cyclic dep caused by `export { App } from './index'`
 - [ ] handle persistence across multiple tabs
-  > don't sync; create multiple persisted stores which can save/select
-  > don't permit same 'project' open twice
-  > use shared web-worker to detect others and amalgamate persist 
+  > use local storage to track other tabs open
+  > confirm if opening project which may be open by other tab
 - [x] aim towards 'properly hmr' top-down svg/css 3d agent engine
   > see project.md; see `with-bash-and-level` branch
 - [x] can import `scss` into `tsx` as css module

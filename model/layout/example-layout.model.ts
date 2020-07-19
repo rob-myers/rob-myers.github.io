@@ -41,100 +41,152 @@ const defaultMobileConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
   'content': [
     {
       'type': 'column',
+      'title': '',
       'isClosable': true,
       'reorderEnabled': true,
-      'title': '',
-      'width': 100,
-      'height': 100,
       'content': [
         {
-          'type': 'stack',
+          'type': 'column',
           'isClosable': true,
           'reorderEnabled': true,
           'title': '',
-          'width': 50,
-          'activeItemIndex': 0,
-          'height': 37.5,
+          'width': 100,
+          'height': 100,
           'content': [
             {
-              'type': 'component',
-              'title': rootAppFilename,
-              'component': 'window-panel',
-              'props': {
-                'panelKey': 'panel-1',
-                'panelMeta': {
-                  'filename': rootAppFilename
-                }
-              },
-              'componentName': 'lm-react-component',
+              'type': 'stack',
+              'title': '',
+              'width': 50,
+              'activeItemIndex': 0,
               'isClosable': true,
-              'reorderEnabled': true
+              'reorderEnabled': true,
+              'height': 42.69535673839185,
+              'content': [
+                {
+                  'type': 'component',
+                  'title': 'app.tsx',
+                  'component': 'window-panel',
+                  'props': {
+                    'panelKey': 'panel-1',
+                    'panelMeta': {
+                      'filename': 'app.tsx'
+                    }
+                  },
+                  'componentName': 'lm-react-component',
+                  'isClosable': true,
+                  'reorderEnabled': true
+                },
+                {
+                  'type': 'component',
+                  'title': 'reducer.ts',
+                  'component': 'window-panel',
+                  'props': {
+                    'panelKey': 'panel-2',
+                    'panelMeta': {
+                      'filename': 'reducer.ts'
+                    }
+                  },
+                  'componentName': 'lm-react-component',
+                  'isClosable': true,
+                  'reorderEnabled': true
+                },
+                {
+                  'type': 'component',
+                  'title': 'store/test.duck.ts',
+                  'component': 'window-panel',
+                  'props': {
+                    'panelKey': 'panel-2b',
+                    'panelMeta': {
+                      'filename': 'store/test.duck.ts'
+                    }
+                  },
+                  'componentName': 'lm-react-component',
+                  'isClosable': true,
+                  'reorderEnabled': true
+                }
+              ]
             },
             {
-              'type': 'component',
-              'title': 'model.ts',
-              'component': 'window-panel',
-              'props': {
-                'panelKey': 'panel-2',
-                'panelMeta': {
-                  'filename': 'model.ts'
-                }
-              },
-              'componentName': 'lm-react-component',
+              'type': 'stack',
+              'header': {},
               'isClosable': true,
-              'reorderEnabled': true
-            },
-            {
-              'type': 'component',
-              'title': 'index.scss',
-              'component': 'window-panel',
-              'props': {
-                'panelKey': 'panel-4',
-                'panelMeta': {
-                  'filename': 'index.scss'
+              'reorderEnabled': true,
+              'title': '',
+              'activeItemIndex': 0,
+              'height': 57.304643261608156,
+              'content': [
+                {
+                  'type': 'component',
+                  'title': 'App',
+                  'component': 'window-panel',
+                  'props': {
+                    'panelKey': 'panel-3',
+                    'panelMeta': {
+                      'devEnvComponent': 'App'
+                    }
+                  },
+                  'componentName': 'lm-react-component',
+                  'isClosable': true,
+                  'reorderEnabled': true
+                },
+                {
+                  'type': 'component',
+                  'title': 'index.scss',
+                  'component': 'window-panel',
+                  'props': {
+                    'panelKey': 'panel-4',
+                    'panelMeta': {
+                      'filename': 'index.scss'
+                    }
+                  },
+                  'componentName': 'lm-react-component',
+                  'isClosable': true,
+                  'reorderEnabled': true
+                },
+                {
+                  'type': 'component',
+                  'title': 'other.scss',
+                  'component': 'window-panel',
+                  'props': {
+                    'panelKey': 'panel-5',
+                    'panelMeta': {
+                      'filename': 'other.scss'
+                    }
+                  },
+                  'componentName': 'lm-react-component',
+                  'isClosable': true,
+                  'reorderEnabled': true
+                },
+                {
+                  'type': 'component',
+                  'title': 'store/redux.model.ts',
+                  'component': 'window-panel',
+                  'props': {
+                    'panelKey': 'panel-2a',
+                    'panelMeta': {
+                      'filename': 'store/redux.model.ts'
+                    }
+                  },
+                  'componentName': 'lm-react-component',
+                  'isClosable': true,
+                  'reorderEnabled': true
+                },
+                {
+                  'type': 'component',
+                  'title': 'util.ts',
+                  'component': 'window-panel',
+                  'props': {
+                    'panelKey': 'panel-3a',
+                    'panelMeta': {
+                      'filename': 'util.ts'
+                    }
+                  },
+                  'componentName': 'lm-react-component',
+                  'isClosable': true,
+                  'reorderEnabled': true
                 }
-              },
-              'componentName': 'lm-react-component',
-              'isClosable': true,
-              'reorderEnabled': true
-            },
-            {
-              'type': 'component',
-              'title': 'other.scss',
-              'component': 'window-panel',
-              'props': {
-                'panelKey': 'panel-5',
-                'panelMeta': {
-                  'filename': 'other.scss'
-                }
-              },
-              'componentName': 'lm-react-component',
-              'isClosable': true,
-              'reorderEnabled': true
+              ]
             }
-          ]
-        },
-        {
-          'type': 'stack',
-          'header': {},
-          'isClosable': true,
-          'reorderEnabled': true,
-          'title': '',
-          'activeItemIndex': 0,
-          'height': 62.5,
-          'content': [
-            {
-              'type': 'component',
-              'title': 'App',
-              'component': 'window-panel',
-              'props': {
-                'panelKey': 'panel-3',
-                'panelMeta': {
-                  'devEnvComponent': 'App'
-                }
-              },
-              'componentName': 'lm-react-component',
-            },
           ]
         }
       ]
