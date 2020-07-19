@@ -3,18 +3,11 @@
  */
 export const defaultUtilTs = `
 /**
- * Can be used as a NOOP, testing whether a type is never,
- * e.g. \`default: return state || testNever(act)\`.
+ * Usage e.g. \`default: return state || testNever(act)\`.
  */
-export function testNever(x: never, shouldThrow = false): any {
-  if (shouldThrow) {
-    throw new Error(\`testNever: \${JSON.stringify(x)} not implemented.\`);
-  }
-  return null;
-}
+export function testNever(x: never): any { /** NOOP */ }
 
 `.trim();
-
 /**
  * reducer.ts
  */
@@ -31,23 +24,19 @@ import {
 
 export interface RootState {
   test: TestState;
-  // ...
 }
 
 export type RootAction = (
   | TestAction
-  // ...
 );
 
 export type ThunkAction = (
   | TestThunk
-  // ...
 );
 
-/** Used by our thunk middleware */
+/** Provides thunks to our thunk middleware */
 export const Thunk = {
   ...TestThunk,
-  // ...
 };
 
 type Dispatchable = (
@@ -68,6 +57,7 @@ const createRootReducer = () => combineReducers({
   // ...
 });
 
+/** Defines initial state and synchronous actions */
 export default createRootReducer;
 
 `.trim();
@@ -115,7 +105,6 @@ export const createThunk = <T extends string, A extends {} = {}, R = void>(
     thunk,
     args
   } as ThunkAct<T, A, R>), { type });
-
 //#endregion
 
 interface ActionCreatorsMapObject {
@@ -133,7 +122,7 @@ export type ActionsUnion<A extends ActionCreatorsMapObject> =
  */
 export const defaultTestDuckTs = `
 import { testNever } from '../util';
-import { createSync, ActionsUnion, createThunk } from './redux.model';
+import { createSync, createThunk, ActionsUnion } from './redux.model';
 
 export interface State {
   count: number;
@@ -214,9 +203,6 @@ export const exampleTsx3 = `
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import css from './index.scss';
-
-// import { baz } from './model';
-// console.log({ baz })
 
 interface ItemProps {
   id: number;

@@ -4,6 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [ ] draft a blog entry via doc panel
 - [x] prevent app from rendering whilst reducer currently invalid
 - [x] better useDispatch typings, supporting thunks
 - [x] type `useDispatch` and `useSelector`
@@ -19,6 +20,7 @@ See [blog notes](./blog.md).
 - [x] collect ts/tsx/js errors during import/export analysis in webworker
 - [ ] custom dropdown for better x-browser experience
 - [ ] support multiple projects
+  > base project can have different 'branches'
 - [x] new panel type `doc` e.g. for blog and README
 - [x] setup `mdx` and create demo test entry
 - [x] fix syntax highlighting when switch to tsx
