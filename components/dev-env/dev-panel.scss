@@ -12,11 +12,16 @@
   overflow: hidden;
 
   color: #aaa;
-  background-color: rgb(35, 30, 30);
 
   &:hover {
     color: white;
     background-color: rgb(40, 40, 40);
+    transition: background-color 300ms ease-in;
+  }
+
+  &:not(:hover) {
+    background-color: rgb(35, 30, 30);
+    transition: background-color 500ms ease-out;
   }
 
   .menu-options {
@@ -39,12 +44,15 @@
   }
 
   &.menu-closed {
-    justify-content: flex-end;
-    height: 14px;
-    transition: height 200ms ease-out;
+    .menu-options {
+      visibility: none;
+      height: 14px;
+      opacity: 0;
+      transition: height 200ms ease-out;
+    }
   }
 
-  &:not(.menu-closed) {
+  &.menu-open {
     background-image: linear-gradient(
       135deg,
       #333333 16.67%,
@@ -57,8 +65,12 @@
     );
     background-size: 4.24px 4.24px;
 
-    height: 23px;
-    transition: height 200ms ease-in;
+    .menu-options {
+      visibility: visible;
+      height: 23px;
+      opacity: 1;
+      transition: height 200ms ease-in, opacity 200ms ease-in;
+    }
 
     .toggle-indicator {
       margin-top: 2px;

@@ -32,23 +32,23 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
       onClick={toggle}
       className={classNames(css.menuContainer, {
         [css.menuClosed]: !isOpen,
+        [css.menuOpen]: isOpen,
       })}
     >
-      {isOpen && (
-        <div className={css.menuOptions}>
-          <select
-            className={css.selectFile}
-            value={currentValue}
-            onChange={handleFileChange}
-            onClick={preventToggle}
-          >
-            <option value="app">App</option>
-            {filenames.map(filename =>
-              <option key={filename} value={filename}>{filename}</option>)}
-            {/* TODO doc filenames */}
-          </select>
-        </div>
-      )}
+      <div className={css.menuOptions}>
+        <select
+          className={css.selectFile}
+          value={currentValue}
+          onChange={handleFileChange}
+          onClick={preventToggle}
+          disabled={!isOpen}
+        >
+          <option value="app">App</option>
+          {filenames.map(filename =>
+            <option key={filename} value={filename}>{filename}</option>)}
+          {/* TODO doc filenames */}
+        </select>
+      </div>
       {
         <div className={css.toggleIndicator}>
           {isOpen ? '✕' : '⋯'}

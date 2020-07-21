@@ -5,7 +5,7 @@ export const defaultUtilTs = `
 /**
  * Usage e.g. \`default: return state || testNever(act)\`.
  */
-export function testNever(x: never): any { /** NOOP */ }
+export function testNever(_: never): any { /** NOOP */ }
 
 `.trim();
 /**
