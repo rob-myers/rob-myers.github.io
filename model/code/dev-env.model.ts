@@ -58,7 +58,11 @@ export function getBlobUrl(jsCode: string) {
 }
 
 export function ensureEsModule(input: { scriptId: string; scriptSrcUrl: string }) {
-  document.getElementById(input.scriptId)?.remove();
+  const previous = document.getElementById(input.scriptId) as HTMLScriptElement | null;
+  if (previous) {
+    previous.remove();
+    URL.revokeObjectURL(previous.src);
+  }
   const el = document.createElement('script');
   el.id = input.scriptId;
   el.setAttribute('type', 'module');

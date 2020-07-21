@@ -38,7 +38,7 @@ See [blog notes](./blog.md).
 - [x] 1st working implementation of `react-refresh`.
 - [x] react facade for dynamic modules, providing react from render-react.js
 - [x] ensure next.js is not conflicting with our hook into react-refresh
-- [ ] garbage-collect blob urls
+- [x] garbage-collect blob urls
 - [x] avoid changing `$RefreshReg$` (try-finally can't contain imports)
 - [x] bootstrap react-refresh
 - [x] provide redux/react-redux typings and can import
