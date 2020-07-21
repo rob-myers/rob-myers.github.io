@@ -2,16 +2,16 @@ import { ChangeEvent, MouseEvent } from 'react';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { Thunk, Act } from '@store/dev-env.duck';
-import css from './dev-panel.scss';
+import css from './dev-panel-menu.scss';
 
 const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
   const filenames = useSelector(({ devEnv }) => Object.keys(devEnv.file));
   const isOpen = useSelector(({ devEnv }) => devEnv.panelToMeta[panelKey].menuOpen);
+
   const currentValue = useSelector(({ devEnv }) => {
     const meta = devEnv.panelToMeta[panelKey];
-    return meta.panelType === 'app' 
-      ? 'app' // 'app'
-      : meta.filename; // 'file' or 'doc'
+    // Both 'doc' and 'file' have a filename
+    return meta.panelType === 'app'  ? 'app' : meta.filename;
   });
 
   const dispatch = useDispatch();
@@ -24,7 +24,8 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
       dispatch(Thunk.changePanel({ panelKey, next: { to: 'file', filename: value } }));
     }
   };
-  const toggle = () => dispatch(Act.updatePanelMeta(panelKey, () => ({ menuOpen: !isOpen })));
+  const toggle = () => dispatch(Act.updatePanelMeta(panelKey,
+    () => ({ menuOpen: !isOpen })));
   const preventToggle = (e: MouseEvent) => e.stopPropagation();
 
   return (
