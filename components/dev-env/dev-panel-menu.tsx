@@ -1,7 +1,8 @@
-import { ChangeEvent, MouseEvent } from 'react';
+import {  MouseEvent } from 'react';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { Thunk, Act } from '@store/dev-env.duck';
+import Select from '@components/select/select';
 import css from './dev-panel-menu.scss';
 
 const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
@@ -15,7 +16,7 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
   });
 
   const dispatch = useDispatch();
-  const handleFileChange = ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
+  const handleFileChange = (value: string) => {
     if (value === 'app') {
       dispatch(Thunk.changePanel({ panelKey, next: { to: 'app' } }));
     } else if (value.startsWith('docs/')) {
@@ -36,25 +37,25 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
         [css.menuOpen]: isOpen,
       })}
     >
-      <div className={css.menuOptions}>
-        <select
-          className={css.selectFile}
-          value={currentValue}
-          onChange={handleFileChange}
-          onClick={preventToggle}
-          disabled={!isOpen}
-        >
-          <option value="app">App</option>
-          {filenames.map(filename =>
-            <option key={filename} value={filename}>{filename}</option>)}
-          {/* TODO doc filenames */}
-        </select>
-      </div>
-      {
-        <div className={css.toggleIndicator}>
-          {isOpen ? '✕' : '⋯'}
+      <div
+        className={css.menuOptions}
+        onClick={preventToggle}
+      >
+        <div className={css.selectFileNew}>
+          <Select
+            items={[
+              { itemKey: 'app', label: 'App' },
+              ...filenames.map(filename => ({ itemKey: filename, label: filename })),
+            ]}
+            onChange={(itemKey) => handleFileChange(itemKey)}
+            selectedKey={currentValue}
+            disabled={!isOpen}
+          />
         </div>
-      }
+      </div>
+      <div className={css.toggleIndicator}>
+        {isOpen ? '✕' : '⋯'}
+      </div>
     </div>
   );
 };
