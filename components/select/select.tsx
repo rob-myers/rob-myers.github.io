@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import css from './select.scss';
 
-const Option: React.FC<OptionProps> = ({ label, onClick }) => {
+const Option: React.FC<OptionProps> = ({ label, onClick, highlight }) => {
   return (
     <div
-      className={css.option}
+      className={classNames(css.option, {
+        [css.highlighted]: highlight,
+      })}
       onClick={onClick}
     >
       {label}
@@ -15,6 +17,7 @@ const Option: React.FC<OptionProps> = ({ label, onClick }) => {
 
 interface OptionProps extends Item {
   onClick: () => void;  
+  highlight?: boolean;
 }
 
 const Select: React.FC<Props> = ({
@@ -31,9 +34,11 @@ const Select: React.FC<Props> = ({
   }, [disabled]);
 
   return items.length ? (
-    <div className={classNames(css.root, {
-      [css.open]: isOpen,
-    })}>
+    <div
+      className={classNames(css.root, { [css.open]: isOpen })}
+      tabIndex={0}
+      onBlur={() => setIsOpen(false)}
+    >
       <div
         className={css.selected}
         onClick={() => !disabled && setIsOpen(!isOpen)}
@@ -53,6 +58,7 @@ const Select: React.FC<Props> = ({
                     setIsOpen(false);
                   }
                 }}
+                highlight={item.itemKey === selectedKey}
               />
             ))}
           </div>

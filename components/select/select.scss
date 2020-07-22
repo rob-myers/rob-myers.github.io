@@ -2,13 +2,14 @@
   cursor: pointer;
   font-size: 14px;
   user-select: none;
+  outline: none;
   color: #abc;
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 
   .selected {
     display: flex;
     border: 1px solid #555;
-    padding: 0 4px 4px 4px;
+    padding: 0 4px 2px 4px;
   }
 
   &.open .selected {
@@ -24,12 +25,15 @@
     min-width: 100%;
     z-index: 3;
     background: rgba(0, 0, 0, 0.8);
-    padding: 4px;
     border: 1px solid #555;
 
     .option {
+      padding: 1px 4px;
       &:hover {
         background: rgba(50, 50, 50, 0.7);
+      }
+      &.highlighted {
+        background: rgba(100, 50, 50, 0.7);
       }
     }
   }
