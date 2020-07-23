@@ -160,11 +160,11 @@ function patchTranspiledCode(
     if (resolved && filenameToPatched[resolved]) {
       nextValue = filenameToPatched[resolved].blobUrl;
     } else if (value === 'react') {
-      nextValue = `${window.location.origin}/runtime-modules/react-facade.js`;
+      nextValue = `${window.location.origin}/facade/react.facade.js`;
     } else if (value === 'redux') {
-      nextValue = `${window.location.origin}/runtime-modules/redux-facade.js`;
+      nextValue = `${window.location.origin}/facade/redux.facade.js`;
     } else if (value === 'react-redux') {
-      nextValue = `${window.location.origin}/runtime-modules/react-redux-facade.js`;
+      nextValue = `${window.location.origin}/facade/react-redux.facade.js`;
     } else if (resolved && resolved.endsWith('.scss')) {
       nextValue = scssFile[resolved].cssModule!.blobUrl;
     } else {

@@ -518,6 +518,12 @@ export const Thunk = {
         .reduce<Record<string, string>>((agg, [filename, { contents }]) => ({
           ...agg, [filename]: contents,
         }), {});
+      /**
+       * TODO
+       * - package.json
+       * - tsconfig.json
+       * - webpack.config.ts
+       */
       const blob = new Blob([pretty(filenameToContents)], {type: 'text/plain;charset=utf-8'});
       FileSaver.saveAs(blob, 'project.json');
     },

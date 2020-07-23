@@ -45,7 +45,7 @@ export const DevMenu = () => {
         })}>
           <div className={css.leftControls}>
             {/*
-              TODO project/branch selectors in own component 
+              TODO project/branch selectors
             */}
           </div>
 
@@ -53,6 +53,7 @@ export const DevMenu = () => {
             <div
               className={css.saveIcon}
               onClick={saveFilesAsJson}
+              title="save copy of files"
             >
               💾
             </div>
