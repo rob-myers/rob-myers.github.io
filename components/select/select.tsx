@@ -7,9 +7,11 @@ const Select: React.FC<Props> = ({
   items,
   onChange,
   selectedKey,
+  showSelectedOption = true,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const selected = items.find(({ itemKey }) => itemKey === selectedKey) || items[0];
+  const toggle = () => !disabled && setIsOpen(!isOpen);
 
   useEffect(() => {
     disabled && setIsOpen(false);
@@ -21,28 +23,27 @@ const Select: React.FC<Props> = ({
       tabIndex={0}
       onBlur={() => setIsOpen(false)}
     >
-      <div
-        className={css.selected}
-        onClick={() => !disabled && setIsOpen(!isOpen)}
-      >
-        <Option {...selected} onClick={() => null} />
+      <div className={css.selected}>
+        <Option {...selected} onClick={toggle} />
       </div>
       <div className={css.optionsAnchor}>
         {isOpen && (
           <div className={css.options}>
-            {items.map(item => (
-              <Option
-                key={item.itemKey}
-                {...item}
-                onClick={() => {
-                  if (!disabled && selectedKey !== item.itemKey) {
-                    onChange(item.itemKey);
-                    setIsOpen(false);
-                  }
-                }}
-                highlight={item.itemKey === selectedKey}
-              />
-            ))}
+            {items
+              .filter(item => showSelectedOption || item.itemKey !== selectedKey)
+              .map(item => (
+                <Option
+                  key={item.itemKey}
+                  {...item}
+                  onClick={() => {
+                    if (!disabled && selectedKey !== item.itemKey) {
+                      onChange(item.itemKey);
+                      setIsOpen(false);
+                    }
+                  }}
+                  highlight={item.itemKey === selectedKey}
+                />
+              ))}
           </div>
         )}
       </div>
@@ -55,6 +56,7 @@ interface Props {
   items: Item[];
   onChange: (key: string) => void;
   selectedKey: string;
+  showSelectedOption?: boolean;
 }
 
 const Option: React.FC<OptionProps> = ({ label, onClick, highlight }) => {

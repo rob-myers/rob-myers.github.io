@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
@@ -7,6 +7,7 @@ import { menuHeightPx } from '@model/code/dev-env.model';
 import { getConfigPanelKeys } from '@model/layout/example-layout.model';
 import { Thunk as LayoutThunk } from '@store/layout.duck';
 import { Act } from '@store/dev-env.duck';
+import Select from '@components/select/select';
 import css from './dev-menu.scss';
 
 export const DevMenu = () => {
@@ -24,8 +25,8 @@ export const DevMenu = () => {
   }, []);
 
   const dispatch = useDispatch();
-  const handleLayoutChange = ({ target: { value } }: ChangeEvent<HTMLSelectElement>) => {
-    const nextLayout = dispatch(LayoutThunk.setLayout({ layoutId: value }));
+  const handleLayoutChange = (itemKey: string) => {
+    const nextLayout = dispatch(LayoutThunk.setLayout({ layoutId: itemKey }));
     const nextPanelKeys = getConfigPanelKeys(nextLayout);
     dispatch(Act.restrictAppPortals({ panelKeys: nextPanelKeys }));
   };
@@ -33,29 +34,35 @@ export const DevMenu = () => {
   return (
     <div className={css.menu} style={{ height: menuHeightPx }}>
       <div className={css.toolbar}>
+
         <div className={css.logo}>
           com<span>(</span>mit<span>|</span>ment<span>)</span>
         </div>
+
         <div className={classNames(css.controls, {
           [css.controlsDisabled]: monacoLoading || disabled,
         })}>
           <div className={css.leftControls}>
-            {/*  TODO project/branch selectors in own component */}
+            {/*
+              TODO project/branch selectors in own component 
+            */}
           </div>
+
           <div className={css.rightControls}>
-            <select
-              className={css.selectLayout} value={''}
-              onChange={handleLayoutChange}
-            >
-              <option value={''}>layout</option>
-              <option value={'default-layout'}>default layout</option>
-            </select>
+            <Select
+              items={[
+                { itemKey: '', label: 'layout...' },
+                { itemKey: 'default-layout', label: 'default layout' },
+              ]}
+              onChange={(itemKey) => handleLayoutChange(itemKey)}
+              selectedKey=""
+              showSelectedOption={false}
+            />
             <div className={css.separator}>|</div>
             <Link href="/"><a>home</a></Link>
           </div>
         </div>
       </div>
-      <div className={css.content} />
     </div>
   );
 };
