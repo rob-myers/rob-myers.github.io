@@ -4,6 +4,13 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [ ] try putting `declare module 'react-redux'` into `custom-types.d.ts`.
+  > should only exist at root, not inside our notion of 'module'
+- [ ] move base project to `module/core`
+  > has test reducer
+  > has test app (counter, random number)
+  > other root project or modules can import from `@core/util`, `@core/redux.model`.
+- [ ] preserve large chunks during build
 - [ ] mobile view prevents tab dragging and duplicating
 - [ ] draft a blog entry via doc panel
 - [x] prevent app from rendering whilst reducer currently invalid
@@ -19,7 +26,7 @@ See [blog notes](./blog.md).
   > cached lookups
 - [x] show error on ts importing tsx values (or vice-versa)
 - [x] collect ts/tsx/js errors during import/export analysis in webworker
-- [ ] custom dropdown for better x-browser experience
+- [x] custom dropdown for better x-browser experience
 - [ ] support multiple projects
   > base project can have different 'branches'
   > support for multiple tabs/windows
