@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
-import { isAppPanel, isFilePanel, isDocPanel } from '@model/code/dev-env.model';
+import { isAppPanel, isFilePanel, isDocPanel } from '@model/dev-env/dev-env.model';
 import { Act } from '@store/dev-env.duck';
 import DevPanelMenu from './dev-panel-menu';
 import DevDoc from './dev-doc';

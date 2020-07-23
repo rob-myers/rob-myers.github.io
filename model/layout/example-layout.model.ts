@@ -1,6 +1,6 @@
 import { GoldenLayoutConfig, traverseGlConfig } from './layout.model';
 import { deepClone } from '@model/generic.model';
-import { rootAppFilename } from '@model/code/dev-env.model';
+import { rootAppFilename } from '@model/dev-env/dev-env.model';
 
 export type CustomPanelMetaKey = 'title' | 'filename' | 'devEnvComponent';
 

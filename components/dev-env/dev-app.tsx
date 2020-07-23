@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as portals from 'react-reverse-portal';
 
-import { panelKeyToEditorKey } from '@model/code/dev-env.model';
+import { panelKeyToEditorKey } from '@model/dev-env/dev-env.model';
 import { filenameToModelKey } from '@model/monaco/monaco.model';
 import { Thunk } from '@store/dev-env.duck';
 import Editor from '@components/monaco/editor';

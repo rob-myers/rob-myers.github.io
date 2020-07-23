@@ -1,12 +1,12 @@
 import { Project, ts, Node, JsxText, JsxAttribute, JsxSelfClosingElement } from 'ts-morph';
-import { SourceFileError, JsPathError, ModuleSpecifierInterval, TsImportMeta, TsExportMeta, isTsExportDecl, isRelativePath, isRuntimeNpmModule, resolvePath, projectAliasRegex } from '@model/code/dev-env.model';
+import * as Dev from '@model/dev-env/dev-env.model';
 
 let project: Project;
 
 interface AnalyzedImportsExports {
   filename: string;
-  imports: TsImportMeta[];
-  exports: TsExportMeta[];
+  imports: Dev.TsImportMeta[];
+  exports: Dev.TsExportMeta[];
 }
 
 /**
@@ -21,7 +21,7 @@ export function analyzeCodeImportsExports(filename: string, as: 'js' | 'src', co
     code = [code, 'declare namespace React { type FC<P = {}> = (x: P) => {} }'].join('\n');
   }
   const srcFile = project.createSourceFile(filename, code, { overwrite: true });
-  const [imports, exports] = [[] as TsImportMeta[], [] as TsExportMeta[]];
+  const [imports, exports] = [[] as Dev.TsImportMeta[], [] as Dev.TsExportMeta[]];
 
   srcFile.getImportDeclarations().forEach((item) => {
     const moduleSpecifier = item.getModuleSpecifier();
@@ -157,25 +157,25 @@ export function computeTsImportExportErrors(
   analyzed: AnalyzedImportsExports,
   filenames: { [filename: string]: true },
 ) {
-  const errors = [] as SourceFileError[];
-  const pathIntervals = ([] as { meta: ModuleSpecifierInterval; kind: 'import' | 'export' }[]).concat(
+  const errors = [] as Dev.SourceFileError[];
+  const pathIntervals = ([] as { meta: Dev.ModuleSpecifierInterval; kind: 'import' | 'export' }[]).concat(
     analyzed.imports
-      .filter((x) => !isRuntimeNpmModule(x.from.value))
+      .filter((x) => !Dev.isRuntimeNpmModule(x.from.value))
       .map(x => ({ meta: x.from, kind: 'import' })),
-    analyzed.exports.filter(isTsExportDecl).map(x => ({ meta: x.from, kind: 'export' })),
+    analyzed.exports.filter(Dev.isTsExportDecl).map(x => ({ meta: x.from, kind: 'export' })),
   );
   /**
    * Cannot detect tsx importing ts (or ts importing tsx) yet because don't
    * know types from other file. We'll analyze transpiled js later instead.
    */
   for (const { meta: { value, interval }, kind } of pathIntervals) {
-    if (!projectAliasRegex.test(value) && !isRelativePath(value)) {
+    if (!Dev.projectAliasRegex.test(value) && !Dev.isRelativePath(value)) {
       errors.push(kind === 'import'
         ? { key: 'require-import-relative', interval, label: value }
         : { key: 'require-export-relative', interval, label: value });
     }
 
-    const resolved = resolvePath(analyzed.filename, value);
+    const resolved = Dev.resolvePath(analyzed.filename, value);
     console.log({ absPath: analyzed.filename, moduleSpecifier: value, resolved });
 
     if (value.endsWith('.scss')) {
@@ -210,26 +210,26 @@ export function computeJsImportExportErrors(
   analyzed: AnalyzedImportsExports,
   filenames: { [filename: string]: true },
 ) {
-  const errors = [] as JsPathError[];
-  const imports = analyzed.imports.filter((x) => !isRuntimeNpmModule(x.from.value));
+  const errors = [] as Dev.JsPathError[];
+  const imports = analyzed.imports.filter((x) => !Dev.isRuntimeNpmModule(x.from.value));
   const { filename } = analyzed;
 
   if (filename.endsWith('.tsx')) {
     imports.filter(({ from }) =>
-      !from.value.endsWith('.scss') && !(`${resolvePath(filename, from.value)}.tsx` in filenames))
-      .forEach((meta) => errors.push({ key: 'only-import-tsx', path: meta.from.value, resolved: resolvePath(filename, meta.from.value) }));
+      !from.value.endsWith('.scss') && !(`${Dev.resolvePath(filename, from.value)}.tsx` in filenames))
+      .forEach((meta) => errors.push({ key: 'only-import-tsx', path: meta.from.value, resolved: Dev.resolvePath(filename, meta.from.value) }));
     analyzed.exports.forEach((meta) =>
-      meta.key === 'export-decl' && !(`${resolvePath(filename, meta.from.value)}.tsx` in filenames) &&
-    errors.push({ key: 'only-export-tsx', path: meta.from.value, resolved: resolvePath(filename, meta.from.value) }));
+      meta.key === 'export-decl' && !(`${Dev.resolvePath(filename, meta.from.value)}.tsx` in filenames) &&
+    errors.push({ key: 'only-export-tsx', path: meta.from.value, resolved: Dev.resolvePath(filename, meta.from.value) }));
   }
 
   if (filename.endsWith('.ts')) {
     imports.filter(({ from }) =>
-      !from.value.endsWith('.scss') && !(`${resolvePath(filename, from.value)}.ts` in filenames)).forEach((meta) =>
-      errors.push({ key: 'only-import-ts', path: meta.from.value, resolved: resolvePath(filename, meta.from.value) }));
+      !from.value.endsWith('.scss') && !(`${Dev.resolvePath(filename, from.value)}.ts` in filenames)).forEach((meta) =>
+      errors.push({ key: 'only-import-ts', path: meta.from.value, resolved: Dev.resolvePath(filename, meta.from.value) }));
     analyzed.exports.forEach((meta) =>
-      meta.key === 'export-decl' && !(`${resolvePath(filename, meta.from.value)}.ts` in filenames) &&
-    errors.push({ key: 'only-export-ts', path: meta.from.value, resolved: resolvePath(filename, meta.from.value) }));
+      meta.key === 'export-decl' && !(`${Dev.resolvePath(filename, meta.from.value)}.ts` in filenames) &&
+    errors.push({ key: 'only-export-ts', path: meta.from.value, resolved: Dev.resolvePath(filename, meta.from.value) }));
   }
 
   return errors;

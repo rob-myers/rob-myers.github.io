@@ -13,7 +13,7 @@ import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/wor
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
 import { CODE_FONT_FAMILY } from '@components/monaco/consts';
-import { TranspiledCodeFile } from '@model/code/dev-env.model';
+import { TranspiledCodeFile } from '@model/dev-env/dev-env.model';
 
 
 export interface State {

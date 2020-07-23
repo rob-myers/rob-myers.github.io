@@ -1,11 +1,13 @@
 import classNames from 'classnames';
-import { hasSupportedExtension, panelKeyToEditorKey } from '@model/code/dev-env.model';
+import { hasSupportedExtension, panelKeyToEditorKey } from '@model/dev-env/dev-env.model';
 import { filenameToModelKey } from '@model/monaco/monaco.model';
 import Editor from '@components/monaco/editor';
 
-// Used to fix TSX syntax highlighting of monaco editor.
-// We mustn't use CSS modules -- see styles.config.ts.
-// Must `require` to avoid tree-shaking in production.
+/**
+ * We use this scss to augment syntax highlighting of tsx in monaco editor.
+ * Can't use css modules because we don't know the prefix in webworker.
+ * Use `require` to avoid tree-shaking in production.
+ */
 require('./monaco-override.scss');
 import css from './dev-editor.scss';
 

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
-import { menuHeightPx } from '@model/code/dev-env.model';
+import { menuHeightPx } from '@model/dev-env/dev-env.model';
 import { getConfigPanelKeys } from '@model/layout/example-layout.model';
 import { Thunk as LayoutThunk } from '@store/layout.duck';
 import { Act } from '@store/dev-env.duck';

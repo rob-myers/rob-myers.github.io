@@ -1,5 +1,5 @@
 import { parse, stringify } from 'scss-parser';
-import { filenameToClassPrefix, ModuleSpecifierInterval } from '@model/code/dev-env.model';
+import { filenameToClassPrefix, ModuleSpecifierInterval } from '@model/dev-env/dev-env.model';
 
 interface ScssAstNode {
   type: string;

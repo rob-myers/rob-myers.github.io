@@ -1,9 +1,9 @@
 import { KeyedLookup, pluck } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, getBlobUrl, ModuleSpecifierInterval, isTsExportDecl, resolveRelativePath, CodeTranspilation, resolvePath } from './dev-env.model';
+import * as Dev from './dev-env.model';
 
 export function getCyclicDepMarker(
-  { value, interval: { startLine, startCol} }: ModuleSpecifierInterval,
+  { value, interval: { startLine, startCol} }: Dev.ModuleSpecifierInterval,
 ): IMarkerData {
   return {
     message: 'Cyclic dependencies are unsupported. There is no restriction on typings.',
@@ -21,10 +21,10 @@ export function getCyclicDepMarker(
  */
 export function moduleSpecsToCodeFilenames(
   filename: string,
-  file: Record<string, FileState>,
+  file: Record<string, Dev.FileState>,
   moduleSpecs: string[],
 ) {
-  return moduleSpecs.map(x => resolvePath(filename, x))
+  return moduleSpecs.map(x => Dev.resolvePath(filename, x))
     .filter((x, i, xs) => !x.endsWith('.scss') && i === xs.indexOf(x))
     .map(x => file[`${x}.tsx`]?.key || file[`${x}.ts`]?.key)
     .filter(Boolean);
@@ -33,15 +33,16 @@ export function moduleSpecsToCodeFilenames(
 /**
  * For example:
  * - `./app` to `app.tsx`
- * - `./foo/model` to `foo/model.ts`.
- * - `../index.scss` to `index.scss`.
+ * - `./foo/model` to `foo/model.ts`
+ * - `../index.scss` to `index.scss`
+ * - `@module/core/util` to `module/core/util`.
  */
 function moduleSpecToFilename(
   filename: string,
-  file: Record<string, FileState>,
+  file: Record<string, Dev.FileState>,
   moduleSpec: string,
 ) {
-  const resolved = resolvePath(filename, moduleSpec);
+  const resolved = Dev.resolvePath(filename, moduleSpec);
   return (
     file[resolved]?.key
     || file[`${resolved}.tsx`]?.key
@@ -54,9 +55,9 @@ function moduleSpecToFilename(
  * If so we return the first one found.
  */
 export function traverseDeps(
-  f: CodeFile,
-  file: KeyedLookup<CodeFile>,
-  dependents: KeyedLookup<CodeFile>,
+  f: Dev.CodeFile,
+  file: KeyedLookup<Dev.CodeFile>,
+  dependents: KeyedLookup<Dev.CodeFile>,
   maxDepth: number
 ): null | { key: 'dep-cycle'; dependent: string } {
   if (!f.transpiled || maxDepth <= 0) {
@@ -83,7 +84,7 @@ type DepNode = { filename: string; dependencies: string[] };
  * Stratify files by dependencies.
  * We've ensured they are non-cyclic and valid.
  */
-export function stratifyJsFiles(jsFiles: TranspiledCodeFile[]) {
+export function stratifyJsFiles(jsFiles: Dev.TranspiledCodeFile[]) {
   const stratification = [] as string[][];
   const permittedDeps = { react: true } as Record<string, true>;
 
@@ -112,15 +113,15 @@ export function stratifyJsFiles(jsFiles: TranspiledCodeFile[]) {
 }
 
 export function patchTranspiledJsFiles(
-  file: KeyedLookup<FileState>,
+  file: KeyedLookup<Dev.FileState>,
   stratification: string[][],
 ) {
-  const filenameToPatched = {} as Record<string, CodeFileEsModule>;
-  const scssFile = pluck(file, ({ ext }) => ext === 'scss') as KeyedLookup<StyleFile>;
+  const filenameToPatched = {} as Record<string, Dev.CodeFileEsModule>;
+  const scssFile = pluck(file, ({ ext }) => ext === 'scss') as KeyedLookup<Dev.StyleFile>;
 
   for (const level of stratification) {
     for (const filename of level) {
-      const { transpiled } = file[filename] as TranspiledCodeFile;
+      const { transpiled } = file[filename] as Dev.TranspiledCodeFile;
       const patchedCode = patchTranspiledCode(
         filename,
         file,
@@ -129,7 +130,7 @@ export function patchTranspiledJsFiles(
         scssFile, // Only need blobUrls
       );
 
-      filenameToPatched[filename] = { patchedCode, blobUrl: getBlobUrl(patchedCode) };
+      filenameToPatched[filename] = { patchedCode, blobUrl: Dev.getBlobUrl(patchedCode) };
       console.log({ patchedCode });
     }
   }
@@ -143,16 +144,16 @@ export function patchTranspiledJsFiles(
  */
 function patchTranspiledCode(
   filename: string,
-  file: KeyedLookup<FileState>,
-  transpiled: CodeTranspilation,
-  filenameToPatched: Record<string, CodeFileEsModule>,
-  scssFile: KeyedLookup<StyleFile>,
+  file: KeyedLookup<Dev.FileState>,
+  transpiled: Dev.CodeTranspilation,
+  filenameToPatched: Record<string, Dev.CodeFileEsModule>,
+  scssFile: KeyedLookup<Dev.StyleFile>,
 ): string {
   let offset = 0, nextValue: string;
   let patched = transpiled.dst;
 
   transpiled.imports.map(x => x.from).concat(
-    transpiled.exports.filter(isTsExportDecl).map(x => x.from),
+    transpiled.exports.filter(Dev.isTsExportDecl).map(x => x.from),
   ).forEach((meta) => {
     const { value, interval: { start } } = meta;
     const resolved = moduleSpecToFilename(filename, file, value);

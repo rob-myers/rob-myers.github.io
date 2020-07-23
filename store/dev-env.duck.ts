@@ -8,15 +8,15 @@ import RefreshRuntime from '@public/es-react-refresh/runtime';
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact } from '@model/store/redux.model';
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
-import * as CodeExample from '@model/code/examples';
-import * as Dev from '@model/code/dev-env.model';
+import * as CodeExample from '@model/dev-env/examples';
+import * as Dev from '@model/dev-env/dev-env.model';
 import { TsTranspilationResult, filenameToModelKey } from '@model/monaco/monaco.model';
-import * as PatchJs from '@model/code/patch-js-imports';
-import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/code/handle-scss-imports';
-import { getCssModuleCode } from '@model/code/css-module';
+import * as PatchJs from '@model/dev-env/patch-js-imports';
+import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/dev-env/handle-scss-imports';
+import { getCssModuleCode } from '@model/dev-env/css-module';
 import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
-import { isCyclicDepError } from '@model/code/dev-env.model';
+import { isCyclicDepError } from '@model/dev-env/dev-env.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
 
 import { filterActs } from './reducer';
@@ -440,26 +440,25 @@ export const Thunk = {
     '[dev-env] initialize',
     ({ dispatch, state: { devEnv } }) => {
       initializeRuntimeStore();
-
       /**
        * TEMP provide demo files.
        */
+      !devEnv.file[Dev.rootReducerFilename]?.contents &&
+        dispatch(Act.createCodeFile({ filename: Dev.rootReducerFilename, contents: CodeExample.defaultReducerTs }));
       !devEnv.file[Dev.rootAppFilename]?.contents &&
         dispatch(Act.createCodeFile({ filename: Dev.rootAppFilename, contents: CodeExample.exampleTsx3 }));
-      !devEnv.file['module/core/util.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'module/core/util.ts', contents: CodeExample.moduleCoreUtilTs }));
-      !devEnv.file['reducer.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'reducer.ts', contents: CodeExample.defaultReducerTs }));
-      !devEnv.file['module/core/redux.model.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'module/core/redux.model.ts', contents: CodeExample.moduleCoreReduxModelTs }));
-      !devEnv.file['module/core/custom-types.d.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'module/core/custom-types.d.ts', contents: CodeExample.moduleCoreCustomTypesDTs }));
       !devEnv.file['store/test.duck.ts']?.contents &&
         dispatch(Act.createCodeFile({ filename: 'store/test.duck.ts', contents: CodeExample.defaultTestDuckTs }));
       !devEnv.file['index.scss']?.contents &&
         dispatch(Act.createStyleFile({ filename: 'index.scss', contents: CodeExample.exampleScss1 }));
       !devEnv.file['other.scss']?.contents &&
         dispatch(Act.createStyleFile({ filename: 'other.scss', contents: CodeExample.exampleScss2 }));
+      !devEnv.file['module/core/util.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'module/core/util.ts', contents: CodeExample.moduleCoreUtilTs }));
+      !devEnv.file['module/core/redux.model.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'module/core/redux.model.ts', contents: CodeExample.moduleCoreReduxModelTs }));
+      !devEnv.file['module/core/custom-types.d.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'module/core/custom-types.d.ts', contents: CodeExample.moduleCoreCustomTypesDTs }));
 
       dispatch(Act.initialized());
     },

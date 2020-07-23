@@ -1,7 +1,7 @@
 import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
-import { SourceFileError, ModuleSpecifierInterval, JsPathError, TsImportMeta, TsExportMeta } from '@model/code/dev-env.model';
+import { SourceFileError, ModuleSpecifierInterval, JsPathError, TsImportMeta, TsExportMeta } from '@model/dev-env/dev-env.model';
 import { Classification } from './highlight.model';
 import { ToggleTsxCommentResult } from './analyze-ts.model';
 

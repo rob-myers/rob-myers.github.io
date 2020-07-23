@@ -1,6 +1,6 @@
 import { persistStore } from 'redux-persist';
 import { testNever } from '@model/generic.model';
-import reactRefreshTransform from '@model/code/react-refresh-transform';
+import reactRefreshTransform from '@model/dev-env/react-refresh-transform';
 import { SyntaxWorker, SyntaxWorkerContext } from './worker.model';
 import { SyntaxDispatchOverload } from './redux.model';
 import { prefixScssClasses, extractScssImportIntervals } from './analyze-scss.model';

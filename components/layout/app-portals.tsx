@@ -1,6 +1,6 @@
 import * as portals from 'react-reverse-portal';
 import { useSelector } from 'react-redux';
-import { panelKeyToAppElId } from '@model/code/dev-env.model';
+import { panelKeyToAppElId } from '@model/dev-env/dev-env.model';
 import css from './app-portals.scss';
 
 /**
