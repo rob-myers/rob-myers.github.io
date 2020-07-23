@@ -911,9 +911,14 @@ const initializeFileSystem = createEpic(
 
 const initializeMonacoModels = createEpic(
   (action$, state$) => action$.pipe(
-    filterActs('[editor] set monaco loaded'),
-    filter(({ pay: { loaded } }) => loaded),
-    // NOTE turning off diagnostics can cause code transpilation to hang
+    filterActs(
+      '[editor] set monaco loaded',
+      '[editor] set global types loaded',
+    ),
+    filter((_) =>
+      state$.value.editor.monacoLoaded
+      && state$.value.editor.globalTypesLoaded
+    ),
     flatMap(() => [
       ...Object.values(state$.value.devEnv.file).flatMap((file) => [
         EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),

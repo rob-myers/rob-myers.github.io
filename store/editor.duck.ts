@@ -128,6 +128,15 @@ export const Thunk = {
         }));
       }
 
+      if (!editor.syntaxWorker) {
+        const syntaxWorker = new SyntaxWorkerClass;
+        dispatch(Act.storeSyntaxWorker({ worker: redact(syntaxWorker) }));
+        syntaxWorker.postMessage({ key: 'request-status' });
+        // await awaitWorker('worker-ready', syntaxWorker);
+        // await dispatch(Thunk.loadGlobalTypes({}));
+        dispatch(Thunk.loadGlobalTypes({}));
+      }
+
       const monacoModel = dispatch(Thunk.ensureMonacoModel({
         filename: input.filename,
         code: input.code,
@@ -150,32 +159,21 @@ export const Thunk = {
         dispatch(Act.setMonacoLoading(false));
         dispatch(Act.setMonacoLoaded(true));
       }
+
       return true;
     },
   ),
   bootstrapMonaco: createThunk(
     '[editor] bootstrap monaco',
     async ({ dispatch }, monacoInternal: MonacoInternal) => {
-      await Promise.all([
-        (async () => {
-          // Dynamic import keeps monaco out of main bundle
-          const { MonacoService } = await import('@model/monaco/monaco.service');
-    
-          dispatch(Act.setMonacoService(redact(new MonacoService)));
-          dispatch(Act.setMonacoInternal(monacoInternal));
-          dispatch(Thunk.setMonacoCompilerOptions({}));
-          monacoInternal.typescriptDefaults.setEagerModelSync(true);
-    
-          await dispatch(Thunk.loadGlobalTypes({}));
-          monacoInternal.monaco.editor.setTheme('vs-dark');
-        })(),
-        (async () => {
-          const syntaxWorker = new SyntaxWorkerClass;
-          dispatch(Act.storeSyntaxWorker({ worker: redact(syntaxWorker) }));
-          syntaxWorker.postMessage({ key: 'request-status' });
-          await awaitWorker('worker-ready', syntaxWorker);
-        })(),
-      ]);
+      // Dynamic import keeps monaco out of main bundle
+      const { MonacoService } = await import('@model/monaco/monaco.service');
+  
+      dispatch(Act.setMonacoService(redact(new MonacoService)));
+      dispatch(Act.setMonacoInternal(monacoInternal));
+      dispatch(Thunk.setMonacoCompilerOptions({}));
+      monacoInternal.typescriptDefaults.setEagerModelSync(true);
+      monacoInternal.monaco.editor.setTheme('vs-dark');
 
       Sass.setWorkerUrl('/sass.worker.js');
       const sassWorker = new Sass;
