@@ -3,11 +3,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames';
 import GoldenLayout from 'golden-layout';
+
 import { redact } from '@model/store/redux.model';
+import { ExtendedContainer } from '@model/layout/layout.model';
 import { Act, Thunk } from '@store/layout.duck';
 
 import DevPanel from '@components/dev-env/dev-panel';
-import { ExtendedContainer } from '@model/layout/layout.model';
 const GoldenLayoutComponent = dynamic(import('@components/golden-layout/golden-layout'), { ssr: false });
 
 /**

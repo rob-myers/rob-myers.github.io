@@ -22,6 +22,7 @@ const Select: React.FC<Props> = ({
       className={classNames(css.root, { [css.open]: isOpen })}
       tabIndex={0}
       onBlur={() => setIsOpen(false)}
+      onKeyUp={({ key }) => key === 'Escape' && setIsOpen(false)}
     >
       <div className={css.selected}>
         <Option {...selected} onClick={toggle} />
