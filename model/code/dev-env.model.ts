@@ -86,6 +86,17 @@ export function isRuntimeNpmModule(moduleSpecifier: string) {
   return moduleSpecifier === 'react' || moduleSpecifier === 'redux' || moduleSpecifier === 'react-redux';
 }
 
+export const projectAliasRegex = /^(?:@module|@reducer)/;
+
+export function resolvePath(absPath: string, moduleSpecifier: string) {
+  const resolvedAlias = projectAliasRegex.test(moduleSpecifier)
+    ? moduleSpecifier.slice(1) // e.g. @module/foo -> module/foo
+    : moduleSpecifier;
+  return resolvedAlias === moduleSpecifier
+    ? resolveRelativePath(absPath, moduleSpecifier)
+    : resolvedAlias; // monaco will resolve from root
+}
+
 const resolveCache = {} as Record<string, string>;
 
 export function resolveRelativePath(absPath: string, relPath: string) {
@@ -202,7 +213,7 @@ type SourceFileErrorKey = (
   | 'require-import-relative'
   | 'require-export-relative'
   | 'require-scss-exists'
-  | 'require-normalised-path'
+  | 'require-file-exists'
   | 'only-export-cmp'
 );
 
@@ -211,7 +222,7 @@ export const getSourceFileErrorInfo = (key: SourceFileErrorKey): string => {
     case 'only-export-cmp': return 'We require every value exported by a tsx file to have type React.FC<Props>.';
     case 'require-export-relative': return 'Exports must be relative.';
     case 'require-import-relative': return 'Local imports must be relative.';
-    case 'require-normalised-path': return 'Relative path not found.';
+    case 'require-file-exists': return 'Path not found.';
     case 'require-scss-exists': return 'Scss file not found.';
     default: throw testNever(key);
   }

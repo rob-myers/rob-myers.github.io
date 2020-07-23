@@ -1,14 +1,4 @@
 /**
- * util.ts
- */
-export const defaultUtilTs = `
-/**
- * Usage e.g. \`default: return state || testNever(act)\`.
- */
-export function testNever(_: never): any { /** NOOP */ }
-
-`.trim();
-/**
  * reducer.ts
  */
 export const defaultReducerTs = `
@@ -39,18 +29,10 @@ export const Thunk = {
   ...TestThunk,
 };
 
-type Dispatchable = (
+export type Dispatchable = (
   | RootAction
   | Omit<ThunkAction, 'thunk'>
 )
-
-declare module 'react-redux' {
-  function useSelector<T = any>(selector: (state: RootState) => T, equalityFn?: Function): T;
-  function useDispatch(): <T extends Dispatchable>(arg: T) =>
-    T['type'] extends ThunkAction['type']
-      ? ReturnType<Extract<ThunkAction, { type: T['type'] }>['thunk']>
-      : void;
-}
 
 const createRootReducer = () => combineReducers({
   test: testReducer,
@@ -63,9 +45,26 @@ export default createRootReducer;
 `.trim();
 
 /**
- * store/redux.model.ts
+ * module/core/custom-types.d.ts
  */
-export const defaultReduxModelTs = `
+export const moduleCoreCustomTypesDTs = `
+
+import { RootState, Dispatchable, ThunkAction } from '@reducer';
+
+declare module 'react-redux' {
+  function useSelector<T = any>(selector: (state: RootState) => T, equalityFn?: Function): T;
+  function useDispatch(): <T extends Dispatchable>(arg: T) =>
+    T['type'] extends ThunkAction['type']
+      ? ReturnType<Extract<ThunkAction, { type: T['type'] }>['thunk']>
+      : void;
+}
+
+`.trim();
+
+/**
+ * module/core/redux.model.ts
+ */
+export const moduleCoreReduxModelTs = `
 
 //#region sync
 export const createSync = <T extends string, P extends object = {}>(
@@ -80,7 +79,7 @@ export interface SyncAct<T extends string, Payload extends null | {}> {
 //#endregion
 
 //#region thunk
-import { RootState, RootAction } from '../reducer';
+import { RootState, RootAction } from '@reducer';
 
 export interface RootThunkParams {
   dispatch: <T extends RootAction | ThunkAct<string, any, any>>(arg: T) => ThunkActReturnType<T>;
@@ -121,8 +120,8 @@ export type ActionsUnion<A extends ActionCreatorsMapObject> =
  * store/test.duck.ts
  */
 export const defaultTestDuckTs = `
-import { testNever } from '../util';
-import { createSync, createThunk, ActionsUnion } from './redux.model';
+import { testNever } from '@module/core/util';
+import { createSync, createThunk, ActionsUnion } from '@module/core/redux.model';
 
 export interface State {
   count: number;
@@ -160,6 +159,15 @@ export const reducer = (state = initialState, act: Action): State => {
     default: return state || testNever(act);
   }
 };
+`.trim();
+
+export const moduleCoreUtilTs = `
+
+/** Usage e.g. \`default: return state || testNever(act)\`. */
+export function testNever(_: never): any {
+  /** NOOP */
+}
+
 `.trim();
 
 /**

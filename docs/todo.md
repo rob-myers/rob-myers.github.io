@@ -4,14 +4,14 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
-- [ ] try putting `declare module 'react-redux'` into `custom-types.d.ts`.
+- [x] resolve files like `@module/core/util`.
+- [x] live tsconfig has alias `@module` resolving to top-level-dir `module`
+- [x] move `declare module 'react-redux'` into `custom-types.d.ts`.
   > only at root, should not exist in our 'modules'
-- [ ] move base project to `module/core`
-  > has test reducer
-  > has test app (counter, random number)
-  > other root project or modules can import from `@core/util`, `@core/redux.model`.
+- [x] move `util` and `redux.model` to `module/core`
+  > can import from `@module/core/util`, `@module/core/redux.model`.
 - [ ] preserve large chunks during build
-- [ ] mobile view prevents tab dragging and duplicating
+- [ ] add desktop/mobile layout; mobile layout prevents tab dragging/duplicating
 - [ ] draft a blog entry via doc panel
 - [x] prevent app from rendering whilst reducer currently invalid
 - [x] better useDispatch typings, supporting thunks

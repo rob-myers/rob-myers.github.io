@@ -159,12 +159,12 @@ const defaultMobileConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                 },
                 {
                   'type': 'component',
-                  'title': 'store/redux.model.ts',
+                  'title': 'module/core/redux.model.ts',
                   'component': 'window-panel',
                   'props': {
                     'panelKey': 'panel-2a',
                     'panelMeta': {
-                      'filename': 'store/redux.model.ts'
+                      'filename': 'module/core/redux.model.ts'
                     }
                   },
                   'componentName': 'lm-react-component',
@@ -173,12 +173,12 @@ const defaultMobileConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                 },
                 {
                   'type': 'component',
-                  'title': 'util.ts',
+                  'title': 'module/core/util.ts',
                   'component': 'window-panel',
                   'props': {
                     'panelKey': 'panel-3a',
                     'panelMeta': {
-                      'filename': 'util.ts'
+                      'filename': 'module/core/util.ts'
                     }
                   },
                   'componentName': 'lm-react-component',
@@ -275,12 +275,12 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                 },
                 {
                   type: 'component',
-                  title: 'store/redux.model.ts',
+                  title: 'module/core/redux.model.ts',
                   component: 'window-panel',
                   props: {
                     panelKey: 'panel-2a',
                     panelMeta: {
-                      filename: 'store/redux.model.ts',
+                      filename: 'module/core/redux.model.ts',
                     },
                   },
                   componentName: 'lm-react-component',
@@ -326,12 +326,12 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                     },
                     {
                       type: 'component',
-                      title: 'util.ts',
+                      title: 'module/core/util.ts',
                       component: 'window-panel',
                       props: {
                         panelKey: 'panel-3a',
                         panelMeta: {
-                          filename: 'util.ts'
+                          filename: 'module/core/util.ts'
                         }
                       },
                       componentName: 'lm-react-component',

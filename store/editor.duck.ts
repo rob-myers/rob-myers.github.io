@@ -347,20 +347,21 @@ export const Thunk = {
       typescriptDefaults.setCompilerOptions({
         experimentalDecorators: true,
         preserveConstEnums: true,
-        // implicit global `this` usage is almost always a bug
         noImplicitThis: true,
-        // ...compilerOptions,
-        // These options are essential to making the transform/eval and types code work (no overriding)
         allowNonTsExtensions: true,
         target: typescript.ScriptTarget.ES2015,
         jsx: typescript.JsxEmit.React,
         module: typescript.ModuleKind.ESNext,
         baseUrl: 'file:///',
-        // This is updated after types are loaded, so preserve the old setting
-        paths: oldCompilerOptions.paths,
-        // Generate d.ts content in `emitOutput.outputFiles[1]`
-        declaration: true,
-        // allowSyntheticDefaultImports: true,
+        paths: {
+          // This is updated after types are loaded, so preserve the old setting
+          ...oldCompilerOptions.paths,
+          // Our own notion of module
+          '@module/*': ['module/*'],
+          // Used by redux.model.ts & custom-types.d.ts
+          '@reducer': ['reducer'],
+        },
+        declaration: true, // Generate d.ts content in `emitOutput.outputFiles[1]`
       });
     },
   ),

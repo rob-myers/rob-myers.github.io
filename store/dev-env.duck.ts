@@ -8,7 +8,7 @@ import RefreshRuntime from '@public/es-react-refresh/runtime';
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact } from '@model/store/redux.model';
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
-import { exampleTsx3, exampleScss1, defaultTestDuckTs, exampleScss2, defaultReducerTs, defaultReduxModelTs, defaultUtilTs } from '@model/code/examples';
+import * as CodeExample from '@model/code/examples';
 import * as Dev from '@model/code/dev-env.model';
 import { TsTranspilationResult, filenameToModelKey } from '@model/monaco/monaco.model';
 import * as PatchJs from '@model/code/patch-js-imports';
@@ -445,19 +445,21 @@ export const Thunk = {
        * TEMP provide demo files.
        */
       !devEnv.file[Dev.rootAppFilename]?.contents &&
-        dispatch(Act.createCodeFile({ filename: Dev.rootAppFilename, contents: exampleTsx3 }));
-      !devEnv.file['util.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'util.ts', contents: defaultUtilTs }));
-      !devEnv.file['store/reducer.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'reducer.ts', contents: defaultReducerTs }));
-      !devEnv.file['store/redux.model.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'store/redux.model.ts', contents: defaultReduxModelTs }));
+        dispatch(Act.createCodeFile({ filename: Dev.rootAppFilename, contents: CodeExample.exampleTsx3 }));
+      !devEnv.file['module/core/util.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'module/core/util.ts', contents: CodeExample.moduleCoreUtilTs }));
+      !devEnv.file['reducer.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'reducer.ts', contents: CodeExample.defaultReducerTs }));
+      !devEnv.file['module/core/redux.model.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'module/core/redux.model.ts', contents: CodeExample.moduleCoreReduxModelTs }));
+      !devEnv.file['module/core/custom-types.d.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'module/core/custom-types.d.ts', contents: CodeExample.moduleCoreCustomTypesDTs }));
       !devEnv.file['store/test.duck.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'store/test.duck.ts', contents: defaultTestDuckTs }));
+        dispatch(Act.createCodeFile({ filename: 'store/test.duck.ts', contents: CodeExample.defaultTestDuckTs }));
       !devEnv.file['index.scss']?.contents &&
-        dispatch(Act.createStyleFile({ filename: 'index.scss', contents: exampleScss1 }));
+        dispatch(Act.createStyleFile({ filename: 'index.scss', contents: CodeExample.exampleScss1 }));
       !devEnv.file['other.scss']?.contents &&
-        dispatch(Act.createStyleFile({ filename: 'other.scss', contents: exampleScss2 }));
+        dispatch(Act.createStyleFile({ filename: 'other.scss', contents: CodeExample.exampleScss2 }));
 
       dispatch(Act.initialized());
     },

@@ -1,15 +1,12 @@
 import { KeyedLookup, pluck } from '@model/generic.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
-import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, getBlobUrl, ModuleSpecifierInterval, isTsExportDecl, resolveRelativePath, CodeTranspilation } from './dev-env.model';
+import { TranspiledCodeFile, CodeFileEsModule, CodeFile, StyleFile, FileState, getBlobUrl, ModuleSpecifierInterval, isTsExportDecl, resolveRelativePath, CodeTranspilation, resolvePath } from './dev-env.model';
 
 export function getCyclicDepMarker(
   { value, interval: { startLine, startCol} }: ModuleSpecifierInterval,
 ): IMarkerData {
   return {
-    message: [
-      'Cyclic dependencies are unsupported.',
-      'There is no restriction on typings.'
-    ].join(' '),
+    message: 'Cyclic dependencies are unsupported. There is no restriction on typings.',
     startLineNumber: startLine,
     startColumn: startCol,
     endLineNumber: startLine,
@@ -27,7 +24,7 @@ export function moduleSpecsToCodeFilenames(
   file: Record<string, FileState>,
   moduleSpecs: string[],
 ) {
-  return moduleSpecs.map(x => resolveRelativePath(filename, x))
+  return moduleSpecs.map(x => resolvePath(filename, x))
     .filter((x, i, xs) => !x.endsWith('.scss') && i === xs.indexOf(x))
     .map(x => file[`${x}.tsx`]?.key || file[`${x}.ts`]?.key)
     .filter(Boolean);
@@ -44,7 +41,7 @@ function moduleSpecToFilename(
   file: Record<string, FileState>,
   moduleSpec: string,
 ) {
-  const resolved = resolveRelativePath(filename, moduleSpec);
+  const resolved = resolvePath(filename, moduleSpec);
   return (
     file[resolved]?.key
     || file[`${resolved}.tsx`]?.key
