@@ -4,7 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
-- [ ] can save current files to disk as json
+- [x] can save current files to disk as json
 - [ ] load project files via `file-loader`
 - [x] resolve files like `@module/core/util`.
 - [x] live tsconfig has alias `@module` resolving to top-level-dir `module`

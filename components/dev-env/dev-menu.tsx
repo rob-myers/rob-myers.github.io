@@ -5,8 +5,8 @@ import classNames from 'classnames';
 
 import { menuHeightPx } from '@model/dev-env/dev-env.model';
 import { getConfigPanelKeys } from '@model/layout/example-layout.model';
+import { Act, Thunk } from '@store/dev-env.duck';
 import { Thunk as LayoutThunk } from '@store/layout.duck';
-import { Act } from '@store/dev-env.duck';
 import Select from '@components/select/select';
 import css from './dev-menu.scss';
 
@@ -30,6 +30,7 @@ export const DevMenu = () => {
     const nextPanelKeys = getConfigPanelKeys(nextLayout);
     dispatch(Act.restrictAppPortals({ panelKeys: nextPanelKeys }));
   };
+  const saveFilesAsJson = () => dispatch(Thunk.saveFilesToDisk({}));
 
   return (
     <div className={css.menu} style={{ height: menuHeightPx }}>
@@ -49,6 +50,15 @@ export const DevMenu = () => {
           </div>
 
           <div className={css.rightControls}>
+            <div
+              className={css.saveIcon}
+              onClick={saveFilesAsJson}
+            >
+              💾
+            </div>
+
+            <div className={css.separator}>|</div>
+
             <Select
               items={[
                 { itemKey: '', label: 'layout...' },
@@ -58,8 +68,11 @@ export const DevMenu = () => {
               selectedKey=""
               showSelectedOption={false}
             />
+
             <div className={css.separator}>|</div>
+
             <Link href="/"><a>home</a></Link>
+
           </div>
         </div>
       </div>

@@ -1,12 +1,13 @@
 import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
 import * as portals from 'react-reverse-portal';
+import FileSaver from 'file-saver';
 
 import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, initializeRuntimeStore, replaceRootReducerFromBlobUrl, updateThunkLookupFromBlobUrl } from '@public/render-app';
 import RefreshRuntime from '@public/es-react-refresh/runtime';
 
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact } from '@model/store/redux.model';
-import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
+import { KeyedLookup, testNever, lookupFromValues, pluck, pretty } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
 import * as CodeExample from '@model/dev-env/examples';
 import * as Dev from '@model/dev-env/dev-env.model';
@@ -107,6 +108,32 @@ export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
   /**
+   * Analyze source code, storing errors and also module specifier code-intervals,
+   * so can source-map errors found in transpiled js (always tied to an import/export).
+   */
+  analyzeSrcCode: createThunk(
+    '[dev-env] analyze code file src',
+    async ({ dispatch }, { filename }: { filename: string }) => {
+      const { imports, exports, srcErrors } = await dispatch(EditorThunk.computeTsImportExports({ filename }));
+      console.log({
+        key: 'analyzeSrcCode',
+        filename,
+        srcErrors,
+        imports,
+        exports
+      });
+      const updates = {
+        pathIntervals: [
+          ...imports.map(({ from: path }) => path),
+          ...exports.filter(Dev.isTsExportDecl).map(({ from }) => from),
+        ],
+        srcErrors,
+      };
+      dispatch(Act.updateFile(filename, updates));
+      return updates;
+    },
+  ),
+  /**
    * Analyze transpiled javascript before we store it.
    */
   analyzeJsCode: createThunk(
@@ -203,7 +230,8 @@ export const Thunk = {
       await storeAppFromBlobUrl(appUrl);
 
       // Render App in each panel
-      Object.values(devEnv.panelToMeta).filter(({ panelType }) => panelType === 'app')
+      Object.values(devEnv.panelToMeta)
+        .filter(({ panelType }) => panelType === 'app')
         .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
   
       dispatch(Act.rememberAppValid(true));
@@ -483,39 +511,15 @@ export const Thunk = {
       }
     },
   ),
-  /**
-   * Analyze source code, storing errors and also module specifier code-intervals,
-   * so can source-map errors found in transpiled js (always tied to an import/export).
-   */
-  analyzeSrcCode: createThunk(
-    '[dev-env] analyze code file src',
-    async ({ dispatch }, { filename }: { filename: string }) => {
-      const { imports, exports, srcErrors } = await dispatch(EditorThunk.computeTsImportExports({ filename }));
-      console.log({
-        key: 'analyzeSrcCode',
-        filename,
-        srcErrors,
-        imports,
-        exports
-      });
-      const updates = {
-        pathIntervals: [
-          ...imports.map(({ from: path }) => path),
-          ...exports.filter(Dev.isTsExportDecl).map(({ from }) => from),
-        ],
-        srcErrors,
-      };
-      dispatch(Act.updateFile(filename, updates));
-      return updates;
-    },
-  ),
-  /** Initialize (debounced) storage of model contents on model change. */
-  setupRememberFileContents: createThunk(
-    '[dev-env] setup remember file contents',
-    ({ dispatch }, { filename, modelKey }: { filename: string; modelKey: string }) => {
-      const storeFileContents = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
-      const disposable = dispatch(EditorThunk.trackModelChange({ do: storeFileContents, delayType: 'debounce', delayMs: 500, modelKey }));
-      dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
+  saveFilesToDisk: createThunk(
+    '[dev-env] save files to disk',
+    ({ state: { devEnv } }) => {
+      const filenameToContents = Object.entries(devEnv.file)
+        .reduce<Record<string, string>>((agg, [filename, { contents }]) => ({
+          ...agg, [filename]: contents,
+        }), {});
+      const blob = new Blob([pretty(filenameToContents)], {type: 'text/plain;charset=utf-8'});
+      FileSaver.saveAs(blob, 'project.json');
     },
   ),
   /** Initialize (debounced) transpilation of model contents on model change. */
@@ -529,6 +533,15 @@ export const Thunk = {
         ? () => dispatch(Thunk.tryTranspileCodeModel({ filename }))
         : () => dispatch(Thunk.tryTranspileStyleModel({ filename }));
       const disposable = dispatch(EditorThunk.trackModelChange({ do: transpileCode, delayType: 'debounce', delayMs: 500, modelKey }));
+      dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
+    },
+  ),
+  /** Initialize (debounced) storage of model contents on model change. */
+  setupRememberFileContents: createThunk(
+    '[dev-env] setup remember file contents',
+    ({ dispatch }, { filename, modelKey }: { filename: string; modelKey: string }) => {
+      const storeFileContents = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
+      const disposable = dispatch(EditorThunk.trackModelChange({ do: storeFileContents, delayType: 'debounce', delayMs: 500, modelKey }));
       dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
     },
   ),

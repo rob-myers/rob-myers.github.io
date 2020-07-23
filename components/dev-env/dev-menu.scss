@@ -12,8 +12,8 @@
 
   .toolbar .logo {
     display: flex;
-    align-items: center;
-    padding: 0 8px;
+    align-items: flex-end;
+    padding: 4px 8px;
 
     font-family: "Courier New", Courier, monospace;
     font-size: 12px;
@@ -55,16 +55,22 @@
 
   .toolbar .right-controls {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
 
     .separator {
       margin: 0px 4px;
+    }
+
+    .save-icon {
+      font-size: 13px;
+      cursor: pointer;
     }
 
     a {
       text-decoration: none;
       font-size: 12px;
       color: white;
+      margin-bottom: 2px;
     }
 
     &.controls-disabled {
