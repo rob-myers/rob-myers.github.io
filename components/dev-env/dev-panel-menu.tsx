@@ -27,7 +27,7 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
   };
   const toggle = () => dispatch(Act.updatePanelMeta(panelKey,
     () => ({ menuOpen: !isOpen })));
-  const preventToggle = (e: MouseEvent) => e.stopPropagation();
+  const preventToggle = (e: MouseEvent) => isOpen && e.stopPropagation();
 
   return (
     <div

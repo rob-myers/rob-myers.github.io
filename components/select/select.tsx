@@ -2,24 +2,6 @@ import { useState, useEffect } from 'react';
 import classNames from 'classnames';
 import css from './select.scss';
 
-const Option: React.FC<OptionProps> = ({ label, onClick, highlight }) => {
-  return (
-    <div
-      className={classNames(css.option, {
-        [css.highlighted]: highlight,
-      })}
-      onClick={onClick}
-    >
-      {label}
-    </div>
-  );
-};
-
-interface OptionProps extends Item {
-  onClick: () => void;  
-  highlight?: boolean;
-}
-
 const Select: React.FC<Props> = ({
   disabled = false,
   items,
@@ -73,6 +55,24 @@ interface Props {
   items: Item[];
   onChange: (key: string) => void;
   selectedKey: string;
+}
+
+const Option: React.FC<OptionProps> = ({ label, onClick, highlight }) => {
+  return (
+    <div
+      className={classNames(css.option, {
+        [css.highlighted]: highlight,
+      })}
+      onClick={onClick}
+    >
+      {label}
+    </div>
+  );
+};
+
+interface OptionProps extends Item {
+  onClick: () => void;  
+  highlight?: boolean;
 }
 
 interface Item {
