@@ -5,7 +5,7 @@ See [blog notes](./blog.md).
 # Online Dev Environment
 
 - [ ] try putting `declare module 'react-redux'` into `custom-types.d.ts`.
-  > should only exist at root, not inside our notion of 'module'
+  > only at root, should not exist in our 'modules'
 - [ ] move base project to `module/core`
   > has test reducer
   > has test app (counter, random number)
