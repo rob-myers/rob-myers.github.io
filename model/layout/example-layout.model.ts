@@ -159,12 +159,12 @@ const defaultMobileConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                 },
                 {
                   'type': 'component',
-                  'title': 'module/core/redux.model.ts',
+                  'title': 'package/core/redux.model.ts',
                   'component': 'window-panel',
                   'props': {
                     'panelKey': 'panel-2a',
                     'panelMeta': {
-                      'filename': 'module/core/redux.model.ts'
+                      'filename': 'package/core/redux.model.ts'
                     }
                   },
                   'componentName': 'lm-react-component',
@@ -173,12 +173,12 @@ const defaultMobileConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                 },
                 {
                   'type': 'component',
-                  'title': 'module/core/util.ts',
+                  'title': 'package/core/util.ts',
                   'component': 'window-panel',
                   'props': {
                     'panelKey': 'panel-3a',
                     'panelMeta': {
-                      'filename': 'module/core/util.ts'
+                      'filename': 'package/core/util.ts'
                     }
                   },
                   'componentName': 'lm-react-component',
@@ -275,12 +275,12 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                 },
                 {
                   type: 'component',
-                  title: 'module/core/redux.model.ts',
+                  title: 'package/core/redux.model.ts',
                   component: 'window-panel',
                   props: {
                     panelKey: 'panel-2a',
                     panelMeta: {
-                      filename: 'module/core/redux.model.ts',
+                      filename: 'package/core/redux.model.ts',
                     },
                   },
                   componentName: 'lm-react-component',
@@ -326,12 +326,12 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
                     },
                     {
                       type: 'component',
-                      title: 'module/core/util.ts',
+                      title: 'package/core/util.ts',
                       component: 'window-panel',
                       props: {
                         panelKey: 'panel-3a',
                         panelMeta: {
-                          filename: 'module/core/util.ts'
+                          filename: 'package/core/util.ts'
                         }
                       },
                       componentName: 'lm-react-component',

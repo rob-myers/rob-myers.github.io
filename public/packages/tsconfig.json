@@ -16,7 +16,7 @@
     "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
-      "@module/*": ["./*"],
+      "@package/*": ["./*"],
       "@reducer": ["mock-reducer"]
     },
     "downlevelIteration": true

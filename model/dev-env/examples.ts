@@ -45,7 +45,7 @@ export default createRootReducer;
 `.trim();
 
 /**
- * module/core/custom-types.d.ts
+ * package/core/custom-types.d.ts
  */
 export const moduleCoreCustomTypesDTs = `
 
@@ -62,7 +62,7 @@ declare module 'react-redux' {
 `.trim();
 
 /**
- * module/core/redux.model.ts
+ * package/core/redux.model.ts
  */
 export const moduleCoreReduxModelTs = `
 
@@ -120,8 +120,8 @@ export type ActionsUnion<A extends ActionCreatorsMapObject> =
  * store/test.duck.ts
  */
 export const defaultTestDuckTs = `
-import { testNever } from '@module/core/util';
-import { createSync, createThunk, ActionsUnion } from '@module/core/redux.model';
+import { testNever } from '@package/core/util';
+import { createSync, createThunk, ActionsUnion } from '@package/core/redux.model';
 
 export interface State {
   count: number;

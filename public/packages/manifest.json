@@ -11,7 +11,8 @@
 			],
 			"dependencies": [
 				"shared"
-			]
+			],
+			"transitiveDeps": []
 		},
 		"shared": {
 			"key": "shared",
@@ -21,7 +22,8 @@
 				"packages/shared/scss.d.ts",
 				"packages/shared/util.ts"
 			],
-			"dependencies": []
+			"dependencies": [],
+			"transitiveDeps": []
 		}
 	}
 }

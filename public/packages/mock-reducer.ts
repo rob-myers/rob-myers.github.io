@@ -13,7 +13,7 @@ import {
   State as TestState, 
   Action as TestAction,
   Thunk as TestThunk,
-} from '@module/intro/test.duck';
+} from '@package/intro/test.duck';
 
 export interface RootState {
   test: TestState;

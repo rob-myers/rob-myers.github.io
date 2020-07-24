@@ -1,5 +1,5 @@
-import { testNever } from '@module/shared/util';
-import { createSync, createThunk, ActionsUnion } from '@module/shared/redux.model';
+import { testNever } from '@package/shared/util';
+import { createSync, createThunk, ActionsUnion } from '@package/shared/redux.model';
 
 export interface State {
   count: number;

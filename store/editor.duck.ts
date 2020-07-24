@@ -356,8 +356,8 @@ export const Thunk = {
         paths: {
           // This is updated after types are loaded, so preserve the old setting
           ...oldCompilerOptions.paths,
-          // Our own notion of module
-          '@module/*': ['module/*'],
+          // Our own notion of package/module
+          '@package/*': ['package/*'],
           // Used by redux.model.ts & custom-types.d.ts
           '@reducer': ['reducer'],
         },

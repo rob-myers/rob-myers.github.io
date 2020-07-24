@@ -86,11 +86,11 @@ export function isRuntimeNpmModule(moduleSpecifier: string) {
   return moduleSpecifier === 'react' || moduleSpecifier === 'redux' || moduleSpecifier === 'react-redux';
 }
 
-export const projectAliasRegex = /^(?:@module|@reducer)/;
+export const projectAliasRegex = /^(?:@package|@reducer)/;
 
 export function resolvePath(absPath: string, moduleSpecifier: string) {
   const resolvedAlias = projectAliasRegex.test(moduleSpecifier)
-    ? moduleSpecifier.slice(1) // e.g. @module/foo -> module/foo
+    ? moduleSpecifier.slice(1) // e.g. @package/foo -> package/foo
     : moduleSpecifier;
   return resolvedAlias === moduleSpecifier
     ? resolveRelativePath(absPath, moduleSpecifier)

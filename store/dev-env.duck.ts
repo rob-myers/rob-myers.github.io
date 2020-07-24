@@ -509,12 +509,12 @@ export const Thunk = {
         dispatch(Act.createStyleFile({ filename: 'index.scss', contents: CodeExample.exampleScss1 }));
       !devEnv.file['other.scss']?.contents &&
         dispatch(Act.createStyleFile({ filename: 'other.scss', contents: CodeExample.exampleScss2 }));
-      !devEnv.file['module/core/util.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'module/core/util.ts', contents: CodeExample.moduleCoreUtilTs }));
-      !devEnv.file['module/core/redux.model.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'module/core/redux.model.ts', contents: CodeExample.moduleCoreReduxModelTs }));
-      !devEnv.file['module/core/custom-types.d.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'module/core/custom-types.d.ts', contents: CodeExample.moduleCoreCustomTypesDTs }));
+      !devEnv.file['package/core/util.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'package/core/util.ts', contents: CodeExample.moduleCoreUtilTs }));
+      !devEnv.file['package/core/redux.model.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'package/core/redux.model.ts', contents: CodeExample.moduleCoreReduxModelTs }));
+      !devEnv.file['package/core/custom-types.d.ts']?.contents &&
+        dispatch(Act.createCodeFile({ filename: 'package/core/custom-types.d.ts', contents: CodeExample.moduleCoreCustomTypesDTs }));
 
       dispatch(Act.initialized());
     },

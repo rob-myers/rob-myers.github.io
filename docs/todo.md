@@ -4,7 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
-- [ ] use `@package` instead of `@module`
+- [x] use `@package` instead of `@module`
 - [ ] packages manifest includes transitive dependencies
 - [x] packages manifest includes dependencies
 - [ ] load code at runtime using packages manifest

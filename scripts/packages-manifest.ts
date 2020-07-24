@@ -36,7 +36,7 @@ function getNextManifest(): PackagesManifest {
     [ ...srcFile.getImportDeclarations().map(x => x.getModuleSpecifier().getText().slice(1, -1)),
       ...srcFile.getExportDeclarations().filter(x => x.hasModuleSpecifier())
         .map(x => x.getModuleSpecifier()!.getText().slice(1, -1)),
-    ].filter(x => x.startsWith('@module/')).forEach(x =>
+    ].filter(x => x.startsWith('@package/')).forEach(x =>
       (packageToDeps[packageName] = (packageToDeps[packageName] || {}))[moduleSpecToPackageName(x)] = true);
   }
 
@@ -78,7 +78,7 @@ function pathToPackageName(filePath: string) {
   return filePath.split('/')[2];
 }
 
-// @module/shared/foo -> shared
+// @package/shared/foo -> shared
 function moduleSpecToPackageName(moduleSpec: string) {
   return moduleSpec.split('/')[1];
 }

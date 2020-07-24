@@ -35,7 +35,7 @@ export function moduleSpecsToCodeFilenames(
  * - `./app` to `app.tsx`
  * - `./foo/model` to `foo/model.ts`
  * - `../index.scss` to `index.scss`
- * - `@module/core/util` to `module/core/util`.
+ * - `@package/core/util` to `package/core/util`.
  */
 function moduleSpecToFilename(
   filename: string,
