@@ -70,6 +70,8 @@ export const Act = {
     createAct('[dev-env] add app portal', { panelKey, portalNode: redact(portalNode) }),
   addFileCleanups: (filename: string, cleanups: (() => void)[]) =>
     createAct('[dev-env] add file cleanups', { filename, cleanups }),
+  addPackage: (newPackage: Dev.LoadedPackage) =>
+    createAct('[dev-env] add package', { newPackage }),
   appWasValid: () =>
     createAct('[dev-env] app was valid', {}),
   changePanelMeta: (panelKey: string, input: (
@@ -416,6 +418,19 @@ export const Thunk = {
       return { key: 'success', stratification };
     },
   ),
+  fetchPackages: createThunk(
+    '[dev-env] fetch packages',
+    async ({ dispatch, state: { devEnv } }) => {
+      const { packages } = devEnv.packagesManifest!;
+      for (const [packageName, { files }] of Object.entries(packages)) {
+        const loadedFiles = await Promise.all(files.map(async filePath => ({
+          key: filePath,
+          contents: await (await fetch(`/${filePath}`)).text(),
+        })));
+        dispatch(Act.addPackage({ key: packageName, file: lookupFromValues(loadedFiles) }))
+      }
+    },
+  ),
   fetchPackagesManifest: createThunk(
     '[dev-env] fetch packages manifest',
     async ({ dispatch }) => {
@@ -495,6 +510,7 @@ export const Thunk = {
     async ({ dispatch, state: { devEnv } }) => {
       initializeRuntimeStore();
       await dispatch(Thunk.fetchPackagesManifest({}));
+      await dispatch(Thunk.fetchPackages({}));
 
       /**
        * TEMP provide demo files.
@@ -750,17 +766,20 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
-    case '[dev-env] add file cleanups': return { ...state,
-      file: updateLookup(act.pay.filename, state.file, ({ cleanups: cleanupTrackers }) => ({
-        cleanups: cleanupTrackers.concat(act.pay.cleanups),
-      })),
-    };
     case '[dev-env] add app portal': return { ...state,
       appPortal: addToLookup({
         key: act.pay.panelKey,
         portalNode: act.pay.portalNode,
         rendered: false,
       }, state.appPortal),
+    };
+    case '[dev-env] add file cleanups': return { ...state,
+      file: updateLookup(act.pay.filename, state.file, ({ cleanups: cleanupTrackers }) => ({
+        cleanups: cleanupTrackers.concat(act.pay.cleanups),
+      })),
+    };
+    case '[dev-env] add package': return { ...state,
+      package: addToLookup(act.pay.newPackage, state.package),
     };
     case '[dev-env] app was valid': return { ...state,
       flag: { ...state.flag, appWasValid: true }

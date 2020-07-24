@@ -1,10 +1,3 @@
-/**
- * Actual projects are those subdirectories of `public/packages/`
- * containing `app.tsx` and also `reducer.ts` i.e. the root reducer.
- * We mock the latter because it is needed by the `shared` package.
- * If desired, we could include all reducers from all projects,
- * ensuring their global 'consistency' via typescript in development.
- */
 import { combineReducers } from 'redux';
 
 import {

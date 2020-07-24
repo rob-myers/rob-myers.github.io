@@ -495,10 +495,6 @@ export function isTsExportDecl(x: TsExportMeta): x is TsExportDecl {
 export interface LoadedPackage {
   key: string;
   file: KeyedLookup<LoadedPackageFile>;
-  /**
-   * Keys of packages this package transitively depends upon.
-   */
-  dependencies: string[];
 }
 
 interface LoadedPackageFile {
