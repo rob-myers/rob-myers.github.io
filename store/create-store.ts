@@ -14,7 +14,7 @@ import { State as DevEnvState } from './dev-env.duck';
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
 import { getDefaultLayoutConfig } from '@model/layout/example-layout.model';
 
-const storeVersion = 0.32;
+const storeVersion = 0.33;
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
@@ -75,8 +75,12 @@ const persistedReducer = persistReducer({
     createTransform<DevEnvState, DevEnvState>(
       ({ file }, _key) => ({
         appPortal: {},
-        appValid: false,
-        appWasValid: false,
+        flag: {
+          appValid: false,
+          appWasValid: false,
+          initialized: false,
+          reducerValid: false,
+        },
         // Remember files but forget transpilation (& cleanups)
         file: Object.values(file).reduce((agg, item) => ({
           ...agg,
@@ -91,9 +95,7 @@ const persistedReducer = persistReducer({
             transpiled: null,
           },
         }), {} as DevEnvState['file']),
-        initialized: false,
         panelToMeta: {},
-        reducerValid: false,
       }),
       (state, _key) => state,
       { whitelist: ['devEnv'] },

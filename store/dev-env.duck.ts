@@ -27,33 +27,37 @@ import { Thunk as LayoutThunk, Act as LayoutAct } from './layout.duck';
 export interface State {  
   /** So can persist App instances across site */
   appPortal: KeyedLookup<Dev.AppPortal>;
-  /**
-   * True iff all code reachable from app.tsx was deemed
-   * collectively valid after most recent transpilation.
-   */
-  appValid: boolean;
-  /** Has app ever been valid? */
-  appWasValid: boolean;
   /** File lookup. */
   file: KeyedLookup<Dev.FileState>;
-  initialized: boolean;
+  flag: {
+    /**
+     * True iff all code reachable from `app.tsx` was deemed
+     * collectively valid after most recent transpilation.
+     */
+    appValid: boolean;
+    /** Has app ever been valid? */
+    appWasValid: boolean;
+    initialized: boolean;
+    /**
+     * True iff all code reachable from `reducer.ts` was deemed
+     * collectively valid after most recent transpilation.
+     */
+    reducerValid: boolean;
+  };
   /** Mirrors layout.panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
-  /**
-   * True iff all code reachable from reducer.ts was deemed
-   * collectively valid after most recent transpilation.
-   */
-  reducerValid: boolean;
 }
 
 const initialState: State = {
   appPortal: {},
-  appValid: false,
-  appWasValid: false,
   file: {},
-  initialized: false,
+  flag: {
+    appValid: false,
+    appWasValid: false,
+    initialized: false,
+    reducerValid: false,
+  },
   panelToMeta: {},
-  reducerValid: false,
 };
 
 export const Act = {
@@ -235,7 +239,9 @@ export const Thunk = {
         .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
   
       dispatch(Act.rememberAppValid(true));
-      !getState().devEnv.appWasValid && dispatch(Act.appWasValid());
+      if (!getState().devEnv.flag.appWasValid) {
+        dispatch(Act.appWasValid());
+      }
     },
   ),
   bootstrapRootReducer: createThunk(
@@ -265,7 +271,7 @@ export const Thunk = {
       await updateThunkLookupFromBlobUrl(reducerUrl);
 
       dispatch(Act.rememberReducerValid(true));
-      if (!devEnv.appWasValid) {
+      if (!devEnv.flag.appWasValid) {
         dispatch(Thunk.tryTranspileCodeModel({ filename: 'app.tsx' }));
       }
     },
@@ -735,7 +741,7 @@ export const reducer = (state = initialState, act: Action): State => {
       }, state.appPortal),
     };
     case '[dev-env] app was valid': return { ...state,
-      appWasValid: true,
+      flag: { ...state.flag, appWasValid: true }
     };
     case '[dev-env] change panel meta': {
       const metaState = Dev.getDevPanelMetaState(state.panelToMeta[act.pay.panelKey]);
@@ -789,13 +795,13 @@ export const reducer = (state = initialState, act: Action): State => {
       panelToMeta: removeFromLookup(act.pay.panelKey, state.panelToMeta),
     };
     case '[dev-env] initialized': return { ...state,
-      initialized: true,
+      flag: { ...state.flag, initialized: true },
     };
     case '[dev-env] remember app valid': return { ...state,
-      appValid: act.pay.isValid,
+      flag: { ...state.flag, appValid: act.pay.isValid }
     };
     case '[dev-env] remember reducer valid': return { ...state,
-      reducerValid: act.pay.isValid,
+      flag: { ...state.flag, reducerValid: act.pay.isValid }
     };
     case '[dev-env] remember rendered app': return { ...state,
       appPortal: updateLookup(act.pay.panelKey, state.appPortal, () => ({
@@ -839,7 +845,7 @@ const bootstrapApp = createEpic(
       '[dev-env] change panel meta',
     ),
     flatMap((act) => {
-      const { file, appValid, reducerValid } = state$.value.devEnv;
+      const { file, flag: { appValid, reducerValid} } = state$.value.devEnv;
 
       if (act.type === '[dev-env] store code transpilation') {
         if (act.pay.filename.endsWith('.tsx')) {
@@ -878,7 +884,7 @@ const bootstrapReducers = createEpic(
     flatMap((act) => {
       if (act.type === '[dev-env] store code transpilation') {
         if (act.pay.filename.endsWith('.ts')) {
-          const { file, reducerValid } = state$.value.devEnv;
+          const { file, flag: { reducerValid } } = state$.value.devEnv;
 
           const reachableJsFiles = Dev.getReachableJsFiles(Dev.rootReducerFilename, file);
           if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {

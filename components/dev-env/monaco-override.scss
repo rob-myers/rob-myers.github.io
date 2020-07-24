@@ -1,7 +1,6 @@
 /**
- * This CSS is loaded without using CSS modules,
- * so it can affect the monaco editor. We decorate
- * the latter with these classes in editor.duck.ts.
+ * We apply these classes to extend monaco's syntax highlighting of tsx.
+ * Currently, monaco only applies js highlighting.
  */
 .monaco-tsx-editor {
   .jsx-text {
@@ -22,5 +21,12 @@
   }
   .jsx-property {
     color: #dda;
+  }
+}
+
+.monaco-editor {
+  .margin {
+    // Prevent line numbers highlight when double-click panel menu
+    user-select: none;
   }
 }
