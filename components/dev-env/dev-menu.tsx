@@ -35,6 +35,9 @@ export const DevMenu = () => {
       dispatch(Thunk.saveFilesToDisk({}));
     }
   };
+  const handleProjectSelect = (_itemKey: string) => {
+    // TODO
+  };
 
   return (
     <div className={css.menu} style={{ height: menuHeightPx }}>
@@ -48,9 +51,14 @@ export const DevMenu = () => {
           [css.controlsDisabled]: monacoLoading || disabled,
         })}>
           <div className={css.leftControls}>
-            {/*
-              TODO project/branch selectors
-            */}
+            <Select
+              items={[
+                { itemKey: '', label: 'project' },
+                // { itemKey: 'save-project-as-json', label: 'save as json' },
+              ]}
+              onChange={handleProjectSelect}
+              selectedKey=""
+            />
           </div>
 
           <div className={css.rightControls}>
@@ -79,7 +87,9 @@ export const DevMenu = () => {
 
             <div className={css.separator}>|</div>
 
-            <Link href="/"><a>home</a></Link>
+            <div className={css.homeLink}>
+              <Link href="/"><a>home</a></Link>
+            </div>
 
           </div>
         </div>

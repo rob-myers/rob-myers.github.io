@@ -1,13 +1,18 @@
 .root {
   cursor: pointer;
-  font-size: 14px;
+  font-size: 11px;
   user-select: none;
   outline: none;
   color: #aaa;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  display: flex;
+  flex-direction: column;
 
   .selected {
     display: flex;
+    align-items: center;
+    height: 100%;
+
     border: 1px solid rgba(80, 80, 80, 0.5);
     padding: 0 4px 2px 4px;
   }

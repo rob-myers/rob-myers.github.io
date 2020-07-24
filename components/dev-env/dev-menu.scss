@@ -12,8 +12,8 @@
 
   .toolbar .logo {
     display: flex;
-    align-items: flex-end;
-    padding: 2px 8px;
+    align-items: center;
+    padding: 0 8px;
 
     font-family: "Courier New", Courier, monospace;
     font-size: 12px;
@@ -41,6 +41,8 @@
 
   .toolbar .controls {
     display: flex;
+    align-items: stretch;
+
     width: 100%;
     justify-content: space-between;
     color: #777;
@@ -50,26 +52,25 @@
 
   .toolbar .left-controls {
     display: flex;
-    align-items: center;
   }
 
   .toolbar .right-controls {
     display: flex;
-    align-items: baseline;
 
     .separator {
       margin: 0px 4px;
+      align-self: center;
     }
 
-    a {
-      text-decoration: none;
-      font-size: 12px;
-      color: white;
-    }
-
-    &.controls-disabled {
+    .home-link {
+      align-self: center;
       a {
-        pointer-events: none;
+        text-decoration: none;
+        font-size: 12px;
+        color: white;
+        .controls-disabled & {
+          pointer-events: none;
+        }
       }
     }
   }
