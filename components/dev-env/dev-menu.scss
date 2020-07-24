@@ -13,7 +13,7 @@
   .toolbar .logo {
     display: flex;
     align-items: flex-end;
-    padding: 4px 8px;
+    padding: 2px 8px;
 
     font-family: "Courier New", Courier, monospace;
     font-size: 12px;
@@ -59,12 +59,6 @@
 
     .separator {
       margin: 0px 4px;
-    }
-
-    .save-icon {
-      font-size: 12px;
-      cursor: pointer;
-      color: white;
     }
 
     a {

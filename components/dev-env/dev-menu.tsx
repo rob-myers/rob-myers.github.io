@@ -30,7 +30,11 @@ export const DevMenu = () => {
     const nextPanelKeys = getConfigPanelKeys(nextLayout);
     dispatch(Act.restrictAppPortals({ panelKeys: nextPanelKeys }));
   };
-  const saveFilesAsJson = () => dispatch(Thunk.saveFilesToDisk({}));
+  const handleOptionSelect = (itemKey: string) => {
+    if (itemKey === 'save-project-as-json') {
+      dispatch(Thunk.saveFilesToDisk({}));
+    }
+  };
 
   return (
     <div className={css.menu} style={{ height: menuHeightPx }}>
@@ -50,22 +54,25 @@ export const DevMenu = () => {
           </div>
 
           <div className={css.rightControls}>
-            <div
-              className={css.saveIcon}
-              onClick={saveFilesAsJson}
-              title="save copy of files"
-            >
-              💾
-            </div>
+
+            <Select
+              items={[
+                { itemKey: '', label: 'opts' },
+                { itemKey: 'save-project-as-json', label: 'save as json' },
+              ]}
+              onChange={handleOptionSelect}
+              selectedKey=""
+              showSelectedOption={false}
+            />
 
             <div className={css.separator}>|</div>
 
             <Select
               items={[
-                { itemKey: '', label: 'layout...' },
+                { itemKey: '', label: 'layout' },
                 { itemKey: 'default-layout', label: 'default layout' },
               ]}
-              onChange={(itemKey) => handleLayoutChange(itemKey)}
+              onChange={handleLayoutChange}
               selectedKey=""
               showSelectedOption={false}
             />
