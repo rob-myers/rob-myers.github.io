@@ -1,13 +1,14 @@
 /**
- * Build public/packages/manifest.json.
+ * Build the global manifest.json for public/packages.
  * In development we should do this on-the-fly.
  */
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
 import path from 'path';
+import { Project, ts } from 'ts-morph';
 
-const publicDir = 'public';
-const packagesDir = 'public/packages';
-const manifestPath = 'public/packages/manifest.json';
+import { publicDir, packagesDir, manifestPath, PackagesManifest } from '../model/dev-env/manifest.model';
+
+const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
 
 updateManifest();
 
@@ -22,50 +23,43 @@ function updateManifest() {
   }
 }
 
-function getNextManifest(): Manifest {
-  /** Contains e.g. `packages/shared/util.ts` */
-  const allPaths = getDescendentPaths(packagesDir)
-    .map(x => path.relative(publicDir, x));
-  /** Contains e.g. `packages/shared/` */
-  const allPackageRoots = allPaths
-    .filter((x) => x.split('/').length > 2)
-    .map(x => (x.split('/').slice(0, 2).concat('')).join('/'))
-    .filter((x, i, xs) => xs.indexOf(x) === i);
+function getNextManifest(): PackagesManifest {
+  /** e.g. `public/packages/shared/util.ts` but not `public/packages/mock-reducer.ts` */
+  const allPaths = getDescendentPaths(packagesDir).filter((x) => x.split('/').length > 3);
+  /** e.g. `shared` sans dups */
+  const allPackages = allPaths.map(pathToPackageName).filter((x, i, xs) => xs.indexOf(x) === i);
+
+  const packageToDeps = {} as Record<string, Record<string, true>>;
+  for (const filePath of allPaths) {
+    const packageName = pathToPackageName(filePath);
+    const srcFile = project.createSourceFile(filePath, readFileSync(filePath).toString(), { overwrite: true });
+    [ ...srcFile.getImportDeclarations().map(x => x.getModuleSpecifier().getText().slice(1, -1)),
+      ...srcFile.getExportDeclarations().filter(x => x.hasModuleSpecifier())
+        .map(x => x.getModuleSpecifier()!.getText().slice(1, -1)),
+    ].filter(x => x.startsWith('@module/')).forEach(x =>
+      (packageToDeps[packageName] = (packageToDeps[packageName] || {}))[moduleSpecToPackageName(x)] = true);
+  }
 
   return {
-    packages: allPackageRoots
-      .reduce<Manifest['packages']>((agg, packageRoot) => ({
-        ...agg, [path.basename(packageRoot)]: {
-          key: path.basename(packageRoot),
-          rootPath: packageRoot,
-          files: allPaths.filter(x => x.startsWith(packageRoot))
+    packages: allPackages
+      .reduce<PackagesManifest['packages']>((agg, packageName) => ({
+        ...agg, [packageName]: {
+          key: packageName,
+          files: allPaths.map(x => path.relative(publicDir, x))
+            .filter(x => x.startsWith(`packages/${packageName}/`)),
+          dependencies: Object.keys(packageToDeps[packageName] || {}),
         },
       }), {}),
   };
 }
 
-function getPrevManifest(): Manifest | null {
+function getPrevManifest(): PackagesManifest | null {
   try {
     const contents = readFileSync(manifestPath).toString();
-    return JSON.parse(contents) as Manifest;
+    return JSON.parse(contents) as PackagesManifest;
   } catch (e) {
     return null;
   }
-}
-
-interface Manifest {
-  packages: {
-    [packageName: string]: Package;
-  };
-}
-
-interface Package {
-  /** Package name */
-  key: string;
-  /** Relative to web root e.g. packages/shared/ */
-  rootPath: string;
-  /** Relative to web root e.g. packages/shared/util.ts */
-  files: string[];
 }
 
 /**
@@ -76,6 +70,16 @@ function getDescendentPaths(filePath: string): string[] {
     ? Array.prototype.concat(
       ...readdirSync(filePath).map(f => getDescendentPaths(path.join(filePath, f))))
     : [filePath];
+}
+
+// public/packages/shared/foo -> shared
+function pathToPackageName(filePath: string) {
+  return filePath.split('/')[2];
+}
+
+// @module/shared/foo -> shared
+function moduleSpecToPackageName(moduleSpec: string) {
+  return moduleSpec.split('/')[1];
 }
 
 function prettyJson(serializable: any) {

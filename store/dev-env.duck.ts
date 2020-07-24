@@ -18,6 +18,7 @@ import { getCssModuleCode } from '@model/dev-env/css-module';
 import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
 import { isCyclicDepError } from '@model/dev-env/dev-env.model';
+import { manifestWebPath, PackagesManifest } from '@model/dev-env/manifest.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
 
 import { filterActs } from './reducer';
@@ -25,7 +26,7 @@ import { Thunk as EditorThunk } from './editor.duck';
 import { Thunk as LayoutThunk, Act as LayoutAct } from './layout.duck';
 
 export interface State {  
-  /** So can persist App instances across site */
+  /** Persists App instances across site */
   appPortal: KeyedLookup<Dev.AppPortal>;
   /** File lookup. */
   file: KeyedLookup<Dev.FileState>;
@@ -44,7 +45,8 @@ export interface State {
      */
     reducerValid: boolean;
   };
-  /** Mirrors layout.panel */
+  packagesManifest: null | PackagesManifest;
+  /** Mirrors layout.panel, permitting us to change panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
 }
 
@@ -57,6 +59,7 @@ const initialState: State = {
     initialized: false,
     reducerValid: false,
   },
+  packagesManifest: null,
   panelToMeta: {},
 };
 
@@ -100,6 +103,8 @@ export const Act = {
     createAct('[dev-env] restrict app portals', input),
   storeCodeTranspilation: (filename: string, transpilation: Dev.CodeTranspilation) =>
     createAct('[dev-env] store code transpilation', { filename, transpilation }),
+  storePackagesManifest: (manifest: PackagesManifest) =>
+    createAct('[dev-env] store packages manifest', { manifest }),
   storeStyleTranspilation: (filename: string, transpilation: Dev.StyleTranspilation) =>
     createAct('[dev-env] store style transpilation', { filename, transpilation }),
   updateFile: (filename: string, updates: Partial<Dev.FileState>) =>
@@ -409,6 +414,19 @@ export const Thunk = {
       return { key: 'success', stratification };
     },
   ),
+  fetchPackagesManifest: createThunk(
+    '[dev-env] fetch packages manifest',
+    async ({ dispatch }) => {
+      try {
+        const response = await fetch(manifestWebPath);
+        const manifest = await response.json();
+        dispatch(Act.storePackagesManifest(manifest));
+      } catch (e) {
+        console.error(e);
+        throw Error(`Error fetching ${manifestWebPath}`);
+      }
+    },
+  ),
   filenameToPanelKey: createThunk(
     '[dev-env] filename to panel key',
     ({ state: { devEnv } }, { filename }: { filename: string }) =>
@@ -472,8 +490,10 @@ export const Thunk = {
   ),
   initialize: createThunk(
     '[dev-env] initialize',
-    ({ dispatch, state: { devEnv } }) => {
+    async ({ dispatch, state: { devEnv } }) => {
       initializeRuntimeStore();
+      await dispatch(Thunk.fetchPackagesManifest({}));
+
       /**
        * TEMP provide demo files.
        */
@@ -817,6 +837,9 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] restrict app portals': return { ...state,
       appPortal: pluck(state.appPortal, ({ key }) => act.pay.panelKeys.includes(key)),
     };
+    case '[dev-env] store packages manifest': return { ...state,
+      packagesManifest: act.pay.manifest,
+    };
     case '[dev-env] store style transpilation': return { ...state,
       file: updateLookup(act.pay.filename, state.file, () => ({
         transpiled: act.pay.transpilation,
@@ -931,6 +954,7 @@ const bootstrapStyles = createEpic(
 const initializeFileSystem = createEpic(
   (action$, _state$) => action$.pipe(
     filterActs('persist/REHYDRATE' as any),
+    filter(_ => typeof window !== 'undefined'),
     map(() => Thunk.initialize({})),
   ),
 );
@@ -940,10 +964,12 @@ const initializeMonacoModels = createEpic(
     filterActs(
       '[editor] set monaco loaded',
       '[editor] set global types loaded',
+      '[dev-env] initialized',
     ),
     filter((_) =>
       state$.value.editor.monacoLoaded
       && state$.value.editor.globalTypesLoaded
+      && state$.value.devEnv.flag.initialized
     ),
     flatMap(() => [
       ...Object.values(state$.value.devEnv.file).flatMap((file) => [

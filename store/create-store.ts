@@ -95,6 +95,7 @@ const persistedReducer = persistReducer({
             transpiled: null,
           },
         }), {} as DevEnvState['file']),
+        packagesManifest: null,
         panelToMeta: {},
       }),
       (state, _key) => state,
