@@ -8,7 +8,7 @@
 
   &:hover {
     color: white;
-    background-color: rgb(40, 40, 40);
+    background-color: rgb(40, 50, 60);
     transition: background-color 300ms ease-in;
   }
 
@@ -57,11 +57,11 @@
   &.menu-open {
     background-image: linear-gradient(
       135deg,
-      #333333 16.67%,
+      #223344 16.67%,
       #111111 16.67%,
       #111111 50%,
-      #333333 50%,
-      #333333 66.67%,
+      #223344 50%,
+      #223344 66.67%,
       #111111 66.67%,
       #111111 100%
     );
