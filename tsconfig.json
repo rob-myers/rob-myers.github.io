@@ -30,7 +30,8 @@
   },
   "exclude": [
     "node_modules",
-    "public/packages"
+    "public/packages",
+    "out"
   ],
   "include": [
     "next-env.d.ts",

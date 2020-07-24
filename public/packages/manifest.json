@@ -1,0 +1,25 @@
+{
+	"packages": {
+		"intro": {
+			"key": "intro",
+			"rootPath": "packages/intro/",
+			"files": [
+				"packages/intro/app.tsx",
+				"packages/intro/index.scss",
+				"packages/intro/other.scss",
+				"packages/intro/reducer.ts",
+				"packages/intro/test.duck.ts"
+			]
+		},
+		"shared": {
+			"key": "shared",
+			"rootPath": "packages/shared/",
+			"files": [
+				"packages/shared/react-redux.d.ts",
+				"packages/shared/redux.model.ts",
+				"packages/shared/scss.d.ts",
+				"packages/shared/util.ts"
+			]
+		}
+	}
+}

@@ -4,7 +4,7 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 - [ ] load code at runtime using manifest
-- [ ] build `public/packages-manifest.json` by watching `public/packages` 
+- [x] build `public/packages/manifest.json` by watching `public/packages` 
 - [x] create projects and modules inside `public/packages`
 - [x] can save current files to disk as json
 - [x] resolve files like `@module/core/util`.

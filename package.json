@@ -37,8 +37,8 @@
     "node": ">=14.2.0"
   },
   "scripts": {
-    "dev": "yarn next-cfg && concurrently 'next -p 3001' 'yarn syntax-remotedev'",
-    "build": "yarn next-cfg && next build",
+    "dev": "yarn next-cfg && concurrently 'next -p 3001' 'yarn syntax-remotedev' 'yarn watch-packages-manifest'",
+    "build": "yarn next-cfg && yarn build-packages-manifest && next build",
     "start": "yarn next-cfg && next start",
     "export": "next export",
     "deploy": "yarn local-deploy && yarn deploy-from-local",
@@ -54,7 +54,10 @@
     "cp-sass-worker": "cp node_modules/sass.js/dist/sass.worker.js public",
     "cp-es-react": "mkdir -p public/es-react && cp node_modules/es-react/dev/*.js public/es-react",
     "cp-es-redux": "mkdir -p public/es-redux && cp node_modules/redux/es/redux.mjs public/es-redux/redux.js",
-    "react-refresh-test": "TS_NODE_PROJECT='./model/dev-env/tsconfig.code.json' ts-node model/dev-env/react-refresh-transform"
+    "ts-node": "node -r esm -r  ts-node/register",
+    "react-refresh-test": "yarn ts-node model/dev-env/react-refresh-transform",
+    "build-packages-manifest": "yarn ts-node scripts/packages-manifest.ts",
+    "watch-packages-manifest": "nodemon --watch 'public/packages/**/*' -e ts,tsx,scss --exec 'yarn build-packages-manifest'"
   },
   "devDependencies": {
     "@mdx-js/loader": "^1.6.6",
@@ -96,6 +99,7 @@
     "eslint-plugin-promise": "4.2.1",
     "eslint-plugin-react": "7.18.0",
     "eslint-plugin-standard": "4.0.1",
+    "esm": "^3.2.25",
     "extract-css-chunks-webpack-plugin": "^4.7.4",
     "file-loader": "^6.0.0",
     "gh-pages": "2.2.0",
@@ -105,6 +109,7 @@
     "monaco-editor-webpack-plugin": "^1.9.0",
     "next": "^9.4.1",
     "node-sass": "^4.13.1",
+    "nodemon": "^2.0.4",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "postcss-loader": "^3.0.0",
     "raw-loader": "^4.0.1",

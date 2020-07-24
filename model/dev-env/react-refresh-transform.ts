@@ -856,7 +856,7 @@ const reactRefreshTransform = new ReactRefreshTransform({
 reactRefreshTransform.setupVisitors();
 export default reactRefreshTransform;
  
-// Test
+// // Test
 // import { exampleTsx3 } from './examples';
 // reactRefreshTransform.run(exampleTsx3, 'fake.tsx').then(
 //   ({ code }) => console.log({ code })
