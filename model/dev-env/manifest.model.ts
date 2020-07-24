@@ -17,7 +17,12 @@ interface PackageMeta {
   /**
    * Package names occurring in some module specifier of `files`.
    * For example `@module/shared/redux.model` yields `shared`.
-   * Technically we may only be using typings.
+   * Technically we may only be using typings rather than values.
    */
   dependencies: string[];
+  /**
+   * Transitive closure of `dependencies`.
+   * We do not support cyclic dependencies.
+   */
+  transitiveDeps: string[];
 }

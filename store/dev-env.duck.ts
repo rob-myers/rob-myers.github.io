@@ -45,6 +45,7 @@ export interface State {
      */
     reducerValid: boolean;
   };
+  package: KeyedLookup<Dev.LoadedPackage>;
   packagesManifest: null | PackagesManifest;
   /** Mirrors layout.panel, permitting us to change panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
@@ -59,6 +60,7 @@ const initialState: State = {
     initialized: false,
     reducerValid: false,
   },
+  package: {},
   packagesManifest: null,
   panelToMeta: {},
 };

@@ -491,3 +491,18 @@ interface TsExportAsgn {
 export function isTsExportDecl(x: TsExportMeta): x is TsExportDecl {
   return x.key === 'export-decl';
 }
+
+export interface LoadedPackage {
+  key: string;
+  file: KeyedLookup<LoadedPackageFile>;
+  /**
+   * Keys of packages this package transitively depends upon.
+   */
+  dependencies: string[];
+}
+
+interface LoadedPackageFile {
+  /** Filename e.g.  */
+  key: string;
+  contents: string;
+}

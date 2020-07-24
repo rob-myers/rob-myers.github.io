@@ -8,8 +8,6 @@ import { Project, ts } from 'ts-morph';
 
 import { publicDir, packagesDir, manifestPath, PackagesManifest } from '../model/dev-env/manifest.model';
 
-const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
-
 updateManifest();
 
 function updateManifest() {
@@ -28,6 +26,8 @@ function getNextManifest(): PackagesManifest {
   const allPaths = getDescendentPaths(packagesDir).filter((x) => x.split('/').length > 3);
   /** e.g. `shared` sans dups */
   const allPackages = allPaths.map(pathToPackageName).filter((x, i, xs) => xs.indexOf(x) === i);
+
+  const project = new Project({ compilerOptions: { jsx: ts.JsxEmit.React } });
 
   const packageToDeps = {} as Record<string, Record<string, true>>;
   for (const filePath of allPaths) {
@@ -48,6 +48,7 @@ function getNextManifest(): PackagesManifest {
           files: allPaths.map(x => path.relative(publicDir, x))
             .filter(x => x.startsWith(`packages/${packageName}/`)),
           dependencies: Object.keys(packageToDeps[packageName] || {}),
+          transitiveDeps: [], // Populated later
         },
       }), {}),
   };

@@ -97,6 +97,7 @@ const persistedReducer = persistReducer({
         }), {} as DevEnvState['file']),
         packagesManifest: null,
         panelToMeta: {},
+        package: {},
       }),
       (state, _key) => state,
       { whitelist: ['devEnv'] },
