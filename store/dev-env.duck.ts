@@ -966,14 +966,14 @@ const manageAppPortals = createEpic(
       if (act.type === '[dev-env] create app panel meta') {
         if (!state$.value.devEnv.appPortal[panelKey]) {
           const portalNode = portals.createHtmlPortalNode();
-          portalNode.element.style.height = '100%';
+          portalNode.element.style.overflow = 'auto';
           return [Act.addAppPortal(panelKey, portalNode)];
         }
         return [];
       } else if (act.type === '[dev-env] change panel meta') {
         if (act.pay.to === 'app') {
           const portalNode = portals.createHtmlPortalNode();
-          portalNode.element.style.height = '100%';
+          portalNode.element.style.overflow = 'auto';
           return [Act.addAppPortal(panelKey, portalNode)];
         } else {
           return [Act.removeAppPortal(panelKey)];

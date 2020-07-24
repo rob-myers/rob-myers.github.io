@@ -18,7 +18,7 @@ const AppPortals: React.FC = ({ children }) => {
       <div className={css.appPortals}>
         {Object.values(appPortal).map(({ key: panelKey, portalNode }) => (
           <portals.InPortal key={panelKey} node={portalNode}>
-            <div id={panelKeyToAppElId(panelKey)} style={{ height: '100%' }}>
+            <div id={panelKeyToAppElId(panelKey)}>
               <div className={css.appNotMounted}>
                 App is not mounted.
               </div>
