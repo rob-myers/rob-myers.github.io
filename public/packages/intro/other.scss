@@ -1,0 +1,10 @@
+.other-class {
+  color: green;
+}
+
+@mixin myMixin {
+  color: #ccc;
+  border: 1px solid black;
+  cursor: pointer;
+  padding: 2px 12px;
+}

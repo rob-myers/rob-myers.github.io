@@ -1,0 +1,11 @@
+@import "./other.scss";
+
+.my-ancestral-class {
+  overflow: auto;
+  height: 100%;
+
+  .my-class {
+    @include myMixin;
+    background: rgba(255, 0, 0, 0.623);
+  }
+}

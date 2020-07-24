@@ -1,41 +1,32 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "ES2018",
     "lib": [
       "dom",
       "dom.iterable",
       "esnext"
     ],
-    "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
-      "@components/*": ["components/*"],
-      "@store/*": ["store/*"],
-      "@model/*": ["model/*"],
-      "@worker/*": ["worker/*"],
-      "@env/*": ["env/*"],
-      "@public/*": ["public/*"]
+      "@module/*": ["./*"],
+      "@reducer": ["mock-reducer"]
     },
     "downlevelIteration": true
   },
   "exclude": [
-    "node_modules",
-    "public/packages"
+    "node_modules"
   ],
   "include": [
-    "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "types/*"
+    "shared/*"
   ]
 }

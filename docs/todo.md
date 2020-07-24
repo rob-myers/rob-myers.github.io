@@ -3,9 +3,10 @@
 See [blog notes](./blog.md).
 
 # Online Dev Environment
-
+- [ ] load code at runtime using manifest
+- [ ] build `public/packages-manifest.json` by watching `public/packages` 
+- [x] create projects and modules inside `public/packages`
 - [x] can save current files to disk as json
-- [ ] load project files via `file-loader`
 - [x] resolve files like `@module/core/util`.
 - [x] live tsconfig has alias `@module` resolving to top-level-dir `module`
 - [x] move `declare module 'react-redux'` into `custom-types.d.ts`.
@@ -14,7 +15,7 @@ See [blog notes](./blog.md).
   > can import from `@module/core/util`, `@module/core/redux.model`.
 - [ ] preserve large chunks during build
 - [ ] add desktop/mobile layout; mobile layout prevents tab dragging/duplicating
-- [ ] draft a blog entry via doc panel
+- [ ] write a blog entry and show it in a doc panel
 - [x] prevent app from rendering whilst reducer currently invalid
 - [x] better useDispatch typings, supporting thunks
 - [x] type `useDispatch` and `useSelector`
