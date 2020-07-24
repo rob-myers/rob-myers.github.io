@@ -12,7 +12,9 @@
 			"dependencies": [
 				"shared"
 			],
-			"transitiveDeps": []
+			"transitiveDeps": [
+				"shared"
+			]
 		},
 		"shared": {
 			"key": "shared",

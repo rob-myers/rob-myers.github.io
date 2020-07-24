@@ -1,29 +1,23 @@
 import { flatten, removeFirst } from './generic.model';
 
-//#region nodes
-
 export interface BaseNodeOpts {
   /** uid for node */
-  id: string;
+  key: string;
   /** Optional extra data for debugging */
   context?: any;
 }
 
 export class BaseNode<NodeOpts extends BaseNodeOpts = BaseNodeOpts> {
   /** Identifies the node. */
-  public id: string;
+  public key: string;
 
   constructor(
     /** Original options used to construct node, so can clone. */
     public opts: NodeOpts
   ) {
-    this.id = opts.id;
+    this.key = opts.key;
   }
 }
-
-//#endregion
-
-//#region edges
 
 export interface BaseEdgeOpts<Node extends BaseNode> {
   src: Node | string;
@@ -44,15 +38,11 @@ export class BaseEdge<
     // Assume not strings
     this.src = opts.src as Node;
     this.dst = opts.dst as Node;
-    this.id = `${this.src.id}->${this.dst.id}`;
+    this.id = `${this.src.key}->${this.dst.key}`;
     const { src: _, dst: __, ...otherOpts } = opts;
     this.otherOpts = otherOpts;
   }
 }
-
-//#endregion
-
-//#region IGraph
 
 export interface IGraph<
   Node extends BaseNode,
@@ -72,11 +62,7 @@ export interface IGraph<
   getNodeByid(nodeid: string): Node | null;
 }
 
-//#endregion
-
-//#region base graph
-
-export abstract class BaseGraph<
+export class Graph<
   Node extends BaseNode = BaseNode,
   NodeOpts extends BaseNodeOpts = BaseNodeOpts,
   Edge extends BaseEdge<Node> = BaseEdge<Node>,
@@ -104,9 +90,7 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
   /** Edge lookup by `edge.id`. */
   public idToEdge: Map<string, Edge>;
 
-  constructor(
-    public EdgeClass: { new(opts: EdgeOpts): Edge },
-  ) {
+  constructor(public EdgeClass: { new(opts: EdgeOpts): Edge }) {
     this.nodes = new Set<Node>();
     this.succ = new Map<Node, Map<Node, Edge>>();
     this.pred = new Map<Node, Map<Node, Edge>>();
@@ -116,10 +100,17 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
     this.idToEdge = new Map<string, Edge>();
   }
 
+  public static createBasicGraph(nodeKeys = [] as string[], edgeKeys = [] as [string, string][]) {
+    const graph = new Graph(BaseEdge);
+    nodeKeys.forEach(nodeKey => graph.ensureNode(new BaseNode({ key: nodeKey })));
+    edgeKeys.forEach(([srcKey, dstKey]) => graph.connect({ src: srcKey, dst: dstKey }));
+    return graph;
+  }
+
   /**
    * Get reachable nodes in breadth-first manner.
    */
-  public getReachableNodes(node: Node): Node[] {
+  public getReachableNodes(node: Node, { withoutFirst = false }): Node[] {
     const reachable = new Set<Node>([node]);
     let [count, frontier] = [0, [node]];
     while (reachable.size > count) {
@@ -127,26 +118,59 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
       frontier = flatten(frontier.map((node) => this.getSuccs(node)));
       frontier.forEach((node) => reachable.add(node));
     }
-    return Array.from(reachable.values());
+    return Array.from(reachable.values()).slice(withoutFirst ? 1 : 0);
   }
 
   public getReachableUpto(
     node: Node,
-    /**
-     * Predicate should evaluate true at `node` iff we
-     * should __not__ aggregate its successors.
-     */
+    /** Evaluate true iff shouldn't aggregate its successors. */
     stopWhen: (node: Node) => boolean,
   ): Node[] {
-    const reachable = new Set<Node>([node]);
+    const reachable = new Set([node]);
     let [count, frontier] = [0, [node]];
     while (reachable.size > count) {
       count = reachable.size;
-      frontier = flatten(frontier
-        .map((node) => stopWhen(node) ? [] : this.getSuccs(node)));
+      frontier = flatten(frontier.map((node) => stopWhen(node) ? [] : this.getSuccs(node)));
       frontier.forEach((node) => reachable.add(node));
     }
     return Array.from(reachable.values());
+  }
+
+  public hasReachableSatisfying(
+    node: Node,
+    predicate: (node: Node) => boolean | undefined,
+  ): boolean {
+    const reachable = new Set([node]);
+    let [count, frontier] = [0, [node]];
+    while (reachable.size > count && !predicate(node)) {
+      count = reachable.size;
+      frontier = flatten(frontier.map((node) => this.getSuccs(node)));
+      frontier.forEach((node) => reachable.add(node));
+    }
+    return reachable.size !== count;
+  }
+
+  public findCycle()  {
+    const seen = new Set<Node>();
+    let first = undefined as Node | undefined;
+    let last = undefined as Node | undefined;
+
+    while (!last && (first = this.nodesArray.find(x => !seen.has(x)))) {
+      this.hasReachableSatisfying(first, (node) => {
+        if (this.getSuccs(node).some(x => x === node)) {
+          return !!(last = node);
+        }
+        seen.add(node);
+      });
+    }
+    return last ? { first: first!, last } : null;
+  }
+
+  public throwOnCycle(msg: string) {
+    const cycle = this.findCycle();
+    if (cycle) {
+      throw Error(`${msg}: ${JSON.stringify(cycle)}`);
+    }
   }
 
   public reset(): void {
@@ -159,11 +183,20 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
     this.idToEdge.clear();
   }
 
+  /** Returns true if added, false if extant. */
+  public ensureNode(node: Node) {
+    if (this.hasNode(node)) {
+      return false;
+    }
+    this.registerNode(node);
+    return true;
+  }
+
   public removeNode(node: Node): boolean {
     if (this.nodes.has(node)) {
       this.nodes.delete(node);
       removeFirst(this.nodesArray, node);
-      this.idToNode.delete(node.id);
+      this.idToNode.delete(node.key);
       // remove edges to `node`
       this.getPreds(node).forEach((other) =>
         this.removeEdge(this.getEdge(other, node)));
@@ -354,7 +387,7 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
     this.nodesArray.push(node);
     this.succ.set(node, new Map<Node, Edge>());
     this.pred.set(node, new Map<Node, Edge>());
-    this.idToNode.set(node.id, node);
+    this.idToNode.set(node.key, node);
   }
 
   /**
@@ -375,4 +408,3 @@ implements IGraph<Node, NodeOpts, Edge, EdgeOpts> {
     this.edgesArray.push(edge);
   }
 }
-//#endregion

@@ -1,12 +1,13 @@
 /**
  * Build the global manifest.json for public/packages.
- * In development we should do this on-the-fly.
+ * In development we'll run this script on-the-fly.
  */
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
 import path from 'path';
 import { Project, ts } from 'ts-morph';
 
 import { publicDir, packagesDir, manifestPath, PackagesManifest } from '../model/dev-env/manifest.model';
+import { Graph, BaseNode } from '../model/graph.model';
 
 updateManifest();
 
@@ -16,8 +17,8 @@ function updateManifest() {
   const nextContents = prettyJson(nextManifest);
 
   if (prettyJson(prevManifest) !== nextContents) {
-    console.log(`updating "${manifestPath}"...`);
     writeFileSync(manifestPath, nextContents);
+    console.log(`updated packages manifest "${manifestPath}"`);
   }
 }
 
@@ -40,6 +41,12 @@ function getNextManifest(): PackagesManifest {
       (packageToDeps[packageName] = (packageToDeps[packageName] || {}))[moduleSpecToPackageName(x)] = true);
   }
 
+  const edgePairs = allPackages.flatMap(srcKey => Object.keys(packageToDeps[srcKey] || {})
+    .map(next => [srcKey, next] as [string, string]));
+  const graph = Graph.createBasicGraph(allPackages, edgePairs);
+  // Fail if @packages have a cyclic dependency
+  graph.throwOnCycle('@packages have cyclic dependency');
+
   return {
     packages: allPackages
       .reduce<PackagesManifest['packages']>((agg, packageName) => ({
@@ -48,7 +55,9 @@ function getNextManifest(): PackagesManifest {
           files: allPaths.map(x => path.relative(publicDir, x))
             .filter(x => x.startsWith(`packages/${packageName}/`)),
           dependencies: Object.keys(packageToDeps[packageName] || {}),
-          transitiveDeps: [], // Populated later
+          transitiveDeps: graph
+            .getReachableNodes(graph.getNodeById(packageName)!, { withoutFirst: true })
+            .map(({ key }) => key)
         },
       }), {}),
   };
@@ -73,12 +82,12 @@ function getDescendentPaths(filePath: string): string[] {
     : [filePath];
 }
 
-// public/packages/shared/foo -> shared
+/** e.g. `public/packages/shared/foo` --> `shared` */
 function pathToPackageName(filePath: string) {
   return filePath.split('/')[2];
 }
 
-// @package/shared/foo -> shared
+/** e.g. `@package/shared/foo` --> `shared` */
 function moduleSpecToPackageName(moduleSpec: string) {
   return moduleSpec.split('/')[1];
 }
