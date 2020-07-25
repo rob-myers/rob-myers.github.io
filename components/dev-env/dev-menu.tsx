@@ -14,6 +14,12 @@ export const DevMenu = () => {
   const [disabled, setDisabled] = useState(true);
   const monacoLoaded = useSelector(({ editor: { monacoLoaded } }) => monacoLoaded);
   const monacoLoading = useSelector(({ editor: { monacoLoading } }) => monacoLoading);
+
+  const packages = useSelector(({ devEnv }) => Object.keys(devEnv.package));
+  const projects = useSelector(({ devEnv }) =>
+    Object.values(devEnv.packagesManifest?.packages || {})
+      .filter(x => x.project).map(x => x.key));
+
   /**
    * We disable controls initially or when monaco is loading.
    * This gives the web-workers time to load.
@@ -38,6 +44,9 @@ export const DevMenu = () => {
   const handleProjectSelect = (_itemKey: string) => {
     // TODO
   };
+  const handlePackageSelect = (_itemKey: string) => {
+    // TODO
+  };
 
   return (
     <div className={css.menu} style={{ height: menuHeightPx }}>
@@ -54,10 +63,26 @@ export const DevMenu = () => {
             <Select
               items={[
                 { itemKey: '', label: 'project' },
-                // { itemKey: 'save-project-as-json', label: 'save as json' },
+                ...projects.map(packageName => ({
+                  itemKey: packageName, label: packageName,
+                })),
+                { itemKey: 'reset-project', label: 'reset project' },
               ]}
               onChange={handleProjectSelect}
               selectedKey=""
+              showSelectedOption={false}
+            />
+
+            <Select
+              items={[
+                { itemKey: '', label: 'package' },
+                ...packages.map(packageName => ({
+                  itemKey: packageName, label: packageName,
+                })),
+              ]}
+              onChange={handlePackageSelect}
+              selectedKey=""
+              showSelectedOption={false}
             />
           </div>
 
@@ -73,8 +98,6 @@ export const DevMenu = () => {
               showSelectedOption={false}
             />
 
-            <div className={css.separator}>|</div>
-
             <Select
               items={[
                 { itemKey: '', label: 'layout' },
@@ -84,8 +107,6 @@ export const DevMenu = () => {
               selectedKey=""
               showSelectedOption={false}
             />
-
-            <div className={css.separator}>|</div>
 
             <div className={css.homeLink}>
               <Link href="/"><a>home</a></Link>

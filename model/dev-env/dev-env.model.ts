@@ -5,7 +5,7 @@ import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
 import { Redacted } from '@model/store/redux.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
 
-export const menuHeightPx = 30;
+export const menuHeightPx = 28;
 
 const supportedFileExts = ['.tsx', '.scss', '.ts'];
 
