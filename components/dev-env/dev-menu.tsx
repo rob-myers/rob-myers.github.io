@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
 import { menuHeightPx } from '@model/dev-env/dev-env.model';
-import { getConfigPanelKeys } from '@model/layout/example-layout.model';
+import { getConfigPanelKeys } from '@model/layout/generate-layout';
 import { Act, Thunk } from '@store/dev-env.duck';
 import { Thunk as LayoutThunk } from '@store/layout.duck';
 import Select from '@components/select/select';
@@ -53,7 +53,12 @@ export const DevMenu = () => {
       <div className={css.toolbar}>
 
         <div className={css.logo}>
-          com<span>(</span>mit<span>|</span>ment<span>)</span>
+          com
+          <span className={css.left}>⟨</span>
+          mit
+          <span className={css.middle}>❘</span>
+          ment
+          <span className={css.right}>⟩</span>
         </div>
 
         <div className={classNames(css.controls, {

@@ -2,7 +2,7 @@
   display: flex;
   background: #111;
   box-sizing: border-box;
-  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+  font-family: monospace;
 
   .toolbar {
     display: flex;
@@ -12,9 +12,9 @@
   .toolbar .logo {
     display: flex;
     align-items: center;
-    padding: 0 8px 0 8px;
+    padding: 0 8px;
 
-    font-size: 12px;
+    font-size: 15px;
     color: #ccd;
 
     background-image: linear-gradient(
@@ -30,8 +30,16 @@
     background-size: 5.07px 5.07px;
 
     span {
-      color: #8ca;
-      padding: 0 1px;
+      color: #5ca;
+      &.left {
+        padding: 2px 2px 0 3px;
+      }
+      &.middle {
+        padding: 2px 4px 0 4px;
+      }
+      &.right {
+        padding: 2px 0 0 1px;
+      }
     }
   }
 
@@ -56,6 +64,7 @@
       margin-left: 4px;
       display: flex;
       align-self: center;
+      padding-top: 2px;
 
       a {
         text-decoration: none;
