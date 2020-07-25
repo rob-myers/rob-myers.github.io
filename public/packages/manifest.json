@@ -1,5 +1,20 @@
 {
 	"packages": {
+		"bipartite": {
+			"key": "bipartite",
+			"files": [
+				"packages/bipartite/independent-set.ts",
+				"packages/bipartite/matching.ts",
+				"packages/bipartite/vertex-cover.ts"
+			],
+			"dependencies": [
+				"performance"
+			],
+			"project": false,
+			"transitiveDeps": [
+				"performance"
+			]
+		},
 		"intro": {
 			"key": "intro",
 			"files": [
@@ -12,9 +27,21 @@
 			"dependencies": [
 				"shared"
 			],
+			"project": true,
 			"transitiveDeps": [
 				"shared"
 			]
+		},
+		"performance": {
+			"key": "performance",
+			"files": [
+				"packages/performance/array-pool.ts",
+				"packages/performance/bit-hacks.ts",
+				"packages/performance/interval-tree.ts"
+			],
+			"dependencies": [],
+			"project": false,
+			"transitiveDeps": []
 		},
 		"shared": {
 			"key": "shared",
@@ -25,6 +52,7 @@
 				"packages/shared/util.ts"
 			],
 			"dependencies": [],
+			"project": false,
 			"transitiveDeps": []
 		}
 	}

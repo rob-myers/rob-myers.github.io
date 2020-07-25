@@ -1,5 +1,5 @@
 /**
- * Originally created by Alex Bol on 4/1/2017.
+ * Created by Alex Bol on 4/1/2017.
  * Source: https://github.com/alexbol99/flatten-interval-tree/blob/master/dist/main.esm.js
  */
 
@@ -223,7 +223,6 @@ class Node extends BaseNode<number, Interval>  {
       return comparable_less_than(search_node.item.key!.high, low);
   }
 }
-
 
 /**
 * Implementation of interval binary search tree <br/>

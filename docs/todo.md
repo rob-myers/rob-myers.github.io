@@ -4,6 +4,8 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [ ] start work on svg-based static rectilinear level-design app
+- [ ] convert npm module `rectangle-decomposition` into a package
 - [x] use `@package` instead of `@module`
 - [x] packages manifest includes transitive dependencies
 - [x] packages manifest includes dependencies
