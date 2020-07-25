@@ -19,7 +19,9 @@ const Select: React.FC<Props> = ({
 
   return items.length ? (
     <div
-      className={classNames(css.root, { [css.open]: isOpen })}
+      className={classNames(css.root, {
+        [css.open]: isOpen
+      })}
       tabIndex={0}
       onBlur={() => setIsOpen(false)}
       onKeyUp={({ key }) => key === 'Escape' && setIsOpen(false)}

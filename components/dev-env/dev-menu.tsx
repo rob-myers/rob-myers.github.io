@@ -62,11 +62,11 @@ export const DevMenu = () => {
           <div className={css.leftControls}>
             <Select
               items={[
-                { itemKey: '', label: 'project' },
+                { itemKey: '', label: 'load project' },
                 ...projects.map(packageName => ({
                   itemKey: packageName, label: packageName,
                 })),
-                { itemKey: 'reset-project', label: 'reset project' },
+                { itemKey: 'reset-project', label: 'reset current' },
               ]}
               onChange={handleProjectSelect}
               selectedKey=""
@@ -75,7 +75,7 @@ export const DevMenu = () => {
 
             <Select
               items={[
-                { itemKey: '', label: 'package' },
+                { itemKey: '', label: 'ensure pkg' },
                 ...packages.map(packageName => ({
                   itemKey: packageName, label: packageName,
                 })),

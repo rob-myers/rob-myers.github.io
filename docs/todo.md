@@ -4,6 +4,10 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
+- [ ] can ensure packages and have loaded/tested `bipartite` package
+- [ ] projects have a layout and a default layout
+- [ ] package files are read-only
+- [ ] panel title shows package filename as `...{package}/rest/of/path`
 - [ ] start work on svg-based static rectilinear level-design app
 - [ ] convert npm module `rectangle-decomposition` into a package
 - [x] use `@package` instead of `@module`
