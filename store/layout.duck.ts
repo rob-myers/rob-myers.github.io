@@ -3,16 +3,17 @@ import { Redacted, ActionsUnion, createAct, updateLookup, redact, removeFromLook
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { LayoutPanelMeta, ExtendedContainer, GoldenLayoutConfig } from '@model/layout/layout.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { CustomPanelMetaKey, getDefaultLayoutConfig } from '@model/layout/example-layout.model';
+import { CustomPanelMetaKey, getDefaultLayoutConfig } from '@model/layout/generate-layout';
 
 /** Assume exactly one layout. */
 export interface State {
-  /** We use this config to change configs. */
-  nextConfig: GoldenLayoutConfig;
   /** Native instance of `GoldenLayout`. */
   goldenLayout: null | Redacted<GoldenLayout>;
+  /** We use this config to change configs. */
+  nextConfig: GoldenLayoutConfig;
   /** Lookup to keep track of layout panels. */
   panel: KeyedLookup<LayoutPanelState>;
+  savedConfig: KeyedLookup<SavedGoldenLayoutConfig>;
 }
 
 export interface LayoutPanelState {
@@ -34,10 +35,16 @@ export interface LayoutPanelState {
   container: Redacted<ExtendedContainer>;
 }
 
+interface SavedGoldenLayoutConfig {
+  key: string;
+  config: GoldenLayoutConfig;
+}
+
 const getInitialState = (): State => ({
-  nextConfig: getDefaultLayoutConfig(),
   goldenLayout: null,
+  nextConfig: getDefaultLayoutConfig(),
   panel: {},
+  savedConfig: {},
 });
 
 export const Act = {
@@ -67,9 +74,10 @@ export const Act = {
     width: number;
     height: number;
   }) => createAct('[layout] panel shown', input),
-  setNextConfig: (input: {
-    nextConfig: GoldenLayoutConfig;
-  }) => createAct('[layout] set next config', input),
+  saveConfig: (input: { key: string; config: GoldenLayoutConfig; }) =>
+    createAct('[layout] save config', input),
+  setNextConfig: (input: { nextConfig: GoldenLayoutConfig; }) =>
+    createAct('[layout] set next config', input),
   triggerPersist: () =>
     createAct('[layout] trigger persist', {}),
 };
@@ -171,6 +179,11 @@ export const reducer = (state = getInitialState(), act: Action): State => {
           initialized: initialized || (width && height ? true : false),
           width, height,
         }))
+      };
+    }
+    case '[layout] save config': {
+      return { ...state,
+        savedConfig: addToLookup(act.pay, state.savedConfig),
       };
     }
     case '[layout] set next config': {

@@ -16,7 +16,7 @@ import * as PatchJs from '@model/dev-env/patch-js-imports';
 import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/dev-env/handle-scss-imports';
 import { getCssModuleCode } from '@model/dev-env/css-module';
 import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
-import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
+import { CustomPanelMetaKey } from '@model/layout/generate-layout';
 import { isCyclicDepError } from '@model/dev-env/dev-env.model';
 import { manifestWebPath, PackagesManifest } from '@model/dev-env/manifest.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
@@ -45,7 +45,7 @@ export interface State {
      */
     reducerValid: boolean;
   };
-  package: KeyedLookup<Dev.LoadedPackage>;
+  package: KeyedLookup<Dev.PackageData>;
   packagesManifest: null | PackagesManifest;
   /** Mirrors layout.panel, permitting us to change panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
@@ -70,7 +70,7 @@ export const Act = {
     createAct('[dev-env] add app portal', { panelKey, portalNode: redact(portalNode) }),
   addFileCleanups: (filename: string, cleanups: (() => void)[]) =>
     createAct('[dev-env] add file cleanups', { filename, cleanups }),
-  addPackage: (newPackage: Dev.LoadedPackage) =>
+  addPackage: (newPackage: Dev.PackageData) =>
     createAct('[dev-env] add package', { newPackage }),
   appWasValid: () =>
     createAct('[dev-env] app was valid', {}),
@@ -511,6 +511,10 @@ export const Thunk = {
       initializeRuntimeStore();
       await dispatch(Thunk.fetchPackagesManifest({}));
       await dispatch(Thunk.fetchPackages({}));
+
+      /**
+       * TODO load project 'intro' along with default/saved layout
+       */
 
       /**
        * TEMP provide demo files.

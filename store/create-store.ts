@@ -12,9 +12,9 @@ import { State as EditorState } from './editor.duck';
 import { State as LayoutState } from './layout.duck';
 import { State as DevEnvState } from './dev-env.duck';
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
-import { getDefaultLayoutConfig } from '@model/layout/example-layout.model';
+import { getDefaultLayoutConfig } from '@model/layout/generate-layout';
 
-const storeVersion = 0.33;
+const storeVersion = 0.34;
 
 const thunkMiddleware = () =>
   (params: Omit<RootThunkParams, 'state'>) =>
@@ -64,7 +64,8 @@ const persistedReducer = persistReducer({
       { whitelist: ['editor'] }
     ),
     createTransform<LayoutState, LayoutState>(
-      ({ goldenLayout }, _key) => ({
+      ({ goldenLayout, savedConfig: cachedConfig }, _key) => ({
+        savedConfig: cachedConfig,
         goldenLayout: null,
         nextConfig: goldenLayout?.toConfig() || getDefaultLayoutConfig(),
         panel: {},

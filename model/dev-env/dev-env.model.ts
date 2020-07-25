@@ -1,11 +1,11 @@
 import { HtmlPortalNode } from 'react-reverse-portal';
 import { KeyedLookup, lookupFromValues, testNever } from '@model/generic.model';
 import { LayoutPanelMeta } from '@model/layout/layout.model';
-import { CustomPanelMetaKey } from '@model/layout/example-layout.model';
+import { CustomPanelMetaKey } from '@model/layout/generate-layout';
 import { Redacted } from '@model/store/redux.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
 
-export const menuHeightPx = 28;
+export const menuHeightPx = 24;
 
 const supportedFileExts = ['.tsx', '.scss', '.ts'];
 
@@ -492,12 +492,12 @@ export function isTsExportDecl(x: TsExportMeta): x is TsExportDecl {
   return x.key === 'export-decl';
 }
 
-export interface LoadedPackage {
+export interface PackageData {
   key: string;
-  file: KeyedLookup<LoadedPackageFile>;
+  file: KeyedLookup<PackageFiles>;
 }
 
-interface LoadedPackageFile {
+interface PackageFiles {
   /** Filename e.g.  */
   key: string;
   contents: string;
