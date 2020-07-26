@@ -358,7 +358,7 @@ export const Thunk = {
           ...oldCompilerOptions.paths,
           // Our own notion of package/module
           '@package/*': ['package/*'],
-          // Used by redux.model.ts & custom-types.d.ts
+          // Used by shared/redux.model.ts and shared/react-redux.d.ts
           '@reducer': ['reducer'],
         },
         declaration: true, // Generate d.ts content in `emitOutput.outputFiles[1]`

@@ -3,9 +3,9 @@
 		"bipartite": {
 			"key": "bipartite",
 			"files": [
-				"packages/bipartite/independent-set.ts",
-				"packages/bipartite/matching.ts",
-				"packages/bipartite/vertex-cover.ts"
+				"package/bipartite/independent-set.ts",
+				"package/bipartite/matching.ts",
+				"package/bipartite/vertex-cover.ts"
 			],
 			"dependencies": [
 				"performance"
@@ -18,11 +18,11 @@
 		"intro": {
 			"key": "intro",
 			"files": [
-				"packages/intro/app.tsx",
-				"packages/intro/index.scss",
-				"packages/intro/other.scss",
-				"packages/intro/reducer.ts",
-				"packages/intro/test.duck.ts"
+				"package/intro/app.tsx",
+				"package/intro/index.scss",
+				"package/intro/other.scss",
+				"package/intro/reducer.ts",
+				"package/intro/test.duck.ts"
 			],
 			"dependencies": [
 				"shared"
@@ -35,9 +35,9 @@
 		"performance": {
 			"key": "performance",
 			"files": [
-				"packages/performance/array-pool.ts",
-				"packages/performance/bit-hacks.ts",
-				"packages/performance/interval-tree.ts"
+				"package/performance/array-pool.ts",
+				"package/performance/bit-hacks.ts",
+				"package/performance/interval-tree.ts"
 			],
 			"dependencies": [],
 			"project": false,
@@ -46,10 +46,10 @@
 		"shared": {
 			"key": "shared",
 			"files": [
-				"packages/shared/react-redux.d.ts",
-				"packages/shared/redux.model.ts",
-				"packages/shared/scss.d.ts",
-				"packages/shared/util.ts"
+				"package/shared/react-redux.d.ts",
+				"package/shared/redux.model.ts",
+				"package/shared/scss.d.ts",
+				"package/shared/util.ts"
 			],
 			"dependencies": [],
 			"project": false,

@@ -64,12 +64,18 @@ const persistedReducer = persistReducer({
       { whitelist: ['editor'] }
     ),
     createTransform<LayoutState, LayoutState>(
-      ({ goldenLayout, savedConfig: cachedConfig }, _key) => ({
-        savedConfig: cachedConfig,
-        goldenLayout: null,
-        nextConfig: goldenLayout?.toConfig() || getDefaultLayoutConfig(),
-        panel: {},
-      }),
+      ({ goldenLayout, savedConfig, persistKey }, _key) => {
+        const nextConfig = goldenLayout?.toConfig() || getDefaultLayoutConfig();
+        return {
+          savedConfig: persistKey
+            ? { ...savedConfig, [persistKey]: { key: persistKey, config: nextConfig } }
+            : savedConfig,
+          goldenLayout: null,
+          nextConfig,
+          panel: {},
+          persistKey: null,
+        };
+      },
       (state, _key) => state,
       { whitelist: ['layout'] },
     ),

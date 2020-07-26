@@ -4,6 +4,7 @@ import { KeyedLookup, testNever } from '@model/generic.model';
 import { LayoutPanelMeta, ExtendedContainer, GoldenLayoutConfig } from '@model/layout/layout.model';
 import { createThunk } from '@model/store/root.redux.model';
 import { CustomPanelMetaKey, getDefaultLayoutConfig } from '@model/layout/generate-layout';
+import nextConfig from 'scripts/next.config';
 
 /** Assume exactly one layout. */
 export interface State {
@@ -13,6 +14,9 @@ export interface State {
   nextConfig: GoldenLayoutConfig;
   /** Lookup to keep track of layout panels. */
   panel: KeyedLookup<LayoutPanelState>;
+  /** Key where to save config inside `savedConfig`. */
+  persistKey: null | string;
+  /** Stored layouts */
   savedConfig: KeyedLookup<SavedGoldenLayoutConfig>;
 }
 
@@ -44,6 +48,7 @@ const getInitialState = (): State => ({
   goldenLayout: null,
   nextConfig: getDefaultLayoutConfig(),
   panel: {},
+  persistKey: null,
   savedConfig: {},
 });
 
@@ -78,6 +83,8 @@ export const Act = {
     createAct('[layout] save config', input),
   setNextConfig: (input: { nextConfig: GoldenLayoutConfig; }) =>
     createAct('[layout] set next config', input),
+  setPersistConfigKey: (input: { persistKey: string; }) =>
+    createAct('[layout] set persist config key', input),
   triggerPersist: () =>
     createAct('[layout] trigger persist', {}),
 };
@@ -102,14 +109,15 @@ export const Thunk = {
   ),
   setLayout: createThunk(
     '[layout] set layout',
-    ({ dispatch }, { layoutId }: { layoutId: string }) => {
+    ({ dispatch, state: { layout } }, { layoutId }: { layoutId: string }) => {
       if (layoutId === 'default-layout') {
         const nextConfig = getDefaultLayoutConfig();
         dispatch(Act.setNextConfig({ nextConfig }));
         return nextConfig;
-      } else {
-        throw Error(`unrecognised layout id "${layoutId}" was ignored`);
       }
+      const nextConfig = layout.savedConfig[layoutId]?.config || getDefaultLayoutConfig();
+      dispatch(Act.setPersistConfigKey({ persistKey: layoutId }));
+      dispatch(Act.setNextConfig({ nextConfig }));
     },
   ),
   setPanelTitle: createThunk(
@@ -189,6 +197,17 @@ export const reducer = (state = getInitialState(), act: Action): State => {
     case '[layout] set next config': {
       return { ...state,
         nextConfig: act.pay.nextConfig,
+        ...(state.persistKey && {
+          savedConfig: addToLookup({
+            key: state.persistKey,
+            config: act.pay.nextConfig,
+          }, state.savedConfig),
+        }),
+      };
+    }
+    case '[layout] set persist config key': {
+      return { ...state,
+        persistKey: act.pay.persistKey,
       };
     }
     case '[layout] trigger persist': {

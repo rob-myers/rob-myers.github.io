@@ -128,13 +128,7 @@ export const Thunk = {
     '[dev-env] analyze code file src',
     async ({ dispatch }, { filename }: { filename: string }) => {
       const { imports, exports, srcErrors } = await dispatch(EditorThunk.computeTsImportExports({ filename }));
-      console.log({
-        key: 'analyzeSrcCode',
-        filename,
-        srcErrors,
-        imports,
-        exports
-      });
+      // console.log({ key: 'analyzeSrcCode', filename, srcErrors, imports, exports });
       const updates = {
         pathIntervals: [
           ...imports.map(({ from: path }) => path),
@@ -418,6 +412,26 @@ export const Thunk = {
       return { key: 'success', stratification };
     },
   ),
+  ensureProjectPackage: createThunk(
+    '[dev-env] ensure project package',
+    async ({ dispatch, state: { devEnv } }, { packageName, asRoot = false }: {
+      packageName: string;
+      asRoot?: boolean;
+    }) => {
+      const packageRoot = `@package/${packageName}`;
+      const loadedFiles = Object.values(devEnv.package[packageName].file);
+
+      for (const { key: filePath, contents } of loadedFiles) {
+        const relPath = asRoot ? filePath.split('/').slice(2).join('/') : filePath;
+        if (/\.tsx?$/.test(relPath)) {
+          dispatch(Act.createCodeFile({ filename: relPath, contents }));
+        } else if (relPath.endsWith('.scss')) {
+          dispatch(Act.createStyleFile({ filename: relPath, contents }));
+        }
+      }
+      dispatch(LayoutThunk.setLayout({ layoutId: packageRoot }));
+    },
+  ),
   fetchPackages: createThunk(
     '[dev-env] fetch packages',
     async ({ dispatch, state: { devEnv } }) => {
@@ -433,11 +447,12 @@ export const Thunk = {
   ),
   fetchPackagesManifest: createThunk(
     '[dev-env] fetch packages manifest',
-    async ({ dispatch }) => {
+    async ({ dispatch }): Promise<PackagesManifest> => {
       try {
         const response = await fetch(manifestWebPath);
         const manifest = await response.json();
         dispatch(Act.storePackagesManifest(manifest));
+        return manifest;
       } catch (e) {
         console.error(e);
         throw Error(`Error fetching ${manifestWebPath}`);
@@ -507,34 +522,21 @@ export const Thunk = {
   ),
   initialize: createThunk(
     '[dev-env] initialize',
-    async ({ dispatch, state: { devEnv } }) => {
+    async ({ dispatch, getState }) => {
       initializeRuntimeStore();
+
       await dispatch(Thunk.fetchPackagesManifest({}));
       await dispatch(Thunk.fetchPackages({}));
 
       /**
-       * TODO load project 'intro' along with default/saved layout
+       * TODO don't overwrite files
        */
-
-      /**
-       * TEMP provide demo files.
-       */
-      !devEnv.file[Dev.rootReducerFilename]?.contents &&
-        dispatch(Act.createCodeFile({ filename: Dev.rootReducerFilename, contents: CodeExample.defaultReducerTs }));
-      !devEnv.file[Dev.rootAppFilename]?.contents &&
-        dispatch(Act.createCodeFile({ filename: Dev.rootAppFilename, contents: CodeExample.exampleTsx3 }));
-      !devEnv.file['store/test.duck.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'store/test.duck.ts', contents: CodeExample.defaultTestDuckTs }));
-      !devEnv.file['index.scss']?.contents &&
-        dispatch(Act.createStyleFile({ filename: 'index.scss', contents: CodeExample.exampleScss1 }));
-      !devEnv.file['other.scss']?.contents &&
-        dispatch(Act.createStyleFile({ filename: 'other.scss', contents: CodeExample.exampleScss2 }));
-      !devEnv.file['package/core/util.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'package/core/util.ts', contents: CodeExample.moduleCoreUtilTs }));
-      !devEnv.file['package/core/redux.model.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'package/core/redux.model.ts', contents: CodeExample.moduleCoreReduxModelTs }));
-      !devEnv.file['package/core/custom-types.d.ts']?.contents &&
-        dispatch(Act.createCodeFile({ filename: 'package/core/custom-types.d.ts', contents: CodeExample.moduleCoreCustomTypesDTs }));
+      const packageName = 'intro';
+      const { transitiveDeps } = getState().devEnv.packagesManifest!.packages[packageName];
+      for (const depPackage of transitiveDeps) {
+        dispatch(Thunk.ensureProjectPackage({ packageName: depPackage }));
+      }
+      dispatch(Thunk.ensureProjectPackage({ packageName, asRoot: true }));
 
       dispatch(Act.initialized());
     },
@@ -612,7 +614,7 @@ export const Thunk = {
         exports,
       })) as null | Dev.CyclicDepError;
 
-      console.log({ key: 'testCyclicJsDependency', filename, jsErrors, imports, exports });
+      // console.log({ key: 'testCyclicJsDependency', filename, jsErrors, imports, exports });
       return {
         imports,
         exports,

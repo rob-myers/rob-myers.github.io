@@ -176,7 +176,7 @@ export function computeTsImportExportErrors(
     }
 
     const resolved = Dev.resolvePath(analyzed.filename, value);
-    console.log({ absPath: analyzed.filename, moduleSpecifier: value, resolved });
+    // console.log({ absPath: analyzed.filename, moduleSpecifier: value, resolved  })
 
     if (value.endsWith('.scss')) {
       if (!(resolved in filenames)) {

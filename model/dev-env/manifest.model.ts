@@ -1,9 +1,10 @@
 import { KeyedLookup } from '../generic.model';
 
 export const publicDir = 'public';
-export const packagesDir = 'public/packages';
-export const manifestPath = 'public/packages/manifest.json';
-export const manifestWebPath = '/packages/manifest.json';
+export const packagesRootDir = 'public/package';
+export const packagesDirName = 'package';
+export const manifestPath = 'public/package/manifest.json';
+export const manifestWebPath = '/package/manifest.json';
 
 export interface PackagesManifest {
   packages: KeyedLookup<PackageMeta>;

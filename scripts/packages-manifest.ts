@@ -6,8 +6,8 @@ import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
 import path from 'path';
 import { Project, ts } from 'ts-morph';
 
-import { publicDir, packagesDir, manifestPath, PackagesManifest } from '../model/dev-env/manifest.model';
-import { Graph, BaseNode } from '../model/graph.model';
+import { publicDir, packagesRootDir, manifestPath, PackagesManifest, packagesDirName } from '../model/dev-env/manifest.model';
+import { Graph } from '../model/graph.model';
 
 updateManifest();
 
@@ -24,7 +24,7 @@ function updateManifest() {
 
 function getNextManifest(): PackagesManifest {
   /** e.g. `public/packages/shared/util.ts` but not `public/packages/mock-reducer.ts` */
-  const allPaths = getDescendentPaths(packagesDir).filter((x) => x.split('/').length > 3);
+  const allPaths = getDescendentPaths(packagesRootDir).filter((x) => x.split('/').length > 3);
   /** e.g. `shared` sans dups */
   const allPackages = allPaths.map(pathToPackageName).filter((x, i, xs) => xs.indexOf(x) === i);
 
@@ -45,7 +45,7 @@ function getNextManifest(): PackagesManifest {
     .map(next => [srcKey, next] as [string, string]));
   const graph = Graph.createBasicGraph(allPackages, edgePairs);
   // Fail if @packages have a cyclic dependency
-  graph.throwOnCycle('@packages have cyclic dependency');
+  graph.throwOnCycle('@package packages have a cyclic dependency');
 
   return {
     packages: allPackages
@@ -53,12 +53,12 @@ function getNextManifest(): PackagesManifest {
         ...agg, [packageName]: {
           key: packageName,
           files: allPaths.map(x => path.relative(publicDir, x))
-            .filter(x => x.startsWith(`packages/${packageName}/`)),
+            .filter(x => x.startsWith(`${packagesDirName}/${packageName}/`)),
           dependencies: Object.keys(packageToDeps[packageName] || {}),
           project: allPaths.map(x => path.relative(publicDir, x))
             .filter(x => [
-              `packages/${packageName}/reducer.ts`,
-              `packages/${packageName}/app.tsx`,
+              `${packagesDirName}/${packageName}/reducer.ts`,
+              `${packagesDirName}/${packageName}/app.tsx`,
             ].includes(x)).length === 2,
           transitiveDeps: graph
             .getReachableNodes(graph.getNodeById(packageName)!, { withoutFirst: true })

@@ -131,7 +131,7 @@ export function patchTranspiledJsFiles(
       );
 
       filenameToPatched[filename] = { patchedCode, blobUrl: Dev.getBlobUrl(patchedCode) };
-      console.log({ patchedCode });
+      // console.log({ patchedCode });
     }
   }
 

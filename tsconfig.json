@@ -30,7 +30,7 @@
   },
   "exclude": [
     "node_modules",
-    "public/packages",
+    "public/package",
     "out"
   ],
   "include": [
