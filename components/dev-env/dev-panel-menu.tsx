@@ -1,4 +1,4 @@
-import {  MouseEvent } from 'react';
+import {  MouseEvent, useState } from 'react';
 import classNames from 'classnames';
 import { useSelector, useDispatch } from 'react-redux';
 import { Thunk, Act } from '@store/dev-env.duck';
@@ -8,6 +8,7 @@ import css from './dev-panel-menu.scss';
 const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
   const filenames = useSelector(({ devEnv }) => Object.keys(devEnv.file));
   const isOpen = useSelector(({ devEnv }) => devEnv.panelToMeta[panelKey].menuOpen);
+  const [timeoutId, setTimeoutId] = useState(0);
 
   const currentValue = useSelector(({ devEnv }) => {
     const meta = devEnv.panelToMeta[panelKey];
@@ -25,13 +26,19 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
       dispatch(Thunk.changePanel({ panelKey, next: { to: 'file', filename: value } }));
     }
   };
-  const toggle = () => dispatch(Act.updatePanelMeta(panelKey,
-    () => ({ menuOpen: !isOpen })));
+  const toggle = () => dispatch(Act.updatePanelMeta(panelKey, () => ({ menuOpen: !isOpen })));
   const preventToggle = (e: MouseEvent) => isOpen && e.stopPropagation();
 
   return (
     <div
-      onClick={toggle}
+      onMouseOver={() => {
+        window.clearTimeout(timeoutId);
+        !isOpen && setTimeoutId(window.setTimeout(toggle, 100));
+      }}
+      onMouseLeave={() => {
+        window.clearTimeout(timeoutId);
+        isOpen && setTimeoutId(window.setTimeout(toggle, 400));
+      }}
       className={classNames(css.menuContainer, {
         [css.menuClosed]: !isOpen,
         [css.menuOpen]: isOpen,
