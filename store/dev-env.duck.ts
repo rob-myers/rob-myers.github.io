@@ -9,7 +9,6 @@ import RefreshRuntime from '@public/es-react-refresh/runtime';
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact } from '@model/store/redux.model';
 import { KeyedLookup, testNever, lookupFromValues, pluck, pretty } from '@model/generic.model';
 import { createThunk, createEpic } from '@model/store/root.redux.model';
-import * as CodeExample from '@model/dev-env/examples';
 import * as Dev from '@model/dev-env/dev-env.model';
 import { TsTranspilationResult, filenameToModelKey } from '@model/monaco/monaco.model';
 import * as PatchJs from '@model/dev-env/patch-js-imports';
@@ -28,7 +27,7 @@ import { Thunk as LayoutThunk, Act as LayoutAct } from './layout.duck';
 export interface State {  
   /** Persists App instances across site */
   appPortal: KeyedLookup<Dev.AppPortal>;
-  /** File lookup. */
+  /** Current project files. */
   file: KeyedLookup<Dev.FileState>;
   flag: {
     /**
@@ -45,10 +44,16 @@ export interface State {
      */
     reducerValid: boolean;
   };
+  /** Loaded from folders in public/package */
   package: KeyedLookup<Dev.PackageData>;
+  /** Originally public/package/manifest.json */
   packagesManifest: null | PackagesManifest;
   /** Mirrors layout.panel, permitting us to change panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
+  /** Name of current project i.e. a package name */
+  projectKey: null | string;
+  /** Saved project files */
+  saved: KeyedLookup<Dev.SavedProject>;
 }
 
 const initialState: State = {
@@ -63,6 +68,8 @@ const initialState: State = {
   package: {},
   packagesManifest: null,
   panelToMeta: {},
+  projectKey: null,
+  saved: {},
 };
 
 export const Act = {
@@ -105,6 +112,8 @@ export const Act = {
     createAct('[dev-env] remove app portal', { panelKey }),
   restrictAppPortals: (input: { panelKeys: string[] }) =>
     createAct('[dev-env] restrict app portals', input),
+  setProjectKey: (projectKey: string) =>
+    createAct('[dev-env] set project key', { projectKey }),
   storeCodeTranspilation: (filename: string, transpilation: Dev.CodeTranspilation) =>
     createAct('[dev-env] store code transpilation', { filename, transpilation }),
   storePackagesManifest: (manifest: PackagesManifest) =>
@@ -412,24 +421,33 @@ export const Thunk = {
       return { key: 'success', stratification };
     },
   ),
+  /**
+   * Load package or root package.
+   * Root package will also restore from `saved`.
+   */
   ensureProjectPackage: createThunk(
     '[dev-env] ensure project package',
     async ({ dispatch, state: { devEnv } }, { packageName, asRoot = false }: {
       packageName: string;
       asRoot?: boolean;
     }) => {
-      const packageRoot = `@package/${packageName}`;
-      const loadedFiles = Object.values(devEnv.package[packageName].file);
-
-      for (const { key: filePath, contents } of loadedFiles) {
-        const relPath = asRoot ? filePath.split('/').slice(2).join('/') : filePath;
-        if (/\.tsx?$/.test(relPath)) {
-          dispatch(Act.createCodeFile({ filename: relPath, contents }));
-        } else if (relPath.endsWith('.scss')) {
-          dispatch(Act.createStyleFile({ filename: relPath, contents }));
+      let filesToCreate = [] as { filename: string; contents: string }[];
+      if (asRoot && packageName in devEnv.saved) {
+        Object.values(devEnv.saved[packageName].file).forEach(({ key: filename, contents }) =>
+          filesToCreate.push({ filename, contents }));
+      } else {
+        Object.values(devEnv.package[packageName].file).forEach(({ key, contents }) =>
+          filesToCreate.push({ filename: asRoot ? Dev.packageFilenameToLocal(key) : key, contents }));
+      }
+      
+      for (const { filename, contents } of filesToCreate) {
+        if (/\.tsx?$/.test(filename)) {
+          dispatch(Act.createCodeFile({ filename, contents }));
+        } else if (filename.endsWith('.scss')) {
+          dispatch(Act.createStyleFile({ filename, contents }));
         }
       }
-      dispatch(LayoutThunk.setLayout({ layoutId: packageRoot }));
+      dispatch(LayoutThunk.setLayout({ layoutId: `@package/${packageName}` }));
     },
   ),
   fetchPackages: createThunk(
@@ -522,23 +540,31 @@ export const Thunk = {
   ),
   initialize: createThunk(
     '[dev-env] initialize',
-    async ({ dispatch, getState }) => {
+    async ({ dispatch }) => {
       initializeRuntimeStore();
 
       await dispatch(Thunk.fetchPackagesManifest({}));
       await dispatch(Thunk.fetchPackages({}));
 
-      /**
-       * TODO don't overwrite files
-       */
+      // TEMP force initial project
       const packageName = 'intro';
-      const { transitiveDeps } = getState().devEnv.packagesManifest!.packages[packageName];
-      for (const depPackage of transitiveDeps) {
-        dispatch(Thunk.ensureProjectPackage({ packageName: depPackage }));
-      }
-      dispatch(Thunk.ensureProjectPackage({ packageName, asRoot: true }));
+      dispatch(Thunk.loadProject({ projectName: packageName }))
 
       dispatch(Act.initialized());
+    },
+  ),
+  loadProject: createThunk(
+    '[dev-env] load project',
+    ({ dispatch, state: { devEnv } }, { projectName }: { projectName: string }) => {
+      // TODO unload current project
+
+      // Load project
+      dispatch(Act.setProjectKey(projectName));
+      const { transitiveDeps } = devEnv.packagesManifest!.packages[projectName];
+      for (const packageName of transitiveDeps) {
+        dispatch(Thunk.ensureProjectPackage({ packageName }));
+      }
+      dispatch(Thunk.ensureProjectPackage({ packageName: projectName, asRoot: true }));
     },
   ),
   /**
@@ -863,6 +889,9 @@ export const reducer = (state = initialState, act: Action): State => {
     };
     case '[dev-env] restrict app portals': return { ...state,
       appPortal: pluck(state.appPortal, ({ key }) => act.pay.panelKeys.includes(key)),
+    };
+    case '[dev-env] set project key': return { ...state,
+      projectKey: act.pay.projectKey,
     };
     case '[dev-env] store packages manifest': return { ...state,
       packagesManifest: act.pay.manifest,

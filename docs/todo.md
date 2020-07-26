@@ -5,7 +5,7 @@ See [blog notes](./blog.md).
 # Online Dev Environment
 
 - [ ] can ensure packages and have loaded/tested `bipartite` package
-- [ ] projects have a layout and a default layout
+- [x] projects have a layout via `layout.saved`
 - [ ] package files are read-only
 - [ ] panel title shows package filename as `...{package}/rest/of/path`
 - [ ] start work on svg-based static rectilinear level-design app
@@ -13,7 +13,7 @@ See [blog notes](./blog.md).
 - [x] use `@package` instead of `@module`
 - [x] packages manifest includes transitive dependencies
 - [x] packages manifest includes dependencies
-- [ ] load code at runtime using packages manifest
+- [x] load code at runtime using packages manifest
 - [x] build `public/packages/manifest.json` by watching `public/packages` 
 - [x] create projects and modules inside `public/packages`
 - [x] can save current files to disk as json

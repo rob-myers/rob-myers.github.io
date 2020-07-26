@@ -13,6 +13,7 @@ import { State as LayoutState } from './layout.duck';
 import { State as DevEnvState } from './dev-env.duck';
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
 import { getDefaultLayoutConfig } from '@model/layout/generate-layout';
+import { SavedProject } from '@model/dev-env/dev-env.model';
 
 const storeVersion = 0.34;
 
@@ -80,7 +81,7 @@ const persistedReducer = persistReducer({
       { whitelist: ['layout'] },
     ),
     createTransform<DevEnvState, DevEnvState>(
-      ({ file }, _key) => ({
+      ({ file, projectKey, saved }, _key) => ({
         appPortal: {},
         flag: {
           appValid: false,
@@ -88,23 +89,30 @@ const persistedReducer = persistReducer({
           initialized: false,
           reducerValid: false,
         },
-        // Remember files but forget transpilation (& cleanups)
-        file: Object.values(file).reduce((agg, item) => ({
-          ...agg,
-          [item.key]: {
-            ...item,
-            ...(item.ext === 'scss'
-              ? { prefixed: null, cssModule: null }
-              : { esModule: null }
-            ),
-            pathIntervals: [],
-            cleanups: [],
-            transpiled: null,
-          },
-        }), {} as DevEnvState['file']),
+        file: {},
         packagesManifest: null,
         panelToMeta: {},
         package: {},
+        projectKey: null,
+        /**
+         * Remember files in current project and also
+         * previously saved projects.
+         */
+        saved: {
+          ...saved,
+          ...(projectKey && { [projectKey]: {
+              key: projectKey,
+              file: Object.values(file)
+                .filter(x => !x.key.startsWith('package/'))
+                .reduce((agg, item) => ({
+                  ...agg, [item.key]: {
+                    key: item.key,
+                    contents: item.contents,
+                  },
+                }), {} as SavedProject),
+            }
+          }),
+        },
       }),
       (state, _key) => state,
       { whitelist: ['devEnv'] },

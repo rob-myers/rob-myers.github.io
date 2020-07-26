@@ -52,6 +52,11 @@ export function filenameToStyleId(filename: string) {
   return `styles-for-${filename}`;
 }
 
+/** e.g. `package/intro/reducer.ts to reducer.ts` */
+export function packageFilenameToLocal(filePath: string) {
+  return filePath.split('/').slice(2).join('/');
+}
+
 export function getBlobUrl(jsCode: string) {
   const bootstrapBlob = new Blob([jsCode], { type: 'text/javascript' });
   return URL.createObjectURL(bootstrapBlob);     
@@ -493,12 +498,31 @@ export function isTsExportDecl(x: TsExportMeta): x is TsExportDecl {
 }
 
 export interface PackageData {
+  /** Package name e.g. `intro` */
   key: string;
-  file: KeyedLookup<PackageFiles>;
+  file: KeyedLookup<PackageFileData>;
 }
 
-interface PackageFiles {
-  /** Filename e.g.  */
+interface PackageFileData {
+  /**
+   * Package filepath e.g. `package/intro/app.tsx`
+   * or `package/shared/redux.model.ts`.
+   */
+  key: string;
+  contents: string;
+}
+
+export interface SavedProject {
+  /** Project name e.g. `intro` */
+  key: string;
+  file: KeyedLookup<SavedProjectFile>;
+}
+
+interface SavedProjectFile {
+  /**
+   * Project filepath e.g. `app.tsx`
+   * or `package/shared/redux.model.ts`.
+   */
   key: string;
   contents: string;
 }
