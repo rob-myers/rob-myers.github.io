@@ -100,20 +100,20 @@ export const Act = {
     createAct('[dev-env] remove file', input),
   forgetPanelMeta: (input: { panelKey: string }) =>
     createAct('[dev-env] forget panel meta', input),
-  initialized: () =>
-    createAct('[dev-env] initialized', {}),
-  rememberAppValid: (isValid: boolean) =>
-    createAct('[dev-env] remember app valid', { isValid }),
-  rememberReducerValid: (isValid: boolean) =>
-    createAct('[dev-env] remember reducer valid', { isValid }),
-  rememberRenderedApp: (panelKey: string) =>
-    createAct('[dev-env] remember rendered app', { panelKey }),
   removeAppPortal: (panelKey: string) =>
     createAct('[dev-env] remove app portal', { panelKey }),
   restrictAppPortals: (input: { panelKeys: string[] }) =>
     createAct('[dev-env] restrict app portals', input),
+  setAppValid: (isValid: boolean) =>
+    createAct('[dev-env] set app valid', { isValid }),
+  setInitialized: () =>
+    createAct('[dev-env] set initialized', {}),
   setProjectKey: (projectKey: string) =>
     createAct('[dev-env] set project key', { projectKey }),
+  setReducerValid: (isValid: boolean) =>
+    createAct('[dev-env] set reducer valid', { isValid }),
+  setRenderedApp: (panelKey: string) =>
+    createAct('[dev-env] set rendered app', { panelKey }),
   storeCodeTranspilation: (filename: string, transpilation: Dev.CodeTranspilation) =>
     createAct('[dev-env] store code transpilation', { filename, transpilation }),
   storePackagesManifest: (manifest: PackagesManifest) =>
@@ -210,7 +210,7 @@ export const Thunk = {
        */
       if (!devEnv.appPortal[panelKey].rendered) {
         renderAppAt(Dev.panelKeyToAppElId(panelKey));
-        dispatch(Act.rememberRenderedApp(panelKey));
+        dispatch(Act.setRenderedApp(panelKey));
       } else {
         RefreshRuntime.performReactRefresh();
       }
@@ -227,7 +227,7 @@ export const Thunk = {
       const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: Dev.rootAppFilename }));
       if (jsErrors.find(isCyclicDepError)) {
         console.error('App bootstrap failed due to cyclic dependency');
-        dispatch(Act.rememberAppValid(false));
+        dispatch(Act.setAppValid(false));
         dispatch(Thunk.tryTranspileCodeModel({ filename: Dev.rootAppFilename }));
         return;
       }
@@ -250,7 +250,7 @@ export const Thunk = {
         .filter(({ panelType }) => panelType === 'app')
         .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
   
-      dispatch(Act.rememberAppValid(true));
+      dispatch(Act.setAppValid(true));
       if (!getState().devEnv.flag.appWasValid) {
         dispatch(Act.appWasValid());
       }
@@ -264,7 +264,7 @@ export const Thunk = {
       const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: Dev.rootReducerFilename }));
       if (jsErrors.find(isCyclicDepError)) {
         console.error('Root reducer bootstrap failed due to cyclic dependency');
-        dispatch(Act.rememberReducerValid(false));
+        dispatch(Act.setReducerValid(false));
         dispatch(Thunk.tryTranspileCodeModel({ filename: Dev.rootReducerFilename }));
         return;
       }
@@ -282,7 +282,7 @@ export const Thunk = {
       await replaceRootReducerFromBlobUrl(reducerUrl);
       await updateThunkLookupFromBlobUrl(reducerUrl);
 
-      dispatch(Act.rememberReducerValid(true));
+      dispatch(Act.setReducerValid(true));
       if (!devEnv.flag.appWasValid) {
         dispatch(Thunk.tryTranspileCodeModel({ filename: 'app.tsx' }));
       }
@@ -550,7 +550,7 @@ export const Thunk = {
       const packageName = 'intro';
       dispatch(Thunk.loadProject({ projectName: packageName }))
 
-      dispatch(Act.initialized());
+      dispatch(Act.setInitialized());
     },
   ),
   loadProject: createThunk(
@@ -867,20 +867,6 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] forget panel meta': return { ...state,
       panelToMeta: removeFromLookup(act.pay.panelKey, state.panelToMeta),
     };
-    case '[dev-env] initialized': return { ...state,
-      flag: { ...state.flag, initialized: true },
-    };
-    case '[dev-env] remember app valid': return { ...state,
-      flag: { ...state.flag, appValid: act.pay.isValid }
-    };
-    case '[dev-env] remember reducer valid': return { ...state,
-      flag: { ...state.flag, reducerValid: act.pay.isValid }
-    };
-    case '[dev-env] remember rendered app': return { ...state,
-      appPortal: updateLookup(act.pay.panelKey, state.appPortal, () => ({
-        rendered: true,
-      })),
-    };
     case '[dev-env] remove app portal': return { ...state,
       appPortal: removeFromLookup(act.pay.panelKey, state.appPortal),
     };
@@ -890,8 +876,22 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] restrict app portals': return { ...state,
       appPortal: pluck(state.appPortal, ({ key }) => act.pay.panelKeys.includes(key)),
     };
+    case '[dev-env] set app valid': return { ...state,
+      flag: { ...state.flag, appValid: act.pay.isValid }
+    };
+    case '[dev-env] set initialized': return { ...state,
+      flag: { ...state.flag, initialized: true },
+    };
     case '[dev-env] set project key': return { ...state,
       projectKey: act.pay.projectKey,
+    };
+    case '[dev-env] set reducer valid': return { ...state,
+      flag: { ...state.flag, reducerValid: act.pay.isValid }
+    };
+    case '[dev-env] set rendered app': return { ...state,
+      appPortal: updateLookup(act.pay.panelKey, state.appPortal, () => ({
+        rendered: true,
+      })),
     };
     case '[dev-env] store packages manifest': return { ...state,
       packagesManifest: act.pay.manifest,
@@ -938,7 +938,7 @@ const bootstrapApp = createEpic(
             // All reachable code locally valid so try bootstrap app
             return [Thunk.bootstrapApps({})];
           } else if (appValid) {
-            return [Act.rememberAppValid(false)];
+            return [Act.setAppValid(false)];
           }
         }
       } else if (act.type === '[dev-env] app portal is ready') {
@@ -979,7 +979,7 @@ const bootstrapReducers = createEpic(
               Thunk.bootstrapRootReducer({}),
             ];
           } else if (reducerValid) {
-            return [Act.rememberReducerValid(false)];
+            return [Act.setReducerValid(false)];
           }
         }
       }
@@ -1008,9 +1008,9 @@ const bootstrapStyles = createEpic(
 );
 
 const initializeFileSystem = createEpic(
-  (action$, _state$) => action$.pipe(
-    filterActs('persist/REHYDRATE' as any),
-    filter(_ => typeof window !== 'undefined'),
+  (action$, state$) => action$.pipe(
+    filterActs('persist/REHYDRATE' as any), // Also triggered on change page
+    filter(_ => typeof window !== 'undefined' && !state$.value.devEnv.flag.initialized),
     map(() => Thunk.initialize({})),
   ),
 );
@@ -1020,7 +1020,7 @@ const initializeMonacoModels = createEpic(
     filterActs(
       '[editor] set monaco loaded',
       '[editor] set global types loaded',
-      '[dev-env] initialized',
+      '[dev-env] set initialized',
     ),
     filter((_) =>
       state$.value.editor.monacoLoaded
