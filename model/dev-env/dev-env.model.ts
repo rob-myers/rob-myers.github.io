@@ -19,6 +19,14 @@ export function hasSupportedExtension(filename: string) {
 
 type Meta = LayoutPanelMeta<CustomPanelMetaKey>
 
+export function isCodeFilename(filename: string) {
+  return /\.tsx?$/.test(filename);
+}
+
+export function isStyleFilename(filename: string) {
+  return filename.endsWith('.scss');
+}
+
 export function isFilePanel(panelMeta: Meta): panelMeta is Meta & { filename: string } {
   return !panelMeta?.devEnvComponent && supportedFileExts
     .some((filenameExt) => panelMeta?.filename?.endsWith(filenameExt));
@@ -50,6 +58,12 @@ export function filenameToClassPrefix(filename: string) {
 
 export function filenameToStyleId(filename: string) {
   return `styles-for-${filename}`;
+}
+
+export function filenameToPanelTitle(filename: string) {
+  return filename.startsWith('package/')
+    ? `@${filename.split('/').slice(1).join('/')}`
+    : filename;
 }
 
 /** e.g. `package/intro/reducer.ts to reducer.ts` */

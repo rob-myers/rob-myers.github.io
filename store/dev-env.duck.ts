@@ -1087,15 +1087,11 @@ const onChangePanel = createEpic(
           return [LayoutThunk.setPanelTitle({ panelKey, title: 'App' })];
         } else if (Dev.isFilePanel(act.pay.panelMeta)) {
           const { filename } = act.pay.panelMeta;
-          return [
-            LayoutThunk.setPanelTitle({ panelKey, title: filename }),
-            ...(file[filename] ? [] : [Act.createCodeFile({ filename, contents: '' })]),
-          ];
+          return [LayoutThunk.setPanelTitle({ panelKey, title: Dev.filenameToPanelTitle(filename) })];
         }
       } else {
-        return [LayoutThunk.setPanelTitle({
-          panelKey,
-          title: act.pay.to === 'app' ? 'App' : act.pay.filename,
+        return [LayoutThunk.setPanelTitle({ panelKey,
+          title: act.pay.to === 'app' ? 'App' : Dev.filenameToPanelTitle(act.pay.filename),
         })];
       }
       return [];

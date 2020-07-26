@@ -7,8 +7,9 @@ See [blog notes](./blog.md).
 - [ ] can ensure packages and have loaded/tested `bipartite` package
 - [x] projects have a layout via `layout.saved`
 - [ ] package files are read-only
-- [ ] panel title shows package filename as `...{package}/rest/of/path`
-- [ ] start work on svg-based static rectilinear level-design app
+- [x] panel title shows package filename as `@{package}/rest/of/path`
+  > somewhat misleading because must use `@package/{package}/rest/of/path`.
+- [ ] start work on svg-based rectilinear level-designer
 - [ ] convert npm module `rectangle-decomposition` into a package
 - [x] use `@package` instead of `@module`
 - [x] packages manifest includes transitive dependencies
