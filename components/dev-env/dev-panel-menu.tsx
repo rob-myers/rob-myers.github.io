@@ -49,7 +49,7 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
             onChange={(itemKey) => handleFileChange(itemKey)}
             selectedKey={currentValue}
             disabled={!isOpen}
-            selectedLabel="📂"
+            overrideLabel="📂"
           />
         </div>
       </div>
