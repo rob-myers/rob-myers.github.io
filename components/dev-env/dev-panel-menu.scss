@@ -2,13 +2,12 @@
   display: flex;
   justify-content: space-between;
   cursor: pointer;
-  // overflow: hidden;
 
   color: #aaa;
 
   &:hover {
     color: white;
-    background-color: rgb(40, 50, 60);
+    background-color: rgb(40, 40, 40);
     transition: background-color 300ms ease-in;
   }
 
@@ -57,11 +56,11 @@
   &.menu-open {
     background-image: linear-gradient(
       135deg,
-      #223344 16.67%,
+      #333344 16.67%,
       #111111 16.67%,
       #111111 50%,
-      #223344 50%,
-      #223344 66.67%,
+      #333333 50%,
+      #333333 66.67%,
       #111111 66.67%,
       #111111 100%
     );

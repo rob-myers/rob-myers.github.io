@@ -6,6 +6,7 @@ const Select: React.FC<Props> = ({
   disabled = false,
   items,
   onChange,
+  selectedLabel,
   selectedKey,
   showSelectedOption = true,
 }) => {
@@ -26,8 +27,8 @@ const Select: React.FC<Props> = ({
       onBlur={() => setIsOpen(false)}
       onKeyUp={({ key }) => key === 'Escape' && setIsOpen(false)}
     >
-      <div className={css.selected}>
-        <Option {...selected} onClick={toggle} />
+      <div className={css.selected} onClick={toggle}>
+        <Option {...selected} onClick={() => {}} override={selectedLabel} />
       </div>
       <div className={css.optionsAnchor}>
         {isOpen && (
@@ -58,11 +59,18 @@ interface Props {
   disabled?: boolean;
   items: Item[];
   onChange: (key: string) => void;
+  /** Can override label */
+  selectedLabel?: string;
   selectedKey: string;
   showSelectedOption?: boolean;
 }
 
-const Option: React.FC<OptionProps> = ({ label, onClick, highlight }) => {
+const Option: React.FC<OptionProps> = ({
+  label,
+  onClick,
+  override,
+  highlight,
+}) => {
   return (
     <div
       className={classNames(css.option, {
@@ -70,7 +78,7 @@ const Option: React.FC<OptionProps> = ({ label, onClick, highlight }) => {
       })}
       onClick={onClick}
     >
-      {label}
+      {override || label}
     </div>
   );
 };
@@ -83,6 +91,7 @@ interface OptionProps extends Item {
 interface Item {
   itemKey: string;
   label: string;
+  override?: string;
 }
 
 export default Select;
