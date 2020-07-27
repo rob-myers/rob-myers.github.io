@@ -17,7 +17,7 @@ export function hasSupportedExtension(filename: string) {
   return supportedFileExts.some((filenameExt) => filename.endsWith(filenameExt));
 }
 
-type Meta = LayoutPanelMeta<CustomPanelMetaKey>
+export type CustomLayoutPanelMeta = LayoutPanelMeta<CustomPanelMetaKey>
 
 export function isCodeFilename(filename: string) {
   return /\.tsx?$/.test(filename);
@@ -27,16 +27,16 @@ export function isStyleFilename(filename: string) {
   return filename.endsWith('.scss');
 }
 
-export function isFilePanel(panelMeta: Meta): panelMeta is Meta & { filename: string } {
+export function isFilePanel(panelMeta: CustomLayoutPanelMeta): panelMeta is CustomLayoutPanelMeta & { filename: string } {
   return !panelMeta?.devEnvComponent && supportedFileExts
     .some((filenameExt) => panelMeta?.filename?.endsWith(filenameExt));
 }
 
-export function isAppPanel(panelMeta: Meta) {
+export function isAppPanel(panelMeta: CustomLayoutPanelMeta) {
   return panelMeta?.devEnvComponent === 'App';
 }
 
-export function isDocPanel(panelMeta: Meta): panelMeta is Meta & { filename: string } {
+export function isDocPanel(panelMeta: CustomLayoutPanelMeta): panelMeta is CustomLayoutPanelMeta & { filename: string } {
   return panelMeta?.devEnvComponent === 'Doc';
 }
 

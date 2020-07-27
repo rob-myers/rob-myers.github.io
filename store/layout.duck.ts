@@ -1,10 +1,10 @@
 import * as GoldenLayout from 'golden-layout';
 import { Redacted, ActionsUnion, createAct, updateLookup, redact, removeFromLookup, addToLookup } from '@model/store/redux.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
-import { LayoutPanelMeta, ExtendedContainer, GoldenLayoutConfig } from '@model/layout/layout.model';
+import { LayoutPanelMeta, ExtendedContainer, GoldenLayoutConfig, traverseGlConfig, mapGlConfig } from '@model/layout/layout.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { CustomPanelMetaKey, getDefaultLayoutConfig } from '@model/layout/generate-layout';
-import nextConfig from 'scripts/next.config';
+import { CustomPanelMetaKey, getDefaultLayoutConfig, getDefaultEmptyLayout } from '@model/layout/generate-layout';
+import { CustomLayoutPanelMeta } from '@model/dev-env/dev-env.model';
 
 /** Assume exactly one layout. */
 export interface State {
@@ -83,8 +83,8 @@ export const Act = {
     createAct('[layout] save config', input),
   setNextConfig: (input: { nextConfig: GoldenLayoutConfig; }) =>
     createAct('[layout] set next config', input),
-  setPersistConfigKey: (input: { persistKey: string; }) =>
-    createAct('[layout] set persist config key', input),
+  setPersistKey: (persistKey: null | string) =>
+    createAct('[layout] set persist key', { persistKey }),
   triggerPersist: () =>
     createAct('[layout] trigger persist', {}),
 };
@@ -96,8 +96,25 @@ export const Thunk = {
     '[layout] clicked panel title',
     (_, __: { panelKey: string }) => null,
   ),
+  closeMatchingPanels: createThunk(
+    '[layout] close matching panels',
+    ({ state: { layout }, dispatch }, { predicate }: {
+      predicate: (meta: CustomLayoutPanelMeta) => boolean;
+    }) => {
+      const nextConfig = mapGlConfig(layout.nextConfig!, (x) =>
+        'type' in x
+        && x.type === 'component'
+        && x.props.panelMeta
+        && predicate(x.props.panelMeta) ? null : x
+      ) as GoldenLayoutConfig | null;
+      dispatch(Act.setNextConfig({
+        nextConfig: nextConfig || getDefaultEmptyLayout(),
+      }));
+    },
+  ),
   /**
-   * When switching between pages we cannot rely on rehydrate.
+   * When switching between pages we cannot rely on rehydrate,
+   * presumably because persist is invoked?
    */
   saveCurrentLayout: createThunk(
     '[layout] save current layout',
@@ -116,7 +133,7 @@ export const Thunk = {
         return nextConfig;
       }
       const nextConfig = layout.savedConfig[layoutId]?.config || getDefaultLayoutConfig();
-      dispatch(Act.setPersistConfigKey({ persistKey: layoutId }));
+      dispatch(Act.setPersistKey(layoutId));
       dispatch(Act.setNextConfig({ nextConfig }));
     },
   ),
@@ -205,7 +222,7 @@ export const reducer = (state = getInitialState(), act: Action): State => {
         }),
       };
     }
-    case '[layout] set persist config key': {
+    case '[layout] set persist key': {
       return { ...state,
         persistKey: act.pay.persistKey,
       };

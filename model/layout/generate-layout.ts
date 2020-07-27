@@ -29,9 +29,15 @@ const configBase = {
     headerHeight: 20,
     dragProxyWidth: 200,
     dragProxyHeight: 200,
-
   },
 } as GoldenLayoutConfig<CustomPanelMetaKey>;
+
+export function getDefaultEmptyLayout(): GoldenLayoutConfig<CustomPanelMetaKey> {
+  return {
+    ...configBase,
+    content: [],
+  };
+};
 
 export const defaultDesktopProjectLayout: GoldenLayoutConfig<CustomPanelMetaKey> = {
   ...configBase,

@@ -7,9 +7,9 @@ Although we provide a development environment, this is not our objective.
 - The dev env will permit the user to interact with the world. 
 - Rather than developing a UI or CLI, we'll make a "Game AI Editor" by providing a suitable hot-reloading react project.
 
-
 # Online Dev Environment
 
+- [ ] perhaps `DevPanelMenu` should be smaller and always visible
 - [ ] implement close/reset/load project
 - [x] remove support for adding packages -- unneeded complexity
 - [x] fix jsPathErrors markers for aliased module specifiers

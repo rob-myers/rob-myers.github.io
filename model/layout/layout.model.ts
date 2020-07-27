@@ -1,4 +1,5 @@
 import * as GoldenLayout from 'golden-layout';
+import { CustomPanelMetaKey } from './generate-layout';
 
 /**
  * To define a layout for golden-layout, one must define
@@ -129,11 +130,29 @@ export type LayoutPanelMeta<PanelMetaKey extends string> = {
   [key in PanelMetaKey]?: string;
 }
 
-export function traverseGlConfig<PanelMetaKey extends string>(
-  node: GoldenLayoutConfig<PanelMetaKey> | GoldenLayoutConfigItem<PanelMetaKey>,
-  act: (x: typeof node) => void,
+type GlNode<PanelMetaKey extends string> = (
+  | GoldenLayoutConfig<PanelMetaKey>
+  | GoldenLayoutConfigItem<PanelMetaKey>
+);
+
+export function traverseGlConfig<T extends string>(
+  node: GlNode<T>,
+  act: (x: GlNode<T>) => void,
 ) {
   act(node);
-  (node.content || []).forEach(child =>
-    traverseGlConfig(child as GoldenLayoutConfigItem<PanelMetaKey>, act));
+  (node.content || []).forEach(child => traverseGlConfig(child as GoldenLayoutConfigItem<T>, act));
+}
+
+export function mapGlConfig<T extends string>(
+  node: GlNode<T>,
+  transform: (x: GlNode<T>) => GlNode<T> | null,
+): GlNode<T> | null {
+  const next = transform(node);
+  if (!node.content) {
+    return next;
+  }
+  const nextContent = (node.content as GoldenLayoutConfigItem<T>[])
+    .map(x => mapGlConfig(x, transform) as GoldenLayoutConfigItem<T>)
+    .filter(Boolean)
+  return nextContent.length ? { ...next, content: nextContent } : null;
 }

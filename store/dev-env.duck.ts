@@ -46,7 +46,7 @@ export interface State {
   };
   /** Loaded from folders in public/package */
   package: KeyedLookup<Dev.PackageData>;
-  /** Originally public/package/manifest.json */
+  /** Parsed from public/package/manifest.json */
   packagesManifest: null | PackagesManifest;
   /** Mirrors layout.panel, permitting us to change panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
@@ -108,7 +108,7 @@ export const Act = {
     createAct('[dev-env] set app valid', { isValid }),
   setInitialized: () =>
     createAct('[dev-env] set initialized', {}),
-  setProjectKey: (projectKey: string) =>
+  setProjectKey: (projectKey: string | null) =>
     createAct('[dev-env] set project key', { projectKey }),
   setReducerValid: (isValid: boolean) =>
     createAct('[dev-env] set reducer valid', { isValid }),
@@ -333,10 +333,20 @@ export const Thunk = {
   ),
   closeProject: createThunk(
     '[dev-env] close project',
-    () => {
+    ({ dispatch }) => {
       /**
        * TODO
+       * - remove all files/models
+       * - clean away scripts
        */
+      dispatch(Act.setProjectKey(null));
+      dispatch(LayoutAct.setPersistKey(null));
+
+      // Close file panels and App panels, but not docs
+      dispatch(LayoutThunk.closeMatchingPanels({
+        predicate: (meta) => meta.devEnvComponent === 'App'
+          || !meta.devEnvComponent && !!meta.filename,
+      }));
     },
   ),
   /**
