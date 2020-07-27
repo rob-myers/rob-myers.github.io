@@ -16,16 +16,17 @@ export const DevMenu = () => {
   const monacoLoading = useSelector(({ editor: { monacoLoading } }) => monacoLoading);
 
   const packages = useSelector(({ devEnv }) => Object.keys(devEnv.package));
-  const projects = useSelector(({ devEnv }) =>
-    Object.values(devEnv.packagesManifest?.packages || {})
-      .filter(x => x.project).map(x => x.key));
+  const projects = useSelector(({ devEnv }) => Object.values(devEnv.packagesManifest?.packages || {})
+    .filter(x => x.project).map(x => x.key));
 
   /**
    * We disable controls initially or when monaco is loading.
    * This gives the web-workers time to load.
    */
   useEffect(() => {
-    if (monacoLoaded) setDisabled(false);
+    if (monacoLoaded) {
+      setDisabled(false);
+    }
     const id = setTimeout(() => setDisabled(false), 2000);
     return () => clearTimeout(id);
   }, []);
@@ -38,7 +39,7 @@ export const DevMenu = () => {
       dispatch(Act.restrictAppPortals({ panelKeys: nextPanelKeys }));
     }
   };
-  const handleOptionSelect = (itemKey: string) => {
+  const handleOptsSelect = (itemKey: string) => {
     if (itemKey === 'save-project-as-json') {
       dispatch(Thunk.saveFilesToDisk({}));
     }
@@ -46,8 +47,8 @@ export const DevMenu = () => {
   const handleProjectSelect = (_itemKey: string) => {
     // TODO
   };
-  const handlePackageSelect = (_itemKey: string) => {
-    // TODO
+  const handlePackageSelect = (itemKey: string) => {
+    itemKey && dispatch(Thunk.loadPackage({ packageName: itemKey }))
   };
 
   return (
@@ -78,6 +79,7 @@ export const DevMenu = () => {
               onChange={handleProjectSelect}
               selectedKey=""
               showSelectedOption={false}
+              disabled={disabled}
             />
 
             <Select
@@ -90,6 +92,7 @@ export const DevMenu = () => {
               onChange={handlePackageSelect}
               selectedKey=""
               showSelectedOption={false}
+              disabled={disabled}
             />
           </div>
 
@@ -100,9 +103,10 @@ export const DevMenu = () => {
                 { itemKey: '', label: 'opts' },
                 { itemKey: 'save-project-as-json', label: 'save as json' },
               ]}
-              onChange={handleOptionSelect}
+              onChange={handleOptsSelect}
               selectedKey=""
               showSelectedOption={false}
+              disabled={disabled}
             />
 
             <Select
@@ -113,6 +117,7 @@ export const DevMenu = () => {
               onChange={handleLayoutChange}
               selectedKey=""
               showSelectedOption={false}
+              disabled={disabled}
             />
 
             <div className={css.homeLink}>

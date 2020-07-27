@@ -4,7 +4,9 @@ See [blog notes](./blog.md).
 
 # Online Dev Environment
 
-- [ ] can ensure packages and have loaded/tested `bipartite` package
+- [ ] ensure error message when try to import package ts from tsx
+- [ ] `bipartite` package is project with demo
+- [x] can ensure packages and have loaded `bipartite` package
 - [x] projects have a layout via `layout.saved`
 - [ ] package files are read-only
 - [x] panel title shows package filename as `@{package}/rest/of/path`

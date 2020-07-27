@@ -29,7 +29,8 @@
   .options {
     position: absolute;
     min-width: 100%;
-    z-index: 3;
+    z-index: 41; // Just above maximized golden-layout
+
     background: rgba(0, 0, 0, 0.8);
     border: 1px solid rgba(80, 80, 80, 0.5);
     top: -1px;

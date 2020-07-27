@@ -422,11 +422,11 @@ export const Thunk = {
     },
   ),
   /**
-   * Load package or root package.
-   * Root package will also restore from `saved`.
+   * Add files from package.
+   * Can also add them at root-level, restoring previously saved.
    */
-  ensureProjectPackage: createThunk(
-    '[dev-env] ensure project package',
+  addFilesFromPackage: createThunk(
+    '[dev-env] add files from package',
     async ({ dispatch, state: { devEnv } }, { packageName, asRoot = false }: {
       packageName: string;
       asRoot?: boolean;
@@ -548,23 +548,29 @@ export const Thunk = {
 
       // TEMP force initial project
       const packageName = 'intro';
-      dispatch(Thunk.loadProject({ projectName: packageName }))
+      dispatch(Thunk.loadPackage({ packageName, asRoot: true }))
 
       dispatch(Act.setInitialized());
     },
   ),
-  loadProject: createThunk(
-    '[dev-env] load project',
-    ({ dispatch, state: { devEnv } }, { projectName }: { projectName: string }) => {
-      // TODO unload current project
-
-      // Load project
-      dispatch(Act.setProjectKey(projectName));
-      const { transitiveDeps } = devEnv.packagesManifest!.packages[projectName];
-      for (const packageName of transitiveDeps) {
-        dispatch(Thunk.ensureProjectPackage({ packageName }));
+  /**
+   * Load package or project.
+   */
+  loadPackage: createThunk(
+    '[dev-env] load package',
+    ({ dispatch, state: { devEnv } }, { packageName, asRoot = false }: {
+      packageName: string;
+      asRoot?: boolean;
+    }) => {
+      if (asRoot) {
+        // TODO unload current project
+        dispatch(Act.setProjectKey(packageName));
       }
-      dispatch(Thunk.ensureProjectPackage({ packageName: projectName, asRoot: true }));
+      const { transitiveDeps } = devEnv.packagesManifest!.packages[packageName];
+      for (const packageName of transitiveDeps) {
+        dispatch(Thunk.addFilesFromPackage({ packageName }));
+      }
+      dispatch(Thunk.addFilesFromPackage({ packageName, asRoot }));
     },
   ),
   /**
@@ -1019,28 +1025,44 @@ const initializeMonacoModels = createEpic(
   (action$, state$) => action$.pipe(
     filterActs(
       '[editor] set monaco loaded',
-      '[editor] set global types loaded',
       '[dev-env] set initialized',
+      '[dev-env] create code file',
+      '[dev-env] create style file',
     ),
     filter((_) =>
       state$.value.editor.monacoLoaded
-      && state$.value.editor.globalTypesLoaded
       && state$.value.devEnv.flag.initialized
     ),
-    flatMap(() => [
-      ...Object.values(state$.value.devEnv.file).flatMap((file) => [
-        EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
-        // Initial transpile
-        ...file.ext === 'scss'
-          ? [Thunk.tryTranspileStyleModel({ filename: file.key })]
-          : !file.key.endsWith('.d.ts')
-            ? [Thunk.tryTranspileCodeModel({ filename: file.key })]
+    flatMap((act) => {
+      if (act.type === '[dev-env] create code file' || act.type === '[dev-env] create style file') {
+        const { contents, filename } = act.pay;
+        return [
+          EditorThunk.ensureMonacoModel({ filename, code: contents }),
+          // Transpile added package
+          ...Dev.isStyleFilename(filename)
+          ? [Thunk.tryTranspileStyleModel({ filename })]
+          : !filename.endsWith('.d.ts')
+            ? [Thunk.tryTranspileCodeModel({ filename })]
             : []
-      ]),
-    ]
-    ),
+        ];
+      } else {
+        return [
+          ...Object.values(state$.value.devEnv.file).flatMap((file) => [
+            EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
+            // Initial transpile when initialized
+            ...file.ext === 'scss'
+              ? [Thunk.tryTranspileStyleModel({ filename: file.key })]
+              : !file.key.endsWith('.d.ts')
+                ? [Thunk.tryTranspileCodeModel({ filename: file.key })]
+                : []
+          ]),
+        ]
+      }
+    }),
   ),
 );
+
+
 
 const manageAppPortals = createEpic(
   (action$, state$) => action$.pipe(
