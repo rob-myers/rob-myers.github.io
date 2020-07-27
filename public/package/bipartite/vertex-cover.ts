@@ -39,7 +39,7 @@ export default function bipartiteVertexCover(
     if(matchL[src] === dst && !(matchCount[src]++)) {
       continue;
     }
-    adjL[src].push(dst)
+    adjL[src].push(dst);
     adjR[dst].push(src);
   };
 
@@ -47,27 +47,27 @@ export default function bipartiteVertexCover(
   const left = [] as number[];
   const right = [] as number[];
   for(let i = 0; i < n; ++i) {
-    walk(right, i, adjL, matchL, coverL, matchR, coverR)
+    walk(right, i, adjL, matchL, coverL, matchR, coverR);
   }
   for(let i = 0; i < m; ++i) {
-    walk(left, i, adjR, matchR, coverR, matchL, coverL) 
+    walk(left, i, adjR, matchR, coverR, matchL, coverL);
   }
 
   // Clean up left-over edges
   for(let i = 0; i < n; ++i) {
     if(!coverL[i] && matchL[i] >= 0) {
-      coverR[matchL[i]] = coverL[i] = 1
-      left.push(i)
+      // coverR[matchL[i]] = coverL[i] = 1;
+      left.push(i);
     }
   }
 
-  pool.free(coverR)
-  pool.free(matchR)
-  pool.free(coverL)
-  pool.free(matchCount)
-  pool.free(matchL)
+  pool.free(coverR);
+  pool.free(matchR);
+  pool.free(coverL);
+  pool.free(matchCount);
+  pool.free(matchL);
 
-  return [ left, right ]
+  return [ left, right ];
 }
 
 // TODO explain
@@ -81,21 +81,14 @@ function walk(
   coverR: Int32Array,
 ) {
   if(coverL[v] || matchL[v] >= 0) {
-    return
+    return;
   }
   while(v >= 0) {
-    coverL[v] = 1
-    var adj = adjL[v]
-    var next = -1
-    for(var i=0,l=adj.length; i<l; ++i) {
-      var u = adj[i]
-      if(coverR[u]) {
-        continue
-      }
-      next = u
-    }
-    if(next < 0) {
-      break;
+    coverL[v] = 1;
+    const adj = adjL[v];
+    const next = adj.find(u => !coverR[u]);
+    if(next === undefined) {
+      return;
     }
     coverR[next] = 1;
     list.push(next);
