@@ -458,7 +458,7 @@ export function getJsPathErrorMarkers(
   metas: ModuleSpecifierInterval[],
 ): IMarkerData[] {
   const metaErrors = metas.map((meta) => ({ meta, jsErrors: jsErrors.filter(x =>
-    x.resolved === resolveRelativePath(filename, meta.value)),
+    x.resolved === resolvePath(filename, meta.value)),
   }));
   return metaErrors.flatMap(({ meta: { interval }, jsErrors }) =>
     jsErrors.map(({ key }) => ({
