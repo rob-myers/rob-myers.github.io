@@ -104,7 +104,7 @@ export default function bipartiteMatching(
   }
 
   const result = matchN.reduce((agg, dst, src) =>
-    agg.concat(dst < 0 ? [] : [src, dst]), [] as Edge[]
+    agg.concat(dst < 0 ? [] : [[src, dst]]), [] as Edge[]
   );
   
   pool.free(toVisit);
