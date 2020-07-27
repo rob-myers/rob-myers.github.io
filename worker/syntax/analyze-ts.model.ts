@@ -34,8 +34,8 @@ export function analyzeCodeImportsExports(filename: string, as: 'js' | 'src', co
         /** Module specifier e.g. `./index` */
         value: moduleSpecifier.getLiteralValue(),
         interval: {
-          start: moduleSpecifier.getPos() + 2,
-          end: moduleSpecifier.getEnd(),
+          start: moduleSpecifier.getPos() + 2, // excludes start quote
+          end: moduleSpecifier.getEnd(), // excludes end quote
           startLine,
           startCol,
           endLine,
@@ -178,7 +178,7 @@ export function computeTsImportExportErrors(
     const resolved = Dev.resolvePath(analyzed.filename, value);
     // console.log({ absPath: analyzed.filename, moduleSpecifier: value, resolved  })
 
-    if (value.endsWith('.scss')) {
+    if (Dev.isStyleFilename(value)) {
       if (!(resolved in filenames)) {
         errors.push({ key: 'require-scss-exists', interval, label: value });
       }
@@ -216,7 +216,7 @@ export function computeJsImportExportErrors(
 
   if (filename.endsWith('.tsx')) {
     imports.filter(({ from }) =>
-      !from.value.endsWith('.scss') && !(`${Dev.resolvePath(filename, from.value)}.tsx` in filenames))
+      !Dev.isStyleFilename(from.value) && !(`${Dev.resolvePath(filename, from.value)}.tsx` in filenames))
       .forEach((meta) => errors.push({ key: 'only-import-tsx', path: meta.from.value, resolved: Dev.resolvePath(filename, meta.from.value) }));
     analyzed.exports.forEach((meta) =>
       meta.key === 'export-decl' && !(`${Dev.resolvePath(filename, meta.from.value)}.tsx` in filenames) &&
@@ -225,7 +225,7 @@ export function computeJsImportExportErrors(
 
   if (filename.endsWith('.ts')) {
     imports.filter(({ from }) =>
-      !from.value.endsWith('.scss') && !(`${Dev.resolvePath(filename, from.value)}.ts` in filenames)).forEach((meta) =>
+      !Dev.isStyleFilename(from.value) && !(`${Dev.resolvePath(filename, from.value)}.ts` in filenames)).forEach((meta) =>
       errors.push({ key: 'only-import-ts', path: meta.from.value, resolved: Dev.resolvePath(filename, meta.from.value) }));
     analyzed.exports.forEach((meta) =>
       meta.key === 'export-decl' && !(`${Dev.resolvePath(filename, meta.from.value)}.ts` in filenames) &&

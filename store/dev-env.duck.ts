@@ -331,6 +331,14 @@ export const Thunk = {
       dispatch(LayoutAct.triggerPersist());
     },
   ),
+  closeProject: createThunk(
+    '[dev-env] close project',
+    () => {
+      /**
+       * TODO
+       */
+    },
+  ),
   /**
    * Can create css module code/url as soon as scss file created.
    */
@@ -503,7 +511,7 @@ export const Thunk = {
       const modelKey = filenameToModelKey(filename);
       
       if (jsPathErrors.length) {
-        // console.log({ filename, handlingJsErrors: jsPathErrors });
+        console.log({ filename, jsPathErrors });
         const markers = Dev.getJsPathErrorMarkers(filename, jsPathErrors, pathIntervals);
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers }));
         const cyclicError = jsPathErrors.find(isCyclicDepError);
@@ -548,29 +556,22 @@ export const Thunk = {
 
       // TEMP force initial project
       const packageName = 'intro';
-      dispatch(Thunk.loadPackage({ packageName, asRoot: true }))
+      dispatch(Thunk.loadProject({ packageName }));
 
       dispatch(Act.setInitialized());
     },
   ),
-  /**
-   * Load package or project.
-   */
-  loadPackage: createThunk(
-    '[dev-env] load package',
-    ({ dispatch, state: { devEnv } }, { packageName, asRoot = false }: {
-      packageName: string;
-      asRoot?: boolean;
-    }) => {
-      if (asRoot) {
+  loadProject: createThunk(
+    '[dev-env] load project',
+    ({ dispatch, state: { devEnv } }, { packageName }: { packageName: string }) => {
         // TODO unload current project
-        dispatch(Act.setProjectKey(packageName));
-      }
+      dispatch(Act.setProjectKey(packageName));
+
       const { transitiveDeps } = devEnv.packagesManifest!.packages[packageName];
       for (const packageName of transitiveDeps) {
         dispatch(Thunk.addFilesFromPackage({ packageName }));
       }
-      dispatch(Thunk.addFilesFromPackage({ packageName, asRoot }));
+      dispatch(Thunk.addFilesFromPackage({ packageName, asRoot: true }));
     },
   ),
   /**
@@ -591,6 +592,14 @@ export const Thunk = {
       for (const [filename, { patchedCode, blobUrl }] of Object.entries(filenameToPatched)) {
         dispatch(Act.updateFile(filename, { esModule: { patchedCode, blobUrl } }));
       }
+    },
+  ),
+  resetProject: createThunk(
+    '[dev-env] reset project',
+    () => {
+      /**
+       * TODO
+       */
     },
   ),
   saveFilesToDisk: createThunk(
@@ -699,10 +708,10 @@ export const Thunk = {
       }
       
       const { srcErrors } = await dispatch(Thunk.analyzeSrcCode({ filename }));
-      if (srcErrors.length) {
-        // console.error({ filename, srcErrors });
+      if (srcErrors.length) {// We forget transpilation if have error in untranspiled code
+        console.error({ filename, srcErrors });
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers: srcErrors.map(e => Dev.getSrcErrorMarker(e)) }));
-        return; // Forget transpilation if have source error
+        return;
       }
 
       const analyzed = await dispatch(Thunk.analyzeJsCode({ filename, nextTranspiledJs: transpiled.js }));

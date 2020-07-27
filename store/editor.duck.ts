@@ -336,7 +336,8 @@ export const Thunk = {
     ({ state: { editor: e } }, { modelKey, markers }: { modelKey: string; markers: IMarkerData[] }) => {
       const { model } = e.model[modelKey];
       // const modelMarkers = e.internal!.monaco.editor.getModelMarkers({ resource: uri });
-      e.internal!.monaco.editor.setModelMarkers(model, 'eslint', markers);
+      // console.log({ modelKey, model, markers });
+      e.internal!.monaco.editor.setModelMarkers(model, 'custom-owner', markers);
     },
   ),
   setMonacoCompilerOptions: createThunk(

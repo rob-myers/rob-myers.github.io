@@ -2,9 +2,17 @@
 
 See [blog notes](./blog.md).
 
+Although we provide a development environment, this is not our objective.
+- We'll represent worlds using `react` e.g. level geometry via React components.
+- The dev env will permit the user to interact with the world. 
+- Rather than developing a UI or CLI, we'll make a "Game AI Editor" by providing a suitable hot-reloading react project.
+
+
 # Online Dev Environment
 
-- [ ] ensure error message when try to import package ts from tsx
+- [ ] implement close/reset/load project
+- [x] remove support for adding packages -- unneeded complexity
+- [x] fix jsPathErrors markers for aliased module specifiers
 - [ ] `bipartite` package is project with demo
 - [x] can ensure packages and have loaded `bipartite` package
 - [x] projects have a layout via `layout.saved`

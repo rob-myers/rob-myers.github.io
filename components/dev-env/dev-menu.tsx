@@ -44,11 +44,15 @@ export const DevMenu = () => {
       dispatch(Thunk.saveFilesToDisk({}));
     }
   };
-  const handleProjectSelect = (_itemKey: string) => {
-    // TODO
-  };
-  const handlePackageSelect = (itemKey: string) => {
-    itemKey && dispatch(Thunk.loadPackage({ packageName: itemKey }))
+  const handleProjectSelect = (itemKey: string) => {
+    if (itemKey === 'reset-project') {
+      dispatch(Thunk.resetProject({}));
+    } else if (itemKey === 'close-project') {
+      dispatch(Thunk.closeProject({}));
+    } else if (itemKey) {
+      dispatch(Thunk.closeProject({}));
+      dispatch(Thunk.loadProject({ packageName: itemKey }));
+    }
   };
 
   return (
@@ -70,26 +74,14 @@ export const DevMenu = () => {
           <div className={css.leftControls}>
             <Select
               items={[
-                { itemKey: '', label: 'load project' },
+                { itemKey: '', label: 'project' },
                 ...projects.map(packageName => ({
                   itemKey: packageName, label: packageName,
                 })),
-                { itemKey: 'reset-project', label: 'reset current' },
+                { itemKey: 'close-project', label: 'close project' },
+                { itemKey: 'reset-project', label: 'reset project' },
               ]}
               onChange={handleProjectSelect}
-              selectedKey=""
-              showSelectedOption={false}
-              disabled={disabled}
-            />
-
-            <Select
-              items={[
-                { itemKey: '', label: 'ensure pkg' },
-                ...packages.map(packageName => ({
-                  itemKey: packageName, label: packageName,
-                })),
-              ]}
-              onChange={handlePackageSelect}
               selectedKey=""
               showSelectedOption={false}
               disabled={disabled}
