@@ -25,7 +25,7 @@ export function moduleSpecsToCodeFilenames(
   moduleSpecs: string[],
 ) {
   return moduleSpecs.map(x => Dev.resolvePath(filename, x))
-    .filter((x, i, xs) => !x.endsWith('.scss') && i === xs.indexOf(x))
+    .filter((x, i, xs) => !Dev.isStyleFilename(x) && i === xs.indexOf(x))
     .map(x => file[`${x}.tsx`]?.key || file[`${x}.ts`]?.key)
     .filter(Boolean);
 }
@@ -165,7 +165,7 @@ function patchTranspiledCode(
       nextValue = `${window.location.origin}/facade/redux.facade.js`;
     } else if (value === 'react-redux') {
       nextValue = `${window.location.origin}/facade/react-redux.facade.js`;
-    } else if (resolved && resolved.endsWith('.scss')) {
+    } else if (resolved && Dev.isStyleFilename(resolved)) {
       nextValue = scssFile[resolved].cssModule!.blobUrl;
     } else {
       throw Error(`Unexpected import/export meta ${JSON.stringify(meta)}`);

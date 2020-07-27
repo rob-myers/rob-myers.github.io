@@ -96,12 +96,14 @@ export const Act = {
     createAct('[dev-env] create style file', input),
   createFilePanelMeta: (input: { panelKey: string; filename: string }) =>
     createAct('[dev-env] create file panel meta', input),
-  deleteFile: (input: { filename: string }) =>
-    createAct('[dev-env] remove file', input),
   forgetPanelMeta: (input: { panelKey: string }) =>
     createAct('[dev-env] forget panel meta', input),
   removeAppPortal: (panelKey: string) =>
     createAct('[dev-env] remove app portal', { panelKey }),
+  removeFile: (input: { filename: string }) =>
+    createAct('[dev-env] remove file', input),
+  resetFlags: () =>
+    createAct('[dev-env] reset flags', {}),
   restrictAppPortals: (input: { panelKeys: string[] }) =>
     createAct('[dev-env] restrict app portals', input),
   setAppValid: (isValid: boolean) =>
@@ -129,6 +131,34 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  /**
+   * Add files from package.
+   * Can also add them at root-level, restoring previously saved.
+   */
+  addFilesFromPackage: createThunk(
+    '[dev-env] add files from package',
+    async ({ dispatch, state: { devEnv } }, { packageName, asRoot = false }: {
+      packageName: string;
+      asRoot?: boolean;
+    }) => {
+      let filesToCreate = [] as { filename: string; contents: string }[];
+      if (asRoot && packageName in devEnv.saved) {
+        Object.values(devEnv.saved[packageName].file).forEach(({ key: filename, contents }) =>
+          filesToCreate.push({ filename, contents }));
+      } else {
+        Object.values(devEnv.package[packageName].file).forEach(({ key, contents }) =>
+          filesToCreate.push({ filename: asRoot ? Dev.packageFilenameToLocal(key) : key, contents }));
+      }
+      
+      for (const { filename, contents } of filesToCreate) {
+        if (Dev.isCodeFilename(filename)) {
+          dispatch(Act.createCodeFile({ filename, contents }));
+        } else if (Dev.isStyleFilename(filename)) {
+          dispatch(Act.createStyleFile({ filename, contents }));
+        }
+      }
+    },
+  ),
   /**
    * Analyze source code, storing errors and also module specifier code-intervals,
    * so can source-map errors found in transpiled js (always tied to an import/export).
@@ -333,12 +363,7 @@ export const Thunk = {
   ),
   closeProject: createThunk(
     '[dev-env] close project',
-    ({ dispatch }) => {
-      /**
-       * TODO
-       * - remove all files/models
-       * - clean away scripts
-       */
+    ({ dispatch, state: { devEnv } }) => {
       dispatch(Act.setProjectKey(null));
       dispatch(LayoutAct.setPersistKey(null));
 
@@ -347,6 +372,11 @@ export const Thunk = {
         predicate: (meta) => meta.devEnvComponent === 'App'
           || !meta.devEnvComponent && !!meta.filename,
       }));
+      // Remove files, models, scripts/styles
+      Object.values(devEnv.file).forEach(({ key: filename }) =>
+        dispatch(Thunk.removeFile({ filename })));
+      
+      dispatch(Act.resetFlags());
     },
   ),
   /**
@@ -437,35 +467,6 @@ export const Thunk = {
       const reachableScssFiles = Dev.getReachableScssFiles(filename, files);
       const stratification = stratifyScssFiles(reachableScssFiles);
       return { key: 'success', stratification };
-    },
-  ),
-  /**
-   * Add files from package.
-   * Can also add them at root-level, restoring previously saved.
-   */
-  addFilesFromPackage: createThunk(
-    '[dev-env] add files from package',
-    async ({ dispatch, state: { devEnv } }, { packageName, asRoot = false }: {
-      packageName: string;
-      asRoot?: boolean;
-    }) => {
-      let filesToCreate = [] as { filename: string; contents: string }[];
-      if (asRoot && packageName in devEnv.saved) {
-        Object.values(devEnv.saved[packageName].file).forEach(({ key: filename, contents }) =>
-          filesToCreate.push({ filename, contents }));
-      } else {
-        Object.values(devEnv.package[packageName].file).forEach(({ key, contents }) =>
-          filesToCreate.push({ filename: asRoot ? Dev.packageFilenameToLocal(key) : key, contents }));
-      }
-      
-      for (const { filename, contents } of filesToCreate) {
-        if (/\.tsx?$/.test(filename)) {
-          dispatch(Act.createCodeFile({ filename, contents }));
-        } else if (filename.endsWith('.scss')) {
-          dispatch(Act.createStyleFile({ filename, contents }));
-        }
-      }
-      dispatch(LayoutThunk.setLayout({ layoutId: `@package/${packageName}` }));
     },
   ),
   fetchPackages: createThunk(
@@ -578,10 +579,11 @@ export const Thunk = {
       dispatch(Act.setProjectKey(packageName));
 
       const { transitiveDeps } = devEnv.packagesManifest!.packages[packageName];
-      for (const packageName of transitiveDeps) {
-        dispatch(Thunk.addFilesFromPackage({ packageName }));
+      for (const depPackageName of transitiveDeps) {
+        dispatch(Thunk.addFilesFromPackage({ packageName: depPackageName }));
       }
       dispatch(Thunk.addFilesFromPackage({ packageName, asRoot: true }));
+      dispatch(LayoutThunk.setLayout({ layoutId: `@package/${packageName}` }));
     },
   ),
   /**
@@ -601,6 +603,20 @@ export const Thunk = {
         
       for (const [filename, { patchedCode, blobUrl }] of Object.entries(filenameToPatched)) {
         dispatch(Act.updateFile(filename, { esModule: { patchedCode, blobUrl } }));
+      }
+    },
+  ),
+  removeFile: createThunk(
+    '[dev-env] remove files',
+    ({ state: { devEnv }, dispatch }, { filename }: { filename: string }) => {
+      const { cleanups, ext } = devEnv.file[filename];
+      cleanups.forEach(cleanup => cleanup());
+      dispatch(Act.removeFile({ filename }));
+      dispatch(EditorThunk.removeMonacoModel({ modelKey: filenameToModelKey(filename) }));
+      if (ext === 'scss') {
+        document.getElementById(Dev.filenameToStyleId(filename))?.remove();
+      } else {
+        document.getElementById(Dev.filenameToScriptId(filename))?.remove();
       }
     },
   ),
@@ -636,7 +652,7 @@ export const Thunk = {
       if (filename.endsWith('.d.ts')) {
         return; // No need to transpile *.d.ts
       }
-      const transpileCode = /\.tsx?$/.test(filename)
+      const transpileCode = Dev.isCodeFilename(filename)
         ? () => dispatch(Thunk.tryTranspileCodeModel({ filename }))
         : () => dispatch(Thunk.tryTranspileStyleModel({ filename }));
       const disposable = dispatch(EditorThunk.trackModelChange({ do: transpileCode, delayType: 'debounce', delayMs: 500, modelKey }));
@@ -898,6 +914,14 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] remove file': return { ...state,
       file: removeFromLookup(act.pay.filename, state.file),
     };
+    case '[dev-env] reset flags': return { ...state,
+      flag: {
+        ...state.flag,
+        appValid: false,
+        appWasValid: false,
+        reducerValid: false,
+      },
+    };
     case '[dev-env] restrict app portals': return { ...state,
       appPortal: pluck(state.appPortal, ({ key }) => act.pay.panelKeys.includes(key)),
     };
@@ -1045,27 +1069,14 @@ const initializeMonacoModels = createEpic(
     filterActs(
       '[editor] set monaco loaded',
       '[dev-env] set initialized',
-      '[dev-env] create code file',
-      '[dev-env] create style file',
+      '[dev-env] load project', // Perhaps only need this
     ),
     filter((_) =>
       state$.value.editor.monacoLoaded
       && state$.value.devEnv.flag.initialized
     ),
     flatMap((act) => {
-      if (act.type === '[dev-env] create code file' || act.type === '[dev-env] create style file') {
-        const { contents, filename } = act.pay;
-        return [
-          EditorThunk.ensureMonacoModel({ filename, code: contents }),
-          // Transpile added package
-          ...Dev.isStyleFilename(filename)
-          ? [Thunk.tryTranspileStyleModel({ filename })]
-          : !filename.endsWith('.d.ts')
-            ? [Thunk.tryTranspileCodeModel({ filename })]
-            : []
-        ];
-      } else {
-        return [
+      return [
           ...Object.values(state$.value.devEnv.file).flatMap((file) => [
             EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
             // Initial transpile when initialized
@@ -1077,7 +1088,7 @@ const initializeMonacoModels = createEpic(
           ]),
         ]
       }
-    }),
+    ),
   ),
 );
 

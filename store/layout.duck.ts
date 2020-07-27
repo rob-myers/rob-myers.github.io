@@ -101,15 +101,20 @@ export const Thunk = {
     ({ state: { layout }, dispatch }, { predicate }: {
       predicate: (meta: CustomLayoutPanelMeta) => boolean;
     }) => {
-      const nextConfig = mapGlConfig(layout.nextConfig!, (x) =>
-        'type' in x
-        && x.type === 'component'
-        && x.props.panelMeta
-        && predicate(x.props.panelMeta) ? null : x
-      ) as GoldenLayoutConfig | null;
-      dispatch(Act.setNextConfig({
-        nextConfig: nextConfig || getDefaultEmptyLayout(),
-      }));
+      const panelKeystoClose = [] as string[]
+      const nextConfig = mapGlConfig(layout.nextConfig!, (node) => {
+        const props = 'type' in node && node.type === 'component' && node.props || null;
+        if (props?.panelMeta && predicate(props.panelMeta)) {
+          panelKeystoClose.push(props.panelKey);
+          return null;
+        }
+        return node;
+      }) as GoldenLayoutConfig | null;
+
+      // Change config (triggers new layout)
+      dispatch(Act.setNextConfig({ nextConfig: nextConfig || getDefaultEmptyLayout() }));
+      // Pretend user closed the panel
+      setTimeout(() => panelKeystoClose.map(panelKey => dispatch(Act.panelClosed({ panelKey }))));
     },
   ),
   /**
