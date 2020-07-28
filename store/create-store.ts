@@ -12,7 +12,7 @@ import { State as EditorState } from './editor.duck';
 import { State as LayoutState } from './layout.duck';
 import { State as DevEnvState } from './dev-env.duck';
 import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
-import { getDefaultLayoutConfig } from '@model/layout/generate-layout';
+import { getDefaultLayoutConfig, getDefaultEmptyLayout } from '@model/layout/generate-layout';
 import { SavedProject } from '@model/dev-env/dev-env.model';
 
 const storeVersion = 0.34;
@@ -66,7 +66,9 @@ const persistedReducer = persistReducer({
     ),
     createTransform<LayoutState, LayoutState>(
       ({ goldenLayout, savedConfig, persistKey }, _key) => {
-        const nextConfig = goldenLayout?.toConfig() || getDefaultLayoutConfig();
+        const nextConfig = persistKey
+          ? goldenLayout?.toConfig() || getDefaultLayoutConfig()
+          : getDefaultEmptyLayout();
         return {
           savedConfig: persistKey
             ? { ...savedConfig, [persistKey]: { key: persistKey, config: nextConfig } }
@@ -74,7 +76,7 @@ const persistedReducer = persistReducer({
           goldenLayout: null,
           nextConfig,
           panel: {},
-          persistKey: null,
+          persistKey,
         };
       },
       (state, _key) => state,
@@ -93,7 +95,7 @@ const persistedReducer = persistReducer({
         packagesManifest: null,
         panelToMeta: {},
         package: {},
-        projectKey: null,
+        projectKey,
         /**
          * Remember files in current project and also
          * previously saved projects.

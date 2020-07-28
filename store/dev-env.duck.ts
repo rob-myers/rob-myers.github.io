@@ -364,6 +364,7 @@ export const Thunk = {
   closeProject: createThunk(
     '[dev-env] close project',
     ({ dispatch, state: { devEnv } }) => {
+      dispatch(LayoutThunk.saveCurrentLayout({}));
       dispatch(Act.setProjectKey(null));
       dispatch(LayoutAct.setPersistKey(null));
 
@@ -559,15 +560,14 @@ export const Thunk = {
   ),
   initialize: createThunk(
     '[dev-env] initialize',
-    async ({ dispatch }) => {
+    async ({ dispatch, getState }) => {
       initializeRuntimeStore();
 
       await dispatch(Thunk.fetchPackagesManifest({}));
       await dispatch(Thunk.fetchPackages({}));
 
-      // TEMP force initial project
-      const packageName = 'intro';
-      dispatch(Thunk.loadProject({ packageName }));
+      const { projectKey } = getState().devEnv;
+      projectKey && dispatch(Thunk.loadProject({ packageName: projectKey }));
 
       dispatch(Act.setInitialized());
     },
@@ -575,7 +575,6 @@ export const Thunk = {
   loadProject: createThunk(
     '[dev-env] load project',
     ({ dispatch, state: { devEnv } }, { packageName }: { packageName: string }) => {
-        // TODO unload current project
       dispatch(Act.setProjectKey(packageName));
 
       const { transitiveDeps } = devEnv.packagesManifest!.packages[packageName];

@@ -46,7 +46,7 @@ interface SavedGoldenLayoutConfig {
 
 const getInitialState = (): State => ({
   goldenLayout: null,
-  nextConfig: getDefaultLayoutConfig(),
+  nextConfig: getDefaultEmptyLayout(),
   panel: {},
   persistKey: null,
   savedConfig: {},

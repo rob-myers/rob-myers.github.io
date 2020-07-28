@@ -260,7 +260,7 @@ export const Thunk = {
       const model = monaco.editor.getModel(uri) || monaco.editor.createModel(code, undefined, uri);
       
       // Don't track special model which ensures monaco is bootstrapped
-      if (filename === '_bootstrap.ts') {
+      if (filename === '__bootstrap.ts') {
         return model;
       }
 
