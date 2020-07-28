@@ -26,7 +26,7 @@ const Select: React.FC<Props> = ({
       onKeyUp={({ key }) => key === 'Escape' && setIsOpen(false)}
     >
       <div className={css.selected} onClick={toggle}>
-        <Option {...selected} label={overrideLabel || selected.label} />
+        <Option {...selected} label={overrideLabel || selected.label} icon={overrideLabel ? undefined : selected.icon} />
       </div>
       <div className={css.optionsAnchor}>
         {isOpen && (

@@ -84,13 +84,14 @@ export const DevMenu = () => {
                 ...projects.map(packageName => ({
                   itemKey: packageName,
                   label: packageName,
+                  icon: '⋯',
                 })),
               ]}
               onChange={handleProjectSelect}
               selectedKey={projectKey || ''}
               showSelectedOption={false}
               disabled={disabled}
-              overrideLabel={projectKey ? `project: ${projectKey}` : undefined}
+              overrideLabel={projectKey ? `@${projectKey}` : undefined}
             />
           </div>
 
