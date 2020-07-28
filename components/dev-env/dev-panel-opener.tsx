@@ -12,14 +12,14 @@ const DevPanelOpener: React.FC = () => {
   const panelOpener = useSelector(({ devEnv }) => devEnv.panelOpener);
   const filenames = useSelector(({ devEnv }) => Object.keys(devEnv.file));
   const selectedKey = useSelector(({ devEnv }) => {
-    if (panelOpener?.panelKey) {
+    if (panelOpener?.panelKey && panelOpener.panelKey in devEnv.panelToMeta) {
       const meta = devEnv.panelToMeta[panelOpener.panelKey];
       return meta.panelType === 'app'  ? 'app' : meta.filename;
     }
     return null;
   });
-  const resizedAt = useSelector(({ layout }) => panelOpener
-    && layout.panel[panelOpener.panelKey].resizedAt);
+  const resizedAt = useSelector(({ layout }) =>
+    panelOpener && layout.panel[panelOpener.panelKey]?.resizedAt);
 
   const dispatch = useDispatch();
   const close = () => {
@@ -36,14 +36,19 @@ const DevPanelOpener: React.FC = () => {
     }
     close();
   };
+  const updateTargetRect = () => {
+    const nextTarget = panelOpener && document.getElementById(panelOpener.elementId) || null;
+    setTargetRect(nextTarget ? nextTarget.getBoundingClientRect() : null);
+  };
 
   useEffect(() => {
-    if (panelOpener) {
-      const nextTarget = document.getElementById(panelOpener.elementId) || null;
-      setTargetRect(nextTarget ? nextTarget.getBoundingClientRect() : null);
-      setClosed(false);
-    }
-  }, [panelOpener, resizedAt]);
+    updateTargetRect();
+    panelOpener && setClosed(false);
+  }, [panelOpener]);
+
+  useEffect(() => {
+    panelOpener && !closed && updateTargetRect();
+  }, [resizedAt]);
 
   return (
     <div className={css.root}>
@@ -52,7 +57,7 @@ const DevPanelOpener: React.FC = () => {
           className={css.panel}
           style={{
             left: targetRect.left + xOffset,
-            top: targetRect.bottom + 2,
+            top: targetRect.bottom + 3,
           }}
         >
         <Select
@@ -65,7 +70,7 @@ const DevPanelOpener: React.FC = () => {
           dropdown
           onBlur={close}
           provideItemsBounds={(rect) => {
-            setXOffset(60 - rect.width);
+            setXOffset(57 - rect.width);
           }}
         />
         </section>
