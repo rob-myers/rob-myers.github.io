@@ -54,7 +54,7 @@ const Editor: React.FC<EditorProps> = (props) => {
   }, [monacoLoaded]);
 
   React.useEffect(() =>{
-    if (ready) {// Initial syntax highlight
+    if (ready && filename.endsWith('.tsx')) {
       dispatch(Thunk.highlightTsxSyntax({ editorKey }));
     }
   }, [ready]);
@@ -62,6 +62,7 @@ const Editor: React.FC<EditorProps> = (props) => {
   React.useEffect(() => {
     if (ready) {
       dispatch(Thunk.changeEditorModel({ editorKey, nextFilename: filename }));
+      filename.endsWith('.tsx') && dispatch(Thunk.highlightTsxSyntax({ editorKey }));
     }
   }, [filename]);
 
