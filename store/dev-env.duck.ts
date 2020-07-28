@@ -50,6 +50,7 @@ export interface State {
   packagesManifest: null | PackagesManifest;
   /** Mirrors layout.panel, permitting us to change panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
+  panelOpener: null | { panelKey: string; elementId: string };
   /** Name of current project i.e. a package name */
   projectKey: null | string;
   /** Saved project files */
@@ -67,6 +68,7 @@ const initialState: State = {
   },
   package: {},
   packagesManifest: null,
+  panelOpener: null,
   panelToMeta: {},
   projectKey: null,
   saved: {},
@@ -86,6 +88,8 @@ export const Act = {
     | { to: 'doc'; filename: string }
     | { to: 'file'; filename: string }
   )) => createAct('[dev-env] change panel meta', { panelKey, ...input }),
+  closePanelOpener: () =>
+    createAct('[dev-env] close panel opener', {}),
   createAppPanelMeta: (input: { panelKey: string }) =>
     createAct('[dev-env] create app panel meta', input),
   createDocPanelMeta: (input: { panelKey: string; filename: string }) =>
@@ -110,6 +114,8 @@ export const Act = {
     createAct('[dev-env] set app valid', { isValid }),
   setInitialized: () =>
     createAct('[dev-env] set initialized', {}),
+  setPanelOpener: (input: { panelKey: string, elementId: string }) =>
+    createAct('[dev-env] set panel opener', input),
   setProjectKey: (projectKey: string | null) =>
     createAct('[dev-env] set project key', { projectKey }),
   setReducerValid: (isValid: boolean) =>
@@ -888,6 +894,9 @@ export const reducer = (state = initialState, act: Action): State => {
         , state.panelToMeta),
       };
     }
+    case '[dev-env] close panel opener': return { ...state,
+      panelOpener: null,
+    };
     case '[dev-env] create app panel meta': return { ...state,
       panelToMeta: addToLookup(
         Dev.createDevPanelAppMeta(act.pay.panelKey), state.panelToMeta),
@@ -950,6 +959,9 @@ export const reducer = (state = initialState, act: Action): State => {
     };
     case '[dev-env] set initialized': return { ...state,
       flag: { ...state.flag, initialized: true },
+    };
+    case '[dev-env] set panel opener': return { ...state,
+      panelOpener: act.pay,
     };
     case '[dev-env] set project key': return { ...state,
       projectKey: act.pay.projectKey,
@@ -1095,7 +1107,7 @@ const initializeMonacoModels = createEpic(
       state$.value.editor.monacoLoaded
       && state$.value.devEnv.flag.initialized
     ),
-    flatMap((act) => {
+    flatMap((_) => {
       return [
           ...Object.values(state$.value.devEnv.file).flatMap((file) => [
             EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
@@ -1111,8 +1123,6 @@ const initializeMonacoModels = createEpic(
     ),
   ),
 );
-
-
 
 const manageAppPortals = createEpic(
   (action$, state$) => action$.pipe(

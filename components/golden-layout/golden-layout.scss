@@ -10,15 +10,20 @@ body {
     .lm_tab {
       border: 1px solid #333;
       border-width: 1px 1px 0 0;
-      // &.lm_active {}
 
       .lm_title {
         touch-action: none;
       }
     }
-    .lm_close {
-      // Hide close button for multiple panels
-      display: none !important;
+    .lm_controls {
+      .lm_custom_open:before {
+        font-size: 12px;
+        content: "📂";
+      }
+      .lm_close {
+        // Hide close button for multiple panels
+        display: none !important;
+      }
     }
   }
 

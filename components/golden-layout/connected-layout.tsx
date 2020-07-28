@@ -7,6 +7,7 @@ import GoldenLayout from 'golden-layout';
 import { redact } from '@model/store/redux.model';
 import { ExtendedContainer } from '@model/layout/layout.model';
 import { Act, Thunk } from '@store/layout.duck';
+import { Act as DevEnvAct } from '@store/dev-env.duck';
 
 import DevPanel from '@components/dev-env/dev-panel';
 const GoldenLayoutComponent = dynamic(import('@components/golden-layout/golden-layout'), { ssr: false });
@@ -79,6 +80,12 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
 
   const onDragStart = useCallback(() => null, []);
 
+  const onClickCustomIcon = (iconType: string, panelKey: string, iconId: string) => {
+    if (iconType === 'custom-open') {
+      dispatch(DevEnvAct.setPanelOpener({ panelKey, elementId: iconId }));
+    }
+  };
+
   return (
     <div className="connected-golden-layout">
       <div className={classNames({
@@ -95,6 +102,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
           onComponentCreated={onComponentCreated}
           registerComponents={registerComponents}
           onDragStart={onDragStart}
+          onClickCustomIcon={onClickCustomIcon}
         />
       </div>
     </div>

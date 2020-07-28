@@ -5,7 +5,6 @@ import { LayoutPanelMeta } from '@model/layout/layout.model';
 import { CustomPanelMetaKey } from '@model/layout/generate-layout';
 import { isAppPanel, isFilePanel, isDocPanel } from '@model/dev-env/dev-env.model';
 import { Act } from '@store/dev-env.duck';
-import DevPanelMenu from './dev-panel-menu';
 import DevDoc from './dev-doc';
 import css from './dev-panel.scss';
 
@@ -42,7 +41,7 @@ const DevPanel: React.FC<Props> = ({ panelKey, panelMeta }) => {
 
   return devMeta ? (
     <>
-      <DevPanelMenu panelKey={panelKey} />
+      <div style={{ height: 8, background: '#222', borderBottom: '1px solid #112' }} />
       {devMeta.panelType === 'file' &&
         <DevEditor panelKey={panelKey} filename={devMeta.filename} />}
       {devMeta.panelType === 'doc' &&

@@ -10,6 +10,7 @@ import { Act, Thunk } from '@store/dev-env.duck';
 import { Thunk as LayoutThunk } from '@store/layout.duck';
 import Select from '@components/select/select';
 import css from './dev-menu.scss';
+import DevPanelOpener from './dev-panel-opener';
 
 const Editor = dynamic(import('@components/monaco/editor'), { ssr: false });
 
@@ -122,6 +123,8 @@ export const DevMenu = () => {
             <div className={css.homeLink}>
               <Link href="/"><a>home</a></Link>
             </div>
+
+            <DevPanelOpener />
 
           </div>
         </div>

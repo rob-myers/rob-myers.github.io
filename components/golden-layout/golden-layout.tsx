@@ -98,6 +98,23 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
             };
             this.goldenLayoutInstance.on('stackCreated', onDropDuplicate);
           });
+
+          /**
+           * Create button for opening file/app
+           * TODO generic approach for adding dev-env specific buttons
+           */
+          const li = document.createElement('li');
+          li.className = 'lm_custom_open';
+          li.title="open file or app"
+          li.id = `gl-icon-${shortId.generate()}`;
+          li.addEventListener('click', () => {
+            const config = tab.header.activeContentItem.config as GoldenLayoutConfigItem<string>;
+            const panelKey = 'type' in config && config.type === 'component' && config.props.panelKey || null;
+            if (panelKey) {
+              this.props.onClickCustomIcon('custom-open', panelKey, li.id);
+            }
+          });
+          controlsContainer.prepend(li);
         }
       });
 
@@ -151,7 +168,6 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
   /**
    * Attach a "drag detector" (drag source) to specific button element.
    * We specify the newPanelKey which'll only be instantiated if the user drags and drops.
-   * 
    * Create new dragSource using `config` as template, but:
    * 1. Use new distinct `panelKey`.
    * 2. Change 'component' back to 'react-component'.
@@ -197,6 +213,8 @@ interface Props {
   onComponentCreated: (component: ExtendedContainer) => void;
   /** Invoked on commence dragging of a tab. */
   onDragStart: (component: ExtendedContainer) => void;
+  /** Invoked on click custom icon. */
+  onClickCustomIcon: (iconType: string, openPanelKey: string, iconId: string) => void;
 }
 
 interface State {

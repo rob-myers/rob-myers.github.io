@@ -93,6 +93,7 @@ const persistedReducer = persistReducer({
         },
         file: {},
         packagesManifest: null,
+        panelOpener: null,
         panelToMeta: {},
         package: {},
         projectKey,
