@@ -66,6 +66,7 @@ interface Props {
 const Option: React.FC<OptionProps> = ({
   label,
   highlight,
+  icon,
   onClick,
 }) => {
   return (
@@ -76,6 +77,7 @@ const Option: React.FC<OptionProps> = ({
       onClick={onClick}
     >
       {label}
+      {icon && <div>{icon}</div>}
     </div>
   );
 };
@@ -88,6 +90,7 @@ interface OptionProps extends Item {
 interface Item {
   itemKey: string;
   label: string;
+  icon?: string;
 }
 
 export default Select;
