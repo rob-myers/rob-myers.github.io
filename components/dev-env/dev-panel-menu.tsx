@@ -40,18 +40,16 @@ const DevPanelMenu: React.FC<Props> = ({ panelKey }) => {
         className={css.menuOptions}
         onClick={preventToggle}
       >
-        <div className={css.selectFileNew}>
-          <Select
-            items={[
-              { itemKey: 'app', label: 'App' },
-              ...filenames.map(filename => ({ itemKey: filename, label: filename })),
-            ]}
-            onChange={(itemKey) => handleFileChange(itemKey)}
-            selectedKey={currentValue}
-            disabled={!isOpen}
-            overrideLabel="📂"
-          />
-        </div>
+        <Select
+          items={[
+            { itemKey: 'app', label: 'App' },
+            ...filenames.map(filename => ({ itemKey: filename, label: filename })),
+          ]}
+          onChange={(itemKey) => handleFileChange(itemKey)}
+          selectedKey={currentValue}
+          disabled={!isOpen}
+          overrideLabel="📂"
+        />
       </div>
       <div className={css.toggleIndicator}>
         {isOpen ? '✕' : '⋯'}

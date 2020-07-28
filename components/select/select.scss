@@ -43,6 +43,10 @@
       justify-content: space-between;
       align-items: baseline;
 
+      .icon {
+        margin-left: 4px;
+      }
+
       &:hover {
         background: rgba(50, 50, 50, 0.7);
         color: #ccc;

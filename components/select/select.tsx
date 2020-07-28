@@ -77,7 +77,7 @@ const Option: React.FC<OptionProps> = ({
       onClick={onClick}
     >
       {label}
-      {icon && <div>{icon}</div>}
+      {icon && <div className={css.icon}>{icon}</div>}
     </div>
   );
 };
