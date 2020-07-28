@@ -1,3 +1,4 @@
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
@@ -10,12 +11,14 @@ import { Thunk as LayoutThunk } from '@store/layout.duck';
 import Select from '@components/select/select';
 import css from './dev-menu.scss';
 
+const Editor = dynamic(import('@components/monaco/editor'), { ssr: false });
+
 export const DevMenu = () => {
   const [disabled, setDisabled] = useState(true);
   const monacoLoaded = useSelector(({ editor: { monacoLoaded } }) => monacoLoaded);
   const monacoLoading = useSelector(({ editor: { monacoLoading } }) => monacoLoading);
 
-  const packages = useSelector(({ devEnv }) => Object.keys(devEnv.package));
+  const projectKey = useSelector(({ devEnv }) => devEnv.projectKey);
   const projects = useSelector(({ devEnv }) => Object.values(devEnv.packagesManifest?.packages || {})
     .filter(x => x.project).map(x => x.key));
 
@@ -74,17 +77,20 @@ export const DevMenu = () => {
           <div className={css.leftControls}>
             <Select
               items={[
-                { itemKey: '', label: 'project' },
+                ...(!projectKey
+                    ? [{ itemKey: '', label: 'choose project' }]
+                    : [{ itemKey: 'close-project', label: 'close', icon: '✕' },
+                      { itemKey: 'reset-project', label: 'reset', icon: '⟳' }]),
                 ...projects.map(packageName => ({
-                  itemKey: packageName, label: packageName,
+                  itemKey: packageName,
+                  label: packageName,
                 })),
-                { itemKey: 'close-project', label: 'close project' },
-                { itemKey: 'reset-project', label: 'reset project' },
               ]}
               onChange={handleProjectSelect}
-              selectedKey=""
+              selectedKey={projectKey || ''}
               showSelectedOption={false}
               disabled={disabled}
+              overrideLabel={projectKey ? `project: ${projectKey}` : undefined}
             />
           </div>
 
@@ -119,6 +125,17 @@ export const DevMenu = () => {
           </div>
         </div>
       </div>
+
+      {!monacoLoaded && (
+        // Ensure monaco is bootstrapped via hidden editor
+        <div className={css.hiddenMonacoEditor}>
+          <Editor
+            editorKey={'__editor-bootstrap'}
+            modelKey={'__model-_bootstrap.ts'}
+            filename={'__bootstrap.ts'}
+          />
+        </div>
+      )}
     </div>
   );
 };
