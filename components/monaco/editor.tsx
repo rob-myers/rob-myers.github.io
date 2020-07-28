@@ -53,6 +53,12 @@ const Editor: React.FC<EditorProps> = (props) => {
     return () => void dispatch(Thunk.removeMonacoEditor({ editorKey }));
   }, [monacoLoaded]);
 
+  React.useEffect(() =>{
+    if (ready) {// Initial syntax highlight
+      dispatch(Thunk.highlightTsxSyntax({ editorKey }));
+    }
+  }, [ready]);
+
   React.useEffect(() => {
     if (ready) {
       dispatch(Thunk.changeEditorModel({ editorKey, nextFilename: filename }));

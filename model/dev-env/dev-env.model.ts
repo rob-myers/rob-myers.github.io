@@ -71,6 +71,11 @@ export function packageFilenameToLocal(filePath: string) {
   return filePath.split('/').slice(2).join('/');
 }
 
+/** e.g. `intro` to `@package/intro` */
+export function packageNameToLayoutKey(packageName: string) {
+  return `@package/${packageName}`;
+}
+
 export function getBlobUrl(jsCode: string) {
   const bootstrapBlob = new Blob([jsCode], { type: 'text/javascript' });
   return URL.createObjectURL(bootstrapBlob);     

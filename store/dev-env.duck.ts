@@ -15,7 +15,7 @@ import * as PatchJs from '@model/dev-env/patch-js-imports';
 import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/dev-env/handle-scss-imports';
 import { getCssModuleCode } from '@model/dev-env/css-module';
 import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
-import { CustomPanelMetaKey } from '@model/layout/generate-layout';
+import { CustomPanelMetaKey, getDefaultProjectLayout } from '@model/layout/generate-layout';
 import { isCyclicDepError } from '@model/dev-env/dev-env.model';
 import { manifestWebPath, PackagesManifest } from '@model/dev-env/manifest.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
@@ -137,17 +137,21 @@ export const Thunk = {
    */
   addFilesFromPackage: createThunk(
     '[dev-env] add files from package',
-    async ({ dispatch, state: { devEnv } }, { packageName, asRoot = false }: {
+    async ({ dispatch, state: { devEnv } }, { packageName, mode = 'package' }: {
       packageName: string;
-      asRoot?: boolean;
+      mode?: 'package' | 'restore-root' | 'overwrite-root';
     }) => {
       let filesToCreate = [] as { filename: string; contents: string }[];
-      if (asRoot && packageName in devEnv.saved) {
-        Object.values(devEnv.saved[packageName].file).forEach(({ key: filename, contents }) =>
-          filesToCreate.push({ filename, contents }));
+      if (mode === 'restore-root' && packageName in devEnv.saved) {
+        Object.values(devEnv.saved[packageName].file)
+          .forEach(({ key: filename, contents }) => filesToCreate.push({ filename, contents }));
       } else {
+        const copyToRoot = mode === 'restore-root' || mode === 'overwrite-root';
         Object.values(devEnv.package[packageName].file).forEach(({ key, contents }) =>
-          filesToCreate.push({ filename: asRoot ? Dev.packageFilenameToLocal(key) : key, contents }));
+          filesToCreate.push({
+            filename: copyToRoot ? Dev.packageFilenameToLocal(key) : key,
+            contents,
+          }));
       }
       
       for (const { filename, contents } of filesToCreate) {
@@ -369,10 +373,13 @@ export const Thunk = {
       dispatch(LayoutAct.setPersistKey(null));
 
       // Close file panels and App panels, but not docs
+      // Their closure triggers tidy up
       dispatch(LayoutThunk.closeMatchingPanels({
-        predicate: (meta) => meta.devEnvComponent === 'App'
+        predicate: (meta) =>
+          meta.devEnvComponent === 'App'
           || !meta.devEnvComponent && !!meta.filename,
       }));
+
       // Remove files, models, scripts/styles
       Object.values(devEnv.file).forEach(({ key: filename }) =>
         dispatch(Thunk.removeFile({ filename })));
@@ -574,15 +581,25 @@ export const Thunk = {
   ),
   loadProject: createThunk(
     '[dev-env] load project',
-    ({ dispatch, state: { devEnv } }, { packageName }: { packageName: string }) => {
+    ({ dispatch, state: { devEnv } }, { packageName, overwrite = false }: {
+      packageName: string;
+      /** Should we overwrite any saved files? */
+      overwrite?: boolean;
+    }) => {
       dispatch(Act.setProjectKey(packageName));
 
       const { transitiveDeps } = devEnv.packagesManifest!.packages[packageName];
       for (const depPackageName of transitiveDeps) {
         dispatch(Thunk.addFilesFromPackage({ packageName: depPackageName }));
       }
-      dispatch(Thunk.addFilesFromPackage({ packageName, asRoot: true }));
-      dispatch(LayoutThunk.setLayout({ layoutId: `@package/${packageName}` }));
+      dispatch(Thunk.addFilesFromPackage({
+        packageName,
+        mode: overwrite ? 'overwrite-root' : 'restore-root',
+      }));
+
+      dispatch(LayoutThunk.restoreSavedLayout({
+        layoutKey: Dev.packageNameToLayoutKey(packageName)
+      }));
     },
   ),
   /**
@@ -621,10 +638,14 @@ export const Thunk = {
   ),
   resetProject: createThunk(
     '[dev-env] reset project',
-    () => {
-      /**
-       * TODO
-       */
+    ({ state: { devEnv }, dispatch, getState }) => {
+      const projectKey = devEnv.projectKey!;
+      dispatch(Thunk.closeProject({}));
+      dispatch(Thunk.loadProject({ packageName: projectKey, overwrite: true }));
+      setTimeout(() => {// Trigger panel refresh
+        const { nextConfig } = getState().layout;
+        dispatch(LayoutAct.setNextConfig({ nextConfig: { ...nextConfig } }));
+      });
     },
   ),
   saveFilesToDisk: createThunk(

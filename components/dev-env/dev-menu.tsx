@@ -36,11 +36,11 @@ export const DevMenu = () => {
 
   const dispatch = useDispatch();
   const handleLayoutChange = (itemKey: string) => {
-    const nextLayout = dispatch(LayoutThunk.setLayout({ layoutId: itemKey }));
-    if (nextLayout) {
-      const nextPanelKeys = getConfigPanelKeys(nextLayout);
-      dispatch(Act.restrictAppPortals({ panelKeys: nextPanelKeys }));
-    }
+    const nextLayout =  itemKey === 'default-layout'
+      ? dispatch(LayoutThunk.applyDefaultLayout({}))
+      : dispatch(LayoutThunk.restoreSavedLayout({ layoutKey: itemKey }));
+    const nextPanelKeys = getConfigPanelKeys(nextLayout);
+    dispatch(Act.restrictAppPortals({ panelKeys: nextPanelKeys }));
   };
   const handleOptsSelect = (itemKey: string) => {
     if (itemKey === 'save-project-as-json') {

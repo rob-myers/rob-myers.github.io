@@ -536,7 +536,7 @@ const defaultDesktopConfig: GoldenLayoutConfig<CustomPanelMetaKey> = {
 /**
  * Default layout depends on screen width.
  */
-export function getDefaultLayoutConfig() {
+export function getDefaultProjectLayout() {
   return screenHasSmallWidth()
     ? deepClone(defaulMobileProjectLayout)
     : deepClone(defaultDesktopProjectLayout);

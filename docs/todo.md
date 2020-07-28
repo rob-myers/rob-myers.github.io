@@ -9,8 +9,8 @@ Although we provide a development environment, this is not our objective.
 
 # Online Dev Environment
 
-- [ ] perhaps `DevPanelMenu` should be smaller and always visible
-- [ ] implement close/reset/load project
+- [ ] merge `DevPanelMenu` into golden-layout header
+- [x] implement close/reset/load project
 - [x] remove support for adding packages -- unneeded complexity
 - [x] fix jsPathErrors markers for aliased module specifiers
 - [ ] `bipartite` package is project with demo
@@ -51,7 +51,7 @@ Although we provide a development environment, this is not our objective.
 - [x] show error on ts importing tsx values (or vice-versa)
 - [x] collect ts/tsx/js errors during import/export analysis in webworker
 - [x] custom dropdown for better x-browser experience
-- [ ] support multiple projects
+- [x] support multiple projects
   > handle multiple tabs/windows
 - [x] new panel type `doc` e.g. for blog and README
 - [x] setup `mdx` and create demo test entry

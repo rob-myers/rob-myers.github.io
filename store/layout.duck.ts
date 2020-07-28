@@ -3,7 +3,7 @@ import { Redacted, ActionsUnion, createAct, updateLookup, redact, removeFromLook
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { LayoutPanelMeta, ExtendedContainer, GoldenLayoutConfig, traverseGlConfig, mapGlConfig } from '@model/layout/layout.model';
 import { createThunk } from '@model/store/root.redux.model';
-import { CustomPanelMetaKey, getDefaultLayoutConfig, getDefaultEmptyLayout } from '@model/layout/generate-layout';
+import { CustomPanelMetaKey, getDefaultProjectLayout, getDefaultEmptyLayout } from '@model/layout/generate-layout';
 import { CustomLayoutPanelMeta } from '@model/dev-env/dev-env.model';
 
 /** Assume exactly one layout. */
@@ -92,6 +92,16 @@ export const Act = {
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  applyDefaultLayout: createThunk(
+    '[layout] apply default layout',
+    ({ state: { devEnv }, dispatch }) => {
+      const nextConfig = devEnv.projectKey
+        ? getDefaultProjectLayout() // app.tsx, reducer.ts, App
+        : getDefaultEmptyLayout(); // no panels
+      dispatch(Act.setNextConfig({ nextConfig }));
+      return nextConfig;
+    },
+  ),
   clickedPanelTitle: createThunk(
     '[layout] clicked panel title',
     (_, __: { panelKey: string }) => null,
@@ -125,21 +135,17 @@ export const Thunk = {
     '[layout] save current layout',
     ({ state: { layout: { goldenLayout } }, dispatch }) => {
       dispatch(Act.setNextConfig({
-        nextConfig: goldenLayout?.toConfig() || getDefaultLayoutConfig(),
+        nextConfig: goldenLayout?.toConfig() || getDefaultProjectLayout(),
       }));
     },
   ),
-  setLayout: createThunk(
-    '[layout] set layout',
-    ({ dispatch, state: { layout } }, { layoutId }: { layoutId: string }) => {
-      if (layoutId === 'default-layout') {
-        const nextConfig = getDefaultLayoutConfig();
-        dispatch(Act.setNextConfig({ nextConfig }));
-        return nextConfig;
-      }
-      const nextConfig = layout.savedConfig[layoutId]?.config || getDefaultLayoutConfig();
-      dispatch(Act.setPersistKey(layoutId));
+  restoreSavedLayout: createThunk(
+    '[layout] restore saved layout',
+    ({ dispatch, state: { layout } }, { layoutKey }: { layoutKey: string }) => {
+      const nextConfig = layout.savedConfig[layoutKey]?.config || getDefaultProjectLayout();
+      dispatch(Act.setPersistKey(layoutKey));
       dispatch(Act.setNextConfig({ nextConfig }));
+      return nextConfig;
     },
   ),
   setPanelTitle: createThunk(

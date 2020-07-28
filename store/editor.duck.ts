@@ -378,7 +378,6 @@ export const Thunk = {
       e.syntaxWorker!.addEventListener('message', eventListener);
       const syntaxHighlight = () => dispatch(Thunk.highlightTsxSyntax({ editorKey }));
       const disposable = dispatch(Thunk.trackModelChange({ editorKey, delayMs: 300, delayType: 'throttle', do: syntaxHighlight }));
-      requestAnimationFrame(syntaxHighlight); // For first time load
 
       dispatch(Act.addEditorCleanups({ editorKey, cleanups: [
         () => e.syntaxWorker?.removeEventListener('message', eventListener),
