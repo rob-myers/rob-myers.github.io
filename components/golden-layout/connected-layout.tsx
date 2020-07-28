@@ -82,7 +82,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
 
   const onClickCustomIcon = (iconType: string, panelKey: string, iconId: string) => {
     if (iconType === 'custom-open') {
-      dispatch(DevEnvAct.setPanelOpener({ panelKey, elementId: iconId }));
+      dispatch(DevEnvAct.xorPanelOpener({ panelKey, elementId: iconId }));
     }
   };
 

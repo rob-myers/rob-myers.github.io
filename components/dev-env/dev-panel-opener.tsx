@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Thunk, Act } from '@store/dev-env.duck';
+import { Thunk } from '@store/dev-env.duck';
 import Select from '@components/select/select';
 import css from './dev-panel-opener.scss';
 
 const DevPanelOpener: React.FC = () => {
   const [targetRect, setTargetRect] = useState<null | DOMRect>(null);
   const [xOffset, setXOffset] = useState(0);
+  const [closed, setClosed] = useState(true);
 
   const panelOpener = useSelector(({ devEnv }) => devEnv.panelOpener);
   const filenames = useSelector(({ devEnv }) => Object.keys(devEnv.file));
@@ -17,11 +18,13 @@ const DevPanelOpener: React.FC = () => {
     }
     return null;
   });
+  const resizedAt = useSelector(({ layout }) => panelOpener
+    && layout.panel[panelOpener.panelKey].resizedAt);
 
   const dispatch = useDispatch();
   const close = () => {
     setXOffset(0);
-    dispatch(Act.closePanelOpener());
+    setClosed(true);
   }
   const handleFileChange = (panelKey: string, value: string) => {
     if (value === 'app') {
@@ -35,23 +38,20 @@ const DevPanelOpener: React.FC = () => {
   };
 
   useEffect(() => {
-    const nextTarget = panelOpener && document.getElementById(panelOpener.elementId) || null;
-    setTargetRect(nextTarget ? nextTarget.getBoundingClientRect() : null);
-  }, [panelOpener]);
-  
-  useEffect(() => {
-    const onResize = () => close();
-    window.addEventListener('resize', onResize);
-    return () => void window.removeEventListener('resize', onResize);
-  }, []);
+    if (panelOpener) {
+      const nextTarget = document.getElementById(panelOpener.elementId) || null;
+      setTargetRect(nextTarget ? nextTarget.getBoundingClientRect() : null);
+      setClosed(false);
+    }
+  }, [panelOpener, resizedAt]);
 
   return (
     <div className={css.root}>
-      {panelOpener?.panelKey && targetRect && (
+      {!closed && panelOpener?.panelKey && targetRect && (
         <section
           className={css.panel}
           style={{
-            left: targetRect.left - xOffset,
+            left: targetRect.left + xOffset,
             top: targetRect.bottom + 2,
           }}
         >
@@ -65,7 +65,7 @@ const DevPanelOpener: React.FC = () => {
           dropdown
           onBlur={close}
           provideItemsBounds={(rect) => {
-            setXOffset(Math.max(0, targetRect.left + rect.width - window.innerWidth));
+            setXOffset(60 - rect.width);
           }}
         />
         </section>

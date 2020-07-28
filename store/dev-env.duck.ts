@@ -88,8 +88,6 @@ export const Act = {
     | { to: 'doc'; filename: string }
     | { to: 'file'; filename: string }
   )) => createAct('[dev-env] change panel meta', { panelKey, ...input }),
-  closePanelOpener: () =>
-    createAct('[dev-env] close panel opener', {}),
   createAppPanelMeta: (input: { panelKey: string }) =>
     createAct('[dev-env] create app panel meta', input),
   createDocPanelMeta: (input: { panelKey: string; filename: string }) =>
@@ -114,8 +112,6 @@ export const Act = {
     createAct('[dev-env] set app valid', { isValid }),
   setInitialized: () =>
     createAct('[dev-env] set initialized', {}),
-  setPanelOpener: (input: { panelKey: string, elementId: string }) =>
-    createAct('[dev-env] set panel opener', input),
   setProjectKey: (projectKey: string | null) =>
     createAct('[dev-env] set project key', { projectKey }),
   setReducerValid: (isValid: boolean) =>
@@ -132,6 +128,8 @@ export const Act = {
     createAct('[dev-env] update file', { filename, updates }),
   updatePanelMeta: (panelKey: string, updates: ReduxUpdater<Dev.DevPanelMeta>) =>
     createAct('[dev-env] update panel meta', { panelKey, updates }),
+  xorPanelOpener: (input: { panelKey: string, elementId: string }) =>
+    createAct('[dev-env] xor panel opener', input),
 };
 
 export type Action = ActionsUnion<typeof Act>;
@@ -894,9 +892,6 @@ export const reducer = (state = initialState, act: Action): State => {
         , state.panelToMeta),
       };
     }
-    case '[dev-env] close panel opener': return { ...state,
-      panelOpener: null,
-    };
     case '[dev-env] create app panel meta': return { ...state,
       panelToMeta: addToLookup(
         Dev.createDevPanelAppMeta(act.pay.panelKey), state.panelToMeta),
@@ -960,9 +955,6 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] set initialized': return { ...state,
       flag: { ...state.flag, initialized: true },
     };
-    case '[dev-env] set panel opener': return { ...state,
-      panelOpener: act.pay,
-    };
     case '[dev-env] set project key': return { ...state,
       projectKey: act.pay.projectKey,
     };
@@ -992,7 +984,13 @@ export const reducer = (state = initialState, act: Action): State => {
     };
     case '[dev-env] update panel meta': return { ...state,
       panelToMeta: updateLookup(act.pay.panelKey, state.panelToMeta, act.pay.updates),
-    };    
+    };
+    case '[dev-env] xor panel opener': return { ...state,
+      panelOpener: state.panelOpener && (
+        state.panelOpener.elementId === act.pay.elementId
+        && state.panelOpener.panelKey === act.pay.panelKey
+      ) ? null : act.pay,
+    };
     default: return state || testNever(act);
   }
 };
