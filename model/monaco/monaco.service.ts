@@ -52,6 +52,10 @@ export class MonacoService {
         };
       }
 
+      if (filename.endsWith('.d.ts')) {
+        return { key: 'success', src, js: '', typings: '' };
+      }
+
       return {
         key: 'success',
         src,
