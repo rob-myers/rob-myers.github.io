@@ -55,31 +55,35 @@ const DevPanelOpener: React.FC = () => {
   }, [panelOpener, resizedAt]);
 
   return (
-    <div className={css.root}>
-      {panelOpener?.panelKey && targetRect && (
-        <section
-          className={css.panel}
-          style={{
+    <div
+      className={css.root}
+      style={!panelOpener ? { display: 'none' } : undefined}
+    >
+      <section
+        className={css.panel}
+        style={
+          targetRect ? {
             left: targetRect.left + xOffset,
             top: targetRect.bottom + 3,
-          }}
-        >
-        <div ref={itemsRef}>
-          {items.map(item => (
-            <Item
-              key={item.itemKey}
-              {...item}
-              highlight={item.itemKey === selectedKey}
-              onClick={() => {
-                if (selectedKey !== item.itemKey) {
-                  handleFileChange(panelOpener.panelKey, item.itemKey);
-                }
-              }}
-            />
-          ))}
-        </div>
-        </section>
-      )}
+          } : undefined
+        }
+      >
+      <div ref={itemsRef}>
+        {items.map(item => (
+          <Item
+            key={item.itemKey}
+            itemKey={item.itemKey}
+            label={item.label}
+            highlight={item.itemKey === selectedKey}
+            onClick={() => {
+              if (panelOpener && selectedKey !== item.itemKey) {
+                handleFileChange(panelOpener.panelKey, item.itemKey);
+              }
+            }}
+          />
+        ))}
+      </div>
+      </section>
     </div>
   );
 };
