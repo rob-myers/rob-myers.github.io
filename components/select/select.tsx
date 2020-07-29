@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import css from './select.scss';
 
 const Select: React.FC<Props> = ({
+  alignedRight = false,
   disabled = false,
   items,
   onChange,
@@ -25,10 +26,7 @@ const Select: React.FC<Props> = ({
       ref={rootRef}
       className={classNames(css.root, { [css.open]: isOpen })}
       tabIndex={0}
-      onBlur={() => {
-        setIsOpen(false);
-        // onBlur();
-      }}
+      onBlur={() => setIsOpen(false)}
       onKeyUp={({ key }) => (key === 'Escape') && setIsOpen(false)}
     >
       <div className={css.selected} onClick={toggle}>
@@ -40,7 +38,12 @@ const Select: React.FC<Props> = ({
       </div>
       <div className={css.optionsAnchor}>
         {isOpen && (
-          <div className={css.options} ref={innerRef}>
+          <div
+            ref={innerRef}
+            className={classNames(css.options, {
+              [css.alignedRight]: alignedRight
+            })}
+          >
             {items
               .filter(item => showSelectedOption || item.itemKey !== selectedKey)
               .map(item => (
@@ -64,10 +67,11 @@ const Select: React.FC<Props> = ({
 };
 
 interface Props {
+  alignedRight?: boolean;
   disabled?: boolean;
   items: Item[];
   onChange: (key: string) => void;
-  /** Can override label */
+  /** Can override main label */
   overrideLabel?: string;
   selectedKey: string | null;
   showSelectedOption?: boolean;

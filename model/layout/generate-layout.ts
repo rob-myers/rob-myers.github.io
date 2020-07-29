@@ -25,7 +25,7 @@ const configBase = {
     borderWidth: 1,
     borderGrabWidth: 15,
     minItemHeight: 200,
-    minItemWidth: 200,
+    minItemWidth: 300,
     headerHeight: 20,
     dragProxyWidth: 200,
     dragProxyHeight: 200,

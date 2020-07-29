@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
@@ -9,8 +9,8 @@ import { getConfigPanelKeys } from '@model/layout/generate-layout';
 import { Act, Thunk } from '@store/dev-env.duck';
 import { Thunk as LayoutThunk } from '@store/layout.duck';
 import Select from '@components/select/select';
-import css from './dev-menu.scss';
 import DevPanelOpener from './dev-panel-opener';
+import css from './dev-menu.scss';
 
 const Editor = dynamic(import('@components/monaco/editor'), { ssr: false });
 
@@ -36,18 +36,7 @@ export const DevMenu = () => {
   }, []);
 
   const dispatch = useDispatch();
-  const handleLayoutChange = (itemKey: string) => {
-    const nextLayout =  itemKey === 'default-layout'
-      ? dispatch(LayoutThunk.applyDefaultLayout({}))
-      : dispatch(LayoutThunk.restoreSavedLayout({ layoutKey: itemKey }));
-    const nextPanelKeys = getConfigPanelKeys(nextLayout);
-    dispatch(Act.restrictAppPortals({ panelKeys: nextPanelKeys }));
-  };
-  const handleOptsSelect = (itemKey: string) => {
-    if (itemKey === 'save-project-as-json') {
-      dispatch(Thunk.saveFilesToDisk({}));
-    }
-  };
+
   const handleProjectSelect = (itemKey: string) => {
     if (itemKey === 'reset-project') {
       dispatch(Thunk.resetProject({}));
@@ -59,10 +48,25 @@ export const DevMenu = () => {
     }
   };
 
+  const router = useRouter();
+
+  const handleOptsSelect = (itemKey: string) => {
+    if (itemKey === 'save-project-as-json') {
+      dispatch(Thunk.saveFilesToDisk({}));
+    } else if (itemKey === 'default-layout') {
+      const nextLayout = dispatch(LayoutThunk.applyDefaultLayout({}))
+      const nextPanelKeys = getConfigPanelKeys(nextLayout);
+      dispatch(Act.restrictAppPortals({ panelKeys: nextPanelKeys }));
+    } else if (itemKey === 'goto-homepage') {
+      router.push('/');
+    }
+  };
+
   return (
     <div className={css.menu} style={{ height: menuHeightPx }}>
-      <div className={css.toolbar}>
+      <DevPanelOpener />
 
+      <div className={css.toolbar}>
         <div className={css.logo}>
           com
           <span className={css.left}>⟨</span>
@@ -97,35 +101,19 @@ export const DevMenu = () => {
           </div>
 
           <div className={css.rightControls}>
-
             <Select
+              alignedRight
               items={[
                 { itemKey: '', label: 'opts' },
+                { itemKey: 'goto-homepage', label: 'home' },
                 { itemKey: 'save-project-as-json', label: 'save as json' },
+                { itemKey: 'use-default-layout', label: 'reset layout' },
               ]}
               onChange={handleOptsSelect}
               selectedKey=""
               showSelectedOption={false}
               disabled={disabled}
             />
-
-            <Select
-              items={[
-                { itemKey: '', label: 'layout' },
-                { itemKey: 'default-layout', label: 'default layout' },
-              ]}
-              onChange={handleLayoutChange}
-              selectedKey=""
-              showSelectedOption={false}
-              disabled={disabled}
-            />
-
-            <div className={css.homeLink}>
-              <Link href="/"><a>home</a></Link>
-            </div>
-
-            <DevPanelOpener />
-
           </div>
         </div>
       </div>
