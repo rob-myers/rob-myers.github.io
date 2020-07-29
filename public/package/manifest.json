@@ -3,15 +3,21 @@
 		"bipartite": {
 			"key": "bipartite",
 			"files": [
+				"package/bipartite/app.tsx",
+				"package/bipartite/bipartite.duck.ts",
 				"package/bipartite/independent-set.ts",
+				"package/bipartite/index.scss",
 				"package/bipartite/matching.ts",
+				"package/bipartite/reducer.ts",
 				"package/bipartite/vertex-cover.ts"
 			],
 			"dependencies": [
+				"shared",
 				"performance"
 			],
-			"project": false,
+			"project": true,
 			"transitiveDeps": [
+				"shared",
 				"performance"
 			]
 		},

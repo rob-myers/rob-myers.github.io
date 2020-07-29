@@ -33,7 +33,7 @@ export default function bipartiteMatching(
     adjM[vM].push(vN);
   }
 
-  let dmax = INF
+  let dmax = INF;
   
   // TODO explain
   function dfs(v: number) {
@@ -42,7 +42,7 @@ export default function bipartiteMatching(
     }
     const succs = adjN[v];
     for(const succ of succs) {
-      const matched = matchM[succ]
+      const matched = matchM[succ];
       const dpu = matched >= 0 ? dist[matched] : dmax;
       if(dpu === dist[v] + 1) {
         if(dfs(matched)) {
@@ -53,7 +53,7 @@ export default function bipartiteMatching(
       }
     }
     dist[v] = INF;
-    return false
+    return false;
   }
 
   // Run search

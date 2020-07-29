@@ -9,6 +9,8 @@ Although we provide a development environment, this is not our objective.
 
 # Online Dev Environment
 
+- [ ] can switch between two projects
+- [ ] fix/simplify jsx-commenting
 - [x] cleanup `DevPanelOpener`
 - [x] merge layout Select into opts Select
 - [x] merge `DevPanelMenu` into golden-layout header
