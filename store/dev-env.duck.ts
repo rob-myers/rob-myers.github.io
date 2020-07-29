@@ -385,8 +385,7 @@ export const Thunk = {
       dispatch(Act.setProjectKey(null));
       dispatch(LayoutAct.setPersistKey(null));
 
-      // Close file panels and App panels, but not docs
-      // Their closure triggers tidy up
+      // Close file/app panels, but not docs panels.
       dispatch(LayoutThunk.closeMatchingPanels({
         predicate: (meta) =>
           meta.devEnvComponent === 'App'
@@ -581,8 +580,6 @@ export const Thunk = {
   initialize: createThunk(
     '[dev-env] initialize',
     async ({ dispatch, getState }) => {
-      initializeRuntimeStore();
-
       await dispatch(Thunk.fetchPackagesManifest({}));
       await dispatch(Thunk.fetchPackages({}));
 
@@ -599,6 +596,7 @@ export const Thunk = {
       /** Should we overwrite any saved files? */
       overwrite?: boolean;
     }) => {
+      initializeRuntimeStore();
       dispatch(Act.setProjectKey(packageName));
 
       const { transitiveDeps } = devEnv.packagesManifest!.packages[packageName];
@@ -638,11 +636,13 @@ export const Thunk = {
   removeFile: createThunk(
     '[dev-env] remove files',
     ({ state: { devEnv }, dispatch }, { filename }: { filename: string }) => {
-      const { cleanups, ext } = devEnv.file[filename];
-      cleanups.forEach(cleanup => cleanup());
+      const file = devEnv.file[filename];
+      file.cleanups.forEach(cleanup => cleanup());
+      'esModule' in file && file.esModule?.blobUrl && URL.revokeObjectURL(file.esModule.blobUrl);
+
       dispatch(Act.removeFile({ filename }));
       dispatch(EditorThunk.removeMonacoModel({ modelKey: filenameToModelKey(filename) }));
-      if (ext === 'scss') {
+      if (file.ext === 'scss') {
         document.getElementById(Dev.filenameToStyleId(filename))?.remove();
       } else {
         document.getElementById(Dev.filenameToScriptId(filename))?.remove();
@@ -773,6 +773,10 @@ export const Thunk = {
         return;
       }
 
+      if (filename.endsWith('.d.ts')) {
+        return;
+      }
+
       const analyzed = await dispatch(Thunk.analyzeJsCode({ filename, nextTranspiledJs: transpiled.js }));
 
       dispatch(Thunk.updateCodeTranspilation({
@@ -838,6 +842,7 @@ export const Thunk = {
   tryUnmountAppInstance: createThunk(
     '[dev-env] unmount app instance',
     (_, { panelKey }: { panelKey: string }) => {
+      // console.log('trying to unmount...', { panelKey, id: Dev.panelKeyToAppElId(panelKey) });
       unmountAppAt(Dev.panelKeyToAppElId(panelKey));
     },
   ),
@@ -1012,7 +1017,6 @@ const bootstrapApp = createEpic(
     filterActs(
       '[dev-env] store code transpilation',
       '[dev-env] app portal is ready',
-      '[dev-env] change panel meta',
     ),
     flatMap((act) => {
       const { file, flag: { appValid, reducerValid} } = state$.value.devEnv;
@@ -1035,10 +1039,6 @@ const bootstrapApp = createEpic(
       } else if (act.type === '[dev-env] app portal is ready') {
         if (appValid) {
           return [Thunk.bootstrapAppInstance({ panelKey: act.args.panelKey })];
-        }
-      } else if (act.type === '[dev-env] change panel meta') {
-        if (act.pay.to === 'file' || act.pay.to === 'doc') {
-          return [Thunk.tryUnmountAppInstance({ panelKey: act.pay.panelKey })];
         }
       }
       return [];
@@ -1184,9 +1184,7 @@ const initializeMonacoModels = createEpic(
             // Initial transpile when initialized
             ...file.ext === 'scss'
               ? [Thunk.tryTranspileStyleModel({ filename: file.key })]
-              : !file.key.endsWith('.d.ts')
-                ? [Thunk.tryTranspileCodeModel({ filename: file.key })]
-                : []
+              : [Thunk.tryTranspileCodeModel({ filename: file.key })]
           ]),
         ]
       }
