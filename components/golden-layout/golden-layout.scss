@@ -16,7 +16,7 @@ body {
       }
     }
     .lm_controls {
-      .lm_custom_open:before {
+      .lm_custom_open::before {
         font-size: 12px;
         content: "📂";
       }

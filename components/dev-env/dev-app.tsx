@@ -13,9 +13,9 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
   }, [portalNode]);
 
   return (
-    portalNode && (// App instance (see AppPortals)
+    portalNode ? (// App instance (see AppPortals)
       <portals.OutPortal node={portalNode} />
-    )
+    ) : null
   );
 };
 

@@ -12,6 +12,8 @@ Although we provide a development environment, this is not our objective.
 - [ ] cleanup `DevPanelOpener`
   > extract `DropDown` from `Select`
   > close on drag outside
+  > can toggle
+  > correct offset when maximised
 - [ ] merge layout Select into opts Select
 - [x] merge `DevPanelMenu` into golden-layout header
 - [x] implement close/reset/load project
