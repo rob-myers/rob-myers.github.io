@@ -29,11 +29,13 @@
 
   .options {
     position: absolute;
-    min-width: 100%;
+    width: 100%;
+    min-width: 80px;
     z-index: 41; // Just above maximized golden-layout
 
     &.aligned-right {
       right: 0;
+      padding-right: 8px;
     }
 
     background: rgba(0, 0, 0, 0.8);
