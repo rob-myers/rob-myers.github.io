@@ -44,7 +44,8 @@ export function updateThunkLookupFromBlobUrl(blobUrl) {
 let store;
 
 export function initializeRuntimeStore(preloadedState) {
-  if (store || typeof window === 'undefined') {
+  // if (store || typeof window === 'undefined') {
+  if (typeof window === 'undefined') {
     return;
   }
   rootReducer = combineReducers({});
@@ -108,5 +109,8 @@ export function renderAppAt(elementId) {
 
 export function unmountAppAt(elementId) {
   const el = document.getElementById(elementId);
-  el && ReactDOM.unmountComponentAtNode(el);
+  if (el) {
+    ReactDOM.unmountComponentAtNode(el);
+    // console.log('unmounted app', { elementId })
+  }
 }
