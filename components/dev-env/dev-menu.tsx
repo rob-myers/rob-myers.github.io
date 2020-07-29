@@ -53,7 +53,7 @@ export const DevMenu = () => {
   const handleOptsSelect = (itemKey: string) => {
     if (itemKey === 'save-project-as-json') {
       dispatch(Thunk.saveFilesToDisk({}));
-    } else if (itemKey === 'default-layout') {
+    } else if (itemKey === 'use-default-layout') {
       const nextLayout = dispatch(LayoutThunk.applyDefaultLayout({}))
       const nextPanelKeys = getConfigPanelKeys(nextLayout);
       dispatch(Act.restrictAppPortals({ panelKeys: nextPanelKeys }));
@@ -104,7 +104,7 @@ export const DevMenu = () => {
             <Select
               alignedRight
               items={[
-                { itemKey: '', label: 'opts' },
+                { itemKey: '', label: 'options' },
                 { itemKey: 'goto-homepage', label: 'home' },
                 { itemKey: 'save-project-as-json', label: 'save as json' },
                 { itemKey: 'use-default-layout', label: 'reset layout' },
