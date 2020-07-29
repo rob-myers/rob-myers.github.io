@@ -12,6 +12,12 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
     portalNode && dispatch(Thunk.appPortalIsReady({ panelKey }));
   }, [portalNode]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(Thunk.tryUnmountAppInstance({ panelKey }));
+    };
+  }, []);
+
   return (
     portalNode ? (// App instance (see AppPortals)
       <portals.OutPortal node={portalNode} />
