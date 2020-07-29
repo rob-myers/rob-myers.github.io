@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
-import { Thunk } from '@store/dev-env.duck';
+import { Thunk, Act } from '@store/dev-env.duck';
 import css from './dev-panel-opener.scss';
 
 const DevPanelOpener: React.FC = () => {
@@ -58,6 +58,7 @@ const DevPanelOpener: React.FC = () => {
     <div
       className={css.root}
       style={!panelOpener ? { display: 'none' } : undefined}
+      onDoubleClick={() => dispatch(Act.closePanelOpener())}
     >
       <section
         className={css.panel}
