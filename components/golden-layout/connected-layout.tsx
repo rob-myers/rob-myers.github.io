@@ -1,3 +1,4 @@
+import * as shortId from 'shortid';
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -5,11 +6,12 @@ import classNames from 'classnames';
 import GoldenLayout from 'golden-layout';
 
 import { redact } from '@model/store/redux.model';
-import { ExtendedContainer } from '@model/layout/layout.model';
+import { ExtendedContainer, ComponentConfig, GoldenLayoutConfigItem } from '@model/layout/layout.model';
 import { Act, Thunk } from '@store/layout.duck';
 import { Act as DevEnvAct } from '@store/dev-env.duck';
 
 import DevPanel from '@components/dev-env/dev-panel';
+import { Props as GlProps } from './golden-layout';
 const GoldenLayoutComponent = dynamic(import('@components/golden-layout/golden-layout'), { ssr: false });
 
 /**
@@ -35,7 +37,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
     const { config, element: [el], tab } = glCmp;
       
     if (config.type === 'component') {
-      const { props: { panelKey, panelMeta } } = config;
+      const { panelKey, panelMeta } = config.props;
 
       const onClickTitle = () => dispatch(Thunk.clickedPanelTitle({ panelKey }));
       tab?.element.children('.lm_title')?.on('click', onClickTitle);
@@ -49,8 +51,13 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
       }));
       
       // Track panel closure in state.
-      glCmp.container.on('destroy', () => {
-        dispatch(Act.panelClosed({ panelKey }));
+      glCmp.container.on('destroy', (cmp: GoldenLayout.ContentItem) => {
+        dispatch(Act.panelClosed({
+          panelKey,
+          siblingKeys: (cmp.parent.contentItems || [])
+            .map(x => (x.config as ComponentConfig<string>)?.props.panelKey)
+            .filter(x => !!x && x !== panelKey),
+        }));
       });
 
       // Track panel resize.
@@ -73,6 +80,9 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
             panelKey,
             width: el.clientWidth,
             height: el.clientHeight,
+            siblingKeys: (glCmp.parent.contentItems || [])
+              .map(x => (x.config as ComponentConfig<string>)?.props.panelKey)
+              .filter(Boolean),
           })), 0);
       });
     }
@@ -80,10 +90,24 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
 
   const onDragStart = useCallback(() => null, []);
 
-  const onClickCustomIcon = (iconType: string, panelKey: string, iconId: string) => {
-    if (iconType === 'custom-open') {
-      dispatch(DevEnvAct.xorPanelOpener({ panelKey, elementId: iconId }));
-    }
+  const setupCustomIcons: GlProps['setupCustomIcons'] = (tab) => {
+    const li = document.createElement('li');
+    li.className = 'lm_custom_open';
+    li.title="open file or app"
+    li.id = `gl-icon-${shortId.generate()}`;
+
+    li.addEventListener('click', () => {
+      const config = tab.header.activeContentItem.config as GoldenLayoutConfigItem<string>;
+      const panelKey = 'type' in config && config.type === 'component' && config.props.panelKey || null;
+      if (panelKey) {
+        const siblingKeys = (tab.header.activeContentItem.parent.contentItems || [])
+          .map(x => (x.config as ComponentConfig<string>)?.props.panelKey)
+          .filter(Boolean);
+        dispatch(DevEnvAct.xorPanelOpener({ panelKey, elementId: li.id, siblingKeys }));
+      }
+    });
+
+    tab.header.controlsContainer.prepend(li);
   };
 
   return (
@@ -102,7 +126,7 @@ const ConnectedLayout: React.FC<Props> = ({ width, height, disabled, closable })
           onComponentCreated={onComponentCreated}
           registerComponents={registerComponents}
           onDragStart={onDragStart}
-          onClickCustomIcon={onClickCustomIcon}
+          setupCustomIcons={setupCustomIcons}
         />
       </div>
     </div>

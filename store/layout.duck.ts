@@ -68,6 +68,8 @@ export const Act = {
   }) => createAct('[layout] panel created', input),
   panelClosed: (input: {
     panelKey: string;
+    /** Panel keys of sibling components excluding `panelKey` */
+    siblingKeys: string[];
   }) => createAct('[layout] panel closed', input),
   panelResized: (input: {
     panelKey: string;
@@ -78,6 +80,8 @@ export const Act = {
     panelKey: string;
     width: number;
     height: number;
+    /** Panel keys of sibling components including `panelKey` */
+    siblingKeys: string[];
   }) => createAct('[layout] panel shown', input),
   saveConfig: (input: { key: string; config: GoldenLayoutConfig; }) =>
     createAct('[layout] save config', input),
@@ -124,7 +128,7 @@ export const Thunk = {
       // Change config (triggers new layout)
       dispatch(Act.setNextConfig({ nextConfig: nextConfig || getDefaultEmptyLayout() }));
       // Pretend user closed the panel
-      setTimeout(() => panelKeystoClose.map(panelKey => dispatch(Act.panelClosed({ panelKey }))));
+      setTimeout(() => panelKeystoClose.map(panelKey => dispatch(Act.panelClosed({ panelKey, siblingKeys: [] }))));
     },
   ),
   /**

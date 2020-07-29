@@ -37,12 +37,8 @@ const DevPanelOpener: React.FC = () => {
     } else {
       dispatch(Thunk.changePanel({ panelKey, next: { to: 'file', filename: value } }));
     }
-    close();
   };
 
-  /**
-   * TODO handle initial case
-   */
   useEffect(() => {
     if (panelOpener) {
       const nextTarget = document.getElementById(panelOpener.elementId);
@@ -64,7 +60,7 @@ const DevPanelOpener: React.FC = () => {
         className={css.panel}
         style={
           targetRect ? {
-            left: targetRect.left + xOffset,
+            left: targetRect.left + xOffset - 3,
             top: targetRect.bottom + 3,
           } : undefined
         }

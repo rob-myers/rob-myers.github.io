@@ -9,8 +9,7 @@ Although we provide a development environment, this is not our objective.
 
 # Online Dev Environment
 
-- [ ] cleanup `DevPanelOpener`
-  > correct offset when maximised
+- [x] cleanup `DevPanelOpener`
 - [ ] merge layout Select into opts Select
 - [x] merge `DevPanelMenu` into golden-layout header
 - [x] implement close/reset/load project

@@ -15,7 +15,7 @@ import * as PatchJs from '@model/dev-env/patch-js-imports';
 import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/dev-env/handle-scss-imports';
 import { getCssModuleCode } from '@model/dev-env/css-module';
 import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
-import { CustomPanelMetaKey, getDefaultProjectLayout } from '@model/layout/generate-layout';
+import { CustomPanelMetaKey } from '@model/layout/generate-layout';
 import { isCyclicDepError } from '@model/dev-env/dev-env.model';
 import { manifestWebPath, PackagesManifest } from '@model/dev-env/manifest.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
@@ -50,11 +50,18 @@ export interface State {
   packagesManifest: null | PackagesManifest;
   /** Mirrors layout.panel, permitting us to change panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
-  panelOpener: null | { panelKey: string; elementId: string };
+  panelOpener: null | PanelOpener;
   /** Name of current project i.e. a package name */
   projectKey: null | string;
   /** Saved project files */
   saved: KeyedLookup<Dev.SavedProject>;
+}
+
+interface PanelOpener {
+  panelKey: string;
+  elementId: string;
+  /** Including `panelKey` */
+  siblingKeys: string[];
 }
 
 const initialState: State = {
@@ -130,7 +137,7 @@ export const Act = {
     createAct('[dev-env] update file', { filename, updates }),
   updatePanelMeta: (panelKey: string, updates: ReduxUpdater<Dev.DevPanelMeta>) =>
     createAct('[dev-env] update panel meta', { panelKey, updates }),
-  xorPanelOpener: (input: { panelKey: string, elementId: string }) =>
+  xorPanelOpener: (input: PanelOpener) =>
     createAct('[dev-env] xor panel opener', input),
 };
 
@@ -1089,6 +1096,68 @@ const bootstrapStyles = createEpic(
   ),
 );
 
+const handlePanelOpenerChange = createEpic(
+  (action$, state$) => action$.pipe(
+    filterActs(
+      '[layout] panel closed',
+      '[layout] panel shown',
+      '[layout] set next config',
+    ),
+    flatMap((act) => {
+      const { devEnv: { panelOpener } } = state$.value;
+      if (!panelOpener) {
+        return [];
+      }
+      if (act.type === '[layout] panel closed') {
+        if (act.pay.panelKey === panelOpener.panelKey && !act.pay.siblingKeys.length) {
+          return [Act.closePanelOpener()];
+        }
+      } else if (act.type === '[layout] panel shown') {
+        if (
+          panelOpener.panelKey !== act.pay.panelKey
+          && act.pay.siblingKeys.includes(panelOpener.panelKey)
+          || panelOpener.siblingKeys.includes(act.pay.panelKey)
+        ) {
+          return [Act.xorPanelOpener({
+            panelKey: act.pay.panelKey,
+            elementId:  panelOpener.elementId,
+            siblingKeys: act.pay.siblingKeys,
+          })];
+        }
+      } else if (act.type === '[layout] set next config') {
+        return [Act.closePanelOpener()];
+      }
+      return [];
+    }),
+  ),
+);
+
+const handlePanelInitialize = createEpic(
+  (action$, state$) => action$.pipe(
+    filterActs(
+      '[layout] panel created', // initialized
+      '[dev-env] change panel meta', // reinitialized
+    ),
+    flatMap((act) => {
+      const { panelKey } = act.pay;
+      if (act.type === '[layout] panel created') {
+        const { file } = state$.value.devEnv;
+        if (Dev.isAppPanel(act.pay.panelMeta)) {
+          return [LayoutThunk.setPanelTitle({ panelKey, title: 'App' })];
+        } else if (Dev.isFilePanel(act.pay.panelMeta)) {
+          const { filename } = act.pay.panelMeta;
+          return [LayoutThunk.setPanelTitle({ panelKey, title: Dev.filenameToPanelTitle(filename) })];
+        }
+      } else {
+        return [LayoutThunk.setPanelTitle({ panelKey,
+          title: act.pay.to === 'app' ? 'App' : Dev.filenameToPanelTitle(act.pay.filename),
+        })];
+      }
+      return [];
+    }),
+  ),
+);
+
 const initializeFileSystem = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('persist/REHYDRATE' as any), // Also triggered on change page
@@ -1156,32 +1225,6 @@ const manageAppPortals = createEpic(
   ),
 );
 
-const onChangePanel = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs(
-      '[layout] panel created',
-      '[dev-env] change panel meta',
-    ),
-    flatMap((act) => {
-      const { panelKey } = act.pay;
-      if (act.type === '[layout] panel created') {
-        const { file } = state$.value.devEnv;
-        if (Dev.isAppPanel(act.pay.panelMeta)) {
-          return [LayoutThunk.setPanelTitle({ panelKey, title: 'App' })];
-        } else if (Dev.isFilePanel(act.pay.panelMeta)) {
-          const { filename } = act.pay.panelMeta;
-          return [LayoutThunk.setPanelTitle({ panelKey, title: Dev.filenameToPanelTitle(filename) })];
-        }
-      } else {
-        return [LayoutThunk.setPanelTitle({ panelKey,
-          title: act.pay.to === 'app' ? 'App' : Dev.filenameToPanelTitle(act.pay.filename),
-        })];
-      }
-      return [];
-    }),
-  ),
-);
-
 const resizeMonacoWithPanel = createEpic(
   (action$, state$) =>
     action$.pipe(
@@ -1218,10 +1261,11 @@ export const epic = combineEpics(
   bootstrapApp,
   bootstrapReducers,
   bootstrapStyles,
+  handlePanelInitialize,
+  handlePanelOpenerChange,
   initializeFileSystem,
   initializeMonacoModels,
   manageAppPortals,
-  onChangePanel,
   resizeMonacoWithPanel,
   trackCodeFileContents,
 );

@@ -3,7 +3,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import GoldenLayout from 'golden-layout';
 import { deepClone, assign } from '@model/generic.model';
-import { GoldenLayoutConfig, GoldenLayoutConfigItem, ReactComponentConfig, ExtendedContainer } from '@model/layout/layout.model';
+import { GoldenLayoutConfig, GoldenLayoutConfigItem, ReactComponentConfig, ExtendedContainer, ComponentConfig } from '@model/layout/layout.model';
 import { ReactComponentHandlerPatched } from './golden-layout.patch';
 
 // Must require to avoid tree-shaking in production
@@ -83,7 +83,7 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
 
           // We want to duplicate the tab's component
           // when the user drags the 'duplication' button
-          const config =  tab.contentItem.config as GoldenLayoutConfigItem<any>;
+          const config = tab.contentItem.config as GoldenLayoutConfigItem<any>;
           this.createDragSource(buttonEl, config);
 
           // Refresh config inside dragSource after use,
@@ -106,27 +106,9 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
                 buttonEl.style.pointerEvents = 'none';
               }
             });
-          /**
-           * TODO in ConnectedLayout detect if panel initially maximised
-           * and initialize lm_maximise pointerEvents accordingly
-           */
+          // TODO handle case where panel initially maximised
 
-          /**
-           * Create button for opening file/app
-           * TODO generic approach for adding dev-env specific buttons
-           */
-          const li = document.createElement('li');
-          li.className = 'lm_custom_open';
-          li.title="open file or app"
-          li.id = `gl-icon-${shortId.generate()}`;
-          li.addEventListener('click', () => {
-            const config = tab.header.activeContentItem.config as GoldenLayoutConfigItem<string>;
-            const panelKey = 'type' in config && config.type === 'component' && config.props.panelKey || null;
-            if (panelKey) {
-              this.props.onClickCustomIcon('custom-open', panelKey, li.id);
-            }
-          });
-          controlsContainer.prepend(li);
+          this.props.setupCustomIcons(tab);
         }
       });
 
@@ -212,7 +194,7 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
   }
 }
 
-interface Props {
+export interface Props {
   htmlAttrs: React.HTMLAttributes<any>; 
   /**
    * Initial layout config, subsequent changes ignored.
@@ -225,8 +207,7 @@ interface Props {
   onComponentCreated: (component: ExtendedContainer) => void;
   /** Invoked on commence dragging of a tab. */
   onDragStart: (component: ExtendedContainer) => void;
-  /** Invoked on click custom icon. */
-  onClickCustomIcon: (iconType: string, openPanelKey: string, iconId: string) => void;
+  setupCustomIcons: (tab: GoldenLayout.Tab & { contentItem: ExtendedContainer }) => void;
 }
 
 interface State {
