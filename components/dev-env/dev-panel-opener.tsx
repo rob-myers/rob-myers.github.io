@@ -7,7 +7,6 @@ import css from './dev-panel-opener.scss';
 const DevPanelOpener: React.FC = () => {
   const [targetRect, setTargetRect] = useState<null | DOMRect>(null);
   const [xOffset, setXOffset] = useState(0);
-  const [closed, setClosed] = useState(true);
 
   const panelOpener = useSelector(({ devEnv }) => devEnv.panelOpener);
   const filenames = useSelector(({ devEnv }) => Object.keys(devEnv.file));
@@ -22,10 +21,7 @@ const DevPanelOpener: React.FC = () => {
     panelOpener && layout.panel[panelOpener.panelKey]?.resizedAt);
 
   const dispatch = useDispatch();
-  const close = () => {
-    setXOffset(0);
-    setClosed(true);
-  }
+
   const handleFileChange = (panelKey: string, value: string) => {
     if (value === 'app') {
       dispatch(Thunk.changePanel({ panelKey, next: { to: 'app' } }));
@@ -36,23 +32,19 @@ const DevPanelOpener: React.FC = () => {
     }
     close();
   };
-  const updateTargetRect = () => {
-    const nextTarget = panelOpener && document.getElementById(panelOpener.elementId) || null;
-    setTargetRect(nextTarget ? nextTarget.getBoundingClientRect() : null);
-  };
 
   useEffect(() => {
-    updateTargetRect();
-    panelOpener && setClosed(false);
-  }, [panelOpener]);
-
-  useEffect(() => {
-    panelOpener && !closed && updateTargetRect();
-  }, [resizedAt]);
+    if (panelOpener) {
+      const nextTarget = panelOpener && document.getElementById(panelOpener.elementId) || null;
+      setTargetRect(nextTarget ? nextTarget.getBoundingClientRect() : null);
+    } else {
+      setXOffset(0);
+    }
+  }, [panelOpener, resizedAt]);
 
   return (
     <div className={css.root}>
-      {!closed && panelOpener?.panelKey && targetRect && (
+      {panelOpener?.panelKey && targetRect && (
         <section
           className={css.panel}
           style={{
@@ -68,7 +60,7 @@ const DevPanelOpener: React.FC = () => {
           onChange={(itemKey) => handleFileChange(panelOpener.panelKey, itemKey)}
           selectedKey={selectedKey}
           dropdown
-          onBlur={close}
+          // onBlur={close}
           provideItemsBounds={(rect) => {
             setXOffset(57 - rect.width);
           }}
