@@ -15,6 +15,7 @@ require('./golden-layout.scss');
 export default class GoldenLayoutComponent extends React.Component<Props, State> {
   public state: State = { renderPanels: new Set() };
   public goldenLayoutInstance!: GoldenLayout;
+  public onResize!: () => void;
   private containerRef = React.createRef<HTMLDivElement>();
 
   public render() {
@@ -53,7 +54,7 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
       newRenderPanels.delete(reactComponentHandler);
       return { renderPanels: newRenderPanels };
     });
-    window.removeEventListener('resize', () => this.goldenLayoutInstance.updateSize());
+    window.removeEventListener('resize', () => this.onResize);
   }
 
   public componentDidMount() {
@@ -62,7 +63,8 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
       this.containerRef.current || undefined,
     );
     // Resize with window
-    window.addEventListener('resize', () => this.goldenLayoutInstance.updateSize());
+    this.onResize = () => this.goldenLayoutInstance.updateSize();
+    window.addEventListener('resize', this.onResize);
 
     // Add duplication button on tab creation
     this.goldenLayoutInstance.on('tabCreated',
@@ -84,10 +86,6 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
           const config =  tab.contentItem.config as GoldenLayoutConfigItem<any>;
           this.createDragSource(buttonEl, config);
 
-          // Show/hide 'duplication' button on maximise/minimise
-          controlsContainer.find('.lm_maximise')
-            .click(() => buttonEl.hidden = !buttonEl.hidden);
-
           // Refresh config inside dragSource after use,
           // thereby avoiding duplicate panelKeys
           buttonEl.addEventListener('mousedown', () => {
@@ -98,6 +96,20 @@ export default class GoldenLayoutComponent extends React.Component<Props, State>
             };
             this.goldenLayoutInstance.on('stackCreated', onDropDuplicate);
           });
+
+          // Disable 'duplication' button on maximise/minimise
+          controlsContainer.find('.lm_maximise')
+            .click(() => {
+              if (buttonEl.style.pointerEvents === 'none') {
+                buttonEl.style.pointerEvents = 'auto';
+              } else {
+                buttonEl.style.pointerEvents = 'none';
+              }
+            });
+          /**
+           * TODO in ConnectedLayout detect if panel initially maximised
+           * and initialize lm_maximise pointerEvents accordingly
+           */
 
           /**
            * Create button for opening file/app

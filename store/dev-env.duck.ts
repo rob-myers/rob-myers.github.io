@@ -88,6 +88,8 @@ export const Act = {
     | { to: 'doc'; filename: string }
     | { to: 'file'; filename: string }
   )) => createAct('[dev-env] change panel meta', { panelKey, ...input }),
+  closePanelOpener: () =>
+    createAct('[dev-env] close panel opener', {}),
   createAppPanelMeta: (input: { panelKey: string }) =>
     createAct('[dev-env] create app panel meta', input),
   createDocPanelMeta: (input: { panelKey: string; filename: string }) =>
@@ -892,6 +894,9 @@ export const reducer = (state = initialState, act: Action): State => {
         , state.panelToMeta),
       };
     }
+    case '[dev-env] close panel opener': return { ...state,
+      panelOpener: null,
+    };
     case '[dev-env] create app panel meta': return { ...state,
       panelToMeta: addToLookup(
         Dev.createDevPanelAppMeta(act.pay.panelKey), state.panelToMeta),
@@ -1036,9 +1041,7 @@ const bootstrapApp = createEpic(
 
 const bootstrapReducers = createEpic(
   (action$, state$) => action$.pipe(
-    filterActs(
-      '[dev-env] store code transpilation',
-    ),
+    filterActs('[dev-env] store code transpilation'),
     flatMap((act) => {
       if (act.type === '[dev-env] store code transpilation') {
         if (act.pay.filename.endsWith('.ts')) {

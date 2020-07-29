@@ -33,7 +33,7 @@ const Select: React.FC<Props> = ({
       tabIndex={0}
       onBlur={() => {
         setIsOpen(false);
-        onBlur();
+        // onBlur();
       }}
       onKeyUp={({ key }) => {
         if (key === 'Escape') {
