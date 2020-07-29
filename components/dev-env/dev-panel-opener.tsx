@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import classNames from 'classnames';
+
 import { Thunk } from '@store/dev-env.duck';
-import Select from '@components/select/select';
 import css from './dev-panel-opener.scss';
 
 const DevPanelOpener: React.FC = () => {
+  const itemsRef = useRef<HTMLDivElement>(null);
   const [targetRect, setTargetRect] = useState<null | DOMRect>(null);
   const [xOffset, setXOffset] = useState(0);
 
@@ -20,6 +22,11 @@ const DevPanelOpener: React.FC = () => {
   const resizedAt = useSelector(({ layout }) =>
     panelOpener && layout.panel[panelOpener.panelKey]?.resizedAt);
 
+  const items = [
+    { itemKey: 'app', label: 'App' },
+    ...filenames.map(filename => ({ itemKey: filename, label: filename })),
+  ];
+
   const dispatch = useDispatch();
 
   const handleFileChange = (panelKey: string, value: string) => {
@@ -33,10 +40,15 @@ const DevPanelOpener: React.FC = () => {
     close();
   };
 
+  /**
+   * TODO handle initial case
+   */
   useEffect(() => {
     if (panelOpener) {
-      const nextTarget = panelOpener && document.getElementById(panelOpener.elementId) || null;
-      setTargetRect(nextTarget ? nextTarget.getBoundingClientRect() : null);
+      const nextTarget = document.getElementById(panelOpener.elementId);
+      setTargetRect(nextTarget?.getBoundingClientRect() || null);
+      const rect = itemsRef.current?.getBoundingClientRect();
+      rect && setXOffset(57 - rect.width);
     } else {
       setXOffset(0);
     }
@@ -52,23 +64,49 @@ const DevPanelOpener: React.FC = () => {
             top: targetRect.bottom + 3,
           }}
         >
-        <Select
-          items={[
-            { itemKey: 'app', label: 'App' },
-            ...filenames.map(filename => ({ itemKey: filename, label: filename })),
-          ]}
-          onChange={(itemKey) => handleFileChange(panelOpener.panelKey, itemKey)}
-          selectedKey={selectedKey}
-          dropdown
-          // onBlur={close}
-          provideItemsBounds={(rect) => {
-            setXOffset(57 - rect.width);
-          }}
-        />
+        <div ref={itemsRef}>
+          {items.map(item => (
+            <Item
+              key={item.itemKey}
+              {...item}
+              highlight={item.itemKey === selectedKey}
+              onClick={() => {
+                if (selectedKey !== item.itemKey) {
+                  handleFileChange(panelOpener.panelKey, item.itemKey);
+                }
+              }}
+            />
+          ))}
+        </div>
         </section>
       )}
     </div>
   );
 };
+
+const Item: React.FC<ItemProps> = ({
+  label,
+  highlight,
+  onClick,
+}) => {
+  return (
+    <div
+      className={classNames(css.item, {
+        [css.highlighted]: highlight,
+      })}
+      onClick={onClick}
+    >
+      {label}
+    </div>
+  );
+};
+
+interface ItemProps {
+  itemKey: string;
+  label: string;
+  onClick?: () => void;  
+  highlight?: boolean;
+}
+
 
 export default DevPanelOpener;
