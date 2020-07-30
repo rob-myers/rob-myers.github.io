@@ -30,7 +30,7 @@ export const App: React.FC = () => {
     setGraph(nextGraph);
   }
 
-  React.useEffect(() => void !graph && nextRandomGraph(), [graph]);
+  React.useEffect(() => void (!graph && nextRandomGraph()), [graph]);
 
   return graph ? (
     <div className={css.root}>
