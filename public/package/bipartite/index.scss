@@ -1,5 +1,20 @@
 .root {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+
+  svg {
+    .lower-bipartition {
+      fill: white;
+    }
+    .upper-bipartition {
+      fill: white;
+    }
+    .edges {
+      stroke: #f00;
+    }
+    .maximal-matching {
+      stroke: white;
+      stroke-dasharray: 5;
+    }
+  }
 }

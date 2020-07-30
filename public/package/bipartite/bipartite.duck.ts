@@ -37,6 +37,27 @@ export const Thunk = {
     (_, graph: BipartiteGraph) =>
     maximalIndependentSet(graph.n, graph.m, graph.edges),
   ),
+  getRandomGraph: createThunk(
+    '[@bipartite] get random graph',
+    (_, { lower: l, upper: u, edgeProbability: p }: {
+      /** Vertex count range (inclusive) of lower bipartition */
+      lower: [number, number];
+      /** Vertex count range (inclusive) of upper bipartition */
+      upper: [number, number];
+      /** Between 0 and 1 (inclusive) */
+      edgeProbability: number;
+    }): BipartiteGraph => {
+      const n = l[0] + Math.trunc(Math.random() * (1 + l[1] - l[0]));
+      const m = u[0] + Math.trunc(Math.random() * (1 + u[1] - u[0]));
+      return {
+        n,
+        m,
+        edges: [...Array(n)].reduce((agg, _, i) =>
+          agg.concat(...[...Array(m)].map((_, j) => Math.random() < p ? [[i, j]] : []))
+        , [] as Edge[])
+      };
+    },
+  ),
 };
 
 export type Thunk = ActionsUnion<typeof Thunk>;
