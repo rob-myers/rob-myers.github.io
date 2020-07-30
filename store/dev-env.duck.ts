@@ -3,7 +3,7 @@ import { map, filter, flatMap } from 'rxjs/operators';
 import * as portals from 'react-reverse-portal';
 import FileSaver from 'file-saver';
 
-import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, initializeRuntimeStore, replaceRootReducerFromBlobUrl, updateThunkLookupFromBlobUrl } from '@public/render-app';
+import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, initializeRuntimeStore, replaceRootReducerFromBlobUrl, updateThunkLookupFromBlobUrl, forgetAppAndStore } from '@public/render-app';
 import RefreshRuntime from '@public/es-react-refresh/runtime';
 
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact } from '@model/store/redux.model';
@@ -397,6 +397,7 @@ export const Thunk = {
         dispatch(Thunk.removeFile({ filename })));
       
       dispatch(Act.resetFlags());
+      forgetAppAndStore();
     },
   ),
   /**

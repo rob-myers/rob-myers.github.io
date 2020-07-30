@@ -9,7 +9,10 @@ Although we provide a development environment, this is not our objective.
 
 # Online Dev Environment
 
+- [ ] can we replace blob urls by a `module-registry` or another method?
+  > imported blob urls are not garbage collected
 - [ ] can switch between two projects
+  > e.g. by attempting to bootstrap new app then new reducer
 - [ ] fix/simplify jsx-commenting
 - [x] cleanup `DevPanelOpener`
 - [x] merge layout Select into opts Select

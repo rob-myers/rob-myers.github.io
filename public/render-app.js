@@ -114,3 +114,8 @@ export function unmountAppAt(elementId) {
     // console.log('unmounted app', { elementId })
   }
 }
+
+export function forgetAppAndStore() {
+  store = undefined;
+  App = undefined;
+}
