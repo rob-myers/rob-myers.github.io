@@ -638,11 +638,16 @@ export const Thunk = {
     '[dev-env] remove files',
     ({ state: { devEnv }, dispatch }, { filename }: { filename: string }) => {
       const file = devEnv.file[filename];
+
       file.cleanups.forEach(cleanup => cleanup());
-      'esModule' in file && file.esModule?.blobUrl && URL.revokeObjectURL(file.esModule.blobUrl);
+      file.transpiled?.cleanups.forEach((cleanup => cleanup()));
+      if (file.ext !== 'scss' && file.esModule?.blobUrl) {
+        URL.revokeObjectURL(file.esModule.blobUrl);
+      }
 
       dispatch(Act.removeFile({ filename }));
       dispatch(EditorThunk.removeMonacoModel({ modelKey: filenameToModelKey(filename) }));
+
       if (file.ext === 'scss') {
         document.getElementById(Dev.filenameToStyleId(filename))?.remove();
       } else {
