@@ -4,8 +4,6 @@
  * Source: https://en.wikipedia.org/wiki/Hopcroft%E2%80%93Karp_algorithm
  */
 
-import * as pool from '@package/performance/array-pool';
-
 const INF = 1 << 28;
 export type Edge = [number, number];
 
@@ -23,9 +21,9 @@ export default function bipartiteMatching(
   // Initalize adjacency lists, matchings, distances
   const adjN = [...new Array(n)].map(_ => [] as number[]);
   const adjM = [...new Array(m)].map(_ => [] as number[]);
-  const matchN = pool.mallocInt32(n).fill(-1);
-  const matchM = pool.mallocInt32(m).fill(-1);
-  const dist = pool.mallocInt32(n).fill(INF);
+  const matchN = [...new Array(n)].fill(-1);
+  const matchM = [...new Array(m)].fill(-1);
+  const dist = [...new Array(n)].fill(-1);
 
   // Build adjacency matrix and its transpose
   for (const [vN, vM] of edges) {
@@ -35,19 +33,17 @@ export default function bipartiteMatching(
 
   let dmax = INF;
   
-  // TODO explain
   function dfs(v: number) {
     if(v < 0) {
       return true;
     }
-    const succs = adjN[v];
-    for(const succ of succs) {
-      const matched = matchM[succ];
-      const dpu = matched >= 0 ? dist[matched] : dmax;
+    for(const dst of adjN[v]) {
+      const matchedSrc = matchM[dst];
+      const dpu = matchedSrc >= 0 ? dist[matchedSrc] : dmax;
       if(dpu === dist[v] + 1) {
-        if(dfs(matched)) {
-          matchN[v] = succ;
-          matchM[succ] = v;
+        if(dfs(matchedSrc)) {
+          matchN[v] = dst;
+          matchM[dst] = v;
           return true;
         }
       }
@@ -57,15 +53,19 @@ export default function bipartiteMatching(
   }
 
   // Run search
-  const toVisit = pool.mallocInt32(n);
+  const toVisit = [...new Array(n)];
   while(true) {
 
     // Initialize queue
     let count = 0
-    matchN.forEach((dst, src) => {
-      dist[src] = dst < 0 ? 0 : INF;
-      dst < 0 && (toVisit[count++] = src);
-    });
+    for (let src = 0; src < n; ++src) {
+      if (matchN[src] < 0) {
+        dist[src] = 0;
+        toVisit[count++] = src
+      } else {
+        dist[src] = INF;
+      }
+    };
 
     // Run breadth first search
     let ptr = 0;
@@ -75,7 +75,7 @@ export default function bipartiteMatching(
       const dv = dist[v];
       if(dv < dmax) {
         const adj = adjN[v];
-        for(let j=0, l=adj.length; j < l; ++j) {
+        for(let j = 0, l = adj.length; j < l; ++j) {
           const u = adj[j];
           const pu = matchM[u];
           if(pu < 0) {
@@ -106,11 +106,6 @@ export default function bipartiteMatching(
   const result = matchN.reduce((agg, dst, src) =>
     agg.concat(dst < 0 ? [] : [[src, dst]]), [] as Edge[]
   );
-  
-  pool.free(toVisit);
-  pool.free(matchM);
-  pool.free(dist);
-  pool.free(matchN);
 
   return result;
 }

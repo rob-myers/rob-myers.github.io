@@ -21,7 +21,7 @@ Although we provide a development environment, this is not our objective.
 - [x] implement close/reset/load project
 - [x] remove support for adding packages -- unneeded complexity
 - [x] fix jsPathErrors markers for aliased module specifiers
-- [ ] `bipartite` package is project with demo
+- [x] `bipartite` package is project with demo
 - [x] can ensure packages and have loaded `bipartite` package
 - [x] projects have a layout via `layout.saved`
 - [ ] package files are read-only

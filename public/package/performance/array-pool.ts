@@ -36,7 +36,7 @@ function malloc(n: number) {
 }
 
 export function free(array: Int32Array) {
-  var log_n = bits.log2(array.byteLength) | 0
+  const log_n = bits.log2(array.length) | 0
   DATA[log_n].push(array)
 }
 
