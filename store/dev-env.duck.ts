@@ -3,7 +3,7 @@ import { map, filter, flatMap } from 'rxjs/operators';
 import * as portals from 'react-reverse-portal';
 import FileSaver from 'file-saver';
 
-import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, initializeRuntimeStore, replaceRootReducerFromBlobUrl, updateThunkLookupFromBlobUrl, forgetAppAndStore } from '@public/render-app';
+import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, initializeRuntimeStore, replaceRootReducerFromBlobUrl, updateThunkLookupFromBlobUrl, forgetAppAndStore, storeAppInvalidSignaller } from '@public/render-app';
 import RefreshRuntime from '@public/es-react-refresh/runtime';
 
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact } from '@model/store/redux.model';
@@ -598,16 +598,18 @@ export const Thunk = {
       overwrite?: boolean;
     }) => {
       initializeRuntimeStore();
+      storeAppInvalidSignaller(() => dispatch(Act.setAppValid(false)));
+
       dispatch(Act.setProjectKey(packageName));
 
-      const { transitiveDeps } = devEnv.packagesManifest!.packages[packageName];
-      for (const depPackageName of transitiveDeps) {
-        dispatch(Thunk.addFilesFromPackage({ packageName: depPackageName }));
-      }
       dispatch(Thunk.addFilesFromPackage({
         packageName,
         mode: overwrite ? 'overwrite-root' : 'restore-root',
       }));
+      const { transitiveDeps } = devEnv.packagesManifest!.packages[packageName];
+      for (const depPackageName of transitiveDeps) {
+        dispatch(Thunk.addFilesFromPackage({ packageName: depPackageName }));
+      }
 
       dispatch(LayoutThunk.restoreSavedLayout({
         layoutKey: Dev.packageNameToLayoutKey(packageName)

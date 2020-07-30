@@ -83,6 +83,12 @@ export function replaceRootReducerFromBlobUrl(blobUrl) {
   );
 }
 
+let sendAppInvalidSignal;
+
+export function storeAppInvalidSignaller(fn) {
+  sendAppInvalidSignal = fn;
+}
+
 let App;
 
 /**
@@ -102,7 +108,7 @@ export function storeAppFromBlobUrl(blobUrl) {
 export function renderAppAt(elementId) {
   const rootEl = document.getElementById(elementId);
   ReactDOM.unmountComponentAtNode(rootEl);
-  const ErrorBoundedApp = React.createElement(ErrorBoundary, null, React.createElement(App));
+  const ErrorBoundedApp = React.createElement(ErrorBoundary, { sendAppInvalidSignal }, React.createElement(App));
   const ProvidedApp = React.createElement(Provider, { store }, ErrorBoundedApp);
   ReactDOM.render(ProvidedApp, rootEl);
 }

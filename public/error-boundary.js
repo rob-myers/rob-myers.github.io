@@ -14,6 +14,7 @@ export class ErrorBoundary extends React.Component {
     this.setState({ componentStack: errorInfo.componentStack })
     console.log({ error });
     console.log({ errorInfo });
+    this.props.sendAppInvalidSignal();
   }
 
   render() {
