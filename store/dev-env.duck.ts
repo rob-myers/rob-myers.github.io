@@ -661,6 +661,7 @@ export const Thunk = {
       const projectKey = devEnv.projectKey!;
       dispatch(Thunk.closeProject({}));
       dispatch(Thunk.loadProject({ packageName: projectKey, overwrite: true }));
+
       setTimeout(() => {// Trigger panel refresh
         const { nextConfig } = getState().layout;
         dispatch(LayoutAct.setNextConfig({ nextConfig: { ...nextConfig } }));

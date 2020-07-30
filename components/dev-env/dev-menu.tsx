@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import classNames from 'classnames';
 
+import { pause } from '@model/generic.model';
 import { menuHeightPx } from '@model/dev-env/dev-env.model';
 import { getConfigPanelKeys } from '@model/layout/generate-layout';
 import { Act, Thunk } from '@store/dev-env.duck';
@@ -37,13 +38,14 @@ export const DevMenu = () => {
 
   const dispatch = useDispatch();
 
-  const handleProjectSelect = (itemKey: string) => {
+  const handleProjectSelect = async (itemKey: string) => {
     if (itemKey === 'reset-project') {
       dispatch(Thunk.resetProject({}));
     } else if (itemKey === 'close-project') {
       dispatch(Thunk.closeProject({}));
     } else if (itemKey) {
       dispatch(Thunk.closeProject({}));
+      await pause(100); // TODO await project closure
       dispatch(Thunk.loadProject({ packageName: itemKey }));
     }
   };

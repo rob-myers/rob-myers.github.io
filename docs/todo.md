@@ -11,7 +11,7 @@ Although we provide a development environment, this is not our objective.
 
 - [ ] can we replace blob urls by a `module-registry` or another method?
   > imported blob urls are not garbage collected
-- [ ] can switch between two projects
+- [x] can switch between two projects
 - [x] can close project and open another
   > e.g. by attempting to bootstrap new app then new reducer
 - [ ] fix/simplify jsx-commenting
