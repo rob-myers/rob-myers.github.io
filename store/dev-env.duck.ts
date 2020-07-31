@@ -2,11 +2,11 @@ import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
 import * as portals from 'react-reverse-portal';
 
-import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, forgetAppAndStore, storeAppInvalidSignaller } from '@public/render-app';
+import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, forgetAppAndStore, storeAppInvalidSignaller, setStore } from '@public/render-app';
 import RefreshRuntime from '@public/es-react-refresh/runtime';
 
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact, createThunk, createEpic } from '@model/store/redux.model';
-import { KeyedLookup, testNever, lookupFromValues, pluck, pretty } from '@model/generic.model';
+import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
 import * as Dev from '@model/dev-env/dev-env.model';
 import { TsTranspilationResult, filenameToModelKey } from '@model/monaco/monaco.model';
 import * as PatchJs from '@model/dev-env/patch-js-imports';
@@ -18,6 +18,8 @@ import { awaitWorker } from '@worker/syntax/worker.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
+import { getWindow } from '@model/dom.model';
+import { NEXT_REDUX_STORE } from '@public/constants';
 
 export interface State {  
   /** Persists App instances across site */
@@ -295,6 +297,14 @@ export const Thunk = {
       forgetAppAndStore();
     },
   ),
+  createAppPortal: createThunk(
+    '[dev-env] create app portal',
+    ({ dispatch }, { panelKey }: { panelKey: string }) => {
+      const portalNode = portals.createHtmlPortalNode();
+      portalNode.element.style.overflow = 'auto';
+      dispatch(Act.addAppPortal(panelKey, portalNode));
+    },
+  ),
   /**
    * Can create css module code/url as soon as scss file created.
    */
@@ -480,7 +490,7 @@ export const Thunk = {
   ),
   initialize: createThunk(
     '[dev-env] initialize',
-    async ({ dispatch, getState }) => {
+    async ({ dispatch }) => {
       await dispatch(Thunk.fetchPackagesManifest({}));
       await dispatch(Thunk.fetchPackages({}));
 
@@ -497,7 +507,7 @@ export const Thunk = {
       /** Should we overwrite any saved files? */
       overwrite?: boolean;
     }) => {
-      // initializeRuntimeStore();
+      setStore(getWindow()![NEXT_REDUX_STORE]);
       storeAppInvalidSignaller(() => dispatch(Act.setAppValid(false)));
 
       dispatch(Thunk.addFilesFromPackage({ packageName, overwrite }));
@@ -527,6 +537,14 @@ export const Thunk = {
       for (const [filename, { patchedCode, blobUrl }] of Object.entries(filenameToPatched)) {
         dispatch(Act.updateFile(filename, { esModule: { patchedCode, blobUrl } }));
       }
+    },
+  ),
+  removeAppInstance: createThunk(
+    '[dev-env] remove app instance',
+    ({ dispatch }, { panelKey }: { panelKey: string }) => {
+      // console.log('trying to unmount...', { panelKey, id: Dev.panelKeyToAppElId(panelKey) });
+      unmountAppAt(Dev.panelKeyToAppElId(panelKey));
+      dispatch(Act.removeAppPortal(panelKey));
     },
   ),
   removeFile: createThunk(
@@ -721,13 +739,6 @@ export const Thunk = {
         console.error({ sassJsTranspileError: transpiled }); // TODO
         // dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
       }
-    },
-  ),
-  tryUnmountAppInstance: createThunk(
-    '[dev-env] unmount app instance',
-    (_, { panelKey }: { panelKey: string }) => {
-      // console.log('trying to unmount...', { panelKey, id: Dev.panelKeyToAppElId(panelKey) });
-      unmountAppAt(Dev.panelKeyToAppElId(panelKey));
     },
   ),
   updateCodeTranspilation: createThunk(
@@ -962,48 +973,6 @@ const initializeMonacoModels = createEpic(
   ),
 );
 
-const manageAppPortals = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs(
-      '[dev-env] create app panel meta',
-      // '[dev-env] change panel meta',
-      // '[layout] panel closed', // App explicitly closed
-    ),
-    flatMap((act) => {
-      const { panelKey } = act.pay;
-      if (act.type === '[dev-env] create app panel meta') {
-        if (!state$.value.devEnv.appPortal[panelKey]) {
-          const portalNode = portals.createHtmlPortalNode();
-          portalNode.element.style.overflow = 'auto';
-          return [Act.addAppPortal(panelKey, portalNode)];
-        }
-      } 
-      return [];
-      // else if (act.type === '[dev-env] change panel meta') {
-      //   if (act.pay.to === 'app') {
-      //     const portalNode = portals.createHtmlPortalNode();
-      //     portalNode.element.style.overflow = 'auto';
-      //     return [Act.addAppPortal(panelKey, portalNode)];
-      //   } else {
-      //     return [Act.removeAppPortal(panelKey)];
-      //   }
-      // } else {
-      //   return [Act.removeAppPortal(panelKey)];
-      // }
-    })
-  ),
-);
-
-// const resizeMonacoWithPanel = createEpic(
-//   (action$, state$) =>
-//     action$.pipe(
-//       filterActs('[layout] panel resized'),
-//       filter(({ pay: { panelKey } }) =>
-//         !!state$.value.editor.editor[Dev.panelKeyToEditorKey(panelKey)]),
-//       map(({ pay: { panelKey } }) =>
-//         EditorThunk.resizeEditor({ editorKey: Dev.panelKeyToEditorKey(panelKey) })),
-//     ));
-
 const trackCodeFileContents = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[editor] store monaco model'),
@@ -1031,10 +1000,5 @@ export const epic = combineEpics(
   bootstrapStyles,
   initializeFileSystem,
   initializeMonacoModels,
-  manageAppPortals,
   trackCodeFileContents,
 );
-
-// if (module.hot) {
-//   // console.log('reload dev-env.duck');
-// }

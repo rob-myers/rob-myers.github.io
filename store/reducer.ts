@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import { combineEpics } from 'redux-observable';
 import { filter } from 'rxjs/operators';
 
+import { DistributiveOmit } from '@model/generic.model';
 import {
   reducer as testReducer,
   State as TestState, 
@@ -39,6 +40,16 @@ export type RootThunk = (
   | DevEnvThunk
 );
 
+export const getRootThunks = () => [
+  ...Object.values(EditorThunk),
+  ...Object.values(DevEnvThunk),
+];
+
+export type Dispatchable = (
+  | RootAction
+  | DistributiveOmit<RootThunk, 'thunk'>
+)
+
 const createRootReducer = () => combineReducers<RootState>({
   test: testReducer,
   editor: editorReducer,
@@ -47,7 +58,9 @@ const createRootReducer = () => combineReducers<RootState>({
 
 export default createRootReducer;
 
-//#region redux-observable
+/**
+ * Redux-observable
+ */
 export type RootActOrThunk = RootAction | RootThunk
 
 export type GetActOrThunk<T extends RootActOrThunk['type']> =
@@ -66,7 +79,6 @@ export const rootEpic = () => combineEpics(
   editorEpic,
   devEnvEpic,
 );
-//#endregion
 
 // if (module.hot) {
 //   console.log('reloading reducer');

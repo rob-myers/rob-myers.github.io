@@ -43,12 +43,12 @@ export interface ThunkAct<T extends string, A extends {}, R> {
 export const createThunk = <T extends string, A extends {} = {}, R = void>(
   type: T,
   thunk: ThunkAct<T, A, R>['thunk']
-) => (args: A) =>
+) => Object.assign((args: A) =>
   ({
     type,
     thunk,
     args,
-  } as ThunkAct<T, A, R>);
+  } as ThunkAct<T, A, R>), { type });
 
 /**
  * Epics

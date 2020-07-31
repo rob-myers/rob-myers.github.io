@@ -5,12 +5,12 @@ import { createEpicMiddleware } from 'redux-observable';
 import { createTransform, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
+import { NEXT_REDUX_STORE } from '@public/constants';
 import { State as DevEnvState } from './dev-env.duck';
 import { State as EditorState } from './editor.duck';
-import createRootReducer, { RootAction, RootActOrThunk, rootEpic, RootState, RootThunk } from './reducer';
+import createRootReducer, { RootAction, rootEpic, RootState, RootThunk, RootActOrThunk, getRootThunks } from './reducer';
 import { State as TestState } from './test.duck';
 import { mapValues } from '@model/generic.model';
-import { NEXT_REDUX_STORE } from './with-redux';
 import { getWindow } from '@model/dom.model';
 
 const storeVersion = 0.01;
@@ -118,43 +118,49 @@ export const initializeStore = (preloadedState?: RootState) => {
       )
     )
   );
-  refreshReducers();
+  refreshReducersAndThunks();
   epicMiddleware.run(rootEpic());
   return store;
 };
 
 export type ReduxStore = ReturnType<typeof initializeStore>;
 
+
+/** We store thunks here for better hot-reloading. */
+let thunkLookup = {} as Record<string, RootThunk[keyof RootThunk]>;
+
 function createThunkMiddleware() {
-  return (params: Omit<RootThunkParams, 'state'>) =>
-    (next: Dispatch) =>
-      (action: RootAction | ThunkAct<string, {}, any>) => {
-        if ('thunk' in action) {
-          return action.thunk({ ...params, state: params.getState() }, action.args);
+  return (params: Omit<RootThunkParams, 'state'>) => // params has { dispatch, getState }
+    (next: Dispatch) => // native dispatch
+      (action: RootActOrThunk) => { // received action
+        if ('args' in action && action.type in thunkLookup) {
+          return (thunkLookup[action.type] as (args: any) => any)(action.args).thunk(
+            { ...params, state: params.getState() },
+            action.args,
+          );
         }
         next(action);
         return;
       };
 }
 
-function refreshReducers() {
-  // thunkLookup = getRootThunks().reduce((agg, fn) => ({ ...agg, [fn.type]: fn }), {});
-  const window = getWindow<{ __NEXT_REDUX_STORE__: ReduxStore }>();
+function refreshReducersAndThunks() {
+  thunkLookup = getRootThunks().reduce((agg, fn) => ({ ...agg, [fn.type]: fn }), {});
+  const window = getWindow<{ [NEXT_REDUX_STORE]: ReduxStore }>();
   if (window && NEXT_REDUX_STORE in window) {
     window[NEXT_REDUX_STORE].replaceReducer(createPersistedReducer());
   }
 }
 
-const handler = (status: string) => {
+const refreshHandler = (status: string) => {
   // console.log({ status });
   if (status === 'idle') {
-    refreshReducers();
+    refreshReducersAndThunks();
   }
-  module.hot?.removeStatusHandler(handler);
+  module.hot?.removeStatusHandler(refreshHandler);
 }
 
 if (module.hot) {
   module.hot.accept();
-  module.hot.addStatusHandler(handler);
-  // console.log('reloading create-store');
+  module.hot.addStatusHandler(refreshHandler);
 }

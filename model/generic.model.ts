@@ -186,3 +186,7 @@ export function pluck<T extends { key: string }>(
   Object.values(lookup).forEach((item) => !test(item) && delete shallow[item.key]);
   return shallow;
 }
+
+export type DistributiveOmit<T, K extends keyof T> = T extends unknown
+  ? Omit<T, K>
+  : never;

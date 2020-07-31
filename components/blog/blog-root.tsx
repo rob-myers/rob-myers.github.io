@@ -3,16 +3,25 @@ import TestBlog from './test-blog.mdx';
 import css from './blog.scss';
 
 const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false });
+// hmr was unstable when this wasn't dynamically imported
+const DevApp = dynamic(import('@components/dev-env/dev-app'), { ssr: false });
 
 const BlogRoot: React.FC = () => {
   return (
     <div className={css.root}>
       <TestBlog/>
-      <div style={{ height: 500 }}>
-        <DevEditor
-          panelKey={'test-panel'}
-          filename={'package/intro/app.tsx'}
-        />
+      <div style={{ display: 'flex' }}>
+        <div style={{ width: 400, height: 500 }}>
+          <DevEditor
+            panelKey="test-code-panel"
+            filename="package/intro/app.tsx"
+          />
+        </div>
+        <div style={{ width: 400, height: 500 }}>
+          <DevApp
+            panelKey="test-dev-panel"
+          />
+        </div>
       </div>
     </div>
   );

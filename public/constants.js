@@ -10,3 +10,4 @@ export const REFRESH_INTERCEPT_MODULE_EXECUTION = '$RefreshInterceptModuleExecut
 export const LIVE_REACT = '__LIVE_REACT__';
 export const LIVE_REDUX = '__LIVE_REDUX__';
 export const LIVE_REACT_REDUX = '__LIVE_REACT_REDUX__';
+export const NEXT_REDUX_STORE = '__NEXT_REDUX_STORE__';
