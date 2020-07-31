@@ -592,10 +592,10 @@ export const epic = combineEpics(
   // ...
 );
 
-if (module.hot) {
-  /**
-   * Currently `Editor` crashes on hmr.
-   * TODO try to fix.
-   */
-  module.hot.decline();
-}
+// if (module.hot) {
+//   /**
+//    * Currently `Editor` crashes on hmr.
+//    * TODO try to fix.
+//    */
+//   module.hot.decline();
+// }

@@ -57,7 +57,7 @@ export function filenameToScriptId(filename: string) {
 }
 
 export function filenameToClassPrefix(filename: string) {
-  return `${filename.replace(/\.scss$/, '').replace(/\./g, '_')}__`;
+  return `${filename.replace(/\.scss$/, '').replace(/[\.\/]/g, '_')}__`;
 }
 
 export function filenameToStyleId(filename: string) {

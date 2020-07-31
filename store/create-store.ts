@@ -58,7 +58,6 @@ const createPersistedReducer = () => persistReducer({
           appValid: false,
           appWasValid: false,
           initialized: false,
-          reducerValid: false,
         },
         file: {},
         packagesManifest: null,

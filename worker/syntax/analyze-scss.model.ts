@@ -1,5 +1,5 @@
 import { parse, stringify } from 'scss-parser';
-import { filenameToClassPrefix, ModuleSpecifierInterval } from '@model/dev-env/dev-env.model';
+import { filenameToClassPrefix, ModuleSpecifierInterval, resolveRelativePath } from '@model/dev-env/dev-env.model';
 
 interface ScssAstNode {
   type: string;
@@ -24,6 +24,15 @@ export function prefixScssClasses(scssContents: string, filename: string) {
        * `scss(css-rcurlyexpected)`. We throw to keep in sync.
        */
       throw Error('selector cannot start with a number');
+    }
+
+    if (node.type === 'atrule') {// Resolve paths
+      const [first, second, third] = node.value as ScssAstNode[];
+      if ((first.type === 'atkeyword' && first.value === 'import' && second.type === 'space'
+        && (third.type === 'string_double' || third.type === 'string_single')
+      ) && third.start) {
+        (node as any).value[2] = { ...(node as any).value[2], value: resolveRelativePath(filename, third.value as string) };
+      }
     }
   }, ast);
 

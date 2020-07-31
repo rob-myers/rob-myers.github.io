@@ -44,13 +44,6 @@ export interface State {
   saved: KeyedLookup<Dev.SavedProject>;
 }
 
-interface PanelOpener {
-  panelKey: string;
-  elementId: string;
-  /** Including `panelKey` */
-  siblingKeys: string[];
-}
-
 const initialState: State = {
   appPortal: {},
   file: {},
@@ -228,7 +221,7 @@ export const Thunk = {
     '[dev-env] bootstrap apps',
     async ({ dispatch, getState }, { appRoot }: { appRoot: string }) => {
       /**
-       * Files reachable from `app.tsx` have acyclic dependencies, modulo
+       * Files reachable from `appRoot` have acyclic dependencies, modulo
        * untranspiled transitive-dependencies at time they were checked.
        * All reachable files are now transpiled, so can now properly test for cycles.
        */
@@ -678,13 +671,11 @@ export const Thunk = {
   ),
   /**
    * Try to transpile scss.
-   * TODO clean up
    */
   tryTranspileStyleModel: createThunk(
     '[dev-env] try transpile style model',
     async ({ dispatch, state: { devEnv }, getState }, { filename }: { filename: string }) => {
-      try {
-        // Ensure all scss files have been `prefixed` and compute `pathIntervals`
+      try {// Ensure all scss files `prefixed` and compute `pathIntervals`
         const scssFiles = Object.values(devEnv.file).filter(({ ext }) => ext === 'scss');
         for (const { key: filename } of scssFiles)
           await dispatch(Thunk.tryPrefixStyleFile({ filename }));
