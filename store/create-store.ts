@@ -62,7 +62,6 @@ const createPersistedReducer = () => persistReducer({
         },
         file: {},
         packagesManifest: null,
-        panelToMeta: {},
         package: {},
         /**
          * Save all files from packages that have been loaded.

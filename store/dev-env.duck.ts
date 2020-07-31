@@ -40,8 +40,6 @@ export interface State {
   package: KeyedLookup<Dev.PackageData>;
   /** Parsed from public/package/manifest.json */
   packagesManifest: null | PackagesManifest;
-  /** Mirrors layout.panel, permitting us to change panel */
-  panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
   /** Saved project files */
   saved: KeyedLookup<Dev.SavedProject>;
 }
@@ -63,7 +61,6 @@ const initialState: State = {
   },
   package: {},
   packagesManifest: null,
-  panelToMeta: {},
   saved: {},
 };
 
@@ -76,16 +73,10 @@ export const Act = {
     createAct('[dev-env] add package', { newPackage }),
   appWasValid: () =>
     createAct('[dev-env] app was valid', {}),
-  createAppPanelMeta: (input: { panelKey: string }) =>
-    createAct('[dev-env] create app panel meta', input),
   createCodeFile: (input: { filename: string; contents: string }) =>
     createAct('[dev-env] create code file', input),
   createStyleFile: (input: { filename: string; contents: string }) =>
     createAct('[dev-env] create style file', input),
-  createFilePanelMeta: (input: { panelKey: string; filename: string }) =>
-    createAct('[dev-env] create file panel meta', input),
-  forgetPanelMeta: (input: { panelKey: string }) =>
-    createAct('[dev-env] forget panel meta', input),
   removeAppPortal: (panelKey: string) =>
     createAct('[dev-env] remove app portal', { panelKey }),
   removeFile: (input: { filename: string }) =>
@@ -108,8 +99,6 @@ export const Act = {
     createAct('[dev-env] store style transpilation', { filename, transpilation }),
   updateFile: (filename: string, updates: Partial<Dev.FileState>) =>
     createAct('[dev-env] update file', { filename, updates }),
-  updatePanelMeta: (panelKey: string, updates: ReduxUpdater<Dev.DevPanelMeta>) =>
-    createAct('[dev-env] update panel meta', { panelKey, updates }),
   updatePackageMeta: (panelKey: string, updates: ReduxUpdater<Dev.PackageData>) =>
     createAct('[dev-env] update package meta', { panelKey, updates }),
 };
@@ -264,9 +253,8 @@ export const Thunk = {
       const { blobUrl: appUrl } = (devEnv.file[appRoot] as Dev.CodeFile).esModule!;
       await storeAppFromBlobUrl(appUrl);
 
-      // Render App in each panel
-      Object.values(devEnv.panelToMeta)
-        .filter(({ panelType }) => panelType === 'app')
+      // Ensure each App is rendered
+      Object.values(devEnv.appPortal)
         .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
   
       dispatch(Act.setAppValid(true));
@@ -426,12 +414,6 @@ export const Thunk = {
         throw Error(`Error fetching ${manifestWebPath}`);
       }
     },
-  ),
-  filenameToPanelKey: createThunk(
-    '[dev-env] filename to panel key',
-    ({ state: { devEnv } }, { filename }: { filename: string }) =>
-      Object.values(devEnv.panelToMeta)
-        .find((meta) => meta.panelType === 'file' && meta.filename === filename)?.key || null
   ),
   forgetCodeTranspilation: createThunk(
     '[dev-env] forget code transpilation',
@@ -790,10 +772,6 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] app was valid': return { ...state,
       flag: { ...state.flag, appWasValid: true }
     };
-    case '[dev-env] create app panel meta': return { ...state,
-      panelToMeta: addToLookup(
-        Dev.createDevPanelAppMeta(act.pay.panelKey), state.panelToMeta),
-    };
     case '[dev-env] create code file': return { ...state,
       file: addToLookup({
         key: act.pay.filename,
@@ -805,10 +783,6 @@ export const reducer = (state = initialState, act: Action): State => {
         cleanups: [],
         esModule: null,
       }, state.file),
-    };
-    case '[dev-env] create file panel meta': return { ...state,
-      panelToMeta: addToLookup(
-        Dev.createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), state.panelToMeta)
     };
     case '[dev-env] create style file': return { ...state,
       file: addToLookup({
@@ -822,9 +796,6 @@ export const reducer = (state = initialState, act: Action): State => {
         prefixed: null,
         cssModule: null,
       } as Dev.StyleFile, state.file),
-    };
-    case '[dev-env] forget panel meta': return { ...state,
-      panelToMeta: removeFromLookup(act.pay.panelKey, state.panelToMeta),
     };
     case '[dev-env] remove app portal': return { ...state,
       appPortal: removeFromLookup(act.pay.panelKey, state.appPortal),
@@ -868,9 +839,6 @@ export const reducer = (state = initialState, act: Action): State => {
     };
     case '[dev-env] update file': return { ...state,
       file: updateLookup(act.pay.filename, state.file, () => act.pay.updates),
-    };
-    case '[dev-env] update panel meta': return { ...state,
-      panelToMeta: updateLookup(act.pay.panelKey, state.panelToMeta, act.pay.updates),
     };
     case '[dev-env] update package meta': return { ...state,
       package: updateLookup(act.pay.panelKey, state.package, act.pay.updates),
