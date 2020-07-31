@@ -422,6 +422,11 @@ export const Thunk = {
       { state: { editor } },
       { src, files }: { src: string; files: { filename: string; contents: string }[] },
     ): Promise<ScssTranspilationResult> => {
+      // console.log({ files });
+      /**
+       * TODO normalise module specifiers e.g.
+       * ./other.scss to package/shared/other.scss
+       */
       files.forEach(({ contents, filename }) =>
         editor.sassWorker!.writeFile(filename, contents));
 
@@ -586,3 +591,11 @@ export const reducer = (state = initialState, act: Action): State => {
 export const epic = combineEpics(
   // ...
 );
+
+if (module.hot) {
+  /**
+   * Currently `Editor` crashes on hmr.
+   * TODO try to fix.
+   */
+  module.hot.decline();
+}

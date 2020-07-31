@@ -40,16 +40,15 @@ export interface ThunkAct<T extends string, A extends {}, R> {
   args: A;
 }
 
-// We additionally assign { type } for our custom thunk middleware
 export const createThunk = <T extends string, A extends {} = {}, R = void>(
   type: T,
-  thunk: ThunkAct<T, A, R>['thunk'],
-) => Object.assign((args: A) =>
+  thunk: ThunkAct<T, A, R>['thunk']
+) => (args: A) =>
   ({
     type,
     thunk,
     args,
-  } as ThunkAct<T, A, R>), { type });
+  } as ThunkAct<T, A, R>);
 
 /**
  * Epics

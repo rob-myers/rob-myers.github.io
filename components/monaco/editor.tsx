@@ -18,7 +18,6 @@ const Editor: React.FC<EditorProps> = (props) => {
   const {
     width,
     height,
-    // Relevant to golden-layout mini-view
     minHeight = 200,
     className,
     code = '',

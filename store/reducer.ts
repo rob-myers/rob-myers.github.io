@@ -39,11 +39,6 @@ export type RootThunk = (
   | DevEnvThunk
 );
 
-export const getRootThunks = () => [
-  ...Object.values(EditorThunk),
-  ...Object.values(DevEnvThunk),
-];
-
 const createRootReducer = () => combineReducers<RootState>({
   test: testReducer,
   editor: editorReducer,

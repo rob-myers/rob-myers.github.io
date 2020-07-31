@@ -18,7 +18,6 @@ import { awaitWorker } from '@worker/syntax/worker.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
-import { refreshReducersAndThunks } from './create-store';
 
 export interface State {  
   /** Persists App instances across site */
@@ -130,7 +129,7 @@ export const Thunk = {
     }) => {
       let filesToCreate = [] as { filename: string; contents: string }[];
 
-      if (!overwrite) {
+      if (!overwrite && packageName in devEnv.saved) {
         Object.values(devEnv.saved[packageName].file)
           .forEach(({ key: filename, contents }) => filesToCreate.push({ filename, contents }));
       } else {
@@ -236,31 +235,31 @@ export const Thunk = {
   ),
   bootstrapApps: createThunk(
     '[dev-env] bootstrap apps',
-    async ({ dispatch, getState }) => {
+    async ({ dispatch, getState }, { appRoot }: { appRoot: string }) => {
       /**
        * Files reachable from `app.tsx` have acyclic dependencies, modulo
        * untranspiled transitive-dependencies at time they were checked.
        * All reachable files are now transpiled, so can now properly test for cycles.
        */
-      const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: Dev.rootAppFilename }));
+      const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: appRoot }));
       if (jsErrors.find(isCyclicDepError)) {
         console.error('App bootstrap failed due to cyclic dependency');
         dispatch(Act.setAppValid(false));
-        dispatch(Thunk.tryTranspileCodeModel({ filename: Dev.rootAppFilename }));
+        dispatch(Thunk.tryTranspileCodeModel({ filename: appRoot }));
         return;
       }
 
       // Replace module specifiers with blob urls so can dynamically load
-      await dispatch(Thunk.patchAllTranspiledCode({ rootFilename: Dev.rootAppFilename }));
+      await dispatch(Thunk.patchAllTranspiledCode({ rootFilename: appRoot }));
 
       // Mount the respective es modules as <script>'s of type "module"
       const { devEnv } = getState();
-      const jsFiles = Dev.getReachableJsFiles(Dev.rootAppFilename, devEnv.file).reverse();
+      const jsFiles = Dev.getReachableJsFiles(appRoot, devEnv.file).reverse();
       for (const { key: filename, esModule: esm } of jsFiles)
         Dev.ensureEsModule({ scriptId: Dev.filenameToScriptId(filename), scriptSrcUrl: esm!.blobUrl });
 
       // Get App from dynamic module and store inside static module
-      const { blobUrl: appUrl } = (devEnv.file[Dev.rootAppFilename] as Dev.CodeFile).esModule!;
+      const { blobUrl: appUrl } = (devEnv.file[appRoot] as Dev.CodeFile).esModule!;
       await storeAppFromBlobUrl(appUrl);
 
       // Render App in each panel
@@ -485,8 +484,8 @@ export const Thunk = {
       await dispatch(Thunk.fetchPackagesManifest({}));
       await dispatch(Thunk.fetchPackages({}));
 
-      // const projectKey = 'intro';
-      // dispatch(Thunk.loadProject({ packageName: projectKey }));
+      const projectKey = 'intro';
+      dispatch(Thunk.loadPackage({ packageName: projectKey }));
 
       dispatch(Act.setInitialized());
     },
@@ -877,16 +876,22 @@ const bootstrapApp = createEpic(
     ),
     flatMap((act) => {
       const { file, flag: { appValid } } = state$.value.devEnv;
-
+      
       if (act.type === '[dev-env] store code transpilation') {
+        /**
+         * TODO handle case where transpiled file is not root,
+         * e.g. package/foo/foo.tsx may be used by package/bar/bar.tsx
+         */
+        const appRoot = act.pay.filename;
+
         if (act.pay.filename.endsWith('.tsx')) {
-          const reachableJsFiles = Dev.getReachableJsFiles(Dev.rootAppFilename, file);
+          const reachableJsFiles = Dev.getReachableJsFiles(appRoot, file);
           if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
-            return []; // Ignore files unreachable from app.tsx
+            return []; // Ignore files unreachable from root (TODO remove)
           }
           if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
             // All reachable code locally valid so try bootstrap app
-            return [Thunk.bootstrapApps({})];
+            return [Thunk.bootstrapApps({ appRoot })];
           } else if (appValid) {
             return [Act.setAppValid(false)];
           }

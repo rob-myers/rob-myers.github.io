@@ -11,7 +11,7 @@ if (typeof window !== 'undefined') {
 import RefreshHelpers from './helpers';
 import React from '../es-react/react';
 
-import { REFRESH_HELPERS, REFRESH_REG, REFRESH_SIG, LIVE_REACT, LIVE_REDUX, LIVE_REACT_REDUX } from '../constants';
+import { REFRESH_HELPERS, REFRESH_REG, REFRESH_SIG, LIVE_REACT, LIVE_REACT_REDUX } from '../constants';
 
 if (typeof window !== 'undefined') {    
   window[REFRESH_REG] = function (filename, type, id) {
@@ -31,17 +31,12 @@ if (typeof window !== 'undefined') {
   window[LIVE_REACT] = React;
 
   /**
-   * TODO provide redux, react-redux from compiled mmodules
+   * Import dynamically because was silently breaking react-refresh,
+   * presumably via early reference to es-react/react-dom inside
+   * public/es-react-redux/utils/reactBatchedUpdates.js.
    */
-  // window[LIVE_REDUX] = Redux;
-
-  // /**
-  //  * Import dynamically because was silently breaking react-refresh,
-  //  * presumably via early reference to es-react/react-dom inside
-  //  * public/es-react-redux/utils/reactBatchedUpdates.js.
-  //  */
-  // import('../es-react-redux/index').then((imported) =>
-  //   window[LIVE_REACT_REDUX] = imported);
+  import('../es-react-redux').then((imported) =>
+    window[LIVE_REACT_REDUX] = imported);
 }
 
 export default function preventTreeShake() {}

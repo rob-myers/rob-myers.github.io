@@ -8,7 +8,6 @@ import { IMarkerData } from '@model/monaco/monaco.model';
  * - review notion of "panel" (no longer using golden-layout)
  * - eventually replace blob urls with module registry
  */
-export const rootAppFilename = 'app.tsx';
 
 const supportedFileExts = ['.tsx', '.scss', '.ts']; // TODO remove .ts
 
