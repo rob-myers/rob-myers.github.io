@@ -21,8 +21,7 @@ const TopMenu: React.FC<Props> = ({
       })}>
         <Link href="/"><a>home</a></Link>
         <Link href="about"><a>about</a></Link>
-        <Link href="dev"><a>development</a></Link>
-        <Link href="test"><a>test</a></Link>
+        <Link href="blog"><a>blog</a></Link>
       </section>
     </>
   );

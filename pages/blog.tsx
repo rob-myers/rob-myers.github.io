@@ -5,7 +5,7 @@ import Blog from '@components/blog/blog';
 const Test: React.FC = () => {
   return (
     <Layout>
-      <TopMenu title="test" label="The Test Page" />
+      <TopMenu title="blog" label="Blog" />
       <Blog/>
     </Layout>
   );
