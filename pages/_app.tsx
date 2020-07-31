@@ -24,7 +24,7 @@ const RootApp: React.FC<RootProps> = ({
       >
         <Head>
           <link rel="shortcut icon" href="/favicon.ico" />
-          <style global>{`
+          <style global={true}>{`
             body {
               margin: 0px;
             }
