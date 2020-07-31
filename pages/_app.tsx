@@ -10,12 +10,6 @@ import { ReduxStore } from '@store/create-store';
 import withRedux from '@store/with-redux';
 import AppPortals from '@components/layout/app-portals';
 
-type RootProps = AppInitialProps & {
-  Component: NextComponentType<NextPageContext, any, {}>;
-  router: Router;
-  reduxStore: ReduxStore;
-}
-
 const RootApp: React.FC<RootProps> = ({
   Component,
   pageProps,
@@ -43,5 +37,11 @@ const RootApp: React.FC<RootProps> = ({
     </Provider>
   );
 };
+
+interface RootProps extends AppInitialProps {
+  Component: NextComponentType<NextPageContext, any, {}>;
+  router: Router;
+  reduxStore: ReduxStore;
+}
 
 export default withRedux(RootApp as any);

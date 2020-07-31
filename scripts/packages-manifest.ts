@@ -9,6 +9,12 @@ import { Project, ts } from 'ts-morph';
 import { publicDir, packagesRootDir, manifestPath, PackagesManifest, packagesDirName } from '../model/dev-env/manifest.model';
 import { Graph } from '../model/graph.model';
 
+/**
+ * TODO
+ * - remove flag `project` because every package is a project
+ * - keep dependencies e.g. foo/app.tsx may depend on bar/app.tsx
+ */
+
 updateManifest();
 
 function updateManifest() {
@@ -44,8 +50,10 @@ function getNextManifest(): PackagesManifest {
   const edgePairs = allPackages.flatMap(srcKey => Object.keys(packageToDeps[srcKey] || {})
     .map(next => [srcKey, next] as [string, string]));
   const graph = Graph.createBasicGraph(allPackages, edgePairs);
-  // Fail if @packages have a cyclic dependency
-  graph.throwOnCycle('@package packages have a cyclic dependency');
+  /**
+   * Fail if packages have a cyclic dependency.
+   */
+  graph.throwOnCycle('@package has a cyclic dependency');
 
   return {
     packages: allPackages
@@ -87,7 +95,7 @@ function getDescendentPaths(filePath: string): string[] {
     : [filePath];
 }
 
-/** e.g. `public/packages/shared/foo` --> `shared` */
+/** e.g. `public/package/shared/foo` --> `shared` */
 function pathToPackageName(filePath: string) {
   return filePath.split('/')[2];
 }

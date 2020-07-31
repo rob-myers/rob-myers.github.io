@@ -4,24 +4,29 @@ import { getWindow } from '@model/dom.model';
 import { RootState } from './reducer';
 import { initializeStore, ReduxStore } from './create-store';
 
-const __NEXT_REDUX_STORE__ = '__NEXT_REDUX_STORE__';
-
-const getOrInitializeStore = (initialState?: RootState) => {
-  const w = getWindow<{ __NEXT_REDUX_STORE__: ReduxStore }>();
-  return w
-    ? w[__NEXT_REDUX_STORE__] || (
-      w[__NEXT_REDUX_STORE__] = initializeStore(initialState)
-    ) 
-    : initializeStore(initialState);
-};
-
-type IProps = { initialReduxState: RootState }
-type Props = { pageProps?: any; reduxStore?: ReduxStore }
+const NEXT_REDUX_STORE = '__NEXT_REDUX_STORE__';
 
 export default (App: NextComponentType<NextPageContext, IProps, Props>) => {
-  // eslint-disable-next-line react/display-name
   return (props: Props & IProps) => {
     const reduxStore = useRef(getOrInitializeStore(props.initialReduxState));
     return <App {...props} reduxStore={reduxStore.current}  />;
   };
 };
+
+function getOrInitializeStore(initialState?: RootState) {
+  const window = getWindow<{ __NEXT_REDUX_STORE__: ReduxStore }>();
+  return window
+    ? window[NEXT_REDUX_STORE] || (
+      window[NEXT_REDUX_STORE] = initializeStore(initialState)
+    ) 
+    : initializeStore(initialState);
+}
+
+interface IProps {
+  initialReduxState: RootState;
+}
+
+interface Props {
+  pageProps?: any;
+  reduxStore?: ReduxStore;
+}

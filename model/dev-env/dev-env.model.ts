@@ -1,23 +1,28 @@
 import { HtmlPortalNode } from 'react-reverse-portal';
 import { KeyedLookup, lookupFromValues, testNever } from '@model/generic.model';
-import { LayoutPanelMeta } from '@model/layout/layout.model';
-import { CustomPanelMetaKey } from '@model/layout/generate-layout';
 import { Redacted } from '@model/store/redux.model';
 import { IMarkerData } from '@model/monaco/monaco.model';
 
-export const menuHeightPx = 28;
-
-const supportedFileExts = ['.tsx', '.scss', '.ts'];
-
+/**
+ * TODO
+ * - review notion of "panel" (no longer using golden-layout)
+ * - eventually replace blob urls with module registry
+ */
 export const rootAppFilename = 'app.tsx';
 
-export const rootReducerFilename = 'reducer.ts';
+const supportedFileExts = ['.tsx', '.scss', '.ts']; // TODO remove .ts
 
 export function hasSupportedExtension(filename: string) {
   return supportedFileExts.some((filenameExt) => filename.endsWith(filenameExt));
 }
 
-export type CustomLayoutPanelMeta = LayoutPanelMeta<CustomPanelMetaKey>
+export type CustomLayoutPanelMeta = {
+  title: string;
+} & (
+  | { key: 'file'; filename: string; }
+  | { key: 'component'; component: string; }
+);
+
 
 export function isCodeFilename(filename: string) {
   return /\.tsx?$/.test(filename);
@@ -27,17 +32,17 @@ export function isStyleFilename(filename: string) {
   return filename.endsWith('.scss');
 }
 
-export function isFilePanel(panelMeta: CustomLayoutPanelMeta): panelMeta is CustomLayoutPanelMeta & { filename: string } {
-  return !panelMeta?.devEnvComponent && supportedFileExts
-    .some((filenameExt) => panelMeta?.filename?.endsWith(filenameExt));
+export function isFilePanel(
+  panelMeta: CustomLayoutPanelMeta,
+): panelMeta is Extract<CustomLayoutPanelMeta, { key: 'file' }> {
+  return panelMeta.key === 'file' && supportedFileExts
+    .some((filenameExt) => panelMeta.filename.endsWith(filenameExt));
 }
 
-export function isAppPanel(panelMeta: CustomLayoutPanelMeta) {
-  return panelMeta?.devEnvComponent === 'App';
-}
-
-export function isDocPanel(panelMeta: CustomLayoutPanelMeta): panelMeta is CustomLayoutPanelMeta & { filename: string } {
-  return panelMeta?.devEnvComponent === 'Doc';
+export function isAppPanel(
+  panelMeta: CustomLayoutPanelMeta,
+): panelMeta is Extract<CustomLayoutPanelMeta, { key: 'commponent' }> {
+  return panelMeta.key === 'component';
 }
 
 export function panelKeyToAppElId(panelKey: string) {
@@ -352,7 +357,6 @@ export function getReachableScssFiles(rootFilename: string, file: KeyedLookup<Pr
 export type DevPanelMeta = (
   | DevPanelFileMeta
   | DevPanelAppMeta
-  | DevPanelDocMeta
 );
 
 /** A file in the project */
@@ -365,13 +369,6 @@ export interface DevPanelAppMeta extends BasePanelMeta {
   panelType: 'app';
   elementId: string;
 }
-/** A blog entry (external doc) or README (project doc) */
-export interface DevPanelDocMeta extends BasePanelMeta {
-  panelType: 'doc';
-  /** e.g. docs/foo */
-  filename: string;
-}
-
 interface BasePanelMeta {
   /** Panel key */
   key: string;
@@ -398,15 +395,6 @@ export function createDevPanelFileMeta(panelKey: string, filename: string): DevP
   return {
     key: panelKey,
     panelType: 'file',
-    filename: filename,
-    menuOpen: false,
-  };
-}
-
-export function createDevPanelDocMeta(panelKey: string, filename: string): DevPanelDocMeta {
-  return {
-    key: panelKey,
-    panelType: 'doc',
     filename: filename,
     menuOpen: false,
   };
@@ -520,6 +508,8 @@ export interface PackageData {
   /** Package name e.g. `intro` */
   key: string;
   file: KeyedLookup<PackageFileData>;
+  /** Is this package currently loaded? */
+  loaded: boolean;
 }
 
 interface PackageFileData {

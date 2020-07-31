@@ -4,15 +4,19 @@ import { PrefixedStyleFile, resolveRelativePath } from './dev-env.model';
 export const detectInvalidScssImport = (
   filename: string,
   file: KeyedLookup<PrefixedStyleFile>,
-) => file[filename].pathIntervals.find(({ value }) =>
-  !(resolveRelativePath(filename, value) in file)) || null;
+) =>
+  file[filename].pathIntervals.find(({ value }) =>
+    !(resolveRelativePath(filename, value) in file)) || null;
 
 export type ScssImportsResult = (
   | { key: 'success'; stratification: string[][] }
   | SccsImportsError
 );
 
-export type SccsImportsError = TraverseScssError & { dependency: string };
+export type SccsImportsError = (
+  & TraverseScssError
+  & { dependency: string }
+);
 
 export function traverseScssDeps(
   f: PrefixedStyleFile,
@@ -45,7 +49,10 @@ type TraverseScssError = { key: 'error' } & (
   | { errorKey: 'import-unknown'; inFilename: string; fromFilename: string }
 );
 
-type DepNode = { filename: string; dependencies: string[] };
+interface DepNode {
+  filename: string;
+  dependencies: string[];
+}
 
 export function stratifyScssFiles(scssFiles: PrefixedStyleFile[]) {
   const stratification = [] as string[][];

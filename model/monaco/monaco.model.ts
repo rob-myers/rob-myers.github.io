@@ -31,7 +31,7 @@ export interface IDiagnostic {
 import { EditorProps } from '@components/monaco/editor.model';
 import { SassResultError } from 'sass.js/dist/sass';
 
-export const baseTsxEditorProps: EditorProps = {
+export const baseTsxEditorProps: Omit<EditorProps, 'editorKey' | 'modelKey'> = {
   language:'typescript',
   theme: 'vs-dark',
   editorOptions: {},

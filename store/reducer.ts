@@ -15,12 +15,6 @@ import {
   epic as editorEpic,
 } from './editor.duck';
 import {
-  reducer as layoutReducer,
-  State as LayoutState, 
-  Action as LayoutAction,
-  Thunk as LayoutThunk,
-} from './layout.duck';
-import {
   reducer as devEnvReducer,
   State as DevEnvState, 
   Action as DevEnvAction,
@@ -31,27 +25,28 @@ import {
 export interface RootState {
   test: TestState;
   editor: EditorState;
-  layout: LayoutState;
   devEnv: DevEnvState;
 }
 
 export type RootAction = (
   | TestAction
   | EditorAction
-  | LayoutAction
   | DevEnvAction
 );
 
 export type RootThunk = (
   | EditorThunk
-  | LayoutThunk
   | DevEnvThunk
 );
+
+export const RootThunks = [
+  ...Object.values(EditorThunk),
+  ...Object.values(DevEnvThunk),
+];
 
 const rootReducer = () => combineReducers<RootState>({
   test: testReducer,
   editor: editorReducer,
-  layout: layoutReducer,
   devEnv: devEnvReducer,
 });
 

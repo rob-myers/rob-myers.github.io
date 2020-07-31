@@ -4,15 +4,14 @@ import { combineEpics } from 'redux-observable';
 
 import { KeyedLookup, testNever, mapValues } from '@model/generic.model';
 import { Message } from '@model/worker.model';
-import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup, ReduxUpdater } from '@model/store/redux.model';
-import { createThunk } from '@model/store/root.redux.model';
+import { createAct, ActionsUnion, Redacted, redact, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, createThunk } from '@model/store/redux.model';
 import { IMonacoTextModel, Editor, TypescriptDefaults, Typescript, Monaco, Uri, IMarkerData, ScssTranspilationResult, filenameToModelKey } from '@model/monaco/monaco.model';
 import { MonacoService } from '@model/monaco/monaco.service';
 import { accessibilityHelpUrl } from '@model/monaco/monaco.model';
 import { SyntaxWorker, awaitWorker, MessageFromWorker } from '@worker/syntax/worker.model';
 import SyntaxWorkerClass from '@worker/syntax/syntax.worker';
 import { Classification } from '@worker/syntax/highlight.model';
-import { CODE_FONT_FAMILY } from '@components/monaco/consts';
+import { CODE_FONT_FAMILY } from '@components/monaco/editor.model';
 import { TranspiledCodeFile } from '@model/dev-env/dev-env.model';
 
 

@@ -7,6 +7,20 @@ Although we provide a development environment, this is not our objective.
 - The dev env will permit the user to interact with the world. 
 - Rather than developing a UI or CLI, we'll make a "Game AI Editor" by providing a suitable hot-reloading react project.
 
+# Fresh start @ August 2020
+
+- Blog 1st i.e. write content 1st
+- No goldenlayout, use mdx instead
+- Only tsx and scss
+- Instead of ts use npm modules provided via thunks
+- Use optimal hot-reloading strategy in development
+  > non-standard thunk middleware
+  > need to replace thunks on hot reload
+- Same store/thunks in dev/runtime, so same react-redux.d.ts.
+- Implement module-registry instead of blob urls
+- runtime tsx and scss available in dev, and auto-copied to public folder
+
+
 # Online Dev Environment
 
 - [ ] can we replace blob urls by a `module-registry` or another method?

@@ -1,32 +1,19 @@
-import { createStore, applyMiddleware, Dispatch } from 'redux';
-import { composeWithDevTools, EnhancerOptions } from 'redux-devtools-extension';
-import { persistReducer, createTransform } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
-import { createEpicMiddleware } from 'redux-observable';
-
-import { RedactInReduxDevTools } from '@model/store/redux.model';
-import { RootThunkParams, ThunkAct } from '@model/store/root.redux.model';
-
-import { State as TestState } from './test.duck';
-import { State as EditorState } from './editor.duck';
-import { State as LayoutState } from './layout.duck';
-import { State as DevEnvState } from './dev-env.duck';
-import rootReducer, { RootState, RootAction, rootEpic, RootThunk } from './reducer';
-import { getDefaultProjectLayout, getDefaultEmptyLayout } from '@model/layout/generate-layout';
 import { SavedProject } from '@model/dev-env/dev-env.model';
+import { replacer, RootThunkParams } from '@model/store/redux.model';
+import { applyMiddleware, createStore, Dispatch } from 'redux';
+import { composeWithDevTools, EnhancerOptions } from 'redux-devtools-extension';
+import { createEpicMiddleware } from 'redux-observable';
+import { createTransform, persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { State as DevEnvState } from './dev-env.duck';
+import { State as EditorState } from './editor.duck';
+import rootReducer, { RootAction, RootActOrThunk, rootEpic, RootState, RootThunk, RootThunks } from './reducer';
+import { State as TestState } from './test.duck';
+import { mapValues } from '@model/generic.model';
 
-const storeVersion = 0.34;
 
-const thunkMiddleware = () =>
-  (params: Omit<RootThunkParams, 'state'>) =>
-    (next: Dispatch) =>
-      (action: RootAction | ThunkAct<string, {}, any>) => {
-        if ('thunk' in action) {
-          return action.thunk({ ...params, state: params.getState() }, action.args);
-        }
-        next(action);
-        return;
-      };
+
+const storeVersion = 0.01;
 
 const persistedReducer = persistReducer({
   key: 'primary',
@@ -64,26 +51,8 @@ const persistedReducer = persistReducer({
       (state, _key) => state,
       { whitelist: ['editor'] }
     ),
-    createTransform<LayoutState, LayoutState>(
-      ({ goldenLayout, savedConfig, persistKey }, _key) => {
-        const nextConfig = persistKey
-          ? goldenLayout?.toConfig() || getDefaultProjectLayout()
-          : getDefaultEmptyLayout();
-        return {
-          savedConfig: persistKey
-            ? { ...savedConfig, [persistKey]: { key: persistKey, config: nextConfig } }
-            : savedConfig,
-          goldenLayout: null,
-          nextConfig,
-          panel: {},
-          persistKey,
-        };
-      },
-      (state, _key) => state,
-      { whitelist: ['layout'] },
-    ),
     createTransform<DevEnvState, DevEnvState>(
-      ({ file, projectKey, saved }, _key) => ({
+      ({ file, saved, package: toPackage }, _key) => ({
         appPortal: {},
         flag: {
           appValid: false,
@@ -96,25 +65,25 @@ const persistedReducer = persistReducer({
         panelOpener: null,
         panelToMeta: {},
         package: {},
-        projectKey,
         /**
-         * Remember files in current project and also
-         * previously saved projects.
+         * Save all files from packages that have been loaded.
          */
         saved: {
           ...saved,
-          ...(projectKey && { [projectKey]: {
-              key: projectKey,
-              file: Object.values(file)
-                .filter(x => !x.key.startsWith('package/'))
-                .reduce((agg, item) => ({
-                  ...agg, [item.key]: {
-                    key: item.key,
-                    contents: item.contents,
-                  },
-                }), {} as SavedProject),
-            }
-          }),
+          ...(
+            Object.values(toPackage)
+              .filter(x => x.loaded)
+              .reduce((agg, pkg) => ({
+                ...agg,
+                [pkg.key]: {
+                  ...pkg,
+                  file: mapValues(file, ({ key, contents }) => ({
+                    key,
+                    contents,
+                  })),
+                },
+              }), {} as typeof toPackage)
+          ),
         },
       }),
       (state, _key) => state,
@@ -141,10 +110,7 @@ export const initializeStore = (preloadedState?: RootState) => {
       shouldHotReload: false,
       serialize: {
         // Handle huge/cyclic objects by redacting them
-        replacer: (_: any, value: RedactInReduxDevTools) =>
-          value && value.devToolsRedaction
-            ? `Redacted<${value.devToolsRedaction}>`
-            : typeof value === 'function' ? 'Redacted<function>' : value,
+        replacer,
       } as EnhancerOptions['serialize']
     })(
       applyMiddleware(
@@ -153,8 +119,36 @@ export const initializeStore = (preloadedState?: RootState) => {
       )
     )
   );
+  loadThunkLookup();
   epicMiddleware.run(rootEpic());
   return store;
 };
 
 export type ReduxStore = ReturnType<typeof initializeStore>;
+
+/** We store thunks here for better hot-reloading. */
+let thunkLookup = {} as Record<string, RootThunk[keyof RootThunk]>;
+
+function thunkMiddleware() {
+  return (params: Omit<RootThunkParams, 'state'>) => // params has { dispatch, getState }
+    (next: Dispatch) => // native dispatch
+      (action: RootActOrThunk) => { // received action
+        if ('args' in action && action.type in thunkLookup) {
+          return (thunkLookup[action.type] as (args: any) => any)(action.args).thunk(
+            { ...params, state: params.getState() },
+            action.args,
+          );
+        }
+        next(action);
+        return;
+      };
+}
+
+function loadThunkLookup() {
+  thunkLookup = RootThunks.reduce((agg, fn) => ({ ...agg, [fn.type]: fn }), {});
+}
+
+module.hot?.accept(() => {
+  console.log('reloading thunk lookup...')
+  loadThunkLookup();
+});

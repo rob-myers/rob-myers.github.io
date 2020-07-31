@@ -9,6 +9,12 @@ import { ErrorBoundary } from './error-boundary';
 
 let rootReducer;
 
+/**
+ * TODO
+ * - use store from main app instead
+ * - remove reducer-related stuff below
+ */
+
 /** We store thunks here for better hot-reloading. */
 let thunkLookup = {};
 

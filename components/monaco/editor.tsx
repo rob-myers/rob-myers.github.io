@@ -3,7 +3,6 @@ import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { EditorProps } from './editor.model';
-import { DEFAULT_WIDTH, DEFAULT_HEIGHT } from './consts';
 import { Thunk } from '@store/editor.duck';
 import { redact } from '@model/store/redux.model';
 
@@ -17,8 +16,8 @@ const typescriptDefaults = typescript.typescriptDefaults as TypescriptDefaults;
  */
 const Editor: React.FC<EditorProps> = (props) => {
   const {
-    width = DEFAULT_WIDTH,
-    height = DEFAULT_HEIGHT,
+    width,
+    height,
     // Relevant to golden-layout mini-view
     minHeight = 200,
     className,

@@ -2,11 +2,12 @@ import { IMonacoEditorOptions } from '@model/monaco/monaco.model';
 
 export interface EditorProps {
   /** Defaults to `default-editor`. */
-  editorKey?: string;
+  editorKey: string;
   /** Defaults to `default-model`. */
-  modelKey?: string;
-  height?: number | string;
-  width?: number | string;
+  modelKey: string;
+  height: number | string;
+  width: number | string;
+
   /** Defaults to `100`. */
   minHeight?: number | string;
   /** Class for the div containing the editor. */
@@ -24,3 +25,6 @@ export interface EditorProps {
   /** Callback to notify when the text changes. */
   theme?: string;
 }
+
+/** Font family for code snippets/editors */
+export const CODE_FONT_FAMILY = 'Monaco, Menlo, Consolas, "Droid Sans Mono", "Inconsolata", "Courier New", monospace';

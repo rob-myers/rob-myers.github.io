@@ -1,28 +1,23 @@
 import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
 import * as portals from 'react-reverse-portal';
-import FileSaver from 'file-saver';
 
 import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, initializeRuntimeStore, replaceRootReducerFromBlobUrl, updateThunkLookupFromBlobUrl, forgetAppAndStore, storeAppInvalidSignaller } from '@public/render-app';
 import RefreshRuntime from '@public/es-react-refresh/runtime';
 
-import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact } from '@model/store/redux.model';
+import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact, createThunk, createEpic } from '@model/store/redux.model';
 import { KeyedLookup, testNever, lookupFromValues, pluck, pretty } from '@model/generic.model';
-import { createThunk, createEpic } from '@model/store/root.redux.model';
 import * as Dev from '@model/dev-env/dev-env.model';
 import { TsTranspilationResult, filenameToModelKey } from '@model/monaco/monaco.model';
 import * as PatchJs from '@model/dev-env/patch-js-imports';
 import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/dev-env/handle-scss-imports';
 import { getCssModuleCode } from '@model/dev-env/css-module';
-import { traverseGlConfig, GoldenLayoutConfig } from '@model/layout/layout.model';
-import { CustomPanelMetaKey } from '@model/layout/generate-layout';
 import { isCyclicDepError } from '@model/dev-env/dev-env.model';
 import { manifestWebPath, PackagesManifest } from '@model/dev-env/manifest.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
-import { Thunk as LayoutThunk, Act as LayoutAct } from './layout.duck';
 
 export interface State {  
   /** Persists App instances across site */
@@ -38,21 +33,14 @@ export interface State {
     /** Has app ever been valid? */
     appWasValid: boolean;
     initialized: boolean;
-    /**
-     * True iff all code reachable from `reducer.ts` was deemed
-     * collectively valid after most recent transpilation.
-     */
-    reducerValid: boolean;
   };
-  /** Loaded from folders in public/package */
+  /** Loaded from folders in public/package. */
   package: KeyedLookup<Dev.PackageData>;
   /** Parsed from public/package/manifest.json */
   packagesManifest: null | PackagesManifest;
   /** Mirrors layout.panel, permitting us to change panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
   panelOpener: null | PanelOpener;
-  /** Name of current project i.e. a package name */
-  projectKey: null | string;
   /** Saved project files */
   saved: KeyedLookup<Dev.SavedProject>;
 }
@@ -71,13 +59,11 @@ const initialState: State = {
     appValid: false,
     appWasValid: false,
     initialized: false,
-    reducerValid: false,
   },
   package: {},
   packagesManifest: null,
   panelOpener: null,
   panelToMeta: {},
-  projectKey: null,
   saved: {},
 };
 
@@ -90,17 +76,8 @@ export const Act = {
     createAct('[dev-env] add package', { newPackage }),
   appWasValid: () =>
     createAct('[dev-env] app was valid', {}),
-  changePanelMeta: (panelKey: string, input: (
-    | { to: 'app' }
-    | { to: 'doc'; filename: string }
-    | { to: 'file'; filename: string }
-  )) => createAct('[dev-env] change panel meta', { panelKey, ...input }),
-  closePanelOpener: () =>
-    createAct('[dev-env] close panel opener', {}),
   createAppPanelMeta: (input: { panelKey: string }) =>
     createAct('[dev-env] create app panel meta', input),
-  createDocPanelMeta: (input: { panelKey: string; filename: string }) =>
-    createAct('[dev-env] create doc panel meta', input),
   createCodeFile: (input: { filename: string; contents: string }) =>
     createAct('[dev-env] create code file', input),
   createStyleFile: (input: { filename: string; contents: string }) =>
@@ -121,10 +98,6 @@ export const Act = {
     createAct('[dev-env] set app valid', { isValid }),
   setInitialized: () =>
     createAct('[dev-env] set initialized', {}),
-  setProjectKey: (projectKey: string | null) =>
-    createAct('[dev-env] set project key', { projectKey }),
-  setReducerValid: (isValid: boolean) =>
-    createAct('[dev-env] set reducer valid', { isValid }),
   setRenderedApp: (panelKey: string) =>
     createAct('[dev-env] set rendered app', { panelKey }),
   storeCodeTranspilation: (filename: string, transpilation: Dev.CodeTranspilation) =>
@@ -137,34 +110,33 @@ export const Act = {
     createAct('[dev-env] update file', { filename, updates }),
   updatePanelMeta: (panelKey: string, updates: ReduxUpdater<Dev.DevPanelMeta>) =>
     createAct('[dev-env] update panel meta', { panelKey, updates }),
-  xorPanelOpener: (input: PanelOpener) =>
-    createAct('[dev-env] xor panel opener', input),
+  updatePackageMeta: (panelKey: string, updates: ReduxUpdater<Dev.PackageData>) =>
+    createAct('[dev-env] update package meta', { panelKey, updates }),
 };
 
 export type Action = ActionsUnion<typeof Act>;
 
 export const Thunk = {
   /**
-   * Add files from package.
-   * Can also add them at root-level, restoring previously saved.
+   * Given file data previously fetched and stored in `devEnv.package[packageName]`,
+   * create respective files in `devEnv.file`. The latter files have respective monaco
+   * models and are retranspiled on change.
    */
   addFilesFromPackage: createThunk(
     '[dev-env] add files from package',
-    async ({ dispatch, state: { devEnv } }, { packageName, mode = 'package' }: {
+    async ({ dispatch, state: { devEnv } }, { packageName, overwrite }: {
       packageName: string;
-      mode?: 'package' | 'restore-root' | 'overwrite-root';
+      /** If we don't overwrite we attempt to restore saved files */
+      overwrite: boolean;
     }) => {
       let filesToCreate = [] as { filename: string; contents: string }[];
-      if (mode === 'restore-root' && packageName in devEnv.saved) {
+
+      if (!overwrite) {
         Object.values(devEnv.saved[packageName].file)
           .forEach(({ key: filename, contents }) => filesToCreate.push({ filename, contents }));
       } else {
-        const copyToRoot = mode === 'restore-root' || mode === 'overwrite-root';
         Object.values(devEnv.package[packageName].file).forEach(({ key, contents }) =>
-          filesToCreate.push({
-            filename: copyToRoot ? Dev.packageFilenameToLocal(key) : key,
-            contents,
-          }));
+          filesToCreate.push({ filename: key, contents }));
       }
       
       for (const { filename, contents } of filesToCreate) {
@@ -177,7 +149,7 @@ export const Thunk = {
     },
   ),
   /**
-   * Analyze source code, storing errors and also module specifier code-intervals,
+   * Analyze ts/tsx source code, storing errors and also module specifier code-intervals,
    * so can source-map errors found in transpiled js (always tied to an import/export).
    */
   analyzeSrcCode: createThunk(
@@ -207,7 +179,7 @@ export const Thunk = {
     }): Promise<Dev.AnalyzeNextCode> => {
       /**
        * Must apply react-refresh transform before checking for cyclic dependencies,
-       * because later we'll patch code-intervals using computed `imports` and `exports`.
+       * because later on we'll patch code-intervals using computed `imports` and `exports`.
        */
       const { transformedJs } = await dispatch(Thunk.applyReactRefreshTransform({
         filename,
@@ -269,7 +241,7 @@ export const Thunk = {
       /**
        * Files reachable from `app.tsx` have acyclic dependencies, modulo
        * untranspiled transitive-dependencies at time they were checked.
-       * All reachable files are now transpiled, so can now test for cycles.
+       * All reachable files are now transpiled, so can now properly test for cycles.
        */
       const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: Dev.rootAppFilename }));
       if (jsErrors.find(isCyclicDepError)) {
@@ -303,38 +275,6 @@ export const Thunk = {
       }
     },
   ),
-  bootstrapRootReducer: createThunk(
-    '[dev-env] bootstrap root reducer',
-    async ({ dispatch, getState }) => {
-
-      // We verify dependencies are acyclic
-      const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: Dev.rootReducerFilename }));
-      if (jsErrors.find(isCyclicDepError)) {
-        console.error('Root reducer bootstrap failed due to cyclic dependency');
-        dispatch(Act.setReducerValid(false));
-        dispatch(Thunk.tryTranspileCodeModel({ filename: Dev.rootReducerFilename }));
-        return;
-      }
-      // Replace module specifiers with blob urls so can dynamically load
-      await dispatch(Thunk.patchAllTranspiledCode({ rootFilename: Dev.rootReducerFilename }));
-
-      // Mount scripts
-      const { devEnv } = getState();
-      const jsFiles = Dev.getReachableJsFiles(Dev.rootReducerFilename, devEnv.file).reverse();
-      for (const { key: filename, esModule: esm } of jsFiles)
-        Dev.ensureEsModule({ scriptId: Dev.filenameToScriptId(filename), scriptSrcUrl: esm!.blobUrl });
-      
-      // Replace root reducer and thunk lookup
-      const { blobUrl: reducerUrl } = (devEnv.file[Dev.rootReducerFilename] as Dev.CodeFile).esModule!;
-      await replaceRootReducerFromBlobUrl(reducerUrl);
-      await updateThunkLookupFromBlobUrl(reducerUrl);
-
-      dispatch(Act.setReducerValid(true));
-      if (!devEnv.flag.appWasValid) {
-        dispatch(Thunk.tryTranspileCodeModel({ filename: 'app.tsx' }));
-      }
-    },
-  ),
   /**
    * Mount transpiled scss on the page using a style tag.
    */
@@ -346,52 +286,9 @@ export const Thunk = {
       Dev.ensureStyleTag({ styleId: styleElId, styles });
     },
   ),
-  changePanel: createThunk(
-    '[dev-env] change panel contents',
-    ({ dispatch, state: { layout } }, { panelKey, next }: {
-      panelKey: string;
-      next: (
-        | { to: 'app' }
-        | { to: 'doc'; filename: string }
-        | { to: 'file'; filename: string }
-      );
-    }) => {
-      dispatch(Act.changePanelMeta(panelKey, next));
-
-      // Mutate golden-layout config so change remembered on persist
-      const glConfig = layout.goldenLayout!.config as GoldenLayoutConfig<CustomPanelMetaKey>;
-      traverseGlConfig(glConfig, (node) => {
-        if ('type' in node && node.type === 'component' && node.props.panelKey === panelKey) {
-          const panelMeta = node.props.panelMeta!;
-          if (next.to === 'app') {
-            delete panelMeta.filename;
-            panelMeta.devEnvComponent = node.title = 'App';
-          } else if (next.to === 'doc') {
-            panelMeta.devEnvComponent = 'Doc';
-            panelMeta.filename = node.title = next.filename;
-          } else {
-            delete panelMeta.devEnvComponent;
-            panelMeta.filename = node.title = next.filename;
-          }
-        }
-      });
-      dispatch(LayoutAct.triggerPersist());
-    },
-  ),
   closeProject: createThunk(
     '[dev-env] close project',
     ({ dispatch, state: { devEnv } }) => {
-      dispatch(LayoutThunk.saveCurrentLayout({}));
-      dispatch(Act.setProjectKey(null));
-      dispatch(LayoutAct.setPersistKey(null));
-
-      // Close file/app panels, but not docs panels.
-      dispatch(LayoutThunk.closeMatchingPanels({
-        predicate: (meta) =>
-          meta.devEnvComponent === 'App'
-          || !meta.devEnvComponent && !!meta.filename,
-      }));
-
       // Remove files, models, scripts/styles
       Object.values(devEnv.file).forEach(({ key: filename }) =>
         dispatch(Thunk.removeFile({ filename })));
@@ -498,8 +395,13 @@ export const Thunk = {
         const loadedFiles = await Promise.all(files.map(async filePath => ({
           key: filePath,
           contents: await (await fetch(`/${filePath}`)).text(),
+          touched: false,
         })));
-        dispatch(Act.addPackage({ key: packageName, file: lookupFromValues(loadedFiles) }))
+        dispatch(Act.addPackage({
+          key: packageName,
+          file: lookupFromValues(loadedFiles),
+          loaded: false,
+        }));
       }
     },
   ),
@@ -556,9 +458,6 @@ export const Thunk = {
       }
     },
   ),
-  /**
-   * TODO improve
-   */
   handleScssImportError: createThunk(
     '[dev-env] handle scss import error',
     ({ state: { devEnv } }, { filename, importError }: {
@@ -569,12 +468,15 @@ export const Thunk = {
       const { pathIntervals } = devEnv.file[filename] as Dev.StyleFile;
       if (importError.errorKey === 'import-unknown') {
         if (importError.dependency === filename) {
-          console.log({ scssImportUnknown: pathIntervals.filter(({ value }) => value === importError.fromFilename) });
+          console.log({
+            scssImportUnknown: pathIntervals.filter(({ value }) => value === importError.fromFilename),
+          });
         } else {
-          console.log({ scssTransitiveImportUnknown: pathIntervals.filter(({ value }) =>
-            Dev.resolveRelativePath(filename, value) === importError.dependency) });
+          console.log({
+            scssTransitiveImportUnknown: pathIntervals.filter(({ value }) =>
+              Dev.resolveRelativePath(filename, value) === importError.dependency),
+          });
         }
-        // dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
       }
     },
   ),
@@ -584,14 +486,14 @@ export const Thunk = {
       await dispatch(Thunk.fetchPackagesManifest({}));
       await dispatch(Thunk.fetchPackages({}));
 
-      const { projectKey } = getState().devEnv;
-      projectKey && dispatch(Thunk.loadProject({ packageName: projectKey }));
+      // const projectKey = 'intro';
+      // dispatch(Thunk.loadProject({ packageName: projectKey }));
 
       dispatch(Act.setInitialized());
     },
   ),
-  loadProject: createThunk(
-    '[dev-env] load project',
+  loadPackage: createThunk(
+    '[dev-env] load package',
     ({ dispatch, state: { devEnv } }, { packageName, overwrite = false }: {
       packageName: string;
       /** Should we overwrite any saved files? */
@@ -600,25 +502,18 @@ export const Thunk = {
       initializeRuntimeStore();
       storeAppInvalidSignaller(() => dispatch(Act.setAppValid(false)));
 
-      dispatch(Act.setProjectKey(packageName));
-
-      dispatch(Thunk.addFilesFromPackage({
-        packageName,
-        mode: overwrite ? 'overwrite-root' : 'restore-root',
-      }));
+      dispatch(Thunk.addFilesFromPackage({ packageName, overwrite }));
       const { transitiveDeps } = devEnv.packagesManifest!.packages[packageName];
       for (const depPackageName of transitiveDeps) {
-        dispatch(Thunk.addFilesFromPackage({ packageName: depPackageName }));
+        dispatch(Thunk.addFilesFromPackage({ packageName: depPackageName, overwrite }));
       }
 
-      dispatch(LayoutThunk.restoreSavedLayout({
-        layoutKey: Dev.packageNameToLayoutKey(packageName)
-      }));
+      dispatch(Act.updatePackageMeta(packageName, () => ({ loaded: true })));
     },
   ),
   /**
    * To display app need to replace import/export module specifers in transpiled js by
-   * valid urls. We use (a) an asset url for react, (b) blob urls for relative paths.
+   * valid urls. We use (a) an asset url for react/redux/react-redux, (b) blob urls for relative paths.
    */
   patchAllTranspiledCode: createThunk(
     '[dev-env] patch all transpiled code',
@@ -644,7 +539,7 @@ export const Thunk = {
       file.cleanups.forEach(cleanup => cleanup());
       file.transpiled?.cleanups.forEach((cleanup => cleanup()));
       if (file.ext !== 'scss' && file.esModule?.blobUrl) {
-        URL.revokeObjectURL(file.esModule.blobUrl);
+        URL.revokeObjectURL(file.esModule.blobUrl); // Has no effect if imported
       }
 
       dispatch(Act.removeFile({ filename }));
@@ -657,37 +552,14 @@ export const Thunk = {
       }
     },
   ),
-  resetProject: createThunk(
+  resetPackage: createThunk(
     '[dev-env] reset project',
-    ({ state: { devEnv }, dispatch, getState }) => {
-      const projectKey = devEnv.projectKey!;
+    ({ dispatch }, { packageName }: { packageName: string }) => {
       dispatch(Thunk.closeProject({}));
-      dispatch(Thunk.loadProject({ packageName: projectKey, overwrite: true }));
-
-      setTimeout(() => {// Trigger panel refresh
-        const { nextConfig } = getState().layout;
-        dispatch(LayoutAct.setNextConfig({ nextConfig: { ...nextConfig } }));
-      });
+      dispatch(Thunk.loadPackage({ packageName, overwrite: true }));
     },
   ),
-  saveFilesToDisk: createThunk(
-    '[dev-env] save files to disk',
-    ({ state: { devEnv } }) => {
-      const filenameToContents = Object.entries(devEnv.file)
-        .reduce<Record<string, string>>((agg, [filename, { contents }]) => ({
-          ...agg, [filename]: contents,
-        }), {});
-      /**
-       * TODO
-       * - package.json
-       * - tsconfig.json
-       * - webpack.config.ts
-       */
-      const blob = new Blob([pretty(filenameToContents)], {type: 'text/plain;charset=utf-8'});
-      FileSaver.saveAs(blob, 'project.json');
-    },
-  ),
-  /** Initialize (debounced) transpilation of model contents on model change. */
+  /** Initialize debounced transpilation of model contents on model change. */
   setupFileTranspile: createThunk(
     '[dev-env] setup code file transpile',
     ({ dispatch }, { modelKey, filename }: { modelKey: string; filename: string }) => {
@@ -701,12 +573,17 @@ export const Thunk = {
       dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
     },
   ),
-  /** Initialize (debounced) storage of model contents on model change. */
+  /** Initialize debounced storage of model contents on model change. */
   setupRememberFileContents: createThunk(
     '[dev-env] setup remember file contents',
     ({ dispatch }, { filename, modelKey }: { filename: string; modelKey: string }) => {
       const storeFileContents = (contents: string) => dispatch(Act.updateFile(filename, { contents }));
-      const disposable = dispatch(EditorThunk.trackModelChange({ do: storeFileContents, delayType: 'debounce', delayMs: 500, modelKey }));
+      const disposable = dispatch(EditorThunk.trackModelChange({
+        do: storeFileContents,
+        delayType: 'debounce',
+        delayMs: 500,
+        modelKey,
+      }));
       dispatch(Act.addFileCleanups(filename, [() => disposable.dispose()]));
     },
   ),
@@ -904,20 +781,6 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] app was valid': return { ...state,
       flag: { ...state.flag, appWasValid: true }
     };
-    case '[dev-env] change panel meta': {
-      const metaState = Dev.getDevPanelMetaState(state.panelToMeta[act.pay.panelKey]);
-      return { ...state, panelToMeta: addToLookup(
-        act.pay.to === 'app'
-          ? { ...Dev.createDevPanelAppMeta(act.pay.panelKey), ...metaState }
-          : act.pay.to ===  'doc'
-            ? { ...Dev.createDevPanelDocMeta(act.pay.panelKey, act.pay.filename), ...metaState }
-            : { ...Dev.createDevPanelFileMeta(act.pay.panelKey, act.pay.filename), ...metaState }
-        , state.panelToMeta),
-      };
-    }
-    case '[dev-env] close panel opener': return { ...state,
-      panelOpener: null,
-    };
     case '[dev-env] create app panel meta': return { ...state,
       panelToMeta: addToLookup(
         Dev.createDevPanelAppMeta(act.pay.panelKey), state.panelToMeta),
@@ -933,10 +796,6 @@ export const reducer = (state = initialState, act: Action): State => {
         cleanups: [],
         esModule: null,
       }, state.file),
-    };
-    case '[dev-env] create doc panel meta': return { ...state,
-      panelToMeta: addToLookup(
-        Dev.createDevPanelDocMeta(act.pay.panelKey, act.pay.filename), state.panelToMeta)
     };
     case '[dev-env] create file panel meta': return { ...state,
       panelToMeta: addToLookup(
@@ -969,7 +828,6 @@ export const reducer = (state = initialState, act: Action): State => {
         ...state.flag,
         appValid: false,
         appWasValid: false,
-        reducerValid: false,
       },
     };
     case '[dev-env] restrict app portals': return { ...state,
@@ -980,12 +838,6 @@ export const reducer = (state = initialState, act: Action): State => {
     };
     case '[dev-env] set initialized': return { ...state,
       flag: { ...state.flag, initialized: true },
-    };
-    case '[dev-env] set project key': return { ...state,
-      projectKey: act.pay.projectKey,
-    };
-    case '[dev-env] set reducer valid': return { ...state,
-      flag: { ...state.flag, reducerValid: act.pay.isValid }
     };
     case '[dev-env] set rendered app': return { ...state,
       appPortal: updateLookup(act.pay.panelKey, state.appPortal, () => ({
@@ -1011,11 +863,8 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] update panel meta': return { ...state,
       panelToMeta: updateLookup(act.pay.panelKey, state.panelToMeta, act.pay.updates),
     };
-    case '[dev-env] xor panel opener': return { ...state,
-      panelOpener: state.panelOpener && (
-        state.panelOpener.elementId === act.pay.elementId
-        && state.panelOpener.panelKey === act.pay.panelKey
-      ) ? null : act.pay,
+    case '[dev-env] update package meta': return { ...state,
+      package: updateLookup(act.pay.panelKey, state.package, act.pay.updates),
     };
     default: return state || testNever(act);
   }
@@ -1028,7 +877,7 @@ const bootstrapApp = createEpic(
       '[dev-env] app portal is ready',
     ),
     flatMap((act) => {
-      const { file, flag: { appValid, reducerValid} } = state$.value.devEnv;
+      const { file, flag: { appValid } } = state$.value.devEnv;
 
       if (act.type === '[dev-env] store code transpilation') {
         if (act.pay.filename.endsWith('.tsx')) {
@@ -1036,9 +885,7 @@ const bootstrapApp = createEpic(
           if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
             return []; // Ignore files unreachable from app.tsx
           }
-          if (!reducerValid) {
-            return []; // Don't render under state is 'valid'
-          } else if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
+          if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
             // All reachable code locally valid so try bootstrap app
             return [Thunk.bootstrapApps({})];
           } else if (appValid) {
@@ -1048,37 +895,6 @@ const bootstrapApp = createEpic(
       } else if (act.type === '[dev-env] app portal is ready') {
         if (appValid) {
           return [Thunk.bootstrapAppInstance({ panelKey: act.args.panelKey })];
-        }
-      }
-      return [];
-    }),
-  ),
-);
-
-const bootstrapReducers = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs('[dev-env] store code transpilation'),
-    flatMap((act) => {
-      if (act.type === '[dev-env] store code transpilation') {
-        if (act.pay.filename.endsWith('.ts')) {
-          const { file, flag: { reducerValid } } = state$.value.devEnv;
-
-          const reachableJsFiles = Dev.getReachableJsFiles(Dev.rootReducerFilename, file);
-          if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
-            return []; // Ignore files unreachable from reducer.ts
-          }
-          const invalidFile = reachableJsFiles.find((f) => !Dev.isFileValid(f));
-          if (invalidFile) {// DEBUG
-            // console.log({ foundInvalid: invalid.key, validities: reachableJsFiles.map(x => ({ filename: x.key, valid: Dev.isFileValid(x) }))
-            // return [Thunk.tryTranspileCodeModel({ filename: invalid.key, onlyIf: 'valid' })];
-          }
-          if (!invalidFile) {
-            return [// All reachable code locally valid, so replace reducer
-              Thunk.bootstrapRootReducer({}),
-            ];
-          } else if (reducerValid) {
-            return [Act.setReducerValid(false)];
-          }
         }
       }
       return [];
@@ -1105,68 +921,6 @@ const bootstrapStyles = createEpic(
   ),
 );
 
-const handlePanelOpenerChange = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs(
-      '[layout] panel closed',
-      '[layout] panel shown',
-      '[layout] set next config',
-    ),
-    flatMap((act) => {
-      const { devEnv: { panelOpener } } = state$.value;
-      if (!panelOpener) {
-        return [];
-      }
-      if (act.type === '[layout] panel closed') {
-        if (act.pay.panelKey === panelOpener.panelKey && !act.pay.siblingKeys.length) {
-          return [Act.closePanelOpener()];
-        }
-      } else if (act.type === '[layout] panel shown') {
-        if (
-          panelOpener.panelKey !== act.pay.panelKey
-          && act.pay.siblingKeys.includes(panelOpener.panelKey)
-          || panelOpener.siblingKeys.includes(act.pay.panelKey)
-        ) {
-          return [Act.xorPanelOpener({
-            panelKey: act.pay.panelKey,
-            elementId:  panelOpener.elementId,
-            siblingKeys: act.pay.siblingKeys,
-          })];
-        }
-      } else if (act.type === '[layout] set next config') {
-        return [Act.closePanelOpener()];
-      }
-      return [];
-    }),
-  ),
-);
-
-const handlePanelInitialize = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs(
-      '[layout] panel created', // initialized
-      '[dev-env] change panel meta', // reinitialized
-    ),
-    flatMap((act) => {
-      const { panelKey } = act.pay;
-      if (act.type === '[layout] panel created') {
-        const { file } = state$.value.devEnv;
-        if (Dev.isAppPanel(act.pay.panelMeta)) {
-          return [LayoutThunk.setPanelTitle({ panelKey, title: 'App' })];
-        } else if (Dev.isFilePanel(act.pay.panelMeta)) {
-          const { filename } = act.pay.panelMeta;
-          return [LayoutThunk.setPanelTitle({ panelKey, title: Dev.filenameToPanelTitle(filename) })];
-        }
-      } else {
-        return [LayoutThunk.setPanelTitle({ panelKey,
-          title: act.pay.to === 'app' ? 'App' : Dev.filenameToPanelTitle(act.pay.filename),
-        })];
-      }
-      return [];
-    }),
-  ),
-);
-
 const initializeFileSystem = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('persist/REHYDRATE' as any), // Also triggered on change page
@@ -1175,12 +929,15 @@ const initializeFileSystem = createEpic(
   ),
 );
 
+/**
+ * TODO only initialize new ones
+ */
 const initializeMonacoModels = createEpic(
   (action$, state$) => action$.pipe(
     filterActs(
       '[editor] set monaco loaded',
       '[dev-env] set initialized',
-      '[dev-env] load project', // Perhaps only need this
+      '[dev-env] load package', // Perhaps only need this
     ),
     filter((_) =>
       state$.value.editor.monacoLoaded
@@ -1205,8 +962,8 @@ const manageAppPortals = createEpic(
   (action$, state$) => action$.pipe(
     filterActs(
       '[dev-env] create app panel meta',
-      '[dev-env] change panel meta',
-      '[layout] panel closed', // App explicitly closed
+      // '[dev-env] change panel meta',
+      // '[layout] panel closed', // App explicitly closed
     ),
     flatMap((act) => {
       const { panelKey } = act.pay;
@@ -1216,31 +973,32 @@ const manageAppPortals = createEpic(
           portalNode.element.style.overflow = 'auto';
           return [Act.addAppPortal(panelKey, portalNode)];
         }
-        return [];
-      } else if (act.type === '[dev-env] change panel meta') {
-        if (act.pay.to === 'app') {
-          const portalNode = portals.createHtmlPortalNode();
-          portalNode.element.style.overflow = 'auto';
-          return [Act.addAppPortal(panelKey, portalNode)];
-        } else {
-          return [Act.removeAppPortal(panelKey)];
-        }
-      } else {
-        return [Act.removeAppPortal(panelKey)];
-      }
+      } 
+      return [];
+      // else if (act.type === '[dev-env] change panel meta') {
+      //   if (act.pay.to === 'app') {
+      //     const portalNode = portals.createHtmlPortalNode();
+      //     portalNode.element.style.overflow = 'auto';
+      //     return [Act.addAppPortal(panelKey, portalNode)];
+      //   } else {
+      //     return [Act.removeAppPortal(panelKey)];
+      //   }
+      // } else {
+      //   return [Act.removeAppPortal(panelKey)];
+      // }
     })
   ),
 );
 
-const resizeMonacoWithPanel = createEpic(
-  (action$, state$) =>
-    action$.pipe(
-      filterActs('[layout] panel resized'),
-      filter(({ pay: { panelKey } }) =>
-        !!state$.value.editor.editor[Dev.panelKeyToEditorKey(panelKey)]),
-      map(({ pay: { panelKey } }) =>
-        EditorThunk.resizeEditor({ editorKey: Dev.panelKeyToEditorKey(panelKey) })),
-    ));
+// const resizeMonacoWithPanel = createEpic(
+//   (action$, state$) =>
+//     action$.pipe(
+//       filterActs('[layout] panel resized'),
+//       filter(({ pay: { panelKey } }) =>
+//         !!state$.value.editor.editor[Dev.panelKeyToEditorKey(panelKey)]),
+//       map(({ pay: { panelKey } }) =>
+//         EditorThunk.resizeEditor({ editorKey: Dev.panelKeyToEditorKey(panelKey) })),
+//     ));
 
 const trackCodeFileContents = createEpic(
   (action$, state$) => action$.pipe(
@@ -1266,13 +1024,9 @@ const trackCodeFileContents = createEpic(
 
 export const epic = combineEpics(
   bootstrapApp,
-  bootstrapReducers,
   bootstrapStyles,
-  handlePanelInitialize,
-  handlePanelOpenerChange,
   initializeFileSystem,
   initializeMonacoModels,
   manageAppPortals,
-  resizeMonacoWithPanel,
   trackCodeFileContents,
 );

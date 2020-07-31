@@ -1,7 +1,7 @@
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Act } from '@store/test.duck';
 import css from './blog.scss';
-import { useState } from 'react';
 
 export const PersistentCounter: React.FC = () => {
   // const [count, setCount] = useState(0);
