@@ -39,18 +39,18 @@ export type RootThunk = (
   | DevEnvThunk
 );
 
-export const RootThunks = [
+export const getRootThunks = () => [
   ...Object.values(EditorThunk),
   ...Object.values(DevEnvThunk),
 ];
 
-const rootReducer = () => combineReducers<RootState>({
+const createRootReducer = () => combineReducers<RootState>({
   test: testReducer,
   editor: editorReducer,
   devEnv: devEnvReducer,
 });
 
-export default rootReducer;
+export default createRootReducer;
 
 //#region redux-observable
 export type RootActOrThunk = RootAction | RootThunk
@@ -72,3 +72,7 @@ export const rootEpic = () => combineEpics(
   devEnvEpic,
 );
 //#endregion
+
+// if (module.hot) {
+//   console.log('reloading reducer');
+// }

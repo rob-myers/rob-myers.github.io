@@ -1,21 +1,21 @@
-import { SavedProject } from '@model/dev-env/dev-env.model';
 import { replacer, RootThunkParams } from '@model/store/redux.model';
 import { applyMiddleware, createStore, Dispatch } from 'redux';
 import { composeWithDevTools, EnhancerOptions } from 'redux-devtools-extension';
 import { createEpicMiddleware } from 'redux-observable';
 import { createTransform, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+
 import { State as DevEnvState } from './dev-env.duck';
 import { State as EditorState } from './editor.duck';
-import rootReducer, { RootAction, RootActOrThunk, rootEpic, RootState, RootThunk, RootThunks } from './reducer';
+import createRootReducer, { RootAction, RootActOrThunk, rootEpic, RootState, RootThunk, getRootThunks } from './reducer';
 import { State as TestState } from './test.duck';
 import { mapValues } from '@model/generic.model';
-
-
+import { NEXT_REDUX_STORE } from './with-redux';
+import { getWindow } from '@model/dom.model';
 
 const storeVersion = 0.01;
 
-const persistedReducer = persistReducer({
+const createPersistedReducer = () => persistReducer({
   key: 'primary',
   version: storeVersion,
   migrate: async (state, currentVersion) => {
@@ -62,7 +62,6 @@ const persistedReducer = persistReducer({
         },
         file: {},
         packagesManifest: null,
-        panelOpener: null,
         panelToMeta: {},
         package: {},
         /**
@@ -90,7 +89,7 @@ const persistedReducer = persistReducer({
       { whitelist: ['devEnv'] },
     ),
   ],
-}, rootReducer());
+}, createRootReducer());
 
 const epicMiddlewareFactory = () => createEpicMiddleware<
   RootAction | RootThunk,
@@ -103,8 +102,8 @@ export const initializeStore = (preloadedState?: RootState) => {
   const epicMiddleware = epicMiddlewareFactory();
 
   const store = createStore(
-    // rootReducer,
-    persistedReducer,
+    // rootReducer(),
+    createPersistedReducer(),
     preloadedState,
     composeWithDevTools({
       shouldHotReload: false,
@@ -119,7 +118,7 @@ export const initializeStore = (preloadedState?: RootState) => {
       )
     )
   );
-  loadThunkLookup();
+  refreshReducersAndThunks();
   epicMiddleware.run(rootEpic());
   return store;
 };
@@ -144,11 +143,25 @@ function thunkMiddleware() {
       };
 }
 
-function loadThunkLookup() {
-  thunkLookup = RootThunks.reduce((agg, fn) => ({ ...agg, [fn.type]: fn }), {});
+export function refreshReducersAndThunks() {
+  console.log('loading thunk lookup...');
+  thunkLookup = getRootThunks().reduce((agg, fn) => ({ ...agg, [fn.type]: fn }), {});
+  const window = getWindow<{ __NEXT_REDUX_STORE__: ReduxStore }>();
+  if (window && NEXT_REDUX_STORE in window) {
+    window[NEXT_REDUX_STORE].replaceReducer(createPersistedReducer());
+  }
 }
 
-module.hot?.accept(() => {
-  console.log('reloading thunk lookup...')
-  loadThunkLookup();
-});
+const handler = (status: string) => {
+  console.log({ status });
+  if (status === 'idle') {
+    refreshReducersAndThunks();
+  }
+  module.hot?.removeStatusHandler(handler);
+}
+
+if (module.hot) {
+  module.hot.accept();
+  module.hot.addStatusHandler(handler);
+  // console.log('reloading create-store');
+}

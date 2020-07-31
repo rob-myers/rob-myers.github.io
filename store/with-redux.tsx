@@ -4,7 +4,7 @@ import { getWindow } from '@model/dom.model';
 import { RootState } from './reducer';
 import { initializeStore, ReduxStore } from './create-store';
 
-const NEXT_REDUX_STORE = '__NEXT_REDUX_STORE__';
+export const NEXT_REDUX_STORE = '__NEXT_REDUX_STORE__';
 
 export default (App: NextComponentType<NextPageContext, IProps, Props>) => {
   return (props: Props & IProps) => {

@@ -1,4 +1,5 @@
 import { createAct, ActionsUnion } from '../model/store/redux.model';
+import { refreshReducersAndThunks } from './create-store';
 
 export interface State {
   count: number;
@@ -28,3 +29,7 @@ export const reducer = (state = initialState, action: Action): State => {
     default: return state;
   }
 };
+
+// if (module.hot) {
+//   console.log('reloading test.duck');
+// }

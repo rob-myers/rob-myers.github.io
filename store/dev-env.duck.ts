@@ -2,7 +2,7 @@ import { combineEpics } from 'redux-observable';
 import { map, filter, flatMap } from 'rxjs/operators';
 import * as portals from 'react-reverse-portal';
 
-import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, initializeRuntimeStore, replaceRootReducerFromBlobUrl, updateThunkLookupFromBlobUrl, forgetAppAndStore, storeAppInvalidSignaller } from '@public/render-app';
+import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, forgetAppAndStore, storeAppInvalidSignaller } from '@public/render-app';
 import RefreshRuntime from '@public/es-react-refresh/runtime';
 
 import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact, createThunk, createEpic } from '@model/store/redux.model';
@@ -18,6 +18,7 @@ import { awaitWorker } from '@worker/syntax/worker.model';
 
 import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
+import { refreshReducersAndThunks } from './create-store';
 
 export interface State {  
   /** Persists App instances across site */
@@ -40,7 +41,6 @@ export interface State {
   packagesManifest: null | PackagesManifest;
   /** Mirrors layout.panel, permitting us to change panel */
   panelToMeta: KeyedLookup<Dev.DevPanelMeta>;
-  panelOpener: null | PanelOpener;
   /** Saved project files */
   saved: KeyedLookup<Dev.SavedProject>;
 }
@@ -62,7 +62,6 @@ const initialState: State = {
   },
   package: {},
   packagesManifest: null,
-  panelOpener: null,
   panelToMeta: {},
   saved: {},
 };
@@ -499,7 +498,7 @@ export const Thunk = {
       /** Should we overwrite any saved files? */
       overwrite?: boolean;
     }) => {
-      initializeRuntimeStore();
+      // initializeRuntimeStore();
       storeAppInvalidSignaller(() => dispatch(Act.setAppValid(false)));
 
       dispatch(Thunk.addFilesFromPackage({ packageName, overwrite }));
@@ -1030,3 +1029,7 @@ export const epic = combineEpics(
   manageAppPortals,
   trackCodeFileContents,
 );
+
+// if (module.hot) {
+//   // console.log('reload dev-env.duck');
+// }
