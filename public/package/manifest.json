@@ -15,7 +15,6 @@
 				"shared",
 				"performance"
 			],
-			"project": true,
 			"transitiveDeps": [
 				"shared",
 				"performance"
@@ -33,7 +32,6 @@
 			"dependencies": [
 				"shared"
 			],
-			"project": true,
 			"transitiveDeps": [
 				"shared"
 			]
@@ -46,7 +44,6 @@
 				"package/performance/interval-tree.ts"
 			],
 			"dependencies": [],
-			"project": false,
 			"transitiveDeps": []
 		},
 		"shared": {
@@ -58,7 +55,6 @@
 				"package/shared/util.ts"
 			],
 			"dependencies": [],
-			"project": false,
 			"transitiveDeps": []
 		}
 	}

@@ -22,11 +22,6 @@ interface PackageMeta {
    */
   dependencies: string[];
   /**
-   * A package is a project iff its root directory contains
-   * files `reducer.ts` and `app.tsx`.
-   */
-  project: boolean;
-  /**
    * Transitive closure of `dependencies`.
    * We do not support cyclic dependencies.
    */

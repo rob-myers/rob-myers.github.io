@@ -3,7 +3,7 @@ import TestBlog from './test-blog.mdx';
 import css from './blog.scss';
 
 const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false });
-// hmr was unstable when this wasn't dynamically imported
+// Had issue with portals and SSR
 const DevApp = dynamic(import('@components/dev-env/dev-app'), { ssr: false });
 
 const BlogRoot: React.FC = () => {

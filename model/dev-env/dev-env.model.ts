@@ -317,7 +317,7 @@ export function isFileValid(file: FileState) {
     ));
 }
 
-/** Get ts/tsx files reachable from app.tsx */
+/** Get ts/tsx files reachable from `rootFilename.` */
 export function getReachableJsFiles(rootFilename: string, file: KeyedLookup<FileState>) {
   const frontier = [file[rootFilename]] as CodeFile[];
   const reachable = lookupFromValues(frontier);

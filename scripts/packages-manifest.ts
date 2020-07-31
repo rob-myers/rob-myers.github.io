@@ -63,11 +63,6 @@ function getNextManifest(): PackagesManifest {
           files: allPaths.map(x => path.relative(publicDir, x))
             .filter(x => x.startsWith(`${packagesDirName}/${packageName}/`)),
           dependencies: Object.keys(packageToDeps[packageName] || {}),
-          project: allPaths.map(x => path.relative(publicDir, x))
-            .filter(x => [
-              `${packagesDirName}/${packageName}/reducer.ts`,
-              `${packagesDirName}/${packageName}/app.tsx`,
-            ].includes(x)).length === 2,
           transitiveDeps: graph
             .getReachableNodes(graph.getNodeById(packageName)!, { withoutFirst: true })
             .map(({ key }) => key)
