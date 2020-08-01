@@ -16,8 +16,7 @@
     "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
-      "@package/*": ["./*"],
-      "@reducer": ["mock-reducer"]
+      "@package/*": ["./*"]
     },
     "downlevelIteration": true
   },
@@ -26,7 +25,6 @@
   ],
   "include": [
     "**/*.ts",
-    "**/*.tsx",
-    "shared/*"
+    "**/*.tsx"
   ]
 }

@@ -111,7 +111,7 @@ export function isRelativePath(path: string) {
 }
 
 export function isRuntimeNpmModule(moduleSpecifier: string) {
-  return moduleSpecifier === 'react' || moduleSpecifier === 'redux' || moduleSpecifier === 'react-redux';
+  return moduleSpecifier === 'react' || moduleSpecifier === 'react-redux';
 }
 
 export const projectAliasRegex = /^(?:@package|@reducer)/;
