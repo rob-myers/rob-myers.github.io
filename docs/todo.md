@@ -12,12 +12,16 @@ Although we provide a development environment, this is not our objective.
 [ ] Blog 1st i.e. write content 1st
 [x] No goldenlayout, use mdx instead
 [x] Only tsx and scss
-- Instead of ts use npm modules provided via thunks
+[ ] Instead of ts use npm modules provided via thunks
 [x] Use optimal hot-reloading strategy in development
   > non-standard thunk middleware
   > need to replace thunks on hot reload
-[ ] Same store/thunks in dev/runtime, so same react-redux.d.ts.
-[ ] Implement module-registry instead of blob urls
+[x] Same store/thunks in dev/runtime
+[ ] Generate `react-redux.d.ts`
+  > write 'self-contained' reducers & additional `store/types/{reducer}.types.ts`
+  > can extract types via vscode hover and `noErrorTruncation`
+  > can use `- & -` to provide some consistency
+[ ] Implement `module-registry` instead of blob urls
 [ ] runtime tsx and scss available in dev, and auto-copied to public folder
 
 

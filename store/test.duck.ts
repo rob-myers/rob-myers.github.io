@@ -28,7 +28,3 @@ export const reducer = (state = initialState, action: Action): State => {
     default: return state;
   }
 };
-
-// if (module.hot) {
-//   console.log('reloading test.duck');
-// }

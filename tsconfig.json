@@ -26,7 +26,8 @@
       "@env/*": ["env/*"],
       "@public/*": ["public/*"]
     },
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "noErrorTruncation": true
   },
   "exclude": [
     "node_modules",
