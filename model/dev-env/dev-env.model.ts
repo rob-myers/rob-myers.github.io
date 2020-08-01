@@ -70,6 +70,11 @@ export function filenameToPanelTitle(filename: string) {
     : filename;
 }
 
+/** e.g. package/foo/bar/baz.tsx -> package/foo/app.tsx */
+export function filenameToAppRoot(filename: string) {
+  return filename.split('/').slice(0, 2).concat('app.tsx').join('/');
+}
+
 /** e.g. `package/foo/bar.tsx to bar.tsx` */
 export function packageFilenameToRoot(filePath: string) {
   return filePath.split('/').slice(2).join('/');
@@ -117,12 +122,15 @@ export function isRuntimeNpmModule(moduleSpecifier: string) {
 export const projectAliasRegex = /^(?:@package|@reducer)/;
 
 export function resolvePath(absPath: string, moduleSpecifier: string) {
-  const resolvedAlias = projectAliasRegex.test(moduleSpecifier)
-    ? moduleSpecifier.slice(1) // e.g. @package/foo -> package/foo
-    : moduleSpecifier;
+  const resolvedAlias = moduleSpecifier.startsWith('@package/')
+    ? moduleSpecifier.slice('@'.length) // @package/foo -> package/foo
+    : moduleSpecifier.startsWith('@reducer/')
+      ? moduleSpecifier.slice('@reducer/'.length) // @reducer/foo -> foo
+      : moduleSpecifier;
+  
   return resolvedAlias === moduleSpecifier
     ? resolveRelativePath(absPath, moduleSpecifier)
-    : resolvedAlias; // monaco will resolve from root
+    : resolvedAlias;
 }
 
 const resolveCache = {} as Record<string, string>;

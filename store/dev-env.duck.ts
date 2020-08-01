@@ -246,7 +246,10 @@ export const Thunk = {
       const { blobUrl: appUrl } = (devEnv.file[appRoot] as Dev.CodeFile).esModule!;
       await storeAppFromBlobUrl(appUrl);
 
-      // Ensure each App is rendered
+      /**
+       * Ensure each App is rendered
+       * TODO only render relevant panels.
+       */
       Object.values(devEnv.appPortal)
         .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
   
@@ -480,10 +483,13 @@ export const Thunk = {
       storeAppInvalidSignaller(() => dispatch(Act.setAppValid(false)));
 
       /**
-       * TODO remove hard-coding
+       * TODO
+       * - remove hard-coding
+       * - support multiple kinds of app at once
        */
       dispatch(Thunk.loadPackage({ packageName: 'types' }));
-      dispatch(Thunk.loadPackage({ packageName: 'intro' }));
+      // dispatch(Thunk.loadPackage({ packageName: 'intro' }));
+      dispatch(Thunk.loadPackage({ packageName: 'bipartite' }));
 
       dispatch(Act.setInitialized());
     },
@@ -507,7 +513,7 @@ export const Thunk = {
   ),
   /**
    * To display app need to replace import/export module specifers in transpiled js by
-   * valid urls. We use (a) an asset url for react/redux/react-redux, (b) blob urls for relative paths.
+   * valid urls. We use (a) an asset url for react/react-redux, (b) blob urls for relative paths.
    */
   patchAllTranspiledCode: createThunk(
     '[dev-env] patch all transpiled code',
@@ -528,7 +534,7 @@ export const Thunk = {
   /**
    * Unused.
    * - do we want to unmount App instances?
-   * - prefer persist when hidden e.g. user on other page.
+   * - prefer persist when hidden e.g. user changed page.
    * - if we ReactDOM.unmountAtNode then should remove parent portal too.
    */
   unmountAppInstance: createThunk(
@@ -864,13 +870,8 @@ const bootstrapApp = createEpic(
       const { file, flag: { appValid } } = state$.value.devEnv;
       
       if (act.type === '[dev-env] store code transpilation') {
-        /**
-         * TODO handle case where transpiled file is not root,
-         * e.g. package/foo/foo.tsx may be used by package/bar/bar.tsx
-         */
-        const appRoot = act.pay.filename;
-
         if (act.pay.filename.endsWith('.tsx')) {
+          const appRoot = Dev.filenameToAppRoot(act.pay.filename);
           const reachableJsFiles = Dev.getReachableJsFiles(appRoot, file);
           if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
             return []; // Ignore files unreachable from root (TODO remove)
@@ -919,15 +920,12 @@ const initializeFileSystem = createEpic(
   ),
 );
 
-/**
- * TODO only initialize new ones
- */
 const initializeMonacoModels = createEpic(
   (action$, state$) => action$.pipe(
     filterActs(
-      '[editor] set monaco loaded',
+      '[editor] set monaco loaded', // Crucial e.g. breaks react-redux.d.ts if removed
       '[dev-env] set initialized',
-      '[dev-env] load package', // Perhaps only need this
+      '[dev-env] load package', // TODO on-the-fly loads
     ),
     filter((_) =>
       state$.value.editor.monacoLoaded

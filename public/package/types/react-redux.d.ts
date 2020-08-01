@@ -1,3 +1,7 @@
+type DistributiveOmit<T, K extends keyof T> = T extends unknown
+  ? Omit<T, K>
+  : never;
+
 declare module 'react-redux' {
   
   import {
@@ -19,19 +23,31 @@ declare module 'react-redux' {
   }
 
   /** @internal */
-  type Dispatchable = (
+  type RootAct = (
     | BipartiteSync
-    | BipartiteThunk
     | TestSync
+  )
+
+  /** @internal */
+  type RootThunk = (
+    | BipartiteThunk
     | TestThunk
   )
 
+  /** @internal */
+  type Dispatchable = (
+    | RootAct
+    | DistributiveOmit<RootThunk, 'returns'>
+  )
+
   export function useSelector<T = any>(
-    selector: (state: RootState) => T,
-    equalityFn?: Function
-  ): T;
+      selector: (state: RootState) => T,
+      equalityFn?: Function,
+    ): T;
 
   export function useDispatch(): <T extends Dispatchable>(arg: T) =>
-    T extends { returns: any } ? T['returns'] : void;
+    T['type'] extends RootThunk['type']
+      ? Extract<RootThunk, { type: T['type'] }>['returns']
+      : void;
 
 }

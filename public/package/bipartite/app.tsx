@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-// import { Edge } from './matching';
-// import { BipartiteGraph } from './bipartite.duck';
+import { BipartiteGraph, Edge } from '@reducer/bipartite.types';
 import css from './index.scss';
-
-type BipartiteGraph = any;
-type Edge = any;
 
 const r = 2;
 const dx = 50;
@@ -17,17 +13,12 @@ export const App: React.FC = () => {
   const ns = React.useMemo(() => [...Array(graph?.n || 0)].map((_, i) => i), [graph]);
   const ms = React.useMemo(() => [...Array(graph?.m || 0)].map((_, i) => i), [graph]);
 
-  /**
-   * TODO
-   * - provide reducer at window[NEXT_REDUX_STORE]
-   * - provide typings for monaco
-   */
-  const dispatch = useDispatch() as any;
+  const dispatch = useDispatch();
 
   function nextRandomGraph() {
     const nextGraph = dispatch({ type: '[bipartite] get random graph', args: {
-      lower: [10, 10],
-      upper: [10, 10],
+      n: 10,
+      m: 10,
       edgeProbability: 0.2,
     } })
     setMatching(dispatch({ type: '[bipartite] get maximal matching', args: {

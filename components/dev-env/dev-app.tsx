@@ -15,9 +15,7 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
   }, [portalNode]);
 
   // No need to unmount app on component unmount (prefer persist).
-  // useEffect(() => {
-  //   return () => dispatch({ type: '[dev-env] unmount app instance', args: { panelKey } });
-  // }, []);
+  // useEffect(() => () => dispatch({ type: '[dev-env] unmount app instance', args: { panelKey } }), []);
 
   return (
     portalNode ? (// App instance (see AppPortals)

@@ -9,10 +9,13 @@ Although we provide a development environment, this is not our objective.
 
 # Fresh start @ August 2020
 
+[ ] typescript inside mdx?
+[ ] simultaneous apps from different packages
+  > `DevEnv` and portals need to know appRoot
 [ ] Blog 1st i.e. write content 1st
 [x] No goldenlayout, use mdx instead
 [x] Only tsx and scss
-[ ] Instead of ts use npm modules provided via thunks
+[x] Instead of ts use npm modules provided via thunks
 [x] Use optimal hot-reloading strategy in development
   > non-standard thunk middleware
   > need to replace thunks on hot reload
@@ -20,7 +23,7 @@ Although we provide a development environment, this is not our objective.
 [x] Generate `react-redux.d.ts`
   > write 'self-contained' reducers importing from `package/types/{reducer}.types.ts`
 [ ] Implement `module-registry` instead of blob urls
-[ ] runtime tsx and scss available in dev, and auto-copied to public folder
+[x] runtime tsx and scss available in dev
 
 
 # Online Dev Environment
