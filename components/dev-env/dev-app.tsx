@@ -7,13 +7,17 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch({ type: '[dev-env] create app portal', args: { panelKey } });
-    return () => dispatch({ type: '[dev-env] remove app instance', args: { panelKey } });
-  }, []);
-
-  useEffect(() => {// This signal triggers app bootstrap
-    portalNode && dispatch({ type: '[dev-env] app portal is ready', args: { panelKey } });
+    if (portalNode) {// Trigger app bootstrap
+      dispatch({ type: '[dev-env] app portal is ready', args: { panelKey } });
+    } else {// Must be first mount
+      dispatch({ type: '[dev-env] create app portal', args: { panelKey } });
+    }
   }, [portalNode]);
+
+  // No need to unmount app on component unmount (prefer persist).
+  // useEffect(() => {
+  //   return () => dispatch({ type: '[dev-env] unmount app instance', args: { panelKey } });
+  // }, []);
 
   return (
     portalNode ? (// App instance (see AppPortals)

@@ -200,19 +200,19 @@ export const Thunk = {
     (_, _input: { panelKey: string }) => void null,
   ),
   /**
-   * Mount or update an app instance, either
-   * via code update or newly created app panel.
+   * Render or refresh an app instance.
+   * Triggered via code update or 1st time mount of DevApp for `panelKey`.
    */
   bootstrapAppInstance: createThunk(
     '[dev-env] bootstrap app instance',
     ({ state: { devEnv }, dispatch }, { panelKey }: { panelKey: string }) => {
-      /**
-       * TODO invalidate react-refresh when exports change
-       */
-      if (!devEnv.appPortal[panelKey].rendered) {
+      if (!(panelKey in devEnv.appPortal)) {
+        return; // App instance was destroyed
+      } else if (!devEnv.appPortal[panelKey].rendered) {
         renderAppAt(Dev.panelKeyToAppElId(panelKey));
         dispatch(Act.setRenderedApp(panelKey));
       } else {
+        // TODO invalidate react-refresh when exports change
         RefreshRuntime.performReactRefresh();
       }
     },
@@ -514,10 +514,15 @@ export const Thunk = {
       }
     },
   ),
-  removeAppInstance: createThunk(
-    '[dev-env] remove app instance',
+  /**
+   * Unused.
+   * - do we want to unmount App instances?
+   * - probably persist when hidden e.g. user on other page.
+   * - if ReactDOM.unmountAtNode then should remove parent portal too.
+   */
+  unmountAppInstance: createThunk(
+    '[dev-env] unmount app instance',
     ({ dispatch }, { panelKey }: { panelKey: string }) => {
-      // console.log('trying to unmount...', { panelKey, id: Dev.panelKeyToAppElId(panelKey) });
       unmountAppAt(Dev.panelKeyToAppElId(panelKey));
       dispatch(Act.removeAppPortal(panelKey));
     },
