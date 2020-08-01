@@ -61,7 +61,6 @@
     "@types/classnames": "^2.2.10",
     "@types/gh-pages": "2.0.1",
     "@types/glob": "^7.1.1",
-    "@types/jquery": "^3.3.38",
     "@types/node": "13.7.0",
     "@types/optimize-css-assets-webpack-plugin": "^5.0.1",
     "@types/react": "16.9.19",
