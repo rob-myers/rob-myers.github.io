@@ -1,9 +1,7 @@
-import { createAct, ActionsUnion } from '../model/store/redux.model';
+import { createAct, ActionsUnion } from '@model/store/redux.model';
+import { State as TestState } from '@public-reducer/test.types';
 
-export interface State {
-  count: number;
-  lastPing: null | string;
-}
+export type State = TestState;
 
 const initialState: State = {
   count: 0,

@@ -70,8 +70,8 @@ export function filenameToPanelTitle(filename: string) {
     : filename;
 }
 
-/** e.g. `package/intro/reducer.ts to reducer.ts` */
-export function packageFilenameToLocal(filePath: string) {
+/** e.g. `package/foo/bar.tsx to bar.tsx` */
+export function packageFilenameToRoot(filePath: string) {
   return filePath.split('/').slice(2).join('/');
 }
 

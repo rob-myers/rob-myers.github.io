@@ -356,8 +356,11 @@ export const Thunk = {
         paths: {
           // This is updated after types are loaded, so preserve the old setting
           ...oldCompilerOptions.paths,
-          // Our own notion of package/module
+          // Our own notion of package
           '@package/*': ['package/*'],
+          // Used by our react-redux.d.ts
+          // We move files package/types/* to the root in fetchPackages
+          '@reducer/*': ['./*'],
         },
         declaration: true, // Generate d.ts content in `emitOutput.outputFiles[1]`
       });
@@ -590,10 +593,10 @@ export const epic = combineEpics(
   // ...
 );
 
-// if (module.hot) {
-//   /**
-//    * Currently `Editor` crashes on hmr.
-//    * TODO try to fix.
-//    */
-//   module.hot.decline();
-// }
+if (module.hot) {
+  /**
+   * Currently `Editor` crashes on hmr.
+   * TODO try to fix.
+   */
+  module.hot.decline();
+}

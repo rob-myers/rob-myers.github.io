@@ -25,12 +25,12 @@ export const App: React.FC = () => {
   const dispatch = useDispatch() as any;
 
   function nextRandomGraph() {
-    const nextGraph = dispatch({ type: '[@bipartite] get random graph', args: {
+    const nextGraph = dispatch({ type: '[bipartite] get random graph', args: {
       lower: [10, 10],
       upper: [10, 10],
       edgeProbability: 0.2,
     } })
-    setMatching(dispatch({ type: '[@bipartite] maximal matching', args: {
+    setMatching(dispatch({ type: '[bipartite] get maximal matching', args: {
       n: nextGraph.n,
       m: nextGraph.m,
       edges: nextGraph.edges,

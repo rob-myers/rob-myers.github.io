@@ -18,6 +18,16 @@
 			],
 			"dependencies": [],
 			"transitiveDeps": []
+		},
+		"types": {
+			"key": "types",
+			"files": [
+				"package/types/bipartite.types.ts",
+				"package/types/react-redux.d.ts",
+				"package/types/test.types.ts"
+			],
+			"dependencies": [],
+			"transitiveDeps": []
 		}
 	}
 }

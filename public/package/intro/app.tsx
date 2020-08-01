@@ -22,7 +22,7 @@ export const App: React.FC = () => {
   const [items, setItems] = React.useState([...Array(20)].map((_, i) => i));
 
   const dispatch = useDispatch();
-  // const count = useSelector(({ test }) => test.count);
+  const count = useSelector(({ test }) => test.count);
 
   return (
     <div className={css.myAncestralClass}>
@@ -32,8 +32,8 @@ export const App: React.FC = () => {
           key={x}
           remove={() => {
             setItems(items.filter(y => y !== x));
-            dispatch({ type: '[test] increment', payload: {} });
-            dispatch({ type: '[test] delayed increment', args: { delayMs: 1000 } });
+            dispatch({ type: '[test] increment', pay: {} });
+            // dispatch({ type: '[test] delayed increment', args: { delayMs: 1000 } });
           }}
         />
       ))}

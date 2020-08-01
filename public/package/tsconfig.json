@@ -16,7 +16,8 @@
     "jsx": "preserve",
     "baseUrl": "./",
     "paths": {
-      "@package/*": ["./*"]
+      "@package/*": ["./*"],
+      "@reducer/*": ["./types/*"]
     },
     "downlevelIteration": true
   },

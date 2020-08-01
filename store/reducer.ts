@@ -22,27 +22,37 @@ import {
   Thunk as DevEnvThunk,
   epic as devEnvEpic,
 } from './dev-env.duck';
+import {
+  reducer as bipartiteReducer,
+  State as BipartiteState, 
+  Action as BipartiteAction,
+  Thunk as BipartiteThunk,
+} from './bipartite.duck';
 
 export interface RootState {
-  test: TestState;
-  editor: EditorState;
+  bipartite: BipartiteState;
   devEnv: DevEnvState;
+  editor: EditorState;
+  test: TestState;
 }
 
 export type RootAction = (
-  | TestAction
-  | EditorAction
+  | BipartiteAction
   | DevEnvAction
+  | EditorAction
+  | TestAction
 );
 
 export type RootThunk = (
-  | EditorThunk
+  | BipartiteThunk
   | DevEnvThunk
+  | EditorThunk
 );
 
 export const getRootThunks = () => [
   ...Object.values(EditorThunk),
   ...Object.values(DevEnvThunk),
+  ...Object.values(BipartiteThunk),
 ];
 
 export type Dispatchable = (
@@ -51,15 +61,16 @@ export type Dispatchable = (
 )
 
 const createRootReducer = () => combineReducers<RootState>({
-  test: testReducer,
-  editor: editorReducer,
+  bipartite: bipartiteReducer as any,
   devEnv: devEnvReducer,
+  editor: editorReducer,
+  test: testReducer,
 });
 
 export default createRootReducer;
 
 /**
- * Redux-observable
+ * Redux observable
  */
 export type RootActOrThunk = RootAction | RootThunk
 
@@ -79,7 +90,3 @@ export const rootEpic = () => combineEpics(
   editorEpic,
   devEnvEpic,
 );
-
-// if (module.hot) {
-//   console.log('reloading reducer');
-// }

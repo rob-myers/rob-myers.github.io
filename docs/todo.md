@@ -17,10 +17,8 @@ Although we provide a development environment, this is not our objective.
   > non-standard thunk middleware
   > need to replace thunks on hot reload
 [x] Same store/thunks in dev/runtime
-[ ] Generate `react-redux.d.ts`
-  > write 'self-contained' reducers & additional `store/types/{reducer}.types.ts`
-  > can extract types via vscode hover and `noErrorTruncation`
-  > can use `- & -` to provide some consistency
+[x] Generate `react-redux.d.ts`
+  > write 'self-contained' reducers importing from `package/types/{reducer}.types.ts`
 [ ] Implement `module-registry` instead of blob urls
 [ ] runtime tsx and scss available in dev, and auto-copied to public folder
 

@@ -384,8 +384,15 @@ export const Thunk = {
         const loadedFiles = await Promise.all(files.map(async filePath => ({
           key: filePath,
           contents: await (await fetch(`/${filePath}`)).text(),
-          touched: false,
         })));
+        if (packageName === 'types') {
+          /**
+           * Moves `package/types/react-redux.d.ts` to `react-redux.d.ts`,
+           * so monaco-editor can resolve these custom typings.
+           */
+          loadedFiles.forEach(x => x.key = Dev.packageFilenameToRoot(x.key));
+        }
+
         dispatch(Act.addPackage({
           key: packageName,
           file: lookupFromValues(loadedFiles),
@@ -469,8 +476,14 @@ export const Thunk = {
       await dispatch(Thunk.fetchPackagesManifest({}));
       await dispatch(Thunk.fetchPackages({}));
 
-      const projectKey = 'intro';
-      dispatch(Thunk.loadPackage({ packageName: projectKey }));
+      setStore(getWindow()![NEXT_REDUX_STORE]);
+      storeAppInvalidSignaller(() => dispatch(Act.setAppValid(false)));
+
+      /**
+       * TODO remove hard-coding
+       */
+      dispatch(Thunk.loadPackage({ packageName: 'types' }));
+      dispatch(Thunk.loadPackage({ packageName: 'intro' }));
 
       dispatch(Act.setInitialized());
     },
@@ -482,10 +495,8 @@ export const Thunk = {
       /** Should we overwrite any saved files? */
       overwrite?: boolean;
     }) => {
-      setStore(getWindow()![NEXT_REDUX_STORE]);
-      storeAppInvalidSignaller(() => dispatch(Act.setAppValid(false)));
-
       dispatch(Thunk.addFilesFromPackage({ packageName, overwrite }));
+
       const { transitiveDeps } = devEnv.packagesManifest!.packages[packageName];
       for (const depPackageName of transitiveDeps) {
         dispatch(Thunk.addFilesFromPackage({ packageName: depPackageName, overwrite }));
@@ -517,8 +528,8 @@ export const Thunk = {
   /**
    * Unused.
    * - do we want to unmount App instances?
-   * - probably persist when hidden e.g. user on other page.
-   * - if ReactDOM.unmountAtNode then should remove parent portal too.
+   * - prefer persist when hidden e.g. user on other page.
+   * - if we ReactDOM.unmountAtNode then should remove parent portal too.
    */
   unmountAppInstance: createThunk(
     '[dev-env] unmount app instance',

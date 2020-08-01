@@ -24,7 +24,8 @@
       "@model/*": ["model/*"],
       "@worker/*": ["worker/*"],
       "@env/*": ["env/*"],
-      "@public/*": ["public/*"]
+      "@public/*": ["public/*"],
+      "@public-reducer/*": ["public/package/types/*"]
     },
     "downlevelIteration": true,
     "noErrorTruncation": true
