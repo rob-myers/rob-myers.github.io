@@ -10,7 +10,7 @@ Although we provide a development environment, this is not our objective.
 # Fresh start @ August 2020
 
 [ ] typescript inside mdx?
-[ ] simultaneous apps from different packages
+[x] simultaneous apps from different packages
   > `DevApp` and portals need to know appRoot
 [ ] Blog 1st i.e. write content 1st
 [x] No goldenlayout, use mdx instead

@@ -184,7 +184,7 @@ export const Thunk = {
     },
   ),
   /**
-   * NOOP used to trigger bootstrapAppInstance.
+   * NOOP used to trigger app bootstrap.
    */
   appPortalIsReady: createThunk(
     '[dev-env] app portal is ready',
@@ -484,12 +484,10 @@ export const Thunk = {
         dispatch(Act.setAppValid({ appRoot, isValid: false })));
 
       /**
-       * TODO
-       * - remove hard-coding
-       * - support multiple kinds of app at once
+       * TODO remove hard-coding e.g. load on demand
        */
       dispatch(Thunk.loadPackage({ packageName: 'types' }));
-      // dispatch(Thunk.loadPackage({ packageName: 'intro' }));
+      dispatch(Thunk.loadPackage({ packageName: 'intro' }));
       dispatch(Thunk.loadPackage({ packageName: 'bipartite' }));
 
       dispatch(Act.setInitialized());

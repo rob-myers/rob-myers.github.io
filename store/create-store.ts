@@ -13,7 +13,7 @@ import { State as TestState } from './test.duck';
 import { mapValues } from '@model/generic.model';
 import { getWindow } from '@model/dom.model';
 
-const storeVersion = 0.01;
+const storeVersion = 0.02;
 
 const createPersistedReducer = () => persistReducer({
   key: 'primary',
