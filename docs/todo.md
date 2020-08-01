@@ -9,6 +9,7 @@ Although we provide a development environment, this is not our objective.
 
 # Fresh start @ August 2020
 
+[ ] mirroring i.e. get intro/bipartite working in main codebase
 [ ] typescript inside mdx?
 [x] simultaneous apps from different packages
   > `DevApp` and portals need to know appRoot

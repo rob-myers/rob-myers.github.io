@@ -3,52 +3,35 @@ import { useDispatch } from 'react-redux';
 import { BipartiteGraph, Edge } from '@reducer/bipartite.types';
 import css from './index.scss';
 
-const r = 2;
-const dx = 50;
-const h = 200;
+const deltaX = 50;
+const height = 200;
 
 export const App: React.FC = () => {
   const [graph, setGraph] = React.useState<null | BipartiteGraph>(null); 
   const [matching, setMatching] = React.useState([] as Edge[]); 
-  const ns = React.useMemo(() => [...Array(graph?.n || 0)].map((_, i) => i), [graph]);
-  const ms = React.useMemo(() => [...Array(graph?.m || 0)].map((_, i) => i), [graph]);
-
   const dispatch = useDispatch();
 
   function nextRandomGraph() {
-    const nextGraph = dispatch({ type: '[bipartite] get random graph', args: {
-      n: 10,
-      m: 10,
-      edgeProbability: 0.2,
-    } })
-    setMatching(dispatch({ type: '[bipartite] get maximal matching', args: {
-      n: nextGraph.n,
-      m: nextGraph.m,
-      edges: nextGraph.edges,
-    }}));
+    const nextGraph = dispatch({
+      type: '[bipartite] get random graph',
+      args: { n: 10, m: 10, edgeProbability: 0.2 },
+    });
     setGraph(nextGraph);
+    setMatching(dispatch({ type: '[bipartite] get maximal matching', args: nextGraph }));
   }
 
   React.useEffect(() => void (!graph && nextRandomGraph()), [graph]);
 
   return graph ? (
     <div className={css.root}>
-      <svg viewBox={`0 0 ${dx * (10 - 1)} ${h}`}>
-        <g>
-          <g className={css.edges}>
-            {graph.edges.map(([i, j], k) =>
-              <line key={k} x1={dx * i} y1={h} x2={dx * j} y2={0} />)}
-          </g>
-          <g className={css.maximalMatching}>
-            {matching.map(([i, j], k) =>
-              <line key={k} x1={dx * i} y1={h} x2={dx * j} y2={0} />)}
-          </g>
-          <g className={css.lowerBipartition}>
-            {ns.map(i => <circle key={i} r={r} cx={dx * i} cy={h} />)}
-          </g>
-          <g className={css.upperBipartition}>
-            {ms.map(j => <circle key={j} r={r} cx={dx * j} cy={0} />)}
-          </g>
+      <svg viewBox={`0 0 ${deltaX * (10 - 1)} ${height}`}>
+        <g className={css.edges}>
+          {graph.edges.map(([i, j], k) =>
+            <line key={k} x1={deltaX * i} y1={height} x2={deltaX * j} y2={0} />)}
+        </g>
+        <g className={css.maximalMatching}>
+          {matching.map(([i, j], k) =>
+            <line key={k} x1={deltaX * i} y1={height} x2={deltaX * j} y2={0} />)}
         </g>
       </svg>
       <button onClick={nextRandomGraph}>
