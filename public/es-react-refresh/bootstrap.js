@@ -5,11 +5,11 @@ if (typeof window !== 'undefined') {
    * Hook into ReactDOM initialization, see also:
    * @next/react-refresh-utils/runtime.js
    */
-  setTimeout(() => RefreshRuntime.injectIntoGlobalHook(window));
+  RefreshRuntime.injectIntoGlobalHook(window);
 }
 
 import RefreshHelpers from './helpers';
-import React from '../es-react/react';
+// import React from '../es-react/react';
 
 import { REFRESH_HELPERS, REFRESH_REG, REFRESH_SIG, LIVE_REACT, LIVE_REACT_REDUX } from '../constants';
 
@@ -28,7 +28,9 @@ if (typeof window !== 'undefined') {
    * inside dynamic module but it yields a different copy of react,
    * because the module specifier is different.
    */
-  window[LIVE_REACT] = React;
+  // window[LIVE_REACT] = React;
+  import('../es-react/react').then((imported) =>
+    window[LIVE_REACT] = imported);
 
   /**
    * Import dynamically because was silently breaking react-refresh,
