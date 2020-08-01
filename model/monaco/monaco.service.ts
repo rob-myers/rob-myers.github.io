@@ -25,6 +25,12 @@ export class MonacoService {
           `${typesPrefix}/react-redux/index.d.ts`,
         )
       )(),
+      typescriptDefaults.addExtraLib(
+        `declare module '*.scss' {
+          const content: {[className: string]: string};
+          export default content;
+        }`,
+      ),
     ]);
   }
 

@@ -22,7 +22,7 @@ export const App: React.FC = () => {
   const [items, setItems] = React.useState([...Array(20)].map((_, i) => i));
 
   const dispatch = useDispatch();
-  const count = useSelector(({ test }) => test.count);
+  // const count = useSelector(({ test }) => test.count);
 
   return (
     <div className={css.myAncestralClass}>
