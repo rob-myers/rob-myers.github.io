@@ -9,16 +9,16 @@ Although we provide a development environment, this is not our objective.
 
 # Fresh start @ August 2020
 
-- Blog 1st i.e. write content 1st
-- No goldenlayout, use mdx instead
-- Only tsx and scss
+[ ] Blog 1st i.e. write content 1st
+[x] No goldenlayout, use mdx instead
+[x] Only tsx and scss
 - Instead of ts use npm modules provided via thunks
-- Use optimal hot-reloading strategy in development
+[x] Use optimal hot-reloading strategy in development
   > non-standard thunk middleware
   > need to replace thunks on hot reload
-- Same store/thunks in dev/runtime, so same react-redux.d.ts.
-- Implement module-registry instead of blob urls
-- runtime tsx and scss available in dev, and auto-copied to public folder
+[ ] Same store/thunks in dev/runtime, so same react-redux.d.ts.
+[ ] Implement module-registry instead of blob urls
+[ ] runtime tsx and scss available in dev, and auto-copied to public folder
 
 
 # Online Dev Environment
