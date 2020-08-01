@@ -407,6 +407,18 @@ export function createDevPanelFileMeta(panelKey: string, filename: string): DevP
   };
 }
 
+export interface AppMeta {
+  /** e.g. package/intro/app.tsx */
+  key: string;
+  /**
+   * True iff all code reachable from file `key` was deemed
+   * collectively valid after most recent transpilation.
+   */
+  valid: boolean;
+  /** Has app ever been valid? */
+  wasValid: boolean;
+}
+
 /**
  * Persists across different pages, unlike DevPanelAppMeta.
  */
@@ -414,6 +426,8 @@ export interface AppPortal {
   /** Panel key */
   key: string;
   portalNode: Redacted<HtmlPortalNode>;
+  /** e.g. package/intro/app.tsx */
+  appRoot: string;
   rendered: boolean;
 }
 

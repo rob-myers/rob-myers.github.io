@@ -34,10 +34,10 @@ export function storeAppFromBlobUrl(blobUrl) {
   );
 }
 
-export function renderAppAt(elementId) {
+export function renderAppAt(elementId, appRoot) {
   const rootEl = document.getElementById(elementId);
   ReactDOM.unmountComponentAtNode(rootEl);
-  const ErrorBoundedApp = React.createElement(ErrorBoundary, { sendAppInvalidSignal }, React.createElement(App));
+  const ErrorBoundedApp = React.createElement(ErrorBoundary, { sendAppInvalidSignal, appRoot }, React.createElement(App));
   const ProvidedApp = React.createElement(Provider, { store }, ErrorBoundedApp);
   ReactDOM.render(ProvidedApp, rootEl);
 }

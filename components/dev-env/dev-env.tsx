@@ -17,6 +17,7 @@ const DevEnv: React.FC<Props> = ({ appRoot }) => {
       <div style={{ width: 400, height: 500 }}>
         <DevApp
           panelKey="test-dev-panel"
+          appRoot={appRoot}
         />
       </div>
     </div>

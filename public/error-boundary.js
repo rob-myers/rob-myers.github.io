@@ -1,5 +1,10 @@
 import * as React from './es-react/react';
 
+/**
+ * Has props:
+ * - `appRoot: string` e.g. `package/intro.app.tsx`
+ * - `sendAppInvalidSignal: (appRoot: string) => void`
+ */
 export class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -14,7 +19,7 @@ export class ErrorBoundary extends React.Component {
     this.setState({ componentStack: errorInfo.componentStack })
     console.log({ error });
     console.log({ errorInfo });
-    this.props.sendAppInvalidSignal();
+    this.props.sendAppInvalidSignal(this.props.appRoot);
   }
 
   render() {

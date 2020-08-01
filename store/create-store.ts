@@ -53,10 +53,9 @@ const createPersistedReducer = () => persistReducer({
     ),
     createTransform<DevEnvState, DevEnvState>(
       ({ file, saved, package: toPackage }, _key) => ({
+        appMeta: {},
         appPortal: {},
         flag: {
-          appValid: false,
-          appWasValid: false,
           initialized: false,
         },
         file: {},
@@ -150,15 +149,15 @@ function refreshReducersAndThunks() {
   }
 }
 
-const refreshHandler = (status: string) => {
+if (module.hot) {
+  module.hot.accept();
+  module.hot.addStatusHandler(refreshHandler);
+}
+
+function refreshHandler(status: string) {
   // console.log({ status });
   if (status === 'idle') {
     refreshReducersAndThunks();
   }
   module.hot?.removeStatusHandler(refreshHandler);
-}
-
-if (module.hot) {
-  module.hot.accept();
-  module.hot.addStatusHandler(refreshHandler);
 }

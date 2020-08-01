@@ -21,19 +21,13 @@ import { Thunk as EditorThunk } from './editor.duck';
 import { getWindow } from '@model/dom.model';
 import { NEXT_REDUX_STORE } from '@public/constants';
 
-export interface State {  
+export interface State {
+  appMeta: KeyedLookup<Dev.AppMeta>;
   /** Persists App instances across site */
   appPortal: KeyedLookup<Dev.AppPortal>;
   /** Current project files. */
   file: KeyedLookup<Dev.FileState>;
   flag: {
-    /**
-     * True iff all code reachable from `app.tsx` was deemed
-     * collectively valid after most recent transpilation.
-     */
-    appValid: boolean;
-    /** Has app ever been valid? */
-    appWasValid: boolean;
     initialized: boolean;
   };
   /** Loaded from folders in public/package. */
@@ -45,11 +39,10 @@ export interface State {
 }
 
 const initialState: State = {
+  appMeta: {},
   appPortal: {},
   file: {},
   flag: {
-    appValid: false,
-    appWasValid: false,
     initialized: false,
   },
   package: {},
@@ -58,14 +51,14 @@ const initialState: State = {
 };
 
 export const Act = {
-  addAppPortal: (panelKey: string, portalNode: portals.HtmlPortalNode) =>
-    createAct('[dev-env] add app portal', { panelKey, portalNode: redact(portalNode) }),
+  addAppPortal: (input: Omit<Dev.AppPortal, 'rendered'>) =>
+    createAct('[dev-env] add app portal', input),
   addFileCleanups: (filename: string, cleanups: (() => void)[]) =>
     createAct('[dev-env] add file cleanups', { filename, cleanups }),
   addPackage: (newPackage: Dev.PackageData) =>
     createAct('[dev-env] add package', { newPackage }),
-  appWasValid: () =>
-    createAct('[dev-env] app was valid', {}),
+  createAppMeta: (input: { appRoot: string }) =>
+    createAct('[dev-env] create app meta', input),
   createCodeFile: (input: { filename: string; contents: string }) =>
     createAct('[dev-env] create code file', input),
   createStyleFile: (input: { filename: string; contents: string }) =>
@@ -74,12 +67,10 @@ export const Act = {
     createAct('[dev-env] remove app portal', { panelKey }),
   removeFile: (input: { filename: string }) =>
     createAct('[dev-env] remove file', input),
-  resetFlags: () =>
-    createAct('[dev-env] reset flags', {}),
   restrictAppPortals: (input: { panelKeys: string[] }) =>
     createAct('[dev-env] restrict app portals', input),
-  setAppValid: (isValid: boolean) =>
-    createAct('[dev-env] set app valid', { isValid }),
+  setAppValid: (input: { appRoot: string; isValid: boolean }) =>
+    createAct('[dev-env] set app valid', input),
   setInitialized: () =>
     createAct('[dev-env] set initialized', {}),
   setRenderedApp: (panelKey: string) =>
@@ -197,7 +188,7 @@ export const Thunk = {
    */
   appPortalIsReady: createThunk(
     '[dev-env] app portal is ready',
-    (_, _input: { panelKey: string }) => void null,
+    (_, _input: { panelKey: string; appRoot: string; }) => void null,
   ),
   /**
    * Render or refresh an app instance.
@@ -228,7 +219,7 @@ export const Thunk = {
       const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: appRoot }));
       if (jsErrors.find(isCyclicDepError)) {
         console.error('App bootstrap failed due to cyclic dependency');
-        dispatch(Act.setAppValid(false));
+        dispatch(Act.setAppValid({ appRoot, isValid: false }));
         dispatch(Thunk.tryTranspileCodeModel({ filename: appRoot }));
         return;
       }
@@ -246,17 +237,12 @@ export const Thunk = {
       const { blobUrl: appUrl } = (devEnv.file[appRoot] as Dev.CodeFile).esModule!;
       await storeAppFromBlobUrl(appUrl);
 
-      /**
-       * Ensure each App is rendered
-       * TODO only render relevant panels.
-       */
+      // Ensure each App is rendered
       Object.values(devEnv.appPortal)
+        .filter(({ appRoot: other }) => appRoot == other)
         .forEach(({ key: panelKey }) => dispatch(Thunk.bootstrapAppInstance({ panelKey })));
   
-      dispatch(Act.setAppValid(true));
-      if (!getState().devEnv.flag.appWasValid) {
-        dispatch(Act.appWasValid());
-      }
+      dispatch(Act.setAppValid({ appRoot, isValid: true }));
     },
   ),
   /**
@@ -277,16 +263,23 @@ export const Thunk = {
       Object.values(devEnv.file).forEach(({ key: filename }) =>
         dispatch(Thunk.removeFile({ filename })));
       
-      dispatch(Act.resetFlags());
+      // dispatch(Act.resetFlags());
       forgetAppAndStore();
     },
   ),
   createAppPortal: createThunk(
     '[dev-env] create app portal',
-    ({ dispatch }, { panelKey }: { panelKey: string }) => {
-      const portalNode = portals.createHtmlPortalNode();
+    ({ dispatch, state: { devEnv } }, {  panelKey, appRoot }: {
+      panelKey: string;
+      /** e.g. package/intro/app.tsx */
+      appRoot: string;
+    }) => {
+      if (!(appRoot in devEnv.appMeta)) {// Ensure app meta
+        dispatch(Act.createAppMeta({ appRoot }));
+      }
+      const portalNode = redact(portals.createHtmlPortalNode());
       portalNode.element.style.overflow = 'auto';
-      dispatch(Act.addAppPortal(panelKey, portalNode));
+      dispatch(Act.addAppPortal({ key: panelKey, appRoot, portalNode }));
     },
   ),
   /**
@@ -379,6 +372,10 @@ export const Thunk = {
       return { key: 'success', stratification };
     },
   ),
+  /**
+   * Use packages manifest to fetch source files.
+   * We also move the package `types` to the root.
+   */
   fetchPackages: createThunk(
     '[dev-env] fetch packages',
     async ({ dispatch, state: { devEnv } }) => {
@@ -388,11 +385,14 @@ export const Thunk = {
           key: filePath,
           contents: await (await fetch(`/${filePath}`)).text(),
         })));
+        /**
+         * Move `package/types/react-redux.d.ts` to `react-redux.d.ts`,
+         * so monaco-editor can resolve these custom typings.
+         * Also move `package/types/{reducer}.types.ts` to `{reducer}.types.ts`.
+         * The latter are used by the former, and are also available
+         * to package components as `@reducer/{reducer}.types`.
+         */
         if (packageName === 'types') {
-          /**
-           * Moves `package/types/react-redux.d.ts` to `react-redux.d.ts`,
-           * so monaco-editor can resolve these custom typings.
-           */
           loadedFiles.forEach(x => x.key = Dev.packageFilenameToRoot(x.key));
         }
 
@@ -480,7 +480,8 @@ export const Thunk = {
       await dispatch(Thunk.fetchPackages({}));
 
       setStore(getWindow()![NEXT_REDUX_STORE]);
-      storeAppInvalidSignaller(() => dispatch(Act.setAppValid(false)));
+      storeAppInvalidSignaller((appRoot: string) =>
+        dispatch(Act.setAppValid({ appRoot, isValid: false })));
 
       /**
        * TODO
@@ -768,11 +769,7 @@ export type Thunk = ActionsUnion<typeof Thunk>;
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
     case '[dev-env] add app portal': return { ...state,
-      appPortal: addToLookup({
-        key: act.pay.panelKey,
-        portalNode: act.pay.portalNode,
-        rendered: false,
-      }, state.appPortal),
+      appPortal: addToLookup({ ...act.pay, rendered: false }, state.appPortal),
     };
     case '[dev-env] add file cleanups': return { ...state,
       file: updateLookup(act.pay.filename, state.file, ({ cleanups: cleanupTrackers }) => ({
@@ -782,8 +779,12 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] add package': return { ...state,
       package: addToLookup(act.pay.newPackage, state.package),
     };
-    case '[dev-env] app was valid': return { ...state,
-      flag: { ...state.flag, appWasValid: true }
+    case '[dev-env] create app meta': return { ...state,
+      appMeta: addToLookup({
+        key: act.pay.appRoot,
+        valid: false,
+        wasValid: false,
+      }, state.appMeta),
     };
     case '[dev-env] create code file': return { ...state,
       file: addToLookup({
@@ -816,18 +817,14 @@ export const reducer = (state = initialState, act: Action): State => {
     case '[dev-env] remove file': return { ...state,
       file: removeFromLookup(act.pay.filename, state.file),
     };
-    case '[dev-env] reset flags': return { ...state,
-      flag: {
-        ...state.flag,
-        appValid: false,
-        appWasValid: false,
-      },
-    };
     case '[dev-env] restrict app portals': return { ...state,
       appPortal: pluck(state.appPortal, ({ key }) => act.pay.panelKeys.includes(key)),
     };
     case '[dev-env] set app valid': return { ...state,
-      flag: { ...state.flag, appValid: act.pay.isValid }
+      appMeta: updateLookup(act.pay.appRoot, state.appMeta, ({ wasValid }) => ({
+        valid: act.pay.isValid,
+        wasValid: wasValid || act.pay.isValid,
+      })),
     };
     case '[dev-env] set initialized': return { ...state,
       flag: { ...state.flag, initialized: true },
@@ -860,31 +857,31 @@ export const reducer = (state = initialState, act: Action): State => {
   }
 };
 
-const bootstrapApp = createEpic(
+const triggerBootstrapApps = createEpic(
   (action$, state$) => action$.pipe(
     filterActs(
       '[dev-env] store code transpilation',
       '[dev-env] app portal is ready',
     ),
     flatMap((act) => {
-      const { file, flag: { appValid } } = state$.value.devEnv;
+      const { file, appMeta } = state$.value.devEnv;
       
       if (act.type === '[dev-env] store code transpilation') {
         if (act.pay.filename.endsWith('.tsx')) {
           const appRoot = Dev.filenameToAppRoot(act.pay.filename);
           const reachableJsFiles = Dev.getReachableJsFiles(appRoot, file);
+
           if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
             return []; // Ignore files unreachable from root (TODO remove)
-          }
-          if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
+          } else if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
             // All reachable code locally valid so try bootstrap app
             return [Thunk.bootstrapApps({ appRoot })];
-          } else if (appValid) {
-            return [Act.setAppValid(false)];
+          } else if (appMeta[appRoot].valid) {
+            return [Act.setAppValid({ appRoot, isValid: false })];
           }
         }
       } else if (act.type === '[dev-env] app portal is ready') {
-        if (appValid) {
+        if (appMeta[act.args.appRoot].valid) {
           return [Thunk.bootstrapAppInstance({ panelKey: act.args.panelKey })];
         }
       }
@@ -897,7 +894,7 @@ const bootstrapApp = createEpic(
  * Currently we append a <style> for *.scss, even if unused by App.
  * We also attempt to retranspile any immediate ancestor (i.e. parent).
  */
-const bootstrapStyles = createEpic(
+const triggerBootstrapStyles = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[dev-env] store style transpilation'),
     flatMap(({ pay: { filename } }) => {
@@ -969,8 +966,8 @@ const trackCodeFileContents = createEpic(
 );
 
 export const epic = combineEpics(
-  bootstrapApp,
-  bootstrapStyles,
+  triggerBootstrapApps,
+  triggerBootstrapStyles,
   initializeFileSystem,
   initializeMonacoModels,
   trackCodeFileContents,

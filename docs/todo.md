@@ -11,7 +11,7 @@ Although we provide a development environment, this is not our objective.
 
 [ ] typescript inside mdx?
 [ ] simultaneous apps from different packages
-  > `DevEnv` and portals need to know appRoot
+  > `DevApp` and portals need to know appRoot
 [ ] Blog 1st i.e. write content 1st
 [x] No goldenlayout, use mdx instead
 [x] Only tsx and scss

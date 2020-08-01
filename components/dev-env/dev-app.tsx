@@ -2,23 +2,23 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import * as portals from 'react-reverse-portal';
 
-const DevApp: React.FC<Props> = ({ panelKey }) => {
+const DevApp: React.FC<Props> = ({ panelKey, appRoot }) => {
   const portalNode = useSelector(({ devEnv }) => devEnv.appPortal[panelKey]?.portalNode);
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (portalNode) {// Trigger app bootstrap
-      dispatch({ type: '[dev-env] app portal is ready', args: { panelKey } });
-    } else {// Must be first mount
-      dispatch({ type: '[dev-env] create app portal', args: { panelKey } });
+      dispatch({ type: '[dev-env] app portal is ready', args: { panelKey, appRoot } });
+    } else {// 1st ever mount
+      dispatch({ type: '[dev-env] create app portal', args: { panelKey, appRoot } });
     }
   }, [portalNode]);
 
-  // No need to unmount app on component unmount (prefer persist).
+  // No need to unmount app, prefer persist.
   // useEffect(() => () => dispatch({ type: '[dev-env] unmount app instance', args: { panelKey } }), []);
 
   return (
-    portalNode ? (// App instance (see AppPortals)
+    portalNode ? (// See AppPortals
       <portals.OutPortal node={portalNode} />
     ) : null
   );
@@ -26,6 +26,7 @@ const DevApp: React.FC<Props> = ({ panelKey }) => {
 
 interface Props {
   panelKey: string;
+  appRoot: string;
 }
 
 export default DevApp;
