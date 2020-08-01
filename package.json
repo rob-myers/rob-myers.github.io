@@ -4,6 +4,7 @@
   "dependencies": {
     "@babel/core": "^7.10.2",
     "@babel/generator": "^7.10.2",
+    "bipartite-matching": "^1.0.0",
     "cdt2d": "^1.0.0",
     "classnames": "^2.2.6",
     "es-react": "16.12.0",
