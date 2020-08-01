@@ -50,7 +50,7 @@ export const initializeStore = (
     preloadedState,
     composeWithDevTools({
       shouldHotReload: false,
-      // realtime: true,
+      realtime: false, // Turned off remote monitoring
       port: 3002,
       name: 'syntax-worker',
       stateSanitizer: (state: SyntaxWorkerState): Redacted<SyntaxWorkerState> => {
