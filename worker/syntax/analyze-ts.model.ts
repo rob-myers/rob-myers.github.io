@@ -176,13 +176,13 @@ export function computeTsImportExportErrors(
     }
 
     const resolved = Dev.resolvePath(analyzed.filename, value);
-    // console.log({ absPath: analyzed.filename, moduleSpecifier: value, resolved  })
 
     if (Dev.isStyleFilename(value)) {
       if (!(resolved in filenames)) {
         errors.push({ key: 'require-scss-exists', interval, label: value });
       }
     } else if (!(`${resolved}.tsx` in filenames) && !(`${resolved}.ts` in filenames)) {
+      console.error({ absPath: analyzed.filename, moduleSpecifier: value, resolved  })
       errors.push({ key: 'require-file-exists', interval, label: value });
     }
   }
