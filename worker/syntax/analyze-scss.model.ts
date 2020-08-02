@@ -1,5 +1,5 @@
 import { parse, stringify } from 'scss-parser';
-import { filenameToClassPrefix, ModuleSpecifierInterval, resolveRelativePath } from '@model/dev-env/dev-env.model';
+import { filenameToClassPrefix, ModuleSpecifierInterval, resolvePath } from '@model/dev-env/dev-env.model';
 
 interface ScssAstNode {
   type: string;
@@ -31,7 +31,7 @@ export function prefixScssClasses(scssContents: string, filename: string) {
       if ((first.type === 'atkeyword' && first.value === 'import' && second.type === 'space'
         && (third.type === 'string_double' || third.type === 'string_single')
       ) && third.start) {
-        (node as any).value[2] = { ...(node as any).value[2], value: resolveRelativePath(filename, third.value as string) };
+        (node as any).value[2] = { ...(node as any).value[2], value: resolvePath(filename, third.value as string) };
       }
     }
   }, ast);

@@ -354,7 +354,7 @@ export const Thunk = {
         return { key: 'error', errorKey: 'import-unknown', dependency: filename, inFilename: filename, fromFilename: invalidImport.value };
       }
 
-      const dependencies = file.pathIntervals.map(({ value }) => files[Dev.resolveRelativePath(filename, value)]);
+      const dependencies = file.pathIntervals.map(({ value }) => files[Dev.resolvePath(filename, value)]);
       const dependents = Object.values(files).filter(({ key, pathIntervals }) =>
         key === filename || pathIntervals.some(({ value }) => value === filename));
 
@@ -386,13 +386,10 @@ export const Thunk = {
         })));
         /**
          * Move `package/types/react-redux.d.ts` to `react-redux.d.ts`,
-         * so monaco-editor can resolve these custom typings.
-         * Also move `package/types/{reducer}.types.ts` to `{reducer}.types.ts`.
-         * The latter are used by the former, and are also available
-         * to package components as `@reducer/{reducer}.types`.
+         * so monaco-editor resolves it like an npm module.
          */
         if (packageName === 'types') {
-          loadedFiles.forEach(x => x.key = Dev.packageFilenameToRoot(x.key));
+          loadedFiles.find(x => x.key === 'package/types/react-redux.d.ts' && (x.key = 'react-redux.d.ts'));
         }
 
         dispatch(Act.addPackage({
@@ -466,7 +463,7 @@ export const Thunk = {
         } else {
           console.log({
             scssTransitiveImportUnknown: pathIntervals.filter(({ value }) =>
-              Dev.resolveRelativePath(filename, value) === importError.dependency),
+              Dev.resolvePath(filename, value) === importError.dependency),
           });
         }
       }

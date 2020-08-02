@@ -121,25 +121,28 @@ export function isRuntimeNpmModule(moduleSpecifier: string) {
 
 export const projectAliasRegex = /^(?:@package|@reducer)/;
 
+const resolveCache = {} as Record<string, string>;
+
 export function resolvePath(absPath: string, moduleSpecifier: string) {
+  const key = `${absPath} ${moduleSpecifier}`;
+  if (resolveCache[key]) {
+    return resolveCache[key];
+  }
+
   const resolvedAlias = moduleSpecifier.startsWith('@package/')
     ? moduleSpecifier.slice('@'.length) // @package/foo -> package/foo
     : moduleSpecifier.startsWith('@reducer/')
       ? moduleSpecifier.slice('@reducer/'.length) // @reducer/foo -> foo
       : moduleSpecifier;
   
-  return resolvedAlias === moduleSpecifier
+  const result = resolvedAlias === moduleSpecifier
     ? resolveRelativePath(absPath, moduleSpecifier)
     : resolvedAlias;
+
+  return resolveCache[key] = result;
 }
 
-const resolveCache = {} as Record<string, string>;
-
 export function resolveRelativePath(absPath: string, relPath: string) {
-  const key = `${absPath} ${relPath}`;
-  if (resolveCache[key]) {
-    return resolveCache[key];
-  }
   const parts = absPath.split('/');
   parts.pop();
   for (const x of relPath.split('/')) {
@@ -151,7 +154,7 @@ export function resolveRelativePath(absPath: string, relPath: string) {
       parts.push(x);
     }
   }
-  return resolveCache[key] = parts.join('/');
+  return parts.join('/');
 }
 
 export function withoutFileExtension(filename: string) {
@@ -352,8 +355,8 @@ export function getReachableScssFiles(rootFilename: string, file: KeyedLookup<Pr
     frontier.length = 0;
     prevFrontier.forEach((node) => {
       const newAdjs = (node.pathIntervals || [])
-        .filter(({ value }) => !(resolveRelativePath(node.key, value) in reachable))
-        .map(({ value }) => file[resolveRelativePath(node.key, value)] as PrefixedStyleFile);
+        .filter(({ value }) => !(resolvePath(node.key, value) in reachable))
+        .map(({ value }) => file[resolvePath(node.key, value)] as PrefixedStyleFile);
       frontier.push(...newAdjs);
       newAdjs.forEach(f => reachable[f.key] = f);
     });

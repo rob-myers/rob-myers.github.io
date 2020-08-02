@@ -359,9 +359,9 @@ export const Thunk = {
           ...oldCompilerOptions.paths,
           // Our own notion of package
           '@package/*': ['package/*'],
-          // Used by our react-redux.d.ts
-          // We move package/types/* to the root in fetchPackages
-          '@reducer/*': ['./*'],
+          // Used by our react-redux.d.ts, which we move from
+          // package/types/* to the root so it resolves correctly
+          '@reducer/*': ['package/types/*'],
         },
         declaration: true, // Generate d.ts content in `emitOutput.outputFiles[1]`
       });

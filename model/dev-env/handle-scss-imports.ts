@@ -1,12 +1,12 @@
 import { KeyedLookup } from '@model/generic.model';
-import { PrefixedStyleFile, resolveRelativePath } from './dev-env.model';
+import { PrefixedStyleFile, resolvePath } from './dev-env.model';
 
 export const detectInvalidScssImport = (
   filename: string,
   file: KeyedLookup<PrefixedStyleFile>,
 ) =>
   file[filename].pathIntervals.find(({ value }) =>
-    !(resolveRelativePath(filename, value) in file)) || null;
+    !(resolvePath(filename, value) in file)) || null;
 
 export type ScssImportsResult = (
   | { key: 'success'; stratification: string[][] }
@@ -36,7 +36,7 @@ export function traverseScssDeps(
   }
   
   for (const { value } of f.pathIntervals) {
-    const resolved = resolveRelativePath(f.key, value);
+    const resolved = resolvePath(f.key, value);
     const error = traverseScssDeps(file[resolved], file, dependents, maxDepth - 1);
     if (error) return error;
   }
@@ -61,7 +61,7 @@ export function stratifyScssFiles(scssFiles: PrefixedStyleFile[]) {
   const lookup = scssFiles.reduce((agg, { key, pathIntervals }) => ({
     ...agg, [key]: {
       filename: key,
-      dependencies: pathIntervals.map(({ value }) => resolveRelativePath(key, value)),
+      dependencies: pathIntervals.map(({ value }) => resolvePath(key, value)),
     },
   }), {} as Record<string, DepNode>);
   
