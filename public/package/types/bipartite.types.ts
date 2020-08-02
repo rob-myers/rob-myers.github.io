@@ -2,6 +2,8 @@
 
 export type Edge = [number, number];
 
+export type BipartitionedSet = [number[], number[]];
+
 export interface BipartiteGraph {
   /** Number of vertices in lower bipartition. */
   n: number;
@@ -28,6 +30,8 @@ export type DispatchableSync = never;
  * Used by `useDispatch` at runtime.
  */
 export type DispatchableThunk = (
+  | { type: '[bipartite] get maximal independent set'; args: BipartiteGraph; returns: BipartitionedSet[] }
   | { type: '[bipartite] get maximal matching'; args: BipartiteGraph; returns: Edge[] }
+  | { type: '[bipartite] get minimal vertex cover'; args: BipartiteGraph; returns: BipartitionedSet[] }
   | { type: '[bipartite] get random graph'; args: { n: number; m: number; edgeProbability: number; }; returns: BipartiteGraph }
 );
