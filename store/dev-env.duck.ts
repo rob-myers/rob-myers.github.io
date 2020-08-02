@@ -4,22 +4,21 @@ import * as portals from 'react-reverse-portal';
 
 import { renderAppAt, storeAppFromBlobUrl, unmountAppAt, forgetAppAndStore, storeAppInvalidSignaller, setStore } from '@public/render-app';
 import RefreshRuntime from '@public/es-react-refresh/runtime';
+import { NEXT_REDUX_STORE } from '@public/constants';
 
-import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact, createThunk, createEpic } from '@model/store/redux.model';
 import { KeyedLookup, testNever, lookupFromValues, pluck } from '@model/generic.model';
-import * as Dev from '@model/dev-env/dev-env.model';
+import { getWindow } from '@model/dom.model';
+import { createAct, ActionsUnion, addToLookup, removeFromLookup, updateLookup, ReduxUpdater, redact, createThunk, createEpic } from '@model/store/redux.model';
 import { TsTranspilationResult, filenameToModelKey } from '@model/monaco/monaco.model';
-import * as PatchJs from '@model/dev-env/patch-js-imports';
-import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/dev-env/handle-scss-imports';
 import { getCssModuleCode } from '@model/dev-env/css-module';
-import { isCyclicDepError } from '@model/dev-env/dev-env.model';
+import { detectInvalidScssImport, ScssImportsResult, traverseScssDeps, stratifyScssFiles, SccsImportsError } from '@model/dev-env/handle-scss-imports';
 import { manifestWebPath, PackagesManifest } from '@model/dev-env/manifest.model';
+import * as PatchJs from '@model/dev-env/patch-js-imports';
+import * as Dev from '@model/dev-env/dev-env.model';
 import { awaitWorker } from '@worker/syntax/worker.model';
 
-import { filterActs } from './reducer';
 import { Thunk as EditorThunk } from './editor.duck';
-import { getWindow } from '@model/dom.model';
-import { NEXT_REDUX_STORE } from '@public/constants';
+import { filterActs } from './reducer';
 
 export interface State {
   appMeta: KeyedLookup<Dev.AppMeta>;
@@ -92,8 +91,8 @@ export type Action = ActionsUnion<typeof Act>;
 export const Thunk = {
   /**
    * Given file data previously fetched and stored in `devEnv.package[packageName]`,
-   * create respective files in `devEnv.file`. The latter files have respective monaco
-   * models and are retranspiled on change.
+   * create respective files in `devEnv.file`. The latter files will have respective
+   * monaco models, and are retranspiled on model change.
    */
   addFilesFromPackage: createThunk(
     '[dev-env] add files from package',
@@ -119,26 +118,6 @@ export const Thunk = {
           dispatch(Act.createStyleFile({ filename, contents }));
         }
       }
-    },
-  ),
-  /**
-   * Analyze ts/tsx source code, storing errors and also module specifier code-intervals,
-   * so can source-map errors found in transpiled js (always tied to an import/export).
-   */
-  analyzeSrcCode: createThunk(
-    '[dev-env] analyze code file src',
-    async ({ dispatch }, { filename }: { filename: string }) => {
-      const { imports, exports, srcErrors } = await dispatch(EditorThunk.computeTsImportExports({ filename }));
-      // console.log({ key: 'analyzeSrcCode', filename, srcErrors, imports, exports });
-      const updates = {
-        pathIntervals: [
-          ...imports.map(({ from: path }) => path),
-          ...exports.filter(Dev.isTsExportDecl).map(({ from }) => from),
-        ],
-        srcErrors,
-      };
-      dispatch(Act.updateFile(filename, updates));
-      return updates;
     },
   ),
   /**
@@ -169,8 +148,28 @@ export const Thunk = {
         jsImports: imports,
         jsExports: exports,
         prevCyclicError: (devEnv.file[filename] as Dev.CodeFile)
-          .transpiled?.jsPathErrors.find(isCyclicDepError) || null,
+          .transpiled?.jsPathErrors.find(Dev.isCyclicDepError) || null,
       };
+    },
+  ),
+  /**
+   * Analyze ts/tsx source code, storing errors and also module specifier code-intervals,
+   * so can source-map errors found in transpiled js (always tied to an import/export).
+   */
+  analyzeSrcCode: createThunk(
+    '[dev-env] analyze code file src',
+    async ({ dispatch }, { filename }: { filename: string }) => {
+      const { imports, exports, srcErrors } = await dispatch(EditorThunk.computeTsImportExports({ filename }));
+      // console.log({ key: 'analyzeSrcCode', filename, srcErrors, imports, exports });
+      const updates = {
+        pathIntervals: [
+          ...imports.map(({ from: path }) => path),
+          ...exports.filter(Dev.isTsExportDecl).map(({ from }) => from),
+        ],
+        srcErrors,
+      };
+      dispatch(Act.updateFile(filename, updates));
+      return updates;
     },
   ),
   /**
@@ -217,7 +216,7 @@ export const Thunk = {
        * All reachable files are now transpiled, so can now properly test for cycles.
        */
       const { jsErrors } = await dispatch(Thunk.testCyclicJsDependency({ filename: appRoot }));
-      if (jsErrors.find(isCyclicDepError)) {
+      if (jsErrors.find(Dev.isCyclicDepError)) {
         console.error('App bootstrap failed due to cyclic dependency');
         dispatch(Act.setAppValid({ appRoot, isValid: false }));
         dispatch(Thunk.tryTranspileCodeModel({ filename: appRoot }));
@@ -441,7 +440,7 @@ export const Thunk = {
         console.log({ filename, jsPathErrors });
         const markers = Dev.getJsPathErrorMarkers(filename, jsPathErrors, pathIntervals);
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers }));
-        const cyclicError = jsPathErrors.find(isCyclicDepError);
+        const cyclicError = jsPathErrors.find(Dev.isCyclicDepError);
         cyclicError && dispatch(Thunk.tryTranspileCodeModel({ filename: cyclicError.path, onlyIf: 'valid' }));
       } else {
         dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
@@ -528,19 +527,6 @@ export const Thunk = {
       for (const [filename, { patchedCode, blobUrl }] of Object.entries(filenameToPatched)) {
         dispatch(Act.updateFile(filename, { esModule: { patchedCode, blobUrl } }));
       }
-    },
-  ),
-  /**
-   * Unused.
-   * - do we want to unmount App instances?
-   * - prefer persist when hidden e.g. user changed page.
-   * - if we ReactDOM.unmountAtNode then should remove parent portal too.
-   */
-  unmountAppInstance: createThunk(
-    '[dev-env] unmount app instance',
-    ({ dispatch }, { panelKey }: { panelKey: string }) => {
-      unmountAppAt(Dev.panelKeyToAppElId(panelKey));
-      dispatch(Act.removeAppPortal(panelKey));
     },
   ),
   removeFile: createThunk(
@@ -639,7 +625,9 @@ export const Thunk = {
       }
     },
   ),
-  /** Try to transpile a ts or tsx file. */
+  /**
+   * Try to transpile a ts or tsx file.
+   */
   tryTranspileCodeModel: createThunk(
     '[dev-env] try transpile code model',
     async ({ dispatch, state: { devEnv } }, { filename, onlyIf }: {
@@ -733,6 +721,19 @@ export const Thunk = {
         console.error({ sassJsTranspileError: transpiled }); // TODO
         // dispatch(EditorThunk.setModelMarkers({ modelKey, markers: [] }));
       }
+    },
+  ),
+  /**
+   * Unused:
+   * - should we unmount App instances?
+   * - prefer persist when hidden e.g. user changed page.
+   * - if we ReactDOM.unmountAtNode then should remove parent portal too.
+   */
+  unmountAppInstance: createThunk(
+    '[dev-env] unmount app instance',
+    ({ dispatch }, { panelKey }: { panelKey: string }) => {
+      unmountAppAt(Dev.panelKeyToAppElId(panelKey));
+      dispatch(Act.removeAppPortal(panelKey));
     },
   ),
   updateCodeTranspilation: createThunk(
@@ -855,6 +856,30 @@ export const reducer = (state = initialState, act: Action): State => {
   }
 };
 
+/**
+ * Monaco should only start loading after devEnv initialized, when
+ * all files should be available. We also kick off transpilation.
+ */
+const initializeMonacoModels = createEpic(
+  (action$, state$) => action$.pipe(
+    filterActs('[editor] set monaco loaded'),
+    filter((_) => state$.value.devEnv.flag.initialized),
+    flatMap((_) => {
+      return [
+          ...Object.values(state$.value.devEnv.file).flatMap((file) => [
+            // Models may not exist yet e.g. DevEditor not loaded
+            EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
+            // Initial transpile when initialized
+            ...file.ext === 'scss'
+              ? [Thunk.tryTranspileStyleModel({ filename: file.key })]
+              : [Thunk.tryTranspileCodeModel({ filename: file.key })]
+          ]),
+        ]
+      }
+    ),
+  ),
+);
+
 const triggerBootstrapApps = createEpic(
   (action$, state$) => action$.pipe(
     filterActs(
@@ -889,8 +914,8 @@ const triggerBootstrapApps = createEpic(
 );
 
 /**
- * Currently we append a <style> for *.scss, even if unused by App.
- * We also attempt to retranspile any immediate ancestor (i.e. parent).
+ * Currently we append a <style> for *.scss, even if unused by any App.
+ * We try retranspiling any immediate ancestor i.e. parent.
  */
 const triggerBootstrapStyles = createEpic(
   (action$, state$) => action$.pipe(
@@ -907,7 +932,7 @@ const triggerBootstrapStyles = createEpic(
   ),
 );
 
-const initializeFileSystem = createEpic(
+const triggerInitialize = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('persist/REHYDRATE' as any), // Also triggered on change page
     filter(_ => typeof window !== 'undefined' && !state$.value.devEnv.flag.initialized),
@@ -915,43 +940,20 @@ const initializeFileSystem = createEpic(
   ),
 );
 
-const initializeMonacoModels = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs(
-      '[editor] set monaco loaded', // Crucial e.g. breaks react-redux.d.ts if removed
-      '[dev-env] set initialized',
-      '[dev-env] load package', // TODO on-the-fly loads
-    ),
-    filter((_) =>
-      state$.value.editor.monacoLoaded
-      && state$.value.devEnv.flag.initialized
-    ),
-    flatMap((_) => {
-      return [
-          ...Object.values(state$.value.devEnv.file).flatMap((file) => [
-            EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
-            // Initial transpile when initialized
-            ...file.ext === 'scss'
-              ? [Thunk.tryTranspileStyleModel({ filename: file.key })]
-              : [Thunk.tryTranspileCodeModel({ filename: file.key })]
-          ]),
-        ]
-      }
-    ),
-  ),
-);
-
-const trackCodeFileContents = createEpic(
+/**
+ * `devEnv.file[filename]` should exist before monaco model does.
+ * Currently we create files before `devEnv.flag.initialized`,
+ * loading each `DevEditor` after `devEnv.flag.initialized`.
+ */
+const watchMonacoModel = createEpic(
   (action$, state$) => action$.pipe(
     filterActs('[editor] store monaco model'),
     flatMap(({ pay: { model, filename, modelKey } }) => {
       const { file } = state$.value.devEnv;
-      if (file[filename]) {
-        // Initially load file contents
+      if (file[filename]) {// Initially load file contents
         model.setValue(file[filename].contents);
         return [
-          ...(file[filename].ext === 'scss'
-            ? [Thunk.createCssModule({ filename })] : []),
+          ...(file[filename].ext === 'scss' ? [Thunk.createCssModule({ filename })] : []),
           // Setup tracking
           Thunk.setupRememberFileContents({ modelKey, filename }),
           Thunk.setupFileTranspile({ modelKey, filename }),
@@ -964,9 +966,9 @@ const trackCodeFileContents = createEpic(
 );
 
 export const epic = combineEpics(
+  initializeMonacoModels,
   triggerBootstrapApps,
   triggerBootstrapStyles,
-  initializeFileSystem,
-  initializeMonacoModels,
-  trackCodeFileContents,
+  triggerInitialize,
+  watchMonacoModel,
 );
