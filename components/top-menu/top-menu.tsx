@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Link from 'next/link';
-import css from './top-menu.scss';
 import classNames from 'classnames';
+import css from './top-menu.scss';
 
 const TopMenu: React.FC<Props> = ({
   title,

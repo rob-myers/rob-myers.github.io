@@ -1,4 +1,3 @@
-import { replacer, RootThunkParams, ThunkAct } from '@model/store/redux.model';
 import { applyMiddleware, createStore, Dispatch } from 'redux';
 import { composeWithDevTools, EnhancerOptions } from 'redux-devtools-extension';
 import { createEpicMiddleware } from 'redux-observable';
@@ -7,6 +6,7 @@ import storage from 'redux-persist/lib/storage';
 
 import { mapValues } from '@model/generic.model';
 import { getWindow } from '@model/dom.model';
+import { replacer, RootThunkParams } from '@model/store/redux.model';
 import { NEXT_REDUX_STORE } from '@public/constants';
 import createRootReducer, { RootAction, rootEpic, RootState, RootThunk, RootActOrThunk, getRootThunks } from './reducer';
 import { State as BipartiteState } from './bipartite.duck';

@@ -21,3 +21,5 @@ public/sass.worker.js
 public/es-react/
 
 .DS_Store
+
+analyze/

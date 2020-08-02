@@ -1,4 +1,4 @@
-import * as monaco from 'monaco-editor';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { TypescriptDefaults, IMonacoTextModel, TsTranspilationResult, IDiagnostic } from './monaco.model';
 import { EmitOutput } from './monaco-typescript';
 

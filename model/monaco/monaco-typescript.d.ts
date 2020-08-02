@@ -5,7 +5,7 @@
 
 // merged imports from all files
 import * as ts from 'typescript';
-import * as monaco from 'monaco-editor';
+import * as monaco from 'monaco-editor/esm/vs/editor/editor.api.js';
 import CancellationToken = monaco.CancellationToken;
 import IDisposable = monaco.IDisposable;
 import IEvent = monaco.IEvent;
