@@ -1,7 +1,38 @@
 import { PersistentCounter, RandomNumber } from './test-component';
 import DevEnv from '../dev-env/dev-env';
 
-_This is a demo blog entry_
+import Intro from '@public/package/intro/app';
+import Bipartite from '@public/package/bipartite/app';
+
+Main codebase
+
+<div style={{ width: 400, height: 200 }}>
+  <Intro />
+</div>
+
+<div style={{ width: 400, height: 200 }}>
+  <Bipartite />
+</div>
+
+---
+
+Maximal bipartite matchings
+
+<DevEnv
+  appRoot="package/bipartite/app.tsx"
+  envKey="bipartite"
+/>
+
+Todo app
+
+<DevEnv
+  appRoot="package/intro/app.tsx"
+  envKey="intro"
+/>
+
+---
+
+## This is a demo blog entry
 
 ### Behold the persistent counter!
 
@@ -12,17 +43,3 @@ _This is a demo blog entry_
 ### Random numbers for free:
 
 > <RandomNumber />
-
-First
-
-<DevEnv
-  appRoot="package/bipartite/app.tsx"
-  envKey="bipartite"
-/>
-
-Second
-
-<DevEnv
-  appRoot="package/intro/app.tsx"
-  envKey="intro"
-/>

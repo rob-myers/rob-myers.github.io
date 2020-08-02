@@ -4,39 +4,37 @@ type DistributiveOmit<T, K extends keyof T> = T extends unknown
 
 declare module 'react-redux' {
   
-  import {
-    State as BipartiteState,
-    DispatchableSync as BipartiteSync,
-    DispatchableThunk as BipartiteThunk,
-  } from '@reducer/bipartite.types';
+  import '@reducer/bipartite.types';
+  import '@reducer/test.types';
 
-  import {
-    State as TestState,
-    DispatchableSync as TestSync,
-    DispatchableThunk as TestThunk,
-  } from '@reducer/test.types';
-
-  /** @internal */
-  interface RootState {
-    bipartite: BipartiteState;
-    test: TestState;
+  namespace Bipartite {
+    export * from '@reducer/bipartite.types';
+  }
+  namespace Test {
+    export * from '@reducer/test.types';
   }
 
   /** @internal */
-  type RootAct = (
-    | BipartiteSync
-    | TestSync
+  interface RootState {
+    bipartite: Bipartite.State;
+    test: Test.State;
+  }
+
+  /** @internal */
+  type RootSync = (
+    | Bipartite.DispatchableSync
+    | Test.DispatchableSync
   )
 
   /** @internal */
   type RootThunk = (
-    | BipartiteThunk
-    | TestThunk
+    | Bipartite.DispatchableThunk
+    | Test.DispatchableThunk
   )
 
   /** @internal */
   type Dispatchable = (
-    | RootAct
+    | RootSync
     | DistributiveOmit<RootThunk, 'returns'>
   )
 

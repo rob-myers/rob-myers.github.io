@@ -1,15 +1,22 @@
 .root {
   display: flex;
   flex-direction: column;
-  background: #555;
+  background: #333;
 
   svg {
     .edges {
-      stroke: #f00;
+      stroke: #f44;
     }
     .maximal-matching {
       stroke: white;
       stroke-dasharray: 5;
+    }
+  }
+
+  .opts {
+    display: flex;
+    button {
+      flex-grow: 1;
     }
   }
 }
