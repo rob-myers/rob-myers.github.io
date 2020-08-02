@@ -1,3 +1,16 @@
 .root {
   display: flex;
 }
+
+.file-panel {
+  background: #eee;
+  width: 400px;
+  height: 500px;
+}
+
+.app-panel {
+  background: #eee;
+  width: 400px;
+  height: 500px;
+  border: 1px solid #999;
+}

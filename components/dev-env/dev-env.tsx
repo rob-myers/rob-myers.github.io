@@ -1,20 +1,24 @@
 import dynamic from 'next/dynamic';
+import { useSelector } from 'react-redux';
 import css from './dev-env.scss';
 
+// Keep monaco-editor out of main bundle
 const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false });
-// Had issue with portals and SSR
+// react-reverse-portal incompatible with SSR
 const DevApp = dynamic(import('@components/dev-env/dev-app'), { ssr: false });
 
 const DevEnv: React.FC<Props> = ({ appRoot, envKey }) => {
+  const ready = useSelector(({ devEnv }) => devEnv.flag.initialized);
+
   return (
     <div className={css.root}>
-      <div style={{ width: 400, height: 500 }}>
-        <DevEditor
+      <div className={css.filePanel}>
+        {ready && <DevEditor
           panelKey={`app.tsx@${envKey}`}
           filename={appRoot}
-        />
+        />}
       </div>
-      <div style={{ width: 400, height: 500 }}>
+      <div className={css.appPanel}>
         <DevApp
           panelKey={`App@${envKey}`}
           appRoot={appRoot}
