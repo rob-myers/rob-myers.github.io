@@ -1,0 +1,594 @@
+// Type definitions for flatten-js library
+// Project: https://github.com/alexbol99/flatten-js
+// Definitions by: Alex Bol
+
+import IntervalTree from "./interval-tree";
+// /// <reference types="@flatten-js/interval-tree" />
+
+declare namespace Flatten {
+  interface SVGAttributes {
+      r?: number,
+      stroke?: string | number,
+      strokeWidth?: number,
+      fill?: string | number,
+      fillRule?: "nonzero" | "evenodd",
+      fillOpacity?: number,
+      id? : string,
+      className?: string
+  }
+
+  type Comparable = any;      // any object that implements operators '<' and '==' and 'max'
+  type Value = any;
+
+  interface Interval {
+      low: Comparable;
+      high: Comparable;
+
+      readonly  max: Comparable;
+
+      clone(): Interval;
+      less_than(other_interval: Interval) : boolean;
+      equal_to(other_interval: Interval) : boolean;
+      intersect(other_interval: Interval) : boolean;
+      not_intersect(other_interval: Interval) : boolean;
+      output() : any;
+
+      comparable_max(arg1: Comparable, arg2: Comparable) : Comparable;
+      comparable_less_than(arg1: Comparable, arg2: Comparable ) : boolean;
+  }
+
+  class LinkedListElement {
+      next: LinkedListElement | null;
+      prev: LinkedListElement | null;
+  }
+
+  class LinkedList {
+      // members
+      first: LinkedListElement;
+      last: LinkedListElement;
+
+      // getters
+      readonly size: number;
+
+      // public methods
+      append(element: LinkedListElement): LinkedList;
+      insert(newElement: LinkedListElement, prevElement: LinkedListElement): LinkedList;
+      remove(element: LinkedListElement): LinkedList;
+      toArray(start?: LinkedListElement, end?: LinkedListElement): LinkedListElement[];
+      isEmpty(): boolean;
+  }
+
+  class CircularLinkedList extends LinkedList {}
+
+  type DE9IM_element = Array<Shape> | undefined;
+  /* Impossible to set length for tuple ? Really ? */
+  type DE9IM_matrix = [
+      DE9IM_element,DE9IM_element,DE9IM_element,
+      DE9IM_element,DE9IM_element,DE9IM_element,
+      DE9IM_element,DE9IM_element,DE9IM_element
+  ];
+
+  class DE9IM {
+      // member
+      m: DE9IM_matrix;
+
+      get I2I();
+      set I2I(geom: Array<Shape>);
+
+      get I2B();
+      set I2B(geom: Array<Shape>);
+
+      get I2E();
+      set I2E(geom: Array<Shape>);
+
+      get B2I();
+      set B2I(geom: Array<Shape>);
+
+      get B2B();
+      set B2B(geom: Array<Shape>);
+
+      get B2E();
+      set B2E(geom: Array<Shape>);
+
+      get E2I();
+      set E2I(geom: Array<Shape>);
+
+      get E2B();
+      set E2B(geom: Array<Shape>);
+
+      get E2E();
+      set E2E(geom: Array<Shape>);
+
+      toString() : string;
+  }
+
+  const CCW = true;
+  const CW = false;
+  enum ArcOrientationType {CW, CCW}
+
+  class Arc {
+      counterClockwise: ArcOrientationType;
+
+      // members
+      ps: Point;
+      r: Number;
+      startAngle: number;
+      endAngle: number;
+
+      constructor(
+          pc?: Point,
+          r?: number,
+          startAngle?: number,
+          endAngle?: number,
+          counterClockwise?: ArcOrientationType
+      );
+
+      // getters
+      readonly start: Point;
+      readonly end: Point;
+      readonly center: Point;
+      readonly length: number;
+      readonly sweep: number;
+      readonly vertices: [Point, Point];
+      readonly box: Box;
+
+      // public methods
+      clone(): Arc;
+      contains(pt: Point): boolean;
+      split(pt: Point): [Arc | undefined, Arc | undefined];
+      middle(): Point;
+      chordHeight(): number;
+      intersect(shape: Shape): Array<Point>;
+      distanceTo(geom: Shape | PlanarSet): [number, Segment];
+      breakToFunctional(): Array<Arc>;
+      tangentInEnd(): Vector;
+      tangentInStart(): Vector;
+      reverse(): Arc;
+      translate(vec: Vector): Arc;
+      translate(x:number, y:number): Arc;
+      rotate(angle: number, center: Point): Arc;
+      transform(matrix?: Matrix): Arc;
+      sortPoints(pts: Array<Point>): Array<Point>;
+      toJSON() : Object;
+      svg(attrs?: SVGAttributes): string;
+  }
+
+  class Box implements Interval {
+      constructor(xmin?: number, ymin?: number, xmax?: number, ymax?: number);
+
+      //members
+      xmin: number;
+      ymin: number;
+      xmax: number;
+      ymax: number;
+
+      // getters
+      readonly center: Point;
+      readonly high: Point;
+      readonly low: Point;
+      readonly max: Box;
+
+      // public methods
+      clone(): Box;
+      not_intersect(box: Box): boolean;
+      intersect(box: Box): boolean;
+      merge(box: Box): Box;
+      less_than(box: Box): boolean;
+      equal_to(box: Box): boolean;
+      set(xmin: number, ymin: number, xmax: number, ymax: number): void;
+      toPoints() : Array<Point>;
+      toSegments() : Array<Segment>;
+      output(): Box;         // required by base type Interval
+      svg(attrs?: SVGAttributes): string;
+
+      comparable_max(arg1: Comparable, arg2: Comparable) : Comparable;
+      comparable_less_than(arg1: Comparable, arg2: Comparable ) : boolean;
+  }
+
+  class Circle {
+      constructor(pc: Point, r: number);
+
+      // members
+      pc: Point;
+      r: number;
+
+      // getters
+      readonly box: Box;
+      readonly center: Point;
+
+      // public methods
+      clone(): Circle;
+      contains(shape: Shape): boolean;
+      toArc(counterclockwise?: ArcOrientationType): Arc;
+      intersect(shape: Shape): Array<Point>;
+      distanceTo(geom: Shape | PlanarSet): [number, Segment];
+      toJSON() : Object;
+      svg(attrs?: SVGAttributes): string;
+  }
+
+  class Line {
+      constructor(pt?: Point, norm?: Vector);
+      constructor(norm: Vector, pt: Point);
+      constructor(pt1: Point, pt2: Point);
+
+      // members
+      pt: Point;
+      norm: Vector;
+
+      // getters
+      readonly start: undefined;
+      readonly end: undefined;
+      readonly box: Box;
+      readonly length: number;
+      readonly slope: number;
+      readonly standard: [number, number, number];
+
+      // public methods
+      clone(): Line;
+      parallelTo(line: Line): boolean;
+      incidentTo(line: Line): boolean;
+      contains(pt: Point): boolean;
+      coord(pt: Point): number;
+      intersect(shape: Shape): Point[];
+      distanceTo(shape: Shape): [number, Segment];
+      split(pt: Point | Point[]): Shape[];
+      sortPoints(points: Point[]): Point[];
+      toJSON() : Object;
+      svg(box: Box, attrs?: SVGAttributes): string;
+  }
+
+  class Point {
+      constructor(x?: number, y?: number);
+      constructor(arg?: [number, number]);
+
+      // members
+      x: number;
+      y: number;
+
+      //getters
+      readonly box: Box;
+      readonly vertices: [Point];
+
+      // public methods
+      clone(): Point;
+      equalTo(pt: Point): boolean;
+      lessThan(pt: Point): boolean;
+      rotate(angle: number, center?: Point): Point;
+      transform(matrix: Matrix): Point;
+      translate(vec: Vector): Point;
+      translate(x: number, y: number): Point;
+      projectionOn(line: Line): Point;
+      distanceTo(geom: Shape | PlanarSet): [number, Segment];
+      leftTo(line: Line): boolean;
+      on(shape: Point | Shape): boolean;
+      toJSON() : Object;
+      svg(attrs?: SVGAttributes): string;
+  }
+
+  class Ray {
+      // members
+      pt: Point;
+      norm: Vector;
+
+      // getters
+      readonly start: Point;
+      readonly box: Box;
+      readonly slope: number;
+
+      constructor(pt?: Point, norm?: Vector);
+
+      // public methods
+      clone(): Ray;
+      contains(pt: Point): boolean;
+      split(pt: Point[]): Shape[];
+      intersect(shape: Segment | Arc): Point[];
+      svg(box: Box, attrs?: SVGAttributes): string;
+  }
+
+  class Segment {
+      constructor(ps?: Point, pe?: Point);
+
+      // members
+      ps: Point;
+      pe: Point;
+
+      // getters
+      readonly start: Point;
+      readonly end: Point;
+      readonly box: Box;
+      readonly length: number;
+      readonly slope: number;
+      readonly vertices: [Point, Point];
+
+      // public methods
+      clone(): Segment;
+      equalTo(seg: Segment): boolean;
+      contains(pt: Point): boolean;
+      intersect(shape: Shape): Point[];
+      distanceTo(shape: Shape): [number, Segment];
+      tangentInStart(): Vector;
+      tangentInEnd(): Vector;
+      reverse(): Segment;
+      split(pt: Point): [Segment|null,Segment|null];
+      middle(): Point;
+      rotate(angle: number, center?: Point): Segment;
+      transform(matrix: Matrix): Segment;
+      translate(vec: Vector): Segment;
+      translate(x: number, y: number): Segment;
+      isZeroLength(): boolean;
+      sortPoint(points: Array<Point>) : Array<Point>;
+      toJSON() : Object;
+      svg(attrs?: SVGAttributes): string;
+  }
+
+  class Vector {
+      constructor(x?: number, y?: number);
+      constructor(ps: Point, pe: Point);
+
+      // members
+      x: number;
+      y: number;
+
+      // getters
+      readonly length: number;
+      readonly slope: number;
+
+      // public methods
+      clone(): Vector;
+      equalTo(v: Vector): boolean;
+      multiply(scalar: number): Vector;
+      dot(v: Vector): number;
+      cross(v: Vector): number;
+      normalize(): Vector;
+      rotate(angle: number): Vector;
+      rotate90CCW(): Vector;
+      rotate90CW(): Vector;
+      invert(): Vector;
+      add(v: Vector): Vector;
+      subtract(v: Vector): Vector;
+      angleTo(v: Vector): number;
+      projectionOn(v: Vector): Vector;
+      toJSON() : Object;
+  }
+
+  class Matrix {
+      constructor(a?: number, b?: number, c?: number, d?: number, tx?: number, ty?: number);
+
+      // members
+      a: number;
+      b: number;
+      c: number;
+      d: number;
+      tx: number;
+      ty: number;
+
+      // public methods
+      clone(): Matrix;
+      equalTo(matrix: Matrix): boolean;
+      multiply(matrix: Matrix): Matrix;
+      rotate(angle: number): Matrix;
+      scale(sx: number, sy: number): Matrix;
+      transform(vector: [number,number]): [number, number];
+      translate(tx: number, ty: number): Matrix;
+      translate(vector: Vector) : Matrix;
+  }
+
+  // any object that has "box" property that implements "Interval" interface may be indexable
+  // all shapes has box property that fits Interval interface
+  interface IndexableElement {
+      box: Interval;
+  }
+
+  // @ts-ignore (Set)
+  class PlanarSet extends Set {
+      constructor();
+
+      // members
+      index: IntervalTree;
+
+      // public methods
+      add(element: IndexableElement): this;
+      delete(element: IndexableElement): boolean;
+      clear() : void;
+      hit(pt: Point): IndexableElement[];
+      search(box: Box): IndexableElement[];
+      svg(): string;
+  }
+
+
+  const INSIDE = 1;
+  const OUTSIDE = 0;
+  const BOUNDARY = 2;
+  enum EdgeRelationType {INSIDE, OUTSIDE, BOUNDARY}
+  const OVERLAP_SAME = 1;
+  const OVERLAP_OPPOSITE = 2;
+  enum EdgeOverlappingType {OVERLAP_SAME, OVERLAP_OPPOSITE}
+
+  // Base class Edge for Polygon and Multiline
+  class Edge {
+      // members
+      shape: any
+
+      constructor(shape: any);
+      face: Face;
+      next: Edge;
+      prev: Edge;
+      bvStart: EdgeRelationType;
+      bvEnd: EdgeRelationType;
+      bv: EdgeRelationType;
+      overlap: EdgeOverlappingType;
+      arc_length: number;
+
+      // getters
+      readonly start: Point;
+      readonly end: Point;
+      readonly length: number;
+      readonly box: Box;
+
+      // public methods
+      isSegment() : boolean;
+      isArc() : boolean;
+      contains(pt: Point): boolean;
+      middle(): Point;
+      setInclusion(polygon: Polygon): EdgeRelationType;
+      setOverlap(edge: Edge) : EdgeOverlappingType;
+  }
+
+  class PolygonEdge extends Edge {
+      shape: Segment | Arc;
+      constructor(shape: Segment | Arc);
+  }
+
+  class Face extends CircularLinkedList {
+      // constructor is not documented and should not be called implicitly
+
+      // members
+      first: PolygonEdge;
+      last: PolygonEdge;
+
+      // getters
+      readonly box: Box;
+      readonly size: number;
+      readonly edges: PolygonEdge[];
+
+      // public methods
+      append(edge: PolygonEdge): Face;
+      insert(element: PolygonEdge): Face;
+      remove(element: PolygonEdge): Face;
+      reverse(): void;
+      setArcLength(): void;
+      area(): number;
+      signedArea(): number;
+      orientation(): Flatten.ORIENTATION.PolygonOrientationType;
+      isSimple(edges: PolygonEdge[]): boolean;
+      findEdgeByPoint(pt: Point): PolygonEdge | undefined;
+      toPolygon(): Polygon;
+      svg(attrs?: SVGAttributes, pathDefined? : boolean): string;
+  }
+
+  type NumericPair = [number,number];
+  type ConstructorEdgeShape = Point | Segment | Arc ;
+  type LoopOfShapes = Array<ConstructorEdgeShape | NumericPair>;
+  type MultiLoopOfShapes = Array<LoopOfShapes | Circle | Box>;
+
+  class Polygon {
+      constructor(args?: LoopOfShapes | Circle | Box | MultiLoopOfShapes);
+
+      // members
+      edges: PlanarSet;
+      faces: PlanarSet;
+
+      // getters
+      readonly box: Box;
+      readonly vertices: Point[];
+
+      // public methods
+      clone(): Polygon;
+      isEmpty(): boolean;
+      isValid(): boolean;
+      area(): number;
+      addFace(args: Array<Point> | Array<Segment | Arc> | Circle | Box): Face;
+      deleteFace(face: Face): boolean;
+      removeChain(face: Face, edgeFrom: PolygonEdge, edgeTo: PolygonEdge): void;
+      addVertex(edge: PolygonEdge, pt: Point): PolygonEdge;
+      cut(multiline: Multiline): Polygon[];
+      cutFace(pt1: Point, pt2: Point): [Polygon, Polygon];
+      findEdgeByPoint(pt: Point): PolygonEdge;
+      splitToIslands() : Polygon[];
+      reverse(): Polygon;
+      contains(shape: Shape): boolean;
+      distanceTo(shape: Shape): [number, Segment];
+      intersect(shape: Shape): Point[];
+      rotate(angle?: number, center?: Point): Polygon;
+      transform(matrix?: Matrix): Polygon;
+      translate(vec: Vector): Polygon;
+      toJSON() : Object;
+      toArray() : Polygon[];
+      svg(attrs?: SVGAttributes): string;
+  }
+
+  type MultilineEdgeShape = Segment | Arc | Ray | Line;
+  type MultilineShapes = Array<MultilineEdgeShape> | [Line]
+
+  class MultilineEdge extends Edge {
+      shape: MultilineEdgeShape;          // there may be only one line edge and only terminal ray edges
+      constructor(MultilineEdgeShape: MultilineEdgeShape);
+  }
+
+  class Multiline extends LinkedList {
+      constructor(args?: MultilineShapes);
+
+      // getters
+      get edges() : MultilineEdge[];
+      get vertices(): Point[];
+      get box(): Box;
+
+      clone(): Multiline;
+      addVertex(pt: Point, edge: MultilineEdge): MultilineEdge;
+      split(ip: Point[]) : Multiline;
+      findEdgeByPoint(pt: Point): MultilineEdge | undefined;
+      rotate(angle?: number, center?: Point): Multiline;
+      transform(matrix?: Matrix): Multiline;
+      translate(vec: Vector): Multiline;
+      toShapes(): MultilineShapes;
+      toJSON() : Object;
+      svg(attrs?: SVGAttributes): string;
+  }
+
+  type Shape = Point | Line | Ray | Circle | Box | Segment | Arc | Polygon;
+
+  function point(x?: number, y?: number): Point;
+  function point(arr?: [number, number]): Point;
+  function circle(pc: Point, r: number) : Circle;
+  function line(pt?: Point, norm?: Vector) : Line;
+  function line(norm?: Vector, pt?: Point) : Line;
+  function line(pt1?: Point, pt2?: Point) : Line;
+  function segment(ps?: Point, pe?: Point) : Segment;
+  function segment(arr: [number, number, number, number]) : Segment;
+  function segment(psx: number, psy: number, pex: number, pey: number) : Segment;
+  function arc(pc?: Point, r?: number, startAngle?: number, endAngle?: number, counterClockwise?: ArcOrientationType) : Arc;
+  function vector(x?: number, y?: number) : Vector;
+  function vector(arr: [number, number]) : Vector;
+  function vector(p1: Point, p2: Point) : Vector;
+  function ray(pt?: Point) : Ray;
+  function ray(x: number, y: number): Ray;
+  function matrix(a: number, b: number, c: number, d: number, tx: number, ty: number) : Matrix;
+}
+
+declare namespace Flatten.ORIENTATION {
+  const CCW: -1;
+  const CW: 1;
+  const NOT_ORIENTABLE: 0;
+  enum PolygonOrientationType {CCW, CW, NOT_ORIENTABLE}
+}
+
+declare namespace Flatten.Utils {
+  var DP_TOL: number;
+  function EQ_0(x: number) : boolean;
+  function GT(x: number, y: number) : boolean;
+  function GE(x: number, y: number) : boolean;
+  function LT(x: number, y: number) : boolean;
+  function LE(x: number, y: number) : boolean;
+}
+
+declare namespace Flatten.BooleanOperations {
+  function unify(polygon1: Polygon, polygon2: Polygon): Polygon;
+  function subtract(polygon1: Polygon, polygon2: Polygon): Polygon;
+  function intersect(polygon1: Polygon, polygon2: Polygon): Polygon;
+  function innerClip(polygon1: Polygon, polygon2: Polygon): [Shape[], Shape[]];
+  function outerClip(polygon1: Polygon, polygon2: Polygon): Shape[];
+  function calculateIntersections(polygon1: Polygon, polygon2: Polygon): [Point[],Point[]];
+}
+
+declare namespace Flatten.Relations {
+  function relate(shape1: Shape, shape2: Shape): DE9IM_matrix;
+  function equal(shape1: Shape, shape2: Shape): boolean;
+  function intersect(shape1: Shape, shape2: Shape): boolean;
+  function touch(shape1: Shape, shape2: Shape): boolean;
+  function disjoint(shape1: Shape, shape2: Shape): boolean;
+  function inside(shape1: Shape, shape2: Shape): boolean;
+  function covered(shape1: Shape, shape2: Shape): boolean;
+  function cover(shape1: Shape, shape2: Shape): boolean;
+}
+
+export default Flatten;

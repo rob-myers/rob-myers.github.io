@@ -1,11 +1,8 @@
-type DistributiveOmit<T, K extends keyof T> = T extends unknown
-  ? Omit<T, K>
-  : never;
-
 declare module 'react-redux' {
   
   import '@reducer/bipartite.types';
   import '@reducer/test.types';
+  import '@reducer/geom.types';
 
   namespace Bipartite {
     export * from '@reducer/bipartite.types';
@@ -13,22 +10,28 @@ declare module 'react-redux' {
   namespace Test {
     export * from '@reducer/test.types';
   }
+  namespace Geom {
+    export * from '@reducer/geom.types';
+  }
 
   /** @internal */
   interface RootState {
     bipartite: Bipartite.State;
+    geom: Geom.State;
     test: Test.State;
   }
 
   /** @internal */
   type RootSync = (
     | Bipartite.DispatchableSync
+    | Geom.DispatchableSync
     | Test.DispatchableSync
   )
 
   /** @internal */
   type RootThunk = (
     | Bipartite.DispatchableThunk
+    | Geom.DispatchableThunk
     | Test.DispatchableThunk
   )
 
@@ -49,3 +52,7 @@ declare module 'react-redux' {
       : void;
 
 }
+
+type DistributiveOmit<T, K extends keyof T> = T extends unknown
+  ? Omit<T, K>
+  : never;

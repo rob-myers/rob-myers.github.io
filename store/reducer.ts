@@ -3,25 +3,7 @@ import { combineEpics } from 'redux-observable';
 import { filter } from 'rxjs/operators';
 
 import { DistributiveOmit } from '@model/generic.model';
-import {
-  reducer as testReducer,
-  State as TestState, 
-  Action as TestAction,
-} from './test.duck';
-import {
-  reducer as editorReducer,
-  State as EditorState, 
-  Action as EditorAction,
-  Thunk as EditorThunk,
-  epic as editorEpic,
-} from './editor.duck';
-import {
-  reducer as devEnvReducer,
-  State as DevEnvState, 
-  Action as DevEnvAction,
-  Thunk as DevEnvThunk,
-  epic as devEnvEpic,
-} from './dev-env.duck';
+
 import {
   reducer as bipartiteReducer,
   State as BipartiteState, 
@@ -34,12 +16,38 @@ import {
   Action as BlogAction,
   Thunk as BlogThunk,
 } from './blog.duck';
+import {
+  reducer as devEnvReducer,
+  State as DevEnvState, 
+  Action as DevEnvAction,
+  Thunk as DevEnvThunk,
+  epic as devEnvEpic,
+} from './dev-env.duck';
+import {
+  reducer as editorReducer,
+  State as EditorState, 
+  Action as EditorAction,
+  Thunk as EditorThunk,
+  epic as editorEpic,
+} from './editor.duck';
+import {
+  reducer as geomReducer,
+  State as GeomState, 
+  Action as GeomAction,
+  Thunk as GeomThunk,
+} from './geom.duck';
+import {
+  reducer as testReducer,
+  State as TestState, 
+  Action as TestAction,
+} from './test.duck';
 
 export interface RootState {
   bipartite: BipartiteState;
   blog: BlogState;
   devEnv: DevEnvState;
   editor: EditorState;
+  geom: GeomState;
   test: TestState;
 }
 
@@ -48,6 +56,7 @@ export type RootAction = (
   | BlogAction
   | DevEnvAction
   | EditorAction
+  | GeomAction
   | TestAction
 );
 
@@ -56,13 +65,15 @@ export type RootThunk = (
   | BlogThunk
   | DevEnvThunk
   | EditorThunk
+  | GeomThunk
 );
 
 export const getRootThunks = () => [
-  ...Object.values(BlogThunk),
-  ...Object.values(EditorThunk),
-  ...Object.values(DevEnvThunk),
   ...Object.values(BipartiteThunk),
+  ...Object.values(BlogThunk),
+  ...Object.values(DevEnvThunk),
+  ...Object.values(EditorThunk),
+  ...Object.values(GeomThunk),
 ];
 
 export type Dispatchable = (
@@ -75,6 +86,7 @@ const createRootReducer = () => combineReducers<RootState>({
   blog: blogReducer,
   devEnv: devEnvReducer,
   editor: editorReducer,
+  geom: geomReducer as any,
   test: testReducer,
 });
 
