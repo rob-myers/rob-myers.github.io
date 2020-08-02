@@ -7,7 +7,7 @@ const DevEditor = dynamic(import('@components/dev-env/dev-editor'), { ssr: false
 // react-reverse-portal incompatible with SSR
 const DevApp = dynamic(import('@components/dev-env/dev-app'), { ssr: false });
 
-const DevEnv: React.FC<Props> = ({ appRoot, envKey }) => {
+const DevEnv: React.FC<Props> = ({ appRoot, scssRoot, envKey }) => {
   const ready = useSelector(({ devEnv }) => devEnv.flag.initialized);
 
   return (
@@ -16,6 +16,12 @@ const DevEnv: React.FC<Props> = ({ appRoot, envKey }) => {
         {ready && <DevEditor
           panelKey={`app.tsx@${envKey}`}
           filename={appRoot}
+        />}
+      </div>
+      <div className={css.filePanel}>
+        {ready && <DevEditor
+          panelKey={`index.scss@${envKey}`}
+          filename={scssRoot}
         />}
       </div>
       <div className={css.appPanel}>
@@ -30,6 +36,7 @@ const DevEnv: React.FC<Props> = ({ appRoot, envKey }) => {
 
 interface Props {
   appRoot: string;
+  scssRoot: string;
   envKey: string;
 }
 

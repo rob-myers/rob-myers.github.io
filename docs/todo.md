@@ -2,13 +2,16 @@
 
 See [blog notes](./blog.md).
 
-Although we provide a development environment, this is not our objective.
+Although we provide development environments, this is not our objective.
 - We'll represent worlds using `react` e.g. level geometry via React components.
-- The dev env will permit the user to interact with the world. 
-- Rather than developing a UI or CLI, we'll make a "Game AI Editor" by providing a suitable hot-reloading react project.
+- Dev envs will permit interact with the world. 
+- They'll provide a malleable 'UI' via react hot reloading.
 
 # Fresh start @ August 2020
 
+[ ] multiple layouts for `DevEnv`; support additional files
+[ ] standard apps/components persist via portals too
+[x] dev-env includes scss
 [x] mirroring i.e. get intro/bipartite working in main codebase
 [ ] typescript inside mdx?
 [x] simultaneous apps from different packages
