@@ -181,7 +181,11 @@ export function computeTsImportExportErrors(
       if (!(resolved in filenames)) {
         errors.push({ key: 'require-scss-exists', interval, label: value });
       }
-    } else if (!(`${resolved}.tsx` in filenames) && !(`${resolved}.ts` in filenames)) {
+    } else if (
+      !(`${resolved}.tsx` in filenames)
+      && !(`${resolved}.ts` in filenames)
+      && !(`${resolved}.d.ts` in filenames)
+    ) {
       console.error({ absPath: analyzed.filename, moduleSpecifier: value, resolved  })
       errors.push({ key: 'require-file-exists', interval, label: value });
     }
