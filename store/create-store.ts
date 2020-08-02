@@ -104,6 +104,7 @@ export const initializeStore = (preloadedState?: RootState) => {
     preloadedState,
     composeWithDevTools({
       shouldHotReload: false,
+      maxAge: 200,
       serialize: {
         // Handle huge/cyclic objects by redacting them
         replacer,
