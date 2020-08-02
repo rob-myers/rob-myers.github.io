@@ -132,8 +132,7 @@ export const Thunk = {
         dispatch(Act.storeSyntaxWorker({ worker: redact(syntaxWorker) }));
         syntaxWorker.postMessage({ key: 'request-status' });
         // await awaitWorker('worker-ready', syntaxWorker);
-        // await dispatch(Thunk.loadGlobalTypes({}));
-        dispatch(Thunk.loadGlobalTypes({}));
+        await dispatch(Thunk.loadGlobalTypes({}));
       }
 
       const monacoModel = dispatch(Thunk.ensureMonacoModel({
@@ -349,7 +348,9 @@ export const Thunk = {
         preserveConstEnums: true,
         noImplicitThis: true,
         allowNonTsExtensions: true,
-        target: typescript.ScriptTarget.ES2015,
+        // However, monaco-editor only provide ES2015 types
+        // https://stackoverflow.com/a/58944783/2917822
+        target: typescript.ScriptTarget.ES2020,
         jsx: typescript.JsxEmit.React,
         module: typescript.ModuleKind.ESNext,
         baseUrl: 'file:///',
@@ -359,7 +360,7 @@ export const Thunk = {
           // Our own notion of package
           '@package/*': ['package/*'],
           // Used by our react-redux.d.ts
-          // We move files package/types/* to the root in fetchPackages
+          // We move package/types/* to the root in fetchPackages
           '@reducer/*': ['./*'],
         },
         declaration: true, // Generate d.ts content in `emitOutput.outputFiles[1]`

@@ -5,17 +5,32 @@ import { EmitOutput } from './monaco-typescript';
 export class MonacoService {
 
   public async loadGlobalTypes(typescriptDefaults: TypescriptDefaults) {
-    typescriptDefaults.addExtraLib(
-      //@ts-ignore
-      (await import('!raw-loader!@types/react/index.d.ts')).default,
-      'file:///node_modules/@types/react/index.d.ts',
-    );
-    typescriptDefaults.addExtraLib(
-      `declare module '*.scss' {
-        const content: {[className: string]: string};
-        export default content;
-      }`,
-    );
+    await Promise.all([
+      /**
+       * Support Array.flatMap
+       */
+      (async () => typescriptDefaults.addExtraLib(
+        //@ts-ignore
+        (await import('!raw-loader!./lib.es2019.array.d.ts')).default,
+      ))(),
+      /**
+       * React typings.
+       */
+      (async () => typescriptDefaults.addExtraLib(
+        //@ts-ignore
+        (await import('!raw-loader!@types/react/index.d.ts')).default,
+        'file:///node_modules/@types/react/index.d.ts',
+      ))(),
+      /**
+       * Scss modules.
+       */
+      Promise.resolve(typescriptDefaults.addExtraLib(
+        `declare module '*.scss' {
+          const content: {[className: string]: string};
+          export default content;
+        }`,
+      )),
+    ]);
   }
 
   /**
