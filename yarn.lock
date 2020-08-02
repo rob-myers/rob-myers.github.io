@@ -1490,6 +1490,18 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
+"@flatten-js/core@^1.2.9":
+  version "1.2.9"
+  resolved "https://registry.yarnpkg.com/@flatten-js/core/-/core-1.2.9.tgz#1b41a99774067bce8260f832c7fb803f7b63e36e"
+  integrity sha512-uNQVj5ZvgwG7fmrpYBxpynqNaKP0IdJgvizc95Sa8Pmu+3vv/fheI8wfJRko89vRNglS02zWYunNDNndHANNNQ==
+  dependencies:
+    "@flatten-js/interval-tree" "^1.0.11"
+
+"@flatten-js/interval-tree@^1.0.11":
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/@flatten-js/interval-tree/-/interval-tree-1.0.11.tgz#1864a3c2ec7972e28dd1eeb26f82b609590baa15"
+  integrity sha512-gp9mS5d7QTcjE9mTG3hoiC82q1MjqX+nrAlKODkj45YXWMhR/j/OHStTVw9qRTUEiq6mzspE8iFi3JTAg8s7Pw==
+
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.0.0.tgz#10602de5570baea82f8afbfa2630b24e7a8cfe5b"
