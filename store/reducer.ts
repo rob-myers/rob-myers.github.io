@@ -28,9 +28,16 @@ import {
   Action as BipartiteAction,
   Thunk as BipartiteThunk,
 } from './bipartite.duck';
+import {
+  reducer as blogReducer,
+  State as BlogState, 
+  Action as BlogAction,
+  Thunk as BlogThunk,
+} from './blog.duck';
 
 export interface RootState {
   bipartite: BipartiteState;
+  blog: BlogState;
   devEnv: DevEnvState;
   editor: EditorState;
   test: TestState;
@@ -38,6 +45,7 @@ export interface RootState {
 
 export type RootAction = (
   | BipartiteAction
+  | BlogAction
   | DevEnvAction
   | EditorAction
   | TestAction
@@ -45,11 +53,13 @@ export type RootAction = (
 
 export type RootThunk = (
   | BipartiteThunk
+  | BlogThunk
   | DevEnvThunk
   | EditorThunk
 );
 
 export const getRootThunks = () => [
+  ...Object.values(BlogThunk),
   ...Object.values(EditorThunk),
   ...Object.values(DevEnvThunk),
   ...Object.values(BipartiteThunk),
@@ -62,6 +72,7 @@ export type Dispatchable = (
 
 const createRootReducer = () => combineReducers<RootState>({
   bipartite: bipartiteReducer as any,
+  blog: blogReducer,
   devEnv: devEnvReducer,
   editor: editorReducer,
   test: testReducer,

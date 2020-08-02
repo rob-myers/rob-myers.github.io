@@ -49,7 +49,7 @@ const initialState: State = {
   saved: {},
 };
 
-export const Act = {
+const Act = {
   addAppPortal: (input: Omit<Dev.AppPortal, 'rendered'>) =>
     createAct('[dev-env] add app portal', input),
   addFileCleanups: (filename: string, cleanups: (() => void)[]) =>
@@ -856,119 +856,111 @@ export const reducer = (state = initialState, act: Action): State => {
   }
 };
 
-/**
- * Monaco should only start loading after devEnv initialized, when
- * all files should be available. We also kick off transpilation.
- */
-const initializeMonacoModels = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs('[editor] set monaco loaded'),
-    filter((_) => state$.value.devEnv.flag.initialized),
-    flatMap((_) => {
-      return [
-          ...Object.values(state$.value.devEnv.file).flatMap((file) => [
-            // Models may not exist yet e.g. DevEditor not loaded
-            EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
-            // Initial transpile when initialized
-            ...file.ext === 'scss'
-              ? [Thunk.tryTranspileStyleModel({ filename: file.key })]
-              : [Thunk.tryTranspileCodeModel({ filename: file.key })]
-          ]),
-        ]
-      }
+const Epics = {
+  /**
+   * Monaco should only start loading after devEnv initialized, when
+   * all files should be available. We also kick off transpilation.
+   */
+  initializeMonacoModels: createEpic(
+    (action$, state$) => action$.pipe(
+      filterActs('[editor] set monaco loaded'),
+      filter((_) => state$.value.devEnv.flag.initialized),
+      flatMap((_) => {
+        return [
+            ...Object.values(state$.value.devEnv.file).flatMap((file) => [
+              // Models may not exist yet e.g. DevEditor not loaded
+              EditorThunk.ensureMonacoModel({ filename: file.key, code: file.contents }),
+              // Initial transpile when initialized
+              ...file.ext === 'scss'
+                ? [Thunk.tryTranspileStyleModel({ filename: file.key })]
+                : [Thunk.tryTranspileCodeModel({ filename: file.key })]
+            ]),
+          ]
+        }
+      ),
     ),
   ),
-);
-
-const triggerBootstrapApps = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs(
-      '[dev-env] store code transpilation',
-      '[dev-env] app portal is ready',
-    ),
-    flatMap((act) => {
-      const { file, appMeta } = state$.value.devEnv;
-      
-      if (act.type === '[dev-env] store code transpilation') {
-        if (act.pay.filename.endsWith('.tsx')) {
-          const appRoot = Dev.filenameToAppRoot(act.pay.filename);
-          const reachableJsFiles = Dev.getReachableJsFiles(appRoot, file);
-
-          if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
-            return []; // Ignore files unreachable from root (TODO remove)
-          } else if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
-            // All reachable code locally valid so try bootstrap app
-            return [Thunk.bootstrapApps({ appRoot })];
-          } else if (appMeta[appRoot].valid) {
-            return [Act.setAppValid({ appRoot, isValid: false })];
+  triggerBootstrapApps: createEpic(
+    (action$, state$) => action$.pipe(
+      filterActs(
+        '[dev-env] store code transpilation',
+        '[dev-env] app portal is ready',
+      ),
+      flatMap((act) => {
+        const { file, appMeta } = state$.value.devEnv;
+        
+        if (act.type === '[dev-env] store code transpilation') {
+          if (act.pay.filename.endsWith('.tsx')) {
+            const appRoot = Dev.filenameToAppRoot(act.pay.filename);
+            const reachableJsFiles = Dev.getReachableJsFiles(appRoot, file);
+  
+            if (!reachableJsFiles.includes(file[act.pay.filename] as Dev.CodeFile)) {
+              return []; // Ignore files unreachable from root (TODO remove)
+            } else if (reachableJsFiles.every((f) => Dev.isFileValid(f))) {
+              // All reachable code locally valid so try bootstrap app
+              return [Thunk.bootstrapApps({ appRoot })];
+            } else if (appMeta[appRoot].valid) {
+              return [Act.setAppValid({ appRoot, isValid: false })];
+            }
+          }
+        } else if (act.type === '[dev-env] app portal is ready') {
+          if (appMeta[act.args.appRoot].valid) {
+            return [Thunk.bootstrapAppInstance({ panelKey: act.args.panelKey })];
           }
         }
-      } else if (act.type === '[dev-env] app portal is ready') {
-        if (appMeta[act.args.appRoot].valid) {
-          return [Thunk.bootstrapAppInstance({ panelKey: act.args.panelKey })];
-        }
-      }
-      return [];
-    }),
+        return [];
+      }),
+    ),
   ),
-);
-
-/**
- * Currently we append a <style> for *.scss, even if unused by any App.
- * We try retranspiling any immediate ancestor i.e. parent.
- */
-const triggerBootstrapStyles = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs('[dev-env] store style transpilation'),
-    flatMap(({ pay: { filename } }) => {
-      const file = pluck(state$.value.devEnv.file, ({ ext }) => ext === 'scss') as KeyedLookup<Dev.PrefixedStyleFile>;
-      const parentFiles = Object.values(file).filter(({ key, pathIntervals }) =>
-        key !== filename && pathIntervals.some(({ value }) => value === `./${filename}`));
-      return [
-        Thunk.bootstrapStyles({ filename }),
-        ...parentFiles.map(({ key }) => Thunk.tryTranspileStyleModel({ filename: key })),
-      ];
-    }),
-  ),
-);
-
-const triggerInitialize = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs('persist/REHYDRATE' as any), // Also triggered on change page
-    filter(_ => typeof window !== 'undefined' && !state$.value.devEnv.flag.initialized),
-    map(() => Thunk.initialize({})),
-  ),
-);
-
-/**
- * `devEnv.file[filename]` should exist before monaco model does.
- * Currently we create files before `devEnv.flag.initialized`,
- * loading each `DevEditor` after `devEnv.flag.initialized`.
- */
-const watchMonacoModel = createEpic(
-  (action$, state$) => action$.pipe(
-    filterActs('[editor] store monaco model'),
-    flatMap(({ pay: { model, filename, modelKey } }) => {
-      const { file } = state$.value.devEnv;
-      if (file[filename]) {// Initially load file contents
-        model.setValue(file[filename].contents);
+  /**
+   * Currently we append a <style> for *.scss, even if unused by any App.
+   * We try retranspiling any immediate ancestor i.e. parent.
+   */
+  triggerBootstrapStyles: createEpic(
+    (action$, state$) => action$.pipe(
+      filterActs('[dev-env] store style transpilation'),
+      flatMap(({ pay: { filename } }) => {
+        const file = pluck(state$.value.devEnv.file, ({ ext }) => ext === 'scss') as KeyedLookup<Dev.PrefixedStyleFile>;
+        const parentFiles = Object.values(file).filter(({ key, pathIntervals }) =>
+          key !== filename && pathIntervals.some(({ value }) => value === `./${filename}`));
         return [
-          ...(file[filename].ext === 'scss' ? [Thunk.createCssModule({ filename })] : []),
-          // Setup tracking
-          Thunk.setupRememberFileContents({ modelKey, filename }),
-          Thunk.setupFileTranspile({ modelKey, filename }),
+          Thunk.bootstrapStyles({ filename }),
+          ...parentFiles.map(({ key }) => Thunk.tryTranspileStyleModel({ filename: key })),
         ];
-      }
-      console.warn(`Ignored file "${filename}" (not found in state)`);
-      return [];
-    }),
+      }),
+    ),
   ),
-);
+  triggerInitialize: createEpic(
+    (action$, state$) => action$.pipe(
+      filterActs('persist/REHYDRATE' as any), // Also triggered on change page
+      filter(_ => typeof window !== 'undefined' && !state$.value.devEnv.flag.initialized),
+      map(() => Thunk.initialize({})),
+    ),
+  ),
+  /**
+   * `devEnv.file[filename]` should exist before monaco model does.
+   * Currently we create files before `devEnv.flag.initialized`,
+   * loading each `DevEditor` after `devEnv.flag.initialized`.
+   */
+  watchMonacoModel: createEpic(
+    (action$, state$) => action$.pipe(
+      filterActs('[editor] store monaco model'),
+      flatMap(({ pay: { model, filename, modelKey } }) => {
+        const { file } = state$.value.devEnv;
+        if (file[filename]) {// Initially load file contents
+          model.setValue(file[filename].contents);
+          return [
+            ...(file[filename].ext === 'scss' ? [Thunk.createCssModule({ filename })] : []),
+            // Setup tracking
+            Thunk.setupRememberFileContents({ modelKey, filename }),
+            Thunk.setupFileTranspile({ modelKey, filename }),
+          ];
+        }
+        console.warn(`Ignored file "${filename}" (not found in state)`);
+        return [];
+      }),
+    ),
+  ),
+};
 
-export const epic = combineEpics(
-  initializeMonacoModels,
-  triggerBootstrapApps,
-  triggerBootstrapStyles,
-  triggerInitialize,
-  watchMonacoModel,
-);
+export const epic = combineEpics(...Object.values(Epics));

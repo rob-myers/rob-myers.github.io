@@ -5,13 +5,15 @@ import { createEpicMiddleware } from 'redux-observable';
 import { createTransform, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import { NEXT_REDUX_STORE } from '@public/constants';
-import { State as DevEnvState } from './dev-env.duck';
-import { State as EditorState } from './editor.duck';
-import createRootReducer, { RootAction, rootEpic, RootState, RootThunk, RootActOrThunk, getRootThunks } from './reducer';
-import { State as TestState } from './test.duck';
 import { mapValues } from '@model/generic.model';
 import { getWindow } from '@model/dom.model';
+import { NEXT_REDUX_STORE } from '@public/constants';
+import createRootReducer, { RootAction, rootEpic, RootState, RootThunk, RootActOrThunk, getRootThunks } from './reducer';
+import { State as BipartiteState } from './bipartite.duck';
+import { State as BlogState } from './blog.duck';
+import { State as DevEnvState } from './dev-env.duck';
+import { State as EditorState } from './editor.duck';
+import { State as TestState } from './test.duck';
 
 const storeVersion = 0.02;
 
@@ -28,28 +30,19 @@ const createPersistedReducer = () => persistReducer({
   },
   storage,
   transforms: [
-    createTransform<TestState, TestState & { lastPing: null }>(
-      ({ count }, _key) => ({
-        count,
-        lastPing: null
-      }),
-      (state, _key) => state,
-      { whitelist: ['test'] }
-    ),
-    createTransform<EditorState, EditorState>(
+    createTransform<BipartiteState, BipartiteState>(
       (_, _key) => ({
-        editor: {},
-        internal: null,
-        monacoLoaded: false,
-        monacoLoading: false,
-        model: {},
-        monacoService: null,
-        globalTypesLoaded: false,
-        sassWorker: null,
-        syntaxWorker: null,
+        // Empty
       }),
       (state, _key) => state,
-      { whitelist: ['editor'] }
+      { whitelist: ['bipartite'] }
+    ),
+    createTransform<BlogState, BlogState>(
+      (_, _key) => ({
+        portal: {},
+      }),
+      (state, _key) => state,
+      { whitelist: ['blog'] }
     ),
     createTransform<DevEnvState, DevEnvState>(
       ({ file, saved, package: toPackage }, _key) => ({
@@ -84,6 +77,29 @@ const createPersistedReducer = () => persistReducer({
       }),
       (state, _key) => state,
       { whitelist: ['devEnv'] },
+    ),
+    createTransform<EditorState, EditorState>(
+      (_, _key) => ({
+        editor: {},
+        internal: null,
+        monacoLoaded: false,
+        monacoLoading: false,
+        model: {},
+        monacoService: null,
+        globalTypesLoaded: false,
+        sassWorker: null,
+        syntaxWorker: null,
+      }),
+      (state, _key) => state,
+      { whitelist: ['editor'] }
+    ),
+    createTransform<TestState, TestState & { lastPing: null }>(
+      ({ count }, _key) => ({
+        count,
+        lastPing: null
+      }),
+      (state, _key) => state,
+      { whitelist: ['test'] }
     ),
   ],
 }, createRootReducer());
@@ -150,15 +166,15 @@ function refreshReducersAndThunks() {
   }
 }
 
-if (module.hot) {
-  module.hot.accept();
-  module.hot.addStatusHandler(refreshHandler);
-}
-
 function refreshHandler(status: string) {
   // console.log({ status });
   if (status === 'idle') {
     refreshReducersAndThunks();
   }
   module.hot?.removeStatusHandler(refreshHandler);
+}
+
+if (module.hot) {
+  module.hot.accept();
+  module.hot.addStatusHandler(refreshHandler);
 }
