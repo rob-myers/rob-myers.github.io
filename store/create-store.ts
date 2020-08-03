@@ -14,6 +14,8 @@ import { State as BlogState } from './blog.duck';
 import { State as DevEnvState } from './dev-env.duck';
 import { State as EditorState } from './editor.duck';
 import { State as TestState } from './test.duck';
+import { State as GeomState } from './geom.duck';
+import { GeomService } from '@model/geom/geom.service';
 
 const storeVersion = 0.02;
 
@@ -85,13 +87,23 @@ const createPersistedReducer = () => persistReducer({
         monacoLoaded: false,
         monacoLoading: false,
         model: {},
-        monacoService: null,
+        monacoService: null, // Keep out of main bundle
         globalTypesLoaded: false,
         sassWorker: null,
         syntaxWorker: null,
       }),
       (state, _key) => state,
       { whitelist: ['editor'] }
+    ),
+    createTransform<GeomState, Omit<GeomState, 'service'>>(
+      ({}, _key) => ({
+        // Forget service
+      }),
+      (state, _key) => ({
+        ...state,
+        service: new GeomService,
+      }),
+      { whitelist: ['geom'] }
     ),
     createTransform<TestState, TestState & { lastPing: null }>(
       ({ count }, _key) => ({

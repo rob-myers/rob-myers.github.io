@@ -115,3 +115,35 @@ export interface VectorJson {
   x: number;
   y: number;
 }
+
+// export type FlattenJson = (
+//   | ArcJson
+//   | BoxJson
+//   | CircleJson
+//   | EdgeJson
+//   | FaceJson
+//   | LineJson
+//   | MultilineJson
+//   | PointJson
+//   | PolygonJson
+//   | RayJson
+//   | SegmentJson
+//   | VectorJson
+// )
+
+// export type FlattenName = FlattenJson['name'];
+
+// export type FlattenClass = (
+//   | Flatten.Arc
+//   | Flatten.Box
+//   | Flatten.Circle
+//   | Flatten.Edge
+//   | Flatten.Face
+//   | Flatten.Line
+//   | Flatten.Multiline
+//   | Flatten.Point
+//   | Flatten.Polygon
+//   | Flatten.Ray
+//   | Flatten.Segment
+//   | Flatten.Vector
+// );
