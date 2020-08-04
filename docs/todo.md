@@ -9,6 +9,7 @@ Although we provide development environments, this is not our objective.
 
 # Fresh start @ August 2020
 
+[x] rename `geom.types.ts` as `geom.types.d.ts` inside runtime
 [ ] multiple layouts for `DevEnv`; support additional files
 [ ] standard apps/components persist via portals too
 [x] dev-env includes scss

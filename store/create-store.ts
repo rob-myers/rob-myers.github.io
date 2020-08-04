@@ -4,20 +4,22 @@ import { createEpicMiddleware } from 'redux-observable';
 import { createTransform, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import { mapValues } from '@model/generic.model';
+import { mapValues, pluck } from '@model/generic.model';
 import { getWindow } from '@model/dom.model';
 import { replacer, RootThunkParams } from '@model/store/redux.model';
+import { GeomService } from '@model/geom/geom.service';
 import { NEXT_REDUX_STORE } from '@public/constants';
-import createRootReducer, { RootAction, rootEpic, RootState, RootThunk, RootActOrThunk, getRootThunks } from './reducer';
+
+import * as Reducer from './reducer';
+import createRootReducer from './reducer';
 import { State as BipartiteState } from './bipartite.duck';
 import { State as BlogState } from './blog.duck';
 import { State as DevEnvState } from './dev-env.duck';
 import { State as EditorState } from './editor.duck';
 import { State as TestState } from './test.duck';
 import { State as GeomState } from './geom.duck';
-import { GeomService } from '@model/geom/geom.service';
 
-const storeVersion = 0.02;
+const storeVersion = 0.03;
 
 const createPersistedReducer = () => persistReducer({
   key: 'primary',
@@ -57,21 +59,22 @@ const createPersistedReducer = () => persistReducer({
         packagesManifest: null,
         package: {},
         /**
-         * Save all files from packages that have been loaded.
+         * Save all files from loaded packages, except 'types'.
          */
         saved: {
           ...saved,
           ...(
             Object.values(toPackage)
-              .filter(x => x.loaded)
+              .filter(x => x.loaded && x.key !== 'types')
               .reduce((agg, pkg) => ({
                 ...agg,
                 [pkg.key]: {
                   ...pkg,
-                  file: mapValues(file, ({ key, contents }) => ({
-                    key,
-                    contents,
-                  })),
+                  file: mapValues(
+                    // Only save files from this package i.e. not from dependencies
+                    pluck(file, ({ key }) => key.startsWith(`package/${pkg.key}`)),
+                    ({ key, contents }) => ({ key, contents })
+                  ),
                 },
               }), {} as typeof toPackage)
           ),
@@ -117,13 +120,13 @@ const createPersistedReducer = () => persistReducer({
 }, createRootReducer());
 
 const epicMiddlewareFactory = () => createEpicMiddleware<
-  RootAction | RootThunk,
-  RootAction | RootThunk,
-  RootState,
+  Reducer.RootAction | Reducer.RootThunk,
+  Reducer.RootAction | Reducer.RootThunk,
+  Reducer.RootState,
   any
 >();
 
-export const initializeStore = (preloadedState?: RootState) => {
+export const initializeStore = (preloadedState?: Reducer.RootState) => {
   const epicMiddleware = epicMiddlewareFactory();
 
   const store = createStore(
@@ -145,7 +148,7 @@ export const initializeStore = (preloadedState?: RootState) => {
     )
   );
   refreshReducersAndThunks();
-  epicMiddleware.run(rootEpic());
+  epicMiddleware.run(Reducer.rootEpic());
   return store;
 };
 
@@ -153,12 +156,15 @@ export type ReduxStore = ReturnType<typeof initializeStore>;
 
 
 /** We store thunks here for better hot-reloading. */
-let thunkLookup = {} as Record<string, RootThunk[keyof RootThunk]>;
+let thunkLookup = {} as Record<
+  string,
+  Reducer.RootThunk[keyof Reducer.RootThunk]
+>;
 
 function createThunkMiddleware() {
   return (params: Omit<RootThunkParams, 'state'>) => // params has { dispatch, getState }
     (next: Dispatch) => // native dispatch
-      (action: RootActOrThunk) => { // received action
+      (action: Reducer.RootActOrThunk) => { // received action
         if ('args' in action && action.type in thunkLookup) {
           return (thunkLookup[action.type] as (args: any) => any)(action.args).thunk(
             { ...params, state: params.getState() },
@@ -171,7 +177,7 @@ function createThunkMiddleware() {
 }
 
 function refreshReducersAndThunks() {
-  thunkLookup = getRootThunks().reduce((agg, fn) => ({ ...agg, [fn.type]: fn }), {});
+  thunkLookup = Reducer.getRootThunks().reduce((agg, fn) => ({ ...agg, [fn.type]: fn }), {});
   const window = getWindow<{ [NEXT_REDUX_STORE]: ReduxStore }>();
   if (window && NEXT_REDUX_STORE in window) {
     window[NEXT_REDUX_STORE].replaceReducer(createPersistedReducer());

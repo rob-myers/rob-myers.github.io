@@ -373,7 +373,7 @@ export const Thunk = {
   ),
   /**
    * Use packages manifest to fetch source files.
-   * We also move the package `types` to the root.
+   * We also modify some files in the 'types' package.
    */
   fetchPackages: createThunk(
     '[dev-env] fetch packages',
@@ -384,12 +384,11 @@ export const Thunk = {
           key: filePath,
           contents: await (await fetch(`/${filePath}`)).text(),
         })));
-        /**
-         * Move `package/types/react-redux.d.ts` to `react-redux.d.ts`,
-         * so monaco-editor resolves it like an npm module.
-         */
         if (packageName === 'types') {
+          // Move react-redux.d.ts to root so monaco-editor resolves it like an npm module
           loadedFiles.find(x => x.key === 'package/types/react-redux.d.ts' && (x.key = 'react-redux.d.ts'));
+          // Rename geom.types.ts as geom.types.d.ts because monaco only uses its types
+          loadedFiles.find(x => x.key === 'package/types/geom.types.ts' && (x.key = 'package/types/geom.types.d.ts'));
         }
 
         dispatch(Act.addPackage({
