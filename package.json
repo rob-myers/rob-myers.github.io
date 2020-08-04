@@ -4,7 +4,6 @@
   "dependencies": {
     "@babel/core": "^7.10.2",
     "@babel/generator": "^7.10.2",
-    "@flatten-js/core": "^1.2.9",
     "bipartite-matching": "^1.0.0",
     "bipartite-vertex-cover": "^1.0.0",
     "cdt2d": "^1.0.0",
@@ -14,6 +13,7 @@
     "maximal-independent-set": "^0.0.0",
     "monaco-editor": "^0.20.0",
     "monaco-typescript": "^3.7.0",
+    "polygon-clipping": "^0.15.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-redux": "^7.2.0",

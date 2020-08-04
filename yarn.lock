@@ -1490,18 +1490,6 @@
   resolved "https://registry.yarnpkg.com/@emotion/weak-memoize/-/weak-memoize-0.2.5.tgz#8eed982e2ee6f7f4e44c253e12962980791efd46"
   integrity sha512-6U71C2Wp7r5XtFtQzYrW5iKFT67OixrSxjI4MptCHzdSVlgabczzqLe0ZSgnub/5Kp4hSbpDB1tMytZY9pwxxA==
 
-"@flatten-js/core@^1.2.9":
-  version "1.2.9"
-  resolved "https://registry.yarnpkg.com/@flatten-js/core/-/core-1.2.9.tgz#1b41a99774067bce8260f832c7fb803f7b63e36e"
-  integrity sha512-uNQVj5ZvgwG7fmrpYBxpynqNaKP0IdJgvizc95Sa8Pmu+3vv/fheI8wfJRko89vRNglS02zWYunNDNndHANNNQ==
-  dependencies:
-    "@flatten-js/interval-tree" "^1.0.11"
-
-"@flatten-js/interval-tree@^1.0.11":
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/@flatten-js/interval-tree/-/interval-tree-1.0.11.tgz#1864a3c2ec7972e28dd1eeb26f82b609590baa15"
-  integrity sha512-gp9mS5d7QTcjE9mTG3hoiC82q1MjqX+nrAlKODkj45YXWMhR/j/OHStTVw9qRTUEiq6mzspE8iFi3JTAg8s7Pw==
-
 "@istanbuljs/load-nyc-config@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@istanbuljs/load-nyc-config/-/load-nyc-config-1.0.0.tgz#10602de5570baea82f8afbfa2630b24e7a8cfe5b"
@@ -9633,6 +9621,13 @@ pnp-webpack-plugin@1.6.4:
   dependencies:
     ts-pnp "^1.1.6"
 
+polygon-clipping@^0.15.1:
+  version "0.15.1"
+  resolved "https://registry.yarnpkg.com/polygon-clipping/-/polygon-clipping-0.15.1.tgz#df231c280e0d337a5854eb45be5ccc59a218bb91"
+  integrity sha512-6tvqlvuSu+CLe0RtS51sG43iU31h4zwyLAESMW/Kv+iNb62lSwxvGJhlLNduS4JTtX3mtBrg8Bbl/QCpC2I+hA==
+  dependencies:
+    splaytree "^3.0.1"
+
 posix-character-classes@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
@@ -11723,6 +11718,11 @@ spdx-license-ids@^3.0.0:
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/spdx-license-ids/-/spdx-license-ids-3.0.5.tgz#3694b5804567a458d3c8045842a6358632f62654"
   integrity sha512-J+FWzZoynJEXGphVIS+XEh3kFSjZX/1i9gFBaWQcB+/tmpe2qUsSBABpcxqxnAxFdiUFEgAX1bjYGQvIZmoz9Q==
+
+splaytree@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/splaytree/-/splaytree-3.0.1.tgz#038d8e6d597a3a1893e8e82693a0f4413b3559f7"
+  integrity sha512-WvQIHRDXLSVn72xjlIG/WGhv/4QO3m+iY2TpVdFRaXd1+/vkNlpkpw1QaNH5taghF9eWXDHWMWnzXyicR8d6ig==
 
 split-string@^3.0.1, split-string@^3.0.2:
   version "3.1.0"

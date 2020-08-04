@@ -1,9 +1,8 @@
-import Flatten from '@flatten-js/core';
 import { createThunk, ActionsUnion } from '@model/store/redux.model';
 import { GeomService } from '@model/geom/geom.service';
-import { State as GeomState, PolygonJson, EdgeJson } from '@public-reducer/geom.types';
+import * as Geom from '@public-reducer/geom.types';
 
-export interface State extends GeomState {
+export interface State extends Geom.State {
   service: GeomService; // Invisible to runtime state
 }
 
@@ -18,11 +17,22 @@ export type Action = ActionsUnion<typeof Act>;
 export const Thunk = {
   createPolygon: createThunk(
     '[geom] create polygon',
-    ({ state: { geom } }, json: PolygonJson): Flatten.Polygon => {
-      return geom.service.toPolygon(json);
+    (_, poly: Geom.PolygonJson) => Geom.Polygon.from(poly),
+  ),
+  insetPolygon: createThunk(
+    '[geom] inset polygon',
+    ({ state: { geom } }, input: { poly: Geom.PolygonJson; amount: number }) => {
+      const poly = Geom.Polygon.from(input.poly);
+      return geom.service.inset(poly, input.amount);
     }
   ),
-
+  rectDecompose: createThunk(
+    '[geom] decompose as rects',
+    ({ state: { geom } }, polyJson: Geom.PolygonJson): Geom.Rect[] => {
+      const poly = Geom.Polygon.from(polyJson);
+      return geom.service.computeRectPartition(poly);
+    },
+  ),
 };
 
 export type Thunk = ActionsUnion<typeof Thunk>;

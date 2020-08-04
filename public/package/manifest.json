@@ -23,9 +23,7 @@
 			"key": "types",
 			"files": [
 				"package/types/bipartite.types.d.ts",
-				"package/types/flatten-js/core.d.ts",
-				"package/types/flatten-js/interval-tree.d.ts",
-				"package/types/geom.types.d.ts",
+				"package/types/geom.types.ts",
 				"package/types/react-redux.d.ts",
 				"package/types/test.types.d.ts"
 			],
