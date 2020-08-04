@@ -9,6 +9,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { ReduxStore } from '@store/create-store';
 import withRedux from '@store/with-redux';
 import AppPortals from '@components/layout/app-portals';
+import BlogPortals from '@components/blog/blog-portals';
 
 const RootApp: React.FC<RootProps> = ({
   Component,
@@ -30,9 +31,9 @@ const RootApp: React.FC<RootProps> = ({
             }
           `}</style>
         </Head>
-        <AppPortals>
-          <Component {...pageProps} />
-        </AppPortals>
+        <Component {...pageProps} />
+        <AppPortals />
+        <BlogPortals />
       </PersistGate>
     </Provider>
   );

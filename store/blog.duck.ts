@@ -3,20 +3,24 @@ import * as Redux from '@model/store/redux.model';
 import { KeyedLookup } from '@model/generic.model';
 
 export interface State {
-  portal: KeyedLookup<ComponentPortal>;
+  portal: KeyedLookup<BlogAppPortal>;
 }
 
-interface ComponentPortal {
+interface BlogAppPortal {
+  /** Portal key */
   key: string;
+  /** Blog app identifier */
+  componentKey: BlogAppKey;
   portalNode: Redux.Redacted<portals.HtmlPortalNode>;
 }
+type BlogAppKey = 'intro' | 'bipartite';
 
 const initialState: State = {
   portal: {},
 };
 
 const Act = {
-  addComponentPortal: (input: ComponentPortal) =>
+  addComponentPortal: (input: BlogAppPortal) =>
     Redux.createAct('[blog] add component portal', input),
   removeComponentPortal: (input: { portalKey: string }) =>
     Redux.createAct('[blog] remove component portal', input),
@@ -27,10 +31,13 @@ export type Action = Redux.ActionsUnion<typeof Act>;
 export const Thunk = {
   createComponentPortal: Redux.createThunk(
     '[blog] create component portal',
-    ({ dispatch }, { portalKey }: { portalKey: string }) => {
+    ({ dispatch }, { portalKey, componentKey }: {
+      componentKey: BlogAppKey;
+      portalKey: string;
+    }) => {
       const portalNode = Redux.redact(portals.createHtmlPortalNode());
       portalNode.element.style.overflow = 'auto';
-      dispatch(Act.addComponentPortal({ key: portalKey, portalNode }));
+      dispatch(Act.addComponentPortal({ key: portalKey, componentKey, portalNode }));
     },
   ),
 };

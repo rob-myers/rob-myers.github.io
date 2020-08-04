@@ -7,11 +7,11 @@ declare module 'react-redux' {
   namespace Bipartite {
     export * from '@reducer/bipartite.types';
   }
-  namespace Test {
-    export * from '@reducer/test.types';
-  }
   namespace Geom {
     export * from '@reducer/geom.types';
+  }
+  namespace Test {
+    export * from '@reducer/test.types';
   }
 
   /** @internal */
