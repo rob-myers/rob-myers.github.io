@@ -1,4 +1,4 @@
-import { testNever, last as lastEl } from "@model/generic.model";
+import { testNever, last as lastEl } from "../../generic.model";
 import Vertex from "./vertex";
 import Polygon from "./polygon";
 import Point from "./point";
@@ -137,7 +137,6 @@ class PointLocation {
       default:
         throw testNever(this.type);
     }
-
   }
 
   public notEquals(other: PointLocation) {
@@ -146,14 +145,20 @@ class PointLocation {
 
 }
 
-function lowerBound<K extends number, V>(map: Map<K, V>, key: K): K | null {
-  for (const k of map.keys())
-    if (k >= key) return k;
-  return null;
+/** Index of first key `k` not smaller than `key`. */
+function lowerBoundIndex<K extends number, V>(map: Map<K, V>, key: K): number | null {
+  const found = [...map.keys()].findIndex(k => k >= key);
+  return found === -1 ? null : found;
+}
+/** Index of first key `k` greater than `key`. */
+function upperBoundIndex<K extends number, V>(map: Map<K, V>, key: K): number | null {
+  const found = [...map.keys()].findIndex(k => k > key);
+  return found === -1 ? null : found;
 }
 function upperBound<K extends number, V>(map: Map<K, V>, key: K): K | null {
-  for (const k of map.keys())
+  for (const k of map.keys()) {
     if (k > key) return k;
+  }
   return null;
 }
 
@@ -204,23 +209,32 @@ export default class Mesh {
         adjPolyIds.filter(x => x !== -1).length <= 1,
       );
     });
+
+    this.precalc_point_location();
   }
 
   // void precalc_point_location();
   precalc_point_location() {
-    for (const v of this.mesh_vertices) {
-      this.slabs.set(v.p.x, []); // initialises the vector
-    }
+    // Ensure the iterator `this.slabs` is aligned to key-ordering
+    const pairs = this.mesh_vertices.map(v => [v.p.x, []] as [number, number[]]);
+    pairs.sort((a, b) => a[0] < b[0] ? -1 : 1);
+    this.slabs = new Map(pairs);
+    
+    // Correct below?
     for (let i = 0; i < this.mesh_polygons.length; i++) {
-        const p = this.mesh_polygons[i];
-        const low_it = lowerBound(this.slabs, p.min_x);
-        const high_it = upperBound(this.slabs, p.max_x);
+      const p = this.mesh_polygons[i];
+      // console.log({ p });
+      const lowIndex = lowerBoundIndex(this.slabs, p.min_x);
+      const highIndex = upperBoundIndex(this.slabs, p.max_x)??(this.slabs.size - 1);
+      // console.log({ i, low_it: lowIndex, high_it: highIndex });
 
-        if (!low_it || !high_it) continue;
-
-        for (let it = low_it; it != high_it; it++) {
-          this.slabs.get(it)!.push(i);
-        }
+      if (lowIndex === null) {
+        continue;
+      }
+      const pairs = [...this.slabs.entries()]; 
+      for (let it = lowIndex; it <= highIndex; it++) {
+        pairs[it][1].push(i);
+      }
     }
     for (const [, inner] of this.slabs) {
       inner.sort((a: number, b: number) => {
@@ -235,7 +249,7 @@ export default class Mesh {
         return as < bs ? -1 : 1;
       });
     }
-}
+  }
   
   // PointLocation get_point_location(Point& p);
   // Finds where the point P lies in the mesh.
@@ -248,97 +262,104 @@ export default class Mesh {
     ) {
       return new PointLocation(PointLocationType.NOT_ON_MESH, -1, -1, -1, -1);
     }
+
+    // Check if the 1st key above p.x is the least key (we previously sorted keys)
     let slabKey = upperBound(this.slabs, p.x)!;
     if (slabKey === this.slabs.keys().next().value) {
       return new PointLocation(PointLocationType.NOT_ON_MESH, -1, -1, -1, -1);
     }
+
     // Find previous slab key
     slabKey = [...this.slabs.keys()].find((_, i, keys) => keys[i + 1] === slabKey)!;
     const polys = this.slabs.get(slabKey)!;
     
-    const lastPoly = lastEl(polys)!;
-    const close_it = polys.find(x => {
+    let closeIndex = polys.findIndex(x => {
       // Sorts based on the midpoints.
       // If tied, sort based on width of poly.
       const poly = this.mesh_polygons[x];
       return !(poly.min_y + poly.max_y < p.y * 2);
-    }) || lastPoly;
-    const close_index = close_it - polys[0] - Number(close_it === lastPoly);
+    });
+    closeIndex -= Number(closeIndex === polys.length - 1);
 
     // The plan is to take an index and repeatedly do:
     // +1, -2, +3, -4, +5, -6, +7, -8, ...
     // until it hits the edge. If it hits an edge, instead iterate normally.
     const ps = polys.length;
-    let i = close_index;
+    let i = closeIndex;
     let next_delta = 1;
     let walk_delta = 0; // way to go when walking normally
 
+    
+    // console.log({ i, ps });
     while (i >= 0 && i < ps) {
-        const polygon = polys[i];
-        const result = this.poly_contains_point(polygon, p);
-        switch (result.type) {
-          case PolyContainmentType.OUTSIDE:
-              // Does not contain: try the next one.
-              break;
-          case PolyContainmentType.INSIDE:
-              // This one strictly contains the point.
-              return new PointLocation(PointLocationType.IN_POLYGON, polygon, -1, -1, -1);
-          case PolyContainmentType.ON_EDGE:
-              // This one lies on the edge.
-              // Chek whether the other one is -1.
-              return new PointLocation(
-                  result.adjacent_poly === -1
-                    ? PointLocationType.ON_MESH_BORDER
-                    : PointLocationType.ON_EDGE
-                  ,
-                  polygon,
-                  result.adjacent_poly,
-                  result.vertex1,
-                  result.vertex2
-              );
-          case PolyContainmentType.ON_VERTEX: {
-            // This one lies on a corner.
-            const v = this.mesh_vertices[result.vertex1];
-            if (v.is_corner) {
-              if (v.is_ambig) {
-                return new PointLocation(PointLocationType.ON_CORNER_VERTEX_AMBIG, -1, -1,
-                  result.vertex1, -1);
-              } else {
-                return new PointLocation(PointLocationType.ON_CORNER_VERTEX_UNAMBIG,
-                  polygon, -1, result.vertex1, -1);
-              }
-            } else {
-              return new PointLocation(
-                PointLocationType.ON_NON_CORNER_VERTEX,
-                polygon, -1,
+      const polygon = polys[i];
+      const result = this.poly_contains_point(polygon, p);
+      // console.log({ polygon, p, result });
+      
+      switch (result.type) {
+        case PolyContainmentType.OUTSIDE:
+            // Does not contain: try the next one.
+            break;
+        case PolyContainmentType.INSIDE:
+            // This one strictly contains the point.
+            return new PointLocation(PointLocationType.IN_POLYGON, polygon, -1, -1, -1);
+        case PolyContainmentType.ON_EDGE:
+            // This one lies on the edge.
+            // Chek whether the other one is -1.
+            return new PointLocation(
+                result.adjacent_poly === -1
+                  ? PointLocationType.ON_MESH_BORDER
+                  : PointLocationType.ON_EDGE
+                ,
+                polygon,
+                result.adjacent_poly,
+                result.vertex1,
+                result.vertex2
+            );
+        case PolyContainmentType.ON_VERTEX: {
+          // This one lies on a corner.
+          const v = this.mesh_vertices[result.vertex1];
+          if (v.is_corner) {
+            if (v.is_ambig) {
+              return new PointLocation(PointLocationType.ON_CORNER_VERTEX_AMBIG, -1, -1,
                 result.vertex1, -1);
+            } else {
+              return new PointLocation(PointLocationType.ON_CORNER_VERTEX_UNAMBIG,
+                polygon, -1, result.vertex1, -1);
             }
-          }
-
-          default:
-            // This should not be reachable
-            throw testNever(result.type);
-        }
-
-        // do stuff
-        if (walk_delta == 0) {
-          const next_i = i + next_delta * (2 * (next_delta & 1) - 1);
-          if (next_i < 0) {
-            // was going to go too far to the left.
-            // start going right
-            walk_delta = 1;
-          } else if (next_i >= ps) {
-            walk_delta = -1;
           } else {
-            i = next_i;
-            next_delta++;
+            return new PointLocation(
+              PointLocationType.ON_NON_CORNER_VERTEX,
+              polygon, -1,
+              result.vertex1, -1);
           }
         }
 
-        if (walk_delta != 0) {
-          i += walk_delta;
+        default:
+          // This should not be reachable
+          throw testNever(result.type);
+      }
+
+      // do stuff
+      if (walk_delta == 0) {
+        const next_i = i + next_delta * (2 * (next_delta & 1) - 1);
+        if (next_i < 0) {
+          // was going to go too far to the left.
+          // start going right
+          walk_delta = 1;
+        } else if (next_i >= ps) {
+          walk_delta = -1;
+        } else {
+          i = next_i;
+          next_delta++;
         }
+      }
+
+      if (walk_delta != 0) {
+        i += walk_delta;
+      }
     }
+
     // Haven't returned yet, therefore P does not lie on the mesh.
     return new PointLocation(PointLocationType.NOT_ON_MESH, -1, -1, -1, -1);
   }
@@ -499,7 +520,7 @@ export default class Mesh {
 
 }
 
-interface MeshJson {
+export interface MeshJson {
   vertices: [number, number][];
   polygons: {
     /** Each convex polygon is represented as vertex indices. */

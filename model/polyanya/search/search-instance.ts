@@ -1,10 +1,11 @@
 import TinyQueue from 'tinyqueue';
+import Timer from '../helpers/timer';
 import Point from "../structs/point";
 import SearchNode from '../structs/search-node';
 import Mesh, { PointLocationType } from '../structs/mesh';
 import Successor, { SuccessorType } from '../structs/successor';
 import { EPSILON } from '../structs/consts';
-import { testNever, last as lastEl } from '@model/generic.model';
+import { testNever, last as lastEl } from '../../generic.model';
 import { get_h_value, get_successors } from './expansion';
 
 export default class SearchInstance {
@@ -29,8 +30,9 @@ export default class SearchInstance {
   public nodes_pruned_post_pop!: number;  // Nodes we prune right after popping off
   public successor_calls!: number;         // Times we call get_successors
   public verbose!: boolean;
+
   // warthog::mem::cpool* node_pool;
-  // warthog::timer timer;
+  private timer = new Timer;
 
   constructor(
     private mesh: Mesh,
@@ -78,60 +80,62 @@ export default class SearchInstance {
     if (this.final_node === null) {
       return -1;
     }
-    return this.final_node?.f || null;
+    return this.final_node.f;
   }
 
   get_point_location(p: Point) {
-      // assert(mesh != nullptr);
-      const out = this.mesh.get_point_location(p);
-      if (out.type == PointLocationType.ON_CORNER_VERTEX_AMBIG) {
-        // Add a few EPSILONS to the point and try again.
-        const CORRECTOR = new Point(EPSILON * 10, EPSILON * 10);
-        let corrected = p.add(CORRECTOR);
-        let corrected_loc = this.mesh.get_point_location(corrected);
+    // assert(mesh != nullptr);
+    const out = this.mesh.get_point_location(p);
+    // console.log({ out });
 
-        // #ifndef NDEBUG
-        // if (this.verbose) {
-          // console.error(`${p} ${corrected_loc}`);
-          // std::cerr << p << " " << corrected_loc << std::endl;
-        // }
-        // #endif
+    if (out.type == PointLocationType.ON_CORNER_VERTEX_AMBIG) {
+      // Add a few EPSILONS to the point and try again.
+      const CORRECTOR = new Point(EPSILON * 10, EPSILON * 10);
+      let corrected = p.add(CORRECTOR);
+      let corrected_loc = this.mesh.get_point_location(corrected);
 
-        switch (corrected_loc.type) {
-          case PointLocationType.ON_CORNER_VERTEX_AMBIG:
-          case PointLocationType.ON_CORNER_VERTEX_UNAMBIG:
-          case PointLocationType.ON_NON_CORNER_VERTEX:
-            // #ifndef NDEBUG
-            if (this.verbose) {
-              // std::cerr << "Warning: corrected " << p << " lies on vertex"
-              //           << std::endl;
-              console.error(`Warning: corrected ${p} lies on vertex`);
-            }
-            // #endif
+      // #ifndef NDEBUG
+      // if (this.verbose) {
+        // console.error(`${p} ${corrected_loc}`);
+        // std::cerr << p << " " << corrected_loc << std::endl;
+      // }
+      // #endif
+
+      switch (corrected_loc.type) {
+        case PointLocationType.ON_CORNER_VERTEX_AMBIG:
+        case PointLocationType.ON_CORNER_VERTEX_UNAMBIG:
+        case PointLocationType.ON_NON_CORNER_VERTEX:
+          // #ifndef NDEBUG
+          if (this.verbose) {
+            // std::cerr << "Warning: corrected " << p << " lies on vertex"
+            //           << std::endl;
+            console.error(`Warning: corrected ${p} lies on vertex`);
+          }
+          // #endif
+          break;
+        case PointLocationType.NOT_ON_MESH:
+          // #ifndef NDEBUG
+          if (this.verbose) {
+            // std::cerr << "Warning: completely ambiguous point at " << p
+            //           << std::endl;
+            console.error(`Warning: completely ambiguous point at ${p}`);
+          }
+          // #endif
+          break;
+        case PointLocationType.IN_POLYGON:
+        case PointLocationType.ON_MESH_BORDER:
+        // Note that ON_EDGE should be fine: any polygon works and there's
+        // no need to special case successor generation.
+        case PointLocationType.ON_EDGE:
+            out.poly1 = corrected_loc.poly1;
             break;
-          case PointLocationType.NOT_ON_MESH:
-            // #ifndef NDEBUG
-            if (this.verbose) {
-              // std::cerr << "Warning: completely ambiguous point at " << p
-              //           << std::endl;
-              console.error(`Warning: completely ambiguous point at ${p}`);
-            }
-            // #endif
-            break;
-          case PointLocationType.IN_POLYGON:
-          case PointLocationType.ON_MESH_BORDER:
-          // Note that ON_EDGE should be fine: any polygon works and there's
-          // no need to special case successor generation.
-          case PointLocationType.ON_EDGE:
-              out.poly1 = corrected_loc.poly1;
-              break;
-          default:
-              // Should be impossible to reach.
-              // assert(false);
-              throw testNever(corrected_loc.type);
-        }
+        default:
+            // Should be impossible to reach.
+            // assert(false);
+            throw testNever(corrected_loc.type);
       }
-      return out;
+    }
+    return out;
   }
 
   succ_to_node(
@@ -140,7 +144,7 @@ export default class SearchInstance {
     num_succ: number,
     nodes: SearchNode[],
   ) {
-      // asser  t(mesh != nullptr);
+    // assert(mesh != nullptr);
     const polygon = this.mesh.mesh_polygons[parent.next_polygon];
     const V = polygon.vertices;
     const P = polygon.polygons;
@@ -360,23 +364,29 @@ export default class SearchInstance {
       default:
         throw testNever(pl.type);
     }
-    // #undef v
-    // #undef get_lazy
+
+    // console.log({ final_node: this.final_node })
   }
 
   // #define root_to_point(root) ((root) == -1 ? start : mesh->mesh_vertices[root].p)
   root_to_point = (root: number) => ((root) == -1 ? this.start : this.mesh.mesh_vertices[root].p)
   
   search() {
-    // timer.start();
+    this.timer.start();
     this.init_search();
-    if (this.mesh === null || this.end_polygon == -1) {
-        // timer.stop();
-        return false;
+  
+    // console.log({
+    //   mesh: this.mesh,
+    //   end_polygon: this.end_polygon, 
+    // });
+
+    if (this.mesh === null || this.end_polygon === -1) {
+      this.timer.stop();
+      return false;
     }
 
     if (this.final_node != null) {
-        // timer.stop();
+        this.timer.stop();
         return true;
     }
 
@@ -423,7 +433,7 @@ export default class SearchInstance {
 
         this.nodes_generated++;
 
-        // timer.stop();
+        this.timer.stop();
 
         // #ifndef NDEBUG
         // if (verbose)
@@ -535,7 +545,7 @@ export default class SearchInstance {
       this.nodes_pushed += num_nodes;
     }
 
-    // timer.stop();
+    this.timer.stop();
     return false;
   }
 
@@ -571,11 +581,11 @@ export default class SearchInstance {
     */
   }
   
-  get_path_points(out: Point[]) {
+  get_path_points() {
+    const out = [] as Point[];
     if (this.final_node === null) {
-      return;
+      return out;
     }
-    out.length = 0;
     out.push(this.goal);
     let cur_node = this.final_node as SearchNode | null;
 
@@ -586,6 +596,7 @@ export default class SearchInstance {
       cur_node = cur_node.parent;
     }
     out.reverse();
+    return out;
   }
 
   print_search_nodes() {
@@ -604,6 +615,8 @@ export default class SearchInstance {
 
     return text.join('\n');
   }
+
+  get_search_micro() {
+    return this.timer.elapsed_time_micro();
+  }
 }
-
-
