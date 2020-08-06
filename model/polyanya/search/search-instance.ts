@@ -51,6 +51,8 @@ export default class SearchInstance {
   private init_root_pruning() {
       // assert(this.mesh != nullptr);
       this.search_id = 0;
+      this.root_g_values = [];
+      this.root_search_ids = [];
   }
 
   private init_search() {
@@ -127,12 +129,12 @@ export default class SearchInstance {
         // Note that ON_EDGE should be fine: any polygon works and there's
         // no need to special case successor generation.
         case PointLocationType.ON_EDGE:
-            out.poly1 = corrected_loc.poly1;
-            break;
+          out.poly1 = corrected_loc.poly1;
+          break;
         default:
-            // Should be impossible to reach.
-            // assert(false);
-            throw testNever(corrected_loc.type);
+          // Should be impossible to reach.
+          // assert(false);
+          throw testNever(corrected_loc.type);
       }
     }
     return out;

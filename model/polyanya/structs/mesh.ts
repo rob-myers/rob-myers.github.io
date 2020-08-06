@@ -279,7 +279,7 @@ export default class Mesh {
       const poly = this.mesh_polygons[x];
       return !(poly.min_y + poly.max_y < p.y * 2);
     });
-    closeIndex -= Number(closeIndex === polys.length - 1);
+    closeIndex === -1 && (closeIndex = polys.length - 1);
 
     // The plan is to take an index and repeatedly do:
     // +1, -2, +3, -4, +5, -6, +7, -8, ...
@@ -298,24 +298,23 @@ export default class Mesh {
       
       switch (result.type) {
         case PolyContainmentType.OUTSIDE:
-            // Does not contain: try the next one.
-            break;
+          // Does not contain: try the next one.
+          break;
         case PolyContainmentType.INSIDE:
-            // This one strictly contains the point.
-            return new PointLocation(PointLocationType.IN_POLYGON, polygon, -1, -1, -1);
+          // This one strictly contains the point.
+          return new PointLocation(PointLocationType.IN_POLYGON, polygon, -1, -1, -1);
         case PolyContainmentType.ON_EDGE:
-            // This one lies on the edge.
-            // Chek whether the other one is -1.
-            return new PointLocation(
-                result.adjacent_poly === -1
-                  ? PointLocationType.ON_MESH_BORDER
-                  : PointLocationType.ON_EDGE
-                ,
-                polygon,
-                result.adjacent_poly,
-                result.vertex1,
-                result.vertex2
-            );
+          // This one lies on the edge.
+          // Chek whether the other one is -1.
+          return new PointLocation(
+            result.adjacent_poly === -1
+              ? PointLocationType.ON_MESH_BORDER
+              : PointLocationType.ON_EDGE,
+            polygon,
+            result.adjacent_poly,
+            result.vertex1,
+            result.vertex2,
+          );
         case PolyContainmentType.ON_VERTEX: {
           // This one lies on a corner.
           const v = this.mesh_vertices[result.vertex1];
