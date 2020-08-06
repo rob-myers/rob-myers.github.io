@@ -28,6 +28,7 @@
     "scss-parser": "^1.0.4",
     "shortid": "^2.2.15",
     "spark-md5": "^3.0.1",
+    "tinyqueue": "^2.0.3",
     "ts-morph": "^7.1.0"
   },
   "engineStrict": true,

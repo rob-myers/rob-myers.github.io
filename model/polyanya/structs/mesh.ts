@@ -42,7 +42,7 @@ export class PolyContainment {
   }
 };
 
-enum PointLocationType {
+export enum PointLocationType {
     // Does not use any ints.
     NOT_ON_MESH,
     // Uses poly1 (the polygon it is on).
@@ -65,13 +65,13 @@ enum PointLocationType {
 class PointLocation {
 
   constructor(
-    private type: PointLocationType,
-    private poly1: number,
-    private poly2: number,
+    public type: PointLocationType,
+    public poly1: number,
+    public poly2: number,
     // If on edge, vertex1/vertex2 represents the left/right vertices of the
     // edge when looking from a point in poly1.
-    private vertex1: number,
-    private vertex2: number,
+    public vertex1: number,
+    public vertex2: number,
   ) {}
 
   public toString() {
