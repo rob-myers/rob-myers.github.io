@@ -1,3 +1,4 @@
+
 declare module 'rectangle-decomposition' {
 
   type Coord = [number, number];

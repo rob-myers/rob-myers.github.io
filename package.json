@@ -52,7 +52,7 @@
     "ensure-public-js": "yarn cp-sass-worker && yarn cp-es-react",
     "cp-sass-worker": "cp node_modules/sass.js/dist/sass.worker.js public",
     "cp-es-react": "mkdir -p public/es-react && cp node_modules/es-react/dev/*.js public/es-react",
-    "ts-node": "node -r esm -r  ts-node/register",
+    "ts-node": "node -r esm -r ts-node/register",
     "react-refresh-test": "yarn ts-node model/dev-env/react-refresh-transform",
     "build-packages-manifest": "yarn ts-node scripts/packages-manifest.ts",
     "watch-packages-manifest": "nodemon --watch 'public/package/**/*' -e ts,tsx,scss --exec 'yarn build-packages-manifest'",

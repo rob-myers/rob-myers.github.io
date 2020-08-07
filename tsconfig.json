@@ -28,7 +28,11 @@
       "@public-reducer/*": ["public/package/types/*"]
     },
     "downlevelIteration": true,
-    "noErrorTruncation": true
+    "noErrorTruncation": true,
+    "typeRoots": [
+      "./node_modules/@types",
+      "types"
+    ]
   },
   "exclude": [
     "node_modules",
@@ -38,7 +42,6 @@
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "types/*"
+    "**/*.tsx"
   ]
 }
