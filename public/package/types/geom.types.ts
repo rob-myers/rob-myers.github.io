@@ -39,12 +39,19 @@ export class Vector {
     return new Vector(this.x, this.y);
   }
 
+  get coord(): [number, number] {
+    return [this.x, this.y];
+  }
+
   equals({ x, y }: Vector) {
     return this.x === x && this.y === y;
   }
 
-  static from(p: VectorJson) {
-    return new Vector(p.x, p.y);
+  static from(p: VectorJson | string) {
+    return typeof p === 'string'
+      // expect e.g. 4.5,3
+      ? new Vector(...(p.split(',').map(Number) as [number, number]))
+      : new Vector(p.x, p.y);
   }
 
   get length() {
@@ -63,6 +70,10 @@ export class Vector {
     this.x *= amount;
     this.y *= amount;
     return this;
+  }
+
+  toString() {
+    return `${this.x},${this.y}`;
   }
 
   translate(dx: number, dy: number): Vector {
@@ -90,6 +101,25 @@ export class Rect {
     public width: number,
     public height: number,
   ) {}
+
+  get points(): [Vector, Vector, Vector, Vector] {
+    return [
+      new Vector(this.x, this.y),
+      new Vector(this.x + this.width, this.y),
+      new Vector(this.x + this.width, this.y + this.height),
+      new Vector(this.x, this.y + this.height),
+    ];
+  }
+
+  get edges(): [[Vector, Vector], [Vector, Vector], [Vector, Vector], [Vector, Vector]] {
+    const [p, q, r, s] = this.points;
+    return [
+      [p, q],
+      [q, r],
+      [r, s],
+      [s, p],
+    ];
+  }
 
 }
 

@@ -8,8 +8,10 @@ export default class Point {
   ) {}
 
   equals(other: Point) {
-    return (Math.abs(this.x - other.x) < EPSILON) &&
-      (Math.abs(this.y - other.y) < EPSILON);
+    return (
+      Math.abs(this.x - other.x) < EPSILON &&
+      Math.abs(this.y - other.y) < EPSILON
+    );
   }
 
   notEquals(other: Point) {

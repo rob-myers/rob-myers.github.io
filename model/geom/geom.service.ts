@@ -1,5 +1,6 @@
-import rectDecompose from 'rectangle-decomposition';
 import polygonClipping from 'polygon-clipping';
+import rectDecompose from 'rectangle-decomposition';
+import { MeshJson as PolyanyaMeshJson } from '@model/polyanya/structs/mesh';
 import * as Geom from '@public-reducer/geom.types';
 
 export class GeomService {
@@ -51,14 +52,10 @@ export class GeomService {
     p1: Geom.VectorJson,
     d1: Geom.VectorJson,
   ): null | number {
-    const d0x = d0.x,
-      d0y = d0.y,
-      p0x = p0.x,
-      p0y = p0.y,
-      d1x = d1.x,
-      d1y = d1.y,
-      p1x = p1.x,
-      p1y = p1.y;
+    const d0x = d0.x, d0y = d0.y,
+      p0x = p0.x, p0y = p0.y,
+      d1x = d1.x, d1y = d1.y,
+      p1x = p1.x, p1y = p1.y;
     /**
      * Recall that normal_0 is (-d0y, d0x).
      * No intersection if the directions d0, d1 are approx. parallel,
@@ -123,6 +120,53 @@ export class GeomService {
     });
 
     return outsetEdges;
+  }
+
+  /**
+   * Given a list of disjoint rects create a Polyanya mesh.
+   */
+  rectsToPolyanya(rects: Geom.Rect[]): PolyanyaMeshJson {
+
+    /** Vertex key to list of rects it is a corner of */
+    const vertexToRects = rects
+      .reduce((agg, rect) => ({ ...agg,
+        ...rect.points.map(p => [`${p}`, rect] as [string, Geom.Rect])
+          .reduce((agg, [key, rect]) => ({ ...agg,
+            [key]: (agg[key] || []).concat(rect),
+          }), {} as Record<string, Geom.Rect[]>),
+      }), {} as Record<string, Geom.Rect[]>);
+
+    /** Edge key to adjacent rects (1 or 2) */
+    const edgeToRects: Record<string, Geom.Rect[]> = rects
+      .reduce((agg, rect) => ({ ...agg,
+        ...rect.edges.map(([u, v]) => [`${u} ${v}`, rect] as [string, Geom.Rect])
+          .reduce((agg, [key, other]) => ({ ...agg,
+            [key]: (agg[key] || []).concat(other),
+          }), {} as Record<string, Geom.Rect[]>),
+      }), {} as Record<string, Geom.Rect[]>);
+
+    const polygons: PolyanyaMeshJson['polygons'] = rects
+      .map(rect => ({
+        vertexIds: rect.points
+          .map(x => Object.keys(vertexToRects).indexOf(`${x}`)),
+        adjPolyIds: rect.edges
+          .map((_, i, xs) => xs[(i - 1 + 4) % 4]) // polyanya convention
+          .map(([u, v]) => edgeToRects[`${u} ${v}`].filter(r => r !== rect))
+          .map(rs => !rs.length ? -1 : rects.indexOf(rs[0]))
+      }));
+
+    return {
+      vertices: Object.keys(vertexToRects)
+        .map(x => Geom.Vector.from(x).coord),
+      polygons,
+      /**
+       * We don't try to 'order' the polygons, see:
+       * https://bitbucket.org/dharabor/pathfinding/src/d2ba41149c7a3c01a3e119cd31abb2874f439b83/anyangle/polyanya/utils/spec/mesh/2.txt?at=master
+       */
+      vertexToPolys: Object.values(vertexToRects)
+        .map(rs => rs.map(r => rects.indexOf(r)))
+        .map(rs => rs.length === 4 ? rs : rs.concat(-1)),
+    };
   }
 
   union(polys: Geom.Polygon[]): Geom.Polygon[] {
