@@ -2,18 +2,7 @@ import { MeshJson } from "./structs/mesh";
 import { ScenarioJson } from "./helpers/scenario";
 import { main } from './scenario-runner';
 
-// mesh
-// 2
-// 5 4  // 5 vertices, 4 polygons
-// 0 1 3 -1 1 0  // (0,1) 3 nbors (-1, 1, 0)
-// 1 0 3 -1 0 3  // (1,0)
-// 0 -1 3 -1 3 2 // (0,-1)
-// -1 0 3 -1 2 1 // (-1, 0)
-// 0 0 4 0 1 2 3 // (0,0)
-// 3 4 1 0 1 3 -1
-// 3 4 0 3 2 0 -1
-// 3 4 3 2 3 1 -1
-// 3 4 2 1 0 2 -1
+/** See https://bitbucket.org/dharabor/pathfinding/src/d2ba41149c7a3c01a3e119cd31abb2874f439b83/anyangle/polyanya/meshes/tests/square.mesh?at=master */
 const meshEx1: MeshJson = {
   vertices: [
     [0, 1],
