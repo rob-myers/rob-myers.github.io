@@ -82,12 +82,19 @@ const meshEx3: MeshJson = {
     [7, 3],
     [7, 7],
     [3, 7], // 11
+
+    [4, 4], // 12 
+    [7, 4], // 13
+    [7, 6], // 14
+    [4, 6], // 15
   ],
   polygons: [
     { vertexIds: [1, 2, 9, 8], adjPolyIds: [3, -1, 1, -1] },
-    { vertexIds: [2, 3, 4, 5, 10, 9], adjPolyIds: [0, -1, -1, -1, 2, -1] },
+    // { vertexIds: [2, 3, 4, 5, 10, 9], adjPolyIds: [0, -1, -1, -1, 2, -1] },
+    { vertexIds: [2, 3, 4, 5, 10, 14, 13, 9], adjPolyIds: [0, -1, -1, -1, 2, -1, 4, -1] },
     { vertexIds: [11, 10, 5, 6], adjPolyIds: [3, -1, 1, -1] },
     { vertexIds: [0, 1, 8, 11, 6, 7], adjPolyIds: [-1, -1, 0, -1, 2, -1] },
+    { vertexIds: [12, 13, 14, 15], adjPolyIds: [-1, -1, 1, -1] },
   ],
   vertexToPolys: [
     [-1, 3],
@@ -101,7 +108,12 @@ const meshEx3: MeshJson = {
     [0, -1, 3], // 8
     [1, -1, 0],
     [1, 2, -1],
-    [2, 3, -1],
+    [2, 3, -1], // 11
+
+    [4, -1], // 12
+    [1, 4, -1], // 13
+    [1, -1, 4], // 14
+    [4, -1], // 15
   ],
 };
 const scenEx3: ScenarioJson = {
@@ -109,7 +121,8 @@ const scenEx3: ScenarioJson = {
   xsize: 100,
   ysize: 100,
   start: { x: 0.1, y: 0.1 },
-  goal: { x: 9.9, y: 9.9 },
+  // goal: { x: 9.9, y: 9.9 },
+  goal: { x: 5, y: 5 },
   gridcost: 1,
 };
 

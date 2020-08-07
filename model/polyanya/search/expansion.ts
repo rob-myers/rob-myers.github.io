@@ -101,7 +101,7 @@ function binary_search<T, Pred extends (item: T) => boolean>(
   }
   let best_so_far = -1;
   while (lower <= upper) {
-      const mid = lower + (upper - lower) / 2;
+      const mid = Math.trunc(lower + (upper - lower) / 2); // int cast
       const matches_pred = pred(objects[arr[normalise(mid, N)]]);
       if (matches_pred) {
           best_so_far = mid;
