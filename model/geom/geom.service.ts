@@ -1,7 +1,7 @@
 import polygonClipping from 'polygon-clipping';
 import rectDecompose from 'rectangle-decomposition';
-import { MeshJson as PolyanyaMeshJson } from '@model/polyanya/structs/mesh';
-import * as Geom from '@public-reducer/geom.types';
+import { MeshJson as PolyanyaMeshJson } from '../polyanya/structs/mesh';
+import * as Geom from '../../public/package/types/geom.types';
 
 export class GeomService {
 
@@ -123,49 +123,65 @@ export class GeomService {
   }
 
   /**
-   * Given a list of disjoint rects create a Polyanya mesh.
+   * Given a list of rects which may only overlap along edges,
+   * we create a Polyanya mesh.
    */
   rectsToPolyanya(rects: Geom.Rect[]): PolyanyaMeshJson {
+    // Compute adjacency graph of rectangle via intersection
+    const { succ, toPolygon } = new Geom.RectNavGraph(rects);
 
-    /** Vertex key to list of rects it is a corner of */
-    const vertexToRects = rects
-      .reduce((agg, rect) => ({ ...agg,
-        ...rect.points.map(p => [`${p}`, rect] as [string, Geom.Rect])
-          .reduce((agg, [key, rect]) => ({ ...agg,
-            [key]: (agg[key] || []).concat(rect),
-          }), {} as Record<string, Geom.Rect[]>),
-      }), {} as Record<string, Geom.Rect[]>);
+    /** Vertex key to list of rects it touches */
+    const vertexToRects = rects.reduce<Record<string, Geom.Rect[]>>((agg, rect) => ({
+      ...agg,
+      ...rect.points.reduce<Record<string, Geom.Rect[]>>((agg, p) => ({
+        ...agg,
+        [`${p}`]: agg[`${p}`] || [rect].concat(succ.get(rect)!.all.filter(r => r.contains(p))),
+      }), {}),
+    }), {});
+    const vertexKeys = Object.keys(vertexToRects);
 
-    /** Edge key to adjacent rects (1 or 2) */
-    const edgeToRects: Record<string, Geom.Rect[]> = rects
-      .reduce((agg, rect) => ({ ...agg,
-        ...rect.edges.map(([u, v]) => [`${u} ${v}`, rect] as [string, Geom.Rect])
-          .reduce((agg, [key, other]) => ({ ...agg,
-            [key]: (agg[key] || []).concat(other),
-          }), {} as Record<string, Geom.Rect[]>),
-      }), {} as Record<string, Geom.Rect[]>);
+    /**
+     * Directed polygon edge key to adjacent rects (1 or more).
+     * Each rect has a respective polygon i.e. rect & incident corners (RectNavGraph).
+     */
+    const edgeToRects = rects.reduce<Record<string, Geom.Rect[]>>((agg, rect) => {
+      const { all } = succ.get(rect)!;
+      const { edges } = toPolygon.get(rect)!;
+      edges.outline.forEach((edge) =>
+        agg[`${edge}`] = [rect].concat(all.filter(r => r.contains(edge.midpoint))));
+      return agg;
+    }, {});
 
-    const polygons: PolyanyaMeshJson['polygons'] = rects
-      .map(rect => ({
-        vertexIds: rect.points
-          .map(x => Object.keys(vertexToRects).indexOf(`${x}`)),
-        adjPolyIds: rect.edges
-          .map((_, i, xs) => xs[(i - 1 + 4) % 4]) // polyanya convention
-          .map(([u, v]) => edgeToRects[`${u} ${v}`].filter(r => r !== rect))
-          .map(rs => !rs.length ? -1 : rects.indexOf(rs[0]))
-      }));
+    /**
+     *  Each rect has a respective polygon i.e. rect & incident corners of other rects
+     */
+    const polygons: PolyanyaMeshJson['polygons'] = rects.map(rect => {
+      const { outline, edges, outline: { length } } = toPolygon.get(rect)!;
+      return {
+        vertexIds: outline.map(x => vertexKeys.indexOf(`${x}`)),
+        adjPolyIds: edges.outline
+          .map((_, i, es) => es[(i - 1 + length) % length]) // Per polyanya convention
+          .map((edge) => edgeToRects[`${edge}`].filter(r => r !== rect))
+          .map(rs => !rs.length ? -1 : rects.indexOf(rs[0])),
+      };
+    });
 
     return {
-      vertices: Object.keys(vertexToRects)
-        .map(x => Geom.Vector.from(x).coord),
+      vertices: vertexKeys.map(x => Geom.Vector.from(x).coord),
       polygons,
       /**
        * We don't try to 'order' the polygons, see:
        * https://bitbucket.org/dharabor/pathfinding/src/d2ba41149c7a3c01a3e119cd31abb2874f439b83/anyangle/polyanya/utils/spec/mesh/2.txt?at=master
        */
-      vertexToPolys: Object.values(vertexToRects)
-        .map(rs => rs.map(r => rects.indexOf(r)))
-        .map(rs => rs.length === 4 ? rs : rs.concat(-1)),
+      vertexToPolys: vertexKeys.map((vKey) =>
+        Object.keys(edgeToRects).filter(x => x.startsWith(`${vKey} `))
+          .flatMap(edgeKey => {
+            const adjRects = edgeToRects[edgeKey];
+            return adjRects.length === 1
+              ? [rects.indexOf(adjRects[0]), -1]
+              : adjRects.map(r => rects.indexOf(r))
+          }).filter((x, i, xs) => i === xs.indexOf(x)),
+      ),
     };
   }
 

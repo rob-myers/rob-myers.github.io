@@ -2,6 +2,9 @@ import { MeshJson } from "./structs/mesh";
 import { ScenarioJson } from "./helpers/scenario";
 import { main } from './scenario-runner';
 
+import { GeomService } from '../geom/geom.service';
+import * as Geom from '../../public/package/types/geom.types';
+
 /** See https://bitbucket.org/dharabor/pathfinding/src/d2ba41149c7a3c01a3e119cd31abb2874f439b83/anyangle/polyanya/meshes/tests/square.mesh?at=master */
 const meshEx1: MeshJson = {
   vertices: [
@@ -116,3 +119,23 @@ const scenEx3: ScenarioJson = {
 };
 
 main(meshEx3, [scenEx3], true);
+
+const geom = new GeomService();
+
+const meshEx4 = geom.rectsToPolyanya([
+  new Geom.Rect(0, 0, 50, 50),
+  new Geom.Rect(50, 25, 50, 25),
+]);
+
+// console.log({ meshEx4: JSON.stringify(meshEx4) })
+
+const scenEx4: ScenarioJson = {
+  bucket: 1,
+  xsize: 100,
+  ysize: 100,
+  start: { x: 0.1, y: 0.1 },
+  goal: { x: 99, y: 26 },
+  gridcost: 1,
+};
+
+main(meshEx4, [scenEx4], true);

@@ -388,8 +388,8 @@ export default class SearchInstance {
     }
 
     if (this.final_node != null) {
-        this.timer.stop();
-        return true;
+      this.timer.stop();
+      return true;
     }
 
     while (this.open_list.length) {
@@ -593,7 +593,7 @@ export default class SearchInstance {
 
     while (cur_node != null) {
       if (this.root_to_point(cur_node.root) != lastEl(out)) {
-          out.push(this.root_to_point(cur_node.root));
+        out.push(this.root_to_point(cur_node.root));
       }
       cur_node = cur_node.parent;
     }
