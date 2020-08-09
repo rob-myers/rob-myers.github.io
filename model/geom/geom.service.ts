@@ -94,11 +94,10 @@ export class GeomService {
 
   /** Inset a ring by `amount`. */
   insetRing(ring: Geom.Vector[], amount: number): Geom.Vector[] {
-    const length = ring.length;
-
     /** Tangents */
     const ts = this.computeTangents(ring);
 
+    const length = ring.length;
     /** Edges of ring translated along their normal by `amount` */
     const offsetEdges = ring.map<[Geom.Vector, Geom.Vector]>((v, i) => [
       v.clone().translate(amount * -ts[i].y, amount * ts[i].x),
@@ -116,7 +115,7 @@ export class GeomService {
       );
       return lambda
         ? edge[1].translate(lambda * ts[i].x, lambda * ts[i].y)
-        : Geom.Vector.average([edge[1], nextEdge[0]]); // Fallback.
+        : Geom.Vector.average([edge[1], nextEdge[0]]); // Fallback
     });
 
     return outsetEdges;
@@ -124,10 +123,10 @@ export class GeomService {
 
   /**
    * Given a list of rects which may only overlap along edges,
-   * we create a Polyanya mesh.
+   * create a Polyanya mesh.
    */
   rectsToPolyanya(rects: Geom.Rect[]): PolyanyaMeshJson {
-    // Compute adjacency graph of rectangle via intersection
+    // Compute adjacency graph of rectangles via their intersections
     const { succ, toPolygon } = new Geom.RectNavGraph(rects);
 
     /** Vertex key to list of rects it touches */
@@ -141,8 +140,9 @@ export class GeomService {
     const vertexKeys = Object.keys(vertexToRects);
 
     /**
-     * Directed polygon edge key to adjacent rects (1 or more).
-     * Each rect has a respective polygon i.e. rect & incident corners (RectNavGraph).
+     * Each rect has a respective polygon `toPolygon.get(rect)` i.e. the rect and
+     * all incident corners of other rects. Given a serialized polygon edge, we
+     * provide its adjacent rects (1 or more).
      */
     const edgeToRects = rects.reduce<Record<string, Geom.Rect[]>>((agg, rect) => {
       const { all } = succ.get(rect)!;
@@ -153,7 +153,7 @@ export class GeomService {
     }, {});
 
     /**
-     *  Each rect has a respective polygon i.e. rect & incident corners of other rects
+     * Each rect has a respective polygon i.e. rect & incident corners of other rects
      */
     const polygons: PolyanyaMeshJson['polygons'] = rects.map(rect => {
       const { outline, edges, outline: { length } } = toPolygon.get(rect)!;
@@ -170,7 +170,7 @@ export class GeomService {
       vertices: vertexKeys.map(x => Geom.Vector.from(x).coord),
       polygons,
       /**
-       * We don't try to 'order' the polygons, see:
+       * We don't try to 'order' the polygons adjacent to the vertex, see:
        * https://bitbucket.org/dharabor/pathfinding/src/d2ba41149c7a3c01a3e119cd31abb2874f439b83/anyangle/polyanya/utils/spec/mesh/2.txt?at=master
        */
       vertexToPolys: vertexKeys.map((vKey) =>
