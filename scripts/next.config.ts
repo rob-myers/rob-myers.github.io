@@ -1,12 +1,14 @@
 import path from 'path';
+import webpack from 'webpack';
 import webpackMerge from 'webpack-merge';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
+import WebpackBar from 'webpackbar';
+
 import configStyles from './styles.config';
 import configOther from './other.config';
 import { NextJsConfigCtxt, Phase, NextJsConfig, WebpackCtxt } from './next.model';
 
 import configMonaco from './monaco.config';
-import webpack from 'webpack';
 
 const production = process.env.NODE_ENV === 'production';
 console.log({ production });
@@ -82,6 +84,16 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
             })
           ]
         } : {},
+        // Webpack build info
+        {
+          plugins: [
+            new WebpackBar({
+              fancy: true,
+              profile: true,
+              basic: false,
+            }),
+          ]
+        },
         configStyles(options),
         configOther(options),
         !options.isServer ? configMonaco(config) : {},
