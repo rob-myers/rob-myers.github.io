@@ -1,7 +1,7 @@
 import polygonClipping from 'polygon-clipping';
 import rectDecompose from 'rectangle-decomposition';
 import { MeshJson as PolyanyaMeshJson } from '../polyanya/structs/mesh';
-import * as Geom from '../../public/package/types/geom.types';
+import * as Geom from './geom.model';
 
 export class GeomService {
 

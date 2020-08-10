@@ -1,5 +1,6 @@
 # .vscode
 
+.DS_Store
 node_modules
 
 .next
@@ -11,15 +12,10 @@ next.config.js
 styles.config.js
 postcss.config.js
 other.config.js
-monaco.config.js
 
 yarn-error.log
 
 env/env.ts
 
-public/sass.worker.js
-public/es-react/
-
-.DS_Store
 
 analyze/

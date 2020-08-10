@@ -2,7 +2,7 @@ import { testNever } from '@model/generic.model';
 import { createAct, ActionsUnion } from '@model/store/redux.model';
 
 /**
- * This state lives inside the syntax worker.
+ * This state lives inside the geom worker.
  */
 export interface State {
   count: number;

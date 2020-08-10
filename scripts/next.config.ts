@@ -8,8 +8,6 @@ import configStyles from './styles.config';
 import configOther from './other.config';
 import { NextJsConfigCtxt, Phase, NextJsConfig, WebpackCtxt } from './next.model';
 
-import configMonaco from './monaco.config';
-
 const production = process.env.NODE_ENV === 'production';
 console.log({ production });
 
@@ -96,7 +94,6 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
         },
         configStyles(options),
         configOther(options),
-        !options.isServer ? configMonaco(config) : {},
       );
     }
   };

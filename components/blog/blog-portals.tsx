@@ -1,7 +1,7 @@
-import * as portals from 'react-reverse-portal';
-import Bipartite from '@public/package/bipartite/app';
-import Intro from '@public/package/intro/app';
 import { useSelector } from 'react-redux';
+import * as portals from 'react-reverse-portal';
+import Bipartite from '@components/demo/bipartite/app';
+import Intro from '@components/demo/intro/app';
 
 /**
  * Portals where pre-built components can be rendered.

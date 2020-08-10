@@ -9,7 +9,6 @@ import OptimizeCssAssetsWebpackPlugin from 'optimize-css-assets-webpack-plugin';
 import { WebpackCtxt } from './next.model';
 
 const noCssModulesRegexes = [
-  /\/monaco-override\.scss$/,
   /\/golden-layout\.scss$/,
 ];
 

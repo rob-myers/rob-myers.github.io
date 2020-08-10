@@ -3,7 +3,7 @@ import { ScenarioJson } from "./helpers/scenario";
 import { main } from './scenario-runner';
 
 import { GeomService } from '../geom/geom.service';
-import * as Geom from '../../public/package/types/geom.types';
+import * as Geom from '../geom/geom.model';
 
 /** See https://bitbucket.org/dharabor/pathfinding/src/d2ba41149c7a3c01a3e119cd31abb2874f439b83/anyangle/polyanya/meshes/tests/square.mesh?at=master */
 const meshEx1: MeshJson = {

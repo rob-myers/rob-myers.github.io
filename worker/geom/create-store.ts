@@ -3,15 +3,15 @@ import { persistReducer, createTransform } from 'redux-persist';
 import storage from 'localforage';
 import { composeWithDevTools } from 'remote-redux-devtools';
 import { Redacted, replacer } from '@model/store/redux.model';
-import { SyntaxWorkerContext } from './worker.model';
-import { SyntaxDispatchOverload, SyntaxThunkAct } from './redux.model';
-import rootReducer, { SyntaxWorkerAction, SyntaxWorkerState, SyntaxWorkerThunk } from './reducer';
+import { GeomWorkerContext } from './worker.model';
+import { GeomDispatchOverload, GeomThunkAct } from './redux.model';
+import rootReducer, { GeomWorkerAction, GeomWorkerState, GeomWorkerThunk } from './reducer';
 
 const thunkMiddleware =
-  (worker: SyntaxWorkerContext) =>
-    (params: MiddlewareAPI<SyntaxDispatchOverload>) =>
+  (worker: GeomWorkerContext) =>
+    (params: MiddlewareAPI<GeomDispatchOverload>) =>
       (next: Dispatch) =>
-        (action: SyntaxWorkerAction | SyntaxThunkAct<string, {}, any>) => {
+        (action: GeomWorkerAction | GeomThunkAct<string, {}, any>) => {
           if ('thunk' in action) {
             return action.thunk({
               ...params,
@@ -24,11 +24,11 @@ const thunkMiddleware =
         };
 
 const persistedReducer = persistReducer({
-  key: 'syntax-worker',
+  key: 'geom-worker',
   storage,
   transforms: [
-    createTransform<SyntaxWorkerState['test'], SyntaxWorkerState['test']>(
-      ({ count }, _key): SyntaxWorkerState['test'] => {
+    createTransform<GeomWorkerState['test'], GeomWorkerState['test']>(
+      ({ count }, _key): GeomWorkerState['test'] => {
         return {
           count,
         };
@@ -41,8 +41,8 @@ const persistedReducer = persistReducer({
 
 
 export const initializeStore = (
-  worker: SyntaxWorkerContext,
-  preloadedState?: SyntaxWorkerState,
+  worker: GeomWorkerContext,
+  preloadedState?: GeomWorkerState,
 ) =>
   createStore(
     // rootReducer,
@@ -52,11 +52,11 @@ export const initializeStore = (
       shouldHotReload: false,
       realtime: false, // Turned off remote monitoring
       port: 3002,
-      name: 'syntax-worker',
-      stateSanitizer: (state: SyntaxWorkerState): Redacted<SyntaxWorkerState> => {
+      name: 'geom-worker',
+      stateSanitizer: (state: GeomWorkerState): Redacted<GeomWorkerState> => {
         return JSON.parse(JSON.stringify(state, replacer));
       },
-      actionSanitizer: (act: SyntaxWorkerState): Redacted<SyntaxWorkerState> => {
+      actionSanitizer: (act: GeomWorkerState): Redacted<GeomWorkerState> => {
         return JSON.parse(JSON.stringify(act, replacer));
       },
     })(
@@ -64,4 +64,4 @@ export const initializeStore = (
         thunkMiddleware(worker),
       )
     )
-  ) as unknown as Store<SyntaxWorkerState, SyntaxWorkerAction | SyntaxWorkerThunk>;
+  ) as unknown as Store<GeomWorkerState, GeomWorkerAction | GeomWorkerThunk>;

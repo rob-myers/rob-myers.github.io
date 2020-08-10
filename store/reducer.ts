@@ -17,20 +17,6 @@ import {
   Thunk as BlogThunk,
 } from './blog.duck';
 import {
-  reducer as devEnvReducer,
-  State as DevEnvState, 
-  Action as DevEnvAction,
-  Thunk as DevEnvThunk,
-  epic as devEnvEpic,
-} from './dev-env.duck';
-import {
-  reducer as editorReducer,
-  State as EditorState, 
-  Action as EditorAction,
-  Thunk as EditorThunk,
-  epic as editorEpic,
-} from './editor.duck';
-import {
   reducer as geomReducer,
   State as GeomState, 
   Action as GeomAction,
@@ -45,8 +31,6 @@ import {
 export interface RootState {
   bipartite: BipartiteState;
   blog: BlogState;
-  devEnv: DevEnvState;
-  editor: EditorState;
   geom: GeomState;
   test: TestState;
 }
@@ -54,8 +38,6 @@ export interface RootState {
 export type RootAction = (
   | BipartiteAction
   | BlogAction
-  | DevEnvAction
-  | EditorAction
   | GeomAction
   | TestAction
 );
@@ -63,16 +45,12 @@ export type RootAction = (
 export type RootThunk = (
   | BipartiteThunk
   | BlogThunk
-  | DevEnvThunk
-  | EditorThunk
   | GeomThunk
 );
 
 export const getRootThunks = () => [
   ...Object.values(BipartiteThunk),
   ...Object.values(BlogThunk),
-  ...Object.values(DevEnvThunk),
-  ...Object.values(EditorThunk),
   ...Object.values(GeomThunk),
 ];
 
@@ -84,8 +62,6 @@ export type Dispatchable = (
 const createRootReducer = () => combineReducers<RootState>({
   bipartite: bipartiteReducer as any,
   blog: blogReducer,
-  devEnv: devEnvReducer,
-  editor: editorReducer,
   geom: geomReducer as any,
   test: testReducer,
 });
@@ -110,6 +86,6 @@ export const filterActs = <T extends RootActOrThunk['type']>(...types: T[]) =>
     types.includes(action.type as T));
 
 export const rootEpic = () => combineEpics(
-  editorEpic,
-  devEnvEpic,
+  // someEpic,
 );
+

@@ -1,25 +1,3 @@
-// Used by @store/geom.duck.ts and monaco-editor at runtime.
-
-/**
- * Used by @store/geom.duck and also `useSelector` at runtime.
- */
-export interface State {}
-
-/**
- * Must keep in sync with `Act` from @store/geom.duck.
- * Used by `useDispatch` at runtime.
- */
-export type DispatchableSync = never;
-
-/**
- * Must keep in sync with `Thunk` from @store/geom.duck.
- * Used by `useDispatch` at runtime.
- */
-export type DispatchableThunk = (
-  | { type: '[geom] decompose as rects'; args: PolygonJson; returns: Rect[] }
-  | { type: '[geom] inset polygon'; args: { poly: PolygonJson; amount: number }; returns: Polygon }
-);
-
 export class Vector {
 
   constructor(

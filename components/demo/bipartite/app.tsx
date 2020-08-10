@@ -1,15 +1,16 @@
 import * as React from 'react';
-import { useDispatch, Bipartite } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import css from './index.scss';
+import { BipartiteGraph, Edge } from '@model/geom/bipartite.model';
 
 const [deltaX, height] = [50, 200];
-const initGraph: Bipartite.BipartiteGraph = { n: 10, m: 10,
+const initGraph: BipartiteGraph = { n: 10, m: 10,
   edges: [...Array(10)].flatMap((_, i) => [[i, (i + 9) % 10], [i, (i + 1) % 10]]),
 };
 
 export const App: React.FC = () => {
   const [graph, setGraph] = React.useState(initGraph); 
-  const [matching, setMatching] = React.useState([] as Bipartite.Edge[]); 
+  const [matching, setMatching] = React.useState([] as Edge[]); 
   const dispatch = useDispatch();
 
   function nextRandomGraph() {

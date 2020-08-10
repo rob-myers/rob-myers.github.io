@@ -4,21 +4,21 @@ import {
   Action as TestAction,
   // Thunk as TestThunk,
   reducer as testReducer,
-} from '@worker/syntax/test.duck';
+} from '@worker/geom/test.duck';
 
-export interface SyntaxWorkerState {
+export interface GeomWorkerState {
   test: TestState;
 }
 
-export type SyntaxWorkerAction = (
+export type GeomWorkerAction = (
   | TestAction
 );
 
-export type SyntaxWorkerThunk = (
+export type GeomWorkerThunk = (
   // | TestThunk
   | never
 );
 
-export default combineReducers<SyntaxWorkerState>({
+export default combineReducers<GeomWorkerState>({
   test: testReducer,
 });

@@ -29,18 +29,4 @@ declare module 'react-redux' {
       ? ReturnType<Extract<ThunkAction, { type: T['type'] }>['thunk']>
       : void;
 
-  // For consistency with public/package/types/react-redux.d.ts since
-  // we also import public/package/* components in e.g. BlogPortals
-  import '@public-reducer/bipartite.types';
-  import '@public-reducer/test.types';
-  import '@public-reducer/geom.types';
-  namespace Bipartite {
-    export * from '@public-reducer/bipartite.types';
-  }
-  namespace Geom {
-    export * from '@public-reducer/geom.types';
-  }
-  namespace Test {
-    export * from '@public-reducer/test.types';
-  }
 }

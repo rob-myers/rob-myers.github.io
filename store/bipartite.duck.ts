@@ -2,9 +2,11 @@ import maximalMatching from 'bipartite-matching';
 import minimalVertexCover from 'bipartite-vertex-cover';
 import maximalIndependentSet from 'maximal-independent-set';
 import { createThunk, ActionsUnion } from '@model/store/redux.model';
-import { BipartiteGraph, Edge, State as BipartiteState } from '@public-reducer/bipartite.types';
+import { BipartiteGraph, Edge } from '@model/geom/bipartite.model';
 
-export type State = BipartiteState;
+export interface State {
+  // ...
+}
 
 const initialState: State = {};
 

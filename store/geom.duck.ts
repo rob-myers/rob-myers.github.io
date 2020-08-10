@@ -1,8 +1,8 @@
 import { createThunk, ActionsUnion } from '@model/store/redux.model';
 import { GeomService } from '@model/geom/geom.service';
-import * as Geom from '@public-reducer/geom.types';
+import * as Geom from '@model/geom/geom.model';
 
-export interface State extends Geom.State {
+export interface State {
   service: GeomService; // Invisible to runtime state
 }
 

@@ -1,8 +1,7 @@
-import { PersistentCounter, RandomNumber } from './test-component';
-import DevEnv from '../dev-env/dev-env';
+import Intro from '@components/demo/intro/app';
+import Bipartite from '@components/demo/bipartite/app';
 
-import Intro from '@public/package/intro/app';
-import Bipartite from '@public/package/bipartite/app';
+import { PersistentCounter, RandomNumber } from './test-component';
 
 Main codebase
 
@@ -13,24 +12,6 @@ Main codebase
 <div style={{ width: 400, height: 200 }}>
   <Bipartite />
 </div>
-
----
-
-Maximal bipartite matchings
-
-<DevEnv
-  appRoot="package/bipartite/app.tsx"
-  scssRoot="package/bipartite/index.scss"
-  envKey="bipartite"
-/>
-
-Todo app
-
-<DevEnv
-  appRoot="package/intro/app.tsx"
-  scssRoot="package/intro/index.scss"
-  envKey="intro"
-/>
 
 ---
 

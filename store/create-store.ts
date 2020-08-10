@@ -4,7 +4,6 @@ import { createEpicMiddleware } from 'redux-observable';
 import { createTransform, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import { mapValues, pluck } from '@model/generic.model';
 import { getWindow } from '@model/dom.model';
 import { replacer, RootThunkParams } from '@model/store/redux.model';
 import { GeomService } from '@model/geom/geom.service';
@@ -14,8 +13,6 @@ import * as Reducer from './reducer';
 import createRootReducer from './reducer';
 import { State as BipartiteState } from './bipartite.duck';
 import { State as BlogState } from './blog.duck';
-import { State as DevEnvState } from './dev-env.duck';
-import { State as EditorState } from './editor.duck';
 import { State as TestState } from './test.duck';
 import { State as GeomState } from './geom.duck';
 
@@ -47,56 +44,6 @@ const createPersistedReducer = () => persistReducer({
       }),
       (state, _key) => state,
       { whitelist: ['blog'] }
-    ),
-    createTransform<DevEnvState, DevEnvState>(
-      ({ file, saved, package: toPackage }, _key) => ({
-        appMeta: {},
-        appPortal: {},
-        flag: {
-          initialized: false,
-        },
-        file: {},
-        packagesManifest: null,
-        package: {},
-        /**
-         * Save all files from loaded packages, except 'types'.
-         */
-        saved: {
-          ...saved,
-          ...(
-            Object.values(toPackage)
-              .filter(x => x.loaded && x.key !== 'types')
-              .reduce((agg, pkg) => ({
-                ...agg,
-                [pkg.key]: {
-                  ...pkg,
-                  file: mapValues(
-                    // Only save files from this package i.e. not from dependencies
-                    pluck(file, ({ key }) => key.startsWith(`package/${pkg.key}`)),
-                    ({ key, contents }) => ({ key, contents })
-                  ),
-                },
-              }), {} as typeof toPackage)
-          ),
-        },
-      }),
-      (state, _key) => state,
-      { whitelist: ['devEnv'] },
-    ),
-    createTransform<EditorState, EditorState>(
-      (_, _key) => ({
-        editor: {},
-        internal: null,
-        monacoLoaded: false,
-        monacoLoading: false,
-        model: {},
-        monacoService: null, // Keep out of main bundle
-        globalTypesLoaded: false,
-        sassWorker: null,
-        syntaxWorker: null,
-      }),
-      (state, _key) => state,
-      { whitelist: ['editor'] }
     ),
     createTransform<GeomState, Omit<GeomState, 'service'>>(
       ({}, _key) => ({
@@ -148,7 +95,7 @@ export const initializeStore = (preloadedState?: Reducer.RootState) => {
     )
   );
   refreshReducersAndThunks();
-  epicMiddleware.run(Reducer.rootEpic());
+  epicMiddleware.run(Reducer.rootEpic() as any); // TEMP any
   return store;
 };
 
