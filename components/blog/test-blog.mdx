@@ -1,16 +1,12 @@
-import Intro from '@components/demo/intro/app';
-import Bipartite from '@components/demo/bipartite/app';
-
+import Portal from './blog-portal'
 import { PersistentCounter, RandomNumber } from './test-component';
 
-Main codebase
-
 <div style={{ width: 400, height: 200 }}>
-  <Intro />
+  <Portal to="Intro" portalKey="intro-test" />
 </div>
 
 <div style={{ width: 400, height: 200 }}>
-  <Bipartite />
+  <Portal to="Bipartite" portalKey="bipartite-test" />
 </div>
 
 ---

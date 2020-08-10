@@ -8,9 +8,10 @@ import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 import OptimizeCssAssetsWebpackPlugin from 'optimize-css-assets-webpack-plugin';
 import { WebpackCtxt } from './next.model';
 
-const noCssModulesRegexes = [
-  /\/golden-layout\.scss$/,
-];
+// const noCssModulesRegexes = [
+//   /\/monaco-override\.scss$/,
+//   /\/golden-layout\.scss$/,
+// ];
 
 export default function({
   isServer,
@@ -112,21 +113,21 @@ export default function({
       rules: [
         {
           test: /\.(sa|sc|c)ss$/,
-          exclude: { or: [/node_modules/].concat(noCssModulesRegexes) },
+          // exclude: { or: [/node_modules/].concat(noCssModulesRegexes) },
           use: defaultLoaders.sass
         },
         {
           test: /node_modules.+\.css$/,
           use: defaultLoaders.npmCss
         },
-        {
-          test: { or: noCssModulesRegexes },
-          use: [
-            'style-loader',
-            { loader: 'css-loader', options: { importLoaders: 1 } },
-            'sass-loader',
-          ],
-        },
+        // {
+        //   test: { or: noCssModulesRegexes },
+        //   use: [
+        //     'style-loader',
+        //     { loader: 'css-loader', options: { importLoaders: 1 } },
+        //     'sass-loader',
+        //   ],
+        // },
         {
           test: /\.(woff|woff2|eot|ttf|otf)$/i,
           use: [

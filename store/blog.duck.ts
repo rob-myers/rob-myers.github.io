@@ -13,7 +13,10 @@ interface BlogAppPortal {
   componentKey: BlogAppKey;
   portalNode: Redux.Redacted<portals.HtmlPortalNode>;
 }
-type BlogAppKey = 'intro' | 'bipartite';
+export type BlogAppKey =  (
+  | 'Intro'
+  | 'Bipartite'
+)
 
 const initialState: State = {
   portal: {},
@@ -37,6 +40,7 @@ export const Thunk = {
     }) => {
       const portalNode = Redux.redact(portals.createHtmlPortalNode());
       portalNode.element.style.overflow = 'auto';
+      portalNode.element.style.height = '100%';
       dispatch(Act.addComponentPortal({ key: portalKey, componentKey, portalNode }));
     },
   ),
