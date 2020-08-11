@@ -1,7 +1,8 @@
-import css from './root-layout.scss';
 import Link from 'next/link';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import classNames from 'classnames';
+import css from './root-layout.scss';
 
 const RootLayout: React.FC = ({ children }) => {
   const router = useRouter();
@@ -20,9 +21,15 @@ const RootLayout: React.FC = ({ children }) => {
           </svg>
         </h1>
         <div className={css.links}>
-          {router.pathname !== '/' && <Link href="/"><a>blog</a></Link>}
-          {router.pathname !== '/meta' && <Link href="meta"><a>meta</a></Link>}
-          <Link href="defs"><a>defs</a></Link>
+          <Link href="/">
+            <a className={classNames({ [css.enabled]: router.pathname === '/' })}>blog</a>
+          </Link>
+          <Link href="/meta">
+            <a className={classNames({ [css.enabled]: router.pathname === '/meta' })}>meta</a>
+          </Link>
+          <Link href="/defs">
+            <a className={classNames({ [css.enabled]: router.pathname === '/defs' })}>defs</a>
+          </Link>
         </div>
       </div>
       <div>
