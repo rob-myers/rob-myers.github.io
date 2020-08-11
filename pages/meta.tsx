@@ -1,12 +1,9 @@
-import Layout from '@components/layout/layout';
-import TopMenu from '@components/top-menu/top-menu';
-import css from './about.scss';
+import RootLayout from '@components/root-layout/root-layout';
+import css from './meta.scss';
 
-const About: React.FC = () => {
+const Meta: React.FC = () => {
   return (
-    <Layout>
-      <TopMenu title="about" label="About" />
-
+    <RootLayout>
       <section className={css.personalInfo}>
         <div>Robert S. R. Myers</div>
         <a href="mailto:me.robmyers@gmail.com">me.robmyers@gmail.com</a>
@@ -14,8 +11,8 @@ const About: React.FC = () => {
         <a href="https://www.linkedin.com/in/robert-myers-4822ab18a/" target="_blank" rel="noopener noreferrer">Linkedin</a>
         <a href="https://dblp.org/pers/hd/m/Myers:Robert_S=_R=" target="_blank" rel="noopener noreferrer">Academic Papers</a>
       </section>
-    </Layout>
+    </RootLayout>
   );
 };
 
-export default About;
+export default Meta;

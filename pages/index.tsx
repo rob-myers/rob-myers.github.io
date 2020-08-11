@@ -1,14 +1,11 @@
-import Layout from '@components/layout/layout';
-import TopMenu from '@components/top-menu/top-menu';
+import RootLayout from '@components/root-layout/root-layout';
+import BlogRoot from '@components/blog/blog-root';
 
 const Home: React.FC = () => {
   return (
-    <Layout>
-      <TopMenu
-        title="rob-myers"
-        label="Robert S. R. Myers"
-      />
-    </Layout>  
+    <RootLayout>
+      <BlogRoot/>
+    </RootLayout>
   );
 };
 
