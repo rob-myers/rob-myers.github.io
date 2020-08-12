@@ -1,10 +1,10 @@
 import RootLayout from '@components/root-layout/root-layout';
-import BlogRoot from '@components/blog/blog-root';
+import Blog from '@components/blog/blog';
 
 const Home: React.FC = () => {
   return (
     <RootLayout>
-      <BlogRoot/>
+      <Blog/>
     </RootLayout>
   );
 };

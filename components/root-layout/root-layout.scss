@@ -1,65 +1,82 @@
 .root {
-  margin: 20px 0 0 20px;
+  margin: 40px 10px 0 40px;
+
+  > div {
+    max-width: 800px;
+  }
+
+  // blockquote {
+  //   font-style: italic;
+  //   background: #eee;
+  // }
+
+  a {
+    color: #555;
+  }
+
+  p {
+    line-height: 1.4;
+  }
 }
 
 .header {
   margin-bottom: 16px;
+}
 
-  .title {
-    margin: 0;
-  }
+.title {
+  margin: 0;
+}
 
-  .svg-title {
-    height: 80px;
+.svg-title {
+  height: 80px;
 
-    .text {
-      font: bold 80px sans-serif;
-      font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+  .text {
+    font: bold 80px sans-serif;
+    font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
 
-      transition: fill 0.5s ease-in-out, stroke 0.5s ease-in-out;
-      &:not(:hover) {
-        stroke: #000;
-        fill: black;
-      }
-      &:hover {
-        fill: white;
-        stroke: #500;
-      }
+    transition: fill 0.5s ease-in-out, stroke 0.5s ease-in-out;
+    &:not(:hover) {
+      stroke: #000;
+      fill: black;
+    }
+    &:hover {
+      fill: white;
+      stroke: #500;
     }
   }
+}
 
-  .links {
-    display: flex;
-    font-family: "Courier New", Courier, monospace;
-    font-size: 12px;
+.links {
+  display: flex;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 12px;
 
-    > a {
-      margin-right: 10px;
-      padding: 4px 8px;
+  > a {
+    margin-right: 10px;
+    padding: 4px 8px;
 
-      display: block;
+    display: block;
 
-      text-decoration: none;
-      background: #eee;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-      background: #eee;
+    text-decoration: none;
+    background: #eee;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    background: #eee;
 
-      &:hover {
-        color: #555;
-        transition: all 0.4s ease-in;
-        border: 1px solid #999;
-      }
-      &:not(:hover) {
-        color: #aaa;
-        transition: all 0.4s ease-out;
-      }
+    &:hover {
+      color: #555;
+      transition: all 0.4s ease-in;
+      border: 1px solid #999;
+    }
+    &:not(:hover) {
+      color: #aaa;
+      transition: all 0.4s ease-out;
+    }
 
-      &.enabled {
-        color: #222;
-        background: white;
-        border: 1px solid #999;
-      }
+    &.enabled {
+      color: #222;
+      background: white;
+      border: 1px solid #999;
     }
   }
 }
