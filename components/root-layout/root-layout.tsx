@@ -10,13 +10,13 @@ const RootLayout: React.FC = ({ children }) => {
   return (
     <section className={css.root}>
       <Head>
-        <title>Game AI Blog</title>
+        <title>game ai blog</title>
       </Head>
       <div className={css.header}>
         <h1 className={css.title}>
-          <svg className={css.svgTitle} viewBox="0 -60 500 80">
+          <svg className={css.svgTitle} viewBox="0 -60 420 80">
             <text className={css.text}>
-              be.have.your
+              be.have.yr
             </text>
           </svg>
         </h1>

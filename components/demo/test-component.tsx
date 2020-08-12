@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Act } from '@store/test.duck';
-import css from './blog.scss';
 
 export const PersistentCounter: React.FC = () => {
   // const [count, setCount] = useState(0);
@@ -9,7 +8,7 @@ export const PersistentCounter: React.FC = () => {
   const dispatch = useDispatch();
 
   return (
-    <section className={css.testSuite}>
+    <section>
       {count} &nbsp;
       <button onClick={() => dispatch(Act.testDecrement())}>-1</button>
       <button onClick={() => dispatch(Act.testIncrement())}>+1</button>

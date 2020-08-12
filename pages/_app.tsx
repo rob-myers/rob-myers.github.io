@@ -8,7 +8,7 @@ import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ReduxStore } from '@store/create-store';
 import withRedux from '@store/with-redux';
-import BlogPortals from '@components/blog/blog-portals';
+import BlogPortals from '@components/portal/blog-portals';
 
 const RootApp: React.FC<RootProps> = ({
   Component,
