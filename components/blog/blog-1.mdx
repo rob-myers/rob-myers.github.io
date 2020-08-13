@@ -1,22 +1,37 @@
-### Intro
+import Link from 'next/link';
+import ExtLink from '@components/ui/ext-link';
+import Citation from '@components/ui/citation';
 
-Human simulation remains a dream.
-[Simulating microscopic flat-worms](https://en.wikipedia.org/wiki/OpenWorm) inhabits dream-country too. Alan Turing asked if a machine could be behaviourally indistinguishable from a human, using plain text messages concerning general knowledge<sup>[1](#footnote)</sup>. Game developers consider a related question:
+# intro
 
-> can..
+Human simulation remains a dream, as does the [direct simulation of microscopic flat-worms](#worm). 
+<!-- Human simulation remains a dream, as does <Link href="/#worm"><a>direct simulation of microscopic flat-worms</a></Link>.  -->
+
+Alan Turing asked whether a machine could be indistinguishable from a human, restricting interaction to text messages and general knowledge [[Tur50]](#tur-50).
+Game AI asks a related question:
+
+> given characters and a particular setting, how can we make the experience as realistic as possible?
 
 
+Importantly we must also entertain the player, just as Turing's Test was presented as a party game [[Tur50](#tur-50)].
 
----
+
+<!-- 
 
 1. Explain how human behaviour is simulated in games.
 
-2. Develop richer behavioural experiences than currently exist.
+2. Develop richer behavioural experiences than currently exist. -->
 
 
 <br/>
 
-[1] <a name="footnote"></a> Turing's 1950 paper is called [Computing Machinery and Intelligence](https://watermark.silverchair.com/lix-236-433.pdf?token=AQECAHi208BE49Ooan9kkhW_Ercy7Dm3ZL_9Cf3qfKAc485ysgAAAqwwggKoBgkqhkiG9w0BBwagggKZMIIClQIBADCCAo4GCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMwuk9NIUpQ-fXwWXjAgEQgIICX_MvBzmnKRQPj7Vh0ye881sGlVybi-QyOXLtJgpp0Hpf5AMZktCmTvXpgnTf_jhC_2WX0DlF0BAu7Zafv8CkB8BGgoesa28BN44nqfJq93OAGEICnMqDzmMaqMHFra5cvdgSTPeon9wCXFf0qyE-NyB_ERM06WtiwMxpFWz7T880Wh97tB-zWvksNW9yTyQmjYjGPL-78pUIR0gdUyWV_h585QgN85dFRtGXVTQLiIqZCFfRRAf5R0d8shu7cjtKmYyyl5amd_wgPi8YYzxLGXMj2PAWjgs1WxFgukA_swp2Av7mRox-HsP6MAEQ3W9xZKK8lFaooe9mwnJBR1H_U41GyGM0nUYoCx84YkMYdoo7Z9xKuemgBhxYDVf31LLSEGN3iFiy7SZl19WCSBHviLRxfU-hpkoeIhP-1kfC6bs8ooIB_AbB0HHYMfCMzTyKRrIfIe2U2oLAuHObSox48gYMeX4LMnQ-O_HTDtToUY40yDi01W1VkLi9Edj-H7Vbghq9YUMpvcJK4CC1XDzVEXT2j-mbu7xq6cOHcxeIjhFRe1c1YF-pDjNYyBBzwtd8abUVvjx5_wIkRGnfGM5GxVVK72sjjw6S2WgVLiPjwZCXogC73mNRgN5ZdyS5Q8CN2U-60XBqR19KS9bIqSzrz7UNg-KUGByel0bHjqRfE4mg_YoASigj_51pzuz1_n1x8zwRCzxUl0YI-vg0-BWrQOSp8pCD3OB0F8y2vI3SwJquXsIDqYCEQoGuc3SNuoxiDI2rCUj57pQnhzyHnme_HaJTcfvLyZWQAmeHfcxM8g0). To qualify as "thinking", the machine is required to be indistinguishable from a woman answering questions in a "party game". 
+<Citation hash="tur-50" label="Tur50">
+  <ExtLink href="https://academic.oup.com/mind/article/LIX/236/433/986238">Computing Machinery and Intelligence</ExtLink>.
+</Citation>
 
+
+<Citation hash="worm" label="Worm">
+  See <ExtLink href="https://en.wikipedia.org/wiki/OpenWorm">OpenWorm</ ExtLink> and ...
+</Citation>
 
 <!-- We'll survey Game AI by providing many interactive demos. -->

@@ -35,6 +35,7 @@ const RootLayout: React.FC = ({ children }) => {
       <div>
         {children}
       </div>
+      <div className={css.emptyFooter} />
     </section>
   );
 };

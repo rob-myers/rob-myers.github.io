@@ -15,6 +15,7 @@ import {
   State as BlogState, 
   Action as BlogAction,
   Thunk as BlogThunk,
+  epic as blogEpic,
 } from './blog.duck';
 import {
   reducer as geomReducer,
@@ -85,7 +86,6 @@ export const filterActs = <T extends RootActOrThunk['type']>(...types: T[]) =>
   filter((action: RootActOrThunk): action is GetActOrThunk<T> =>
     types.includes(action.type as T));
 
-export const rootEpic = () => combineEpics(
-  // someEpic,
+export const createRootEpic = () => combineEpics(
+  blogEpic,
 );
-

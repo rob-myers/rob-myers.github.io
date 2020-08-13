@@ -5,10 +5,11 @@
     max-width: 800px;
   }
 
-  // blockquote {
-  //   font-style: italic;
-  //   background: #eee;
-  // }
+  blockquote {
+    color: #555;
+    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+    font-size: 18px;
+  }
 
   a {
     color: #555;
@@ -79,4 +80,8 @@
       border: 1px solid #999;
     }
   }
+}
+
+.empty-footer {
+  height: 100vh;
 }

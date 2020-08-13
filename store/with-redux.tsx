@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
 import { NextComponentType, NextPageContext } from 'next';
+import { Provider } from 'react-redux';
 import { persistStore, Persistor } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
 
 import { NEXT_REDUX_STORE, NEXT_REDUX_PERSISTOR } from '@public/constants';
 import { getWindow } from '@model/dom.model';
@@ -12,11 +14,15 @@ export default (App: NextComponentType<NextPageContext, IProps, Props>) => {
     const reduxStore = useRef(getOrInitializeStore(props.initialReduxState));
     const reduxPersistor = useRef(getOrInitializePersistor(reduxStore.current));
     return (
-      <App
-        {...props}
-        reduxStore={reduxStore.current}
-        reduxPersistor={reduxPersistor.current}
-      />);
+      <Provider store={reduxStore.current}>
+        <PersistGate
+          // loading={<Component {...pageProps} />}
+          persistor={reduxPersistor.current}
+        >
+          <App {...props} />
+        </PersistGate>
+      </Provider>
+      );
   };
 };
 
@@ -46,6 +52,4 @@ interface IProps {
 
 interface Props {
   pageProps?: any;
-  reduxStore?: ReduxStore;
-  reduxPersistor?: Persistor;
 }

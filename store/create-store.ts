@@ -95,7 +95,7 @@ export const initializeStore = (preloadedState?: Reducer.RootState) => {
     )
   );
   refreshReducersAndThunks();
-  epicMiddleware.run(Reducer.rootEpic() as any); // TEMP any
+  epicMiddleware.run(Reducer.createRootEpic());
   return store;
 };
 
