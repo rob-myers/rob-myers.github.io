@@ -1,5 +1,5 @@
 import RootLayout from '@components/ui/root-layout';
-import Blog from '@components/blog/blog';
+import Blog from 'blog/blog';
 
 const Home: React.FC = () => {
   return (
