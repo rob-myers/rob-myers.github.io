@@ -44,9 +44,21 @@ export class Vector {
     return this;
   }
 
+  round() {
+    this.x = Math.round(this.x);
+    this.y = Math.round(this.y);
+    return this;
+  }
+
   scale(amount: number) {
     this.x *= amount;
     this.y *= amount;
+    return this;
+  }
+
+  sub(other: VectorJson) {
+    this.x -= other.x;
+    this.y -= other.y;
     return this;
   }
 
