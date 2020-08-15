@@ -24,8 +24,7 @@
       "@model/*": ["model/*"],
       "@worker/*": ["worker/*"],
       "@env/*": ["env/*"],
-      "@public/*": ["public/*"],
-      "@public-reducer/*": ["public/package/types/*"]
+      "@public/*": ["public/*"]
     },
     "downlevelIteration": true,
     "noErrorTruncation": true,
@@ -36,7 +35,6 @@
   },
   "exclude": [
     "node_modules",
-    "public/package",
     "out"
   ],
   "include": [

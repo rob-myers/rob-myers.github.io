@@ -1,5 +1,7 @@
 ## Todo
 
+- [ ] codepen for svg pan zoom
+- [ ] svg pan zoom with grid
 - [ ] Can collapse/expand each blog entry
 - [x] Start blog concerning stepwise AI development.
 - [x] New branch `sans-monaco-2020` without monaco editor.

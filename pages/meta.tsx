@@ -1,4 +1,4 @@
-import RootLayout from '@components/root-layout/root-layout';
+import RootLayout from '@components/ui/root-layout';
 import css from './meta.scss';
 
 const Meta: React.FC = () => {
