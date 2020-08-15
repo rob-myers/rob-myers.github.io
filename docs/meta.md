@@ -1,27 +1,27 @@
 ## Todo
 
+- [ ] Can collapse/expand each blog entry
+- [x] Start blog concerning stepwise AI development.
 - [x] New branch `sans-monaco-2020` without monaco editor.
-- [ ] Start list of desired ai behaviours.
-- [ ] Start blog concerning stepwise AI development.
 
 ## Technical approach
 
 Our web-based engine has three parts:
 
-### __geom__
-
-Rectilinear levels specified via `react` components.
-Auto-generated navmesh with minimal number of rectangles.
-Truly optimal path-finding via recent [Polyanya algorithm](#cite-polyanya).
-
-### __visual__
+### __environment__
 
 top-down view with 3d walls via `react`, `SVG` and `CSS3`.
 
-### __behave__
+### __geometry__
 
-CLI-style behaviour specification via `rxjs`. -->
+Rectilinear levels specified via `react` components.
+Auto-generated navmesh with minimal number of rectangles.
 
+### __director__
+
+- Truly optimal path-finding via recent [Polyanya algorithm](#cite-polyanya).
+- Behaviour trees.
+- rxjs
 
 ## Rough ideas
 
