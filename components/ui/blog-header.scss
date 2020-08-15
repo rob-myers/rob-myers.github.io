@@ -1,14 +1,14 @@
 .root {
   position: relative;
-  margin-bottom: -24px;
+  margin-bottom: -12px;
   font-family: "Courier New", Courier, monospace;
   font-size: 14px;
 }
 
 .top-border {
   border-top: 1px solid #ddd;
-  transform: translateX(-16px);
-  width: calc(100% + 16px);
+  transform: translateX(-32px);
+  width: calc(100% + 32px);
 }
 
 .right-meta {
