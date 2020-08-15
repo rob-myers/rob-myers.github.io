@@ -1,6 +1,11 @@
 .root {
   margin-bottom: 12px;
-  padding: 2px 0 2px 8px;
+  padding: 2px 0 2px 0px;
+
+  strong {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    font-size: 16px;
+  }
 }
 
 .highlighted {

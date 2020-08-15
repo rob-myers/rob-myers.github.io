@@ -1,0 +1,22 @@
+.root {
+  position: relative;
+  margin-bottom: -24px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 14px;
+}
+
+.top-border {
+  border-top: 1px solid #ddd;
+  transform: translateX(-16px);
+  width: calc(100% + 16px);
+}
+
+.right-meta {
+  display: flex;
+  justify-content: flex-end;
+
+  .date-and-number {
+    color: #333;
+    padding: 2px 4px;
+  }
+}

@@ -1,37 +1,57 @@
 import Link from 'next/link';
 import ExtLink from '@components/ui/ext-link';
 import Citation from '@components/ui/citation';
+import BlogHeader from '@components/ui/blog-header';
 
-# intro
+<BlogHeader number="1" date="1/Sep/2020" />
+
+# Our objectives
 
 Human simulation remains a dream, as does the [direct simulation of microscopic flat-worms](#worm). 
-<!-- Human simulation remains a dream, as does <Link href="/#worm"><a>direct simulation of microscopic flat-worms</a></Link>.  -->
 
-Alan Turing asked whether a machine could be indistinguishable from a human, restricting interaction to text messages and general knowledge [[Tur50]](#tur-50).
+Alan Turing asked if a machine could be indistinguishable from a human, when communication is restricted to text messages and general knowledge [[Tur50]](#tur-50).
 Game AI asks a related question:
 
-> given characters and a particular setting, how can we make the experience as realistic as possible?
+> <a name="central-question"/> given the environment and plot, how can we orchestrate characters to behave like humans?
 
+By _environment_ we mean the graphics (how the player sees) and UI (how the player acts). It might be a birdseye 3d view of robots where the player is moved via the mouse. By _plot_ we mean a (usually dramatic) situation e.g. escaping from soldiers. Rather than attempting to simulate general knowledge, Game AI aims for _good acting over all possible plays_.
 
-Importantly we must also entertain the player, just as Turing's Test was presented as a party game [[Tur50](#tur-50)].
+<!-- The "judge" is the player, who is usually guided along their own narrative.  -->
+<!-- Game AI must entertain the player, not unlike the Turing Test's original presentation as a party game [[Tur50](#tur-50)]. -->
 
+This website will:
 
-<!-- 
+- explain how the [central question](#central-question) has been answered by video games.
+- develop richer behavioural experiences than currently exist outside games.
 
-1. Explain how human behaviour is simulated in games.
-
-2. Develop richer behavioural experiences than currently exist. -->
-
-
-<br/>
+In particular, we'll develop our own engine online and use it to explain well-travelled techniques. We'll also compose them to obtain rich experiences beyond the norm.
 
 <Citation hash="tur-50" label="Tur50">
   <ExtLink href="https://academic.oup.com/mind/article/LIX/236/433/986238">Computing Machinery and Intelligence</ExtLink>.
 </Citation>
 
-
 <Citation hash="worm" label="Worm">
   See <ExtLink href="https://en.wikipedia.org/wiki/OpenWorm">OpenWorm</ ExtLink> and ...
 </Citation>
 
-<!-- We'll survey Game AI by providing many interactive demos. -->
+<br/>
+
+<BlogHeader number="2" date="1st September 2020" />
+
+# How we'll do it
+
+Let us agree to divide the work as follows:
+
+- The _environment_ determines how the player sees & acts.
+- The _geometry_ defines the non-living structures e.g. walls/doors/items.
+- The _director_ determines the behaviour of the actors.
+
+
+<!-- We'll divide the remaining technology into _geometry_ and _behaviour_.
+
+systems:
+
+- _geometry_
+- _behaviour_ -->
+
+

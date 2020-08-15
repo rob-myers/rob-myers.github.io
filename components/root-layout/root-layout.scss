@@ -1,5 +1,5 @@
 .root {
-  margin: 40px 10px 0 40px;
+  margin: 40px 30px 0 40px;
 
   > div {
     max-width: 800px;
@@ -17,6 +17,11 @@
 
   p {
     line-height: 1.4;
+  }
+
+  ul {
+    // list-style: lower-latin;
+    line-height: 1.6;
   }
 }
 
