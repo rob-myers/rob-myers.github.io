@@ -18,6 +18,12 @@ import {
   epic as blogEpic,
 } from './blog.duck';
 import {
+  reducer as envReducer,
+  State as EnvState, 
+  Action as EnvAction,
+  Thunk as EnvThunk,
+} from './env.duck';
+import {
   reducer as geomReducer,
   State as GeomState, 
   Action as GeomAction,
@@ -32,6 +38,7 @@ import {
 export interface RootState {
   bipartite: BipartiteState;
   blog: BlogState;
+  env: EnvState;
   geom: GeomState;
   test: TestState;
 }
@@ -39,6 +46,7 @@ export interface RootState {
 export type RootAction = (
   | BipartiteAction
   | BlogAction
+  | EnvAction
   | GeomAction
   | TestAction
 );
@@ -46,12 +54,14 @@ export type RootAction = (
 export type RootThunk = (
   | BipartiteThunk
   | BlogThunk
+  | EnvThunk
   | GeomThunk
 );
 
 export const getRootThunks = () => [
   ...Object.values(BipartiteThunk),
   ...Object.values(BlogThunk),
+  ...Object.values(EnvThunk),
   ...Object.values(GeomThunk),
 ];
 
@@ -63,6 +73,7 @@ export type Dispatchable = (
 const createRootReducer = () => combineReducers<RootState>({
   bipartite: bipartiteReducer as any,
   blog: blogReducer,
+  env: envReducer,
   geom: geomReducer as any,
   test: testReducer,
 });

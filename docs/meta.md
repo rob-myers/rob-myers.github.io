@@ -1,5 +1,6 @@
 ## Todo
 
+- [ ] merge bipartite reducer into geom reducer/worker
 - [ ] codepen for svg pan zoom
 - [x] svg pan zoom with grid
 - [ ] Can collapse/expand each blog entry

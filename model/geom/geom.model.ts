@@ -171,6 +171,10 @@ export class Rect {
     return new Vector(this.x, this.y + this.height);
   }
 
+  static get zero() {
+    return new Rect(0, 0, 0, 0);
+  }
+
 }
 
 export interface RectJson {
