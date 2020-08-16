@@ -1,18 +1,55 @@
 import { useRef, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Vector } from '@model/geom/geom.model';
 import { getRelativePos } from '@model/dom.model';
 import css from './env.scss';
 
 const EnvMouse: React.FC<Props> = ({ envKey }) => {
   const rectEl = useRef<SVGRectElement>(null);
-  /** Is the mouse held down? */
-  const mouseIsDown = useRef(false);
-  /** Pan-zoom handler */
-  const onWheel = useRef<(e: WheelEvent) => void>(() => {});
-
-  const state = useSelector(({ env: { instance } }) => instance[envKey]);
   const dispatch = useDispatch();
+
+  const onMouseMove = (e: React.MouseEvent | MouseEvent) => {
+    const env = dispatch({ type: '[env] get env' as '[env] get env', args: { envKey } })!;
+    const relPos = getRelativePos(e);
+    const mouseWorld = new Vector(
+      env.renderBounds.x + (relPos.x / env.zoom),
+      env.renderBounds.y + (relPos.y / env.zoom),
+    );
+    dispatch({ type: '[env] update env', pay: { envKey, updates: { mouseWorld } } });
+  };
+
+  // Attached manually in useEffect
+  const onWheel = (e: WheelEvent) => {
+    e.preventDefault(); // Prevent page from scrolling
+    const env = dispatch({ type: '[env] get env' as '[env] get env', args: { envKey } })!;
+
+    if (e.shiftKey) {// Zoom
+      const nextZoom = env.zoom - 0.005 * e.deltaY;
+      if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
+        const relPos = getRelativePos(e);
+
+        dispatch({ type: '[env] update env', pay: { envKey, updates: {
+          zoom: nextZoom,
+          // Preserve world position of mouse
+          renderBounds: env.renderBounds.clone().translate(
+            relPos.x * (1 / env.zoom - 1 / nextZoom),
+            relPos.y * (1 / env.zoom - 1 / nextZoom),
+          ),
+        }}});
+      }
+    } else {// Pan
+      onMouseMove(e);
+      const k = 0.5 / env.zoom;
+      dispatch({ type: '[env] update env', pay: { envKey, updates: {
+        renderBounds: env.renderBounds.clone().translate(k * e.deltaX, k * e.deltaY),
+      }}});
+    }
+  };
+
+  // Focus EnvKeys
+  const onMouseEnter = () => {
+    rectEl.current?.parentElement?.parentElement?.parentElement?.focus();
+  };
 
   useEffect(() => {
     const onResize = () => {// Ensure rectangle 100% on resize
@@ -23,67 +60,20 @@ const EnvMouse: React.FC<Props> = ({ envKey }) => {
       }
     };
     window.addEventListener('resize', onResize);
-
-    const onWheelEvent = (e: WheelEvent) => onWheel.current(e);
-    rectEl.current!.addEventListener('wheel', onWheelEvent, false);
+    rectEl.current!.addEventListener('wheel', onWheel, false);
 
     return () => {
       window.removeEventListener('resize', onResize);
-      rectEl.current?.removeEventListener('wheel', onWheelEvent);
+      rectEl.current?.removeEventListener('wheel', onWheel);
     };
   }, []);
-
-  const onMouseMove = (e: React.MouseEvent | MouseEvent) => {
-    const relPos = getRelativePos(e);
-    const mouseWorld = new Vector(
-      state.renderBounds.x + (relPos.x / state.zoom),
-      state.renderBounds.y + (relPos.y / state.zoom),
-    );
-    dispatch({ type: '[env] update env', pay: { envKey, updates: { mouseWorld } } });
-  };
-  
-  onWheel.current = (e) => {
-    e.preventDefault(); // Prevent page from scrolling
-
-    // console.log({ deltaX: e.deltaX, deltaY: e.deltaY }); // Safari issue?
-    if (e.shiftKey) {// Zoom
-      const nextZoom = state.zoom - 0.005 * e.deltaY;
-      if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
-        const relPos = getRelativePos(e);
-
-        dispatch({ type: '[env] update env', pay: { envKey, updates: {
-          zoom: nextZoom,
-          // Preserve world position of mouse
-          renderBounds: state.renderBounds.clone().translate(
-            relPos.x * (1 / state.zoom - 1 / nextZoom),
-            relPos.y * (1 / state.zoom - 1 / nextZoom),
-          ),
-        }}});
-      }
-    } else {// Pan
-      onMouseMove(e);
-      const k = 0.5 / state.zoom;
-      dispatch({ type: '[env] update env', pay: { envKey, updates: {
-        renderBounds: state.renderBounds.clone().translate(k * e.deltaX, k * e.deltaY),
-      }}});
-    }
-  };
 
   return (
     <rect
       ref={rectEl}
       className={css.mouseRect}
-      onMouseEnter={// Focus EnvKeys
-        () => rectEl.current?.parentElement?.parentElement?.parentElement?.focus()
-      }
+      onMouseEnter={onMouseEnter}
       onMouseMove={onMouseMove}
-      onMouseDown={() => {
-        mouseIsDown.current = true;
-      }}
-      onMouseUp={(e) => {
-        mouseIsDown.current = false;
-      }}
-      // onWheel={onWheel.current}
     />
   );
 };

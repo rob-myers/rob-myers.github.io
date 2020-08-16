@@ -1,7 +1,9 @@
 ## Todo
 
+- [ ] try standard thunk approach and see if can get thunk hot reload working
 - [ ] merge bipartite reducer into geom reducer/worker
 - [ ] codepen for svg pan zoom
+- [x] instead, use our version of svg pan-zoom with grid
 - [x] svg pan zoom with grid
 - [ ] Can collapse/expand each blog entry
 - [x] Start blog concerning stepwise AI development.

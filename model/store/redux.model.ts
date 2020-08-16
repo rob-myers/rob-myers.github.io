@@ -3,12 +3,12 @@ import { KeyedLookup } from '@model/generic.model';
 /**
  * Synchronous actions
  */
-export interface SyncAct<T extends string, Payload extends null | {}> {
+export interface SyncAct<T extends string, Payload extends {}> {
   type: T;
   pay: Payload;
 }
 
-export const createAct = <T extends string, P extends object = {}>(
+export const createAct = <T extends string, P extends {}>(
   type: T,
   payload: P
 ): SyncAct<T, P> => ({ pay: payload, type });
