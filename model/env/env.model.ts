@@ -10,6 +10,7 @@ export interface EnvState {
   mouseWorld: Vector;
   /** Viewport bounds in world coords. */
   renderBounds: Rect;
+  screenCenter: Vector;
   /** Zoom multiplier with default `1` */
   zoom: number;
 }
@@ -21,6 +22,7 @@ export function createEnvState(envKey: string, dimension: VectorJson): EnvState 
     mouseScreen: Vector.zero,
     mouseWorld: Vector.zero,
     renderBounds: new Rect(0, 0, dimension.x, dimension.y),
+    screenCenter: Vector.from(dimension).scale(0.5),
     zoom: 1,
   };
 }
