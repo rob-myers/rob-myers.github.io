@@ -2,7 +2,7 @@
 declare module 'react-redux' {
   import { Component } from 'react';
   import { Store } from 'redux';
-  import { RootState, Dispatchable, ThunkAction } from '@store/reducer';
+  import { RootState, Dispatchable, RootThunk } from '@store/reducer';
   
   interface ProviderProps<A extends Action = AnyAction> {
     /**
@@ -25,8 +25,8 @@ declare module 'react-redux' {
   ): T;
   
   function useDispatch(): <T extends Dispatchable>(arg: T) =>
-    T['type'] extends ThunkAction['type']
-      ? ReturnType<Extract<ThunkAction, { type: T['type'] }>['thunk']>
+    T['type'] extends RootThunk['type']
+      ? ReturnType<Extract<RootThunk, { type: T['type'] }>['thunk']>
       : void;
 
 }
