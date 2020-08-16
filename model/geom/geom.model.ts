@@ -5,6 +5,10 @@ export class Vector {
     public y: number,
   ) {}
 
+  public get angle() {
+    return Math.atan2(this.y, this.x);
+  }
+
   static average(vectors: Vector[]) {
     return vectors.length
       ? vectors
@@ -19,6 +23,12 @@ export class Vector {
 
   get coord(): [number, number] {
     return [this.x, this.y];
+  }
+
+  public copy(other: Vector) {
+    this.x = other.x;
+    this.y = other.y;
+    return this;
   }
 
   equals({ x, y }: Vector) {
@@ -110,6 +120,10 @@ export class Rect {
     public height: number,
   ) {}
 
+  public clone() {
+    return new Rect(this.x, this.y, this.width, this.height);
+  }
+
   public contains({ x, y }: VectorJson) {
     return this.x <= x &&
       x <= this.x + this.width &&
@@ -169,6 +183,12 @@ export class Rect {
   }
   get sw() {
     return new Vector(this.x, this.y + this.height);
+  }
+
+  translate(dx: number, dy: number) {
+    this.x += dx;
+    this.y += dy;
+    return this;
   }
 
   static get zero() {
