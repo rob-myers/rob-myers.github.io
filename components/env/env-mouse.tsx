@@ -9,7 +9,7 @@ const EnvMouse: React.FC<Props> = ({ envKey }) => {
   const dispatch = useDispatch();
 
   const onMouseMove = (e: React.MouseEvent | MouseEvent) => {
-    const env = dispatch({ type: '[env] get env' as '[env] get env', args: { envKey } })!;
+    const env = dispatch({ type: '[env] get env', args: { envKey } })!;
     const relPos = getRelativePos(e);
     const mouseWorld = new Vector(
       env.renderBounds.x + (relPos.x / env.zoom),
@@ -21,7 +21,7 @@ const EnvMouse: React.FC<Props> = ({ envKey }) => {
   // Attached manually in useEffect
   const onWheel = (e: WheelEvent) => {
     e.preventDefault(); // Prevent page from scrolling
-    const env = dispatch({ type: '[env] get env' as '[env] get env', args: { envKey } })!;
+    const env = dispatch({ type: '[env] get env', args: { envKey } })!;
 
     if (e.shiftKey) {// Zoom
       const nextZoom = env.zoom - 0.005 * e.deltaY;

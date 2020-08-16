@@ -8,7 +8,9 @@ const Env3d: React.FC<Props> = ({ envKey }) => {
   const containerEl = useRef<HTMLDivElement>(null);
   const tempPoint = useRef(Vector.zero);
   
-  const [wallSegs, setWallSegs] = useState([] as { u: Vector; v: Vector; backface: boolean }[]);
+  const [wallSegs, setWallSegs] = useState([
+    { u: new Vector(300, 100), v: new Vector(300, 200), backface: true }
+  ] as { u: Vector; v: Vector; backface: boolean }[]);
   const [dimension, setDimension] = useState<Vector>();
 
   const mouseWorld = useSelector(({ env: { instance } }) => instance[envKey].mouseWorld);
@@ -32,23 +34,19 @@ const Env3d: React.FC<Props> = ({ envKey }) => {
   }, []);
 
   const geometry = useMemo(() =>
-    <>
-      {
-        wallSegs.map(({ u, v, backface }, i) => {
-          tempPoint.current.copy(u).sub(v);
-          return (
-            <div
-              key={`wall-${i}`}
-              className={classNames(css.wall, !backface && css.cullBackface)}
-              style={{
-                transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.current.angle}rad) rotateX(90deg)`,
-                width: tempPoint.current.length,
-              }}
-            />
-          );
-        })
-      }
-    </>
+    wallSegs.map(({ u, v, backface }, i) => {
+      tempPoint.current.copy(u).sub(v);
+      return (
+        <div
+          key={`wall-${i}`}
+          className={classNames(css.wall, !backface && css.cullBackface)}
+          style={{
+            transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.current.angle}rad) rotateX(90deg)`,
+            width: tempPoint.current.length,
+          }}
+        />
+      );
+    })
   , [wallSegs]);
 
   return (
