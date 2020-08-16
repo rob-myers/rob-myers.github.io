@@ -1,8 +1,9 @@
-import { Vector, Rect } from "@model/geom/geom.model";
+import { Vector, Rect, VectorJson } from "@model/geom/geom.model";
 
 export interface EnvState {
   /** Identifier e.g. `level-1` */
   key: string;
+  dimension: Vector;
   /** Mouse position in world coords */
   mouseWorld: Vector;
   /** Viewport bounds in world coords. */
@@ -11,11 +12,12 @@ export interface EnvState {
   zoom: number;
 }
 
-export function createEnvState(envKey: string): EnvState {
+export function createEnvState(envKey: string, dimension: VectorJson): EnvState {
   return {
     key: envKey,
+    dimension: Vector.from(dimension),
     mouseWorld:  Vector.zero,
-    renderBounds: Rect.zero,
+    renderBounds: new Rect(0, 0, dimension.x, dimension.y),
     zoom: 1,
   };
 }

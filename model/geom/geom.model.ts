@@ -120,6 +120,10 @@ export class Rect {
     public height: number,
   ) {}
 
+  public get center() {
+    return new Vector(this.x + (this.width / 2), this.y + (this.height / 2));
+  }
+
   public clone() {
     return new Rect(this.x, this.y, this.width, this.height);
   }

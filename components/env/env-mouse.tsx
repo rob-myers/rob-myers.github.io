@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Vector } from '@model/geom/geom.model';
+import { Vector, Rect } from '@model/geom/geom.model';
 import { getRelativePos } from '@model/dom.model';
 import css from './env.scss';
 
@@ -26,14 +26,18 @@ const EnvMouse: React.FC<Props> = ({ envKey }) => {
     if (e.shiftKey) {// Zoom
       const nextZoom = env.zoom - 0.005 * e.deltaY;
       if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
-        const relPos = getRelativePos(e);
-
+        // const relPos = getRelativePos(e); // Zoom to mouse
+        // Zoom to center
+        const relPos = { x: env.dimension.x/2, y: env.dimension.y/2 };
+        
         dispatch({ type: '[env] update env', pay: { envKey, updates: {
           zoom: nextZoom,
-          // Preserve world position of mouse
-          renderBounds: env.renderBounds.clone().translate(
-            relPos.x * (1 / env.zoom - 1 / nextZoom),
-            relPos.y * (1 / env.zoom - 1 / nextZoom),
+          renderBounds: new Rect(
+            // Preserve world position of mouse
+            env.renderBounds.x + relPos.x * (1 / env.zoom - 1 / nextZoom),
+            env.renderBounds.y + relPos.y * (1 / env.zoom - 1 / nextZoom),
+            env.dimension.x / nextZoom,
+            env.dimension.y / nextZoom,
           ),
         }}});
       }

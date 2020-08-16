@@ -12,7 +12,7 @@ const Env: React.FC<Props> = ({ envKey, width, height }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch({ type: '[env] add env', pay: { envKey } });
+    dispatch({ type: '[env] add env', pay: { envKey, dimension: { x: width, y: height } } });
     return () => void dispatch({ type: '[env] remove env', pay: { envKey } });
   }, []);
 

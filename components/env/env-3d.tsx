@@ -9,16 +9,17 @@ const Env3d: React.FC<Props> = ({ envKey }) => {
   const tempPoint = useRef(Vector.zero);
   
   const [wallSegs, setWallSegs] = useState([
-    { u: new Vector(300, 100), v: new Vector(300, 200), backface: true }
+    { u: new Vector(200, 100), v: new Vector(200, 200), backface: true } // TEMP
   ] as { u: Vector; v: Vector; backface: boolean }[]);
   const [dimension, setDimension] = useState<Vector>();
 
-  const mouseWorld = useSelector(({ env: { instance } }) => instance[envKey].mouseWorld);
+  // const mouseWorld = useSelector(({ env: { instance } }) => instance[envKey].mouseWorld);
   const renderBounds = useSelector(({ env: { instance } }) => instance[envKey].renderBounds);
   const zoomFactor = useSelector(({ env: { instance } }) => instance[envKey].zoom);
-
+  
   const scale = `scale(${zoomFactor})`;
   const translate = `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
+  const center = renderBounds.center;
 
   useEffect(() => {
     const onResize = () => {
@@ -58,7 +59,8 @@ const Env3d: React.FC<Props> = ({ envKey }) => {
         ref={containerEl}
         className={css.parentThreeD}
         style={dimension && {
-          perspectiveOrigin: `${100 * (mouseWorld.x / dimension.x)}% ${100 * (mouseWorld.y / dimension.y)}%`,
+          // perspectiveOrigin: `${100 * (mouseWorld.x / dimension.x)}% ${100 * (mouseWorld.y / dimension.y)}%`,
+          perspectiveOrigin: `${100 * (center.x / dimension.x)}% ${100 * (center.y / dimension.y)}%`,
           width: dimension.x,
           height: dimension.y,
         }}

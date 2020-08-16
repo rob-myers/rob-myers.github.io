@@ -9,6 +9,7 @@ const Env2d: React.FC<Props> = ({ envKey }) => {
   
   const scale = `scale(${zoomFactor || 1})`;
   const translate = renderBounds && `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
+  const center = renderBounds.center;
 
   const levelContent = useMemo(() => <EnvFloor envKey={envKey} />, []);
 
@@ -16,6 +17,7 @@ const Env2d: React.FC<Props> = ({ envKey }) => {
     <g style={{ transform: scale }}>
       <g style={{ transform: translate }}>
         {levelContent}
+        <circle fill="red" cx={center.x} cy={center.y} r={2} />
       </g>
       <EnvGrid envKey={envKey} />
     </g>
