@@ -23,7 +23,7 @@
       "@store/*": ["store/*"],
       "@model/*": ["model/*"],
       "@worker/*": ["worker/*"],
-      "@env/*": ["env/*"],
+      "@env-var/*": ["env-var/*"],
       "@public/*": ["public/*"]
     },
     "downlevelIteration": true,

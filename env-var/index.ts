@@ -8,7 +8,7 @@ const defaultEnv: Env = {
 
 try {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  Object.assign(defaultEnv, require('./env').default);
+  Object.assign(defaultEnv, require('./private').default);
 } catch (e) {
   // NOOP
 }

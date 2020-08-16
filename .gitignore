@@ -15,7 +15,7 @@ other.config.js
 
 yarn-error.log
 
-env/env.ts
+env-var/private.ts
 
 
 analyze/
