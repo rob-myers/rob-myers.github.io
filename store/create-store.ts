@@ -13,8 +13,9 @@ import * as Reducer from './reducer';
 import createRootReducer from './reducer';
 import { State as BipartiteState } from './bipartite.duck';
 import { State as BlogState } from './blog.duck';
-import { State as TestState } from './test.duck';
+import { State as EnvState } from './env.duck';
 import { State as GeomState } from './geom.duck';
+import { State as TestState } from './test.duck';
 
 const storeVersion = 0.03;
 
@@ -44,6 +45,13 @@ const createPersistedReducer = () => persistReducer({
       }),
       (state, _key) => state,
       { whitelist: ['blog'] }
+    ),
+    createTransform<EnvState, EnvState>(
+      ({}, _key) => ({
+        instance: {},
+      }),
+      (state, _key) => state,
+      { whitelist: ['env'] }
     ),
     createTransform<GeomState, Omit<GeomState, 'service'>>(
       ({}, _key) => ({
