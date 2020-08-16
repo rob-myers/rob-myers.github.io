@@ -19,3 +19,5 @@ export function createEnvState(envKey: string): EnvState {
     zoom: 1,
   };
 }
+
+export const tileDim = 10;

@@ -4,7 +4,10 @@ export function getWindow<T extends Record<string, any>>(): (Window & T) | undef
     : window as unknown as (Window & T);
 }
 
-export function getRelativePos(e: React.MouseEvent): { x: number; y: number } {
-  const { left, top } = e.currentTarget.getBoundingClientRect();
+/**
+ * Target element must have a bounding rect, so `window` is not supported.
+ */
+export function getRelativePos(e: React.MouseEvent | MouseEvent): { x: number; y: number } {
+  const { left, top } = (e.currentTarget! as Element).getBoundingClientRect();
   return { x: e.clientX - left, y: e.clientY - top };
 }
