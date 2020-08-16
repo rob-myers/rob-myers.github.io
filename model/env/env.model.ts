@@ -4,6 +4,8 @@ export interface EnvState {
   /** Identifier e.g. `level-1` */
   key: string;
   dimension: Vector;
+  /** Mouse position in screen coords relative to svg. */
+  mouseScreen: Vector;
   /** Mouse position in world coords */
   mouseWorld: Vector;
   /** Viewport bounds in world coords. */
@@ -16,7 +18,8 @@ export function createEnvState(envKey: string, dimension: VectorJson): EnvState 
   return {
     key: envKey,
     dimension: Vector.from(dimension),
-    mouseWorld:  Vector.zero,
+    mouseScreen: Vector.zero,
+    mouseWorld: Vector.zero,
     renderBounds: new Rect(0, 0, dimension.x, dimension.y),
     zoom: 1,
   };

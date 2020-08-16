@@ -15,7 +15,10 @@ const EnvMouse: React.FC<Props> = ({ envKey }) => {
       env.renderBounds.x + (relPos.x / env.zoom),
       env.renderBounds.y + (relPos.y / env.zoom),
     );
-    dispatch({ type: '[env] update env', pay: { envKey, updates: { mouseWorld } } });
+    dispatch({ type: '[env] update env', pay: { envKey, updates: {
+      mouseScreen: Vector.from(relPos),
+      mouseWorld,
+    }}});
   };
 
   // Attached manually in useEffect
@@ -33,7 +36,7 @@ const EnvMouse: React.FC<Props> = ({ envKey }) => {
         dispatch({ type: '[env] update env', pay: { envKey, updates: {
           zoom: nextZoom,
           renderBounds: new Rect(
-            // Preserve world position of mouse
+            // Preserve world position of `relPos`
             env.renderBounds.x + relPos.x * (1 / env.zoom - 1 / nextZoom),
             env.renderBounds.y + relPos.y * (1 / env.zoom - 1 / nextZoom),
             env.dimension.x / nextZoom,
