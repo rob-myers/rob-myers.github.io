@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import EnvFloor from './env-floor';
 import EnvGrid from './env-grid';
+import css from './env.scss';
 
 const Env2d: React.FC<Props> = ({ envKey }) => {
   const zoomFactor = useSelector(({ env: { instance } }) => instance[envKey]?.zoom);
@@ -9,18 +10,17 @@ const Env2d: React.FC<Props> = ({ envKey }) => {
   
   const scale = `scale(${zoomFactor || 1})`;
   const translate = renderBounds && `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
-  const center = renderBounds.center;
-
   const levelContent = useMemo(() => <EnvFloor envKey={envKey} />, []);
 
   return (
-    <g style={{ transform: scale }}>
-      <g style={{ transform: translate }}>
-        {levelContent}
-        <circle fill="red" cx={center.x} cy={center.y} r={2} />
+    <>
+      <g style={{ transform: scale }}>
+        <g style={{ transform: translate }}>
+          {levelContent}
+        </g>
+        <EnvGrid envKey={envKey} />
       </g>
-      <EnvGrid envKey={envKey} />
-    </g>
+    </>
   );
 };
 

@@ -9,7 +9,9 @@ const Env3d: React.FC<Props> = ({ envKey }) => {
   const tempPoint = useRef(Vector.zero);
   
   const [wallSegs, setWallSegs] = useState([
-    { u: new Vector(200, 100), v: new Vector(200, 200), backface: true } // TEMP
+    // TEMP
+    { u: new Vector(200, 100), v: new Vector(200, 200), backface: true },
+    { u: new Vector(200, 100), v: new Vector(400, 100), backface: true },
   ] as { u: Vector; v: Vector; backface: boolean }[]);
   const [dimension, setDimension] = useState<Vector>();
 

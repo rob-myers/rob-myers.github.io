@@ -8,7 +8,7 @@ const EnvKeys: React.FC<Props> = ({ envKey, children}) => {
     <div
       className={css.keys}
       onKeyUp={(e) => {
-        const _state = dispatch({ type: '[env] get env', args: { envKey } })!;
+        const _env = dispatch({ type: '[env] get env', args: { envKey } })!;
         console.log({ key: e.key });
         /**
          * Can react to keypresses here.

@@ -21,26 +21,27 @@ const EnvMouse: React.FC<Props> = ({ envKey }) => {
     }}});
   };
 
-  // Attached manually in useEffect
   const onWheel = (e: WheelEvent) => {
     e.preventDefault(); // Prevent page from scrolling
     const env = dispatch({ type: '[env] get env', args: { envKey } })!;
 
-    if (e.shiftKey) {// Zoom
-      const nextZoom = env.zoom - 0.005 * e.deltaY;
+    /**
+     * NOTE e.ctrlKey is true when pinch zoom in/out
+     */
+    if (e.ctrlKey) {// Zoom
+      const nextZoom = env.zoom - 0.05 * e.deltaY;
       if (Math.abs(e.deltaY) > 0.1 && nextZoom > 0.3) {
         // const relPos = getRelativePos(e); // Zoom to mouse
-        // Zoom to center
-        const relPos = { x: env.dimension.x/2, y: env.dimension.y/2 };
+        const relPos = env.screenCenter; // Zoom to center
         
         dispatch({ type: '[env] update env', pay: { envKey, updates: {
           zoom: nextZoom,
+          // Preserve world position of `relPos`
           renderBounds: new Rect(
-            // Preserve world position of `relPos`
             env.renderBounds.x + relPos.x * (1 / env.zoom - 1 / nextZoom),
             env.renderBounds.y + relPos.y * (1 / env.zoom - 1 / nextZoom),
-            env.dimension.x / nextZoom,
-            env.dimension.y / nextZoom,
+            env.screenDim.x / nextZoom,
+            env.screenDim.y / nextZoom,
           ),
         }}});
       }
