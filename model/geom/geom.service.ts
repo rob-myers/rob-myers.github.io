@@ -1,16 +1,15 @@
 import polygonClipping from 'polygon-clipping';
 import rectDecompose from 'rectangle-decomposition';
+import { GeomWorker } from '@worker/geom/worker.model';
 import { MeshJson as PolyanyaMeshJson } from '../polyanya/structs/mesh';
 import * as Geom from './geom.model';
-import GeomWorker from '@worker/geom/geom.worker';
 
 export class GeomService {
+  public worker!: GeomWorker;
 
-  constructor(
-    /** Instantiate web worker */
-    public worker = new GeomWorker,
-  ) {
-    // TODO
+  constructor() {
+    import('@worker/geom/geom.worker') // Avoid SSR issue
+      .then(imported => this.worker = new imported.default);
   }
 
   /**

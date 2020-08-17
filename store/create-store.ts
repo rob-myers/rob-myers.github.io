@@ -4,10 +4,10 @@ import { createEpicMiddleware } from 'redux-observable';
 import { createTransform, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
+import { NEXT_REDUX_STORE } from '@public/constants';
 import { getWindow } from '@model/dom.model';
 import { replacer, RootThunkParams } from '@model/store/redux.model';
 import { GeomService } from '@model/geom/geom.service';
-import { NEXT_REDUX_STORE } from '@public/constants';
 
 import * as Reducer from './reducer';
 import createRootReducer from './reducer';

@@ -24,11 +24,11 @@ const RootLayout: React.FC = ({ children }) => {
           <Link href="/">
             <a className={classNames({ [css.enabled]: router.pathname === '/' })}>blog</a>
           </Link>
-          <Link href="/meta">
-            <a className={classNames({ [css.enabled]: router.pathname === '/meta' })}>meta</a>
-          </Link>
           <Link href="/defs">
             <a className={classNames({ [css.enabled]: router.pathname === '/defs' })}>defs</a>
+          </Link>
+          <Link href="/meta">
+            <a className={classNames({ [css.enabled]: router.pathname === '/meta' })}>meta</a>
           </Link>
         </div>
       </div>
