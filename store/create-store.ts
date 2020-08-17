@@ -17,7 +17,7 @@ import { State as EnvState } from './env.duck';
 import { State as GeomState } from './geom.duck';
 import { State as TestState } from './test.duck';
 
-const storeVersion = 0.03;
+const storeVersion = 0.01;
 
 const createPersistedReducer = () => persistReducer({
   key: 'primary',
@@ -47,9 +47,7 @@ const createPersistedReducer = () => persistReducer({
       { whitelist: ['blog'] }
     ),
     createTransform<EnvState, EnvState>(
-      ({}, _key) => ({
-        instance: {},
-      }),
+      ({}, _key) => ({}),
       (state, _key) => state,
       { whitelist: ['env'] }
     ),

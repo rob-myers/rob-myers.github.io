@@ -7,8 +7,8 @@ import css from './env.scss';
 const LevelGrid: React.FC<Props> = ({ envKey }) => {
   const gridId = useRef(`grid-${envKey}`);
   const largeGridId = useRef(`large-grid-${envKey}`);
-  const renderBounds = useSelector(({ env: { instance } }) => instance[envKey].renderBounds);
-  const zoomFactor = useSelector(({ env: { instance } }) => instance[envKey].zoom);
+  const renderBounds = useSelector(({ env }) => env[envKey].renderBounds);
+  const zoomFactor = useSelector(({ env }) => env[envKey].zoom);
 
   // Compute grid pattern offset
   const dx = -posModulo(renderBounds.x, tileDim);

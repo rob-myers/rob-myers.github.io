@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import EnvKeys from './env-keys';
 import EnvMouse from './env-mouse';
@@ -8,11 +8,12 @@ import Env3d from './env-3d';
 import css from './env.scss';
 
 const Env: React.FC<Props> = ({ envKey, width, height }) => {
-  const registered = useSelector(({ env: { instance } }) => envKey in instance);
+  const [ready, setReady] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch({ type: '[env] add env', pay: { envKey, dimension: { x: width, y: height } } });
+    setReady(true);
     return () => void dispatch({ type: '[env] remove env', pay: { envKey } });
   }, []);
 
@@ -22,7 +23,7 @@ const Env: React.FC<Props> = ({ envKey, width, height }) => {
       className={css.root}
       style={{ width, height }}
     >
-      {registered &&
+      {ready &&
         <EnvKeys envKey={envKey}>
           <section className={css.viewport}>
             <svg className={css.svg}>

@@ -16,8 +16,8 @@ const Env3d: React.FC<Props> = ({ envKey }) => {
   const [dimension, setDimension] = useState<Vector>();
 
   // const mouseWorld = useSelector(({ env: { instance } }) => instance[envKey].mouseWorld);
-  const renderBounds = useSelector(({ env: { instance } }) => instance[envKey].renderBounds);
-  const zoomFactor = useSelector(({ env: { instance } }) => instance[envKey].zoom);
+  const renderBounds = useSelector(({ env }) => env[envKey].renderBounds);
+  const zoomFactor = useSelector(({ env }) => env[envKey].zoom);
   
   const scale = `scale(${zoomFactor})`;
   const translate = `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;

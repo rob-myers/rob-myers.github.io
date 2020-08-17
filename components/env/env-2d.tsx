@@ -5,8 +5,8 @@ import EnvGrid from './env-grid';
 // import css from './env.scss';
 
 const Env2d: React.FC<Props> = ({ envKey }) => {
-  const zoomFactor = useSelector(({ env: { instance } }) => instance[envKey]?.zoom);
-  const renderBounds = useSelector(({ env: { instance } }) => instance[envKey]?.renderBounds);
+  const zoomFactor = useSelector(({ env }) => env[envKey]?.zoom);
+  const renderBounds = useSelector(({ env }) => env[envKey]?.renderBounds);
   
   const scale = `scale(${zoomFactor || 1})`;
   const translate = renderBounds && `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;

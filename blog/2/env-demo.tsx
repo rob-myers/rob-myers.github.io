@@ -6,7 +6,7 @@ import Env from '@components/env/env';
 const initialHeight = 200; // ?
 
 const EnvDemo: React.FC<Props> = ({ envKey }) => {
-  const env = useSelector(({ env }) => env.instance[envKey]);
+  const env = useSelector(({ env }) => env[envKey]);
   const [mouseScreen, setMouseScreen] = useState(Vector.zero);
   const [worldPos, setWorldPos] = useState(Vector.zero);
   const [zoom, setZoom] = useState(1);
