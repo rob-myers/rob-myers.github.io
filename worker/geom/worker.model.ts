@@ -2,8 +2,8 @@ import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
 
-/** A Worker instance in parent thread. */
-export interface SyntaxWorker extends Worker {
+/** A Worker instance in main thread. */
+export interface GeomWorker extends Worker {
   postMessage(message: MessageFromParent): void;
   addEventListener(type: 'message', listener: (message: Message<MessageFromWorker>) => void): void;
   addEventListener(type: 'message', object: EventListenerObject): void;
@@ -40,7 +40,7 @@ type RefinedMessage<Key> = Extract<MessageFromWorker, { key: Key }>
 
 export async function awaitWorker<Key extends MessageFromWorker['key']>(
   key: Key,
-  worker: SyntaxWorker,
+  worker: GeomWorker,
   isMessage: (message: RefinedMessage<Key>) => boolean = () => true,
 ): Promise<RefinedMessage<Key>> {
   return new Promise(resolve => {
@@ -55,7 +55,7 @@ export async function awaitWorker<Key extends MessageFromWorker['key']>(
 }
 
 export function subscribeToWorker(
-  worker: SyntaxWorker,
+  worker: GeomWorker,
   handler: (msg: MessageFromWorker) => void, 
 ) {
   return fromEvent<Message<MessageFromWorker>>(worker, 'message')

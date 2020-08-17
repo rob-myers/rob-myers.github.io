@@ -1,6 +1,6 @@
 import { SyncAct } from '@model/store/redux.model';
 import { GeomWorkerAction, GeomWorkerState } from './reducer';
-import { GeomWorkerContext } from './worker.model';
+import { GeomWorkerContext } from '../worker.model';
 
 export interface GeomThunkParams {
   dispatch: <T extends GeomWorkerAction | GeomThunkAct<string, any, any>>(arg: T) => ThunkActReturnType<T>;

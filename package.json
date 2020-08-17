@@ -31,7 +31,7 @@
     "node": ">=14.2.0"
   },
   "scripts": {
-    "dev": "yarn next-cfg && concurrently 'next -p 3001'",
+    "dev": "yarn next-cfg && concurrently 'next -p 3001' 'yarn syntax-remotedev'",
     "build": "yarn next-cfg && next build",
     "start": "yarn next-cfg && next start",
     "export": "next export",

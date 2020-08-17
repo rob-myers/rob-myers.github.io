@@ -2,8 +2,9 @@ import { MiddlewareAPI, Dispatch, createStore, applyMiddleware, Store } from 're
 import { persistReducer, createTransform } from 'redux-persist';
 import storage from 'localforage';
 import { composeWithDevTools } from 'remote-redux-devtools';
+
 import { Redacted, replacer } from '@model/store/redux.model';
-import { GeomWorkerContext } from './worker.model';
+import { GeomWorkerContext } from '../worker.model';
 import { GeomDispatchOverload, GeomThunkAct } from './redux.model';
 import rootReducer, { GeomWorkerAction, GeomWorkerState, GeomWorkerThunk } from './reducer';
 
@@ -50,7 +51,7 @@ export const initializeStore = (
     preloadedState,
     composeWithDevTools({
       shouldHotReload: false,
-      realtime: false, // Turned off remote monitoring
+      realtime: true, // Turned on remote monitoring
       port: 3002,
       name: 'geom-worker',
       stateSanitizer: (state: GeomWorkerState): Redacted<GeomWorkerState> => {

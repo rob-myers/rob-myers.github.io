@@ -1,7 +1,7 @@
 import { persistStore } from 'redux-persist';
-import { SyntaxWorker, GeomWorkerContext } from './worker.model';
-import { GeomDispatchOverload } from './redux.model';
-import { initializeStore } from './create-store';
+import { GeomWorker, GeomWorkerContext } from './worker.model';
+import { GeomDispatchOverload } from './store/redux.model';
+import { initializeStore } from './store/create-store';
 
 const ctxt: GeomWorkerContext = self as any;
 
@@ -27,4 +27,4 @@ ctxt.addEventListener('message', async ({ data }) => {
 
 });
 
-export default {} as Worker & { new (): SyntaxWorker };
+export default {} as Worker & { new (): GeomWorker };

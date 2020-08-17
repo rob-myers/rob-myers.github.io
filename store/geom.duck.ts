@@ -3,7 +3,7 @@ import { GeomService } from '@model/geom/geom.service';
 import * as Geom from '@model/geom/geom.model';
 
 export interface State {
-  service: GeomService; // Invisible to runtime state
+  service: GeomService;
 }
 
 const initialState: State = {

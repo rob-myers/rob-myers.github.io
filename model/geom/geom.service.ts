@@ -2,8 +2,16 @@ import polygonClipping from 'polygon-clipping';
 import rectDecompose from 'rectangle-decomposition';
 import { MeshJson as PolyanyaMeshJson } from '../polyanya/structs/mesh';
 import * as Geom from './geom.model';
+import GeomWorker from '@worker/geom/geom.worker';
 
 export class GeomService {
+
+  constructor(
+    /** Instantiate web worker */
+    public worker = new GeomWorker,
+  ) {
+    // TODO
+  }
 
   /**
    * Multipolygon's points must be integers.
