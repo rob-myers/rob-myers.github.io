@@ -11,13 +11,12 @@ import { GeomService } from '@model/geom/geom.service';
 
 import * as Reducer from './reducer';
 import createRootReducer from './reducer';
-import { State as BipartiteState } from './bipartite.duck';
 import { State as BlogState } from './blog.duck';
 import { State as EnvState } from './env.duck';
 import { State as GeomState } from './geom.duck';
 import { State as TestState } from './test.duck';
 
-const storeVersion = 0.01;
+const storeVersion = 0.02;
 
 const createPersistedReducer = () => persistReducer({
   key: 'primary',
@@ -32,13 +31,6 @@ const createPersistedReducer = () => persistReducer({
   },
   storage,
   transforms: [
-    createTransform<BipartiteState, BipartiteState>(
-      (_, _key) => ({
-        // Empty
-      }),
-      (state, _key) => state,
-      { whitelist: ['bipartite'] }
-    ),
     createTransform<BlogState, BlogState>(
       (_, _key) => ({
         portal: {},

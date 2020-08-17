@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { BipartiteGraph, BipartiteEdge } from '@model/geom/bipartite.model';
 import css from './index.scss';
-import { BipartiteGraph, Edge } from '@model/geom/bipartite.model';
 
 const [deltaX, height] = [50, 200];
 const initGraph: BipartiteGraph = { n: 10, m: 10,
@@ -10,18 +10,16 @@ const initGraph: BipartiteGraph = { n: 10, m: 10,
 
 export const App: React.FC = () => {
   const [graph, setGraph] = React.useState(initGraph); 
-  const [matching, setMatching] = React.useState([] as Edge[]); 
-  const dispatch = useDispatch();
+  const [matching, setMatching] = React.useState([] as BipartiteEdge[]); 
+  const geom = useSelector(({ geom }) => geom.service);
 
   function nextRandomGraph() {
-    setMatching([]);
-    setGraph(dispatch({
-      type: '[bipartite] get random graph',
-      args: { n: 10, m: 10, edgeProbability: 0.2 },
-    }));
+    setGraph(geom.randomBipartiteGraph(10, 10, 0.2));
   }
-  function computeMaximalMatching() {
-    setMatching(dispatch({ type: '[bipartite] get maximal matching', args: graph }));
+
+  async function computeMaximalMatching() {
+    const { edges } = await geom.maximalMatching(graph);
+    setMatching(edges);
   }
 
   return (

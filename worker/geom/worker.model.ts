@@ -1,6 +1,49 @@
 import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
+import { BipartiteGraph, BipartiteEdge } from '@model/geom/bipartite.model';
+import { PolygonJson, Rect } from '@model/geom/geom.model';
+
+interface RequestStatus {
+  key: 'request-status';
+}
+interface GetMaxMatching {
+  key: 'get-max-matching';
+  graphKey: string;
+  graph: BipartiteGraph;
+}
+interface GetRectDecompose {
+  key: 'get-rect-decompose';
+  polygonKey: string;
+  /** Rectilinear with integer coords */
+  polygon: PolygonJson;
+}
+
+interface SendWorkerReady {
+  key: 'worker-ready';
+}
+interface SendMaxMatching {
+  key: 'send-max-matching';
+  graphKey: string;
+  edges: BipartiteEdge[];
+}
+interface SendRectDecompose {
+  key: 'send-rect-decompose';
+  polygonKey: string;
+  rects: Rect[];
+}
+
+type MessageFromParent = (
+  | RequestStatus
+  | GetMaxMatching
+  | GetRectDecompose
+);
+
+export type MessageFromWorker = (
+  | SendWorkerReady
+  | SendMaxMatching
+  | SendRectDecompose
+);
 
 /** A Worker instance in main thread. */
 export interface GeomWorker extends Worker {
@@ -19,22 +62,6 @@ export interface GeomWorkerContext extends Worker {
   removeEventListener(type: 'message', listener: (message: Message<MessageFromParent>) => void): void;
   removeEventListener(type: 'message', object: EventListenerObject): void;
 }
-
-interface RequestStatus {
-  key: 'request-status';
-}
-
-interface SendWorkerReady {
-  key: 'worker-ready';
-}
-
-type MessageFromParent = (
-  | RequestStatus
-);
-
-export type MessageFromWorker = (
-  | SendWorkerReady
-);
 
 type RefinedMessage<Key> = Extract<MessageFromWorker, { key: Key }>
 

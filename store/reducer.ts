@@ -5,12 +5,6 @@ import { filter } from 'rxjs/operators';
 import { DistributiveOmit } from '@model/generic.model';
 
 import {
-  reducer as bipartiteReducer,
-  State as BipartiteState, 
-  Action as BipartiteAction,
-  Thunk as BipartiteThunk,
-} from './bipartite.duck';
-import {
   reducer as blogReducer,
   State as BlogState, 
   Action as BlogAction,
@@ -36,7 +30,6 @@ import {
 } from './test.duck';
 
 export interface RootState {
-  bipartite: BipartiteState;
   blog: BlogState;
   env: EnvState;
   geom: GeomState;
@@ -44,7 +37,6 @@ export interface RootState {
 }
 
 export type RootAction = (
-  | BipartiteAction
   | BlogAction
   | EnvAction
   | GeomAction
@@ -52,14 +44,12 @@ export type RootAction = (
 );
 
 export type RootThunk = (
-  | BipartiteThunk
   | BlogThunk
   | EnvThunk
   | GeomThunk
 );
 
 export const getRootThunks = () => [
-  ...Object.values(BipartiteThunk),
   ...Object.values(BlogThunk),
   ...Object.values(EnvThunk),
   ...Object.values(GeomThunk),
@@ -71,7 +61,6 @@ export type Dispatchable = (
 )
 
 const createRootReducer = () => combineReducers<RootState>({
-  bipartite: bipartiteReducer as any,
   blog: blogReducer,
   env: envReducer,
   geom: geomReducer as any,

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import classNames from 'classnames';
-import { Vector } from '@model/geom/geom.model';
+import { Vector } from '@model/geom/vector.model';
 import css from './env.scss';
 
 const Env3d: React.FC<Props> = ({ envKey }) => {

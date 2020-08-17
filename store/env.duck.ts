@@ -1,7 +1,7 @@
 import * as Redux from '@model/store/redux.model';
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { EnvState, createEnvState } from '@model/env/env.model';
-import { VectorJson } from '@model/geom/geom.model';
+import { VectorJson } from '@model/geom/vector.model';
 
 export type State = KeyedLookup<EnvState>;
 

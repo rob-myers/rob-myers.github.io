@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Vector } from '@model/geom/geom.model';
+import { Vector } from '@model/geom/vector.model';
 import Env from '@components/env/env';
 
 const initialHeight = 200; // ?
