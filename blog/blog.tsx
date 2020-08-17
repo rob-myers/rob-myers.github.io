@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
+import { getWindow } from '@model/dom.model';
 import Blog1 from './1/blog-1.mdx';
 import Blog2 from './2/blog-2.mdx';
-import { getWindow } from '@model/dom.model';
 import css from './blog.scss';
 
 const BlogRoot: React.FC = () => {

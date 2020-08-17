@@ -4,9 +4,8 @@ import maximalMatching from 'bipartite-matching';
 import minimalVertexCover from 'bipartite-vertex-cover';
 import maximalIndependentSet from 'maximal-independent-set';
 
-// Using relative paths permits ts-node scripts
-import { MeshJson as PolyanyaMeshJson } from '../../model/polyanya/structs/mesh';
-import * as Geom from '../../model/geom/geom.model';
+import * as Geom from '@model/geom/geom.model';
+import { MeshJson as PolyanyaMeshJson } from './polyanya/structs/mesh';
 
 export class GeomWorkerService {
   /**

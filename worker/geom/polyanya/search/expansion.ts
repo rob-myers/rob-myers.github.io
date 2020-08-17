@@ -1,4 +1,4 @@
-import { testNever, last as lastEl } from '../../generic.model';
+import { testNever, last as lastEl } from '@model/generic.model';
 import { ZeroOnePos, line_intersect_bound_check, reflect_point, get_orientation, OrientationType, is_collinear, line_intersect } from '../helpers/geometry';
 import Point from '../structs/point'
 import { EPSILON } from '../structs/consts';

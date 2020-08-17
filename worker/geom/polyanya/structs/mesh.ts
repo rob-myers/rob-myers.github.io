@@ -1,4 +1,4 @@
-import { testNever, last as lastEl } from "../../generic.model";
+import { testNever, last as lastEl } from "@model/generic.model";
 import Vertex from "./vertex";
 import Polygon from "./polygon";
 import Point from "./point";

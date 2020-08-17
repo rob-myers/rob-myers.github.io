@@ -1,11 +1,11 @@
 import TinyQueue from 'tinyqueue';
+import { testNever, last as lastEl } from '@model/generic.model';
 import Timer from '../helpers/timer';
 import Point from "../structs/point";
 import SearchNode from '../structs/search-node';
 import Mesh, { PointLocationType } from '../structs/mesh';
 import Successor, { SuccessorType } from '../structs/successor';
 import { EPSILON } from '../structs/consts';
-import { testNever, last as lastEl } from '../../generic.model';
 import { get_h_value, get_successors } from './expansion';
 
 export default class SearchInstance {

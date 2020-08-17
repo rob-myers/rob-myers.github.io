@@ -1,7 +1,7 @@
 ## Todo
 
-- [ ] try standard thunk approach and see if can get thunk hot reload working
-- [ ] merge bipartite reducer into geom reducer/worker
+- [ ] try standard thunk approach; what about `GeomService`?
+- [x] merge bipartite reducer into geom reducer/worker
 - [ ] codepen for env
 - [x] instead, use our version of svg pan-zoom with grid i.e. `Env`
 - [x] svg pan zoom with grid
