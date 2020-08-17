@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import Env from '@components/env/env';
 import { Vector } from '@model/geom/geom.model';
+import Env from '@components/env/env';
 
 const initialHeight = 200; // ?
 
-const EnvDemo: React.FC = () => {
-  const envKey = 'b2-d1';
+const EnvDemo: React.FC<Props> = ({ envKey }) => {
   const env = useSelector(({ env }) => env.instance[envKey]);
   const [mouseScreen, setMouseScreen] = useState(Vector.zero);
   const [worldPos, setWorldPos] = useState(Vector.zero);
@@ -17,11 +16,10 @@ const EnvDemo: React.FC = () => {
     if (env) {
       setMouseScreen(env.mouseScreen.clone().round());
       setWorldPos(env.renderBounds.center.round());
-      setZoom(Math.round(env.zoom));
+      setZoom(Number(env.zoom.toPrecision(1)));
       setHeight(Math.round(initialHeight / env.zoom));
     }
   }, [env]);
-
 
   return (
     <div>
@@ -38,5 +36,9 @@ const EnvDemo: React.FC = () => {
     </div>
   );
 };
+
+interface Props {
+  envKey: string;
+}
 
 export default EnvDemo;
