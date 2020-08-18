@@ -13,9 +13,17 @@ const RootApp: React.FC<RootProps> = ({
   <>
     <Head>
       <link rel="shortcut icon" href="/favicon.ico" />
+      <link rel="preload" href="/fonts/Quicksand-Regular.otf" as="font" crossOrigin="" />
+      <link rel="preload" href="/fonts/Montserrat-Regular.otf" as="font" crossOrigin="" />
       <style global={true}>{`
         body {
           margin: 0px;
+        }
+        @font-face {
+          font-family: 'Helvetica-Now';
+          src: url('/fonts/HelveticaNowText-Light.woff2');
+          font-style: normal;
+          font-display: swap;
         }
       `}</style>
     </Head>
