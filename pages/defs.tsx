@@ -1,5 +1,5 @@
 import RootLayout from '@components/ui/root-layout';
-import Defs from '@blog/defs';
+import Defs from '@blog/defs/defs';
 
 const About: React.FC = () => {
   return (

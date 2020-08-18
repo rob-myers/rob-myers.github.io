@@ -1,5 +1,5 @@
-import Meta from './meta/meta.mdx';
-import css from './blog.scss';
+import Meta from './meta.mdx';
+import css from '../blog.scss';
 
 const BlogMeta: React.FC = () => {
   return (

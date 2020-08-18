@@ -1,5 +1,5 @@
-import Defs from './defs/defs.mdx';
-import css from './blog.scss';
+import Defs from './defs.mdx';
+import css from '../blog.scss';
 
 const BlogDefs: React.FC = () => {
   return (
