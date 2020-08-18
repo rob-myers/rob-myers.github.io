@@ -17,7 +17,7 @@ const RootLayout: React.FC = ({ children }) => {
           <h1 className={css.title}>
             <svg className={css.svgTitle} viewBox="0 -60 420 80">
               <text className={css.text}>
-                be.have.yr
+                be have yr
               </text>
             </svg>
           </h1>

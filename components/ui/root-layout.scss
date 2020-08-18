@@ -51,6 +51,7 @@
   .text {
     font: bold 80px sans-serif;
     font-family: "Helvetica-Now";
+    font-weight: lighter;
   }
 }
 
@@ -70,7 +71,7 @@
     background: #eee;
     border-radius: 4px;
     border: 1px solid #ddd;
-    background: #eee;
+    background: #fff;
 
     &:hover {
       color: #555;
@@ -84,7 +85,6 @@
 
     &.enabled {
       color: #222;
-      background: white;
       border: 1px solid #999;
     }
   }
