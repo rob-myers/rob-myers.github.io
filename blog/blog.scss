@@ -1,6 +1,9 @@
 .root {
   padding-top: 10px;
-  padding-left: 32px;
+  padding-left: 20px;
+  @media (min-width: 500px) {
+    padding-left: 40px;
+  }
   border-left: 1px solid #ddd;
 
   // font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;

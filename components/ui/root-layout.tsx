@@ -15,7 +15,11 @@ const RootLayout: React.FC = ({ children }) => {
       <div>
         <div className={css.header}>
           <h1 className={css.title}>
-            <svg className={css.svgTitle} viewBox="0 -60 420 80">
+            <svg
+              className={css.svgTitle}
+              viewBox="0 -60 420 80"
+              preserveAspectRatio="xMinYMin"
+            >
               <text className={css.text}>
                 be have yr
               </text>
