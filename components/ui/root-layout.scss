@@ -22,7 +22,7 @@
   h1 {
     margin: 0;
     padding-top: 12px;
-    font-family: "Helvetica-Now";
+    font-family: "Helvetica-Now", Helvetica, sans-serif;
   }
 
   blockquote {
@@ -58,7 +58,7 @@
     max-height: 80px;
     .text {
       font: bold 80px sans-serif;
-      font-family: "Helvetica-Now";
+      font-family: "Helvetica-Now", Helvetica, sans-serif;
       font-weight: lighter;
     }
   }
