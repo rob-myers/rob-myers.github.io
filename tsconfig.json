@@ -24,7 +24,8 @@
       "@model/*": ["model/*"],
       "@worker/*": ["worker/*"],
       "@env-var/*": ["env-var/*"],
-      "@public/*": ["public/*"]
+      "@public/*": ["public/*"],
+      "@blog/*": ["blog/*"],
     },
     "downlevelIteration": true,
     "noErrorTruncation": true,

@@ -1,16 +1,10 @@
 import RootLayout from '@components/ui/root-layout';
-import css from './meta.scss';
+import BlogMeta from '@blog/meta';
 
 const Meta: React.FC = () => {
   return (
     <RootLayout>
-      <section className={css.personalInfo}>
-        <div>Robert S. R. Myers</div>
-        <a href="mailto:me.robmyers@gmail.com">me.robmyers@gmail.com</a>
-        <a href="mailto:robmyers@gumtree.com">robmyers@gumtree.com</a>
-        <a href="https://www.linkedin.com/in/robert-myers-4822ab18a/" target="_blank" rel="noopener noreferrer">Linkedin</a>
-        <a href="https://dblp.org/pers/hd/m/Myers:Robert_S=_R=" target="_blank" rel="noopener noreferrer">Academic Papers</a>
-      </section>
+      <BlogMeta />
     </RootLayout>
   );
 };

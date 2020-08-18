@@ -1,8 +1,25 @@
 .root {
-  margin: 40px 30px 0 40px;
+  display: flex;
+  flex-direction: column;
+  @media (min-width: 800px) {
+    align-items: center;
+  }
 
-  > div {
-    max-width: 800px;
+  .header {
+    background: #eee;
+    padding: 30px 0 16px 40px;
+    border-top: 10px solid #000;
+  }
+
+  .body {
+    margin-right: 30px;
+    @media (min-width: 800px) {
+      width: calc(100vw - 30px);
+    }
+    @media (min-width: 1020px) {
+      margin-right: 0px;
+      width: 1000px;
+    }
   }
 
   blockquote {
@@ -25,10 +42,6 @@
   }
 }
 
-.header {
-  margin-bottom: 16px;
-}
-
 .title {
   margin: 0;
 }
@@ -39,21 +52,22 @@
   .text {
     font: bold 80px sans-serif;
     font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans", Arial, sans-serif;
+    stroke: #000;
 
     transition: fill 0.5s ease-in-out, stroke 0.5s ease-in-out;
     &:not(:hover) {
-      stroke: #000;
       fill: black;
     }
     &:hover {
-      fill: white;
-      stroke: #500;
+      fill: #fff;
     }
   }
 }
 
 .links {
   display: flex;
+  // justify-content: center;
+
   font-family: "Courier New", Courier, monospace;
   font-size: 12px;
 

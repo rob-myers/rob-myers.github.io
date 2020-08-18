@@ -27,6 +27,7 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
               '@worker': path.resolve(__dirname, 'worker'),
               '@env-var': path.resolve(__dirname, 'env-var'),
               '@public': path.resolve(__dirname, 'public'),
+              '@blog': path.resolve(__dirname, 'blog'),
             }
           },
         },

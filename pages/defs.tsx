@@ -1,10 +1,10 @@
 import RootLayout from '@components/ui/root-layout';
-import css from './defs.scss';
+import Defs from '@blog/defs';
 
 const About: React.FC = () => {
   return (
     <RootLayout>
-      Definitions
+      <Defs />
     </RootLayout>
   );
 };

@@ -12,28 +12,30 @@ const RootLayout: React.FC = ({ children }) => {
       <Head>
         <title>game ai blog</title>
       </Head>
-      <div className={css.header}>
-        <h1 className={css.title}>
-          <svg className={css.svgTitle} viewBox="0 -60 420 80">
-            <text className={css.text}>
-              be.have.yr
-            </text>
-          </svg>
-        </h1>
-        <div className={css.links}>
-          <Link href="/">
-            <a className={classNames({ [css.enabled]: router.pathname === '/' })}>blog</a>
-          </Link>
-          <Link href="/defs">
-            <a className={classNames({ [css.enabled]: router.pathname === '/defs' })}>defs</a>
-          </Link>
-          <Link href="/meta">
-            <a className={classNames({ [css.enabled]: router.pathname === '/meta' })}>meta</a>
-          </Link>
-        </div>
-      </div>
       <div>
-        {children}
+        <div className={css.header}>
+          <h1 className={css.title}>
+            <svg className={css.svgTitle} viewBox="0 -60 420 80">
+              <text className={css.text}>
+                be.have.yr
+              </text>
+            </svg>
+          </h1>
+          <div className={css.links}>
+            <Link href="/">
+              <a className={classNames({ [css.enabled]: router.pathname === '/' })}>blog</a>
+            </Link>
+            <Link href="/defs">
+              <a className={classNames({ [css.enabled]: router.pathname === '/defs' })}>defs</a>
+            </Link>
+            <Link href="/meta">
+              <a className={classNames({ [css.enabled]: router.pathname === '/meta' })}>meta</a>
+            </Link>
+          </div>
+        </div>
+        <div className={css.body}>
+          {children}
+        </div>
       </div>
       <div className={css.emptyFooter} />
     </section>
