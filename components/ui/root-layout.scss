@@ -1,25 +1,18 @@
 .root {
   display: flex;
   flex-direction: column;
-  @media (min-width: 800px) {
-    align-items: center;
-  }
+  align-items: center;
 
   .header {
     background: #eee;
     padding: 30px 40px;
     border-top: 10px solid #000;
-    width: 100%;
   }
 
   .body {
-    margin-right: 20px;
-    @media (min-width: 800px) {
-      width: calc(100vw - 30px);
-    }
-    @media (min-width: 1020px) {
-      margin-right: 0px;
-      width: 1000px;
+    width: 100vw;
+    @media (min-width: 1000px) {
+      max-width: 1000px;
     }
   }
 
@@ -40,6 +33,7 @@
 
   p {
     line-height: 1.6;
+    padding-right: 20px;
   }
 
   ul {
