@@ -1,0 +1,16 @@
+.root {
+  float: right;
+  display: flex;
+  justify-content: space-between;
+
+  background: rgba(200, 180, 160, 0.1);
+  font-size: 12px;
+  padding: 8px;
+  color: #000;
+  font-weight: lighter;
+
+  .date {
+    // color: #abc;
+    margin-right: 8px;
+  }
+}

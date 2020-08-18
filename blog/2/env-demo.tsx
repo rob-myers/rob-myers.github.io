@@ -22,7 +22,7 @@ const EnvDemo: React.FC<Props> = ({ envKey }) => {
   }, [env]);
 
   return (
-    <div>
+    <div style={{ overflow: 'auto' }}>
       <div style={{
         fontFamily: '"Courier New", Courier, monospace',
         fontSize: 12,

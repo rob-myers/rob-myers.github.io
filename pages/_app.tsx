@@ -25,6 +25,12 @@ const RootApp: React.FC<RootProps> = ({
           font-style: normal;
           font-display: swap;
         }
+        @font-face {
+          font-family: 'Tisaweb-Regular';
+          src: url('/fonts/Tisaweb-Regular.otf');
+          font-style: normal;
+          font-display: swap;
+        }
       `}</style>
     </Head>
     <Component {...pageProps} />
