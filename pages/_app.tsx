@@ -13,23 +13,9 @@ const RootApp: React.FC<RootProps> = ({
   <>
     <Head>
       <link rel="shortcut icon" href="/favicon.ico" />
-      <link rel="preload" href="/fonts/HelveticaNowText-Light.woff2" as="font" crossOrigin="" />
-      <link rel="preload" href="/fonts/Tisaweb-Regular.otf" as="font" crossOrigin="" />
       <style global={true}>{`
         body {
           margin: 0px;
-        }
-        @font-face {
-          font-family: 'Helvetica-Now';
-          src: url('/fonts/HelveticaNowText-Light.woff2');
-          font-style: normal;
-          font-display: swap;
-        }
-        @font-face {
-          font-family: 'Tisaweb-Regular';
-          src: url('/fonts/Tisaweb-Regular.otf');
-          font-style: normal;
-          font-display: swap;
         }
       `}</style>
     </Head>
