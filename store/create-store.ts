@@ -46,6 +46,7 @@ const createPersistedReducer = () => persistReducer({
     createTransform<GeomState, Omit<GeomState, 'service'>>(
       ({}, _key) => ({
         // Forget service
+        lookup: {}, // Forget geom roots
       }),
       (state, _key) => ({
         ...state,
