@@ -4,17 +4,20 @@ import classNames from 'classnames';
 import { Vector } from '@model/geom/vector.model';
 import css from './env.scss';
 
+const tableHeight = 30;
+interface VertFace { u: Vector; v: Vector; backface: boolean; };
+
 const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
   const containerEl = useRef<HTMLDivElement>(null);
   const tempPoint = useRef(Vector.zero);
-  const [wallSegs, setWallSegs] = useState(
-    [] as { u: Vector; v: Vector; backface: boolean }[],
-  );
+  const [tableSegs, setTableSegs] = useState([] as VertFace[]);
+  const [wallSegs, setWallSegs] = useState([] as VertFace[]);
   const [dimension, setDimension] = useState<Vector>();
 
   // const mouseWorld = useSelector(({ env: { instance } }) => instance[envKey].mouseWorld);
   const renderBounds = useSelector(({ env }) => env[envKey].renderBounds);
   const zoomFactor = useSelector(({ env }) => env[envKey].zoom);
+  const tables = useSelector(({ geom }) => geom.lookup[geomKey]?.tables || []);
   const walls = useSelector(({ geom }) => geom.lookup[geomKey]?.walls || []);
   
   const scale = `scale(${zoomFactor})`;
@@ -32,6 +35,15 @@ const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
   }, []);
 
   useEffect(() => {
+    setTableSegs(tables.flatMap(({ nw, ne, se, sw }) => [
+      { u: ne, v: nw, backface: false },
+      { u: se, v: ne, backface: false },
+      { u: sw, v: se, backface: false },
+      { u: nw, v: sw, backface: false },
+    ]));
+  }, [tables]);
+
+  useEffect(() => {
     setWallSegs(walls.flatMap(({ nw, ne, se, sw }) => [
       { u: ne, v: nw, backface: false },
       { u: se, v: ne, backface: false },
@@ -41,20 +53,47 @@ const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
   }, [walls]);
 
   const geometry = useMemo(() =>
-    wallSegs.map(({ u, v, backface }, i) => {
-      tempPoint.current.copy(u).sub(v);
-      return (
+    <>
+      {tableSegs.map(({ u, v, backface }, i) => {
+        tempPoint.current.copy(u).sub(v);
+        return (
+          <div
+            key={`table-${i}`}
+            className={classNames(css.table, !backface && css.cullBackface)}
+            style={{
+              transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.current.angle}rad) rotateX(90deg)`,
+              height: tableHeight,
+              width: tempPoint.current.length,
+            }}
+          />
+        );
+      })}
+      {tables.map(({ x, y, width, height }, i) =>
         <div
-          key={`wall-${i}`}
-          className={classNames(css.wall, !backface && css.cullBackface)}
+          key={`tabletop-${i}`}
+          className={css.tableTop}
           style={{
-            transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.current.angle}rad) rotateX(90deg)`,
-            width: tempPoint.current.length,
+            transform: `translate3d(${x}px, ${y}px, ${tableHeight}px)`,
+            height,
+            width,
           }}
-        />
-      );
-    })
-  , [wallSegs]);
+        />)
+      }
+      {wallSegs.map(({ u, v, backface }, i) => {
+        tempPoint.current.copy(u).sub(v);
+        return (
+          <div
+            key={`wall-${i}`}
+            className={classNames(css.wall, !backface && css.cullBackface)}
+            style={{
+              transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.current.angle}rad) rotateX(90deg)`,
+              width: tempPoint.current.length,
+            }}
+          />
+        );
+      })}
+    </>
+  , [wallSegs, tableSegs]);
 
   return (
     <div

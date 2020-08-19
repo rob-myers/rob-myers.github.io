@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { Vector } from '@model/geom/vector.model';
 import Env from '@components/env/env';
 import GeomRoot from '@components/geom/geom-root';
+import Table from '@components/geom/geom-table';
 import Wall from '@components/geom/geom-wall';
 
 const initialHeight = 200; // ?
@@ -31,6 +32,8 @@ const EnvDemo: React.FC<Props> = ({ envKey }) => {
           <Wall x={400} y={100} dx={5} dy={200} />
         {/* </g> */}
       {/* </g> */}
+      <Table x={100} y={200} dx={50} dy={50} />
+      <Table x={200} y={200} dx={50} dy={100} />
     </GeomRoot>
   ), []);
 

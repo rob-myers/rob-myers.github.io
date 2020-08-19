@@ -1,4 +1,4 @@
-import { KeyedLookup, testNever } from '@model/generic.model';
+import { KeyedLookup, testNever, pluck } from '@model/generic.model';
 import { traverseDom } from '@model/dom.model';
 import * as Redux from '@model/store/redux.model';
 import { GeomService } from '@model/geom/geom.service';
@@ -42,7 +42,8 @@ export const Thunk = {
 
       const file = geom.lookup[geomKey];
       const invertedUiMatrix = ancestralCtm;
-      const nextWalls = {} as { [wallKey: string]: Geom.Rect };
+      const nextTables = {} as { [itemKey: string]: Geom.Rect };
+      const nextWalls = {} as { [itemKey: string]: Geom.Rect };
 
       traverseDom(rootEl, (el) => {
         if (el instanceof SVGRectElement) {
@@ -56,21 +57,26 @@ export const Thunk = {
           if (el.classList.contains(css.wall)) {
             nextWalls[`${rect}`] = rect;
           } else if (el.classList.contains(css.table)) {
-
+            nextTables[`${rect}`] = rect;
           }
         }
       });
       
-      const prevKeys = file.walls.map(x => `${x}`);
-      const nextKeys = Object.keys(nextWalls);
-      if (prevKeys.length !== nextKeys.length || prevKeys.some(key => !nextWalls[key])) {
-        console.log('geometry has changed')
-        /**
-         * TODO compute & show navmesh
-         */
-        const walls = Object.values(nextWalls).map(x => x.clone());
-        dispatch(Act.updateGeom(geomKey, { walls }));
+      let prevKeys = file.walls.map(x => `${x}`);
+      if (prevKeys.length !== Object.keys(nextWalls).length || prevKeys.some(key => !nextWalls[key])) {
+        console.log('geometry has changed (walls)')
+        dispatch(Act.updateGeom(geomKey, { walls: Object.values(nextWalls) }));
       }
+
+      prevKeys = file.tables.map(x => `${x}`);
+      if (prevKeys.length !== Object.keys(nextTables).length || prevKeys.some(key => !nextTables[key])) {
+        console.log('geometry has changed (tables)')
+        dispatch(Act.updateGeom(geomKey, { tables: Object.values(nextTables) }));
+      }
+
+      /**
+       * TODO compute & show navmesh
+       */
     },
   ),
 };
