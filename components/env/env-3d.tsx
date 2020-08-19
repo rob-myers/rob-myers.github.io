@@ -4,20 +4,18 @@ import classNames from 'classnames';
 import { Vector } from '@model/geom/vector.model';
 import css from './env.scss';
 
-const Env3d: React.FC<Props> = ({ envKey }) => {
+const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
   const containerEl = useRef<HTMLDivElement>(null);
   const tempPoint = useRef(Vector.zero);
-  
-  const [wallSegs, setWallSegs] = useState([
-    // TEMP
-    { u: new Vector(100, 100), v: new Vector(100, 200), backface: true },
-    { u: new Vector(300, 100), v: new Vector(400, 100), backface: true },
-  ] as { u: Vector; v: Vector; backface: boolean }[]);
+  const [wallSegs, setWallSegs] = useState(
+    [] as { u: Vector; v: Vector; backface: boolean }[],
+  );
   const [dimension, setDimension] = useState<Vector>();
 
   // const mouseWorld = useSelector(({ env: { instance } }) => instance[envKey].mouseWorld);
   const renderBounds = useSelector(({ env }) => env[envKey].renderBounds);
   const zoomFactor = useSelector(({ env }) => env[envKey].zoom);
+  const walls = useSelector(({ geom }) => geom.lookup[geomKey]?.walls || []);
   
   const scale = `scale(${zoomFactor})`;
   const translate = `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
@@ -30,11 +28,17 @@ const Env3d: React.FC<Props> = ({ envKey }) => {
     };
     window.addEventListener('resize', onResize);
     onResize();
-
-    return () => {
-      window.removeEventListener('resize', onResize);
-    };
+    return () => window.removeEventListener('resize', onResize);
   }, []);
+
+  useEffect(() => {
+    setWallSegs(walls.flatMap(({ nw, ne, se, sw }) => [
+      { u: ne, v: nw, backface: false },
+      { u: se, v: ne, backface: false },
+      { u: sw, v: se, backface: false },
+      { u: nw, v: sw, backface: false },
+    ]));
+  }, [walls]);
 
   const geometry = useMemo(() =>
     wallSegs.map(({ u, v, backface }, i) => {

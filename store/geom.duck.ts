@@ -15,19 +15,30 @@ const initialState: State = {
 };
 
 export const Act = {
-  openGeom: (geomKey: string) =>
-    Redux.createAct('[geom] open geom', { geomKey }),
   closeGeom: (geomKey: string) =>
     Redux.createAct('[geom] close geom', { geomKey }),
+  openGeom: (geomKey: string) =>
+    Redux.createAct('[geom] open geom', { geomKey }),
+  updateGeom: (
+    geomKey: string,
+    updates: Partial<GeomRootState> | Redux.ReduxUpdater<GeomRootState>
+  ) =>
+    Redux.createAct('[geom] update geom', { geomKey, updates }),
 };
 
 export type Action = Redux.ActionsUnion<typeof Act>;
 
 export const Thunk = {
-  // TODO remove once have useful thunk
-  createPolygon: Redux.createThunk(
-    '[geom] create polygon',
-    (_, poly: Geom.PolygonJson) => Geom.Polygon.from(poly),
+  recomputeGeom: Redux.createThunk(
+    '[geom] recompute geom',
+    ({ dispatch }, input: { geomKey: string; walls: Geom.Rect[] }) => {
+      /**
+       * TODO
+       */
+      dispatch(Act.updateGeom(input.geomKey, {
+        walls: input.walls.map(x => x.clone()),
+      }));
+    },
   ),
 };
 
@@ -44,6 +55,15 @@ export const reducer = (state = initialState, act: Action): State => {
       return { ...state, lookup: act.pay.geomKey in state.lookup
         ? Redux.updateLookup(act.pay.geomKey, state.lookup, ({ openCount }) => ({ openCount: openCount + 1 }))
         : Redux.addToLookup(createGeomRoot(act.pay.geomKey), state.lookup),
+      };
+    }
+    case '[geom] update geom': {
+      return { ...state,
+        lookup: Redux.updateLookup(act.pay.geomKey, state.lookup,
+          typeof act.pay.updates === 'function'
+            ? act.pay.updates
+            : () => act.pay.updates as Partial<GeomRootState>,
+        ),
       };
     }
     default: return state || testNever(act);

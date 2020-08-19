@@ -25,12 +25,12 @@ const EnvDemo: React.FC<Props> = ({ envKey }) => {
 
   const geom = useMemo(() => (
     <GeomRoot geomKey={envKey}>
-      <g style={{ transform: 'translate(100px)' }}>
+      {/* <g style={{ transform: 'translate(100px) scaleY(1)' }}> */}
         <Wall x={100} y={100} dx={200} dy={5} />
         {/* <g style={{ transform: 'translateX(100px)' }}> */}
-        <Wall x={300} y={100} dx={5} dy={200} />
+          <Wall x={300} y={100} dx={5} dy={200} />
         {/* </g> */}
-      </g>
+      {/* </g> */}
     </GeomRoot>
   ), []);
 

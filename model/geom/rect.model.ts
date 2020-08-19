@@ -40,6 +40,20 @@ export class Rect {
     return new Rect(x, y, width, height);
   }
 
+  public static fromPoints(...ps: VectorJson[]) {
+    if (ps.length) {
+      let mx = ps[0].x, my = ps[0].y, Mx = mx, My = my;
+      ps.forEach(p => {
+        mx = Math.min(mx, p.x);
+        Mx = Math.max(Mx, p.x);
+        my = Math.min(my, p.y);
+        My = Math.max(My, p.y);
+      });
+      return new Rect(mx, my, Mx - mx, My - my);
+    }
+    return Rect.zero;
+  }
+
   public static fromString(input: string) {
     return new Rect(// see this.toString
       ...input.split(',').map(Number) as [number, number, number, number]
