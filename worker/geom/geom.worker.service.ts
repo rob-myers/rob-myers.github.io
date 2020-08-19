@@ -142,7 +142,7 @@ export class GeomWorkerService {
    */
   rectsToPolyanya(rects: Geom.Rect[]): PolyanyaMeshJson {
     // Compute adjacency graph of rectangles via their intersections
-    const { succ, toPolygon } = new Geom.RectNavGraph(rects);
+    const { succ, toPolygon } = (new Geom.RectNavGraph(rects)).compute();
 
     /** Vertex key to list of rects it touches */
     const vertexToRects = rects.reduce<Record<string, Geom.Rect[]>>((agg, rect) => ({

@@ -74,11 +74,23 @@ export class Rect {
     );
   }
 
+  get json(): RectJson {
+    return { x: this.x, y: this.y, width: this.width, height: this.height };
+  }
+
   get ne() {
     return new Vector(this.x + this.width, this.y);
   }
   get nw() {
     return new Vector(this.x, this.y);
+  }
+
+  public outset(nonNegAmount: number): Rect {
+    this.x -= nonNegAmount;
+    this.y -= nonNegAmount;
+    this.width += 2 * nonNegAmount;
+    this.height += 2 * nonNegAmount;
+    return this;
   }
 
   /** Anti-clockwise w.r.t y being downwards */
@@ -110,6 +122,10 @@ export class Rect {
     this.x += dx;
     this.y += dy;
     return this;
+  }
+
+  static union(rects: Rect[]) {
+    return Rect.fromPoints(...rects.flatMap(r => [r.nw, r.se]));
   }
 
   static get zero() {

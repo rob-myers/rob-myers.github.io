@@ -16,7 +16,7 @@ import { State as EnvState } from './env.duck';
 import { State as GeomState } from './geom.duck';
 import { State as TestState } from './test.duck';
 
-const storeVersion = 0.02;
+const storeVersion = 0.01;
 
 const createPersistedReducer = () => persistReducer({
   key: 'primary',
@@ -47,6 +47,7 @@ const createPersistedReducer = () => persistReducer({
       ({}, _key) => ({
         // Forget service
         lookup: {}, // Forget geom roots
+        serviceReady: false,
       }),
       (state, _key) => ({
         ...state,

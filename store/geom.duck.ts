@@ -6,13 +6,15 @@ import * as Geom from '@model/geom/geom.model';
 import { GeomRootState, createGeomRoot } from '@model/geom/geom-root.model';
 
 export interface State {
-  service: GeomService;
   lookup: KeyedLookup<GeomRootState>;
+  service: GeomService;
+  serviceReady: boolean;
 }
 
 const initialState: State = {
   lookup: {},
   service: new GeomService,
+  serviceReady: false,
 };
 
 export const Act = {
@@ -20,6 +22,8 @@ export const Act = {
     Redux.createAct('[geom] close geom', { geomKey }),
   openGeom: (geomKey: string) =>
     Redux.createAct('[geom] open geom', { geomKey }),
+  serviceIsReady: () =>
+    Redux.createAct('[geom] service is ready', {}),
   updateGeom: (
     geomKey: string,
     updates: Partial<GeomRootState> | Redux.ReduxUpdater<GeomRootState>
@@ -30,9 +34,16 @@ export const Act = {
 export type Action = Redux.ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  initializeService: Redux.createThunk(
+    '[geom] initialize service',
+    async ({ state: { geom }, dispatch }) => {
+      await geom.service.ensureWorker();
+      dispatch(Act.serviceIsReady());
+    },
+  ),
   traverseDom: Redux.createThunk(
     '[geom] recompute geom',
-    ({ state: { geom }, dispatch }, { geomKey, rootEl, ancestralCtm, css }: {
+    async ({ state: { geom }, dispatch }, { geomKey, rootEl, ancestralCtm, css }: {
       geomKey: string;
       rootEl: SVGGElement;
       ancestralCtm: DOMMatrix;
@@ -62,21 +73,28 @@ export const Thunk = {
         }
       });
       
-      let prevKeys = file.walls.map(x => `${x}`);
-      if (prevKeys.length !== Object.keys(nextWalls).length || prevKeys.some(key => !nextWalls[key])) {
-        console.log('geometry has changed (walls)')
-        dispatch(Act.updateGeom(geomKey, { walls: Object.values(nextWalls) }));
+      const [wallKeys, walls] = [file.walls.map(x => `${x}`), Object.values(nextWalls)];
+      const wallsChanged = wallKeys.length !== Object.keys(nextWalls).length || wallKeys.some(key => !nextWalls[key]);
+      if (wallsChanged) {
+        dispatch(Act.updateGeom(geomKey, { walls }));
       }
-
-      prevKeys = file.tables.map(x => `${x}`);
-      if (prevKeys.length !== Object.keys(nextTables).length || prevKeys.some(key => !nextTables[key])) {
-        console.log('geometry has changed (tables)')
-        dispatch(Act.updateGeom(geomKey, { tables: Object.values(nextTables) }));
+      
+      const [tableKeys, tables] = [file.tables.map(x => `${x}`), Object.values(nextTables)];
+      const tablesChanged = tableKeys.length !== Object.keys(nextTables).length || tableKeys.some(key => !nextTables[key]);
+      if (tablesChanged) {
+        dispatch(Act.updateGeom(geomKey, { tables }));
       }
-
-      /**
-       * TODO compute & show navmesh
-       */
+      
+      if (wallsChanged || tablesChanged) {
+        console.log('geometry has changed')
+        /**
+         * TODO compute & show navmesh
+         */
+        const { navGraphs } = await geom.service.computeNavGraph({ walls, tables });
+        dispatch(Act.updateGeom(geomKey, {
+          navGraphs: navGraphs.map(json => Geom.RectNavGraph.from(json)),
+        }));
+      }
     },
   ),
 };
@@ -103,6 +121,11 @@ export const reducer = (state = initialState, act: Action): State => {
             ? act.pay.updates
             : () => act.pay.updates as Partial<GeomRootState>,
         ),
+      };
+    }
+    case '[geom] service is ready': {
+      return { ...state,
+        serviceReady: true,
       };
     }
     default: return state || testNever(act);

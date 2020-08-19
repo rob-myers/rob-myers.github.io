@@ -6,6 +6,7 @@ import css from './geom.scss';
 const GeomRoot: React.FC<Props> = ({ geomKey, transform, children }) => {
   const rootEl = useRef<SVGGElement>(null);
   const file = useSelector<GeomRootState | undefined>(({ geom }) => geom.lookup[geomKey]);
+  const ready = useSelector(({ geom }) => geom.serviceReady);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -17,7 +18,7 @@ const GeomRoot: React.FC<Props> = ({ geomKey, transform, children }) => {
   }, []);
 
   useEffect(() => {
-    if (file && rootEl.current) {
+    if (ready && file && rootEl.current) {
       dispatch({ type: '[geom] recompute geom', args: {
         css,
         geomKey,
@@ -29,7 +30,6 @@ const GeomRoot: React.FC<Props> = ({ geomKey, transform, children }) => {
         ancestralCtm: DOMMatrix.fromMatrix(
           (rootEl.current.parentNode as SVGGElement).getCTM()!.inverse()),
       }});
-
     }
   });
 
@@ -39,7 +39,14 @@ const GeomRoot: React.FC<Props> = ({ geomKey, transform, children }) => {
         {children}
       </g>
       <g className={css.navigable}>
-        {/* TODO show generated navmesh here */}
+        {
+          // TODO show navmesh here, 1 poly each
+        }
+        {file?.navGraphs.map(({ rects }, i) =>
+          rects.map(({ x, y, width, height }, j) =>
+            <rect key={`${i}-${j}`} x={x} y={y} width={width} height={height} fill="rgba(100, 100, 100, 0.3)" />
+          )
+        )}
       </g>
     </>
   );

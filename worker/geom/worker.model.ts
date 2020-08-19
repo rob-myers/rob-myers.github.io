@@ -2,7 +2,7 @@ import { fromEvent } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { Message } from '@model/worker.model';
 import { BipartiteGraph, BipartiteEdge } from '@model/geom/bipartite.model';
-import { PolygonJson, Rect } from '@model/geom/geom.model';
+import { PolygonJson, Rect, NavInput, RectNavGraphJson } from '@model/geom/geom.model';
 
 interface RequestStatus {
   key: 'request-status';
@@ -18,6 +18,11 @@ interface GetRectDecompose {
   /** Rectilinear with integer coords */
   polygon: PolygonJson;
 }
+interface GetRectNavGraph {
+  key: 'get-rect-navgraph';
+  graphKey: string;
+  navInput: NavInput;
+}
 
 interface SendWorkerReady {
   key: 'worker-ready';
@@ -32,17 +37,24 @@ interface SendRectDecompose {
   polygonKey: string;
   rects: Rect[];
 }
+interface SendRectNavGraph {
+  key: 'send-rect-navgraph';
+  graphKey: string;
+  navGraphs: RectNavGraphJson[];
+}
 
 type MessageFromParent = (
   | RequestStatus
   | GetMaxMatching
   | GetRectDecompose
+  | GetRectNavGraph
 );
 
 export type MessageFromWorker = (
   | SendWorkerReady
   | SendMaxMatching
   | SendRectDecompose
+  | SendRectNavGraph
 );
 
 /** A Worker instance in main thread. */

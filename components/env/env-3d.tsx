@@ -5,6 +5,7 @@ import { Vector } from '@model/geom/vector.model';
 import css from './env.scss';
 
 const tableHeight = 30;
+const wallHeight = 450;
 interface VertFace { u: Vector; v: Vector; backface: boolean; };
 
 const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
@@ -14,11 +15,9 @@ const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
   const [wallSegs, setWallSegs] = useState([] as VertFace[]);
   const [dimension, setDimension] = useState<Vector>();
 
-  // const mouseWorld = useSelector(({ env: { instance } }) => instance[envKey].mouseWorld);
   const renderBounds = useSelector(({ env }) => env[envKey].renderBounds);
   const zoomFactor = useSelector(({ env }) => env[envKey].zoom);
-  const tables = useSelector(({ geom }) => geom.lookup[geomKey]?.tables || []);
-  const walls = useSelector(({ geom }) => geom.lookup[geomKey]?.walls || []);
+  const file = useSelector(({ geom }) => geom.lookup[geomKey]);
   
   const scale = `scale(${zoomFactor})`;
   const translate = `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
@@ -35,22 +34,22 @@ const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
   }, []);
 
   useEffect(() => {
-    setTableSegs(tables.flatMap(({ nw, ne, se, sw }) => [
+    file && setTableSegs(file.tables.flatMap(({ nw, ne, se, sw }) => [
       { u: ne, v: nw, backface: false },
       { u: se, v: ne, backface: false },
       { u: sw, v: se, backface: false },
       { u: nw, v: sw, backface: false },
     ]));
-  }, [tables]);
+  }, [file?.tables]);
 
   useEffect(() => {
-    setWallSegs(walls.flatMap(({ nw, ne, se, sw }) => [
+    file && setWallSegs(file.walls.flatMap(({ nw, ne, se, sw }) => [
       { u: ne, v: nw, backface: false },
       { u: se, v: ne, backface: false },
       { u: sw, v: se, backface: false },
       { u: nw, v: sw, backface: false },
     ]));
-  }, [walls]);
+  }, [file?.walls]);
 
   const geometry = useMemo(() =>
     <>
@@ -68,7 +67,7 @@ const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
           />
         );
       })}
-      {tables.map(({ x, y, width, height }, i) =>
+      {file?.tables.map(({ x, y, width, height }, i) =>
         <div
           key={`tabletop-${i}`}
           className={css.tableTop}
@@ -92,6 +91,17 @@ const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
           />
         );
       })}
+      {file?.walls.map(({ x, y, width, height }, i) =>
+        <div
+          key={`walltop-${i}`}
+          className={css.wallTop}
+          style={{
+            transform: `translate3d(${x}px, ${y}px, ${wallHeight}px)`,
+            height,
+            width,
+          }}
+        />)
+      }
     </>
   , [wallSegs, tableSegs]);
 

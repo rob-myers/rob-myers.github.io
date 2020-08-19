@@ -1,8 +1,12 @@
-import { Polygon } from "./polygon.model";
-import { Rect } from "./rect.model";
+import { Polygon, PolygonJson } from "./polygon.model";
+import { Rect, RectJson } from "./rect.model";
 import { Vector } from "./vector.model";
 
+export const navInset = 10;
+export const navBoundsOutset = 50;
+
 export class RectNavGraph {
+
   /** n/s/e/w relative to '+y goes down screen' */
   public succ: Map<Rect, {
     all: Rect[];
@@ -12,12 +16,17 @@ export class RectNavGraph {
     w: Rect[];
   }>;
 
+  /** Rectangle as polygon with intersection points */
   public toPolygon: Map<Rect, Polygon>;
 
-  constructor(public rects: Rect[]) {
+  constructor(
+    public rects: Rect[],
+  ) {
     this.succ = new Map;
     this.toPolygon = new Map;
+  }
 
+  public compute() {
     const sort = (coord: 'x' | 'y', dir: 1 | -1) =>
       (a: Rect, b: Rect) => dir * (a[coord] <  b[coord] ? -1 : 1);
 
@@ -50,6 +59,56 @@ export class RectNavGraph {
       ]));
     });
 
+    return this;
   }
 
+  public static from({ rects, succ, toPolygon }: RectNavGraphJson) {
+    const output = new RectNavGraph(rects.map(x => Rect.from(x)));
+    succ.forEach(([key, value]) => output.succ.set(Rect.from(key), {
+      all: value.all.map(x => Rect.from(x)),
+      n: value.n.map(x => Rect.from(x)),
+      e: value.e.map(x => Rect.from(x)),
+      s: value.s.map(x => Rect.from(x)),
+      w: value.w.map(x => Rect.from(x)),
+    }));
+    toPolygon.forEach(([key, value]) =>
+      output.toPolygon.set(Rect.from(key), Polygon.from(value)));
+    return output;
+  }
+
+  public get json(): RectNavGraphJson {
+    return {
+      rects: this.rects.map(x => x.json),
+      succ: Array.from(this.succ.entries())
+        .map(([src, { all, n, e, s, w }]) => [
+          src.json, {
+            all: all.map(x => x.json),
+            n: n.map(x => x.json),
+            e: e.map(x => x.json),
+            s: s.map(x => x.json),
+            w: w.map(x => x.json),
+          }
+        ]),
+      toPolygon: Array.from(this.toPolygon)
+        .map(([src, dst]) => [src.json, dst.json])
+    };
+  }
+
+}
+
+export interface RectNavGraphJson {
+  rects: RectJson[];
+  succ: [RectJson, {
+    all: RectJson[];
+    n: RectJson[];
+    e: RectJson[];
+    s: RectJson[];
+    w: RectJson[];
+  }][],
+  toPolygon: [RectJson, PolygonJson][],
+}
+
+export interface NavInput {
+  tables: RectJson[];
+  walls: RectJson[];
 }

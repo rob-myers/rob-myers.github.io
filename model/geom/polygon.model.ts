@@ -49,12 +49,27 @@ export class Polygon {
     );
   }
 
+  static fromRect(rect: Rect) {
+    return new Polygon(rect.points);
+  }
+
   get geoJson(): GeoJsonPolygon {
     return {
       type: 'Polygon',
       coordinates: [this.outline.map<Coord>(({ x, y }) => [x, y])]
         .concat(this.holes.map(hole => hole.map(({ x, y }) => [x, y]))),
     };
+  }
+
+  get json(): PolygonJson {
+    return {
+      outline: this.outline.map(({ x, y }) => ({ x, y })),
+      holes: this.holes.map(hole => hole.map(({ x, y }) => ({ x, y }))),
+    };
+  }
+
+  public get rect() {
+    return Rect.fromPoints(...this.outline);
   }
   
 }
