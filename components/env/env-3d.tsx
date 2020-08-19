@@ -10,8 +10,8 @@ const Env3d: React.FC<Props> = ({ envKey }) => {
   
   const [wallSegs, setWallSegs] = useState([
     // TEMP
-    { u: new Vector(200, 100), v: new Vector(200, 200), backface: true },
-    { u: new Vector(200, 100), v: new Vector(400, 100), backface: true },
+    { u: new Vector(100, 100), v: new Vector(100, 200), backface: true },
+    { u: new Vector(300, 100), v: new Vector(400, 100), backface: true },
   ] as { u: Vector; v: Vector; backface: boolean }[]);
   const [dimension, setDimension] = useState<Vector>();
 
@@ -75,6 +75,8 @@ const Env3d: React.FC<Props> = ({ envKey }) => {
 
 interface Props {
   envKey: string;
+  /** We'll read from this geometry */
+  geomKey: string;
 }
 
 export default Env3d;

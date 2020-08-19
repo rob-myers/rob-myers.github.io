@@ -1,21 +1,17 @@
-import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import EnvFloor from './env-floor';
 import EnvGrid from './env-grid';
-// import css from './env.scss';
 
-const Env2d: React.FC<Props> = ({ envKey }) => {
+const Env2d: React.FC<Props> = ({ envKey, children }) => {
   const zoomFactor = useSelector(({ env }) => env[envKey]?.zoom);
   const renderBounds = useSelector(({ env }) => env[envKey]?.renderBounds);
   
   const scale = `scale(${zoomFactor || 1})`;
   const translate = renderBounds && `translate(${-renderBounds.x}px, ${-renderBounds.y}px)`;
-  const levelContent = useMemo(() => <EnvFloor envKey={envKey} />, []);
 
   return (
     <g style={{ transform: scale }}>
       <g style={{ transform: translate }}>
-        {levelContent}
+        {children /** GeomRoot */}
       </g>
       <EnvGrid envKey={envKey} />
     </g>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import EnvKeys from './env-keys';
 import EnvMouse from './env-mouse';
 import EnvDefs from './env-defs';
@@ -7,7 +7,7 @@ import Env2d from './env-2d';
 import Env3d from './env-3d';
 import css from './env.scss';
 
-const Env: React.FC<Props> = ({ envKey, width, height }) => {
+const Env: React.FC<Props> = ({ envKey, geomKey, width, height, children }) => {
   const [ready, setReady] = useState(false);
   const dispatch = useDispatch();
 
@@ -29,9 +29,11 @@ const Env: React.FC<Props> = ({ envKey, width, height }) => {
             <svg className={css.svg}>
               <EnvDefs />
               <EnvMouse envKey={envKey} />
-              <Env2d envKey={envKey} />
+              <Env2d envKey={envKey}>
+                {children}
+              </Env2d>
             </svg>
-            <Env3d envKey={envKey} />
+            <Env3d envKey={envKey} geomKey={geomKey} />
           </section>
         </EnvKeys>
       }
@@ -41,6 +43,12 @@ const Env: React.FC<Props> = ({ envKey, width, height }) => {
 
 interface Props {
   envKey: string;
+  /**
+   * Env should have a single child i.e. a GeomRoot, which has
+   * a geomKey. We also provide this geomKey directly so Env3d
+   * can read the induced 3d representation.
+   */
+  geomKey: string;
   width: number;
   height: number;
 }

@@ -11,3 +11,10 @@ export function getRelativePos(e: React.MouseEvent | MouseEvent): { x: number; y
   const { left, top } = (e.currentTarget! as Element).getBoundingClientRect();
   return { x: e.clientX - left, y: e.clientY - top };
 }
+
+export function traverseDom(el: Element, act: (el: Element) => void) {
+  act(el);
+  for (const childEl of el.children) {
+    traverseDom(childEl as Element, act);
+  }
+}

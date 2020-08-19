@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { Vector } from '@model/geom/vector.model';
 import Env from '@components/env/env';
+import GeomRoot from '@components/geom/geom-root';
+import Wall from '@components/geom/geom-wall';
 
 const initialHeight = 200; // ?
 
@@ -16,10 +18,16 @@ const EnvDemo: React.FC<Props> = ({ envKey }) => {
     if (env) {
       setMouseScreen(env.mouseScreen.clone().round());
       setWorldPos(env.renderBounds.center.round());
-      setZoom(Number(env.zoom.toPrecision(1)));
+      setZoom(Number(env.zoom.toFixed(1)));
       setHeight(Math.round(initialHeight / env.zoom));
     }
   }, [env]);
+
+  const geom = useMemo(() => (
+    <GeomRoot geomKey={envKey}>
+      <Wall x={100} y={100} dx={200} dy={5} />
+    </GeomRoot>
+  ), []);
 
   return (
     <div style={{ overflow: 'auto' }}>
@@ -32,7 +40,14 @@ const EnvDemo: React.FC<Props> = ({ envKey }) => {
         zoom({zoom}) |
         height({height})
       </div>
-      <Env envKey={envKey} width={600} height={300} />
+      <Env
+        envKey={envKey}
+        geomKey={envKey}
+        width={600}
+        height={300}
+      >
+        {geom}
+      </Env>
     </div>
   );
 };
