@@ -5,7 +5,7 @@ import { Vector } from '@model/geom/vector.model';
 import css from './env.scss';
 
 const tableHeight = 30;
-const wallHeight = 450;
+const wallHeight = 250; // See env.scss
 interface VertFace { u: Vector; v: Vector; backface: boolean; };
 
 const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
@@ -118,6 +118,7 @@ const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
           perspectiveOrigin: `${100 * (center.x / dimension.x)}% ${100 * (center.y / dimension.y)}%`,
           width: dimension.x,
           height: dimension.y,
+          // perspective: 500 - 200 * zoomFactor,
         }}
       >
         {geometry}

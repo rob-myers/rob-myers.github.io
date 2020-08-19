@@ -44,7 +44,16 @@ const GeomRoot: React.FC<Props> = ({ geomKey, transform, children }) => {
         }
         {file?.navGraphs.map(({ rects }, i) =>
           rects.map(({ x, y, width, height }, j) =>
-            <rect key={`${i}-${j}`} x={x} y={y} width={width} height={height} fill="rgba(100, 100, 100, 0.3)" />
+            <rect
+              key={`${i}-${j}`}
+              x={x}
+              y={y}
+              width={width}
+              height={height}
+              strokeWidth={0.5}
+              // stroke="rgba(200, 100, 100, 1)"
+              fill="rgba(200, 100, 100, 0.2)"
+            />
           )
         )}
       </g>
