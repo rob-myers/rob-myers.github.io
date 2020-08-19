@@ -8,7 +8,6 @@ const BlogCounter: React.FC<Props> = ({ date, number }) => {
       </div>
       <div className={css.number}>
         #{number}
-        &nbsp;
       </div>
     </div>
   )

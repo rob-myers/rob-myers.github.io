@@ -1,5 +1,7 @@
 ## Todo
 
+- [x] `GeomRoot` induces 3d walls
+- [x] `GeomRoot` supports `Wall` and recursive `g`
 - [ ] can reset env ui
 - [ ] must 1st click env to start pan-zoom
 - [ ] try standard thunk approach; what about `GeomService`?
