@@ -36,10 +36,8 @@ export type Thunk = Redux.ActionsUnion<typeof Thunk>;
 export const reducer = (state = initialState, act: Action): State => {
   switch (act.type) {
     case '[geom] close geom': {
-      const openCount = state.lookup[act.pay.geomKey]?.openCount;
-      return { ...state, lookup: openCount > 1
-        ? Redux.updateLookup(act.pay.geomKey, state.lookup, () => ({ openCount: openCount - 1 }))
-        : Redux.removeFromLookup(act.pay.geomKey, state.lookup),
+      return { ...state,
+        lookup:Redux.updateLookup(act.pay.geomKey, state.lookup, ({ openCount }) => ({ openCount: openCount - 1 })),
       };
     }
     case '[geom] open geom': {

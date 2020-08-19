@@ -1,36 +1,44 @@
 import { useState, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import { RectJson } from '@model/geom/rect.model';
+import { useDispatch, useSelector } from 'react-redux';
+import { RectJson, Rect } from '@model/geom/rect.model';
 import { traverseDom } from '@model/dom.model';
+import { GeomRootState } from '@model/geom/geom-root.model';
 import css from './geom.scss';
 
 const GeomRoot: React.FC<Props> = ({ geomKey, transform, children }) => {
   const rootEl = useRef<SVGGElement>(null);
-  const [ready, setReady] = useState(false);
+  const geomFile = useSelector<GeomRootState | undefined>(({ geom }) => geom.lookup[geomKey]);
   const [walls, setWalls] = useState({} as { [wallKey: string]: RectJson });
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!ready) {// Avoid rerun on hot-reload
-      dispatch({ type: '[geom] open geom', pay: { geomKey } });
-      setReady(true);
-    }
+    // Opening a geometry ensures it exists and tracks open count
+    dispatch({ type: '[geom] open geom', pay: { geomKey } });
     return () => {
-      console.log('unmount...');
+      // Closing tracks open count, it doesn't delete
+      dispatch({ type: '[geom] close geom', pay: { geomKey } });
     };
   }, []);
 
   useEffect(() => {
-    if (ready && rootEl.current) {
+    if (geomFile && rootEl.current) {
       console.log('recomputing GeomRoot', geomKey);
       const nextWalls = {} as typeof walls;
+
       traverseDom(rootEl.current, (el) => {
         if (el instanceof SVGRectElement) {
+          const bbox = el.getBBox();
+          const matrix = DOMMatrix.fromMatrix(el.getCTM()!);
+          const tl = matrix.transformPoint(bbox);
+          const br = matrix.transformPoint({ x: bbox.right, y: bbox.bottom });
+          const rect = new Rect(tl.x, tl.y, br.x - tl.x, br.y - tl.y);
+
           if (el.classList.contains(css.wall)) {
-            console.log('Found wall', el);
+            nextWalls[`${rect}`] = rect;
           }
         }
       });
+      console.log({ nextWalls })
     }
   });
 

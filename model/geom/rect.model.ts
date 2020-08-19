@@ -36,6 +36,16 @@ export class Rect {
     return this.x + this.width;
   }
 
+  public static from({ x, y, width, height }: RectJson) {
+    return new Rect(x, y, width, height);
+  }
+
+  public static fromString(input: string) {
+    return new Rect(// see this.toString
+      ...input.split(',').map(Number) as [number, number, number, number]
+    );
+  }
+
   /**
    * Does this filled rectangle intersect with `other` filled rectangle?
    * We exclude corner-point intersections.
@@ -76,6 +86,10 @@ export class Rect {
   }
   get sw() {
     return new Vector(this.x, this.y + this.height);
+  }
+
+  toString() {
+    return `${this.x},${this.y},${this.width},${this.height}`;
   }
 
   translate(dx: number, dy: number) {
