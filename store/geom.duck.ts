@@ -1,4 +1,5 @@
 import { KeyedLookup, testNever } from '@model/generic.model';
+import { traverseDom } from '@model/dom.model';
 import * as Redux from '@model/store/redux.model';
 import { GeomService } from '@model/geom/geom.service';
 import * as Geom from '@model/geom/geom.model';
@@ -29,15 +30,47 @@ export const Act = {
 export type Action = Redux.ActionsUnion<typeof Act>;
 
 export const Thunk = {
-  recomputeGeom: Redux.createThunk(
+  traverseDom: Redux.createThunk(
     '[geom] recompute geom',
-    ({ dispatch }, input: { geomKey: string; walls: Geom.Rect[] }) => {
-      /**
-       * TODO
-       */
-      dispatch(Act.updateGeom(input.geomKey, {
-        walls: input.walls.map(x => x.clone()),
-      }));
+    ({ state: { geom }, dispatch }, { geomKey, rootEl, ancestralCtm, css }: {
+      geomKey: string;
+      rootEl: SVGGElement;
+      ancestralCtm: DOMMatrix;
+      css: { [label: string]: string };
+    }) => {
+      console.log('recomputing GeomRoot', geomKey);
+
+      const file = geom.lookup[geomKey];
+      const invertedUiMatrix = ancestralCtm;
+      const nextWalls = {} as { [wallKey: string]: Geom.Rect };
+
+      traverseDom(rootEl, (el) => {
+        if (el instanceof SVGRectElement) {
+          const bbox = el.getBBox();
+          const matrix = invertedUiMatrix.multiply((el.getCTM()!));
+          const rect = Geom.Rect.fromPoints(
+            matrix.transformPoint(bbox),
+            matrix.transformPoint({ x: bbox.x + bbox.width, y: bbox.y + bbox.height }),
+          );
+
+          if (el.classList.contains(css.wall)) {
+            nextWalls[`${rect}`] = rect;
+          } else if (el.classList.contains(css.table)) {
+
+          }
+        }
+      });
+      
+      const prevKeys = file.walls.map(x => `${x}`);
+      const nextKeys = Object.keys(nextWalls);
+      if (prevKeys.length !== nextKeys.length || prevKeys.some(key => !nextWalls[key])) {
+        console.log('geometry has changed')
+        /**
+         * TODO compute & show navmesh
+         */
+        const walls = Object.values(nextWalls).map(x => x.clone());
+        dispatch(Act.updateGeom(geomKey, { walls }));
+      }
     },
   ),
 };
