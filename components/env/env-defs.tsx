@@ -15,7 +15,8 @@ export const EnvDefs: React.FC = () => (
     </filter>
 
     <filter id="svg-filter-shadow">
-      <feDropShadow dx="0" dy="0" stdDeviation="1"/>
+      <feDropShadow dx="5" dy="0" stdDeviation="1"/>
+      <feDropShadow dx="-5" dy="0" stdDeviation="1"/>
     </filter>
   </>
 );

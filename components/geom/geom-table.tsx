@@ -6,6 +6,7 @@ const Table: React.FC<Props> = ({ x, y, dx, dy }) => {
     <rect
       className={css.table}
       x={x} y={y} width={dx} height={dy}
+      filter="url(#svg-filter-shadow)"
     />
   );
 };
