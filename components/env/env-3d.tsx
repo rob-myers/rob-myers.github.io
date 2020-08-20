@@ -5,7 +5,7 @@ import { Vector } from '@model/geom/vector.model';
 import css from './env.scss';
 
 const tableHeight = 30;
-const wallHeight = 250; // See env.scss
+const wallHeight = 450; // See env.scss
 interface VertFace { u: Vector; v: Vector; backface: boolean; };
 
 const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
@@ -75,9 +75,10 @@ const Env3d: React.FC<Props> = ({ envKey, geomKey }) => {
             transform: `translate3d(${x}px, ${y}px, ${tableHeight}px)`,
             height,
             width,
+            background: '#cbb'
           }}
-        />)
-      }
+        />
+      )}
       {wallSegs.map(({ u, v, backface }, i) => {
         tempPoint.current.copy(u).sub(v);
         return (

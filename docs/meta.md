@@ -1,5 +1,8 @@
 ## Todo
 
+Reconsider making a game stepwise vs. a blog about Game AI.
+
+- [x] `GeomRoot` induces `RectNavGraph`
 - [x] `GeomRoot` induces 3d walls
 - [x] `GeomRoot` supports `Wall` and recursive `g`
 - [ ] can reset env ui
