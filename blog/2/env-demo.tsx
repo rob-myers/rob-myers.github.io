@@ -26,9 +26,8 @@ const EnvDemo: React.FC<Props> = ({ envKey }) => {
 
   const geom = useMemo(() => (
     <GeomRoot geomKey={envKey}>
-      <g>
       <Wall x={0} y={100} dx={400} dy={5} />
-      <Wall x={400} y={100} dx={5} dy={200} />
+      <Wall x={500} y={100} dx={5} dy={200} />
       <Wall x={0} y={200} dx={5} dy={100} />
       
       <Wall x={0} y={100} dx={5} dy={50} />
@@ -38,7 +37,6 @@ const EnvDemo: React.FC<Props> = ({ envKey }) => {
       <Table x={100} y={200} dx={50} dy={100} />
       <Table x={200} y={200} dx={50} dy={100} />
       <Table x={300} y={200} dx={50} dy={100} />
-      </g>
     </GeomRoot>
   ), []);
 

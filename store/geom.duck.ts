@@ -1,4 +1,4 @@
-import { KeyedLookup, testNever, pluck } from '@model/generic.model';
+import { KeyedLookup, testNever } from '@model/generic.model';
 import { traverseDom } from '@model/dom.model';
 import * as Redux from '@model/store/redux.model';
 import { GeomService } from '@model/geom/geom.service';
@@ -86,7 +86,7 @@ export const Thunk = {
       }
       
       if (wallsChanged || tablesChanged) {
-        console.log('geometry has changed')
+        console.log('geometry has changed');
         /**
          * TODO compute & show navmesh
          */
