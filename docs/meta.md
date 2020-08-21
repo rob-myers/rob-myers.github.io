@@ -2,17 +2,18 @@
 
 Reconsider making a game stepwise vs. a blog about Game AI.
 
+- [ ] can reset env ui; must 1st click to start pan-zoom
+- [ ] try standard thunk approach; what about `GeomService`?
+- [ ] codesandbox.io for env
+- [ ] Can collapse/expand each blog entry
+
+- [x] r3fiber pan-zoom with grid
 - [x] `GeomRoot` induces `RectNavGraph`
 - [x] `GeomRoot` induces 3d walls
 - [x] `GeomRoot` supports `Wall` and recursive `g`
-- [ ] can reset env ui
-- [ ] must 1st click env to start pan-zoom
-- [ ] try standard thunk approach; what about `GeomService`?
 - [x] merge bipartite reducer into geom reducer/worker
-- [ ] codepen for env
 - [x] instead, use our version of svg pan-zoom with grid i.e. `Env`
 - [x] svg pan zoom with grid
-- [ ] Can collapse/expand each blog entry
 - [x] Start blog concerning stepwise AI development.
 - [x] New branch `sans-monaco-2020` without monaco editor.
 
