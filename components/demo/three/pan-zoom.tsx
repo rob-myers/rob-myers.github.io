@@ -95,18 +95,6 @@ const PanZoom: React.FC = () => {
         <planeBufferGeometry args={[2, 2, 1, 1]} attach="geometry" />
         {gridMaterial}
       </mesh>
-      <Wall p={[-2, 1]} d={[4, 0.1]} />
-      <Wall p={[3, 1]} d={[0.1, 2]} />
-      <Wall p={[-2, 0]} d={[0.1, 1]} />
-      
-      <Wall p={[-2, 1]} d={[0.1, 0.5]} />
-      <Wall p={[-1, 1]} d={[0.1, 0.5]} />
-      <Wall p={[0, 1]} d={[0.1, 0.5]} />
-
-      <Table p={[-1, -1]} d={[0.5, 1]} />
-      <Table p={[0, -1]} d={[0.5, 1]} />
-      <Table p={[1, -1]} d={[0.5, 1]} />      
-
       <group rotation={[Math.PI/2, 0, 0]}>
         <Suspense fallback={null}>
           <First />

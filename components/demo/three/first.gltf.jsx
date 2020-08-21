@@ -12,7 +12,42 @@ export default function Model(props) {
   const { nodes, materials } = useLoader(GLTFLoader, '/first.gltf')
   return (
     <group ref={group} {...props} dispose={null}>
-      <mesh material={materials['Material.002']} geometry={nodes.Cube.geometry} position={[0, 0.25, 0]} />
+      <mesh
+        material={materials['Material.003']}
+        geometry={nodes.Cube004.geometry}
+        position={[-0.75, 0.25, 0.75]}
+        scale={[0.5, 0.5, 0.5]}
+      />
+      <mesh
+        material={materials['Material.003']}
+        geometry={nodes.Cube005.geometry}
+        position={[0.25, 0.25, 0.75]}
+        scale={[0.5, 0.5, 0.5]}
+      />
+      <mesh
+        material={materials['Material.003']}
+        geometry={nodes.Cube006.geometry}
+        position={[1.25, 0.25, 0.75]}
+        scale={[0.5, 0.5, 0.5]}
+      />
+      <mesh
+        material={materials.Material}
+        geometry={nodes.Cube002.geometry}
+        position={[0, 0.25, -0.95]}
+        scale={[2, 0.5, 0.5]}
+      />
+      <mesh
+        material={materials.Material}
+        geometry={nodes.Cube001.geometry}
+        position={[2.95, 0.25, -0.75]}
+        scale={[0.5, 0.5, 0.5]}
+      />
+      <mesh
+        material={materials.Material}
+        geometry={nodes.Cube003.geometry}
+        position={[-1.95, 0.25, -0.75]}
+        scale={[0.5, 0.5, 0.5]}
+      />
     </group>
   )
 }

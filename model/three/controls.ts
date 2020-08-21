@@ -13,8 +13,8 @@ export class PanZoomControls extends EventDispatcher {
   public enabled = true;
   public screen = { left: 0, top: 0, width: 0, height: 0 };
   // public rotateSpeed = 1.0;
-  public zoomSpeed = 1.2;
-  public panSpeed = 0.3;
+  public zoomSpeed = 1;
+  public panSpeed = 0.1;
   public noRotate = false;
   public noZoom = false;
   public noPan = false;
