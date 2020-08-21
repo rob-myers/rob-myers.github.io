@@ -8,7 +8,7 @@ Reconsider making a game stepwise vs. a blog about Game AI.
 - [ ] Can collapse/expand each blog entry
 
 - [ ] r3fiber: import from blender
-- [ ] r3fiber: create some walls & tables manually
+- [x] r3fiber: create some walls & tables manually
 - [x] r3fiber pan-zoom with grid
 - [x] `GeomRoot` induces `RectNavGraph`
 - [x] `GeomRoot` induces 3d walls

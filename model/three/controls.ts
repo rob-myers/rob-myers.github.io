@@ -121,12 +121,12 @@ export class PanZoomControls extends EventDispatcher {
     );
   }
 
-  getMouseOnCircle(pageX: number, pageY: number) {
-    return this.mouseCircle.set(
-      ( ( pageX - this.screen.width * 0.5 - this.screen.left ) / ( this.screen.width * 0.5 ) ),
-      ( ( this.screen.height + 2 * ( this.screen.top - pageY ) ) / this.screen.width ) // screen.width intentional
-    );
-  }
+  // getMouseOnCircle(pageX: number, pageY: number) {
+  //   return this.mouseCircle.set(
+  //     ( ( pageX - this.screen.width * 0.5 - this.screen.left ) / ( this.screen.width * 0.5 ) ),
+  //     ( ( this.screen.height + 2 * ( this.screen.top - pageY ) ) / this.screen.width ) // screen.width intentional
+  //   );
+  // }
 
   zoomCamera() {
     let factor: number;

@@ -3,20 +3,7 @@ import { Canvas, useFrame } from 'react-three-fiber';
 import { Euler } from 'three';
 import css from './three.scss';
 
-const Cubes: React.FC = () => {
-  return (
-    <div className={css.root}>
-      <Canvas>
-        <ambientLight />
-        <pointLight position={[10, 10, 10]} />
-        <Box position={[-1.2, 0, 0]} />
-        <Box position={[1.2, 0, 0]} />
-      </Canvas>
-    </div>
-  );
-};
-
-export const Box: React.FC<BoxProps> = ({ position }) => {
+export const RotatingCube: React.FC<RotatingCubeProps> = ({ position }) => {
   const mesh = useRef<JSX.IntrinsicElements['mesh']>(null);
   const [hovered, setHover] = useState(false);
   const [active, setActive] = useState(false);
@@ -41,8 +28,20 @@ export const Box: React.FC<BoxProps> = ({ position }) => {
   );
 };
 
-interface BoxProps {
+interface RotatingCubeProps {
   position: [number, number, number];
 }
+
+const Cubes: React.FC = () => {
+  return (
+    <div className={css.root}>
+      <Canvas>
+        <ambientLight />
+        <RotatingCube position={[-1.2, 0, 0]} />
+        <RotatingCube position={[1.2, 0, 0]} />
+      </Canvas>
+    </div>
+  );
+};
 
 export default Cubes;

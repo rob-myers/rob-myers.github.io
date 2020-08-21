@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { useRef, useMemo } from 'react';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
-import { Box } from './cubes';
+import { Wall, Table } from './geom';
 import css from './three.scss';
 
 // See types/react-three-fiber/three-types.d.ts
@@ -30,10 +30,10 @@ const PanZoom: React.FC = () => {
       attach="material"
       side={THREE.DoubleSide}
       uniforms={{
-        uSize1: { value: 10 },
-        uSize2: { value: 100 },
-        uColor: { value: new THREE.Color('black') },
-        uDistance: { value: 8000 },
+        uSize1: { value: 0.1 },
+        uSize2: { value: 0.5 },
+        uColor: { value: new THREE.Color('#777') },
+        uDistance: { value: 1024 },
       }}
       transparent
       vertexShader={`
@@ -91,7 +91,17 @@ const PanZoom: React.FC = () => {
         <planeBufferGeometry args={[2, 2, 1, 1]} attach="geometry" />
         {gridMaterial}
       </mesh>
-      <Box position={[0, 0, 1]} />
+      <Wall p={[-2, 1]} d={[4, 0.05]} />
+      <Wall p={[3, 1]} d={[0.05, 2]} />
+      <Wall p={[-2, 0]} d={[0.05, 1]} />
+      
+      <Wall p={[-2, 1]} d={[0.05, 0.5]} />
+      <Wall p={[-1, 1]} d={[0.05, 0.5]} />
+      <Wall p={[0, 1]} d={[0.05, 0.5]} />
+
+      <Table p={[-1, -1]} d={[0.5, 1]} />
+      <Table p={[0, -1]} d={[0.5, 1]} />
+      <Table p={[1, -1]} d={[0.5, 1]} />      
     </group>
   );
 };
@@ -102,9 +112,15 @@ const PanZoomRoot: React.FC = () => {
       className={css.root}
       style={{ height: 400 }}
     >
-      <Canvas pixelRatio={window.devicePixelRatio}>
+      <Canvas
+        pixelRatio={window.devicePixelRatio}
+        onCreated={(ctxt) => {
+          ctxt.camera.position.set(0, 0, 2);
+        }}
+      >
         <CameraControls />
-        <ambientLight />
+        <ambientLight color="white" intensity={0.5} />
+        <pointLight position={[0, 0, 5]} intensity={1} />
         <PanZoom />
       </Canvas>
     </div>
