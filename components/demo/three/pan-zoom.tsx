@@ -1,9 +1,12 @@
+import dynamic from 'next/dynamic';
 import * as THREE from 'three';
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, Suspense } from 'react';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
 import { Wall, Table } from './geom';
 import css from './three.scss';
+
+const First = dynamic(() => import('@components/demo/three/First'), { ssr: false });
 
 // See types/react-three-fiber/three-types.d.ts
 extend({ PanZoomControls });
@@ -102,6 +105,12 @@ const PanZoom: React.FC = () => {
       <Table p={[-1, -1]} d={[0.5, 1]} />
       <Table p={[0, -1]} d={[0.5, 1]} />
       <Table p={[1, -1]} d={[0.5, 1]} />      
+
+      <group rotation={[Math.PI/2, 0, 0]} scale={[.1, .1, .1]}>
+        <Suspense fallback={null}>
+          <First />
+        </Suspense>
+      </group>
     </group>
   );
 };

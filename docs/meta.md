@@ -7,7 +7,14 @@ Reconsider making a game stepwise vs. a blog about Game AI.
 - [ ] codesandbox.io for env
 - [ ] Can collapse/expand each blog entry
 
-- [ ] r3fiber: import from blender
+- [ ] replace previous approach; show navmesh too
+- [x] r3fiber: import from blender
+  ```sh
+  # from repo root
+  cp ../3d/first.gltf ./public/e/First.jsx
+  npx gltfjsx public/first.gltf
+  mv First.js components/demo/three/First.jsx 
+  ```
 - [x] r3fiber: create some walls & tables manually
 - [x] r3fiber pan-zoom with grid
 - [x] `GeomRoot` induces `RectNavGraph`
@@ -18,6 +25,9 @@ Reconsider making a game stepwise vs. a blog about Game AI.
 - [x] svg pan zoom with grid
 - [x] Start blog concerning stepwise AI development.
 - [x] New branch `sans-monaco-2020` without monaco editor.
+
+
+
 
 ## Technical approach
 
