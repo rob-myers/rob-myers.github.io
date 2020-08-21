@@ -5,6 +5,7 @@ import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
 import { Wall, Table } from './geom';
 import css from './three.scss';
+import { PerspectiveCamera } from 'three';
 
 const First = dynamic(() => import('@components/demo/three/first.gltf'), { ssr: false });
 
@@ -124,7 +125,9 @@ const PanZoomRoot: React.FC = () => {
       <Canvas
         pixelRatio={window.devicePixelRatio}
         onCreated={(ctxt) => {
-          ctxt.camera.position.set(0, 0, 2);
+          const camera = ctxt.camera as PerspectiveCamera;
+          camera.position.set(0, 0, 5);
+          camera.setFocalLength(30);
         }}
       >
         <CameraControls />
