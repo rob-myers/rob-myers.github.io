@@ -1,9 +1,9 @@
+import * as THREE from 'three';
 import { useRef, useMemo } from 'react';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
+import { PanZoomControls } from '@model/three/controls';
 import { Box } from './cubes';
-import { PanZoomControls } from './controls';
 import css from './three.scss';
-import * as THREE from 'three';
 
 // See types/react-three-fiber/three-types.d.ts
 extend({ PanZoomControls });
