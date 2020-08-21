@@ -47,7 +47,9 @@
     "syntax-remotedev": "remotedev --hostname=localhost --port=3002 --wsEngine=ws",
     "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build",
     "ts-node": "node -r esm -r ts-node/register",
-    "polyanya-test": "yarn ts-node -r tsconfig-paths/register ./worker/geom/polyanya/tests.ts"
+    "polyanya-test": "yarn ts-node -r tsconfig-paths/register ./worker/geom/polyanya/tests.ts",
+    "watch-gltf": "nodemon --watch '../3d/**/*' -e gltf --exec 'yarn update-gltf'",
+    "update-gltf": "source scripts/gltf-to-jsx.sh"
   },
   "devDependencies": {
     "@mdx-js/loader": "^1.6.6",

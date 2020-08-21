@@ -6,7 +6,7 @@ import { PanZoomControls } from '@model/three/controls';
 import { Wall, Table } from './geom';
 import css from './three.scss';
 
-const First = dynamic(() => import('@components/demo/three/First'), { ssr: false });
+const First = dynamic(() => import('@components/demo/three/first.gltf'), { ssr: false });
 
 // See types/react-three-fiber/three-types.d.ts
 extend({ PanZoomControls });
@@ -34,7 +34,7 @@ const PanZoom: React.FC = () => {
       side={THREE.DoubleSide}
       uniforms={{
         uSize1: { value: 0.1 },
-        uSize2: { value: 0.5 },
+        uSize2: { value: 1 },
         uColor: { value: new THREE.Color('#777') },
         uDistance: { value: 1024 },
       }}
@@ -94,19 +94,19 @@ const PanZoom: React.FC = () => {
         <planeBufferGeometry args={[2, 2, 1, 1]} attach="geometry" />
         {gridMaterial}
       </mesh>
-      <Wall p={[-2, 1]} d={[4, 0.05]} />
-      <Wall p={[3, 1]} d={[0.05, 2]} />
-      <Wall p={[-2, 0]} d={[0.05, 1]} />
+      <Wall p={[-2, 1]} d={[4, 0.1]} />
+      <Wall p={[3, 1]} d={[0.1, 2]} />
+      <Wall p={[-2, 0]} d={[0.1, 1]} />
       
-      <Wall p={[-2, 1]} d={[0.05, 0.5]} />
-      <Wall p={[-1, 1]} d={[0.05, 0.5]} />
-      <Wall p={[0, 1]} d={[0.05, 0.5]} />
+      <Wall p={[-2, 1]} d={[0.1, 0.5]} />
+      <Wall p={[-1, 1]} d={[0.1, 0.5]} />
+      <Wall p={[0, 1]} d={[0.1, 0.5]} />
 
       <Table p={[-1, -1]} d={[0.5, 1]} />
       <Table p={[0, -1]} d={[0.5, 1]} />
       <Table p={[1, -1]} d={[0.5, 1]} />      
 
-      <group rotation={[Math.PI/2, 0, 0]} scale={[.1, .1, .1]}>
+      <group rotation={[Math.PI/2, 0, 0]}>
         <Suspense fallback={null}>
           <First />
         </Suspense>

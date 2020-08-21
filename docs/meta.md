@@ -1,6 +1,6 @@
 ## Todo
 
-Reconsider making a game stepwise vs. a blog about Game AI.
+- [ ] develop character/story which fits 'repeatable AI engine' setting
 
 - [ ] can reset env ui; must 1st click to start pan-zoom
 - [ ] try standard thunk approach; what about `GeomService`?
@@ -8,10 +8,11 @@ Reconsider making a game stepwise vs. a blog about Game AI.
 - [ ] Can collapse/expand each blog entry
 
 - [ ] replace previous approach; show navmesh too
+- [ ] build demo level entirely in blender
 - [x] r3fiber: import from blender
   ```sh
   # from repo root
-  cp ../3d/first.gltf ./public/e/First.jsx
+  cp ../3d/first.gltf ./public/first.gltf
   npx gltfjsx public/first.gltf
   mv First.js components/demo/three/First.jsx 
   ```
@@ -25,8 +26,6 @@ Reconsider making a game stepwise vs. a blog about Game AI.
 - [x] svg pan zoom with grid
 - [x] Start blog concerning stepwise AI development.
 - [x] New branch `sans-monaco-2020` without monaco editor.
-
-
 
 
 ## Technical approach

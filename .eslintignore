@@ -6,3 +6,5 @@ postcss.config.js
 other.config.js
 
 public/
+
+*.gltf.jsx
