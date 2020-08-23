@@ -1,11 +1,12 @@
 import dynamic from 'next/dynamic';
-import { useRef, Suspense } from 'react';
+import { useRef } from 'react';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
 // import { Wall, Table } from './geom';
-import css from './three.scss';
 import { PerspectiveCamera } from 'three';
 import Grid from '@components/three/grid';
+import Transformer from '@components/three/transformer';
+import css from './three.scss';
 
 const First = dynamic(() => import('@components/demo/three/first.gltf'), { ssr: false });
 
@@ -20,16 +21,13 @@ const CameraControls: React.FC = () => {
 };
 
 const PanZoom: React.FC = () => {
-
   return (
-    <group>
+    <>
       <Grid />
-      <group rotation={[Math.PI/2, 0, 0]}>
-        <Suspense fallback={null}>
-          <First />
-        </Suspense>
-      </group>
-    </group>
+      <Transformer groupNames={['first-grp']}>
+        <First />
+      </Transformer>
+    </>
   );
 };
 
