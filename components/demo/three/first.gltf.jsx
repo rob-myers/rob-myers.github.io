@@ -18,22 +18,22 @@ export default function Model(props) {
             material={materials.Material}
             geometry={nodes.Cube002.geometry}
             name="Cube002"
-            position={[0, 0.25, -0.95]}
-            scale={[2, 0.5, 0.5]}
+            position={[0, 2.625, -0.75]}
+            userData={{ name: 'Cube.002' }}
           />
           <mesh
             material={materials.Material}
             geometry={nodes.Cube003.geometry}
             name="Cube003"
-            position={[-1.95, 0.25, -0.75]}
-            scale={[0.5, 0.5, 0.5]}
+            position={[-1.95, 2.625, 1.55]}
+            userData={{ name: 'Cube.003' }}
           />
           <mesh
             material={materials.Material}
             geometry={nodes.Wall001.geometry}
             name="Wall001"
-            position={[2.95, 0.25, -0.75]}
-            scale={[0.5, 0.5, 0.5]}
+            position={[0.95, 2.625, 1.05]}
+            userData={{ Wall: 1, name: 'Wall.001' }}
           />
         </group>
         <mesh
@@ -42,6 +42,7 @@ export default function Model(props) {
           name="Cube004"
           position={[-0.75, 0.25, 0.75]}
           scale={[0.5, 0.5, 0.5]}
+          userData={{ name: 'Cube.004' }}
         />
         <mesh
           material={materials['Material.003']}
@@ -49,6 +50,7 @@ export default function Model(props) {
           name="Cube005"
           position={[0.25, 0.25, 0.75]}
           scale={[0.5, 0.5, 0.5]}
+          userData={{ name: 'Cube.005' }}
         />
         <mesh
           material={materials['Material.003']}
@@ -56,6 +58,7 @@ export default function Model(props) {
           name="Cube006"
           position={[1.25, 0.25, 0.75]}
           scale={[0.5, 0.5, 0.5]}
+          userData={{ name: 'Cube.006' }}
         />
       </scene>
     </group>

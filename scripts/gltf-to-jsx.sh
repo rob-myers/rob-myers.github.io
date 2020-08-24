@@ -15,5 +15,10 @@ for src in $changedFiles; do
 
   jsxFilename="${gltfFilename%%.*}.gltf.jsx"
   # npx gltfjsx "$gltfFilename" "../components/demo/three/$jsxFilename"
-  node ../node_modules/gltfjsx/index.js --compress false "$gltfFilename" "../components/demo/three/$jsxFilename"
+  # node ../node_modules/gltfjsx/index.js --compress false "$gltfFilename" "../components/demo/three/$jsxFilename"
+  node ../../gltfjsx/index.js \
+    --compress false \
+    --extras true \
+    --precision 4 \
+    "$gltfFilename" "../components/demo/three/$jsxFilename"
 done
