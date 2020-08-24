@@ -2,13 +2,13 @@ import dynamic from 'next/dynamic';
 import { useRef } from 'react';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
-// import { Wall, Table } from './geom';
 import { PerspectiveCamera } from 'three';
 import Grid from '@components/three/grid';
 import Transformer from '@components/three/transformer';
 import css from './three.scss';
 
-const First = dynamic(() => import('@components/demo/three/first.gltf'), { ssr: false });
+// const First = dynamic(() => import('@components/demo/three/first.gltf'), { ssr: false });
+const Lego = dynamic(() => import('@components/demo/three/lego.gltf'), { ssr: false });
 
 // See types/react-three-fiber/three-types.d.ts
 extend({ PanZoomControls });
@@ -25,7 +25,8 @@ const PanZoom: React.FC = () => {
     <>
       <Grid />
       <Transformer groupNames={['first-grp']}>
-        <First />
+        {/* <First /> */}
+        <Lego />
       </Transformer>
     </>
   );
