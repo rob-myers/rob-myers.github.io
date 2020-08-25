@@ -35,6 +35,12 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] New branch `sans-monaco-2020` without monaco editor.
 
 
+## Concerning Behaviour Trees
+
+Instead, could write behaviours using live javascript and rxjs.
+Still want interactive graphical representation, which should be induced by the code.
+
+
 ## Technical approach
 
 Our web-based engine has three parts:

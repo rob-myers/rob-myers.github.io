@@ -1,3 +1,4 @@
+import * as THREE from 'three';
 import { KeyedLookup, testNever } from '@model/generic.model';
 import { traverseDom } from '@model/dom.model';
 import * as Redux from '@model/store/redux.model';
@@ -34,6 +35,16 @@ export const Act = {
 export type Action = Redux.ActionsUnion<typeof Act>;
 
 export const Thunk = {
+  handleImportedGltf: Redux.createThunk(
+    '[geom] handle imported gltf',
+    (_ , { geomKey, groupName, scene }: {
+      geomKey: string;
+      scene: THREE.Scene;
+      groupName: string;
+    }) => {
+
+    },
+  ),
   initializeService: Redux.createThunk(
     '[geom] initialize service',
     async ({ state: { geom }, dispatch }) => {
@@ -41,6 +52,7 @@ export const Thunk = {
       dispatch(Act.serviceIsReady());
     },
   ),
+  // TODO remove
   traverseDom: Redux.createThunk(
     '[geom] recompute geom',
     async ({ state: { geom }, dispatch }, { geomKey, rootEl, ancestralCtm, css }: {
