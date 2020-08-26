@@ -14,7 +14,9 @@ import createRootReducer from './reducer';
 import { State as BlogState } from './blog.duck';
 import { State as EnvState } from './env.duck';
 import { State as GeomState } from './geom.duck';
+import { State as ShellState } from './shell.duck';
 import { State as TestState } from './test.duck';
+import { ParseShService } from '@model/sh/parse-sh.service';
 
 const storeVersion = 0.01;
 
@@ -54,6 +56,16 @@ const createPersistedReducer = () => persistReducer({
         service: new GeomService,
       }),
       { whitelist: ['geom'] }
+    ),
+    createTransform<ShellState, Omit<ShellState, 'parseSh'>>(
+      ({}, _key) => ({
+        // Forget parseSh service
+      }),
+      (state, _key) => ({
+        ...state,
+        parseSh: new ParseShService,
+      }),
+      { whitelist: ['shell'] }
     ),
     createTransform<TestState, TestState & { lastPing: null }>(
       ({ count }, _key) => ({

@@ -1,13 +1,12 @@
 import { Terminal } from 'xterm';
-import { MessageFromOsWorker, VirtualTty } from './tty.message';
+import { MessageFromTty, VirtualTty } from './tty.message';
 import { testNever } from '@model/generic.model';
 import { Redacted } from '@model/store/redux.model';
 import { Message } from '@model/worker.model';
 import { SigEnum } from './process.model';
 
 /**
- * Wrapper around XTerm.Terminal which communicates
- * with a TtyINode in the OS web worker.
+ * Wrapper around XTerm.Terminal.
  */
 export class TtyXterm {
   /**
@@ -397,7 +396,7 @@ export class TtyXterm {
     return { row, col };
   }
 
-  protected onWorkerMessage({ data: msg }: Message<MessageFromOsWorker>) {
+  protected onWorkerMessage({ data: msg }: Message<MessageFromTty>) {
     // console.log({ receivedFromOsWorker: msg });
 
     switch (msg.key) {

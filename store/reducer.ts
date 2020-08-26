@@ -24,6 +24,12 @@ import {
   Thunk as GeomThunk,
 } from './geom.duck';
 import {
+  reducer as shellReducer,
+  State as ShellState, 
+  Action as ShellAction,
+  Thunk as ShellThunk,
+} from './shell.duck';
+import {
   reducer as testReducer,
   State as TestState, 
   Action as TestAction,
@@ -33,6 +39,7 @@ export interface RootState {
   blog: BlogState;
   env: EnvState;
   geom: GeomState;
+  shell: ShellState;
   test: TestState;
 }
 
@@ -40,6 +47,7 @@ export type RootAction = (
   | BlogAction
   | EnvAction
   | GeomAction
+  | ShellAction
   | TestAction
 );
 
@@ -47,12 +55,14 @@ export type RootThunk = (
   | BlogThunk
   | EnvThunk
   | GeomThunk
+  | ShellThunk
 );
 
 export const getRootThunks = () => [
   ...Object.values(BlogThunk),
   ...Object.values(EnvThunk),
   ...Object.values(GeomThunk),
+  ...Object.values(ShellThunk),
 ];
 
 export type Dispatchable = (
@@ -63,7 +73,8 @@ export type Dispatchable = (
 const createRootReducer = () => combineReducers<RootState>({
   blog: blogReducer,
   env: envReducer,
-  geom: geomReducer as any,
+  geom: geomReducer,
+  shell: shellReducer as any,
   test: testReducer,
 });
 

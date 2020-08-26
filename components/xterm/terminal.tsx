@@ -12,7 +12,6 @@ const Terminal = () =>
   <XTerm
     className={css.terminal}
     onMount={(xterm) => {
-      console.log('mounted');
       const ttyXterm = new TtyXterm({
         canonicalPath: '/dev/tty-1',
         sessionKey: 'tty-1@root',

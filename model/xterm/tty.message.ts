@@ -1,14 +1,20 @@
 import { SigEnum } from './process.model';
 
 export class VirtualTty {
-  postMessage(_input: MessageFromOsParent) {
-    /**
-     * TODO
-     */
+  postMessage(msg: MessageFromXterm) {
+    console.log(msg);
+    switch (msg.key) {
+      case 'line-to-tty': {
+        /**
+         * TODO dispatch to shell.duck
+         */
+        break;
+      }
+    }
   }
 }
 
-export type MessageFromOsParent = (
+export type MessageFromXterm = (
   // | PingFromParent
   | SendLineToTty
   | SendTtySignal
@@ -64,7 +70,7 @@ interface RequestHistoryLine {
   historyIndex: number;
 }
 
-export type MessageFromOsWorker = (
+export type MessageFromTty = (
   // | PongFromWorker
   // | WorkerOsReady
   | SetXtermPrompt

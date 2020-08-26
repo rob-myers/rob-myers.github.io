@@ -11,6 +11,7 @@
     "es-react": "16.12.0",
     "localforage": "^1.7.3",
     "maximal-independent-set": "^0.0.0",
+    "mvdan-sh": "^0.5.0",
     "polygon-clipping": "^0.15.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
