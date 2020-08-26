@@ -112,7 +112,7 @@ export default function({
     module: {
       rules: [
         {
-          test: /\.(sa|sc|c)ss$/,
+          test: /\.(sa|sc)ss$/,
           // exclude: { or: [/node_modules/].concat(noCssModulesRegexes) },
           use: defaultLoaders.sass
         },

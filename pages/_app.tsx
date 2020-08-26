@@ -8,6 +8,8 @@ import { useDispatch } from 'react-redux';
 import withRedux from '@store/with-redux';
 import BlogPortals from '@components/portal/blog-portals';
 
+import 'xterm/css/xterm.css';
+
 const RootApp: React.FC<RootProps> = ({
   Component,
   pageProps,
@@ -31,7 +33,7 @@ const RootApp: React.FC<RootProps> = ({
       <BlogPortals />
     </>
   );
-}
+};
 
 interface RootProps extends AppInitialProps {
   Component: NextComponentType<NextPageContext, any, {}>;
