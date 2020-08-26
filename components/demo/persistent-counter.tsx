@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import useStore, { selectCount, selectApi } from '@store/test.store';
 
 /**
@@ -10,17 +10,17 @@ const PersistentCounter: React.FC = () => {
   const [localCount, setLocalCount] = useState(0);
 
   return (
-    <section>
-      {count} &nbsp;
+    <section style={{ padding: 10 }}>
+      persisted: <strong>{count}</strong> &nbsp;
       <button onClick={() => decrement()}>-1</button>
       <button onClick={() => increment()}>+1</button>
-      
-      <br/>
 
-      Local count {localCount}
-      <button onClick={() => setLocalCount(localCount + 1)}>
-        +1
-      </button>
+      <br/>
+      
+      local: <strong>{localCount}</strong> &nbsp;
+      <button onClick={() => setLocalCount(localCount - 1)}>-1</button>
+      <button onClick={() => setLocalCount(localCount + 1)}>+1</button>
+
     </section>
   );
 };

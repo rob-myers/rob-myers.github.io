@@ -3,12 +3,12 @@ import { useState } from "react";
 const RandomNumber: React.FC = () => {
   const [randomNumber, setRandomNumber] = useState(0);
   return (
-    <div>
-      {randomNumber} &nbsp;
+    <section style={{ padding: 10 }}>
+      random: <strong>{randomNumber}</strong> &nbsp;
       <button onClick={() => setRandomNumber(generateRandomNumber())}>
         generate
       </button>
-    </div>
+    </section>
   );
 };
 
