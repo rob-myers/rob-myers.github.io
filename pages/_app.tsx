@@ -2,20 +2,33 @@ import { NextComponentType, NextPageContext } from 'next';
 import { Router } from 'next/router';
 import Head from 'next/head';
 import { AppInitialProps } from 'next/app';
+import { useEffect } from 'react';
+import useTestStore from '@store/test.store';
 
 const RootApp: React.FC<RootProps> = ({
   Component,
   pageProps,
 }) => {
+
+  // Persist the test.store
+  useEffect(() => {
+    useTestStore.getState().persist.restore();
+    return useTestStore.subscribe(({ persist }) => persist.save());
+  }, []);
+
   return (
     <>
       <Head>
         <link rel="shortcut icon" href="/favicon.ico" />
-        <style global={true}>{`
+        <style //@ts-ignore
+          global="true"
+        >
+        {`
           body {
             margin: 0px;
           }
-        `}</style>
+        `}
+        </style>
       </Head>
       <Component {...pageProps} />
     </>
