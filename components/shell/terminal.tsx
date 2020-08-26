@@ -1,23 +1,25 @@
 import dynamic from 'next/dynamic';
 import { TtyXterm } from '@model/shell/tty.xterm';
-import { VirtualTty } from '@model/shell/tty.message';
+import { TtyHandler } from '@model/shell/tty.handler';
 import XTermComponent from './xterm';
 import css from './terminal.scss';
 
-const XTerm = dynamic(
-  () => import('@components/shell/xterm'), { ssr: false }) as typeof XTermComponent;
+const XTerm = dynamic(() =>
+  import('@components/shell/xterm'), { ssr: false }) as typeof XTermComponent;
 
-const Terminal = () =>
-  <XTerm
+const Terminal = () => {
+
+
+  return <XTerm
     className={css.terminal}
     onMount={(xterm) => {
+      const ttyId = 1;
       const ttyXterm = new TtyXterm({
-        canonicalPath: '/dev/tty-1',
-        sessionKey: 'tty-1@root',
+        canonicalPath: `/dev/tty-${ttyId}`,
+        sessionKey: `root@tty-${ttyId}`,
         linesPerUpdate: 1000,
         refreshMs: 1,
-        tty: new VirtualTty(),
-        uiKey: 'tty-ui-1',
+        tty: new TtyHandler(ttyId),
         xterm,
       });
       ttyXterm.initialise();
@@ -32,5 +34,6 @@ const Terminal = () =>
       },
     }}
   />;
+}
 
 export default Terminal;

@@ -107,7 +107,7 @@ export class PanZoomControls extends EventDispatcher {
   handleResize() {
     const box = this.domEl.getBoundingClientRect();
     // adjustments come from similar code in the jquery offset() function
-    const d = this.domEl.ownerDocument.documentElement;
+    const d = this.domEl.ownerDocument!.documentElement;
     this.screen.left = box.left + window.pageXOffset - d.clientLeft;
     this.screen.top = box.top + window.pageYOffset - d.clientTop;
     this.screen.width = box.width;
@@ -312,8 +312,8 @@ export class PanZoomControls extends EventDispatcher {
       this.panEnd.copy( this.panStart );
     }
 
-    this.domEl.ownerDocument.addEventListener( 'mousemove', this.mousemove, false );
-    this.domEl.ownerDocument.addEventListener( 'mouseup', this.mouseup, false );
+    this.domEl.ownerDocument!.addEventListener( 'mousemove', this.mousemove, false );
+    this.domEl.ownerDocument!.addEventListener( 'mouseup', this.mouseup, false );
 
     this.dispatchEvent( this.event.start );
   }
@@ -349,8 +349,8 @@ export class PanZoomControls extends EventDispatcher {
 
     this.state = this.STATE.NONE;
 
-    this.domEl.ownerDocument.removeEventListener( 'mousemove', this.mousemove );
-    this.domEl.ownerDocument.removeEventListener( 'mouseup', this.mouseup );
+    this.domEl.ownerDocument!.removeEventListener( 'mousemove', this.mousemove );
+    this.domEl.ownerDocument!.removeEventListener( 'mouseup', this.mouseup );
     this.dispatchEvent( this.event.end );
 
   }
@@ -484,8 +484,8 @@ export class PanZoomControls extends EventDispatcher {
     this.domEl.removeEventListener( 'touchstart', this.touchstart as EventListener, false );
     this.domEl.removeEventListener( 'touchend', this.touchend as EventListener, false );
     this.domEl.removeEventListener( 'touchmove', this.touchmove as EventListener, false );
-    this.domEl.ownerDocument.removeEventListener( 'mousemove', this.mousemove as EventListener, false );
-    this.domEl.ownerDocument.removeEventListener( 'mouseup', this.mouseup as EventListener, false );
+    this.domEl.ownerDocument!.removeEventListener( 'mousemove', this.mousemove as EventListener, false );
+    this.domEl.ownerDocument!.removeEventListener( 'mouseup', this.mouseup as EventListener, false );
     // window.removeEventListener( 'keydown', keydown, false );
     // window.removeEventListener( 'keyup', keyup, false );
   }

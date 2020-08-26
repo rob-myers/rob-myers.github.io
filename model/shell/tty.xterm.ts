@@ -1,7 +1,6 @@
 import { Terminal } from 'xterm';
-import { MessageFromTty, VirtualTty } from './tty.message';
+import { MessageFromTty, TtyHandler } from './tty.handler';
 import { testNever } from '@model/generic.model';
-import { Message } from '@model/worker.model';
 import { SigEnum } from './process.model';
 
 /**
@@ -59,7 +58,7 @@ export class TtyXterm {
   }
 
   public initialise() {
-    // this.def.osWorker.addEventListener('message', this.onWorkerMessage.bind(this));
+    this.def.tty.out.subscribe(this.onMessage.bind(this));
     this.xterm.onData(this.handleXtermInput.bind(this));
 
     // Initial message
@@ -240,21 +239,13 @@ export class TtyXterm {
       switch (data.slice(1)) {
         case '[A': {// Up arrow.
           if (this.promptReady) {
-            this.def.tty.postMessage({
-              key: 'request-history-line',
-              historyIndex: this.historyIndex + 1,
-              sessionKey: this.def.sessionKey,
-            });
+            this.def.tty.requestHistoryLine(this.historyIndex + 1);
           }
           break;  
         }
         case '[B': {// Down arrow
           if (this.promptReady) {
-            this.def.tty.postMessage({
-              key: 'request-history-line',
-              historyIndex: this.historyIndex - 1,
-              sessionKey: this.def.sessionKey,
-            });
+            this.def.tty.requestHistoryLine(this.historyIndex - 1);
           }
           break;
         }
@@ -395,7 +386,7 @@ export class TtyXterm {
     return { row, col };
   }
 
-  protected onWorkerMessage({ data: msg }: Message<MessageFromTty>) {
+  protected onMessage(msg: MessageFromTty) {
     // console.log({ receivedFromOsWorker: msg });
 
     switch (msg.key) {
@@ -414,18 +405,14 @@ export class TtyXterm {
       case 'write-to-xterm': {
         if (msg.sessionKey === this.def.sessionKey) {
           // Acknowledge immediately i.e. before writing lines
-          this.def.tty.postMessage({
-            key: 'xterm-received-lines',
-            sessionKey: msg.sessionKey,
-            messageUid: msg.messageUid,
-          });
+          this.def.tty.ackReceivedLines(msg.messageUid);
           this.queueCommands(msg.lines.map(
             line => ({ key: 'line' as 'line', line })));
         }
         return;
       }
       case 'tty-received-line': {
-        if (msg.sessionKey === this.def.sessionKey && msg.uiKey === this.def.uiKey) {
+        if (msg.sessionKey === this.def.sessionKey) {
           /**
            * The tty inode has received the line sent from this xterm.
            * We now resume listening for input, even without prompt.
@@ -544,12 +531,7 @@ export class TtyXterm {
     this.historyIndex = -1;
     this.preHistory = '';
 
-    this.def.tty.postMessage({
-      key: 'line-to-tty',
-      sessionKey: this.def.sessionKey,
-      line: this.input,
-      xtermKey: this.def.uiKey,
-    });
+    this.def.tty.lineToTty(this.input);
   }
 
   /**
@@ -565,11 +547,7 @@ export class TtyXterm {
     this.commandBuffer.length = 0;
 
     // Reset controlling process
-    this.def.tty.postMessage({
-      key: 'send-tty-signal',
-      sessionKey: this.def.sessionKey,
-      signal: SigEnum.SIGINT,
-    });
+    this.def.tty.sendTtySignal(SigEnum.SIGINT);
   }
 
   /**
@@ -670,13 +648,12 @@ export class TtyXterm {
 }
 
 interface TtyXtermDef {
-  uiKey: string;
   xterm: Terminal;
   sessionKey: string;
   canonicalPath: string;
   linesPerUpdate: number;
   refreshMs: number;
-  tty: VirtualTty;
+  tty: TtyHandler;
 }
 
 type XtermOutputCommand = (

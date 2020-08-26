@@ -22,7 +22,8 @@ const RootApp: React.FC<RootProps> = ({
     <>
       <Head>
         <link rel="shortcut icon" href="/favicon.ico" />
-        <style //@ts-ignore
+        <style
+          //@ts-ignore
           global="true"
         >
         {`
