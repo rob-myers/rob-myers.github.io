@@ -5,6 +5,8 @@ import { AppInitialProps } from 'next/app';
 import { useEffect } from 'react';
 import useTestStore from '@store/test.store';
 
+import 'xterm/css/xterm.css';
+
 const RootApp: React.FC<RootProps> = ({
   Component,
   pageProps,
