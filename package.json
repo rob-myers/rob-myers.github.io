@@ -7,7 +7,9 @@
     "classnames": "^2.2.6",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-three-fiber": "^4.2.20",
     "shortid": "^2.2.15",
+    "three": "^0.120.0",
     "zustand": "^3.0.2"
   },
   "engineStrict": true,
@@ -27,7 +29,9 @@
     "test": "jest --watch --verbose",
     "check-types": "tsc --noEmit",
     "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build",
-    "ts-node": "node -r esm -r ts-node/register"
+    "ts-node": "node -r esm -r ts-node/register",
+    "watch-gltf": "nodemon --watch '../3d/**/*' -e gltf --exec 'yarn update-gltf'",
+    "update-gltf": "source scripts/gltf-to-jsx.sh"
   },
   "devDependencies": {
     "@mdx-js/loader": "^1.6.6",

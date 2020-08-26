@@ -14,11 +14,9 @@ for src in $changedFiles; do
   cp "$src" "$gltfFilename"
 
   jsxFilename="${gltfFilename%%.*}.gltf.jsx"
-  # npx gltfjsx "$gltfFilename" "../components/demo/three/$jsxFilename"
-  # node ../node_modules/gltfjsx/index.js --compress false "$gltfFilename" "../components/demo/three/$jsxFilename"
   node ../../gltfjsx/index.js \
     --compress false \
     --extras true \
     --precision 4 \
-    "$gltfFilename" "../components/demo/three/$jsxFilename"
+    "$gltfFilename" "../components/3d/gltf/$jsxFilename"
 done
