@@ -23,7 +23,6 @@ const GeomLoader: React.FC = () => {
           node.traverse((x) => {
             if (isGroupNode(x) && x.name === 'rooms') {
               x.updateMatrixWorld();
-              console.log('Found rooms', x);
               x.traverse((roomNode) => isMeshNode(roomNode) && rooms.push(roomNode));
             }
           });
