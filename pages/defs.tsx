@@ -1,12 +1,12 @@
 import RootLayout from '@components/ui/root-layout';
-import Defs from '@blog/defs/defs';
+import BlogDefs from '@blog/defs/defs';
 
-const About: React.FC = () => {
+const Defs: React.FC = () => {
   return (
     <RootLayout>
-      <Defs />
+      <BlogDefs />
     </RootLayout>
   );
 };
 
-export default About;
+export default Defs;

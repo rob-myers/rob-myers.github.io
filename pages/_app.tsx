@@ -2,23 +2,11 @@ import { NextComponentType, NextPageContext } from 'next';
 import { Router } from 'next/router';
 import Head from 'next/head';
 import { AppInitialProps } from 'next/app';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-
-import withRedux from '@store/with-redux';
-import BlogPortals from '@components/portal/blog-portals';
-
-import 'xterm/css/xterm.css';
 
 const RootApp: React.FC<RootProps> = ({
   Component,
   pageProps,
 }) => {
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch({ type: '[geom] initialize service', args: {} });
-  }, []);
-
   return (
     <>
       <Head>
@@ -30,7 +18,6 @@ const RootApp: React.FC<RootProps> = ({
         `}</style>
       </Head>
       <Component {...pageProps} />
-      <BlogPortals />
     </>
   );
 };
@@ -40,4 +27,4 @@ interface RootProps extends AppInitialProps {
   router: Router;
 }
 
-export default withRedux(RootApp as any);
+export default RootApp;

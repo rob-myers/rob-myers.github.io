@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Act } from '@store/test.duck';
 
 export const PersistentCounter: React.FC = () => {
-  // const [count, setCount] = useState(0);
+  const [localCount, setLocalCount] = useState(0);
   const count = useSelector(({ test }) => test.count);
   const dispatch = useDispatch();
 
@@ -12,6 +12,9 @@ export const PersistentCounter: React.FC = () => {
       {count} &nbsp;
       <button onClick={() => dispatch(Act.testDecrement())}>-1</button>
       <button onClick={() => dispatch(Act.testIncrement())}>+1</button>
+      <br/>
+      Local count {count}
+      <button onClick={() => setLocalCount(localCount + 1)}>+1</button>
     </section>
   );
 };

@@ -1,2 +1,0 @@
-export const NEXT_REDUX_STORE = '__NEXT_REDUX_STORE__';
-export const NEXT_REDUX_PERSISTOR = '__NEXT_REDUX_PERSISTOR__';
