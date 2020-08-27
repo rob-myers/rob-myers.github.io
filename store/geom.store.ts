@@ -1,0 +1,100 @@
+import create from 'zustand';
+import * as THREE from 'three';
+import { KeyedLookup } from '@model/generic.model';
+import { isMeshNode, epsilon } from '@model/three/three.model';
+import * as Geom from '@model/geom/geom.model'
+import GeomService from '@model/geom/geom.service';
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
+
+export interface State {
+  loadedRooms: boolean;
+  rooms: KeyedLookup<RoomMeta>;
+  api: {
+    geom: GeomService;
+    loadRooms: () => Promise<void>;
+    extractRooms: (gltf: GLTF) => THREE.Mesh[];
+    extractRoomMeta: (room: THREE.Mesh) => RoomMeta;
+  };
+}
+
+interface RoomMeta {
+  /** Mesh name */
+  key: string;
+  mesh: THREE.Mesh;
+  floor: Geom.Rect;
+  walls: Geom.Polygon[];
+  navigable: Geom.Polygon[];
+}
+
+const useStore = create<State>((set, get) => ({
+  rooms: {},
+  loadedRooms: false,
+  api: {
+    geom: new GeomService,
+    extractRooms: (gltf: GLTF) => {
+      const rooms = [] as THREE.Mesh[];
+      gltf.scene.traverse((node) => {
+        if (node.name === 'rooms') {
+          rooms.push(...node.children.filter(isMeshNode));
+          // Reset planar position of room
+          rooms.forEach(room => room.position.setX(0));
+          node.updateMatrixWorld();
+        }
+      });
+      return rooms;
+    },
+    extractRoomMeta: (room) => {
+      const geometry = (new THREE.Geometry()).fromBufferGeometry(room.geometry as THREE.BufferGeometry);
+      const vs = geometry.vertices.map(p => room.localToWorld(p.clone()));
+      const { geom } = get().api;
+      
+      const floor = Geom.Rect.fromPoints(
+        geom.project(room.geometry.boundingBox!.min),
+        geom.project(room.geometry.boundingBox!.max),
+      );
+
+      const wallTris = [] as Geom.Polygon[];
+      geometry.faces.forEach(({ a, b, c }) => {
+        const tri = [a, b, c].map(i => vs[i]);
+        if (tri.every(p => Math.abs(p.y) < epsilon)) {
+          wallTris.push(new Geom.Polygon(tri.map(geom.project)));
+        }
+      });
+      const wallsPoly = geom.union(wallTris);
+      const outsetAmount = 0.2;
+      const navigablePoly = geom.cutOut(
+        wallsPoly.flatMap(x => geom.outset(x, outsetAmount)),
+        [Geom.Polygon.fromRect(floor)],
+      );
+
+      return {
+        key: room.name,
+        mesh: room,
+        floor,
+        walls: wallsPoly,
+        navigable: navigablePoly,
+      };
+    },
+    loadRooms: async () => {
+      if (get().loadedRooms) {
+        return;
+      }
+      const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader');
+      new GLTFLoader().load('/rooms.gltf', (gltf) => {
+        const { api } = get();
+        const rooms = api.extractRooms(gltf);
+        console.log({ rooms });
+
+        const metas = rooms.map(room => api.extractRoomMeta(room));
+        console.log({ metas });
+        
+        set(_ => ({
+          loadedRooms: true,
+          rooms: metas.reduce((agg, meta) => ({ ...agg, [meta.key]: meta }), {}),
+        }));
+      });
+    },
+  },
+}));
+
+export default useStore;

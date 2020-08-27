@@ -58,6 +58,13 @@ export class Vector {
     return this;
   }
 
+  precision(digits = 3) {
+    return this
+      .scale(Math.pow(10, digits))
+      .round()
+      .scale(1/Math.pow(10, digits));
+  }
+
   round() {
     this.x = Math.round(this.x);
     this.y = Math.round(this.y);

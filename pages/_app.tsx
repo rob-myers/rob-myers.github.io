@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { AppInitialProps } from 'next/app';
 import { useEffect } from 'react';
 import useTestStore from '@store/test.store';
+import useGeomStore from '@store/geom.store';
 
 import 'xterm/css/xterm.css';
 
@@ -12,10 +13,16 @@ const RootApp: React.FC<RootProps> = ({
   pageProps,
 }) => {
 
-  // Persist the test.store
+  // Persist test.store
   useEffect(() => {
     useTestStore.getState().persist.restore();
     return useTestStore.subscribe(({ persist }) => persist.save());
+  }, []);
+
+  // Load rooms.gltf
+  useEffect(() => {
+    const { api } = useGeomStore.getState();
+    api.loadRooms();
   }, []);
 
   return (

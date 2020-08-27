@@ -28,7 +28,7 @@ const useStore = create<State>((set, get) => ({
     save: ({ count, lastPing }) => ({ count, lastPing }),
     restore: (saved) => saved,
   }, set, get),
-}))
+}));
 
 export const selectCount = ({ count }: State) => count;
 export const selectApi = ({ api }: State) => api;

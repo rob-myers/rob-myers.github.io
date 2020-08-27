@@ -136,6 +136,15 @@ export default class GeomService {
     return outsetEdges;
   }
 
+  /** Project onto xy plane, restricting precision */
+  project(v: THREE.Vector3): Geom.Vector {
+    return new Geom.Vector(v.x, -v.z).precision();
+  }
+
+  outset(poly: Geom.Polygon, amount: number) {
+    return this.inset(poly, -amount);
+  }
+
   randomBipartiteGraph(n: number, m: number, p: number) {
     return {
         n,

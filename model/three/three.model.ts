@@ -5,3 +5,5 @@ export function isGroupNode(x: THREE.Object3D): x is THREE.Group {
 export function isMeshNode(x: THREE.Object3D): x is THREE.Mesh {
   return x.type === 'Mesh';
 }
+
+export const epsilon = 0.0001;
