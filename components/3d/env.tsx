@@ -6,6 +6,7 @@ import Grid from './grid';
 import LoadRooms from './load-rooms';
 import css from './3d.scss';
 import { getWindow } from '@model/dom.model';
+import Room from './room';
 
 // See types/react-three-fiber/three-types.d.ts
 extend({ PanZoomControls });
@@ -36,7 +37,10 @@ const Env: React.FC = () => {
         <pointLight position={[0, 0, 5]} intensity={1} />
         
         <Grid />
-        <LoadRooms />
+        {/* <LoadRooms /> */}
+        <Room name="junction" to="n" />
+        <Room name="closet" at={[4, 0]} to="w" />
+        <Room name="straight" at={[0, 4]} to="n" />
 
       </Canvas>
     </div>

@@ -17,7 +17,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] navmesh autogen from meshes on floor
 
 - [ ] can build `Row`s of rooms
-- [ ] can instantiate rooms
+- [x] can instantiate rooms
 - [x] load rooms.gltf using `GLTFLoader` and store in state
 
 - [x] replace previous approach

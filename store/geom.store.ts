@@ -13,7 +13,7 @@ export interface State {
     geom: GeomService;
     loadRooms: () => Promise<void>;
     extractRooms: (gltf: GLTF) => THREE.Mesh[];
-    extractRoomMeta: (room: THREE.Mesh) => RoomMeta;
+    computeRoomMeta: (room: THREE.Mesh) => RoomMeta;
   };
 }
 
@@ -35,15 +35,16 @@ const useStore = create<State>((set, get) => ({
       const rooms = [] as THREE.Mesh[];
       gltf.scene.traverse((node) => {
         if (node.name === 'rooms') {
-          rooms.push(...node.children.filter(isMeshNode));
-          // Reset planar position of room
-          rooms.forEach(room => room.position.setX(0));
           node.updateMatrixWorld();
+          rooms.push(...node.children.filter(isMeshNode));
+          rooms.forEach(room => {
+            room.position.setX(0); // Reset planar position
+          });
         }
       });
       return rooms;
     },
-    extractRoomMeta: (room) => {
+    computeRoomMeta: (room) => {
       const geometry = (new THREE.Geometry()).fromBufferGeometry(room.geometry as THREE.BufferGeometry);
       const vs = geometry.vertices.map(p => room.localToWorld(p.clone()));
       const { geom } = get().api;
@@ -60,6 +61,7 @@ const useStore = create<State>((set, get) => ({
           wallTris.push(new Geom.Polygon(tri.map(geom.project)));
         }
       });
+      // console.log({ wallTris })
       const wallsPoly = geom.union(wallTris);
       const outsetAmount = 0.2;
       const navigablePoly = geom.cutOut(
@@ -83,10 +85,8 @@ const useStore = create<State>((set, get) => ({
       new GLTFLoader().load('/rooms.gltf', (gltf) => {
         const { api } = get();
         const rooms = api.extractRooms(gltf);
-        console.log({ rooms });
-
-        const metas = rooms.map(room => api.extractRoomMeta(room));
-        console.log({ metas });
+        const metas = rooms.map(room => api.computeRoomMeta(room));
+        // console.log({ rooms, metas });
         
         set(_ => ({
           loadedRooms: true,
