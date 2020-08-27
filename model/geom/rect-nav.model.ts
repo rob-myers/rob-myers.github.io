@@ -16,7 +16,7 @@ export class RectNavGraph {
     w: Rect[];
   }>;
 
-  /** Rectangle as polygon with intersection points */
+  /** Rectangle as polygon with adjacent rects corner points */
   public toPolygon: Map<Rect, Polygon>;
 
   constructor(
@@ -45,7 +45,7 @@ export class RectNavGraph {
       /**
        * Polyanya views +y as upwards and expects relatively anticlockwise polygons.
        * We agree with polyanya's convention, which is more conventional in mathematics.
-       * North-east-south-west traversal is clockwise wrt y+ down, anticlockwise wrt y+ up.
+       * North-east-south-west traversal wrt y+ down is: clockwise wrt y+ down, anticlockwise wrt y+ up.
        */
       this.toPolygon.set(r, new Polygon([
         // along north-side (left to right)
