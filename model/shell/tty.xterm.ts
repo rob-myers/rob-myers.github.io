@@ -1,5 +1,5 @@
 import { Terminal } from 'xterm';
-import { MessageFromTty, TtyHandler } from './tty.handler';
+import { MessageFromSession, SessionHandler } from './session.handler';
 import { testNever } from '@model/generic.model';
 import { SigEnum } from './process.model';
 
@@ -386,7 +386,7 @@ export class TtyXterm {
     return { row, col };
   }
 
-  protected onMessage(msg: MessageFromTty) {
+  protected onMessage(msg: MessageFromSession) {
     // console.log({ receivedFromOsWorker: msg });
 
     switch (msg.key) {
@@ -653,7 +653,7 @@ interface TtyXtermDef {
   canonicalPath: string;
   linesPerUpdate: number;
   refreshMs: number;
-  tty: TtyHandler;
+  tty: SessionHandler;
 }
 
 type XtermOutputCommand = (

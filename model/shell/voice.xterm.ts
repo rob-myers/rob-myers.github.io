@@ -1,4 +1,4 @@
-import { MessageFromTty, TtyHandler } from './tty.handler';
+import { MessageFromSession, SessionHandler } from './session.handler';
 
 /**
  * There is only one instance of this class for all xterms,
@@ -32,7 +32,7 @@ export class VoiceXterm {
     }, 500);
   }
 
-  protected onMessage = (msg: MessageFromTty) => {
+  protected onMessage = (msg: MessageFromSession) => {
     // console.log({ at: 'VoiceXterm', receivedFromOsWorker: msg });
 
     switch (msg.key) {
@@ -133,5 +133,5 @@ type VoiceCommand = (
 
 interface VoiceXtermDef {
   defaultVoice?: string;
-  tty: TtyHandler;
+  tty: SessionHandler;
 }

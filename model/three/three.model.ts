@@ -1,5 +1,3 @@
-import * as THREE from 'three';
-
 export function isGroupNode(x: THREE.Object3D): x is THREE.Group {
   return x.type === 'Group';
 }

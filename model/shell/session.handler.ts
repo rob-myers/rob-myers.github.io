@@ -4,10 +4,10 @@ import { TtyINode } from '@model/inode/tty.inode';
 import { HistoryINode } from '@model/inode/history.inode';
 import { VoiceCommandSpeech } from './voice.xterm';
 
-export class TtyHandler {
-  out: Subject<MessageFromTty>;
-  inode: TtyINode;
+export class SessionHandler {
   sessionKey: string;
+  inode: TtyINode;
+  out: Subject<MessageFromSession>;
 
   constructor(ttyId: number) {
     this.out = new Subject; 
@@ -87,7 +87,7 @@ export class TtyHandler {
 
 }
 
-export type MessageFromTty = (
+export type MessageFromSession = (
   | SetXtermPrompt
   | WriteToXterm
   | ClearXterm

@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 import { TtyXterm } from '@model/shell/tty.xterm';
-import { TtyHandler } from '@model/shell/tty.handler';
+import { SessionHandler } from '@model/shell/session.handler';
 import XTermComponent from './xterm';
 import css from './terminal.scss';
 
@@ -19,7 +19,7 @@ const Terminal = () => {
         sessionKey: `root@tty-${ttyId}`,
         linesPerUpdate: 1000,
         refreshMs: 1,
-        tty: new TtyHandler(ttyId),
+        tty: new SessionHandler(ttyId),
         xterm,
       });
       ttyXterm.initialise();

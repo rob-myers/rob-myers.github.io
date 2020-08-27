@@ -2,6 +2,10 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 ## Todo
 
+- [ ] terminal has 'listening process' which:
+  > continually attempts to read/parse tty input
+  > continually prompts for more input
+
 - [ ] can reset env ui; must 1st click to start pan-zoom
 - [ ] try standard thunk approach; what about `GeomService`?
 - [ ] codesandbox.io for env
@@ -17,28 +21,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] navmesh autogen from meshes on floor
 - [x] build demo level entirely in blender
 - [x] r3fiber: import from blender
-  ```sh
-  # from repo root
-  cp ../3d/first.gltf ./public/first.gltf
-  npx gltfjsx public/first.gltf
-  mv First.js components/demo/three/First.jsx 
-  ```
-- [x] r3fiber: create some walls & tables manually
-- [x] r3fiber pan-zoom with grid
-- [x] `GeomRoot` induces `RectNavGraph`
-- [x] `GeomRoot` induces 3d walls
-- [x] `GeomRoot` supports `Wall` and recursive `g`
-- [x] merge bipartite reducer into geom reducer/worker
-- [x] instead, use our version of svg pan-zoom with grid i.e. `Env`
-- [x] svg pan zoom with grid
-- [x] Start blog concerning stepwise AI development.
-- [x] New branch `sans-monaco-2020` without monaco editor.
-
-
-## Concerning Behaviour Trees
-
-Instead, could write behaviours using live javascript and rxjs.
-Still want interactive graphical representation, which should be induced by the code.
 
 
 ## Technical approach
