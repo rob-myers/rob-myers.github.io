@@ -6,13 +6,17 @@
     "@babel/generator": "^7.10.2",
     "classnames": "^2.2.6",
     "globrex": "^0.1.2",
+    "maximal-independent-set": "^0.0.0",
     "mvdan-sh": "^0.5.0",
+    "polygon-clipping": "^0.15.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-three-fiber": "^4.2.20",
+    "rectangle-decomposition": "^1.0.0",
     "rxjs": "^6.6.2",
     "shortid": "^2.2.15",
     "three": "^0.120.0",
+    "tinyqueue": "^2.0.3",
     "xterm": "^4.8.1",
     "xterm-addon-fit": "^0.4.0",
     "xterm-addon-web-links": "^0.4.0",
@@ -37,7 +41,8 @@
     "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build",
     "ts-node": "node -r esm -r ts-node/register",
     "watch-gltf": "nodemon --watch '../3d/**/*' -e gltf --exec 'yarn update-gltf'",
-    "update-gltf": "source scripts/gltf-to-jsx.sh"
+    "update-gltf": "source scripts/gltf-to-jsx.sh",
+    "polyanya-tests": "yarn ts-node -r tsconfig-paths/register ./model/polyanya/tests.ts"
   },
   "devDependencies": {
     "@mdx-js/loader": "^1.6.6",
