@@ -10119,10 +10119,10 @@ rxjs@^6.5.2, rxjs@^6.5.3:
   dependencies:
     tslib "^1.9.0"
 
-rxjs@^6.6.2:
-  version "6.6.2"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.2.tgz#8096a7ac03f2cc4fe5860ef6e572810d9e01c0d2"
-  integrity sha512-BHdBMVoWC2sL26w//BCu3YzKT4s2jip/WhwsGEDmeKYBhKDZeYezVUnHatYB7L85v5xs0BAQmg6BEYJEKxBabg==
+rxjs@^7.0.0-beta.4:
+  version "7.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.0.0-beta.4.tgz#bca2bea86cf2074b56f37db202f978ae296c7517"
+  integrity sha512-VpZJjT9GLSTmQIYC9s1nsAYjJONg7UeSpLFd88uQJpw0VPyobs/2EwK2iTAMGeiLxJWj7BW66BcjeNA1hWbygQ==
   dependencies:
     tslib "^1.9.0"
 
