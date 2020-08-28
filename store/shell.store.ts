@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 import produce from 'immer';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
 import * as INode from '@model/inode';
 import { TtyWrapper } from '@model/shell/tty.wrapper';
@@ -46,7 +46,8 @@ export interface Process {
   ppid: number;
   /** File descriptor to ofd key. */
   fdToOpen: Record<number, string>;
-  sub: Subscription;
+  observable: Observable<any>; // TODO type observations
+  subscription: Subscription;
 }
 
 const useStore = create<State>(devtools((set, get) => {
@@ -69,16 +70,12 @@ const useStore = create<State>(devtools((set, get) => {
         }
         const ttyFilename = `tty-${ttyId}`;
         const sessionKey = `root@${ttyFilename}`;
-        const tty = new TtyWrapper(sessionKey, ttyFilename);
+        const service = new ProcessService(sessionKey, file);
         
+        const tty = new TtyWrapper(sessionKey, ttyFilename);
         file.store(tty.inode, tty.canonicalPath);
         file.store(tty.inode.def.historyINode, '/root/.history');
 
-        const service = new ProcessService(
-          sessionKey,
-          tty.inode,
-          file,
-        );
 
         set(produce((state: State) => {
           state.nextTtyId++;
@@ -91,12 +88,15 @@ const useStore = create<State>(devtools((set, get) => {
             ofd: {
               'rd-null': file.createOfd('null', file.null, { mode: 'RDONLY' }),
               'wr-null': file.createOfd('null', file.null, { mode: 'WRONLY' }),
+              'rd-tty': file.createOfd('rd-tty', tty.inode, { mode: 'RDONLY' }),
+              'wr-tty': file.createOfd('wr-tty', tty.inode, { mode: 'WRONLY' }),
             },
             process: {},
             service,
           };
         }));
 
+        // Start the session
         service.createSessionLeader();
       },
       file,

@@ -37,6 +37,59 @@ export default class FileService {
     };
   }
 
+  readOfd(ofd: OpenFileDescription, maxLines: number, buffer: string[]) {
+    const { iNode, offset } = ofd;
+    const prevLength = buffer.length;
+
+    if (!iNode.readBlocked) {
+      // `0` iff EOF, otherwise it is the number of lines read
+      const readReturn = iNode.read(buffer, maxLines, offset);
+
+      if (buffer.length > prevLength) { // At least one line was read
+        // Adjust offset for regular/history inodes
+        ofd.offset += buffer.length - prevLength;
+
+        if (iNode.type === INodeType.fifo) {
+          /**
+           * Provide data from pipe as soon as possible,
+           * also informing any pending writers.
+           */
+          iNode.awakenWriters();
+          return { eof: false, wait: false };
+        } else if (iNode.type === INodeType.tty) {
+          return { eof: false, wait: false };
+        }
+      }
+
+      if (readReturn) {// Not EOF
+        if (readReturn < maxLines) {
+          // Haven't read `maxLines`, will block below.
+        } else {// Have read desired lines without reaching EOF.
+          return { eof: false, wait: false };
+        }
+      } else {// Have read lines and seen EOF.
+        // console.log({ buffer: buffer.slice(), prevLength });
+        return {
+          /**
+           * Only report EOF if nothing read (read again for EOF).
+           * One can read nothing via e.g. empty pipe, or
+           * regular file (or history) with offset beyond EOF.
+           */
+          eof: buffer.length === prevLength,
+          wait: false,
+        };
+      }
+    }
+    /**
+     * Either read was immediately blocked, or we read 
+     * something but fewer than `maxLines` without seeing EOF.
+     */
+    return {
+      eof: false,
+      wait: true,
+    };
+  }
+
   store(inode: INode, path: string) {
     // TODO resolve inode and attach
   }
