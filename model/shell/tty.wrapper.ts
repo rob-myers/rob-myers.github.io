@@ -51,6 +51,9 @@ export class TtyWrapper {
     });
   }
 
+  /**
+   * Send a single line to the tty inode.
+   */
   lineToTty(line: string) {
     this.inode.inputs.push({
       line,
