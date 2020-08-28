@@ -1,12 +1,13 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 import produce from 'immer';
+import { Subscription } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
 import * as INode from '@model/inode';
 import { TtyWrapper } from '@model/shell/tty.wrapper';
 import FileService from '@model/shell/file.service';
-import { Subscription } from 'rxjs';
 import ProcessService from '@model/shell/process.service';
+import { OpenFileDescription } from '@model/shell/file.model';
 
 export interface State {
   /** Root of filesystem */
@@ -32,12 +33,19 @@ export interface Session {
   tty: TtyWrapper;
   /** Next process id in this session */
   nextProcId: number;
+  /** Opened files are registered here */
+  ofd: KeyedLookup<OpenFileDescription>;
+  /** Processes in this session */
   process: KeyedLookup<Process>;
   service: ProcessService;
 }
 
-interface Process {
+export interface Process {
   key: string;
+  pid: number;
+  ppid: number;
+  /** File descriptor to ofd key. */
+  fdToOpen: Record<number, string>;
   sub: Subscription;
 }
 
@@ -80,6 +88,10 @@ const useStore = create<State>(devtools((set, get) => {
             ttyId,
             tty,
             nextProcId: 1,
+            ofd: {
+              'rd-null': file.createOfd('null', file.null, { mode: 'RDONLY' }),
+              'wr-null': file.createOfd('null', file.null, { mode: 'WRONLY' }),
+            },
             process: {},
             service,
           };

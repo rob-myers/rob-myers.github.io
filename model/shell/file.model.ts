@@ -17,3 +17,42 @@ export type INode = (
   | TtyINode
   | VoiceINode
 );
+
+export interface OpenFileDescription {
+  key: string;
+  /**
+   * The number of descendent processes using this open file description.
+   * - Incremented upon initial open and inheritance.
+   * - Decremented on close (explicitly, or via process termination).
+   */
+  numLinks: number;
+  /**
+   * The opened iNode.
+   */
+  iNode: INode;
+  /**
+   * If iNode is regular this is the lineNumber.
+   */
+  offset: number;
+  /**
+   * Read-only, read-and-write, or write-only.
+   */
+  mode: OpenFileMode;
+  /**
+   * Applicable if iNode is regular and we may write.
+   */
+  append: boolean;
+}
+
+type OpenFileMode = 'RDONLY' | 'RDWR' | 'WRONLY';
+
+export interface CreateOfdOpts {
+  /**
+   * Read-only, read-and-write, or write-only.
+   */
+  mode: OpenFileMode;
+  /**
+   * Applicable if inode is regular and we may write.
+   */
+  append?: boolean;
+}
