@@ -13,7 +13,7 @@ const XTermComponent: React.FC<Props> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const xtermRef = useRef<Terminal>();
-  const [, triggerUpdate] = useState();
+  const [, triggerUpdate] = useState<any>();
 
   useEffect(() => {
     const xterm = new Terminal(options);
