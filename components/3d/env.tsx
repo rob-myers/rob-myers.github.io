@@ -3,7 +3,6 @@ import { useRef } from 'react';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
 import Grid from './grid';
-import LoadRooms from './load-rooms';
 import css from './3d.scss';
 import { getWindow } from '@model/dom.model';
 import Room from './room';

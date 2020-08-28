@@ -7,3 +7,5 @@ export function isMeshNode(x: THREE.Object3D): x is THREE.Mesh {
 }
 
 export const epsilon = 0.0001;
+
+export type Coord3 = [number, number, number];

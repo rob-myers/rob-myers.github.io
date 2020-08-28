@@ -1,10 +1,12 @@
 import create from 'zustand';
+import { devtools } from 'zustand/middleware'
 import * as THREE from 'three';
+import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
+
 import { KeyedLookup } from '@model/generic.model';
 import { isMeshNode, epsilon } from '@model/three/three.model';
 import * as Geom from '@model/geom/geom.model'
 import GeomService from '@model/geom/geom.service';
-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 export interface State {
   loadedRooms: boolean;
@@ -14,6 +16,7 @@ export interface State {
     loadRooms: () => Promise<void>;
     extractRooms: (gltf: GLTF) => THREE.Mesh[];
     computeRoomMeta: (room: THREE.Mesh) => RoomMeta;
+    extendRoom: (meta: RoomMeta) => void;
   };
 }
 
@@ -26,28 +29,46 @@ interface RoomMeta {
   navigable: Geom.Polygon[];
 }
 
-const useStore = create<State>((set, get) => ({
+const useStore = create<State>(devtools((set, get) => ({
   rooms: {},
   loadedRooms: false,
   api: {
     geom: new GeomService,
+    loadRooms: async () => {
+      if (get().loadedRooms) {
+        return;
+      }
+      const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader');
+      new GLTFLoader().load('/rooms.gltf', (gltf) => {
+        const { api } = get();
+        const rooms = api.extractRooms(gltf);
+        const metas = rooms.map(room => api.computeRoomMeta(room));
+        metas.forEach(meta => api.extendRoom(meta));
+        // console.log({ rooms, metas });
+        
+        set(_ => ({
+          loadedRooms: true,
+          rooms: metas.reduce((agg, meta) => ({ ...agg, [meta.key]: meta }), {}),
+        }));
+      });
+    },
     extractRooms: (gltf: GLTF) => {
       const rooms = [] as THREE.Mesh[];
       gltf.scene.traverse((node) => {
         if (node.name === 'rooms') {
-          node.updateMatrixWorld();
           rooms.push(...node.children.filter(isMeshNode));
           rooms.forEach(room => {
             room.position.setX(0); // Reset planar position
           });
+          node.updateMatrixWorld();
         }
       });
       return rooms;
     },
     computeRoomMeta: (room) => {
+      const { geom } = get().api;
       const geometry = (new THREE.Geometry()).fromBufferGeometry(room.geometry as THREE.BufferGeometry);
       const vs = geometry.vertices.map(p => room.localToWorld(p.clone()));
-      const { geom } = get().api;
       
       const floor = Geom.Rect.fromPoints(
         geom.project(room.geometry.boundingBox!.min),
@@ -61,8 +82,9 @@ const useStore = create<State>((set, get) => ({
           wallTris.push(new Geom.Polygon(tri.map(geom.project)));
         }
       });
-      // console.log({ wallTris })
+      console.log({ key: room.name, floor, wallTris })
       const wallsPoly = geom.union(wallTris);
+
       const outsetAmount = 0.2;
       const navigablePoly = geom.cutOut(
         wallsPoly.flatMap(x => geom.outset(x, outsetAmount)),
@@ -77,24 +99,10 @@ const useStore = create<State>((set, get) => ({
         navigable: navigablePoly,
       };
     },
-    loadRooms: async () => {
-      if (get().loadedRooms) {
-        return;
-      }
-      const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader');
-      new GLTFLoader().load('/rooms.gltf', (gltf) => {
-        const { api } = get();
-        const rooms = api.extractRooms(gltf);
-        const metas = rooms.map(room => api.computeRoomMeta(room));
-        // console.log({ rooms, metas });
-        
-        set(_ => ({
-          loadedRooms: true,
-          rooms: metas.reduce((agg, meta) => ({ ...agg, [meta.key]: meta }), {}),
-        }));
-      });
+    extendRoom: (meta) => {
+      // meta.navigable[0].
     },
   },
-}));
+}), 'geom'));
 
 export default useStore;
