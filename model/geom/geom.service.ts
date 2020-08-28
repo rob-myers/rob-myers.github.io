@@ -8,10 +8,9 @@ import * as Geom from '@model/geom/geom.model';
 import { MeshJson as PolyanyaMeshJson } from '../polyanya/structs/mesh';
 
 export default class GeomService {
-  /**
-   * Multipolygon's points must be integers.
-   */
-  computeRectPartition({ outline, holes }: Geom.Polygon): Geom.Rect[] {
+
+  /** Multipolygon must be rectilinear with integer-valued coords. */
+  private computeIntegerRectPartition({ outline, holes }: Geom.Polygon): Geom.Rect[] {
     const loops = [outline].concat(holes)
       .map((loop) => loop.map(({ x, y }) => [x, y] as [number, number]));
 
@@ -19,6 +18,14 @@ export default class GeomService {
       new Geom.Rect(x1, y1, x2 - x1, y2 - y1));
 
     return rects;
+  }
+
+  /** Rationalised poly must be rectilinear. */
+  computeRectPartition(poly: Geom.Polygon, decimalPlaces = 3) {
+    const scalar = Math.pow(10, decimalPlaces);
+    const navPoly = poly.clone().scale(scalar).round();
+    const navPartition = this.computeIntegerRectPartition(navPoly);
+    return navPartition.map(rt => rt.scale(1 / scalar));
   }
 
   computeTangents(ring: Geom.Vector[]) {

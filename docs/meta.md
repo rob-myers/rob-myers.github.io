@@ -14,7 +14,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] can query polyanya and display navpath
 
 - [ ] tops of walls autoscaled, no need in blender
-- [ ] navmesh autogen from meshes on floor
+- [x] navmesh autogen from meshes on floor
 
 - [ ] can build `Row`s of rooms
 - [x] can instantiate rooms

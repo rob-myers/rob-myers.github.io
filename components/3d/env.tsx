@@ -37,6 +37,7 @@ const Env: React.FC = () => {
         
         <Grid />
         {/* <LoadRooms /> */}
+
         <Room is="junction" n />
         <Room is="straight" at={[4, 0]} w />
         <Room is="closet" at={[8, 0]} w />

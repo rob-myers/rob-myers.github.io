@@ -71,6 +71,18 @@ export class Polygon {
   public get rect() {
     return Rect.fromPoints(...this.outline);
   }
+
+  public round() {
+    this.outline.forEach(p => p.round());
+    this.holes.forEach(h => h.forEach(p => p.round()));
+    return this;
+  }
+
+  public scale(scalar: number) {
+    this.outline.forEach(p => p.scale(scalar));
+    this.holes.forEach(h => h.forEach(p => p.scale(scalar)));
+    return this;
+  }
   
 }
 

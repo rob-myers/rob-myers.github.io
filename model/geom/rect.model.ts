@@ -107,6 +107,14 @@ export class Rect {
     return this.y + this.height;
   }
 
+  public scale(scalar: number) {
+    this.x *= scalar;
+    this.y *= scalar;
+    this.width *= scalar;
+    this.height *= scalar;
+    return this;
+  }
+
   get se() {
     return new Vector(this.x + this.width, this.y + this.height);
   }

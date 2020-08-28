@@ -67,7 +67,9 @@ const useStore = create<State>(devtools((set, get) => ({
     },
     computeRoomMeta: (room) => {
       const { geom } = get().api;
-      const geometry = (new THREE.Geometry()).fromBufferGeometry(room.geometry as THREE.BufferGeometry);
+      const geometry = (new THREE.Geometry()).fromBufferGeometry(
+        room.geometry as THREE.BufferGeometry,
+      );
       const vs = geometry.vertices.map(p => room.localToWorld(p.clone()));
       
       const floor = Geom.Rect.fromPoints(
@@ -82,10 +84,10 @@ const useStore = create<State>(devtools((set, get) => ({
           wallTris.push(new Geom.Polygon(tri.map(geom.project)));
         }
       });
-      console.log({ key: room.name, floor, wallTris })
+      // console.log({ key: room.name, floor, wallTris })
       const wallsPoly = geom.union(wallTris);
 
-      const outsetAmount = 0.2;
+      const outsetAmount = 0.25;
       const navigablePoly = geom.cutOut(
         wallsPoly.flatMap(x => geom.outset(x, outsetAmount)),
         [Geom.Polygon.fromRect(floor)],
@@ -100,7 +102,25 @@ const useStore = create<State>(devtools((set, get) => ({
       };
     },
     extendRoom: (meta) => {
-      // meta.navigable[0].
+      const { geom } = get().api;
+      const floorZ = meta.mesh.geometry.boundingBox!.min.y;
+      const material = new THREE.MeshBasicMaterial({
+        color: 0x777777,
+        opacity: 0.2,
+        transparent: true,
+        side: THREE.DoubleSide,
+      });
+      const navPartitions = meta.navigable.map(part => geom.computeRectPartition(part));
+      // console.log(meta.key, navPartitions);
+
+      navPartitions.forEach(rects => {
+        rects.forEach(({ cx, cy, width, height }) => {
+          const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 2), material);
+          plane.position.set(cx, floorZ, -cy);
+          plane.rotation.set(-Math.PI/2, 0, 0);
+          meta.mesh.add(plane);
+        });
+      });
     },
   },
 }), 'geom'));
