@@ -2,13 +2,14 @@ import { useRef, useEffect } from "react";
 import useStore from "@store/geom.store";
 
 const dirToAngle = {
-  e: 0,
-  s: -Math.PI/2,
-  w: Math.PI,
-  n: Math.PI/2,
+  0: 0, // east
+  1: -Math.PI/2, // south
+  2: Math.PI, // west
+  3: Math.PI/2, // north
 };
 
-const Room: React.FC<Props> = ({ name, at = [0, 0], to = 'e' }) => {
+const Room: React.FC<Props> = (props) => {
+  const { is: name, at = [0, 0] } = props;
   const meta = useStore(({ rooms }) => rooms[name]);
   const group = useRef<THREE.Group>(null);
   
@@ -20,9 +21,13 @@ const Room: React.FC<Props> = ({ name, at = [0, 0], to = 'e' }) => {
     }
   }, [meta]);
 
+  const dir = 'e' in props ? 0
+    : 's' in props ? 1
+    : 'w' in props ? 2
+    : 'n' in props ? 3 : 0;
   useEffect(() => {
-    group.current!.rotation.y = dirToAngle[to];
-  }, [to]);
+    group.current!.rotation.y = dirToAngle[dir];
+  }, [dir]);
 
   return (
     <group
@@ -33,10 +38,14 @@ const Room: React.FC<Props> = ({ name, at = [0, 0], to = 'e' }) => {
   )
 };
 
-interface Props {
-  name: string;
+type Props = {
+  is: string;
   at?: [number, number];
-  to?: 'e' | 's' | 'w' | 'n'; 
-}
+} & (
+  | { e?: boolean }
+  | { s?: boolean }
+  | { w?: boolean }
+  | { n?: boolean }
+)
 
 export default Room;

@@ -33,14 +33,15 @@ const Env: React.FC = () => {
         }}
       >
         <CameraControls />
-        <ambientLight color="white" intensity={0.5} />
-        <pointLight position={[0, 0, 5]} intensity={1} />
+        {/* <ambientLight color="white" intensity={0.5} /> */}
+        {/* <pointLight position={[0, 0, 5]} intensity={1} /> */}
         
         <Grid />
         {/* <LoadRooms /> */}
-        <Room name="junction" to="n" />
-        <Room name="closet" at={[4, 0]} to="w" />
-        <Room name="straight" at={[0, 4]} to="n" />
+        <Room is="junction" n />
+        <Room is="straight" at={[4, 0]} w />
+        <Room is="closet" at={[8, 0]} w />
+        <Room is="straight" at={[0, 4]} n />
 
       </Canvas>
     </div>
