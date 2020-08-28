@@ -1,4 +1,4 @@
-import { MessageFromSession, SessionHandler } from './session.handler';
+import { MessageFromSession, TtyWrapper } from './tty.wrapper';
 
 /**
  * There is only one instance of this class for all xterms,
@@ -133,5 +133,5 @@ type VoiceCommand = (
 
 interface VoiceXtermDef {
   defaultVoice?: string;
-  tty: SessionHandler;
+  tty: TtyWrapper;
 }

@@ -1,5 +1,5 @@
 import { Terminal } from 'xterm';
-import { MessageFromSession, SessionHandler } from './session.handler';
+import { MessageFromSession, TtyWrapper } from './tty.wrapper';
 import { testNever } from '@model/generic.model';
 import { SigEnum } from './process.model';
 
@@ -653,7 +653,7 @@ interface TtyXtermDef {
   canonicalPath: string;
   linesPerUpdate: number;
   refreshMs: number;
-  tty: SessionHandler;
+  tty: TtyWrapper;
 }
 
 type XtermOutputCommand = (

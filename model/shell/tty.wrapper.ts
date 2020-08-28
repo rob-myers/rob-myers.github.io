@@ -4,27 +4,28 @@ import { TtyINode } from '@model/inode/tty.inode';
 import { HistoryINode } from '@model/inode/history.inode';
 import { VoiceCommandSpeech } from './voice.xterm';
 
-export class SessionHandler {
-  sessionKey: string;
+/** Tty INode wrapper */
+export class TtyWrapper {
   inode: TtyINode;
   out: Subject<MessageFromSession>;
+  canonicalPath: string;
 
-  constructor(ttyId: number) {
+  constructor(
+    public sessionKey: string,
+    public ttyFilename: string,
+  ) {
     this.out = new Subject; 
 
     const userKey = 'root';
     const groupKey = userKey;
-    const canonicalFilename = `tty-${ttyId}`;
-    const canonicalPath = `/dev/${canonicalFilename}`;
-    const sessionKey = `${userKey}@${canonicalFilename}`;
-    this.sessionKey = sessionKey;
+    this.canonicalPath = `/dev/${ttyFilename}`;
 
     const historyINode = new HistoryINode({ userKey, groupKey });
 
     this.inode = new TtyINode({
       userKey,
       groupKey,
-      canonicalPath,
+      canonicalPath: this.canonicalPath,
       historyINode,
       sendSignal: (_signal) => {}, // NOOP
       setPrompt: (_prompt) => {}, // NOOP
