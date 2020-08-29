@@ -1,5 +1,5 @@
 import { Subject } from 'rxjs';
-import { MessageFromShell, MessageFromVoiceXterm } from './tty.wrapper';
+import { MessageFromShell, MessageFromVoiceXterm } from './tty.shell';
 
 /**
  * There is only one instance of this class for all xterms,

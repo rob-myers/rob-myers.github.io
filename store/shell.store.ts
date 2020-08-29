@@ -3,7 +3,7 @@ import { devtools } from 'zustand/middleware';
 import produce from 'immer';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
-import { TtyShell } from '@model/shell/tty.wrapper';
+import { TtyShell } from '@model/shell/tty.shell';
 import ProcessService from '@model/shell/process.service';
 import { OpenFileDescription } from '@model/shell/file.model';
 import { SigEnum } from '@model/shell/process.model';

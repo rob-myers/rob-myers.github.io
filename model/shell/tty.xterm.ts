@@ -1,6 +1,6 @@
 import { Terminal } from 'xterm';
 import { Subject } from 'rxjs';
-import { MessageFromShell, MessageFromXterm } from './tty.wrapper';
+import { MessageFromShell, MessageFromXterm } from './tty.shell';
 import { testNever } from '@model/generic.model';
 import { SigEnum } from './process.model';
 
