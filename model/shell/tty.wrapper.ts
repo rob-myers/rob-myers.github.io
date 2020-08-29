@@ -1,97 +1,134 @@
-import { Subject } from 'rxjs';
 import { SigEnum } from './process.model';
-import { TtyINode } from '@model/inode/tty.inode';
-import { HistoryINode } from '@model/inode/history.inode';
+import { testNever } from '@model/generic.model';
+import useStore, { State as ShellState, Session } from '@store/shell.store';
 import { VoiceCommandSpeech } from './voice.xterm';
+import { TtyXterm } from './tty.xterm';
 
-/** Tty INode wrapper */
-export class TtyWrapper {
-  inode: TtyINode;
-  out: Subject<MessageFromSession>;
-  canonicalPath: string;
+export class TtyShell {
+
+  private xterm!: TtyXterm;
+  /** Lines received from a TtyXterm. */
+  public inputs = [] as { line: string; resolve: () => void }[];
+
+  /** Source code entered interactively, most recent last. */
+  private history = [] as string[];
+  private readonly maxLines = 500;
+  
+  private set!: ShellState['api']['set'];
+  private get session(): Session {
+    return useStore.getState().session[this.sessionKey];
+  }
 
   constructor(
     public sessionKey: string,
-    public ttyFilename: string,
-  ) {
-    this.out = new Subject; 
+    public canonicalPath: string,
+  ) {}
+  
+  initialise(xterm: TtyXterm) {
+    this.xterm = xterm;
+    this.xterm.outgoing.subscribe(this.onMessage.bind(this));
+    
+    this.set = useStore.getState().api.set;
+    const { service } = this.session;
 
-    const userKey = 'root';
-    const groupKey = userKey;
-    this.canonicalPath = `/dev/${ttyFilename}`;
-
-    const historyINode = new HistoryINode({ userKey, groupKey });
-
-    this.inode = new TtyINode({
-      userKey,
-      groupKey,
-      canonicalPath: this.canonicalPath,
-      historyINode,
-      sendSignal: (_signal) => {}, // NOOP
-      setPrompt: (_prompt) => {}, // NOOP
-      clearXterm: () => this.out.next({
-        key: 'clear-xterm',
-        sessionKey,
-      }),
-      writeToXterm: (lines, messageUid) => this.out.next({
-        key: 'write-to-xterm',
-        sessionKey,
-        messageUid,
-        lines,
-      }),
-    });
+    this.set(state => {
+      const { ofd } =  state.session[this.sessionKey]
+      // To read from tty we'll subscribe to its outgoing Subject
+      ofd['rd-tty'] = service.createOfd('rd-tty', xterm.outgoing, { mode: 'RDONLY' });
+      // To write from tty we'll subscribe to its incoming Subject
+      ofd['wr-tty'] = service.createOfd('wr-tty', xterm.incoming, { mode: 'WRONLY' });
+    });    
   }
 
-  ackReceivedLines(messageUid: string) {
-    Object.keys(this.inode.resolveLookup).forEach((key) => {
-      if (key === messageUid) {
-        this.inode.resolveLookup[messageUid]();
-        delete this.inode.resolveLookup[messageUid];
+  private onMessage(msg: MessageFromXterm) {
+    switch (msg.key) {
+      case 'req-history-line': {
+        const { line, nextIndex } = this.getHistoryLine(msg.historyIndex);
+        this.xterm.incoming.next({
+          key: 'send-history-line',
+          sessionKey: this.sessionKey,
+          line,
+          nextIndex,
+        });
+        break;
       }
-    });
+      case 'send-line-to-shell': {
+        this.inputs.push({
+          line: msg.line,
+          resolve: () => this.xterm.incoming.next({
+            key: 'tty-received-line',
+            sessionKey: this.sessionKey,
+          })
+        });
+        /**
+         * TODO process line
+         */
+        break;
+      }
+      case 'send-sig-to-shell': {
+        if (msg.signal === SigEnum.SIGINT) {
+          useStore.getState().api.signalSession(this.sessionKey, msg.signal);
+        }
+        break;
+      }
+      default: throw testNever(msg);
+    }
+
   }
 
-  /**
-   * Send a single line to the tty inode.
-   */
-  lineToTty(line: string) {
-    this.inode.inputs.push({
-      line,
-      resolve: () => this.out.next({
-        key: 'tty-received-line',
-        sessionKey: this.sessionKey,
-      })
-    });
-    this.inode.awakenFirstPendingReader();
+  public getHistoryLine(lineIndex: number) {
+    const maxIndex = this.history.length - 1;
+    return {
+      line: this.history[maxIndex - lineIndex] || '',
+      nextIndex: lineIndex < 0 ? 0 : lineIndex > maxIndex ? maxIndex : lineIndex,
+    };
   }
 
-  requestHistoryLine(historyIndex: number) {
-    const { line, nextIndex } = this.inode.def.historyINode.getLine(historyIndex);
-    this.out.next({
-      key: 'send-history-line',
-      sessionKey: this.sessionKey,
-      line,
-      nextIndex,
-    });
-  }
-
-  saidVoiceCommand(_uid: string) {
-    // NOOP
-  }
-
-  sendAllVoices(voices: string[]) {
-    // NOOP
-  }
-
-  sendTtySignal(signal: SigEnum) {
-    if (signal === SigEnum.SIGINT) {
-      this.inode.sendSigInt();
+  public storeSrcLine(srcLine: string) {
+    if (srcLine) {
+      this.history.push(srcLine);
+      while (this.history.length > this.maxLines) this.history.shift();
     }
   }
-
 }
 
-export type MessageFromSession = (
+export type MessageFromXterm = (
+  | RequestHistoryLine
+  | SendLineToShell
+  | SendSignalToShell
+);
+
+interface RequestHistoryLine {
+  key: 'req-history-line',
+  historyIndex: number;
+}
+
+interface SendLineToShell {
+  key: 'send-line-to-shell';
+  line: string;
+}
+
+interface SendSignalToShell {
+  key: 'send-sig-to-shell';
+  signal: SigEnum;
+}
+
+export type MessageFromVoiceXterm = (
+  | SaidVoiceCommand
+  | SendAllVoices
+);
+
+interface SaidVoiceCommand {
+  key: 'said-voice-cmd';
+  uid: string;
+}
+
+interface SendAllVoices {
+  key: 'send-all-voices';
+  voices: string[];
+}
+
+export type MessageFromShell = (
   | SetXtermPrompt
   | WriteToXterm
   | ClearXterm

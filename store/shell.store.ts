@@ -1,17 +1,14 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 import produce from 'immer';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription, Observable, Subject } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
-import * as INode from '@model/inode';
-import { TtyWrapper } from '@model/shell/tty.wrapper';
-import FileService from '@model/shell/file.service';
+import { TtyShell } from '@model/shell/tty.wrapper';
 import ProcessService from '@model/shell/process.service';
 import { OpenFileDescription } from '@model/shell/file.model';
+import { SigEnum } from '@model/shell/process.model';
 
 export interface State {
-  /** Root of filesystem */
-  root: INode.DirectoryINode;
   /** Each terminal connects to a session */
   session: KeyedLookup<Session>;
   /** Next tty identifier, inducing e.g. tty-2 */
@@ -21,7 +18,7 @@ export interface State {
 
   readonly api: {
     ensureSession: (alias: string) => void;
-    file: FileService;
+    signalSession: (sessionKey: string, signal: SigEnum) => void;
     /** Useful e.g. to track external state changes in devtools */
     set: (delta: ((current: State) => void)) => void;
   };
@@ -30,7 +27,7 @@ export interface State {
 export interface Session {
   key: string;
   ttyId: number;
-  tty: TtyWrapper;
+  ttyShell: TtyShell;
   /** Next process id in this session */
   nextProcId: number;
   /** Opened files are registered here */
@@ -44,21 +41,13 @@ export interface Process {
   key: string;
   pid: number;
   ppid: number;
-  /** File descriptor to ofd key. */
-  fdToOpen: Record<number, string>;
   observable: Observable<any>; // TODO type observations
   subscription: Subscription;
 }
 
 const useStore = create<State>(devtools((set, get) => {
-  const root = new INode.DirectoryINode(
-    { userKey: 'root', groupKey: 'root'}, 
-    null,
-  );
-  const file = new FileService(root);
 
   return {
-    root,
     session: {},
     nextTtyId: 1,
     toSessionKey: {},
@@ -70,12 +59,10 @@ const useStore = create<State>(devtools((set, get) => {
         }
         const ttyFilename = `tty-${ttyId}`;
         const sessionKey = `root@${ttyFilename}`;
-        const service = new ProcessService(sessionKey, file);
-        
-        const tty = new TtyWrapper(sessionKey, ttyFilename);
-        file.store(tty.inode, tty.canonicalPath);
-        file.store(tty.inode.def.historyINode, '/root/.history');
-
+        const canonicalPath = `/dev/${ttyFilename}`;
+        const service = new ProcessService(sessionKey);
+        const ttyShell = new TtyShell(sessionKey, canonicalPath);
+        const devNull = new Subject;
 
         set(produce((state: State) => {
           state.nextTtyId++;
@@ -83,13 +70,19 @@ const useStore = create<State>(devtools((set, get) => {
           state.session[sessionKey] = {
             key: sessionKey,
             ttyId,
-            tty,
+            ttyShell,
             nextProcId: 1,
             ofd: {
-              'rd-null': file.createOfd('null', file.null, { mode: 'RDONLY' }),
-              'wr-null': file.createOfd('null', file.null, { mode: 'WRONLY' }),
-              'rd-tty': file.createOfd('rd-tty', tty.inode, { mode: 'RDONLY' }),
-              'wr-tty': file.createOfd('wr-tty', tty.inode, { mode: 'WRONLY' }),
+              'rd-null': service.createOfd('null', devNull, { mode: 'RDONLY' }),
+              'wr-null': service.createOfd('null', devNull, { mode: 'WRONLY' }),
+              /**
+               * TODO
+               * - tty.xterm provides stream which it writes to (instead of invoking tty.wrapper)
+               * - tty.xterm provides stream which it reads from
+               * - tty.handler becomes tty.shell and reads/writes tty.xterm
+               */
+              // 'rd-tty': service.createOfd('rd-tty', tty.inode, { mode: 'RDONLY' }),
+              // 'wr-tty': service.createOfd('wr-tty', tty.inode, { mode: 'WRONLY' }),
             },
             process: {},
             service,
@@ -99,7 +92,9 @@ const useStore = create<State>(devtools((set, get) => {
         // Start the session
         service.createSessionLeader();
       },
-      file,
+      signalSession: (key, signal) => {
+        console.log('received', { signal, forSession: key });
+      },
       set: (delta) => set(produce(delta)),
     },
   };

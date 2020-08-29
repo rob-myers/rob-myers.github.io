@@ -1,5 +1,6 @@
 import { Terminal } from 'xterm';
-import { MessageFromSession, TtyWrapper } from './tty.wrapper';
+import { Subject } from 'rxjs';
+import { MessageFromShell, MessageFromXterm } from './tty.wrapper';
 import { testNever } from '@model/generic.model';
 import { SigEnum } from './process.model';
 
@@ -7,8 +8,12 @@ import { SigEnum } from './process.model';
  * Wrapper around XTerm.Terminal.
  */
 export class TtyXterm {
+
+  public outgoing = new Subject<MessageFromXterm>();
+  public incoming = new Subject<MessageFromShell>();
+
   /**
-   * For example write a line, clear the screen.
+   * Commands include writing a line, clearing the screen.
    * They're induced by user input and/or processes in respective session.
    */
   private commandBuffer: XtermOutputCommand[];
@@ -58,8 +63,8 @@ export class TtyXterm {
   }
 
   public initialise() {
-    this.def.tty.out.subscribe(this.onMessage.bind(this));
     this.xterm.onData(this.handleXtermInput.bind(this));
+    this.incoming.subscribe(this.onMessage.bind(this));
 
     // Initial message
     this.xterm.write('\x1b[38;5;248;1m');
@@ -239,13 +244,19 @@ export class TtyXterm {
       switch (data.slice(1)) {
         case '[A': {// Up arrow.
           if (this.promptReady) {
-            this.def.tty.requestHistoryLine(this.historyIndex + 1);
+            this.outgoing.next({
+              key: 'req-history-line',
+              historyIndex: this.historyIndex + 1
+            });
           }
           break;  
         }
         case '[B': {// Down arrow
           if (this.promptReady) {
-            this.def.tty.requestHistoryLine(this.historyIndex - 1);
+            this.outgoing.next({
+              key: 'req-history-line',
+              historyIndex: this.historyIndex - 1
+            });
           }
           break;
         }
@@ -386,7 +397,7 @@ export class TtyXterm {
     return { row, col };
   }
 
-  protected onMessage(msg: MessageFromSession) {
+  protected onMessage(msg: MessageFromShell) {
     // console.log({ receivedFromOsWorker: msg });
 
     switch (msg.key) {
@@ -404,8 +415,6 @@ export class TtyXterm {
       }
       case 'write-to-xterm': {
         if (msg.sessionKey === this.def.sessionKey) {
-          // Acknowledge immediately i.e. before writing lines
-          this.def.tty.ackReceivedLines(msg.messageUid);
           this.queueCommands(msg.lines.map(
             line => ({ key: 'line' as 'line', line })));
         }
@@ -531,7 +540,10 @@ export class TtyXterm {
     this.historyIndex = -1;
     this.preHistory = '';
 
-    this.def.tty.lineToTty(this.input);
+    this.outgoing.next({
+      key: 'send-line-to-shell',
+      line: this.input,
+    });
   }
 
   /**
@@ -547,7 +559,10 @@ export class TtyXterm {
     this.commandBuffer.length = 0;
 
     // Reset controlling process
-    this.def.tty.sendTtySignal(SigEnum.SIGINT);
+    this.outgoing.next({
+      key: 'send-sig-to-shell',
+      signal: SigEnum.SIGINT,
+    });
   }
 
   /**
@@ -653,7 +668,6 @@ interface TtyXtermDef {
   canonicalPath: string;
   linesPerUpdate: number;
   refreshMs: number;
-  tty: TtyWrapper;
 }
 
 type XtermOutputCommand = (

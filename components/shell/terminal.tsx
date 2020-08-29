@@ -9,8 +9,7 @@ const XTerm = dynamic(() =>
   import('@components/shell/xterm'), { ssr: false }) as typeof XTermComponent;
 
 const Terminal: React.FC<Props> = ({ alias }) => {
-  const session = useStore(({ session, toSessionKey }) =>
-     session[toSessionKey[alias]]);
+  const session = useStore(({ session, toSessionKey }) => session[toSessionKey[alias]]);
   const api = useStore(({ api }) => api);
 
   useEffect(() => {
@@ -21,15 +20,17 @@ const Terminal: React.FC<Props> = ({ alias }) => {
     session ? <XTerm
       className={css.terminal}
       onMount={(xterm) => {
-        const { tty } = session;
+        const { ttyShell } = session;
+
         const ttyXterm = new TtyXterm({
-          canonicalPath: tty.canonicalPath,
-          sessionKey: tty.sessionKey,
+          canonicalPath: ttyShell.canonicalPath,
+          sessionKey: ttyShell.sessionKey,
           linesPerUpdate: 1000,
           refreshMs: 1,
-          tty, // tty inode wrapper
           xterm, // xterm.js instance
         });
+
+        ttyShell.initialise(ttyXterm);
         ttyXterm.initialise();
       }}  
       options={{

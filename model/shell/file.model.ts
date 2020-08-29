@@ -1,22 +1,4 @@
-import { DirectoryINode } from "@model/inode/directory.inode";
-import { FifoINode } from "@model/inode/fifo.inode";
-import { HistoryINode } from "@model/inode/history.inode";
-import { NullINode } from "@model/inode/null.inode";
-import { RegularINode } from "@model/inode/regular.inode";
-import { RandomINode } from "@model/inode/random.inode";
-import { TtyINode } from "@model/inode/tty.inode";
-import { VoiceINode } from "@model/inode/voice.inode";
-
-export type INode = (
-  | DirectoryINode
-  | FifoINode
-  | HistoryINode
-  | NullINode
-  | RegularINode
-  | RandomINode
-  | TtyINode
-  | VoiceINode
-);
+import { Subject } from "rxjs";
 
 export interface OpenFileDescription {
   key: string;
@@ -27,21 +9,13 @@ export interface OpenFileDescription {
    */
   numLinks: number;
   /**
-   * The opened iNode.
+   * The opened stream.
    */
-  iNode: INode;
-  /**
-   * If iNode is regular this is the lineNumber.
-   */
-  offset: number;
+  stream: Subject<any>;
   /**
    * Read-only, read-and-write, or write-only.
    */
   mode: OpenFileMode;
-  /**
-   * Applicable if iNode is regular and we may write.
-   */
-  append: boolean;
 }
 
 type OpenFileMode = 'RDONLY' | 'RDWR' | 'WRONLY';
@@ -51,8 +25,4 @@ export interface CreateOfdOpts {
    * Read-only, read-and-write, or write-only.
    */
   mode: OpenFileMode;
-  /**
-   * Applicable if inode is regular and we may write.
-   */
-  append?: boolean;
 }

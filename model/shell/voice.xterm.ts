@@ -1,10 +1,14 @@
-import { MessageFromSession, TtyWrapper } from './tty.wrapper';
+import { Subject } from 'rxjs';
+import { MessageFromShell, MessageFromVoiceXterm } from './tty.wrapper';
 
 /**
  * There is only one instance of this class for all xterms,
  * because the Web Speech API doesn't permit simultaneous voices.
  */
 export class VoiceXterm {
+  public outgoing = new Subject<MessageFromVoiceXterm>();
+  public incoming = new Subject<MessageFromShell>();
+
   private commandBuffer: VoiceCommand[];
   private currentCommand: null | VoiceCommand;
   private defaultVoice!: SpeechSynthesisVoice;
@@ -20,7 +24,7 @@ export class VoiceXterm {
   }
 
   private setup() {
-    this.def.tty.out.subscribe(this.onMessage.bind(this));
+    this.incoming.subscribe(this.onMessage.bind(this));
 
     setTimeout(() => {
       this.voices = this.synth.getVoices();
@@ -32,16 +36,17 @@ export class VoiceXterm {
     }, 500);
   }
 
-  protected onMessage = (msg: MessageFromSession) => {
-    // console.log({ at: 'VoiceXterm', receivedFromOsWorker: msg });
-
+  protected onMessage = (msg: MessageFromShell) => {
     switch (msg.key) {
       case 'send-voice-cmd': {
         this.queueCommands(
           msg.command,
           { key: 'resolve',
             processKey: msg.command.processKey,
-            resolve: () => this.def.tty.saidVoiceCommand(msg.uid)},
+            resolve: () => this.outgoing.next({
+              key: 'said-voice-cmd',
+              uid: msg.uid,
+            })},
         );
         break;
       }
@@ -55,7 +60,10 @@ export class VoiceXterm {
       }
       case 'get-all-voices': {
         console.log('sending', this.voices.map(({ name }) => name));
-        this.def.tty.sendAllVoices(this.voices.map(({ name }) => name));
+        this.outgoing.next({
+          key: 'send-all-voices',
+          voices: this.voices.map(({ name }) => name),
+        });
         break;
       }
     }
@@ -133,5 +141,4 @@ type VoiceCommand = (
 
 interface VoiceXtermDef {
   defaultVoice?: string;
-  tty: TtyWrapper;
 }

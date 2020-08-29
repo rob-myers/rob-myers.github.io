@@ -14,6 +14,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] can query polyanya and display navpath
 
 - [ ] tops of walls autoscaled, no need in blender
+
+- [x] remove filesystem i.e. inodes
+  > keep `OpenFileDescription`s pointing to `Subject`s
 - [x] navmesh autogen from meshes on floor
 
 - [ ] can build `Row`s of rooms
