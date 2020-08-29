@@ -16,7 +16,7 @@ export interface InteractiveParseResult {
 /**
  * Parse shell code using npm module mvdan-sh.
  */
-export class ParseShService {
+class ParseShService {
 
   public parse(src: string): File {
     // Use mvdan-sh to parse shell code
@@ -25,6 +25,27 @@ export class ParseShService {
     const parsed = parser.Parse(src, 'src.sh');
     // Clean up the parse e.g. make it serialisable
     return this.File(parsed);
+  }
+
+  public tryParseBuffer(buffer: string[]) {
+    console.log('PARSING', buffer.slice()); // DEBUG
+    try {
+      // Parser.Interactive expects terminal newline.
+      const src = buffer.join('\n') + '\n';
+      const { incomplete, parsed } = this.interactiveParse(src);
+
+      if (parsed) {// DEBUG
+        parsed.StmtList.Stmts.forEach((stmt) => console.log('PARSED', stmt.Cmd));
+      }
+
+      return incomplete
+        ? { key: 'incomplete' as 'incomplete' }
+        : { key: 'complete' as 'complete', parsed: parsed as File, src };
+
+    } catch (e) {
+      console.error(e);
+      return { key: 'failed' as 'failed', error: `${e}` };
+    }
   }
 
   /**
@@ -902,3 +923,5 @@ export type WordPart =
 | ExtGlob
 
 //#endregion
+
+export const parseSh = new ParseShService();

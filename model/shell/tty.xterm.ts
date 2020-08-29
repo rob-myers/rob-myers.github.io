@@ -401,7 +401,7 @@ export class TtyXterm {
     // console.log({ receivedFromOsWorker: msg });
 
     switch (msg.key) {
-      case 'set-xterm-prompt': {
+      case 'send-xterm-prompt': {
         if (msg.sessionKey === this.def.sessionKey) {
           this.setPrompt(msg.prompt);
         }

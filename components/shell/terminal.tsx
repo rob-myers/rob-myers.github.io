@@ -30,8 +30,8 @@ const Terminal: React.FC<Props> = ({ alias }) => {
           xterm, // xterm.js instance
         });
 
-        ttyShell.initialise(ttyXterm);
         ttyXterm.initialise();
+        ttyShell.initialise(ttyXterm);
       }}  
       options={{
         fontSize: 12,

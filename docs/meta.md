@@ -2,10 +2,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 ## Todo
 
-- [ ] terminal has 'listening process' which:
-  > continually attempts to read/parse tty input
-  > continually prompts for more input
-
 - [ ] can reset env ui; must 1st click to start pan-zoom
 - [ ] try standard thunk approach; what about `GeomService`?
 - [ ] codesandbox.io for env
@@ -15,8 +11,12 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] tops of walls autoscaled, no need in blender
 
+- [x] terminal has 'listening process' which:
+  > continually attempts to read/parse tty input
+  > continually prompts for more input
+
 - [x] remove filesystem i.e. inodes
-  > keep `OpenFileDescription`s pointing to `Subject`s
+  > `OpenFileDescription`s now point to `Subject`s
 - [x] navmesh autogen from meshes on floor
 
 - [ ] can build `Row`s of rooms

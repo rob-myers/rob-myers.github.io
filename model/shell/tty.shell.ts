@@ -3,12 +3,15 @@ import { testNever } from '@model/generic.model';
 import useStore, { State as ShellState, Session } from '@store/shell.store';
 import { VoiceCommandSpeech } from './voice.xterm';
 import { TtyXterm } from './tty.xterm';
+import { parseSh } from './parse-sh.service';
 
 export class TtyShell {
 
   private xterm!: TtyXterm;
   /** Lines received from a TtyXterm. */
   public inputs = [] as { line: string; resolve: () => void }[];
+  /** Lines in current interactive parse */
+  public buffer = [] as string[];
 
   /** Source code entered interactively, most recent last. */
   private history = [] as string[];
@@ -37,6 +40,16 @@ export class TtyShell {
       ofd['rd-tty'] = service.createOfd('rd-tty', xterm.outgoing, { mode: 'RDONLY' });
       // To write from tty we'll subscribe to its incoming Subject
       ofd['wr-tty'] = service.createOfd('wr-tty', xterm.incoming, { mode: 'WRONLY' });
+    });
+
+    this.prompt('$ ');
+  }
+
+  private prompt(prompt: string) {
+    this.xterm.incoming.next({
+      key: 'send-xterm-prompt',
+      prompt,
+      sessionKey: this.sessionKey,
     });    
   }
 
@@ -55,14 +68,13 @@ export class TtyShell {
       case 'send-line-to-shell': {
         this.inputs.push({
           line: msg.line,
+          // xterm won't send another line until resolved
           resolve: () => this.xterm.incoming.next({
             key: 'tty-received-line',
             sessionKey: this.sessionKey,
-          })
+          }),
         });
-        /**
-         * TODO process line
-         */
+        this.tryParse();
         break;
       }
       case 'send-sig-to-shell': {
@@ -76,7 +88,37 @@ export class TtyShell {
 
   }
 
-  public getHistoryLine(lineIndex: number) {
+  private tryParse() {
+    const input = this.inputs.pop();
+    
+    if (input) {
+      this.buffer.push(input.line);
+      const result = parseSh.tryParseBuffer(this.buffer.slice());
+
+      switch (result.key) {
+        case 'failed': {
+          console.error(result.error.replace(/^Error: runtime error: src\.sh:/, ''));
+          this.buffer.length = 0;
+          break;
+        }
+        case 'complete': {
+          /**
+           * TODO transpile and run
+           */
+          this.buffer.length = 0;
+          this.prompt('$ ');
+          break;
+        }
+        case 'incomplete': {
+          this.prompt('> ');
+          break;
+        }
+      }
+      input.resolve();
+    }
+  }
+
+  private getHistoryLine(lineIndex: number) {
     const maxIndex = this.history.length - 1;
     return {
       line: this.history[maxIndex - lineIndex] || '',
@@ -84,7 +126,7 @@ export class TtyShell {
     };
   }
 
-  public storeSrcLine(srcLine: string) {
+  private storeSrcLine(srcLine: string) {
     if (srcLine) {
       this.history.push(srcLine);
       while (this.history.length > this.maxLines) this.history.shift();
@@ -129,7 +171,7 @@ interface SendAllVoices {
 }
 
 export type MessageFromShell = (
-  | SetXtermPrompt
+  | SendXtermPrompt
   | WriteToXterm
   | ClearXterm
   | TtyReceivedLine
@@ -140,10 +182,10 @@ export type MessageFromShell = (
 );
 
 /**
- * tty sets xterm prompt
+ * tty sends and sets xterm prompt
  */
-interface SetXtermPrompt {
-  key: 'set-xterm-prompt';
+interface SendXtermPrompt {
+  key: 'send-xterm-prompt';
   sessionKey: string;
   prompt: string;
 }
