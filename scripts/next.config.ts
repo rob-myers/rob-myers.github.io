@@ -83,15 +83,25 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
             })
           ]
         } : {},
-        // Webpack build info
         {
           plugins: [
+            // Webpack build info
             new WebpackBar({
               fancy: true,
               profile: true,
               basic: false,
             }),
-          ]
+            // Ignore 3rd party errors
+            new webpack.ContextReplacementPlugin(
+              // @node_modules/mvdan-sh/index.js
+              // Critical dependency: require function is used in a way in which dependencies cannot be statically extracted
+              /\/mvdan-sh/,
+              (data: any) => {
+                delete data.dependencies[0].critical;
+                return data;
+              },
+            ),            
+          ],          
         },
         configStyles(options),
         configOther(options),
