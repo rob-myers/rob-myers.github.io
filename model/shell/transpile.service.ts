@@ -3,6 +3,8 @@ import { concatMap, reduce, tap, map } from 'rxjs/operators';
 import * as Sh from '@model/shell/parse.service';
 import { ProcessAct, Expanded } from './process.model';
 import { expandService as expand } from './expand.service';
+import { ParameterDef, ParamType } from './parameter.model';
+import { testNever } from '@model/generic.model';
 
 type Obs = Observable<ProcessAct>;
 
@@ -91,11 +93,12 @@ class TranspileShService {
     const { Redirs, background, negated } = extend;
 
     if (Cmd) {
-      const {Assigns, Args } = Cmd;
-      const words = Args.map((arg) => this.Expand(arg));
+      const { Assigns, Args } = Cmd;
 
-      return of({ key: 'unimplemented' });
-
+      // return of({ key: 'unimplemented' });
+      return from(Args).pipe(
+        concatMap(arg => this.Expand(arg)),
+      );
       // return new SimpleComposite({
       //   key: CompositeType.simple,
       //   assigns: Assigns.map((assign) => this.Assign(assign)),
@@ -131,15 +134,13 @@ class TranspileShService {
     // });
   }
 
-  public Expand({ Parts }: Sh.Word): Obs {
+  public Expand({ Parts }: Sh.Word): Observable<Expanded> {
     /**
      * TODO
      * - expand parts in sequence, forwarding messages
      * - aggregate their output via `reduce`, compute values
-     * - emit as array for later processing
+     * - emit transform as same message type for later processing
      */
-
-    // return new Observable();
     if (Parts.length > 1) {
       return from(Parts).pipe(
         concatMap(wordPart => this.ExpandPart(wordPart)),
@@ -150,13 +151,8 @@ class TranspileShService {
         tap((msg) => {
           console.log('aggregated', msg);
         }),
+        // ...
       );
-      // return new PartsExpand({
-      //   key: CompositeType.expand,
-      //   expandKey: ExpandType.parts,
-      //   cs: Parts.map((wordPart) => this.ExpandPart(wordPart)),
-      //   sourceMap: this.sourceMap({ Pos, End }),
-      // });
     }
     return this.ExpandPart(Parts[0]);
   }
@@ -198,26 +194,20 @@ class TranspileShService {
       //     comments: [],
       //   });
       // }
-      case 'ExtGlob': {// TODO
-        return of({ key: 'expanded', values: [''] });
+      case 'ExtGlob': {
+        return of({
+          key: 'expanded',
+          values: [''], // TODO
+        });
       }
       case 'Lit': {
         return of({
           key: 'expanded',
           values: expand.literal(input),
         });
-        // new LiteralExpand({
-        //   key: CompositeType.expand,
-        //   expandKey: ExpandType.literal,
-        //   value: input.Value,
-        //   sourceMap: this.sourceMap({ Pos, End }),
-        // });
       }
       case 'ParamExp': {
-        return of({
-          key: 'expanded',
-          values: expand.parameter(input),
-        });
+        return this.ParamExp(input);
       }
       // case 'ProcSubst': {
       //   const { Pos, End, StmtList, Op, Rparen } = input;
@@ -240,21 +230,164 @@ class TranspileShService {
           key: 'expanded',
           values: expand.singleQuotes(input),
         });
-        // const { Dollar, Value } = input;
-        // return new SingleQuoteExpand({
-        //   key: CompositeType.expand,
-        //   expandKey: ExpandType.singleQuote,
-        //   interpret: Dollar,
-        //   value: Value,
-        //   sourceMap: this.sourceMap({ Pos, End },
-        //     { key: 'single-quote', pos: Left, end: Right },
-        //   ),
-        // });
       }
       // default: throw testNever(input);
       default:
         throw Error(`${input.type} unimplemented`);
     }
+  }
+
+  /**
+   * $(( x * y ))
+   * $(( 2 * (x + 1) )),
+   * (( x++ ))
+   * x[1 + "2$i"]=y.
+   */
+  private ArithmExpr(input: Sh.ArithmExpr): Observable<Expanded> {
+    switch (input.type) {
+      case 'BinaryArithm': {
+        return new Observable();
+        // return new ArithmOpComposite({
+        //   key: CompositeType.arithm_op,
+        //   symbol: input.Op, 
+        //   cs: [this.ArithmExpr(input.X), this.ArithmExpr(input.Y)],
+        //   postfix: false,
+        // });
+      }
+      case 'ParenArithm': {
+        return this.ArithmExpr(input.X);
+      }
+      case 'UnaryArithm': {
+        return new Observable();
+        // return new ArithmOpComposite({
+        //   key: CompositeType.arithm_op,
+        //   symbol: input.Op,
+        //   cs: [this.ArithmExpr(input.X)],
+        //   postfix: input.Post,
+        // });
+      }
+      case 'Word': {
+        return this.Expand(input);
+      }
+      default: throw testNever(input);
+    }
+  }
+
+  private ParamExp({
+    Excl, Exp, Index, Length, Names, Param, Repl, Short, Slice,
+  }: Sh.ParamExp): Observable<Expanded> {
+
+    // Must assign below
+    let sub = null as null | ParameterDef<Observable<Expanded>, Observable<Expanded>>;
+    const base = {
+      param: Param.Value,
+      short: Short,
+      index: Index ? this.ArithmExpr(Index) : undefined,
+    };
+
+    if (Excl) {// ${!...}
+      if (Index) {
+        const special = this.isArithmExprSpecial(Index);
+        if (special) {// ${!x[@]}, ${x[*]}
+          sub = { ...base, parKey: ParamType['keys'], split: special === '@' };
+        } else {// Indirection ${!x[n]} or ${!x["foo"]}
+          sub = sub || { ...base, parKey: ParamType['pointer'] };
+        }
+      } else if (Names) {// ${!x*}, ${!x@}
+        sub = { ...base, parKey: ParamType['vars'], split: (Names === '@') };
+      } else {// Indirection ${!x}
+        sub = { ...base, parKey: ParamType['pointer'] };
+      }
+    } else {// No exclamation
+      if (Exp) {
+        const pattern = Exp.Word ? this.Expand(Exp.Word) : null;
+        const alt = pattern;
+        switch (Exp.Op) {
+          case '^': sub = { ...base, parKey: ParamType.case, pattern, to: 'upper', all: false }; break;
+          case '^^': sub = { ...base, parKey: ParamType.case, pattern, to: 'upper', all: true };  break;
+          case ',': sub = { ...base, parKey: ParamType.case, pattern, to: 'lower', all: false }; break;
+          case ',,': sub = { ...base, parKey: ParamType.case, pattern, to: 'lower', all: true }; break;
+          // remove
+          case '%': sub = { ...base, parKey: ParamType.remove, pattern, greedy: false, dir: 1 }; break;
+          case '%%': sub = { ...base, parKey: ParamType.remove, pattern, greedy: true, dir: 1 }; break;
+          case '#': sub = { ...base, parKey: ParamType.remove, pattern, greedy: false, dir: -1 }; break;
+          case '##': sub = { ...base, parKey: ParamType.remove, pattern, greedy: true, dir: -1 }; break;
+          // default
+          case '+': sub = { ...base, parKey: ParamType.default, alt, symbol: '+', colon: false }; break;
+          case ':+': sub = { ...base, parKey: ParamType.default, alt, symbol: '+', colon: true }; break;
+          case '=': sub = { ...base, parKey: ParamType.default, alt, symbol: '=', colon: false }; break;
+          case ':=': sub = { ...base, parKey: ParamType.default, alt, symbol: '=', colon: true }; break;
+          case '?': sub = { ...base, parKey: ParamType.default, alt, symbol: '?', colon: false }; break;
+          case ':?': sub = { ...base, parKey: ParamType.default, alt, symbol: '?', colon: true }; break;
+          case '-': sub = { ...base, parKey: ParamType.default, alt, symbol: '-', colon: false }; break;
+          case ':-': sub = { ...base, parKey: ParamType.default, alt, symbol: '-', colon: true }; break;
+          // ...
+          default: throw new Error(
+            `Unsupported operation '${Exp.Op}' in parameter expansion of '${Param.Value}'.`);
+        }
+      } else if (Length) {// ${#x}, ${#x[2]}, ${#x[@]}
+        const isSpecial = Boolean(this.isArithmExprSpecial(Index));
+        sub = { ...base, parKey: ParamType['length'], of: isSpecial ? 'values' : 'word' };
+      } else if (Repl) {// ${x/y/z}, ${x//y/z}, ${x[foo]/y/z}
+        sub = { ...base, parKey: ParamType['replace'], all: Repl.All,
+          orig: this.Expand(Repl.Orig),
+          with: Repl.With ? this.Expand(Repl.With) : null,
+        };
+      } else if (Slice) {// ${x:y:z}, ${x[foo]:y:z}
+        sub = { ...base, parKey: ParamType['substring'],
+          from: this.ArithmExpr(Slice.Offset),
+          length: Slice.Length ? this.ArithmExpr(Slice.Length) : null,
+        };
+
+      } else if (Index) {// ${x[i]}, ${x[@]}, ${x[*]}
+        // NOTE ${x[@]} can split fields in double quotes.
+        sub = { ...base, parKey: ParamType['plain'] };
+      } else if (base.param === String(parseInt(base.param))) {
+        sub = { ...base, parKey: ParamType['position'] };
+      } else {
+        switch (base.param) {
+          // special
+          case '@':
+          case '*':
+          case '#':
+          case '?':
+          case '-':
+          case '$':
+          case '!':
+          case '0':
+          case '_': {
+            sub = { ...base, parKey: ParamType['special'], param: base.param };
+            break;
+          }// plain
+          default: {
+            sub = { ...base, parKey: ParamType['plain'] };
+          }
+        }
+      }
+    }
+
+    return new Observable();
+    // return new ParameterExpand({
+    //   key: CompositeType.expand,
+    //   expandKey: ExpandType.parameter,
+    //   ...sub,
+    // });
+  }
+
+  private isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
+    if (
+      arithmExpr && arithmExpr.type === 'Word'
+      && (arithmExpr.Parts.length === 1)
+      && arithmExpr.Parts[0].type === 'Lit'
+    ) {
+      const { Value } = arithmExpr.Parts[0] as Sh.Lit;
+      if (Value === '@') {
+        return '@';
+      } else if (Value === '*') {
+        return '*';
+      }
+    }
+    return null;
   }
 
 }

@@ -898,6 +898,18 @@ export type ParsedSh = (
   | WordPart
 );
 
+export type ExpandType = (
+  | ArithmCmd
+  | Command
+  | DblQuoted
+  | ExtGlob
+  | Lit
+  | ParamExp
+  | Word // parts
+  | ProcSubst
+  | SglQuoted
+);
+
 export type ArithmCmd = Sh.ArithmCmdGeneric<BaseNode, Pos, string>
 export type ArithmExp = Sh.ArithmExpGeneric<BaseNode, Pos, string>
 export type ArrayElem = Sh.ArrayElemGeneric<BaseNode, Pos, string>
