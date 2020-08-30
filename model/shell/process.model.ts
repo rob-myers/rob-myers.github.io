@@ -31,3 +31,20 @@ export enum SigEnum {
   SIGUSR1='SIGUSR1',
   SIGUSR2='SIGUSR2',
 }
+
+export type ProcessAct = (
+  | RequestPid
+  | WorldCoords
+  // ...
+);
+
+interface RequestPid {
+  key: 'req-pid';
+  cb: (pid: string) => void;
+}
+
+interface WorldCoords {
+  key: 'world-coords';
+  x: number;
+  y: number;  
+}
