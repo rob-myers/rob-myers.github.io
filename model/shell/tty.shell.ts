@@ -1,10 +1,12 @@
 import { testNever } from '@model/generic.model';
 import useStore, { State as ShellState, Session } from '@store/shell.store';
-import { parseSh } from './parse.service';
+import { parseSh, FileWithMeta } from './parse.service';
 import { SigEnum } from './process.model';
 import { createOfd } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
 import { TtyXterm } from './tty.xterm';
+import { transpileSh } from './transpile.service';
+import { processService } from './process.service';
 
 export class TtyShell {
 
@@ -45,14 +47,6 @@ export class TtyShell {
     this.prompt('$ ');
   } 
 
-  private prompt(prompt: string) {
-    this.xterm.incoming.next({
-      key: 'send-xterm-prompt',
-      prompt,
-      sessionKey: this.sessionKey,
-    });    
-  }
-
   private onMessage(msg: MessageFromXterm) {
     switch (msg.key) {
       case 'req-history-line': {
@@ -88,7 +82,7 @@ export class TtyShell {
 
   }
 
-  private tryParse() {
+  private async tryParse() {
     const input = this.inputs.pop();
     
     if (input) {
@@ -102,10 +96,8 @@ export class TtyShell {
           break;
         }
         case 'complete': {
-          /**
-           * TODO transpile and run
-           */
           this.buffer.length = 0;
+          await this.runParsed(result.parsed);
           this.prompt('$ ');
           break;
         }
@@ -116,6 +108,19 @@ export class TtyShell {
       }
       input.resolve();
     }
+  }
+
+  private async runParsed(parsed: FileWithMeta) {
+    const { pid } = processService.createProcess(parsed, this.sessionKey, this.session.sid);
+    await processService.startProcess(pid);
+  }
+
+  private prompt(prompt: string) {
+    this.xterm.incoming.next({
+      key: 'send-xterm-prompt',
+      prompt,
+      sessionKey: this.sessionKey,
+    });    
   }
 
   private getHistoryLine(lineIndex: number) {
@@ -129,7 +134,8 @@ export class TtyShell {
   private storeSrcLine(srcLine: string) {
     if (srcLine) {
       this.history.push(srcLine);
-      while (this.history.length > this.maxLines) this.history.shift();
+      while (this.history.length > this.maxLines)
+        this.history.shift();
     }
   }
 }

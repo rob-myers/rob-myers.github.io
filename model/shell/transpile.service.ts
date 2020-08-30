@@ -1,4 +1,4 @@
-import { Observable, from } from 'rxjs';
+import { Observable, from, of } from 'rxjs';
 import { concatMap } from 'rxjs/operators';
 import * as Sh from '@model/shell/parse.service';
 import { ProcessAct } from './process.model';
@@ -11,7 +11,7 @@ type Obs = Observable<ProcessAct>;
  * we'll instead clone `Sh.File`s and set sessionKey, pid somehow.
  */
 
-export class TranspileShService {
+class TranspileShService {
 
   transpile(parsed: Sh.File): Obs {
     const transpiled = this.File(parsed);
@@ -44,7 +44,7 @@ export class TranspileShService {
       return this.CallExpr(Cmd, extend);
     }
 
-    return Observable.create();
+    return of({ key: 'unimplemented' });
 
     // let child: Term = null as any;
 
@@ -93,7 +93,8 @@ export class TranspileShService {
       const {Assigns, Args } = Cmd;
       const words = Args.map((arg) => this.Expand(arg));
 
-      return new Observable();
+      return of({ key: 'unimplemented' });
+
       // return new SimpleComposite({
       //   key: CompositeType.simple,
       //   assigns: Assigns.map((assign) => this.Assign(assign)),
@@ -114,7 +115,7 @@ export class TranspileShService {
      * - > out # creates blank file out
      * - echo "$( < out)" # echos contents of out
      */
-    return new Observable();
+    return of({ key: 'unimplemented' });
     // return new SimpleComposite({
     //   key: CompositeType.simple,
     //   assigns: [],
@@ -144,9 +145,10 @@ export class TranspileShService {
   }
 
 }
-
 interface CommandExtension {
   Redirs: Sh.Redirect[];
   background: boolean;
   negated: boolean;
 }
+
+export const transpileSh = new TranspileShService;

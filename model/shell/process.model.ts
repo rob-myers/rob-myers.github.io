@@ -33,14 +33,13 @@ export enum SigEnum {
 }
 
 export type ProcessAct = (
-  | RequestPid
+  | Unimplemented
   | WorldCoords
   // ...
 );
 
-interface RequestPid {
-  key: 'req-pid';
-  cb: (pid: string) => void;
+interface Unimplemented {
+  key: 'unimplemented';
 }
 
 interface WorldCoords {

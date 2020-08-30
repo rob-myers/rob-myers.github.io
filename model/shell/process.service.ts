@@ -1,5 +1,6 @@
-import { Observable } from 'rxjs';
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
+import { FileWithMeta, parseSh } from './parse.service';
+import { transpileSh } from './transpile.service';
 
 export class ProcessService {
   
@@ -7,46 +8,65 @@ export class ProcessService {
 
   constructor() {}
 
-  createSessionLeader(sessionKey: string) {
+  /**
+   * Create 'dummy' process, so shell can use its scopes.
+   * Its pid is the respective sid.
+   */
+  createLeadingProcess(sessionKey: string) {
+    // Ensure shortcut
     this.set = this.set || useStore.getState().api.set;
-    
-    // this.createProcess(
-    //   defer(async () => {
-    //     await this.while(
-    //       of(true),
-    //       defer(async () => {
-    //         const buffer = [] as string[];
-    //         return this.read(1, 0, 1, buffer);
-    //       }),
-    //     );
-    //   }),
-    // );
-  }
 
-  private createProcess(
-    observable: Observable<any>,
-    sessionKey: string,
-    parentPid?: number,
-  ) {
     this.set((state) => {
-      const pid = state.nextProcId;
+      const { sid: pid } = this.getSession(sessionKey);
       state.proc[pid] = {
         key: `${pid}`,
         sessionKey,
         pid,
-        ppid: parentPid || 0,
-        observable,
-        subscription: observable.subscribe({
-          /**
-           * TODO
-           */
-          next: (act) => console.log('next', act),
-        }),
+        ppid: 0,
+        parsed: parseSh.parse(''),
+        subscription: null, // We'll never run it 
       };
-      state.nextProcId++;
     });
   }
 
+  createProcess(
+    parsed: FileWithMeta,
+    sessionKey: string,
+    parentPid: number,
+  ) {
+    const pid = useStore.getState().nextProcId;
+    parsed.meta = { pid, sessionKey };
+
+    this.set((state) => {
+      state.proc[pid] = {
+        key: `${pid}`,
+        sessionKey,
+        pid,
+        ppid: parentPid,
+        parsed,
+        subscription: null,        
+      };
+      state.nextProcId++;
+    });
+
+    return { pid };
+  }
+  
+  startProcess(pid: number) {
+    const process = this.getProcess(pid)
+    const transpiled = transpileSh.transpile(process.parsed);
+
+    return new Promise((resolve, reject) => {
+      this.set((state) => {
+        state.proc[pid].subscription = transpiled.subscribe({
+          next: (msg) => console.log('received', msg), // TEMP
+          complete: () => resolve(),
+          error: (err) => reject(err),
+        });
+      });
+    });
+  }
+  
   private getProcess(pid: number): Process {
     return useStore.getState().proc[pid];
   }

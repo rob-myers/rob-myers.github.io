@@ -1,12 +1,13 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 import produce from 'immer';
-import { Subscription, Observable, Subject } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
-import { processService } from '@model/shell/process.service';
 import { OpenFileDescription, createOfd } from '@model/shell/file.model';
 import { SigEnum } from '@model/shell/process.model';
+import { FileWithMeta } from '@model/shell/parse.service';
+import { processService } from '@model/shell/process.service';
 
 export interface State {
   /** Next tty identifier, inducing e.g. tty-2 and sessionKey */
@@ -32,6 +33,8 @@ export interface State {
 
 export interface Session {
   key: string;
+  // Used as pid of leading process
+  sid: number;
   ttyId: number;
   ttyShell: TtyShell;
 }
@@ -41,8 +44,8 @@ export interface Process {
   sessionKey: string;
   pid: number;
   ppid: number;
-  observable: Observable<any>; // TODO type observations
-  subscription: Subscription;
+  parsed: FileWithMeta;
+  subscription: null | Subscription;
 }
 
 const useStore = create<State>(devtools((set, get) => {
@@ -69,17 +72,18 @@ const useStore = create<State>(devtools((set, get) => {
         const ttyShell = new TtyShell(sessionKey, canonicalPath);
 
         set(produce((state: State) => {
-          state.nextTtyId++;
           state.toSessionKey[alias] = sessionKey;
           state.session[sessionKey] = {
             key: sessionKey,
+            sid: state.nextProcId,
             ttyId,
             ttyShell,
           };
+          state.nextTtyId++;
+          state.nextProcId++;
         }));
 
-        // Start the session
-        processService.createSessionLeader(sessionKey);
+        processService.createLeadingProcess(sessionKey);
       },
       signalSession: (key, signal) => {
         console.log('received', { signal, forSession: key });
