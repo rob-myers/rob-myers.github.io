@@ -33,6 +33,7 @@ export enum SigEnum {
 }
 
 export type ProcessAct = (
+  | Expanded
   | Unimplemented
   | WorldCoords
   // ...
@@ -40,6 +41,11 @@ export type ProcessAct = (
 
 interface Unimplemented {
   key: 'unimplemented';
+}
+
+export interface Expanded {
+  key: 'expanded';
+  values: string[];
 }
 
 interface WorldCoords {

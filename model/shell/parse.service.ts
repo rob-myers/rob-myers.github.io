@@ -1,6 +1,6 @@
 import Sh, { syntax } from 'mvdan-sh';
 import cloneWithRefs from 'lodash.clonedeep';
-import { Process } from '@store/shell.store';
+import { withParents } from './parse.util';
 // console.log({ Sh });
 
 /**
@@ -9,6 +9,7 @@ import { Process } from '@store/shell.store';
 class ParseShService {
 
   private mockMeta = getMockMeta();
+  private mockPos = getMockPos();
 
   public parse(src: string): FileWithMeta {
     // Use mvdan-sh to parse shell code
@@ -16,12 +17,13 @@ class ParseShService {
     syntax.KeepComments(parser);
     const parsed = parser.Parse(src, 'src.sh');
     /**
-     * Clean up the parse e.g. make it serialisable.
-     * We use a single fresh single meta reference
-     * for all nodes, so we can edit it easily later
+     * Clean up the parse, making it serialisable.
+     * We also use a single fresh `meta` for all nodes,
+     * and attach parents.
      */
-    this.mockMeta = getMockMeta(); 
-    return this.File(parsed);
+    this.mockMeta = getMockMeta();
+    const cleaned = this.File(parsed);
+    return withParents(cleaned);
   }
 
   public tryParseBuffer(buffer: string[]) {
@@ -95,18 +97,14 @@ class ParseShService {
     return meta.value || meta.name;
   }
 
-  // /** For optional positions. */
-  // private optPos = ({ Line, Col, Offset }: Sh.Pos): Pos | null => Line()
-  //   ? ({ Line: Line(), Col: Col(), Offset: Offset() })
-  //   : null;
-
-  /** Convert to our notion of base parse-node. */
+  /** Convert to our notion of base parsed node. */
   private base = ({ Pos, End }: Sh.BaseNode): BaseNode => {
     // console.log({ Pos, End });
     return {
       Pos: this.pos(Pos()),
       End: this.pos(End()),
-      meta: this.mockMeta, // Will be replaced
+      meta: this.mockMeta, // Gets mutated
+      parent: null, // Gets overwritten
     };
   };
 
@@ -394,6 +392,7 @@ class ParseShService {
   private File = (
     { Name, StmtList }: Sh.File,
   ): FileWithMeta => ({
+    ...this.base({ Pos: this.mockPos, End: this.mockPos }),
     type: 'File',
     Name,
     StmtList: this.StmtList(StmtList),
@@ -577,6 +576,8 @@ class ParseShService {
   private StmtList = (
     { Last, Stmts }: Sh.StmtList
   ): StmtList => ({
+    // Force every node to have a parent
+    ...this.base({ Pos: this.mockPos, End: this.mockPos }),
     type: 'StmtList',
     Last: Last.map(this.Comment),
     Stmts: Stmts.map(this.Stmt),
@@ -845,7 +846,57 @@ export interface BaseNode {
   End: Pos;
   Pos: Pos;
   meta: FileMeta; // Single instance for entire tree
+  parent: null | ParsedSh;
 }
+
+export type ParsedSh = (
+  | ArithmCmd
+  | ArithmExp
+  | ArrayElem
+  | ArithmExpr
+  | ArrayExpr
+  | Assign
+  | BinaryArithm
+  | BinaryCmd
+  | BinaryTest
+  | Block
+  | CallExpr
+  | CaseClause
+  | CaseItem
+  | CmdSubst
+  | Comment
+  | CStyleLoop
+  | Command
+  | CoprocClause
+  | DblQuoted
+  | DeclClause
+  | ExtGlob
+  | File
+  | ForClause
+  | FuncDecl
+  | IfClause
+  | LetClause
+  | Lit
+  | Loop
+  | ParamExp
+  | ParenArithm
+  | ParenTest
+  | ProcSubst
+  | Redirect
+  | SglQuoted
+  | Stmt
+  | StmtList
+  | Subshell
+  | TestClause
+  | TimeClause
+  | TestExpr
+  | UnaryArithm
+  | UnaryTest
+  | WhileClause
+  | Word
+  | WordIter
+  | WordPart
+);
 
 export type ArithmCmd = Sh.ArithmCmdGeneric<BaseNode, Pos, string>
 export type ArithmExp = Sh.ArithmExpGeneric<BaseNode, Pos, string>
@@ -887,7 +938,7 @@ export type CoprocClause = Sh.CoprocClauseGeneric<BaseNode, Pos, string>
 export type DblQuoted = Sh.DblQuotedGeneric<BaseNode, Pos, string>
 export type DeclClause = Sh.DeclClauseGeneric<BaseNode, Pos, string>
 export type ExtGlob = Sh.ExtGlobGeneric<BaseNode, Pos, string>
-export type File = Sh.FileGeneric<BaseNode, Pos, string>
+export type File = Sh.FileGeneric<BaseNode, Pos, string> & BaseNode
 export type ForClause = Sh.ForClauseGeneric<BaseNode, Pos, string>
 export type FuncDecl = Sh.FuncDeclGeneric<BaseNode, Pos, string>
 export type IfClause = Sh.IfClauseGeneric<BaseNode, Pos, string>
@@ -950,5 +1001,11 @@ const getMockMeta = (): FileMeta => ({
   pid: -1,
   sessionKey: 'mockSession',
 });
+
+const getMockPos = () => (() => ({
+  Line: () => 1,
+  Col: () => 1,
+  Offset: () => 0,
+} as Sh.Pos));
 
 export const parseSh = new ParseShService();

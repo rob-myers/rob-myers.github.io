@@ -1,6 +1,7 @@
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
 import { FileWithMeta, parseSh } from './parse.service';
 import { transpileSh } from './transpile.service';
+import { updateLookup, addToLookup } from '@store/store.util';
 
 export class ProcessService {
   
@@ -10,23 +11,23 @@ export class ProcessService {
 
   /**
    * Create 'dummy' process, so shell can use its scopes.
-   * Its pid is the respective sid.
+   * Its `pid` is the session's `sid`.
    */
   createLeadingProcess(sessionKey: string) {
     // Ensure shortcut
     this.set = this.set || useStore.getState().api.set;
-
-    this.set((state) => {
-      const { sid: pid } = this.getSession(sessionKey);
-      state.proc[pid] = {
+    
+    const { sid: pid } = this.getSession(sessionKey);
+    this.set(({ proc }) => ({
+      proc: addToLookup({
         key: `${pid}`,
         sessionKey,
         pid,
         ppid: 0,
         parsed: parseSh.parse(''),
         subscription: null, // We'll never run it 
-      };
-    });
+      }, proc),
+    }));
   }
 
   createProcess(
@@ -37,32 +38,30 @@ export class ProcessService {
     const pid = useStore.getState().nextProcId;
     parsed.meta = { pid, sessionKey };
 
-    this.set((state) => {
-      state.proc[pid] = {
+    this.set(({ proc, nextProcId }) => ({
+      proc: addToLookup({
         key: `${pid}`,
         sessionKey,
         pid,
         ppid: parentPid,
         parsed,
         subscription: null,        
-      };
-      state.nextProcId++;
-    });
-
+      }, proc),
+      nextProcId: nextProcId + 1,
+    }));
     return { pid };
   }
   
   startProcess(pid: number) {
     const process = this.getProcess(pid)
     const transpiled = transpileSh.transpile(process.parsed);
-
+    
     return new Promise((resolve, reject) => {
-      this.set((state) => {
-        state.proc[pid].subscription = transpiled.subscribe({
-          next: (msg) => console.log('received', msg), // TEMP
-          complete: () => resolve(),
-          error: (err) => reject(err),
-        });
+      // Can directly mutate state
+      process.subscription = transpiled.subscribe({
+        next: (msg) => console.log('received', msg), // TEMP
+        complete: () => resolve(),
+        error: (err) => reject(err),
       });
     });
   }

@@ -5,8 +5,8 @@ import { SigEnum } from './process.model';
 import { createOfd } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
 import { TtyXterm } from './tty.xterm';
-import { transpileSh } from './transpile.service';
 import { processService } from './process.service';
+import { addToLookup } from '@store/store.util';
 
 export class TtyShell {
 
@@ -36,13 +36,14 @@ export class TtyShell {
     
     this.set = useStore.getState().api.set;
 
-    this.set(({ ofd }) => {
-      const prefix = xterm.def.canonicalPath;
+    const prefix = xterm.def.canonicalPath;
+    this.set(({ ofd }) => ({
       // We permit reading the internals of xterm (MessageFromXterm)
-      ofd[`${prefix}/out`] = createOfd(`${prefix}/out`, xterm.outgoing, { mode: 'RDONLY' });
+      ofd: addToLookup(createOfd(`${prefix}/out`, xterm.outgoing, { mode: 'RDONLY' }), 
       // We permit writing to the internals of xterm (MessageFromShell)
-      ofd[`${prefix}/in`] = createOfd(`${prefix}/in`, xterm.incoming, { mode: 'WRONLY' });
-    });
+        addToLookup(createOfd(`${prefix}/in`, xterm.incoming, { mode: 'WRONLY' }), ofd),
+      ),
+    }));
 
     this.prompt('$ ');
   } 

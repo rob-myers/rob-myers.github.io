@@ -1,7 +1,8 @@
 import { Observable, from, of } from 'rxjs';
-import { concatMap } from 'rxjs/operators';
+import { concatMap, reduce, tap, map } from 'rxjs/operators';
 import * as Sh from '@model/shell/parse.service';
-import { ProcessAct } from './process.model';
+import { ProcessAct, Expanded } from './process.model';
+import { expandService as expand } from './expand.service';
 
 type Obs = Observable<ProcessAct>;
 
@@ -131,17 +132,129 @@ class TranspileShService {
   }
 
   public Expand({ Parts }: Sh.Word): Obs {
+    /**
+     * TODO
+     * - expand parts in sequence, forwarding messages
+     * - aggregate their output via `reduce`, compute values
+     * - emit as array for later processing
+     */
 
-    return new Observable();
-    // if (Parts.length > 1) {
-    //   return new PartsExpand({
-    //     key: CompositeType.expand,
-    //     expandKey: ExpandType.parts,
-    //     cs: Parts.map((wordPart) => this.ExpandPart(wordPart)),
-    //     sourceMap: this.sourceMap({ Pos, End }),
-    //   });
-    // }
-    // return this.ExpandPart(Parts[0]);
+    // return new Observable();
+    if (Parts.length > 1) {
+      return from(Parts).pipe(
+        concatMap(wordPart => this.ExpandPart(wordPart)),
+        reduce(({ key, values }, item: Expanded) => ({
+          key,
+          values: values.concat(item.values),
+        }), { key: 'expanded' as 'expanded', values: [] as string[] }),
+        tap((msg) => {
+          console.log('aggregated', msg);
+        }),
+      );
+      // return new PartsExpand({
+      //   key: CompositeType.expand,
+      //   expandKey: ExpandType.parts,
+      //   cs: Parts.map((wordPart) => this.ExpandPart(wordPart)),
+      //   sourceMap: this.sourceMap({ Pos, End }),
+      // });
+    }
+    return this.ExpandPart(Parts[0]);
+  }
+
+  public ExpandPart(input: Sh.WordPart): Observable<Expanded> {
+    switch (input.type) {
+      // case 'ArithmExp': {
+      //   return new ArithmExpand({
+      //     key: CompositeType.expand,
+      //     expandKey: ExpandType.arithmetic,
+      //     expr: this.ArithmExpr(input.X),
+      //     sourceMap: this.sourceMap({ Pos, End }),
+      //   });
+      // }
+      // case 'CmdSubst': {
+      //   const { Pos, End, StmtList, Left, Right } = input;
+      //   return new CommandExpand({
+      //     key: CompositeType.expand,
+      //     expandKey: ExpandType.command,
+      //     cs: StmtList.Stmts.map((Stmt) => this.Stmt(Stmt)),
+      //     sourceMap: this.sourceMap({ Pos, End },
+      //       // $( ... ) or ` ... `
+      //       { key: 'brackets', pos: Left, end: Right }),
+      //     // Trailing comments only.
+      //     comments: StmtList.Last.map<TermComment>(({ Hash, End, Text }) => ({
+      //       sourceMap: this.sourceMap({ Pos: Hash, End }),
+      //       text: Text,
+      //     })),
+      //   });
+      // }
+      // case 'DblQuoted': {
+      //   const { Dollar, Parts } = input;
+      //   return new DoubleQuoteExpand({
+      //     key: CompositeType.expand,
+      //     expandKey: ExpandType.doubleQuote,
+      //     cs: Parts.map((part) => this.ExpandPart(part)),
+      //     locale: Dollar,
+      //     sourceMap: this.sourceMap({ Pos, End }),
+      //     comments: [],
+      //   });
+      // }
+      case 'ExtGlob': {// TODO
+        return of({ key: 'expanded', values: [''] });
+      }
+      case 'Lit': {
+        return of({
+          key: 'expanded',
+          values: expand.literal(input),
+        });
+        // new LiteralExpand({
+        //   key: CompositeType.expand,
+        //   expandKey: ExpandType.literal,
+        //   value: input.Value,
+        //   sourceMap: this.sourceMap({ Pos, End }),
+        // });
+      }
+      case 'ParamExp': {
+        return of({
+          key: 'expanded',
+          values: expand.parameter(input),
+        });
+      }
+      // case 'ProcSubst': {
+      //   const { Pos, End, StmtList, Op, Rparen } = input;
+      //   return new ProcessExpand({
+      //     key: CompositeType.expand,
+      //     expandKey: ExpandType.process,
+      //     dir: Op === '<(' ? '<' : '>',
+      //     cs: StmtList.Stmts.map((Stmt) => this.Stmt(Stmt)),
+      //     sourceMap: this.sourceMap({ Pos, End },
+      //       { key: 'right-bracket', pos: Rparen }),
+      //     // Trailing comments only.
+      //     comments: StmtList.Last.map<TermComment>(({ Hash, End, Text }) => ({
+      //       sourceMap: this.sourceMap({ Pos: Hash, End }),
+      //       text: Text,
+      //     })),
+      //   });
+      // }
+      case 'SglQuoted': {
+        return of({
+          key: 'expanded',
+          values: expand.singleQuotes(input),
+        });
+        // const { Dollar, Value } = input;
+        // return new SingleQuoteExpand({
+        //   key: CompositeType.expand,
+        //   expandKey: ExpandType.singleQuote,
+        //   interpret: Dollar,
+        //   value: Value,
+        //   sourceMap: this.sourceMap({ Pos, End },
+        //     { key: 'single-quote', pos: Left, end: Right },
+        //   ),
+        // });
+      }
+      // default: throw testNever(input);
+      default:
+        throw Error(`${input.type} unimplemented`);
+    }
   }
 
 }

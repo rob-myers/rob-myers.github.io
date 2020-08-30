@@ -1,6 +1,5 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
-import produce from 'immer';
 import { Subscription, Subject } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
@@ -8,6 +7,7 @@ import { OpenFileDescription, createOfd } from '@model/shell/file.model';
 import { SigEnum } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
 import { processService } from '@model/shell/process.service';
+import { addToLookup } from './store.util';
 
 export interface State {
   /** Next tty identifier, inducing e.g. tty-2 and sessionKey */
@@ -26,8 +26,11 @@ export interface State {
   readonly api: {
     ensureSession: (alias: string) => void;
     signalSession: (sessionKey: string, signal: SigEnum) => void;
-    /** Useful e.g. to track external state changes in devtools */
-    set: (delta: ((current: State) => void)) => void;
+    /**
+     * Useful e.g. to track external state changes in devtools.
+     * We cannot use `immer` here: saw stack overflows.
+     */
+    set: (delta: ((current: State) => Partial<State>)) => void;
   };
 }
 
@@ -71,16 +74,16 @@ const useStore = create<State>(devtools((set, get) => {
         const canonicalPath = `/dev/${ttyFilename}`;
         const ttyShell = new TtyShell(sessionKey, canonicalPath);
 
-        set(produce((state: State) => {
-          state.toSessionKey[alias] = sessionKey;
-          state.session[sessionKey] = {
+        set(({ toSessionKey, nextProcId, nextTtyId, session }: State) => ({
+          toSessionKey: { ...toSessionKey, [alias]: sessionKey },
+          session: addToLookup({
             key: sessionKey,
-            sid: state.nextProcId,
+            sid: nextProcId,
             ttyId,
             ttyShell,
-          };
-          state.nextTtyId++;
-          state.nextProcId++;
+          }, session),
+          nextProcId: nextProcId + 1,
+          nextTtyId: nextTtyId + 1,
         }));
 
         processService.createLeadingProcess(sessionKey);
@@ -88,7 +91,7 @@ const useStore = create<State>(devtools((set, get) => {
       signalSession: (key, signal) => {
         console.log('received', { signal, forSession: key });
       },
-      set: (delta) => set(produce(delta)),
+      set,
     },
   };
 }, 'shell'));
