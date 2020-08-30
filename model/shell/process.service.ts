@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
 
-export default class ProcessService {
+export class ProcessService {
   
   private set!: ShellState['api']['set'];
 
@@ -56,3 +56,5 @@ export default class ProcessService {
   }
 
 }
+
+export const processService = new ProcessService;

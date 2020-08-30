@@ -4,7 +4,7 @@ import produce from 'immer';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
-import ProcessService from '@model/shell/process.service';
+import { processService } from '@model/shell/process.service';
 import { OpenFileDescription, createOfd } from '@model/shell/file.model';
 import { SigEnum } from '@model/shell/process.model';
 
@@ -24,7 +24,6 @@ export interface State {
 
   readonly api: {
     ensureSession: (alias: string) => void;
-    service: ProcessService;
     signalSession: (sessionKey: string, signal: SigEnum) => void;
     /** Useful e.g. to track external state changes in devtools */
     set: (delta: ((current: State) => void)) => void;
@@ -48,7 +47,6 @@ export interface Process {
 
 const useStore = create<State>(devtools((set, get) => {
   const devNull = new Subject;
-  const service = new ProcessService;
 
   return {
     nextTtyId: 1,
@@ -81,9 +79,8 @@ const useStore = create<State>(devtools((set, get) => {
         }));
 
         // Start the session
-        get().api.service.createSessionLeader(sessionKey);
+        processService.createSessionLeader(sessionKey);
       },
-      service,
       signalSession: (key, signal) => {
         console.log('received', { signal, forSession: key });
       },
