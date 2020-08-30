@@ -15,9 +15,11 @@ class ParseShService {
     const parser = syntax.NewParser();
     syntax.KeepComments(parser);
     const parsed = parser.Parse(src, 'src.sh');
-
-    // Clean up the parse e.g. make it serialisable
-    // Must use fresh single reference for all nodes
+    /**
+     * Clean up the parse e.g. make it serialisable.
+     * We use a single fresh single meta reference
+     * for all nodes, so we can edit it easily later
+     */
     this.mockMeta = getMockMeta(); 
     return this.File(parsed);
   }
@@ -35,7 +37,7 @@ class ParseShService {
 
       return incomplete
         ? { key: 'incomplete' as 'incomplete' }
-        : { key: 'complete' as 'complete', parsed: parsed as File, src };
+        : { key: 'complete' as 'complete', parsed: parsed!, src };
 
     } catch (e) {
       console.error(e);
@@ -943,12 +945,10 @@ export interface FileWithMeta extends File {
 interface FileMeta {
   pid: number;
   sessionKey: string;
-  process: Process;
 }
 const getMockMeta = (): FileMeta => ({
   pid: -1,
   sessionKey: 'mockSession',
-  process: {} as any,
 });
 
 export const parseSh = new ParseShService();

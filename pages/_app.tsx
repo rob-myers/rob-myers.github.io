@@ -12,7 +12,6 @@ const RootApp: React.FC<RootProps> = ({
   Component,
   pageProps,
 }) => {
-
   // Persist test.store
   useEffect(() => {
     useTestStore.getState().persist.restore();
