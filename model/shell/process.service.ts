@@ -1,4 +1,4 @@
-import { Observable, lastValueFrom, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
 
 export default class ProcessService {
@@ -8,7 +8,7 @@ export default class ProcessService {
   constructor() {}
 
   createSessionLeader(sessionKey: string) {
-    this.set = useStore.getState().api.set;
+    this.set = this.set || useStore.getState().api.set;
     
     // this.createProcess(
     //   defer(async () => {

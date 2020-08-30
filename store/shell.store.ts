@@ -57,8 +57,7 @@ const useStore = create<State>(devtools((set, get) => {
     nextProcId: 1,
     proc: {},
     ofd: {
-      'rd-null': createOfd('null', devNull, { mode: 'RDONLY' }),
-      'wr-null': createOfd('null', devNull, { mode: 'WRONLY' }),
+      '/dev/null': createOfd('/dev/null', devNull, { mode: 'RDWR' }),
     },
     api: {
       ensureSession: (alias) => {
