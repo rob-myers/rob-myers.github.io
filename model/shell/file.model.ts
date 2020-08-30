@@ -26,3 +26,12 @@ export interface CreateOfdOpts {
    */
   mode: OpenFileMode;
 }
+
+export function createOfd(key: string, stream: Subject<any>, opts: CreateOfdOpts): OpenFileDescription {
+  return {
+    key,
+    stream, // Direct reference.
+    mode: opts.mode,
+    numLinks: 0,
+  };
+}

@@ -5,19 +5,26 @@ import { Subscription, Observable, Subject } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
 import ProcessService from '@model/shell/process.service';
-import { OpenFileDescription } from '@model/shell/file.model';
+import { OpenFileDescription, createOfd } from '@model/shell/file.model';
 import { SigEnum } from '@model/shell/process.model';
 
 export interface State {
+  /** Next tty identifier, inducing e.g. tty-2 and sessionKey */
+  nextTtyId: number;
   /** Each terminal connects to a session */
   session: KeyedLookup<Session>;
-  /** Next tty identifier, inducing e.g. tty-2 */
-  nextTtyId: number;
   /** Sessions are aliased */
-  toSessionKey: { [alias: string]: string };
+  toSessionKey: { [alias: string]: string };  
+  /** Next process id */
+  nextProcId: number;
+  /** Processes, each with a parent session */
+  proc: KeyedLookup<Process>;
+  /** Opened files are registered here */
+  ofd: KeyedLookup<OpenFileDescription>;
 
   readonly api: {
     ensureSession: (alias: string) => void;
+    service: ProcessService;
     signalSession: (sessionKey: string, signal: SigEnum) => void;
     /** Useful e.g. to track external state changes in devtools */
     set: (delta: ((current: State) => void)) => void;
@@ -28,17 +35,11 @@ export interface Session {
   key: string;
   ttyId: number;
   ttyShell: TtyShell;
-  /** Next process id in this session */
-  nextProcId: number;
-  /** Opened files are registered here */
-  ofd: KeyedLookup<OpenFileDescription>;
-  /** Processes in this session */
-  process: KeyedLookup<Process>;
-  service: ProcessService;
 }
 
 export interface Process {
   key: string;
+  sessionKey: string;
   pid: number;
   ppid: number;
   observable: Observable<any>; // TODO type observations
@@ -46,11 +47,19 @@ export interface Process {
 }
 
 const useStore = create<State>(devtools((set, get) => {
+  const devNull = new Subject;
+  const service = new ProcessService;
 
   return {
-    session: {},
     nextTtyId: 1,
+    session: {},
     toSessionKey: {},
+    nextProcId: 1,
+    proc: {},
+    ofd: {
+      'rd-null': createOfd('null', devNull, { mode: 'RDONLY' }),
+      'wr-null': createOfd('null', devNull, { mode: 'WRONLY' }),
+    },
     api: {
       ensureSession: (alias) => {
         const { toSessionKey, nextTtyId: ttyId } = get();
@@ -60,9 +69,7 @@ const useStore = create<State>(devtools((set, get) => {
         const ttyFilename = `tty-${ttyId}`;
         const sessionKey = `root@${ttyFilename}`;
         const canonicalPath = `/dev/${ttyFilename}`;
-        const service = new ProcessService(sessionKey);
         const ttyShell = new TtyShell(sessionKey, canonicalPath);
-        const devNull = new Subject;
 
         set(produce((state: State) => {
           state.nextTtyId++;
@@ -71,27 +78,13 @@ const useStore = create<State>(devtools((set, get) => {
             key: sessionKey,
             ttyId,
             ttyShell,
-            nextProcId: 1,
-            ofd: {
-              'rd-null': service.createOfd('null', devNull, { mode: 'RDONLY' }),
-              'wr-null': service.createOfd('null', devNull, { mode: 'WRONLY' }),
-              /**
-               * TODO
-               * - tty.xterm provides stream which it writes to (instead of invoking tty.wrapper)
-               * - tty.xterm provides stream which it reads from
-               * - tty.handler becomes tty.shell and reads/writes tty.xterm
-               */
-              // 'rd-tty': service.createOfd('rd-tty', tty.inode, { mode: 'RDONLY' }),
-              // 'wr-tty': service.createOfd('wr-tty', tty.inode, { mode: 'WRONLY' }),
-            },
-            process: {},
-            service,
           };
         }));
 
         // Start the session
-        service.createSessionLeader();
+        get().api.service.createSessionLeader(sessionKey);
       },
+      service,
       signalSession: (key, signal) => {
         console.log('received', { signal, forSession: key });
       },

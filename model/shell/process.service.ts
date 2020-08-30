@@ -1,14 +1,13 @@
 import { Observable, lastValueFrom, Subject } from 'rxjs';
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
-import { CreateOfdOpts, OpenFileDescription } from './file.model';
 
 export default class ProcessService {
   
   private set!: ShellState['api']['set'];
 
-  constructor(private sessionKey: string) {}
+  constructor() {}
 
-  createSessionLeader() {
+  createSessionLeader(sessionKey: string) {
     this.set = useStore.getState().api.set;
     
     // this.createProcess(
@@ -24,24 +23,16 @@ export default class ProcessService {
     // );
   }
 
-  createOfd(key: string, stream: Subject<any>, opts: CreateOfdOpts): OpenFileDescription {
-    return {
-      key,
-      stream, // Direct reference.
-      mode: opts.mode,
-      numLinks: 0,
-    };
-  }
-
   private createProcess(
     observable: Observable<any>,
+    sessionKey: string,
     parentPid?: number,
   ) {
     this.set((state) => {
-      const session = state.session[this.sessionKey];
-      const pid = session.nextProcId;
-      session.process[pid] = {
+      const pid = state.nextProcId;
+      state.proc[pid] = {
         key: `${pid}`,
+        sessionKey,
         pid,
         ppid: parentPid || 0,
         observable,
@@ -52,16 +43,16 @@ export default class ProcessService {
           next: (act) => console.log('next', act),
         }),
       };
-      session.nextProcId++;
+      state.nextProcId++;
     });
   }
 
   private getProcess(pid: number): Process {
-    return this.session.process[pid];
+    return useStore.getState().proc[pid];
   }
 
-  private get session(): Session {
-    return useStore.getState().session[this.sessionKey];
+  private getSession(sessionKey: string): Session {
+    return useStore.getState().session[sessionKey];
   }
 
 }

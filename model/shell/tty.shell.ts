@@ -1,9 +1,10 @@
-import { SigEnum } from './process.model';
 import { testNever } from '@model/generic.model';
 import useStore, { State as ShellState, Session } from '@store/shell.store';
+import { parseSh } from './parse.service';
+import { SigEnum } from './process.model';
+import { createOfd } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
 import { TtyXterm } from './tty.xterm';
-import { parseSh } from './parse.service';
 
 export class TtyShell {
 
@@ -32,18 +33,17 @@ export class TtyShell {
     this.xterm.outgoing.subscribe(this.onMessage.bind(this));
     
     this.set = useStore.getState().api.set;
-    const { service } = this.session;
 
-    this.set(state => {
-      const { ofd } =  state.session[this.sessionKey]
-      // To read from tty we'll subscribe to its outgoing Subject
-      ofd['rd-tty'] = service.createOfd('rd-tty', xterm.outgoing, { mode: 'RDONLY' });
-      // To write from tty we'll subscribe to its incoming Subject
-      ofd['wr-tty'] = service.createOfd('wr-tty', xterm.incoming, { mode: 'WRONLY' });
+    this.set(({ ofd }) => {
+      const prefix = xterm.def.canonicalPath;
+      // We permit reading the internals of xterm (MessageFromXterm)
+      ofd[`${prefix}/out`] = createOfd(`${prefix}/out`, xterm.outgoing, { mode: 'RDONLY' });
+      // We permit writing to the internals of xterm (MessageFromShell)
+      ofd[`${prefix}/in`] = createOfd(`${prefix}/in`, xterm.incoming, { mode: 'WRONLY' });
     });
 
     this.prompt('$ ');
-  }
+  } 
 
   private prompt(prompt: string) {
     this.xterm.incoming.next({

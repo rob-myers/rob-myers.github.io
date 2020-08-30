@@ -665,6 +665,7 @@ export class TtyXterm {
 interface TtyXtermDef {
   xterm: Terminal;
   sessionKey: string;
+  /** e.g. `/dev/tty-2 */
   canonicalPath: string;
   linesPerUpdate: number;
   refreshMs: number;
