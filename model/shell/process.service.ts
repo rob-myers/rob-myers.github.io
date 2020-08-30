@@ -36,7 +36,8 @@ export class ProcessService {
     parentPid: number,
   ) {
     const pid = useStore.getState().nextProcId;
-    parsed.meta = { pid, sessionKey };
+    // Must mutate to affect all descendents
+    Object.assign(parsed.meta, { pid, sessionKey });
 
     this.set(({ proc, nextProcId }) => ({
       proc: addToLookup({
