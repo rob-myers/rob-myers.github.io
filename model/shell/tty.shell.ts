@@ -3,7 +3,7 @@ import { testNever } from '@model/generic.model';
 import useStore, { State as ShellState, Session } from '@store/shell.store';
 import { VoiceCommandSpeech } from './voice.xterm';
 import { TtyXterm } from './tty.xterm';
-import { parseSh } from './parse-sh.service';
+import { parseSh } from './parse.service';
 
 export class TtyShell {
 
