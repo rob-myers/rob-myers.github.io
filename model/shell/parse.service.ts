@@ -1,29 +1,24 @@
 import Sh, { syntax } from 'mvdan-sh';
+import cloneWithRefs from 'lodash.clonedeep';
+import { Process } from '@store/shell.store';
 // console.log({ Sh });
-
-export interface InteractiveParseResult {
-  /**
-   * {parser.Interactive} callback appears to
-   * run synchronously. Permit null just in case.
-   */
-  incomplete: boolean | null;
-  /**
-   * If {incomplete} is false, this is the cleaned parse.
-   */
-  parsed: null | File;
-}
 
 /**
  * Parse shell code using npm module mvdan-sh.
  */
 class ParseShService {
 
-  public parse(src: string): File {
+  private mockMeta = getMockMeta();
+
+  public parse(src: string): FileWithMeta {
     // Use mvdan-sh to parse shell code
     const parser = syntax.NewParser();
     syntax.KeepComments(parser);
     const parsed = parser.Parse(src, 'src.sh');
+
     // Clean up the parse e.g. make it serialisable
+    // Must use fresh single reference for all nodes
+    this.mockMeta = getMockMeta(); 
     return this.File(parsed);
   }
 
@@ -51,9 +46,8 @@ class ParseShService {
   /**
    * `partialSrc` must come from the command line.
    * It must be `\n`-terminated.
-   * It must not have a proper-prefix which is
-   * a complete command, e.g. `echo foo\necho bar\n` is invalid
-   * due to proper-prefix `echo foo\n`.
+   * It must not have a proper-prefix which is a complete command,
+   * e.g. `echo foo\necho bar\n` invalid via proper-prefix `echo foo\n`.
    */
   public interactiveParse(partialSrc: string): InteractiveParseResult {
     const parser = syntax.NewParser();
@@ -68,9 +62,15 @@ class ParseShService {
       // console.log('ERROR', e);
     }
 
-    // Want source-map, so we re-parse
+    // To clean it up we re-parse, which also provides source map
     const parsed = incomplete ? null : this.parse(partialSrc);
     return { incomplete, parsed };
+  }
+
+  public clone(parsed: FileWithMeta): FileWithMeta {
+    const cloned = cloneWithRefs(parsed);
+    Object.assign(cloned.meta, getMockMeta());
+    return cloned;
   }
 
   /**
@@ -104,6 +104,7 @@ class ParseShService {
     return {
       Pos: this.pos(Pos()),
       End: this.pos(End()),
+      meta: this.mockMeta, // Will be replaced
     };
   };
 
@@ -390,10 +391,11 @@ class ParseShService {
    */
   private File = (
     { Name, StmtList }: Sh.File,
-  ): File => ({
+  ): FileWithMeta => ({
     type: 'File',
     Name,
     StmtList: this.StmtList(StmtList),
+    meta: this.mockMeta,
   });
   
   private ForClause = (
@@ -840,6 +842,7 @@ export interface Pos {
 export interface BaseNode {
   End: Pos;
   Pos: Pos;
+  meta: FileMeta; // Single instance for entire tree
 }
 
 export type ArithmCmd = Sh.ArithmCmdGeneric<BaseNode, Pos, string>
@@ -923,5 +926,29 @@ export type WordPart =
 | ExtGlob
 
 //#endregion
+
+export interface InteractiveParseResult {
+  /**
+   * `parser.Interactive` callback appears to
+   * run synchronously. Permit null just in case.
+   */
+  incomplete: boolean | null;
+  /** If `incomplete` is false, this is the cleaned parse. */
+  parsed: null | FileWithMeta;
+}
+
+export interface FileWithMeta extends File {
+  meta: FileMeta;
+}
+interface FileMeta {
+  pid: number;
+  sessionKey: string;
+  process: Process;
+}
+const getMockMeta = (): FileMeta => ({
+  pid: -1,
+  sessionKey: 'mockSession',
+  process: {} as any,
+});
 
 export const parseSh = new ParseShService();
