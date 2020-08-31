@@ -32,16 +32,24 @@ export class TtyShell {
   
   initialise(xterm: TtyXterm) {
     this.xterm = xterm;
+    /**
+     * TODO need special mechanism where most recent subscriber
+     * is the only one to receive 'send-line' events.
+     */
     this.xterm.outgoing.subscribe(this.onMessage.bind(this));
     
     this.set = useStore.getState().api.set;
 
-    const prefix = xterm.def.canonicalPath;
+    /**
+     * TODO remove these internal streams, instead:
+     * - provide a stream processes can write to.
+     * - provide a stream processes can read from (interactive input).
+     */
     this.set(({ ofd }) => ({
       // We permit reading the internals of xterm (MessageFromXterm)
-      ofd: addToLookup(createOfd(`${prefix}/out`, xterm.outgoing, { mode: 'RDONLY' }), 
+      ofd: addToLookup(createOfd(`${xterm.def.canonicalPath}/out`, xterm.outgoing, { mode: 'RDONLY' }), 
       // We permit writing to the internals of xterm (MessageFromShell)
-        addToLookup(createOfd(`${prefix}/in`, xterm.incoming, { mode: 'WRONLY' }), ofd),
+        addToLookup(createOfd(`${xterm.def.canonicalPath}/in`, xterm.incoming, { mode: 'WRONLY' }), ofd),
       ),
     }));
 
@@ -60,7 +68,7 @@ export class TtyShell {
         });
         break;
       }
-      case 'send-line-to-shell': {
+      case 'send-line': {
         this.inputs.push({
           line: msg.line,
           // xterm won't send another line until resolved
@@ -72,7 +80,7 @@ export class TtyShell {
         this.tryParse();
         break;
       }
-      case 'send-sig-to-shell': {
+      case 'send-sig': {
         if (msg.signal === SigEnum.SIGINT) {
           useStore.getState().api.signalSession(this.sessionKey, msg.signal);
         }
@@ -153,12 +161,12 @@ interface RequestHistoryLine {
 }
 
 interface SendLineToShell {
-  key: 'send-line-to-shell';
+  key: 'send-line';
   line: string;
 }
 
 interface SendSignalToShell {
-  key: 'send-sig-to-shell';
+  key: 'send-sig';
   signal: SigEnum;
 }
 

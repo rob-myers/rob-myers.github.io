@@ -4,8 +4,9 @@ import { Subscription, Subject } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
 import { OpenFileDescription, createOfd } from '@model/shell/file.model';
-import { SigEnum } from '@model/shell/process.model';
+import { SigEnum, FromFdToOpenKey } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
+import { ToProcVar } from '@model/shell/var.service';
 import { processService } from '@model/shell/process.service';
 import { addToLookup } from './store.util';
 
@@ -49,6 +50,23 @@ export interface Process {
   ppid: number;
   parsed: FileWithMeta;
   subscription: null | Subscription;
+  /** File descriptor to open key */
+  fdToOpenKey: FromFdToOpenKey;
+  /**
+   * Process code-blocks e.g while, if, for, {} have redirection scope.
+   * The 1st item corresponds to the current scope, the last to the top-most
+   * scope. An item has key {fd} iff {fd} was set (redirected) in its respective scope.
+   */
+  nestedRedirs: FromFdToOpenKey[];
+  /**
+   * - 1st item contains vars set in current scope (deepest).
+   * - Last item is earliest scope, rest are induced by
+   *   functions, builtins, and sourced-scripts.
+   * - Key 0 (0th positional parameter) exists in scope iff
+   *   earliest scope, or scope induced by function, sourced-script, or builtin.
+   * - Thus to get positional parameters find 1st scope with 0.
+   */
+  nestedVars: ToProcVar[];
 }
 
 const useStore = create<State>(devtools((set, get) => {

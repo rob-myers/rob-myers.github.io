@@ -1,3 +1,5 @@
+export type FromFdToOpenKey = Record<number, string>;
+
 export enum SigEnum {
   SIGHUP='SIGHUP',
   SIGINT='SIGINT',

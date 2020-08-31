@@ -541,7 +541,7 @@ export class TtyXterm {
     this.preHistory = '';
 
     this.outgoing.next({
-      key: 'send-line-to-shell',
+      key: 'send-line',
       line: this.input,
     });
   }
@@ -560,7 +560,7 @@ export class TtyXterm {
 
     // Reset controlling process
     this.outgoing.next({
-      key: 'send-sig-to-shell',
+      key: 'send-sig',
       signal: SigEnum.SIGINT,
     });
   }

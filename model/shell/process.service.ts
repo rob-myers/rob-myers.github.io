@@ -1,13 +1,13 @@
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
 import { FileWithMeta, parseSh } from './parse.service';
 import { transpileSh } from './transpile.service';
-import { updateLookup, addToLookup } from '@store/store.util';
+import { addToLookup } from '@store/store.util';
+import { mapValues } from '@model/generic.model';
+import { cloneVar } from './var.service';
 
 export class ProcessService {
   
   private set!: ShellState['api']['set'];
-
-  constructor() {}
 
   /**
    * Create 'dummy' process, so shell can use its scopes.
@@ -17,7 +17,15 @@ export class ProcessService {
     // Ensure shortcut
     this.set = this.set || useStore.getState().api.set;
     
-    const { sid: pid } = this.getSession(sessionKey);
+    const { sid: pid, ttyShell } = this.getSession(sessionKey);
+    const canonicalPath = ttyShell.canonicalPath;
+
+    const fdToOpenKey = {
+      0: `${canonicalPath}/out`, // TODO can read from terminal e.g. `read` reads a line
+      1: `${canonicalPath}/in`, // TODO process can write to terminal via 'write-to-xterm'
+      2: `${canonicalPath}/in`,
+    };
+
     this.set(({ proc }) => ({
       proc: addToLookup({
         key: `${pid}`,
@@ -26,6 +34,9 @@ export class ProcessService {
         ppid: 0,
         parsed: parseSh.parse(''),
         subscription: null, // We'll never run it 
+        fdToOpenKey,
+        nestedRedirs: [{ ...fdToOpenKey }],
+        nestedVars: [],
       }, proc),
     }));
   }
@@ -39,6 +50,8 @@ export class ProcessService {
     // Must mutate to affect all descendents
     Object.assign(parsed.meta, { pid, sessionKey });
 
+    const { fdToOpenKey, nestedVars } = this.getProcess(parentPid);
+
     this.set(({ proc, nextProcId }) => ({
       proc: addToLookup({
         key: `${pid}`,
@@ -46,7 +59,11 @@ export class ProcessService {
         pid,
         ppid: parentPid,
         parsed,
-        subscription: null,        
+        subscription: null,
+        fdToOpenKey: { ...fdToOpenKey },
+        nestedRedirs: [{ ...fdToOpenKey }],
+        nestedVars: nestedVars
+          .map(fdToOpenKey => mapValues(fdToOpenKey, v => cloneVar(v))),
       }, proc),
       nextProcId: nextProcId + 1,
     }));

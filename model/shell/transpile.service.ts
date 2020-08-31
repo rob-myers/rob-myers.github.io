@@ -1,9 +1,9 @@
 import { Observable, from, of } from 'rxjs';
-import { concatMap, reduce, tap, map } from 'rxjs/operators';
+import { concatMap, reduce, tap } from 'rxjs/operators';
 import * as Sh from '@model/shell/parse.service';
 import { ProcessAct, Expanded } from './process.model';
 import { expandService as expand } from './expand.service';
-import { ParameterDef, ParamType } from './parameter.model';
+import { ParamType, ParameterDef } from './parameter.model';
 import { testNever } from '@model/generic.model';
 
 type Obs = Observable<ProcessAct>;
@@ -22,13 +22,13 @@ class TranspileShService {
     return transpiled;
   }
 
-  File({ StmtList }: Sh.File): Obs {
+  private File({ StmtList }: Sh.File): Obs {
     return from(StmtList.Stmts).pipe(
       concatMap(x => this.Stmt(x)),
     );
   }
 
-  Stmt({ Negated, Background, Redirs, Cmd }: Sh.Stmt): Obs {
+  private Stmt({ Negated, Background, Redirs, Cmd }: Sh.Stmt): Obs {
     return this.Command(Cmd, {
       Redirs,
       background: Background,
@@ -39,7 +39,7 @@ class TranspileShService {
   /**
    * Construct a simple command (CallExpr), or compound command.
    */
-  Command(
+  private Command(
     Cmd: null | Sh.Command,
     extend: CommandExtension,
   ): Obs {
@@ -86,7 +86,7 @@ class TranspileShService {
     // });
   }
 
-  CallExpr(
+  private CallExpr(
     Cmd: null | Sh.CallExpr,
     extend: CommandExtension,
   ): Obs {
@@ -134,7 +134,7 @@ class TranspileShService {
     // });
   }
 
-  public Expand({ Parts }: Sh.Word): Observable<Expanded> {
+  private Expand({ Parts }: Sh.Word): Observable<Expanded> {
     /**
      * TODO
      * - expand parts in sequence, forwarding messages
@@ -157,7 +157,7 @@ class TranspileShService {
     return this.ExpandPart(Parts[0]);
   }
 
-  public ExpandPart(input: Sh.WordPart): Observable<Expanded> {
+  private ExpandPart(input: Sh.WordPart): Observable<Expanded> {
     switch (input.type) {
       // case 'ArithmExp': {
       //   return new ArithmExpand({
@@ -273,108 +273,107 @@ class TranspileShService {
     }
   }
 
-  private ParamExp({
-    Excl, Exp, Index, Length, Names, Param, Repl, Short, Slice,
-  }: Sh.ParamExp): Observable<Expanded> {
+  private ParamExp(input: Sh.ParamExp): Observable<Expanded> {
+    const def = this.paramExpToDef(input);
 
-    // Must assign below
-    let sub = null as null | ParameterDef<Observable<Expanded>, Observable<Expanded>>;
-    const base = {
-      param: Param.Value,
-      short: Short,
-      index: Index ? this.ArithmExpr(Index) : undefined,
-    };
+    return from(function* () {
 
-    if (Excl) {// ${!...}
-      if (Index) {
-        const special = this.isArithmExprSpecial(Index);
-        if (special) {// ${!x[@]}, ${x[*]}
-          sub = { ...base, parKey: ParamType['keys'], split: special === '@' };
-        } else {// Indirection ${!x[n]} or ${!x["foo"]}
-          sub = sub || { ...base, parKey: ParamType['pointer'] };
-        }
-      } else if (Names) {// ${!x*}, ${!x@}
-        sub = { ...base, parKey: ParamType['vars'], split: (Names === '@') };
-      } else {// Indirection ${!x}
-        sub = { ...base, parKey: ParamType['pointer'] };
+      // if (def.parKey === ParamType.special) {
+      //   switch (def.param) {
+      //     case '@':
+      //     case '*':
+      //     case '#': {
+      //       // Restrict to positive positionals.
+      //       const result = dispatch(osGetPositionalsThunk({ processKey }));
+      //       const posPositionals = result.slice(1);
+            
+      //       switch (def.param) {
+      //         case '@': return posPositionals; break;
+      //         case '*': this.value = posPositionals.join(' '); break;
+      //         case '#': this.value = String(posPositionals.length); break;
+      //         default: throw testNever(this.def.param);
+      //       }
+      //       break;
+      //     }
+      //     case '?':
+      //     case '-':
+      //     case '$':
+      //     case '!': {
+      //       const process = dispatch(osGetProcessThunk({ processKey }));
+
+      //       switch (this.def.param) {
+      //         case '?': this.value = String(process.lastExitCode || 0); break;
+      //         // TODO opt flags from set?
+      //         case '-': {
+      //           this.value = '';
+      //           break;
+      //         }
+      //         case '$': {
+      //           if (isInteractiveShell(process.term)) {
+      //             this.value = process.pid.toString();
+      //           } else {
+      //             const ancestralProc = dispatch(osFindAncestralProcessThunk({ processKey, predicate: ({ term }) => isInteractiveShell(term) }));
+      //             this.value = (ancestralProc?.pid || process.pid).toString();
+      //           }
+      //           break;
+      //         }
+      //         case '!': {
+      //           this.value = '';
+      //           if (process.lastBgKey) {
+      //             const bgProc = dispatch(osGetProcessThunk({ processKey: process.lastBgKey }));
+      //             // Only provide PID if background process still exists
+      //             bgProc && (this.value = bgProc.pid.toString());
+      //           }
+      //           break;
+      //         }
+      //         default: throw testNever(this.def.param);
+      //       }
+      //       break;
+      //     }
+      //     case '0': {
+      //       this.value = dispatch(osGetPositionalsThunk({ processKey }))[0];
+      //       break;
+      //     }
+      //     case '_': {
+      //       /**
+      //        * _TODO_
+      //        * At shell startup, set to the absolute pathname used to invoke the shell
+      //        * or shell script being executed as passed in the environment or argument list.
+      //        * Subsequently, expands to the last argument to the previous command, after expansion.
+      //        * Also set to the full pathname used to invoke each command executed and placed in
+      //        * the environment exported to that command. When checking mail, this parameter holds
+      //        * the name of the mail file.
+      //        */
+      //       this.value = '/bin/bash';
+      //       break;
+      //     }
+      //     default: throw testNever(def.param);
+      //   }
+      // }
+
+      if (def.index) {
+        yield def.index;
       }
-    } else {// No exclamation
-      if (Exp) {
-        const pattern = Exp.Word ? this.Expand(Exp.Word) : null;
-        const alt = pattern;
-        switch (Exp.Op) {
-          case '^': sub = { ...base, parKey: ParamType.case, pattern, to: 'upper', all: false }; break;
-          case '^^': sub = { ...base, parKey: ParamType.case, pattern, to: 'upper', all: true };  break;
-          case ',': sub = { ...base, parKey: ParamType.case, pattern, to: 'lower', all: false }; break;
-          case ',,': sub = { ...base, parKey: ParamType.case, pattern, to: 'lower', all: true }; break;
-          // remove
-          case '%': sub = { ...base, parKey: ParamType.remove, pattern, greedy: false, dir: 1 }; break;
-          case '%%': sub = { ...base, parKey: ParamType.remove, pattern, greedy: true, dir: 1 }; break;
-          case '#': sub = { ...base, parKey: ParamType.remove, pattern, greedy: false, dir: -1 }; break;
-          case '##': sub = { ...base, parKey: ParamType.remove, pattern, greedy: true, dir: -1 }; break;
-          // default
-          case '+': sub = { ...base, parKey: ParamType.default, alt, symbol: '+', colon: false }; break;
-          case ':+': sub = { ...base, parKey: ParamType.default, alt, symbol: '+', colon: true }; break;
-          case '=': sub = { ...base, parKey: ParamType.default, alt, symbol: '=', colon: false }; break;
-          case ':=': sub = { ...base, parKey: ParamType.default, alt, symbol: '=', colon: true }; break;
-          case '?': sub = { ...base, parKey: ParamType.default, alt, symbol: '?', colon: false }; break;
-          case ':?': sub = { ...base, parKey: ParamType.default, alt, symbol: '?', colon: true }; break;
-          case '-': sub = { ...base, parKey: ParamType.default, alt, symbol: '-', colon: false }; break;
-          case ':-': sub = { ...base, parKey: ParamType.default, alt, symbol: '-', colon: true }; break;
-          // ...
-          default: throw new Error(
-            `Unsupported operation '${Exp.Op}' in parameter expansion of '${Param.Value}'.`);
-        }
-      } else if (Length) {// ${#x}, ${#x[2]}, ${#x[@]}
-        const isSpecial = Boolean(this.isArithmExprSpecial(Index));
-        sub = { ...base, parKey: ParamType['length'], of: isSpecial ? 'values' : 'word' };
-      } else if (Repl) {// ${x/y/z}, ${x//y/z}, ${x[foo]/y/z}
-        sub = { ...base, parKey: ParamType['replace'], all: Repl.All,
-          orig: this.Expand(Repl.Orig),
-          with: Repl.With ? this.Expand(Repl.With) : null,
-        };
-      } else if (Slice) {// ${x:y:z}, ${x[foo]:y:z}
-        sub = { ...base, parKey: ParamType['substring'],
-          from: this.ArithmExpr(Slice.Offset),
-          length: Slice.Length ? this.ArithmExpr(Slice.Length) : null,
-        };
 
-      } else if (Index) {// ${x[i]}, ${x[@]}, ${x[*]}
-        // NOTE ${x[@]} can split fields in double quotes.
-        sub = { ...base, parKey: ParamType['plain'] };
-      } else if (base.param === String(parseInt(base.param))) {
-        sub = { ...base, parKey: ParamType['position'] };
-      } else {
-        switch (base.param) {
-          // special
-          case '@':
-          case '*':
-          case '#':
-          case '?':
-          case '-':
-          case '$':
-          case '!':
-          case '0':
-          case '_': {
-            sub = { ...base, parKey: ParamType['special'], param: base.param };
-            break;
-          }// plain
-          default: {
-            sub = { ...base, parKey: ParamType['plain'] };
-          }
-        }
-      }
-    }
+      // if (def.parKey === ParamType.special) {
+      //   yield this.exit(0);
+      //   return;
+      // }
 
-    return new Observable();
-    // return new ParameterExpand({
-    //   key: CompositeType.expand,
-    //   expandKey: ExpandType.parameter,
-    //   ...sub,
-    // });
+    }()).pipe(
+      concatMap(x => x), // 0 or 1
+    );
+
+
+    // return new Observable();
+    // // return new ParameterExpand({
+    // //   key: CompositeType.expand,
+    // //   expandKey: ExpandType.parameter,
+    // //   ...sub,
+    // // });
   }
 
-  private isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
+  isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
     if (
       arithmExpr && arithmExpr.type === 'Word'
       && (arithmExpr.Parts.length === 1)
@@ -388,6 +387,100 @@ class TranspileShService {
       }
     }
     return null;
+  }
+
+  paramExpToDef({
+    Excl, Exp, Index, Length, Names, Param, Repl, Short, Slice,
+  }: Sh.ParamExp) {
+    // Must assign below
+    let def = null as null | ParameterDef<Observable<Expanded>, Observable<Expanded>>;
+    const base = {
+      param: Param.Value,
+      short: Short,
+      index: Index ? this.ArithmExpr(Index) : undefined,
+    };
+  
+    if (Excl) {// ${!...}
+      if (Index) {
+        const special = this.isArithmExprSpecial(Index);
+        if (special) {// ${!x[@]}, ${x[*]}
+          def = { ...base, parKey: ParamType['keys'], split: special === '@' };
+        } else {// Indirection ${!x[n]} or ${!x["foo"]}
+          def = def || { ...base, parKey: ParamType['pointer'] };
+        }
+      } else if (Names) {// ${!x*}, ${!x@}
+        def = { ...base, parKey: ParamType['vars'], split: (Names === '@') };
+      } else {// Indirection ${!x}
+        def = { ...base, parKey: ParamType['pointer'] };
+      }
+    } else {// No exclamation
+      if (Exp) {
+        const pattern = Exp.Word ? this.Expand(Exp.Word) : null;
+        const alt = pattern;
+        switch (Exp.Op) {
+          case '^': def = { ...base, parKey: ParamType.case, pattern, to: 'upper', all: false }; break;
+          case '^^': def = { ...base, parKey: ParamType.case, pattern, to: 'upper', all: true };  break;
+          case ',': def = { ...base, parKey: ParamType.case, pattern, to: 'lower', all: false }; break;
+          case ',,': def = { ...base, parKey: ParamType.case, pattern, to: 'lower', all: true }; break;
+          // remove
+          case '%': def = { ...base, parKey: ParamType.remove, pattern, greedy: false, dir: 1 }; break;
+          case '%%': def = { ...base, parKey: ParamType.remove, pattern, greedy: true, dir: 1 }; break;
+          case '#': def = { ...base, parKey: ParamType.remove, pattern, greedy: false, dir: -1 }; break;
+          case '##': def = { ...base, parKey: ParamType.remove, pattern, greedy: true, dir: -1 }; break;
+          // default
+          case '+': def = { ...base, parKey: ParamType.default, alt, symbol: '+', colon: false }; break;
+          case ':+': def = { ...base, parKey: ParamType.default, alt, symbol: '+', colon: true }; break;
+          case '=': def = { ...base, parKey: ParamType.default, alt, symbol: '=', colon: false }; break;
+          case ':=': def = { ...base, parKey: ParamType.default, alt, symbol: '=', colon: true }; break;
+          case '?': def = { ...base, parKey: ParamType.default, alt, symbol: '?', colon: false }; break;
+          case ':?': def = { ...base, parKey: ParamType.default, alt, symbol: '?', colon: true }; break;
+          case '-': def = { ...base, parKey: ParamType.default, alt, symbol: '-', colon: false }; break;
+          case ':-': def = { ...base, parKey: ParamType.default, alt, symbol: '-', colon: true }; break;
+          // ...
+          default: throw new Error(
+            `Unsupported operation '${Exp.Op}' in parameter expansion of '${Param.Value}'.`);
+        }
+      } else if (Length) {// ${#x}, ${#x[2]}, ${#x[@]}
+        const isSpecial = Boolean(this.isArithmExprSpecial(Index));
+        def = { ...base, parKey: ParamType['length'], of: isSpecial ? 'values' : 'word' };
+      } else if (Repl) {// ${x/y/z}, ${x//y/z}, ${x[foo]/y/z}
+        def = { ...base, parKey: ParamType['replace'], all: Repl.All,
+          orig: this.Expand(Repl.Orig),
+          with: Repl.With ? this.Expand(Repl.With) : null,
+        };
+      } else if (Slice) {// ${x:y:z}, ${x[foo]:y:z}
+        def = { ...base, parKey: ParamType['substring'],
+          from: this.ArithmExpr(Slice.Offset),
+          length: Slice.Length ? this.ArithmExpr(Slice.Length) : null,
+        };
+  
+      } else if (Index) {// ${x[i]}, ${x[@]}, ${x[*]}
+        // NOTE ${x[@]} can split fields in double quotes.
+        def = { ...base, parKey: ParamType['plain'] };
+      } else if (base.param === String(parseInt(base.param))) {
+        def = { ...base, parKey: ParamType['position'] };
+      } else {
+        switch (base.param) {
+          // special
+          case '@':
+          case '*':
+          case '#':
+          case '?':
+          case '-':
+          case '$':
+          case '!':
+          case '0':
+          case '_': {
+            def = { ...base, parKey: ParamType['special'], param: base.param };
+            break;
+          }// plain
+          default: {
+            def = { ...base, parKey: ParamType['plain'] };
+          }
+        }
+      }
+    }
+    return def;
   }
 
 }
