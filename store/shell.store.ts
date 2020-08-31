@@ -69,6 +69,8 @@ export interface Process {
    * - Thus to get positional parameters find 1st scope with 0.
    */
   nestedVars: ToProcVar[];
+  lastExitCode: null | number;
+  lastBgPid: null | number;
 }
 
 const useStore = create<State>(devtools((set, get) => {

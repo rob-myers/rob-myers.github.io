@@ -41,6 +41,12 @@ export type ProcessAct = (
   // ...
 );
 
+export const act = {
+  unimplemented: (): Unimplemented => ({ key: 'unimplemented' }),
+  expanded: (values: string | string[]): Expanded =>
+    ({ key: 'expanded', values: values instanceof Array ? values : [values] }),
+};
+
 interface Unimplemented {
   key: 'unimplemented';
 }

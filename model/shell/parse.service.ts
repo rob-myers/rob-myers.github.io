@@ -1005,12 +1005,15 @@ export interface InteractiveParseResult {
 export interface FileWithMeta extends File {
   meta: FileMeta;
 }
-interface FileMeta {
+export interface FileMeta {
   pid: number;
+  /** This is a shell iff `pid === sid` */
+  sid: number;
   sessionKey: string;
 }
 const getMockMeta = (): FileMeta => ({
   pid: -1,
+  sid: -1,
   sessionKey: 'mockSession',
 });
 

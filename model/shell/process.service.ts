@@ -1,5 +1,5 @@
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
-import { FileWithMeta, parseSh } from './parse.service';
+import { FileWithMeta, parseSh, FileMeta, ParsedSh } from './parse.service';
 import { transpileSh } from './transpile.service';
 import { addToLookup } from '@store/store.util';
 import { mapValues } from '@model/generic.model';
@@ -33,12 +33,14 @@ export class ProcessService {
         key: `${pid}`,
         sessionKey,
         pid,
-        ppid: 0,
+        ppid: pid, // Assume leading process is its own parent
         parsed: parseSh.parse(''), // Satisfies typing
         subscription: null, // We'll never actually run it 
         fdToOpenKey,
         nestedRedirs: [{ ...fdToOpenKey }],
         nestedVars: [],
+        lastExitCode: null,
+        lastBgPid: null,
       }, proc),
     }));
   }
@@ -48,9 +50,10 @@ export class ProcessService {
     sessionKey: string,
     parentPid: number,
   ) {
+    const { sid  } = this.getSession(sessionKey);
     const pid = useStore.getState().nextProcId;
     // Must mutate to affect all descendents
-    Object.assign(parsed.meta, { pid, sessionKey });
+    Object.assign<FileMeta, FileMeta>(parsed.meta, { pid, sessionKey, sid });
 
     const { fdToOpenKey, nestedVars } = this.getProcess(parentPid);
 
@@ -66,6 +69,8 @@ export class ProcessService {
         nestedRedirs: [{ ...fdToOpenKey }],
         nestedVars: nestedVars.map(fdToOpenKey =>
           mapValues(fdToOpenKey, v => varService.cloneVar(v))),
+        lastExitCode: null,
+        lastBgPid: null,
       }, proc),
       nextProcId: nextProcId + 1,
     }));
@@ -85,9 +90,32 @@ export class ProcessService {
       });
     });
   }
+
+  findAncestral(pid: number, predicate: (state: Process) => boolean) {
+    const proc = this.getProcesses();
+    let process = proc[pid];
+    /**
+     * Since our 'shells' (leading processes) are their own
+     * parent we can terminate on self-parent.
+     */
+    do {
+      if (predicate(process)) {
+        return process;
+      }
+    } while (process !== (process = proc[process.ppid]));
+    return null;
+  }
+
+  getProcess(pid: number): Process {
+    return this.getProcesses()[pid];
+  }
   
-  private getProcess(pid: number): Process {
-    return useStore.getState().proc[pid];
+  getProcesses() {
+    return useStore.getState().proc;
+  }
+  
+  isInteractiveShell({ meta }: FileWithMeta) {
+    return meta.pid === meta.sid;
   }
 
   private getSession(sessionKey: string): Session {

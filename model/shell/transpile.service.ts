@@ -1,10 +1,12 @@
 import { Observable, from, of } from 'rxjs';
-import { concatMap, reduce, tap } from 'rxjs/operators';
+import { concatMap, reduce, tap, map } from 'rxjs/operators';
 import * as Sh from '@model/shell/parse.service';
-import { ProcessAct, Expanded } from './process.model';
+import { ProcessAct, Expanded, act } from './process.model';
 import { expandService as expand } from './expand.service';
 import { ParamType, ParameterDef } from './parameter.model';
 import { testNever } from '@model/generic.model';
+import { varService } from './var.service';
+import { processService as service } from './process.service';
 
 type Obs = Observable<ProcessAct>;
 
@@ -41,7 +43,7 @@ class TranspileShService {
       return this.CallExpr(Cmd, extend);
     }
 
-    return of({ key: 'unimplemented' });
+    return of(act.unimplemented());
 
     // let child: Term = null as any;
 
@@ -113,7 +115,7 @@ class TranspileShService {
      * - > out # creates blank file out
      * - echo "$( < out)" # echos contents of out
      */
-    return of({ key: 'unimplemented' });
+    return of(act.unimplemented());
     // return new SimpleComposite({
     //   key: CompositeType.simple,
     //   assigns: [],
@@ -138,14 +140,16 @@ class TranspileShService {
     if (Parts.length > 1) {
       return from(Parts).pipe(
         concatMap(wordPart => this.ExpandPart(wordPart)),
-        reduce(({ key, values }, item: Expanded) => ({
-          key,
-          values: values.concat(item.values),
-        }), { key: 'expanded' as 'expanded', values: [] as string[] }),
+        reduce(({ values }, item: Expanded) =>
+          act.expanded(values.concat(item.values)),
+          act.expanded([]),
+        ),
         tap((msg) => {
           console.log('aggregated', msg);
         }),
-        // ...
+        /**
+         * TODO apply complex composition and emit
+         */
       );
     }
     return this.ExpandPart(Parts[0]);
@@ -189,16 +193,10 @@ class TranspileShService {
       //   });
       // }
       case 'ExtGlob': {
-        return of({
-          key: 'expanded',
-          values: [''], // TODO
-        });
+        return of(act.expanded([''])); // TODO
       }
       case 'Lit': {
-        return of({
-          key: 'expanded',
-          values: expand.literal(input),
-        });
+        return of(act.expanded(expand.literal(input)));
       }
       case 'ParamExp': {
         return this.ParamExp(input);
@@ -220,10 +218,7 @@ class TranspileShService {
       //   });
       // }
       case 'SglQuoted': {
-        return of({
-          key: 'expanded',
-          values: expand.singleQuotes(input),
-        });
+        return of(act.expanded(expand.singleQuotes(input)));
       }
       // default: throw testNever(input);
       default:
@@ -241,6 +236,7 @@ class TranspileShService {
     switch (input.type) {
       case 'BinaryArithm': {
         return new Observable();
+
         // return new ArithmOpComposite({
         //   key: CompositeType.arithm_op,
         //   symbol: input.Op, 
@@ -269,102 +265,79 @@ class TranspileShService {
 
   private ParamExp(input: Sh.ParamExp): Observable<Expanded> {
     const def = this.toParamDef(input);
+    const { pid } = input.meta;
 
-    return from(function* () {
+    console.log({ paramExp: input, def });
 
-      // if (def.parKey === ParamType.special) {
-      //   switch (def.param) {
-      //     case '@':
-      //     case '*':
-      //     case '#': {
-      //       // Restrict to positive positionals.
-      //       const result = dispatch(osGetPositionalsThunk({ processKey }));
-      //       const posPositionals = result.slice(1);
+    if (def.parKey === ParamType.special) {
+      // We'll yield exactly one expansion
+      return from(function* () {
+        switch (def.param) {
+          case '@':
+          case '*':
+          case '#': {
+            // Restrict to positive positionals
+            const result = varService.getPositionals(pid);
+            const posPositionals = result.slice(1);
             
-      //       switch (def.param) {
-      //         case '@': return posPositionals; break;
-      //         case '*': this.value = posPositionals.join(' '); break;
-      //         case '#': this.value = String(posPositionals.length); break;
-      //         default: throw testNever(this.def.param);
-      //       }
-      //       break;
-      //     }
-      //     case '?':
-      //     case '-':
-      //     case '$':
-      //     case '!': {
-      //       const process = dispatch(osGetProcessThunk({ processKey }));
+            switch (def.param) {
+              case '@': yield act.expanded(posPositionals); break;
+              case '*': yield act.expanded(posPositionals.join(' ')); break;
+              case '#': yield act.expanded(String(posPositionals.length)); break;
+              default: throw testNever(def.param);
+            }
+            break;
+          }
+          case '?':
+          case '-':
+          case '$':
+          case '!': {
+            const process = service.getProcess(pid);
 
-      //       switch (this.def.param) {
-      //         case '?': this.value = String(process.lastExitCode || 0); break;
-      //         // TODO opt flags from set?
-      //         case '-': {
-      //           this.value = '';
-      //           break;
-      //         }
-      //         case '$': {
-      //           if (isInteractiveShell(process.term)) {
-      //             this.value = process.pid.toString();
-      //           } else {
-      //             const ancestralProc = dispatch(osFindAncestralProcessThunk({ processKey, predicate: ({ term }) => isInteractiveShell(term) }));
-      //             this.value = (ancestralProc?.pid || process.pid).toString();
-      //           }
-      //           break;
-      //         }
-      //         case '!': {
-      //           this.value = '';
-      //           if (process.lastBgKey) {
-      //             const bgProc = dispatch(osGetProcessThunk({ processKey: process.lastBgKey }));
-      //             // Only provide PID if background process still exists
-      //             bgProc && (this.value = bgProc.pid.toString());
-      //           }
-      //           break;
-      //         }
-      //         default: throw testNever(this.def.param);
-      //       }
-      //       break;
-      //     }
-      //     case '0': {
-      //       this.value = dispatch(osGetPositionalsThunk({ processKey }))[0];
-      //       break;
-      //     }
-      //     case '_': {
-      //       /**
-      //        * _TODO_
-      //        * At shell startup, set to the absolute pathname used to invoke the shell
-      //        * or shell script being executed as passed in the environment or argument list.
-      //        * Subsequently, expands to the last argument to the previous command, after expansion.
-      //        * Also set to the full pathname used to invoke each command executed and placed in
-      //        * the environment exported to that command. When checking mail, this parameter holds
-      //        * the name of the mail file.
-      //        */
-      //       this.value = '/bin/bash';
-      //       break;
-      //     }
-      //     default: throw testNever(def.param);
-      //   }
-      // }
+            switch (def.param) {
+              case '?':
+                yield act.expanded(String(process.lastExitCode || 0));
+                break;
+              case '-': {// TODO opt flags from set?
+                yield act.expanded('');
+                break;
+              }
+              case '$': {
+                if (service.isInteractiveShell(process.parsed)) {
+                  yield act.expanded(`${pid}`);
+                } else {
+                  const ancestralProc = service.findAncestral(pid, ({ parsed }) => service.isInteractiveShell(parsed))
+                  yield act.expanded((ancestralProc!.pid).toString()); // Top-most process is session's shell
+                }
+                break;
+              }
+              case '!': {
+                if (process.lastBgPid && service.getProcess(process.lastBgPid)) {
+                  yield act.expanded(`${process.lastBgPid}`);
+                  break;
+                }
+                yield act.expanded(''); // Fallback
+                break;
+              }
+              default: throw testNever(def.param);
+            }
+            break;
+          }
+          case '0': {
+            yield act.expanded(varService.getPositionals(pid)[0]);
+            break;
+          }
+          case '_': {
+            yield act.expanded('/bin/bash'); // TODO
+            break;
+          }
+          default: throw testNever(def.param);
+        }
+      }());
+    };
 
-      if (def.index) {
-        yield def.index;
-      }
-
-      // if (def.parKey === ParamType.special) {
-      //   yield this.exit(0);
-      //   return;
-      // }
-
-    }()).pipe(
-      concatMap(x => x), // 0 or 1
-    );
-
-
-    // return new Observable();
-    // // return new ParameterExpand({
-    // //   key: CompositeType.expand,
-    // //   expandKey: ExpandType.parameter,
-    // //   ...sub,
-    // // });
+    // TODO
+    return of();
   }
 
   isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
