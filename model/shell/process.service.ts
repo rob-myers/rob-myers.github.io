@@ -1,7 +1,7 @@
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
 import { FileWithMeta, parseSh, FileMeta, ParsedSh } from './parse.service';
 import { transpileSh } from './transpile.service';
-import { addToLookup } from '@store/store.util';
+import { addToLookup, updateLookup } from '@store/store.util';
 import { mapValues } from '@model/generic.model';
 import { varService } from './var.service';
 
@@ -23,7 +23,7 @@ export class ProcessService {
     const fdToOpenKey = {
       // TtyShell already reads from here, but so could `read` in another process.
       0: ttyShell.canonicalPath,
-      // TtyShell already writes here, as does any descendent process (sans redirect).
+      // TtyShell already writes here, as does any descendent process (sans redirect)
       1: ttyShell.canonicalPath,
       2: ttyShell.canonicalPath,
     };
@@ -77,6 +77,30 @@ export class ProcessService {
     return { pid };
   }
   
+  /**
+   * Run parsed code in session's leading process.
+   */
+  runInShell(parsed: FileWithMeta, sessionKey: string) {
+    const transpiled = transpileSh.transpile(parsed);
+    const { sid: pid } = this.getSession(sessionKey);
+
+    // Must mutate to affect all descendents
+    Object.assign<FileMeta, FileMeta>(parsed.meta, { pid, sessionKey, sid: pid });
+
+    return new Promise((resolve, reject) => {
+      this.set(({ proc }) => ({
+        proc: updateLookup(`${pid}`, proc, () => ({
+          parsed,
+          subscription: transpiled.subscribe({
+            next: (msg) => console.log('received', msg), // TEMP
+            complete: () => resolve(),
+            error: (err) => reject(err),
+          }),
+        })),
+      }))
+    });
+  }
+
   startProcess(pid: number) {
     const process = this.getProcess(pid)
     const transpiled = transpileSh.transpile(process.parsed);

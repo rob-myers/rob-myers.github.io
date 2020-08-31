@@ -8,9 +8,9 @@ import { SigEnum, FromFdToOpenKey } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
 import { ToProcVar } from '@model/shell/var.model';
 import { processService } from '@model/shell/process.service';
-import { ShellStream } from '@model/shell/shell.stream';
-import { addToLookup } from './store.util';
+import { ShellStream } from '@model/rxjs/shell.stream';
 import { varService } from '@model/shell/var.service';
+import { addToLookup } from './store.util';
 
 export interface State {
   /** Next tty identifier, inducing e.g. tty-2 and sessionKey */

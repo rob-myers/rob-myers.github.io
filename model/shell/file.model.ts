@@ -1,4 +1,4 @@
-import { ShellStream } from "./shell.stream";
+import { ShellStream } from "@model/rxjs/shell.stream";
 
 export interface OpenFileDescription<R = any, W = any> {
   key: string;

@@ -7,19 +7,17 @@ import { SigEnum } from './process.model';
 import { createOfd } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
 import { TtyXterm } from './tty.xterm';
-import { processService } from './process.service';
+import { processService as ps } from './process.service';
 
 export class TtyShell {
 
   private xterm!: TtyXterm;
   /** We need our own stream to xterm.io.registerReader below */
   private incoming = new Subject<MessageFromXterm>();
-
   /** Lines received from a TtyXterm. */
   private inputs = [] as { line: string; resolve: () => void }[];
   /** Lines in current interactive parse */
   private buffer = [] as string[];
-
   /** Source code entered interactively, most recent last. */
   private history = [] as string[];
   private readonly maxLines = 500;
@@ -100,7 +98,7 @@ export class TtyShell {
         }
         case 'complete': {
           this.buffer.length = 0;
-          await this.runParsed(result.parsed);
+          await ps.runInShell(result.parsed, this.sessionKey);
           this.prompt('$ ');
           break;
         }
@@ -113,10 +111,10 @@ export class TtyShell {
     }
   }
 
-  private async runParsed(parsed: FileWithMeta) {
-    const { pid } = processService.createProcess(parsed, this.sessionKey, this.session.sid);
-    await processService.startProcess(pid);
-  }
+  // async launchProcess(parsed: FileWithMeta) {
+  //   const { pid } = ps.createProcess(parsed, this.sessionKey, this.session.sid);
+  //   await ps.startProcess(pid);
+  // }
 
   private prompt(prompt: string) {
     this.xterm.io.write({

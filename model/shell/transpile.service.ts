@@ -1,12 +1,16 @@
-import { Observable, from, of } from 'rxjs';
-import { concatMap, reduce, tap, map } from 'rxjs/operators';
+import { Observable, from, of, lastValueFrom, empty } from 'rxjs';
+import { concatMap, reduce, tap, map, mergeMap, defaultIfEmpty } from 'rxjs/operators';
+import globrex from 'globrex';
+
 import * as Sh from '@model/shell/parse.service';
 import { ProcessAct, Expanded, act } from './process.model';
 import { expandService as expand } from './expand.service';
 import { ParamType, ParameterDef } from './parameter.model';
 import { testNever } from '@model/generic.model';
-import { varService } from './var.service';
-import { processService as service } from './process.service';
+import { varService as vs } from './var.service';
+import { processService as ps } from './process.service';
+import { BaseAssignOpts } from './var.model';
+import { awaitEnd } from '@model/rxjs/rxjs.util';
 
 type Obs = Observable<ProcessAct>;
 
@@ -18,19 +22,174 @@ class TranspileShService {
     return transpiled;
   }
 
-  private File({ StmtList }: Sh.File): Obs {
-    return from(StmtList.Stmts).pipe(
-      concatMap(x => this.Stmt(x)),
-    );
+  /**
+   * $(( x * y ))
+   * $(( 2 * (x + 1) )),
+   * (( x++ ))
+   * x[1 + "2$i"]=y.
+   */
+  private ArithmExpr(input: Sh.ArithmExpr): Observable<Expanded> {
+    switch (input.type) {
+      case 'BinaryArithm': {
+        return new Observable();
+
+        // return new ArithmOpComposite({
+        //   key: CompositeType.arithm_op,
+        //   symbol: input.Op, 
+        //   cs: [this.ArithmExpr(input.X), this.ArithmExpr(input.Y)],
+        //   postfix: false,
+        // });
+      }
+      case 'ParenArithm': {
+        return this.ArithmExpr(input.X);
+      }
+      case 'UnaryArithm': {
+        return new Observable();
+        // return new ArithmOpComposite({
+        //   key: CompositeType.arithm_op,
+        //   symbol: input.Op,
+        //   cs: [this.ArithmExpr(input.X)],
+        //   postfix: input.Post,
+        // });
+      }
+      case 'Word': {
+        return this.Expand(input);
+      }
+      default: throw testNever(input);
+    }
   }
 
-  private Stmt({ Negated, Background, Redirs, Cmd }: Sh.Stmt): Obs {
-    return this.Command(Cmd, {
-      Redirs,
-      background: Background,
-      negated: Negated,
-    });
+  private Assign({ Name, Value, Append, Array, Index, Naked, meta }: Sh.Assign): Obs {
+    const { pid } = meta
+    const ts = this;
+
+    if (Array) {
+      return of(act.unimplemented());
+      // return new AssignComposite({
+      //   // ...baseAssign,
+      //   key: CompositeType.assign,
+      //   sourceMap,
+      //   subKey: 'array',
+      //   // x=(foo bar), x=([f]=oo [b]=ar)
+      //   array: this.ArrayExpr(Array),
+      //   varName: Name.Value,
+      //   naked: Naked,
+      //   // x+=(baz qux)
+      //   append: Append,
+      // });
+    } else if (Index) {
+      return of(act.unimplemented());
+      // return new AssignComposite({
+      //   // ...baseAssign,
+      //   key: CompositeType.assign,
+      //   sourceMap,
+      //   subKey: 'item',
+      //   append: Append,
+      //   index: this.ArithmExpr(Index),
+      //   value: Value ? this.Expand(Value) : null,
+      //   varName: Name.Value,
+      //   naked: Naked,
+      // });
+    } else {
+      /**
+       * {x=foo}, and also {declare -a x} and {declare -a x=foo}
+       */
+      const declOpts: Partial<BaseAssignOpts> = {}; // TODO
+      const varName = Name.Value;
+
+      // NOTE this stream is actually empty
+      return of(null).pipe(
+        mergeMap(async function* () {
+          /**
+           * Naked iff e.g. {declare -i x}.
+           * Use undefined so don't overwrite.
+           */
+          const value = Naked ? undefined
+            : Value ? await lastValueFrom(ts.Expand(Value).pipe(
+                reduce((agg, { values }) => agg.concat(values), [] as string[]),
+                map((x) => x.join(' ')),
+              ))
+            : '';
+
+          if (declOpts.array) {// declare -a x
+            vs.assignVar(pid, { ...declOpts, varName, act: { key: 'array', value: value == null ? [] : [value] } });
+          } else if (declOpts.associative) {// declare -A x
+            vs.assignVar(pid, { ...declOpts, varName, act: { key: 'map', value: value == null ? {} : { 0: value } } });
+          } else {// x=foo or x+=foo
+            vs.assignVar(pid, {
+              ...declOpts,
+              varName,
+              act: { key: 'default', value, append: Append },
+            });
+          }
+        }),
+      );
+    }
   }
+
+  private CallExpr(
+    Cmd: null | Sh.CallExpr,
+    extend: CommandExtension,
+  ): Obs {
+    const { Redirs, background, negated } = extend;
+
+    if (Cmd) {
+      const { Assigns, Args } = Cmd;
+      const ts = this;
+
+      return of(null).pipe(
+        mergeMap(async function* () {
+
+          // await lastValueFrom(from(Assigns).pipe(
+          await awaitEnd(from(Assigns).pipe(
+            concatMap(arg => ts.Assign(arg)),
+          ));
+
+          const args = Args.length
+            ? await lastValueFrom(from(Args).pipe(
+              concatMap(arg => ts.Expand(arg)),
+              reduce((agg, { values }) => agg.concat(values), [] as string[]),
+            )) : [];
+          console.log({ args });
+
+          return act.expanded([]);
+        })
+      );
+      // return new SimpleComposite({
+      //   key: CompositeType.simple,
+      //   assigns: Assigns.map((assign) => this.Assign(assign)),
+      //   redirects: Redirs.map((redirect) => this.Redirect(redirect)),
+      //   words: Args.map((arg) => this.Expand(arg)),
+      //   comments,
+      //   background,
+      //   negated,
+      //   sourceMap: this.sourceMap({ Pos, End },
+      //     // i.e. Position of words, excluding assigns & redirects.
+      //     { key: 'inner', pos: InnerPos, end: InnerEnd },
+      //     ...extra,
+      //   ),
+      // });
+    }
+    /**
+     * Redirects without command can have effects:
+     * - > out # creates blank file out
+     * - echo "$( < out)" # echos contents of out
+     */
+    return of(act.unimplemented());
+    // return new SimpleComposite({
+    //   key: CompositeType.simple,
+    //   assigns: [],
+    //   redirects: Redirs.map((redirect) => this.Redirect(redirect)),
+    //   words: [],
+    //   comments,
+    //   background,
+    //   negated,
+    //   sourceMap: Redirs.length
+    //     ? this.sourceMap({ Pos: Redirs[0].Pos, End: (last(Redirs) as Sh.Redirect).End })
+    //     : undefined,
+    // });
+  }
+
 
   /**
    * Construct a simple command (CallExpr), or compound command.
@@ -79,54 +238,6 @@ class TranspileShService {
     //   redirects: Redirs.map((x) => this.Redirect(x)),
     //   background,
     //   negated,
-    // });
-  }
-
-  private CallExpr(
-    Cmd: null | Sh.CallExpr,
-    extend: CommandExtension,
-  ): Obs {
-    const { Redirs, background, negated } = extend;
-
-    if (Cmd) {
-      const { Assigns, Args } = Cmd;
-
-      // return of({ key: 'unimplemented' });
-      return from(Args).pipe(
-        concatMap(arg => this.Expand(arg)),
-      );
-      // return new SimpleComposite({
-      //   key: CompositeType.simple,
-      //   assigns: Assigns.map((assign) => this.Assign(assign)),
-      //   redirects: Redirs.map((redirect) => this.Redirect(redirect)),
-      //   words: Args.map((arg) => this.Expand(arg)),
-      //   comments,
-      //   background,
-      //   negated,
-      //   sourceMap: this.sourceMap({ Pos, End },
-      //     // i.e. Position of words, excluding assigns & redirects.
-      //     { key: 'inner', pos: InnerPos, end: InnerEnd },
-      //     ...extra,
-      //   ),
-      // });
-    }
-    /**
-     * Redirects without command can have effects:
-     * - > out # creates blank file out
-     * - echo "$( < out)" # echos contents of out
-     */
-    return of(act.unimplemented());
-    // return new SimpleComposite({
-    //   key: CompositeType.simple,
-    //   assigns: [],
-    //   redirects: Redirs.map((redirect) => this.Redirect(redirect)),
-    //   words: [],
-    //   comments,
-    //   background,
-    //   negated,
-    //   sourceMap: Redirs.length
-    //     ? this.sourceMap({ Pos: Redirs[0].Pos, End: (last(Redirs) as Sh.Redirect).End })
-    //     : undefined,
     // });
   }
 
@@ -226,58 +337,36 @@ class TranspileShService {
     }
   }
 
-  /**
-   * $(( x * y ))
-   * $(( 2 * (x + 1) )),
-   * (( x++ ))
-   * x[1 + "2$i"]=y.
-   */
-  private ArithmExpr(input: Sh.ArithmExpr): Observable<Expanded> {
-    switch (input.type) {
-      case 'BinaryArithm': {
-        return new Observable();
+  private File({ StmtList }: Sh.File): Obs {
+    return from(StmtList.Stmts).pipe(
+      concatMap(x => this.Stmt(x)),
+    );
+  }
 
-        // return new ArithmOpComposite({
-        //   key: CompositeType.arithm_op,
-        //   symbol: input.Op, 
-        //   cs: [this.ArithmExpr(input.X), this.ArithmExpr(input.Y)],
-        //   postfix: false,
-        // });
-      }
-      case 'ParenArithm': {
-        return this.ArithmExpr(input.X);
-      }
-      case 'UnaryArithm': {
-        return new Observable();
-        // return new ArithmOpComposite({
-        //   key: CompositeType.arithm_op,
-        //   symbol: input.Op,
-        //   cs: [this.ArithmExpr(input.X)],
-        //   postfix: input.Post,
-        // });
-      }
-      case 'Word': {
-        return this.Expand(input);
-      }
-      default: throw testNever(input);
-    }
+  private Stmt({ Negated, Background, Redirs, Cmd }: Sh.Stmt): Obs {
+    return this.Command(Cmd, {
+      Redirs,
+      background: Background,
+      negated: Negated,
+    });
   }
 
   private ParamExp(input: Sh.ParamExp): Observable<Expanded> {
     const def = this.toParamDef(input);
     const { pid } = input.meta;
-
-    console.log({ paramExp: input, def });
+    // console.log({ paramExp: input, def });
 
     if (def.parKey === ParamType.special) {
-      // We'll yield exactly one expansion
+      /**
+       * Special parameters.
+       */
       return from(function* () {
         switch (def.param) {
           case '@':
           case '*':
           case '#': {
             // Restrict to positive positionals
-            const result = varService.getPositionals(pid);
+            const result = vs.getPositionals(pid);
             const posPositionals = result.slice(1);
             
             switch (def.param) {
@@ -292,7 +381,7 @@ class TranspileShService {
           case '-':
           case '$':
           case '!': {
-            const process = service.getProcess(pid);
+            const process = ps.getProcess(pid);
 
             switch (def.param) {
               case '?':
@@ -303,16 +392,16 @@ class TranspileShService {
                 break;
               }
               case '$': {
-                if (service.isInteractiveShell(process.parsed)) {
+                if (ps.isInteractiveShell(process.parsed)) {
                   yield act.expanded(`${pid}`);
                 } else {
-                  const ancestralProc = service.findAncestral(pid, ({ parsed }) => service.isInteractiveShell(parsed))
+                  const ancestralProc = ps.findAncestral(pid, ({ parsed }) => ps.isInteractiveShell(parsed))
                   yield act.expanded((ancestralProc!.pid).toString()); // Top-most process is session's shell
                 }
                 break;
               }
               case '!': {
-                if (process.lastBgPid && service.getProcess(process.lastBgPid)) {
+                if (process.lastBgPid && ps.getProcess(process.lastBgPid)) {
                   yield act.expanded(`${process.lastBgPid}`);
                   break;
                 }
@@ -324,7 +413,7 @@ class TranspileShService {
             break;
           }
           case '0': {
-            yield act.expanded(varService.getPositionals(pid)[0]);
+            yield act.expanded(vs.getPositionals(pid)[0]);
             break;
           }
           case '_': {
@@ -336,11 +425,277 @@ class TranspileShService {
       }());
     };
 
-    // TODO
-    return of();
+    /**
+     * other parameters.
+     */
+    return (def.index || of(act.expanded([]))).pipe(
+      mergeMap(async function* ({ values }) {
+        const index = def.index ? `${values}` : null;
+        const varValue = vs.lookupVar(pid, def.param);
+        const paramValues = vs.getVarValues(index, varValue);
+
+        switch (def.parKey) {
+          /**
+           * case: ${x^y}, ${x^^y}, ${x,y} or ${x,,y}.
+           * - also e.g. ${x[1]^^}.
+           */
+          case ParamType.case: {
+            const { all, to, pattern } = def;
+            let re = /^.$/;// Pattern defaults to '?'.
+
+            /**
+             * TODO set a variable first
+             */
+            console.log({ case: def, varValue, paramValues });
+    
+            if (pattern) {
+              // Evaluate pattern and convert to RegExp
+              const values = await lastValueFrom(pattern.pipe(
+                reduce((agg, item) => (agg.concat(item.values)), [] as string[]),
+              ));
+              re = globrex(values.join(' '), { extended: true }).regex;
+            }
+
+            // Transform chars of each word.
+            const transform = to === 'lower'
+              ? (x: string) => x.toLowerCase()
+              : (x: string) => x.toUpperCase();
+            const text = paramValues.join('');
+            const output = all
+              ? text.split('').map((c) => re.test(c) ? transform(c) : c).join('')
+              : (re.test(text[0]) ? transform(text[0]) : text[0]) + text.slice(1);
+            yield act.expanded(output);
+            break;
+          }
+          /**
+           * default: ${x[:][-=?+]y} or ${x[0]:-foo}.
+           */
+          // case ParamType.default: {
+          //   const { alt, colon, symbol } = def;
+          //   // If colon then applies if 'unset', or 'null' (i.e. empty-string).
+          //   // Otherwise, only applies if unset.
+          //   const applies = colon
+          //     ? !paramValues.length || (paramValues.length === 1 && paramValues[0] === '')
+          //     : !paramValues.length;
+    
+          //   switch (symbol) {
+          //     case '-':
+          //     case '=': {
+          //       if (applies) {
+          //         if (!alt) {
+          //           this.value = '';
+          //         } else {
+          //           yield* this.runChild({ child: alt, ...base });
+          //           this.value = alt.value; 
+          //         }
+          //         if (symbol === '=') {
+          //           // Additionally assign to param.
+          //           dispatch(osAssignVarThunk({
+          //             processKey,
+          //             varName: def.param,
+          //             act: { key: 'default', value: paramValues.join('') },
+          //           }));
+          //         }
+          //       } else {
+          //         this.value = paramValues.join('');
+          //       }
+          //       break;
+          //     }
+          //     case '?': {
+          //       if (applies) {
+          //         if (!alt) {
+          //           yield this.exit(1, `${def.param}: required but unset or null.`);
+          //         } else {
+          //           yield* this.runChild({ child: alt, ...base });
+          //           yield this.exit(1, alt.value);
+          //         }
+          //       } else {
+          //         this.value = paramValues.join('');
+          //       }
+          //       break;
+          //     }
+          //     case '+': {
+          //       if (applies || !alt) {
+          //         this.value = '';
+          //       } else {// Use alt.
+          //         yield* this.runChild({ child: alt, ...base });
+          //         this.value = alt.value;
+          //       }
+          //       break;
+          //     }
+          //     default: throw testNever(symbol);
+          //   }
+          //   break;
+          // }
+          // /**
+          //  * keys: ${!x[@]} or ${!x[*]}.
+          //  */
+          // case ParamType.keys: {
+          //   const keys = this.getVarKeys(varValue);
+          //   if (def.split) {
+          //     this.values = keys;
+          //   } else {
+          //     this.value = keys.join(' ');
+          //   }
+          //   break;
+          // }
+          // /**
+          //  * length: ${#x}, ${#x[i]}, ${#x[@]} or ${#x[*]}.
+          //  */
+          // case ParamType.length: {
+          //   const { of: Of } = def;
+          //   if (Of === 'word') {
+          //     // `paramValues` should be [] or ['foo'].
+          //     this.value = String((paramValues[0] || '').length);
+          //   } else {// of: 'values'.
+          //     this.value = String(paramValues.length);
+          //   }
+          //   break;
+          // }
+          /**
+           * plain: ${x}, ${x[i]}, ${x[@]} or ${x[*]}.
+           */
+          case ParamType.plain: {
+            // "${x[@]}" can produce multiple fields, so
+            // cannot set this.value as plains.join(' ').
+            if (index === '@') {
+              yield act.expanded(paramValues);
+            } else if (index === '*') {
+              yield act.expanded(paramValues.join(' '));
+            } else {
+              yield act.expanded(paramValues.join(''));
+            }
+            break;
+          }
+          // /**
+          //  * pointer: ${!x} -- only basic support.
+          //  */
+          // // /([a-z_][a-z0-9_])\[([a-z0-9_@*])+\]*/i
+          // case ParamType.pointer: {
+          //   const nextParam = paramValues.join('');
+          //   if (nextParam) {
+          //     /**
+          //      * Lookup param value without dynamic parsing.
+          //      * Bash supports x='y[$z]'; echo ${!x};.
+          //      * In particular, cannot point to array item.
+          //      */
+          //     const result = dispatch(osLookupVarThunk({ processKey, varName: nextParam }));
+          //     this.value = this.getVarValues(null, result).join('');
+          //   } else {
+          //     this.value = '';
+          //   }
+          //   break;
+          // }
+          // /**
+          //  * positional: $1, $2, etc.
+          //  */
+          // case ParamType.position: {
+          //   this.value = paramValues.join('');
+          //   break;
+          // }
+          // /**
+          //  * remove:
+          //  *   prefix: ${x#y} or ${x##y}.
+          //  *   suffix: ${x%y} or ${x%%y}.
+          //  */
+          // case ParamType.remove: {
+          //   const { dir, greedy } = def;
+    
+          //   if (def.pattern) {
+          //     // Evaluate pattern, convert to RegExp.
+          //     const { pattern } = def;
+          //     yield* this.runChild({ child: pattern, ...base });
+          //     const baseRe = (globrex(pattern.value, { extended: true }).regex as RegExp)
+          //       .source.slice(1, -1);// Sans ^ and $.
+          //     // Match largest/smallest prefix/suffix.
+          //     const regex = new RegExp(dir === 1
+          //       ? (greedy ? `^${baseRe}.*` : `^${baseRe}.*?`)
+          //       : (greedy ? `.*${baseRe}$` : `.*?${baseRe}$`));
+          //     // Remove matching.
+          //     this.value = paramValues.join('').replace(regex, '');
+          //   }
+          //   break;
+          // }
+          // /**
+          //  * replace: ${parameter/pattern/string}.
+          //  * We support 'replace all' via //.
+          //  * TODO support # (prefix), % (suffix).
+          //  */
+          // case ParamType.replace: {
+          //   const { all, orig, with: With } = def;
+          //   yield* this.runChild({ child: orig, ...base });
+          //   if (With) {
+          //     yield* this.runChild({ child: With, ...base });
+          //   }
+          //   const subst = With ? With.value : '';
+          //   const regex = new RegExp(orig.value, all ? 'g' : '');
+          //   this.value = paramValues.join('').replace(regex, subst);
+          //   break;
+          // }
+          // /**
+          //  * substring:
+          //  * ${parameter:offset} e.g. ${x: -7}.
+          //  * ${parameter:offset:length}.
+          //  * Also ${@:i:j}, ${x[@]:i:j} or ${x[*]:i:j}.
+          //  */
+          // case ParamType.substring: {
+          //   const { from, length } = def;
+          //   yield* this.runChild({ child: from, ...base });
+          //   const offset = parseInt(String(from.value)) || 0;
+    
+          //   if (length) {
+          //     yield* this.runChild({ child: length, ...base });
+          //   }
+    
+          //   const len = length
+          //     ? parseInt(String(length.value)) || 0
+          //     : paramValues.join(' ').length;
+    
+          //   if (def.param === '@' || def.param === '*') {
+          //     if (len < 0) {
+          //       yield this.exit(1, `${len}: substring expression < 0`);
+          //     }
+          //     const positionals = dispatch(osGetPositionalsThunk({ processKey })).slice();
+          //     const values = from
+          //       ? length
+          //         ? positionals.slice(offset, offset + len)
+          //         : positionals.slice(offset)
+          //       : positionals.slice(1); // positive positionals
+          //     this.values = def.param === '@' ? values : [values.join(' ')];
+          //   } else if (index === '@' || index === '*') {
+          //     if (len < 0) {
+          //       yield this.exit(1, `${len}: substring expression < 0`);
+          //     }
+          //     const values = paramValues.slice(offset, offset + len);
+          //     this.values = def.param === '@' ? values : [values.join(' ')];
+          //   } else {
+          //     this.value = len >= 0
+          //       ? paramValues.join('').substr(offset, len)
+          //       : paramValues.join('').slice(offset, len);
+          //   }
+          //   break;
+          // }
+          // /**
+          //  * variables: ${!param*} or ${!param@}.
+          //  */
+          // case ParamType.vars: {
+          //   const { split, param } = def;
+          //   if (param.length) {
+          //     const result = dispatch(osFindVarNamesThunk({ processKey, varPrefix: param }));
+          //     this.values = split ? result : [result.join(' ')];
+          //   } else {
+          //     this.value = '';
+          //   }
+          //   break;
+          // }
+          // default: throw testNever(def);
+        }
+        return act.expanded([]); 
+      }),
+    );
   }
 
-  isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
+  private isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
     if (
       arithmExpr && arithmExpr.type === 'Word'
       && (arithmExpr.Parts.length === 1)
@@ -356,7 +711,7 @@ class TranspileShService {
     return null;
   }
 
-  toParamDef({
+  private toParamDef({
     Excl, Exp, Index, Length, Names, Param, Repl, Short, Slice,
   }: Sh.ParamExp) {
     let def = null as null | ParameterDef<Observable<Expanded>, Observable<Expanded>>;
@@ -454,6 +809,18 @@ interface CommandExtension {
   Redirs: Sh.Redirect[];
   background: boolean;
   negated: boolean;
+}
+
+export class ShError extends Error {
+  constructor(
+    message: string,
+    public exitCode: number,
+    public internalCode?: 'P_EXIST' | 'PP_NO_EXIST' | 'F_NO_EXIST' | 'NOT_A_DIR',
+  ) {
+    super(message);
+    // Set the prototype explicitly.
+    Object.setPrototypeOf(this, ShError.prototype);
+  }
 }
 
 export const transpileSh = new TranspileShService;

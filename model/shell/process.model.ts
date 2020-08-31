@@ -47,13 +47,14 @@ export const act = {
     ({ key: 'expanded', values: values instanceof Array ? values : [values] }),
 };
 
-interface Unimplemented {
-  key: 'unimplemented';
-}
 
 export interface Expanded {
   key: 'expanded';
   values: string[];
+}
+
+interface Unimplemented {
+  key: 'unimplemented';
 }
 
 interface WorldCoords {
