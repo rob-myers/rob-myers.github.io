@@ -151,8 +151,6 @@ class TranspileShService {
                   throw new ShError(`${input.Op}: unrecognised binary arithmetic symbol`, 2);
                 }
               }
-
-              yield act.expanded(`${input.number}`); 
             }
           }),
         );
@@ -164,22 +162,54 @@ class TranspileShService {
         return of(null).pipe(
           mergeMap(async function* () {
             /**
-             * TODO
+             * Unary.
              */
+            const child = input.X;
+            await ts.runArithmExpr(child); // Mutates input.num
+            const childNum = input.number!;
+            const childStr = input.string!;
+
+            switch (input.Op) {
+              case '!': input.number = childNum ? 0 : 1; break;
+              case '~': input.number = ~childNum; break;
+              case '-': input.number = -childNum; break;
+              case '+': input.number = childNum; break;
+              case '++':
+              case '--':
+              {
+                switch (input.Op) {
+                  case '++': input.number = childNum + 1; break;
+                  case '--': input.number = childNum - 1; break;
+                  default: throw testNever(input.Op);
+                }
+                vs.assignVar(pid, {
+                  integer: true,
+                  varName: childStr,
+                  act: { key: 'default', value: String(input.number) },
+                });
+                /**
+                 * If unary operator is:
+                 * postfix: then exit 1 <=> error or prev value zero.
+                 * prefix: then exit 1 <=> error or next value zero.
+                 */
+                const exitCode = input.Post
+                  ? (Number.isInteger(childNum) && childNum) ? 0 : 1
+                  : (Number.isInteger(input.number) && input.number) ? 0 : 1;
+                break;
+              }
+              default: {
+                throw new ShError(`${input.Op}: unsupported unary arithmetic symbol`, 2);
+              }
+            }
           }),
         );
-        // return new ArithmOpComposite({
-        //   key: CompositeType.arithm_op,
-        //   symbol: input.Op,
-        //   cs: [this.ArithmExpr(input.X)],
-        //   postfix: input.Post,
-        // });
       }
       case 'Word': {
         return this.Expand(input);
       }
       default: throw testNever(input);
     }
+    // TODO exit code?
   }
 
   private ArrayExpr(
@@ -316,7 +346,6 @@ class TranspileShService {
       return of(null).pipe(
         mergeMap(async function* () {
 
-          // await lastValueFrom(from(Assigns).pipe(
           await awaitEnd(from(Assigns).pipe(
             concatMap(arg => ts.Assign(arg)),
           ));
@@ -421,9 +450,6 @@ class TranspileShService {
       })
     );
 
-      
-
-
     // return new CompoundComposite({// Compound command.
     //   key: CompositeType.compound,
     //   child,
@@ -459,6 +485,7 @@ class TranspileShService {
   }
 
   private ExpandPart(input: Sh.WordPart): Observable<Expanded> {
+    const ts = this;
     switch (input.type) {
       case 'ArithmExp': {
         return this.ArithmExp(input);
@@ -621,11 +648,6 @@ class TranspileShService {
           case ParamType.case: {
             const { all, to, pattern } = def;
             let re = /^.$/;// Pattern defaults to '?'.
-
-            /**
-             * TODO set a variable first
-             */
-            console.log({ case: def, varValue, paramValues });
     
             if (pattern) {
               // Evaluate pattern and convert to RegExp
@@ -915,10 +937,13 @@ class TranspileShService {
   }
   
   private async runArithmExpr(term: Sh.ExpandType) {
-    const textValue = this.isWordPart(term)
-      ? (await lastValueFrom(this.ExpandPart(term))).values.join(' ')
-      : (await lastValueFrom(this.ArithmExpr(term))).values.join(' ');
+    if (this.isWordPart(term)) {
+      await awaitEnd(this.ExpandPart(term));
+    } else {
+      await awaitEnd(this.ArithmExpr(term)); 
+    }
 
+    const textValue = term.string!;
     let value = parseInt(textValue);
     if (Number.isNaN(value)) {// Try looking up variable
       const varValue = vs.expandVar(term.meta.pid, textValue);
