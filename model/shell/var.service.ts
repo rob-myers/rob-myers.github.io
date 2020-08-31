@@ -372,6 +372,18 @@ export class VarService {
     };
   }
 
+  expandVar(pid: number, varName: string, index?: string) {
+    const result = this.lookupVar(pid, varName);
+    if (!result) {
+      return '';
+    } else if (Array.isArray(result)) {
+      return String(result[parseInt(index || '0') || 0]) || '';
+    } else if (typeof result === 'object') {
+      return String(result[index || 0]) || '';
+    }
+    return String(result);
+  }
+
   /**
    * Given current variable type {prevKey} and whether desire integer-based,
    * return new type after assignment x=foo.

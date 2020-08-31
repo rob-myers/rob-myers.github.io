@@ -1,5 +1,5 @@
 import { Observable, from, of, lastValueFrom } from 'rxjs';
-import { concatMap, reduce, tap, map, mergeMap, } from 'rxjs/operators';
+import { concatMap, reduce, tap, map, mergeMap, concatAll, flatMap, } from 'rxjs/operators';
 import globrex from 'globrex';
 
 import { awaitEnd } from '@model/rxjs/rxjs.util';
@@ -23,28 +23,151 @@ class TranspileShService {
   }
 
   /**
+   * (( x = y / 2 , z = x * y ))
+   */
+  public ArithmCmd(input: Sh.ArithmCmd): Observable<Expanded> {    
+    const ts = this;
+    const { pid } = input.meta
+    
+    return of(null).pipe(
+      mergeMap(async function* () {
+        await ts.runArithmExpr(input.X);
+        // Exit code 0 iff `input.number` is a non-zero integer
+        if (input.number && Number.isInteger(input.number)) {
+          ps.setExitCode(pid, input.number ? 0 : 1);
+        } else {
+          ps.setExitCode(pid, 1);
+        }
+        yield act.expanded(`${input.number || 0}`);
+      }),
+    );
+  }
+
+  /**
+   * y=$(( 2 ** x ))
+   */
+  ArithmExp(input: Sh.ArithmExp): Observable<Expanded> {
+    return this.ArithmCmd(input as unknown as Sh.ArithmCmd);
+  }
+
+  /**
    * $(( x * y ))
    * $(( 2 * (x + 1) )),
    * (( x++ ))
    * x[1 + "2$i"]=y.
    */
   private ArithmExpr(input: Sh.ArithmExpr): Observable<Expanded> {
+    const ts = this;
+    const { pid } = input.meta;
+
     switch (input.type) {
       case 'BinaryArithm': {
-        return new Observable();
+        return of(null).pipe(
+          mergeMap(async function* () {
+            if (input.Op === '?') {
+              /**
+               * Ternary i.e. `x ? y : z`.
+               */
+              const [left, other] = [input.X, input.Y as Sh.BinaryArithm];
+              await ts.runArithmExpr(left); // Mutates input.num
+              const right = input.number ? other.X : other.Y;
+              await ts.runArithmExpr(right);
+            } else {
+              /**
+               * Binary.
+               */
+              const [left, right] = [input.X, input.Y];
+              await ts.runArithmExpr(left);
+              const lNum = input.number!
+              const lStr = input.string!;
+              await ts.runArithmExpr(right);
+              const rNum = input.number!
+  
+              switch (input.Op) {
+                case '<': input.number = (lNum < rNum) ? 1 : 0; break;
+                case '<=': input.number = (lNum <= rNum) ? 1 : 0; break;
+                case '>': input.number = (lNum > rNum) ? 1 : 0; break;
+                case '>=': input.number = (lNum >= rNum) ? 1 : 0; break;
+                case '*': input.number = lNum * rNum; break;
+                case '**': input.number = Math.pow(lNum, rNum); break;
+                case '==': input.number = (lNum === rNum) ? 1 : 0; break;
+                case '+=':
+                case '-=':
+                case '*=':
+                case '/=':
+                case '%=':
+                case '&=':
+                case '|=':
+                case '^=':
+                case '<<=':
+                case '>>=':
+                {
+                  switch (input.Op) {
+                    case '+=': input.number = lNum + rNum; break;
+                    case '-=': input.number = lNum - rNum; break;
+                    case '*=': input.number = lNum * rNum; break;
+                    case '/=': input.number = lNum / rNum; break;
+                    case '%=': input.number = lNum % rNum; break;
+                    case '&=': input.number = lNum & rNum; break;
+                    case '|=': input.number = lNum | rNum; break;
+                    case '^=': input.number = lNum ^ rNum; break;
+                    case '<<=': input.number = lNum << rNum; break;
+                    case '>>=': input.number = lNum >> rNum; break;
+                    default: throw testNever(input.Op);
+                  }
+                  // Update variable
+                  vs.assignVar(pid, {
+                    integer: true,
+                    varName: lStr,
+                    act: { key: 'default', value: String(input.number) },
+                  });
+                  break;
+                }
+                case '+': input.number = lNum + rNum; break;
+                case '-': input.number = lNum - rNum; break;
+                // Ternary '?' handled earlier.
+                // Also arises in test expressions.
+                case '=': {// Assign.
+                  input.number = rNum;
+                  vs.assignVar(pid, {
+                    integer: true,
+                    varName: lStr,
+                    act: { key: 'default', value: String(input.number) },
+                  });                  
+                  // true <=> assigned value non-zero.
+                  // exitCode = Number.isInteger(this.value) && this.value ? 0 : 1;
+                  break;
+                }
+                case '%': input.number = lNum % rNum; break;
+                case '^': input.number = lNum ^ rNum; break;
+                case ',': input.number = rNum; break;
+                case '/': input.number = Math.floor(lNum / rNum); break;
+                /**
+                 * TODO
+                 */
+                default: {
+                  // yield this.exit(2, `${def.symbol}: unrecognised binary arithmetic symbol`);
+                  // return;
+                  throw new ShError(`${input.Op}: unrecognised binary arithmetic symbol`, 2);
+                }
+              }
 
-        // return new ArithmOpComposite({
-        //   key: CompositeType.arithm_op,
-        //   symbol: input.Op, 
-        //   cs: [this.ArithmExpr(input.X), this.ArithmExpr(input.Y)],
-        //   postfix: false,
-        // });
+              yield act.expanded(`${input.number}`); 
+            }
+          }),
+        );
       }
       case 'ParenArithm': {
         return this.ArithmExpr(input.X);
       }
       case 'UnaryArithm': {
-        return new Observable();
+        return of(null).pipe(
+          mergeMap(async function* () {
+            /**
+             * TODO
+             */
+          }),
+        );
         // return new ArithmOpComposite({
         //   key: CompositeType.arithm_op,
         //   symbol: input.Op,
@@ -73,7 +196,7 @@ class TranspileShService {
           const keyResult = key ? await lastValueFrom(key) : null;
           const valueResult = await lastValueFrom(value);
           yield {
-            key: keyResult?.values.join(' ') || null,
+            key: keyResult ? keyResult.values.join(' ') : null,
             value: valueResult.values.join(' '),
           };
         }
@@ -185,10 +308,10 @@ class TranspileShService {
     extend: CommandExtension,
   ): Obs {
     const { Redirs, background, negated } = extend;
+    const ts = this;
 
     if (Cmd) {
       const { Assigns, Args } = Cmd;
-      const ts = this;
 
       return of(null).pipe(
         mergeMap(async function* () {
@@ -243,7 +366,6 @@ class TranspileShService {
     // });
   }
 
-
   /**
    * Construct a simple command (CallExpr), or compound command.
    */
@@ -251,39 +373,56 @@ class TranspileShService {
     Cmd: null | Sh.Command,
     extend: CommandExtension,
   ): Obs {
-    if (!Cmd || Cmd.type === 'CallExpr') {
+    if (!Cmd || Cmd.type === 'CallExpr') {// Simple command
       return this.CallExpr(Cmd, extend);
     }
 
-    return of(act.unimplemented());
+    // Compound command
+    const ts = this;
+    return of(null).pipe(
+      mergeMap(async function*() {
+        let cmd: Obs = null as any;
+    
+        switch (Cmd.type) {
+          case 'ArithmCmd': cmd = ts.ArithmCmd(Cmd); break;
+          // case 'BinaryCmd': child = this.BinaryCmd(Cmd); break;
+          // case 'Block': child = this.Block(Cmd); break;
+          // case 'CaseClause': child = this.CaseClause(Cmd); break;
+          // case 'CoprocClause': {
+          //   /**
+          //    * TODO
+          //    */
+          //   child = this.CoprocClause(Cmd);
+          //   break;
+          // }
+          // case 'DeclClause': child = this.DeclClause(Cmd); break;
+          // case 'ForClause': child = this.ForClause(Cmd); break;
+          // case 'FuncDecl': child = this.FuncDecl(Cmd); break;
+          // case 'IfClause': child = this.IfClause(Cmd); break;
+          // case 'LetClause': child = this.LetClause(Cmd); break;
+          // case 'Subshell': child = this.Subshell(Cmd); break;
+          // case 'TestClause': child = this.TestClause(Cmd); break;
+          // case 'TimeClause': child = this.TimeClause(Cmd); break;
+          // case 'WhileClause': child = this.WhileClause(Cmd); break;
+          // default: throw testNever(Cmd);
+          default: return;
+        }
 
-    // let child: Term = null as any;
+        const { Redirs, background, negated } = extend;
+        if (background) {
+          // yield* this.runInBackground(dispatch, processKey);
+          ps.setExitCode(Cmd.meta.pid, 0);
+        } else {
+          // TODO apply/remove redirections
+          const redirects = Redirs.map((x) => ts.Redirect(x));
+          // await awaitEnd(cmd);
+          await lastValueFrom(cmd);
+        }
+      })
+    );
 
-    // switch (Cmd.type) {
-    //   case 'ArithmCmd': child = this.ArithmCmd(Cmd); break;
-    //   case 'BinaryCmd': child = this.BinaryCmd(Cmd); break;
-    //   case 'Block': child = this.Block(Cmd); break;
-    //   case 'CaseClause': child = this.CaseClause(Cmd); break;
-    //   case 'CoprocClause': {
-    //     /**
-    //      * TODO
-    //      */
-    //     child = this.CoprocClause(Cmd);
-    //     break;
-    //   }
-    //   case 'DeclClause': child = this.DeclClause(Cmd); break;
-    //   case 'ForClause': child = this.ForClause(Cmd); break;
-    //   case 'FuncDecl': child = this.FuncDecl(Cmd); break;
-    //   case 'IfClause': child = this.IfClause(Cmd); break;
-    //   case 'LetClause': child = this.LetClause(Cmd); break;
-    //   case 'Subshell': child = this.Subshell(Cmd); break;
-    //   case 'TestClause': child = this.TestClause(Cmd); break;
-    //   case 'TimeClause': child = this.TimeClause(Cmd); break;
-    //   case 'WhileClause': child = this.WhileClause(Cmd); break;
-    //   default: throw testNever(Cmd);
-    // }
+      
 
-    // const { Redirs, background, negated } = extend;
 
     // return new CompoundComposite({// Compound command.
     //   key: CompositeType.compound,
@@ -321,14 +460,9 @@ class TranspileShService {
 
   private ExpandPart(input: Sh.WordPart): Observable<Expanded> {
     switch (input.type) {
-      // case 'ArithmExp': {
-      //   return new ArithmExpand({
-      //     key: CompositeType.expand,
-      //     expandKey: ExpandType.arithmetic,
-      //     expr: this.ArithmExpr(input.X),
-      //     sourceMap: this.sourceMap({ Pos, End }),
-      //   });
-      // }
+      case 'ArithmExp': {
+        return this.ArithmExp(input);
+      }
       // case 'CmdSubst': {
       //   const { Pos, End, StmtList, Left, Right } = input;
       //   return new CommandExpand({
@@ -394,14 +528,6 @@ class TranspileShService {
     return from(StmtList.Stmts).pipe(
       concatMap(x => this.Stmt(x)),
     );
-  }
-
-  private Stmt({ Negated, Background, Redirs, Cmd }: Sh.Stmt): Obs {
-    return this.Command(Cmd, {
-      Redirs,
-      background: Background,
-      negated: Negated,
-    });
   }
 
   private ParamExp(input: Sh.ParamExp): Observable<Expanded> {
@@ -748,6 +874,26 @@ class TranspileShService {
     );
   }
 
+  private Redirect(input: Sh.Redirect): Obs {
+    /**
+     * TODO
+     */
+    return of(act.unimplemented());
+  }
+
+  private Stmt({ Negated, Background, Redirs, Cmd }: Sh.Stmt): Obs {
+    return this.Command(Cmd, {
+      Redirs,
+      background: Background,
+      negated: Negated,
+    });
+  }
+
+  /** ArithmExpr sans Word */
+  private isArithmOp(term: Sh.ParsedSh): term is Exclude<Sh.ArithmExpr, Sh.Word> {
+    return !!(arithmOp as Record<string, true>)[term.type];
+  }
+
   private isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
     if (
       arithmExpr && arithmExpr.type === 'Word'
@@ -762,6 +908,25 @@ class TranspileShService {
       }
     }
     return null;
+  }
+
+  private isWordPart(term: Sh.ParsedSh): term is Sh.WordPart {
+    return !!(wordPart as Record<string, true>)[term.type];
+  }
+  
+  private async runArithmExpr(term: Sh.ExpandType) {
+    const textValue = this.isWordPart(term)
+      ? (await lastValueFrom(this.ExpandPart(term))).values.join(' ')
+      : (await lastValueFrom(this.ArithmExpr(term))).values.join(' ');
+
+    let value = parseInt(textValue);
+    if (Number.isNaN(value)) {// Try looking up variable
+      const varValue = vs.expandVar(term.meta.pid, textValue);
+      value = parseInt(varValue) || 0;
+    }
+    // Propagate string and evaluated number upwards
+    (term.parent! as Sh.BaseNode).string = textValue;
+    (term.parent! as Sh.BaseNode).number = value;
   }
 
   private toParamDef({
@@ -875,5 +1040,24 @@ export class ShError extends Error {
     Object.setPrototypeOf(this, ShError.prototype);
   }
 }
+
+const arithmOp = {
+  'BinaryArithm': true,
+  'UnaryArithm': true,
+  'ParenArithm': true,
+  // 'Word': true,
+};
+
+const wordPart = {
+  'Lit': true,
+  'SglQuoted': true,
+  'DblQuoted': true,
+  'ParamExp': true,
+  'CmdSubst': true,
+  'ArithmExp': true,
+  'ProcSubst': true,
+  'ExtGlob': true,
+};
+
 
 export const transpileSh = new TranspileShService;

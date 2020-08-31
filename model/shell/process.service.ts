@@ -136,6 +136,14 @@ export class ProcessService {
     });
   }
 
+  setExitCode(pid: number, code: number) {
+    this.set(({ proc }) => ({
+      proc: updateLookup(`${pid}`, proc, () => ({
+        lastExitCode: code,
+      })),
+    }));
+  }
+
   startProcess(pid: number) {
     const process = this.getProcess(pid)
     const transpiled = transpileSh.transpile(process.parsed);

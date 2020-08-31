@@ -94,6 +94,7 @@ export class TtyShell {
         case 'failed': {
           console.error(result.error.replace(/^Error: runtime error: src\.sh:/, ''));
           this.buffer.length = 0;
+          this.prompt('$ ');
           break;
         }
         case 'complete': {

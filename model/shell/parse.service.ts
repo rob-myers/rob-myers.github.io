@@ -846,7 +846,14 @@ export interface BaseNode {
   End: Pos;
   Pos: Pos;
   meta: FileMeta; // Single instance for entire tree
+  /** Reference to parent node  */
   parent: null | ParsedSh;
+  /** Used for test expansion */
+  boolean?: boolean;
+  /** Used for arithmetic expansion */
+  number?: number;
+  /** Used for arithmetic/boolean expansion */
+  string?: string;
 }
 
 export type ParsedSh = (
@@ -899,15 +906,9 @@ export type ParsedSh = (
 );
 
 export type ExpandType = (
-  | ArithmCmd
-  | Command
-  | DblQuoted
-  | ExtGlob
-  | Lit
-  | ParamExp
-  | Word // parts
-  | ProcSubst
-  | SglQuoted
+  | ArithmExpr
+  | Word // i.e. parts
+  | Exclude<WordPart, ArithmExp>
 );
 
 export type ArithmCmd = Sh.ArithmCmdGeneric<BaseNode, Pos, string>
