@@ -1,6 +1,6 @@
-import { Subject } from "rxjs";
+import { ShellStream } from "./shell.stream";
 
-export interface OpenFileDescription {
+export interface OpenFileDescription<R = any, W = any> {
   key: string;
   /**
    * The number of descendent processes using this open file description.
@@ -8,30 +8,27 @@ export interface OpenFileDescription {
    * - Decremented on close (explicitly, or via process termination).
    */
   numLinks: number;
-  /**
-   * The opened stream.
-   */
-  stream: Subject<any>;
-  /**
-   * Read-only, read-and-write, or write-only.
-   */
+  /** The opened stream. */
+  stream: ShellStream<R, W>;
+  /** Read-only, read-and-write, or write-only. */
   mode: OpenFileMode;
 }
 
 type OpenFileMode = 'RDONLY' | 'RDWR' | 'WRONLY';
 
-export interface CreateOfdOpts {
-  /**
-   * Read-only, read-and-write, or write-only.
-   */
-  mode: OpenFileMode;
-}
-
-export function createOfd(key: string, stream: Subject<any>, opts: CreateOfdOpts): OpenFileDescription {
+export function createOfd<R = any, W = any>(
+  key: string,
+  stream: ShellStream<R, W>,
+  // opts: CreateOfdOpts,
+): OpenFileDescription<R, W> {
   return {
     key,
-    stream, // Direct reference.
-    mode: opts.mode,
-    numLinks: 0,
+    stream,
+    /**
+     * For the moment, all streams are READ-WRITE,
+     * even if they don't provide a writable under-the-hood.
+     */
+    mode: 'RDWR',
+    numLinks: 0, // TODO ?
   };
 }

@@ -1,20 +1,24 @@
+import { Subject } from 'rxjs';
 import { testNever } from '@model/generic.model';
 import useStore, { State as ShellState, Session } from '@store/shell.store';
+import { addToLookup } from '@store/store.util';
 import { parseSh, FileWithMeta } from './parse.service';
 import { SigEnum } from './process.model';
 import { createOfd } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
 import { TtyXterm } from './tty.xterm';
 import { processService } from './process.service';
-import { addToLookup } from '@store/store.util';
 
 export class TtyShell {
 
   private xterm!: TtyXterm;
+  /** We need our own stream to xterm.io.registerReader below */
+  private incoming = new Subject<MessageFromXterm>();
+
   /** Lines received from a TtyXterm. */
-  public inputs = [] as { line: string; resolve: () => void }[];
+  private inputs = [] as { line: string; resolve: () => void }[];
   /** Lines in current interactive parse */
-  public buffer = [] as string[];
+  private buffer = [] as string[];
 
   /** Source code entered interactively, most recent last. */
   private history = [] as string[];
@@ -32,25 +36,15 @@ export class TtyShell {
   
   initialise(xterm: TtyXterm) {
     this.xterm = xterm;
-    /**
-     * TODO need special mechanism where most recent subscriber
-     * is the only one to receive 'send-line' events.
-     */
-    this.xterm.outgoing.subscribe(this.onMessage.bind(this));
-    
     this.set = useStore.getState().api.set;
 
-    /**
-     * TODO remove these internal streams, instead:
-     * - provide a stream processes can write to.
-     * - provide a stream processes can read from (interactive input).
-     */
+    // To read from xterm we need our own stream this.incoming
+    this.incoming.subscribe(this.onMessage.bind(this));
+    this.xterm.io.registerReader(this.incoming);
+    
     this.set(({ ofd }) => ({
-      // We permit reading the internals of xterm (MessageFromXterm)
-      ofd: addToLookup(createOfd(`${xterm.def.canonicalPath}/out`, xterm.outgoing, { mode: 'RDONLY' }), 
-      // We permit writing to the internals of xterm (MessageFromShell)
-        addToLookup(createOfd(`${xterm.def.canonicalPath}/in`, xterm.incoming, { mode: 'WRONLY' }), ofd),
-      ),
+      // e.g. /dev/tty-1 actually determines an open file description
+      ofd: addToLookup(createOfd(`${xterm.def.canonicalPath}`, xterm.io), ofd),
     }));
 
     this.prompt('$ ');
@@ -60,7 +54,7 @@ export class TtyShell {
     switch (msg.key) {
       case 'req-history-line': {
         const { line, nextIndex } = this.getHistoryLine(msg.historyIndex);
-        this.xterm.incoming.next({
+        this.xterm.io.write({
           key: 'send-history-line',
           sessionKey: this.sessionKey,
           line,
@@ -68,11 +62,11 @@ export class TtyShell {
         });
         break;
       }
-      case 'send-line': {
+      case 'send-lines': {
         this.inputs.push({
-          line: msg.line,
+          line: msg.lines[0],
           // xterm won't send another line until resolved
-          resolve: () => this.xterm.incoming.next({
+          resolve: () => this.xterm.io.write({
             key: 'tty-received-line',
             sessionKey: this.sessionKey,
           }),
@@ -125,7 +119,7 @@ export class TtyShell {
   }
 
   private prompt(prompt: string) {
-    this.xterm.incoming.next({
+    this.xterm.io.write({
       key: 'send-xterm-prompt',
       prompt,
       sessionKey: this.sessionKey,
@@ -151,7 +145,7 @@ export class TtyShell {
 
 export type MessageFromXterm = (
   | RequestHistoryLine
-  | SendLineToShell
+  | SendLinesToShell
   | SendSignalToShell
 );
 
@@ -160,9 +154,13 @@ interface RequestHistoryLine {
   historyIndex: number;
 }
 
-interface SendLineToShell {
-  key: 'send-line';
-  line: string;
+/**
+ * We'll always send exactly one line.
+ * Use 'send-lines' to fit global convention.
+ */
+interface SendLinesToShell {
+  key: 'send-lines';
+  lines: string[];
 }
 
 interface SendSignalToShell {
@@ -209,7 +207,7 @@ interface SendXtermPrompt {
  * tty writes lines to xterm
  */
 interface WriteToXterm {
-  key: 'write-to-xterm';
+  key: 'send-lines';
   sessionKey: string;
   messageUid: string;
   lines: string[];

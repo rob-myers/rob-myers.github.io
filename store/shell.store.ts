@@ -8,6 +8,7 @@ import { SigEnum, FromFdToOpenKey } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
 import { ToProcVar } from '@model/shell/var.service';
 import { processService } from '@model/shell/process.service';
+import { ShellStream } from '@model/shell/shell.stream';
 import { addToLookup } from './store.util';
 
 export interface State {
@@ -28,8 +29,8 @@ export interface State {
     ensureSession: (alias: string) => void;
     signalSession: (sessionKey: string, signal: SigEnum) => void;
     /**
-     * Useful e.g. to track external state changes in devtools.
-     * We cannot use `immer` here: saw stack overflows.
+     * Useful for tracking external state changes in devtools.
+     * Can't use `immer`: recursive parse trees caused stack overflows.
      */
     set: (delta: ((current: State) => Partial<State>)) => void;
   };
@@ -37,7 +38,7 @@ export interface State {
 
 export interface Session {
   key: string;
-  // Used as pid of leading process
+  /** Used as pid of leading process */
   sid: number;
   ttyId: number;
   ttyShell: TtyShell;
@@ -53,9 +54,9 @@ export interface Process {
   /** File descriptor to open key */
   fdToOpenKey: FromFdToOpenKey;
   /**
-   * Process code-blocks e.g while, if, for, {} have redirection scope.
+   * Process code-blocks such as `while, if, for, {}` have redirection scope.
    * The 1st item corresponds to the current scope, the last to the top-most
-   * scope. An item has key {fd} iff {fd} was set (redirected) in its respective scope.
+   * scope. An item has key `fd` iff `fd` was set (redirected) in its respective scope.
    */
   nestedRedirs: FromFdToOpenKey[];
   /**
@@ -70,7 +71,7 @@ export interface Process {
 }
 
 const useStore = create<State>(devtools((set, get) => {
-  const devNull = new Subject;
+  const devNull = new ShellStream({ readable: new Subject, writable: new Subject });
 
   return {
     nextTtyId: 1,
@@ -78,9 +79,8 @@ const useStore = create<State>(devtools((set, get) => {
     toSessionKey: {},
     nextProcId: 1,
     proc: {},
-    ofd: {
-      '/dev/null': createOfd('/dev/null', devNull, { mode: 'RDWR' }),
-    },
+    // We're using /dev/null to identify an open file description
+    ofd: addToLookup(createOfd('/dev/null', devNull), {} as State['ofd']),
     api: {
       ensureSession: (alias) => {
         const { toSessionKey, nextTtyId: ttyId } = get();

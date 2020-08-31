@@ -3,14 +3,18 @@ import { Subject } from 'rxjs';
 import { MessageFromShell, MessageFromXterm } from './tty.shell';
 import { testNever } from '@model/generic.model';
 import { SigEnum } from './process.model';
+import { ShellStream } from './shell.stream';
 
 /**
- * Wrapper around XTerm.Terminal.
+ * Wraps XTerm.Terminal.
  */
 export class TtyXterm {
 
-  public outgoing = new Subject<MessageFromXterm>();
-  public incoming = new Subject<MessageFromShell>();
+  public io: ShellStream<MessageFromXterm, MessageFromShell>;
+  /** Outgoing messages from this xterm */
+  private outgoing = new Subject<MessageFromXterm>();
+  /** Incoming messages from TtyShell or processes  */
+  private incoming = new Subject<MessageFromShell>();
 
   /**
    * Commands include writing a line, clearing the screen.
@@ -60,6 +64,11 @@ export class TtyXterm {
     this.cursorRow = 0;
     this.historyIndex = -1;
     this.preHistory = this.input;
+
+    this.io = new ShellStream({
+      readable: this.outgoing,
+      writable: this.incoming,
+    });
   }
 
   public initialise() {
@@ -398,9 +407,16 @@ export class TtyXterm {
   }
 
   protected onMessage(msg: MessageFromShell) {
-    // console.log({ receivedFromOsWorker: msg });
+    // console.log({ xtermReceivedMsg: msg });
 
     switch (msg.key) {
+      case 'send-lines': {
+        if (msg.sessionKey === this.def.sessionKey) {
+          this.queueCommands(msg.lines.map(
+            line => ({ key: 'line' as 'line', line })));
+        }
+        return;
+      }
       case 'send-xterm-prompt': {
         if (msg.sessionKey === this.def.sessionKey) {
           this.setPrompt(msg.prompt);
@@ -410,13 +426,6 @@ export class TtyXterm {
       case 'clear-xterm': {
         if (msg.sessionKey === this.def.sessionKey) {
           this.clearScreen();
-        }
-        return;
-      }
-      case 'write-to-xterm': {
-        if (msg.sessionKey === this.def.sessionKey) {
-          this.queueCommands(msg.lines.map(
-            line => ({ key: 'line' as 'line', line })));
         }
         return;
       }
@@ -450,6 +459,8 @@ export class TtyXterm {
         }
         return;
       }
+      default:
+        console.warn(`xterm for ${this.def.sessionKey} ignored message ${JSON.stringify(msg)}`);
     }
   }
 
@@ -541,8 +552,8 @@ export class TtyXterm {
     this.preHistory = '';
 
     this.outgoing.next({
-      key: 'send-line',
-      line: this.input,
+      key: 'send-lines',
+      lines: [this.input],
     });
   }
 

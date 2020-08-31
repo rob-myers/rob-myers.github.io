@@ -10,20 +10,21 @@ export class ProcessService {
   private set!: ShellState['api']['set'];
 
   /**
-   * Create 'dummy' process, so shell can use its scopes.
-   * Its `pid` is the session's `sid`.
+   * Create a dummy process so the shell can use its scopes.
+   * Its PID is the SID of the current session.
    */
   createLeadingProcess(sessionKey: string) {
     // Ensure shortcut
     this.set = this.set || useStore.getState().api.set;
     
     const { sid: pid, ttyShell } = this.getSession(sessionKey);
-    const canonicalPath = ttyShell.canonicalPath;
 
     const fdToOpenKey = {
-      0: `${canonicalPath}/out`, // TODO can read from terminal e.g. `read` reads a line
-      1: `${canonicalPath}/in`, // TODO process can write to terminal via 'write-to-xterm'
-      2: `${canonicalPath}/in`,
+      // TtyShell already reads from here, but so could `read` in another process.
+      0: ttyShell.canonicalPath,
+      // TtyShell already writes here, as does any descendent process (sans redirect).
+      1: ttyShell.canonicalPath,
+      2: ttyShell.canonicalPath,
     };
 
     this.set(({ proc }) => ({
@@ -32,8 +33,8 @@ export class ProcessService {
         sessionKey,
         pid,
         ppid: 0,
-        parsed: parseSh.parse(''),
-        subscription: null, // We'll never run it 
+        parsed: parseSh.parse(''), // Satisfies typing
+        subscription: null, // We'll never actually run it 
         fdToOpenKey,
         nestedRedirs: [{ ...fdToOpenKey }],
         nestedVars: [],
@@ -75,7 +76,7 @@ export class ProcessService {
     const transpiled = transpileSh.transpile(process.parsed);
     
     return new Promise((resolve, reject) => {
-      // Can directly mutate state
+      // We can directly mutate state (btw immer wouldn't allow this)
       process.subscription = transpiled.subscribe({
         next: (msg) => console.log('received', msg), // TEMP
         complete: () => resolve(),
