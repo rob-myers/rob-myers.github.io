@@ -11,7 +11,7 @@ import { processService as ps } from './process.service';
 
 export class TtyShell {
 
-  private xterm!: TtyXterm;
+  public xterm!: TtyXterm;
   /** We need our own stream to xterm.io.registerReader below */
   private incoming = new Subject<MessageFromXterm>();
   /** Lines received from a TtyXterm. */
@@ -32,6 +32,9 @@ export class TtyShell {
     public canonicalPath: string,
   ) {}
   
+  /**
+   * TODO prevent re-initialise
+   */
   initialise(xterm: TtyXterm) {
     this.xterm = xterm;
     this.set = useStore.getState().api.set;

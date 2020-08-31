@@ -10,7 +10,7 @@ import { ToProcVar } from '@model/shell/var.model';
 import { processService } from '@model/shell/process.service';
 import { ShellStream } from '@model/rxjs/shell.stream';
 import { varService } from '@model/shell/var.service';
-import { addToLookup } from './store.util';
+import { addToLookup, removeFromLookup } from './store.util';
 
 export interface State {
   /** Next tty identifier, inducing e.g. tty-2 and sessionKey */
@@ -27,7 +27,8 @@ export interface State {
   ofd: KeyedLookup<OpenFileDescription>;
 
   readonly api: {
-    ensureSession: (alias: string) => void;
+    createSession: (alias: string) => void;
+    removeSession: (alias: string) => void;
     signalSession: (sessionKey: string, signal: SigEnum) => void;
     /**
      * Useful for tracking external state changes in devtools.
@@ -85,11 +86,12 @@ const useStore = create<State>(devtools((set, get) => {
     // We're using /dev/null to identify an open file description
     ofd: addToLookup(createOfd('/dev/null', devNull), {} as State['ofd']),
     api: {
-      ensureSession: (alias) => {
+      createSession: (alias) => {
         const { toSessionKey, nextTtyId: ttyId } = get();
         if (toSessionKey[alias]) {
           return;
         }
+
         const ttyFilename = `tty-${ttyId}`;
         const sessionKey = `root@${ttyFilename}`;
         const canonicalPath = `/dev/${ttyFilename}`;
@@ -108,6 +110,17 @@ const useStore = create<State>(devtools((set, get) => {
         }));
 
         processService.createLeadingProcess(sessionKey);
+      },
+      removeSession: (alias) => {
+        /**
+         * TODO
+         * - stop/remove descendent processes
+         * - remove any orphan ofds
+         */
+        set(({ session, toSessionKey: { [alias]: sessionKey, ...rest } }) => ({
+          session: removeFromLookup(sessionKey, session),
+          toSessionKey: { ...rest },
+        }));
       },
       signalSession: (key, signal) => {
         console.log('received', { signal, forSession: key });

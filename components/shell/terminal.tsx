@@ -13,7 +13,10 @@ const Terminal: React.FC<Props> = ({ alias }) => {
   const api = useStore(({ api }) => api);
 
   useEffect(() => {
-    api.ensureSession(alias);
+    api.createSession(alias);
+    return () => {
+      api.removeSession(alias);
+    };
   }, []);
 
   return (
