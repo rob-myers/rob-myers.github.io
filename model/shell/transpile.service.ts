@@ -79,7 +79,7 @@ class TranspileShService {
         }
       }),
       reduce((agg, item) =>
-        agg.pairs.concat(item) && agg, act.arrayAsgn([])),
+        agg.pairs.push(item) as 1 && agg, act.arrayAsgn([])),
     );
   }
 
@@ -201,8 +201,8 @@ class TranspileShService {
           const args = Args.length
             ? await lastValueFrom(from(Args).pipe(
               concatMap(arg => ts.Expand(arg)),
-              reduce((agg, { values }) => agg.concat(values), [] as string[]),
-            )) : [];
+              reduce((agg, { values }) => agg.concat(values), [] as string[])))
+            : [];
           console.log({ args });
 
           return act.expanded([]);
