@@ -1,3 +1,5 @@
+import { ExpandType } from "./parse.service";
+
 export type ToProcVar = Record<string, ProcessVar>;
 
 /** `value` is null iff (a) declared but not set, or (b) unset */

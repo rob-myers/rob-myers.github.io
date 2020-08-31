@@ -1,16 +1,16 @@
-import { Observable, from, of, lastValueFrom, empty } from 'rxjs';
-import { concatMap, reduce, tap, map, mergeMap, defaultIfEmpty } from 'rxjs/operators';
+import { Observable, from, of, lastValueFrom } from 'rxjs';
+import { concatMap, reduce, tap, map, mergeMap, } from 'rxjs/operators';
 import globrex from 'globrex';
 
+import { awaitEnd } from '@model/rxjs/rxjs.util';
 import * as Sh from '@model/shell/parse.service';
-import { ProcessAct, Expanded, act } from './process.model';
+import { testNever } from '@model/generic.model';
+import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
 import { expandService as expand } from './expand.service';
 import { ParamType, ParameterDef } from './parameter.model';
-import { testNever } from '@model/generic.model';
 import { varService as vs } from './var.service';
 import { processService as ps } from './process.service';
 import { BaseAssignOpts } from './var.model';
-import { awaitEnd } from '@model/rxjs/rxjs.util';
 
 type Obs = Observable<ProcessAct>;
 
@@ -59,50 +59,103 @@ class TranspileShService {
     }
   }
 
-  private Assign({ Name, Value, Append, Array, Index, Naked, meta }: Sh.Assign): Obs {
+  private ArrayExpr(
+    { Pos, End, Elems, Last, Lparen, Rparen }: Sh.ArrayExpr,
+  ): Observable<ArrayAssign> {
+    const pairs = Elems.map(({ Index, Value }) => ({
+      key: Index ? this.ArithmExpr(Index) : null,
+      value: this.Expand(Value),
+    }));
+
+    return of(null).pipe(
+      mergeMap(async function* () {
+        for (const { key, value } of pairs) {
+          const keyResult = key ? await lastValueFrom(key) : null;
+          const valueResult = await lastValueFrom(value);
+          yield {
+            key: keyResult?.values.join(' ') || null,
+            value: valueResult.values.join(' '),
+          };
+        }
+      }),
+      reduce((agg, item) =>
+        agg.pairs.concat(item) && agg, act.arrayAsgn([])),
+    );
+  }
+
+  private Assign({ Name, Value, Append, Array: ArrayTerm, Index, Naked, meta }: Sh.Assign): Obs {
     const { pid } = meta
     const ts = this;
+    const declOpts: Partial<BaseAssignOpts> = {}; // TODO
+    const varName = Name.Value;
 
-    if (Array) {
-      return of(act.unimplemented());
-      // return new AssignComposite({
-      //   // ...baseAssign,
-      //   key: CompositeType.assign,
-      //   sourceMap,
-      //   subKey: 'array',
-      //   // x=(foo bar), x=([f]=oo [b]=ar)
-      //   array: this.ArrayExpr(Array),
-      //   varName: Name.Value,
-      //   naked: Naked,
-      //   // x+=(baz qux)
-      //   append: Append,
-      // });
+    if (ArrayTerm) {
+      return of(null).pipe(
+        mergeMap(async function* () {
+          const { pairs } = await lastValueFrom(ts.ArrayExpr(ArrayTerm))
+
+          if (declOpts.associative) {
+            /**
+             * Associative array via `declare -A`.
+             * We also forward this.associative flag via `baseAssignOpts`.
+             */
+            const value = {} as Record<string, string>; // Even if integer-valued
+            for (const { key, value: v } of pairs) {
+              if (!key) {
+                ps.warn(pid, `${varName}: ${v}: must use subscript when assigning associative array`);
+              } else {
+                value[key] = v;
+              }
+            }
+            vs.assignVar(pid, { ...declOpts, varName, act: { key: 'map', value } });
+          } else {
+            /**
+             * Vanilla array.
+             */
+            const values = [] as string[];
+            let index = 0;
+            pairs.map(({ key, value }) => {
+              index = key ? (parseInt(key) || 0) : index; // ?
+              values[index] = value;
+              index++;
+            });
+
+            if (Append) {
+              const prevValue = vs.lookupVar(pid, varName);
+              Array.isArray(prevValue) && values.unshift(...(prevValue as any[]).map(String));
+            }
+
+            vs.assignVar(pid, { ...declOpts, varName, act: { key: 'array', value: values } });
+          }
+        })
+      );
     } else if (Index) {
-      return of(act.unimplemented());
-      // return new AssignComposite({
-      //   // ...baseAssign,
-      //   key: CompositeType.assign,
-      //   sourceMap,
-      //   subKey: 'item',
-      //   append: Append,
-      //   index: this.ArithmExpr(Index),
-      //   value: Value ? this.Expand(Value) : null,
-      //   varName: Name.Value,
-      //   naked: Naked,
-      // });
+      return of(null).pipe(
+        mergeMap(async function* () {
+          // Run index
+          const { values } = await lastValueFrom(ts.ArithmExpr(Index))
+          const index = values.join(' ');
+          /**
+           * Unsure if naked is possible here.
+           * If {x[i]=} then no def.value so use ''.
+           */
+          const value = Naked ? undefined
+            : Value ? (await lastValueFrom(ts.Expand(Value))).values.join(' ')
+            : '';
+
+          vs.assignVar(pid, { ...declOpts, varName, act: { key: 'item', index, value } });
+        }),
+      );
     } else {
       /**
-       * {x=foo}, and also {declare -a x} and {declare -a x=foo}
+       * `x=foo`, and also `declare -a x` and `declare -a x=foo`
        */
-      const declOpts: Partial<BaseAssignOpts> = {}; // TODO
-      const varName = Name.Value;
-
       // NOTE this stream is actually empty
       return of(null).pipe(
         mergeMap(async function* () {
           /**
-           * Naked iff e.g. {declare -i x}.
-           * Use undefined so don't overwrite.
+           * Naked if e.g. declare -i x.
+           * We use undefined so we don't overwrite.
            */
           const value = Naked ? undefined
             : Value ? await lastValueFrom(ts.Expand(Value).pipe(

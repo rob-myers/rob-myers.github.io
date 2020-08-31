@@ -35,6 +35,7 @@ export enum SigEnum {
 }
 
 export type ProcessAct = (
+  | ArrayAssign
   | Expanded
   | Unimplemented
   | WorldCoords
@@ -42,10 +43,18 @@ export type ProcessAct = (
 );
 
 export const act = {
-  unimplemented: (): Unimplemented => ({ key: 'unimplemented' }),
+  arrayAsgn: (pairs: ArrayAssign['pairs']): ArrayAssign =>
+    ({ key: 'array-asgn', pairs }),
   expanded: (values: string | string[]): Expanded =>
     ({ key: 'expanded', values: values instanceof Array ? values : [values] }),
+  unimplemented: (): Unimplemented =>
+    ({ key: 'unimplemented' }),
 };
+
+export interface ArrayAssign {
+  key: 'array-asgn';
+  pairs: { key: null | string; value: string }[];
+}
 
 
 export interface Expanded {

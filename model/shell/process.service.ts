@@ -76,6 +76,41 @@ export class ProcessService {
     }));
     return { pid };
   }
+
+  findAncestral(pid: number, predicate: (state: Process) => boolean) {
+    const proc = this.getProcesses();
+    let process = proc[pid];
+    /**
+     * Since our 'shells' (leading processes) are their own
+     * parent we can terminate on self-parent.
+     */
+    do {
+      if (predicate(process)) {
+        return process;
+      }
+    } while (process !== (process = proc[process.ppid]));
+    return null;
+  }
+
+  private getOfds() {
+    return useStore.getState().ofd;
+  }
+
+  getProcess(pid: number): Process {
+    return this.getProcesses()[pid];
+  }
+  
+  private getProcesses() {
+    return useStore.getState().proc;
+  }
+
+  private getSession(sessionKey: string): Session {
+    return useStore.getState().session[sessionKey];
+  }
+
+  isInteractiveShell({ meta }: FileWithMeta) {
+    return meta.pid === meta.sid;
+  }
   
   /**
    * Run parsed code in session's leading process.
@@ -115,35 +150,14 @@ export class ProcessService {
     });
   }
 
-  findAncestral(pid: number, predicate: (state: Process) => boolean) {
-    const proc = this.getProcesses();
-    let process = proc[pid];
-    /**
-     * Since our 'shells' (leading processes) are their own
-     * parent we can terminate on self-parent.
-     */
-    do {
-      if (predicate(process)) {
-        return process;
-      }
-    } while (process !== (process = proc[process.ppid]));
-    return null;
+  warn(pid: number, msg: string) {
+    this.write(pid, 2, msg);
   }
 
-  getProcess(pid: number): Process {
-    return this.getProcesses()[pid];
-  }
-  
-  getProcesses() {
-    return useStore.getState().proc;
-  }
-  
-  isInteractiveShell({ meta }: FileWithMeta) {
-    return meta.pid === meta.sid;
-  }
-
-  private getSession(sessionKey: string): Session {
-    return useStore.getState().session[sessionKey];
+  write(pid: number, fd: number, msg: string) {
+    const { fdToOpenKey: { [fd]: openKey } } = this.getProcess(pid);
+    const { stream } = this.getOfds()[openKey];
+    stream.write({ key: 'send-lines', lines: [msg] }); // TODO types
   }
 
 }
