@@ -634,23 +634,21 @@ class TranspileShService {
     /**
      * other parameters.
      */
-    return (def.index || of(act.expanded([]))).pipe(
-      mergeMap(async function* ({ values }) {
-        const index = def.index ? `${values}` : null;
+    return of(null).pipe(
+      mergeMap(async function* () {
+        const index = def.index ? (await lastValueFrom(def.index)).values.join(' ') : null;
         const varValue = vs.lookupVar(pid, def.param);
         const paramValues = vs.getVarValues(index, varValue);
 
         switch (def.parKey) {
           /**
-           * case: ${x^y}, ${x^^y}, ${x,y} or ${x,,y}.
-           * - also e.g. ${x[1]^^}.
+           * case: ${x^y}, ${x^^y}, ${x,y} or ${x,,y} (also ${x[1]^^}).
            */
           case ParamType.case: {
             const { all, to, pattern } = def;
             let re = /^.$/;// Pattern defaults to '?'.
     
-            if (pattern) {
-              // Evaluate pattern and convert to RegExp
+            if (pattern) {// Evaluate pattern and convert to RegExp
               const values = await lastValueFrom(pattern.pipe(
                 reduce((agg, item) => (agg.concat(item.values)), [] as string[]),
               ));
@@ -671,88 +669,75 @@ class TranspileShService {
           /**
            * default: ${x[:][-=?+]y} or ${x[0]:-foo}.
            */
-          // case ParamType.default: {
-          //   const { alt, colon, symbol } = def;
-          //   // If colon then applies if 'unset', or 'null' (i.e. empty-string).
-          //   // Otherwise, only applies if unset.
-          //   const applies = colon
-          //     ? !paramValues.length || (paramValues.length === 1 && paramValues[0] === '')
-          //     : !paramValues.length;
+          case ParamType.default: {
+            const { alt, colon, symbol } = def;
+            // If colon then applies if 'unset', or 'null' (i.e. empty-string).
+            // Otherwise, only applies if unset.
+            const applies = colon
+              ? !paramValues.length || (paramValues.length === 1 && paramValues[0] === '')
+              : !paramValues.length;
     
-          //   switch (symbol) {
-          //     case '-':
-          //     case '=': {
-          //       if (applies) {
-          //         if (!alt) {
-          //           this.value = '';
-          //         } else {
-          //           yield* this.runChild({ child: alt, ...base });
-          //           this.value = alt.value; 
-          //         }
-          //         if (symbol === '=') {
-          //           // Additionally assign to param.
-          //           dispatch(osAssignVarThunk({
-          //             processKey,
-          //             varName: def.param,
-          //             act: { key: 'default', value: paramValues.join('') },
-          //           }));
-          //         }
-          //       } else {
-          //         this.value = paramValues.join('');
-          //       }
-          //       break;
-          //     }
-          //     case '?': {
-          //       if (applies) {
-          //         if (!alt) {
-          //           yield this.exit(1, `${def.param}: required but unset or null.`);
-          //         } else {
-          //           yield* this.runChild({ child: alt, ...base });
-          //           yield this.exit(1, alt.value);
-          //         }
-          //       } else {
-          //         this.value = paramValues.join('');
-          //       }
-          //       break;
-          //     }
-          //     case '+': {
-          //       if (applies || !alt) {
-          //         this.value = '';
-          //       } else {// Use alt.
-          //         yield* this.runChild({ child: alt, ...base });
-          //         this.value = alt.value;
-          //       }
-          //       break;
-          //     }
-          //     default: throw testNever(symbol);
-          //   }
-          //   break;
-          // }
-          // /**
-          //  * keys: ${!x[@]} or ${!x[*]}.
-          //  */
-          // case ParamType.keys: {
-          //   const keys = this.getVarKeys(varValue);
-          //   if (def.split) {
-          //     this.values = keys;
-          //   } else {
-          //     this.value = keys.join(' ');
-          //   }
-          //   break;
-          // }
-          // /**
-          //  * length: ${#x}, ${#x[i]}, ${#x[@]} or ${#x[*]}.
-          //  */
-          // case ParamType.length: {
-          //   const { of: Of } = def;
-          //   if (Of === 'word') {
-          //     // `paramValues` should be [] or ['foo'].
-          //     this.value = String((paramValues[0] || '').length);
-          //   } else {// of: 'values'.
-          //     this.value = String(paramValues.length);
-          //   }
-          //   break;
-          // }
+            switch (symbol) {
+              case '-':
+              case '=': {
+                if (applies) {
+                  yield act.expanded(alt
+                    ? (await lastValueFrom(alt)).values.join(' ')
+                    : '');
+                  if (symbol === '=') {// Additionally assign to param
+                    vs.assignVar(pid, { varName: def.param, act: { key: 'default', value: paramValues.join('') } });
+                  }
+                } else {
+                  yield act.expanded(paramValues.join(''));
+                }
+                break;
+              }
+              case '?': {
+                if (applies) {
+                  input.exitCode = 1;
+                  return alt
+                    ? ps.warn(pid, (await lastValueFrom(alt)).values.join(' '))
+                    : ps.warn(pid, `${def.param}: required but unset or null.`);
+                } else {
+                  yield act.expanded(paramValues.join(''));
+                }
+                break;
+              }
+              case '+': {
+                yield act.expanded(applies || !alt
+                  ? ''
+                  : (await lastValueFrom(alt)).values.join(' '));
+                break;
+              }
+              default: throw testNever(symbol);
+            }
+            break;
+          }
+          /**
+           * keys: ${!x[@]} or ${!x[*]}.
+           */
+          case ParamType.keys: {
+            const keys = vs.getVarKeys(varValue);
+            if (def.split) {
+              yield* keys.map(key => act.expanded(key));
+            } else {
+              yield act.expanded(keys.join(' '));
+            }
+            break;
+          }
+          /**
+           * length: ${#x}, ${#x[i]}, ${#x[@]} or ${#x[*]}.
+           */
+          case ParamType.length: {
+            const { of: Of } = def;
+            if (Of === 'word') {
+              // `paramValues` should be [] or ['foo'].
+              yield act.expanded(String((paramValues[0] || '').length));
+            } else {// of: 'values'.
+              yield act.expanded(String(paramValues.length));
+            }
+            break;
+          }
           /**
            * plain: ${x}, ${x[i]}, ${x[@]} or ${x[*]}.
            */
@@ -768,32 +753,32 @@ class TranspileShService {
             }
             break;
           }
-          // /**
-          //  * pointer: ${!x} -- only basic support.
-          //  */
-          // // /([a-z_][a-z0-9_])\[([a-z0-9_@*])+\]*/i
-          // case ParamType.pointer: {
-          //   const nextParam = paramValues.join('');
-          //   if (nextParam) {
-          //     /**
-          //      * Lookup param value without dynamic parsing.
-          //      * Bash supports x='y[$z]'; echo ${!x};.
-          //      * In particular, cannot point to array item.
-          //      */
-          //     const result = dispatch(osLookupVarThunk({ processKey, varName: nextParam }));
-          //     this.value = this.getVarValues(null, result).join('');
-          //   } else {
-          //     this.value = '';
-          //   }
-          //   break;
-          // }
-          // /**
-          //  * positional: $1, $2, etc.
-          //  */
-          // case ParamType.position: {
-          //   this.value = paramValues.join('');
-          //   break;
-          // }
+          /**
+           * pointer: ${!x} -- only basic support.
+           */
+          // /([a-z_][a-z0-9_])\[([a-z0-9_@*])+\]*/i
+          case ParamType.pointer: {
+            const nextParam = paramValues.join('');
+            if (nextParam) {
+              /**
+               * Lookup param value without dynamic parsing.
+               * Bash supports x='y[$z]'; echo ${!x};.
+               * In particular, cannot point to array item.
+               */
+              const result = vs.lookupVar(pid, nextParam);
+              yield act.expanded(vs.getVarValues(null, result).join(''));
+            } else {
+              yield act.expanded('');
+            }
+            break;
+          }
+          /**
+           * positional: $1, $2, etc.
+           */
+          case ParamType.position: {
+            yield act.expanded(paramValues.join(''));
+            break;
+          }
           // /**
           //  * remove:
           //  *   prefix: ${x#y} or ${x##y}.
@@ -822,17 +807,16 @@ class TranspileShService {
           //  * We support 'replace all' via //.
           //  * TODO support # (prefix), % (suffix).
           //  */
-          // case ParamType.replace: {
-          //   const { all, orig, with: With } = def;
-          //   yield* this.runChild({ child: orig, ...base });
-          //   if (With) {
-          //     yield* this.runChild({ child: With, ...base });
-          //   }
-          //   const subst = With ? With.value : '';
-          //   const regex = new RegExp(orig.value, all ? 'g' : '');
-          //   this.value = paramValues.join('').replace(regex, subst);
-          //   break;
-          // }
+          case ParamType.replace: {
+            const { all, orig, with: With } = def;
+            const origValue = (await lastValueFrom(orig)).values.join(' ');
+            const subst = With
+              ? (await lastValueFrom(With)).values.join(' ')
+              : '';
+            const regex = new RegExp(origValue, all ? 'g' : '');
+            yield act.expanded(paramValues.join('').replace(regex, subst));
+            break;
+          }
           // /**
           //  * substring:
           //  * ${parameter:offset} e.g. ${x: -7}.
@@ -876,22 +860,22 @@ class TranspileShService {
           //   }
           //   break;
           // }
-          // /**
-          //  * variables: ${!param*} or ${!param@}.
-          //  */
-          // case ParamType.vars: {
-          //   const { split, param } = def;
-          //   if (param.length) {
-          //     const result = dispatch(osFindVarNamesThunk({ processKey, varPrefix: param }));
-          //     this.values = split ? result : [result.join(' ')];
-          //   } else {
-          //     this.value = '';
-          //   }
-          //   break;
-          // }
+          /**
+           * variables: ${!param*} or ${!param@}.
+           */
+          case ParamType.vars: {
+            const { split, param } = def;
+            if (param.length) {
+              const result = vs.findVarNames(pid, param);
+              yield act.expanded(split ? result : result.join(' '));
+            } else {
+              yield act.expanded('');
+            }
+            break;
+          }
           // default: throw testNever(def);
         }
-        return act.expanded([]); 
+        // return act.expanded([]); 
       }),
     );
   }

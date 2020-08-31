@@ -854,6 +854,7 @@ export interface BaseNode {
   number?: number;
   /** Used for arithmetic/boolean expansion */
   string?: string;
+  exitCode?: number;
 }
 
 export type ParsedSh = (

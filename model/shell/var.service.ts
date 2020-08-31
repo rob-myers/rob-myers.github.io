@@ -385,6 +385,19 @@ export class VarService {
   }
 
   /**
+   * Find all variables in {processKey} with prefix {varPrefix}.
+   */
+  findVarNames(pid: number, varPrefix: string) {
+    const found = new Set<string>();
+    this.getProcess(pid).nestedVars.forEach((toVar) => {
+      Object.keys(toVar)
+        .filter((varName) => varName.startsWith(varPrefix))
+        .forEach((varName) => found.add(varName));
+    });
+    return Array.from(found);
+  }
+
+  /**
    * Given current variable type {prevKey} and whether desire integer-based,
    * return new type after assignment x=foo.
    */
@@ -447,6 +460,13 @@ export class VarService {
       return positions.map((i) => (toVar[i] as BasePositionalVar).value);
     }
     throw Error('positional variables not found in process');    
+  }
+
+  getVarKeys(value: undefined | ProcessVar['value']): string[] {
+    if (value && typeof value === 'object') {
+      return Object.keys(value);
+    }
+    return [];
   }
 
   getVarValues(
