@@ -8,12 +8,6 @@ import { testNever } from '@model/generic.model';
 
 type Obs = Observable<ProcessAct>;
 
-/**
- * Previously, transpilation created Terms which we cloned.
- * Since transpilation won't do much precomputation any more,
- * we'll instead clone `Sh.File`s and set sessionKey, pid somehow.
- */
-
 class TranspileShService {
 
   transpile(parsed: Sh.File): Obs {
@@ -274,7 +268,7 @@ class TranspileShService {
   }
 
   private ParamExp(input: Sh.ParamExp): Observable<Expanded> {
-    const def = this.paramExpToDef(input);
+    const def = this.toParamDef(input);
 
     return from(function* () {
 
@@ -389,10 +383,9 @@ class TranspileShService {
     return null;
   }
 
-  paramExpToDef({
+  toParamDef({
     Excl, Exp, Index, Length, Names, Param, Repl, Short, Slice,
   }: Sh.ParamExp) {
-    // Must assign below
     let def = null as null | ParameterDef<Observable<Expanded>, Observable<Expanded>>;
     const base = {
       param: Param.Value,

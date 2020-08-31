@@ -6,10 +6,11 @@ import { TtyShell } from '@model/shell/tty.shell';
 import { OpenFileDescription, createOfd } from '@model/shell/file.model';
 import { SigEnum, FromFdToOpenKey } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
-import { ToProcVar } from '@model/shell/var.service';
+import { ToProcVar } from '@model/shell/var.model';
 import { processService } from '@model/shell/process.service';
 import { ShellStream } from '@model/shell/shell.stream';
 import { addToLookup } from './store.util';
+import { varService } from '@model/shell/var.service';
 
 export interface State {
   /** Next tty identifier, inducing e.g. tty-2 and sessionKey */
@@ -114,4 +115,9 @@ const useStore = create<State>(devtools((set, get) => {
   };
 }, 'shell'));
 
+
 export default useStore;
+
+// Must invoke after default export
+processService.initialise();
+varService.initialise();
