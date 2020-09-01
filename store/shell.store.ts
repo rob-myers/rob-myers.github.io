@@ -29,7 +29,6 @@ export interface State {
   readonly api: {
     createSession: (alias: string) => void;
     removeSession: (alias: string) => void;
-    signalSession: (sessionKey: string, signal: SigEnum) => void;
     /**
      * Useful for tracking external state changes in devtools.
      * Can't use `immer`: recursive parse trees caused stack overflows.
@@ -121,9 +120,6 @@ const useStore = create<State>(devtools((set, get) => {
           session: removeFromLookup(sessionKey, session),
           toSessionKey: { ...rest },
         }));
-      },
-      signalSession: (key, signal) => {
-        console.log('received', { signal, forSession: key });
       },
       set,
     },

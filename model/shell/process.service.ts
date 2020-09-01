@@ -158,6 +158,13 @@ export class ProcessService {
     });
   }
 
+  stopProcess(pid: number) {
+    this.getProcess(pid).subscription?.unsubscribe();
+    this.set(({ proc }) => ({
+      proc: updateLookup(`${pid}`, proc, () => ({ subscription: null })),
+    }));
+  }
+
   warn(pid: number, msg: string) {
     this.write(pid, 2, msg);
   }

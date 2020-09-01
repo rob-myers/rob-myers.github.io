@@ -7,7 +7,7 @@ import { SigEnum } from './process.model';
 import { createOfd } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
 import { TtyXterm } from './tty.xterm';
-import { processService as ps } from './process.service';
+import { processService as ps, processService } from './process.service';
 
 export class TtyShell {
 
@@ -76,8 +76,10 @@ export class TtyShell {
         break;
       }
       case 'send-sig': {
+        console.log('received signal', { msg, sessionKey: this.sessionKey });
         if (msg.signal === SigEnum.SIGINT) {
-          useStore.getState().api.signalSession(this.sessionKey, msg.signal);
+          processService.stopProcess(this.session.sid);
+          this.prompt('$ ');
         }
         break;
       }
