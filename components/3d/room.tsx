@@ -1,4 +1,5 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
+import { MouseEvent as ThreeMouseEvent } from 'react-three-fiber';
 import useStore from "@store/geom.store";
 import { Coord3 } from "@model/three/three.model";
 
@@ -10,6 +11,11 @@ const Room: React.FC<Props> = (props) => {
   const api = useStore(({ api }) => api);
   const group = useRef<THREE.Group>(null);
   
+  const onClick = useCallback((e: ThreeMouseEvent) => {
+    console.log({ clickedRoom: e })
+    e.stopPropagation();
+  }, []);
+
   useEffect(() => {
     if (meta) {
       const clone = meta.mesh.clone();
@@ -28,6 +34,7 @@ const Room: React.FC<Props> = (props) => {
       ref={group}
       position={[at[0], at[1], 0]}
       rotation={undoGltfRotation}
+      onClick={onClick}
     />
   )
 };

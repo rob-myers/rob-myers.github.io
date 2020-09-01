@@ -36,12 +36,19 @@ const Env: React.FC = () => {
         {/* <pointLight position={[0, 0, 5]} intensity={1} /> */}
         
         <Grid />
-        {/* <LoadRooms /> */}
 
-        <Room is="junction" n />
-        <Room is="straight" at={[4, 0]} w />
+        <Room is="closet" at={[-4, 0]} />
         <Room is="closet" at={[8, 0]} w />
-        <Room is="straight" at={[0, 4]} n />
+        <group position={[0, -4, 0]}>
+          <Room is="closet" at={[-4, 0]} />
+          <Room is="closet" at={[8, 0]} w />
+        </group>
+        <Room is="junction" />
+        <Room is="junction" at={[4, 0]} />
+        <Room is="fourway" at={[0, -4]} />
+        <Room is="fourway" at={[4, -4]} />
+        <Room is="straight" at={[0, -8]} n />
+        <Room is="straight" at={[4, -8]} n />
 
       </Canvas>
     </div>
