@@ -4,9 +4,9 @@ import globrex from 'globrex';
 
 import { awaitEnd } from '@model/rxjs/rxjs.util';
 import * as Sh from '@model/shell/parse.service';
-import { testNever } from '@model/generic.model';
+import { testNever, last } from '@model/generic.model';
 import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
-import { expandService as expand } from './expand.service';
+import { expandService as expand, expandService } from './expand.service';
 import { ParamType, ParameterDef } from './parameter.model';
 import { varService as vs } from './var.service';
 import { processService as ps } from './process.service';
@@ -217,13 +217,19 @@ class TranspileShService {
         for (const { key, value } of pairs) {
           yield {
             key: key ? (await lastValueFrom(key)).value : null,
-            value: (await lastValueFrom(value)).value,
+            // e.g. brace expansion can provide many values
+            values: (await lastValueFrom(value)).values,
           };
         }
       }),
       // Combine all pairs into a single 'array-asgn' message
-      reduce((agg, item) =>
-        agg.pairs.push(item) as 1 && agg, act.arrayAsgn([])),
+      reduce((agg, { key, values }) => {
+        agg.pairs.push(...values.map(value => ({ key, value })));
+        return agg;
+      }, act.arrayAsgn([])),
+      tap(msg => {
+        console.log({ arrayExprResult: msg })
+      }),
     );
   }
 
@@ -447,23 +453,48 @@ class TranspileShService {
   }
 
   private Expand({ Parts }: Sh.Word): Observable<Expanded> {
-    /**
-     * TODO rewrite using mergeMap style, aggregating parts
-     * using special method.
-     */
     if (Parts.length > 1) {
-      return from(Parts).pipe(
-        concatMap(wordPart => this.ExpandPart(wordPart)),
-        reduce(({ values }, item: Expanded) =>
-          act.expanded(values.concat(item.values)),
-          act.expanded([]),
-        ),
-        tap((msg) => {
-          console.log('aggregated', msg);
+      return of(null).pipe(
+        mergeMap(async function*() {
+          // Compute each part, mutating each wordPart
+          for (const wordPart of Parts) {
+            await awaitEnd(ts.ExpandPart(wordPart));
+          }
+          /*
+          * Is the last value computed via a parameter/command-expansion,
+          * and if so does it have trailing whitespace?
+          */
+          let lastTrailing = false;
+          const values = [] as string[];
+
+          for (const { type, string } of Parts) {
+            const value = string!;
+            if (type === 'ParamExp' || type === 'CmdSubst') {
+              const vs = expandService.normalizeWhitespace(value, false);// Do not trim.
+              // console.log({ value, vs });
+              if (!vs.length) {
+                continue;
+              } else if (!values.length || lastTrailing || /^\s/.test(vs[0])) {
+                // Freely add, although trim 1st and last.
+                values.push(...vs.map((x) => x.trim()));
+              } else {
+                // Either {last(vs)} a trailing quote, or it has no trailing space.
+                // Since vs[0] has no leading space we must join words.
+                values.push(values.pop() + vs[0].trim());
+                values.push(...vs.slice(1).map((x) => x.trim()));
+              }
+              // Check last element (pre-trim).
+              lastTrailing = /\s$/.test(last(vs) as string);
+            } else if (!values.length || lastTrailing) {// Freely add.
+              values.push(value);
+              lastTrailing = false;
+            } else {// Must join.
+              values.push(values.pop() + value);
+              lastTrailing = false;
+            }
+          }
+          yield act.expanded(values);
         }),
-        /**
-         * TODO apply complex composition and emit
-         */
       );
     }
     return this.ExpandPart(Parts[0]);
