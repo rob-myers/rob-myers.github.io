@@ -45,8 +45,11 @@ export type ProcessAct = (
 export const act = {
   arrayAsgn: (pairs: ArrayAssign['pairs']): ArrayAssign =>
     ({ key: 'array-asgn', pairs }),
-  expanded: (values: string | string[]): Expanded =>
-    ({ key: 'expanded', values: values instanceof Array ? values : [values] }),
+  expanded: (values: string | string[]): Expanded => ({
+    key: 'expanded',
+    values: values instanceof Array ? values : [values],
+    value: values instanceof Array ? values.join(' ') : values,
+  }),
   unimplemented: (): Unimplemented =>
     ({ key: 'unimplemented' }),
 };
@@ -56,10 +59,11 @@ export interface ArrayAssign {
   pairs: { key: null | string; value: string }[];
 }
 
-
 export interface Expanded {
   key: 'expanded';
   values: string[];
+  /** This is values.join(' ') */
+  value: string;
 }
 
 interface Unimplemented {

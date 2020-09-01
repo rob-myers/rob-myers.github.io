@@ -10,35 +10,29 @@ import { expandService as expand } from './expand.service';
 import { ParamType, ParameterDef } from './parameter.model';
 import { varService as vs } from './var.service';
 import { processService as ps } from './process.service';
-import { BaseAssignOpts } from './var.model';
-
-type Obs = Observable<ProcessAct>;
 
 class TranspileShService {
 
-  transpile(parsed: Sh.File): Obs {
+  transpile(parsed: Sh.File): Observable<ProcessAct> {
     const transpiled = this.File(parsed);
-    console.log('TRANSPILED', transpiled); // DEBUG
+    console.log('TRANSPILED', transpiled);
     return transpiled;
   }
 
   /**
    * (( x = y / 2 , z = x * y ))
    */
-  public ArithmCmd(input: Sh.ArithmCmd): Observable<Expanded> {    
-    const ts = this;
-    const { pid } = input.meta
-    
+  public ArithmCmd(node: Sh.ArithmCmd): Observable<Expanded> {    
     return of(null).pipe(
       mergeMap(async function* () {
-        await ts.runArithmExpr(input.X);
+        await ts.runArithmExpr(node.X);
         // Exit code 0 iff `input.number` is a non-zero integer
-        if (input.number && Number.isInteger(input.number)) {
-          ps.setExitCode(pid, input.number ? 0 : 1);
+        if (node.number && Number.isInteger(node.number)) {
+          node.exitCode = node.number ? 0 : 1;
         } else {
-          ps.setExitCode(pid, 1);
+          node.exitCode = 1;
         }
-        yield act.expanded(`${input.number || 0}`);
+        yield act.expanded(`${node.number || 0}`);
       }),
     );
   }
@@ -46,8 +40,8 @@ class TranspileShService {
   /**
    * y=$(( 2 ** x ))
    */
-  ArithmExp(input: Sh.ArithmExp): Observable<Expanded> {
-    return this.ArithmCmd(input as unknown as Sh.ArithmCmd);
+  ArithmExp(node: Sh.ArithmExp): Observable<Expanded> {
+    return this.ArithmCmd(node as unknown as Sh.ArithmCmd);
   }
 
   /**
@@ -56,41 +50,40 @@ class TranspileShService {
    * (( x++ ))
    * x[1 + "2$i"]=y.
    */
-  private ArithmExpr(input: Sh.ArithmExpr): Observable<Expanded> {
-    const ts = this;
-    const { pid } = input.meta;
+  private ArithmExpr(node: Sh.ArithmExpr): Observable<Expanded> {
+    const { pid } = node.meta;
 
-    switch (input.type) {
+    switch (node.type) {
       case 'BinaryArithm': {
         return of(null).pipe(
           mergeMap(async function* () {
-            if (input.Op === '?') {
+            if (node.Op === '?') {
               /**
                * Ternary i.e. `x ? y : z`.
                */
-              const [left, other] = [input.X, input.Y as Sh.BinaryArithm];
-              await ts.runArithmExpr(left); // Mutates input.num
-              const right = input.number ? other.X : other.Y;
+              const [left, other] = [node.X, node.Y as Sh.BinaryArithm];
+              await ts.runArithmExpr(left); // Mutates input.number
+              const right = node.number ? other.X : other.Y;
               await ts.runArithmExpr(right);
             } else {
               /**
                * Binary.
                */
-              const [left, right] = [input.X, input.Y];
+              const [left, right] = [node.X, node.Y];
               await ts.runArithmExpr(left);
-              const lNum = input.number!
-              const lStr = input.string!;
+              const lNum = node.number!
+              const lStr = node.string!;
               await ts.runArithmExpr(right);
-              const rNum = input.number!
+              const rNum = node.number!
   
-              switch (input.Op) {
-                case '<': input.number = (lNum < rNum) ? 1 : 0; break;
-                case '<=': input.number = (lNum <= rNum) ? 1 : 0; break;
-                case '>': input.number = (lNum > rNum) ? 1 : 0; break;
-                case '>=': input.number = (lNum >= rNum) ? 1 : 0; break;
-                case '*': input.number = lNum * rNum; break;
-                case '**': input.number = Math.pow(lNum, rNum); break;
-                case '==': input.number = (lNum === rNum) ? 1 : 0; break;
+              switch (node.Op) {
+                case '<': node.number = (lNum < rNum) ? 1 : 0; break;
+                case '<=': node.number = (lNum <= rNum) ? 1 : 0; break;
+                case '>': node.number = (lNum > rNum) ? 1 : 0; break;
+                case '>=': node.number = (lNum >= rNum) ? 1 : 0; break;
+                case '*': node.number = lNum * rNum; break;
+                case '**': node.number = Math.pow(lNum, rNum); break;
+                case '==': node.number = (lNum === rNum) ? 1 : 0; break;
                 case '+=':
                 case '-=':
                 case '*=':
@@ -102,61 +95,63 @@ class TranspileShService {
                 case '<<=':
                 case '>>=':
                 {
-                  switch (input.Op) {
-                    case '+=': input.number = lNum + rNum; break;
-                    case '-=': input.number = lNum - rNum; break;
-                    case '*=': input.number = lNum * rNum; break;
-                    case '/=': input.number = lNum / rNum; break;
-                    case '%=': input.number = lNum % rNum; break;
-                    case '&=': input.number = lNum & rNum; break;
-                    case '|=': input.number = lNum | rNum; break;
-                    case '^=': input.number = lNum ^ rNum; break;
-                    case '<<=': input.number = lNum << rNum; break;
-                    case '>>=': input.number = lNum >> rNum; break;
-                    default: throw testNever(input.Op);
+                  switch (node.Op) {
+                    case '+=': node.number = lNum + rNum; break;
+                    case '-=': node.number = lNum - rNum; break;
+                    case '*=': node.number = lNum * rNum; break;
+                    case '/=': node.number = lNum / rNum; break;
+                    case '%=': node.number = lNum % rNum; break;
+                    case '&=': node.number = lNum & rNum; break;
+                    case '|=': node.number = lNum | rNum; break;
+                    case '^=': node.number = lNum ^ rNum; break;
+                    case '<<=': node.number = lNum << rNum; break;
+                    case '>>=': node.number = lNum >> rNum; break;
+                    default: throw testNever(node.Op);
                   }
                   // Update variable
                   vs.assignVar(pid, {
                     integer: true,
                     varName: lStr,
-                    act: { key: 'default', value: String(input.number) },
+                    act: { key: 'default', value: String(node.number) },
                   });
                   break;
                 }
-                case '+': input.number = lNum + rNum; break;
-                case '-': input.number = lNum - rNum; break;
+                case '+': node.number = lNum + rNum; break;
+                case '-': node.number = lNum - rNum; break;
                 // Ternary '?' handled earlier.
                 // Also arises in test expressions.
                 case '=': {// Assign.
-                  input.number = rNum;
+                  node.number = rNum;
                   vs.assignVar(pid, {
                     integer: true,
                     varName: lStr,
-                    act: { key: 'default', value: String(input.number) },
+                    act: { key: 'default', value: String(node.number) },
                   });                  
                   // true <=> assigned value non-zero.
                   // exitCode = Number.isInteger(this.value) && this.value ? 0 : 1;
                   break;
                 }
-                case '%': input.number = lNum % rNum; break;
-                case '^': input.number = lNum ^ rNum; break;
-                case ',': input.number = rNum; break;
-                case '/': input.number = Math.floor(lNum / rNum); break;
+                case '%': node.number = lNum % rNum; break;
+                case '^': node.number = lNum ^ rNum; break;
+                case ',': node.number = rNum; break;
+                case '/': node.number = Math.floor(lNum / rNum); break;
                 /**
                  * TODO
                  */
                 default: {
                   // yield this.exit(2, `${def.symbol}: unrecognised binary arithmetic symbol`);
                   // return;
-                  throw new ShError(`${input.Op}: unrecognised binary arithmetic symbol`, 2);
+                  throw new ShError(`${node.Op}: unrecognised binary arithmetic symbol`, 2);
                 }
               }
+
+              node.exitCode = node.number ? 0 : 1;
             }
           }),
         );
       }
       case 'ParenArithm': {
-        return this.ArithmExpr(input.X);
+        return this.ArithmExpr(node.X);
       }
       case 'UnaryArithm': {
         return of(null).pipe(
@@ -164,57 +159,54 @@ class TranspileShService {
             /**
              * Unary.
              */
-            const child = input.X;
-            await ts.runArithmExpr(child); // Mutates input.num
-            const childNum = input.number!;
-            const childStr = input.string!;
+            const child = node.X;
+            await ts.runArithmExpr(child); // Mutates input.number
+            const childNum = node.number!;
+            const childStr = node.string!;
 
-            switch (input.Op) {
-              case '!': input.number = childNum ? 0 : 1; break;
-              case '~': input.number = ~childNum; break;
-              case '-': input.number = -childNum; break;
-              case '+': input.number = childNum; break;
+            switch (node.Op) {
+              case '!': node.number = childNum ? 0 : 1; break;
+              case '~': node.number = ~childNum; break;
+              case '-': node.number = -childNum; break;
+              case '+': node.number = childNum; break;
               case '++':
               case '--':
               {
-                switch (input.Op) {
-                  case '++': input.number = childNum + 1; break;
-                  case '--': input.number = childNum - 1; break;
-                  default: throw testNever(input.Op);
+                switch (node.Op) {
+                  case '++': node.number = childNum + 1; break;
+                  case '--': node.number = childNum - 1; break;
+                  default: throw testNever(node.Op);
                 }
                 vs.assignVar(pid, {
                   integer: true,
                   varName: childStr,
-                  act: { key: 'default', value: String(input.number) },
+                  act: { key: 'default', value: String(node.number) },
                 });
                 /**
                  * If unary operator is:
-                 * postfix: then exit 1 <=> error or prev value zero.
-                 * prefix: then exit 1 <=> error or next value zero.
+                 * - postfix: then exit 1 <=> error or prev value zero.
+                 * - prefix: then exit 1 <=> error or next value zero.
                  */
-                const exitCode = input.Post
+                node.exitCode = node.Post
                   ? (Number.isInteger(childNum) && childNum) ? 0 : 1
-                  : (Number.isInteger(input.number) && input.number) ? 0 : 1;
+                  : (Number.isInteger(node.number) && node.number) ? 0 : 1;
                 break;
               }
               default: {
-                throw new ShError(`${input.Op}: unsupported unary arithmetic symbol`, 2);
+                throw new ShError(`${node.Op}: unsupported unary arithmetic symbol`, 2);
               }
             }
           }),
         );
       }
       case 'Word': {
-        return this.Expand(input);
+        return this.Expand(node);
       }
-      default: throw testNever(input);
+      default: throw testNever(node);
     }
-    // TODO exit code?
   }
 
-  private ArrayExpr(
-    { Pos, End, Elems, Last, Lparen, Rparen }: Sh.ArrayExpr,
-  ): Observable<ArrayAssign> {
+  private ArrayExpr({ Elems }: Sh.ArrayExpr): Observable<ArrayAssign> {
     const pairs = Elems.map(({ Index, Value }) => ({
       key: Index ? this.ArithmExpr(Index) : null,
       value: this.Expand(Value),
@@ -223,29 +215,29 @@ class TranspileShService {
     return of(null).pipe(
       mergeMap(async function* () {
         for (const { key, value } of pairs) {
-          const keyResult = key ? await lastValueFrom(key) : null;
-          const valueResult = await lastValueFrom(value);
           yield {
-            key: keyResult ? keyResult.values.join(' ') : null,
-            value: valueResult.values.join(' '),
+            key: key ? (await lastValueFrom(key)).value : null,
+            value: (await lastValueFrom(value)).value,
           };
         }
       }),
+      // Combine all pairs into a single 'array-asgn' message
       reduce((agg, item) =>
         agg.pairs.push(item) as 1 && agg, act.arrayAsgn([])),
     );
   }
 
-  private Assign({ Name, Value, Append, Array: ArrayTerm, Index, Naked, meta }: Sh.Assign): Obs {
+  private Assign({
+    Name, Value, Append, Array: ArrayNode, Index, Naked,
+    meta, declOpts = {},
+  }: Sh.Assign): Observable<ProcessAct> {
     const { pid } = meta
-    const ts = this;
-    const declOpts: Partial<BaseAssignOpts> = {}; // TODO
     const varName = Name.Value;
 
-    if (ArrayTerm) {
+    if (ArrayNode) {
       return of(null).pipe(
         mergeMap(async function* () {
-          const { pairs } = await lastValueFrom(ts.ArrayExpr(ArrayTerm))
+          const { pairs } = await lastValueFrom(ts.ArrayExpr(ArrayNode));
 
           if (declOpts.associative) {
             /**
@@ -286,16 +278,12 @@ class TranspileShService {
       return of(null).pipe(
         mergeMap(async function* () {
           // Run index
-          const { values } = await lastValueFrom(ts.ArithmExpr(Index))
-          const index = values.join(' ');
-          /**
-           * Unsure if naked is possible here.
-           * If {x[i]=} then no def.value so use ''.
-           */
+          const { value: index } = await lastValueFrom(ts.ArithmExpr(Index))
+          // Unsure if naked is possible here
+          // If {x[i]=} then no def.value so use ''.
           const value = Naked ? undefined
-            : Value ? (await lastValueFrom(ts.Expand(Value))).values.join(' ')
+            : Value ? (await lastValueFrom(ts.Expand(Value))).value
             : '';
-
           vs.assignVar(pid, { ...declOpts, varName, act: { key: 'item', index, value } });
         }),
       );
@@ -303,8 +291,7 @@ class TranspileShService {
       /**
        * `x=foo`, and also `declare -a x` and `declare -a x=foo`
        */
-      // NOTE this stream is actually empty
-      return of(null).pipe(
+      return of(null).pipe(// NOTE this stream is always empty
         mergeMap(async function* () {
           /**
            * Naked if e.g. declare -i x.
@@ -333,15 +320,15 @@ class TranspileShService {
     }
   }
 
-  private CallExpr(
-    Cmd: null | Sh.CallExpr,
-    extend: CommandExtension,
-  ): Obs {
+  /**
+   * TODO
+   */
+  private CallExpr(node: null | Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
     const { Redirs, background, negated } = extend;
     const ts = this;
 
-    if (Cmd) {
-      const { Assigns, Args } = Cmd;
+    if (node) {
+      const { Assigns, Args } = node;
 
       return of(null).pipe(
         mergeMap(async function* () {
@@ -399,21 +386,21 @@ class TranspileShService {
    * Construct a simple command (CallExpr), or compound command.
    */
   private Command(
-    Cmd: null | Sh.Command,
+    node: null | Sh.Command,
     extend: CommandExtension,
-  ): Obs {
-    if (!Cmd || Cmd.type === 'CallExpr') {// Simple command
-      return this.CallExpr(Cmd, extend);
+  ): Observable<ProcessAct> {
+    if (!node || node.type === 'CallExpr') {// Simple command
+      return this.CallExpr(node, extend);
     }
 
     // Compound command
     const ts = this;
     return of(null).pipe(
       mergeMap(async function*() {
-        let cmd: Obs = null as any;
+        let cmd: Observable<ProcessAct> = null as any;
     
-        switch (Cmd.type) {
-          case 'ArithmCmd': cmd = ts.ArithmCmd(Cmd); break;
+        switch (node.type) {
+          case 'ArithmCmd': cmd = ts.ArithmCmd(node); break;
           // case 'BinaryCmd': child = this.BinaryCmd(Cmd); break;
           // case 'Block': child = this.Block(Cmd); break;
           // case 'CaseClause': child = this.CaseClause(Cmd); break;
@@ -440,7 +427,7 @@ class TranspileShService {
         const { Redirs, background, negated } = extend;
         if (background) {
           // yield* this.runInBackground(dispatch, processKey);
-          ps.setExitCode(Cmd.meta.pid, 0);
+          ps.setExitCode(node.meta.pid, 0);
         } else {
           // TODO apply/remove redirections
           const redirects = Redirs.map((x) => ts.Redirect(x));
@@ -461,10 +448,8 @@ class TranspileShService {
 
   private Expand({ Parts }: Sh.Word): Observable<Expanded> {
     /**
-     * TODO
-     * - expand parts in sequence, forwarding messages
-     * - aggregate their output via `reduce`, compute values
-     * - emit transform as same message type for later processing
+     * TODO rewrite using mergeMap style, aggregating parts
+     * using special method.
      */
     if (Parts.length > 1) {
       return from(Parts).pipe(
@@ -484,11 +469,11 @@ class TranspileShService {
     return this.ExpandPart(Parts[0]);
   }
 
-  private ExpandPart(input: Sh.WordPart): Observable<Expanded> {
+  private ExpandPart(node: Sh.WordPart): Observable<Expanded> {
     const ts = this;
-    switch (input.type) {
+    switch (node.type) {
       case 'ArithmExp': {
-        return this.ArithmExp(input);
+        return this.ArithmExp(node);
       }
       // case 'CmdSubst': {
       //   const { Pos, End, StmtList, Left, Right } = input;
@@ -521,10 +506,10 @@ class TranspileShService {
         return of(act.expanded([''])); // TODO
       }
       case 'Lit': {
-        return of(act.expanded(expand.literal(input)));
+        return of(act.expanded(expand.literal(node)));
       }
       case 'ParamExp': {
-        return this.ParamExp(input);
+        return this.ParamExp(node);
       }
       // case 'ProcSubst': {
       //   const { Pos, End, StmtList, Op, Rparen } = input;
@@ -543,24 +528,23 @@ class TranspileShService {
       //   });
       // }
       case 'SglQuoted': {
-        return of(act.expanded(expand.singleQuotes(input)));
+        return of(act.expanded(expand.singleQuotes(node)));
       }
       // default: throw testNever(input);
       default:
-        throw Error(`${input.type} unimplemented`);
+        throw Error(`${node.type} unimplemented`);
     }
   }
 
-  private File({ StmtList }: Sh.File): Obs {
+  private File({ StmtList }: Sh.File): Observable<ProcessAct> {
     return from(StmtList.Stmts).pipe(
       concatMap(x => this.Stmt(x)),
     );
   }
 
-  private ParamExp(input: Sh.ParamExp): Observable<Expanded> {
-    const def = this.toParamDef(input);
-    const { pid } = input.meta;
-    // console.log({ paramExp: input, def });
+  private ParamExp(node: Sh.ParamExp): Observable<Expanded> {
+    const def = this.transpileParam(node);
+    const { pid } = node.meta;
 
     if (def.parKey === ParamType.special) {
       /**
@@ -630,13 +614,12 @@ class TranspileShService {
         }
       }());
     };
-
     /**
      * other parameters.
      */
     return of(null).pipe(
       mergeMap(async function* () {
-        const index = def.index ? (await lastValueFrom(def.index)).values.join(' ') : null;
+        const index = def.index ? (await lastValueFrom(def.index)).value : null;
         const varValue = vs.lookupVar(pid, def.param);
         const paramValues = vs.getVarValues(index, varValue);
 
@@ -646,7 +629,7 @@ class TranspileShService {
            */
           case ParamType.case: {
             const { all, to, pattern } = def;
-            let re = /^.$/;// Pattern defaults to '?'.
+            let re = /^.$/;// Pattern defaults to '?'
     
             if (pattern) {// Evaluate pattern and convert to RegExp
               const values = await lastValueFrom(pattern.pipe(
@@ -681,9 +664,7 @@ class TranspileShService {
               case '-':
               case '=': {
                 if (applies) {
-                  yield act.expanded(alt
-                    ? (await lastValueFrom(alt)).values.join(' ')
-                    : '');
+                  yield act.expanded(alt ? (await lastValueFrom(alt)).value : '');
                   if (symbol === '=') {// Additionally assign to param
                     vs.assignVar(pid, { varName: def.param, act: { key: 'default', value: paramValues.join('') } });
                   }
@@ -694,9 +675,9 @@ class TranspileShService {
               }
               case '?': {
                 if (applies) {
-                  input.exitCode = 1;
+                  node.exitCode = 1;
                   return alt
-                    ? ps.warn(pid, (await lastValueFrom(alt)).values.join(' '))
+                    ? ps.warn(pid, (await lastValueFrom(alt)).value)
                     : ps.warn(pid, `${def.param}: required but unset or null.`);
                 } else {
                   yield act.expanded(paramValues.join(''));
@@ -706,7 +687,7 @@ class TranspileShService {
               case '+': {
                 yield act.expanded(applies || !alt
                   ? ''
-                  : (await lastValueFrom(alt)).values.join(' '));
+                  : (await lastValueFrom(alt)).value);
                 break;
               }
               default: throw testNever(symbol);
@@ -779,29 +760,26 @@ class TranspileShService {
             yield act.expanded(paramValues.join(''));
             break;
           }
-          // /**
-          //  * remove:
-          //  *   prefix: ${x#y} or ${x##y}.
-          //  *   suffix: ${x%y} or ${x%%y}.
-          //  */
-          // case ParamType.remove: {
-          //   const { dir, greedy } = def;
-    
-          //   if (def.pattern) {
-          //     // Evaluate pattern, convert to RegExp.
-          //     const { pattern } = def;
-          //     yield* this.runChild({ child: pattern, ...base });
-          //     const baseRe = (globrex(pattern.value, { extended: true }).regex as RegExp)
-          //       .source.slice(1, -1);// Sans ^ and $.
-          //     // Match largest/smallest prefix/suffix.
-          //     const regex = new RegExp(dir === 1
-          //       ? (greedy ? `^${baseRe}.*` : `^${baseRe}.*?`)
-          //       : (greedy ? `.*${baseRe}$` : `.*?${baseRe}$`));
-          //     // Remove matching.
-          //     this.value = paramValues.join('').replace(regex, '');
-          //   }
-          //   break;
-          // }
+          /**
+           * remove:
+           * - prefix: ${x#y} or ${x##y}.
+           * - suffix: ${x%y} or ${x%%y}.
+           */
+          case ParamType.remove: {
+            if (def.pattern) {
+              // Evaluate pattern, convert to RegExp.
+              const { value } = await lastValueFrom(def.pattern);
+              const baseRe = (globrex(value, { extended: true }).regex as RegExp)
+                .source.slice(1, -1);// Sans ^ and $.
+              // Match largest/smallest prefix/suffix.
+              const regex = new RegExp(def.dir === 1
+                ? (def.greedy ? `^${baseRe}.*` : `^${baseRe}.*?`)
+                : (def.greedy ? `.*${baseRe}$` : `.*?${baseRe}$`));
+              // Remove matching.
+              yield act.expanded(paramValues.join('').replace(regex, ''));
+            }
+            break;
+          }
           // /**
           //  * replace: ${parameter/pattern/string}.
           //  * We support 'replace all' via //.
@@ -809,9 +787,9 @@ class TranspileShService {
           //  */
           case ParamType.replace: {
             const { all, orig, with: With } = def;
-            const origValue = (await lastValueFrom(orig)).values.join(' ');
+            const origValue = (await lastValueFrom(orig)).value;
             const subst = With
-              ? (await lastValueFrom(With)).values.join(' ')
+              ? (await lastValueFrom(With)).value
               : '';
             const regex = new RegExp(origValue, all ? 'g' : '');
             yield act.expanded(paramValues.join('').replace(regex, subst));
@@ -880,14 +858,14 @@ class TranspileShService {
     );
   }
 
-  private Redirect(input: Sh.Redirect): Obs {
+  private Redirect(node: Sh.Redirect): Observable<ProcessAct> {
     /**
      * TODO
      */
     return of(act.unimplemented());
   }
 
-  private Stmt({ Negated, Background, Redirs, Cmd }: Sh.Stmt): Obs {
+  private Stmt({ Negated, Background, Redirs, Cmd }: Sh.Stmt): Observable<ProcessAct> {
     return this.Command(Cmd, {
       Redirs,
       background: Background,
@@ -896,8 +874,8 @@ class TranspileShService {
   }
 
   /** ArithmExpr sans Word */
-  private isArithmOp(term: Sh.ParsedSh): term is Exclude<Sh.ArithmExpr, Sh.Word> {
-    return !!(arithmOp as Record<string, true>)[term.type];
+  private isArithmOp(node: Sh.ParsedSh): node is Exclude<Sh.ArithmExpr, Sh.Word> {
+    return !!(arithmOp as Record<string, true>)[node.type];
   }
 
   private isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
@@ -916,29 +894,32 @@ class TranspileShService {
     return null;
   }
 
-  private isWordPart(term: Sh.ParsedSh): term is Sh.WordPart {
-    return !!(wordPart as Record<string, true>)[term.type];
+  private isWordPart(node: Sh.ParsedSh): node is Sh.WordPart {
+    return !!(wordPart as Record<string, true>)[node.type];
   }
   
-  private async runArithmExpr(term: Sh.ExpandType) {
-    if (this.isWordPart(term)) {
-      await awaitEnd(this.ExpandPart(term));
+  /**
+   * Sets node.parent.{string,number}.
+   */
+  private async runArithmExpr(node: Sh.ExpandType) {
+    if (this.isWordPart(node)) {
+      await awaitEnd(this.ExpandPart(node));
     } else {
-      await awaitEnd(this.ArithmExpr(term)); 
+      await awaitEnd(this.ArithmExpr(node)); 
     }
 
-    const textValue = term.string!;
+    const textValue = node.string!;
     let value = parseInt(textValue);
     if (Number.isNaN(value)) {// Try looking up variable
-      const varValue = vs.expandVar(term.meta.pid, textValue);
+      const varValue = vs.expandVar(node.meta.pid, textValue);
       value = parseInt(varValue) || 0;
     }
     // Propagate string and evaluated number upwards
-    (term.parent! as Sh.BaseNode).string = textValue;
-    (term.parent! as Sh.BaseNode).number = value;
+    (node.parent! as Sh.BaseNode).string = textValue;
+    (node.parent! as Sh.BaseNode).number = value;
   }
 
-  private toParamDef({
+  private transpileParam({
     Excl, Exp, Index, Length, Names, Param, Repl, Short, Slice,
   }: Sh.ParamExp) {
     let def = null as null | ParameterDef<Observable<Expanded>, Observable<Expanded>>;
@@ -1070,3 +1051,5 @@ const wordPart = {
 
 
 export const transpileSh = new TranspileShService;
+
+const ts = transpileSh; // Local shortcut

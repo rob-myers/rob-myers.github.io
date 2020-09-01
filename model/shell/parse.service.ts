@@ -1,6 +1,7 @@
 import Sh, { syntax } from 'mvdan-sh';
 import cloneWithRefs from 'lodash.clonedeep';
 import { withParents } from './parse.util';
+import { BaseAssignOpts } from './var.model';
 // console.log({ Sh });
 
 /**
@@ -177,6 +178,7 @@ class ParseShService {
     Naked,
     Name: this.Lit(Name),
     Value: Value ? this.Word(Value) : Value,
+    declOpts: {},
   });
 
   private BinaryArithm = (
@@ -848,13 +850,17 @@ export interface BaseNode {
   meta: FileMeta; // Single instance for entire tree
   /** Reference to parent node  */
   parent: null | ParsedSh;
+
   /** Used for test expansion */
   boolean?: boolean;
   /** Used for arithmetic expansion */
   number?: number;
   /** Used for arithmetic/boolean expansion */
   string?: string;
+  /** Used to calculate actual exit codes */
   exitCode?: number;
+  /** Used by Assign nodes only */
+  declOpts?: Partial<BaseAssignOpts>;
 }
 
 export type ParsedSh = (
@@ -922,6 +928,7 @@ export type ArithmExpr =
 | Word
 export type ArrayExpr = Sh.ArrayExprGeneric<BaseNode, Pos, string>
 export type Assign = Sh.AssignGeneric<BaseNode, Pos, string>
+
 export type BinaryArithm = Sh.BinaryArithmGeneric<BaseNode, Pos, string>
 export type BinaryCmd = Sh.BinaryCmdGeneric<BaseNode, Pos, string>
 export type BinaryTest = Sh.BinaryTestGeneric<BaseNode, Pos, string>
