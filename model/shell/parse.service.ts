@@ -72,10 +72,12 @@ class ParseShService {
     return { incomplete, parsed };
   }
 
+  /**
+   * Clone creates completely fresh tree, sharing internal refs as before.
+   * In particular, every node has the same node.meta.
+   */
   public clone(parsed: FileWithMeta): FileWithMeta {
-    const cloned = cloneWithRefs(parsed);
-    Object.assign(cloned.meta, getMockMeta());
-    return cloned;
+    return cloneWithRefs(parsed);
   }
 
   /**
