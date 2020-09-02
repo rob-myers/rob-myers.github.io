@@ -179,7 +179,7 @@ export class VarService {
    * Apply x=y (or x+=y) to process variable v
    * where x is {v.name} and y is {value}.
    */
-  public assignVarDefault(v: ProcessVar, value: string): void {
+  assignVarDefault(v: ProcessVar, value: string): void {
     switch (v.key) {
       case 'integer[]': {
         if (v.value) v.value[0] = parseInt(value) || 0;
@@ -226,7 +226,7 @@ export class VarService {
    * Apply v[key]=value to process variable {v}.
    * We support declare v[key], where the value is undefined.
    */
-  public assignVarItem(
+  assignVarItem(
     v: ProcessVar,
     key: string,
     value?: string,
@@ -401,7 +401,7 @@ export class VarService {
    * Given current variable type {prevKey} and whether desire integer-based,
    * return new type after assignment x=foo.
    */
-  public getDefaultVarKey(
+  getDefaultVarKey(
     prevKey: ProcessVar['key'],
     /** Want integer-based type? */
     integer: boolean,
