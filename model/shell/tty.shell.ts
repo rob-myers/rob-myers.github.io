@@ -32,9 +32,6 @@ export class TtyShell {
     public canonicalPath: string,
   ) {}
   
-  /**
-   * TODO prevent re-initialise
-   */
   initialise(xterm: TtyXterm) {
     this.xterm = xterm;
     this.set = useStore.getState().api.set;
@@ -43,9 +40,11 @@ export class TtyShell {
     this.incoming.subscribe(this.onMessage.bind(this));
     this.xterm.io.registerReader(this.incoming);
     
-    this.set(({ ofd }) => ({
+    const { canonicalPath } = xterm.def;
+    this.set(({ ofd, fs }) => ({
       // e.g. /dev/tty-1 actually determines an open file description
-      ofd: addToLookup(createOfd(`${xterm.def.canonicalPath}`, xterm.io), ofd),
+      ofd: addToLookup(createOfd(canonicalPath, xterm.io), ofd),
+      fs: addToLookup({ key: canonicalPath, stream: xterm.io }, fs),
     }));
 
     this.prompt('$ ');

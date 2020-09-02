@@ -25,6 +25,8 @@ export interface State {
   proc: KeyedLookup<Process>;
   /** Opened files are registered here */
   ofd: KeyedLookup<OpenFileDescription>;
+  /** Global file system */
+  fs: KeyedLookup<FsFile>;
 
   readonly api: {
     createSession: (alias: string) => void;
@@ -73,6 +75,11 @@ export interface Process {
   lastBgPid: null | number;
 }
 
+interface FsFile {
+  key: string;
+  stream: ShellStream<any, any>;
+}
+
 const useStore = create<State>(devtools((set, get) => {
   const devNull = new ShellStream({ readable: new Subject, writable: new Subject });
 
@@ -84,6 +91,7 @@ const useStore = create<State>(devtools((set, get) => {
     proc: {},
     // We're using /dev/null to identify an open file description
     ofd: addToLookup(createOfd('/dev/null', devNull), {} as State['ofd']),
+    fs: addToLookup({ key: '/dev/null', stream: devNull }, {} as State['fs']),
     api: {
       createSession: (alias) => {
         const { toSessionKey, nextTtyId: ttyId } = get();
@@ -106,6 +114,7 @@ const useStore = create<State>(devtools((set, get) => {
           }, session),
           nextProcId: nextProcId + 1,
           nextTtyId: nextTtyId + 1,
+          // fs: addToLookup({ key: canonicalPath, stream: ttyShell.xterm.io }, fs),
         }));
 
         processService.createLeadingProcess(sessionKey);
@@ -116,9 +125,10 @@ const useStore = create<State>(devtools((set, get) => {
          * - stop/remove descendent processes
          * - remove any orphan ofds
          */
-        set(({ session, toSessionKey: { [alias]: sessionKey, ...rest } }) => ({
+        set(({ session, toSessionKey: { [alias]: sessionKey, ...rest }, fs }) => ({
           session: removeFromLookup(sessionKey, session),
           toSessionKey: { ...rest },
+          fs: removeFromLookup(session[sessionKey]?.ttyShell.canonicalPath, fs),
         }));
       },
       set,
