@@ -1,11 +1,12 @@
 import { PerspectiveCamera } from 'three';
-import { useRef, useEffect } from 'react';
+import { useRef, useMemo } from 'react';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
-import Grid from './grid';
-import css from './3d.scss';
 import { getWindow } from '@model/dom.model';
+import { Coord3 } from '@model/three/three.model';
+import Grid from './grid';
 import Room from './room';
+import css from './3d.scss';
 
 // See types/react-three-fiber/three-types.d.ts
 extend({ PanZoomControls });
@@ -19,11 +20,8 @@ const CameraControls: React.FC = () => {
 
 const Env: React.FC<Props> = ({ high }) => {
   const level = useRef<THREE.Group>(null);
-
-  useEffect(() => {
-    level.current?.scale.set(1, 1, high ? 3 : 1);
-  }, [high]);
-
+  const scale = useMemo(() => [1, 1, high ? 3 : 1] as Coord3, [high]);
+  
   return (
     <div
       className={css.root}
@@ -43,7 +41,7 @@ const Env: React.FC<Props> = ({ high }) => {
         
         <Grid />
 
-        <group ref={level}>
+        <group ref={level} scale={scale}>
           <Room is="closet" at={[-4, 0]} high />
           <Room is="junction" />
           <Room is="closet" at={[4, 0]} w />

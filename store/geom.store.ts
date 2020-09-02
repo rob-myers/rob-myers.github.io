@@ -87,7 +87,7 @@ const useStore = create<State>(devtools((set, get) => ({
       // console.log({ key: room.name, floor, wallTris })
       const wallsPoly = geom.union(wallTris);
 
-      const outsetAmount = 0.4;
+      const outsetAmount = 0.3;
       const navigablePoly = geom.cutOut(
         wallsPoly.flatMap(x => geom.outset(x, outsetAmount)),
         [Geom.Polygon.fromRect(floor)],
