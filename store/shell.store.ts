@@ -4,12 +4,13 @@ import { Subscription, Subject } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
 import { OpenFileDescription, createOfd } from '@model/shell/file.model';
-import { SigEnum, FromFdToOpenKey } from '@model/shell/process.model';
+import { FromFdToOpenKey } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
 import { ToProcVar } from '@model/shell/var.model';
 import { processService } from '@model/shell/process.service';
 import { ShellStream } from '@model/rxjs/shell.stream';
 import { varService } from '@model/shell/var.service';
+import { fileService } from '@model/shell/file.service';
 import { addToLookup, removeFromLookup } from './store.util';
 
 export interface State {
@@ -123,7 +124,7 @@ const useStore = create<State>(devtools((set, get) => {
         /**
          * TODO
          * - stop/remove descendent processes
-         * - remove any orphan ofds
+         * - remove orphan ofds
          */
         set(({ session, toSessionKey: { [alias]: sessionKey, ...rest }, fs }) => ({
           session: removeFromLookup(sessionKey, session),
@@ -142,3 +143,4 @@ export default useStore;
 // Must invoke after default export
 processService.initialise();
 varService.initialise();
+fileService.initialise();
