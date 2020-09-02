@@ -5,11 +5,15 @@ import globrex from 'globrex';
 import { awaitEnd } from '@model/rxjs/rxjs.util';
 import * as Sh from '@model/shell/parse.service';
 import { testNever, last } from '@model/generic.model';
+import { FsFile } from '@store/shell.store';
 import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
 import { expandService as expand, expandService } from './expand.service';
 import { ParamType, ParameterDef } from './parameter.model';
 import { varService as vs } from './var.service';
 import { processService as ps } from './process.service';
+import { fileService as fs } from './file.service';
+import { builtinService as bs } from './builtin.service';
+import { NamedFunction } from './var.model';
 
 class TranspileShService {
 
@@ -325,18 +329,27 @@ class TranspileShService {
     return of(null).pipe(
       mergeMap(async function* () {
         const args = await ts.performShellExpansion(node.Args);
-        console.log('args', args)
-
+        console.log('args', args);
+        
         if (args.length) {
-          /**
-           * TODO: invoke function, run builtin or run script
-           */
-        } else {
-          // Assign vars in this process
+          // Run builtin, run script or invoke function
+          let file: FsFile | null, func: NamedFunction;
+          const { pid } = node.meta;
+
+          if (bs.isBuiltinCommand(args[0])) {
+            await bs.runBuiltin(args[0]);
+          } else if (file = fs.resolvePath(pid, args[0])) {
+            await ps.runScript(pid, file);
+          } else if (func = vs.getFunction(pid, args[0])) {
+            await vs.invokeFunction(pid, func);
+          } else {
+            throw new ShError(`${args[0]}: unrecognised command`, 1);
+          }
+        } else {// Assign vars in this process
           await ts.assignVars(node, extend.Redirs);
         }
 
-        return act.expanded([]);
+        // return act.expanded([]);
       })
     );
   }
@@ -352,8 +365,7 @@ class TranspileShService {
       // We don't support pure redirections
       return throwError(new ShError(`simple commands without args or assigns are unsupported`, 2));
     } else if (node.type === 'CallExpr') {
-      // Simple command
-      return this.CallExpr(node, extend);
+      return this.CallExpr(node, extend); // Simple command
     }
     // Compound command
     return of(null).pipe(
@@ -411,9 +423,10 @@ class TranspileShService {
     if (Parts.length > 1) {
       return of(null).pipe(
         mergeMap(async function*() {
-          // Compute each part, mutating each wordPart
+          // Compute each part, storing flat result in node
           for (const wordPart of Parts) {
-            await awaitEnd(ts.ExpandPart(wordPart));
+             const { value } = await lastValueFrom(ts.ExpandPart(wordPart));
+             wordPart.string = value;
           }
           /*
           * Is the last value computed via a parameter/command-expansion,
@@ -425,7 +438,7 @@ class TranspileShService {
           for (const { type, string } of Parts) {
             const value = string!;
             if (type === 'ParamExp' || type === 'CmdSubst') {
-              const vs = expandService.normalizeWhitespace(value, false);// Do not trim.
+              const vs = expandService.normalizeWhitespace(value!, false);// Do not trim.
               // console.log({ value, vs });
               if (!vs.length) {
                 continue;
