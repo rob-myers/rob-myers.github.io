@@ -1,5 +1,5 @@
 import { PerspectiveCamera } from 'three';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
 import Grid from './grid';
@@ -17,7 +17,13 @@ const CameraControls: React.FC = () => {
   return <panZoomControls ref={controls} args={[camera, domElement]} />;
 };
 
-const Env: React.FC = () => {
+const Env: React.FC<Props> = ({ high }) => {
+  const level = useRef<THREE.Group>(null);
+
+  useEffect(() => {
+    level.current?.scale.set(1, 1, high ? 3 : 1);
+  }, [high]);
+
   return (
     <div
       className={css.root}
@@ -37,22 +43,26 @@ const Env: React.FC = () => {
         
         <Grid />
 
-        <Room is="closet" at={[-4, 0]} />
-        <Room is="closet" at={[8, 0]} w />
-        <group position={[0, -4, 0]}>
-          <Room is="closet" at={[-4, 0]} />
-          <Room is="closet" at={[8, 0]} w />
+        <group ref={level}>
+          <Room is="closet" at={[-4, 0]} high />
+          <Room is="junction" />
+          <Room is="closet" at={[4, 0]} w />
+          
+          <Room is="fourway" at={[0, -4]} />
+          <Room is="corner" at={[-4, -4]} n />
+          <Room is="straight" at={[4, -4]} />
+          
+          <Room is="straight" at={[0, -8]} s />
         </group>
-        <Room is="junction" />
-        <Room is="junction" at={[4, 0]} />
-        <Room is="fourway" at={[0, -4]} />
-        <Room is="fourway" at={[4, -4]} />
-        <Room is="straight" at={[0, -8]} n />
-        <Room is="straight" at={[4, -8]} n />
+
 
       </Canvas>
     </div>
   );
 };
+
+interface Props {
+  high: boolean;
+}
 
 export default Env;

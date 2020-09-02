@@ -6,7 +6,7 @@ import { Coord3 } from "@model/three/three.model";
 const undoGltfRotation = [Math.PI/2, 0, 0] as Coord3;
 
 const Room: React.FC<Props> = (props) => {
-  const { is, at = [0, 0] } = props;
+  const { is, at = [0, 0], high } = props;
   const meta = useStore(({ rooms }) => rooms[is]);
   const api = useStore(({ api }) => api);
   const group = useRef<THREE.Group>(null);
@@ -24,10 +24,8 @@ const Room: React.FC<Props> = (props) => {
     }
   }, [meta]);
 
-
   const angle = propsToAngle(props);
-  useEffect(() =>
-    void (group.current!.rotation.y = angle), [angle]);
+  useEffect(() => void (group.current!.rotation.y = angle), [angle]);
 
   return (
     <group
@@ -49,6 +47,7 @@ function propsToAngle(props: Props) {
 type Props = {
   is: string;
   at?: [number, number];
+  high?: boolean;
 } & (
   | { e?: boolean }
   | { s?: boolean }

@@ -9,7 +9,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can query polyanya and display navpath
 
-- [ ] tops of walls autoscaled, no need in blender
+- [x] tops of walls autoscaled, no need in blender
 
 - [x] terminal has 'listening process' which:
   > continually attempts to read/parse tty input
