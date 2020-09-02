@@ -1,8 +1,9 @@
 import { testNever, mapValues, isStringInt } from "@model/generic.model";
 import useStore, { State as ShellState, Process } from '@store/shell.store';
 import { updateLookup } from "@store/store.util";
-import { ProcessVar, BasePositionalVar, AssignVarBase, VarFlags } from "./var.model";
+import { ProcessVar, BasePositionalVar, AssignVarBase, VarFlags, NamedFunction } from "./var.model";
 import { ShError } from "./transpile.service";
+import { parseSh } from "./parse.service";
 
 export class VarService {
   private set!: ShellState['api']['set'];
@@ -282,6 +283,14 @@ export class VarService {
     }
   }
 
+  /** Clone a function for use inside current process */
+  cloneFunc(func: NamedFunction): NamedFunction {
+    return {
+      ...func,
+      node: parseSh.clone(func.node),
+    };
+  }
+
   cloneVar(input: ProcessVar): ProcessVar {
     switch (input.key) {
       case 'integer': 
@@ -443,6 +452,10 @@ export class VarService {
     } 
   }
 
+  getFunction(pid: number, functionName: string) {
+    return this.getProcess(pid).toFunc[functionName] || null
+  }
+
   getPositionals(pid: number) {
     const { nestedVars } = this.getProcess(pid)
     /**
@@ -487,6 +500,13 @@ export class VarService {
         : [String(value[index || 0])];
     }
     return [String(value)];
+  }
+
+  async invokeFunction(pid: number, func: NamedFunction) {
+    /**
+     * TODO
+     */
+    console.log(`TODO invoke function ${func.key}`);
   }
 
   isVarKeyNumeric(

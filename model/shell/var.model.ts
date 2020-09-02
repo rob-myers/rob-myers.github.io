@@ -1,4 +1,4 @@
-import { ExpandType } from "./parse.service";
+import { FileWithMeta } from "./parse.service";
 
 export type ToProcVar = Record<string, ProcessVar>;
 
@@ -72,4 +72,20 @@ export interface VarFlags {
    * null iff should not transform.
    */
   to: null | 'lower' | 'upper';
+}
+
+/**
+ * A variable and a function may have the same name.
+ */
+export interface NamedFunction {
+  /** Function name. */
+  key: string;
+  /** Function definition. */
+  node: FileWithMeta;
+  /** Export function to child processes? */
+  exported: boolean;
+  /** Is this function readonly? */
+  readonly: boolean;
+  /** The source code of the body of the function, e.g. `{ echo foo; }` */
+  src: null | string;
 }

@@ -6,7 +6,7 @@ import { TtyShell } from '@model/shell/tty.shell';
 import { OpenFileDescription, createOfd } from '@model/shell/file.model';
 import { FromFdToOpenKey } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
-import { ToProcVar } from '@model/shell/var.model';
+import { ToProcVar, NamedFunction } from '@model/shell/var.model';
 import { processService } from '@model/shell/process.service';
 import { ShellStream } from '@model/rxjs/shell.stream';
 import { varService } from '@model/shell/var.service';
@@ -72,11 +72,12 @@ export interface Process {
    * - Thus to get positional parameters find 1st scope with 0.
    */
   nestedVars: ToProcVar[];
+  toFunc: Record<string, NamedFunction>;
   lastExitCode: null | number;
   lastBgPid: null | number;
 }
 
-interface FsFile {
+export interface FsFile {
   key: string;
   stream: ShellStream<any, any>;
 }

@@ -1,4 +1,4 @@
-import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
+import useStore, { State as ShellState, Session, Process, FsFile } from '@store/shell.store';
 import { FileWithMeta, parseSh, FileMeta, ParsedSh } from './parse.service';
 import { transpileSh } from './transpile.service';
 import { addToLookup, updateLookup } from '@store/store.util';
@@ -61,6 +61,7 @@ export class ProcessService {
           PWD: { key: 'string', varName: 'PWD', value: '/root', exported: true, readonly: false, to: null },
           PATH: { key: 'string', varName: 'PATH', value: '/bin', exported: true, readonly: false, to: null },
         }],
+        toFunc: {},
         lastExitCode: null,
         lastBgPid: null,
       }, proc),
@@ -77,7 +78,7 @@ export class ProcessService {
     // Must mutate to affect all descendents
     Object.assign<FileMeta, FileMeta>(parsed.meta, { pid, sessionKey, sid });
 
-    const { fdToOpenKey, nestedVars } = this.getProcess(parentPid);
+    const { fdToOpenKey, nestedVars, toFunc } = this.getProcess(parentPid);
 
     this.set(({ proc, nextProcId }) => ({
       proc: addToLookup({
@@ -91,6 +92,8 @@ export class ProcessService {
         nestedRedirs: [{ ...fdToOpenKey }],
         nestedVars: nestedVars.map(fdToOpenKey =>
           mapValues(fdToOpenKey, v => varService.cloneVar(v))),
+        toFunc: mapValues(toFunc,
+          (func) => varService.cloneFunc(func)),
         lastExitCode: null,
         lastBgPid: null,
       }, proc),
@@ -199,6 +202,13 @@ export class ProcessService {
         })),
       }))
     });
+  }
+
+  async runScript(pid: number, file: FsFile) {
+    /**
+     * TODO can run regular files
+     */
+    console.log(`TODO: run script ${file.key}`);
   }
 
   setExitCode(pid: number, code: number) {
