@@ -4,6 +4,7 @@ import { transpileSh } from './transpile.service';
 import { addToLookup, updateLookup } from '@store/store.util';
 import { mapValues } from '@model/generic.model';
 import { varService } from './var.service';
+import { FromFdToOpenKey } from './process.model';
 
 export class ProcessService {
   
@@ -11,6 +12,22 @@ export class ProcessService {
 
   initialise() {
     this.set = useStore.getState().api.set;
+  }
+
+  closeFd(opts: {
+    fromFd: FromFdToOpenKey;
+    /** File descriptor. */
+    fd: number;
+    /** Current open file description state. */
+    ofd: ShellState['ofd'];
+    /** Warn if open file description non-existent? */
+    warnNonExist?: boolean;
+  }) {
+    /**
+     * TODO decrement open file description,
+     * and remove when numLinks is zero.
+     */
+    return { ...opts.ofd };
   }
 
   /**
@@ -38,7 +55,12 @@ export class ProcessService {
         subscription: null, // We'll never actually run it 
         fdToOpenKey,
         nestedRedirs: [{ ...fdToOpenKey }],
-        nestedVars: [],
+        nestedVars: [{
+          USER: { key: 'string', varName: 'USER', value: 'root', exported: true, readonly: false, to: null },
+          OLDPWD: { key: 'string', varName: 'OLDPWD', value: '/root', exported: true, readonly: false, to: null },
+          PWD: { key: 'string', varName: 'PWD', value: '/root', exported: true, readonly: false, to: null },
+          PATH: { key: 'string', varName: 'PATH', value: '/bin', exported: true, readonly: false, to: null },
+        }],
         lastExitCode: null,
         lastBgPid: null,
       }, proc),
@@ -112,6 +134,49 @@ export class ProcessService {
     return meta.pid === meta.sid;
   }
   
+  /**
+   * Remove deepest redirection scope in process.
+   */
+  popRedirectScope(pid: number) {
+    const { nestedRedirs } = this.getProcess(pid);
+    const [deepest, ...nextNestedRedirs] = nestedRedirs;
+    
+    this.set(({ ofd, proc }) => {
+      // Close anything opened explicitly in deepest scope
+      let nextOfd = ofd;
+      Object.keys(deepest).forEach((fd) =>
+        nextOfd = this.closeFd({ fd: Number(fd), fromFd: deepest, ofd: nextOfd }));
+      
+      // Recompute `fdToOpenKey`
+      const fdToOpenKey = nextNestedRedirs.slice().reverse().reduce(
+        (agg, item) => ({ ...agg, ...item }),
+        {} as Record<number, string>
+      );
+      return {
+        proc: updateLookup(`${pid}`, proc, () => ({
+          nestedRedirs: nextNestedRedirs,
+          fdToOpenKey,
+        })),
+        ofd: nextOfd,
+      }
+    });
+  }
+
+  /**
+   * Deepen redirection scope in process.
+   */
+  pushRedirectScope(pid: number) {
+    this.set(({ proc }) => ({
+      proc: updateLookup(`${pid}`, proc, ({ nestedRedirs }) => ({
+        /**
+         * Add fresh scope as 1st item.
+         * No need to recompute `fdToOpenKey`.
+         */
+        nestedRedirs: [{} as Record<number, string>].concat(nestedRedirs),
+      })),
+    }));
+  }
+
   /**
    * Run parsed code in session's leading process.
    */

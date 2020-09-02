@@ -1,5 +1,5 @@
-import { Observable, from, of, lastValueFrom } from 'rxjs';
-import { concatMap, reduce, tap, map, mergeMap, concatAll, flatMap, } from 'rxjs/operators';
+import { Observable, from, of, lastValueFrom, throwError } from 'rxjs';
+import { concatMap, reduce, tap, map, mergeMap, concatAll, flatMap, catchError, } from 'rxjs/operators';
 import globrex from 'globrex';
 
 import { awaitEnd } from '@model/rxjs/rxjs.util';
@@ -144,7 +144,6 @@ class TranspileShService {
                   throw new ShError(`${node.Op}: unrecognised binary arithmetic symbol`, 2);
                 }
               }
-
               node.exitCode = node.number ? 0 : 1;
             }
           }),
@@ -227,9 +226,6 @@ class TranspileShService {
         agg.pairs.push(...values.map(value => ({ key, value })));
         return agg;
       }, act.arrayAsgn([])),
-      tap(msg => {
-        console.log({ arrayExprResult: msg })
-      }),
     );
   }
 
@@ -286,16 +282,15 @@ class TranspileShService {
           // Run index
           const { value: index } = await lastValueFrom(ts.ArithmExpr(Index))
           // Unsure if naked is possible here
-          // If {x[i]=} then no def.value so use ''.
           const value = Naked ? undefined
-            : Value ? (await lastValueFrom(ts.Expand(Value))).value
-            : '';
+          : Value ? (await lastValueFrom(ts.Expand(Value))).value
+            : ''; // If {x[i]=} then no def.value so use ''
           vs.assignVar(pid, { ...declOpts, varName, act: { key: 'item', index, value } });
         }),
       );
     } else {
       /**
-       * `x=foo`, and also `declare -a x` and `declare -a x=foo`
+       * `x=foo` and also `declare -a x` and `declare -a x=foo`
        */
       return of(null).pipe(// NOTE this stream is always empty
         mergeMap(async function* () {
@@ -326,66 +321,24 @@ class TranspileShService {
     }
   }
 
-  /**
-   * TODO
-   */
-  private CallExpr(node: null | Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
-    const { Redirs, background, negated } = extend;
-    const ts = this;
+  private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
+    return of(null).pipe(
+      mergeMap(async function* () {
+        const args = await ts.performShellExpansion(node.Args);
+        console.log('args', args)
 
-    if (node) {
-      const { Assigns, Args } = node;
+        if (args.length) {
+          /**
+           * TODO: invoke function, run builtin or run script
+           */
+        } else {
+          // Assign vars in this process
+          await ts.assignVars(node, extend.Redirs);
+        }
 
-      return of(null).pipe(
-        mergeMap(async function* () {
-
-          await awaitEnd(from(Assigns).pipe(
-            concatMap(arg => ts.Assign(arg)),
-          ));
-
-          const args = Args.length
-            ? await lastValueFrom(from(Args).pipe(
-              concatMap(arg => ts.Expand(arg)),
-              reduce((agg, { values }) => agg.concat(values), [] as string[])))
-            : [];
-          console.log({ args });
-
-          return act.expanded([]);
-        })
-      );
-      // return new SimpleComposite({
-      //   key: CompositeType.simple,
-      //   assigns: Assigns.map((assign) => this.Assign(assign)),
-      //   redirects: Redirs.map((redirect) => this.Redirect(redirect)),
-      //   words: Args.map((arg) => this.Expand(arg)),
-      //   comments,
-      //   background,
-      //   negated,
-      //   sourceMap: this.sourceMap({ Pos, End },
-      //     // i.e. Position of words, excluding assigns & redirects.
-      //     { key: 'inner', pos: InnerPos, end: InnerEnd },
-      //     ...extra,
-      //   ),
-      // });
-    }
-    /**
-     * Redirects without command can have effects:
-     * - > out # creates blank file out
-     * - echo "$( < out)" # echos contents of out
-     */
-    return of(act.unimplemented());
-    // return new SimpleComposite({
-    //   key: CompositeType.simple,
-    //   assigns: [],
-    //   redirects: Redirs.map((redirect) => this.Redirect(redirect)),
-    //   words: [],
-    //   comments,
-    //   background,
-    //   negated,
-    //   sourceMap: Redirs.length
-    //     ? this.sourceMap({ Pos: Redirs[0].Pos, End: (last(Redirs) as Sh.Redirect).End })
-    //     : undefined,
-    // });
+        return act.expanded([]);
+      })
+    );
   }
 
   /**
@@ -395,12 +348,14 @@ class TranspileShService {
     node: null | Sh.Command,
     extend: CommandExtension,
   ): Observable<ProcessAct> {
-    if (!node || node.type === 'CallExpr') {// Simple command
+    if (!node) {
+      // We don't support pure redirections
+      return throwError(new ShError(`simple commands without args or assigns are unsupported`, 2));
+    } else if (node.type === 'CallExpr') {
+      // Simple command
       return this.CallExpr(node, extend);
     }
-
     // Compound command
-    const ts = this;
     return of(null).pipe(
       mergeMap(async function*() {
         let cmd: Observable<ProcessAct> = null as any;
@@ -904,6 +859,42 @@ class TranspileShService {
     });
   }
 
+  private async assignVars(node: Sh.CallExpr, redirects: Sh.Redirect[]) {
+    for (const assign of node.Assigns) {
+      try {
+        await awaitEnd(this.Assign(assign));
+      } catch (e) {
+        if (e instanceof ShError) {
+          console.error('Caught assign error', e);
+          node.exitCode = e.exitCode;
+        } else {
+          throw e;
+        }
+      }
+    }
+
+    // Apply redirections in temporary scope
+    // We still run them as they may have side-effects
+    if (redirects.length) {
+      const { pid } = redirects[0].meta;
+      ps.pushRedirectScope(pid);
+      for (const redirect of redirects) {
+        try {
+          await awaitEnd(this.Redirect(redirect));
+        } catch (e) {
+          if (e instanceof ShError) {
+            console.error('Caught redirects error', e);
+            node.exitCode = e.exitCode;
+            break; // Stop immediately
+          } else {
+            throw e;
+          }
+        }
+      }
+      ps.popRedirectScope(pid);
+    }
+  }
+
   /** ArithmExpr sans Word */
   private isArithmOp(node: Sh.ParsedSh): node is Exclude<Sh.ArithmExpr, Sh.Word> {
     return !!(arithmOp as Record<string, true>)[node.type];
@@ -929,6 +920,45 @@ class TranspileShService {
     return !!(wordPart as Record<string, true>)[node.type];
   }
   
+  private async performShellExpansion(Args: Sh.Word[]): Promise<string[]> {
+    const expanded = [] as string[];
+
+    for (const word of Args) {
+      const result = await lastValueFrom(this.Expand(word));
+      const single = word.Parts.length === 1 ? word.Parts[0] : null;
+
+      if (word.exitCode) {
+        throw new ShError('failed to expand word', word.exitCode);
+      } else if (single?.type === 'SglQuoted') {
+        expanded.push(result.value); // No filename expansion for '' and $''.
+      }
+      /**
+       * Normalize command and parameter expansion,
+       * e.g. ' foo \nbar ' -> ['foo', 'bar']
+       */
+      const fileArgs = single?.type === 'ParamExp' || single?.type === 'CmdSubst'
+        ? expandService.normalizeWhitespace(result.value)
+        : result.values;
+      /**
+       * Filename expansion.
+       */
+      for (const pattern of fileArgs) {
+        if (/\*|\?|\[/.test(pattern)) {
+          // Could be a glob.
+          // console.log('Applying filename expansion to:', JSON.stringify(pattern));// DEBUG
+          const { pid } = word.meta;
+          const fileExpand = expandService.filePath(pid, pattern);
+          fileExpand?.sort();
+          // console.log({ result });// DEBUG
+          expanded.push(...(fileExpand || [pattern]));
+        } else {
+          expanded.push(pattern);
+        }
+      }
+    }
+    return expanded;
+  }
+
   /**
    * Sets node.parent.{string,number}.
    */

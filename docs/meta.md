@@ -9,6 +9,10 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can query polyanya and display navpath
 
+- [ ] `ShellStream` -> `INode` and has only one internal stream
+
+- [ ] can transpile simple command
+
 - [x] tops of walls autoscaled, no need in blender
 
 - [x] terminal has 'listening process' which:
