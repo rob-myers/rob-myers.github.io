@@ -1,39 +1,5 @@
 export type FromFdToOpenKey = Record<number, string>;
 
-export enum SigEnum {
-  SIGHUP='SIGHUP',
-  SIGINT='SIGINT',
-  SIGQUIT='SIGQUIT',
-  SIGILL='SIGILL',
-  SIGTRAP='SIGTRAP',
-  SIGART='SIGART',
-  SIGEMT='SIGEMT',
-  SIGFPE='SIGFPE',
-  SIGKILL='SIGKILL',
-  SIGBUS='SIGBUS',
-  SIGSEGV='SIGSEGV',
-  SIGSYS='SIGSYS',
-  SIGPIPE='SIGPIPE',
-  SIGALRM='SIGALRM',
-  SIGTERM='SIGTERM',
-  SIGURG='SIGURG', 
-  SIGSTOP='SIGSTOP',
-  SIGTSTP='SIGTSTP',
-  SIGCONT='SIGCONT',
-  SIGCHLD='SIGCHLD',
-  SIGTTIN='SIGTTIN',
-  SIGTTOU='SIGTTOU',
-  SIGIO='SIGIO',
-  SIGXCPU='SIGXCPU',
-  SIGXFSZ='SIGXFSZ',
-  SIGVTALRM='SIGVTALRM',
-  SIGPROF='SIGPROF',
-  SIGWINCH='SIGWINCH',
-  SIGINFO='SIGINFO',
-  SIGUSR1='SIGUSR1',
-  SIGUSR2='SIGUSR2',
-}
-
 export type ProcessAct = (
   | ArrayAssign
   | Expanded
@@ -74,4 +40,49 @@ interface WorldCoords {
   key: 'world-coords';
   x: number;
   y: number;  
+}
+
+/**
+ * TODO
+ */
+export const builtins = {
+  echo: true,
+  pwd: true,
+  click: true,
+};
+
+export type BuiltinKey = keyof typeof builtins;
+
+export enum SigEnum {
+  SIGHUP='SIGHUP',
+  SIGINT='SIGINT',
+  SIGQUIT='SIGQUIT',
+  SIGILL='SIGILL',
+  SIGTRAP='SIGTRAP',
+  SIGART='SIGART',
+  SIGEMT='SIGEMT',
+  SIGFPE='SIGFPE',
+  SIGKILL='SIGKILL',
+  SIGBUS='SIGBUS',
+  SIGSEGV='SIGSEGV',
+  SIGSYS='SIGSYS',
+  SIGPIPE='SIGPIPE',
+  SIGALRM='SIGALRM',
+  SIGTERM='SIGTERM',
+  SIGURG='SIGURG', 
+  SIGSTOP='SIGSTOP',
+  SIGTSTP='SIGTSTP',
+  SIGCONT='SIGCONT',
+  SIGCHLD='SIGCHLD',
+  SIGTTIN='SIGTTIN',
+  SIGTTOU='SIGTTOU',
+  SIGIO='SIGIO',
+  SIGXCPU='SIGXCPU',
+  SIGXFSZ='SIGXFSZ',
+  SIGVTALRM='SIGVTALRM',
+  SIGPROF='SIGPROF',
+  SIGWINCH='SIGWINCH',
+  SIGINFO='SIGINFO',
+  SIGUSR1='SIGUSR1',
+  SIGUSR2='SIGUSR2',
 }
