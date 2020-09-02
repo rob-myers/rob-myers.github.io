@@ -1,10 +1,26 @@
 import braces from 'braces';
 import * as Sh from './parse.service';
+import { varService } from './var.service';
 import { interpretEscapeSequences } from './parse.util';
-import { ParameterDef } from './parameter.model';
 import { last } from '@model/generic.model';
+import { fileService } from './file.service';
 
 export class ExpandService {
+  /**
+   * Returns a non-empty array of expansions, or null if no expansions found.
+   */
+  filePath(pid: number, pattern: string) {
+    if (!/\*|\?|\[/.test(pattern)) {// Not a filepath glob
+      return null;
+    } else if (!this.validateRegexString(pattern, 'Unterminated character class')) {
+      return null;// Ignore e.g. /^[ $/
+    }
+
+    /** Path to 'directory' we'll start from. */
+    const absPath = pattern.startsWith('/') ? '/' : varService.expandVar(pid, 'PWD');
+    const matches = fileService.expandFilepath(absPath, pattern);
+    return matches.length ? matches : null;
+  }
 
   literal({ Value, parent }: Sh.Lit): string[] {
     if (!parent) {
@@ -58,19 +74,20 @@ export class ExpandService {
     return words;
   }
 
-  parameter(node: Sh.WordPart) {
-    /**
-     * TODO
-     */
-    return [];
-  }
-
   singleQuotes({ Dollar: interpret, Value }: Sh.SglQuoted) {
     return [
       interpret
         ? interpretEscapeSequences(Value)
         : Value
       ];
+  }
+
+  private validateRegexString(input: string, badSuffix = ''): boolean {
+    try {
+      return Boolean(new RegExp(input));
+    } catch (e) {// Fail iff error message has bad suffix
+      return !(e.message as string).endsWith(badSuffix);
+    }
   }
 
 }
