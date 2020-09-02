@@ -1,12 +1,39 @@
-import useStore, { State as ShellState } from '@store/shell.store';
+import useStore, { State as ShellState, FsFile } from '@store/shell.store';
 import { ShError } from './transpile.service';
 import globRex from 'globrex';
+import { varService } from './var.service';
 
 export class FileService {
   private set!: ShellState['api']['set'];
 
   initialise() {
     this.set = useStore.getState().api.set;
+  }
+
+  /**
+   * Convert path to rooted path by:
+   * - rewriting ~ to /root
+   * - rewriting ./ to ${cwd}/.
+   * - if no prefix / then add prefix ${cwd}/.
+   *
+   * We do not resolve inner .'s or ..'s.
+   */
+  rootedPath(
+    /** A relative path */
+    path: string,
+    /** Absolute path to process's current working directory */
+    cwd: string,
+  ) {
+    if (path.startsWith('/')) {
+      return path;
+    } else if (path.startsWith('~')) {
+      // Leading ~ to user's home directory.
+      return `/root${path.slice(1)}`;
+    } else if (path.startsWith('./')) {
+      // Leading ./ to process's current working directory.
+      return `${cwd}${path.slice(1)}`;
+    }// Non-leading / to process's current working directory.
+    return `${cwd}/${path}`;
   }
 
   /**
@@ -69,6 +96,27 @@ export class FileService {
     return matches.flatMap((dirName) =>
       this.expandFilepathParts(dirParts.concat(dirName), parts)
         .map((x) => `${dirName}/${x}`));
+  }
+
+  resolvePath(pid: number, path: string): FsFile | null {
+    if (!path.trim()) {// Only whitespace
+      return null;
+    }
+    
+    const cwd = varService.expandVar(pid, 'PWD');
+    const rootedPath = this.rootedPath(path, cwd);
+    const absPath = rootedPath.split('/').reduce((agg, part) => {
+      if (!part || part === '.') {
+        return agg;
+      } else if (part === '..') {
+        agg.pop();
+      } else {
+        agg.push(part);
+      }
+      return agg;
+    }, [] as string[]).join('/');
+
+    return this.getFs()[absPath] || null;
   }
 
   getFs() {
