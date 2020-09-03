@@ -27,17 +27,16 @@ class TranspileShService {
    * (( x = y / 2 , z = x * y ))
    */
   public ArithmCmd(node: Sh.ArithmCmd): Observable<Expanded> {    
-    return of(null).pipe(
-      mergeMap(async function* () {
-        await ts.runArithmExpr(node.X);
-        // Exit code 0 iff `input.number` is a non-zero integer
-        if (node.number && Number.isInteger(node.number)) {
-          node.exitCode = node.number ? 0 : 1;
-        } else {
-          node.exitCode = 1;
-        }
-        yield act.expanded(`${node.number || 0}`);
-    }));
+    return from(async function* () {
+      await ts.runArithmExpr(node.X);
+      // Exit code 0 iff `input.number` is a non-zero integer
+      if (node.number && Number.isInteger(node.number)) {
+        node.exitCode = node.number ? 0 : 1;
+      } else {
+        node.exitCode = 1;
+      }
+      yield act.expanded(`${node.number || 0}`);
+    }());
   }
 
   /**
@@ -78,7 +77,7 @@ class TranspileShService {
               const lStr = node.string!;
               await ts.runArithmExpr(right);
               const rNum = node.number!
-  
+
               switch (node.Op) {
                 case '<': node.number = (lNum < rNum) ? 1 : 0; break;
                 case '<=': node.number = (lNum <= rNum) ? 1 : 0; break;
@@ -147,6 +146,7 @@ class TranspileShService {
                   throw new ShError(`${node.Op}: unrecognised binary arithmetic symbol`, 2);
                 }
               }
+              node.string = `${node.number}`;
               node.exitCode = node.number ? 0 : 1;
             }
           }),
