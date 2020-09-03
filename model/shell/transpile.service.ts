@@ -4,13 +4,13 @@ import globrex from 'globrex';
 
 import { testNever, last } from '@model/generic.model';
 import * as Sh from '@model/shell/parse.service';
-import { FsFile } from '@store/shell.store';
 import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
 import { expandService as expand, expandService } from './expand.service';
 import { ParamType, ParameterDef } from './parameter.model';
 import { varService as vs } from './var.service';
 import { processService as ps } from './process.service';
 import { fileService as fs } from './file.service';
+import { FsFile } from './file.model';
 import { builtinService as bs } from './builtin.service';
 import { NamedFunction } from './var.model';
 

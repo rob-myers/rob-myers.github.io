@@ -1,10 +1,9 @@
 import { Subject } from 'rxjs';
 import { testNever } from '@model/generic.model';
 import useStore, { State as ShellState, Session } from '@store/shell.store';
-import { addToLookup } from '@store/store.util';
-import { parseSh, FileWithMeta } from './parse.service';
+import { parseSh } from './parse.service';
 import { SigEnum } from './process.model';
-import { createOfd } from './file.model';
+import { FsFile } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
 import { TtyXterm } from './tty.xterm';
 import { processService as ps, processService } from './process.service';
@@ -12,8 +11,6 @@ import { processService as ps, processService } from './process.service';
 export class TtyShell {
 
   public xterm!: TtyXterm;
-  /** We need our own stream to xterm.io.registerReader below */
-  private incoming = new Subject<MessageFromXterm>();
   /** Lines received from a TtyXterm. */
   private inputs = [] as { line: string; resolve: () => void }[];
   /** Lines in current interactive parse */
@@ -30,23 +27,14 @@ export class TtyShell {
   constructor(
     public sessionKey: string,
     public canonicalPath: string,
+    public io: FsFile<MessageFromXterm, MessageFromShell>,
   ) {}
   
   initialise(xterm: TtyXterm) {
     this.xterm = xterm;
     this.set = useStore.getState().api.set;
-
-    // To read from xterm we need our own stream this.incoming
-    this.incoming.subscribe(this.onMessage.bind(this));
-    this.xterm.io.registerReader(this.incoming);
-    
-    const { canonicalPath } = xterm.def;
-    this.set(({ ofd, fs }) => ({
-      // e.g. /dev/tty-1 actually determines an open file description
-      ofd: addToLookup(createOfd(canonicalPath, xterm.io), ofd),
-      fs: addToLookup({ key: canonicalPath, stream: xterm.io }, fs),
-    }));
-
+    // this.xterm.outgoing.registerCallback(this.onMessage.bind(this));
+    this.io.readable.registerCallback(this.onMessage.bind(this));
     this.prompt('$ ');
   } 
 
@@ -54,9 +42,8 @@ export class TtyShell {
     switch (msg.key) {
       case 'req-history-line': {
         const { line, nextIndex } = this.getHistoryLine(msg.historyIndex);
-        this.xterm.io.write({
+        this.io.writable.write({
           key: 'send-history-line',
-          sessionKey: this.sessionKey,
           line,
           nextIndex,
         });
@@ -66,9 +53,8 @@ export class TtyShell {
         this.inputs.push({
           line: msg.lines[0],
           // xterm won't send another line until resolved
-          resolve: () => this.xterm.io.write({
+          resolve: () => this.io.writable.write({
             key: 'tty-received-line',
-            sessionKey: this.sessionKey,
           }),
         });
         this.tryParse();
@@ -122,10 +108,9 @@ export class TtyShell {
   // }
 
   private prompt(prompt: string) {
-    this.xterm.io.write({
+    this.io.writable.write({
       key: 'send-xterm-prompt',
       prompt,
-      sessionKey: this.sessionKey,
     });    
   }
 
@@ -202,7 +187,6 @@ export type MessageFromShell = (
  */
 interface SendXtermPrompt {
   key: 'send-xterm-prompt';
-  sessionKey: string;
   prompt: string;
 }
 
@@ -211,7 +195,6 @@ interface SendXtermPrompt {
  */
 interface WriteToXterm {
   key: 'send-lines';
-  sessionKey: string;
   messageUid: string;
   lines: string[];
 }
@@ -221,7 +204,6 @@ interface WriteToXterm {
  */
 interface ClearXterm {
   key: 'clear-xterm';
-  sessionKey: string;
 }
 
 /**
@@ -229,12 +211,10 @@ interface ClearXterm {
  */
 interface TtyReceivedLine {
   key: 'tty-received-line';
-  sessionKey: string;
 }
 
 interface SendHistoryLine {
   key: 'send-history-line';
-  sessionKey: string;
   line: string;
   nextIndex: number;
 }

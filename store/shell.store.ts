@@ -3,7 +3,7 @@ import { devtools } from 'zustand/middleware';
 import { Subscription, Subject } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
-import { OpenFileDescription, createOfd } from '@model/shell/file.model';
+import { OpenFileDescription, createOfd, createFsFile } from '@model/shell/file.model';
 import { FromFdToOpenKey } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
 import { ToProcVar, NamedFunction } from '@model/shell/var.model';
@@ -11,6 +11,7 @@ import { processService } from '@model/shell/process.service';
 import { ShellStream } from '@model/shell/shell.stream';
 import { varService } from '@model/shell/var.service';
 import { fileService } from '@model/shell/file.service';
+import { FsFile } from "@model/shell/file.model";
 import { addToLookup, removeFromLookup } from './store.util';
 
 export interface State {
@@ -25,7 +26,7 @@ export interface State {
   /** Processes, each with a parent session */
   proc: KeyedLookup<Process>;
   /** Opened files are registered here */
-  ofd: KeyedLookup<OpenFileDescription>;
+  ofd: KeyedLookup<OpenFileDescription<any>>;
   /** Global file system */
   fs: KeyedLookup<FsFile>;
 
@@ -77,13 +78,8 @@ export interface Process {
   lastBgPid: null | number;
 }
 
-export interface FsFile {
-  key: string;
-  stream: ShellStream<any, any>;
-}
-
 const useStore = create<State>(devtools((set, get) => {
-  const devNull = new ShellStream({ readable: new Subject, writable: new Subject });
+  const nullFile = createFsFile('/dev/null', new ShellStream(), new ShellStream());
 
   return {
     nextTtyId: 1,
@@ -91,9 +87,9 @@ const useStore = create<State>(devtools((set, get) => {
     toSessionKey: {},
     nextProcId: 1,
     proc: {},
-    // We're using /dev/null to identify an open file description
-    ofd: addToLookup(createOfd('/dev/null', devNull), {} as State['ofd']),
-    fs: addToLookup({ key: '/dev/null', stream: devNull }, {} as State['fs']),
+    fs: addToLookup(nullFile, {} as State['fs']),
+    // NOTE we're also using /dev/null to identify an open file description
+    ofd: addToLookup(createOfd('/dev/null', nullFile), {} as State['ofd']),
     api: {
       createSession: (alias) => {
         const { toSessionKey, nextTtyId: ttyId } = get();
@@ -104,9 +100,10 @@ const useStore = create<State>(devtools((set, get) => {
         const ttyFilename = `tty-${ttyId}`;
         const sessionKey = `root@${ttyFilename}`;
         const canonicalPath = `/dev/${ttyFilename}`;
-        const ttyShell = new TtyShell(sessionKey, canonicalPath);
+        const ttyFile = createFsFile(canonicalPath, new ShellStream(), new ShellStream());
+        const ttyShell = new TtyShell(sessionKey, canonicalPath, ttyFile);
 
-        set(({ toSessionKey, nextProcId, nextTtyId, session }: State) => ({
+        set(({ toSessionKey, nextProcId, nextTtyId, session, fs, ofd }: State) => ({
           toSessionKey: { ...toSessionKey, [alias]: sessionKey },
           session: addToLookup({
             key: sessionKey,
@@ -116,7 +113,9 @@ const useStore = create<State>(devtools((set, get) => {
           }, session),
           nextProcId: nextProcId + 1,
           nextTtyId: nextTtyId + 1,
-          // fs: addToLookup({ key: canonicalPath, stream: ttyShell.xterm.io }, fs),
+          fs: addToLookup(ttyFile, fs),
+          // NOTE we're also using /dev/tty-${ttyId} to identify an open file description
+          ofd: addToLookup(createOfd(canonicalPath, ttyFile), ofd),
         }));
 
         processService.createLeadingProcess(sessionKey);

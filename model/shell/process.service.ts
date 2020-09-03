@@ -1,10 +1,11 @@
-import useStore, { State as ShellState, Session, Process, FsFile } from '@store/shell.store';
+import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
 import { FileWithMeta, parseSh, FileMeta, ParsedSh } from './parse.service';
 import { transpileSh } from './transpile.service';
 import { addToLookup, updateLookup } from '@store/store.util';
 import { mapValues } from '@model/generic.model';
 import { varService } from './var.service';
 import { FromFdToOpenKey } from './process.model';
+import { FsFile } from './file.model';
 
 export class ProcessService {
   
@@ -38,7 +39,7 @@ export class ProcessService {
     const { sid: pid, ttyShell } = this.getSession(sessionKey);
 
     const fdToOpenKey = {
-      // TtyShell already reads from here, but so could `read` in another process.
+      // TtyShell already reads from here, but so could `read` in another process
       0: ttyShell.canonicalPath,
       // TtyShell already writes here, as does any descendent process (sans redirect)
       1: ttyShell.canonicalPath,
@@ -240,14 +241,20 @@ export class ProcessService {
     }));
   }
 
+  /**
+   * TODO remove?
+   */
   warn(pid: number, msg: string) {
     this.write(pid, 2, msg);
   }
-
+  
+  /**
+   * TODO remove?
+   */
   write(pid: number, fd: number, msg: string) {
     const { fdToOpenKey: { [fd]: openKey } } = this.getProcess(pid);
-    const { stream } = this.getOfds()[openKey];
-    stream.write({ key: 'send-lines', lines: [msg] }); // TODO types
+    const { file } = this.getOfds()[openKey];
+    file.writable.write({ key: 'send-lines', lines: [msg] }); // TODO types
   }
 
 }

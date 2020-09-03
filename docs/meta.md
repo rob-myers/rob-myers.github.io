@@ -9,7 +9,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can query polyanya and display navpath
 
-- [ ] `ShellStream` has only one internal stream
+- [x] `OpenFileDescription` has `FsFile`
+- [x] `FsFile` has readable/writable `ShellStream` which may be the same
+- [x] `ShellStream` has only one internal stream
 
 - [ ] can transpile simple command
 - [x] tops of walls autoscaled, no need in blender
@@ -50,7 +52,5 @@ Auto-generated navmesh with minimal number of rectangles.
 
 ## Rough ideas
 
-Can slow down, can reverse, can reproduce.
-  - Store history which can be run backwards.
-  - Bot state visible via behaviour trees.
-  - Bot state somehow reversible
+1. Code driven by user e.g. via `tick` -- a wrapper about `setInterval`.
+2. for/while loops are driven by stdin which they pass through; also CmdSub.

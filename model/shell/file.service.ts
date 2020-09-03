@@ -1,7 +1,7 @@
-import useStore, { State as ShellState, FsFile } from '@store/shell.store';
-import { ShError } from './transpile.service';
 import globRex from 'globrex';
+import useStore, { State as ShellState } from '@store/shell.store';
 import { varService } from './var.service';
+import { FsFile } from "./file.model";
 
 export class FileService {
   private set!: ShellState['api']['set'];
@@ -34,18 +34,6 @@ export class FileService {
       return `${cwd}${path.slice(1)}`;
     }// Non-leading / to process's current working directory.
     return `${cwd}/${path}`;
-  }
-
-  /**
-   * Given absolute path `absPath` try to resolve `INode`,
-   * throwing an error if not found.
-   */
-  absPathToINode(absPath: string) {
-    const file = this.getFs()[absPath];
-    if (file) {
-      return file.stream;
-    }
-    throw new ShError(`${absPath}: no such file or directory`, 1, 'F_NO_EXIST');
   }
 
   /**

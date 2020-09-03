@@ -25,13 +25,11 @@ const Terminal: React.FC<Props> = ({ alias }) => {
       onMount={(xterm) => {
         const { ttyShell } = session;
 
-        const ttyXterm = new TtyXterm({
-          canonicalPath: ttyShell.canonicalPath,
-          sessionKey: ttyShell.sessionKey,
-          linesPerUpdate: 1000,
-          refreshMs: 1,
+        const ttyXterm = new TtyXterm(
           xterm, // xterm.js instance
-        });
+          ttyShell.sessionKey,
+          ttyShell.io,
+        );
 
         ttyXterm.initialise();
         ttyShell.initialise(ttyXterm);

@@ -1,34 +1,56 @@
 import { ShellStream } from "@model/shell/shell.stream";
 
-export interface OpenFileDescription<R = any, W = any> {
+/**
+ * - `/dev/null`: two independent streams
+ * - `/dev/tty-n`:
+ *   - writable respond to writes by printing them
+ *   - readable respond to reads by providing user input
+ * - `wire`: readable is same as writable
+ */
+export interface FsFile<R = any, W = any> {
+  key: string;
+  readable: ShellStream<R>;
+  writable: ShellStream<W>;
+}
+
+export interface OpenFileDescription<T> {
   key: string;
   /**
    * The number of descendent processes using this open file description.
-   * - Incremented upon initial open and inheritance.
-   * - Decremented on close (explicitly, or via process termination).
+   * - incremented upon initial open and inheritance.
+   * - decremented on close (explicitly, or via process termination).
    */
   numLinks: number;
-  /** The opened stream. */
-  stream: ShellStream<R, W>;
-  /** Read-only, read-and-write, or write-only. */
+  /** The opened file. */
+  file: FsFile;
+  /** Read only, read and write, or write only. */
   mode: OpenFileMode;
 }
 
 type OpenFileMode = 'RDONLY' | 'RDWR' | 'WRONLY';
 
-export function createOfd<R = any, W = any>(
+export function createOfd<T>(
   key: string,
-  stream: ShellStream<R, W>,
-  // opts: CreateOfdOpts,
-): OpenFileDescription<R, W> {
+  file: FsFile,
+): OpenFileDescription<T> {
   return {
     key,
-    stream,
-    /**
-     * For the moment, all streams are READ-WRITE,
-     * even if they don't provide a writable under-the-hood.
-     */
-    mode: 'RDWR',
-    numLinks: 0, // TODO ?
+    file,
+    mode: 'RDWR', // TODO
+    numLinks: 0, // TODO
   };
+}
+
+export function createFsFile<R, W>(
+  absPath: string,
+  /** We should write to this stream */
+  readable: ShellStream<R>,
+  /** We should read from this stream */
+  writable: ShellStream<W>,
+): FsFile {
+  return {
+    key: absPath,
+    readable,
+    writable,
+  }
 }

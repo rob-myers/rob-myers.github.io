@@ -1,42 +1,47 @@
 import { Subject, Subscription } from "rxjs";
 
-export class ShellStream<R, W> {
+export class ShellStream<T> {
 
-  public readers: Subject<R>[];
+  public readers: Subject<T>[];
   public subscription: null | Subscription;
+  private internal: Subject<T>;
+  private cbToSub: Map<(msg: T) => void, Subscription>;
 
-  constructor(public def: Opts<R, W>) {
+  constructor() {
     this.readers = [];
-    this.subscription = def.readable?.subscribe(
+    this.internal = new Subject;
+    this.subscription = this.internal.subscribe(
       this.onMessage.bind(this)
     ) || null;
+    this.cbToSub = new Map;
   }
 
-  registerReader(reader: Subject<R>) {
+  registerCallback(cb: (msg: T) => void) {
+    this.cbToSub.set(cb, this.internal.subscribe(cb));
+  }
+
+  registerReader(reader: Subject<T>) {
     // Most recent registration takes priority
     this.readers.unshift(reader);
   }
+
+  unregisterCallback(cb: (msg: T) => void) {
+    this.cbToSub.get(cb)?.unsubscribe();
+    this.cbToSub.delete(cb);
+  }
   
-  unregisterReader(reader: Subject<R>) {
+  unregisterReader(reader: Subject<T>) {
     this.readers = this.readers.filter(x => x !== reader);
   }
 
-  write(msg: W) {
-    // This will error if no writable
-    this.def.writable!.next(msg);
+  write(msg: T) {
+    this.internal.next(msg);
   }
 
-  private onMessage(msg: R) {
+  private onMessage(msg: T) {
     if (this.readers.length) {
       this.readers[0].next(msg);
     }
   }
 
-}
-
-interface Opts<R, W> {
-  /** Stream than can be read from */
-  readable?: Subject<R>;
-  /** Stream that can be written to */
-  writable?: Subject<W>;
 }
