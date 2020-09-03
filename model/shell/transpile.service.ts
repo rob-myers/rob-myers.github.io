@@ -2,9 +2,9 @@ import { Observable, from, of, lastValueFrom, throwError } from 'rxjs';
 import { concatMap, reduce, map, tap } from 'rxjs/operators';
 import globrex from 'globrex';
 
+import { testNever, last } from '@model/generic.model';
 import { awaitEnd } from '@model/rxjs/rxjs.util';
 import * as Sh from '@model/shell/parse.service';
-import { testNever, last } from '@model/generic.model';
 import { FsFile } from '@store/shell.store';
 import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
 import { expandService as expand, expandService } from './expand.service';
@@ -26,7 +26,7 @@ class TranspileShService {
   /**
    * (( x = y / 2 , z = x * y ))
    */
-  public ArithmCmd(node: Sh.ArithmCmd): Observable<Expanded> {    
+  private ArithmCmd(node: Sh.ArithmCmd): Observable<Expanded> {    
     return from(async function* () {
       await ts.runArithmExpr(node.X);
       // Exit code 0 iff `input.number` is a non-zero integer
@@ -42,7 +42,7 @@ class TranspileShService {
   /**
    * y=$(( 2 ** x ))
    */
-  ArithmExp(node: Sh.ArithmExp): Observable<Expanded> {
+  private ArithmExp(node: Sh.ArithmExp): Observable<Expanded> {
     return this.ArithmCmd(node as unknown as Sh.ArithmCmd);
   }
 
@@ -884,11 +884,6 @@ class TranspileShService {
     }
   }
 
-  /** ArithmExpr sans Word */
-  private isArithmOp(node: Sh.ParsedSh): node is Exclude<Sh.ArithmExpr, Sh.Word> {
-    return !!(arithmOp as Record<string, true>)[node.type];
-  }
-
   private isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
     if (
       arithmExpr?.type === 'Word'
@@ -903,6 +898,11 @@ class TranspileShService {
       }
     }
     return null;
+  }
+
+  /** ArithmExpr sans Word */
+  private isArithmOp(node: Sh.ParsedSh): node is Exclude<Sh.ArithmExpr, Sh.Word> {
+    return !!(arithmOp as Record<string, true>)[node.type];
   }
 
   private isWordPart(node: Sh.ParsedSh): node is Sh.WordPart {
