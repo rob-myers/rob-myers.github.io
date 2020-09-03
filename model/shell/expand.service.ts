@@ -5,6 +5,11 @@ import { interpretEscapeSequences } from './parse.util';
 import { last } from '@model/generic.model';
 import { fileService } from './file.service';
 
+const bracesOpts: braces.Options = {
+  expand: true,
+  rangeLimit: Infinity,
+};
+
 export class ExpandService {
   /**
    * Returns a non-empty array of expansions, or null if no expansions found.
@@ -51,7 +56,7 @@ export class ExpandService {
     /**
     * Otherwise escape everything and apply brace-expansion.
     */
-    return braces.expand(value);
+    return braces(value, bracesOpts);
   }
 
   normalizeWhitespace(word: string, trim = true): string[] {
