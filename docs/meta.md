@@ -15,6 +15,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] `ShellStream` has only one internal stream
 
 - [ ] can transpile simple command
+  > TODO redirects
 - [x] tops of walls autoscaled, no need in blender
 - [x] terminal has 'listening process' which:
   > continually attempts to read/parse tty input
@@ -53,5 +54,7 @@ Auto-generated navmesh with minimal number of rectangles.
 
 ## Rough ideas
 
-1. Code driven by user e.g. via `tick` -- a wrapper about `setInterval`.
-2. for/while loops are driven by stdin which they pass through; also CmdSub.
+1. Code driven by user e.g. via `tick` (a wrapper about `setInterval`).
+2. while/for loops must be guarded e.g.
+  - `while read x; do echo $x; done`
+  - `for x in {1..10}; do click x y; look $x $y; done`

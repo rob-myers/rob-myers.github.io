@@ -1,7 +1,6 @@
 import braces from 'braces';
 import * as Sh from './parse.service';
 import { varService } from './var.service';
-import { interpretEscapeSequences } from './parse.util';
 import { last } from '@model/generic.model';
 import { fileService } from './file.service';
 
@@ -25,6 +24,39 @@ export class ExpandService {
     const absPath = pattern.startsWith('/') ? '/' : varService.expandVar(pid, 'PWD');
     const matches = fileService.expandFilepath(absPath, pattern);
     return matches.length ? matches : null;
+  }
+
+  /**
+   * Given interactive input to shell, interpret escape sequences.
+   * TODO Refactor as single pass of string.
+   */
+  private interpretEscapeSequences(input: string): string {
+    const value = JSON.stringify(input)
+      // Unicode utf-16 e.g. '\\\\u001b' -> '\\u001b'.
+      .replace(/\\\\u([0-9a-f]{4})/g, '\\u$1')
+      // Replace double backslashes by their unicode.
+      .replace(/\\\\\\\\/g, '\\u005c')
+      // '\\\\e' -> '\\u001b'.
+      .replace(/\\\\e/g, '\\u001b')
+      // Hex escape-code (0-255) e.g. '\\\\x1b' -> '\\u001b'.
+      .replace(/\\\\x([0-9a-f]{2})/g, '\\u00$1')
+      // e.g. '\\\\n' -> '\\n'.
+      .replace(/\\\\([bfnrt])/g, '\\$1')
+      // Vertical tab '\\\\v' -> '\u000b'
+      .replace(/\\\\v/g, '\\u000b')
+      // Alert/Bell '\\\\a' -> '\u0007'
+      .replace(/\\\\a/g, '\\u0007')
+      // Octal escape-code (0-255) e.g. '\\\\047' -> '\\u0027'.
+      // Out-of-bounds become `?`.
+      .replace(/\\\\([0-7]{3})/g,
+        (_, submatch) => {
+          const decimal = parseInt(submatch, 8);
+          return decimal < 256
+            ? `\\u00${decimal.toString(16)}`
+            : '?';
+        });
+
+    return JSON.parse(value) as string;
   }
 
   literal({ Value, parent }: Sh.Lit): string[] {
@@ -82,7 +114,7 @@ export class ExpandService {
   singleQuotes({ Dollar: interpret, Value }: Sh.SglQuoted) {
     return [
       interpret
-        ? interpretEscapeSequences(Value)
+        ? this.interpretEscapeSequences(Value)
         : Value
       ];
   }

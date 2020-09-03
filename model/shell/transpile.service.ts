@@ -995,9 +995,8 @@ class TranspileShService {
     (node.parent! as Sh.BaseNode).number = value;
   }
 
-  private transpileParam({
-    Excl, Exp, Index, Length, Names, Param, Repl, Short, Slice,
-  }: Sh.ParamExp) {
+  private transpileParam(node: Sh.ParamExp) {
+    const { Excl, Exp, Index, Length, Names, Param, Repl, Short, Slice } = node;
     let def = null as null | ParameterDef<Observable<Expanded>, Observable<Expanded>>;
     const base = {
       param: Param.Value,
@@ -1085,6 +1084,8 @@ class TranspileShService {
         }
       }
     }
+    // also store on node to aid serialization
+    node.paramDef = def;
     return def;
   }
 

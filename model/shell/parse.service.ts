@@ -2,6 +2,7 @@ import Sh, { syntax } from 'mvdan-sh';
 import cloneWithRefs from 'lodash.clonedeep';
 import { withParents } from './parse.util';
 import { BaseAssignOpts } from './var.model';
+import { ParameterDef } from './parameter.model';
 // console.log({ Sh });
 
 /**
@@ -849,6 +850,7 @@ export interface Pos {
 export interface BaseNode {
   End: Pos;
   Pos: Pos;
+
   meta: FileMeta; // Single instance for entire tree
   /** Reference to parent node  */
   parent: null | ParsedSh;
@@ -863,6 +865,8 @@ export interface BaseNode {
   exitCode?: number;
   /** Used by Assign nodes only */
   declOpts?: Partial<BaseAssignOpts>;
+  /** Used by ParamExp nodes  only */
+  paramDef?: ParameterDef<any, any>;
 }
 
 export type ParsedSh = (
