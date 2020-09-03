@@ -1,5 +1,5 @@
 import { Observable, from, of, lastValueFrom, throwError } from 'rxjs';
-import { concatMap, reduce, tap, map, mergeMap, concatAll, flatMap, catchError, } from 'rxjs/operators';
+import { concatMap, reduce, map, mergeMap, tap } from 'rxjs/operators';
 import globrex from 'globrex';
 
 import { awaitEnd } from '@model/rxjs/rxjs.util';
@@ -37,8 +37,7 @@ class TranspileShService {
           node.exitCode = 1;
         }
         yield act.expanded(`${node.number || 0}`);
-      }),
-    );
+    }));
   }
 
   /**
@@ -286,9 +285,11 @@ class TranspileShService {
           // Run index
           const { value: index } = await lastValueFrom(ts.ArithmExpr(Index))
           // Unsure if naked is possible here
-          const value = Naked ? undefined
-          : Value ? (await lastValueFrom(ts.Expand(Value))).value
-            : ''; // If {x[i]=} then no def.value so use ''
+          const value = Naked
+            ? undefined
+            : Value
+              ? (await lastValueFrom(ts.Expand(Value))).value
+              : ''; // If {x[i]=} then no def.value so use ''
           vs.assignVar(pid, { ...declOpts, varName, act: { key: 'item', index, value } });
         }),
       );
@@ -348,8 +349,6 @@ class TranspileShService {
         } else {// Assign vars in this process
           await ts.assignVars(node, extend.Redirs);
         }
-
-        // return act.expanded([]);
       })
     );
   }
@@ -419,12 +418,12 @@ class TranspileShService {
     // });
   }
 
-  private Expand({ Parts }: Sh.Word): Observable<Expanded> {
-    if (Parts.length > 1) {
+  private Expand(node: Sh.Word): Observable<Expanded> {
+    if (node.Parts.length > 1) {
       return of(null).pipe(
         mergeMap(async function*() {
           // Compute each part, storing flat result in node
-          for (const wordPart of Parts) {
+          for (const wordPart of node.Parts) {
              const { value } = await lastValueFrom(ts.ExpandPart(wordPart));
              wordPart.string = value;
           }
@@ -435,41 +434,44 @@ class TranspileShService {
           let lastTrailing = false;
           const values = [] as string[];
 
-          for (const { type, string } of Parts) {
+          for (const { type, string } of node.Parts) {
             const value = string!;
             if (type === 'ParamExp' || type === 'CmdSubst') {
-              const vs = expandService.normalizeWhitespace(value!, false);// Do not trim.
+              const vs = expandService.normalizeWhitespace(value!, false);// Do not trim
               // console.log({ value, vs });
               if (!vs.length) {
                 continue;
               } else if (!values.length || lastTrailing || /^\s/.test(vs[0])) {
-                // Freely add, although trim 1st and last.
+                // Freely add, although trim 1st and last
                 values.push(...vs.map((x) => x.trim()));
               } else {
-                // Either {last(vs)} a trailing quote, or it has no trailing space.
-                // Since vs[0] has no leading space we must join words.
+                // Either {last(vs)} a trailing quote, or it has no trailing space
+                // Since vs[0] has no leading space we must join words
                 values.push(values.pop() + vs[0].trim());
                 values.push(...vs.slice(1).map((x) => x.trim()));
               }
-              // Check last element (pre-trim).
+              // Check last element (pre-trim)
               lastTrailing = /\s$/.test(last(vs) as string);
-            } else if (!values.length || lastTrailing) {// Freely add.
+            } else if (!values.length || lastTrailing) {// Freely add
               values.push(value);
               lastTrailing = false;
-            } else {// Must join.
+            } else {// Must join
               values.push(values.pop() + value);
               lastTrailing = false;
             }
           }
-          yield act.expanded(values);
+
+          node.string = values.join(' '); // If part of ArithmExpr?
+          yield act.expanded(values); // Need array?
         }),
       );
     }
-    return this.ExpandPart(Parts[0]);
+    return this.ExpandPart(node.Parts[0]).pipe(
+      tap(({ value }) => node.string = value),
+    );
   }
 
   private ExpandPart(node: Sh.WordPart): Observable<Expanded> {
-    const ts = this;
     switch (node.type) {
       case 'ArithmExp': {
         return this.ArithmExp(node);
@@ -976,18 +978,20 @@ class TranspileShService {
    * Sets node.parent.{string,number}.
    */
   private async runArithmExpr(node: Sh.ExpandType) {
-    if (this.isWordPart(node)) {
-      await awaitEnd(this.ExpandPart(node));
-    } else {
+    let textValue: string;
+    if (this.isWordPart(node)) {// WordPart expands to multiple values
+      textValue = (await lastValueFrom(this.ExpandPart(node))).value;
+    } else {// ArithmExpr expands to exactly one string/number
       await awaitEnd(this.ArithmExpr(node)); 
+      textValue = node.string!;
     }
 
-    const textValue = node.string!;
     let value = parseInt(textValue);
     if (Number.isNaN(value)) {// Try looking up variable
       const varValue = vs.expandVar(node.meta.pid, textValue);
       value = parseInt(varValue) || 0;
     }
+
     // Propagate string and evaluated number upwards
     (node.parent! as Sh.BaseNode).string = textValue;
     (node.parent! as Sh.BaseNode).number = value;
