@@ -229,14 +229,14 @@ export class ProcessService {
   }
 
   /**
-   * TODO remove?
+   * Write message to process's stderr.
    */
   warn(pid: number, msg: string) {
     this.write(pid, 2, msg);
   }
   
   /**
-   * TODO remove?
+   * Write message to process's file descriptor.
    */
   write(pid: number, fd: number, msg: string) {
     const { fdToOpen: { [fd]: { file } } } = this.getProcess(pid);

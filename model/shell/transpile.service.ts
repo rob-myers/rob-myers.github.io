@@ -1,5 +1,5 @@
 import { Observable, from, of, lastValueFrom, throwError } from 'rxjs';
-import { concatMap, reduce, map, tap } from 'rxjs/operators';
+import { concatMap, reduce, map, tap, catchError } from 'rxjs/operators';
 import globrex from 'globrex';
 
 import { testNever, last } from '@model/generic.model';
@@ -516,9 +516,20 @@ class TranspileShService {
     }
   }
 
-  private File({ StmtList }: Sh.File): Observable<ProcessAct> {
-    return from(StmtList.Stmts).pipe(
+  private File(node: Sh.File): Observable<ProcessAct> {
+    return from(node.StmtList.Stmts).pipe(
       concatMap(x => this.Stmt(x)),
+      catchError((e, _src) => {
+        const { meta } = node;
+        if (e instanceof ShError) {
+          ps.warn(meta.pid, e.message);
+          ps.setExitCode(meta.pid, e.exitCode);
+        } else {
+          console.error(`${meta.sessionKey}: ${meta.pid}: internal error`);
+          console.error(e);
+        }
+        return of();
+      }),
     );
   }
 

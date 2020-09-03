@@ -9,6 +9,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can query polyanya and display navpath
 
+- [ ] get shell history working
 - [x] `OpenFileDescription` has `FsFile`
 - [x] `FsFile` has readable/writable `ShellStream` which may be the same
 - [x] `ShellStream` has only one internal stream
