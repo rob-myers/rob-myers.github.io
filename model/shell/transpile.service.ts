@@ -316,6 +316,7 @@ class TranspileShService {
     return from(async function* () {
       const args = await ts.performShellExpansion(node.Args);
       console.log('args', args);
+      node.exitCode = 0;
       
       if (args.length) {
         // Run builtin, run script or invoke function
@@ -323,7 +324,7 @@ class TranspileShService {
         const { pid } = node.meta;
 
         if (bs.isBuiltinCommand(args[0])) {
-          await bs.runBuiltin(args[0]);
+          await bs.runBuiltin(node, args[0], args.slice(1));
         } else if (file = fs.resolvePath(pid, args[0])) {
           await ps.runScript(pid, file);
         } else if (func = vs.getFunction(pid, args[0])) {
@@ -344,15 +345,18 @@ class TranspileShService {
     node: null | Sh.Command,
     extend: CommandExtension,
   ): Observable<ProcessAct> {
-    if (!node) {
-      // We don't support pure redirections
+        
+    if (!node) {// We don't support pure redirections
       return throwError(new ShError(`simple commands without args or assigns are unsupported`, 2));
     } else if (node.type === 'CallExpr') {
-      return this.CallExpr(node, extend); // Simple command
+       // Run simple command
+      return this.CallExpr(node, extend);
     }
-    // Compound command
+
+    // Run compound command
     return from(async function*() {
       let cmd: Observable<ProcessAct> = null as any;
+      node.exitCode = 0;
   
       switch (node.type) {
         case 'ArithmCmd': cmd = ts.ArithmCmd(node); break;
@@ -381,13 +385,14 @@ class TranspileShService {
 
       const { Redirs, background, negated } = extend;
       if (background) {
+        // TODO
         // yield* this.runInBackground(dispatch, processKey);
-        ps.setExitCode(node.meta.pid, 0);
       } else {
         // TODO apply/remove redirections
         const redirects = Redirs.map((x) => ts.Redirect(x));
         await lastValueFrom(cmd);
       }
+      ps.setExitCode(node.meta.pid, node.exitCode);
     }());
 
     // return new CompoundComposite({// Compound command.
@@ -927,6 +932,7 @@ class TranspileShService {
         throw new ShError('failed to expand word', word.exitCode);
       } else if (single?.type === 'SglQuoted') {
         expanded.push(result.value); // No filename expansion for '' and $''.
+        continue;
       }
       /**
        * Normalize command and parameter expansion,

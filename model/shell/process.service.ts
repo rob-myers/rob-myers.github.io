@@ -45,7 +45,9 @@ export class ProcessService {
       1: ttyShell.canonicalPath,
       2: ttyShell.canonicalPath,
     };
+    const ofd = this.getOfds();
 
+    // We will only mutate values in `proc` after their creation
     this.set(({ proc }) => ({
       proc: addToLookup({
         key: `${pid}`,
@@ -54,7 +56,7 @@ export class ProcessService {
         ppid: pid, // Assume leading process is its own parent
         parsed: parseSh.parse(''), // Satisfies typing
         subscription: null, // We'll never actually run it 
-        fdToOpenKey,
+        fdToOpen: mapValues(fdToOpenKey, (ofdKey) => ofd[ofdKey]),
         nestedRedirs: [{ ...fdToOpenKey }],
         nestedVars: [{
           USER: { key: 'string', varName: 'USER', value: 'root', exported: true, readonly: false, to: null },
@@ -79,8 +81,9 @@ export class ProcessService {
     // Must mutate to affect all descendents
     Object.assign<FileMeta, FileMeta>(parsed.meta, { pid, sessionKey, sid });
 
-    const { fdToOpenKey, nestedVars, toFunc } = this.getProcess(parentPid);
+    const { fdToOpen, nestedVars, toFunc } = this.getProcess(parentPid);
 
+    // We will only mutate values in `proc` after their creation
     this.set(({ proc, nextProcId }) => ({
       proc: addToLookup({
         key: `${pid}`,
@@ -89,8 +92,8 @@ export class ProcessService {
         ppid: parentPid,
         parsed,
         subscription: null,
-        fdToOpenKey: { ...fdToOpenKey },
-        nestedRedirs: [{ ...fdToOpenKey }],
+        fdToOpen: { ...fdToOpen },
+        nestedRedirs: [{ ...mapValues(fdToOpen, (o) => o.key) }],
         nestedVars: nestedVars.map(fdToOpenKey =>
           mapValues(fdToOpenKey, v => varService.cloneVar(v))),
         toFunc: mapValues(toFunc,
@@ -149,36 +152,28 @@ export class ProcessService {
       // Close anything opened explicitly in deepest scope
       let nextOfd = ofd;
       Object.keys(deepest).forEach((fd) =>
-        nextOfd = this.closeFd({ fd: Number(fd), fromFd: deepest, ofd: nextOfd }));
+        nextOfd = this.closeFd({ fd: Number(fd), fromFd: deepest, ofd: nextOfd })
+      );
       
-      // Recompute `fdToOpenKey`
+      // Mutate proc
+      proc[pid].nestedRedirs = nextNestedRedirs;
       const fdToOpenKey = nextNestedRedirs.slice().reverse().reduce(
         (agg, item) => ({ ...agg, ...item }),
-        {} as Record<number, string>
+        {} as Record<number, string>,
       );
-      return {
-        proc: updateLookup(`${pid}`, proc, () => ({
-          nestedRedirs: nextNestedRedirs,
-          fdToOpenKey,
-        })),
-        ofd: nextOfd,
-      }
+      proc[pid].fdToOpen = mapValues(fdToOpenKey, (ofdKey) => ofd[ofdKey]);
+
+      return { ofd: nextOfd };
     });
   }
 
   /**
    * Deepen redirection scope in process.
+   * Add fresh scope as 1st item.
+   * No need to recompute `fdToOpenKey`.
    */
   pushRedirectScope(pid: number) {
-    this.set(({ proc }) => ({
-      proc: updateLookup(`${pid}`, proc, ({ nestedRedirs }) => ({
-        /**
-         * Add fresh scope as 1st item.
-         * No need to recompute `fdToOpenKey`.
-         */
-        nestedRedirs: [{} as Record<number, string>].concat(nestedRedirs),
-      })),
-    }));
+    this.getProcess(pid).nestedRedirs.unshift({});
   }
 
   /**
@@ -192,16 +187,13 @@ export class ProcessService {
     Object.assign<FileMeta, FileMeta>(parsed.meta, { pid, sessionKey, sid: pid });
 
     return new Promise((resolve, reject) => {
-      this.set(({ proc }) => ({
-        proc: updateLookup(`${pid}`, proc, () => ({
-          parsed,
-          subscription: transpiled.subscribe({
-            next: (msg) => console.log('received', msg), // TEMP
-            complete: () => resolve(),
-            error: (err) => reject(err),
-          }),
-        })),
-      }))
+      const process = this.getProcess(pid);
+      process.parsed = parsed;
+      process.subscription = transpiled.subscribe({
+        next: (msg) => console.log('received', msg), // TEMP
+        complete: () => resolve(),
+        error: (err) => reject(err),
+      });
     });
   }
 
@@ -213,11 +205,7 @@ export class ProcessService {
   }
 
   setExitCode(pid: number, code: number) {
-    this.set(({ proc }) => ({
-      proc: updateLookup(`${pid}`, proc, () => ({
-        lastExitCode: code,
-      })),
-    }));
+    this.getProcess(pid).lastExitCode = code;
   }
 
   startProcess(pid: number) {
@@ -235,10 +223,9 @@ export class ProcessService {
   }
 
   stopProcess(pid: number) {
-    this.getProcess(pid).subscription?.unsubscribe();
-    this.set(({ proc }) => ({
-      proc: updateLookup(`${pid}`, proc, () => ({ subscription: null })),
-    }));
+    const process = this.getProcess(pid);
+    process.subscription?.unsubscribe();
+    process.subscription = null;
   }
 
   /**
@@ -252,9 +239,9 @@ export class ProcessService {
    * TODO remove?
    */
   write(pid: number, fd: number, msg: string) {
-    const { fdToOpenKey: { [fd]: openKey } } = this.getProcess(pid);
-    const { file } = this.getOfds()[openKey];
-    file.writable.write({ key: 'send-lines', lines: [msg] }); // TODO types
+    const { fdToOpen: { [fd]: { file } } } = this.getProcess(pid);
+    // TODO types
+    file.writable.write({ key: 'send-lines', lines: [msg] });
   }
 
 }

@@ -13,33 +13,27 @@ export interface FsFile<R = any, W = any> {
   writable: ShellStream<W>;
 }
 
-export interface OpenFileDescription<T> {
-  key: string;
+
+export class OpenFileDescription<T> {
+  mode: 'RDWR'; // TODO
   /**
    * The number of descendent processes using this open file description.
    * - incremented upon initial open and inheritance.
    * - decremented on close (explicitly, or via process termination).
    */
   numLinks: number;
-  /** The opened file. */
-  file: FsFile;
-  /** Read only, read and write, or write only. */
-  mode: OpenFileMode;
+  
+  constructor(public key: string, public file: FsFile) {
+    this.mode = 'RDWR';
+    this.numLinks = 0;
+  }
+
+  write(msg: T) {
+    this.file.writable.write(msg);
+  }
 }
 
-type OpenFileMode = 'RDONLY' | 'RDWR' | 'WRONLY';
-
-export function createOfd<T>(
-  key: string,
-  file: FsFile,
-): OpenFileDescription<T> {
-  return {
-    key,
-    file,
-    mode: 'RDWR', // TODO
-    numLinks: 0, // TODO
-  };
-}
+// type OpenFileMode = 'RDONLY' | 'RDWR' | 'WRONLY';
 
 export function createFsFile<R, W>(
   absPath: string,

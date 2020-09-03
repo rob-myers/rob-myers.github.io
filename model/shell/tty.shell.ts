@@ -110,7 +110,7 @@ export class TtyShell {
   private prompt(prompt: string) {
     this.io.writable.write({
       key: 'send-xterm-prompt',
-      prompt,
+      prompt: `\u001b[37m${prompt}\x1b[0m`, // White prompt
     });    
   }
 

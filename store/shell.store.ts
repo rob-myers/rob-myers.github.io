@@ -1,9 +1,9 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { Subscription, Subject } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
-import { OpenFileDescription, createOfd, createFsFile } from '@model/shell/file.model';
+import { OpenFileDescription, createFsFile } from '@model/shell/file.model';
 import { FromFdToOpenKey } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
 import { ToProcVar, NamedFunction } from '@model/shell/var.model';
@@ -56,8 +56,8 @@ export interface Process {
   ppid: number;
   parsed: FileWithMeta;
   subscription: null | Subscription;
-  /** File descriptor to open key */
-  fdToOpenKey: FromFdToOpenKey;
+  /** File descriptor to ofd */
+  fdToOpen: Record<string, OpenFileDescription<any>>;
   /**
    * Process code-blocks such as `while, if, for, {}` have redirection scope.
    * The 1st item corresponds to the current scope, the last to the top-most
@@ -89,7 +89,7 @@ const useStore = create<State>(devtools((set, get) => {
     proc: {},
     fs: addToLookup(nullFile, {} as State['fs']),
     // NOTE we're also using /dev/null to identify an open file description
-    ofd: addToLookup(createOfd('/dev/null', nullFile), {} as State['ofd']),
+    ofd: addToLookup(new OpenFileDescription('/dev/null', nullFile), {} as State['ofd']),
     api: {
       createSession: (alias) => {
         const { toSessionKey, nextTtyId: ttyId } = get();
@@ -115,7 +115,7 @@ const useStore = create<State>(devtools((set, get) => {
           nextTtyId: nextTtyId + 1,
           fs: addToLookup(ttyFile, fs),
           // NOTE we're also using /dev/tty-${ttyId} to identify an open file description
-          ofd: addToLookup(createOfd(canonicalPath, ttyFile), ofd),
+          ofd: addToLookup(new OpenFileDescription(canonicalPath, ttyFile), ofd),
         }));
 
         processService.createLeadingProcess(sessionKey);

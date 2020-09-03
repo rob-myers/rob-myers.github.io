@@ -67,8 +67,9 @@ export class TtyXterm {
     this.io.writable.registerCallback(this.onMessage.bind(this));
 
     // Initial message
-    this.xterm.write('\x1b[38;5;248;1m');
-    this.xterm.writeln(`Connected to ${this.io.key}.\x1b[0m`);
+    this.xterm.write('\x1b[37m');
+    this.xterm.writeln(`Connected to ${this.io.key}`);
+    this.xterm.write('\x1b[0m');
     this.clearInput();
     this.cursorRow = 2;
   }
@@ -440,8 +441,14 @@ export class TtyXterm {
         }
         return;
       }
-      default:
-        console.warn(`xterm for ${this.sessionKey} ignored message ${JSON.stringify(msg)}`);
+      default: {
+        this.queueCommands([{
+          key: 'line',
+          line: typeof msg === 'string' ? msg : JSON.stringify(msg),
+        }]);
+        return;
+        // console.warn(`xterm for ${this.sessionKey} ignored message ${JSON.stringify(msg)}`);
+      }
     }
   }
 
@@ -483,7 +490,9 @@ export class TtyXterm {
           break;
         }
         case 'line': {
+          this.xterm.write('\u001b[33m'); // Brown output
           this.xterm.writeln(command.line);
+          this.xterm.write('\x1b[0m');
           this.trackCursorRow(+1);
           numLines++;
           break;
