@@ -9,12 +9,10 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can query polyanya and display navpath
 
-- [ ] `ShellStream` -> `INode` and has only one internal stream
+- [ ] `ShellStream` has only one internal stream
 
 - [ ] can transpile simple command
-
 - [x] tops of walls autoscaled, no need in blender
-
 - [x] terminal has 'listening process' which:
   > continually attempts to read/parse tty input
   > continually prompts for more input
@@ -22,7 +20,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] remove filesystem i.e. inodes
   > `OpenFileDescription`s now point to `Subject`s
 - [x] navmesh autogen from meshes on floor
-
 - [ ] can build `Row`s of rooms
 - [x] can instantiate rooms
 - [x] load rooms.gltf using `GLTFLoader` and store in state

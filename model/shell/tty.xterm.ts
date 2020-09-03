@@ -3,7 +3,7 @@ import { Subject } from 'rxjs';
 import { MessageFromShell, MessageFromXterm } from './tty.shell';
 import { testNever } from '@model/generic.model';
 import { SigEnum } from './process.model';
-import { ShellStream } from '../rxjs/shell.stream';
+import { ShellStream } from './shell.stream';
 
 /**
  * Wraps XTerm.Terminal.

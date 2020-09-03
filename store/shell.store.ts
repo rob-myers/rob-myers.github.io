@@ -8,7 +8,7 @@ import { FromFdToOpenKey } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
 import { ToProcVar, NamedFunction } from '@model/shell/var.model';
 import { processService } from '@model/shell/process.service';
-import { ShellStream } from '@model/rxjs/shell.stream';
+import { ShellStream } from '@model/shell/shell.stream';
 import { varService } from '@model/shell/var.service';
 import { fileService } from '@model/shell/file.service';
 import { addToLookup, removeFromLookup } from './store.util';

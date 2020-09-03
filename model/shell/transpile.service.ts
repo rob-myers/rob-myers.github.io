@@ -3,7 +3,6 @@ import { concatMap, reduce, map, tap } from 'rxjs/operators';
 import globrex from 'globrex';
 
 import { testNever, last } from '@model/generic.model';
-import { awaitEnd } from '@model/rxjs/rxjs.util';
 import * as Sh from '@model/shell/parse.service';
 import { FsFile } from '@store/shell.store';
 import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
@@ -387,7 +386,6 @@ class TranspileShService {
       } else {
         // TODO apply/remove redirections
         const redirects = Redirs.map((x) => ts.Redirect(x));
-        // await awaitEnd(cmd);
         await lastValueFrom(cmd);
       }
     }());
@@ -851,7 +849,7 @@ class TranspileShService {
   private async assignVars(node: Sh.CallExpr, redirects: Sh.Redirect[]) {
     for (const assign of node.Assigns) {
       try {
-        await awaitEnd(this.Assign(assign));
+        await this.awaitEnd(this.Assign(assign));
       } catch (e) {
         if (e instanceof ShError) {
           console.error('Caught assign error', e);
@@ -869,7 +867,7 @@ class TranspileShService {
       ps.pushRedirectScope(pid);
       for (const redirect of redirects) {
         try {
-          await awaitEnd(this.Redirect(redirect));
+          await this.awaitEnd(this.Redirect(redirect));
         } catch (e) {
           if (e instanceof ShError) {
             console.error('Caught redirects error', e);
@@ -882,6 +880,15 @@ class TranspileShService {
       }
       ps.popRedirectScope(pid);
     }
+  }
+
+  private async awaitEnd<T>(observable: Observable<T>) {
+    await new Promise((resolve, reject) => {
+      observable.subscribe({
+        complete: resolve,
+        error: reject,
+      });
+    });
   }
 
   private isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
@@ -956,7 +963,7 @@ class TranspileShService {
     if (this.isWordPart(node)) {// WordPart expands to multiple values
       textValue = (await lastValueFrom(this.ExpandPart(node))).value;
     } else {// ArithmExpr expands to exactly one string/number
-      await awaitEnd(this.ArithmExpr(node)); 
+      await this.awaitEnd(this.ArithmExpr(node)); 
       textValue = node.string!;
     }
 
