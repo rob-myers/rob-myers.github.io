@@ -857,10 +857,10 @@ class TranspileShService {
     );
   }
 
+  /**
+   * TODO
+   */
   private Redirect(node: Sh.Redirect): Observable<ProcessAct> {
-    /**
-     * TODO
-     */
     return of(act.unimplemented());
   }
 
@@ -915,7 +915,7 @@ class TranspileShService {
 
   private isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
     if (
-      arithmExpr && arithmExpr.type === 'Word'
+      arithmExpr?.type === 'Word'
       && (arithmExpr.Parts.length === 1)
       && arithmExpr.Parts[0].type === 'Lit'
     ) {
