@@ -535,9 +535,9 @@ class TranspileShService {
   }
 
   private ParamExp(node: Sh.ParamExp): Observable<Expanded> {
-    const def = this.transpileParam(node);
-    node.paramDef =  def; // Store in node too
     const { pid } = node.meta;
+    const def: ParameterDef<Observable<Expanded>, Observable<Expanded>> = node.paramDef || this.transpileParam(node);
+    node.paramDef = def; // Store in node too
 
     if (def.parKey === ParamType.special) {
       /**
@@ -772,11 +772,11 @@ class TranspileShService {
           }
           break;
         }
-        // /**
-        //  * replace: ${parameter/pattern/string}.
-        //  * We support 'replace all' via //.
-        //  * TODO support # (prefix), % (suffix).
-        //  */
+        /**
+         * replace: ${parameter/pattern/string}.
+         * We support 'replace all' via //.
+         * TODO support # (prefix), % (suffix).
+         */
         case ParamType.replace: {
           const { all, orig, with: With } = def;
           const origValue = (await lastValueFrom(orig)).value;
@@ -853,7 +853,7 @@ class TranspileShService {
    * TODO review and explain
    */
   private Redirect(node: Sh.Redirect): Observable<ProcessAct> {
-    const def = this.transpileRedirect(node);
+    const def = node.redirDef || this.transpileRedirect(node);
     node.redirDef = def; // Store in node too
     
     return from(async function* (){
@@ -1076,7 +1076,7 @@ class TranspileShService {
     (node.parent! as Sh.BaseNode).number = value;
   }
 
-  private transpileParam(node: Sh.ParamExp): ParameterDef<Observable<Expanded>, Observable<Expanded>> {
+  transpileParam(node: Sh.ParamExp): ParameterDef<Observable<Expanded>, Observable<Expanded>> {
     const { Excl, Exp, Index, Length, Names, Param, Repl, Short, Slice } = node;
     const base = {
       param: Param.Value,
@@ -1165,7 +1165,7 @@ class TranspileShService {
     }
   }
 
-  private transpileRedirect(node: Sh.Redirect): RedirectDef<any> {
+  transpileRedirect(node: Sh.Redirect): RedirectDef<any> {
     const { N, Word, Hdoc } = node;
     const fd = N ? Number(N.Value) : undefined;
 

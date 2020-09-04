@@ -1,4 +1,3 @@
-import { Subject } from 'rxjs';
 import { testNever } from '@model/generic.model';
 import useStore, { State as ShellState, Session } from '@store/shell.store';
 import { parseSh } from './parse.service';
@@ -7,6 +6,7 @@ import { FsFile } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
 import { TtyXterm } from './tty.xterm';
 import { processService as ps, processService } from './process.service';
+import { srcService } from './src.service';
 
 export class TtyShell {
 
@@ -89,6 +89,10 @@ export class TtyShell {
         }
         case 'complete': {
           this.buffer.length = 0;
+          // store in .history device
+          const singleLineSrc = srcService.src(result.parsed);
+          this.storeSrcLine(singleLineSrc);
+
           await ps.runInShell(result.parsed, this.sessionKey);
           this.prompt('$ ');
           break;
