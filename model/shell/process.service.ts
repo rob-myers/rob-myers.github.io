@@ -2,7 +2,7 @@ import shortid from 'shortid';
 import { mapValues } from '@model/generic.model';
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
 import { addToLookup } from '@store/store.util';
-import { FileWithMeta, parseSh, FileMeta } from './parse.service';
+import { FileWithMeta, parseSh, FileMeta, ParsedSh, BaseNode } from './parse.service';
 import { transpileSh, ShError } from './transpile.service';
 import { varService } from './var.service';
 import { FsFile, OpenFileRequest, OpenFileDescription } from './file.model';
@@ -184,8 +184,17 @@ export class ProcessService {
     return useStore.getState().session[sessionKey];
   }
 
-  isInteractiveShell({ meta }: FileWithMeta) {
+  isInteractiveShell({ meta }: BaseNode) {
     return meta.pid === meta.sid;
+  }
+
+  /**
+   * Was process launched interactively?
+   * We don't support launching shells from shells.
+   */
+  launchedInteractively(pid: number): boolean {
+    const { parsed } = this.getProcess(pid);
+    return this.isInteractiveShell(parsed);
   }
 
   /**

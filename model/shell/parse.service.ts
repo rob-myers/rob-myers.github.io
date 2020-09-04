@@ -6,6 +6,8 @@ import { ParameterDef } from './parameter.model';
 import { RedirectDef } from './file.model';
 // console.log({ Sh });
 
+let nodeCount = 0;
+
 /**
  * Parse shell code using npm module mvdan-sh.
  */
@@ -108,6 +110,7 @@ class ParseShService {
     return {
       Pos: this.pos(Pos()),
       End: this.pos(End()),
+      uid: nodeCount++, // Uid over all parse trees
       meta: this.mockMeta, // Gets mutated
       parent: null, // Gets overwritten
     };
@@ -856,6 +859,9 @@ export interface BaseNode {
   /** Reference to parent node  */
   parent: null | ParsedSh;
 
+  /** Node id is global across all parse trees */
+  uid: number;
+
   /** Used for test expansion */
   boolean?: boolean;
   /** Used for arithmetic expansion */
@@ -1029,6 +1035,8 @@ export interface FileMeta {
   sid: number;
   sessionKey: string;
 }
+
+
 const getMockMeta = (): FileMeta => ({
   pid: -1,
   sid: -1,

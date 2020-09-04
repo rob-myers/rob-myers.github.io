@@ -101,6 +101,11 @@ export class FileService {
     return this.hasDir(dirPath);
   }
 
+  makeWire(absPath: string) {
+    const stream = new ShellStream();
+    this.createFsFile(absPath, stream, stream);
+  }
+
   /**
    * Resolve a mounted file.
    */

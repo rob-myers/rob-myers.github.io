@@ -331,7 +331,6 @@ class TranspileShService {
 
     return from(async function*() {
       const cs = stmts.map((stmt) => ts.Stmt(stmt));
-      const { pid } = node.meta;
 
       switch (node.Op) {
         case '&&': {
@@ -358,7 +357,23 @@ class TranspileShService {
         case '|': {
           /**
            * TODO
+           * - create temp wires
+           * - create forked processes connected by wires
+           * - wait for them all to terminate 
            */
+          const { pid, sessionKey } = node.meta;
+          const rootKey = `${node.uid}.${pid}.${sessionKey}`;
+          const pipePaths = cs.slice(0, -1).map((_, i) => `/tmp/${i}-${i + 1}.${rootKey}`);
+          const interactive = ps.launchedInteractively(pid);
+
+          for (const pipePath of pipePaths) {
+            fs.makeWire(pipePath);
+          }
+
+          /**
+           * TODO can fork process
+           */
+
           break;
         }
         default:
@@ -366,7 +381,6 @@ class TranspileShService {
       }
     }());
   }
-
 
   private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
     return from(async function* () {
@@ -1037,7 +1051,7 @@ class TranspileShService {
     ps.setExitCode(meta.pid, e.exitCode);
   }
 
-  private isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
+  private extractSpecialArithmExpr(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
     if (
       arithmExpr?.type === 'Word'
       && (arithmExpr.Parts.length === 1)
@@ -1135,7 +1149,7 @@ class TranspileShService {
   
     if (Excl) {// ${!...}
       if (Index) {
-        const special = this.isArithmExprSpecial(Index);
+        const special = this.extractSpecialArithmExpr(Index);
         if (special) {// ${!x[@]}, ${x[*]}
           return { ...base, parKey: ParamType['keys'], split: special === '@' };
         } else {// Indirection ${!x[n]} or ${!x["foo"]}
@@ -1174,7 +1188,7 @@ class TranspileShService {
             `Unsupported operation '${Exp.Op}' in parameter expansion of '${Param.Value}'.`);
         }
       } else if (Length) {// ${#x}, ${#x[2]}, ${#x[@]}
-        const isSpecial = Boolean(this.isArithmExprSpecial(Index));
+        const isSpecial = Boolean(this.extractSpecialArithmExpr(Index));
         return { ...base, parKey: ParamType['length'], of: isSpecial ? 'values' : 'word' };
       } else if (Repl) {// ${x/y/z}, ${x//y/z}, ${x[foo]/y/z}
         return { ...base, parKey: ParamType['replace'], all: Repl.All,
