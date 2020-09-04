@@ -297,38 +297,37 @@ export function src(node: Sh.ParsedSh | null): string {
       return `let ${node.Exprs.map(c => src(c)).join(' ')}`;
 
     case 'Redirect': {
-      // const { def } = node;
-      // switch (def.subKey) {
-      //   case '<': {
-      //     return `${def.fd || ''}<${def.mod ? '&' : ''}${this.src(def.location) }${
-      //       def.mod === 'move' ? '-' : ''}`;
-      //   }
-      //   case '>': {
-      //     return `${def.fd || ''}${def.mod === 'append' ? '>>' : def.mod ? '>&' : '>'}${
-      //       this.src(def.location) }${def.mod === 'move' ? '-' : ''}`;
-      //   }
-      //   case '&>': {
-      //     return `${def.append ? '&>>' : '&>'}${this.src(def.location)}`;
-      //   }
-      //   /**
-      //    * Transform heredoc to fit on 1 line.
-      //    */
-      //   case '<<': {
-      //     let src = this.src(def.here);
-      //     if (src.endsWith('\n')) {// echo will add a newline
-      //       src = src.slice(0, -1);
-      //     }
-      //     return `${def.fd || ''}< <( echo "${src.replace(/\n/g, '"$$\'\\n\'"')}" )`;
-      //   }
-      //   case '<<<': {
-      //     return `${def.fd || ''}<<<${this.src(def.location)}`;
-      //   }
-      //   case '<>': {
-      //     return `${def.fd || ''}<>${this.src(def.location)}`;
-      //   }
-      //   default: throw testNever(def);
-      // }
-      return // TODO
+      const def = node.redirDef!;
+      switch (def.subKey) {
+        case '<': {
+          return `${def.fd || ''}<${def.mod ? '&' : ''}${src(node.Word) }${
+            def.mod === 'move' ? '-' : ''}`;
+        }
+        case '>': {
+          return `${def.fd || ''}${def.mod === 'append' ? '>>' : def.mod ? '>&' : '>'}${
+            src(node.Word) }${def.mod === 'move' ? '-' : ''}`;
+        }
+        case '&>': {
+          return `${def.append ? '&>>' : '&>'}${src(node.Word)}`;
+        }
+        /**
+         * Transform heredoc to fit on 1 line.
+         */
+        case '<<': {
+          let srcCode = src(def.here);
+          if (srcCode.endsWith('\n')) {// echo will add a newline
+            srcCode = srcCode.slice(0, -1);
+          }
+          return `${def.fd || ''}< <( echo "${srcCode.replace(/\n/g, '"$$\'\\n\'"')}" )`;
+        }
+        case '<<<': {
+          return `${def.fd || ''}<<<${src(node.Word)}`;
+        }
+        case '<>': {
+          return `${def.fd || ''}<>${src(node.Word)}`;
+        }
+        default: throw testNever(def);
+      }
     }
 
     case 'File':
@@ -385,6 +384,10 @@ export function src(node: Sh.ParsedSh | null): string {
     // Unreachable
     case 'CStyleLoop':
     case 'Comment':
+    case 'WordIter':
+    case 'ArrayElem':
+    case 'CaseItem':
+    case 'ArithmCmd': // <== ?
       return '';
 
     default:
