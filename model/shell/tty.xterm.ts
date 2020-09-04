@@ -4,6 +4,10 @@ import { testNever } from '@model/generic.model';
 import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
 
+export const ansiReset = '\x1b[0m';
+export const ansiOut = '\u001b[33m';
+export const ansiWarn = '\u001b[41;37m';
+
 /**
  * Wraps XTerm.Terminal.
  */
@@ -489,9 +493,9 @@ export class TtyXterm {
           break;
         }
         case 'line': {
-          this.xterm.write('\u001b[33m'); // Brown output
+          this.xterm.write(ansiOut); // Brown output
           this.xterm.writeln(command.line);
-          this.xterm.write('\x1b[0m');
+          this.xterm.write(ansiReset);
           this.trackCursorRow(+1);
           numLines++;
           break;

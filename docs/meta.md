@@ -3,12 +3,14 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 ## Todo
 
 - [ ] can reset env ui; must 1st click to start pan-zoom
-- [ ] try standard thunk approach; what about `GeomService`?
 - [ ] Can collapse/expand each blog entry
 
 - [ ] can query polyanya and display navpath
 
-- [ ] 'normal writes' are brown, shell errors are red
+- [ ] fix exit code propagation
+- [ ] can transpile `|`
+- [x] can transpile `&&` and `||`
+- [x] 'normal writes' are brown, shell errors are red
 - [x] get shell history working
 - [x] `OpenFileDescription` has `FsFile`
 - [x] `FsFile` has readable/writable `ShellStream` which may be the same

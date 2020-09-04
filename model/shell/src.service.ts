@@ -5,7 +5,7 @@ import { transpileSh } from "./transpile.service";
 
 export class SrcService {
 
-  private binaryCmds(cmd: Sh.BinaryCmd): Sh.BinaryCmd[] {
+  binaryCmds(cmd: Sh.BinaryCmd): Sh.BinaryCmd[] {
     const { X, Y, Op } = cmd;
     if (X.Cmd && X.Cmd.type === 'BinaryCmd' && X.Cmd.Op === Op) {
       return [...this.binaryCmds(X.Cmd), cmd];

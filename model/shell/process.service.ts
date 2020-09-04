@@ -8,6 +8,7 @@ import { varService } from './var.service';
 import { FsFile, OpenFileRequest, OpenFileDescription } from './file.model';
 import { fileService } from './file.service';
 import { ShellStream } from './shell.stream';
+import { ansiWarn, ansiReset } from './tty.xterm';
 
 export class ProcessService {
   
@@ -220,6 +221,7 @@ export class ProcessService {
       this.closeFd(pid, nextFd);
     }
     this.setFd(pid, nextFd, opened);
+    return opened;
   }
   
   /**
@@ -337,24 +339,18 @@ export class ProcessService {
   }
 
   /**
-   * Write message to process's stderr.
+   * Write textual message to process's stderr.
    */
   warn(pid: number, msg: string) {
-    this.write(pid, 2, msg);
+    this.write(pid, 2, [ansiWarn, msg, ansiReset].join(''));
   }
   
   /**
-   * Write message to process's file descriptor.
+   * Write textual message to process's file descriptor.
    */
-  write(pid: number, fd: number, msgs: string | string[]) {
+  private write(pid: number, fd: number, msg: string) {
     const { [fd]: opened } = this.getProcess(pid).fdToOpen;
-    /**
-     * TODO types or perhaps just send string
-     */
-    opened.write({
-      key: 'send-lines',
-      lines: msgs instanceof Array ? msgs : [msgs],
-    });
+    opened.write(msg);
   }
 
 }

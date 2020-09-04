@@ -14,6 +14,7 @@ import { processService as ps } from './process.service';
 import { fileService as fs } from './file.service';
 import { FsFile, RedirectDef } from './file.model';
 import { builtinService as bs } from './builtin.service';
+import { srcService as ss } from './src.service';
 import { NamedFunction } from './var.model';
 
 class TranspileShService {
@@ -319,6 +320,54 @@ class TranspileShService {
     }
   }
 
+  private BinaryCmd(node: Sh.BinaryCmd) {
+    /** All contiguous binary cmds for same operator */
+    const cmds = ss.binaryCmds(node);
+    /**
+     * Restrict to leaves of binary expression, assuming expression
+     * originally left-biased e.g. (((A * B) * C) * D) * E
+     */
+    const stmts = [cmds[0].X].concat(cmds.map(({ Y }) => Y));
+
+    return from(async function*() {
+      const cs = stmts.map((stmt) => ts.Stmt(stmt));
+      const { pid } = node.meta;
+
+      switch (node.Op) {
+        case '&&': {
+          for (const child of cs) {
+            await awaitEnd(child);
+          }
+          break;
+        }
+        case '||': {
+          for (const child of cs) {
+            try {
+              await awaitEnd(child);
+              break;
+            } catch (e) {
+              if (e instanceof ShError) {
+                ts.handleShError(node, e);
+                continue;
+              }
+              throw e;
+            }
+          }
+          break;
+        }
+        case '|': {
+          /**
+           * TODO
+           */
+          break;
+        }
+        default:
+          throw new ShError(`binary command ${node.Op} unsupported`, 2);
+      }
+    }());
+  }
+
+
   private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
     return from(async function* () {
       const args = await ts.performShellExpansion(node.Args);
@@ -347,7 +396,7 @@ class TranspileShService {
   }
 
   /**
-   * Construct a simple command (CallExpr), or compound command.
+   * Construct a simple command (CallExpr), or a compound command.
    */
   private Command(
     node: null | Sh.Command,
@@ -368,7 +417,7 @@ class TranspileShService {
   
       switch (node.type) {
         case 'ArithmCmd': cmd = ts.ArithmCmd(node); break;
-        // case 'BinaryCmd': child = this.BinaryCmd(Cmd); break;
+        case 'BinaryCmd': cmd = ts.BinaryCmd(node); break;
         // case 'Block': child = this.Block(Cmd); break;
         // case 'CaseClause': child = this.CaseClause(Cmd); break;
         // case 'CoprocClause': {
@@ -398,7 +447,7 @@ class TranspileShService {
       } else {
         // TODO apply/remove redirections
         const redirects = Redirs.map((x) => ts.Redirect(x));
-        await lastValueFrom(cmd);
+        await awaitEnd(cmd);
       }
       ps.setExitCode(node.meta.pid, node.exitCode);
     }());
@@ -530,9 +579,7 @@ class TranspileShService {
       catchError((e, _src) => {
         const { meta } = node;
         if (e instanceof ShError) {
-          console.error(`${meta.sessionKey}: pid ${meta.pid}: ${e.message}`);
-          ps.warn(meta.pid, e.message);
-          ps.setExitCode(meta.pid, e.exitCode);
+          ts.handleShError(node, e);
         } else {
           console.error(`${meta.sessionKey}: pid ${meta.pid}: internal error`);
           console.error(e);
@@ -923,8 +970,9 @@ class TranspileShService {
            * - TODO Write in new redirection scope?
            */
           const tempPath = `/tmp/here-doc.${shortId.generate()}.${pid}`;
-          ps.openFile(pid, { fd: 10, mode: 'WRONLY', path: tempPath });
-          ps.write(pid, 1, buffer) // ?
+          const opened = ps.openFile(pid, { fd: 10, mode: 'WRONLY', path: tempPath });
+          // ps.write(pid, 1, buffer)
+          buffer.map(line => opened.write(line));
           ps.closeFd(pid, 10);
           ps.openFile(pid, { fd: def.fd || 0, mode: 'RDONLY', path: tempPath });
           ps.unlinkFile(pid, tempPath);
@@ -981,6 +1029,12 @@ class TranspileShService {
       }
       ps.popRedirectScope(pid);
     }
+  }
+
+  private handleShError({ meta }: Sh.BaseNode, e: ShError) {
+    console.error(`${meta.sessionKey}: pid ${meta.pid}: ${e.message}`);
+    ps.warn(meta.pid, e.message);
+    ps.setExitCode(meta.pid, e.exitCode);
   }
 
   private isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
