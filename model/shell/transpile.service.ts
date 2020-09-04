@@ -1,6 +1,7 @@
 import { Observable, from, of, lastValueFrom, throwError } from 'rxjs';
 import { concatMap, reduce, map, tap, catchError } from 'rxjs/operators';
 import globrex from 'globrex';
+import shortId from 'shortid';
 
 import { testNever, last } from '@model/generic.model';
 import * as Sh from '@model/shell/parse.service';
@@ -10,7 +11,7 @@ import { ParamType, ParameterDef } from './parameter.model';
 import { varService as vs } from './var.service';
 import { processService as ps } from './process.service';
 import { fileService as fs } from './file.service';
-import { FsFile } from './file.model';
+import { FsFile, RedirectDef } from './file.model';
 import { builtinService as bs } from './builtin.service';
 import { NamedFunction } from './var.model';
 
@@ -535,6 +536,7 @@ class TranspileShService {
 
   private ParamExp(node: Sh.ParamExp): Observable<Expanded> {
     const def = this.transpileParam(node);
+    node.paramDef =  def; // Store in node too
     const { pid } = node.meta;
 
     if (def.parKey === ParamType.special) {
@@ -848,10 +850,89 @@ class TranspileShService {
   }
 
   /**
-   * TODO
+   * TODO review and explain
    */
   private Redirect(node: Sh.Redirect): Observable<ProcessAct> {
-    return of(act.unimplemented());
+    const def = this.transpileRedirect(node);
+    node.redirDef = def; // Store in node too
+    
+    return from(async function* (){
+      const { value } = await lastValueFrom(ts.Expand(node.Word));
+      const { pid } = node.meta;
+
+      /**
+       * Handle duplication and moving.
+       */
+      switch (def.subKey) {
+        case '<':
+        case '>': {
+          const fd = def.fd == null ? (def.subKey === '<' ? 0 : 1) : def.fd;
+          if (def.mod === 'dup') {
+            if (value === '-') {
+              ps.ensureFd(pid, fd);
+              ps.closeFd(pid, fd);
+            } else {
+              ps.ensureFd(pid, value);
+              ps.duplicateFd(pid, parseInt(value), fd);
+            }
+            // Propagate any exit code
+            node.exitCode = node.Word.exitCode || 0;
+          } else if (def.mod === 'move') {
+            ps.ensureFd(pid, value);
+            ps.duplicateFd(pid, parseInt(value), fd);
+            ps.closeFd(pid, parseInt(value));
+            node.exitCode = node.Word.exitCode || 0;
+          }
+        }
+      }
+
+      const fd = 'fd' in def ? def.fd : undefined;
+      switch (def.subKey) {
+        case '<': {
+          // mod: null, so fd<location
+          ps.openFile(pid, { fd: fd == null ? 0 : fd, mode: 'RDONLY', path: value });
+          break;
+        }
+        case '>': {// mod: null | 'append', so fd>location or fd>>location.
+          ps.openFile(pid, { fd: fd == null ? 1 : fd, mode: 'WRONLY', path: value });
+          break;
+        }
+        case '&>': {// &>location or &>>location, both at stdout and stderr.
+          ps.openFile(pid, { fd: 1, mode: 'WRONLY', path: value });
+          ps.openFile(pid, { fd: 2, mode: 'WRONLY', path: value });
+          break;
+        }
+        case '<<':  // Here-doc
+        case '<<<': // Here-string
+        {
+          const buffer = [] as string[];
+          if (def.subKey === '<<') {// location.value is e.g. EOF
+            const { value: hereValue } = await lastValueFrom(ts.Expand(node.Hdoc!));
+            // Remove a single final newline if exists
+            buffer.push(...hereValue.replace(/\n$/, '').split('\n'));
+          } else {
+            buffer.push(value); // ?
+          }
+          /**
+           * Create temp file and unlink.
+           * - https://www.oilshell.org/blog/2016/10/18.html
+           * - TODO Write in new redirection scope?
+           */
+          const tempPath = `/tmp/here-doc.${shortId.generate()}.${pid}`;
+          ps.openFile(pid, { fd: 10, mode: 'WRONLY', path: tempPath });
+          ps.write(pid, 1, buffer) // ?
+          ps.closeFd(pid, 10);
+          ps.openFile(pid, { fd: def.fd || 0, mode: 'RDONLY', path: tempPath });
+          ps.unlinkFile(pid, tempPath);
+          break;
+        }
+        case '<>': {// Open fd for read/write.
+          ps.openFile(pid, { fd: fd == null ? 0 : fd, mode: 'RDWR', path: value });
+          break;
+        }
+        default: throw testNever(def);
+      }
+    }());
   }
 
   private Stmt({ Negated, Background, Redirs, Cmd }: Sh.Stmt): Observable<ProcessAct> {
@@ -995,9 +1076,8 @@ class TranspileShService {
     (node.parent! as Sh.BaseNode).number = value;
   }
 
-  private transpileParam(node: Sh.ParamExp) {
+  private transpileParam(node: Sh.ParamExp): ParameterDef<Observable<Expanded>, Observable<Expanded>> {
     const { Excl, Exp, Index, Length, Names, Param, Repl, Short, Slice } = node;
-    let def = null as null | ParameterDef<Observable<Expanded>, Observable<Expanded>>;
     const base = {
       param: Param.Value,
       short: Short,
@@ -1008,61 +1088,61 @@ class TranspileShService {
       if (Index) {
         const special = this.isArithmExprSpecial(Index);
         if (special) {// ${!x[@]}, ${x[*]}
-          def = { ...base, parKey: ParamType['keys'], split: special === '@' };
+          return { ...base, parKey: ParamType['keys'], split: special === '@' };
         } else {// Indirection ${!x[n]} or ${!x["foo"]}
-          def = def || { ...base, parKey: ParamType['pointer'] };
+          return { ...base, parKey: ParamType['pointer'] };
         }
       } else if (Names) {// ${!x*}, ${!x@}
-        def = { ...base, parKey: ParamType['vars'], split: (Names === '@') };
+        return { ...base, parKey: ParamType['vars'], split: (Names === '@') };
       } else {// Indirection ${!x}
-        def = { ...base, parKey: ParamType['pointer'] };
+        return { ...base, parKey: ParamType['pointer'] };
       }
     } else {// No exclamation
       if (Exp) {
         const pattern = Exp.Word ? this.Expand(Exp.Word) : null;
         const alt = pattern;
         switch (Exp.Op) {
-          case '^': def = { ...base, parKey: ParamType.case, pattern, to: 'upper', all: false }; break;
-          case '^^': def = { ...base, parKey: ParamType.case, pattern, to: 'upper', all: true };  break;
-          case ',': def = { ...base, parKey: ParamType.case, pattern, to: 'lower', all: false }; break;
-          case ',,': def = { ...base, parKey: ParamType.case, pattern, to: 'lower', all: true }; break;
+          case '^': return { ...base, parKey: ParamType.case, pattern, to: 'upper', all: false }; break;
+          case '^^': return { ...base, parKey: ParamType.case, pattern, to: 'upper', all: true };  break;
+          case ',': return { ...base, parKey: ParamType.case, pattern, to: 'lower', all: false }; break;
+          case ',,': return { ...base, parKey: ParamType.case, pattern, to: 'lower', all: true }; break;
           // remove
-          case '%': def = { ...base, parKey: ParamType.remove, pattern, greedy: false, dir: 1 }; break;
-          case '%%': def = { ...base, parKey: ParamType.remove, pattern, greedy: true, dir: 1 }; break;
-          case '#': def = { ...base, parKey: ParamType.remove, pattern, greedy: false, dir: -1 }; break;
-          case '##': def = { ...base, parKey: ParamType.remove, pattern, greedy: true, dir: -1 }; break;
+          case '%': return { ...base, parKey: ParamType.remove, pattern, greedy: false, dir: 1 }; break;
+          case '%%': return { ...base, parKey: ParamType.remove, pattern, greedy: true, dir: 1 }; break;
+          case '#': return { ...base, parKey: ParamType.remove, pattern, greedy: false, dir: -1 }; break;
+          case '##': return { ...base, parKey: ParamType.remove, pattern, greedy: true, dir: -1 }; break;
           // default
-          case '+': def = { ...base, parKey: ParamType.default, alt, symbol: '+', colon: false }; break;
-          case ':+': def = { ...base, parKey: ParamType.default, alt, symbol: '+', colon: true }; break;
-          case '=': def = { ...base, parKey: ParamType.default, alt, symbol: '=', colon: false }; break;
-          case ':=': def = { ...base, parKey: ParamType.default, alt, symbol: '=', colon: true }; break;
-          case '?': def = { ...base, parKey: ParamType.default, alt, symbol: '?', colon: false }; break;
-          case ':?': def = { ...base, parKey: ParamType.default, alt, symbol: '?', colon: true }; break;
-          case '-': def = { ...base, parKey: ParamType.default, alt, symbol: '-', colon: false }; break;
-          case ':-': def = { ...base, parKey: ParamType.default, alt, symbol: '-', colon: true }; break;
+          case '+': return { ...base, parKey: ParamType.default, alt, symbol: '+', colon: false }; break;
+          case ':+': return { ...base, parKey: ParamType.default, alt, symbol: '+', colon: true }; break;
+          case '=': return { ...base, parKey: ParamType.default, alt, symbol: '=', colon: false }; break;
+          case ':=': return { ...base, parKey: ParamType.default, alt, symbol: '=', colon: true }; break;
+          case '?': return { ...base, parKey: ParamType.default, alt, symbol: '?', colon: false }; break;
+          case ':?': return { ...base, parKey: ParamType.default, alt, symbol: '?', colon: true }; break;
+          case '-': return { ...base, parKey: ParamType.default, alt, symbol: '-', colon: false }; break;
+          case ':-': return { ...base, parKey: ParamType.default, alt, symbol: '-', colon: true }; break;
           // ...
           default: throw new Error(
             `Unsupported operation '${Exp.Op}' in parameter expansion of '${Param.Value}'.`);
         }
       } else if (Length) {// ${#x}, ${#x[2]}, ${#x[@]}
         const isSpecial = Boolean(this.isArithmExprSpecial(Index));
-        def = { ...base, parKey: ParamType['length'], of: isSpecial ? 'values' : 'word' };
+        return { ...base, parKey: ParamType['length'], of: isSpecial ? 'values' : 'word' };
       } else if (Repl) {// ${x/y/z}, ${x//y/z}, ${x[foo]/y/z}
-        def = { ...base, parKey: ParamType['replace'], all: Repl.All,
+        return { ...base, parKey: ParamType['replace'], all: Repl.All,
           orig: this.Expand(Repl.Orig),
           with: Repl.With ? this.Expand(Repl.With) : null,
         };
       } else if (Slice) {// ${x:y:z}, ${x[foo]:y:z}
-        def = { ...base, parKey: ParamType['substring'],
+        return { ...base, parKey: ParamType['substring'],
           from: this.ArithmExpr(Slice.Offset),
           length: Slice.Length ? this.ArithmExpr(Slice.Length) : null,
         };
   
       } else if (Index) {// ${x[i]}, ${x[@]}, ${x[*]}
         // NOTE ${x[@]} can split fields in double quotes.
-        def = { ...base, parKey: ParamType['plain'] };
+        return { ...base, parKey: ParamType['plain'] };
       } else if (base.param === String(parseInt(base.param))) {
-        def = { ...base, parKey: ParamType['position'] };
+        return { ...base, parKey: ParamType['position'] };
       } else {
         switch (base.param) {
           // special
@@ -1075,18 +1155,52 @@ class TranspileShService {
           case '!':
           case '0':
           case '_': {
-            def = { ...base, parKey: ParamType['special'], param: base.param };
-            break;
+            return { ...base, parKey: ParamType['special'], param: base.param };
           }// plain
           default: {
-            def = { ...base, parKey: ParamType['plain'] };
+            return { ...base, parKey: ParamType['plain'] };
           }
         }
       }
     }
-    // also store on node to aid serialization
-    node.paramDef = def;
-    return def;
+  }
+
+  private transpileRedirect(node: Sh.Redirect): RedirectDef<any> {
+    const { N, Word, Hdoc } = node;
+    const fd = N ? Number(N.Value) : undefined;
+
+    switch (node.Op) {
+      case '<':
+        return { subKey: '<', mod: null, fd };
+      case '<&': {
+        const [part] = Word.Parts;
+        // See 3.6.8 of:
+        // https://www.gnu.org/software/bash/manual/bash.html#Redirections
+        if (part && part.type === 'Lit' && part.Value.endsWith('-')) {
+          return { subKey: '<', mod: 'move', fd };
+        }
+        return { subKey: '<', mod: 'dup', fd };
+      }
+      case '>':
+        return { subKey: '>', mod: null, fd };
+      case '>>':
+        return { subKey: '>', mod: 'append', fd };
+      case '>&': {
+        const [part] = Word.Parts;
+        if (part && part.type === 'Lit' && part.Value.endsWith('-')) {
+          return { subKey: '>', mod: 'move', fd };
+        }
+        return { subKey: '>', mod: 'dup', fd };
+      }
+      case '<<':
+        return { subKey: '<<', fd, here: this.Expand(Hdoc!) };
+      case '<<<':
+        return { subKey: '<<<', fd };
+      case '<>':
+        return { subKey: '<>', fd, };
+      default:
+        throw new Error(`Unsupported redirection symbol '${node.Op}'.`);
+    }
   }
 
 }
