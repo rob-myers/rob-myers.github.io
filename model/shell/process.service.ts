@@ -1,12 +1,13 @@
+import shortid from 'shortid';
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
-import { FileWithMeta, parseSh, FileMeta, ParsedSh } from './parse.service';
+import { FileWithMeta, parseSh, FileMeta } from './parse.service';
 import { transpileSh, ShError } from './transpile.service';
-import { addToLookup, updateLookup } from '@store/store.util';
+import { addToLookup } from '@store/store.util';
 import { mapValues } from '@model/generic.model';
 import { varService } from './var.service';
-import { FromFdToOpenKey } from './process.model';
-import { FsFile, OpenFileRequest } from './file.model';
+import { FsFile, OpenFileRequest, OpenFileDescription } from './file.model';
 import { fileService } from './file.service';
+import { ShellStream } from './shell.stream';
 
 export class ProcessService {
   
@@ -93,67 +94,60 @@ export class ProcessService {
 
 
   /**
-   * TODO decrement open file description,
-   * and remove when numLinks is zero.
+   * Decrement open file description,
+   * removing when numLinks is not positive.
    */
-  closeFdInternal(opts: {
-    fromFd: Process['fdToOpen'];
+  closeFdInternal(
     /** File descriptor. */
-    fd: number;
-    /** Current open file description state. */
-    ofd: ShellState['ofd'];
+    fd: number,
+    fromFd: Process['fdToOpen'],
     /** Warn if open file description non-existent? */
-    warnNonExist?: boolean;
-  }) {
-    /**
-     * TODO mutate ofd
-     */
+    warnNonExist?: boolean,
+  ) {
+    const open = fromFd[fd];
+    if (open) {
+      if (open.numLinks > 1) {
+        open.numLinks--;
+      } else {
+        delete this.getOfds()[open.key];
+      }
+    } else if (warnNonExist) {
+      console.error(`Cannot open non-existent file at ${fd}`);
+    }
   }
 
   closeFd(pid: number, fd: number) {
-    const ofd = this.getOfds();
-    const process = this.getProcess(pid);
-    const { fdToOpen, nestedRedirs: [redirs] } = process;
+    const { fdToOpen, nestedRedirs } = this.getProcess(pid);
 
-    if (redirs[fd]) {
-      this.closeFdInternal({ fromFd: fdToOpen, fd, ofd, warnNonExist: true });
+    if (nestedRedirs[0][fd]) {
+      this.closeFdInternal(fd, fdToOpen, true);
     }
   
-    // Remove from fd-to-ofd mapping.
-    const nextFromFd = { ...fdToOpen };
-    delete nextFromFd[fd];
-    // Remove from current nested redirection scope, in case was added there.
-    const nextRedirs = { ...redirs };
-    delete nextRedirs[fd];
-    
-    process.fdToOpen = nextFromFd;
-    process.nestedRedirs = [nextRedirs, ...process.nestedRedirs.slice(1)];
+    delete fdToOpen[fd];
+    delete nestedRedirs[0][fd];
   }
 
   duplicateFd(pid: number, srcFd: number, dstFd: number) {
     const ofd = this.getOfds();
     const process = this.getProcess(pid);
-    const { fdToOpen: { [srcFd]: srcFile }, nestedRedirs: [redirs] } = process;
+    const { fdToOpen: { [srcFd]: srcFile }, nestedRedirs } = process;
     
     // Close dstFd if opened in current redir scope
-    if (redirs[dstFd]) {
-      this.closeFdInternal({ fromFd: process.fdToOpen, fd: dstFd, ofd })
+    if (nestedRedirs[0][dstFd]) {
+      this.closeFdInternal(dstFd, process.fdToOpen);
     }
     
-    const nextRedirs = { ...redirs, [dstFd]: srcFile.key };
-    process.nestedRedirs = [nextRedirs, ...process.nestedRedirs.slice(1)];
     process.fdToOpen[dstFd] = srcFile;
+    nestedRedirs[0][dstFd] = srcFile.key;
     ofd[srcFile.key].numLinks++;
   }
 
   ensureFd(pid: number, fdInput: string | number) {
     const fd = typeof fdInput === 'string' ? parseInt(fdInput) : fdInput;
-
     if (Number.isNaN(fd) || !Number.isInteger(fd) || (fd < 0)) {
       throw new ShError(`${fd}: bad file descriptor`, 1);
     }
-    const { fdToOpen } = this.getProcess(pid);
-    if (!(fd in fdToOpen)) {
+    if (!(fd in this.getProcess(pid).fdToOpen)) {
       throw new ShError(`${fd}: bad file descriptor`, 1);
     }
   }
@@ -194,19 +188,38 @@ export class ProcessService {
   }
 
   /**
-   * TODO
+   * Try to open a file in a process.
    */
-  openFile(pid: number, request: OpenFileRequest) {
-    const { path, mode, fd: fdOrUndefined } = request;
+  openFile(pid: number, { path, mode, fd }: OpenFileRequest) {
+    const absPath = fileService.resolvePath(pid, path);
+
+    if (fileService.hasDir(absPath)) {// Cannot open directory
+      throw Error(`${path}: is a directory`);
+    } else if (!fileService.hasParentDir(absPath)) {// Parent directory must exist
+      throw new ShError(`${path}: no such file or directory`, 1, 'F_NO_EXIST');
+    }
+
+    let file = fileService.getFile(absPath);
+    if (!file) {
+      if (mode === 'RDONLY') {
+        throw new ShError(`${path}: no such file or directory`, 1, 'F_NO_EXIST');
+      }
+      // Create and mount a file (a 'wire')
+      const stream = new ShellStream;
+      file = { key: absPath, readable: stream, writable: stream };
+      fileService.saveFile(file);
+    }
+
+    // Create open file description and connect to process
     const process = this.getProcess(pid);
-    const file = fileService.resolvePath(pid, path);
-    /**
-     * TODO
-     * - throw error if parent dir doesn't exist
-     * - create file if new
-     * - update numLinks
-     * - connect to process fds
-     */
+    const opened = new OpenFileDescription(shortid.generate(), file, mode);
+    // If `fd` undefined we'll use minimal unassigned file descriptor
+    const nextFd = fileService.getNextFd(process.fdToOpen, fd);
+    
+    if (nextFd in process.fdToOpen) {// Close if open
+      this.closeFd(pid, nextFd);
+    }
+    this.setFd(pid, nextFd, opened);
   }
   
   /**
@@ -219,7 +232,7 @@ export class ProcessService {
     
     // Close anything opened explicitly in deepest scope
     Object.keys(deepest).forEach((fd) =>
-      this.closeFdInternal({ fd: Number(fd), fromFd: mapValues(deepest, (key) => ofd[key]), ofd })
+      this.closeFdInternal(Number(fd), mapValues(deepest, (key) => ofd[key])),
     );
 
     // Mutate process
@@ -270,6 +283,19 @@ export class ProcessService {
 
   setExitCode(pid: number, code: number) {
     this.getProcess(pid).lastExitCode = code;
+  }
+
+  setFd(pid: number, fd: number, opened: OpenFileDescription<any>) {
+    const { nestedRedirs, fdToOpen } = this.getProcess(pid);
+
+    // Close if opened in current redirection scope
+    if (nestedRedirs[0][fd]) {
+      this.closeFdInternal(pid, fdToOpen);
+    }
+
+    fdToOpen[fd] = opened;
+    nestedRedirs[0][fd] = opened.key;
+    opened.numLinks++;
   }
 
   startProcess(pid: number) {

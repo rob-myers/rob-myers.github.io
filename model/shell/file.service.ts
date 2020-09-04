@@ -1,20 +1,16 @@
 import globRex from 'globrex';
-import useStore, { State as ShellState } from '@store/shell.store';
+import useStore, { State as ShellState, Process } from '@store/shell.store';
 import { varService } from './var.service';
 import { FsFile } from "./file.model";
+import { firstAvailableInteger } from '@model/generic.model';
 
 export class FileService {
-  private set!: ShellState['api']['set'];
-
-  initialise() {
-    this.set = useStore.getState().api.set;
-  }
 
   /**
    * Convert path to rooted path by:
-   * - rewriting ~ to /root
-   * - rewriting ./ to ${cwd}/.
-   * - if no prefix / then add prefix ${cwd}/.
+   * - rewriting leading ~ to /root
+   * - rewriting leading ./ to ${cwd}/
+   * - if no / prefix add prefix ${cwd}/
    *
    * We do not resolve inner .'s or ..'s.
    */
@@ -86,11 +82,39 @@ export class FileService {
         .map((x) => `${dirName}/${x}`));
   }
 
-  resolvePath(pid: number, path: string): FsFile | null {
+  getFile(absPath: string): FsFile | null {
+    return this.getFs()[absPath] || null;
+  }
+
+  /** If fd unspecified provide the minimal unassigned one. */
+  public getNextFd(
+    fdToOpen: Process['fdToOpen'],
+    requestedFd: number | undefined,
+  ): number {
+    return requestedFd === undefined
+      ? firstAvailableInteger(Object.keys(fdToOpen).map(Number))
+      : requestedFd;
+  }
+
+  hasDir(absDirPath: string) {
+    const prefix = absDirPath.endsWith('/') ? absDirPath : `${absDirPath}/`;
+    return Object.keys(this.getFs()).some(absPath => absPath.startsWith(prefix));
+  }
+
+  hasParentDir(absPath: string) {
+    const dirPath = absPath.split('/').slice(0, -1).join('/');
+    return this.hasDir(dirPath);
+  }
+
+  resolveFile(pid: number, path: string): FsFile | null {
     if (!path.trim()) {// Only whitespace
       return null;
     }
-    
+    const absPath = this.resolvePath(pid, path);
+    return this.getFs()[absPath] || null;
+  }
+
+  resolvePath(pid: number, path: string): string {
     const cwd = varService.expandVar(pid, 'PWD');
     const rootedPath = this.rootedPath(path, cwd);
     const absPath = rootedPath.split('/').reduce((agg, part) => {
@@ -103,11 +127,14 @@ export class FileService {
       }
       return agg;
     }, [] as string[]).join('/');
-
-    return this.getFs()[absPath] || null;
+    return absPath;
   }
 
-  getFs() {
+  saveFile(file: FsFile) {
+    this.getFs()[file.key] = file;
+  }
+
+  private getFs() {
     return useStore.getState().fs;
   }
 }

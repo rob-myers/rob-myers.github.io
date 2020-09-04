@@ -326,7 +326,7 @@ class TranspileShService {
 
         if (bs.isBuiltinCommand(args[0])) {
           await bs.runBuiltin(node, args[0], args.slice(1));
-        } else if (file = fs.resolvePath(pid, args[0])) {
+        } else if (file = fs.resolveFile(pid, args[0])) {
           await ps.runScript(pid, file);
         } else if (func = vs.getFunction(pid, args[0])) {
           await vs.invokeFunction(pid, func);
@@ -849,9 +849,6 @@ class TranspileShService {
     }());
   }
 
-  /**
-   * TODO review, complete and explain
-   */
   private Redirect(node: Sh.Redirect): Observable<ProcessAct> {
     const def: RedirectDef<Observable<Expanded>> = node.redirDef || this.transpileRedirect(node);
     node.redirDef = def; // Store in node too
@@ -906,7 +903,7 @@ class TranspileShService {
         case '<<<': // Here-string
         {
           const buffer = [] as string[];
-          if (def.subKey === '<<') {// location.value is e.g. EOF
+          if (def.subKey === '<<') {// value is e.g. EOF
             const { value: hereValue } = await lastValueFrom(ts.Expand(node.Hdoc!));
             // Remove a single final newline if exists
             buffer.push(...hereValue.replace(/\n$/, '').split('\n'));

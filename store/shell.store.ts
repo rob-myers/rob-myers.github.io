@@ -89,7 +89,10 @@ const useStore = create<State>(devtools((set, get) => {
     proc: {},
     fs: addToLookup(nullFile, {} as State['fs']),
     // NOTE we're also using /dev/null to identify an open file description
-    ofd: addToLookup(new OpenFileDescription('/dev/null', nullFile), {} as State['ofd']),
+    ofd: addToLookup(
+      new OpenFileDescription('/dev/null', nullFile, 'RDWR'),
+      {} as State['ofd'],
+    ),
     api: {
       createSession: (alias) => {
         const { toSessionKey, nextTtyId: ttyId } = get();
@@ -115,7 +118,10 @@ const useStore = create<State>(devtools((set, get) => {
           nextTtyId: nextTtyId + 1,
           fs: addToLookup(ttyFile, fs),
           // NOTE we're also using /dev/tty-${ttyId} to identify an open file description
-          ofd: addToLookup(new OpenFileDescription(canonicalPath, ttyFile), ofd),
+          ofd: addToLookup(
+            new OpenFileDescription(canonicalPath, ttyFile, 'RDWR'),
+            ofd,
+          ),
         }));
 
         processService.createLeadingProcess(sessionKey);
@@ -142,5 +148,3 @@ export default useStore;
 
 // Must invoke after default export
 processService.initialise();
-varService.initialise();
-fileService.initialise();

@@ -15,7 +15,6 @@ export interface FsFile<R = any, W = any> {
 
 
 export class OpenFileDescription<T> {
-  mode: 'RDWR'; // TODO
   /**
    * The number of descendent processes using this open file description.
    * - incremented upon initial open and inheritance.
@@ -23,8 +22,11 @@ export class OpenFileDescription<T> {
    */
   numLinks: number;
   
-  constructor(public key: string, public file: FsFile) {
-    this.mode = 'RDWR';
+  constructor(
+    public key: string,
+    public file: FsFile,
+    public mode: OpenFileMode,
+  ) {
     this.numLinks = 0;
   }
 

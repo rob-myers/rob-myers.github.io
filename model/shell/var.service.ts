@@ -1,16 +1,10 @@
 import { testNever, mapValues, isStringInt } from "@model/generic.model";
-import useStore, { State as ShellState, Process } from '@store/shell.store';
-import { updateLookup } from "@store/store.util";
+import useStore, { Process } from '@store/shell.store';
 import { ProcessVar, BasePositionalVar, AssignVarBase, VarFlags, NamedFunction } from "./var.model";
 import { ShError } from "./transpile.service";
 import { parseSh } from "./parse.service";
 
 export class VarService {
-  private set!: ShellState['api']['set'];
-
-  initialise() {
-    this.set = useStore.getState().api.set;
-  }
 
   /**
    * Assign value to variable.
@@ -639,15 +633,12 @@ export class VarService {
     scopeIndex: number;
     processVar: ProcessVar;
   }) {
-    this.set(state => ({
-      proc: updateLookup(`${pid}`, state.proc, ({ nestedVars }) => ({
-        nestedVars: [
-          ...nestedVars.slice(0, scopeIndex),
-          { ...nestedVars[scopeIndex], [varName]: processVar },
-          ...nestedVars.slice(scopeIndex + 1),
-        ],
-      })),
-    }));
+    const process = this.getProcess(pid);
+    process.nestedVars = [
+      ...process.nestedVars.slice(0, scopeIndex),
+      { ...process.nestedVars[scopeIndex], [varName]: processVar },
+      ...process.nestedVars.slice(scopeIndex + 1),
+    ];
   }
 
   private getProcess(pid: number): Process {
