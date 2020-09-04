@@ -124,7 +124,7 @@ export class FileService {
         agg.push(part);
       }
       return agg;
-    }, [] as string[]).join('/');
+    }, ['']).join('/');
     return absPath;
   }
 

@@ -5,6 +5,7 @@ import shortId from 'shortid';
 
 import { testNever, last } from '@model/generic.model';
 import * as Sh from '@model/shell/parse.service';
+import { awaitEnd } from './rxjs.model';
 import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
 import { expandService as expand, expandService } from './expand.service';
 import { ParamType, ParameterDef } from './parameter.model';
@@ -152,7 +153,7 @@ class TranspileShService {
       case 'ParenArithm':
         // NOTE cannot pipe into tap because ts.ArithmExpr may be empty
         return from(async function* () {
-          await ts.awaitEnd(ts.ArithmExpr(node.X));
+          await awaitEnd(ts.ArithmExpr(node.X));
           node.string = node.X.string;
           node.number = node.X.number;
         }());
@@ -328,9 +329,10 @@ class TranspileShService {
         // Run builtin, run script or invoke function
         let file: FsFile | null, func: NamedFunction;
         const { pid } = node.meta;
+        const ctxt: CommandCtxt = { ...extend, Redirs: extend.Redirs.map(c => ts.Redirect(c)) };
 
         if (bs.isBuiltinCommand(args[0])) {
-          await bs.runBuiltin(node, args[0], args.slice(1));
+          await bs.runBuiltin(node, ctxt, args[0], args.slice(1));
         } else if (file = fs.resolveFile(pid, args[0])) {
           await ps.runScript(pid, file);
         } else if (func = vs.getFunction(pid, args[0])) {
@@ -528,10 +530,11 @@ class TranspileShService {
       catchError((e, _src) => {
         const { meta } = node;
         if (e instanceof ShError) {
+          console.error(`${meta.sessionKey}: pid ${meta.pid}: ${e.message}`);
           ps.warn(meta.pid, e.message);
           ps.setExitCode(meta.pid, e.exitCode);
         } else {
-          console.error(`${meta.sessionKey}: ${meta.pid}: internal error`);
+          console.error(`${meta.sessionKey}: pid ${meta.pid}: internal error`);
           console.error(e);
         }
         return of();
@@ -947,7 +950,7 @@ class TranspileShService {
   private async assignVars(node: Sh.CallExpr, redirects: Sh.Redirect[]) {
     for (const assign of node.Assigns) {
       try {
-        await this.awaitEnd(this.Assign(assign));
+        await awaitEnd(this.Assign(assign));
       } catch (e) {
         if (e instanceof ShError) {
           console.error('Caught assign error', e);
@@ -965,7 +968,7 @@ class TranspileShService {
       ps.pushRedirectScope(pid);
       for (const redirect of redirects) {
         try {
-          await this.awaitEnd(this.Redirect(redirect));
+          await awaitEnd(this.Redirect(redirect));
         } catch (e) {
           if (e instanceof ShError) {
             console.error('Caught redirects error', e);
@@ -978,15 +981,6 @@ class TranspileShService {
       }
       ps.popRedirectScope(pid);
     }
-  }
-
-  private async awaitEnd<T>(observable: Observable<T>) {
-    await new Promise((resolve, reject) => {
-      observable.subscribe({
-        complete: resolve,
-        error: reject,
-      });
-    });
   }
 
   private isArithmExprSpecial(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
@@ -1062,7 +1056,7 @@ class TranspileShService {
     if (this.isWordPart(node)) {// WordPart expands to multiple values
       textValue = (await lastValueFrom(this.ExpandPart(node))).value;
     } else {// ArithmExpr expands to exactly one string/number
-      await this.awaitEnd(this.ArithmExpr(node)); 
+      await awaitEnd(this.ArithmExpr(node)); 
       textValue = node.string!;
     }
 
@@ -1207,6 +1201,12 @@ class TranspileShService {
 }
 interface CommandExtension {
   Redirs: Sh.Redirect[];
+  background: boolean;
+  negated: boolean;
+}
+
+export interface CommandCtxt {
+  Redirs: Observable<ProcessAct>[];
   background: boolean;
   negated: boolean;
 }

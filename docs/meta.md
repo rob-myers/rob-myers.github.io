@@ -4,7 +4,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can reset env ui; must 1st click to start pan-zoom
 - [ ] try standard thunk approach; what about `GeomService`?
-- [ ] codesandbox.io for env
 - [ ] Can collapse/expand each blog entry
 
 - [ ] can query polyanya and display navpath
@@ -15,8 +14,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] `FsFile` has readable/writable `ShellStream` which may be the same
 - [x] `ShellStream` has only one internal stream
 
-- [ ] can transpile simple command
-  > TODO redirects
+- [x] can transpile simple command to builtin
 - [x] tops of walls autoscaled, no need in blender
 - [x] terminal has 'listening process' which:
   > continually attempts to read/parse tty input

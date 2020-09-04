@@ -1,7 +1,10 @@
 import { Process } from "@store/shell.store";
-import { BuiltinKey, builtins } from "./process.model";
+import { awaitEnd } from "./rxjs.model";
 import * as Sh from "./parse.service";
+import { BuiltinKey, builtins } from "./process.model";
 import { processService as ps} from './process.service';
+import { CommandCtxt, ShError } from "./transpile.service";
+import { catchError } from 'rxjs/operators';
 
 export class BuiltinService {
 
@@ -9,22 +12,38 @@ export class BuiltinService {
     return !!(builtins as Record<string, boolean>)[command];
   }
 
-  /**
-   * TODO
-   */
-  async runBuiltin(node: Sh.CallExpr, command: BuiltinKey, args: string[]) {
+  async runBuiltin(
+    node: Sh.CallExpr,
+    { Redirs }: CommandCtxt,
+    command: BuiltinKey,
+    args: string[],
+  ) {
     const process = ps.getProcess(node.meta.pid);
+
+    if (Redirs.length) {
+      ps.pushRedirectScope(process.pid);
+      for (const redirect of Redirs) {
+        await awaitEnd(redirect.pipe(catchError((e, _src) => {
+          ps.popRedirectScope(process.pid);
+          throw e;
+        })));
+      }
+    }
 
     switch (command) {
       case 'echo':
-        return this.echo(process, args);
+        await this.echo(process, args);
       default:
         console.log(`TODO run builtin ${command}`);
     }
+
+    if (Redirs.length) {
+      ps.popRedirectScope(process.pid);
+    }
   }
 
-  private async echo(process: Process, args: string[]) {
-    process.fdToOpen[1].write(args.join(' '));
+  private async echo({ fdToOpen }: Process, args: string[]) {
+    fdToOpen[1].write(args.join(' '));
   }
 }
 
