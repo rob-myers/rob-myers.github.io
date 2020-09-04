@@ -1,11 +1,12 @@
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
 import { FileWithMeta, parseSh, FileMeta, ParsedSh } from './parse.service';
-import { transpileSh } from './transpile.service';
+import { transpileSh, ShError } from './transpile.service';
 import { addToLookup, updateLookup } from '@store/store.util';
 import { mapValues } from '@model/generic.model';
 import { varService } from './var.service';
 import { FromFdToOpenKey } from './process.model';
-import { FsFile } from './file.model';
+import { FsFile, OpenFileRequest } from './file.model';
+import { fileService } from './file.service';
 
 export class ProcessService {
   
@@ -13,22 +14,6 @@ export class ProcessService {
 
   initialise() {
     this.set = useStore.getState().api.set;
-  }
-
-  closeFd(opts: {
-    fromFd: FromFdToOpenKey;
-    /** File descriptor. */
-    fd: number;
-    /** Current open file description state. */
-    ofd: ShellState['ofd'];
-    /** Warn if open file description non-existent? */
-    warnNonExist?: boolean;
-  }) {
-    /**
-     * TODO decrement open file description,
-     * and remove when numLinks is zero.
-     */
-    return { ...opts.ofd };
   }
 
   /**
@@ -106,6 +91,73 @@ export class ProcessService {
     return { pid };
   }
 
+
+  /**
+   * TODO decrement open file description,
+   * and remove when numLinks is zero.
+   */
+  closeFdInternal(opts: {
+    fromFd: Process['fdToOpen'];
+    /** File descriptor. */
+    fd: number;
+    /** Current open file description state. */
+    ofd: ShellState['ofd'];
+    /** Warn if open file description non-existent? */
+    warnNonExist?: boolean;
+  }) {
+    /**
+     * TODO mutate ofd
+     */
+  }
+
+  closeFd(pid: number, fd: number) {
+    const ofd = this.getOfds();
+    const process = this.getProcess(pid);
+    const { fdToOpen, nestedRedirs: [redirs] } = process;
+
+    if (redirs[fd]) {
+      this.closeFdInternal({ fromFd: fdToOpen, fd, ofd, warnNonExist: true });
+    }
+  
+    // Remove from fd-to-ofd mapping.
+    const nextFromFd = { ...fdToOpen };
+    delete nextFromFd[fd];
+    // Remove from current nested redirection scope, in case was added there.
+    const nextRedirs = { ...redirs };
+    delete nextRedirs[fd];
+    
+    process.fdToOpen = nextFromFd;
+    process.nestedRedirs = [nextRedirs, ...process.nestedRedirs.slice(1)];
+  }
+
+  duplicateFd(pid: number, srcFd: number, dstFd: number) {
+    const ofd = this.getOfds();
+    const process = this.getProcess(pid);
+    const { fdToOpen: { [srcFd]: srcFile }, nestedRedirs: [redirs] } = process;
+    
+    // Close dstFd if opened in current redir scope
+    if (redirs[dstFd]) {
+      this.closeFdInternal({ fromFd: process.fdToOpen, fd: dstFd, ofd })
+    }
+    
+    const nextRedirs = { ...redirs, [dstFd]: srcFile.key };
+    process.nestedRedirs = [nextRedirs, ...process.nestedRedirs.slice(1)];
+    process.fdToOpen[dstFd] = srcFile;
+    ofd[srcFile.key].numLinks++;
+  }
+
+  ensureFd(pid: number, fdInput: string | number) {
+    const fd = typeof fdInput === 'string' ? parseInt(fdInput) : fdInput;
+
+    if (Number.isNaN(fd) || !Number.isInteger(fd) || (fd < 0)) {
+      throw new ShError(`${fd}: bad file descriptor`, 1);
+    }
+    const { fdToOpen } = this.getProcess(pid);
+    if (!(fd in fdToOpen)) {
+      throw new ShError(`${fd}: bad file descriptor`, 1);
+    }
+  }
+
   findAncestral(pid: number, predicate: (state: Process) => boolean) {
     const proc = this.getProcesses();
     let process = proc[pid];
@@ -140,31 +192,43 @@ export class ProcessService {
   isInteractiveShell({ meta }: FileWithMeta) {
     return meta.pid === meta.sid;
   }
+
+  /**
+   * TODO
+   */
+  openFile(pid: number, request: OpenFileRequest) {
+    const { path, mode, fd: fdOrUndefined } = request;
+    const process = this.getProcess(pid);
+    const file = fileService.resolvePath(pid, path);
+    /**
+     * TODO
+     * - throw error if parent dir doesn't exist
+     * - create file if new
+     * - update numLinks
+     * - connect to process fds
+     */
+  }
   
   /**
    * Remove deepest redirection scope in process.
    */
   popRedirectScope(pid: number) {
-    const { nestedRedirs } = this.getProcess(pid);
-    const [deepest, ...nextNestedRedirs] = nestedRedirs;
+    const ofd = this.getOfds();
+    const process = this.getProcess(pid);
+    const [deepest, ...nextNestedRedirs] = process.nestedRedirs;
     
-    this.set(({ ofd, proc }) => {
-      // Close anything opened explicitly in deepest scope
-      let nextOfd = ofd;
-      Object.keys(deepest).forEach((fd) =>
-        nextOfd = this.closeFd({ fd: Number(fd), fromFd: deepest, ofd: nextOfd })
-      );
-      
-      // Mutate proc
-      proc[pid].nestedRedirs = nextNestedRedirs;
-      const fdToOpenKey = nextNestedRedirs.slice().reverse().reduce(
-        (agg, item) => ({ ...agg, ...item }),
-        {} as Record<number, string>,
-      );
-      proc[pid].fdToOpen = mapValues(fdToOpenKey, (ofdKey) => ofd[ofdKey]);
+    // Close anything opened explicitly in deepest scope
+    Object.keys(deepest).forEach((fd) =>
+      this.closeFdInternal({ fd: Number(fd), fromFd: mapValues(deepest, (key) => ofd[key]), ofd })
+    );
 
-      return { ofd: nextOfd };
-    });
+    // Mutate process
+    process.nestedRedirs = nextNestedRedirs;
+    const fdToOpenKey = nextNestedRedirs.slice().reverse().reduce(
+      (agg, item) => ({ ...agg, ...item }),
+      {} as Record<number, string>,
+    );
+    process.fdToOpen = mapValues(fdToOpenKey, (ofdKey) => ofd[ofdKey]);
   }
 
   /**
@@ -229,6 +293,13 @@ export class ProcessService {
   }
 
   /**
+   * TODO
+   */
+  unlinkFile(pid: number, path: string) {
+    
+  }
+
+  /**
    * Write message to process's stderr.
    */
   warn(pid: number, msg: string) {
@@ -238,10 +309,13 @@ export class ProcessService {
   /**
    * Write message to process's file descriptor.
    */
-  write(pid: number, fd: number, msg: string) {
+  write(pid: number, fd: number, msgs: string | string[]) {
     const { fdToOpen: { [fd]: { file } } } = this.getProcess(pid);
     // TODO types
-    file.writable.write({ key: 'send-lines', lines: [msg] });
+    file.writable.write({
+       key: 'send-lines',
+       lines: msgs instanceof Array ? msgs : [msgs],
+    });
   }
 
 }
