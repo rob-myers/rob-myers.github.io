@@ -1,35 +1,26 @@
 import globRex from 'globrex';
-import useStore, { State as ShellState, Process } from '@store/shell.store';
-import { varService } from './var.service';
-import { FsFile } from "./file.model";
 import { firstAvailableInteger } from '@model/generic.model';
+import useStore, { Process } from '@store/shell.store';
+import { varService } from './var.service';
+import { FsFile, ShellFile } from "./file.model";
+import { ShellStream } from './shell.stream';
 
 export class FileService {
 
   /**
-   * Convert path to rooted path by:
-   * - rewriting leading ~ to /root
-   * - rewriting leading ./ to ${cwd}/
-   * - if no / prefix add prefix ${cwd}/
-   *
-   * We do not resolve inner .'s or ..'s.
+   * Create a `ShellFile` wrapped to be mounted at `absPath`.
    */
-  rootedPath(
-    /** A relative path */
-    path: string,
-    /** Absolute path to process's current working directory */
-    cwd: string,
-  ) {
-    if (path.startsWith('/')) {
-      return path;
-    } else if (path.startsWith('~')) {
-      // Leading ~ to user's home directory.
-      return `/root${path.slice(1)}`;
-    } else if (path.startsWith('./')) {
-      // Leading ./ to process's current working directory.
-      return `${cwd}${path.slice(1)}`;
-    }// Non-leading / to process's current working directory.
-    return `${cwd}/${path}`;
+  createFsFile<R, W>(
+    absPath: string,
+    /** We should read from this stream */
+    readable: ShellStream<R>,
+    /** We should write to this stream */
+    writable: ShellStream<W>,
+  ): FsFile {
+    return new FsFile(
+      absPath,
+      new ShellFile(readable, writable),
+    );
   }
 
   /**
@@ -86,8 +77,12 @@ export class FileService {
     return this.getFs()[absPath] || null;
   }
 
+  private getFs() {
+    return useStore.getState().fs;
+  }
+
   /** If fd unspecified provide the minimal unassigned one. */
-  public getNextFd(
+  getNextFd(
     fdToOpen: Process['fdToOpen'],
     requestedFd: number | undefined,
   ): number {
@@ -106,6 +101,9 @@ export class FileService {
     return this.hasDir(dirPath);
   }
 
+  /**
+   * Resolve a mounted file.
+   */
   resolveFile(pid: number, path: string): FsFile | null {
     if (!path.trim()) {// Only whitespace
       return null;
@@ -130,12 +128,38 @@ export class FileService {
     return absPath;
   }
 
+  /**
+   * Convert path to rooted path by:
+   * - rewriting leading ~ to /root
+   * - rewriting leading ./ to ${cwd}/
+   * - if no / prefix add prefix ${cwd}/
+   *
+   * We do not resolve inner .'s or ..'s.
+   */
+  rootedPath(
+    /** A relative path */
+    path: string,
+    /** Absolute path to process's current working directory */
+    cwd: string,
+  ) {
+    if (path.startsWith('/')) {
+      return path;
+    } else if (path.startsWith('~')) {
+      // Leading ~ to user's home directory.
+      return `/root${path.slice(1)}`;
+    } else if (path.startsWith('./')) {
+      // Leading ./ to process's current working directory.
+      return `${cwd}${path.slice(1)}`;
+    }// Non-leading / to process's current working directory.
+    return `${cwd}/${path}`;
+  }
+
   saveFile(file: FsFile) {
     this.getFs()[file.key] = file;
   }
 
-  private getFs() {
-    return useStore.getState().fs;
+  unlinkFile(absPath: string) {
+    delete this.getFs()[absPath];
   }
 }
 

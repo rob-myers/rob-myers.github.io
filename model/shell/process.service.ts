@@ -1,9 +1,9 @@
 import shortid from 'shortid';
+import { mapValues } from '@model/generic.model';
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
+import { addToLookup } from '@store/store.util';
 import { FileWithMeta, parseSh, FileMeta } from './parse.service';
 import { transpileSh, ShError } from './transpile.service';
-import { addToLookup } from '@store/store.util';
-import { mapValues } from '@model/generic.model';
 import { varService } from './var.service';
 import { FsFile, OpenFileRequest, OpenFileDescription } from './file.model';
 import { fileService } from './file.service';
@@ -48,7 +48,7 @@ export class ProcessService {
           USER: { key: 'string', varName: 'USER', value: 'root', exported: true, readonly: false, to: null },
           OLDPWD: { key: 'string', varName: 'OLDPWD', value: '/root', exported: true, readonly: false, to: null },
           PWD: { key: 'string', varName: 'PWD', value: '/root', exported: true, readonly: false, to: null },
-          PATH: { key: 'string', varName: 'PATH', value: '/bin', exported: true, readonly: false, to: null },
+          // PATH: { key: 'string', varName: 'PATH', value: '/bin', exported: true, readonly: false, to: null },
         }],
         toFunc: {},
         lastExitCode: null,
@@ -97,7 +97,7 @@ export class ProcessService {
    * Decrement open file description,
    * removing when numLinks is not positive.
    */
-  closeFdInternal(
+  private closeFdInternal(
     /** File descriptor. */
     fd: number,
     fromFd: Process['fdToOpen'],
@@ -156,7 +156,7 @@ export class ProcessService {
     const proc = this.getProcesses();
     let process = proc[pid];
     /**
-     * Since our 'shells' (leading processes) are their own
+     * Since our _shells_ (leading processes) are their own
      * parent we can terminate on self-parent.
      */
     do {
@@ -206,7 +206,7 @@ export class ProcessService {
       }
       // Create and mount a file (a 'wire')
       const stream = new ShellStream;
-      file = { key: absPath, readable: stream, writable: stream };
+      file = fileService.createFsFile(absPath, stream, stream);
       fileService.saveFile(file);
     }
 
@@ -224,6 +224,7 @@ export class ProcessService {
   
   /**
    * Remove deepest redirection scope in process.
+   * We always mutate processes once created.
    */
   popRedirectScope(pid: number) {
     const ofd = this.getOfds();
@@ -235,7 +236,6 @@ export class ProcessService {
       this.closeFdInternal(Number(fd), mapValues(deepest, (key) => ofd[key])),
     );
 
-    // Mutate process
     process.nestedRedirs = nextNestedRedirs;
     const fdToOpenKey = nextNestedRedirs.slice().reverse().reduce(
       (agg, item) => ({ ...agg, ...item }),
@@ -247,7 +247,7 @@ export class ProcessService {
   /**
    * Deepen redirection scope in process.
    * Add fresh scope as 1st item.
-   * No need to recompute `fdToOpenKey`.
+   * No need to recompute `fdToOpen`.
    */
   pushRedirectScope(pid: number) {
     this.getProcess(pid).nestedRedirs.unshift({});
@@ -319,10 +319,21 @@ export class ProcessService {
   }
 
   /**
-   * TODO
+   * Unlink file.
    */
   unlinkFile(pid: number, path: string) {
-    
+    const file = fileService.resolveFile(pid, path);
+
+    if (!file) {
+      const absPath = fileService.resolvePath(pid, path);
+      if (fileService.hasDir(absPath)) {
+        throw new ShError(`${path}: is a directory`, 1);
+      }
+      throw new ShError(`${path}: no such file or directory`, 1, 'F_NO_EXIST');
+    }
+
+    file.iNode.numLinks--;
+    fileService.unlinkFile(file.key);
   }
 
   /**
@@ -336,11 +347,13 @@ export class ProcessService {
    * Write message to process's file descriptor.
    */
   write(pid: number, fd: number, msgs: string | string[]) {
-    const { fdToOpen: { [fd]: { file } } } = this.getProcess(pid);
-    // TODO types
-    file.writable.write({
-       key: 'send-lines',
-       lines: msgs instanceof Array ? msgs : [msgs],
+    const { [fd]: opened } = this.getProcess(pid).fdToOpen;
+    /**
+     * TODO types or perhaps just send string
+     */
+    opened.write({
+      key: 'send-lines',
+      lines: msgs instanceof Array ? msgs : [msgs],
     });
   }
 

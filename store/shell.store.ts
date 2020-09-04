@@ -3,16 +3,15 @@ import { devtools } from 'zustand/middleware';
 import { Subscription } from 'rxjs';
 import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
-import { OpenFileDescription, createFsFile } from '@model/shell/file.model';
+import { OpenFileDescription } from '@model/shell/file.model';
 import { FromFdToOpenKey } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
 import { ToProcVar, NamedFunction } from '@model/shell/var.model';
 import { processService } from '@model/shell/process.service';
 import { ShellStream } from '@model/shell/shell.stream';
-import { varService } from '@model/shell/var.service';
-import { fileService } from '@model/shell/file.service';
 import { FsFile } from "@model/shell/file.model";
 import { addToLookup, removeFromLookup } from './store.util';
+import { fileService } from '@model/shell/file.service';
 
 export interface State {
   /** Next tty identifier, inducing e.g. tty-2 and sessionKey */
@@ -79,7 +78,7 @@ export interface Process {
 }
 
 const useStore = create<State>(devtools((set, get) => {
-  const nullFile = createFsFile('/dev/null', new ShellStream(), new ShellStream());
+  const nullFile = fileService.createFsFile('/dev/null', new ShellStream(), new ShellStream());
 
   return {
     nextTtyId: 1,
@@ -103,7 +102,7 @@ const useStore = create<State>(devtools((set, get) => {
         const ttyFilename = `tty-${ttyId}`;
         const sessionKey = `root@${ttyFilename}`;
         const canonicalPath = `/dev/${ttyFilename}`;
-        const ttyFile = createFsFile(canonicalPath, new ShellStream(), new ShellStream());
+        const ttyFile = fileService.createFsFile(canonicalPath, new ShellStream(), new ShellStream());
         const ttyShell = new TtyShell(sessionKey, canonicalPath, ttyFile);
 
         set(({ toSessionKey, nextProcId, nextTtyId, session, fs, ofd }: State) => ({

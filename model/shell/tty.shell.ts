@@ -1,5 +1,5 @@
 import { testNever } from '@model/generic.model';
-import useStore, { State as ShellState, Session } from '@store/shell.store';
+import useStore, { Session } from '@store/shell.store';
 import { parseSh } from './parse.service';
 import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
@@ -19,7 +19,6 @@ export class TtyShell {
   private history = [] as string[];
   private readonly maxLines = 500;
   
-  private set!: ShellState['api']['set'];
   private get session(): Session {
     return useStore.getState().session[this.sessionKey];
   }
@@ -32,9 +31,7 @@ export class TtyShell {
   
   initialise(xterm: TtyXterm) {
     this.xterm = xterm;
-    this.set = useStore.getState().api.set;
-    // this.xterm.outgoing.registerCallback(this.onMessage.bind(this));
-    this.io.readable.registerCallback(this.onMessage.bind(this));
+    this.io.read(this.onMessage.bind(this));
     this.prompt('$ ');
   } 
 
@@ -42,7 +39,7 @@ export class TtyShell {
     switch (msg.key) {
       case 'req-history-line': {
         const { line, nextIndex } = this.getHistoryLine(msg.historyIndex);
-        this.io.writable.write({
+        this.io.write({
           key: 'send-history-line',
           line,
           nextIndex,
@@ -53,7 +50,7 @@ export class TtyShell {
         this.inputs.push({
           line: msg.lines[0],
           // xterm won't send another line until resolved
-          resolve: () => this.io.writable.write({
+          resolve: () => this.io.write({
             key: 'tty-received-line',
           }),
         });
@@ -112,7 +109,7 @@ export class TtyShell {
   // }
 
   private prompt(prompt: string) {
-    this.io.writable.write({
+    this.io.write({
       key: 'send-xterm-prompt',
       prompt: `\u001b[37m${prompt}\x1b[0m`, // White prompt
     });    

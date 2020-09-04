@@ -9,6 +9,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can query polyanya and display navpath
 
+- [ ] 'normal writes' are brown, shell errors are red
 - [x] get shell history working
 - [x] `OpenFileDescription` has `FsFile`
 - [x] `FsFile` has readable/writable `ShellStream` which may be the same

@@ -7,12 +7,50 @@ import { ShellStream } from "@model/shell/shell.stream";
  *   - readable respond to reads by providing user input
  * - `wire`: readable is same as writable
  */
-export interface FsFile<R = any, W = any> {
-  key: string;
-  readable: ShellStream<R>;
-  writable: ShellStream<W>;
+export class FsFile<R = any, W = any> {
+  constructor(
+    /** Absolute path. */
+    public key: string,
+    public iNode: ShellFile<R, W>,
+  ) {}
+
+  /** Write to readers of this file */
+  internalWrite(msg: R) {
+    this.iNode.readable.write(msg);
+  }
+
+  /** Register a callback to handle writes to this file */
+  internalWriteHandler(cb: (msg: W) => void) {
+    this.iNode.writable.registerCallback(cb); 
+  }
+
+  /** Read from this file */
+  read(cb: (msg: R) => void) {
+    this.iNode.readable.registerCallback(cb);
+  }
+
+  /** Write to this file */
+  write(msg: W) {
+    this.iNode.writable.write(msg);
+  }
 }
 
+export class ShellFile<R, W> {
+ /**
+  * The number of places this file has been mounted,
+  * i.e. number of keys in `ShellState['fs']` with value `this`.
+  */
+  public numLinks: number;
+
+  constructor(
+    /** Readers will read from this stream */
+    public readable: ShellStream<R>,
+    /** Writers will write to this stream */
+    public writable: ShellStream<W>,
+  ) {
+    this.numLinks = 0;
+  }
+}
 
 export class OpenFileDescription<T> {
   /**
@@ -31,25 +69,11 @@ export class OpenFileDescription<T> {
   }
 
   write(msg: T) {
-    this.file.writable.write(msg);
+    this.file.write(msg);
   }
 }
 
 type OpenFileMode = 'RDONLY' | 'RDWR' | 'WRONLY';
-
-export function createFsFile<R, W>(
-  absPath: string,
-  /** We should write to this stream */
-  readable: ShellStream<R>,
-  /** We should read from this stream */
-  writable: ShellStream<W>,
-): FsFile {
-  return {
-    key: absPath,
-    readable,
-    writable,
-  }
-}
 
 export type RedirectDef<WordType> = (
   | { subKey: '<'; fd?: number; mod: null | 'dup' | 'move' }
@@ -83,7 +107,7 @@ export interface OpenFileRequest {
    */
   path: string;
   /**
-   * Read-only, read-and-write, or write-only.
+   * Read only, read n'write, or write only.
    */
   mode: OpenFileMode;
   /**
