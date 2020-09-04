@@ -150,7 +150,12 @@ class TranspileShService {
           }
         }());
       case 'ParenArithm':
-        return this.ArithmExpr(node.X);
+        // NOTE cannot pipe into tap because ts.ArithmExpr may be empty
+        return from(async function* () {
+          await ts.awaitEnd(ts.ArithmExpr(node.X));
+          node.string = node.X.string;
+          node.number = node.X.number;
+        }());
       case 'UnaryArithm':
         return from(async function* () {
           /**
@@ -885,8 +890,7 @@ class TranspileShService {
 
       const fd = 'fd' in def ? def.fd : undefined;
       switch (def.subKey) {
-        case '<': {
-          // mod: null, so fd<location
+        case '<': {// mod: null, so fd<location
           ps.openFile(pid, { fd: fd == null ? 0 : fd, mode: 'RDONLY', path: value });
           break;
         }
