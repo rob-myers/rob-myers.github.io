@@ -3,6 +3,7 @@ import cloneWithRefs from 'lodash.clonedeep';
 import { withParents } from './parse.util';
 import { BaseAssignOpts } from './var.model';
 import { ParameterDef } from './parameter.model';
+import { RedirectDef } from './file.model';
 // console.log({ Sh });
 
 /**
@@ -865,8 +866,10 @@ export interface BaseNode {
   exitCode?: number;
   /** Used by Assign nodes only */
   declOpts?: Partial<BaseAssignOpts>;
-  /** Used by ParamExp nodes  only */
+  /** Used by ParamExp nodes only */
   paramDef?: ParameterDef<any, any>;
+  /** Used by Redirects only */
+  redirDef?: RedirectDef<any>;
 }
 
 export type ParsedSh = (

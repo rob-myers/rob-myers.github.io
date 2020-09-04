@@ -33,7 +33,7 @@ export class OpenFileDescription<T> {
   }
 }
 
-// type OpenFileMode = 'RDONLY' | 'RDWR' | 'WRONLY';
+type OpenFileMode = 'RDONLY' | 'RDWR' | 'WRONLY';
 
 export function createFsFile<R, W>(
   absPath: string,
@@ -47,4 +47,46 @@ export function createFsFile<R, W>(
     readable,
     writable,
   }
+}
+
+export type RedirectDef<WordType> = (
+  | { subKey: '<'; fd?: number; mod: null | 'dup' | 'move' }
+  /**
+   * Output modifier:
+   * - `null` (fd>location): Open {location} at {fd} (default 1) for writing.
+   * - `append` (fd>>location): Open {location} at {fd} (default 1) for appending at location.
+   * - `dup`: (fd>&location): Duplicate file descriptor {location} at {fd} (default 1).
+   *   {location} must be a valid fd which writes output, or '-' (close fd).
+   *   TODO: special case where {location} evaluates to whitespace.
+   * - `move` (<&-): Move file descriptor {location} to {fd} (default 1).
+   *   {location} must be a valid fd which writes output.
+   */
+  | { subKey: '>'; fd?: number; mod: null | 'append' | 'dup' | 'move' }
+  // Open stdout and stderr for writing, possibly appending.
+  | { subKey: '&>'; append: boolean }
+  // Here-doc at fd (default 0).
+  | { subKey: '<<'; fd?: number; here: WordType }
+  // Here-string `location` at fd (default 0).
+  | { subKey: '<<<'; fd?: number }
+  // Open fd (default 0) for reading and writing.
+  | { subKey: '<>'; fd?: number }
+);
+
+/**
+ * Corresponds to arguments of open(1).
+ */
+export interface OpenFileRequest {
+  /**
+   * A path to be resolved in context of a process.
+   */
+  path: string;
+  /**
+   * Read-only, read-and-write, or write-only.
+   */
+  mode: OpenFileMode;
+  /**
+   * Can optionally specify file descriptor.
+   * Default is minimal unused one.
+   */
+  fd?: number;
 }
