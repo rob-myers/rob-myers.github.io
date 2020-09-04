@@ -2,7 +2,7 @@ import shortid from 'shortid';
 import { mapValues } from '@model/generic.model';
 import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
 import { addToLookup } from '@store/store.util';
-import { FileWithMeta, parseSh, FileMeta, ParsedSh, BaseNode } from './parse.service';
+import { FileWithMeta, parseSh, FileMeta, BaseNode, ParsedSh, Stmt } from './parse.service';
 import { transpileSh, ShError } from './transpile.service';
 import { varService } from './var.service';
 import { FsFile, OpenFileRequest, OpenFileDescription } from './file.model';
@@ -13,9 +13,11 @@ import { ansiWarn, ansiReset } from './tty.xterm';
 export class ProcessService {
   
   private set!: ShellState['api']['set'];
+  private mockParsed!: FileWithMeta;
 
   initialise() {
     this.set = useStore.getState().api.set;
+    this.mockParsed = parseSh.parse('');
   }
 
   /**
@@ -40,8 +42,9 @@ export class ProcessService {
         key: `${pid}`,
         sessionKey,
         pid,
-        ppid: pid, // Assume leading process is its own parent
-        parsed: parseSh.parse(''), // Satisfies typing
+        ppid: pid, // Leading process is its own parent
+        pgid: pid, // Leading process is in its own group
+        parsed: this.mockParsed,
         subscription: null, // We'll never actually run it 
         fdToOpen: mapValues(fdToOpenKey, (ofdKey) => ofd[ofdKey]),
         nestedRedirs: [{ ...fdToOpenKey }],
@@ -57,42 +60,6 @@ export class ProcessService {
       }, proc),
     }));
   }
-
-  createProcess(
-    parsed: FileWithMeta,
-    sessionKey: string,
-    parentPid: number,
-  ) {
-    const { sid  } = this.getSession(sessionKey);
-    const pid = useStore.getState().nextProcId;
-    // Must mutate to affect all descendents
-    Object.assign<FileMeta, FileMeta>(parsed.meta, { pid, sessionKey, sid });
-
-    const { fdToOpen, nestedVars, toFunc } = this.getProcess(parentPid);
-
-    // We will only mutate values in `proc` after their creation
-    this.set(({ proc, nextProcId }) => ({
-      proc: addToLookup({
-        key: `${pid}`,
-        sessionKey,
-        pid,
-        ppid: parentPid,
-        parsed,
-        subscription: null,
-        fdToOpen: { ...fdToOpen },
-        nestedRedirs: [{ ...mapValues(fdToOpen, (o) => o.key) }],
-        nestedVars: nestedVars.map(fdToOpenKey =>
-          mapValues(fdToOpenKey, v => varService.cloneVar(v))),
-        toFunc: mapValues(toFunc,
-          (func) => varService.cloneFunc(func)),
-        lastExitCode: null,
-        lastBgPid: null,
-      }, proc),
-      nextProcId: nextProcId + 1,
-    }));
-    return { pid };
-  }
-
 
   /**
    * Decrement open file description,
@@ -157,7 +124,7 @@ export class ProcessService {
     const proc = this.getProcesses();
     let process = proc[pid];
     /**
-     * Since our _shells_ (leading processes) are their own
+     * Since our shells (leading processes) are their own
      * parent we can terminate on self-parent.
      */
     do {
@@ -166,6 +133,45 @@ export class ProcessService {
       }
     } while (process !== (process = proc[process.ppid]));
     return null;
+  }
+
+  private forkProcess(
+    ppid: number,
+    /** Forks of (statically-detected) builtins won't use vars/funcs */
+    shareVars = false,
+  ) {
+    const parent = this.getProcess(ppid);
+    if (!parent) {
+      throw new ShError(`cannot fork non-extant process ${ppid}`, 1, 'PP_NO_EXIST');
+    }
+
+    const pid = useStore.getState().nextProcId;
+
+    this.set(({ proc }) => {
+      // We mutate proc rather than creating fresh object
+      proc[pid] = {
+        key: `${pid}`,
+        sessionKey: parent.sessionKey,
+        pid,
+        ppid,
+        pgid: parent.pgid,
+        // We'll always overwrite `parsed` before starting the process
+        parsed: this.mockParsed,
+        subscription: null,
+        fdToOpen: { ...parent.fdToOpen },
+        nestedRedirs: [{ ...mapValues(parent.fdToOpen, (o) => o.key) }],
+        nestedVars: shareVars
+          ? parent.nestedVars
+          : parent.nestedVars.map(fdToOpenKey => mapValues(fdToOpenKey, v => varService.cloneVar(v))),
+        toFunc: shareVars
+          ? parent.toFunc
+          : mapValues(parent.toFunc, (func) => varService.cloneFunc(func)),
+        lastExitCode: null,
+        lastBgPid: null,
+      };
+      return { nextProcId: pid + 1 };
+    });
+    return this.getProcess(pid);
   }
 
   private getOfds() {
@@ -279,7 +285,10 @@ export class ProcessService {
       process.parsed = parsed;
       process.subscription = transpiled.subscribe({
         next: (msg) => console.log('received', msg), // TEMP
-        complete: () => resolve(),
+        complete: () => {
+          console.log(`${parsed.meta.sessionKey}: shell execution terminated`)
+          resolve();
+        },
         error: (err) => reject(err),
       });
     });
@@ -309,6 +318,20 @@ export class ProcessService {
     opened.numLinks++;
   }
 
+  /**
+   * TODO
+   */
+  spawnProcess(ppid: number, node: Stmt) {
+    const forked = this.forkProcess(ppid);
+    const parsed = parseSh.clone(node);
+    // Must mutate to affect all descendents
+    Object.assign<FileMeta, Partial<FileMeta>>(parsed.meta, { pid: forked.pid });
+    forked.parsed = parseSh.wrapInFile(parsed);
+    /**
+     * TODO
+     */
+  }
+
   startProcess(pid: number) {
     const process = this.getProcess(pid)
     const transpiled = transpileSh.transpile(process.parsed);
@@ -317,7 +340,11 @@ export class ProcessService {
       // We can directly mutate state (btw immer wouldn't allow this)
       process.subscription = transpiled.subscribe({
         next: (msg) => console.log('received', msg), // TEMP
-        complete: () => resolve(),
+        complete: () => {
+          const { sessionKey } = process.parsed.meta;
+          console.log(`${sessionKey}: pid ${pid} terminated`);
+          resolve();
+        },
         error: (err) => reject(err),
       });
     });

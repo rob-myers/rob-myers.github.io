@@ -3,7 +3,7 @@ import { awaitEnd } from "./rxjs.model";
 import * as Sh from "./parse.service";
 import { BuiltinKey, builtins } from "./process.model";
 import { processService as ps} from './process.service';
-import { CommandCtxt, ShError } from "./transpile.service";
+import { CommandCtxt } from "./transpile.service";
 import { catchError } from 'rxjs/operators';
 
 export class BuiltinService {
@@ -33,6 +33,7 @@ export class BuiltinService {
     switch (command) {
       case 'echo':
         await this.echo(process, args);
+        break;
       default:
         console.log(`TODO run builtin ${command}`);
     }

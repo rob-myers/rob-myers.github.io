@@ -7,7 +7,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can query polyanya and display navpath
 
-- [ ] can fork process
+- [ ] can spawn a process
+- [x] can fork process
 - [ ] fix exit code propagation
 - [ ] can transpile `|`
 - [x] can transpile `&&` and `||`

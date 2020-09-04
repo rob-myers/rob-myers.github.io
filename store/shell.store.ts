@@ -5,7 +5,7 @@ import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
 import { OpenFileDescription } from '@model/shell/file.model';
 import { FromFdToOpenKey } from '@model/shell/process.model';
-import { FileWithMeta } from '@model/shell/parse.service';
+import { FileWithMeta, Stmt, parseSh } from '@model/shell/parse.service';
 import { ToProcVar, NamedFunction } from '@model/shell/var.model';
 import { processService } from '@model/shell/process.service';
 import { ShellStream } from '@model/shell/shell.stream';
@@ -51,8 +51,13 @@ export interface Session {
 export interface Process {
   key: string;
   sessionKey: string;
+  /** Process id */
   pid: number;
+  /** Parent process id */
   ppid: number;
+  /** Process group id. Changed e.g. for pipelines run in the foreground. */
+  pgid: number;
+  /** The parse tree obtain directly from mvdan-sh or by wrapping subtrees */
   parsed: FileWithMeta;
   subscription: null | Subscription;
   /** File descriptor to ofd */

@@ -6,6 +6,7 @@ import { ParameterDef } from './parameter.model';
 import { RedirectDef } from './file.model';
 // console.log({ Sh });
 
+/** Provides a unique integer for every node */
 let nodeCount = 0;
 
 /**
@@ -15,8 +16,13 @@ class ParseShService {
 
   private mockMeta = getMockMeta();
   private mockPos = getMockPos();
+  private mockBaseNode!: BaseNode;
 
-  public parse(src: string): FileWithMeta {
+  constructor() {
+    this.mockBaseNode = this.base({ Pos: this.mockPos, End: this.mockPos });
+  }
+
+  parse(src: string): FileWithMeta {
     // Use mvdan-sh to parse shell code
     const parser = syntax.NewParser();
     syntax.KeepComments(parser);
@@ -26,12 +32,11 @@ class ParseShService {
      * We also use a single fresh `meta` for all nodes,
      * and attach parents.
      */
-    this.mockMeta = getMockMeta();
     const cleaned = this.File(parsed);
     return withParents(cleaned);
   }
 
-  public tryParseBuffer(buffer: string[]) {
+  tryParseBuffer(buffer: string[]) {
     console.log('PARSING', buffer.slice()); // DEBUG
     try {
       // Parser.Interactive expects terminal newline.
@@ -58,7 +63,7 @@ class ParseShService {
    * It must not have a proper-prefix which is a complete command,
    * e.g. `echo foo\necho bar\n` invalid via proper-prefix `echo foo\n`.
    */
-  public interactiveParse(partialSrc: string): InteractiveParseResult {
+  interactiveParse(partialSrc: string): InteractiveParseResult {
     const parser = syntax.NewParser();
     let incomplete: null | boolean = null;
 
@@ -80,7 +85,7 @@ class ParseShService {
    * Clone creates completely fresh tree, sharing internal refs as before.
    * In particular, every node has the same node.meta.
    */
-  public clone(parsed: FileWithMeta): FileWithMeta {
+  clone<T extends ParsedSh>(parsed: T): T {
     return cloneWithRefs(parsed);
   }
 
@@ -703,6 +708,26 @@ class ParseShService {
   };
   //#endregion
 
+  /**
+   * Convert a statement to a FileWithMeta so it
+   * can be used to drive a process. There's nothing
+   * particularly special about FileWithMeta. However,
+   * restricting to this type aids uniformity.
+   */
+  wrapInFile(node: Stmt): FileWithMeta {
+    return {
+      ...this.mockBaseNode,
+      type: 'File',
+      Name: 'generated-from-node',
+      StmtList: {
+        ...this.mockBaseNode,
+        type: 'StmtList',
+        Stmts: [node],
+        Last: [],
+      },
+    };
+  }
+
   private readonly opMetas: {
     name: string;
     value: null | string;
@@ -1029,6 +1054,7 @@ export interface InteractiveParseResult {
 export interface FileWithMeta extends File {
   meta: FileMeta;
 }
+
 export interface FileMeta {
   pid: number;
   /** This is a shell iff `pid === sid` */
