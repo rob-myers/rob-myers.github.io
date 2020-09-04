@@ -850,10 +850,10 @@ class TranspileShService {
   }
 
   /**
-   * TODO review and explain
+   * TODO review, complete and explain
    */
   private Redirect(node: Sh.Redirect): Observable<ProcessAct> {
-    const def = node.redirDef || this.transpileRedirect(node);
+    const def: RedirectDef<Observable<Expanded>> = node.redirDef || this.transpileRedirect(node);
     node.redirDef = def; // Store in node too
     
     return from(async function* (){
@@ -1165,7 +1165,7 @@ class TranspileShService {
     }
   }
 
-  transpileRedirect(node: Sh.Redirect): RedirectDef<any> {
+  transpileRedirect(node: Sh.Redirect): RedirectDef<Observable<Expanded>> {
     const { N, Word, Hdoc } = node;
     const fd = N ? Number(N.Value) : undefined;
 
