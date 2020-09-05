@@ -1,9 +1,9 @@
 import { PerspectiveCamera } from 'three';
-import { useRef, useMemo } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
 import { getWindow } from '@model/dom.model';
-import { Coord3 } from '@model/three/three.model';
+import useStore, { selectApi } from '@store/env.store';
 import Grid from './grid';
 import Room from './room';
 import css from './3d.scss';
@@ -18,10 +18,22 @@ const CameraControls: React.FC = () => {
   return <panZoomControls ref={controls} args={[camera, domElement]} />;
 };
 
-const Env: React.FC<Props> = ({ high }) => {
+const Env: React.FC<Props> = ({ name, high }) => {
   const level = useRef<THREE.Group>(null);
-  const scale = useMemo(() => [1, 1, high ? 3 : 1] as Coord3, [high]);
+  const [levelMounted, setLevelMounted] = useState(false);
+  const api = useStore(selectApi);
   
+  useEffect(() => {
+    if (levelMounted) {
+      api.createEnv({ key: name, levelRoot: level.current!, highWalls: !!high });
+      return () => {
+        api.removeEnv(name);
+      };
+    }
+  }, [levelMounted]);
+
+  useEffect(() => void api.setHighWalls(name, !!high), [high]);
+
   return (
     <div
       className={css.root}
@@ -41,8 +53,12 @@ const Env: React.FC<Props> = ({ high }) => {
         
         <Grid />
 
-        <group ref={level} scale={scale}>
-          <Room is="closet" at={[-4, 0]} high />
+        <group
+          ref={level}
+          onUpdate={() => !levelMounted && setLevelMounted(true)}
+          userData={{ envName: name }} // For children
+        >
+          <Room is="closet" at={[-4, 0]} />
           <Room is="junction" />
           <Room is="closet" at={[4, 0]} w />
           
@@ -53,13 +69,13 @@ const Env: React.FC<Props> = ({ high }) => {
           <Room is="straight" at={[0, -8]} s />
         </group>
 
-
       </Canvas>
     </div>
   );
 };
 
 interface Props {
+  name: string;
   high: boolean;
 }
 

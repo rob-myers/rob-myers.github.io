@@ -6,8 +6,12 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] Can collapse/expand each blog entry
 
 - [ ] can query polyanya and display navpath
-  > Focus on this next
+- [ ] on 2nd click compute a navpath and display it
+- [ ] onclick floor show cube
 
+- [x] `Env` registers with state and its `Room` lookup `high` there
+
+- [ ] builtin `click` awaits clicks from environment
 - [x] can spawn a process without starting it
 - [x] can fork process
 - [ ] fix exit code propagation

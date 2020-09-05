@@ -1,15 +1,20 @@
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useMemo, useState } from "react";
 import { MouseEvent as ThreeMouseEvent } from 'react-three-fiber';
-import useStore from "@store/geom.store";
+import useGeomStore from "@store/geom.store";
+import useEnvStore from "@store/env.store";
 import { Coord3 } from "@model/three/three.model";
 
 const undoGltfRotation = [Math.PI/2, 0, 0] as Coord3;
 
 const Room: React.FC<Props> = (props) => {
-  const { is, at = [0, 0], high } = props;
-  const meta = useStore(({ rooms }) => rooms[is]);
-  const api = useStore(({ api }) => api);
-  const group = useRef<THREE.Group>(null);
+  const { is, at = [0, 0] } = props;
+  const root = useRef<THREE.Group>(null);
+  const walls = useRef<THREE.Group>(null);
+  
+  const meta = useGeomStore(({ rooms }) => rooms[is]);
+  const [envName, setEnvName] = useState(null as null | string);
+  const env = useEnvStore(({ env }) => envName ? env[envName] : null);
+  const wallsScale = useMemo(() => [1, env?.highWalls ? 3 : 1, 1] as Coord3, [env]);
   
   const onClick = useCallback((e: ThreeMouseEvent) => {
     console.log({ clickedRoom: e })
@@ -18,22 +23,30 @@ const Room: React.FC<Props> = (props) => {
 
   useEffect(() => {
     if (meta) {
+      // Attach walls
       const clone = meta.mesh.clone();
-      group.current?.add(clone);
-      return () => void group.current?.remove(clone);
+      walls.current?.add(clone);
+      // We'll connect to environment using envName
+      setEnvName(root.current?.parent?.userData.envName??null);
+      return () => void walls.current?.remove(clone);
     }
   }, [meta]);
 
   const angle = propsToAngle(props);
-  useEffect(() => void (group.current!.rotation.y = angle), [angle]);
+  useEffect(() => void (root.current!.rotation.y = angle), [angle]);
 
   return (
     <group
-      ref={group}
+      ref={root}
       position={[at[0], at[1], 0]}
       rotation={undoGltfRotation}
       onClick={onClick}
-    />
+    >
+      <group
+        ref={walls}
+        scale={wallsScale}
+      />
+    </group>
   )
 };
 
@@ -47,7 +60,6 @@ function propsToAngle(props: Props) {
 type Props = {
   is: string;
   at?: [number, number];
-  high?: boolean;
 } & (
   | { e?: boolean }
   | { s?: boolean }
