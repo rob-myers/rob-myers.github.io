@@ -501,7 +501,7 @@ class TranspileShService {
               // Freely add, although trim 1st and last
               values.push(...vs.map((x) => x.trim()));
             } else {
-              // Either {last(vs)} a trailing quote, or it has no trailing space
+              // Either `last(vs)` a trailing quote, or it has no trailing space
               // Since vs[0] has no leading space we must join words
               values.push(values.pop() + vs[0].trim());
               values.push(...vs.slice(1).map((x) => x.trim()));
@@ -546,17 +546,21 @@ class TranspileShService {
       //     })),
       //   });
       // }
-      // case 'DblQuoted': {
-      //   const { Dollar, Parts } = input;
-      //   return new DoubleQuoteExpand({
-      //     key: CompositeType.expand,
-      //     expandKey: ExpandType.doubleQuote,
-      //     cs: Parts.map((part) => this.ExpandPart(part)),
-      //     locale: Dollar,
-      //     sourceMap: this.sourceMap({ Pos, End }),
-      //     comments: [],
-      //   });
-      // }
+      case 'DblQuoted':
+        return from(async function*() {
+          const output = [] as string[];
+
+          for (const part of node.Parts) {
+            const result = await lastValueFrom(ts.ExpandPart(part));
+            if (ts.isSpecialParamExp(part)) {
+              output.push(`${output.pop() || ''}${result.values[0] || ''}`, ...result.values.slice(1));
+            } else {
+              output.push(`${output.pop() || ''}${result.value || ''}`);
+            }
+          }
+
+          yield act.expanded(output);
+        }());
       case 'ExtGlob':
         return of(act.expanded([''])); // TODO
       case 'Lit':
@@ -1070,6 +1074,14 @@ class TranspileShService {
   /** ArithmExpr sans Word */
   private isArithmOp(node: Sh.ParsedSh): node is Exclude<Sh.ArithmExpr, Sh.Word> {
     return !!(arithmOp as Record<string, true>)[node.type];
+  }
+
+  /** Only $@ and ${x[@]} can expand to multiple args */
+  private isSpecialParamExp(node: Sh.WordPart) {
+    return node.type === 'ParamExp' && (
+      node.paramDef!.parKey === ParamType.special
+      || (node.paramDef!.parKey === ParamType.plain && node.paramDef!.index?.value === '@' )
+    );
   }
 
   private isWordPart(node: Sh.ParsedSh): node is Sh.WordPart {
