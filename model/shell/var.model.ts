@@ -89,3 +89,10 @@ export interface NamedFunction {
   /** The source code of the body of the function, e.g. `{ echo foo; }` */
   src: null | string;
 }
+
+export interface BasePositionalVar {
+  key: 'positional';
+  value: string;
+  /** `1`-based index */
+  index: number;
+}

@@ -1,23 +1,25 @@
 import shortid from 'shortid';
-import { mapValues } from '@model/generic.model';
-import useStore, { State as ShellState, Session, Process } from '@store/shell.store';
+import { mapValues, last } from '@model/generic.model';
+import useStore, { State as ShellState, Session, Process, ProcessGroup } from '@store/shell.store';
 import { addToLookup } from '@store/store.util';
-import { FileWithMeta, parseSh, FileMeta, BaseNode, ParsedSh, Stmt } from './parse.service';
+import { ShellStream } from './shell.stream';
+import { FsFile, OpenFileRequest, OpenFileDescription } from './file.model';
+import { SpawnOpts } from './process.model';
+import * as Sh from './parse.service';
 import { transpileSh, ShError } from './transpile.service';
 import { varService } from './var.service';
-import { FsFile, OpenFileRequest, OpenFileDescription } from './file.model';
 import { fileService } from './file.service';
-import { ShellStream } from './shell.stream';
 import { ansiWarn, ansiReset } from './tty.xterm';
+import { builtinService } from './builtin.service';
 
 export class ProcessService {
   
   private set!: ShellState['api']['set'];
-  private mockParsed!: FileWithMeta;
+  private mockParsed!: Sh.FileWithMeta;
 
   initialise() {
     this.set = useStore.getState().api.set;
-    this.mockParsed = parseSh.parse('');
+    this.mockParsed = Sh.parseSh.parse('');
   }
 
   /**
@@ -59,6 +61,9 @@ export class ProcessService {
         lastBgPid: null,
       }, proc),
     }));
+
+    // Add leading process to its own group
+    this.createProcessGroup({ key: `${pid}`, pgid: pid, sessionKey, pids: [pid] });
   }
 
   /**
@@ -95,6 +100,11 @@ export class ProcessService {
     delete nestedRedirs[0][fd];
   }
 
+  createProcessGroup(group: ProcessGroup) {
+    this.getProcessGroups()[group.key] = group;
+    return group;
+  }
+
   duplicateFd(pid: number, srcFd: number, dstFd: number) {
     const ofd = this.getOfds();
     const process = this.getProcess(pid);
@@ -120,6 +130,15 @@ export class ProcessService {
     }
   }
 
+  execProcess(pid: number, node: Sh.Stmt) {
+    const process = this.getProcess(pid);
+    // Must clone parse tree because meta will differ
+    const cloned = Sh.parseSh.clone(node);
+    // Must mutate to affect all descendents
+    Object.assign<Sh.FileMeta, Partial<Sh.FileMeta>>(cloned.meta, { pid: process.pid });
+    process.parsed = Sh.parseSh.wrapInFile(cloned);
+  }
+
   findAncestral(pid: number, predicate: (state: Process) => boolean) {
     const proc = this.getProcesses();
     let process = proc[pid];
@@ -137,17 +156,26 @@ export class ProcessService {
 
   private forkProcess(
     ppid: number,
-    /** Forks of (statically-detected) builtins won't use vars/funcs */
+    /** Subshells can share vars and builtins won't use them */
     shareVars = false,
   ) {
-    const parent = this.getProcess(ppid);
+    const parent = this.getProcess(ppid);    
+    const pid = useStore.getState().nextProcId;
     if (!parent) {
       throw new ShError(`cannot fork non-extant process ${ppid}`, 1, 'PP_NO_EXIST');
     }
+    
+    let forkedNestedVars = parent.nestedVars;
+    if (!shareVars) {
+      forkedNestedVars = [{}];
+      // Restrict to vars in earliest scope i.e. ignore `local` variables
+      Object.values(last(parent.nestedVars)!)
+        // Restrict to env vars, excluding positive positionals
+        .filter(({ exported, key, varName }) => exported && (key !== 'positional' || varName === '0'))
+        .forEach((x) => forkedNestedVars[0][x.key] = varService.cloneVar(x));
+    }
 
-    const pid = useStore.getState().nextProcId;
-
-    this.set(({ proc }) => {
+    this.set(({ proc, procGrp }) => {
       // We mutate proc rather than creating fresh object
       proc[pid] = {
         key: `${pid}`,
@@ -155,20 +183,21 @@ export class ProcessService {
         pid,
         ppid,
         pgid: parent.pgid,
-        // We'll always overwrite `parsed` before starting the process
+        // We'll always overwrite `parsed` by execing the process
         parsed: this.mockParsed,
         subscription: null,
         fdToOpen: { ...parent.fdToOpen },
         nestedRedirs: [{ ...mapValues(parent.fdToOpen, (o) => o.key) }],
-        nestedVars: shareVars
-          ? parent.nestedVars
-          : parent.nestedVars.map(fdToOpenKey => mapValues(fdToOpenKey, v => varService.cloneVar(v))),
+        nestedVars: forkedNestedVars,
         toFunc: shareVars
           ? parent.toFunc
           : mapValues(parent.toFunc, (func) => varService.cloneFunc(func)),
         lastExitCode: null,
         lastBgPid: null,
       };
+      // Add to parent process group
+      procGrp[parent.pgid].pids.push(pid);
+
       return { nextProcId: pid + 1 };
     });
     return this.getProcess(pid);
@@ -181,6 +210,14 @@ export class ProcessService {
   getProcess(pid: number): Process {
     return this.getProcesses()[pid];
   }
+
+  private getProcessGroup(pgid: number): ProcessGroup | null {
+    return this.getProcessGroups()[pgid] || null;
+  }
+
+  private getProcessGroups() {
+    return useStore.getState().procGrp;
+  }
   
   private getProcesses() {
     return useStore.getState().proc;
@@ -190,7 +227,12 @@ export class ProcessService {
     return useStore.getState().session[sessionKey];
   }
 
-  isInteractiveShell({ meta }: BaseNode) {
+  /** Statically detect builtins */
+  private isBuiltinStatically(node: Sh.Stmt) {
+    return builtinService.isBuiltinCommand(((node.Cmd as Sh.CallExpr)?.Args[0].Parts[0] as Sh.Lit)?.Value || '');
+  }
+
+  isInteractiveShell({ meta }: Sh.BaseNode) {
     return meta.pid === meta.sid;
   }
 
@@ -270,15 +312,24 @@ export class ProcessService {
     this.getProcess(pid).nestedRedirs.unshift({});
   }
 
+  /** We assume `pid` already resides in the group */
+  removeProcessFromGroup(pid: number, pgid: number)  {
+    const group = this.getProcessGroup(pgid)!;
+    group.pids = group.pids.filter(x => x !== pid);
+    if (!group.pids.length) {
+      delete this.getProcessGroups()[pgid];
+    }
+  }
+
   /**
    * Run parsed code in session's leading process.
    */
-  runInShell(parsed: FileWithMeta, sessionKey: string) {
+  runInShell(parsed: Sh.FileWithMeta, sessionKey: string) {
     const transpiled = transpileSh.transpile(parsed);
     const { sid: pid } = this.getSession(sessionKey);
 
     // Must mutate to affect all descendents
-    Object.assign<FileMeta, FileMeta>(parsed.meta, { pid, sessionKey, sid: pid });
+    Object.assign<Sh.FileMeta, Sh.FileMeta>(parsed.meta, { pid, sessionKey, sid: pid });
 
     return new Promise((resolve, reject) => {
       const process = this.getProcess(pid);
@@ -319,17 +370,65 @@ export class ProcessService {
   }
 
   /**
-   * TODO
+   * Add/move process to process group, creating latter if needed.
    */
-  spawnProcess(ppid: number, node: Stmt) {
-    const forked = this.forkProcess(ppid);
-    const parsed = parseSh.clone(node);
-    // Must mutate to affect all descendents
-    Object.assign<FileMeta, Partial<FileMeta>>(parsed.meta, { pid: forked.pid });
-    forked.parsed = parseSh.wrapInFile(parsed);
-    /**
-     * TODO
-     */
+  private setProcessGroup(pid: number, pgid: number) {
+    const { pgid: prevPgid, sessionKey } = this.getProcess(pid);
+    if (pgid === prevPgid) {
+      return;
+    }
+
+    this.removeProcessFromGroup(pid, prevPgid);
+    const group = this.getProcessGroup(pgid)
+      || this.createProcessGroup({ key: `${pgid}`, sessionKey, pgid, pids: [] });
+    group.pids.push(pid);
+  }
+
+  /**
+   * Set the foreground process group of a session.
+   * Used e.g. when launching a pipeline from shell.
+   */
+  private setSessionForeground(sessionKey: string, pgid: number) {
+    this.getSession(sessionKey).fgStack.push(pgid);
+  }
+
+  /**
+   * Spawn a process without starting it.
+   */
+  spawnProcess(ppid: number, node: Sh.Stmt, opts: SpawnOpts) {
+    const forked = this.forkProcess(ppid, opts.subshell || this.isBuiltinStatically(node));
+    this.execProcess(forked.pid, node);
+
+    for (const request of opts.redirects) {
+      this.openFile(forked.pid, request);
+    }
+
+    if (opts.pgid) {// Add to specified process group
+      this.setProcessGroup(forked.pid, opts.pgid);
+      if (!opts.background) {// Not in background means in session foreground
+        this.setSessionForeground(forked.sessionKey, opts.pgid);
+      }
+    } else if (opts.background) {
+      // If parent in session foreground, create new process group for child
+      const { fgStack } = this.getSession(forked.sessionKey);
+      if (fgStack.length && (forked.pgid === last(fgStack))) {
+        this.setProcessGroup(forked.pid, forked.pid);
+      }
+    }
+
+    if (opts.posPositionals) {
+      varService.pushPositionalsScope(forked.pid, opts.posPositionals);
+    }
+
+    if (opts.exportVars) {
+      for (const { varName, varValue } of opts.exportVars) {
+        varService.assignVar(forked.pid, { varName, act: { key: 'default', value: varValue }, exported: true });
+      }
+    }
+
+    if (opts.background) {
+      this.getProcess(ppid).lastBgPid = forked.pid;
+    }
   }
 
   startProcess(pid: number) {

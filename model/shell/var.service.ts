@@ -1,4 +1,4 @@
-import { testNever, mapValues, isStringInt } from "@model/generic.model";
+import { testNever, mapValues, isStringInt, last } from "@model/generic.model";
 import useStore, { Process } from '@store/shell.store';
 import { ProcessVar, BasePositionalVar, AssignVarBase, VarFlags, NamedFunction } from "./var.model";
 import { ShError } from "./transpile.service";
@@ -450,12 +450,12 @@ export class VarService {
     return this.getProcess(pid).toFunc[functionName] || null
   }
 
-  getPositionals(pid: number) {
+  /**
+   * Positionals are in 1st scope containing 0.
+   * Such a scope always exists i.e. the last item in `nestedVars`.
+   */
+  getPositionals(pid: number): string[] {
     const { nestedVars } = this.getProcess(pid)
-    /**
-     * Positionals are in 1st scope containing 0.
-     * Such a scope always exists i.e. the last item in `nestedVars`.
-     */
     const toVar = nestedVars.find((toVar) => 0 in toVar);
     if (toVar) {// Collect all positions, starting from 0
       let i = -1;
@@ -467,6 +467,10 @@ export class VarService {
       return positions.map((i) => (toVar[i] as BasePositionalVar).value);
     }
     throw Error('positional variables not found in process');    
+  }
+
+  private getProcess(pid: number): Process {
+    return useStore.getState().proc[pid];
   }
 
   getVarKeys(value: undefined | ProcessVar['value']): string[] {
@@ -503,7 +507,7 @@ export class VarService {
     console.log(`TODO invoke function ${func.key}`);
   }
 
-  isVarKeyNumeric(
+  private isVarKeyNumeric(
     key: ProcessVar['key'],
   ): key is 'integer' | 'integer[]' | 'to-integer' {
     switch (key) {
@@ -527,7 +531,25 @@ export class VarService {
     return found ? found[varName].value : undefined;
   }
 
-  recastVar(
+  /** Create new scope containing positive positionals. */
+  pushPositionalsScope(pid: number, posPositionals: string[]) {
+    const { nestedVars } = this.getProcess(pid);
+    const toVar = {} as Record<string, ProcessVar>;
+    posPositionals.forEach((value, index) => toVar[index + 1] = {
+      key: 'positional',
+      index: index + 1,
+      varName: String(index + 1),
+      value,
+      exported: false,
+      readonly: true,
+      to: null,
+    });
+    // Include $0 from earliest scope
+    Object.assign(toVar, { 0: this.cloneVar((last(nestedVars)!)[0]) });
+    nestedVars.unshift(toVar);
+  }
+
+  private recastVar(
     prev: ProcessVar,
     nextKey: ProcessVar['key'],
     flags: VarFlags,
@@ -639,10 +661,6 @@ export class VarService {
       { ...process.nestedVars[scopeIndex], [varName]: processVar },
       ...process.nestedVars.slice(scopeIndex + 1),
     ];
-  }
-
-  private getProcess(pid: number): Process {
-    return useStore.getState().proc[pid];
   }
 
 }

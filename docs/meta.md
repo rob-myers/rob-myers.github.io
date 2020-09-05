@@ -6,8 +6,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] Can collapse/expand each blog entry
 
 - [ ] can query polyanya and display navpath
+  > Focus on this next
 
-- [ ] can spawn a process
+- [x] can spawn a process without starting it
 - [x] can fork process
 - [ ] fix exit code propagation
 - [ ] can transpile `|`

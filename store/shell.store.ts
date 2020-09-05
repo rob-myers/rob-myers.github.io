@@ -28,6 +28,8 @@ export interface State {
   ofd: KeyedLookup<OpenFileDescription<any>>;
   /** Global file system */
   fs: KeyedLookup<FsFile>;
+  /** Process groups */
+  procGrp: KeyedLookup<ProcessGroup>;
 
   readonly api: {
     createSession: (alias: string) => void;
@@ -46,6 +48,12 @@ export interface Session {
   sid: number;
   ttyId: number;
   ttyShell: TtyShell;
+  /**
+   * Foreground process group stack.
+   * - first item is the controlling process of a shell.
+   * - last item is current foreground process group.
+   */
+  fgStack: number[];
 }
 
 export interface Process {
@@ -82,6 +90,21 @@ export interface Process {
   lastBgPid: null | number;
 }
 
+
+export interface ProcessGroup {
+  /** `pgid` as a string */
+  key: string;
+  /** Identifier */
+  pgid: number;
+  /** Parent session */
+  sessionKey: string;
+  /**
+   * Pids of processes in the group
+   * which have not yet terminated.
+   */
+  pids: number[];
+}
+
 const useStore = create<State>(devtools((set, get) => {
   const nullFile = fileService.createFsFile('/dev/null', new ShellStream(), new ShellStream());
 
@@ -97,6 +120,7 @@ const useStore = create<State>(devtools((set, get) => {
       new OpenFileDescription('/dev/null', nullFile, 'RDWR'),
       {} as State['ofd'],
     ),
+    procGrp: {},
     api: {
       createSession: (alias) => {
         const { toSessionKey, nextTtyId: ttyId } = get();
@@ -110,22 +134,20 @@ const useStore = create<State>(devtools((set, get) => {
         const ttyFile = fileService.createFsFile(canonicalPath, new ShellStream(), new ShellStream());
         const ttyShell = new TtyShell(sessionKey, canonicalPath, ttyFile);
 
-        set(({ toSessionKey, nextProcId, nextTtyId, session, fs, ofd }: State) => ({
+        set(({ toSessionKey, nextProcId: sid, nextTtyId, session, fs, ofd }: State) => ({
           toSessionKey: { ...toSessionKey, [alias]: sessionKey },
           session: addToLookup({
             key: sessionKey,
-            sid: nextProcId,
+            sid,
             ttyId,
             ttyShell,
+            fgStack: [sid],
           }, session),
-          nextProcId: nextProcId + 1,
+          nextProcId: sid + 1, // We'll create a process directly below
           nextTtyId: nextTtyId + 1,
           fs: addToLookup(ttyFile, fs),
           // NOTE we're also using /dev/tty-${ttyId} to identify an open file description
-          ofd: addToLookup(
-            new OpenFileDescription(canonicalPath, ttyFile, 'RDWR'),
-            ofd,
-          ),
+          ofd: addToLookup(new OpenFileDescription(canonicalPath, ttyFile, 'RDWR'), ofd),
         }));
 
         processService.createLeadingProcess(sessionKey);
