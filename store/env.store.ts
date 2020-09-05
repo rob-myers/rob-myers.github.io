@@ -14,18 +14,20 @@ export interface State {
 
 export interface Environment {
   key: string;
-  levelRoot: THREE.Group;
   highWalls: boolean;
 }
 
-type EnvDef = Environment;
+interface EnvDef {
+  envName: string;
+  highWalls: boolean;
+}
 
 const useStore = create<State>(devtools((set, get) => ({
   env: {},
   api: {
-    createEnv: ({ key, levelRoot, highWalls }) => {
+    createEnv: ({ envName, highWalls }) => {
       set(({ env }) => ({
-        env: addToLookup({ key, levelRoot, highWalls }, env),
+        env: addToLookup({ key: envName, highWalls }, env),
       }));
     },
     removeEnv: (key) => {

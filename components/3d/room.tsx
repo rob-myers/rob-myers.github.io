@@ -11,9 +11,10 @@ const Room: React.FC<Props> = (props) => {
   const root = useRef<THREE.Group>(null);
   const walls = useRef<THREE.Group>(null);
   
-  const meta = useGeomStore(({ rooms }) => rooms[is]);
   const [envName, setEnvName] = useState(null as null | string);
   const env = useEnvStore(({ env }) => envName ? env[envName] : null);
+  
+  const meta = useGeomStore(({ rooms }) => rooms[is]);
   const wallsScale = useMemo(() => [1, env?.highWalls ? 3 : 1, 1] as Coord3, [env]);
   
   const onClick = useCallback((e: ThreeMouseEvent) => {

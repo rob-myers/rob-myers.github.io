@@ -1,28 +1,14 @@
 import { PerspectiveCamera } from 'three';
-import { useRef, useEffect, useState } from 'react';
+import { useRef } from 'react';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
 import { getWindow } from '@model/dom.model';
-import useStore, { selectApi } from '@store/env.store';
 import Grid from './grid';
 import Room from './room';
 import css from './3d.scss';
 
-const World: React.FC<Props> = ({ envName, high }) => {
+const World: React.FC<Props> = ({ envName }) => {
   const level = useRef<THREE.Group>(null);
-  const [levelMounted, setLevelMounted] = useState(false);
-  const api = useStore(selectApi);
-  
-  useEffect(() => {
-    if (levelMounted) {
-      api.createEnv({ key: envName, levelRoot: level.current!, highWalls: !!high });
-      return () => {
-        api.removeEnv(envName);
-      };
-    }
-  }, [levelMounted]);
-
-  useEffect(() => void api.setHighWalls(envName, !!high), [high]);
 
   return (
     <div
@@ -45,7 +31,7 @@ const World: React.FC<Props> = ({ envName, high }) => {
 
         <group
           ref={level}
-          onUpdate={() => !levelMounted && setLevelMounted(true)}
+          // onUpdate={() => !geomMounted && setGeomMounted(true)}
           userData={{ envName }} // For children
         >
           <Room is="closet" at={[-4, 0]} />
@@ -66,7 +52,6 @@ const World: React.FC<Props> = ({ envName, high }) => {
 
 interface Props {
   envName: string;
-  high: boolean;
 }
 
 // See types/react-three-fiber/three-types.d.ts
