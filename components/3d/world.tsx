@@ -8,31 +8,21 @@ import Grid from './grid';
 import Room from './room';
 import css from './3d.scss';
 
-// See types/react-three-fiber/three-types.d.ts
-extend({ PanZoomControls });
-
-const CameraControls: React.FC = () => {
-  const { camera, gl: { domElement } } = useThree();
-  const controls = useRef<PanZoomControls>();
-  useFrame((_state) => controls.current!.update());
-  return <panZoomControls ref={controls} args={[camera, domElement]} />;
-};
-
-const Env: React.FC<Props> = ({ name, high }) => {
+const World: React.FC<Props> = ({ envName, high }) => {
   const level = useRef<THREE.Group>(null);
   const [levelMounted, setLevelMounted] = useState(false);
   const api = useStore(selectApi);
   
   useEffect(() => {
     if (levelMounted) {
-      api.createEnv({ key: name, levelRoot: level.current!, highWalls: !!high });
+      api.createEnv({ key: envName, levelRoot: level.current!, highWalls: !!high });
       return () => {
-        api.removeEnv(name);
+        api.removeEnv(envName);
       };
     }
   }, [levelMounted]);
 
-  useEffect(() => void api.setHighWalls(name, !!high), [high]);
+  useEffect(() => void api.setHighWalls(envName, !!high), [high]);
 
   return (
     <div
@@ -56,7 +46,7 @@ const Env: React.FC<Props> = ({ name, high }) => {
         <group
           ref={level}
           onUpdate={() => !levelMounted && setLevelMounted(true)}
-          userData={{ envName: name }} // For children
+          userData={{ envName }} // For children
         >
           <Room is="closet" at={[-4, 0]} />
           <Room is="junction" />
@@ -75,8 +65,18 @@ const Env: React.FC<Props> = ({ name, high }) => {
 };
 
 interface Props {
-  name: string;
+  envName: string;
   high: boolean;
 }
 
-export default Env;
+// See types/react-three-fiber/three-types.d.ts
+extend({ PanZoomControls });
+
+const CameraControls: React.FC = () => {
+  const { camera, gl: { domElement } } = useThree();
+  const controls = useRef<PanZoomControls>();
+  useFrame((_state) => controls.current!.update());
+  return <panZoomControls ref={controls} args={[camera, domElement]} />;
+};
+
+export default World;

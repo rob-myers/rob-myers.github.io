@@ -5,14 +5,15 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] can reset env ui; must 1st click to start pan-zoom
 - [ ] Can collapse/expand each blog entry
 
-- [ ] can query polyanya and display navpath
+- [ ] can query polyanya in webworker and display navpath
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
 
-- [x] `Env` registers with state and its `Room` lookup `high` there
+- [x] `Env` registers with state and `Room`s lookup `highWalls` there
 
 - [ ] builtin `click` awaits clicks from environment
-- [x] can spawn a process without starting it
+- [ ] `/dev/world-{ttyId}` provides click events
+- [x] can spawn a process (without starting it)
 - [x] can fork process
 - [ ] fix exit code propagation
 - [ ] can transpile `|`
