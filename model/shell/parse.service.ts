@@ -1,5 +1,7 @@
 import Sh, { syntax } from 'mvdan-sh';
 import cloneWithRefs from 'lodash.clonedeep';
+import getopts from 'getopts';
+import { last } from '@model/generic.model';
 import { withParents } from './parse.util';
 import { BaseAssignOpts } from './var.model';
 import { ParameterDef } from './parameter.model';
@@ -89,6 +91,27 @@ class ParseShService {
    */
   clone<T extends ParsedSh>(parsed: T): T {
     return cloneWithRefs(parsed);
+  }
+
+  getOpts(args: string[], options?: getopts.Options) {
+    return this.simplifyGetOpts(getopts(args, options));
+  }
+
+  /**
+   * `getopts` handles dup options by providing an array,
+   * and we restrict to the final item. Also we store all
+   * extant option names as the value of key `__optKeys`.
+   */
+  private simplifyGetOpts(parsed: getopts.ParsedOptions) {
+    const output = parsed as getopts.ParsedOptions & { __optKeys: string[] };
+    Object.keys(parsed).forEach((key) => {
+      output.__optKeys = [];
+      if (key !== '_') {
+        Array.isArray(parsed[key]) && (output[key] = last(parsed[key]) as any);
+        output.__optKeys.push(key);
+      }
+    });
+    return output;
   }
 
   /**

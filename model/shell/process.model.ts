@@ -49,8 +49,8 @@ interface WorldCoords {
  */
 export const builtins = {
   echo: true,
-  pwd: true,
-  click: true,
+  sleep: true,
+  // click: true,
 };
 
 export type BuiltinKey = keyof typeof builtins;

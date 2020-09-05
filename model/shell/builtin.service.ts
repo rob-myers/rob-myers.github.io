@@ -1,10 +1,13 @@
+import { catchError } from 'rxjs/operators';
+
+import { testNever, pause } from "@model/generic.model";
 import { Process } from "@store/shell.store";
 import { awaitEnd } from "./rxjs.model";
-import * as Sh from "./parse.service";
 import { BuiltinKey, builtins } from "./process.model";
+import * as Sh from "./parse.service";
+import { parseSh } from './parse.service';
 import { processService as ps} from './process.service';
-import { CommandCtxt } from "./transpile.service";
-import { catchError } from 'rxjs/operators';
+import { CommandCtxt, ShError } from "./transpile.service";
 
 export class BuiltinService {
 
@@ -31,11 +34,9 @@ export class BuiltinService {
     }
 
     switch (command) {
-      case 'echo':
-        await this.echo(process, args);
-        break;
-      default:
-        console.log(`TODO run builtin ${command}`);
+      case 'echo': await this.echo(process, args); break;
+      case 'sleep': await this.sleep(args); break;
+      default: throw testNever(command);
     }
 
     if (Redirs.length) {
@@ -43,8 +44,28 @@ export class BuiltinService {
     }
   }
 
+  /** Writes arguments, which includes any options  */
   private async echo({ fdToOpen }: Process, args: string[]) {
     fdToOpen[1].write(args.join(' '));
+  }
+
+  /**
+   * Wait for sum of arguments in seconds.
+   * If there are no arguments we'll sleep for 1 second.
+   * If the sum is negative we'll wait 0 seconds.
+   */
+  private async sleep(args: string[]) {
+    // const { _: operands, __optKeys } = parseSh.getOpts(args, {});
+    let seconds = args.length ? 0 : 1, delta: number;
+    
+    for (const arg of args) {
+      seconds += (delta = Number(arg));
+      if (Number.isNaN(delta)) {
+        throw new ShError(`sleep: invalid time interval ‘${arg}’`, 1);
+      }
+    }
+
+    await pause(seconds * 1000);
   }
 }
 
