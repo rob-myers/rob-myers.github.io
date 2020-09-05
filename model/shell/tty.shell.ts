@@ -101,7 +101,9 @@ export class TtyShell {
             break;
           }
         }
-      } catch (e) {// Cancelled via Ctrl+C
+      } catch (e) {
+        // Cancelled via Ctrl+C
+      } finally {
         input.resolve();
       }
     }
