@@ -3,14 +3,13 @@ import { devtools } from 'zustand/middleware'
 import { KeyedLookup } from '@model/generic.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import useShellStore from './shell.store';
-import { FsFile, mockFsFile } from '@model/shell/file.model';
+import { FsFile } from '@model/shell/file.model';
 
 export interface State {
   env: KeyedLookup<Environment>;
   api: {
     createEnv: (def: EnvDef) => void;
     removeEnv: (envKey: string) => void;
-    connectToWorldDevice: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
   };
 }
@@ -18,7 +17,7 @@ export interface State {
 export interface Environment {
   key: string;
   highWalls: boolean;
-  device: FsFile;
+  worldDevice: FsFile;
 }
 
 interface EnvDef {
@@ -30,19 +29,21 @@ const useStore = create<State>(devtools((set, get) => ({
   env: {},
   api: {
     createEnv: ({ envKey, highWalls }) => {
+      /**
+       * Child's initial useEffect runs before parent's,
+       * so we know the respective session exists.
+       * https://codesandbox.io/s/useeffect-timing-jvgip?file=/src/index.js
+       */
+      const { toSessionKey, session } = useShellStore.getState();
+      const { worldDevice } = session[toSessionKey[envKey]];
+
       set(({ env }) => ({
         env: addToLookup({
           key: envKey,
           highWalls,
-          device: mockFsFile, // Will be overwritten
+          worldDevice,
         }, env),
       }));
-    },
-    connectToWorldDevice: (envKey: string) => {
-      const { toSessionKey, session, fs } = useShellStore.getState();
-      const absPath = `/dev/world-${session[toSessionKey[envKey]].ttyId}`;
-      const device = fs[absPath];
-      set(({ env }) => updateLookup(envKey, env, () => ({ device })));
     },
     removeEnv: (envKey) => {
       set(({ env }) => ({

@@ -44,17 +44,6 @@ interface WorldCoords {
   y: number;  
 }
 
-/**
- * TODO
- */
-export const builtins = {
-  echo: true,
-  sleep: true,
-  // click: true,
-};
-
-export type BuiltinKey = keyof typeof builtins;
-
 export interface SpawnOpts {
   /** Should it run in the background? */
   background?: boolean;

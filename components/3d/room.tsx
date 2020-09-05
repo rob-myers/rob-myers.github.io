@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback, useMemo, useState } from "react";
 import { MouseEvent as ThreeMouseEvent } from 'react-three-fiber';
-import useGeomStore from "@store/geom.store";
 import useEnvStore from "@store/env.store";
+import useGeomStore from "@store/geom.store";
 import { Coord3 } from "@model/three/three.model";
 
 const undoGltfRotation = [Math.PI/2, 0, 0] as Coord3;
@@ -15,12 +15,16 @@ const Room: React.FC<Props> = (props) => {
   const env = useEnvStore(({ env }) => envName ? env[envName] : null);
   
   const meta = useGeomStore(({ rooms }) => rooms[is]);
+  const api = useGeomStore(({ api }) => api);
   const wallsScale = useMemo(() => [1, env?.highWalls ? 3 : 1, 1] as Coord3, [env]);
   
   const onClick = useCallback((e: ThreeMouseEvent) => {
-    console.log({ clickedRoom: e });
     e.stopPropagation();
-    env?.device.write({ key: 'click', position: e.point });
+    if (Math.abs(e.point.z) < 0.0001) {// Only floor clicks
+      console.log({ clickedRoom: e });
+      const position = api.geom.project(e.point);
+      env?.worldDevice.write({ key: 'click', position });
+    }
   }, [env]);
 
   useEffect(() => {

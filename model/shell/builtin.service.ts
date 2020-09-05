@@ -3,10 +3,8 @@ import { catchError } from 'rxjs/operators';
 import { testNever, pause } from "@model/generic.model";
 import { Process } from "@store/shell.store";
 import { awaitEnd } from "./rxjs.model";
-import { BuiltinKey, builtins } from "./process.model";
 import * as Sh from "./parse.service";
-import { parseSh } from './parse.service';
-import { processService as ps} from './process.service';
+import { processService as ps, processService} from './process.service';
 import { CommandCtxt, ShError } from "./transpile.service";
 
 export class BuiltinService {
@@ -34,6 +32,7 @@ export class BuiltinService {
     }
 
     switch (command) {
+      case 'click': await this.click(process, args); break;
       case 'echo': await this.echo(process, args); break;
       case 'sleep': await this.sleep(args); break;
       default: throw testNever(command);
@@ -44,6 +43,23 @@ export class BuiltinService {
     }
   }
 
+  /**
+   * TODO 
+   * - non-blocking reads
+   * - only listen for clicks, use types, 2 dp precision
+   * - ensure fdToOpen is always mutated, so reference not stale
+   */
+  private async click({ sessionKey, fdToOpen }: Process, _args: string[]) {
+    const { worldDevice } = processService.getSession(sessionKey);
+    await new Promise((resolve) => {
+      const stopReading = worldDevice.read((msg) => {
+        fdToOpen[1].write(msg);
+        stopReading();
+        resolve();
+      });
+    });
+  }
+
   /** Writes arguments, which includes any options  */
   private async echo({ fdToOpen }: Process, args: string[]) {
     fdToOpen[1].write(args.join(' '));
@@ -51,8 +67,8 @@ export class BuiltinService {
 
   /**
    * Wait for sum of arguments in seconds.
-   * If there are no arguments we'll sleep for 1 second.
-   * If the sum is negative we'll wait 0 seconds.
+   * - if there are no arguments we'll sleep for 1 second.
+   * - if the sum is negative we'll wait 0 seconds.
    */
   private async sleep(args: string[]) {
     // const { _: operands, __optKeys } = parseSh.getOpts(args, {});
@@ -64,9 +80,20 @@ export class BuiltinService {
         throw new ShError(`sleep: invalid time interval ‘${arg}’`, 1);
       }
     }
-
-    await pause(seconds * 1000);
+    await pause(1000 * seconds);
   }
 }
+
+
+/**
+ * TODO
+ */
+export const builtins = {
+  click: true,
+  echo: true,
+  sleep: true,
+};
+
+export type BuiltinKey = keyof typeof builtins;
 
 export const builtinService = new BuiltinService;

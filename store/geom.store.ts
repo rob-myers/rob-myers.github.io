@@ -73,15 +73,15 @@ const useStore = create<State>(devtools((set, get) => ({
       const vs = geometry.vertices.map(p => room.localToWorld(p.clone()));
       
       const floor = Geom.Rect.fromPoints(
-        geom.project(room.geometry.boundingBox!.min),
-        geom.project(room.geometry.boundingBox!.max),
+        geom.projectGltf(room.geometry.boundingBox!.min),
+        geom.projectGltf(room.geometry.boundingBox!.max),
       );
 
       const wallTris = [] as Geom.Polygon[];
       geometry.faces.forEach(({ a, b, c }) => {
         const tri = [a, b, c].map(i => vs[i]);
         if (tri.every(p => Math.abs(p.y) < epsilon)) {
-          wallTris.push(new Geom.Polygon(tri.map(geom.project)));
+          wallTris.push(new Geom.Polygon(tri.map(geom.projectGltf)));
         }
       });
       // console.log({ key: room.name, floor, wallTris })

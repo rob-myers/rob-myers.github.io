@@ -223,7 +223,7 @@ export class ProcessService {
     return useStore.getState().proc;
   }
 
-  private getSession(sessionKey: string): Session {
+  getSession(sessionKey: string): Session {
     return useStore.getState().session[sessionKey];
   }
 

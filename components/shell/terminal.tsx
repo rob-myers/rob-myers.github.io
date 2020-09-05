@@ -8,7 +8,7 @@ import css from './terminal.scss';
 const XTerm = dynamic(() =>
   import('@components/shell/xterm'), { ssr: false }) as typeof XTermComponent;
 
-const Terminal: React.FC<Props> = ({ envName, onShellReady }) => {
+const Terminal: React.FC<Props> = ({ envName }) => {
   const session = useStore(({ session, toSessionKey }) =>
     session[toSessionKey[envName]]);
   const api = useStore(({ api }) => api);
@@ -34,7 +34,6 @@ const Terminal: React.FC<Props> = ({ envName, onShellReady }) => {
 
         ttyXterm.initialise();
         ttyShell.initialise(ttyXterm);
-        onShellReady();
       }}  
       options={{
         fontSize: 12,
@@ -51,7 +50,6 @@ const Terminal: React.FC<Props> = ({ envName, onShellReady }) => {
 
 interface Props {
   envName: string;
-  onShellReady: () => void;
 }
 
 export default Terminal;

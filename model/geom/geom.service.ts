@@ -143,9 +143,16 @@ export default class GeomService {
     return outsetEdges;
   }
 
-  /** Project onto xy plane, restricting precision */
-  project(v: THREE.Vector3): Geom.Vector {
+  /**
+   * Project a GLTF vector onto xy plane, restricting precision.
+   * We're assume z-axis corresponds to negative y-axis in 2d.
+   */
+  projectGltf(v: THREE.Vector3): Geom.Vector {
     return new Geom.Vector(v.x, -v.z).precision();
+  }
+
+  project(v: THREE.Vector3): Geom.Vector {
+    return new Geom.Vector(v.x, v.y).precision(2);
   }
 
   outset(poly: Geom.Polygon, amount: number) {

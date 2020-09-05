@@ -54,6 +54,7 @@ export interface Session {
    * - last item is current foreground process group.
    */
   fgStack: number[];
+  worldDevice: FsFile;
 }
 
 export interface Process {
@@ -131,9 +132,11 @@ const useStore = create<State>(devtools((set, get) => {
         const ttyFilename = `tty-${ttyId}`;
         const sessionKey = `root@${ttyFilename}`;
         const canonicalPath = `/dev/${ttyFilename}`;
+        // 2 separate streams that will be connected via TtyXterm and  TtyShell
         const ttyFile = fileService.createFsFile(canonicalPath, new ShellStream(), new ShellStream());
         const ttyShell = new TtyShell(sessionKey, canonicalPath, ttyFile);
-        const worldFile = fileService.createFsFile(`/dev/world-${ttyId}`, new ShellStream(), new ShellStream());
+        // A wire means readable/writable stream are the same
+        const worldDevice = fileService.makeWire(`/dev/world-${ttyId}`);
 
         set(({ toSessionKey, nextProcId: sid, nextTtyId, session, fs, ofd }: State) => ({
           toSessionKey: { ...toSessionKey, [alias]: sessionKey },
@@ -143,10 +146,11 @@ const useStore = create<State>(devtools((set, get) => {
             ttyId,
             ttyShell,
             fgStack: [sid],
+            worldDevice,
           }, session),
           nextProcId: sid + 1, // We'll create a process directly below
           nextTtyId: nextTtyId + 1,
-          fs: addToLookup(worldFile, addToLookup(ttyFile, fs)),
+          fs: addToLookup(worldDevice, addToLookup(ttyFile, fs)),
           // NOTE we're also using /dev/tty-${ttyId} to identify an open file description
           ofd: addToLookup(new OpenFileDescription(canonicalPath, ttyFile, 'RDWR'), ofd),
         }));

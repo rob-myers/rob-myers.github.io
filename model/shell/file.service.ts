@@ -103,7 +103,7 @@ export class FileService {
 
   makeWire(absPath: string) {
     const stream = new ShellStream();
-    this.createFsFile(absPath, stream, stream);
+    return this.createFsFile(absPath, stream, stream);
   }
 
   /**

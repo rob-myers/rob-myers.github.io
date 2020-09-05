@@ -27,6 +27,7 @@ export class FsFile<R = any, W = any> {
   /** Read from this file */
   read(cb: (msg: R) => void) {
     this.iNode.readable.registerCallback(cb);
+    return () => this.iNode.readable.unregisterCallback(cb);
   }
 
   /** Write to this file */
