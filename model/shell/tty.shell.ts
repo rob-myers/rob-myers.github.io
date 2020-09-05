@@ -61,7 +61,7 @@ export class TtyShell {
         console.log('received signal', { msg, sessionKey: this.sessionKey });
         if (msg.signal === SigEnum.SIGINT) {
           processService.stopProcess(this.session.sid);
-          this.session.cancel();
+          this.session.cancels.reverse().forEach(cancel => cancel());
           this.prompt('$ ');
         }
         break;
@@ -104,6 +104,7 @@ export class TtyShell {
       } catch (e) {
         // Cancelled via Ctrl+C
       } finally {
+        this.session.cancels.length = 0;
         input.resolve();
       }
     }

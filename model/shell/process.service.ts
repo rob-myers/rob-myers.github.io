@@ -339,12 +339,11 @@ export class ProcessService {
         next: (msg) => console.log('received', msg), // TEMP
         complete: () => {
           console.log(`${parsed.meta.sessionKey}: shell execution terminated`)
-          session.cancel = () => {};
           resolve();
         },
         error: (err) => reject(err),
       });
-      session.cancel = reject;
+      session.cancels.push(reject);
     });
   }
 
