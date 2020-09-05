@@ -68,7 +68,7 @@
 .links {
   display: flex;
 
-  font-family: "Courier New", Courier, monospace;
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   font-size: 12px;
 
   > a {
@@ -79,14 +79,11 @@
 
     text-decoration: none;
     background: #eee;
-    border-radius: 4px;
-    border: 1px solid #ddd;
     background: #fff;
 
     &:hover {
       color: #555;
       transition: all 0.4s ease-in;
-      border: 1px solid #999;
     }
     &:not(:hover) {
       color: #aaa;
@@ -95,7 +92,6 @@
 
     &.enabled {
       color: #222;
-      border: 1px solid #999;
     }
   }
 }
