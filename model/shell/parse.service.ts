@@ -14,12 +14,14 @@ let nodeCount = 0;
  */
 class ParseShService {
 
-  private mockMeta = getMockMeta();
-  private mockPos = getMockPos();
-  private mockBaseNode!: BaseNode;
+  private mockMeta: FileMeta;
+  private mockPos: () => Sh.Pos;
+  private mockBaseNode: BaseNode;
 
   constructor() {
+    this.mockPos = () => ({ Line: () => 1, Col: () => 1, Offset: () => 0} as Sh.Pos);
     this.mockBaseNode = this.base({ Pos: this.mockPos, End: this.mockPos });
+    this.mockMeta = { pid: -1, sid: -1, sessionKey: 'mockSession' };
   }
 
   parse(src: string): FileWithMeta {
@@ -1061,18 +1063,5 @@ export interface FileMeta {
   sid: number;
   sessionKey: string;
 }
-
-
-const getMockMeta = (): FileMeta => ({
-  pid: -1,
-  sid: -1,
-  sessionKey: 'mockSession',
-});
-
-const getMockPos = () => (() => ({
-  Line: () => 1,
-  Col: () => 1,
-  Offset: () => 0,
-} as Sh.Pos));
 
 export const parseSh = new ParseShService();
