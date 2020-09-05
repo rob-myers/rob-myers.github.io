@@ -133,6 +133,7 @@ const useStore = create<State>(devtools((set, get) => {
         const canonicalPath = `/dev/${ttyFilename}`;
         const ttyFile = fileService.createFsFile(canonicalPath, new ShellStream(), new ShellStream());
         const ttyShell = new TtyShell(sessionKey, canonicalPath, ttyFile);
+        const worldFile = fileService.createFsFile(`/dev/world-${ttyId}`, new ShellStream(), new ShellStream());
 
         set(({ toSessionKey, nextProcId: sid, nextTtyId, session, fs, ofd }: State) => ({
           toSessionKey: { ...toSessionKey, [alias]: sessionKey },
@@ -145,7 +146,7 @@ const useStore = create<State>(devtools((set, get) => {
           }, session),
           nextProcId: sid + 1, // We'll create a process directly below
           nextTtyId: nextTtyId + 1,
-          fs: addToLookup(ttyFile, fs),
+          fs: addToLookup(worldFile, addToLookup(ttyFile, fs)),
           // NOTE we're also using /dev/tty-${ttyId} to identify an open file description
           ofd: addToLookup(new OpenFileDescription(canonicalPath, ttyFile, 'RDWR'), ofd),
         }));

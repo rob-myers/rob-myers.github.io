@@ -12,7 +12,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] `Env` registers with state and `Room`s lookup `highWalls` there
 
 - [ ] builtin `click` awaits clicks from environment
-- [ ] `/dev/world-{ttyId}` provides click events
+- [x] `/dev/world-{ttyId}` provides click events
 - [x] can spawn a process (without starting it)
 - [x] can fork process
 - [ ] fix exit code propagation

@@ -116,3 +116,5 @@ export interface OpenFileRequest {
    */
   fd?: number;
 }
+
+export const mockFsFile = new FsFile('mock', new ShellFile(new ShellStream(), new ShellStream()));

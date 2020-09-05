@@ -18,9 +18,10 @@ const Room: React.FC<Props> = (props) => {
   const wallsScale = useMemo(() => [1, env?.highWalls ? 3 : 1, 1] as Coord3, [env]);
   
   const onClick = useCallback((e: ThreeMouseEvent) => {
-    console.log({ clickedRoom: e })
+    console.log({ clickedRoom: e });
     e.stopPropagation();
-  }, []);
+    env?.device.write({ key: 'click', position: e.point });
+  }, [env]);
 
   useEffect(() => {
     if (meta) {
