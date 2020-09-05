@@ -13,7 +13,7 @@ const World: React.FC<Props> = ({ envName }) => {
   return (
     <div
       className={css.root}
-      style={{ height: 400 }}
+      // style={{ height: 400 }}
     >
       <Canvas
         pixelRatio={getWindow()?.devicePixelRatio}
