@@ -61,6 +61,7 @@ export class TtyShell {
         console.log('received signal', { msg, sessionKey: this.sessionKey });
         if (msg.signal === SigEnum.SIGINT) {
           processService.stopProcess(this.session.sid);
+          this.session.cancel();
           this.prompt('$ ');
         }
         break;
@@ -74,39 +75,37 @@ export class TtyShell {
     const input = this.inputs.pop();
     
     if (input) {
-      this.buffer.push(input.line);
-      const result = parseSh.tryParseBuffer(this.buffer.slice());
+      try {// Catching Ctrl-C of ps.runInShell
+        this.buffer.push(input.line);
+        const result = parseSh.tryParseBuffer(this.buffer.slice()); // Can't error
+  
+        switch (result.key) {
+          case 'failed': {
+            console.error(result.error.replace(/^Error: runtime error: src\.sh:/, ''));
+            this.buffer.length = 0;
+            this.prompt('$ ');
+            break;
+          }
+          case 'complete': {
+            this.buffer.length = 0;
+            // store in .history device
+            const singleLineSrc = srcService.src(result.parsed);
+            this.storeSrcLine(singleLineSrc);
 
-      switch (result.key) {
-        case 'failed': {
-          console.error(result.error.replace(/^Error: runtime error: src\.sh:/, ''));
-          this.buffer.length = 0;
-          this.prompt('$ ');
-          break;
+            await ps.runInShell(result.parsed, this.sessionKey);
+            this.prompt('$ ');
+            break;
+          }
+          case 'incomplete': {
+            this.prompt('> ');
+            break;
+          }
         }
-        case 'complete': {
-          this.buffer.length = 0;
-          // store in .history device
-          const singleLineSrc = srcService.src(result.parsed);
-          this.storeSrcLine(singleLineSrc);
-
-          await ps.runInShell(result.parsed, this.sessionKey);
-          this.prompt('$ ');
-          break;
-        }
-        case 'incomplete': {
-          this.prompt('> ');
-          break;
-        }
+      } catch (e) {// Cancelled via Ctrl+C
+        input.resolve();
       }
-      input.resolve();
     }
   }
-
-  // async launchProcess(parsed: FileWithMeta) {
-  //   const { pid } = ps.createProcess(parsed, this.sessionKey, this.session.sid);
-  //   await ps.startProcess(pid);
-  // }
 
   private prompt(prompt: string) {
     this.io.write({

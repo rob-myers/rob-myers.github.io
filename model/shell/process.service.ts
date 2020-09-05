@@ -326,7 +326,8 @@ export class ProcessService {
    */
   runInShell(parsed: Sh.FileWithMeta, sessionKey: string) {
     const transpiled = transpileSh.transpile(parsed);
-    const { sid: pid } = this.getSession(sessionKey);
+    const session = this.getSession(sessionKey);
+    const pid = session.sid;
 
     // Must mutate to affect all descendents
     Object.assign<Sh.FileMeta, Sh.FileMeta>(parsed.meta, { pid, sessionKey, sid: pid });
@@ -338,10 +339,12 @@ export class ProcessService {
         next: (msg) => console.log('received', msg), // TEMP
         complete: () => {
           console.log(`${parsed.meta.sessionKey}: shell execution terminated`)
+          session.cancel = () => {};
           resolve();
         },
         error: (err) => reject(err),
       });
+      session.cancel = reject;
     });
   }
 

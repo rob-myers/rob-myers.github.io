@@ -204,7 +204,7 @@ export class TtyXterm {
   }
 
   private async handleXtermInput(data: string) {
-    if (!this.readyForInput) {
+    if (!this.readyForInput && data !== '\x03') {
       return;
     }
     if (data.length > 1 && data.includes('\r')) {

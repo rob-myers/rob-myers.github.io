@@ -55,6 +55,8 @@ export interface Session {
    */
   fgStack: number[];
   worldDevice: FsFile;
+  /** Cancel current execution if any */
+  cancel: () => void;
 }
 
 export interface Process {
@@ -147,6 +149,7 @@ const useStore = create<State>(devtools((set, get) => {
             ttyShell,
             fgStack: [sid],
             worldDevice,
+            cancel: () => {},
           }, session),
           nextProcId: sid + 1, // We'll create a process directly below
           nextTtyId: nextTtyId + 1,
