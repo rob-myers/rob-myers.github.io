@@ -354,19 +354,16 @@ class TranspileShService {
           }
           break;
         }
-        /**
-         * TODO
-         * - Ctrl-C cancels foreground processes and deletes them
-         */
         case '|': {
-          const { pid } = node.meta;
+          const { pid, sessionKey } = node.meta;
           const background = !ps.isInteractiveShell(node);
           const spawns = stmts.map(stmt => ps.spawnProcess(pid, stmt, background));
           const transpiles = spawns.map(({ parsed }) => ts.transpile(parsed));
 
+          const removeSpawned = () => ps.removeProcesses(spawns.map(({ pid }) => pid));
+          ps.addCancel(sessionKey, removeSpawned);
           await Promise.all(transpiles.map(awaitEnd));
-
-          spawns.map((spawned) => ps.removeProcess(spawned.pid));
+          removeSpawned();
           break;
         }
         default:

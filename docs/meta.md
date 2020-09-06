@@ -4,6 +4,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can reset env ui; must 1st click to start pan-zoom
 - [ ] Can collapse/expand each blog entry
+- [ ] hashes always scrollIntoView
 
 - [ ] can query polyanya in webworker and display navpath
 - [ ] on 2nd click compute a navpath and display it
@@ -12,7 +13,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] can store/retrieve arbitrary objects in bash variables
   > remove typing and massively simplify
 
-- [ ] can transpile `|`
+- [x] can transpile `|`
   > `|` amounts to `Promise.all`
   > create new process per pipe-child as before
   > Ctrl-C cancels in foreground

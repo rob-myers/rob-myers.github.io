@@ -20,6 +20,10 @@ export class ProcessService {
     this.mockParsed = Sh.parseSh.parse('');
   }
 
+  addCancel(sessionKey: string, cancel: () => void) {
+    this.getSession(sessionKey).cancels.push(cancel);
+  }
+
   /**
    * Create a dummy process so the shell can use its scopes.
    * Its PID is the SID of the current session.
@@ -319,6 +323,10 @@ export class ProcessService {
     const { pgid } = this.getProcess(pid);
     this.removeProcessFromGroup(pid, pgid);
     delete this.getProcesses()[pid];
+  }
+
+  removeProcesses(pids: number[]) {
+    pids.forEach(pid => this.removeProcess(pid));
   }
 
   /** We assume `pid` already resides in the group */
