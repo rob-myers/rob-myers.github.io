@@ -168,6 +168,7 @@ export class ProcessService {
     const pid = this.getNextPid();
     
     // We only keep env vars and $0 (direct refs, not cloned)
+    // TODO only permit $0 and env vars in earliest scope
     const nextVars = { ...parent.nestedVars.pop()! };
     parent.nestedVars.push(nextVars);
     Object.values(nextVars).forEach(({ exported, varName, key }) =>
@@ -440,7 +441,7 @@ export class ProcessService {
   }
 
   /**
-   * Unlink file.
+   * Unlink a file.
    */
   unlinkFile(pid: number, path: string) {
     const file = fileService.resolveFile(pid, path);
