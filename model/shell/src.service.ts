@@ -158,7 +158,7 @@ export class SrcService {
 
       case 'ParamExp': {
         const def = node.paramDef || transpileSh.transpileParam(node);
-        const param = `${def.param}${def.index ? `[${this.src(def.index)}]` : ''}`;
+        const param = `${def.param}${node.Index ? `[${this.src(node.Index)}]` : ''}`;
 
         switch (def.parKey) {
           case ParamType.case:
@@ -192,7 +192,8 @@ export class SrcService {
           }
           case ParamType.vars:
             return `\${!${param}${def.split ? '@' : '*'}}`;
-          default: throw testNever(def);
+          default:
+            throw testNever(def);
         }
       }
 
@@ -321,6 +322,7 @@ export class SrcService {
         return '';
 
       default:
+        console.log('here', node);
         throw testNever(node);
     }
   }

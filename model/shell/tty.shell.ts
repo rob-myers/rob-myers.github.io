@@ -102,7 +102,8 @@ export class TtyShell {
           }
         }
       } catch (e) {
-        // Cancelled via Ctrl+C
+        // Probably Ctrl+C but need debug
+        console.error(e);
       } finally {
         this.session.cancels.length = 0;
         input.resolve();
