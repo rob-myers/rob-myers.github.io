@@ -440,7 +440,7 @@ class TranspileShService {
         //   child = this.CoprocClause(Cmd);
         //   break;
         // }
-        // case 'DeclClause': child = this.DeclClause(Cmd); break;
+        case 'DeclClause': cmd = ts.DeclClause(node); break;
         // case 'ForClause': child = this.ForClause(Cmd); break;
         // case 'FuncDecl': child = this.FuncDecl(Cmd); break;
         // case 'IfClause': child = this.IfClause(Cmd); break;
@@ -472,6 +472,40 @@ class TranspileShService {
     //   background,
     //   negated,
     // });
+  }
+
+  /**
+   * TODO first simplify/generalise variable handling,
+   * i.e. permit arbitrary js objects.
+   */
+  private DeclClause(node: Sh.DeclClause) {
+    switch (node.Variant.Value) {
+      case 'declare': {
+        return of();
+        // return new DeclareBuiltin({ ...base, builtinKey: BuiltinOtherType.declare });
+      }
+      case 'export': {
+        return of();
+        // return new ExportBuiltin({ ...base, builtinKey: BuiltinSpecialType.export });
+      }
+      case 'local': {
+        return of();
+        // return new LocalBuiltin({ ...base, builtinKey: BuiltinOtherType.local });
+      }
+      case 'readonly': {
+        return of();
+        // return new ReadonlyBuiltin({ ...base, builtinKey: BuiltinSpecialType.readonly });
+      }
+      case 'typeset': {
+        return of();
+        // return new TypesetBuiltin({ ...base, builtinKey: BuiltinOtherType.typeset });
+      }
+      case 'nameref': // TODO
+        return of();
+      default:
+        throw testNever(node.Variant.Value);
+    }
+
   }
 
   private Expand(node: Sh.Word): Observable<Expanded> {

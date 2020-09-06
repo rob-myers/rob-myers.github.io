@@ -10,15 +10,15 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] onclick floor show cube
 
 - [ ] can store/retrieve arbitrary objects in bash variables
-  > remove notion of string/integer but keep array/map
-- [x] `Env` registers with state and `Room`s lookup `highWalls` there
+  > remove typing and massively simplify
 
 - [ ] can transpile `|`
   > `|` amounts to `Promise.all`
   > create new process per pipe-child as before
   > Ctrl-C cancels in foreground
 
-- [ ] improve `click`
+- [x] `Env` registers with state and `Room`s lookup `highWalls` there
+- [x] improve `click`
 - [x] builtin `click` awaits clicks from environment
 - [x] `/dev/world-{ttyId}` provides click events
 - [x] can spawn a process (without starting it)
