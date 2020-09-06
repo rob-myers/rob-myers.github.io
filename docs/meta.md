@@ -10,7 +10,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
 
-- [ ] can store/retrieve arbitrary objects in bash variables
+- [ ] can store/retrieve arbitrary objects in bash variables __<===__
   > remove typing and massively simplify
 
 - [x] can transpile `|`
