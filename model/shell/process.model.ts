@@ -44,21 +44,6 @@ interface WorldCoords {
   y: number;  
 }
 
-export interface SpawnOpts {
-  /** Should it run in the background? */
-  background?: boolean;
-  /** Exported variables to be created e.g. prefixing simple command */
-  exportVars?: { varName: string; varValue: string }[];
-  /** Can specify process group. */
-  pgid?: number;
-  /** Can propagate positive positionals. */
-  posPositionals?: string[];
-  /** Can specify immediate redirects e.g. to implement pipelines. */
-  redirects: Required<OpenFileRequest>[];
-  /** Are we creating a subshell? */
-  subshell?: boolean;
-}
-
 export enum SigEnum {
   SIGHUP='SIGHUP',
   SIGINT='SIGINT',

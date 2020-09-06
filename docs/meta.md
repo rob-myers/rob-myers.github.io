@@ -9,11 +9,12 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
 
+- [ ] can store/retrieve arbitrary objects in bash variables
 - [x] `Env` registers with state and `Room`s lookup `highWalls` there
 
 - [ ] can transpile `|`
-  > subterms can have different `nestedRedirs` e.g. pipe children
   > `|` amounts to `Promise.all`
+  > need to rethink var/func/redir scope first
 
 - [ ] improve `click`
 - [x] builtin `click` awaits clicks from environment

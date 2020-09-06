@@ -5,7 +5,7 @@ import shortId from 'shortid';
 
 import { testNever, last, range } from '@model/generic.model';
 import { awaitEnd } from './rxjs.model';
-import { ProcessAct, Expanded, act, ArrayAssign, SpawnOpts } from './process.model';
+import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
 import { ParamType, ParameterDef } from './parameter.model';
 import { fileService as fs } from './file.service';
 import * as Sh from '@model/shell/parse.service';
@@ -357,8 +357,7 @@ class TranspileShService {
         /**
          * TODO simplify:
          * - pipe is just `Promise.all` i.e. parallel without wires
-         * - fresh nestedRedirs for each pipeline child
-         * - pipeline children share vars/funcs with parent
+         * - but need to rethink var/func/redir scope first
          */
         case '|': {
           // const { pid, sessionKey } = node.meta;

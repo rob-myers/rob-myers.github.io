@@ -5,7 +5,7 @@ import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
 import { OpenFileDescription } from '@model/shell/file.model';
 import { FromFdToOpenKey } from '@model/shell/process.model';
-import { FileWithMeta, Stmt, parseSh } from '@model/shell/parse.service';
+import { FileWithMeta } from '@model/shell/parse.service';
 import { ToProcVar, NamedFunction } from '@model/shell/var.model';
 import { processService } from '@model/shell/process.service';
 import { ShellStream } from '@model/shell/shell.stream';
@@ -66,12 +66,13 @@ export interface Process {
   pid: number;
   /** Parent process id */
   ppid: number;
-  /** Process group id. Changed e.g. for pipelines run in the foreground. */
+  /** Process group id. */
   pgid: number;
-  /** The parse tree obtain directly from mvdan-sh or by wrapping subtrees */
+  /** The parse tree obtain from mvdan-sh or by wrapping a subtree */
   parsed: FileWithMeta;
+  /** Result of subscribing to transpilation of `parsed` */
   subscription: null | Subscription;
-  /** File descriptor to ofd */
+  /** File descriptor to open file */
   fdToOpen: Record<string, OpenFileDescription<any>>;
   /**
    * Process code-blocks such as `while, if, for, {}` have redirection scope.
@@ -91,6 +92,11 @@ export interface Process {
   toFunc: Record<string, NamedFunction>;
   lastExitCode: null | number;
   lastBgPid: null | number;
+  /**
+   * Since pipe children and command substitutions don't run in a new process,
+   * they have their own nested redirection scopes, identified via root node's uid.
+   */
+  descRedirs: KeyedLookup<{ key: string; nodeUid: number; nestedRedirs: FromFdToOpenKey[] }>;
 }
 
 
