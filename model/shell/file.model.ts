@@ -1,4 +1,5 @@
 import { ShellStream } from "@model/shell/shell.stream";
+import { Subject } from "rxjs";
 
 /**
  * - `/dev/null`: two independent streams
@@ -24,10 +25,16 @@ export class FsFile<R = any, W = any> {
     this.iNode.writable.registerCallback(cb); 
   }
 
-  /** Read from this file */
-  read(cb: (msg: R) => void) {
+  /** Non-blocking read */
+  listen(cb: (msg: R) => void) {
     this.iNode.readable.registerCallback(cb);
     return () => this.iNode.readable.unregisterCallback(cb);
+  }
+
+  /** Blocking read */
+  read(subject: Subject<any>) {
+    this.iNode.readable.registerReader(subject);
+    return () => this.iNode.readable.unregisterReader(subject);
   }
 
   /** Write to this file */

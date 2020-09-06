@@ -45,19 +45,18 @@ export class BuiltinService {
 
   /**
    * TODO 
-   * - non-blocking reads
-   * - only listen for clicks, use types
+   * - only listen for clicks; use typings
    * - ensure fdToOpen reference not stale
    */
   private async click({ sessionKey, fdToOpen }: Process, _args: string[]) {
     const { worldDevice, cancels } = processService.getSession(sessionKey);
     await new Promise((resolve) => {
-      const stopReading = worldDevice.read((msg) => {
+      const stopListening = worldDevice.listen((msg) => {
         fdToOpen[1].write(msg);
-        stopReading();
+        stopListening();
         resolve();
       });
-      cancels.push(stopReading);
+      cancels.push(stopListening);
     });
   }
 

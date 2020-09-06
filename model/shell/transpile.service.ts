@@ -356,7 +356,7 @@ class TranspileShService {
         }
         /**
          * TODO
-         * - Ctrl-C cancels foreground processes and delete them
+         * - Ctrl-C cancels foreground processes and deletes them
          */
         case '|': {
           const { pid } = node.meta;
@@ -373,6 +373,12 @@ class TranspileShService {
           throw new ShError(`binary command ${node.Op} unsupported`, 2);
       }
     }());
+  }
+
+  private Block(node: Sh.Block) {
+    return from(node.StmtList.Stmts).pipe(
+      concatMap(x => this.Stmt(x)),
+    );
   }
 
   private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
@@ -425,7 +431,7 @@ class TranspileShService {
       switch (node.type) {
         case 'ArithmCmd': cmd = ts.ArithmCmd(node); break;
         case 'BinaryCmd': cmd = ts.BinaryCmd(node); break;
-        // case 'Block': child = this.Block(Cmd); break;
+        case 'Block': cmd = ts.Block(node); break;
         // case 'CaseClause': child = this.CaseClause(Cmd); break;
         // case 'CoprocClause': {
         //   /**

@@ -16,10 +16,12 @@ export class ShellStream<T> {
     this.cbToSub = new Map;
   }
 
+  /** For receiving multicast */
   registerCallback(cb: (msg: T) => void) {
     this.cbToSub.set(cb, this.internal.subscribe(cb));
   }
 
+  /** For blocking read */
   registerReader(reader: Subject<T>) {
     // Most recent registration takes priority
     this.readers.unshift(reader);
