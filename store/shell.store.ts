@@ -110,6 +110,8 @@ export interface ProcessGroup {
 
 const useStore = create<State>(devtools((set, get) => {
   const nullFile = fileService.createFsFile('/dev/null', new ShellStream(), new ShellStream());
+  // To write to /tmp/* currrently need to ensure directory via hidden file
+  const tmpHidden = fileService.createFsFile('/tmp/.empty', new ShellStream(), new ShellStream());
 
   return {
     nextTtyId: 1,
@@ -117,7 +119,7 @@ const useStore = create<State>(devtools((set, get) => {
     toSessionKey: {},
     nextProcId: 1,
     proc: {},
-    fs: addToLookup(nullFile, {} as State['fs']),
+    fs: addToLookup(tmpHidden,addToLookup(nullFile, {} as State['fs'])),
     // NOTE we're also using /dev/null to identify an open file description
     ofd: addToLookup(
       new OpenFileDescription('/dev/null', nullFile, 'RDWR'),

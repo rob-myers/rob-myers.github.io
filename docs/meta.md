@@ -11,13 +11,16 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [x] `Env` registers with state and `Room`s lookup `highWalls` there
 
+- [ ] can transpile `|`
+  > subterms can have different `nestedRedirs` e.g. pipe children
+  > `|` amounts to `Promise.all`
+
 - [ ] improve `click`
 - [x] builtin `click` awaits clicks from environment
 - [x] `/dev/world-{ttyId}` provides click events
 - [x] can spawn a process (without starting it)
 - [x] can fork process
 - [ ] fix exit code propagation
-- [ ] can transpile `|`
 - [x] can transpile `&&` and `||`
 - [x] 'normal writes' are brown, shell errors are red
 - [x] get shell history working

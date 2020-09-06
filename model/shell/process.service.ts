@@ -55,6 +55,7 @@ export class ProcessService {
           OLDPWD: { key: 'string', varName: 'OLDPWD', value: '/root', exported: true, readonly: false, to: null },
           PWD: { key: 'string', varName: 'PWD', value: '/root', exported: true, readonly: false, to: null },
           // PATH: { key: 'string', varName: 'PATH', value: '/bin', exported: true, readonly: false, to: null },
+          0: { key: 'positional', varName: '0', index: 0, value: 'behaveyr', exported: true, readonly: false, to: null },
         }],
         toFunc: {},
         lastExitCode: null,
@@ -154,6 +155,9 @@ export class ProcessService {
     return null;
   }
 
+  /**
+   * TODO simplify i.e. only fork background processes, without sharing.
+   */
   private forkProcess(
     ppid: number,
     /** Subshells can share vars and builtins won't use them */
@@ -205,6 +209,10 @@ export class ProcessService {
 
   private getOfds() {
     return useStore.getState().ofd;
+  }
+
+  getNextPid() {
+    return useStore.getState().nextProcId;
   }
 
   getProcess(pid: number): Process {
@@ -390,11 +398,12 @@ export class ProcessService {
    * Set the foreground process group of a session.
    * Used e.g. when launching a pipeline from shell.
    */
-  private setSessionForeground(sessionKey: string, pgid: number) {
+  setSessionForeground(sessionKey: string, pgid: number) {
     this.getSession(sessionKey).fgStack.push(pgid);
   }
 
   /**
+   * TODO simplify i.e. only spawn process in background.
    * Spawn a process without starting it.
    */
   spawnProcess(ppid: number, node: Sh.Stmt, opts: SpawnOpts) {
@@ -431,6 +440,7 @@ export class ProcessService {
     if (opts.background) {
       this.getProcess(ppid).lastBgPid = forked.pid;
     }
+    return forked;
   }
 
   startProcess(pid: number) {

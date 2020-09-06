@@ -3,15 +3,15 @@ import { concatMap, reduce, map, tap, catchError } from 'rxjs/operators';
 import globrex from 'globrex';
 import shortId from 'shortid';
 
-import { testNever, last } from '@model/generic.model';
-import * as Sh from '@model/shell/parse.service';
+import { testNever, last, range } from '@model/generic.model';
 import { awaitEnd } from './rxjs.model';
-import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
-import { expandService as expand, expandService } from './expand.service';
+import { ProcessAct, Expanded, act, ArrayAssign, SpawnOpts } from './process.model';
 import { ParamType, ParameterDef } from './parameter.model';
+import { fileService as fs } from './file.service';
+import * as Sh from '@model/shell/parse.service';
+import { expandService as expand, expandService } from './expand.service';
 import { varService as vs } from './var.service';
 import { processService as ps } from './process.service';
-import { fileService as fs } from './file.service';
 import { FsFile, RedirectDef } from './file.model';
 import { builtinService as bs } from './builtin.service';
 import { srcService as ss } from './src.service';
@@ -354,26 +354,53 @@ class TranspileShService {
           }
           break;
         }
+        /**
+         * TODO simplify:
+         * - pipe is just `Promise.all` i.e. parallel without wires
+         * - fresh nestedRedirs for each pipeline child
+         * - pipeline children share vars/funcs with parent
+         */
         case '|': {
-          /**
-           * TODO
-           * - create temp wires
-           * - create forked processes connected by wires
-           * - wait for them all to terminate 
-           */
-          const { pid, sessionKey } = node.meta;
-          const rootKey = `${node.uid}.${pid}.${sessionKey}`;
-          const pipePaths = cs.slice(0, -1).map((_, i) => `/tmp/${i}-${i + 1}.${rootKey}`);
-          const interactive = ps.launchedInteractively(pid);
+          // const { pid, sessionKey } = node.meta;
+          // const rootKey = `${node.uid}.${pid}.${sessionKey}`;
+          // const pipePaths = cs.slice(0, -1).map((_, i) => `/tmp/${i}-${i + 1}.${rootKey}`);
+          // const interactive = ps.launchedInteractively(pid);
 
-          for (const pipePath of pipePaths) {
-            fs.makeWire(pipePath);
-          }
+          // for (const pipePath of pipePaths) {
+          //   fs.makeWire(pipePath);
+          // }
+          
+          // // Spawn redirected child processes in background
+          // const childCount = cs.length;
+          // const firstPid = ps.getNextPid()
+          // const lastPid = firstPid + (childCount - 1);
+          // const posPositionals = vs.getPositionals(pid).slice(1);
 
-          /**
-           * TODO can fork process
-           */
+          // for (let i = 0; i < childCount; i++) {
+          //   ps.spawnProcess(pid, stmts[i], {
+          //     redirects: ([] as SpawnOpts['redirects']).concat(
+          //       // (i+1)^th process reads from i^th pipe
+          //       (i === 0) ? [] : [{ fd: 0, mode: 'RDONLY', path: pipePaths[i - 1] }],
+          //       // (i-1)^th process writes to (i-1)^th pipe
+          //       (i === (childCount - 1)) ? [] : [{ fd: 1, mode: 'WRONLY', path: pipePaths[i] }],
+          //     ),
+          //     background: true,
+          //     pgid: interactive ? lastPid : undefined,
+          //     posPositionals: posPositionals.slice(),
+          //   });
+          // }
+          // // if (interactive) {// Set children's process group as foreground
+          // //   ps.setSessionForeground(sessionKey, lastPid);
+          // // }
 
+          // // Wait for them to finish (or last child)
+          // const cpids = cs.map((_, i) => firstPid + i);
+          // await Promise.all(cpids.map(cpid => ps.startProcess(cpid)));
+          // // Propagate exit code of final child
+          
+          // for (const pipePath of pipePaths) {
+          //   fs.unlinkFile(pipePath);
+          // }
           break;
         }
         default:
