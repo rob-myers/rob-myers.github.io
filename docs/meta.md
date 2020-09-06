@@ -10,11 +10,12 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] onclick floor show cube
 
 - [ ] can store/retrieve arbitrary objects in bash variables
+  > remove notion of string/integer but keep array/map
 - [x] `Env` registers with state and `Room`s lookup `highWalls` there
 
 - [ ] can transpile `|`
   > `|` amounts to `Promise.all`
-  > need to rethink var/func/redir scope first
+  > create new process per pipe-child as before
 
 - [ ] improve `click`
 - [x] builtin `click` awaits clicks from environment

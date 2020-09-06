@@ -6,11 +6,9 @@ import { ShellStream } from './shell.stream';
 import { FsFile, OpenFileRequest, OpenFileDescription } from './file.model';
 import * as Sh from './parse.service';
 import { transpileSh, ShError } from './transpile.service';
-import { varService } from './var.service';
 import { fileService } from './file.service';
 import { ansiWarn, ansiReset } from './tty.xterm';
 import { builtinService } from './builtin.service';
-import { ProcessVar } from './var.model';
 
 export class ProcessService {
   
@@ -60,7 +58,6 @@ export class ProcessService {
         toFunc: {},
         lastExitCode: null,
         lastBgPid: null,
-        descRedirs: {},
       }, proc),
     }));
 
@@ -132,6 +129,9 @@ export class ProcessService {
     }
   }
 
+  /**
+   * TODO pool clones keyed by node.uid
+   */
   execProcess(pid: number, node: Sh.Stmt) {
     const process = this.getProcess(pid);
     // Must clone parse tree because meta will differ
@@ -158,18 +158,21 @@ export class ProcessService {
   }
 
   /**
-   * Fork a process (the session leader) to run in the background.
+   * Efficiently fork a process. Use cases:
+   * - when piping, for each pipe child.
+   * - when explicitly using the background.
+   * - for command/process substitution.
    */
   private forkProcess(ppid: number) {
     const parent = this.getProcess(ppid);    
     const pid = this.getNextPid();
     
-    let forkedNestedVars = [{}] as Record<string, ProcessVar>[];
-    // Restrict to vars in earliest scope i.e. ignore `local` variables
-    Object.values(last(parent.nestedVars)!)
-      // Restrict to env vars, excluding positive positionals
-      .filter(({ exported, key, varName }) => exported && (key !== 'positional' || varName === '0'))
-      .forEach((x) => forkedNestedVars[0][x.key] = varService.cloneVar(x));
+    // We only keep env vars and $0 (direct refs, not cloned)
+    const nextVars = { ...parent.nestedVars.pop()! };
+    parent.nestedVars.push(nextVars);
+    Object.values(nextVars).forEach(({ exported, varName, key }) =>
+      !exported && varName !== '0' && delete nextVars[key]
+    );
 
     this.set(({ proc, procGrp }) => {
       // We mutate proc rather than creating fresh object
@@ -184,12 +187,11 @@ export class ProcessService {
         subscription: null,
         fdToOpen: { ...parent.fdToOpen },
         nestedRedirs: [{ ...mapValues(parent.fdToOpen, (o) => o.key) }],
-        nestedVars: forkedNestedVars,
-        // TODO only global functions
-        toFunc: mapValues(parent.toFunc, (func) => varService.cloneFunc(func)),
+        nestedVars: [nextVars],
+        // Functions are global in the session
+        toFunc: parent.toFunc,
         lastExitCode: null,
         lastBgPid: null,
-        descRedirs: {},
       };
       // Add to parent process group
       procGrp[parent.pgid].pids.push(pid);
@@ -395,19 +397,21 @@ export class ProcessService {
   }
 
   /**
-   * Spawn a process in the background, without starting it.
+   * Spawn a process without starting it.
    */
-  spawnProcess(ppid: number, node: Sh.Stmt) {
+  spawnProcess(ppid: number, node: Sh.Stmt, background: boolean) {
     const forked = this.forkProcess(ppid);
     this.execProcess(forked.pid, node);
 
-    // If parent in session foreground, create new process group for child
-    const { fgStack } = this.getSession(forked.sessionKey);
-    if (fgStack.length && (forked.pgid === last(fgStack))) {
-      this.setProcessGroup(forked.pid, forked.pid);
+    if (background) {
+      // If parent in session foreground, create new process group for child
+      const { fgStack } = this.getSession(forked.sessionKey);
+      if (fgStack.length && (forked.pgid === last(fgStack))) {
+        this.setProcessGroup(forked.pid, forked.pid);
+      }
+      this.getProcess(ppid).lastBgPid = forked.pid;
     }
 
-    this.getProcess(ppid).lastBgPid = forked.pid;
     return forked;
   }
 

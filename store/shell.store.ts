@@ -92,11 +92,6 @@ export interface Process {
   toFunc: Record<string, NamedFunction>;
   lastExitCode: null | number;
   lastBgPid: null | number;
-  /**
-   * Since pipe children and command substitutions don't run in a new process,
-   * they have their own nested redirection scopes, identified via root node's uid.
-   */
-  descRedirs: KeyedLookup<{ key: string; nodeUid: number; nestedRedirs: FromFdToOpenKey[] }>;
 }
 
 

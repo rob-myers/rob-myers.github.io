@@ -736,21 +736,21 @@ class ParseShService {
   /**
    * Convert a statement to a FileWithMeta so it
    * can be used to drive a process. There's nothing
-   * particularly special about FileWithMeta. However,
-   * restricting to this type aids uniformity.
+   * particularly special about FileWithMeta except
+   * the parser mvdan-sh outputs this type.
    */
   wrapInFile(node: Stmt): FileWithMeta {
     return {
-      ...this.mockBaseNode,
+      // ...this.mockBaseNode,
       type: 'File',
-      Name: 'generated-from-node',
+      // Name: 'generated-from-node',
       StmtList: {
-        ...this.mockBaseNode,
+        // ...this.mockBaseNode,
         type: 'StmtList',
         Stmts: [node],
-        Last: [],
+        // Last: [],
       },
-    };
+    } as FileWithMeta;
   }
 
   private readonly opMetas: {
