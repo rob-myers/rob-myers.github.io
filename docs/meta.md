@@ -16,6 +16,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] can transpile `|`
   > `|` amounts to `Promise.all`
   > create new process per pipe-child as before
+  > Ctrl-C cancels in foreground
 
 - [ ] improve `click`
 - [x] builtin `click` awaits clicks from environment

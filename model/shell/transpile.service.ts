@@ -355,51 +355,18 @@ class TranspileShService {
           break;
         }
         /**
-         * TODO simplify:
-         * - pipe is just `Promise.all` i.e. parallel without wires
-         * - but need to rethink var/func/redir scope first
+         * TODO
+         * - Ctrl-C cancels foreground processes and delete them
          */
         case '|': {
-          // const { pid, sessionKey } = node.meta;
-          // const rootKey = `${node.uid}.${pid}.${sessionKey}`;
-          // const pipePaths = cs.slice(0, -1).map((_, i) => `/tmp/${i}-${i + 1}.${rootKey}`);
-          // const interactive = ps.launchedInteractively(pid);
+          const { pid } = node.meta;
+          const background = !ps.isInteractiveShell(node);
+          const spawns = stmts.map(stmt => ps.spawnProcess(pid, stmt, background));
+          const transpiles = spawns.map(({ parsed }) => ts.transpile(parsed));
 
-          // for (const pipePath of pipePaths) {
-          //   fs.makeWire(pipePath);
-          // }
-          
-          // // Spawn redirected child processes in background
-          // const childCount = cs.length;
-          // const firstPid = ps.getNextPid()
-          // const lastPid = firstPid + (childCount - 1);
-          // const posPositionals = vs.getPositionals(pid).slice(1);
+          await Promise.all(transpiles.map(awaitEnd));
 
-          // for (let i = 0; i < childCount; i++) {
-          //   ps.spawnProcess(pid, stmts[i], {
-          //     redirects: ([] as SpawnOpts['redirects']).concat(
-          //       // (i+1)^th process reads from i^th pipe
-          //       (i === 0) ? [] : [{ fd: 0, mode: 'RDONLY', path: pipePaths[i - 1] }],
-          //       // (i-1)^th process writes to (i-1)^th pipe
-          //       (i === (childCount - 1)) ? [] : [{ fd: 1, mode: 'WRONLY', path: pipePaths[i] }],
-          //     ),
-          //     background: true,
-          //     pgid: interactive ? lastPid : undefined,
-          //     posPositionals: posPositionals.slice(),
-          //   });
-          // }
-          // // if (interactive) {// Set children's process group as foreground
-          // //   ps.setSessionForeground(sessionKey, lastPid);
-          // // }
-
-          // // Wait for them to finish (or last child)
-          // const cpids = cs.map((_, i) => firstPid + i);
-          // await Promise.all(cpids.map(cpid => ps.startProcess(cpid)));
-          // // Propagate exit code of final child
-          
-          // for (const pipePath of pipePaths) {
-          //   fs.unlinkFile(pipePath);
-          // }
+          spawns.map((spawned) => ps.removeProcess(spawned.pid));
           break;
         }
         default:

@@ -315,6 +315,12 @@ export class ProcessService {
     this.getProcess(pid).nestedRedirs.unshift({});
   }
 
+  removeProcess(pid: number) {
+    const { pgid } = this.getProcess(pid);
+    this.removeProcessFromGroup(pid, pgid);
+    delete this.getProcesses()[pid];
+  }
+
   /** We assume `pid` already resides in the group */
   removeProcessFromGroup(pid: number, pgid: number)  {
     const group = this.getProcessGroup(pgid)!;
