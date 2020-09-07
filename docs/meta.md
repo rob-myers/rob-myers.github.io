@@ -10,6 +10,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
 
+- [x] no shell scripts only shell functions
+
+- [ ] `shift` builtin for functions
 - [ ] `spawn` command
   > spawn an actor at a position
 - [ ] `read` command
@@ -22,7 +25,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > remove typing and massively simplify
   > access via simple commands `point.y` or e.g. `p:$( p.x ),$( p.y )`
 
-- [ ] `shift` builtin for functions
 - [x] functions receive positionals in own scope
 - [x] justify decision that pipelines are just parallel processes
   > behaviour trees use parallel

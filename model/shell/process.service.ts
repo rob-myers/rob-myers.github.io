@@ -373,13 +373,6 @@ export class ProcessService {
     });
   }
 
-  async runScript(pid: number, file: FsFile) {
-    /**
-     * TODO can run regular files
-     */
-    console.log(`TODO: run script ${file.key}`);
-  }
-
   setExitCode(pid: number, code: number) {
     this.getProcess(pid).lastExitCode = code;
   }

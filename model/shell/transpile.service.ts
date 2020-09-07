@@ -379,7 +379,7 @@ class TranspileShService {
   }
 
   /**
-   * TODO speed up fs.resolveFile
+   * TODO support variable lookup
    */
   private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
     return from(async function* () {
@@ -395,8 +395,6 @@ class TranspileShService {
 
         if (bs.isBuiltinCommand(args[0])) {
           await bs.runBuiltin(node, ctxt, args[0], args.slice(1));
-        } else if (file = fs.resolveFile(pid, args[0])) {
-          await ps.runScript(pid, file);
         } else if (func = vs.getFunction(pid, args[0])) {
           await ps.invokeFunction(pid, func, args.slice(1));
         } else {
