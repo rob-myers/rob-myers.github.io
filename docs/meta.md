@@ -27,7 +27,11 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] can store/retrieve arbitrary objects in bash variables
   > remove typing and massively simplify
   > access via simple commands `point.y` or e.g. `p:$( p.x ),$( p.y )`
+  > support deep var lookup e.g. `x.y.z` or `x[4]` via e.g.
+  > `Function('o', 'return o.x[4]')(varLookup)`
 
+
+- [ ] functions receive prefixed variables
 - [x] support variable lookup via simple command
   > can also redirect
 - [x] functions receive positionals in own scope

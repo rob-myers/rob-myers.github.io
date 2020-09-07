@@ -1,11 +1,8 @@
-import { catchError } from 'rxjs/operators';
-
 import { testNever, pause } from "@model/generic.model";
 import { Process } from "@store/shell.store";
-import { awaitEnd } from "./rxjs.model";
 import * as Sh from "./parse.service";
 import { processService as ps, processService} from './process.service';
-import { CommandCtxt, ShError } from "./transpile.service";
+import { ShError } from "./transpile.service";
 
 export class BuiltinService {
 
@@ -13,33 +10,13 @@ export class BuiltinService {
     return !!(builtins as Record<string, boolean>)[command];
   }
 
-  async runBuiltin(
-    node: Sh.CallExpr,
-    { Redirs }: CommandCtxt,
-    command: BuiltinKey,
-    args: string[],
-  ) {
+  async runBuiltin(node: Sh.CallExpr, command: BuiltinKey, args: string[]) {
     const process = ps.getProcess(node.meta.pid);
-
-    if (Redirs.length) {
-      ps.pushRedirectScope(process.pid);
-      for (const redirect of Redirs) {
-        await awaitEnd(redirect.pipe(catchError((e, _src) => {
-          ps.popRedirectScope(process.pid);
-          throw e;
-        })));
-      }
-    }
-
     switch (command) {
       case 'click': await this.click(process, args); break;
       case 'echo': await this.echo(process, args); break;
       case 'sleep': await this.sleep(args); break;
       default: throw testNever(command);
-    }
-
-    if (Redirs.length) {
-      ps.popRedirectScope(process.pid);
     }
   }
 

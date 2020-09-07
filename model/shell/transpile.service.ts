@@ -379,34 +379,36 @@ class TranspileShService {
 
   private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
     return from(async function* () {
+      const { pid } = node.meta;
       const args = await ts.performShellExpansion(node.Args);
       console.log('args', args);
       node.exitCode = 0;
       
       if (args.length) {
-        // Run builtin, run script or invoke function
+        // Run builtin, invoke function or output variable
         let func: NamedFunction, varValue: ProcessVar['value'] | undefined;
-        const { pid } = node.meta;
-        const ctxt: CommandCtxt = { ...extend, Redirs: extend.Redirs.map(c => ts.Redirect(c)) };
-
-        if (bs.isBuiltinCommand(args[0])) {
-          await bs.runBuiltin(node, ctxt, args[0], args.slice(1));
-        } else if (func = vs.getFunction(pid, args[0])) {
-          await ps.invokeFunction(pid, func, args.slice(1));
-        } else if (varValue = vs.lookupVar(pid, args[0])) {
-          if (extend.Redirs.length) {
-            await ts.wrapInRedirects(pid,
-              async () => ps.getProcess(pid).fdToOpen[1].write(varValue),
-              extend.Redirs,
-            );
-          } else {
-            ps.getProcess(pid).fdToOpen[1].write(varValue);
-          }
+        const [command, ...cmdArgs] = args;
+        
+        if (bs.isBuiltinCommand(command)) {
+          await ts.redirect(pid, () =>
+            bs.runBuiltin(node, command, cmdArgs),
+            extend.Redirs,
+          );
+        } else if (func = vs.getFunction(pid, command)) {
+          /**
+           * TODO assign vars in local scope
+           */
+          await ps.invokeFunction(pid, func, cmdArgs);
+        } else if (varValue = vs.lookupVar(pid, command)) {
+          await ts.redirect(pid, async () =>
+            ps.getProcess(pid).fdToOpen[1].write(varValue),
+            extend.Redirs,
+          );
         } else {
-          throw new ShError(`${args[0]}: unrecognised command`, 1);
+          throw new ShError(`${command}: unrecognised command`, 1);
         }
       } else {// Assign vars in this process
-        await ts.assignVars(node, extend.Redirs);
+        await ts.redirect(pid, () => ts.assignVars(node), extend.Redirs);
       }
     }());
   }
@@ -1060,22 +1062,14 @@ class TranspileShService {
     });
   }
 
-  private async assignVars(node: Sh.CallExpr, redirects: Sh.Redirect[]) {
+  private async assignVars(node: Sh.CallExpr) {
     for (const assign of node.Assigns) {
       try {
         await awaitEnd(this.Assign(assign));
       } catch (e) {
-        if (e instanceof ShError) {
-          console.error('Caught assign error', e);
-          node.exitCode = e.exitCode;
-        } else {
-          throw e;
-        }
+        node.exitCode = e instanceof ShError ? e.exitCode : 2;
+        throw e;
       }
-    }
-
-    if (redirects.length) {// Apply redirections in temp scope in case of side-effects
-      await this.wrapInRedirects(redirects[0].meta.pid, async () => {}, redirects);
     }
   }
 
@@ -1308,7 +1302,11 @@ class TranspileShService {
     }
   }
 
-  private async wrapInRedirects(pid: number, code: () => Promise<void>, redirects: Sh.Redirect[]) {
+  private async redirect(pid: number, code: () => Promise<void>, redirects: Sh.Redirect[]) {
+    if (!redirects.length) {
+      await code();
+      return;
+    }
     try {
       ps.pushRedirectScope(pid);
       for (const redirect of redirects) {
