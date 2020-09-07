@@ -102,7 +102,9 @@ export class TtyShell {
           }
         }
       } catch (e) {
-        // Probably Ctrl+C but need debug
+        /**
+         * Usually Ctrl+C but also need to debug.
+         */
         console.error(e);
       } finally {
         this.session.cancels.length = 0;

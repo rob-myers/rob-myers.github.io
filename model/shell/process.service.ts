@@ -10,6 +10,7 @@ import { fileService } from './file.service';
 import { ansiWarn, ansiReset } from './tty.xterm';
 import { builtinService } from './builtin.service';
 import { NamedFunction } from './var.model';
+import { varService } from './var.service';
 
 export class ProcessService {
   
@@ -234,9 +235,11 @@ export class ProcessService {
     return useStore.getState().session[sessionKey];
   }
 
-  async invokeFunction(pid: number, func: NamedFunction) {
+  async invokeFunction(pid: number, func: NamedFunction, args: string[]) {
     const { sessionKey } = this.getProcess(pid);
-    await this.runInShell(func.node, sessionKey);
+    varService.pushPositionalsScope(pid, args);
+    const popPositionals = () => varService.popPositionalsScope(pid);
+    await this.runInShell(func.node, sessionKey, [popPositionals]);
   }
 
   /** Statically detect builtins */
@@ -346,7 +349,7 @@ export class ProcessService {
   /**
    * Run parsed code in session's leading process.
    */
-  runInShell(parsed: Sh.FileWithMeta, sessionKey: string) {
+  runInShell(parsed: Sh.FileWithMeta, sessionKey: string, cleanups: (() => void)[] = []) {
     const transpiled = transpileSh.transpile(parsed);
     const session = this.getSession(sessionKey);
     const pid = session.sid;
@@ -361,11 +364,12 @@ export class ProcessService {
         next: (msg) => console.log('received', msg), // TEMP
         complete: () => {
           console.log(`${parsed.meta.sessionKey}: shell execution terminated`)
+          cleanups.forEach(cleanup => cleanup());
           resolve();
         },
         error: (err) => reject(err),
       });
-      session.cancels.push(reject);
+      session.cancels.push(reject, ...cleanups);
     });
   }
 

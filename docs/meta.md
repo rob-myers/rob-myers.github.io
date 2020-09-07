@@ -22,6 +22,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > remove typing and massively simplify
   > access via simple commands `point.y` or e.g. `p:$( p.x ),$( p.y )`
 
+- [ ] `shift` builtin for functions
+- [x] functions receive positionals in own scope
 - [x] justify decision that pipelines are just parallel processes
   > behaviour trees use parallel
   > we're wrapping `Promise.all()`

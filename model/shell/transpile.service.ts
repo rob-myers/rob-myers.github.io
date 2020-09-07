@@ -398,7 +398,7 @@ class TranspileShService {
         } else if (file = fs.resolveFile(pid, args[0])) {
           await ps.runScript(pid, file);
         } else if (func = vs.getFunction(pid, args[0])) {
-          await ps.invokeFunction(pid, func);
+          await ps.invokeFunction(pid, func, args.slice(1));
         } else {
           throw new ShError(`${args[0]}: unrecognised command`, 1);
         }

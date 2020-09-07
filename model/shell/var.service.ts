@@ -547,7 +547,19 @@ export class VarService {
     return found ? found[varName].value : undefined;
   }
 
-  /** Create new scope containing positive positionals. */
+  /**
+   * Pop variable scopes up to and including deepest where
+   * positionals were set. This action should always be guarded by
+   * `pushPositionalScope`, so original scope is never popped.
+   */
+  popPositionalsScope(pid: number) {
+    const process = this.getProcess(pid);
+    // Index of deepest scope where positionals were set (shouldn't be 0)
+    const scopeIndex = process.nestedVars.findIndex((toVar) => 0 in toVar);
+    process.nestedVars = process.nestedVars.slice(scopeIndex + 1);
+  }
+
+  /** Create new scope containing positive positionals and 0. */
   pushPositionalsScope(pid: number, posPositionals: string[]) {
     const { nestedVars } = this.getProcess(pid);
     const toVar = {} as Record<string, ProcessVar>;
@@ -561,7 +573,7 @@ export class VarService {
       to: null,
     });
     // Include $0 from earliest scope
-    Object.assign(toVar, { 0: this.cloneVar((last(nestedVars)!)[0]) });
+    Object.assign(toVar, { 0: (last(nestedVars)!)[0] });
     nestedVars.unshift(toVar);
   }
 
