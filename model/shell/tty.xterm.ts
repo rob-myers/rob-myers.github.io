@@ -447,7 +447,7 @@ export class TtyXterm {
       default: {
         this.queueCommands([{
           key: 'line',
-          line: typeof msg === 'string' ? msg : JSON.stringify(msg),
+          line: JSON.stringify(msg),
         }]);
         return;
         // console.warn(`xterm for ${this.sessionKey} ignored message ${JSON.stringify(msg)}`);
