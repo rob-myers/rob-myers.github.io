@@ -1,7 +1,7 @@
 // https://github.com/farfromrefug/react-xterm/blob/master/src/react-xterm.tsx
 import { Terminal, ITerminalOptions } from 'xterm';
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import { FitAddon } from 'xterm-addon-fit';
 // import { SearchAddon } from 'xterm-addon-search';
 import { WebLinksAddon } from 'xterm-addon-web-links';
@@ -13,7 +13,6 @@ const XTermComponent: React.FC<Props> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const xtermRef = useRef<Terminal>();
-  const [, triggerUpdate] = useState<any>();
 
   useEffect(() => {
     const xterm = new Terminal(options);
@@ -26,10 +25,7 @@ const XTermComponent: React.FC<Props> = ({
     fitAddon.fit();
     xterm.focus();
 
-    const onResize = () => {
-      fitAddon.fit();
-      triggerUpdate({});
-    };
+    const onResize = () => fitAddon.fit();
     window.addEventListener('resize', onResize);
 
     onMount(xterm);
