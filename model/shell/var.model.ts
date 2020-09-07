@@ -1,4 +1,4 @@
-import { FileWithMeta } from "./parse.service";
+import { FileWithMeta, Stmt } from "./parse.service";
 
 export type ToProcVar = Record<string, ProcessVar>;
 
@@ -82,6 +82,7 @@ export interface NamedFunction {
   key: string;
   /** Function definition. */
   node: FileWithMeta;
+  // node: Stmt;
   /** Export function to child processes? */
   exported: boolean;
   /** Is this function readonly? */

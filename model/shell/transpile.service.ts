@@ -378,6 +378,9 @@ class TranspileShService {
     );
   }
 
+  /**
+   * TODO speed up fs.resolveFile
+   */
   private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
     return from(async function* () {
       const args = await ts.performShellExpansion(node.Args);
@@ -395,7 +398,7 @@ class TranspileShService {
         } else if (file = fs.resolveFile(pid, args[0])) {
           await ps.runScript(pid, file);
         } else if (func = vs.getFunction(pid, args[0])) {
-          await vs.invokeFunction(pid, func);
+          await ps.invokeFunction(pid, func);
         } else {
           throw new ShError(`${args[0]}: unrecognised command`, 1);
         }
@@ -439,7 +442,7 @@ class TranspileShService {
         // }
         case 'DeclClause': cmd = ts.DeclClause(node); break;
         // case 'ForClause': child = this.ForClause(Cmd); break;
-        // case 'FuncDecl': child = this.FuncDecl(Cmd); break;
+        case 'FuncDecl': cmd = ts.FuncDecl(node); break;
         // case 'IfClause': child = this.IfClause(Cmd); break;
         // case 'LetClause': child = this.LetClause(Cmd); break;
         // case 'Subshell': child = this.Subshell(Cmd); break;
@@ -635,6 +638,17 @@ class TranspileShService {
         return of();
       }),
     );
+  }
+
+  private FuncDecl(node: Sh.FuncDecl) {
+    return from(async function*() {
+      const func = vs.getFunction(node.meta.pid, node.Name.Value);
+      if (func?.readonly) {
+        throw new ShError(`${node.Name.Value}: readonly function`, 1);
+      }
+      const clonedBody = Sh.parseSh.clone(node.Body);
+      vs.addFunction(node.meta.pid, node.Name.Value, clonedBody);
+    }());
   }
 
   private ParamExp(node: Sh.ParamExp): Observable<Expanded> {

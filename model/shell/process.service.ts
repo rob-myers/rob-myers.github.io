@@ -9,6 +9,7 @@ import { transpileSh, ShError } from './transpile.service';
 import { fileService } from './file.service';
 import { ansiWarn, ansiReset } from './tty.xterm';
 import { builtinService } from './builtin.service';
+import { NamedFunction } from './var.model';
 
 export class ProcessService {
   
@@ -231,6 +232,11 @@ export class ProcessService {
 
   getSession(sessionKey: string): Session {
     return useStore.getState().session[sessionKey];
+  }
+
+  async invokeFunction(pid: number, func: NamedFunction) {
+    const { sessionKey } = this.getProcess(pid);
+    await this.runInShell(func.node, sessionKey);
   }
 
   /** Statically detect builtins */

@@ -750,6 +750,7 @@ class ParseShService {
         Stmts: [node],
         // Last: [],
       },
+      meta: node.meta,
     } as FileWithMeta;
   }
 

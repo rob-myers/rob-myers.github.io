@@ -10,9 +10,25 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
 
-- [ ] can store/retrieve arbitrary objects in bash variables __<===__
-  > remove typing and massively simplify
+- [ ] `spawn` command
+  > spawn an actor at a position
+- [ ] `read` command
+  > read from stdin and forward or save to variable
+- [ ] extend `click`
+  > can store (steiner) points via `click p`
+  > blocking clicks via `click --block` or `click -b`
 
+- [ ] can store/retrieve arbitrary objects in bash variables
+  > remove typing and massively simplify
+  > access via simple commands `point.y` or e.g. `p:$( p.x ),$( p.y )`
+
+- [x] justify decision that pipelines are just parallel processes
+  > behaviour trees use parallel
+  > we're wrapping `Promise.all()`
+  > we don't implement fifos (no backpressure)
+  > local vars more common
+  > can still pipe via `mkwire` and explicit redirects
+- [x] can define and execute functions
 - [x] can transpile `|`
   > `|` amounts to `Promise.all`
   > create new process per pipe-child as before

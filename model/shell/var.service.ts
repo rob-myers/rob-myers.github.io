@@ -1,10 +1,30 @@
 import { testNever, mapValues, isStringInt, last } from "@model/generic.model";
 import useStore, { Process } from '@store/shell.store';
 import { ProcessVar, BasePositionalVar, AssignVarBase, VarFlags, NamedFunction } from "./var.model";
-import { ShError } from "./transpile.service";
-import { parseSh } from "./parse.service";
+import { ShError, transpileSh } from "./transpile.service";
+import { parseSh, Stmt, FileMeta } from "./parse.service";
 
 export class VarService {
+
+  /**
+   * TODO try pre-transpiling the function
+   */
+  addFunction(pid: number, name: string, stmt: Stmt) {
+    const { sessionKey } = this.getProcess(pid);
+    const { sid } = this.getSession(sessionKey);
+
+    const node = parseSh.wrapInFile(stmt);
+    Object.assign<FileMeta, FileMeta>(node.meta, { pid, sessionKey, sid });
+
+    this.getProcess(pid).toFunc[name] = {
+      key: name,
+      exported: false,
+      readonly: false,
+      src: null,
+      node,
+    };
+  }
+
   /**
    * Assign value to variable.
    * Variable needn't exist.
@@ -472,6 +492,10 @@ export class VarService {
     return useStore.getState().proc[pid];
   }
 
+  private getSession(sessionKey: string) {
+    return useStore.getState().session[sessionKey];
+  }
+
   getVarKeys(value: undefined | ProcessVar['value']): string[] {
     if (value && typeof value === 'object') {
       return Object.keys(value);
@@ -497,13 +521,6 @@ export class VarService {
         : [String(value[index || 0])];
     }
     return [String(value)];
-  }
-
-  async invokeFunction(pid: number, func: NamedFunction) {
-    /**
-     * TODO
-     */
-    console.log(`TODO invoke function ${func.key}`);
   }
 
   private isVarKeyNumeric(
