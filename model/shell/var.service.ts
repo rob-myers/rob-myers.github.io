@@ -5,7 +5,6 @@ import { ShError } from "./transpile.service";
 import { parseSh } from "./parse.service";
 
 export class VarService {
-
   /**
    * Assign value to variable.
    * Variable needn't exist.

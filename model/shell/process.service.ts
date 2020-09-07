@@ -193,8 +193,7 @@ export class ProcessService {
         fdToOpen: { ...parent.fdToOpen },
         nestedRedirs: [{ ...mapValues(parent.fdToOpen, (o) => o.key) }],
         nestedVars: [nextVars],
-        // Functions are global in the session
-        toFunc: parent.toFunc,
+        toFunc: { ...parent.toFunc },
         lastExitCode: null,
         lastBgPid: null,
       };
