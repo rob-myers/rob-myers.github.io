@@ -3,14 +3,14 @@ import { mapValues, last } from '@model/generic.model';
 import useStore, { State as ShellState, Session, Process, ProcessGroup } from '@store/shell.store';
 import { addToLookup } from '@store/store.util';
 import { ShellStream } from './shell.stream';
-import { FsFile, OpenFileRequest, OpenFileDescription } from './file.model';
+import { OpenFileRequest, OpenFileDescription } from './file.model';
 import * as Sh from './parse.service';
 import { transpileSh, ShError } from './transpile.service';
 import { fileService } from './file.service';
-import { ansiWarn, ansiReset } from './tty.xterm';
 import { builtinService } from './builtin.service';
 import { NamedFunction } from './var.model';
 import { varService } from './var.service';
+import { SendXtermError } from './tty.shell';
 
 export class ProcessService {
   
@@ -55,11 +55,10 @@ export class ProcessService {
         fdToOpen: mapValues(fdToOpenKey, (ofdKey) => ofd[ofdKey]),
         nestedRedirs: [{ ...fdToOpenKey }],
         nestedVars: [{
-          USER: { key: 'string', varName: 'USER', value: 'root', exported: true, readonly: false, to: null },
-          OLDPWD: { key: 'string', varName: 'OLDPWD', value: '/root', exported: true, readonly: false, to: null },
-          PWD: { key: 'string', varName: 'PWD', value: '/root', exported: true, readonly: false, to: null },
-          // PATH: { key: 'string', varName: 'PATH', value: '/bin', exported: true, readonly: false, to: null },
-          0: { key: 'positional', varName: '0', index: 0, value: 'behaveyr', exported: true, readonly: false, to: null },
+          USER: { key: 'plain', varName: 'USER', value: 'root', exported: true, readonly: false },
+          OLDPWD: { key: 'plain', varName: 'OLDPWD', value: '/root', exported: true, readonly: false },
+          PWD: { key: 'plain', varName: 'PWD', value: '/root', exported: true, readonly: false },
+          0: { key: 'positional', varName: '0', index: 0, value: 'behaveyr', exported: true, readonly: false },
         }],
         toFunc: {},
         lastExitCode: null,
@@ -475,18 +474,12 @@ export class ProcessService {
   }
 
   /**
-   * Write textual message to process's stderr.
+   * Write error message to process's stderr.
    */
   warn(pid: number, msg: string) {
-    this.write(pid, 2, [ansiWarn, msg, ansiReset].join(''));
-  }
-  
-  /**
-   * Write textual message to process's file descriptor.
-   */
-  private write(pid: number, fd: number, msg: string) {
-    const { [fd]: opened } = this.getProcess(pid).fdToOpen;
-    opened.write(msg);
+    const errorMsg: SendXtermError = { key: 'error', msg };
+    const { [2]: opened } = this.getProcess(pid).fdToOpen;
+    opened.write(errorMsg);
   }
 
 }

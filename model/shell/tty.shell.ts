@@ -179,7 +179,7 @@ interface SendAllVoices {
 
 export type MessageFromShell = (
   | SendXtermPrompt
-  | WriteToXterm
+  | SendXtermError
   | ClearXterm
   | TtyReceivedLine
   | SendHistoryLine
@@ -196,13 +196,9 @@ interface SendXtermPrompt {
   prompt: string;
 }
 
-/**
- * tty writes lines to xterm
- */
-interface WriteToXterm {
-  key: 'send-lines';
-  messageUid: string;
-  lines: string[];
+export interface SendXtermError {
+  key: 'error';
+  msg: string;
 }
 
 /**

@@ -405,19 +405,17 @@ export class TtyXterm {
     // console.log({ xtermReceivedMsg: msg });
 
     switch (msg.key) {
-      case 'send-lines': {
-        this.queueCommands(msg.lines.map(
-          line => ({ key: 'line' as 'line', line })));
-        return;
-      }
-      case 'send-xterm-prompt': {
+      // case 'send-lines': {
+      //   this.queueCommands(msg.lines.map(
+      //     line => ({ key: 'line' as 'line', line })));
+      //   return;
+      // }
+      case 'send-xterm-prompt':
         this.setPrompt(msg.prompt);
         return;
-      }
-      case 'clear-xterm': {
+      case 'clear-xterm':
         this.clearScreen();
         return;
-      }
       case 'tty-received-line': {
         /**
          * The tty inode has received the line sent from this xterm.
@@ -444,14 +442,19 @@ export class TtyXterm {
         }
         return;
       }
-      default: {
+      case 'error':
+        this.queueCommands([{
+          key: 'line',
+          line: `${ansiWarn}${msg.msg}${ansiReset}`,
+        }]);
+        break;
+      default:
         this.queueCommands([{
           key: 'line',
           line: JSON.stringify(msg),
         }]);
         return;
         // console.warn(`xterm for ${this.sessionKey} ignored message ${JSON.stringify(msg)}`);
-      }
     }
   }
 

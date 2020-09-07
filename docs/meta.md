@@ -15,6 +15,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [x] no shell scripts only shell functions
 
+- [ ] `steiner` labels a point in the world
+  > it could track a changing variable
 - [ ] `shift` builtin for functions
 - [ ] `spawn` command
   > spawn an actor at a position
@@ -24,12 +26,11 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > can store (steiner) points via `click p`
   > blocking clicks via `click --block` or `click -b`
 
-- [ ] can store/retrieve arbitrary objects in bash variables
-  > remove typing and massively simplify
-  > access via simple commands `point.y` or e.g. `p:$( p.x ),$( p.y )`
-  > support deep var lookup e.g. `x.y.z` or `x[4]` via e.g.
+- [ ] access deep vars e.g. `x.y.z` or `x[4]` via e.g.
   > `Function('o', 'return o.x[4]')(varLookup)`
 
+- [x] can store/retrieve arbitrary objects in bash variables
+  > remove typing and massively simplify
 
 - [ ] functions receive prefixed variables
 - [x] support variable lookup via simple command
