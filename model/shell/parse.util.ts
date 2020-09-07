@@ -18,27 +18,27 @@ export function getChildren(node: Sh.ParsedSh): Sh.ParsedSh[] {
     case 'BinaryArithm': 
     case 'BinaryCmd':
     case 'BinaryTest': return [node.X, node.Y];
-    case 'Block': return [node.StmtList];
+    case 'Block': return node.Stmts;
     case 'CStyleLoop': return [node.Cond, node.Init, node.Post];
     case  'CallExpr': return ([] as Sh.ParsedSh[])
       .concat(node.Args, node.Assigns);
     case 'CaseClause': return ([] as Sh.ParsedSh[])
       .concat(node.Items, node.Word);
     case 'CaseItem': return  ([] as Sh.ParsedSh[])
-      .concat(node.Patterns, node.StmtList);
-    case 'CmdSubst': return [node.StmtList];
+      .concat(node.Patterns, node.Stmts);
+    case 'CmdSubst': return node.Stmts;
     case 'Comment': return [];
     case 'CoprocClause': return [node.Stmt];
     case 'DblQuoted': return node.Parts;
     case 'DeclClause': return ([] as Sh.ParsedSh[])
         .concat(node.Assigns, node.Opts, node.Variant, node.others);
     case 'ExtGlob': return [];
-    case 'File': return [node.StmtList];
-    case 'ForClause': return [node.Do, node.Loop];
+    case 'File': return node.Stmts;
+    case 'ForClause': return [...node.Do, node.Loop];
     case 'FuncDecl': return [node.Body, node.Name];
     case 'IfClause': return [
-      node.Cond,
-      node.Then,
+      ...node.Cond,
+      ...node.Then,
       ...node.Else ? [node.Else] : [],
     ];
     case 'LetClause': return node.Exprs;
@@ -54,7 +54,7 @@ export function getChildren(node: Sh.ParsedSh): Sh.ParsedSh[] {
     ];
     case 'ParenArithm': return [node.X];
     case 'ParenTest': return [node.X];
-    case 'ProcSubst': return [node.StmtList];
+    case 'ProcSubst': return node.Stmts;
     case 'Redirect': return [
       ...(node.Hdoc ? [node.Hdoc] : []),
       ...(node.N ? [node.N] : []),
@@ -65,15 +65,14 @@ export function getChildren(node: Sh.ParsedSh): Sh.ParsedSh[] {
       ...node.Cmd ? [node.Cmd] : [],
       ...node.Redirs,
     ];
-    case 'StmtList': return node.Stmts;
-    case 'Subshell': return [node.StmtList];
+    case 'Subshell': return node.Stmts;
     case 'TestClause': return [node.X];
     case 'TimeClause': return [
       ...node.Stmt ? [node.Stmt] : [],
     ];
     case 'UnaryArithm':
     case 'UnaryTest': return [node.X];
-    case 'WhileClause': return [node.Cond, node.Do];
+    case 'WhileClause': return node.Cond.concat(node.Do);
     case 'Word': return node.Parts;
     case 'WordIter': return node.Items;
     default: throw testNever(node);

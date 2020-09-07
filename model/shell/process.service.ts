@@ -19,7 +19,9 @@ export class ProcessService {
 
   initialise() {
     this.set = useStore.getState().api.set;
-    this.mockParsed = Sh.parseSh.parse('');
+    if (typeof window !== 'undefined') {
+      this.mockParsed = Sh.parseSh.parse('');
+    }
   }
 
   addCancel(sessionKey: string, cancel: () => void) {

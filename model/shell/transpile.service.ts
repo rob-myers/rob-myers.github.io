@@ -372,7 +372,7 @@ class TranspileShService {
   }
 
   private Block(node: Sh.Block) {
-    return from(node.StmtList.Stmts).pipe(
+    return from(node.Stmts).pipe(
       concatMap(x => this.Stmt(x)),
     );
   }
@@ -630,7 +630,7 @@ class TranspileShService {
   }
 
   private File(node: Sh.File): Observable<ProcessAct> {
-    return from(node.StmtList.Stmts).pipe(
+    return from(node.Stmts).pipe(
       concatMap(x => this.Stmt(x)),
       catchError((e, _src) => {
         const { meta } = node;

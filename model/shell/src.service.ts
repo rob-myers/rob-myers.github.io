@@ -74,7 +74,7 @@ export class SrcService {
       }
 
       case 'Block': {
-        const { Stmts } = node.StmtList;
+        const { Stmts } = node;
         // Handle `{ echo foo & }`
         const terminal = this.isBackgroundNode(last(Stmts)!) ? '' : ';';
         return `{ ${ this.seqSrc(Stmts) }${terminal} }`;
@@ -95,10 +95,10 @@ export class SrcService {
         ].filter(Boolean).join(' ');
 
       case 'CaseClause': {
-        const cases = node.Items.map(({ Patterns, Op, StmtList }) => ({
+        const cases = node.Items.map(({ Patterns, Op, Stmts }) => ({
           globs: Patterns,
           terminal: Op,
-          child: StmtList,
+          child: Stmts,
         }));
         return [
           'case',
@@ -106,7 +106,7 @@ export class SrcService {
           'in',
           cases.map(({ child, globs, terminal }) => [
             `${globs.map(g => this.src(g)).join('|')})`,
-            this.src(child),
+            this.seqSrc(child),
             terminal,
           ].join(' ')),
         ].filter(Boolean).join(' ');
@@ -138,7 +138,7 @@ export class SrcService {
         }(( ${this.src(node.X)} ))`;
 
       case 'CmdSubst':
-        return `$( ${this.seqSrc(node.StmtList.Stmts)} )`;
+        return `$( ${this.seqSrc(node.Stmts)} )`;
 
       case 'DblQuoted':
         return `"${node.Parts.map(c => this.src(c)).join('')}"`;
@@ -199,7 +199,7 @@ export class SrcService {
 
       case 'ProcSubst': {
         const dir = node.Op === '<(' ? '<' : '>';
-        return `${dir}( ${this.seqSrc(node.StmtList.Stmts)} )`;
+        return `${dir}( ${this.seqSrc(node.Stmts)} )`;
       }
 
       case 'SglQuoted': {
@@ -218,7 +218,7 @@ export class SrcService {
           child: Then,
         }));
         return cs.map(({ test, child }, i) => test
-          ? `${!i ? 'if' : 'elif'} ${this.src(test)}; then ${this.src(child)}; `
+          ? `${!i ? 'if' : 'elif'} ${this.seqSrc(test)}; then ${this.seqSrc(child)}; `
           : `else ${child}; `
         ).concat('fi').join('');
       }
@@ -262,15 +262,11 @@ export class SrcService {
       }
 
       case 'File':
-        return this.src(node.StmtList);
-
-      case 'StmtList':
-        // Handle `echo foo & echo bar`
         return this.seqSrc(node.Stmts);
 
       case 'Subshell':
         return `( ${
-          node.StmtList.Stmts.map(c => this.src(c)).join('; ')
+          node.Stmts.map(c => this.src(c)).join('; ')
         } )`;
 
       case 'TestClause':
@@ -296,19 +292,19 @@ export class SrcService {
           }; ${
             this.src(Loop.Post)
           } )); do ${
-            this.seqSrc(Do.Stmts, true)
+            this.seqSrc(Do, true)
           }done`;
         }
         return `for ${Loop.Name} in ${
           Loop.Items.map(c => this.src(c)).join(' ')
         }; do ${
-          this.seqSrc(Do.Stmts, true)
+          this.seqSrc(Do, true)
         }done`;
       }
 
       case 'WhileClause': {
-        return `while ${this.seqSrc(node.Cond.Stmts, true)}do ${
-          this.seqSrc(node.Do.Stmts, true)
+        return `while ${this.seqSrc(node.Cond, true)}do ${
+          this.seqSrc(node.Do, true)
         }done`;
       }
 

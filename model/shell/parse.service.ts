@@ -18,18 +18,16 @@ class ParseShService {
 
   private mockMeta: FileMeta;
   private mockPos: () => Sh.Pos;
-  private mockBaseNode: BaseNode;
 
   constructor() {
     this.mockPos = () => ({ Line: () => 1, Col: () => 1, Offset: () => 0} as Sh.Pos);
-    this.mockBaseNode = this.base({ Pos: this.mockPos, End: this.mockPos });
     this.mockMeta = { pid: -1, sid: -1, sessionKey: 'mockSession' };
   }
 
   parse(src: string): FileWithMeta {
     // Use mvdan-sh to parse shell code
     const parser = syntax.NewParser();
-    syntax.KeepComments(parser);
+    // syntax.KeepComments(parser);
     const parsed = parser.Parse(src, 'src.sh');
     /**
      * Clean up the parse, making it serialisable.
@@ -48,7 +46,7 @@ class ParseShService {
       const { incomplete, parsed } = this.interactiveParse(src);
 
       if (parsed) {// DEBUG
-        parsed.StmtList.Stmts.forEach((stmt) => console.log('PARSED', stmt.Cmd));
+        parsed.Stmts.forEach((stmt) => console.log('PARSED', stmt.Cmd));
       }
 
       return incomplete
@@ -252,13 +250,13 @@ class ParseShService {
   })
 
   private Block = (
-    { Pos, End, Lbrace, Rbrace, StmtList }: Sh.Block,
+    { Pos, End, Lbrace, Rbrace, Stmts }: Sh.Block,
   ): Block => ({
     ...this.base({ Pos, End }),
     type: 'Block',
     Lbrace: this.pos(Lbrace),
     Rbrace: this.pos(Rbrace),
-    StmtList: this.StmtList(StmtList),
+    Stmts: Stmts.map(Stmt => this.Stmt(Stmt)),
   });
 
   private CallExpr = (
@@ -284,7 +282,7 @@ class ParseShService {
 
   private CaseItem = (
     { Pos, End, Comments, Op,
-      OpPos, Patterns, StmtList }: Sh.CaseItem
+      OpPos, Patterns, Stmts }: Sh.CaseItem
   ): CaseItem => ({
     ...this.base({ Pos, End }),
     type: 'CaseItem',
@@ -292,19 +290,18 @@ class ParseShService {
     Op: this.op(Op),
     OpPos: this.pos(OpPos),
     Patterns: Patterns.map(this.Word),
-    StmtList: this.StmtList(StmtList),
+    Stmts: Stmts.map(Stmt => this.Stmt(Stmt)),
   });
   
   private CmdSubst = (
-    { Pos, End, Left, ReplyVar, Right,
-      StmtList, TempFile }: Sh.CmdSubst
+    { Pos, End, Left, ReplyVar, Right, Stmts, TempFile }: Sh.CmdSubst
   ): CmdSubst => ({
     ...this.base({ Pos, End }),
     type: 'CmdSubst',
     Left: this.pos(Left),
     ReplyVar,
     Right: this.pos(Right),
-    StmtList: this.StmtList(StmtList),
+    Stmts: Stmts.map(Stmt => this.Stmt(Stmt)),
     TempFile,
   });
   
@@ -429,21 +426,28 @@ class ParseShService {
    * Previously arg had functions {Pos} and {End}.
    */
   private File = (
-    { Name, StmtList }: Sh.File,
+    { Name, Stmts }: Sh.File,
   ): FileWithMeta => ({
     ...this.base({ Pos: this.mockPos, End: this.mockPos }),
     type: 'File',
     Name,
-    StmtList: this.StmtList(StmtList),
+    Stmts: Stmts.map(x => this.Stmt(x)),
     meta: this.mockMeta,
   });
+  // ): FileWithMeta => ({
+  //   ...this.base({ Pos: this.mockPos, End: this.mockPos }),
+  //   type: 'File',
+  //   Name,
+  //   StmtList: this.StmtList(StmtList),
+  //   meta: this.mockMeta,
+  // });
   
   private ForClause = (
     { Pos, End, Do, DonePos, DoPos, ForPos, Loop, Select }: Sh.ForClause
   ): ForClause => ({
     ...this.base({ Pos, End }),
     type: 'ForClause',
-    Do: this.StmtList(Do),
+    Do: Do.map(Stmt => this.Stmt(Stmt)),
     DonePos: this.pos(DonePos),
     DoPos: this.pos(DoPos),
     ForPos: this.pos(ForPos),
@@ -471,9 +475,9 @@ class ParseShService {
     ThenPos: this.pos(ThenPos),
     FiPos: this.pos(FiPos),
 
-    Cond: this.StmtList(Cond),
+    Cond: Cond.map(Stmt => this.Stmt(Stmt)),
     CondLast: (CondLast || []).map(this.Comment),
-    Then: this.StmtList(Then),
+    Then: Then.map(Stmt => this.Stmt(Stmt)),
     ThenLast: (ThenLast || []).map(this.Comment),
 
     Else: Else ? this.IfClause(Else) : null,
@@ -561,14 +565,14 @@ class ParseShService {
   });
 
   private ProcSubst = (
-    { Pos, End, Op, OpPos, Rparen, StmtList }: Sh.ProcSubst
+    { Pos, End, Op, OpPos, Rparen, Stmts }: Sh.ProcSubst
   ): ProcSubst => ({
     ...this.base({ Pos, End }),
     type: 'ProcSubst',
     Op: this.op(Op),
     OpPos: this.pos(OpPos),
     Rparen: this.pos(Rparen),
-    StmtList: this.StmtList(StmtList),
+    Stmts: Stmts.map(Stmt => this.Stmt(Stmt)),
   });
 
   private Redirect = (
@@ -612,24 +616,14 @@ class ParseShService {
     Semicolon: this.pos(Semicolon),
   });
 
-  private StmtList = (
-    { Last, Stmts }: Sh.StmtList
-  ): StmtList => ({
-    // Force every node to have a parent
-    ...this.base({ Pos: this.mockPos, End: this.mockPos }),
-    type: 'StmtList',
-    Last: Last.map(this.Comment),
-    Stmts: Stmts.map(this.Stmt),
-  });
-
   private Subshell = (
-    { Pos, End, Lparen, Rparen, StmtList }: Sh.Subshell
+    { Pos, End, Lparen, Rparen, Stmts }: Sh.Subshell
   ): Subshell => ({
     ...this.base({ Pos, End }),
     type: 'Subshell',
     Lparen: this.pos(Lparen),
     Rparen: this.pos(Rparen),
-    StmtList: this.StmtList(StmtList),
+    Stmts: Stmts.map(this.Stmt),
   });
 
   private TestClause = (
@@ -690,8 +684,8 @@ class ParseShService {
   ): WhileClause => ({
     ...this.base({ Pos, End }),
     type: 'WhileClause',
-    Cond: this.StmtList(Cond),
-    Do: this.StmtList(Do),
+    Cond: Cond.map(Stmt => this.Stmt(Stmt)),
+    Do: Do.map(Stmt => this.Stmt(Stmt)),
     DonePos: this.pos(DonePos),
     DoPos: this.pos(DoPos),
     Until,
@@ -726,7 +720,7 @@ class ParseShService {
       return this.CmdSubst(node);
     } else if ('X' in node) {
       return this.ArithmExp(node);
-    } else if ('StmtList' in node) {
+    } else if ('Stmts' in node) {
       return this.ProcSubst(node);
     }
     return this.ExtGlob(node);
@@ -744,12 +738,7 @@ class ParseShService {
       // ...this.mockBaseNode,
       type: 'File',
       // Name: 'generated-from-node',
-      StmtList: {
-        // ...this.mockBaseNode,
-        type: 'StmtList',
-        Stmts: [node],
-        // Last: [],
-      },
+      Stmts: [node],
       meta: node.meta,
     } as FileWithMeta;
   }
@@ -965,7 +954,6 @@ export type ParsedSh = (
   | Redirect
   | SglQuoted
   | Stmt
-  | StmtList
   | Subshell
   | TestClause
   | TimeClause
@@ -1041,7 +1029,6 @@ export type ProcSubst = Sh.ProcSubstGeneric<BaseNode, Pos, string>
 export type Redirect = Sh.RedirectGeneric<BaseNode, Pos, string>
 export type SglQuoted = Sh.SglQuotedGeneric<BaseNode, Pos, string>
 export type Stmt = Sh.StmtGeneric<BaseNode, Pos, string>
-export type StmtList = Sh.StmtListGeneric<BaseNode, Pos, string>
 export type Subshell = Sh.SubshellGeneric<BaseNode, Pos, string>
 export type TestClause = Sh.TestClauseGeneric<BaseNode, Pos, string>
 export type TimeClause = Sh.TimeClauseGeneric<BaseNode, Pos, string>

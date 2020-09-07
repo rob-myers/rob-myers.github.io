@@ -131,7 +131,6 @@ declare namespace MvdanSh {
   type Redirect = RedirectGeneric<BaseNode, Pos, Op>
   type SglQuoted = SglQuotedGeneric<BaseNode, Pos, Op>
   type Stmt = StmtGeneric<BaseNode, Pos, Op>
-  type StmtList = StmtListGeneric<BaseNode, Pos, Op>
   type Subshell = SubshellGeneric<BaseNode, Pos, Op>
   type TestClause = TestClauseGeneric<BaseNode, Pos, Op>
   type TimeClause = TimeClauseGeneric<BaseNode, Pos, Op>
@@ -191,7 +190,6 @@ declare namespace MvdanSh {
   | RedirectGeneric<Base, Pos, Op>
   | SglQuotedGeneric<Base, Pos, Op>
   | StmtGeneric<Base, Pos, Op>
-  | StmtListGeneric<Base, Pos, Op>
   | SubshellGeneric<Base, Pos, Op>
   | TestClauseGeneric<Base, Pos, Op>
   | TimeClauseGeneric<Base, Pos, Op>
@@ -378,7 +376,7 @@ declare namespace MvdanSh {
     type: 'Block';
     Lbrace: Pos;
     Rbrace: Pos;
-    StmtList: StmtListGeneric<Base, Pos, Op>;
+    Stmts: StmtGeneric<Base, Pos, Op>[];
   }
   /**
    * CallExpr represents a command execution or function call, otherwise known as a "simple command".
@@ -414,7 +412,7 @@ declare namespace MvdanSh {
      * `met*|meet*)` yields two patterns.
      */
     Patterns: WordGeneric<Base, Pos, Op>[];
-    StmtList: StmtListGeneric<Base, Pos, Op>;
+    Stmts: StmtGeneric<Base, Pos, Op>[];
   }
   /**
    * CmdSubst represents a command substitution.
@@ -427,7 +425,7 @@ declare namespace MvdanSh {
     TempFile: boolean; // mksh's ${ foo;}
     /** mksh's ${|foo;} */
     ReplyVar: boolean; // mksh's ${|foo;}
-    StmtList: StmtListGeneric<Base, Pos, Op>;
+    Stmts: StmtGeneric<Base, Pos, Op>[];
   }
   /**
    * Comment represents a single comment on a single line.
@@ -547,7 +545,7 @@ declare namespace MvdanSh {
   type FileGeneric<Base, Pos, Op> = {
     type: 'File';
     Name: string;
-    StmtList: StmtListGeneric<Base, Pos, Op>;
+    Stmts: StmtGeneric<Base, Pos, Op>[];
   }
   /**
    * ForClause represents a for or a select clause. The latter is only present in Bash.
@@ -559,7 +557,7 @@ declare namespace MvdanSh {
     DonePos: Pos;
     Select: boolean;
     Loop: LoopGeneric<Base, Pos, Op>;
-    Do: StmtListGeneric<Base, Pos, Op>;
+    Do: StmtGeneric<Base, Pos, Op>[];
   }
   /**
    * FuncDecl represents the declaration of a function.
@@ -584,9 +582,9 @@ declare namespace MvdanSh {
     /** position of "fi", shared with .Else if non-nil. */
     FiPos: Pos; // position of "fi", empty if Elif == true
 
-    Cond: StmtListGeneric<Base, Pos, Op>;
+    Cond: StmtGeneric<Base, Pos, Op>[];
     CondLast: CommentGeneric<Base, Pos, Op>[];
-    Then: StmtListGeneric<Base, Pos, Op>;
+    Then: StmtGeneric<Base, Pos, Op>[];
     ThenLast: CommentGeneric<Base, Pos, Op>[];
 
     /** if non-nil, an "elif" or an "else" */
@@ -706,7 +704,7 @@ declare namespace MvdanSh {
     OpPos: Pos;
     Rparen: Pos;
     Op: Op;
-    StmtList: StmtListGeneric<Base, Pos, Op>;
+    Stmts: StmtGeneric<Base, Pos, Op>[];
   }
   /**
    * Redirect represents an input/output redirection.
@@ -779,23 +777,13 @@ declare namespace MvdanSh {
     Redirs: RedirectGeneric<Base, Pos, Op>[]; // stmt >a <b
   }
   /**
-   * StmtList is a list of statements with any number of trailing comments.
-   * Both lists can be empty.
-   */
-  type StmtListGeneric<Base, Pos, Op> = {
-    type: 'StmtList';
-    Stmts: StmtGeneric<Base, Pos, Op>[];
-    /** Comments. */
-    Last: CommentGeneric<Base, Pos, Op>[];
-  }
-  /**
    * Subshell represents a series of commands that should be executed in a nested shell environment.
    */
   type SubshellGeneric<Base, Pos, Op> = Base & {
     type: 'Subshell';
     Lparen: Pos;
     Rparen: Pos;
-    StmtList: StmtListGeneric<Base, Pos, Op>;
+    Stmts: StmtGeneric<Base, Pos, Op>[];
   }
   /**
    * TestClause represents a Bash extended test clause.
@@ -858,8 +846,8 @@ declare namespace MvdanSh {
     DoPos: Pos;
     DonePos: Pos;
     Until: boolean;
-    Cond: StmtListGeneric<Base, Pos, Op>;
-    Do: StmtListGeneric<Base, Pos, Op>;
+    Cond: StmtGeneric<Base, Pos, Op>[];
+    Do: StmtGeneric<Base, Pos, Op>[];
   }
   /**
    * Word represents a shell word, containing one or more word parts contiguous to each other.

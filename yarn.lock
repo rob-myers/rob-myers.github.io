@@ -7886,10 +7886,10 @@ mute-stream@0.0.8:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.8.tgz#1630c42b2251ff81e2a283de96a5497ea92e5e0d"
   integrity sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA==
 
-mvdan-sh@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/mvdan-sh/-/mvdan-sh-0.4.0.tgz#e1e5ed870bc866ce0180ee79abab55c3bf1c2293"
-  integrity sha512-pJ8f58eHR5LgJ5VY3yUpIAkvnd6rpLQj9WV4zwxQPInVyRRmE+dzBSEL3gcShLTodeORtcA8UG+HNMOhdMthrA==
+mvdan-sh@0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/mvdan-sh/-/mvdan-sh-0.5.0.tgz#fa76f611a103595ad0f04f5d18e582892c46e87c"
+  integrity sha512-UWbdl4LHd2fUnaEcOUFVWRdWGLkNoV12cKVIPiirYd8qM5VkCoCTXErlDubevrkEG7kGohvjRxAlTQmOqG80tw==
 
 nan@^2.12.1, nan@^2.13.2:
   version "2.14.0"
