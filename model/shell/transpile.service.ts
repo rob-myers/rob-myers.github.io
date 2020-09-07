@@ -3,19 +3,18 @@ import { concatMap, reduce, map, tap, catchError } from 'rxjs/operators';
 import globrex from 'globrex';
 import shortId from 'shortid';
 
-import { testNever, last, range } from '@model/generic.model';
+import { testNever, last } from '@model/generic.model';
 import { awaitEnd } from './rxjs.model';
 import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
 import { ParamType, ParameterDef } from './parameter.model';
-import { fileService as fs } from './file.service';
 import * as Sh from '@model/shell/parse.service';
 import { expandService as expand, expandService } from './expand.service';
 import { varService as vs } from './var.service';
 import { processService as ps } from './process.service';
-import { FsFile, RedirectDef } from './file.model';
+import {  RedirectDef } from './file.model';
 import { builtinService as bs } from './builtin.service';
 import { srcService as ss } from './src.service';
-import { NamedFunction } from './var.model';
+import { NamedFunction, ProcessVar } from './var.model';
 
 class TranspileShService {
 
@@ -378,9 +377,6 @@ class TranspileShService {
     );
   }
 
-  /**
-   * TODO support variable lookup
-   */
   private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
     return from(async function* () {
       const args = await ts.performShellExpansion(node.Args);
@@ -389,7 +385,7 @@ class TranspileShService {
       
       if (args.length) {
         // Run builtin, run script or invoke function
-        let file: FsFile | null, func: NamedFunction;
+        let func: NamedFunction, varValue: ProcessVar['value'] | undefined;
         const { pid } = node.meta;
         const ctxt: CommandCtxt = { ...extend, Redirs: extend.Redirs.map(c => ts.Redirect(c)) };
 
@@ -397,6 +393,15 @@ class TranspileShService {
           await bs.runBuiltin(node, ctxt, args[0], args.slice(1));
         } else if (func = vs.getFunction(pid, args[0])) {
           await ps.invokeFunction(pid, func, args.slice(1));
+        } else if (varValue = vs.lookupVar(pid, args[0])) {
+          if (extend.Redirs.length) {
+            await ts.wrapInRedirects(pid,
+              async () => ps.getProcess(pid).fdToOpen[1].write(varValue),
+              extend.Redirs,
+            );
+          } else {
+            ps.getProcess(pid).fdToOpen[1].write(varValue);
+          }
         } else {
           throw new ShError(`${args[0]}: unrecognised command`, 1);
         }
@@ -1069,25 +1074,8 @@ class TranspileShService {
       }
     }
 
-    // Apply redirections in temporary scope
-    // We still run them as they may have side-effects
-    if (redirects.length) {
-      const { pid } = redirects[0].meta;
-      ps.pushRedirectScope(pid);
-      for (const redirect of redirects) {
-        try {
-          await awaitEnd(this.Redirect(redirect));
-        } catch (e) {
-          if (e instanceof ShError) {
-            console.error('Caught redirects error', e);
-            node.exitCode = e.exitCode;
-            break; // Stop immediately
-          } else {
-            throw e;
-          }
-        }
-      }
-      ps.popRedirectScope(pid);
+    if (redirects.length) {// Apply redirections in temp scope in case of side-effects
+      await this.wrapInRedirects(redirects[0].meta.pid, async () => {}, redirects);
     }
   }
 
@@ -1317,6 +1305,20 @@ class TranspileShService {
         return { subKey: '<>', fd, };
       default:
         throw new Error(`Unsupported redirection symbol '${node.Op}'.`);
+    }
+  }
+
+  private async wrapInRedirects(pid: number, code: () => Promise<void>, redirects: Sh.Redirect[]) {
+    try {
+      ps.pushRedirectScope(pid);
+      for (const redirect of redirects) {
+        await awaitEnd(this.Redirect(redirect));
+      }
+      await code();
+      ps.popRedirectScope(pid);
+    } catch (e) {
+      ps.popRedirectScope(pid);
+      throw e;
     }
   }
 

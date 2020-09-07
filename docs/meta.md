@@ -10,6 +10,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
 
+- [ ] `session.cancels` should probably move to `process.cleanups`
+  > will need to handle background process failures
+
 - [x] no shell scripts only shell functions
 
 - [ ] `shift` builtin for functions
@@ -25,6 +28,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > remove typing and massively simplify
   > access via simple commands `point.y` or e.g. `p:$( p.x ),$( p.y )`
 
+- [x] support variable lookup via simple command
+  > can also redirect
 - [x] functions receive positionals in own scope
 - [x] justify decision that pipelines are just parallel processes
   > behaviour trees use parallel
