@@ -62,6 +62,7 @@ export class TtyShell {
         if (msg.signal === SigEnum.SIGINT) {
           processService.stopProcess(this.session.sid);
           this.session.cancels.reverse().forEach(cancel => cancel());
+          this.buffer.length = 0;
           this.prompt('$ ');
         }
         break;
