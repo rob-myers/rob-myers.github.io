@@ -1,3 +1,5 @@
+import fastSafeStringify from 'fast-safe-stringify';
+
 export interface KeyedLookup<Value extends { key: K }, K extends string = string> {
   [key: string]: Value;
 }
@@ -190,3 +192,13 @@ export function pluck<T extends { key: string }>(
 export type DistributiveOmit<T, K extends keyof T> = T extends unknown
   ? Omit<T, K>
   : never;
+
+export function safeStringify(input: any) {
+  return tryJsonStringify(input) || fastSafeStringify(input);
+}
+
+function tryJsonStringify(input: any) {
+  try {
+    return JSON.stringify(input);
+  } catch (e) {}
+}

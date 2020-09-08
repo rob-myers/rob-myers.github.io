@@ -1,6 +1,6 @@
 import { Terminal } from 'xterm';
 import { MessageFromShell, MessageFromXterm } from './tty.shell';
-import { testNever } from '@model/generic.model';
+import { testNever, safeStringify } from '@model/generic.model';
 import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
 
@@ -405,11 +405,7 @@ export class TtyXterm {
     // console.log({ xtermReceivedMsg: msg });
 
     switch (msg.key) {
-      // case 'send-lines': {
-      //   this.queueCommands(msg.lines.map(
-      //     line => ({ key: 'line' as 'line', line })));
-      //   return;
-      // }
+
       case 'send-xterm-prompt':
         this.setPrompt(msg.prompt);
         return;
@@ -451,7 +447,7 @@ export class TtyXterm {
       default:
         this.queueCommands([{
           key: 'line',
-          line: JSON.stringify(msg),
+          line: safeStringify(msg),
         }]);
         return;
         // console.warn(`xterm for ${this.sessionKey} ignored message ${JSON.stringify(msg)}`);
