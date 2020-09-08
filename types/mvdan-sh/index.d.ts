@@ -487,7 +487,8 @@ declare namespace MvdanSh {
    */
   type DblQuotedGeneric<Base, Pos, Op> = Base & {
     type: 'DblQuoted';
-    Position: Pos;
+    Left: Pos;
+    Right: Pos;
     /**
      * $"" i.e. locale translation.
      * https://www.gnu.org/software/bash/manual/html_node/Locale-Translation.html

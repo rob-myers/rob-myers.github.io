@@ -39,7 +39,7 @@ export class VarService {
     }
 
     // Index of 1st admissible scope referencing variable.
-    // If `local` only check deepest scope, else all deepest to shallowest.
+    // If `local` only check deepest scope, else deepest to shallowest
     const { nestedVars } = this.getProcess(pid);
     const scopeIndex = (def.local ? [nestedVars[0]] : nestedVars)
       .findIndex((toVar) => varName in toVar);
