@@ -6,7 +6,6 @@ import { withParents } from './parse.util';
 import { BaseAssignOpts } from './var.model';
 import { ParameterDef } from './parameter.model';
 import { RedirectDef } from './file.model';
-// console.log({ Sh });
 
 /** Provides a unique integer for every node */
 let nodeCount = 0;
@@ -24,10 +23,17 @@ class ParseShService {
     this.mockMeta = { pid: -1, sid: -1, sessionKey: 'mockSession' };
   }
 
+  /**
+   * Use mvdan-sh to parse shell code.
+   */
   parse(src: string): FileWithMeta {
-    // Use mvdan-sh to parse shell code
-    const parser = syntax.NewParser();
-    // syntax.KeepComments(parser);
+    // console.log({ syntax });
+    const parser = syntax.NewParser(
+      syntax.KeepComments(false),
+      // syntax.Variant(syntax.LangBash),
+      // syntax.Variant(syntax.LangPOSIX),
+      // syntax.Variant(syntax.LangMirBSDKorn),
+    );
     const parsed = parser.Parse(src, 'src.sh');
     /**
      * Clean up the parse, making it serialisable.

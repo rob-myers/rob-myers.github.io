@@ -26,7 +26,11 @@ declare namespace MvdanSh {
       predicate: (node: MvdanSh.Node) => boolean,
     ): void;
 
-    function KeepComments(parser: MvdanSh.Parser): void;
+    function KeepComments(enabled?: boolean): any;
+    function Variant(variant: 0 | 1 | 2): any;
+    const LangBash: 0;
+    const LangPOSIX: 1;
+    const LangMirBSDKorn: 2;
   }
 
   interface Parser {
