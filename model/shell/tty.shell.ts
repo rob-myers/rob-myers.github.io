@@ -81,7 +81,9 @@ export class TtyShell {
   
         switch (result.key) {
           case 'failed': {
-            console.error(result.error.replace(/^Error: runtime error: src\.sh:/, ''));
+            const errMsg = `mvdan-sh: ${result.error.replace(/^src\.sh:/, '')}`;
+            console.error(errMsg);
+            processService.warn(this.session.sid, errMsg);
             this.buffer.length = 0;
             this.prompt('$ ');
             break;
