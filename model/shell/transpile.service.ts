@@ -384,10 +384,9 @@ class TranspileShService {
       console.log('args', args);
       node.exitCode = 0;
       
-      if (args.length) {
-        // Run builtin, invoke function or output variable
-        let func: NamedFunction, varValue: ProcessVar['value'] | undefined;
+      if (args.length) {// Run builtin or invoke function
         const [command, ...cmdArgs] = args;
+        let func: NamedFunction;
         
         if (bs.isBuiltinCommand(command)) {
           await ts.redirect(pid, () =>
@@ -396,14 +395,9 @@ class TranspileShService {
           );
         } else if (func = vs.getFunction(pid, command)) {
           /**
-           * TODO assign vars in local scope
+           * TODO function needs vars in local scope
            */
           await ps.invokeFunction(pid, func, cmdArgs);
-        } else if (varValue = vs.lookupVar(pid, command)) {
-          await ts.redirect(pid, async () =>
-            ps.getProcess(pid).fdToOpen[1].write(varValue),
-            extend.Redirs,
-          );
         } else {
           throw new ShError(`${command}: unrecognised command`, 1);
         }
@@ -513,6 +507,9 @@ class TranspileShService {
 
   }
 
+  /**
+   * Expand a `Word` which has `Parts`.
+   */
   private Expand(node: Sh.Word): Observable<Expanded> {
     if (node.Parts.length > 1) {
       return from(async function*() {
