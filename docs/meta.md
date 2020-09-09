@@ -23,12 +23,14 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `read` command
   > read from stdin and forward or save to variable
 - [ ] extend `click`
-  > can store (steiner) points via `click p`
+  > can store points via `click p`
   > blocking clicks via `click --block` or `click -b`
 
-- [ ] access deep vars e.g. `x.y.z` or `x[4]` via e.g.
+- [ ] can `def range 'n => [...Array(n)].map((_, i) => i)'`
+  > i.e. create shell functions from js ones
+- [x] can `get x.y.z as p`
+- [x] access deep vars e.g. `x.y.z` or `x[4]` via e.g.
   > `Function('o', 'return o.x[4]')(varLookup)`
-
 - [x] can store/retrieve arbitrary objects in bash variables
   > remove typing and massively simplify
 
@@ -105,3 +107,10 @@ Auto-generated navmesh with minimal number of rectangles.
 2. while/for loops must be guarded e.g.
   - `while read x; do echo $x; done`
   - `for x in {1..10}; do click x y; look $x $y; done`
+
+3. Since variables can now take arbitrary values we need to access them.
+  - we'll use e.g. `from x.y[0].z`
+  - direct access as simple command causes various issues:
+    > https://github.com/mvdan/sh/issues/604
+    > `LangPosix` supports but no arrays, `declare`, `CStyleLoop` etc.
+    > can't do `${x.y}` in mvdan-sh for any language

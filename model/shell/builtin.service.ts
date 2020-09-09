@@ -1,8 +1,9 @@
 import { testNever, pause } from "@model/generic.model";
 import { Process } from "@store/shell.store";
 import * as Sh from "./parse.service";
-import { processService as ps, processService} from './process.service';
+import { processService as ps} from './process.service';
 import { ShError } from "./transpile.service";
+import { varService } from "./var.service";
 
 export class BuiltinService {
 
@@ -10,23 +11,25 @@ export class BuiltinService {
     return !!(builtins as Record<string, boolean>)[command];
   }
 
+  /**
+   * TODO exit codes
+   */
   async runBuiltin(node: Sh.CallExpr, command: BuiltinKey, args: string[]) {
     const process = ps.getProcess(node.meta.pid);
     switch (command) {
       case 'click': await this.click(process, args); break;
       case 'echo': await this.echo(process, args); break;
+      case 'get': this.get(process, args); break;
       case 'sleep': await this.sleep(args); break;
       default: throw testNever(command);
     }
   }
 
   /**
-   * TODO 
-   * - only listen for clicks; use typings
-   * - ensure fdToOpen reference not stale
+   * TODO only listen for clicks; use typings
    */
   private async click({ sessionKey, fdToOpen }: Process, _args: string[]) {
-    const { worldDevice, cancels } = processService.getSession(sessionKey);
+    const { worldDevice, cancels } = ps.getSession(sessionKey);
     await new Promise((resolve) => {
       const stopListening = worldDevice.listen((msg) => {
         fdToOpen[1].write(msg);
@@ -40,6 +43,39 @@ export class BuiltinService {
   /** Writes arguments, which includes any options  */
   private async echo({ fdToOpen }: Process, args: string[]) {
     fdToOpen[1].write(args.join(' '));
+  }
+
+  private get({ pid, fdToOpen }: Process, [srcPath, ...rest]: string[]) {
+    if (rest.length && (rest[0] !== 'as' || rest.length !== 2)) {
+      throw new ShError(`get: format \`get foo\` or \`get foo as bar\``, 1);
+    }
+
+    let cached = getCmdCache[srcPath];
+    if (!cached) {
+      const varName = srcPath.split(/[\.\[]/, 1)[0];
+      const relPath = srcPath.slice(varName.length);
+      cached = (getCmdCache[srcPath] = { varName, relPath,
+        func: Function('_v', `return _v${relPath};`) as (x: any) => any,
+      });
+    }
+
+    const rootVar = varService.lookupVar(pid, cached.varName);
+    if (rootVar) {
+      try {
+        const value = cached.func(rootVar);
+        if (value !== undefined) {
+          if (rest.length) {
+            varService.assignVar(pid, { varName: rest[1], act: { key: 'simple', value } });
+          } else {
+            fdToOpen[1].write(value);
+          }
+        }
+      } catch (e) {
+        throw new ShError(`get: path ${srcPath} not found`, 1);
+      }
+    } else {
+      throw new ShError(`get: ${cached.varName} not found`, 1);
+    }
   }
 
   /**
@@ -61,16 +97,21 @@ export class BuiltinService {
   }
 }
 
-
-/**
- * TODO
- */
 export const builtins = {
   click: true,
   echo: true,
+  get: true,
   sleep: true,
 };
 
 export type BuiltinKey = keyof typeof builtins;
 
 export const builtinService = new BuiltinService;
+
+const getCmdCache = {} as Record<string, {
+  /** Root variable name */
+  varName: string;
+  /** Path inside variable e.g. empty, `.foo`, `[0].bar` */
+  relPath: string;
+  func: (rootVar: any) => any;
+}>;
