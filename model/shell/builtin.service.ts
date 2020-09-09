@@ -25,12 +25,15 @@ export class BuiltinService {
     }
   }
 
-  private async click({ sessionKey, pid, fdToOpen }: Process, args: string[]) {
+  private async click(
+    { sessionKey, pid, fdToOpen, cleanups }: Process,
+    args: string[],
+  ) {
     if (args.length > 1) {
       throw new ShError(`click: format \`click\` or \`click p\``, 1);
     }
     
-    const { worldDevice, cancels } = ps.getSession(sessionKey);
+    const { worldDevice } = ps.getSession(sessionKey);
     await new Promise((resolve) => {
       const stopListening = worldDevice.listen((msg) => {
         // Currently only one click event
@@ -44,7 +47,7 @@ export class BuiltinService {
           resolve();
         }
       });
-      cancels.push(stopListening);
+      cleanups.push(stopListening);
     });
   }
 

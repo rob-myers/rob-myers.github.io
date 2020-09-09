@@ -55,9 +55,8 @@ export interface Session {
    * - last item is current foreground process group.
    */
   fgStack: number[];
+  /** For sending/receiving world events */
   worldDevice: FsFile<WorldEvent>;
-  /** Cancel current execution if any */
-  cancels: (() => void)[];
 }
 
 export interface Process {
@@ -93,6 +92,8 @@ export interface Process {
   toFunc: Record<string, NamedFunction>;
   lastExitCode: null | number;
   lastBgPid: null | number;
+  /** For canceling current executions */
+  cleanups: (() => void)[];
 }
 
 
@@ -153,7 +154,6 @@ const useStore = create<State>(devtools((set, get) => {
             ttyShell,
             fgStack: [sid],
             worldDevice,
-            cancels: [],
           }, session),
           nextProcId: sid + 1, // We'll create a process directly below
           nextTtyId: nextTtyId + 1,

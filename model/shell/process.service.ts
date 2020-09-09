@@ -24,8 +24,18 @@ export class ProcessService {
     }
   }
 
-  addCancel(sessionKey: string, cancel: () => void) {
-    this.getSession(sessionKey).cancels.push(cancel);
+  addCleanups(pid: number, ...cancels: (() => void)[]) {
+    this.getProcess(pid).cleanups.push(...cancels);
+  }
+
+  cleanup(pid: number) {
+    const { cleanups } = this.getProcess(pid);
+    cleanups.reverse().forEach(cleanup => cleanup());
+    cleanups.length = 0;
+  }
+
+  clearCleanups(pid: number) {
+    this.getProcess(pid).cleanups.length = 0;
   }
 
   /**
@@ -65,6 +75,7 @@ export class ProcessService {
         toFunc: {},
         lastExitCode: null,
         lastBgPid: null,
+        cleanups: [],
       }, proc),
     }));
 
@@ -199,6 +210,7 @@ export class ProcessService {
         toFunc: { ...parent.toFunc },
         lastExitCode: null,
         lastBgPid: null,
+        cleanups: [],
       };
       // Add to parent process group
       procGrp[parent.pgid].pids.push(pid);
@@ -220,10 +232,15 @@ export class ProcessService {
     return this.getProcesses()[pid];
   }
 
-  private getProcessGroup(pgid: number): ProcessGroup | null {
-    return this.getProcessGroups()[pgid] || null;
+  getProcessesInGroup(pgid: number) {
+    const group = this.getProcessGroup(pgid);
+    return group.pids.map(pid => this.getProcess(pid));
   }
 
+  private getProcessGroup(pgid: number): ProcessGroup {
+    return this.getProcessGroups()[pgid];
+  }
+  
   private getProcessGroups() {
     return useStore.getState().procGrp;
   }
@@ -231,7 +248,7 @@ export class ProcessService {
   private getProcesses() {
     return useStore.getState().proc;
   }
-
+  
   getSession(sessionKey: string): Session {
     return useStore.getState().session[sessionKey];
   }
@@ -340,7 +357,7 @@ export class ProcessService {
 
   /** We assume `pid` already resides in the group */
   removeProcessFromGroup(pid: number, pgid: number)  {
-    const group = this.getProcessGroup(pgid)!;
+    const group = this.getProcessGroup(pgid);
     group.pids = group.pids.filter(x => x !== pid);
     if (!group.pids.length) {
       delete this.getProcessGroups()[pgid];
@@ -352,8 +369,7 @@ export class ProcessService {
    */
   runInShell(parsed: Sh.FileWithMeta, sessionKey: string, cleanups: (() => void)[] = []) {
     const transpiled = transpileSh.transpile(parsed);
-    const session = this.getSession(sessionKey);
-    const pid = session.sid;
+    const pid = this.getSession(sessionKey).sid;
 
     // Must mutate to affect all descendents
     Object.assign<Sh.FileMeta, Sh.FileMeta>(parsed.meta, { pid, sessionKey, sid: pid });
@@ -370,7 +386,7 @@ export class ProcessService {
         },
         error: (err) => reject(err),
       });
-      session.cancels.push(reject, ...cleanups);
+      processService.addCleanups(pid, reject, ...cleanups);
     });
   }
 
@@ -401,7 +417,7 @@ export class ProcessService {
     }
 
     this.removeProcessFromGroup(pid, prevPgid);
-    const group = this.getProcessGroup(pgid)
+    const group = this.tryGetProcessGroup(pgid)
       || this.createProcessGroup({ key: `${pgid}`, sessionKey, pgid, pids: [] });
     group.pids.push(pid);
   }
@@ -455,6 +471,10 @@ export class ProcessService {
     const process = this.getProcess(pid);
     process.subscription?.unsubscribe();
     process.subscription = null;
+  }
+
+  private tryGetProcessGroup(pgid: number) {
+    return this.getProcessGroups()[pgid] || null;
   }
 
   /**

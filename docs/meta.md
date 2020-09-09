@@ -25,7 +25,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] simplify params for `varService.assignVar`
 
-- [ ] `session.cancels` should probably move to `process.cleanups`
+- [x] move `session.cancels` to `process.cleanups`
   > will need to handle background process failures
 
 - [ ] can `def range 'n => [...Array(n)].map((_, i) => i)'`

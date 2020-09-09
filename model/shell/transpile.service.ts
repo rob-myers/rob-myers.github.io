@@ -360,7 +360,7 @@ class TranspileShService {
           const transpiles = spawns.map(({ parsed }) => ts.transpile(parsed));
 
           const removeSpawned = () => ps.removeProcesses(spawns.map(({ pid }) => pid));
-          ps.addCancel(sessionKey, removeSpawned);
+          ps.addCleanups(pid, removeSpawned);
           await Promise.all(transpiles.map(awaitEnd));
           removeSpawned();
           break;

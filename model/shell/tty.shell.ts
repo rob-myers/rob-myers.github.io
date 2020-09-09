@@ -1,5 +1,5 @@
 import { testNever } from '@model/generic.model';
-import useStore, { Session } from '@store/shell.store';
+import useStore, { Session, Process } from '@store/shell.store';
 import { parseSh } from './parse.service';
 import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
@@ -19,9 +19,7 @@ export class TtyShell {
   private history = [] as string[];
   private readonly maxLines = 500;
   
-  private get session(): Session {
-    return useStore.getState().session[this.sessionKey];
-  }
+  private session!: Session;
 
   constructor(
     public sessionKey: string,
@@ -33,6 +31,7 @@ export class TtyShell {
     this.xterm = xterm;
     this.io.listen(this.onMessage.bind(this));
     this.prompt('$ ');
+    this.session = useStore.getState().session[this.sessionKey];
   } 
 
   private onMessage(msg: MessageFromXterm) {
@@ -60,8 +59,11 @@ export class TtyShell {
       case 'send-sig': {
         console.log('received signal', { msg, sessionKey: this.sessionKey });
         if (msg.signal === SigEnum.SIGINT) {
-          processService.stopProcess(this.session.sid);
-          this.session.cancels.reverse().forEach(cancel => cancel());
+          const processes = processService.getProcessesInGroup(this.session.sid);
+          processes.forEach(({ pid: memberPid }) => {
+            processService.stopProcess(memberPid);
+            processService.cleanup(memberPid);
+          });
           this.buffer.length = 0;
           this.prompt('$ ');
         }
@@ -110,7 +112,7 @@ export class TtyShell {
          */
         console.error(e);
       } finally {
-        this.session.cancels.length = 0;
+        processService.clearCleanups(this.session.sid);
         input.resolve();
       }
     }
