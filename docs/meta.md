@@ -10,8 +10,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
 
-- [x] no shell scripts only shell functions
-
 - [ ] `steiner` labels a point in the world
   > it could track a changing variable
 - [ ] `shift` builtin for functions
@@ -20,16 +18,17 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `read` command
   > read from stdin and forward or save to variable
 - [x] extend `click`
-  > can store points via `click p`
-  > decided against blocking click
+  > can store points via `click evt`
+  > decided against blocking click for the moment
 
-- [ ] simplify params for `varService.assignVar`
+- [ ] can `def range '([x]) => [...Array(Number(n))].map((_, i) => i)'`
+  > create shell functions from js ones
+  > `(positionals, scope) => ...` where vars a proxy into nested scope
 
+- [x] simplify params for `varService.assignVar`
+- [x] no shell scripts, only shell functions
 - [x] move `session.cancels` to `process.cleanups`
   > will need to handle background process failures
-
-- [ ] can `def range 'n => [...Array(n)].map((_, i) => i)'`
-  > i.e. create shell functions from js ones
 - [x] can `get x.y.z as p`
 - [x] access deep vars e.g. `x.y.z` or `x[4]` via e.g.
   > `Function('o', 'return o.x[4]')(varLookup)`

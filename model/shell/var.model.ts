@@ -44,7 +44,17 @@ export interface BaseAssignOpts {
 
 export interface AssignVarBase extends Partial<BaseAssignOpts> {
   varName: string;
-  act: AssignVarAction;
+  value?: any;
+  /**
+   * Shell-based assignment? If so:
+   * - `integer` is used and means integer-based
+   * - `append` is used and means concat
+   * - if array/map x=y assigns to index 0, x+=y appends 0-indexed
+   */
+  shell?: boolean;
+  /** For array/object kv assignment */
+  index?: string;
+  append?: boolean;
 }
 
 /**

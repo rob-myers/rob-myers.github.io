@@ -39,7 +39,7 @@ export class BuiltinService {
         // Currently only one click event
         if (msg.key === 'navmesh-click') {
           if (args.length) {
-            varService.assignVar(pid, {  varName: args[0], act: { key: 'simple', value: msg } });
+            varService.assignVar(pid, { varName: args[0], value: msg });
           } else {
             fdToOpen[1].write(msg);
           }
@@ -79,7 +79,7 @@ export class BuiltinService {
         const value = cached.func(rootVar);
         if (value !== undefined) {
           if (rest.length) {
-            varService.assignVar(pid, { varName: rest[1], act: { key: 'simple', value } });
+            varService.assignVar(pid, { varName: rest[1], value });
           } else {
             fdToOpen[1].write(value);
           }

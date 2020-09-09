@@ -26,32 +26,29 @@ export class VarService {
   }
 
   /**
-   * Assign value to variable:
-   * - it needn't exist, otherwise recasts 
-   * - recasts variable if necessary.
-   * - declares variable if value null.
+   * Assign value to variable in process scope,
+   * either using shell rules or by simply assigning it.
    */
   assignVar(pid: number, def: AssignVarBase) {
     // Require alphanumeric variable name where 1st char non-numeric
-    const { varName } = def;
-    if (!varName || !alphaNumeric.test(varName)) {
-      throw new ShError(`\`${varName}' not a valid identifier`, 1);
+    if (!def.varName || !alphaNumeric.test(def.varName)) {
+      throw new ShError(`\`${def.varName}' not a valid identifier`, 1);
     }
 
     // Index of 1st admissible scope referencing variable.
     // If `local` only check deepest scope, else deepest to shallowest
     const { nestedVars } = this.getProcess(pid);
     const scopeIndex = (def.local ? [nestedVars[0]] : nestedVars)
-      .findIndex((toVar) => varName in toVar);
+      .findIndex((toVar) => def.varName in toVar);
 
-    if (scopeIndex === -1) {// Create in deepest/shallowest scope
+    if (scopeIndex === -1) {// Create in deepest or shallowest scope
       const newVar = this.createVar(def);
-      this.updateNestedVar(pid, varName, def.local ? 0 : nestedVars.length - 1, newVar);
+      this.updateNestedVar(pid, def.varName, def.local ? 0 : nestedVars.length - 1, newVar);
       return;
     }
 
     /** Variable exists so use `curr` to create `next`. */
-    const curr = nestedVars[scopeIndex][varName];
+    const curr = nestedVars[scopeIndex][def.varName];
     if (curr.readonly && !def.force) {
       throw new ShError(`${curr.varName}: readonly variable`, 1);
     } else if (curr.key === 'positional') {
@@ -61,53 +58,32 @@ export class VarService {
     }
     
     const next: ProcessVar = { ...curr };
-    const { act, integer } = def;
-    integer && this.castAsIntegerBased(next);
 
-    switch (act.key) {
-      /**
-       * x=y or x+=y
-       * declare x or declare x=y
-       */
-      case 'default': {
-        if (act.value !== undefined) {// Not `declare x`
-          if (act.append && Array.isArray(curr.value) && Array.isArray(next.value)) {
-            // x+=y where x is an array
-            next.value[0] += curr.value;
-          } else {
-            this.assignVarDefault(next, act.value, integer);
-            if (act.append) {// x+=y
-              next.value = curr.value + next.value
-            }
-          }
-        }
-        break;
+    if (def.shell) {
+      if (def.integer) {
+        this.castAsIntegerBased(next);
       }
-      /**
-       * x[2]=foo
-       * x[foo]=bar when x associative
-       */
-      case 'item':
-        this.assignVarItem(next, act.index, act.value, integer);
-        break;
-      /**
-       * x=(a b c)
-       * declare x=(a b c)
-       */
-      case 'array':
-      /**
-       * x=([foo]=bar [baz]=bim)
-       */
-      case 'map':
-      case 'simple':
-        next.value = act.value || null;
-        break;
-      default:
-        throw testNever(act);
+      if (def.index !== undefined) {
+        this.assignVarItem(next, def.index, def.value, def.integer);
+      } else if (def.value === undefined) {
+        // Do nothing if `declare x`
+      } else if (def.append && (
+        curr.value instanceof Array || curr.value && typeof curr.value === 'object'
+      )) {
+        // x+=y where x is an array or object
+        next.value[0] += def.value;
+      } else {
+        this.assignVarDefault(next, def.value, def.integer);
+        if (def.append) {// x+=y
+          next.value = curr.value + next.value
+        }
+      }
+    } else {
+      next.value = def.value;
     }
 
-    // Finally, overwrite previous variable in state
-    this.updateNestedVar(pid, varName, scopeIndex, next);
+    // Finally, adjust variable scope
+    this.updateNestedVar(pid, def.varName, scopeIndex, next);
   }
 
   /**
@@ -151,35 +127,33 @@ export class VarService {
   }
 
   createVar(def: AssignVarBase): ProcessVar {
-    const { integer, act, varName } = def;
-    const base = { varName, exported: !!def.exported, readonly: !!def.readonly };
+    const base = {
+      key: 'plain' as 'plain',
+      varName: def.varName,
+      exported: !!def.exported,
+      readonly: !!def.readonly,
+    };
 
-    switch (act.key) {
-      case 'array':
-        return integer
-          ? { ...base, key: 'plain', value: act.value == null ? null : act.value.map((x) => parseInt(x) || 0) }
-          : { ...base, key: 'plain', value: act.value == null ? null : act.value };
-      case 'item': {
-        let value = null as (number | string)[] | null;
-        if (act.value) {
-          value = [];
-          value[parseInt(act.index) || 0] = integer ? (parseInt(act.value) || 0) : act.value;
+    if (def.shell) {
+      if (def.index !== undefined) {
+        if (def.value instanceof Array) {
+          throw new ShError(`${def.varName}[${def.index}]: cannot assign list to array member`, 1);
         }
-        return integer
-          ? { ...base, key: 'plain', value: value as number[] | null }
-          : { ...base, key: 'plain', value: value as string[] | null };
+        return { ...base,
+          value: Object.assign(
+            def.associative ? {} : [],
+            { [def.index]: def.integer ? parseInt(def.value) : def.value },
+          ),
+        };
       }
-      case 'default':
-      case 'simple':
-        return integer
-          ? { ...base, key: 'plain', value: (act.value == null) ? null : (parseInt(act.value) || 0) }
-          : { ...base, key: 'plain', value: (act.value == null) ? null : act.value };
-      case 'map':
-        return integer
-          ? { ...base, key: 'plain', value: (act.value == null) ? null : mapValues(act.value, (x) => parseInt(x) || 0) }
-          : { ...base, key: 'plain', value: act.value == null ? null : act.value };
-      default:
-        throw testNever(act);
+      // Standard case
+      const value = def.integer && (
+          def.value instanceof Array && def.value.map(Number)
+          || (def.value && typeof def.value === 'object' && mapValues(def.value, Number))
+        ) || def.value;
+      return { ...base, value };
+    } else {
+      return { ...base, value: def.value };
     }
   }
 

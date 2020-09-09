@@ -112,9 +112,10 @@ class TranspileShService {
                 }
                 // Update variable
                 vs.assignVar(pid, {
+                  shell: true,
                   integer: true,
                   varName: lStr,
-                  act: { key: 'default', value: String(node.number) },
+                  value: String(node.number),
                 });
                 break;
               }
@@ -125,9 +126,10 @@ class TranspileShService {
               case '=': {// Assign.
                 node.number = rNum;
                 vs.assignVar(pid, {
+                  shell: true,
                   integer: true,
                   varName: lStr,
-                  act: { key: 'default', value: String(node.number) },
+                  value: String(node.number),
                 });                  
                 // true <=> assigned value non-zero.
                 // exitCode = Number.isInteger(this.value) && this.value ? 0 : 1;
@@ -181,9 +183,10 @@ class TranspileShService {
                 default: throw testNever(node.Op);
               }
               vs.assignVar(pid, {
+                shell: true,
                 integer: true,
                 varName: childStr,
-                act: { key: 'default', value: String(node.number) },
+                value: String(node.number),
               });
               /**
                * If unary operator is:
@@ -255,7 +258,7 @@ class TranspileShService {
               value[key] = v;
             }
           }
-          vs.assignVar(pid, { ...declOpts, varName, act: { key: 'map', value } });
+          vs.assignVar(pid, { ...declOpts, varName, shell: true, value });
         } else {
           /**
            * Vanilla array.
@@ -273,7 +276,7 @@ class TranspileShService {
             Array.isArray(prevValue) && values.unshift(...(prevValue as any[]).map(String));
           }
 
-          vs.assignVar(pid, { ...declOpts, varName, act: { key: 'array', value: values } });
+          vs.assignVar(pid, { ...declOpts, varName, shell: true, value: values });
         }
       }());
     } else if (Index) {
@@ -286,7 +289,7 @@ class TranspileShService {
           : Value
             ? (await lastValueFrom(ts.Expand(Value))).value
             : ''; // If {x[i]=} then no def.value so use ''
-        vs.assignVar(pid, { ...declOpts, varName, act: { key: 'item', index, value } });
+        vs.assignVar(pid, { ...declOpts, varName, shell: true, index, value });
       }());
     } else {
       /**
@@ -305,14 +308,16 @@ class TranspileShService {
           : '';
 
         if (declOpts.array) {// declare -a x
-          vs.assignVar(pid, { ...declOpts, varName, act: { key: 'array', value: value == null ? [] : [value] } });
+          vs.assignVar(pid, { ...declOpts, varName, shell: true, value: value == null ? [] : [value] });
         } else if (declOpts.associative) {// declare -A x
-          vs.assignVar(pid, { ...declOpts, varName, act: { key: 'map', value: value == null ? {} : { 0: value } } });
+          vs.assignVar(pid, { ...declOpts, varName, shell: true, value: value == null ? {} : { 0: value }  });
         } else {// x=foo or x+=foo
           vs.assignVar(pid, {
             ...declOpts,
             varName,
-            act: { key: 'default', value, append: Append },
+            shell: true,
+            value,
+            append: Append,
           });
         }
       }());
@@ -777,7 +782,7 @@ class TranspileShService {
               if (applies) {
                 yield act.expanded(alt ? (await lastValueFrom(alt)).value : '');
                 if (symbol === '=') {// Additionally assign to param
-                  vs.assignVar(pid, { varName: def.param, act: { key: 'default', value: paramValues.join('') } });
+                  vs.assignVar(pid, { varName: def.param, shell: true, value: paramValues.join('') });
                 }
               } else {
                 yield act.expanded(paramValues.join(''));
