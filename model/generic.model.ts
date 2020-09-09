@@ -202,3 +202,8 @@ function tryJsonStringify(input: any) {
     return JSON.stringify(input);
   } catch (e) {}
 }
+
+export function isArrayOrObject(input: any) {
+  return input instanceof Array ||
+    (input && typeof input === 'object');
+}

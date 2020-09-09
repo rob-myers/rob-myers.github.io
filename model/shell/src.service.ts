@@ -213,7 +213,7 @@ export class SrcService {
       case 'IfClause': {
         const ifClauses = this.collectIfClauses(node);
         const lastIndex = ifClauses.length - 1;
-        const cs = ifClauses.map(({ Cond, Pos, ThenPos, Then }, i) => ({
+        const cs = ifClauses.map(({ Cond, Then }, i) => ({
           test: i === lastIndex ? null : Cond,
           child: Then,
         }));

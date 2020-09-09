@@ -213,25 +213,18 @@ class TranspileShService {
   private ArrayExpr({ Elems }: Sh.ArrayExpr): Observable<ArrayAssign> {
     return from(
       async function* () {
-        const pairs = Elems.map(({ Index, Value }) => ({
-          key: Index ? ts.ArithmExpr(Index) : null,
-          value: ts.Expand(Value),
-        }));
-
-        for (const { key, value } of pairs) {
-          yield {
-            key: key ? (await lastValueFrom(key)).value : null,
-            // e.g. brace expansion can provide many values
-            values: (await lastValueFrom(value)).values,
-          };
+        const output = act.arrayAsgn([], false);
+        let associative = false;
+        for (const { Index, Value } of Elems){
+          const key = Index ? (await lastValueFrom(ts.ArithmExpr(Index))).value : null;
+          const { values } = await lastValueFrom(ts.Expand(Value));
+          output.pairs.push(...values.map(value => ({ key, value })));
+          associative = associative || isNaN(Number(key));
         }
-      }()).pipe(
-        // Combine all pairs into a single 'array-asgn' message
-        reduce((agg, { key, values }) => {
-          agg.pairs.push(...values.map(value => ({ key, value })));
-          return agg;
-        }, act.arrayAsgn([])),
-      );
+        output.associative = associative;
+        // console.log({ output });
+        yield output;
+      }());
   }
 
   private Assign({
@@ -243,37 +236,39 @@ class TranspileShService {
 
     if (ArrayNode) {
       return from(async function* () {
-        const { pairs } = await lastValueFrom(ts.ArrayExpr(ArrayNode));
+        const { pairs, associative: assoc } = await lastValueFrom(ts.ArrayExpr(ArrayNode));
+        const associative = declOpts.associative || assoc;
 
-        if (declOpts.associative) {
+        if (associative) {
           /**
-           * Associative array via `declare -A`.
-           * We also forward this.associative flag via `baseAssignOpts`.
+           * Associative array via `declare -A` or e.g. x=([a]=b)
+           * We also forward associative flag.
            */
-          const value = {} as Record<string, string>; // Even if integer-valued
+          const value = {} as Record<string, string | number>;
           for (const { key, value: v } of pairs) {
             if (!key) {
               ps.warn(pid, `${varName}: ${v}: must use subscript when assigning associative array`);
             } else {
-              value[key] = v;
+              value[key] = declOpts.integer ? parseInt(v) || 0 : v;
             }
           }
-          vs.assignVar(pid, { ...declOpts, varName, shell: true, value });
+          vs.assignVar(pid, { ...declOpts, associative, varName, shell: true, value });
         } else {
           /**
            * Vanilla array.
            */
-          const values = [] as string[];
+          const values = [] as (string[] | number[]);
           let index = 0;
           pairs.map(({ key, value }) => {
-            index = key ? (parseInt(key) || 0) : index; // ?
-            values[index] = value;
+            index = key ? (parseInt(key) || 0) : index;
+            values[index] = declOpts.integer ? parseInt(value) || 0 : value;
             index++;
           });
 
           if (Append) {
-            const prevValue = vs.lookupVar(pid, varName);
-            Array.isArray(prevValue) && values.unshift(...(prevValue as any[]).map(String));
+            const prevValue = vs.lookupVar(pid, varName)
+              .map(declOpts.integer ? Number : String);
+            Array.isArray(prevValue) && (values as any[]).unshift(...prevValue);
           }
 
           vs.assignVar(pid, { ...declOpts, varName, shell: true, value: values });

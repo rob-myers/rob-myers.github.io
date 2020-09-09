@@ -1,4 +1,4 @@
-import { testNever, mapValues, last } from "@model/generic.model";
+import { testNever, mapValues, last, isArrayOrObject } from "@model/generic.model";
 import useStore, { Process } from '@store/shell.store';
 import { ProcessVar, BasePositionalVar, AssignVarBase } from "./var.model";
 import { ShError } from "./transpile.service";
@@ -67,10 +67,11 @@ export class VarService {
         this.assignVarItem(next, def.index, def.value, def.integer);
       } else if (def.value === undefined) {
         // Do nothing if `declare x`
-      } else if (def.append && (
-        curr.value instanceof Array || curr.value && typeof curr.value === 'object'
-      )) {
+      } else if (def.append && isArrayOrObject(curr.value)) {
         // x+=y where x is an array or object
+        if (isArrayOrObject(next.value)) {
+          throw new ShError(`${next.varName}[0]: cannot assign list to array member`, 1);
+        }
         next.value[0] += def.value;
       } else {
         this.assignVarDefault(next, def.value, def.integer);
@@ -93,10 +94,12 @@ export class VarService {
   assignVarDefault(v: ProcessVar, value: any, integer?: boolean): void {
     switch (v.key) {
       case 'plain': {
-        if (v.value instanceof Array) {
-          v.value[0] = integer ? parseInt(value) || 0 : value;
-        } else if (v.value && typeof v.value === 'object') {
-          v.value[0] = integer ? parseInt(value) || 0 : value;
+        if (isArrayOrObject(v.value)) {
+          if (isArrayOrObject(value)) {
+            v.value = value;
+          } else {
+            v.value[0] = integer ? parseInt(value) || 0 : value;
+          }
         } else {
           v.value = integer ? parseInt(value) || 0 : value;
         }
