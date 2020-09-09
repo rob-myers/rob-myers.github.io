@@ -10,9 +10,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
 
-- [ ] `session.cancels` should probably move to `process.cleanups`
-  > will need to handle background process failures
-
 - [x] no shell scripts only shell functions
 
 - [ ] `steiner` labels a point in the world
@@ -22,9 +19,14 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > spawn an actor at a position
 - [ ] `read` command
   > read from stdin and forward or save to variable
-- [ ] extend `click`
+- [x] extend `click`
   > can store points via `click p`
-  > blocking clicks via `click --block` or `click -b`
+  > decided against blocking click
+
+- [ ] simplify params for `varService.assignVar`
+
+- [ ] `session.cancels` should probably move to `process.cleanups`
+  > will need to handle background process failures
 
 - [ ] can `def range 'n => [...Array(n)].map((_, i) => i)'`
   > i.e. create shell functions from js ones
@@ -34,10 +36,10 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] can store/retrieve arbitrary objects in bash variables
   > remove typing and massively simplify
 
-- [ ] functions receive prefixed variables
+- [ ] shell functions receive prefixed variables
 - [x] support variable lookup via simple command
   > can also redirect
-- [x] functions receive positionals in own scope
+- [x] shell functions receive positionals in own scope
 - [x] justify decision that pipelines are just parallel processes
   > behaviour trees use parallel
   > we're wrapping `Promise.all()`

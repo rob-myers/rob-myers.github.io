@@ -3,6 +3,7 @@ import { MouseEvent as ThreeMouseEvent } from 'react-three-fiber';
 import useEnvStore from "@store/env.store";
 import useGeomStore from "@store/geom.store";
 import { Coord3 } from "@model/three/three.model";
+import { NavmeshClick } from "@model/shell/events.model";
 
 const undoGltfRotation = [Math.PI/2, 0, 0] as Coord3;
 
@@ -23,7 +24,8 @@ const Room: React.FC<Props> = (props) => {
     if (Math.abs(e.point.z) < 0.0001) {// Only floor clicks
       console.log({ clickedRoom: e });
       const position = api.geom.project(e.point);
-      env?.worldDevice.write({ key: 'click', position });
+      const event: NavmeshClick = { key: 'navmesh-click', position };
+      env?.worldDevice.write(event);
     }
   }, [env]);
 

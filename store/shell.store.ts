@@ -12,6 +12,7 @@ import { ShellStream } from '@model/shell/shell.stream';
 import { FsFile } from "@model/shell/file.model";
 import { addToLookup, removeFromLookup } from './store.util';
 import { fileService } from '@model/shell/file.service';
+import { WorldEvent } from '@model/shell/events.model';
 
 export interface State {
   /** Next tty identifier, inducing e.g. tty-2 and sessionKey */
@@ -54,7 +55,7 @@ export interface Session {
    * - last item is current foreground process group.
    */
   fgStack: number[];
-  worldDevice: FsFile;
+  worldDevice: FsFile<WorldEvent>;
   /** Cancel current execution if any */
   cancels: (() => void)[];
 }

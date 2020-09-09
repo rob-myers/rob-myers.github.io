@@ -25,16 +25,24 @@ export class BuiltinService {
     }
   }
 
-  /**
-   * TODO only listen for clicks; use typings
-   */
-  private async click({ sessionKey, fdToOpen }: Process, _args: string[]) {
+  private async click({ sessionKey, pid, fdToOpen }: Process, args: string[]) {
+    if (args.length > 1) {
+      throw new ShError(`click: format \`click\` or \`click p\``, 1);
+    }
+    
     const { worldDevice, cancels } = ps.getSession(sessionKey);
     await new Promise((resolve) => {
       const stopListening = worldDevice.listen((msg) => {
-        fdToOpen[1].write(msg);
-        stopListening();
-        resolve();
+        // Currently only one click event
+        if (msg.key === 'navmesh-click') {
+          if (args.length) {
+            varService.assignVar(pid, {  varName: args[0], act: { key: 'simple', value: msg } });
+          } else {
+            fdToOpen[1].write(msg);
+          }
+          stopListening();
+          resolve();
+        }
       });
       cancels.push(stopListening);
     });
@@ -45,6 +53,9 @@ export class BuiltinService {
     fdToOpen[1].write(args.join(' '));
   }
 
+  /**
+   * Deep var lookup, either output to stdout or can save as variable.
+   */
   private get({ pid, fdToOpen }: Process, [srcPath, ...rest]: string[]) {
     if (rest.length && (rest[0] !== 'as' || rest.length !== 2)) {
       throw new ShError(`get: format \`get foo\` or \`get foo as bar\``, 1);
