@@ -30,7 +30,7 @@ class ParseShService {
     // console.log({ syntax });
     const parser = syntax.NewParser(
       syntax.KeepComments(false),
-      // syntax.Variant(syntax.LangBash),
+      syntax.Variant(syntax.LangBash),
       // syntax.Variant(syntax.LangPOSIX),
       // syntax.Variant(syntax.LangMirBSDKorn),
     );
@@ -378,13 +378,14 @@ class ParseShService {
   });
   
   private DblQuoted = (
-    { Pos, End, Dollar, Parts, Position }: Sh.DblQuoted
+    { Pos, End, Dollar, Parts, Left, Right }: Sh.DblQuoted
   ): DblQuoted => ({
     ...this.base({ Pos, End }),
     type: 'DblQuoted',
     Dollar,
     Parts: Parts.map(this.WordPart),
-    Position: this.pos(Position),
+    Left: this.pos(Left),
+    Right: this.pos(Right),
   });
   
   /**
@@ -749,24 +750,31 @@ class ParseShService {
     } as FileWithMeta;
   }
 
+  /**
+   * https://github.com/mvdan/sh/blob/fdf7a3fc92bd63ca6bf0231df97875b8613c0a8a/syntax/tokens.go
+   */
   private readonly opMetas: {
     name: string;
     value: null | string;
   }[] = [
     { name: 'illegalTok', value: null },// 0
+
     { name: '_EOF', value: null },
     { name: '_Newl', value: null },
     { name: '_Lit', value: null },
     { name: '_LitWord', value: null },
     { name: '_LitRedir', value: null },
+
     { name: 'sglQuote', value: '\'' },
     { name: 'dblQuote', value: '"' },
     { name: 'bckQuote', value: '`' },
+
     { name: 'and', value: '&' },
     { name: 'andAnd', value: '&&' },// 10
     { name: 'orOr', value: '||' },
     { name: 'or', value: '|' },
     { name: 'orAnd', value: '|&' },
+
     { name: 'dollar', value: '$' },
     { name: 'dollSglQuote', value: '$\'' },
     { name: 'dollDblQuote', value: '$"' },
@@ -778,16 +786,20 @@ class ParseShService {
     { name: 'dblLeftBrack', value: '[[' },
     { name: 'leftParen', value: '(' },
     { name: 'dblLeftParen', value: '((' },
+
     { name: 'rightBrace', value: '}' },
     { name: 'rightBrack', value: ']' },
     { name: 'rightParen', value: ')' },
     { name: 'dblRightParen', value: '))' },
     { name: 'semicolon', value: ';' },
+
     { name: 'dblSemicolon', value: ';;' },
     { name: 'semiAnd', value: ';&' },
     { name: 'dblSemiAnd', value: ';;&' },
     { name: 'semiOr', value: ';|' },
+
     { name: 'exclMark', value: '!' },
+    { name: 'tilde', value: '~' },
     { name: 'addAdd', value: '++' },
     { name: 'subSub', value: '--' },
     { name: 'star', value: '*' },
@@ -796,6 +808,7 @@ class ParseShService {
     { name: 'nequal', value: '!=' },
     { name: 'lequal', value: '<=' },
     { name: 'gequal', value: '>=' },
+
     { name: 'addAssgn', value: '+=' },
     { name: 'subAssgn', value: '-=' },
     { name: 'mulAssgn', value: '*=' },
@@ -806,6 +819,7 @@ class ParseShService {
     { name: 'xorAssgn', value: '^=' },
     { name: 'shlAssgn', value: '<<=' },
     { name: 'shrAssgn', value: '>>=' },
+    
     { name: 'rdrOut', value: '>' },
     { name: 'appOut', value: '>>' },
     { name: 'rdrIn', value: '<' },
@@ -818,8 +832,10 @@ class ParseShService {
     { name: 'wordHdoc', value: '<<<' },
     { name: 'rdrAll', value: '&>' },
     { name: 'appAll', value: '&>>' },
+
     { name: 'cmdIn', value: '<(' },
     { name: 'cmdOut', value: '>(' },
+
     { name: 'plus', value: '+' },
     { name: 'colPlus', value: ':+' },
     { name: 'minus', value: '-' },
@@ -840,6 +856,7 @@ class ParseShService {
     { name: 'slash', value: '/' },
     { name: 'dblSlash', value: '//' },
     { name: 'colon', value: ':' },
+
     { name: 'tsExists', value: '-e' },
     { name: 'tsRegFile', value: '-f' },
     { name: 'tsDirect', value: '-d' },
@@ -864,6 +881,7 @@ class ParseShService {
     { name: 'tsOptSet', value: '-o' },
     { name: 'tsVarSet', value: '-v' },
     { name: 'tsRefVar', value: '-R' },
+
     { name: 'tsReMatch', value: '=~' },
     { name: 'tsNewer', value: '-nt' },
     { name: 'tsOlder', value: '-ot' },
@@ -874,6 +892,7 @@ class ParseShService {
     { name: 'tsGeq', value: '-ge' },
     { name: 'tsLss', value: '-lt' },
     { name: 'tsGtr', value: '-gt' },
+
     { name: 'globQuest', value: '?(' },
     { name: 'globStar', value: '*(' },
     { name: 'globPlus', value: '+(' },
