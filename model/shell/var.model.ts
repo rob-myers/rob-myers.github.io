@@ -55,6 +55,7 @@ type AssignVarAction = (
   | { key: 'item'; index: string; value?: string }// x[0]=foo, x[foo]=bar, x[foo]=
   | { key: 'default'; value?: string; append?: boolean }// string or integer
   | { key: 'map'; value?: Record<string, string> }// ( [a]=1, [b]=2, [c]=3 )
+  | { key: 'simple'; value: any }
 );
 
 /**

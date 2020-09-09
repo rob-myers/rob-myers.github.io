@@ -66,20 +66,6 @@ export class VarService {
 
     switch (act.key) {
       /**
-       * x=(a b c)
-       * declare x=(a b c)
-       */
-      case 'array':
-        next.value = act.value || null;
-        break;
-      /**
-       * x[2]=foo
-       * x[foo]=bar when x associative
-       */
-      case 'item':
-        this.assignVarItem(next, act.index, act.value, integer);
-        break;
-      /**
        * x=y or x+=y
        * declare x or declare x=y
        */
@@ -87,8 +73,7 @@ export class VarService {
         if (act.value !== undefined) {// Not `declare x`
           if (act.append && Array.isArray(curr.value) && Array.isArray(next.value)) {
             // x+=y where x is an array
-            // We choose to concatenate rather than set 0th entry
-            next.value = curr.value.concat(next.value);
+            next.value[0] += curr.value;
           } else {
             this.assignVarDefault(next, act.value, integer);
             if (act.append) {// x+=y
@@ -99,9 +84,22 @@ export class VarService {
         break;
       }
       /**
+       * x[2]=foo
+       * x[foo]=bar when x associative
+       */
+      case 'item':
+        this.assignVarItem(next, act.index, act.value, integer);
+        break;
+      /**
+       * x=(a b c)
+       * declare x=(a b c)
+       */
+      case 'array':
+      /**
        * x=([foo]=bar [baz]=bim)
        */
       case 'map':
+      case 'simple':
         next.value = act.value || null;
         break;
       default:
@@ -172,6 +170,7 @@ export class VarService {
           : { ...base, key: 'plain', value: value as string[] | null };
       }
       case 'default':
+      case 'simple':
         return integer
           ? { ...base, key: 'plain', value: (act.value == null) ? null : (parseInt(act.value) || 0) }
           : { ...base, key: 'plain', value: (act.value == null) ? null : act.value };
