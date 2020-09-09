@@ -7,9 +7,6 @@ import { BaseAssignOpts } from './var.model';
 import { ParameterDef } from './parameter.model';
 import { RedirectDef } from './file.model';
 
-/** Provides a unique integer for every node */
-let nodeCount = 0;
-
 /**
  * Parse shell code using npm module mvdan-sh.
  */
@@ -142,9 +139,8 @@ class ParseShService {
   private base = ({ Pos, End }: Sh.BaseNode): BaseNode => {
     // console.log({ Pos, End });
     return {
-      Pos: this.pos(Pos()),
-      End: this.pos(End()),
-      uid: nodeCount++, // Uid over all parse trees
+      // Pos: this.pos(Pos()),
+      // End: this.pos(End()),
       meta: this.mockMeta, // Gets mutated
       parent: null, // Gets overwritten
     };
@@ -917,15 +913,12 @@ export interface Pos {
  * Our notion of base node, as opposed to `MvdanSh.BaseNode`.
  */
 export interface BaseNode {
-  End: Pos;
-  Pos: Pos;
+  // End: Pos;
+  // Pos: Pos;
 
   meta: FileMeta; // Single instance for entire tree
   /** Reference to parent node  */
   parent: null | ParsedSh;
-
-  /** Node id is global across all parse trees */
-  uid: number;
 
   /** Used for test expansion */
   boolean?: boolean;
