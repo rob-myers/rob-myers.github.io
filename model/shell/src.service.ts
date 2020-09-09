@@ -204,7 +204,7 @@ export class SrcService {
 
       case 'SglQuoted': {
         const inner = node.Value.replace(/\n/g, '$$\'\\n\'');
-        return node.Dollar ? `$'${inner}'` : inner;
+        return `${node.Dollar ? '$' : ''}'${inner}'`;
       }
         
       case 'FuncDecl':
