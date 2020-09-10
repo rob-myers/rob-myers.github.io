@@ -1,5 +1,5 @@
 import { Observable, from, of, lastValueFrom, throwError } from 'rxjs';
-import { concatMap, reduce, map, tap, catchError } from 'rxjs/operators';
+import { reduce, map, tap, catchError } from 'rxjs/operators';
 import globrex from 'globrex';
 import shortId from 'shortid';
 
@@ -325,38 +325,36 @@ class TranspileShService {
     const stmts = [cmds[0].X].concat(cmds.map(({ Y }) => Y));
 
     return from(async function*() {
-      const cs = stmts.map((stmt) => ts.Stmt(stmt));
-
       switch (node.Op) {
         case '&&': {
-          for (const child of cs) {
-            await awaitEnd(child);
+          // Assume thrown errors already caught
+          for (const stmt of stmts) {
+            await awaitEnd(ts.Stmt(stmt));
+            node.exitCode = stmt.exitCode;
+            if (node.exitCode) {
+              break;
+            }
           }
           break;
         }
         case '||': {
-          for (const child of cs) {
-            try {
-              await awaitEnd(child);
+          // Assume thrown errors already caught
+          for (const stmt of stmts) {
+            await awaitEnd(ts.Stmt(stmt));
+            node.exitCode = stmt.exitCode;
+            if (node.exitCode === 0) {
               break;
-            } catch (e) {
-              if (e instanceof ShError) {
-                ts.handleShError(node, e);
-                continue;
-              }
-              throw e;
             }
           }
           break;
         }
         case '|': {
-          const { pid, sessionKey } = node.meta;
           const background = !ps.isInteractiveShell(node);
-          const spawns = stmts.map(stmt => ps.spawnProcess(pid, stmt, background));
+          const spawns = stmts.map(stmt => ps.spawnProcess(node.meta.pid, stmt, background));
           const transpiles = spawns.map(({ parsed }) => ts.transpile(parsed));
 
           const removeSpawned = () => ps.removeProcesses(spawns.map(({ pid }) => pid));
-          ps.addCleanups(pid, removeSpawned);
+          ps.addCleanups(node.meta.pid, removeSpawned);
           await Promise.all(transpiles.map(awaitEnd));
           removeSpawned();
           break;
@@ -364,41 +362,45 @@ class TranspileShService {
         default:
           throw new ShError(`binary command ${node.Op} unsupported`, 2);
       }
+
+      ps.setExitCode(node.meta.pid, node.exitCode || 0);
     }());
   }
 
   private Block(node: Sh.Block) {
-    return from(node.Stmts).pipe(
-      concatMap(x => this.Stmt(x)),
-    );
+    return this.stmts(node, node.Stmts);
   }
 
   private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
     return from(async function* () {
-      const { pid } = node.meta;
       const args = await ts.performShellExpansion(node.Args);
       console.log('args', args);
       node.exitCode = 0;
       
-      if (args.length) {// Run builtin or invoke function
-        const [command, ...cmdArgs] = args;
-        let func: NamedFunction;
-        
-        if (bs.isBuiltinCommand(command)) {
-          await ts.redirect(pid, () =>
-            bs.runBuiltin(node, command, cmdArgs),
-            extend.Redirs,
-          );
-        } else if (func = vs.getFunction(pid, command)) {
-          /**
-           * TODO function needs vars in local scope
-           */
-          await ps.invokeFunction(pid, func, cmdArgs);
-        } else {
-          throw new ShError(`${command}: unrecognised command`, 1);
+      try {
+        if (args.length) {// Run builtin or invoke function
+          const [command, ...cmdArgs] = args;
+          let func: NamedFunction;
+          
+          if (bs.isBuiltinCommand(command)) {
+            await ts.redirect(node.meta.pid, () =>
+              bs.runBuiltin(node, command, cmdArgs),
+              extend.Redirs,
+            );
+          } else if (func = vs.getFunction(node.meta.pid, command)) {
+            /**
+             * TODO function needs vars in local scope
+             */
+            await ps.invokeFunction(node.meta.pid, func, cmdArgs);
+          } else {
+            throw new ShError(`${command}: command not found`, 127);
+          }
+        } else {// Assign vars in this process
+          await ts.redirect(node.meta.pid, () => ts.assignVars(node), extend.Redirs);
         }
-      } else {// Assign vars in this process
-        await ts.redirect(pid, () => ts.assignVars(node), extend.Redirs);
+      } catch (e) {
+        ts.handleShError(node, e);
+        node.parent!.exitCode = node.exitCode;
       }
     }());
   }
@@ -407,11 +409,14 @@ class TranspileShService {
    * Construct a simple command (CallExpr), or a compound command.
    */
   private Command(node: null | Sh.Command, extend: CommandExtension): Observable<ProcessAct> {
-        
+
     if (!node) {// We don't support pure redirections
-      return throwError(new ShError(`simple commands without args or assigns are unsupported`, 2));
-    } else if (node.type === 'CallExpr') {
-       // Run simple command
+      return from(function*() {
+        ts.handleShError(extend.Redirs[0].parent!,
+          new ShError(`simple commands without args or assigns are unsupported`, 2)
+        );
+      }());
+    } else if (node.type === 'CallExpr') {// Run simple command
       return this.CallExpr(node, extend);
     }
 
@@ -419,42 +424,45 @@ class TranspileShService {
     return from(async function*() {
       let cmd: Observable<ProcessAct> = null as any;
       node.exitCode = 0;
-  
-      switch (node.type) {
-        case 'ArithmCmd': cmd = ts.ArithmCmd(node); break;
-        case 'BinaryCmd': cmd = ts.BinaryCmd(node); break;
-        case 'Block': cmd = ts.Block(node); break;
-        // case 'CaseClause': child = this.CaseClause(Cmd); break;
-        // case 'CoprocClause': {
-        //   /**
-        //    * TODO
-        //    */
-        //   child = this.CoprocClause(Cmd);
-        //   break;
-        // }
-        case 'DeclClause': cmd = ts.DeclClause(node); break;
-        // case 'ForClause': child = this.ForClause(Cmd); break;
-        case 'FuncDecl': cmd = ts.FuncDecl(node); break;
-        // case 'IfClause': child = this.IfClause(Cmd); break;
-        // case 'LetClause': child = this.LetClause(Cmd); break;
-        // case 'Subshell': child = this.Subshell(Cmd); break;
-        // case 'TestClause': child = this.TestClause(Cmd); break;
-        // case 'TimeClause': child = this.TimeClause(Cmd); break;
-        // case 'WhileClause': child = this.WhileClause(Cmd); break;
-        // default: throw testNever(Cmd);
-        default: return;
-      }
 
-      const { Redirs, background, negated } = extend;
-      if (background) {
-        // TODO
-        // yield* this.runInBackground(dispatch, processKey);
-      } else {
-        // TODO apply/remove redirections
-        const redirects = Redirs.map((x) => ts.Redirect(x));
-        await awaitEnd(cmd);
+      try {
+        switch (node.type) {
+          case 'ArithmCmd': cmd = ts.ArithmCmd(node); break;
+          case 'BinaryCmd': cmd = ts.BinaryCmd(node); break;
+          case 'Block': cmd = ts.Block(node); break;
+          // case 'CaseClause': child = this.CaseClause(Cmd); break;
+          // case 'CoprocClause': {
+          //   /**
+          //    * TODO
+          //    */
+          //   child = this.CoprocClause(Cmd);
+          //   break;
+          // }
+          case 'DeclClause': cmd = ts.DeclClause(node); break;
+          // case 'ForClause': child = this.ForClause(Cmd); break;
+          case 'FuncDecl': cmd = ts.FuncDecl(node); break;
+          // case 'IfClause': child = this.IfClause(Cmd); break;
+          // case 'LetClause': child = this.LetClause(Cmd); break;
+          // case 'Subshell': child = this.Subshell(Cmd); break;
+          // case 'TestClause': child = this.TestClause(Cmd); break;
+          // case 'TimeClause': child = this.TimeClause(Cmd); break;
+          // case 'WhileClause': child = this.WhileClause(Cmd); break;
+          // default: throw testNever(Cmd);
+          default: return;
+        }
+  
+        const { Redirs, background, negated } = extend;
+        if (background) {
+          // TODO
+          // yield* this.runInBackground(dispatch, processKey);
+        } else {
+          // TODO apply/remove redirections
+          const redirects = Redirs.map((x) => ts.Redirect(x));
+          await awaitEnd(cmd);
+        }
+      } catch (e) {
+        ts.handleShError(node, e);
       }
-      ps.setExitCode(node.meta.pid, node.exitCode);
     }());
 
     // return new CompoundComposite({// Compound command.
@@ -620,18 +628,25 @@ class TranspileShService {
   }
 
   private File(node: Sh.File): Observable<ProcessAct> {
-    return from(node.Stmts).pipe(
-      concatMap(x => this.Stmt(x)),
+    return ts.stmts(node, node.Stmts).pipe(
       catchError((e, _src) => {
-        if (e instanceof ShError) {
-          ts.handleShError(node, e);
-        } else {
-          console.error(`${node.meta.sessionKey}: pid ${node.meta.pid}: internal error`);
-          console.error(e);
-        }
+        // SAFETY i.e. do not expect errors here
+        console.error('caught top level error');
+        ts.handleShError(node, e);
         return of();
-      }),
+      })
     );
+  }
+
+  private stmts(parent: Sh.ParsedSh, nodes: Sh.Stmt[]) {
+    return from(async function*() {
+      // Assume thrown errors already caught
+      for (const node of nodes) {
+        await awaitEnd(ts.Stmt(node));
+        parent.exitCode = node.exitCode;
+      }
+      ps.setExitCode(parent.meta.pid, parent.exitCode || 0);
+    }());
   }
 
   private FuncDecl(node: Sh.FuncDecl) {
@@ -1062,10 +1077,18 @@ class TranspileShService {
     }
   }
 
-  private handleShError({ meta }: Sh.BaseNode, e: ShError) {
-    console.error(`${meta.sessionKey}: pid ${meta.pid}: ${e.message}`);
-    ps.warn(meta.pid, e.message);
-    ps.setExitCode(meta.pid, e.exitCode);
+  private handleShError(node: Sh.BaseNode, e: any) {
+    if (e instanceof ShError) {
+      // console.error(`${sessionKey}: pid ${pid}: ${e.message}`);
+      ps.warn(node.meta.pid, e.message);
+      node.exitCode = e.exitCode;
+    } else {
+      console.error(`${node.meta.sessionKey}: pid ${node.meta.pid}: internal error: ${e.message}`);
+      console.error(e);
+      ps.warn(node.meta.pid, `internal error: ${e.message}`);
+      node.exitCode = 2;
+    }
+    ps.setExitCode(node.meta.pid, node.exitCode);
   }
 
   private extractSpecialArithmExpr(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {

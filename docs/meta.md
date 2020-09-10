@@ -25,7 +25,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   >  e.g. `def range '({1: n}) => [...Array(Number(n))].map((_, i) => i)'`
   > `(scope) => ...` where `scope` a get/set proxy for nested scope
 
-- [ ] builtins propagate exit codes
+- [x] align exit behaviour to default shell behaviour
+- [x] builtins propagate exit codes
 
 - [x] simplify params for `varService.assignVar`
 - [x] no shell scripts, only shell functions
