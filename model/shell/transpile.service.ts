@@ -352,11 +352,20 @@ class TranspileShService {
           const background = !ps.isInteractiveShell(node);
           const spawns = stmts.map(stmt => ps.spawnProcess(node.meta.pid, stmt, background));
           const transpiles = spawns.map(({ parsed }) => ts.transpile(parsed));
+          // const uid = shortId.generate();
+          // const wires = spawns.slice(0, -1).map(i => fileService.makeWire(`/tmp/${uid}.${i}`));
+          // wires.forEach((wire, i) => {
+          //   ps.openFile(spawns[i].pid, { path: wire.key, fd: 1, mode: 'WRONLY' });
+          //   ps.openFile(spawns[i + 1].pid, { path: wire.key, fd: 0, mode: 'RDONLY' });
+          // });
 
-          const removeSpawned = () => ps.removeProcesses(spawns.map(({ pid }) => pid));
-          ps.addCleanups(node.meta.pid, removeSpawned);
+          const cleanup = () => {
+            ps.removeProcesses(spawns.map(({ pid }) => pid));
+            // wires.forEach(({ key }) => fileService.unlinkFile(key));
+          };
+          ps.addCleanups(node.meta.pid, cleanup);
           await Promise.all(transpiles.map(awaitEnd));
-          removeSpawned();
+          cleanup();
           break;
         }
         default:
@@ -373,34 +382,47 @@ class TranspileShService {
 
   private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
     return from(async function* () {
+      node.exitCode = 0;
+      const { pid } = node.meta;
       const args = await ts.performShellExpansion(node.Args);
       console.log('args', args);
-      node.exitCode = 0;
       
       try {
-        if (args.length) {// Run builtin or invoke function
-          const [command, ...cmdArgs] = args;
-          let func: NamedFunction;
-          
+        const [command, ...cmdArgs] = args;
+        let func: NamedFunction;
+        ps.pushRedirectScope(pid);
+        await ts.applyRedirects(node, extend.Redirs);
+
+        if (args.length) {
           if (bs.isBuiltinCommand(command)) {
-            await ts.redirect(node.meta.pid, () =>
-              bs.runBuiltin(node, command, cmdArgs),
-              extend.Redirs,
-            );
-          } else if (func = vs.getFunction(node.meta.pid, command)) {
-            /**
-             * TODO function needs vars in local scope
-             */
-            await ps.invokeFunction(node.meta.pid, func, cmdArgs);
+            // Run builtin 
+            await bs.runBuiltin(node, command, cmdArgs);
+          } else if (func = vs.getFunction(pid, command)) {
+            // Run function with variables
+            try {
+              vs.pushVarScope(pid);
+              /**
+               * TODO ensure assigned vars have `local` flag
+               */
+              await ts.assignVars(node, true);
+// console.log(JSON.stringify(ps.getProcess(pid).nestedVars));
+              await ps.invokeFunction(pid, func, cmdArgs);
+            } finally {
+              vs.popVarScope(pid);
+// console.log(JSON.stringify(ps.getProcess(pid).nestedVars));
+            }
           } else {
             throw new ShError(`${command}: command not found`, 127);
           }
-        } else {// Assign vars in this process
-          await ts.redirect(node.meta.pid, () => ts.assignVars(node), extend.Redirs);
+        } else {
+          // Assign vars in this process
+          await ts.assignVars(node);
         }
       } catch (e) {
         ts.handleShError(node, e);
         node.parent!.exitCode = node.exitCode;
+      } finally {
+        ps.popRedirectScope(pid);
       }
     }());
   }
@@ -409,14 +431,10 @@ class TranspileShService {
    * Construct a simple command (CallExpr), or a compound command.
    */
   private Command(node: null | Sh.Command, extend: CommandExtension): Observable<ProcessAct> {
-
-    if (!node) {// We don't support pure redirections
-      return from(function*() {
-        ts.handleShError(extend.Redirs[0].parent!,
-          new ShError(`simple commands without args or assigns are unsupported`, 2)
-        );
-      }());
-    } else if (node.type === 'CallExpr') {// Run simple command
+    if (!node) {
+      return this.unsupportedNode(extend.Redirs[0], 'pure redirects are unsupported');
+    } else if (node.type === 'CallExpr') {
+      // Run simple command
       return this.CallExpr(node, extend);
     }
 
@@ -464,14 +482,6 @@ class TranspileShService {
         ts.handleShError(node, e);
       }
     }());
-
-    // return new CompoundComposite({// Compound command.
-    //   key: CompositeType.compound,
-    //   child,
-    //   redirects: Redirs.map((x) => this.Redirect(x)),
-    //   background,
-    //   negated,
-    // });
   }
 
   /**
@@ -1068,16 +1078,28 @@ class TranspileShService {
     });
   }
 
-  private async assignVars(node: Sh.CallExpr) {
-    for (const assign of node.Assigns) {
-      try {
-        await awaitEnd(this.Assign(assign));
-      } catch (e) {
-        node.exitCode = e instanceof ShError ? e.exitCode : 2;
-        throw e;
+  private async applyRedirects(parent: Sh.CallExpr, redirects: Sh.Redirect[]) {
+    try {
+      for (const redirect of redirects) {
+        await awaitEnd(this.Redirect(redirect));
       }
+    } catch (e) {
+      this.handleShError(parent, e);
     }
   }
+
+  private async assignVars(node: Sh.CallExpr, local = false) {
+    try {
+      for (const assign of node.Assigns) {
+        assign.declOpts = assign.declOpts || {};
+        assign.declOpts.local = local;
+        await awaitEnd(this.Assign(assign));
+      }
+    } catch (e) {
+      this.handleShError(node, e);
+    }
+  }
+
 
   private handleShError(node: Sh.BaseNode, e: any) {
     if (e instanceof ShError) {
@@ -1311,22 +1333,10 @@ class TranspileShService {
     }
   }
 
-  private async redirect(pid: number, code: () => Promise<void>, redirects: Sh.Redirect[]) {
-    if (!redirects.length) {
-      await code();
-      return;
-    }
-    try {
-      ps.pushRedirectScope(pid);
-      for (const redirect of redirects) {
-        await awaitEnd(this.Redirect(redirect));
-      }
-      await code();
-      ps.popRedirectScope(pid);
-    } catch (e) {
-      ps.popRedirectScope(pid);
-      throw e;
-    }
+  private unsupportedNode(node: Sh.ParsedSh, msg: string) {
+    return from(function*() {
+      ts.handleShError(node, new ShError(msg, 2));
+    }());
   }
 
 }

@@ -208,7 +208,7 @@ export class SrcService {
       }
         
       case 'FuncDecl':
-        return `${node.Name}() ${this.src(node.Body)}`;
+        return `${node.Name.Value}() ${this.src(node.Body)}`;
       
       case 'IfClause': {
         const ifClauses = this.collectIfClauses(node);

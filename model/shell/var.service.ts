@@ -6,7 +6,7 @@ import { ShError } from "./transpile.service";
 import { FileMeta } from "./parse.service";
 import { processService } from "./process.service";
 
-const alphaNumeric = /^[a-z_][a-z0-9_]*/;
+const alphaNumeric = /^[a-z_][a-z0-9_]*/i;
 
 class VarService {
 
@@ -280,6 +280,10 @@ class VarService {
     process.nestedVars = process.nestedVars.slice(scopeIndex + 1);
   }
 
+  popVarScope(pid: number) {
+    this.getProcess(pid).nestedVars.shift();
+  }
+
   /** Create new scope containing positive positionals and 0. */
   pushPositionalsScope(pid: number, posPositionals: string[]) {
     const { nestedVars } = this.getProcess(pid);
@@ -295,6 +299,10 @@ class VarService {
     // Include $0 from earliest scope
     Object.assign(toVar, { 0: (last(nestedVars)!)[0] });
     nestedVars.unshift(toVar);
+  }
+
+  pushVarScope(pid: number) {
+    this.getProcess(pid).nestedVars.unshift({});
   }
 
   private castAsIntegerBased(v: ProcessVar) {

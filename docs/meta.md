@@ -15,11 +15,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > it could track a changing variable
 - [ ] `spawn` command
   > spawn an actor at a position
-- [ ] `read` command
-  > read from stdin and forward or save to variable
 
-- [ ] shell functions receive prefixed variables `x=y foo p`
-- [ ] pipes redirect
+- [ ] can write to `/var/foo` to write to variable foo 
+- [x] shell functions receive prefixed variables `x=y foo p`
 
 - [x] extend `click`
   > can store points via `click evt`

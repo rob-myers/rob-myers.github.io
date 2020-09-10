@@ -6,7 +6,6 @@ export type ProcessAct = (
   | ArrayAssign
   | Expanded
   | Unimplemented
-  | WorldCoords
   // ...
 );
 
@@ -42,12 +41,6 @@ export interface Expanded {
 
 interface Unimplemented {
   key: 'unimplemented';
-}
-
-interface WorldCoords {
-  key: 'world-coords';
-  x: number;
-  y: number;  
 }
 
 export enum SigEnum {
