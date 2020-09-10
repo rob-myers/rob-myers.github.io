@@ -168,7 +168,7 @@ export class SrcService {
           case ParamType.default:
             return `\${${param}${def.colon ? `:${def.symbol}${this.src(def.alt)}` : ''}}`;
           case ParamType.keys:
-            return `\${!${param}[${def.split ? '@' : '*'}]}`;
+            return `\${!${param}}`;
           case ParamType.length:
             return `\${${param}}${def.of === 'values' ? '[@]' : ''}`;
           case ParamType.plain:
