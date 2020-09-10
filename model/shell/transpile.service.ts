@@ -14,7 +14,7 @@ import { processService as ps } from './process.service';
 import {  RedirectDef } from './file.model';
 import { builtinService as bs } from './builtin.service';
 import { srcService as ss } from './src.service';
-import { NamedFunction, ProcessVar } from './var.model';
+import { NamedFunction } from './var.model';
 
 class TranspileShService {
 
@@ -31,11 +31,7 @@ class TranspileShService {
     return from(async function* () {
       await ts.runArithmExpr(node.X);
       // Exit code 0 iff `input.number` is a non-zero integer
-      if (node.number && Number.isInteger(node.number)) {
-        node.exitCode = node.number ? 0 : 1;
-      } else {
-        node.exitCode = 1;
-      }
+      node.exitCode = node.number && Number.isInteger(node.number) ? 0 : 1;
       yield act.expanded(`${node.number || 0}`);
     }());
   }
@@ -410,10 +406,7 @@ class TranspileShService {
   /**
    * Construct a simple command (CallExpr), or a compound command.
    */
-  private Command(
-    node: null | Sh.Command,
-    extend: CommandExtension,
-  ): Observable<ProcessAct> {
+  private Command(node: null | Sh.Command, extend: CommandExtension): Observable<ProcessAct> {
         
     if (!node) {// We don't support pure redirections
       return throwError(new ShError(`simple commands without args or assigns are unsupported`, 2));
@@ -508,7 +501,7 @@ class TranspileShService {
   }
 
   /**
-   * Expand a `Word` which has `Parts`.
+   * Expand a `Word`, which has `Parts`.
    */
   private Expand(node: Sh.Word): Observable<Expanded> {
     if (node.Parts.length > 1) {
@@ -630,11 +623,10 @@ class TranspileShService {
     return from(node.Stmts).pipe(
       concatMap(x => this.Stmt(x)),
       catchError((e, _src) => {
-        const { meta } = node;
         if (e instanceof ShError) {
           ts.handleShError(node, e);
         } else {
-          console.error(`${meta.sessionKey}: pid ${meta.pid}: internal error`);
+          console.error(`${node.meta.sessionKey}: pid ${node.meta.pid}: internal error`);
           console.error(e);
         }
         return of();

@@ -11,11 +11,9 @@ export class BuiltinService {
     return !!(builtins as Record<string, boolean>)[command];
   }
 
-  /**
-   * TODO exit codes
-   */
   async runBuiltin(node: Sh.CallExpr, command: BuiltinKey, args: string[]) {
     const process = ps.getProcess(node.meta.pid);
+    node.exitCode = 0;
     switch (command) {
       case 'click': await this.click(process, args); break;
       case 'echo': await this.echo(process, args); break;
@@ -25,18 +23,14 @@ export class BuiltinService {
     }
   }
 
-  private async click(
-    { sessionKey, pid, fdToOpen, cleanups }: Process,
-    args: string[],
-  ) {
+  private async click({ sessionKey, pid, fdToOpen, cleanups }: Process, args: string[]) {
     if (args.length > 1) {
-      throw new ShError(`click: format \`click\` or \`click p\``, 1);
+      throw new ShError(`click: format \`click\` or \`click evt\``, 1);
     }
     
     const { worldDevice } = ps.getSession(sessionKey);
     await new Promise((resolve) => {
       const stopListening = worldDevice.listen((msg) => {
-        // Currently only one click event
         if (msg.key === 'navmesh-click') {
           if (args.length) {
             varService.assignVar(pid, { varName: args[0], value: msg });
@@ -51,7 +45,9 @@ export class BuiltinService {
     });
   }
 
-  /** Writes arguments, which includes any options  */
+  /**
+   * Writes arguments, which includes any options.
+   */
   private async echo({ fdToOpen }: Process, args: string[]) {
     fdToOpen[1].write(args.join(' '));
   }
