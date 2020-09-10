@@ -662,7 +662,8 @@ class TranspileShService {
 
   private ParamExp(node: Sh.ParamExp): Observable<Expanded> {
     const { pid } = node.meta;
-    const def: ParameterDef<Observable<Expanded>, Observable<Expanded>> = node.paramDef || this.transpileParam(node);
+    const def: ParameterDef<Observable<Expanded>, Observable<Expanded>> =
+      node.paramDef || this.transpileParam(node);
     node.paramDef = def; // Store in node too
 
     if (def.parKey === ParamType.special) {
@@ -726,7 +727,7 @@ class TranspileShService {
             break;
           }
           case '_': {
-            yield act.expanded('/bin/bash'); // TODO
+            yield act.expanded('behaveyr'); // TODO
             break;
           }
           default: throw testNever(def.param);
@@ -1105,11 +1106,6 @@ class TranspileShService {
       }
     }
     return null;
-  }
-
-  /** ArithmExpr sans Word */
-  private isArithmOp(node: Sh.ParsedSh): node is Exclude<Sh.ArithmExpr, Sh.Word> {
-    return !!(arithmOp as Record<string, true>)[node.type];
   }
 
   /** Only $@ and ${x[@]} can expand to multiple args */
