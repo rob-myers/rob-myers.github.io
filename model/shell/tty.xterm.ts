@@ -5,7 +5,9 @@ import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
 
 export const ansiReset = '\x1b[0m';
-export const ansiOut = '\u001b[33m';
+export const ansiBrown = '\u001b[33m';
+export const ansiBlue = '\x1b[1;34m';
+export const ansiWhite = '\u001b[37m';
 export const ansiWarn = '\u001b[41;37m';
 
 /**
@@ -452,7 +454,7 @@ export class TtyXterm {
       default: {
         this.queueCommands([{
           key: 'line',
-          line: safeStringify(msg),
+          line: `${ansiBrown}${safeStringify(msg)}${ansiReset}`,
         }]);
       }
     }
@@ -496,9 +498,7 @@ export class TtyXterm {
           break;
         }
         case 'line': {
-          this.xterm.write(ansiOut); // Brown output
           this.xterm.writeln(command.line);
-          this.xterm.write(ansiReset);
           this.trackCursorRow(+1);
           numLines++;
           break;
