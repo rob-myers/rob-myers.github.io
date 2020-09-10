@@ -10,21 +10,23 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
 
+- [ ] `shift` builtin for functions
 - [ ] `steiner` labels a point in the world
   > it could track a changing variable
-- [ ] `shift` builtin for functions
 - [ ] `spawn` command
   > spawn an actor at a position
 - [ ] `read` command
   > read from stdin and forward or save to variable
+
+- [ ] shell functions receive prefixed variables `x=y foo p`
+- [ ] pipes redirect
+
 - [x] extend `click`
   > can store points via `click evt`
   > decided against blocking click for the moment
-
-- [ ] can create shell functions from js ones
-  >  e.g. `def range '({1: n}) => [...Array(Number(n))].map((_, i) => i)'`
+- [x] can create shell functions from js ones
+  >  e.g. `def range '({ 1: n }) => [...Array(Number(n))].map((_, i) => i)'`
   > `(scope) => ...` where `scope` a get/set proxy for nested scope
-
 - [x] align exit behaviour to default shell behaviour
 - [x] builtins propagate exit codes
 
@@ -38,7 +40,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] can store/retrieve arbitrary objects in bash variables
   > remove typing and massively simplify
 
-- [ ] shell functions receive prefixed variables `x=y foo p`
 - [x] support variable lookup via simple command
   > can also redirect
 - [x] shell functions receive positionals in own scope

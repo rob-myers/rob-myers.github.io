@@ -253,15 +253,27 @@ export class ProcessService {
     return useStore.getState().session[sessionKey];
   }
 
-  async invokeFunction(pid: number, func: NamedFunction, args: string[]) {
-    const { sessionKey } = this.getProcess(pid);
+  async invokeFunction(pid: number, namedFunc: NamedFunction, args: string[]) {
     varService.pushPositionalsScope(pid, args);
     const popPositionals = () => varService.popPositionalsScope(pid);
-    await this.runInShell(func.node, sessionKey, [popPositionals]);
+    
+    if (namedFunc.type === 'shell') {
+      const { sessionKey } = this.getProcess(pid);
+      await this.runInShell(namedFunc.node, sessionKey, [popPositionals]);
+    } else {
+      try {
+        const result = await namedFunc.func()(varService.createVarProxy(pid));
+        if (result !== undefined) {
+          this.getProcess(pid).fdToOpen[1].write(result);
+        }
+      } finally {
+        popPositionals();
+      }
+    }
   }
 
   /** Statically detect builtins */
-  private isBuiltinStatically(node: Sh.Stmt) {
+  private detectBuiltinStatically(node: Sh.Stmt) {
     return builtinService.isBuiltinCommand(((node.Cmd as Sh.CallExpr)?.Args[0].Parts[0] as Sh.Lit)?.Value || '');
   }
 

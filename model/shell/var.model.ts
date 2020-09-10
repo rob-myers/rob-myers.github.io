@@ -71,16 +71,26 @@ type AssignVarAction = (
 /**
  * A variable and a function may have the same name.
  */
-export interface NamedFunction {
+export type NamedFunction = {
   /** Function name. */
   key: string;
-  /** Function definition. */
-  node: FileWithMeta;
-  // node: Stmt;
   /** Export function to child processes? */
   exported: boolean;
   /** Is this function readonly? */
   readonly: boolean;
   /** The source code of the body of the function, e.g. `{ echo foo; }` */
   src: null | string;
+} & (
+  | ShellFuncDef
+  | JsFuncDef
+)
+
+export interface ShellFuncDef {
+  type: 'shell';
+  node: FileWithMeta;
+}
+
+export interface JsFuncDef {
+  type: 'js';
+  func: () => (v: Record<string, any>) => void | Promise<void>;
 }

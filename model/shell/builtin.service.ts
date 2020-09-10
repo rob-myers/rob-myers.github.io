@@ -16,6 +16,7 @@ export class BuiltinService {
     node.exitCode = 0;
     switch (command) {
       case 'click': await this.click(process, args); break;
+      case 'def': await this.def(process, args); break;
       case 'echo': await this.echo(process, args); break;
       case 'get': this.get(process, args); break;
       case 'sleep': await this.sleep(args); break;
@@ -25,7 +26,7 @@ export class BuiltinService {
 
   private async click({ sessionKey, pid, fdToOpen, cleanups }: Process, args: string[]) {
     if (args.length > 1) {
-      throw new ShError(`click: format \`click\` or \`click evt\``, 1);
+      throw new ShError(`click: usage \`click\` or \`click evt\``, 1);
     }
     
     const { worldDevice } = ps.getSession(sessionKey);
@@ -45,6 +46,16 @@ export class BuiltinService {
     });
   }
 
+  private async def({ pid }: Process, [funcName, funcDef, ...rest]: string[]) {
+    if (!funcName || !funcDef || rest.length) {
+      throw new ShError(`def: usage \`def myFunc '(x) => x.foo = Number(x[1])''\``, 1);
+    }
+    varService.addFunction(pid, funcName, {
+      type: 'js',
+      func: Function('v', `return ${funcDef}`) as () => (x: Record<string, any>) => void,
+    });
+  }
+
   /**
    * Writes arguments, which includes any options.
    */
@@ -57,20 +68,21 @@ export class BuiltinService {
    */
   private get({ pid, fdToOpen }: Process, [srcPath, ...rest]: string[]) {
     if (rest.length && (rest[0] !== 'as' || rest.length !== 2)) {
-      throw new ShError(`get: format \`get foo\` or \`get foo as bar\``, 1);
+      throw new ShError(`get: usage \`get foo\` or \`get foo as bar\``, 1);
     }
 
-    let cached = getCmdCache[srcPath];
+    let cached = cacheFor.get[srcPath];
     if (!cached) {
       const varName = srcPath.split(/[\.\[]/, 1)[0];
       const relPath = srcPath.slice(varName.length);
-      cached = (getCmdCache[srcPath] = { varName, relPath,
-        func: Function('_v', `return _v${relPath};`) as (x: any) => any,
+      cached = (cacheFor.get[srcPath] = { varName, relPath,
+        // Works because user vars may not start with underscore
+        func: Function('__', `return __${relPath};`) as (x: any) => any,
       });
     }
 
     const rootVar = varService.lookupVar(pid, cached.varName);
-    if (rootVar) {
+    if (rootVar !== undefined) {
       try {
         const value = cached.func(rootVar);
         if (value !== undefined) {
@@ -109,6 +121,7 @@ export class BuiltinService {
 
 export const builtins = {
   click: true,
+  def: true,
   echo: true,
   get: true,
   sleep: true,
@@ -118,10 +131,13 @@ export type BuiltinKey = keyof typeof builtins;
 
 export const builtinService = new BuiltinService;
 
-const getCmdCache = {} as Record<string, {
-  /** Root variable name */
-  varName: string;
-  /** Path inside variable e.g. empty, `.foo`, `[0].bar` */
-  relPath: string;
-  func: (rootVar: any) => any;
-}>;
+const cacheFor = {
+  /** Keyed by `${varName}${relPath}` */
+  get: {} as Record<string, {
+    /** Root variable name */
+    varName: string;
+    /** Path/code inside variable e.g. empty, `.foo`, `[0].bar`, `.map(Number) */
+    relPath: string;
+    func: (rootVar: any) => any;
+  }>,
+};

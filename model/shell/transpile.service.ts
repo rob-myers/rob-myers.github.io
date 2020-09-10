@@ -656,7 +656,8 @@ class TranspileShService {
         throw new ShError(`${node.Name.Value}: readonly function`, 1);
       }
       const clonedBody = Sh.parseSh.clone(node.Body);
-      vs.addFunction(node.meta.pid, node.Name.Value, clonedBody);
+      const wrappedFile = Sh.parseSh.wrapInFile(clonedBody);
+      vs.addFunction(node.meta.pid, node.Name.Value, { type: 'shell', node: wrappedFile });
     }());
   }
 

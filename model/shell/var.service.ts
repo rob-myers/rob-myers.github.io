@@ -1,28 +1,27 @@
 import * as jsStringify from "javascript-stringify";
 import { testNever, mapValues, last, isArrayOrObject } from "@model/generic.model";
 import useStore, { Process } from '@store/shell.store';
-import { ProcessVar, BasePositionalVar, AssignVarBase } from "./var.model";
+import { ProcessVar, BasePositionalVar, AssignVarBase, ShellFuncDef, JsFuncDef } from "./var.model";
 import { ShError } from "./transpile.service";
-import { parseSh, Stmt, FileMeta } from "./parse.service";
+import { FileMeta } from "./parse.service";
+import { processService } from "./process.service";
 
 const alphaNumeric = /^[a-z_][a-z0-9_]*/;
 
-export class VarService {
-  /**
-   * TODO could save transpilation of function?
-   */
-  addFunction(pid: number, name: string, stmt: Stmt) {
-    const node = parseSh.wrapInFile(stmt);
-    const { sessionKey } = this.getProcess(pid);
-    const { sid } = this.getSession(sessionKey);
-    Object.assign<FileMeta, FileMeta>(node.meta, { pid, sessionKey, sid });
+class VarService {
 
+  addFunction(pid: number, name: string, def: ShellFuncDef | JsFuncDef) {
+    if (def.type === 'shell') {
+      const { sessionKey } = this.getProcess(pid);
+      const { sid } = this.getSession(sessionKey);
+      Object.assign<FileMeta, FileMeta>(def.node.meta, { pid, sessionKey, sid });
+    };
     this.getProcess(pid).toFunc[name] = {
       key: name,
       exported: false,
       readonly: false,
       src: null,
-      node,
+      ...def,
     };
   }
 
@@ -159,6 +158,27 @@ export class VarService {
     } else {
       return { ...base, value: def.value };
     }
+  }
+
+  createVarProxy(pid: number) {
+    return new Proxy({}, {
+      get: (_, varName: string) =>
+        varService.lookupVar(pid, varName),
+      set: (_, varName: string, value) => {
+        varService.assignVar(pid, { varName, value });
+        return true;
+      },
+      ownKeys: () => {
+        const { nestedVars } = processService.getProcess(pid);
+        return Array.from(nestedVars.reduce((agg, scope) => {
+          Object.keys(scope).forEach(key => agg.add(key));
+          return agg;
+        }, new Set<string>()));
+      },
+      getOwnPropertyDescriptor() {
+        return { enumerable: true, configurable: true };
+      },
+    });
   }
 
   expandVar(pid: number, varName: string) {
