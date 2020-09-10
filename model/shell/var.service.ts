@@ -1,3 +1,4 @@
+import * as jsStringify from "javascript-stringify";
 import { testNever, mapValues, last, isArrayOrObject } from "@model/generic.model";
 import useStore, { Process } from '@store/shell.store';
 import { ProcessVar, BasePositionalVar, AssignVarBase } from "./var.model";
@@ -210,6 +211,12 @@ export class VarService {
     return useStore.getState().session[sessionKey];
   }
 
+  private toStringOrJson(input: any) {
+    return typeof input === 'string'
+      ? input
+      : jsStringify.stringify(input) || '';
+  }
+
   getVarKeys(value: undefined | ProcessVar['value']): string[] {
     if (value && typeof value === 'object') {
       return Object.keys(value);
@@ -217,24 +224,22 @@ export class VarService {
     return [];
   }
 
-  getVarValues(
-    index: string | null,
-    value: undefined | ProcessVar['value']
-  ): string[] {
+  getVarValues(index: string | null, value: undefined | ProcessVar['value']): string[] {
     if (value == null) {
-      // undefined ~ never set, null: declared but not set, or unset.
+      // `undefined` means: never set
+      // `null` means: declared but not set, or unset.
       return [];
     } else if (Array.isArray(value)) {
       // Must remove empties e.g. crashes getopts.
       return index === '@' || index === '*'
-        ? (value as any[]).filter((x) => x !== undefined).map(String)
-        : [String(value[index ? parseInt(index) : 0])];
+        ? (value as any[]).filter((x) => x !== undefined).map(this.toStringOrJson)
+        : [this.toStringOrJson(value[index ? parseInt(index) : 0])];
     } else if (typeof value === 'object') {
       return index === '@' || index === '*'
-        ? Object.values(value as Record<string, string | number>).map(String)
-        : [String(value[index || 0])];
+        ? Object.values(value as Record<string, string | number>).map(this.toStringOrJson)
+        : [this.toStringOrJson(value[index || 0])];
     }
-    return [String(value)];
+    return [this.toStringOrJson(value)];
   }
 
   lookupVar(pid: number, varName: string): ProcessVar['value'] | undefined {
