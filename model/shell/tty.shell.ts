@@ -1,10 +1,10 @@
 import { testNever } from '@model/generic.model';
-import useStore, { Session, Process } from '@store/shell.store';
+import useStore, { Session } from '@store/shell.store';
 import { parseSh } from './parse.service';
 import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
-import { TtyXterm } from './tty.xterm';
+import { TtyXterm, ansiReset, ansiWhite } from './tty.xterm';
 import { processService as ps, processService } from './process.service';
 import { srcService } from './src.service';
 
@@ -87,6 +87,7 @@ export class TtyShell {
             const errMsg = `mvdan-sh: ${result.error.replace(/^src\.sh:/, '')}`;
             console.error(errMsg);
             processService.warn(this.session.sid, errMsg);
+            processService.setExitCode(this.session.sid, 1);
             this.buffer.length = 0;
             this.prompt('$ ');
             break;
@@ -121,7 +122,7 @@ export class TtyShell {
   private prompt(prompt: string) {
     this.io.write({
       key: 'send-xterm-prompt',
-      prompt: `\u001b[37m${prompt}\x1b[0m`, // White prompt
+      prompt: `${ansiWhite}${prompt}${ansiReset}`, // White prompt
     });    
   }
 
