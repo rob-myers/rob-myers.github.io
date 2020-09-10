@@ -295,7 +295,7 @@ export class SrcService {
             this.seqSrc(Do, true)
           }done`;
         }
-        return `for ${Loop.Name} in ${
+        return `for ${Loop.Name.Value} in ${
           Loop.Items.map(c => this.src(c)).join(' ')
         }; do ${
           this.seqSrc(Do, true)

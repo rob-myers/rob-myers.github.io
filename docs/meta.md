@@ -21,9 +21,11 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > can store points via `click evt`
   > decided against blocking click for the moment
 
-- [ ] can `def range '([x]) => [...Array(Number(n))].map((_, i) => i)'`
-  > create shell functions from js ones
-  > `(positionals, scope) => ...` where vars a proxy into nested scope
+- [ ] can create shell functions from js ones
+  >  e.g. `def range '({1: n}) => [...Array(Number(n))].map((_, i) => i)'`
+  > `(scope) => ...` where `scope` a get/set proxy for nested scope
+
+- [ ] builtins propagate exit codes
 
 - [x] simplify params for `varService.assignVar`
 - [x] no shell scripts, only shell functions
@@ -35,7 +37,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] can store/retrieve arbitrary objects in bash variables
   > remove typing and massively simplify
 
-- [ ] shell functions receive prefixed variables
+- [ ] shell functions receive prefixed variables `x=y foo p`
 - [x] support variable lookup via simple command
   > can also redirect
 - [x] shell functions receive positionals in own scope
