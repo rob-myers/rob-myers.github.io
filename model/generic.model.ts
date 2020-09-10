@@ -1,4 +1,4 @@
-import fastSafeStringify from 'fast-safe-stringify';
+import safeJsonStringify from 'safe-json-stringify';
 
 export interface KeyedLookup<Value extends { key: K }, K extends string = string> {
   [key: string]: Value;
@@ -194,7 +194,7 @@ export type DistributiveOmit<T, K extends keyof T> = T extends unknown
   : never;
 
 export function safeStringify(input: any) {
-  return tryJsonStringify(input) || fastSafeStringify(input);
+  return tryJsonStringify(input) || safeJsonStringify(input);
 }
 
 function tryJsonStringify(input: any) {
