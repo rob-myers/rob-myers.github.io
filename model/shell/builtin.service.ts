@@ -12,17 +12,22 @@ export class BuiltinService {
   }
 
   async runBuiltin(node: Sh.CallExpr, command: BuiltinKey, args: string[]) {
+    // Wrap in a promise so Ctrl-C can reject via process.cleanups
     await new Promise(async (resolve, reject) => {
       const process = ps.getProcess(node.meta.pid);
-      process.cleanups.push(() => reject(null)); // throw on Ctrl-C
+      process.cleanups.push(() => reject(null));
       node.exitCode = 0;
-      switch (command) {
-        case 'click': await this.click(process, args); break;
-        case 'def': await this.def(process, args); break;
-        case 'echo': await this.echo(process, args); break;
-        case 'get': this.get(process, args); break;
-        case 'sleep': await this.sleep(args); break;
-        default: throw testNever(command);
+      try {
+        switch (command) {
+          case 'click': await this.click(process, args); break;
+          case 'def': await this.def(process, args); break;
+          case 'echo': await this.echo(process, args); break;
+          case 'get': this.get(process, args); break;
+          case 'sleep': await this.sleep(args); break;
+          default: throw testNever(command);
+        }
+      } catch (e) {// Must forward errors thrown by builtins
+        reject(e);
       }
       resolve();
     });
@@ -33,7 +38,7 @@ export class BuiltinService {
       throw new ShError(`click: usage \`click\` or \`click evt\``, 1);
     }
     // TODO could avoid try-finally and cleanups.push
-    // if kept track of pid callback originated from,
+    // if kept track of the pid the callback originated from,
     // i.e. could autoclean listeners.
 
     let stopListening: () => void;
