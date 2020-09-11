@@ -23,6 +23,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > `read </tick/1s`
 
 - [ ] simplify ofds as much as possible
+  > can we replace open file descriptions by filepaths?
 - [ ] remove path resolution i.e. all paths absolute
   > no `PWD` or `OLDPWD`
 

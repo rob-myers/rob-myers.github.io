@@ -17,10 +17,7 @@ export class FileService {
     /** We should write to this stream */
     writable: ShellStream<W>,
   ): FsFile {
-    return new FsFile(
-      absPath,
-      new ShellFile(readable, writable),
-    );
+    return new FsFile(absPath, new ShellFile(readable, writable));
   }
 
   /**

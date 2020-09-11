@@ -1,5 +1,5 @@
 import { Observable, from, of, lastValueFrom } from 'rxjs';
-import { reduce, map, tap, catchError } from 'rxjs/operators';
+import { reduce, map, tap } from 'rxjs/operators';
 import globrex from 'globrex';
 import shortId from 'shortid';
 
@@ -382,7 +382,7 @@ class TranspileShService {
   private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
     return from(async function* () {
       node.exitCode = 0;
-      const { pid } = node.meta;
+      const pid = node.meta.pid;
       const args = await ts.performShellExpansion(node.Args);
       console.log('args', args);
       
@@ -1143,6 +1143,7 @@ class TranspileShService {
     return !!(wordPart as Record<string, true>)[node.type];
   }
   
+  /** No file expansion because only permit absolute paths */
   private async performShellExpansion(Args: Sh.Word[]): Promise<string[]> {
     const expanded = [] as string[];
 
@@ -1154,30 +1155,12 @@ class TranspileShService {
         throw new ShError('failed to expand word', word.exitCode);
       } else if (single?.type === 'SglQuoted') {
         expanded.push(result.value); // No filename expansion for '' and $''.
-        continue;
-      }
-      /**
-       * Normalize command and parameter expansion,
-       * e.g. ' foo \nbar ' -> ['foo', 'bar']
-       */
-      const fileArgs = single?.type === 'ParamExp' || single?.type === 'CmdSubst'
-        ? expandService.normalizeWhitespace(result.value)
-        : result.values;
-      /**
-       * Filename expansion.
-       */
-      for (const pattern of fileArgs) {
-        if (/\*|\?|\[/.test(pattern)) {
-          // Could be a glob.
-          // console.log('Applying filename expansion to:', JSON.stringify(pattern));// DEBUG
-          const { pid } = word.meta;
-          const fileExpand = expandService.filePath(pid, pattern);
-          fileExpand?.sort();
-          // console.log({ result });// DEBUG
-          expanded.push(...(fileExpand || [pattern]));
-        } else {
-          expanded.push(pattern);
-        }
+      } else if (single?.type === 'ParamExp' || single?.type === 'CmdSubst') {
+        // Normalize command and parameter expansion,
+        // e.g. ' foo \nbar ' -> ['foo', 'bar'].
+        expanded.push(...expandService.normalizeWhitespace(result.value));
+      } else {
+        expanded.push(...result.values);
       }
     }
     return expanded;

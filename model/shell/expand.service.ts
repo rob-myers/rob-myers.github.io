@@ -1,31 +1,13 @@
 import braces from 'braces';
 import * as Sh from './parse.service';
-import { varService } from './var.service';
 import { last } from '@model/generic.model';
-import { fileService } from './file.service';
 
 const bracesOpts: braces.Options = {
   expand: true,
   rangeLimit: Infinity,
 };
 
-export class ExpandService {
-  /**
-   * Returns a non-empty array of expansions, or null if no expansions found.
-   */
-  filePath(pid: number, pattern: string) {
-    if (!/\*|\?|\[/.test(pattern)) {// Not a filepath glob
-      return null;
-    } else if (!this.validateRegexString(pattern, 'Unterminated character class')) {
-      return null;// Ignore e.g. /^[ $/
-    }
-
-    /** Path to 'directory' we'll start from. */
-    const absPath = pattern.startsWith('/') ? '/' : varService.expandVar(pid, 'PWD');
-    const matches = fileService.expandFilepath(absPath, pattern);
-    return matches.length ? matches : null;
-  }
-
+class ExpandService {
   /**
    * Given interactive input to shell, interpret escape sequences.
    * TODO Refactor as single pass of string.
@@ -118,15 +100,6 @@ export class ExpandService {
         : Value
       ];
   }
-
-  private validateRegexString(input: string, badSuffix = ''): boolean {
-    try {
-      return Boolean(new RegExp(input));
-    } catch (e) {// Fail iff error message has bad suffix
-      return !(e.message as string).endsWith(badSuffix);
-    }
-  }
-
 }
 
 export const expandService = new ExpandService;
