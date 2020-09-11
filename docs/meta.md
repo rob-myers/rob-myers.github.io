@@ -17,6 +17,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > spawn an actor at a position
 
 - [ ] can write to `/var/foo` to write to variable foo 
+
+- [x] Ctrl-C causes `throw null` from leaf to root
+- [x] implement command substitution
 - [x] shell functions receive prefixed variables `x=y foo p`
 
 - [x] extend `click`

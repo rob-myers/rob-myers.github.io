@@ -1,4 +1,4 @@
-import { Observable, from, of, lastValueFrom, throwError } from 'rxjs';
+import { Observable, from, of, lastValueFrom } from 'rxjs';
 import { reduce, map, tap, catchError } from 'rxjs/operators';
 import globrex from 'globrex';
 import shortId from 'shortid';
@@ -289,7 +289,7 @@ class TranspileShService {
       return from(async function* () {
         /**
          * Naked if e.g. declare -i x.
-         * We use undefined so we don't overwrite.
+         * Use `undefined` so we don't overwrite.
          */
         const value = Naked ? undefined
           : Value ? await lastValueFrom(ts.Expand(Value).pipe(
@@ -359,13 +359,12 @@ class TranspileShService {
           //   ps.openFile(spawns[i + 1].pid, { path: wire.key, fd: 0, mode: 'RDONLY' });
           // });
 
-          const cleanup = () => {
-            ps.removeProcesses(spawns.map(({ pid }) => pid));
+          try {
+            await Promise.all(transpiles.map(awaitEnd));
+          } finally {
+            ps.removeProcesses(spawns.map(({ pid }) => pid));  
             // wires.forEach(({ key }) => fileService.unlinkFile(key));
-          };
-          ps.addCleanups(node.meta.pid, cleanup);
-          await Promise.all(transpiles.map(awaitEnd));
-          cleanup();
+          }
           break;
         }
         default:
@@ -395,21 +394,16 @@ class TranspileShService {
 
         if (args.length) {
           if (bs.isBuiltinCommand(command)) {
-            // Run builtin 
+            // Run builtin
             await bs.runBuiltin(node, command, cmdArgs);
           } else if (func = vs.getFunction(pid, command)) {
-            // Run function with variables
+            // Run function with local variables
             try {
               vs.pushVarScope(pid);
-              /**
-               * TODO ensure assigned vars have `local` flag
-               */
               await ts.assignVars(node, true);
-// console.log(JSON.stringify(ps.getProcess(pid).nestedVars));
               await ps.invokeFunction(pid, func, cmdArgs);
             } finally {
               vs.popVarScope(pid);
-// console.log(JSON.stringify(ps.getProcess(pid).nestedVars));
             }
           } else {
             throw new ShError(`${command}: command not found`, 127);
@@ -442,6 +436,7 @@ class TranspileShService {
     return from(async function*() {
       let cmd: Observable<ProcessAct> = null as any;
       node.exitCode = 0;
+      const { Redirs, background, negated } = extend;
 
       try {
         switch (node.type) {
@@ -469,7 +464,6 @@ class TranspileShService {
           default: return;
         }
   
-        const { Redirs, background, negated } = extend;
         if (background) {
           // TODO
           // yield* this.runInBackground(dispatch, processKey);
@@ -576,22 +570,28 @@ class TranspileShService {
     switch (node.type) {
       case 'ArithmExp':
         return this.ArithmExp(node);
-      // case 'CmdSubst': {
-      //   const { Pos, End, StmtList, Left, Right } = input;
-      //   return new CommandExpand({
-      //     key: CompositeType.expand,
-      //     expandKey: ExpandType.command,
-      //     cs: StmtList.Stmts.map((Stmt) => this.Stmt(Stmt)),
-      //     sourceMap: this.sourceMap({ Pos, End },
-      //       // $( ... ) or ` ... `
-      //       { key: 'brackets', pos: Left, end: Right }),
-      //     // Trailing comments only.
-      //     comments: StmtList.Last.map<TermComment>(({ Hash, End, Text }) => ({
-      //       sourceMap: this.sourceMap({ Pos: Hash, End }),
-      //       text: Text,
-      //     })),
-      //   });
-      // }
+      case 'CmdSubst': {
+        return from(async function*() {
+          const pid = node.meta.pid;
+          const output = [] as string[];
+
+          ps.pushRedirectScope(pid);
+          const opened = ps.openFile(pid, { path: `/dev/cs/${pid}`, mode: 'WRONLY', fd: 1 });
+          const stopListening = opened.file.listen((msg) => output.push(vs.toStringOrJs(msg)));
+
+          try {
+            const transpiles = node.Stmts.map(stmt => ts.Stmt(stmt));
+            for (const transpiled of transpiles) {
+              await awaitEnd(transpiled);
+            }
+          } finally {
+            stopListening();
+            ps.popRedirectScope(pid); // Should close `opened`
+          }
+
+          yield act.expanded(output.join('\n').replace(/\n*$/, ''));
+        }());
+      }
       case 'DblQuoted':
         return from(async function*() {
           const output = [] as string[];
@@ -638,19 +638,17 @@ class TranspileShService {
   }
 
   private File(node: Sh.File): Observable<ProcessAct> {
-    return ts.stmts(node, node.Stmts).pipe(
-      catchError((e, _src) => {
-        // SAFETY i.e. do not expect errors here
-        console.error('caught top level error');
+    return from(async function*() {
+      try {
+        await awaitEnd(ts.stmts(node, node.Stmts));
+      } catch (e) {
         ts.handleShError(node, e);
-        return of();
-      })
-    );
+      } 
+    }());
   }
 
   private stmts(parent: Sh.ParsedSh, nodes: Sh.Stmt[]) {
     return from(async function*() {
-      // Assume thrown errors already caught
       for (const node of nodes) {
         await awaitEnd(ts.Stmt(node));
         parent.exitCode = node.exitCode;
@@ -1100,9 +1098,11 @@ class TranspileShService {
     }
   }
 
-
-  private handleShError(node: Sh.BaseNode, e: any) {
-    if (e instanceof ShError) {
+  private handleShError(node: Sh.ParsedSh, e: any) {
+    if (e === null) {
+      // We throw null when terminating via Ctrl-C
+      throw null;
+    } else if (e instanceof ShError) {
       // console.error(`${sessionKey}: pid ${pid}: ${e.message}`);
       ps.warn(node.meta.pid, e.message);
       node.exitCode = e.exitCode;

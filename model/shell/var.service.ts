@@ -231,7 +231,7 @@ class VarService {
     return useStore.getState().session[sessionKey];
   }
 
-  private toStringOrJson(input: any) {
+  toStringOrJs(input: any) {
     return typeof input === 'string'
       ? input
       : jsStringify.stringify(input) || '';
@@ -252,14 +252,14 @@ class VarService {
     } else if (Array.isArray(value)) {
       // Must remove empties e.g. crashes getopts.
       return index === '@' || index === '*'
-        ? (value as any[]).filter((x) => x !== undefined).map(this.toStringOrJson)
-        : [this.toStringOrJson(value[index ? parseInt(index) : 0])];
+        ? (value as any[]).filter((x) => x !== undefined).map(this.toStringOrJs)
+        : [this.toStringOrJs(value[index ? parseInt(index) : 0])];
     } else if (typeof value === 'object') {
       return index === '@' || index === '*'
-        ? Object.values(value as Record<string, string | number>).map(this.toStringOrJson)
-        : [this.toStringOrJson(value[index || 0])];
+        ? Object.values(value as Record<string, string | number>).map(this.toStringOrJs)
+        : [this.toStringOrJs(value[index || 0])];
     }
-    return [this.toStringOrJson(value)];
+    return [this.toStringOrJs(value)];
   }
 
   lookupVar(pid: number, varName: string): ProcessVar['value'] | undefined {

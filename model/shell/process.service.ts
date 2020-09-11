@@ -1,5 +1,5 @@
 import shortid from 'shortid';
-import { mapValues, last } from '@model/generic.model';
+import { mapValues, last, removeFirst } from '@model/generic.model';
 import useStore, { State as ShellState, Session, Process, ProcessGroup } from '@store/shell.store';
 import { addToLookup } from '@store/store.util';
 import { ShellStream } from './shell.stream';
@@ -22,10 +22,6 @@ export class ProcessService {
     if (typeof window !== 'undefined') {
       this.mockParsed = Sh.parseSh.parse('');
     }
-  }
-
-  addCleanups(pid: number, ...cancels: (() => void)[]) {
-    this.getProcess(pid).cleanups.push(...cancels);
   }
 
   cleanup(pid: number) {
@@ -255,20 +251,18 @@ export class ProcessService {
 
   async invokeFunction(pid: number, namedFunc: NamedFunction, args: string[]) {
     varService.pushPositionalsScope(pid, args);
-    const popPositionals = () => varService.popPositionalsScope(pid);
-    
-    if (namedFunc.type === 'shell') {
-      const { sessionKey } = this.getProcess(pid);
-      await this.runInShell(namedFunc.node, sessionKey, [popPositionals]);
-    } else {
-      try {
+    try {
+      if (namedFunc.type === 'shell') {
+        const { sessionKey } = this.getProcess(pid);
+        await this.runInShell(namedFunc.node, sessionKey);
+      } else {
         const result = await namedFunc.func()(varService.createVarProxy(pid));
         if (result !== undefined) {
           this.getProcess(pid).fdToOpen[1].write(result);
         }
-      } finally {
-        popPositionals();
       }
+    } finally {
+      varService.popPositionalsScope(pid);
     }
   }
 
@@ -298,8 +292,6 @@ export class ProcessService {
 
     if (fileService.hasDir(absPath)) {// Cannot open directory
       throw Error(`${path}: is a directory`);
-    } else if (!fileService.hasParentDir(absPath)) {// Parent directory must exist
-      throw new ShError(`${path}: no such file or directory`, 1, 'F_NO_EXIST');
     }
 
     let file = fileService.getFile(absPath);
@@ -314,9 +306,10 @@ export class ProcessService {
     }
 
     // Create open file description and connect to process
+    // If file descriptor `undefined` we'll use minimal unassigned
     const process = this.getProcess(pid);
     const opened = new OpenFileDescription(shortid.generate(), file, mode);
-    // If `fd` undefined we'll use minimal unassigned file descriptor
+    this.getOfds()[opened.key] = opened;
     const nextFd = fileService.getNextFd(process.fdToOpen, fd);
     
     if (nextFd in process.fdToOpen) {// Close if open
@@ -350,8 +343,6 @@ export class ProcessService {
 
   /**
    * Deepen redirection scope in process.
-   * Add fresh scope as 1st item.
-   * No need to recompute `fdToOpen`.
    */
   pushRedirectScope(pid: number) {
     this.getProcess(pid).nestedRedirs.unshift({});
@@ -379,7 +370,7 @@ export class ProcessService {
   /**
    * Run parsed code in session's leading process.
    */
-  runInShell(parsed: Sh.FileWithMeta, sessionKey: string, cleanups: (() => void)[] = []) {
+  runInShell(parsed: Sh.FileWithMeta, sessionKey: string) {
     const transpiled = transpileSh.transpile(parsed);
     const pid = this.getSession(sessionKey).sid;
 
@@ -389,16 +380,22 @@ export class ProcessService {
     return new Promise((resolve, reject) => {
       const process = this.getProcess(pid);
       process.parsed = parsed;
+
       process.subscription = transpiled.subscribe({
-        next: (msg) => console.log('received', msg), // TEMP
+        next: (msg) =>
+          console.log('received', msg), // TEMP
         complete: () => {
-          console.log(`${parsed.meta.sessionKey}: shell execution terminated`)
-          cleanups.forEach(cleanup => cleanup());
+          console.log(`${parsed.meta.sessionKey}: shell completed`)
+          process.subscription = null;
           resolve();
         },
-        error: (err) => reject(err),
+        error: (err) => {
+          // Ctrl-C corresponds to null error
+          console.error(`${parsed.meta.sessionKey}: shell terminated`, err);
+          process.subscription = null;
+          reject(err);
+        },
       });
-      processService.addCleanups(pid, reject, ...cleanups);
     });
   }
 
@@ -461,29 +458,11 @@ export class ProcessService {
     return forked;
   }
 
-  startProcess(pid: number) {
-    const process = this.getProcess(pid)
-    const transpiled = transpileSh.transpile(process.parsed);
-    
-    return new Promise((resolve, reject) => {
-      // We can directly mutate state (btw immer wouldn't allow this)
-      process.subscription = transpiled.subscribe({
-        next: (msg) => console.log('received', msg), // TEMP
-        complete: () => {
-          const { sessionKey } = process.parsed.meta;
-          console.log(`${sessionKey}: pid ${pid} terminated`);
-          resolve();
-        },
-        error: (err) => reject(err),
-      });
-    });
-  }
-
-  stopProcess(pid: number) {
-    const process = this.getProcess(pid);
-    process.subscription?.unsubscribe();
-    process.subscription = null;
-  }
+  // stopProcess(pid: number) {
+  //   const process = this.getProcess(pid);
+  //   process.subscription?.unsubscribe();
+  //   process.subscription = null;
+  // }
 
   private tryGetProcessGroup(pgid: number) {
     return this.getProcessGroups()[pgid] || null;

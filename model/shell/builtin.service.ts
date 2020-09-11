@@ -12,38 +12,50 @@ export class BuiltinService {
   }
 
   async runBuiltin(node: Sh.CallExpr, command: BuiltinKey, args: string[]) {
-    const process = ps.getProcess(node.meta.pid);
-    node.exitCode = 0;
-    switch (command) {
-      case 'click': await this.click(process, args); break;
-      case 'def': await this.def(process, args); break;
-      case 'echo': await this.echo(process, args); break;
-      case 'get': this.get(process, args); break;
-      case 'sleep': await this.sleep(args); break;
-      default: throw testNever(command);
-    }
+    await new Promise(async (resolve, reject) => {
+      const process = ps.getProcess(node.meta.pid);
+      process.cleanups.push(() => reject(null)); // throw on Ctrl-C
+      node.exitCode = 0;
+      switch (command) {
+        case 'click': await this.click(process, args); break;
+        case 'def': await this.def(process, args); break;
+        case 'echo': await this.echo(process, args); break;
+        case 'get': this.get(process, args); break;
+        case 'sleep': await this.sleep(args); break;
+        default: throw testNever(command);
+      }
+      resolve();
+    });
   }
 
   private async click({ sessionKey, pid, fdToOpen, cleanups }: Process, args: string[]) {
     if (args.length > 1) {
       throw new ShError(`click: usage \`click\` or \`click evt\``, 1);
     }
-    
+    // TODO could avoid try-finally and cleanups.push
+    // if kept track of pid callback originated from,
+    // i.e. could autoclean listeners.
+
+    let stopListening: () => void;
     const { worldDevice } = ps.getSession(sessionKey);
-    await new Promise((resolve) => {
-      const stopListening = worldDevice.listen((msg) => {
-        if (msg.key === 'navmesh-click') {
-          if (args.length) {
-            varService.assignVar(pid, { varName: args[0], value: msg });
-          } else {
-            fdToOpen[1].write(msg);
+    try {
+      await new Promise((resolve, reject) => {
+        stopListening = worldDevice.listen((msg) => {
+          if (msg.key === 'navmesh-click') {
+            if (args.length) {
+              varService.assignVar(pid, { varName: args[0], value: msg });
+            } else {
+              fdToOpen[1].write(msg);
+            }
+            stopListening();
+            resolve();
           }
-          stopListening();
-          resolve();
-        }
+        });
+        cleanups.push(() => reject(null));
       });
-      cleanups.push(stopListening);
-    });
+    } finally {
+      stopListening!(); // Idempotent so can call twice
+    }
   }
 
   private async def({ pid }: Process, [funcName, funcDef, ...rest]: string[]) {
@@ -60,6 +72,7 @@ export class BuiltinService {
    * Writes arguments, which includes any options.
    */
   private async echo({ fdToOpen }: Process, args: string[]) {
+    console.log({ echoOfd: fdToOpen[1] })
     fdToOpen[1].write(args.join(' '));
   }
 

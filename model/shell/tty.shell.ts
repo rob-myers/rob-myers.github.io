@@ -59,10 +59,15 @@ export class TtyShell {
       case 'send-sig': {
         console.log('received signal', { msg, sessionKey: this.sessionKey });
         if (msg.signal === SigEnum.SIGINT) {
+          /**
+           * Terminate and cleanup all processes in foreground process group.
+           */
           const processes = processService.getProcessesInGroup(this.session.sid);
           processes.forEach(({ pid: memberPid }) => {
-            processService.stopProcess(memberPid);
+            // Cleaning causes throw from leaf to root.
+            // We don't invoke process.subscription.unsubscribe().
             processService.cleanup(memberPid);
+            
           });
           this.buffer.length = 0;
           this.prompt('$ ');
@@ -108,11 +113,9 @@ export class TtyShell {
           }
         }
       } catch (e) {
-        /**
-         * Usually Ctrl+C but also need to debug.
-         */
-        console.error(e);
+        console.error('error propagated to TtyShell', e);
       } finally {
+        // Can we assume other processes in foreground have terminated?
         processService.clearCleanups(this.session.sid);
         input.resolve();
       }
