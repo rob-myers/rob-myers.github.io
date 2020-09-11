@@ -24,6 +24,7 @@ export class BuiltinService {
           case 'echo': await this.echo(process, args); break;
           case 'get': this.get(process, args); break;
           case 'sleep': await this.sleep(args); break;
+          case 'tick': await this.tick(process, args); break;
           default: throw testNever(command);
         }
       } catch (e) {// Must forward errors thrown by builtins
@@ -135,6 +136,29 @@ export class BuiltinService {
     }
     await pause(1000 * seconds);
   }
+
+  private async tick({ fdToOpen, cleanups }: Process, args: string[]) {
+    if (args.length > 1 || args[0] && isNaN(Number(args[0]))) {
+      throw new ShError(`tick: usage \`tick\` or \`tick 0.5\``, 1);
+    }
+
+    let intervalId: number;
+    const seconds = args.length ? parseFloat(args[0]) || 0 : 1;
+    if (seconds <= 0) {
+      return;
+    }
+    
+    try {
+      await new Promise((_ ,reject) => {
+        const opened = fdToOpen[1];
+        opened.write({ key: 'tick' });
+        intervalId = window.setInterval(() => opened.write({ key: 'tick' }), 1000 * seconds);
+        cleanups.push(() => reject(null));
+      });
+    } finally {
+      clearInterval(intervalId!);
+    }
+  }
 }
 
 export const builtins = {
@@ -143,6 +167,7 @@ export const builtins = {
   echo: true,
   get: true,
   sleep: true,
+  tick: true,
 };
 
 export type BuiltinKey = keyof typeof builtins;
