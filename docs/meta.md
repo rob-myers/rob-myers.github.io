@@ -24,7 +24,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] simplify ofds as much as possible
   > can we replace open file descriptions by filepaths?
-- [ ] remove path resolution i.e. all paths absolute
+- [x] remove path resolution i.e. all paths absolute
   > no `PWD` or `OLDPWD`
 
 - [x] Ctrl-C causes `throw null` from leaf to root

@@ -1,6 +1,5 @@
 import { firstAvailableInteger } from '@model/generic.model';
 import useStore, { Process } from '@store/shell.store';
-import { varService } from './var.service';
 import { FsFile, ShellFile } from "./file.model";
 import { ShellStream } from './shell.stream';
 
@@ -28,81 +27,15 @@ export class FileService {
   }
 
   /** If fd unspecified provide the minimal unassigned one. */
-  getNextFd(
-    fdToOpen: Process['fdToOpen'],
-    requestedFd: number | undefined,
-  ): number {
-    return requestedFd === undefined
+  getNextFd(fdToOpen: Process['fdToOpen'], fd: number | undefined): number {
+    return fd === undefined
       ? firstAvailableInteger(Object.keys(fdToOpen).map(Number))
-      : requestedFd;
-  }
-
-  hasDir(absDirPath: string) {
-    const prefix = absDirPath.endsWith('/') ? absDirPath : `${absDirPath}/`;
-    return Object.keys(this.getFs()).some(absPath => absPath.startsWith(prefix));
-  }
-
-  hasParentDir(absPath: string) {
-    const dirPath = absPath.split('/').slice(0, -1).join('/');
-    return this.hasDir(dirPath);
+      : fd;
   }
 
   makeWire(absPath: string) {
     const stream = new ShellStream();
     return this.createFsFile(absPath, stream, stream);
-  }
-
-  /**
-   * Resolve a mounted file.
-   */
-  resolveFile(pid: number, path: string): FsFile | null {
-    if (!path.trim()) {// Only whitespace
-      return null;
-    }
-    const absPath = this.resolvePath(pid, path);
-    return this.getFs()[absPath] || null;
-  }
-
-  resolvePath(pid: number, path: string): string {
-    const cwd = varService.expandVar(pid, 'PWD');
-    const rootedPath = this.rootedPath(path, cwd);
-    const absPath = rootedPath.split('/').reduce((agg, part) => {
-      if (!part || part === '.') {
-        return agg;
-      } else if (part === '..') {
-        agg.pop();
-      } else {
-        agg.push(part);
-      }
-      return agg;
-    }, ['']).join('/');
-    return absPath;
-  }
-
-  /**
-   * Convert path to rooted path by:
-   * - rewriting leading ~ to /root
-   * - rewriting leading ./ to ${cwd}/
-   * - if no / prefix add prefix ${cwd}/
-   *
-   * We do not resolve inner .'s or ..'s.
-   */
-  rootedPath(
-    /** A relative path */
-    path: string,
-    /** Absolute path to process's current working directory */
-    cwd: string,
-  ) {
-    if (path.startsWith('/')) {
-      return path;
-    } else if (path.startsWith('~')) {
-      // Leading ~ to user's home directory.
-      return `/root${path.slice(1)}`;
-    } else if (path.startsWith('./')) {
-      // Leading ./ to process's current working directory.
-      return `${cwd}${path.slice(1)}`;
-    }// Non-leading / to process's current working directory.
-    return `${cwd}/${path}`;
   }
 
   saveFile(file: FsFile) {

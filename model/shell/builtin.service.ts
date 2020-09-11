@@ -78,7 +78,7 @@ export class BuiltinService {
    * Writes arguments, which includes any options.
    */
   private async echo({ fdToOpen }: Process, args: string[]) {
-    console.log({ echoOfd: fdToOpen[1] })
+    // console.log({ echoOfd: fdToOpen[1] })
     fdToOpen[1].write(args.join(' '));
   }
 
@@ -93,10 +93,10 @@ export class BuiltinService {
     let cached = cacheFor.get[srcPath];
     if (!cached) {
       const varName = srcPath.split(/[\.\[]/, 1)[0];
-      const relPath = srcPath.slice(varName.length);
-      cached = (cacheFor.get[srcPath] = { varName, relPath,
+      const relJsPath = srcPath.slice(varName.length);
+      cached = (cacheFor.get[srcPath] = { varName, relJsPath: relJsPath,
         // Works because user vars may not start with underscore
-        func: Function('__', `return __${relPath};`) as (x: any) => any,
+        func: Function('__', `return __${relJsPath};`) as (x: any) => any,
       });
     }
 
@@ -171,12 +171,12 @@ export type BuiltinKey = keyof typeof builtins;
 export const builtinService = new BuiltinService;
 
 const cacheFor = {
-  /** Keyed by `${varName}${relPath}` */
+  /** Keyed by `${varName}${relJsPath}` */
   get: {} as Record<string, {
     /** Root variable name */
     varName: string;
     /** Path/code inside variable e.g. empty, `.foo`, `[0].bar`, `.map(Number) */
-    relPath: string;
+    relJsPath: string;
     func: (rootVar: any) => any;
   }>,
 };

@@ -1,5 +1,5 @@
 import shortid from 'shortid';
-import { mapValues, last, removeFirst } from '@model/generic.model';
+import { mapValues, last } from '@model/generic.model';
 import useStore, { State as ShellState, Session, Process, ProcessGroup } from '@store/shell.store';
 import { addToLookup } from '@store/store.util';
 import { ShellStream } from './shell.stream';
@@ -64,8 +64,6 @@ export class ProcessService {
         nestedRedirs: [{ ...fdToOpenKey }],
         nestedVars: [{
           USER: { key: 'plain', varName: 'USER', value: 'root', exported: true, readonly: false },
-          OLDPWD: { key: 'plain', varName: 'OLDPWD', value: '/root', exported: true, readonly: false },
-          PWD: { key: 'plain', varName: 'PWD', value: '/root', exported: true, readonly: false },
           0: { key: 'positional', varName: '0', index: 0, value: 'behaveyr', exported: true, readonly: false },
         }],
         toFunc: {},
@@ -287,19 +285,14 @@ export class ProcessService {
   /**
    * Try to open a file in a process.
    */
-  openFile(pid: number, { path, mode, fd }: OpenFileRequest) {
-    const absPath = fileService.resolvePath(pid, path);
-
-    if (fileService.hasDir(absPath)) {// Cannot open directory
-      throw Error(`${path}: is a directory`);
-    }
-
+  openFile(pid: number, { path: absPath, mode, fd }: OpenFileRequest) {
     let file = fileService.getFile(absPath);
+
     if (!file) {
-      if (mode === 'RDONLY') {
-        throw new ShError(`${path}: no such file or directory`, 1, 'F_NO_EXIST');
+      if (absPath.endsWith('/')) {
+        throw Error(`${absPath}: is a directory`);
       }
-      // Create and mount a file (a 'wire')
+      // Create and mount a file i.e. a 'wire'
       const stream = new ShellStream;
       file = fileService.createFsFile(absPath, stream, stream);
       fileService.saveFile(file);
@@ -471,15 +464,14 @@ export class ProcessService {
   /**
    * Unlink a file.
    */
-  unlinkFile(pid: number, path: string) {
-    const file = fileService.resolveFile(pid, path);
+  unlinkFile(pid: number, absPath: string) {
+    const file = fileService.getFile(absPath);
 
     if (!file) {
-      const absPath = fileService.resolvePath(pid, path);
-      if (fileService.hasDir(absPath)) {
-        throw new ShError(`${path}: is a directory`, 1);
+      if (absPath.endsWith('/')) {
+        throw new ShError(`${absPath}: is a directory`, 1);
       }
-      throw new ShError(`${path}: no such file or directory`, 1, 'F_NO_EXIST');
+      throw new ShError(`${absPath}: no such file or directory`, 1);
     }
 
     file.iNode.numLinks--;
