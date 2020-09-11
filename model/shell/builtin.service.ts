@@ -138,16 +138,12 @@ export class BuiltinService {
   }
 
   private async tick({ fdToOpen, cleanups }: Process, args: string[]) {
-    if (args.length > 1 || args[0] && isNaN(Number(args[0]))) {
+    const seconds = args.length ? Number(args[0]) : 1;
+    if (isNaN(seconds) || seconds <= 0) {
       throw new ShError(`tick: usage \`tick\` or \`tick 0.5\``, 1);
     }
 
     let intervalId: number;
-    const seconds = args.length ? parseFloat(args[0]) || 0 : 1;
-    if (seconds <= 0) {
-      return;
-    }
-    
     try {
       await new Promise((_ ,reject) => {
         const opened = fdToOpen[1];
