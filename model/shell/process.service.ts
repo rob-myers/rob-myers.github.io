@@ -2,13 +2,13 @@ import shortid from 'shortid';
 import { mapValues, last } from '@model/generic.model';
 import useStore, { State as ShellState, Session, Process, ProcessGroup } from '@store/shell.store';
 import { addToLookup } from '@store/store.util';
-import { ShellStream } from './shell.stream';
 import { OpenFileRequest, OpenFileDescription } from './file.model';
+import { NamedFunction } from './var.model';
+import { ShellStream } from './shell.stream';
 import * as Sh from './parse.service';
 import { transpileSh, ShError } from './transpile.service';
 import { fileService } from './file.service';
 import { builtinService } from './builtin.service';
-import { NamedFunction } from './var.model';
 import { varService } from './var.service';
 import { SendXtermError } from './tty.shell';
 
@@ -285,7 +285,7 @@ export class ProcessService {
   /**
    * Try to open a file in a process.
    */
-  openFile(pid: number, { path: absPath, mode, fd }: OpenFileRequest) {
+  openFile(pid: number, { path: absPath, fd }: OpenFileRequest) {
     let file = fileService.getFile(absPath);
 
     if (!file) {
@@ -301,7 +301,7 @@ export class ProcessService {
     // Create open file description and connect to process
     // If file descriptor `undefined` we'll use minimal unassigned
     const process = this.getProcess(pid);
-    const opened = new OpenFileDescription(shortid.generate(), file, mode);
+    const opened = new OpenFileDescription(shortid.generate(), file);
     this.getOfds()[opened.key] = opened;
     const nextFd = fileService.getNextFd(process.fdToOpen, fd);
     

@@ -9,6 +9,7 @@ import { Subject } from "rxjs";
  * - `wire`: readable is same as writable
  */
 export class FsFile<R = any, W = any> {
+
   constructor(
     /** Absolute path. */
     public key: string,
@@ -60,19 +61,20 @@ export class ShellFile<R, W> {
   }
 }
 
+/**
+ * Wraps an `FsFile`. The latter is usually mounted where its
+ * `key` is its absolute path. However if it has been unlinked
+ * then an `OpenFileDescription` retains a link to it.
+ */
 export class OpenFileDescription<T> {
   /**
    * The number of descendent processes using this open file description.
-   * - incremented upon initial open and inheritance.
-   * - decremented on close (explicitly, or via process termination).
+   * Incremented upon initial open and inheritance.
+   * Decremented on close (explicitly, or via process termination).
    */
   numLinks: number;
   
-  constructor(
-    public key: string,
-    public file: FsFile,
-    public mode: OpenFileMode,
-  ) {
+  constructor(public key: string, public file: FsFile) {
     this.numLinks = 0;
   }
 
@@ -81,19 +83,17 @@ export class OpenFileDescription<T> {
   }
 }
 
-type OpenFileMode = 'RDONLY' | 'RDWR' | 'WRONLY';
-
 export type RedirectDef<WordType> = (
   | { subKey: '<'; fd?: number; mod: null | 'dup' | 'move' }
   /**
    * Output modifier:
-   * - `null` (fd>location): Open {location} at {fd} (default 1) for writing.
-   * - `append` (fd>>location): Open {location} at {fd} (default 1) for appending at location.
-   * - `dup`: (fd>&location): Duplicate file descriptor {location} at {fd} (default 1).
-   *   {location} must be a valid fd which writes output, or '-' (close fd).
-   *   TODO: special case where {location} evaluates to whitespace.
-   * - `move` (<&-): Move file descriptor {location} to {fd} (default 1).
-   *   {location} must be a valid fd which writes output.
+   * - `null` (fd>location): Open `location` at `fd` (default 1) for writing.
+   * - `append` (fd>>location): Open `location` at `fd` (default 1) for appending at location.
+   * - `dup`: (fd>&location): Duplicate file descriptor `location` at `fd` (default 1).
+   *   `location` must be a valid fd which writes output, or '-' (close fd).
+   *   TODO: special case where `location` evaluates to whitespace.
+   * - `move` (<&-): Move file descriptor `location` to `fd` (default 1).
+   *   `location` must be a valid fd which writes output.
    */
   | { subKey: '>'; fd?: number; mod: null | 'append' | 'dup' | 'move' }
   // Open stdout and stderr for writing, possibly appending.
@@ -110,19 +110,11 @@ export type RedirectDef<WordType> = (
  * Corresponds to arguments of open(1).
  */
 export interface OpenFileRequest {
-  /**
-   * A path to be resolved in context of a process.
-   */
+  /** A path to be resolved in context of a process. */
   path: string;
-  /**
-   * Read only, read n'write, or write only.
-   */
-  mode: OpenFileMode;
   /**
    * Can optionally specify file descriptor.
    * Default is minimal unused one.
    */
   fd?: number;
 }
-
-export const mockFsFile = new FsFile('mock', new ShellFile(new ShellStream(), new ShellStream()));

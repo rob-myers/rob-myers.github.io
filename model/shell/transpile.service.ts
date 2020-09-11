@@ -576,7 +576,7 @@ class TranspileShService {
           const output = [] as string[];
 
           ps.pushRedirectScope(pid);
-          const opened = ps.openFile(pid, { path: `/dev/cs/${pid}`, mode: 'WRONLY', fd: 1 });
+          const opened = ps.openFile(pid, { path: `/dev/cs/${pid}`, fd: 1 });
           const stopListening = opened.file.listen((msg) => output.push(vs.toStringOrJson(msg)));
 
           try {
@@ -1022,16 +1022,16 @@ class TranspileShService {
       const fd = 'fd' in def ? def.fd : undefined;
       switch (def.subKey) {
         case '<': {// mod: null, so fd<location
-          ps.openFile(pid, { fd: fd == null ? 0 : fd, mode: 'RDONLY', path: value });
+          ps.openFile(pid, { fd: fd == null ? 0 : fd, path: value });
           break;
         }
         case '>': {// mod: null | 'append', so fd>location or fd>>location.
-          ps.openFile(pid, { fd: fd == null ? 1 : fd, mode: 'WRONLY', path: value });
+          ps.openFile(pid, { fd: fd == null ? 1 : fd, path: value });
           break;
         }
         case '&>': {// &>location or &>>location, both at stdout and stderr.
-          ps.openFile(pid, { fd: 1, mode: 'WRONLY', path: value });
-          ps.openFile(pid, { fd: 2, mode: 'WRONLY', path: value });
+          ps.openFile(pid, { fd: 1, path: value });
+          ps.openFile(pid, { fd: 2, path: value });
           break;
         }
         case '<<':  // Here-doc
@@ -1051,16 +1051,16 @@ class TranspileShService {
            * - TODO Write in new redirection scope?
            */
           const tempPath = `/tmp/here-doc.${shortId.generate()}.${pid}`;
-          const opened = ps.openFile(pid, { fd: 10, mode: 'WRONLY', path: tempPath });
+          const opened = ps.openFile(pid, { fd: 10, path: tempPath });
           // ps.write(pid, 1, buffer)
           buffer.map(line => opened.write(line));
           ps.closeFd(pid, 10);
-          ps.openFile(pid, { fd: def.fd || 0, mode: 'RDONLY', path: tempPath });
+          ps.openFile(pid, { fd: def.fd || 0, path: tempPath });
           ps.unlinkFile(pid, tempPath);
           break;
         }
         case '<>': {// Open fd for read/write.
-          ps.openFile(pid, { fd: fd == null ? 0 : fd, mode: 'RDWR', path: value });
+          ps.openFile(pid, { fd: fd == null ? 0 : fd, path: value });
           break;
         }
         default: throw testNever(def);

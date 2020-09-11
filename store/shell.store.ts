@@ -125,7 +125,7 @@ const useStore = create<State>(devtools((set, get) => {
     fs: addToLookup(tmpHidden,addToLookup(nullFile, {} as State['fs'])),
     // NOTE we're also using /dev/null to identify an open file description
     ofd: addToLookup(
-      new OpenFileDescription('/dev/null', nullFile, 'RDWR'),
+      new OpenFileDescription('/dev/null', nullFile),
       {} as State['ofd'],
     ),
     procGrp: {},
@@ -159,7 +159,7 @@ const useStore = create<State>(devtools((set, get) => {
           nextTtyId: nextTtyId + 1,
           fs: addToLookup(worldDevice, addToLookup(ttyFile, fs)),
           // NOTE we're also using /dev/tty-${ttyId} to identify an open file description
-          ofd: addToLookup(new OpenFileDescription(canonicalPath, ttyFile, 'RDWR'), ofd),
+          ofd: addToLookup(new OpenFileDescription(canonicalPath, ttyFile), ofd),
         }));
 
         processService.createLeadingProcess(sessionKey);

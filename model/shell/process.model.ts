@@ -1,5 +1,3 @@
-import { OpenFileRequest } from "./file.model";
-
 export type FromFdToOpenKey = Record<number, string>;
 
 export type ProcessAct = (
