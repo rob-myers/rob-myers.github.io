@@ -577,7 +577,7 @@ class TranspileShService {
 
           ps.pushRedirectScope(pid);
           const opened = ps.openFile(pid, { path: `/dev/cs/${pid}`, mode: 'WRONLY', fd: 1 });
-          const stopListening = opened.file.listen((msg) => output.push(vs.toStringOrJs(msg)));
+          const stopListening = opened.file.listen((msg) => output.push(vs.toStringOrJson(msg)));
 
           try {
             const transpiles = node.Stmts.map(stmt => ts.Stmt(stmt));

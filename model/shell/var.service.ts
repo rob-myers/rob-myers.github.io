@@ -1,10 +1,10 @@
-import * as jsStringify from "javascript-stringify";
 import { testNever, mapValues, last, isArrayOrObject } from "@model/generic.model";
 import useStore, { Process } from '@store/shell.store';
 import { ProcessVar, BasePositionalVar, AssignVarBase, ShellFuncDef, JsFuncDef } from "./var.model";
 import { ShError } from "./transpile.service";
 import { FileMeta } from "./parse.service";
 import { processService } from "./process.service";
+import safeJsonStringify from "safe-json-stringify";
 
 const alphaNumeric = /^[a-z_][a-z0-9_]*/i;
 
@@ -231,10 +231,10 @@ class VarService {
     return useStore.getState().session[sessionKey];
   }
 
-  toStringOrJs(input: any) {
+  toStringOrJson(input: any) {
     return typeof input === 'string'
       ? input
-      : jsStringify.stringify(input) || '';
+      : safeJsonStringify(input) || '';
   }
 
   getVarKeys(value: undefined | ProcessVar['value']): string[] {
@@ -252,14 +252,14 @@ class VarService {
     } else if (Array.isArray(value)) {
       // Must remove empties e.g. crashes getopts.
       return index === '@' || index === '*'
-        ? (value as any[]).filter((x) => x !== undefined).map(this.toStringOrJs)
-        : [this.toStringOrJs(value[index ? parseInt(index) : 0])];
+        ? (value as any[]).filter((x) => x !== undefined).map(this.toStringOrJson)
+        : [this.toStringOrJson(value[index ? parseInt(index) : 0])];
     } else if (typeof value === 'object') {
       return index === '@' || index === '*'
-        ? Object.values(value as Record<string, string | number>).map(this.toStringOrJs)
-        : [this.toStringOrJs(value[index || 0])];
+        ? Object.values(value as Record<string, string | number>).map(this.toStringOrJson)
+        : [this.toStringOrJson(value[index || 0])];
     }
-    return [this.toStringOrJs(value)];
+    return [this.toStringOrJson(value)];
   }
 
   lookupVar(pid: number, varName: string): ProcessVar['value'] | undefined {

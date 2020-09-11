@@ -4,7 +4,7 @@ import { parseSh } from './parse.service';
 import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
-import { TtyXterm, ansiReset, ansiWhite } from './tty.xterm';
+import { TtyXterm, ansiReset, ansiPrompt } from './tty.xterm';
 import { processService as ps, processService } from './process.service';
 import { srcService } from './src.service';
 
@@ -30,7 +30,7 @@ export class TtyShell {
   initialise(xterm: TtyXterm) {
     this.xterm = xterm;
     this.io.listen(this.onMessage.bind(this));
-    this.prompt('$ ');
+    this.prompt('$');
     this.session = useStore.getState().session[this.sessionKey];
   } 
 
@@ -70,7 +70,7 @@ export class TtyShell {
             
           });
           this.buffer.length = 0;
-          this.prompt('$ ');
+          this.prompt('$');
         }
         break;
       }
@@ -94,7 +94,7 @@ export class TtyShell {
             processService.warn(this.session.sid, errMsg);
             processService.setExitCode(this.session.sid, 1);
             this.buffer.length = 0;
-            this.prompt('$ ');
+            this.prompt('$');
             break;
           }
           case 'complete': {
@@ -104,11 +104,11 @@ export class TtyShell {
             this.storeSrcLine(singleLineSrc);
 
             await ps.runInShell(result.parsed, this.sessionKey);
-            this.prompt('$ ');
+            this.prompt('$');
             break;
           }
           case 'incomplete': {
-            this.prompt('> ');
+            this.prompt('>');
             break;
           }
         }
@@ -125,7 +125,7 @@ export class TtyShell {
   private prompt(prompt: string) {
     this.io.write({
       key: 'send-xterm-prompt',
-      prompt: `${ansiWhite}${prompt}${ansiReset}`, // White prompt
+      prompt: `${ansiPrompt}${prompt}${ansiReset} `,
     });    
   }
 

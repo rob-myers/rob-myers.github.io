@@ -5,10 +5,12 @@ import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
 
 export const ansiReset = '\x1b[0m';
-export const ansiBrown = '\u001b[33m';
+export const ansiBrown = '\x1b[33m';
 export const ansiBlue = '\x1b[1;34m';
-export const ansiWhite = '\u001b[37m';
-export const ansiWarn = '\u001b[41;37m';
+export const ansiPrompt = '\x1b[40;37m';
+export const ansiOther = '\x1b[3;37m';
+export const ansiWhite = '\x1b[37m';
+export const ansiWarn = '\x1b[41;37m';
 
 /**
  * Wraps XTerm.Terminal.
@@ -403,11 +405,11 @@ export class TtyXterm {
     return { row, col };
   }
 
-  protected onMessage(msg: MessageFromShell) {
-    // if (typeof msg === 'string') {
-    //   return this.queueCommands(msg.split('\n')
-    //     .map(line => ({ key: 'line', line })));
-    // }
+  protected onMessage(msg: MessageFromShell | string) {
+    if (typeof msg === 'string') {
+      return this.queueCommands(msg.split('\n')
+        .map(line => ({ key: 'line', line: `${ansiOther}${line}${ansiReset}` })));
+    }
 
     switch (msg.key) {
       case 'send-xterm-prompt': {
