@@ -22,8 +22,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
     last read by specific instance of `read`/`click`/... builtin.
   > `read </tick/1s`
 
-- [ ] simplify ofds as much as possible
-  > can we replace open file descriptions by filepaths?
+- [x] simplify ofds (probably more to do)
 - [x] remove path resolution i.e. all paths absolute
   > no `PWD` or `OLDPWD`
 

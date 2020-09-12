@@ -2,13 +2,12 @@ import shortid from 'shortid';
 import { mapValues, last } from '@model/generic.model';
 import useStore, { State as ShellState, Session, Process, ProcessGroup } from '@store/shell.store';
 import { addToLookup } from '@store/store.util';
+import * as Sh from './parse.service';
 import { OpenFileRequest, OpenFileDescription } from './file.model';
 import { NamedFunction } from './var.model';
 import { ShellStream } from './shell.stream';
-import * as Sh from './parse.service';
 import { transpileSh, ShError } from './transpile.service';
 import { fileService } from './file.service';
-import { builtinService } from './builtin.service';
 import { varService } from './var.service';
 import { SendXtermError } from './tty.shell';
 
@@ -40,7 +39,11 @@ export class ProcessService {
    */
   createLeadingProcess(sessionKey: string) {
     const { sid: pid, ttyShell } = this.getSession(sessionKey);
-
+    /**
+     * The canonical paths `/dev/tty-1`s point to the tty's inode.
+     * We also use this path to indicate an OpenFileDescription created
+     * via api.createSession in shell.store.
+     */
     const fdToOpenKey = {
       // TtyShell already reads from here, but so could `read` in another process
       0: ttyShell.canonicalPath,
@@ -81,34 +84,27 @@ export class ProcessService {
    * Decrement open file description,
    * removing when numLinks is not positive.
    */
-  private closeFdInternal(
-    /** File descriptor. */
-    fd: number,
-    fromFd: Process['fdToOpen'],
-    /** Warn if open file description non-existent? */
-    warnNonExist?: boolean,
-  ) {
-    const open = fromFd[fd];
+  private closeFdInternal(fd: number, fdToOpen: Process['fdToOpen']) {
+    const open = fdToOpen[fd];
     if (open) {
       if (open.numLinks > 1) {
         open.numLinks--;
       } else {
         delete this.getOfds()[open.key];
       }
-    } else if (warnNonExist) {
-      console.error(`Cannot open non-existent file at ${fd}`);
+    } else {
+      throw new ShError(`${fd}: cannot open non-existent file`, 1);
     }
   }
 
   closeFd(pid: number, fd: number) {
-    const { fdToOpen, nestedRedirs } = this.getProcess(pid);
-
-    if (nestedRedirs[0][fd]) {
-      this.closeFdInternal(fd, fdToOpen, true);
+    const process = this.getProcess(pid);
+    // 0th is most recent scope i.e. deepest scope
+    if (process.nestedRedirs[0][fd]) {
+      this.closeFdInternal(fd, process.fdToOpen);
+      delete process.nestedRedirs[0][fd];
     }
-  
-    delete fdToOpen[fd];
-    delete nestedRedirs[0][fd];
+    delete process.fdToOpen[fd];
   }
 
   createProcessGroup(group: ProcessGroup) {
@@ -117,18 +113,16 @@ export class ProcessService {
   }
 
   duplicateFd(pid: number, srcFd: number, dstFd: number) {
-    const ofd = this.getOfds();
-    const process = this.getProcess(pid);
-    const { fdToOpen: { [srcFd]: srcFile }, nestedRedirs } = process;
-    
     // Close dstFd if opened in current redir scope
-    if (nestedRedirs[0][dstFd]) {
+    const process = this.getProcess(pid);
+    if (process.nestedRedirs[0][dstFd]) {
       this.closeFdInternal(dstFd, process.fdToOpen);
     }
     
+    const { [srcFd]: srcFile } = process.fdToOpen;
     process.fdToOpen[dstFd] = srcFile;
-    nestedRedirs[0][dstFd] = srcFile.key;
-    ofd[srcFile.key].numLinks++;
+    process.nestedRedirs[0][dstFd] = srcFile.key;
+    this.getOfds()[srcFile.key].numLinks++;
   }
 
   ensureFd(pid: number, fdInput: string | number) {
@@ -141,9 +135,6 @@ export class ProcessService {
     }
   }
 
-  /**
-   * TODO pool clones keyed by node.uid
-   */
   execProcess(pid: number, node: Sh.Stmt) {
     const process = this.getProcess(pid);
     // Must clone parse tree because meta will differ
@@ -262,11 +253,6 @@ export class ProcessService {
     } finally {
       varService.popPositionalsScope(pid);
     }
-  }
-
-  /** Statically detect builtins */
-  private detectBuiltinStatically(node: Sh.Stmt) {
-    return builtinService.isBuiltinCommand(((node.Cmd as Sh.CallExpr)?.Args[0].Parts[0] as Sh.Lit)?.Value || '');
   }
 
   isInteractiveShell({ meta }: Sh.BaseNode) {
@@ -397,15 +383,13 @@ export class ProcessService {
   }
 
   setFd(pid: number, fd: number, opened: OpenFileDescription<any>) {
-    const { nestedRedirs, fdToOpen } = this.getProcess(pid);
-
+    const process = this.getProcess(pid);
     // Close if opened in current redirection scope
-    if (nestedRedirs[0][fd]) {
-      this.closeFdInternal(pid, fdToOpen);
+    if (process.nestedRedirs[0][fd]) {
+      this.closeFdInternal(pid, process.fdToOpen);
     }
-
-    fdToOpen[fd] = opened;
-    nestedRedirs[0][fd] = opened.key;
+    process.fdToOpen[fd] = opened;
+    process.nestedRedirs[0][fd] = opened.key;
     opened.numLinks++;
   }
 
@@ -451,12 +435,6 @@ export class ProcessService {
     return forked;
   }
 
-  // stopProcess(pid: number) {
-  //   const process = this.getProcess(pid);
-  //   process.subscription?.unsubscribe();
-  //   process.subscription = null;
-  // }
-
   private tryGetProcessGroup(pgid: number) {
     return this.getProcessGroups()[pgid] || null;
   }
@@ -466,7 +444,6 @@ export class ProcessService {
    */
   unlinkFile(pid: number, absPath: string) {
     const file = fileService.getFile(absPath);
-
     if (!file) {
       if (absPath.endsWith('/')) {
         throw new ShError(`${absPath}: is a directory`, 1);
@@ -486,7 +463,6 @@ export class ProcessService {
     const { [2]: opened } = this.getProcess(pid).fdToOpen;
     opened.write(errorMsg);
   }
-
 }
 
 export const processService = new ProcessService;
