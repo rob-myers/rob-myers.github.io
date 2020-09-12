@@ -50,6 +50,7 @@ export default function Model(props) {
             userData={{ name: 'straight' }}
           />
         </group>
+        <group name="inners" />
       </scene>
     </group>
   )

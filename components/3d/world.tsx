@@ -9,13 +9,14 @@ import css from './world.scss';
 
 const World: React.FC<Props> = ({ envName }) => {
   const level = useRef<THREE.Group>(null);
+  const pixelRatio = useRef(getWindow()?.devicePixelRatio);
 
   return (
     <div
       className={css.root}
     >
       <Canvas
-        pixelRatio={getWindow()?.devicePixelRatio}
+        pixelRatio={pixelRatio.current}
         onCreated={(ctxt) => {
           const camera = ctxt.camera as PerspectiveCamera;
           camera.position.set(0, 0, 10);
@@ -32,16 +33,16 @@ const World: React.FC<Props> = ({ envName }) => {
           ref={level}
           // onUpdate={() => !geomMounted && setGeomMounted(true)}
           userData={{ envName }} // For children
-        >
-          <Room is="closet" at={[-4, 0]} />
+        >ß
+          <Room is="closet" x={-4} />
           <Room is="junction" />
-          <Room is="closet" at={[4, 0]} w />
+          <Room is="closet" x={4} w />
           
-          <Room is="fourway" at={[0, -4]} />
-          <Room is="corner" at={[-4, -4]} n />
-          <Room is="straight" at={[4, -4]} />
+          <Room is="fourway" y={-4} />
+          <Room is="corner" x={-4} y={-4} n />
+          <Room is="straight" x={4} y={-4} />
           
-          <Room is="straight" at={[0, -8]} s />
+          <Room is="straight" y={-8} s />
         </group>
 
       </Canvas>

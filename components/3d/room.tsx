@@ -8,14 +8,14 @@ import { NavmeshClick } from "@model/shell/events.model";
 const undoGltfRotation = [Math.PI/2, 0, 0] as Coord3;
 
 const Room: React.FC<Props> = (props) => {
-  const { is, at = [0, 0] } = props;
   const root = useRef<THREE.Group>(null);
   const walls = useRef<THREE.Group>(null);
   
   const [envName, setEnvName] = useState(null as null | string);
   const env = useEnvStore(({ env }) => envName ? env[envName] : null);
   
-  const meta = useGeomStore(({ rooms }) => rooms[is]);
+  const position = useMemo(() => [props.x || 0, props.y || 0, 0] as Coord3, [props.x, props.y]);
+  const meta = useGeomStore(({ rooms }) => rooms[props.is]);
   const api = useGeomStore(({ api }) => api);
   const wallsScale = useMemo(() => [1, env?.highWalls ? 3 : 1, 1] as Coord3, [env]);
   
@@ -46,7 +46,7 @@ const Room: React.FC<Props> = (props) => {
   return (
     <group
       ref={root}
-      position={[at[0], at[1], 0]}
+      position={position}
       rotation={undoGltfRotation}
       onClick={onClick}
     >
@@ -67,7 +67,8 @@ function propsToAngle(props: Props) {
 
 type Props = {
   is: string;
-  at?: [number, number];
+  x?: number;
+  y?: number;
 } & (
   | { e?: boolean }
   | { s?: boolean }
