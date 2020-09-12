@@ -67,7 +67,7 @@ export class ProcessService {
         nestedRedirs: [{ ...fdToOpenKey }],
         nestedVars: [{
           USER: { key: 'plain', varName: 'USER', value: 'root', exported: true, readonly: false },
-          0: { key: 'positional', varName: '0', index: 0, value: 'behaveyr', exported: true, readonly: false },
+          0: { key: 'positional', varName: '0', index: 0, value: 'behave-yr', exported: true, readonly: false },
         }],
         toFunc: {},
         lastExitCode: null,

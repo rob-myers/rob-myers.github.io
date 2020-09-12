@@ -16,11 +16,14 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `spawn` command
   > spawn an actor at a position
 
-- [ ] can write to `/var/foo` to write to variable foo 
+- [ ] can read/write to `/var/foo` to read/write to variable foo 
 - [ ] instead of a `tick` builtin, provide _read-aware-clocks_
   > e.g. 1 second clock immediately provides read if more than 1s since
     last read by specific instance of `read`/`click`/... builtin.
   > `read </tick/1s`
+
+- [ ] navmesh accounts for room interiors
+- [ ] optional room interiors
 
 - [x] simplify ofds (probably more to do)
 - [x] remove path resolution i.e. all paths absolute

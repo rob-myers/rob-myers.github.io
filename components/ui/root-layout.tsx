@@ -12,7 +12,7 @@ const RootLayout: React.FC = ({ children }) => {
       <Head>
         <title>game ai blog</title>
       </Head>
-      <div>
+      <div className={css.content}>
         <div className={css.header}>
           <h1 className={css.title}>
             <svg
@@ -21,7 +21,7 @@ const RootLayout: React.FC = ({ children }) => {
               preserveAspectRatio="xMinYMin"
             >
               <text className={css.text}>
-                be have yr
+                behave yr
               </text>
             </svg>
           </h1>

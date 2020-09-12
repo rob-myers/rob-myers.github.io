@@ -5,7 +5,7 @@ import { PanZoomControls } from '@model/three/controls';
 import { getWindow } from '@model/dom.model';
 import Grid from './grid';
 import Room from './room';
-import css from './3d.scss';
+import css from './world.scss';
 
 const World: React.FC<Props> = ({ envName }) => {
   const level = useRef<THREE.Group>(null);
@@ -13,7 +13,6 @@ const World: React.FC<Props> = ({ envName }) => {
   return (
     <div
       className={css.root}
-      // style={{ height: 400 }}
     >
       <Canvas
         pixelRatio={getWindow()?.devicePixelRatio}

@@ -15,10 +15,10 @@ const Env: React.FC<Props> = ({ envKey, high }) => {
   useEffect(() => api.setHighWalls(envKey, !!high), [high]);
 
   return (
-    <div className={css.root}>
+    <section className={css.root}>
       <World envName={envKey} />
       <Terminal envName={envKey} />
-    </div>
+    </section>
   )
 };
 

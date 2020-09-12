@@ -736,7 +736,7 @@ class TranspileShService {
             break;
           }
           case '_': {
-            yield act.expanded('behaveyr'); // TODO
+            yield act.expanded('behave-yr'); // TODO
             break;
           }
           default: throw testNever(def.param);

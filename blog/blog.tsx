@@ -15,10 +15,10 @@ const BlogRoot: React.FC = () => {
   }, []);
 
   return (
-    <div className={css.root}>
+    <section className={css.root}>
       <Blog1/>
       <Blog2/>
-    </div>
+    </section>
   );
 };
 
