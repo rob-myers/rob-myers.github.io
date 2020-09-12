@@ -146,29 +146,26 @@ export default class GeomService {
   }
 
   /**
-   * Project a GLTF vector onto XY plane, restricting precision.
-   * We assume input z-axis corresponds to negative y-axis in 2d.
+   * Project onto XY plane, restricting precision.
    */
-  projectGltf(v: THREE.Vector3): Geom.Vector {
-    return new Geom.Vector(v.x, -v.z).precision();
+  projectXY(v: THREE.Vector3): Geom.Vector {
+    return new Geom.Vector(v.x, v.y).precision();
   }
 
   /**
-   * Project the base of a GLTF geometry onto XY plane, restricting precision.
-   * - seek tris where each y ~ 0 because gltf changes z -> y.
-   * - may have disjoint walls so outputs a list of (multi)polygons.
+   * Project base of three.js geometry onto XY plane, restricting precision.
+   * May have disjoint pieces, so outputs a list of (multi)polygons.
    */
-  projectGltfGeometry(parent: THREE.Mesh, geometry: THREE.Geometry): Geom.Polygon[] {
+  projectGeometryXY(parent: THREE.Mesh, geometry: THREE.Geometry): Geom.Polygon[] {
     const baseTris = [] as Geom.Polygon[];
     const vs = geometry.vertices.map(p => parent.localToWorld(p.clone()));
-
     geometry.faces.forEach(({ a, b, c }) => {
       const tri = [a, b, c].map(i => vs[i]);
-      if (tri.every(p => Math.abs(p.y) < epsilon)) {
-        baseTris.push(new Geom.Polygon(tri.map(this.projectGltf)));
+      if (tri.every(p => Math.abs(p.z) < epsilon)) {
+        baseTris.push(new Geom.Polygon(tri.map(this.projectXY)));
       }
     });
-    console.log({ key: parent.name, baseTris });
+    // console.log({ key: parent.name, baseTris });
     return this.union(baseTris);
   }
 

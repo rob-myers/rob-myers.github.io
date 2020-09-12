@@ -83,7 +83,13 @@ const useStore = create<State>(devtools((set, get) => ({
           case 'rooms': {
             rooms.push(...node.children.filter(isMeshNode));
             rooms.forEach(room => {
-              room.position.setX(0); // Reset planar position
+              // Reset planar position
+              room.position.setX(0);
+              // Remove gltf rotation
+              room.position.setY(0);
+              room.geometry.rotateX(Math.PI/2);
+              // Put on floor
+              room.geometry.translate(0, 0, -room.geometry.boundingBox!.min.z);
             });
             node.updateMatrixWorld();
             break;
@@ -100,7 +106,7 @@ const useStore = create<State>(devtools((set, get) => ({
     computeInnerMeta: (inner) => {
       const { geom } = get().api;
       const geometry = geom.toThreeGeometry(inner.geometry as THREE.BufferGeometry);
-      const basePoly = geom.projectGltfGeometry(inner, geometry);
+      const basePoly = geom.projectGeometryXY(inner, geometry);
       const unnavigable = basePoly.flatMap(x => geom.outset(x, outsetAmount));
 
       return {
@@ -114,15 +120,14 @@ const useStore = create<State>(devtools((set, get) => ({
       const { geom } = get().api;
       // Compute room bounding rect in XY plane
       const floor = Geom.Rect.fromPoints(
-        geom.projectGltf(room.geometry.boundingBox!.min),
-        geom.projectGltf(room.geometry.boundingBox!.max),
+        geom.projectXY(room.geometry.boundingBox!.min),
+        geom.projectXY(room.geometry.boundingBox!.max),
       );
 
       // Compute base of walls as list of (multi)polygons
       const geometry = geom.toThreeGeometry(room.geometry as THREE.BufferGeometry);
-      const wallsPoly = geom.projectGltfGeometry(room, geometry);
-      // console.log({ key: room.name, floor, wallsPoly })
-
+      const wallsPoly = geom.projectGeometryXY(room, geometry);
+      
       // Compute navmesh by cutting outset walls from rect
       const navigablePoly = geom.cutOut(
         wallsPoly.flatMap(x => geom.outset(x, outsetAmount)),
@@ -140,7 +145,6 @@ const useStore = create<State>(devtools((set, get) => ({
     // Add navmesh to room mesh
     extendRoom: (meta) => {
       const { geom } = get().api;
-      const floorZ = meta.mesh.geometry.boundingBox!.min.y;
       const material = new THREE.MeshBasicMaterial({
         color: 0x777777,
         opacity: 0.2,
@@ -156,8 +160,7 @@ const useStore = create<State>(devtools((set, get) => ({
       navPartitions.forEach(rects => {
         rects.forEach(({ cx, cy, width, height }) => {
           const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 2), material);
-          plane.position.set(cx, floorZ, -cy);
-          plane.rotation.set(-Math.PI/2, 0, 0);
+          plane.position.set(cx, cy, 0);
           navMesh.add(plane);
         });
       });

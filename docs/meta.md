@@ -25,6 +25,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > `read </tick/1s`
 
 - [ ] can mount `inners` inside `Room`s, which mutates navmesh
+- [ ] simplify `Room` i.e. scale walls and adjust gltf rotation elsewhere
 - [x] load room `inners` from Blender into geom.store
 
 - [x] simplify ofds (probably more to do)
