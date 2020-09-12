@@ -4,7 +4,7 @@
   align-items: center;
 
   .content {
-    @media (min-width: 1024px) {
+    @media (min-width: 1284px) {
       margin-top: 20px;
       border-top: 10px solid #444;
       border-left: 1px solid #ddd;
@@ -39,8 +39,8 @@
 
   .body {
     width: 100vw;
-    @media (min-width: 1024px) {
-      max-width: 1024px;
+    @media (min-width: 1284px) {
+      width: 1284px;
     }
   }
 
