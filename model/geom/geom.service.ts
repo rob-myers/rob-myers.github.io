@@ -169,6 +169,33 @@ export default class GeomService {
     };
   }
 
+  /** https://schteppe.github.io/p2.js/docs/files/src_collision_AABB.js.html */
+  rayAabbIntersect(src: Geom.VectorJson, dir: Geom.VectorJson, rect: Geom.Rect){
+    const t1 = (rect.x - src.x) / dir.x;
+    const t2 = (rect.e - src.x) / dir.x;
+    const t3 = (rect.y - src.y) / dir.y;
+    const t4 = (rect.s - src.y) / dir.y;
+    const tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)));
+    const tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)));
+
+    if (tmax < 0){// line intersects AABB, but whole AABB is behind us
+      return -1;
+    }
+    if (tmin > tmax){// ray doesn't intersect AABB
+      return -1;
+    }
+    return { x: src.x + dir.x * tmax, y: src.y + dir.y * tmax };
+  }
+
+  rayLeaveAabbIntersect(src: Geom.VectorJson, dir: Geom.VectorJson, rect: Geom.Rect) {
+    const t1 = (rect.x - src.x) / dir.x;
+    const t2 = (rect.e - src.x) / dir.x;
+    const t3 = (rect.y - src.y) / dir.y;
+    const t4 = (rect.s - src.y) / dir.y;
+    const tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)));
+    return { x: src.x + dir.x * tmax, y: src.y + dir.y * tmax };
+  }
+
   /**
    * Given a list of rects which may only overlap along edges,
    * create a Polyanya mesh.
