@@ -6,6 +6,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] Can collapse/expand each blog entry
 - [ ] hashes always scrollIntoView
 
+- [ ] `Env` should be in react-reverse-portal
+
 - [ ] can query polyanya in webworker and display navpath
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
