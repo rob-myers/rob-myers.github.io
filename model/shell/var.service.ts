@@ -257,7 +257,9 @@ class VarService {
     } else if (typeof value === 'object') {
       return index === '@' || index === '*'
         ? Object.values(value as Record<string, string | number>).map(this.toStringOrJson)
-        : [this.toStringOrJson(value[index || 0])];
+        : index === null
+          ? [this.toStringOrJson(value)]
+          : [this.toStringOrJson(value[index || 0])];
     }
     return [this.toStringOrJson(value)];
   }
