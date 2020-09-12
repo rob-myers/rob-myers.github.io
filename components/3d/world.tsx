@@ -4,7 +4,7 @@ import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
 import { getWindow } from '@model/dom.model';
 import Grid from './grid';
-import Room from './room';
+import * as Room from './rooms';
 import css from './world.scss';
 
 const World: React.FC<Props> = ({ envName }) => {
@@ -33,16 +33,16 @@ const World: React.FC<Props> = ({ envName }) => {
           ref={level}
           // onUpdate={() => !geomMounted && setGeomMounted(true)}
           userData={{ envName }} // For children
-        >ß
-          <Room is="closet" x={-4} />
-          <Room is="junction" />
-          <Room is="closet" x={4} w />
+        >
+          <Room.Closet x={-4} />
+          <Room.Junction />
+          <Room.Closet x={4} w />
           
-          <Room is="fourway" y={-4} />
-          <Room is="corner" x={-4} y={-4} n />
-          <Room is="straight" x={4} y={-4} />
+          <Room.Fourway y={-4} />
+          <Room.Corner x={-4} y={-4} n />
+          <Room.Straight x={4} y={-4} />
           
-          <Room is="straight" y={-8} s />
+          <Room.Straight y={-8} s />
         </group>
 
       </Canvas>

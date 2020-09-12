@@ -65,8 +65,11 @@ function propsToAngle(props: Props) {
     : 'n' in props ? Math.PI/2 : 0;
 }
 
-type Props = {
+type Props = RoomTransformProps & {
   is: string;
+}
+
+export type RoomTransformProps = {
   x?: number;
   y?: number;
 } & (
