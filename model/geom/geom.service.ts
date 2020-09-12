@@ -175,8 +175,8 @@ export default class GeomService {
     const t2 = (rect.e - src.x) / dir.x;
     const t3 = (rect.y - src.y) / dir.y;
     const t4 = (rect.s - src.y) / dir.y;
-    const tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)));
-    const tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)));
+    const tmin = Math.max(Math.min(t1, t2), Math.min(t3, t4));
+    const tmax = Math.min(Math.max(t1, t2), Math.max(t3, t4));
 
     if (tmax < 0){// line intersects AABB, but whole AABB is behind us
       return -1;
@@ -187,32 +187,22 @@ export default class GeomService {
     return { x: src.x + dir.x * tmax, y: src.y + dir.y * tmax };
   }
 
+  /** Assume `rect` contains `src` */
   rayLeaveAabbIntersect(src: Geom.VectorJson, dir: Geom.VectorJson, rect: Geom.Rect) {
     const t1 = (rect.x - src.x) / dir.x;
     const t2 = (rect.e - src.x) / dir.x;
     const t3 = (rect.y - src.y) / dir.y;
     const t4 = (rect.s - src.y) / dir.y;
-    const tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)));
+    const tmax = Math.min(Math.max(t1, t2), Math.max(t3, t4));
     return { x: src.x + dir.x * tmax, y: src.y + dir.y * tmax };
   }
 
   /**
-   * Given a list of rects which may only overlap along edges,
-   * create a Polyanya mesh.
+   * Given rects only overlapping along edges, create a Polyanya mesh.
    */
   rectsToPolyanya(rects: Geom.Rect[]): PolyanyaMeshJson {
     // Compute adjacency graph of rectangles via their intersections
     const { succ, toPolygon } = (new Geom.RectNavGraph(rects)).compute();
-
-    /** Vertex key to list of rects it touches */
-    const vertexToRects = rects.reduce<Record<string, Geom.Rect[]>>((agg, rect) => ({
-      ...agg,
-      ...rect.points.reduce<Record<string, Geom.Rect[]>>((agg, p) => ({
-        ...agg,
-        [`${p}`]: agg[`${p}`] || [rect].concat(succ.get(rect)!.all.filter(r => r.contains(p))),
-      }), {}),
-    }), {});
-    const vertexKeys = Object.keys(vertexToRects);
 
     /**
      * Each rect has a respective polygon `toPolygon.get(rect)` i.e. the rect and
@@ -226,6 +216,10 @@ export default class GeomService {
         agg[`${edge}`] = [rect].concat(all.filter(r => r.contains(edge.midpoint))));
       return agg;
     }, {});
+
+    const vertexKeys = Array.from(new Set(
+      rects.flatMap(rect => rect.points.flatMap(p => `${p}`))
+    ));
 
     /**
      * Each rect has a respective polygon i.e. rect & incident corners of other rects
@@ -252,10 +246,8 @@ export default class GeomService {
         Object.keys(edgeToRects).filter(x => x.startsWith(`${vKey} `))
           .flatMap(edgeKey => {
             const adjRects = edgeToRects[edgeKey];
-            return adjRects.length === 1
-              ? [rects.indexOf(adjRects[0]), -1]
-              : adjRects.map(r => rects.indexOf(r))
-          }).filter((x, i, xs) => i === xs.indexOf(x)),
+            return adjRects.length === 1 ? [rects.indexOf(adjRects[0]), -1] : adjRects.map(r => rects.indexOf(r))
+          }).filter((x, i, xs) => i === xs.indexOf(x)), // Remove dups
       ),
     };
   }
