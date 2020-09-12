@@ -1,22 +1,28 @@
 import { useRef, useEffect, useCallback, useMemo, useState } from "react";
 import { MouseEvent as ThreeMouseEvent } from 'react-three-fiber';
-import useEnvStore from "@store/env.store";
-import useGeomStore from "@store/geom.store";
 import { Coord3, epsilon } from "@model/three/three.model";
 import { NavmeshClick } from "@model/shell/events.model";
+import useEnvStore from "@store/env.store";
+import useGeomStore from "@store/geom.store";
+import { alwaysEqual } from "@store/store.util";
 
 const Room: React.FC<Props> = (props) => {
+
   const root = useRef<THREE.Group>(null);
-  const wallsGroup = useRef<THREE.Group>(null);
+  const { api, meta } = useGeomStore(({ api, rooms }) =>
+    ({ api, meta: rooms[props.is] }), alwaysEqual);
   
+  const angle = propsToAngle(props);
+  useEffect(() => void (root.current!.rotation.z = angle), [angle]);
+  const { x = 0, y = 0 } = props;
+  const position = useMemo(() => [x, y, 0] as Coord3, [x, y]);
+
   const [envName, setEnvName] = useState(null as null | string);
   const env = useEnvStore(({ env }) => envName ? env[envName] : null);
-  
-  const position = useMemo(() => [props.x || 0, props.y || 0, 0] as Coord3, [props.x, props.y]);
-  const meta = useGeomStore(({ rooms }) => rooms[props.is]);
-  const api = useGeomStore(({ api }) => api);
-  const wallsScale = useMemo(() => [1, 1, env?.highWalls ? 3 : 1] as Coord3, [env]);
-  
+  useEffect(() => {// We'll connect to environment state using envName
+    setEnvName(root.current?.parent?.userData.envName??null);
+  }, []);
+
   const onClick = useCallback((e: ThreeMouseEvent) => {
     e.stopPropagation();
     if (Math.abs(e.point.z) < epsilon) {// Only floor clicks
@@ -25,21 +31,15 @@ const Room: React.FC<Props> = (props) => {
       const event: NavmeshClick = { key: 'navmesh-click', position };
       env?.worldDevice.write(event);
     }
-  }, [env]);
+  }, [env?.key]);
 
   useEffect(() => {
-    if (meta) {
-      // Attach walls and navmesh
-      const clone = meta.mesh.clone();
-      wallsGroup.current?.add(clone);
-      // We'll connect to environment using envName
-      setEnvName(root.current?.parent?.userData.envName??null);
-      return () => void wallsGroup.current?.remove(clone);
+    if (env) {
+      const clone = (env.highWalls ? meta.highMesh : meta.mesh).clone();
+      root.current?.add(clone);
+      return () => void root.current?.remove(clone);
     }
-  }, [meta]);
-
-  const angle = propsToAngle(props);
-  useEffect(() => void (root.current!.rotation.z = angle), [angle]);
+  }, [env?.highWalls]);
 
   return (
     <group
@@ -47,10 +47,6 @@ const Room: React.FC<Props> = (props) => {
       position={position}
       onClick={onClick}
     >
-      <group
-        ref={wallsGroup}
-        scale={wallsScale}
-      />
       {props.children}
     </group>
   )

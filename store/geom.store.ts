@@ -9,7 +9,7 @@ import * as Geom from '@model/geom/geom.model'
 import GeomService from '@model/geom/geom.service';
 
 export interface State {
-  loadedRooms: boolean;
+  loadedGltf: boolean;
   rooms: KeyedLookup<RoomMeta>;
   inners: KeyedLookup<InnerMeta>;
   api: {
@@ -30,6 +30,7 @@ interface RoomMeta {
   /** Mesh name */
   key: string;
   mesh: THREE.Mesh;
+  highMesh: THREE.Mesh;
   floor: Geom.Rect;
   walls: Geom.Polygon[];
   /** Base navmesh for room */
@@ -49,12 +50,12 @@ interface InnerMeta {
 const useStore = create<State>(devtools((set, get) => ({
   rooms: {},
   inners: {},
-  loadedRooms: false,
+  loadedGltf: false,
   api: {
     geom: new GeomService,
 
     load: async () => {
-      const { loadedRooms, api } = get();
+      const { loadedGltf: loadedRooms, api } = get();
       if (loadedRooms) {
         return;
       }
@@ -68,7 +69,7 @@ const useStore = create<State>(devtools((set, get) => ({
         
         // console.log({ rooms, inners, metas });
         set(_ => ({
-          loadedRooms: true,
+          loadedGltf: true,
           rooms: lookupFromValues(roomMetas),
           inners: lookupFromValues(innerMetas),
         }));
@@ -133,16 +134,22 @@ const useStore = create<State>(devtools((set, get) => ({
         wallsPoly.flatMap(x => geom.outset(x, outsetAmount)),
         [Geom.Polygon.fromRect(floor)],
       );
+
+      const highMesh = room.clone();
+      highMesh.geometry = highMesh.geometry.clone();
+      highMesh.geometry.scale(1, 1, 3);
+
       return {
         key: room.name,
         mesh: room,
+        highMesh,
         floor,
         walls: wallsPoly,
         navigable: navigablePoly,
       };
     },
 
-    // Add navmesh to room mesh
+    // Add navmesh to room mesh/highMesh
     extendRoom: (meta) => {
       const { geom } = get().api;
       const material = new THREE.MeshBasicMaterial({
@@ -164,7 +171,9 @@ const useStore = create<State>(devtools((set, get) => ({
           navMesh.add(plane);
         });
       });
+
       meta.mesh.add(navMesh);
+      meta.highMesh.add(navMesh.clone());
     },
   },
 }), 'geom'));
