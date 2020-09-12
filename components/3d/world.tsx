@@ -5,7 +5,8 @@ import { PanZoomControls } from '@model/three/controls';
 import { getWindow } from '@model/dom.model';
 import useGeomStore from '@store/geom.store';
 import Grid from './grid';
-import * as Room from './rooms';
+import { Closet, Corner, Fourway, Junction, Straight } from './rooms';
+import Inner from './rooms/inner';
 import css from './world.scss';
 
 const World: React.FC<Props> = ({ envName }) => {
@@ -28,7 +29,7 @@ const World: React.FC<Props> = ({ envName }) => {
         >
           <CameraControls />
           {/* <ambientLight color="white" intensity={0.5} /> */}
-          {/* <pointLight position={[0, 0, 5]} intensity={1} /> */}
+          <pointLight position={[0, 0, 5]} intensity={0.5} />
           
           <Grid />
 
@@ -37,15 +38,19 @@ const World: React.FC<Props> = ({ envName }) => {
             // onUpdate={() => !geomMounted && setGeomMounted(true)}
             userData={{ envName }} // For children
           >
-            <Room.Closet x={-4} />
-            <Room.Junction />
-            <Room.Closet x={4} w />
+            <Closet x={-4}>
+              <Inner id="sideboard" />  
+            </Closet>
+            <Junction>
+              <Inner id="central-table" />  
+            </Junction>
+            <Closet x={4} w />
             
-            <Room.Fourway y={-4} />
-            <Room.Corner x={-4} y={-4} n />
-            <Room.Straight x={4} y={-4} />
+            <Fourway y={-4} />
+            <Corner x={-4} y={-4} n />
+            <Straight x={4} y={-4} />
             
-            <Room.Straight y={-8} s />
+            <Straight y={-8} s />
           </group>
 
         </Canvas>

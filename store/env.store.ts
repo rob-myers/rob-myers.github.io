@@ -7,12 +7,15 @@ import { FsFile } from '@model/shell/file.model';
 
 export interface State {
   env: KeyedLookup<Environment>;
+  room: KeyedLookup<EnvRoom>;
   api: {
     createEnv: (def: EnvDef) => void;
     removeEnv: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
     registerRoom: (envKey: string, roomKey: string) => void;
-    unregisterRoom: (envKey: string, roomKey: string) => void;
+    unregisterRoom: (roomKey: string) => void;
+    registerInner: (roomKey: string, innerKey: string) => void;
+    unregisterInner: (roomKey: string, innerKey: string) => void;
   };
 }
 
@@ -20,7 +23,6 @@ export interface Environment {
   key: string;
   highWalls: boolean;
   worldDevice: FsFile;
-  rooms: KeyedLookup<EnvRoom>;
 }
 
 interface EnvDef {
@@ -28,15 +30,18 @@ interface EnvDef {
   highWalls: boolean;
 }
 
-interface EnvRoom {
+export interface EnvRoom {
   /** Room instance key */
   key: string;
+  /** Parent env */
+  envKey: string;
   /** Identifiers of `Inner` children of room */
   innerKeys: string[];
 }
 
 const useStore = create<State>(devtools((set, get) => ({
   env: {},
+  room: {},
   api: {
     createEnv: ({ envKey, highWalls }) => {
       /**
@@ -52,7 +57,6 @@ const useStore = create<State>(devtools((set, get) => ({
           key: envKey,
           highWalls,
           worldDevice,
-          rooms: {},
         }, env),
       }));
     },
@@ -70,20 +74,33 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     registerRoom: (envKey, roomKey) => {
-      set(({ env }) => ({
-        env: updateLookup(envKey, env, ({ rooms }) => ({
-          rooms: addToLookup({ key: roomKey, innerKeys: [] }, rooms),
+      set(({ room }) => ({
+        room: addToLookup({ key: roomKey, envKey, innerKeys: [] }, room),
+      }));
+    },
+
+    unregisterRoom: (roomKey) => {
+      set(({ room }) => ({
+        room: removeFromLookup(roomKey, room),
+      }));
+    },
+
+    registerInner: (roomKey, innerKey) => {
+      set(({ room }) => ({
+        room: updateLookup(roomKey, room, ({ innerKeys }) => ({
+          innerKeys: innerKeys.concat(innerKey),
         })),
       }));
     },
 
-    unregisterRoom: (envKey, roomKey) => {
-      set(({ env }) => ({
-        env: updateLookup(envKey, env, ({ rooms }) => ({
-          rooms: removeFromLookup(roomKey, rooms),
+    unregisterInner: (roomKey, innerKey) => {
+      set(({ room }) => ({
+        room: updateLookup(roomKey, room, ({ innerKeys }) => ({
+          innerKeys: innerKeys.filter(key => key !== innerKey),
         })),
       }));
     },
+
   },
 }), 'env'));
 

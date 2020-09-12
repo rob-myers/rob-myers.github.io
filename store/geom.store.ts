@@ -26,7 +26,7 @@ export interface State {
 }
 
 /** e.g. `fourway` or `closet` */
-interface RoomMeta {
+export interface RoomMeta {
   /** Mesh name */
   key: string;
   mesh: THREE.Mesh;
@@ -97,6 +97,11 @@ const useStore = create<State>(devtools((set, get) => ({
           }
           case 'inners': {
             inners.push(...node.children.filter(isMeshNode));
+            inners.forEach(inner => {
+              inner.position.setY(0);
+              inner.geometry.rotateX(Math.PI/2);
+              inner.geometry.translate(0, 0, -inner.geometry.boundingBox!.min.z);
+            });
             break;
           }
         }
