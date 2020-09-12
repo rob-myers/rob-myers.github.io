@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
-import { isMeshNode, epsilon, outsetAmount } from '@model/three/three.model';
+import { isMeshNode, outsetAmount } from '@model/three/three.model';
 import * as Geom from '@model/geom/geom.model'
 import GeomService from '@model/geom/geom.service';
 

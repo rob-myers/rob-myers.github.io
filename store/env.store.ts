@@ -11,6 +11,8 @@ export interface State {
     createEnv: (def: EnvDef) => void;
     removeEnv: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
+    registerRoom: (envKey: string, roomKey: string) => void;
+    unregisterRoom: (envKey: string, roomKey: string) => void;
   };
 }
 
@@ -18,11 +20,19 @@ export interface Environment {
   key: string;
   highWalls: boolean;
   worldDevice: FsFile;
+  rooms: KeyedLookup<EnvRoom>;
 }
 
 interface EnvDef {
   envKey: string;
   highWalls: boolean;
+}
+
+interface EnvRoom {
+  /** Room instance key */
+  key: string;
+  /** Identifiers of `Inner` children of room */
+  innerKeys: string[];
 }
 
 const useStore = create<State>(devtools((set, get) => ({
@@ -42,17 +52,36 @@ const useStore = create<State>(devtools((set, get) => ({
           key: envKey,
           highWalls,
           worldDevice,
+          rooms: {},
         }, env),
       }));
     },
+    
     removeEnv: (envKey) => {
       set(({ env }) => ({
         env: removeFromLookup(envKey, env),
       }));
     },
+
     setHighWalls: (envKey: string, next: boolean) => {
       set(({ env }) => ({
         env: updateLookup(envKey, env, () => ({ highWalls: next })),
+      }));
+    },
+
+    registerRoom: (envKey, roomKey) => {
+      set(({ env }) => ({
+        env: updateLookup(envKey, env, ({ rooms }) => ({
+          rooms: addToLookup({ key: roomKey, innerKeys: [] }, rooms),
+        })),
+      }));
+    },
+
+    unregisterRoom: (envKey, roomKey) => {
+      set(({ env }) => ({
+        env: updateLookup(envKey, env, ({ rooms }) => ({
+          rooms: removeFromLookup(roomKey, rooms),
+        })),
       }));
     },
   },
