@@ -24,8 +24,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
     last read by specific instance of `read`/`click`/... builtin.
   > `read </tick/1s`
 
-- [ ] navmesh accounts for room interiors
-- [ ] optional room interiors
+- [ ] can mount `inners` inside `Room`s, which mutates navmesh
+- [x] load room `inners` from Blender into geom.store
 
 - [x] simplify ofds (probably more to do)
 - [x] remove path resolution i.e. all paths absolute

@@ -1,3 +1,4 @@
+import * as THREE from "three";
 import polygonClipping from 'polygon-clipping';
 import rectDecompose from 'rectangle-decomposition';
 import maximalMatching from 'bipartite-matching';
@@ -6,6 +7,7 @@ import maximalIndependentSet from 'maximal-independent-set';
 
 import * as Geom from '@model/geom/geom.model';
 import { MeshJson as PolyanyaMeshJson } from '../polyanya/structs/mesh';
+import { epsilon } from "@model/three/three.model";
 
 export default class GeomService {
 
@@ -144,11 +146,30 @@ export default class GeomService {
   }
 
   /**
-   * Project a GLTF vector onto xy plane, restricting precision.
-   * We're assume z-axis corresponds to negative y-axis in 2d.
+   * Project a GLTF vector onto XY plane, restricting precision.
+   * We assume input z-axis corresponds to negative y-axis in 2d.
    */
   projectGltf(v: THREE.Vector3): Geom.Vector {
     return new Geom.Vector(v.x, -v.z).precision();
+  }
+
+  /**
+   * Project the base of a GLTF geometry onto XY plane, restricting precision.
+   * - seek tris where each y ~ 0 because gltf changes z -> y.
+   * - may have disjoint walls so outputs a list of (multi)polygons.
+   */
+  projectGltfGeometry(parent: THREE.Mesh, geometry: THREE.Geometry): Geom.Polygon[] {
+    const baseTris = [] as Geom.Polygon[];
+    const vs = geometry.vertices.map(p => parent.localToWorld(p.clone()));
+
+    geometry.faces.forEach(({ a, b, c }) => {
+      const tri = [a, b, c].map(i => vs[i]);
+      if (tri.every(p => Math.abs(p.y) < epsilon)) {
+        baseTris.push(new Geom.Polygon(tri.map(this.projectGltf)));
+      }
+    });
+    console.log({ key: parent.name, baseTris });
+    return this.union(baseTris);
   }
 
   project(v: THREE.Vector3): Geom.Vector {
@@ -250,6 +271,10 @@ export default class GeomService {
           }).filter((x, i, xs) => i === xs.indexOf(x)), // Remove dups
       ),
     };
+  }
+
+  toThreeGeometry(geom: THREE.BufferGeometry) {
+    return (new THREE.Geometry()).fromBufferGeometry(geom);
   }
 
   union(polys: Geom.Polygon[]): Geom.Polygon[] {
