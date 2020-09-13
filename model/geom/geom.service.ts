@@ -169,10 +169,6 @@ export default class GeomService {
     return this.union(baseTris);
   }
 
-  project(v: THREE.Vector3): Geom.Vector {
-    return new Geom.Vector(v.x, v.y).precision(2);
-  }
-
   outset(poly: Geom.Polygon, amount: number) {
     return this.inset(poly, -amount);
   }

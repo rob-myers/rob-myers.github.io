@@ -83,6 +83,12 @@ export class Polygon {
     this.holes.forEach(h => h.forEach(p => p.scale(scalar)));
     return this;
   }
+
+  public translate(delta: Vector) {
+    this.outline.forEach(p => p.translate(delta.x, delta.y));
+    this.holes.forEach(h => h.forEach(p => p.translate(delta.x, delta.y)));
+    return this;
+  }
   
 }
 

@@ -24,7 +24,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
     last read by specific instance of `read`/`click`/... builtin.
   > `read </tick/1s`
 
-- [ ] can mount `inners` inside `Room`s, which mutates navmesh
+- [x] can mount `inners` inside `Room`s, which mutates navmesh
 - [x] simplify `Room` i.e. scale walls and adjust gltf rotation elsewhere
 - [x] load room `inners` from Blender into geom.store
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { TransformProps, propsToAngle, innerGroupName } from "@model/env/env.model";
+import { innerGroupName } from "@model/env/env.model";
 import useGeomStore from '@store/geom.store';
 
 const Inner: React.FC<Props> = (props: Props) => {
@@ -14,15 +14,13 @@ const Inner: React.FC<Props> = (props: Props) => {
     props.innerUpdated();
   }, []);
 
-  // Can change angle and position
-  const angle = propsToAngle(props);
+  // Can change position
   useEffect(() => {
     if (props.innerUpdated) {
-      root.current!.rotation.z = angle;
       root.current!.position.set(props.x || 0, props.y || 0, 0);
       props.innerUpdated();
     }
-  }, [angle, props.x, props.y]);
+  }, [props.x, props.y]);
 
   return (
     <group
@@ -32,9 +30,10 @@ const Inner: React.FC<Props> = (props: Props) => {
   );
 };
 
-
-type Props = TransformProps & {
+type Props = {
   id: string;
+  x?: number;
+  y?: number;
   /** Internal only */
   innerUpdated?: () => void;
 }

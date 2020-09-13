@@ -14,8 +14,9 @@ const Room: React.FC<Props> = (props) => {
   const mesh = useRef(null as null | THREE.Mesh);
   const onClick = useRef<(e: ThreeMouseEvent) => void>();
   const channel = useRef(new Subject<({ key: 'inner-updated' })>());
-  const children = useRef(undefined as any);
-  const [mounted, setMounted] = useState(false);
+
+  const [children, setChildren] = useState(undefined as any);
+  const [mountChildren, setChildrenMounted] = useState(false);
 
   useEffect(() => {
     const envName = root.current!.parent!.userData.envName as string;
@@ -41,26 +42,26 @@ const Room: React.FC<Props> = (props) => {
       e.stopPropagation();
       if (Math.abs(e.point.z) < epsilon) {// Only floor clicks
         console.log({ clickedRoom: e });
-        const position = geomApi.geom.project(e.point);
+        const position = geomApi.geom.projectXY(e.point);
         const event: NavmeshClick = { key: 'navmesh-click', position };
         env.worldDevice.write(event);
       }
     };
 
-    // Can now mount children i.e. Inners
-    setMounted(true);
+    // Now mount Inners
+    setChildrenMounted(true);
   }, []);
   
   // Can change angle/position
   useEffect(() => {
     root.current!.rotation.z = propsToAngle(props);
     root.current!.position.set(props.x || 0, props.y || 0, 0);
-    children.current = React.Children.map(props.children, child => 
+    setChildren(React.Children.map(props.children, child => 
       React.isValidElement(child)
         ? React.cloneElement(child, {
             innerUpdated: () => channel.current.next({ key: 'inner-updated' }),
           })
-        : child);
+        : child));
   }, [props]);
 
   return (
@@ -68,7 +69,7 @@ const Room: React.FC<Props> = (props) => {
       ref={root}
       onClick={onClick.current}
     >
-      {mounted && children.current}
+      {mountChildren && children}
     </group>
   );
 };

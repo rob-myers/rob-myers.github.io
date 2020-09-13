@@ -4,10 +4,10 @@ import * as THREE from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
-import { isMeshNode, outsetAmount } from '@model/three/three.model';
+import { isMeshNode } from '@model/three/three.model';
 import * as Geom from '@model/geom/geom.model'
 import GeomService from '@model/geom/geom.service';
-import { innerGroupName, navmeshGroupName, navMeshMaterial } from '@model/env/env.model';
+import { innerGroupName, navmeshGroupName, navMeshMaterial, outsetAmount } from '@model/env/env.model';
 
 export interface State {
   loadedGltf: boolean;
@@ -160,23 +160,25 @@ const useStore = create<State>(devtools((set, get) => ({
       const { [room.name]: meta } = get().rooms;
       const roomGroup = room.parent!;
 
-      const roomInners = roomGroup.children
+      const innerMeshes = roomGroup.children
         .filter(({ name, children }) => name === innerGroupName && isMeshNode(children[0]))
-        .map(({ children }) => inners[children[0].name]);
-      // console.log('Computing and attaching navmesh...', room, roomInners);
+        .map(({ children }) => children[0] as THREE.Mesh);
+      const innerMetas = innerMeshes.map(x => inners[x.name]);
+      const innerDeltas = innerMeshes.map(x => geom.projectXY(x.parent!.position));
+      // console.log('Computing and attaching navmesh...', room, innerMetas, innerDeltas);
 
       const navigable = geom.cutOut(
-        roomInners.flatMap(({ unnavigable }) => unnavigable.map(p => p.clone())),
+        innerMetas.flatMap(({ unnavigable }, i) =>
+          unnavigable.map(p => p.clone().translate(innerDeltas[i]))),
         meta.navigable.map(p => p.clone()),
       );
       
-      // Each element is a rectangular decomposition of a rectilinear multipolygon
-      const navPartitions = navigable.map(part => geom.computeRectPartition(part));
       const navMesh = new THREE.Group();
       navMesh.name = navmeshGroupName;
-
+      // Each item is a rectangular decomposition of a rectilinear multipolygon
+      const navPartitions = navigable.map(part => geom.computeRectPartition(part));
       navPartitions.forEach(rects => {
-        // TODO create a single mesh
+        // TODO create single mesh
         rects.forEach(({ cx, cy, width, height }) => {
           const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 2), navMeshMaterial);
           plane.position.set(cx, cy, 0);
@@ -184,8 +186,8 @@ const useStore = create<State>(devtools((set, get) => ({
         });
       });
       
-      const previous = roomGroup.children.find(({ name }) => name === navmeshGroupName);
-      previous && roomGroup.remove(previous);
+      const prevNavmesh = roomGroup.children.find(({ name }) => name === navmeshGroupName);
+      prevNavmesh && roomGroup.remove(prevNavmesh);
       roomGroup.add(navMesh);
     },
 
