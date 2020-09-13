@@ -24,6 +24,7 @@ export class FsFile<R = any, W = any> {
   /** Register a callback to handle writes to this file */
   internalWriteHandler(cb: (msg: W) => void) {
     this.iNode.writable.registerCallback(cb); 
+    return () => this.iNode.writable.unregisterCallback(cb);
   }
 
   /** Non-blocking read */
@@ -32,11 +33,11 @@ export class FsFile<R = any, W = any> {
     return () => this.iNode.readable.unregisterCallback(cb);
   }
 
-  /** Blocking read */
-  read(subject: Subject<any>) {
-    this.iNode.readable.registerReader(subject);
-    return () => this.iNode.readable.unregisterReader(subject);
-  }
+  // /** Blocking read */
+  // read(subject: Subject<any>) {
+  //   this.iNode.readable.registerReader(subject);
+  //   return () => this.iNode.readable.unregisterReader(subject);
+  // }
 
   /** Write to this file */
   write(msg: W) {
@@ -76,6 +77,10 @@ export class OpenFileDescription<T> {
   
   constructor(public key: string, public file: FsFile) {
     this.numLinks = 0;
+  }
+
+  onWrite(cb: (msg: T) => void) {
+    return this.file.internalWriteHandler(cb);
   }
 
   write(msg: T) {

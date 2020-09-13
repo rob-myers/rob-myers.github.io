@@ -21,20 +21,20 @@ export class ShellStream<T> {
     this.cbToSub.set(cb, this.internal.subscribe(cb));
   }
 
-  /** For blocking read */
-  registerReader(reader: Subject<T>) {
-    // Most recent registration takes priority
-    this.readers.unshift(reader);
-  }
+  // /** For blocking read */
+  // registerReader(reader: Subject<T>) {
+  //   // Most recent registration takes priority
+  //   this.readers.unshift(reader);
+  // }
 
   unregisterCallback(cb: (msg: T) => void) {
     this.cbToSub.get(cb)?.unsubscribe();
     this.cbToSub.delete(cb);
   }
   
-  unregisterReader(reader: Subject<T>) {
-    this.readers = this.readers.filter(x => x !== reader);
-  }
+  // unregisterReader(reader: Subject<T>) {
+  //   this.readers = this.readers.filter(x => x !== reader);
+  // }
 
   write(msg: T) {
     this.internal.next(msg);

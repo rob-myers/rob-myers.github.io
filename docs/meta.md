@@ -18,7 +18,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `spawn` command
   > spawn an actor at a position
 
-- [ ] can read/write to `/var/foo` to read/write to variable foo 
 - [ ] instead of a `tick` builtin, provide _read-aware-clocks_
   > e.g. 1 second clock immediately provides read if more than 1s since
     last read by specific instance of `read`/`click`/... builtin.

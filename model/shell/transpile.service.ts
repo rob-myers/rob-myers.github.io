@@ -990,12 +990,10 @@ class TranspileShService {
     node.redirDef = def; // Store in node too
     
     return from(async function* (){
-      const { value } = await lastValueFrom(ts.Expand(node.Word));
       const { pid } = node.meta;
+      const { value } = await lastValueFrom(ts.Expand(node.Word));
 
-      /**
-       * Handle duplication and moving.
-       */
+      // Handle duplication and moving
       switch (def.subKey) {
         case '<':
         case '>': {
