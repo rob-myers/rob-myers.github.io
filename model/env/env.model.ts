@@ -17,7 +17,7 @@ export type TransformProps = {
   | { n?: boolean }
 )
 
-export const navMeshMaterial = new THREE.MeshBasicMaterial({
+export const navMeshMaterial = new THREE.MeshStandardMaterial({
   color: 0x888888,
   opacity: 0.2,
   transparent: true,

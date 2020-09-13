@@ -11,6 +11,7 @@ export interface State {
     createEnv: (def: EnvDef) => void;
     removeEnv: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
+    roomUpdated: (envKey: string) => void;
   };
 }
 
@@ -18,18 +19,12 @@ export interface Environment {
   key: string;
   highWalls: boolean;
   worldDevice: FsFile;
+  roomsUpdatedAt: number;
 }
 
 interface EnvDef {
   envKey: string;
   highWalls: boolean;
-}
-
-export interface EnvRoom {
-  /** Room instance key */
-  key: string;
-  /** Parent env */
-  envKey: string;
 }
 
 const useStore = create<State>(devtools((set, get) => ({
@@ -49,6 +44,7 @@ const useStore = create<State>(devtools((set, get) => ({
           key: envKey,
           highWalls,
           worldDevice,
+          roomsUpdatedAt: Date.now(),
         }, env),
       }));
     },
@@ -59,7 +55,15 @@ const useStore = create<State>(devtools((set, get) => ({
       }));
     },
 
-    setHighWalls: (envKey: string, next: boolean) => {
+    roomUpdated: (envKey) => {
+      set(({ env }) => ({
+        env: updateLookup(envKey, env, () => ({
+          roomsUpdatedAt: Date.now(),
+        })),
+      }));
+    },
+
+    setHighWalls: (envKey, next) => {
       set(({ env }) => ({
         env: updateLookup(envKey, env, () => ({ highWalls: next })),
       }));

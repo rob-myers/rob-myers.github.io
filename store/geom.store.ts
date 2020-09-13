@@ -181,6 +181,7 @@ const useStore = create<State>(devtools((set, get) => ({
         // TODO create single mesh
         rects.forEach(({ cx, cy, width, height }) => {
           const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 2), navMeshMaterial);
+          plane.receiveShadow = true;
           plane.position.set(cx, cy, 0);
           navMesh.add(plane);
         });

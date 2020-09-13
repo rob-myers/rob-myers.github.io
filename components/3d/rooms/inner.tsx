@@ -10,7 +10,9 @@ const Inner: React.FC<Props> = (props: Props) => {
     if (!props.innerUpdated || !inner) {
       return console.error('Inner should be mounted inside a Room');
     }
-    root.current?.add(inner.mesh.clone());
+    const clone = inner.mesh.clone();
+    // clone.castShadow = true;
+    root.current?.add(clone);
     props.innerUpdated();
   }, []);
 

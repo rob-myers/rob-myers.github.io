@@ -1,30 +1,32 @@
-import { PerspectiveCamera } from 'three';
-import { useRef, useEffect, useState } from 'react';
-import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
+import { PerspectiveCamera, PCFSoftShadowMap } from 'three';
+import { useRef, useEffect } from 'react';
+import { Canvas, extend, useThree, useFrame, CanvasContext } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
 import { getWindow } from '@model/dom.model';
 import useGeomStore from '@store/geom.store';
+import useEnvStore from '@store/env.store';
 import Grid from './grid';
-import { Closet, Corner, Fourway, Junction, Straight } from './rooms';
 import Inner from './rooms/inner';
+import Rooms from './rooms/rooms';
+import { Closet, Corner, Fourway, Junction, Straight } from './rooms';
 import css from './world.scss';
-import { isMeshNode } from '@model/three/three.model';
 
-const World: React.FC<Props> = ({ envName, highWalls }) => {
-  const level = useRef<THREE.Group>(null);
+const World: React.FC<Props> = ({ envName }) => {
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
+  const canvas = useRef(null as null | CanvasContext);
   const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
+  const env = useEnvStore(({ env }) => env[envName]);
 
   useEffect(() => {
-    const metas = useGeomStore.getState().rooms;
-    level.current?.traverse((o) => (o.name in metas && isMeshNode(o)) &&
-      (o.geometry = metas[o.name][highWalls ? 'highMesh' : 'mesh'].geometry));
-  }, [highWalls]);
+    const ctxt = canvas.current;
+    if (ctxt) {
+      ctxt.gl.shadowMap.needsUpdate = true; // Hacky:
+      setTimeout(() => ctxt.gl.shadowMap.needsUpdate = false);
+    }
+  }, [env?.roomsUpdatedAt]);
 
   return (
-    <div
-      className={css.root}
-    >
+    <div className={css.root} >
       {loadedGltf &&
         <Canvas
           pixelRatio={pixelRatio.current}
@@ -32,24 +34,32 @@ const World: React.FC<Props> = ({ envName, highWalls }) => {
             const camera = ctxt.camera as PerspectiveCamera;
             camera.position.set(0, 0, 10);
             camera.setFocalLength(30);
+            
+            ctxt.gl.shadowMap.enabled = true;
+            ctxt.gl.shadowMap.autoUpdate = false;
+            ctxt.gl.shadowMap.type = PCFSoftShadowMap;
+            canvas.current = ctxt;
           }}
         >
           <CameraControls />
-          {/* <ambientLight color="white" intensity={0.5} /> */}
-          <pointLight position={[0, 0, 8]} intensity={1.2} />
+          <ambientLight
+            color="white"
+            intensity={0.8}
+          />
+          <pointLight
+            position={[0, -4, 8]}
+            intensity={0.4}
+            castShadow
+          />
           
           <Grid />
 
-          <group
-            ref={level}
-            // onUpdate={() => !geomMounted && setGeomMounted(true)}
-            userData={{ envName }} // For children
-          >
+          <Rooms envName={envName}>
             <Closet x={-4}>
               <Inner id="sideboard" />  
             </Closet>
             <Junction>
-              <Inner id="central-table" y={1.3} />  
+              <Inner id="central-table" y={0} />  
             </Junction>
             <Closet x={4} w>
               <Inner id="sideboard" />  
@@ -60,8 +70,7 @@ const World: React.FC<Props> = ({ envName, highWalls }) => {
             <Straight x={4} y={-4} />
             
             <Straight y={-8} s />
-          </group>
-
+          </Rooms>
         </Canvas>
       }
     </div>
@@ -70,7 +79,6 @@ const World: React.FC<Props> = ({ envName, highWalls }) => {
 
 interface Props {
   envName: string;
-  highWalls: boolean;
 }
 
 // See types/react-three-fiber/three-types.d.ts
