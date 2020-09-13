@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 export function propsToAngle(props: TransformProps) {
   return 'e' in props ? 0
     : 's' in props ? -Math.PI/2
@@ -14,3 +16,15 @@ export type TransformProps = {
   | { w?: boolean }
   | { n?: boolean }
 )
+
+export const navMeshMaterial = new THREE.MeshBasicMaterial({
+  color: 0x777777,
+  opacity: 0.2,
+  transparent: true,
+  side: THREE.DoubleSide,
+});
+
+/** THREE.Group containing a single Inner */
+export const innerGroupName = 'innerGroup';
+
+export const navmeshGroupName = 'navmesh';

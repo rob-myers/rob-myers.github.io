@@ -7,6 +7,7 @@ import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 import { isMeshNode, outsetAmount } from '@model/three/three.model';
 import * as Geom from '@model/geom/geom.model'
 import GeomService from '@model/geom/geom.service';
+import { innerGroupName, navmeshGroupName, navMeshMaterial } from '@model/env/env.model';
 
 export interface State {
   loadedGltf: boolean;
@@ -21,7 +22,8 @@ export interface State {
     };
     computeInnerMeta: (inner: THREE.Mesh) => InnerMeta;
     computeRoomMeta: (room: THREE.Mesh) => RoomMeta;
-    extendRoom: (meta: RoomMeta) => void;
+    /** Taking attached inners into account */
+    updateRoomNavmesh: (roomGroup: THREE.Group) => void;
   };
 }
 
@@ -30,6 +32,7 @@ export interface RoomMeta {
   /** Mesh name */
   key: string;
   mesh: THREE.Mesh;
+  /** `mesh` scaled vertically */
   highMesh: THREE.Mesh;
   floor: Geom.Rect;
   walls: Geom.Polygon[];
@@ -38,14 +41,13 @@ export interface RoomMeta {
 }
 
 /** e.g. `central-table` or `shelves`. */
-interface InnerMeta {
+export interface InnerMeta {
   /** Mesh name */
   key: string;
   mesh: THREE.Mesh;
   /** Outset of base which cannot be walked on */
   unnavigable: Geom.Polygon[];
 }
-
 
 const useStore = create<State>(devtools((set, get) => ({
   rooms: {},
@@ -65,7 +67,7 @@ const useStore = create<State>(devtools((set, get) => ({
         const { rooms, inners } = api.extractMeshes(gltf);
         const roomMetas = rooms.map(room => api.computeRoomMeta(room));
         const innerMetas = inners.map(room => api.computeInnerMeta(room));
-        roomMetas.forEach(meta => api.extendRoom(meta));
+        // roomMetas.forEach(meta => api.extendRoom(meta));
         
         // console.log({ rooms, inners, metas });
         set(_ => ({
@@ -154,32 +156,39 @@ const useStore = create<State>(devtools((set, get) => ({
       };
     },
 
-    // Add navmesh to room mesh/highMesh
-    extendRoom: (meta) => {
-      const { geom } = get().api;
-      const material = new THREE.MeshBasicMaterial({
-        color: 0x777777,
-        opacity: 0.2,
-        transparent: true,
-        side: THREE.DoubleSide,
-      });
+    updateRoomNavmesh: (roomGroup: THREE.Group) => {
+      const room = roomGroup.children[0] as THREE.Mesh;
+      const { api: { geom }, inners } = get();
+      const { [room.name]: meta } = get().rooms;
 
-      const navPartitions = meta.navigable.map(part => geom.computeRectPartition(part));
-      // console.log(meta.key, navPartitions);
+      const roomInners = room.parent!.children
+        .filter(({ name, children }) => name === innerGroupName && isMeshNode(children[0]))
+        .map(({ children }) => inners[children[0].name]);
+      // console.log('Computing and attaching navmesh...', room, roomInners);
+
+      const navigable = geom.cutOut(
+        roomInners.flatMap(({ unnavigable }) => unnavigable.map(p => p.clone())),
+        meta.navigable.map(p => p.clone()),
+      );
+      
+      // Each element is rectangular decomposition of a rectilinear multipolygon
+      const navPartitions = navigable.map(part => geom.computeRectPartition(part));
       const navMesh = new THREE.Group();
-      navMesh.name = 'navmesh';
+      navMesh.name = navmeshGroupName;
 
       navPartitions.forEach(rects => {
+        // TODO create a single mesh
         rects.forEach(({ cx, cy, width, height }) => {
-          const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 2), material);
+          const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 2), navMeshMaterial);
           plane.position.set(cx, cy, 0);
           navMesh.add(plane);
         });
       });
-
-      meta.mesh.add(navMesh);
-      meta.highMesh.add(navMesh.clone());
+      
+      roomGroup.remove(...roomGroup.children.filter(({ name }) => name === navmeshGroupName));
+      roomGroup.add(navMesh);
     },
+
   },
 }), 'geom'));
 

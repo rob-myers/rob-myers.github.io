@@ -29,7 +29,7 @@ const World: React.FC<Props> = ({ envName }) => {
         >
           <CameraControls />
           {/* <ambientLight color="white" intensity={0.5} /> */}
-          <pointLight position={[0, 0, 5]} intensity={0.5} />
+          <pointLight position={[0, 0, 5]} intensity={1} />
           
           <Grid />
 
@@ -44,7 +44,9 @@ const World: React.FC<Props> = ({ envName }) => {
             <Junction>
               <Inner id="central-table" />  
             </Junction>
-            <Closet x={4} w />
+            <Closet x={4} w>
+              <Inner id="sideboard" />  
+            </Closet>
             
             <Fourway y={-4} />
             <Corner x={-4} y={-4} n />
