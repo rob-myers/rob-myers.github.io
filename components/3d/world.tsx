@@ -1,5 +1,5 @@
 import { PerspectiveCamera } from 'three';
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Canvas, extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from '@model/three/controls';
 import { getWindow } from '@model/dom.model';
@@ -8,11 +8,18 @@ import Grid from './grid';
 import { Closet, Corner, Fourway, Junction, Straight } from './rooms';
 import Inner from './rooms/inner';
 import css from './world.scss';
+import { isMeshNode } from '@model/three/three.model';
 
-const World: React.FC<Props> = ({ envName }) => {
+const World: React.FC<Props> = ({ envName, highWalls }) => {
   const level = useRef<THREE.Group>(null);
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
   const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
+
+  useEffect(() => {
+    const metas = useGeomStore.getState().rooms;
+    level.current?.traverse((o) => (o.name in metas && isMeshNode(o)) &&
+      (o.geometry = metas[o.name][highWalls ? 'highMesh' : 'mesh'].geometry));
+  }, [highWalls]);
 
   return (
     <div
@@ -63,6 +70,7 @@ const World: React.FC<Props> = ({ envName }) => {
 
 interface Props {
   envName: string;
+  highWalls: boolean;
 }
 
 // See types/react-three-fiber/three-types.d.ts

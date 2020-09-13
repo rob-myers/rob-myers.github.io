@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { MouseEvent as ThreeMouseEvent } from 'react-three-fiber';
 import { Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
@@ -11,10 +11,10 @@ import useGeomStore from "@store/geom.store";
 
 const Room: React.FC<Props> = (props) => {
   const root = useRef<THREE.Group>(null);
+  const mesh = useRef(null as null | THREE.Mesh);
   const onClick = useRef<(e: ThreeMouseEvent) => void>();
-  const channel = useRef(new Subject<(
-    | { key: 'inner-updated' }
-  )>());
+  const channel = useRef(new Subject<({ key: 'inner-updated' })>());
+  const children = useRef(undefined as any);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -24,16 +24,16 @@ const Room: React.FC<Props> = (props) => {
     if (!env || !meta) {
       return console.error(`Room must be inside World with valid id "${props.id}"`);
     }
-    const geomApi = useGeomStore.getState().api;
-
-    // Add walls
-    const clone = (env.highWalls ? meta.highMesh : meta.mesh).clone();
-    root.current?.add(clone);
-
+    
+    // Add room mesh i.e. walls
+    mesh.current = (env.highWalls ? meta.highMesh : meta.mesh).clone();
+    root.current?.add(mesh.current);
+    
     // Recompute navmesh whenever an Inner mounts/updates
+    const geomApi = useGeomStore.getState().api;
     channel.current
       .pipe(debounceTime(30))
-      .subscribe({ next: () => geomApi.updateRoomNavmesh(root.current!) });
+      .subscribe({ next: () => geomApi.updateRoomNavmesh(mesh.current!) });
     channel.current.next({ key: 'inner-updated' }); // Initialise
 
     // Handle navmesh clicks
@@ -51,37 +51,24 @@ const Room: React.FC<Props> = (props) => {
     setMounted(true);
   }, []);
   
-  // Can change angle and position
-  const angle = propsToAngle(props);
+  // Can change angle/position
   useEffect(() => {
-    root.current!.rotation.z = angle;
+    root.current!.rotation.z = propsToAngle(props);
     root.current!.position.set(props.x || 0, props.y || 0, 0);
-  }, [angle, props.x, props.y]);
-
-  const children = useMemo(() =>
-    React.Children.map(props.children, child => 
+    children.current = React.Children.map(props.children, child => 
       React.isValidElement(child)
         ? React.cloneElement(child, {
             innerUpdated: () => channel.current.next({ key: 'inner-updated' }),
           })
-        : child)
-    , [props.children]);
-
-  // TODO high walls handled elsewhere i.e. traverse scene graph
-  //
-  // const highWalls = useEnvStore(({ env }) => env[initial.current?.envName]?.highWalls);
-  // useEffect(() => {
-  //   const clone = initial.current!.meta[(highWalls ? 'highMesh' : 'mesh')].clone();
-  //   root.current?.add(clone);
-  //   return () => void root.current?.remove(clone);
-  // }, [highWalls]);
+        : child);
+  }, [props]);
 
   return (
     <group
       ref={root}
       onClick={onClick.current}
     >
-      {mounted && children}
+      {mounted && children.current}
     </group>
   );
 };

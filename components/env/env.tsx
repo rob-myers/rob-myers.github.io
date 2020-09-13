@@ -16,7 +16,7 @@ const Env: React.FC<Props> = ({ envKey, high }) => {
 
   return (
     <section className={css.root}>
-      <World envName={envKey} />
+      <World envName={envKey} highWalls={!!high} />
       <Terminal envName={envKey} />
     </section>
   )

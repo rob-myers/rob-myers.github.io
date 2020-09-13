@@ -1,4 +1,5 @@
-import Room, { TransformProps as Props } from './room';
+import { TransformProps as Props } from '@model/env/env.model';
+import Room from './room';
 
 export const Closet: React.FC<Props> =
   (props) => <Room id="closet" {...props} />;

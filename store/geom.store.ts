@@ -22,8 +22,8 @@ export interface State {
     };
     computeInnerMeta: (inner: THREE.Mesh) => InnerMeta;
     computeRoomMeta: (room: THREE.Mesh) => RoomMeta;
-    /** Taking attached inners into account */
-    updateRoomNavmesh: (roomGroup: THREE.Group) => void;
+    /** Takes Inners attached to parent into account */
+    updateRoomNavmesh: (room: THREE.Mesh) => void;
   };
 }
 
@@ -32,7 +32,6 @@ export interface RoomMeta {
   /** Mesh name */
   key: string;
   mesh: THREE.Mesh;
-  /** `mesh` scaled vertically */
   highMesh: THREE.Mesh;
   floor: Geom.Rect;
   walls: Geom.Polygon[];
@@ -156,12 +155,12 @@ const useStore = create<State>(devtools((set, get) => ({
       };
     },
 
-    updateRoomNavmesh: (roomGroup: THREE.Group) => {
-      const room = roomGroup.children[0] as THREE.Mesh;
+    updateRoomNavmesh: (room: THREE.Mesh) => {
       const { api: { geom }, inners } = get();
       const { [room.name]: meta } = get().rooms;
+      const roomGroup = room.parent!;
 
-      const roomInners = room.parent!.children
+      const roomInners = roomGroup.children
         .filter(({ name, children }) => name === innerGroupName && isMeshNode(children[0]))
         .map(({ children }) => inners[children[0].name]);
       // console.log('Computing and attaching navmesh...', room, roomInners);
@@ -171,7 +170,7 @@ const useStore = create<State>(devtools((set, get) => ({
         meta.navigable.map(p => p.clone()),
       );
       
-      // Each element is rectangular decomposition of a rectilinear multipolygon
+      // Each element is a rectangular decomposition of a rectilinear multipolygon
       const navPartitions = navigable.map(part => geom.computeRectPartition(part));
       const navMesh = new THREE.Group();
       navMesh.name = navmeshGroupName;
@@ -185,7 +184,8 @@ const useStore = create<State>(devtools((set, get) => ({
         });
       });
       
-      roomGroup.remove(...roomGroup.children.filter(({ name }) => name === navmeshGroupName));
+      const previous = roomGroup.children.find(({ name }) => name === navmeshGroupName);
+      previous && roomGroup.remove(previous);
       roomGroup.add(navMesh);
     },
 
