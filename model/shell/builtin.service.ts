@@ -3,7 +3,7 @@ import { Process } from "@store/shell.store";
 import * as Sh from "./parse.service";
 import { processService as ps} from './process.service';
 import { ShError } from "./transpile.service";
-import { varService } from "./var.service";
+import { varService, alphaNumericRegex } from "./var.service";
 
 export class BuiltinService {
 
@@ -113,22 +113,14 @@ export class BuiltinService {
   }
 
   private async read({ pid, sessionKey, fdToOpen, cleanups }: Process, args: string[]) {
-    if (args.length > 1) {
-      throw new ShError(`usage \`read\`, \`read ''\` or \`read x\``, 1);
+    if (args.some(arg => !alphaNumericRegex.test(arg))) {
+      throw new ShError(`usage \`read\` or \`read x\``, 1);
     }
 
     await new Promise((resolve, reject) => {
       const onWrite = (msg: any) => {
-        try {
-          if (args.length) {
-            args[0] && varService.assignVar(pid, { varName: args[0], value: msg });
-          } else {
-            fdToOpen[1].write(msg);
-          }
-          resolve();
-        } catch (e) {
-          reject(e);
-        }
+        varService.assignVar(pid, { varName: args[0], value: msg });
+        resolve();
       };
 
       if (ps.isTty(pid, 0)) {

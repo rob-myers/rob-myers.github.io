@@ -6,7 +6,7 @@ import { FileMeta } from "./parse.service";
 import { processService } from "./process.service";
 import safeJsonStringify from "safe-json-stringify";
 
-const alphaNumeric = /^[a-z_][a-z0-9_]*/i;
+export const alphaNumericRegex = /^[a-z_][a-z0-9_]*/i;
 
 class VarService {
 
@@ -31,7 +31,7 @@ class VarService {
    */
   assignVar(pid: number, def: AssignVarBase) {
     // Require alphanumeric variable name where 1st char non-numeric
-    if (!def.varName || !alphaNumeric.test(def.varName)) {
+    if (!def.varName || !alphaNumericRegex.test(def.varName)) {
       throw new ShError(`\`${def.varName}' not a valid identifier`, 1);
     }
 
