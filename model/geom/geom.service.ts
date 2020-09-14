@@ -165,7 +165,7 @@ export default class GeomService {
         baseTris.push(new Geom.Polygon(tri.map(this.projectXY)));
       }
     });
-    console.log({ key: parent.name, baseTris });
+    // console.log({ key: parent.name, baseTris });
     return this.union(baseTris);
   }
 

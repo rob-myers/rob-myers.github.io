@@ -8,7 +8,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] `Env` should be in react-reverse-portal
 
-- [ ] can query polyanya in webworker and display navpath
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
 
@@ -18,15 +17,19 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `spawn` command
   > spawn an actor at a position
 
+- [ ] can query polyanya in webworker and display navpath
+
 - [ ] instead of a `tick` builtin, provide _read-aware-clocks_
   > e.g. 1 second clock immediately provides read if more than 1s since
     last read by specific instance of `read`/`click`/... builtin.
   > `read </tick/1s`
 
+- [x] rooms cast shadows
 - [x] can mount `inners` inside `Room`s, which mutates navmesh
 - [x] simplify `Room` i.e. scale walls and adjust gltf rotation elsewhere
 - [x] load room `inners` from Blender into geom.store
 
+- [x] implement background processes
 - [x] simplify ofds (probably more to do)
 - [x] remove path resolution i.e. all paths absolute
   > no `PWD` or `OLDPWD`
