@@ -992,7 +992,7 @@ class TranspileShService {
           const nodeUid = node.nodeUid || (node.nodeUid = shortId.generate());
           /**
            * TODO 
-           * - open special file and 'register' `nodeUid`
+           * - open special file and register via `${pid} ${nodeUid}`
            * - this file ticks and also tracks re-read to reply 'early'
            * - need builtin `read` to test it
            */

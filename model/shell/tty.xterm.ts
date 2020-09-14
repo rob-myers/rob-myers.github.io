@@ -550,8 +550,8 @@ export class TtyXterm {
     this.preHistory = '';
 
     this.io.internalWrite({
-      key: 'send-lines',
-      lines: [this.input],
+      key: 'send-line',
+      line: this.input,
     });
   }
 

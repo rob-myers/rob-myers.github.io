@@ -45,13 +45,14 @@ export class TtyShell {
         });
         break;
       }
-      case 'send-lines': {
+      case 'send-line': {
+        /**
+         * TODO foreground `read` can override this.
+         */
         this.inputs.push({
-          line: msg.lines[0],
+          line: msg.line,
           // xterm won't send another line until resolved
-          resolve: () => this.io.write({
-            key: 'tty-received-line',
-          }),
+          resolve: () => this.io.write({ key: 'tty-received-line' }),
         });
         this.tryParse();
         break;
@@ -148,7 +149,7 @@ export class TtyShell {
 
 export type MessageFromXterm = (
   | RequestHistoryLine
-  | SendLinesToShell
+  | SendLineToShell
   | SendSignalToShell
 );
 
@@ -159,11 +160,10 @@ interface RequestHistoryLine {
 
 /**
  * We'll always send exactly one line.
- * Use 'send-lines' to fit global convention.
  */
-interface SendLinesToShell {
-  key: 'send-lines';
-  lines: string[];
+interface SendLineToShell {
+  key: 'send-line';
+  line: string;
 }
 
 interface SendSignalToShell {

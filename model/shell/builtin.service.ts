@@ -23,8 +23,8 @@ export class BuiltinService {
           case 'def': await this.def(process, args); break;
           case 'echo': await this.echo(process, args); break;
           case 'get': this.get(process, args); break;
+          case 'read': await this.read(process, args); break;
           case 'sleep': await this.sleep(args); break;
-          case 'tick': await this.tick(process, args); break;
           default: throw testNever(command);
         }
       } catch (e) {// Must forward errors thrown by builtins
@@ -38,30 +38,22 @@ export class BuiltinService {
     if (args.length > 1) {
       throw new ShError(`click: usage \`click\` or \`click evt\``, 1);
     }
-    // TODO could avoid try-finally and cleanups.push
-    // if kept track of the pid the callback originated from,
-    // i.e. could autoclean listeners.
 
-    let stopListening: () => void;
     const { worldDevice } = ps.getSession(sessionKey);
-    try {
-      await new Promise((resolve, reject) => {
-        stopListening = worldDevice.listen((msg) => {
-          if (msg.key === 'navmesh-click') {
-            if (args.length) {
-              varService.assignVar(pid, { varName: args[0], value: msg });
-            } else {
-              fdToOpen[1].write(msg);
-            }
-            stopListening();
-            resolve();
+    await new Promise((resolve, reject) => {
+      const stopListening = worldDevice.listen((msg) => {
+        if (msg.key === 'navmesh-click') {
+          if (args.length) {
+            varService.assignVar(pid, { varName: args[0], value: msg });
+          } else {
+            fdToOpen[1].write(msg);
           }
-        });
-        cleanups.push(() => reject(null));
+          stopListening();
+          resolve();
+        }
       });
-    } finally {
-      stopListening!(); // Idempotent so can call twice
-    }
+      cleanups.push(() => reject(null), stopListening);
+    });
   }
 
   private async def({ pid }: Process, [funcName, funcDef, ...rest]: string[]) {
@@ -120,6 +112,30 @@ export class BuiltinService {
   }
 
   /**
+   * TODO
+   * - if reading from a tty then override it for one line.
+   * - but if process running in background throw error.
+   */
+  private async read({ pid, fdToOpen, cleanups }: Process, args: string[]) {
+    if (args.length > 1) {
+      throw new ShError(`read: usage \`read\` or \`read x\``, 1);
+    }
+
+    await new Promise((resolve, reject) => {
+      const stopReading = fdToOpen[0].onWrite((msg) => {
+        if (args.length) {
+          varService.assignVar(pid, { varName: args[0], value: msg });
+        } else {
+          fdToOpen[1].write(msg);
+        }
+        stopReading();
+        resolve();
+      });
+      cleanups.push(() => reject(null), stopReading);
+    });
+  }
+
+  /**
    * Wait for sum of arguments in seconds.
    * - if there are no arguments we'll sleep for 1 second.
    * - if the sum is negative we'll wait 0 seconds.
@@ -136,25 +152,6 @@ export class BuiltinService {
     }
     await pause(1000 * seconds);
   }
-
-  private async tick({ fdToOpen, cleanups }: Process, args: string[]) {
-    const seconds = args.length ? Number(args[0]) : 1;
-    if (isNaN(seconds) || seconds <= 0) {
-      throw new ShError(`tick: usage \`tick\` or \`tick 0.5\``, 1);
-    }
-
-    let intervalId: number;
-    try {
-      await new Promise((_ ,reject) => {
-        const opened = fdToOpen[1];
-        opened.write({ key: 'tick' });
-        intervalId = window.setInterval(() => opened.write({ key: 'tick' }), 1000 * seconds);
-        cleanups.push(() => reject(null));
-      });
-    } finally {
-      clearInterval(intervalId!);
-    }
-  }
 }
 
 export const builtins = {
@@ -162,8 +159,8 @@ export const builtins = {
   def: true,
   echo: true,
   get: true,
+  read: true,
   sleep: true,
-  tick: true,
 };
 
 export type BuiltinKey = keyof typeof builtins;
