@@ -977,12 +977,28 @@ class TranspileShService {
   }
 
   private Redirect(node: Sh.Redirect): Observable<ProcessAct> {
-    const def: RedirectDef<Observable<Expanded>> = node.redirDef || this.transpileRedirect(node);
+    const def: RedirectDef<Observable<Expanded>> = node.redirDef
+      || this.transpileRedirect(node);
     node.redirDef = def; // Store in node too
     
     return from(async function* (){
-      const { pid } = node.meta;
+      const pid = node.meta.pid;
       const { value } = await lastValueFrom(ts.Expand(node.Word));
+
+      // Special redirects </tick/{1s,0.5s,0.25s}
+      if (def.subKey === '<' && value.startsWith('/tick/')) {
+        const seconds = Number(value.slice('/tick/'.length, -1));
+        if ([1, 0.5, 0.25].includes(seconds) && value.endsWith('s')) {
+          const nodeUid = node.nodeUid || (node.nodeUid = shortId.generate());
+          /**
+           * TODO 
+           * - open special file and 'register' `nodeUid`
+           * - this file ticks and also tracks re-read to reply 'early'
+           * - need builtin `read` to test it
+           */
+          return;
+        }
+      }
 
       // Handle duplication and moving
       switch (def.subKey) {
@@ -1302,7 +1318,7 @@ class TranspileShService {
         const [part] = Word.Parts;
         // See 3.6.8 of:
         // https://www.gnu.org/software/bash/manual/bash.html#Redirections
-        if (part && part.type === 'Lit' && part.Value.endsWith('-')) {
+        if (part?.type === 'Lit' && part.Value.endsWith('-')) {
           return { subKey: '<', mod: 'move', fd };
         }
         return { subKey: '<', mod: 'dup', fd };
@@ -1313,7 +1329,7 @@ class TranspileShService {
         return { subKey: '>', mod: 'append', fd };
       case '>&': {
         const [part] = Word.Parts;
-        if (part && part.type === 'Lit' && part.Value.endsWith('-')) {
+        if (part?.type === 'Lit' && part.Value.endsWith('-')) {
           return { subKey: '>', mod: 'move', fd };
         }
         return { subKey: '>', mod: 'dup', fd };
@@ -1327,12 +1343,6 @@ class TranspileShService {
       default:
         throw new Error(`Unsupported redirection symbol '${node.Op}'.`);
     }
-  }
-
-  private unsupportedNode(node: Sh.ParsedSh, msg: string) {
-    return from(function*() {
-      ts.handleShError(node, new ShError(msg, 2));
-    }());
   }
 
 }

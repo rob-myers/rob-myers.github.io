@@ -912,7 +912,8 @@ export interface BaseNode {
   // End: Pos;
   // Pos: Pos;
 
-  meta: FileMeta; // Single instance for entire tree
+  /** Single instance for entire parse tree */
+  meta: FileMeta;
   /** Reference to parent node  */
   parent: null | ParsedSh;
 
@@ -930,6 +931,9 @@ export interface BaseNode {
   paramDef?: ParameterDef<any, any>;
   /** Used by Redirects only */
   redirDef?: RedirectDef<any>;
+
+  /** If we need to remember node we'll set this */
+  nodeUid?: string;
 }
 
 export type ParsedSh = (

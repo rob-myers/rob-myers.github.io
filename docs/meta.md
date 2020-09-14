@@ -19,11 +19,15 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can query polyanya in webworker and display navpath
 
+- [ ] ensure we cannot create a file which is already a directory
+- [x] ensure dummy files `/tick/{1s,0.5s,0.25s}` for consistency
+
 - [ ] instead of a `tick` builtin, provide _read-aware-clocks_
   > e.g. 1 second clock immediately provides read if more than 1s since
     last read by specific instance of `read`/`click`/... builtin.
   > `read </tick/1s`
 
+- [ ] remove builtin `tick`; create builtin `read`
 - [x] rooms cast shadows
 - [x] can mount `inners` inside `Room`s, which mutates navmesh
 - [x] simplify `Room` i.e. scale walls and adjust gltf rotation elsewhere
