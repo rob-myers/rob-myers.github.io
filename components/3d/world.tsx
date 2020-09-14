@@ -13,15 +13,15 @@ import css from './world.scss';
 
 const World: React.FC<Props> = ({ envName }) => {
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
-  const canvas = useRef(null as null | CanvasContext);
+  const ctxt = useRef(null as null | CanvasContext);
   const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
   const env = useEnvStore(({ env }) => env[envName]);
 
   useEffect(() => {
-    const ctxt = canvas.current;
-    if (ctxt) {
-      ctxt.gl.shadowMap.needsUpdate = true; // Hacky:
-      setTimeout(() => ctxt.gl.shadowMap.needsUpdate = false);
+    const gl = ctxt.current?.gl;
+    if (gl) {
+      gl.shadowMap.needsUpdate = true; // Hacky removal
+      setTimeout(() => gl.shadowMap.needsUpdate = false);
     }
   }, [env?.roomsUpdatedAt]);
 
@@ -30,21 +30,21 @@ const World: React.FC<Props> = ({ envName }) => {
       {loadedGltf &&
         <Canvas
           pixelRatio={pixelRatio.current}
-          onCreated={(ctxt) => {
-            const camera = ctxt.camera as PerspectiveCamera;
+          onCreated={(ct) => {
+            const camera = ct.camera as PerspectiveCamera;
             camera.position.set(0, 0, 10);
             camera.setFocalLength(30);
             
-            ctxt.gl.shadowMap.enabled = true;
-            ctxt.gl.shadowMap.autoUpdate = false;
-            ctxt.gl.shadowMap.type = PCFSoftShadowMap;
-            canvas.current = ctxt;
+            ct.gl.shadowMap.enabled = true;
+            ct.gl.shadowMap.autoUpdate = false;
+            ct.gl.shadowMap.type = PCFSoftShadowMap;
+            ctxt.current = ct;
           }}
         >
           <CameraControls />
           <ambientLight
             color="white"
-            intensity={0.8}
+            intensity={1}
           />
           <pointLight
             position={[0, -4, 8]}
