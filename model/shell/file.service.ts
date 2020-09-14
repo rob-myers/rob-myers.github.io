@@ -14,8 +14,13 @@ export class FileService {
     readable: ShellStream<R>,
     /** We should write to this stream */
     writable: ShellStream<W>,
+    /** Is this file a tty? */
+    tty = false,
   ): FsFile {
-    return new FsFile(absPath, new ShellFile(readable, writable));
+    return new FsFile(
+      absPath, 
+      new ShellFile(readable, writable, tty),
+    );
   }
 
   getFile(absPath: string): FsFile | null {

@@ -71,7 +71,7 @@ export class TtyXterm {
 
   public initialise() {
     this.xterm.onData(this.handleXtermInput.bind(this));
-    this.io.internalWriteHandler(this.onMessage.bind(this));
+    this.io.onWrite(this.onMessage.bind(this), false);
 
     // Initial message
     this.xterm.write('\x1b[37m');

@@ -142,8 +142,13 @@ const useStore = create<State>(devtools((set, get) => {
         const ttyFilename = `tty-${ttyId}`;
         const sessionKey = `root@${ttyFilename}`;
         const canonicalPath = `/dev/${ttyFilename}`;
-        // 2 separate streams that will be connected via TtyXterm and  TtyShell
-        const ttyFile = fileService.createFsFile(canonicalPath, new ShellStream(), new ShellStream());
+        // 2 separate streams that will be connected via TtyXterm and TtyShell
+        const ttyFile = fileService.createFsFile(
+          canonicalPath,
+          new ShellStream(),
+          new ShellStream(),
+          true,
+        );
         const ttyShell = new TtyShell(sessionKey, canonicalPath, ttyFile);
         // A wire means readable/writable stream are the same
         const worldDevice = fileService.makeWire(`/dev/world-${ttyId}`);

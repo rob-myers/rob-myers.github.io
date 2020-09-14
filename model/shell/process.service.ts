@@ -255,8 +255,17 @@ export class ProcessService {
     }
   }
 
+  isForegroundProcess(pid: number) {
+    const { sessionKey } = this.getProcess(pid)
+    return this.getSession(sessionKey).fgStack.includes(pid);
+  }
+
   isInteractiveShell({ meta }: Sh.BaseNode) {
     return meta.pid === meta.sid;
+  }
+
+  isTty(pid: number, fd: number) {
+    return this.getProcess(pid).fdToOpen[0].file.isATty();
   }
 
   /**
@@ -325,6 +334,11 @@ export class ProcessService {
    */
   pushRedirectScope(pid: number) {
     this.getProcess(pid).nestedRedirs.unshift({});
+  }
+
+  readOnceFromTty(sessionKey: string, reader: (msg: any) => void) {
+    const { ttyShell } = this.getSession(sessionKey);
+    return ttyShell.readOnceFromTty(reader);
   }
 
   removeProcess(pid: number) {

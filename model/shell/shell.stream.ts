@@ -2,48 +2,36 @@ import { Subject, Subscription } from "rxjs";
 
 export class ShellStream<T> {
 
-  public readers: Subject<T>[];
   public subscription: null | Subscription;
   private internal: Subject<T>;
   private cbToSub: Map<(msg: T) => void, Subscription>;
+  private once: Set<(msg: T) => void>;
 
   constructor() {
-    this.readers = [];
     this.internal = new Subject;
-    this.subscription = this.internal.subscribe(
-      this.onMessage.bind(this)
-    ) || null;
+    this.subscription = this.internal.subscribe();
     this.cbToSub = new Map;
+    this.once = new Set;
   }
 
   /** For receiving multicast */
-  registerCallback(cb: (msg: T) => void) {
+  registerCallback(cb: (msg: T) => void, once: boolean) {
     this.cbToSub.set(cb, this.internal.subscribe(cb));
+    once && this.once.add(cb);
   }
-
-  // /** For blocking read */
-  // registerReader(reader: Subject<T>) {
-  //   // Most recent registration takes priority
-  //   this.readers.unshift(reader);
-  // }
 
   unregisterCallback(cb: (msg: T) => void) {
     this.cbToSub.get(cb)?.unsubscribe();
     this.cbToSub.delete(cb);
+    this.once.delete(cb);
   }
   
-  // unregisterReader(reader: Subject<T>) {
-  //   this.readers = this.readers.filter(x => x !== reader);
-  // }
-
   write(msg: T) {
     this.internal.next(msg);
-  }
-
-  private onMessage(msg: T) {
-    if (this.readers.length) {
-      this.readers[0].next(msg);
+    for (const cb of this.once) {
+      this.cbToSub.get(cb)!.unsubscribe();
     }
+    this.once.clear();
   }
 
 }

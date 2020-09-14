@@ -1,5 +1,4 @@
 import { ShellStream } from "@model/shell/shell.stream";
-import { Subject } from "rxjs";
 
 /**
  * - `/dev/null`: two independent streams
@@ -22,22 +21,20 @@ export class FsFile<R = any, W = any> {
   }
 
   /** Register a callback to handle writes to this file */
-  internalWriteHandler(cb: (msg: W) => void) {
-    this.iNode.writable.registerCallback(cb); 
+  onWrite(cb: (msg: W) => void, once: boolean) {
+    this.iNode.writable.registerCallback(cb, once); 
     return () => this.iNode.writable.unregisterCallback(cb);
   }
 
-  /** Non-blocking read */
-  listen(cb: (msg: R) => void) {
-    this.iNode.readable.registerCallback(cb);
-    return () => this.iNode.readable.unregisterCallback(cb);
+  isATty() {
+    return this.iNode.tty;
   }
 
-  // /** Blocking read */
-  // read(subject: Subject<any>) {
-  //   this.iNode.readable.registerReader(subject);
-  //   return () => this.iNode.readable.unregisterReader(subject);
-  // }
+  /** Non-blocking read */
+  listen(cb: (msg: R) => void, once = false) {
+    this.iNode.readable.registerCallback(cb, once);
+    return () => this.iNode.readable.unregisterCallback(cb);
+  }
 
   /** Write to this file */
   write(msg: W) {
@@ -57,6 +54,8 @@ export class ShellFile<R, W> {
     public readable: ShellStream<R>,
     /** Writers will write to this stream */
     public writable: ShellStream<W>,
+    /** Must specify */
+    public tty = false,
   ) {
     this.numLinks = 0;
   }
@@ -79,8 +78,8 @@ export class OpenFileDescription<T> {
     this.numLinks = 0;
   }
 
-  onWrite(cb: (msg: T) => void) {
-    return this.file.internalWriteHandler(cb);
+  onWrite(cb: (msg: T) => void, once: boolean) {
+    return this.file.onWrite(cb, once);
   }
 
   write(msg: T) {

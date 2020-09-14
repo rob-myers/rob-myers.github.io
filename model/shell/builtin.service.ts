@@ -28,6 +28,9 @@ export class BuiltinService {
           default: throw testNever(command);
         }
       } catch (e) {// Must forward errors thrown by builtins
+        if (e instanceof ShError) {
+          e.message = `${command}: ${e.message}` 
+        }
         reject(e);
       }
       resolve();
@@ -36,29 +39,28 @@ export class BuiltinService {
 
   private async click({ sessionKey, pid, fdToOpen, cleanups }: Process, args: string[]) {
     if (args.length > 1) {
-      throw new ShError(`click: usage \`click\` or \`click evt\``, 1);
+      throw new ShError(`usage \`click\` or \`click evt\``, 1);
     }
-
     const { worldDevice } = ps.getSession(sessionKey);
+
     await new Promise((resolve, reject) => {
-      const stopListening = worldDevice.listen((msg) => {
+      const cancel = worldDevice.listen((msg) => {
         if (msg.key === 'navmesh-click') {
           if (args.length) {
             varService.assignVar(pid, { varName: args[0], value: msg });
           } else {
             fdToOpen[1].write(msg);
           }
-          stopListening();
           resolve();
         }
-      });
-      cleanups.push(() => reject(null), stopListening);
+      }, true);
+      cleanups.push(() => reject(null), cancel);
     });
   }
 
   private async def({ pid }: Process, [funcName, funcDef, ...rest]: string[]) {
     if (!funcName || !funcDef || rest.length) {
-      throw new ShError(`def: usage \`def myFunc '(x) => x.foo = Number(x[1])''\``, 1);
+      throw new ShError(`usage \`def myFunc '(x) => x.foo = Number(x[1])''\``, 1);
     }
     varService.addFunction(pid, funcName, {
       type: 'js',
@@ -70,7 +72,6 @@ export class BuiltinService {
    * Writes arguments, which includes any options.
    */
   private async echo({ fdToOpen }: Process, args: string[]) {
-    // console.log({ echoOfd: fdToOpen[1] })
     fdToOpen[1].write(args.join(' '));
   }
 
@@ -79,7 +80,7 @@ export class BuiltinService {
    */
   private get({ pid, fdToOpen }: Process, [srcPath, ...rest]: string[]) {
     if (rest.length && (rest[0] !== 'as' || rest.length !== 2)) {
-      throw new ShError(`get: usage \`get foo\` or \`get foo as bar\``, 1);
+      throw new ShError(`usage \`get foo\` or \`get foo as bar\``, 1);
     }
 
     let cached = cacheFor.get[srcPath];
@@ -93,45 +94,52 @@ export class BuiltinService {
     }
 
     const rootVar = varService.lookupVar(pid, cached.varName);
-    if (rootVar !== undefined) {
-      try {
-        const value = cached.func(rootVar);
-        if (value !== undefined) {
-          if (rest.length) {
-            varService.assignVar(pid, { varName: rest[1], value });
-          } else {
-            fdToOpen[1].write(value);
-          }
+    if (rootVar === undefined) {
+      throw new ShError(`${cached.varName} not found`, 1);
+    }
+
+    try {
+      const value = cached.func(rootVar);
+      if (value !== undefined) {
+        if (rest.length) {
+          varService.assignVar(pid, { varName: rest[1], value });
+        } else {
+          fdToOpen[1].write(value);
         }
-      } catch (e) {
-        throw new ShError(`get: path ${srcPath} not found`, 1);
       }
-    } else {
-      throw new ShError(`get: ${cached.varName} not found`, 1);
+    } catch (e) {
+      throw new ShError(`path ${srcPath} not found`, 1);
     }
   }
 
-  /**
-   * TODO
-   * - if reading from a tty then override it for one line.
-   * - but if process running in background throw error.
-   */
-  private async read({ pid, fdToOpen, cleanups }: Process, args: string[]) {
+  private async read({ pid, sessionKey, fdToOpen, cleanups }: Process, args: string[]) {
     if (args.length > 1) {
-      throw new ShError(`read: usage \`read\` or \`read x\``, 1);
+      throw new ShError(`usage \`read\`, \`read ''\` or \`read x\``, 1);
     }
 
     await new Promise((resolve, reject) => {
-      const stopReading = fdToOpen[0].onWrite((msg) => {
-        if (args.length) {
-          varService.assignVar(pid, { varName: args[0], value: msg });
-        } else {
-          fdToOpen[1].write(msg);
+      const onWrite = (msg: any) => {
+        try {
+          if (args.length) {
+            args[0] && varService.assignVar(pid, { varName: args[0], value: msg });
+          } else {
+            fdToOpen[1].write(msg);
+          }
+          resolve();
+        } catch (e) {
+          reject(e);
         }
-        stopReading();
-        resolve();
-      });
-      cleanups.push(() => reject(null), stopReading);
+      };
+
+      if (ps.isTty(pid, 0)) {
+        if (!ps.isForegroundProcess(pid)) {
+          throw new ShError(`background process tried to read from tty`, 1);
+        }
+        ps.readOnceFromTty(sessionKey, onWrite);
+      } else {
+        cleanups.push(fdToOpen[0].onWrite(onWrite, true));
+      }
+      cleanups.push(() => reject(null));
     });
   }
 
@@ -147,7 +155,7 @@ export class BuiltinService {
     for (const arg of args) {
       seconds += (delta = Number(arg));
       if (Number.isNaN(delta)) {
-        throw new ShError(`sleep: invalid time interval ‘${arg}’`, 1);
+        throw new ShError(`invalid time interval ‘${arg}’`, 1);
       }
     }
     await pause(1000 * seconds);

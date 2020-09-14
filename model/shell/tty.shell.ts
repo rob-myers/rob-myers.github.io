@@ -13,13 +13,15 @@ export class TtyShell {
   public xterm!: TtyXterm;
   /** Lines received from a TtyXterm. */
   private inputs = [] as { line: string; resolve: () => void }[];
+  private input = null as null | { line: string; resolve: () => void };
   /** Lines in current interactive parse */
   private buffer = [] as string[];
   /** Source code entered interactively, most recent last. */
   private history = [] as string[];
   private readonly maxLines = 500;
-  
+
   private session!: Session;
+  private oneTimeReaders = [] as ((msg: any) => void)[];
 
   constructor(
     public sessionKey: string,
@@ -32,7 +34,22 @@ export class TtyShell {
     this.io.listen(this.onMessage.bind(this));
     this.prompt('$');
     this.session = useStore.getState().session[this.sessionKey];
-  } 
+  }
+
+  private prompt(prompt: string) {
+    this.io.write({
+      key: 'send-xterm-prompt',
+      prompt: `${ansiPrompt}${prompt}${ansiReset} `,
+    });    
+  }
+
+  private getHistoryLine(lineIndex: number) {
+    const maxIndex = this.history.length - 1;
+    return {
+      line: this.history[maxIndex - lineIndex] || '',
+      nextIndex: lineIndex < 0 ? 0 : lineIndex > maxIndex ? maxIndex : lineIndex,
+    };
+  }
 
   private onMessage(msg: MessageFromXterm) {
     switch (msg.key) {
@@ -49,20 +66,24 @@ export class TtyShell {
         /**
          * TODO foreground `read` can override this.
          */
-        this.inputs.push({
-          line: msg.line,
-          // xterm won't send another line until resolved
-          resolve: () => this.io.write({ key: 'tty-received-line' }),
-        });
-        this.tryParse();
+        if (this.oneTimeReaders.length) {
+          this.oneTimeReaders.shift()!(msg.line);
+          this.io.write({ key: 'tty-received-line' });
+        } else {
+          this.inputs.push({
+            line: msg.line,
+            // xterm won't send another line until resolved
+            resolve: () => this.io.write({ key: 'tty-received-line' }),
+          });
+          this.tryParse();
+        }
+
         break;
       }
       case 'send-sig': {
         console.log('received signal', { msg, sessionKey: this.sessionKey });
         if (msg.signal === SigEnum.SIGINT) {
-          /**
-           * Terminate and cleanup all processes in foreground process group.
-           */
+          // Terminate and cleanup all processes in foreground process group
           const processes = processService.getProcessesInGroup(this.session.sid);
           processes.forEach(({ pid: memberPid }) => {
             // Cleaning causes throw from leaf to root.
@@ -71,6 +92,7 @@ export class TtyShell {
             
           });
           this.buffer.length = 0;
+          this.oneTimeReaders.length = 0;
           this.prompt('$');
         }
         break;
@@ -80,12 +102,26 @@ export class TtyShell {
 
   }
 
+  readOnceFromTty(reader: (msg: any) => void) {
+    this.oneTimeReaders.push(reader);
+    this.input?.resolve();
+    this.input = null;
+  }
+
+  private storeSrcLine(srcLine: string) {
+    if (srcLine) {
+      this.history.push(srcLine);
+      while (this.history.length > this.maxLines)
+        this.history.shift();
+    }
+  }
+
   private async tryParse() {
-    const input = this.inputs.pop();
+    this.input = this.inputs.pop() || null;
     
-    if (input) {
+    if (this.input) {
       try {// Catching Ctrl-C of ps.runInShell
-        this.buffer.push(input.line);
+        this.buffer.push(this.input.line);
         const result = parseSh.tryParseBuffer(this.buffer.slice()); // Can't error
   
         switch (result.key) {
@@ -118,31 +154,9 @@ export class TtyShell {
       } finally {
         // Can we assume other processes in foreground have terminated?
         processService.clearCleanups(this.session.sid);
-        input.resolve();
+        this.input?.resolve();
+        this.input = null;
       }
-    }
-  }
-
-  private prompt(prompt: string) {
-    this.io.write({
-      key: 'send-xterm-prompt',
-      prompt: `${ansiPrompt}${prompt}${ansiReset} `,
-    });    
-  }
-
-  private getHistoryLine(lineIndex: number) {
-    const maxIndex = this.history.length - 1;
-    return {
-      line: this.history[maxIndex - lineIndex] || '',
-      nextIndex: lineIndex < 0 ? 0 : lineIndex > maxIndex ? maxIndex : lineIndex,
-    };
-  }
-
-  private storeSrcLine(srcLine: string) {
-    if (srcLine) {
-      this.history.push(srcLine);
-      while (this.history.length > this.maxLines)
-        this.history.shift();
     }
   }
 }
