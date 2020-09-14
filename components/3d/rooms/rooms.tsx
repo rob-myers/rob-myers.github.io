@@ -24,7 +24,7 @@ const Rooms: React.FC<Props> = (props) => {
 
   return (
     <group ref={level}>
-     {children}
+     {env && children}
     </group>
   );
 };
