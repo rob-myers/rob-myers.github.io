@@ -218,7 +218,6 @@ class TranspileShService {
           associative = associative || isNaN(Number(key));
         }
         output.associative = associative;
-        // console.log({ output });
         yield output;
       }());
   }
@@ -379,25 +378,25 @@ class TranspileShService {
     return this.stmts(node, node.Stmts);
   }
 
-  private CallExpr(node: Sh.CallExpr, extend: CommandExtension): Observable<ProcessAct> {
+  private CallExpr(node: Sh.CallExpr, Redirs: Sh.Redirect[]): Observable<ProcessAct> {
     return from(async function* () {
-      node.exitCode = 0;
       const pid = node.meta.pid;
-      const args = await ts.performShellExpansion(node.Args);
-      console.log('args', args);
+      node.exitCode = 0;
       
+      const args = await ts.performShellExpansion(node.Args);
+      const [command, ...cmdArgs] = args;
+      console.log('args', args);
+
       try {
-        const [command, ...cmdArgs] = args;
-        let func: NamedFunction;
         ps.pushRedirectScope(pid);
-        await ts.applyRedirects(node, extend.Redirs);
+        await ts.applyRedirects(node, Redirs);
+        let func: NamedFunction;
 
         if (args.length) {
           if (bs.isBuiltinCommand(command)) {
-            // Run builtin
             await bs.runBuiltin(node, command, cmdArgs);
           } else if (func = vs.getFunction(pid, command)) {
-            // Run function with local variables
+            // Invoke function with local variables
             try {
               vs.pushVarScope(pid);
               await ts.assignVars(node, true);
@@ -414,7 +413,57 @@ class TranspileShService {
         }
       } catch (e) {
         ts.handleShError(node, e);
-        node.parent!.exitCode = node.exitCode;
+      } finally {
+        ps.popRedirectScope(pid);
+        // node.parent!.exitCode = node.exitCode;
+      }
+    }());
+  }
+
+  /**
+   * Construct a simple command or a compound command.
+   */
+  private Command(node: Sh.Command, Redirs: Sh.Redirect[]): Observable<ProcessAct> {
+    if (node.type === 'CallExpr') {
+      // Run simple command
+      return this.CallExpr(node, Redirs);
+    }
+
+    // Run compound command
+    return from(async function*() {
+      let cmd: Observable<ProcessAct> = null as any;
+
+      switch (node.type) {
+        case 'ArithmCmd': cmd = ts.ArithmCmd(node); break;
+        case 'BinaryCmd': cmd = ts.BinaryCmd(node); break;
+        case 'Block': cmd = ts.Block(node); break;
+        // case 'CaseClause': child = this.CaseClause(Cmd); break;
+        // case 'CoprocClause': {
+        //   child = this.CoprocClause(Cmd);
+        //   break;
+        // }
+        case 'DeclClause': cmd = ts.DeclClause(node); break;
+        // case 'ForClause': child = this.ForClause(Cmd); break;
+        case 'FuncDecl': cmd = ts.FuncDecl(node); break;
+        // case 'IfClause': child = this.IfClause(Cmd); break;
+        // case 'LetClause': child = this.LetClause(Cmd); break;
+        // case 'Subshell': child = this.Subshell(Cmd); break;
+        // case 'TestClause': child = this.TestClause(Cmd); break;
+        // case 'TimeClause': child = this.TimeClause(Cmd); break;
+        // case 'WhileClause': child = this.WhileClause(Cmd); break;
+        // default: throw testNever(Cmd);
+        default: return;
+      }
+      
+      const pid = node.meta.pid;
+      node.exitCode = 0;
+
+      try {
+        ps.pushRedirectScope(pid);
+        await ts.applyRedirects(node, Redirs);
+        await awaitEnd(cmd);
+      } catch (e) {
+        ts.handleShError(node, e);
       } finally {
         ps.popRedirectScope(pid);
       }
@@ -422,65 +471,7 @@ class TranspileShService {
   }
 
   /**
-   * Construct a simple command (CallExpr), or a compound command.
-   */
-  private Command(node: null | Sh.Command, extend: CommandExtension): Observable<ProcessAct> {
-    if (!node) {
-      return this.unsupportedNode(extend.Redirs[0], 'pure redirects are unsupported');
-    } else if (node.type === 'CallExpr') {
-      // Run simple command
-      return this.CallExpr(node, extend);
-    }
-
-    // Run compound command
-    return from(async function*() {
-      let cmd: Observable<ProcessAct> = null as any;
-      node.exitCode = 0;
-      const { Redirs, background, negated } = extend;
-
-      try {
-        switch (node.type) {
-          case 'ArithmCmd': cmd = ts.ArithmCmd(node); break;
-          case 'BinaryCmd': cmd = ts.BinaryCmd(node); break;
-          case 'Block': cmd = ts.Block(node); break;
-          // case 'CaseClause': child = this.CaseClause(Cmd); break;
-          // case 'CoprocClause': {
-          //   /**
-          //    * TODO
-          //    */
-          //   child = this.CoprocClause(Cmd);
-          //   break;
-          // }
-          case 'DeclClause': cmd = ts.DeclClause(node); break;
-          // case 'ForClause': child = this.ForClause(Cmd); break;
-          case 'FuncDecl': cmd = ts.FuncDecl(node); break;
-          // case 'IfClause': child = this.IfClause(Cmd); break;
-          // case 'LetClause': child = this.LetClause(Cmd); break;
-          // case 'Subshell': child = this.Subshell(Cmd); break;
-          // case 'TestClause': child = this.TestClause(Cmd); break;
-          // case 'TimeClause': child = this.TimeClause(Cmd); break;
-          // case 'WhileClause': child = this.WhileClause(Cmd); break;
-          // default: throw testNever(Cmd);
-          default: return;
-        }
-  
-        if (background) {
-          // TODO
-          // yield* this.runInBackground(dispatch, processKey);
-        } else {
-          // TODO apply/remove redirections
-          const redirects = Redirs.map((x) => ts.Redirect(x));
-          await awaitEnd(cmd);
-        }
-      } catch (e) {
-        ts.handleShError(node, e);
-      }
-    }());
-  }
-
-  /**
-   * TODO first simplify/generalise variable handling,
-   * i.e. permit arbitrary js objects.
+   * TODO
    */
   private DeclClause(node: Sh.DeclClause) {
     switch (node.Variant.Value) {
@@ -1066,15 +1057,39 @@ class TranspileShService {
     }());
   }
 
-  private Stmt({ Negated, Background, Redirs, Cmd }: Sh.Stmt): Observable<ProcessAct> {
-    return this.Command(Cmd, {
-      Redirs,
-      background: Background,
-      negated: Negated,
-    });
+  private Stmt(stmt: Sh.Stmt): Observable<ProcessAct> {
+    return from(async function*() {
+      if (!stmt.Cmd) {
+        ts.handleShError(stmt.Redirs[0], new ShError('pure redirects are unsupported', 2));
+      } else if (stmt.Background) {
+        // Spawn background process
+        const cloned = Object.assign(Sh.parseSh.clone(stmt), { Background: false } as Sh.Stmt);
+        const { pid: spawnedPid, parsed } = ps.spawnProcess(cloned.meta.pid, cloned, true);
+        // Launch it
+        ts.transpile(parsed).subscribe({
+          complete: () => {
+            ps.removeProcess(spawnedPid);
+            console.log(`background process ${spawnedPid} terminated`);
+          },
+          error: (e) => {
+            ps.removeProcess(spawnedPid);
+            console.error(`background process ${spawnedPid} terminated`);
+            console.error(e);
+          },
+        });
+        stmt.exitCode = stmt.Negated ? 1 : 0;
+      } else {
+        // Run a simple or compound command
+        await awaitEnd(ts.Command(stmt.Cmd, stmt.Redirs));
+        stmt.exitCode = stmt.Cmd.exitCode;
+        if (stmt.Negated) {
+          stmt.exitCode = 1 - Number(!!stmt.Cmd.exitCode);
+        }
+      }
+    }());
   }
 
-  private async applyRedirects(parent: Sh.CallExpr, redirects: Sh.Redirect[]) {
+  private async applyRedirects(parent: Sh.Command, redirects: Sh.Redirect[]) {
     try {
       for (const redirect of redirects) {
         await awaitEnd(this.Redirect(redirect));
@@ -1323,13 +1338,6 @@ class TranspileShService {
 }
 interface CommandExtension {
   Redirs: Sh.Redirect[];
-  background: boolean;
-  negated: boolean;
-}
-
-export interface CommandCtxt {
-  Redirs: Observable<ProcessAct>[];
-  background: boolean;
   negated: boolean;
 }
 
