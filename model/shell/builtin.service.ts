@@ -44,7 +44,7 @@ export class BuiltinService {
     const { worldDevice } = ps.getSession(sessionKey);
 
     await new Promise((resolve, reject) => {
-      const cancel = worldDevice.listen((msg) => {
+      const cancel = worldDevice.read((msg) => {
         if (msg.key === 'navmesh-click') {
           if (args.length) {
             varService.assignVar(pid, { varName: args[0], value: msg });
@@ -112,6 +112,11 @@ export class BuiltinService {
     }
   }
 
+  /**
+   * TODO
+   * 1. option --tick 0.5s or -t 0.5s instead of tick device
+   * 2. when reading string support multi args e.g. `read x y z`
+   */
   private async read({ pid, sessionKey, fdToOpen, cleanups }: Process, args: string[]) {
     if (args.some(arg => !alphaNumericRegex.test(arg))) {
       throw new ShError(`usage \`read\` or \`read x\``, 1);

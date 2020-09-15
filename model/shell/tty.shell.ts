@@ -31,7 +31,7 @@ export class TtyShell {
   
   initialise(xterm: TtyXterm) {
     this.xterm = xterm;
-    this.io.listen(this.onMessage.bind(this));
+    this.io.read(this.onMessage.bind(this));
     this.prompt('$');
     this.session = useStore.getState().session[this.sessionKey];
   }

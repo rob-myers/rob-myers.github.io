@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { Subscription } from 'rxjs';
-import { KeyedLookup, lookupFromValues } from '@model/generic.model';
+import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
 import { OpenFileDescription } from '@model/shell/file.model';
 import { FromFdToOpenKey } from '@model/shell/process.model';
@@ -113,8 +113,6 @@ export interface ProcessGroup {
 
 const useStore = create<State>(devtools((set, get) => {
   const nullFile = fileService.createFsFile('/dev/null', new ShellStream(), new ShellStream());
-  const mockTicks = ['1s', '0.5s', '0.25s'].map(s =>
-    fileService.createFsFile(`/tick/${s}`, new ShellStream(), new ShellStream()));
 
   return {
     nextTtyId: 1,
@@ -124,7 +122,6 @@ const useStore = create<State>(devtools((set, get) => {
     proc: {},
     fs: {
       [nullFile.key]: nullFile,
-      ...lookupFromValues(mockTicks),
     },
     // NOTE we're also using /dev/null to identify an open file description
     ofd: addToLookup(

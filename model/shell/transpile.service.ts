@@ -568,7 +568,7 @@ class TranspileShService {
 
           ps.pushRedirectScope(pid);
           const opened = ps.openFile(pid, { path: `/dev/cs/${pid}`, fd: 1 });
-          const stopListening = opened.file.listen((msg) => output.push(vs.toStringOrJson(msg)));
+          const stopListening = opened.file.read((msg) => output.push(vs.toStringOrJson(msg)));
 
           try {
             const transpiles = node.Stmts.map(stmt => ts.Stmt(stmt));
@@ -1005,20 +1005,24 @@ class TranspileShService {
       const pid = node.meta.pid;
       const { value } = await lastValueFrom(ts.Expand(node.Word));
 
-      // Special redirects </tick/{1s,0.5s,0.25s}
-      if (def.subKey === '<' && value.startsWith('/tick/')) {
-        const seconds = Number(value.slice('/tick/'.length, -1));
-        if ([1, 0.5, 0.25].includes(seconds) && value.endsWith('s')) {
-          const nodeUid = node.nodeUid || (node.nodeUid = shortId.generate());
-          /**
-           * TODO 
-           * - open special file and register via `${pid} ${nodeUid}`
-           * - this file ticks and also tracks re-read to reply 'early'
-           * - need builtin `read` to test it
-           */
-          return;
-        }
-      }
+      /**
+       * TODO move elsewhere:
+       * - /tick/1s just ticks
+       * - `read` detects tick message and pauses itself according to last time it ran
+       */
+      // if (def.subKey === '<' && value.startsWith('/tick/')) {
+      //   const seconds = Number(value.slice('/tick/'.length, -1));
+      //   if ([1, 0.5, 0.25].includes(seconds) && value.endsWith('s')) {
+      //     const nodeUid = node.nodeUid || (node.nodeUid = shortId.generate());
+      //     /**
+      //      * TODO 
+      //      * - open special file and register via `${pid} ${nodeUid}`
+      //      * - this file ticks and also tracks re-read to reply 'early'
+      //      * - need builtin `read` to test it
+      //      */
+      //     return;
+      //   }
+      // }
 
       // Handle duplication and moving
       switch (def.subKey) {

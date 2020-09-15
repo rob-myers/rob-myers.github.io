@@ -70,7 +70,7 @@ export class TtyXterm {
 
   public initialise() {
     this.xterm.onData(this.handleXtermInput.bind(this));
-    this.io.onWrite(this.onMessage.bind(this), false);
+    this.io.iNode.onWrite(this.onMessage.bind(this), false);
 
     this.xterm.writeln(`${ansiWhite}Connected to ${this.io.key}${ansiReset}`);
     this.clearInput();
@@ -248,7 +248,7 @@ export class TtyXterm {
       switch (data.slice(1)) {
         case '[A': {// Up arrow.
           if (this.promptReady) {
-            this.io.internalWrite({
+            this.io.iNode.internalWrite({
               key: 'req-history-line',
               historyIndex: this.historyIndex + 1
             });
@@ -257,7 +257,7 @@ export class TtyXterm {
         }
         case '[B': {// Down arrow
           if (this.promptReady) {
-            this.io.internalWrite({
+            this.io.iNode.internalWrite({
               key: 'req-history-line',
               historyIndex: this.historyIndex - 1
             });
@@ -545,7 +545,7 @@ export class TtyXterm {
     this.historyIndex = -1;
     this.preHistory = '';
 
-    this.io.internalWrite({
+    this.io.iNode.internalWrite({
       key: 'send-line',
       line: this.input,
     });
@@ -564,7 +564,7 @@ export class TtyXterm {
     this.commandBuffer.length = 0;
 
     // Reset controlling process
-    this.io.internalWrite({
+    this.io.iNode.internalWrite({
       key: 'send-sig',
       signal: SigEnum.SIGINT,
     });

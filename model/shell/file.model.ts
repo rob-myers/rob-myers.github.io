@@ -15,30 +15,19 @@ export class FsFile<R = any, W = any> {
     public iNode: ShellFile<R, W>,
   ) {}
 
-  /** Write to readers of this file */
-  internalWrite(msg: R) {
-    this.iNode.readable.write(msg);
-  }
-
-  /** Register a callback to handle writes to this file */
-  onWrite(cb: (msg: W) => void, once: boolean) {
-    this.iNode.writable.registerCallback(cb, once); 
-    return () => this.iNode.writable.unregisterCallback(cb);
-  }
-
   isATty() {
     return this.iNode.tty;
   }
 
   /** Non-blocking read */
-  listen(cb: (msg: R) => void, once = false) {
+  read(cb: (msg: R) => void, once = false) {
     this.iNode.readable.registerCallback(cb, once);
     return () => this.iNode.readable.unregisterCallback(cb);
   }
 
   /** Write to this file */
   write(msg: W) {
-    this.iNode.writable.write(msg);
+    this.iNode.write(msg);
   }
 }
 
@@ -49,6 +38,10 @@ export class ShellFile<R, W> {
   */
   public numLinks: number;
 
+  get hasReader () {
+    return this.readable.hasListener;
+  }
+
   constructor(
     /** Readers will read from this stream */
     public readable: ShellStream<R>,
@@ -58,6 +51,22 @@ export class ShellFile<R, W> {
     public tty = false,
   ) {
     this.numLinks = 0;
+  }
+
+  /** Write to readers of this file */
+  internalWrite(msg: R) {
+    this.readable.write(msg);
+  }
+
+  /** Register a callback to handle writes to this file */
+  onWrite(cb: (msg: W) => void, once: boolean) {
+    this.writable.registerCallback(cb, once); 
+    return () => this.writable.unregisterCallback(cb);
+  }
+
+  /** Write to this file */
+  write(msg: W) {
+    this.writable.write(msg);
   }
 }
 
@@ -79,7 +88,7 @@ export class OpenFileDescription<T> {
   }
 
   onWrite(cb: (msg: T) => void, once: boolean) {
-    return this.file.onWrite(cb, once);
+    return this.file.iNode.onWrite(cb, once);
   }
 
   write(msg: T) {

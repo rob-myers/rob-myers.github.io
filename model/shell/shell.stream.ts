@@ -2,10 +2,14 @@ import { Subject, Subscription } from "rxjs";
 
 export class ShellStream<T> {
 
-  public subscription: null | Subscription;
+  private subscription: null | Subscription;
   private internal: Subject<T>;
   private cbToSub: Map<(msg: T) => void, Subscription>;
   private once: Set<(msg: T) => void>;
+
+  get hasListener() {
+    return this.cbToSub.size > 0;
+  }
 
   constructor() {
     this.internal = new Subject;
