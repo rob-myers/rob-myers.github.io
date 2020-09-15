@@ -64,9 +64,6 @@ export class TtyShell {
         break;
       }
       case 'send-line': {
-        /**
-         * TODO foreground `read` can override this.
-         */
         if (this.oneTimeReaders.length) {
           this.oneTimeReaders.shift()!(msg.line);
           this.io.write({ key: 'tty-received-line' });
@@ -83,6 +80,7 @@ export class TtyShell {
       }
       case 'send-sig': {
         console.log('received signal', { msg, sessionKey: this.sessionKey });
+
         if (msg.signal === SigEnum.SIGINT) {
           // Terminate and cleanup all processes in foreground process group
           const processes = processService.getProcessesInGroup(this.session.sid);

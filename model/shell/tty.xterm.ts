@@ -72,7 +72,7 @@ export class TtyXterm {
     this.xterm.onData(this.handleXtermInput.bind(this));
     this.io.onWrite(this.onMessage.bind(this), false);
 
-    this.xterm.writeln(`${ansiOther}Connected to ${this.io.key}${ansiReset}`);
+    this.xterm.writeln(`${ansiWhite}Connected to ${this.io.key}${ansiReset}`);
     this.clearInput();
     this.cursorRow = 2;
   }
