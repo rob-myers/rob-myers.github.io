@@ -36,6 +36,7 @@ const Terminal: React.FC<Props> = ({ envName }) => {
         ttyShell.initialise(ttyXterm);
       }}  
       options={{
+        allowProposedApi: true, // Needed for WebLinksAddon
         fontSize: 12,
         cursorBlink: true,
         rendererType: 'dom',
@@ -43,6 +44,7 @@ const Terminal: React.FC<Props> = ({ envName }) => {
           background: 'black',
           foreground: '#41FF00',
         },
+        convertEol: false,
       }}
     /> : null
   );

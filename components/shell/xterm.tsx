@@ -22,11 +22,11 @@ const XTermComponent: React.FC<Props> = ({
     // xterm.loadAddon(new SearchAddon);
     xterm.loadAddon(new WebLinksAddon);
     xterm.open(containerRef.current!);
-    fitAddon.fit();
     xterm.focus();
 
     const onResize = () => fitAddon.fit();
     window.addEventListener('resize', onResize);
+    onResize();
 
     onMount(xterm);
 

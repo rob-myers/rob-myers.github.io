@@ -4,7 +4,7 @@ import { parseSh } from './parse.service';
 import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
-import { TtyXterm, ansiReset, ansiPrompt } from './tty.xterm';
+import { TtyXterm } from './tty.xterm';
 import { processService as ps, processService } from './process.service';
 import { srcService } from './src.service';
 
@@ -36,10 +36,11 @@ export class TtyShell {
     this.session = useStore.getState().session[this.sessionKey];
   }
 
+  /** `prompt` must not contain non-readable characters e.g. ansi color codess */
   private prompt(prompt: string) {
     this.io.write({
       key: 'send-xterm-prompt',
-      prompt: `${ansiPrompt}${prompt}${ansiReset} `,
+      prompt: `${prompt} `,
     });    
   }
 

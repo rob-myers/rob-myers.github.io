@@ -523,7 +523,7 @@ export class TtyXterm {
           break;
         }
         case 'prompt': {
-          this.xterm.write(command.prompt);
+          this.xterm.write(`${ansiPrompt}${command.prompt}${ansiReset} `);
           this.promptReady = true;
           break;
         }
