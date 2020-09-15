@@ -7,7 +7,6 @@ import { FsFile } from './file.model';
 export const ansiReset = '\x1b[0m';
 export const ansiBrown = '\x1b[33m';
 export const ansiBlue = '\x1b[1;34m';
-export const ansiPrompt = '\x1b[40;37m';
 export const ansiOther = '\x1b[3;37m';
 export const ansiWhite = '\x1b[37m';
 export const ansiWarn = '\x1b[41;37m';
@@ -523,7 +522,7 @@ export class TtyXterm {
           break;
         }
         case 'prompt': {
-          this.xterm.write(`${ansiPrompt}${command.prompt}${ansiReset} `);
+          this.xterm.write(command.prompt);
           this.promptReady = true;
           break;
         }
