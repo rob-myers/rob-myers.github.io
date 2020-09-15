@@ -445,7 +445,7 @@ class TranspileShService {
         case 'DeclClause': cmd = ts.DeclClause(node); break;
         // case 'ForClause': child = this.ForClause(Cmd); break;
         case 'FuncDecl': cmd = ts.FuncDecl(node); break;
-        // case 'IfClause': child = this.IfClause(Cmd); break;
+        case 'IfClause': cmd = ts.IfClause(node); break;
         // case 'LetClause': child = this.LetClause(Cmd); break;
         // case 'Subshell': child = this.Subshell(Cmd); break;
         // case 'TestClause': child = this.TestClause(Cmd); break;
@@ -657,6 +657,26 @@ class TranspileShService {
       const clonedBody = Sh.parseSh.clone(node.Body);
       const wrappedFile = Sh.parseSh.wrapInFile(clonedBody);
       vs.addFunction(node.meta.pid, node.Name.Value, { type: 'shell', node: wrappedFile });
+    }());
+  }
+
+  private IfClause(node: Sh.IfClause) {
+    return from(async function*() {
+      for (const { Cond, Then } of ts.collectIfClauses(node)) {
+        if (Cond.length) {// if | elif i.e. have a test
+          await awaitEnd(ts.stmts(node, Cond));
+
+          if (last(Cond)!.exitCode === 0) {// Test succeeded
+            await awaitEnd(ts.stmts(node, Then));
+            node.exitCode = last(Then)?.exitCode || 0;
+            return;
+          }
+        } else {// else
+          await awaitEnd(ts.stmts(node, Then));
+          node.exitCode = last(Then)?.exitCode || 0;
+          return;
+        }
+      }
     }());
   }
 
@@ -1127,21 +1147,9 @@ class TranspileShService {
     }
   }
 
-  private handleShError(node: Sh.ParsedSh, e: any) {
-    if (e === null) {
-      // We throw null when terminating via Ctrl-C
-      throw null;
-    } else if (e instanceof ShError) {
-      // console.error(`${sessionKey}: pid ${pid}: ${e.message}`);
-      ps.warn(node.meta.pid, e.message);
-      node.exitCode = e.exitCode;
-    } else {
-      console.error(`${node.meta.sessionKey}: pid ${node.meta.pid}: internal error: ${e.message}`);
-      console.error(e);
-      ps.warn(node.meta.pid, `internal error: ${e.message}`);
-      node.exitCode = 2;
-    }
-    ps.setExitCode(node.meta.pid, node.exitCode);
+  /** Collect contiguous if-clauses. */
+  collectIfClauses(cmd: Sh.IfClause): Sh.IfClause[] {
+    return cmd.Else ? [cmd, ...this.collectIfClauses(cmd.Else)] : [cmd];
   }
 
   private extractSpecialArithmExpr(arithmExpr: null | Sh.ArithmExpr): null | '@' | '*' {
@@ -1158,6 +1166,23 @@ class TranspileShService {
       }
     }
     return null;
+  }
+
+  private handleShError(node: Sh.ParsedSh, e: any) {
+    if (e === null) {
+      // We throw null when terminating via Ctrl-C
+      throw null;
+    } else if (e instanceof ShError) {
+      // console.error(`${sessionKey}: pid ${pid}: ${e.message}`);
+      ps.warn(node.meta.pid, e.message);
+      node.exitCode = e.exitCode;
+    } else {
+      console.error(`${node.meta.sessionKey}: pid ${node.meta.pid}: internal error: ${e.message}`);
+      console.error(e);
+      ps.warn(node.meta.pid, `internal error: ${e.message}`);
+      node.exitCode = 2;
+    }
+    ps.setExitCode(node.meta.pid, node.exitCode);
   }
 
   /** Only $@ and ${x[@]} can expand to multiple args */
@@ -1344,11 +1369,6 @@ class TranspileShService {
         throw new Error(`Unsupported redirection symbol '${node.Op}'.`);
     }
   }
-
-}
-interface CommandExtension {
-  Redirs: Sh.Redirect[];
-  negated: boolean;
 }
 
 export class ShError extends Error {
@@ -1363,13 +1383,6 @@ export class ShError extends Error {
   }
 }
 
-const arithmOp = {
-  'BinaryArithm': true,
-  'UnaryArithm': true,
-  'ParenArithm': true,
-  // 'Word': true,
-};
-
 const wordPart = {
   'Lit': true,
   'SglQuoted': true,
@@ -1380,7 +1393,6 @@ const wordPart = {
   'ProcSubst': true,
   'ExtGlob': true,
 };
-
 
 export const transpileSh = new TranspileShService;
 

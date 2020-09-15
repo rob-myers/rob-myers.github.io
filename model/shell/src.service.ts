@@ -211,15 +211,10 @@ export class SrcService {
         return `${node.Name.Value}() ${this.src(node.Body)}`;
       
       case 'IfClause': {
-        const ifClauses = this.collectIfClauses(node);
-        const lastIndex = ifClauses.length - 1;
-        const cs = ifClauses.map(({ Cond, Then }, i) => ({
-          test: i === lastIndex ? null : Cond,
-          child: Then,
-        }));
-        return cs.map(({ test, child }, i) => test
-          ? `${!i ? 'if' : 'elif'} ${this.seqSrc(test)}; then ${this.seqSrc(child)}; `
-          : `else ${child}; `
+        return transpileSh.collectIfClauses(node).map(({ Cond, Then }, i) =>
+          Cond.length
+            ? `${!i ? 'if' : 'elif'} ${this.seqSrc(Cond)}; then ${this.seqSrc(Then)}; `
+            : `else ${this.seqSrc(Then)}; `
         ).concat('fi').join('');
       }
 
