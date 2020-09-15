@@ -119,7 +119,7 @@ export class BuiltinService {
 
     await new Promise((resolve, reject) => {
       const onWrite = (msg: any) => {
-        varService.assignVar(pid, { varName: args[0], value: msg });
+        args.length && varService.assignVar(pid, { varName: args[0], value: msg });
         resolve();
       };
 
