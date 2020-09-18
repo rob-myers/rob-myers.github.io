@@ -5,7 +5,7 @@ import { addToLookup } from '@store/store.util';
 import * as Sh from './parse.service';
 import { OpenFileRequest, OpenFileDescription } from './file.model';
 import { NamedFunction } from './var.model';
-import { transpileSh, ShError } from './transpile.service';
+import { semanticsService, ShError } from './semantics.service';
 import { fileService } from './file.service';
 import { varService } from './var.service';
 import { SendXtermError } from './tty.shell';
@@ -367,7 +367,7 @@ export class ProcessService {
    * Run parsed code in session's leading process.
    */
   runInShell(parsed: Sh.FileWithMeta, sessionKey: string) {
-    const transpiled = transpileSh.transpile(parsed);
+    const transpiled = semanticsService.transpile(parsed);
     const pid = this.getSession(sessionKey).sid;
 
     // Must mutate to affect all descendents

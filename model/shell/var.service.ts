@@ -1,7 +1,7 @@
 import { testNever, mapValues, last, isArrayOrObject } from "@model/generic.model";
 import useStore, { Process } from '@store/shell.store';
 import { ProcessVar, BasePositionalVar, AssignVarBase, ShellFuncDef, JsFuncDef } from "./var.model";
-import { ShError } from "./transpile.service";
+import { ShError } from "./semantics.service";
 import { FileMeta } from "./parse.service";
 import { processService } from "./process.service";
 import safeJsonStringify from "safe-json-stringify";

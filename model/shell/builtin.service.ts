@@ -3,7 +3,7 @@ import { Process } from "@store/shell.store";
 import * as Sh from "./parse.service";
 import { parseService } from "./parse.service";
 import { processService as ps} from './process.service';
-import { ShError, breakError, continueError } from "./transpile.service";
+import { ShError, breakError, continueError } from "./semantics.service";
 import { varService, alphaNumericRegex } from "./var.service";
 
 export class BuiltinService {

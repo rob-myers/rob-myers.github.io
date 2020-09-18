@@ -14,10 +14,10 @@ import { varService as vs } from './var.service';
 import { processService as ps } from './process.service';
 import {  RedirectDef } from './file.model';
 import { builtinService as bs } from './builtin.service';
-import { srcService as ss } from './src.service';
+import { srcService } from './src.service';
 import { NamedFunction } from './var.model';
 
-class TranspileShService {
+class SemanticsService {
 
   transpile(parsed: Sh.File): Observable<ProcessAct> {
     const transpiled = this.File(parsed);
@@ -30,7 +30,7 @@ class TranspileShService {
    */
   private ArithmCmd(node: Sh.ArithmCmd): Observable<Expanded> {    
     return from(async function* () {
-      await ts.runArithmExpr(node.X);
+      await sem.runArithmExpr(node.X);
       // Exit code 0 iff `input.number` is a non-zero integer
       node.exitCode = node.number && Number.isInteger(node.number) ? 0 : 1;
       yield act.expanded(`${node.number || 0}`);
@@ -61,18 +61,18 @@ class TranspileShService {
              * Ternary i.e. `x ? y : z`.
              */
             const [left, other] = [node.X, node.Y as Sh.BinaryArithm];
-            await ts.runArithmExpr(left); // Mutates input.number
+            await sem.runArithmExpr(left); // Mutates input.number
             const right = node.number ? other.X : other.Y;
-            await ts.runArithmExpr(right);
+            await sem.runArithmExpr(right);
           } else {
             /**
              * Binary.
              */
             const [left, right] = [node.X, node.Y];
-            await ts.runArithmExpr(left);
+            await sem.runArithmExpr(left);
             const lNum = node.number!
             const lStr = node.string!;
-            await ts.runArithmExpr(right);
+            await sem.runArithmExpr(right);
             const rNum = node.number!
 
             switch (node.Op) {
@@ -152,7 +152,7 @@ class TranspileShService {
       case 'ParenArithm':
         // NOTE cannot pipe into tap because ts.ArithmExpr may be empty
         return from(async function* () {
-          await awaitEnd(ts.ArithmExpr(node.X));
+          await awaitEnd(sem.ArithmExpr(node.X));
           node.string = node.X.string;
           node.number = node.X.number;
         }());
@@ -162,7 +162,7 @@ class TranspileShService {
            * Unary.
            */
           const child = node.X;
-          await ts.runArithmExpr(child); // Mutates input.number
+          await sem.runArithmExpr(child); // Mutates input.number
           const childNum = node.number!;
           const childStr = node.string!;
 
@@ -213,8 +213,8 @@ class TranspileShService {
         const output = act.arrayAsgn([], false);
         let associative = false;
         for (const { Index, Value } of Elems){
-          const key = Index ? (await lastValueFrom(ts.ArithmExpr(Index))).value : null;
-          const { values } = await lastValueFrom(ts.Expand(Value));
+          const key = Index ? (await lastValueFrom(sem.ArithmExpr(Index))).value : null;
+          const { values } = await lastValueFrom(sem.Expand(Value));
           output.pairs.push(...values.map(value => ({ key, value })));
           associative = associative || isNaN(Number(key));
         }
@@ -232,7 +232,7 @@ class TranspileShService {
 
     if (ArrayNode) {
       return from(async function* () {
-        const { pairs, associative: assoc } = await lastValueFrom(ts.ArrayExpr(ArrayNode));
+        const { pairs, associative: assoc } = await lastValueFrom(sem.ArrayExpr(ArrayNode));
         const associative = declOpts.associative || assoc;
 
         if (associative) {
@@ -273,12 +273,12 @@ class TranspileShService {
     } else if (Index) {
       return from(async function* () {
         // Run index
-        const { value: index } = await lastValueFrom(ts.ArithmExpr(Index))
+        const { value: index } = await lastValueFrom(sem.ArithmExpr(Index))
         // Unsure if naked is possible here
         const value = Naked
           ? undefined
           : Value
-            ? (await lastValueFrom(ts.Expand(Value))).value
+            ? (await lastValueFrom(sem.Expand(Value))).value
             : ''; // If {x[i]=} then no def.value so use ''
         vs.assignVar(pid, { ...declOpts, varName, shell: true, index, value });
       }());
@@ -292,7 +292,7 @@ class TranspileShService {
          * Use `undefined` so we don't overwrite.
          */
         const value = Naked ? undefined
-          : Value ? await lastValueFrom(ts.Expand(Value).pipe(
+          : Value ? await lastValueFrom(sem.Expand(Value).pipe(
               reduce((agg, { values }) => agg.concat(values), [] as string[]),
               map((x) => x.join(' ')),
             ))
@@ -317,7 +317,7 @@ class TranspileShService {
 
   private BinaryCmd(node: Sh.BinaryCmd) {
     /** All contiguous binary cmds for same operator */
-    const cmds = ss.binaryCmds(node);
+    const cmds = srcService.binaryCmds(node);
     /**
      * Restrict to leaves of binary expression, assuming expression
      * originally left-biased e.g. (((A * B) * C) * D) * E
@@ -329,7 +329,7 @@ class TranspileShService {
         case '&&': {
           // Assume thrown errors already caught
           for (const stmt of stmts) {
-            await awaitEnd(ts.Stmt(stmt));
+            await awaitEnd(sem.Stmt(stmt));
             node.exitCode = stmt.exitCode;
             if (node.exitCode) {
               break;
@@ -340,7 +340,7 @@ class TranspileShService {
         case '||': {
           // Assume thrown errors already caught
           for (const stmt of stmts) {
-            await awaitEnd(ts.Stmt(stmt));
+            await awaitEnd(sem.Stmt(stmt));
             node.exitCode = stmt.exitCode;
             if (node.exitCode === 0) {
               break;
@@ -351,7 +351,7 @@ class TranspileShService {
         case '|': {
           const background = !ps.isInteractiveShell(node);
           const spawns = stmts.map(stmt => ps.spawnProcess(node.meta.pid, stmt, background));
-          const transpiles = spawns.map(({ parsed }) => ts.transpile(parsed));
+          const transpiles = spawns.map(({ parsed }) => sem.transpile(parsed));
           // const uid = shortId.generate();
           // const wires = spawns.slice(0, -1).map(i => fileService.makeWire(`/tmp/${uid}.${i}`));
           // wires.forEach((wire, i) => {
@@ -384,13 +384,13 @@ class TranspileShService {
       const pid = node.meta.pid;
       node.exitCode = 0;
       
-      const args = await ts.performShellExpansion(node.Args);
+      const args = await sem.performShellExpansion(node.Args);
       const [command, ...cmdArgs] = args;
       console.log('args', args);
 
       try {
         ps.pushRedirectScope(pid);
-        await ts.applyRedirects(node, Redirs);
+        await sem.applyRedirects(node, Redirs);
         let func: NamedFunction;
 
         if (args.length) {
@@ -400,7 +400,7 @@ class TranspileShService {
             // Invoke function with local variables
             try {
               vs.pushVarScope(pid);
-              await ts.assignVars(node, true);
+              await sem.assignVars(node, true);
               await ps.invokeFunction(pid, func, cmdArgs);
             } finally {
               vs.popVarScope(pid);
@@ -410,10 +410,10 @@ class TranspileShService {
           }
         } else {
           // Assign vars in this process
-          await ts.assignVars(node);
+          await sem.assignVars(node);
         }
       } catch (e) {
-        ts.handleShError(node, e);
+        sem.handleShError(node, e);
       } finally {
         ps.popRedirectScope(pid);
         // node.parent!.exitCode = node.exitCode;
@@ -435,23 +435,23 @@ class TranspileShService {
       let cmd: Observable<ProcessAct> = null as any;
 
       switch (node.type) {
-        case 'ArithmCmd': cmd = ts.ArithmCmd(node); break;
-        case 'BinaryCmd': cmd = ts.BinaryCmd(node); break;
-        case 'Block': cmd = ts.Block(node); break;
+        case 'ArithmCmd': cmd = sem.ArithmCmd(node); break;
+        case 'BinaryCmd': cmd = sem.BinaryCmd(node); break;
+        case 'Block': cmd = sem.Block(node); break;
         // case 'CaseClause': child = this.CaseClause(Cmd); break;
         // case 'CoprocClause': {
         //   child = this.CoprocClause(Cmd);
         //   break;
         // }
-        case 'DeclClause': cmd = ts.DeclClause(node); break;
-        case 'ForClause': cmd = ts.ForClause(node); break;
-        case 'FuncDecl': cmd = ts.FuncDecl(node); break;
-        case 'IfClause': cmd = ts.IfClause(node); break;
+        case 'DeclClause': cmd = sem.DeclClause(node); break;
+        case 'ForClause': cmd = sem.ForClause(node); break;
+        case 'FuncDecl': cmd = sem.FuncDecl(node); break;
+        case 'IfClause': cmd = sem.IfClause(node); break;
         // case 'LetClause': child = this.LetClause(Cmd); break;
         // case 'Subshell': child = this.Subshell(Cmd); break;
         // case 'TestClause': child = this.TestClause(Cmd); break;
         // case 'TimeClause': child = this.TimeClause(Cmd); break;
-        case 'WhileClause': cmd = ts.WhileClause(node); break;
+        case 'WhileClause': cmd = sem.WhileClause(node); break;
         // default: throw testNever(Cmd);
         default: return;
       }
@@ -461,10 +461,10 @@ class TranspileShService {
 
       try {
         ps.pushRedirectScope(pid);
-        await ts.applyRedirects(node, Redirs);
+        await sem.applyRedirects(node, Redirs);
         await awaitEnd(cmd);
       } catch (e) {
-        ts.handleShError(node, e);
+        sem.handleShError(node, e);
       } finally {
         ps.popRedirectScope(pid);
       }
@@ -512,7 +512,7 @@ class TranspileShService {
       return from(async function*() {
         // Compute each part, storing flat result in node
         for (const wordPart of node.Parts) {
-          const { value } = await lastValueFrom(ts.ExpandPart(wordPart));
+          const { value } = await lastValueFrom(sem.ExpandPart(wordPart));
           wordPart.string = value;
         }
         /*
@@ -572,7 +572,7 @@ class TranspileShService {
           const stopListening = opened.file.read((msg) => output.push(vs.toStringOrJson(msg)));
 
           try {
-            const transpiles = node.Stmts.map(stmt => ts.Stmt(stmt));
+            const transpiles = node.Stmts.map(stmt => sem.Stmt(stmt));
             for (const transpiled of transpiles) {
               await awaitEnd(transpiled);
             }
@@ -589,8 +589,8 @@ class TranspileShService {
           const output = [] as string[];
 
           for (const part of node.Parts) {
-            const result = await lastValueFrom(ts.ExpandPart(part));
-            if (ts.isSpecialParamExp(part)) {
+            const result = await lastValueFrom(sem.ExpandPart(part));
+            if (sem.isSpecialParamExp(part)) {
               output.push(`${output.pop() || ''}${result.values[0] || ''}`, ...result.values.slice(1));
             } else {
               output.push(`${output.pop() || ''}${result.value || ''}`);
@@ -632,9 +632,9 @@ class TranspileShService {
   private File(node: Sh.File): Observable<ProcessAct> {
     return from(async function*() {
       try {
-        await awaitEnd(ts.stmts(node, node.Stmts));
+        await awaitEnd(sem.stmts(node, node.Stmts));
       } catch (e) {
-        ts.handleInternalError(node, e);
+        sem.handleInternalError(node, e);
       } 
     }());
   }
@@ -644,22 +644,22 @@ class TranspileShService {
 
     if (Loop.type === 'CStyleLoop') {
       return from(async function*() {
-        await awaitEnd(ts.ArithmExpr(Loop.Init));
+        await awaitEnd(sem.ArithmExpr(Loop.Init));
         node.lastIterated = undefined;
     
         while (true) {
           try {
-            await ts.throttleIterator(node);
-            await awaitEnd(ts.ArithmExpr(Loop.Cond));
+            await sem.throttleIterator(node);
+            await awaitEnd(sem.ArithmExpr(Loop.Cond));
             if (Loop.Cond.number === 0) {
               break;
             }
   
-            await awaitEnd(ts.stmts(node, node.Do));
-            await awaitEnd(ts.ArithmExpr(Loop.Post));
+            await awaitEnd(sem.stmts(node, node.Do));
+            await awaitEnd(sem.ArithmExpr(Loop.Post));
 
           } catch (e) {
-            const result = ts.handleInterrupt(e, node);
+            const result = sem.handleInterrupt(e, node);
             if (result === 'break') break;
             if (result === 'continue') continue;
             // Otherwise we threw
@@ -673,19 +673,19 @@ class TranspileShService {
 
       for (const item of Loop.Items) {
         // Cannot break/continue inside expansion
-        const itemResult = await lastValueFrom(ts.Expand(item));
+        const itemResult = await lastValueFrom(sem.Expand(item));
 
-        const values = ts.isWordParamExp(item) || ts.isWordParamExp(item)
+        const values = sem.isWordParamExp(item) || sem.isWordParamExp(item)
           ? expandService.normalizeWhitespace(itemResult.value)
           : itemResult.values;
 
         for (const word of values) {
           try {
-            await ts.throttleIterator(node);
+            await sem.throttleIterator(node);
             vs.assignVar(node.meta.pid, { varName: Loop.Name.Value, value: word });
-            await awaitEnd(ts.stmts(node, node.Do));
+            await awaitEnd(sem.stmts(node, node.Do));
           } catch (e) {
-            const result = ts.handleInterrupt(e, node);
+            const result = sem.handleInterrupt(e, node);
             if (result === 'break') break;
             if (result === 'continue') continue;
           }
@@ -708,17 +708,17 @@ class TranspileShService {
 
   private IfClause(node: Sh.IfClause) {
     return from(async function*() {
-      for (const { Cond, Then } of ts.collectIfClauses(node)) {
+      for (const { Cond, Then } of sem.collectIfClauses(node)) {
         if (Cond.length) {// if | elif i.e. have a test
-          await awaitEnd(ts.stmts(node, Cond));
+          await awaitEnd(sem.stmts(node, Cond));
 
           if (last(Cond)!.exitCode === 0) {// Test succeeded
-            await awaitEnd(ts.stmts(node, Then));
+            await awaitEnd(sem.stmts(node, Then));
             node.exitCode = last(Then)?.exitCode || 0;
             return;
           }
         } else {// else
-          await awaitEnd(ts.stmts(node, Then));
+          await awaitEnd(sem.stmts(node, Then));
           node.exitCode = last(Then)?.exitCode || 0;
           return;
         }
@@ -1044,7 +1044,7 @@ class TranspileShService {
     
     return from(async function* (){
       const pid = node.meta.pid;
-      const { value } = await lastValueFrom(ts.Expand(node.Word));
+      const { value } = await lastValueFrom(sem.Expand(node.Word));
 
       // Handle duplication and moving
       switch (def.subKey) {
@@ -1090,7 +1090,7 @@ class TranspileShService {
         {
           const buffer = [] as string[];
           if (def.subKey === '<<') {// value is e.g. EOF
-            const { value: hereValue } = await lastValueFrom(ts.Expand(node.Hdoc!));
+            const { value: hereValue } = await lastValueFrom(sem.Expand(node.Hdoc!));
             // Remove a single final newline if exists
             buffer.push(...hereValue.replace(/\n$/, '').split('\n'));
           } else {
@@ -1122,13 +1122,13 @@ class TranspileShService {
   private Stmt(stmt: Sh.Stmt): Observable<ProcessAct> {
     return from(async function*() {
       if (!stmt.Cmd) {
-        ts.handleShError(stmt.Redirs[0], new ShError('pure redirects are unsupported', 2));
+        sem.handleShError(stmt.Redirs[0], new ShError('pure redirects are unsupported', 2));
       } else if (stmt.Background) {
         // Spawn background process
         const cloned = Object.assign(parseService.clone(stmt), { Background: false } as Sh.Stmt);
         const { pid: spawnedPid, parsed } = ps.spawnProcess(cloned.meta.pid, cloned, true);
         // Launch it
-        ts.transpile(parsed).subscribe({
+        sem.transpile(parsed).subscribe({
           complete: () => {
             ps.removeProcess(spawnedPid);
             console.log(`background process ${spawnedPid} terminated`);
@@ -1142,7 +1142,7 @@ class TranspileShService {
         stmt.exitCode = stmt.Negated ? 1 : 0;
       } else {
         // Run a simple or compound command
-        await awaitEnd(ts.Command(stmt.Cmd, stmt.Redirs));
+        await awaitEnd(sem.Command(stmt.Cmd, stmt.Redirs));
         stmt.exitCode = stmt.Cmd.exitCode;
         if (stmt.Negated) {
           stmt.exitCode = 1 - Number(!!stmt.Cmd.exitCode);
@@ -1157,16 +1157,16 @@ class TranspileShService {
         try {
           stmt.lastIterated = Date.now();
           
-          await awaitEnd(ts.stmts(stmt, stmt.Cond));
+          await awaitEnd(sem.stmts(stmt, stmt.Cond));
           if (stmt.Until ? !stmt.exitCode : stmt.exitCode) {
             ps.setExitCode(stmt.meta.pid, stmt.exitCode = 0);
             break;
           }
-          await awaitEnd(ts.stmts(stmt, stmt.Do));
-          await ts.throttleIterator(stmt);
+          await awaitEnd(sem.stmts(stmt, stmt.Do));
+          await sem.throttleIterator(stmt);
 
         } catch (e) {
-          const result = ts.handleInterrupt(e, stmt);
+          const result = sem.handleInterrupt(e, stmt);
           if (result === 'break') break;
           if (result === 'continue') continue;
         }
@@ -1333,7 +1333,7 @@ class TranspileShService {
   private stmts(parent: Sh.ParsedSh, nodes: Sh.Stmt[]) {
     return from(async function*() {
       for (const node of nodes) {
-        await awaitEnd(ts.Stmt(node));
+        await awaitEnd(sem.Stmt(node));
         parent.exitCode = node.exitCode;
       }
       ps.setExitCode(parent.meta.pid, parent.exitCode || 0);
@@ -1510,6 +1510,6 @@ const wordPart = {
   'ExtGlob': true,
 };
 
-export const transpileSh = new TranspileShService;
+export const semanticsService = new SemanticsService;
 
-const ts = transpileSh; // Local shortcut
+const sem = semanticsService; // Local shortcut

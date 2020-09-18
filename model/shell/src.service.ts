@@ -1,7 +1,7 @@
 import * as Sh from "./parse.service";
 import { last, testNever } from "@model/generic.model";
 import { ParamType } from "./parameter.model";
-import { transpileSh } from "./transpile.service";
+import { semanticsService } from "./semantics.service";
 
 export class SrcService {
 
@@ -157,7 +157,7 @@ export class SrcService {
       }
 
       case 'ParamExp': {
-        const def = node.paramDef || transpileSh.transpileParam(node);
+        const def = node.paramDef || semanticsService.transpileParam(node);
         const param = `${def.param}${node.Index ? `[${this.src(node.Index)}]` : ''}`;
 
         switch (def.parKey) {
@@ -211,7 +211,7 @@ export class SrcService {
         return `${node.Name.Value}() ${this.src(node.Body)}`;
       
       case 'IfClause': {
-        return transpileSh.collectIfClauses(node).map(({ Cond, Then }, i) =>
+        return semanticsService.collectIfClauses(node).map(({ Cond, Then }, i) =>
           Cond.length
             ? `${!i ? 'if' : 'elif'} ${this.seqSrc(Cond)}; then ${this.seqSrc(Then)}; `
             : `else ${this.seqSrc(Then)}; `
@@ -222,7 +222,7 @@ export class SrcService {
         return `let ${node.Exprs.map(c => this.src(c)).join(' ')}`;
 
       case 'Redirect': {
-        const def = node.redirDef || transpileSh.transpileRedirect(node);
+        const def = node.redirDef || semanticsService.transpileRedirect(node);
 
         switch (def.subKey) {
           case '<': {
