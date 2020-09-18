@@ -10,5 +10,6 @@
   },
   "[scss]": {
     "editor.formatOnSave": true
-  }
+  },
+  "typescript.tsdk": "/Users/robmyers/coding/rob-myers.github.io/node_modules/typescript/lib"
 }
