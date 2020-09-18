@@ -8,11 +8,14 @@ import { isMeshNode } from '@model/three/three.model';
 import * as Geom from '@model/geom/geom.model'
 import GeomService from '@model/geom/geom.service';
 import { innerGroupName, navmeshGroupName, navMeshMaterial, outsetAmount } from '@model/env/env.model';
+import { NavWorker } from '@model/worker/nav.model';
+import { getWindow } from '@model/dom.model';
 
 export interface State {
   loadedGltf: boolean;
   rooms: KeyedLookup<RoomMeta>;
   inners: KeyedLookup<InnerMeta>;
+  navWorker: null | NavWorker;
   api: {
     geom: GeomService;
     load: () => Promise<void>;
@@ -52,12 +55,13 @@ const useStore = create<State>(devtools((set, get) => ({
   rooms: {},
   inners: {},
   loadedGltf: false,
+  navWorker: null,
   api: {
     geom: new GeomService,
 
     load: async () => {
-      const { loadedGltf: loadedRooms, api } = get();
-      if (loadedRooms) {
+      const { loadedGltf, api } = get();
+      if (loadedGltf) {
         return;
       }
       const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader');
@@ -75,6 +79,10 @@ const useStore = create<State>(devtools((set, get) => ({
           inners: lookupFromValues(innerMetas),
         }));
       });
+
+      const navWorker = new (await import('@worker/nav.worker')).default;
+      set(_ => ({ navWorker }));
+      navWorker.postMessage({ key: 'ping-navworker' });
     },
 
     extractMeshes: (gltf: GLTF) => {
