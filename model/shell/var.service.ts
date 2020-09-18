@@ -220,7 +220,7 @@ class VarService {
       // console.log({ positions });
       return positions.map((i) => (toVar[i] as BasePositionalVar).value);
     }
-    throw Error('positional variables not found in process');    
+    throw Error(`positional variables not found in process ${pid}`);
   }
 
   private getProcess(pid: number): Process {

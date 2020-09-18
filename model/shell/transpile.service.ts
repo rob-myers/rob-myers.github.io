@@ -927,7 +927,7 @@ class TranspileShService {
          */
         case ParamType.replace: {
           const { all, orig, with: With } = def;
-          const origValue = (await lastValueFrom(orig)).value;
+          const { value: origValue } = (await lastValueFrom(orig));
           const subst = With
             ? (await lastValueFrom(With)).value
             : '';
@@ -935,49 +935,45 @@ class TranspileShService {
           yield act.expanded(paramValues.join('').replace(regex, subst));
           break;
         }
-        // /**
-        //  * substring:
-        //  * ${parameter:offset} e.g. ${x: -7}.
-        //  * ${parameter:offset:length}.
-        //  * Also ${@:i:j}, ${x[@]:i:j} or ${x[*]:i:j}.
-        //  */
-        // case ParamType.substring: {
-        //   const { from, length } = def;
-        //   yield* this.runChild({ child: from, ...base });
-        //   const offset = parseInt(String(from.value)) || 0;
+        /**
+         * substring:
+         * ${parameter:offset} e.g. ${x: -7}.
+         * ${parameter:offset:length}.
+         * Also ${@:i:j}, ${x[@]:i:j} or ${x[*]:i:j}.
+         */
+        case ParamType.substring: {
+          const { from, length } = def;
+          const { value: fromValue } = await lastValueFrom(from);
+          const offset = parseInt(fromValue) || 0;
   
-        //   if (length) {
-        //     yield* this.runChild({ child: length, ...base });
-        //   }
+          const len = length
+            ? parseInt((await lastValueFrom(from)).value) || 0
+            : paramValues.join(' ').length;
   
-        //   const len = length
-        //     ? parseInt(String(length.value)) || 0
-        //     : paramValues.join(' ').length;
-  
-        //   if (def.param === '@' || def.param === '*') {
-        //     if (len < 0) {
-        //       yield this.exit(1, `${len}: substring expression < 0`);
-        //     }
-        //     const positionals = dispatch(osGetPositionalsThunk({ processKey })).slice();
-        //     const values = from
-        //       ? length
-        //         ? positionals.slice(offset, offset + len)
-        //         : positionals.slice(offset)
-        //       : positionals.slice(1); // positive positionals
-        //     this.values = def.param === '@' ? values : [values.join(' ')];
-        //   } else if (index === '@' || index === '*') {
-        //     if (len < 0) {
-        //       yield this.exit(1, `${len}: substring expression < 0`);
-        //     }
-        //     const values = paramValues.slice(offset, offset + len);
-        //     this.values = def.param === '@' ? values : [values.join(' ')];
-        //   } else {
-        //     this.value = len >= 0
-        //       ? paramValues.join('').substr(offset, len)
-        //       : paramValues.join('').slice(offset, len);
-        //   }
-        //   break;
-        // }
+          if (def.param === '@' || def.param === '*') {
+            if (len < 0) {
+              throw new ShError(`${len}: substring expression < 0`, 1);
+            }
+            const positionals = vs.getPositionals(pid);
+            const values = from
+              ? length
+                ? positionals.slice(offset, offset + len)
+                : positionals.slice(offset)
+              : positionals.slice(1); // positive positionals
+            yield act.expanded(def.param === '@' ? values : [values.join(' ')]);
+          } else if (index === '@' || index === '*') {
+            if (len < 0) {
+              throw new ShError(`${len}: substring expression < 0`, 1);
+            }
+            const values = paramValues.slice(offset, offset + len);
+            yield act.expanded(def.param === '@' ? values : [values.join(' ')]);
+          } else {
+            yield act.expanded(len >= 0
+              ? paramValues.join('').substr(offset, len)
+              : paramValues.join('').slice(offset, len));
+          }
+          break;
+        }
         /**
          * variables: ${!param*} or ${!param@}.
          */
@@ -991,9 +987,8 @@ class TranspileShService {
           }
           break;
         }
-        // default: throw testNever(def);
+        default: throw testNever(def);
       }
-      // return act.expanded([]); 
     }());
   }
 
