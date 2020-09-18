@@ -22,9 +22,11 @@ export class BuiltinService {
           case 'click': await this.click(process, args); break;
           case 'def': await this.def(process, args); break;
           case 'echo': await this.echo(process, args); break;
+          case 'false': node.exitCode = 1; break;
           case 'get': this.get(process, args); break;
           case 'read': await this.read(process, args); break;
           case 'sleep': await this.sleep(args); break;
+          case 'true': break;
           default: throw testNever(command);
         }
       } catch (e) {// Must forward errors thrown by builtins
@@ -166,9 +168,11 @@ export const builtins = {
   click: true,
   def: true,
   echo: true,
+  false: true,
   get: true,
   read: true,
   sleep: true,
+  true: true,
 };
 
 export type BuiltinKey = keyof typeof builtins;
