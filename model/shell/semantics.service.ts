@@ -10,7 +10,7 @@ import { ParamType, ParameterDef } from './parameter.model';
 import * as Sh from '@model/shell/parse.service';
 import { parseService } from '@model/shell/parse.service';
 import { expandService as expand, expandService } from './expand.service';
-import { varService as vs } from './var.service';
+import { varService as vs, throttleVarName } from './var.service';
 import { processService as ps } from './process.service';
 import {  RedirectDef } from './file.model';
 import { builtinService as bs } from './builtin.service';
@@ -1342,7 +1342,7 @@ class SemanticsService {
 
   private async throttleIterator(node: Sh.ParsedSh) {
     if (node.lastIterated) {
-      const throttleMs = 1000; // TODO config via builtin `throttle`
+      const throttleMs = (vs.lookupVar(node.meta.pid, throttleVarName) || 1) * 1000;
       const sleepMs = Math.max(0, throttleMs - (Date.now() - node.lastIterated));
       await ps.sleep(node.meta.pid, sleepMs);
     }

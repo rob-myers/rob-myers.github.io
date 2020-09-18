@@ -4,7 +4,7 @@ import * as Sh from "./parse.service";
 import { parseService } from "./parse.service";
 import { processService as ps} from './process.service';
 import { ShError, breakError, continueError } from "./semantics.service";
-import { varService, alphaNumericRegex } from "./var.service";
+import { varService, alphaNumericRegex, throttleVarName } from "./var.service";
 
 export class BuiltinService {
 
@@ -29,6 +29,7 @@ export class BuiltinService {
           case 'get': this.get(process, args); break;
           case 'read': await this.read(process, args); break;
           case 'sleep': await this.sleep(args); break;
+          case 'throttle': this.throttle(process, args); break;
           case 'true': break;
           default: throw testNever(command);
         }
@@ -189,6 +190,18 @@ export class BuiltinService {
     }
     await pause(1000 * seconds);
   }
+
+  private throttle({ pid }: Process, args: string[]) {
+    const permitted = { 0.25: true, 0.5: true, 1: true };
+    if (args.length !== 1 || !(args[0] in permitted)) {
+      throw new ShError(`usage \`throttle {0.25,0.5,1}\``, 1);
+    }
+    varService.assignVar(pid, {
+      varName: throttleVarName,
+      value: Number(args[0]),
+      internal: true,
+    });
+  }
 }
 
 export const builtins = {
@@ -210,6 +223,8 @@ export const builtins = {
   read: true,
   /** Wait for sum of arguments in seconds */
   sleep: true,
+  /** set throttling of subsequent iterator iterations  */
+  throttle: true,
   /** Exit with code 0 */
   true: true,
 };

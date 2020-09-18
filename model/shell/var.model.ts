@@ -42,7 +42,7 @@ export interface BaseAssignOpts {
   force: boolean;
 }
 
-export interface AssignVarBase extends Partial<BaseAssignOpts> {
+export interface AssignVarOpts extends Partial<BaseAssignOpts> {
   varName: string;
   value?: any;
   /**
@@ -52,21 +52,12 @@ export interface AssignVarBase extends Partial<BaseAssignOpts> {
    * - if array/map x=y assigns to index 0, x+=y appends 0-indexed
    */
   shell?: boolean;
+  /** Internal variables needn't match varName regex */
+  internal?: boolean;
   /** For array/object kv assignment */
   index?: string;
   append?: boolean;
 }
-
-/**
- * If `value` undefined then must be declaring.
- */
-type AssignVarAction = (
-  | { key: 'array'; value?: string[] }// ( a, b, c )
-  | { key: 'item'; index: string; value?: string }// x[0]=foo, x[foo]=bar, x[foo]=
-  | { key: 'default'; value?: string; append?: boolean }// string or integer
-  | { key: 'map'; value?: Record<string, string> }// ( [a]=1, [b]=2, [c]=3 )
-  | { key: 'simple'; value: any }
-);
 
 /**
  * A variable and a function may have the same name.

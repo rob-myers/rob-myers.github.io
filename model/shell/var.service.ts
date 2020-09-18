@@ -1,6 +1,6 @@
 import { testNever, mapValues, last, isArrayOrObject } from "@model/generic.model";
 import useStore, { Process } from '@store/shell.store';
-import { ProcessVar, BasePositionalVar, AssignVarBase, ShellFuncDef, JsFuncDef } from "./var.model";
+import { ProcessVar, BasePositionalVar, AssignVarOpts, ShellFuncDef, JsFuncDef } from "./var.model";
 import { ShError } from "./semantics.service";
 import { FileMeta } from "./parse.service";
 import { processService } from "./process.service";
@@ -29,9 +29,9 @@ class VarService {
    * Assign value to variable in process scope,
    * either using shell rules or by simply assigning it.
    */
-  assignVar(pid: number, def: AssignVarBase) {
+  assignVar(pid: number, def: AssignVarOpts) {
     // Require alphanumeric variable name where 1st char non-numeric
-    if (!def.varName || !alphaNumericRegex.test(def.varName)) {
+    if (!def.varName || (!alphaNumericRegex.test(def.varName) && !def.internal)) {
       throw new ShError(`\`${def.varName}' not a valid identifier`, 1);
     }
 
@@ -129,7 +129,7 @@ class VarService {
     }
   }
 
-  createVar(def: AssignVarBase): ProcessVar {
+  createVar(def: AssignVarOpts): ProcessVar {
     const base = {
       key: 'plain' as 'plain',
       varName: def.varName,
@@ -333,5 +333,7 @@ class VarService {
   }
 
 }
+
+export const throttleVarName = '__THROTTLE__';
 
 export const varService = new VarService;
