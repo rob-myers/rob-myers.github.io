@@ -444,7 +444,7 @@ class TranspileShService {
         //   break;
         // }
         case 'DeclClause': cmd = ts.DeclClause(node); break;
-        // case 'ForClause': child = this.ForClause(Cmd); break;
+        case 'ForClause': cmd = ts.ForClause(node); break;
         case 'FuncDecl': cmd = ts.FuncDecl(node); break;
         case 'IfClause': cmd = ts.IfClause(node); break;
         // case 'LetClause': child = this.LetClause(Cmd); break;
@@ -639,13 +639,58 @@ class TranspileShService {
     }());
   }
 
-  private stmts(parent: Sh.ParsedSh, nodes: Sh.Stmt[]) {
+  private ForClause(node: Sh.ForClause): Observable<ProcessAct> {
+    const { Loop } = node;
+
+    if (Loop.type === 'CStyleLoop') {
+      return from(async function*() {
+        await awaitEnd(ts.ArithmExpr(Loop.Init));
+        node.lastIterated = undefined;
+    
+        while (true) {
+          try {
+            await ts.throttleIterator(node);
+            await awaitEnd(ts.ArithmExpr(Loop.Cond));
+            if (Loop.Cond.number === 0) {
+              break;
+            }
+  
+            await awaitEnd(ts.stmts(node, node.Do));
+            await awaitEnd(ts.ArithmExpr(Loop.Post));
+
+          } catch (e) {
+            const result = ts.handleInterrupt(e, node);
+            if (result === 'break') break;
+            if (result === 'continue') continue;
+            // Otherwise we threw
+          }
+        }
+      }());
+    }
+
     return from(async function*() {
-      for (const node of nodes) {
-        await awaitEnd(ts.Stmt(node));
-        parent.exitCode = node.exitCode;
+      node.lastIterated = undefined;
+
+      for (const item of Loop.Items) {
+        // Cannot break/continue inside expansion
+        const itemResult = await lastValueFrom(ts.Expand(item));
+
+        const values = ts.isWordParamExp(item) || ts.isWordParamExp(item)
+          ? expandService.normalizeWhitespace(itemResult.value)
+          : itemResult.values;
+
+        for (const word of values) {
+          try {
+            await ts.throttleIterator(node);
+            vs.assignVar(node.meta.pid, { varName: Loop.Name.Value, value: word });
+            await awaitEnd(ts.stmts(node, node.Do));
+          } catch (e) {
+            const result = ts.handleInterrupt(e, node);
+            if (result === 'break') break;
+            if (result === 'continue') continue;
+          }
+        }
       }
-      ps.setExitCode(parent.meta.pid, parent.exitCode || 0);
     }());
   }
 
@@ -1118,28 +1163,12 @@ class TranspileShService {
             break;
           }
           await awaitEnd(ts.stmts(stmt, stmt.Do));
-
-          // TODO handle `break`, `return`, `continue`
-
-          const throttleMs = 1000; // TODO config via builtin `throttle`
-          const sleepMs = Math.max(0, throttleMs - (Date.now() - stmt.lastIterated));
-          await ps.sleep(stmt.meta.pid, sleepMs);
+          await ts.throttleIterator(stmt);
 
         } catch (e) {
-          if (e instanceof ShError) {
-            if (e.extra?.break) {
-              if (e.extra.break > 1 && parseService.hasAncestralIterator(stmt)) {
-                throw breakError(e.extra.break - 1);
-              }
-              break;
-            } else if (e.extra?.continue) {
-              if (e.extra.continue > 1 && parseService.hasAncestralIterator(stmt)) {
-                throw continueError(e.extra.continue - 1);
-              }
-              continue;
-            }
-          }
-          throw e;
+          const result = ts.handleInterrupt(e, stmt);
+          if (result === 'break') break;
+          if (result === 'continue') continue;
         }
       }
     }());
@@ -1202,6 +1231,23 @@ class TranspileShService {
     ps.setExitCode(node.meta.pid, node.exitCode);
   }
 
+  private handleInterrupt(e: any, node: Sh.ParsedSh) {
+    if (e instanceof ShError) {
+      if (e.extra?.break) {
+        if (e.extra.break > 1 && parseService.hasAncestralIterator(node)) {
+          throw breakError(e.extra.break - 1);
+        }
+        return 'break';
+      } else if (e.extra?.continue) {
+        if (e.extra.continue > 1 && parseService.hasAncestralIterator(node)) {
+          throw continueError(e.extra.continue - 1);
+        }
+        return 'continue';
+      }
+    }
+    throw e;
+  }
+
   private handleShError(node: Sh.ParsedSh, e: any) {
     if (e === null) {
       throw null; // Propagate Ctrl-C
@@ -1216,6 +1262,14 @@ class TranspileShService {
     } else {
       this.handleInternalError(node, e);
     }
+  }
+
+  private isWordParamExp(word: Sh.Word) {
+    return word.Parts[0].type === 'ParamExp';
+  }
+
+  private isWordCommandSub(word: Sh.Word) {
+    return word.Parts[0].type === 'CmdSubst';
   }
 
   /** Only $@ and ${x[@]} can expand to multiple args */
@@ -1274,6 +1328,25 @@ class TranspileShService {
     // Propagate string and evaluated number upwards
     (node.parent! as Sh.BaseNode).string = textValue;
     (node.parent! as Sh.BaseNode).number = value;
+  }
+
+  private stmts(parent: Sh.ParsedSh, nodes: Sh.Stmt[]) {
+    return from(async function*() {
+      for (const node of nodes) {
+        await awaitEnd(ts.Stmt(node));
+        parent.exitCode = node.exitCode;
+      }
+      ps.setExitCode(parent.meta.pid, parent.exitCode || 0);
+    }());
+  }
+
+  private async throttleIterator(node: Sh.ParsedSh) {
+    if (node.lastIterated) {
+      const throttleMs = 1000; // TODO config via builtin `throttle`
+      const sleepMs = Math.max(0, throttleMs - (Date.now() - node.lastIterated));
+      await ps.sleep(node.meta.pid, sleepMs);
+    }
+    node.lastIterated = Date.now();
   }
 
   transpileParam(node: Sh.ParamExp): ParameterDef<Observable<Expanded>, Observable<Expanded>> {

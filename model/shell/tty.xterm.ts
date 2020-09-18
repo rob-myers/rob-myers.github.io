@@ -555,10 +555,10 @@ export class TtyXterm {
    * Send SIGINT to foreground process group.
    */
   private sendSigInt() {
-    this.setCursor(this.input.length);
+    this.input = '';
+    this.setCursor(0);
     this.xterm.write('^C\r\n');
     this.trackCursorRow(1);
-    this.input = '';
     this.cursor = 0;
     // Immediately forget any pending output
     this.commandBuffer.length = 0;

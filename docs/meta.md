@@ -20,8 +20,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can query polyanya in webworker and display navpath
 
-- [ ] iterators `for`/`while` have inbuilt delay (e.g. at least `1s`)
-  > delay alterable via builtin `throttle 0.5`
+- [ ] can configure iterator delay by setting `THROTTLE`
+  > only permit `1s` (default/fallback), `0.5s`, `0.25s`
+- [x] iterators `for`/`while` have inbuilt delay (e.g. at least `1s`)
 - [x] `while` supports builtins `break` and `continue`
 - [x] implement cancellable `while`
 
