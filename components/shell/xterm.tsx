@@ -6,6 +6,10 @@ import { FitAddon } from 'xterm-addon-fit';
 // import { SearchAddon } from 'xterm-addon-search';
 import { WebLinksAddon } from 'xterm-addon-web-links';
 
+const stopKeysPropagating = (e: React.KeyboardEvent) => {
+  e.stopPropagation();
+};
+
 const XTermComponent: React.FC<Props> = ({
   className,
   options,
@@ -40,6 +44,7 @@ const XTermComponent: React.FC<Props> = ({
     <div
       ref={containerRef}
       className={className}
+      onKeyDown={stopKeysPropagating}
     />
   );
 };
