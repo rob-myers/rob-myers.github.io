@@ -15,7 +15,7 @@ export class BuiltinService {
     // Wrap in a promise so Ctrl-C can reject via process.cleanups
     await new Promise(async (resolve, reject) => {
       const process = ps.getProcess(node.meta.pid);
-      process.cleanups.push(() => reject(null));
+      const removeCleanup = ps.addCleanup(process.pid, () => reject(null));
       node.exitCode = 0;
       try {
         switch (command) {
@@ -29,13 +29,14 @@ export class BuiltinService {
           case 'true': break;
           default: throw testNever(command);
         }
+        removeCleanup();
+        resolve();
       } catch (e) {// Must forward errors thrown by builtins
         if (e instanceof ShError) {
           e.message = `${command}: ${e.message}` 
         }
         reject(e);
       }
-      resolve();
     });
   }
 
@@ -150,7 +151,7 @@ export class BuiltinService {
    * - if there are no arguments we'll sleep for 1 second.
    * - if the sum is negative we'll wait 0 seconds.
    */
-  private async sleep(args: string[]) {
+  async sleep(args: string[]) {
     // const { _: operands, __optKeys } = parseSh.getOpts(args, {});
     let seconds = args.length ? 0 : 1, delta: number;
     

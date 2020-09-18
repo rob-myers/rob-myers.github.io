@@ -1,5 +1,5 @@
 import shortid from 'shortid';
-import { mapValues, last } from '@model/generic.model';
+import { mapValues, last, removeFirst } from '@model/generic.model';
 import useStore, { State as ShellState, Session, Process, ProcessGroup } from '@store/shell.store';
 import { addToLookup } from '@store/store.util';
 import * as Sh from './parse.service';
@@ -21,6 +21,11 @@ export class ProcessService {
     if (typeof window !== 'undefined') {
       this.mockParsed = Sh.parseSh.parse('');
     }
+  }
+
+  addCleanup(pid: number, cb: () => void): () => void {
+    this.getProcess(pid).cleanups.push(cb);
+    return () => removeFirst(this.getProcess(pid).cleanups, cb);
   }
 
   cleanup(pid: number) {
@@ -427,6 +432,17 @@ export class ProcessService {
    */
   setSessionForeground(sessionKey: string, pgid: number) {
     this.getSession(sessionKey).fgStack.push(pgid);
+  }
+
+  /** Cancellable sleep like builtin `sleep` */
+  sleep(pid: number, ms: number) {
+    return new Promise((resolve, reject) => {
+      const removeCleanup = this.addCleanup(pid, () => reject(null));
+      setTimeout(() => {
+        removeCleanup();
+        resolve();
+      }, ms)
+    });
   }
 
   /**

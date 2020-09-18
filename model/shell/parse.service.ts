@@ -932,8 +932,8 @@ export interface BaseNode {
   /** Used by Redirects only */
   redirDef?: RedirectDef<any>;
 
-  /** If we need to remember node we'll set this */
-  nodeUid?: string;
+  /** Used by ForClause and WhileClause only */
+  lastIterated?: number;
 }
 
 export type ParsedSh = (

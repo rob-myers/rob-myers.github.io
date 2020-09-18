@@ -450,7 +450,7 @@ class TranspileShService {
         // case 'Subshell': child = this.Subshell(Cmd); break;
         // case 'TestClause': child = this.TestClause(Cmd); break;
         // case 'TimeClause': child = this.TimeClause(Cmd); break;
-        // case 'WhileClause': child = this.WhileClause(Cmd); break;
+        case 'WhileClause': cmd = ts.WhileClause(node); break;
         // default: throw testNever(Cmd);
         default: return;
       }
@@ -1106,6 +1106,29 @@ class TranspileShService {
         if (stmt.Negated) {
           stmt.exitCode = 1 - Number(!!stmt.Cmd.exitCode);
         }
+      }
+    }());
+  }
+
+  private WhileClause(stmt: Sh.WhileClause): Observable<ProcessAct> {
+    return from(async function*() {
+      while (true) {// Run guard
+        stmt.lastIterated = Date.now();
+        await awaitEnd(ts.stmts(stmt, stmt.Cond));
+
+        if (stmt.exitCode) {// Guard failed
+          ps.setExitCode(stmt.meta.pid, stmt.exitCode = 0);
+          break;
+        }
+        // TODO handle `break`, `return`, `continue`
+
+        // Run body
+        await awaitEnd(ts.stmts(stmt, stmt.Do));
+
+        // Cancellable sleep
+        const throttleMs = 1000; // TODO config via builtin `throttle`
+        const sleepMs = Math.max(0, throttleMs - (Date.now() - stmt.lastIterated));
+        await ps.sleep(stmt.meta.pid, sleepMs);
       }
     }());
   }

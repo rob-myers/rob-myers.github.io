@@ -7,6 +7,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] hashes always scrollIntoView
 
 - [ ] `Env` should be in react-reverse-portal
+- [ ] try to remove `Observable<ProcessAct>` syntax
 
 - [ ] on 2nd click compute a navpath and display it
 - [ ] onclick floor show cube
@@ -20,7 +21,10 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] can query polyanya in webworker and display navpath
 
 - [ ] iterators `for`/`while` have inbuilt delay (e.g. at least `1s`)
-  > alter via builtin `throttle 0.5`
+  > delay alterable via builtin `throttle 0.5`
+
+- [ ] `while` supports builtins `break` and `continue`
+- [x] implement cancellable `while`
 
 - [x] ensure we cannot create a file which is already a directory
 - [x] support `read x y z` when input is a string
