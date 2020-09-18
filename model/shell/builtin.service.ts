@@ -112,11 +112,6 @@ export class BuiltinService {
     }
   }
 
-  /**
-   * TODO
-   * 1. option --tick 0.5s or -t 0.5s instead of tick device
-   * 2. when reading string support multi args e.g. `read x y z`
-   */
   private async read({ pid, sessionKey, fdToOpen, cleanups }: Process, args: string[]) {
     if (args.some(arg => !alphaNumericRegex.test(arg))) {
       throw new ShError(`usage \`read\` or \`read x\``, 1);
@@ -124,7 +119,15 @@ export class BuiltinService {
 
     await new Promise((resolve, reject) => {
       const onWrite = (msg: any) => {
-        args.length && varService.assignVar(pid, { varName: args[0], value: msg });
+        if (args.length) {
+          if (typeof msg === 'string') {// Assign words to variables
+            const [words, lastArg] = [msg.trim().replace(/\s\s+/g, ' ').split(' '), args.pop()];
+            args.forEach(varName => varService.assignVar(pid, { varName, value: words.shift() || '' }));
+            lastArg && varService.assignVar(pid, { varName: lastArg, value: words.join(' ') });
+          } else {
+            varService.assignVar(pid, { varName: args[0], value: msg });
+          }
+        }
         resolve();
       };
 

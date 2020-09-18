@@ -1005,25 +1005,6 @@ class TranspileShService {
       const pid = node.meta.pid;
       const { value } = await lastValueFrom(ts.Expand(node.Word));
 
-      /**
-       * TODO move elsewhere:
-       * - /tick/1s just ticks
-       * - `read` detects tick message and pauses itself according to last time it ran
-       */
-      // if (def.subKey === '<' && value.startsWith('/tick/')) {
-      //   const seconds = Number(value.slice('/tick/'.length, -1));
-      //   if ([1, 0.5, 0.25].includes(seconds) && value.endsWith('s')) {
-      //     const nodeUid = node.nodeUid || (node.nodeUid = shortId.generate());
-      //     /**
-      //      * TODO 
-      //      * - open special file and register via `${pid} ${nodeUid}`
-      //      * - this file ticks and also tracks re-read to reply 'early'
-      //      * - need builtin `read` to test it
-      //      */
-      //     return;
-      //   }
-      // }
-
       // Handle duplication and moving
       switch (def.subKey) {
         case '<':
