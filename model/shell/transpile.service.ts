@@ -1110,13 +1110,19 @@ class TranspileShService {
     }());
   }
 
+  /**
+   * We don't continue redirects after an error.
+   * We rethrow e.g. preventing a builtin from running.
+   */
   private async applyRedirects(parent: Sh.Command, redirects: Sh.Redirect[]) {
     try {
       for (const redirect of redirects) {
+        redirect.exitCode = 0;
         await awaitEnd(this.Redirect(redirect));
       }
     } catch (e) {
-      this.handleShError(parent, e);
+      parent.exitCode = redirects.find(x => x.exitCode)?.exitCode??1;
+      throw e;
     }
   }
 
