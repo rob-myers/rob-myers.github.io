@@ -284,12 +284,11 @@ export class ProcessService {
     let file = fileService.getFile(absPath);
 
     if (!file) {
-      if (absPath.endsWith('/')) {
-        throw Error(`${absPath}: is a directory`);
+      if (!fileService.validatePath(absPath)) {
+        throw new ShError(`${absPath}: only absolute paths /{dev,root,tmp}/foo are supported`, 1);
       }
-      // Create and mount a file i.e. a 'wire'
-      const stream = new ShellStream;
-      file = fileService.createFsFile(absPath, stream, stream);
+      // Create and mount a file
+      file = fileService.makeWire(absPath);
       fileService.saveFile(file);
     }
 

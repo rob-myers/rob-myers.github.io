@@ -50,6 +50,17 @@ export class FileService {
   unlinkFile(absPath: string) {
     delete this.getFs()[absPath];
   }
+
+  validatePath(absPath: string) {
+    const parts = absPath.split('/');
+    return parts.length === 3
+      && !parts[0] // starts with /
+      && allowedDirs.includes(parts[1])
+      && parts[2]
+      && !/\s/.test(parts[2]);
+  }
 }
+
+const allowedDirs = ['root', 'dev', 'tmp'];
 
 export const fileService = new FileService;

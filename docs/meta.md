@@ -19,9 +19,10 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can query polyanya in webworker and display navpath
 
-- [ ] ensure we cannot create a file which is already a directory
 - [ ] iterators `for`/`while` have inbuilt delay (e.g. at least `1s`)
   > alter via builtin `throttle 0.5`
+
+- [x] ensure we cannot create a file which is already a directory
 - [x] support `read x y z` when input is a string
 
 - [x] remove builtin `tick`; create builtin `read`
