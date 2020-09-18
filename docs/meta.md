@@ -22,8 +22,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] iterators `for`/`while` have inbuilt delay (e.g. at least `1s`)
   > delay alterable via builtin `throttle 0.5`
-
-- [ ] `while` supports builtins `break` and `continue`
+- [x] `while` supports builtins `break` and `continue`
 - [x] implement cancellable `while`
 
 - [x] ensure we cannot create a file which is already a directory

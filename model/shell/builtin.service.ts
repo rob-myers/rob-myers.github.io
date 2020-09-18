@@ -1,8 +1,9 @@
 import { testNever, pause } from "@model/generic.model";
 import { Process } from "@store/shell.store";
 import * as Sh from "./parse.service";
+import { parseService } from "./parse.service";
 import { processService as ps} from './process.service';
-import { ShError } from "./transpile.service";
+import { ShError, breakError, continueError } from "./transpile.service";
 import { varService, alphaNumericRegex } from "./var.service";
 
 export class BuiltinService {
@@ -15,11 +16,13 @@ export class BuiltinService {
     // Wrap in a promise so Ctrl-C can reject via process.cleanups
     await new Promise(async (resolve, reject) => {
       const process = ps.getProcess(node.meta.pid);
-      const removeCleanup = ps.addCleanup(process.pid, () => reject(null));
+      const removeCleanup = ps.addCleanups(process.pid, () => reject(null));
       node.exitCode = 0;
       try {
         switch (command) {
+          case 'break': this.break(node, args); break;
           case 'click': await this.click(process, args); break;
+          case 'continue': this.continue(node, args); break;
           case 'def': await this.def(process, args); break;
           case 'echo': await this.echo(process, args); break;
           case 'false': node.exitCode = 1; break;
@@ -40,25 +43,48 @@ export class BuiltinService {
     });
   }
 
+  private break(node: Sh.CallExpr, args: string[]) {
+    const loopCount = args.length ? Number(args[0]) : 1;
+
+    if (args.length > 1 || !Number.isInteger(loopCount) || loopCount <= 0) {
+      throw new ShError(`usage \`break\` or \`break n\` where n > 0`, 1);
+    } else if (!parseService.hasAncestralIterator(node)) {
+      throw new ShError(`only meaningful in a \`for', \`while' or \`until' loop`, 1);
+    }
+    throw breakError(loopCount);
+  }
+
   private async click({ sessionKey, pid, fdToOpen, cleanups }: Process, args: string[]) {
     if (args.length > 1) {
       throw new ShError(`usage \`click\` or \`click evt\``, 1);
     }
-    const { worldDevice } = ps.getSession(sessionKey);
 
     await new Promise((resolve, reject) => {
-      const cancel = worldDevice.read((msg) => {
-        if (msg.key === 'navmesh-click') {
-          if (args.length) {
-            varService.assignVar(pid, { varName: args[0], value: msg });
-          } else {
-            fdToOpen[1].write(msg);
+      const { worldDevice } = ps.getSession(sessionKey);
+      ps.addCleanups(pid, () => reject(null),
+        worldDevice.read((msg) => {
+          if (msg.key === 'navmesh-click') {
+            if (args.length) {
+              varService.assignVar(pid, { varName: args[0], value: msg });
+            } else {
+              fdToOpen[1].write(msg);
+            }
+            resolve();
           }
-          resolve();
-        }
-      }, true);
-      cleanups.push(() => reject(null), cancel);
+        }, true),
+      );
     });
+  }
+
+  private continue(node: Sh.CallExpr, args: string[]) {
+    const loopCount = args.length ? Number(args[0]) : 1;
+
+    if (args.length > 1 || !Number.isInteger(loopCount) || loopCount <= 0) {
+      throw new ShError(`usage \`continue\` or \`continue n\` where n > 0`, 1);
+    } else if (!parseService.hasAncestralIterator(node)) {
+      throw new ShError(`only meaningful in a \`for', \`while' or \`until' loop`, 1);
+    }
+    throw continueError(loopCount);
   }
 
   private async def({ pid }: Process, [funcName, funcDef, ...rest]: string[]) {
@@ -151,7 +177,7 @@ export class BuiltinService {
    * - if there are no arguments we'll sleep for 1 second.
    * - if the sum is negative we'll wait 0 seconds.
    */
-  async sleep(args: string[]) {
+  private async sleep(args: string[]) {
     // const { _: operands, __optKeys } = parseSh.getOpts(args, {});
     let seconds = args.length ? 0 : 1, delta: number;
     
@@ -166,13 +192,25 @@ export class BuiltinService {
 }
 
 export const builtins = {
+  /** Exit for, while or until */
+  break: true,
+  /** Write next navmesh click to stdout */
   click: true,
+  /** Continue for, while or until */
+  continue: true,
+  /** Define a shell function using javascript */
   def: true,
+  /** Write shell expansion to stdout */
   echo: true,
+  /** Exit with code 1 */
   false: true,
+  /** Write a js variable's value to stdout */
   get: true,
+  /** Read from stdin and store in provided variable */
   read: true,
+  /** Wait for sum of arguments in seconds */
   sleep: true,
+  /** Exit with code 0 */
   true: true,
 };
 

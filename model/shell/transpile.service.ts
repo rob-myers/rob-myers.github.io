@@ -8,6 +8,7 @@ import { awaitEnd } from './rxjs.model';
 import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
 import { ParamType, ParameterDef } from './parameter.model';
 import * as Sh from '@model/shell/parse.service';
+import { parseService } from '@model/shell/parse.service';
 import { expandService as expand, expandService } from './expand.service';
 import { varService as vs } from './var.service';
 import { processService as ps } from './process.service';
@@ -633,7 +634,7 @@ class TranspileShService {
       try {
         await awaitEnd(ts.stmts(node, node.Stmts));
       } catch (e) {
-        ts.handleShError(node, e);
+        ts.handleInternalError(node, e);
       } 
     }());
   }
@@ -654,8 +655,8 @@ class TranspileShService {
       if (func?.readonly) {
         throw new ShError(`${node.Name.Value}: readonly function`, 1);
       }
-      const clonedBody = Sh.parseSh.clone(node.Body);
-      const wrappedFile = Sh.parseSh.wrapInFile(clonedBody);
+      const clonedBody = parseService.clone(node.Body);
+      const wrappedFile = parseService.wrapInFile(clonedBody);
       vs.addFunction(node.meta.pid, node.Name.Value, { type: 'shell', node: wrappedFile });
     }());
   }
@@ -1084,7 +1085,7 @@ class TranspileShService {
         ts.handleShError(stmt.Redirs[0], new ShError('pure redirects are unsupported', 2));
       } else if (stmt.Background) {
         // Spawn background process
-        const cloned = Object.assign(Sh.parseSh.clone(stmt), { Background: false } as Sh.Stmt);
+        const cloned = Object.assign(parseService.clone(stmt), { Background: false } as Sh.Stmt);
         const { pid: spawnedPid, parsed } = ps.spawnProcess(cloned.meta.pid, cloned, true);
         // Launch it
         ts.transpile(parsed).subscribe({
@@ -1113,21 +1114,38 @@ class TranspileShService {
   private WhileClause(stmt: Sh.WhileClause): Observable<ProcessAct> {
     return from(async function*() {
       while (true) {
-        stmt.lastIterated = Date.now();
-        
-        await awaitEnd(ts.stmts(stmt, stmt.Cond));
-        if (stmt.Until ? !stmt.exitCode : stmt.exitCode) {
-          ps.setExitCode(stmt.meta.pid, stmt.exitCode = 0);
-          break;
+        try {
+          stmt.lastIterated = Date.now();
+          
+          await awaitEnd(ts.stmts(stmt, stmt.Cond));
+          if (stmt.Until ? !stmt.exitCode : stmt.exitCode) {
+            ps.setExitCode(stmt.meta.pid, stmt.exitCode = 0);
+            break;
+          }
+          await awaitEnd(ts.stmts(stmt, stmt.Do));
+
+          // TODO handle `break`, `return`, `continue`
+
+          const throttleMs = 1000; // TODO config via builtin `throttle`
+          const sleepMs = Math.max(0, throttleMs - (Date.now() - stmt.lastIterated));
+          await ps.sleep(stmt.meta.pid, sleepMs);
+
+        } catch (e) {
+          if (e instanceof ShError) {
+            if (e.extra?.break) {
+              if (e.extra.break > 1 && parseService.hasAncestralIterator(stmt)) {
+                throw breakError(e.extra.break - 1);
+              }
+              break;
+            } else if (e.extra?.continue) {
+              if (e.extra.continue > 1 && parseService.hasAncestralIterator(stmt)) {
+                throw continueError(e.extra.continue - 1);
+              }
+              continue;
+            }
+          }
+          throw e;
         }
-        await awaitEnd(ts.stmts(stmt, stmt.Do));
-
-        // TODO handle `break`, `return`, `continue`
-
-        // Cancellable sleep
-        const throttleMs = 1000; // TODO config via builtin `throttle`
-        const sleepMs = Math.max(0, throttleMs - (Date.now() - stmt.lastIterated));
-        await ps.sleep(stmt.meta.pid, sleepMs);
       }
     }());
   }
@@ -1181,21 +1199,28 @@ class TranspileShService {
     return null;
   }
 
+  private handleInternalError(node: Sh.ParsedSh, e: any) {
+    console.error(`${node.meta.sessionKey}: pid ${node.meta.pid}: internal error: ${e.message}`);
+    console.error(e);
+    ps.warn(node.meta.pid, `internal error: ${e.message}`);
+    node.exitCode = 2;
+    ps.setExitCode(node.meta.pid, node.exitCode);
+  }
+
   private handleShError(node: Sh.ParsedSh, e: any) {
     if (e === null) {
-      // We throw null when terminating via Ctrl-C
-      throw null;
+      throw null; // Propagate Ctrl-C
     } else if (e instanceof ShError) {
       // console.error(`${sessionKey}: pid ${pid}: ${e.message}`);
+      if (e.exitCode === 0) {
+        throw e; // Propagate break/continue/return
+      }
       ps.warn(node.meta.pid, e.message);
       node.exitCode = e.exitCode;
+      ps.setExitCode(node.meta.pid, node.exitCode);
     } else {
-      console.error(`${node.meta.sessionKey}: pid ${node.meta.pid}: internal error: ${e.message}`);
-      console.error(e);
-      ps.warn(node.meta.pid, `internal error: ${e.message}`);
-      node.exitCode = 2;
+      this.handleInternalError(node, e);
     }
-    ps.setExitCode(node.meta.pid, node.exitCode);
   }
 
   /** Only $@ and ${x[@]} can expand to multiple args */
@@ -1388,13 +1413,23 @@ export class ShError extends Error {
   constructor(
     message: string,
     public exitCode: number,
-    public internalCode?: 'P_EXIST' | 'PP_NO_EXIST' | 'F_NO_EXIST' | 'NOT_A_DIR',
+    public extra?: {
+      break?: number;
+      continue?: number;
+      return?: number;
+    }
   ) {
     super(message);
     // Set the prototype explicitly.
     Object.setPrototypeOf(this, ShError.prototype);
   }
 }
+
+export const breakError = (breaks: number) =>
+  new ShError('__break__', 0, { break: breaks });
+
+export const continueError = (continues: number) =>
+  new ShError('__continue__', 0, { continue: continues });
 
 const wordPart = {
   'Lit': true,

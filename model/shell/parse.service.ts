@@ -21,6 +21,58 @@ class ParseShService {
   }
 
   /**
+   * Clone creates completely fresh tree, sharing internal refs as before.
+   * In particular, every node has the same node.meta.
+   */
+  clone<T extends ParsedSh>(parsed: T): T {
+    return cloneWithRefs(parsed);
+  }
+
+  private findAncestral(node: ParsedSh, predicate: (ancestor: ParsedSh) => boolean) {
+    let ancestor = node as null | ParsedSh;
+    while (ancestor = ancestor!.parent) {
+      if (predicate(ancestor)) {
+        break;
+      }
+    }
+    return ancestor;
+  }
+
+  getOpts(args: string[], options?: getopts.Options) {
+    return this.simplifyGetOpts(getopts(args, options));
+  }
+
+  hasAncestralIterator(node: ParsedSh) {
+    return this.findAncestral(node, ({ type }) =>
+      type === 'ForClause' || type === 'WhileClause'
+    );
+  }
+
+  /**
+   * `partialSrc` must come from the command line.
+   * It must be `\n`-terminated.
+   * It must not have a proper-prefix which is a complete command,
+   * e.g. `echo foo\necho bar\n` invalid via proper-prefix `echo foo\n`.
+   */
+  interactiveParse(partialSrc: string): InteractiveParseResult {
+    const parser = syntax.NewParser();
+    let incomplete: null | boolean = null;
+
+    try { // Use mvdah-sh to parse partial shell code
+      parser.Interactive(
+        { read: () => partialSrc },
+        () => { incomplete = parser.Incomplete(); return false; }
+      );
+    } catch (e) {
+      // console.log('ERROR', e);
+    }
+
+    // To clean it up we re-parse, which also provides source map
+    const parsed = incomplete ? null : this.parse(partialSrc);
+    return { incomplete, parsed };
+  }
+
+  /**
    * Use mvdan-sh to parse shell code.
    */
   parse(src: string): FileWithMeta {
@@ -60,42 +112,6 @@ class ParseShService {
       console.error(e);
       return { key: 'failed' as 'failed', error: `${e.Error()}` };
     }
-  }
-
-  /**
-   * `partialSrc` must come from the command line.
-   * It must be `\n`-terminated.
-   * It must not have a proper-prefix which is a complete command,
-   * e.g. `echo foo\necho bar\n` invalid via proper-prefix `echo foo\n`.
-   */
-  interactiveParse(partialSrc: string): InteractiveParseResult {
-    const parser = syntax.NewParser();
-    let incomplete: null | boolean = null;
-
-    try { // Use mvdah-sh to parse partial shell code
-      parser.Interactive(
-        { read: () => partialSrc },
-        () => { incomplete = parser.Incomplete(); return false; }
-      );
-    } catch (e) {
-      // console.log('ERROR', e);
-    }
-
-    // To clean it up we re-parse, which also provides source map
-    const parsed = incomplete ? null : this.parse(partialSrc);
-    return { incomplete, parsed };
-  }
-
-  /**
-   * Clone creates completely fresh tree, sharing internal refs as before.
-   * In particular, every node has the same node.meta.
-   */
-  clone<T extends ParsedSh>(parsed: T): T {
-    return cloneWithRefs(parsed);
-  }
-
-  getOpts(args: string[], options?: getopts.Options) {
-    return this.simplifyGetOpts(getopts(args, options));
   }
 
   /**
@@ -1093,4 +1109,4 @@ export interface FileMeta {
   sessionKey: string;
 }
 
-export const parseSh = new ParseShService();
+export const parseService = new ParseShService();

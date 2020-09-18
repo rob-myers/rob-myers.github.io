@@ -1,6 +1,6 @@
 import { testNever } from '@model/generic.model';
 import useStore, { Session } from '@store/shell.store';
-import { parseSh } from './parse.service';
+import { parseService } from './parse.service';
 import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
 import { VoiceCommandSpeech } from './voice.xterm';
@@ -121,7 +121,7 @@ export class TtyShell {
     if (this.input) {
       try {// Catching Ctrl-C of ps.runInShell
         this.buffer.push(this.input.line);
-        const result = parseSh.tryParseBuffer(this.buffer.slice()); // Can't error
+        const result = parseService.tryParseBuffer(this.buffer.slice()); // Can't error
   
         switch (result.key) {
           case 'failed': {

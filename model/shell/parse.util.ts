@@ -79,13 +79,13 @@ export function getChildren(node: Sh.ParsedSh): Sh.ParsedSh[] {
   }
 }
 
-export function traverse(node: Sh.ParsedSh, act: (node: Sh.ParsedSh) => void) {
+export function traverseParsed(node: Sh.ParsedSh, act: (node: Sh.ParsedSh) => void) {
   act(node);
-  getChildren(node).forEach(child => traverse(child, act));
+  getChildren(node).forEach(child => traverseParsed(child, act));
 }
 
 export function withParents<T extends Sh.ParsedSh>(root: T) {
-  traverse(root, (node) => {
+  traverseParsed(root, (node) => {
     getChildren(node).forEach(child => (child as Sh.BaseNode).parent = node);
   });
   return root;

@@ -5,7 +5,6 @@ import { addToLookup } from '@store/store.util';
 import * as Sh from './parse.service';
 import { OpenFileRequest, OpenFileDescription } from './file.model';
 import { NamedFunction } from './var.model';
-import { ShellStream } from './shell.stream';
 import { transpileSh, ShError } from './transpile.service';
 import { fileService } from './file.service';
 import { varService } from './var.service';
@@ -19,13 +18,13 @@ export class ProcessService {
   initialise() {
     this.set = useStore.getState().api.set;
     if (typeof window !== 'undefined') {
-      this.mockParsed = Sh.parseSh.parse('');
+      this.mockParsed = Sh.parseService.parse('');
     }
   }
 
-  addCleanup(pid: number, cb: () => void): () => void {
-    this.getProcess(pid).cleanups.push(cb);
-    return () => removeFirst(this.getProcess(pid).cleanups, cb);
+  addCleanups(pid: number, ...cbs: (() => void)[]): () => void {
+    this.getProcess(pid).cleanups.push(...cbs);
+    return () => cbs.forEach(cb => removeFirst(this.getProcess(pid).cleanups, cb));
   }
 
   cleanup(pid: number) {
@@ -143,11 +142,11 @@ export class ProcessService {
   execProcess(pid: number, node: Sh.Stmt) {
     const process = this.getProcess(pid);
     // Must clone parse tree because meta will differ
-    const cloned = Sh.parseSh.clone(node);
+    const cloned = Sh.parseService.clone(node);
     // Must mutate to affect all descendents
     Object.assign<Sh.FileMeta, Partial<Sh.FileMeta>>(cloned.meta, { pid: process.pid });
     // Must wrap Stmt in File
-    process.parsed = Sh.parseSh.wrapInFile(cloned);
+    process.parsed = Sh.parseService.wrapInFile(cloned);
   }
 
   findAncestral(pid: number, predicate: (state: Process) => boolean) {
@@ -437,7 +436,7 @@ export class ProcessService {
   /** Cancellable sleep like builtin `sleep` */
   sleep(pid: number, ms: number) {
     return new Promise((resolve, reject) => {
-      const removeCleanup = this.addCleanup(pid, () => reject(null));
+      const removeCleanup = this.addCleanups(pid, () => reject(null));
       setTimeout(() => {
         removeCleanup();
         resolve();
