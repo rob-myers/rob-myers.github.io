@@ -298,7 +298,7 @@ export class SrcService {
       }
 
       case 'WhileClause': {
-        return `while ${this.seqSrc(node.Cond, true)}do ${
+        return `${node.Until ? 'until' : 'while'} ${this.seqSrc(node.Cond, true)}do ${
           this.seqSrc(node.Do, true)
         }done`;
       }

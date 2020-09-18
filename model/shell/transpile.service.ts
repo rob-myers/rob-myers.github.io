@@ -1112,18 +1112,17 @@ class TranspileShService {
 
   private WhileClause(stmt: Sh.WhileClause): Observable<ProcessAct> {
     return from(async function*() {
-      while (true) {// Run guard
+      while (true) {
         stmt.lastIterated = Date.now();
+        
         await awaitEnd(ts.stmts(stmt, stmt.Cond));
-
-        if (stmt.exitCode) {// Guard failed
+        if (stmt.Until ? !stmt.exitCode : stmt.exitCode) {
           ps.setExitCode(stmt.meta.pid, stmt.exitCode = 0);
           break;
         }
-        // TODO handle `break`, `return`, `continue`
-
-        // Run body
         await awaitEnd(ts.stmts(stmt, stmt.Do));
+
+        // TODO handle `break`, `return`, `continue`
 
         // Cancellable sleep
         const throttleMs = 1000; // TODO config via builtin `throttle`
