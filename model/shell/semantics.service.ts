@@ -634,6 +634,9 @@ class SemanticsService {
       try {
         await awaitEnd(sem.stmts(node, node.Stmts));
       } catch (e) {
+        if (e === null) {
+          throw e;
+        }
         sem.handleInternalError(node, e);
       } 
     }());
