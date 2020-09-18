@@ -19,6 +19,10 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > spawn an actor at a position
 
 - [ ] can query polyanya in webworker and display navpath
+  > create navworker
+  > can add/remove navigable
+  > can query navpath
+  > can display navpath
 
 - [x] can configure iterator delay via builtin `throttle`
   > only permit `1s` (default/fallback), `0.5s`, `0.25s`
