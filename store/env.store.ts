@@ -2,8 +2,10 @@ import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import { KeyedLookup } from '@model/generic.model';
 import { FsFile } from '@model/shell/file.model';
+import * as Geom from '@model/geom/geom.model'
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import useShellStore from './shell.store';
+import useGeomStore from './geom.store';
 
 export interface State {
   env: KeyedLookup<Environment>;
@@ -11,7 +13,9 @@ export interface State {
     createEnv: (def: EnvDef) => void;
     removeEnv: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
+    removeNavWorkerRoom: (input: { envKey: string, roomUid: string }) => void;
     roomUpdated: (envKey: string) => void;
+    updateNavWorkerRoom: (input: { envKey: string; roomUid: string;  navPartitions: Geom.Rect[][]; }) => void;
   };
 }
 
@@ -55,6 +59,11 @@ const useStore = create<State>(devtools((set, get) => ({
       }));
     },
 
+    removeNavWorkerRoom: ({ envKey, roomUid }) => {
+      const { navWorker } = useGeomStore.getState();
+      navWorker!.postMessage({ key: 'remove-room-nav', envKey, roomUid });
+    },
+
     roomUpdated: (envKey) => {
       set(({ env }) => ({
         env: updateLookup(envKey, env, () => ({
@@ -67,6 +76,11 @@ const useStore = create<State>(devtools((set, get) => ({
       set(({ env }) => ({
         env: updateLookup(envKey, env, () => ({ highWalls: next })),
       }));
+    },
+
+    updateNavWorkerRoom: ({ envKey, roomUid, navPartitions }) => {
+      const { navWorker } = useGeomStore.getState();
+      navWorker!.postMessage({ key: 'update-room-nav', envKey, roomUid, navPartitions });
     },
 
   },

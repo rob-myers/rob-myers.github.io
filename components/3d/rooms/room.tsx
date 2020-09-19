@@ -32,9 +32,13 @@ const Room: React.FC<Props> = (props) => {
     
     // Recompute navmesh whenever an Inner mounts/updates
     const geomApi = useGeomStore.getState().api;
+    const envApi = useEnvStore.getState().api;
     channel.current
       .pipe(debounceTime(30))
-      .subscribe({ next: () => geomApi.updateRoomNavmesh(mesh.current!) });
+      .subscribe({ next: () => {
+        const navPartitions = geomApi.updateRoomNavmesh(mesh.current!);
+        envApi.updateNavWorkerRoom({ envKey: envName, roomUid: mesh.current!.uuid, navPartitions });
+      }});
     channel.current.next({ key: 'inner-updated' }); // Initialise
 
     // Handle navmesh clicks
@@ -49,6 +53,10 @@ const Room: React.FC<Props> = (props) => {
     };
 
     setChildrenMounted(true); // Now mount Inners
+
+    return () => {
+      envApi.removeNavWorkerRoom({ envKey: envName, roomUid: mesh.current!.uuid });
+    };
   }, []);
   
   // Can change angle/position

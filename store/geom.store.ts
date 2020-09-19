@@ -9,7 +9,6 @@ import * as Geom from '@model/geom/geom.model'
 import GeomService from '@model/geom/geom.service';
 import { innerGroupName, navmeshGroupName, navMeshMaterial, outsetAmount } from '@model/env/env.model';
 import { NavWorker } from '@model/worker/nav.model';
-import { getWindow } from '@model/dom.model';
 
 export interface State {
   loadedGltf: boolean;
@@ -25,8 +24,12 @@ export interface State {
     };
     computeInnerMeta: (inner: THREE.Mesh) => InnerMeta;
     computeRoomMeta: (room: THREE.Mesh) => RoomMeta;
-    /** Takes Inners attached to parent into account */
-    updateRoomNavmesh: (room: THREE.Mesh) => void;
+    /**
+     * Update child mesh 'navmesh' of supplied `room`,
+     * taking any attached Inners into account.
+     * We also return the grouped nav rects.
+     */
+    updateRoomNavmesh: (room: THREE.Mesh) => Geom.Rect[][];
   };
 }
 
@@ -198,6 +201,8 @@ const useStore = create<State>(devtools((set, get) => ({
       const prevNavmesh = roomGroup.children.find(({ name }) => name === navmeshGroupName);
       prevNavmesh && roomGroup.remove(prevNavmesh);
       roomGroup.add(navMesh);
+
+      return navPartitions;
     },
 
   },

@@ -1,3 +1,5 @@
+import type * as Geom from '@model/geom/rect.model';
+
 /** A Worker instance in main thread. */
 export interface NavWorker extends Worker {
   postMessage(message: MessageFromMain): void;
@@ -22,15 +24,25 @@ interface Message<Data> extends MessageEvent {
 
 type MessageFromMain = (
   | PingNavWorker
-  | SetupNavigable
+  | UpdateRoomNav
+  | RemoveRoomNav
   | RequestNavPath
 );
 interface PingNavWorker {
   key: 'ping-navworker';
 }
-interface SetupNavigable {
-  key: 'setup-navigable';
-  // TODO provide nav poly
+interface UpdateRoomNav {
+  key: 'update-room-nav';
+  envKey: string;
+  /** Room instance uid */
+  roomUid: string;
+  navPartitions: Geom.Rect[][];
+}
+interface RemoveRoomNav {
+  key: 'remove-room-nav';
+  envKey: string;
+  /** Room instance uid */
+  roomUid: string;
 }
 interface RequestNavPath {
   key: 'request-navpath';
