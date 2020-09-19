@@ -37,7 +37,7 @@ const Room: React.FC<Props> = (props) => {
       .pipe(debounceTime(30))
       .subscribe({ next: () => {
         const navPartitions = geomApi.updateRoomNavmesh(mesh.current!);
-        envApi.updateNavWorkerRoom({ envKey: envName, roomUid: mesh.current!.uuid, navPartitions });
+        envApi.updateNavWorkerRoom({ envKey: envName, roomType: props.id, roomUid: mesh.current!.uuid, navPartitions });
       }});
     channel.current.next({ key: 'inner-updated' }); // Initialise
 

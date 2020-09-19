@@ -18,22 +18,35 @@ export interface NavWorkerContext extends Worker {
   removeEventListener(type: 'message', object: EventListenerObject): void;
 }
 
-interface Message<Data> extends MessageEvent {
+export interface Message<Data> extends MessageEvent {
   data: Data;
 }
 
-type MessageFromMain = (
+export type MessageFromMain = (
   | PingNavWorker
+  | CreateEnv
+  | RemoveEnv
   | UpdateRoomNav
   | RemoveRoomNav
   | RequestNavPath
 );
+
 interface PingNavWorker {
   key: 'ping-navworker';
 }
-interface UpdateRoomNav {
+interface CreateEnv {
+  key: 'create-env';
+  envKey: string;
+}
+interface RemoveEnv {
+  key: 'remove-env';
+  envKey: string;
+}
+export interface UpdateRoomNav {
   key: 'update-room-nav';
   envKey: string;
+  /** Room type e.g. 'straight' */
+  roomType: string;
   /** Room instance uid */
   roomUid: string;
   navPartitions: Geom.Rect[][];

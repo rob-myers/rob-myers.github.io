@@ -6,16 +6,23 @@ import * as Geom from '@model/geom/geom.model'
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import useShellStore from './shell.store';
 import useGeomStore from './geom.store';
+import { NavWorker } from '@worker/nav.msg';
 
 export interface State {
   env: KeyedLookup<Environment>;
+  navWorker: null | NavWorker;
   api: {
     createEnv: (def: EnvDef) => void;
     removeEnv: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
     removeNavWorkerRoom: (input: { envKey: string, roomUid: string }) => void;
     roomUpdated: (envKey: string) => void;
-    updateNavWorkerRoom: (input: { envKey: string; roomUid: string;  navPartitions: Geom.Rect[][]; }) => void;
+    updateNavWorkerRoom: (input: {
+      envKey: string;
+      roomType: string;
+      roomUid: string;
+      navPartitions: Geom.Rect[][];
+    }) => void;
   };
 }
 
@@ -33,6 +40,7 @@ interface EnvDef {
 
 const useStore = create<State>(devtools((set, get) => ({
   env: {},
+  navWorker: null,
   api: {
     createEnv: ({ envKey, highWalls }) => {
       /**
@@ -51,17 +59,21 @@ const useStore = create<State>(devtools((set, get) => ({
           roomsUpdatedAt: Date.now(),
         }, env),
       }));
+
+
+      get().navWorker!.postMessage({ key: 'create-env', envKey });
     },
     
     removeEnv: (envKey) => {
       set(({ env }) => ({
         env: removeFromLookup(envKey, env),
       }));
+      
+      get().navWorker!.postMessage({ key: 'remove-env', envKey });
     },
 
     removeNavWorkerRoom: ({ envKey, roomUid }) => {
-      const { navWorker } = useGeomStore.getState();
-      navWorker!.postMessage({ key: 'remove-room-nav', envKey, roomUid });
+      get().navWorker!.postMessage({ key: 'remove-room-nav', envKey, roomUid });
     },
 
     roomUpdated: (envKey) => {
@@ -78,9 +90,8 @@ const useStore = create<State>(devtools((set, get) => ({
       }));
     },
 
-    updateNavWorkerRoom: ({ envKey, roomUid, navPartitions }) => {
-      const { navWorker } = useGeomStore.getState();
-      navWorker!.postMessage({ key: 'update-room-nav', envKey, roomUid, navPartitions });
+    updateNavWorkerRoom: ({ envKey, roomType, roomUid, navPartitions }) => {
+      get().navWorker!.postMessage({ key: 'update-room-nav', envKey, roomType, roomUid, navPartitions });
     },
 
   },
@@ -88,6 +99,10 @@ const useStore = create<State>(devtools((set, get) => ({
 
 export function selectApi({ api }: State) {
   return api;
+}
+
+export function selectNavWorker({ navWorker }: State) {
+  return navWorker;
 }
 
 export default useStore;

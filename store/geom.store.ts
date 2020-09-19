@@ -8,13 +8,12 @@ import { isMeshNode } from '@model/three/three.model';
 import * as Geom from '@model/geom/geom.model'
 import GeomService from '@model/geom/geom.service';
 import { innerGroupName, navmeshGroupName, navMeshMaterial, outsetAmount } from '@model/env/env.model';
-import { NavWorker } from '@model/worker/nav.model';
+import useEnvStore from './env.store'
 
 export interface State {
   loadedGltf: boolean;
   rooms: KeyedLookup<RoomMeta>;
   inners: KeyedLookup<InnerMeta>;
-  navWorker: null | NavWorker;
   api: {
     geom: GeomService;
     load: () => Promise<void>;
@@ -81,10 +80,11 @@ const useStore = create<State>(devtools((set, get) => ({
           rooms: lookupFromValues(roomMetas),
           inners: lookupFromValues(innerMetas),
         }));
+
       });
 
       const navWorker = new (await import('@worker/nav.worker')).default;
-      set(_ => ({ navWorker }));
+      useEnvStore.setState({ navWorker });
       navWorker.postMessage({ key: 'ping-navworker' });
     },
 
