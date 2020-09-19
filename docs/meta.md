@@ -18,6 +18,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `spawn` command
   > spawn an actor at a position
 
+- [ ] fix mobile touch in `three/controls` (perhaps devtools issue)
+
 - [ ] can query polyanya in webworker and display navpath
   > create navworker
   > can add/remove navigable

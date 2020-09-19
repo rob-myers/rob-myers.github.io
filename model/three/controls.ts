@@ -91,9 +91,9 @@ export class PanZoomControls extends EventDispatcher {
     this.domEl.addEventListener( 'contextmenu', this.contextmenu, false );
     this.domEl.addEventListener( 'mousedown', this.mousedown as EventListener, false );
     this.domEl.addEventListener( 'wheel', this.mousewheel as EventListener, false );
-    this.domEl.addEventListener( 'touchstart', this.touchstart as EventListener, false );
-    this.domEl.addEventListener( 'touchend', this.touchend as EventListener, false );
-    this.domEl.addEventListener( 'touchmove', this.touchmove as EventListener, false );
+    // this.domEl.addEventListener( 'touchstart', this.touchstart as EventListener, false );
+    // this.domEl.addEventListener( 'touchend', this.touchend as EventListener, false );
+    // this.domEl.addEventListener( 'touchmove', this.touchmove as EventListener, false );
   
     // window.addEventListener( 'keydown', keydown, false );
     // window.addEventListener( 'keyup', keyup, false );
