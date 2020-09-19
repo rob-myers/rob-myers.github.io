@@ -7,15 +7,15 @@ import { testNever, last } from '@model/generic.model';
 import { awaitEnd } from './rxjs.model';
 import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
 import { ParamType, ParameterDef } from './parameter.model';
+import {  RedirectDef } from './file.model';
+import { NamedFunction } from './var.model';
 import * as Sh from '@model/shell/parse.service';
 import { parseService } from '@model/shell/parse.service';
 import { expandService as expand, expandService } from './expand.service';
 import { varService as vs, throttleVarName } from './var.service';
 import { processService as ps } from './process.service';
-import {  RedirectDef } from './file.model';
 import { builtinService as bs } from './builtin.service';
 import { srcService } from './src.service';
-import { NamedFunction } from './var.model';
 
 class SemanticsService {
 
@@ -678,7 +678,7 @@ class SemanticsService {
         // Cannot break/continue inside expansion
         const itemResult = await lastValueFrom(sem.Expand(item));
 
-        const values = sem.isWordParamExp(item) || sem.isWordParamExp(item)
+        const values = sem.isWordParamExp(item) || sem.isWordCommandSub(item)
           ? expandService.normalizeWhitespace(itemResult.value)
           : itemResult.values;
 
