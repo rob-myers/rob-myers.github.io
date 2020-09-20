@@ -9497,6 +9497,11 @@ react-refresh@0.8.2:
   resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.8.2.tgz#24bb0858eac92b0d7b0dd561747f0c9fd6c60327"
   integrity sha512-n8GXxo3DwM2KtFEL69DAVhGc4A1THn2qjmfvSo3nze0NLCoPbywazeJPqdp0RdSGLmyhQzeyA+XPXOobbYlkzg==
 
+react-reverse-portal@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-reverse-portal/-/react-reverse-portal-2.0.0.tgz#a262df2a2238d1baf356022c6b5c731879bcc24d"
+  integrity sha512-dXdPYa8ysVtj1iS/DkmgS9S0P8Fb/i82UJyyalt16duNk11qtAwBmC1qA81787CUDcflyBQvxgxdQcjmgg736Q==
+
 react-test-renderer@16.12.0:
   version "16.12.0"
   resolved "https://registry.yarnpkg.com/react-test-renderer/-/react-test-renderer-16.12.0.tgz#11417ffda579306d4e841a794d32140f3da1b43f"

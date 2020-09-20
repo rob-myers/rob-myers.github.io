@@ -15,6 +15,7 @@
     "polygon-clipping": "^0.15.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-reverse-portal": "^2.0.0",
     "react-three-fiber": "^4.2.20",
     "rectangle-decomposition": "^1.0.0",
     "rxjs": "^7.0.0-beta.4",
