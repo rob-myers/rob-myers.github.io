@@ -1,10 +1,13 @@
 import RootLayout from '@components/ui/root-layout';
-import BlogDefs from '@blog/defs/defs';
+import DefsMdx from '@blog/defs/defs.mdx';
+import css from '@blog/blog.scss';
 
 const Defs: React.FC = () => {
   return (
     <RootLayout>
-      <BlogDefs />
+      <div className={css.root}>
+        <DefsMdx />
+      </div>
     </RootLayout>
   );
 };

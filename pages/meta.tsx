@@ -1,10 +1,13 @@
 import RootLayout from '@components/ui/root-layout';
-import BlogMeta from '@blog/meta/meta';
+import MetaMdx from '@blog/meta/meta.mdx';
+import css from '@blog/blog.scss';
 
 const Meta: React.FC = () => {
   return (
     <RootLayout>
-      <BlogMeta />
+      <div className={css.root}>
+        <MetaMdx />
+      </div>
     </RootLayout>
   );
 };

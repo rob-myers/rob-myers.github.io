@@ -5,21 +5,18 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] can reset env ui; must 1st click to start pan-zoom
 - [ ] Can collapse/expand each blog entry
 - [ ] hashes always scrollIntoView
-
 - [ ] `Env` should be in react-reverse-portal
 - [ ] try to remove `Observable<ProcessAct>` syntax
-
-- [ ] on 2nd click compute a navpath and display it
-- [ ] onclick floor show cube
+- [ ] fix mobile touch in `three/controls` (perhaps devtools issue)
 
 - [ ] `shift` builtin for functions
 - [ ] `steiner` labels a point in the world
   > it could track a changing variable
 - [ ] `spawn` command
   > spawn an actor at a position
+- [ ] onclick floor show cube
 
-- [ ] fix mobile touch in `three/controls` (perhaps devtools issue)
-
+- [ ] navpath informs us which navrect we're in
 - [ ] can query polyanya in webworker and display navpath
   > create navworker
   > can add/remove navigable
