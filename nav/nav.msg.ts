@@ -49,7 +49,7 @@ export interface UpdateRoomNav {
   roomType: string;
   /** Room instance uid */
   roomUid: string;
-  navPartitions: Geom.RectJson[][];
+  navRects: Geom.RectJson[];
 }
 export interface RemoveRoomNav {
   key: 'remove-room-nav';
@@ -76,5 +76,25 @@ interface NavWorkerReady {
 }
 interface NavPathResponse {
   key: 'navpath-response';
+  msgUid: string;
   navPath: Geom.VectorJson[];
+  error?: string;
 }
+
+export async function awaitWorker<Key extends MessageFromWorker['key']>(
+  key: Key,
+  worker: NavWorker,
+  isMsg: (message: RefinedMessage<Key>) => boolean,
+): Promise<RefinedMessage<Key>> {
+  return new Promise(resolve => {
+    const listener = (message: Message<MessageFromWorker>) => {
+      if (message.data.key === key && isMsg(message.data as RefinedMessage<Key>)) {
+        worker.removeEventListener('message', listener);
+        resolve(message.data as RefinedMessage<Key>);
+      }
+    };
+    worker.addEventListener('message', listener);
+  });
+}
+
+type RefinedMessage<Key> = Extract<MessageFromWorker, { key: Key }>

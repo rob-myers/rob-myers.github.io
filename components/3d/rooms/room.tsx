@@ -1,13 +1,15 @@
 import React, { useRef, useEffect, useState, useMemo } from "react";
+import { Box3 } from "three";
 import { MouseEvent as ThreeMouseEvent } from 'react-three-fiber';
 import { Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 
 import { epsilon } from "@model/three/three.model";
 import { NavmeshClick } from "@model/shell/events.model";
-import { TransformProps, propsToAngle } from "@model/env/env.model";
+import { TransformProps, propsToAngle, navmeshGroupName, navmeshPlaneName } from "@model/env/env.model";
 import useEnvStore from "@store/env.store";
 import useGeomStore from "@store/geom.store";
+import { geomService } from '@model/geom/geom.service';
 
 const Room: React.FC<Props> = (props) => {
   const root = useRef<THREE.Group>(null);
@@ -36,19 +38,26 @@ const Room: React.FC<Props> = (props) => {
     channel.current
       .pipe(debounceTime(30))
       .subscribe({ next: () => {
-        const navPartitions = geomApi.updateRoomNavmesh(mesh.current!);
-        envApi.updateNavWorkerRoom({ envKey: envName, roomType: props.id, roomUid: mesh.current!.uuid, navPartitions });
+        geomApi.updateRoomNavmesh(mesh.current!);
+        // Compute instantiated navmesh by traversing navmesh children
+        const bbox = new Box3;
+        const planes = root.current!.children.find(x => x.name === navmeshGroupName)?.children??[] as THREE.Mesh[];
+        const navRects = planes.map(x => geomService.projectBox3XY(bbox.setFromObject(x)));
+        // console.log(navRects);
+        envApi.updateNavWorkerRoom({ envKey: envName, roomType: props.id, roomUid: mesh.current!.uuid, navRects });
       }});
-    channel.current.next({ key: 'inner-updated' }); // Initialise
+    // channel.current.next({ key: 'inner-updated' }); // Initialise
 
-    // Handle navmesh clicks
+    /**
+     * Handle navmesh clicks
+     */
     onClick.current = (e: ThreeMouseEvent) => {
-      e.stopPropagation();
-      if (Math.abs(e.point.z) < epsilon) {// Only floor clicks
-        console.log({ clickedRoom: e });
-        const position = geomApi.geom.projectXY(e.point);
-        const event: NavmeshClick = { key: 'navmesh-click', position };
+      if (Math.abs(e.point.z) < epsilon && e.object.name === navmeshPlaneName) {
+        // console.log({ clickedRoom: e });
+        const position = geomService.projectXY(e.point);
+        const event: NavmeshClick = { key: 'nav-click', x: position.x, y: position.y };
         env.worldDevice.write(event);
+        e.stopPropagation();
       }
     };
 
@@ -65,15 +74,20 @@ const Room: React.FC<Props> = (props) => {
     root.current!.rotation.z = propsToAngle(props);
     root.current!.position.set(props.x || 0, props.y || 0, 0);
     useEnvStore.getState().api.roomUpdated(props.envName!);
+    // Update navmesh too
+    channel.current.next({ key: 'inner-updated' });
   }, [angle, props.x, props.y]);
 
-  const children = useMemo(() =>
-    React.Children.map(props.children, child => 
+  const children = useMemo(() => {
+    // Update navmesh too
+    // channel.current.next({ key: 'inner-updated' });
+    return React.Children.map(props.children, child => 
       React.isValidElement(child)
         ? React.cloneElement(child, {
             innerUpdated: () => channel.current.next({ key: 'inner-updated' }),
           })
-        : child)
+        : child);
+  }
   , [props.children]);
 
   return (

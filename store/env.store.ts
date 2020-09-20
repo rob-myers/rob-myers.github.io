@@ -7,7 +7,7 @@ import { FsFile } from '@model/shell/file.model';
 import * as Geom from '@model/geom/geom.model'
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import useShellStore from './shell.store';
-import { NavWorker } from '@nav/nav.msg';
+import { NavWorker, awaitWorker } from '@nav/nav.msg';
 
 export interface State {
   env: KeyedLookup<Environment>;
@@ -21,12 +21,17 @@ export interface State {
     removeEnv: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
     removeNavWorkerRoom: (input: { envKey: string; roomType: string; roomUid: string }) => void;
+    requestNavPath: (
+      envKey: string,
+      src: Geom.VectorJson,
+      dst: Geom.VectorJson,
+    ) => Promise<{ navPath: Geom.VectorJson[]; error?: string }>;
     roomUpdated: (envKey: string) => void;
     updateNavWorkerRoom: (input: {
       envKey: string;
       roomType: string;
       roomUid: string;
-      navPartitions: Geom.Rect[][];
+      navRects: Geom.Rect[];
     }) => void;
   };
 }
@@ -47,6 +52,8 @@ interface EnvPortal {
   key: string;
   portalNode: portals.HtmlPortalNode;
 }
+
+let nextMsgUid = 0;
 
 const useStore = create<State>(devtools((set, get) => ({
   env: {},
@@ -96,6 +103,13 @@ const useStore = create<State>(devtools((set, get) => ({
       get().navWorker!.postMessage({ key: 'remove-room-nav', envKey, roomType, roomUid });
     },
 
+    requestNavPath: async (envKey, src, dst) => {
+      const [msgUid, navWorker] = [`${nextMsgUid++}`, get().navWorker!];
+      navWorker.postMessage({ key: 'request-navpath', envKey, msgUid, src, dst });
+      const { navPath, error } = await awaitWorker('navpath-response', navWorker, ({ msgUid: other }) => msgUid === other);
+      return { navPath, error };
+    },
+
     roomUpdated: (envKey) => {
       set(({ env }) => ({
         env: updateLookup(envKey, env, () => ({
@@ -110,9 +124,9 @@ const useStore = create<State>(devtools((set, get) => ({
       }));
     },
 
-    updateNavWorkerRoom: ({ envKey, roomType, roomUid, navPartitions }) => {
+    updateNavWorkerRoom: ({ envKey, roomType, roomUid, navRects }) => {
       get().navWorker!.postMessage({ key: 'update-room-nav', envKey, roomType, roomUid,
-        navPartitions: navPartitions.map(rects => rects.map(r => r.json)),
+        navRects: navRects.map(r => r.json),
       });
     },
 

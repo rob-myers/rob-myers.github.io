@@ -1,5 +1,6 @@
 import { testNever, pause } from "@model/generic.model";
 import { Process } from "@store/shell.store";
+import useEnvStore from '@store/env.store';
 import * as Sh from "./parse.service";
 import { parseService } from "./parse.service";
 import { processService as ps} from './process.service';
@@ -27,6 +28,7 @@ export class BuiltinService {
           case 'echo': await this.echo(process, args); break;
           case 'false': node.exitCode = 1; break;
           case 'get': this.get(process, args); break;
+          case 'nav': await this.nav(process, args); break;
           case 'read': await this.read(process, args); break;
           case 'sleep': await this.sleep(args); break;
           case 'throttle': this.throttle(process, args); break;
@@ -55,26 +57,28 @@ export class BuiltinService {
     throw breakError(loopCount);
   }
 
-  private async click({ sessionKey, pid, fdToOpen, cleanups }: Process, args: string[]) {
-    if (args.length > 1) {
-      throw new ShError(`usage \`click\` or \`click evt\``, 1);
-    }
+  private async click({ sessionKey, pid, fdToOpen }: Process, args: string[]) {
+    const { worldDevice } = ps.getSession(sessionKey);
+    let stopListening: () => void;
 
-    await new Promise((resolve, reject) => {
-      const { worldDevice } = ps.getSession(sessionKey);
-      ps.addCleanups(pid, () => reject(null),
-        worldDevice.read((msg) => {
-          if (msg.key === 'navmesh-click') {
+    try {
+      await new Promise((resolve, reject) => {
+        stopListening = worldDevice.read((msg) => {
+          if (msg.key === 'nav-click') {
             if (args.length) {
-              varService.assignVar(pid, { varName: args[0], value: msg });
-            } else {
+              varService.assignVar(pid, { varName: args.shift()!, value: msg });
+              !args.length && resolve();
+            } else {// Originally no args
               fdToOpen[1].write(msg);
+              resolve();
             }
-            resolve();
           }
-        }, true),
-      );
-    });
+        }, false);
+        ps.addCleanups(pid, () => reject(null));
+      });
+    } finally {
+      stopListening!();
+    }
   }
 
   private continue(node: Sh.CallExpr, args: string[]) {
@@ -140,6 +144,22 @@ export class BuiltinService {
     } catch (e) {
       throw new ShError(`path ${srcPath} not found`, 1);
     }
+  }
+
+  private async nav({ pid }: Process, args: string[]) {
+    if (args.length !== 2) {
+      throw new ShError(`usage \`nav p q\``, 1);
+    }
+   
+    const p = varService.lookupVar(pid, args[0]);
+    const q = varService.lookupVar(pid, args[1]);
+    const envKey = ps.getEnvKey(pid);
+
+    const { navPath, error } = await useEnvStore.getState().api.requestNavPath(envKey, p, q);
+    if (error) {
+      throw new ShError(`failed with error: ${error}`, 1);
+    }
+    console.log('receivedNavPath', navPath);
   }
 
   private async read({ pid, sessionKey, fdToOpen, cleanups }: Process, args: string[]) {
@@ -219,6 +239,8 @@ export const builtins = {
   false: true,
   /** Write a js variable's value to stdout */
   get: true,
+  /** Find optimal navpath and write to stdout  */
+  nav: true,
   /** Read from stdin and store in provided variable */
   read: true,
   /** Wait for sum of arguments in seconds */

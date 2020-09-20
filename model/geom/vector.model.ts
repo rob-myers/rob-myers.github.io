@@ -59,10 +59,9 @@ export class Vector {
   }
 
   precision(digits = 3) {
-    return this
-      .scale(Math.pow(10, digits))
-      .round()
-      .scale(1/Math.pow(10, digits));
+    this.x = Number(this.x.toFixed(2));
+    this.y = Number(this.y.toFixed(2));
+    return this;
   }
 
   round() {

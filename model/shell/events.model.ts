@@ -1,9 +1,7 @@
-import { VectorJson } from "@model/geom/geom.model";
-
 export interface NavmeshClick {
-  key: 'navmesh-click';
-  /** Position clicked on navmesh */
-  position: VectorJson;
+  key: 'nav-click';
+  x: number;
+  y: number;
 }
 
 export type WorldEvent = (

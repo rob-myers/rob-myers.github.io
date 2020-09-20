@@ -3,8 +3,6 @@ import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 import type { Rect } from '@model/geom/rect.model';
-import Mesh from "@model/polyanya/structs/mesh";
-import { rectsToPolyanya } from '@model/geom/polyanya.model';
 import { addToLookup, removeFromLookup, updateLookup } from '@store/store.util';
 
 const useStore = create<{
@@ -17,7 +15,7 @@ const useStore = create<{
     removeEnv: (envKey: string) => void;
     removeRoom: (envKey: string, roomUid: string) => void;
     setReady: (evnKey: string, ready: boolean) => void;
-    updatePolyanyaMeshes: (envKey: string) => void;
+    updateEnvNavigation: (envKey: string) => void;
     updateRoom: (roomItem: RoomItem) => void;
   },
 }>(devtools((set, get) => ({
@@ -31,7 +29,6 @@ const useStore = create<{
           roomUids: [],
           navReady$: new ReplaySubject(1),
           navUpdatesSub: o.subscribe(),
-          polyanyaMesh: new Mesh({ vertices: [], polygons: [], vertexToPolys: [] }),
         }, env) }));
         get().api.setReady(envKey, false); // Not ready
       }
@@ -39,7 +36,7 @@ const useStore = create<{
     ensureRoom: (envKey, roomUid) => {
       !get().room[roomUid] &&
         set(({ room, env }) => ({
-          room: addToLookup({ key: roomUid, envKey, navPartitions: [] }, room),
+          room: addToLookup({ key: roomUid, envKey, navRects: [] }, room),
           env: updateLookup(envKey, env, ({ roomUids }) => ({ roomUids: roomUids.concat(roomUid) })),
         }));
     },
@@ -62,16 +59,18 @@ const useStore = create<{
     setReady: (envKey, ready: boolean) => {
       get().env[envKey].navReady$.next(ready);
     },
-    updatePolyanyaMeshes: (envKey) => {
-      // Can flatten navPartitions because polyanya Mesh supports disjoint areas
-      const navRects = get().env[envKey].roomUids.reduce((agg, roomUid) =>
-        agg.concat(...get().room[roomUid].navPartitions), [] as Rect[]);
 
-      // console.log('Polyanya will use navRects', navRects);
-      set(({ env }) => ({
-        env: updateLookup(envKey, env, () => ({ polyanyaMesh: new Mesh(rectsToPolyanya(navRects)) })),
-      }));
-      // console.log('Computed polyanya mesh', get().env[envKey].polyanyaMesh);
+    updateEnvNavigation: (envKey) => {
+      /**
+       * TODO use nav rects to create/update navigation
+       */
+      const navRects = get().env[envKey].roomUids.flatMap(uid => get().room[uid].navRects);
+      console.log('receivedNavRects', navRects);
+      // set(({ env }) => ({
+      //   env: updateLookup(envKey, env, () => ({
+      //     // polyanyaMesh: new Mesh(rectsToPolyanya(navRects))
+      //   })),
+      // }));
       get().api.setReady(envKey, true);
     },
     updateRoom: (def) => {
@@ -89,20 +88,13 @@ interface EnvItem {
   navReady$: ReplaySubject<boolean>;
   /** For debounced nav updates */
   navUpdatesSub: Subscription;
-  /** Polyanya representation of all nav partitions */
-  polyanyaMesh: Mesh;
 }
 
 interface RoomItem {
   /** Room uid from room mesh */
   key: string;
   envKey: string;
-  /**
-   * A room might have disjoint parts, so there
-   * may be multiple rectangular decompositions.
-   * However, we flatten this array for polyanya.
-   */
-  navPartitions: Rect[][];
+  navRects: Rect[];
 }
 
 export default useStore;

@@ -8,7 +8,7 @@ import maximalIndependentSet from 'maximal-independent-set';
 import * as Geom from '@model/geom/geom.model';
 import { epsilon } from "@model/three/three.model";
 
-export default class GeomService {
+class GeomService {
 
   /** Multipolygon must be rectilinear with integer-valued coords. */
   private computeIntegerRectPartition({ outline, holes }: Geom.Polygon): Geom.Rect[] {
@@ -23,10 +23,11 @@ export default class GeomService {
 
   /** Rationalised poly must be rectilinear. */
   computeRectPartition(poly: Geom.Polygon, decimalPlaces = 3) {
-    const scalar = Math.pow(10, decimalPlaces);
+    const scalar = 100;
     const navPoly = poly.clone().scale(scalar).round();
-    const navPartition = this.computeIntegerRectPartition(navPoly);
-    return navPartition.map(rt => rt.scale(1 / scalar));
+    const navPartition = this.computeIntegerRectPartition(navPoly)
+      .map(r => r.scale(1/scalar).precision());
+    return navPartition;
   }
 
   computeTangents(ring: Geom.Vector[]) {
@@ -144,6 +145,15 @@ export default class GeomService {
     return outsetEdges;
   }
 
+  projectBox3XY({ min, max }: THREE.Box3): Geom.Rect {
+    return new Geom.Rect(
+      Number(min.x.toFixed(2)),
+      Number(min.y.toFixed(2)),
+      Number((max.x - min.x).toFixed(2)),
+      Number((max.y - min.y).toFixed(2)),
+    );
+  }
+
   /**
    * Project onto XY plane, restricting precision.
    */
@@ -221,3 +231,5 @@ export default class GeomService {
   }
 
 }
+
+export const geomService = new GeomService;

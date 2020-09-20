@@ -6,8 +6,8 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 import { isMeshNode } from '@model/three/three.model';
 import * as Geom from '@model/geom/geom.model'
-import GeomService from '@model/geom/geom.service';
-import { innerGroupName, navmeshGroupName, navMeshMaterial, outsetAmount } from '@model/env/env.model';
+import { geomService } from '@model/geom/geom.service';
+import { innerGroupName, navmeshGroupName, navMeshMaterial, outsetAmount, navmeshPlaneName } from '@model/env/env.model';
 import useEnvStore from './env.store'
 
 export interface State {
@@ -15,7 +15,6 @@ export interface State {
   rooms: KeyedLookup<RoomMeta>;
   inners: KeyedLookup<InnerMeta>;
   api: {
-    geom: GeomService;
     load: () => Promise<void>;
     extractMeshes: (gltf: GLTF) => {
       rooms: THREE.Mesh[];
@@ -26,9 +25,8 @@ export interface State {
     /**
      * Update child mesh 'navmesh' of supplied `room`,
      * taking any attached Inners into account.
-     * We also return the grouped nav rects.
      */
-    updateRoomNavmesh: (room: THREE.Mesh) => Geom.Rect[][];
+    updateRoomNavmesh: (room: THREE.Mesh) => void;
   };
 }
 
@@ -59,8 +57,6 @@ const useStore = create<State>(devtools((set, get) => ({
   loadedGltf: false,
   navWorker: null,
   api: {
-    geom: new GeomService,
-
     load: async () => {
       const { loadedGltf, api } = get();
       if (loadedGltf) {
@@ -122,10 +118,9 @@ const useStore = create<State>(devtools((set, get) => ({
     },
     
     computeInnerMeta: (inner) => {
-      const { geom } = get().api;
-      const geometry = geom.toThreeGeometry(inner.geometry as THREE.BufferGeometry);
-      const basePoly = geom.projectGeometryXY(inner, geometry);
-      const unnavigable = basePoly.flatMap(x => geom.outset(x, outsetAmount));
+      const geometry = geomService.toThreeGeometry(inner.geometry as THREE.BufferGeometry);
+      const basePoly = geomService.projectGeometryXY(inner, geometry);
+      const unnavigable = basePoly.flatMap(x => geomService.outset(x, outsetAmount));
 
       return {
         key: inner.name,
@@ -135,20 +130,19 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     computeRoomMeta: (room) => {
-      const { geom } = get().api;
       // Compute room bounding rect in XY plane
       const floor = Geom.Rect.fromPoints(
-        geom.projectXY(room.geometry.boundingBox!.min),
-        geom.projectXY(room.geometry.boundingBox!.max),
+        geomService.projectXY(room.geometry.boundingBox!.min),
+        geomService.projectXY(room.geometry.boundingBox!.max),
       );
 
       // Compute base of walls as list of (multi)polygons
-      const geometry = geom.toThreeGeometry(room.geometry as THREE.BufferGeometry);
-      const wallsPoly = geom.projectGeometryXY(room, geometry);
+      const geometry = geomService.toThreeGeometry(room.geometry as THREE.BufferGeometry);
+      const wallsPoly = geomService.projectGeometryXY(room, geometry);
       
       // Compute navmesh by cutting outset walls from rect
-      const navigablePoly = geom.cutOut(
-        wallsPoly.flatMap(x => geom.outset(x, outsetAmount)),
+      const navigablePoly = geomService.cutOut(
+        wallsPoly.flatMap(x => geomService.outset(x, outsetAmount)),
         [Geom.Polygon.fromRect(floor)],
       );
 
@@ -166,8 +160,11 @@ const useStore = create<State>(devtools((set, get) => ({
       };
     },
 
+    /**
+     * Update navmesh attached to a room instance.
+     */
     updateRoomNavmesh: (room: THREE.Mesh) => {
-      const { api: { geom }, inners } = get();
+      const { inners } = get();
       const { [room.name]: meta } = get().rooms;
       const roomGroup = room.parent!;
 
@@ -176,10 +173,10 @@ const useStore = create<State>(devtools((set, get) => ({
         .filter(({ name, children }) => name === innerGroupName && children[0] && isMeshNode(children[0]))
         .map(({ children }) => children[0] as THREE.Mesh);
       const innerMetas = innerMeshes.map(x => inners[x.name]);
-      const innerDeltas = innerMeshes.map(x => geom.projectXY(x.parent!.position));
+      const innerDeltas = innerMeshes.map(x => geomService.projectXY(x.parent!.position));
       // console.log('Computing and attaching navmesh...', room, innerMetas, innerDeltas);
 
-      const navigable = geom.cutOut(
+      const navigable = geomService.cutOut(
         innerMetas.flatMap(({ unnavigable }, i) =>
           unnavigable.map(p => p.clone().translate(innerDeltas[i]))),
         meta.navigable.map(p => p.clone()),
@@ -188,22 +185,29 @@ const useStore = create<State>(devtools((set, get) => ({
       const navMesh = new THREE.Group();
       navMesh.name = navmeshGroupName;
       // Each item is a rectangular decomposition of a rectilinear multipolygon
-      const navPartitions = navigable.map(part => geom.computeRectPartition(part));
+      const navPartitions = navigable.map(part => geomService.computeRectPartition(part));
       navPartitions.forEach(rects => {
-        // TODO create single mesh
+        /**
+         * Possibly wasteful to create many PlaneGeometry instead of one Mesh.
+         * We'll traverse these quads to find instantiated navmesh.
+         */
         rects.forEach(({ cx, cy, width, height }) => {
-          const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 2), navMeshMaterial);
+          const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 1), navMeshMaterial);
+          plane.name = navmeshPlaneName;
           plane.receiveShadow = true;
           plane.position.set(cx, cy, 0);
           navMesh.add(plane);
+          plane.add(new THREE.LineSegments(// Debug only
+            new THREE.EdgesGeometry(plane.geometry),
+            new THREE.LineBasicMaterial( { color: 0xffffff } ),
+          ));
         });
       });
-      
+
       const prevNavmesh = roomGroup.children.find(({ name }) => name === navmeshGroupName);
       prevNavmesh && roomGroup.remove(prevNavmesh);
       roomGroup.add(navMesh);
-
-      return navPartitions;
+      roomGroup.updateMatrixWorld();
     },
 
   },

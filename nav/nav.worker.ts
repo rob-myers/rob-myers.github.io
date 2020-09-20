@@ -1,10 +1,11 @@
 import { fromEvent, firstValueFrom } from 'rxjs';
 import { filter, map, tap, buffer, debounceTime } from 'rxjs/operators';
-import { NavWorker, NavWorkerContext, Message, MessageFromMain, UpdateRoomNav, RemoveRoomNav } from './nav.msg';
-import useStore from './nav.store';
+
 import type * as Geom from '@model/geom/geom.model';
 import { Rect } from '@model/geom/rect.model';
-import { findNavPathAlt } from '@model/polyanya';
+
+import { NavWorker, NavWorkerContext, Message, MessageFromMain, UpdateRoomNav, RemoveRoomNav } from './nav.msg';
+import useStore from './nav.store';
 
 const ctxt: NavWorkerContext = self as any;
 const { api } = useStore.getState();
@@ -27,8 +28,13 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     }
     case 'update-room-nav': {
       api.ensureRoom(msg.envKey, msg.roomUid);
+
       api.updateRoom({ key: msg.roomUid, envKey: msg.envKey,
-        navPartitions: msg.navPartitions.map(rects => rects.map(r => Rect.from(r))),
+        /**
+         * Scale nav rects by 100 and round for polyanya precision.
+         * We'll have to scale navPaths by 1/100.
+         */
+        navRects: msg.navRects.map(r => Rect.from(r).scale(100).round()),
       });
       break;
     }
@@ -39,11 +45,23 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     case 'request-navpath': {
       const { navReady$ } = useStore.getState().env[msg.envKey];
       await firstValueFrom(navReady$.pipe(filter((ready) => ready)));
-      const { polyanyaMesh } = useStore.getState().env[msg.envKey];
-      const navPath = findNavPathAlt(polyanyaMesh, msg.src, msg.dst)
-        .map<Geom.VectorJson>(({ x, y }) => ({ x, y }));
-      console.log('navPath', navPath);
-      ctxt.postMessage({ key: 'navpath-response', navPath });
+
+      try {
+        /**
+         * TODO navpath search
+         */
+        // const { src, dst } = msg;
+        // const navPath = findNavPathAlt(
+        //   polyanyaMesh,
+        //   { x: Math.round(src.x * 100), y: Math.round(src.y * 100) },
+        //   { x: Math.round(dst.x * 100), y: Math.round(dst.y * 100) },
+        // ).map<Geom.VectorJson>(({ x, y }) => ({ x: x/100, y: y/100 }));
+        ctxt.postMessage({ key: 'navpath-response', msgUid: msg.msgUid, navPath: [] });
+      } catch (e) {
+        console.error('nav error', e);
+        ctxt.postMessage({ key: 'navpath-response', msgUid: msg.msgUid, navPath: [], error: `${e}` });
+      }
+      
       break;
     }
   }
@@ -57,7 +75,7 @@ function updateEnvPolyanyaMesh$(envKey: string) {
     buffer(envUpdate$(envKey).pipe(debounceTime(250))),
     tap(msgs => {
       console.log(`Updating env '${msgs[0].envKey}' using rooms '${msgs.map(x => x.roomType)}'`);
-      api.updatePolyanyaMeshes(envKey);
+      api.updateEnvNavigation(envKey);
     }),
   );
 }

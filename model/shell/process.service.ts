@@ -209,6 +209,13 @@ export class ProcessService {
     return this.getProcess(pid);
   }
 
+  getEnvKey(pid: number) {
+    const { sessionKey } = this.getProcess(pid);
+    const { toSessionKey } = useStore.getState();
+    return Object.keys(toSessionKey)
+      .find(alias => toSessionKey[alias] === sessionKey)!;
+  }
+
   private getOfds() {
     return useStore.getState().ofd;
   }

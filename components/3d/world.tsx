@@ -57,21 +57,22 @@ const World: React.FC<Props> = ({ envName }) => {
           <Grid />
 
           <Rooms envName={envName}>
-            <Closet x={-4}>
+            {/* <Closet x={-4}>
               <Inner id="sideboard" />  
-            </Closet>
+            </Closet> */}
             <Junction>
-              <Inner id="central-table" y={0} />  
+              <Inner
+                id="central-table" y={0} />  
             </Junction>
-            <Closet x={4} w>
+            {/* <Closet x={4} w>
               <Inner id="sideboard" />  
-            </Closet>
+            </Closet> */}
             
             <Fourway y={-4} />
-            <Corner x={-4} y={-4} n />
+            {/* <Corner x={-4} y={-4} n />
             <Straight x={4} y={-4} />
             
-            <Straight y={-8} s />
+            <Straight y={-8} s /> */}
           </Rooms>
         </Canvas>
       }

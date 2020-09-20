@@ -103,6 +103,23 @@ export class Rect {
     ];
   }
 
+  /** Enforce 2 d.p. precision */
+  precision() {
+    this.x = Number(this.x.toFixed(2));
+    this.y = Number(this.y.toFixed(2));
+    this.width = Number(this.width.toFixed(2));
+    this.height = Number(this.height.toFixed(2));
+    return this;
+  }
+
+  round() {
+    this.x = Math.round(this.x);
+    this.y = Math.round(this.y);
+    this.width = Math.round(this.width);
+    this.height = Math.round(this.height);
+    return this;
+  }
+
   public get s() {
     return this.y + this.height;
   }
