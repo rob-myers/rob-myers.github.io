@@ -1,10 +1,10 @@
 import { PerspectiveCamera, PCFSoftShadowMap } from 'three';
 import { useRef, useEffect } from 'react';
-import { Canvas, extend, useThree, useFrame, CanvasContext } from 'react-three-fiber';
-import { PanZoomControls } from '@model/three/controls';
+import { Canvas, CanvasContext } from 'react-three-fiber';
 import { getWindow } from '@model/dom.model';
 import useGeomStore from '@store/geom.store';
 import useEnvStore from '@store/env.store';
+import CameraControls from './controls/camera-controls';
 import Grid from './grid';
 import Inner from './rooms/inner';
 import Rooms from './rooms/rooms';
@@ -41,7 +41,9 @@ const World: React.FC<Props> = ({ envName }) => {
             ctxt.current = ct;
           }}
         >
+
           <CameraControls />
+
           <ambientLight
             color="white"
             intensity={1}
@@ -80,15 +82,5 @@ const World: React.FC<Props> = ({ envName }) => {
 interface Props {
   envName: string;
 }
-
-// See types/react-three-fiber/three-types.d.ts
-extend({ PanZoomControls });
-
-const CameraControls: React.FC = () => {
-  const { camera, gl: { domElement } } = useThree();
-  const controls = useRef<PanZoomControls>();
-  useFrame((_state) => controls.current!.update());
-  return <panZoomControls ref={controls} args={[camera, domElement]} />;
-};
 
 export default World;

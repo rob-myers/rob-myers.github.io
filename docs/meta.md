@@ -5,7 +5,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] can reset env ui; must 1st click to start pan-zoom
 - [ ] Can collapse/expand each blog entry
 - [ ] hashes always scrollIntoView
-- [ ] `Env` should be in react-reverse-portal
 - [ ] try to remove `Observable<ProcessAct>` syntax
 - [ ] fix mobile touch in `three/controls` (perhaps devtools issue)
 
@@ -15,6 +14,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `spawn` command
   > spawn an actor at a position
 - [ ] onclick floor show cube
+- [ ] `World` should fade-in
 
 - [ ] navPath informs us which navrect we're in
   > corner point + direction yields rect
@@ -26,8 +26,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > can query navpath
   > can display navpath
 
+- [x] `Env` persisted via react-reverse-portal
 - [x] cleanup polyanya interface
-
 - [x] can configure iterator delay via builtin `throttle`
   > only permit `1s` (default/fallback), `0.5s`, `0.25s`
 - [x] iterators `for`/`while` have inbuilt delay (e.g. at least `1s`)

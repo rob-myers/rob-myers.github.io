@@ -11,7 +11,10 @@ const Env: React.FC<Props> = ({ envKey, high }) => {
   useEffect(() => {
     if (navWorker) {
       api.createEnv({ envKey, highWalls: !!high });
-      return () => api.removeEnv(envKey);
+      return () => {
+        // NOTE won't unmount if created via EnvPortal
+        api.removeEnv(envKey);
+      }
     }
   }, [navWorker]);
 
@@ -25,7 +28,7 @@ const Env: React.FC<Props> = ({ envKey, high }) => {
   )
 };
 
-interface Props {
+export interface Props {
   envKey: string;
   high?: boolean;
 }

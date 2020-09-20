@@ -1,5 +1,7 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware'
+import * as portals from 'react-reverse-portal';
+
 import { KeyedLookup } from '@model/generic.model';
 import { FsFile } from '@model/shell/file.model';
 import * as Geom from '@model/geom/geom.model'
@@ -10,7 +12,11 @@ import { NavWorker } from '@nav/nav.msg';
 export interface State {
   env: KeyedLookup<Environment>;
   navWorker: null | NavWorker;
+  envPortal: KeyedLookup<EnvPortal>;
   api: {
+    /** Also use envKey as portalKey */
+    ensureEnvPortal: (envKey: string) => void;
+    removeEnvPortal: (envKey: string) => void;
     createEnv: (def: EnvDef) => void;
     removeEnv: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
@@ -37,10 +43,25 @@ interface EnvDef {
   highWalls: boolean;
 }
 
+interface EnvPortal {
+  key: string;
+  portalNode: portals.HtmlPortalNode;
+}
+
 const useStore = create<State>(devtools((set, get) => ({
   env: {},
   navWorker: null,
+  envPortal: {},
   api: {
+    ensureEnvPortal: (envKey) => {
+      !get().envPortal[envKey] && set(({ envPortal }) => ({ envPortal: addToLookup({
+        key: envKey,
+        portalNode: portals.createHtmlPortalNode(),
+      }, envPortal) }));
+    },
+    removeEnvPortal: (envKey) => {
+      set(({ envPortal }) => ({ envPortal: removeFromLookup(envKey, envPortal) }));
+    },
     createEnv: ({ envKey, highWalls }) => {
       /**
        * Child's initial useEffect runs before parent's,

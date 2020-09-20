@@ -5,6 +5,7 @@ import { AppInitialProps } from 'next/app';
 import { useEffect } from 'react';
 import useTestStore from '@store/test.store';
 import useGeomStore from '@store/geom.store';
+import Portals from '@components/portals';
 
 import 'xterm/css/xterm.css';
 
@@ -38,7 +39,9 @@ const RootApp: React.FC<RootProps> = ({
         `}
         </style>
       </Head>
-      <Component {...pageProps} />
+      <Portals>
+        <Component {...pageProps} />
+      </Portals>
     </>
   );
 };
