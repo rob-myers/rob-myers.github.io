@@ -26,6 +26,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > can query navpath
   > can display navpath
 
+- [ ] fix polyanya by using delaunay triangulation
+
 - [x] `Env` persisted via react-reverse-portal
 - [x] cleanup polyanya interface
 - [x] can configure iterator delay via builtin `throttle`
