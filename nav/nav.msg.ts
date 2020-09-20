@@ -51,9 +51,11 @@ export interface UpdateRoomNav {
   roomUid: string;
   navPartitions: Geom.Rect[][];
 }
-interface RemoveRoomNav {
+export interface RemoveRoomNav {
   key: 'remove-room-nav';
   envKey: string;
+  /** Room type e.g. 'straight' */
+  roomType: string;
   /** Room instance uid */
   roomUid: string;
 }

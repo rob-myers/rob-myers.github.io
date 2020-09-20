@@ -1,6 +1,6 @@
 import { fromEvent } from 'rxjs';
-import { filter, map, debounceTime, tap } from 'rxjs/operators';
-import { NavWorker, NavWorkerContext, Message, MessageFromMain, UpdateRoomNav } from './nav.msg';
+import { filter, map, tap, buffer, debounceTime } from 'rxjs/operators';
+import { NavWorker, NavWorkerContext, Message, MessageFromMain, UpdateRoomNav, RemoveRoomNav } from './nav.msg';
 import useStore from './nav.store';
 
 const ctxt: NavWorkerContext = self as any;
@@ -12,7 +12,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
    * TODO
    * - directly update `rooms` and `env.roomKeys`
    * - delay computation of each env's polyanya poly via debounceTime
-   * - only respond to navpath requests when needed
+   * - only respond to navpath requests when ready
    */
   switch (msg.key) {
     case 'ping-navworker': {
@@ -20,7 +20,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       break;
     }
     case 'create-env': {
-      api.ensureEnv(msg.envKey, debounceEnvUpdates(msg.envKey));
+      api.ensureEnv(msg.envKey, bufferEnvUpdates(msg.envKey));
       break;
     }
     case 'remove-env': {
@@ -39,15 +39,26 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
   }
 });
 
-function debounceEnvUpdates(envKey: string) {
-  return fromEvent<Message<MessageFromMain>>(ctxt, 'message')
-  .pipe(
+function bufferEnvUpdates(envKey: string) {
+  return envUpdate$(envKey).pipe(
+    buffer(envUpdate$(envKey).pipe(debounceTime(250))),
+    tap(msgs => {
+      console.log(`TODO: update env '${msgs[0].envKey}' using rooms '${msgs.map(x => x.roomType)}'`);
+      /**
+       * TODO compute polyanya polys and set env ready
+       */
+    }),
+  );
+
+}
+
+function envUpdate$(envKey: string) {
+  return fromEvent<Message<MessageFromMain>>(ctxt, 'message').pipe(
     map(x => x.data),
-    filter((x): x is UpdateRoomNav => x.key === 'update-room-nav' && x.envKey === envKey),
-    debounceTime(300),
-    tap(msg => {
-      console.log(`TODO: update env '${msg.envKey}' using room '${msg.roomType}'`);
-    })
+    filter((x): x is UpdateRoomNav | RemoveRoomNav =>
+      x.key === 'update-room-nav' && x.envKey === envKey
+      || x.key === 'remove-room-nav' && x.envKey === envKey
+    ),
   );
 }
 

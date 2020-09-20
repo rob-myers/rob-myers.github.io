@@ -43,12 +43,18 @@ const useStore = create<{
     },
     removeRoom: (envKey, roomUid) => {
       set(({ env, room }) => ({
-        env: updateLookup(envKey, env, ({ roomUids }) => ({ roomUids: roomUids.filter(x => x !== roomUid) })),
         room: removeFromLookup(roomUid, room),
+        env: updateLookup(envKey, env, ({ roomUids }) => ({
+          roomUids: roomUids.filter(x => x !== roomUid),
+          ready: false,
+        })),
       }));
     },
     updateRoom: (def) => {
-      set(({ room }) => ({ room: updateLookup(def.key, room, () => def) }));
+      set(({ room, env }) => ({
+        room: updateLookup(def.key, room, () => def),
+        env: updateLookup(def.envKey, env, () => ({ ready: false })),
+      }));
     },
   },
 })));

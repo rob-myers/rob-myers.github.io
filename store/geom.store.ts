@@ -83,7 +83,7 @@ const useStore = create<State>(devtools((set, get) => ({
 
       });
 
-      const navWorker = new (await import('@worker/nav.worker')).default;
+      const navWorker = new (await import('@nav/nav.worker')).default;
       useEnvStore.setState({ navWorker });
       navWorker.postMessage({ key: 'ping-navworker' });
     },

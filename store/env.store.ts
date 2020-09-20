@@ -5,8 +5,7 @@ import { FsFile } from '@model/shell/file.model';
 import * as Geom from '@model/geom/geom.model'
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import useShellStore from './shell.store';
-import useGeomStore from './geom.store';
-import { NavWorker } from '@worker/nav.msg';
+import { NavWorker } from '@nav/nav.msg';
 
 export interface State {
   env: KeyedLookup<Environment>;
@@ -15,7 +14,7 @@ export interface State {
     createEnv: (def: EnvDef) => void;
     removeEnv: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
-    removeNavWorkerRoom: (input: { envKey: string, roomUid: string }) => void;
+    removeNavWorkerRoom: (input: { envKey: string; roomType: string; roomUid: string }) => void;
     roomUpdated: (envKey: string) => void;
     updateNavWorkerRoom: (input: {
       envKey: string;
@@ -72,8 +71,8 @@ const useStore = create<State>(devtools((set, get) => ({
       get().navWorker!.postMessage({ key: 'remove-env', envKey });
     },
 
-    removeNavWorkerRoom: ({ envKey, roomUid }) => {
-      get().navWorker!.postMessage({ key: 'remove-room-nav', envKey, roomUid });
+    removeNavWorkerRoom: ({ envKey, roomType, roomUid }) => {
+      get().navWorker!.postMessage({ key: 'remove-room-nav', envKey, roomType, roomUid });
     },
 
     roomUpdated: (envKey) => {

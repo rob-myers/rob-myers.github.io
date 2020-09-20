@@ -55,7 +55,7 @@ const Room: React.FC<Props> = (props) => {
     setChildrenMounted(true); // Now mount Inners
 
     return () => {
-      envApi.removeNavWorkerRoom({ envKey: envName, roomUid: mesh.current!.uuid });
+      envApi.removeNavWorkerRoom({ envKey: envName, roomType: props.id, roomUid: mesh.current!.uuid });
     };
   }, []);
   

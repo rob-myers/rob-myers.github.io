@@ -22,7 +22,7 @@
       "@components/*": ["components/*"],
       "@store/*": ["store/*"],
       "@model/*": ["model/*"],
-      "@worker/*": ["worker/*"],
+      "@nav/*": ["nav/*"],
       "@env-var/*": ["env-var/*"],
       "@public/*": ["public/*"],
       "@blog/*": ["blog/*"],
