@@ -1,5 +1,8 @@
+import * as poly2tri from 'poly2tri';
+import earcut from 'earcut';
 import { Vector, Coord, VectorJson, Edge } from "./vector.model";
 import { Rect } from "./rect.model";
+import { Triple } from '@model/generic.model';
 
 export class Polygon {
 
@@ -7,6 +10,10 @@ export class Polygon {
     public outline: Vector[] = [],
     public holes: Vector[][] = [],
   ) {}
+
+  private get allPoints(): Vector[] {
+    return this.outline.concat(...this.holes);
+  }
 
   /**
    * Ensure final point of each ring doesn't equal 1st point.
@@ -34,6 +41,28 @@ export class Polygon {
       outline: this.outline.map((p, i, ps) => new Edge(p, ps[(i + 1) % ps.length])),
       holes: this.holes.map(hole => hole.map((p, i, ps) => new Edge(p, ps[(i + 1) % ps.length]))),
     };
+  }
+
+  /**
+   * Faster but less uniform.
+   * Also, it ignores Steiner points.
+   */
+  public fastTriangulate() {
+    const { coordinates } = this.geoJson;
+    const data = earcut.flatten(coordinates);
+    const triIds = earcut(data.vertices, data.holes, 2);
+    const indexTriples = triIds.reduce<Triple<number>[]>(
+      (agg, vertexIndex, i) =>
+        i % 3 === 2
+          ? agg.concat([[triIds[i - 2], triIds[i - 1], vertexIndex]])
+          : agg,
+      [],
+    );
+
+    const triangulationIds = indexTriples;
+    const triangulation = this.triangleIdsToPolys(triangulationIds);
+
+    return { triangulationIds, triangulation };
   }
 
   static from(input: PolygonJson | GeoJsonPolygon['coordinates']) {
@@ -68,6 +97,39 @@ export class Polygon {
     };
   }
 
+  /**
+   * Quality triangulation via constrained delaunay library 'poly2ti'.
+   * Can fail for 'non-wellformed polygons' e.g. given square
+   * with a hole, cut another hole meeting 1st hole at a point.
+   * On failure we fallback to earcut algorithm, warning in console.
+   */
+  public qualityTriangulate() {
+    try {
+      interface V2WithId extends VectorJson { id: number }
+      const outline: V2WithId[] = this.outline.map(({ x, y }, id) => ({ x, y, id }));
+      let nextId = outline.length;
+      const holes: V2WithId[][] = this.holes
+        .map(hole => hole.map(({ x, y }) => ({ x, y, id: nextId++ })));
+
+      const triangulationIds = new poly2tri.SweepContext(outline)
+        .addHoles(holes)
+        // Seen failures, but cdt2d handles steiner points
+        // .addPoints(this.steinerPoints)
+        .triangulate()
+        .getTriangles()
+        .map(t => [t.getPoint(0), t.getPoint(1), t.getPoint(2)] as Triple<V2WithId>)
+        .map<Triple<number>>(([u, v, w]) => [u.id, v.id, w.id]);
+      
+      const triangulation = this.triangleIdsToPolys(triangulationIds);
+
+      return { triangulation, triangulationIds };
+    } catch (e) {
+      console.error('Quality triangulation failed, falling back to earcut');
+      console.error(e);
+      return this.fastTriangulate();
+    }
+  }
+
   public get rect() {
     return Rect.fromPoints(...this.outline);
   }
@@ -88,6 +150,11 @@ export class Polygon {
     this.outline.forEach(p => p.translate(delta.x, delta.y));
     this.holes.forEach(h => h.forEach(p => p.translate(delta.x, delta.y)));
     return this;
+  }
+
+  private triangleIdsToPolys(triIds: Triple<number>[]): Polygon[] {
+    const ps = this.allPoints;
+    return triIds.map(([u, v, w]) => new Polygon([ ps[u], ps[v], ps[w] ]));
   }
   
 }
