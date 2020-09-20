@@ -1,4 +1,4 @@
-import { findNavPath } from './scenario-runner';
+import { findNavPath } from './index';
 import GeomService from "@model/geom/geom.service";
 import * as Geom from '@model/geom/geom.model';
 
@@ -26,14 +26,8 @@ console.log('Example 1', findNavPath(
       [0, 1, 2, 3],
     ],
   },
-  {
-    bucket: 0,
-    xsize: 10,
-    ysize: 10,
-    start: { x: 0.1, y: 0.1 },
-    goal: { x: -0.1, y: -0.1 },
-    gridcost: 1,
-  },
+  { x: 0.1, y: 0.1 },
+  { x: -0.1, y: -0.1 },
   true,
 ));
 
@@ -47,14 +41,8 @@ console.log('Example 2', findNavPath(
       [-1, 0], [-1, 0], [-1, 0], [-1, 0],
     ],
   },
-  {
-    bucket: 1,
-    xsize: 100,
-    ysize: 100,
-    start: { x: 0.1, y: 0.1 },
-    goal: { x: 0.9, y: 0.9 },
-    gridcost: 1,
-  },
+  { x: 0.1, y: 0.1 },
+  { x: 0.9, y: 0.9 },
   true,
 ));
 
@@ -107,15 +95,8 @@ console.log('Example 3', findNavPath(
       [4, -1], // 15
     ],
   },
-  {
-    bucket: 1,
-    xsize: 100,
-    ysize: 100,
-    start: { x: 0.1, y: 0.1 },
-    // goal: { x: 9.9, y: 9.9 },
-    goal: { x: 5, y: 5 },
-    gridcost: 1,
-  },
+  { x: 0.1, y: 0.1 },
+  { x: 5, y: 5 },
   true,
 ));
 
@@ -127,13 +108,7 @@ console.log('Example 4', findNavPath(
     new Geom.Rect(25, 0, 25, 50),
     new Geom.Rect(50, 25, 50, 25),
   ]),
-  {
-    bucket: 1,
-    xsize: 100,
-    ysize: 100,
-    start: { x: 0.1, y: 0.1 },
-    goal: { x: 99, y: 26 },
-    gridcost: 1,
-  },
+  { x: 0.1, y: 0.1 },
+  { x: 99, y: 26 },
   true,
 ));

@@ -18,7 +18,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] navPath informs us which navrect we're in
   > corner point + direction yields rect
-  > intermediate rects via rect-raytrace
+  > intermediate rects via rect-raytrace (lazily)
+
 - [ ] can query polyanya in webworker and display navpath
   > create navworker
   > can add/remove navigable
