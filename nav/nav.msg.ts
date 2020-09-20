@@ -1,4 +1,4 @@
-import type * as Geom from '@model/geom/rect.model';
+import type * as Geom from '@model/geom/geom.model';
 
 /** A Worker instance in main thread. */
 export interface NavWorker extends Worker {
@@ -61,11 +61,20 @@ export interface RemoveRoomNav {
 }
 interface RequestNavPath {
   key: 'request-navpath';
+  envKey: string;
+  msgUid: string;
+  src: Geom.VectorJson;
+  dst: Geom.VectorJson;
 }
 
 type MessageFromWorker = (
   | NavWorkerReady
+  | NavPathResponse
 );
 interface NavWorkerReady {
   key: 'worker-ready'
+}
+interface NavPathResponse {
+  key: 'navpath-response';
+  navPath: Geom.VectorJson[];
 }
