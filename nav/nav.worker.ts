@@ -2,6 +2,7 @@ import { fromEvent } from 'rxjs';
 import { filter, map, tap, buffer, debounceTime } from 'rxjs/operators';
 import { NavWorker, NavWorkerContext, Message, MessageFromMain, UpdateRoomNav, RemoveRoomNav } from './nav.msg';
 import useStore from './nav.store';
+import { Rect } from '@model/geom/rect.model';
 
 const ctxt: NavWorkerContext = self as any;
 const { api } = useStore.getState();
@@ -29,7 +30,9 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
     }
     case 'update-room-nav': {
       api.ensureRoom(msg.envKey, msg.roomUid);
-      api.updateRoom({ key: msg.roomUid, envKey: msg.envKey, navPartitions: msg.navPartitions });
+      api.updateRoom({ key: msg.roomUid, envKey: msg.envKey,
+        navPartitions: msg.navPartitions.map(rects => rects.map(r => Rect.from(r))),
+      });
       break;
     }
     case 'remove-room-nav': {
@@ -43,10 +46,8 @@ function bufferedEnvUpdates$(envKey: string) {
   return envUpdate$(envKey).pipe(
     buffer(envUpdate$(envKey).pipe(debounceTime(250))),
     tap(msgs => {
-      console.log(`[TODO] update env '${msgs[0].envKey}' using rooms '${msgs.map(x => x.roomType)}'`);
-      /**
-       * TODO compute polyanya polys and set env ready
-       */
+      console.log(`Updating env '${msgs[0].envKey}' using rooms '${msgs.map(x => x.roomType)}'`);
+      api.updatePolyanyaMeshes(envKey);
     }),
   );
 }

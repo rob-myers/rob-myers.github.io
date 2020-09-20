@@ -49,7 +49,7 @@ export interface UpdateRoomNav {
   roomType: string;
   /** Room instance uid */
   roomUid: string;
-  navPartitions: Geom.Rect[][];
+  navPartitions: Geom.RectJson[][];
 }
 export interface RemoveRoomNav {
   key: 'remove-room-nav';

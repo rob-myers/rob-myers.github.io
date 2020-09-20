@@ -90,7 +90,9 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     updateNavWorkerRoom: ({ envKey, roomType, roomUid, navPartitions }) => {
-      get().navWorker!.postMessage({ key: 'update-room-nav', envKey, roomType, roomUid, navPartitions });
+      get().navWorker!.postMessage({ key: 'update-room-nav', envKey, roomType, roomUid,
+        navPartitions: navPartitions.map(rects => rects.map(r => r.json)),
+      });
     },
 
   },

@@ -1,6 +1,7 @@
-import { findNavPath } from './index';
-import GeomService from "@model/geom/geom.service";
+import { findNavPath, findNavPathAlt } from './index';
 import * as Geom from '@model/geom/geom.model';
+import Mesh from './structs/mesh';
+import { rectsToPolyanya } from '@model/geom/polyanya.model';
 
 /** See https://bitbucket.org/dharabor/pathfinding/src/d2ba41149c7a3c01a3e119cd31abb2874f439b83/anyangle/polyanya/meshes/tests/square.mesh?at=master */
 console.log('Example 1', findNavPath(
@@ -100,14 +101,26 @@ console.log('Example 3', findNavPath(
   true,
 ));
 
-const geom = new GeomService;
-
 console.log('Example 4', findNavPath(
-  geom.rectsToPolyanya([
+  rectsToPolyanya([
     new Geom.Rect(0, 0, 25, 50),
     new Geom.Rect(25, 0, 25, 50),
     new Geom.Rect(50, 25, 50, 25),
   ]),
+  { x: 0.1, y: 0.1 },
+  { x: 99, y: 26 },
+  true,
+));
+
+
+console.log('Example 5', findNavPathAlt(
+  new Mesh(
+    rectsToPolyanya([
+      new Geom.Rect(0, 0, 25, 50),
+      new Geom.Rect(25, 0, 25, 50),
+      new Geom.Rect(50, 25, 50, 25),
+    ]),
+  ),
   { x: 0.1, y: 0.1 },
   { x: 99, y: 26 },
   true,
