@@ -16,12 +16,16 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > spawn an actor at a position
 - [ ] onclick floor show cube
 
-- [ ] navpath informs us which navrect we're in
+- [ ] navPath informs us which navrect we're in
+  > corner point + direction yields rect
+  > intermediate rects via rect-raytrace
 - [ ] can query polyanya in webworker and display navpath
   > create navworker
   > can add/remove navigable
   > can query navpath
   > can display navpath
+
+- [x] cleanup polyanya interface
 
 - [x] can configure iterator delay via builtin `throttle`
   > only permit `1s` (default/fallback), `0.5s`, `0.25s`

@@ -618,6 +618,27 @@ export default class SearchInstance {
     return text.join('\n');
   }
 
+  getSearchNodes() {
+    if (this.final_node == null) {
+      return [];
+    }
+    
+    const output = [] as Point[][];
+    let cur_node = this.final_node as SearchNode | null;
+
+    while (cur_node != null) {
+      const path = [] as typeof output[0];
+      path.push(this.root_to_point(cur_node.root));
+      path.push(...this.mesh.mesh_polygons[cur_node.next_polygon]
+        .vertices.map(i => this.mesh.mesh_vertices[i].p)
+      );
+      output.push(path);
+      cur_node = cur_node.parent;
+    }
+
+    return output;
+  }
+
   get_search_micro() {
     return this.timer.elapsed_time_micro();
   }

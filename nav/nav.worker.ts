@@ -20,7 +20,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       break;
     }
     case 'create-env': {
-      api.ensureEnv(msg.envKey, bufferEnvUpdates(msg.envKey));
+      api.ensureEnv(msg.envKey, bufferedEnvUpdates$(msg.envKey));
       break;
     }
     case 'remove-env': {
@@ -39,17 +39,16 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
   }
 });
 
-function bufferEnvUpdates(envKey: string) {
+function bufferedEnvUpdates$(envKey: string) {
   return envUpdate$(envKey).pipe(
     buffer(envUpdate$(envKey).pipe(debounceTime(250))),
     tap(msgs => {
-      console.log(`TODO: update env '${msgs[0].envKey}' using rooms '${msgs.map(x => x.roomType)}'`);
+      console.log(`[TODO] update env '${msgs[0].envKey}' using rooms '${msgs.map(x => x.roomType)}'`);
       /**
        * TODO compute polyanya polys and set env ready
        */
     }),
   );
-
 }
 
 function envUpdate$(envKey: string) {
