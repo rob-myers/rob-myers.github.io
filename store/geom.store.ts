@@ -172,7 +172,8 @@ const useStore = create<State>(devtools((set, get) => ({
       const roomGroup = room.parent!;
 
       const innerMeshes = roomGroup.children
-        .filter(({ name, children }) => name === innerGroupName && isMeshNode(children[0]))
+        // children[0] needed in firefox, why?
+        .filter(({ name, children }) => name === innerGroupName && children[0] && isMeshNode(children[0]))
         .map(({ children }) => children[0] as THREE.Mesh);
       const innerMetas = innerMeshes.map(x => inners[x.name]);
       const innerDeltas = innerMeshes.map(x => geom.projectXY(x.parent!.position));
