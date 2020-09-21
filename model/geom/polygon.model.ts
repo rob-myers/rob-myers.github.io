@@ -11,7 +11,7 @@ export class Polygon {
     public holes: Vector[][] = [],
   ) {}
 
-  private get allPoints(): Vector[] {
+  get allPoints(): Vector[] {
     return this.outline.concat(...this.holes);
   }
 
@@ -45,7 +45,7 @@ export class Polygon {
 
   /**
    * Faster but less uniform.
-   * Also, it ignores Steiner points.
+   * Also cannot handle Steiner points.
    */
   public fastTriangulate() {
     const { coordinates } = this.geoJson;
@@ -59,10 +59,10 @@ export class Polygon {
       [],
     );
 
-    const triangulationIds = indexTriples;
-    const triangulation = this.triangleIdsToPolys(triangulationIds);
+    const triangleIds = indexTriples;
+    const triangles = this.triangleIdsToPolys(triangleIds);
 
-    return { triangulationIds, triangulation };
+    return { triangleIds, triangles };
   }
 
   static from(input: PolygonJson | GeoJsonPolygon['coordinates']) {
@@ -111,7 +111,7 @@ export class Polygon {
       const holes: V2WithId[][] = this.holes
         .map(hole => hole.map(({ x, y }) => ({ x, y, id: nextId++ })));
 
-      const triangulationIds = new poly2tri.SweepContext(outline)
+      const triangleIds = new poly2tri.SweepContext(outline)
         .addHoles(holes)
         // Seen failures, but cdt2d handles steiner points
         // .addPoints(this.steinerPoints)
@@ -120,9 +120,9 @@ export class Polygon {
         .map(t => [t.getPoint(0), t.getPoint(1), t.getPoint(2)] as Triple<V2WithId>)
         .map<Triple<number>>(([u, v, w]) => [u.id, v.id, w.id]);
       
-      const triangulation = this.triangleIdsToPolys(triangulationIds);
+      const triangles = this.triangleIdsToPolys(triangleIds);
 
-      return { triangulation, triangulationIds };
+      return { triangles, triangleIds };
     } catch (e) {
       console.error('Quality triangulation failed, falling back to earcut');
       console.error(e);
