@@ -208,12 +208,11 @@ export class BuiltinService {
     });
   }
   
-  private async say({ pid, fdToOpen, cleanups }: Process, args: string[]) {
-    const { _: operands, v, __optKeys } = parseService.getOpts(args, { string: ['v']  });
+  private async say({ fdToOpen, cleanups }: Process, args: string[]) {
+    const { _: operands, v } = parseService.getOpts(args, { string: ['v']  });
 
     if (v === '?') {// List available voices.
-      voiceDevice.getAllVoices().forEach(voice => fdToOpen[1].write(voice));
-      return;
+      return voiceDevice.getAllVoices().forEach(voice => fdToOpen[1].write(voice));
     }
     
     await new Promise(async (resolve, reject) => {

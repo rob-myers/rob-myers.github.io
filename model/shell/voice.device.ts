@@ -8,18 +8,17 @@ class VoiceDevice {
   private commandBuffer: VoiceCommand[];
   private currentCommand: null | VoiceCommand;
   private defaultVoice!: SpeechSynthesisVoice;
-  private synth: SpeechSynthesis;
+  private synth!: SpeechSynthesis;
   private voices: SpeechSynthesisVoice[];
 
   constructor() {
     this.commandBuffer = [];
     this.currentCommand = null;
-    this.synth = window.speechSynthesis;
     this.voices = [];
-    this.initialize();
   }
-
-  private initialize() {
+  
+  initialise() {
+    this.synth = window.speechSynthesis;
     setTimeout(() => {
       this.voices = this.synth.getVoices();
       // console.log({ voices: this.voices });
@@ -28,11 +27,7 @@ class VoiceDevice {
     }, 500);
   }
 
-  addVoiceCommand(
-    text: string,
-    resolve: () => void,
-    voice?: string,
-  ) {
+  addVoiceCommand(text: string, resolve: () => void, voice?: string) {
     const cmd = { text, voice, resolve };
     this.queueCommands(cmd);
     return () => this.cancelVoiceCommand(cmd);
@@ -58,8 +53,10 @@ class VoiceDevice {
   }
 
   private runCommands = async () => {
-    if (!(this.currentCommand = this.commandBuffer.shift() || null)) {
-      return;
+    if (this.synth.speaking) {
+      return; // In case something else just started
+    } else if (!(this.currentCommand = this.commandBuffer.shift() || null)) {
+      return; // No commands left
     }
 
     await this.speak(this.currentCommand);

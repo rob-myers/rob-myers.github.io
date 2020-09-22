@@ -6,6 +6,7 @@ import { FsFile } from './file.model';
 import { TtyXterm } from './tty.xterm';
 import { processService as ps, processService } from './process.service';
 import { srcService } from './src.service';
+import { voiceDevice } from './voice.device';
 
 export class TtyShell {
 
@@ -33,6 +34,7 @@ export class TtyShell {
     this.io.read(this.onMessage.bind(this));
     this.prompt('$');
     this.session = useStore.getState().session[this.sessionKey];
+    voiceDevice.initialise();
   }
 
   /** `prompt` must not contain non-readable characters e.g. ansi color codess */
