@@ -568,7 +568,7 @@ class SemanticsService {
           const output = [] as string[];
 
           ps.pushRedirectScope(pid);
-          const opened = ps.openFile(pid, { path: `/dev/cs/${pid}`, fd: 1 });
+          const opened = ps.openFile(pid, { path: `/dev/.cs-${pid}`, fd: 1 });
           const stopListening = opened.file.read((msg) => output.push(vs.toStringOrJson(msg)));
 
           try {
