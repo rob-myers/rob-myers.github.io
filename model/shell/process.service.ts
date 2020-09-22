@@ -440,14 +440,14 @@ export class ProcessService {
     this.getSession(sessionKey).fgStack.push(pgid);
   }
 
-  /** Cancellable sleep like builtin `sleep` */
+  /** Cancellable sleep */
   sleep(pid: number, ms: number) {
     return new Promise((resolve, reject) => {
-      const removeCleanup = this.addCleanups(pid, () => reject(null));
+      const remove = this.addCleanups(pid, () => reject(null));
       setTimeout(() => {
-        removeCleanup();
+        remove();
         resolve();
-      }, ms)
+      }, ms);
     });
   }
 

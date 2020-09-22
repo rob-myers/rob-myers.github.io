@@ -33,7 +33,7 @@ export class BuiltinService {
           case 'nav': await this.nav(process, args); break;
           case 'read': await this.read(process, args); break;
           case 'say': await this.say(process, args); break;
-          case 'sleep': await this.sleep(args); break;
+          case 'sleep': await this.sleep(process, args); break;
           case 'throttle': this.throttle(process, args); break;
           case 'true': break;
           case 'way': this.way(process, args); break;
@@ -228,7 +228,7 @@ export class BuiltinService {
    * - if there are no arguments we'll sleep for 1 second.
    * - if the sum is negative we'll wait 0 seconds.
    */
-  private async sleep(args: string[]) {
+  private async sleep({ pid }: Process, args: string[]) {
     // const { _: operands, __optKeys } = parseSh.getOpts(args, {});
     let seconds = args.length ? 0 : 1, delta: number;
     
@@ -238,7 +238,7 @@ export class BuiltinService {
         throw new ShError(`invalid time interval ‘${arg}’`, 1);
       }
     }
-    await pause(1000 * seconds);
+    await ps.sleep(pid, 1000 * seconds);
   }
 
   private throttle({ pid }: Process, args: string[]) {
