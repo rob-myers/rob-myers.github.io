@@ -42,7 +42,7 @@ export class TtyXterm {
   private nextPrintId: null | number;
   /**
    * User-input prompt e.g. '$ '.
-   * Currently do not support escape chars in prompt.
+   * We do not support escape chars in prompt.
    */
   private prompt: string;
 
@@ -79,7 +79,6 @@ export class TtyXterm {
 
   /**
    * Compute actual cursor (1-dimensional), taking prompt into account.
-   * TODO handle length when prompt contains control chars
    */
   private actualCursor(input: string, cursor: number) {
     return this.actualLine(input.slice(0, cursor)).length;
@@ -379,8 +378,8 @@ export class TtyXterm {
   }
 
   /**
-   * Convert 0-based {cursor} in {input} to
-   * a relative 0-based col/row location.
+   * Convert 0-based `cursor` in `input` to
+   * a relative 0-based row/col location.
    */
   private offsetToColRow(input: string, cursor: number) {
     const { cols } = this.xterm;
