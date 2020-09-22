@@ -58,11 +58,7 @@ export class Polygon {
           : agg,
       [],
     );
-
-    const triangleIds = indexTriples;
-    const triangles = this.triangleIdsToPolys(triangleIds);
-
-    return { triangleIds, triangles };
+    return { vs: this.allPoints, tris: indexTriples };
   }
 
   static from(input: PolygonJson | GeoJsonPolygon['coordinates']) {
@@ -111,7 +107,7 @@ export class Polygon {
       const holes: V2WithId[][] = this.holes
         .map(hole => hole.map(({ x, y }) => ({ x, y, id: nextId++ })));
 
-      const triangleIds = new poly2tri.SweepContext(outline)
+      const tris = new poly2tri.SweepContext(outline)
         .addHoles(holes)
         // Seen failures, but cdt2d handles steiner points
         // .addPoints(this.steinerPoints)
@@ -120,9 +116,7 @@ export class Polygon {
         .map(t => [t.getPoint(0), t.getPoint(1), t.getPoint(2)] as Triple<V2WithId>)
         .map<Triple<number>>(([u, v, w]) => [u.id, v.id, w.id]);
       
-      const triangles = this.triangleIdsToPolys(triangleIds);
-
-      return { triangles, triangleIds };
+      return { vs: this.allPoints, tris };
     } catch (e) {
       console.error('Quality triangulation failed, falling back to earcut');
       console.error(e);
@@ -150,11 +144,6 @@ export class Polygon {
     this.outline.forEach(p => p.translate(delta.x, delta.y));
     this.holes.forEach(h => h.forEach(p => p.translate(delta.x, delta.y)));
     return this;
-  }
-
-  private triangleIdsToPolys(triIds: Triple<number>[]): Polygon[] {
-    const ps = this.allPoints;
-    return triIds.map(([u, v, w]) => new Polygon([ ps[u], ps[v], ps[w] ]));
   }
   
 }

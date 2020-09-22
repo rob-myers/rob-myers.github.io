@@ -7,6 +7,8 @@ import maximalIndependentSet from 'maximal-independent-set';
 
 import * as Geom from '@model/geom/geom.model';
 import { epsilon } from "@model/three/three.model";
+import { Triple } from "@model/generic.model";
+import { Geometry, Vector3, Face3, Mesh } from "three";
 
 class GeomService {
 
@@ -51,6 +53,19 @@ class GeomService {
         ...cuttingPolys.map(({ geoJson: { coordinates } }) => coordinates),
       )
       .map(coords => Geom.Polygon.from(coords).cleanFinalReps());
+  }
+
+  /** Join disjoint triangulations */
+  joinTriangulations(decomps: { vs: Geom.Vector[]; tris: Triple<number>[] }[]) {
+    const vs = [] as Geom.Vector[];
+    const tris = [] as Triple<number>[];
+    let offset = 0;
+    for (const decomp of decomps) {
+      vs.push(...decomp.vs);
+      tris.push(...decomp.tris.map(tri => tri.map(x => x += offset) as Triple<number>));
+      offset += decomp.vs.length;
+    }
+    return { vs, tris };
   }
 
   /**
@@ -154,6 +169,25 @@ class GeomService {
     );
   }
 
+  meshFromPolys(polys: Geom.Polygon[], plane: 'XY' | 'XZ', useBufferGeom = true): THREE.Mesh {
+    const decomps = polys.map(p => p.qualityTriangulate());
+    const all = this.joinTriangulations(decomps);
+    console.log('triangulations', all);
+    const geometry = new Geometry();
+    if (plane === 'XY') {
+      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, 0)));
+    } else {
+      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, 0, p.y)));
+    }
+    geometry.faces.push(...all.tris.map(tri => new Face3(tri[2], tri[1], tri[0])));
+    geometry.computeVertexNormals();
+    geometry.computeFaceNormals();
+    return new Mesh(
+      useBufferGeom ? (new THREE.BufferGeometry()).fromGeometry(geometry) : geometry,
+      new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
+    );
+  }
+
   /**
    * Project onto XY plane, restricting precision.
    */
@@ -218,6 +252,16 @@ class GeomService {
     const t4 = (rect.s - src.y) / dir.y;
     const tmax = Math.min(Math.max(t1, t2), Math.max(t3, t4));
     return { x: src.x + dir.x * tmax, y: src.y + dir.y * tmax };
+  }
+
+  removePathReps(path: Geom.VectorJson[]) {
+    let prev: Geom.VectorJson;
+    return path.reduce((agg, p) => {
+      if (!(prev && (p.x === prev.x) && (p.y === prev.y))) {
+        agg.push(prev = p);
+      }
+      return agg;
+    }, [] as typeof path);
   }
 
   toThreeGeometry(geom: THREE.BufferGeometry) {
