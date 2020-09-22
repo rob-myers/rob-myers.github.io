@@ -3,7 +3,6 @@ import useStore, { Session } from '@store/shell.store';
 import { parseService } from './parse.service';
 import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
-import { VoiceCommandSpeech } from './voice.xterm';
 import { TtyXterm } from './tty.xterm';
 import { processService as ps, processService } from './process.service';
 import { srcService } from './src.service';
@@ -205,9 +204,6 @@ export type MessageFromShell = (
   | ClearXterm
   | TtyReceivedLine
   | SendHistoryLine
-  | SendVoiceCommand
-  | CancelVoiceCommands
-  | GetAllVoices
 );
 
 /**
@@ -241,19 +237,4 @@ interface SendHistoryLine {
   key: 'send-history-line';
   line: string;
   nextIndex: number;
-}
-
-interface SendVoiceCommand {
-  key: 'send-voice-cmd';
-  command: VoiceCommandSpeech;
-  uid: string;
-}
-
-interface CancelVoiceCommands {
-  key: 'cancel-voice-cmds';
-  processKey: string;
-}
-
-interface GetAllVoices {
-  key: 'get-all-voices';
 }

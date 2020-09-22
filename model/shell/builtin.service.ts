@@ -7,6 +7,7 @@ import { processService as ps} from './process.service';
 import { ShError, breakError, continueError } from "./semantics.service";
 import { varService, alphaNumericRegex, throttleVarName } from "./var.service";
 import { geomService } from "@model/geom/geom.service";
+import { voiceDevice } from "./voice.device";
 
 export class BuiltinService {
 
@@ -31,6 +32,7 @@ export class BuiltinService {
           case 'get': this.get(process, args); break;
           case 'nav': await this.nav(process, args); break;
           case 'read': await this.read(process, args); break;
+          case 'say': await this.say(process, args); break;
           case 'sleep': await this.sleep(args); break;
           case 'throttle': this.throttle(process, args); break;
           case 'true': break;
@@ -205,6 +207,22 @@ export class BuiltinService {
       cleanups.push(() => reject(null));
     });
   }
+  
+  private async say({ pid, fdToOpen, cleanups }: Process, args: string[]) {
+    const { _: operands, v, __optKeys } = parseService.getOpts(args, { string: ['v']  });
+
+    if (v === '?') {// List available voices.
+      voiceDevice.getAllVoices().forEach(voice => fdToOpen[1].write(voice));
+      return;
+    }
+    
+    await new Promise(async (resolve, reject) => {
+      cleanups.push(
+        voiceDevice.addVoiceCommand(operands.join(' '), resolve, v),
+        () => reject(null),
+      );
+    });
+  }
 
   /**
    * Wait for sum of arguments in seconds.
@@ -266,6 +284,8 @@ export const builtins = {
   nav: true,
   /** Read from stdin and store in provided variable */
   read: true,
+  /** Say args */
+  say: true,
   /** Wait for sum of arguments in seconds */
   sleep: true,
   /** set throttling of subsequent iterator iterations  */

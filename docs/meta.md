@@ -19,6 +19,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > should always know which navRect agent is in
 
 - [ ] can display navpath
+  > use builtin `way p` which toggles visibility
 - [x] `nav` builtin queries three-pathfinding in webworker and receives navpath
   > create navworker
   > can add/remove navigable
