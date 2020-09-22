@@ -1,9 +1,13 @@
 import { Subscription, Observable, ReplaySubject } from 'rxjs';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware'
+import { Pathfinding } from 'three-pathfinding';
+
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 import type { Rect } from '@model/geom/rect.model';
 import { addToLookup, removeFromLookup, updateLookup } from '@store/store.util';
+import { geomService } from '@model/geom/geom.service';
+import { Polygon } from '@model/geom/geom.model';
 
 const useStore = create<{
   env: KeyedLookup<EnvItem>;
@@ -29,6 +33,7 @@ const useStore = create<{
           roomUids: [],
           navReady$: new ReplaySubject(1),
           navUpdatesSub: o.subscribe(),
+          pathfinding: new Pathfinding(),
         }, env) }));
         get().api.setReady(envKey, false); // Not ready
       }
@@ -61,16 +66,16 @@ const useStore = create<{
     },
 
     updateEnvNavigation: (envKey) => {
-      /**
-       * TODO use nav rects to create/update navigation
-       */
       const navRects = get().env[envKey].roomUids.flatMap(uid => get().room[uid].navRects);
-      console.log('receivedNavRects', navRects);
-      // set(({ env }) => ({
-      //   env: updateLookup(envKey, env, () => ({
-      //     // polyanyaMesh: new Mesh(rectsToPolyanya(navRects))
-      //   })),
-      // }));
+      const navPolys = geomService.union(navRects.map(r => Polygon.fromRect(r)));
+      // console.log('navRects, navPolys', navRects, navPolys);
+      
+      const navMesh = geomService.meshFromPolys(navPolys, 'XZ');
+      const pathfinding = new Pathfinding();
+      pathfinding.setZoneData('zone1', Pathfinding.createZone(navMesh.geometry as THREE.BufferGeometry));
+      // console.log('navMesh, pathfinding', navMesh, pathfinding);
+
+      set(({ env }) => ({ env: updateLookup(envKey, env, () => ({ pathfinding })) }));
       get().api.setReady(envKey, true);
     },
     updateRoom: (def) => {
@@ -88,6 +93,7 @@ interface EnvItem {
   navReady$: ReplaySubject<boolean>;
   /** For debounced nav updates */
   navUpdatesSub: Subscription;
+  pathfinding: Pathfinding;
 }
 
 interface RoomItem {
