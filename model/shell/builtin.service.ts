@@ -34,6 +34,7 @@ export class BuiltinService {
           case 'sleep': await this.sleep(args); break;
           case 'throttle': this.throttle(process, args); break;
           case 'true': break;
+          case 'way': this.way(process, args); break;
           default: throw testNever(command);
         }
         removeCleanup();
@@ -234,6 +235,16 @@ export class BuiltinService {
       internal: true,
     });
   }
+
+  /**
+   * TODO name/colour/highlight/direct/mutate/remove ways
+   */
+  private way({ pid }: Process, args: string[]) {
+    /**
+     * Expect single arg i.e. var pointing towards path.
+     * Construct graphical representation of it.
+     */
+  }
 }
 
 export const builtins = {
@@ -261,6 +272,8 @@ export const builtins = {
   throttle: true,
   /** Exit with code 0 */
   true: true,
+  /** Show/hide nav paths */
+  way: true,
 };
 
 export type BuiltinKey = keyof typeof builtins;
