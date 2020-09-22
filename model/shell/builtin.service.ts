@@ -6,6 +6,7 @@ import { parseService } from "./parse.service";
 import { processService as ps} from './process.service';
 import { ShError, breakError, continueError } from "./semantics.service";
 import { varService, alphaNumericRegex, throttleVarName } from "./var.service";
+import { geomService } from "@model/geom/geom.service";
 
 export class BuiltinService {
 
@@ -147,19 +148,30 @@ export class BuiltinService {
   }
 
   private async nav({ pid }: Process, args: string[]) {
-    if (args.length !== 2) {
-      throw new ShError(`usage \`nav p q\``, 1);
+    if (!(args.length === 2 || (args.length === 4 && args[2] === 'as'))) {
+      throw new ShError(`usage \`nav p q\` or \`nav p q as r\``, 1);
     }
-   
     const p = varService.lookupVar(pid, args[0]);
     const q = varService.lookupVar(pid, args[1]);
     const envKey = ps.getEnvKey(pid);
 
-    const { navPath, error } = await useEnvStore.getState().api.requestNavPath(envKey, p, q);
+    if (!geomService.isVectorJson(p) || !geomService.isVectorJson(p)) {
+      throw new ShError(`usage \`nav p q\` or \`nav p q as r\` where p, q are point-valued vars`, 1); 
+    }
+
+    const { navPath, error } = await useEnvStore.getState().api
+      .requestNavPath(envKey, { x: p.x, y: p.y }, { x: q.x, y: q.y });
     if (error) {
       throw new ShError(`failed with error: ${error}`, 1);
     }
-    console.log('receivedNavPath', navPath);
+    // console.log('received navPath', navPath);
+
+    const { fdToOpen } = ps.getProcess(pid);
+    if (args.length === 2) {
+      fdToOpen[1].write(navPath);
+    } else {
+      varService.assignVar(pid, { varName: args[3], value: navPath });
+    }
   }
 
   private async read({ pid, sessionKey, fdToOpen, cleanups }: Process, args: string[]) {

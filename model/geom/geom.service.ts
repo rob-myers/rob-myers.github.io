@@ -160,6 +160,10 @@ class GeomService {
     return outsetEdges;
   }
 
+  isVectorJson(p: any) {
+    return p && (typeof p.x === 'number') && (typeof p.y === 'number');
+  }
+
   projectBox3XY({ min, max }: THREE.Box3): Geom.Rect {
     return new Geom.Rect(
       Number(min.x.toFixed(2)),

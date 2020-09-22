@@ -15,19 +15,16 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > spawn an actor at a position
 - [ ] onclick floor show cube
 - [ ] `World` should fade-in
+- [ ] given line compute navRect intersections
+  > should always know which navRect agent is in
 
-- [ ] navPath informs us which navrect we're in
-  > corner point + direction yields rect
-  > intermediate rects via rect-raytrace (lazily)
-
-- [ ] can query polyanya in webworker and display navpath
+- [ ] can display navpath
+- [x] `nav` builtin queries three-pathfinding in webworker and receives navpath
   > create navworker
   > can add/remove navigable
-  > can query navpath
-  > can display navpath
+  > can query navpath via builtin `nav`
 
-- [ ] fix polyanya by using delaunay triangulation
-
+- [x] abandon polyanya, use three-pathfinding instead
 - [x] `Env` persisted via react-reverse-portal
 - [x] cleanup polyanya interface
 - [x] can configure iterator delay via builtin `throttle`
