@@ -11211,6 +11211,11 @@ text-table@^0.2.0:
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
 
+three-pathfinding@^0.12.1:
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/three-pathfinding/-/three-pathfinding-0.12.1.tgz#d776bddb1aace0843c1f66a22d7c19d4895c0add"
+  integrity sha512-9xlydK+kkjL8PxuXh1OhtOyMrrd76HfWIYkhqv8kQBm4xHY5feCVZqyfCOcOrSEAldh3tlyj48SSJAFnc5rPmw==
+
 three@^0.120.0:
   version "0.120.0"
   resolved "https://registry.yarnpkg.com/three/-/three-0.120.0.tgz#238ab7a9e5d92af6bab3d257ea2b1891c90aef63"
