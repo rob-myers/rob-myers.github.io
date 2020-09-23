@@ -15,7 +15,7 @@ declare module 'three-pathfinding' {
 
   class PathfindingHelper extends THREE.Object3D {
 
-    setPath(path: Vector3[]): this;
+    setPath(path: THREE.Vector3[]): this;
     setPlayerPosition(position: THREE.Vector3): this;
     setTargetPosition(position: THREE.Vector3): this;
     setNodePosition(position: THREE.Vector3): this;

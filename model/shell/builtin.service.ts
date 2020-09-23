@@ -1,4 +1,4 @@
-import { testNever, pause } from "@model/generic.model";
+import { testNever } from "@model/generic.model";
 import { Process } from "@store/shell.store";
 import useEnvStore from '@store/env.store';
 import * as Sh from "./parse.service";
@@ -209,15 +209,15 @@ export class BuiltinService {
   }
   
   private async say({ fdToOpen, cleanups }: Process, args: string[]) {
-    const { _: operands, v } = parseService.getOpts(args, { string: ['v']  });
+    const { _: operands, voice, v } = parseService.getOpts(args, { string: ['voice', 'v'] });
 
-    if (v === '?') {// List available voices.
+    if (voice || v === '?') {// List available voices
       return voiceDevice.getAllVoices().forEach(voice => fdToOpen[1].write(voice));
     }
     
     await new Promise(async (resolve, reject) => {
       cleanups.push(
-        voiceDevice.addVoiceCommand(operands.join(' '), resolve, v),
+        voiceDevice.addVoiceCommand(operands.join(' '), resolve, voice || v),
         () => reject(null),
       );
     });
@@ -254,13 +254,29 @@ export class BuiltinService {
   }
 
   /**
-   * TODO name/colour/highlight/direct/mutate/remove ways
+   * TODO can remove/name/list/colour/highlight/direct/mutate ways
    */
   private way({ pid }: Process, args: string[]) {
-    /**
-     * Expect single arg i.e. var pointing towards path.
-     * Construct graphical representation of it.
-     */
+    const { _: operands, clear, c } = parseService.getOpts(args, { boolean: ['clear', 'c'] });
+    if (operands.length > 1) {
+      throw new ShError('usage `way [opts]` or `way [opts] p`', 1);
+    }
+    if (clear || c) {
+      // TODO clear all or named paths
+    }
+    if (!operands.length) {
+      return;
+    }
+
+    const p = varService.lookupVar(pid, operands[0]);
+    if (p instanceof Array && p.every(p => geomService.isVectorJson(p))) {
+      const obj3d = geomService.createPath(p);
+      /**
+       * TODO attach to world via worldDevice
+       */
+    } else {
+      throw new ShError('usage `way [opts] p` where p is a path-valued var', 1);
+    }
   }
 }
 

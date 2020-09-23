@@ -12,6 +12,7 @@ import { NavWorker, awaitWorker } from '@nav/nav.msg';
 export interface State {
   env: KeyedLookup<Environment>;
   navWorker: null | NavWorker;
+  /** Portal nodes for mounted `Env`s */
   envPortal: KeyedLookup<EnvPortal>;
   api: {
     /** Also use envKey as portalKey */
@@ -37,9 +38,19 @@ export interface State {
 }
 
 export interface Environment {
+  /** Environment key */
   key: string;
+  /** Should the walls be really high? */
   highWalls: boolean;
+  /**
+   * World can send click events to builtins.
+   * Builtins can messages which change the world.
+   */
   worldDevice: FsFile;
+  /**
+   * Used to trigger navmesh recomputation.
+   * TODO use a Subject instead?
+   */
   roomsUpdatedAt: number;
 }
 
@@ -49,6 +60,7 @@ interface EnvDef {
 }
 
 interface EnvPortal {
+  /** Environment key */
   key: string;
   portalNode: portals.HtmlPortalNode;
 }

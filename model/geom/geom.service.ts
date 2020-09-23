@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { PathfindingHelper } from "three-pathfinding";
 import polygonClipping from 'polygon-clipping';
 import rectDecompose from 'rectangle-decomposition';
 import maximalMatching from 'bipartite-matching';
@@ -41,6 +42,12 @@ class GeomService {
           : [],
         [] as Geom.Vector[],
     );
+  }
+
+  createPath(input: Geom.VectorJson[]) {
+    const path = new PathfindingHelper;
+    path.setPath(input.map(p => new Vector3(p.x, p.y, 0.5)));
+    return path;
   }
 
   /**

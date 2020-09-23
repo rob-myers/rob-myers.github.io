@@ -112,7 +112,7 @@ export interface ProcessGroup {
 }
 
 const useStore = create<State>(devtools((set, get) => {
-  const nullFile = fileService.createFsFile('/dev/null', new ShellStream(), new ShellStream());
+  const nullFile = fileService.createFsFile('/dev/null', new ShellStream, new ShellStream);
 
   return {
     nextTtyId: 1,
