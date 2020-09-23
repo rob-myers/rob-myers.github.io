@@ -272,10 +272,6 @@ export class BuiltinService {
     if (p instanceof Array && p.every(p => geomService.isVectorJson(p))) {
       const { worldDevice } = ps.getSession(sessionKey);
       worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: p });
-      /**
-       * TODO create navpath visulation somewhere...
-       */
-      // const object3d = geomService.createPath(p);
     } else {
       throw new ShError('usage `way [opts] p` where p is a path-valued var', 1);
     }

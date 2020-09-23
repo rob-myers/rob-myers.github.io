@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { PathfindingHelper } from "three-pathfinding";
+import { MeshLineMaterial, MeshLine } from 'three.meshline';
 import polygonClipping from 'polygon-clipping';
 import rectDecompose from 'rectangle-decomposition';
 import maximalMatching from 'bipartite-matching';
@@ -12,6 +12,10 @@ import { Triple } from "@model/generic.model";
 import { Geometry, Vector3, Face3, Mesh } from "three";
 
 class GeomService {
+
+  private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
+  private whiteColor = new THREE.Color('#ffffff');
+  private lineMaterial = new MeshLineMaterial( { color: this.whiteColor, lineWidth: 0.02 } );
 
   /** Multipolygon must be rectilinear with integer-valued coords. */
   private computeIntegerRectPartition({ outline, holes }: Geom.Polygon): Geom.Rect[] {
@@ -44,10 +48,33 @@ class GeomService {
     );
   }
 
-  createPath(input: Geom.VectorJson[]) {
-    const path = new PathfindingHelper;
-    path.setPath(input.map(p => new Vector3(p.x, p.y, 0.5)));
-    return path;
+  createCube(p: Vector3, dim = 0.05) {
+    const mesh = new Mesh(
+      new THREE.BoxGeometry(dim, dim, dim),
+      this.whiteMaterial,
+    );
+    mesh.position.set(p.x, p.y, p.z);
+    return mesh;
+  }
+
+  createPolyLine(points: Geom.VectorJson[], height = 0.5) {
+    const meshLine = new MeshLine();
+    meshLine.setPoints(points.map(p => new Vector3(p.x, p.y, height)));
+    return new THREE.Mesh(meshLine, this.lineMaterial);
+  }
+
+  createGroup(objects: THREE.Object3D[], name?: string) {
+    const group = new THREE.Group();
+    objects.forEach(o => group.add(o));
+    name && (group.name = name);
+    return group;
+  }
+
+  createPath(points: Geom.VectorJson[]) {
+    const vectors = points.map(p => new Vector3(p.x, p.y, 0.2));
+    const cubes = vectors.map(v => this.createCube(v));
+    const polyLine = this.createPolyLine(points, 0.2);
+    return this.createGroup([...cubes, polyLine]);
   }
 
   /**

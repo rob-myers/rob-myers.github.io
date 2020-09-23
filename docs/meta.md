@@ -20,7 +20,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] given line compute navRect intersections
   > should always know which navRect agent is in
 
-- [ ] can display navpath
+- [x] can display navpath
   > use builtin `way p` which toggles visibility
 - [x] `nav` builtin queries three-pathfinding in webworker and receives navpath
   > create navworker
