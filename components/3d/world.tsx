@@ -1,5 +1,5 @@
 import { PerspectiveCamera, PCFSoftShadowMap } from 'three';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { Canvas, CanvasContext } from 'react-three-fiber';
 import { debounceTime, tap } from 'rxjs/operators';
 import { getWindow } from '@model/dom.model';
@@ -15,28 +15,27 @@ import css from './world.scss';
 
 const World: React.FC<Props> = ({ envName }) => {
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
-  const ctxt = useRef(null as null | CanvasContext);
   const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
+  const [ctxt, setCtxt] = useState(null as null | CanvasContext);
   const env = useEnvStore(({ env }) => env[envName]);
 
   useEffect(() => {
-    if (env) {
+    if (env && ctxt) {
       // Update shadows whenever a room changes
-      const shadowsSub = env.roomUpdated$.pipe(debounceTime(30), tap(_ => {
-        const gl = ctxt.current?.gl;
-        gl && (gl.shadowMap.needsUpdate = true);
-        gl && setTimeout(() => gl.shadowMap.needsUpdate = false);
+      const shadowsSub = env.updateShadows$.pipe(debounceTime(30), tap(_ => {
+        ctxt.gl.shadowMap.needsUpdate = true;
+        setTimeout(() => ctxt.gl.shadowMap.needsUpdate = false);
       })).subscribe();
 
       // Listen for messages from shell builtins
-      const writeHandler = handleWorldDeviceWrites(envName);
+      const writeHandler = handleWorldDeviceWrites(envName, ctxt.scene);
       const stopListening = env.worldDevice.iNode.onWrite((msg) => writeHandler(msg), false);
       return () => {
         stopListening();
         shadowsSub.unsubscribe();
       };
     }
-  }, [env]);
+  }, [env, ctxt]);
 
   return (
     <div className={css.root} >
@@ -51,7 +50,7 @@ const World: React.FC<Props> = ({ envName }) => {
             ct.gl.shadowMap.enabled = true;
             ct.gl.shadowMap.autoUpdate = false;
             ct.gl.shadowMap.type = PCFSoftShadowMap;
-            ctxt.current = ct;
+            setCtxt(ct);
           }}
         >
 

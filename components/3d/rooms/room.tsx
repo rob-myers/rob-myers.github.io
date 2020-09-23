@@ -45,8 +45,8 @@ const Room: React.FC<Props> = (props) => {
         const navRects = planes.map(x => geomService.projectBox3XY(bbox.setFromObject(x)));
         // console.log(navRects);
         envApi.updateNavWorkerRoom({ envKey: envName, roomType: props.id, roomUid: mesh.current!.uuid, navRects });
+        // TODO update shadows if inners have them
       }});
-    // channel.current.next({ key: 'inner-updated' }); // Initialise
 
     /**
      * Handle navmesh clicks
@@ -74,13 +74,10 @@ const Room: React.FC<Props> = (props) => {
     root.current!.rotation.z = propsToAngle(props);
     root.current!.position.set(props.x || 0, props.y || 0, 0);
     useEnvStore.getState().api.roomUpdated(props.envName!);
-    // Update navmesh too
-    channel.current.next({ key: 'inner-updated' });
+    channel.current.next({ key: 'inner-updated' }); // Update navmesh too
   }, [angle, props.x, props.y]);
 
   const children = useMemo(() => {
-    // Update navmesh too
-    // channel.current.next({ key: 'inner-updated' });
     return React.Children.map(props.children, child => 
       React.isValidElement(child)
         ? React.cloneElement(child, {

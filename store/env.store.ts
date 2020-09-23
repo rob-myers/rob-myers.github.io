@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import * as portals from 'react-reverse-portal';
-import { Subject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 
 import { KeyedLookup } from '@model/generic.model';
 import { FsFile } from '@model/shell/file.model';
@@ -55,7 +55,7 @@ export interface Environment {
    * Navmesh recomputation is handled elsewhere i.e.
    * each `Room` talks to the nav webworker.
    */
-  roomUpdated$: Subject<{ key: 'room-updated' }>;
+  updateShadows$: ReplaySubject<{ key: 'room-updated' }>;
 }
 
 interface EnvDef {
@@ -99,7 +99,7 @@ const useStore = create<State>(devtools((set, get) => ({
           key: envKey,
           highWalls,
           worldDevice,
-          roomUpdated$: new Subject,
+          updateShadows$: new ReplaySubject(1),
         }, env),
       }));
 
@@ -124,7 +124,7 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     roomUpdated: (envKey) => {
-      get().env[envKey].roomUpdated$.next({ key: 'room-updated' });
+      get().env[envKey].updateShadows$.next({ key: 'room-updated' });
     },
 
     setHighWalls: (envKey, next) => {

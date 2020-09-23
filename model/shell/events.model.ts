@@ -21,7 +21,7 @@ interface ShowNavPath {
   points: Geom.VectorJson[];
 }
 
-export function handleWorldDeviceWrites(envKey: string) {
+export function handleWorldDeviceWrites(envKey: string, scene: THREE.Scene) {
   return (msg: MessageToWorld) => {
     console.log('worldDevice was written to', msg);
   };
