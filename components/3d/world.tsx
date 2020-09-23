@@ -1,7 +1,9 @@
 import { PerspectiveCamera, PCFSoftShadowMap } from 'three';
 import { useRef, useEffect } from 'react';
 import { Canvas, CanvasContext } from 'react-three-fiber';
+import { debounceTime, tap } from 'rxjs/operators';
 import { getWindow } from '@model/dom.model';
+import { handleWorldDeviceWrites } from '@model/shell/events.model';
 import useGeomStore from '@store/geom.store';
 import useEnvStore from '@store/env.store';
 import CameraControls from './controls/camera-controls';
@@ -18,12 +20,23 @@ const World: React.FC<Props> = ({ envName }) => {
   const env = useEnvStore(({ env }) => env[envName]);
 
   useEffect(() => {
-    const gl = ctxt.current?.gl;
-    if (gl) {
-      gl.shadowMap.needsUpdate = true; // Hacky removal
-      setTimeout(() => gl.shadowMap.needsUpdate = false);
+    if (env) {
+      // Update shadows whenever a room changes
+      const shadowsSub = env.roomUpdated$.pipe(debounceTime(30), tap(_ => {
+        const gl = ctxt.current?.gl;
+        gl && (gl.shadowMap.needsUpdate = true);
+        gl && setTimeout(() => gl.shadowMap.needsUpdate = false);
+      })).subscribe();
+
+      // Listen for messages from shell builtins
+      const writeHandler = handleWorldDeviceWrites(envName);
+      const stopListening = env.worldDevice.iNode.onWrite((msg) => writeHandler(msg), false);
+      return () => {
+        stopListening();
+        shadowsSub.unsubscribe();
+      };
     }
-  }, [env?.roomsUpdatedAt]);
+  }, [env]);
 
   return (
     <div className={css.root} >

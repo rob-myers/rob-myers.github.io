@@ -1,6 +1,7 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import * as portals from 'react-reverse-portal';
+import { Subject } from 'rxjs';
 
 import { KeyedLookup } from '@model/generic.model';
 import { FsFile } from '@model/shell/file.model';
@@ -8,8 +9,6 @@ import * as Geom from '@model/geom/geom.model'
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import useShellStore from './shell.store';
 import { NavWorker, awaitWorker } from '@nav/nav.msg';
-import { Subscription } from 'rxjs';
-import { handleWorldDeviceWrites } from '@model/shell/events.model';
 
 export interface State {
   env: KeyedLookup<Environment>;
@@ -51,11 +50,12 @@ export interface Environment {
    */
   worldDevice: FsFile;
   /**
-   * Used to trigger navmesh recomputation.
-   * TODO use a Subject instead?
+   * Messages are sent by `Room`s when they're updated.
+   * This triggers shadow recomputation in `World`.
+   * Navmesh recomputation is handled elsewhere i.e.
+   * each `Room` talks to the nav webworker.
    */
-  roomsUpdatedAt: number;
-  cleanups: (() => void)[];
+  roomUpdated$: Subject<{ key: 'room-updated' }>;
 }
 
 interface EnvDef {
@@ -93,17 +93,13 @@ const useStore = create<State>(devtools((set, get) => ({
        */
       const { toSessionKey, session } = useShellStore.getState();
       const { worldDevice } = session[toSessionKey[envKey]];
-      const writeHandler = handleWorldDeviceWrites(envKey);
 
       set(({ env }) => ({
         env: addToLookup({
           key: envKey,
           highWalls,
           worldDevice,
-          roomsUpdatedAt: Date.now(),
-          cleanups: [
-            worldDevice.iNode.onWrite((msg) => writeHandler(msg), false),
-          ],
+          roomUpdated$: new Subject,
         }, env),
       }));
 
@@ -112,11 +108,7 @@ const useStore = create<State>(devtools((set, get) => ({
     },
     
     removeEnv: (envKey) => {
-      set(({ env }) => {
-        env[envKey]?.cleanups.forEach(cleanup => cleanup());
-        return { env: removeFromLookup(envKey, env) };
-      });
-      
+      set(({ env }) => ({ env: removeFromLookup(envKey, env) }));
       get().navWorker!.postMessage({ key: 'remove-env', envKey });
     },
 
@@ -132,11 +124,7 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     roomUpdated: (envKey) => {
-      set(({ env }) => ({
-        env: updateLookup(envKey, env, () => ({
-          roomsUpdatedAt: Date.now(),
-        })),
-      }));
+      get().env[envKey].roomUpdated$.next({ key: 'room-updated' });
     },
 
     setHighWalls: (envKey, next) => {
