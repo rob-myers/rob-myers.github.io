@@ -8,6 +8,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] try to remove `Observable<ProcessAct>` syntax
 - [ ] fix mobile touch in `three/controls` (perhaps devtools issue)
 
+- [ ] prevent recursive background processes i.e. tie to parse tree
+
 - [ ] `shift` builtin for functions
 - [ ] `steiner` labels a point in the world
   > it could track a changing variable

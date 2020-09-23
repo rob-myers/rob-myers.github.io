@@ -56,7 +56,7 @@ const Room: React.FC<Props> = (props) => {
         // console.log({ clickedRoom: e });
         const position = geomService.projectXY(e.point);
         const event: NavmeshClick = { key: 'nav-click', x: position.x, y: position.y };
-        env.worldDevice.write(event);
+        env.worldDevice.iNode.internalWrite(event);
         e.stopPropagation();
       }
     };

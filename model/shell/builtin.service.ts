@@ -256,7 +256,7 @@ export class BuiltinService {
   /**
    * TODO can remove/name/list/colour/highlight/direct/mutate ways
    */
-  private way({ pid }: Process, args: string[]) {
+  private way({ sessionKey, pid }: Process, args: string[]) {
     const { _: operands, clear, c } = parseService.getOpts(args, { boolean: ['clear', 'c'] });
     if (operands.length > 1) {
       throw new ShError('usage `way [opts]` or `way [opts] p`', 1);
@@ -270,10 +270,12 @@ export class BuiltinService {
 
     const p = varService.lookupVar(pid, operands[0]);
     if (p instanceof Array && p.every(p => geomService.isVectorJson(p))) {
-      const obj3d = geomService.createPath(p);
+      const { worldDevice } = ps.getSession(sessionKey);
+      worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: p });
       /**
-       * TODO attach to world via worldDevice
+       * TODO create navpath visulation somewhere...
        */
+      // const object3d = geomService.createPath(p);
     } else {
       throw new ShError('usage `way [opts] p` where p is a path-valued var', 1);
     }

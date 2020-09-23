@@ -8,11 +8,10 @@ import { FromFdToOpenKey } from '@model/shell/process.model';
 import { FileWithMeta } from '@model/shell/parse.service';
 import { ToProcVar, NamedFunction } from '@model/shell/var.model';
 import { processService } from '@model/shell/process.service';
-import { ShellStream } from '@model/shell/shell.stream';
 import { FsFile } from "@model/shell/file.model";
 import { addToLookup, removeFromLookup } from './store.util';
 import { fileService } from '@model/shell/file.service';
-import { WorldEvent } from '@model/shell/events.model';
+import { MessageFromWorld, MessageToWorld } from '@model/shell/events.model';
 
 export interface State {
   /** Next tty identifier, inducing e.g. tty-2 and sessionKey */
@@ -56,7 +55,7 @@ export interface Session {
    */
   fgStack: number[];
   /** For sending/receiving world events */
-  worldDevice: FsFile<WorldEvent>;
+  worldDevice: FsFile<MessageFromWorld, MessageToWorld>;
 }
 
 export interface Process {
@@ -112,7 +111,8 @@ export interface ProcessGroup {
 }
 
 const useStore = create<State>(devtools((set, get) => {
-  const nullFile = fileService.createFsFile('/dev/null', new ShellStream, new ShellStream);
+  // 2 disconnected streams
+  const nullFile = fileService.makeDevice('/dev/null');
 
   return {
     nextTtyId: 1,
@@ -139,16 +139,15 @@ const useStore = create<State>(devtools((set, get) => {
         const ttyFilename = `tty-${ttyId}`;
         const sessionKey = `root@${ttyFilename}`;
         const canonicalPath = `/dev/${ttyFilename}`;
-        // 2 separate streams that will be connected via TtyXterm and TtyShell
-        const ttyFile = fileService.createFsFile(
-          canonicalPath,
-          new ShellStream(),
-          new ShellStream(),
-          true,
-        );
+        // 2 streams that'll be connected via TtyXterm and TtyShell
+        const ttyFile = fileService.makeTty(canonicalPath);
         const ttyShell = new TtyShell(sessionKey, canonicalPath, ttyFile);
-        // A wire means readable/writable stream are the same
-        const worldDevice = fileService.makeWire(`/dev/world-${ttyId}`);
+        /**
+         * 2 streams where:
+         * - builtin's can write to mutate the world.
+         * - builtins can read world events.
+         */
+        const worldDevice = fileService.makeDevice(`/dev/world-${ttyId}`);
 
         set(({ toSessionKey, nextProcId: sid, nextTtyId, session, fs, ofd }: State) => ({
           toSessionKey: { ...toSessionKey, [alias]: sessionKey },
@@ -162,8 +161,12 @@ const useStore = create<State>(devtools((set, get) => {
           }, session),
           nextProcId: sid + 1, // We'll create a process directly below
           nextTtyId: nextTtyId + 1,
-          fs: addToLookup(worldDevice, addToLookup(ttyFile, fs)),
-          // NOTE we're also using /dev/tty-${ttyId} to identify an open file description
+          fs: {
+            ...fs,
+            [ttyFile.key]: ttyFile,
+            [worldDevice.key]: worldDevice,
+          },
+          // NOTE we also use /dev/tty-${ttyId} to identify an open file description
           ofd: addToLookup(new OpenFileDescription(canonicalPath, ttyFile), ofd),
         }));
 

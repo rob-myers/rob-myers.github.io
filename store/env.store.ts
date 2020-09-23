@@ -8,6 +8,8 @@ import * as Geom from '@model/geom/geom.model'
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import useShellStore from './shell.store';
 import { NavWorker, awaitWorker } from '@nav/nav.msg';
+import { Subscription } from 'rxjs';
+import { handleWorldDeviceWrites } from '@model/shell/events.model';
 
 export interface State {
   env: KeyedLookup<Environment>;
@@ -43,8 +45,9 @@ export interface Environment {
   /** Should the walls be really high? */
   highWalls: boolean;
   /**
-   * World can send click events to builtins.
-   * Builtins can messages which change the world.
+   * Originally created in shell.store `Session`.
+   * - world can internally write click events to builtins.
+   * - builtins can write messages to change the world.
    */
   worldDevice: FsFile;
   /**
@@ -52,6 +55,7 @@ export interface Environment {
    * TODO use a Subject instead?
    */
   roomsUpdatedAt: number;
+  cleanups: (() => void)[];
 }
 
 interface EnvDef {
@@ -84,11 +88,12 @@ const useStore = create<State>(devtools((set, get) => ({
     createEnv: ({ envKey, highWalls }) => {
       /**
        * Child's initial useEffect runs before parent's,
-       * so we know the respective session exists.
+       * so respective session exists and contains `worldDevice`.
        * https://codesandbox.io/s/useeffect-timing-jvgip?file=/src/index.js
        */
       const { toSessionKey, session } = useShellStore.getState();
       const { worldDevice } = session[toSessionKey[envKey]];
+      const writeHandler = handleWorldDeviceWrites(envKey);
 
       set(({ env }) => ({
         env: addToLookup({
@@ -96,17 +101,21 @@ const useStore = create<State>(devtools((set, get) => ({
           highWalls,
           worldDevice,
           roomsUpdatedAt: Date.now(),
+          cleanups: [
+            worldDevice.iNode.onWrite((msg) => writeHandler(msg), false),
+          ],
         }, env),
       }));
 
-
+      // Also create an env in navigation webworker
       get().navWorker!.postMessage({ key: 'create-env', envKey });
     },
     
     removeEnv: (envKey) => {
-      set(({ env }) => ({
-        env: removeFromLookup(envKey, env),
-      }));
+      set(({ env }) => {
+        env[envKey]?.cleanups.forEach(cleanup => cleanup());
+        return { env: removeFromLookup(envKey, env) };
+      });
       
       get().navWorker!.postMessage({ key: 'remove-env', envKey });
     },

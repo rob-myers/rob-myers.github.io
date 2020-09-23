@@ -6,9 +6,10 @@ import { ShellStream } from './shell.stream';
 export class FileService {
 
   /**
-   * Create a `ShellFile` wrapped to be mounted at `absPath`.
+   * An `FsFile` is a `ShellFile` wrapped together a `key`,
+   * i.e. the absolute path at which it will be mounted.
    */
-  createFsFile<R, W>(
+  private createFsFile<R, W>(
     absPath: string,
     /** We should read from this stream */
     readable: ShellStream<R>,
@@ -38,8 +39,16 @@ export class FileService {
       : fd;
   }
 
+  makeDevice(absPath: string) {
+    return this.createFsFile(absPath, new ShellStream, new ShellStream);
+  }
+  
+  makeTty(absPath: string) {
+    return this.createFsFile(absPath, new ShellStream, new ShellStream, true);
+  }
+
   makeWire(absPath: string) {
-    const stream = new ShellStream();
+    const stream = new ShellStream;
     return this.createFsFile(absPath, stream, stream);
   }
 
