@@ -51,22 +51,24 @@ const World: React.FC<Props> = ({ envName }) => {
             setCtxt(ct);
           }}
         >
-
           <CameraControls />
-
-          <ambientLight
-            color="white"
-            intensity={1}
-          />
-          <pointLight
-            position={[0, -4, 8]}
-            intensity={0.4}
-            castShadow
-          />
-          
           <Grid />
+          <group name="indicators"/>
+          <group name="actors"/>
 
           <FirstLevel envName={envName} />
+
+          <group name="lights">
+            <ambientLight
+              color="white"
+              intensity={1}
+            />
+            <pointLight
+              position={[0, -4, 8]}
+              intensity={0.4}
+              castShadow
+            />
+          </group>
 
         </Canvas>
       }

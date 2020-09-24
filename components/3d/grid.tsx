@@ -64,6 +64,7 @@ const Grid: React.FC = () => {
   return (
     <mesh
       ref={gridMesh}
+      name="grid"
       position={[0, 0, 0]}
       scale={[1, 1, 1]}
       rotation={[Math.PI/2, 0, 0]}

@@ -23,7 +23,10 @@ const Level: React.FC<Props> = (props) => {
     [props.children]);
 
   return (
-    <group ref={level}>
+    <group
+      ref={level}
+      name="level"
+    >
      {env && children}
     </group>
   );
