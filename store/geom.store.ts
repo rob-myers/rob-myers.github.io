@@ -232,6 +232,7 @@ const useStore = create<State>(devtools((set, get) => ({
           plane.receiveShadow = true;
           plane.position.set(cx, cy, 0);
           navMesh.add(plane);
+          // TODO use three.meshline instead
           // plane.add(new THREE.LineSegments(// Debug only
           //   new THREE.EdgesGeometry(plane.geometry),
           //   new THREE.LineBasicMaterial( { color: 0xffffff } ),

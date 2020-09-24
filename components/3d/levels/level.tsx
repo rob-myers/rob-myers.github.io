@@ -3,7 +3,7 @@ import { isMeshNode } from "@model/three/three.model";
 import useGeomStore from '@store/geom.store';
 import useEnvStore from '@store/env.store';
 
-const Rooms: React.FC<Props> = (props) => {
+const Level: React.FC<Props> = (props) => {
   const level = useRef<THREE.Group>(null);
   const env = useEnvStore(({ env }) => env[props.envName]);
 
@@ -33,4 +33,4 @@ interface Props {
   envName: string;
 }
 
-export default Rooms;
+export default Level;
