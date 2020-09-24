@@ -5,7 +5,7 @@ import * as Sh from "./parse.service";
 import { parseService } from "./parse.service";
 import { processService as ps} from './process.service';
 import { ShError, breakError, continueError } from "./semantics.service";
-import { varService, alphaNumericRegex, throttleVarName } from "./var.service";
+import { varService, alphaNumericRegex, iteratorDelayVarName } from "./var.service";
 import { geomService } from "@model/geom/geom.service";
 import { voiceDevice } from "./voice.device";
 
@@ -24,18 +24,20 @@ export class BuiltinService {
       try {
         switch (command) {
           case 'break': this.break(node, args); break;
+          case 'call': await this.call(process, args); break;
           case 'click': await this.click(process, args); break;
           case 'continue': this.continue(node, args); break;
           case 'def': await this.def(process, args); break;
+          case 'delay': this.delay(process, args); break;
           case 'echo': await this.echo(process, args); break;
           case 'false': node.exitCode = 1; break;
           case 'get': this.get(process, args); break;
+          case 'goto': this.goto(process, args); break;
           case 'nav': await this.nav(process, args); break;
           case 'read': await this.read(process, args); break;
           case 'say': await this.say(process, args); break;
           case 'sleep': await this.sleep(process, args); break;
           case 'spawn': await this.spawn(process, args); break;
-          case 'throttle': this.throttle(process, args); break;
           case 'true': break;
           case 'way': this.way(process, args); break;
           default: throw testNever(command);
@@ -43,9 +45,7 @@ export class BuiltinService {
         removeCleanup();
         resolve();
       } catch (e) {// Must forward errors thrown by builtins
-        if (e instanceof ShError) {
-          e.message = `${command}: ${e.message}` 
-        }
+        e.message = `${command}: ${e.message}` 
         reject(e);
       }
     });
@@ -107,6 +107,17 @@ export class BuiltinService {
     });
   }
 
+  private async call({ pid }: Process, [funcDef, ...rest]: string[]) {
+    if (!funcDef) {
+      throw new ShError('usage `do \'(vars, args) => ... \' [val1 ... valN]`', 1);
+    }
+    const func = Function('v', `return ${funcDef}`);
+    const result = await func()(varService.createVarProxy(pid), rest);
+    if (result !== undefined) {
+      ps.getProcess(pid).fdToOpen[1].write(result);
+    }
+  }
+
   /**
    * Writes arguments, which includes any options.
    */
@@ -149,6 +160,10 @@ export class BuiltinService {
     } catch (e) {
       throw new ShError(`path ${srcPath} not found`, 1);
     }
+  }
+
+  private async goto({}: Process, args: string[]) {
+    // TODO
   }
 
   private async nav({ pid }: Process, args: string[]) {
@@ -256,13 +271,13 @@ export class BuiltinService {
     worldDevice.write({ key: 'spawn-actor', name: args[0], position });
   }
 
-  private throttle({ pid }: Process, args: string[]) {
+  private delay({ pid }: Process, args: string[]) {
     const permitted = { 0.25: true, 0.5: true, 1: true };
     if (args.length !== 1 || !(args[0] in permitted)) {
-      throw new ShError(`usage \`throttle {0.25,0.5,1}\``, 1);
+      throw new ShError(`usage \`delay t where t in [0.25, 0.5, 1]\``, 1);
     }
     varService.assignVar(pid, {
-      varName: throttleVarName,
+      varName: iteratorDelayVarName,
       value: Number(args[0]),
       internal: true,
     });
@@ -296,6 +311,8 @@ export class BuiltinService {
 export const builtins = {
   /** Exit for, while or until */
   break: true,
+  /** Immediately invoke a javascript function */
+  call: true,
   /** Write next navmesh click to stdout */
   click: true,
   /** Continue for, while or until */
@@ -308,6 +325,8 @@ export const builtins = {
   false: true,
   /** Write a js variable's value to stdout */
   get: true,
+  /** Make actor goto point or follow path */
+  goto: true,
   /** Find optimal navpath and write to stdout  */
   nav: true,
   /** Read from stdin and store in provided variable */
@@ -318,11 +337,14 @@ export const builtins = {
   sleep: true,
   /** Spawn an actor */
   spawn: true,
-  /** set throttling of subsequent iterator iterations  */
-  throttle: true,
+  /** Set delays of subsequent iterator iterations */
+  delay: true,
   /** Exit with code 0 */
   true: true,
-  /** Show/hide nav paths */
+  /**
+   * Show/hide nav paths
+   * TODO remove (instead we'll `nav p q >/dev/world`)
+   */
   way: true,
 };
 

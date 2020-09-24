@@ -12,7 +12,7 @@ import { NamedFunction } from './var.model';
 import * as Sh from '@model/shell/parse.service';
 import { parseService } from '@model/shell/parse.service';
 import { expandService as expand, expandService } from './expand.service';
-import { varService as vs, throttleVarName } from './var.service';
+import { varService as vs, iteratorDelayVarName } from './var.service';
 import { processService as ps } from './process.service';
 import { builtinService as bs } from './builtin.service';
 import { srcService } from './src.service';
@@ -397,8 +397,8 @@ class SemanticsService {
           if (bs.isBuiltinCommand(command)) {
             await bs.runBuiltin(node, command, cmdArgs);
           } else if (func = vs.getFunction(pid, command)) {
-            // Invoke function with local variables
             try {
+              // Invoke function with local variables
               vs.pushVarScope(pid);
               await sem.assignVars(node, true);
               await ps.invokeFunction(pid, func, cmdArgs);
@@ -1229,7 +1229,7 @@ class SemanticsService {
   private handleInternalError(node: Sh.ParsedSh, e: any) {
     console.error(`${node.meta.sessionKey}: pid ${node.meta.pid}: internal error: ${e.message}`);
     console.error(e);
-    ps.warn(node.meta.pid, `internal error: ${e.message}`);
+    ps.warn(node.meta.pid, e.message);
     node.exitCode = 2;
     ps.setExitCode(node.meta.pid, node.exitCode);
   }
@@ -1345,7 +1345,7 @@ class SemanticsService {
 
   private async throttleIterator(node: Sh.ParsedSh) {
     if (node.lastIterated) {
-      const throttleMs = (vs.lookupVar(node.meta.pid, throttleVarName) || 1) * 1000;
+      const throttleMs = (vs.lookupVar(node.meta.pid, iteratorDelayVarName) || 1) * 1000;
       const sleepMs = Math.max(0, throttleMs - (Date.now() - node.lastIterated));
       await ps.sleep(node.meta.pid, sleepMs);
     }

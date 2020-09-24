@@ -334,6 +334,6 @@ class VarService {
 
 }
 
-export const throttleVarName = '__THROTTLE__';
+export const iteratorDelayVarName = '__ITER_DELAY__';
 
 export const varService = new VarService;
