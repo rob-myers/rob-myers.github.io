@@ -46,7 +46,7 @@ export class BuiltinService {
         removeCleanup();
         resolve();
       } catch (e) {// Must forward errors thrown by builtins
-        e.message = `${command}: ${e.message}` 
+        e && (e.message = `${command}: ${e.message}`);
         reject(e);
       }
     });

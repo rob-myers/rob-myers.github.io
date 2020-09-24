@@ -30,8 +30,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > remove builtin `way`
   > general purpose builtin `entity` with subcommands `list`, `remove` etc.
 
-- [ ] `follow` command
-  > make an actor follow a path
+- [ ] `goto` command
+  > can `goto [path] bob`
+  > can `goto [point] bob` (does planning)
 - [x] `spawn` command
   > spawn an actor at a position
 
