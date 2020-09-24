@@ -21,8 +21,10 @@ const World: React.FC<Props> = ({ envName }) => {
     if (env && ctxt) {
       // Update shadows whenever a room changes
       const shadowsSub = env.updateShadows$.pipe(debounceTime(30), tap(_ => {
-        ctxt.gl.shadowMap.needsUpdate = true;
-        setTimeout(() => ctxt.gl.shadowMap.needsUpdate = false);
+        if (ctxt.gl) {
+          ctxt.gl.shadowMap.needsUpdate = true;
+          setTimeout(() => ctxt.gl.shadowMap.needsUpdate = false);
+        }
       })).subscribe();
 
       // Listen for messages from shell builtins
