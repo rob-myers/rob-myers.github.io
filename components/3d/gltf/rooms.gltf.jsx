@@ -70,6 +70,15 @@ export default function Model(props) {
             userData={{ name: 'sideboard' }}
           />
         </group>
+        <group name="actors">
+          <mesh
+            material={materials.actor}
+            geometry={nodes.bob.geometry}
+            name="bob"
+            position={[1.2, 0.2, 0]}
+            userData={{ name: 'bob' }}
+          />
+        </group>
       </scene>
     </group>
   )
