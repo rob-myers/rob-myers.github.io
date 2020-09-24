@@ -203,6 +203,14 @@ function tryJsonStringify(input: any) {
   } catch (e) {}
 }
 
+export function tryParseJson(input: any) {
+  try {
+    return JSON.parse(input);
+  } catch (e) {
+    return null;
+  }
+}
+
 export function isArrayOrObject(input: any) {
   return input instanceof Array ||
     (input && typeof input === 'object');

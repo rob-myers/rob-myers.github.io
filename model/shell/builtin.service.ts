@@ -1,4 +1,6 @@
 import { testNever } from "@model/generic.model";
+import { geomService } from "@model/geom/geom.service";
+import type * as Geom from '@model/geom/geom.model';
 import { Process } from "@store/shell.store";
 import useEnvStore from '@store/env.store';
 import * as Sh from "./parse.service";
@@ -6,7 +8,6 @@ import { parseService } from "./parse.service";
 import { processService as ps} from './process.service';
 import { ShError, breakError, continueError } from "./semantics.service";
 import { varService, alphaNumericRegex, iteratorDelayVarName } from "./var.service";
-import { geomService } from "@model/geom/geom.service";
 import { voiceDevice } from "./voice.device";
 
 export class BuiltinService {
@@ -32,7 +33,7 @@ export class BuiltinService {
           case 'echo': await this.echo(process, args); break;
           case 'false': node.exitCode = 1; break;
           case 'get': this.get(process, args); break;
-          case 'goto': this.goto(process, args); break;
+          case 'goto': await this.goto(process, args); break;
           case 'nav': await this.nav(process, args); break;
           case 'read': await this.read(process, args); break;
           case 'say': await this.say(process, args); break;
@@ -162,8 +163,49 @@ export class BuiltinService {
     }
   }
 
-  private async goto({}: Process, args: string[]) {
-    // TODO
+  private async getActorData(pid: number, name: string) {
+    const envKey = ps.getEnvKey(pid);
+    const actorData = useEnvStore.api.getActorData(envKey, name);
+    if (!actorData) {
+      throw new ShError(`actor "${name}" not found`, 1);
+    }
+    return actorData;
+  }
+
+  private async getNavPath(pid: number, p: Geom.VectorJson, q: Geom.VectorJson) {
+    const envKey = ps.getEnvKey(pid);
+    const { navPath, error } = await useEnvStore.api
+      .requestNavPath(envKey, { x: p.x, y: p.y }, { x: q.x, y: q.y });
+    if (error) {
+      throw new ShError(`failed with error: ${error}`, 1);
+    }
+    return navPath;
+  }
+
+  private async goto({ pid }: Process, [dst, actorName, ...rest]: string[]) {
+    if (!dst || !actorName || rest.length) {
+      throw new ShError('usage `goto p bob`ß', 1);
+    }
+    const actorData = await this.getActorData(pid, actorName);
+
+    if (dst.startsWith('[')) {
+      const path = geomService.tryParsePath(dst);
+      // TODO teleport then follow path
+    } else if (dst.startsWith('{')) {
+      const point = geomService.tryParsePoint(dst);
+      const navPath = await this.getNavPath(pid, actorData.position, point);
+      // TODO follow path
+    } else {
+      const value = varService.lookupVar(pid, dst);
+      if (geomService.isVectorJson(value)) {
+        const navPath = await this.getNavPath(pid, actorData.position, value);
+        // TODO follow path
+      } else if (geomService.isVectorJsonPath(value)) {
+        // TODO teleport then follow path
+      } else {
+        throw new ShError('usage `goto p bob` where p a point/path', 1);
+      }
+    }
   }
 
   private async nav({ pid }: Process, args: string[]) {
@@ -172,22 +214,15 @@ export class BuiltinService {
     }
     const p = varService.lookupVar(pid, args[0]);
     const q = varService.lookupVar(pid, args[1]);
-    const envKey = ps.getEnvKey(pid);
 
-    if (!geomService.isVectorJson(p) || !geomService.isVectorJson(p)) {
+    if (!geomService.isVectorJson(p) || !geomService.isVectorJson(q)) {
       throw new ShError(`usage \`nav p q\` or \`nav p q as r\` where p, q are point-valued vars`, 1); 
     }
-
-    const { navPath, error } = await useEnvStore.api
-      .requestNavPath(envKey, { x: p.x, y: p.y }, { x: q.x, y: q.y });
-    if (error) {
-      throw new ShError(`failed with error: ${error}`, 1);
-    }
+    const navPath = await this.getNavPath(pid, p, q);
     // console.log('received navPath', navPath);
 
-    const { fdToOpen } = ps.getProcess(pid);
     if (args.length === 2) {
-      fdToOpen[1].write(navPath);
+      ps.getProcess(pid).fdToOpen[1].write(navPath);
     } else {
       varService.assignVar(pid, { varName: args[3], value: navPath });
     }
@@ -287,24 +322,16 @@ export class BuiltinService {
    * TODO can remove/name/list/colour/highlight/direct/mutate ways
    */
   private way({ sessionKey, pid }: Process, args: string[]) {
-    const { _: operands, clear, c } = parseService.getOpts(args, { boolean: ['clear', 'c'] });
-    if (operands.length > 1) {
-      throw new ShError('usage `way [opts]` or `way [opts] p`', 1);
-    }
-    if (clear || c) {
-      // TODO clear all or named paths
-    }
-    if (!operands.length) {
-      return;
+    if (args.length > 1) {
+      throw new ShError('usage `way p`', 1);
     }
 
-    const p = varService.lookupVar(pid, operands[0]);
-    if (p instanceof Array && p.every(p => geomService.isVectorJson(p))) {
-      const { worldDevice } = ps.getSession(sessionKey);
-      worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: p });
-    } else {
+    const p = varService.lookupVar(pid, args[0]);
+    if (!geomService.isVectorJsonPath(p)) {
       throw new ShError('usage `way [opts] p` where p is a path-valued var', 1);
     }
+    const { worldDevice } = ps.getSession(sessionKey);
+    worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: p });
   }
 }
 

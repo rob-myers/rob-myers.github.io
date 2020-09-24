@@ -9,6 +9,8 @@ import * as Geom from '@model/geom/geom.model'
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import useShellStore from './shell.store';
 import { NavWorker, awaitWorker } from '@nav/nav.msg';
+import { Scene, Vector3 } from 'three';
+import * as threeUtil from '@model/three/three.model';
 
 export interface State {
   env: KeyedLookup<Environment>;
@@ -16,12 +18,12 @@ export interface State {
   /** Portal nodes for mounted `Env`s */
   envPortal: KeyedLookup<EnvPortal>;
   readonly api: {
+    createEnv: (def: EnvDef) => void;
     /** Also use envKey as portalKey */
     ensureEnvPortal: (envKey: string) => void;
-    removeEnvPortal: (envKey: string) => void;
-    createEnv: (def: EnvDef) => void;
+    getActorData: (envKey: string, name: string) => ActorData | null;
     removeEnv: (envKey: string) => void;
-    setHighWalls: (envKey: string, next: boolean) => void;
+    removeEnvPortal: (envKey: string) => void;
     removeNavWorkerRoom: (input: { envKey: string; roomType: string; roomUid: string }) => void;
     requestNavPath: (
       envKey: string,
@@ -29,6 +31,8 @@ export interface State {
       dst: Geom.VectorJson,
     ) => Promise<{ navPath: Geom.VectorJson[]; error?: string }>;
     roomUpdated: (envKey: string) => void;
+    setHighWalls: (envKey: string, next: boolean) => void;
+    storeScene: (envKey: string, scene: THREE.Scene) => void;
     updateNavWorkerRoom: (input: {
       envKey: string;
       roomType: string;
@@ -56,6 +60,10 @@ export interface Environment {
    * each `Room` talks to the nav webworker.
    */
   updateShadows$: ReplaySubject<{ key: 'room-updated' }>;
+  /**
+   * Supplied by `World`.
+   */
+  scene: THREE.Scene;
 }
 
 interface EnvDef {
@@ -69,6 +77,11 @@ interface EnvPortal {
   portalNode: portals.HtmlPortalNode;
 }
 
+interface ActorData {
+  name: string;
+  position: Vector3;
+}
+
 let nextMsgUid = 0;
 
 const useStore = create<State>(devtools((set, get) => ({
@@ -76,15 +89,7 @@ const useStore = create<State>(devtools((set, get) => ({
   navWorker: null,
   envPortal: {},
   api: {
-    ensureEnvPortal: (envKey) => {
-      !get().envPortal[envKey] && set(({ envPortal }) => ({ envPortal: addToLookup({
-        key: envKey,
-        portalNode: portals.createHtmlPortalNode(),
-      }, envPortal) }));
-    },
-    removeEnvPortal: (envKey) => {
-      set(({ envPortal }) => ({ envPortal: removeFromLookup(envKey, envPortal) }));
-    },
+
     createEnv: ({ envKey, highWalls }) => {
       /**
        * Child's initial useEffect runs before parent's,
@@ -100,13 +105,33 @@ const useStore = create<State>(devtools((set, get) => ({
           highWalls,
           worldDevice,
           updateShadows$: new ReplaySubject(1),
+          scene: new Scene(),
         }, env),
       }));
 
       // Also create an env in navigation webworker
       get().navWorker!.postMessage({ key: 'create-env', envKey });
     },
-    
+
+    ensureEnvPortal: (envKey) => {
+      !get().envPortal[envKey] && set(({ envPortal }) => ({ envPortal: addToLookup({
+        key: envKey,
+        portalNode: portals.createHtmlPortalNode(),
+      }, envPortal) }));
+    },
+
+    getActorData: (envKey, name) => {
+      const actors = threeUtil.getChild(get().env[envKey].scene, 'actors')!;
+      const actor = threeUtil.getChild(actors, name);
+      return actor
+        ? { name, position: actor.position.clone() }
+        : null;
+    },
+
+    removeEnvPortal: (envKey) => {
+      set(({ envPortal }) => ({ envPortal: removeFromLookup(envKey, envPortal) }));
+    },
+
     removeEnv: (envKey) => {
       set(({ env }) => ({ env: removeFromLookup(envKey, env) }));
       get().navWorker!.postMessage({ key: 'remove-env', envKey });
@@ -130,6 +155,12 @@ const useStore = create<State>(devtools((set, get) => ({
     setHighWalls: (envKey, next) => {
       set(({ env }) => ({
         env: updateLookup(envKey, env, () => ({ highWalls: next })),
+      }));
+    },
+
+    storeScene: (envKey, scene) => {
+      set(({ env }) => ({
+        env: updateLookup(envKey, env, () => ({ scene })),
       }));
     },
 

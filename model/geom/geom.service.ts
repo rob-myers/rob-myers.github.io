@@ -9,7 +9,7 @@ import maximalIndependentSet from 'maximal-independent-set';
 
 import * as Geom from '@model/geom/geom.model';
 import { epsilon } from "@model/three/three.model";
-import { Triple } from "@model/generic.model";
+import { Triple, tryParseJson } from "@model/generic.model";
 
 class GeomService {
 
@@ -198,6 +198,10 @@ class GeomService {
     return p && (typeof p.x === 'number') && (typeof p.y === 'number');
   }
 
+  isVectorJsonPath(p: any) {
+    return p instanceof Array && p.every(p => this.isVectorJson(p));
+  }
+
   projectBox3XY({ min, max }: THREE.Box3): Geom.Rect {
     return new Geom.Rect(
       Number(min.x.toFixed(2)),
@@ -304,6 +308,22 @@ class GeomService {
 
   toThreeGeometry(geom: THREE.BufferGeometry) {
     return (new THREE.Geometry()).fromBufferGeometry(geom);
+  }
+
+  tryParsePoint(p: string)  {
+    const parsed = tryParseJson(p);
+    if (this.isVectorJson(parsed)) {
+      return parsed;
+    }
+    throw Error(`failed to parse ${p}`)
+  }
+
+  tryParsePath(p: string)  {
+    const parsed = tryParseJson(p);
+    if (this.isVectorJsonPath(parsed)) {
+      return parsed;
+    }
+    throw Error(`failed to parse ${p}`)
   }
 
   union(polys: Geom.Polygon[]): Geom.Polygon[] {
