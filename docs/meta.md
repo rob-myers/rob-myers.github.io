@@ -14,12 +14,25 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `steiner` labels a point in the world
   > it could track a changing variable
 - [ ] `World` should fade-in
-- [ ] given line compute navRect intersections
-  > should always know which navRect agent is in
+- [ ] circular/rectangular triggers
+- [ ] wrap three raycasts
+  > navRect could be future optimisation
+- [ ] UI buttons
+  > can ctrl-c
+  > can auto send world events to tty
+> [ ] Ctrl-C UI button
+- [ ] builtin `call '() => Math.random()'` and can provide js args
+
+- [ ] can `nav "$( click )" "$( click )" > /dev/world`
+  > `/dev/world` resolves to e.g. `/dev/world-2` as required
+  > `nav` supports string inputs
+  > sending array of points creates navpath
+  > remove builtin `way`
+  > general purpose builtin `entity` with subcommands `list`, `remove` etc.
 
 - [ ] `follow` command
   > make an actor follow a path
-- [ ] `spawn` command
+- [x] `spawn` command
   > spawn an actor at a position
 
 - [x] can display navpath

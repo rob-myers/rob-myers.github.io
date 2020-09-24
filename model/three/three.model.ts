@@ -19,3 +19,7 @@ export function getScene(obj: THREE.Object3D): null | THREE.Object3D {
   }
   return getScene(obj.parent);
 }
+
+export function getChild(obj: THREE.Object3D, childName: string) {
+  return obj.children.find(x => x.name === childName) || null;
+}

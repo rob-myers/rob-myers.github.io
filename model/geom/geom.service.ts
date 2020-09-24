@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { Geometry, Vector3, Face3, Mesh } from "three";
 import { MeshLineMaterial, MeshLine } from 'three.meshline';
 import polygonClipping from 'polygon-clipping';
 import rectDecompose from 'rectangle-decomposition';
@@ -9,7 +10,6 @@ import maximalIndependentSet from 'maximal-independent-set';
 import * as Geom from '@model/geom/geom.model';
 import { epsilon } from "@model/three/three.model";
 import { Triple } from "@model/generic.model";
-import { Geometry, Vector3, Face3, Mesh } from "three";
 
 class GeomService {
 
@@ -46,10 +46,6 @@ class GeomService {
           : [],
         [] as Geom.Vector[],
     );
-  }
-
-  createActor(p: Vector3) {
-
   }
 
   createCube(p: Vector3, dim: number, material: THREE.Material) {
