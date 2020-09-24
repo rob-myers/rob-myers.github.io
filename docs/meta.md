@@ -13,12 +13,14 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `shift` builtin for functions
 - [ ] `steiner` labels a point in the world
   > it could track a changing variable
-- [ ] `spawn` command
-  > spawn an actor at a position
-- [ ] onclick floor show cube
 - [ ] `World` should fade-in
 - [ ] given line compute navRect intersections
   > should always know which navRect agent is in
+
+- [ ] `follow` command
+  > make an actor follow a path
+- [ ] `spawn` command
+  > spawn an actor at a position
 
 - [x] can display navpath
   > use builtin `way p` which toggles visibility

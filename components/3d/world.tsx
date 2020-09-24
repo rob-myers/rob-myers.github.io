@@ -83,7 +83,9 @@ const World: React.FC<Props> = ({ envName }) => {
             <Fourway y={-4} />
             <Corner x={-4} y={-4} n />
             <Straight x={4} y={-4} />
+            <Closet x={8} y={-4} w />
             
+            <Closet x={-4} y={-8} n />
             <Straight y={-8} s />
           </Rooms>
         </Canvas>

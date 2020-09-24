@@ -48,10 +48,14 @@ class GeomService {
     );
   }
 
-  createCube(p: Vector3, dim = 0.05) {
+  createActor(p: Vector3) {
+
+  }
+
+  createCube(p: Vector3, dim: number, material: THREE.Material) {
     const mesh = new Mesh(
       new THREE.BoxGeometry(dim, dim, dim),
-      this.whiteMaterial,
+      material,
     );
     mesh.position.set(p.x, p.y, p.z);
     return mesh;
@@ -71,8 +75,8 @@ class GeomService {
   }
 
   createPath(points: Geom.VectorJson[]) {
-    const vectors = points.map(p => new Vector3(p.x, p.y, 0.2));
-    const cubes = vectors.map(v => this.createCube(v));
+    const cubes = points.map(p => this.createCube(
+      new Vector3(p.x, p.y, 0.2), 0.05, this.whiteMaterial));
     const polyLine = this.createPolyLine(points, 0.2);
     return this.createGroup([...cubes, polyLine]);
   }
