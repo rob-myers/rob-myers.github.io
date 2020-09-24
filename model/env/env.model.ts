@@ -18,7 +18,7 @@ export type TransformProps = {
 )
 
 export const navMeshMaterial = new THREE.MeshStandardMaterial({
-  color: 0x888888,
+  color: 0xaaaaaa,
   opacity: 0.2,
   transparent: true,
   side: THREE.DoubleSide,
@@ -26,7 +26,6 @@ export const navMeshMaterial = new THREE.MeshStandardMaterial({
 
 /** THREE.Group containing a single Inner */
 export const innerGroupName = 'innerGroup';
-
 export const navmeshGroupName = 'navmesh';
 export const navmeshPlaneName = 'navmeshPlane';
 
