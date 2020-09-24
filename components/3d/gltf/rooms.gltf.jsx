@@ -73,10 +73,10 @@ export default function Model(props) {
         <group name="actors">
           <mesh
             material={materials.actor}
-            geometry={nodes.bob.geometry}
-            name="bob"
+            geometry={nodes['default-bot'].geometry}
+            name="default-bot"
             position={[1.2, 0.2, 0]}
-            userData={{ name: 'bob' }}
+            userData={{ name: 'default-bot' }}
           />
         </group>
       </scene>
