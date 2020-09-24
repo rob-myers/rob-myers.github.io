@@ -113,6 +113,7 @@ const useStore = create<State>(devtools((set, get) => ({
               actor.geometry.rotateX(Math.PI/2);
               actor.position.setX(0);
               actor.position.setY(0);
+              actor.geometry.translate(0, 0, 0.2 - actor.geometry.boundingBox!.min.z);
             });
             break;
           }

@@ -13,6 +13,7 @@ export interface NavmeshClick {
 
 export type MessageToWorld = (
   | ShowNavPath
+  | SpawnActor
 );
 
 /** Show a graphical representation */
@@ -22,12 +23,20 @@ interface ShowNavPath {
   points: Geom.VectorJson[];
 }
 
+interface SpawnActor {
+  key: 'spawn-actor';
+  name: string;
+  position: Geom.VectorJson;
+}
+
 export function handleWorldDeviceWrites(envKey: string, scene: THREE.Scene) {
   return (msg: MessageToWorld) => {
     console.log('worldDevice was written to', msg);
 
     if (msg.key === 'show-navpath') {
-      scene.add(geomService.createPath(msg.points));
+      scene.add(geomService.createPath(msg.points, name));
+    } else if (msg.key === 'spawn-actor') {
+      // TODO
     }
   };
 }

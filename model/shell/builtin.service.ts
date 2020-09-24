@@ -34,6 +34,7 @@ export class BuiltinService {
           case 'read': await this.read(process, args); break;
           case 'say': await this.say(process, args); break;
           case 'sleep': await this.sleep(process, args); break;
+          case 'spawn': await this.spawn(process, args); break;
           case 'throttle': this.throttle(process, args); break;
           case 'true': break;
           case 'way': this.way(process, args); break;
@@ -241,6 +242,20 @@ export class BuiltinService {
     await ps.sleep(pid, 1000 * seconds);
   }
 
+  private async spawn({ pid, sessionKey }: Process, args: string[]) {
+    if (args.length !== 2 || !args[0] || !alphaNumericRegex.test(args[0])) {
+      throw new ShError('usage `spawn bob p` where name is alphanumeric', 1);
+    }
+
+    const position = varService.lookupVar(pid, args[1]);
+    if (!geomService.isVectorJson(position)) {
+      throw new ShError('usage `spawn bob p` where p a point-valued var', 1); 
+    }
+
+    const { worldDevice } = ps.getSession(sessionKey);
+    worldDevice.write({ key: 'spawn-actor', name: args[0], position });
+  }
+
   private throttle({ pid }: Process, args: string[]) {
     const permitted = { 0.25: true, 0.5: true, 1: true };
     if (args.length !== 1 || !(args[0] in permitted)) {
@@ -301,6 +316,8 @@ export const builtins = {
   say: true,
   /** Wait for sum of arguments in seconds */
   sleep: true,
+  /** Spawn an actor */
+  spawn: true,
   /** set throttling of subsequent iterator iterations  */
   throttle: true,
   /** Exit with code 0 */

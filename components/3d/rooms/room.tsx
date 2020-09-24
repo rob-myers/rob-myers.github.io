@@ -5,7 +5,7 @@ import { Subject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 
 import { epsilon } from "@model/three/three.model";
-import { NavmeshClick } from "@model/shell/events.model";
+import { NavmeshClick } from "@model/env/world.device";
 import { TransformProps, propsToAngle, navmeshGroupName, navmeshPlaneName } from "@model/env/env.model";
 import useEnvStore from "@store/env.store";
 import useGeomStore from "@store/geom.store";

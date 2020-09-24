@@ -74,11 +74,11 @@ class GeomService {
     return group;
   }
 
-  createPath(points: Geom.VectorJson[]) {
+  createPath(points: Geom.VectorJson[], name: string) {
     const cubes = points.map(p => this.createCube(
       new Vector3(p.x, p.y, 0.2), 0.05, this.whiteMaterial));
     const polyLine = this.createPolyLine(points, 0.2);
-    return this.createGroup([...cubes, polyLine]);
+    return this.createGroup([...cubes, polyLine], name);
   }
 
   /**

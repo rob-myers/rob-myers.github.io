@@ -11,7 +11,7 @@ import { processService } from '@model/shell/process.service';
 import { FsFile } from "@model/shell/file.model";
 import { addToLookup, removeFromLookup } from './store.util';
 import { fileService } from '@model/shell/file.service';
-import { MessageFromWorld, MessageToWorld } from '@model/shell/events.model';
+import { MessageFromWorld, MessageToWorld } from '@model/env/world.device';
 
 export interface State {
   /** Next tty identifier, inducing e.g. tty-2 and sessionKey */

@@ -3,7 +3,7 @@ import { useRef, useEffect, useState } from 'react';
 import { Canvas, CanvasContext } from 'react-three-fiber';
 import { debounceTime, tap } from 'rxjs/operators';
 import { getWindow } from '@model/dom.model';
-import { handleWorldDeviceWrites } from '@model/shell/events.model';
+import { handleWorldDeviceWrites } from '@model/env/world.device';
 import useGeomStore from '@store/geom.store';
 import useEnvStore from '@store/env.store';
 import CameraControls from './controls/camera-controls';
