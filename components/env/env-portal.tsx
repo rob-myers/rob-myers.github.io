@@ -8,7 +8,7 @@ const EnvPortal: React.FC<Props> = ({ envKey, high }) => {
   const portalNode = useStore(({ envPortal }) => envPortal[envKey]?.portalNode);
 
   useEffect(() => {
-    useStore.getState().api.ensureEnvPortal(envKey);
+    useStore.api.ensureEnvPortal(envKey);
   }, []);
 
   return portalNode

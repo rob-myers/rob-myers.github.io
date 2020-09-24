@@ -15,7 +15,7 @@ export interface State {
   actors: KeyedLookup<ActorMeta>;
   rooms: KeyedLookup<RoomMeta>;
   inners: KeyedLookup<InnerMeta>;
-  api: {
+  readonly api: {
     load: () => Promise<void>;
     extractMeshes: (gltf: GLTF) => {
       actors: THREE.Mesh[];
@@ -25,6 +25,7 @@ export interface State {
     computeActorMeta: (inner: THREE.Mesh) => ActorMeta;
     computeInnerMeta: (inner: THREE.Mesh) => InnerMeta;
     computeRoomMeta: (room: THREE.Mesh) => RoomMeta;
+    createActor: (position: Geom.VectorJson, name: string) => THREE.Mesh;
     /**
      * Update child mesh 'navmesh' of supplied `room`,
      * taking any attached Inners into account.
@@ -195,6 +196,13 @@ const useStore = create<State>(devtools((set, get) => ({
       };
     },
 
+    createActor: (position, name) => {
+      const mesh = get().actors['default-bot'].mesh.clone();
+      mesh.position.set(position.x, position.y, mesh.position.z);
+      mesh.name = name;
+      return mesh;
+    },
+
     /**
      * Update navmesh attached to a room instance.
      */
@@ -249,4 +257,7 @@ const useStore = create<State>(devtools((set, get) => ({
   },
 }), 'geom'));
 
-export default useStore;
+// Provide direct access to api
+Object.assign(useStore, { api: useStore.getState().api });
+
+export default useStore as typeof useStore & { api: State['api'] };

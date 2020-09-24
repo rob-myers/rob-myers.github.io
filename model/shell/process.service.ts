@@ -16,7 +16,7 @@ export class ProcessService {
   private mockParsed!: Sh.FileWithMeta;
 
   initialise() {
-    this.set = useStore.getState().api.set;
+    this.set = useStore.api.set;
     if (typeof window !== 'undefined') {
       this.mockParsed = Sh.parseService.parse('');
     }

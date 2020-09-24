@@ -21,7 +21,7 @@ const RootApp: React.FC<RootProps> = ({
 
   // Load rooms.gltf
   useEffect(() => {
-    useGeomStore.getState().api.load();
+    useGeomStore.api.load();
   }, []);
 
   return (

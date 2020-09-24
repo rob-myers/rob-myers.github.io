@@ -33,18 +33,16 @@ const Room: React.FC<Props> = (props) => {
     root.current?.add(mesh.current);
     
     // Recompute navmesh whenever an Inner mounts/updates
-    const geomApi = useGeomStore.getState().api;
-    const envApi = useEnvStore.getState().api;
     channel.current
       .pipe(debounceTime(30))
       .subscribe({ next: () => {
-        geomApi.updateRoomNavmesh(mesh.current!);
+        useGeomStore.api.updateRoomNavmesh(mesh.current!);
         // Compute instantiated navmesh by traversing navmesh children
         const bbox = new Box3;
         const planes = root.current!.children.find(x => x.name === navmeshGroupName)?.children??[] as THREE.Mesh[];
         const navRects = planes.map(x => geomService.projectBox3XY(bbox.setFromObject(x)));
         // console.log(navRects);
-        envApi.updateNavWorkerRoom({ envKey: envName, roomType: props.id, roomUid: mesh.current!.uuid, navRects });
+        useEnvStore.api.updateNavWorkerRoom({ envKey: envName, roomType: props.id, roomUid: mesh.current!.uuid, navRects });
         // TODO update shadows if inners have them
       }});
 
@@ -64,7 +62,7 @@ const Room: React.FC<Props> = (props) => {
     setChildrenMounted(true); // Now mount Inners
 
     return () => {
-      envApi.removeNavWorkerRoom({ envKey: envName, roomType: props.id, roomUid: mesh.current!.uuid });
+      useEnvStore.api.removeNavWorkerRoom({ envKey: envName, roomType: props.id, roomUid: mesh.current!.uuid });
     };
   }, []);
   
@@ -73,7 +71,7 @@ const Room: React.FC<Props> = (props) => {
   useEffect(() => {
     root.current!.rotation.z = propsToAngle(props);
     root.current!.position.set(props.x || 0, props.y || 0, 0);
-    useEnvStore.getState().api.roomUpdated(props.envName!);
+    useEnvStore.api.roomUpdated(props.envName!);
     channel.current.next({ key: 'inner-updated' }); // Update navmesh too
   }, [angle, props.x, props.y]);
 

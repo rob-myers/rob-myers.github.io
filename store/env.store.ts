@@ -15,7 +15,7 @@ export interface State {
   navWorker: null | NavWorker;
   /** Portal nodes for mounted `Env`s */
   envPortal: KeyedLookup<EnvPortal>;
-  api: {
+  readonly api: {
     /** Also use envKey as portalKey */
     ensureEnvPortal: (envKey: string) => void;
     removeEnvPortal: (envKey: string) => void;
@@ -150,4 +150,7 @@ export function selectNavWorker({ navWorker }: State) {
   return navWorker;
 }
 
-export default useStore;
+// Provide direct access to api
+Object.assign(useStore, { api: useStore.getState().api });
+
+export default useStore as typeof useStore & { api: State['api'] };

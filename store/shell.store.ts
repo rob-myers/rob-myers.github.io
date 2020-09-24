@@ -189,8 +189,10 @@ const useStore = create<State>(devtools((set, get) => {
   };
 }, 'shell'));
 
+// Provide direct access to api
+Object.assign(useStore, { api: useStore.getState().api });
 
-export default useStore;
+export default useStore as typeof useStore & { api: State['api'] };
 
 // Must invoke after default export
 processService.initialise();

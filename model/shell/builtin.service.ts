@@ -163,7 +163,7 @@ export class BuiltinService {
       throw new ShError(`usage \`nav p q\` or \`nav p q as r\` where p, q are point-valued vars`, 1); 
     }
 
-    const { navPath, error } = await useEnvStore.getState().api
+    const { navPath, error } = await useEnvStore.api
       .requestNavPath(envKey, { x: p.x, y: p.y }, { x: q.x, y: q.y });
     if (error) {
       throw new ShError(`failed with error: ${error}`, 1);
