@@ -51,8 +51,7 @@
     "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build",
     "ts-node": "node -r esm -r ts-node/register",
     "watch-gltf": "nodemon --watch '../3d/**/*' -e gltf --exec 'yarn update-gltf'",
-    "update-gltf": "source scripts/gltf-to-jsx.sh",
-    "polyanya-tests": "yarn ts-node -r tsconfig-paths/register ./model/polyanya/tests.ts"
+    "update-gltf": "source scripts/gltf-to-jsx.sh"
   },
   "devDependencies": {
     "@mdx-js/loader": "^1.6.6",
