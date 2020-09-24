@@ -52,12 +52,12 @@ const Room: React.FC<Props> = (props) => {
      * Handle navmesh clicks
      */
     onClick.current = (e: ThreeMouseEvent) => {
+      e.stopPropagation(); // Must directly click
       if (Math.abs(e.point.z) < epsilon && e.object.name === navmeshPlaneName) {
         // console.log({ clickedRoom: e });
         const position = geomService.projectXY(e.point);
         const event: NavmeshClick = { key: 'nav-click', x: position.x, y: position.y };
         env.worldDevice.iNode.internalWrite(event);
-        e.stopPropagation();
       }
     };
 
