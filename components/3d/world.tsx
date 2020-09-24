@@ -28,12 +28,16 @@ const World: React.FC<Props> = ({ envName }) => {
       // Listen for messages from shell builtins
       const writeHandler = handleWorldDeviceWrites(envName, ctxt.scene);
       const stopListening = env.worldDevice.iNode.onWrite((msg) => writeHandler(msg), false);
+
+      // Also store scene in `env` so e.g. builtins can lookup actors
+      useEnvStore.api.storeScene(envName, ctxt.scene);
+
       return () => {
         stopListening();
         shadowsSub.unsubscribe();
       };
     }
-  }, [env, ctxt]);
+  }, [env?.key, ctxt]);
 
   return (
     <div className={css.root} >
