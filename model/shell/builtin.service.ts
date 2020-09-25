@@ -110,9 +110,9 @@ export class BuiltinService {
 
   private async call({ pid }: Process, [funcDef, ...rest]: string[]) {
     if (!funcDef) {
-      throw new ShError('usage `do \'(vars, args) => ... \' [val1 ... valN]`', 1);
+      throw new ShError('usage `do \'(scope, args) => ... \' [args]`', 1);
     }
-    const func = Function('v', `return ${funcDef}`);
+    const func = Function('v', `return ${funcDef}`); // TODO cache
     const result = await func()(varService.createVarProxy(pid), rest);
     if (result !== undefined) {
       ps.getProcess(pid).fdToOpen[1].write(result);
@@ -127,7 +127,7 @@ export class BuiltinService {
   }
 
   /**
-   * Deep var lookup, either output to stdout or can save as variable.
+   * Deep var lookup; outputs to stdout or can save as variable.
    */
   private get({ pid, fdToOpen }: Process, [srcPath, ...rest]: string[]) {
     if (rest.length && (rest[0] !== 'as' || rest.length !== 2)) {
@@ -184,42 +184,52 @@ export class BuiltinService {
 
   private async goto({ pid }: Process, [dst, actorName, ...rest]: string[]) {
     if (!dst || !actorName || rest.length) {
-      throw new ShError('usage `goto p bob`ß', 1);
+      throw new ShError('usage `goto p bob`', 1);
     }
     const actorData = await this.getActorData(pid, actorName);
+    const pointOrPath = this.parsePointOrPathArg(pid, dst);
 
-    if (dst.startsWith('[')) {
-      const path = geomService.tryParsePath(dst);
+    if (pointOrPath instanceof Array) {
       // TODO teleport then follow path
-    } else if (dst.startsWith('{')) {
-      const point = geomService.tryParsePoint(dst);
-      const navPath = await this.getNavPath(pid, actorData.position, point);
-      // TODO follow path
     } else {
-      const value = varService.lookupVar(pid, dst);
-      if (geomService.isVectorJson(value)) {
-        const navPath = await this.getNavPath(pid, actorData.position, value);
-        // TODO follow path
-      } else if (geomService.isVectorJsonPath(value)) {
-        // TODO teleport then follow path
-      } else {
-        throw new ShError('usage `goto p bob` where p a point/path', 1);
-      }
+      const navPath = await this.getNavPath(pid, actorData.position, pointOrPath);
+      // TODO follow path
     }
+  }
+
+  private parsePointArg(pid: number, varOrJson: string) {
+    if (varOrJson.startsWith('{')) {
+      return geomService.tryParsePoint(varOrJson);
+    }
+    const value = varService.lookupVar(pid, varOrJson);
+    if (geomService.isVectorJson(value)) {
+      return value;
+    }
+    throw new ShError(`require point valued var: ${varOrJson}`, 1);
+  }
+
+  private parsePointOrPathArg(pid: number, varOrJson: string) {
+    if (varOrJson.startsWith('{')) {
+      return geomService.tryParsePoint(varOrJson);
+    } else if (varOrJson.startsWith('[')) {
+      return geomService.tryParsePath(varOrJson);
+    }
+    const value = varService.lookupVar(pid, varOrJson);
+    if (geomService.isVectorJson(value)) {
+      return value;
+    } else if (geomService.isVectorJsonPath(value)) {
+      return value;
+    }
+    throw new ShError(`require point/path valued var: ${varOrJson}`, 1);
   }
 
   private async nav({ pid }: Process, args: string[]) {
     if (!(args.length === 2 || (args.length === 4 && args[2] === 'as'))) {
-      throw new ShError(`usage \`nav p q\` or \`nav p q as r\``, 1);
+      throw new ShError('usage `nav p q` or `nav p q as r`', 1);
     }
-    const p = varService.lookupVar(pid, args[0]);
-    const q = varService.lookupVar(pid, args[1]);
-
-    if (!geomService.isVectorJson(p) || !geomService.isVectorJson(q)) {
-      throw new ShError(`usage \`nav p q\` or \`nav p q as r\` where p, q are point-valued vars`, 1); 
-    }
+    const p = this.parsePointArg(pid, args[0]);
+    const q = this.parsePointArg(pid, args[1]);
     const navPath = await this.getNavPath(pid, p, q);
-    // console.log('received navPath', navPath);
 
     if (args.length === 2) {
       ps.getProcess(pid).fdToOpen[1].write(navPath);
@@ -249,7 +259,7 @@ export class BuiltinService {
 
       if (ps.isTty(pid, 0)) {
         if (!ps.isForegroundProcess(pid)) {
-          throw new ShError(`background process tried to read from tty`, 1);
+          throw new ShError(`background process tried reading from tty`, 1);
         }
         ps.readOnceFromTty(sessionKey, onWrite);
       } else {
@@ -265,7 +275,6 @@ export class BuiltinService {
     if (voice || v === '?') {// List available voices
       return voiceDevice.getAllVoices().forEach(voice => fdToOpen[1].write(voice));
     }
-    
     await new Promise(async (resolve, reject) => {
       cleanups.push(
         voiceDevice.addVoiceCommand(operands.join(' '), resolve, voice || v),
@@ -297,11 +306,7 @@ export class BuiltinService {
       throw new ShError('usage `spawn bob p` where name is alphanumeric', 1);
     }
 
-    const position = varService.lookupVar(pid, args[1]);
-    if (!geomService.isVectorJson(position)) {
-      throw new ShError('usage `spawn bob p` where p a point-valued var', 1); 
-    }
-
+    const position = this.parsePointArg(pid, args[1]);
     const { worldDevice } = ps.getSession(sessionKey);
     worldDevice.write({ key: 'spawn-actor', name: args[0], position });
   }
@@ -319,17 +324,17 @@ export class BuiltinService {
   }
 
   /**
-   * TODO can remove/name/list/colour/highlight/direct/mutate ways
+   * TODO remove; instead we'll `nav p q >/dev/world`
    */
   private way({ sessionKey, pid }: Process, args: string[]) {
     if (args.length > 1) {
       throw new ShError('usage `way p`', 1);
     }
-
     const p = varService.lookupVar(pid, args[0]);
     if (!geomService.isVectorJsonPath(p)) {
       throw new ShError('usage `way [opts] p` where p is a path-valued var', 1);
     }
+
     const { worldDevice } = ps.getSession(sessionKey);
     worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: p });
   }

@@ -194,11 +194,11 @@ class GeomService {
     return outsetEdges;
   }
 
-  isVectorJson(p: any) {
+  isVectorJson(p: any): p is Geom.VectorJson {
     return p && (typeof p.x === 'number') && (typeof p.y === 'number');
   }
 
-  isVectorJsonPath(p: any) {
+  isVectorJsonPath(p: any): p is Geom.VectorJson[] {
     return p instanceof Array && p.every(p => this.isVectorJson(p));
   }
 
