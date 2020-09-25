@@ -49,7 +49,7 @@ const World: React.FC<Props> = ({ envName }) => {
           onCreated={(ct) => {
             const camera = ct.camera as PerspectiveCamera;
             camera.position.set(0, 0, 10);
-            camera.setFocalLength(30);
+            camera.setFocalLength(35);
             
             ct.gl.shadowMap.enabled = true;
             ct.gl.shadowMap.autoUpdate = false;
@@ -70,8 +70,10 @@ const World: React.FC<Props> = ({ envName }) => {
               intensity={1}
             />
             <pointLight
-              position={[0, -4, 8]}
-              intensity={0.4}
+              position={[0, -2, 8]}
+              intensity={1}
+              decay={2}
+              distance={20}
               castShadow
             />
           </group>

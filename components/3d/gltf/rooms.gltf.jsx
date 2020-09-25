@@ -58,16 +58,16 @@ export default function Model(props) {
             userData={{ name: 'central-table' }}
           />
           <mesh
-            material={nodes.shelves.material}
-            geometry={nodes.shelves.geometry}
-            name="shelves"
-            userData={{ name: 'shelves' }}
-          />
-          <mesh
             material={nodes.sideboard.material}
             geometry={nodes.sideboard.geometry}
             name="sideboard"
             userData={{ name: 'sideboard' }}
+          />
+          <mesh
+            material={materials.inner}
+            geometry={nodes.shelves.geometry}
+            name="shelves"
+            userData={{ name: 'shelves' }}
           />
         </group>
         <group name="actors">
