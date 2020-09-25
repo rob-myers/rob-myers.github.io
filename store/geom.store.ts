@@ -5,7 +5,7 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 import * as Param from '@model/env/env.model';
-import { isMeshNode } from '@model/three/three.model';
+import { isMeshNode, navMeshMaterial } from '@model/three/three.model';
 import * as Geom from '@model/geom/geom.model'
 import { geomService } from '@model/geom/geom.service';
 import useEnvStore from './env.store'
@@ -235,7 +235,7 @@ const useStore = create<State>(devtools((set, get) => ({
          * We'll traverse these quads to find instantiated navmesh.
          */
         rects.forEach(({ cx, cy, width, height }) => {
-          const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 1), Param.navMeshMaterial);
+          const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 1), navMeshMaterial);
           plane.name = Param.navmeshPlaneName;
           plane.receiveShadow = true;
           plane.position.set(cx, cy, 0);

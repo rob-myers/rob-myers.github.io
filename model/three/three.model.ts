@@ -1,3 +1,12 @@
+import * as THREE from 'three';
+
+export const navMeshMaterial = new THREE.MeshStandardMaterial({
+  color: 0xaa8686,
+  opacity: 0.2,
+  transparent: true,
+  side: THREE.DoubleSide,
+});
+
 export function isGroupNode(x: THREE.Object3D): x is THREE.Group {
   return x.type === 'Group';
 }
