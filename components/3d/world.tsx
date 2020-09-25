@@ -8,8 +8,9 @@ import useGeomStore from '@store/geom.store';
 import useEnvStore from '@store/env.store';
 import CameraControls from './controls/camera-controls';
 import Grid from './grid';
-import FirstLevel from './levels/first-level';
+import FirstLevel from './level/first-level';
 import css from './world.scss';
+import Actors from './actor/actors';
 
 const World: React.FC<Props> = ({ envName }) => {
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
@@ -60,7 +61,7 @@ const World: React.FC<Props> = ({ envName }) => {
           <CameraControls />
           <Grid />
           <group name="indicators"/>
-          <group name="actors"/>
+          <Actors />
 
           <FirstLevel envName={envName} />
 
