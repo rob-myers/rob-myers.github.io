@@ -1,6 +1,6 @@
-import { Closet, Corner, Fourway, Junction, Straight } from '../rooms';
+import { Closet, Corner, Fourway, Junction, Straight } from '../room';
 import Level from './level';
-import Inner from '../rooms/inner';
+import Inner from '../room/inner';
 
 const FirstLevel: React.FC<Props> = ({ envName }) => (
   <Level envName={envName}>
