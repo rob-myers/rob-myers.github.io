@@ -93,14 +93,14 @@ export class BuiltinService {
     if (args.length > 1 || !Number.isInteger(loopCount) || loopCount <= 0) {
       throw new ShError(`usage \`continue\` or \`continue n\` where n > 0`, 1);
     } else if (!parseService.hasAncestralIterator(node)) {
-      throw new ShError(`only meaningful in a \`for', \`while' or \`until' loop`, 1);
+      throw new ShError('only meaningful in a `for\', `while\' or `until\' loop', 1);
     }
     throw continueError(loopCount);
   }
 
   private async def({ pid }: Process, [funcName, funcDef, ...rest]: string[]) {
     if (!funcName || !funcDef || rest.length) {
-      throw new ShError(`usage \`def myFunc '(x) => x.foo = Number(x[1])''\``, 1);
+      throw new ShError('usage `def my_func \'(v) => v.foo = Math.random()`', 1);
     }
     varService.addFunction(pid, funcName, {
       type: 'js',
@@ -130,8 +130,8 @@ export class BuiltinService {
    * Deep var lookup; outputs to stdout or can save as variable.
    */
   private get({ pid, fdToOpen }: Process, [srcPath, ...rest]: string[]) {
-    if (rest.length && (rest[0] !== 'as' || rest.length !== 2)) {
-      throw new ShError(`usage \`get foo\` or \`get foo as bar\``, 1);
+    if (!srcPath || rest.length && (rest[0] !== 'as' || rest.length !== 2)) {
+      throw new ShError('usage `get foo` or `get foo.bar[2]` or `get foo as bar`', 1);
     }
 
     let cached = cacheFor.get[srcPath];
@@ -182,15 +182,19 @@ export class BuiltinService {
     return navPath;
   }
 
-  private async goto({ pid }: Process, [dst, actorName, ...rest]: string[]) {
+  private async goto({ pid, sessionKey }: Process, [dst, actorName, ...rest]: string[]) {
     if (!dst || !actorName || rest.length) {
-      throw new ShError('usage `goto p bob`', 1);
+      throw new ShError('usage `goto point_or_path bob`', 1);
     }
     const actorData = await this.getActorData(pid, actorName);
     const pointOrPath = this.parsePointOrPathArg(pid, dst);
-
+    const { worldDevice } = ps.getSession(sessionKey);
+    
     if (pointOrPath instanceof Array) {
-      // TODO teleport then follow path
+      if (pointOrPath.length) {
+        // TODO teleport then follow path
+        worldDevice.write({ key: 'spawn-actor', name: actorData.name, position: pointOrPath[0] });
+      }
     } else {
       const navPath = await this.getNavPath(pid, actorData.position, pointOrPath);
       // TODO follow path
@@ -205,7 +209,7 @@ export class BuiltinService {
     if (geomService.isVectorJson(value)) {
       return value;
     }
-    throw new ShError(`require point valued var: ${varOrJson}`, 1);
+    throw new ShError(`${varOrJson}: expected point-valued variable`, 1);
   }
 
   private parsePointOrPathArg(pid: number, varOrJson: string) {
@@ -220,12 +224,12 @@ export class BuiltinService {
     } else if (geomService.isVectorJsonPath(value)) {
       return value;
     }
-    throw new ShError(`require point/path valued var: ${varOrJson}`, 1);
+    throw new ShError(`${varOrJson}: expected point/path-valued variable`, 1);
   }
 
   private async nav({ pid }: Process, args: string[]) {
     if (!(args.length === 2 || (args.length === 4 && args[2] === 'as'))) {
-      throw new ShError('usage `nav p q` or `nav p q as r`', 1);
+      throw new ShError('usage `nav pnt_a pnt_b` or `nav pnt_a pnt_b as path`', 1);
     }
     const p = this.parsePointArg(pid, args[0]);
     const q = this.parsePointArg(pid, args[1]);
@@ -303,7 +307,7 @@ export class BuiltinService {
 
   private async spawn({ pid, sessionKey }: Process, args: string[]) {
     if (args.length !== 2 || !args[0] || !alphaNumericRegex.test(args[0])) {
-      throw new ShError('usage `spawn bob p` where name is alphanumeric', 1);
+      throw new ShError('usage `spawn bob pnt`', 1);
     }
 
     const position = this.parsePointArg(pid, args[1]);
@@ -314,7 +318,7 @@ export class BuiltinService {
   private delay({ pid }: Process, args: string[]) {
     const permitted = { 0.25: true, 0.5: true, 1: true };
     if (args.length !== 1 || !(args[0] in permitted)) {
-      throw new ShError(`usage \`delay t where t in [0.25, 0.5, 1]\``, 1);
+      throw new ShError(`usage \`delay t where t in {0.25,0.5,1}\``, 1);
     }
     varService.assignVar(pid, {
       varName: iteratorDelayVarName,
