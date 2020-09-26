@@ -184,7 +184,7 @@ export class BuiltinService {
 
   private async goto({ pid, sessionKey }: Process, [dst, actorName, ...rest]: string[]) {
     if (!dst || !actorName || rest.length) {
-      throw new ShError('usage `goto point_or_path bob`', 1);
+      throw new ShError('usage `goto point_or_path actor_name`', 1);
     }
     const actorData = await this.getActorData(pid, actorName);
     const pointOrPath = this.parsePointOrPathArg(pid, dst);
@@ -192,12 +192,12 @@ export class BuiltinService {
     
     if (pointOrPath instanceof Array) {
       if (pointOrPath.length) {
-        // TODO teleport then follow path
         worldDevice.write({ key: 'spawn-actor', name: actorData.name, position: pointOrPath[0] });
+        worldDevice.write({ key: 'follow-path', actorName: actorData.name, navPath: pointOrPath });
       }
     } else {
       const navPath = await this.getNavPath(pid, actorData.position, pointOrPath);
-      // TODO follow path
+      worldDevice.write({ key: 'follow-path', actorName: actorData.name, navPath });
     }
   }
 

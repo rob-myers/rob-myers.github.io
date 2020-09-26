@@ -14,8 +14,9 @@ export interface NavmeshClick {
 }
 
 export type MessageToWorld = (
-  | ShowNavPath
+  | ShowNavPath // TODO VectorJson[] instead
   | SpawnActor
+  | FollowPath
 );
 
 /** Show a graphical representation */
@@ -31,20 +32,37 @@ interface SpawnActor {
   position: Geom.VectorJson;
 }
 
+interface FollowPath {
+  key: 'follow-path';
+  actorName: string;
+  navPath: Geom.VectorJson[];
+}
+
 export function handleWorldDeviceWrites(envKey: string, scene: THREE.Scene) {
   return (msg: MessageToWorld) => {
     console.log('worldDevice was written to', msg);
 
-    if (msg.key === 'show-navpath') {
-      const indicators = threeUtil.getChild(scene, 'indicators')!;
-      const previous = threeUtil.getChild(indicators, msg.name);
-      previous && indicators.remove(previous);
-      indicators.add(geomService.createPath(msg.points, name));
-    } else if (msg.key === 'spawn-actor') {
-      const actors = threeUtil.getChild(scene, 'actors')!;
-      const previous = threeUtil.getChild(actors, msg.name);
-      previous && actors.remove(previous);
-      actors.add(useGeomStore.api.createActor(msg.position, msg.name));
+    switch (msg.key) {
+      case 'show-navpath': {
+        const indicators = threeUtil.getChild(scene, 'indicators')!;
+        const previous = threeUtil.getChild(indicators, msg.name);
+        previous && indicators.remove(previous);
+        indicators.add(geomService.createPath(msg.points, name));
+        break;
+      }
+      case 'spawn-actor': {
+        const actors = threeUtil.getChild(scene, 'actors')!;
+        const previous = threeUtil.getChild(actors, msg.name);
+        if (previous) {
+          geomService.moveToXY(previous, msg.position);
+        } else {
+          actors.add(useGeomStore.api.createActor(msg.position, msg.name));
+        }
+        break;
+      }
+      case 'follow-path': {
+        break;
+      }
     }
   };
 }

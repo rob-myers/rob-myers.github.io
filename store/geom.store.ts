@@ -198,7 +198,7 @@ const useStore = create<State>(devtools((set, get) => ({
 
     createActor: (position, name) => {
       const mesh = get().actors['default-bot'].mesh.clone();
-      mesh.position.set(position.x, position.y, mesh.position.z);
+      geomService.moveToXY(mesh, position);
       mesh.name = name;
       return mesh;
     },
