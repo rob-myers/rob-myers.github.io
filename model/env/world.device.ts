@@ -62,7 +62,7 @@ export function handleWorldDeviceWrites(envKey: string) {
           geomService.moveToXY(director.toMesh[msg.name], msg.position);
         } else {
           const mesh = useGeomStore.api.createActor(msg.position, msg.name);
-          director.group.add(mesh);
+          director.actorsGrp.add(mesh);
           director.toMesh[msg.name] = mesh;
           director.toTween[msg.name] = null;
           // director.activeActors.push(msg.name);
@@ -86,18 +86,21 @@ export function handleWorldDeviceWrites(envKey: string) {
         const position = { x: mesh.position.x, y: mesh.position.y };
         const tween = new Tween.Tween(position)
           .to({ x: msg.path[1].x, y: msg.path[1].y }, 2000);
+
+        director.tweenGrp.add(tween);
+        director.toTween[msg.name] = tween;
         tween.onUpdate(() => {
           mesh.position.setX(position.x);
           mesh.position.setY(position.y);
         });
         tween.onComplete(() => {
-          msg.callback(null);
           removeFirst(director.activeActors, msg.name);
           director.toTween[msg.name] = null;
+          director.tweenGrp.remove(tween);
+          msg.callback(null);
         });
         tween.start();
 
-        director.toTween[msg.name] = tween;
         if (!director.activeActors.includes(msg.name)) {
           director.activeActors.push(msg.name);
         }

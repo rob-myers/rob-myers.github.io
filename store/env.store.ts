@@ -65,14 +65,11 @@ const useStore = create<State>(devtools((set, get) => ({
         return;
       }
       const tweenActors = () => {
-        // TODO one tween group per env
-        Tween.update();
-
+        director.tweenGrp.update();
         director.animFrameId = director.activeActors.length
           ? requestAnimationFrame(tweenActors)
           : null;
       };
-      // Start tweening active actors
       tweenActors();
     },
     
@@ -95,7 +92,8 @@ const useStore = create<State>(devtools((set, get) => ({
         }, env),
         director: addToLookup({
           key: envKey,
-          group: threeUtil.placeholderGroup,
+          actorsGrp: threeUtil.placeholderGroup,
+          tweenGrp: new Tween.Group,
           activeActors: [],
           toMesh: {},
           toTween: {},
@@ -119,7 +117,7 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     getActorData: (envKey, name) => {
-      const { group } = get().director[envKey];
+      const { actorsGrp: group } = get().director[envKey];
       const actor = threeUtil.getChild(group, name);
       return actor
         ? { name, position: actor.position.clone() }
@@ -164,7 +162,7 @@ const useStore = create<State>(devtools((set, get) => ({
       set(({ env, director, decorator }) => ({
         env: updateLookup(envKey, env, () => ({ scene })),
         director: updateLookup(envKey, director, () => ({
-          group: threeUtil.getChild(scene, 'actors') as THREE.Group,
+          actorsGrp: threeUtil.getChild(scene, 'actors') as THREE.Group,
         })),
         decorator: updateLookup(envKey, decorator, () => ({
           indicators: threeUtil.getChild(scene, 'indicators') as THREE.Group,

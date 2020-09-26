@@ -30,6 +30,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > remove builtin `way`
   > general purpose builtin `entity` with subcommands `list`, `remove` etc.
 
+- [ ] fix nested command substitution
+  > e.g. `s=$( nav $(click) $(click) )`
+
 - [ ] `goto` command
   > can `goto [path] bob`
   > can `goto [point] bob` (does planning)

@@ -254,7 +254,7 @@ namespace TWEEN {
    * Using the TWEEN singleton to manage your tweens can cause issues in large apps with many components.
    * In these cases, you may want to create your own smaller groups of tween
    */
-  class Group {
+  export class Group {
       private _tweens;
       private _tweensAddedDuringUpdate;
       getAll(): Array<Tween<UnknownProps>>;

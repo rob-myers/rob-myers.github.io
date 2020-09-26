@@ -50,11 +50,15 @@ export interface ActorData {
 export interface Director {
   /** Environment key */
   key: string;
-  /** Group containing actors */
-  group: THREE.Group;
+  /** Group of actor meshes */
+  actorsGrp: THREE.Group;
+  /** Group of actor tweens */
+  tweenGrp: TWEEN.Group;
+  /** Remember actor's mesh */
   toMesh: Record<string, THREE.Mesh>;
+  /** Remember actor's tween, if any */
   toTween: Record<string, null | TWEEN.Tween<any>>;
-  /** Actors with a tween which should be updated */
+  /** Remember which actors are being tweened */
   activeActors: string[];
   /** Can pause via cancelAnimationFrame */
   animFrameId: null | number;
