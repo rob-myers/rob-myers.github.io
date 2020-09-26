@@ -16,6 +16,7 @@ export function last<T>(items: T[]): T | undefined {
   return items[items.length - 1];
 }
 
+export type Pair<T> = [T, T];
 export type Triple<T> = [T, T, T];
 
 /**
