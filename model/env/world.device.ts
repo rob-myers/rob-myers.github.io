@@ -2,6 +2,7 @@ import type * as Geom from '@model/geom/geom.model';
 import { geomService } from '@model/geom/geom.service';
 import * as threeUtil from '@model/three/three.model';
 import useGeomStore from "@store/geom.store";
+import useEnvStore from "@store/env.store";
 
 export type MessageFromWorld = (
   | NavmeshClick
@@ -38,25 +39,30 @@ interface FollowPath {
   navPath: Geom.VectorJson[];
 }
 
-export function handleWorldDeviceWrites(envKey: string, scene: THREE.Scene) {
+export function handleWorldDeviceWrites(envKey: string) {
   return (msg: MessageToWorld) => {
     console.log('worldDevice was written to', msg);
 
     switch (msg.key) {
       case 'show-navpath': {
-        const indicators = threeUtil.getChild(scene, 'indicators')!;
+        const { indicators } = useEnvStore.getState().decorator[envKey];
         const previous = threeUtil.getChild(indicators, msg.name);
         previous && indicators.remove(previous);
         indicators.add(geomService.createPath(msg.points, name));
         break;
       }
       case 'spawn-actor': {
-        const actors = threeUtil.getChild(scene, 'actors')!;
-        const previous = threeUtil.getChild(actors, msg.name);
-        if (previous) {
-          geomService.moveToXY(previous, msg.position);
+        const { name, position } = msg;
+        const director = useEnvStore.getState().director[envKey];
+
+        if (director.actors.includes(name)) {
+          geomService.moveToXY(director.toMesh[name], position);
         } else {
-          actors.add(useGeomStore.api.createActor(msg.position, msg.name));
+          const mesh = useGeomStore.api.createActor(position, name);
+          director.group.add(mesh);
+          director.toMesh[name] = mesh;
+          director.toTween[name] = null;
+          director.actors.push(name);
         }
         break;
       }

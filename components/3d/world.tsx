@@ -10,7 +10,6 @@ import CameraControls from './controls/camera-controls';
 import Grid from './grid';
 import FirstLevel from './level/first-level';
 import css from './world.scss';
-import Actors from './actor/actors';
 
 const World: React.FC<Props> = ({ envName }) => {
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
@@ -28,12 +27,12 @@ const World: React.FC<Props> = ({ envName }) => {
         }
       })).subscribe();
 
-      // Listen for messages from shell builtins
-      const writeHandler = handleWorldDeviceWrites(envName, ctxt.scene);
-      const stopListening = env.worldDevice.iNode.onWrite((msg) => writeHandler(msg), false);
-
-      // Also store scene in `env` so e.g. builtins can lookup actors
+      // Store scene in env/director/decorator
       useEnvStore.api.storeScene(envName, ctxt.scene);
+
+      // Listen for messages from shell builtins
+      const writeHandler = handleWorldDeviceWrites(envName);
+      const stopListening = env.worldDevice.iNode.onWrite((msg) => writeHandler(msg), false);
 
       return () => {
         stopListening();
@@ -61,7 +60,7 @@ const World: React.FC<Props> = ({ envName }) => {
           <CameraControls />
           <Grid />
           <group name="indicators"/>
-          <Actors />
+          <group name="actors"/>
 
           <FirstLevel envName={envName} />
 

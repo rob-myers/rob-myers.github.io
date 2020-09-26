@@ -2,6 +2,7 @@ import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import * as portals from 'react-reverse-portal';
 import { ReplaySubject } from 'rxjs';
+import Tween from '@tweenjs/tween.js';
 
 import { KeyedLookup } from '@model/generic.model';
 import { FsFile } from '@model/shell/file.model';
@@ -13,10 +14,14 @@ import { Scene, Vector3 } from 'three';
 import * as threeUtil from '@model/three/three.model';
 
 export interface State {
-  env: KeyedLookup<Environment>;
+  env: KeyedLookup<Env>;
   navWorker: null | NavWorker;
-  /** Portal nodes for mounted `Env`s */
+  /** Aligned to env i.e. portal node for `Env` */
   envPortal: KeyedLookup<EnvPortal>;
+  /** Aligned to env i.e. actor movement manager */
+  director: KeyedLookup<Director>;
+  decorator: KeyedLookup<Decorator>;
+
   readonly api: {
     createEnv: (def: EnvDef) => void;
     /** Also use envKey as portalKey */
@@ -42,10 +47,10 @@ export interface State {
   };
 }
 
-export interface Environment {
+export interface Env {
   /** Environment key */
   key: string;
-  /** Should the walls be really high? */
+  /** Set walls very high? */
   highWalls: boolean;
   /**
    * Originally created in shell.store `Session`.
@@ -60,9 +65,7 @@ export interface Environment {
    * each `Room` talks to the nav webworker.
    */
   updateShadows$: ReplaySubject<{ key: 'room-updated' }>;
-  /**
-   * Supplied by `World`.
-   */
+  /** Supplied by `World`. */
   scene: THREE.Scene;
 }
 
@@ -82,14 +85,41 @@ interface ActorData {
   position: Vector3;
 }
 
+/**
+ * Manages actor movement for an environment.
+ * We'll mutate this state per animation frame,
+ * so it should not be fed into React components.
+ */
+interface Director {
+  /** Environment key */
+  key: string;
+  /** Group containing actors */
+  group: THREE.Group;
+  /** Actor names */
+  actors: string[];
+  toMesh: Record<string, THREE.Mesh>;
+  toTween: Record<string, null | typeof Tween['Tween']>;
+  /** Can pause via cancelAnimationFrame */
+  animFrameId: null | number;
+}
+
+interface Decorator {
+  /** Environment key */
+  key: string;
+  /** Group containing indicators */
+  indicators: THREE.Group;
+}
+
 let nextMsgUid = 0;
 
 const useStore = create<State>(devtools((set, get) => ({
   env: {},
   navWorker: null,
   envPortal: {},
-  api: {
+  director: {},
+  decorator: {},
 
+  api: {
     createEnv: ({ envKey, highWalls }) => {
       /**
        * Child's initial useEffect runs before parent's,
@@ -99,7 +129,7 @@ const useStore = create<State>(devtools((set, get) => ({
       const { toSessionKey, session } = useShellStore.getState();
       const { worldDevice } = session[toSessionKey[envKey]];
 
-      set(({ env }) => ({
+      set(({ env, director, decorator }) => ({
         env: addToLookup({
           key: envKey,
           highWalls,
@@ -107,6 +137,18 @@ const useStore = create<State>(devtools((set, get) => ({
           updateShadows$: new ReplaySubject(1),
           scene: new Scene(),
         }, env),
+        director: addToLookup({
+          key: envKey,
+          group: threeUtil.placeholderGroup,
+          actors: [],
+          toMesh: {},
+          toTween: {},
+          animFrameId: null,
+        }, director),
+        decorator: addToLookup({
+          key: envKey,
+          indicators: threeUtil.placeholderGroup,
+        }, decorator),
       }));
 
       // Also create an env in navigation webworker
@@ -121,8 +163,8 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     getActorData: (envKey, name) => {
-      const actors = threeUtil.getChild(get().env[envKey].scene, 'actors')!;
-      const actor = threeUtil.getChild(actors, name);
+      const { group } = get().director[envKey];
+      const actor = threeUtil.getChild(group, name);
       return actor
         ? { name, position: actor.position.clone() }
         : null;
@@ -133,7 +175,11 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     removeEnv: (envKey) => {
-      set(({ env }) => ({ env: removeFromLookup(envKey, env) }));
+      set(({ env, director, decorator }) => ({
+        env: removeFromLookup(envKey, env),
+        director: removeFromLookup(envKey, director),
+        decorator: removeFromLookup(envKey, decorator),
+      }));
       get().navWorker!.postMessage({ key: 'remove-env', envKey });
     },
 
@@ -159,8 +205,14 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     storeScene: (envKey, scene) => {
-      set(({ env }) => ({
+      set(({ env, director, decorator }) => ({
         env: updateLookup(envKey, env, () => ({ scene })),
+        director: updateLookup(envKey, director, () => ({
+          group: threeUtil.getChild(scene, 'actors') as THREE.Group,
+        })),
+        decorator: updateLookup(envKey, decorator, () => ({
+          indicators: threeUtil.getChild(scene, 'indicators') as THREE.Group,
+        })),
       }));
     },
 
