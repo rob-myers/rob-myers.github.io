@@ -1,4 +1,5 @@
-import Tween from '@tweenjs/tween.js';
+import Tween from '@tweenjs/tween.js/dist/tween.cjs';
+import { removeFirst } from '@model/generic.model';
 import type * as Geom from '@model/geom/geom.model';
 import { geomService } from '@model/geom/geom.service';
 import * as threeUtil from '@model/three/three.model';
@@ -64,7 +65,7 @@ export function handleWorldDeviceWrites(envKey: string) {
           director.group.add(mesh);
           director.toMesh[msg.name] = mesh;
           director.toTween[msg.name] = null;
-          director.actors.push(msg.name);
+          // director.activeActors.push(msg.name);
         }
 
         break;
@@ -79,7 +80,9 @@ export function handleWorldDeviceWrites(envKey: string) {
         }
 
         const mesh = director.toMesh[msg.name];
+        director.toTween[msg.name]?.stop(); // Needed?
 
+        // Configure tween
         const position = { x: mesh.position.x, y: mesh.position.y };
         const tween = new Tween.Tween(position)
           .to({ x: msg.path[1].x, y: msg.path[1].y }, 2000);
@@ -87,9 +90,17 @@ export function handleWorldDeviceWrites(envKey: string) {
           mesh.position.setX(position.x);
           mesh.position.setY(position.y);
         });
-        tween.onComplete(() => msg.callback(null));
-        tween.start(); // Finished config
+        tween.onComplete(() => {
+          msg.callback(null);
+          removeFirst(director.activeActors, msg.name);
+          director.toTween[msg.name] = null;
+        });
+        tween.start();
+
         director.toTween[msg.name] = tween;
+        if (!director.activeActors.includes(msg.name)) {
+          director.activeActors.push(msg.name);
+        }
         useEnvStore.api.awakenDirector(envKey);
 
         break;

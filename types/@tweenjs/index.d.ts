@@ -1,4 +1,4 @@
-declare module "TWEEN" {
+namespace TWEEN {
 
   type EasingFunction = (amount: number) => number;
 
@@ -186,7 +186,7 @@ declare module "TWEEN" {
   
   
   
-  class Tween<T extends UnknownProps> {
+  export class Tween<T extends UnknownProps> {
       private _object;
       private _group;
       private _isPaused;
@@ -220,7 +220,7 @@ declare module "TWEEN" {
       isPaused(): boolean;
       to(properties: UnknownProps, duration?: number): this;
       duration(d: number): this;
-      start(time: number): this;
+      start(time?: number): this;
       private _setupProperties;
       stop(): this;
       end(): this;
@@ -240,7 +240,7 @@ declare module "TWEEN" {
       onRepeat(callback: (object: T) => void): this;
       onComplete(callback: (object: T) => void): this;
       onStop(callback: (object: T) => void): this;
-      update(time: number): boolean;
+      update(time?: number): boolean;
       private _updateProperties;
       private _handleRelativeValue;
       private _swapEndStartRepeatValues;
@@ -261,13 +261,17 @@ declare module "TWEEN" {
       removeAll(): void;
       add(tween: Tween<UnknownProps>): void;
       remove(tween: Tween<UnknownProps>): void;
-      update(time: number, preserve?: boolean): boolean;
+      update(time?: number, preserve?: boolean): boolean;
   }
 
   export default TWEEN;
 }
 
-declare module "@tweenjs/tween.js" {
-  import TWEEN from "TWEEN";
-  export = TWEEN;
+// declare module "@tweenjs/tween.js" {
+//   import TWEEN from "TWEEN";
+//   export = TWEEN;
+// }
+
+declare module '@tweenjs/tween.js/dist/tween.cjs' {
+  export default TWEEN.default;
 }

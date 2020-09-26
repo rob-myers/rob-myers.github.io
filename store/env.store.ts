@@ -2,9 +2,10 @@ import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import * as portals from 'react-reverse-portal';
 import { ReplaySubject } from 'rxjs';
+import Tween from '@tweenjs/tween.js/dist/tween.cjs';
 
 import { KeyedLookup } from '@model/generic.model';
-import type * as Store from '@model/env/env-store.model';
+import type * as Store from '@model/env/env.store.model';
 import * as Geom from '@model/geom/geom.model'
 import * as threeUtil from '@model/three/three.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
@@ -63,9 +64,16 @@ const useStore = create<State>(devtools((set, get) => ({
       if (director.animFrameId) {
         return;
       }
-      /**
-       * TODO trigger actor tweening
-       */
+      const tweenActors = () => {
+        // TODO one tween group per env
+        Tween.update();
+
+        director.animFrameId = director.activeActors.length
+          ? requestAnimationFrame(tweenActors)
+          : null;
+      };
+      // Start tweening active actors
+      tweenActors();
     },
     
     createEnv: ({ envKey, highWalls }) => {
@@ -88,7 +96,7 @@ const useStore = create<State>(devtools((set, get) => ({
         director: addToLookup({
           key: envKey,
           group: threeUtil.placeholderGroup,
-          actors: [],
+          activeActors: [],
           toMesh: {},
           toTween: {},
           animFrameId: null,

@@ -1,7 +1,7 @@
 import { ReplaySubject } from 'rxjs';
 import type * as THREE from 'three';
-import { TweenType } from '@tweenjs/tween.js';
 import * as portals from 'react-reverse-portal';
+
 import { FsFile } from '@model/shell/file.model';
 
 export interface Env {
@@ -52,10 +52,10 @@ export interface Director {
   key: string;
   /** Group containing actors */
   group: THREE.Group;
-  /** Actor names */
-  actors: string[];
   toMesh: Record<string, THREE.Mesh>;
-  toTween: Record<string, null | TweenType>;
+  toTween: Record<string, null | TWEEN.Tween<any>>;
+  /** Actors with a tween which should be updated */
+  activeActors: string[];
   /** Can pause via cancelAnimationFrame */
   animFrameId: null | number;
 }
