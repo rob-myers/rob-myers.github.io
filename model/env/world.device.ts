@@ -1,3 +1,4 @@
+import Tween from '@tweenjs/tween.js';
 import type * as Geom from '@model/geom/geom.model';
 import { geomService } from '@model/geom/geom.service';
 import * as threeUtil from '@model/three/three.model';
@@ -33,10 +34,12 @@ interface SpawnActor {
   position: Geom.VectorJson;
 }
 
-interface FollowPath {
+export interface FollowPath {
   key: 'follow-path';
-  actorName: string;
-  navPath: Geom.VectorJson[];
+  /** Actor's name */
+  name: string;
+  path: Geom.VectorJson[];
+  callback: (err: null | string) => void;
 }
 
 export function handleWorldDeviceWrites(envKey: string) {
@@ -52,21 +55,43 @@ export function handleWorldDeviceWrites(envKey: string) {
         break;
       }
       case 'spawn-actor': {
-        const { name, position } = msg;
         const director = useEnvStore.getState().director[envKey];
 
-        if (director.actors.includes(name)) {
-          geomService.moveToXY(director.toMesh[name], position);
+        if (msg.name in director.toMesh) {
+          geomService.moveToXY(director.toMesh[msg.name], msg.position);
         } else {
-          const mesh = useGeomStore.api.createActor(position, name);
+          const mesh = useGeomStore.api.createActor(msg.position, msg.name);
           director.group.add(mesh);
-          director.toMesh[name] = mesh;
-          director.toTween[name] = null;
-          director.actors.push(name);
+          director.toMesh[msg.name] = mesh;
+          director.toTween[msg.name] = null;
+          director.actors.push(msg.name);
         }
+
         break;
       }
       case 'follow-path': {
+        const director = useEnvStore.getState().director[envKey];
+
+        if (!(msg.name in director.toMesh)) {
+          return msg.callback(`unknown actor "${msg.name}" cannot follow path`);
+        } else if (msg.path.length <= 1) {
+          return msg.callback(null);
+        }
+
+        const mesh = director.toMesh[msg.name];
+
+        const position = { x: mesh.position.x, y: mesh.position.y };
+        const tween = new Tween.Tween(position)
+          .to({ x: msg.path[1].x, y: msg.path[1].y }, 2000);
+        tween.onUpdate(() => {
+          mesh.position.setX(position.x);
+          mesh.position.setY(position.y);
+        });
+        tween.onComplete(() => msg.callback(null));
+        tween.start(); // Finished config
+        director.toTween[msg.name] = tween;
+        useEnvStore.api.awakenDirector(envKey);
+
         break;
       }
     }

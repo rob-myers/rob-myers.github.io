@@ -9,6 +9,7 @@ import { processService as ps} from './process.service';
 import { ShError, breakError, continueError } from "./semantics.service";
 import { varService, alphaNumericRegex, iteratorDelayVarName } from "./var.service";
 import { voiceDevice } from "./voice.device";
+import { FollowPath } from "@model/env/world.device";
 
 export class BuiltinService {
 
@@ -193,12 +194,21 @@ export class BuiltinService {
     if (pointOrPath instanceof Array) {
       if (pointOrPath.length) {
         worldDevice.write({ key: 'spawn-actor', name: actorData.name, position: pointOrPath[0] });
-        worldDevice.write({ key: 'follow-path', actorName: actorData.name, navPath: pointOrPath });
+        const error = await new Promise((resolve: FollowPath['callback']) =>
+          worldDevice.write({ key: 'follow-path', name: actorData.name, path: pointOrPath, callback: resolve }));
+        if (error) {
+          throw new ShError(error, 1);
+        }
       }
     } else {
       const navPath = await this.getNavPath(pid, actorData.position, pointOrPath);
-      worldDevice.write({ key: 'follow-path', actorName: actorData.name, navPath });
+      const error = await new Promise((resolve: FollowPath['callback']) =>
+        worldDevice.write({ key: 'follow-path', name: actorData.name, path: navPath, callback: resolve }));
+      if (error) {
+        throw new ShError(error, 1);
+      }
     }
+
   }
 
   private parsePointArg(pid: number, varOrJson: string) {

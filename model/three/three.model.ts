@@ -34,3 +34,4 @@ export function getChild(obj: THREE.Object3D, childName: string) {
 }
 
 export const placeholderGroup = new THREE.Group;
+export const placeholderScene = new THREE.Scene;

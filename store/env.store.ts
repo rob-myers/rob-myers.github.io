@@ -2,31 +2,31 @@ import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import * as portals from 'react-reverse-portal';
 import { ReplaySubject } from 'rxjs';
-import Tween from '@tweenjs/tween.js';
 
 import { KeyedLookup } from '@model/generic.model';
-import { FsFile } from '@model/shell/file.model';
+import type * as Store from '@model/env/env-store.model';
 import * as Geom from '@model/geom/geom.model'
+import * as threeUtil from '@model/three/three.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import useShellStore from './shell.store';
 import { NavWorker, awaitWorker } from '@nav/nav.msg';
-import { Scene, Vector3 } from 'three';
-import * as threeUtil from '@model/three/three.model';
 
 export interface State {
-  env: KeyedLookup<Env>;
+  env: KeyedLookup<Store.Env>;
   navWorker: null | NavWorker;
   /** Aligned to env i.e. portal node for `Env` */
-  envPortal: KeyedLookup<EnvPortal>;
+  envPortal: KeyedLookup<Store.EnvPortal>;
   /** Aligned to env i.e. actor movement manager */
-  director: KeyedLookup<Director>;
-  decorator: KeyedLookup<Decorator>;
+  director: KeyedLookup<Store.Director>;
+  /** Aligned to env e.g. indicators */
+  decorator: KeyedLookup<Store.Decorator>;
 
   readonly api: {
-    createEnv: (def: EnvDef) => void;
+    awakenDirector: (envKey: string) => void;
+    createEnv: (def: Store.EnvDef) => void;
     /** Also use envKey as portalKey */
     ensureEnvPortal: (envKey: string) => void;
-    getActorData: (envKey: string, name: string) => ActorData | null;
+    getActorData: (envKey: string, name: string) => Store.ActorData | null;
     removeEnv: (envKey: string) => void;
     removeEnvPortal: (envKey: string) => void;
     removeNavWorkerRoom: (input: { envKey: string; roomType: string; roomUid: string }) => void;
@@ -47,68 +47,6 @@ export interface State {
   };
 }
 
-export interface Env {
-  /** Environment key */
-  key: string;
-  /** Set walls very high? */
-  highWalls: boolean;
-  /**
-   * Originally created in shell.store `Session`.
-   * - world can internally write click events to builtins.
-   * - builtins can write messages to change the world.
-   */
-  worldDevice: FsFile;
-  /**
-   * Messages are sent by `Room`s when they're updated.
-   * This triggers shadow recomputation in `World`.
-   * Navmesh recomputation is handled elsewhere i.e.
-   * each `Room` talks to the nav webworker.
-   */
-  updateShadows$: ReplaySubject<{ key: 'room-updated' }>;
-  /** Supplied by `World`. */
-  scene: THREE.Scene;
-}
-
-interface EnvDef {
-  envKey: string;
-  highWalls: boolean;
-}
-
-interface EnvPortal {
-  /** Environment key */
-  key: string;
-  portalNode: portals.HtmlPortalNode;
-}
-
-interface ActorData {
-  name: string;
-  position: Vector3;
-}
-
-/**
- * Manages actor movement for an environment.
- * We'll mutate this state per animation frame,
- * so it should not be fed into React components.
- */
-interface Director {
-  /** Environment key */
-  key: string;
-  /** Group containing actors */
-  group: THREE.Group;
-  /** Actor names */
-  actors: string[];
-  toMesh: Record<string, THREE.Mesh>;
-  toTween: Record<string, null | typeof Tween['Tween']>;
-  /** Can pause via cancelAnimationFrame */
-  animFrameId: null | number;
-}
-
-interface Decorator {
-  /** Environment key */
-  key: string;
-  /** Group containing indicators */
-  indicators: THREE.Group;
-}
 
 let nextMsgUid = 0;
 
@@ -120,6 +58,16 @@ const useStore = create<State>(devtools((set, get) => ({
   decorator: {},
 
   api: {
+    awakenDirector: (envKey) => {
+      const director = get().director[envKey];
+      if (director.animFrameId) {
+        return;
+      }
+      /**
+       * TODO trigger actor tweening
+       */
+    },
+    
     createEnv: ({ envKey, highWalls }) => {
       /**
        * Child's initial useEffect runs before parent's,
@@ -135,7 +83,7 @@ const useStore = create<State>(devtools((set, get) => ({
           highWalls,
           worldDevice,
           updateShadows$: new ReplaySubject(1),
-          scene: new Scene(),
+          scene: threeUtil.placeholderScene,
         }, env),
         director: addToLookup({
           key: envKey,
