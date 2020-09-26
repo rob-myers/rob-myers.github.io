@@ -25,7 +25,7 @@
       "@nav/*": ["nav/*"],
       "@env-var/*": ["env-var/*"],
       "@public/*": ["public/*"],
-      "@blog/*": ["blog/*"],
+      "@blog/*": ["blog/*"]
     },
     "downlevelIteration": true,
     "noErrorTruncation": true,
