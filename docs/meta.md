@@ -35,6 +35,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] camera can follow actor
 - [ ] actor can turn along path
+- [x] Consider `while click p; do goto p bob & done`
+  > ensure all bg processes resolve
+- [x] `goto`: most recent process cancels previous
 - [x] ctrl-c `goto` stops motion
 
 - [x] `goto` command

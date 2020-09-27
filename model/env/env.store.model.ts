@@ -54,6 +54,8 @@ export interface Director {
   actorsGrp: THREE.Group;
   /** Remember actor's mesh */
   toMesh: Record<string, THREE.Mesh>;
+  /** Most recent process cancels previous */
+  toCancel: Record<string, () => void>;
 }
 
 export interface Decorator {

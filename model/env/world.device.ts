@@ -74,17 +74,25 @@ export function handleWorldDeviceWrites(envKey: string) {
         break;
       }
       case 'follow-path': {
-        const { toMesh } = useEnvStore.getState().director[envKey];
+        const director = useEnvStore.getState().director[envKey];
 
-        if (!(msg.name in toMesh)) {
+        if (!(msg.name in director.toMesh)) {
           return msg.callback(`unknown actor "${msg.name}" cannot follow path`);
         } else if (msg.path.length <= 1) {
           return msg.callback(null);
         }
 
-        const mesh = toMesh[msg.name];
+        // Cancel any currently running timeline
+        if (msg.name in director.toCancel) {
+          director.toCancel[msg.name]();
+        }
+
+        const mesh = director.toMesh[msg.name];
         const path = msg.path.map(p => new Vector(p.x, p.y));
         const position = path[0].clone();
+
+        // TODO rotation via absolute offsets (just before turn)
+        // No need for easing though
 
         const timeline = anime.timeline({
           targets: position,
@@ -94,14 +102,24 @@ export function handleWorldDeviceWrites(envKey: string) {
         path.slice(1).forEach((target, i) => timeline.add({
           x: target.x,
           y: target.y,
-          duration: 500 * path[i].distTo(target),
+          duration: 600 * path[i].distTo(target),
+          easing: 'linear',
         }));
 
+
+        // We race to handle Ctrl-C and cancellation by other process
         Promise.race([
           timeline.finished,
-          new Promise((_, reject) => ps.addCleanups(msg.pid, reject)),
+          new Promise((_, reject) => {
+            ps.addCleanups(msg.pid, reject);
+            director.toCancel[msg.name] = reject;
+          }),
         ]).then(() => msg.callback(null))
-          .catch(() => timeline.pause()); // TODO dispose animations?
+          .catch(() => {
+            timeline.pause(); // TODO dispose animations?
+            msg.callback(`${msg.name}: goto was cancelled`)
+          })
+          .finally(() => delete director.toCancel[msg.name]);
 
         break;
       }

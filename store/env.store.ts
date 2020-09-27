@@ -78,6 +78,7 @@ const useStore = create<State>(devtools((set, get) => ({
           key: envKey,
           actorsGrp: threeUtil.placeholderGroup,
           toMesh: {},
+          toCancel: {},
         }, director),
         decorator: addToLookup({
           key: envKey,

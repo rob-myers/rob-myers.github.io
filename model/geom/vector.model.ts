@@ -5,6 +5,12 @@ export class Vector {
     public y: number,
   ) {}
 
+  add(other: VectorJson) {
+    this.x += other.x;
+    this.y += other.y;
+    return this;
+  }
+  
   public get angle() {
     return Math.atan2(this.y, this.x);
   }
