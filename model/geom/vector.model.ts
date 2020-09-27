@@ -34,6 +34,10 @@ export class Vector {
   public distSquaredTo(other: Vector) {
     return Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2)
   }
+  
+  public distTo(other: Vector) {
+    return Math.sqrt(this.distSquaredTo(other));
+  }
 
   equals({ x, y }: Vector) {
     return this.x === x && this.y === y;

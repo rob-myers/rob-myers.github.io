@@ -33,7 +33,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] fix nested command substitution
   > e.g. `s=$( nav $(click) $(click) )`
 
-- [ ] `goto` command
+- [ ] can ctrl-c goto
+
+- [x] `goto` command
   > can `goto [path] bob`
   > can `goto [point] bob` (does planning)
 - [x] `spawn` command

@@ -1,8 +1,8 @@
 import Tween from '@tweenjs/tween.js/dist/tween.cjs';
-import { removeFirst } from '@model/generic.model';
 import type * as Geom from '@model/geom/geom.model';
 import { geomService } from '@model/geom/geom.service';
 import * as threeUtil from '@model/three/three.model';
+import { Vector } from '@model/geom/geom.model';
 import useGeomStore from "@store/geom.store";
 import useEnvStore from "@store/env.store";
 
@@ -65,13 +65,14 @@ export function handleWorldDeviceWrites(envKey: string) {
           director.actorsGrp.add(mesh);
           director.toMesh[msg.name] = mesh;
           director.toTween[msg.name] = null;
-          // director.activeActors.push(msg.name);
         }
 
         break;
       }
       case 'follow-path': {
         const director = useEnvStore.getState().director[envKey];
+
+        // TODO can Ctrl-C path
 
         if (!(msg.name in director.toMesh)) {
           return msg.callback(`unknown actor "${msg.name}" cannot follow path`);
@@ -80,30 +81,22 @@ export function handleWorldDeviceWrites(envKey: string) {
         }
 
         const mesh = director.toMesh[msg.name];
-        director.toTween[msg.name]?.stop(); // Needed?
+        const path = msg.path.map(p => new Vector(p.x, p.y));
 
-        // Configure tween
-        const position = { x: mesh.position.x, y: mesh.position.y };
-        const tween = new Tween.Tween(position)
-          .to({ x: msg.path[1].x, y: msg.path[1].y }, 2000);
+        const tweens = path.slice(0, -1).map((p, i) => new Tween.Tween(p)
+          .to(path[i + 1], 500 * p.distTo(path[i + 1]) )
+          .onUpdate(() => geomService.moveToXY(mesh, p))
+          .onComplete(() => {
+            director.tweenGrp.remove(tweens[i]);
+            if (tweens[i + 1]) {
+              director.tweenGrp.add(tweens[i + 1].start());
+            } else {
+              msg.callback(null);
+            }
+          })
+        );
 
-        director.tweenGrp.add(tween);
-        director.toTween[msg.name] = tween;
-        tween.onUpdate(() => {
-          mesh.position.setX(position.x);
-          mesh.position.setY(position.y);
-        });
-        tween.onComplete(() => {
-          removeFirst(director.activeActors, msg.name);
-          director.toTween[msg.name] = null;
-          director.tweenGrp.remove(tween);
-          msg.callback(null);
-        });
-        tween.start();
-
-        if (!director.activeActors.includes(msg.name)) {
-          director.activeActors.push(msg.name);
-        }
+        director.tweenGrp.add(tweens[0].start());
         useEnvStore.api.awakenDirector(envKey);
 
         break;

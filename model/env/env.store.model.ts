@@ -58,8 +58,6 @@ export interface Director {
   toMesh: Record<string, THREE.Mesh>;
   /** Remember actor's tween, if any */
   toTween: Record<string, null | TWEEN.Tween<any>>;
-  /** Remember which actors are being tweened */
-  activeActors: string[];
   /** Can pause via cancelAnimationFrame */
   animFrameId: null | number;
 }

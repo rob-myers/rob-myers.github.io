@@ -65,10 +65,12 @@ const useStore = create<State>(devtools((set, get) => ({
         return;
       }
       const tweenActors = () => {
-        director.tweenGrp.update();
-        director.animFrameId = director.activeActors.length
-          ? requestAnimationFrame(tweenActors)
-          : null;
+        if (director.tweenGrp.update()) {
+        // if (Tween.update()) {
+          director.animFrameId = requestAnimationFrame(tweenActors);
+        } else {
+          director.animFrameId = null;
+        }
       };
       tweenActors();
     },
@@ -94,7 +96,6 @@ const useStore = create<State>(devtools((set, get) => ({
           key: envKey,
           actorsGrp: threeUtil.placeholderGroup,
           tweenGrp: new Tween.Group,
-          activeActors: [],
           toMesh: {},
           toTween: {},
           animFrameId: null,

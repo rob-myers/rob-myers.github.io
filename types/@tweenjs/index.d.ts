@@ -246,7 +246,8 @@ namespace TWEEN {
       private _swapEndStartRepeatValues;
   }
 
-  type UnknownProps = Record<string, unknown>;
+//   type UnknownProps = Record<string, unknown>;
+  type UnknownProps = any;
 
   /**
    * Controlling groups of tweens
