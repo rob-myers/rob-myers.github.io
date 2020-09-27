@@ -39,8 +39,12 @@ export interface FollowPath {
   key: 'follow-path';
   /** Actor's name */
   name: string;
+  /** Navpath to follow, starting from actor's position */
   path: Geom.VectorJson[];
+  /** Invoked on error or when finished */
   callback: (err: null | string) => void;
+  /** For Ctrl-C */
+  pid: number;
 }
 
 export function handleWorldDeviceWrites(envKey: string) {
@@ -57,22 +61,18 @@ export function handleWorldDeviceWrites(envKey: string) {
       }
       case 'spawn-actor': {
         const director = useEnvStore.getState().director[envKey];
-
         if (msg.name in director.toMesh) {
           geomService.moveToXY(director.toMesh[msg.name], msg.position);
         } else {
           const mesh = useGeomStore.api.createActor(msg.position, msg.name);
           director.actorsGrp.add(mesh);
           director.toMesh[msg.name] = mesh;
-          director.toTween[msg.name] = null;
+          useEnvStore.api.stopActorTween(envKey, msg.name);
         }
-
         break;
       }
       case 'follow-path': {
         const director = useEnvStore.getState().director[envKey];
-
-        // TODO can Ctrl-C path
 
         if (!(msg.name in director.toMesh)) {
           return msg.callback(`unknown actor "${msg.name}" cannot follow path`);
@@ -80,27 +80,41 @@ export function handleWorldDeviceWrites(envKey: string) {
           return msg.callback(null);
         }
 
-        const mesh = director.toMesh[msg.name];
-        const path = msg.path.map(p => new Vector(p.x, p.y));
+        (async () => {
+          const mesh = director.toMesh[msg.name];
+          const path = msg.path.map(p => new Vector(p.x, p.y));
+          let position = path.shift()!.clone();
+          const updater = () => geomService.moveToXY(mesh, position);
+          for (const target of path) {
+            await asyncTween(position, target, updater, director.tweenGrp);
+          }
+          msg.callback(null);
+        })();
 
-        const tweens = path.slice(0, -1).map((p, i) => new Tween.Tween(p)
-          .to(path[i + 1], 500 * p.distTo(path[i + 1]) )
-          .onUpdate(() => geomService.moveToXY(mesh, p))
-          .onComplete(() => {
-            director.tweenGrp.remove(tweens[i]);
-            if (tweens[i + 1]) {
-              director.tweenGrp.add(tweens[i + 1].start());
-            } else {
-              msg.callback(null);
-            }
-          })
-        );
-
-        director.tweenGrp.add(tweens[0].start());
+        // processService.addCleanups() // TODO
         useEnvStore.api.awakenDirector(envKey);
 
         break;
       }
     }
   };
+}
+
+function asyncTween(
+  from: Geom.Vector,
+  to: Geom.Vector,
+  updater: (current: Geom.VectorJson) => void,
+  group: TWEEN.Group,
+) {
+  return new Promise((resolve) => {
+    const tween = new Tween.Tween(from)
+      .to(to, 500 * from.distTo(to))
+      .onUpdate(updater)
+      .onComplete(() => {
+        group.remove(tween)
+        resolve();
+      })
+      .start();
+    group.add(tween);
+  });
 }

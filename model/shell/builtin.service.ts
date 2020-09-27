@@ -195,7 +195,7 @@ export class BuiltinService {
       if (pointOrPath.length) {
         worldDevice.write({ key: 'spawn-actor', name: actorData.name, position: pointOrPath[0] });
         const error = await new Promise((resolve: FollowPath['callback']) =>
-          worldDevice.write({ key: 'follow-path', name: actorData.name, path: pointOrPath, callback: resolve }));
+          worldDevice.write({ key: 'follow-path', pid, name: actorData.name, path: pointOrPath, callback: resolve }));
         if (error) {
           throw new ShError(error, 1);
         }
@@ -203,7 +203,7 @@ export class BuiltinService {
     } else {
       const navPath = await this.getNavPath(pid, actorData.position, pointOrPath);
       const error = await new Promise((resolve: FollowPath['callback']) =>
-        worldDevice.write({ key: 'follow-path', name: actorData.name, path: navPath, callback: resolve }));
+        worldDevice.write({ key: 'follow-path', pid, name: actorData.name, path: navPath, callback: resolve }));
       if (error) {
         throw new ShError(error, 1);
       }

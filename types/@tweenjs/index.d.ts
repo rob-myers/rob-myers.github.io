@@ -225,7 +225,7 @@ namespace TWEEN {
       stop(): this;
       end(): this;
       pause(time: number): this;
-      resume(time: number): this;
+      resume(time?: number): this;
       stopChainedTweens(): this;
       group(group: Group): this;
       delay(amount: number): this;

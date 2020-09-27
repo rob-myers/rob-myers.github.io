@@ -38,6 +38,7 @@ export interface State {
     ) => Promise<{ navPath: Geom.VectorJson[]; error?: string }>;
     roomUpdated: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
+    stopActorTween: (envKey: string, actorName: string) => void;
     storeScene: (envKey: string, scene: THREE.Scene) => void;
     updateNavWorkerRoom: (input: {
       envKey: string;
@@ -157,6 +158,16 @@ const useStore = create<State>(devtools((set, get) => ({
       set(({ env }) => ({
         env: updateLookup(envKey, env, () => ({ highWalls: next })),
       }));
+    },
+
+    stopActorTween: (envKey, actorName) => {
+      const { toTween, tweenGrp } = get().director[envKey];
+      const tween = toTween[actorName];
+      if (tween) {
+        tween.stop();
+        tweenGrp.remove(tween);
+        toTween[actorName] = null;
+      }
     },
 
     storeScene: (envKey, scene) => {
