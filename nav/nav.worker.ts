@@ -48,7 +48,7 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
         const dst = new Vector3(msg.dst.x, 0, msg.dst.y);
         const group = pathfinding.getGroup('zone1', src);
         const navPath = pathfinding.findPath(src, dst, 'zone1', group);
-        // TODO remove repetitions (seen midpath)
+        // console.log({src, dst, group, navPath})
         const cleanNavPath = geomService.removePathReps(
           [msg.src].concat(navPath.map(({ x, z }) => ({ x, y: z }))));
         ctxt.postMessage({ key: 'navpath-response', msgUid: msg.msgUid, navPath: cleanNavPath });

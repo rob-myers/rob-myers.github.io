@@ -22,6 +22,11 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > can auto send world events to tty
 > [ ] Ctrl-C UI button
 - [x] builtin `call '() => Math.random()'` and can provide js args
+- [ ] builtin `paste r` pastes & runs `string` or `string[]` output?
+- [ ] `range 10` is compositional if `0 1 2 ...`, but not if an array
+- [ ] issue where can't navigate from a nav point?
+  > `goto: failed with error: TypeError: Cannot read property 'map' of null`
+  > saw it when spawning a bot at each navpoint
 
 - [ ] can `nav "$( click )" "$( click )" > /dev/world`
   > `/dev/world` resolves to e.g. `/dev/world-2` as required
@@ -32,6 +37,10 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] fix nested command substitution
   > e.g. `s=$( nav $(click) $(click) )`
+  > this will permit `goto $( nav $(click) $(click) ) bob`
+
+- [x] spawn a bot at each point along navpath
+  `for i in {0..3}; do spawn bot-${i} $(  get r[${i}] ); done`
 
 - [ ] camera can follow actor
 - [ ] actor can turn along path
