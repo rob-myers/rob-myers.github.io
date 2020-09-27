@@ -1,10 +1,13 @@
-import Tween from '@tweenjs/tween.js/dist/tween.cjs';
+import anime from 'animejs';
+
 import type * as Geom from '@model/geom/geom.model';
 import { geomService } from '@model/geom/geom.service';
 import * as threeUtil from '@model/three/three.model';
 import { Vector } from '@model/geom/geom.model';
 import useGeomStore from "@store/geom.store";
 import useEnvStore from "@store/env.store";
+import { removeFirst } from '@model/generic.model';
+import { processService as ps } from '@model/shell/process.service';
 
 export type MessageFromWorld = (
   | NavmeshClick
@@ -67,32 +70,38 @@ export function handleWorldDeviceWrites(envKey: string) {
           const mesh = useGeomStore.api.createActor(msg.position, msg.name);
           director.actorsGrp.add(mesh);
           director.toMesh[msg.name] = mesh;
-          useEnvStore.api.stopActorTween(envKey, msg.name);
         }
         break;
       }
       case 'follow-path': {
-        const director = useEnvStore.getState().director[envKey];
+        const { toMesh } = useEnvStore.getState().director[envKey];
 
-        if (!(msg.name in director.toMesh)) {
+        if (!(msg.name in toMesh)) {
           return msg.callback(`unknown actor "${msg.name}" cannot follow path`);
         } else if (msg.path.length <= 1) {
           return msg.callback(null);
         }
 
-        (async () => {
-          const mesh = director.toMesh[msg.name];
-          const path = msg.path.map(p => new Vector(p.x, p.y));
-          let position = path.shift()!.clone();
-          const updater = () => geomService.moveToXY(mesh, position);
-          for (const target of path) {
-            await asyncTween(position, target, updater, director.tweenGrp);
-          }
-          msg.callback(null);
-        })();
+        const mesh = toMesh[msg.name];
+        const path = msg.path.map(p => new Vector(p.x, p.y));
+        const position = path[0].clone();
 
-        // processService.addCleanups() // TODO
-        useEnvStore.api.awakenDirector(envKey);
+        const timeline = anime.timeline({
+          targets: position,
+          easing: 'linear',
+          update: () => geomService.moveToXY(mesh, position),
+        });
+        path.slice(1).forEach((target, i) => timeline.add({
+          x: target.x,
+          y: target.y,
+          duration: 500 * path[i].distTo(target),
+        }));
+
+        Promise.race([
+          timeline.finished,
+          new Promise((_, reject) => ps.addCleanups(msg.pid, reject)),
+        ]).then(() => msg.callback(null))
+          .catch(() => timeline.pause()); // TODO dispose animations?
 
         break;
       }
@@ -100,21 +109,8 @@ export function handleWorldDeviceWrites(envKey: string) {
   };
 }
 
-function asyncTween(
-  from: Geom.Vector,
-  to: Geom.Vector,
-  updater: (current: Geom.VectorJson) => void,
-  group: TWEEN.Group,
-) {
-  return new Promise((resolve) => {
-    const tween = new Tween.Tween(from)
-      .to(to, 500 * from.distTo(to))
-      .onUpdate(updater)
-      .onComplete(() => {
-        group.remove(tween)
-        resolve();
-      })
-      .start();
-    group.add(tween);
-  });
+/** https://github.com/juliangarnier/anime/issues/188#issuecomment-621589326 */
+function cancelAnimation (animation: anime.AnimeInstance) {
+  removeFirst(anime.running, animation);
+  animation.pause();
 }

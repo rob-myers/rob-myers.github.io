@@ -52,14 +52,8 @@ export interface Director {
   key: string;
   /** Group of actor meshes */
   actorsGrp: THREE.Group;
-  /** Group of actor tweens */
-  tweenGrp: TWEEN.Group;
   /** Remember actor's mesh */
   toMesh: Record<string, THREE.Mesh>;
-  /** Remember actor's tween, if any */
-  toTween: Record<string, null | TWEEN.Tween<any>>;
-  /** Can pause via cancelAnimationFrame */
-  animFrameId: null | number;
 }
 
 export interface Decorator {

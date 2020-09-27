@@ -33,9 +33,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] fix nested command substitution
   > e.g. `s=$( nav $(click) $(click) )`
 
-- [ ] actor can turn along path
 - [ ] camera can follow actor
-- [ ] ctrl-c `goto` stops tweens
+- [ ] actor can turn along path
+- [x] ctrl-c `goto` stops motion
 
 - [x] `goto` command
   > can `goto [path] bob`

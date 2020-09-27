@@ -2,7 +2,6 @@ import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import * as portals from 'react-reverse-portal';
 import { ReplaySubject } from 'rxjs';
-import Tween from '@tweenjs/tween.js/dist/tween.cjs';
 
 import { KeyedLookup } from '@model/generic.model';
 import type * as Store from '@model/env/env.store.model';
@@ -23,7 +22,6 @@ export interface State {
   decorator: KeyedLookup<Store.Decorator>;
 
   readonly api: {
-    awakenDirector: (envKey: string) => void;
     createEnv: (def: Store.EnvDef) => void;
     /** Also use envKey as portalKey */
     ensureEnvPortal: (envKey: string) => void;
@@ -38,7 +36,6 @@ export interface State {
     ) => Promise<{ navPath: Geom.VectorJson[]; error?: string }>;
     roomUpdated: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
-    stopActorTween: (envKey: string, actorName: string) => void;
     storeScene: (envKey: string, scene: THREE.Scene) => void;
     updateNavWorkerRoom: (input: {
       envKey: string;
@@ -60,22 +57,6 @@ const useStore = create<State>(devtools((set, get) => ({
   decorator: {},
 
   api: {
-    awakenDirector: (envKey) => {
-      const director = get().director[envKey];
-      if (director.animFrameId) {
-        return;
-      }
-      const tweenActors = () => {
-        if (director.tweenGrp.update()) {
-        // if (Tween.update()) {
-          director.animFrameId = requestAnimationFrame(tweenActors);
-        } else {
-          director.animFrameId = null;
-        }
-      };
-      tweenActors();
-    },
-    
     createEnv: ({ envKey, highWalls }) => {
       /**
        * Child's initial useEffect runs before parent's,
@@ -96,10 +77,7 @@ const useStore = create<State>(devtools((set, get) => ({
         director: addToLookup({
           key: envKey,
           actorsGrp: threeUtil.placeholderGroup,
-          tweenGrp: new Tween.Group,
           toMesh: {},
-          toTween: {},
-          animFrameId: null,
         }, director),
         decorator: addToLookup({
           key: envKey,
@@ -158,16 +136,6 @@ const useStore = create<State>(devtools((set, get) => ({
       set(({ env }) => ({
         env: updateLookup(envKey, env, () => ({ highWalls: next })),
       }));
-    },
-
-    stopActorTween: (envKey, actorName) => {
-      const { toTween, tweenGrp } = get().director[envKey];
-      const tween = toTween[actorName];
-      if (tween) {
-        tween.stop();
-        tweenGrp.remove(tween);
-        toTween[actorName] = null;
-      }
     },
 
     storeScene: (envKey, scene) => {
