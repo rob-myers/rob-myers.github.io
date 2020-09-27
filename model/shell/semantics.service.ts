@@ -1345,7 +1345,9 @@ class SemanticsService {
 
   private async throttleIterator(node: Sh.ParsedSh) {
     if (node.lastIterated) {
-      const throttleMs = (vs.lookupVar(node.meta.pid, iteratorDelayVarName) || 1) * 1000;
+      const throttleMs = (
+        vs.lookupVar(node.meta.pid, iteratorDelayVarName) || 0.25
+      ) * 1000;
       const sleepMs = Math.max(0, throttleMs - (Date.now() - node.lastIterated));
       await ps.sleep(node.meta.pid, sleepMs);
     }
