@@ -216,6 +216,10 @@ export class TtyXterm {
         await new Promise(resolve => {
           this.queueCommands([
             { key: 'paste-line', line },
+            /**
+             * TODO this is preventing others processes from
+             * writing lines/errors
+             */
             { key: 'await-prompt' },
             { key: 'resolve', resolve },
           ]);
@@ -442,6 +446,7 @@ export class TtyXterm {
         return;
       }
       case 'error': {
+        console.log('receoved error', msg);
         this.queueCommands([{
           key: 'line',
           line: `${ansiWarn}${msg.msg}${ansiReset}`,
@@ -531,6 +536,7 @@ export class TtyXterm {
 
   private printPending() {
     if (this.commandBuffer.length && !this.nextPrintId) {
+      console.log('about to print', this.commandBuffer);
       this.nextPrintId = window.setTimeout(this.runCommands, this.refreshMs);
     }
   }
