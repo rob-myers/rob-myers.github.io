@@ -32,14 +32,17 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > https://github.com/donmccurdy/three-pathfinding/issues/68
   > might also be able to fix by double-facing the navmesh
 
-- [ ] bots have a shadow
-
-- [ ] can `nav "$( click )" "$( click )" > /dev/world`
-  > `/dev/world` resolves to e.g. `/dev/world-2` as required
-  > `nav` supports string inputs
-  > sending array of points creates navpath
+- [ ] can `decor foo` to show navpath and name it `foo`
   > remove builtin `way`
-  > general purpose builtin `decor` with subcommands `list`, `remove` etc.
+  > can `decor rm foo`
+  > can `decor ls`
+  
+   with subcommands `list`, `remove` etc.
+- [x] `nav` and `spawn` supports string inputs
+
+- [ ] `nav $(click) $(click) >@foo` sets variable `foo`
+  > avoids serialization
+  > avoids syntax `... as foo`
 
 - [x] fix nested command substitution
   > e.g. `s=$( nav $(click) $(click) )`
@@ -47,6 +50,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] spawn a bot at each point along navpath
   `for i in {0..3}; do spawn bot-${i} $(  get r[${i}] ); done`
 
+- [ ] actors have a shadow
 - [ ] camera can follow actor
 - [ ] actor can turn along path
 - [x] Consider `while click p; do goto p bob & done`
