@@ -138,7 +138,7 @@ export class SrcService {
         }(( ${this.src(node.X)} ))`;
 
       case 'CmdSubst':
-        return `$( ${this.seqSrc(node.Stmts)} )`;
+        return `$(${this.seqSrc(node.Stmts)})`;
 
       case 'DblQuoted':
         return `"${node.Parts.map(c => this.src(c)).join('')}"`;
