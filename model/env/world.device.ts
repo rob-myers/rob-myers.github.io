@@ -1,12 +1,7 @@
-import anime from 'animejs';
-
 import type * as Geom from '@model/geom/geom.model';
 import { geomService } from '@model/geom/geom.service';
 import * as threeUtil from '@model/three/three.model';
-import { Vector } from '@model/geom/geom.model';
 import useEnvStore from "@store/env.store";
-import { removeFirst } from '@model/generic.model';
-import { processService as ps } from '@model/shell/process.service';
 import { actorService } from './actor.service';
 
 export type MessageFromWorld = (
@@ -72,10 +67,4 @@ export function handleWorldDeviceWrites(envKey: string) {
       }
     }
   };
-}
-
-/** https://github.com/juliangarnier/anime/issues/188#issuecomment-621589326 */
-function cancelAnimation (animation: anime.AnimeInstance) {
-  removeFirst(anime.running, animation);
-  animation.pause();
 }

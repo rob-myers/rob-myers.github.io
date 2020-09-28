@@ -1,4 +1,5 @@
 import anime from 'animejs';
+import { removeFirst } from '@model/generic.model';
 import type * as Geom from '@model/geom/geom.model';
 import { Vector } from '@model/geom/geom.model';
 import { geomService } from '@model/geom/geom.service';
@@ -30,7 +31,7 @@ class ActorService {
     const director = useEnvStore.getState().director[envKey];
 
     if (!(actorName in director.toMesh)) {
-      return cb(`unknown actor "${actorName}" cannot follow path`);
+      return cb(`unknown actor "${actorName}": cannot follow path`);
     } else if (navPath.length <= 1) {
       return cb(null);
     }
@@ -43,21 +44,48 @@ class ActorService {
     const mesh = director.toMesh[actorName];
     const path = navPath.map(p => new Vector(p.x, p.y));
     const position = path[0].clone();
-
-    // TODO rotation via absolute offsets (just before turn)
-    // No need for easing though
+    const rotation = { angle: geomService.ensureDeltaRad(mesh.rotation.z) };
 
     const timeline = anime.timeline({
       targets: position,
       easing: 'linear',
       update: () => geomService.moveToXY(mesh, position),
     });
-    path.slice(1).forEach((target, i) => timeline.add({
-      x: target.x,
-      y: target.y,
-      duration: 600 * path[i].distTo(target),
-      easing: 'linear',
-    }));
+    const baseRotation: anime.AnimeParams = {
+      targets: rotation,
+      update: () => mesh.rotation.z = rotation.angle,
+      duration: 200,
+    };
+    mesh.rotation.z = geomService.ensureDeltaRad(mesh.rotation.z);
+
+    let totalMs = 0, delta = Vector.zero;
+    path.slice(1).forEach((target, i) => {
+      delta.copy(target).sub(path[i]);
+      const deltaMs = 600 * delta.length;
+
+      if (i === 0) {
+        timeline.add({ ...baseRotation,
+          angle: delta.angle,
+          duration: 200,
+        });
+        totalMs += 200;
+      }
+      // Move towards `target` after previous move
+      timeline.add({
+        x: target.x,
+        y: target.y,
+        duration: deltaMs,
+      });
+      // At `totalMs` (absolute offset) rotate towards `delta.angle`
+      if (i) {
+        timeline.add({ ...baseRotation,
+          angle: delta.angle,
+          duration: 100,
+        }, totalMs);
+      }
+
+      totalMs += deltaMs;
+    });
 
     try {
       // We race to handle Ctrl-C and cancellation by other process
@@ -75,6 +103,13 @@ class ActorService {
     } finally {
       delete director.toCancel[actorName];
     }
+  }
+
+
+  /** https://github.com/juliangarnier/anime/issues/188#issuecomment-621589326 */
+  private cancelAnimation (animation: anime.AnimeInstance) {
+    removeFirst(anime.running, animation);
+    animation.pause();
   }
 
 }

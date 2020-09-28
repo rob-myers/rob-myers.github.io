@@ -11,6 +11,8 @@ import * as Geom from '@model/geom/geom.model';
 import { epsilon } from "@model/three/three.model";
 import { Triple, tryParseJson } from "@model/generic.model";
 
+const twopi = 2 * Math.PI;
+
 class GeomService {
 
   private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
@@ -87,6 +89,12 @@ class GeomService {
         ...cuttingPolys.map(({ geoJson: { coordinates } }) => coordinates),
       )
       .map(coords => Geom.Polygon.from(coords).cleanFinalReps());
+  }
+
+  /** Ensure radian in range (-pi, pi] */
+  ensureDeltaRad(radians: number) {
+    const modulo = ((radians % twopi) + twopi) % twopi;
+    return modulo > Math.PI ? (modulo - twopi) : modulo;
   }
 
   /** Join disjoint triangulations */

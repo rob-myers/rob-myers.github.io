@@ -32,12 +32,14 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > https://github.com/donmccurdy/three-pathfinding/issues/68
   > might also be able to fix by double-facing the navmesh
 
+- [ ] `goto` error messages on takeover not always sent
+- [ ] `TtyXterm` is blocking/ignoring lines from other processes when pasting
+
 - [ ] can `decor foo` to show navpath and name it `foo`
   > remove builtin `way`
   > can `decor rm foo`
-  > can `decor ls`
-  
-   with subcommands `list`, `remove` etc.
+  > can `decor` to list decorations
+
 - [x] `nav` and `spawn` supports string inputs
 
 - [ ] `nav $(click) $(click) >@foo` sets variable `foo`
@@ -52,7 +54,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] actors have a shadow
 - [ ] camera can follow actor
-- [ ] actor can turn along path
+- [x] actor turns along path
+
 - [x] Consider `while click p; do goto p bob & done`
   > ensure all bg processes resolve
 - [x] `goto`: most recent process cancels previous
