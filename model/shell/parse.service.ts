@@ -933,6 +933,13 @@ export interface BaseNode {
   /** Reference to parent node  */
   parent: null | ParsedSh;
 
+  /**
+   * Sometimes a node needs a uid:
+   * - identify command substitution file `/dev/cs-${pid}-${uid}`
+   * - TODO prevent > 1 background process per respective subterm 
+   */
+  uid?: string;
+
   /** Used for test expansion */
   boolean?: boolean;
   /** Used for arithmetic expansion */
@@ -947,7 +954,6 @@ export interface BaseNode {
   paramDef?: ParameterDef<any, any>;
   /** Used by Redirects only */
   redirDef?: RedirectDef<any>;
-
   /** Used by ForClause and WhileClause only */
   lastIterated?: number;
 }

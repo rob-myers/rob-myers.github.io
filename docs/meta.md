@@ -29,6 +29,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > `goto: failed with error: TypeError: Cannot read property 'map' of null`
   > currently patching three-pathfinding Utils `isPointInPoly`
   > i.e. replace first two `<` by `<=`.
+  > https://github.com/donmccurdy/three-pathfinding/issues/68
+  > might also be able to fix by double-facing the navmesh
 
 - [ ] bots have a shadow
 
@@ -39,10 +41,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > remove builtin `way`
   > general purpose builtin `decor` with subcommands `list`, `remove` etc.
 
-- [ ] fix nested command substitution
+- [x] fix nested command substitution
   > e.g. `s=$( nav $(click) $(click) )`
   > this will permit `goto $( nav $(click) $(click) ) bob`
-
 - [x] spawn a bot at each point along navpath
   `for i in {0..3}; do spawn bot-${i} $(  get r[${i}] ); done`
 

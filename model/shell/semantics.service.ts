@@ -17,6 +17,8 @@ import { processService as ps } from './process.service';
 import { builtinService as bs } from './builtin.service';
 import { srcService } from './src.service';
 
+let nextNodeUid = 0;
+
 class SemanticsService {
 
   transpile(parsed: Sh.File): Observable<ProcessAct> {
@@ -566,9 +568,10 @@ class SemanticsService {
         return from(async function*() {
           const pid = node.meta.pid;
           const output = [] as string[];
+          const nodeUid = node.uid || (node.uid = `${nextNodeUid++}`);
 
           ps.pushRedirectScope(pid);
-          const opened = ps.openFile(pid, { path: `/dev/.cs-${pid}`, fd: 1 });
+          const opened = ps.openFile(pid, { path: `/dev/.cs-${pid}-${nodeUid}`, fd: 1 });
           const stopListening = opened.file.read((msg) => output.push(vs.toStringOrJson(msg)));
 
           try {
