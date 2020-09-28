@@ -316,13 +316,13 @@ export class BuiltinService {
   }
 
   private async spawn({ pid, sessionKey }: Process, args: string[]) {
-    if (args.length !== 2 || !args[0] || !alphaNumericRegex.test(args[0])) {
-      throw new ShError('usage `spawn bob pnt`', 1);
+    if (args.length !== 2 || !args[1] || !alphaNumericRegex.test(args[1])) {
+      throw new ShError('usage `spawn point_or_var actor_name`', 1);
     }
 
-    const position = this.parsePointArg(pid, args[1]);
+    const position = this.parsePointArg(pid, args[0]);
     const { worldDevice } = ps.getSession(sessionKey);
-    worldDevice.write({ key: 'spawn-actor', name: args[0], position });
+    worldDevice.write({ key: 'spawn-actor', name: args[1], position });
   }
 
   private delay({ pid }: Process, args: string[]) {
