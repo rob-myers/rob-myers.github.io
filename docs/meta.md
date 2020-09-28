@@ -24,9 +24,13 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] builtin `call '() => Math.random()'` and can provide js args
 - [ ] builtin `paste r` pastes & runs `string` or `string[]` output?
 - [ ] `range 10` is compositional if `0 1 2 ...`, but not if an array
-- [ ] issue where can't navigate from a nav point?
+
+- [x] sometimes can't navigate from corner nav points
   > `goto: failed with error: TypeError: Cannot read property 'map' of null`
-  > saw it when spawning a bot at each navpoint
+  > currently patching three-pathfinding Utils `isPointInPoly`
+  > i.e. replace first two `<` by `<=`.
+
+- [ ] bots have a shadow
 
 - [ ] can `nav "$( click )" "$( click )" > /dev/world`
   > `/dev/world` resolves to e.g. `/dev/world-2` as required
