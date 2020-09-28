@@ -1258,7 +1258,7 @@ class SemanticsService {
     if (e === null) {
       throw null; // Propagate Ctrl-C
     } else if (e instanceof ShError) {
-      // console.error(`${sessionKey}: pid ${pid}: ${e.message}`);
+      console.error(`handleShError: ${node.meta.sessionKey}: pid ${node.meta.pid}: ${e.message}`);
       if (e.exitCode === 0) {
         throw e; // Propagate break/continue/return
       }
