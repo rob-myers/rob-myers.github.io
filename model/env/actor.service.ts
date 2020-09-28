@@ -56,7 +56,6 @@ class ActorService {
       update: () => mesh.rotation.z = rotation.angle,
       duration: 200,
     };
-    mesh.rotation.z = geomService.ensureDeltaRad(mesh.rotation.z);
 
     let totalMs = 0, delta = Vector.zero;
     path.slice(1).forEach((target, i) => {

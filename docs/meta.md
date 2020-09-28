@@ -25,15 +25,17 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] builtin `paste r` pastes & runs `string` or `string[]` output?
 - [ ] `range 10` is compositional if `0 1 2 ...`, but not if an array
 
-- [x] sometimes can't navigate from corner nav points
-  > `goto: failed with error: TypeError: Cannot read property 'map' of null`
-  > currently patching three-pathfinding Utils `isPointInPoly`
-  > i.e. replace first two `<` by `<=`.
+- [ ] sometimes can't navigate from corner nav points
   > https://github.com/donmccurdy/three-pathfinding/issues/68
-  > might also be able to fix by double-facing the navmesh
+  > `goto: failed with error: TypeError: Cannot read property 'map' of null`
+  > patch of `isPointInPoly` did not work (added bad edges to navgraph)
+  > try fixing by double-facing the navmesh
 
 - [ ] `goto` error messages on takeover not always sent
-- [ ] `TtyXterm` is blocking/ignoring lines from other processes when pasting
+- [ ] `TtyXterm` blocks/ignores lines from other processes on paste
+
+- [ ] implement joined-up gotos
+- [ ] avoid bounce-back on override goto
 
 - [ ] can `decor foo` to show navpath and name it `foo`
   > remove builtin `way`
