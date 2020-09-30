@@ -235,6 +235,15 @@ export class Polygon {
     }
   }
 
+  static pointInTriangle(pt: Vector, v1: Vector, v2: Vector, v3: Vector) {
+    const d1 = Polygon.sign(pt, v1, v2);
+    const d2 = Polygon.sign(pt, v2, v3);
+    const d3 = Polygon.sign(pt, v3, v1);
+    const hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    const hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+    return !(hasNeg && hasPos);
+  }
+
   get rect() {
     return Rect.fromPoints(...this.outline);
   }
@@ -249,6 +258,10 @@ export class Polygon {
     this.outline.forEach(p => p.scale(scalar));
     this.holes.forEach(h => h.forEach(p => p.scale(scalar)));
     return this;
+  }
+
+  private static sign (p1: Vector, p2: Vector, p3: Vector) {
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
   }
 
   /** Compute tangents of exterior and holes. */

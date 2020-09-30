@@ -25,12 +25,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] builtin `paste r` pastes & runs `string` or `string[]` output?
 - [ ] `range 10` is compositional if `0 1 2 ...`, but not if an array
 
-- [ ] sometimes can't navigate from corner nav points
-  > https://github.com/donmccurdy/three-pathfinding/issues/68
-  > `goto: failed with error: TypeError: Cannot read property 'map' of null`
-  > patch of `isPointInPoly` did not work (added bad edges to navgraph)
-  > try fixing by double-facing the navmesh
-
 - [ ] `goto` error messages on takeover not always sent
 - [ ] `TtyXterm` blocks/ignores lines from other processes on paste
 
@@ -53,6 +47,12 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > this will permit `goto $( nav $(click) $(click) ) bob`
 - [x] spawn a bot at each point along navpath
   `for i in {0..3}; do spawn bot-${i} $(  get r[${i}] ); done`
+
+- [x] sometimes can't navigate from corner nav points
+  > https://github.com/donmccurdy/three-pathfinding/issues/68
+  > `goto: failed with error: TypeError: Cannot read property 'map' of null`
+  > patched `findPath` i.e. do not require points to be inside nav poly,
+    instead the closest node is picked.
 
 - [ ] actors have a shadow
 - [ ] camera can follow actor

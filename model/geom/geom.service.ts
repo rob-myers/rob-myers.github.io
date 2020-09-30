@@ -223,10 +223,14 @@ class GeomService {
     );
   }
 
-  meshFromPolys(polys: Geom.Polygon[], plane: 'XY' | 'XZ', useBufferGeom = true): THREE.Mesh {
+  meshFromPolys(
+    polys: Geom.Polygon[],
+    plane: 'XY' | 'XZ',
+    useBufferGeom = true,
+  ): THREE.Mesh {
     const decomps = polys.map(p => p.qualityTriangulate());
     const all = this.joinTriangulations(decomps);
-    console.log('triangulations', all);
+
     const geometry = new Geometry();
     if (plane === 'XY') {
       geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, 0)));
@@ -234,6 +238,7 @@ class GeomService {
       geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, 0, p.y)));
     }
     geometry.faces.push(...all.tris.map(tri => new Face3(tri[2], tri[1], tri[0])));
+
     geometry.computeVertexNormals();
     geometry.computeFaceNormals();
     return new Mesh(
