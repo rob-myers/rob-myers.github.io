@@ -9,6 +9,7 @@ import useEnvStore from '@store/env.store';
 import CameraControls from './controls/camera-controls';
 import Grid from './grid';
 import FirstLevel from './level/first-level';
+import Actors from './actor/actors';
 import css from './world.scss';
 
 const World: React.FC<Props> = ({ envName }) => {
@@ -58,9 +59,12 @@ const World: React.FC<Props> = ({ envName }) => {
           }}
         >
           <CameraControls />
+
           <Grid />
+
           <group name="indicators"/>
-          <group name="actors"/>
+
+          <Actors />
 
           <FirstLevel envName={envName} />
 
