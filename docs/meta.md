@@ -56,6 +56,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] actors have a shadow
 - [ ] camera can follow actor
+
+- [ ] use physics engine to follow path?
+
 - [x] actor turns along path
 
 - [x] Consider `while click p; do goto p bob & done`

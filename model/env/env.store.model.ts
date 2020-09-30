@@ -3,6 +3,7 @@ import type * as THREE from 'three';
 import * as portals from 'react-reverse-portal';
 
 import { FsFile } from '@model/shell/file.model';
+import { KeyedLookup } from '@model/generic.model';
 
 export interface Env {
   /** Environment key */
@@ -50,12 +51,20 @@ export interface ActorData {
 export interface Director {
   /** Environment key */
   key: string;
-  /** Group of actor meshes */
+  /** Group which contains the actor meshes */
   actorsGrp: THREE.Group;
+  /** Actor's meta data */
+  actor: KeyedLookup<ActorMeta>;
+}
+
+export interface ActorMeta {
+  key: string;
   /** Remember actor's mesh */
-  toMesh: Record<string, THREE.Mesh>;
-  /** Most recent process cancels previous */
-  toCancel: Record<string, () => void>;
+  mesh: THREE.Mesh;
+  /** Cancel animation or noop */
+  cancel: () => void;
+  /** Current timeline used to animate actor */
+  timeline: anime.AnimeTimelineInstance;
 }
 
 export interface Decorator {

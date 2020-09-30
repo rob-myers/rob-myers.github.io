@@ -12,12 +12,21 @@ class ActorService {
 
   spawn(envKey: string, actorName: string, position: Geom.VectorJson) {
     const director = useEnvStore.getState().director[envKey];
-    if (actorName in director.toMesh) {
-      geomService.moveToXY(director.toMesh[actorName], position);
+    if (actorName in director.actor) {
+      geomService.moveToXY(director.actor[actorName].mesh, position);
     } else {
       const mesh = useGeomStore.api.createActor(position, actorName);
       director.actorsGrp.add(mesh);
-      director.toMesh[actorName] = mesh;
+
+      const timeline = anime.timeline({});
+      timeline.pause();
+
+      director.actor[actorName] = {
+        key: actorName,
+        mesh,
+        cancel: () => {},
+        timeline,
+      };
     }
   }
 
@@ -29,32 +38,36 @@ class ActorService {
     cb: FollowPath['callback'],
   ) {
     const director = useEnvStore.getState().director[envKey];
+    const actor = director.actor[actorName];
 
-    if (!(actorName in director.toMesh)) {
+    if (!actor) {
       return cb(`unknown actor "${actorName}": cannot follow path`);
     } else if (navPath.length <= 1) {
       return cb(null);
     }
 
-    // Cancel any currently running timeline
-    if (actorName in director.toCancel) {
-      director.toCancel[actorName]();
+    const path = navPath.map(p => new Vector(p.x, p.y));
+    const moving = !actor.timeline.finished;
+
+    if (moving) {
+      actor.timeline.pause();
+      actor.cancel();
     }
 
-    const mesh = director.toMesh[actorName];
-    const path = navPath.map(p => new Vector(p.x, p.y));
+    const { mesh } = actor;
     const position = path[0].clone();
     const rotation = { angle: geomService.ensureDeltaRad(mesh.rotation.z) };
 
-    const timeline = anime.timeline({
+    actor.timeline = anime.timeline({
       targets: position,
       easing: 'linear',
       update: () => geomService.moveToXY(mesh, position),
     });
-    const baseRotation: anime.AnimeParams = {
+
+    const baseRotate: anime.AnimeParams = {
       targets: rotation,
-      update: () => mesh.rotation.z = rotation.angle,
       duration: 200,
+      update: () => mesh.rotation.z = rotation.angle,
     };
 
     let totalMs = 0, delta = Vector.zero;
@@ -63,24 +76,15 @@ class ActorService {
       const deltaMs = 600 * delta.length;
 
       if (i === 0) {
-        timeline.add({ ...baseRotation,
-          angle: delta.angle,
-          duration: 200,
-        });
+        actor.timeline.add({ ...baseRotate, angle: delta.angle, duration: 200 });
         totalMs += 200;
       }
+
       // Move towards `target` after previous move
-      timeline.add({
-        x: target.x,
-        y: target.y,
-        duration: deltaMs,
-      });
-      // At `totalMs` (absolute offset) rotate towards `delta.angle`
+      actor.timeline.add({ x: target.x, y: target.y, duration: deltaMs });
       if (i) {
-        timeline.add({ ...baseRotation,
-          angle: delta.angle,
-          duration: 100,
-        }, totalMs);
+        // At `totalMs` (absolute offset) rotate towards `delta.angle`
+        actor.timeline.add({ ...baseRotate, angle: delta.angle, duration: 100 }, totalMs);
       }
 
       totalMs += deltaMs;
@@ -89,18 +93,18 @@ class ActorService {
     try {
       // We race to handle Ctrl-C and cancellation by other process
       await Promise.race([
-        timeline.finished,
+        actor.timeline.finished,
         new Promise((_, reject) => {
           ps.addCleanups(pid, reject);
-          director.toCancel[actorName] = reject;
+          actor.cancel = reject;
         }),
       ]);
       cb(null);
     } catch (e) {
-      timeline.pause(); // TODO dispose animations?
+      actor.timeline.pause(); // TODO dispose animations?
       cb(`${actorName}: goto was cancelled`);
     } finally {
-      delete director.toCancel[actorName];
+      actor.cancel = () => {};
     }
   }
 
