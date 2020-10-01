@@ -36,6 +36,10 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > can `decor rm foo`
   > can `decor` to list decorations
 
+- [ ] try migrating babylonjs recast plugin (three-pathfinding has issues)
+  > https://github.com/BabylonJS/Babylon.js/blob/master/src/Navigation/Plugins/recastJSPlugin.ts
+  > https://www.npmjs.com/package/recast-detour
+
 - [x] `nav` and `spawn` supports string inputs
 
 - [ ] `nav $(click) $(click) >@foo` sets variable `foo`

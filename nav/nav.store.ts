@@ -68,9 +68,9 @@ const useStore = create<{
     updateEnvNavigation: (envKey) => {
       const navRects = get().env[envKey].roomUids.flatMap(uid => get().room[uid].navRects);
       const navPolys = geomService.union(navRects.map(r => Polygon.fromRect(r)));
+      const navMesh = geomService.navPolysToMesh(navPolys);
       // console.log('navRects, navPolys', navRects, navPolys);
       
-      const navMesh = geomService.meshFromPolys(navPolys, 'XZ');
       const pathfinding = new Pathfinding();
       pathfinding.setZoneData('zone1', Pathfinding.createZone(navMesh.geometry as THREE.BufferGeometry));
       // console.log('navMesh, pathfinding', navMesh, pathfinding);

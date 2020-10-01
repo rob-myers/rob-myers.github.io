@@ -223,26 +223,18 @@ class GeomService {
     );
   }
 
-  meshFromPolys(
-    polys: Geom.Polygon[],
-    plane: 'XY' | 'XZ',
-    useBufferGeom = true,
-  ): THREE.Mesh {
-    const decomps = polys.map(p => p.qualityTriangulate());
+  navPolysToMesh(navPolys: Geom.Polygon[]): THREE.Mesh {
+    const decomps = navPolys.map(p => p.qualityTriangulate());
     const all = this.joinTriangulations(decomps);
 
     const geometry = new Geometry();
-    if (plane === 'XY') {
-      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, 0)));
-    } else {
-      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, 0, p.y)));
-    }
+    geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, 0, p.y)));
     geometry.faces.push(...all.tris.map(tri => new Face3(tri[2], tri[1], tri[0])));
 
     geometry.computeVertexNormals();
     geometry.computeFaceNormals();
     return new Mesh(
-      useBufferGeom ? (new THREE.BufferGeometry()).fromGeometry(geometry) : geometry,
+      (new THREE.BufferGeometry()).fromGeometry(geometry),
       new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
     );
   }
