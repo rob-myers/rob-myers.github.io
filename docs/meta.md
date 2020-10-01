@@ -36,7 +36,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > can `decor rm foo`
   > can `decor` to list decorations
 
-- [x] `nav $(click) $(click) >@foo` sets variable `foo`
+- [ ] `nav $(click) $(click) >@foo` sets variable `foo`
   > avoids serialization
   > avoids syntax `... as foo`
 
