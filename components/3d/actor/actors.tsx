@@ -12,17 +12,14 @@ const Actors: React.FC<Props> = ({ envName }) => {
     Object.values(director?.actor??{}), [director?.actor]);
 
   return (
-    <group name="actors">
-      <Physics gravity={gravity} >
-        {actors.map(({ key }) => (
-          <Actor
-            key={key}
-            envName={envName}
-            actorName={key}
-          />
-        ))}
-      </Physics>
-      </group>
+    <Physics gravity={gravity} >
+      {actors.map((actor) => (
+        <Actor
+          key={actor.key}
+          actor={actor}
+        />
+      ))}
+    </Physics>
   );
 };
 

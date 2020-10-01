@@ -1,17 +1,12 @@
 import { useEffect } from "react";
 import { useBox } from "@react-three/cannon";
-import useEnvStore from "@store/env.store";
+import { ActorMeta } from "@model/env/env.store.model";
+// import useEnvStore from "@store/env.store";
 
-const Actor: React.FC<Props> = ({ envName, actorName }) => {
+const Actor: React.FC<Props> = ({ actor }) => {
   const [root, api] = useBox(() => ({ mass: 1 }));
 
   useEffect(() => {
-    const director = useEnvStore.getState().director[envName];
-    const actor =  director.actor[actorName];
-    if (!director || !actor) {
-      return console.error(`invalid env name "${envName}" or actor name "${actorName}"`);
-    }
-
     const origMesh = actor.mesh;
     actor.mesh = root.current as THREE.Mesh;
     actor.mesh.geometry = origMesh.geometry;
@@ -29,13 +24,16 @@ const Actor: React.FC<Props> = ({ envName, actorName }) => {
   }, []);
 
   return (
-    <mesh ref={root} />
+    <mesh
+      ref={root}
+      material={actor.mesh.material}
+      geometry={actor.mesh.geometry}
+    />
   );
 }
 
 interface Props {
-  envName: string;
-  actorName: string;
+  actor: ActorMeta
 }
 
 export default Actor;
