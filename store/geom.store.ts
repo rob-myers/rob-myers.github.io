@@ -229,17 +229,21 @@ const useStore = create<State>(devtools((set, get) => ({
          * Possibly wasteful to create many PlaneGeometry instead of one Mesh.
          * We'll traverse these quads to find instantiated navmesh.
          */
-        rects.forEach(({ cx, cy, width, height }) => {
+        rects.forEach((rect) => {
+          const { cx, cy, width, height } = rect;
           const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 1), navMeshMaterial);
           plane.name = Param.navmeshPlaneName;
           plane.receiveShadow = true;
           plane.position.set(cx, cy, 0);
           navMesh.add(plane);
-          // TODO use three.meshline instead
-          // plane.add(new THREE.LineSegments(// Debug only
-          //   new THREE.EdgesGeometry(plane.geometry),
-          //   new THREE.LineBasicMaterial( { color: 0xffffff } ),
-          // ));
+
+          /**
+           * Nav rects (DEBUG).
+           */
+          // const lines = geomService.createPolyLine([
+          //   rect.nw, rect.ne, rect.se, rect.sw, rect.nw,
+          // ].map(p => p.translate(-cx, -cy)), 0.001);
+          // plane.add(lines);
         });
       });
 
