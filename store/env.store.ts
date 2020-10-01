@@ -76,7 +76,7 @@ const useStore = create<State>(devtools((set, get) => ({
         }, env),
         director: addToLookup({
           key: envKey,
-          actorsGrp: threeUtil.placeholderGroup,
+          group: threeUtil.placeholderGroup,
           actor: {},
         }, director),
         decorator: addToLookup({
@@ -97,7 +97,7 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     getActorData: (envKey, name) => {
-      const { actorsGrp: group } = get().director[envKey];
+      const { group } = get().director[envKey];
       const actor = threeUtil.getChild(group, name);
       return actor
         ? { name, position: actor.position.clone() }
@@ -142,7 +142,7 @@ const useStore = create<State>(devtools((set, get) => ({
       set(({ env, director, decorator }) => ({
         env: updateLookup(envKey, env, () => ({ scene })),
         director: updateLookup(envKey, director, () => ({
-          actorsGrp: threeUtil.getChild(scene, 'actors') as THREE.Group,
+          group: threeUtil.getChild(scene, 'actors') as THREE.Group,
         })),
         decorator: updateLookup(envKey, decorator, () => ({
           indicators: threeUtil.getChild(scene, 'indicators') as THREE.Group,

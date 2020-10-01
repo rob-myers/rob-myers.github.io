@@ -19,8 +19,8 @@ export interface Env {
   /**
    * Messages are sent by `Room`s when they're updated.
    * This triggers shadow recomputation in `World`.
-   * Navmesh recomputation is handled elsewhere i.e.
-   * each `Room` talks to the nav webworker.
+   * Navmesh recomputation handled elsewhere: each `Room`
+   * handles its `Inner`s and talks to the nav webworker.
    */
   updateShadows$: ReplaySubject<{ key: 'room-updated' }>;
   /** Supplied by `World`. */
@@ -43,22 +43,23 @@ export interface ActorData {
   position: THREE.Vector3;
 }
 
-/**
- * Manages actor movement for an environment.
- * We'll mutate this state per animation frame,
- * so it should not be fed into React components.
- */
 export interface Director {
   /** Environment key */
   key: string;
-  /** Group which contains the actor meshes */
-  actorsGrp: THREE.Group;
-  /** Actor's meta data */
+  /** Group containing the actor meshes */
+  group: THREE.Group;
+  /**
+   * Actors in this enviroment.
+   * This nested lookup is justified.
+   */
   actor: KeyedLookup<ActorMeta>;
 }
 
 export interface ActorMeta {
+  /** Actor name (unique per env) */
   key: string;
+  /** Mesh id */
+  id: string;
   /** Remember actor's mesh */
   mesh: THREE.Mesh;
   /** Cancel animation or noop */

@@ -64,7 +64,7 @@ const World: React.FC<Props> = ({ envName }) => {
 
           <group name="indicators"/>
 
-          <Actors />
+          <Actors envName={envName} />
 
           <FirstLevel envName={envName} />
 

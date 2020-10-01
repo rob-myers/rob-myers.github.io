@@ -12,24 +12,26 @@ class ActorService {
 
   spawn(envKey: string, actorName: string, position: Geom.VectorJson) {
     const director = useEnvStore.getState().director[envKey];
-    if (actorName in director.actor) {
-      geomService.moveToXY(director.actor[actorName].mesh, position);
+    const actor = director.actor[actorName];
+
+    if (actor) {
+      geomService.moveToXY(actor.mesh, position);
     } else {
       const mesh = useGeomStore.api.createActor(position, actorName);
-      director.actorsGrp.add(mesh);
-
-      const timeline = anime.timeline({});
-      timeline.pause();
-
+      director.group.add(mesh);
       director.actor[actorName] = {
         key: actorName,
+        id: mesh.name,
         mesh,
         cancel: () => {},
-        timeline,
+        timeline: anime.timeline({ autoplay: false }),
       };
     }
   }
 
+  /**
+   * TODO total rewrite based on @react-three/cannon
+   */
   async followPath(
     envKey: string,
     pid: number,
