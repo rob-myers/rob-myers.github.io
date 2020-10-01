@@ -164,13 +164,14 @@ export class BuiltinService {
     }
   }
 
-  private async getActorData(pid: number, name: string) {
+  /** Throws if actor n'exist pas */
+  private getActorMeta(pid: number, actorName: string) {
     const envKey = ps.getEnvKey(pid);
-    const actorData = useEnvStore.api.getActorData(envKey, name);
-    if (!actorData) {
-      throw new ShError(`actor "${name}" not found`, 1);
+    const actor = useEnvStore.api.getActorMeta(envKey, actorName);
+    if (!actor) {
+      throw new ShError(`actor "${actorName}" not found`, 1);
     }
-    return actorData;
+    return actor;
   }
 
   private async getNavPath(pid: number, p: Geom.VectorJson, q: Geom.VectorJson) {
@@ -187,24 +188,25 @@ export class BuiltinService {
     if (!dst || !actorName || rest.length) {
       throw new ShError('usage `goto point_or_path actor_name`', 1);
     }
-    const actorData = await this.getActorData(pid, actorName);
+    // Also ensures actor exists
+    const { position } = this.getActorMeta(pid, actorName);
     const pointOrPath = this.parsePointOrPathArg(pid, dst);
     const { worldDevice } = ps.getSession(sessionKey);
     
     if (pointOrPath instanceof Array) {
       if (pointOrPath.length) {
-        worldDevice.write({ key: 'spawn-actor', name: actorData.name, position: pointOrPath[0] });
+        worldDevice.write({ key: 'spawn-actor', name: actorName, position: pointOrPath[0] });
         const error = await new Promise((resolve: FollowPath['callback']) =>
-          worldDevice.write({ key: 'follow-path', pid, name: actorData.name, path: pointOrPath, callback: resolve }));
+          worldDevice.write({ key: 'follow-path', pid, name: actorName, path: pointOrPath, callback: resolve }));
         if (error) {
           throw new ShError(error, 1);
         }
       }
     } else {
-      const navPath = await this.getNavPath(pid, actorData.position, pointOrPath);
+      const navPath = await this.getNavPath(pid, position, pointOrPath);
       // worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: navPath });
       const error = await new Promise((resolve: FollowPath['callback']) =>
-        worldDevice.write({ key: 'follow-path', pid, name: actorData.name, path: navPath, callback: resolve }));
+        worldDevice.write({ key: 'follow-path', pid, name: actorName, path: navPath, callback: resolve }));
       if (error) {
         throw new ShError(error, 1);
       }

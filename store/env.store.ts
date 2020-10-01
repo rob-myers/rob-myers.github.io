@@ -2,13 +2,15 @@ import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import * as portals from 'react-reverse-portal';
 import { ReplaySubject } from 'rxjs';
+import anime from 'animejs';
 
 import { KeyedLookup } from '@model/generic.model';
 import type * as Store from '@model/env/env.store.model';
 import * as Geom from '@model/geom/geom.model'
 import * as threeUtil from '@model/three/three.model';
-import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import useShellStore from './shell.store';
+import useGeomStore from './geom.store';
+import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import { NavWorker, awaitWorker } from '@nav/nav.msg';
 
 export interface State {
@@ -22,10 +24,12 @@ export interface State {
   decorator: KeyedLookup<Store.Decorator>;
 
   readonly api: {
+    createActor: (envKey: string, actorName: string, position: Geom.VectorJson) => void;
     createEnv: (def: Store.EnvDef) => void;
-    /** Also use envKey as portalKey */
+    /** Uses envKey as portalKey */
     ensureEnvPortal: (envKey: string) => void;
-    getActorData: (envKey: string, name: string) => Store.ActorData | null;
+    getActorMeta: (envKey: string, name: string) => Store.ActorMeta | null;
+    removeActor: (envKey: string, actorName: string) => void;
     removeEnv: (envKey: string) => void;
     removeEnvPortal: (envKey: string) => void;
     removeNavWorkerRoom: (input: { envKey: string; roomType: string; roomUid: string }) => void;
@@ -57,6 +61,24 @@ const useStore = create<State>(devtools((set, get) => ({
   decorator: {},
 
   api: {
+    createActor: (envKey, actorName, position) => {
+      const mesh = useGeomStore.api.createActor(actorName);
+      mesh.position.set(position.x, position.y, 0);
+
+      set(({ director }) => ({ director: updateLookup(envKey, director, ({ actor }) => ({
+        actor: addToLookup({
+          key: actorName,
+          id: 'default-bot',
+          mesh,
+          physics: {} as any,
+          position: mesh.position.clone(),
+          rotation: mesh.rotation.clone(),
+          cancel: () => {},
+          timeline: anime.timeline({ autoplay: false }),
+        }, actor),
+      })) }));
+    },
+
     createEnv: ({ envKey, highWalls }) => {
       /**
        * Child's initial useEffect runs before parent's,
@@ -76,7 +98,6 @@ const useStore = create<State>(devtools((set, get) => ({
         }, env),
         director: addToLookup({
           key: envKey,
-          group: threeUtil.placeholderGroup,
           actor: {},
         }, director),
         decorator: addToLookup({
@@ -96,12 +117,16 @@ const useStore = create<State>(devtools((set, get) => ({
       }, envPortal) }));
     },
 
-    getActorData: (envKey, name) => {
-      const { group } = get().director[envKey];
-      const actor = threeUtil.getChild(group, name);
-      return actor
-        ? { name, position: actor.position.clone() }
-        : null;
+    getActorMeta: (envKey, actorName) => {
+      return get().director[envKey].actor[actorName] || null;
+    },
+
+    removeActor: (envKey, actorName) => {
+      set(({ director }) => ({
+        director: updateLookup(envKey, director, ({ actor }) => ({
+          actor: removeFromLookup(actorName, actor),
+        })),
+      }));
     },
 
     removeEnvPortal: (envKey) => {
@@ -139,11 +164,8 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     storeScene: (envKey, scene) => {
-      set(({ env, director, decorator }) => ({
+      set(({ env, decorator }) => ({
         env: updateLookup(envKey, env, () => ({ scene })),
-        director: updateLookup(envKey, director, () => ({
-          group: threeUtil.getChild(scene, 'actors') as THREE.Group,
-        })),
         decorator: updateLookup(envKey, decorator, () => ({
           indicators: threeUtil.getChild(scene, 'indicators') as THREE.Group,
         })),

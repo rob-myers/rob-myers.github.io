@@ -19,7 +19,7 @@ const World: React.FC<Props> = ({ envName }) => {
   const env = useEnvStore(({ env }) => env[envName]);
 
   useEffect(() => {
-    if (env && ctxt) {
+    if (env && ctxt?.gl) {
       // Update shadows whenever a room changes
       const shadowsSub = env.updateShadows$.pipe(debounceTime(30), tap(_ => {
         if (ctxt.gl) {

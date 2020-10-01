@@ -1,6 +1,7 @@
 import { ReplaySubject } from 'rxjs';
 import type * as THREE from 'three';
 import * as portals from 'react-reverse-portal';
+import type { useBox } from '@react-three/cannon';
 
 import { FsFile } from '@model/shell/file.model';
 import { KeyedLookup } from '@model/generic.model';
@@ -38,16 +39,9 @@ export interface EnvPortal {
   portalNode: portals.HtmlPortalNode;
 }
 
-export interface ActorData {
-  name: string;
-  position: THREE.Vector3;
-}
-
 export interface Director {
   /** Environment key */
   key: string;
-  /** Group containing the actor meshes */
-  group: THREE.Group;
   /**
    * Actors in this enviroment.
    * This nested lookup is justified.
@@ -60,8 +54,14 @@ export interface ActorMeta {
   key: string;
   /** Mesh id */
   id: string;
-  /** Remember actor's mesh */
+  /** Mesh instance from `Actor` */
   mesh: THREE.Mesh;
+  /** useBox physics from `Actor` */
+  physics: ReturnType<typeof useBox>[1];
+  /** Physics position updated via subscription */
+  position: THREE.Vector3;
+  /** Physics rotation updated via subscription */
+  rotation: THREE.Euler;
   /** Cancel animation or noop */
   cancel: () => void;
   /** Current timeline used to animate actor */

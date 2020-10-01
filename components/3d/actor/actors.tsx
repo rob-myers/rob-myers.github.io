@@ -3,18 +3,22 @@ import { useMemo } from 'react';
 import useEnvStore from '@store/env.store';
 import Actor from './actor';
 
+const gravity = [0, 0, 0];
+
 const Actors: React.FC<Props> = ({ envName }) => {
   const director = useEnvStore(({ director }) => director[envName]);
-  // director.actor immutable, but not its items
-  const actors = useMemo(() => Object.values(director.actor??{}), [director?.actor]);
+  // Why can `director` be undefined on hot-reload?
+  const actors = useMemo(() =>
+    Object.values(director?.actor??{}), [director?.actor]);
 
   return (
     <group name="actors">
-      <Physics>
+      <Physics gravity={gravity} >
         {actors.map(({ key }) => (
           <Actor
-            id={key}
+            key={key}
             envName={envName}
+            actorName={key}
           />
         ))}
       </Physics>

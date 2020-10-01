@@ -8,7 +8,6 @@ import * as Param from '@model/env/env.model';
 import { isMeshNode, navMeshMaterial } from '@model/three/three.model';
 import * as Geom from '@model/geom/geom.model'
 import { geomService } from '@model/geom/geom.service';
-import useEnvStore from './env.store'
 
 export interface State {
   loadedGltf: boolean;
@@ -25,7 +24,7 @@ export interface State {
     computeActorMeta: (inner: THREE.Mesh) => ActorMeta;
     computeInnerMeta: (inner: THREE.Mesh) => InnerMeta;
     computeRoomMeta: (room: THREE.Mesh) => RoomMeta;
-    createActor: (position: Geom.VectorJson, name: string) => THREE.Mesh;
+    createActor: (name: string) => THREE.Mesh;
     /**
      * Update child mesh 'navmesh' of supplied `room`,
      * taking any attached Inners into account.
@@ -94,10 +93,6 @@ const useStore = create<State>(devtools((set, get) => ({
           inners: lookupFromValues(innerMetas),
         }));
       });
-
-      const navWorker = new (await import('@nav/nav.worker')).default;
-      useEnvStore.setState({ navWorker });
-      navWorker.postMessage({ key: 'ping-navworker' });
     },
 
     extractMeshes: (gltf: GLTF) => {
@@ -196,9 +191,9 @@ const useStore = create<State>(devtools((set, get) => ({
       };
     },
 
-    createActor: (position, name) => {
+    createActor: (name) => {
       const mesh = get().actors['default-bot'].mesh.clone();
-      geomService.moveToXY(mesh, position);
+      mesh.position.set(0, 0, 0);
       mesh.name = name;
       return mesh;
     },

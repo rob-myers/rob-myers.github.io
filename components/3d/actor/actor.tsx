@@ -1,35 +1,41 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useBox } from "@react-three/cannon";
 import useEnvStore from "@store/env.store";
-import useGeomStore from "@store/geom.store";
 
-const Actor: React.FC<Props> = ({ envName, id }) => {
-  // const root = useRef<THREE.Group>(null);
-  const [root, api] = useBox(() => ({ mass: 1 }))
-  const mesh = useRef(null as null | THREE.Mesh);
+const Actor: React.FC<Props> = ({ envName, actorName }) => {
+  const [root, api] = useBox(() => ({ mass: 1 }));
 
   useEffect(() => {
-    const env = useEnvStore.getState().env[envName];
-    const meta =  useGeomStore.getState().actors[id];
-    if (!env || !meta) {
-      return console.error(`invalid actor id "${id}"`);
+    const director = useEnvStore.getState().director[envName];
+    const actor =  director.actor[actorName];
+    if (!director || !actor) {
+      return console.error(`invalid env name "${envName}" or actor name "${actorName}"`);
     }
 
-    mesh.current = meta.mesh.clone();
-    root.current?.add(mesh.current);
-    // api.position.set()
+    const origMesh = actor.mesh;
+    actor.mesh = root.current as THREE.Mesh;
+    actor.mesh.geometry = origMesh.geometry;
+    actor.mesh.material = origMesh.material;
+
+    actor.physics = api;
+    api.position.copy(origMesh.position);
+    api.position.subscribe((v) => actor.position.set(v[0], v[1], v[2]));
+    api.rotation.subscribe((v) => actor.rotation.set(v[0], v[1], v[2]));
+
+    return () => {
+      actor.mesh = origMesh;
+      actor.physics = {} as any;
+    };
   }, []);
 
   return (
-    <group
-      ref={root}    
-    />
+    <mesh ref={root} />
   );
 }
 
 interface Props {
-  id: string;
   envName: string;
+  actorName: string;
 }
 
 export default Actor;

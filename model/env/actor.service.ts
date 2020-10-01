@@ -4,7 +4,6 @@ import type * as Geom from '@model/geom/geom.model';
 import { Vector } from '@model/geom/geom.model';
 import { geomService } from '@model/geom/geom.service';
 import { processService as ps } from '@model/shell/process.service';
-import useGeomStore from "@store/geom.store";
 import useEnvStore from "@store/env.store";
 import { FollowPath } from './world.device';
 
@@ -15,17 +14,9 @@ class ActorService {
     const actor = director.actor[actorName];
 
     if (actor) {
-      geomService.moveToXY(actor.mesh, position);
+      actor.physics.position.set(position.x, position.y, 0);
     } else {
-      const mesh = useGeomStore.api.createActor(position, actorName);
-      director.group.add(mesh);
-      director.actor[actorName] = {
-        key: actorName,
-        id: mesh.name,
-        mesh,
-        cancel: () => {},
-        timeline: anime.timeline({ autoplay: false }),
-      };
+      useEnvStore.api.createActor(envKey, actorName, position);
     }
   }
 
@@ -56,20 +47,22 @@ class ActorService {
       actor.cancel();
     }
 
-    const { mesh } = actor;
     const position = path[0].clone();
-    const rotation = { angle: geomService.ensureDeltaRad(mesh.rotation.z) };
+    const rotation = { angle: geomService.ensureDeltaRad(actor.rotation.z) };
 
+    const { physics } = actor;
     actor.timeline = anime.timeline({
       targets: position,
       easing: 'linear',
-      update: () => geomService.moveToXY(mesh, position),
+      update: () => {// NOTE we're clamping height
+        physics.position.set(position.x, position.y, 0);
+      },
     });
 
     const baseRotate: anime.AnimeParams = {
       targets: rotation,
       duration: 200,
-      update: () => mesh.rotation.z = rotation.angle,
+      update: () => physics.rotation.set(0, 0, rotation.angle),
     };
 
     let totalMs = 0, delta = Vector.zero;
