@@ -3,8 +3,17 @@ import { useBox } from "@react-three/cannon";
 import { ActorMeta } from "@model/env/env.store.model";
 // import useEnvStore from "@store/env.store";
 
-const Actor: React.FC<Props> = ({ actor }) => {
-  const [root, api] = useBox(() => ({ mass: 1 }));
+const Actor: React.FC<Props> = ({ actor, index }) => {
+  const [root, api] = useBox(() => ({
+    allowSleep: true,
+    /**
+     * Don't want actors to collide.
+     * Do want `Dynamic` body, so:
+     * - can move via forces (not just velocity).
+     * - can collide actor with static trigger.
+     */
+    collisionFilterGroup: index,
+  }));
 
   useEffect(() => {
     const origMesh = actor.mesh;
@@ -33,7 +42,9 @@ const Actor: React.FC<Props> = ({ actor }) => {
 }
 
 interface Props {
-  actor: ActorMeta
+  actor: ActorMeta;
+  /** Used to prevent actor collisions */
+  index: number;
 }
 
 export default Actor;

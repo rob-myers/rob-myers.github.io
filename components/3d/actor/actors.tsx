@@ -13,10 +13,11 @@ const Actors: React.FC<Props> = ({ envName }) => {
 
   return (
     <Physics gravity={gravity} >
-      {actors.map((actor) => (
+      {actors.map((actor, index) => (
         <Actor
           key={actor.key}
           actor={actor}
+          index={index}
         />
       ))}
     </Physics>
