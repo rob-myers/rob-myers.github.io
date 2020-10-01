@@ -9728,6 +9728,11 @@ rebass@^4.0.7:
   dependencies:
     reflexbox "^4.0.6"
 
+recast-detour@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/recast-detour/-/recast-detour-1.1.0.tgz#2410dadd24504a56f7321a5893e4ee4265ddc25a"
+  integrity sha512-29MxxvFgOlP/K5mgze/3ygraUswIFJp/jFKZLTCRRU9daDHL05U9v/CcaTE7wyvKR979MRUaIlXTNKH98VcsGw==
+
 rectangle-decomposition@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/rectangle-decomposition/-/rectangle-decomposition-1.0.0.tgz#4412d6a5396449ed2364816c9431770cf5d54e9e"
@@ -11291,11 +11296,6 @@ text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
   integrity sha1-f17oI66AUgfACvLfSoTsP8+lcLQ=
-
-three-pathfinding@^0.12.1:
-  version "0.12.1"
-  resolved "https://registry.yarnpkg.com/three-pathfinding/-/three-pathfinding-0.12.1.tgz#d776bddb1aace0843c1f66a22d7c19d4895c0add"
-  integrity sha512-9xlydK+kkjL8PxuXh1OhtOyMrrd76HfWIYkhqv8kQBm4xHY5feCVZqyfCOcOrSEAldh3tlyj48SSJAFnc5rPmw==
 
 three.meshline@^1.3.0:
   version "1.3.0"

@@ -7,6 +7,7 @@ import { NavWorker, NavWorkerContext, Message, MessageFromMain, UpdateRoomNav, R
 import useStore from './nav.store';
 import { Vector3 } from 'three';
 import { geomService } from '@model/geom/geom.service';
+import { recastService } from '@model/env/recast.service';
 
 const ctxt: NavWorkerContext = self as any;
 const { api } = useStore.getState();
@@ -40,14 +41,15 @@ ctxt.addEventListener('message', async ({ data: msg }) => {
       break;
     }
     case 'request-navpath': {
-      const { navReady$, pathfinding } = useStore.getState().env[msg.envKey];
+      const { navReady$ } = useStore.getState().env[msg.envKey];
       await firstValueFrom(navReady$.pipe(filter((ready) => ready)));
 
       try {
         const src = new Vector3(msg.src.x, 0, msg.src.y);
         const dst = new Vector3(msg.dst.x, 0, msg.dst.y);
-        const group = pathfinding.getGroup('zone1', src);
-        const navPath = pathfinding.findPath(src, dst, 'zone1', group);
+        const navPath = recastService.computePath(src, dst);
+        // const group = pathfinding.getGroup('zone1', src);
+        // const navPath = pathfinding.findPath(src, dst, 'zone1', group);
         // console.log({src, dst, group, navPath})
         const cleanNavPath = geomService.removePathReps(
           [msg.src].concat(navPath.map(({ x, z }) => ({ x, y: z }))));
