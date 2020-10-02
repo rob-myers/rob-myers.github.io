@@ -1,4 +1,3 @@
-import shortid from 'shortid';
 import { mapValues, last, removeFirst } from '@model/generic.model';
 import useStore, { State as ShellState, Session, Process, ProcessGroup } from '@store/shell.store';
 import { addToLookup } from '@store/store.util';
@@ -7,8 +6,10 @@ import { OpenFileRequest, OpenFileDescription } from './file.model';
 import { NamedFunction } from './var.model';
 import { semanticsService, ShError } from './semantics.service';
 import { fileService } from './file.service';
-import { varService } from './var.service';
+import { varService, alphaNumericRegex } from './var.service';
 import { SendXtermError } from './tty.shell';
+
+let nextOpenId = 0;
 
 export class ProcessService {
   
@@ -85,15 +86,15 @@ export class ProcessService {
   }
 
   /**
-   * Decrement open file description,
-   * removing when numLinks is not positive.
+   * Decrement open file description numLinks,
+   * removing if not positive. We immediately
+   * unlink files `@foo/{pid}-{openId}`.
    */
   private closeFdInternal(fd: number, fdToOpen: Process['fdToOpen']) {
     const open = fdToOpen[fd];
     if (open) {
-      if (open.numLinks > 1) {
-        open.numLinks--;
-      } else {
+      open.numLinks--;      
+      if (open.numLinks <= 0 || open.file.key.startsWith('@')) {
         delete this.getOfds()[open.key];
       }
     } else {
@@ -295,23 +296,35 @@ export class ProcessService {
     let file = fileService.getFile(absPath);
 
     if (!file) {
-      if (!fileService.validatePath(absPath)) {
+      if (absPath.startsWith('@')) {
+        const varName = absPath.slice(1);
+        if (!alphaNumericRegex.test(varName)) {
+          throw new ShError(`${absPath}: variable must be alphanumeric`, 1);
+        }
+        // Created file should only exist whilst `opened` scope does
+        file = fileService.makeVarSetter(pid, `${absPath}/${pid}-${nextOpenId}`, varName);
+        fileService.saveFile(file);
+      } else if (!fileService.validatePath(absPath)) {
         throw new ShError(`${absPath}: only absolute paths /{dev,root,tmp}/foo are supported`, 1);
+      } else {
+        // Create and mount a file
+        file = fileService.makeWire(absPath);
+        fileService.saveFile(file);
       }
-      // Create and mount a file
-      file = fileService.makeWire(absPath);
-      fileService.saveFile(file);
     }
 
-    // Create open file description and connect to process
-    // If file descriptor `undefined` we'll use minimal unassigned
+    /**
+     * Create open file description and connect to process.
+     * If file descriptor `undefined` we'll use minimal unassigned.
+     */
     const process = this.getProcess(pid);
-    const opened = new OpenFileDescription(shortid.generate(), file);
+    const openKey = `opened-${nextOpenId++}`
+    const opened = new OpenFileDescription(openKey, file);
     this.getOfds()[opened.key] = opened;
     const nextFd = fileService.getNextFd(process.fdToOpen, fd);
     
-    if (nextFd in process.fdToOpen) {// Close if open
-      this.closeFd(pid, nextFd);
+    if (nextFd in process.fdToOpen) {
+      this.closeFd(pid, nextFd); // Close if open
     }
     this.setFd(pid, nextFd, opened);
     return opened;

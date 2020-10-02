@@ -40,7 +40,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] camera can follow actor
 - [ ] use physics engine to follow path
 
-- [ ] `nav $(click) $(click) >@foo` sets variable `foo`
+- [x] `nav $(click) $(click) >@foo` sets variable `foo`
   > avoids serialization
   > avoids syntax `... as foo`
 

@@ -2,6 +2,7 @@ import { firstAvailableInteger } from '@model/generic.model';
 import useStore, { Process } from '@store/shell.store';
 import { FsFile, ShellFile } from "./file.model";
 import { ShellStream } from './shell.stream';
+import { varService } from './var.service';
 
 export class FileService {
 
@@ -47,6 +48,14 @@ export class FileService {
     return this.createFsFile(absPath, new ShellStream, new ShellStream, true);
   }
 
+  makeVarSetter(pid: number, absPath: string, varName: string) {
+    const writable = new ShellStream;
+    writable.registerCallback((msg) => {
+      varService.assignVar(pid, { varName , value: msg });
+    }, false);
+    return this.createFsFile(absPath, new ShellStream, writable);    
+  }
+
   makeWire(absPath: string) {
     const stream = new ShellStream;
     return this.createFsFile(absPath, stream, stream);
@@ -60,6 +69,12 @@ export class FileService {
     delete this.getFs()[absPath];
   }
 
+  /**
+   * Permitted:
+   * - `/root/foo`
+   * - `/dev/foo`
+   * - `/tmp/foo`
+   */
   validatePath(absPath: string) {
     const parts = absPath.split('/');
     return parts.length === 3

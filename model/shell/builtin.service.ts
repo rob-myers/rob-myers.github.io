@@ -131,8 +131,8 @@ export class BuiltinService {
    * Deep var lookup; outputs to stdout or can save as variable.
    */
   private get({ pid, fdToOpen }: Process, [srcPath, ...rest]: string[]) {
-    if (!srcPath || rest.length && (rest[0] !== 'as' || rest.length !== 2)) {
-      throw new ShError('usage `get foo` or `get foo.bar[2]` or `get foo as bar`', 1);
+    if (!srcPath || rest.length) {
+      throw new ShError('usage `get foo` or `get foo.bar[2]`', 1);
     }
 
     let cached = cacheFor.get[srcPath];
@@ -153,11 +153,7 @@ export class BuiltinService {
     try {
       const value = cached.func(rootVar);
       if (value !== undefined) {
-        if (rest.length) {
-          varService.assignVar(pid, { varName: rest[1], value });
-        } else {
-          fdToOpen[1].write(value);
-        }
+        fdToOpen[1].write(value);
       }
     } catch (e) {
       throw new ShError(`path ${srcPath} not found`, 1);
@@ -241,18 +237,13 @@ export class BuiltinService {
   }
 
   private async nav({ pid }: Process, args: string[]) {
-    if (!(args.length === 2 || (args.length === 4 && args[2] === 'as'))) {
-      throw new ShError('usage `nav pnt_a pnt_b` or `nav pnt_a pnt_b as path`', 1);
+    if (args.length !== 2) {
+      throw new ShError('usage `nav pnt_a pnt_b``', 1);
     }
     const p = this.parsePointArg(pid, args[0]);
     const q = this.parsePointArg(pid, args[1]);
     const navPath = await this.getNavPath(pid, p, q);
-
-    if (args.length === 2) {
-      ps.getProcess(pid).fdToOpen[1].write(navPath);
-    } else {
-      varService.assignVar(pid, { varName: args[3], value: navPath });
-    }
+    ps.getProcess(pid).fdToOpen[1].write(navPath);
   }
 
   private async read({ pid, sessionKey, fdToOpen, cleanups }: Process, args: string[]) {
@@ -330,6 +321,7 @@ export class BuiltinService {
 
   private delay({ pid }: Process, args: string[]) {
     const permitted = { 0.25: true, 0.5: true, 1: true };
+
     if (args.length !== 1 || !(args[0] in permitted)) {
       throw new ShError(`usage \`delay t where t in {0.25,0.5,1}\``, 1);
     }
