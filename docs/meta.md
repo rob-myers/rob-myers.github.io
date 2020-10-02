@@ -36,6 +36,10 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > can `decor rm foo`
   > can `decor` to list decorations
 
+- [ ] actors have a shadow
+- [ ] camera can follow actor
+- [ ] use physics engine to follow path
+
 - [ ] `nav $(click) $(click) >@foo` sets variable `foo`
   > avoids serialization
   > avoids syntax `... as foo`
@@ -57,11 +61,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > `goto: failed with error: TypeError: Cannot read property 'map' of null`
   > patched `findPath` i.e. do not require points to be inside nav poly,
     instead the closest node is picked.
-
-- [ ] actors have a shadow
-- [ ] camera can follow actor
-
-- [ ] use physics engine to follow path?
 
 - [x] actor turns along path
 
