@@ -1,9 +1,6 @@
-import { Physics } from '@react-three/cannon';
 import { useMemo } from 'react';
 import useEnvStore from '@store/env.store';
 import Actor from './actor';
-
-const gravity = [0, 0, 0];
 
 const Actors: React.FC<Props> = ({ envName }) => {
   const director = useEnvStore(({ director }) => director[envName]);
@@ -12,15 +9,14 @@ const Actors: React.FC<Props> = ({ envName }) => {
     Object.values(director?.actor??{}), [director?.actor]);
 
   return (
-    <Physics gravity={gravity} >
-      {actors.map((actor, index) => (
+    <>
+      {actors.map((actor) =>
         <Actor
           key={actor.key}
           actor={actor}
-          index={index}
         />
-      ))}
-    </Physics>
+      )}
+    </>
   );
 };
 

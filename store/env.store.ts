@@ -70,9 +70,7 @@ const useStore = create<State>(devtools((set, get) => ({
           key: actorName,
           id: 'default-bot',
           mesh,
-          physics: {} as any,
-          position: mesh.position.clone(),
-          rotation: mesh.rotation.clone(),
+          // OLD BELOW
           cancel: () => {},
           timeline: anime.timeline({ autoplay: false }),
         }, actor),

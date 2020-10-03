@@ -4,7 +4,6 @@ import * as portals from 'react-reverse-portal';
 
 import { FsFile } from '@model/shell/file.model';
 import { KeyedLookup } from '@model/generic.model';
-import { PhysicsInstance } from './env.model';
 
 export interface Env {
   /** Environment key */
@@ -56,12 +55,6 @@ export interface ActorMeta {
   id: string;
   /** Mesh instance from `Actor` */
   mesh: THREE.Mesh;
-  /** useBox physics from `Actor` */
-  physics: PhysicsInstance;
-  /** Physics position updated via subscription */
-  position: THREE.Vector3;
-  /** Physics rotation updated via subscription */
-  rotation: THREE.Euler;
 
   // OLD BELOW
 

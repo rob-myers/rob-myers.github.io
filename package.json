@@ -4,7 +4,6 @@
   "dependencies": {
     "@babel/core": "^7.10.2",
     "@babel/generator": "^7.10.2",
-    "@react-three/cannon": "^0.5.3",
     "animejs": "^3.2.0",
     "braces": "^3.0.2",
     "classnames": "^2.2.6",

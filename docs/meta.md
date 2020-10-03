@@ -46,11 +46,11 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] actors have a shadow
 - [ ] camera can follow actor
 
-- [ ] possibly replace use-cannon with:
+- [ ] replace use-cannon with:
   > https://github.com/erosmarcon/three-steer
   > could implement triggers ourselves via navrect partition
 - [ ] use physics engine to follow path
-
+- [x] remove use-cannon
 
 - [x] `nav $(click) $(click) >@foo` sets variable `foo`
   > avoids serialization

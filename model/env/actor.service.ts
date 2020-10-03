@@ -14,14 +14,14 @@ class ActorService {
     const actor = director.actor[actorName];
 
     if (actor) {
-      actor.physics.position.set(position.x, position.y, 0);
+      actor.mesh.position.set(position.x, position.y, 0);
     } else {
       useEnvStore.api.createActor(envKey, actorName, position);
     }
   }
 
   /**
-   * TODO total rewrite based on @react-three/cannon
+   * @deprecated
    */
   async followPath(
     envKey: string,
@@ -47,22 +47,23 @@ class ActorService {
       actor.cancel();
     }
 
+    const mesh = actor.mesh;
     const position = path[0].clone();
-    const rotation = { angle: geomService.ensureDeltaRad(actor.rotation.z) };
+    const rotation = { angle: geomService.ensureDeltaRad(mesh.rotation.z) };
 
-    const { physics } = actor;
+    // const { physics } = actor;
     actor.timeline = anime.timeline({
       targets: position,
       easing: 'linear',
       update: () => {// NOTE we're clamping height
-        physics.position.set(position.x, position.y, 0);
+        mesh.position.set(position.x, position.y, 0);
       },
     });
 
     const baseRotate: anime.AnimeParams = {
       targets: rotation,
       duration: 200,
-      update: () => physics.rotation.set(0, 0, rotation.angle),
+      update: () => mesh.rotation.set(0, 0, rotation.angle),
     };
 
     let totalMs = 0, delta = Vector.zero;
