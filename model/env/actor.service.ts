@@ -1,7 +1,6 @@
 import anime from 'animejs';
 import * as THREE from 'three';
 
-import { removeFirst } from '@model/generic.model';
 import type * as Geom from '@model/geom/geom.model';
 import { Vector } from '@model/geom/geom.model';
 import { geomService } from '@model/geom/geom.service';
@@ -51,7 +50,7 @@ class ActorService {
       if (steerable.followPath(path, false, 0.1)) {
         return true;
       }
-      steerable.lookWhereGoing(true);
+      // steerable.lookWhereGoing(true);
       steerable.update();
     };
 

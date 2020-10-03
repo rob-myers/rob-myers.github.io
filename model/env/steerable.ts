@@ -7,21 +7,15 @@ import { Vector3 } from 'three';
 class BaseSteerable {
 
   mass = 1;
-  maxSpeed = 10;
-
-  position = new THREE.Vector3;
+  maxSpeed = 0.1;
   velocity: THREE.Vector3 & { angle: number };
-
   box = new THREE.Box3;
   raycaster = new THREE.Raycaster;
-
   velocitySamples = [] as THREE.Vector3[];
   numSamplesForSmoothing = 20;
-
   radius = 200; // temp initial value
 
   constructor(public group: THREE.Group) {
-
     this.velocity = Object.defineProperty(new THREE.Vector3, 'angle', {
       get: function() {
         return Math.atan2(this.y, this.x);
@@ -33,36 +27,40 @@ class BaseSteerable {
     });
   }
 
+  get position() {
+    return this.group.position;
+  }
+
   get backward() {
     return this.forward.clone().negate();
   }
   
   bounce(box: THREE.Box3) {
     if (this.position.x > box.max.x) {
-        this.position.setX(box.max.x);
-        this.velocity.angle = this.velocity.angle + .1
+      this.position.setX(box.max.x);
+      this.velocity.angle = this.velocity.angle + .1
     }
 
     if (this.position.x < box.min.x) {
-        this.position.setX(box.min.x);
-        this.velocity.angle = this.velocity.angle + .1
+      this.position.setX(box.min.x);
+      this.velocity.angle = this.velocity.angle + .1
     }
 
     if (this.position.z > box.max.z) {
-        this.position.setZ(box.max.z);
-        this.velocity.angle = this.velocity.angle + .1
+      this.position.setZ(box.max.z);
+      this.velocity.angle = this.velocity.angle + .1
     }
     if (this.position.z < box.min.z) {
-        this.position.setZ(box.min.z);
-        this.velocity.angle = this.velocity.angle + .1
+      this.position.setZ(box.min.z);
+      this.velocity.angle = this.velocity.angle + .1
     }
 
     if (this.position.y > box.max.y) {
-        this.position.setY(box.max.y);
+      this.position.setY(box.max.y);
     }
 
     if (this.position.y < box.min.y) {
-        this.position.setY(-box.min.y);
+      this.position.setY(-box.min.y);
     }
   }
 
@@ -72,7 +70,7 @@ class BaseSteerable {
 
   /** Our convention: +y goes into screen */
   get forward() {
-    return new THREE.Vector3(0, -1, 0)
+    return new THREE.Vector3(-1, 0, 0)
       .applyQuaternion(this.group.quaternion).negate();
   }
   
@@ -82,7 +80,8 @@ class BaseSteerable {
   }
 
   get left() {
-    return this.forward.clone().applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI * .5)
+    return this.forward.clone()
+      .applyAxisAngle(new THREE.Vector3(0, 0, 1), Math.PI * .5)
   }
 
   get right() {
@@ -93,7 +92,7 @@ class BaseSteerable {
    * Must be set explicitly.
    */
   setBounds(bounds: THREE.Box3) {
-    this.box.setFromObject(group.children[0]);
+    this.box.copy(bounds);
   }
 
   update() {
@@ -108,45 +107,47 @@ class BaseSteerable {
 
   wrap(box: THREE.Box3) {
       if (this.position.x > box.max.x) {
-          this.position.setX(box.min.x + 1);
+        this.position.setX(box.min.x + 1);
       }
 
       else if (this.position.x < box.min.x) {
-          this.position.setX(box.max.x - 1);
+        this.position.setX(box.max.x - 1);
       }
 
       if (this.position.z > box.max.z) {
-          this.position.setZ(box.min.z + 1);
-
+        this.position.setZ(box.min.z + 1);
       }
       else if (this.position.z < box.min.z) {
-          this.position.setZ(box.max.z - 1);
+        this.position.setZ(box.max.z - 1);
       }
 
       if (this.position.y > box.max.y) {
-          this.position.setY(box.min.y + 1);
+        this.position.setY(box.min.y + 1);
       }
 
       else if (this.position.y < box.min.y) {
-          this.position.setY(box.max.y + 1);
+        this.position.setY(box.max.y + 1);
       }
   }
 
   lookWhereGoing(smoothing: boolean) {
-    let direction = this.position.clone().add(this.velocity).setZ(this.position.z);
+    let direction = this.position.clone()
+      .add(this.velocity)
+      .setZ(0);
     
     if (smoothing) {
       if (this.velocitySamples.length == this.numSamplesForSmoothing) {
-          this.velocitySamples.shift();
+        this.velocitySamples.shift();
       }
 
-      this.velocitySamples.push(this.velocity.clone().setZ(this.position.z));
+      this.velocitySamples.push(this.velocity.clone().setZ(0));
       direction.set(0, 0, 0);
       for (var v = 0; v < this.velocitySamples.length; v++) {
-          direction.add(this.velocitySamples[v])
+        direction.add(this.velocitySamples[v])
       }
       direction.divideScalar(this.velocitySamples.length)
-      direction = this.position.clone().add(direction).setZ(this.position.z)
+      direction = this.position.clone().add(direction)
+        .setZ(0);
     }
     this.group.lookAt(direction)
   }
@@ -157,21 +158,21 @@ class BaseSteerable {
  */
 export class Steerable extends BaseSteerable {
 
-  maxForce = 5;
-  arrivalThreshold = 400;
+  maxForce = 0.1;
+  arrivalThreshold = 0.1;
 
   wanderAngle = 0;
   wanderDistance = 10;
   wanderRadius = 5;
   wanderRange = 1;
 
-  avoidDistance = 400
+  avoidDistance = 400;
   avoidBuffer = 20; //NOT USED
 
   inSightDistance = 200;
   tooCloseDistance = 60;
 
-  pathIndex = 0
+  pathIndex = 0;
 
   steeringForce = new THREE.Vector3(0, 0, 0);
 
@@ -188,15 +189,15 @@ export class Steerable extends BaseSteerable {
   }
 
   arrive(position: THREE.Vector3) {
-      var desiredVelocity = position.clone().sub(this.position);
-      desiredVelocity.normalize()
-      var distance = this.position.distanceTo(position)
-      if (distance > this.arrivalThreshold)
-          desiredVelocity.setLength(this.maxSpeed);
-      else
-          desiredVelocity.setLength(this.maxSpeed * distance / this.arrivalThreshold)
-      desiredVelocity.sub(this.velocity);
-      this.steeringForce.add(desiredVelocity);
+    var desiredVelocity = position.clone().sub(this.position);
+    desiredVelocity.normalize()
+    var distance = this.position.distanceTo(position)
+    if (distance > this.arrivalThreshold)
+        desiredVelocity.setLength(this.maxSpeed);
+    else
+        desiredVelocity.setLength(this.maxSpeed * distance / this.arrivalThreshold)
+    desiredVelocity.sub(this.velocity);
+    this.steeringForce.add(desiredVelocity);
   }
 
   pursue(target: BaseSteerable) {
@@ -283,7 +284,7 @@ export class Steerable extends BaseSteerable {
     var behind = leader.position.clone().add(tv)
 
     if (this.isOnLeaderSight(leader, ahead, leaderSightRadius)) {
-        this.evade(leader);
+      this.evade(leader);
     }
     this.arrivalThreshold = arrivalThreshold;
     this.arrive(behind);
@@ -340,12 +341,12 @@ export class Steerable extends BaseSteerable {
     var inSightCount = 0;
     for (var i = 0; i < entities.length; i++) {
       if (entities[i] != this && this.inSight(entities[i])) {
-          averageVelocity.add(entities[i].velocity)
-          averagePosition.add(entities[i].position)
-          if (this.position.distanceTo(entities[i].position) < this.tooCloseDistance) {
-              this.flee(entities[i].position)
-          }
-          inSightCount++;
+        averageVelocity.add(entities[i].velocity)
+        averagePosition.add(entities[i].position)
+        if (this.position.distanceTo(entities[i].position) < this.tooCloseDistance) {
+            this.flee(entities[i].position)
+        }
+        inSightCount++;
       }
     }
     if (inSightCount > 0) {
@@ -382,19 +383,22 @@ export class Steerable extends BaseSteerable {
     var ahead2 = this.position.clone().add(this.velocity.clone().normalize().multiplyScalar(this.avoidDistance * .5));
     //get most threatening
     var mostThreatening = null;
-    for (var i = 0; i < obstacles.length; i++)
-    {
-        if (obstacles[i] === this)
-            continue;
-        var collision = obstacles[i].position.distanceTo(ahead) <= obstacles[i].radius || obstacles[i].position.distanceTo(ahead2) <= obstacles[i].radius
-        if (collision && (mostThreatening == null || this.position.distanceTo(obstacles[i].position) < this.position.distanceTo(mostThreatening.position))) {
-            mostThreatening = obstacles[i];
-        }
+    for (var i = 0; i < obstacles.length; i++) {
+      if (obstacles[i] === this)
+        continue;
+      var collision = obstacles[i].position.distanceTo(ahead) <= obstacles[i].radius ||
+        obstacles[i].position.distanceTo(ahead2) <= obstacles[i].radius
+      if (collision && (
+        mostThreatening == null ||
+        this.position.distanceTo(obstacles[i].position) < this.position.distanceTo(mostThreatening.position)
+      )) {
+        mostThreatening = obstacles[i];
+      }
     }
     //end
-    var avoidance = new THREE.Vector3(0, 0, 0)
+    var avoidance = new THREE.Vector3(0, 0, 0);
     if (mostThreatening != null) {
-        avoidance = ahead.clone().sub(mostThreatening.position).normalize().multiplyScalar(100)
+      avoidance = ahead.clone().sub(mostThreatening.position).normalize().multiplyScalar(100)
     }
     this.steeringForce.add(avoidance);
   }
@@ -409,9 +413,7 @@ export class Steerable extends BaseSteerable {
 
 }
 
-const group = new THREE.Group();
-group.add(new THREE.Mesh);
-export const placeholderSteerable = new Steerable(group);
+export const placeholderSteerable = new Steerable( new THREE.Group);
 
 // /**
 // * Returns a random number between min (inclusive) and max (exclusive)

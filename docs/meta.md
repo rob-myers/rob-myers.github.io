@@ -50,6 +50,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > https://github.com/erosmarcon/three-steer
   > could implement triggers ourselves via navrect partition
 - [ ] use physics engine to follow path
+
+- [ ] change to conventional embedding `(x, y)` -> `(x, 0, y)`
 - [x] remove use-cannon
 
 - [x] `nav $(click) $(click) >@foo` sets variable `foo`

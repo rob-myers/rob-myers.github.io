@@ -18,7 +18,7 @@ const Actor: React.FC<Props> = ({ actor }) => {
 
     const grp = group.current!;
     actor.steerable = new Steerable(grp);
-    actor.steerable.setBounds(threeUtil.getBounds(grp.children[0]));
+    actor.steerable.setBounds(threeUtil.getBounds(actor.mesh));
 
     setReady(true); // Trigger re-render
   }, []);
