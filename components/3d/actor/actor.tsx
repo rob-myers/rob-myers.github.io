@@ -14,9 +14,9 @@ const Actor: React.FC<Props> = ({ actor }) => {
     actor.mesh = mesh.current!;
     actor.mesh.geometry = geometry;
     actor.mesh.material = material;
-    actor.mesh.position.copy(actor.lastSpawn);
-
+    
     const grp = group.current!;
+    grp.position.copy(actor.lastSpawn);
     actor.steerable = new Steerable(grp);
     actor.steerable.setBounds(threeUtil.getBounds(actor.mesh));
 

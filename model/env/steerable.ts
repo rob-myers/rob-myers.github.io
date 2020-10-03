@@ -131,9 +131,8 @@ class BaseSteerable {
   }
 
   lookWhereGoing(smoothing: boolean) {
-    let direction = this.position.clone()
-      .add(this.velocity)
-      .setZ(0);
+    let target = this.position.clone()
+      .add(this.velocity).setZ(this.position.z);
     
     if (smoothing) {
       if (this.velocitySamples.length == this.numSamplesForSmoothing) {
@@ -141,15 +140,15 @@ class BaseSteerable {
       }
 
       this.velocitySamples.push(this.velocity.clone().setZ(0));
-      direction.set(0, 0, 0);
+      target.set(0, 0, 0);
       for (var v = 0; v < this.velocitySamples.length; v++) {
-        direction.add(this.velocitySamples[v])
+        target.add(this.velocitySamples[v])
       }
-      direction.divideScalar(this.velocitySamples.length)
-      direction = this.position.clone().add(direction)
-        .setZ(0);
+      target.divideScalar(this.velocitySamples.length)
+      target = this.position.clone().add(target).setZ(0);
     }
-    this.group.lookAt(direction)
+
+    this.group.rotation.z = Math.atan2(target.y - this.position.y, target.x - this.position.x);
   }
 }
 
@@ -414,26 +413,3 @@ export class Steerable extends BaseSteerable {
 }
 
 export const placeholderSteerable = new Steerable( new THREE.Group);
-
-// /**
-// * Returns a random number between min (inclusive) and max (exclusive)
-// */
-// Math.getRandomArbitrary = function (min, max) {
-//   return Math.random() * (max - min) + min;
-// }
-
-// /**
-// * Returns a random integer between min (inclusive) and max (inclusive)
-// * Using Math.round() will give you a non-uniform distribution!
-// */
-// Math.getRandomInt = function (min, max) {
-//   return Math.floor(Math.random() * (max - min + 1)) + min;
-// }
-
-// THREE.Vector3.prototype.perp = function () {
-//   return new THREE.Vector3(-this.z, 0, this.x)
-// }
-
-// THREE.Vector3.prototype.sign = function (vector) {
-//   return this.perp().dot(vector) < 0 ? -1 : 1
-// }

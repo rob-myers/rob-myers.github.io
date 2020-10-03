@@ -185,7 +185,7 @@ export class BuiltinService {
       throw new ShError('usage `goto point_or_path actor_name`', 1);
     }
     // Also ensures actor exists
-    const { mesh: { position } } = this.getActorMeta(pid, actorName);
+    const { steerable: { position } } = this.getActorMeta(pid, actorName);
     const pointOrPath = this.parsePointOrPathArg(pid, dst);
     const { worldDevice } = ps.getSession(sessionKey);
     

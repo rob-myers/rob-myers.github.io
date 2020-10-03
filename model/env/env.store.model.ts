@@ -58,13 +58,8 @@ export interface ActorMeta {
   mesh: THREE.Mesh;
   lastSpawn: THREE.Vector3;
   steerable: Steerable;
-
-  // OLD BELOW
-
   /** Cancel animation or noop */
   cancel: () => void;
-  /** Current timeline used to animate actor */
-  timeline: anime.AnimeTimelineInstance;
 }
 
 export interface Decorator {

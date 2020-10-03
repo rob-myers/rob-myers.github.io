@@ -62,8 +62,8 @@ export function handleWorldDeviceWrites(envKey: string) {
         break;
       }
       case 'follow-path': {
+        // actorService.followPath(envKey, msg.pid, msg.name, msg.path, msg.callback);
         actorService.followPath(envKey, msg.pid, msg.name, msg.path, msg.callback);
-        // actorService.followPathNew(envKey, msg.pid, msg.name, msg.path, msg.callback);
         break;
       }
     }
