@@ -148,6 +148,9 @@ class BaseSteerable extends THREE.Group {
   }
 }
 
+/**
+ * https://github.com/erosmarcon/three-steer/blob/master/js/ThreeSteer.js
+ */
 export class Steerable extends BaseSteerable {
 
   maxForce = 5;
@@ -238,8 +241,8 @@ export class Steerable extends BaseSteerable {
 
     for (var i = 0; i < entities.length; i++) {
       if (entities[i] != this && entities[i].position.distanceTo(this.position) <= separationRadius) {
-          force.add(entities[i].position.clone().sub(this.position));
-          neighborCount++;
+        force.add(entities[i].position.clone().sub(this.position));
+        neighborCount++;
       }
     }
     if (neighborCount != 0) {
@@ -256,7 +259,8 @@ export class Steerable extends BaseSteerable {
     ahead: THREE.Vector3,
     leaderSightRadius: number,
   ) {
-    return (ahead.distanceTo(this.position) <= leaderSightRadius || leader.position.distanceTo(this.position) <= leaderSightRadius)
+    return ahead.distanceTo(this.position) <= leaderSightRadius ||
+      leader.position.distanceTo(this.position) <= leaderSightRadius;
   }
 
   followLeader(
@@ -290,11 +294,11 @@ export class Steerable extends BaseSteerable {
     var ahead = this.position.clone().add(qa);
 
     for (var i = 0; i < entities.length; i++) {
-        var distance = ahead.distanceTo(entities[i].position);
-        if (entities[i] != this && distance <= maxQueueRadius) {
-            res = entities[i]
-            break;
-        }
+      var distance = ahead.distanceTo(entities[i].position);
+      if (entities[i] != this && distance <= maxQueueRadius) {
+          res = entities[i]
+          break;
+      }
     }
     return res;
   }
@@ -304,12 +308,12 @@ export class Steerable extends BaseSteerable {
     var brake = new THREE.Vector3(0, 0, 0)
     var v = this.velocity.clone()
     if (neighbor != null) {
-        brake = this.steeringForce.clone().negate().multiplyScalar(0.8);
-        v.negate().normalize();
-        brake.add(v)
-        if (this.position.distanceTo(neighbor.position) <= maxQueueRadius) {
-            this.velocity.multiplyScalar(0.3)
-        }
+      brake = this.steeringForce.clone().negate().multiplyScalar(0.8);
+      v.negate().normalize();
+      brake.add(v)
+      if (this.position.distanceTo(neighbor.position) <= maxQueueRadius) {
+          this.velocity.multiplyScalar(0.3)
+      }
     }
 
     this.steeringForce.add(brake);
@@ -317,12 +321,12 @@ export class Steerable extends BaseSteerable {
 
   inSight(entity: BaseSteerable) {
     if (this.position.distanceTo(entity.position) > this.inSightDistance)
-        return false;
+      return false;
     var heading = this.velocity.clone().normalize();
     var difference = entity.position.clone().sub(this.position);
     var dot = difference.dot(heading)
     if (dot < 0)
-        return false;
+      return false;
     return true;
   }
 
@@ -331,40 +335,40 @@ export class Steerable extends BaseSteerable {
     var averagePosition = new THREE.Vector3(0, 0, 0);
     var inSightCount = 0;
     for (var i = 0; i < entities.length; i++) {
-        if (entities[i] != this && this.inSight(entities[i])) {
-            averageVelocity.add(entities[i].velocity)
-            averagePosition.add(entities[i].position)
-            if (this.position.distanceTo(entities[i].position) < this.tooCloseDistance) {
-                this.flee(entities[i].position)
-            }
-            inSightCount++;
-        }
+      if (entities[i] != this && this.inSight(entities[i])) {
+          averageVelocity.add(entities[i].velocity)
+          averagePosition.add(entities[i].position)
+          if (this.position.distanceTo(entities[i].position) < this.tooCloseDistance) {
+              this.flee(entities[i].position)
+          }
+          inSightCount++;
+      }
     }
     if (inSightCount > 0) {
-        averageVelocity.divideScalar(inSightCount);
-        averagePosition.divideScalar(inSightCount);
-        this.seek(averagePosition);
-        this.steeringForce.add(averageVelocity.sub(this.velocity))
+      averageVelocity.divideScalar(inSightCount);
+      averagePosition.divideScalar(inSightCount);
+      this.seek(averagePosition);
+      this.steeringForce.add(averageVelocity.sub(this.velocity))
     }
   }
 
   followPath(path: Vector3[], loop: boolean, thresholdRadius = 1) {
     var wayPoint = path[this.pathIndex]
     if (wayPoint == null)
-        return;
+      return;
     if (this.position.distanceTo(wayPoint) < thresholdRadius) {
-        if (this.pathIndex >= path.length - 1) {
-            if (loop)
-                this.pathIndex = 0;
-        }
-        else {
-            this.pathIndex++
-        }
+      if (this.pathIndex >= path.length - 1) {
+        if (loop)
+            this.pathIndex = 0;
+      }
+      else {
+          this.pathIndex++
+      }
     }
     if (this.pathIndex >= path.length - 1 && !loop)
-        this.arrive(wayPoint)
+      this.arrive(wayPoint)
     else
-        this.seek(wayPoint)
+      this.seek(wayPoint)
   }
 
   avoid(obstacles: BaseSteerable[]) {
