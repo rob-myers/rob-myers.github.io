@@ -28,6 +28,13 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `goto` error messages on takeover not always sent
 - [ ] `TtyXterm` blocks/ignores lines from other processes on paste
 
+- [ ] following throws error on Ctrl-C:
+  ```sh
+  while true; do echo foo >/tmp/x; done |
+  while read line; do echo ${line}; done </tmp/x
+  ```
+  i.e. `TypeError: Cannot read property 'cleanups' of undefined`
+
 - [ ] implement joined-up gotos
 - [ ] avoid bounce-back on override goto
 
@@ -38,7 +45,12 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] actors have a shadow
 - [ ] camera can follow actor
+
+- [ ] possibly replace use-cannon with:
+  > https://github.com/erosmarcon/three-steer
+  > could implement triggers ourselves via navrect partition
 - [ ] use physics engine to follow path
+
 
 - [x] `nav $(click) $(click) >@foo` sets variable `foo`
   > avoids serialization
