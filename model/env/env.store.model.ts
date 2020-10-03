@@ -1,10 +1,10 @@
 import { ReplaySubject } from 'rxjs';
 import type * as THREE from 'three';
 import * as portals from 'react-reverse-portal';
-import type { useBox } from '@react-three/cannon';
 
 import { FsFile } from '@model/shell/file.model';
 import { KeyedLookup } from '@model/generic.model';
+import { PhysicsInstance } from './env.model';
 
 export interface Env {
   /** Environment key */
@@ -57,11 +57,14 @@ export interface ActorMeta {
   /** Mesh instance from `Actor` */
   mesh: THREE.Mesh;
   /** useBox physics from `Actor` */
-  physics: ReturnType<typeof useBox>[1];
+  physics: PhysicsInstance;
   /** Physics position updated via subscription */
   position: THREE.Vector3;
   /** Physics rotation updated via subscription */
   rotation: THREE.Euler;
+
+  // OLD BELOW
+
   /** Cancel animation or noop */
   cancel: () => void;
   /** Current timeline used to animate actor */

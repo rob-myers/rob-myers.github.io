@@ -1,3 +1,8 @@
+import { Api } from '@react-three/cannon';
+
+/** Physics Instance Api */
+export type PhysicsInstance = Api[1];
+
 export function propsToAngle(props: TransformProps) {
   return 'e' in props ? 0
     : 's' in props ? -Math.PI/2
