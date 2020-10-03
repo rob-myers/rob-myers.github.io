@@ -4,7 +4,7 @@ import { Vector3 } from 'three';
 /**
  * https://github.com/erosmarcon/three-steer/blob/master/js/ThreeSteer.js
  */
-class BaseSteerable extends THREE.Group {
+class BaseSteerable {
 
   mass = 1;
   maxSpeed = 10;
@@ -20,8 +20,7 @@ class BaseSteerable extends THREE.Group {
 
   radius = 200; // temp initial value
 
-  constructor(public mesh: THREE.Mesh) {
-    super();
+  constructor(public group: THREE.Group) {
 
     this.velocity = Object.defineProperty(new THREE.Vector3, 'angle', {
       get: function() {
@@ -32,9 +31,6 @@ class BaseSteerable extends THREE.Group {
         this.y = Math.sin(value) * this.length();
       },
     });
-
-    this.box.setFromObject(mesh);
-    this.add(mesh);
   }
 
   get backward() {
@@ -76,7 +72,8 @@ class BaseSteerable extends THREE.Group {
 
   /** Our convention: +y goes into screen */
   get forward() {
-    return new THREE.Vector3(0, -1, 0).applyQuaternion(this.quaternion).negate();
+    return new THREE.Vector3(0, -1, 0)
+      .applyQuaternion(this.group.quaternion).negate();
   }
   
   /** Our convention: +z goes up */
@@ -90,6 +87,13 @@ class BaseSteerable extends THREE.Group {
 
   get right() {
     return this.left.clone().negate();
+  }
+
+  /**
+   * Must be set explicitly.
+   */
+  setBounds(bounds: THREE.Box3) {
+    this.box.setFromObject(group.children[0]);
   }
 
   update() {
@@ -129,22 +133,22 @@ class BaseSteerable extends THREE.Group {
   }
 
   lookWhereGoing(smoothing: boolean) {
-      let direction = this.position.clone().add(this.velocity).setZ(this.position.z);
-      
-      if (smoothing) {
-          if (this.velocitySamples.length == this.numSamplesForSmoothing) {
-              this.velocitySamples.shift();
-          }
-
-          this.velocitySamples.push(this.velocity.clone().setZ(this.position.z));
-          direction.set(0, 0, 0);
-          for (var v = 0; v < this.velocitySamples.length; v++) {
-              direction.add(this.velocitySamples[v])
-          }
-          direction.divideScalar(this.velocitySamples.length)
-          direction = this.position.clone().add(direction).setZ(this.position.z)
+    let direction = this.position.clone().add(this.velocity).setZ(this.position.z);
+    
+    if (smoothing) {
+      if (this.velocitySamples.length == this.numSamplesForSmoothing) {
+          this.velocitySamples.shift();
       }
-      this.lookAt(direction)
+
+      this.velocitySamples.push(this.velocity.clone().setZ(this.position.z));
+      direction.set(0, 0, 0);
+      for (var v = 0; v < this.velocitySamples.length; v++) {
+          direction.add(this.velocitySamples[v])
+      }
+      direction.divideScalar(this.velocitySamples.length)
+      direction = this.position.clone().add(direction).setZ(this.position.z)
+    }
+    this.group.lookAt(direction)
   }
 }
 
@@ -405,7 +409,9 @@ export class Steerable extends BaseSteerable {
 
 }
 
-export const placeholderSteerable = new Steerable(new THREE.Mesh);
+const group = new THREE.Group();
+group.add(new THREE.Mesh);
+export const placeholderSteerable = new Steerable(group);
 
 // /**
 // * Returns a random number between min (inclusive) and max (exclusive)

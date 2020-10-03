@@ -33,6 +33,10 @@ export function getChild(obj: THREE.Object3D, childName: string) {
   return obj.children.find(x => x.name === childName) || null;
 }
 
+export function getBounds(obj: THREE.Object3D) {
+  return (new THREE.Box3).setFromObject(obj);
+}
+
 export const placeholderGroup = new THREE.Group;
 export const placeholderMesh = new THREE.Mesh;
 export const placeholderScene = new THREE.Scene;

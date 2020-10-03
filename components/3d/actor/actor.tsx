@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { ActorMeta } from "@model/env/env.store.model";
-import useGeomStore from "@store/geom.store";
 import { Steerable } from "@model/env/steerable";
+import * as threeUtil from '@model/three/three.model';
+import useGeomStore from "@store/geom.store";
 
 const Actor: React.FC<Props> = ({ actor }) => {
+  const group = useRef<THREE.Group>(null);
   const mesh = useRef<THREE.Mesh>(null);
   const [, setReady] = useState(false);
 
@@ -14,17 +16,21 @@ const Actor: React.FC<Props> = ({ actor }) => {
     actor.mesh.material = material;
     actor.mesh.position.copy(actor.lastSpawn);
 
-    actor.steerable = new Steerable(actor.mesh);
+    const grp = group.current!;
+    actor.steerable = new Steerable(grp);
+    actor.steerable.setBounds(threeUtil.getBounds(grp.children[0]));
 
     setReady(true); // Trigger re-render
   }, []);
 
   return (
-    <mesh
-      ref={mesh}
-      material={actor.mesh.material}
-      geometry={actor.mesh.geometry}
-    />
+    <group ref={group}>
+      <mesh
+        ref={mesh}
+        material={actor.mesh.material}
+        geometry={actor.mesh.geometry}
+      />
+    </group>
   );
 }
 
