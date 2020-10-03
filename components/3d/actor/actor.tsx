@@ -1,22 +1,22 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActorMeta } from "@model/env/env.store.model";
+import useGeomStore from "@store/geom.store";
+import { Steerable } from "@model/env/steerable";
 
 const Actor: React.FC<Props> = ({ actor }) => {
   const mesh = useRef<THREE.Mesh>(null);
+  const [, setReady] = useState(false);
 
   useEffect(() => {
-    /**
-     * TODO provide base mesh to copy geometry/material from
-     */
-    const origMesh = actor.mesh;
-    actor.mesh = mesh.current as THREE.Mesh;
-    actor.mesh.geometry = origMesh.geometry;
-    actor.mesh.material = origMesh.material;
-    actor.mesh.position.copy(origMesh.position);  
+    const { geometry, material } = useGeomStore.api.createActor(actor.key);
+    actor.mesh = mesh.current!;
+    actor.mesh.geometry = geometry;
+    actor.mesh.material = material;
+    actor.mesh.position.copy(actor.lastSpawn);
 
-    return () => {
-      actor.mesh = origMesh;
-    };
+    actor.steerable = new Steerable(actor.mesh);
+
+    setReady(true); // Trigger re-render
   }, []);
 
   return (

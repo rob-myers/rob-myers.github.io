@@ -1,4 +1,6 @@
 import anime from 'animejs';
+import * as THREE from 'three';
+
 import { removeFirst } from '@model/generic.model';
 import type * as Geom from '@model/geom/geom.model';
 import { Vector } from '@model/geom/geom.model';
@@ -18,6 +20,32 @@ class ActorService {
     } else {
       useEnvStore.api.createActor(envKey, actorName, position);
     }
+  }
+
+  async followPathNew(
+    envKey: string,
+    pid: number,
+    actorName: string,
+    navPath: Geom.VectorJson[],
+    cb: FollowPath['callback'],
+  ) {
+    const director = useEnvStore.getState().director[envKey];
+    const actor = director.actor[actorName];
+
+    if (!actor) {
+      return cb(`unknown actor "${actorName}": cannot follow path`);
+    } else if (navPath.length <= 1) {
+      // 1st point should be actor's current position
+      return cb(null);
+    }
+
+    const path = navPath.map(p => new THREE.Vector3(p.x, p.y));
+    const steerable = actor.steerable;
+
+    /**
+     * TODO
+     */
+
   }
 
   /**

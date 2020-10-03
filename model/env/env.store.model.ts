@@ -4,6 +4,7 @@ import * as portals from 'react-reverse-portal';
 
 import { FsFile } from '@model/shell/file.model';
 import { KeyedLookup } from '@model/generic.model';
+import { Steerable } from './steerable';
 
 export interface Env {
   /** Environment key */
@@ -55,6 +56,8 @@ export interface ActorMeta {
   id: string;
   /** Mesh instance from `Actor` */
   mesh: THREE.Mesh;
+  lastSpawn: THREE.Vector3;
+  steerable: Steerable;
 
   // OLD BELOW
 

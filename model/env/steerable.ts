@@ -353,16 +353,17 @@ export class Steerable extends BaseSteerable {
   }
 
   followPath(path: Vector3[], loop: boolean, thresholdRadius = 1) {
-    var wayPoint = path[this.pathIndex]
-    if (wayPoint == null)
-      return;
+    const wayPoint = path[this.pathIndex]
+    if (!wayPoint) {
+      return true;
+    }
     if (this.position.distanceTo(wayPoint) < thresholdRadius) {
-      if (this.pathIndex >= path.length - 1) {
-        if (loop)
-            this.pathIndex = 0;
-      }
-      else {
-          this.pathIndex++
+      if (this.pathIndex < path.length - 1) {
+        this.pathIndex++
+      } else if (loop) {
+        this.pathIndex = 0;
+      } else {
+        return true;
       }
     }
     if (this.pathIndex >= path.length - 1 && !loop)
@@ -403,6 +404,8 @@ export class Steerable extends BaseSteerable {
   }
 
 }
+
+export const placeholderSteerable = new Steerable(new THREE.Mesh);
 
 // /**
 // * Returns a random number between min (inclusive) and max (exclusive)

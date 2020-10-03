@@ -319,6 +319,10 @@ class GeomService {
     return (new THREE.Geometry()).fromBufferGeometry(geom);
   }
 
+  toVector3(vector: Geom.VectorJson) {
+    return new Vector3(vector.x, vector.y);
+  }
+
   tryParsePoint(p: string)  {
     const parsed = tryParseJson(p);
     if (this.isVectorJson(parsed)) {

@@ -24,7 +24,11 @@ export interface State {
     computeActorMeta: (inner: THREE.Mesh) => ActorMeta;
     computeInnerMeta: (inner: THREE.Mesh) => InnerMeta;
     computeRoomMeta: (room: THREE.Mesh) => RoomMeta;
-    createActor: (name: string) => THREE.Mesh;
+    createActor: (name: string) => {
+      actorName: string;
+      geometry: THREE.BufferGeometry;
+      material: THREE.Material;
+    };
     /**
      * Update child mesh 'navmesh' of supplied `room`,
      * taking any attached Inners into account.
@@ -192,10 +196,12 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     createActor: (name) => {
-      const mesh = get().actors['default-bot'].mesh.clone();
-      mesh.position.set(0, 0, 0);
-      mesh.name = name;
-      return mesh;
+      const { geometry, material } = get().actors['default-bot'].mesh;
+      return {
+        actorName: name,
+        geometry: geometry as THREE.BufferGeometry,
+        material: material as THREE.Material, // Could be array?
+      };
     },
 
     /**

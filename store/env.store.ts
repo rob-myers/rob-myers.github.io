@@ -12,6 +12,8 @@ import useShellStore from './shell.store';
 import useGeomStore from './geom.store';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import { NavWorker, awaitWorker } from '@nav/nav.msg';
+import { Steerable, placeholderSteerable } from '@model/env/steerable';
+import { geomService } from '@model/geom/geom.service';
 
 export interface State {
   env: KeyedLookup<Store.Env>;
@@ -62,14 +64,17 @@ const useStore = create<State>(devtools((set, get) => ({
 
   api: {
     createActor: (envKey, actorName, position) => {
-      const mesh = useGeomStore.api.createActor(actorName);
-      mesh.position.set(position.x, position.y, 0);
+      // const { geometry, material } = useGeomStore.api.createActor(actorName);
+      // mesh.position.set(position.x, position.y, 0);
 
       set(({ director }) => ({ director: updateLookup(envKey, director, ({ actor }) => ({
         actor: addToLookup({
           key: actorName,
           id: 'default-bot',
-          mesh,
+          mesh: threeUtil.placeholderMesh,
+          steerable: placeholderSteerable,
+          lastSpawn: geomService.toVector3(position),
+
           // OLD BELOW
           cancel: () => {},
           timeline: anime.timeline({ autoplay: false }),
