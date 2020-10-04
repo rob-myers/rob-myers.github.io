@@ -7,7 +7,7 @@ import { Vector3 } from 'three';
 class BaseSteerable {
 
   mass = 1;
-  maxSpeed = 0.1;
+  maxSpeed = 0.03;
   velocity: THREE.Vector3 & { angle: number };
   box = new THREE.Box3;
   raycaster = new THREE.Raycaster;
