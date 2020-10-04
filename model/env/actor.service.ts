@@ -4,6 +4,7 @@ import type * as Geom from '@model/geom/geom.model';
 import { processService as ps } from '@model/shell/process.service';
 import useEnvStore from "@store/env.store";
 import { FollowPath } from './world.device';
+import { pause } from '@model/generic.model';
 
 class ActorService {
 
@@ -15,6 +16,7 @@ class ActorService {
 
     if (actor) {
       actor.steerable.position.set(position.x, position.y, 0);
+      actor.cancel();
     } else {
       useEnvStore.api.createActor(envKey, actorName, position);
     }
@@ -36,13 +38,15 @@ class ActorService {
       return cb(null);
     }
 
-    const cancelKey = `${actorName}@${envKey}`;
-    if (cancelKey in this.animCancels) {
-      this.cancelAnimation(cancelKey);
-    }
-
     const path = navPath.map(p => new THREE.Vector3(p.x, p.y));
     const steerable = actor.steerable;
+
+    const cancelKey = `${actorName}@${envKey}`;
+    if (cancelKey in this.animCancels) {
+      actor.cancel();
+      await pause(100);
+    }
+
     const step = () => {
       if (steerable.followPath(path, false, 0.1)) {
         return true;
@@ -57,7 +61,7 @@ class ActorService {
         this.animateUntil(step,cancelKey),
         new Promise((_, reject) => {
           ps.addCleanups(pid, reject); // Ctrl-C
-          actor.cancel = reject; // Another process (UNUSED)
+          actor.cancel = reject;
         }),
       ]);
       cb(null);
