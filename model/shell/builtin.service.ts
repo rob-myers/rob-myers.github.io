@@ -200,7 +200,7 @@ export class BuiltinService {
       }
     } else {
       const navPath = await this.getNavPath(pid, position, pointOrPath);
-      // worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: navPath });
+      worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: navPath });
       const error = await new Promise((resolve: FollowPath['callback']) =>
         worldDevice.write({ key: 'follow-path', pid, name: actorName, path: navPath, callback: resolve }));
       if (error) {

@@ -54,7 +54,7 @@ export function handleWorldDeviceWrites(envKey: string) {
         const { indicators } = useEnvStore.getState().decorator[envKey];
         const previous = threeUtil.getChild(indicators, msg.name);
         previous && indicators.remove(previous);
-        indicators.add(geomService.createPath(msg.points, name));
+        indicators.add(geomService.createPath(msg.points, msg.name));
         break;
       }
       case 'spawn-actor': {
