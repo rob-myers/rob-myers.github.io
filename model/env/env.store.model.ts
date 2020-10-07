@@ -5,6 +5,7 @@ import * as portals from 'react-reverse-portal';
 import { FsFile } from '@model/shell/file.model';
 import { KeyedLookup } from '@model/generic.model';
 import { Steerable } from './steerable';
+import { PanZoomControls } from '@model/three/controls';
 
 export interface Env {
   /** Environment key */
@@ -26,6 +27,7 @@ export interface Env {
   updateShadows$: ReplaySubject<{ key: 'room-updated' }>;
   /** Supplied by `World`. */
   scene: THREE.Scene;
+  camControls: PanZoomControls;
 }
 
 export interface EnvDef {

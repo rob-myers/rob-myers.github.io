@@ -58,7 +58,7 @@ const World: React.FC<Props> = ({ envName }) => {
             setCtxt(ct);
           }}
         >
-          <CameraControls />
+          <CameraControls envName={envName} />
 
           <Grid />
 

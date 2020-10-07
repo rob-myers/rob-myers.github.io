@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import type * as Geom from '@model/geom/geom.model';
 import { processService as ps } from '@model/shell/process.service';
 import useEnvStore from "@store/env.store";
-import { FollowPath } from './world.device';
+import { ActorFollowPath } from './world.device';
 import { pause } from '@model/generic.model';
 
 class ActorService {
@@ -27,7 +27,7 @@ class ActorService {
     pid: number,
     actorName: string,
     navPath: Geom.VectorJson[],
-    cb: FollowPath['callback'],
+    cb: ActorFollowPath['callback'],
   ) {
     const director = useEnvStore.getState().director[envKey];
     const actor = director.actor[actorName];

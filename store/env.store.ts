@@ -12,6 +12,7 @@ import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import { NavWorker, awaitWorker } from '@nav/nav.msg';
 import { placeholderSteerable } from '@model/env/steerable';
 import { geomService } from '@model/geom/geom.service';
+import { PanZoomControls } from '@model/three/controls';
 
 export interface State {
   env: KeyedLookup<Store.Env>;
@@ -40,6 +41,7 @@ export interface State {
     ) => Promise<{ navPath: Geom.VectorJson[]; error?: string }>;
     roomUpdated: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
+    storeCamControls: (envKey: string, controls: PanZoomControls) => void;
     storeScene: (envKey: string, scene: THREE.Scene) => void;
     updateNavWorkerRoom: (input: {
       envKey: string;
@@ -90,6 +92,7 @@ const useStore = create<State>(devtools((set, get) => ({
           worldDevice,
           updateShadows$: new ReplaySubject(1),
           scene: threeUtil.placeholderScene,
+          camControls: {} as PanZoomControls,
         }, env),
         director: addToLookup({
           key: envKey,
@@ -155,6 +158,12 @@ const useStore = create<State>(devtools((set, get) => ({
     setHighWalls: (envKey, next) => {
       set(({ env }) => ({
         env: updateLookup(envKey, env, () => ({ highWalls: next })),
+      }));
+    },
+
+    storeCamControls: (envKey, camControls) => {
+      set(({ env }) => ({
+        env: updateLookup(envKey, env, () => ({ camControls })),
       }));
     },
 

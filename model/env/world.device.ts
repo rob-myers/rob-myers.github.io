@@ -3,6 +3,7 @@ import { geomService } from '@model/geom/geom.service';
 import * as threeUtil from '@model/three/three.model';
 import useEnvStore from "@store/env.store";
 import { actorService } from './actor.service';
+import { worldService } from './world.service';
 
 export type MessageFromWorld = (
   | NavmeshClick
@@ -15,9 +16,11 @@ export interface NavmeshClick {
 }
 
 export type MessageToWorld = (
-  | ShowNavPath // TODO VectorJson[] instead
+  | ShowNavPath
   | SpawnActor
-  | FollowPath
+  | ActorFollowPath
+  | SetCameraFree
+  | SetCameraFollow
 );
 
 /** Show a graphical representation */
@@ -33,8 +36,8 @@ interface SpawnActor {
   position: Geom.VectorJson;
 }
 
-export interface FollowPath {
-  key: 'follow-path';
+export interface ActorFollowPath {
+  key: 'actor-follow-path';
   /** Actor's name */
   name: string;
   /** Navpath to follow, starting from actor's position */
@@ -43,6 +46,15 @@ export interface FollowPath {
   callback: (err: null | string) => void;
   /** For Ctrl-C */
   pid: number;
+}
+
+interface SetCameraFree {
+  key: 'set-camera-free';
+}
+
+interface SetCameraFollow {
+  key: 'set-camera-follow';
+  actorName: string;
 }
 
 export function handleWorldDeviceWrites(envKey: string) {
@@ -61,9 +73,16 @@ export function handleWorldDeviceWrites(envKey: string) {
         actorService.spawn(envKey, msg.name, msg.position);
         break;
       }
-      case 'follow-path': {
-        // actorService.followPath(envKey, msg.pid, msg.name, msg.path, msg.callback);
+      case 'actor-follow-path': {
         actorService.followPath(envKey, msg.pid, msg.name, msg.path, msg.callback);
+        break;
+      }
+      case 'set-camera-free': {
+        worldService.setCameraFree(envKey);
+        break;
+      }
+      case 'set-camera-follow': {
+        worldService.setCameraFollow(envKey, msg.actorName);
         break;
       }
     }

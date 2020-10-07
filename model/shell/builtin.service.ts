@@ -9,7 +9,7 @@ import { processService as ps} from './process.service';
 import { ShError, breakError, continueError } from "./semantics.service";
 import { varService, alphaNumericRegex, iteratorDelayVarName } from "./var.service";
 import { voiceDevice } from "./voice.device";
-import { FollowPath } from "@model/env/world.device";
+import { ActorFollowPath } from "@model/env/world.device";
 
 export class BuiltinService {
 
@@ -33,6 +33,7 @@ export class BuiltinService {
           case 'delay': this.delay(process, args); break;
           case 'echo': await this.echo(process, args); break;
           case 'false': node.exitCode = 1; break;
+          case 'follow': await this.follow(process, args); break;
           case 'get': this.get(process, args); break;
           case 'goto': await this.goto(process, args); break;
           case 'nav': await this.nav(process, args); break;
@@ -127,6 +128,20 @@ export class BuiltinService {
     fdToOpen[1].write(args.join(' '));
   }
 
+  private async follow({ pid, sessionKey }: Process, args: string[]) {
+    if (args.length > 2) {
+      throw new ShError('usage `follow actor_name` or `follow`', 1);
+    }
+    
+    const { worldDevice } = ps.getSession(sessionKey);
+    if (args.length) {
+      this.getActorMeta(pid, args[0]); // ensures actor exists
+      worldDevice.write({ key: 'set-camera-follow', actorName: args[0] });
+    } else {
+      worldDevice.write({ key: 'set-camera-free' });
+    }
+  }
+
   /**
    * Deep var lookup; outputs to stdout or can save as variable.
    */
@@ -192,8 +207,8 @@ export class BuiltinService {
     if (pointOrPath instanceof Array) {
       if (pointOrPath.length) {
         worldDevice.write({ key: 'spawn-actor', name: actorName, position: pointOrPath[0] });
-        const error = await new Promise((resolve: FollowPath['callback']) =>
-          worldDevice.write({ key: 'follow-path', pid, name: actorName, path: pointOrPath, callback: resolve }));
+        const error = await new Promise((resolve: ActorFollowPath['callback']) =>
+          worldDevice.write({ key: 'actor-follow-path', pid, name: actorName, path: pointOrPath, callback: resolve }));
         if (error) {
           throw new ShError(error, 1);
         }
@@ -201,8 +216,8 @@ export class BuiltinService {
     } else {
       const navPath = await this.getNavPath(pid, position, pointOrPath);
       worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: navPath });
-      const error = await new Promise((resolve: FollowPath['callback']) =>
-        worldDevice.write({ key: 'follow-path', pid, name: actorName, path: navPath, callback: resolve }));
+      const error = await new Promise((resolve: ActorFollowPath['callback']) =>
+        worldDevice.write({ key: 'actor-follow-path', pid, name: actorName, path: navPath, callback: resolve }));
       if (error) {
         throw new ShError(error, 1);
       }
@@ -364,6 +379,8 @@ export const builtins = {
   echo: true,
   /** Exit with code 1 */
   false: true,
+  /** Make camera follow an actor */
+  follow: true,
   /** Write a js variable's value to stdout */
   get: true,
   /** Make actor goto point or follow path */
