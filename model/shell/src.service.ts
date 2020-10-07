@@ -50,7 +50,7 @@ export class SrcService {
       }
 
       case 'BinaryArithm':
-        return [node.X, node.Y].map(c => this.src(c)).join(` ${node.Op} `);
+        return [node.X, node.Y].map(c => this.src(c)).join(`${node.Op}`);
       case 'UnaryArithm':
         return node.Post ? `${this.src(node.X)}${node.Op}` : `${node.Op}${this.src(node.X)}`;
       case 'ParenArithm':

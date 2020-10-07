@@ -476,7 +476,7 @@ class SemanticsService {
         case 'ForClause': cmd = sem.ForClause(node); break;
         case 'FuncDecl': cmd = sem.FuncDecl(node); break;
         case 'IfClause': cmd = sem.IfClause(node); break;
-        // case 'LetClause': child = this.LetClause(Cmd); break;
+        case 'LetClause': cmd = sem.LetClause(node); break;
         // case 'Subshell': child = this.Subshell(Cmd); break;
         // case 'TestClause': child = this.TestClause(Cmd); break;
         // case 'TimeClause': child = this.TimeClause(Cmd); break;
@@ -757,6 +757,14 @@ class SemanticsService {
         }
       }
     }());
+  }
+
+  private LetClause(node: Sh.LetClause): Observable<ProcessAct>  {
+    return from((async function*() {
+      for (const child of node.Exprs) {
+        await awaitEnd(sem.ArithmExpr(child));
+      }
+    })());
   }
 
   private ParamExp(node: Sh.ParamExp): Observable<Expanded> {
