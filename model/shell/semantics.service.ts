@@ -352,20 +352,14 @@ class SemanticsService {
         }
         case '|': {
           const background = !ps.isInteractiveShell(node);
-          const spawns = stmts.map(stmt => ps.spawnProcess(node.meta.pid, stmt, background));
+          const files = stmts.map(stmt => parseService.wrapInFile(stmt));
+          const spawns = files.map(file => ps.spawnProcess(node.meta.pid, file, background));
           const transpiles = spawns.map(({ parsed }) => sem.transpile(parsed));
-          // const uid = shortId.generate();
-          // const wires = spawns.slice(0, -1).map(i => fileService.makeWire(`/tmp/${uid}.${i}`));
-          // wires.forEach((wire, i) => {
-          //   ps.openFile(spawns[i].pid, { path: wire.key, fd: 1, mode: 'WRONLY' });
-          //   ps.openFile(spawns[i + 1].pid, { path: wire.key, fd: 0, mode: 'RDONLY' });
-          // });
 
           try {
             await Promise.all(transpiles.map(awaitEnd));
           } finally {
             ps.removeProcesses(spawns.map(({ pid }) => pid));  
-            // wires.forEach(({ key }) => fileService.unlinkFile(key));
           }
           break;
         }
@@ -477,7 +471,7 @@ class SemanticsService {
         case 'FuncDecl': cmd = sem.FuncDecl(node); break;
         case 'IfClause': cmd = sem.IfClause(node); break;
         case 'LetClause': cmd = sem.LetClause(node); break;
-        // case 'Subshell': child = this.Subshell(Cmd); break;
+        case 'Subshell': cmd = sem.Subshell(node); break;
         // case 'TestClause': child = this.TestClause(Cmd); break;
         // case 'TimeClause': child = this.TimeClause(Cmd); break;
         case 'WhileClause': cmd = sem.WhileClause(node); break;
@@ -598,6 +592,7 @@ class SemanticsService {
           const nodeUid = node.uid || (node.uid = `${nextNodeUid++}`);
 
           ps.pushRedirectScope(pid);
+          vs.pushVarScope(pid, true);
           const opened = ps.openFile(pid, { path: `/dev/.cs-${pid}-${nodeUid}`, fd: 1 });
           const stopListening = opened.file.read((msg) => output.push(vs.toStringOrJson(msg)));
 
@@ -608,6 +603,7 @@ class SemanticsService {
             }
           } finally {
             stopListening();
+            vs.popVarScope(pid);
             ps.popRedirectScope(pid); // Should close `opened`
           }
 
@@ -1167,7 +1163,9 @@ class SemanticsService {
       } else if (stmt.Background) {
         // Spawn background process
         const cloned = Object.assign(parseService.clone(stmt), { Background: false } as Sh.Stmt);
-        const { pid: spawnedPid, parsed } = ps.spawnProcess(cloned.meta.pid, cloned, true);
+        const file = parseService.wrapInFile(cloned);
+        const { pid: spawnedPid, parsed } = ps.spawnProcess(cloned.meta.pid, file, true);
+
         // Launch it
         sem.transpile(parsed).subscribe({
           complete: () => {
@@ -1190,6 +1188,24 @@ class SemanticsService {
         }
       }
     }());
+  }
+
+  private Subshell(node: Sh.Subshell): Observable<ProcessAct> {
+    return from((async function*() {
+      const pid = node.meta.pid;
+      ps.pushRedirectScope(pid);
+      vs.pushVarScope(pid, true);
+
+      try {
+        const transpiles = node.Stmts.map(stmt => sem.Stmt(stmt));
+        for (const transpiled of transpiles) {
+          await awaitEnd(transpiled);
+        }
+      } finally {
+        vs.popVarScope(pid);
+        ps.popRedirectScope(pid);
+      }
+    })());
   }
 
   private WhileClause(stmt: Sh.WhileClause): Observable<ProcessAct> {

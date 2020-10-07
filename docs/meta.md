@@ -10,6 +10,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] prevent recursive background processes i.e. tie to parse tree
 
+- [ ] subshells/cmd-subst should not change shell functions
 - [ ] `shift` builtin for functions
 - [ ] `steiner` labels a point in the world
   > it could track a changing variable
@@ -25,9 +26,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] builtin `paste r` pastes & runs `string` or `string[]` output?
 - [ ] `range 10` is compositional if `0 1 2 ...`, but not if an array
 
+
 - [ ] `goto` error messages on takeover not always sent
 - [ ] `TtyXterm` blocks/ignores lines from other processes on paste
-
 - [ ] following throws error on Ctrl-C:
   ```sh
   while true; do echo foo >/tmp/x; done |

@@ -140,14 +140,13 @@ export class ProcessService {
     }
   }
 
-  execProcess(pid: number, node: Sh.Stmt) {
+  execProcess(pid: number, node: Sh.File) {
     const process = this.getProcess(pid);
     // Must clone parse tree because meta will differ
     const cloned = Sh.parseService.clone(node);
     // Must mutate to affect all descendents
     Object.assign<Sh.FileMeta, Partial<Sh.FileMeta>>(cloned.meta, { pid: process.pid });
-    // Must wrap Stmt in File
-    process.parsed = Sh.parseService.wrapInFile(cloned);
+    process.parsed = cloned;
   }
 
   findAncestral(pid: number, predicate: (state: Process) => boolean) {
@@ -169,7 +168,7 @@ export class ProcessService {
    * Efficiently fork a process. Use cases:
    * - when piping, for each pipe child.
    * - when explicitly using the background.
-   * - for command/process substitution.
+   * - for process substitution.
    */
   private forkProcess(ppid: number) {
     const parent = this.getProcess(ppid);    
@@ -467,7 +466,7 @@ export class ProcessService {
   /**
    * Spawn a process without starting it.
    */
-  spawnProcess(ppid: number, node: Sh.Stmt, background: boolean) {
+  spawnProcess(ppid: number, node: Sh.File, background: boolean) {
     const forked = this.forkProcess(ppid);
     this.execProcess(forked.pid, node);
 

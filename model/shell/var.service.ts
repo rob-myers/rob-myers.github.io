@@ -36,14 +36,17 @@ class VarService {
     }
 
     // Index of 1st admissible scope referencing variable.
-    // If `local` only check deepest scope, else deepest to shallowest
+    // - if `def.local` then only check deepest scope.
+    // - else check deepest up-to-and-including 1st with key `__subshell__`.
     const { nestedVars } = this.getProcess(pid);
-    const scopeIndex = (def.local ? [nestedVars[0]] : nestedVars)
+    const subshellIndex = nestedVars.findIndex(s => '__subshell__' in s);
+    const finalScopeIndex = def.local ? 0 : subshellIndex === -1 ? nestedVars.length - 1 : subshellIndex;
+    const scopeIndex = nestedVars.slice(0, finalScopeIndex + 1)
       .findIndex((toVar) => def.varName in toVar);
 
-    if (scopeIndex === -1) {// Create in deepest or shallowest scope
+    if (scopeIndex === -1) {// Create in oldest possible scope
       const newVar = this.createVar(def);
-      this.updateNestedVar(pid, def.varName, def.local ? 0 : nestedVars.length - 1, newVar);
+      this.updateNestedVar(pid, def.varName, finalScopeIndex, newVar);
       return;
     }
 
@@ -303,8 +306,10 @@ class VarService {
     nestedVars.unshift(toVar);
   }
 
-  pushVarScope(pid: number) {
-    this.getProcess(pid).nestedVars.unshift({});
+  pushVarScope(pid: number, subshell = false) {
+    this.getProcess(pid).nestedVars.unshift(
+      subshell ? { __subshell__: null as any } : {}
+    );
   }
 
   private castAsIntegerBased(v: ProcessVar) {
