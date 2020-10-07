@@ -34,13 +34,15 @@ export class SrcService {
 
   /**
    * Given parse tree, compute source code.
-   * The source code has no newlines so it can be used as history.
+   * We ensure the source code has no newlines so it can be used as history.
    */
   src(node: Sh.ParsedSh | null): string {
     if (!node) {
       return '';
     }
     switch (node.type) {
+      case 'ArithmCmd':
+        return `(( ${this.src(node.X)} ))`;
       case 'BinaryCmd': {
         const cmds = this.binaryCmds(node);
         const stmts = [cmds[0].X].concat(cmds.map(({ Y }) => Y));
@@ -309,11 +311,9 @@ export class SrcService {
       case 'WordIter':
       case 'ArrayElem':
       case 'CaseItem':
-      case 'ArithmCmd': // <== ?
         return '';
 
       default:
-        console.log('here', node);
         throw testNever(node);
     }
   }
