@@ -25,6 +25,8 @@ export class PanZoomControls extends EventDispatcher {
   // this.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
   // this.mouseButtons = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.ZOOM, RIGHT: MOUSE.PAN };
 
+  public targetObject = null as null | THREE.Object3D;
+
   private readonly STATE = {
     NONE: -1,
     // ROTATE: 0,
@@ -210,12 +212,15 @@ export class PanZoomControls extends EventDispatcher {
   update() {
     this.eye.subVectors(this.camera.position, this.target );
 
-    if (!this.noZoom ) {
+    if (!this.noZoom) {
       this.zoomCamera();
     }
 
-    if (!this.noPan ) {
+    if (!this.noPan) {
       this.panCamera();
+    } else if (this.targetObject) {
+      this.target.setX(this.targetObject.position.x);
+      this.target.setY(this.targetObject.position.y);
     }
 
     this.camera.position.addVectors(this.target, this.eye);
@@ -248,7 +253,7 @@ export class PanZoomControls extends EventDispatcher {
     this.state = this.STATE.NONE;
     this.keyState = this.STATE.NONE;
 
-    this.target.copy( this.initial.target );
+    this.target.copy(this.initial.target);
     this.camera.position.copy(this.initial.position);
     this.camera.up.copy(this.initial.up);
     this.camera.zoom = this.initial.zoom;
@@ -359,9 +364,6 @@ export class PanZoomControls extends EventDispatcher {
     if (this.enabled === false) {
       return;
     }
-    if (this.noPan === true) {
-      return;
-    }
 
     event.preventDefault();
     event.stopPropagation();
@@ -377,12 +379,11 @@ export class PanZoomControls extends EventDispatcher {
           this.zoomStart.y -= event.deltaY * 0.01;
           break;
         default:
-          // undefined, 0, assume pixels
-          // this.zoomStart.y -= event.deltaY * 0.00025;
+          // `undefined` or `0`; assume pixels
           this.zoomStart.y -= event.deltaY * 0.005;
           break;
       }
-    } else {
+    } else if(!this.noPan) {
       this.panEnd.x -= event.deltaX * 0.005;
       this.panEnd.y -= event.deltaY * 0.005;
     }

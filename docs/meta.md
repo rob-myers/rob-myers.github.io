@@ -45,7 +45,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > can `decor` to list decorations
 
 - [ ] actors have a shadow
-- [ ] camera can follow actor
+- [x] camera can follow actor
 
 - [x] remove anime.js
 - [x] replace use-cannon with:

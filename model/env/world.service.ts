@@ -4,17 +4,15 @@ class WorldService {
 
   setCameraFree(envKey: string) {
     const { camControls } = useEnvStore.getState().env[envKey];
-    // console.log('camControls', camControls);
-    camControls.enabled = true;
-    camControls.camera?.parent?.remove(camControls.camera);
+    camControls.noPan = false;
+    camControls.targetObject = null;
   }
 
   setCameraFollow(envKey: string, actorName: string) {
     const { camControls } = useEnvStore.getState().env[envKey];
-    // console.log('camControls', camControls);
-    camControls.enabled = false;
+    camControls.noPan = true;
     const { actor } = useEnvStore.getState().director[envKey];
-    actor[actorName]?.steerable.group.add(camControls.camera);
+    camControls.targetObject = actor[actorName].mesh.parent!;
   }
 
 }
