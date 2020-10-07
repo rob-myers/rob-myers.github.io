@@ -469,7 +469,7 @@ class SemanticsService {
         case 'IfClause': cmd = sem.IfClause(node); break;
         case 'LetClause': cmd = sem.LetClause(node); break;
         case 'Subshell': cmd = sem.Subshell(node); break;
-        // case 'TestClause': child = this.TestClause(Cmd); break;
+        case 'TestClause': cmd = sem.TestClause(node); break;
         case 'TimeClause': cmd = sem.TimeClause(node); break;
         case 'WhileClause': cmd = sem.WhileClause(node); break;
         // default: throw testNever(Cmd);
@@ -1203,6 +1203,52 @@ class SemanticsService {
         ps.popRedirectScope(pid);
       }
     })());
+  }
+
+  private TestClause(node: Sh.TestClause): Observable<ProcessAct> {
+    return this.TestExpr(node.X);
+  }
+
+  private TestExpr(node: Sh.TestExpr): Observable<ProcessAct> {
+    switch (node.type) {
+      case 'BinaryTest': {
+        // return new TestOpComposite({
+        //   key: CompositeType.test_op,
+        //   cs: [this.TestExpr(input.X), this.TestExpr(input.Y)],
+        //   postfix: false,
+        //   symbol: input.Op,
+        //   sourceMap: this.sourceMap({ Pos, End },
+        //     ...extra,// Earlier first.
+        //     { key: input.Op, pos: input.OpPos },
+        //   ),
+        // });
+        return from((async function*() {
+          // TODO
+        })());
+      }
+      case 'ParenTest':
+        return this.TestExpr(node.X);
+      case 'UnaryTest': {
+        // return new TestOpComposite({
+        //   key: CompositeType.test_op,
+        //   cs: [this.TestExpr(input.X)],
+        //   postfix: false, // No post/pre for tests.
+        //   sourceMap: this.sourceMap({ Pos, End },
+        //     ...extra, // Earlier first.
+        //     { key: input.Op, pos: input.OpPos },
+        //   ),
+        //   symbol: input.Op,
+        // });
+        return from((async function*() {
+          // TODO
+        })());
+      }
+      case 'Word': {
+        return this.Expand(node);
+      }
+      default: throw testNever(node);
+    }
+    
   }
 
   private TimeClause(node: Sh.TimeClause): Observable<ProcessAct> {
