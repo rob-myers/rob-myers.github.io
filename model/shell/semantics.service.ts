@@ -462,10 +462,7 @@ class SemanticsService {
         case 'BinaryCmd': cmd = sem.BinaryCmd(node); break;
         case 'Block': cmd = sem.Block(node); break;
         case 'CaseClause': cmd = sem.CaseClause(node); break;
-        // case 'CoprocClause': {
-        //   child = this.CoprocClause(Cmd);
-        //   break;
-        // }
+        // case 'CoprocClause': child = this.CoprocClause(Cmd); break;
         case 'DeclClause': cmd = sem.DeclClause(node); break;
         case 'ForClause': cmd = sem.ForClause(node); break;
         case 'FuncDecl': cmd = sem.FuncDecl(node); break;
@@ -473,7 +470,7 @@ class SemanticsService {
         case 'LetClause': cmd = sem.LetClause(node); break;
         case 'Subshell': cmd = sem.Subshell(node); break;
         // case 'TestClause': child = this.TestClause(Cmd); break;
-        // case 'TimeClause': child = this.TimeClause(Cmd); break;
+        case 'TimeClause': cmd = sem.TimeClause(node); break;
         case 'WhileClause': cmd = sem.WhileClause(node); break;
         // default: throw testNever(Cmd);
         default: return;
@@ -1205,6 +1202,18 @@ class SemanticsService {
         vs.popVarScope(pid);
         ps.popRedirectScope(pid);
       }
+    })());
+  }
+
+  private TimeClause(node: Sh.TimeClause): Observable<ProcessAct> {
+    return from((async function*() {
+      const before = Date.now(); // Milliseconds since epoch
+      if (node.Stmt) {
+        await awaitEnd(sem.Stmt(node.Stmt));
+      }
+      ps.getProcess(node.meta.pid).fdToOpen[1].write(
+        `real\t${Date.now() - before}ms`
+      );
     })());
   }
 
