@@ -423,6 +423,33 @@ class SemanticsService {
     }());
   }
 
+  private CaseClause(node: Sh.CaseClause): Observable<ProcessAct> {
+    return from((async function* () {
+      const { value: word } = await lastValueFrom(sem.Expand(node.Word));
+
+      const cases = node.Items.map(({ Patterns, Op, Stmts }) => ({
+        globs: Patterns.map((x) => sem.Expand(x)),
+        terminal: Op as ';;' | ';&' | ';;&',
+        child: sem.stmts(node, Stmts),
+      }));
+      let matched = false;
+
+      for (const { globs, child } of cases) {
+        for (const glob of globs) {
+          const { value: globValue } = await lastValueFrom(glob);
+          const { regex } = globrex(globValue, { extended: true });
+          if (matched = regex.test(word)) {
+            break;
+          }
+        }
+        if (matched) {
+          await awaitEnd(child);
+          break;
+        }
+      }
+    })());
+  }
+
   /**
    * Construct a simple command or a compound command.
    */
@@ -440,7 +467,7 @@ class SemanticsService {
         case 'ArithmCmd': cmd = sem.ArithmCmd(node); break;
         case 'BinaryCmd': cmd = sem.BinaryCmd(node); break;
         case 'Block': cmd = sem.Block(node); break;
-        // case 'CaseClause': child = this.CaseClause(Cmd); break;
+        case 'CaseClause': cmd = sem.CaseClause(node); break;
         // case 'CoprocClause': {
         //   child = this.CoprocClause(Cmd);
         //   break;

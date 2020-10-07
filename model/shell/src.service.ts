@@ -106,11 +106,12 @@ export class SrcService {
           'case',
           this.src(node.Word),
           'in',
-          cases.map(({ child, globs, terminal }) => [
-            `${globs.map(g => this.src(g)).join('|')})`,
+          cases.flatMap(({ child, globs, terminal }) => [
+            `${globs.map(g => this.src(g)).join(' | ')})`,
             this.seqSrc(child),
             terminal,
-          ].join(' ')),
+          ]).join(' '),
+          'esac'
         ].filter(Boolean).join(' ');
       }
 
