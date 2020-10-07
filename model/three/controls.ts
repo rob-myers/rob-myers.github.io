@@ -20,8 +20,9 @@ export class PanZoomControls extends EventDispatcher {
   public noPan = false;
   public staticMoving = false;
   public dynamicDampingFactor = 0.2;
-  public minDistance = 0;
-  public maxDistance = Infinity;
+
+  public minDistance = 1;
+  public maxDistance = 10;
   // this.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
   // this.mouseButtons = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.ZOOM, RIGHT: MOUSE.PAN };
 
@@ -156,7 +157,6 @@ export class PanZoomControls extends EventDispatcher {
         } else {
           console.warn('PanZoomControls: Unsupported camera type');
         }
-
       }
 
       if (this.staticMoving ) {
