@@ -3,9 +3,9 @@
 # default is "modified 5s ago or less"
 mtime=${1:-"-5s"}
 
-# expect folder '3d' to be a sibling of repo root
+# expect folder '3d' in repo root
 cd public
-changedFiles=$( find '../../3d' -name '*.gltf' -mtime $mtime )
+changedFiles=$( find '../3d' -name '*.gltf' -mtime $mtime )
  
 for src in $changedFiles; do
   echo "detected changed file: $src relative to $( pwd )"

@@ -16,3 +16,7 @@ other.config.js
 yarn-error.log
 
 analyze/
+
+3d/*.blend
+3d/*.blend1
+3d/*.gltf
