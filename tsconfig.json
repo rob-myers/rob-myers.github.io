@@ -23,7 +23,6 @@
       "@store/*": ["store/*"],
       "@model/*": ["model/*"],
       "@nav/*": ["nav/*"],
-      "@env-var/*": ["env-var/*"],
       "@public/*": ["public/*"],
       "@blog/*": ["blog/*"]
     },
