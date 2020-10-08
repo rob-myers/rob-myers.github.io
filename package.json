@@ -49,7 +49,7 @@
     "check-types": "tsc --noEmit",
     "analyze-build": "rm -rf .next && yarn next-cfg && ANALYZE=true next build",
     "ts-node": "node -r esm -r ts-node/register",
-    "watch-gltf": "nodemon --watch '../3d/**/*' -e gltf --exec 'yarn update-gltf'",
+    "watch-gltf": "nodemon --watch './3d/**/*' -e gltf --exec 'yarn update-gltf'",
     "update-gltf": "source scripts/gltf-to-jsx.sh",
     "postinstall": "patch-package"
   },
