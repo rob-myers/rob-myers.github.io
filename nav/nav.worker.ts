@@ -13,7 +13,7 @@ const ctxt: NavWorkerContext = self as any;
 const { api } = useStore.getState();
 
 ctxt.addEventListener('message', async ({ data: msg }) => {
-  console.log(msg.key, { navWorkerReceived: msg });
+  // console.log(msg.key, { navWorkerReceived: msg });
 
   switch (msg.key) {
     case 'ping-navworker': {
