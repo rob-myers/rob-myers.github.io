@@ -20,4 +20,4 @@ export const innerGroupName = 'innerGroup';
 export const navmeshGroupName = 'navmesh';
 export const navmeshPlaneName = 'navmeshPlane';
 
-export const outsetAmount = 0.3;
+export const outsetAmount = 0.35;

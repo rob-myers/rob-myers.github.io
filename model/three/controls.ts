@@ -27,6 +27,7 @@ export class PanZoomControls extends EventDispatcher {
   // this.mouseButtons = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.ZOOM, RIGHT: MOUSE.PAN };
 
   public targetObject = null as null | THREE.Object3D;
+  private targetObjectDelta = new Vector3;
 
   private readonly STATE = {
     NONE: -1,
@@ -210,7 +211,7 @@ export class PanZoomControls extends EventDispatcher {
   }
 
   update() {
-    this.eye.subVectors(this.camera.position, this.target );
+    this.eye.subVectors(this.camera.position, this.target);
 
     if (!this.noZoom) {
       this.zoomCamera();
@@ -218,9 +219,41 @@ export class PanZoomControls extends EventDispatcher {
 
     if (!this.noPan) {
       this.panCamera();
-    } else if (this.targetObject) {
-      this.target.setX(this.targetObject.position.x);
-      this.target.setY(this.targetObject.position.y);
+    }
+
+    if (this.targetObject) {
+
+      // Tight follow
+      // this.target.setX(this.targetObject.position.x);
+      // this.target.setY(this.targetObject.position.y);
+      
+      // Slow follow
+      this.targetObjectDelta.subVectors(this.targetObject.position, this.target).setZ(0);
+      if (this.targetObjectDelta.length() > 0.42) {
+        this.targetObjectDelta.clampLength(0, 0.4);
+        this.target.setX(this.targetObject.position.x - this.targetObjectDelta.x);
+        this.target.setY(this.targetObject.position.y - this.targetObjectDelta.y);
+      } else {
+        this.target.add(this.targetObjectDelta.clampLength(0, 0.02));
+      }
+
+      // // Radius follow
+      // this.targetObjectDelta.subVectors(this.target, this.targetObject.position);
+      // this.targetObjectDelta.setZ(0);
+      // const deltaSq = this.targetObjectDelta.lengthSq();
+      // if (deltaSq > 0.3 * 0.3) {
+      //   this.target.setX(this.targetObject.position.x);
+      //   this.target.setY(this.targetObject.position.y);
+      //   this.target.addScaledVector(this.targetObjectDelta, 0.3 / Math.sqrt(deltaSq));
+      // }
+
+      // // Constrain along actor direction
+      // const angle = this.targetObject.rotation.z;
+      // const unitVector = new Vector3(Math.cos(angle), Math.sin(angle), 0);
+      // this.targetObjectDelta.subVectors(this.target, this.targetObject.position).setZ(0);
+      // const dotProd = MathUtils.clamp(unitVector.dot(this.targetObjectDelta), -0.4, 0.1);
+      // this.target.setX(this.targetObject.position.x + dotProd * unitVector.x);
+      // this.target.setY(this.targetObject.position.y + dotProd * unitVector.y);
     }
 
     this.camera.position.addVectors(this.target, this.eye);
