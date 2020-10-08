@@ -355,12 +355,7 @@ class SemanticsService {
           const files = stmts.map(stmt => parseService.wrapInFile(stmt));
           const spawns = files.map(file => ps.spawnProcess(node.meta.pid, file, background));
           const transpiles = spawns.map(({ parsed }) => sem.transpile(parsed));
-
-          try {
-            await Promise.all(transpiles.map(awaitEnd));
-          } finally {
-            ps.removeProcesses(spawns.map(({ pid }) => pid));  
-          }
+          await Promise.all(transpiles.map(awaitEnd));
           break;
         }
         default:
@@ -661,7 +656,11 @@ class SemanticsService {
           throw e;
         }
         sem.handleInternalError(node, e);
-      } 
+      } finally {
+        if (!ps.isLeadingProcess(node.meta.pid)) {
+          ps.removeProcess(node.meta.pid);
+        }
+      }
     }());
   }
 
@@ -1162,19 +1161,8 @@ class SemanticsService {
         const cloned = Object.assign(parseService.clone(stmt), { Background: false } as Sh.Stmt);
         const file = parseService.wrapInFile(cloned);
         const { pid: spawnedPid, parsed } = ps.spawnProcess(cloned.meta.pid, file, true);
-
         // Launch it
-        sem.transpile(parsed).subscribe({
-          complete: () => {
-            ps.removeProcess(spawnedPid);
-            console.log(`background process ${spawnedPid} terminated`);
-          },
-          error: (e) => {
-            ps.removeProcess(spawnedPid);
-            console.error(`background process ${spawnedPid} terminated`);
-            console.error(e);
-          },
-        });
+        sem.transpile(parsed).subscribe();
         stmt.exitCode = stmt.Negated ? 1 : 0;
       } else {
         // Run a simple or compound command
@@ -1454,9 +1442,7 @@ class SemanticsService {
 
   private async throttleIterator(node: Sh.ParsedSh) {
     if (node.lastIterated) {
-      const throttleMs = (
-        vs.lookupVar(node.meta.pid, iteratorDelayVarName) || 0.25
-      ) * 1000;
+      const throttleMs = 1000 * (vs.lookupVar(node.meta.pid, iteratorDelayVarName) || 0.25);
       const sleepMs = Math.max(0, throttleMs - (Date.now() - node.lastIterated));
       await ps.sleep(node.meta.pid, sleepMs);
     }

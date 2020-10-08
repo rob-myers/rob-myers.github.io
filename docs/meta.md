@@ -28,7 +28,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] `goto` error messages on takeover not always sent
 - [ ] `TtyXterm` blocks/ignores lines from other processes on paste
-- [ ] following throws error on Ctrl-C:
+- [x] fix error on Ctrl-C:
   ```sh
   while true; do echo foo >/tmp/x; done |
   while read line; do echo ${line}; done </tmp/x
@@ -37,78 +37,66 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] implement joined-up gotos
 - [x] avoid bounce-back on override goto
-
 - [ ] can `decor foo` to show navpath and name it `foo`
   > remove builtin `way`
   > can `decor rm foo`
   > can `decor` to list decorations
-
+- [ ] actor can cast visible ray
 - [ ] actors can aim?
   > `@bob face alice` face towards alice once
-  > `@bob watch --mouse` keep facing towards mouse
-  > `@bob watch --none` stop watching
-  > actor can cast visible ray
-
+  > `@bob watch mouse` keep facing towards mouse
+  > `@bob watch none` stop watching
 - [ ] event system i.e. enter/exit nav-rect
-
+- [ ] can list running processes
 - [ ] can cancel background `goto`
   > implement `kill` supporting SIGINT
   > implement `trap code_or_function 2`
   > `goto p & trap "kill $!" 2`
 
+- [ ] `@camera bob` and `@camera free`
+  > remove `follow`
+
 - [x] actors have a shadow
 - [x] camera can follow actor
-
 - [x] remove anime.js
 - [x] replace use-cannon with:
   > https://github.com/erosmarcon/three-steer
   > could implement triggers ourselves via navrect partition
 - [x] use physics engine to follow path
-
 - [x] remove use-cannon
-
 - [x] `nav $(click) $(click) >@foo` sets variable `foo`
   > avoids serialization
   > avoids syntax `... as foo`
-
 - [x] replace three-pathfinding with babylonjs recast plugin
   > https://github.com/BabylonJS/Babylon.js/blob/master/src/Navigation/Plugins/recastJSPlugin.ts
   > https://www.npmjs.com/package/recast-detour
-
 - [x] `nav` and `spawn` supports string inputs
-
 - [x] fix nested command substitution
   > e.g. `s=$( nav $(click) $(click) )`
   > this will permit `goto $( nav $(click) $(click) ) bob`
 - [x] spawn a bot at each point along navpath
   `for i in {0..3}; do spawn bot-${i} $(  get r[${i}] ); done`
-
 - [x] sometimes can't navigate from corner nav points
   > https://github.com/donmccurdy/three-pathfinding/issues/68
   > `goto: failed with error: TypeError: Cannot read property 'map' of null`
   > patched `findPath` i.e. do not require points to be inside nav poly,
     instead the closest node is picked.
-
 - [x] actor turns along path
-
 - [x] Consider `while click p; do goto p bob & done`
   > ensure all bg processes resolve
 - [x] `goto`: most recent process cancels previous
 - [x] ctrl-c `goto` stops motion
-
 - [x] `goto` command
   > can `goto [path] bob`
   > can `goto [point] bob` (does planning)
 - [x] `spawn` command
   > spawn an actor at a position
-
 - [x] can display navpath
   > use builtin `way p` which toggles visibility
 - [x] `nav` builtin queries three-pathfinding in webworker and receives navpath
   > create navworker
   > can add/remove navigable
   > can query navpath via builtin `nav`
-
 - [x] abandon polyanya, use three-pathfinding instead
 - [x] `Env` persisted via react-reverse-portal
 - [x] cleanup polyanya interface
@@ -117,7 +105,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] iterators `for`/`while` have inbuilt delay (e.g. at least `1s`)
 - [x] `while` supports builtins `break` and `continue`
 - [x] implement cancellable `while`
-
 - [x] ensure we cannot create a file which is already a directory
 - [x] support `read x y z` when input is a string
 

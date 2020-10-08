@@ -60,7 +60,7 @@ class ActorService {
       await Promise.race([
         this.animateUntil(step,cancelKey),
         new Promise((_, reject) => {
-          ps.addCleanups(pid, reject); // Ctrl-C
+          ps.addCleanup(pid, reject); // Ctrl-C
           actor.cancel = reject;
         }),
       ]);

@@ -21,7 +21,7 @@ export class BuiltinService {
     // Wrap in a promise so Ctrl-C can reject via process.cleanups
     await new Promise(async (resolve, reject) => {
       const process = ps.getProcess(node.meta.pid);
-      const removeCleanup = ps.addCleanups(process.pid, () => reject(null));
+      const removeCleanup = ps.addCleanup(process.pid, () => reject(null));
       node.exitCode = 0;
       try {
         switch (command) {
@@ -82,7 +82,7 @@ export class BuiltinService {
             }
           }
         }, false);
-        ps.addCleanups(pid, () => reject(null));
+        ps.addCleanup(pid, () => reject(null));
       });
     } finally {
       stopListening!();

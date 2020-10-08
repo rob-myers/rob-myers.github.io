@@ -23,9 +23,9 @@ export class ProcessService {
     }
   }
 
-  addCleanups(pid: number, ...cbs: (() => void)[]): () => void {
-    this.getProcess(pid).cleanups.push(...cbs);
-    return () => cbs.forEach(cb => removeFirst(this.getProcess(pid).cleanups, cb));
+  addCleanup(pid: number, cleanup: () => void): () => void {
+    this.getProcess(pid).cleanups.push(cleanup);
+    return () => removeFirst(this.getProcess(pid).cleanups, cleanup);
   }
 
   cleanup(pid: number) {
@@ -267,8 +267,13 @@ export class ProcessService {
   }
 
   isForegroundProcess(pid: number) {
-    const { sessionKey } = this.getProcess(pid)
+    const { sessionKey } = this.getProcess(pid);
     return this.getSession(sessionKey).fgStack.includes(pid);
+  }
+
+  isLeadingProcess(pid: number) {
+    const { sessionKey } = this.getProcess(pid);
+    return this.getSession(sessionKey).sid === pid;
   }
 
   isInteractiveShell({ meta }: Sh.BaseNode) {
@@ -367,10 +372,7 @@ export class ProcessService {
     const { pgid } = this.getProcess(pid);
     this.removeProcessFromGroup(pid, pgid);
     delete this.getProcesses()[pid];
-  }
-
-  removeProcesses(pids: number[]) {
-    pids.forEach(pid => this.removeProcess(pid));
+    console.warn(`terminated process ${pid}`);
   }
 
   /** We assume `pid` already resides in the group */
@@ -455,8 +457,13 @@ export class ProcessService {
   /** Cancellable sleep */
   sleep(pid: number, ms: number) {
     return new Promise((resolve, reject) => {
-      const remove = this.addCleanups(pid, () => reject(null));
-      setTimeout(() => {
+      const remove = this.addCleanup(pid, () => {
+        reject(null);
+        // If process cancelled/removed before sleep finishes,
+        // `remove()` will throw an error; we prevent it
+        window.clearTimeout(timeoutId);
+      });
+      const timeoutId = setTimeout(() => {
         remove();
         resolve();
       }, ms);
