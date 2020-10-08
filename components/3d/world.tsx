@@ -24,7 +24,7 @@ const World: React.FC<Props> = ({ envName }) => {
       const shadowsSub = env.updateShadows$.pipe(debounceTime(30), tap(_ => {
         if (ctxt.gl) {
           ctxt.gl.shadowMap.needsUpdate = true;
-          setTimeout(() => ctxt.gl.shadowMap.needsUpdate = false);
+          setTimeout(() => ctxt.gl.shadowMap.needsUpdate = false, 10);
         }
       })).subscribe();
 
@@ -51,7 +51,7 @@ const World: React.FC<Props> = ({ envName }) => {
             const camera = ct.camera as PerspectiveCamera;
             camera.position.set(0, 0, 10);
             camera.setFocalLength(35);
-            
+
             ct.gl.shadowMap.enabled = true;
             ct.gl.shadowMap.autoUpdate = false;
             ct.gl.shadowMap.type = PCFSoftShadowMap;
