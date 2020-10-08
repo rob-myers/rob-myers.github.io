@@ -59,7 +59,7 @@ interface SetCameraFollow {
 
 export function handleWorldDeviceWrites(envKey: string) {
   return (msg: MessageToWorld) => {
-    console.log('worldDevice was written to', msg);
+    // console.log('worldDevice was written to', msg);
 
     switch (msg.key) {
       case 'show-navpath': {

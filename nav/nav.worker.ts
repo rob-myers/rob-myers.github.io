@@ -71,7 +71,7 @@ function updateEnvPolyanyaMesh$(envKey: string) {
     // NOTE buffer only being used for debugging
     buffer(envUpdate$(envKey).pipe(debounceTime(250))),
     tap(msgs => {
-      console.log(`Updating env '${msgs[0].envKey}' using rooms '${msgs.map(x => x.roomType)}'`);
+      // console.log(`Updating env '${msgs[0].envKey}' using rooms '${msgs.map(x => x.roomType)}'`);
       api.updateEnvNavigation(envKey);
     }),
   );

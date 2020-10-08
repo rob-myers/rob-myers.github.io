@@ -377,7 +377,7 @@ class SemanticsService {
       
       const args = await sem.performShellExpansion(node.Args);
       const [command, ...cmdArgs] = args;
-      console.log('args', args);
+      // console.log('args', args);
 
       try {
         ps.pushRedirectScope(pid);

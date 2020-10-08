@@ -80,7 +80,7 @@ export class TtyShell {
         break;
       }
       case 'send-sig': {
-        console.log('received signal', { msg, sessionKey: this.sessionKey });
+        // console.log('received signal', { msg, sessionKey: this.sessionKey });
 
         if (msg.signal === SigEnum.SIGINT) {
           // Terminate and cleanup all processes in foreground process group
