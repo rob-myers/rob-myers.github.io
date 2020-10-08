@@ -37,6 +37,13 @@ export function getBounds(obj: THREE.Object3D) {
   return (new THREE.Box3).setFromObject(obj);
 }
 
+export function transformImportedMesh(mesh: THREE.Mesh) {
+  mesh.position.set(0, 0, 0);
+  mesh.geometry.rotateX(Math.PI/2);
+  mesh.geometry.translate(0, 0, -mesh.geometry.boundingBox!.min.z);
+  return mesh;
+}
+
 export const placeholderGroup = new THREE.Group;
 export const placeholderMesh = new THREE.Mesh;
 export const placeholderScene = new THREE.Scene;

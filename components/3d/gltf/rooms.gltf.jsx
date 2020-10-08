@@ -76,8 +76,16 @@ export default function Model(props) {
             geometry={nodes['default-bot'].geometry}
             name="default-bot"
             position={[1.2, 0.2, 0]}
-            userData={{ name: 'default-bot' }}
-          />
+            userData={{ name: 'default-bot' }}>
+            <mesh
+              material={materials.red}
+              geometry={nodes.shadow.geometry}
+              name="shadow"
+              position={[0, -0.195, 0]}
+              scale={[0.5, 0.5, 0.5]}
+              userData={{ name: 'shadow' }}
+            />
+          </mesh>
         </group>
       </scene>
     </group>

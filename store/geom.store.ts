@@ -5,7 +5,7 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import { KeyedLookup, lookupFromValues } from '@model/generic.model';
 import * as Param from '@model/env/env.model';
-import { isMeshNode, navMeshMaterial } from '@model/three/three.model';
+import * as threeUtil from '@model/three/three.model';
 import * as Geom from '@model/geom/geom.model'
 import { geomService } from '@model/geom/geom.service';
 
@@ -28,6 +28,7 @@ export interface State {
       actorName: string;
       geometry: THREE.BufferGeometry;
       material: THREE.Material;
+      children: THREE.Object3D[];
     };
     /**
      * Update child mesh 'navmesh' of supplied `room`,
@@ -107,37 +108,24 @@ const useStore = create<State>(devtools((set, get) => ({
       gltf.scene.traverse((node) => {
         switch (node.name) {
           case 'actors': {
-            actors.push(...node.children.filter(isMeshNode));
+            actors.push(...node.children.filter(threeUtil.isMeshNode));
             actors.forEach(actor => {
-              actor.position.setY(0);
-              actor.geometry.rotateX(Math.PI/2);
-              actor.position.setX(0);
-              actor.position.setY(0);
-              actor.geometry.translate(0, 0, 0.2 - actor.geometry.boundingBox!.min.z);
+              threeUtil.transformImportedMesh(actor);
+              actor.geometry.translate(0, 0, 0.3); // Move actor up
+              actor.children.filter(threeUtil.isMeshNode)
+                .forEach(child => threeUtil.transformImportedMesh(child));
             });
             break;
           }
           case 'rooms': {
-            rooms.push(...node.children.filter(isMeshNode));
-            rooms.forEach(room => {
-              // Reset planar position
-              room.position.setX(0);
-              // Remove gltf rotation
-              room.position.setY(0);
-              room.geometry.rotateX(Math.PI/2);
-              // Put on floor
-              room.geometry.translate(0, 0, -room.geometry.boundingBox!.min.z);
-            });
+            rooms.push(...node.children.filter(threeUtil.isMeshNode));
+            rooms.forEach(room => threeUtil.transformImportedMesh(room));
             node.updateMatrixWorld();
             break;
           }
           case 'inners': {
-            inners.push(...node.children.filter(isMeshNode));
-            inners.forEach(inner => {
-              inner.position.setY(0);
-              inner.geometry.rotateX(Math.PI/2);
-              inner.geometry.translate(0, 0, -inner.geometry.boundingBox!.min.z);
-            });
+            inners.push(...node.children.filter(threeUtil.isMeshNode));
+            inners.forEach(inner => threeUtil.transformImportedMesh(inner));
             break;
           }
         }
@@ -196,11 +184,12 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     createActor: (name) => {
-      const { geometry, material } = get().actors['default-bot'].mesh;
+      const { geometry, material, children } = get().actors['default-bot'].mesh;
       return {
         actorName: name,
         geometry: geometry as THREE.BufferGeometry,
         material: material as THREE.Material, // Could be array?
+        children,
       };
     },
 
@@ -214,7 +203,8 @@ const useStore = create<State>(devtools((set, get) => ({
 
       const innerMeshes = roomGroup.children
         // children[0] needed in firefox, why?
-        .filter(({ name, children }) => name === Param.innerGroupName && children[0] && isMeshNode(children[0]))
+        .filter(({ name, children }) =>
+          name === Param.innerGroupName && children[0] && threeUtil.isMeshNode(children[0]))
         .map(({ children }) => children[0] as THREE.Mesh);
       const innerMetas = innerMeshes.map(x => inners[x.name]);
       const innerDeltas = innerMeshes.map(x => geomService.projectXY(x.parent!.position));
@@ -237,7 +227,7 @@ const useStore = create<State>(devtools((set, get) => ({
          */
         rects.forEach((rect) => {
           const { cx, cy, width, height } = rect;
-          const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 1), navMeshMaterial);
+          const plane = new THREE.Mesh(new THREE.PlaneGeometry(width, height, 1), threeUtil.navMeshMaterial);
           plane.name = Param.navmeshPlaneName;
           plane.receiveShadow = true;
           plane.position.set(cx, cy, 0);

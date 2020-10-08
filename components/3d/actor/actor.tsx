@@ -10,10 +10,11 @@ const Actor: React.FC<Props> = ({ actor }) => {
   const [, setReady] = useState(false);
 
   useEffect(() => {
-    const { geometry, material } = useGeomStore.api.createActor(actor.key);
+    const model = useGeomStore.api.createActor(actor.key);
     actor.mesh = mesh.current!;
-    actor.mesh.geometry = geometry;
-    actor.mesh.material = material;
+    actor.mesh.geometry = model.geometry;
+    actor.mesh.material = model.material;
+    model.children.forEach(x => actor.mesh.add(x.clone()));
     
     const grp = group.current!;
     grp.position.copy(actor.lastSpawn);

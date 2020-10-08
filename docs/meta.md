@@ -21,7 +21,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] UI buttons
   > can ctrl-c
   > can auto send world events to tty
-> [ ] Ctrl-C UI button
 - [x] builtin `call '() => Math.random()'` and can provide js args
 - [ ] builtin `paste r` pastes & runs `string` or `string[]` output?
 - [ ] `range 10` is compositional if `0 1 2 ...`, but not if an array
@@ -37,14 +36,27 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   i.e. `TypeError: Cannot read property 'cleanups' of undefined`
 
 - [ ] implement joined-up gotos
-- [ ] avoid bounce-back on override goto
+- [x] avoid bounce-back on override goto
 
 - [ ] can `decor foo` to show navpath and name it `foo`
   > remove builtin `way`
   > can `decor rm foo`
   > can `decor` to list decorations
 
-- [ ] actors have a shadow
+- [ ] actors can aim?
+  > `@bob face alice` face towards alice once
+  > `@bob watch --mouse` keep facing towards mouse
+  > `@bob watch --none` stop watching
+  > actor can cast visible ray
+
+- [ ] event system i.e. enter/exit nav-rect
+
+- [ ] can cancel background `goto`
+  > implement `kill` supporting SIGINT
+  > implement `trap code_or_function 2`
+  > `goto p & trap "kill $!" 2`
+
+- [x] actors have a shadow
 - [x] camera can follow actor
 
 - [x] remove anime.js
