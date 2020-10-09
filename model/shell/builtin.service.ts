@@ -44,7 +44,6 @@ export class BuiltinService {
             case 'echo': await this.echo(process, args); break;
             case 'false': node.exitCode = 1; break;
             case 'get': this.get(process, args); break;
-            case 'goto': await this.goto(process, args); break;
             case 'nav': await this.nav(process, args); break;
             case 'read': await this.read(process, args); break;
             case 'say': await this.say(process, args); break;
@@ -113,6 +112,36 @@ export class BuiltinService {
           worldDevice.write({ key: 'actor-face-point', pid, actorName: actor.key, point, callback: resolve }));
         if (error) {
           throw new ShError(error, 1);
+        }
+        break;
+      }
+      /**
+       * Make actor goto point or follow path
+       */
+      case 'goto': {
+        if (args.length !== 2) {
+          throw new ShError('expected exactly one point/path/variable`', 1);
+        }
+        const pointOrPath = this.parsePointOrPathArg(pid, args[1]);
+        
+        if (pointOrPath instanceof Array) {
+          if (pointOrPath.length) {
+            worldDevice.write({ key: 'spawn-actor', name: actor.key, position: pointOrPath[0] });
+            const error = await new Promise((resolve: WorldDeviceCallback) =>
+              worldDevice.write({ key: 'actor-follow-path', pid, name:  actor.key, path: pointOrPath, callback: resolve }));
+            if (error) {
+              throw new ShError(error, 1);
+            }
+          }
+        } else {
+          const navPath = await this.getNavPath(pid, actor.steerable.position, pointOrPath);
+          // TEMP show navPath of most recent navigation
+          worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: navPath });
+          const error = await new Promise((resolve: WorldDeviceCallback) =>
+            worldDevice.write({ key: 'actor-follow-path', pid, name:  actor.key, path: navPath, callback: resolve }));
+          if (error) {
+            throw new ShError(error, 1);
+          }
         }
         break;
       }
@@ -269,36 +298,6 @@ export class BuiltinService {
     return navPath;
   }
 
-  private async goto({ pid, sessionKey }: Process, [dst, actorName, ...rest]: string[]) {
-    if (!dst || !actorName || rest.length) {
-      throw new ShError('usage `goto point_or_path actor_name`', 1);
-    }
-    // Also ensures actor exists
-    const { steerable: { position } } = this.getActorOrThrow(pid, actorName);
-    const pointOrPath = this.parsePointOrPathArg(pid, dst);
-    const { worldDevice } = ps.getSession(sessionKey);
-    
-    if (pointOrPath instanceof Array) {
-      if (pointOrPath.length) {
-        worldDevice.write({ key: 'spawn-actor', name: actorName, position: pointOrPath[0] });
-        const error = await new Promise((resolve: WorldDeviceCallback) =>
-          worldDevice.write({ key: 'actor-follow-path', pid, name: actorName, path: pointOrPath, callback: resolve }));
-        if (error) {
-          throw new ShError(error, 1);
-        }
-      }
-    } else {
-      const navPath = await this.getNavPath(pid, position, pointOrPath);
-      worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: navPath });
-      const error = await new Promise((resolve: WorldDeviceCallback) =>
-        worldDevice.write({ key: 'actor-follow-path', pid, name: actorName, path: navPath, callback: resolve }));
-      if (error) {
-        throw new ShError(error, 1);
-      }
-    }
-
-  }
-
   private parsePointArg(pid: number, varOrJson: string) {
     if (varOrJson.startsWith('{')) {
       return geomService.tryParsePoint(varOrJson);
@@ -322,7 +321,7 @@ export class BuiltinService {
     } else if (geomService.isVectorJsonPath(value)) {
       return value;
     }
-    throw new ShError(`${varOrJson}: expected point/path-valued variable`, 1);
+    throw new ShError(`${varOrJson}: expected point/path/variable`, 1);
   }
 
   private async nav({ pid }: Process, args: string[]) {
@@ -457,8 +456,6 @@ export const builtins = {
   false: true,
   /** Write a js variable's value to stdout */
   get: true,
-  /** Make actor goto point or follow path */
-  goto: true,
   /** Find optimal navpath and write to stdout  */
   nav: true,
   /** Read from stdin and store in provided variable */

@@ -48,9 +48,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `@bob watch mouse` keep facing towards mouse
   > `@bob relax` stop watching
 
-- [ ] change `goto $(click) bob` to `@bob goto $(click)`
+- [x] change `goto $(click) bob` to `@bob goto $(click)`
   > remove `goto`
-
 - [x] `@bob face alice` faces towards once
   > alias `@bob look alice`
 - [x] `@bob speed 0.03` changes speed
