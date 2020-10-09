@@ -25,15 +25,13 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] builtin `paste r` pastes & runs `string` or `string[]` output?
 - [ ] `range 10` is compositional if `0 1 2 ...`, but not if an array
 
+- [ ] can list running processes
+- [ ] implement `kill` supporting SIGINT
+- [ ] implement `trap code_or_function 2`
+  > can cancel background goto `goto p & trap "kill $!" 2`
 
 - [ ] `goto` error messages on takeover not always sent
 - [ ] `TtyXterm` blocks/ignores lines from other processes on paste
-- [x] fix error on Ctrl-C:
-  ```sh
-  while true; do echo foo >/tmp/x; done |
-  while read line; do echo ${line}; done </tmp/x
-  ```
-  i.e. `TypeError: Cannot read property 'cleanups' of undefined`
 - [ ] implement joined-up gotos
 - [x] avoid bounce-back on override goto
 - [ ] can `decor foo` to show navpath and name it `foo`
@@ -41,23 +39,25 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > can `decor rm foo`
   > can `decor` to list decorations
 - [ ] actor can cast visible ray
+
+- [ ] event system i.e. enter/exit nav-rect
+
 - [ ] actors can aim?
   > `@bob face alice` face towards alice once
   > `@bob watch mouse` keep facing towards mouse
-  > `@bob watch none` stop watching
-  > `@bob position`
-- [ ] event system i.e. enter/exit nav-rect
-- [ ] can list running processes
-- [ ] can cancel background `goto`
-  > implement `kill` supporting SIGINT
-  > implement `trap code_or_function 2`
-  > `goto p & trap "kill $!" 2`
+  > `@bob relax` stop watching
 
+- [x] `@bob stop` cancels any running `goto`
 - [x] `@bob` to make camera follow bob
   > `@camera` for free camera
   > `@bob at` get current position
   > remove `follow`
-
+- [x] fix error on Ctrl-C:
+  ```sh
+  while true; do echo foo >/tmp/x; done |
+  while read line; do echo ${line}; done </tmp/x
+  ```
+  i.e. `TypeError: Cannot read property 'cleanups' of undefined`
 - [x] actors have a shadow
 - [x] camera can follow actor
 - [x] remove anime.js

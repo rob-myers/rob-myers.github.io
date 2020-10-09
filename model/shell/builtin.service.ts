@@ -105,6 +105,10 @@ export class BuiltinService {
         fdToOpen[1].write(geomService.projectXY(actor.steerable.position));
         break;
       }
+      case 'stop': {
+        actor.cancel();
+        break;
+      }
       default: throw new ShError(`unrecognised actor command`, 1);
     }
   }
