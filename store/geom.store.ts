@@ -11,7 +11,7 @@ import { geomService } from '@model/geom/geom.service';
 
 export interface State {
   loadedGltf: boolean;
-  actors: KeyedLookup<ActorMeta>;
+  actors: KeyedLookup<ActorMeshMeta>;
   rooms: KeyedLookup<RoomMeta>;
   inners: KeyedLookup<InnerMeta>;
   readonly api: {
@@ -21,7 +21,7 @@ export interface State {
       rooms: THREE.Mesh[];
       inners: THREE.Mesh[];
     };
-    computeActorMeta: (inner: THREE.Mesh) => ActorMeta;
+    computeActorMeta: (inner: THREE.Mesh) => ActorMeshMeta;
     computeInnerMeta: (inner: THREE.Mesh) => InnerMeta;
     computeRoomMeta: (room: THREE.Mesh) => RoomMeta;
     createActor: (name: string) => {
@@ -38,7 +38,7 @@ export interface State {
   };
 }
 
-export interface ActorMeta {
+export interface ActorMeshMeta {
   /** Mesh name */
   key: string;
   mesh: THREE.Mesh;
