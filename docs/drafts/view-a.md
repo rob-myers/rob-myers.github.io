@@ -8,4 +8,5 @@ A language for games
 
 - actor
 - item
-- trigger (rect, circle)
+- trigger
+

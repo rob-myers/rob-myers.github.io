@@ -65,44 +65,6 @@ class RecastService {
 
       this.navMesh = new this.bjsRECAST.NavMesh();
 
-      // var index: number;
-      // var tri: number;
-      // var pt: number;
-
-      // var indices = [];
-      // var positions = [];
-      // var offset = 0;
-      // for (index = 0; index < meshes.length; index++) {
-      //     if (meshes[index]) {
-      //         var mesh = meshes[index];
-
-      //         const meshIndices = mesh.getIndices();
-      //         if (!meshIndices) {
-      //             continue;
-      //         }
-      //         const meshPositions = mesh.getVerticesData(VertexBuffer.PositionKind, false, false);
-      //         if (!meshPositions) {
-      //             continue;
-      //         }
-
-      //         const wm = mesh.computeWorldMatrix(true);
-
-      //         for (tri = 0; tri < meshIndices.length; tri++) {
-      //             indices.push(meshIndices[tri] + offset);
-      //         }
-
-      //         var transformed = Vector3.Zero();
-      //         var position = Vector3.Zero();
-      //         for (pt = 0; pt < meshPositions.length; pt += 3) {
-      //             Vector3.FromArrayToRef(meshPositions, pt, position);
-      //             Vector3.TransformCoordinatesToRef(position, wm, transformed);
-      //             positions.push(transformed.x, transformed.y, transformed.z);
-      //         }
-
-      //         offset += meshPositions.length / 3;
-      //     }
-      // }
-
       const geometry = (new Geometry).fromBufferGeometry(mesh.geometry as THREE.BufferGeometry);
       const positions = geometry.vertices.flatMap(v => [v.x, v.y, v.z]);
       const offset = geometry.vertices.length;

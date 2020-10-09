@@ -11,10 +11,8 @@ class BaseSteerable {
   maxSpeed = 0.02;
   velocity: THREE.Vector3 & { angle: number };
   box = new THREE.Box3;
-  raycaster = new THREE.Raycaster;
   velocitySamples = [] as THREE.Vector3[];
   numSamplesForSmoothing = 20;
-  radius = 200; // temp initial value
 
   lookStrategy = LookStrategy.travel;
   /** Target look direction when controlled */
@@ -153,13 +151,6 @@ export class Steerable extends BaseSteerable {
 
   maxForce = 0.1;
   arrivalThreshold = 0.1;
-  wanderAngle = 0;
-  wanderDistance = 10;
-  wanderRadius = 5;
-  wanderRange = 1;
-  avoidDistance = 400;
-  inSightDistance = 200;
-  tooCloseDistance = 60;
   pathIndex = 0;
   steeringForce = new THREE.Vector3(0, 0, 0);
 
