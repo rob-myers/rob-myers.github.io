@@ -28,7 +28,11 @@ const XTermComponent: React.FC<Props> = ({
     xterm.open(containerRef.current!);
     xterm.focus();
 
-    const onResize = () => fitAddon.fit();
+    const onResize = () => {
+      try {// Saw Uncaught Error: This API only accepts integers
+        fitAddon.fit();
+      } catch (e) {}
+    };
     window.addEventListener('resize', onResize);
     onResize();
 
