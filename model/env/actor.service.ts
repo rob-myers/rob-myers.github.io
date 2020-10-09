@@ -7,7 +7,7 @@ import { pause } from '@model/generic.model';
 import { alphaNumericRegex } from '@model/shell/var.service';
 import * as threeUtil from '@model/three/three.model';
 import { geomService } from '@model/geom/geom.service';
-
+import { LookStrategy } from './steerable';
 
 class ActorService {
   
@@ -26,7 +26,7 @@ class ActorService {
 
     if (actor) {
       actor.steerable.position.set(position.x, position.y, 0);
-      actor.cancel();
+      actor.cancelGoto();
     } else {
       useEnvStore.api.createActor(envKey, actorName, position);
     }
@@ -42,12 +42,47 @@ class ActorService {
     const director = useEnvStore.getState().director[envKey];
     const actor = director.actor[actorName];
 
-    const rect = geomService.projectBox3XY(threeUtil.getBounds(actor.mesh));
-    if (rect.contains(point)) {
+    // Override any current look for this actor
+    const cancelKey = `${actorName}@${envKey}:look`;
+    if (cancelKey in this.animCancels) {
+      actor.cancelLook();
+      await pause(100);
+    }
+
+    const selfRect = geomService.projectBox3XY(threeUtil.getBounds(actor.mesh));
+    if (selfRect.contains(point)) {
       return cb(null); // Actor cannot face itself
     }
 
-    cb('unimplemented');
+    const totalDelta = actor.steerable.setLookTarget(new THREE.Vector3(point.x, point.y));
+    if (Math.abs(totalDelta) < 0.01) {
+      return cb(null);
+    }
+    
+    let steps = 0;
+    const numSteps = (Math.abs(totalDelta) / Math.PI) * 50;
+    const step = () => {
+      actor.steerable.lookTowards(steps / numSteps);
+      return steps++ > numSteps;
+    };
+    // TODO unset?
+    actor.steerable.lookStrategy = LookStrategy.controlled;
+
+    try {// Racing handles Ctrl-C or cancellation by another process
+      await Promise.race([
+        this.animateUntil(step, cancelKey),
+        new Promise((_, reject) => {
+          ps.addCleanup(pid, reject); // Ctrl-C
+          actor.cancelLook = reject;
+        }),
+      ]);
+      cb(null);
+    } catch (e) {
+      cb(`${actorName}: look was cancelled`);
+      this.cancelAnimation(cancelKey);
+    } finally {
+      actor.cancelLook = () => {};
+    }
   }
 
   async followPath(
@@ -69,9 +104,10 @@ class ActorService {
     const path = navPath.map(p => new THREE.Vector3(p.x, p.y));
     const steerable = actor.steerable;
 
-    const cancelKey = `${actorName}@${envKey}`;
+    // Override any currently running `goto` for this actor
+    const cancelKey = `${actorName}@${envKey}:goto`;
     if (cancelKey in this.animCancels) {
-      actor.cancel();
+      actor.cancelGoto();
       await pause(100);
     }
 
@@ -79,17 +115,16 @@ class ActorService {
       if (steerable.followPath(path, false, 0.1)) {
         return true;
       }
-      steerable.lookWhereGoing(true);
+      steerable.look();
       steerable.update();
     };
 
-    try {
-      // Racing handles Ctrl-C or cancellation by another process
+    try {// Racing handles Ctrl-C or cancellation by another process
       await Promise.race([
-        this.animateUntil(step,cancelKey),
+        this.animateUntil(step, cancelKey),
         new Promise((_, reject) => {
           ps.addCleanup(pid, reject); // Ctrl-C
-          actor.cancel = reject;
+          actor.cancelGoto = reject;
         }),
       ]);
       cb(null);
@@ -97,7 +132,7 @@ class ActorService {
       cb(`${actorName}: goto was cancelled`);
       this.cancelAnimation(cancelKey);
     } finally {
-      actor.cancel = () => {};
+      actor.cancelGoto = () => {};
       steerable.pathIndex = 0;
     }
 

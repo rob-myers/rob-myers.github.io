@@ -61,7 +61,8 @@ export interface ActorMeta {
   lastSpawn: THREE.Vector3;
   steerable: Steerable;
   /** Cancel animation or noop */
-  cancel: () => void;
+  cancelGoto: () => void;
+  cancelLook: () => void;
 }
 
 export interface Decorator {

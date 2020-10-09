@@ -72,7 +72,8 @@ const useStore = create<State>(devtools((set, get) => ({
           mesh: threeUtil.placeholderMesh,
           steerable: placeholderSteerable,
           lastSpawn: geomService.toVector3(position),
-          cancel: () => {},
+          cancelGoto: () => {},
+          cancelLook: () => {},
         }, actor),
       })) }));
     },

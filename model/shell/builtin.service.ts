@@ -9,9 +9,10 @@ import { processService as ps} from './process.service';
 import { ShError, breakError, continueError } from "./semantics.service";
 import { varService, alphaNumericRegex, iteratorDelayVarName } from "./var.service";
 import { voiceDevice } from "./voice.device";
-import { ActorFollowPath, WorldDeviceCallback } from "@model/env/world.device";
+import { WorldDeviceCallback } from "@model/env/world.device";
 import { actorService } from "@model/env/actor.service";
 import { ActorMeta } from "@model/env/env.store.model";
+import { LookStrategy } from "@model/env/steerable";
 
 export class BuiltinService {
 
@@ -87,7 +88,7 @@ export class BuiltinService {
         break;
       }
       default:
-        throw new ShError(`unrecognised camera command`, 1);
+        throw new ShError(`${args[0]}: unrecognised camera command`, 1);
     }
   }
 
@@ -103,9 +104,11 @@ export class BuiltinService {
         fdToOpen[1].write(actor.steerable.positionXY);
         break;
       }
+      case 'look':
       case 'face': {
         const point = this.getActor(pid, args[1])?.steerable.positionXY
           || this.parsePointArg(pid, args[1]); // throws on failure
+
         const error = await new Promise((resolve: WorldDeviceCallback) =>
           worldDevice.write({ key: 'actor-face-point', pid, actorName: actor.key, point, callback: resolve }));
         if (error) {
@@ -113,12 +116,26 @@ export class BuiltinService {
         }
         break;
       }
+      case 'speed': {
+        const speed = Number(args[1]);
+        if (args.length !== 2 || !Number.isFinite(speed) || speed < 0) {
+          throw new ShError(`${speed}: invalid speed`, 1);
+        }
+        actor.steerable.maxSpeed = speed;
+        break;
+      }
       case 'stop': {
-        actor.cancel();
+        actor.cancelGoto();
+        break;
+      }
+      case 'unwatch': {
+        // Should cancel iterated looks too
+        actor.cancelLook();
+        actor.steerable.lookStrategy = LookStrategy.travel;
         break;
       }
       default:
-        throw new ShError(`unrecognised actor command`, 1);
+        throw new ShError(`${args[0]}: unrecognised actor command`, 1);
     }
   }
 

@@ -45,11 +45,15 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] event system i.e. enter/exit nav-rect
 
-- [ ] actors can aim
-  > `@bob face alice` face towards alice once
-  > `@bob watch mouse` keep facing towards mouse
+- [ ] `@bob watch mouse` keep facing towards mouse
   > `@bob relax` stop watching
 
+- [ ] change `goto $(click) bob` to `@bob goto $(click)`
+  > remove `goto`
+
+- [x] `@bob face alice` faces towards once
+  > alias `@bob look alice`
+- [x] `@bob speed 0.03` changes speed
 - [x] `@bob stop` cancels any running `goto`
 - [x] `@bob` to make camera follow bob
   > `@camera` for free camera
