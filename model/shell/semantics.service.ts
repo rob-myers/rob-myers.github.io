@@ -14,7 +14,7 @@ import { parseService } from '@model/shell/parse.service';
 import { expandService as expand, expandService } from './expand.service';
 import { varService as vs, iteratorDelayVarName } from './var.service';
 import { processService as ps } from './process.service';
-import { builtinService as bs } from './builtin.service';
+import { builtinService as bs, BuiltinKey } from './builtin.service';
 import { srcService } from './src.service';
 
 let nextNodeUid = 0;
@@ -385,8 +385,8 @@ class SemanticsService {
         let func: NamedFunction;
 
         if (args.length) {
-          if (bs.isBuiltinCommand(command)) {
-            await bs.runBuiltin(node, command, cmdArgs);
+          if (bs.isBuiltinCommand(command) || command.startsWith('@')) {
+            await bs.runBuiltin(node, command as BuiltinKey, cmdArgs);
           } else if (func = vs.getFunction(pid, command)) {
             try {
               // Invoke function with local variables

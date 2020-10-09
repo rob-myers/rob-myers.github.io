@@ -30,6 +30,7 @@ export interface State {
     /** Uses envKey as portalKey */
     ensureEnvPortal: (envKey: string) => void;
     getActorMeta: (envKey: string, name: string) => Store.ActorMeta | null;
+    getCamControls: (envKey: string) => PanZoomControls;
     removeActor: (envKey: string, actorName: string) => void;
     removeEnv: (envKey: string) => void;
     removeEnvPortal: (envKey: string) => void;
@@ -117,6 +118,10 @@ const useStore = create<State>(devtools((set, get) => ({
 
     getActorMeta: (envKey, actorName) => {
       return get().director[envKey].actor[actorName] || null;
+    },
+
+    getCamControls: (envKey) => {
+      return get().env[envKey].camControls;
     },
 
     removeActor: (envKey, actorName) => {

@@ -10,41 +10,51 @@ import { ShError, breakError, continueError } from "./semantics.service";
 import { varService, alphaNumericRegex, iteratorDelayVarName } from "./var.service";
 import { voiceDevice } from "./voice.device";
 import { ActorFollowPath } from "@model/env/world.device";
+import { actorService } from "@model/env/actor.service";
+import { ActorMeta } from "@model/env/env.store.model";
 
 export class BuiltinService {
 
+  
   isBuiltinCommand(command: string): command is BuiltinKey {
     return !!(builtins as Record<string, boolean>)[command];
   }
 
+  /** `command` may also be any string starting with `@` */
   async runBuiltin(node: Sh.CallExpr, command: BuiltinKey, args: string[]) {
+
     // Wrap in a promise so Ctrl-C can reject via process.cleanups
     await new Promise(async (resolve, reject) => {
       const process = ps.getProcess(node.meta.pid);
       const removeCleanup = ps.addCleanup(process.pid, () => reject(null));
       node.exitCode = 0;
+
       try {
-        switch (command) {
-          case 'break': this.break(node, args); break;
-          case 'call': await this.call(process, args); break;
-          case 'click': await this.click(process, args); break;
-          case 'continue': this.continue(node, args); break;
-          case 'def': await this.def(process, args); break;
-          case 'delay': this.delay(process, args); break;
-          case 'echo': await this.echo(process, args); break;
-          case 'false': node.exitCode = 1; break;
-          case 'follow': await this.follow(process, args); break;
-          case 'get': this.get(process, args); break;
-          case 'goto': await this.goto(process, args); break;
-          case 'nav': await this.nav(process, args); break;
-          case 'read': await this.read(process, args); break;
-          case 'say': await this.say(process, args); break;
-          case 'sleep': await this.sleep(process, args); break;
-          case 'spawn': await this.spawn(process, args); break;
-          case 'true': break;
-          case 'way': this.way(process, args); break;
-          default: throw testNever(command);
+        if (command.startsWith('@')) {
+          await this.runAt(node, command.slice(1), args);
+        } else {
+          switch (command) {
+            case 'break': this.break(node, args); break;
+            case 'call': await this.call(process, args); break;
+            case 'click': await this.click(process, args); break;
+            case 'continue': this.continue(node, args); break;
+            case 'def': await this.def(process, args); break;
+            case 'delay': this.delay(process, args); break;
+            case 'echo': await this.echo(process, args); break;
+            case 'false': node.exitCode = 1; break;
+            case 'get': this.get(process, args); break;
+            case 'goto': await this.goto(process, args); break;
+            case 'nav': await this.nav(process, args); break;
+            case 'read': await this.read(process, args); break;
+            case 'say': await this.say(process, args); break;
+            case 'sleep': await this.sleep(process, args); break;
+            case 'spawn': await this.spawn(process, args); break;
+            case 'true': break;
+            case 'way': this.way(process, args); break;
+            default: throw testNever(command);
+          }
         }
+
         removeCleanup();
         resolve();
       } catch (e) {// Must forward errors thrown by builtins
@@ -52,6 +62,51 @@ export class BuiltinService {
         reject(e);
       }
     });
+  }
+
+  /** Originally @{command} {args} */
+  private async runAt(node: Sh.CallExpr, command: string, args: string[]) {
+    const process = ps.getProcess(node.meta.pid);
+    if (command === 'camera') {
+      await this.cameraCommand(process, args);
+    } else {
+      const actor = this.getActorMeta(process.pid, command);
+      await this.actorCommand(process, actor, args);
+    }
+  }
+
+  /** Originally @camera {args} */
+  private async cameraCommand({ pid, sessionKey, fdToOpen }: Process, args: string[]) {
+    switch (args[0]) {
+      case undefined: {
+        const { worldDevice } = ps.getSession(sessionKey);
+        worldDevice.write({ key: 'set-camera-free' });
+        break;
+      }
+      case 'at': {
+        const envKey = ps.getEnvKey(pid);
+        const { camera } = useEnvStore.api.getCamControls(envKey);
+        fdToOpen[1].write(geomService.projectXY(camera.position));
+        break;
+      }
+      default: throw new ShError(`unrecognised camera command`, 1);
+    }
+  }
+
+  /** Originally @{actor_name} {args} */
+  private async actorCommand({ sessionKey, fdToOpen }: Process, actor: ActorMeta, args: string[]) {
+    switch (args[0]) {
+      case undefined: {
+        const { worldDevice } = ps.getSession(sessionKey);
+        worldDevice.write({ key: 'set-camera-follow', actorName: actor.key });
+        break;
+      }
+      case 'at': {
+        fdToOpen[1].write(geomService.projectXY(actor.steerable.position));
+        break;
+      }
+      default: throw new ShError(`unrecognised actor command`, 1);
+    }
   }
 
   private break(node: Sh.CallExpr, args: string[]) {
@@ -126,20 +181,6 @@ export class BuiltinService {
    */
   private async echo({ fdToOpen }: Process, args: string[]) {
     fdToOpen[1].write(args.join(' '));
-  }
-
-  private async follow({ pid, sessionKey }: Process, args: string[]) {
-    if (args.length > 2) {
-      throw new ShError('usage `follow actor_name` or `follow`', 1);
-    }
-    
-    const { worldDevice } = ps.getSession(sessionKey);
-    if (args.length) {
-      this.getActorMeta(pid, args[0]); // ensures actor exists
-      worldDevice.write({ key: 'set-camera-follow', actorName: args[0] });
-    } else {
-      worldDevice.write({ key: 'set-camera-free' });
-    }
   }
 
   /**
@@ -325,8 +366,10 @@ export class BuiltinService {
   }
 
   private async spawn({ pid, sessionKey }: Process, args: string[]) {
-    if (args.length !== 2 || !args[1] || !alphaNumericRegex.test(args[1])) {
+    if (args.length !== 2) {
       throw new ShError('usage `spawn point_or_var actor_name`', 1);
+    } else if (!actorService.isLegalName(args[1])) {
+      throw new ShError('actor_name must be alphanumeric and not forbidden', 1);
     }
 
     const position = this.parsePointArg(pid, args[0]);
@@ -379,8 +422,6 @@ export const builtins = {
   echo: true,
   /** Exit with code 1 */
   false: true,
-  /** Make camera follow an actor */
-  follow: true,
   /** Write a js variable's value to stdout */
   get: true,
   /** Make actor goto point or follow path */

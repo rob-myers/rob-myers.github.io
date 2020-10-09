@@ -34,7 +34,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   while read line; do echo ${line}; done </tmp/x
   ```
   i.e. `TypeError: Cannot read property 'cleanups' of undefined`
-
 - [ ] implement joined-up gotos
 - [x] avoid bounce-back on override goto
 - [ ] can `decor foo` to show navpath and name it `foo`
@@ -46,6 +45,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > `@bob face alice` face towards alice once
   > `@bob watch mouse` keep facing towards mouse
   > `@bob watch none` stop watching
+  > `@bob position`
 - [ ] event system i.e. enter/exit nav-rect
 - [ ] can list running processes
 - [ ] can cancel background `goto`
@@ -53,7 +53,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > implement `trap code_or_function 2`
   > `goto p & trap "kill $!" 2`
 
-- [ ] `@camera bob` and `@camera free`
+- [x] `@bob` to make camera follow bob
+  > `@camera` for free camera
+  > `@bob at` get current position
   > remove `follow`
 
 - [x] actors have a shadow

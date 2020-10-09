@@ -5,10 +5,19 @@ import { processService as ps } from '@model/shell/process.service';
 import useEnvStore from "@store/env.store";
 import { ActorFollowPath } from './world.device';
 import { pause } from '@model/generic.model';
+import { alphaNumericRegex } from '@model/shell/var.service';
+
 
 class ActorService {
-
+  
   private animCancels = {} as Record<string, () => void>;
+  private forbiddenNames = {
+    camera: true,
+  };
+
+  isLegalName(actorName: string) {
+    return alphaNumericRegex.test(actorName) && !(actorName in this.forbiddenNames);
+  }
 
   spawn(envKey: string, actorName: string, position: Geom.VectorJson) {
     const director = useEnvStore.getState().director[envKey];
