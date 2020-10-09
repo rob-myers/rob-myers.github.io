@@ -118,6 +118,7 @@ export class BuiltinService {
       /**
        * Make actor goto point or follow path
        */
+      case 'go':
       case 'goto': {
         if (args.length !== 2) {
           throw new ShError('expected exactly one point/path/variable`', 1);
