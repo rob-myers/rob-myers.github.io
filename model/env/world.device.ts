@@ -16,11 +16,14 @@ export interface NavmeshClick {
 }
 
 export type MessageToWorld = (
+  | ActorFacePoint
+  | ActorFollowPath
+  | ActorWatchMouse
+  | ActorWatchActor
+  | SetCameraFollow
+  | SetCameraFree
   | ShowNavPath
   | SpawnActor
-  | ActorFollowPath
-  | SetCameraFree
-  | SetCameraFollow
 );
 
 /** Show a graphical representation */
@@ -36,6 +39,8 @@ interface SpawnActor {
   position: Geom.VectorJson;
 }
 
+export type WorldDeviceCallback = (err: null | string) => void;
+
 export interface ActorFollowPath {
   key: 'actor-follow-path';
   /** Actor's name */
@@ -43,9 +48,29 @@ export interface ActorFollowPath {
   /** Navpath to follow, starting from actor's position */
   path: Geom.VectorJson[];
   /** Invoked on error or when finished */
-  callback: (err: null | string) => void;
+  callback: WorldDeviceCallback;
   /** For Ctrl-C */
   pid: number;
+}
+
+interface ActorFacePoint {
+  key: 'actor-face-point';
+  actorName: string;
+  point: Geom.VectorJson;
+  /** Invoked on error or when finished */
+  callback: WorldDeviceCallback;
+  pid: number;
+}
+
+interface ActorWatchActor {
+  key: 'actor-watch-actor';
+  actorName: string;
+  otherName: string;
+}
+
+interface ActorWatchMouse {
+  key: 'actor-watch-mouse';
+  actorName: string;
 }
 
 interface SetCameraFree {
@@ -62,6 +87,14 @@ export function handleWorldDeviceWrites(envKey: string) {
     // console.log('worldDevice was written to', msg);
 
     switch (msg.key) {
+      case 'actor-follow-path': {
+        actorService.followPath(envKey, msg.pid, msg.name, msg.path, msg.callback);
+        break;
+      }
+      case 'actor-face-point': {
+        actorService.faceTowardsPoint(envKey, msg.pid, msg.actorName, msg.point, msg.callback);
+        break;
+      }
       case 'show-navpath': {
         const { indicators } = useEnvStore.getState().decorator[envKey];
         const previous = threeUtil.getChild(indicators, msg.name);
@@ -69,20 +102,16 @@ export function handleWorldDeviceWrites(envKey: string) {
         indicators.add(geomService.createPath(msg.points, msg.name));
         break;
       }
-      case 'spawn-actor': {
-        actorService.spawn(envKey, msg.name, msg.position);
-        break;
-      }
-      case 'actor-follow-path': {
-        actorService.followPath(envKey, msg.pid, msg.name, msg.path, msg.callback);
+      case 'set-camera-follow': {
+        worldService.setCameraFollow(envKey, msg.actorName);
         break;
       }
       case 'set-camera-free': {
         worldService.setCameraFree(envKey);
         break;
       }
-      case 'set-camera-follow': {
-        worldService.setCameraFollow(envKey, msg.actorName);
+      case 'spawn-actor': {
+        actorService.spawn(envKey, msg.name, msg.position);
         break;
       }
     }

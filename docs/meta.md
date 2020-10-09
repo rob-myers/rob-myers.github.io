@@ -40,9 +40,12 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > can `decor` to list decorations
 - [ ] actor can cast visible ray
 
+- [ ] limit background processes by original subterm
+  > consider `while true; do goto $(click) bob &; done`
+
 - [ ] event system i.e. enter/exit nav-rect
 
-- [ ] actors can aim?
+- [ ] actors can aim
   > `@bob face alice` face towards alice once
   > `@bob watch mouse` keep facing towards mouse
   > `@bob relax` stop watching

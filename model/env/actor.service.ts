@@ -3,9 +3,10 @@ import * as THREE from 'three';
 import type * as Geom from '@model/geom/geom.model';
 import { processService as ps } from '@model/shell/process.service';
 import useEnvStore from "@store/env.store";
-import { ActorFollowPath } from './world.device';
 import { pause } from '@model/generic.model';
 import { alphaNumericRegex } from '@model/shell/var.service';
+import * as threeUtil from '@model/three/three.model';
+import { geomService } from '@model/geom/geom.service';
 
 
 class ActorService {
@@ -31,12 +32,30 @@ class ActorService {
     }
   }
 
+  async faceTowardsPoint(
+    envKey: string,
+    pid: number,
+    actorName: string,
+    point: Geom.VectorJson,
+    cb: (err: null | string) => void,
+  ) {
+    const director = useEnvStore.getState().director[envKey];
+    const actor = director.actor[actorName];
+
+    const rect = geomService.projectBox3XY(threeUtil.getBounds(actor.mesh));
+    if (rect.contains(point)) {
+      return cb(null); // Actor cannot face itself
+    }
+
+    cb('unimplemented');
+  }
+
   async followPath(
     envKey: string,
     pid: number,
     actorName: string,
     navPath: Geom.VectorJson[],
-    cb: ActorFollowPath['callback'],
+    cb: (err: null | string) => void,
   ) {
     const director = useEnvStore.getState().director[envKey];
     const actor = director.actor[actorName];

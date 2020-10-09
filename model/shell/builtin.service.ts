@@ -9,7 +9,7 @@ import { processService as ps} from './process.service';
 import { ShError, breakError, continueError } from "./semantics.service";
 import { varService, alphaNumericRegex, iteratorDelayVarName } from "./var.service";
 import { voiceDevice } from "./voice.device";
-import { ActorFollowPath } from "@model/env/world.device";
+import { ActorFollowPath, WorldDeviceCallback } from "@model/env/world.device";
 import { actorService } from "@model/env/actor.service";
 import { ActorMeta } from "@model/env/env.store.model";
 
@@ -70,46 +70,55 @@ export class BuiltinService {
     if (command === 'camera') {
       await this.cameraCommand(process, args);
     } else {
-      const actor = this.getActorMeta(process.pid, command);
-      await this.actorCommand(process, actor, args);
+      const actor = this.getActorOrThrow(process.pid, command);
+      await this.actorCommand(process, actor!, args);
     }
   }
 
   /** Originally @camera {args} */
   private async cameraCommand({ pid, sessionKey, fdToOpen }: Process, args: string[]) {
     switch (args[0]) {
-      case undefined: {
-        const { worldDevice } = ps.getSession(sessionKey);
-        worldDevice.write({ key: 'set-camera-free' });
+      case undefined:
+        ps.getSession(sessionKey).worldDevice.write({ key: 'set-camera-free' });
         break;
-      }
       case 'at': {
-        const envKey = ps.getEnvKey(pid);
-        const { camera } = useEnvStore.api.getCamControls(envKey);
+        const { camera } = useEnvStore.api.getCamControls(ps.getEnvKey(pid));
         fdToOpen[1].write(geomService.projectXY(camera.position));
         break;
       }
-      default: throw new ShError(`unrecognised camera command`, 1);
+      default:
+        throw new ShError(`unrecognised camera command`, 1);
     }
   }
 
   /** Originally @{actor_name} {args} */
-  private async actorCommand({ sessionKey, fdToOpen }: Process, actor: ActorMeta, args: string[]) {
+  private async actorCommand({ pid, sessionKey, fdToOpen }: Process, actor: ActorMeta, args: string[]) {
+    const { worldDevice } = ps.getSession(sessionKey);
     switch (args[0]) {
       case undefined: {
-        const { worldDevice } = ps.getSession(sessionKey);
         worldDevice.write({ key: 'set-camera-follow', actorName: actor.key });
         break;
       }
       case 'at': {
-        fdToOpen[1].write(geomService.projectXY(actor.steerable.position));
+        fdToOpen[1].write(actor.steerable.positionXY);
+        break;
+      }
+      case 'face': {
+        const point = this.getActor(pid, args[1])?.steerable.positionXY
+          || this.parsePointArg(pid, args[1]); // throws on failure
+        const error = await new Promise((resolve: WorldDeviceCallback) =>
+          worldDevice.write({ key: 'actor-face-point', pid, actorName: actor.key, point, callback: resolve }));
+        if (error) {
+          throw new ShError(error, 1);
+        }
         break;
       }
       case 'stop': {
         actor.cancel();
         break;
       }
-      default: throw new ShError(`unrecognised actor command`, 1);
+      default:
+        throw new ShError(`unrecognised actor command`, 1);
     }
   }
 
@@ -188,7 +197,7 @@ export class BuiltinService {
   }
 
   /**
-   * Deep var lookup; outputs to stdout or can save as variable.
+   * Deep var lookup which outputs to stdout.
    */
   private get({ pid, fdToOpen }: Process, [srcPath, ...rest]: string[]) {
     if (!srcPath || rest.length) {
@@ -220,10 +229,13 @@ export class BuiltinService {
     }
   }
 
-  /** Throws if actor n'exist pas */
-  private getActorMeta(pid: number, actorName: string) {
+  private getActor(pid: number, actorName: string) {
     const envKey = ps.getEnvKey(pid);
-    const actor = useEnvStore.api.getActorMeta(envKey, actorName);
+    return useEnvStore.api.getActorMeta(envKey, actorName);
+  }
+
+  private getActorOrThrow(pid: number, actorName: string) {
+    const actor = this.getActor(pid, actorName);
     if (!actor) {
       throw new ShError(`actor "${actorName}" not found`, 1);
     }
@@ -245,14 +257,14 @@ export class BuiltinService {
       throw new ShError('usage `goto point_or_path actor_name`', 1);
     }
     // Also ensures actor exists
-    const { steerable: { position } } = this.getActorMeta(pid, actorName);
+    const { steerable: { position } } = this.getActorOrThrow(pid, actorName);
     const pointOrPath = this.parsePointOrPathArg(pid, dst);
     const { worldDevice } = ps.getSession(sessionKey);
     
     if (pointOrPath instanceof Array) {
       if (pointOrPath.length) {
         worldDevice.write({ key: 'spawn-actor', name: actorName, position: pointOrPath[0] });
-        const error = await new Promise((resolve: ActorFollowPath['callback']) =>
+        const error = await new Promise((resolve: WorldDeviceCallback) =>
           worldDevice.write({ key: 'actor-follow-path', pid, name: actorName, path: pointOrPath, callback: resolve }));
         if (error) {
           throw new ShError(error, 1);
@@ -261,7 +273,7 @@ export class BuiltinService {
     } else {
       const navPath = await this.getNavPath(pid, position, pointOrPath);
       worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: navPath });
-      const error = await new Promise((resolve: ActorFollowPath['callback']) =>
+      const error = await new Promise((resolve: WorldDeviceCallback) =>
         worldDevice.write({ key: 'actor-follow-path', pid, name: actorName, path: navPath, callback: resolve }));
       if (error) {
         throw new ShError(error, 1);
@@ -308,7 +320,7 @@ export class BuiltinService {
 
   private async read({ pid, sessionKey, fdToOpen, cleanups }: Process, args: string[]) {
     if (args.some(arg => !alphaNumericRegex.test(arg))) {
-      throw new ShError(`usage \`read\` or \`read x\``, 1);
+      throw new ShError('usage `read [var_names]`', 1);
     }
 
     await new Promise((resolve, reject) => {

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { Vector3 } from 'three';
+import type * as Geom from '@model/geom/geom.model';
 
 /**
  * https://github.com/erosmarcon/three-steer/blob/master/js/ThreeSteer.js
@@ -29,6 +29,10 @@ class BaseSteerable {
 
   get position() {
     return this.group.position;
+  }
+
+  get positionXY(): Geom.VectorJson {
+    return { x: this.group.position.x, y: this.group.position.y };
   }
 
   get backward() {
@@ -356,7 +360,7 @@ export class Steerable extends BaseSteerable {
     }
   }
 
-  followPath(path: Vector3[], loop: boolean, thresholdRadius = 1) {
+  followPath(path: THREE.Vector3[], loop: boolean, thresholdRadius = 1) {
     const wayPoint = path[this.pathIndex]
     if (!wayPoint) {
       return true;
