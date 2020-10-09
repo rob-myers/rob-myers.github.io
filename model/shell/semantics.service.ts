@@ -706,6 +706,9 @@ class SemanticsService {
 
         for (const word of values) {
           try {
+            /**
+             * Intentionally causes a massive slow down.
+             */
             await sem.throttleIterator(node);
             vs.assignVar(node.meta.pid, { varName: Loop.Name.Value, value: word });
             await awaitEnd(sem.stmts(node, node.Do));
@@ -1263,6 +1266,9 @@ class SemanticsService {
             break;
           }
           await awaitEnd(sem.stmts(stmt, stmt.Do));
+          /**
+           * Intentionally causes a massive slow down.
+           */
           await sem.throttleIterator(stmt);
 
         } catch (e) {
@@ -1442,7 +1448,9 @@ class SemanticsService {
 
   private async throttleIterator(node: Sh.ParsedSh) {
     if (node.lastIterated) {
-      const throttleMs = 1000 * (vs.lookupVar(node.meta.pid, iteratorDelayVarName) || 0.25);
+      const throttleMs = 1000 * (
+        vs.lookupVar(node.meta.pid, iteratorDelayVarName
+      ) || 0.25);
       const sleepMs = Math.max(0, throttleMs - (Date.now() - node.lastIterated));
       await ps.sleep(node.meta.pid, sleepMs);
     }
