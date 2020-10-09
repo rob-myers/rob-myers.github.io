@@ -21,7 +21,6 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] UI buttons
   > can ctrl-c
   > can auto send world events to tty
-- [x] builtin `call '() => Math.random()'` and can provide js args
 - [ ] builtin `paste r` pastes & runs `string` or `string[]` output?
 - [ ] `range 10` is compositional if `0 1 2 ...`, but not if an array
 
@@ -33,20 +32,19 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] `goto` error messages on takeover not always sent
 - [ ] `TtyXterm` blocks/ignores lines from other processes on paste
 - [ ] implement joined-up gotos
-- [x] avoid bounce-back on override goto
 - [ ] can `decor foo` to show navpath and name it `foo`
   > remove builtin `way`
   > can `decor rm foo`
   > can `decor` to list decorations
 - [ ] actor can cast visible ray
 
-- [ ] limit background processes by original subterm
-  > consider `while true; do goto $(click) bob &; done`
-
 - [ ] event system i.e. enter/exit nav-rect
 
 - [ ] `@bob watch mouse` keep facing towards mouse
   > `@bob relax` stop watching
+
+- [ ] limit background processes by original subterm
+  > consider runaway: `while true; do goto $(click) bob & done`
 
 - [x] change `goto $(click) bob` to `@bob goto $(click)`
   > remove `goto`
@@ -67,6 +65,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] actors have a shadow
 - [x] camera can follow actor
 - [x] remove anime.js
+- [x] builtin `call '(, [k]) => k * Math.random()' 5` and can provide js args
+- [x] avoid bounce-back on override goto
 - [x] replace use-cannon with:
   > https://github.com/erosmarcon/three-steer
   > could implement triggers ourselves via navrect partition
@@ -195,37 +195,3 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] replace previous approach
 - [x] build demo level entirely in blender
 - [x] r3fiber: import from blender
-
-
-## Technical approach
-
-Our web-based engine has three parts:
-
-### __environment__
-
-top-down view with 3d walls via `react`, `SVG` and `CSS3`.
-
-### __geometry__
-
-Rectilinear levels specified via `react` components.
-Auto-generated navmesh with minimal number of rectangles.
-
-### __director__
-
-- Truly optimal path-finding via recent [Polyanya algorithm](#cite-polyanya).
-- Behaviour trees.
-- rxjs
-
-## Rough ideas
-
-1. Code driven by user e.g. via `tick` (a wrapper about `setInterval`).
-2. while/for loops must be guarded e.g.
-  - `while read x; do echo $x; done`
-  - `for x in {1..10}; do click x y; look $x $y; done`
-
-3. Since variables can now take arbitrary values we need to access them.
-  - we'll use e.g. `from x.y[0].z`
-  - direct access as simple command causes various issues:
-    > https://github.com/mvdan/sh/issues/604
-    > `LangPosix` supports but no arrays, `declare`, `CStyleLoop` etc.
-    > can't do `${x.y}` in mvdan-sh for any language
