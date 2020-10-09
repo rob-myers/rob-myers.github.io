@@ -65,7 +65,6 @@ class ActorService {
       actor.steerable.lookTowards(steps / numSteps);
       return steps++ > numSteps;
     };
-    // TODO unset?
     actor.steerable.lookStrategy = LookStrategy.controlled;
 
     try {// Racing handles Ctrl-C or cancellation by another process
@@ -82,6 +81,7 @@ class ActorService {
       this.cancelAnimation(cancelKey);
     } finally {
       actor.cancelLook = () => {};
+      actor.steerable.lookStrategy = LookStrategy.travel;
     }
   }
 
