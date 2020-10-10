@@ -11,21 +11,16 @@ Our blog could be:
 A _soul_ is missing.
 > Even if we create independent AI examples, one or more settings is needed to bring it to life.
 
-@design `use ideas from Teleglitch`
+@design ideas from Teleglitch
 - doors, lighting, zooming
 - maybe scenery such as engines/ladders
 
-@setting `partially adapt Teleglitch`
-- escape the "mad" Main AI
-- you are a robot (in Teleglitch you are human)
-- why is Main AI mad?
-
-Idea sketch
+@setting ideas
 - research institute studying neural scans of meditators
 - "we've identified a stable neurostate during the jhanic phase"
 - "this state naturally embeds a memory lattice of large length"
 - "it is an irreducible representation of a simple monoid"
-- So, we built AI by imitating nature i.e. by simulating a prime
+- we built AI by imitating nature i.e. by simulating a prime
   component highlighted during jhanic meditation
 
 

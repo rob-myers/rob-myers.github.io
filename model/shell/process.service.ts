@@ -8,6 +8,7 @@ import { semanticsService, ShError } from './semantics.service';
 import { fileService } from './file.service';
 import { varService, alphaNumericRegex } from './var.service';
 import { SendXtermError } from './tty.shell';
+import { srcService } from './src.service';
 
 let nextOpenId = 0;
 
@@ -243,6 +244,16 @@ export class ProcessService {
   
   private getProcesses() {
     return useStore.getState().proc;
+  }
+
+  getProcessesMeta(sessionKey: string) {
+    return Object.values(this.getProcesses())
+      .filter(p => p.sessionKey === sessionKey)
+      .map(({ pid, ppid, parsed }) => ({
+        pid,
+        ppid,
+        command: srcService.src(parsed), // TODO cache?
+      }));
   }
   
   getSession(sessionKey: string): Session {

@@ -45,6 +45,7 @@ export class BuiltinService {
             case 'false': node.exitCode = 1; break;
             case 'get': this.get(process, args); break;
             case 'nav': await this.nav(process, args); break;
+            case 'ps': await this.ps(process, args); break;
             case 'read': await this.read(process, args); break;
             case 'say': await this.say(process, args); break;
             case 'sleep': await this.sleep(process, args); break;
@@ -299,6 +300,16 @@ export class BuiltinService {
     return navPath;
   }
 
+  private async nav({ pid }: Process, args: string[]) {
+    if (args.length !== 2) {
+      throw new ShError('usage `nav pnt_a pnt_b``', 1);
+    }
+    const p = this.parsePointArg(pid, args[0]);
+    const q = this.parsePointArg(pid, args[1]);
+    const navPath = await this.getNavPath(pid, p, q);
+    ps.getProcess(pid).fdToOpen[1].write(navPath);
+  }
+ 
   private parsePointArg(pid: number, varOrJson: string) {
     if (varOrJson.startsWith('{')) {
       return geomService.tryParsePoint(varOrJson);
@@ -325,14 +336,15 @@ export class BuiltinService {
     throw new ShError(`${varOrJson}: expected point/path/variable`, 1);
   }
 
-  private async nav({ pid }: Process, args: string[]) {
-    if (args.length !== 2) {
-      throw new ShError('usage `nav pnt_a pnt_b``', 1);
+  private async ps({ sessionKey, fdToOpen }: Process, args: string[]) {
+    if (args.length) {
+      throw new ShError('arguments are unsupported', 1);
     }
-    const p = this.parsePointArg(pid, args[0]);
-    const q = this.parsePointArg(pid, args[1]);
-    const navPath = await this.getNavPath(pid, p, q);
-    ps.getProcess(pid).fdToOpen[1].write(navPath);
+    fdToOpen[1].write('PID'.padEnd(7) + 'PPID'.padEnd(9) + 'CMD');
+    const metas = ps.getProcessesMeta(sessionKey);
+    for (const { pid, ppid, command } of metas) {
+      fdToOpen[1].write(`${pid}`.padEnd(7) + `${ppid}`.padEnd(9) + `${command}`);
+    }
   }
 
   private async read({ pid, sessionKey, fdToOpen, cleanups }: Process, args: string[]) {
@@ -459,6 +471,7 @@ export const builtins = {
   get: true,
   /** Find optimal navpath and write to stdout  */
   nav: true,
+  ps: true,
   /** Read from stdin and store in provided variable */
   read: true,
   /** Say args */
