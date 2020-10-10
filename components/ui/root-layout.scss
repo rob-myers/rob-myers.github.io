@@ -84,22 +84,14 @@
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   font-size: 12px;
 
-  :first-child {
+  a:first-of-type {
     padding-left: 4px;
   }
 
-  > a {
+  a {
     margin-right: 1px;
     padding: 4px 8px;
-
-    &:hover {
-      color: #fff;
-      transition: all 0.4s ease-in;
-    }
-    &:not(:hover) {
-      color: #aaa;
-      transition: all 0.2s ease-out;
-    }
+    color: #aaa;
 
     &.enabled {
       color: #fff;
