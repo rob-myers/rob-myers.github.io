@@ -39,6 +39,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] actor can cast visible ray
 
 - [ ] event system i.e. enter/exit nav-rect
+  > consider removing rectilinear requirement
+  > spacial partitioning or pre-existing solution?
 
 - [ ] `@bob watch mouse` keep facing towards mouse
   > `@bob relax` stop watching
