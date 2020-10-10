@@ -2,4 +2,8 @@
   border: 1px solid #ddd;
   border-right: 0px;
   background: #222;
+
+  @media (max-width: 580px) {
+    border: 1px solid #ddd;
+  }
 }
