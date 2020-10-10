@@ -77,7 +77,7 @@ class ActorService {
       ]);
       cb(null);
     } catch (e) {
-      cb(`${actorName}: look was cancelled`);
+      cb('look was cancelled');
       this.cancelAnimation(cancelKey);
     } finally {
       actor.cancelLook = () => {};
@@ -129,7 +129,7 @@ class ActorService {
       ]);
       cb(null);
     } catch (e) {
-      cb(`${actorName}: goto was cancelled`);
+      cb('goto was cancelled');
       this.cancelAnimation(cancelKey);
     } finally {
       actor.cancelGoto = () => {};
