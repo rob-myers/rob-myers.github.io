@@ -11,9 +11,16 @@ const EnvPortal: React.FC<Props> = ({ envKey, high }) => {
     useStore.api.ensureEnvPortal(envKey);
   }, []);
 
-  return portalNode
-    ? <portals.OutPortal node={portalNode} high={high} />
-    : <div className={css.root} />;
+  // Wrap in div to avoid react-refresh errors
+  return (
+    <div>
+      {portalNode
+        ? <portals.OutPortal node={portalNode} high={high} />
+        : <div className={css.root} />
+      }
+    </div>
+  );
+  
 };
 
 export default EnvPortal;

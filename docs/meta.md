@@ -48,6 +48,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] limit background processes by original subterm
   > consider runaway: `while true; do goto $(click) bob & done`
 
+- [ ] cleanup site and deploy
+
 - [x] change `goto $(click) bob` to `@bob goto $(click)`
   > remove `goto`
 - [x] `@bob face alice` faces towards once

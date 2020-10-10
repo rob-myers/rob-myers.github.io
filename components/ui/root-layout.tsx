@@ -35,6 +35,9 @@ const RootLayout: React.FC = ({ children }) => {
             <Link href="/meta">
               <a className={classNames({ [css.enabled]: router.pathname === '/meta' })}>meta</a>
             </Link>
+            <Link href="/demo">
+              <a className={classNames({ [css.enabled]: router.pathname === '/demo' })}>demo</a>
+            </Link>
           </div>
         </div>
         <div className={css.body}>
