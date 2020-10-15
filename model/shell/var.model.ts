@@ -1,4 +1,4 @@
-import { FileWithMeta } from "./parse.service";
+import { FileWithMeta } from "./parse.model";
 
 export type ToProcVar = Record<string, ProcessVar>;
 

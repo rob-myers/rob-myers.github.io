@@ -1,18 +1,18 @@
 import { testNever } from "@model/generic.model";
+import type * as Sh from "./parse.model";
 import { geomService } from "@model/geom/geom.service";
 import type * as Geom from '@model/geom/geom.model';
+import { ActorMeta } from "@model/env/env.store.model";
 import { Process } from "@store/shell.store";
 import useEnvStore from '@store/env.store';
-import * as Sh from "./parse.service";
-import { parseService } from "./parse.service";
 import { processService as ps} from './process.service';
 import { ShError, breakError, continueError } from "./semantics.service";
 import { varService, alphaNumericRegex, iteratorDelayVarName } from "./var.service";
 import { voiceDevice } from "./voice.device";
 import { WorldDeviceCallback } from "@model/env/world.device";
 import { actorService } from "@model/env/actor.service";
-import { ActorMeta } from "@model/env/env.store.model";
 import { LookStrategy } from "@model/env/steerable";
+import { getOpts, hasAncestralIterator } from "./parse.util";
 
 export class BuiltinService {
 
@@ -175,7 +175,7 @@ export class BuiltinService {
 
     if (args.length > 1 || !Number.isInteger(loopCount) || loopCount <= 0) {
       throw new ShError(`usage \`break\` or \`break n\` where n > 0`, 1);
-    } else if (!parseService.hasAncestralIterator(node)) {
+    } else if (!hasAncestralIterator(node)) {
       throw new ShError(`only meaningful in a \`for', \`while' or \`until' loop`, 1);
     }
     throw breakError(loopCount);
@@ -210,7 +210,7 @@ export class BuiltinService {
 
     if (args.length > 1 || !Number.isInteger(loopCount) || loopCount <= 0) {
       throw new ShError(`usage \`continue\` or \`continue n\` where n > 0`, 1);
-    } else if (!parseService.hasAncestralIterator(node)) {
+    } else if (!hasAncestralIterator(node)) {
       throw new ShError('only meaningful in a `for\', `while\' or `until\' loop', 1);
     }
     throw continueError(loopCount);
@@ -379,7 +379,7 @@ export class BuiltinService {
   }
   
   private async say({ fdToOpen, cleanups }: Process, args: string[]) {
-    const { _: operands, voice, v } = parseService.getOpts(args, { string: ['voice', 'v'] });
+    const { _: operands, voice, v } = getOpts(args, { string: ['voice', 'v'] });
 
     if (voice || v === '?') {// List available voices
       return voiceDevice.getAllVoices().forEach(voice => fdToOpen[1].write(voice));

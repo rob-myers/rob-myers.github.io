@@ -48,9 +48,11 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] limit background processes by original subterm
   > consider runaway: `while true; do goto $(click) bob & done`
 
+- [ ] move parse-sh.service into own webworker
 - [ ] avoid 500kb initial load via mvdan-sh in webworker?
-- [x] cleanup site and deploy
+- [x] remove deps on parse-sh.service
 
+- [x] cleanup site and deploy
 - [x] change `goto $(click) bob` to `@bob goto $(click)`
   > remove `goto`
 - [x] `@bob face alice` faces towards once

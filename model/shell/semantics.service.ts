@@ -9,13 +9,13 @@ import { ProcessAct, Expanded, act, ArrayAssign } from './process.model';
 import { ParamType, ParameterDef } from './parameter.model';
 import {  RedirectDef } from './file.model';
 import { NamedFunction } from './var.model';
-import * as Sh from '@model/shell/parse.service';
-import { parseService } from '@model/shell/parse.service';
+import type * as Sh from '@model/shell/parse.model';
 import { expandService as expand, expandService } from './expand.service';
 import { varService as vs, iteratorDelayVarName } from './var.service';
 import { processService as ps } from './process.service';
 import { builtinService as bs, BuiltinKey } from './builtin.service';
 import { srcService } from './src.service';
+import { cloneParsed, wrapInFile, hasAncestralIterator } from './parse.util';
 
 let nextNodeUid = 0;
 
@@ -352,7 +352,7 @@ class SemanticsService {
         }
         case '|': {
           const background = !ps.isInteractiveShell(node);
-          const files = stmts.map(stmt => parseService.wrapInFile(stmt));
+          const files = stmts.map(stmt => wrapInFile(stmt));
           const spawns = files.map(file => ps.spawnProcess(node.meta.pid, file, background));
           const transpiles = spawns.map(({ parsed }) => sem.transpile(parsed));
           await Promise.all(transpiles.map(awaitEnd));
@@ -728,8 +728,8 @@ class SemanticsService {
       if (func?.readonly) {
         throw new ShError(`${node.Name.Value}: readonly function`, 1);
       }
-      const clonedBody = parseService.clone(node.Body);
-      const wrappedFile = parseService.wrapInFile(clonedBody);
+      const clonedBody = cloneParsed(node.Body);
+      const wrappedFile = wrapInFile(clonedBody);
       vs.addFunction(node.meta.pid, node.Name.Value, { type: 'shell', node: wrappedFile });
     }());
   }
@@ -1161,8 +1161,8 @@ class SemanticsService {
         sem.handleShError(stmt.Redirs[0], new ShError('pure redirects are unsupported', 2));
       } else if (stmt.Background) {
         // Spawn background process
-        const cloned = Object.assign(parseService.clone(stmt), { Background: false } as Sh.Stmt);
-        const file = parseService.wrapInFile(cloned);
+        const cloned = Object.assign(cloneParsed(stmt), { Background: false } as Sh.Stmt);
+        const file = wrapInFile(cloned);
         const { pid: spawnedPid, parsed } = ps.spawnProcess(cloned.meta.pid, file, true);
         // Launch it
         sem.transpile(parsed).subscribe();
@@ -1340,12 +1340,12 @@ class SemanticsService {
   private handleInterrupt(e: any, node: Sh.ParsedSh) {
     if (e instanceof ShError) {
       if (e.extra?.break) {
-        if (e.extra.break > 1 && parseService.hasAncestralIterator(node)) {
+        if (e.extra.break > 1 && hasAncestralIterator(node)) {
           throw breakError(e.extra.break - 1);
         }
         return 'break';
       } else if (e.extra?.continue) {
-        if (e.extra.continue > 1 && parseService.hasAncestralIterator(node)) {
+        if (e.extra.continue > 1 && hasAncestralIterator(node)) {
           throw continueError(e.extra.continue - 1);
         }
         return 'continue';

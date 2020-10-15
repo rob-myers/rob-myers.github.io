@@ -1,5 +1,15 @@
-import { testNever } from "@model/generic.model";
-import * as Sh from "./parse.service";
+import cloneWithRefs from 'lodash.clonedeep';
+import getopts from 'getopts';
+import { testNever, last } from "@model/generic.model";
+import type * as Sh from "./parse.model";
+
+/**
+ * Clone creates completely fresh tree, sharing internal refs as before.
+ * In particular, every node has the same node.meta.
+ */
+export function cloneParsed<T extends Sh.ParsedSh>(parsed: T): T {
+  return cloneWithRefs(parsed);
+}
 
 export function getChildren(node: Sh.ParsedSh): Sh.ParsedSh[] {
   switch (node.type) {
@@ -79,7 +89,44 @@ export function getChildren(node: Sh.ParsedSh): Sh.ParsedSh[] {
   }
 }
 
-export function traverseParsed(node: Sh.ParsedSh, act: (node: Sh.ParsedSh) => void) {
+export function getOpts(args: string[], options?: getopts.Options) {
+  return simplifyGetOpts(getopts(args, options));
+}
+
+function findAncestral(node: Sh.ParsedSh, predicate: (ancestor: Sh.ParsedSh) => boolean) {
+  let ancestor = node as null | Sh.ParsedSh;
+  while (ancestor = ancestor!.parent) {
+    if (predicate(ancestor)) {
+      break;
+    }
+  }
+  return ancestor;
+}
+
+export function hasAncestralIterator(node: Sh.ParsedSh) {
+  return findAncestral(node, ({ type }) =>
+    type === 'ForClause' || type === 'WhileClause'
+  );
+}
+
+/**
+ * `getopts` handles dup options by providing an array,
+ * and we restrict to the final item. Also we store all
+ * extant option names as the value of key `__optKeys`.
+ */
+function simplifyGetOpts(parsed: getopts.ParsedOptions) {
+  const output = parsed as getopts.ParsedOptions & { __optKeys: string[] };
+  Object.keys(parsed).forEach((key) => {
+    output.__optKeys = [];
+    if (key !== '_') {
+      Array.isArray(parsed[key]) && (output[key] = last(parsed[key]) as any);
+      output.__optKeys.push(key);
+    }
+  });
+  return output;
+}
+
+function traverseParsed(node: Sh.ParsedSh, act: (node: Sh.ParsedSh) => void) {
   act(node);
   getChildren(node).forEach(child => traverseParsed(child, act));
 }
@@ -91,4 +138,14 @@ export function withParents<T extends Sh.ParsedSh>(root: T) {
   return root;
 }
 
-
+/**
+ * Convert statement to a FileWithMeta so it
+ * can be used to drive a process.
+ */
+export function wrapInFile(node: Sh.Stmt): Sh.FileWithMeta {
+  return {
+    type: 'File',
+    Stmts: [node],
+    meta: node.meta,
+  } as Sh.FileWithMeta;
+}

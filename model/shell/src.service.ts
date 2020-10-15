@@ -1,4 +1,4 @@
-import * as Sh from "./parse.service";
+import type * as Sh from "./parse.model";
 import { last, testNever } from "@model/generic.model";
 import { ParamType } from "./parameter.model";
 import { semanticsService } from "./semantics.service";

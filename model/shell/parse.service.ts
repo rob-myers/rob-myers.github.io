@@ -1,18 +1,13 @@
 import Sh, { syntax } from 'mvdan-sh';
-import cloneWithRefs from 'lodash.clonedeep';
-import getopts from 'getopts';
-import { last } from '@model/generic.model';
+import type * as P from './parse.model';
 import { withParents } from './parse.util';
-import { BaseAssignOpts } from './var.model';
-import { ParameterDef } from './parameter.model';
-import { RedirectDef } from './file.model';
 
 /**
  * Parse shell code using npm module mvdan-sh.
  */
 class ParseShService {
 
-  private mockMeta: FileMeta;
+  private mockMeta: P.FileMeta;
   private mockPos: () => Sh.Pos;
 
   constructor() {
@@ -21,40 +16,12 @@ class ParseShService {
   }
 
   /**
-   * Clone creates completely fresh tree, sharing internal refs as before.
-   * In particular, every node has the same node.meta.
-   */
-  clone<T extends ParsedSh>(parsed: T): T {
-    return cloneWithRefs(parsed);
-  }
-
-  private findAncestral(node: ParsedSh, predicate: (ancestor: ParsedSh) => boolean) {
-    let ancestor = node as null | ParsedSh;
-    while (ancestor = ancestor!.parent) {
-      if (predicate(ancestor)) {
-        break;
-      }
-    }
-    return ancestor;
-  }
-
-  getOpts(args: string[], options?: getopts.Options) {
-    return this.simplifyGetOpts(getopts(args, options));
-  }
-
-  hasAncestralIterator(node: ParsedSh) {
-    return this.findAncestral(node, ({ type }) =>
-      type === 'ForClause' || type === 'WhileClause'
-    );
-  }
-
-  /**
    * `partialSrc` must come from the command line.
    * It must be `\n`-terminated.
    * It must not have a proper-prefix which is a complete command,
    * e.g. `echo foo\necho bar\n` invalid via proper-prefix `echo foo\n`.
    */
-  interactiveParse(partialSrc: string): InteractiveParseResult {
+  interactiveParse(partialSrc: string): P.InteractiveParseResult {
     const parser = syntax.NewParser();
     let incomplete: null | boolean = null;
 
@@ -75,7 +42,7 @@ class ParseShService {
   /**
    * Use mvdan-sh to parse shell code.
    */
-  parse(src: string): FileWithMeta {
+  parse(src: string): P.FileWithMeta {
     // console.log({ syntax });
     const parser = syntax.NewParser(
       syntax.KeepComments(false),
@@ -115,28 +82,11 @@ class ParseShService {
   }
 
   /**
-   * `getopts` handles dup options by providing an array,
-   * and we restrict to the final item. Also we store all
-   * extant option names as the value of key `__optKeys`.
-   */
-  private simplifyGetOpts(parsed: getopts.ParsedOptions) {
-    const output = parsed as getopts.ParsedOptions & { __optKeys: string[] };
-    Object.keys(parsed).forEach((key) => {
-      output.__optKeys = [];
-      if (key !== '_') {
-        Array.isArray(parsed[key]) && (output[key] = last(parsed[key]) as any);
-        output.__optKeys.push(key);
-      }
-    });
-    return output;
-  }
-
-  /**
    * Convert to a source-code position in our format.
    * It may be invalid e.g. `CallExpr.Semicolon`.
    * This can be inferred because 1-based `Line` will equal `0`.
    */
-  private pos = ({ Line, Col, Offset }: Sh.Pos): Pos => ({
+  private pos = ({ Line, Col, Offset }: Sh.Pos): P.Pos => ({
     Line: Line(),
     Col: Col(),
     Offset: Offset(),
@@ -152,7 +102,7 @@ class ParseShService {
   }
 
   /** Convert to our notion of base parsed node. */
-  private base = ({ Pos, End }: Sh.BaseNode): BaseNode => {
+  private base = ({ Pos, End }: Sh.BaseNode): P.BaseNode => {
     // console.log({ Pos, End });
     return {
       // Pos: this.pos(Pos()),
@@ -166,7 +116,7 @@ class ParseShService {
 
   private ArithmCmd = (
     { Pos, End, Left, Right, Unsigned, X }: Sh.ArithmCmd
-  ): ArithmCmd => ({
+  ): P.ArithmCmd => ({
     ...this.base({ Pos, End }),
     type: 'ArithmCmd',
     Left: this.pos(Left),
@@ -178,7 +128,7 @@ class ParseShService {
   private ArithmExp = (
     { Pos, End, Bracket, Left,
       Right, Unsigned, X }: Sh.ArithmExp
-  ): ArithmExp => ({
+  ): P.ArithmExp => ({
     ...this.base({ Pos, End }),
     type: 'ArithmExp',
     Bracket,
@@ -190,7 +140,7 @@ class ParseShService {
 
   private ArrayElem = (
     { Pos, End, Comments, Index, Value }: Sh.ArrayElem
-  ): ArrayElem => ({
+  ): P.ArrayElem => ({
     ...this.base({ Pos, End }),
     type: 'ArrayElem',
     Comments: Comments.map(this.Comment),
@@ -198,7 +148,7 @@ class ParseShService {
     Value: this.Word(Value),
   });
 
-  private ArithmExpr = (node: Sh.ArithmExpr): ArithmExpr => {
+  private ArithmExpr = (node: Sh.ArithmExpr): P.ArithmExpr => {
     if ('Y' in node) {
       return this.BinaryArithm(node);
     } else if ('Post' in node) {
@@ -211,7 +161,7 @@ class ParseShService {
 
   private ArrayExpr = (
     { Pos, End, Elems, Last, Lparen, Rparen }: Sh.ArrayExpr
-  ): ArrayExpr => ({
+  ): P.ArrayExpr => ({
     ...this.base({ Pos, End }),
     type: 'ArrayExpr',
     Elems: Elems.map(this.ArrayElem),
@@ -222,7 +172,7 @@ class ParseShService {
 
   private Assign = (
     { Pos, End, Append, Array, Index, Naked, Name, Value }: Sh.Assign
-  ): Assign => ({
+  ): P.Assign => ({
     ...this.base({ Pos, End }),
     type: 'Assign',
     Append,
@@ -236,7 +186,7 @@ class ParseShService {
 
   private BinaryArithm = (
     { Pos, End, Op, OpPos, X, Y }: Sh.BinaryArithm
-  ): BinaryArithm => ({
+  ): P.BinaryArithm => ({
     ...this.base({ Pos, End }),
     type: 'BinaryArithm',
     Op: this.op(Op),
@@ -247,7 +197,7 @@ class ParseShService {
   
   private BinaryCmd = (
     { Pos, End, Op, OpPos, X, Y }: Sh.BinaryCmd
-  ): BinaryCmd => ({
+  ): P.BinaryCmd => ({
     ...this.base({ Pos, End }),
     type: 'BinaryCmd',
     Op: this.op(Op),
@@ -258,7 +208,7 @@ class ParseShService {
   
   private BinaryTest = (
     { Pos, End, Op, OpPos, X, Y }: Sh.BinaryTest,
-  ): BinaryTest => ({
+  ): P.BinaryTest => ({
     ...this.base({ Pos, End }),
     type: 'BinaryTest',
     Op: this.op(Op),
@@ -269,7 +219,7 @@ class ParseShService {
 
   private Block = (
     { Pos, End, Lbrace, Rbrace, Stmts }: Sh.Block,
-  ): Block => ({
+  ): P.Block => ({
     ...this.base({ Pos, End }),
     type: 'Block',
     Lbrace: this.pos(Lbrace),
@@ -279,7 +229,7 @@ class ParseShService {
 
   private CallExpr = (
     { Pos, End, Args, Assigns }: Sh.CallExpr
-  ): CallExpr => ({
+  ): P.CallExpr => ({
     ...this.base({ Pos, End }),
     type: 'CallExpr',
     Args: Args.map(this.Word),
@@ -288,7 +238,7 @@ class ParseShService {
 
   private CaseClause = (
     { Pos, End, Case, Esac, Items, Last, Word }: Sh.CaseClause
-  ): CaseClause => ({
+  ): P.CaseClause => ({
     ...this.base({ Pos, End }),
     type: 'CaseClause',
     Case: this.pos(Case),
@@ -301,7 +251,7 @@ class ParseShService {
   private CaseItem = (
     { Pos, End, Comments, Op,
       OpPos, Patterns, Stmts }: Sh.CaseItem
-  ): CaseItem => ({
+  ): P.CaseItem => ({
     ...this.base({ Pos, End }),
     type: 'CaseItem',
     Comments: Comments.map(this.Comment),
@@ -313,7 +263,7 @@ class ParseShService {
   
   private CmdSubst = (
     { Pos, End, Left, ReplyVar, Right, Stmts, TempFile }: Sh.CmdSubst
-  ): CmdSubst => ({
+  ): P.CmdSubst => ({
     ...this.base({ Pos, End }),
     type: 'CmdSubst',
     Left: this.pos(Left),
@@ -325,7 +275,7 @@ class ParseShService {
   
   private Comment = (
     { Pos, End, Hash, Text }: Sh.Comment
-  ): Comment => ({
+  ): P.Comment => ({
     ...this.base({ Pos, End }),
     type: 'Comment',
     Hash: this.pos(Hash),
@@ -335,7 +285,7 @@ class ParseShService {
   private CStyleLoop = (
     { Pos, End, Cond, Init,
       Lparen, Post, Rparen }: Sh.CStyleLoop
-  ): CStyleLoop => ({
+  ): P.CStyleLoop => ({
     ...this.base({ Pos, End }),
     type: 'CStyleLoop',
     Cond: this.ArithmExpr(Cond),
@@ -345,7 +295,7 @@ class ParseShService {
     Rparen: this.pos(Rparen),
   });
   
-  private Command = (node: Sh.Command): Command => {
+  private Command = (node: Sh.Command): P.Command => {
     if ('Args' in node) {
       return this.CallExpr(node);
     // } else if ('IfPos' in node) {
@@ -381,7 +331,7 @@ class ParseShService {
   
   private CoprocClause = (
     { Pos, End, Coproc, Name, Stmt }: Sh.CoprocClause
-  ): CoprocClause => ({
+  ): P.CoprocClause => ({
     ...this.base({ Pos, End }),
     type: 'CoprocClause',
     Coproc: this.pos(Coproc),
@@ -391,7 +341,7 @@ class ParseShService {
   
   private DblQuoted = (
     { Pos, End, Dollar, Parts, Left, Right }: Sh.DblQuoted
-  ): DblQuoted => ({
+  ): P.DblQuoted => ({
     ...this.base({ Pos, End }),
     type: 'DblQuoted',
     Dollar,
@@ -408,7 +358,7 @@ class ParseShService {
    */
   private DeclClause = (
     { Pos, End, Assigns, Opts, Variant }: Sh.DeclClause
-  ): DeclClause => {
+  ): P.DeclClause => {
   // ): CallExpr => {
     /**
      * PATCH.
@@ -433,7 +383,7 @@ class ParseShService {
   
   private ExtGlob = (
     { Pos, End, Op, OpPos, Pattern }: Sh.ExtGlob
-  ): ExtGlob => ({
+  ): P.ExtGlob => ({
     ...this.base({ Pos, End }),
     type: 'ExtGlob',
     Op: this.op(Op),
@@ -446,7 +396,7 @@ class ParseShService {
    */
   private File = (
     { Name, Stmts }: Sh.File,
-  ): FileWithMeta => ({
+  ): P.FileWithMeta => ({
     ...this.base({ Pos: this.mockPos, End: this.mockPos }),
     type: 'File',
     Name,
@@ -463,7 +413,7 @@ class ParseShService {
   
   private ForClause = (
     { Pos, End, Do, DonePos, DoPos, ForPos, Loop, Select }: Sh.ForClause
-  ): ForClause => ({
+  ): P.ForClause => ({
     ...this.base({ Pos, End }),
     type: 'ForClause',
     Do: Do.map(Stmt => this.Stmt(Stmt)),
@@ -476,7 +426,7 @@ class ParseShService {
 
   private FuncDecl = (
     { Pos, End, Body, Name, Position, RsrvWord }: Sh.FuncDecl
-  ): FuncDecl => ({
+  ): P.FuncDecl => ({
     ...this.base({ Pos, End }),
     type: 'FuncDecl',
     Body: this.Stmt(Body),
@@ -488,7 +438,7 @@ class ParseShService {
   private IfClause = (
     { Pos, End, Cond, CondLast, Else,
       FiPos, Then, ThenLast, ThenPos, Last }: Sh.IfClause
-  ): IfClause => ({
+  ): P.IfClause => ({
     ...this.base({ Pos, End }),
     type: 'IfClause',
     ThenPos: this.pos(ThenPos),
@@ -505,7 +455,7 @@ class ParseShService {
 
   private LetClause = (
     { Pos, End, Exprs, Let }: Sh.LetClause,
-  ): LetClause => ({
+  ): P.LetClause => ({
     ...this.base({ Pos, End }),
     type: 'LetClause',
     Exprs: Exprs.map(this.ArithmExpr),
@@ -514,7 +464,7 @@ class ParseShService {
 
   private Lit = <Values extends string = string>(
     { Pos, End, Value, ValueEnd, ValuePos }: Sh.Lit
-  ): Lit<Values> => ({
+  ): P.Lit<Values> => ({
     ...this.base({ Pos, End }),
     type: 'Lit',
     Value: Value as Values,
@@ -522,7 +472,7 @@ class ParseShService {
     ValuePos: this.pos(ValuePos),
   });
 
-  private Loop = (node: Sh.Loop): Loop => {
+  private Loop = (node: Sh.Loop): P.Loop => {
     if ('Name' in node) {
       return this.WordIter(node);
     }
@@ -533,7 +483,7 @@ class ParseShService {
     { Pos, End, Dollar, Excl, Exp,
       Index, Length, Names, Param, Rbrace,
       Repl, Short, Slice, Width }: Sh.ParamExp
-  ): ParamExp => ({
+  ): P.ParamExp => ({
     ...this.base({ Pos, End }),
     type: 'ParamExp',
     Dollar: this.pos(Dollar),
@@ -565,7 +515,7 @@ class ParseShService {
 
   private ParenArithm = (
     { Pos, End, Lparen, Rparen, X }: Sh.ParenArithm
-  ): ParenArithm => ({
+  ): P.ParenArithm => ({
     ...this.base({ Pos, End }),
     type: 'ParenArithm',
     Lparen: this.pos(Lparen),
@@ -575,7 +525,7 @@ class ParseShService {
 
   private ParenTest = (
     { Pos, End, Lparen, Rparen, X }: Sh.ParenTest
-  ): ParenTest => ({
+  ): P.ParenTest => ({
     ...this.base({ Pos, End }),
     type: 'ParenTest',
     Lparen: this.pos(Lparen),
@@ -585,7 +535,7 @@ class ParseShService {
 
   private ProcSubst = (
     { Pos, End, Op, OpPos, Rparen, Stmts }: Sh.ProcSubst
-  ): ProcSubst => ({
+  ): P.ProcSubst => ({
     ...this.base({ Pos, End }),
     type: 'ProcSubst',
     Op: this.op(Op),
@@ -596,7 +546,7 @@ class ParseShService {
 
   private Redirect = (
     { Pos, End, Hdoc, N, Op, OpPos, Word }: Sh.Redirect
-  ): Redirect => ({
+  ): P.Redirect => ({
     ...this.base({ Pos, End }),
     type: 'Redirect',
     Hdoc: Hdoc ? this.Word(Hdoc) : null,
@@ -608,7 +558,7 @@ class ParseShService {
 
   private SglQuoted = (
     { Pos, End, Dollar, Left, Right, Value }: Sh.SglQuoted
-  ): SglQuoted => ({
+  ): P.SglQuoted => ({
     ...this.base({ Pos, End }),
     type: 'SglQuoted',
     Dollar,
@@ -620,7 +570,7 @@ class ParseShService {
   private Stmt = (
     { Pos, End, Background, Cmd, Comments, Coprocess,
       Negated, Position, Redirs, Semicolon }: Sh.Stmt
-  ): Stmt => ({
+  ): P.Stmt => ({
     ...this.base({ Pos, End }),
     type: 'Stmt',
     Background,
@@ -637,7 +587,7 @@ class ParseShService {
 
   private Subshell = (
     { Pos, End, Lparen, Rparen, Stmts }: Sh.Subshell
-  ): Subshell => ({
+  ): P.Subshell => ({
     ...this.base({ Pos, End }),
     type: 'Subshell',
     Lparen: this.pos(Lparen),
@@ -647,7 +597,7 @@ class ParseShService {
 
   private TestClause = (
     { Pos, End, Left, Right, X }: Sh.TestClause
-  ): TestClause => ({
+  ): P.TestClause => ({
     ...this.base({ Pos, End }),
     type: 'TestClause',
     Left: this.pos(Left),
@@ -655,7 +605,7 @@ class ParseShService {
     X: this.TestExpr(X),
   });
   
-  private TestExpr = (node: Sh.TestExpr): TestExpr => {
+  private TestExpr = (node: Sh.TestExpr): P.TestExpr => {
     if ('Y' in node) {
       return this.BinaryTest(node);
     } else if ('Op' in node) {
@@ -668,7 +618,7 @@ class ParseShService {
 
   private TimeClause = (
     { Pos, End, PosixFormat, Stmt, Time }: Sh.TimeClause
-  ): TimeClause => ({
+  ): P.TimeClause => ({
     ...this.base({ Pos, End }),
     type: 'TimeClause',
     PosixFormat,
@@ -678,7 +628,7 @@ class ParseShService {
   
   private UnaryArithm = (
     { Pos, End, Op, OpPos, Post, X }: Sh.UnaryArithm
-  ): UnaryArithm => ({
+  ): P.UnaryArithm => ({
     ...this.base({ Pos, End }),
     type: 'UnaryArithm',
     Op: this.op(Op),
@@ -689,7 +639,7 @@ class ParseShService {
 
   private UnaryTest = (
     { Pos, End, Op, OpPos, X }: Sh.UnaryTest
-  ): UnaryTest => ({
+  ): P.UnaryTest => ({
     ...this.base({ Pos, End }),
     type: 'UnaryTest',
     Op: this.op(Op),
@@ -700,7 +650,7 @@ class ParseShService {
   private WhileClause = (
     { Pos, End, Cond, Do, DonePos,
       DoPos, Until, WhilePos }: Sh.WhileClause
-  ): WhileClause => ({
+  ): P.WhileClause => ({
     ...this.base({ Pos, End }),
     type: 'WhileClause',
     Cond: Cond.map(Stmt => this.Stmt(Stmt)),
@@ -711,7 +661,7 @@ class ParseShService {
     WhilePos: this.pos(WhilePos),
   });
 
-  private Word = ({ Pos, End, Parts }: Sh.Word): Word => ({
+  private Word = ({ Pos, End, Parts }: Sh.Word): P.Word => ({
     ...this.base({ Pos, End }),
     type: 'Word',
     Parts: Parts.map(this.WordPart),
@@ -719,14 +669,14 @@ class ParseShService {
   
   private WordIter = (
     { Pos, End, Items, Name }: Sh.WordIter
-  ): WordIter => ({
+  ): P.WordIter => ({
     ...this.base({ Pos, End }),
     type: 'WordIter',
     Items: Items.map(this.Word),
     Name: this.Lit(Name),
   });
 
-  private WordPart = (node: Sh.WordPart): WordPart => {
+  private WordPart = (node: Sh.WordPart): P.WordPart => {
     if ('ValuePos' in node) {
       return this.Lit(node);
     } else if ('Value' in node) {
@@ -745,18 +695,6 @@ class ParseShService {
     return this.ExtGlob(node);
   };
   //#endregion
-
-  /**
-   * Convert statement to a FileWithMeta so it
-   * can be used to drive a process.
-   */
-  wrapInFile(node: Stmt): FileWithMeta {
-    return {
-      type: 'File',
-      Stmts: [node],
-      meta: node.meta,
-    } as FileWithMeta;
-  }
 
   /**
    * https://github.com/mvdan/sh/blob/fdf7a3fc92bd63ca6bf0231df97875b8613c0a8a/syntax/tokens.go
@@ -907,212 +845,6 @@ class ParseShService {
     { name: 'globAt', value: '@(' },
     { name: 'globExcl', value: '!(' },
   ];
-}
-
-//#region typings
-
-// export type ParseResult = File;
-
-/**
- * Our notion of position, as opposed to `MvdanSh.Pos`.
- */
-export interface Pos {
-  Line: number;
-  Col: number;
-  Offset: number;
-}
-/**
- * Our notion of base node, as opposed to `MvdanSh.BaseNode`.
- */
-export interface BaseNode {
-  // End: Pos;
-  // Pos: Pos;
-
-  /** Single instance for entire parse tree */
-  meta: FileMeta;
-  /** Reference to parent node  */
-  parent: null | ParsedSh;
-
-  /**
-   * Sometimes a node needs a uid:
-   * - identify command substitution file `/dev/cs-${pid}-${uid}`
-   * - TODO prevent > 1 background process per respective subterm 
-   */
-  uid?: string;
-
-  /** Used for test expansion */
-  boolean?: boolean;
-  /** Used for arithmetic expansion */
-  number?: number;
-  /** Used for arithmetic/boolean expansion */
-  string?: string;
-  /** Used to calculate actual exit codes */
-  exitCode?: number;
-  /** Used by Assign nodes only */
-  declOpts?: Partial<BaseAssignOpts>;
-  /** Used by ParamExp nodes only */
-  paramDef?: ParameterDef<any, any>;
-  /** Used by Redirects only */
-  redirDef?: RedirectDef<any>;
-  /** Used by ForClause and WhileClause only */
-  lastIterated?: number;
-}
-
-export type ParsedSh = (
-  | ArithmCmd
-  | ArithmExp
-  | ArrayElem
-  | ArithmExpr
-  | ArrayExpr
-  | Assign
-  | BinaryArithm
-  | BinaryCmd
-  | BinaryTest
-  | Block
-  | CallExpr
-  | CaseClause
-  | CaseItem
-  | CmdSubst
-  | Comment
-  | CStyleLoop
-  | Command
-  | CoprocClause
-  | DblQuoted
-  | DeclClause
-  | ExtGlob
-  | File
-  | ForClause
-  | FuncDecl
-  | IfClause
-  | LetClause
-  | Lit
-  | Loop
-  | ParamExp
-  | ParenArithm
-  | ParenTest
-  | ProcSubst
-  | Redirect
-  | SglQuoted
-  | Stmt
-  | Subshell
-  | TestClause
-  | TimeClause
-  | TestExpr
-  | UnaryArithm
-  | UnaryTest
-  | WhileClause
-  | Word
-  | WordIter
-  | WordPart
-);
-
-export type ExpandType = (
-  | ArithmExpr
-  | Word // i.e. parts
-  | Exclude<WordPart, ArithmExp>
-);
-
-export type ArithmCmd = Sh.ArithmCmdGeneric<BaseNode, Pos, string>
-export type ArithmExp = Sh.ArithmExpGeneric<BaseNode, Pos, string>
-export type ArrayElem = Sh.ArrayElemGeneric<BaseNode, Pos, string>
-export type ArithmExpr =
-| BinaryArithm
-| UnaryArithm
-| ParenArithm
-| Word
-export type ArrayExpr = Sh.ArrayExprGeneric<BaseNode, Pos, string>
-export type Assign = Sh.AssignGeneric<BaseNode, Pos, string>
-
-export type BinaryArithm = Sh.BinaryArithmGeneric<BaseNode, Pos, string>
-export type BinaryCmd = Sh.BinaryCmdGeneric<BaseNode, Pos, string>
-export type BinaryTest = Sh.BinaryTestGeneric<BaseNode, Pos, string>
-export type Block = Sh.BlockGeneric<BaseNode, Pos, string>
-export type CallExpr = Sh.CallExprGeneric<BaseNode, Pos, string>
-export type CaseClause = Sh.CaseClauseGeneric<BaseNode, Pos, string>
-export type CaseItem = Sh.CaseItemGeneric<BaseNode, Pos, string>
-export type CmdSubst = Sh.CmdSubstGeneric<BaseNode, Pos, string>
-export type Comment = Sh.CommentGeneric<BaseNode, Pos, string>
-export type CStyleLoop = Sh.CStyleLoopGeneric<BaseNode, Pos, string>
-export type Command =
-| CallExpr
-| IfClause
-| WhileClause
-| ForClause
-| CaseClause
-| Block
-| Subshell
-| BinaryCmd
-| FuncDecl
-| ArithmCmd
-| TestClause
-| DeclClause
-| LetClause
-| TimeClause
-| CoprocClause
-export type CoprocClause = Sh.CoprocClauseGeneric<BaseNode, Pos, string>
-export type DblQuoted = Sh.DblQuotedGeneric<BaseNode, Pos, string>
-export type DeclClause = Sh.DeclClauseGeneric<BaseNode, Pos, string>
-export type ExtGlob = Sh.ExtGlobGeneric<BaseNode, Pos, string>
-export type File = Sh.FileGeneric<BaseNode, Pos, string> & BaseNode
-export type ForClause = Sh.ForClauseGeneric<BaseNode, Pos, string>
-export type FuncDecl = Sh.FuncDeclGeneric<BaseNode, Pos, string>
-export type IfClause = Sh.IfClauseGeneric<BaseNode, Pos, string>
-export type LetClause = Sh.LetClauseGeneric<BaseNode, Pos, string>
-export type Lit<Values extends string = string> = Sh.LitGeneric<BaseNode, Pos, number, Values>
-export type Loop =
-| WordIter
-| CStyleLoop
-export type ParamExp = Sh.ParamExpGeneric<BaseNode, Pos, string>
-export type ParenArithm = Sh.ParenArithmGeneric<BaseNode, Pos, string>
-export type ParenTest = Sh.ParenTestGeneric<BaseNode, Pos, string>
-export type ProcSubst = Sh.ProcSubstGeneric<BaseNode, Pos, string>
-export type Redirect = Sh.RedirectGeneric<BaseNode, Pos, string>
-export type SglQuoted = Sh.SglQuotedGeneric<BaseNode, Pos, string>
-export type Stmt = Sh.StmtGeneric<BaseNode, Pos, string>
-export type Subshell = Sh.SubshellGeneric<BaseNode, Pos, string>
-export type TestClause = Sh.TestClauseGeneric<BaseNode, Pos, string>
-export type TimeClause = Sh.TimeClauseGeneric<BaseNode, Pos, string>
-export type TestExpr =
-| BinaryTest
-| UnaryTest
-| ParenTest
-| Word
-export type UnaryArithm = Sh.UnaryArithmGeneric<BaseNode, Pos, string>
-export type UnaryTest = Sh.UnaryTestGeneric<BaseNode, Pos, string>
-export type WhileClause = Sh.WhileClauseGeneric<BaseNode, Pos, string>
-export type Word = Sh.WordGeneric<BaseNode, Pos, string>
-export type WordIter = Sh.WordIterGeneric<BaseNode, Pos, string>
-export type WordPart =
-| Lit
-| SglQuoted
-| DblQuoted
-| ParamExp
-| CmdSubst
-| ArithmExp
-| ProcSubst
-| ExtGlob
-
-//#endregion
-
-export interface InteractiveParseResult {
-  /**
-   * `parser.Interactive` callback appears to
-   * run synchronously. Permit null just in case.
-   */
-  incomplete: boolean | null;
-  /** If `incomplete` is false, this is the cleaned parse. */
-  parsed: null | FileWithMeta;
-}
-
-export interface FileWithMeta extends File {
-  meta: FileMeta;
-}
-
-export interface FileMeta {
-  pid: number;
-  /** This is a shell iff `pid === sid` */
-  sid: number;
-  sessionKey: string;
 }
 
 export const parseService = new ParseShService();

@@ -1,14 +1,15 @@
 import { mapValues, last, removeFirst } from '@model/generic.model';
-import useStore, { State as ShellState, Session, Process, ProcessGroup } from '@store/shell.store';
-import { addToLookup } from '@store/store.util';
-import * as Sh from './parse.service';
+import type * as Sh from './parse.model';
 import { OpenFileRequest, OpenFileDescription } from './file.model';
 import { NamedFunction } from './var.model';
+import useStore, { State as ShellState, Session, Process, ProcessGroup } from '@store/shell.store';
+import { addToLookup } from '@store/store.util';
 import { semanticsService, ShError } from './semantics.service';
 import { fileService } from './file.service';
 import { varService, alphaNumericRegex } from './var.service';
 import { SendXtermError } from './tty.shell';
 import { srcService } from './src.service';
+import { cloneParsed } from './parse.util';
 
 let nextOpenId = 0;
 
@@ -20,7 +21,7 @@ export class ProcessService {
   initialise() {
     this.set = useStore.api.set;
     if (typeof window !== 'undefined') {
-      this.mockParsed = Sh.parseService.parse('');
+      this.mockParsed = {} as Sh.FileWithMeta;
     }
   }
 
@@ -144,7 +145,7 @@ export class ProcessService {
   execProcess(pid: number, node: Sh.File) {
     const process = this.getProcess(pid);
     // Must clone parse tree because meta will differ
-    const cloned = Sh.parseService.clone(node);
+    const cloned = cloneParsed(node);
     // Must mutate to affect all descendents
     Object.assign<Sh.FileMeta, Partial<Sh.FileMeta>>(cloned.meta, { pid: process.pid });
     process.parsed = cloned;

@@ -5,7 +5,7 @@ import { KeyedLookup } from '@model/generic.model';
 import { TtyShell } from '@model/shell/tty.shell';
 import { OpenFileDescription } from '@model/shell/file.model';
 import { FromFdToOpenKey } from '@model/shell/process.model';
-import { FileWithMeta } from '@model/shell/parse.service';
+import { FileWithMeta } from '@model/shell/parse.model';
 import { ToProcVar, NamedFunction } from '@model/shell/var.model';
 import { processService } from '@model/shell/process.service';
 import { FsFile } from "@model/shell/file.model";

@@ -1,6 +1,6 @@
 import braces from 'braces';
-import * as Sh from './parse.service';
 import { last } from '@model/generic.model';
+import type * as Sh from './parse.model';
 
 const bracesOpts: braces.Options = {
   expand: true,
