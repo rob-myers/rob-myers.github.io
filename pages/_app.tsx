@@ -25,7 +25,7 @@ const RootApp: React.FC<RootProps> = ({
   useEffect(() => {
     (async () => {
       await useGeomStore.api.load();
-      const navWorker = new (await import('@nav/nav.worker')).default;
+      const navWorker = new (await import('@model/nav/nav.worker')).default;
       useEnvStore.setState({ navWorker });
       navWorker.postMessage({ key: 'ping-navworker' });
     })();

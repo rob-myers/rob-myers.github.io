@@ -22,7 +22,6 @@
       "@components/*": ["components/*"],
       "@store/*": ["store/*"],
       "@model/*": ["model/*"],
-      "@nav/*": ["nav/*"],
       "@public/*": ["public/*"],
       "@blog/*": ["blog/*"]
     },

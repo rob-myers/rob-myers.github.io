@@ -9,7 +9,7 @@ import * as Geom from '@model/geom/geom.model'
 import * as threeUtil from '@model/three/three.model';
 import useShellStore from './shell.store';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
-import { NavWorker, awaitWorker } from '@nav/nav.msg';
+import { NavWorker, awaitWorker } from '@model/nav/nav.msg';
 import { placeholderSteerable } from '@model/env/steerable';
 import { geomService } from '@model/geom/geom.service';
 import { PanZoomControls } from '@model/three/controls';
