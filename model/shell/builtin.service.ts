@@ -81,11 +81,9 @@ export class BuiltinService {
       case undefined:
         ps.getSession(sessionKey).worldDevice.write({ key: 'set-camera-free' });
         break;
-      case 'at': {
-        const { camera } = useEnvStore.api.getCamControls(ps.getEnvKey(pid));
-        fdToOpen[1].write(geomService.projectXY(camera.position));
+      case 'at':
+        fdToOpen[1].write(this.getCamPosition(pid));
         break;
-      }
       default:
         throw new ShError(`${args[0]}: unrecognised camera command`, 1);
     }
@@ -95,14 +93,17 @@ export class BuiltinService {
   private async actorCommand({ pid, sessionKey, fdToOpen }: Process, actor: ActorMeta, args: string[]) {
     const { worldDevice } = ps.getSession(sessionKey);
     switch (args[0]) {
+      // Make camera follow actor
       case undefined: {
         worldDevice.write({ key: 'set-camera-follow', actorName: actor.key });
         break;
       }
+      // Write actor's position to stdout
       case 'at': {
         fdToOpen[1].write(actor.steerable.positionXY);
         break;
       }
+      // Make actor look towards actor or point 
       case 'look':
       case 'face': {
         const point = this.getActor(pid, args[1])?.steerable.positionXY
@@ -115,9 +116,7 @@ export class BuiltinService {
         }
         break;
       }
-      /**
-       * Make actor goto point or follow path
-       */
+      // Make actor goto point or follow path
       case 'go':
       case 'goto': {
         if (args.length !== 2) {
@@ -146,6 +145,7 @@ export class BuiltinService {
         }
         break;
       }
+      // Change actor's speed
       case 'speed': {
         const speed = Number(args[1]);
         if (args.length !== 2 || !Number.isFinite(speed) || speed < 0) {
@@ -236,9 +236,20 @@ export class BuiltinService {
     }
   }
 
-  /**
-   * Writes arguments, which includes any options.
-   */
+  private delay({ pid }: Process, args: string[]) {
+    const permitted = { 0.25: true, 0.5: true, 1: true };
+    if (args.length !== 1 || !(args[0] in permitted)) {
+      throw new ShError(`usage \`delay t where t in {0.25,0.5,1}\``, 1);
+    }
+
+    varService.assignVar(pid, {
+      varName: iteratorDelayVarName,
+      value: Number(args[0]),
+      internal: true,
+    });
+  }
+
+  /** Writes arguments, which includes any options. */
   private async echo({ fdToOpen }: Process, args: string[]) {
     fdToOpen[1].write(args.join(' '));
   }
@@ -287,6 +298,11 @@ export class BuiltinService {
       throw new ShError(`actor "${actorName}" not found`, 1);
     }
     return actor;
+  }
+
+  private getCamPosition(pid: number) {
+    const { camera } = useEnvStore.api.getCamControls(ps.getEnvKey(pid));
+    return geomService.projectXY(camera.position);
   }
 
   private async getNavPath(pid: number, p: Geom.VectorJson, q: Geom.VectorJson) {
@@ -410,28 +426,15 @@ export class BuiltinService {
   }
 
   private async spawn({ pid, sessionKey }: Process, args: string[]) {
-    if (args.length !== 2) {
-      throw new ShError('usage `spawn point_or_var actor_name`', 1);
-    } else if (!actorService.isLegalName(args[1])) {
-      throw new ShError('actor_name must be alphanumeric and not forbidden', 1);
+    if (args.length === 0 || args.length > 2) {
+      throw new ShError('usage `spawn actor_name` or `spawn actor_name pnt_or_var', 1);
+    } else if (!actorService.isLegalName(args[0])) {
+      throw new ShError(`actor_name must be alphanumeric and not ${actorService.forbiddenNames}`, 1);
     }
 
-    const position = this.parsePointArg(pid, args[0]);
+    const position = args[1] != null ? this.parsePointArg(pid, args[1]) : this.getCamPosition(pid);
     const { worldDevice } = ps.getSession(sessionKey);
-    worldDevice.write({ key: 'spawn-actor', name: args[1], position });
-  }
-
-  private delay({ pid }: Process, args: string[]) {
-    const permitted = { 0.25: true, 0.5: true, 1: true };
-
-    if (args.length !== 1 || !(args[0] in permitted)) {
-      throw new ShError(`usage \`delay t where t in {0.25,0.5,1}\``, 1);
-    }
-    varService.assignVar(pid, {
-      varName: iteratorDelayVarName,
-      value: Number(args[0]),
-      internal: true,
-    });
+    worldDevice.write({ key: 'spawn-actor', name: args[0], position });
   }
 
   /**

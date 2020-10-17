@@ -1,11 +1,11 @@
 ```sh
-spawn $(click) bob
+spawn bob $(click)
 @bob go $(click)
 @bob go $(@camera at)
 ```
 
 ```sh
-spawn $(click) bob
+spawn bob $(click)
 @bob speed 0.04
 @bob
 while click p; do
@@ -14,8 +14,8 @@ done
 ```
 
 ```sh
-spawn $(click) bob
-spawn $(click) alice
+spawn bob $(click)
+spawn alice $(click)
 @alice look bob
 @alice
 @alice goto $(click)

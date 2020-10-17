@@ -12,7 +12,7 @@ import { LookStrategy } from './steerable';
 class ActorService {
   
   private animCancels = {} as Record<string, () => void>;
-  private forbiddenNames = {
+  readonly forbiddenNames = {
     camera: true,
   };
 
