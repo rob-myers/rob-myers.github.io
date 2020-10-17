@@ -105,11 +105,12 @@ export class BuiltinService {
       case 'at':
         fdToOpen[1].write(actor.steerable.positionXY);
         break;
-      // Make actor look towards actor or point 
+      // Make actor look towards mouse, actor or point 
       case 'look':
       case 'face': {
-        const point = this.getActor(pid, args[1])?.steerable.positionXY
-          || this.parsePointArg(pid, args[1]); // throws on failure
+        const point = args[1] == null
+          ? this.getMousePosition(pid)
+          : this.getActor(pid, args[1])?.steerable.positionXY || this.parsePointArg(pid, args[1]);
         await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
           worldDevice.write({ key: 'actor-face-point', pid, actorName: actor.key, point, callback: resolve })));
         break;
@@ -299,8 +300,13 @@ export class BuiltinService {
   }
 
   private getCamPosition(pid: number) {
-    const { camera } = useEnvStore.api.getCamControls(ps.getEnvKey(pid));
-    return geomService.projectXY(camera.position);
+    const { camControls } = useEnvStore.getState().env[ps.getEnvKey(pid)];
+    return geomService.projectXY(camControls.camera.position);
+  }
+
+  private getMousePosition(pid: number) {
+    const { mouse } = useEnvStore.getState().director[ps.getEnvKey(pid)];
+    return mouse.position;
   }
 
   private async getNavPath(pid: number, p: Geom.VectorJson, q: Geom.VectorJson) {

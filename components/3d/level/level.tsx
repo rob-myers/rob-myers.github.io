@@ -1,7 +1,8 @@
-import React, { useMemo, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect, useCallback } from "react";
 import { isMeshNode } from "@model/three/three.model";
 import useGeomStore from '@store/geom.store';
 import useEnvStore from '@store/env.store';
+import { PointerEvent } from "react-three-fiber";
 
 const Level: React.FC<Props> = (props) => {
   const level = useRef<THREE.Group>(null);
@@ -22,10 +23,16 @@ const Level: React.FC<Props> = (props) => {
         : child),
     [props.children]);
 
+  const storeMouse = useCallback((e: PointerEvent) => {
+    useEnvStore.api.storeMouse(props.envName, e);
+    e.stopPropagation();
+  }, []);
+
   return (
     <group
       ref={level}
       name="level"
+      onPointerMove={storeMouse}
     >
      {env && children}
     </group>

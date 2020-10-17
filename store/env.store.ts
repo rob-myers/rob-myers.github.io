@@ -1,6 +1,7 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import * as portals from 'react-reverse-portal';
+import { PointerEvent } from 'react-three-fiber';
 import { ReplaySubject } from 'rxjs';
 
 import { KeyedLookup } from '@model/generic.model';
@@ -30,7 +31,6 @@ export interface State {
     /** Uses envKey as portalKey */
     ensureEnvPortal: (envKey: string) => void;
     getActorMeta: (envKey: string, name: string) => Store.ActorMeta | null;
-    getCamControls: (envKey: string) => PanZoomControls;
     removeActor: (envKey: string, actorName: string) => void;
     removeEnv: (envKey: string) => void;
     removeEnvPortal: (envKey: string) => void;
@@ -43,6 +43,7 @@ export interface State {
     roomUpdated: (envKey: string) => void;
     setHighWalls: (envKey: string, next: boolean) => void;
     storeCamControls: (envKey: string, controls: PanZoomControls) => void;
+    storeMouse: (envKey: string, pointer: PointerEvent) => void;
     storeScene: (envKey: string, scene: THREE.Scene) => void;
     updateNavWorkerRoom: (input: {
       envKey: string;
@@ -99,6 +100,9 @@ const useStore = create<State>(devtools((set, get) => ({
         director: addToLookup({
           key: envKey,
           actor: {},
+          mouse: {
+            position: new Geom.Vector,
+          },
         }, director),
         decorator: addToLookup({
           key: envKey,
@@ -119,10 +123,6 @@ const useStore = create<State>(devtools((set, get) => ({
 
     getActorMeta: (envKey, actorName) => {
       return get().director[envKey].actor[actorName] || null;
-    },
-
-    getCamControls: (envKey) => {
-      return get().env[envKey].camControls;
     },
 
     removeActor: (envKey, actorName) => {
@@ -171,6 +171,10 @@ const useStore = create<State>(devtools((set, get) => ({
       set(({ env }) => ({
         env: updateLookup(envKey, env, () => ({ camControls })),
       }));
+    },
+
+    storeMouse: (envKey, { point }) => {
+      get().director[envKey].mouse.position.copy(point);
     },
 
     storeScene: (envKey, scene) => {

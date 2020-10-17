@@ -2,6 +2,7 @@ import { ReplaySubject } from 'rxjs';
 import type * as THREE from 'three';
 import * as portals from 'react-reverse-portal';
 
+import type * as Geom from '@model/geom/geom.model'
 import { FsFile } from '@model/shell/file.model';
 import { KeyedLookup } from '@model/generic.model';
 import { Steerable } from './steerable';
@@ -46,9 +47,13 @@ export interface Director {
   key: string;
   /**
    * Actors in this enviroment.
-   * This nested lookup is justified.
+   * They are mutated in situ.
    */
   actor: KeyedLookup<ActorMeta>;
+  mouse: {
+    /** Last seen 2d position of mouse */
+    position: Geom.Vector;
+  };
 }
 
 export interface ActorMeta {
