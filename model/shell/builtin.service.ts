@@ -90,30 +90,28 @@ export class BuiltinService {
   }
 
   /** @{actor_name} {args} */
-  private async actorCommand({ pid, sessionKey, fdToOpen }: Process, actor: ActorMeta, args: string[]) {
+  private async actorCommand(
+    { pid, sessionKey, fdToOpen }: Process,
+    actor: ActorMeta,
+    args: string[],
+  ) {
     const { worldDevice } = ps.getSession(sessionKey);
     switch (args[0]) {
       // Make camera follow actor
-      case undefined: {
+      case undefined:
         worldDevice.write({ key: 'set-camera-follow', actorName: actor.key });
         break;
-      }
       // Write actor's position to stdout
-      case 'at': {
+      case 'at':
         fdToOpen[1].write(actor.steerable.positionXY);
         break;
-      }
       // Make actor look towards actor or point 
       case 'look':
       case 'face': {
         const point = this.getActor(pid, args[1])?.steerable.positionXY
           || this.parsePointArg(pid, args[1]); // throws on failure
-
-        const error = await new Promise((resolve: WorldDeviceCallback) =>
-          worldDevice.write({ key: 'actor-face-point', pid, actorName: actor.key, point, callback: resolve }));
-        if (error) {
-          throw new ShError(error, 1);
-        }
+        await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
+          worldDevice.write({ key: 'actor-face-point', pid, actorName: actor.key, point, callback: resolve })));
         break;
       }
       // Make actor goto point or follow path
@@ -127,24 +125,23 @@ export class BuiltinService {
         if (pointOrPath instanceof Array) {
           if (pointOrPath.length) {
             worldDevice.write({ key: 'spawn-actor', name: actor.key, position: pointOrPath[0] });
-            const error = await new Promise((resolve: WorldDeviceCallback) =>
-              worldDevice.write({ key: 'actor-follow-path', pid, name:  actor.key, path: pointOrPath, callback: resolve }));
-            if (error) {
-              throw new ShError(error, 1);
-            }
+            await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
+              worldDevice.write({ key: 'actor-follow-path', pid, name:  actor.key, path: pointOrPath, callback: resolve })));
           }
         } else {
           const navPath = await this.getNavPath(pid, actor.steerable.position, pointOrPath);
           // TEMP show navPath of most recent navigation
           worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: navPath });
-          const error = await new Promise((resolve: WorldDeviceCallback) =>
-            worldDevice.write({ key: 'actor-follow-path', pid, name:  actor.key, path: navPath, callback: resolve }));
-          if (error) {
-            throw new ShError(error, 1);
-          }
+          await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
+            worldDevice.write({ key: 'actor-follow-path', pid, name:  actor.key, path: navPath, callback: resolve })));
         }
         break;
       }
+      case 'relax':
+        // Should cancel iterated looks too
+        actor.cancelLook();
+        actor.steerable.lookStrategy = LookStrategy.travel;
+        break;
       // Change actor's speed
       case 'speed': {
         const speed = Number(args[1]);
@@ -154,14 +151,15 @@ export class BuiltinService {
         actor.steerable.maxSpeed = speed;
         break;
       }
-      case 'stop': {
+      case 'stop':
         actor.cancelGoto();
         break;
-      }
-      case 'unwatch': {
-        // Should cancel iterated looks too
-        actor.cancelLook();
-        actor.steerable.lookStrategy = LookStrategy.travel;
+      case 'watch': {
+        // TODO
+        // const point = this.getActor(pid, args[1])?.steerable.positionXY
+        //   || this.parsePointArg(pid, args[1]);
+        // await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
+        //   worldDevice.write({ key: 'actor-face-point', pid, actorName: actor.key, point, callback: resolve })));          
         break;
       }
       default:
@@ -391,6 +389,13 @@ export class BuiltinService {
       }
       cleanups.push(() => reject(null));
     });
+  }
+
+  private async runAndHandleError(promiseFactory: () => Promise<null | string>) {
+    const error = await promiseFactory();
+    if (error) {
+      throw new ShError(error, 1);
+    }
   }
   
   private async say({ fdToOpen, cleanups }: Process, args: string[]) {
