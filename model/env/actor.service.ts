@@ -32,39 +32,59 @@ class ActorService {
     }
   }
 
-  async faceTowardsPoint(
-    envKey: string,
-    pid: number,
-    actorName: string,
-    point: Geom.VectorJson,
-    cb: (err: null | string) => void,
-  ) {
+  async faceTowardsPoint(opts: {
+    envKey: string;
+    pid: number;
+    actorName: string;
+    cb: (err: null | string) => void;
+  } & (
+    | { mode: 'once'; point: Geom.VectorJson }
+    | { mode: 'watch-other-actor'; otherName: string }
+    | { mode: 'watch-mouse' }
+  )) {
+    const { envKey, pid, actorName, cb } = opts;
     const director = useEnvStore.getState().director[envKey];
     const actor = director.actor[actorName];
 
     // Override any current look for this actor
     const cancelKey = `${actorName}@${envKey}:look`;
-    if (cancelKey in this.animCancels) {
-      actor.cancelLook();
-      await pause(100);
+    if (cancelKey in this.animCancels) actor.cancelLook();
+
+    let step: () => {};
+
+    switch(opts.mode) {
+      case 'once': {
+        const delta = actor.steerable.setLookTarget(new THREE.Vector3(opts.point.x, opts.point.y));
+        if (Math.abs(delta) < 0.01) {
+          return cb(null); // Already facing
+        }
+        let steps = 0, numSteps = (Math.abs(delta) / Math.PI) * 50;
+        step = () => {
+          actor.steerable.lookTowards(steps / numSteps);
+          return steps++ > numSteps;
+        };
+        break;
+      }
+      case 'watch-other-actor': {
+        const { steerable } = useEnvStore.getState().director[envKey].actor[opts.otherName];
+        step = () => {
+          actor.steerable.setLookTarget(steerable.position);
+          actor.steerable.lookTowards(0.1);
+          return false;
+        };
+        break;
+      }
+      case 'watch-mouse': {
+        const { position } = useEnvStore.getState().director[envKey].mouse;
+        step = () => {
+          actor.steerable.setLookTarget(position);
+          actor.steerable.lookTowards(0.1);
+          return false;
+        };
+        break;
+      }
     }
 
-    const selfRect = geomService.projectBox3XY(threeUtil.getBounds(actor.mesh));
-    if (selfRect.contains(point)) {
-      return cb(null); // Actor cannot face itself
-    }
-
-    const totalDelta = actor.steerable.setLookTarget(new THREE.Vector3(point.x, point.y));
-    if (Math.abs(totalDelta) < 0.01) {
-      return cb(null);
-    }
-    
-    let steps = 0;
-    const numSteps = (Math.abs(totalDelta) / Math.PI) * 50;
-    const step = () => {
-      actor.steerable.lookTowards(steps / numSteps);
-      return steps++ > numSteps;
-    };
     actor.steerable.lookStrategy = LookStrategy.controlled;
 
     try {// Racing handles Ctrl-C or cancellation by another process
@@ -77,7 +97,7 @@ class ActorService {
       ]);
       cb(null);
     } catch (e) {
-      cb('look was cancelled');
+      cb(`${opts.mode === 'once' ? 'look' : 'watch'} was cancelled`);
       this.cancelAnimation(cancelKey);
     } finally {
       actor.cancelLook = () => {};

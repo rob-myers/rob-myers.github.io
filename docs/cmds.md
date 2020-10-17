@@ -1,5 +1,14 @@
 ```sh
 spawn bob $(click)
+@bob watch &
+@bob
+while click p; do
+  @bob go p &
+done
+```
+
+```sh
+spawn bob $(click)
 @bob go $(click)
 @bob go $(@camera at)
 ```

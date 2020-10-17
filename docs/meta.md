@@ -42,9 +42,9 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > consider removing rectilinear requirement
   > spacial partitioning or pre-existing solution?
 
-- [ ] `@bob watch` keep facing towards mouse
-- [ ] `@bob watch alice` keep facing towards alice
-- [ ] `@bob relax` stop watching
+- [x] `@bob watch` keep facing towards mouse
+- [x] `@bob watch alice` keep facing towards alice
+- [x] `@bob relax` stop watching
 
 - [ ] limit background processes by original subterm
   > consider runaway: `while true; do goto $(click) bob & done`

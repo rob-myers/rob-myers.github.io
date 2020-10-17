@@ -53,24 +53,25 @@ export interface ActorFollowPath {
   pid: number;
 }
 
-interface ActorFacePoint {
-  key: 'actor-face-point';
+interface BaseActorFace {
+  pid: number;
   actorName: string;
-  point: Geom.VectorJson;
   /** Invoked on error or when finished */
   callback: WorldDeviceCallback;
-  pid: number;
 }
 
-interface ActorWatchActor {
+interface ActorFacePoint extends BaseActorFace {
+  key: 'actor-face-point';
+  point: Geom.VectorJson;
+}
+
+interface ActorWatchActor extends BaseActorFace {
   key: 'actor-watch-actor';
-  actorName: string;
   otherName: string;
 }
 
-interface ActorWatchMouse {
+interface ActorWatchMouse extends BaseActorFace {
   key: 'actor-watch-mouse';
-  actorName: string;
 }
 
 interface SetCameraFree {
@@ -92,7 +93,18 @@ export function handleWorldDeviceWrites(envKey: string) {
         break;
       }
       case 'actor-face-point': {
-        actorService.faceTowardsPoint(envKey, msg.pid, msg.actorName, msg.point, msg.callback);
+        const { pid, actorName, point, callback: cb } = msg;
+        actorService.faceTowardsPoint({ envKey, pid, actorName, cb, mode: 'once', point });
+        break;
+      }
+      case 'actor-watch-actor': {
+        const { pid, actorName, callback: cb, otherName } = msg;
+        actorService.faceTowardsPoint({ envKey, pid, actorName, cb, mode: 'watch-other-actor', otherName });
+        break;
+      }
+      case 'actor-watch-mouse': {
+        const { pid, actorName, callback: cb } = msg;
+        actorService.faceTowardsPoint({ envKey, pid, actorName, cb, mode: 'watch-mouse' });
         break;
       }
       case 'show-navpath': {

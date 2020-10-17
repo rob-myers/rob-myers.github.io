@@ -105,7 +105,7 @@ export class BuiltinService {
       case 'at':
         fdToOpen[1].write(actor.steerable.positionXY);
         break;
-      // Make actor look towards mouse, actor or point 
+      // Look towards actor, mouse or point 
       case 'look':
       case 'face': {
         const point = args[1] == null
@@ -115,7 +115,7 @@ export class BuiltinService {
           worldDevice.write({ key: 'actor-face-point', pid, actorName: actor.key, point, callback: resolve })));
         break;
       }
-      // Make actor goto point or follow path
+      // Goto point via computed path or follow specified path
       case 'go':
       case 'goto': {
         if (args.length !== 2) {
@@ -155,12 +155,16 @@ export class BuiltinService {
       case 'stop':
         actor.cancelGoto();
         break;
+      // Watch other actor or mouse
       case 'watch': {
-        // TODO
-        // const point = this.getActor(pid, args[1])?.steerable.positionXY
-        //   || this.parsePointArg(pid, args[1]);
-        // await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
-        //   worldDevice.write({ key: 'actor-face-point', pid, actorName: actor.key, point, callback: resolve })));          
+        if (args[1]) {
+          const { key: otherName } = this.getActorOrThrow(pid, args[1]);
+          await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
+            worldDevice.write({ key: 'actor-watch-actor', pid, actorName: actor.key, callback: resolve, otherName })));
+        } else {
+          await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
+            worldDevice.write({ key: 'actor-watch-mouse', pid, actorName: actor.key, callback: resolve })));
+        }
         break;
       }
       default:

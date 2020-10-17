@@ -114,7 +114,7 @@ class BaseSteerable {
   }
 
   /** Returns total delta angle */
-  setLookTarget(target: THREE.Vector3) {
+  setLookTarget(target: Geom.VectorJson) {
     const angle = Math.atan2(target.y - this.position.y, target.x - this.position.x);
     this.lookQuaternion.setFromEuler(new THREE.Euler( 0, 0, angle ));
     return geomService.ensureDeltaRad(angle - this.group.rotation.z);
