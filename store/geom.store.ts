@@ -111,7 +111,7 @@ const useStore = create<State>(devtools((set, get) => ({
             actors.push(...node.children.filter(threeUtil.isMeshNode));
             actors.forEach(actor => {
               threeUtil.transformImportedMesh(actor);
-              actor.geometry.translate(0, 0, 0.3); // Move actor up
+              actor.geometry.translate(0, 0, 0.2); // Move actor up
               actor.children.filter(threeUtil.isMeshNode)
                 .forEach(child => threeUtil.transformImportedMesh(child));
             });
