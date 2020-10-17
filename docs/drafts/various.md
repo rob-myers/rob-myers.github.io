@@ -4,15 +4,6 @@ We've got an online AI engine.
 - missing comments via GitHub Issues
 - but shouldn't be too hard
 
-Our blog could be:
-
-- a bunch of ai examples
-- an ai-game built step-by-step online
-- mathematically oriented
-
-A _soul_ is missing.
-> Even if we create independent AI examples, one or more settings is needed to bring it to life.
-
 ### Design ideas from Teleglitch
 
 - doors, lighting, zooming
@@ -31,3 +22,4 @@ A _soul_ is missing.
 
 > https://www.rockpapershotgun.com/2013/08/12/teleglitch-telechat/
 > https://www.rockpapershotgun.com/2017/10/31/best-horror-games/7/
+

@@ -4,8 +4,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 - [ ] can reset env ui; must 1st click to start pan-zoom
 - [ ] Can collapse/expand each blog entry
-- [ ] hashes always scrollIntoView
-- [ ] try to remove `Observable<ProcessAct>` syntax
+- [ ] remove `Observable<ProcessAct>` syntax?
 - [ ] fix mobile touch in `three/controls` (perhaps devtools issue)
 
 - [ ] prevent recursive background processes i.e. tie to parse tree
@@ -46,6 +45,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [x] `@bob watch alice` keep facing towards alice
 - [x] `@bob relax` stop watching
 
+- [ ] verify `ps` shows processes spawned in bg
 - [ ] limit background processes by original subterm
   > consider runaway: `while true; do goto $(click) bob & done`
 
