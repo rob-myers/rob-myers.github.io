@@ -1,8 +1,8 @@
 export class Vector {
 
   constructor(
-    public x: number,
-    public y: number,
+    public x = 0,
+    public y = 0,
   ) {}
 
   add(other: VectorJson) {
@@ -31,21 +31,21 @@ export class Vector {
     return [this.x, this.y];
   }
 
-  public copy(other: Vector) {
+  public copy(other: VectorJson) {
     this.x = other.x;
     this.y = other.y;
     return this;
   }
 
-  public distSquaredTo(other: Vector) {
+  public distSquaredTo(other: VectorJson) {
     return Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2)
   }
   
-  public distTo(other: Vector) {
+  public distTo(other: VectorJson) {
     return Math.sqrt(this.distSquaredTo(other));
   }
 
-  equals({ x, y }: Vector) {
+  equals({ x, y }: VectorJson) {
     return this.x === x && this.y === y;
   }
 
@@ -68,9 +68,9 @@ export class Vector {
     return this;
   }
 
-  precision(digits = 3) {
-    this.x = Number(this.x.toFixed(2));
-    this.y = Number(this.y.toFixed(2));
+  precision(digits = 2) {
+    this.x = Number(this.x.toFixed(digits));
+    this.y = Number(this.y.toFixed(digits));
     return this;
   }
 
