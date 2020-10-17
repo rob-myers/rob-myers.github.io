@@ -1,3 +1,5 @@
+import type { parseService } from "@model/shell/parse.service";
+
 /** A Worker instance in main thread. */
 export interface ParseWorker extends Worker {
   postMessage(message: MessageFromMain): void;
@@ -21,20 +23,18 @@ export interface Message<Data> extends MessageEvent {
 }
 
 export type MessageFromMain = (
-  | PingParseWorker
+  | { key: 'ping-worker' }
+  | { key: 'req-parse-buffer'; msgId: string; buffer: string[] }
 );
-
-interface PingParseWorker {
-  key: 'ping-worker';
-}
 
 type MessageFromWorker = (
-  | ParseWorkerReady
+  | { key: 'worker-ready' }
+  | {
+      key: 'parse-buffer-result';
+      msgId: string;
+      result: ReturnType<typeof parseService.tryParseBuffer>;
+    }
 );
-
-interface ParseWorkerReady {
-  key: 'worker-ready'
-}
 
 export async function awaitWorker<Key extends MessageFromWorker['key']>(
   key: Key,

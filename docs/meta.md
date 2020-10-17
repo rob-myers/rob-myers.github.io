@@ -24,7 +24,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] builtin `paste r` pastes & runs `string` or `string[]` output?
 - [ ] `range 10` is compositional if `0 1 2 ...`, but not if an array
 
-- [ ] can list running processes
+- [x] can list running processes
 - [ ] implement `kill` supporting SIGINT
 - [ ] implement `trap code_or_function 2`
   > can cancel background goto `goto p & trap "kill $!" 2`
@@ -49,8 +49,10 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] limit background processes by original subterm
   > consider runaway: `while true; do goto $(click) bob & done`
 
-- [ ] avoid 500kb initial load via mvdan-sh in webworker
-- [ ] move parse-sh.service into own webworker
+- [x] avoid 500kb initial load via mvdan-sh in webworker
+  > only saved ~220kb i.e. 580kb -> 358
+- [x] move parse-sh.service into own webworker
+  > made webworker but decided to just use dynamic import
 - [x] remove deps on parse-sh.service
 
 - [x] cleanup site and deploy

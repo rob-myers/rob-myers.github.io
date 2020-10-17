@@ -1,12 +1,16 @@
 import { testNever } from '@model/generic.model';
 import useStore, { Session } from '@store/shell.store';
-import { parseService } from './parse.service';
+import { ParseService } from './parse.service';
 import { SigEnum } from './process.model';
 import { FsFile } from './file.model';
 import { TtyXterm } from './tty.xterm';
 import { processService as ps, processService } from './process.service';
 import { srcService } from './src.service';
 import { voiceDevice } from './voice.device';
+
+// Lazyload saves ~220kb initially
+let parseService = { tryParseBuffer: (_) => ({ key: 'failed', error: 'not ready' })} as ParseService;
+import('./parse.service').then(x => parseService = x.parseService) 
 
 export class TtyShell {
 
@@ -22,7 +26,6 @@ export class TtyShell {
 
   private session!: Session;
   private oneTimeReaders = [] as ((msg: any) => void)[];
-
   constructor(
     public sessionKey: string,
     public canonicalPath: string,
@@ -89,7 +92,6 @@ export class TtyShell {
             // Cleaning causes throw from leaf to root.
             // We don't invoke process.subscription.unsubscribe().
             processService.cleanup(memberPid);
-            
           });
           this.buffer.length = 0;
           this.oneTimeReaders.length = 0;
@@ -124,6 +126,11 @@ export class TtyShell {
         this.buffer.push(this.input.line);
         const result = parseService.tryParseBuffer(this.buffer.slice()); // Can't error
   
+        // ALTERNATIVELY could use webworker
+        // const msgId = `${nextMsgId++}`;
+        // this.parseWorker.postMessage({ key: 'req-parse-buffer', msgId, buffer: this.buffer.slice() });
+        // const { result } = await awaitWorker('parse-buffer-result', this.parseWorker, (x) => x.msgId === msgId);
+
         switch (result.key) {
           case 'failed': {
             const errMsg = `mvdan-sh: ${result.error.replace(/^src\.sh:/, '')}`;

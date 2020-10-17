@@ -21,7 +21,7 @@ class ParseShService {
    * It must not have a proper-prefix which is a complete command,
    * e.g. `echo foo\necho bar\n` invalid via proper-prefix `echo foo\n`.
    */
-  interactiveParse(partialSrc: string): P.InteractiveParseResult {
+  private interactiveParse(partialSrc: string): P.InteractiveParseResult {
     const parser = syntax.NewParser();
     let incomplete: null | boolean = null;
 
@@ -42,7 +42,7 @@ class ParseShService {
   /**
    * Use mvdan-sh to parse shell code.
    */
-  parse(src: string): P.FileWithMeta {
+  private parse(src: string): P.FileWithMeta {
     // console.log({ syntax });
     const parser = syntax.NewParser(
       syntax.KeepComments(false),
@@ -848,3 +848,5 @@ class ParseShService {
 }
 
 export const parseService = new ParseShService();
+
+export type ParseService = ParseShService;
