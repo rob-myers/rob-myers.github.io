@@ -21,3 +21,4 @@ Missing layer strategy:
 - Possibly can inspect regex as nfa.
 - Player can scan actors to see regexes in terminal.
 - Regex can be changed by weapons e.g. word derivative.
+- Actors can shoot player, but Player has temp shield.

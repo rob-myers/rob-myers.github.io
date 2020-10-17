@@ -16,7 +16,6 @@ import { getOpts, hasAncestralIterator } from "./parse.util";
 
 export class BuiltinService {
 
-  
   isBuiltinCommand(command: string): command is BuiltinKey {
     return !!(builtins as Record<string, boolean>)[command];
   }
@@ -65,7 +64,7 @@ export class BuiltinService {
     });
   }
 
-  /** Originally @{command} {args} */
+  /** @{command} {args} */
   private async runAt(node: Sh.CallExpr, command: string, args: string[]) {
     const process = ps.getProcess(node.meta.pid);
     if (command === 'camera') {
@@ -76,7 +75,7 @@ export class BuiltinService {
     }
   }
 
-  /** Originally @camera {args} */
+  /** @camera {args} */
   private async cameraCommand({ pid, sessionKey, fdToOpen }: Process, args: string[]) {
     switch (args[0]) {
       case undefined:
@@ -92,7 +91,7 @@ export class BuiltinService {
     }
   }
 
-  /** Originally @{actor_name} {args} */
+  /** @{actor_name} {args} */
   private async actorCommand({ pid, sessionKey, fdToOpen }: Process, actor: ActorMeta, args: string[]) {
     const { worldDevice } = ps.getSession(sessionKey);
     switch (args[0]) {

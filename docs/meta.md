@@ -42,14 +42,15 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > consider removing rectilinear requirement
   > spacial partitioning or pre-existing solution?
 
-- [ ] `@bob watch mouse` keep facing towards mouse
-  > `@bob relax` stop watching
+- [ ] `@bob watch` keep facing towards mouse
+- [ ] `@bob watch alice` keep facing towards alice
+- [ ] `@bob relax` stop watching
 
 - [ ] limit background processes by original subterm
   > consider runaway: `while true; do goto $(click) bob & done`
 
+- [ ] avoid 500kb initial load via mvdan-sh in webworker
 - [ ] move parse-sh.service into own webworker
-- [ ] avoid 500kb initial load via mvdan-sh in webworker?
 - [x] remove deps on parse-sh.service
 
 - [x] cleanup site and deploy

@@ -17,4 +17,12 @@ done
 spawn $(click) bob
 spawn $(click) alice
 @alice look bob
+@alice
+@alice goto $(click)
+@camera
+```
+
+```sh
+def match '(v) => RegExp(v["1"]).test(v["2"])'
+match '^a+' aaa
 ```
