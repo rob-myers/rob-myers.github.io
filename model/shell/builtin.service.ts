@@ -43,6 +43,7 @@ export class BuiltinService {
             case 'echo': await this.echo(process, args); break;
             case 'false': node.exitCode = 1; break;
             case 'get': this.get(process, args); break;
+            case 'kill': this.kill(process, node, args); break;
             case 'nav': await this.nav(process, args); break;
             case 'ps': await this.ps(process, args); break;
             case 'read': await this.read(process, args); break;
@@ -240,9 +241,9 @@ export class BuiltinService {
   }
 
   private delay({ pid }: Process, args: string[]) {
-    const permitted = { 0.25: true, 0.5: true, 1: true };
-    if (args.length !== 1 || !(args[0] in permitted)) {
-      throw new ShError(`usage \`delay t where t in {0.25,0.5,1}\``, 1);
+    const permitted = [0.1, 0.2, 0.25, 0.3, 0.4, 0.5, 1];
+    if (args.length !== 1 || !permitted.includes(Number(args[0]))) {
+      throw new ShError(`usage \`delay t where t in {${permitted}}\``, 1);
     }
 
     varService.assignVar(pid, {
@@ -321,6 +322,17 @@ export class BuiltinService {
       throw new ShError(`failed with error: ${error}`, 1);
     }
     return navPath;
+  }
+
+  private async kill({ pid }: Process, node: Sh.CallExpr, args: string[]) {
+    for (const arg of args) {
+      try {
+        ps.cleanup(Number(arg));
+      } catch {
+        ps.warn(pid, `kill: ${arg}: unknown pid`);
+        node.exitCode = 1;
+      }
+    }
   }
 
   private async nav({ pid }: Process, args: string[]) {
@@ -486,6 +498,8 @@ export const builtins = {
   false: true,
   /** Write a js variable's value to stdout */
   get: true,
+  /** Kill pids */
+  kill: true,
   /** Find optimal navpath and write to stdout  */
   nav: true,
   ps: true,

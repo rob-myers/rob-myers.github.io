@@ -1163,7 +1163,7 @@ class SemanticsService {
         // Spawn background process
         const cloned = Object.assign(cloneParsed(stmt), { Background: false } as Sh.Stmt);
         const file = wrapInFile(cloned);
-        const { pid: spawnedPid, parsed } = ps.spawnProcess(cloned.meta.pid, file, true);
+        const { parsed } = ps.spawnProcess(cloned.meta.pid, file, true);
         // Launch it
         sem.transpile(parsed).subscribe();
         stmt.exitCode = stmt.Negated ? 1 : 0;
@@ -1442,6 +1442,7 @@ class SemanticsService {
         await awaitEnd(sem.Stmt(node));
         parent.exitCode = node.exitCode;
       }
+      // Exit code propagates from children
       ps.setExitCode(parent.meta.pid, parent.exitCode || 0);
     }());
   }
@@ -1450,7 +1451,7 @@ class SemanticsService {
     if (node.lastIterated) {
       const throttleMs = 1000 * (
         vs.lookupVar(node.meta.pid, iteratorDelayVarName
-      ) || 0.25);
+      ) || 0.1);
       const sleepMs = Math.max(0, throttleMs - (Date.now() - node.lastIterated));
       await ps.sleep(node.meta.pid, sleepMs);
     }

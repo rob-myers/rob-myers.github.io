@@ -91,7 +91,7 @@ export interface Process {
   toFunc: Record<string, NamedFunction>;
   lastExitCode: null | number;
   lastBgPid: null | number;
-  /** For canceling current executions */
+  /** For cancelling current executions */
   cleanups: (() => void)[];
 }
 

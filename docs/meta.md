@@ -23,13 +23,11 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] builtin `paste r` pastes & runs `string` or `string[]` output?
 - [ ] `range 10` is compositional if `0 1 2 ...`, but not if an array
 
-- [x] can list running processes
-- [ ] implement `kill` supporting SIGINT
 - [ ] implement `trap code_or_function 2`
   > can cancel background goto `goto p & trap "kill $!" 2`
 
-- [ ] `goto` error messages on takeover not always sent
-- [ ] `TtyXterm` blocks/ignores lines from other processes on paste
+- [ ] BUG `goto` error messages on takeover not always sent
+- [ ] BUG `TtyXterm` blocks/ignores lines from other processes on paste
 - [ ] implement joined-up gotos
 - [ ] can `decor foo` to show navpath and name it `foo`
   > remove builtin `way`
@@ -41,13 +39,18 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > consider removing rectilinear requirement
   > spacial partitioning or pre-existing solution?
 
+- [x] limit background processes by original subterm
+  > e.g. runaway: `while true; do @bob go $(click) & done`
+  > Decided against: complex, arbitrary, and can just refresh page
+  > Maybe kill/throttle processes that spawn too many bgs?
+
+- [x] implement `kill` supporting SIGINT
+- [x] can list running processes
 - [x] `@bob watch` keep facing towards mouse
 - [x] `@bob watch alice` keep facing towards alice
 - [x] `@bob relax` stop watching
-
-- [ ] verify `ps` shows processes spawned in bg
-- [ ] limit background processes by original subterm
-  > consider runaway: `while true; do goto $(click) bob & done`
+  
+- [x] verify `ps` shows bg processes spawned in bg
 
 - [x] avoid 500kb initial load via mvdan-sh in webworker
   > only saved ~220kb i.e. 580kb -> 358
