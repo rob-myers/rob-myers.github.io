@@ -39,10 +39,12 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > consider removing rectilinear requirement
   > spacial partitioning or pre-existing solution?
 
+- [x] `ps` term should show `@bob-1 watch` instead of `@bob-${i} watch`
+
 - [x] limit background processes by original subterm
   > e.g. runaway: `while true; do @bob go $(click) & done`
   > Decided against: complex, arbitrary, and can just refresh page
-  > Maybe kill/throttle processes that spawn too many bgs?
+  > TODO _kill/throttle processes that spawn too many bgs_
 
 - [x] implement `kill` supporting SIGINT
 - [x] can list running processes

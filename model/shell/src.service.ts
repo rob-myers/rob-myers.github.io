@@ -33,7 +33,7 @@ export class SrcService {
   }
 
   /**
-   * Given parse tree, compute source code.
+   * Given parse tree compute source code.
    * We ensure the source code has no newlines so it can be used as history.
    */
   src(node: Sh.ParsedSh | null): string {
@@ -49,14 +49,22 @@ export class SrcService {
         return stmts.map(c => this.src(c)).join(` ${node.Op} `);
       }
 
-      case 'BinaryArithm':
+      case 'BinaryArithm': {
+        if (typeof node.number === 'number') return `${node.number}`;
         return [node.X, node.Y].map(c => this.src(c)).join(`${node.Op}`);
-      case 'UnaryArithm':
+      }
+      case 'UnaryArithm': {
+        if (typeof node.number === 'number') return `${node.number}`;
         return node.Post ? `${this.src(node.X)}${node.Op}` : `${node.Op}${this.src(node.X)}`;
-      case 'ParenArithm':
+      }
+      case 'ParenArithm': {
+        if (typeof node.number === 'number') return `${node.number}`;
         return `(${this.src(node.X)})`;
-      case 'Word':
+      }
+      case 'Word': {
+        if (typeof node.string === 'string') return node.string;
         return node.Parts.map(c => this.src(c)).join('');
+      }
       
       case 'ArrayExpr': {
         const contents = node.Elems.map(({ Index, Value }) =>
@@ -160,6 +168,8 @@ export class SrcService {
       }
 
       case 'ParamExp': {
+        if (typeof node.string === 'string') return node.string;
+
         const def = node.paramDef || semanticsService.transpileParam(node);
         const param = `${def.param}${node.Index ? `[${this.src(node.Index)}]` : ''}`;
 
