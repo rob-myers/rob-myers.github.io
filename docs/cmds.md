@@ -2,7 +2,8 @@
 spawn bob $(click)
 for i in {1..5}; do spawn bob-${i} $(click); done
 for i in {1..5}; do @bob-${i} watch bob & done
-@bob watch
+@bob watch &
+@bob speed 0.04
 @bob
 while click p; do @bob go p & done
 ```

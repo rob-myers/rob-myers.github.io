@@ -39,7 +39,7 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
   > consider removing rectilinear requirement
   > spacial partitioning or pre-existing solution?
 
-- [x] `ps` term should show `@bob-1 watch` instead of `@bob-${i} watch`
+- [x] `ps` term should `@bob-1 watch` instead of `@bob-${i} watch`
 
 - [x] limit background processes by original subterm
   > e.g. runaway: `while true; do @bob go $(click) & done`

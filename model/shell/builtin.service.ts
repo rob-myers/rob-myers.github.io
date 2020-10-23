@@ -133,7 +133,7 @@ export class BuiltinService {
         } else {
           const navPath = await this.getNavPath(pid, actor.steerable.position, pointOrPath);
           // TEMP show navPath of most recent navigation
-          worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: navPath });
+          // worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: navPath });
           await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
             worldDevice.write({ key: 'actor-follow-path', pid, name:  actor.key, path: navPath, callback: resolve })));
         }
