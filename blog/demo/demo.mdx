@@ -1,12 +1,8 @@
 import EnvPortal from '@components/env/env-portal';
-import Cytoscape from '@components/cytoscape/cytoscape';
-import { demoElements } from '@components/cytoscape/util';
+import Graph from '@components/graph/graph';
 
 # Environment Demo
 
 <EnvPortal envKey="first" />
 
-<Cytoscape
-  style={ { width: '100%', height: '300px', border: '1px solid #999' } }
-  elements={demoElements}
-/>
+<Graph />
