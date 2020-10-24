@@ -1,17 +1,11 @@
 import { testNever } from "@model/generic.model";
 import type * as Sh from "./parse.model";
 import { geomService } from "@model/geom/geom.service";
-import type * as Geom from '@model/geom/geom.model';
-import { ActorMeta } from "@model/env/env.store.model";
 import { Process } from "@store/shell.store";
-import useEnvStore from '@store/env.store';
 import { processService as ps} from './process.service';
 import { ShError, breakError, continueError } from "./semantics.service";
 import { varService, alphaNumericRegex, iteratorDelayVarName } from "./var.service";
 import { voiceDevice } from "./voice.device";
-import { WorldDeviceCallback } from "@model/env/world.device";
-import { actorService } from "@model/env/actor.service";
-import { LookStrategy } from "@model/env/steerable";
 import { getOpts, hasAncestralIterator } from "./parse.util";
 
 export class BuiltinService {
@@ -30,30 +24,23 @@ export class BuiltinService {
       node.exitCode = 0;
 
       try {
-        if (command.startsWith('@')) {
-          await this.runAt(node, command.slice(1), args);
-        } else {
-          switch (command) {
-            case 'break': this.break(node, args); break;
-            case 'call': await this.call(process, args); break;
-            case 'click': await this.click(process, args); break;
-            case 'continue': this.continue(node, args); break;
-            case 'def': await this.def(process, args); break;
-            case 'delay': this.delay(process, args); break;
-            case 'echo': await this.echo(process, args); break;
-            case 'false': node.exitCode = 1; break;
-            case 'get': this.get(process, args); break;
-            case 'kill': this.kill(process, node, args); break;
-            case 'nav': await this.nav(process, args); break;
-            case 'ps': await this.ps(process, args); break;
-            case 'read': await this.read(process, args); break;
-            case 'say': await this.say(process, args); break;
-            case 'sleep': await this.sleep(process, args); break;
-            case 'spawn': await this.spawn(process, args); break;
-            case 'true': break;
-            case 'way': this.way(process, args); break;
-            default: throw testNever(command);
-          }
+        switch (command) {
+          case 'break': this.break(node, args); break;
+          case 'call': await this.call(process, args); break;
+          case 'click': await this.click(process, args); break;
+          case 'continue': this.continue(node, args); break;
+          case 'def': await this.def(process, args); break;
+          case 'delay': this.delay(process, args); break;
+          case 'echo': await this.echo(process, args); break;
+          case 'false': node.exitCode = 1; break;
+          case 'get': this.get(process, args); break;
+          case 'kill': this.kill(process, node, args); break;
+          case 'ps': await this.ps(process, args); break;
+          case 'read': await this.read(process, args); break;
+          case 'say': await this.say(process, args); break;
+          case 'sleep': await this.sleep(process, args); break;
+          case 'true': break;
+          default: throw testNever(command);
         }
 
         removeCleanup();
@@ -63,114 +50,6 @@ export class BuiltinService {
         reject(e);
       }
     });
-  }
-
-  /** @{command} {args} */
-  private async runAt(node: Sh.CallExpr, command: string, args: string[]) {
-    const process = ps.getProcess(node.meta.pid);
-    if (command === 'camera') {
-      await this.cameraCommand(process, args);
-    } else {
-      const actor = this.getActorOrThrow(process.pid, command);
-      await this.actorCommand(process, actor!, args);
-    }
-  }
-
-  /** @camera {args} */
-  private async cameraCommand({ pid, sessionKey, fdToOpen }: Process, args: string[]) {
-    switch (args[0]) {
-      case undefined:
-        ps.getSession(sessionKey).worldDevice.write({ key: 'set-camera-free' });
-        break;
-      case 'at':
-        fdToOpen[1].write(this.getCamPosition(pid));
-        break;
-      default:
-        throw new ShError(`${args[0]}: unrecognised camera command`, 1);
-    }
-  }
-
-  /** @{actor_name} {args} */
-  private async actorCommand(
-    { pid, sessionKey, fdToOpen }: Process,
-    actor: ActorMeta,
-    args: string[],
-  ) {
-    const { worldDevice } = ps.getSession(sessionKey);
-    switch (args[0]) {
-      // Make camera follow actor
-      case undefined:
-        worldDevice.write({ key: 'set-camera-follow', actorName: actor.key });
-        break;
-      // Write actor's position to stdout
-      case 'at':
-        fdToOpen[1].write(actor.steerable.positionXY);
-        break;
-      // Look towards actor, mouse or point 
-      case 'look':
-      case 'face': {
-        const point = args[1] == null
-          ? this.getMousePosition(pid)
-          : this.getActor(pid, args[1])?.steerable.positionXY || this.parsePointArg(pid, args[1]);
-        await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
-          worldDevice.write({ key: 'actor-face-point', pid, actorName: actor.key, point, callback: resolve })));
-        break;
-      }
-      // Goto point via computed path or follow specified path
-      case 'go':
-      case 'goto': {
-        if (args.length !== 2) {
-          throw new ShError('expected exactly one point/path/variable`', 1);
-        }
-        const pointOrPath = this.parsePointOrPathArg(pid, args[1]);
-        
-        if (pointOrPath instanceof Array) {
-          if (pointOrPath.length) {
-            worldDevice.write({ key: 'spawn-actor', name: actor.key, position: pointOrPath[0] });
-            await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
-              worldDevice.write({ key: 'actor-follow-path', pid, name:  actor.key, path: pointOrPath, callback: resolve })));
-          }
-        } else {
-          const navPath = await this.getNavPath(pid, actor.steerable.position, pointOrPath);
-          // TEMP show navPath of most recent navigation
-          // worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: navPath });
-          await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
-            worldDevice.write({ key: 'actor-follow-path', pid, name:  actor.key, path: navPath, callback: resolve })));
-        }
-        break;
-      }
-      case 'relax':
-        // Should cancel iterated looks too
-        actor.cancelLook();
-        actor.steerable.lookStrategy = LookStrategy.travel;
-        break;
-      // Change actor's speed
-      case 'speed': {
-        const speed = Number(args[1]);
-        if (args.length !== 2 || !Number.isFinite(speed) || speed < 0) {
-          throw new ShError(`${speed}: invalid speed`, 1);
-        }
-        actor.steerable.maxSpeed = speed;
-        break;
-      }
-      case 'stop':
-        actor.cancelGoto();
-        break;
-      // Watch other actor or mouse
-      case 'watch': {
-        if (args[1]) {
-          const { key: otherName } = this.getActorOrThrow(pid, args[1]);
-          await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
-            worldDevice.write({ key: 'actor-watch-actor', pid, actorName: actor.key, callback: resolve, otherName })));
-        } else {
-          await this.runAndHandleError(() => new Promise((resolve: WorldDeviceCallback) =>
-            worldDevice.write({ key: 'actor-watch-mouse', pid, actorName: actor.key, callback: resolve })));
-        }
-        break;
-      }
-      default:
-        throw new ShError(`${args[0]}: unrecognised actor command`, 1);
-    }
   }
 
   private break(node: Sh.CallExpr, args: string[]) {
@@ -191,15 +70,15 @@ export class BuiltinService {
     try {
       await new Promise((resolve, reject) => {
         stopListening = worldDevice.read((msg) => {
-          if (msg.key === 'nav-click') {
-            if (args.length) {
-              varService.assignVar(pid, { varName: args.shift()!, value: msg });
-              !args.length && resolve();
-            } else {// Originally no args
-              fdToOpen[1].write(msg);
-              resolve();
-            }
-          }
+          // if (msg.key === 'nav-click') {
+          //   if (args.length) {
+          //     varService.assignVar(pid, { varName: args.shift()!, value: msg });
+          //     !args.length && resolve();
+          //   } else {// Originally no args
+          //     fdToOpen[1].write(msg);
+          //     resolve();
+          //   }
+          // }
         }, false);
         ps.addCleanup(pid, () => reject(null));
       });
@@ -291,39 +170,6 @@ export class BuiltinService {
     }
   }
 
-  private getActor(pid: number, actorName: string) {
-    const envKey = ps.getEnvKey(pid);
-    return useEnvStore.api.getActorMeta(envKey, actorName);
-  }
-
-  private getActorOrThrow(pid: number, actorName: string) {
-    const actor = this.getActor(pid, actorName);
-    if (!actor) {
-      throw new ShError(`actor "${actorName}" not found`, 1);
-    }
-    return actor;
-  }
-
-  private getCamPosition(pid: number) {
-    const { camControls } = useEnvStore.getState().env[ps.getEnvKey(pid)];
-    return geomService.projectXY(camControls.camera.position);
-  }
-
-  private getMousePosition(pid: number) {
-    const { mouse } = useEnvStore.getState().director[ps.getEnvKey(pid)];
-    return mouse.position;
-  }
-
-  private async getNavPath(pid: number, p: Geom.VectorJson, q: Geom.VectorJson) {
-    const envKey = ps.getEnvKey(pid);
-    const { navPath, error } = await useEnvStore.api
-      .requestNavPath(envKey, { x: p.x, y: p.y }, { x: q.x, y: q.y });
-    if (error) {
-      throw new ShError(`failed with error: ${error}`, 1);
-    }
-    return navPath;
-  }
-
   private async kill({ pid }: Process, node: Sh.CallExpr, args: string[]) {
     for (const arg of args) {
       try {
@@ -333,16 +179,6 @@ export class BuiltinService {
         node.exitCode = 1;
       }
     }
-  }
-
-  private async nav({ pid }: Process, args: string[]) {
-    if (args.length !== 2) {
-      throw new ShError('usage `nav pnt_a pnt_b``', 1);
-    }
-    const p = this.parsePointArg(pid, args[0]);
-    const q = this.parsePointArg(pid, args[1]);
-    const navPath = await this.getNavPath(pid, p, q);
-    ps.getProcess(pid).fdToOpen[1].write(navPath);
   }
  
   private parsePointArg(pid: number, varOrJson: string) {
@@ -452,33 +288,6 @@ export class BuiltinService {
     await ps.sleep(pid, 1000 * seconds);
   }
 
-  private async spawn({ pid, sessionKey }: Process, args: string[]) {
-    if (args.length === 0 || args.length > 2) {
-      throw new ShError('usage `spawn actor_name` or `spawn actor_name pnt_or_var', 1);
-    } else if (!actorService.isLegalName(args[0])) {
-      throw new ShError(`actor_name must be alphanumeric and not ${actorService.forbiddenNames}`, 1);
-    }
-
-    const position = args[1] != null ? this.parsePointArg(pid, args[1]) : this.getCamPosition(pid);
-    const { worldDevice } = ps.getSession(sessionKey);
-    worldDevice.write({ key: 'spawn-actor', name: args[0], position });
-  }
-
-  /**
-   * TODO remove; instead we'll `nav p q >/dev/world`
-   */
-  private way({ sessionKey, pid }: Process, args: string[]) {
-    if (args.length > 1) {
-      throw new ShError('usage `way p`', 1);
-    }
-    const p = varService.lookupVar(pid, args[0]);
-    if (!geomService.isVectorJsonPath(p)) {
-      throw new ShError('usage `way [opts] p` where p is a path-valued var', 1);
-    }
-
-    const { worldDevice } = ps.getSession(sessionKey);
-    worldDevice.write({ key: 'show-navpath', name: '__TODO__', points: p });
-  }
 }
 
 export const builtins = {
@@ -500,8 +309,7 @@ export const builtins = {
   get: true,
   /** Kill pids */
   kill: true,
-  /** Find optimal navpath and write to stdout  */
-  nav: true,
+  /** List running processes */
   ps: true,
   /** Read from stdin and store in provided variable */
   read: true,
@@ -509,17 +317,10 @@ export const builtins = {
   say: true,
   /** Wait for sum of arguments in seconds */
   sleep: true,
-  /** Spawn an actor */
-  spawn: true,
   /** Set delays of subsequent iterator iterations */
   delay: true,
   /** Exit with code 0 */
   true: true,
-  /**
-   * Show/hide nav paths
-   * TODO remove (instead we'll `nav p q >/dev/world`)
-   */
-  way: true,
 };
 
 export type BuiltinKey = keyof typeof builtins;

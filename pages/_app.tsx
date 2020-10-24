@@ -5,8 +5,6 @@ import { AppInitialProps } from 'next/app';
 import { useEffect } from 'react';
 
 import useTestStore from '@store/test.store';
-import useGeomStore from '@store/geom.store';
-import useEnvStore from '@store/env.store';
 import Portals from '@components/portals';
 
 import 'xterm/css/xterm.css';
@@ -21,13 +19,9 @@ const RootApp: React.FC<RootProps> = ({
     return useTestStore.subscribe(({ persist }) => persist.save());
   }, []);
 
-  // Load rooms.gltf
   useEffect(() => {
     (async () => {
-      await useGeomStore.api.load();
-      const navWorker = new (await import('@model/nav/nav.worker')).default;
-      useEnvStore.setState({ navWorker });
-      navWorker.postMessage({ key: 'ping-navworker' });
+      // NOOP
     })();
   }, []);
 

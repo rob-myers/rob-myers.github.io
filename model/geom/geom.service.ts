@@ -1,6 +1,3 @@
-import * as THREE from "three";
-import { Geometry, Vector3, Face3, Mesh } from "three";
-import { MeshLineMaterial, MeshLine } from 'three.meshline';
 import polygonClipping from 'polygon-clipping';
 import rectDecompose from 'rectangle-decomposition';
 import maximalMatching from 'bipartite-matching';
@@ -8,16 +5,11 @@ import minimalVertexCover from 'bipartite-vertex-cover';
 import maximalIndependentSet from 'maximal-independent-set';
 
 import * as Geom from '@model/geom/geom.model';
-import { epsilon } from "@model/three/three.model";
 import { Triple, tryParseJson } from "@model/generic.model";
 
 const twopi = 2 * Math.PI;
 
 class GeomService {
-
-  private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
-  private whiteColor = new THREE.Color('#ffffff');
-  private lineMaterial = new MeshLineMaterial( { color: this.whiteColor, lineWidth: 0.02 } );
 
   /** Multipolygon must be rectilinear with integer-valued coords. */
   private computeIntegerRectPartition({ outline, holes }: Geom.Polygon): Geom.Rect[] {
@@ -48,35 +40,6 @@ class GeomService {
           : [],
         [] as Geom.Vector[],
     );
-  }
-
-  createCube(p: Vector3, dim: number, material: THREE.Material) {
-    const mesh = new Mesh(
-      new THREE.BoxGeometry(dim, dim, dim),
-      material,
-    );
-    mesh.position.set(p.x, p.y, p.z);
-    return mesh;
-  }
-
-  createPolyLine(points: Geom.VectorJson[], height = 0.5) {
-    const meshLine = new MeshLine();
-    meshLine.setPoints(points.map(p => new Vector3(p.x, p.y, height)));
-    return new THREE.Mesh(meshLine, this.lineMaterial);
-  }
-
-  createGroup(objects: THREE.Object3D[], name?: string) {
-    const group = new THREE.Group();
-    objects.forEach(o => group.add(o));
-    name && (group.name = name);
-    return group;
-  }
-
-  createPath(points: Geom.VectorJson[], name: string) {
-    const cubes = points.map(p => this.createCube(
-      new Vector3(p.x, p.y, 0.2), 0.05, this.whiteMaterial));
-    const polyLine = this.createPolyLine(points, 0.2);
-    return this.createGroup([...cubes, polyLine], name);
   }
 
   /**
@@ -223,46 +186,6 @@ class GeomService {
     );
   }
 
-  navPolysToMesh(navPolys: Geom.Polygon[]): THREE.Mesh {
-    const decomps = navPolys.map(p => p.qualityTriangulate());
-    const all = this.joinTriangulations(decomps);
-
-    const geometry = new Geometry();
-    geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, 0, p.y)));
-    geometry.faces.push(...all.tris.map(tri => new Face3(tri[2], tri[1], tri[0])));
-
-    geometry.computeVertexNormals();
-    geometry.computeFaceNormals();
-    return new Mesh(
-      (new THREE.BufferGeometry()).fromGeometry(geometry),
-      new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
-    );
-  }
-
-  /**
-   * Project onto XY plane, restricting precision.
-   */
-  projectXY(v: THREE.Vector3): Geom.Vector {
-    return new Geom.Vector(v.x, v.y).precision();
-  }
-
-  /**
-   * Project base of three.js geometry onto XY plane, restricting precision.
-   * May have disjoint pieces, so outputs a list of (multi)polygons.
-   */
-  projectGeometryXY(parent: THREE.Mesh, geometry: THREE.Geometry): Geom.Polygon[] {
-    const baseTris = [] as Geom.Polygon[];
-    const vs = geometry.vertices.map(p => parent.localToWorld(p.clone()));
-    geometry.faces.forEach(({ a, b, c }) => {
-      const tri = [a, b, c].map(i => vs[i]);
-      if (tri.every(p => Math.abs(p.z) < epsilon)) {
-        baseTris.push(new Geom.Polygon(tri.map(this.projectXY)));
-      }
-    });
-    // console.log({ key: parent.name, baseTris });
-    return this.union(baseTris);
-  }
-
   outset(poly: Geom.Polygon, amount: number) {
     return this.inset(poly, -amount);
   }
@@ -313,14 +236,6 @@ class GeomService {
       }
       return agg;
     }, [] as typeof path);
-  }
-
-  toThreeGeometry(geom: THREE.BufferGeometry) {
-    return (new THREE.Geometry()).fromBufferGeometry(geom);
-  }
-
-  toVector3(vector: Geom.VectorJson) {
-    return new Vector3(vector.x, vector.y);
   }
 
   tryParsePoint(p: string)  {

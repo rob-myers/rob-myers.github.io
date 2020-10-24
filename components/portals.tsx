@@ -15,7 +15,7 @@ const Portals: React.FC = ({ children }) => {
       <div>
         {Object.values(envPortal).map(({ key, portalNode }) => (
           <portals.InPortal key={key} node={portalNode}>
-            <Env envKey="first" high />
+            <Env envKey="first" />
           </portals.InPortal>
         ))}
       </div>

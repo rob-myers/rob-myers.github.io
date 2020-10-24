@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { Props } from './env';
 import css from './env.scss';
 
-const EnvPortal: React.FC<Props> = ({ envKey, high }) => {
+const EnvPortal: React.FC<Props> = ({ envKey }) => {
   const portalNode = useStore(({ envPortal }) => envPortal[envKey]?.portalNode);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ const EnvPortal: React.FC<Props> = ({ envKey, high }) => {
   return (
     <div>
       {portalNode
-        ? <portals.OutPortal node={portalNode} high={high} />
+        ? <portals.OutPortal node={portalNode} />
         : <div className={css.root} />
       }
     </div>
