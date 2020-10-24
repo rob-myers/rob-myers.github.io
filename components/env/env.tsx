@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import useStore, { selectApi } from '@store/env.store';
+import useStore from '@store/env.store';
 import Terminal from '@components/shell/terminal'
 import css from './env.scss';
 
 const Env: React.FC<Props> = ({ envKey }) => {
-  const api = useStore(selectApi);
+  const { api } = useStore.getState();
 
   useEffect(() => {
       api.createEnv({ envKey });
