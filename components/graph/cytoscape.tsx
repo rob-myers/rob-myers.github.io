@@ -6,7 +6,6 @@ import { defaults } from './util';
 const Cytoscape: React.FC<Partial<Props>> = (props) => {
   const el = useRef<HTMLDivElement>(null);
   const cy = useRef<cytoscape.Core>();
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const container = el.current!;
@@ -23,9 +22,16 @@ const Cytoscape: React.FC<Partial<Props>> = (props) => {
       wheelSensitivity: props.wheelSensitivity,
       pixelRatio: props.pixelRatio,
     });
-    setMounted(true);
+
+    const resize = () => setTimeout(() => cy.current!.animate({
+      center: { eles: cy.current as any },
+      fit: { eles: cy.current as any, padding: 10 },
+      duration: 200,
+    }), 200);
+    window.addEventListener('resize', resize);
 
     return () => {
+      window.removeEventListener('resize', resize);
       cy.current?.destroy();
     };
   }, []);
