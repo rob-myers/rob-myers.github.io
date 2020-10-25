@@ -23,11 +23,15 @@ const Cytoscape: React.FC<Partial<Props>> = (props) => {
       pixelRatio: props.pixelRatio,
     });
 
-    const resize = () => setTimeout(() => cy.current!.animate({
-      center: { eles: cy.current as any },
-      fit: { eles: cy.current as any, padding: 10 },
-      duration: 200,
-    }), 200);
+    let animateId = 0;
+    const resize = () => {
+      clearTimeout(animateId);
+      animateId = window.setTimeout(() => cy.current!.animate({
+        center: { eles: cy.current as any },
+        fit: { eles: cy.current as any, padding: 10 },
+        duration: 200,
+      }), 200);
+    };
     window.addEventListener('resize', resize);
 
     return () => {
