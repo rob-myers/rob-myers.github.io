@@ -5,47 +5,20 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 - [ ] can reset env ui; must 1st click to start pan-zoom
 - [ ] Can collapse/expand each blog entry
 - [ ] remove `Observable<ProcessAct>` syntax?
-- [ ] fix mobile touch in `three/controls` (perhaps devtools issue)
-
-- [ ] prevent recursive background processes i.e. tie to parse tree
-
 - [ ] subshells/cmd-subst should not change shell functions
 - [ ] `shift` builtin for functions
-- [ ] `steiner` labels a point in the world
-  > it could track a changing variable
-- [ ] `World` should fade-in
-- [ ] circular/rectangular triggers
-- [ ] wrap three raycasts
-  > navRect could be future optimisation
-- [ ] UI buttons
-  > can ctrl-c
-  > can auto send world events to tty
+- [ ] Can ctrl-c via UI
 - [ ] builtin `paste r` pastes & runs `string` or `string[]` output?
-- [ ] `range 10` is compositional if `0 1 2 ...`, but not if an array
-
 - [ ] implement `trap code_or_function 2`
   > can cancel background goto `goto p & trap "kill $!" 2`
-
 - [ ] BUG `goto` error messages on takeover not always sent
 - [ ] BUG `TtyXterm` blocks/ignores lines from other processes on paste
-- [ ] implement joined-up gotos
-- [ ] can `decor foo` to show navpath and name it `foo`
-  > remove builtin `way`
-  > can `decor rm foo`
-  > can `decor` to list decorations
-- [ ] actor can cast visible ray
-
-- [ ] event system i.e. enter/exit nav-rect
-  > consider removing rectilinear requirement
-  > spacial partitioning or pre-existing solution?
 
 - [x] `ps` term should `@bob-1 watch` instead of `@bob-${i} watch`
-
 - [x] limit background processes by original subterm
   > e.g. runaway: `while true; do @bob go $(click) & done`
   > Decided against: complex, arbitrary, and can just refresh page
   > TODO _kill/throttle processes that spawn too many bgs_
-
 - [x] implement `kill` supporting SIGINT
 - [x] can list running processes
 - [x] `@bob watch` keep facing towards mouse
