@@ -2,6 +2,8 @@ Remember our aims: (a) clarify Game AI, (b) better behaviours.
 
 ## Todo
 
+- [ ] start using emotion.js
+
 - [ ] can reset env ui; must 1st click to start pan-zoom
 - [ ] Can collapse/expand each blog entry
 - [ ] remove `Observable<ProcessAct>` syntax?

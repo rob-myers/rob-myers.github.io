@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
 import useStore from '@store/env.store';
 import Terminal from '@components/shell/terminal'
-import css from './env.scss';
 
-const Env: React.FC<Props> = ({ envKey }) => {
+const Env: React.FC<Props> = ({ envKey, children }) => {
   const { api } = useStore.getState();
 
   useEffect(() => {
@@ -15,9 +14,10 @@ const Env: React.FC<Props> = ({ envKey }) => {
   }, []);
 
   return (
-    <section className={css.root}>
+    <>
+      {children}
       <Terminal envName={envKey} />
-    </section>
+    </>
   )
 };
 

@@ -1,8 +1,10 @@
 import EnvPortal from '@components/env/env-portal';
 import Graph from '@components/graph/graph';
+import gridCss from '@components/ui/grid.scss';
 
 # Environment Demo
 
-<EnvPortal envKey="first" />
-
-<Graph />
+<section className={gridCss.graphAndTerm}>
+  <Graph />
+  <EnvPortal envKey="first" />
+</section>
