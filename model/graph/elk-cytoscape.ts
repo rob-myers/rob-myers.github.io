@@ -2,13 +2,16 @@ import ELK, { LayoutOptions as ElkOpts, ElkNode } from 'elkjs';
 
 const elk = new ELK;
 
-const layoutOptions: Record<string, string | boolean> = {
+const layoutOptions: Record<string, string | boolean | number> = {
   'algorithm': 'layered',
-  'edgeRouting': 'POLYLINE',
   // 'algorithm': 'mrtree', 
-  // 'elk.algorithm': 'stress', 
-  // 'elk.algorithm': 'rectpacking', 
-  // 'elk.algorithm': 'force', 
+  'edgeRouting': 'POLYLINE',
+  'elk.direction': 'UP',
+  'spacing.nodeNode': 50,
+  'layered.considerModelOrder': 'NODES_AND_EDGES',
+  // 'algorithm': 'stress', 
+  // 'algorithm': 'rectpacking', 
+  // 'algorithm': 'force', 
 };
 
 //#region debug
@@ -218,7 +221,7 @@ export class ElkCytoscape {
 function getDefaultOpts(): Options {
   return {
     // Boolean which changes whether label dimensions are included when calculating node dimensions
-    nodeDimensionsIncludeLabels: false,
+    nodeDimensionsIncludeLabels: true,
     fit: true,
     padding: 20,
     animate: false, // Whether to transition the node positions

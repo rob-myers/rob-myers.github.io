@@ -35,18 +35,25 @@ export const demoElements: Props['elements'] = [
   { data: { id: '2', label: '2' , width: 10, height: 10 }, position: { x: 100, y: 0 } },
   { data: { id: '3', label: '3' } },
   { data: { id: '4', label: '4' } },
-  { data: { source: '1', target: '2', label: 'from 1 to 2',  } },
+  { data: { id: '5', label: '5' } },
+  { data: { id: '6', label: '6' } },
+  // { data: { id: '7', label: '7' } },
+  { data: { source: '1', target: '2', label: '🙂',  } },
   { data: { source: '1', target: '3' }},
   { data: { source: '3', target: '4' }},
   { data: { source: '2', target: '4' }},
+  { data: { source: '4', target: '5' }},
+  // { data: { source: '3', target: '6' }},
+  // { data: { source: '6', target: '7' }},
+  // { data: { source: '7', target: '1' }},
 ];
 
 export const demoStylesheet: Props['stylesheet'] = [
   {
     selector: 'node',
     style: {
-      width: 10,
-      height: 10,
+      width: 5,
+      height: 5,
       backgroundColor: '#000',
       label: 'data(label)',
       "font-size": 10,
@@ -57,6 +64,7 @@ export const demoStylesheet: Props['stylesheet'] = [
     style: {
       label: 'data(label)',
       "font-size": 10,
+      width: 1,
     },
   },
 ];

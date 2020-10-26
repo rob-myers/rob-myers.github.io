@@ -29,7 +29,7 @@ const Cytoscape: React.FC<Partial<Props>> = (props) => {
       motionBlurOpacity: props.motionBlurOpacity,
       wheelSensitivity: props.wheelSensitivity,
       pixelRatio: props.pixelRatio,
-      maxZoom: 3,
+      maxZoom: 4,
     });
 
     let animateId = 0;
