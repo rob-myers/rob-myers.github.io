@@ -1,7 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import cytoscape from 'cytoscape';
 import type { VectorJson } from "@model/geom/geom.model";
 import { defaults } from './util';
+import { ElkCytoscape } from "@model/graph/elk-cytoscape";
+
+// Connect Elk and Cytoscope
+cytoscape('layout', 'elk', ElkCytoscape);
 
 const Cytoscape: React.FC<Partial<Props>> = (props) => {
   const el = useRef<HTMLDivElement>(null);
@@ -9,10 +13,14 @@ const Cytoscape: React.FC<Partial<Props>> = (props) => {
 
   useEffect(() => {
     const container = el.current!;
+
     cy.current = cytoscape({
       container,
       style: props.stylesheet,
       elements: props.elements,
+      layout: {
+        name: 'elk',
+      },
 
       styleEnabled: props.styleEnabled,
       hideEdgesOnViewport: props.hideEdgesOnViewport,
@@ -21,6 +29,7 @@ const Cytoscape: React.FC<Partial<Props>> = (props) => {
       motionBlurOpacity: props.motionBlurOpacity,
       wheelSensitivity: props.wheelSensitivity,
       pixelRatio: props.pixelRatio,
+      maxZoom: 3,
     });
 
     let animateId = 0;
