@@ -11,8 +11,8 @@ const Cytoscape: React.FC<Partial<Props>> = (props) => {
     const container = el.current!;
     cy.current = cytoscape({
       container,
-      elements: props.elements,
       style: props.stylesheet,
+      elements: props.elements,
 
       styleEnabled: props.styleEnabled,
       hideEdgesOnViewport: props.hideEdgesOnViewport,
@@ -81,10 +81,7 @@ export interface Props {
    *
    * See http://js.cytoscape.org/#notation/elements-json
    * */
-  elements: {
-    data: { id?: string; label?: string; source?: string; target?: string };
-    position?: VectorJson;
-  }[];
+  elements: cytoscape.ElementDefinition[];
 
   /**
    * The Cytoscape stylesheet as non-stringified JSON.  E.g.:
