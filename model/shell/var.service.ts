@@ -9,6 +9,15 @@ import safeJsonStringify from "safe-json-stringify";
 export const alphaNumericRegex = /^[a-z_][a-z0-9_]*/i;
 
 class VarService {
+  
+  private subshellVarName = '__subshell__';
+  private subshellVar: ProcessVar = {
+    key: 'plain',
+    varName: this.subshellVarName,
+    value: true,
+    exported: false,
+    readonly: true,
+  };
 
   addFunction(pid: number, name: string, def: ShellFuncDef | JsFuncDef) {
     if (def.type === 'shell') {
@@ -39,7 +48,7 @@ class VarService {
     // - if `def.local` then only check deepest scope.
     // - else check deepest up-to-and-including 1st with key `__subshell__`.
     const { nestedVars } = this.getProcess(pid);
-    const subshellIndex = nestedVars.findIndex(s => '__subshell__' in s);
+    const subshellIndex = nestedVars.findIndex(s => this.subshellVarName in s);
     const finalScopeIndex = def.local ? 0 : subshellIndex === -1 ? nestedVars.length - 1 : subshellIndex;
     const scopeIndex = nestedVars.slice(0, finalScopeIndex + 1)
       .findIndex((toVar) => def.varName in toVar);
@@ -308,7 +317,7 @@ class VarService {
 
   pushVarScope(pid: number, subshell = false) {
     this.getProcess(pid).nestedVars.unshift(
-      subshell ? { __subshell__: null as any } : {}
+      subshell ? { [this.subshellVarName]: this.subshellVar } : {}
     );
   }
 
