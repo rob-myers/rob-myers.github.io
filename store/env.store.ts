@@ -21,15 +21,9 @@ export interface State {
   };
 }
 
-
-let nextMsgUid = 0;
-
 const useStore = create<State>(devtools((set, get) => ({
   env: {},
-  navWorker: null,
   envPortal: {},
-  director: {},
-  decorator: {},
 
   api: {
     createEnv: ({ envKey }) => {
