@@ -62,7 +62,8 @@ export const demoStylesheet: Props['stylesheet'] = [
   {
     selector: 'edge',
     style: {
-      label: 'data(label)',
+      label: (el: cytoscape.EdgeSingular & { label?: string }) =>
+        el.label || '',
       "font-size": 10,
       width: 1,
     },
