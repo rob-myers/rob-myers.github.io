@@ -3,16 +3,28 @@ import ExtLink from '@components/ui/ext-link'
 
 # Behaviour and the Brain
 
-The preface of _Automata Studies_ (1956) begins:
+The preface of _Automata Studies_ (1956) made a bold prediction.
 
 > Among the most challenging scientific questions of our time are the corresponding analytic and synthetic problems: How does the brain function? Can we design a machine which will simulate a brain? [__…__]
 
 > Recent progress in various related fields leads to an optimistic view toward the eventual and not too remote solution of the analytic and synthetic problems.
 
-That famous collection began by characterising the events recognisable by an artificial neural network. That is, Kleene introduced the _regular expressions_. Fifty years later, _Introduction to Automata Theory, Languages, and Computation_ (2006) commented on the state of affairs.
+The first of this famous collection of papers characterised the events recognisable by an artificial neural network. That is, Kleene introduced the _regular expressions_. Fifty years later, _Introduction to Automata Theory, Languages, and Computation_ (2006) had this to say.
 
 > [__…__] in 1979, automata and language theory was still an area of active research. [__…__] Today, there is little direct research in automata theory (as opposed to its applications),and thus little motivation for us to retain the succinct, highly mathematical tone of the 1978 book.
 
-This viewpoint is a bit sweeping (see e.g. <ExtLink href="https://eatcs.org/index.php/best-icalp-paper">ICALP Track B</ExtLink>). 
-But it is fair to say the foundational results concerning finite machines have remained stable.
+<!-- TODO
+  - reference Brzozowski/Pin/Straubing work
+  - reference OBDDs (post 1970), although this an application
+  - but not much research @ foundations i.e. det/nondet/regex
+  - ANNs tend to be acyclic layers (Kleene ignored)
+  - algebraic automata theory not helpful in applications
+    e.g. Krohn-rhodes decomposition too large
+  - missing a "nice" mathematical theory of complexity
+    e.g. ANN much more succinct than dfa,
+    e.g. but nfas allow superstates
+-->
+
+This viewpoint is a bit sweeping (e.g. <ExtLink href="https://eatcs.org/index.php/best-icalp-paper">ICALP Track B</ExtLink>). 
+Nevertheless, there's been relatively little research concerning finite machines and regular languages.
 
