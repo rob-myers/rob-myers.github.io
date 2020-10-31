@@ -10,7 +10,7 @@ const RootLayout: React.FC = ({ children }) => {
   return (
     <section className={css.root}>
       <Head>
-        <title>game ai blog</title>
+        <title>behave yr</title>
       </Head>
       <div className={css.content}>
         <div className={css.header}>
@@ -26,16 +26,16 @@ const RootLayout: React.FC = ({ children }) => {
             </svg>
           </h1>
           <div className={css.links}>
-            <Link href="/">
+            <Link href="/" scroll={false}>
               <a className={classNames({ [css.enabled]: router.pathname === '/' })}>blog</a>
             </Link>
-            <Link href="/defs">
+            <Link href="/defs " scroll={false}>
               <a className={classNames({ [css.enabled]: router.pathname === '/defs' })}>defs</a>
             </Link>
-            <Link href="/meta">
+            <Link href="/meta" scroll={false}>
               <a className={classNames({ [css.enabled]: router.pathname === '/meta' })}>meta</a>
             </Link>
-            <Link href="/demo">
+            <Link href="/demo" scroll={false}>
               <a className={classNames({ [css.enabled]: router.pathname === '/demo' })}>demo</a>
             </Link>
           </div>
