@@ -1,3 +1,34 @@
+export default (api: Api): Config => {
+  api.cache(true);
+
+  return {
+    presets: [
+      [
+        'next/babel',
+        {
+          'preset-env': {},
+          'transform-runtime': {},
+          'styled-jsx': {},
+          'class-properties': {},
+          '@emotion/babel-preset-css-prop': {},
+        },
+      ],
+    ],
+    plugins: [
+      [
+        'module-resolver',
+        {
+          'root': ['./'],
+          'alias': {
+            '@components': './components',
+            '@store': './store',
+          }
+        }
+      ]
+    ]
+  };
+};
+
 interface Api {
   version: string;
   cache: Function & {
@@ -17,33 +48,3 @@ interface Config {
   presets: object[];
   plugins: (string | object)[];
 }
-
-export default (api: Api): Config => {
-  api.cache(true);
-
-  return {
-    presets: [
-      [
-        'next/babel',
-        {
-          'preset-env': {},
-          'transform-runtime': {},
-          'styled-jsx': {},
-          'class-properties': {}
-        },
-      ],
-    ],
-    plugins: [
-      [
-        'module-resolver',
-        {
-          'root': ['./'],
-          'alias': {
-            '@components': './components',
-            '@store': './store',
-          }
-        }
-      ]
-    ]
-  };
-};

@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 
 import useTestStore from '@store/test.store';
 import Portals from '@components/portals';
+import globalStyles from '@components/style/global.style';
 
 import 'xterm/css/xterm.css';
 
@@ -25,26 +26,15 @@ const RootApp: React.FC<RootProps> = ({
     })();
   }, []);
 
-  return (
-    <>
+  return <>
       <Head>
         <link rel="shortcut icon" href="/favicon.ico" />
-        <style
-          //@ts-ignore
-          global="true"
-        >
-        {`
-          body {
-            margin: 0px;
-          }
-        `}
-        </style>
       </Head>
       <Portals>
+        {globalStyles}
         <Component {...pageProps} />
       </Portals>
-    </>
-  );
+  </>;
 };
 
 interface RootProps extends AppInitialProps {
