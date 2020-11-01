@@ -1,5 +1,5 @@
-<!-- import { Icon } from '@components/style/ui.style'; -->
-import ExtLink from '@components/ui/ext-link'
+import Ext from '@components/ui/ext-link'
+import { Icon } from '@components/style/ui.style';
 
 # Behaviour and the Brain
 
@@ -9,12 +9,11 @@ The preface of _Automata Studies_ (1956) made a bold prediction.
 
 > Recent progress in various related fields leads to an optimistic view toward the eventual and not too remote solution of the analytic and synthetic problems.
 
-The first of this famous collection of papers characterised the events recognisable by an artificial neural network. That is, Kleene introduced the _regular expressions_. Fifty years later, _Introduction to Automata Theory, Languages, and Computation_ (2006) had this to say.
+The first paper in this famous collection characterised the events recognisable by an artificial neural network. That is, Stephen Kleene introduced the _regular expressions_. Fifty years later, the third edition of _Introduction to Automata Theory, Languages, and Computation_ (2006) had this to say.
 
 > [__…__] in 1979, automata and language theory was still an area of active research. [__…__] Today, there is little direct research in automata theory (as opposed to its applications),and thus little motivation for us to retain the succinct, highly mathematical tone of the 1978 book.
 
 <!-- TODO
-  - reference Brzozowski/Pin/Straubing work
   - reference OBDDs (post 1970), although this an application
   - but not much research @ foundations i.e. det/nondet/regex
   - ANNs tend to be acyclic layers (Kleene ignored)
@@ -25,6 +24,12 @@ The first of this famous collection of papers characterised the events recognisa
     e.g. but nfas allow superstates
 -->
 
-This viewpoint is a bit sweeping (e.g. <ExtLink href="https://eatcs.org/index.php/best-icalp-paper">ICALP Track B</ExtLink>). 
-Nevertheless, there's been relatively little research concerning finite machines and regular languages.
+Although <Icon title="the above">⬆️</Icon> is heavy-handed, automata theory is no longer the research frontier it once was. It _is_ an active research area (e.g. <Ext href="https://eatcs.org/index.php/best-icalp-paper">ICALP</Ext>, <Ext href="https://link.springer.com/conference/fossacs">FoSSaCS</Ext>, <Ext href="http://lics.siglog.org/">LiCS</Ext>) but it is _not_ driven by clearly defined open problems. Well-established problems exist e.g. those presented by Brzozowski in <Ext href="https://www.sciencedirect.com/science/article/pii/B9780121153502500075">1979</Ext> and reappraised in <Ext href="https://hal.archives-ouvertes.fr/hal-01614375v2/document">2015</Ext>, but these conjectures are only on the radar of a select few. Automata theory no longer pursues the two questions posed by _Automata Studies_, nor have they been replaced by refined questions of a similar universal appeal.
 
+What happened?
+
+<!-- The question moved into AI and Computational Complexity -->
+
+<!-- - The questions posed by Automata Studies have universal appeal.
+- Artificial Intelligence has PAC Learning
+- Computational Complexity has the P vs NP question. -->
