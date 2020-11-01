@@ -173,19 +173,6 @@ class GeomService {
     return p instanceof Array && p.every(p => this.isVectorJson(p));
   }
 
-  moveToXY(obj: THREE.Object3D, position: Geom.VectorJson) {
-    obj.position.set(position.x, position.y, obj.position.z);
-  }
-
-  projectBox3XY({ min, max }: THREE.Box3): Geom.Rect {
-    return new Geom.Rect(
-      Number(min.x.toFixed(2)),
-      Number(min.y.toFixed(2)),
-      Number((max.x - min.x).toFixed(2)),
-      Number((max.y - min.y).toFixed(2)),
-    );
-  }
-
   outset(poly: Geom.Polygon, amount: number) {
     return this.inset(poly, -amount);
   }
