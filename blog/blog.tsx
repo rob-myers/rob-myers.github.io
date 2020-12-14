@@ -1,4 +1,4 @@
-import Blog1 from './1/blog-1.mdx';
+import Blog1 from './entries/blog-1.mdx';
 import css from './blog.scss';
 
 const BlogRoot: React.FC = () => {
