@@ -3,22 +3,43 @@
 Biology has revealed our machine-like nature:
 
 - our _genome_ is a word with approximately 64 billion letters.
-- our _bodies_ are amalgams of predictable structures.
+- our _bodies_ are amalgams of (relatively) predictable structures.
 - our _brains_ represent information using networks of neurons.
 
-But how do such structural properties lead to our emergent behaviour?
+We, and all other animals of this world, are miraculous mechanisms.
+But the emergence of our collective behaviour from mechanical underpinnings remains a deep mystery.
+One objective of this website is to indirectly attack this problem.
+Rather than attempting to model the particulars, we present a new richer theory of finite-state-machines by connecting _algebraic automata theory_ to _nondeterministic state complexity_.
 
-This is not an original question. It was a driving force during Computer Science's genesis in the 1930s, 40s and 50s.
-Alan Turing and Alonzo Church independently conceived what an _algorithm_ was in 1936.
-Warren McCulloch and Walter Pitts defined _artificial neural networks_ in 1943.
-Stephen Kleene defined the _regular languages_ in 1951.
-Each defined a new concept and proved it was _expressive_.
+<!-- TODO latex macros -->
+<!-- TODO less technical presentation  -->
 
-- Halting Turing machines capture _solvable yes/no-answer problems concerning any fixed class of finitely representable structures_.
-- Church's lambda calculus also captured the _solvable decision problems_.
-- Artificial neural networks can express ...
-- Kleene's regular languages capture the _events recognisable by an artificial neural network_.
+In this theory, each cleverly constructed machine with behaviour $L \subseteq \Sigma^*$ yields a small biclique edge-covering $\mathscr{C}$ of a natural bipartite graph $\mathcal{SD}_L\subseteq\mathsf{LD}(L)\times\mathsf{syn}(L)$. Crucially, the $\mathscr{C}$ arising in this way are precisely those satisfying:
+$$
+\mathcal{H} ; \delta_a\text{\u{}} = \mathcal{R}_a ; \mathcal{H}
+\qquad
+(a \in \Sigma)
+$$
+where (a) $\mathcal{H}(A \times B, [v]) :\iff v \in B$, (b) $\delta_a$ is right-multiplication in $L$'s syntactic monoid, and (c) $\mathcal{R}_a(A_1 \times B_1,  A_2 \times B_2) :\iff \delta_a[B_2] \subseteq B_1$
 
-```
-ok
-```
+
+<!-- Let us turn to Computer Science in the 1930s, 40s and 50s.
+Church and Turing independently conceived what an _algorithm_ was in 1936.
+McCulloch and Pitts defined _artificial neural networks_ in 1943 and compared them to Turing machines.
+Stephen Kleene defined the _regular languages_ in 1951, capturing the events recognisable by an artificial neural network. -->
+
+<!-- Correspondence to complexity-theory/artificial-intelligence/programming-languages -->
+
+<!-- Each defined a new concept and proved it was _expressive_.
+
+- Church and Turing captured the _solvable_ `yes|no`_-answer problems concerning any fixed class of finitely representable structures_.
+- McCulloch and Pitts showed ...
+- Kleene captured the _events recognisable by an artificial neural network_. -->
+
+
+
+<!-- In _Automata Studies_ (1956) Claude Shannon and John McCarthy made a bold prediction.
+
+> Among the most challenging scientific questions of our time are the corresponding analytic and synthetic problems: How does the brain function? Can we design a machine which will simulate a brain? [__…__]
+
+> Recent progress in various related fields leads to an optimistic view toward the eventual and not too remote solution of the analytic and synthetic problems. -->

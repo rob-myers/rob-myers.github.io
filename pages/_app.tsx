@@ -9,6 +9,7 @@ import Portals from '@components/portals';
 import globalStyles from '@components/style/global.style';
 
 import 'xterm/css/xterm.css';
+import 'katex/dist/katex.min.css';
 
 const RootApp: React.FC<RootProps> = ({
   Component,

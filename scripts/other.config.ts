@@ -1,6 +1,8 @@
-
 import webpack from 'webpack';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 import { WebpackCtxt } from './next.model';
+
 
 export default function(options: WebpackCtxt): webpack.Configuration {
 
@@ -21,8 +23,13 @@ export default function(options: WebpackCtxt): webpack.Configuration {
             {
               loader: '@mdx-js/loader',
               options: {
-                // ...
-              }
+                remarkPlugins: [
+                  [remarkMath, { /* options */ }],
+                ],
+                rehypePlugins: [
+                  [rehypeKatex, {/* options */}],
+                ],
+              },
             },
           ],
         }
