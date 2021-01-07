@@ -6,7 +6,7 @@
   .content {
     @media (min-width: 1284px) {
       margin-top: 30px;
-      border-left: 1px solid rgba(0, 0, 0, 0.5);
+      border-left: 1px solid rgba(0, 0, 0, 1);
     }
   }
 
@@ -14,11 +14,16 @@
     background: #000;
     padding-left: 8px;
     padding-bottom: 12px;
-
+    border-bottom: 4px solid #eee;
+    @media (max-width: 1284px) {
+      border-top: 4px solid #777;
+    }
+    
     @media (min-width: 600px) {
       padding-left: 20px;
+    }
+    @media (min-width: 1284px) {
       padding-top: 10px;
-      margin-bottom: 16px;
     }
   }
 
@@ -26,12 +31,17 @@
     margin: 0;
 
     .svg-title {
-      max-height: 80px;
-      .text {
-        fill: #eee;
-        stroke: none;
-        font: bold 64px sans-serif;
-        font-weight: lighter;
+      color: #eee;
+      stroke: none;
+      font: lighter 36px sans-serif;
+      margin: 6px 0;
+
+      @media (max-width: 600px) {
+        font: lighter 28px sans-serif;
+      }
+
+      .subatomic {
+        color: #faa;
       }
     }
   }
@@ -86,6 +96,7 @@
 
 .links {
   display: flex;
+  padding: 4px 0 0;
 
   font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
   font-size: 12px;

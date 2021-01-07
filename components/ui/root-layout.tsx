@@ -10,20 +10,16 @@ const RootLayout: React.FC = ({ children }) => {
   return (
     <section className={css.root}>
       <Head>
-        <title>behave yr</title>
+        <title>subatomic theory of finite machines</title>
       </Head>
       <div className={css.content}>
         <div className={css.header}>
           <h1 className={css.title}>
-            <svg
-              className={css.svgTitle}
-              viewBox="0 -60 420 80"
-              preserveAspectRatio="xMinYMin"
-            >
-              <text className={css.text}>
-                behave yr
-              </text>
-            </svg>
+              <div className={css.svgTitle}>
+                the
+                <span className={css.subatomic}> subatomic </span>
+                theory of finite machines
+              </div>
           </h1>
           <div className={css.links}>
             <Link href="/" scroll={false}>
