@@ -10,29 +10,29 @@ const RootLayout: React.FC = ({ children }) => {
   return (
     <section className={css.root}>
       <Head>
-        <title>subatomic theory of finite machines</title>
+        <title>
+            subatomic theory of finite machines
+        </title>
       </Head>
       <div className={css.content}>
         <div className={css.header}>
           <h1 className={css.title}>
-              <div className={css.svgTitle}>
-                the
-                <span className={css.subatomic}> subatomic </span>
-                theory of finite machines
-              </div>
+              the
+              <span className={css.subatomic}> subatomic </span>
+              theory of finite machines
           </h1>
           <div className={css.links}>
             <Link href="/" scroll={false}>
-              <a className={classNames({ [css.enabled]: router.pathname === '/' })}>blog</a>
+              <a className={classNames({ [css.enabled]: router.pathname === '/' })} title="goto blog">blog</a>
             </Link>
             <Link href="/defs " scroll={false}>
-              <a className={classNames({ [css.enabled]: router.pathname === '/defs' })}>defs</a>
+              <a className={classNames({ [css.enabled]: router.pathname === '/defs' })} title="view definitions">defs</a>
             </Link>
             <Link href="/meta" scroll={false}>
-              <a className={classNames({ [css.enabled]: router.pathname === '/meta' })}>meta</a>
+              <a className={classNames({ [css.enabled]: router.pathname === '/meta' })} title="about me">meta</a>
             </Link>
             <Link href="/demo" scroll={false}>
-              <a className={classNames({ [css.enabled]: router.pathname === '/demo' })}>demo</a>
+              <a className={classNames({ [css.enabled]: router.pathname === '/demo' })} title="view demos">demo</a>
             </Link>
           </div>
         </div>

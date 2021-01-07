@@ -1,14 +1,13 @@
 .root {
-  padding: 8px;
 
   @media (min-width: 600px) {
     border: none;
-    padding-left: 20px;
+    // padding-left: 20px;
     padding-right: 20px;
   }
   @media (min-width: 1268px) {
     padding-right: 0px;
-    padding-left: 28px;
+    // padding-left: 28px;
   }
 
   font-family: sans-serif;
