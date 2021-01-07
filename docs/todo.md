@@ -1,3 +1,3 @@
 # TODO
 
-- [ ] remove graph library
+- [x] remove graph library

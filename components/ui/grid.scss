@@ -1,13 +1,7 @@
-.graphAndTerm {
-  height: 400px;
-  background: #000;
+.terminal {
+  width: 600px;
 
-  display: grid;
-  grid-template-columns: 50% 50%;
-  grid-template-rows: auto;
-
-  @media (max-width: 800px) {
-    grid-template-columns: 100%;
-    grid-template-rows: 300px 300px;
+  @media (max-width: 600px) {
+    width: 500px;
   }
 }

@@ -1,5 +1,7 @@
 .root {
   padding: 12px;
+  display: grid;
+  border: 10px solid #eee;
 
   .title {
     font-size: 48px;
@@ -11,6 +13,7 @@
     .subatomic {
       color: #900;
     }
+
   }
 
   .links {
@@ -19,10 +22,11 @@
     
     a {
       color: #33d;
+
+      &.enabled {
+        font-weight: bold;
+      }
     }
 
-    .enabled {
-      font-weight: bold;
-    }
   }
 }
