@@ -36,6 +36,7 @@ const RootLayout: React.FC = ({ children }) => {
               theory of finite machines
           </h1>
         </div>
+        <div className={css.separator} />
         <div className={css.body}>
           {children}
         </div>

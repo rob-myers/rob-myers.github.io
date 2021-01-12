@@ -6,7 +6,7 @@
 
   .title {
     font-size: 64px;
-    margin: 24px 0 32px 0;
+    margin: 24px 0 24px;
     .subatomic {
       color: #900;
     }
@@ -22,19 +22,34 @@
     }
   }
 
+  .separator {
+    height: 2px;
+    background: rgba(0, 0, 100, 0.4);
+  }
+
   .links {
-    font-size: 16px;
-    width: 280px;
+    font-size: 14px;
+    max-width: 400px;
 
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    padding: 0 0 0 4px;
+    padding: 4px 12px;
+    background: #000;
+    border-radius: 5px;
+
 
     a {
-      color: #777;
+      color: #aaa;
+      text-decoration: none;
+      text-align: center;
+      padding: 2px;
+      // border: 1px dashed #000;
+
       &.enabled {
-        text-decoration: none;
-        color: #000;
+        color: #fcc;
+      }
+      &:hover:not(.enabled) {
+        color: #fff;
       }
     }
 
