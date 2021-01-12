@@ -1,12 +1,40 @@
 .root {
   padding: 24px 48px;
-  border: 12px solid #eee;
+  border: 32px solid #eee;
+  border-width: 0 32px;
   display: grid;
   font-family: sans-serif;
+  height: 100%;
+
+  .links {
+    font-size: 14px;
+    border-bottom: 12px solid #eee;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding: 8px 12px;
+    background: #000;
+    border-radius: 5px;
+
+    a {
+      color: #aaa;
+      text-decoration: none;
+      text-align: center;
+      padding: 2px;
+      // border: 1px dashed #000;
+
+      &.enabled {
+        color: #fdd;
+      }
+      &:hover:not(.enabled) {
+        color: #fff;
+      }
+    }
+  }
 
   .title {
-    font-size: 64px;
-    margin: 24px 0 28px;
+    font-size: 68px;
+    margin: 32px 0;
     .subatomic {
       color: #900;
     }
@@ -14,7 +42,7 @@
 
   @media (max-width: 600px) {
     padding: 16px 12px;
-    border: 8px solid #eee;
+    border-width: 0 8px;
 
     .title {
       font-size: 48px;
@@ -25,33 +53,5 @@
   .separator {
     height: 1px;
     background: rgba(0, 0, 100, 0.2);
-  }
-
-  .links {
-    font-size: 14px;
-    max-width: 400px;
-
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    padding: 4px 12px;
-    background: #000;
-    border-radius: 5px;
-
-
-    a {
-      color: #aaa;
-      text-decoration: none;
-      text-align: center;
-      padding: 2px;
-      // border: 1px dashed #000;
-
-      &.enabled {
-        color: #fcc;
-      }
-      &:hover:not(.enabled) {
-        color: #fff;
-      }
-    }
-
   }
 }
