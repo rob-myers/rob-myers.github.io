@@ -1,30 +1,40 @@
 .root {
-  padding: 12px;
+  padding: 24px 48px;
+  border: 12px solid #eee;
   display: grid;
-  border: 10px solid #eee;
+  font-family: sans-serif;
 
   .title {
-    font-size: 48px;
-    margin: 12px 0;
-    @media (max-width: 600px) {
-      margin: 0 0 12px;
-    }
-
+    font-size: 64px;
+    margin: 24px 0 32px 0;
     .subatomic {
       color: #900;
     }
+  }
 
+  @media (max-width: 600px) {
+    padding: 16px 12px;
+    border: 8px solid #eee;
+
+    .title {
+      font-size: 48px;
+      margin: 16px 0;
+    }
   }
 
   .links {
-    display: grid;
-    grid-template-columns: 45px 45px 45px 45px;
-    
-    a {
-      color: #33d;
+    font-size: 16px;
+    width: 280px;
 
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    padding: 0 0 0 4px;
+
+    a {
+      color: #777;
       &.enabled {
-        font-weight: bold;
+        text-decoration: none;
+        color: #000;
       }
     }
 

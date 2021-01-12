@@ -11,16 +11,11 @@ const RootLayout: React.FC = ({ children }) => {
     <section className={css.root}>
       <Head>
         <title>
-            subatomic theory of finite machines
+            the subatomic theory of finite machines
         </title>
       </Head>
       <div className={css.content}>
         <div className={css.header}>
-          <h1 className={css.title}>
-              the
-              <span className={css.subatomic}> subatomic </span>
-              theory of finite machines
-          </h1>
           <div className={css.links}>
             <Link href="/" scroll={false}>
               <a className={classNames({ [css.enabled]: router.pathname === '/' })} title="goto blog">blog</a>
@@ -35,6 +30,11 @@ const RootLayout: React.FC = ({ children }) => {
               <a className={classNames({ [css.enabled]: router.pathname === '/demo' })} title="view demos">demo</a>
             </Link>
           </div>
+          <h1 className={css.title}>
+              The
+              <span className={css.subatomic}> subatomic </span>
+              theory of finite machines
+          </h1>
         </div>
         <div className={css.body}>
           {children}
