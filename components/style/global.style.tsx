@@ -4,6 +4,7 @@ const globalStyles = <Global
   styles={css`
     body {
       margin: 0;
+      background: #eee;
     }
   `}
 />

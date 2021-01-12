@@ -1,10 +1,11 @@
 .root {
+  max-width: 1248px;
   padding: 24px 48px;
-  border: 32px solid #eee;
-  border-width: 0 32px;
+  margin: 8px auto;
+
   display: grid;
   font-family: sans-serif;
-  height: 100%;
+  background: white;
 
   .links {
     font-size: 14px;
@@ -21,7 +22,6 @@
       text-decoration: none;
       text-align: center;
       padding: 2px;
-      // border: 1px dashed #000;
 
       &.enabled {
         color: #fdd;
@@ -33,7 +33,7 @@
   }
 
   .title {
-    font-size: 68px;
+    font-size: 64px;
     margin: 32px 0;
     .subatomic {
       color: #900;
@@ -42,7 +42,7 @@
 
   @media (max-width: 600px) {
     padding: 16px 12px;
-    border-width: 0 8px;
+    margin: 0 8px;
 
     .title {
       font-size: 48px;
