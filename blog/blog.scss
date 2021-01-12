@@ -3,10 +3,10 @@
   font-family: sans-serif;
   font-weight: lighter;
   font-size: 18px;
-  padding-top: 18px;
-
+  
   @media (min-width: 600px) {
     border: none;
+    padding-top: 8px;
     padding-right: 20px;
   }
   @media (min-width: 1268px) {

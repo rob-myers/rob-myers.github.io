@@ -6,7 +6,7 @@
 
   .title {
     font-size: 64px;
-    margin: 24px 0 24px;
+    margin: 24px 0 28px;
     .subatomic {
       color: #900;
     }
@@ -18,13 +18,13 @@
 
     .title {
       font-size: 48px;
-      margin: 16px 0;
+      margin: 16px 0 20px;
     }
   }
 
   .separator {
-    height: 2px;
-    background: rgba(0, 0, 100, 0.4);
+    height: 1px;
+    background: rgba(0, 0, 100, 0.2);
   }
 
   .links {
