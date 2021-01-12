@@ -406,8 +406,11 @@ export class TtyXterm {
 
   protected onMessage(msg: MessageFromShell | string) {
     if (typeof msg === 'string') {
-      return this.queueCommands(msg.split('\n')
+      this.queueCommands(msg.split('\n')
         .map(line => ({ key: 'line', line: `${ansiOther}${line}${ansiReset}` })));
+      return;
+    } else if (msg == undefined) {// e.g. call '() => null'
+      return;
     }
 
     switch (msg.key) {
