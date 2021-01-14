@@ -1,21 +1,43 @@
+import Ext from '@components/ui/ext-link'
+
 # In the beginning
 
 This site has two objectives:
 
-- develop a new theory of finite state machines.
-- apply the respective automata-theoretic techniques to web development.
+- to develop a new theory of finite state machines.
+- to propose an automata-theoretic approach to web development.
 
-In what sense is it a _theory_? In what sense is it _new_?
+The first objective is based on ten years of work concerning nondeterministic finite automata (e.g. <Ext href="https://link.springer.com/chapter/10.1007%2F978-3-662-44124-4_11">a</Ext>, <Ext href="https://www.sciencedirect.com/science/article/pii/S1571066114000693?via%3Dihub">b</Ext> and <Ext href="https://arxiv.org/abs/2101.03039">c</Ext>). The second objective reflects my current incarnation as a frontend developer. But in what sense do we provide a _theory_? In what sense is it _new_?
 
-Well, there are three new core concepts. Let's set the scene.
+Let's set the scene.
 
-### The stag at the heart of the wood
+### The hart of the wood
 
 <!-- TODO interactivity begins -->
 
-At the heart of Computer Science lurks regular languages, deterministic finite automata, regular expressions and nondeterministic finite automata. Informally, a _regular language_ is a finite state behaviour represented as a possibly infinite set of words (the _runs_ of the system). _Deterministic finite automata_ and _nondeterministic finite automata_ are "machines" whose behaviour is a regular language. A _regular expression_ is a well-formed program whose behaviour is a regular language. It is more common to say the machine or expression _accepts_ a regular language.
+At the heart of Computer Science lurks regular languages, deterministic finite automata, regular expressions and nondeterministic finite automata. Informally, the _regular languages_ are the behaviours of finite state machines. Each regular language is a possibly infinite set of finite words (the _runs_ of the system). _Deterministic finite automata_ and _nondeterministic finite automata_ are important classes of finite state machines. A _regular expression_ is a well-formed program which inductively defines a regular language. Collectively, these concepts
+
+TODO illustrations
+- dfa/nfa/regex `/foo|bar/`
+- nfa -> dfa
+- regex -> nfa
+- nfa -> regex
+
+<!--
+  dfa: button accepting ridiculous terms and conditions spread over several panes
+  nfa: (union + alphabet embed) show message "you've signed away your freedom" on final submit
+  nfa: (intersect+) can also go backwards
+  nfa: (intersect+) can disable button until scrolled to bottom
+
+  should all be nuclear languages i.e. components + union/intersection
+-->
+
+Motivating nfa theory: simplest theory modeling relationship between specification (regular language $L$) and implementations (nondeterministic automata accepting $L$)
+
+Motivating nfa practice: regex are essentially nfas; unknown component problem; automata learning; boolean decision diagrams
 
 Regular expressions can be directly viewed as nondeterministic automata without any real size increase (TODO example), although not conversely (TODO example).
 
+### The mockingbird
 
 First, there is a new way to measure nondeterministic automata called [_nondeterministic syntactic complexity_](https://arxiv.org/abs/2101.03039).
