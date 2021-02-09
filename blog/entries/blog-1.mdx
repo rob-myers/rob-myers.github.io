@@ -2,12 +2,37 @@ import Ext from '@components/ui/ext-link'
 
 # In the beginning
 
-This site has two objectives:
+Biology has revealed our machine-like nature:
 
-- to develop a new theory of finite state machines.
-- to propose an automata-theoretic approach to web development.
+- our _genome_ is a word with approximately 64 billion letters.
+- our _bodies_ are amalgams of (relatively) predictable structures.
+- our _brains_ represent information using networks of neurons.
 
-The first objective is based on ten years of work concerning nondeterministic finite automata (e.g. <Ext href="https://link.springer.com/chapter/10.1007%2F978-3-662-44124-4_11">a</Ext>, <Ext href="https://www.sciencedirect.com/science/article/pii/S1571066114000693?via%3Dihub">b</Ext> and <Ext href="https://arxiv.org/abs/2101.03039">c</Ext>). The second objective reflects my current incarnation as a frontend developer. But in what sense do we provide a _theory_? In what sense is it _new_?
+The emergence of our collective behaviour from mechanical underpinnings remains a deep mystery.
+To understand how the complex arises from  
+
+
+One objective of this website is to indirectly attack this problem.
+Rather than attempting to model the particulars, we present a new richer theory of finite-state-machines. This is achieved by building a bridge between _algebraic automata theory_ and _nondeterministic state complexity_.
+
+<br/>
+<br/>
+
+
+The site presents a new theory of finite state machines.
+
+But in what sense do we provide a _theory_? In what sense is it _new_?
+
+ (see e.g. <Ext href="https://arxiv.org/abs/2101.03039">a</Ext>, <Ext href="https://link.springer.com/chapter/10.1007%2F978-3-662-44124-4_11">b</Ext> and <Ext href="https://www.sciencedirect.com/science/article/pii/S1571066114000693?via%3Dihub">c</Ext>).
+
+<!--
+  imaginative outlet provided by e.g.
+  - illustrating syntactic monoid
+  - illustrating subset construction
+  - providing software to investigate these concepts
+
+  emphasize connection between algebraic automata theory to nondeterministic complexity.
+-->
 
 Let's set the scene.
 
@@ -15,7 +40,14 @@ Let's set the scene.
 
 <!-- TODO interactivity begins -->
 
-At the heart of Computer Science lurks regular languages, deterministic finite automata, regular expressions and nondeterministic finite automata. Informally, the _regular languages_ are the behaviours of finite state machines. Each regular language is a possibly infinite set of finite words (the _runs_ of the system). _Deterministic finite automata_ and _nondeterministic finite automata_ are important classes of finite state machines. A _regular expression_ is a well-formed program which inductively defines a regular language. Collectively, these concepts
+At the heart of Computer Science lurks regular languages, deterministic finite automata, regular expressions and nondeterministic finite automata. Informally, the _regular languages_ are the behaviours of finite state machines. Each regular language is a possibly infinite set of finite words (the _runs_ of the system). _Deterministic finite automata_ and _nondeterministic finite automata_ are important classes of finite state machines. A _regular expression_ is a well-formed program which inductively defines a regular language. These four concepts provide a microcosm of programming in general.
+
+concept  | may be thought of as |
+-------- | -------------- |
+regular language | behaviour; denotational semantics | 
+deterministic finite automaton | exhaustive flowchart; operational semantics   | 
+regular expression | program | 
+nondeterministic finite automaton | compiled program   | 
 
 TODO illustrations
 - dfa/nfa/regex `/foo|bar/`

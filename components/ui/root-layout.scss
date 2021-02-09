@@ -1,6 +1,6 @@
 .root {
   max-width: 1248px;
-  padding: 24px 48px;
+  padding: 32px 48px;
   margin: 8px auto;
 
   display: grid;
@@ -9,32 +9,35 @@
 
   .links {
     font-size: 14px;
-    border-bottom: 12px solid #eee;
+    border-bottom: 14px solid #000;
+    border: 1px solid #ccc;
 
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     padding: 8px 12px;
-    background: #000;
+    background: #eee;
     border-radius: 5px;
 
     a {
-      color: #aaa;
+      color: #333;
       text-decoration: none;
       text-align: center;
-      padding: 2px;
 
       &.enabled {
-        color: #fdd;
+        color: #000;
+        text-decoration: underline;
       }
       &:hover:not(.enabled) {
-        color: #fff;
+        color: #000;
+        text-decoration: underline;
       }
     }
   }
 
   .title {
-    font-size: 64px;
-    margin: 32px 0;
+    font-size: 72px;
+    max-width: 1024px;
+    margin: 32px 0 48px;
     .subatomic {
       color: #900;
     }

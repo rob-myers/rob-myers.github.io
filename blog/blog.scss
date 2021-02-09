@@ -14,7 +14,17 @@
   }
 
   h3 {
-    color: #445;
+    color: #334;
+  }
+
+  table {
+    width: 100%;
+  }
+  thead {
+    th {
+      text-align: left;
+      color: #445;
+    }
   }
 
   code {
