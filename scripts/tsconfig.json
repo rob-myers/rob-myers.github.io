@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "target": "ES2015",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "isolatedModules": true,
+    "outDir": "..",
+    "typeRoots": [
+      "../types"
+    ],
+    "types": [
+      "node"
+    ]
+  },
+  "exclude": [
+    "node_modules",
+    "./gh-pages.ts"
+  ],
+  "include": [
+    "./**/*.ts",
+    "../types/**/*.ts"
+  ]
+}
