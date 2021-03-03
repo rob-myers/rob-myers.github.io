@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { KeyedLookup } from 'model/generic.model';
-import { addToLookup, removeFromLookup } from './store.util';
+import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import { Vector2 } from 'model/geom/vec2.model';
 
 export type State = {
@@ -10,7 +10,9 @@ export type State = {
 
   readonly api: {
     createStage: (stageKey: string) => void;
+    getStage: (stageKey: string) => Stage;
     removeStage: (stageKey: string) => void;
+    updateStage: (stageKey: string, updates: Partial<Stage>) => void;
   }
 }
 
@@ -25,7 +27,7 @@ interface PersistedStage {
   // TODO
 }
 
-const useStore = create<State>(devtools(persist((set, _get) => ({
+const useStore = create<State>(devtools(persist((set, get) => ({
   stage: {},
   persist: {},
   api: {
@@ -36,9 +38,17 @@ const useStore = create<State>(devtools(persist((set, _get) => ({
         offset: Vector2.zero,
       }, stage),
     })),
+    getStage: (stageKey) => {
+      return get().stage[stageKey];
+    },
     removeStage: (stageKey) => set(({ stage }) => ({
       stage: removeFromLookup(stageKey, stage),
     })),
+    updateStage: (stageKey, updates) => {
+      set(({ stage }) => ({
+        stage: updateLookup(stageKey, stage, () => updates),
+      }));
+    },
   },
 }), {
   name: 'stage',
