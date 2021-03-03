@@ -6,6 +6,7 @@ import { Vector2 } from 'model/geom/vec2.model';
 
 export type State = {
   stage: KeyedLookup<Stage>;
+  persist: KeyedLookup<PersistedStage>;
 
   readonly api: {
     createStage: (stageKey: string) => void;
@@ -19,8 +20,14 @@ export type Stage = {
   offset: Vector2;
 };
 
+interface PersistedStage {
+  key: string;
+  // TODO
+}
+
 const useStore = create<State>(devtools(persist((set, _get) => ({
   stage: {},
+  persist: {},
   api: {
     createStage: (stageKey) => set(({ stage }) => ({
       stage: addToLookup({
@@ -36,7 +43,7 @@ const useStore = create<State>(devtools(persist((set, _get) => ({
 }), {
   name: 'stage',
   version: 1,
-  blacklist: ['api'],
+  blacklist: ['api', 'stage'],
 }), 'stage'));
 
 const api = useStore.getState().api;
