@@ -36,5 +36,4 @@ yarn-error.log*
 # locally generated config files via scripts/
 babel.config.js
 next.config.js
-styles.config.js
 misc.config.js

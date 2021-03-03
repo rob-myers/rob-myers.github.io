@@ -4,7 +4,6 @@ import webpackMerge from 'webpack-merge';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import WebpackBar from 'webpackbar';
 
-import configStyles from './styles.config';
 import configMisc from './misc.config';
 import { NextJsConfigCtxt, Phase, NextJsConfig, WebpackCtxt } from './next.model';
 
@@ -71,7 +70,6 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
             ),            
           ],          
         },
-        configStyles(options),
         configMisc(options),
       );
     }
