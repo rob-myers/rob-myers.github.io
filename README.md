@@ -1,4 +1,4 @@
-
+# Game AI Website
 
 ```sh
 # Local development
@@ -12,3 +12,5 @@ npx http-server
 ```
 
 > __NOTE__ files such as `next.config.js` are generated from `scripts/*` using `yarn next-cfg`.
+
+See the [plan](docs/plan.md).

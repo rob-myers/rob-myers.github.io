@@ -1,0 +1,8 @@
+.container {
+  height: 400px;
+}
+
+.container > div {
+  width: 100%;
+  padding: 4px;
+}

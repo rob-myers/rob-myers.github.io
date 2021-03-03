@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "strict": true,
     "baseUrl": ".",
+    "downlevelIteration": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -17,7 +18,11 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "typeRoots": [
+      "./node_modules/@types",
+      "types"
+    ]
   },
   "include": [
     "next-env.d.ts",

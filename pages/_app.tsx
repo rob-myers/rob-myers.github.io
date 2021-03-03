@@ -1,7 +1,9 @@
 import { NextComponentType, NextPageContext } from 'next';
 import { AppInitialProps } from 'next/app';
 import { Router } from 'next/router';
-import '../styles/globals.css'
+
+import 'xterm/css/xterm.css';
+import 'styles/globals.css'
 
 const MyApp: React.FC<RootProps> = ({ Component, pageProps }) => {
   return <Component {...pageProps} />
