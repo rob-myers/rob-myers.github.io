@@ -1,9 +1,9 @@
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import styles from 'styles/Home.module.css'
 
 export default function Home() {
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>rsrm</title>
         <link rel="icon" href="/favicon.ico" />
@@ -14,7 +14,7 @@ export default function Home() {
           Welcome
         </h1>
 
-        <p className={styles.description}>
+        <p>
           to this particular offering
         </p>
       </main>
