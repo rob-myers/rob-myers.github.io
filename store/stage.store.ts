@@ -36,6 +36,6 @@ const useStore = create<State>(devtools(persist((set, _get) => ({
 }), 'stage'));
 
 const api = useStore.getState().api;
-const useChartStore = Object.assign(useStore, { api });
+const useStageStore = Object.assign(useStore, { api });
 
-export default useChartStore;
+export default useStageStore;

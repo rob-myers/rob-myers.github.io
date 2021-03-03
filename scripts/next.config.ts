@@ -19,13 +19,7 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
         // Module aliases
         {
           resolve: {
-            alias: {
-              '@components': path.resolve(__dirname, 'components'),
-              '@store': path.resolve(__dirname, 'store'),
-              '@model': path.resolve(__dirname, 'model'),
-              '@public': path.resolve(__dirname, 'public'),
-              '@blog': path.resolve(__dirname, 'blog'),
-            }
+            alias: {},
           },
         },
         // Ignore tests
