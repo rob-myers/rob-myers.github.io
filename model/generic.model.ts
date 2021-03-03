@@ -5,6 +5,8 @@ export interface KeyedLookup<Value extends { key: K }, K extends string = string
   [key: string]: Value;
 }
 
+export type Triple<T> = [T, T, T];
+
 /** Clone serializable data `input`, e.g. not regexes. */
 export function deepClone<T>(input: T): T {
   return JSON.parse(JSON.stringify(input));
@@ -49,4 +51,13 @@ export function safeStringify(input: any) {
 
 export function flatten<T>(items: (T | T[])[]): T[] {
   return ([] as T[]).concat(...items);
+}
+
+/** Construct `x` modulo `modulus` ensuring positive */
+export function posModulo(x: number, modulus: number) {
+  return x < 0 ? modulus + x % modulus : x % modulus;
+}
+
+export function chooseRandomItem<T>(items: T[]) {
+  return items[Math.floor(items.length * Math.random())] || null;
 }

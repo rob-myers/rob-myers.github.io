@@ -2,6 +2,7 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { KeyedLookup } from 'model/generic.model';
 import { addToLookup, removeFromLookup } from './store.util';
+import { Vector2 } from 'model/geom/vec2.model';
 
 export type State = {
   stage: KeyedLookup<Stage>;
@@ -14,7 +15,8 @@ export type State = {
 
 export type Stage = {
   key: string;
-  // TODO
+  zoomFactor: number;
+  offset: Vector2;
 };
 
 const useStore = create<State>(devtools(persist((set, _get) => ({
@@ -23,6 +25,8 @@ const useStore = create<State>(devtools(persist((set, _get) => ({
     createStage: (stageKey) => set(({ stage }) => ({
       stage: addToLookup({
         key: stageKey,
+        zoomFactor: 1,
+        offset: Vector2.zero,
       }, stage),
     })),
     removeStage: (stageKey) => set(({ stage }) => ({

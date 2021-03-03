@@ -1,4 +1,4 @@
-import Stage from 'components/Stage'
+import Stage from 'components/stage/Stage'
 import Terminal from 'components/sh/Terminal'
 import Head from 'next/head'
 import styles from 'styles/Home.module.css'
@@ -20,8 +20,10 @@ export default function Home() {
           to this particular offering
         </p>
 
-        <Terminal sessionKey={'test'} />
-        <Stage stageKey={'test'} />
+        <section className={styles.termStage}>
+          <Terminal sessionKey={'test'} />
+          <Stage stageKey={'test'} />
+        </section>
       </main>
     </div>
   )
