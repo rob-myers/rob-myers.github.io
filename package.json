@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "yarn next-cfg && next -p 3002",
     "build": "yarn next-cfg && next build",
+    "export": "next export",
     "start": "yarn next-cfg && next start",
     "next-cfg": "tsc -p scripts"
   },
