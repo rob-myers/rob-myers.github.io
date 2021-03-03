@@ -2,6 +2,7 @@ import { useRef, useEffect } from 'react';
 // https://github.com/farfromrefug/react-xterm/blob/master/src/react-xterm.tsx
 import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import styles from 'styles/Terminal.module.css';
 
 const XTermComponent: React.FC<Props> = ({
   className,
@@ -38,7 +39,7 @@ const XTermComponent: React.FC<Props> = ({
   return (
     <div
       ref={containerRef}
-      className={className}
+      className={styles.xtermContainer}
       onKeyDown={stopKeysPropagating}
     />
   );

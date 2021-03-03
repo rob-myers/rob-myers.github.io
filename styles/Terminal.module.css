@@ -1,8 +1,13 @@
-.container {
+.root {
   height: 400px;
+  background: black;
 }
 
-.container > div {
+.xtermContainer {
+  height: inherit;
+}
+
+.xtermContainer > div {
   width: 100%;
   padding: 4px;
 }
