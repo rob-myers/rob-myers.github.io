@@ -5,6 +5,8 @@ export interface KeyedLookup<Value extends { key: K }, K extends string = string
   [key: string]: Value;
 }
 
+export type Pair<T> = [T, T];
+
 export type Triple<T> = [T, T, T];
 
 /** Clone serializable data `input`, e.g. not regexes. */
@@ -60,4 +62,16 @@ export function posModulo(x: number, modulus: number) {
 
 export function chooseRandomItem<T>(items: T[]) {
   return items[Math.floor(items.length * Math.random())] || null;
+}
+
+export function lookupFromValues<T extends { key: string }>(values: T[]): KeyedLookup<T> {
+  return values.reduce((agg, item) => ({ ...agg, [item.key]: item }), {} as KeyedLookup<T>);
+}
+
+export function tryParseJson(input: any) {
+  try {
+    return JSON.parse(input);
+  } catch (e) {
+    return null;
+  }
 }
