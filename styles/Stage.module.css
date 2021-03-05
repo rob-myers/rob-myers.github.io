@@ -3,13 +3,12 @@
   height: 100%;
   border: 1px solid #000;
   display: flex;
+  overflow: scroll;
 }
 
 .viewport {
-  height: 100%;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
+  height: 200%;
+  width: 200%;
 }
 
 .mouseRect {

@@ -37,3 +37,6 @@ yarn-error.log*
 babel.config.js
 next.config.js
 misc.config.js
+
+3d/*.blend
+3d/*.blend1
