@@ -1,25 +1,24 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import { Scene } from 'three';
 import { KeyedLookup } from 'model/generic.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
-import { Vector2 } from 'model/geom/vec2.model';
 
 export type State = {
-  stage: KeyedLookup<Stage>;
+  stage: KeyedLookup<StoredStage>;
   persist: KeyedLookup<PersistedStage>;
 
   readonly api: {
     createStage: (stageKey: string) => void;
-    getStage: (stageKey: string) => Stage;
+    getStage: (stageKey: string) => StoredStage;
     removeStage: (stageKey: string) => void;
-    updateStage: (stageKey: string, updates: Partial<Stage>) => void;
+    updateStage: (stageKey: string, updates: Partial<StoredStage>) => void;
   }
 }
 
-export type Stage = {
+export type StoredStage = {
   key: string;
-  zoomFactor: number;
-  offset: Vector2;
+  scene?: Scene;
 };
 
 interface PersistedStage {
@@ -34,8 +33,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     createStage: (stageKey) => set(({ stage }) => ({
       stage: addToLookup({
         key: stageKey,
-        zoomFactor: 1,
-        offset: Vector2.zero,
       }, stage),
     })),
     getStage: (stageKey) => {

@@ -1,9 +1,16 @@
-import { useEffect } from "react";
-import useStageStore from "store/stage.store";
-import StageGrid from "./StageGrid";
+import { getWindow } from "model/dom.model";
+import { useEffect, useRef, useState } from "react";
+import { CanvasContext } from "react-three-fiber";
+import useGeomStore from "store/geom.store";
+import useStageStore, { StoredStage } from "store/stage.store";
 import styles from 'styles/Stage.module.css';
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
+  const pixelRatio = useRef(getWindow()?.devicePixelRatio);
+  const [ctxt, setCtxt] = useState(null as null | CanvasContext);
+  const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
+  const stage = useStageStore<StoredStage | null>(({ stage }) => stage[stageKey]??null);
+
   useEffect(() => {
     useStageStore.api.createStage(stageKey);
     return () => {
@@ -11,24 +18,18 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     };
   }, [stageKey]);
 
-  const stage = useStageStore(({ stage }) =>
-    stageKey in stage ? stage[stageKey] : null
-  );
-  const zoomFactor = stage?.zoomFactor??1;
-  const scale = `scale(${zoomFactor})`;
+  useEffect(() => {
+    if (stage && ctxt?.gl) {
+      useStageStore.api.updateStage(stageKey, { scene: ctxt.scene });
+    }
+
+  }, [stage?.key, ctxt?.gl]);
+
 
   return (
     <section className={styles.root}>
       {stage && (
-        <svg className={styles.viewport}>
-          <g style={{ transform: scale }}>
-            <StageGrid
-              stageKey={stageKey}
-              zoomFactor={stage.zoomFactor}
-              offset={stage.offset} 
-            />
-          </g>
-        </svg>
+        null
       )}
     </section>
   );
