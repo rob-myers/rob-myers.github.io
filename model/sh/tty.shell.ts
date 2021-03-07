@@ -1,5 +1,5 @@
 import { testNever } from 'model/generic.model';
-import { Device, ShellIo, SigEnum } from './io.model';
+import { Device, ShellIo, SigEnum } from './io/io.model';
 import { FileWithMeta } from './parse.model';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
 import type * as Sh from './parse.model';
@@ -108,10 +108,15 @@ export class TtyShell implements Device {
     this.input = null;
   }
 
-  /**
-   * Transpile parsed code into runnable format, then run.
-   */
-  runInShell(parsed: FileWithMeta) {
+  async runParsed(parsed: FileWithMeta) {
+    const device = useSession.api.resolve(parsed.meta.stdOut);
+    const generator = semanticsService.File(parsed);
+    for await (const item of generator) {
+      await device.writeData(item);
+    }
+  }
+
+  async runInShell(parsed: FileWithMeta) {
     const sessionKey = this.sessionKey;
     // Must mutate to affect all descendents
     Object.assign<Sh.BaseMeta, Sh.BaseMeta>(parsed.meta, {
@@ -120,25 +125,7 @@ export class TtyShell implements Device {
       stdOut: this.key,
       stdErr: this.key,
     });
-    const transpiled = semanticsService.transpile(parsed);
-
-    return new Promise<void>((resolve, reject) => {
-      const _subscription = transpiled.subscribe({
-        next: (msg) => {
-          // console.log('received top-level', msg);
-          this.io.write(msg);
-        },
-        complete: () => {
-          console.log(`${sessionKey}: shell completed`)
-          resolve();
-        },
-        error: (err) => {
-          // Ctrl-C corresponds to null error
-          console.error(`${sessionKey}: shell terminated`, err);
-          reject(err);
-        },
-      });
-    });
+    await this.runParsed(parsed);
   }
 
   private storeSrcLine(srcLine: string) {

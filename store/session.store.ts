@@ -2,12 +2,15 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import { KeyedLookup } from 'model/generic.model';
-import { Device, makeShellIo, ShellIo } from 'model/sh/io.model';
+import { Device, makeShellIo, ShellIo } from 'model/sh/io/io.model';
 import { MessageFromShell, MessageFromXterm } from 'model/sh/tty.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import { TtyShell } from 'model/sh/tty.shell';
 import { NamedFunction } from 'model/sh/var.model';
-import { FifoDevice } from 'model/sh/fifo.device';
+import { FifoDevice } from 'model/sh/io/fifo.device';
+import { VarDevice } from 'model/sh/io/var.device';
+import { FileWithMeta } from 'model/sh/parse.model';
+import { srcService } from 'model/sh/src.service';
 
 export type State = {
   session: KeyedLookup<Session>;
@@ -16,12 +19,15 @@ export type State = {
   rehydrated: boolean;
   
   readonly api: {
-    assignVar: (sessionKey: string, def: { varName: string; varValue: any }) => void;
+    addFunc: (sessionKey: string, funcName: string, wrappedFile: FileWithMeta) => void;
     createSession: (sessionKey: string) => void;
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
+    createVarDevice: (sessionKey: string, varName: string) => VarDevice;
     ensurePersisted: (sessionKey: string) => PersistedSession;
     getFunc: (sessionKey: string, funcName: string) => NamedFunction | undefined;
+    getFuncs: (sessionKey: string) => NamedFunction[];
     getVar: (sessionKey: string, varName: string) => any | undefined;
+    getVars: (sessionKey: string) => { key: string; value: string }[];
     getSession: (sessionKey: string) => Session;
     persist: (sessionKey: string, data: { history: string[] }) => void;
     removeFifo: (fifoKey: string) => void;
@@ -52,14 +58,28 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   rehydrated: false,
 
   api: {
-    assignVar: (sessionKey, { varName, varValue }) => {
-      api.getSession(sessionKey).var[varName] = varValue; // Mutate
+    addFunc: (sessionKey, funcName, file) => {
+      set(({ session }) => ({
+        session: updateLookup(sessionKey, session, ({ func }) => ({
+          func: addToLookup({
+            key: funcName,
+            node: file,
+            src: srcService.src(file),
+          }, func),
+        }))
+      }));
     },
 
     createFifo(key, size) {
       const fifo = new FifoDevice(key, size);
       set(({ device }) => ({ device: addToLookup(fifo, device) }));
       return fifo;
+    },
+
+    createVarDevice(sessionKey, varName) {
+      const varDevice = new VarDevice(sessionKey, varName);
+      set(({ device }) => ({ device: addToLookup(varDevice, device) }));
+      return varDevice;
     },
 
     createSession: (sessionKey) => {
@@ -91,8 +111,17 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().session[sessionKey].func[funcName] || undefined;
     },
 
+    getFuncs: (sessionKey) => {
+      return Object.values(get().session[sessionKey].func);
+    },
+
     getVar: (sessionKey, varName) => {
       return get().session[sessionKey].var[varName] || undefined;
+    },
+
+    getVars: (sessionKey) => {
+      return Object.entries(get().session[sessionKey].var)
+        .map(([key, value]) => ({ key, value }));
     },
 
     getSession: (sessionKey) =>
@@ -126,7 +155,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
 }), {
   name: 'session',
-  version: 1,
+  version: 2,
   blacklist: ['api', 'device', 'session'],
   onRehydrateStorage: (_) =>  {
     return () => {

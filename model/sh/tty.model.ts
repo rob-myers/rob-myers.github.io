@@ -1,4 +1,4 @@
-import { SigEnum } from "./io.model";
+import { SigEnum } from "./io/io.model";
 
 export type MessageFromXterm = (
   | RequestHistoryLine

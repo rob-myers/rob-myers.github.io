@@ -6,16 +6,33 @@ import safeJsonStringify from 'safe-json-stringify';
 
 import { last } from 'model/generic.model';
 import useSession from 'store/session.store';
-import { NamedFunction } from './var.model';
+import { NamedFunction, varRegex } from './var.model';
 import { expand, Expanded, literal, normalizeWhitespace, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './src.service';
-import { RedirectDef, redirectNode } from './io.model';
-import { wrapInFile } from './parse.util';
-import { FifoDevice } from './fifo.device';
+import { RedirectDef, redirectNode } from './io/io.model';
+import { cloneParsed, wrapInFile } from './parse.util';
+import { FifoDevice } from './io/fifo.device';
 
-type Obs = Observable<any>;
 class SemanticsService {
+
+  private async *assignVars(node: Sh.CallExpr) {
+    for (const assign of node.Assigns) {
+      yield* this.Assign(assign);
+    }
+  }
+
+  private async applyRedirects(parent: Sh.Command, redirects: Sh.Redirect[]) {
+    try {
+      for (const redirect of redirects) {
+        redirect.exitCode = 0;
+        await this.Redirect(redirect);
+      }
+    } catch (e) {
+      parent.exitCode = redirects.find(x => x.exitCode)?.exitCode??1;
+      throw e;
+    }
+  }
 
   private handleInternalError(node: Sh.ParsedSh, e: any, prefix?: string) {
     const message = [prefix, e.message].filter(Boolean).join(': ');
@@ -23,7 +40,6 @@ class SemanticsService {
     console.error(e);
     useSession.api.warn(node.meta.sessionKey, message);
     node.exitCode = 2;
-    // useSession.api.setExitCode(node.meta.sessionKey, node.exitCode);
   }
 
   private handleShError(node: Sh.ParsedSh, e: any, prefix?: string) {
@@ -78,22 +94,6 @@ class SemanticsService {
     return expanded;
   }
 
-  transpile(parsed: Sh.File): Obs {
-    return from((async function*(){
-      try {
-        yield* sem.File(parsed);
-      } catch (e) {
-        if (e === null) {
-          throw e;
-        }
-        sem.handleInternalError(parsed, e);
-      }
-    })())
-  }
-
-  /**
-   * NOTE redirections are parsed/transpiled but currently have no effect.
-   */
   transpileRedirect(node: Sh.Redirect): RedirectDef<Observable<Expanded>> {
     const { N, Word, Hdoc } = node;
     const fd = N ? Number(N.Value) : undefined;
@@ -132,6 +132,14 @@ class SemanticsService {
     }
   }
 
+  private async *Assign({ meta, Name, Value, Naked }: Sh.Assign) {
+    let value = '';
+    if (!Naked && Value) {
+      value = (await lastValueFrom(sem.Expand(Value))).value;
+    }
+    useSession.api.setVar(meta.sessionKey, Name.Value, value);
+  }
+
   private async *BinaryCmd(node: Sh.BinaryCmd) {
     /** All contiguous binary cmds for same operator */
     const cmds = srcService.binaryCmds(node);
@@ -168,14 +176,12 @@ class SemanticsService {
           }
           const files = stmts.map(stmt => wrapInFile(stmt));
           const stdOuts = stmts.map(stmt => useSession.api.resolve(stmt.meta.stdOut));
+          const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
 
           await Promise.all(files.map((file, i) =>
             new Promise<void>(async (resolve, reject) => {
               try {
-                const generator = this.File(file);
-                for await (const item of generator) {
-                  await stdOuts[i].writeData(item);
-                }
+                await ttyShell.runParsed(file);
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
                 /**
@@ -228,6 +234,8 @@ class SemanticsService {
         } else {
           throw new ShError('command not found', 127);
         }
+      } else {
+        yield* sem.assignVars(node);
       }
     } catch (e) {
       sem.handleShError(node, e, args[0]);
@@ -235,7 +243,8 @@ class SemanticsService {
   }
 
   /** Construct a simple command or a compound command. */
-  private async *Command(node: Sh.Command, _Redirs: Sh.Redirect[]) {
+  private async *Command(node: Sh.Command, Redirs: Sh.Redirect[]) {
+    await sem.applyRedirects(node, Redirs);
     const device = useSession.api.resolve(node.meta.stdOut);
 
     if (node.type === 'CallExpr') {// Run simple command
@@ -251,6 +260,7 @@ class SemanticsService {
     switch (node.type) {
       case 'Block': cmd = sem.Block(node); break;
       case 'BinaryCmd': cmd = sem.BinaryCmd(node); break;
+      case 'FuncDecl': cmd = sem.FuncDecl(node); break;
       // default: throw testNever(Cmd);
       default: return;
     }
@@ -341,17 +351,53 @@ class SemanticsService {
           yield expand(outputs.join('\n').replace(/\n*$/, ''));
         }());
       }
+      case 'ParamExp': 
+        return from(sem.ParamExp(node));
       case 'ArithmExp':
       case 'ExtGlob':
-      case 'ParamExp':
       case 'ProcSubst':
       default:
         throw Error(`${node.type} unimplemented`);
     }
   }
 
-  private File(node: Sh.File) {
+  File(node: Sh.File) {
     return sem.stmts(node, node.Stmts);
+  }
+
+  private async *FuncDecl(node: Sh.FuncDecl) {
+    const clonedBody = cloneParsed(node.Body);
+    const wrappedFile = wrapInFile(clonedBody);
+    useSession.api.addFunc(node.meta.sessionKey, node.Name.Value, wrappedFile);
+  }
+
+  /** Only support vanilla $x and ${x} */
+  private async *ParamExp(node: Sh.ParamExp) {
+    const varName = node.Param.Value;
+    const varValue = String(useSession.api.getVar(node.meta.sessionKey, varName) || '');
+    yield expand(varValue);
+  }
+
+  private async Redirect(node: Sh.Redirect) {
+    const { meta } = node;
+    const def = this.transpileRedirect(node);
+
+    switch (def.subKey) {
+      case '>': {
+        const { value } = await lastValueFrom(sem.Expand(node.Word));
+        if (varRegex.test(value)) {
+          const varDevice = useSession.api.createVarDevice(meta.sessionKey, value);
+          redirectNode(node.parent!, 'stdOut', varDevice.key);
+        } else if (value === '/dev/null') {
+          redirectNode(node.parent!, 'stdOut', '/dev/null');
+        } else {
+          throw new ShError(`${def.subKey}: ${value}: invalid redirect`, 127);
+        }
+        break;
+      }
+      default:
+        throw new ShError(`${def.subKey}: unsupported redirect`, 127);
+    }
   }
 
   private async *Stmt(stmt: Sh.Stmt) {

@@ -1,7 +1,7 @@
 import { Subject, Subscription } from "rxjs";
-import type * as Sh from './parse.model';
-import { NodeFd } from './parse.model';
-import { traverseParsed } from './parse.util';
+import type * as Sh from '../parse.model';
+import { NodeFd } from '../parse.model';
+import { traverseParsed } from '../parse.util';
 
 export const scrollback = 200;
 

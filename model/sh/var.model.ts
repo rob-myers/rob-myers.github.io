@@ -7,3 +7,5 @@ export type NamedFunction = {
   src: null | string;
   node: FileWithMeta;
 }
+
+export const varRegex = /^[a-z_][a-z0-9_-]*$/i;

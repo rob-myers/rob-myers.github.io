@@ -2,19 +2,22 @@ import { flatten, pause, testNever } from 'model/generic.model';
 import type * as Sh from './parse.model';
 import { NamedFunction } from "./var.model";
 import useSession from 'store/session.store';
-import { ReadResult } from './io.model';
-import { dataChunk, isDataChunk } from './fifo.device';
+import { ReadResult } from './io/io.model';
+import { dataChunk, isDataChunk } from './io/fifo.device';
 import { ShError } from './sh.util';
 
 const commandKeys = {
+  cat: true,
+  declare: true,
   /** Output arguments as space-separated string */
   echo: true,
-  /** Filter stdiin */
+  /** Filter stdin */
   filter: true,
   /** Flatten stdin */
   flat: true,
   /** List previous commands */
   history: true,
+  ls: true,
   /** Map function over stdin (arrays or non-arrays). */
   map: true,
   '[map]': true,
@@ -105,6 +108,26 @@ class CmdService {
   async *runCmd(node: Sh.CallExpr, command: CommandName, args: string[]) {
     const { meta } = node;
     switch (command) {
+      case 'cat': {
+        for (const arg of args) {
+          const value = useSession.api.getVar(meta.sessionKey, arg);
+          if (value === undefined) {
+            throw new ShError(`${arg}: variable not found`, 1);
+          }
+          for (const item of Array.isArray(value) ? value : [value]) {
+            yield item;
+          }
+        }
+        break;
+      }
+      case 'declare': {
+        const funcs = useSession.api.getFuncs(meta.sessionKey);
+        for (const { key, src } of funcs) {
+          yield `${key} ()`;
+          yield src;
+        } 
+        break;
+      }
       case 'echo': {
         yield args.join(' ');
         break;
@@ -166,6 +189,13 @@ class CmdService {
         }
         break;
       }
+      case 'ls': {
+        const kvPairs = useSession.api.getVars(meta.sessionKey);
+        for (const { key, value: _ } of kvPairs) {
+          yield key;
+        }
+        break;
+      }
       case 'sleep': {
         let seconds = args.length ? 0 : 1, delta: number;
         for (const arg of args) {
@@ -195,7 +225,10 @@ class CmdService {
   }
 
   async invokeFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
-    // TODO
+    const { var: v, ttyShell } = useSession.api.getSession(node.meta.sessionKey);
+    args.forEach((arg, i) => v[i + 1] = arg);
+    Object.assign(namedFunc.node.meta, node.meta); 
+    await ttyShell.runParsed(namedFunc.node);
   }
 }
 
