@@ -11,6 +11,7 @@ import { FifoDevice } from 'model/sh/io/fifo.device';
 import { VarDevice } from 'model/sh/io/var.device';
 import { FileWithMeta } from 'model/sh/parse.model';
 import { srcService } from 'model/sh/src.service';
+import { NullDevice } from 'model/sh/io/null.device';
 
 export type State = {
   session: KeyedLookup<Session>;
@@ -87,6 +88,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const ttyIo = makeShellIo<MessageFromXterm, MessageFromShell>();
       const ttyShell = new TtyShell(sessionKey, ttyIo, persisted.history);
       const ttyDevice: Device = ttyShell;
+      const nullDevice = new NullDevice('/dev/null');
 
       set(({ session, device }) => ({
         session: addToLookup({
@@ -96,7 +98,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           ttyShell,
           var: {},
         }, session),
-        device: addToLookup(ttyDevice, device),
+        device: addToLookup(nullDevice, addToLookup(ttyDevice, device)),
       }));
     },
 

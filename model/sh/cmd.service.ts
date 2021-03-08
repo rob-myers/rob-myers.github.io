@@ -46,7 +46,7 @@ class CmdService {
     let result = {} as ReadResult;
     while (!result.eof) {
       result = await device.readData();
-      if (result.data) {
+      if (result.data !== undefined) {
         if (isDataChunk(result.data)) {
           result.data.items = result.data.items
             .map(act).filter(x => x !== undefined);

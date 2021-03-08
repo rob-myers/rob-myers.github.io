@@ -88,6 +88,9 @@ export class FifoDevice implements Device {
 //#region chunks of data
 export const dataChunkKey = '__chunk__';
 export function isDataChunk(data: any): data is DataChunk {
+  if (data === undefined) {
+    return false;
+  }
   return data[dataChunkKey];
 }
 export function dataChunk(items: any[]): DataChunk {
