@@ -1,5 +1,5 @@
 import { flatten, pause, testNever } from 'model/generic.model';
-import type * as Sh from './parse.model';
+import type * as Sh from './parse/parse.model';
 import { NamedFunction } from "./var.model";
 import useSession from 'store/session.store';
 import { ReadResult } from './io/io.model';

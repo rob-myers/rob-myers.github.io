@@ -1,4 +1,4 @@
-import { FileWithMeta } from './parse.model';
+import { FileWithMeta } from './parse/parse.model';
 
 export type NamedFunction = {
   /** Function name. */

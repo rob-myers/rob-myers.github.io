@@ -9,8 +9,8 @@ import { TtyShell } from 'model/sh/tty.shell';
 import { NamedFunction } from 'model/sh/var.model';
 import { FifoDevice } from 'model/sh/io/fifo.device';
 import { VarDevice } from 'model/sh/io/var.device';
-import { FileWithMeta } from 'model/sh/parse.model';
-import { srcService } from 'model/sh/src.service';
+import { FileWithMeta } from 'model/sh/parse/parse.model';
+import { srcService } from 'model/sh/parse/src.service';
 import { NullDevice } from 'model/sh/io/null.device';
 
 export type State = {

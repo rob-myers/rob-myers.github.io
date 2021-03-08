@@ -1,7 +1,7 @@
 import { Subject, Subscription } from "rxjs";
-import type * as Sh from '../parse.model';
-import { NodeFd } from '../parse.model';
-import { traverseParsed } from '../parse.util';
+import type * as Sh from '../parse/parse.model';
+import { NodeFd } from '../parse/parse.model';
+import { traverseParsed } from '../parse/parse.util';
 
 export const scrollback = 200;
 
@@ -79,7 +79,7 @@ export enum SigEnum {
   SIGKILL='SIGKILL',
 }
 
-export type RedirectDef<WordType> = (
+export type RedirectDef = (
   | { subKey: '<'; fd?: number; mod: null | 'dup' | 'move' }
   /**
    * Output modifier:
@@ -95,7 +95,7 @@ export type RedirectDef<WordType> = (
   // Open stdout and stderr for writing, possibly appending.
   | { subKey: '&>'; append: boolean }
   // Here-doc at fd (default 0).
-  | { subKey: '<<'; fd?: number; here: WordType }
+  // | { subKey: '<<'; fd?: number; here: WordType }
   // Here-string `location` at fd (default 0).
   | { subKey: '<<<'; fd?: number }
   // Open fd (default 0) for reading and writing.

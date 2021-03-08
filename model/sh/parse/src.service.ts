@@ -1,6 +1,6 @@
 import type * as Sh from "./parse.model";
 import { last, testNever } from "model/generic.model";
-import { semanticsService } from "./semantics.service";
+import { semanticsService } from "../semantics.service";
 
 export class SrcService {
 
@@ -238,29 +238,11 @@ export class SrcService {
         const def = semanticsService.transpileRedirect(node);
 
         switch (def.subKey) {
-          case '<':
-            return `${def.fd || ''}<${def.mod ? '&' : ''}${this.src(node.Word) }${
-              def.mod === 'move' ? '-' : ''}`;
           case '>':
             return `${def.fd || ''}${def.mod === 'append' ? '>>' : def.mod ? '>&' : '>'}${
               this.src(node.Word) }${def.mod === 'move' ? '-' : ''}`;
-          case '&>':
-            return `${def.append ? '&>>' : '&>'}${this.src(node.Word)}`;
-          case '<<': {
-            // // Transform heredoc to fit on 1 line.
-            // let srcCode = this.src(def.here);
-            // if (srcCode.endsWith('\n')) {// echo will add a newline
-            //   srcCode = srcCode.slice(0, -1);
-            // }
-            // return `${def.fd || ''}< <( echo "${srcCode.replace(/\n/g, '"$$\'\\n\'"')}" )`;
-            return ''; 
-          }
-          case '<<<':
-            return `${def.fd || ''}<<<${this.src(node.Word)}`;
-          case '<>':
-            return `${def.fd || ''}<>${this.src(node.Word)}`;
           default:
-            throw testNever(def);
+            throw testNever(def as never);
         }
       }
 

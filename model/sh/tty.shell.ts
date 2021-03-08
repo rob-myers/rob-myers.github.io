@@ -1,18 +1,18 @@
 import { testNever } from 'model/generic.model';
 import { Device, ShellIo, SigEnum } from './io/io.model';
-import { FileWithMeta } from './parse.model';
+import { FileWithMeta } from './parse/parse.model';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
-import type * as Sh from './parse.model';
+import type * as Sh from './parse/parse.model';
 
 import useSession from 'store/session.store';
-import { ParseService } from './parse.service';
-import { srcService } from './src.service';
+import { ParseService } from './parse/parse.service';
+import { srcService } from './parse/src.service';
 import { semanticsService } from './semantics.service';
 import { TtyXterm } from './tty.xterm';
 
 // Lazyload saves ~220kb initially
 let parseService = { tryParseBuffer: (_) => ({ key: 'failed', error: 'not ready' })} as ParseService;
-import('./parse.service').then(x => parseService = x.parseService) 
+import('./parse/parse.service').then(x => parseService = x.parseService) 
 
 export class TtyShell implements Device {
 

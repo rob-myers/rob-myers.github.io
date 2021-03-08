@@ -1,6 +1,6 @@
 import braces from 'braces';
 import { last } from 'model/generic.model';
-import type * as Sh from './parse.model';
+import type * as Sh from './parse/parse.model';
 
 export function normalizeWhitespace(word: string, trim = true): string[] {
   if (!word.trim()) {// Prevent [''].

@@ -1,4 +1,4 @@
-import type * as Sh from './parse.model';
+import type * as Sh from './parse/parse.model';
 import { Observable, from, lastValueFrom, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import shortid from 'shortid';
@@ -9,9 +9,9 @@ import useSession from 'store/session.store';
 import { NamedFunction, varRegex } from './var.model';
 import { expand, Expanded, literal, normalizeWhitespace, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
-import { srcService } from './src.service';
+import { srcService } from './parse/src.service';
 import { RedirectDef, redirectNode } from './io/io.model';
-import { cloneParsed, wrapInFile } from './parse.util';
+import { cloneParsed, wrapInFile } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
 class SemanticsService {
@@ -94,39 +94,13 @@ class SemanticsService {
     return expanded;
   }
 
-  transpileRedirect(node: Sh.Redirect): RedirectDef<Observable<Expanded>> {
+  transpileRedirect(node: Sh.Redirect): RedirectDef {
     const { N, Word, Hdoc } = node;
     const fd = N ? Number(N.Value) : undefined;
 
     switch (node.Op) {
-      case '<':
-        return { subKey: '<', mod: null, fd };
-      case '<&': {
-        const [part] = Word.Parts;
-        // See 3.6.8 of:
-        // https://www.gnu.org/software/bash/manual/bash.html#Redirections
-        if (part?.type === 'Lit' && part.Value.endsWith('-')) {
-          return { subKey: '<', mod: 'move', fd };
-        }
-        return { subKey: '<', mod: 'dup', fd };
-      }
       case '>':
         return { subKey: '>', mod: null, fd };
-      case '>>':
-        return { subKey: '>', mod: 'append', fd };
-      case '>&': {
-        const [part] = Word.Parts;
-        if (part?.type === 'Lit' && part.Value.endsWith('-')) {
-          return { subKey: '>', mod: 'move', fd };
-        }
-        return { subKey: '>', mod: 'dup', fd };
-      }
-      case '<<':
-        return { subKey: '<<', fd, here: this.Expand(Hdoc!) };
-      case '<<<':
-        return { subKey: '<<<', fd };
-      case '<>':
-        return { subKey: '<>', fd, };
       default:
         throw new Error(`Unsupported redirection symbol '${node.Op}'.`);
     }
