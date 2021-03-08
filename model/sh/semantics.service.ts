@@ -348,8 +348,13 @@ class SemanticsService {
   /** Only support vanilla $x and ${x} */
   private async *ParamExp(node: Sh.ParamExp) {
     const varName = node.Param.Value;
-    const varValue = String(useSession.api.getVar(node.meta.sessionKey, varName) || '');
-    yield expand(varValue);
+    const varValue = useSession.api.getVar(node.meta.sessionKey, varName);
+    if (varValue === undefined || typeof varValue === 'string') {
+      yield expand(varValue || '');
+    } else {
+      console.log({ varValue });
+      yield expand(safeJsonStringify(varValue));
+    }
   }
 
   private async Redirect(node: Sh.Redirect) {

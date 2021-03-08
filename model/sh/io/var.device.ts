@@ -10,26 +10,22 @@ export class VarDevice implements Device {
   constructor(
     private sessionKey: string,
     private varName: string,
-    private overwrite = false,
-    private append = false,
   ) {
     this.key = `${varName}@${sessionKey}`;
     this.buffer = null;
   }
 
   public async writeData(data: any) {
-    if (!this.overwrite) {
-      if (!this.buffer) {
-        this.buffer = [];
-        useSessionStore.api.setVar(this.sessionKey, this.varName, this.buffer);
-      }
-      isDataChunk(data)
-        ? this.buffer!.push(...data.items)
-        : this.buffer!.push(data);
+    if (!this.buffer) {
+      this.buffer = [];
+      useSessionStore.api.setVar(this.sessionKey, this.varName, this.buffer);
+    }
+    if (data === undefined) {
+      return; 
+    } else if (isDataChunk(data)) {
+      this.buffer!.push(...data.items);
     } else {
-      useSessionStore.api.setVar(this.sessionKey, this.varName,
-        isDataChunk(data) ? data.items : data
-      );
+      this.buffer!.push(data);
     }
   }
 
