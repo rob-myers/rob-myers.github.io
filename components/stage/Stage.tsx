@@ -1,11 +1,13 @@
-import { getWindow } from "model/dom.model";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Canvas, CanvasContext } from "react-three-fiber";
-import { PCFSoftShadowMap, PerspectiveCamera } from "three";
+import { PerspectiveCamera } from "three";
+import { getWindow } from "model/dom.model";
 import useGeomStore from "store/geom.store";
 import useStageStore, { StoredStage } from "store/stage.store";
 import CameraControls from "./CameraControls";
 import Grid from "./Grid";
+import { Box } from './Meshes';
+import { Lights } from "./Lights";
 import styles from 'styles/Stage.module.css';
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
@@ -25,30 +27,27 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     if (stage && ctxt?.gl) {
       useStageStore.api.updateStage(stageKey, { scene: ctxt.scene });
     }
-
   }, [stage?.key, ctxt?.gl]);
 
+  const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
+    initializeCanvasContext(ctxt);
+    setCtxt(ctxt);
+  }, []);
 
   return (
     <section className={styles.root}>
       {stage && loadedGltf && (
         <Canvas
           pixelRatio={pixelRatio.current}
-          onCreated={(ct) => {
-            const camera = ct.camera as PerspectiveCamera;
-            camera.position.set(0, 0, 10);
-            camera.setFocalLength(35);
-
-            ct.gl.shadowMap.enabled = true;
-            ct.gl.shadowMap.autoUpdate = false;
-            ct.gl.shadowMap.type = PCFSoftShadowMap;
-            setCtxt(ct);
-          }}
+          onCreated={onCreatedCanvas}
         >
           <CameraControls stageKey={stageKey} />
-
           <Grid />
+          <Lights />
 
+          <group>
+            <Box />
+          </group>
         </Canvas>
       )}
     </section>
@@ -57,6 +56,15 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
 
 interface Props {
   stageKey: string;
+}
+
+function initializeCanvasContext(ctxt: CanvasContext) {
+  const camera = ctxt.camera as PerspectiveCamera;
+  camera.position.set(0, 0, 10);
+  camera.setFocalLength(35);
+  // ctxt.gl.shadowMap.enabled = true;
+  // ctxt.gl.shadowMap.autoUpdate = false;
+  // ctxt.gl.shadowMap.type = PCFSoftShadowMap;
 }
 
 export default Stage;
