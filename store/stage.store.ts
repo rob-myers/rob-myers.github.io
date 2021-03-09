@@ -2,6 +2,7 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { Scene } from 'three';
 import { KeyedLookup } from 'model/generic.model';
+import { PanZoomControls } from 'model/3d/controls';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 
 export type State = {
@@ -19,6 +20,7 @@ export type State = {
 export type StoredStage = {
   key: string;
   scene?: Scene;
+  controls?: PanZoomControls;
 };
 
 interface PersistedStage {
