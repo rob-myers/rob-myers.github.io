@@ -1,4 +1,4 @@
-export const Lights: React.FC = () => {
+const Lights: React.FC = () => {
   return (
     <group name="lights">
     <ambientLight
@@ -15,3 +15,5 @@ export const Lights: React.FC = () => {
   </group>
   );
 };
+
+export default Lights;

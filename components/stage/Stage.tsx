@@ -4,10 +4,11 @@ import { PerspectiveCamera } from "three";
 import { getWindow } from "model/dom.model";
 import useGeomStore from "store/geom.store";
 import useStageStore, { StoredStage } from "store/stage.store";
+
 import CameraControls from "./CameraControls";
 import Grid from "./Grid";
-import { Box } from './Meshes';
-import { Lights } from "./Lights";
+import Lights from "./Lights";
+import Walls from "./Walls";
 import styles from 'styles/Stage.module.css';
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
@@ -45,9 +46,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           <Grid />
           <Lights />
 
-          <group>
-            <Box />
-          </group>
+          <Walls wallPolys={stage.wallPolys} />
         </Canvas>
       )}
     </section>

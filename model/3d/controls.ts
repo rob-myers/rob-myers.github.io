@@ -22,7 +22,7 @@ export class PanZoomControls extends EventDispatcher {
   public dynamicDampingFactor = 0.2;
 
   public minDistance = 1;
-  public maxDistance = 10;
+  public maxDistance = 15;
   // this.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
   // this.mouseButtons = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.ZOOM, RIGHT: MOUSE.PAN };
 

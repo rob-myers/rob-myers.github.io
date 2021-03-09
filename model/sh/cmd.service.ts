@@ -6,6 +6,7 @@ import { ReadResult } from './io/io.model';
 import { dataChunk, isDataChunk } from './io/fifo.device';
 import { ShError } from './sh.util';
 import { getOpts } from './parse/parse.util';
+import useStageStore from 'store/stage.store';
 
 const commandKeys = {
   /** Output a variable */
@@ -32,6 +33,7 @@ const commandKeys = {
   split: true,
   /** Collect stdin into a single array */
   sponge: true,
+  wall: true,
 };
 type CommandName = keyof typeof commandKeys;
 
@@ -129,16 +131,16 @@ class CmdService {
         break;
       }
       case 'echo': {
-        const { _: params, a, n } = getOpts(args, { boolean: [
+        const { opts, operands } = getOpts(args, { boolean: [
           'a', // output array
           'n', // cast as numbers
         ], });
-        if (a) {
-          yield n ? params.map(Number) : params;
-        } else if (n) {
-          for (const arg of params) yield Number(arg);
+        if (opts.a) {
+          yield opts.n ? operands.map(Number) : operands;
+        } else if (opts.n) {
+          for (const operand of operands) yield Number(operand);
         } else {
-          yield params.join(' ');
+          yield operands.join(' ');
         }
         break;
       }
@@ -217,6 +219,18 @@ class CmdService {
         const outputs = [] as any[];
         yield* this.read(node, (data: any[]) => { outputs.push(data); });
         yield outputs;
+        break;
+      }
+      case 'wall': {
+        const { opts } = getOpts(args, { boolean: [
+          'c', // cut out wall
+        ], });
+        const outputs = [] as any[];
+        yield* this.read(node, (data: any[]) => { outputs.push(data); });
+        const filtered = outputs.filter(x => x.length === 4 && x.every(Number.isFinite));
+        useStageStore.api.addWalls(meta.sessionKey, filtered, {
+          cutOut: opts.c,
+        });
         break;
       }
       default: throw testNever(command);

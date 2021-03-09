@@ -190,6 +190,24 @@ class GeomService {
     );
   }
 
+  /**
+   * IN PROGRESS
+   */
+  polysToWallsGeometry(polys: Geom.Polygon[]): THREE.BufferGeometry {
+    const decomps = polys.map(p => p.qualityTriangulate());
+    const all = this.joinTriangulations(decomps);
+
+    const geometry = new Geometry();
+    // Base
+    geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, 0)));
+    geometry.faces.push(...all.tris.map(tri => new Face3(tri[2], tri[1], tri[0])));
+    // TODO sides and top
+    geometry.computeVertexNormals();
+    geometry.computeFaceNormals();
+
+    return geometry.toBufferGeometry();
+  }
+
   navPolysToMesh(navPolys: Geom.Polygon[]): THREE.Mesh {
     const decomps = navPolys.map(p => p.qualityTriangulate());
     const all = this.joinTriangulations(decomps);
@@ -197,9 +215,9 @@ class GeomService {
     const geometry = new Geometry();
     geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, 0, p.y)));
     geometry.faces.push(...all.tris.map(tri => new Face3(tri[2], tri[1], tri[0])));
-
     geometry.computeVertexNormals();
     geometry.computeFaceNormals();
+
     return new Mesh(
       geometry.toBufferGeometry(),
       new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),

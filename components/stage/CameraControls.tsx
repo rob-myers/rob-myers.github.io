@@ -7,6 +7,7 @@ import useStageStore from 'store/stage.store';
 extend({ PanZoomControls });
 
 const CameraControls: React.FC<Props> = ({ stageKey }) => {
+
   const controls = useRef<PanZoomControls>();
   const { camera, gl: { domElement } } = useThree();
 

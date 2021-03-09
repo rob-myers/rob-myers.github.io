@@ -90,7 +90,11 @@ export function getChildren(node: Sh.ParsedSh): Sh.ParsedSh[] {
 }
 
 export function getOpts(args: string[], options?: getopts.Options) {
-  return simplifyGetOpts(getopts(args, options));
+  return {
+    opts: simplifyGetOpts(getopts(args, options)),
+    // Include options starting with a number to permit negative integers
+    operands: args.filter(x => x[0] !== '-' || !isNaN(x[1] as any)),
+  };
 }
 
 function findAncestral(node: Sh.ParsedSh, predicate: (ancestor: Sh.ParsedSh) => boolean) {
@@ -115,7 +119,7 @@ export function hasAncestralIterator(node: Sh.ParsedSh) {
  * extant option names as the value of key `__optKeys`.
  */
 function simplifyGetOpts(parsed: getopts.ParsedOptions) {
-  const output = parsed as getopts.ParsedOptions & { __optKeys: string[] };
+  const output = parsed as getopts.ParsedOptions & { operands: string[] };
   Object.keys(parsed).forEach((key) => {
     output.__optKeys = [];
     if (key !== '_') {
