@@ -12,6 +12,7 @@ import { recastService } from 'model/3d/recast.service';
 export type State = {
   loadedGltf: boolean;
   actors: KeyedLookup<ActorMeshMeta>;
+
   readonly api: {
     load: () => Promise<void>;
     extractMeshes: (gltf: GLTF) => {
@@ -37,8 +38,6 @@ export interface ActorMeshMeta {
 
 const useStore = create<State>(devtools((set, get) => ({
   actors: {},
-  rooms: {},
-  inners: {},
   loadedGltf: false,
   navWorker: null,
   api: {
@@ -52,7 +51,7 @@ const useStore = create<State>(devtools((set, get) => ({
       }
 
       const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader');
-      (new GLTFLoader()).load('/rooms.gltf', (gltf) => {
+      (new GLTFLoader()).load('/root.gltf', (gltf) => {
         const { actors } = api.extractMeshes(gltf);
         const actorMetas = actors.map(actor => api.computeActorMeta(actor));
         // console.log({ actors, rooms, inners });
