@@ -5,10 +5,13 @@ import useSession from 'store/session.store';
 import { ReadResult } from './io/io.model';
 import { dataChunk, isDataChunk } from './io/fifo.device';
 import { ShError } from './sh.util';
+import { getOpts } from './parse/parse.util';
 
 const commandKeys = {
+  /** Output a variable */
   cat: true,
-  declare: true,
+  /** List function definitions */
+  defs: true,
   /** Output arguments as space-separated string */
   echo: true,
   /** Filter stdin */
@@ -18,10 +21,7 @@ const commandKeys = {
   /** List previous commands */
   history: true,
   ls: true,
-  /** Map function over stdin (arrays or non-arrays). */
   map: true,
-  '[map]': true,
-  '[red]': true,
   red: true,
   /** Wait for specified number of seconds */
   sleep: true,
@@ -120,16 +120,26 @@ class CmdService {
         }
         break;
       }
-      case 'declare': {
+      case 'defs': {
         const funcs = useSession.api.getFuncs(meta.sessionKey);
         for (const { key, src } of funcs) {
           yield `${key} ()`;
-          yield src;
+          yield `${src}\n`;
         } 
         break;
       }
       case 'echo': {
-        yield args.join(' ');
+        const { _: params, a, n } = getOpts(args, { boolean: [
+          'a', // output array
+          'n', // cast as numbers
+        ], });
+        if (a) {
+          yield n ? params.map(Number) : params;
+        } else if (n) {
+          for (const arg of params) yield Number(arg);
+        } else {
+          yield params.join(' ');
+        }
         break;
       }
       case 'flat': {
@@ -144,11 +154,8 @@ class CmdService {
         for (const line of history) yield line;
         break;
       }
-      // These five commands read from stdin
       case 'filter':
-      case '[map]':
       case 'map':
-      case '[red]':
       case 'red': {
         if (args.length === 0) {
           throw new ShError('1st arg must be a function', 1);
@@ -158,17 +165,13 @@ class CmdService {
 
         if (command === 'filter') {
           yield* this.read(node, (data) => func()(data) ? data : undefined);
-        } else if (command === 'map' || command === '[map]') {
+        } else if (command === 'map') {
           // Can also restrict column indices via extra args
           const indices = args.slice(1).map(x => this.parseArg(x));
           const mapper = indices.length
             ? (x: any, i: number) => indices.includes(i) ? func()(x) : x
             : (x: any) => func()(x);
-          if (command === 'map') {
-            yield* this.read(node, (data) => func()(data));
-          } else {
-            yield* this.read(node, (data) => data.map(mapper));
-          }
+          yield* this.read(node, (data) => func()(data));
         } else {
           if (args.length <= 2) {
             if (command === 'red') {// `reduce` over all inputs
@@ -177,10 +180,6 @@ class CmdService {
               yield args[1]
                 ? outputs.reduce((agg, item) => func()(agg, item), this.parseArg(args[1]))
                 : outputs.reduce((agg, item) => func()(agg, item));
-            } else {// `[red]` applies reduce to each input array
-              yield* this.read(node, (data: any[]) => args[1]
-                ? data.reduce((agg, item) => func()(agg, item), this.parseArg(args[1]))
-                : data.reduce((agg, item) => func()(agg, item)));
             }
             break;
           } else {
