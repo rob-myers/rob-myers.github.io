@@ -21,8 +21,8 @@ export default function Home() {
         </p>
 
         <section className={styles.termStage}>
-          <Terminal sessionKey={'test'} />
           <Stage stageKey={'test'} />
+          <Terminal sessionKey={'test'} />
         </section>
       </main>
     </>

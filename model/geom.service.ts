@@ -190,21 +190,37 @@ class GeomService {
     );
   }
 
-  /**
-   * IN PROGRESS
-   */
-  polysToWallsGeometry(polys: Geom.Polygon[]): THREE.BufferGeometry {
+  polysToWallsGeometry(polys: Geom.Polygon[], height = 2): THREE.BufferGeometry {
     const decomps = polys.map(p => p.qualityTriangulate());
-    const all = this.joinTriangulations(decomps);
 
     const geometry = new Geometry();
-    // Base
-    geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, 0)));
-    geometry.faces.push(...all.tris.map(tri => new Face3(tri[2], tri[1], tri[0])));
-    // TODO sides and top
+    let offset = 0;
+    for (const { vs, tris } of decomps) {
+      geometry.vertices.push(...vs.map(p => new Vector3(p.x, p.y, 0)));
+      geometry.faces.push(...tris.map(tri => new Face3(tri[0] + offset, tri[1] + offset, tri[2] + offset)));
+      offset += vs.length;
+    }
+    for (const { vs, tris } of decomps) {
+      geometry.vertices.push(...vs.map(p => new Vector3(p.x, p.y, height)));
+      geometry.faces.push(...tris.map(tri => new Face3(tri[0] + offset, tri[1] + offset, tri[2] + offset)));
+      offset += vs.length;
+    }
+    /** Difference between lower and upper vertices */
+    const delta = offset / 2;
+    offset = 0;
+    for (const { outline, holes } of polys) {
+      for (const cycle of [outline].concat(holes)) {
+        const breadth = cycle.length;
+        geometry.faces.push(...cycle.map((_, i) =>
+          new Face3(offset + i % breadth, offset + (i + 1) % breadth, delta + offset + (i + 1) % breadth)));
+        geometry.faces.push(...cycle.map((_, i) =>
+          new Face3(delta + offset + (i + 1) % breadth, delta + offset + i % breadth, offset + i % breadth)));
+        offset += cycle.length;
+      }
+    }
+
     geometry.computeVertexNormals();
     geometry.computeFaceNormals();
-
     return geometry.toBufferGeometry();
   }
 
