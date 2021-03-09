@@ -31,7 +31,7 @@ export type State = {
     getVars: (sessionKey: string) => { key: string; value: string }[];
     getSession: (sessionKey: string) => Session;
     persist: (sessionKey: string, data: { history: string[] }) => void;
-    removeFifo: (fifoKey: string) => void;
+    removeDevice: (deviceKey: string) => void;
     removeSession: (sessionKey: string) => void;
     resolve: (deviceKey: string) => Device;
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
@@ -135,8 +135,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       })),
     })),
 
-    removeFifo(fifoKey) {
-      set(({ device }) => ({ device: removeFromLookup(fifoKey, device), }));
+    removeDevice(deviceKey) {
+      set(({ device }) => ({ device: removeFromLookup(deviceKey, device), }));
     },
 
     removeSession: (sessionKey) => set(({ session, device }) => ({

@@ -1,6 +1,4 @@
 import type * as Sh from './parse/parse.model';
-import { Observable, from, lastValueFrom, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
 import shortid from 'shortid';
 import safeJsonStringify from 'safe-json-stringify';
 
@@ -59,6 +57,12 @@ class SemanticsService {
     }
   }
 
+  private async lastExpanded(generator: AsyncGenerator<Expanded>) {
+    let lastExpanded = undefined as Expanded | undefined;
+    for await (const expanded of generator) lastExpanded = expanded;
+    return lastExpanded!;
+  }
+
   private async *stmts(parent: Sh.ParsedSh, nodes: Sh.Stmt[]) {
     for (const node of nodes) {
       yield* sem.Stmt(node);
@@ -75,7 +79,7 @@ class SemanticsService {
     const expanded = [] as string[];
 
     for (const word of Args) {
-      const result = await lastValueFrom(this.Expand(word));
+      const result = await this.lastExpanded(this.Expand(word));
       const single = word.Parts.length === 1 ? word.Parts[0] : null;
 
       if (word.exitCode) {
@@ -109,7 +113,7 @@ class SemanticsService {
   private async *Assign({ meta, Name, Value, Naked }: Sh.Assign) {
     let value = '';
     if (!Naked && Value) {
-      value = (await lastValueFrom(sem.Expand(Value))).value;
+      value = (await this.lastExpanded(sem.Expand(Value))).value;
     }
     useSession.api.setVar(meta.sessionKey, Name.Value, value);
   }
@@ -176,7 +180,7 @@ class SemanticsService {
         } finally {
           fifos.forEach(fifo => {
             fifo.finishedWriting();
-            useSession.api.removeFifo(fifo.key);
+            useSession.api.removeDevice(fifo.key);
           });
         }
         break;
@@ -249,84 +253,94 @@ class SemanticsService {
   }
 
   /** Expand a `Word` which has `Parts`. */
-  private Expand(node: Sh.Word): Observable<Expanded> {
+  private async *Expand(node: Sh.Word) {
     if (node.Parts.length > 1) {
-      return from(async function*() {
-        for (const wordPart of node.Parts) {
-          wordPart.string = (await lastValueFrom(sem.ExpandPart(wordPart))).value;
-        }
-        /*
-        * Is the last value computed via a parameter/command-expansion,
-        * and, if so, does it have trailing whitespace?
-        */
-        let lastTrailing = false;
-        const values = [] as string[];
-  
-        for (const { type, string } of node.Parts) {
-          const value = string!;
-          if (type === 'ParamExp' || type === 'CmdSubst') {
-            const vs = normalizeWhitespace(value!, false); // Do not trim
-            if (!vs.length) continue;
-            else if (!values.length || lastTrailing || /^\s/.test(vs[0])) {
-              // Freely add, although trim 1st and last
-              values.push(...vs.map((x) => x.trim()));
-            } else {
-              // Either `last(vs)` a trailing quote, or it has no trailing space
-              // Since vs[0] has no leading space we must join words
-              values.push(values.pop() + vs[0].trim());
-              values.push(...vs.slice(1).map((x) => x.trim()));
-            }
-            // Check last element (pre-trim)
-            lastTrailing = /\s$/.test(last(vs) as string);
-          } else if (!values.length || lastTrailing) {// Freely add
-            values.push(value);
-            lastTrailing = false;
-          } else {// Must join
-            values.push(values.pop() + value);
-            lastTrailing = false;
+      for (const wordPart of node.Parts) {
+        wordPart.string = (await this.lastExpanded(sem.ExpandPart(wordPart))).value;
+      }
+      /*
+      * Is the last value computed via a parameter/command-expansion,
+      * and, if so, does it have trailing whitespace?
+      */
+      let lastTrailing = false;
+      const values = [] as string[];
+
+      for (const { type, string } of node.Parts) {
+        const value = string!;
+        if (type === 'ParamExp' || type === 'CmdSubst') {
+          const vs = normalizeWhitespace(value!, false); // Do not trim
+          if (!vs.length) continue;
+          else if (!values.length || lastTrailing || /^\s/.test(vs[0])) {
+            // Freely add, although trim 1st and last
+            values.push(...vs.map((x) => x.trim()));
+          } else {
+            // Either `last(vs)` a trailing quote, or it has no trailing space
+            // Since vs[0] has no leading space we must join words
+            values.push(values.pop() + vs[0].trim());
+            values.push(...vs.slice(1).map((x) => x.trim()));
           }
+          // Check last element (pre-trim)
+          lastTrailing = /\s$/.test(last(vs) as string);
+        } else if (!values.length || lastTrailing) {// Freely add
+          values.push(value);
+          lastTrailing = false;
+        } else {// Must join
+          values.push(values.pop() + value);
+          lastTrailing = false;
         }
-  
-        node.string = values.join(' '); // If part of ArithmExpr?
-        yield expand(values); // Need array?
-      }());
+      }
+
+      node.string = values.join(' '); // If part of ArithmExpr?
+      yield expand(values); // Need array?
+    } else {
+      for await (const expanded of this.ExpandPart(node.Parts[0])) {
+        node.string = expanded.value;
+        yield expanded;
+      }
     }
-    return this.ExpandPart(node.Parts[0])
-      .pipe(tap(({ value }) => node.string = value));
   }
 
-  private ExpandPart(node: Sh.WordPart): Observable<Expanded> {
+  private async *ExpandPart(node: Sh.WordPart) {
     switch (node.type) {
-      case 'DblQuoted':
-        return from(async function*() {
-          const output = [] as string[];
-          for (const part of node.Parts) {
-            const result = await lastValueFrom(sem.ExpandPart(part));
-            output.push(`${output.pop() || ''}${result.value || ''}`);
+      case 'DblQuoted': {
+        const output = [] as string[];
+        for (const part of node.Parts) {
+          let lastValue = '';
+          for await (const { value } of sem.ExpandPart(part)) {
+            lastValue = value;
           }
-          yield expand(output);
-        }());
-      case 'Lit':
-        return of(expand(literal(node)));
-      case 'SglQuoted':
-        return of(expand(singleQuotes(node)));
-      case 'CmdSubst': {
-        return from(async function*() {
-          const device = useSession.api.createFifo(
-            `/dev/fifo-cmd-${shortid.generate()}`);
-          redirectNode(node, 'stdOut', device.key);
-          const stmts = node.Stmts.map(stmt => sem.Stmt(stmt));
-          for (const stmt of stmts) for await (const _ of stmt) {}
-          
-          const outputs = device.readAll().map(x =>
-            typeof x === 'string' ? x : safeJsonStringify(x)  
-          );
-          useSession.api.removeFifo(device.key);
-          yield expand(outputs.join('\n').replace(/\n*$/, ''));
-        }());
+          output.push(`${output.pop() || ''}${lastValue || ''}`);
+        }
+        yield expand(output);
+        return;
       }
-      case 'ParamExp': 
-        return from(sem.ParamExp(node));
+      case 'Lit': {
+        yield expand(literal(node));
+        break;
+      }
+      case 'SglQuoted': {
+        yield expand(singleQuotes(node));
+        break;
+      }
+      case 'CmdSubst': {
+        const device = useSession.api.createFifo(
+          `/dev/fifo-cmd-${shortid.generate()}`
+        );
+        redirectNode(node, 'stdOut', device.key);
+        const stmts = node.Stmts.map(stmt => sem.Stmt(stmt));
+        for (const stmt of stmts) for await (const _ of stmt) {}
+        
+        const outputs = device.readAll().map(x =>
+          typeof x === 'string' ? x : safeJsonStringify(x)  
+        );
+        useSession.api.removeDevice(device.key);
+        yield expand(outputs.join('\n').replace(/\n*$/, ''));
+        break;
+      }
+      case 'ParamExp': {
+        yield* sem.ParamExp(node);
+        return;
+      }
       case 'ArithmExp':
       case 'ExtGlob':
       case 'ProcSubst':
@@ -363,7 +377,7 @@ class SemanticsService {
 
     switch (def.subKey) {
       case '>': {
-        const { value } = await lastValueFrom(sem.Expand(node.Word));
+        const { value } = await this.lastExpanded(sem.Expand(node.Word));
         if (varRegex.test(value)) {
           const varDevice = useSession.api.createVarDevice(meta.sessionKey, value);
           redirectNode(node.parent!, 'stdOut', varDevice.key);
