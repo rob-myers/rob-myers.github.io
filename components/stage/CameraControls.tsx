@@ -16,10 +16,11 @@ const CameraControls: React.FC<Props> = ({ stageKey, enabled }) => {
     <panZoomControls
       ref={controls}
       args={[camera, domElement]}
+      enabled={enabled}
     />
-  ), []);
+  ), [enabled]);
 
-  useFrame((_state) => enabled && controls.current!.update());
+  useFrame((_state) => controls.current!.update());
 
   useEffect(() => {
     useStageStore.api.updateStage(stageKey, {
