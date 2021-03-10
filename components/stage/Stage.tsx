@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Canvas, CanvasContext } from "react-three-fiber";
 import { PerspectiveCamera } from "three";
+import { Canvas, CanvasContext } from "react-three-fiber";
 import { getWindow } from "model/dom.model";
 import useGeomStore from "store/geom.store";
 import useStageStore, { StoredStage } from "store/stage.store";
 
+import StageToolbar from "./StageToolbar";
 import CameraControls from "./CameraControls";
 import Grid from "./Grid";
 import Lights from "./Lights";
@@ -12,10 +13,10 @@ import Walls from "./Walls";
 import styles from 'styles/Stage.module.css';
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
+  const stage = useStageStore<StoredStage | null>(({ stage }) => stage[stageKey]??null);
+  const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
-  const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
-  const stage = useStageStore<StoredStage | null>(({ stage }) => stage[stageKey]??null);
 
   useEffect(() => {
     useStageStore.api.createStage(stageKey);
@@ -37,6 +38,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
 
   return (
     <section className={styles.root}>
+      <StageToolbar stageKey={stageKey} />
       {stage && loadedGltf && (
         <Canvas
           pixelRatio={pixelRatio.current}

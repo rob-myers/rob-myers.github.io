@@ -2,10 +2,25 @@
   width: 100%;
   height: 100%;
   border: 1px solid #000;
-  display: flex;
   overflow: scroll;
+  display: flex;
+  flex-direction: column;
 }
 
-.viewport {
+.toolbar {
+  font-size: 16px;
+  border-bottom: 1px solid #ddd;
+  background-color: #edefff;
+  display: grid;
+  padding: 4px;
+  grid-template-columns: auto 60px;
+  gap: 8px;
+}
 
+.button {
+  cursor: pointer;
+}
+
+.button.disabled {
+  color: #ddd;
 }
