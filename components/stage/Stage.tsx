@@ -53,14 +53,18 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           onPointerUp={onPointer}
           onPointerLeave={onPointer}
         >
-          <CameraControls stageKey={stageKey} enabled={stage.camEnabled} />
+          <CameraControls
+            stageKey={stageKey}
+            enabled={stage.camEnabled}
+          />
           <Grid />
           <Lights />
-          <SelectRect
-            stage={stage}
-            wire={selectWire.current}
-          />
-
+          {stage.controls && (
+            <SelectRect
+              stage={stage}
+              wire={selectWire.current}
+            />
+          )}
           <Walls wallPolys={stage.wallPolys} />
         </Canvas>
       )}
