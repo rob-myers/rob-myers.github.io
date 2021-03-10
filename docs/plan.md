@@ -8,8 +8,12 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Have mouse edit mode e.g. can select area and use console to create/copy/cut
-- Need setting/theme/story to bring it to life
+- Can create rectilinear polygonal selections
+
+- Implement comments using build and client-side calls:
+  > https://eiriksm.dev/walkthrough-github-comments
+- Must navigate to GitHub to actually post comments
+
 
 - `Terminal` can run background processes
 - Try building a low poly character in blender
@@ -24,3 +28,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ have `Terminal`
 ✅ have `Stage`
 ✅ can use `Terminal` to create rectilinear polygons in `Stage`
+✅ can create rectangular selection using mouse
+✅ need setting/theme/story to bring it to life
+   > We will remake Teleglitch on the web

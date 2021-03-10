@@ -13,7 +13,7 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
     <Toolbar>
       {stage && <>
         <section>
-          @<Title>{stage.key}</Title>
+          user@<strong>{stage.key}</strong>
         </section>
         <Button
           enabled={stage.camEnabled}
@@ -39,10 +39,6 @@ const Toolbar = styled.section`
   padding: 4px;
   grid-template-columns: auto 60px;
   gap: 8px;
-`;
-
-const Title = styled.span`
-  font-weight: bold;
 `;
 
 const Button = styled.span<{ enabled: boolean }>`

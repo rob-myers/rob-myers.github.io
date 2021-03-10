@@ -318,7 +318,7 @@ export class PanZoomControls extends EventDispatcher {
         case 0:
           // this.state = this.STATE.ROTATE;
           // this.state = this.STATE.PAN;
-          this.state = this.STATE.ZOOM;
+          // this.state = this.STATE.ZOOM;
           break;
         // case scope.mouseButtons.MIDDLE:
         case 1:

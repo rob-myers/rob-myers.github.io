@@ -1,5 +1,5 @@
 .main {
-  padding: 5rem 0;
+  padding: 2rem 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -19,7 +19,7 @@
 }
 
 .subtitle {
-  margin-bottom: 32px;
+  margin-bottom: 48px;
 }
 
 .code {

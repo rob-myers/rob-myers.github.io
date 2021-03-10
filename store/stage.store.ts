@@ -26,10 +26,15 @@ type WallDef = [number, number, number, number];
 
 export type StoredStage = {
   key: string;
-  wallPolys: Geom.Polygon[];
-  scene?: Scene;
-  controls?: PanZoomControls;
   camEnabled: boolean;
+  /** Attached on mount */
+  controls?: PanZoomControls;
+  /** Currently selected polygon */
+  selectPolys: Geom.Polygon[];
+  /** Attached on mount */
+  scene?: Scene;
+  /** Base of walls */
+  wallPolys: Geom.Polygon[];
 };
 
 interface PersistedStage {
@@ -53,6 +58,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     createStage: (stageKey) => set(({ stage }) => ({
       stage: addToLookup({
         key: stageKey,
+        selectPolys: [],
         wallPolys: [],
         camEnabled: true,
       }, stage),

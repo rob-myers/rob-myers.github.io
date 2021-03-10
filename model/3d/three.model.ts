@@ -1,3 +1,4 @@
+import { VectorJson } from 'model/geom';
 import * as THREE from 'three';
 
 export const navMeshMaterial = new THREE.MeshStandardMaterial({
@@ -47,3 +48,19 @@ export function transformImportedMesh(mesh: THREE.Mesh) {
 export const placeholderGroup = new THREE.Group;
 export const placeholderMesh = new THREE.Mesh;
 export const placeholderScene = new THREE.Scene;
+
+export function ndCoordsToGroundPlane(
+  output: THREE.Vector3,
+  ndCoords: VectorJson,
+  camera: THREE.Camera,
+) {
+  output.set(ndCoords.x, ndCoords.y, 0.5);
+  output.unproject(camera).sub(camera.position).normalize();
+  output.multiplyScalar((0 - camera.position.z) / output.z);
+  output.add(camera.position);
+  return output;
+}
+
+export function vectAccuracy(v: THREE.Vector3, accuracy: number) {
+  return v.multiplyScalar(10 ** accuracy).round().divideScalar(10 ** accuracy);
+}
