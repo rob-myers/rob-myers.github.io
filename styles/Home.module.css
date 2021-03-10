@@ -10,6 +10,16 @@
   margin: 0;
   line-height: 1.15;
   font-size: 4rem;
+  display: flex;
+}
+
+.reference {
+  font-size: small;
+  padding-top: 10px;
+}
+
+.subtitle {
+  margin-bottom: 32px;
 }
 
 .code {

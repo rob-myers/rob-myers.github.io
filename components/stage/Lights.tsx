@@ -7,7 +7,7 @@ const Lights: React.FC = () => {
     />
     <pointLight
       position={[0, -4, 8]}
-      intensity={1}
+      intensity={5}
       decay={2}
       distance={20}
       // castShadow

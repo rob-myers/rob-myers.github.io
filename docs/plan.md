@@ -8,9 +8,10 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- can use `Terminal` to create rectilinear polygons in `Stage`
-- `Terminal` can run background processes
+- Have mouse edit mode e.g. can select area and use console to create/copy/cut
+- Need setting/theme/story to bring it to life
 
+- `Terminal` can run background processes
 - Try building a low poly character in blender
 - Beginners guide:
   - https://www.youtube.com/watch?v=7MRonzqYJgw&ab_channel=GrantAbbitt
@@ -22,3 +23,4 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ✅ have `Terminal`
 ✅ have `Stage`
+✅ can use `Terminal` to create rectilinear polygons in `Stage`
