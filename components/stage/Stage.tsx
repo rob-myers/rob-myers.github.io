@@ -38,13 +38,14 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
 
   return (
     <section className={styles.root}>
-      <StageToolbar stageKey={stageKey} />
+      <StageToolbar stage={stage} />
+
       {stage && loadedGltf && (
         <Canvas
           pixelRatio={pixelRatio.current}
           onCreated={onCreatedCanvas}
         >
-          <CameraControls stageKey={stageKey} />
+          <CameraControls stageKey={stageKey} enabled={stage.camEnabled} />
           <Grid />
           <Lights />
 

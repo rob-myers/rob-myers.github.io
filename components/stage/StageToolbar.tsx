@@ -1,27 +1,37 @@
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
-import { useState } from 'react';
+import useStage, { StoredStage } from 'store/stage.store';
+import { useCallback } from 'react';
 
-const StageToolbar: React.FC<Props> = ({ stageKey }) => {
-  const [enabled, setEnabled] = useState(true);
+const StageToolbar: React.FC<Props> = ({ stage }) => {
+
+  const toggleCam = useCallback(() => stage &&
+    useStage.api.updateStage(stage.key, { camEnabled: !stage.camEnabled }),
+  [stage?.camEnabled]);
 
   return (
     <Toolbar>
-      <span>
-        @{stageKey}
-      </span>
-      <Button enabled={enabled} onClick={() => setEnabled(!enabled)}>
-        camera
-      </Button>
+      {stage && <>
+        <section>
+          @<Title>{stage.key}</Title>
+        </section>
+        <Button
+          enabled={stage.camEnabled}
+          onClick={toggleCam}
+        >
+          camera
+        </Button>
+      </>}
     </Toolbar>
   );
 };
 
 interface Props {
-  stageKey: string;
+  stage: StoredStage | null;
 }
 
 const Toolbar = styled.section`
+  height: 28px;
   font-size: 16px;
   border-bottom: 1px solid #ddd;
   background-color: #edefff;
@@ -29,6 +39,10 @@ const Toolbar = styled.section`
   padding: 4px;
   grid-template-columns: auto 60px;
   gap: 8px;
+`;
+
+const Title = styled.span`
+  font-weight: bold;
 `;
 
 const Button = styled.span<{ enabled: boolean }>`

@@ -29,6 +29,7 @@ export type StoredStage = {
   wallPolys: Geom.Polygon[];
   scene?: Scene;
   controls?: PanZoomControls;
+  camEnabled: boolean;
 };
 
 interface PersistedStage {
@@ -53,6 +54,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       stage: addToLookup({
         key: stageKey,
         wallPolys: [],
+        camEnabled: true,
       }, stage),
     })),
     getStage: (stageKey) => {

@@ -6,7 +6,7 @@ import useStageStore from 'store/stage.store';
 // See types/react-three-fiber/three-types.d.ts
 extend({ PanZoomControls });
 
-const CameraControls: React.FC<Props> = ({ stageKey }) => {
+const CameraControls: React.FC<Props> = ({ stageKey, enabled }) => {
 
   const controls = useRef<PanZoomControls>();
   const { camera, gl: { domElement } } = useThree();
@@ -19,7 +19,7 @@ const CameraControls: React.FC<Props> = ({ stageKey }) => {
     />
   ), []);
 
-  useFrame((_state) => controls.current!.update());
+  useFrame((_state) => enabled && controls.current!.update());
 
   useEffect(() => {
     useStageStore.api.updateStage(stageKey, {
@@ -32,6 +32,7 @@ const CameraControls: React.FC<Props> = ({ stageKey }) => {
 
 interface Props {
   stageKey: string;
+  enabled: boolean;
 }
 
 export default CameraControls;
