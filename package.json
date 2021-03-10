@@ -37,6 +37,9 @@
     "zustand": "^3.3.3"
   },
   "devDependencies": {
+    "@emotion/babel-preset-css-prop": "^11.2.0",
+    "@emotion/react": "^11.1.5",
+    "@emotion/styled": "^11.1.5",
     "@types/braces": "^3.0.0",
     "@types/earcut": "^2.1.1",
     "@types/lodash.clonedeep": "^4.5.6",
