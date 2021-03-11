@@ -1,7 +1,5 @@
 import {
   EventDispatcher,
-  // MOUSE,
-  // Quaternion,
   Vector2,
   Vector3,
   PerspectiveCamera,
@@ -12,54 +10,37 @@ export class PanZoomControls extends EventDispatcher {
 
   public enabled = true;
   public screen = { left: 0, top: 0, width: 0, height: 0 };
-  // public rotateSpeed = 1.0;
   public zoomSpeed = 1;
   public panSpeed = 0.1;
-  public noRotate = false;
   public noZoom = false;
   public noPan = false;
-  public staticMoving = false;
   public dynamicDampingFactor = 0.2;
 
   public minDistance = 1;
   public maxDistance = 15;
-  // this.keys = [ 65 /*A*/, 83 /*S*/, 68 /*D*/ ];
-  // this.mouseButtons = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.ZOOM, RIGHT: MOUSE.PAN };
-
-  public targetObject = null as null | THREE.Object3D;
-  private targetObjectDelta = new Vector3;
 
   private readonly STATE = {
     NONE: -1,
-    // ROTATE: 0,
     ZOOM: 1,
     PAN: 2,
-    // TOUCH_ROTATE: 3,
     TOUCH_ZOOM_PAN: 4,
   };
-  private target = new Vector3();
+  private target = new Vector3;
   private readonly EPS = 0.000001;
-  private lastPosition = new Vector3();
+  private lastPosition = new Vector3;
   private lastZoom = 1;
 
   private state = this.STATE.NONE;
   private keyState = this.STATE.NONE;
 
-  private eye = new Vector3();
+  private eye = new Vector3;
 
-  // private movePrev = new Vector2();
-  // private moveCurr = new Vector2();
-  // private lastAxis = new Vector3();
-  // private lastAngle = 0;
-
-  private zoomStart = new Vector2();
-  private zoomEnd = new Vector2();
-
+  private zoomStart = new Vector2;
+  private zoomEnd = new Vector2;
   private touchZoomDistanceStart = 0;
   private touchZoomDistanceEnd = 0;
-
-  private panStart = new Vector2();
-  private panEnd = new Vector2();
+  private panStart = new Vector2;
+  private panEnd = new Vector2;
 
   private readonly initial = {
     target: this.target.clone(),
@@ -74,39 +55,32 @@ export class PanZoomControls extends EventDispatcher {
     end: { type: 'end' },
   }
 
-  // getMouseOnScreen
   private mouseScreen = new Vector2;
-  // getMouseOnCircle
-  private mouseCircle = new Vector2;
-  // panCamera
+  private mouseWorld = new Vector3;
   private pan = {
     mouseChange: new Vector2,
     cameraUp: new Vector3,
     delta: new Vector3,
   }
 
+  /** For tracking actors */
+  public targetObject = null as null | THREE.Object3D;
+  private targetObjectDelta = new Vector3;
+
   constructor(
     public camera: PerspectiveCamera | OrthographicCamera,
     public domEl: Element,
   ) {
     super();
-
-    // listeners already bound to `this` because they're arrow fns
+    
     this.domEl.addEventListener( 'contextmenu', this.contextmenu, false );
     this.domEl.addEventListener( 'mousedown', this.mousedown as EventListener, false );
     this.domEl.addEventListener( 'wheel', this.mousewheel as EventListener, false );
-    // this.domEl.addEventListener( 'touchstart', this.touchstart as EventListener, false );
-    // this.domEl.addEventListener( 'touchend', this.touchend as EventListener, false );
-    // this.domEl.addEventListener( 'touchmove', this.touchmove as EventListener, false );
-  
-    // window.addEventListener( 'keydown', keydown, false );
-    // window.addEventListener( 'keyup', keyup, false );
-  
+
     this.handleResize();
-  
-    // force an update at start
     this.update();
   }
+
 
   handleResize() {
     const box = this.domEl.getBoundingClientRect();
@@ -124,13 +98,6 @@ export class PanZoomControls extends EventDispatcher {
       ( pageY - this.screen.top ) / this.screen.height
     );
   }
-
-  // getMouseOnCircle(pageX: number, pageY: number) {
-  //   return this.mouseCircle.set(
-  //     ( ( pageX - this.screen.width * 0.5 - this.screen.left ) / ( this.screen.width * 0.5 ) ),
-  //     ( ( this.screen.height + 2 * ( this.screen.top - pageY ) ) / this.screen.width ) // screen.width intentional
-  //   );
-  // }
 
   zoomCamera() {
     let factor: number;
@@ -160,11 +127,7 @@ export class PanZoomControls extends EventDispatcher {
         }
       }
 
-      if (this.staticMoving ) {
-        this.zoomStart.copy(this.zoomEnd);
-      } else {
-        this.zoomStart.y += (this.zoomEnd.y - this.zoomStart.y ) * this.dynamicDampingFactor;
-      }
+      this.zoomStart.y += (this.zoomEnd.y - this.zoomStart.y ) * this.dynamicDampingFactor;
     }
 
   }
@@ -189,11 +152,7 @@ export class PanZoomControls extends EventDispatcher {
       this.camera.position.add(delta);
       this.target.add(delta);
 
-      if (this.staticMoving) {
-        this.panStart.copy(this.panEnd);
-      } else {
-        this.panStart.add(mouseChange.subVectors(this.panEnd, this.panStart).multiplyScalar(this.dynamicDampingFactor));
-      }
+      this.panStart.add(mouseChange.subVectors(this.panEnd, this.panStart).multiplyScalar(this.dynamicDampingFactor));
     }
   }
 
@@ -292,18 +251,14 @@ export class PanZoomControls extends EventDispatcher {
     this.camera.zoom = this.initial.zoom;
 
     this.camera.updateProjectionMatrix();
-
     this.eye.subVectors( this.camera.position, this.target );
-
     this.camera.lookAt( this.target );
-
     this.dispatchEvent( this.event.change );
 
     this.lastPosition.copy( this.camera.position );
     this.lastZoom = this.camera.zoom;
   }
 
-  // Listeners must be arrow fns
   mousedown = (event: MouseEvent) => {
     if (this.enabled === false ) {
       return;
@@ -338,10 +293,6 @@ export class PanZoomControls extends EventDispatcher {
 
     const state = ( this.keyState !== this.STATE.NONE ) ? this.keyState : this.state;
 
-    // if (state === this.STATE.ROTATE && !this.noRotate ) {
-    //   this.moveCurr.copy( getMouseOnCircle( event.pageX, event.pageY ) );
-    //   _movePrev.copy( _moveCurr );
-    // }
     if (state === this.STATE.ZOOM && !this.noZoom ) {
       this.zoomStart.copy( this.getMouseOnScreen( event.pageX, event.pageY ) );
       this.zoomEnd.copy( this.zoomStart );
@@ -356,6 +307,7 @@ export class PanZoomControls extends EventDispatcher {
     this.dispatchEvent( this.event.start );
   }
 
+  // Listener attached by this.mousedown
   mousemove = (event: MouseEvent) => {
     if (this.enabled === false) {
       return;
@@ -366,10 +318,6 @@ export class PanZoomControls extends EventDispatcher {
 
     const state = ( this.keyState !== this.STATE.NONE ) ? this.keyState : this.state;
 
-    // if ( state === this.STATE.ROTATE && ! this.noRotate ) {
-    //   this.movePrev.copy( this.moveCurr );
-    //   this.moveCurr.copy( this.getMouseOnCircle( event.pageX, event.pageY ) );
-    // }
     if ( state === this.STATE.ZOOM && !this.noZoom ) {
       this.zoomEnd.copy( this.getMouseOnScreen( event.pageX, event.pageY ) );
     } else if ( state === this.STATE.PAN && !this.noPan ) {
@@ -390,7 +338,6 @@ export class PanZoomControls extends EventDispatcher {
     this.domEl.ownerDocument!.removeEventListener( 'mousemove', this.mousemove );
     this.domEl.ownerDocument!.removeEventListener( 'mouseup', this.mouseup );
     this.dispatchEvent( this.event.end );
-
   }
 
   mousewheel = (event: MouseWheelEvent) => {
@@ -470,7 +417,7 @@ export class PanZoomControls extends EventDispatcher {
       case 1:
         // this.movePrev.copy(this.moveCurr );
         // this.moveCurr.copy(this.getMouseOnCircle( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
-        this.panEnd.copy( this.getMouseOnScreen( event.touches[ 0 ].pageX,event.touches[ 0 ].pageY ) );
+        this.panEnd.copy( this.getMouseOnScreen( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
         break;
       default: {// 2 or more
         const dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
