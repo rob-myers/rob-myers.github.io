@@ -1,2 +1,3 @@
-/** Dimension of tile */
-export const tileDim = 50;
+export type StageMsg = (
+  { key: 'select-n-gon'; n: number }
+);

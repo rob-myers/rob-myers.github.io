@@ -8,6 +8,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+- Can create ui plugin using shell, which changes the SelectRect.
+
 - Can create rectilinear polygonal selections
 
 - Implement comments using build and client-side calls:

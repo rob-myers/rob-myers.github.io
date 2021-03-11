@@ -11,7 +11,7 @@ import StageToolbar from "./StageToolbar";
 import CameraControls from "./CameraControls";
 import Grid from "./Grid";
 import Lights from "./Lights";
-import SelectRect, { Wire } from "./SelectRect";
+import SelectRect, { PointerMsg } from "./SelectRect";
 import Walls from "./Walls";
 import styles from 'styles/Stage.module.css';
 
@@ -35,9 +35,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     setCtxt(ctxt);
   }, []);
 
-  const selectWire = useRef<Wire>(new Subject);
+  const ptrWire = useRef(new Subject<PointerMsg>()).current;
   const onPointer = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    selectWire.current.next({ key: e.type as any, ndCoords: getNormDevicePos(e) });
+    ptrWire.next({ key: e.type as any, ndCoords: getNormDevicePos(e) });
   }, [stage]);
 
   return (
@@ -62,7 +62,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           {stage.controls && (
             <SelectRect
               stage={stage}
-              wire={selectWire.current}
+              wire={ptrWire}
             />
           )}
           <Walls wallPolys={stage.wallPolys} />

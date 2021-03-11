@@ -1,6 +1,6 @@
 import { useRef, useMemo, useEffect } from 'react';
 import { extend, useThree, useFrame } from 'react-three-fiber';
-import { PanZoomControls } from 'model/3d/controls';
+import { PanZoomControls } from 'model/3d/pan-zoom-controls';
 import useStageStore from 'store/stage.store';
 
 // See types/react-three-fiber/three-types.d.ts

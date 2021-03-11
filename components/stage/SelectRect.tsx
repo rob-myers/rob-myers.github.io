@@ -15,7 +15,10 @@ const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
   const initial = useRef(new Vector3).current;
   /** Should we update the selection rectangle?  */
   const active = useRef(false);
+  
   const [visible, setVisible] = useState(false);
+  /** Number of sides of 'uniform polygon brush' */
+  const [polySides, setPolySides] = useState(4);
 
   useEffect(() => {
     const sub = wire.subscribe(({ key, ndCoords }) => {
@@ -51,8 +54,8 @@ const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
         <meshStandardMaterial color="#59a" transparent opacity={0.4} />
       </mesh>
       <mesh scale={[0.5, 0.5, 0.5]} rotation={[0, 0, 0]}>
-        <meshStandardMaterial color="#f00" transparent opacity={0.2} />
-        <circleBufferGeometry args={[1, 6]} />
+        <meshStandardMaterial color="#444" transparent opacity={0.2} />
+        <circleBufferGeometry args={[1, polySides]} />
       </mesh>
     </group>
   );
@@ -60,10 +63,10 @@ const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
 
 interface Props {
   stage: StoredStage;
-  wire: Wire;
+  wire: Subject<PointerMsg>;
 }
 
-export type Wire = Subject<{
+export type PointerMsg = {
   /** Normalized device coords in [-1, 1] * [-1, 1] */
   ndCoords: VectorJson;
 } & (
@@ -71,6 +74,6 @@ export type Wire = Subject<{
   | { key: 'pointerup' }
   | { key: 'pointerleave' }
   | { key: 'pointermove' }
-)>;
+);
 
 export default SelectionRect;

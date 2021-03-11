@@ -1,11 +1,14 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { Scene } from 'three';
+import { Subject } from 'rxjs';
+
 import * as Geom from 'model/geom';
 import { KeyedLookup } from 'model/generic.model';
-import { PanZoomControls } from 'model/3d/controls';
+import { PanZoomControls } from 'model/3d/pan-zoom-controls';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
+import { StageMsg } from 'model/stage.model';
 
 export type State = {
   stage: KeyedLookup<StoredStage>;
@@ -27,13 +30,15 @@ type WallDef = [number, number, number, number];
 export type StoredStage = {
   key: string;
   camEnabled: boolean;
+  /** Send messages to stage here */
+  input: Subject<StageMsg>;
   /** Attached on mount */
   controls?: PanZoomControls;
   /** Currently selected polygon */
   selectPolys: Geom.Polygon[];
   /** Attached on mount */
   scene?: Scene;
-  /** Base of walls */
+  /** Base of walls. */
   wallPolys: Geom.Polygon[];
 };
 
@@ -58,9 +63,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     createStage: (stageKey) => set(({ stage }) => ({
       stage: addToLookup({
         key: stageKey,
+        camEnabled: true,
+        input: new Subject,
         selectPolys: [],
         wallPolys: [],
-        camEnabled: true,
       }, stage),
     })),
     getStage: (stageKey) => {
