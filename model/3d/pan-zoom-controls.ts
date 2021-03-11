@@ -56,7 +56,6 @@ export class PanZoomControls extends EventDispatcher {
   }
 
   private mouseScreen = new Vector2;
-  private mouseWorld = new Vector3;
   private pan = {
     mouseChange: new Vector2,
     cameraUp: new Vector3,
@@ -80,7 +79,6 @@ export class PanZoomControls extends EventDispatcher {
     this.handleResize();
     this.update();
   }
-
 
   handleResize() {
     const box = this.domEl.getBoundingClientRect();
@@ -148,6 +146,8 @@ export class PanZoomControls extends EventDispatcher {
 
       delta.copy(this.eye).cross(this.camera.up).setLength(mouseChange.x);
       delta.add(cameraUp.copy(this.camera.up).setLength(mouseChange.y));
+
+      // console.log(this.eye);
 
       this.camera.position.add(delta);
       this.target.add(delta);

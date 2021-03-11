@@ -9,6 +9,7 @@ import { PanZoomControls } from 'model/3d/pan-zoom-controls';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
 import { StageMsg } from 'model/stage.model';
+import { NewPanZoomControls } from 'model/3d/new-controls';
 
 export type State = {
   stage: KeyedLookup<StoredStage>;
@@ -33,7 +34,8 @@ export type StoredStage = {
   /** Send messages to stage here */
   input: Subject<StageMsg>;
   /** Attached on mount */
-  controls?: PanZoomControls;
+  // controls?: PanZoomControls;
+  controls?: NewPanZoomControls;
   /** Currently selected polygon */
   selectPolys: Geom.Polygon[];
   /** Attached on mount */
