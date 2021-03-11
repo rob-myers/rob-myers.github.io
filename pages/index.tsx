@@ -21,9 +21,9 @@ export default function Home() {
           </span>
         </h1>
         <p className={styles.subtitle}>
-          remaking <a href="https://en.wikipedia.org/wiki/Teleglitch" target='#'>
+          inspired by <a href="https://en.wikipedia.org/wiki/Teleglitch" target='#'>
             Teleglitch
-          </a> for the web
+          </a>.
         </p>
 
         <section className={styles.termStage}>

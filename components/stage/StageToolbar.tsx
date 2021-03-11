@@ -13,13 +13,13 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
     <Toolbar>
       {stage && <>
         <section>
-          user@<strong>{stage.key}</strong>
+          @<strong>{stage.key}</strong>
         </section>
         <Button
           enabled={stage.camEnabled}
           onClick={toggleCam}
         >
-          camera
+          panzoom
         </Button>
       </>}
     </Toolbar>
@@ -34,10 +34,9 @@ const Toolbar = styled.section`
   height: 28px;
   font-size: 16px;
   border-bottom: 1px solid #ddd;
-  background-color: #edefff;
   display: grid;
   padding: 4px;
-  grid-template-columns: auto 60px;
+  grid-template-columns: auto 70px;
   gap: 8px;
 `;
 
