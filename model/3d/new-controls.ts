@@ -6,8 +6,6 @@ import {
   PerspectiveCamera,
 } from 'three';
 
-type State = 'none' | 'pan' | 'zoom';
-
 export class NewPanZoomControls extends EventDispatcher {
   public enabled = true;
   private screen = { left: 0, top: 0, width: 0, height: 0 };
@@ -27,11 +25,13 @@ export class NewPanZoomControls extends EventDispatcher {
   private zoomStart = initCameraPos.z;
   private zoomEnd = initCameraPos.z;
   private zoomChange = 0;
-  private zoomWorld = new Vector3;
-
-  private state: State = 'none';
+  /** Used to keep mouse world position fixed when zooming */
+  private zoomMouseDelta = new Vector3;
+  
   private readonly epsilon = 0.0001;
   private readonly epsilonSquared = this.epsilon ** 2;
+  /** For debugging */
+  // private state: State = 'none';
 
   constructor(
     public camera: PerspectiveCamera,
@@ -47,19 +47,6 @@ export class NewPanZoomControls extends EventDispatcher {
     this.update();
   }
 
-  private start(state: State) {
-    if (this.state !== state) {
-      this.state = state;
-      console.log('started', state);
-    }
-  }
-  private stop(state: State) {
-    if (this.state === state) {
-      this.state = 'none';
-      console.log('stopped', state);
-    }
-  }
-
   update() {
     if (!this.enabled) return false;
 
@@ -67,14 +54,14 @@ export class NewPanZoomControls extends EventDispatcher {
     if (this.panChange.lengthSq() > this.epsilonSquared) {
       this.handlePan();
     } else {
-      this.stop('pan');
+      // this.stop('pan');
     }
 
     this.zoomChange = this.zoomEnd - this.zoomStart;
     if (Math.abs(this.zoomChange) > this.epsilon) {
       this.handleZoom();
     } else {
-      this.stop('zoom');
+      // this.stop('zoom');
     }
   }
 
@@ -89,14 +76,15 @@ export class NewPanZoomControls extends EventDispatcher {
     );
   }
 
-  // TODO keep point under mouse fixed
   handleZoom() {
     this.camera.position.z += this.zoomChange * this.zoomSpeed;
-    // this.ndcToWorld(this.ndcMouse, this.mouseDelta);
-    // this.mouseDelta.sub(this.mouseWorld);
-    // this.camera.position.x -= this.mouseDelta.x;
-    // this.camera.position.y -= this.mouseDelta.y;
     this.zoomStart += this.zoomChange * this.dampingFactor;
+    
+    // Keep floor point under mouse fixed
+    this.ndcToWorld(this.ndcMouse, this.zoomMouseDelta);
+    this.zoomMouseDelta.sub(this.mouseWorld);
+    this.camera.position.x -= this.zoomMouseDelta.x;
+    this.camera.position.y -= this.zoomMouseDelta.y;
   }
 
   onWheel = (event: MouseWheelEvent) => {
@@ -108,11 +96,11 @@ export class NewPanZoomControls extends EventDispatcher {
     
     if (event.ctrlKey) {// Pinch zoom
       this.zoomEnd += event.deltaY * 0.05;
-      this.start('zoom');
+      // this.start('zoom');
     } else {
       this.panEnd.x -= event.deltaX * 0.005;
       this.panEnd.y -= event.deltaY * 0.005
-      this.start('pan');
+      // this.start('pan');
     }
   }
 
@@ -135,6 +123,7 @@ export class NewPanZoomControls extends EventDispatcher {
       -((e.clientY - this.screen.top) / this.screen.height) * 2 + 1,
     );
     this.ndcToWorld(this.ndcMouse, this.mouseWorld)
+    // console.log(this.mouseWorld);
   }
 
   private ndcToWorld(ndCoords: Vector2, output: Vector3) {
@@ -142,8 +131,21 @@ export class NewPanZoomControls extends EventDispatcher {
     output.unproject(this.camera).sub(this.camera.position).normalize();
     output.multiplyScalar((0 - this.camera.position.z) / output.z);
     output.add(this.camera.position);
-    // console.log(this.mouseWorld);
   }
+
+  // private start(state: State) {
+  //   if (this.state !== state) {
+  //     this.state = state;
+  //     console.log('started', state);
+  //   }
+  // }
+
+  // private stop(state: State) {
+  //   if (this.state === state) {
+  //     this.state = 'none';
+  //     console.log('stopped', state);
+  //   }
+  // }
 
   dispose() {
     this.canvasEl.removeEventListener('resize', this.onResize, false);
@@ -151,3 +153,5 @@ export class NewPanZoomControls extends EventDispatcher {
     this.canvasEl.removeEventListener('mousemove', this.onMove, false);
   }
 }
+
+// type State = 'none' | 'pan' | 'zoom';
