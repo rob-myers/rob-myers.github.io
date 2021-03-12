@@ -8,20 +8,22 @@ import {
 
 export class NewPanZoomControls extends EventDispatcher {
   public enabled = true;
-
   private screen = { left: 0, top: 0, width: 0, height: 0 };
   /** Normalized device (x, y) mouse position */
   private ndMousePos = new Vector2;
   /** World mouse position where z = 0 */
   private mouseWorld = new Vector3;
-  
-  private panSpeed = 0.1;
-  public panDamping = 0.2;
+  private dampingFactor = 0.2;
+
+  private panSpeed = 0.2;
   private panStart = new Vector2;
   private panEnd = new Vector2;
   private panChange = new Vector2;
-  /** Desired distance from cam to floor */
-  private targetDist = initCameraPos.z;
+
+  private zoomSpeed = 0.1;
+  private zoomStart = initCameraPos.z;
+  private zoomEnd = initCameraPos.z;
+  private zoomChange = 0;
   
   constructor(
     public camera: PerspectiveCamera,
@@ -45,7 +47,10 @@ export class NewPanZoomControls extends EventDispatcher {
       this.handlePan();
     }
 
-    this.handleZoom();
+    this.zoomChange = this.zoomEnd - this.zoomStart;
+    if (this.zoomChange) {
+      this.handleZoom();
+    }
   }
 
   handlePan() {
@@ -55,26 +60,29 @@ export class NewPanZoomControls extends EventDispatcher {
 
     this.panStart.add(
       this.panChange.subVectors(this.panEnd, this.panStart)
-        .multiplyScalar(this.panDamping)
+        .multiplyScalar(this.dampingFactor)
     );
   }
 
+  // TODO keep point under mouse fixed
   handleZoom() {
-    // TODO zoom towards this.mouseWorld
+    this.zoomChange *= this.zoomSpeed;
+    this.camera.position.z += this.zoomChange;
+    this.zoomStart += (this.zoomEnd - this.zoomStart) * this.dampingFactor;
   }
 
   onWheel = (event: MouseWheelEvent) => {
     this.updateMouseWorld(event);
     if (!this.enabled) return false;
-
+    
     event.preventDefault();
     event.stopPropagation();
-
+    
     if (event.ctrlKey) {// Pinch zoom
-      this.targetDist -= event.deltaY * 0.005;
+      this.zoomEnd += event.deltaY * 0.05;
     } else {
       this.panEnd.x -= event.deltaX * 0.005;
-      this.panEnd.y -= event.deltaY * 0.005;
+      this.panEnd.y -= event.deltaY * 0.005
     }
   }
 
