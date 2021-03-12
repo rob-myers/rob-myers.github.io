@@ -4,7 +4,7 @@ import { Vector3 } from "three";
 
 import { VectorJson } from "model/geom";
 import { ndCoordsToGroundPlane, vectAccuracy } from "model/3d/three.model";
-import { StoredStage } from "store/stage.store";
+import { StoredStage } from "model/stage.model";
 
 const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
   const root = useRef<THREE.Group>(null);
@@ -16,9 +16,8 @@ const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
   /** Should we update the selection rectangle?  */
   const active = useRef(false);
   
-  const [visible, setVisible] = useState(false);
-  /** Number of sides of 'uniform polygon brush' */
-  const [polySides, setPolySides] = useState(4);
+  const [everUsed, setEverUsed] = useState(false);
+  const meta = stage.selectRectMeta;
 
   useEffect(() => {
     const sub = wire.subscribe(({ key, ndCoords }) => {
@@ -41,21 +40,21 @@ const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
           Math.abs(initial.y - current.y),
           1,
         );
-        !visible && setVisible(true);
+        !everUsed && setEverUsed(true);
       }
     });
     return () => sub.unsubscribe();
-  }, [visible]);
+  }, [everUsed]);
 
   return (
-    <group ref={root} visible={visible}>
+    <group ref={root} visible={everUsed}>
       <mesh>
         <planeBufferGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color="#59a" transparent opacity={0.4} />
       </mesh>
       <mesh scale={[0.5, 0.5, 0.5]} rotation={[0, 0, 0]}>
         <meshStandardMaterial color="#444" transparent opacity={0.2} />
-        <circleBufferGeometry args={[1, polySides]} />
+        <circleBufferGeometry args={[1, meta.brushPolySides]} />
       </mesh>
     </group>
   );

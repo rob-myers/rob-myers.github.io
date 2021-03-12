@@ -1,15 +1,12 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { Scene } from 'three';
 import { Subject } from 'rxjs';
 
 import * as Geom from 'model/geom';
-import { KeyedLookup } from 'model/generic.model';
-import { PanZoomControls } from 'model/3d/pan-zoom-controls';
+import { deepClone, KeyedLookup } from 'model/generic.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
-import { StageMsg } from 'model/stage.model';
-import { NewPanZoomControls } from 'model/3d/new-controls';
+import { defaultSelectRectMeta, handleStageInput, PersistedStage, StoredStage } from 'model/stage.model';
 
 export type State = {
   stage: KeyedLookup<StoredStage>;
@@ -28,27 +25,6 @@ export type State = {
 
 type WallDef = [number, number, number, number];
 
-export type StoredStage = {
-  key: string;
-  camEnabled: boolean;
-  /** Send messages to stage here */
-  input: Subject<StageMsg>;
-  /** Attached on mount */
-  // controls?: PanZoomControls;
-  controls?: NewPanZoomControls;
-  /** Currently selected polygon */
-  selectPolys: Geom.Polygon[];
-  /** Attached on mount */
-  scene?: Scene;
-  /** Base of walls. */
-  wallPolys: Geom.Polygon[];
-};
-
-interface PersistedStage {
-  key: string;
-  // TODO
-}
-
 const useStore = create<State>(devtools(persist((set, get) => ({
   stage: {},
   persist: {},
@@ -66,7 +42,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       stage: addToLookup({
         key: stageKey,
         camEnabled: true,
-        input: new Subject,
+        selectRectMeta: deepClone(defaultSelectRectMeta),
+        input: handleStageInput(stageKey, new Subject),
         selectPolys: [],
         wallPolys: [],
       }, stage),
@@ -85,7 +62,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 1,
+  version: 2,
   blacklist: ['api', 'stage'],
 }), 'stage'));
 
