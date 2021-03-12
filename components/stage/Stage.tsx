@@ -4,6 +4,7 @@ import { Canvas, CanvasContext } from "react-three-fiber";
 import { Subject } from "rxjs";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
+import { initCameraPos } from "model/stage.model";
 import useGeomStore from "store/geom.store";
 import useStageStore, { StoredStage } from "store/stage.store";
 
@@ -78,7 +79,7 @@ interface Props {
 
 function initializeCanvasContext(ctxt: CanvasContext) {
   const camera = ctxt.camera as PerspectiveCamera;
-  camera.position.set(0, 0, 10);
+  camera.position.copy(initCameraPos);
   camera.setFocalLength(35);
   // ctxt.gl.shadowMap.enabled = true;
   // ctxt.gl.shadowMap.autoUpdate = false;

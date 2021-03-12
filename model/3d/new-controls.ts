@@ -1,3 +1,4 @@
+import { initCameraPos } from 'model/stage.model';
 import {
   EventDispatcher,
   Vector2,
@@ -6,6 +7,7 @@ import {
 } from 'three';
 
 export class NewPanZoomControls extends EventDispatcher {
+  public enabled = true;
 
   private screen = { left: 0, top: 0, width: 0, height: 0 };
   /** Normalized device (x, y) mouse position */
@@ -18,6 +20,8 @@ export class NewPanZoomControls extends EventDispatcher {
   private panStart = new Vector2;
   private panEnd = new Vector2;
   private panChange = new Vector2;
+  /** Desired distance from cam to floor */
+  private targetDist = initCameraPos.z;
   
   constructor(
     public camera: PerspectiveCamera,
@@ -34,6 +38,8 @@ export class NewPanZoomControls extends EventDispatcher {
   }
 
   update() {
+    if (!this.enabled) return false;
+
     this.panChange.copy(this.panEnd).sub(this.panStart);
     if (this.panChange.lengthSq()) {
       this.handlePan();
@@ -47,13 +53,33 @@ export class NewPanZoomControls extends EventDispatcher {
     this.camera.position.x -= this.panChange.x;
     this.camera.position.y += this.panChange.y;
 
-    this.panChange.subVectors(this.panEnd, this.panStart)
-      .multiplyScalar(this.panDamping);
-    this.panStart.add(this.panChange);
+    this.panStart.add(
+      this.panChange.subVectors(this.panEnd, this.panStart)
+        .multiplyScalar(this.panDamping)
+    );
   }
 
   handleZoom() {
     // TODO zoom towards this.mouseWorld
+  }
+
+  onWheel = (event: MouseWheelEvent) => {
+    this.updateMouseWorld(event);
+    if (!this.enabled) return false;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (event.ctrlKey) {// Pinch zoom
+      this.targetDist -= event.deltaY * 0.005;
+    } else {
+      this.panEnd.x -= event.deltaX * 0.005;
+      this.panEnd.y -= event.deltaY * 0.005;
+    }
+  }
+
+  onMove = (event: MouseEvent) => {
+    this.updateMouseWorld(event);
   }
 
   onResize = () => {
@@ -63,19 +89,6 @@ export class NewPanZoomControls extends EventDispatcher {
     this.screen.top = rect.top + window.pageYOffset - d.clientTop;
     this.screen.width = rect.width;
     this.screen.height = rect.height;
-  }
-
-  onWheel = (event: MouseWheelEvent) => {
-    event.preventDefault();
-    event.stopPropagation();
-    // this.computeMouseWorld(event);
-
-    this.panEnd.x -= event.deltaX * 0.005;
-    this.panEnd.y -= event.deltaY * 0.005;
-  }
-
-  onMove = (event: MouseEvent) => {
-    this.updateMouseWorld(event);
   }
 
   updateMouseWorld(e: MouseEvent) {

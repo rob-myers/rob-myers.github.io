@@ -14,7 +14,6 @@ const CameraControls: React.FC<Props> = ({ stageKey, enabled }) => {
   const controls = useRef<NewPanZoomControls>();
   const { camera, gl: { domElement } } = useThree();
 
-  // Prevent re-render to avoid running camera.lookAt twice
   const panZoomControls = useMemo(() => (
     <panZoomControls
       ref={controls}
