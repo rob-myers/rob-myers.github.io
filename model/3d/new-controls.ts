@@ -6,13 +6,16 @@ import {
   PerspectiveCamera,
 } from 'three';
 
+type State = 'none' | 'pan' | 'zoom';
+
 export class NewPanZoomControls extends EventDispatcher {
   public enabled = true;
   private screen = { left: 0, top: 0, width: 0, height: 0 };
   /** Normalized device (x, y) mouse position */
-  private ndMousePos = new Vector2;
+  private ndcMouse = new Vector2;
   /** World mouse position where z = 0 */
   private mouseWorld = new Vector3;
+
   private dampingFactor = 0.2;
 
   private panSpeed = 0.2;
@@ -20,11 +23,16 @@ export class NewPanZoomControls extends EventDispatcher {
   private panEnd = new Vector2;
   private panChange = new Vector2;
 
-  private zoomSpeed = 0.1;
+  private zoomSpeed = 0.2;
   private zoomStart = initCameraPos.z;
   private zoomEnd = initCameraPos.z;
   private zoomChange = 0;
-  
+  private zoomWorld = new Vector3;
+
+  private state: State = 'none';
+  private readonly epsilon = 0.0001;
+  private readonly epsilonSquared = this.epsilon ** 2;
+
   constructor(
     public camera: PerspectiveCamera,
     public canvasEl: HTMLCanvasElement,
@@ -39,17 +47,34 @@ export class NewPanZoomControls extends EventDispatcher {
     this.update();
   }
 
+  private start(state: State) {
+    if (this.state !== state) {
+      this.state = state;
+      console.log('started', state);
+    }
+  }
+  private stop(state: State) {
+    if (this.state === state) {
+      this.state = 'none';
+      console.log('stopped', state);
+    }
+  }
+
   update() {
     if (!this.enabled) return false;
 
     this.panChange.copy(this.panEnd).sub(this.panStart);
-    if (this.panChange.lengthSq()) {
+    if (this.panChange.lengthSq() > this.epsilonSquared) {
       this.handlePan();
+    } else {
+      this.stop('pan');
     }
 
     this.zoomChange = this.zoomEnd - this.zoomStart;
-    if (this.zoomChange) {
+    if (Math.abs(this.zoomChange) > this.epsilon) {
       this.handleZoom();
+    } else {
+      this.stop('zoom');
     }
   }
 
@@ -66,9 +91,12 @@ export class NewPanZoomControls extends EventDispatcher {
 
   // TODO keep point under mouse fixed
   handleZoom() {
-    this.zoomChange *= this.zoomSpeed;
-    this.camera.position.z += this.zoomChange;
-    this.zoomStart += (this.zoomEnd - this.zoomStart) * this.dampingFactor;
+    this.camera.position.z += this.zoomChange * this.zoomSpeed;
+    // this.ndcToWorld(this.ndcMouse, this.mouseDelta);
+    // this.mouseDelta.sub(this.mouseWorld);
+    // this.camera.position.x -= this.mouseDelta.x;
+    // this.camera.position.y -= this.mouseDelta.y;
+    this.zoomStart += this.zoomChange * this.dampingFactor;
   }
 
   onWheel = (event: MouseWheelEvent) => {
@@ -80,9 +108,11 @@ export class NewPanZoomControls extends EventDispatcher {
     
     if (event.ctrlKey) {// Pinch zoom
       this.zoomEnd += event.deltaY * 0.05;
+      this.start('zoom');
     } else {
       this.panEnd.x -= event.deltaX * 0.005;
       this.panEnd.y -= event.deltaY * 0.005
+      this.start('pan');
     }
   }
 
@@ -99,15 +129,19 @@ export class NewPanZoomControls extends EventDispatcher {
     this.screen.height = rect.height;
   }
 
-  updateMouseWorld(e: MouseEvent) {
-    this.ndMousePos.set(
+  private updateMouseWorld(e: MouseEvent) {
+    this.ndcMouse.set(
       ((e.clientX - this.screen.left) / this.screen.width) * 2 - 1,
       -((e.clientY - this.screen.top) / this.screen.height) * 2 + 1,
     );
-    this.mouseWorld.set(this.ndMousePos.x, this.ndMousePos.y, 1);
-    this.mouseWorld.unproject(this.camera).sub(this.camera.position).normalize();
-    this.mouseWorld.multiplyScalar((0 - this.camera.position.z) / this.mouseWorld.z);
-    this.mouseWorld.add(this.camera.position);
+    this.ndcToWorld(this.ndcMouse, this.mouseWorld)
+  }
+
+  private ndcToWorld(ndCoords: Vector2, output: Vector3) {
+    output.set(ndCoords.x, ndCoords.y, 1);
+    output.unproject(this.camera).sub(this.camera.position).normalize();
+    output.multiplyScalar((0 - this.camera.position.z) / output.z);
+    output.add(this.camera.position);
     // console.log(this.mouseWorld);
   }
 
