@@ -77,11 +77,13 @@ export class NewPanZoomControls extends EventDispatcher {
     this.camera.position.z += this.zoomChange * this.zoomSpeed;
     this.zoomStart += this.zoomChange * this.dampingFactor;
     
-    // Keep floor point under mouse fixed
-    this.ndcToWorld(this.ndcMouse, this.zoomMouseDelta);
-    this.zoomMouseDelta.sub(this.mouseWorld);
-    this.camera.position.x -= this.zoomMouseDelta.x;
-    this.camera.position.y -= this.zoomMouseDelta.y;
+    if (this.state !== 'pan') {
+      // Keep floor point under mouse fixed
+      this.ndcToWorld(this.ndcMouse, this.zoomMouseDelta);
+      this.zoomMouseDelta.sub(this.mouseWorld);
+      this.camera.position.x -= this.zoomMouseDelta.x;
+      this.camera.position.y -= this.zoomMouseDelta.y;
+    }
   }
 
   onWheel = (event: MouseWheelEvent) => {
