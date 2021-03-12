@@ -8,7 +8,6 @@ import {
 
 export class NewPanZoomControls extends EventDispatcher {
   public enabled = true;
-  private screen = { left: 0, top: 0, width: 0, height: 0 };
   /** Normalized device (x, y) mouse position */
   private ndcMouse = new Vector2;
   /** World mouse position where z = 0 */
@@ -31,7 +30,7 @@ export class NewPanZoomControls extends EventDispatcher {
   private readonly epsilon = 0.0001;
   private readonly epsilonSquared = this.epsilon ** 2;
   /** For debugging */
-  // private state: State = 'none';
+  private state: State = 'none';
 
   constructor(
     public camera: PerspectiveCamera,
@@ -39,11 +38,9 @@ export class NewPanZoomControls extends EventDispatcher {
   ) {
     super();
 
-    this.canvasEl.addEventListener('resize', this.onResize, false);
     this.canvasEl.addEventListener( 'wheel', this.onWheel, false );
     this.canvasEl.addEventListener( 'mousemove', this.onMove, false );
 
-    this.onResize();
     this.update();
   }
 
@@ -54,14 +51,14 @@ export class NewPanZoomControls extends EventDispatcher {
     if (this.panChange.lengthSq() > this.epsilonSquared) {
       this.handlePan();
     } else {
-      // this.stop('pan');
+      this.stop('pan');
     }
 
     this.zoomChange = this.zoomEnd - this.zoomStart;
     if (Math.abs(this.zoomChange) > this.epsilon) {
       this.handleZoom();
     } else {
-      // this.stop('zoom');
+      this.stop('zoom');
     }
   }
 
@@ -96,11 +93,11 @@ export class NewPanZoomControls extends EventDispatcher {
     
     if (event.ctrlKey) {// Pinch zoom
       this.zoomEnd += event.deltaY * 0.05;
-      // this.start('zoom');
+      this.start('zoom');
     } else {
       this.panEnd.x -= event.deltaX * 0.005;
       this.panEnd.y -= event.deltaY * 0.005
-      // this.start('pan');
+      this.start('pan');
     }
   }
 
@@ -108,22 +105,14 @@ export class NewPanZoomControls extends EventDispatcher {
     this.updateMouseWorld(event);
   }
 
-  onResize = () => {
-    const rect = this.canvasEl.getBoundingClientRect();
-    const d = this.canvasEl.ownerDocument!.documentElement;
-    this.screen.left = rect.left + window.pageXOffset - d.clientLeft;
-    this.screen.top = rect.top + window.pageYOffset - d.clientTop;
-    this.screen.width = rect.width;
-    this.screen.height = rect.height;
-  }
-
   private updateMouseWorld(e: MouseEvent) {
+    const { left, top, width, height } = (e.currentTarget! as Element).getBoundingClientRect();
     this.ndcMouse.set(
-      ((e.clientX - this.screen.left) / this.screen.width) * 2 - 1,
-      -((e.clientY - this.screen.top) / this.screen.height) * 2 + 1,
+      ((e.clientX - left) / width) * 2 - 1,
+      -((e.clientY - top) / height) * 2 + 1,
     );
     this.ndcToWorld(this.ndcMouse, this.mouseWorld)
-    // console.log(this.mouseWorld);
+    // console.log('ndcMouse', this.ndcMouse);
   }
 
   private ndcToWorld(ndCoords: Vector2, output: Vector3) {
@@ -133,25 +122,24 @@ export class NewPanZoomControls extends EventDispatcher {
     output.add(this.camera.position);
   }
 
-  // private start(state: State) {
-  //   if (this.state !== state) {
-  //     this.state = state;
-  //     console.log('started', state);
-  //   }
-  // }
+  private start(state: State) {
+    if (this.state !== state) {
+      this.state = state;
+      console.log('started', state);
+    }
+  }
 
-  // private stop(state: State) {
-  //   if (this.state === state) {
-  //     this.state = 'none';
-  //     console.log('stopped', state);
-  //   }
-  // }
+  private stop(state: State) {
+    if (this.state === state) {
+      this.state = 'none';
+      console.log('stopped', state);
+    }
+  }
 
   dispose() {
-    this.canvasEl.removeEventListener('resize', this.onResize, false);
     this.canvasEl.removeEventListener('wheel', this.onWheel, false);
     this.canvasEl.removeEventListener('mousemove', this.onMove, false);
   }
 }
 
-// type State = 'none' | 'pan' | 'zoom';
+type State = 'none' | 'pan' | 'zoom';
