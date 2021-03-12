@@ -1,17 +1,14 @@
 import { useRef, useMemo, useEffect } from 'react';
 import { extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
-import { NewPanZoomControls } from 'model/3d/new-controls';
 import useStageStore from 'store/stage.store';
 
 // See types/react-three-fiber/three-types.d.ts
-// extend({ PanZoomControls });
-extend({ PanZoomControls: NewPanZoomControls });
+extend({ PanZoomControls });
 
 const CameraControls: React.FC<Props> = ({ stageKey, enabled }) => {
 
-  // const controls = useRef<PanZoomControls>();
-  const controls = useRef<NewPanZoomControls>();
+  const controls = useRef<PanZoomControls>();
   const { camera, gl: { domElement } } = useThree();
 
   const panZoomControls = useMemo(() => (

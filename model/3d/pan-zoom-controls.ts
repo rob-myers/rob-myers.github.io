@@ -1,481 +1,147 @@
+import { initCameraPos } from 'model/stage.model';
 import {
   EventDispatcher,
   Vector2,
   Vector3,
   PerspectiveCamera,
-  OrthographicCamera,
 } from 'three';
 
 export class PanZoomControls extends EventDispatcher {
-
   public enabled = true;
-  public screen = { left: 0, top: 0, width: 0, height: 0 };
-  public zoomSpeed = 1;
-  public panSpeed = 0.1;
-  public noZoom = false;
-  public noPan = false;
-  public dynamicDampingFactor = 0.2;
+  /** Normalized device (x, y) mouse position */
+  private ndcMouse = new Vector2;
+  /** World mouse position where z = 0 */
+  private mouseWorld = new Vector3;
 
-  public minDistance = 1;
-  public maxDistance = 15;
+  private dampingFactor = 0.2;
 
-  private readonly STATE = {
-    NONE: -1,
-    ZOOM: 1,
-    PAN: 2,
-    TOUCH_ZOOM_PAN: 4,
-  };
-  private target = new Vector3;
-  private readonly EPS = 0.000001;
-  private lastPosition = new Vector3;
-  private lastZoom = 1;
-
-  private state = this.STATE.NONE;
-  private keyState = this.STATE.NONE;
-
-  private eye = new Vector3;
-
-  private zoomStart = new Vector2;
-  private zoomEnd = new Vector2;
-  private touchZoomDistanceStart = 0;
-  private touchZoomDistanceEnd = 0;
+  private panSpeed = 0.2;
   private panStart = new Vector2;
   private panEnd = new Vector2;
+  private panChange = new Vector2;
 
-  private readonly initial = {
-    target: this.target.clone(),
-    position: this.camera.position.clone(),
-    up: this.camera.up.clone(),
-    zoom: this.camera.zoom,
-  };
-
-  private readonly event = {
-    change: { type: 'change' },
-    start: { type: 'start' },
-    end: { type: 'end' },
-  }
-
-  private mouseScreen = new Vector2;
-  private pan = {
-    mouseChange: new Vector2,
-    cameraUp: new Vector3,
-    delta: new Vector3,
-  }
-
-  /** For tracking actors */
-  public targetObject = null as null | THREE.Object3D;
-  private targetObjectDelta = new Vector3;
+  private zoomSpeed = 0.2;
+  private zoomStart = initCameraPos.z;
+  private zoomEnd = initCameraPos.z;
+  private zoomChange = 0;
+  /** Used to keep mouse world position fixed when zooming */
+  private zoomMouseDelta = new Vector3;
+  
+  private readonly epsilon = 0.0001;
+  private readonly epsilonSquared = this.epsilon ** 2;
+  /** For debugging */
+  private state: State = 'none';
 
   constructor(
-    public camera: PerspectiveCamera | OrthographicCamera,
-    public domEl: Element,
+    public camera: PerspectiveCamera,
+    public canvasEl: HTMLCanvasElement,
   ) {
     super();
-    
-    this.domEl.addEventListener( 'contextmenu', this.contextmenu, false );
-    this.domEl.addEventListener( 'mousedown', this.mousedown as EventListener, false );
-    this.domEl.addEventListener( 'wheel', this.mousewheel as EventListener, false );
 
-    this.handleResize();
+    this.canvasEl.addEventListener( 'wheel', this.onWheel, false );
+    this.canvasEl.addEventListener( 'mousemove', this.onMove, false );
+
     this.update();
   }
 
-  handleResize() {
-    const box = this.domEl.getBoundingClientRect();
-    // adjustments come from similar code in the jquery offset() function
-    const d = this.domEl.ownerDocument!.documentElement;
-    this.screen.left = box.left + window.pageXOffset - d.clientLeft;
-    this.screen.top = box.top + window.pageYOffset - d.clientTop;
-    this.screen.width = box.width;
-    this.screen.height = box.height;
+  update() {
+    if (!this.enabled) return false;
+
+    this.panChange.copy(this.panEnd).sub(this.panStart);
+    if (this.panChange.lengthSq() > this.epsilonSquared) {
+      this.handlePan();
+    } else {
+      this.stop('pan');
+    }
+
+    this.zoomChange = this.zoomEnd - this.zoomStart;
+    if (Math.abs(this.zoomChange) > this.epsilon) {
+      this.handleZoom();
+    } else {
+      this.stop('zoom');
+    }
   }
 
-  getMouseOnScreen(pageX: number, pageY: number) {
-    return this.mouseScreen.set(
-      ( pageX - this.screen.left ) / this.screen.width,
-      ( pageY - this.screen.top ) / this.screen.height
+  handlePan() {
+    this.panChange.multiplyScalar(this.panSpeed);
+    this.camera.position.x -= this.panChange.x;
+    this.camera.position.y += this.panChange.y;
+
+    this.panStart.add(
+      this.panChange.subVectors(this.panEnd, this.panStart)
+        .multiplyScalar(this.dampingFactor)
     );
   }
 
-  zoomCamera() {
-    let factor: number;
-    if (this.state === this.STATE.TOUCH_ZOOM_PAN) {
-      factor = this.touchZoomDistanceStart / this.touchZoomDistanceEnd;
-      this.touchZoomDistanceStart = this.touchZoomDistanceEnd;
-
-      if (isPerspective(this.camera)) {
-        this.eye.multiplyScalar(factor);
-      } else if (isOrthographic(this.camera)) {
-        this.camera.zoom *= factor;
-        this.camera.updateProjectionMatrix();
-      } else {
-        console.warn( 'PanZoomControls: Unsupported camera type');
-      }
-    } else {
-      factor = 1.0 + (this.zoomEnd.y - this.zoomStart.y) * this.zoomSpeed;
-
-      if ( factor !== 1.0 && factor > 0.0 ) {
-        if (isPerspective(this.camera)) {
-          this.eye.multiplyScalar(factor);
-        } else if (isOrthographic(this.camera)) {
-          this.camera.zoom /= factor;
-          this.camera.updateProjectionMatrix();
-        } else {
-          console.warn('PanZoomControls: Unsupported camera type');
-        }
-      }
-
-      this.zoomStart.y += (this.zoomEnd.y - this.zoomStart.y ) * this.dynamicDampingFactor;
-    }
-
-  }
-
-  panCamera() {
-    const { mouseChange, delta, cameraUp } = this.pan;
-    mouseChange.copy(this.panEnd).sub(this.panStart);
-
-    if (mouseChange.lengthSq()) {
-      if (isOrthographic(this.camera)) {
-        const scaleX = ( this.camera.right - this.camera.left ) /this.camera.zoom / this.domEl.clientWidth;
-        const scaleY = ( this.camera.top - this.camera.bottom ) / this.camera.zoom / this.domEl.clientWidth;
-        mouseChange.x *= scaleX;
-        mouseChange.y *= scaleY;
-      }
-
-      mouseChange.multiplyScalar(this.eye.length() * this.panSpeed );
-
-      delta.copy(this.eye).cross(this.camera.up).setLength(mouseChange.x);
-      delta.add(cameraUp.copy(this.camera.up).setLength(mouseChange.y));
-
-      // console.log(this.eye);
-
-      this.camera.position.add(delta);
-      this.target.add(delta);
-
-      this.panStart.add(mouseChange.subVectors(this.panEnd, this.panStart).multiplyScalar(this.dynamicDampingFactor));
+  handleZoom() {
+    this.camera.position.z += this.zoomChange * this.zoomSpeed;
+    this.zoomStart += this.zoomChange * this.dampingFactor;
+    
+    if (this.state !== 'pan') {
+      // Keep floor point under mouse fixed
+      this.ndcToWorld(this.ndcMouse, this.zoomMouseDelta);
+      this.zoomMouseDelta.sub(this.mouseWorld);
+      this.camera.position.x -= this.zoomMouseDelta.x;
+      this.camera.position.y -= this.zoomMouseDelta.y;
     }
   }
 
-  checkDistances() {
-    if (!this.noZoom || !this.noPan) {
-      if (this.eye.lengthSq() > this.maxDistance * this.maxDistance ) {
-        this.camera.position.addVectors( this.target, this.eye.setLength( this.maxDistance ) );
-        this.zoomStart.copy(this.zoomEnd );
-      }
-      if (this.eye.lengthSq() < this.minDistance * this.minDistance ) {
-        this.camera.position.addVectors(this.target, this.eye.setLength( this.minDistance ) );
-        this.zoomStart.copy(this.zoomEnd );
-      }
-    }
-  }
-
-  update() {
-    this.eye.subVectors(this.camera.position, this.target);
-
-    if (!this.noZoom) {
-      this.zoomCamera();
-    }
-
-    if (!this.noPan) {
-      this.panCamera();
-    }
-
-    if (this.targetObject) {
-
-      // Tight follow
-      // this.target.setX(this.targetObject.position.x);
-      // this.target.setY(this.targetObject.position.y);
-      
-      // Slow follow
-      this.targetObjectDelta.subVectors(this.targetObject.position, this.target).setZ(0);
-      if (this.targetObjectDelta.length() > 0.42) {
-        this.targetObjectDelta.clampLength(0, 0.4);
-        this.target.setX(this.targetObject.position.x - this.targetObjectDelta.x);
-        this.target.setY(this.targetObject.position.y - this.targetObjectDelta.y);
-      } else {
-        this.target.add(this.targetObjectDelta.clampLength(0, 0.02));
-      }
-
-      // // Radius follow
-      // this.targetObjectDelta.subVectors(this.target, this.targetObject.position);
-      // this.targetObjectDelta.setZ(0);
-      // const deltaSq = this.targetObjectDelta.lengthSq();
-      // if (deltaSq > 0.3 * 0.3) {
-      //   this.target.setX(this.targetObject.position.x);
-      //   this.target.setY(this.targetObject.position.y);
-      //   this.target.addScaledVector(this.targetObjectDelta, 0.3 / Math.sqrt(deltaSq));
-      // }
-
-      // // Constrain along actor direction
-      // const angle = this.targetObject.rotation.z;
-      // const unitVector = new Vector3(Math.cos(angle), Math.sin(angle), 0);
-      // this.targetObjectDelta.subVectors(this.target, this.targetObject.position).setZ(0);
-      // const dotProd = MathUtils.clamp(unitVector.dot(this.targetObjectDelta), -0.4, 0.1);
-      // this.target.setX(this.targetObject.position.x + dotProd * unitVector.x);
-      // this.target.setY(this.targetObject.position.y + dotProd * unitVector.y);
-    }
-
-    this.camera.position.addVectors(this.target, this.eye);
-
-    if (isPerspective(this.camera)) {
-      this.checkDistances();
-      this.camera.lookAt(this.target);
-
-      if (this.lastPosition.distanceToSquared(this.camera.position ) > this.EPS ) {
-        this.dispatchEvent(this.event.change);
-        this.lastPosition.copy(this.camera.position);
-      }
-    } else if (isOrthographic(this.camera)) {
-      this.camera.lookAt( this.target );
-
-      if (
-        this.lastPosition.distanceToSquared(this.camera.position ) > this.EPS
-        || this.lastZoom !== this.camera.zoom
-      ) {
-        this.dispatchEvent(this.event.change);
-        this.lastPosition.copy( this.camera.position );
-        this.lastZoom = this.camera.zoom;
-      }
-    } else {
-      console.warn( 'PanZoomControls: Unsupported camera type' );
-    }
-  }
-
-  reset() {
-    this.state = this.STATE.NONE;
-    this.keyState = this.STATE.NONE;
-
-    this.target.copy(this.initial.target);
-    this.camera.position.copy(this.initial.position);
-    this.camera.up.copy(this.initial.up);
-    this.camera.zoom = this.initial.zoom;
-
-    this.camera.updateProjectionMatrix();
-    this.eye.subVectors( this.camera.position, this.target );
-    this.camera.lookAt( this.target );
-    this.dispatchEvent( this.event.change );
-
-    this.lastPosition.copy( this.camera.position );
-    this.lastZoom = this.camera.zoom;
-  }
-
-  mousedown = (event: MouseEvent) => {
-    if (this.enabled === false ) {
-      return;
-    }
-
+  onWheel = (event: MouseWheelEvent) => {
+    this.updateMouseWorld(event);
+    if (!this.enabled) return false;
+    
     event.preventDefault();
     event.stopPropagation();
-
-    if (this.state === this.STATE.NONE ) {
-      switch ( event.button ) {
-        // case scope.mouseButtons.LEFT:
-        case 0:
-          // this.state = this.STATE.ROTATE;
-          // this.state = this.STATE.PAN;
-          // this.state = this.STATE.ZOOM;
-          break;
-        // case scope.mouseButtons.MIDDLE:
-        case 1:
-          // this.state = this.STATE.ZOOM;
-          this.state = this.STATE.PAN;
-          break;
-
-        // case scope.mouseButtons.RIGHT:
-        case 2:
-          this.state = this.STATE.PAN;
-          break;
-
-        default:
-          this.state = this.STATE.NONE;
-      }
-    }
-
-    const state = ( this.keyState !== this.STATE.NONE ) ? this.keyState : this.state;
-
-    if (state === this.STATE.ZOOM && !this.noZoom ) {
-      this.zoomStart.copy( this.getMouseOnScreen( event.pageX, event.pageY ) );
-      this.zoomEnd.copy( this.zoomStart );
-    } else if ( state === this.STATE.PAN && !this.noPan ) {
-      this.panStart.copy( this.getMouseOnScreen( event.pageX, event.pageY ) );
-      this.panEnd.copy( this.panStart );
-    }
-
-    this.domEl.ownerDocument!.addEventListener( 'mousemove', this.mousemove, false );
-    this.domEl.ownerDocument!.addEventListener( 'mouseup', this.mouseup, false );
-
-    this.dispatchEvent( this.event.start );
-  }
-
-  // Listener attached by this.mousedown
-  mousemove = (event: MouseEvent) => {
-    if (this.enabled === false) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    const state = ( this.keyState !== this.STATE.NONE ) ? this.keyState : this.state;
-
-    if ( state === this.STATE.ZOOM && !this.noZoom ) {
-      this.zoomEnd.copy( this.getMouseOnScreen( event.pageX, event.pageY ) );
-    } else if ( state === this.STATE.PAN && !this.noPan ) {
-      this.panEnd.copy( this.getMouseOnScreen( event.pageX, event.pageY ) );
-    }
-  }
-
-  mouseup = (event: MouseEvent) => {
-    if (this.enabled === false ) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    this.state = this.STATE.NONE;
-
-    this.domEl.ownerDocument!.removeEventListener( 'mousemove', this.mousemove );
-    this.domEl.ownerDocument!.removeEventListener( 'mouseup', this.mouseup );
-    this.dispatchEvent( this.event.end );
-  }
-
-  mousewheel = (event: MouseWheelEvent) => {
-    if (this.enabled === false) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-
+    
     if (event.ctrlKey) {// Pinch zoom
-      switch (event.deltaMode) {
-        case 2:
-          // Zoom in pages
-          this.zoomStart.y -= event.deltaY * 0.025;
-          break;
-        case 1:
-          // Zoom in lines
-          this.zoomStart.y -= event.deltaY * 0.01;
-          break;
-        default:
-          // `undefined` or `0`; assume pixels
-          this.zoomStart.y -= event.deltaY * 0.005;
-          break;
-      }
-    } else if(!this.noPan) {
+      this.zoomEnd += event.deltaY * 0.05;
+      this.start('zoom');
+    } else {
       this.panEnd.x -= event.deltaX * 0.005;
-      this.panEnd.y -= event.deltaY * 0.005;
-    }
-
-    this.dispatchEvent( this.event.start );
-    this.dispatchEvent( this.event.end );
-  }
-
-  touchstart = (event: TouchEvent) => {
-    if (this.enabled === false ) {
-      return;
-    }
-
-    event.preventDefault();
-
-    switch ( event.touches.length ) {
-      case 1:
-        // this.state = this.STATE.TOUCH_ROTATE;
-        // this.moveCurr.copy( this.getMouseOnCircle( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
-        // this.movePrev.copy( this.moveCurr );
-        this.state = this.STATE.TOUCH_ZOOM_PAN;
-        this.panEnd.copy( this.getMouseOnScreen( event.touches[ 0 ].pageX,event.touches[ 0 ].pageY ) );
-        break;
-
-      default: {// 2 or more
-        this.state = this.STATE.TOUCH_ZOOM_PAN;
-        const dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-        const dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-        this.touchZoomDistanceEnd = this.touchZoomDistanceStart = Math.sqrt( dx * dx + dy * dy );
-
-        const x = ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX ) / 2;
-        const y = ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY ) / 2;
-        this.panStart.copy( this.getMouseOnScreen( x, y ) );
-        this.panEnd.copy( this.panStart );
-        break;
-      }
-    }
-
-    this.dispatchEvent( this.event.start );
-  }
-
-  touchmove = (event: TouchEvent) => {
-    if (this.enabled === false ) {
-      return;
-    }
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    switch (event.touches.length ) {
-      case 1:
-        // this.movePrev.copy(this.moveCurr );
-        // this.moveCurr.copy(this.getMouseOnCircle( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
-        this.panEnd.copy( this.getMouseOnScreen( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
-        break;
-      default: {// 2 or more
-        const dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-        const dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-        this.touchZoomDistanceEnd = Math.sqrt( dx * dx + dy * dy );
-
-        const x = ( event.touches[ 0 ].pageX + event.touches[ 1 ].pageX ) / 2;
-        const y = ( event.touches[ 0 ].pageY + event.touches[ 1 ].pageY ) / 2;
-        this.panEnd.copy( this.getMouseOnScreen( x, y ) );
-        break;
-      }
+      this.panEnd.y -= event.deltaY * 0.005
+      this.start('pan');
     }
   }
 
-  touchend = (event: TouchEvent) => {
-    if (this.enabled === false ) {
-      return;
-    }
-
-    switch (event.touches.length ) {
-      case 0:
-        this.state = this.STATE.NONE;
-        break;
-      case 1:
-        // this.state = this.STATE.TOUCH_ROTATE;
-        // this.moveCurr.copy( this.getMouseOnCircle( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY ) );
-        // this.movePrev.copy( this.moveCurr );
-        this.panEnd.copy( this.getMouseOnScreen( event.touches[ 0 ].pageX,event.touches[ 0 ].pageY ) );
-        this.state = this.STATE.NONE;
-        break;
-    }
-    this.dispatchEvent( this.event.end );
+  onMove = (event: MouseEvent) => {
+    this.updateMouseWorld(event);
   }
 
-  // Includes RMB
-  contextmenu = (_event: Event) => {
-    // if (this.enabled === false ) return;
-    // event.preventDefault();
+  private updateMouseWorld(e: MouseEvent) {
+    const { left, top, width, height } = (e.currentTarget! as Element).getBoundingClientRect();
+    this.ndcMouse.set(
+      ((e.clientX - left) / width) * 2 - 1,
+      -((e.clientY - top) / height) * 2 + 1,
+    );
+    this.ndcToWorld(this.ndcMouse, this.mouseWorld)
+    // console.log('ndcMouse', this.ndcMouse);
+  }
+
+  private ndcToWorld(ndCoords: Vector2, output: Vector3) {
+    output.set(ndCoords.x, ndCoords.y, 1);
+    output.unproject(this.camera).sub(this.camera.position).normalize();
+    output.multiplyScalar((0 - this.camera.position.z) / output.z);
+    output.add(this.camera.position);
+  }
+
+  private start(state: State) {
+    if (this.state !== state) {
+      this.state = state;
+      console.log('started', state);
+    }
+  }
+
+  private stop(state: State) {
+    if (this.state === state) {
+      this.state = 'none';
+      console.log('stopped', state);
+    }
   }
 
   dispose() {
-    this.domEl.removeEventListener( 'contextmenu', this.contextmenu, false );
-    this.domEl.removeEventListener( 'mousedown', this.mousedown as EventListener, false );
-    this.domEl.removeEventListener( 'wheel', this.mousewheel as EventListener, false );
-    this.domEl.removeEventListener( 'touchstart', this.touchstart as EventListener, false );
-    this.domEl.removeEventListener( 'touchend', this.touchend as EventListener, false );
-    this.domEl.removeEventListener( 'touchmove', this.touchmove as EventListener, false );
-    this.domEl.ownerDocument!.removeEventListener( 'mousemove', this.mousemove as EventListener, false );
-    this.domEl.ownerDocument!.removeEventListener( 'mouseup', this.mouseup as EventListener, false );
-    // window.removeEventListener( 'keydown', keydown, false );
-    // window.removeEventListener( 'keyup', keyup, false );
+    this.canvasEl.removeEventListener('wheel', this.onWheel, false);
+    this.canvasEl.removeEventListener('mousemove', this.onMove, false);
   }
 }
 
-function isOrthographic(camera: PerspectiveCamera | OrthographicCamera): camera is OrthographicCamera {
-  return (camera as OrthographicCamera).isOrthographicCamera;
-}
-
-function isPerspective(camera: PerspectiveCamera | OrthographicCamera): camera is PerspectiveCamera {
-  return (camera as PerspectiveCamera).isPerspectiveCamera;
-}
+type State = 'none' | 'pan' | 'zoom';
