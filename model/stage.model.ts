@@ -6,7 +6,7 @@ export type StoredStage = {
   key: string;
   /** Is this camera enabled? */
   camEnabled: boolean;
-  selector: SelectRectMeta;
+  brush: BrushMeta;
   /** Attached on mount */
   controls?: PanZoomControls;
   /** Attached on mount */
@@ -24,13 +24,13 @@ export interface PersistedStage {
 
 export const initCameraPos = new Vector3(0, 0, 10);
 
-export interface SelectRectMeta {
-  shape: 'rect' | 'brush';
-  mode: 'add' | 'remove';
+export interface BrushMeta {
+  shape: 'rect' | 'poly';
+  mode: 'add' | 'cut';
   sides: number;
 }
 
-export const defaultSelectRectMeta: SelectRectMeta = {
+export const defaultSelectRectMeta: BrushMeta = {
   mode: 'add',
   shape: 'rect',
   sides: 6,

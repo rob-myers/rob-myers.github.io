@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
-import { Vector3 } from "three";
+import { DoubleSide, Vector3 } from "three";
 
 import { VectorJson } from "model/geom";
 import { ndCoordsToGroundPlane, vectAccuracy } from "model/3d/three.model";
 import { StoredStage } from "model/stage.model";
 
-const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
+const Brush: React.FC<Props> = ({ wire, stage }) => {
   const root = useRef<THREE.Group>(null);
   const camera = stage.controls!.camera;
   /** Ground position of pointer */
@@ -44,12 +44,12 @@ const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
     return () => sub.unsubscribe();
   }, [everUsed]);
 
-  const meta = stage.selector;
-  let rectOpacity = 0.2, brushOpacity = 0.15, brushColor = '#444';
+  const meta = stage.brush;
+  let rectOpacity = 0.2, polyOpacity = 0.1, polyColor = '#000';
   let rectColor = meta.mode === 'add' ? '#00f' : '#f00';
-  if (meta.shape === 'brush') {
-    [rectColor, brushColor] = [brushColor, rectColor];
-    [rectOpacity, brushOpacity] = [brushOpacity, rectOpacity];
+  if (meta.shape === 'poly') {
+    [rectColor, polyColor] = [polyColor, rectColor];
+    [rectOpacity, polyOpacity] = [polyOpacity, rectOpacity];
   }
 
   return (
@@ -59,7 +59,7 @@ const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
         <meshStandardMaterial color={rectColor} transparent opacity={rectOpacity} />
       </mesh>
       <mesh scale={[0.5, 0.5, 0.5]} rotation={[0, 0, 0]}>
-        <meshStandardMaterial color={brushColor} transparent opacity={brushOpacity} />
+        <meshStandardMaterial color={polyColor} transparent opacity={polyOpacity} />
         <circleBufferGeometry args={[1, meta.sides]} />
       </mesh>
     </group>
@@ -81,4 +81,4 @@ export type PointerMsg = {
   | { key: 'pointermove' }
 );
 
-export default SelectionRect;
+export default Brush;

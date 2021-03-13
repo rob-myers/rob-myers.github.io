@@ -46,7 +46,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       stage: addToLookup({
         key: stageKey,
         camEnabled: true,
-        selector: deepClone(defaultSelectRectMeta),
+        brush: deepClone(defaultSelectRectMeta),
         selectPolys: [],
         wallPolys: [],
       }, stage),

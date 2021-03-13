@@ -4,15 +4,15 @@ import { Canvas, CanvasContext } from "react-three-fiber";
 import { Subject } from "rxjs";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
-import { initCameraPos } from "model/stage.model";
+import { initCameraPos, StoredStage } from "model/stage.model";
 import useGeomStore from "store/geom.store";
-import useStageStore, { StoredStage } from "store/stage.store";
+import useStageStore from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
 import CameraControls from "./CameraControls";
 import Grid from "./Grid";
 import Lights from "./Lights";
-import SelectRect, { PointerMsg } from "./SelectRect";
+import Brush, { PointerMsg } from "./Brush";
 import Walls from "./Walls";
 import styles from 'styles/Stage.module.css';
 
@@ -61,7 +61,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           <Grid />
           <Lights />
           {stage.controls && (
-            <SelectRect
+            <Brush
               stage={stage}
               wire={ptrWire}
             />

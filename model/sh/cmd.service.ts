@@ -19,7 +19,7 @@ const commandKeys = {
   filter: true,
   /** Flatten stdin */
   flat: true,
-  /** e.g. `get /selector/sides` from stage store */
+  /** e.g. `get /brush/sides` from stage store */
   get: true,
   /** List previous commands */
   history: true,
@@ -29,7 +29,7 @@ const commandKeys = {
   map: true,
   /** Reduce over all stdin */
   red: true,
-  /** e.g. `set /selector/sides 6` */
+  /** e.g. `set /brush/sides 6` */
   set: true,
   /** Wait for specified number of seconds */
   sleep: true,

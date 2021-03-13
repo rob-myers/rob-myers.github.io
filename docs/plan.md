@@ -39,5 +39,5 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ need setting/theme/story to bring it to life
    > We will remake Teleglitch on the web
   
-✅ can `get /selector/sides`
-✅ can `set /selector/sides 4`
+✅ can `get /brush/sides`
+✅ can `set /brush/sides 4`
