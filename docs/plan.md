@@ -9,19 +9,15 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ### TODO
 
 - `Terminal` can run background processes
-  - can read from stage key events
+  - can read from stage key-events
   - can 'pause' by suppressing external events for particular 'process'
   - can 'kill' by unsubscribing
   - can see processes via `ps`
 
 - Can create ui plugin using shell, changing `SelectRect` on key events.
 
-- Can create rectilinear polygonal selections
-
-- Implement comments using build and client-side calls:
-  > https://eiriksm.dev/walkthrough-github-comments
-- Must navigate to GitHub to actually post comments
-
+- Have layers where tagged multipolygons and blender models can be stored
+- Can create walls
 
 - Try building a low poly character in blender
 - Beginners guide:
@@ -29,6 +25,13 @@ The editor consists of one or more `Terminal`s and a `Stage`.
   - https://www.youtube.com/watch?v=L0AY61v6-M4&ab_channel=GrantAbbitt
 - Model: https://www.youtube.com/watch?v=4OUYOKGl7x0
 - Rigging: https://www.youtube.com/watch?v=srpOeu9UUBU
+
+- Start writing post / decide on blog format
+
+
+- Implement comments using build and client-side calls:
+  > https://eiriksm.dev/walkthrough-github-comments
+- Must navigate to GitHub to actually post comments
 
 ### DONE
 
