@@ -65,7 +65,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           func: addToLookup({
             key: funcName,
             node: file,
-            src: srcService.src(file),
+            src: srcService.multilineSrc(file),
           }, func),
         }))
       }));

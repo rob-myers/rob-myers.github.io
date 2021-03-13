@@ -19,12 +19,17 @@ const commandKeys = {
   filter: true,
   /** Flatten stdin */
   flat: true,
+  /** e.g. `get /selector/sides` from stage store */
   get: true,
   /** List previous commands */
   history: true,
+  /** List variables, usually created via redirection */
   ls: true,
+  /** Apply function to each item from stdin */
   map: true,
+  /** Reduce over all stdin */
   red: true,
+  /** e.g. `set /selector/sides 6` */
   set: true,
   /** Wait for specified number of seconds */
   sleep: true,
@@ -127,8 +132,8 @@ class CmdService {
       case 'defs': {
         const funcs = useSession.api.getFuncs(meta.sessionKey);
         for (const { key, src } of funcs) {
-          yield `${key} ()`;
-          yield `${src}\n`;
+          yield `${key} () {`;
+          yield `${src!.slice(2)}\n`; // multiline src starts with {\n
         } 
         break;
       }

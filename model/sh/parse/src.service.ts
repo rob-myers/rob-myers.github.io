@@ -4,6 +4,8 @@ import { semanticsService } from "../semantics.service";
 
 export class SrcService {
 
+  private onOneLine = true;
+
   binaryCmds(cmd: Sh.BinaryCmd): Sh.BinaryCmd[] {
     const { X, Y, Op } = cmd;
     if (X.Cmd && X.Cmd.type === 'BinaryCmd' && X.Cmd.Op === Op) {
@@ -22,18 +24,28 @@ export class SrcService {
   private isBackgroundNode(node: Sh.ParsedSh) {
     return node.type === 'Stmt' && node.Background;
   }
+
+  public multilineSrc = (node: Sh.ParsedSh | null) => {
+    this.onOneLine = false;
+    const src = this.src(node)
+    this.onOneLine = true;
+    return src;
+  }
   
-  private seqSrc(nodes: Sh.ParsedSh[], trailing = false) {
-    const srcs = [] as string[];
-    nodes.forEach((c) => srcs.push(this.src(c), this.isBackgroundNode(c) ? ' ' : '; '));
-    return (trailing ? srcs : srcs.slice(0, -1)).join('');
+  private seqSrc = (nodes: Sh.ParsedSh[], trailing = false) => {
+    if (this.onOneLine) {
+      const srcs = [] as string[];
+      nodes.forEach((c) => srcs.push(this.src(c), this.isBackgroundNode(c) ? ' ' : '; '));
+      return (trailing ? srcs : srcs.slice(0, -1)).join('');
+    }
+    return nodes.map(x => this.src(x)).join('\n');
   }
 
   /**
    * Given parse tree compute source code.
    * We ensure the source code has no newlines so it can be used as history.
    */
-  src(node: Sh.ParsedSh | null): string {
+  src = (node: Sh.ParsedSh | null): string => {
     if (!node) {
       return '';
     }
@@ -84,7 +96,9 @@ export class SrcService {
         const { Stmts } = node;
         // Handle `{ echo foo & }`
         const terminal = this.isBackgroundNode(last(Stmts)!) ? '' : ';';
-        return `{ ${ this.seqSrc(Stmts) }${terminal} }`;
+        return this.onOneLine
+          ? `{ ${ this.seqSrc(Stmts) }${terminal} }`
+          : `{\n${ this.seqSrc(Stmts) }\n}`;
       }
 
       case 'CallExpr': //  TODO ?

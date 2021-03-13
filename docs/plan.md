@@ -8,7 +8,13 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+- `Terminal` can run background processes
+  - can read from stage key events
+  - can 'pause' by suppressing such events for particular 'process'
+  - can 'kill' by unsubscribing
+
 - Can create ui plugin using shell, changing `SelectRect` on key events.
+
 - Can create rectilinear polygonal selections
 
 - Implement comments using build and client-side calls:
@@ -16,7 +22,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 - Must navigate to GitHub to actually post comments
 
 
-- `Terminal` can run background processes
 - Try building a low poly character in blender
 - Beginners guide:
   - https://www.youtube.com/watch?v=7MRonzqYJgw&ab_channel=GrantAbbitt
