@@ -10,8 +10,9 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 - `Terminal` can run background processes
   - can read from stage key events
-  - can 'pause' by suppressing such events for particular 'process'
+  - can 'pause' by suppressing external events for particular 'process'
   - can 'kill' by unsubscribing
+  - can see processes via `ps`
 
 - Can create ui plugin using shell, changing `SelectRect` on key events.
 

@@ -15,10 +15,8 @@ const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
   const initial = useRef(new Vector3).current;
   /** Should we update the selection rectangle?  */
   const active = useRef(false);
-  
   const [everUsed, setEverUsed] = useState(false);
-  const meta = stage.selector;
-
+  
   useEffect(() => {
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (key === 'pointerleave' || key === 'pointerup') {
@@ -46,14 +44,22 @@ const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
     return () => sub.unsubscribe();
   }, [everUsed]);
 
+  const meta = stage.selector;
+  let rectOpacity = 0.2, brushOpacity = 0.15, brushColor = '#444';
+  let rectColor = meta.mode === 'add' ? '#00f' : '#f00';
+  if (meta.shape === 'brush') {
+    [rectColor, brushColor] = [brushColor, rectColor];
+    [rectOpacity, brushOpacity] = [brushOpacity, rectOpacity];
+  }
+
   return (
     <group ref={root} visible={everUsed}>
       <mesh>
         <planeBufferGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="#59a" transparent opacity={0.4} />
+        <meshStandardMaterial color={rectColor} transparent opacity={rectOpacity} />
       </mesh>
       <mesh scale={[0.5, 0.5, 0.5]} rotation={[0, 0, 0]}>
-        <meshStandardMaterial color="#444" transparent opacity={0.2} />
+        <meshStandardMaterial color={brushColor} transparent opacity={brushOpacity} />
         <circleBufferGeometry args={[1, meta.sides]} />
       </mesh>
     </group>

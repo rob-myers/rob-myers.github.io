@@ -211,7 +211,7 @@ class CmdService {
         break;
       }
       case 'set': {
-        const value = JSON.parse(args[1]);
+        const value = this.parseArg(args[1]);
         yield useStage.api.setData(meta.sessionKey, args[0], value);
         break;
       }
