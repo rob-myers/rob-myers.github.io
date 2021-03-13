@@ -75,3 +75,12 @@ export function tryParseJson(input: any) {
     return null;
   }
 }
+
+export function deepGet(obj: any, path: string[]) {
+  return path.reduce((agg, part) => agg[part], obj);
+}
+
+/** foo-bar-baz to fooBarBaz */
+export function kebabToCamel(text: string) {
+  return text.replace(/-(.)/g, (_, c: string) => c.toUpperCase());
+}

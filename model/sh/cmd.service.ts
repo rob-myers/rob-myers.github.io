@@ -6,7 +6,7 @@ import { ReadResult } from './io/io.model';
 import { dataChunk, isDataChunk } from './io/fifo.device';
 import { ShError } from './sh.util';
 import { getOpts } from './parse/parse.util';
-import useStageStore from 'store/stage.store';
+import useStage from 'store/stage.store';
 
 const commandKeys = {
   /** Output a variable */
@@ -19,11 +19,13 @@ const commandKeys = {
   filter: true,
   /** Flatten stdin */
   flat: true,
+  get: true,
   /** List previous commands */
   history: true,
   ls: true,
   map: true,
   red: true,
+  set: true,
   /** Wait for specified number of seconds */
   sleep: true,
   /**
@@ -150,6 +152,12 @@ class CmdService {
           : data);
         break;
       }
+      case 'get': {
+        if (args[0]) {
+          yield useStage.api.getData(meta.sessionKey, args[0]);
+        }
+        break;
+      }
       case 'history': {
         const { ttyShell } = useSession.api.getSession(meta.sessionKey);
         const history = ttyShell.getHistory();
@@ -197,6 +205,11 @@ class CmdService {
         }
         break;
       }
+      case 'set': {
+        const value = JSON.parse(args[1]);
+        yield useStage.api.setData(meta.sessionKey, args[0], value);
+        break;
+      }
       case 'sleep': {
         let seconds = args.length ? 0 : 1, delta: number;
         for (const arg of args) {
@@ -228,7 +241,7 @@ class CmdService {
         const outputs = [] as any[];
         yield* this.read(node, (data: any[]) => { outputs.push(data); });
         const filtered = outputs.filter(x => x.length === 4 && x.every(Number.isFinite));
-        useStageStore.api.addWalls(meta.sessionKey, filtered, {
+        useStage.api.addWalls(meta.sessionKey, filtered, {
           cutOut: opts.c,
         });
         break;

@@ -32,14 +32,20 @@ export class PanZoomControls extends EventDispatcher {
   /** For debugging */
   private state: State = 'none';
 
+  private cleanups: (() => void)[];
+
   constructor(
     public camera: PerspectiveCamera,
-    public canvasEl: HTMLCanvasElement,
+    canvasEl: HTMLCanvasElement,
   ) {
     super();
 
-    this.canvasEl.addEventListener( 'wheel', this.onWheel, false );
-    this.canvasEl.addEventListener( 'mousemove', this.onMove, false );
+    canvasEl.addEventListener( 'wheel', this.onWheel, false );
+    canvasEl.addEventListener( 'mousemove', this.onMove, false );
+    this.cleanups = [
+      () => canvasEl.removeEventListener('wheel', this.onWheel, false),
+      () => canvasEl.removeEventListener('mousemove', this.onMove, false),
+    ];
 
     this.update();
   }
@@ -139,8 +145,8 @@ export class PanZoomControls extends EventDispatcher {
   }
 
   dispose() {
-    this.canvasEl.removeEventListener('wheel', this.onWheel, false);
-    this.canvasEl.removeEventListener('mousemove', this.onMove, false);
+    this.cleanups.forEach(cleanup => cleanup());
+    this.cleanups.length = 0;
   }
 }
 

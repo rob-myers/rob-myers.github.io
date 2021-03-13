@@ -38,6 +38,6 @@ export function updateLookup<LookupItem extends { key: string }>(
   };
 }
 
-type ReduxUpdater<LookupItem extends { key: string }> = (
+export type ReduxUpdater<LookupItem extends { key: string }> = (
   item: LookupItem
 ) => Partial<LookupItem>;

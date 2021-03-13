@@ -1,15 +1,12 @@
 import { Vector3, Scene } from "three";
 import * as Geom from 'model/geom';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
-import { Subject } from 'rxjs';
 
 export type StoredStage = {
   key: string;
   /** Is this camera enabled? */
   camEnabled: boolean;
-  selectRectMeta: SelectRectMeta;
-  /** Send messages to stage here */
-  input: Subject<StageMsg>;
+  selector: SelectRectMeta;
   /** Attached on mount */
   controls?: PanZoomControls;
   /** Attached on mount */
@@ -27,26 +24,14 @@ export interface PersistedStage {
 
 export const initCameraPos = new Vector3(0, 0, 10);
 
-export type StageMsg = (
-  { key: 'set-brush-sides'; args: [number] }
-);
-
 export interface SelectRectMeta {
   shape: 'rect' | 'brush';
   mode: 'add' | 'remove';
-  brushPolySides: number;
+  sides: number;
 }
 
 export const defaultSelectRectMeta: SelectRectMeta = {
-  shape: 'rect',
-  brushPolySides: 6,
   mode: 'add',
+  shape: 'rect',
+  sides: 6,
 };
-
-export function handleStageInput(
-  stageKey: string,
-  subject: StoredStage['input'],
-): StoredStage['input'] {
-  // TODO
-  return subject;
-}

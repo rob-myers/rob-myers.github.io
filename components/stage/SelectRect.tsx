@@ -17,7 +17,7 @@ const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
   const active = useRef(false);
   
   const [everUsed, setEverUsed] = useState(false);
-  const meta = stage.selectRectMeta;
+  const meta = stage.selector;
 
   useEffect(() => {
     const sub = wire.subscribe(({ key, ndCoords }) => {
@@ -54,7 +54,7 @@ const SelectionRect: React.FC<Props> = ({ wire, stage }) => {
       </mesh>
       <mesh scale={[0.5, 0.5, 0.5]} rotation={[0, 0, 0]}>
         <meshStandardMaterial color="#444" transparent opacity={0.2} />
-        <circleBufferGeometry args={[1, meta.brushPolySides]} />
+        <circleBufferGeometry args={[1, meta.sides]} />
       </mesh>
     </group>
   );

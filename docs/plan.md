@@ -8,8 +8,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Can create ui plugin using shell, which changes the SelectRect.
-
+- Can create ui plugin using shell, changing `SelectRect` on key events.
 - Can create rectilinear polygonal selections
 
 - Implement comments using build and client-side calls:
@@ -33,3 +32,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ can create rectangular selection using mouse
 ✅ need setting/theme/story to bring it to life
    > We will remake Teleglitch on the web
+  
+✅ can `get /selector/sides`
+✅ can `set /selector/sides 4`
