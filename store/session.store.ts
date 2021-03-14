@@ -31,6 +31,7 @@ export type State = {
     ensurePersisted: (sessionKey: string) => PersistedSession;
     getFunc: (sessionKey: string, funcName: string) => NamedFunction | undefined;
     getFuncs: (sessionKey: string) => NamedFunction[];
+    getProcess: (processKey: string) => ProcessMeta;
     getVar: (sessionKey: string, varName: string) => any | undefined;
     getVars: (sessionKey: string) => { key: string; value: string }[];
     getSession: (sessionKey: string) => Session;
@@ -62,6 +63,7 @@ interface ProcessMeta {
   sessionKey: string;
   status: 'running' | 'suspended' | 'interrupted' | 'killed';
   positionals: string[];
+  resume: null | (() => void);
 }
 
 const useStore = create<State>(devtools(persist((set, get) => ({
@@ -96,6 +98,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         sessionKey,
         status: 'running',
         positionals: [],
+        resume: null,
       }; // Mutate
     },
 
@@ -137,6 +140,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     getFuncs: (sessionKey) => {
       return Object.values(get().session[sessionKey].func);
+    },
+
+    getProcess: (processKey: string) => {
+      return get().process[processKey];
     },
 
     getVar: (sessionKey, varName) => {

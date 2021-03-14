@@ -1,9 +1,9 @@
 import shortid from 'shortid';
-import { flatten, pause, testNever } from 'model/generic.model';
+import { flatten, testNever } from 'model/generic.model';
 import type * as Sh from './parse/parse.model';
 import { NamedFunction } from "./var.model";
 import useSession from 'store/session.store';
-import { ReadResult } from './io/io.model';
+import { handleProcessStatus, ReadResult } from './io/io.model';
 import { dataChunk, isDataChunk } from './io/fifo.device';
 import { ShError } from './sh.util';
 import { getOpts } from './parse/parse.util';
@@ -216,14 +216,12 @@ class CmdService {
         break;
       }
       case 'sleep': {
-        let seconds = args.length ? 0 : 1, delta: number;
-        for (const arg of args) {
-          seconds += (delta = Number(arg));
-          if (Number.isNaN(delta)) {
-            throw new ShError(`invalid time interval ‘${arg}’`, 1);
-          }
-        }
-        await pause(1000 * seconds);
+        const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
+        await new Promise<void>(resolve => {
+          useSession.api.getProcess(meta.processKey).resume = resolve;
+          setTimeout(resolve, 1000 * seconds);
+        });
+        await handleProcessStatus(meta.processKey);
         break;
       }
       case 'split': {

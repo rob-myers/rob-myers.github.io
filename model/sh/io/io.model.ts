@@ -1,5 +1,5 @@
 import { Subject, Subscription } from "rxjs";
-import useSessionStore from "store/session.store";
+import useSession from "store/session.store";
 import type * as Sh from '../parse/parse.model';
 import { traverseParsed } from '../parse/parse.util';
 import { ProcessError } from "../sh.util";
@@ -134,24 +134,46 @@ export interface Device {
   finishedReading: () => void;
 }
 
+/**
+ * Suspend/prevent reads/writes for relevant process status.
+ */
 export function withProcessHandling(device: Device, processKey: string): Device {
-  const processMeta = useSessionStore.getState().process[processKey];
+  const process = useSession.api.getProcess(processKey);
 
   return new Proxy(device, {
     get: (target, p: keyof Device) => {
       if (p === 'writeData' || p === 'readData') {
-        console.log(p, processMeta);
-
-        if (processMeta.status === 'interrupted') {
+        console.log(p, process);
+        if (process.status === 'interrupted') {
           throw new ProcessError(SigEnum.SIGINT);
-        } else if (processMeta.status === 'killed') {
+        } else if (process.status === 'killed') {
           throw new ProcessError(SigEnum.SIGKILL);
-        } else if (processMeta.status === 'suspended') {
-          // TODO chained promise
+        } else if (process.status === 'suspended') {
+          return async (input?: any) => {
+            await new Promise<void>(resolve => {
+              process.resume = resolve;
+            });
+            await target[p](input);
+          };
         }
-
       }
       return target[p];
     }
   });
+}
+
+/**
+ * Suspend/prevent ongoing computation for relevant process status.
+ */
+export async function handleProcessStatus(processKey: string) {
+  const process = useSession.api.getProcess(processKey);
+  if (process.status === 'interrupted') {
+    throw new ProcessError(SigEnum.SIGINT);
+  } else if (process.status === 'killed') {
+    throw new ProcessError(SigEnum.SIGKILL);
+  } else if (process.status === 'suspended') {
+    return new Promise<void>(resolve => {
+      process.resume = resolve;
+    });
+  }
 }

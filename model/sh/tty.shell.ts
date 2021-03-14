@@ -42,10 +42,10 @@ export class TtyShell implements Device {
     this.xterm = xterm;
     this.io.read(this.onMessage.bind(this));
     this.prompt('$');
-    // voiceDevice.initialise();
+    useSession.api.createProcess(this.sessionKey, this.sessionKey)
   }
 
-  /** `prompt` must not contain non-readable characters e.g. ansi color codess */
+  /** `prompt` must not contain non-readable characters e.g. ansi color codes */
   private prompt(prompt: string) {
     this.io.write({
       key: 'send-xterm-prompt',
@@ -90,11 +90,13 @@ export class TtyShell implements Device {
         break;
       }
       case 'send-sig': {
-        // console.log('received signal', { msg, sessionKey: this.sessionKey });
+        // console.log('received signal from tty.xterm', { msg, sessionKey: this.sessionKey });
         if (msg.signal === SigEnum.SIGINT) {
           this.buffer.length = 0;
           this.oneTimeReaders.length = 0;
-          useSession.api.updateProcess(this.sessionKey, { status: 'interrupted' });
+          const process = useSession.api.getProcess(this.sessionKey);
+          process.status = 'interrupted';
+          process.resume?.();
           this.prompt('$');
         }
         break;
@@ -113,10 +115,15 @@ export class TtyShell implements Device {
   /**
    * Spawn a process.
    */
-  async spawn(parsed: FileWithMeta) {
+  async spawn(parsed: FileWithMeta, leading = false) {
     const { meta: { processKey, sessionKey, stdOut } } = parsed;
     try {
-      useSession.api.createProcess(processKey, sessionKey);
+      if (leading) {
+        useSession.api.updateProcess(processKey, { status: 'running', resume: null });
+      } else {
+        useSession.api.createProcess(processKey, sessionKey);
+      }
+
       const device = useSession.api.resolve(stdOut, processKey);
       const generator = semanticsService.File(parsed);
       for await (const item of generator) {
@@ -132,7 +139,7 @@ export class TtyShell implements Device {
       }
       throw e;
     } finally {
-      useSession.api.removeProcess(processKey);
+      !leading && useSession.api.removeProcess(processKey);
     }
   }
 
@@ -183,7 +190,7 @@ export class TtyShell implements Device {
               stdOut: this.key,
               stdErr: this.key,
             });
-            await this.spawn(result.parsed);
+            await this.spawn(result.parsed, true);
             // Prompt for next command
             this.prompt('$');
             break;

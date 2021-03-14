@@ -137,16 +137,14 @@ class SemanticsService {
       case '|': {
         const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
         const files = stmts.map(x => wrapInFile(cloneParsed(x)));
+        files.forEach(file => file.meta.processKey = shortid.generate());
         const fifos = [] as FifoDevice[];
 
         try {
           for (const [i, file] of files.slice(0, -1).entries()) {
-            const processKey = shortid.generate();
-            const fifoKey = `/dev/fifo-${i}-${processKey}`;
+            const fifoKey = `/dev/fifo-${i}-${file.meta.processKey}`;
             fifos.push(useSession.api.createFifo(fifoKey));
             file.meta.stdOut = fifoKey;
-            // Final pipe child will inherit processKey
-            file.meta.processKey = processKey;
             files[i + 1].meta.stdIn = fifoKey;
           }
           const stdOuts = files.map(({ meta }) =>
