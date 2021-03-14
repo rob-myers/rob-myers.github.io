@@ -381,13 +381,11 @@ class SemanticsService {
     if (!stmt.Cmd) {
       sem.handleShError(stmt.Redirs[0], new ShError('pure redirects are unsupported', 2));
     } else if (stmt.Background) {
-      /**
-       * TODO support background processes
-       */
-      // const cloned = Object.assign(cloneParsed(stmt), { Background: false } as Sh.Stmt);
-      // const file = wrapInFile(cloned);
-      // sem.transpile(file).subscribe();
-      // stmt.exitCode = stmt.Negated ? 1 : 0;
+      const { ttyShell } = useSession.api.getSession(stmt.meta.sessionKey);
+      const file = wrapInFile(Object.assign(cloneParsed(stmt), { Background: false } as Sh.Stmt));
+      file.meta.processKey = shortid.generate();
+      ttyShell.spawn(file); // Don't await
+      stmt.exitCode = stmt.Negated ? 1 : 0;
     } else {
       // Run a simple or compound command
       yield* sem.Command(stmt.Cmd, stmt.Redirs);

@@ -51,7 +51,7 @@ class CmdService {
     return word in commandKeys;
   }
 
-  async *read({ meta }: Sh.CallExpr, act: (data: any) => any) {
+  private async *read({ meta }: Sh.CallExpr, act: (data: any) => any) {
     const device = useSession.api.resolve(meta.stdIn, meta.processKey);
     let result = {} as ReadResult;
     while (!result.eof) {
@@ -106,7 +106,7 @@ class CmdService {
   }
 
   /** JSON.parse with string fallback */
-  parseArg(x: any) {
+  private parseArg(x: any) {
     try {
       return x === undefined ?  undefined : JSON.parse(x);
     } catch {
