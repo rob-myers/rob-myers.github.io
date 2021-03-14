@@ -263,7 +263,7 @@ class CmdService {
     const { var: v, ttyShell } = useSession.api.getSession(node.meta.sessionKey);
     args.forEach((arg, i) => v[i + 1] = arg);
     Object.assign(namedFunc.node.meta, { ...node.meta, processKey: shortid.generate() });
-    await ttyShell.runParsed(namedFunc.node);
+    await ttyShell.spawn(namedFunc.node);
   }
 }
 

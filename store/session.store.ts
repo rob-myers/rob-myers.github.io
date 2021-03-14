@@ -16,12 +16,16 @@ import { NullDevice } from 'model/sh/io/null.device';
 export type State = {
   session: KeyedLookup<Session>;
   device: KeyedLookup<Device>;
+  /** Always mutated */
+  process: KeyedLookup<ProcessMeta>;
   persist: KeyedLookup<PersistedSession>;
   rehydrated: boolean;
   
   readonly api: {
     addFunc: (sessionKey: string, funcName: string, wrappedFile: FileWithMeta) => void;
     createSession: (sessionKey: string) => void;
+    createProcess: (processKey: string, sessionKey: string) => void;
+    updateProcess: (processKey: string, updates: Partial<ProcessMeta>) => void;
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
     createVarDevice: (sessionKey: string, varName: string) => VarDevice;
     ensurePersisted: (sessionKey: string) => PersistedSession;
@@ -32,6 +36,7 @@ export type State = {
     getSession: (sessionKey: string) => Session;
     persist: (sessionKey: string, data: { history: string[] }) => void;
     removeDevice: (deviceKey: string) => void;
+    removeProcess: (processKey: string) => void;
     removeSession: (sessionKey: string) => void;
     resolve: (deviceKey: string, processKey: string) => Device;
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
@@ -52,9 +57,17 @@ interface PersistedSession {
   history: string[];
 }
 
+interface ProcessMeta {
+  key: string;
+  sessionKey: string;
+  status: 'running' | 'suspended' | 'killed';
+  positionals: string[];
+}
+
 const useStore = create<State>(devtools(persist((set, get) => ({
   device: {},
   session: {},
+  process: {},
   persist: {},
   rehydrated: false,
 
@@ -77,10 +90,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return fifo;
     },
 
-    createVarDevice(sessionKey, varName) {
-      const varDevice = new VarDevice(sessionKey, varName);
-      set(({ device }) => ({ device: addToLookup(varDevice, device) }));
-      return varDevice;
+    createProcess: (processKey, sessionKey) => {
+      get().process[processKey] = {
+        key: processKey,
+        sessionKey,
+        status: 'running',
+        positionals: [],
+      }; // Mutate
     },
 
     createSession: (sessionKey) => {
@@ -100,6 +116,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         }, session),
         device: addToLookup(nullDevice, addToLookup(ttyDevice, device)),
       }));
+    },
+
+    createVarDevice(sessionKey, varName) {
+      const varDevice = new VarDevice(sessionKey, varName);
+      set(({ device }) => ({ device: addToLookup(varDevice, device) }));
+      return varDevice;
     },
 
     ensurePersisted: (sessionKey) => {
@@ -139,6 +161,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       set(({ device }) => ({ device: removeFromLookup(deviceKey, device), }));
     },
 
+    removeProcess(processKey) {
+      delete get().process[processKey];
+    },
+
     removeSession: (sessionKey) => set(({ session, device }) => ({
       session: removeFromLookup(sessionKey, session),
       device: removeFromLookup(session[sessionKey].ttyShell.key, device),
@@ -151,6 +177,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     setVar: async (sessionKey, varName, varValue) => {
       api.getSession(sessionKey).var[varName] = varValue; // Mutate
+    },
+
+    updateProcess: (processKey, updates) => {
+      Object.assign(get().process[processKey], updates); // Mutate
     },
 
     warn: (sessionKey, msg) => {

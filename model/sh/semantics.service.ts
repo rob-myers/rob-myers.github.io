@@ -163,7 +163,7 @@ class SemanticsService {
           await Promise.all(files.map((file, i) =>
             new Promise<void>(async (resolve, reject) => {
               try {
-                await ttyShell.runParsed(file);
+                await ttyShell.spawn(file);
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
                 (node.exitCode = file.exitCode) ? reject() : resolve();

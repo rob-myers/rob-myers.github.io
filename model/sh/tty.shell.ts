@@ -109,9 +109,14 @@ export class TtyShell implements Device {
     this.input = null;
   }
 
-  async runParsed(parsed: FileWithMeta) {
+  /**
+   * Spawn a process.
+   */
+  async spawn(parsed: FileWithMeta) {
+    const { meta: { processKey, sessionKey, stdOut } } = parsed;
     try {
-      const device = useSession.api.resolve(parsed.meta.stdOut, parsed.meta.processKey);
+      useSession.api.createProcess(processKey, sessionKey);
+      const device = useSession.api.resolve(stdOut, processKey);
       const generator = semanticsService.File(parsed);
       for await (const item of generator) {
         await device.writeData(item);
@@ -119,26 +124,15 @@ export class TtyShell implements Device {
     } catch (e) {
       if (e instanceof ProcessError) {
         if (e.code === SigEnum.SIGKILL) {
-          console.log('process was killed', parsed.meta.processKey);
-          return;
+          console.log('process was killed', processKey);
         } else if (e.code === SigEnum.SIGINT) {
-          console.log('process was interrupted', parsed.meta.processKey);
-          // Do not return to avoid duplicate prompt
+          console.log('process was interrupted', processKey);
         }
       }
       throw e;
+    } finally {
+      useSession.api.removeProcess(processKey);
     }
-  }
-
-  async runInShell(parsed: FileWithMeta) {
-    Object.assign<Sh.BaseMeta, Sh.BaseMeta>(parsed.meta, {
-      sessionKey: this.sessionKey,
-      processKey: shortid.generate(),
-      stdIn: this.key,
-      stdOut: this.key,
-      stdErr: this.key,
-    });
-    await this.runParsed(parsed);
   }
 
   private storeSrcLine(srcLine: string) {
@@ -181,7 +175,14 @@ export class TtyShell implements Device {
             const singleLineSrc = srcService.src(result.parsed);
             this.storeSrcLine(singleLineSrc);
             // Run command
-            await this.runInShell(result.parsed);
+            Object.assign<Sh.BaseMeta, Sh.BaseMeta>(result.parsed.meta, {
+              sessionKey: this.sessionKey,
+              processKey: this.sessionKey,
+              stdIn: this.key,
+              stdOut: this.key,
+              stdErr: this.key,
+            });
+            await this.spawn(result.parsed);
             // Prompt for next command
             this.prompt('$');
             break;

@@ -1,7 +1,9 @@
 import { Subject, Subscription } from "rxjs";
+import useSessionStore from "store/session.store";
 import type * as Sh from '../parse/parse.model';
 import { traverseParsed } from '../parse/parse.util';
-import { ShError } from "../sh.util";
+// import { pause } from "model/generic.model";
+// import { ProcessError, ShError } from "../sh.util";
 
 export const scrollback = 200;
 
@@ -132,13 +134,18 @@ export interface Device {
 }
 
 export function withProcessHandling(device: Device, processKey: string): Device {
-  // TODO store reference to immutable "processes meta" here
+  const processMeta = useSessionStore.getState().process[processKey];
+
   return new Proxy(device, {
     get: (target, p: keyof Device) => {
       if (p === 'writeData' || p === 'readData') {
-        // TODO throw or chained promise
         console.log(p, processKey);
+        // TODO throw or chained promise
         // throw new ProcessError(SigEnum.SIGKILL);
+        // return async (input?: any) => {
+        //   await pause(1000);
+        //   await target[p](input);
+        // };
       }
       return target[p];
     }
