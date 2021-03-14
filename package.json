@@ -10,7 +10,8 @@
     "next-cfg": "tsc -p scripts",
     "watch-gltf": "nodemon --watch './3d/**/*' -e gltf --exec 'yarn update-gltf'",
     "update-gltf": "source scripts/gltf-to-jsx.sh",
-    "force-update-gltf": "yarn update-gltf '-1000000d'"
+    "force-update-gltf": "yarn update-gltf '-1000000d'",
+    "types": "tsc --noEmit"
   },
   "dependencies": {
     "braces": "^3.0.2",
