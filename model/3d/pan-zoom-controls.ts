@@ -29,9 +29,8 @@ export class PanZoomControls extends EventDispatcher {
   
   private readonly epsilon = 0.0001;
   private readonly epsilonSquared = this.epsilon ** 2;
-  /** For debugging */
-  private state: State = 'none';
 
+  private state: State = 'none';
   private cleanups: (() => void)[];
 
   constructor(

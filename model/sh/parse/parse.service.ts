@@ -16,9 +16,9 @@ class ParseShService {
     this.mockMeta = {
       sessionKey: defaultSessionKey,
       processKey: defaultProcessKey,
+      processGrpKey: defaultProcessKey,
       stdIn: defaultStdInOutErr,
       stdOut: defaultStdInOutErr,
-      stdErr: defaultStdInOutErr,
     };
   }
 

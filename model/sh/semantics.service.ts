@@ -137,7 +137,10 @@ class SemanticsService {
       case '|': {
         const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
         const files = stmts.map(x => wrapInFile(cloneParsed(x)));
-        files.forEach(file => file.meta.processKey = shortid.generate());
+        files.forEach(file => {
+          file.meta.processKey = shortid.generate();
+          file.meta.processGrpKey = files[0].meta.processKey;
+        });
         const fifos = [] as FifoDevice[];
 
         try {
@@ -383,7 +386,7 @@ class SemanticsService {
     } else if (stmt.Background) {
       const { ttyShell } = useSession.api.getSession(stmt.meta.sessionKey);
       const file = wrapInFile(Object.assign(cloneParsed(stmt), { Background: false } as Sh.Stmt));
-      file.meta.processKey = shortid.generate();
+      file.meta.processGrpKey = file.meta.processKey = shortid.generate();
       ttyShell.spawn(file); // Don't await
       stmt.exitCode = stmt.Negated ? 1 : 0;
     } else {

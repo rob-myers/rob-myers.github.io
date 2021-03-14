@@ -205,14 +205,14 @@ export interface FileWithMeta extends File {
  *   - has value `${defaultSessionKey}` if code not run.
  * - `stdIn`: where to read input from, defaults to 'tty'
  * - `stdOut`: where to send output, defaults to 'tty'
- * - `stdErr`: where to send output, defaults to 'tty'
  */
 export interface BaseMeta extends Record<NodeFd, string> {
   sessionKey: string;
   processKey: string;
+  processGrpKey: string;
 }
 
-export type NodeFd = 'stdIn' | 'stdOut' | 'stdErr';
+export type NodeFd = 'stdIn' | 'stdOut';
 
 export const defaultSessionKey = 'code-has-not-run';
 export const defaultProcessKey = 'code-has-not-run';

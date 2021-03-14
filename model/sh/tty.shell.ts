@@ -10,7 +10,6 @@ import { ParseService } from './parse/parse.service';
 import { srcService } from './parse/src.service';
 import { semanticsService } from './semantics.service';
 import { TtyXterm } from './tty.xterm';
-import { ProcessError } from './sh.util';
 
 // Lazyload saves ~220kb initially
 let parseService = { tryParseBuffer: (_) => ({ key: 'failed', error: 'not ready' })} as ParseService;
@@ -106,38 +105,21 @@ export class TtyShell implements Device {
     }
   }
 
-  readOnceFromTty(reader: (msg: any) => void) {
-    this.oneTimeReaders.push(reader);
-    this.input?.resolve();
-    this.input = null;
-  }
-
   /**
    * Spawn a process.
    */
   async spawn(parsed: FileWithMeta, leading = false) {
     const { meta: { processKey, sessionKey, stdOut } } = parsed;
     try {
-      if (leading) {
-        useSession.api.updateProcess(processKey, { status: 'running', resume: null });
-      } else {
-        useSession.api.createProcess(processKey, sessionKey);
-      }
+      leading
+        ? useSession.api.updateProcess(processKey, { status: 'running', resume: null })
+        : useSession.api.createProcess(processKey, sessionKey);
 
       const device = useSession.api.resolve(stdOut, processKey);
       const generator = semanticsService.File(parsed);
-      for await (const item of generator) {
+      for await (const item of generator)
         await device.writeData(item);
-      }
-    } catch (e) {
-      if (e instanceof ProcessError) {
-        if (e.code === SigEnum.SIGKILL) {
-          console.log('process was killed', processKey);
-        } else if (e.code === SigEnum.SIGINT) {
-          console.log('process was interrupted', processKey);
-        }
-      }
-      throw e;
+
     } finally {
       !leading && useSession.api.removeProcess(processKey);
     }
@@ -186,9 +168,9 @@ export class TtyShell implements Device {
             Object.assign<Sh.BaseMeta, Sh.BaseMeta>(result.parsed.meta, {
               sessionKey: this.sessionKey,
               processKey: this.sessionKey,
+              processGrpKey: this.sessionKey,
               stdIn: this.key,
               stdOut: this.key,
-              stdErr: this.key,
             });
             await this.spawn(result.parsed, true);
             // Prompt for next command
@@ -209,6 +191,12 @@ export class TtyShell implements Device {
         this.input = null;
       }
     }
+  }
+
+  readOnceFromTty(reader: (msg: any) => void) {
+    this.oneTimeReaders.push(reader);
+    this.input?.resolve();
+    this.input = null;
   }
 
   //#region Device
