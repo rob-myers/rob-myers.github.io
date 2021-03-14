@@ -144,19 +144,22 @@ class SemanticsService {
       }
       case '|': {
         const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
+        const files = stmts.map(x => wrapInFile(cloneParsed(x)));
         const fifos = [] as FifoDevice[];
 
         try {
-          for (const [i, stmt] of stmts.slice(0, -1).entries()) {
-            const fifo = useSession.api.createFifo(`/dev/fifo-${i}-${shortid.generate()}`);
-            redirectNode(stmt, { stdOut: fifo.key });
-            redirectNode(stmts[i + 1], { stdIn: fifo.key });
-            fifos.push(fifo);
+          for (const [i, file] of files.slice(0, -1).entries()) {
+            const processKey = shortid.generate();
+            const fifoKey = `/dev/fifo-${i}-${processKey}`;
+            fifos.push(useSession.api.createFifo(fifoKey));
+            file.meta.stdOut = fifoKey;
+            // Final pipe child will inherit processKey
+            file.meta.processKey = processKey;
+            files[i + 1].meta.stdIn = fifoKey;
           }
-          const files = stmts.map(stmt => wrapInFile(stmt));
-          const stdOuts = stmts.map(({ meta }) => useSession.api.resolve(meta.stdOut, meta.processKey));
+          const stdOuts = files.map(({ meta }) =>
+            useSession.api.resolve(meta.stdOut, meta.processKey));
 
-          // We run all pipe-children in the current processKey
           await Promise.all(files.map((file, i) =>
             new Promise<void>(async (resolve, reject) => {
               try {
@@ -183,7 +186,6 @@ class SemanticsService {
       default:
         throw new ShError(`binary command ${node.Op} unsupported`, 2);
     }
-    // useSession.api.setExitCode(node.meta.sessionKey, node.exitCode || 0);
   }
 
   private Block(node: Sh.Block) {
