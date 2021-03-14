@@ -6,6 +6,7 @@ import { deepClone, deepGet, kebabToCamel, KeyedLookup } from 'model/generic.mod
 import { addToLookup, ReduxUpdater, removeFromLookup, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
 import { defaultSelectRectMeta, PersistedStage, StoredStage } from 'model/stage.model';
+import { Subject } from 'rxjs';
 
 export type State = {
   stage: KeyedLookup<StoredStage>;
@@ -47,6 +48,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         key: stageKey,
         camEnabled: true,
         brush: deepClone(defaultSelectRectMeta),
+        keyEvents: new Subject,
         selectPolys: [],
         wallPolys: [],
       }, stage),

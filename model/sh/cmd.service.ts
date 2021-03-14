@@ -24,6 +24,7 @@ const commandKeys = {
   get: true,
   /** List previous commands */
   history: true,
+  key: true,
   /** List variables, usually created via redirection */
   ls: true,
   /** Apply function to each item from stdin */
@@ -91,7 +92,7 @@ class CmdService {
     let result = {} as ReadResult;
     while (!result.eof) {
       result = await device.readData();
-      if (result.data) {
+      if (result.data !== undefined) {
         if (isDataChunk(result.data)) {
           result.data.items = result.data.items
             .flatMap((x: string) => x.split(separator));
@@ -169,6 +170,12 @@ class CmdService {
         for (const line of history) yield line;
         break;
       }
+      case 'key': {
+        /**
+         * TODO
+         */
+        break;
+      }
       case 'filter':
       case 'map':
       case 'red': {
@@ -181,11 +188,6 @@ class CmdService {
         if (command === 'filter') {
           yield* this.read(node, (data) => func()(data) ? data : undefined);
         } else if (command === 'map') {
-          // Can also restrict column indices via extra args
-          const indices = args.slice(1).map(x => this.parseArg(x));
-          const mapper = indices.length
-            ? (x: any, i: number) => indices.includes(i) ? func()(x) : x
-            : (x: any) => func()(x);
           yield* this.read(node, (data) => func()(data));
         } else {
           if (args.length <= 2) {

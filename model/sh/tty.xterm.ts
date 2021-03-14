@@ -406,10 +406,11 @@ export class TtyXterm {
 
   protected onMessage(msg: MessageFromShell | string) {
     if (typeof msg === 'string') {
-      this.queueCommands(msg.split('\n')
+      return this.queueCommands(msg.split('\n')
         .map(line => ({ key: 'line', line: `${ansiWhite}${line}${ansiReset}` })));
-      return;
-    } else if (msg == undefined) {// e.g. call '() => null'
+    } else if (msg === null) {
+      return this.queueCommands([{ key: 'line', line: `${ansiBrown}null${ansiReset}` }]);
+    } else if (msg == undefined) {
       return;
     }
 
@@ -457,7 +458,9 @@ export class TtyXterm {
       }
       default: {
         if (isDataChunk(msg)) {
-          (msg as DataChunk).items.slice(-2 * scrollback).forEach(x => this.onMessage(x));
+          (msg as DataChunk).items
+            .slice(-2 * scrollback)
+            .forEach(x => this.onMessage(x));
         } else {
           this.queueCommands([{
             key: 'line',

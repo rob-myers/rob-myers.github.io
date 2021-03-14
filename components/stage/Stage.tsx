@@ -40,9 +40,19 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   const onPointer = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     ptrWire.next({ key: e.type as any, ndCoords: getNormDevicePos(e) });
   }, [stage]);
+  
+  const keyWire = stage?.keyEvents;
+  const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
+    keyWire?.next({ key: e.type as any, keyName: e.key });
+  }, [keyWire]);
 
   return (
-    <section className={styles.root}>
+    <section
+      className={styles.root}
+      tabIndex={0}
+      onKeyDown={onKey}
+      onKeyUp={onKey}
+    >
       <StageToolbar stage={stage} />
 
       {stage && loadedGltf && (

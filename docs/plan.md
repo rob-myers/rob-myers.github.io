@@ -9,7 +9,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ### TODO
 
 ✅ `Terminal` can run background processes
-- can read from stage key events
+- can read from stage key events via `key`
 - list processes via `ps`
 - can kill processes
 - can suspend processes
