@@ -1,3 +1,4 @@
+import shortid from 'shortid';
 import { testNever } from 'model/generic.model';
 import { Device, ShellIo, SigEnum } from './io/io.model';
 import { FileWithMeta } from './parse/parse.model';
@@ -9,10 +10,11 @@ import { ParseService } from './parse/parse.service';
 import { srcService } from './parse/src.service';
 import { semanticsService } from './semantics.service';
 import { TtyXterm } from './tty.xterm';
+import { ProcessError } from './sh.util';
 
 // Lazyload saves ~220kb initially
 let parseService = { tryParseBuffer: (_) => ({ key: 'failed', error: 'not ready' })} as ParseService;
-import('./parse/parse.service').then(x => parseService = x.parseService) 
+import('./parse/parse.service').then(x => parseService = x.parseService);
 
 export class TtyShell implements Device {
 
@@ -85,7 +87,6 @@ export class TtyShell implements Device {
           });
           this.tryParse();
         }
-
         break;
       }
       case 'send-sig': {
@@ -109,18 +110,30 @@ export class TtyShell implements Device {
   }
 
   async runParsed(parsed: FileWithMeta) {
-    const device = useSession.api.resolve(parsed.meta.stdOut);
-    const generator = semanticsService.File(parsed);
-    for await (const item of generator) {
-      await device.writeData(item);
+    try {
+      const device = useSession.api.resolve(parsed.meta.stdOut, parsed.meta.processKey);
+      const generator = semanticsService.File(parsed);
+      for await (const item of generator) {
+        await device.writeData(item);
+      }
+    } catch (e) {
+      if (e instanceof ProcessError) {
+        if (e.code === SigEnum.SIGKILL) {
+          console.log('process was killed', parsed.meta.processKey);
+          return;
+        } else if (e.code === SigEnum.SIGINT) {
+          console.log('process was interrupted', parsed.meta.processKey);
+          // Do not return to avoid duplicate prompt
+        }
+      }
+      throw e;
     }
   }
 
   async runInShell(parsed: FileWithMeta) {
-    const sessionKey = this.sessionKey;
-    // Must mutate to affect all descendents
     Object.assign<Sh.BaseMeta, Sh.BaseMeta>(parsed.meta, {
-      sessionKey,
+      sessionKey: this.sessionKey,
+      processKey: shortid.generate(),
       stdIn: this.key,
       stdOut: this.key,
       stdErr: this.key,

@@ -28,7 +28,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 - Start writing post / decide on blog format
 
-
 - Implement comments using build and client-side calls:
   > https://eiriksm.dev/walkthrough-github-comments
 - Must navigate to GitHub to actually post comments
@@ -41,6 +40,5 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ can create rectangular selection using mouse
 ✅ need setting/theme/story to bring it to life
    > We will remake Teleglitch on the web
-  
 ✅ can `get /brush/sides`
 ✅ can `set /brush/sides 4`

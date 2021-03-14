@@ -5,7 +5,7 @@ import safeJsonStringify from 'safe-json-stringify';
 import { last } from 'model/generic.model';
 import useSession from 'store/session.store';
 import { NamedFunction, varRegex } from './var.model';
-import { expand, Expanded, literal, normalizeWhitespace, ShError, singleQuotes } from './sh.util';
+import { expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
 import { RedirectDef, redirectNode } from './io/io.model';
@@ -126,7 +126,7 @@ class SemanticsService {
     const stmts = [cmds[0].X].concat(cmds.map(({ Y }) => Y));
 
     switch (node.Op) {
-      case '&&': {// Assume thrown errors already caught
+      case '&&': {
         for (const stmt of stmts) {
           yield* sem.Stmt(stmt);
           node.exitCode = stmt.exitCode;
@@ -135,7 +135,6 @@ class SemanticsService {
         break;
       }
       case '||': {
-        // Assume thrown errors already caught
         for (const stmt of stmts) {
           yield* sem.Stmt(stmt);
           node.exitCode = stmt.exitCode;
@@ -144,31 +143,27 @@ class SemanticsService {
         break;
       }
       case '|': {
+        const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
         const fifos = [] as FifoDevice[];
+
         try {
-          for (const [index, stmt] of stmts.slice(0, -1).entries()) {
-            const fifo = useSession.api.createFifo(`/dev/fifo-${index}-${shortid.generate()}`);
+          for (const [i, stmt] of stmts.slice(0, -1).entries()) {
+            const fifo = useSession.api.createFifo(`/dev/fifo-${i}-${shortid.generate()}`);
+            redirectNode(stmt, { stdOut: fifo.key });
+            redirectNode(stmts[i + 1], { stdIn: fifo.key });
             fifos.push(fifo);
-            redirectNode(stmt, 'stdOut', fifo.key);
-            redirectNode(stmts[index + 1], 'stdIn', fifo.key);
           }
           const files = stmts.map(stmt => wrapInFile(stmt));
-          const stdOuts = stmts.map(stmt => useSession.api.resolve(stmt.meta.stdOut));
-          const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
+          const stdOuts = stmts.map(({ meta }) => useSession.api.resolve(meta.stdOut, meta.processKey));
 
+          // We run all pipe-children in the current processKey
           await Promise.all(files.map((file, i) =>
             new Promise<void>(async (resolve, reject) => {
               try {
                 await ttyShell.runParsed(file);
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
-                /**
-                 * By default, shells do not stop executing when some
-                 * subcommand fails: they instead write an error to stderr.
-                 * But pipelines should fail whenever a pipe-child does.
-                 */
-                node.exitCode = file.exitCode;
-                file.exitCode ? reject() : resolve();
+                (node.exitCode = file.exitCode) ? reject() : resolve();
               } catch (error) {
                 reject(error);
               }
@@ -176,7 +171,7 @@ class SemanticsService {
           ));
 
         } catch (error) {
-            error && sem.handleInternalError(node, error);
+          error && sem.handleInternalError(node, error);
         } finally {
           fifos.forEach(fifo => {
             fifo.finishedWriting();
@@ -223,11 +218,11 @@ class SemanticsService {
   /** Construct a simple command or a compound command. */
   private async *Command(node: Sh.Command, Redirs: Sh.Redirect[]) {
     await sem.applyRedirects(node, Redirs);
-    const device = useSession.api.resolve(node.meta.stdOut);
+    const device = useSession.api.resolve(node.meta.stdOut, node.meta.processKey);
 
     if (node.type === 'CallExpr') {// Run simple command
       for await (const item of this.CallExpr(node)) {
-        device.writeData(item);
+        await device.writeData(item);
       }
       return;
     }
@@ -245,7 +240,7 @@ class SemanticsService {
 
     try {
       for await (const item of cmd) {
-        device.writeData(item);
+        await device.writeData(item);
       }
     } catch (e) {
       sem.handleShError(node, e);
@@ -305,10 +300,7 @@ class SemanticsService {
       case 'DblQuoted': {
         const output = [] as string[];
         for (const part of node.Parts) {
-          let lastValue = '';
-          for await (const { value } of sem.ExpandPart(part)) {
-            lastValue = value;
-          }
+          const lastValue = await this.lastExpanded(sem.ExpandPart(part));
           output.push(`${output.pop() || ''}${lastValue || ''}`);
         }
         yield expand(output);
@@ -323,18 +315,18 @@ class SemanticsService {
         break;
       }
       case 'CmdSubst': {
-        const device = useSession.api.createFifo(
-          `/dev/fifo-cmd-${shortid.generate()}`
-        );
-        redirectNode(node, 'stdOut', device.key);
+        const fifoKey = `/dev/fifo-cmd-${shortid.generate()}`;
+        const device = useSession.api.createFifo(fifoKey);
+        redirectNode(node, { stdOut: device.key });
+
         const stmts = node.Stmts.map(stmt => sem.Stmt(stmt));
-        for (const stmt of stmts) for await (const _ of stmt) {}
+        for (const stmt of stmts) for await (const _ of stmt);
         
-        const outputs = device.readAll().map(x =>
-          typeof x === 'string' ? x : safeJsonStringify(x)  
+        yield expand(device.readAll()
+          .map(x => typeof x === 'string' ? x : safeJsonStringify(x))
+          .join('\n').replace(/\n*$/, ''),
         );
         useSession.api.removeDevice(device.key);
-        yield expand(outputs.join('\n').replace(/\n*$/, ''));
         break;
       }
       case 'ParamExp': {
@@ -380,9 +372,9 @@ class SemanticsService {
         const { value } = await this.lastExpanded(sem.Expand(node.Word));
         if (varRegex.test(value)) {
           const varDevice = useSession.api.createVarDevice(meta.sessionKey, value);
-          redirectNode(node.parent!, 'stdOut', varDevice.key);
+          redirectNode(node.parent!, { stdOut: varDevice.key });
         } else if (value === '/dev/null') {
-          redirectNode(node.parent!, 'stdOut', '/dev/null');
+          redirectNode(node.parent!, { stdOut: '/dev/null' });
         } else {
           throw new ShError(`${def.subKey}: ${value}: invalid redirect`, 127);
         }
@@ -397,11 +389,15 @@ class SemanticsService {
     if (!stmt.Cmd) {
       sem.handleShError(stmt.Redirs[0], new ShError('pure redirects are unsupported', 2));
     } else if (stmt.Background) {
+      /**
+       * TODO support background processes
+       */
       // const cloned = Object.assign(cloneParsed(stmt), { Background: false } as Sh.Stmt);
       // const file = wrapInFile(cloned);
       // sem.transpile(file).subscribe();
       // stmt.exitCode = stmt.Negated ? 1 : 0;
-    } else {// Run a simple or compound command
+    } else {
+      // Run a simple or compound command
       yield* sem.Command(stmt.Cmd, stmt.Redirs);
       stmt.exitCode = stmt.Cmd.exitCode;
       if (stmt.Negated) {

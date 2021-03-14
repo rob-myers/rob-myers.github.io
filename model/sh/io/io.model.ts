@@ -1,7 +1,7 @@
 import { Subject, Subscription } from "rxjs";
 import type * as Sh from '../parse/parse.model';
-import { NodeFd } from '../parse/parse.model';
 import { traverseParsed } from '../parse/parse.util';
+import { ShError } from "../sh.util";
 
 export const scrollback = 200;
 
@@ -102,8 +102,8 @@ export type RedirectDef = (
   | { subKey: '<>'; fd?: number }
 );
 
-export function redirectNode(node: Sh.ParsedSh, fd: NodeFd, wireKey: string) {
-  const newMeta: Sh.BaseMeta = { ...node.meta, [fd]: wireKey };
+export function redirectNode(node: Sh.ParsedSh, updates: Partial<Sh.BaseMeta>) {
+  const newMeta: Sh.BaseMeta = { ...node.meta, ...updates };
   traverseParsed(node, (descendent) => descendent.meta = newMeta);
 }
 
@@ -131,3 +131,16 @@ export interface Device {
   finishedReading: () => void;
 }
 
+export function withProcessHandling(device: Device, processKey: string): Device {
+  // TODO store reference to immutable "processes meta" here
+  return new Proxy(device, {
+    get: (target, p: keyof Device) => {
+      if (p === 'writeData' || p === 'readData') {
+        // TODO throw or chained promise
+        console.log(p, processKey);
+        // throw new ProcessError(SigEnum.SIGKILL);
+      }
+      return target[p];
+    }
+  });
+}

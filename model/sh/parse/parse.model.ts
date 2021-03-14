@@ -209,12 +209,11 @@ export interface FileWithMeta extends File {
  */
 export interface BaseMeta extends Record<NodeFd, string> {
   sessionKey: string;
-  // pid: number;
-  // /** This is a shell iff `pid === sid` */
-  // sid: number;
+  processKey: string;
 }
 
 export type NodeFd = 'stdIn' | 'stdOut' | 'stdErr';
 
 export const defaultSessionKey = 'code-has-not-run';
+export const defaultProcessKey = 'code-has-not-run';
 export const defaultStdInOutErr = 'unassigned-tty';

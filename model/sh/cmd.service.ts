@@ -1,3 +1,4 @@
+import shortid from 'shortid';
 import { flatten, pause, testNever } from 'model/generic.model';
 import type * as Sh from './parse/parse.model';
 import { NamedFunction } from "./var.model";
@@ -51,7 +52,7 @@ class CmdService {
   }
 
   async *read({ meta }: Sh.CallExpr, act: (data: any) => any) {
-    const device = useSession.api.resolve(meta.stdIn);
+    const device = useSession.api.resolve(meta.stdIn, meta.processKey);
     let result = {} as ReadResult;
     while (!result.eof) {
       result = await device.readData();
@@ -68,14 +69,13 @@ class CmdService {
   }
 
   private async *split({ meta }: Sh.CallExpr) {
-    const device = useSession.api.resolve(meta.stdIn);
+    const device = useSession.api.resolve(meta.stdIn, meta.processKey);
     let result = {} as ReadResult;
     while (!result.eof) {
       result = await device.readData();
       if (result.data) {
         if (isDataChunk(result.data)) {
-          result.data.items = result.data.items
-            .flatMap(x => x);
+          result.data.items = result.data.items.flatMap(x => x);
           yield result.data;
         } else if (Array.isArray(result.data)) {
           yield dataChunk(result.data);
@@ -87,7 +87,7 @@ class CmdService {
   }
 
   private async *splitBy({ meta }: Sh.CallExpr, separator: string) {
-    const device = useSession.api.resolve(meta.stdIn);
+    const device = useSession.api.resolve(meta.stdIn, meta.processKey);
     let result = {} as ReadResult;
     while (!result.eof) {
       result = await device.readData();
@@ -256,9 +256,13 @@ class CmdService {
   }
 
   async invokeFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
+    /**
+     * TODO shouldn't set positionals in global variable scope.
+     * Each invokation of a function is given a processKey, so let's relativize.
+     */
     const { var: v, ttyShell } = useSession.api.getSession(node.meta.sessionKey);
     args.forEach((arg, i) => v[i + 1] = arg);
-    Object.assign(namedFunc.node.meta, node.meta); 
+    Object.assign(namedFunc.node.meta, { ...node.meta, processKey: shortid.generate() });
     await ttyShell.runParsed(namedFunc.node);
   }
 }

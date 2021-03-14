@@ -2,7 +2,7 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import { KeyedLookup } from 'model/generic.model';
-import { Device, makeShellIo, ShellIo } from 'model/sh/io/io.model';
+import { Device, makeShellIo, ShellIo, withProcessHandling } from 'model/sh/io/io.model';
 import { MessageFromShell, MessageFromXterm } from 'model/sh/tty.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import { TtyShell } from 'model/sh/tty.shell';
@@ -33,7 +33,7 @@ export type State = {
     persist: (sessionKey: string, data: { history: string[] }) => void;
     removeDevice: (deviceKey: string) => void;
     removeSession: (sessionKey: string) => void;
-    resolve: (deviceKey: string) => Device;
+    resolve: (deviceKey: string, processKey: string) => Device;
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
     warn: (sessionKey: string, msg: string) => void;
   }
@@ -144,7 +144,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       device: removeFromLookup(session[sessionKey].ttyShell.key, device),
     })),
 
-    resolve: (deviceKey) => get().device[deviceKey],
+    resolve: (deviceKey, processKey) => {
+      const device = get().device[deviceKey];
+      return withProcessHandling(device, processKey);
+    },
 
     setVar: async (sessionKey, varName, varValue) => {
       api.getSession(sessionKey).var[varName] = varValue; // Mutate

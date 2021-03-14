@@ -1,5 +1,6 @@
 import braces from 'braces';
 import { last } from 'model/generic.model';
+import { SigEnum } from './io/io.model';
 import type * as Sh from './parse/parse.model';
 
 export function normalizeWhitespace(word: string, trim = true): string[] {
@@ -90,5 +91,11 @@ export class ShError extends Error {
     super(message);
     // Set the prototype explicitly.
     Object.setPrototypeOf(this, ShError.prototype);
+  }
+}
+
+export class ProcessError extends Error {
+  constructor(public code: SigEnum) {
+    super();
   }
 }

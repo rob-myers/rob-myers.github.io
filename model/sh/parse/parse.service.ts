@@ -1,6 +1,6 @@
 import Sh, { syntax } from 'mvdan-sh';
 import type * as P from './parse.model';
-import { defaultSessionKey, defaultStdInOutErr } from './parse.model';
+import { defaultProcessKey, defaultSessionKey, defaultStdInOutErr } from './parse.model';
 import { withParents } from './parse.util';
 
 /**
@@ -15,6 +15,7 @@ class ParseShService {
     this.mockPos = () => ({ Line: () => 1, Col: () => 1, Offset: () => 0} as Sh.Pos);
     this.mockMeta = {
       sessionKey: defaultSessionKey,
+      processKey: defaultProcessKey,
       stdIn: defaultStdInOutErr,
       stdOut: defaultStdInOutErr,
       stdErr: defaultStdInOutErr,
