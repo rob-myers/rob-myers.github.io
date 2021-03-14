@@ -60,7 +60,7 @@ interface PersistedSession {
 interface ProcessMeta {
   key: string;
   sessionKey: string;
-  status: 'running' | 'suspended' | 'killed';
+  status: 'running' | 'suspended' | 'interrupted' | 'killed';
   positionals: string[];
 }
 

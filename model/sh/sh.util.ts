@@ -97,5 +97,6 @@ export class ShError extends Error {
 export class ProcessError extends Error {
   constructor(public code: SigEnum) {
     super();
+    Object.setPrototypeOf(this, ProcessError.prototype);
   }
 }

@@ -91,15 +91,16 @@ export class TtyShell implements Device {
       }
       case 'send-sig': {
         // console.log('received signal', { msg, sessionKey: this.sessionKey });
-
         if (msg.signal === SigEnum.SIGINT) {
           this.buffer.length = 0;
           this.oneTimeReaders.length = 0;
+          useSession.api.updateProcess(this.sessionKey, { status: 'interrupted' });
           this.prompt('$');
         }
         break;
       }
-      default: throw testNever(msg);
+      default:
+        throw testNever(msg);
     }
   }
 

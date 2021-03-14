@@ -2,6 +2,7 @@ import { Subject, Subscription } from "rxjs";
 import useSessionStore from "store/session.store";
 import type * as Sh from '../parse/parse.model';
 import { traverseParsed } from '../parse/parse.util';
+import { ProcessError } from "../sh.util";
 // import { pause } from "model/generic.model";
 // import { ProcessError, ShError } from "../sh.util";
 
@@ -139,13 +140,16 @@ export function withProcessHandling(device: Device, processKey: string): Device 
   return new Proxy(device, {
     get: (target, p: keyof Device) => {
       if (p === 'writeData' || p === 'readData') {
-        console.log(p, processKey);
-        // TODO throw or chained promise
-        // throw new ProcessError(SigEnum.SIGKILL);
-        // return async (input?: any) => {
-        //   await pause(1000);
-        //   await target[p](input);
-        // };
+        console.log(p, processMeta);
+
+        if (processMeta.status === 'interrupted') {
+          throw new ProcessError(SigEnum.SIGINT);
+        } else if (processMeta.status === 'killed') {
+          throw new ProcessError(SigEnum.SIGKILL);
+        } else if (processMeta.status === 'suspended') {
+          // TODO chained promise
+        }
+
       }
       return target[p];
     }

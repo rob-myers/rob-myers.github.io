@@ -32,28 +32,21 @@ class SemanticsService {
     }
   }
 
-  private handleInternalError(node: Sh.ParsedSh, e: any, prefix?: string) {
-    const message = [prefix, e.message].filter(Boolean).join(': ');
-    console.error(`${node.meta.sessionKey}: internal error: ${message}`);
-    console.error(e);
-    useSession.api.warn(node.meta.sessionKey, message);
-    node.exitCode = 2;
-  }
-
   private handleShError(node: Sh.ParsedSh, e: any, prefix?: string) {
-    if (e === null) {
-      throw null; // Propagate Ctrl-C
-    } else if (e instanceof ShError) {
-      if (e.exitCode === 0) {
-        throw e; // Propagate break/continue/return
-      }
-      const message = [prefix, e.message].filter(Boolean).join(': ');
+    if (e instanceof ProcessError) {
+      throw e;
+    }
+    const message = [prefix, e.message].filter(Boolean).join(': ');
+    useSession.api.warn(node.meta.sessionKey, message);
+    
+    if (e instanceof ShError) {
+      // if (e.exitCode === 0) throw e; // Propagate break/continue/return
       console.error(`ShError: ${node.meta.sessionKey}: ${message}`);
-      useSession.api.warn(node.meta.sessionKey, message);
       node.exitCode = e.exitCode;
-      // useSession.api.setExitCode(node.meta.sessionKey, node.exitCode);
-    } else {
-      this.handleInternalError(node, e, prefix);
+    } else  {
+      console.error(`Internal ShError: ${node.meta.sessionKey}: ${message}`);
+      console.error(e);
+      node.exitCode = 2;
     }
   }
 
@@ -67,8 +60,7 @@ class SemanticsService {
     for (const node of nodes) {
       yield* sem.Stmt(node);
       parent.exitCode = node.exitCode;
-    } // Exit code propagates from children
-    // useSession.api.setExitCode(parent.meta.sessionKey, parent.exitCode || 0);
+    }
   }
 
   /**
@@ -174,7 +166,7 @@ class SemanticsService {
           ));
 
         } catch (error) {
-          error && sem.handleInternalError(node, error);
+          error && sem.handleShError(node, error);
         } finally {
           fifos.forEach(fifo => {
             fifo.finishedWriting();
