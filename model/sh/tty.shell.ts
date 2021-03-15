@@ -41,7 +41,7 @@ export class TtyShell implements Device {
     this.xterm = xterm;
     this.io.read(this.onMessage.bind(this));
     this.prompt('$');
-    useSession.api.createProcess(this.sessionKey, this.sessionKey)
+    useSession.api.createProcess(this.sessionKey, this.sessionKey, this.sessionKey)
   }
 
   /** `prompt` must not contain non-readable characters e.g. ansi color codes */
@@ -89,14 +89,18 @@ export class TtyShell implements Device {
         break;
       }
       case 'send-sig': {
-        // console.log('received signal from tty.xterm', { msg, sessionKey: this.sessionKey });
         if (msg.signal === SigEnum.SIGINT) {
           this.buffer.length = 0;
           this.oneTimeReaders.length = 0;
-          const process = useSession.api.getProcess(this.sessionKey);
-          process.status = 'interrupted';
-          process.resume?.();
-          this.prompt('$');
+
+          const processes = useSession.api.getProcessGroup(this.sessionKey);
+          // console.log(processes)
+          processes.forEach((process) => {
+            process.status = 'interrupted';
+            process.cleanups.forEach(cleanup => cleanup());
+            process.cleanups.length = 0;
+          });
+          // this.prompt('$');
         }
         break;
       }
@@ -109,17 +113,20 @@ export class TtyShell implements Device {
    * Spawn a process.
    */
   async spawn(parsed: FileWithMeta, leading = false) {
-    const { meta: { processKey, sessionKey, stdOut } } = parsed;
+    const { meta: { processKey, processGrpKey, sessionKey, stdOut } } = parsed;
+    leading
+      ? useSession.api.updateProcess(processKey, { status: 'running', resume: null })
+      : useSession.api.createProcess(processKey, processGrpKey, sessionKey);
+
+    const device = useSession.api.resolve(stdOut, processKey);
+    const generator = semanticsService.File(parsed);
+
     try {
-      leading
-        ? useSession.api.updateProcess(processKey, { status: 'running', resume: null })
-        : useSession.api.createProcess(processKey, sessionKey);
-
-      const device = useSession.api.resolve(stdOut, processKey);
-      const generator = semanticsService.File(parsed);
-      for await (const item of generator)
+      for await (const item of generator) {
         await device.writeData(item);
-
+      }
+    } catch (e) {
+      throw e;
     } finally {
       !leading && useSession.api.removeProcess(processKey);
     }
@@ -184,6 +191,7 @@ export class TtyShell implements Device {
         }
       } catch (e) {
         console.error('error propagated to TtyShell', e);
+        this.prompt('$');
       } finally {
         // Can we assume other processes in foreground have terminated?
         // processService.clearCleanups(this.session.sid);

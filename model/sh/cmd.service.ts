@@ -1,12 +1,16 @@
 import shortid from 'shortid';
+
 import { flatten, testNever } from 'model/generic.model';
+import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
+
 import type * as Sh from './parse/parse.model';
 import { NamedFunction } from "./var.model";
-import useSession from 'store/session.store';
 import { handleProcessStatus, ReadResult } from './io/io.model';
 import { dataChunk, isDataChunk } from './io/fifo.device';
 import { ShError } from './sh.util';
 import { getOpts } from './parse/parse.util';
+
+import useSession from 'store/session.store';
 import useStage from 'store/stage.store';
 
 const commandKeys = {
@@ -30,7 +34,7 @@ const commandKeys = {
   /** Apply function to each item from stdin */
   map: true,
   /** Reduce over all stdin */
-  red: true,
+  reduce: true,
   /** e.g. `set /brush/sides 6` */
   set: true,
   /** Wait for specified number of seconds */
@@ -47,6 +51,32 @@ const commandKeys = {
 type CommandName = keyof typeof commandKeys;
 
 class CmdService {
+
+  private createStageProxy(stageKey: string) {
+    return new Proxy({}, {
+      get: (_, varName: string) => {
+        if (varName === 'update') {
+          return () => useStage.api.updateStage(stageKey, {});
+        }
+        const stage = useStage.api.getStage(stageKey);
+        return varName in stage ? stage[varName as keyof typeof stage] : undefined;
+      },
+      ownKeys: () => Object.keys(useStage.api.getStage(stageKey)).concat('update'),
+      getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
+    });
+  }
+
+  private createVarProxy(sessionKey: string) {
+    return new Proxy({}, {
+      get: (_, varName: string) => useSession.api.getVar(sessionKey, varName),
+      set: (_, varName: string, value) => {
+        useSession.api.setVar(sessionKey, varName, value);
+        return true;
+      },
+      ownKeys: () => Object.keys(useSession.api.getSession(sessionKey).var),
+      getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
+    });
+  }
 
   isCmd(word: string): word is CommandName {
     return word in commandKeys;
@@ -171,27 +201,36 @@ class CmdService {
         break;
       }
       case 'key': {
-        /**
-         * TODO
-         */
+        const { keyEvents } = useStage.api.getStage(meta.sessionKey);
+        const bucket = {} as Bucket<any>;
+        const generator = asyncIteratorFrom(keyEvents.asObservable(), bucket);
+        useSession.api.getProcess(meta.processKey).cleanups
+          .push(() => bucket.promise?.reject());
+        try {
+          for await (const item of generator) yield item;
+        } catch {
+          throw null;
+        }
         break;
       }
       case 'filter':
       case 'map':
-      case 'red': {
+      case 'reduce': {
         if (args.length === 0) {
           throw new ShError('1st arg must be a function', 1);
-        } 
+        }
         const funcDef = args[0];
         const func = Function('_', `return ${funcDef}`);
+        const vp = this.createVarProxy(meta.sessionKey);
+        const sp = this.createStageProxy(meta.sessionKey);
 
         if (command === 'filter') {
-          yield* this.read(node, (data) => func()(data) ? data : undefined);
+          yield* this.read(node, (data) => func()(data, sp, vp) ? data : undefined);
         } else if (command === 'map') {
-          yield* this.read(node, (data) => func()(data));
+          yield* this.read(node, (data) => func()(data, sp, vp));
         } else {
           if (args.length <= 2) {
-            if (command === 'red') {// `reduce` over all inputs
+            if (command === 'reduce') {// `reduce` over all inputs
               const outputs = [] as any[];
               yield* this.read(node, (data: any[]) => { outputs.push(data); });
               yield args[1]
@@ -219,11 +258,18 @@ class CmdService {
       }
       case 'sleep': {
         const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
-        await new Promise<void>(resolve => {
-          useSession.api.getProcess(meta.processKey).resume = resolve;
-          setTimeout(resolve, 1000 * seconds);
-        });
-        await handleProcessStatus(meta.processKey);
+        const process = useSession.api.getProcess(meta.processKey);
+        try {
+          await new Promise<void>((resolve, reject) => {
+            process.resume = resolve;
+            process.cleanups.push(reject);
+            setTimeout(resolve, 1000 * seconds);
+          });
+          // Perhaps only need to handle suspension?
+          await handleProcessStatus(meta.processKey);
+        } catch (e) {
+          throw null;
+        }
         break;
       }
       case 'split': {

@@ -24,7 +24,7 @@ export type State = {
   readonly api: {
     addFunc: (sessionKey: string, funcName: string, wrappedFile: FileWithMeta) => void;
     createSession: (sessionKey: string) => void;
-    createProcess: (processKey: string, sessionKey: string) => void;
+    createProcess: (processKey: string, processGrpKey: string, sessionKey: string) => void;
     updateProcess: (processKey: string, updates: Partial<ProcessMeta>) => void;
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
     createVarDevice: (sessionKey: string, varName: string) => VarDevice;
@@ -32,6 +32,7 @@ export type State = {
     getFunc: (sessionKey: string, funcName: string) => NamedFunction | undefined;
     getFuncs: (sessionKey: string) => NamedFunction[];
     getProcess: (processKey: string) => ProcessMeta;
+    getProcessGroup: (processGrpKey: string) => ProcessMeta[];
     getVar: (sessionKey: string, varName: string) => any | undefined;
     getVars: (sessionKey: string) => { key: string; value: string }[];
     getSession: (sessionKey: string) => Session;
@@ -60,10 +61,12 @@ interface PersistedSession {
 
 interface ProcessMeta {
   key: string;
+  processGrpKey: string;
   sessionKey: string;
   status: 'running' | 'suspended' | 'interrupted' | 'killed';
   positionals: string[];
   resume: null | (() => void);
+  cleanups: (() => void)[];
 }
 
 const useStore = create<State>(devtools(persist((set, get) => ({
@@ -92,13 +95,15 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return fifo;
     },
 
-    createProcess: (processKey, sessionKey) => {
+    createProcess: (processKey, processGrpKey, sessionKey) => {
       get().process[processKey] = {
         key: processKey,
+        processGrpKey,
         sessionKey,
         status: 'running',
         positionals: [],
         resume: null,
+        cleanups: [],
       }; // Mutate
     },
 
@@ -144,6 +149,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     getProcess: (processKey: string) => {
       return get().process[processKey];
+    },
+
+    getProcessGroup: (processGrpKey: string) => {
+      return Object.values(get().process).filter(x => x.processGrpKey === processGrpKey);
     },
 
     getVar: (sessionKey, varName) => {

@@ -33,17 +33,19 @@ class SemanticsService {
   }
 
   private handleShError(node: Sh.ParsedSh, e: any, prefix?: string) {
-    if (e instanceof ProcessError) {
+    if (e instanceof ProcessError || e === null) {
       throw e;
     }
-    const message = [prefix, e.message].filter(Boolean).join(': ');
-    useSession.api.warn(node.meta.sessionKey, message);
     
     if (e instanceof ShError) {
+      const message = [prefix, e.message].filter(Boolean).join(': ');
+      useSession.api.warn(node.meta.sessionKey, message);
       // if (e.exitCode === 0) throw e; // Propagate break/continue/return
       console.error(`ShError: ${node.meta.sessionKey}: ${message}`);
       node.exitCode = e.exitCode;
-    } else  {
+    } else {
+      const message = [prefix, e.message].filter(Boolean).join(': ');
+      useSession.api.warn(node.meta.sessionKey, message);
       console.error(`Internal ShError: ${node.meta.sessionKey}: ${message}`);
       console.error(e);
       node.exitCode = 2;
@@ -137,10 +139,8 @@ class SemanticsService {
       case '|': {
         const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
         const files = stmts.map(x => wrapInFile(cloneParsed(x)));
-        files.forEach(file => {
-          file.meta.processKey = shortid.generate();
-          file.meta.processGrpKey = files[0].meta.processKey;
-        });
+        // processGrpKey is inherited
+        files.forEach(file => file.meta.processKey = shortid.generate());
         const fifos = [] as FifoDevice[];
 
         try {
@@ -167,7 +167,7 @@ class SemanticsService {
           ));
 
         } catch (error) {
-          error && sem.handleShError(node, error);
+          sem.handleShError(node, error);
         } finally {
           fifos.forEach(fifo => {
             fifo.finishedWriting();
@@ -190,51 +190,49 @@ class SemanticsService {
     const args = await sem.performShellExpansion(node.Args);
     console.log('simple command', args);
 
-    try {
-      const [command, ...cmdArgs] = args;
-      let func: NamedFunction | undefined;
+    const [command, ...cmdArgs] = args;
+    let func: NamedFunction | undefined;
 
-      if (args.length) {
-        if (cmdService.isCmd(command)) {
-          yield* cmdService.runCmd(node, command, cmdArgs);
-        } else if (func = useSession.api.getFunc(node.meta.sessionKey, command)) {
-          await cmdService.invokeFunc(node, func, cmdArgs);
-        } else {
-          throw new ShError('command not found', 127);
-        }
+    if (args.length) {
+      if (cmdService.isCmd(command)) {
+        yield* cmdService.runCmd(node, command, cmdArgs);
+      } else if (func = useSession.api.getFunc(node.meta.sessionKey, command)) {
+        await cmdService.invokeFunc(node, func, cmdArgs);
       } else {
-        yield* sem.assignVars(node);
+        throw new ShError('command not found', 127);
       }
-    } catch (e) {
-      sem.handleShError(node, e, args[0]);
+    } else {
+      yield* sem.assignVars(node);
     }
   }
 
   /** Construct a simple command or a compound command. */
   private async *Command(node: Sh.Command, Redirs: Sh.Redirect[]) {
-    await sem.applyRedirects(node, Redirs);
-    const device = useSession.api.resolve(node.meta.stdOut, node.meta.processKey);
-
-    if (node.type === 'CallExpr') {// Run simple command
-      for await (const item of this.CallExpr(node)) {
-        await device.writeData(item);
-      }
-      return;
-    }
-
-    // Run compound command
-    let cmd: AsyncGenerator<any, void, unknown> = null as any;
-
-    switch (node.type) {
-      case 'Block': cmd = sem.Block(node); break;
-      case 'BinaryCmd': cmd = sem.BinaryCmd(node); break;
-      case 'FuncDecl': cmd = sem.FuncDecl(node); break;
-      // default: throw testNever(Cmd);
-      default: return;
-    }
+    let generator: AsyncGenerator<any, void, unknown>;
 
     try {
-      for await (const item of cmd) {
+      await sem.applyRedirects(node, Redirs);
+      const device = useSession.api.resolve(node.meta.stdOut, node.meta.processKey);
+
+      if (node.type === 'CallExpr') {
+        // Run simple command
+        generator = this.CallExpr(node);
+        for await (const item of generator) {
+          await device.writeData(item);
+        }
+        return;
+      }
+
+      // Run compound command
+      switch (node.type) {
+        case 'Block': generator = sem.Block(node); break;
+        case 'BinaryCmd': generator = sem.BinaryCmd(node); break;
+        case 'FuncDecl': generator = sem.FuncDecl(node); break;
+        // default: throw testNever(Cmd);
+        default: return;
+      }
+
+      for await (const item of generator) {
         await device.writeData(item);
       }
     } catch (e) {
