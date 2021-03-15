@@ -137,21 +137,25 @@ class SemanticsService {
         break;
       }
       case '|': {
-        const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
+        const { sessionKey, pid: ppid } = node.meta;
+        const { ttyShell } = useSession.api.getSession(sessionKey);
         const files = stmts.map(x => wrapInFile(cloneParsed(x)));
-        // processGrpKey is inherited
-        files.forEach(file => file.meta.processKey = shortid.generate());
+        files.forEach(file => {
+          file.meta.pid = useSession.api.getNextPid(sessionKey);
+          file.meta.ppid = ppid;
+          // pgid is inherited
+        });
         const fifos = [] as FifoDevice[];
 
         try {
           for (const [i, file] of files.slice(0, -1).entries()) {
-            const fifoKey = `/dev/fifo-${i}-${file.meta.processKey}`;
+            const fifoKey = `/dev/fifo-${i}-${file.meta.pid}`;
             fifos.push(useSession.api.createFifo(fifoKey));
             file.meta.stdOut = fifoKey;
             files[i + 1].meta.stdIn = fifoKey;
           }
           const stdOuts = files.map(({ meta }) =>
-            useSession.api.resolve(meta.stdOut, meta.processKey));
+            useSession.api.resolve(meta.stdOut, meta.pid));
 
           await Promise.all(files.map((file, i) =>
             new Promise<void>(async (resolve, reject) => {
@@ -212,7 +216,7 @@ class SemanticsService {
 
     try {
       await sem.applyRedirects(node, Redirs);
-      const device = useSession.api.resolve(node.meta.stdOut, node.meta.processKey);
+      const device = useSession.api.resolve(node.meta.stdOut, node.meta.pid);
 
       if (node.type === 'CallExpr') {
         // Run simple command
@@ -384,8 +388,10 @@ class SemanticsService {
     } else if (stmt.Background) {
       const { ttyShell } = useSession.api.getSession(stmt.meta.sessionKey);
       const file = wrapInFile(Object.assign(cloneParsed(stmt), { Background: false } as Sh.Stmt));
-      file.meta.processGrpKey = file.meta.processKey = shortid.generate();
-      ttyShell.spawn(file); // Don't await
+      file.meta.ppid = stmt.meta.pid;
+      file.meta.pgid = useSession.api.getSession(stmt.meta.sessionKey).nextPid;
+      // Don't await
+      ttyShell.spawn(file);
       stmt.exitCode = stmt.Negated ? 1 : 0;
     } else {
       // Run a simple or compound command

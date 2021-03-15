@@ -15,8 +15,9 @@ class ParseShService {
     this.mockPos = () => ({ Line: () => 1, Col: () => 1, Offset: () => 0} as Sh.Pos);
     this.mockMeta = {
       sessionKey: defaultSessionKey,
-      processKey: defaultProcessKey,
-      processGrpKey: defaultProcessKey,
+      pid: -1,
+      ppid: -1,
+      pgid: -1,
       stdIn: defaultStdInOutErr,
       stdOut: defaultStdInOutErr,
     };

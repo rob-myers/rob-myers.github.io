@@ -24,23 +24,29 @@ export type State = {
   readonly api: {
     addFunc: (sessionKey: string, funcName: string, wrappedFile: FileWithMeta) => void;
     createSession: (sessionKey: string) => void;
-    createProcess: (processKey: string, processGrpKey: string, sessionKey: string) => void;
-    updateProcess: (processKey: string, updates: Partial<ProcessMeta>) => void;
+    createProcess: (meta: {
+      sessionKey: string;
+      ppid: number;
+      pgid: number;
+      src: string;
+    }) => number;
+    updateProcess: (pid: number, updates: Partial<ProcessMeta>) => void;
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
     createVarDevice: (sessionKey: string, varName: string) => VarDevice;
     ensurePersisted: (sessionKey: string) => PersistedSession;
     getFunc: (sessionKey: string, funcName: string) => NamedFunction | undefined;
     getFuncs: (sessionKey: string) => NamedFunction[];
-    getProcess: (processKey: string) => ProcessMeta;
-    getProcessGroup: (processGrpKey: string) => ProcessMeta[];
+    getNextPid: (sessionKey: string) => number;
+    getProcess: (pid: number) => ProcessMeta;
+    getProcessGroup: (pgid: number) => ProcessMeta[];
     getVar: (sessionKey: string, varName: string) => any | undefined;
     getVars: (sessionKey: string) => { key: string; value: string }[];
     getSession: (sessionKey: string) => Session;
     persist: (sessionKey: string, data: { history: string[] }) => void;
     removeDevice: (deviceKey: string) => void;
-    removeProcess: (processKey: string) => void;
+    removeProcess: (pid: number) => void;
     removeSession: (sessionKey: string) => void;
-    resolve: (deviceKey: string, processKey: string) => Device;
+    resolve: (deviceKey: string, pid: number) => Device;
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
     warn: (sessionKey: string, msg: string) => void;
   }
@@ -52,6 +58,7 @@ interface Session {
   ttyIo: ShellIo<MessageFromXterm, MessageFromShell>;
   ttyShell: TtyShell,
   var: Record<string, any>;
+  nextPid: number;
 }
 
 interface PersistedSession {
@@ -60,13 +67,16 @@ interface PersistedSession {
 }
 
 interface ProcessMeta {
-  key: string;
-  processGrpKey: string;
+  /** pid */
+  key: number;
+  ppid: number;
+  pgid: number;
   sessionKey: string;
   status: 'running' | 'suspended' | 'interrupted' | 'killed';
-  positionals: string[];
   resume: null | (() => void);
   cleanups: (() => void)[];
+  src: string;
+  positionals: string[];
 }
 
 const useStore = create<State>(devtools(persist((set, get) => ({
@@ -95,16 +105,20 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return fifo;
     },
 
-    createProcess: (processKey, processGrpKey, sessionKey) => {
-      get().process[processKey] = {
-        key: processKey,
-        processGrpKey,
+    createProcess: ({ sessionKey, ppid, pgid, src }) => {
+      const pid: number = api.getNextPid(sessionKey);
+      get().process[pid] = {
+        key: pid,
+        ppid,
+        pgid,
         sessionKey,
         status: 'running',
         positionals: [],
         resume: null,
         cleanups: [],
+        src,
       }; // Mutate
+      return pid;
     },
 
     createSession: (sessionKey) => {
@@ -121,6 +135,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           ttyIo,
           ttyShell,
           var: {},
+          nextPid: 0,
         }, session),
         device: addToLookup(nullDevice, addToLookup(ttyDevice, device)),
       }));
@@ -147,12 +162,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return Object.values(get().session[sessionKey].func);
     },
 
-    getProcess: (processKey: string) => {
-      return get().process[processKey];
+    getNextPid: (sessionKey) => {
+      return get().session[sessionKey].nextPid++;
     },
 
-    getProcessGroup: (processGrpKey: string) => {
-      return Object.values(get().process).filter(x => x.processGrpKey === processGrpKey);
+    getProcess: (pid: number) => {
+      return get().process[pid];
+    },
+
+    getProcessGroup: (pgid: number) => {
+      return Object.values(get().process).filter(x => x.pgid === pgid);
     },
 
     getVar: (sessionKey, varName) => {
@@ -177,8 +196,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       set(({ device }) => ({ device: removeFromLookup(deviceKey, device), }));
     },
 
-    removeProcess(processKey) {
-      delete get().process[processKey];
+    removeProcess(pid) {
+      delete get().process[pid];
     },
 
     removeSession: (sessionKey) => set(({ session, device }) => ({
@@ -186,17 +205,17 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       device: removeFromLookup(session[sessionKey].ttyShell.key, device),
     })),
 
-    resolve: (deviceKey, processKey) => {
+    resolve: (deviceKey, pid) => {
       const device = get().device[deviceKey];
-      return withProcessHandling(device, processKey);
+      return withProcessHandling(device, pid);
     },
 
     setVar: async (sessionKey, varName, varValue) => {
       api.getSession(sessionKey).var[varName] = varValue; // Mutate
     },
 
-    updateProcess: (processKey, updates) => {
-      Object.assign(get().process[processKey], updates); // Mutate
+    updateProcess: (pid, updates) => {
+      Object.assign(get().process[pid], updates); // Mutate
     },
 
     warn: (sessionKey, msg) => {
@@ -206,8 +225,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
 }), {
   name: 'session',
-  version: 2,
-  blacklist: ['api', 'device', 'session'],
+  version: 3,
+  blacklist: ['api', 'device', 'session', 'process'],
   onRehydrateStorage: (_) =>  {
     return () => {
       useSessionStore.setState({ rehydrated: true });

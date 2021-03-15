@@ -1,4 +1,3 @@
-import shortid from 'shortid';
 import { testNever } from 'model/generic.model';
 import { Device, ShellIo, SigEnum } from './io/io.model';
 import { FileWithMeta } from './parse/parse.model';
@@ -40,8 +39,14 @@ export class TtyShell implements Device {
   initialise(xterm: TtyXterm) {
     this.xterm = xterm;
     this.io.read(this.onMessage.bind(this));
+    // session has pid = ppid = pgid = 0
+    useSession.api.createProcess({
+      sessionKey: this.sessionKey,
+      ppid: 0,
+      pgid: 0,
+      src: 'init',
+    })
     this.prompt('$');
-    useSession.api.createProcess(this.sessionKey, this.sessionKey, this.sessionKey)
   }
 
   /** `prompt` must not contain non-readable characters e.g. ansi color codes */
@@ -93,7 +98,7 @@ export class TtyShell implements Device {
           this.buffer.length = 0;
           this.oneTimeReaders.length = 0;
 
-          const processes = useSession.api.getProcessGroup(this.sessionKey);
+          const processes = useSession.api.getProcessGroup(0);
           // console.log(processes)
           processes.forEach((process) => {
             process.status = 'interrupted';
@@ -113,12 +118,19 @@ export class TtyShell implements Device {
    * Spawn a process.
    */
   async spawn(parsed: FileWithMeta, leading = false) {
-    const { meta: { processKey, processGrpKey, sessionKey, stdOut } } = parsed;
-    leading
-      ? useSession.api.updateProcess(processKey, { status: 'running', resume: null })
-      : useSession.api.createProcess(processKey, processGrpKey, sessionKey);
+    const { meta } = parsed;
+    if (leading) {
+      useSession.api.updateProcess(0, { status: 'running', resume: null });
+    } else {
+      meta.pid = useSession.api.createProcess({
+        ppid: meta.pid,
+        pgid: meta.pgid,
+        sessionKey: meta.sessionKey,
+        src: srcService.src(parsed),
+      });
+    }
 
-    const device = useSession.api.resolve(stdOut, processKey);
+    const device = useSession.api.resolve(meta.stdOut, meta.pid);
     const generator = semanticsService.File(parsed);
 
     try {
@@ -128,7 +140,7 @@ export class TtyShell implements Device {
     } catch (e) {
       throw e;
     } finally {
-      !leading && useSession.api.removeProcess(processKey);
+      !leading && useSession.api.removeProcess(meta.pid);
     }
   }
 
@@ -174,8 +186,9 @@ export class TtyShell implements Device {
             // Run command
             Object.assign<Sh.BaseMeta, Sh.BaseMeta>(result.parsed.meta, {
               sessionKey: this.sessionKey,
-              processKey: this.sessionKey,
-              processGrpKey: this.sessionKey,
+              pid: 0,
+              ppid: 0,
+              pgid: 0,
               stdIn: this.key,
               stdOut: this.key,
             });

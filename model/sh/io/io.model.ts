@@ -135,8 +135,8 @@ export interface Device {
 /**
  * Suspend/prevent reads/writes for relevant process status.
  */
-export function withProcessHandling(device: Device, processKey: string): Device {
-  const process = useSession.api.getProcess(processKey);
+export function withProcessHandling(device: Device, pid: number): Device {
+  const process = useSession.api.getProcess(pid);
 
   return new Proxy(device, {
     get: (target, p: keyof Device) => {
@@ -163,8 +163,8 @@ export function withProcessHandling(device: Device, processKey: string): Device 
 /**
  * Suspend/prevent ongoing computation given process status.
  */
-export async function handleProcessStatus(processKey: string) {
-  const process = useSession.api.getProcess(processKey);
+export async function handleProcessStatus(pid: number) {
+  const process = useSession.api.getProcess(pid);
   if (process.status === 'interrupted') {
     throw new ProcessError(SigEnum.SIGINT);
   } else if (process.status === 'killed') {

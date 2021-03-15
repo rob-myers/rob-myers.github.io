@@ -1,4 +1,4 @@
-import shortid from 'shortid';
+import columns from 'cli-columns';
 
 import { flatten, testNever } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
@@ -12,6 +12,7 @@ import { getOpts } from './parse/parse.util';
 
 import useSession from 'store/session.store';
 import useStage from 'store/stage.store';
+import { ansiBlue, ansiReset } from './tty.xterm';
 
 const commandKeys = {
   /** Output a variable */
@@ -28,9 +29,11 @@ const commandKeys = {
   get: true,
   /** List previous commands */
   history: true,
+  /** Stream key events from stage */
   key: true,
   /** List variables, usually created via redirection */
   ls: true,
+  ps: true,
   /** Apply function to each item from stdin */
   map: true,
   /** Reduce over all stdin */
@@ -83,7 +86,7 @@ class CmdService {
   }
 
   private async *read({ meta }: Sh.CallExpr, act: (data: any) => any) {
-    const device = useSession.api.resolve(meta.stdIn, meta.processKey);
+    const device = useSession.api.resolve(meta.stdIn, meta.pid);
     let result = {} as ReadResult;
     while (!result.eof) {
       result = await device.readData();
@@ -100,7 +103,7 @@ class CmdService {
   }
 
   private async *split({ meta }: Sh.CallExpr) {
-    const device = useSession.api.resolve(meta.stdIn, meta.processKey);
+    const device = useSession.api.resolve(meta.stdIn, meta.pid);
     let result = {} as ReadResult;
     while (!result.eof) {
       result = await device.readData();
@@ -118,7 +121,7 @@ class CmdService {
   }
 
   private async *splitBy({ meta }: Sh.CallExpr, separator: string) {
-    const device = useSession.api.resolve(meta.stdIn, meta.processKey);
+    const device = useSession.api.resolve(meta.stdIn, meta.pid);
     let result = {} as ReadResult;
     while (!result.eof) {
       result = await device.readData();
@@ -151,12 +154,8 @@ class CmdService {
       case 'cat': {
         for (const arg of args) {
           const value = useSession.api.getVar(meta.sessionKey, arg);
-          if (value === undefined) {
-            throw new ShError(`${arg}: variable not found`, 1);
-          }
-          for (const item of Array.isArray(value) ? value : [value]) {
-            yield item;
-          }
+          if (value === undefined) throw new ShError(`${arg}: variable not found`, 1);
+          for (const item of Array.isArray(value) ? value : [value]) yield item;
         }
         break;
       }
@@ -204,7 +203,7 @@ class CmdService {
         const { keyEvents } = useStage.api.getStage(meta.sessionKey);
         const bucket = {} as Bucket<any>;
         const generator = asyncIteratorFrom(keyEvents.asObservable(), bucket);
-        useSession.api.getProcess(meta.processKey).cleanups
+        useSession.api.getProcess(meta.pid).cleanups
           .push(() => bucket.promise?.reject());
         try {
           for await (const item of generator) yield item;
@@ -246,8 +245,16 @@ class CmdService {
       }
       case 'ls': {
         const kvPairs = useSession.api.getVars(meta.sessionKey);
-        for (const { key, value: _ } of kvPairs) {
-          yield key;
+        for (const { key, value: _ } of kvPairs) yield key;
+        break;
+      }
+      case 'ps': {
+        const processes = Object.values(useSession.getState().process)
+          .filter(x => x.sessionKey === meta.sessionKey);
+        const title = ['pid', 'ppid', 'pgid', ''].map(x => x.padEnd(5)).join(' ')
+        yield `${ansiBlue}${title}${ansiReset}`;
+        for (const { key: pid, ppid, pgid, src } of processes) {
+          yield [pid, ppid, pgid, src].map(String).map(x => x.padEnd(5)).join(' ');
         }
         break;
       }
@@ -258,7 +265,7 @@ class CmdService {
       }
       case 'sleep': {
         const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
-        const process = useSession.api.getProcess(meta.processKey);
+        const process = useSession.api.getProcess(meta.pid);
         try {
           await new Promise<void>((resolve, reject) => {
             process.resume = resolve;
@@ -266,7 +273,7 @@ class CmdService {
             setTimeout(resolve, 1000 * seconds);
           });
           // Perhaps only need to handle suspension?
-          await handleProcessStatus(meta.processKey);
+          await handleProcessStatus(meta.pid);
         } catch (e) {
           throw null;
         }
@@ -286,15 +293,11 @@ class CmdService {
         break;
       }
       case 'wall': {
-        const { opts } = getOpts(args, { boolean: [
-          'c', // cut out wall
-        ], });
+        const { opts } = getOpts(args, { boolean: ['c', /** Cut out */ ], });
         const outputs = [] as any[];
         yield* this.read(node, (data: any[]) => { outputs.push(data); });
         const filtered = outputs.filter(x => x.length === 4 && x.every(Number.isFinite));
-        useStage.api.addWalls(meta.sessionKey, filtered, {
-          cutOut: opts.c,
-        });
+        useStage.api.addWalls(meta.sessionKey, filtered, { cutOut: opts.c });
         break;
       }
       default: throw testNever(command);
@@ -304,11 +307,15 @@ class CmdService {
   async invokeFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
     /**
      * TODO shouldn't set positionals in global variable scope.
-     * Each invokation of a function is given a processKey, so let's relativize.
      */
-    const { var: v, ttyShell } = useSession.api.getSession(node.meta.sessionKey);
+    const { sessionKey, ppid } = node.meta;
+    const { var: v, ttyShell } = useSession.api.getSession(sessionKey);
     args.forEach((arg, i) => v[i + 1] = arg);
-    Object.assign(namedFunc.node.meta, { ...node.meta, processKey: shortid.generate() });
+    Object.assign(namedFunc.node.meta, {
+      ...node.meta,
+      pid: useSession.api.getNextPid(sessionKey),
+      ppid,
+    });
     await ttyShell.spawn(namedFunc.node);
   }
 }

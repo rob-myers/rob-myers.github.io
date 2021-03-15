@@ -208,8 +208,9 @@ export interface FileWithMeta extends File {
  */
 export interface BaseMeta extends Record<NodeFd, string> {
   sessionKey: string;
-  processKey: string;
-  processGrpKey: string;
+  pid: number;
+  ppid: number;
+  pgid: number;
 }
 
 export type NodeFd = 'stdIn' | 'stdOut';

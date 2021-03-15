@@ -1,7 +1,7 @@
 import safeJsonStringify from 'safe-json-stringify';
 
 /** Useful for state management */
-export interface KeyedLookup<Value extends { key: K }, K extends string = string> {
+export interface KeyedLookup<Value extends { key: K }, K extends string | number = string | number> {
   [key: string]: Value;
 }
 
