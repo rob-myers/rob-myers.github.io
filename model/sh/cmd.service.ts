@@ -31,6 +31,7 @@ const commandKeys = {
   history: true,
   /** Stream key events from stage */
   key: true,
+  kill: true,
   /** List variables, usually created via redirection */
   ls: true,
   ps: true,
@@ -209,6 +210,18 @@ class CmdService {
           for await (const item of generator) yield item;
         } catch {
           throw null;
+        }
+        break;
+      }
+      case 'kill': {
+        const processes = useSession.api.getProcesses(meta.sessionKey);
+        for (const pid of args.map(x => this.parseArg(x))) {
+          if (pid === 0) throw new ShError('cannot kill leading process', 1);
+          if (processes[pid]) {
+            processes[pid].status = 'killed';
+            processes[pid].cleanups.forEach(c => c());
+            processes[pid].cleanups.length = 0;
+          }
         }
         break;
       }

@@ -12,7 +12,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ can read from stage key events via `key`
 ✅ list processes via `ps`
   > have pid, ppid, pgid, sid, truncated src
-- can kill processes
+✅ can kill processes
 - can suspend processes
 
 - Can create ui plugin using shell, changing `SelectRect` on key events.

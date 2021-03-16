@@ -100,7 +100,7 @@ export class TtyShell implements Device {
           this.buffer.length = 0;
           this.oneTimeReaders.length = 0;
 
-          const processes = useSession.api.getProcessGroup(0);
+          const processes = useSession.api.getProcesses(this.sessionKey, 0);
           processes.forEach((process) => {
             process.status = 'interrupted';
             process.cleanups.forEach(cleanup => cleanup());

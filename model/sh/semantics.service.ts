@@ -197,16 +197,21 @@ class SemanticsService {
     const [command, ...cmdArgs] = args;
     let func: NamedFunction | undefined;
 
-    if (args.length) {
-      if (cmdService.isCmd(command)) {
-        yield* cmdService.runCmd(node, command, cmdArgs);
-      } else if (func = useSession.api.getFunc(node.meta.sessionKey, command)) {
-        await cmdService.invokeFunc(node, func, cmdArgs);
+    try {
+      if (args.length) {
+        if (cmdService.isCmd(command)) {
+          yield* cmdService.runCmd(node, command, cmdArgs);
+        } else if (func = useSession.api.getFunc(node.meta.sessionKey, command)) {
+          await cmdService.invokeFunc(node, func, cmdArgs);
+        } else {
+          throw new ShError('command not found', 127);
+        }
       } else {
-        throw new ShError('command not found', 127);
+        yield* sem.assignVars(node);
       }
-    } else {
-      yield* sem.assignVars(node);
+    } catch (e) {
+      e instanceof ShError && (e.message = `${command}: ${e.message}`);
+      throw e;
     }
   }
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
-import { DoubleSide, Vector3 } from "three";
+import { Vector3 } from "three";
 
 import { VectorJson } from "model/geom";
 import { ndCoordsToGroundPlane, vectAccuracy } from "model/3d/three.model";

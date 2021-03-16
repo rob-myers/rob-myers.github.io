@@ -38,7 +38,7 @@ export type State = {
     getFuncs: (sessionKey: string) => NamedFunction[];
     getNextPid: (sessionKey: string) => number;
     getProcess: (pid: number) => ProcessMeta;
-    getProcessGroup: (pgid: number) => ProcessMeta[];
+    getProcesses: (sessionKey: string, pgid?: number) => ProcessMeta[];
     getVar: (sessionKey: string, varName: string) => any | undefined;
     getVars: (sessionKey: string) => { key: string; value: string }[];
     getSession: (sessionKey: string) => Session;
@@ -166,12 +166,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().session[sessionKey].nextPid++;
     },
 
-    getProcess: (pid: number) => {
+    getProcess: (pid) => {
       return get().process[pid];
     },
 
-    getProcessGroup: (pgid: number) => {
-      return Object.values(get().process).filter(x => x.pgid === pgid);
+    getProcesses: (sessionKey, pgid) => {
+      return Object.values(get().process)
+        .filter(Number.isFinite(pgid)
+          ? x => x.sessionKey === sessionKey && x.pgid === pgid
+          : x => x.sessionKey === sessionKey
+        );
     },
 
     getVar: (sessionKey, varName) => {
