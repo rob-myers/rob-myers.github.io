@@ -150,9 +150,10 @@ export class TtyShell implements Device {
     this.input = this.inputs.pop() || null;
     if (!this.input) return;
 
-    try {// Catching Ctrl-C of `runInShell`
-      this.buffer.push(this.input.line);
-      const result = parseService.tryParseBuffer(this.buffer.slice()); // Can't error
+    try {// Catch errors from `this.spawn`
+
+      this.buffer.push(...this.input.line.split('¶'));
+      const result = parseService.tryParseBuffer(this.buffer.slice());
 
       switch (result.key) {
         case 'failed': {
@@ -181,7 +182,6 @@ export class TtyShell implements Device {
           });
           await this.spawn(result.parsed, true);
 
-          // Prompt for next command
           this.prompt('$');
           break;
         }

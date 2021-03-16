@@ -170,10 +170,9 @@ export class SrcService {
 
       // Literals inside heredocs are handled earlier
       case 'Lit': {
-        // const parent = node.parent!;
         const value = node.Value.replace(/\\\n/g, '');
         if (node.parent?.type === 'DblQuoted') {// Need $$ for literal $
-          return value.replace(/\n/g, '"$$\'\\n\'"');
+          return value.replace(/\n/g, '¶');
         }
         return node.Value;
       }
@@ -230,7 +229,7 @@ export class SrcService {
       }
 
       case 'SglQuoted': {
-        const inner = node.Value.replace(/\n/g, '\'$$\'\\n\'\'');
+        const inner = node.Value.replace(/\n/g, '¶');
         return `${node.Dollar ? '$' : ''}'${inner}'`;
       }
         
