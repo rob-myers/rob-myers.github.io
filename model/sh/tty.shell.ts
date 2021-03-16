@@ -24,6 +24,7 @@ export class TtyShell implements Device {
   /** Lines in current interactive parse */
   private buffer = [] as string[];
   private readonly maxLines = 500;
+  private lastPrompt = null as null | string;
   
   private oneTimeReaders = [] as ((msg: any) => void)[];
   
@@ -51,6 +52,7 @@ export class TtyShell implements Device {
 
   /** `prompt` must not contain non-readable characters e.g. ansi color codes */
   private prompt(prompt: string) {
+    this.lastPrompt = prompt;
     this.io.write({
       key: 'send-xterm-prompt',
       prompt: `${prompt} `,
@@ -99,13 +101,15 @@ export class TtyShell implements Device {
           this.oneTimeReaders.length = 0;
 
           const processes = useSession.api.getProcessGroup(0);
-          // console.log(processes)
           processes.forEach((process) => {
             process.status = 'interrupted';
             process.cleanups.forEach(cleanup => cleanup());
             process.cleanups.length = 0;
           });
-          // this.prompt('$');
+
+          if (this.lastPrompt === '>') {
+            this.prompt('$');
+          }
         }
         break;
       }
@@ -114,9 +118,7 @@ export class TtyShell implements Device {
     }
   }
 
-  /**
-   * Spawn a process.
-   */
+  /** Spawn a process. */
   async spawn(parsed: FileWithMeta, leading = false) {
     const { meta } = parsed;
     if (leading) {
@@ -144,73 +146,69 @@ export class TtyShell implements Device {
     }
   }
 
-  private storeSrcLine(srcLine: string) {
-    if (srcLine) {
-      const prev = this.history.pop();
-      prev && this.history.push(prev);
-      if (prev !== srcLine) {
-        this.history.push(srcLine);
-        while (this.history.length > this.maxLines) {
-          this.history.shift();
+  private async tryParse() {
+    this.input = this.inputs.pop() || null;
+    if (!this.input) return;
+
+    try {// Catching Ctrl-C of `runInShell`
+      this.buffer.push(this.input.line);
+      const result = parseService.tryParseBuffer(this.buffer.slice()); // Can't error
+
+      switch (result.key) {
+        case 'failed': {
+          const errMsg = `mvdan-sh: ${result.error.replace(/^src\.sh:/, '')}`;
+          console.error(errMsg);
+          this.io.write({ key: 'error', msg: errMsg });
+          this.buffer.length = 0;
+          this.prompt('$');
+          break;
         }
-        useSession.api.persist(this.sessionKey, {
-          history: this.history.slice(),
-        });
+        case 'complete': {
+          this.buffer.length = 0;
+          // Store command in history
+          const singleLineSrc = srcService.src(result.parsed);
+          singleLineSrc && this.storeSrcLine(singleLineSrc);
+
+          // Run command
+          useSession.api.updateProcess(0, { src: singleLineSrc });
+          Object.assign<Sh.BaseMeta, Sh.BaseMeta>(result.parsed.meta, {
+            sessionKey: this.sessionKey,
+            pid: 0,
+            ppid: 0,
+            pgid: 0,
+            stdIn: this.key,
+            stdOut: this.key,
+          });
+          await this.spawn(result.parsed, true);
+
+          // Prompt for next command
+          this.prompt('$');
+          break;
+        }
+        case 'incomplete': {
+          this.prompt('>');
+          break;
+        }
       }
+    } catch (e) {
+      console.error('error propagated to TtyShell', e);
+      this.prompt('$');
+    } finally {
+      this.input?.resolve();
+      this.input = null;
     }
   }
 
-  private async tryParse() {
-    this.input = this.inputs.pop() || null;
-    
-    if (this.input) {
-      try {// Catching Ctrl-C of `runInShell`
-        this.buffer.push(this.input.line);
-        const result = parseService.tryParseBuffer(this.buffer.slice()); // Can't error
-
-        switch (result.key) {
-          case 'failed': {
-            const errMsg = `mvdan-sh: ${result.error.replace(/^src\.sh:/, '')}`;
-            console.error(errMsg);
-            this.io.write({ key: 'error', msg: errMsg });
-            // processService.setExitCode(this.session.key, 1);
-            this.buffer.length = 0;
-            this.prompt('$');
-            break;
-          }
-          case 'complete': {
-            this.buffer.length = 0;
-            // Store command in history
-            const singleLineSrc = srcService.src(result.parsed);
-            this.storeSrcLine(singleLineSrc);
-            // Run command
-            Object.assign<Sh.BaseMeta, Sh.BaseMeta>(result.parsed.meta, {
-              sessionKey: this.sessionKey,
-              pid: 0,
-              ppid: 0,
-              pgid: 0,
-              stdIn: this.key,
-              stdOut: this.key,
-            });
-            await this.spawn(result.parsed, true);
-            // Prompt for next command
-            this.prompt('$');
-            break;
-          }
-          case 'incomplete': {
-            this.prompt('>');
-            break;
-          }
-        }
-      } catch (e) {
-        console.error('error propagated to TtyShell', e);
-        this.prompt('$');
-      } finally {
-        // Can we assume other processes in foreground have terminated?
-        // processService.clearCleanups(this.session.sid);
-        this.input?.resolve();
-        this.input = null;
-      }
+  private storeSrcLine(srcLine: string) {
+    const prev = this.history.pop();
+    prev && this.history.push(prev);
+    if (prev !== srcLine) {
+      this.history.push(srcLine);
+      while (this.history.length > this.maxLines)
+        this.history.shift();
+      useSession.api.persist(this.sessionKey, {
+        history: this.history.slice(),
+      });
     }
   }
 

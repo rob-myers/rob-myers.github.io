@@ -20,6 +20,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 - Have layers where tagged multipolygons and blender models can be stored
 - Can create walls
 
+- Replace historical `$'\n'` with single char `↵`?
+
 - Try building a low poly character in blender
 - Beginners guide:
   - https://www.youtube.com/watch?v=7MRonzqYJgw&ab_channel=GrantAbbitt
@@ -32,6 +34,9 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 - Implement comments using build and client-side calls:
   > https://eiriksm.dev/walkthrough-github-comments
 - Must navigate to GitHub to actually post comments
+
+- Create basic text editor using Prism shell highlighting,
+  so can write functions and 'scripts'
 
 ### DONE
 

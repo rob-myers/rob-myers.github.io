@@ -5,7 +5,6 @@ import { FitAddon } from 'xterm-addon-fit';
 import styles from 'styles/Terminal.module.css';
 
 const XTermComponent: React.FC<Props> = ({
-  className,
   options,
   onMount,
 }) => {
@@ -48,7 +47,6 @@ const XTermComponent: React.FC<Props> = ({
 interface Props {
   onMount: (xterm: Terminal) => void;
   options?: ITerminalOptions;
-  className?: string;
 }
 
 function stopKeysPropagating(e: React.KeyboardEvent) {
