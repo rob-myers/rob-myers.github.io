@@ -380,6 +380,8 @@ class SemanticsService {
     const varValue = useSession.api.getVar(node.meta.sessionKey, varName);
     if (varValue === undefined || typeof varValue === 'string') {
       yield expand(varValue || '');
+    } else if (typeof varValue[0] === 'string') {
+      yield expand(varValue[0]);
     } else {
       yield expand(safeJsonStringify(varValue));
     }

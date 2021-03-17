@@ -292,9 +292,8 @@ class CmdService {
       case 'read': {
         let readSomething = false;
         yield* this.read(node, input => {
-          if (input !== undefined && !readSomething) {
-            return (readSomething = true) && input;
-          }
+          input !== undefined && (readSomething = true);
+          return input;
         }, { once: true });
         node.exitCode = readSomething ? 0 : 1;
         break;
