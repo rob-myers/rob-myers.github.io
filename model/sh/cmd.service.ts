@@ -107,6 +107,7 @@ class CmdService {
         yield result.data; // Forward chunk
       } else {
         yield act(result.data);
+        if (once) break;
       }
     }
   }
@@ -277,7 +278,13 @@ class CmdService {
         break;
       }
       case 'read': {
-        yield* this.read(node, x => x, { once: true });
+        let readSomething = false;
+        yield* this.read(node, input => {
+          if (input !== undefined && !readSomething) {
+            return (readSomething = true) && input;
+          }
+        }, { once: true });
+        node.exitCode = readSomething ? 0 : 1;
         break;
       }
       case 'set': {

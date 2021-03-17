@@ -29,16 +29,12 @@ export class FifoDevice implements Device {
 
   public async readData(exactlyOnce?: boolean): Promise<ReadResult> {
     this.readerStatus = this.readerStatus || FifoStatus.Connected;
-    if (this.readerStatus === FifoStatus.Disconnected) {
-      return { eof: true };
-    }
 
     if (this.buffer.length) {
       this.writerResolver?.(); // Unblock writer
       this.writerResolver = null;
 
       if (exactlyOnce) {
-        this.finishedReading();
         if (!isDataChunk(this.buffer[0])) {
           return { data: this.buffer.shift() };
         } else if (this.buffer[0].items.length === 1) {

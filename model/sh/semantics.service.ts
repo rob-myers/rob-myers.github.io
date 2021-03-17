@@ -2,14 +2,14 @@ import type * as Sh from './parse/parse.model';
 import shortid from 'shortid';
 import safeJsonStringify from 'safe-json-stringify';
 
-import { last } from 'model/generic.model';
+import { last, pause } from 'model/generic.model';
 import useSession from 'store/session.store';
 import { NamedFunction, varRegex } from './var.model';
 import { expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
 import { RedirectDef, redirectNode } from './io/io.model';
-import { cloneParsed, wrapInFile } from './parse/parse.util';
+import { cloneParsed, hasAncestralIterator, wrapInFile } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
 class SemanticsService {
@@ -30,6 +30,29 @@ class SemanticsService {
       parent.exitCode = redirects.find(x => x.exitCode)?.exitCode??1;
       throw e;
     }
+  }
+
+  private breakError = (breaks: number) =>
+    new ShError('__break__', 0, { break: breaks });
+
+  private continueError = (continues: number) =>
+    new ShError('__continue__', 0, { continue: continues });
+
+  private handleInterrupt(e: any, node: Sh.ParsedSh) {
+    if (e instanceof ShError) {
+      if (e.extra?.break) {
+        if (e.extra.break > 1 && hasAncestralIterator(node)) {
+          throw this.breakError(e.extra.break - 1);
+        }
+        return 'break';
+      } else if (e.extra?.continue) {
+        if (e.extra.continue > 1 && hasAncestralIterator(node)) {
+          throw this.continueError(e.extra.continue - 1);
+        }
+        return 'continue';
+      }
+    }
+    throw e;
   }
 
   private handleShError(node: Sh.ParsedSh, e: any, prefix?: string) {
@@ -234,6 +257,7 @@ class SemanticsService {
         case 'Block': generator = sem.Block(node); break;
         case 'BinaryCmd': generator = sem.BinaryCmd(node); break;
         case 'FuncDecl': generator = sem.FuncDecl(node); break;
+        case 'WhileClause': generator = sem.WhileClause(node); break;
         // default: throw testNever(Cmd);
         default: return;
       }
@@ -299,8 +323,8 @@ class SemanticsService {
       case 'DblQuoted': {
         const output = [] as string[];
         for (const part of node.Parts) {
-          const lastValue = await this.lastExpanded(sem.ExpandPart(part));
-          output.push(`${output.pop() || ''}${lastValue || ''}`);
+          const { value } = await this.lastExpanded(sem.ExpandPart(part));
+          output.push(`${output.pop() || ''}${value || ''}`);
         }
         yield expand(output);
         return;
@@ -401,6 +425,31 @@ class SemanticsService {
       stmt.exitCode = stmt.Cmd.exitCode;
       if (stmt.Negated) {
         stmt.exitCode = 1 - Number(!!stmt.Cmd.exitCode);
+      }
+    }
+  }
+
+  /**
+   * We will only permit guarded while e.g.
+   * - `while read >foo; do ... done`
+   * - `while sleep 1; do ... done`
+   */
+  private async *WhileClause(stmt: Sh.WhileClause) {
+    while (true) {
+      try {
+        yield* this.stmts(stmt, stmt.Cond);
+
+        await pause(0);
+
+        if (stmt.Until ? !stmt.exitCode : stmt.exitCode) {
+          stmt.exitCode = 0;
+          break;
+        }
+        yield* this.stmts(stmt, stmt.Do);
+      } catch (e) {
+        const result = this.handleInterrupt(e, stmt);
+        if (result === 'break') break;
+        if (result === 'continue') continue;
       }
     }
   }

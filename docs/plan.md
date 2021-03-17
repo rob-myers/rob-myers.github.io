@@ -13,10 +13,12 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ list processes via `ps`
   > have pid, ppid, pgid, sid, truncated src
 ✅ can kill processes
-✅ Replace historical `$'\n'` with single char `¶`?
+✅ Represent newlines in history using single char `¶` rather than `$'\n'`
 ✅ can `read >data`
-- can `while read >data do ... done` i.e. guarded while
+✅ can `while read >data do ... done` and `while sleep; do echo foo`
 - can suspend processes
+
+- force `while` to be guarded; add `break` and `continue`
 
 - Can create ui plugin using shell, changing `SelectRect` on key events.
 
