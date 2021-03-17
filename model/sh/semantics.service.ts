@@ -84,9 +84,9 @@ class SemanticsService {
       } else if (single?.type === 'ParamExp' || single?.type === 'CmdSubst') {
         // Normalize command and parameter expansion,
         // e.g. ' foo \nbar ' -> ['foo', 'bar'].
-        expanded.push(...normalizeWhitespace(result.value));
+        normalizeWhitespace(result.value).forEach(x => expanded.push(x));
       } else {
-        expanded.push(...result.values);
+        result.values.forEach(x => expanded.push(x));
       }
     }
     return expanded;

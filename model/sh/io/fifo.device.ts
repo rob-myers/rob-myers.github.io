@@ -27,19 +27,35 @@ export class FifoDevice implements Device {
     this.buffer = [];
   }
 
-  public async readData(): Promise<ReadResult> {
-    this.readerStatus = FifoStatus.Connected;
+  public async readData(exactlyOnce?: boolean): Promise<ReadResult> {
+    this.readerStatus = this.readerStatus || FifoStatus.Connected;
+    if (this.readerStatus === FifoStatus.Disconnected) {
+      return { eof: true };
+    }
+
     if (this.buffer.length) {
       this.writerResolver?.(); // Unblock writer
       this.writerResolver = null;
-      return { data: this.buffer.shift() };
+
+      if (exactlyOnce) {
+        this.finishedReading();
+        if (!isDataChunk(this.buffer[0])) {
+          return { data: this.buffer.shift() };
+        } else if (this.buffer[0].items.length === 1) {
+          return { data: this.buffer.shift()!.items[0] };
+        }
+        return { data: this.buffer[0].items.shift() };
+      } else {
+        return { data: this.buffer.shift() };
+      }
+
     } else if (this.writerStatus === FifoStatus.Disconnected) {
       return { eof: true };
     }
     // Reader is blocked
     return new Promise<void>((resolve) => {
       this.readerResolver = resolve;
-    }).then(() => this.readData());
+    }).then(() => this.readData(exactlyOnce));
   }
 
   public async writeData(data: any) {

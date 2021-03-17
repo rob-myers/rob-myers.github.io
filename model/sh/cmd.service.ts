@@ -1,5 +1,3 @@
-import columns from 'cli-columns';
-
 import { flatten, testNever } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 
@@ -37,6 +35,8 @@ const commandKeys = {
   ps: true,
   /** Apply function to each item from stdin */
   map: true,
+  /** Read one item from stdin and write to stdout */
+  read: true,
   /** Reduce over all stdin */
   reduce: true,
   /** e.g. `set /brush/sides 6` */
@@ -86,19 +86,27 @@ class CmdService {
     return word in commandKeys;
   }
 
-  private async *read({ meta }: Sh.CallExpr, act: (data: any) => any) {
+  private async *read(
+    { meta }: Sh.CallExpr,
+    act: (data: any) => any,
+    { once }: { once?: boolean } = {}
+  ) {
     const device = useSession.api.resolve(meta.stdIn, meta.pid);
     let result = {} as ReadResult;
-    while (!result.eof) {
-      result = await device.readData();
-      if (result.data !== undefined) {
-        if (isDataChunk(result.data)) {
-          result.data.items = result.data.items
-            .map(act).filter(x => x !== undefined);
-          yield result.data; // Forward chunk
-        } else {
-          yield act(result.data);
+
+    while (!(result = await device.readData(once)).eof) {
+      if (result.data === undefined) {
+        continue;
+      } else if (isDataChunk(result.data)) {
+        let transformed: any, items = [] as any[];
+        for (const item of result.data.items) {
+          transformed = act(item);
+          (transformed !== undefined) && items.push(transformed); 
         }
+        result.data.items = items;
+        yield result.data; // Forward chunk
+      } else {
+        yield act(result.data);
       }
     }
   }
@@ -229,9 +237,6 @@ class CmdService {
       case 'filter':
       case 'map':
       case 'reduce': {
-        if (args.length === 0) {
-          throw new ShError('1st arg must be a function', 1);
-        }
         const funcDef = args[0];
         const func = Function('_', `return ${funcDef}`);
         const vp = this.createVarProxy(meta.sessionKey);
@@ -240,20 +245,19 @@ class CmdService {
         if (command === 'filter') {
           yield* this.read(node, (data) => func()(data, sp, vp) ? data : undefined);
         } else if (command === 'map') {
+          // We do not support sequential async,
+          // use `while read >foo; do ... done` instead
           yield* this.read(node, (data) => func()(data, sp, vp));
-        } else {
-          if (args.length <= 2) {
-            if (command === 'reduce') {// `reduce` over all inputs
-              const outputs = [] as any[];
-              yield* this.read(node, (data: any[]) => { outputs.push(data); });
-              yield args[1]
-                ? outputs.reduce((agg, item) => func()(agg, item), this.parseArg(args[1]))
-                : outputs.reduce((agg, item) => func()(agg, item));
-            }
-            break;
-          } else {
+        } else {// `reduce` over all inputs
+          if (args.length > 2) {
             throw new ShError('expected at most two args', 1);
           }
+          const outputs = [] as any[];
+          yield* this.read(node, (data: any[]) => { outputs.push(data); });
+          yield args[1]
+            ? outputs.reduce((agg, item) => func()(agg, item), this.parseArg(args[1]))
+            : outputs.reduce((agg, item) => func()(agg, item));
+          break;
         }
         break;
       }
@@ -270,6 +274,10 @@ class CmdService {
         for (const { key: pid, ppid, pgid, src } of processes) {
           yield [pid, ppid, pgid, src].map(String).map(x => x.padEnd(5)).join(' ');
         }
+        break;
+      }
+      case 'read': {
+        yield* this.read(node, x => x, { once: true });
         break;
       }
       case 'set': {
@@ -295,9 +303,7 @@ class CmdService {
       }
       case 'split': {
         const arg = this.parseArg(args[0]);
-        yield* arg === undefined
-          ? this.split(node)
-          : this.splitBy(node, arg);
+        yield* arg === undefined ? this.split(node) : this.splitBy(node, arg);
         break;
       }
       case 'sponge': {

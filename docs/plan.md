@@ -14,6 +14,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
   > have pid, ppid, pgid, sid, truncated src
 ✅ can kill processes
 ✅ Replace historical `$'\n'` with single char `¶`?
+✅ can `read >data`
+- can `while read >data do ... done` i.e. guarded while
 - can suspend processes
 
 - Can create ui plugin using shell, changing `SelectRect` on key events.

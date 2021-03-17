@@ -26,8 +26,6 @@ export class TtyShell implements Device {
   private readonly maxLines = 500;
   private lastPrompt = null as null | string;
   
-  private oneTimeReaders = [] as ((msg: any) => void)[];
-  
   constructor(
     public sessionKey: string,
     public io: ShellIo<MessageFromXterm, MessageFromShell>,
@@ -83,22 +81,16 @@ export class TtyShell implements Device {
         break;
       }
       case 'send-line': {
-        if (this.oneTimeReaders.length) {
-          this.oneTimeReaders.shift()!(msg.line);
-          this.io.write({ key: 'tty-received-line' });
-        } else {
-          this.inputs.push({
-            line: msg.line, // xterm won't send another line until resolved
-            resolve: () => this.io.write({ key: 'tty-received-line' }),
-          });
-          this.tryParse();
-        }
+        this.inputs.push({
+          line: msg.line, // xterm won't send another line until resolved
+          resolve: () => this.io.write({ key: 'tty-received-line' }),
+        });
+        this.tryParse();
         break;
       }
       case 'send-sig': {
         if (msg.signal === SigEnum.SIGINT) {
           this.buffer.length = 0;
-          this.oneTimeReaders.length = 0;
 
           const processes = useSession.api.getProcesses(this.sessionKey, 0);
           processes.forEach((process) => {
@@ -118,7 +110,7 @@ export class TtyShell implements Device {
     }
   }
 
-  /** Spawn a process. */
+  /** Spawn a process, assigning pid to non-leading ones */
   async spawn(parsed: FileWithMeta, leading = false) {
     const { meta } = parsed;
     if (leading) {
@@ -212,15 +204,9 @@ export class TtyShell implements Device {
     }
   }
 
-  readOnceFromTty(reader: (msg: any) => void) {
-    this.oneTimeReaders.push(reader);
-    this.input?.resolve();
-    this.input = null;
-  }
-
   //#region Device
-  public readData() {
-    return Promise.resolve({ eof: true });
+  public async readData() {
+    return { eof: true };
   }
   public async writeData(data: any) {
     this.io.write(data);

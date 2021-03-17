@@ -119,8 +119,9 @@ export interface Device {
   /**
    * Read data from device.
    * When eof is `true` we may assume no more data.
+   * Can specify that exactly one item is read.
    */
-  readData: () => Promise<ReadResult>;
+  readData: (exactlyOne?: boolean) => Promise<ReadResult>;
   /**
    * Write data to device.
    */
