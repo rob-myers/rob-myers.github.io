@@ -9,6 +9,7 @@ import { ParseService } from './parse/parse.service';
 import { srcService } from './parse/src.service';
 import { semanticsService } from './semantics.service';
 import { TtyXterm } from './tty.xterm';
+import { handleTopLevelProcessError, ProcessError } from './sh.util';
 
 // Lazyload saves ~220kb initially
 let parseService = { tryParseBuffer: (_) => ({ key: 'failed', error: 'not ready' })} as ParseService;
@@ -181,12 +182,16 @@ export class TtyShell implements Device {
         }
       }
     } catch (e) {
-      console.error('error propagated to TtyShell', e);
+      if (e instanceof ProcessError) {
+        handleTopLevelProcessError(e);
+      } else {
+        console.error('unexpected error propagated to tty.shell', e);
+      }
       this.prompt('$');
     } finally {
       this.input?.resolve();
       this.input = null;
-      useSession.api.getProcess(0).status = ProcessStatus.Idle;
+      useSession.api.getProcess(0).status = ProcessStatus.Suspended;
     }
   }
 

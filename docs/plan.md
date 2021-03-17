@@ -8,22 +8,13 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-✅ `Terminal` can run background processes
-✅ can read from stage key events via `key`
-✅ list processes via `ps`
-  > have pid, ppid, pgid, sid, truncated src
-✅ can kill processes
-✅ Represent newlines in history using single char `¶` rather than `$'\n'`
-✅ can `read >data`
-✅ can `while read >data do ... done` and `while sleep; do echo foo`
-- can suspend processes
-
 - Can create ui plugin using shell, changing `SelectRect` on key events.
+- Have layers where tagged multipolygons and blender models can be stored
+- Can create walls
+
 - force `while` to be guarded; add `break` and `continue`
 - folders for variables corresponding to object
 - keep e.g. `set /brush/sides 4` and make it safer
-- Have layers where tagged multipolygons and blender models can be stored
-- Can create walls
 
 - Try building a low poly character in blender
 - Beginners guide:
@@ -51,3 +42,13 @@ The editor consists of one or more `Terminal`s and a `Stage`.
    > We will remake Teleglitch on the web
 ✅ can `get /brush/sides`
 ✅ can `set /brush/sides 4`
+
+✅ `Terminal` can run background processes
+✅ can read from stage key events via `key`
+✅ list processes via `ps`
+  > have pid, ppid, pgid, sid, truncated src
+✅ can kill processes
+✅ Represent newlines in history using single char `¶` rather than `$'\n'`
+✅ can `read >data`
+✅ can `while read >data do ... done` and `while sleep; do echo foo`
+✅ can suspend/resume processes via `kill --STOP` and `kill --CONT`

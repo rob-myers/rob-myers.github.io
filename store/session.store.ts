@@ -67,9 +67,8 @@ interface PersistedSession {
 }
 
 export enum ProcessStatus {
-  Idle,
-  Running,
   Suspended,
+  Running,
   Killed,
 }
 
@@ -119,7 +118,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         ppid,
         pgid,
         sessionKey,
-        status: ProcessStatus.Idle,
+        status: ProcessStatus.Running,
         positionals: [],
         resume: null,
         cleanups: [],

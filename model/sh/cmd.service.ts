@@ -3,9 +3,9 @@ import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 
 import type * as Sh from './parse/parse.model';
 import { NamedFunction } from "./var.model";
-import { handleProcessStatus, ReadResult } from './io/io.model';
+import { getProcessStatusIcon, handleProcessStatus, ReadResult, SigEnum } from './io/io.model';
 import { dataChunk, isDataChunk } from './io/fifo.device';
-import { ShError } from './sh.util';
+import { ProcessError, ShError } from './sh.util';
 import { getOpts } from './parse/parse.util';
 
 import useSession, { ProcessStatus } from 'store/session.store';
@@ -51,7 +51,6 @@ const commandKeys = {
   split: true,
   /** Collect stdin into a single array */
   sponge: true,
-  suspend: true,
   wall: true,
 };
 type CommandName = keyof typeof commandKeys;
@@ -216,23 +215,31 @@ class CmdService {
         const bucket = {} as Bucket<any>;
         const generator = asyncIteratorFrom(keyEvents.asObservable(), bucket);
         useSession.api.getProcess(meta.pid).cleanups
-          .push(() => bucket.promise?.reject());
-        try {
-          for await (const item of generator) yield item;
-        } catch {
-          throw null;
-        }
+          .push(() => bucket.promise?.reject(
+            new ProcessError(SigEnum.SIGKILL, meta.pid)));
+        for await (const item of generator) yield item;
         break;
       }
       case 'kill': {
-        const pgids = args.map(x => this.parseArg(x))
+        const { opts, operands } = getOpts(args, { boolean: [
+          'STOP', /** --STOP */
+          'CONT', /** --CONT */
+        ] });
+        const pgids = operands.map(x => this.parseArg(x))
           .filter((x): x is number => Number.isFinite(x));
         for (const pgid of pgids) {
           const processes = useSession.api.getProcesses(meta.sessionKey, pgid).reverse();
           processes.forEach(p => {
-            p.status = ProcessStatus.Killed;
-            p.cleanups.forEach(cleanup => cleanup());
-            p.cleanups.length = 0;
+            if (opts.STOP) {
+              p.status = ProcessStatus.Suspended;
+            } else if (opts.CONT) {
+              p.resume?.();
+              p.status = ProcessStatus.Running;
+            } else {
+              p.status = ProcessStatus.Killed;
+              p.cleanups.forEach(cleanup => cleanup());
+              p.cleanups.length = 0;
+            }
           });
         }
         break;
@@ -272,10 +279,12 @@ class CmdService {
       case 'ps': {
         const processes = Object.values(useSession.getState().process)
           .filter(x => x.sessionKey === meta.sessionKey);
-        const title = ['pid', 'ppid', 'pgid', ''].map(x => x.padEnd(5)).join(' ')
+        const title = ['pid', 'ppid', 'pgid'].map(x => x.padEnd(5)).join(' ')
         yield `${ansiBlue}${title}${ansiReset}`;
-        for (const { key: pid, ppid, pgid, src } of processes) {
-          yield [pid, ppid, pgid, src].map(String).map(x => x.padEnd(5)).join(' ');
+        for (const { key: pid, ppid, pgid, status, src } of processes) {
+          const icon = getProcessStatusIcon(status);
+          const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ')
+          yield `${info}${icon}  ${src}`
         }
         break;
       }
@@ -297,17 +306,14 @@ class CmdService {
       case 'sleep': {
         const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
         const process = useSession.api.getProcess(meta.pid);
-        try {
-          await new Promise<void>((resolve, reject) => {
-            process.resume = resolve;
-            process.cleanups.push(reject);
-            setTimeout(resolve, 1000 * seconds);
-          });
-          // Perhaps only need to handle suspension?
-          await handleProcessStatus(meta.pid);
-        } catch (e) {
-          throw null;
-        }
+        await new Promise<void>((resolve, reject) => {
+          process.resume = resolve;
+          process.cleanups.push(() =>
+            reject(new ProcessError(SigEnum.SIGKILL, meta.pid)));
+          setTimeout(resolve, 1000 * seconds);
+        });
+        // Perhaps only need to handle suspension?
+        await handleProcessStatus(meta.pid);
         break;
       }
       case 'split': {
@@ -319,10 +325,6 @@ class CmdService {
         const outputs = [] as any[];
         yield* this.read(node, (data: any[]) => { outputs.push(data); });
         yield outputs;
-        break;
-      }
-      case 'suspend': {
-        // TODO
         break;
       }
       case 'wall': {

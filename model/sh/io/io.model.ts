@@ -144,7 +144,7 @@ export function withProcessHandling(device: Device, pid: number): Device {
       if (p === 'writeData' || p === 'readData') {
         // console.log(p, process);
         if (process.status === ProcessStatus.Killed) {
-          throw new ProcessError(SigEnum.SIGKILL);
+          throw new ProcessError(SigEnum.SIGKILL, pid);
         } else if (process.status === ProcessStatus.Suspended) {
           return async (input?: any) => {
             await new Promise<void>(resolve => {
@@ -165,10 +165,18 @@ export function withProcessHandling(device: Device, pid: number): Device {
 export async function handleProcessStatus(pid: number) {
   const process = useSession.api.getProcess(pid);
   if (process.status === ProcessStatus.Killed) {
-    throw new ProcessError(SigEnum.SIGINT);
+    throw new ProcessError(SigEnum.SIGINT, pid);
   } else if (process.status === ProcessStatus.Suspended) {
     return new Promise<void>(resolve => {
       process.resume = resolve;
     });
+  }
+}
+
+export function getProcessStatusIcon(status: ProcessStatus) {
+  switch(status) {
+    case ProcessStatus.Killed: return '☠';
+    case ProcessStatus.Running: return '▶️';
+    case ProcessStatus.Suspended: return '⏸️';
   }
 }

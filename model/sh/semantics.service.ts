@@ -5,10 +5,10 @@ import safeJsonStringify from 'safe-json-stringify';
 import { last, pause } from 'model/generic.model';
 import useSession from 'store/session.store';
 import { NamedFunction, varRegex } from './var.model';
-import { expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
+import { expand, Expanded, handleTopLevelProcessError, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
-import { RedirectDef, redirectNode } from './io/io.model';
+import { handleProcessStatus, RedirectDef, redirectNode } from './io/io.model';
 import { cloneParsed, hasAncestralIterator, wrapInFile } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
@@ -56,7 +56,7 @@ class SemanticsService {
   }
 
   private handleShError(node: Sh.ParsedSh, e: any, prefix?: string) {
-    if (e instanceof ProcessError || e === null) {
+    if (e instanceof ProcessError) {
       throw e;
     }
     
@@ -417,7 +417,13 @@ class SemanticsService {
       file.meta.ppid = stmt.meta.pid;
       file.meta.pgid = useSession.api.getSession(stmt.meta.sessionKey).nextPid;
       // Don't await
-      ttyShell.spawn(file);
+      ttyShell.spawn(file).catch((e) => {
+        if (e instanceof ProcessError) {
+          handleTopLevelProcessError(e)
+        } else {
+          console.error('top level background error', e);
+        }
+      });
       stmt.exitCode = stmt.Negated ? 1 : 0;
     } else {
       // Run a simple or compound command
