@@ -1,8 +1,8 @@
-import { flatten, testNever } from 'model/generic.model';
+import { flatten, testNever, truncate } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 
 import type * as Sh from './parse/parse.model';
-import { NamedFunction } from "./var.model";
+import { NamedFunction, varRegex } from "./var.model";
 import { getProcessStatusIcon, handleProcessStatus, ReadResult, SigEnum } from './io/io.model';
 import { dataChunk, isDataChunk } from './io/fifo.device';
 import { ProcessError, ShError } from './sh.util';
@@ -278,24 +278,29 @@ class CmdService {
         break;
       }
       case 'ps': {
+        const { opts } = getOpts(args, { boolean: [
+          'a', /** Show all processes */
+        ], });
         const processes = Object.values(useSession.getState().process)
-          .filter(x => x.sessionKey === meta.sessionKey);
+          .filter(x => x.sessionKey === meta.sessionKey)
+          .filter(opts.a ? x => x : ({ key: pid, pgid }) => pid === pgid);
         const title = ['pid', 'ppid', 'pgid'].map(x => x.padEnd(5)).join(' ')
         yield `${ansiBlue}${title}${ansiReset}`;
         for (const { key: pid, ppid, pgid, status, src } of processes) {
           const icon = getProcessStatusIcon(status);
           const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ')
-          yield `${info}${icon}  ${src}`
+          yield `${info}${icon}  ${truncate(src, 40)}`;
         }
         break;
       }
       case 'read': {
-        let readSomething = false;
+        const varName = varRegex.test(args[0]) ? args[0] : null;
+        let varValue = undefined as any;
         yield* this.read(node, input => {
-          input !== undefined && (readSomething = true);
-          return input;
+          if (input !== undefined) varValue = input;
         }, { once: true });
-        node.exitCode = readSomething ? 0 : 1;
+        varName && useSession.api.setVar(meta.sessionKey, varName, varValue);
+        node.exitCode = varValue ? 0 : 1;
         break;
       }
       case 'set': {

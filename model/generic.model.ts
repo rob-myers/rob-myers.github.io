@@ -84,3 +84,9 @@ export function deepGet(obj: any, path: string[]) {
 export function kebabToCamel(text: string) {
   return text.replace(/-(.)/g, (_, c: string) => c.toUpperCase());
 }
+
+export function truncate(text: string, maxLength = 50) {
+  return text.length <= maxLength
+    ? text
+    : `${text.slice(0, maxLength)} ...`;
+}

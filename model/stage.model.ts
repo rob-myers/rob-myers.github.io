@@ -42,6 +42,7 @@ export const defaultSelectRectMeta: BrushMeta = {
 };
 
 export interface StageKeyEvent {
-  key: 'keydown' | 'keyup';
-  keyName: string;
+  event: 'keydown' | 'keyup';
+  /** KeyboardEvent['key'] */
+  key: string;
 }

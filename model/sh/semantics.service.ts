@@ -353,7 +353,7 @@ class SemanticsService {
         break;
       }
       case 'ParamExp': {
-        yield* sem.ParamExp(node);
+        yield* this.ParamExp(node);
         return;
       }
       case 'ArithmExp':
@@ -380,8 +380,8 @@ class SemanticsService {
     const varValue = useSession.api.getVar(node.meta.sessionKey, varName);
     if (varValue === undefined || typeof varValue === 'string') {
       yield expand(varValue || '');
-    } else if (typeof varValue[0] === 'string') {
-      yield expand(varValue[0]);
+    } else if (typeof varValue[0] === 'string' || typeof varValue[0] === 'number') {
+      yield expand(String(varValue[0]));
     } else {
       yield expand(safeJsonStringify(varValue));
     }
