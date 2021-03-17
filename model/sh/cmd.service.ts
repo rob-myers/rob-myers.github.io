@@ -8,7 +8,7 @@ import { dataChunk, isDataChunk } from './io/fifo.device';
 import { ShError } from './sh.util';
 import { getOpts } from './parse/parse.util';
 
-import useSession from 'store/session.store';
+import useSession, { ProcessStatus } from 'store/session.store';
 import useStage from 'store/stage.store';
 import { ansiBlue, ansiReset } from './tty.xterm';
 
@@ -32,6 +32,7 @@ const commandKeys = {
   kill: true,
   /** List variables, usually created via redirection */
   ls: true,
+  /** List running processes */
   ps: true,
   /** Apply function to each item from stdin */
   map: true,
@@ -50,6 +51,7 @@ const commandKeys = {
   split: true,
   /** Collect stdin into a single array */
   sponge: true,
+  suspend: true,
   wall: true,
 };
 type CommandName = keyof typeof commandKeys;
@@ -228,7 +230,7 @@ class CmdService {
         for (const pgid of pgids) {
           const processes = useSession.api.getProcesses(meta.sessionKey, pgid).reverse();
           processes.forEach(p => {
-            p.status = 'killed';
+            p.status = ProcessStatus.Killed;
             p.cleanups.forEach(cleanup => cleanup());
             p.cleanups.length = 0;
           });
@@ -317,6 +319,10 @@ class CmdService {
         const outputs = [] as any[];
         yield* this.read(node, (data: any[]) => { outputs.push(data); });
         yield outputs;
+        break;
+      }
+      case 'suspend': {
+        // TODO
         break;
       }
       case 'wall': {

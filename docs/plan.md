@@ -18,10 +18,10 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ can `while read >data do ... done` and `while sleep; do echo foo`
 - can suspend processes
 
-- force `while` to be guarded; add `break` and `continue`
-
 - Can create ui plugin using shell, changing `SelectRect` on key events.
-
+- force `while` to be guarded; add `break` and `continue`
+- folders for variables corresponding to object
+- keep e.g. `set /brush/sides 4` and make it safer
 - Have layers where tagged multipolygons and blender models can be stored
 - Can create walls
 

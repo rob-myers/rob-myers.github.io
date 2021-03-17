@@ -66,13 +66,20 @@ interface PersistedSession {
   history: string[];
 }
 
+export enum ProcessStatus {
+  Idle,
+  Running,
+  Suspended,
+  Killed,
+}
+
 interface ProcessMeta {
   /** pid */
   key: number;
   ppid: number;
   pgid: number;
   sessionKey: string;
-  status: 'running' | 'suspended' | 'interrupted' | 'killed';
+  status: ProcessStatus;
   resume: null | (() => void);
   cleanups: (() => void)[];
   src: string;
@@ -112,7 +119,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         ppid,
         pgid,
         sessionKey,
-        status: 'running',
+        status: ProcessStatus.Idle,
         positionals: [],
         resume: null,
         cleanups: [],

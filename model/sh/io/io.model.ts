@@ -1,5 +1,5 @@
 import { Subject, Subscription } from "rxjs";
-import useSession from "store/session.store";
+import useSession, { ProcessStatus } from "store/session.store";
 import type * as Sh from '../parse/parse.model';
 import { traverseParsed } from '../parse/parse.util';
 import { ProcessError } from "../sh.util";
@@ -143,11 +143,9 @@ export function withProcessHandling(device: Device, pid: number): Device {
     get: (target, p: keyof Device) => {
       if (p === 'writeData' || p === 'readData') {
         // console.log(p, process);
-        if (process.status === 'interrupted') {
-          throw new ProcessError(SigEnum.SIGINT);
-        } else if (process.status === 'killed') {
+        if (process.status === ProcessStatus.Killed) {
           throw new ProcessError(SigEnum.SIGKILL);
-        } else if (process.status === 'suspended') {
+        } else if (process.status === ProcessStatus.Suspended) {
           return async (input?: any) => {
             await new Promise<void>(resolve => {
               process.resume = resolve;
@@ -166,11 +164,9 @@ export function withProcessHandling(device: Device, pid: number): Device {
  */
 export async function handleProcessStatus(pid: number) {
   const process = useSession.api.getProcess(pid);
-  if (process.status === 'interrupted') {
+  if (process.status === ProcessStatus.Killed) {
     throw new ProcessError(SigEnum.SIGINT);
-  } else if (process.status === 'killed') {
-    throw new ProcessError(SigEnum.SIGKILL);
-  } else if (process.status === 'suspended') {
+  } else if (process.status === ProcessStatus.Suspended) {
     return new Promise<void>(resolve => {
       process.resume = resolve;
     });

@@ -4,7 +4,7 @@ import { FileWithMeta } from './parse/parse.model';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
 import type * as Sh from './parse/parse.model';
 
-import useSession from 'store/session.store';
+import useSession, { ProcessStatus } from 'store/session.store';
 import { ParseService } from './parse/parse.service';
 import { srcService } from './parse/src.service';
 import { semanticsService } from './semantics.service';
@@ -24,7 +24,6 @@ export class TtyShell implements Device {
   /** Lines in current interactive parse */
   private buffer = [] as string[];
   private readonly maxLines = 500;
-  private lastPrompt = null as null | string;
   
   constructor(
     public sessionKey: string,
@@ -50,7 +49,6 @@ export class TtyShell implements Device {
 
   /** `prompt` must not contain non-readable characters e.g. ansi color codes */
   private prompt(prompt: string) {
-    this.lastPrompt = prompt;
     this.io.write({
       key: 'send-xterm-prompt',
       prompt: `${prompt} `,
@@ -92,15 +90,15 @@ export class TtyShell implements Device {
         if (msg.signal === SigEnum.SIGINT) {
           this.buffer.length = 0;
 
-          const processes = useSession.api.getProcesses(this.sessionKey, 0);
-          processes.forEach((process) => {
-            process.status = 'interrupted';
-            process.cleanups.forEach(cleanup => cleanup());
-            process.cleanups.length = 0;
-          });
-
-          if (this.lastPrompt === '>') {
+          if (useSession.api.getProcess(0).status !== ProcessStatus.Running) {
             this.prompt('$');
+          } else {
+            const processes = useSession.api.getProcesses(this.sessionKey, 0);
+            processes.forEach((process) => {
+              process.status = ProcessStatus.Killed;
+              process.cleanups.forEach(cleanup => cleanup());
+              process.cleanups.length = 0;
+            });
           }
         }
         break;
@@ -114,7 +112,7 @@ export class TtyShell implements Device {
   async spawn(parsed: FileWithMeta, leading = false) {
     const { meta } = parsed;
     if (leading) {
-      useSession.api.updateProcess(0, { status: 'running', resume: null });
+      useSession.api.updateProcess(0, { status: ProcessStatus.Running, resume: null });
     } else {
       meta.pid = useSession.api.createProcess({
         ppid: meta.pid,
@@ -172,8 +170,8 @@ export class TtyShell implements Device {
             stdIn: this.key,
             stdOut: this.key,
           });
-          await this.spawn(result.parsed, true);
 
+          await this.spawn(result.parsed, true);
           this.prompt('$');
           break;
         }
@@ -188,6 +186,7 @@ export class TtyShell implements Device {
     } finally {
       this.input?.resolve();
       this.input = null;
+      useSession.api.getProcess(0).status = ProcessStatus.Idle;
     }
   }
 
