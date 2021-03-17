@@ -13,14 +13,13 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ list processes via `ps`
   > have pid, ppid, pgid, sid, truncated src
 ✅ can kill processes
+✅ Replace historical `$'\n'` with single char `¶`?
 - can suspend processes
 
 - Can create ui plugin using shell, changing `SelectRect` on key events.
 
 - Have layers where tagged multipolygons and blender models can be stored
 - Can create walls
-
-- Replace historical `$'\n'` with single char `↵`?
 
 - Try building a low poly character in blender
 - Beginners guide:

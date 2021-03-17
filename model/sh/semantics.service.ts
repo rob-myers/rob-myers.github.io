@@ -140,11 +140,8 @@ class SemanticsService {
         const { sessionKey, pid: ppid } = node.meta;
         const { ttyShell } = useSession.api.getSession(sessionKey);
         const files = stmts.map(x => wrapInFile(cloneParsed(x)));
-        files.forEach(file => {
-          file.meta.pid = useSession.api.getNextPid(sessionKey);
-          file.meta.ppid = ppid;
-          // pgid is inherited
-        });
+        // pid will be assigned in `spawn`, pgid is inherited
+        files.forEach(({ meta }) => meta.ppid = ppid);
         const fifos = [] as FifoDevice[];
 
         try {

@@ -214,14 +214,15 @@ class CmdService {
         break;
       }
       case 'kill': {
-        const processes = useSession.api.getProcesses(meta.sessionKey);
-        for (const pid of args.map(x => this.parseArg(x))) {
-          if (pid === 0) throw new ShError('cannot kill leading process', 1);
-          if (processes[pid]) {
-            processes[pid].status = 'killed';
-            processes[pid].cleanups.forEach(c => c());
-            processes[pid].cleanups.length = 0;
-          }
+        const pgids = args.map(x => this.parseArg(x))
+          .filter((x): x is number => Number.isFinite(x));
+        for (const pgid of pgids) {
+          const processes = useSession.api.getProcesses(meta.sessionKey, pgid).reverse();
+          processes.forEach(p => {
+            p.status = 'killed';
+            p.cleanups.forEach(cleanup => cleanup());
+            p.cleanups.length = 0;
+          });
         }
         break;
       }
