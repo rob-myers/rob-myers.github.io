@@ -193,9 +193,7 @@ class CmdService {
         break;
       }
       case 'flat': {
-        yield* this.read(node, (data) => Array.isArray(data)
-          ? flatten(data)
-          : data);
+        yield* this.read(node, (data) => Array.isArray(data) ? flatten(data) : data);
         break;
       }
       case 'get': {
@@ -212,11 +210,13 @@ class CmdService {
       }
       case 'key': {
         const { keyEvents } = useStage.api.getStage(meta.sessionKey);
-        const bucket = {} as Bucket<any>;
+        const bucket: Bucket<any> = { enabled: true };
         const generator = asyncIteratorFrom(keyEvents.asObservable(), bucket);
-        useSession.api.getProcess(meta.pid).cleanups
-          .push(() => bucket.promise?.reject(
-            new ProcessError(SigEnum.SIGKILL, meta.pid)));
+        useSession.api.mutateProcess(meta.pid, (p) => {
+          p.cleanups.push(() => bucket.promise?.reject(new ProcessError(SigEnum.SIGKILL, meta.pid)));
+          p.onSuspend = () => bucket.forget?.();
+          p.onResume = () => bucket.remember?.();
+        });
         for await (const item of generator) yield item;
         break;
       }
@@ -231,9 +231,10 @@ class CmdService {
           const processes = useSession.api.getProcesses(meta.sessionKey, pgid).reverse();
           processes.forEach(p => {
             if (opts.STOP) {
+              p.onSuspend?.();
               p.status = ProcessStatus.Suspended;
             } else if (opts.CONT) {
-              p.resume?.();
+              p.onResume?.();
               p.status = ProcessStatus.Running;
             } else {
               p.status = ProcessStatus.Killed;
@@ -307,7 +308,7 @@ class CmdService {
         const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
         const process = useSession.api.getProcess(meta.pid);
         await new Promise<void>((resolve, reject) => {
-          process.resume = resolve;
+          process.onResume = resolve;
           process.cleanups.push(() =>
             reject(new ProcessError(SigEnum.SIGKILL, meta.pid)));
           setTimeout(resolve, 1000 * seconds);

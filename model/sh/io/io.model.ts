@@ -148,7 +148,7 @@ export function withProcessHandling(device: Device, pid: number): Device {
         } else if (process.status === ProcessStatus.Suspended) {
           return async (input?: any) => {
             await new Promise<void>(resolve => {
-              process.resume = resolve;
+              process.onResume = resolve;
             });
             await target[p](input);
           };
@@ -168,7 +168,7 @@ export async function handleProcessStatus(pid: number) {
     throw new ProcessError(SigEnum.SIGINT, pid);
   } else if (process.status === ProcessStatus.Suspended) {
     return new Promise<void>(resolve => {
-      process.resume = resolve;
+      process.onResume = resolve;
     });
   }
 }

@@ -2,12 +2,20 @@
 import { Observable } from "rxjs";
 import { Deferred } from "./deferred";
 
-export type Bucket<T> = { promise?: Deferred<IteratorResult<T>> };
+export type Bucket<T> = {
+  promise?: Deferred<IteratorResult<T>>;
+  forget?: () => void;
+  remember?: () => void;
+  enabled: boolean;
+};
 
 export function asyncIteratorFrom<T>(
   source: Observable<T>,
   bucket: Bucket<T>,
 ) {
+  bucket.forget = () => (bucket.enabled = false);
+  bucket.remember = () => (bucket.enabled = true);
+  bucket.enabled = true;
   return coroutine(source, bucket);
 }
 
@@ -15,7 +23,7 @@ async function* coroutine<T>(
   source: Observable<T>,
   bucket: Bucket<T>,
 ) {
-  const deferreds: Deferred<IteratorResult<T>>[] = [];
+  const deferreds = [] as Deferred<IteratorResult<T>>[];
   const values: T[] = [];
   let hasError = false;
   let error: any = null;
@@ -23,7 +31,9 @@ async function* coroutine<T>(
 
   const subs = source.subscribe({
     next: value => {
-      if (deferreds.length > 0) {
+      if (!bucket.enabled) {
+        return;
+      } else if (deferreds.length > 0) {
         deferreds.shift()!.resolve({ value, done: false });
       } else {
         values.push(value);
@@ -53,7 +63,6 @@ async function* coroutine<T>(
       } else if (hasError) {
         throw error;
       } else {
-        // const d = (source as any).__deferred__ = new Deferred<IteratorResult<T>>();
         const d = bucket.promise = new Deferred<IteratorResult<T>>();
         deferreds.push(d);
         const result = await d.promise;

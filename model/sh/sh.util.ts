@@ -101,6 +101,6 @@ export class ProcessError extends Error {
   }
 }
 
-export function handleTopLevelProcessError(e: ProcessError) {
-  console.warn(`process: ${e.pid}: ${e.code}`)
+export function handleTopLevelProcessError(e: ProcessError, prefix: string) {
+  console.warn(`${prefix}: ${e.pid}: ${e.code}`)
 }

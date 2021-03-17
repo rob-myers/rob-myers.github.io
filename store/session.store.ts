@@ -4,7 +4,7 @@ import { devtools, persist } from 'zustand/middleware';
 import { KeyedLookup } from 'model/generic.model';
 import { Device, makeShellIo, ShellIo, withProcessHandling } from 'model/sh/io/io.model';
 import { MessageFromShell, MessageFromXterm } from 'model/sh/tty.model';
-import { addToLookup, removeFromLookup, updateLookup } from './store.util';
+import { addToLookup, ReduxUpdater, removeFromLookup, updateLookup } from './store.util';
 import { TtyShell } from 'model/sh/tty.shell';
 import { NamedFunction } from 'model/sh/var.model';
 import { FifoDevice } from 'model/sh/io/fifo.device';
@@ -30,7 +30,7 @@ export type State = {
       pgid: number;
       src: string;
     }) => number;
-    updateProcess: (pid: number, updates: Partial<ProcessMeta>) => void;
+    mutateProcess: (pid: number, mutator: Partial<ProcessMeta> | ((process: ProcessMeta) => void)) => void;
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
     createVarDevice: (sessionKey: string, varName: string) => VarDevice;
     ensurePersisted: (sessionKey: string) => PersistedSession;
@@ -79,8 +79,12 @@ interface ProcessMeta {
   pgid: number;
   sessionKey: string;
   status: ProcessStatus;
-  resume: null | (() => void);
+  /** Executed on kill */
   cleanups: (() => void)[];
+  /** Executed on suspend */
+  onSuspend: null | (() => void);
+  /** Executed on resume */
+  onResume: null | (() => void);
   src: string;
   positionals: string[];
 }
@@ -120,8 +124,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         sessionKey,
         status: ProcessStatus.Running,
         positionals: [],
-        resume: null,
         cleanups: [],
+        onSuspend: null,
+        onResume: null,
         src,
       }; // Mutate
       return pid;
@@ -224,8 +229,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       api.getSession(sessionKey).var[varName] = varValue; // Mutate
     },
 
-    updateProcess: (pid, updates) => {
-      Object.assign(get().process[pid], updates); // Mutate
+    mutateProcess: (pid, mutator) => {// Mutate
+      const process = get().process[pid];
+      if (typeof mutator === 'function') {
+        mutator(process);
+      } else {
+        Object.assign(process, mutator);
+      }
     },
 
     warn: (sessionKey, msg) => {

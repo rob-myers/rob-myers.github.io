@@ -113,7 +113,7 @@ export class TtyShell implements Device {
   async spawn(parsed: FileWithMeta, leading = false) {
     const { meta } = parsed;
     if (leading) {
-      useSession.api.updateProcess(0, { status: ProcessStatus.Running, resume: null });
+      useSession.api.mutateProcess(0, { status: ProcessStatus.Running, onResume: null });
     } else {
       meta.pid = useSession.api.createProcess({
         ppid: meta.pid,
@@ -162,7 +162,7 @@ export class TtyShell implements Device {
           singleLineSrc && this.storeSrcLine(singleLineSrc);
 
           // Run command
-          useSession.api.updateProcess(0, { src: singleLineSrc });
+          useSession.api.mutateProcess(0, { src: singleLineSrc });
           Object.assign<Sh.BaseMeta, Sh.BaseMeta>(result.parsed.meta, {
             sessionKey: this.sessionKey,
             pid: 0,
@@ -183,7 +183,7 @@ export class TtyShell implements Device {
       }
     } catch (e) {
       if (e instanceof ProcessError) {
-        handleTopLevelProcessError(e);
+        handleTopLevelProcessError(e, 'process');
       } else {
         console.error('unexpected error propagated to tty.shell', e);
       }

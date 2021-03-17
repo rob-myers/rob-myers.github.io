@@ -381,7 +381,6 @@ class SemanticsService {
     if (varValue === undefined || typeof varValue === 'string') {
       yield expand(varValue || '');
     } else {
-      console.log({ varValue });
       yield expand(safeJsonStringify(varValue));
     }
   }
@@ -410,23 +409,30 @@ class SemanticsService {
 
   private async *Stmt(stmt: Sh.Stmt) {
     if (!stmt.Cmd) {
-      sem.handleShError(stmt.Redirs[0], new ShError('pure redirects are unsupported', 2));
+      throw new ShError('pure redirects are unsupported', 2);
     } else if (stmt.Background) {
+      /**
+       * Run a background process.
+       */
       const { ttyShell } = useSession.api.getSession(stmt.meta.sessionKey);
       const file = wrapInFile(Object.assign(cloneParsed(stmt), { Background: false } as Sh.Stmt));
       file.meta.ppid = stmt.meta.pid;
       file.meta.pgid = useSession.api.getSession(stmt.meta.sessionKey).nextPid;
       // Don't await
-      ttyShell.spawn(file).catch((e) => {
-        if (e instanceof ProcessError) {
-          handleTopLevelProcessError(e)
-        } else {
-          console.error('top level background error', e);
-        }
-      });
+      ttyShell.spawn(file)
+        .then(() => console.warn(`background: ${file.meta.pid}: terminated`))
+        .catch((e) => {
+          if (e instanceof ProcessError) {
+            handleTopLevelProcessError(e, 'background')
+          } else {
+            console.error('background process error', e);
+          }
+        });
       stmt.exitCode = stmt.Negated ? 1 : 0;
     } else {
-      // Run a simple or compound command
+      /**
+       * Run a simple or compound command.
+       */
       yield* sem.Command(stmt.Cmd, stmt.Redirs);
       stmt.exitCode = stmt.Cmd.exitCode;
       if (stmt.Negated) {
