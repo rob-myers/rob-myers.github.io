@@ -66,7 +66,6 @@ class ParseShService {
   }
 
   tryParseBuffer(buffer: string[]) {
-    // DEBUG
     // console.log('parsing shell code', buffer.slice());
 
     try {
@@ -74,7 +73,7 @@ class ParseShService {
       const src = buffer.join('\n') + '\n';
       const { incomplete, parsed } = this.interactiveParse(src);
 
-      // if (parsed) {// DEBUG
+      // if (parsed) {
       //   console.log('parsed shell code', parsed);
       // }
 

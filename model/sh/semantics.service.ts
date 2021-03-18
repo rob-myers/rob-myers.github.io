@@ -38,6 +38,18 @@ class SemanticsService {
   private continueError = (continues: number) =>
     new ShError('__continue__', 0, { continue: continues });
 
+  private expandParameter(meta: Sh.BaseMeta, varName: string): string {
+    if (/[0-9]+/.test(varName)) {// Positional
+      const varValue = useSession.api.getPositional(meta.pid, Number(varName));
+      return varValue || '';
+    }
+    const varValue = useSession.api.getVar(meta.sessionKey, varName);
+    if (varValue === undefined || typeof varValue === 'string') {
+      return varValue || '';
+    }
+    return safeJsonStringify(varValue);
+  }
+
   private handleInterrupt(e: any, node: Sh.ParsedSh) {
     if (e instanceof ShError) {
       if (e.extra?.break) {
@@ -375,24 +387,29 @@ class SemanticsService {
   }
 
   /**
-   * Support:
    * - positionals $0, $1, ...
    * - vanilla $x, ${foo}
-   * - default when falsy ${foo:bar} [TODO]
+   * - default when empty ${foo:-bar}
    */
-  private async *ParamExp(node: Sh.ParamExp) {
-    const varName = node.Param.Value;
-
-    if (/[0-9]+/.test(varName)) {
-      const varValue = useSession.api.getPositional(node.meta.pid, Number(varName));
-      yield expand(varValue || '');
-    } else {
-      const varValue = useSession.api.getVar(node.meta.sessionKey, varName);
-      if (varValue === undefined || typeof varValue === 'string') {
-        yield expand(varValue || '');
-      } else {
-        yield expand(safeJsonStringify(varValue));
+  private async *ParamExp(
+    { meta, Param, Slice, Repl, Length, Excl, Exp }: Sh.ParamExp
+  ): AsyncGenerator<Expanded, void, unknown> {
+    if (Excl || Length || Repl || Slice) {
+      throw new ShError(`ParamExp: ${Param.Value}: unsupported operation`, 2);
+    } else if (Exp) {
+      switch (Exp.Op) {
+        case ':-': {
+          const value = this.expandParameter(meta, Param.Value);
+          yield value === '' || !Exp.Word
+            ? expand(value)
+            : await this.lastExpanded(this.Expand(Exp.Word));
+          break;
+        }
+        default:
+          throw new ShError(`ParamExp: ${Param.Value}: unsupported operation`, 2);
       }
+    } else {
+      yield expand(this.expandParameter(meta, Param.Value));
     }
   }
 

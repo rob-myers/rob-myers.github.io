@@ -35,8 +35,6 @@ const commandKeys = {
   map: true,
   /** Read one item from stdin and write to stdout */
   read: true,
-  /** Reduce over all stdin */
-  reduce: true,
   /** e.g. `set /brush/sides 6` */
   set: true,
   /** Wait for specified number of seconds */
@@ -246,31 +244,15 @@ class CmdService {
         }
         break;
       }
-      // TODO `filter` and `reduce` should be functions
-      case 'map':
-      case 'reduce': {
+      case 'map': {
         const { opts, operands } = getOpts(args, { boolean: [
           'x', /** Extended func def */
         ], });
-
         const funcDef = operands[0];
         const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
         const vp = this.createVarProxy(meta.sessionKey);
         const sp = this.createStageProxy(meta.sessionKey);
-
-        if (command === 'map') {
-          yield* this.read(node, (data) => func()(data, sp, vp));
-        } else {// `reduce` over all inputs
-          if (args.length > 2) {
-            throw new ShError('expected at most two args', 1);
-          }
-          const outputs = [] as any[];
-          yield* this.read(node, (data: any[]) => { outputs.push(data); });
-          yield operands[1]
-            ? outputs.reduce((agg, item) => func()(agg, item), this.parseArg(operands[1]))
-            : outputs.reduce((agg, item) => func()(agg, item));
-          break;
-        }
+        yield* this.read(node, (data) => func()(data, sp, vp));
         break;
       }
       case 'ls': {

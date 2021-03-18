@@ -26,15 +26,19 @@ filter () {
   map -x "fn = $1; return (...args) => fn(...args) ? args[0] : undefined"
 }
 
+# Interpret text as JS, falling back to string
 js_arg () {
-  call "() => typeof ${1:undefined} === 'undefined' ? JSON.stringify(\"$1\") : $1"
+  call "() => {
+    try { return Function('__v__', 'return ${1:-\"\"}')(); }
+    catch { return JSON.stringify(\"$1\"); }
+  }"
 }
 
 # reduce over all inputs
 reduce () {
   sponge | {
     test /\S/ $2 \
-      && map "x => x.reduce($1, $( js_arg $2 ) )" \
+      && map "x => x.reduce($1, $( js_arg "$2" ) )" \
       || map "x => x.reduce($1)"
   }
 }

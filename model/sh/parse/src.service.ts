@@ -177,50 +177,12 @@ export class SrcService {
         return node.Value;
       }
 
+      // Unhandled cases are viewed as vanilla case
       case 'ParamExp': {
-        if (typeof node.string === 'string') {
-          return node.string;
+        if (node.Exp?.Op === ':-') {
+          return `\${${node.Param.Value}:-${this.src(node.Exp.Word)}}`;
         }
         return `\${${node.Param.Value}}`;
-
-        // const def = node.paramDef || semanticsService.transpileParam(node);
-        // const param = `${def.param}${node.Index ? `[${this.src(node.Index)}]` : ''}`;
-
-        // switch (def.parKey) {
-        //   case ParamType.case:
-        //     return `\${${param}${
-        //       (def.to === 'lower' ? ',' : '^').repeat(def.all ? 2 : 1)
-        //     }${def.pattern ? this.src(def.pattern) : ''}}`;
-        //   case ParamType.default:
-        //     return `\${${param}${def.colon ? `:${def.symbol}${this.src(def.alt)}` : ''}}`;
-        //   case ParamType.keys:
-        //     return `\${!${param}}`;
-        //   case ParamType.length:
-        //     return `\${${param}}${def.of === 'values' ? '[@]' : ''}`;
-        //   case ParamType.plain:
-        //     return `\${${param}}`;
-        //   case ParamType.pointer:
-        //     return `\${!${param}}`;
-        //   case ParamType.position:
-        //     return param.length === 1 ? `$${param}` : `\${${param}}`;
-        //   case ParamType.remove:
-        //     return `\${${param}${
-        //       (def.dir === 1 ? '#' : '%').repeat(def.greedy ? 2 : 1)
-        //     }${this.src(def.pattern)}}`;
-        //   case ParamType.replace:
-        //     return `\${${param}${def.all ? '//' : '/'}${this.src(def.orig)}/${this.src(def.with)}}`;
-        //   case ParamType.special:
-        //     return `$${def.param}`;
-        //   case ParamType.substring: {
-        //     const from = Number(this.src(def.from));
-        //     const length = this.src(def.length);
-        //     return `\${${param}:${from < 0 ? ' ' : ''}${from}${length ? `:${length}` : ''}}`;
-        //   }
-        //   case ParamType.vars:
-        //     return `\${!${param}${def.split ? '@' : '*'}}`;
-        //   default:
-        //     throw testNever(def);
-        // }
       }
 
       case 'ProcSubst': {
