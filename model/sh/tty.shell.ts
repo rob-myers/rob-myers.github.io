@@ -128,7 +128,7 @@ export class TtyShell implements Device {
 
     try {// Catch errors from `this.spawn`
 
-      this.buffer.push(...this.input.line.split('¶'));
+      this.buffer.push(this.input.line);
       const result = parseService.tryParseBuffer(this.buffer.slice());
 
       switch (result.key) {

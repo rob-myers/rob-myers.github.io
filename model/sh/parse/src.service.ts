@@ -172,7 +172,7 @@ export class SrcService {
       case 'Lit': {
         const value = node.Value.replace(/\\\n/g, '');
         if (node.parent?.type === 'DblQuoted') {// Need $$ for literal $
-          return value.replace(/\n/g, '¶');
+          return value.replace(/\n/g, '\r\n');
         }
         return node.Value;
       }
@@ -229,7 +229,7 @@ export class SrcService {
       }
 
       case 'SglQuoted': {
-        const inner = node.Value.replace(/\n/g, '¶');
+        const inner = node.Value.replace(/\n/g, '');
         return `${node.Dollar ? '$' : ''}'${inner}'`;
       }
         

@@ -8,7 +8,7 @@ export const ansiReset = '\x1b[0m';
 export const ansiBrown = '\x1b[33m';
 export const ansiBlue = '\x1b[1;34m';
 export const ansiOther = '\x1b[3;37m';
-export const ansiWhite = '\x1b[37m';
+export const ansiWhite = '\x1b[0;37m';
 export const ansiWarn = '\x1b[41;37m';
 
 /**
