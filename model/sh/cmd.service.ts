@@ -335,13 +335,13 @@ class CmdService {
     }
   }
 
-  async invokeFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
+  async launchFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
     const cloned = cloneParsed(namedFunc.node);
+    const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
     Object.assign(cloned.meta, {
       ...node.meta,
       ppid: node.meta.pid,
     } as Sh.BaseMeta);
-    const { ttyShell } = useSession.api.getSession(cloned.meta.sessionKey);
     await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
 }

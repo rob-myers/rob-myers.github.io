@@ -239,7 +239,7 @@ class SemanticsService {
         if (cmdService.isCmd(command)) {
           yield* cmdService.runCmd(node, command, cmdArgs);
         } else if (func = useSession.api.getFunc(node.meta.sessionKey, command)) {
-          await cmdService.invokeFunc(node, func, cmdArgs);
+          await cmdService.launchFunc(node, func, cmdArgs);
         } else {
           throw new ShError('command not found', 127);
         }

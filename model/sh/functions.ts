@@ -23,7 +23,7 @@ export const preloadedFunctions = {
   reduce: `
 {
   sponge | {
-    test /\S/ "$2" \\
+    test '/\\S/' "$2" \\
       && map "x => x.reduce($1, $( jarg "$2" ) )" \\
       || map "x => x.reduce($1)"
   }
