@@ -3,7 +3,7 @@ import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 
 import type * as Sh from './parse/parse.model';
 import { NamedFunction, varRegex } from "./var.model";
-import { getProcessStatusIcon, handleProcessStatus, ReadResult, SigEnum } from './io/io.model';
+import { getProcessStatusIcon, ReadResult, SigEnum } from './io/io.model';
 import { dataChunk, isDataChunk } from './io/fifo.device';
 import { ProcessError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
@@ -89,7 +89,7 @@ class CmdService {
     act: (data: any) => any,
     { once }: { once?: boolean } = {}
   ) {
-    const device = useSession.api.resolve(meta.stdIn, meta.pid);
+    const device = useSession.api.resolve(meta.stdIn, meta);
     let result = {} as ReadResult;
 
     while (!(result = await device.readData(once)).eof) {
@@ -111,7 +111,7 @@ class CmdService {
   }
 
   private async *split({ meta }: Sh.CallExpr) {
-    const device = useSession.api.resolve(meta.stdIn, meta.pid);
+    const device = useSession.api.resolve(meta.stdIn, meta);
     let result = {} as ReadResult;
     while (!result.eof) {
       result = await device.readData();
@@ -129,7 +129,7 @@ class CmdService {
   }
 
   private async *splitBy({ meta }: Sh.CallExpr, separator: string) {
-    const device = useSession.api.resolve(meta.stdIn, meta.pid);
+    const device = useSession.api.resolve(meta.stdIn, meta);
     let result = {} as ReadResult;
     while (!result.eof) {
       result = await device.readData();
@@ -212,8 +212,9 @@ class CmdService {
         const { keyEvents } = useStage.api.getStage(meta.sessionKey);
         const bucket: Bucket<any> = { enabled: true };
         const generator = asyncIteratorFrom(keyEvents.asObservable(), bucket);
-        useSession.api.mutateProcess(meta.pid, (p) => {
-          p.cleanups.push(() => bucket.promise?.reject(new ProcessError(SigEnum.SIGKILL, meta.pid)));
+        useSession.api.mutateProcess(meta, (p) => {
+          p.cleanups.push(() => bucket.promise?.reject(
+            new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
           p.onSuspend = () => bucket.forget?.();
           p.onResume = () => bucket.remember?.();
         });
@@ -238,8 +239,11 @@ class CmdService {
               p.status = ProcessStatus.Running;
             } else {
               p.status = ProcessStatus.Killed;
-              p.cleanups.forEach(cleanup => cleanup());
-              p.cleanups.length = 0;
+              p.onResume?.();
+              setTimeout(() => {
+                p.cleanups.forEach(cleanup => cleanup());
+                p.cleanups.length = 0;
+              });
             }
           });
         }
@@ -265,8 +269,7 @@ class CmdService {
         const { opts } = getOpts(args, { boolean: [
           'a', /** Show all processes */
         ], });
-        const processes = Object.values(useSession.getState().process)
-          .filter(x => x.sessionKey === meta.sessionKey)
+        const processes = Object.values(useSession.api.getProcesses(meta.sessionKey))
           .filter(opts.a ? x => x : ({ key: pid, pgid }) => pid === pgid);
         const title = ['pid', 'ppid', 'pgid'].map(x => x.padEnd(5)).join(' ')
         yield `${ansiBlue}${title}${ansiReset}`;
@@ -294,15 +297,13 @@ class CmdService {
       }
       case 'sleep': {
         const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
-        const process = useSession.api.getProcess(meta.pid);
+        const process = useSession.api.getProcess(meta.pid, meta.sessionKey);
         await new Promise<void>((resolve, reject) => {
           process.onResume = resolve;
-          process.cleanups.push(() =>
-            reject(new ProcessError(SigEnum.SIGKILL, meta.pid)));
+          process.cleanups.push(() => reject(
+            new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
           setTimeout(resolve, 1000 * seconds);
         });
-        // Perhaps only need to handle suspension?
-        await handleProcessStatus(meta.pid);
         break;
       }
       case 'split': {

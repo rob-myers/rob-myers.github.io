@@ -3,12 +3,12 @@ import shortid from 'shortid';
 import safeJsonStringify from 'safe-json-stringify';
 
 import { last, pause } from 'model/generic.model';
-import useSession from 'store/session.store';
+import useSession, { ProcessStatus } from 'store/session.store';
 import { NamedFunction, varRegex } from './var.model';
-import { expand, Expanded, handleTopLevelProcessError, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
+import { expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
-import { handleProcessStatus, RedirectDef, redirectNode } from './io/io.model';
+import { RedirectDef, redirectNode, SigEnum } from './io/io.model';
 import { cloneParsed, hasAncestralIterator, wrapInFile } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
@@ -40,7 +40,7 @@ class SemanticsService {
 
   private expandParameter(meta: Sh.BaseMeta, varName: string): string {
     if (/[0-9]+/.test(varName)) {// Positional
-      const varValue = useSession.api.getPositional(meta.pid, Number(varName));
+      const varValue = useSession.api.getPositional(meta.pid, meta.sessionKey, Number(varName));
       return varValue || '';
     }
     const varValue = useSession.api.getVar(meta.sessionKey, varName);
@@ -84,6 +84,20 @@ class SemanticsService {
       console.error(`Internal ShError: ${node.meta.sessionKey}: ${message}`);
       console.error(e);
       node.exitCode = 2;
+    }
+  }
+
+  handleTopLevelProcessError(e: ProcessError, prefix: string) {
+    console.warn(`${prefix}: ${e.pid}@${e.sessionKey}: ${e.code}`)
+    if (e.code === SigEnum.SIGKILL) {
+      // Processes should be removed in finally block of `ttyShell.spawn`
+      // const { pgid } = useSession.api.getProcess(e.pid, e.sessionKey);
+      // const processes = useSession.api.getProcesses(e.sessionKey, pgid);
+      // processes.forEach((process) => {
+      //   process.status = ProcessStatus.Killed;
+      //   process.cleanups.forEach(cleanup => cleanup());
+      //   process.cleanups.length = 0;
+      // });
     }
   }
 
@@ -187,7 +201,7 @@ class SemanticsService {
             files[i + 1].meta.stdIn = fifoKey;
           }
           const stdOuts = files.map(({ meta }) =>
-            useSession.api.resolve(meta.stdOut, meta.pid));
+            useSession.api.resolve(meta.stdOut, meta));
 
           await Promise.all(files.map((file, i) =>
             new Promise<void>(async (resolve, reject) => {
@@ -258,7 +272,9 @@ class SemanticsService {
 
     try {
       await sem.applyRedirects(node, Redirs);
-      const device = useSession.api.resolve(node.meta.stdOut, node.meta.pid);
+      const device = useSession.api.resolve(
+        node.meta.stdOut, node.meta,
+      );
 
       if (node.type === 'CallExpr') {
         // Run simple command
@@ -456,7 +472,7 @@ class SemanticsService {
         .then(() => console.warn(`background: ${file.meta.pid}: terminated`))
         .catch((e) => {
           if (e instanceof ProcessError) {
-            handleTopLevelProcessError(e, 'background')
+            this.handleTopLevelProcessError(e, 'background')
           } else {
             console.error('background process error', e);
           }

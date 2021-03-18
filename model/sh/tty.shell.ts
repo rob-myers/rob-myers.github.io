@@ -4,13 +4,13 @@ import { FileWithMeta } from './parse/parse.model';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
 import type * as Sh from './parse/parse.model';
 
-import useSession, { ProcessStatus } from 'store/session.store';
+import useSession, { ProcessMeta, ProcessStatus } from 'store/session.store';
 import { ParseService } from './parse/parse.service';
 import { srcService } from './parse/src.service';
 import { wrapInFile } from './parse/parse.util';
 import { semanticsService } from './semantics.service';
 import { TtyXterm } from './tty.xterm';
-import { handleTopLevelProcessError, ProcessError } from './sh.util';
+import { ProcessError } from './sh.util';
 import { preloadedFunctions } from './functions';
 
 export class TtyShell implements Device {
@@ -23,6 +23,7 @@ export class TtyShell implements Device {
   /** Lines in current interactive parse */
   private buffer = [] as string[];
   private readonly maxLines = 500;
+  private process!: ProcessMeta;
   
   constructor(
     public sessionKey: string,
@@ -36,13 +37,15 @@ export class TtyShell implements Device {
   initialise(xterm: TtyXterm) {
     this.xterm = xterm;
     this.io.read(this.onMessage.bind(this));
+
     // session has pid = ppid = pgid = 0
     useSession.api.createProcess({
       sessionKey: this.sessionKey,
       ppid: 0,
       pgid: 0,
       src: 'init',
-    })
+    });
+    this.process = useSession.api.getProcess(0, this.sessionKey);
     this.prompt('$');
 
     if (parseService.parse!) {
@@ -74,16 +77,13 @@ export class TtyShell implements Device {
       case 'send-sig': {
         if (msg.signal === SigEnum.SIGINT) {
           this.buffer.length = 0;
-
-          if (useSession.api.getProcess(0).status !== ProcessStatus.Running) {
+          if (useSession.api.getProcess(0, this.sessionKey).status !== ProcessStatus.Running) {
             this.prompt('$');
           } else {
-            const processes = useSession.api.getProcesses(this.sessionKey, 0);
-            processes.forEach((process) => {
-              process.status = ProcessStatus.Killed;
-              process.cleanups.forEach(cleanup => cleanup());
-              process.cleanups.length = 0;
-            });
+            semanticsService.handleTopLevelProcessError(
+              new ProcessError(SigEnum.SIGKILL, 0, this.sessionKey),
+              'tty',
+            );
           }
         }
         break;
@@ -100,10 +100,11 @@ export class TtyShell implements Device {
   ) {
     const { meta } = parsed;
     if (opts.leading) {
-      useSession.api.mutateProcess(0, { status: ProcessStatus.Running, onResume: null });
+      this.process.status = ProcessStatus.Running;
+      this.process.onResume = null;
     } else {
-      const { ppid, pgid  } = meta;
-      const { positionals } = useSession.api.getProcess(ppid);
+      const { ppid, pgid } = meta;
+      const { positionals } = useSession.api.getProcess(ppid, this.sessionKey);
       meta.pid = useSession.api.createProcess({
         ppid,
         pgid,
@@ -111,10 +112,10 @@ export class TtyShell implements Device {
         src: srcService.src(parsed),
         posPositionals: opts.posPositionals || positionals.slice(1),
       });
-      console.warn(ppid, 'launched', meta.pid , srcService.src(parsed), opts.posPositionals || positionals.slice(1));
+      // console.warn(ppid, 'launched', meta.pid, useSession.api.getProcess(meta.pid, this.sessionKey));
     }
 
-    const device = useSession.api.resolve(meta.stdOut, meta.pid);
+    const device = useSession.api.resolve(meta.stdOut, meta);
     const generator = semanticsService.File(parsed);
 
     try {
@@ -124,7 +125,7 @@ export class TtyShell implements Device {
     } catch (e) {
       throw e;
     } finally {
-      !opts.leading && useSession.api.removeProcess(meta.pid);
+      !opts.leading && useSession.api.removeProcess(meta.pid, this.sessionKey);
     }
   }
 
@@ -153,7 +154,7 @@ export class TtyShell implements Device {
           singleLineSrc && this.storeSrcLine(singleLineSrc);
 
           // Run command
-          useSession.api.mutateProcess(0, { src: singleLineSrc });
+          this.process.src = singleLineSrc;
           Object.assign<Sh.BaseMeta, Sh.BaseMeta>(result.parsed.meta, {
             sessionKey: this.sessionKey,
             pid: 0,
@@ -174,7 +175,7 @@ export class TtyShell implements Device {
       }
     } catch (e) {
       if (e instanceof ProcessError) {
-        handleTopLevelProcessError(e, 'process');
+        semanticsService.handleTopLevelProcessError(e, 'foreground');
       } else {
         console.error('unexpected error propagated to tty.shell', e);
       }
@@ -182,7 +183,7 @@ export class TtyShell implements Device {
     } finally {
       this.input?.resolve();
       this.input = null;
-      useSession.api.getProcess(0).status = ProcessStatus.Suspended;
+      this.process.status = ProcessStatus.Suspended;
     }
   }
 

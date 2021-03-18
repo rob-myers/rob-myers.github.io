@@ -8,7 +8,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Remove `cat`, using `get` and `set` instead
+- Remove `cat`: use `get` and `set` instead
   > Could add `cat` back in as a function
 
 - Can create ui plugin using shell, changing `SelectRect` on key events.

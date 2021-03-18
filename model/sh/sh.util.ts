@@ -95,12 +95,12 @@ export class ShError extends Error {
 }
 
 export class ProcessError extends Error {
-  constructor(public code: SigEnum, public pid: number) {
+  constructor(
+    public code: SigEnum,
+    public pid: number,
+    public sessionKey: string,
+  ) {
     super(`process error: ${code}`);
     Object.setPrototypeOf(this, ProcessError.prototype);
   }
-}
-
-export function handleTopLevelProcessError(e: ProcessError, prefix: string) {
-  console.warn(`${prefix}: ${e.pid}: ${e.code}`)
 }

@@ -136,15 +136,19 @@ export interface Device {
 /**
  * Suspend/prevent reads/writes for relevant process status.
  */
-export function withProcessHandling(device: Device, pid: number): Device {
-  const process = useSession.api.getProcess(pid);
+export function withProcessHandling(
+  device: Device,
+  pid: number,
+  sessionKey: string,
+): Device {
+  const process = useSession.api.getProcess(pid, sessionKey);
 
   return new Proxy(device, {
     get: (target, p: keyof Device) => {
       if (p === 'writeData' || p === 'readData') {
         // console.log(p, process);
         if (process.status === ProcessStatus.Killed) {
-          throw new ProcessError(SigEnum.SIGKILL, pid);
+          throw new ProcessError(SigEnum.SIGKILL, pid, sessionKey);
         } else if (process.status === ProcessStatus.Suspended) {
           return async (input?: any) => {
             await new Promise<void>(resolve => {
@@ -157,20 +161,6 @@ export function withProcessHandling(device: Device, pid: number): Device {
       return target[p];
     }
   });
-}
-
-/**
- * Suspend/prevent ongoing computation given process status.
- */
-export async function handleProcessStatus(pid: number) {
-  const process = useSession.api.getProcess(pid);
-  if (process.status === ProcessStatus.Killed) {
-    throw new ProcessError(SigEnum.SIGINT, pid);
-  } else if (process.status === ProcessStatus.Suspended) {
-    return new Promise<void>(resolve => {
-      process.onResume = resolve;
-    });
-  }
 }
 
 export function getProcessStatusIcon(status: ProcessStatus) {
