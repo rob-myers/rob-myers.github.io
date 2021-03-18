@@ -6,7 +6,7 @@ import { NamedFunction, varRegex } from "./var.model";
 import { getProcessStatusIcon, handleProcessStatus, ReadResult, SigEnum } from './io/io.model';
 import { dataChunk, isDataChunk } from './io/fifo.device';
 import { ProcessError, ShError } from './sh.util';
-import { getOpts } from './parse/parse.util';
+import { cloneParsed, getOpts } from './parse/parse.util';
 
 import useSession, { ProcessStatus } from 'store/session.store';
 import useStage from 'store/stage.store';
@@ -336,16 +336,13 @@ class CmdService {
   }
 
   async invokeFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
-    const { sessionKey, ppid } = node.meta;
-    Object.assign(namedFunc.node.meta, {
+    const cloned = cloneParsed(namedFunc.node);
+    Object.assign(cloned.meta, {
       ...node.meta,
-      pid: useSession.api.getNextPid(sessionKey),
-      ppid,
-    });
-    const { ttyShell } = useSession.api.getSession(sessionKey);
-    await ttyShell.spawn(namedFunc.node, {
-      posPositionals: args.slice(),
-    });
+      ppid: node.meta.pid,
+    } as Sh.BaseMeta);
+    const { ttyShell } = useSession.api.getSession(cloned.meta.sessionKey);
+    await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
 }
 

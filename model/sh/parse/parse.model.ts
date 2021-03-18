@@ -206,14 +206,14 @@ export interface FileWithMeta extends File {
  * - `stdIn`: where to read input from, defaults to 'tty'
  * - `stdOut`: where to send output, defaults to 'tty'
  */
-export interface BaseMeta extends Record<NodeFd, string> {
+export interface BaseMeta {
   sessionKey: string;
   pid: number;
   ppid: number;
   pgid: number;
+  stdIn: string;
+  stdOut: string;
 }
-
-export type NodeFd = 'stdIn' | 'stdOut';
 
 export const defaultSessionKey = 'code-has-not-run';
 export const defaultProcessKey = 'code-has-not-run';

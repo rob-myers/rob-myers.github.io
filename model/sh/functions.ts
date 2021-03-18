@@ -23,10 +23,17 @@ export const preloadedFunctions = {
   reduce: `
 {
   sponge | {
-    test /\S/ $2 \
-      && map "x => x.reduce($1, $( jarg "$2" ) )" \
+    test /\S/ "$2" \\
+      && map "x => x.reduce($1, $( jarg "$2" ) )" \\
       || map "x => x.reduce($1)"
   }
 }  
+`,
+};
+
+export const preloadVariables = {
+  brush_keys_fn: `
+({ event, key }) =>
+  event === "keydown" && /^[s3-9]$/.test(key) ? key : undefined
 `,
 };

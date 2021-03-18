@@ -102,14 +102,16 @@ export class TtyShell implements Device {
     if (opts.leading) {
       useSession.api.mutateProcess(0, { status: ProcessStatus.Running, onResume: null });
     } else {
-      const { positionals } = useSession.api.getProcess(meta.ppid);
+      const { ppid, pgid  } = meta;
+      const { positionals } = useSession.api.getProcess(ppid);
       meta.pid = useSession.api.createProcess({
-        ppid: meta.pid,
-        pgid: meta.pgid,
+        ppid,
+        pgid,
         sessionKey: meta.sessionKey,
         src: srcService.src(parsed),
         posPositionals: opts.posPositionals || positionals.slice(1),
       });
+      // console.warn(ppid, 'launched', meta.pid , srcService.src(parsed), opts.posPositionals || positionals.slice(1));
     }
 
     const device = useSession.api.resolve(meta.stdOut, meta.pid);

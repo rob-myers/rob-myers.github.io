@@ -193,6 +193,7 @@ class SemanticsService {
             new Promise<void>(async (resolve, reject) => {
               try {
                 await ttyShell.spawn(file);
+
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
                 if (node.exitCode = file.exitCode) {
@@ -231,7 +232,8 @@ class SemanticsService {
 
     const [command, ...cmdArgs] = args;
     let func: NamedFunction | undefined;
-
+    
+    // TODO set positionals?
     try {
       if (args.length) {
         if (cmdService.isCmd(command)) {

@@ -1,9 +1,9 @@
 ```sh
 
-# TODO better approach to `set` e.g. auto-update, support cycling between choices
+# TODO better approach to `set`
+# e.g. auto-update, support cycling between choices
 
-brush_keys_fn='({ event, key }) =>
-  event === "keydown" && /^[s3-9]$/.test(key) ? key : undefined'
+brush_keys_fn='({ event, key }) => event === "keydown" && /^[s3-9]$/.test(key) ? key : undefined'
 
 key | map "${brush_keys_fn}" |
   while read brush_key; do
@@ -38,7 +38,7 @@ jarg () {
 reduce () {
   sponge | {
     test /\S/ $2 \
-      && map "x => x.reduce($1, $( jarg "$2" ) )" \
+      && map "x => x.reduce($1, $( jarg \"$2\" ) )" \
       || map "x => x.reduce($1)"
   }
 }
