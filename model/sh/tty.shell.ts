@@ -7,13 +7,11 @@ import type * as Sh from './parse/parse.model';
 import useSession, { ProcessStatus } from 'store/session.store';
 import { ParseService } from './parse/parse.service';
 import { srcService } from './parse/src.service';
+import { wrapInFile } from './parse/parse.util';
 import { semanticsService } from './semantics.service';
 import { TtyXterm } from './tty.xterm';
 import { handleTopLevelProcessError, ProcessError } from './sh.util';
-
-// Lazyload saves ~220kb initially
-let parseService = { tryParseBuffer: (_) => ({ key: 'failed', error: 'not ready' })} as ParseService;
-import('./parse/parse.service').then(x => parseService = x.parseService);
+import { preloadedFunctions } from './functions';
 
 export class TtyShell implements Device {
 
@@ -46,6 +44,12 @@ export class TtyShell implements Device {
       src: 'init',
     })
     this.prompt('$');
+
+    if (parseService.parse!) {
+      this.addPreloadedFunctions();
+    } else {
+      initializers.push(() => this.addPreloadedFunctions());
+    }
   }
 
   private onMessage(msg: MessageFromXterm) {
@@ -106,6 +110,7 @@ export class TtyShell implements Device {
         src: srcService.src(parsed),
         posPositionals: opts.posPositionals || positionals.slice(1),
       });
+      console.log('posPositionals', opts.posPositionals || positionals.slice(1));
     }
 
     const device = useSession.api.resolve(meta.stdOut, meta.pid);
@@ -180,6 +185,15 @@ export class TtyShell implements Device {
     }
   }
 
+  private addPreloadedFunctions() {
+    for (const [funcName, funcBody] of Object.entries(preloadedFunctions)) {
+      const parsed = parseService.parse(`${funcName} () ${funcBody.trim()}`);
+      const parsedBody = (parsed.Stmts[0].Cmd as Sh.FuncDecl).Body;
+      const wrappedBody = wrapInFile(parsedBody);
+      useSession.api.addFunc(this.sessionKey, funcName, wrappedBody);
+    }
+  }
+
   /** `prompt` must not contain non-readable characters e.g. ansi color codes */
   private prompt(prompt: string) {
     this.io.write({
@@ -228,3 +242,12 @@ export class TtyShell implements Device {
   }
   //#endregion
 }
+
+// Lazyload saves ~220kb initially
+let parseService = { tryParseBuffer: (_) => ({ key: 'failed', error: 'not ready' })} as ParseService;
+const initializers = [] as (() => void)[]; 
+import('./parse/parse.service').then(x => {
+  parseService = x.parseService;
+  initializers.forEach(initialize => initialize());
+  initializers.length = 0;
+});

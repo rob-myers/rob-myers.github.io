@@ -8,7 +8,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Preload functions
 - Remove `cat`, using `get` and `set` instead
   > Could add `cat` back in as a function
 
@@ -57,3 +56,4 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ can `read >data`
 ✅ can `while read >data do ... done` and `while sleep; do echo foo`
 ✅ can suspend/resume processes via `kill --STOP` and `kill --CONT`
+✅ Preload functions

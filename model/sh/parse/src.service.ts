@@ -96,12 +96,16 @@ export class SrcService {
         const { Stmts } = node;
         // Handle `{ echo foo & }`
         const terminal = this.isBackgroundNode(last(Stmts)!) ? '' : ';';
-        return this.onOneLine
-          ? `{ ${ this.seqSrc(Stmts) }${terminal} }`
-          : `{\n${ this.seqSrc(Stmts) }\n}`;
+        if (this.onOneLine) {
+          return `{ ${ this.seqSrc(Stmts) }${terminal} }`;
+        } else {
+          return `{\n${
+            this.seqSrc(Stmts).split('\n').map(x => `  ${x}`).join('\n')
+          }\n}`;
+        }
       }
 
-      case 'CallExpr': //  TODO ?
+      case 'CallExpr':
         return [
           node.Assigns.map(c => this.src(c)).join(' '),
           node.Args.map(c => this.src(c)).join(' '),
@@ -109,6 +113,7 @@ export class SrcService {
 
       case 'Stmt':
         return [
+
           node.Negated && '!',
           this.src(node.Cmd),
           node.Redirs.map(c => this.src(c)).join(' '),

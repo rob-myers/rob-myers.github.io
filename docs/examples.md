@@ -27,9 +27,9 @@ filter () {
 }
 
 # Interpret text as JS, falling back to string
-js_arg () {
+jarg () {
   call "() => {
-    try { return Function('__v__', 'return ${1:-\"\"}')(); }
+    try { return Function('_', \\\`return \${1:-\\"\\"}\\\` )(); }
     catch { return JSON.stringify(\"$1\"); }
   }"
 }
@@ -38,7 +38,7 @@ js_arg () {
 reduce () {
   sponge | {
     test /\S/ $2 \
-      && map "x => x.reduce($1, $( js_arg "$2" ) )" \
+      && map "x => x.reduce($1, $( jarg "$2" ) )" \
       || map "x => x.reduce($1)"
   }
 }

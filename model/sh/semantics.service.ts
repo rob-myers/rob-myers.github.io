@@ -196,7 +196,7 @@ class SemanticsService {
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
                 if (node.exitCode = file.exitCode) {
-                  throw new ShError(`pipe: ${i}: exited ${node.exitCode}`, node.exitCode);
+                  throw new ShError(`pipe@${i}: exit code ${node.exitCode}`, node.exitCode);
                 }
                 resolve();
               } catch (error) {
@@ -245,7 +245,7 @@ class SemanticsService {
         yield* sem.assignVars(node);
       }
     } catch (e) {
-      e instanceof ShError && (e.message = `${command}: ${e.message}`);
+      e.message = `${command}: ${e.message || e}`;
       throw e;
     }
   }
@@ -403,7 +403,7 @@ class SemanticsService {
       switch (Exp.Op) {
         case ':-': {
           const value = this.expandParameter(meta, Param.Value);
-          yield value === '' || !Exp.Word
+          yield value !== '' || !Exp.Word
             ? expand(value)
             : await this.lastExpanded(this.Expand(Exp.Word));
           break;

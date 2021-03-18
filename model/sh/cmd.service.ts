@@ -176,8 +176,7 @@ class CmdService {
       case 'defs': {
         const funcs = useSession.api.getFuncs(meta.sessionKey);
         for (const { key, src } of funcs) {
-          yield `${ansiBlue}${key}${ansiWhite} () {`;
-          yield `${src!.slice(2)}\n`; // multiline src starts with {\n
+          yield `${ansiBlue}${key}${ansiWhite} () ${src}\r\n`;
         } 
         break;
       }
