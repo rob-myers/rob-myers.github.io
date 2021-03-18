@@ -96,9 +96,11 @@ export class TtyXterm {
    * Returns the cursor to the start of the input.
    */
   private clearInput() {
-    this.setCursor(0);// Return to start of input.
-    // Compute number of lines to clear, starting at current.
+    // Return to start of input
+    this.setCursor(0);
+    // Compute number of lines to clear, starting at current
     const numLines = Math.min(this.numLines(), (this.xterm.rows + 1) - this.cursorRow);
+
     if (numLines > 1) {
       this.xterm.write('\r\x1b[K\x1b[E'.repeat(numLines));
       this.xterm.write('\x1b[F'.repeat(numLines));// Return to start
@@ -475,7 +477,7 @@ export class TtyXterm {
    * Count the number of lines in the current input.
    */
   private numLines() {
-    return 1 + this.offsetToColRow(this.input, this.input.length).row;
+    return 1 + this.offsetToColRow(this.input, this.input.length + 2).row;
   }
 
   public queueCommands(commands: XtermOutputCommand[]) {
