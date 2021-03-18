@@ -79,7 +79,7 @@ class SemanticsService {
       console.error(`ShError: ${node.meta.sessionKey}: ${message}`);
       node.exitCode = e.exitCode;
     } else {
-      const message = [prefix, e.message].filter(Boolean).join(': ');
+      const message = [prefix, e?.message].filter(Boolean).join(': ');
       useSession.api.warn(node.meta.sessionKey, message);
       console.error(`Internal ShError: ${node.meta.sessionKey}: ${message}`);
       console.error(e);
@@ -195,7 +195,10 @@ class SemanticsService {
                 await ttyShell.spawn(file);
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
-                (node.exitCode = file.exitCode) ? reject() : resolve();
+                if (node.exitCode = file.exitCode) {
+                  throw new ShError(`pipe: ${i}: exited ${node.exitCode}`, node.exitCode);
+                }
+                resolve();
               } catch (error) {
                 reject(error);
               }

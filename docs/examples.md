@@ -11,12 +11,12 @@ key | map "${brush_keys_fn}" |
     test /s/ ${brush_key} && set /brush/shape {poly,rect}
   done &
 
-# `range 5` outputs array `[0,...,4]`
+# `range 5` outputs array `[0,..,4]`
 range () {
   call '(_, x) => [...Array(Number(x))].map((_, i) => i)' "$1"
 }
 
-# `seq 5` outputs 5 lines `1` ... `5`
+# `seq 5` outputs 5 lines `1`..`5`
 seq () {
   range "$1" | split
 }
