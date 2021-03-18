@@ -1,6 +1,6 @@
 import Sh, { syntax } from 'mvdan-sh';
 import type * as P from './parse.model';
-import { defaultProcessKey, defaultSessionKey, defaultStdInOutErr } from './parse.model';
+import { defaultSessionKey, defaultStdInOut } from './parse.model';
 import { withParents } from './parse.util';
 
 /**
@@ -18,8 +18,8 @@ class ParseShService {
       pid: -1,
       ppid: -1,
       pgid: -1,
-      stdIn: defaultStdInOutErr,
-      stdOut: defaultStdInOutErr,
+      stdIn: defaultStdInOut,
+      stdOut: defaultStdInOut,
     };
   }
 

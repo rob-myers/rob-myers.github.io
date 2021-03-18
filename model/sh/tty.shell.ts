@@ -48,26 +48,6 @@ export class TtyShell implements Device {
     this.prompt('$');
   }
 
-  /** `prompt` must not contain non-readable characters e.g. ansi color codes */
-  private prompt(prompt: string) {
-    this.io.write({
-      key: 'send-xterm-prompt',
-      prompt: `${prompt} `,
-    });    
-  }
-
-  private getHistoryLine(lineIndex: number) {
-    const maxIndex = this.history.length - 1;
-    return {
-      line: this.history[maxIndex - lineIndex] || '',
-      nextIndex: lineIndex < 0 ? 0 : lineIndex > maxIndex ? maxIndex : lineIndex,
-    };
-  }
-
-  getHistory() {
-    return this.history.slice();
-  }
-
   private onMessage(msg: MessageFromXterm) {
     switch (msg.key) {
       case 'req-history-line': {
@@ -110,16 +90,21 @@ export class TtyShell implements Device {
   }
 
   /** Spawn a process, assigning pid to non-leading ones */
-  async spawn(parsed: FileWithMeta, leading = false) {
+  async spawn(
+    parsed: FileWithMeta,
+    opts: { leading?: boolean, posPositionals?: string[] } = {},
+  ) {
     const { meta } = parsed;
-    if (leading) {
+    if (opts.leading) {
       useSession.api.mutateProcess(0, { status: ProcessStatus.Running, onResume: null });
     } else {
+      const { positionals } = useSession.api.getProcess(meta.ppid);
       meta.pid = useSession.api.createProcess({
         ppid: meta.pid,
         pgid: meta.pgid,
         sessionKey: meta.sessionKey,
         src: srcService.src(parsed),
+        posPositionals: opts.posPositionals || positionals.slice(1),
       });
     }
 
@@ -133,7 +118,7 @@ export class TtyShell implements Device {
     } catch (e) {
       throw e;
     } finally {
-      !leading && useSession.api.removeProcess(meta.pid);
+      !opts.leading && useSession.api.removeProcess(meta.pid);
     }
   }
 
@@ -172,7 +157,7 @@ export class TtyShell implements Device {
             stdOut: this.key,
           });
 
-          await this.spawn(result.parsed, true);
+          await this.spawn(result.parsed, { leading: true });
           this.prompt('$');
           break;
         }
@@ -193,6 +178,26 @@ export class TtyShell implements Device {
       this.input = null;
       useSession.api.getProcess(0).status = ProcessStatus.Suspended;
     }
+  }
+
+  /** `prompt` must not contain non-readable characters e.g. ansi color codes */
+  private prompt(prompt: string) {
+    this.io.write({
+      key: 'send-xterm-prompt',
+      prompt: `${prompt} `,
+    });    
+  }
+
+  private getHistoryLine(lineIndex: number) {
+    const maxIndex = this.history.length - 1;
+    return {
+      line: this.history[maxIndex - lineIndex] || '',
+      nextIndex: lineIndex < 0 ? 0 : lineIndex > maxIndex ? maxIndex : lineIndex,
+    };
+  }
+
+  getHistory() {
+    return this.history.slice();
   }
 
   private storeSrcLine(srcLine: string) {

@@ -217,4 +217,4 @@ export type NodeFd = 'stdIn' | 'stdOut';
 
 export const defaultSessionKey = 'code-has-not-run';
 export const defaultProcessKey = 'code-has-not-run';
-export const defaultStdInOutErr = 'unassigned-tty';
+export const defaultStdInOut = 'unassigned-tty';

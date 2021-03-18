@@ -29,6 +29,7 @@ export type State = {
       ppid: number;
       pgid: number;
       src: string;
+      posPositionals?: string[];
     }) => number;
     mutateProcess: (pid: number, mutator: Partial<ProcessMeta> | ((process: ProcessMeta) => void)) => void;
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
@@ -39,6 +40,7 @@ export type State = {
     getNextPid: (sessionKey: string) => number;
     getProcess: (pid: number) => ProcessMeta;
     getProcesses: (sessionKey: string, pgid?: number) => ProcessMeta[];
+    getPositional: (pid: number, varName: number) => string;
     getVar: (sessionKey: string, varName: string) => any | undefined;
     getVars: (sessionKey: string) => { key: string; value: string }[];
     getSession: (sessionKey: string) => Session;
@@ -115,7 +117,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return fifo;
     },
 
-    createProcess: ({ sessionKey, ppid, pgid, src }) => {
+    createProcess: ({ sessionKey, ppid, pgid, src, posPositionals }) => {
       const pid: number = api.getNextPid(sessionKey);
       get().process[pid] = {
         key: pid,
@@ -123,7 +125,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         pgid,
         sessionKey,
         status: ProcessStatus.Running,
-        positionals: [],
+        positionals: ['rsrm', ...posPositionals || []],
         cleanups: [],
         onSuspend: null,
         onResume: null,
@@ -177,6 +179,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().session[sessionKey].nextPid++;
     },
 
+    getPositional: (pid, varName) => {
+      return get().process[pid].positionals[varName] || '';
+    },
+
     getProcess: (pid) => {
       return get().process[pid];
     },
@@ -213,6 +219,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     removeProcess(pid) {
       delete get().process[pid];
+      // get().process[pid].status = ProcessStatus.Killed;
     },
 
     removeSession: (sessionKey) => set(({ session, device }) => ({

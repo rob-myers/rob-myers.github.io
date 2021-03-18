@@ -377,13 +377,19 @@ class SemanticsService {
   /** Only support vanilla $x and ${x} */
   private async *ParamExp(node: Sh.ParamExp) {
     const varName = node.Param.Value;
-    const varValue = useSession.api.getVar(node.meta.sessionKey, varName);
-    if (varValue === undefined || typeof varValue === 'string') {
+
+    if (/[0-9]+/.test(varName)) {
+      const varValue = useSession.api.getPositional(node.meta.pid, Number(varName));
       yield expand(varValue || '');
-    } else if (typeof varValue[0] === 'string' || typeof varValue[0] === 'number') {
-      yield expand(String(varValue[0]));
     } else {
-      yield expand(safeJsonStringify(varValue));
+      const varValue = useSession.api.getVar(node.meta.sessionKey, varName);
+      if (varValue === undefined || typeof varValue === 'string') {
+        yield expand(varValue || '');
+      } else if (typeof varValue[0] === 'string' || typeof varValue[0] === 'number') {
+        yield expand(String(varValue[0]));
+      } else {
+        yield expand(safeJsonStringify(varValue));
+      }
     }
   }
 

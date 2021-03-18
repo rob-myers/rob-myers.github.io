@@ -13,6 +13,7 @@ import useStage from 'store/stage.store';
 import { ansiBlue, ansiReset } from './tty.xterm';
 
 const commandKeys = {
+  call: true,
   /** Output a variable */
   cat: true,
   /** List function definitions */
@@ -162,6 +163,12 @@ class CmdService {
   async *runCmd(node: Sh.CallExpr, command: CommandName, args: string[]) {
     const { meta } = node;
     switch (command) {
+      case 'call': {
+        const func = Function('_', `return ${args[0]}`);
+        const varProxy = this.createVarProxy(meta.sessionKey);
+        yield func()(varProxy, ...args.slice(1));
+        break;
+      }
       case 'cat': {
         for (const arg of args) {
           const value = useSession.api.getVar(meta.sessionKey, arg);
@@ -345,18 +352,16 @@ class CmdService {
   }
 
   async invokeFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
-    /**
-     * TODO shouldn't set positionals in global variable scope.
-     */
     const { sessionKey, ppid } = node.meta;
-    const { var: v, ttyShell } = useSession.api.getSession(sessionKey);
-    args.forEach((arg, i) => v[i + 1] = arg);
     Object.assign(namedFunc.node.meta, {
       ...node.meta,
       pid: useSession.api.getNextPid(sessionKey),
       ppid,
     });
-    await ttyShell.spawn(namedFunc.node);
+    const { ttyShell } = useSession.api.getSession(sessionKey);
+    await ttyShell.spawn(namedFunc.node, {
+      posPositionals: args.slice(),
+    });
   }
 }
 
