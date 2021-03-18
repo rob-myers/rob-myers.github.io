@@ -11,11 +11,12 @@ export const preloadedFunctions = {
 {
   map -x "fn = $1; return (...args) => fn(...args) ? args[0] : undefined"
 }`,
+  /** We don't support backticks in the argument */
   jarg: `
 {
   call "() => {
     try { return Function('_', \\\`return \${1:-\\"\\"}\\\` )(); }
-    catch { return JSON.stringify(\"$1\"); }
+    catch { return JSON.stringify(\\\`$1\\\`); }
   }"
 }
 `,

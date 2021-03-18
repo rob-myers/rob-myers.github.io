@@ -30,7 +30,7 @@ filter () {
 jarg () {
   call "() => {
     try { return Function('_', \\\`return \${1:-\\"\\"}\\\` )(); }
-    catch { return JSON.stringify(\"$1\"); }
+    catch { return JSON.stringify(\\\`$1\\\`); }
   }"
 }
 

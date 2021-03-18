@@ -110,7 +110,6 @@ export class TtyShell implements Device {
         src: srcService.src(parsed),
         posPositionals: opts.posPositionals || positionals.slice(1),
       });
-      console.log('posPositionals', opts.posPositionals || positionals.slice(1));
     }
 
     const device = useSession.api.resolve(meta.stdOut, meta.pid);
