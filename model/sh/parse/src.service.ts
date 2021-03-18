@@ -55,7 +55,9 @@ export class SrcService {
       case 'BinaryCmd': {
         const cmds = this.binaryCmds(node);
         const stmts = [cmds[0].X].concat(cmds.map(({ Y }) => Y));
-        return stmts.map(c => this.src(c)).join(` ${node.Op} `);
+        return stmts.map(c => this.src(c)).join(` ${node.Op}${
+          !this.onOneLine && node.Op !== '|' ? '\r\n' : ''
+        } `);
       }
 
       case 'BinaryArithm': {
