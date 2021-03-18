@@ -66,16 +66,17 @@ class ParseShService {
   }
 
   tryParseBuffer(buffer: string[]) {
-    console.log('parsing shell code', buffer.slice()); // DEBUG
+    // DEBUG
+    // console.log('parsing shell code', buffer.slice());
 
     try {
       // Parser.Interactive expects terminal newline.
       const src = buffer.join('\n') + '\n';
       const { incomplete, parsed } = this.interactiveParse(src);
 
-      if (parsed) {// DEBUG
-        console.log('parsed shell code', parsed);
-      }
+      // if (parsed) {// DEBUG
+      //   console.log('parsed shell code', parsed);
+      // }
 
       return incomplete
         ? { key: 'incomplete' as 'incomplete' }

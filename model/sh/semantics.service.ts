@@ -374,7 +374,12 @@ class SemanticsService {
     useSession.api.addFunc(node.meta.sessionKey, node.Name.Value, wrappedFile);
   }
 
-  /** Only support vanilla $x and ${x} */
+  /**
+   * Support:
+   * - positionals $0, $1, ...
+   * - vanilla $x, ${foo}
+   * - default when falsy ${foo:bar} [TODO]
+   */
   private async *ParamExp(node: Sh.ParamExp) {
     const varName = node.Param.Value;
 
@@ -385,8 +390,6 @@ class SemanticsService {
       const varValue = useSession.api.getVar(node.meta.sessionKey, varName);
       if (varValue === undefined || typeof varValue === 'string') {
         yield expand(varValue || '');
-      } else if (typeof varValue[0] === 'string' || typeof varValue[0] === 'number') {
-        yield expand(String(varValue[0]));
       } else {
         yield expand(safeJsonStringify(varValue));
       }

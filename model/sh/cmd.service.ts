@@ -1,4 +1,4 @@
-import { flatten, testNever, truncate } from 'model/generic.model';
+import { testNever, truncate } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 
 import type * as Sh from './parse/parse.model';
@@ -10,7 +10,7 @@ import { getOpts } from './parse/parse.util';
 
 import useSession, { ProcessStatus } from 'store/session.store';
 import useStage from 'store/stage.store';
-import { ansiBlue, ansiReset } from './tty.xterm';
+import { ansiBlue, ansiReset, ansiWhite } from './tty.xterm';
 
 const commandKeys = {
   call: true,
@@ -20,10 +20,6 @@ const commandKeys = {
   defs: true,
   /** Output arguments as space-separated string */
   echo: true,
-  /** Filter stdin */
-  filter: true,
-  /** Flatten stdin */
-  flat: true,
   /** e.g. `get /brush/sides` from stage store */
   get: true,
   /** List previous commands */
@@ -52,6 +48,8 @@ const commandKeys = {
   split: true,
   /** Collect stdin into a single array */
   sponge: true,
+  /** Test regex against string */
+  test: true,
   wall: true,
 };
 type CommandName = keyof typeof commandKeys;
@@ -180,7 +178,7 @@ class CmdService {
       case 'defs': {
         const funcs = useSession.api.getFuncs(meta.sessionKey);
         for (const { key, src } of funcs) {
-          yield `${key} () {`;
+          yield `${ansiBlue}${key}${ansiWhite} () {`;
           yield `${src!.slice(2)}\n`; // multiline src starts with {\n
         } 
         break;
@@ -197,10 +195,6 @@ class CmdService {
         } else {
           yield operands.join(' ');
         }
-        break;
-      }
-      case 'flat': {
-        yield* this.read(node, (data) => Array.isArray(data) ? flatten(data) : data);
         break;
       }
       case 'get': {
@@ -252,19 +246,19 @@ class CmdService {
         }
         break;
       }
-      case 'filter':
+      // TODO `filter` and `reduce` should be functions
       case 'map':
       case 'reduce': {
-        const funcDef = args[0];
-        const func = Function('_', `return ${funcDef}`);
+        const { opts, operands } = getOpts(args, { boolean: [
+          'x', /** Extended func def */
+        ], });
+
+        const funcDef = operands[0];
+        const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
         const vp = this.createVarProxy(meta.sessionKey);
         const sp = this.createStageProxy(meta.sessionKey);
 
-        if (command === 'filter') {
-          yield* this.read(node, (data) => func()(data, sp, vp) ? data : undefined);
-        } else if (command === 'map') {
-          // We do not support sequential async,
-          // use `while read >foo; do ... done` instead
+        if (command === 'map') {
           yield* this.read(node, (data) => func()(data, sp, vp));
         } else {// `reduce` over all inputs
           if (args.length > 2) {
@@ -272,8 +266,8 @@ class CmdService {
           }
           const outputs = [] as any[];
           yield* this.read(node, (data: any[]) => { outputs.push(data); });
-          yield args[1]
-            ? outputs.reduce((agg, item) => func()(agg, item), this.parseArg(args[1]))
+          yield operands[1]
+            ? outputs.reduce((agg, item) => func()(agg, item), this.parseArg(operands[1]))
             : outputs.reduce((agg, item) => func()(agg, item));
           break;
         }
@@ -337,6 +331,13 @@ class CmdService {
         const outputs = [] as any[];
         yield* this.read(node, (data: any[]) => { outputs.push(data); });
         yield outputs;
+        break;
+      }
+      case 'test': {
+        const regex = Function('__v__', `return ${args[0]}`)() as RegExp;
+        const value = args[1];
+        node.exitCode = 1;
+        regex.test(value) && (node.exitCode = 0);
         break;
       }
       case 'wall': {

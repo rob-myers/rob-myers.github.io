@@ -8,8 +8,13 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+- Preload functions
+- Remove `cat`, using `get` and `set` instead
+  > Could add `cat` back in as a function
+
 - Can create ui plugin using shell, changing `SelectRect` on key events.
-- Have layers where tagged multipolygons and blender models can be stored
+- Have layers with tagged multipolygons
+- Blender models can be stored
 - Can create walls
 
 - force `while` to be guarded; add `break` and `continue`
