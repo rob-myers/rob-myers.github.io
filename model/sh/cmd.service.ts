@@ -87,12 +87,11 @@ class CmdService {
   private async *read(
     { meta }: Sh.CallExpr,
     act: (data: any) => any,
-    { once }: { once?: boolean } = {}
   ) {
     const device = useSession.api.resolve(meta.stdIn, meta);
     let result = {} as ReadResult;
 
-    while (!(result = await device.readData(once)).eof) {
+    while (!(result = await device.readData()).eof) {
       if (result.data === undefined) {
         continue;
       } else if (isDataChunk(result.data)) {
@@ -105,7 +104,17 @@ class CmdService {
         yield result.data; // Forward chunk
       } else {
         yield act(result.data);
-        if (once) break;
+      }
+    }
+  }
+
+  private async *readOnce({ meta }: Sh.CallExpr) {
+    const device = useSession.api.resolve(meta.stdIn, meta);
+    let result = {} as ReadResult;
+    while (!(result = await device.readData(true)).eof) {
+      if (result.data !== undefined) {
+        yield result.data;
+        break;
       }
     }
   }
@@ -283,11 +292,10 @@ class CmdService {
       case 'read': {
         const varName = varRegex.test(args[0]) ? args[0] : null;
         let varValue = undefined as any;
-        yield* this.read(node, input => {
-          if (input !== undefined) varValue = input;
-        }, { once: true });
-        varName && useSession.api.setVar(meta.sessionKey, varName, varValue);
-        node.exitCode = varValue ? 0 : 1;
+        for await (varValue of this.readOnce(node));
+        
+        if (varName !== null) useSession.api.setVar(meta.sessionKey, varName, varValue);
+        node.exitCode = varValue !== undefined ? 0 : 1;
         break;
       }
       case 'set': {

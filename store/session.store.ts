@@ -197,7 +197,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     getVar: (sessionKey, varName) => {
-      return get().session[sessionKey].var[varName] || undefined;
+      return get().session[sessionKey].var[varName];
     },
 
     getVars: (sessionKey) => {
