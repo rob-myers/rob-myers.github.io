@@ -2,14 +2,14 @@ import type * as Sh from './parse/parse.model';
 import shortid from 'shortid';
 import safeJsonStringify from 'safe-json-stringify';
 
-import { last, pause } from 'model/generic.model';
+import { last } from 'model/generic.model';
 import useSession, { ProcessStatus } from 'store/session.store';
 import { NamedFunction, varRegex } from './var.model';
 import { expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
 import { RedirectDef, redirectNode, SigEnum } from './io/io.model';
-import { cloneParsed, hasAncestralIterator, wrapInFile } from './parse/parse.util';
+import { cloneParsed, wrapInFile } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
 class SemanticsService {
@@ -31,13 +31,6 @@ class SemanticsService {
       throw e;
     }
   }
-
-  private breakError = (breaks: number) =>
-    new ShError('__break__', 0, { break: breaks });
-
-  private continueError = (continues: number) =>
-    new ShError('__continue__', 0, { continue: continues });
-
   private expandParameter(meta: Sh.BaseMeta, varName: string): string {
     if (/[0-9]+/.test(varName)) {// Positional
       const varValue = useSession.api.getPositional(meta.pid, meta.sessionKey, Number(varName));
@@ -50,29 +43,10 @@ class SemanticsService {
     return safeJsonStringify(varValue);
   }
 
-  private handleInterrupt(e: any, node: Sh.ParsedSh) {
-    if (e instanceof ShError) {
-      if (e.extra?.break) {
-        if (e.extra.break > 1 && hasAncestralIterator(node)) {
-          throw this.breakError(e.extra.break - 1);
-        }
-        return 'break';
-      } else if (e.extra?.continue) {
-        if (e.extra.continue > 1 && hasAncestralIterator(node)) {
-          throw this.continueError(e.extra.continue - 1);
-        }
-        return 'continue';
-      }
-    }
-    throw e;
-  }
-
   private handleShError(node: Sh.ParsedSh, e: any, prefix?: string) {
     if (e instanceof ProcessError) {
       throw e;
-    }
-    
-    if (e instanceof ShError) {
+    } else if (e instanceof ShError) {
       const message = [prefix, e.message].filter(Boolean).join(': ');
       useSession.api.warn(node.meta.sessionKey, message);
       // if (e.exitCode === 0) throw e; // Propagate break/continue/return
@@ -90,14 +64,16 @@ class SemanticsService {
   handleTopLevelProcessError(e: ProcessError, prefix: string) {
     console.warn(`${prefix}: ${e.pid}@${e.sessionKey}: ${e.code}`)
     if (e.code === SigEnum.SIGKILL) {
-      // Processes should be removed in finally block of `ttyShell.spawn`
-      // const { pgid } = useSession.api.getProcess(e.pid, e.sessionKey);
-      // const processes = useSession.api.getProcesses(e.sessionKey, pgid);
-      // processes.forEach((process) => {
-      //   process.status = ProcessStatus.Killed;
-      //   process.cleanups.forEach(cleanup => cleanup());
-      //   process.cleanups.length = 0;
-      // });
+      // Is this only needed for leading process pid=0?
+      const process = useSession.api.getProcess(e.pid, e.sessionKey);
+      if (process) {
+        const processes = useSession.api.getProcesses(e.sessionKey, process.pgid);
+        processes.forEach((process) => {
+          process.status = ProcessStatus.Killed;
+          process.cleanups.forEach(cleanup => cleanup());
+          process.cleanups.length = 0;
+        });
+      }
     }
   }
 
@@ -211,11 +187,11 @@ class SemanticsService {
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
                 if (node.exitCode = file.exitCode) {
-                  throw new ShError(`pipe@${i}: exit code ${node.exitCode}`, node.exitCode);
+                  throw new ShError(`${i}@pipe: exit code ${node.exitCode}`, node.exitCode);
                 }
                 resolve();
-              } catch (error) {
-                reject(error);
+              } catch (e) {
+                reject(e);
               }
             }),
           ));
@@ -279,20 +255,15 @@ class SemanticsService {
       if (node.type === 'CallExpr') {
         // Run simple command
         generator = this.CallExpr(node);
-        for await (const item of generator) {
-          await device.writeData(item);
+      } else {
+        // Run compound command
+        switch (node.type) {
+          case 'Block': generator = this.Block(node); break;
+          case 'BinaryCmd': generator = this.BinaryCmd(node); break;
+          case 'FuncDecl': generator = this.FuncDecl(node); break;
+          default:
+            throw new ShError(`Command: ${node.type}: not implemented`, 2);
         }
-        return;
-      }
-
-      // Run compound command
-      switch (node.type) {
-        case 'Block': generator = sem.Block(node); break;
-        case 'BinaryCmd': generator = sem.BinaryCmd(node); break;
-        case 'FuncDecl': generator = sem.FuncDecl(node); break;
-        case 'WhileClause': generator = sem.WhileClause(node); break;
-        // default: throw testNever(Cmd);
-        default: return;
       }
 
       for await (const item of generator) {
@@ -486,31 +457,6 @@ class SemanticsService {
       stmt.exitCode = stmt.Cmd.exitCode;
       if (stmt.Negated) {
         stmt.exitCode = 1 - Number(!!stmt.Cmd.exitCode);
-      }
-    }
-  }
-
-  /**
-   * We will only permit guarded while e.g.
-   * - `while read >foo; do ... done`
-   * - `while sleep 1; do ... done`
-   */
-  private async *WhileClause(stmt: Sh.WhileClause) {
-    while (true) {
-      try {
-        yield* this.stmts(stmt, stmt.Cond);
-
-        await pause(0);
-
-        if (stmt.Until ? !stmt.exitCode : stmt.exitCode) {
-          stmt.exitCode = 0;
-          break;
-        }
-        yield* this.stmts(stmt, stmt.Do);
-      } catch (e) {
-        const result = this.handleInterrupt(e, stmt);
-        if (result === 'break') break;
-        if (result === 'continue') continue;
       }
     }
   }

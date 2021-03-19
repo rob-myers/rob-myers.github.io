@@ -1,3 +1,6 @@
+import { interval, Observable } from 'rxjs';
+import { map, startWith } from 'rxjs/operators';
+
 import { testNever, truncate } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 
@@ -13,6 +16,7 @@ import useStage from 'store/stage.store';
 import { ansiBlue, ansiReset, ansiWhite } from './tty.xterm';
 
 const commandKeys = {
+  await: true,
   call: true,
   /** Output a variable */
   // cat: true,
@@ -29,12 +33,13 @@ const commandKeys = {
   kill: true,
   /** List variables, usually created via redirection */
   ls: true,
+  poll: true,
   /** List running processes */
   ps: true,
   /** Apply function to each item from stdin */
   map: true,
-  /** Read one item from stdin and write to stdout */
-  read: true,
+  // /** Read one item from stdin and write to stdout */
+  // read: true,
   /** e.g. `set /brush/sides 6` */
   set: true,
   /** Wait for specified number of seconds */
@@ -84,6 +89,21 @@ class CmdService {
     return word in commandKeys;
   }
 
+  /** Iterate a never-ending observable e.g. key events or polling */
+  private async *iterateObservable(meta: Sh.BaseMeta, observable: Observable<any>) {
+    const bucket: Bucket<any> = { enabled: true };
+    const generator = asyncIteratorFrom(observable, bucket);
+    useSession.api.mutateProcess(meta, (p) => {
+      p.cleanups.push(() => bucket.promise?.reject(
+        new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
+      p.onSuspend = () => bucket.forget?.();
+      p.onResume = () => bucket.remember?.();
+    });
+    for await (const item of generator) {
+      yield item;
+    }
+  }
+
   private async *read(
     { meta }: Sh.CallExpr,
     act: (data: any) => any,
@@ -108,16 +128,16 @@ class CmdService {
     }
   }
 
-  private async *readOnce({ meta }: Sh.CallExpr) {
-    const device = useSession.api.resolve(meta.stdIn, meta);
-    let result = {} as ReadResult;
-    while (!(result = await device.readData(true)).eof) {
-      if (result.data !== undefined) {
-        yield result.data;
-        break;
-      }
-    }
-  }
+  // private async *readOnce({ meta }: Sh.CallExpr) {
+  //   const device = useSession.api.resolve(meta.stdIn, meta);
+  //   let result = {} as ReadResult;
+  //   while (!(result = await device.readData(true)).eof) {
+  //     if (result.data !== undefined) {
+  //       yield result.data;
+  //       break;
+  //     }
+  //   }
+  // }
 
   private async *split({ meta }: Sh.CallExpr) {
     const device = useSession.api.resolve(meta.stdIn, meta);
@@ -166,6 +186,12 @@ class CmdService {
   async *runCmd(node: Sh.CallExpr, command: CommandName, args: string[]) {
     const { meta } = node;
     switch (command) {
+      case 'await': {
+        /**
+         * TODO
+         */
+        break;
+      }
       case 'call': {
         const func = Function('_', `return ${args[0]}`);
         const varProxy = this.createVarProxy(meta.sessionKey);
@@ -217,15 +243,7 @@ class CmdService {
       }
       case 'key': {
         const { keyEvents } = useStage.api.getStage(meta.sessionKey);
-        const bucket: Bucket<any> = { enabled: true };
-        const generator = asyncIteratorFrom(keyEvents.asObservable(), bucket);
-        useSession.api.mutateProcess(meta, (p) => {
-          p.cleanups.push(() => bucket.promise?.reject(
-            new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
-          p.onSuspend = () => bucket.forget?.();
-          p.onResume = () => bucket.remember?.();
-        });
-        for await (const item of generator) yield item;
+        yield* this.iterateObservable(meta, keyEvents.asObservable());
         break;
       }
       case 'kill': {
@@ -272,6 +290,13 @@ class CmdService {
         for (const { key, value: _ } of kvPairs) yield key;
         break;
       }
+      case 'poll': {
+        const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
+        const delayMs = Math.max(seconds, 0.5) * 1000;
+        const observable = interval(delayMs).pipe(map(x => x + 1),startWith(0));
+        yield* this.iterateObservable(meta, observable);
+        break;
+      }
       case 'ps': {
         const { opts } = getOpts(args, { boolean: [
           'a', /** Show all processes */
@@ -287,15 +312,15 @@ class CmdService {
         }
         break;
       }
-      case 'read': {
-        const varName = varRegex.test(args[0]) ? args[0] : null;
-        let varValue = undefined as any;
-        for await (varValue of this.readOnce(node));
+      // case 'read': {
+      //   const varName = varRegex.test(args[0]) ? args[0] : null;
+      //   let varValue = undefined as any;
+      //   for await (varValue of this.readOnce(node));
         
-        if (varName !== null) useSession.api.setVar(meta.sessionKey, varName, varValue);
-        node.exitCode = varValue !== undefined ? 0 : 1;
-        break;
-      }
+      //   if (varName !== null) useSession.api.setVar(meta.sessionKey, varName, varValue);
+      //   node.exitCode = varValue !== undefined ? 0 : 1;
+      //   break;
+      // }
       case 'set': {
         const value = this.parseArg(args[1]);
         yield useSession.api.setData(meta.sessionKey, args[0], value);
@@ -306,8 +331,8 @@ class CmdService {
         const process = useSession.api.getProcess(meta.pid, meta.sessionKey);
         await new Promise<void>((resolve, reject) => {
           process.onResume = resolve;
-          process.cleanups.push(() => reject(
-            new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
+          useSession.api.addCleanup(meta, () => reject(new ProcessError(
+            SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
           setTimeout(resolve, 1000 * seconds);
         });
         break;

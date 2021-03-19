@@ -21,6 +21,7 @@ export type State = {
   rehydrated: boolean;
   
   readonly api: {
+    addCleanup: (meta: BaseMeta, cleanup: () => void) => void;
     addFunc: (sessionKey: string, funcName: string, wrappedFile: FileWithMeta) => void;
     createSession: (sessionKey: string) => void;
     createProcess: (meta: {
@@ -103,6 +104,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   rehydrated: false,
 
   api: {
+    addCleanup: (meta, cleanup) => {
+      get().session[meta.sessionKey].process[meta.pid].cleanups.push(cleanup);
+    },
+
     addFunc: (sessionKey, funcName, file) => {
       set(({ session }) => ({
         session: updateLookup(sessionKey, session, ({ func }) => ({
@@ -233,7 +238,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     removeProcess(pid, sessionKey) {
-      delete get().session[sessionKey].process[pid];
+      const processes = get().session[sessionKey].process;
+      delete processes[pid];
     },
 
     removeSession: (sessionKey) => set(({ session, device }) => ({
