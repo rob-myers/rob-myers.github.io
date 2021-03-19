@@ -126,11 +126,11 @@ export interface Device {
    * Write data to device.
    */
   writeData: (data: any) => Promise<void>;
-  /**
-   * Inform device we have finished all writes.
-   */
+  /** Inform device we have finished all writes. */
   finishedWriting: () => void;
+  /** Inform device we have finished all reads. */
   finishedReading: () => void;
+  hasFinishedReading?: boolean;
 }
 
 /**
@@ -138,17 +138,18 @@ export interface Device {
  */
 export function withProcessHandling(
   device: Device,
-  pid: number,
-  sessionKey: string,
+  meta: Sh.BaseMeta,
 ): Device {
-  const process = useSession.api.getProcess(pid, sessionKey);
+  const process = useSession.api.getProcess(meta.pid, meta.sessionKey);
 
   return new Proxy(device, {
     get: (target, p: keyof Device) => {
       if (p === 'writeData' || p === 'readData') {
-        // console.log(p, process);
-        if (process.status === ProcessStatus.Killed) {
-          throw new ProcessError(SigEnum.SIGKILL, pid, sessionKey);
+        if (
+          process.status === ProcessStatus.Killed
+          || (p === 'writeData' && device.hasFinishedReading)
+        ) {
+          throw new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey);
         } else if (process.status === ProcessStatus.Suspended) {
           return async (input?: any) => {
             await new Promise<void>(resolve => {

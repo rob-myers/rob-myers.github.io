@@ -95,6 +95,10 @@ export class FifoDevice implements Device {
     this.buffer.length = 0;
     return contents;
   }
+
+  public get hasFinishedReading() {
+    return this.readerStatus === FifoStatus.Disconnected;
+  }
 }
 
 //#region chunks of data

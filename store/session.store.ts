@@ -166,7 +166,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     createVarDevice(sessionKey, varName) {
       const varDevice = new VarDevice(sessionKey, varName);
-      set(({ device }) => ({ device: addToLookup(varDevice, device) }));
+      set(({ device }) => ({ device: addToLookup(varDevice as Device, device) }));
       return varDevice;
     },
 
@@ -249,7 +249,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     resolve: (deviceKey, meta) => {
       const device = get().device[deviceKey];
-      return withProcessHandling(device, meta.pid, meta.sessionKey);
+      return withProcessHandling(device, meta);
     },
 
     setData: (sessionKey, pathStr, data) => {

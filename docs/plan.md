@@ -8,6 +8,11 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+- Redo file descriptors and devices and FIFOs
+  > Numeric `fd` rather than 'stdOut' and 'stdIn'.
+  > A process should terminate when it tries to read/write to closed fd
+  > Fifos are now a mess..
+
 - Remove `cat`: use `get` and `set` instead
   > Could add `cat` back in as a function
 
@@ -57,3 +62,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ can `while read >data do ... done` and `while sleep; do echo foo`
 ✅ can suspend/resume processes via `kill --STOP` and `kill --CONT`
 ✅ Preload functions
+
+- Decided to remove `while` and more generally will not add loop
+  constructs for shell. Pipelines will not be dynamically created.
