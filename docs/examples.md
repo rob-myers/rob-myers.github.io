@@ -11,6 +11,11 @@ key | map "${brush_keys_fn}" |
     test /s/ ${brush_key} && set /brush/shape {poly,rect}
   done &
 
+```
+
+## Library
+
+```sh
 # `range 5` outputs array `[0,..,4]`
 range () {
   call '(_, x) => [...Array(Number(x))].map((_, i) => i)' "$1"
