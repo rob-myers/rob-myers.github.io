@@ -19,7 +19,7 @@ export function range(fromPos: number, toPos?: number): number[] {
   if (toPos === undefined) {
     return Array.from(Array(fromPos), (_, i) => i);
   }
-  return range((toPos - fromPos) + 1)
+  return range(Math.max((toPos - fromPos) + 1, 0))
     .map((x: number) => x + fromPos);
 }
 
