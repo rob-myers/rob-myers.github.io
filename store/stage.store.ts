@@ -2,7 +2,7 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import * as Geom from 'model/geom';
-import { deepClone, deepGet, kebabToCamel, KeyedLookup } from 'model/generic.model';
+import { deepClone, KeyedLookup } from 'model/generic.model';
 import { addToLookup, ReduxUpdater, removeFromLookup, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
 import { defaultSelectRectMeta, PersistedStage, StoredStage } from 'model/stage.model';
@@ -17,10 +17,10 @@ export type State = {
       cutOut?: boolean;
     }) => void;
     createStage: (stageKey: string) => void;
-    getData: (stageKey: string, path: string) => any;
+    // getData: (stageKey: string, path: string) => any;
     getStage: (stageKey: string) => StoredStage;
     removeStage: (stageKey: string) => void;
-    setData: (stageKey: string, path: string, data: any) => void;
+    // setData: (stageKey: string, path: string, data: any) => void;
     updateStage: (
       stageKey: string,
       updates: Partial<StoredStage> | ReduxUpdater<StoredStage>,
@@ -53,22 +53,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         wallPolys: [],
       }, stage),
     })),
-    getData: (stageKey, pathStr) => {
-      const stage = get().stage[stageKey];
-      const path = pathStr.split('/').map(kebabToCamel).filter(Boolean);
-      return deepGet(stage, path);
-    },
     getStage: (stageKey) => {
       return get().stage[stageKey];
-    },
-    setData: (stageKey, pathStr, data) => {
-      const stage = get().stage[stageKey];
-      const path = pathStr.split('/').map(kebabToCamel).filter(Boolean);
-      if (path.length) {
-        const last = path.pop()!;
-        deepGet(stage, path)[last] = data;
-        api.updateStage(stageKey, {});
-      }
     },
     removeStage: (stageKey) => set(({ stage }) => ({
       stage: removeFromLookup(stageKey, stage),

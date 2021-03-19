@@ -15,7 +15,7 @@ import { ansiBlue, ansiReset, ansiWhite } from './tty.xterm';
 const commandKeys = {
   call: true,
   /** Output a variable */
-  cat: true,
+  // cat: true,
   /** List function definitions */
   defs: true,
   /** Output arguments as space-separated string */
@@ -122,8 +122,7 @@ class CmdService {
   private async *split({ meta }: Sh.CallExpr) {
     const device = useSession.api.resolve(meta.stdIn, meta);
     let result = {} as ReadResult;
-    while (!result.eof) {
-      result = await device.readData();
+    while (!(result = await device.readData()).eof) {
       if (result.data) {
         if (isDataChunk(result.data)) {
           result.data.items = result.data.items.flatMap(x => x);
@@ -140,8 +139,7 @@ class CmdService {
   private async *splitBy({ meta }: Sh.CallExpr, separator: string) {
     const device = useSession.api.resolve(meta.stdIn, meta);
     let result = {} as ReadResult;
-    while (!result.eof) {
-      result = await device.readData();
+    while (!(result = await device.readData()).eof) {
       if (result.data !== undefined) {
         if (isDataChunk(result.data)) {
           result.data.items = result.data.items
@@ -174,14 +172,14 @@ class CmdService {
         yield func()(varProxy, ...args.slice(1));
         break;
       }
-      case 'cat': {
-        for (const arg of args) {
-          const value = useSession.api.getVar(meta.sessionKey, arg);
-          if (value === undefined) throw new ShError(`${arg}: variable not found`, 1);
-          for (const item of Array.isArray(value) ? value : [value]) yield item;
-        }
-        break;
-      }
+      // case 'cat': {
+      //   for (const arg of args) {
+      //     const value = useSession.api.getVar(meta.sessionKey, arg);
+      //     if (value === undefined) throw new ShError(`${arg}: variable not found`, 1);
+      //     for (const item of Array.isArray(value) ? value : [value]) yield item;
+      //   }
+      //   break;
+      // }
       case 'defs': {
         const funcs = useSession.api.getFuncs(meta.sessionKey);
         for (const { key, src } of funcs) {
@@ -207,7 +205,7 @@ class CmdService {
       }
       case 'get': {
         if (args[0]) {
-          yield useStage.api.getData(meta.sessionKey, args[0]);
+          yield useSession.api.getData(meta.sessionKey, args[0]);
         }
         break;
       }
@@ -300,7 +298,7 @@ class CmdService {
       }
       case 'set': {
         const value = this.parseArg(args[1]);
-        yield useStage.api.setData(meta.sessionKey, args[0], value);
+        yield useSession.api.setData(meta.sessionKey, args[0], value);
         break;
       }
       case 'sleep': {
