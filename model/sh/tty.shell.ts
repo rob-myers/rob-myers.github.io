@@ -112,16 +112,15 @@ export class TtyShell implements Device {
         src: srcService.src(parsed),
         posPositionals: opts.posPositionals || positionals.slice(1),
       });
-      // console.warn(ppid, 'launched', meta.pid, useSession.api.getProcess(meta.pid, this.sessionKey));
+      console.warn(ppid, 'launched', meta.pid, useSession.api.getProcess(meta.pid, this.sessionKey));
     }
 
     const device = useSession.api.resolve(meta.stdOut, meta);
     const generator = semanticsService.File(parsed);
 
     try {
-      for await (const item of generator) {
+      for await (const item of generator)
         await device.writeData(item);
-      }
     } catch (e) {
       throw e;
     } finally {

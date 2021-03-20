@@ -1,4 +1,4 @@
-import { Device, ReadResult } from "./io.model";
+import { Device, isDataChunk, ReadResult } from "./io.model";
 
 enum FifoStatus {
   Initial,
@@ -71,13 +71,19 @@ export class FifoDevice implements Device {
     }
   }
 
-  public finishedReading() {
+  public finishedReading(query?: boolean) {
+    if (query) {
+      return this.readerStatus === FifoStatus.Disconnected;
+    }
     this.readerStatus = FifoStatus.Disconnected;
     this.writerResolver?.();
     this.writerResolver = null;
   }
 
-  public finishedWriting() {
+  public finishedWriting(query?: boolean) {
+    if (query) {
+      return this.writerStatus === FifoStatus.Disconnected;
+    }
     this.writerStatus = FifoStatus.Disconnected;
     this.readerResolver?.();
     this.readerResolver = null;
@@ -95,26 +101,4 @@ export class FifoDevice implements Device {
     this.buffer.length = 0;
     return contents;
   }
-
-  public get hasFinishedReading() {
-    return this.readerStatus === FifoStatus.Disconnected;
-  }
 }
-
-//#region chunks of data
-export const dataChunkKey = '__chunk__';
-export function isDataChunk(data: any): data is DataChunk {
-  if (data === undefined) {
-    return false;
-  }
-  return data[dataChunkKey];
-}
-export function dataChunk(items: any[]): DataChunk {
-  return { __chunk__: true, items };
-}
-
-export interface DataChunk {
-  [dataChunkKey]: true;
-  items: any[];
-}
-//#endregion

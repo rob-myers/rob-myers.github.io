@@ -8,10 +8,10 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Redo file descriptors and devices and FIFOs
+- Redo file descriptors
   > Numeric `fd` rather than 'stdOut' and 'stdIn'.
-  > A process should terminate when it tries to read/write to closed fd
-  > Fifos are now a mess..
+  > A process should terminate when it tries to read/write to closed fd.
+  > Use OpenFileDescription to avoid creating proxy on `resolve`.
 
 - Remove `cat`: use `get` and `set` instead
   > Could add `cat` back in as a function

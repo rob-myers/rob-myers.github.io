@@ -70,7 +70,6 @@ class ShellWire<T> {
   write(msg: T) {
     this.internal.next(msg);
   }
-
 }
 
 export enum SigEnum {
@@ -108,11 +107,6 @@ export function redirectNode(node: Sh.ParsedSh, updates: Partial<Sh.BaseMeta>) {
   traverseParsed(node, (descendent) => descendent.meta = newMeta);
 }
 
-export interface ReadResult {
-  eof?: boolean;
-  data?: any;
-}
-
 export interface Device {
   /** Uid used to 'resolve' device */
   key: string;
@@ -122,39 +116,41 @@ export interface Device {
    * Can specify that exactly one item is read.
    */
   readData: (exactlyOne?: boolean) => Promise<ReadResult>;
-  /**
-   * Write data to device.
-   */
+  /** Write data to device. */
   writeData: (data: any) => Promise<void>;
-  /** Inform device we have finished all writes. */
-  finishedWriting: () => void;
-  /** Inform device we have finished all reads. */
-  finishedReading: () => void;
-  hasFinishedReading?: boolean;
+  /** Query/inform device we have finished all writes. */
+  finishedWriting: (query?: boolean) => void | undefined | boolean;
+  /** Query/Inform device we have finished all reads. */
+  finishedReading: (query?: boolean) => void | undefined | boolean;
 }
 
-/**
- * Suspend/prevent reads/writes for relevant process status.
- */
+export interface ReadResult {
+  eof?: boolean;
+  data?: any;
+}
+
+/** Suspend/prevent reads/writes for relevant process status. */
 export function withProcessHandling(
   device: Device,
   meta: Sh.BaseMeta,
 ): Device {
   const process = useSession.api.getProcess(meta.pid, meta.sessionKey);
 
+  // TODO use OpenFileDescription
+  console.log('created proxy', device);
+
   return new Proxy(device, {
     get: (target, p: keyof Device) => {
       if (p === 'writeData' || p === 'readData') {
         if (
           process.status === ProcessStatus.Killed
-          || (p === 'writeData' && device.hasFinishedReading)
+          || (p === 'writeData' && device.finishedReading(true))
+          || (p === 'readData' && device.finishedWriting(true))
         ) {
           throw new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey);
         } else if (process.status === ProcessStatus.Suspended) {
           return async (input?: any) => {
-            await new Promise<void>(resolve => {
-              process.onResume = resolve;
-            });
+            await new Promise<void>(resolve => process.onResume = resolve);
             await target[p](input);
           };
         }
@@ -171,3 +167,21 @@ export function getProcessStatusIcon(status: ProcessStatus) {
     case ProcessStatus.Suspended: return '⏸️';
   }
 }
+
+//#region data chunk
+export const dataChunkKey = '__chunk__';
+export function isDataChunk(data: any): data is DataChunk {
+  if (data === undefined) {
+    return false;
+  }
+  return data[dataChunkKey];
+}
+export function dataChunk(items: any[]): DataChunk {
+  return { __chunk__: true, items };
+}
+
+export interface DataChunk {
+  [dataChunkKey]: true;
+  items: any[];
+}
+//#endregion

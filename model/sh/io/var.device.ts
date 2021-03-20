@@ -1,6 +1,5 @@
 import useSessionStore from "store/session.store";
-import { isDataChunk } from "./fifo.device";
-import { Device, ReadResult } from "./io.model";
+import { Device, ReadResult, isDataChunk } from "./io.model";
 
 export class VarDevice implements Device {
 
