@@ -8,7 +8,7 @@ import { NamedFunction, varRegex } from './var.model';
 import { expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
-import { RedirectDef, SigEnum } from './io/io.model';
+import { RedirectDef, redirectNode, SigEnum } from './io/io.model';
 import { cloneParsed, wrapInFile } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
@@ -415,9 +415,9 @@ class SemanticsService {
         const { value } = await this.lastExpanded(sem.Expand(node.Word));
         if (varRegex.test(value)) {
           const varDevice = useSession.api.createVarDevice(meta.sessionKey, value);
-          node.meta.fd[1] = varDevice.key;
+          redirectNode(node.parent!, { 1: varDevice.key });
         } else if (value === '/dev/null') {
-          node.meta.fd[1] = '/dev/null';
+          redirectNode(node.parent!, { 1: '/dev/null' });
         } else {
           throw new ShError(`${def.subKey}: ${value}: invalid redirect`, 127);
         }

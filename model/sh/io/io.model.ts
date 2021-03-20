@@ -1,8 +1,9 @@
 import { Subject, Subscription } from "rxjs";
-import useSession, { ProcessStatus } from "store/session.store";
 import type * as Sh from '../parse/parse.model';
+import useSession, { ProcessStatus } from "store/session.store";
 import { traverseParsed } from '../parse/parse.util';
 import { ProcessError } from "../sh.util";
+import { deepClone } from "model/generic.model";
 
 export const scrollback = 200;
 
@@ -102,16 +103,19 @@ export type RedirectDef = (
   | { subKey: '<>'; fd?: number }
 );
 
-// export function redirectNode(
-//   node: Sh.ParsedSh,
-//   updates: Record<number, string>,
-// ) {
-//   const newMeta: Sh.BaseMeta = {
-//     ...node.meta,
-//     fd: { ...node.meta.fd, ...updates},
-//   };
-//   traverseParsed(node, (descendent) => descendent.meta = newMeta);
-// }
+/**
+ * Redirect a node and its descendents e.g.
+ * - `echo foo; echo bar >/dev/null; echo baz`.
+ * - `echo foo; { echo bar; } >/dev/null; echo baz`.
+ */
+export function redirectNode(
+  node: Sh.ParsedSh,
+  fdUpdates: Record<number, string>,
+) {
+  const newMeta = deepClone(node.meta);
+  Object.assign(newMeta.fd, fdUpdates);
+  traverseParsed(node, (descendent) => descendent.meta = newMeta);
+}
 
 export interface Device {
   /** Uid used to 'resolve' device */

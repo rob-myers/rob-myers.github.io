@@ -45,7 +45,7 @@ const commandKeys = {
   sleep: true,
   /**
    * Split arrays from stdin into items.
-   * Alternatively split strings by provided separator.
+   * Alternatively, split strings by provided separator.
    */
   split: true,
   /** Collect stdin into a single array */
