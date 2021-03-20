@@ -2,7 +2,7 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import { deepGet, kebabToCamel, KeyedLookup } from 'model/generic.model';
-import { Device, makeShellIo, ShellIo, withProcessHandling } from 'model/sh/io/io.model';
+import { Device, makeShellIo, ShellIo } from 'model/sh/io/io.model';
 import { MessageFromShell, MessageFromXterm } from 'model/sh/tty.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import { TtyShell } from 'model/sh/tty.shell';
@@ -42,7 +42,7 @@ export type State = {
     getFunc: (sessionKey: string, funcName: string) => NamedFunction | undefined;
     getFuncs: (sessionKey: string) => NamedFunction[];
     getNextPid: (sessionKey: string) => number;
-    getProcess: (pid: number, sessionKey: string) => ProcessMeta;
+    getProcess: (meta: BaseMeta) => ProcessMeta;
     getProcesses: (sessionKey: string, pgid?: number) => ProcessMeta[];
     getPositional: (pid: number, sessionKey: string, varName: number) => string;
     getVar: (sessionKey: string, varName: string) => any | undefined;
@@ -206,7 +206,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().session[sessionKey].process[pid].positionals[varName] || '';
     },
 
-    getProcess: (pid, sessionKey) => {
+    getProcess: ({ pid, sessionKey }) => {
       return get().session[sessionKey].process[pid];
     },
 
@@ -252,8 +252,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     resolve: (fd, meta) => {
-      const device = get().device[meta.fd[fd]];
-      return withProcessHandling(device, meta);
+      return get().device[meta.fd[fd]];
     },
 
     setData: (sessionKey, pathStr, data) => {

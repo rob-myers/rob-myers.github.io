@@ -6,7 +6,7 @@ import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 
 import type * as Sh from './parse/parse.model';
 import { NamedFunction } from "./var.model";
-import { getProcessStatusIcon, ReadResult, SigEnum, dataChunk, isDataChunk, Device } from './io/io.model';
+import { getProcessStatusIcon, ReadResult, SigEnum, dataChunk, isDataChunk, Device, preProcessRead } from './io/io.model';
 import { ProcessError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 
@@ -203,7 +203,7 @@ class CmdService {
       }
       case 'sleep': {
         const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
-        const process = useSession.api.getProcess(meta.pid, meta.sessionKey);
+        const process = useSession.api.getProcess(meta);
         await new Promise<void>((resolve, reject) => {
           process.onResume = resolve;
           useSession.api.addCleanup(meta, () => reject(new ProcessError(
@@ -298,23 +298,25 @@ class CmdService {
   }
 
   private async *readLoop(
-    device: Device,
+    meta: Sh.BaseMeta,
     body: (res: ReadResult) => any,
-    /** Read one item of data only? */
+    /** Read exactly one item of data? */
     once = false
   ) {
+    const process = useSession.api.getProcess(meta);
+    const device = useSession.api.resolve(0, meta);
+
     let result = {} as ReadResult;
     while (!(result = await device.readData(once)).eof) {
       if (result.data !== undefined) {
         yield body(result);
       }
+      await preProcessRead(process, device);
     }
   }
 
   private async *read({ meta }: Sh.CallExpr, act: (x: any) => any) {
-    const device = useSession.api.resolve(0, meta);
-
-    yield* this.readLoop(device, (result) => {
+    yield* this.readLoop(meta, (result) => {
       if (isDataChunk(result.data)) {
         let transformed: any, items = [] as any[];
         for (const item of result.data.items) {
@@ -330,14 +332,11 @@ class CmdService {
   }
 
   private async *readOnce({ meta }: Sh.CallExpr) {
-    const device = useSession.api.resolve(0, meta);
-    yield* this.readLoop(device, ({ data }) => data, true);
+    yield* this.readLoop(meta, ({ data }) => data, true);
   }
 
   private async *split({ meta }: Sh.CallExpr) {
-    const device = useSession.api.resolve(0, meta);
-
-    yield* this.readLoop(device, (result) => {
+    yield* this.readLoop(meta, (result) => {
       if (isDataChunk(result.data)) {
         result.data.items = result.data.items.flatMap(x => x);
         return result.data;
@@ -350,9 +349,7 @@ class CmdService {
   }
 
   private async *splitBy({ meta }: Sh.CallExpr, separator: string) {
-    const device = useSession.api.resolve(0, meta);
-
-    yield* this.readLoop(device, (result) => {
+    yield* this.readLoop(meta, (result) => {
       if (isDataChunk(result.data)) {
         result.data.items = result.data.items
           .flatMap((x: string) => x.split(separator));

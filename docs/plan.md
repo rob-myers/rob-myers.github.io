@@ -8,10 +8,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Redo file descriptors
-  > Each process has a special device handling writes and process events
-  > A process should terminate when it tries to read/write to closed fd.
-
 - Remove `cat`: use `get` and `set` instead
   > Could add `cat` back in as a function
 
@@ -65,3 +61,5 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ Removed `while` and more generally will not add loop
   constructs for shell. So, pipelines will not be created in loops.
 ✅ Use `meta.fd` rather than 'stdOut' and 'stdIn'
+✅ Exactly one place `.readData` and exactly one place where `.writeData`.
+✅ Stop using device proxy i.e. guard `.readData`/`.writeData`

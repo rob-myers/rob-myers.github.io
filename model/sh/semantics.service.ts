@@ -8,7 +8,7 @@ import { NamedFunction, varRegex } from './var.model';
 import { expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
-import { RedirectDef, redirectNode, SigEnum } from './io/io.model';
+import { preProcessWrite, RedirectDef, redirectNode, SigEnum } from './io/io.model';
 import { cloneParsed, wrapInFile } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
@@ -61,11 +61,13 @@ class SemanticsService {
     }
   }
 
-  handleTopLevelProcessError(e: ProcessError, prefix: string) {
+  handleTopLevelProcessError(prefix: string, e: ProcessError) {
     console.warn(`${prefix}: ${e.pid}@${e.sessionKey}: ${e.code}`)
     if (e.code === SigEnum.SIGKILL) {
-      // Is this only needed for leading process pid=0?
-      const process = useSession.api.getProcess(e.pid, e.sessionKey);
+      // Kill all processes in process group
+      const process = useSession.api.getProcess(
+        { pid: e.pid, sessionKey: e.sessionKey } as Sh.BaseMeta,
+      );
       if (process) {
         const processes = useSession.api.getProcesses(e.sessionKey, process.pgid);
         processes.forEach((process) => {
@@ -245,7 +247,6 @@ class SemanticsService {
 
     try {
       await sem.applyRedirects(node, Redirs);
-      const device = useSession.api.resolve(1, node.meta);
 
       if (node.type === 'CallExpr') {
         // Run simple command
@@ -262,7 +263,10 @@ class SemanticsService {
       }
 
       // Actually run the code
+      const process = useSession.api.getProcess(node.meta);
+      const device = useSession.api.resolve(1, node.meta);
       for await (const item of generator) {
+        await preProcessWrite(process, device);
         await device.writeData(item);
       }
     } catch (e) {
@@ -439,7 +443,7 @@ class SemanticsService {
         .then(() => console.warn(`background: ${file.meta.pid}: terminated`))
         .catch((e) => {
           if (e instanceof ProcessError) {
-            this.handleTopLevelProcessError(e, 'background')
+            this.handleTopLevelProcessError('background', e);
           } else {
             console.error('background process error', e);
           }

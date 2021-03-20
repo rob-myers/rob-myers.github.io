@@ -1,7 +1,7 @@
+import type * as Sh from './parse/parse.model';
 import { testNever } from 'model/generic.model';
 import { Device, ShellIo, SigEnum } from './io/io.model';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
-import type * as Sh from './parse/parse.model';
 
 import useSession, { ProcessMeta, ProcessStatus } from 'store/session.store';
 import { ParseService } from './parse/parse.service';
@@ -44,7 +44,7 @@ export class TtyShell implements Device {
       pgid: 0,
       src: '',
     });
-    this.process = useSession.api.getProcess(0, this.sessionKey);
+    this.process = useSession.api.getSession(this.sessionKey).process[0];
     this.prompt('$');
 
     if (parseService.parse!) {
@@ -76,12 +76,12 @@ export class TtyShell implements Device {
       case 'send-sig': {
         if (msg.signal === SigEnum.SIGINT) {
           this.buffer.length = 0;
-          if (useSession.api.getProcess(0, this.sessionKey).status !== ProcessStatus.Running) {
+          if (this.process.status !== ProcessStatus.Running) {
             this.prompt('$');
           } else {
             semanticsService.handleTopLevelProcessError(
-              new ProcessError(SigEnum.SIGKILL, 0, this.sessionKey),
               'tty',
+              new ProcessError(SigEnum.SIGKILL, 0, this.sessionKey),
             );
           }
         }
@@ -104,7 +104,7 @@ export class TtyShell implements Device {
       this.process.onResume = null;
     } else {
       const { ppid, pgid } = meta;
-      const { positionals } = useSession.api.getProcess(ppid, this.sessionKey);
+      const { positionals } = useSession.api.getProcess(meta);
       const process = useSession.api.createProcess({
         ppid,
         pgid,
@@ -174,7 +174,7 @@ export class TtyShell implements Device {
       }
     } catch (e) {
       if (e instanceof ProcessError) {
-        semanticsService.handleTopLevelProcessError(e, 'foreground');
+        semanticsService.handleTopLevelProcessError('foreground', e);
       } else {
         console.error('unexpected error propagated to tty.shell', e);
       }

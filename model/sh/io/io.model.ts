@@ -1,6 +1,6 @@
 import { Subject, Subscription } from "rxjs";
 import type * as Sh from '../parse/parse.model';
-import useSession, { ProcessStatus } from "store/session.store";
+import { ProcessMeta, ProcessStatus } from "store/session.store";
 import { traverseParsed } from '../parse/parse.util';
 import { ProcessError } from "../sh.util";
 import { deepClone } from "model/generic.model";
@@ -139,35 +139,29 @@ export interface ReadResult {
   data?: any;
 }
 
-/** Suspend/prevent reads/writes for relevant process status. */
-export function withProcessHandling(
+export async function preProcessWrite(
+  process: ProcessMeta,
   device: Device,
-  meta: Sh.BaseMeta,
-): Device {
-  const process = useSession.api.getProcess(meta.pid, meta.sessionKey);
+) {
+  if (
+    process.status === ProcessStatus.Killed
+    || device.finishedReading(true)
+  ) {
+    throw new ProcessError(SigEnum.SIGKILL, process.key, process.sessionKey);
+  } else if (process.status === ProcessStatus.Suspended) {
+    await new Promise<void>(resolve => process.onResume = resolve);
+  }
+}
 
-  // TODO use OpenFileDescription
-  console.log('created proxy', device);
-
-  return new Proxy(device, {
-    get: (target, p: keyof Device) => {
-      if (p === 'writeData' || p === 'readData') {
-        if (
-          process.status === ProcessStatus.Killed
-          // || (p === 'writeData' && device.finishedReading(true))
-          // || (p === 'readData' && device.finishedWriting(true))
-        ) {
-          throw new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey);
-        } else if (process.status === ProcessStatus.Suspended) {
-          return async (input?: any) => {
-            await new Promise<void>(resolve => process.onResume = resolve);
-            await target[p](input);
-          };
-        }
-      }
-      return target[p];
-    }
-  });
+export async function preProcessRead(
+  process: ProcessMeta,
+  _device: Device,
+) {
+  if (process.status === ProcessStatus.Killed) {
+    throw new ProcessError(SigEnum.SIGKILL, process.key, process.sessionKey);
+  } else if (process.status === ProcessStatus.Suspended) {
+    await new Promise<void>(resolve => process.onResume = resolve);
+  }
 }
 
 export function getProcessStatusIcon(status: ProcessStatus) {
