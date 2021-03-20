@@ -1,11 +1,11 @@
 import { interval, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
-import { testNever, truncate } from 'model/generic.model';
+import { pause, testNever, truncate } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 
 import type * as Sh from './parse/parse.model';
-import { NamedFunction } from "./var.model";
+import { NamedFunction, varRegex } from "./var.model";
 import { getProcessStatusIcon, ReadResult, SigEnum, dataChunk, isDataChunk, Device, preProcessRead } from './io/io.model';
 import { ProcessError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
@@ -15,10 +15,7 @@ import useStage from 'store/stage.store';
 import { ansiBlue, ansiReset, ansiWhite } from './tty.xterm';
 
 const commandKeys = {
-  await: true,
   call: true,
-  /** Output a variable */
-  // cat: true,
   /** List function definitions */
   defs: true,
   /** Output arguments as space-separated string */
@@ -37,8 +34,7 @@ const commandKeys = {
   ps: true,
   /** Apply function to each item from stdin */
   map: true,
-  // /** Read one item from stdin and write to stdout */
-  // read: true,
+  run: true,
   /** e.g. `set /brush/sides 6` */
   set: true,
   /** Wait for specified number of seconds */
@@ -61,18 +57,15 @@ class CmdService {
   async *runCmd(node: Sh.CallExpr, command: CommandName, args: string[]) {
     const { meta } = node;
     switch (command) {
-      case 'await': {
-        /**
-         * TODO
-         */
-        break;
-      }
       case 'call': {
         const func = Function('_', `return ${args[0]}`);
-        const varProxy = this.createVarProxy(meta.sessionKey);
-        yield func()(varProxy, ...args.slice(1));
+        yield await func()(
+          // TODO getter/setter proxy 
+          ...args.slice(1),
+        );
         break;
       }
+      // TODO migrate to a function
       // case 'cat': {
       //   for (const arg of args) {
       //     const value = useSession.api.getVar(meta.sessionKey, arg);
@@ -155,9 +148,7 @@ class CmdService {
         ], });
         const funcDef = operands[0];
         const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
-        const vp = this.createVarProxy(meta.sessionKey);
-        const sp = this.createStageProxy(meta.sessionKey);
-        yield* this.read(node, (data) => func()(data, sp, vp));
+        yield* this.read(meta, (data) => func()(data));
         break;
       }
       case 'ls': {
@@ -187,15 +178,19 @@ class CmdService {
         }
         break;
       }
-      // case 'read': {
-      //   const varName = varRegex.test(args[0]) ? args[0] : null;
-      //   let varValue = undefined as any;
-      //   for await (varValue of this.readOnce(node));
-        
-      //   if (varName !== null) useSession.api.setVar(meta.sessionKey, varName, varValue);
-      //   node.exitCode = varValue !== undefined ? 0 : 1;
-      //   break;
-      // }
+      case 'run': {
+        // e.g. await '({ read }) { yield "foo"; yield await read(); }'
+        const func = Function('_', `return async function *generator ${args[0]}`);
+        const iterator = func()(
+          this.provideJsApi(meta),
+          ...args.slice(1),
+        );
+        useSession.api.addCleanup(meta, () => {
+          iterator.throw();
+        });
+        yield* iterator;
+        break;
+      }
       case 'set': {
         const value = this.parseArg(args[1]);
         yield useSession.api.setData(meta.sessionKey, args[0], value);
@@ -214,12 +209,12 @@ class CmdService {
       }
       case 'split': {
         const arg = this.parseArg(args[0]);
-        yield* arg === undefined ? this.split(node) : this.splitBy(node, arg);
+        yield* arg === undefined ? this.split(meta) : this.splitBy(meta, arg);
         break;
       }
       case 'sponge': {
         const outputs = [] as any[];
-        yield* this.read(node, (data: any[]) => { outputs.push(data); });
+        yield* this.read(meta, (data: any[]) => { outputs.push(data); });
         yield outputs;
         break;
       }
@@ -233,7 +228,7 @@ class CmdService {
       case 'wall': {
         const { opts } = getOpts(args, { boolean: ['c', /** Cut out */ ], });
         const outputs = [] as any[];
-        yield* this.read(node, (data: any[]) => { outputs.push(data); });
+        yield* this.read(meta, (data: any[]) => { outputs.push(data); });
         const filtered = outputs.filter(x => x.length === 4 && x.every(Number.isFinite));
         useStage.api.addWalls(meta.sessionKey, filtered, { cutOut: opts.c });
         break;
@@ -252,31 +247,43 @@ class CmdService {
     await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
 
-  private createStageProxy(stageKey: string) {
-    return new Proxy({}, {
-      get: (_, varName: string) => {
-        if (varName === 'update') {
-          return () => useStage.api.updateStage(stageKey, {});
-        }
-        const stage = useStage.api.getStage(stageKey);
-        return varName in stage ? stage[varName as keyof typeof stage] : undefined;
-      },
-      ownKeys: () => Object.keys(useStage.api.getStage(stageKey)).concat('update'),
-      getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
-    });
+  private provideJsApi(meta: Sh.BaseMeta) {
+    return {
+      read: () => this.readOnce(meta),
+      sleep: (seconds: number) => new Promise<void>((resolve, reject) => {
+        setTimeout(resolve, seconds * 1000);
+        useSession.api.addCleanup(meta, () => reject(
+          new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)
+        ));
+      }),
+    };
   }
 
-  private createVarProxy(sessionKey: string) {
-    return new Proxy({}, {
-      get: (_, varName: string) => useSession.api.getVar(sessionKey, varName),
-      set: (_, varName: string, value) => {
-        useSession.api.setVar(sessionKey, varName, value);
-        return true;
-      },
-      ownKeys: () => Object.keys(useSession.api.getSession(sessionKey).var),
-      getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
-    });
-  }
+  // private createStageProxy(stageKey: string) {
+  //   return new Proxy({}, {
+  //     get: (_, varName: string) => {
+  //       if (varName === 'update') {
+  //         return () => useStage.api.updateStage(stageKey, {});
+  //       }
+  //       const stage = useStage.api.getStage(stageKey);
+  //       return varName in stage ? stage[varName as keyof typeof stage] : undefined;
+  //     },
+  //     ownKeys: () => Object.keys(useStage.api.getStage(stageKey)).concat('update'),
+  //     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
+  //   });
+  // }
+
+  // private createVarProxy(sessionKey: string) {
+  //   return new Proxy({}, {
+  //     get: (_, varName: string) => useSession.api.getVar(sessionKey, varName),
+  //     set: (_, varName: string, value) => {
+  //       useSession.api.setVar(sessionKey, varName, value);
+  //       return true;
+  //     },
+  //     ownKeys: () => Object.keys(useSession.api.getSession(sessionKey).var),
+  //     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
+  //   });
+  // }
 
   isCmd(word: string): word is CommandName {
     return word in commandKeys;
@@ -310,12 +317,13 @@ class CmdService {
     while (!(result = await device.readData(once)).eof) {
       if (result.data !== undefined) {
         yield body(result);
+        if (once) break;
       }
       await preProcessRead(process, device);
     }
   }
 
-  private async *read({ meta }: Sh.CallExpr, act: (x: any) => any) {
+  private async *read(meta: Sh.BaseMeta, act: (x: any) => any) {
     yield* this.readLoop(meta, (result) => {
       if (isDataChunk(result.data)) {
         let transformed: any, items = [] as any[];
@@ -331,11 +339,13 @@ class CmdService {
     });
   }
 
-  private async *readOnce({ meta }: Sh.CallExpr) {
-    yield* this.readLoop(meta, ({ data }) => data, true);
+  private async readOnce(meta: Sh.BaseMeta) {
+    for await (const data of this.readLoop(meta, ({ data }) => data, true)) {
+      return data;
+    }
   }
 
-  private async *split({ meta }: Sh.CallExpr) {
+  private async *split(meta: Sh.BaseMeta) {
     yield* this.readLoop(meta, (result) => {
       if (isDataChunk(result.data)) {
         result.data.items = result.data.items.flatMap(x => x);
@@ -348,7 +358,7 @@ class CmdService {
     });
   }
 
-  private async *splitBy({ meta }: Sh.CallExpr, separator: string) {
+  private async *splitBy(meta: Sh.BaseMeta, separator: string) {
     yield* this.readLoop(meta, (result) => {
       if (isDataChunk(result.data)) {
         result.data.items = result.data.items

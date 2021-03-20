@@ -11,6 +11,10 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 - Remove `cat`: use `get` and `set` instead
   > Could add `cat` back in as a function
 
+- Better support for multiline history
+  - BUG: trying running command from intermediate line
+  - BUG: extra character at end of lines
+
 - Can create ui plugin using shell, changing `SelectRect` on key events.
 - Have layers with tagged multipolygons
 - Blender models can be stored

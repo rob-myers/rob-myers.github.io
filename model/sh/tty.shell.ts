@@ -113,7 +113,7 @@ export class TtyShell implements Device {
         posPositionals: opts.posPositionals || positionals.slice(1),
       });
       meta.pid = process.key;
-      console.warn(ppid, 'launched', meta.pid, process, JSON.stringify(meta.fd));
+      // console.warn(ppid, 'launched', meta.pid, process, JSON.stringify(meta.fd));
     }
 
     try {
@@ -220,8 +220,7 @@ export class TtyShell implements Device {
     prev && this.history.push(prev);
     if (prev !== srcLine) {
       this.history.push(srcLine);
-      while (this.history.length > this.maxLines)
-        this.history.shift();
+      while (this.history.length > this.maxLines) this.history.shift();
       useSession.api.persist(this.sessionKey, {
         history: this.history.slice(),
       });

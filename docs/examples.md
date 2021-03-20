@@ -3,7 +3,8 @@
 # TODO better approach to `set`
 # e.g. auto-update, support cycling between choices
 
-brush_keys_fn='({ event, key }) => event === "keydown" && /^[s3-9]$/.test(key) ? key : undefined'
+brush_keys_fn='({ event, key }) =>
+  event === "keydown" && /^[s3-9]$/.test(key) ? key : undefined'
 
 key | map "${brush_keys_fn}" |
   while read brush_key; do
@@ -11,6 +12,35 @@ key | map "${brush_keys_fn}" |
     test /s/ ${brush_key} && set /brush/shape {poly,rect}
   done &
 
+key |
+  map "${brush_keys_fn}" |
+  run '({ read }, { stage: { brush } }) {
+    let data;
+    while (!(data = await read()).eof) {
+      /[3-9]/.test(key) && (brush.sides = Number(key));
+      /s/.test(key) && (brush.shape =
+        ["rect", "poly"].find(x => x !== brush.shape)
+      );
+    }
+  }' &
+
+run '({ read, sleep }) {
+  yield "foo"
+  await sleep(5)
+  yield "bar"
+}'
+```
+
+```ts
+({ read }, { stage: { brush } }) {
+    let data;
+    while (!(data = await read()).eof) {
+      /[3-9]/.test(key) && (brush.sides = Number(key));
+      /s/.test(key) && (brush.shape =
+        ["rect", "poly"].find(x => x !== brush.shape)
+      );
+    }
+  }
 ```
 
 ## Library

@@ -198,7 +198,7 @@ export class SrcService {
       }
 
       case 'SglQuoted': {
-        const inner = node.Value.replace(/\n/g, '');
+        const inner = node.Value.split('\n').join('\r\n');
         return `${node.Dollar ? '$' : ''}'${inner}'`;
       }
         
