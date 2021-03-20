@@ -9,9 +9,9 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ### TODO
 
 - Redo file descriptors
-  > Numeric `fd` rather than 'stdOut' and 'stdIn'.
+  > Use `fromFd` rather than 'stdOut' and 'stdIn'
+  > Each process has a special device handling writes and process events
   > A process should terminate when it tries to read/write to closed fd.
-  > Use OpenFileDescription to avoid creating proxy on `resolve`.
 
 - Remove `cat`: use `get` and `set` instead
   > Could add `cat` back in as a function

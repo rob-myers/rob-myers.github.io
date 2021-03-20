@@ -145,7 +145,7 @@ export function withProcessHandling(
         if (
           process.status === ProcessStatus.Killed
           || (p === 'writeData' && device.finishedReading(true))
-          || (p === 'readData' && device.finishedWriting(true))
+          // || (p === 'readData' && device.finishedWriting(true))
         ) {
           throw new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey);
         } else if (process.status === ProcessStatus.Suspended) {
