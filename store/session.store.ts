@@ -52,7 +52,7 @@ export type State = {
     removeDevice: (deviceKey: string) => void;
     removeProcess: (pid: number, sessionKey: string) => void;
     removeSession: (sessionKey: string) => void;
-    resolve: (deviceKey: string, meta: BaseMeta) => Device;
+    resolve: (fd: number, meta: BaseMeta) => Device;
     setData: (sessionKey: string, path: string, data: any) => void;
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
     warn: (sessionKey: string, msg: string) => void;
@@ -251,8 +251,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }));
     },
 
-    resolve: (deviceKey, meta) => {
-      const device = get().device[deviceKey];
+    resolve: (fd, meta) => {
+      const device = get().device[meta.fd[fd]];
       return withProcessHandling(device, meta);
     },
 

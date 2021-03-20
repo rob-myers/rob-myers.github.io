@@ -176,8 +176,7 @@ class SemanticsService {
             fifos.push(useSession.api.createFifo(fifoKey));
             files[i + 1].meta.fd[0] = file.meta.fd[1] = fifoKey;
           }
-          const stdOuts = files.map(({ meta }) =>
-            useSession.api.resolve(meta.fd[1], meta));
+          const stdOuts = files.map(({ meta }) => useSession.api.resolve(1, meta));
 
           await Promise.all(files.map((file, i) =>
             new Promise<void>(async (resolve, reject) => {
@@ -246,10 +245,7 @@ class SemanticsService {
 
     try {
       await sem.applyRedirects(node, Redirs);
-      const device = useSession.api.resolve(
-        node.meta.fd[1],
-        node.meta,
-      );
+      const device = useSession.api.resolve(1, node.meta);
 
       if (node.type === 'CallExpr') {
         // Run simple command
@@ -265,9 +261,7 @@ class SemanticsService {
         }
       }
 
-      /**
-       * Actually run the code.
-       */
+      // Actually run the code
       for await (const item of generator) {
         await device.writeData(item);
       }

@@ -312,7 +312,7 @@ class CmdService {
   }
 
   private async *read({ meta }: Sh.CallExpr, act: (x: any) => any) {
-    const device = useSession.api.resolve(meta.fd[0], meta);
+    const device = useSession.api.resolve(0, meta);
 
     yield* this.readLoop(device, (result) => {
       if (isDataChunk(result.data)) {
@@ -330,12 +330,12 @@ class CmdService {
   }
 
   private async *readOnce({ meta }: Sh.CallExpr) {
-    const device = useSession.api.resolve(meta.fd[0], meta);
+    const device = useSession.api.resolve(0, meta);
     yield* this.readLoop(device, ({ data }) => data, true);
   }
 
   private async *split({ meta }: Sh.CallExpr) {
-    const device = useSession.api.resolve(meta.fd[0], meta);
+    const device = useSession.api.resolve(0, meta);
 
     yield* this.readLoop(device, (result) => {
       if (isDataChunk(result.data)) {
@@ -350,7 +350,7 @@ class CmdService {
   }
 
   private async *splitBy({ meta }: Sh.CallExpr, separator: string) {
-    const device = useSession.api.resolve(meta.fd[0], meta);
+    const device = useSession.api.resolve(0, meta);
 
     yield* this.readLoop(device, (result) => {
       if (isDataChunk(result.data)) {
