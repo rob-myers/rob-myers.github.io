@@ -222,7 +222,6 @@ class SemanticsService {
     const [command, ...cmdArgs] = args;
     let func: NamedFunction | undefined;
     
-    // TODO set positionals?
     try {
       if (args.length) {
         if (cmdService.isCmd(command)) {
@@ -266,6 +265,9 @@ class SemanticsService {
         }
       }
 
+      /**
+       * Actually run the code.
+       */
       for await (const item of generator) {
         await device.writeData(item);
       }

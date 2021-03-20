@@ -51,7 +51,9 @@ export class FifoDevice implements Device {
     // Reader is blocked
     return new Promise<void>((resolve) => {
       this.readerResolver = resolve;
-    }).then(() => this.readData(exactlyOnce));
+    }).then(// data `undefined` will be filtered by reader
+      () => ({ data: undefined }),
+    );
   }
 
   public async writeData(data: any) {

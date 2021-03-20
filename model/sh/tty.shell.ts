@@ -98,10 +98,10 @@ export class TtyShell implements Device {
     opts: { leading?: boolean, posPositionals?: string[] } = {},
   ) {
     const { meta } = parsed;
+
     if (opts.leading) {
       this.process.status = ProcessStatus.Running;
       this.process.onResume = null;
-      this.process.device.updateResolved(meta);
     } else {
       const { ppid, pgid } = meta;
       const { positionals } = useSession.api.getProcess(ppid, this.sessionKey);
@@ -113,17 +113,11 @@ export class TtyShell implements Device {
         posPositionals: opts.posPositionals || positionals.slice(1),
       });
       meta.pid = process.key;
-      process.device.updateResolved(meta);
       console.warn(ppid, 'launched', meta.pid, process, JSON.stringify(meta.fd));
     }
 
-    const device = useSession.api.resolve(meta.fd[1], meta);
-    const generator = semanticsService.File(parsed);
-
     try {
-      for await (const item of generator) {
-        await device.writeData(item);
-      }
+      for await (const _ of semanticsService.File(parsed));
     } catch (e) {
       throw e;
     } finally {

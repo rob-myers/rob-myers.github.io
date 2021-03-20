@@ -6,7 +6,7 @@ import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 
 import type * as Sh from './parse/parse.model';
 import { NamedFunction } from "./var.model";
-import { getProcessStatusIcon, ReadResult, SigEnum, dataChunk, isDataChunk } from './io/io.model';
+import { getProcessStatusIcon, ReadResult, SigEnum, dataChunk, isDataChunk, Device } from './io/io.model';
 import { ProcessError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 
@@ -297,75 +297,72 @@ class CmdService {
     }
   }
 
-  private async *read(
-    { meta }: Sh.CallExpr,
-    act: (data: any) => any,
+  private async *readLoop(
+    device: Device,
+    body: (res: ReadResult) => any,
+    /** Read one item of data only? */
+    once = false
   ) {
-    const device = useSession.api.resolve(meta.fd[0], meta);
     let result = {} as ReadResult;
+    while (!(result = await device.readData(once)).eof) {
+      if (result.data !== undefined) {
+        yield body(result);
+      }
+    }
+  }
 
-    while (!(result = await device.readData()).eof) {
-      if (result.data === undefined) {
-        continue;
-      } else if (isDataChunk(result.data)) {
+  private async *read({ meta }: Sh.CallExpr, act: (x: any) => any) {
+    const device = useSession.api.resolve(meta.fd[0], meta);
+
+    yield* this.readLoop(device, (result) => {
+      if (isDataChunk(result.data)) {
         let transformed: any, items = [] as any[];
         for (const item of result.data.items) {
           transformed = act(item);
           (transformed !== undefined) && items.push(transformed); 
         }
         result.data.items = items;
-        yield result.data; // Forward chunk
+        return result.data; // Forward chunk
       } else {
-        yield act(result.data);
+        return act(result.data);
       }
-    }
+    });
   }
 
-  // private async *readOnce({ meta }: Sh.CallExpr) {
-  //   const device = useSession.api.resolve(meta.stdIn, meta);
-  //   let result = {} as ReadResult;
-  //   while (!(result = await device.readData(true)).eof) {
-  //     if (result.data !== undefined) {
-  //       yield result.data;
-  //       break;
-  //     }
-  //   }
-  // }
+  private async *readOnce({ meta }: Sh.CallExpr) {
+    const device = useSession.api.resolve(meta.fd[0], meta);
+    yield* this.readLoop(device, ({ data }) => data, true);
+  }
 
   private async *split({ meta }: Sh.CallExpr) {
     const device = useSession.api.resolve(meta.fd[0], meta);
-    let result = {} as ReadResult;
 
-    while (!(result = await device.readData()).eof) {
-      if (result.data) {
-        if (isDataChunk(result.data)) {
-          result.data.items = result.data.items.flatMap(x => x);
-          yield result.data;
-        } else if (Array.isArray(result.data)) {
-          yield dataChunk(result.data);
-        } else {
-          yield result.data;
-        }
+    yield* this.readLoop(device, (result) => {
+      if (isDataChunk(result.data)) {
+        result.data.items = result.data.items.flatMap(x => x);
+        return result.data;
+      } else if (Array.isArray(result.data)) {
+        return dataChunk(result.data);
+      } else {
+        return result.data;
       }
-    }
+    });
   }
 
   private async *splitBy({ meta }: Sh.CallExpr, separator: string) {
     const device = useSession.api.resolve(meta.fd[0], meta);
-    let result = {} as ReadResult;
-    while (!(result = await device.readData()).eof) {
-      if (result.data !== undefined) {
-        if (isDataChunk(result.data)) {
-          result.data.items = result.data.items
-            .flatMap((x: string) => x.split(separator));
-          yield result.data;
-        } else if (typeof result.data === 'string') {
-          yield dataChunk(result.data.split(separator));
-        } else {
-          throw new ShError(`expected string`, 1);
-        }
+
+    yield* this.readLoop(device, (result) => {
+      if (isDataChunk(result.data)) {
+        result.data.items = result.data.items
+          .flatMap((x: string) => x.split(separator));
+        return result.data;
+      } else if (typeof result.data === 'string') {
+        return dataChunk(result.data.split(separator));
+      } else {
+        throw new ShError(`expected string`, 1);
       }
-    }
+    });
   }
 
   /** JSON.parse with string fallback */

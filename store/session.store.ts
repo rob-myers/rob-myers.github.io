@@ -13,7 +13,6 @@ import { BaseMeta, FileWithMeta } from 'model/sh/parse/parse.model';
 import { srcService } from 'model/sh/parse/src.service';
 import { NullDevice } from 'model/sh/io/null.device';
 import useStageStore from './stage.store';
-import { ProxyDevice } from 'model/sh/io/proxy.device';
 
 export type State = {
   session: KeyedLookup<Session>;
@@ -96,7 +95,6 @@ export interface ProcessMeta {
   /** Executed on resume */
   onResume: null | (() => void);
   positionals: string[];
-  device: ProxyDevice;
 }
 
 const useStore = create<State>(devtools(persist((set, get) => ({
@@ -141,11 +139,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         cleanups: [],
         onSuspend: null,
         onResume: null,
-        device: new ProxyDevice(
-          `${pid}@${sessionKey}`,
-          sessionKey,
-          pid,
-        ),
       };
       return processes[pid];
     },
