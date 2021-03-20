@@ -13,6 +13,7 @@ import { BaseMeta, FileWithMeta } from 'model/sh/parse/parse.model';
 import { srcService } from 'model/sh/parse/src.service';
 import { NullDevice } from 'model/sh/io/null.device';
 import useStageStore from './stage.store';
+import { ProxyDevice } from 'model/sh/io/proxy.device';
 
 export type State = {
   session: KeyedLookup<Session>;
@@ -24,13 +25,13 @@ export type State = {
     addCleanup: (meta: BaseMeta, cleanup: () => void) => void;
     addFunc: (sessionKey: string, funcName: string, wrappedFile: FileWithMeta) => void;
     createSession: (sessionKey: string) => void;
-    createProcess: (meta: {
+    createProcess: (def: {
       sessionKey: string;
       ppid: number;
       pgid: number;
       src: string;
       posPositionals?: string[];
-    }) => number;
+    }) => ProcessMeta;
     mutateProcess: (
       meta: BaseMeta,
       mutator: Partial<ProcessMeta> | ((process: ProcessMeta) => void),
@@ -87,14 +88,15 @@ export interface ProcessMeta {
   pgid: number;
   sessionKey: string;
   status: ProcessStatus;
+  src: string;
   /** Executed on kill */
   cleanups: (() => void)[];
   /** Executed on suspend */
   onSuspend: null | (() => void);
   /** Executed on resume */
   onResume: null | (() => void);
-  src: string;
   positionals: string[];
+  device: ProxyDevice;
 }
 
 const useStore = create<State>(devtools(persist((set, get) => ({
@@ -122,25 +124,30 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     createFifo(key, size) {
       const fifo = new FifoDevice(key, size);
-      set(({ device }) => ({ device: addToLookup(fifo, device) }));
-      return fifo;
+      return get().device[fifo.key] = fifo;
     },
 
     createProcess: ({ sessionKey, ppid, pgid, src, posPositionals }) => {
-      const pid: number = api.getNextPid(sessionKey);
-      api.getSession(sessionKey).process[pid] = {
+      const pid = get().api.getNextPid(sessionKey);
+      const processes = get().api.getSession(sessionKey).process;
+      processes[pid] = {
         key: pid,
         ppid,
         pgid,
         sessionKey,
         status: ProcessStatus.Running,
+        src,
         positionals: ['rsrm', ...posPositionals || []],
         cleanups: [],
         onSuspend: null,
         onResume: null,
-        src,
-      }; // Mutate
-      return pid;
+        device: new ProxyDevice(
+          `${pid}@${sessionKey}`,
+          sessionKey,
+          pid,
+        ),
+      };
+      return processes[pid];
     },
 
     createSession: (sessionKey) => {
@@ -150,7 +157,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const ttyDevice: Device = ttyShell;
       const nullDevice = new NullDevice('/dev/null');
 
-      set(({ session, device }) => ({
+      get().device[nullDevice.key] = nullDevice;
+      get().device[ttyDevice.key] = ttyDevice;
+
+      set(({ session }) => ({
         session: addToLookup({
           key: sessionKey,
           func: {},
@@ -160,13 +170,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           nextPid: 0,
           process: {},
         }, session),
-        device: addToLookup(nullDevice, addToLookup(ttyDevice, device)),
       }));
     },
 
     createVarDevice(sessionKey, varName) {
       const varDevice = new VarDevice(sessionKey, varName);
-      set(({ device }) => ({ device: addToLookup(varDevice as Device, device) }));
+      get().device[varDevice.key] = varDevice;
       return varDevice;
     },
 
@@ -234,7 +243,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     })),
 
     removeDevice(deviceKey) {
-      set(({ device }) => ({ device: removeFromLookup(deviceKey, device), }));
+      delete get().device[deviceKey];
     },
 
     removeProcess(pid, sessionKey) {
@@ -242,10 +251,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       delete processes[pid];
     },
 
-    removeSession: (sessionKey) => set(({ session, device }) => ({
-      session: removeFromLookup(sessionKey, session),
-      device: removeFromLookup(session[sessionKey].ttyShell.key, device),
-    })),
+    removeSession: (sessionKey) => {
+      delete get().device[get().session[sessionKey].ttyShell.key];
+      set(({ session }) => ({
+        session: removeFromLookup(sessionKey, session),
+      }));
+    },
 
     resolve: (deviceKey, meta) => {
       const device = get().device[deviceKey];

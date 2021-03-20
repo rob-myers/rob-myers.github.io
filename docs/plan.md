@@ -9,7 +9,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ### TODO
 
 - Redo file descriptors
-  > Use `meta.fd` rather than 'stdOut' and 'stdIn'
   > Each process has a special device handling writes and process events
   > A process should terminate when it tries to read/write to closed fd.
 
@@ -63,5 +62,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ can suspend/resume processes via `kill --STOP` and `kill --CONT`
 ✅ Preload functions
 
-- Decided to remove `while` and more generally will not add loop
-  constructs for shell. Pipelines will not be dynamically created.
+✅ Removed `while` and more generally will not add loop
+  constructs for shell. So, pipelines will not be created in loops.
+✅ Use `meta.fd` rather than 'stdOut' and 'stdIn'

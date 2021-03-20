@@ -37,12 +37,12 @@ export class TtyShell implements Device {
     this.xterm = xterm;
     this.io.read(this.onMessage.bind(this));
 
-    // session has pid = ppid = pgid = 0
+    // session corresponds to leading process where pid = ppid = pgid = 0
     useSession.api.createProcess({
       sessionKey: this.sessionKey,
       ppid: 0,
       pgid: 0,
-      src: 'init',
+      src: '',
     });
     this.process = useSession.api.getProcess(0, this.sessionKey);
     this.prompt('$');
@@ -101,28 +101,29 @@ export class TtyShell implements Device {
     if (opts.leading) {
       this.process.status = ProcessStatus.Running;
       this.process.onResume = null;
+      this.process.device.updateResolved(meta);
     } else {
       const { ppid, pgid } = meta;
       const { positionals } = useSession.api.getProcess(ppid, this.sessionKey);
-      meta.pid = useSession.api.createProcess({
+      const process = useSession.api.createProcess({
         ppid,
         pgid,
         sessionKey: meta.sessionKey,
         src: srcService.src(parsed),
         posPositionals: opts.posPositionals || positionals.slice(1),
       });
-      console.warn(ppid, 'launched', meta.pid,
-        useSession.api.getProcess(meta.pid, this.sessionKey),
-        JSON.stringify(meta.fd),
-      );
+      meta.pid = process.key;
+      process.device.updateResolved(meta);
+      console.warn(ppid, 'launched', meta.pid, process, JSON.stringify(meta.fd));
     }
 
     const device = useSession.api.resolve(meta.fd[1], meta);
     const generator = semanticsService.File(parsed);
 
     try {
-      for await (const item of generator)
+      for await (const item of generator) {
         await device.writeData(item);
+      }
     } catch (e) {
       throw e;
     } finally {
