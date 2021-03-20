@@ -102,10 +102,16 @@ export type RedirectDef = (
   | { subKey: '<>'; fd?: number }
 );
 
-export function redirectNode(node: Sh.ParsedSh, updates: Partial<Sh.BaseMeta>) {
-  const newMeta: Sh.BaseMeta = { ...node.meta, ...updates };
-  traverseParsed(node, (descendent) => descendent.meta = newMeta);
-}
+// export function redirectNode(
+//   node: Sh.ParsedSh,
+//   updates: Record<number, string>,
+// ) {
+//   const newMeta: Sh.BaseMeta = {
+//     ...node.meta,
+//     fd: { ...node.meta.fd, ...updates},
+//   };
+//   traverseParsed(node, (descendent) => descendent.meta = newMeta);
+// }
 
 export interface Device {
   /** Uid used to 'resolve' device */
@@ -144,7 +150,7 @@ export function withProcessHandling(
       if (p === 'writeData' || p === 'readData') {
         if (
           process.status === ProcessStatus.Killed
-          || (p === 'writeData' && device.finishedReading(true))
+          // || (p === 'writeData' && device.finishedReading(true))
           // || (p === 'readData' && device.finishedWriting(true))
         ) {
           throw new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey);

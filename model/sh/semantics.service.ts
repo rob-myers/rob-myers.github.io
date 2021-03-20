@@ -8,8 +8,8 @@ import { NamedFunction, varRegex } from './var.model';
 import { expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
-import { RedirectDef, redirectNode, SigEnum } from './io/io.model';
-import { cloneParsed, wrapInFile } from './parse/parse.util';
+import { RedirectDef, SigEnum } from './io/io.model';
+import { cloneParsed, wrapInFile, wrapInStmt } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
 class SemanticsService {
@@ -165,6 +165,7 @@ class SemanticsService {
         const { sessionKey, pid: ppid } = node.meta;
         const { ttyShell } = useSession.api.getSession(sessionKey);
         const files = stmts.map(x => wrapInFile(cloneParsed(x)));
+
         // pid will be assigned in `spawn`, pgid is inherited
         files.forEach(({ meta }) => meta.ppid = ppid);
         const fifos = [] as FifoDevice[];
@@ -173,17 +174,15 @@ class SemanticsService {
           for (const [i, file] of files.slice(0, -1).entries()) {
             const fifoKey = `/dev/fifo-${i}-${file.meta.pid}`;
             fifos.push(useSession.api.createFifo(fifoKey));
-            file.meta.stdOut = fifoKey;
-            files[i + 1].meta.stdIn = fifoKey;
+            files[i + 1].meta.fd[0] = file.meta.fd[1] = fifoKey;
           }
           const stdOuts = files.map(({ meta }) =>
-            useSession.api.resolve(meta.stdOut, meta));
+            useSession.api.resolve(meta.fd[1], meta));
 
           await Promise.all(files.map((file, i) =>
             new Promise<void>(async (resolve, reject) => {
               try {
                 await ttyShell.spawn(file);
-
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
                 if (node.exitCode = file.exitCode) {
@@ -249,7 +248,8 @@ class SemanticsService {
     try {
       await sem.applyRedirects(node, Redirs);
       const device = useSession.api.resolve(
-        node.meta.stdOut, node.meta,
+        node.meta.fd[1],
+        node.meta,
       );
 
       if (node.type === 'CallExpr') {
@@ -342,12 +342,13 @@ class SemanticsService {
         break;
       }
       case 'CmdSubst': {
+        const cloned = wrapInFile(wrapInStmt(cloneParsed(node)));
         const fifoKey = `/dev/fifo-cmd-${shortid.generate()}`;
         const device = useSession.api.createFifo(fifoKey);
-        redirectNode(node, { stdOut: device.key });
-
-        const stmts = node.Stmts.map(stmt => sem.Stmt(stmt));
-        for (const stmt of stmts) for await (const _ of stmt);
+        cloned.meta.fd[1] = device.key;
+        
+        const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
+        await ttyShell.spawn(cloned);
         
         yield expand(device.readAll()
           .map(x => typeof x === 'string' ? x : safeJsonStringify(x))
@@ -414,9 +415,9 @@ class SemanticsService {
         const { value } = await this.lastExpanded(sem.Expand(node.Word));
         if (varRegex.test(value)) {
           const varDevice = useSession.api.createVarDevice(meta.sessionKey, value);
-          redirectNode(node.parent!, { stdOut: varDevice.key });
+          node.meta.fd[1] = varDevice.key;
         } else if (value === '/dev/null') {
-          redirectNode(node.parent!, { stdOut: '/dev/null' });
+          node.meta.fd[1] = '/dev/null';
         } else {
           throw new ShError(`${def.subKey}: ${value}: invalid redirect`, 127);
         }

@@ -154,3 +154,18 @@ export function wrapInFile(node: Sh.Stmt): Sh.FileWithMeta {
     meta: node.meta,
   } as Sh.FileWithMeta;
 }
+
+export function wrapInStmt(node: Sh.WordPart): Sh.Stmt {
+  return {
+    type: 'Stmt',
+    Background: false,
+    meta: node.meta,
+    Cmd: {
+      type: 'CallExpr',
+      Args: [{
+        type: 'Word',
+        Parts: [node],
+      } as Sh.Word],
+    } as Sh.CallExpr,
+  } as Sh.Stmt;
+}

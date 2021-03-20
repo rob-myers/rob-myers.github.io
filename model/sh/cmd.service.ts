@@ -107,7 +107,7 @@ class CmdService {
     { meta }: Sh.CallExpr,
     act: (data: any) => any,
   ) {
-    const device = useSession.api.resolve(meta.stdIn, meta);
+    const device = useSession.api.resolve(meta.fd[0], meta);
     let result = {} as ReadResult;
 
     while (!(result = await device.readData()).eof) {
@@ -139,8 +139,9 @@ class CmdService {
   // }
 
   private async *split({ meta }: Sh.CallExpr) {
-    const device = useSession.api.resolve(meta.stdIn, meta);
+    const device = useSession.api.resolve(meta.fd[0], meta);
     let result = {} as ReadResult;
+
     while (!(result = await device.readData()).eof) {
       if (result.data) {
         if (isDataChunk(result.data)) {
@@ -156,7 +157,7 @@ class CmdService {
   }
 
   private async *splitBy({ meta }: Sh.CallExpr, separator: string) {
-    const device = useSession.api.resolve(meta.stdIn, meta);
+    const device = useSession.api.resolve(meta.fd[0], meta);
     let result = {} as ReadResult;
     while (!(result = await device.readData()).eof) {
       if (result.data !== undefined) {

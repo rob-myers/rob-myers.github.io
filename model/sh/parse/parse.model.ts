@@ -203,16 +203,14 @@ export interface FileWithMeta extends File {
  * - `sessionKey`: which session we are running the code in,
  *   - links the code to a table.
  *   - has value `${defaultSessionKey}` if code not run.
- * - `stdIn`: where to read input from, defaults to 'tty'
- * - `stdOut`: where to send output, defaults to 'tty'
+ * - `fd`: mapping from file descriptor to device ket
  */
 export interface BaseMeta {
   sessionKey: string;
   pid: number;
   ppid: number;
   pgid: number;
-  stdIn: string;
-  stdOut: string;
+  fd: Record<number, string>;
 }
 
 export const defaultSessionKey = 'code-has-not-run';

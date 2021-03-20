@@ -1,6 +1,5 @@
 import { testNever } from 'model/generic.model';
 import { Device, ShellIo, SigEnum } from './io/io.model';
-import { FileWithMeta } from './parse/parse.model';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
 import type * as Sh from './parse/parse.model';
 
@@ -95,7 +94,7 @@ export class TtyShell implements Device {
 
   /** Spawn a process, assigning pid to non-leading ones */
   async spawn(
-    parsed: FileWithMeta,
+    parsed: Sh.FileWithMeta,
     opts: { leading?: boolean, posPositionals?: string[] } = {},
   ) {
     const { meta } = parsed;
@@ -112,10 +111,13 @@ export class TtyShell implements Device {
         src: srcService.src(parsed),
         posPositionals: opts.posPositionals || positionals.slice(1),
       });
-      console.warn(ppid, 'launched', meta.pid, useSession.api.getProcess(meta.pid, this.sessionKey));
+      console.warn(ppid, 'launched', meta.pid,
+        useSession.api.getProcess(meta.pid, this.sessionKey),
+        JSON.stringify(meta.fd),
+      );
     }
 
-    const device = useSession.api.resolve(meta.stdOut, meta);
+    const device = useSession.api.resolve(meta.fd[1], meta);
     const generator = semanticsService.File(parsed);
 
     try {
@@ -159,11 +161,14 @@ export class TtyShell implements Device {
             pid: 0,
             ppid: 0,
             pgid: 0,
-            stdIn: this.key,
-            stdOut: this.key,
+            fd: {
+              0: this.key,
+              1: this.key,
+              2: this.key,
+            },
           });
-
           await this.spawn(result.parsed, { leading: true });
+
           this.prompt('$');
           break;
         }

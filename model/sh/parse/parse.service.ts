@@ -18,8 +18,11 @@ class ParseShService {
       pid: -1,
       ppid: -1,
       pgid: -1,
-      stdIn: defaultStdInOut,
-      stdOut: defaultStdInOut,
+      fd: {
+        0: defaultStdInOut,
+        1: defaultStdInOut,
+        2: defaultStdInOut,
+      },
     };
   }
 
