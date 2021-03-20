@@ -57,131 +57,6 @@ const commandKeys = {
 type CommandName = keyof typeof commandKeys;
 
 class CmdService {
-
-  private createStageProxy(stageKey: string) {
-    return new Proxy({}, {
-      get: (_, varName: string) => {
-        if (varName === 'update') {
-          return () => useStage.api.updateStage(stageKey, {});
-        }
-        const stage = useStage.api.getStage(stageKey);
-        return varName in stage ? stage[varName as keyof typeof stage] : undefined;
-      },
-      ownKeys: () => Object.keys(useStage.api.getStage(stageKey)).concat('update'),
-      getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
-    });
-  }
-
-  private createVarProxy(sessionKey: string) {
-    return new Proxy({}, {
-      get: (_, varName: string) => useSession.api.getVar(sessionKey, varName),
-      set: (_, varName: string, value) => {
-        useSession.api.setVar(sessionKey, varName, value);
-        return true;
-      },
-      ownKeys: () => Object.keys(useSession.api.getSession(sessionKey).var),
-      getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
-    });
-  }
-
-  isCmd(word: string): word is CommandName {
-    return word in commandKeys;
-  }
-
-  /** Iterate a never-ending observable e.g. key events or polling */
-  private async *iterateObservable(meta: Sh.BaseMeta, observable: Observable<any>) {
-    const bucket: Bucket<any> = { enabled: true };
-    const generator = asyncIteratorFrom(observable, bucket);
-    useSession.api.mutateProcess(meta, (p) => {
-      p.cleanups.push(() => bucket.promise?.reject(
-        new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
-      p.onSuspend = () => bucket.forget?.();
-      p.onResume = () => bucket.remember?.();
-    });
-    for await (const item of generator) {
-      yield item;
-    }
-  }
-
-  private async *read(
-    { meta }: Sh.CallExpr,
-    act: (data: any) => any,
-  ) {
-    const device = useSession.api.resolve(meta.fd[0], meta);
-    let result = {} as ReadResult;
-
-    while (!(result = await device.readData()).eof) {
-      if (result.data === undefined) {
-        continue;
-      } else if (isDataChunk(result.data)) {
-        let transformed: any, items = [] as any[];
-        for (const item of result.data.items) {
-          transformed = act(item);
-          (transformed !== undefined) && items.push(transformed); 
-        }
-        result.data.items = items;
-        yield result.data; // Forward chunk
-      } else {
-        yield act(result.data);
-      }
-    }
-  }
-
-  // private async *readOnce({ meta }: Sh.CallExpr) {
-  //   const device = useSession.api.resolve(meta.stdIn, meta);
-  //   let result = {} as ReadResult;
-  //   while (!(result = await device.readData(true)).eof) {
-  //     if (result.data !== undefined) {
-  //       yield result.data;
-  //       break;
-  //     }
-  //   }
-  // }
-
-  private async *split({ meta }: Sh.CallExpr) {
-    const device = useSession.api.resolve(meta.fd[0], meta);
-    let result = {} as ReadResult;
-
-    while (!(result = await device.readData()).eof) {
-      if (result.data) {
-        if (isDataChunk(result.data)) {
-          result.data.items = result.data.items.flatMap(x => x);
-          yield result.data;
-        } else if (Array.isArray(result.data)) {
-          yield dataChunk(result.data);
-        } else {
-          yield result.data;
-        }
-      }
-    }
-  }
-
-  private async *splitBy({ meta }: Sh.CallExpr, separator: string) {
-    const device = useSession.api.resolve(meta.fd[0], meta);
-    let result = {} as ReadResult;
-    while (!(result = await device.readData()).eof) {
-      if (result.data !== undefined) {
-        if (isDataChunk(result.data)) {
-          result.data.items = result.data.items
-            .flatMap((x: string) => x.split(separator));
-          yield result.data;
-        } else if (typeof result.data === 'string') {
-          yield dataChunk(result.data.split(separator));
-        } else {
-          throw new ShError(`expected string`, 1);
-        }
-      }
-    }
-  }
-
-  /** JSON.parse with string fallback */
-  private parseArg(x: any) {
-    try {
-      return x === undefined ?  undefined : JSON.parse(x);
-    } catch {
-      return JSON.parse(`"${x}"`)
-    }
-  }
   
   async *runCmd(node: Sh.CallExpr, command: CommandName, args: string[]) {
     const { meta } = node;
@@ -376,6 +251,132 @@ class CmdService {
     } as Sh.BaseMeta);
     await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
+
+  private createStageProxy(stageKey: string) {
+    return new Proxy({}, {
+      get: (_, varName: string) => {
+        if (varName === 'update') {
+          return () => useStage.api.updateStage(stageKey, {});
+        }
+        const stage = useStage.api.getStage(stageKey);
+        return varName in stage ? stage[varName as keyof typeof stage] : undefined;
+      },
+      ownKeys: () => Object.keys(useStage.api.getStage(stageKey)).concat('update'),
+      getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
+    });
+  }
+
+  private createVarProxy(sessionKey: string) {
+    return new Proxy({}, {
+      get: (_, varName: string) => useSession.api.getVar(sessionKey, varName),
+      set: (_, varName: string, value) => {
+        useSession.api.setVar(sessionKey, varName, value);
+        return true;
+      },
+      ownKeys: () => Object.keys(useSession.api.getSession(sessionKey).var),
+      getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
+    });
+  }
+
+  isCmd(word: string): word is CommandName {
+    return word in commandKeys;
+  }
+
+  /** Iterate a never-ending observable e.g. key events or polling */
+  private async *iterateObservable(meta: Sh.BaseMeta, observable: Observable<any>) {
+    const bucket: Bucket<any> = { enabled: true };
+    const generator = asyncIteratorFrom(observable, bucket);
+    useSession.api.mutateProcess(meta, (p) => {
+      p.cleanups.push(() => bucket.promise?.reject(
+        new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
+      p.onSuspend = () => bucket.forget?.();
+      p.onResume = () => bucket.remember?.();
+    });
+    for await (const item of generator) {
+      yield item;
+    }
+  }
+
+  private async *read(
+    { meta }: Sh.CallExpr,
+    act: (data: any) => any,
+  ) {
+    const device = useSession.api.resolve(meta.fd[0], meta);
+    let result = {} as ReadResult;
+
+    while (!(result = await device.readData()).eof) {
+      if (result.data === undefined) {
+        continue;
+      } else if (isDataChunk(result.data)) {
+        let transformed: any, items = [] as any[];
+        for (const item of result.data.items) {
+          transformed = act(item);
+          (transformed !== undefined) && items.push(transformed); 
+        }
+        result.data.items = items;
+        yield result.data; // Forward chunk
+      } else {
+        yield act(result.data);
+      }
+    }
+  }
+
+  // private async *readOnce({ meta }: Sh.CallExpr) {
+  //   const device = useSession.api.resolve(meta.stdIn, meta);
+  //   let result = {} as ReadResult;
+  //   while (!(result = await device.readData(true)).eof) {
+  //     if (result.data !== undefined) {
+  //       yield result.data;
+  //       break;
+  //     }
+  //   }
+  // }
+
+  private async *split({ meta }: Sh.CallExpr) {
+    const device = useSession.api.resolve(meta.fd[0], meta);
+    let result = {} as ReadResult;
+
+    while (!(result = await device.readData()).eof) {
+      if (result.data) {
+        if (isDataChunk(result.data)) {
+          result.data.items = result.data.items.flatMap(x => x);
+          yield result.data;
+        } else if (Array.isArray(result.data)) {
+          yield dataChunk(result.data);
+        } else {
+          yield result.data;
+        }
+      }
+    }
+  }
+
+  private async *splitBy({ meta }: Sh.CallExpr, separator: string) {
+    const device = useSession.api.resolve(meta.fd[0], meta);
+    let result = {} as ReadResult;
+    while (!(result = await device.readData()).eof) {
+      if (result.data !== undefined) {
+        if (isDataChunk(result.data)) {
+          result.data.items = result.data.items
+            .flatMap((x: string) => x.split(separator));
+          yield result.data;
+        } else if (typeof result.data === 'string') {
+          yield dataChunk(result.data.split(separator));
+        } else {
+          throw new ShError(`expected string`, 1);
+        }
+      }
+    }
+  }
+
+  /** JSON.parse with string fallback */
+  private parseArg(x: any) {
+    try {
+      return x === undefined ?  undefined : JSON.parse(x);
+    } catch {
+      return JSON.parse(`"${x}"`)
+    }
+  }
+  
 }
 
 export const cmdService = new CmdService;
