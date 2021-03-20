@@ -31,10 +31,6 @@ export type State = {
       src: string;
       posPositionals?: string[];
     }) => ProcessMeta;
-    mutateProcess: (
-      meta: BaseMeta,
-      mutator: Partial<ProcessMeta> | ((process: ProcessMeta) => void),
-    ) => void;
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
     createVarDevice: (sessionKey: string, varName: string) => VarDevice;
     ensurePersisted: (sessionKey: string) => PersistedSession;
@@ -272,15 +268,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     setVar: async (sessionKey, varName, varValue) => {
       api.getSession(sessionKey).var[varName] = varValue; // Mutate
-    },
-
-    mutateProcess: (meta, mutator) => {// Mutate
-      const process = get().session[meta.sessionKey].process[meta.pid];
-      if (typeof mutator === 'function') {
-        mutator(process);
-      } else {
-        Object.assign(process, mutator);
-      }
     },
 
     warn: (sessionKey, msg) => {

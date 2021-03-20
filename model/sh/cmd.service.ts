@@ -1,7 +1,7 @@
 import { interval, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
-import { pause, testNever, truncate } from 'model/generic.model';
+import { testNever, truncate } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 
 import type * as Sh from './parse/parse.model';
@@ -60,7 +60,7 @@ class CmdService {
       case 'call': {
         const func = Function('_', `return ${args[0]}`);
         yield await func()(
-          // TODO getter/setter proxy 
+          this.provideStageAndVars(meta),
           ...args.slice(1),
         );
         break;
@@ -178,17 +178,13 @@ class CmdService {
         }
         break;
       }
-      case 'run': {
-        // e.g. await '({ read }) { yield "foo"; yield await read(); }'
+      case 'run': {// e.g. await '({ read }) { yield "foo"; yield await read(); }'
         const func = Function('_', `return async function *generator ${args[0]}`);
-        const iterator = func()(
+        yield* func()(
           this.provideJsApi(meta),
+          this.provideStageAndVars(meta),
           ...args.slice(1),
         );
-        useSession.api.addCleanup(meta, () => {
-          iterator.throw();
-        });
-        yield* iterator;
         break;
       }
       case 'set': {
@@ -249,41 +245,31 @@ class CmdService {
 
   private provideJsApi(meta: Sh.BaseMeta) {
     return {
-      read: () => this.readOnce(meta),
+      // For js API convert { eof: true } to null, for truthy test
+      read: async () => {
+        const result = await this.readOnce(meta);
+        return result.eof ? null : result;
+      },
       sleep: (seconds: number) => new Promise<void>((resolve, reject) => {
         setTimeout(resolve, seconds * 1000);
         useSession.api.addCleanup(meta, () => reject(
           new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)
         ));
       }),
+      /** Trick to provide local variable via destructuring */
+      _: undefined,
     };
   }
 
-  // private createStageProxy(stageKey: string) {
-  //   return new Proxy({}, {
-  //     get: (_, varName: string) => {
-  //       if (varName === 'update') {
-  //         return () => useStage.api.updateStage(stageKey, {});
-  //       }
-  //       const stage = useStage.api.getStage(stageKey);
-  //       return varName in stage ? stage[varName as keyof typeof stage] : undefined;
-  //     },
-  //     ownKeys: () => Object.keys(useStage.api.getStage(stageKey)).concat('update'),
-  //     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
-  //   });
-  // }
-
-  // private createVarProxy(sessionKey: string) {
-  //   return new Proxy({}, {
-  //     get: (_, varName: string) => useSession.api.getVar(sessionKey, varName),
-  //     set: (_, varName: string, value) => {
-  //       useSession.api.setVar(sessionKey, varName, value);
-  //       return true;
-  //     },
-  //     ownKeys: () => Object.keys(useSession.api.getSession(sessionKey).var),
-  //     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
-  //   });
-  // }
+  private provideStageAndVars(meta: Sh.BaseMeta) {
+    const stage = useStage.api.getStage(meta.sessionKey);
+    const varLookup = useSession.api.getSession(meta.sessionKey).var;
+    return {
+      ...stage,
+      var: varLookup,
+      update: () => useStage.api.updateStage(meta.sessionKey, {}),
+    };
+  }
 
   isCmd(word: string): word is CommandName {
     return word in commandKeys;
@@ -292,23 +278,20 @@ class CmdService {
   /** Iterate a never-ending observable e.g. key events or polling */
   private async *iterateObservable(meta: Sh.BaseMeta, observable: Observable<any>) {
     const bucket: Bucket<any> = { enabled: true };
-    const generator = asyncIteratorFrom(observable, bucket);
-    useSession.api.mutateProcess(meta, (p) => {
-      p.cleanups.push(() => bucket.promise?.reject(
-        new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
-      p.onSuspend = () => bucket.forget?.();
-      p.onResume = () => bucket.remember?.();
-    });
-    for await (const item of generator) {
-      yield item;
-    }
+    const iterator = asyncIteratorFrom(observable, bucket);
+    const process = useSession.api.getProcess(meta);
+    process.cleanups.push(() => bucket.promise?.reject(
+      new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
+    process.onSuspend = () => bucket.forget?.();
+    process.onResume = () => bucket.remember?.();
+    yield* iterator;
   }
 
   private async *readLoop(
     meta: Sh.BaseMeta,
     body: (res: ReadResult) => any,
     /** Read exactly one item of data? */
-    once = false
+    once = false,
   ) {
     const process = useSession.api.getProcess(meta);
     const device = useSession.api.resolve(0, meta);

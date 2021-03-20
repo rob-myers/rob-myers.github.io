@@ -8,21 +8,16 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Remove `cat`: use `get` and `set` instead
-  > Could add `cat` back in as a function
-
-- Better support for multiline history
-  - BUG: trying running command from intermediate line
-  - BUG: extra character at end of lines
-
-- Can create ui plugin using shell, changing `SelectRect` on key events.
+- Can interface with process group via UI
 - Have layers with tagged multipolygons
 - Blender models can be stored
 - Can create walls
 
-- force `while` to be guarded; add `break` and `continue`
+- Add `cat` back in as a function
+- Better support for multiline history
+  - BUG: trying running command from intermediate line
+  - BUG: extra character at end of lines
 - folders for variables corresponding to object
-- keep e.g. `set /brush/sides 4` and make it safer
 
 - Try building a low poly character in blender
 - Beginners guide:
@@ -37,8 +32,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
   > https://eiriksm.dev/walkthrough-github-comments
 - Must navigate to GitHub to actually post comments
 
-- Create basic text editor using Prism shell highlighting,
-  so can write functions and 'scripts'
+- Basic text editor using Prism shell highlighting, for coding/scripts/funcs
 
 ### DONE
 
@@ -67,3 +61,4 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ Use `meta.fd` rather than 'stdOut' and 'stdIn'
 ✅ Exactly one place `.readData` and exactly one place where `.writeData`.
 ✅ Stop using device proxy i.e. guard `.readData`/`.writeData`
+✅ Complete code modifying `brush` on key events.

@@ -1,29 +1,7 @@
+## Hodgepodge
+
+
 ```sh
-
-# TODO better approach to `set`
-# e.g. auto-update, support cycling between choices
-
-brush_keys_fn='({ event, key }) =>
-  event === "keydown" && /^[s3-9]$/.test(key) ? key : undefined'
-
-key | map "${brush_keys_fn}" |
-  while read brush_key; do
-    test /[3-9]/ ${brush_key} && set /brush/sides "${sides}"
-    test /s/ ${brush_key} && set /brush/shape {poly,rect}
-  done &
-
-key |
-  map "${brush_keys_fn}" |
-  run '({ read }, { stage: { brush } }) {
-    let data;
-    while (!(data = await read()).eof) {
-      /[3-9]/.test(key) && (brush.sides = Number(key));
-      /s/.test(key) && (brush.shape =
-        ["rect", "poly"].find(x => x !== brush.shape)
-      );
-    }
-  }' &
-
 run '({ read, sleep }) {
   yield "foo"
   await sleep(5)
@@ -31,16 +9,20 @@ run '({ read, sleep }) {
 }'
 ```
 
-```ts
-({ read }, { stage: { brush } }) {
-    let data;
-    while (!(data = await read()).eof) {
+## UI Pipelines
+
+```sh
+key |
+  map "${brush_keys_fn}" |
+  run '({ read, _: key }, { brush, update }) {
+    while (key = await read()) {
       /[3-9]/.test(key) && (brush.sides = Number(key));
       /s/.test(key) && (brush.shape =
         ["rect", "poly"].find(x => x !== brush.shape)
       );
+      update();
     }
-  }
+  }' &
 ```
 
 ## Library
@@ -83,4 +65,11 @@ flatten () {
   map 'x => Array.isArray(x) ? x.flatMap(y => y) : x'
 }
 
+```
+
+## Variables
+
+```sh
+brush_keys_fn='({ event, key }) =>
+  event === "keydown" && /^[s3-9]$/.test(key) ? key : undefined'
 ```

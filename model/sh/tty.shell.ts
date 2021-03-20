@@ -10,7 +10,7 @@ import { wrapInFile } from './parse/parse.util';
 import { semanticsService } from './semantics.service';
 import { TtyXterm } from './tty.xterm';
 import { ProcessError } from './sh.util';
-import { preloadedFunctions } from './functions';
+import { preloadedFunctions, preloadedVariables } from './functions';
 
 export class TtyShell implements Device {
 
@@ -48,9 +48,9 @@ export class TtyShell implements Device {
     this.prompt('$');
 
     if (parseService.parse!) {
-      this.addPreloadedFunctions();
+      this.addPreloadedFuncsVars();
     } else {
-      initializers.push(() => this.addPreloadedFunctions());
+      initializers.push(() => this.addPreloadedFuncsVars());
     }
   }
 
@@ -186,12 +186,15 @@ export class TtyShell implements Device {
     }
   }
 
-  private addPreloadedFunctions() {
+  private addPreloadedFuncsVars() {
     for (const [funcName, funcBody] of Object.entries(preloadedFunctions)) {
       const parsed = parseService.parse(`${funcName} () ${funcBody.trim()}`);
       const parsedBody = (parsed.Stmts[0].Cmd as Sh.FuncDecl).Body;
       const wrappedBody = wrapInFile(parsedBody);
       useSession.api.addFunc(this.sessionKey, funcName, wrappedBody);
+    }
+    for (const [varName, varValue] of Object.entries(preloadedVariables)) {
+      useSession.api.setVar(this.sessionKey, varName, varValue.trim());
     }
   }
 
