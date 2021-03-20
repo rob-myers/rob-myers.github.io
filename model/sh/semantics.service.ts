@@ -9,7 +9,7 @@ import { expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, 
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
 import { RedirectDef, SigEnum } from './io/io.model';
-import { cloneParsed, wrapInFile, wrapInStmt } from './parse/parse.util';
+import { cloneParsed, wrapInFile } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
 class SemanticsService {
@@ -342,7 +342,7 @@ class SemanticsService {
         break;
       }
       case 'CmdSubst': {
-        const cloned = wrapInFile(wrapInStmt(cloneParsed(node)));
+        const cloned = wrapInFile(cloneParsed(node));
         const fifoKey = `/dev/fifo-cmd-${shortid.generate()}`;
         const device = useSession.api.createFifo(fifoKey);
         cloned.meta.fd[1] = device.key;
@@ -433,13 +433,12 @@ class SemanticsService {
       throw new ShError('pure redirects are unsupported', 2);
     } else if (stmt.Background) {
       /**
-       * Run a background process.
+       * Run a background process without awaiting.
        */
       const { ttyShell } = useSession.api.getSession(stmt.meta.sessionKey);
       const file = wrapInFile(Object.assign(cloneParsed(stmt), { Background: false } as Sh.Stmt));
       file.meta.ppid = stmt.meta.pid;
       file.meta.pgid = useSession.api.getSession(stmt.meta.sessionKey).nextPid;
-      // Don't await
       ttyShell.spawn(file)
         .then(() => console.warn(`background: ${file.meta.pid}: terminated`))
         .catch((e) => {

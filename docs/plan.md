@@ -9,7 +9,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ### TODO
 
 - Redo file descriptors
-  > Use `fromFd` rather than 'stdOut' and 'stdIn'
+  > Use `meta.fd` rather than 'stdOut' and 'stdIn'
   > Each process has a special device handling writes and process events
   > A process should terminate when it tries to read/write to closed fd.
 

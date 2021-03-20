@@ -144,28 +144,15 @@ export function withParents<T extends Sh.ParsedSh>(root: T) {
 }
 
 /**
- * Convert statement to a FileWithMeta so it
- * can be used to drive a process.
+ * Convert node to a FileWithMeta,
+ * so it can be used to drive a process.
  */
-export function wrapInFile(node: Sh.Stmt): Sh.FileWithMeta {
+export function wrapInFile(node: Sh.Stmt | Sh.CmdSubst): Sh.FileWithMeta {
   return {
     type: 'File',
-    Stmts: [node],
+    Stmts: node.type === 'Stmt'
+      ? [node]
+      : node.Stmts,
     meta: node.meta,
   } as Sh.FileWithMeta;
-}
-
-export function wrapInStmt(node: Sh.WordPart): Sh.Stmt {
-  return {
-    type: 'Stmt',
-    Background: false,
-    meta: node.meta,
-    Cmd: {
-      type: 'CallExpr',
-      Args: [{
-        type: 'Word',
-        Parts: [node],
-      } as Sh.Word],
-    } as Sh.CallExpr,
-  } as Sh.Stmt;
 }
