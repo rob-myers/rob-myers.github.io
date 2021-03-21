@@ -23,7 +23,7 @@ async function* coroutine<T>(
   source: Observable<T>,
   bucket: Bucket<T>,
 ) {
-  const deferreds = [] as Deferred<IteratorResult<T>>[];
+  let deferred = null as null | Deferred<IteratorResult<T>>;
   const values: T[] = [];
   let hasError = false;
   let error: any = null;
@@ -33,8 +33,8 @@ async function* coroutine<T>(
     next: value => {
       if (!bucket.enabled) {
         return;
-      } else if (deferreds.length > 0) {
-        deferreds.shift()!.resolve({ value, done: false });
+      } else if (deferred) {
+        deferred.resolve({ value, done: false });
       } else {
         values.push(value);
       }
@@ -42,15 +42,11 @@ async function* coroutine<T>(
     error: err => {
       hasError = true;
       error = err;
-      while (deferreds.length > 0) {
-        deferreds.shift()!.reject(err);
-      }
+      deferred?.reject(err);
     },
     complete: () => {
       completed = true;
-      while (deferreds.length > 0) {
-        deferreds.shift()!.resolve({ value: undefined, done: true });
-      }
+      deferred?.resolve({ value: undefined, done: true });
     },
   });
 
@@ -63,9 +59,8 @@ async function* coroutine<T>(
       } else if (hasError) {
         throw error;
       } else {
-        const d = bucket.promise = new Deferred<IteratorResult<T>>();
-        deferreds.push(d);
-        const result = await d.promise;
+        deferred = bucket.promise = new Deferred<IteratorResult<T>>();
+        const result = await deferred.promise;
         if (result.done) {
           return;
         } else {

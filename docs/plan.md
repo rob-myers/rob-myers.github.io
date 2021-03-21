@@ -8,7 +8,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Replace `key` and `poll` with simpler code
+- How do `key` and `poll` work; can they be simplified?
 - Have layers with tagged multipolygons
 - Blender models can be stored
 - Can create walls
