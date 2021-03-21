@@ -8,7 +8,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Can interface with process group via UI
+- Replace `key` and `poll` with simpler code
 - Have layers with tagged multipolygons
 - Blender models can be stored
 - Can create walls
@@ -33,6 +33,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 - Must navigate to GitHub to actually post comments
 
 - Basic text editor using Prism shell highlighting, for coding/scripts/funcs
+- Can interface with process group via UI
 
 ### DONE
 

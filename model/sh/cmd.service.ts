@@ -152,8 +152,13 @@ class CmdService {
         break;
       }
       case 'ls': {
-        const kvPairs = useSession.api.getVars(meta.sessionKey);
-        for (const { key, value: _ } of kvPairs) yield key;
+        const { stage, var: v } = this.provideStageAndVars(meta);
+        for (const [varName, varValue] of Object.entries(v)) {
+          yield `var/${varName} (${typeof varValue})`;
+        }
+        for (const [key, value] of Object.entries(stage)) {
+          yield `stage/${key} (${typeof value})`;
+        }
         break;
       }
       case 'poll': {
@@ -256,17 +261,15 @@ class CmdService {
           new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)
         ));
       }),
-      /** Trick to provide local variable via destructuring */
-      _: undefined,
+      /** Trick to provide local variables via destructuring */
+      _: {},
     };
   }
 
   private provideStageAndVars(meta: Sh.BaseMeta) {
-    const stage = useStage.api.getStage(meta.sessionKey);
-    const varLookup = useSession.api.getSession(meta.sessionKey).var;
     return {
-      ...stage,
-      var: varLookup,
+      stage: useStage.api.getStage(meta.sessionKey),
+      var: useSession.api.getSession(meta.sessionKey).var,
       update: () => useStage.api.updateStage(meta.sessionKey, {}),
     };
   }

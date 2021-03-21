@@ -1,7 +1,7 @@
 export const preloadedFunctions = {
   range: `
 {
-  call '(x) => [...Array(Number(x))].map((_, i) => i)' "$1"
+  call '(_, x) => [...Array(Number(x))].map((_, i) => i)' "$1"
 }`,
   seq: `
 {
@@ -14,10 +14,10 @@ export const preloadedFunctions = {
   /** We don't support backticks in the argument */
   jarg: `
 {
-  call "() => {
-    try { return Function('_', \\\`return \${1:-\\"\\"}\\\` )(); }
-    catch { return JSON.stringify(\\\`$1\\\`); }
-  }"
+  call '() => {
+    try { return Function("_", \`return '\${1:-\\"\\"}'\` )(); }
+    catch { return JSON.stringify(\`'$1'\`); }
+  }'
 }
 `,
   reduce: `

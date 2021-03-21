@@ -14,12 +14,11 @@ run '({ read, sleep }) {
 ```sh
 key |
   map "${brush_keys_fn}" |
-  run '({ read, _: key }, { brush, update }) {
+  run '({ read, _: {key} }, { stage: {brush}, update }) {
     while (key = await read()) {
       /[3-9]/.test(key) && (brush.sides = Number(key));
       /s/.test(key) && (brush.shape =
-        ["rect", "poly"].find(x => x !== brush.shape)
-      );
+        ["rect", "poly"].find(x => x !== brush.shape));
       update();
     }
   }' &
@@ -45,10 +44,10 @@ filter () {
 
 # Interpret text as JS, falling back to string
 jarg () {
-  call "() => {
-    try { return Function('_', \\\`return \${1:-\\"\\"}\\\` )(); }
-    catch { return JSON.stringify(\\\`$1\\\`); }
-  }"
+  call '() => {
+    try { return Function("_", \`return '\${1:-\\"\\"}'\` )(); }
+    catch { return JSON.stringify(\`'$1'\`); }
+  }'
 }
 
 # reduce over all inputs
