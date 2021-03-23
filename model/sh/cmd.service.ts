@@ -263,6 +263,7 @@ class CmdService {
       }),
       /** Trick to provide local variables via destructuring */
       _: {},
+      update: () => useStage.api.updateStage(meta.sessionKey, {}),
     };
   }
 
@@ -270,7 +271,6 @@ class CmdService {
     return {
       stage: useStage.api.getStage(meta.sessionKey),
       var: useSession.api.getSession(meta.sessionKey).var,
-      update: () => useStage.api.updateStage(meta.sessionKey, {}),
     };
   }
 

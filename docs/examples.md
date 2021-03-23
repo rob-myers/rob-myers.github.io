@@ -3,7 +3,7 @@
 ```sh
 key |
   map "${brush_keys_fn}" |
-  run '({ read, _: {key} }, { stage: {brush}, update }) {
+  run '({ read, _: {key}, update }, { stage: {brush} }) {
     while (key = await read()) {
       /[3-9]/.test(key) && (brush.sides = Number(key));
       /s/.test(key) && (brush.shape =

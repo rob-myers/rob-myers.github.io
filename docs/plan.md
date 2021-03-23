@@ -12,6 +12,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 - Start writing post / decide on blog format
 
+- `ps -a` shows full process src
 - How do `key` and `poll` work; can they be simplified?
 - Make a blender model and import it
 - Add `cat` back in as a function
