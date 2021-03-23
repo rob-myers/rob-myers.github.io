@@ -106,18 +106,21 @@ const useStore = create<State>(devtools((set, get) => ({
         polys.flatMap(x => geomService.outset(x, outsetAmount)),
         [Geom.Polygon.fromRect(floor)],
       );
-      const navMesh = geomService.navPolysToMesh(navPolys);
+      const navMesh = geomService.polysToMesh(
+        navPolys,
+        new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
+      );
       // Only supports one nav mesh at a time
       recastService.createNavMesh(navMesh);
     },
 
     requestNavPath: (src: Geom.VectorJson, dst: Geom.VectorJson) => {
       try {
-        const src3 = new THREE.Vector3(src.x, 0, src.y);
-        const dst3 = new THREE.Vector3(dst.x, 0, dst.y);
+        const src3 = new THREE.Vector3(src.x, src.y);
+        const dst3 = new THREE.Vector3(dst.x, dst.y);
         const navPath = recastService.computePath(src3, dst3);
         return geomService.removePathReps(
-          [src].concat(navPath.map(({ x, z }) => ({ x, y: z }))));
+          [src].concat(navPath.map(({ x, y }) => ({ x, y }))));
         
       } catch (e) {
         console.error('nav error', e);

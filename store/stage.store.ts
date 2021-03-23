@@ -3,10 +3,10 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import * as Geom from 'model/geom';
-import { deepClone, KeyedLookup } from 'model/generic.model';
+import { KeyedLookup } from 'model/generic.model';
 import { addToLookup, CustomUpdater, removeFromLookup, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
-import { BrushMeta, computeBrushGeom, defaultBrushMeta, PersistedStage, StageLayer, StoredStage } from 'model/stage/stage.model';
+import { BrushMeta, createDefaultBrushMeta, PersistedStage, StageLayer, StoredStage } from 'model/stage/stage.model';
 
 export type State = {
   stage: KeyedLookup<StoredStage>;
@@ -53,7 +53,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       stage: addToLookup({
         key: stageKey,
         camEnabled: true,
-        brush: deepClone(defaultBrushMeta),
+        brush: createDefaultBrushMeta(),
         keyEvents: new Subject,
         layer: {
           default: {
@@ -82,12 +82,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     })),
 
     updateBrush: (stageKey, updates) => {
-      const group = updates.group || get().api.getBrush(stageKey).group;
+      // const group = updates.group || get().api.getBrush(stageKey).group;
       get().api.updateStage(stageKey, ({ brush }) => ({
         brush: {
           ...brush,
           ...updates,
-          ...group && computeBrushGeom(group),
+          // ...group && computeBrushGeom(group),
         },
       }));
       console.warn('updated brush', get().api.getBrush(stageKey).polygon);

@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Subject } from "rxjs";
-import THREE, { Vector3 } from "three";
+import THREE, { DoubleSide, Vector3 } from "three";
 
 import { VectorJson } from "model/geom";
 import { ndCoordsToGroundPlane, vectAccuracy } from "model/3d/three.model";
 import { brushPolyName, brushRectName, StoredStage } from "model/stage/stage.model";
-import useStage from "store/stage.store";
+import { geomService } from "model/geom.service";
 
 const Brush: React.FC<Props> = ({ wire, stage }) => {
   const root = useRef<THREE.Group>(null);
@@ -14,17 +14,18 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const current = useRef(new Vector3).current;
   /** Ground position of last pointer down  */
   const initial = useRef(new Vector3).current;
-  /** Should we update the selection rectangle?  */
+  /** Should we update the brush?  */
   const active = useRef(false);
   const [everUsed, setEverUsed] = useState(false);
   
   useEffect(() => {
-    useStage.api.updateBrush(stage.key, { group: root.current! });
+    // useStage.api.updateBrush(stage.key, { group: root.current! });
 
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (key === 'pointerleave' || key === 'pointerup') {
-        if (active.current && root.current) {
-          useStage.api.updateBrush(stage.key, { group: root.current });
+        if (active.current && root.current) {// Sync the state
+          stage.brush.position.copy(root.current.position);
+          stage.brush.scale.copy(root.current.scale);
         }
         active.current = false;
       } else if (key === 'pointerdown') {
@@ -48,18 +49,27 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
       }
     });
     return () => {
-      useStage.api.updateBrush(stage.key, { group: null });
+      // useStage.api.updateBrush(stage.key, { group: null });
       sub.unsubscribe();
     };
   }, [everUsed]);
 
-  const meta = stage.brush;
-  let rectOpacity = 0.2, polyOpacity = 0.1, polyColor = '#000';
-  let rectColor = '#00f';
-  if (meta.shape === 'poly') {
-    [rectColor, polyColor] = [polyColor, rectColor];
-    [rectOpacity, polyOpacity] = [polyOpacity, rectOpacity];
-  }
+  const brush = stage.brush;
+
+  const { rectOpacity, rectColor, polyOpacity, polyColor } = useMemo(() => {
+    let rectOpacity = 0.2, polyOpacity = 0.1;
+    let rectColor = '#00f', polyColor = '#000';
+    if (brush.shape === 'poly') {
+      [rectColor, polyColor] = [polyColor, rectColor];
+      [rectOpacity, polyOpacity] = [polyOpacity, rectOpacity];
+    }
+    return { rectOpacity, rectColor, polyOpacity, polyColor };
+  }, [brush.shape]);
+
+  const polyGeom = useMemo(() => {
+    console.log({ polygon: brush.polygon })
+    return geomService.polysToGeometry([brush.polygon]).toBufferGeometry();
+  }, [brush.polygon]);
 
   return (
     <group ref={root} visible={everUsed}>
@@ -67,9 +77,8 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         <planeBufferGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color={rectColor} transparent opacity={rectOpacity} />
       </mesh>
-      <mesh name={brushPolyName} scale={[0.5, 0.5, 0.5]} rotation={[0, 0, 0]}>
-        <meshStandardMaterial color={polyColor} transparent opacity={polyOpacity} />
-        <circleBufferGeometry args={[1, meta.sides]} />
+      <mesh name={brushPolyName} geometry={polyGeom}>
+        <meshStandardMaterial side={DoubleSide} color={polyColor} transparent opacity={polyOpacity} />
       </mesh>
     </group>
   );

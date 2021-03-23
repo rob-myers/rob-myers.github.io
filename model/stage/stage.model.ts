@@ -2,7 +2,7 @@ import { Subject } from "rxjs";
 import { Vector3, Scene } from "three";
 import * as Geom from 'model/geom';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
-import { KeyedLookup } from "../generic.model";
+import { KeyedLookup, range } from "../generic.model";
 import { geomService } from "../geom.service";
 
 export type StoredStage = {
@@ -31,18 +31,30 @@ export const initCameraPos = new Vector3(0, 0, 10);
 export interface BrushMeta {
   shape: 'rect' | 'poly';
   sides: number;
-  bounds: Geom.Rect,
+  /** The untransformed brush rect */
+  rect: Geom.Rect;
+  /** The untransformed brush poly */
   polygon: Geom.Polygon;
-  /** Attached on mount */
-  group: null | THREE.Group;
+  /** Mutated by Brush */
+  position: Geom.Vector;
+  /** Mutated by Brush */
+  scale: Geom.Vector;
 }
 
-export const defaultBrushMeta: BrushMeta = {
-  shape: 'rect',
-  sides: 6,
-  bounds: new Geom.Rect(0, 0, 0, 0),
-  polygon: new Geom.Polygon,
-  group: null,
+export function createDefaultBrushMeta(): BrushMeta {
+  return {
+    shape: 'rect',
+    sides: 6,
+    rect: Geom.Rect.from({ x: -0.5, y: -0.5, width: 1, height: 1 }),
+    polygon: Geom.Polygon.from({
+      outline: range(6).map((i) => ({
+        x: 0.5 * Math.cos(2 * i * Math.PI / 6),
+        y: 0.5 * Math.sin(2 * i * Math.PI / 6),
+      })),
+    }),
+    position: Geom.Vector.from({ x: 0, y: 0 }),
+    scale: Geom.Vector.from({ x: 1, y: 1 }),
+  };
 };
 
 export interface StageKeyEvent {

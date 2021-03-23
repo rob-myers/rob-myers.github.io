@@ -78,6 +78,7 @@ class GeomService {
 
   /** Join disjoint triangulations */
   joinTriangulations(decomps: { vs: Geom.Vector[]; tris: Triple<number>[] }[]) {
+    if (decomps.length === 1) return decomps[0];
     const vs = [] as Geom.Vector[];
     const tris = [] as Triple<number>[];
     let offset = 0;
@@ -229,20 +230,20 @@ class GeomService {
     return geometry.toBufferGeometry();
   }
 
-  navPolysToMesh(navPolys: Geom.Polygon[]): THREE.Mesh {
-    const decomps = navPolys.map(p => p.qualityTriangulate());
+  polysToGeometry(polygons: Geom.Polygon[]) {
+    const decomps = polygons.map(p => p.qualityTriangulate());
     const all = this.joinTriangulations(decomps);
-
-    const geometry = new Geometry();
-    geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, 0, p.y)));
+    const geometry = new Geometry;
+    geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, 0)));
     geometry.faces.push(...all.tris.map(tri => new Face3(tri[2], tri[1], tri[0])));
     geometry.computeVertexNormals();
     geometry.computeFaceNormals();
+    return geometry;
+  }
 
-    return new Mesh(
-      geometry.toBufferGeometry(),
-      new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
-    );
+  polysToMesh(polygons: Geom.Polygon[], material: THREE.Material): THREE.Mesh {
+    const geometry = this.polysToGeometry(polygons);
+    return new Mesh(geometry.toBufferGeometry(), material);
   }
 
   /**
