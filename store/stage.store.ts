@@ -13,9 +13,8 @@ export type State = {
   persist: KeyedLookup<PersistedStage>;
 
   readonly api: {
-    addWalls: (stageKey: string, walls: WallDef[], opts: {
-      cutOut?: boolean;
-    }) => void;
+    addWalls: (stageKey: string, walls: WallDef[], opts: { cutOut?: boolean }) => void;
+    applyBrush: (stageKey: string, opts: { layer?: string; erase?: boolean }) => void;
     createStage: (stageKey: string) => void;
     getBrush: (stageKey: string) => BrushMeta;
     getLayer: (stageKey: string, layerKey: string) => StageLayer;
@@ -47,6 +46,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         ? geomService.cutOut(delta, prev)
         : geomService.union(prev.concat(delta));
       api.updateLayer(stageKey, layerKey, { polygons: wallPolys });
+    },
+
+    applyBrush: (stageKey, opts) => {
+      console.warn("useBrush", stageKey, opts);
     },
 
     createStage: (stageKey) => set(({ stage }) => ({
@@ -91,7 +94,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           },
         },
       }));
-      console.warn('updated brush', get().api.getBrush(stageKey).polygon);
     },
 
     updateLayer: (stageKey, layerKey, updates) => {
@@ -113,6 +115,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         ),
       }));
     },
+
   },
 }), {
   name: 'stage',

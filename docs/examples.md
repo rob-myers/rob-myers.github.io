@@ -10,9 +10,9 @@ key |
       } else if (key === "s") {
         brush.shape = ["rect", "poly"].find(x => x !== brush.shape);
       } else if (key === "a") {
-        console.warn("add", brush.polygon, brush.bounds);
+        brush.paint();
       } else if (key === "d") {
-        console.warn("delete", brush.polygon, brush.bounds);
+        brush.erase();
       }
     }
   }' &

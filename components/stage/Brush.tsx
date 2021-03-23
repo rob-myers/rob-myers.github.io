@@ -19,8 +19,6 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const [everUsed, setEverUsed] = useState(false);
   
   useEffect(() => {
-    // useStage.api.updateBrush(stage.key, { group: root.current! });
-
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (key === 'pointerleave' || key === 'pointerup') {
         if (active.current && root.current) {// Sync the state
@@ -49,12 +47,11 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
       }
     });
     return () => {
-      // useStage.api.updateBrush(stage.key, { group: null });
       sub.unsubscribe();
     };
   }, [everUsed]);
 
-  const brush = stage.brush;
+  const { brush } = stage;
 
   const { rectOpacity, rectColor, polyOpacity, polyColor } = useMemo(() =>
     computeBrushStyles(brush.shape)
