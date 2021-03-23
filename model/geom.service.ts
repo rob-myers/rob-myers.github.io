@@ -115,6 +115,11 @@ class GeomService {
     return (d1x * (p1y - p0y) - d1y * (p1x - p0x)) / (d0y * d1x - d1y * d0x);
   }
 
+  getVertices(mesh: THREE.Mesh) {
+    const { vertices } = this.toThreeGeometry(mesh.geometry);
+    return vertices.map(p => mesh.localToWorld(p));
+  }
+
   /** Assume `poly` is an island and all edges are segments */
   inset(poly: Geom.Polygon, amount: number): Geom.Polygon[] {
     if (amount === 0) {

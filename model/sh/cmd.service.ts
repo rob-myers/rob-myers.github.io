@@ -3,9 +3,10 @@ import { map, startWith } from 'rxjs/operators';
 
 import { testNever, truncate } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
+import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
-import { NamedFunction } from "./var.model";
+import { NamedFunction } from './var.model';
 import { getProcessStatusIcon, ReadResult, SigEnum, dataChunk, isDataChunk, Device, preProcessRead } from './io/io.model';
 import { ProcessError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
@@ -269,7 +270,7 @@ class CmdService {
 
   private provideStageAndVars(meta: Sh.BaseMeta) {
     return {
-      stage: useStage.api.getStage(meta.sessionKey),
+      stage: createStageProxy(meta.sessionKey),
       var: useSession.api.getSession(meta.sessionKey).var,
     };
   }

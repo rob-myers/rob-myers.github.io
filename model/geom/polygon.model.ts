@@ -118,7 +118,7 @@ export class Polygon {
     return { vs: this.allPoints, tris: indexTriples };
   }
 
-  static from(input: PolygonJson | GeoJsonPolygon['coordinates']) {
+  static from(input: Partial<PolygonJson> | GeoJsonPolygon['coordinates']) {
     if (input instanceof Array) {
       return new Polygon(
         input[0].map(([x, y]) => new Vector(x, y)),
@@ -126,8 +126,8 @@ export class Polygon {
       );
     }
     return new Polygon(
-      input.outline.map(p => Vector.from(p)),
-      input.holes.map(hole => hole.map(p => Vector.from(p))),
+      (input.outline || []).map(p => Vector.from(p)),
+      (input.holes || []).map(hole => hole.map(p => Vector.from(p))),
     );
   }
 

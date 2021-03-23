@@ -6,7 +6,7 @@ import * as Geom from 'model/geom';
 import { deepClone, KeyedLookup } from 'model/generic.model';
 import { addToLookup, CustomUpdater, removeFromLookup, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
-import { defaultBrushMeta, PersistedStage, StageLayer, StoredStage } from 'model/stage.model';
+import { BrushMeta, computeBrushGeom, defaultBrushMeta, PersistedStage, StageLayer, StoredStage } from 'model/stage/stage.model';
 
 export type State = {
   stage: KeyedLookup<StoredStage>;
@@ -17,9 +17,11 @@ export type State = {
       cutOut?: boolean;
     }) => void;
     createStage: (stageKey: string) => void;
+    getBrush: (stageKey: string) => BrushMeta;
     getLayer: (stageKey: string, layerKey: string) => StageLayer;
     getStage: (stageKey: string) => StoredStage;
     removeStage: (stageKey: string) => void;
+    updateBrush: (stageKey: string, updates: Partial<BrushMeta>) => void;
     updateLayer: (
       stageKey: string,
       layerKey: string,
@@ -63,6 +65,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }, stage),
     })),
 
+    getBrush: (stageKey) => {
+      return get().stage[stageKey].brush;
+    },
+
     getLayer: (stageKey, layerKey) => {
       return get().stage[stageKey].layer[layerKey];
     },
@@ -74,6 +80,18 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     removeStage: (stageKey) => set(({ stage }) => ({
       stage: removeFromLookup(stageKey, stage),
     })),
+
+    updateBrush: (stageKey, updates) => {
+      const group = updates.group || get().api.getBrush(stageKey).group;
+      get().api.updateStage(stageKey, ({ brush }) => ({
+        brush: {
+          ...brush,
+          ...updates,
+          ...group && computeBrushGeom(group),
+        },
+      }));
+      console.warn('updated brush', get().api.getBrush(stageKey).polygon);
+    },
 
     updateLayer: (stageKey, layerKey, updates) => {
       get().api.updateStage(stageKey, ({ layer }) => ({

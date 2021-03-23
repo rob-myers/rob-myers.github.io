@@ -4,7 +4,7 @@ import { Canvas, CanvasContext } from "react-three-fiber";
 import { Subject } from "rxjs";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
-import { initCameraPos, StoredStage } from "model/stage.model";
+import { initCameraPos, StoredStage } from "model/stage/stage.model";
 import useGeomStore from "store/geom.store";
 import useStageStore from "store/stage.store";
 

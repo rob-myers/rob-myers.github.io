@@ -1,4 +1,4 @@
-import { initCameraPos } from 'model/stage.model';
+import { initCameraPos } from 'model/stage/stage.model';
 import {
   EventDispatcher,
   Vector2,

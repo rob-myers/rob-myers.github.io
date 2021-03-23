@@ -2,13 +2,18 @@
 
 ```sh
 key |
-  map "${brush_keys_fn}" |
-  run '({ read, _: {key}, update }, { stage: {brush} }) {
+  map "${brush_keys_filter}" |
+  run '({ read, _: {key} }, { stage: {brush} }) {
     while (key = await read()) {
-      /[3-9]/.test(key) && (brush.sides = Number(key));
-      /s/.test(key) && (brush.shape =
-        ["rect", "poly"].find(x => x !== brush.shape));
-      update();
+      if (/[3-9]/.test(key)) {
+        brush.sides = Number(key);
+      } else if (key === "s") {
+        brush.shape = ["rect", "poly"].find(x => x !== brush.shape);
+      } else if (key === "a") {
+        console.warn("add", brush.polygon, brush.bounds);
+      } else if (key === "d") {
+        console.warn("delete", brush.polygon, brush.bounds);
+      }
     }
   }' &
 ```

@@ -10,6 +10,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 - Can `add-to` and `delete-from` default layer via brush and a/d
 
+- Fix multiline command launched from intermediate line
+
 - Start writing post / decide on blog format
 
 - `ps -a` shows full process src

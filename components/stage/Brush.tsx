@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
-import { Vector3 } from "three";
+import THREE, { Vector3 } from "three";
 
 import { VectorJson } from "model/geom";
 import { ndCoordsToGroundPlane, vectAccuracy } from "model/3d/three.model";
-import { StoredStage } from "model/stage.model";
+import { brushPolyName, brushRectName, StoredStage } from "model/stage/stage.model";
+import useStage from "store/stage.store";
 
 const Brush: React.FC<Props> = ({ wire, stage }) => {
   const root = useRef<THREE.Group>(null);
@@ -18,8 +19,13 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const [everUsed, setEverUsed] = useState(false);
   
   useEffect(() => {
+    useStage.api.updateBrush(stage.key, { group: root.current! });
+
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (key === 'pointerleave' || key === 'pointerup') {
+        if (active.current && root.current) {
+          useStage.api.updateBrush(stage.key, { group: root.current });
+        }
         active.current = false;
       } else if (key === 'pointerdown') {
         active.current = true;
@@ -41,12 +47,15 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         !everUsed && setEverUsed(true);
       }
     });
-    return () => sub.unsubscribe();
+    return () => {
+      useStage.api.updateBrush(stage.key, { group: null });
+      sub.unsubscribe();
+    };
   }, [everUsed]);
 
   const meta = stage.brush;
   let rectOpacity = 0.2, polyOpacity = 0.1, polyColor = '#000';
-  let rectColor = meta.mode === 'add' ? '#00f' : '#f00';
+  let rectColor = '#00f';
   if (meta.shape === 'poly') {
     [rectColor, polyColor] = [polyColor, rectColor];
     [rectOpacity, polyOpacity] = [polyOpacity, rectOpacity];
@@ -54,11 +63,11 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
   return (
     <group ref={root} visible={everUsed}>
-      <mesh>
+      <mesh name={brushRectName}>
         <planeBufferGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color={rectColor} transparent opacity={rectOpacity} />
       </mesh>
-      <mesh scale={[0.5, 0.5, 0.5]} rotation={[0, 0, 0]}>
+      <mesh name={brushPolyName} scale={[0.5, 0.5, 0.5]} rotation={[0, 0, 0]}>
         <meshStandardMaterial color={polyColor} transparent opacity={polyOpacity} />
         <circleBufferGeometry args={[1, meta.sides]} />
       </mesh>

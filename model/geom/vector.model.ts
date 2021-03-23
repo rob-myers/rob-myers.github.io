@@ -46,7 +46,10 @@ export class Vector {
   }
 
   equals({ x, y }: VectorJson) {
-    return this.x === x && this.y === y;
+    return (
+      Math.abs(this.x - x) <= Number.EPSILON
+      && Math.abs(this.y - y) <= Number.EPSILON
+    );
   }
 
   static from(p: VectorJson | string) {
