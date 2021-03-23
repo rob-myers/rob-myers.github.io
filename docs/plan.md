@@ -8,8 +8,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Have layers with tagged multipolygons
-- Can create walls with `w`
+- Can add-to/delete-from default layer via brush and `a`/`d`
 
 - Start writing post / decide on blog format
 
@@ -62,3 +61,4 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ Stop using device proxy i.e. guard `.readData`/`.writeData`
 ✅ Complete code modifying `brush` on key events.
 ✅ Better support for multiline history: left/right/backspace
+✅ Have layers with multipolygons and attribs

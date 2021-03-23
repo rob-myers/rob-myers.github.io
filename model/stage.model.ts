@@ -2,6 +2,7 @@ import { Vector3, Scene } from "three";
 import * as Geom from 'model/geom';
 import { Subject } from "rxjs";
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
+import { KeyedLookup } from "./generic.model";
 
 export type StoredStage = {
   key: string;
@@ -15,11 +16,8 @@ export type StoredStage = {
   /** Attached on mount */
   scene?: Scene;
 
-  // BELOW WILL CHANGE
-  /** Currently selected polygon */
-  selectPolys: Geom.Polygon[];
-  /** Base of walls. */
-  wallPolys: Geom.Polygon[];
+  /** The layers in this stage */
+  layer: KeyedLookup<StageLayer>;
 };
 
 export interface PersistedStage {
@@ -35,14 +33,24 @@ export interface BrushMeta {
   sides: number;
 }
 
-export const defaultSelectRectMeta: BrushMeta = {
+export const defaultBrushMeta: BrushMeta = {
   mode: 'add',
   shape: 'rect',
   sides: 6,
 };
 
 export interface StageKeyEvent {
+  /**` KeyboardEvent.type` */
   event: 'keydown' | 'keyup';
-  /** KeyboardEvent['key'] */
+  /** `KeyboardEvent.key` */
   key: string;
+}
+
+export interface StageLayer {
+  key: string;
+  /** An array of multipolygons */
+  polygons: Geom.Polygon[];
+  /** Attributes, applying to every polygon */
+  attrib: Record<string, string | number>;
+  // TODO can also contain meshes imported from Blender
 }

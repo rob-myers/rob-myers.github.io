@@ -1,12 +1,12 @@
+import { Subject } from 'rxjs';
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import * as Geom from 'model/geom';
 import { deepClone, KeyedLookup } from 'model/generic.model';
-import { addToLookup, ReduxUpdater, removeFromLookup, updateLookup } from './store.util';
+import { addToLookup, CustomUpdater, removeFromLookup, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
-import { defaultSelectRectMeta, PersistedStage, StoredStage } from 'model/stage.model';
-import { Subject } from 'rxjs';
+import { defaultBrushMeta, PersistedStage, StageLayer, StoredStage } from 'model/stage.model';
 
 export type State = {
   stage: KeyedLookup<StoredStage>;
@@ -17,14 +17,15 @@ export type State = {
       cutOut?: boolean;
     }) => void;
     createStage: (stageKey: string) => void;
-    // getData: (stageKey: string, path: string) => any;
+    getLayer: (stageKey: string, layerKey: string) => StageLayer;
     getStage: (stageKey: string) => StoredStage;
     removeStage: (stageKey: string) => void;
-    // setData: (stageKey: string, path: string, data: any) => void;
-    updateStage: (
+    updateLayer: (
       stageKey: string,
-      updates: Partial<StoredStage> | ReduxUpdater<StoredStage>,
+      layerKey: string,
+      updates: CustomUpdater<StageLayer>,
     ) => void;
+    updateStage: (stageKey: string, updates: CustomUpdater<StoredStage>) => void;
   }
 }
 
@@ -34,35 +35,63 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   stage: {},
   persist: {},
   api: {
+
     addWalls: (stageKey, walls, { cutOut }) => {
-      const { wallPolys: prev } = api.getStage(stageKey);
+      const layerKey = 'default';
+      const { polygons: prev } = api.getLayer(stageKey, layerKey);
       const delta = walls.map(([x, y, w, h]) =>
         Geom.Polygon.fromRect(new Geom.Rect(x, y, w, h)));
       const wallPolys = cutOut
         ? geomService.cutOut(delta, prev)
         : geomService.union(prev.concat(delta));
-      api.updateStage(stageKey, { wallPolys });
+      api.updateLayer(stageKey, layerKey, { polygons: wallPolys });
     },
+
     createStage: (stageKey) => set(({ stage }) => ({
       stage: addToLookup({
         key: stageKey,
         camEnabled: true,
-        brush: deepClone(defaultSelectRectMeta),
+        brush: deepClone(defaultBrushMeta),
         keyEvents: new Subject,
-        selectPolys: [],
-        wallPolys: [],
+        layer: {
+          default: {
+            key: 'default',
+            attrib: {},
+            polygons: [],
+          },
+        },
       }, stage),
     })),
+
+    getLayer: (stageKey, layerKey) => {
+      return get().stage[stageKey].layer[layerKey];
+    },
+
     getStage: (stageKey) => {
       return get().stage[stageKey];
     },
+
     removeStage: (stageKey) => set(({ stage }) => ({
       stage: removeFromLookup(stageKey, stage),
     })),
+
+    updateLayer: (stageKey, layerKey, updates) => {
+      get().api.updateStage(stageKey, ({ layer }) => ({
+        layer: updateLookup(
+          layerKey,
+          layer,
+          typeof updates === 'function' ? updates : () => updates,
+        ),
+      }));
+    },
+
     updateStage: (stageKey, updates) => {
       set(({ stage }) => ({
-        stage: updateLookup(stageKey, stage,
-          typeof updates === 'function' ? updates : () => updates),
+        stage: updateLookup(
+          stageKey,
+          stage,
+          typeof updates === 'function' ? updates : () => updates,
+        ),
       }));
     },
   },

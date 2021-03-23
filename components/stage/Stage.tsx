@@ -76,7 +76,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
               wire={ptrWire}
             />
           )}
-          <Walls wallPolys={stage.wallPolys} />
+
+          {/* TODO layers */}
+          <Walls wallPolys={stage.layer.default.polygons} />
         </Canvas>
       )}
     </section>
