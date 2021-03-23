@@ -4,7 +4,7 @@ import THREE, { DoubleSide, Vector3 } from "three";
 
 import { VectorJson } from "model/geom";
 import { ndCoordsToGroundPlane, vectAccuracy } from "model/3d/three.model";
-import { brushPolyName, brushRectName, StoredStage } from "model/stage/stage.model";
+import { brushPolyName, brushRectName, computeBrushStyles, StoredStage } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
 
 const Brush: React.FC<Props> = ({ wire, stage }) => {
@@ -56,18 +56,11 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
   const brush = stage.brush;
 
-  const { rectOpacity, rectColor, polyOpacity, polyColor } = useMemo(() => {
-    let rectOpacity = 0.2, polyOpacity = 0.1;
-    let rectColor = '#00f', polyColor = '#000';
-    if (brush.shape === 'poly') {
-      [rectColor, polyColor] = [polyColor, rectColor];
-      [rectOpacity, polyOpacity] = [polyOpacity, rectOpacity];
-    }
-    return { rectOpacity, rectColor, polyOpacity, polyColor };
-  }, [brush.shape]);
+  const { rectOpacity, rectColor, polyOpacity, polyColor } = useMemo(() =>
+    computeBrushStyles(brush.shape)
+  , [brush.shape]);
 
   const polyGeom = useMemo(() => {
-    console.log({ polygon: brush.polygon })
     return geomService.polysToGeometry([brush.polygon]).toBufferGeometry();
   }, [brush.polygon]);
 

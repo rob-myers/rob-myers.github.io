@@ -4,9 +4,8 @@ import { Geometry, Face3 } from 'model/3d/deprecated';
 import { MeshLineMaterial, MeshLine } from 'three.meshline';
 import polygonClipping from 'polygon-clipping';
 
-import { Triple, tryParseJson } from 'model/generic.model';
+import { range, Triple, tryParseJson } from 'model/generic.model';
 import * as Geom from 'model/geom';
-// import { epsilon } from "model/3d/three.model";
 
 const twopi = 2 * Math.PI;
 
@@ -56,6 +55,15 @@ class GeomService {
       new Vector3(p.x, p.y, 0.2), 0.05, this.whiteMaterial));
     const polyLine = this.createPolyLine(points, 0.2);
     return this.createGroup([...cubes, polyLine], name);
+  }
+
+  createRegularPolygon(numEdges: number) {
+    return Geom.Polygon.from({
+      outline: range(numEdges).map((i) => ({
+        x: 0.5 * Math.cos(2 * i * Math.PI / numEdges),
+        y: 0.5 * Math.sin(2 * i * Math.PI / numEdges),
+      })),
+    });
   }
 
   /**

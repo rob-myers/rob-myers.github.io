@@ -42,16 +42,12 @@ export interface BrushMeta {
 }
 
 export function createDefaultBrushMeta(): BrushMeta {
+  const sides = 6;
   return {
     shape: 'rect',
-    sides: 6,
+    sides,
     rect: Geom.Rect.from({ x: -0.5, y: -0.5, width: 1, height: 1 }),
-    polygon: Geom.Polygon.from({
-      outline: range(6).map((i) => ({
-        x: 0.5 * Math.cos(2 * i * Math.PI / 6),
-        y: 0.5 * Math.sin(2 * i * Math.PI / 6),
-      })),
-    }),
+    polygon: geomService.createRegularPolygon(sides),
     position: Geom.Vector.from({ x: 0, y: 0 }),
     scale: Geom.Vector.from({ x: 1, y: 1 }),
   };
@@ -76,15 +72,12 @@ export interface StageLayer {
 export const brushRectName = 'rect';
 export const brushPolyName = 'poly';
 
-export function computeBrushGeom(group: THREE.Group) {
-  const polyMesh = group.getObjectByName(brushPolyName) as THREE.Mesh;
-  const polyVs = geomService.getVertices(polyMesh);
-  const polygon = Geom.Polygon.from({ outline: polyVs.slice(1).map(({ x, y }) => ({ x, y })) });
-  polygon.cleanFinalReps();
-
-  const rectMesh = (group.getObjectByName(brushRectName) as THREE.Mesh);
-  const rectVs = geomService.getVertices(rectMesh);
-  const { rect } = Geom.Polygon.from({ outline: rectVs.map(({ x, y }) => ({ x, y })) });
-
-  return { bounds: rect, polygon };
+export function computeBrushStyles(shape: BrushMeta['shape']) {
+  let rectOpacity = 0.2, polyOpacity = 0.1;
+  let rectColor = '#00f', polyColor = '#000';
+  if (shape === 'poly') {
+    [rectColor, polyColor] = [polyColor, rectColor];
+    [rectOpacity, polyOpacity] = [polyOpacity, rectOpacity];
+  }
+  return { rectOpacity, rectColor, polyOpacity, polyColor };
 }

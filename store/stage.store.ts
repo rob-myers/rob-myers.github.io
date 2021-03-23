@@ -82,12 +82,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     })),
 
     updateBrush: (stageKey, updates) => {
-      // const group = updates.group || get().api.getBrush(stageKey).group;
       get().api.updateStage(stageKey, ({ brush }) => ({
         brush: {
           ...brush,
           ...updates,
-          // ...group && computeBrushGeom(group),
+          ...updates.sides && {
+            polygon: geomService.createRegularPolygon(updates.sides),
+          },
         },
       }));
       console.warn('updated brush', get().api.getBrush(stageKey).polygon);
