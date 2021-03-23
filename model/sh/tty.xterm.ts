@@ -159,15 +159,22 @@ export class TtyXterm {
    */
   private handleCursorErase(backspace: boolean) {
     const { cursor, input } = this;
+    
     if (backspace) {
-      // console.log({ cursor });
+      // console.log({ input, cursor });
       if (cursor <= 0) {
         return;
       }
-      const newInput = input.slice(0, cursor - 1) + input.slice(cursor);
+      let delta = -1;
+      const charToDelete = this.input.charAt(this.cursor + delta);
+      if (charToDelete === '\n') {
+        delta = -2;
+      }
+
+      const newInput = input.slice(0, cursor + delta) + input.slice(cursor);
       this.clearInput();
       this.setInput(newInput);
-      this.setCursor(cursor - 1);
+      this.setCursor(cursor + delta);
     } else {
       const newInput = input.slice(0, cursor) + input.slice(cursor + 1);
       this.clearInput();

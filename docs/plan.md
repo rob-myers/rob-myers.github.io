@@ -8,9 +8,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Bugs remain when navigating multiline history
-  - Issue with deleting
-
 - Have layers with tagged multipolygons
 - Can create walls with `w`
 
@@ -64,4 +61,4 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ Exactly one place `.readData` and exactly one place where `.writeData`.
 ✅ Stop using device proxy i.e. guard `.readData`/`.writeData`
 ✅ Complete code modifying `brush` on key events.
-✅ Better support for multiline history.
+✅ Better support for multiline history: left/right/backspace
