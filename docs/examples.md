@@ -1,21 +1,3 @@
-## Hodgepodge
-
-
-```sh
-run '({ read, sleep }) {
-  yield "foo"
-  await sleep(5)
-  yield "bar"
-}'
-```
-
-```sh
-echo '{
-  one
-  two
-}'
-```
-
 ## UI Pipelines
 
 ```sh
@@ -78,4 +60,26 @@ flatten () {
 ```sh
 brush_keys_fn='({ event, key }) =>
   event === "keydown" && /^[s3-9]$/.test(key) ? key : undefined'
+```
+
+## Hodgepodge
+
+
+```sh
+run '({ read, sleep }) {
+  yield "foo"
+  await sleep(5)
+  yield "bar"
+}'
+```
+
+```sh
+echo '{
+  one
+  two
+}'
+```
+
+```sh
+seq 10 | map 'x => [x * 2, 0, 1, 1]' | wall
 ```

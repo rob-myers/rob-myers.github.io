@@ -8,7 +8,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Can add-to/delete-from default layer via brush and `a`/`d`
+- Can `add-to` and `delete-from` default layer via brush and a/d
 
 - Start writing post / decide on blog format
 
