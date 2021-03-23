@@ -8,15 +8,15 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- How do `key` and `poll` work; can they be simplified?
-- Have layers with tagged multipolygons
-- Blender models can be stored
-- Can create walls
 
+- Have layers with tagged multipolygons
+- Can create walls with `w`
+
+- Start writing post / decide on blog format
+
+- How do `key` and `poll` work; can they be simplified?
+- Make a blender model and import it
 - Add `cat` back in as a function
-- Better support for multiline history
-  - BUG: trying running command from intermediate line
-  - BUG: extra character at end of lines
 - folders for variables corresponding to object
 
 - Try building a low poly character in blender
@@ -26,7 +26,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 - Model: https://www.youtube.com/watch?v=4OUYOKGl7x0
 - Rigging: https://www.youtube.com/watch?v=srpOeu9UUBU
 
-- Start writing post / decide on blog format
 
 - Implement comments using build and client-side calls:
   > https://eiriksm.dev/walkthrough-github-comments
@@ -63,3 +62,4 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ Exactly one place `.readData` and exactly one place where `.writeData`.
 ✅ Stop using device proxy i.e. guard `.readData`/`.writeData`
 ✅ Complete code modifying `brush` on key events.
+✅ Better support for multiline history.

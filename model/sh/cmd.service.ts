@@ -5,7 +5,7 @@ import { testNever, truncate } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 
 import type * as Sh from './parse/parse.model';
-import { NamedFunction, varRegex } from "./var.model";
+import { NamedFunction } from "./var.model";
 import { getProcessStatusIcon, ReadResult, SigEnum, dataChunk, isDataChunk, Device, preProcessRead } from './io/io.model';
 import { ProcessError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';

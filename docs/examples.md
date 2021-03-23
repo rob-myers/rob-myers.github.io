@@ -9,6 +9,13 @@ run '({ read, sleep }) {
 }'
 ```
 
+```sh
+echo '{
+  one
+  two
+}'
+```
+
 ## UI Pipelines
 
 ```sh

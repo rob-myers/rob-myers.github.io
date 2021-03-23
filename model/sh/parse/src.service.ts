@@ -56,7 +56,7 @@ export class SrcService {
         const cmds = this.binaryCmds(node);
         const stmts = [cmds[0].X].concat(cmds.map(({ Y }) => Y));
         return stmts.map(c => this.src(c)).join(` ${node.Op}${
-          !this.onOneLine && node.Op !== '|' ? '\r\n' : ''
+          !this.onOneLine && node.Op !== '|' ? '\n' : ''
         } `);
       }
 
@@ -177,10 +177,10 @@ export class SrcService {
 
       // Literals inside heredocs are handled earlier
       case 'Lit': {
-        const value = node.Value.replace(/\\\n/g, '');
-        if (node.parent?.type === 'DblQuoted') {// Need $$ for literal $
-          return value.replace(/\n/g, '\r\n');
-        }
+        // const value = node.Value.replace(/\\\n/g, '');
+        // if (node.parent?.type === 'DblQuoted') {
+          // return value.replace(/\n/g, '"$$\'\\n\'"'); // Need $$ for literal $
+        // }
         return node.Value;
       }
 
@@ -198,7 +198,8 @@ export class SrcService {
       }
 
       case 'SglQuoted': {
-        const inner = node.Value.split('\n').join('\r\n');
+        // const inner = node.Value.replace(/\n/g, '\'$$\'\\n\'\'');
+        const inner = node.Value;
         return `${node.Dollar ? '$' : ''}'${inner}'`;
       }
         

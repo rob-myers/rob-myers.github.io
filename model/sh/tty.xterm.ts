@@ -194,13 +194,19 @@ export class TtyXterm {
    * Move cursor forwards/backwards (+1/-1).
    */
   private handleCursorMove(dir: -1 | 1) {
-    if (dir > 0) {
-      const num = Math.min(dir, this.input.length - this.cursor);
-      this.setCursor(this.cursor + num);
+    let delta = 0;
+    if (dir === 1) {
+      delta = Math.min(dir, this.input.length - this.cursor);
+      if (this.input.charAt(this.cursor + delta) === '\r') {
+        delta += 2; // Skip over \r and \n
+      }
     } else {
-      const num = Math.max(dir, -this.cursor);
-      this.setCursor(this.cursor + num);
+      delta = Math.max(dir, -this.cursor);
+      if (this.input.charAt(this.cursor + delta) === '\n') {
+        delta -= 1; // Skip over \r
+      }
     }
+    this.setCursor(this.cursor + delta);
   }
 
   private async handleXtermInput(data: string) {
@@ -391,7 +397,7 @@ export class TtyXterm {
     let row = 0, col = 0;
     for (let i = 0; i < cursor; ++i) {
       const chr = input.charAt(i);
-      if (chr == '\n') {
+      if (chr === '\n') {
         col = 0;
         row += 1;
       } else {
@@ -435,11 +441,12 @@ export class TtyXterm {
       }
       case 'send-history-line': {
         if (msg.line) {
+          const line = msg.line.split(/\r?\n/).join('\r\n');
           if (this.historyIndex === -1) {
             this.preHistory = this.input;
           }
           this.clearInput();
-          this.setInput(msg.line);
+          this.setInput(line);
           this.historyIndex = msg.nextIndex; 
         } else if (msg.nextIndex === 0) {
           // Since msg.line empty we must've gone below
@@ -586,7 +593,7 @@ export class TtyXterm {
   }
 
   /**
-   * Move the terminal's cursor and update {this.cursor}.
+   * Move the terminal's cursor and update `this.cursor`.
    */
   private setCursor(newCursor: number) {
     if (newCursor < 0) {
@@ -595,29 +602,29 @@ export class TtyXterm {
       newCursor = this.input.length;
     }
 
-    // Compute actual input with prompt(s).
+    // Compute actual input with prompt(s)
     const inputWithPrompt = this.actualLine(this.input);
-    // Get previous cursor position.
+    // Get previous cursor position
     const prevPromptOffset = this.actualCursor(this.input, this.cursor);
     const { col: prevCol, row: prevRow } = this.offsetToColRow(inputWithPrompt, prevPromptOffset);
-    // Get next cursor position.
+    // Get next cursor position
     const newPromptOffset = this.actualCursor(this.input, newCursor);
     const { col: nextCol, row: nextRow } = this.offsetToColRow(inputWithPrompt, newPromptOffset);
     
-    // console.log({ prevPromptOffset, prevCol, prevRow, nextCol, nextRow });
+    // console.log({ input: this.input, inputWithPrompt, prevPromptOffset, newPromptOffset, prevCol, prevRow, nextCol, nextRow });
 
-    // Adjust vertically.
-    if (nextRow > prevRow) {// Cursor Down.
+    // Adjust vertically
+    if (nextRow > prevRow) {// Cursor Down
       for (let i = prevRow; i < nextRow; ++i) this.xterm.write('\x1b[B');
-    } else {// Cursor Up.
+    } else {// Cursor Up
       for (let i = nextRow; i < prevRow; ++i) this.xterm.write('\x1b[A');
     }
     this.trackCursorRow(nextRow - prevRow);
 
-    // Adjust horizontally.
-    if (nextCol > prevCol) {// Cursor Forward.
+    // Adjust horizontally
+    if (nextCol > prevCol) {// Cursor Forward
       for (let i = prevCol; i < nextCol; ++i) this.xterm.write('\x1b[C');
-    } else {// Cursor Backward.
+    } else {// Cursor Backward
       for (let i = nextCol; i < prevCol; ++i) this.xterm.write('\x1b[D');
     }
     this.cursor = newCursor;
