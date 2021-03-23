@@ -194,15 +194,19 @@ export class TtyXterm {
    * Move cursor forwards/backwards (+1/-1).
    */
   private handleCursorMove(dir: -1 | 1) {
-    let delta = 0;
+    let delta = dir === 1
+      ? Math.min(dir, this.input.length - this.cursor)
+      : Math.max(dir, -this.cursor);
+    const nextChar = this.input.charAt(this.cursor + delta);
+
     if (dir === 1) {
-      delta = Math.min(dir, this.input.length - this.cursor);
-      if (this.input.charAt(this.cursor + delta) === '\r') {
+      if (nextChar === '\r') {
         delta += 2; // Skip over \r and \n
+      } else if (nextChar === '\n') {
+        delta += 1;
       }
     } else {
-      delta = Math.max(dir, -this.cursor);
-      if (this.input.charAt(this.cursor + delta) === '\n') {
+      if (nextChar === '\n') {
         delta -= 1; // Skip over \r
       }
     }

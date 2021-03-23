@@ -8,6 +8,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+- Bugs remain when navigating multiline history
+  - Issue with deleting
 
 - Have layers with tagged multipolygons
 - Can create walls with `w`
