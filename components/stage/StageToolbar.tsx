@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/react';
 import useStage from 'store/stage.store';
 import { useCallback } from 'react';
-import { StoredStage } from 'model/stage/stage.model';
+import { StageMeta } from 'model/stage/stage.model';
 
 const StageToolbar: React.FC<Props> = ({ stage }) => {
 
@@ -28,7 +28,7 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
 };
 
 interface Props {
-  stage: StoredStage | null;
+  stage: StageMeta | null;
 }
 
 const Toolbar = styled.section`

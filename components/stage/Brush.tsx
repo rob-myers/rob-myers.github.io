@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Subject } from "rxjs";
-import { DoubleSide, Vector3 } from "three";
+import { Vector3 } from "three";
 
-import { VectorJson } from "model/geom";
+import * as Geom from "model/geom";
 import { ndCoordsToGroundPlane, vectAccuracy } from "model/3d/three.model";
-import { brushPolyName, brushRectName, computeBrushStyles, StoredStage } from "model/stage/stage.model";
+import { brushRectName, StageMeta } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
 // import useStageStore from "store/stage.store";
 
@@ -31,9 +31,6 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
       } else if (key === 'pointerdown') {
         ndCoordsToGroundPlane(initial, ndCoords, camera);
-        // if (useStageStore.api.pointInBrush(stage.key, initial)) {
-        //   return; // Don't reselect if start inside selection
-        // }
         active.current = true;
         vectAccuracy(initial, 1);
         group.position.set(initial.x, initial.y, 0);
@@ -51,35 +48,29 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
   const { brush } = stage;
 
-  const { rectOpacity, rectColor, polyOpacity, polyColor } = useMemo(() =>
-    computeBrushStyles(brush.shape)
-  , [brush.shape]);
-
   const polyGeom = useMemo(() => {
-    return geomService.polysToGeometry([brush.polygon]).toBufferGeometry();
-  }, [brush.polygon]);
+    const polygon = Geom.Polygon.fromRect(brush.rect);
+    return geomService.polysToGeometry([polygon]).toBufferGeometry();
+  }, [brush.rect]);
 
   return (
     <group ref={root} visible={everUsed}>
       <mesh name={brushRectName} position={[0.5, -0.5, 0]}>
         <planeBufferGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color={rectColor} transparent opacity={rectOpacity} />
-      </mesh>
-      <mesh name={brushPolyName} geometry={polyGeom} visible={brush.shape === 'poly'}>
-        <meshStandardMaterial side={DoubleSide} color={polyColor} transparent opacity={polyOpacity} />
+        <meshStandardMaterial color="#00f" transparent opacity={0.2} />
       </mesh>
     </group>
   );
 };
 
 interface Props {
-  stage: StoredStage;
+  stage: StageMeta;
   wire: Subject<PointerMsg>;
 }
 
 export type PointerMsg = {
   /** Normalized device coords in [-1, 1] * [-1, 1] */
-  ndCoords: VectorJson;
+  ndCoords: Geom.VectorJson;
 } & (
   | { key: 'pointerdown' }
   | { key: 'pointerup' }

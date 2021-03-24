@@ -125,10 +125,14 @@ export class Rect {
   }
 
   public scale(scalar: number) {
-    this.x *= scalar;
-    this.y *= scalar;
-    this.width *= scalar;
-    this.height *= scalar;
+    return this.scaleBy({ x: scalar, y: scalar });
+  }
+
+  public scaleBy({ x, y }: VectorJson) {
+    this.x *= x;
+    this.y *= y;
+    this.width *= x;
+    this.height *= y;
     return this;
   }
 
@@ -143,9 +147,9 @@ export class Rect {
     return `${this.x},${this.y},${this.width},${this.height}`;
   }
 
-  translate(dx: number, dy: number) {
-    this.x += dx;
-    this.y += dy;
+  translate({ x, y }: VectorJson) {
+    this.x += x;
+    this.y += y;
     return this;
   }
 

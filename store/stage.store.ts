@@ -6,10 +6,10 @@ import * as Geom from 'model/geom';
 import { KeyedLookup } from 'model/generic.model';
 import { addToLookup, CustomUpdater, removeFromLookup, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
-import { BrushMeta, computeGlobalBrushPolygon, createDefaultBrushMeta, PersistedStage, StageLayer, StoredStage } from 'model/stage/stage.model';
+import { BrushMeta, computeGlobalBrushRect, createDefaultBrushMeta, createStageLayer, PersistedStage, StageLayer, StageMeta } from 'model/stage/stage.model';
 
 export type State = {
-  stage: KeyedLookup<StoredStage>;
+  stage: KeyedLookup<StageMeta>;
   persist: KeyedLookup<PersistedStage>;
 
   readonly api: {
@@ -18,8 +18,7 @@ export type State = {
     createStage: (stageKey: string) => void;
     getBrush: (stageKey: string) => BrushMeta;
     getLayer: (stageKey: string, layerKey: string) => StageLayer;
-    getStage: (stageKey: string) => StoredStage;
-    pointInBrush: (stageKey: string, point: THREE.Vector3) => boolean;
+    getStage: (stageKey: string) => StageMeta;
     removeStage: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Partial<BrushMeta>) => void;
     updateLayer: (
@@ -27,7 +26,7 @@ export type State = {
       layerKey: string,
       updates: CustomUpdater<StageLayer>,
     ) => void;
-    updateStage: (stageKey: string, updates: CustomUpdater<StoredStage>) => void;
+    updateStage: (stageKey: string, updates: CustomUpdater<StageMeta>) => void;
   }
 }
 
@@ -51,7 +50,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     applyBrush: (stageKey, opts) => {
       const brush = get().api.getBrush(stageKey);
-      const delta = computeGlobalBrushPolygon(brush);
+      const delta = Geom.Polygon.fromRect(computeGlobalBrushRect(brush));
       
       const layerKey = 'default';
       const { polygons: prev } = api.getLayer(stageKey, layerKey);
@@ -72,13 +71,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         camEnabled: true,
         brush: createDefaultBrushMeta(),
         keyEvents: new Subject,
-        layer: {
-          default: {
-            key: 'default',
-            attrib: {},
-            polygons: [],
-          },
-        },
+        layer: addToLookup(createStageLayer('default'), {}),
       }, stage),
     })),
 
@@ -94,27 +87,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().stage[stageKey];
     },
 
-    pointInBrush: (stageKey, { x, y }) => {
-      const brush = get().api.getBrush(stageKey);
-      const polygon = computeGlobalBrushPolygon(brush);
-      return geomService.polyContainsPoint(polygon, { x, y });
-    },
-
     removeStage: (stageKey) => set(({ stage }) => ({
       stage: removeFromLookup(stageKey, stage),
     })),
 
     updateBrush: (stageKey, updates) => {
       get().api.updateStage(stageKey, ({ brush }) => ({
-        brush: {
-          ...brush,
-          ...updates,
-          ...updates.sides && {
-            polygon: geomService
-              .createRegularPolygon(updates.sides)
-              .translate({ x: 0.5, y: -0.5 }),
-          },
-        },
+        brush: { ...brush, ...updates },
       }));
     },
 

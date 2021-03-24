@@ -5,11 +5,7 @@ key |
   map "${brush_keys_filter}" |
   run '({ read, _: {key} }, { stage: {brush} }) {
     while (key = await read()) {
-      if (/[3-9]/.test(key)) {
-        brush.sides = Number(key);
-      } else if (key === "s") {
-        brush.shape = ["rect", "poly"].find(x => x !== brush.shape);
-      } else if (key === "a") {
+      if (key === "a") {
         brush.paint();
       } else if (key === "d") {
         brush.erase();

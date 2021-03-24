@@ -8,6 +8,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+- Start Layer UI: provide 'flatten' button.
+
 Blog layout related tasks
 - `Terminal` and session has `sessionKey` and `stageKey`.
 - Can persist `Stage` layers
@@ -77,3 +79,5 @@ Blog layout related tasks
 ✅ Better support for multiline history: left/right/backspace
 ✅ Have layers with multipolygons and attribs
 ✅ Can add/delete 3d walls iinto default layer via brush and a/d
+✅ Simplify brush i.e. only rectangles.
+   > Polygonal brush is hard to get right.

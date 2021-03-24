@@ -4,7 +4,7 @@ import { Canvas, CanvasContext } from "react-three-fiber";
 import { Subject } from "rxjs";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
-import { initCameraPos, StoredStage } from "model/stage/stage.model";
+import { initCameraPos, StageMeta } from "model/stage/stage.model";
 import useGeomStore from "store/geom.store";
 import useStageStore from "store/stage.store";
 
@@ -13,11 +13,11 @@ import CameraControls from "./CameraControls";
 import Grid from "./Grid";
 import Lights from "./Lights";
 import Brush, { PointerMsg } from "./Brush";
-import Walls from "./Walls";
+import Layer from "./Layer";
 import styles from 'styles/Stage.module.css';
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
-  const stage = useStageStore<StoredStage | null>(({ stage }) => stage[stageKey]??null);
+  const stage = useStageStore<StageMeta | null>(({ stage }) => stage[stageKey]??null);
   const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
@@ -77,8 +77,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
             />
           )}
 
-          {/* TODO layers */}
-          <Walls wallPolys={stage.layer.default.polygons} />
+          <Layer layer={stage.layer.default} />
         </Canvas>
       )}
     </section>

@@ -270,7 +270,6 @@ class CmdService {
       }),
       /** Trick to provide local variables via destructuring */
       _: {},
-      update: () => useStage.api.updateStage(meta.sessionKey, {}),
     };
   }
 

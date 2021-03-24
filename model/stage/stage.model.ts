@@ -3,13 +3,12 @@ import { Vector3, Scene } from "three";
 import * as Geom from 'model/geom';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
 import { KeyedLookup } from "../generic.model";
-import { geomService } from "../geom.service";
 
-export type StoredStage = {
+export type StageMeta = {
   key: string;
   /** Can we move/zoom the pan-zoom camera? */
   camEnabled: boolean;
-  /** Used to draw rects and regular polygons */
+  /** Used to draw rects */
   brush: BrushMeta;
   keyEvents: Subject<StageKeyEvent>;
   /** Attached on mount */
@@ -29,12 +28,9 @@ export interface PersistedStage {
 export const initCameraPos = new Vector3(0, 0, 10);
 
 export interface BrushMeta {
-  shape: 'rect' | 'poly';
   sides: number;
   /** The untransformed brush rect */
   rect: Geom.Rect;
-  /** The untransformed brush poly */
-  polygon: Geom.Polygon;
   /** Mutated by Brush */
   position: Geom.Vector;
   /** Mutated by Brush */
@@ -44,12 +40,8 @@ export interface BrushMeta {
 export function createDefaultBrushMeta(): BrushMeta {
   const sides = 6;
   return {
-    shape: 'rect',
     sides,
-    rect: Geom.Rect
-      .from({ x: 0, y: -1, width: 1, height: 1 }),
-    polygon: geomService.createRegularPolygon(sides)
-      .translate({ x: 0.5, y: -0.5 }),
+    rect: Geom.Rect.from({ x: 0, y: -1, width: 1, height: 1 }),
     position: Geom.Vector.from({ x: 0, y: 0 }),
     scale: Geom.Vector.from({ x: 1, y: 1 }),
   };
@@ -66,27 +58,29 @@ export interface StageLayer {
   key: string;
   /** An array of multipolygons */
   polygons: Geom.Polygon[];
-  /** Attributes, applying to every polygon */
-  attrib: Record<string, string | number>;
+  /** Attributes which apply to every polygon */
+  attrib: {
+    type: 'area' | 'low-wall' | 'high-wall';
+    editFlat: boolean;
+  };
   // TODO can also contain meshes imported from Blender
 }
 
-export const brushRectName = 'rect';
-export const brushPolyName = 'poly';
-
-export function computeBrushStyles(shape: BrushMeta['shape']) {
-  let rectOpacity = 0.2, polyOpacity = 0.1;
-  let rectColor = '#00f', polyColor = '#000';
-  if (shape === 'poly') {
-    [rectColor, polyColor] = [polyColor, rectColor];
-    [rectOpacity, polyOpacity] = [polyOpacity, rectOpacity];
-  }
-  return { rectOpacity, rectColor, polyOpacity, polyColor };
+export function createStageLayer(key: string): StageLayer {
+  return {
+    key,
+    polygons: [],
+    attrib: {
+      type: 'low-wall',
+      editFlat: false,
+    },
+  };
 }
 
-export function computeGlobalBrushPolygon(brush: BrushMeta) {
-  const polygon = brush.shape === 'rect'
-    ? Geom.Polygon.fromRect(brush.rect)
-    : brush.polygon;
-  return polygon.clone().scaleBy(brush.scale).translate(brush.position);
+export const brushRectName = 'rect';
+
+export function computeGlobalBrushRect(brush: BrushMeta) {
+  return brush.rect.clone()
+    .scaleBy(brush.scale)
+    .translate(brush.position);
 }

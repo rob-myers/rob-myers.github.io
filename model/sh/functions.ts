@@ -34,6 +34,6 @@ export const preloadedFunctions = {
 export const preloadedVariables = {
   brush_keys_filter: `
 ({ event, key }) =>
-  event === "keydown" && /^[ads3-9]$/i.test(key) ? key.toLowerCase() : undefined
+  event === "keydown" && /^[ad]$/i.test(key) ? key.toLowerCase() : undefined
 `,
 };

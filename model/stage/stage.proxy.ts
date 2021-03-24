@@ -1,5 +1,5 @@
 import useStageStore from "store/stage.store";
-import { BrushMeta, StoredStage } from "./stage.model";
+import { BrushMeta, StageMeta } from "./stage.model";
 
 export interface ExtendedBrush extends BrushMeta {
   paint: (layer?: string) => void;
@@ -7,8 +7,8 @@ export interface ExtendedBrush extends BrushMeta {
 }
 
 export function createStageProxy(stageKey: string) {
-  return new Proxy({} as StoredStage, {
-    get(_, key: keyof StoredStage) {
+  return new Proxy({} as StageMeta, {
+    get(_, key: keyof StageMeta) {
       const stage = useStageStore.api.getStage(stageKey);
       if (key === 'brush') {
         return new Proxy({} as ExtendedBrush, {
