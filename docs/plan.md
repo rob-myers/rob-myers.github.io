@@ -8,6 +8,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+Can drag brush?
+
 Blog layout related tasks
 - `Terminal` and session has `sessionKey` and `stageKey`.
 - Can persist `Stage` layers
@@ -16,7 +18,9 @@ Blog layout related tasks
 - Auto pause on scroll out of view
 - Auto pause on start/resume another `Stage`
 
+- Can set opacity of layers
 - Can change layers
+- Can set Brush polygon by selecting
 
 - Fix multiline command launched from intermediate line
 - Start writing post / decide on blog format

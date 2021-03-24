@@ -46,8 +46,10 @@ export function createDefaultBrushMeta(): BrushMeta {
   return {
     shape: 'rect',
     sides,
-    rect: Geom.Rect.from({ x: -0.5, y: -0.5, width: 1, height: 1 }),
-    polygon: geomService.createRegularPolygon(sides),
+    rect: Geom.Rect
+      .from({ x: 0, y: -1, width: 1, height: 1 }),
+    polygon: geomService.createRegularPolygon(sides)
+      .translate({ x: 0.5, y: -0.5 }),
     position: Geom.Vector.from({ x: 0, y: 0 }),
     scale: Geom.Vector.from({ x: 1, y: 1 }),
   };

@@ -298,7 +298,7 @@ export class Polygon {
     return { outer, inner };
   }
 
-  translate(delta: Vector) {
+  translate(delta: VectorJson) {
     this.outline.forEach(p => p.translate(delta.x, delta.y));
     this.holes.forEach(h => h.forEach(p => p.translate(delta.x, delta.y)));
     return this;

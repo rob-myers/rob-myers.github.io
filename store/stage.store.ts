@@ -54,11 +54,15 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       
       const layerKey = 'default';
       const { polygons: prev } = api.getLayer(stageKey, layerKey);
-      const layerPolys = opts.erase
-        ? geomService.cutOut([delta], prev)
-        : geomService.union(prev.concat(delta));
-      api.updateLayer(stageKey, layerKey, { polygons: layerPolys });
-      // console.warn("applyBrush", opts, delta);
+      try {
+        const layerPolys = opts.erase
+          ? geomService.cutOut([delta], prev)
+          : geomService.union(prev.concat(delta));
+        api.updateLayer(stageKey, layerKey, { polygons: layerPolys });
+      } catch (error) {
+        console.error('Geometric operation failed');
+        console.error(error);
+      }
     },
 
     createStage: (stageKey) => set(({ stage }) => ({
@@ -99,7 +103,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           ...brush,
           ...updates,
           ...updates.sides && {
-            polygon: geomService.createRegularPolygon(updates.sides),
+            polygon: geomService
+              .createRegularPolygon(updates.sides)
+              .translate({ x: 0.5, y: -0.5 }),
           },
         },
       }));

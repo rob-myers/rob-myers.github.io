@@ -16,7 +16,12 @@ const Walls: React.FC<Props> = ({ wallPolys }) => {
       geometry={wallsGeometry}
     >
       {/* <meshStandardMaterial side={DoubleSide} color="#444"/> */}
-      <meshBasicMaterial side={DoubleSide} color="#000"/>
+      <meshBasicMaterial
+        side={DoubleSide}
+        transparent
+        opacity={1}
+        color="#000"
+      />
     </mesh>
   );
 };

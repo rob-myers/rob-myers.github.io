@@ -30,19 +30,11 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         active.current = true;
         ndCoordsToGroundPlane(initial, ndCoords, camera);
         vectAccuracy(initial, 1);
+        root.current?.position.set(initial.x, initial.y, 0);
       } else if (key === 'pointermove' && active.current) {
         ndCoordsToGroundPlane(current, ndCoords, camera);
         vectAccuracy(current, 1);
-        root.current?.position.set(
-          (initial.x + current.x) * 0.5,
-          (initial.y + current.y) * 0.5,
-          0,
-        );
-        root.current?.scale.set(
-          Math.abs(initial.x - current.x),
-          Math.abs(initial.y - current.y),
-          1,
-        );
+        root.current?.scale.set(current.x - initial.x, -(current.y - initial.y), 1);
         !everUsed && setEverUsed(true);
       }
     });
@@ -63,11 +55,11 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
   return (
     <group ref={root} visible={everUsed}>
-      <mesh name={brushRectName}>
+      <mesh name={brushRectName} position={[0.5, -0.5, 0]} >
         <planeBufferGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color={rectColor} transparent opacity={rectOpacity} />
       </mesh>
-      <mesh name={brushPolyName} geometry={polyGeom}>
+      <mesh name={brushPolyName} geometry={polyGeom} visible={brush.shape === 'poly'}>
         <meshStandardMaterial side={DoubleSide} color={polyColor} transparent opacity={polyOpacity} />
       </mesh>
     </group>
