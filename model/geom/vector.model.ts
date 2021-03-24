@@ -89,6 +89,12 @@ export class Vector {
     return this;
   }
 
+  scaleBy(point: VectorJson) {
+    this.x *= point.x;
+    this.y *= point.y;
+    return this;
+  }
+
   sub(other: VectorJson) {
     this.x -= other.x;
     this.y -= other.y;

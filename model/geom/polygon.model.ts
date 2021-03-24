@@ -236,6 +236,12 @@ export class Polygon {
     }
   }
 
+  moveBy(point: VectorJson) {
+    this.outline.forEach(p => p.add(point));
+    this.holes.forEach(h => h.forEach(p => p.add(point)));
+    return this;
+  }
+
   static pointInTriangle(pt: Vector, v1: Vector, v2: Vector, v3: Vector) {
     const d1 = Polygon.sign(pt, v1, v2);
     const d2 = Polygon.sign(pt, v2, v3);
@@ -258,6 +264,12 @@ export class Polygon {
   scale(scalar: number) {
     this.outline.forEach(p => p.scale(scalar));
     this.holes.forEach(h => h.forEach(p => p.scale(scalar)));
+    return this;
+  }
+
+  scaleBy(point: VectorJson) {
+    this.outline.forEach(p => p.scaleBy(point));
+    this.holes.forEach(h => h.forEach(p => p.scaleBy(point)));
     return this;
   }
 

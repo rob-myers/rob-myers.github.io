@@ -8,13 +8,13 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Can `add-to` and `delete-from` default layer via brush and a/d
+- Can persist layers
+- Can change layers
 
 - Fix multiline command launched from intermediate line
-
 - Start writing post / decide on blog format
 
-- `ps -a` shows full process src
+- `ps -s` shows full process src
 - How do `key` and `poll` work; can they be simplified?
 - Make a blender model and import it
 - Add `cat` back in as a function
@@ -65,3 +65,4 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ✅ Complete code modifying `brush` on key events.
 ✅ Better support for multiline history: left/right/backspace
 ✅ Have layers with multipolygons and attribs
+✅ Can add/delete 3d walls iinto default layer via brush and a/d

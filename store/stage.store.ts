@@ -6,7 +6,7 @@ import * as Geom from 'model/geom';
 import { KeyedLookup } from 'model/generic.model';
 import { addToLookup, CustomUpdater, removeFromLookup, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
-import { BrushMeta, createDefaultBrushMeta, PersistedStage, StageLayer, StoredStage } from 'model/stage/stage.model';
+import { BrushMeta, computeGlobalBrushPolygon, createDefaultBrushMeta, PersistedStage, StageLayer, StoredStage } from 'model/stage/stage.model';
 
 export type State = {
   stage: KeyedLookup<StoredStage>;
@@ -49,7 +49,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     applyBrush: (stageKey, opts) => {
-      console.warn("useBrush", stageKey, opts);
+      const brush = get().api.getBrush(stageKey);
+      const delta = computeGlobalBrushPolygon(brush);
+      
+      const layerKey = 'default';
+      const { polygons: prev } = api.getLayer(stageKey, layerKey);
+      const layerPolys = opts.erase
+        ? geomService.cutOut([delta], prev)
+        : geomService.union(prev.concat(delta));
+      api.updateLayer(stageKey, layerKey, { polygons: layerPolys });
+      // console.warn("applyBrush", opts, delta);
     },
 
     createStage: (stageKey) => set(({ stage }) => ({

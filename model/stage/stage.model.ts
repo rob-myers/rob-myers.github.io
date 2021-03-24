@@ -2,7 +2,7 @@ import { Subject } from "rxjs";
 import { Vector3, Scene } from "three";
 import * as Geom from 'model/geom';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
-import { KeyedLookup, range } from "../generic.model";
+import { KeyedLookup } from "../generic.model";
 import { geomService } from "../geom.service";
 
 export type StoredStage = {
@@ -80,4 +80,11 @@ export function computeBrushStyles(shape: BrushMeta['shape']) {
     [rectOpacity, polyOpacity] = [polyOpacity, rectOpacity];
   }
   return { rectOpacity, rectColor, polyOpacity, polyColor };
+}
+
+export function computeGlobalBrushPolygon(brush: BrushMeta) {
+  const polygon = brush.shape === 'rect'
+    ? Geom.Polygon.fromRect(brush.rect)
+    : brush.polygon;
+  return polygon.clone().scaleBy(brush.scale).moveBy(brush.position);
 }

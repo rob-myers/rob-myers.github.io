@@ -15,10 +15,8 @@ const Walls: React.FC<Props> = ({ wallPolys }) => {
       scale={[1, 1, 1]}
       geometry={wallsGeometry}
     >
-      <meshStandardMaterial
-        side={DoubleSide}
-        color="#444"
-      />
+      {/* <meshStandardMaterial side={DoubleSide} color="#444"/> */}
+      <meshBasicMaterial side={DoubleSide} color="#000"/>
     </mesh>
   );
 };
