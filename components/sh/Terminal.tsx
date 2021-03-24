@@ -1,36 +1,31 @@
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
+
 import { TtyXterm } from 'model/sh/tty.xterm';
 import useSessionStore from 'store/session.store';
 import XTermComponent from './XTerm';
 import styles from 'styles/Terminal.module.css';
 
-const Terminal: React.FC<{ sessionKey: string }> = ({ sessionKey }) => {
+const Terminal: React.FC<Props> = ({ sessionKey }) => {
 
   const session = useSessionStore(({ session }) =>
-    sessionKey in session ? session[sessionKey] : null
-  );
+    sessionKey in session ? session[sessionKey] : null);
 
   useEffect(() => {
     useSessionStore.api.createSession(sessionKey);
-    return () => {
-      useSessionStore.api.removeSession(sessionKey);
-    };
+    return () => useSessionStore.api.removeSession(sessionKey);
   }, [sessionKey]);
 
   return (
     <section className={styles.root}>
       {session ? (
         <XTerm
-          // className={styles.container}
           onMount={(xterm) => {
-    
             const ttyXterm = new TtyXterm(
               xterm, // xterm.js instance
               session.key,
               session.ttyIo,
             );
-    
             ttyXterm.initialise();
             session.ttyShell.initialise(ttyXterm);
           }}
@@ -52,6 +47,10 @@ const Terminal: React.FC<{ sessionKey: string }> = ({ sessionKey }) => {
     </section>
   )
 };
+
+interface Props {
+  sessionKey: string;
+}
 
 const XTerm = dynamic(() =>
   import('components/sh/XTerm'), { ssr: false }) as typeof XTermComponent;

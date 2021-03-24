@@ -1,7 +1,7 @@
 import { interval, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
-import { testNever, truncate } from 'model/generic.model';
+import { deepGet, kebabToCamel, testNever, truncate } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 import { createStageProxy } from '../stage/stage.proxy';
 
@@ -54,6 +54,10 @@ const commandKeys = {
 type CommandName = keyof typeof commandKeys;
 
 class CmdService {
+
+  isCmd(word: string): word is CommandName {
+    return word in commandKeys;
+  }
   
   async *runCmd(node: Sh.CallExpr, command: CommandName, args: string[]) {
     const { meta } = node;
@@ -100,7 +104,8 @@ class CmdService {
       }
       case 'get': {
         if (args[0]) {
-          yield useSession.api.getData(meta.sessionKey, args[0]);
+          const stageKey = meta.sessionKey; // TODO
+          yield this.getData(meta.sessionKey, stageKey, args[0]);
         }
         break;
       }
@@ -194,8 +199,9 @@ class CmdService {
         break;
       }
       case 'set': {
+        const stageKey = meta.sessionKey; // TODO
         const value = this.parseArg(args[1]);
-        yield useSession.api.setData(meta.sessionKey, args[0], value);
+        yield this.setData(meta.sessionKey, stageKey, args[0], value);
         break;
       }
       case 'sleep': {
@@ -275,8 +281,30 @@ class CmdService {
     };
   }
 
-  isCmd(word: string): word is CommandName {
-    return word in commandKeys;
+  private getData(sessionKey: string, stageKey: string, pathStr: string) {
+    const [ first, ...path] = pathStr.split('/').map(kebabToCamel).filter(Boolean);
+    if  (first === 'stage') {
+     const stage = useStage.api.getStage(stageKey);
+     return deepGet(stage, path);
+   } else if (first === 'var') {
+     const varLookup = useSession.api.getSession(sessionKey).var;
+     return deepGet(varLookup, path);
+   }
+  }
+
+  private setData(sessionKey: string, stageKey: string, pathStr: string, data: any) {
+    const [ first, ...path] = pathStr.split('/').map(kebabToCamel).filter(Boolean);
+    if (path.length) {
+      const last = path.pop()!;
+      if  (first === 'stage') {
+        const stage = useStage.api.getStage(stageKey);
+        deepGet(stage, path)[last] = data;
+        useStage.api.updateStage(sessionKey, {});
+      } else if (first === 'var') {
+        const varLookup = useSession.api.getSession(sessionKey).var;
+        deepGet(varLookup, path)[last] = data;
+      }
+    }
   }
 
   /** Iterate a never-ending observable e.g. key events or polling */

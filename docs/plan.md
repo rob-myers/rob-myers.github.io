@@ -8,7 +8,14 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Can persist layers
+Blog layout related tasks
+- `Terminal` and session has `sessionKey` and `stageKey`.
+- Can persist `Stage` layers
+- Can pause/resume `Stage` with grey preview, un/mounting `Stage`
+- On pause/resume `Stage` we pause/resume all running processes
+- Auto pause on scroll out of view
+- Auto pause on start/resume another `Stage`
+
 - Can change layers
 
 - Fix multiline command launched from intermediate line

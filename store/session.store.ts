@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
-import { deepGet, kebabToCamel, KeyedLookup } from 'model/generic.model';
+import { KeyedLookup } from 'model/generic.model';
 import { Device, makeShellIo, ShellIo } from 'model/sh/io/io.model';
 import { MessageFromShell, MessageFromXterm } from 'model/sh/tty.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
@@ -12,7 +12,6 @@ import { VarDevice } from 'model/sh/io/var.device';
 import { BaseMeta, FileWithMeta } from 'model/sh/parse/parse.model';
 import { srcService } from 'model/sh/parse/src.service';
 import { NullDevice } from 'model/sh/io/null.device';
-import useStageStore from './stage.store';
 
 export type State = {
   session: KeyedLookup<Session>;
@@ -34,7 +33,6 @@ export type State = {
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
     createVarDevice: (sessionKey: string, varName: string) => VarDevice;
     ensurePersisted: (sessionKey: string) => PersistedSession;
-    getData: (sessionKey: string, pathStr: string) => any;
     getFunc: (sessionKey: string, funcName: string) => NamedFunction | undefined;
     getFuncs: (sessionKey: string) => NamedFunction[];
     getNextPid: (sessionKey: string) => number;
@@ -49,7 +47,6 @@ export type State = {
     removeProcess: (pid: number, sessionKey: string) => void;
     removeSession: (sessionKey: string) => void;
     resolve: (fd: number, meta: BaseMeta) => Device;
-    setData: (sessionKey: string, path: string, data: any) => void;
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
     warn: (sessionKey: string, msg: string) => void;
   }
@@ -175,17 +172,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return persisted;
     },
 
-     getData: (sessionKey, pathStr) => {
-       const [ first, ...path] = pathStr.split('/').map(kebabToCamel).filter(Boolean);
-       if  (first === 'stage') {
-        const stage = useStageStore.getState().stage[sessionKey];
-        return deepGet(stage, path);
-      } else if (first === 'var') {
-        const varLookup = get().session[sessionKey].var;
-        return deepGet(varLookup, path);
-      }
-    },
-
     getFunc: (sessionKey, funcName) => {
       return get().session[sessionKey].func[funcName] || undefined;
     },
@@ -251,20 +237,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().device[meta.fd[fd]];
     },
 
-    setData: (sessionKey, pathStr, data) => {
-      const [ first, ...path] = pathStr.split('/').map(kebabToCamel).filter(Boolean);
-      if (path.length) {
-        const last = path.pop()!;
-        if  (first === 'stage') {
-          const stage = useStageStore.getState().stage[sessionKey];
-          deepGet(stage, path)[last] = data;
-          useStageStore.api.updateStage(sessionKey, {});
-        } else if (first === 'var') {
-          const varLookup = get().session[sessionKey].var;
-          deepGet(varLookup, path)[last] = data;
-        }
-      }
-    },
+
 
     setVar: async (sessionKey, varName, varValue) => {
       api.getSession(sessionKey).var[varName] = varValue; // Mutate
