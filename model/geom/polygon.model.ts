@@ -8,6 +8,11 @@ import { Rect } from "./rect.model";
 
 export class Polygon {
 
+  /** Avoid costly recomputation when no mutation. */
+  private _triangulation = [] as Polygon[];
+  /** Often preserved under mutation. */
+  private _triangulationIds = [] as Triple<number>[];
+
   constructor(
     public outline: Vector[] = [],
     public holes: Vector[][] = [],
@@ -15,6 +20,17 @@ export class Polygon {
 
   get allPoints(): Vector[] {
     return this.outline.concat(...this.holes);
+  }
+
+  private cache(indexTriples: Triple<number>[]) {
+    this._triangulationIds = indexTriples;
+    this._triangulation = this.triangleIdsToPolys(this._triangulationIds);
+  }
+
+  private clearCache() {
+    this._triangulation = this._triangulationIds.length
+      ? this.triangleIdsToPolys(this._triangulationIds)
+      : [];
   }
 
   /**
@@ -115,6 +131,8 @@ export class Polygon {
           : agg,
       [],
     );
+
+    this.cache(indexTriples);
     return { vs: this.allPoints, tris: indexTriples };
   }
 
@@ -228,18 +246,13 @@ export class Polygon {
         .map(t => [t.getPoint(0), t.getPoint(1), t.getPoint(2)] as Triple<V2WithId>)
         .map<Triple<number>>(([u, v, w]) => [u.id, v.id, w.id]);
       
+      this.cache(tris);
       return { vs: this.allPoints, tris };
     } catch (e) {
-      console.error('Quality triangulation failed, falling back to earcut');
+      console.error('Quality triangulation failed: falling back to "earcut"');
       console.error(e);
       return this.fastTriangulate();
     }
-  }
-
-  moveBy(point: VectorJson) {
-    this.outline.forEach(p => p.add(point));
-    this.holes.forEach(h => h.forEach(p => p.add(point)));
-    return this;
   }
 
   static pointInTriangle(pt: Vector, v1: Vector, v2: Vector, v3: Vector) {
@@ -258,18 +271,18 @@ export class Polygon {
   round() {
     this.outline.forEach(p => p.round());
     this.holes.forEach(h => h.forEach(p => p.round()));
+    this.clearCache();
     return this;
   }
 
   scale(scalar: number) {
-    this.outline.forEach(p => p.scale(scalar));
-    this.holes.forEach(h => h.forEach(p => p.scale(scalar)));
-    return this;
+    return this.scaleBy({ x: scalar, y: scalar });
   }
 
   scaleBy(point: VectorJson) {
     this.outline.forEach(p => p.scaleBy(point));
     this.holes.forEach(h => h.forEach(p => p.scaleBy(point)));
+    this.clearCache();
     return this;
   }
 
@@ -301,7 +314,27 @@ export class Polygon {
   translate(delta: VectorJson) {
     this.outline.forEach(p => p.translate(delta.x, delta.y));
     this.holes.forEach(h => h.forEach(p => p.translate(delta.x, delta.y)));
+    this.clearCache();
     return this;
+  }
+
+  public get triangulation(): Polygon[] {
+    if (this._triangulation.length) {
+      return this._triangulation;
+    }
+    return this.triangulate();
+  }
+
+  private triangleIdsToPolys(triIds: Triple<number>[]): Polygon[] {
+    const ps = this.allPoints;
+    return triIds.map(([u, v, w]) => new Polygon([ ps[u], ps[v], ps[w] ]));
+  }
+
+  public triangulate(): Polygon[] {
+    if (!this._triangulation.length) {
+      this.qualityTriangulate();
+    }
+    return this._triangulation;
   }
 
   /** Construct union of _polygons_, yielding a multipolygon. */

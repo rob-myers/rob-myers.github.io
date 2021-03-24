@@ -19,6 +19,7 @@ export type State = {
     getBrush: (stageKey: string) => BrushMeta;
     getLayer: (stageKey: string, layerKey: string) => StageLayer;
     getStage: (stageKey: string) => StoredStage;
+    pointInBrush: (stageKey: string, point: THREE.Vector3) => boolean;
     removeStage: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Partial<BrushMeta>) => void;
     updateLayer: (
@@ -91,6 +92,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     getStage: (stageKey) => {
       return get().stage[stageKey];
+    },
+
+    pointInBrush: (stageKey, { x, y }) => {
+      const brush = get().api.getBrush(stageKey);
+      const polygon = computeGlobalBrushPolygon(brush);
+      return geomService.polyContainsPoint(polygon, { x, y });
     },
 
     removeStage: (stageKey) => set(({ stage }) => ({

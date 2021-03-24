@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Subject } from "rxjs";
-import THREE, { DoubleSide, Vector3 } from "three";
+import { DoubleSide, Vector3 } from "three";
 
 import { VectorJson } from "model/geom";
 import { ndCoordsToGroundPlane, vectAccuracy } from "model/3d/three.model";
 import { brushPolyName, brushRectName, computeBrushStyles, StoredStage } from "model/stage/stage.model";
+import useStageStore from "store/stage.store";
 import { geomService } from "model/geom.service";
 
 const Brush: React.FC<Props> = ({ wire, stage }) => {
@@ -27,9 +28,14 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         }
         active.current = false;
       } else if (key === 'pointerdown') {
+        const groundPoint = new Vector3;
+        ndCoordsToGroundPlane(groundPoint, ndCoords, camera);
+        if (useStageStore.api.pointInBrush(stage.key, groundPoint)) {
+          return; // Don't reselect if start inside selection
+        }
+
         active.current = true;
-        ndCoordsToGroundPlane(initial, ndCoords, camera);
-        vectAccuracy(initial, 1);
+        vectAccuracy(initial.copy(groundPoint), 1);
         root.current?.position.set(initial.x, initial.y, 0);
       } else if (key === 'pointermove' && active.current) {
         ndCoordsToGroundPlane(current, ndCoords, camera);
@@ -55,7 +61,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
   return (
     <group ref={root} visible={everUsed}>
-      <mesh name={brushRectName} position={[0.5, -0.5, 0]} >
+      <mesh name={brushRectName} position={[0.5, -0.5, 0]}>
         <planeBufferGeometry args={[1, 1, 1]} />
         <meshStandardMaterial color={rectColor} transparent opacity={rectOpacity} />
       </mesh>

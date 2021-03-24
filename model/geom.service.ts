@@ -129,6 +129,17 @@ class GeomService {
     return vertices.map(p => mesh.localToWorld(p));
   }
 
+  isPointInTriangle(pt: Geom.VectorJson, v1: Geom.VectorJson, v2: Geom.VectorJson, v3: Geom.VectorJson) {
+    const d1 = this.triangleSign(pt, v1, v2);
+    const d2 = this.triangleSign(pt, v2, v3);
+    const d3 = this.triangleSign(pt, v3, v1);
+
+    const hasNeg = d1 < 0 || d2 < 0 || d3 < 0;
+    const hasPos = d1 > 0 || d2 > 0 || d3 > 0;
+
+    return !(hasNeg && hasPos);
+  }
+
   /** Assume `poly` is an island and all edges are segments */
   inset(poly: Geom.Polygon, amount: number): Geom.Polygon[] {
     if (amount === 0) {
@@ -202,6 +213,16 @@ class GeomService {
       Number((max.x - min.x).toFixed(2)),
       Number((max.y - min.y).toFixed(2)),
     );
+  }
+
+  polyContainsPoint(polygon: Geom.Polygon, point: Geom.VectorJson) {
+    if (!polygon.rect.contains(point)) {
+      return false;
+    }
+    // Does any triangle in triangulation contain point?
+    return polygon.triangulation
+      .map(({ outline }) => outline)
+      .some(([u, v, w]) => this.isPointInTriangle(point, u, v, w));
   }
 
   polysToWallsGeometry(polys: Geom.Polygon[], height = 2): THREE.BufferGeometry {
@@ -309,6 +330,10 @@ class GeomService {
 
   toVector3(vector: Geom.VectorJson) {
     return new Vector3(vector.x, vector.y);
+  }
+
+  triangleSign(p1: Geom.VectorJson, p2: Geom.VectorJson, p3: Geom.VectorJson) {
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p1.y - p3.y) * (p2.x - p3.x);
   }
 
   tryParsePoint(p: string)  {

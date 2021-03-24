@@ -59,9 +59,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
         <Canvas
           pixelRatio={pixelRatio.current}
           onCreated={onCreatedCanvas}
-          onPointerDown={onPointer}
+          onPointerDownCapture={onPointer}
           onPointerMove={onPointer}
-          onPointerUp={onPointer}
+          onPointerUpCapture={onPointer}
           onPointerLeave={onPointer}
         >
           <CameraControls

@@ -88,5 +88,5 @@ export function computeGlobalBrushPolygon(brush: BrushMeta) {
   const polygon = brush.shape === 'rect'
     ? Geom.Polygon.fromRect(brush.rect)
     : brush.polygon;
-  return polygon.clone().scaleBy(brush.scale).moveBy(brush.position);
+  return polygon.clone().scaleBy(brush.scale).translate(brush.position);
 }
