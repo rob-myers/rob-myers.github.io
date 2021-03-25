@@ -1,12 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
 import { Vector3 } from "three";
 
 import * as Geom from "model/geom";
 import { ndCoordsToGroundPlane, vectAccuracy } from "model/3d/three.model";
 import { brushRectName, StageMeta } from "model/stage/stage.model";
-import { geomService } from "model/geom.service";
-// import useStageStore from "store/stage.store";
 
 const Brush: React.FC<Props> = ({ wire, stage }) => {
   const root = useRef<THREE.Group>(null);
@@ -27,8 +25,8 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         active.current = false;
         // Sync with state
         stage.brush.position.copy(group.position);
-        stage.brush.scale.copy(vectAccuracy(group.scale, 1));
-
+        vectAccuracy(group.scale, 1);
+        stage.brush.scale.copy(group.scale);
       } else if (key === 'pointerdown') {
         ndCoordsToGroundPlane(initial, ndCoords, camera);
         active.current = true;
@@ -45,13 +43,6 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
       sub.unsubscribe();
     };
   }, [everUsed]);
-
-  const { brush } = stage;
-
-  const polyGeom = useMemo(() => {
-    const polygon = Geom.Polygon.fromRect(brush.rect);
-    return geomService.polysToGeometry([polygon]).toBufferGeometry();
-  }, [brush.rect]);
 
   return (
     <group ref={root} visible={everUsed}>

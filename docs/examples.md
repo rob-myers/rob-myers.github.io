@@ -2,12 +2,12 @@
 
 ```sh
 key |
-  map "${brush_keys_filter}" |
-  run '({ read, _: {key} }, { stage: {brush} }) {
-    while (key = await read()) {
-      if (key === "a") {
+  run '({ read, _: {msg} }, { stage: {brush} }) {
+    while (msg = await read()) {
+      if (msg.event !== "keydown") continue;
+      if (msg.key === "a") {
         brush.paint();
-      } else if (key === "d") {
+      } else if (msg.key === "d") {
         brush.erase();
       }
     }
