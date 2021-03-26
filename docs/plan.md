@@ -8,9 +8,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Decided against layers
-- `stage.polygon` defines named polygons
-- `stage.block` defines visible blocking polygons with height 
 - `Brush` has two modes: `select-rect` and `move-template`
   > Set the template by selecting via `select-rect`
   > Can mirror
@@ -83,3 +80,6 @@ Blog layout related tasks
 ✅ Can add/delete 3d walls iinto default layer via brush and a/d
 ✅ Simplify brush i.e. only rectangles.
    > Polygonal brush is hard to get right.
+✅ Decided against layers
+  > `stage.polygon` defines named polygons
+  > `stage.block` defines visible blocking polygons with height 

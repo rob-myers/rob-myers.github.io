@@ -13,7 +13,7 @@ import CameraControls from "./CameraControls";
 import Grid from "./Grid";
 import Lights from "./Lights";
 import Brush, { PointerMsg } from "./Brush";
-import Layer from "./Layer";
+import Block from "./Block";
 import styles from 'styles/Stage.module.css';
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
@@ -23,13 +23,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
 
   useEffect(() => {
-    useStageStore.api.createStage(stageKey);
-    return () => useStageStore.api.removeStage(stageKey);
-  }, [stageKey]);
-
-  useEffect(() => {
+    useStageStore.api.ensureStage(stageKey);
     stage && ctxt?.gl && useStageStore.api.updateInternal(stageKey, { scene: ctxt.scene });
-  }, [stage?.key, ctxt?.gl]);
+  }, [stageKey, ctxt?.gl]);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     initializeCanvasContext(ctxt);
@@ -64,20 +60,15 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           onPointerUpCapture={onPointer}
           onPointerLeave={onPointer}
         >
-          <CameraControls
-            stageKey={stageKey}
-            enabled={stage.internal.camEnabled}
-          />
           <Grid />
           <Lights />
-          {stage.internal.controls && (
-            <Brush
-              stage={stage}
-              wire={ptrWire}
-            />
-          )}
 
-          <Layer layer={stage.layer.default} />
+          <CameraControls stage={stage} />
+          <Brush stage={stage} wire={ptrWire} />
+
+          {/* TODO loop through stage.block */}
+          <Block stage={stage} blockKey="default" flat={false} />
+          
         </Canvas>
       )}
     </section>

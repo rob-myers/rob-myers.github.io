@@ -13,20 +13,25 @@ export type State = {
   persist: KeyedLookup<Stage.PersistedStage>;
 
   readonly api: {
-    addWalls: (stageKey: string, walls: WallDef[], opts: { cutOut?: boolean }) => void;
-    applyBrush: (stageKey: string, opts: { layer?: string; erase?: boolean }) => void;
+    addWalls: (
+      stageKey: string,
+      walls: WallDef[],
+      opts: { polygonKey?: string; cutOut?: boolean },
+    ) => void;
+    applyBrush: (stageKey: string, opts: { polygonKey?: string; erase?: boolean }) => void;
     createStage: (stageKey: string) => void;
+    ensureStage: (stageKey: string) => void;
     getBrush: (stageKey: string) => Stage.BrushMeta;
     getInternal: (stageKey: string) => Stage.StageMeta['internal'];
-    getLayer: (stageKey: string, layerKey: string) => Stage.StageLayer;
+    getPolygon: (stageKey: string, polygonKey?: string) => Stage.NamedPolygons;
     getStage: (stageKey: string) => Stage.StageMeta;
     removeStage: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Partial<Stage.BrushMeta>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageMeta['internal']>) => void;
-    updateLayer: (
+    updatePolygon: (
       stageKey: string,
-      layerKey: string,
-      updates: LookupUpdates<Stage.StageLayer>,
+      polygonKey: string,
+      updates: LookupUpdates<Stage.NamedPolygons>,
     ) => void;
     updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
   }
@@ -39,28 +44,27 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   persist: {},
   api: {
 
-    addWalls: (stageKey, walls, { cutOut }) => {
-      const layerKey = 'default';
-      const { polygons: prev } = api.getLayer(stageKey, layerKey);
+    addWalls: (stageKey, walls, { polygonKey = 'default', cutOut }) => {
+      const { polygons: prev } = api.getPolygon(stageKey, polygonKey);
       const delta = walls.map(([x, y, w, h]) =>
         Geom.Polygon.fromRect(new Geom.Rect(x, y, w, h)));
       const wallPolys = cutOut
         ? geomService.cutOut(delta, prev)
         : geomService.union(prev.concat(delta));
-      api.updateLayer(stageKey, layerKey, { polygons: wallPolys });
+      api.updatePolygon(stageKey, polygonKey, { polygons: wallPolys });
     },
 
     applyBrush: (stageKey, opts) => {
       const brush = get().api.getBrush(stageKey);
       const delta = Geom.Polygon.fromRect(Stage.computeGlobalBrushRect(brush));
       
-      const layerKey = 'default';
-      const { polygons: prev } = api.getLayer(stageKey, layerKey);
+      const { polygons: prev } = api.getPolygon(stageKey, opts.polygonKey);
       try {
         const layerPolys = opts.erase
           ? geomService.cutOut([delta], prev)
           : geomService.union(prev.concat(delta));
-        api.updateLayer(stageKey, layerKey, { polygons: layerPolys });
+        const polygonKey = opts.polygonKey || 'default';
+        api.updatePolygon(stageKey, polygonKey, { polygons: layerPolys });
       } catch (error) {
         console.error('Geometric operation failed');
         console.error(error);
@@ -70,26 +74,30 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     createStage: (stageKey) => set(({ stage }) => ({
       stage: addToLookup({
         key: stageKey,
-
         internal: {
           camEnabled: true,
           keyEvents: new Subject,
         },
-
-        block: {},
+        block: addToLookup(Stage.createStageBlock('default', {
+          polygonKeys: ['default'],
+        }), {}),
         brush: Stage.createDefaultBrushMeta(),
         polygon: addToLookup(Stage.createNamedPolygons('default'), {}),
-
-        layer: addToLookup(Stage.createStageLayer('default'), {}),
       }, stage),
     })),
+
+    ensureStage: (stageKey) => {
+      if(!get().stage[stageKey]) {
+        get().api.createStage(stageKey);
+      }
+    },
 
     getBrush: (stageKey) => {
       return get().stage[stageKey].brush;
     },
 
-    getLayer: (stageKey, layerKey) => {
-      return get().stage[stageKey].layer[layerKey];
+    getPolygon: (stageKey, polyonKey = 'default') => {
+      return get().stage[stageKey].polygon[polyonKey];
     },
 
     getInternal: (stageKey) => {
@@ -110,11 +118,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }));
     },
 
-    updateLayer: (stageKey, layerKey, updates) => {
-      get().api.updateStage(stageKey, ({ layer }) => ({
-        layer: updateLookup(
-          layerKey,
-          layer,
+    updatePolygon: (stageKey, polygonKey, updates) => {
+      get().api.updateStage(stageKey, ({ polygon }) => ({
+        polygon: updateLookup(
+          polygonKey,
+          polygon,
           typeof updates === 'function' ? updates : () => updates,
         ),
       }));

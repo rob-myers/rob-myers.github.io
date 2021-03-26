@@ -14,9 +14,11 @@ export function createStageProxy(stageKey: string) {
         return new Proxy({} as ExtendedBrush, {
           get(_, key: keyof ExtendedBrush) {
             if (key === 'paint') {
-              return (layer?: string) => useStageStore.api.applyBrush(stageKey, { layer });
+              return (polygonKey = 'default') =>
+                useStageStore.api.applyBrush(stageKey, { polygonKey });
             } else if (key === 'erase') {
-              return (layer?: string) => useStageStore.api.applyBrush(stageKey, { layer, erase: true });
+              return (polygonKey = 'default') =>
+                useStageStore.api.applyBrush(stageKey, { polygonKey, erase: true });
             } else {
               return useStageStore.api.getBrush(stageKey)[key];
             }

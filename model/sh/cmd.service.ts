@@ -248,7 +248,8 @@ class CmdService {
         const outputs = [] as any[];
         yield* this.read(meta, (data: any[]) => { outputs.push(data); });
         const filtered = outputs.filter(x => x.length === 4 && x.every(Number.isFinite));
-        useStage.api.addWalls(meta.sessionKey, filtered, { cutOut: opts.c });
+        const polygonKey = 'default'; // TODO
+        useStage.api.addWalls(meta.sessionKey, filtered, { polygonKey, cutOut: opts.c });
         break;
       }
       default: throw testNever(command);

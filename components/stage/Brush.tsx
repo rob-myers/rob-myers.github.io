@@ -8,7 +8,7 @@ import { brushRectName, StageMeta } from "model/stage/stage.model";
 
 const Brush: React.FC<Props> = ({ wire, stage }) => {
   const root = useRef<THREE.Group>(null);
-  const camera = stage.internal.controls!.camera;
+  const controls = stage.internal.controls;
   /** Ground position of pointer */
   const current = useRef(new Vector3).current;
   /** Ground position of last pointer down  */
@@ -18,6 +18,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const [everUsed, setEverUsed] = useState(false);
 
   useEffect(() => {
+    if (!controls) return;
     const group = root.current!;
 
     const sub = wire.subscribe(({ key, ndCoords }) => {
@@ -28,13 +29,13 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         vectAccuracy(group.scale, 1);
         stage.brush.scale.copy(group.scale);
       } else if (key === 'pointerdown') {
-        ndCoordsToGroundPlane(initial, ndCoords, camera);
+        ndCoordsToGroundPlane(initial, ndCoords, controls.camera);
         active.current = true;
         vectAccuracy(initial, 1);
         group.position.set(initial.x, initial.y, 0);
         group.scale.set(0, 0, 0);
       } else if (key === 'pointermove' && active.current) {
-        ndCoordsToGroundPlane(current, ndCoords, camera);
+        ndCoordsToGroundPlane(current, ndCoords, controls.camera);
         group.scale.set(current.x - initial.x, -(current.y - initial.y), 1);
         !everUsed && setEverUsed(true);
       }
@@ -42,7 +43,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     return () => {
       sub.unsubscribe();
     };
-  }, [everUsed]);
+  }, [everUsed, controls]);
 
   return (
     <group ref={root} visible={everUsed}>

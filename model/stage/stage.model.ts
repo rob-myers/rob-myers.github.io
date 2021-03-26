@@ -22,14 +22,13 @@ export type StageMeta = {
   polygon: KeyedLookup<NamedPolygons>;
   /** A block is an extruded polygon blocking the view/way */
   block: KeyedLookup<StageBlock>;
-
-  /** TODO remove */
-  layer: KeyedLookup<StageLayer>;
 };
 
 export interface PersistedStage {
   key: string;
-  // TODO
+  /**
+   * TODO
+   */
 }
 
 //#region internal
@@ -70,6 +69,17 @@ export interface NamedPolygons {
 
 export function createNamedPolygons(key: string): NamedPolygons {
   return { key, polygons: [] };
+}
+
+export function createStageBlock(key: string, opts: Partial<StageBlock>): StageBlock {
+  return {
+    key,
+    color: '#000',
+    height: 4,
+    polygonKeys: [],
+    visible: true,
+    ...opts,
+  };
 }
 
 export interface StageBlock {
