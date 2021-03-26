@@ -6,6 +6,7 @@ import { KeyedLookup } from "../generic.model";
 
 export type StageMeta = {
   key: string;
+  /** Stuff the CLI usually would not access */
   internal: {
     /** Can we move/zoom the pan-zoom camera? */
     camEnabled: boolean;
@@ -14,12 +15,15 @@ export type StageMeta = {
     controls?: PanZoomControls;
     /** Attached on mount */
     scene?: Scene;
-
   };
-  /** Select rects and move templates */
+  /** Used to select rectangles and move templates */
   brush: BrushMeta;
+  /** Polygon storage */
+  polygon: KeyedLookup<NamedPolygons>;
+  /** A block is an extruded polygon blocking the view/way */
+  block: KeyedLookup<StageBlock>;
 
-  /** The layers in this stage */
+  /** TODO remove */
   layer: KeyedLookup<StageLayer>;
 };
 
@@ -28,7 +32,16 @@ export interface PersistedStage {
   // TODO
 }
 
+//#region internal
+export interface StageKeyEvent {
+  /**` KeyboardEvent.type` */
+  event: 'keydown' | 'keyup';
+  /** `KeyboardEvent.key` */
+  key: string;
+}
+
 export const initCameraPos = new Vector3(0, 0, 10);
+//#endregion
 
 export interface BrushMeta {
   sides: number;
@@ -50,11 +63,23 @@ export function createDefaultBrushMeta(): BrushMeta {
   };
 };
 
-export interface StageKeyEvent {
-  /**` KeyboardEvent.type` */
-  event: 'keydown' | 'keyup';
-  /** `KeyboardEvent.key` */
+export interface NamedPolygons {
   key: string;
+  polygons: Geom.Polygon[];
+}
+
+export function createNamedPolygons(key: string): NamedPolygons {
+  return { key, polygons: [] };
+}
+
+export interface StageBlock {
+  key: string;
+  /** Keys of NamedPolygons */
+  polygonKeys: string[];
+  /** Height of top of extruded polygon  */
+  height: number;
+  color: string;
+  visible: boolean;
 }
 
 export interface StageLayer {

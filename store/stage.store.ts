@@ -6,7 +6,7 @@ import * as Geom from 'model/geom';
 import { KeyedLookup } from 'model/generic.model';
 import { addToLookup, CustomUpdater, removeFromLookup, SimpleUpdater as Updates, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
-import { BrushMeta, computeGlobalBrushRect, createDefaultBrushMeta, createStageLayer, PersistedStage, StageLayer, StageMeta } from 'model/stage/stage.model';
+import { BrushMeta, computeGlobalBrushRect, createDefaultBrushMeta, createNamedPolygons, createStageLayer, PersistedStage, StageLayer, StageMeta } from 'model/stage/stage.model';
 
 export type State = {
   stage: KeyedLookup<StageMeta>;
@@ -70,11 +70,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     createStage: (stageKey) => set(({ stage }) => ({
       stage: addToLookup({
         key: stageKey,
+
         internal: {
           camEnabled: true,
           keyEvents: new Subject,
         },
+
+        block: {},
         brush: createDefaultBrushMeta(),
+        polygon: addToLookup(createNamedPolygons('default'), {}),
+
         layer: addToLookup(createStageLayer('default'), {}),
       }, stage),
     })),
