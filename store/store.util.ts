@@ -42,12 +42,12 @@ export type ReduxUpdater<LookupItem extends { key: string | number }> = (
   item: LookupItem
 ) => Partial<LookupItem>;
 
-export type CustomUpdater<Item extends { key: string | number }> = (
+export type LookupUpdates<Item extends { key: string | number }> = (
   | Partial<Item>
   | ReduxUpdater<Item>
 );
 
-export type SimpleUpdater<T> = (
+export type Updates<T> = (
   | Partial<T>
   | ((prev: T) => Partial<T>)
 );

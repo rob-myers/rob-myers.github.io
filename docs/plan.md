@@ -8,12 +8,12 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+- Decided against layers
 - `stage.polygon` defines named polygons
 - `stage.block` defines visible blocking polygons with height 
 - `Brush` has two modes: `select-rect` and `move-template`
   > Set the template by selecting via `select-rect`
   > Can mirror
-- Decided against layers
 - Programmatically defined `Select` UI?
   > e.g. saved polygon templates, blender imports, shortcuts
 
@@ -34,7 +34,6 @@ Blog layout related tasks
 - How do `key` and `poll` work; can they be simplified?
 - Make a blender model and import it
 - Add `cat` back in as a function
-- folders for variables corresponding to object
 
 - Try building a low poly character in blender
 - Beginners guide:

@@ -4,31 +4,31 @@ import { devtools, persist } from 'zustand/middleware';
 
 import * as Geom from 'model/geom';
 import { KeyedLookup } from 'model/generic.model';
-import { addToLookup, CustomUpdater, removeFromLookup, SimpleUpdater as Updates, updateLookup } from './store.util';
+import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
-import { BrushMeta, computeGlobalBrushRect, createDefaultBrushMeta, createNamedPolygons, createStageLayer, PersistedStage, StageLayer, StageMeta } from 'model/stage/stage.model';
+import * as Stage from 'model/stage/stage.model';
 
 export type State = {
-  stage: KeyedLookup<StageMeta>;
-  persist: KeyedLookup<PersistedStage>;
+  stage: KeyedLookup<Stage.StageMeta>;
+  persist: KeyedLookup<Stage.PersistedStage>;
 
   readonly api: {
     addWalls: (stageKey: string, walls: WallDef[], opts: { cutOut?: boolean }) => void;
     applyBrush: (stageKey: string, opts: { layer?: string; erase?: boolean }) => void;
     createStage: (stageKey: string) => void;
-    getBrush: (stageKey: string) => BrushMeta;
-    getInternal: (stageKey: string) => StageMeta['internal'];
-    getLayer: (stageKey: string, layerKey: string) => StageLayer;
-    getStage: (stageKey: string) => StageMeta;
+    getBrush: (stageKey: string) => Stage.BrushMeta;
+    getInternal: (stageKey: string) => Stage.StageMeta['internal'];
+    getLayer: (stageKey: string, layerKey: string) => Stage.StageLayer;
+    getStage: (stageKey: string) => Stage.StageMeta;
     removeStage: (stageKey: string) => void;
-    updateBrush: (stageKey: string, updates: Partial<BrushMeta>) => void;
-    updateInternal: (stageKey: string, updates: Updates<StageMeta['internal']>) => void;
+    updateBrush: (stageKey: string, updates: Partial<Stage.BrushMeta>) => void;
+    updateInternal: (stageKey: string, updates: Updates<Stage.StageMeta['internal']>) => void;
     updateLayer: (
       stageKey: string,
       layerKey: string,
-      updates: CustomUpdater<StageLayer>,
+      updates: LookupUpdates<Stage.StageLayer>,
     ) => void;
-    updateStage: (stageKey: string, updates: CustomUpdater<StageMeta>) => void;
+    updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
   }
 }
 
@@ -52,7 +52,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     applyBrush: (stageKey, opts) => {
       const brush = get().api.getBrush(stageKey);
-      const delta = Geom.Polygon.fromRect(computeGlobalBrushRect(brush));
+      const delta = Geom.Polygon.fromRect(Stage.computeGlobalBrushRect(brush));
       
       const layerKey = 'default';
       const { polygons: prev } = api.getLayer(stageKey, layerKey);
@@ -77,10 +77,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         },
 
         block: {},
-        brush: createDefaultBrushMeta(),
-        polygon: addToLookup(createNamedPolygons('default'), {}),
+        brush: Stage.createDefaultBrushMeta(),
+        polygon: addToLookup(Stage.createNamedPolygons('default'), {}),
 
-        layer: addToLookup(createStageLayer('default'), {}),
+        layer: addToLookup(Stage.createStageLayer('default'), {}),
       }, stage),
     })),
 
