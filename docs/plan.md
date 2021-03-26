@@ -8,20 +8,23 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Start Layer UI: provide 'flatten' button.
+- `stage.polygon` defines named polygons
+- `stage.block` defines visible blocking polygons with height 
+- `Brush` has two modes: `select-rect` and `move-template`
+  > Set the template by selecting via `select-rect`
+  > Can mirror
+- Decided against layers
+- Programmatically defined `Select` UI?
+  > e.g. saved polygon templates, blender imports, shortcuts
+
 
 Blog layout related tasks
 - `Terminal` and session has `sessionKey` and `stageKey`.
-- Can persist `Stage` layers
+- Can persist Stage geometry
 - Can pause/resume `Stage` with grey preview, un/mounting `Stage`
 - On pause/resume `Stage` we pause/resume all running processes
 - Auto pause on scroll out of view
 - Auto pause on start/resume another `Stage`
-
-- Can set opacity of layers
-- Can change layers
-- Can store selection as layer
-- Can drag a layer
 
 
 - Fix multiline command launched from intermediate line
