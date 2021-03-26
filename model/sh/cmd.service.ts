@@ -159,19 +159,22 @@ class CmdService {
         break;
       }
       case 'ls': {
-        const { opts } = getOpts(args, { boolean: [
+        const { opts, operands } = getOpts(args, { boolean: [
           '1', /** One line per item */
         ], });
         const { stage, var: varLookup } = this.provideStageAndVars(meta);
-        const items = Object.keys(varLookup).map(x => `var/${x}`)
-          .concat(Object.keys(stage).map(x => `stage/${x}`));
-        items.sort();
-        if (opts['1']) {
-          for (const item of items) yield item;
-        } else {
+        let items = Object.keys(varLookup).map(x => `var/${x}`)
+          .concat(Object.keys(stage).map(x => `stage/${x}`)).sort();
+
+        // We usually treat -1 as an operand, but it is an option here
+        if (!opts[1]) {
           const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
-          yield cliColumns(items, { width: ttyShell.xterm.xterm.cols });
+          items = cliColumns(items, { width: ttyShell.xterm.xterm.cols }).split(/\r?\n/);
         }
+        const prefix = operands.find(x => !x.startsWith('-'));
+        prefix && (items = items.filter(x => x.startsWith(prefix)));
+
+        for (const item of items) yield item;
         break;
       }
       case 'poll': {
