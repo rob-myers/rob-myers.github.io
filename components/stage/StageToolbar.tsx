@@ -1,14 +1,16 @@
+import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { css } from '@emotion/react';
-import useStage from 'store/stage.store';
-import { useCallback } from 'react';
 import { StageMeta } from 'model/stage/stage.model';
+import useStage from 'store/stage.store';
 
 const StageToolbar: React.FC<Props> = ({ stage }) => {
 
   const toggleCam = useCallback(() => stage &&
-    useStage.api.updateStage(stage.key, { camEnabled: !stage.camEnabled }),
-  [stage?.camEnabled]);
+    useStage.api.updateInternal(stage.key, ({ camEnabled }) => ({
+      camEnabled: !camEnabled,
+    })),
+  []);
 
   return (
     <Toolbar>
@@ -17,7 +19,7 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
           @<strong>{stage.key}</strong>
         </section>
         <Button
-          enabled={stage.camEnabled}
+          enabled={stage.internal.camEnabled}
           onClick={toggleCam}
         >
           pan-zoom

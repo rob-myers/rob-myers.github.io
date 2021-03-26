@@ -4,7 +4,7 @@ import { devtools, persist } from 'zustand/middleware';
 
 import * as Geom from 'model/geom';
 import { KeyedLookup } from 'model/generic.model';
-import { addToLookup, CustomUpdater, removeFromLookup, updateLookup } from './store.util';
+import { addToLookup, CustomUpdater, removeFromLookup, SimpleUpdater as Updates, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
 import { BrushMeta, computeGlobalBrushRect, createDefaultBrushMeta, createStageLayer, PersistedStage, StageLayer, StageMeta } from 'model/stage/stage.model';
 
@@ -17,10 +17,12 @@ export type State = {
     applyBrush: (stageKey: string, opts: { layer?: string; erase?: boolean }) => void;
     createStage: (stageKey: string) => void;
     getBrush: (stageKey: string) => BrushMeta;
+    getInternal: (stageKey: string) => StageMeta['internal'];
     getLayer: (stageKey: string, layerKey: string) => StageLayer;
     getStage: (stageKey: string) => StageMeta;
     removeStage: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Partial<BrushMeta>) => void;
+    updateInternal: (stageKey: string, updates: Updates<StageMeta['internal']>) => void;
     updateLayer: (
       stageKey: string,
       layerKey: string,
@@ -68,9 +70,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     createStage: (stageKey) => set(({ stage }) => ({
       stage: addToLookup({
         key: stageKey,
-        camEnabled: true,
+        internal: {
+          camEnabled: true,
+          keyEvents: new Subject,
+        },
         brush: createDefaultBrushMeta(),
-        keyEvents: new Subject,
         layer: addToLookup(createStageLayer('default'), {}),
       }, stage),
     })),
@@ -81,6 +85,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     getLayer: (stageKey, layerKey) => {
       return get().stage[stageKey].layer[layerKey];
+    },
+
+    getInternal: (stageKey) => {
+      return get().stage[stageKey].internal;
     },
 
     getStage: (stageKey) => {
@@ -104,6 +112,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           layer,
           typeof updates === 'function' ? updates : () => updates,
         ),
+      }));
+    },
+
+    updateInternal: (stageKey, updates) => {
+      get().api.updateStage(stageKey, ({ internal }) => ({
+        internal: { ...internal,
+          ...typeof updates === 'function' ? updates(internal) : updates,
+        }
       }));
     },
 

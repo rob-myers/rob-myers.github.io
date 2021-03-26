@@ -21,7 +21,7 @@ const CameraControls: React.FC<Props> = ({ stageKey, enabled }) => {
   useFrame((_state) => controls.current!.update());
 
   useEffect(() => {
-    useStageStore.api.updateStage(stageKey, {
+    useStageStore.api.updateInternal(stageKey, {
       controls: controls.current!,
     });
   }, []);

@@ -46,3 +46,8 @@ export type CustomUpdater<Item extends { key: string | number }> = (
   | Partial<Item>
   | ReduxUpdater<Item>
 );
+
+export type SimpleUpdater<T> = (
+  | Partial<T>
+  | ((prev: T) => Partial<T>)
+);

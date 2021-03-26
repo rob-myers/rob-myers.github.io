@@ -28,7 +28,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   }, [stageKey]);
 
   useEffect(() => {
-    stage && ctxt?.gl && useStageStore.api.updateStage(stageKey, { scene: ctxt.scene });
+    stage && ctxt?.gl && useStageStore.api.updateInternal(stageKey, { scene: ctxt.scene });
   }, [stage?.key, ctxt?.gl]);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
@@ -39,9 +39,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   const ptrWire = useRef(new Subject<PointerMsg>()).current;
   const onPointer = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     ptrWire.next({ key: e.type as any, ndCoords: getNormDevicePos(e) });
-  }, [stage]);
+  }, []);
   
-  const keyWire = stage?.keyEvents;
+  const keyWire = stage?.internal.keyEvents;
   const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
     keyWire?.next({ key: e.key, event: e.type as any });
   }, [keyWire]);
@@ -66,11 +66,11 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
         >
           <CameraControls
             stageKey={stageKey}
-            enabled={stage.camEnabled}
+            enabled={stage.internal.camEnabled}
           />
           <Grid />
           <Lights />
-          {stage.controls && (
+          {stage.internal.controls && (
             <Brush
               stage={stage}
               wire={ptrWire}

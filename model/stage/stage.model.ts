@@ -6,15 +6,18 @@ import { KeyedLookup } from "../generic.model";
 
 export type StageMeta = {
   key: string;
-  /** Can we move/zoom the pan-zoom camera? */
-  camEnabled: boolean;
-  /** Used to draw rects */
+  internal: {
+    /** Can we move/zoom the pan-zoom camera? */
+    camEnabled: boolean;
+    keyEvents: Subject<StageKeyEvent>;
+    /** Attached on mount */
+    controls?: PanZoomControls;
+    /** Attached on mount */
+    scene?: Scene;
+
+  };
+  /** Select rects and move templates */
   brush: BrushMeta;
-  keyEvents: Subject<StageKeyEvent>;
-  /** Attached on mount */
-  controls?: PanZoomControls;
-  /** Attached on mount */
-  scene?: Scene;
 
   /** The layers in this stage */
   layer: KeyedLookup<StageLayer>;
