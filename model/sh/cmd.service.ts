@@ -1,5 +1,6 @@
 import { interval, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import cliColumns from 'cli-columns';
 
 import { deepGet, kebabToCamel, testNever, truncate } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
@@ -7,7 +8,7 @@ import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
 import { NamedFunction } from './var.model';
-import { getProcessStatusIcon, ReadResult, SigEnum, dataChunk, isDataChunk, Device, preProcessRead } from './io/io.model';
+import { getProcessStatusIcon, ReadResult, SigEnum, dataChunk, isDataChunk, preProcessRead } from './io/io.model';
 import { ProcessError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 
@@ -150,7 +151,7 @@ class CmdService {
       }
       case 'map': {
         const { opts, operands } = getOpts(args, { boolean: [
-          'x', /** Extended func def */
+          'x', /** Permit extended func def, see function `filter` */
         ], });
         const funcDef = operands[0];
         const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
@@ -158,12 +159,18 @@ class CmdService {
         break;
       }
       case 'ls': {
-        const { stage, var: v } = this.provideStageAndVars(meta);
-        for (const [varName, varValue] of Object.entries(v)) {
-          yield `var/${varName} (${typeof varValue})`;
-        }
-        for (const [key, value] of Object.entries(stage)) {
-          yield `stage/${key} (${typeof value})`;
+        const { opts } = getOpts(args, { boolean: [
+          '1', /** One line per item */
+        ], });
+        const { stage, var: varLookup } = this.provideStageAndVars(meta);
+        const items = Object.keys(varLookup).map(x => `var/${x}`)
+          .concat(Object.keys(stage).map(x => `stage/${x}`));
+        items.sort();
+        if (opts['1']) {
+          for (const item of items) yield item;
+        } else {
+          const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
+          yield cliColumns(items, { width: ttyShell.xterm.xterm.cols });
         }
         break;
       }

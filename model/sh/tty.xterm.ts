@@ -51,7 +51,7 @@ export class TtyXterm {
   private refreshMs = 0;
 
   constructor(
-    private xterm: Terminal,
+    public xterm: Terminal,
     public sessionKey: string,
     public io: ShellIo<MessageFromXterm, MessageFromShell>,
   ) {
