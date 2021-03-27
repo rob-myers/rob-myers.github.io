@@ -25,7 +25,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
       if (key === 'pointerleave' || key === 'pointerup') {
         active.current = false;
 
-        if (Math.abs(group.scale.x) > 0.01) {
+        if (Math.abs(group.scale.x) >= 0.01 || Math.abs(group.scale.y) >= 0.01) {
           // Scale up rectangle to contain all touched 0.5 * 0.5 cells
           group.position.x = (group.scale.x > 0 ? Math.floor : Math.ceil)(10 * group.position.x) / 10;
           group.position.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.position.y) / 10;
@@ -39,6 +39,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
           stage.brush.scale.copy(group.scale);
         } else {
           vectPrecision(group.position, 1);
+          group.scale.set(0, 0, 0);
           stage.brush.position.copy(group.position);
           stage.brush.scale.set(0, 0);
         }
