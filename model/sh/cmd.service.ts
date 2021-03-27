@@ -167,12 +167,12 @@ class CmdService {
           .concat(Object.keys(stage).map(x => `stage/${x}`)).sort();
 
         // We usually treat -1 as an operand, but it is an option here
+        const prefix = operands.find(x => !x.startsWith('-'));
+        prefix && (items = items.filter(x => x.startsWith(prefix)));
         if (!opts[1]) {
           const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
           items = cliColumns(items, { width: ttyShell.xterm.xterm.cols }).split(/\r?\n/);
         }
-        const prefix = operands.find(x => !x.startsWith('-'));
-        prefix && (items = items.filter(x => x.startsWith(prefix)));
 
         for (const item of items) yield item;
         break;
