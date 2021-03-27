@@ -9,10 +9,10 @@ key |
       else if (msg.key === "d") stage.brush.erase();
       else if (msg.key === "q") {
         stage.maxHeight = stage.maxHeight ? 0 : 10;
-        stage.opacity = stage.maxHeight ? 1 : 0.2;
+        stage.opacity = 1;
       } else if (msg.key === "e") {
-        if (stage.maxHeight) stage.opacity = stage.opacity > 0.2 ? 0.2 : 1;
-        else { stage.opacity = 0.2; stage.maxHeight = 10; }
+        stage.opacity = stage.opacity === 1 ? 0.2 : 1;
+        stage.maxHeight = 10;
       }
     }
   }' &

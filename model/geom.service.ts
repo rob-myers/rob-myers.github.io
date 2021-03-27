@@ -1,22 +1,38 @@
 import * as THREE from 'three';
 import { Vector3, Mesh } from 'three';
-import { Geometry, Face3 } from 'model/3d/deprecated';
 import { MeshLineMaterial, MeshLine } from 'three.meshline';
 import polygonClipping from 'polygon-clipping';
 
 import { range, Triple, tryParseJson } from 'model/generic.model';
+import { Geometry, Face3 } from 'model/3d/deprecated';
 import * as Geom from 'model/geom';
 
 const twopi = 2 * Math.PI;
-
 export const outsetAmount = 10;
+const defaultLineWidth = 0.015;
 
 class GeomService {
 
+  private colorCache = {} as Record<string, THREE.Color>;
+  private lineMatCache = {} as Record<string, MeshLineMaterial>;
+
+  private getColor(color: string) {
+    return this.colorCache[color] || (
+      this.colorCache[color] = new THREE.Color(color)
+    );
+  }
+
+  private getLineMat(lineWidth: number, color: string) {
+    const key = JSON.stringify({ lineWidth, color });
+    return this.lineMatCache[key] || (
+      this.lineMatCache[key] = new MeshLineMaterial({
+        color: this.getColor(color),
+        lineWidth,
+      })
+    );
+  }
+
   private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
-  private whiteColor = new THREE.Color('#ffffff');
-  private blueColor = new THREE.Color('#add8e6');
-  private lineMaterial = new MeshLineMaterial( { color: this.whiteColor, lineWidth: 0.015 } );
 
   computeTangents(ring: Geom.Vector[]) {
     // We concat `ring[0]` for final tangent
@@ -41,13 +57,15 @@ class GeomService {
   createPolyLine(points: Geom.VectorJson[], opts: {
     height: number;
     loop?: boolean;
-    lineWidth?: number; // TODO
+    lineWidth?: number;
+    color?: string;
   }) {
     const meshLine = new MeshLine;
     const vectors = points.map(p => new Vector3(p.x, p.y, opts.height));
     opts.loop && vectors.length && vectors.push(vectors[0]);
     meshLine.setPoints(vectors);
-    return new THREE.Mesh(meshLine, this.lineMaterial);
+    const lineMaterial = this.getLineMat(opts.lineWidth || defaultLineWidth, opts.color || '#ffffff');
+    return new THREE.Mesh(meshLine, lineMaterial);
   }
 
   createGroup(objects: THREE.Object3D[], name?: string) {
