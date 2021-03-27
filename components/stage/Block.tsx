@@ -11,14 +11,11 @@ const Block: React.FC<Props> = ({ stage, block, flat }) => {
   const geometry = useMemo(() => {
     const flattened = polygons.flatMap(x => x.polygons);
     return geomService.polysToWallsGeometry(flattened, flat ? 0 : block.height);
-  }, polygons);
+  }, [...polygons, flat]);
 
   return (
     <group>
-      <mesh
-        geometry={geometry}
-        scale={flat ? [1, 1, 0] : [1, 1, 1]}
-      >
+      <mesh geometry={geometry}>
         <meshBasicMaterial
           side={DoubleSide}
           color={block.color}

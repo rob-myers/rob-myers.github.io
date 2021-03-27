@@ -10,6 +10,7 @@ export function createStageProxy(stageKey: string) {
   return new Proxy({} as StageMeta, {
     get(_, key: keyof StageMeta) {
       const stage = useStageStore.api.getStage(stageKey);
+
       if (key === 'brush') {
         return new Proxy({} as ExtendedBrush, {
           get(_, key: keyof ExtendedBrush) {
@@ -29,6 +30,7 @@ export function createStageProxy(stageKey: string) {
           },
         });
       }
+
       return stage[key];
     },
     set(_, key: string, value: any) {

@@ -70,7 +70,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           <Block
             stage={stage}
             block={stage.block.default}
-            // flat={true}
+            flat={stage.flat}
           />
           
         </Canvas>

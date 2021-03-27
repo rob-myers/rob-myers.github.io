@@ -2,13 +2,15 @@
 
 ```sh
 key |
-  run '({ read, _: {msg} }, { stage: {brush} }) {
+  run '({ read, _: {msg} }, { stage }) {
     while (msg = await read()) {
       if (msg.event !== "keydown") continue;
       if (msg.key === "a") {
-        brush.paint();
+        stage.brush.paint();
       } else if (msg.key === "d") {
-        brush.erase();
+        stage.brush.erase();
+      } else if (msg.key === "q") {
+        stage.flat = !stage.flat;
       }
     }
   }' &

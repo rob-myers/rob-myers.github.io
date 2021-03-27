@@ -16,6 +16,8 @@ export type StageMeta = {
     /** Attached on mount */
     scene?: Scene;
   };
+  /** Flatten walls to floor? */
+  flat: boolean;
   /** Used to select rectangles and move templates */
   brush: BrushMeta;
   /** Polygon storage */

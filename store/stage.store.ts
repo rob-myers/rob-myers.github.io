@@ -77,12 +77,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         internal: {
           camEnabled: true,
           keyEvents: new Subject,
+          // Others attached by components
         },
+
         block: addToLookup(Stage.createStageBlock('default', {
           polygonKeys: ['default'],
         }), {}),
         brush: Stage.createDefaultBrushMeta(),
         polygon: addToLookup(Stage.createNamedPolygons('default'), {}),
+
+        flat: false,
       }, stage),
     })),
 
