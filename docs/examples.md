@@ -2,18 +2,14 @@
 
 ```sh
 key |
-  run '({ read, _: {msg} }, { stage }) {
+  run '({ read, _: {msg} }, { stage: s }) {
     while (msg = await read()) {
       if (msg.event !== "keydown") continue;
-      if (msg.key === "a") stage.brush.paint();
-      else if (msg.key === "d") stage.brush.erase();
-      else if (msg.key === "q") {
-        stage.maxHeight = stage.maxHeight ? 0 : 10;
-        stage.opacity = 1;
-      } else if (msg.key === "e") {
-        stage.opacity = stage.opacity === 1 ? 0.2 : 1;
-        stage.maxHeight = 10;
-      }
+      if (msg.key === "a") s.brush.paint();
+      else if (msg.key === "d") s.brush.erase();
+      else if (msg.key === "1") [s.height, s.opacity] = [10, 1];
+      else if (msg.key === "2") [s.height, s.opacity] = [0, 0.2];
+      else if (msg.key === "3") [s.height, s.opacity] = [10, 0.2];
     }
   }' &
 ```

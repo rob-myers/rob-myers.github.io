@@ -11,11 +11,11 @@ const Block: React.FC<Props> = ({ stage, block }) => {
   const geometry = useMemo(() =>
     geomService.polysToWalls(
       polygons.flatMap(x => x.polygons),
-      Math.min(block.height, stage.maxHeight),
-  ), [...polygons, stage.maxHeight]);
+      Math.min(block.height, stage.height),
+  ), [...polygons, stage.height]);
 
   // When flat force opacity so can see selections
-  const opacity = stage.maxHeight === 0 ? 0.2 : stage.opacity;
+  const opacity = stage.height === 0 ? 0.2 : stage.opacity;
 
   return (
     <group>

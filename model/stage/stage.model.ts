@@ -19,7 +19,7 @@ export type StageMeta = {
   /** Transparency in range [0,1] */
   opacity: number;
   /** Can suppress high walls */
-  maxHeight: number;
+  height: number;
   /** Used to select rectangles and move templates */
   brush: BrushMeta;
   /** Polygon storage */
