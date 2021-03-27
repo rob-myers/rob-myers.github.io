@@ -3,7 +3,7 @@ import { Subject } from "rxjs";
 import { Vector3 } from "three";
 
 import * as Geom from "model/geom";
-import { ndCoordsToGroundPlane, vectAccuracy } from "model/3d/three.model";
+import { ndCoordsToGroundPlane, vectPrecision } from "model/3d/three.model";
 import { brushRectName, StageMeta } from "model/stage/stage.model";
 
 const Brush: React.FC<Props> = ({ wire, stage }) => {
@@ -26,12 +26,12 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         active.current = false;
         // Sync with state
         stage.brush.position.copy(group.position);
-        vectAccuracy(group.scale, 1);
+        vectPrecision(group.scale, 1);
         stage.brush.scale.copy(group.scale);
       } else if (key === 'pointerdown') {
         ndCoordsToGroundPlane(initial, ndCoords, controls.camera);
         active.current = true;
-        vectAccuracy(initial, 1);
+        vectPrecision(initial, 1);
         group.position.set(initial.x, initial.y, 0);
         group.scale.set(0, 0, 0);
       } else if (key === 'pointermove' && active.current) {

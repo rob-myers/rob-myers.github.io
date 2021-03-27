@@ -61,6 +61,9 @@ export function ndCoordsToGroundPlane(
   return output;
 }
 
-export function vectAccuracy(v: THREE.Vector3, accuracy: number) {
-  return v.multiplyScalar(10 ** accuracy).round().divideScalar(10 ** accuracy);
+export function vectPrecision(v: THREE.Vector3, decimalPlaces: number) {
+  v.x = Number(v.x.toFixed(decimalPlaces));
+  v.y = Number(v.y.toFixed(decimalPlaces));
+  v.z = Number(v.z.toFixed(decimalPlaces));
+  return v;
 }

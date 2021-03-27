@@ -47,7 +47,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     addWalls: (stageKey, walls, { polygonKey = 'default', cutOut }) => {
       const { polygons: prev } = api.getPolygon(stageKey, polygonKey);
       const delta = walls.map(([x, y, w, h]) =>
-        Geom.Polygon.fromRect(new Geom.Rect(x, y, w, h)));
+        Geom.Polygon.fromRect(new Geom.Rect(x, y, w, h)).precision(1));
       const wallPolys = cutOut
         ? geomService.cutOut(delta, prev)
         : geomService.union(prev.concat(delta));
@@ -56,17 +56,17 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     applyBrush: (stageKey, opts) => {
       const brush = get().api.getBrush(stageKey);
-      const delta = Geom.Polygon.fromRect(Stage.computeGlobalBrushRect(brush));
+      const delta = Geom.Polygon.fromRect(Stage.computeGlobalBrushRect(brush)).precision(1);
       
       const { polygons: prev } = api.getPolygon(stageKey, opts.polygonKey);
       try {
-        const layerPolys = opts.erase
+        const next = opts.erase
           ? geomService.cutOut([delta], prev)
           : geomService.union(prev.concat(delta));
         const polygonKey = opts.polygonKey || 'default';
-        api.updatePolygon(stageKey, polygonKey, { polygons: layerPolys });
+        api.updatePolygon(stageKey, polygonKey, { polygons: next });
       } catch (error) {
-        console.error('Geometric operation failed');
+        console.error('applyBrush: geometric operation failed');
         console.error(error);
       }
     },

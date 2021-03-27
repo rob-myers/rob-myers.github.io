@@ -9,15 +9,15 @@ import { Rect } from "./rect.model";
 export class Polygon {
 
   /** Avoid costly recomputation when no mutation. */
-  private _triangulation = [] as Polygon[];
+  private _triangulation: undefined | Polygon[];
   /** Often preserved under mutation. */
-  private _triangulationIds = [] as Triple<number>[];
+  private _triangulationIds: undefined | Triple<number>[];
 
   constructor(
     public outline: Vector[] = [],
     public holes: Vector[][] = [],
   ) {}
-
+  
   get allPoints(): Vector[] {
     return this.outline.concat(...this.holes);
   }
@@ -28,9 +28,9 @@ export class Polygon {
   }
 
   private clearCache() {
-    this._triangulation = this._triangulationIds.length
-      ? this.triangleIdsToPolys(this._triangulationIds)
-      : [];
+    if (this._triangulationIds?.length) {
+      this._triangulation = this.triangleIdsToPolys(this._triangulationIds);
+    }
   }
 
   /**
@@ -255,6 +255,12 @@ export class Polygon {
     }
   }
 
+  precision(decimalPlaces: number) {
+    this.outline.forEach(p => p.precision(decimalPlaces));
+    this.holes.forEach(hole => hole.forEach(p => p.precision(decimalPlaces)));
+    return this;
+  }
+
   static pointInTriangle(pt: Vector, v1: Vector, v2: Vector, v3: Vector) {
     const d1 = Polygon.sign(pt, v1, v2);
     const d2 = Polygon.sign(pt, v2, v3);
@@ -319,7 +325,7 @@ export class Polygon {
   }
 
   public get triangulation(): Polygon[] {
-    if (this._triangulation.length) {
+    if (this._triangulation?.length) {
       return this._triangulation;
     }
     return this.triangulate();
@@ -330,11 +336,11 @@ export class Polygon {
     return triIds.map(([u, v, w]) => new Polygon([ ps[u], ps[v], ps[w] ]));
   }
 
-  public triangulate(): Polygon[] {
-    if (!this._triangulation.length) {
+  private triangulate(): Polygon[] {
+    if (!this._triangulation?.length) {
       this.qualityTriangulate();
     }
-    return this._triangulation;
+    return this._triangulation!;
   }
 
   /** Construct union of _polygons_, yielding a multipolygon. */
