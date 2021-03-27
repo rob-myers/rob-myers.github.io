@@ -1,31 +1,34 @@
-import useStageStore from "store/stage.store";
+import useStage from "store/stage.store";
 import { BrushMeta, StageMeta } from "./stage.model";
 
 export interface ExtendedBrush extends BrushMeta {
-  paint: (layer?: string) => void;
-  erase: (layer?: string) => void;
+  paint: (polygonKey?: string) => void;
+  erase: (polygonKey?: string) => void;
+  select: () => void;
 }
 
 export function createStageProxy(stageKey: string) {
   return new Proxy({} as StageMeta, {
     get(_, key: keyof StageMeta) {
-      const stage = useStageStore.api.getStage(stageKey);
+      const stage = useStage.api.getStage(stageKey);
 
       if (key === 'brush') {
         return new Proxy({} as ExtendedBrush, {
           get(_, key: keyof ExtendedBrush) {
             if (key === 'paint') {
               return (polygonKey = 'default') =>
-                useStageStore.api.applyBrush(stageKey, { polygonKey });
+                useStage.api.applyBrush(stageKey, { polygonKey });
             } else if (key === 'erase') {
               return (polygonKey = 'default') =>
-                useStageStore.api.applyBrush(stageKey, { polygonKey, erase: true });
+                useStage.api.applyBrush(stageKey, { polygonKey, erase: true });
+            } else if (key === 'select') {
+              return () => useStage.api.toggleBrushLock(stageKey);
             } else {
-              return useStageStore.api.getBrush(stageKey)[key];
+              return useStage.api.getBrush(stageKey)[key];
             }
           },
           set(_, key: string, value: any) {
-            useStageStore.api.updateBrush(stageKey, { [key]: value });
+            useStage.api.updateBrush(stageKey, { [key]: value });
             return true;
           },
         });
@@ -34,10 +37,10 @@ export function createStageProxy(stageKey: string) {
       return stage[key];
     },
     set(_, key: string, value: any) {
-      useStageStore.api.updateStage(stageKey, { [key]: value });
+      useStage.api.updateStage(stageKey, { [key]: value });
       return true;
     },
-    ownKeys: () => Object.keys(useStageStore.api.getStage(stageKey)),
+    ownKeys: () => Object.keys(useStage.api.getStage(stageKey)),
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
   });
 }

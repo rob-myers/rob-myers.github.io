@@ -54,6 +54,8 @@ export interface BrushMeta {
   position: Geom.Vector;
   /** Mutated by Brush */
   scale: Geom.Vector;
+  /** Is the selection locked? */
+  locked: boolean;
 }
 
 export function createDefaultBrushMeta(): BrushMeta {
@@ -63,6 +65,7 @@ export function createDefaultBrushMeta(): BrushMeta {
     rect: Geom.Rect.from({ x: 0, y: -1, width: 1, height: 1 }),
     position: Geom.Vector.from({ x: 0, y: 0 }),
     scale: Geom.Vector.from({ x: 1, y: 1 }),
+    locked: false,
   };
 };
 

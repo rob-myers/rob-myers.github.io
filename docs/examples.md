@@ -7,6 +7,7 @@ key |
       if (msg.event !== "keydown") continue;
       if (msg.key === "a") s.brush.paint();
       else if (msg.key === "d") s.brush.erase();
+      else if (msg.key === "w") s.brush.select();
       else if (msg.key === "1") [s.height, s.opacity] = [10, 1];
       else if (msg.key === "2") [s.height, s.opacity] = [0, 0.2];
       else if (msg.key === "3") [s.height, s.opacity] = [10, 0.2];

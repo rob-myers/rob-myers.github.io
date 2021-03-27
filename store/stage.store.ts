@@ -25,6 +25,7 @@ export type State = {
     getInternal: (stageKey: string) => Stage.StageMeta['internal'];
     getPolygon: (stageKey: string, polygonKey?: string) => Stage.NamedPolygons;
     getStage: (stageKey: string) => Stage.StageMeta;
+    toggleBrushLock: (stageKey: string) => void;
     removeStage: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Partial<Stage.BrushMeta>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageMeta['internal']>) => void;
@@ -111,6 +112,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     getStage: (stageKey) => {
       return get().stage[stageKey];
+    },
+
+    toggleBrushLock: (stageKey) => {
+      // TODO select something...
+      const { locked } = get().api.getBrush(stageKey);
+      get().api.updateBrush(stageKey, { locked: !locked });
     },
 
     removeStage: (stageKey) => set(({ stage }) => ({

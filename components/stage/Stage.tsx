@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { PerspectiveCamera } from "three";
 import { Canvas, CanvasContext } from "react-three-fiber";
 import { Subject } from "rxjs";
@@ -57,7 +57,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           pixelRatio={pixelRatio.current}
           onCreated={onCreatedCanvas}
           onPointerDownCapture={onPointer}
-          onPointerMove={onPointer}
+          onPointerMoveCapture={onPointer}
           onPointerUpCapture={onPointer}
           onPointerLeave={onPointer}
         >

@@ -10,8 +10,8 @@
 
 .root > .centralDot {
   position: absolute;
-  background: red;
-  border-radius: 4px;
+  background: #900;
+  border-radius: 2px;
   top: calc(28px + (100% - 28px) * 0.5 - 2px);
   left: calc(50% - 2px);
   height: 4px;

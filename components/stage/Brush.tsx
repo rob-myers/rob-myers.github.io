@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
 import { Vector3 } from "three";
+import { PointerEvent } from "react-three-fiber";
 
 import * as Geom from "model/geom";
 import { ndCoordsToGroundPlane, vectPrecision } from "model/3d/three.model";
@@ -17,13 +18,19 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const active = useRef(false);
   const [everUsed, setEverUsed] = useState(false);
 
+  const locked = stage.brush.locked;
+
   useEffect(() => {
     const group = root.current!;
 
     const sub = wire.subscribe(({ key, ndCoords }) => {
+      if (locked) {
+        key === 'pointerleave' && (active.current = false);
+        return;
+      }
+
       if (key === 'pointerleave' || key === 'pointerup') {
         active.current = false;
-
         if (Math.abs(group.scale.x) >= 0.01 || Math.abs(group.scale.y) >= 0.01) {
           // Scale up rectangle to contain all touched 0.1 * 0.1 cells
           group.position.x = (group.scale.x > 0 ? Math.floor : Math.ceil)(10 * group.position.x) / 10;
@@ -55,13 +62,38 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
       }
     });
     return () => {
+      active.current = false;
       sub.unsubscribe();
     };
-  }, [everUsed, controls]);
+  }, [everUsed, locked]);
+
+  const onMeshPointer = useCallback((e: PointerEvent) => {
+    if (!locked) return;
+    
+    const key = e.type as 'pointerdown' | 'pointermove' | 'pointerup' | 'pointerout';
+    const group = root.current!;
+
+    if (key === 'pointermove' && active.current) {
+      group.position.copy(e.point).add(initial);
+    } else if (key === 'pointerdown') {
+      active.current = true;
+      initial.copy(group.position).sub(e.point);
+    } else if (key === 'pointerup' || key === 'pointerout') {
+      active.current = false;
+      vectPrecision(group.position, 1);
+    }
+  }, [locked]);
 
   return (
     <group ref={root} visible={everUsed}>
-      <mesh name={brushRectName} position={[0.5, -0.5, 0]}>
+      <mesh
+        name={brushRectName}
+        position={[0.5, -0.5, 0]}
+        onPointerDown={onMeshPointer}
+        onPointerUp={onMeshPointer}
+        onPointerMove={onMeshPointer}
+        onPointerOut={onMeshPointer}
+      >
         <planeBufferGeometry args={[1, 1, 1]} />
         <meshStandardMaterial
           color="#00f"
