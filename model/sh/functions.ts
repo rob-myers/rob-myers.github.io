@@ -29,6 +29,9 @@ export const preloadedFunctions = {
   }
 }  
 `,
+  pretty: `
+map '(x, { compactSafeStringify }) => compactSafeStringify(x)'
+`,
 };
 
 export const preloadedVariables = {

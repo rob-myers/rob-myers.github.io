@@ -1,6 +1,8 @@
 import { interval, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import cliColumns from 'cli-columns';
+import safeJsonStringify from 'safe-json-stringify';
+import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 
 import { deepGet, kebabToCamel, testNever, truncate } from 'model/generic.model';
 import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
@@ -71,15 +73,6 @@ class CmdService {
         );
         break;
       }
-      // TODO migrate to a function
-      // case 'cat': {
-      //   for (const arg of args) {
-      //     const value = useSession.api.getVar(meta.sessionKey, arg);
-      //     if (value === undefined) throw new ShError(`${arg}: variable not found`, 1);
-      //     for (const item of Array.isArray(value) ? value : [value]) yield item;
-      //   }
-      //   break;
-      // }
       case 'defs': {
         const funcs = useSession.api.getFuncs(meta.sessionKey);
         for (const { key, src } of funcs) {
@@ -155,7 +148,7 @@ class CmdService {
         ], });
         const funcDef = operands[0];
         const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
-        yield* this.read(meta, (data) => func()(data));
+        yield* this.read(meta, (data) => func()(data, { ...this.jsUtil }));
         break;
       }
       case 'ls': {
@@ -265,6 +258,13 @@ class CmdService {
     } as Sh.BaseMeta);
     await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
+
+  private jsUtil = {
+    safeStringify: safeJsonStringify,
+    compactStringify: jsonStringifyPrettyCompact,
+    compactSafeStringify: (...args: Parameters<typeof safeJsonStringify>) =>
+      jsonStringifyPrettyCompact(JSON.parse(safeJsonStringify(...args))),
+  };
 
   private provideJsApi(meta: Sh.BaseMeta) {
     return {

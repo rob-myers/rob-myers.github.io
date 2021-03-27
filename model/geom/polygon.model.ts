@@ -258,6 +258,7 @@ export class Polygon {
   precision(decimalPlaces: number) {
     this.outline.forEach(p => p.precision(decimalPlaces));
     this.holes.forEach(hole => hole.forEach(p => p.precision(decimalPlaces)));
+    this.clearCache();
     return this;
   }
 
@@ -272,13 +273,6 @@ export class Polygon {
 
   get rect() {
     return Rect.fromPoints(...this.outline);
-  }
-
-  round() {
-    this.outline.forEach(p => p.round());
-    this.holes.forEach(h => h.forEach(p => p.round()));
-    this.clearCache();
-    return this;
   }
 
   scale(scalar: number) {
