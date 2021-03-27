@@ -15,7 +15,8 @@ class GeomService {
 
   private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
   private whiteColor = new THREE.Color('#ffffff');
-  private lineMaterial = new MeshLineMaterial( { color: this.whiteColor, lineWidth: 0.02 } );
+  private blueColor = new THREE.Color('#add8e6');
+  private lineMaterial = new MeshLineMaterial( { color: this.blueColor, lineWidth: 0.01 } );
 
   computeTangents(ring: Geom.Vector[]) {
     // We concat `ring[0]` for final tangent
@@ -37,14 +38,20 @@ class GeomService {
     return mesh;
   }
 
-  createPolyLine(points: Geom.VectorJson[], height = 0.5) {
-    const meshLine = new MeshLine();
-    meshLine.setPoints(points.map(p => new Vector3(p.x, p.y, height)));
+  createPolyLine(points: Geom.VectorJson[], opts: {
+    height: number;
+    loop?: boolean;
+    lineWidth?: number; // TODO
+  }) {
+    const meshLine = new MeshLine;
+    const vectors = points.map(p => new Vector3(p.x, p.y, opts.height));
+    opts.loop && vectors.length && vectors.push(vectors[0]);
+    meshLine.setPoints(vectors);
     return new THREE.Mesh(meshLine, this.lineMaterial);
   }
 
   createGroup(objects: THREE.Object3D[], name?: string) {
-    const group = new THREE.Group();
+    const group = new THREE.Group;
     objects.forEach(o => group.add(o));
     name && (group.name = name);
     return group;
@@ -53,7 +60,7 @@ class GeomService {
   createPath(points: Geom.VectorJson[], name: string) {
     const cubes = points.map(p => this.createCube(
       new Vector3(p.x, p.y, 0.2), 0.05, this.whiteMaterial));
-    const polyLine = this.createPolyLine(points, 0.2);
+    const polyLine = this.createPolyLine(points, { height: 0.2 });
     return this.createGroup([...cubes, polyLine], name);
   }
 

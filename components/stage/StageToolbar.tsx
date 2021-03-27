@@ -22,7 +22,7 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
           enabled={stage.internal.camEnabled}
           onClick={toggleCam}
         >
-          pan-zoom
+          panzoom
         </Button>
       </>}
     </Toolbar>
@@ -39,7 +39,7 @@ const Toolbar = styled.section`
   border-bottom: 1px solid #ddd;
   display: grid;
   padding: 4px;
-  grid-template-columns: auto 76px;
+  grid-template-columns: auto 70px;
   gap: 8px;
 `;
 

@@ -75,7 +75,7 @@ export function createStageBlock(key: string, opts: Partial<StageBlock>): StageB
   return {
     key,
     color: '#000',
-    height: 4,
+    height: 10,
     polygonKeys: [],
     visible: true,
     ...opts,

@@ -14,7 +14,7 @@ import Grid from "./Grid";
 import Lights from "./Lights";
 import Brush, { PointerMsg } from "./Brush";
 import Block from "./Block";
-import styles from 'styles/Stage.module.css';
+import styles from "styles/Stage.module.css";
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
   const stage = useStageStore<StageMeta | null>(({ stage }) => stage[stageKey]??null);
@@ -67,7 +67,11 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           <Brush stage={stage} wire={ptrWire} />
 
           {/* TODO loop through stage.block */}
-          <Block stage={stage} blockKey="default" flat={false} />
+          <Block
+            stage={stage}
+            block={stage.block.default}
+            // flat={true}
+          />
           
         </Canvas>
       )}
