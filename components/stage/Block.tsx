@@ -1,26 +1,29 @@
 import { useMemo } from "react";
-import { DoubleSide } from "three";
+import { BackSide, DoubleSide, FrontSide } from "three";
 import { geomService } from "model/geom.service";
 import { StageBlock, StageMeta } from "model/stage/stage.model";
 
-const Block: React.FC<Props> = ({ stage, block, maxHeight }) => {
+const Block: React.FC<Props> = ({ stage, block }) => {
 
   const polygons = block.polygonKeys
     .map(x => stage.polygon[x]).filter(Boolean);
 
-  const geometry = useMemo(() => {
-    const flattened = polygons.flatMap(x => x.polygons);
-    return geomService.polysToWallsGeometry(
-      flattened, Math.min(block.height, maxHeight) 
-    );
-  }, [...polygons, maxHeight]);
+  const geometry = useMemo(() =>
+    geomService.polysToWalls(
+      polygons.flatMap(x => x.polygons),
+      Math.min(block.height, stage.maxHeight),
+  ), [...polygons, stage.maxHeight]);
 
   return (
     <group>
-      <mesh geometry={geometry}>
+      <mesh key={stage.opacity} geometry={geometry}>
         <meshBasicMaterial
-          side={DoubleSide}
+          side={stage.opacity === 1 ? DoubleSide : FrontSide}
           color={block.color}
+          {...stage.opacity !== 1 && {
+            transparent: true,
+            opacity: stage.opacity,
+          }}
         />
       </mesh>
     </group>
@@ -30,7 +33,6 @@ const Block: React.FC<Props> = ({ stage, block, maxHeight }) => {
 interface Props {
   stage: StageMeta;
   block: StageBlock;
-  maxHeight: number;
 }
 
 export default Block;

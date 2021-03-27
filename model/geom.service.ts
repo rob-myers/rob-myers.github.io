@@ -232,10 +232,10 @@ class GeomService {
       .some(([u, v, w]) => this.isPointInTriangle(point, u, v, w));
   }
 
-  polysToWallsGeometry(polys: Geom.Polygon[], height = 2): THREE.BufferGeometry {
-    const decomps = polys.map(p => p.qualityTriangulate());
+  polysToWalls(polys: Geom.Polygon[], height: number): THREE.BufferGeometry {
+    const decomps = polys.map(p => p.triangulate());
 
-    const geometry = new Geometry();
+    const geometry = new Geometry;
     let offset = 0;
     for (const { vs, tris } of decomps) {
       geometry.vertices.push(...vs.map(p => new Vector3(p.x, p.y, 0)));
@@ -267,7 +267,7 @@ class GeomService {
   }
 
   polysToGeometry(polygons: Geom.Polygon[]) {
-    const decomps = polygons.map(p => p.qualityTriangulate());
+    const decomps = polygons.map(p => p.triangulate());
     const all = this.joinTriangulations(decomps);
     const geometry = new Geometry;
     geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, 0)));

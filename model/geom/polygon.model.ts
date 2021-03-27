@@ -319,10 +319,10 @@ export class Polygon {
   }
 
   public get triangulation(): Polygon[] {
-    if (this._triangulation?.length) {
-      return this._triangulation;
+    if (!this._triangulation) {
+      this.qualityTriangulate();
     }
-    return this.triangulate();
+    return this._triangulation!;
   }
 
   private triangleIdsToPolys(triIds: Triple<number>[]): Polygon[] {
@@ -330,11 +330,11 @@ export class Polygon {
     return triIds.map(([u, v, w]) => new Polygon([ ps[u], ps[v], ps[w] ]));
   }
 
-  private triangulate(): Polygon[] {
+  triangulate() {
     if (!this._triangulation?.length) {
-      this.qualityTriangulate();
+      return this.qualityTriangulate();
     }
-    return this._triangulation!;
+    return { vs: this.allPoints, tris: this._triangulationIds! };
   }
 
   /** Construct union of _polygons_, yielding a multipolygon. */

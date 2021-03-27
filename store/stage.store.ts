@@ -87,6 +87,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         polygon: addToLookup(Stage.createNamedPolygons('default'), {}),
 
         maxHeight: 10,
+        opacity: 1,
       }, stage),
     })),
 

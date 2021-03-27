@@ -16,6 +16,8 @@ export type StageMeta = {
     /** Attached on mount */
     scene?: Scene;
   };
+  /** Transparency in range [0,1] */
+  opacity: number;
   /** Can suppress high walls */
   maxHeight: number;
   /** Used to select rectangles and move templates */
