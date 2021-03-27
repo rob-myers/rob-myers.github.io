@@ -75,6 +75,8 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           ))}
         </Canvas>
       )}
+
+      <div className={styles.centralDot} />
     </section>
   );
 }

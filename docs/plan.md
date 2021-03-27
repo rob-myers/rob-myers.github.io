@@ -8,8 +8,6 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Red lines indicating origin
-
 - `Brush` has two modes: `select-rect` and `move-template`
   > Set the template by selecting via `select-rect`
   > Can mirror
@@ -89,3 +87,4 @@ Blog layout related tasks
   > `stage.block` defines visible blocking polygons with height 
 ✅ Can edit stage.maxHeight
 ✅ Can edit stage.opacity
+✅ Added central dot

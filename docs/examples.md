@@ -7,8 +7,13 @@ key |
       if (msg.event !== "keydown") continue;
       if (msg.key === "a") stage.brush.paint();
       else if (msg.key === "d") stage.brush.erase();
-      else if (msg.key === "q") stage.maxHeight = stage.maxHeight ? 0 : 10;
-      else if (msg.key === "e") stage.opacity = stage.opacity > 0.2 ? 0.2 : 1;
+      else if (msg.key === "q") {
+        stage.maxHeight = stage.maxHeight ? 0 : 10;
+        stage.opacity = stage.maxHeight ? 1 : 0.2;
+      } else if (msg.key === "e") {
+        if (stage.maxHeight) stage.opacity = stage.opacity > 0.2 ? 0.2 : 1;
+        else { stage.opacity = 0.2; stage.maxHeight = 10; }
+      }
     }
   }' &
 ```

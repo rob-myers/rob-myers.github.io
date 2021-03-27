@@ -18,7 +18,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const [everUsed, setEverUsed] = useState(false);
 
   useEffect(() => {
-    if (!controls) return;
+    if (!controls?.camera) return;
     const group = root.current!;
 
     const sub = wire.subscribe(({ key, ndCoords }) => {
@@ -67,7 +67,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         <meshStandardMaterial
           color="#00f"
           transparent
-          opacity={0.5}
+          opacity={0.2}
         />
       </mesh>
     </group>
