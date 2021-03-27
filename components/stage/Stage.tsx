@@ -66,13 +66,14 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           <CameraControls stage={stage} />
           <Brush stage={stage} wire={ptrWire} />
 
-          {/* TODO loop through stage.block */}
-          <Block
-            stage={stage}
-            block={stage.block.default}
-            flat={stage.flat}
-          />
-          
+          {Object.values(stage.block).map(block => (
+            <Block
+              key={block.key}
+              stage={stage}
+              block={block}
+              flat={stage.flat}
+            />
+          ))}
         </Canvas>
       )}
     </section>
