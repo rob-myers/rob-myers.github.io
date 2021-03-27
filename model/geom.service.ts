@@ -16,7 +16,7 @@ class GeomService {
   private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
   private whiteColor = new THREE.Color('#ffffff');
   private blueColor = new THREE.Color('#add8e6');
-  private lineMaterial = new MeshLineMaterial( { color: this.blueColor, lineWidth: 0.01 } );
+  private lineMaterial = new MeshLineMaterial( { color: this.whiteColor, lineWidth: 0.015 } );
 
   computeTangents(ring: Geom.Vector[]) {
     // We concat `ring[0]` for final tangent
@@ -252,11 +252,11 @@ class GeomService {
     offset = 0;
     for (const { outline, holes } of polys) {
       for (const cycle of [outline].concat(holes)) {
-        const breadth = cycle.length;
+        const sides = cycle.length;
         geometry.faces.push(...cycle.map((_, i) =>
-          new Face3(offset + i % breadth, offset + (i + 1) % breadth, delta + offset + (i + 1) % breadth)));
+          new Face3(offset + i % sides, offset + (i + 1) % sides, delta + offset + (i + 1) % sides)));
         geometry.faces.push(...cycle.map((_, i) =>
-          new Face3(delta + offset + (i + 1) % breadth, delta + offset + i % breadth, offset + i % breadth)));
+          new Face3(delta + offset + (i + 1) % sides, delta + offset + i % sides, offset + i % sides)));
         offset += cycle.length;
       }
     }

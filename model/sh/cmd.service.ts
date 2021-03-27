@@ -306,7 +306,7 @@ class CmdService {
     const [ first, ...path] = pathStr.split('/').map(kebabToCamel).filter(Boolean);
     if (path.length) {
       const last = path.pop()!;
-      if  (first === 'stage') {
+      if (first === 'stage') {
         const stage = useStage.api.getStage(stageKey);
         deepGet(stage, path)[last] = data;
         useStage.api.updateStage(sessionKey, {});

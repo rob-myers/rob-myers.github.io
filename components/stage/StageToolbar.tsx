@@ -34,6 +34,7 @@ interface Props {
 }
 
 const Toolbar = styled.section`
+  user-select: none;
   height: 28px;
   font-size: 16px;
   border-bottom: 1px solid #ddd;

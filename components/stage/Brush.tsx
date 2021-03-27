@@ -24,14 +24,21 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (key === 'pointerleave' || key === 'pointerup') {
         active.current = false;
+        // Scale up rectangle to contain all touched 0.5 * 0.5 cells
+        group.position.x = (group.scale.x > 0 ? Math.floor : Math.ceil)(10 * group.position.x) / 10;
+        group.position.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.position.y) / 10;
+        vectPrecision(group.position, 1);
+        group.scale.set(current.x - group.position.x, -(current.y - group.position.y), 1);
+        group.scale.x = (group.scale.x > 0 ? Math.ceil : Math.floor)(10 * group.scale.x) / 10;
+        group.scale.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.scale.y) / 10;
+        vectPrecision(group.scale, 1);
         // Sync with state
         stage.brush.position.copy(group.position);
-        vectPrecision(group.scale, 1);
         stage.brush.scale.copy(group.scale);
       } else if (key === 'pointerdown') {
-        ndCoordsToGroundPlane(initial, ndCoords, controls.camera);
         active.current = true;
-        vectPrecision(initial, 1);
+        ndCoordsToGroundPlane(initial, ndCoords, controls.camera);
+        current.copy(initial);
         group.position.set(initial.x, initial.y, 0);
         group.scale.set(0, 0, 0);
       } else if (key === 'pointermove' && active.current) {
@@ -49,7 +56,11 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     <group ref={root} visible={everUsed}>
       <mesh name={brushRectName} position={[0.5, -0.5, 0]}>
         <planeBufferGeometry args={[1, 1, 1]} />
-        <meshStandardMaterial color="#00f" transparent opacity={0.2} />
+        <meshStandardMaterial
+          color="#00f"
+          transparent
+          opacity={0.5}
+        />
       </mesh>
     </group>
   );
