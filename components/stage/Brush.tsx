@@ -24,17 +24,24 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (key === 'pointerleave' || key === 'pointerup') {
         active.current = false;
-        // Scale up rectangle to contain all touched 0.5 * 0.5 cells
-        group.position.x = (group.scale.x > 0 ? Math.floor : Math.ceil)(10 * group.position.x) / 10;
-        group.position.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.position.y) / 10;
-        vectPrecision(group.position, 1);
-        group.scale.set(current.x - group.position.x, -(current.y - group.position.y), 1);
-        group.scale.x = (group.scale.x > 0 ? Math.ceil : Math.floor)(10 * group.scale.x) / 10;
-        group.scale.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.scale.y) / 10;
-        vectPrecision(group.scale, 1);
-        // Sync with state
-        stage.brush.position.copy(group.position);
-        stage.brush.scale.copy(group.scale);
+
+        if (Math.abs(group.scale.x) > 0.01) {
+          // Scale up rectangle to contain all touched 0.5 * 0.5 cells
+          group.position.x = (group.scale.x > 0 ? Math.floor : Math.ceil)(10 * group.position.x) / 10;
+          group.position.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.position.y) / 10;
+          vectPrecision(group.position, 1);
+          group.scale.set(current.x - group.position.x, -(current.y - group.position.y), 1);
+          group.scale.x = (group.scale.x > 0 ? Math.ceil : Math.floor)(10 * group.scale.x) / 10;
+          group.scale.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.scale.y) / 10;
+          vectPrecision(group.scale, 1);
+          // Sync with state
+          stage.brush.position.copy(group.position);
+          stage.brush.scale.copy(group.scale);
+        } else {
+          vectPrecision(group.position, 1);
+          stage.brush.position.copy(group.position);
+          stage.brush.scale.set(0, 0);
+        }
       } else if (key === 'pointerdown') {
         active.current = true;
         ndCoordsToGroundPlane(initial, ndCoords, controls.camera);

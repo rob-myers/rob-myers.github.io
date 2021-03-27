@@ -95,6 +95,12 @@ export class Vector {
     return this;
   }
 
+  set(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+    return this;
+  }
+
   sub(other: VectorJson) {
     this.x -= other.x;
     this.y -= other.y;
