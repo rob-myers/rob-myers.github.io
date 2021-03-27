@@ -22,12 +22,13 @@ class GeomService {
     );
   }
 
-  private getLineMat(lineWidth: number, color: string) {
-    const key = JSON.stringify({ lineWidth, color });
+  private getLineMat(lineWidth: number, color: string, opacity: number) {
+    const key = JSON.stringify({ lineWidth, color, opacity });
     return this.lineMatCache[key] || (
       this.lineMatCache[key] = new MeshLineMaterial({
         color: this.getColor(color),
         lineWidth,
+        opacity,
       })
     );
   }
@@ -45,6 +46,15 @@ class GeomService {
     );
   }
 
+  createAxis(type: 'x' | 'y', color = '#f00', opacity = 1, lineWidth = 0.01) {
+    return this.createPolyLine(
+      type === 'x'
+        ? [new Vector3(-50, 0), new Vector3(50, 0)]
+        : [new Vector3(0, -50), new Vector3(0, 50)],
+        { height: 0, color, opacity, lineWidth },
+    );
+  }
+
   createCube(p: Vector3, dim: number, material: THREE.Material) {
     const mesh = new Mesh(
       new THREE.BoxGeometry(dim, dim, dim),
@@ -59,12 +69,17 @@ class GeomService {
     loop?: boolean;
     lineWidth?: number;
     color?: string;
+    opacity?: number;
   }) {
     const meshLine = new MeshLine;
     const vectors = points.map(p => new Vector3(p.x, p.y, opts.height));
     opts.loop && vectors.length && vectors.push(vectors[0]);
     meshLine.setPoints(vectors);
-    const lineMaterial = this.getLineMat(opts.lineWidth || defaultLineWidth, opts.color || '#ffffff');
+    const lineMaterial = this.getLineMat(
+      opts.lineWidth || defaultLineWidth,
+      opts.color || '#ffffff',
+      opts.opacity || 1,
+    );
     return new THREE.Mesh(meshLine, lineMaterial);
   }
 

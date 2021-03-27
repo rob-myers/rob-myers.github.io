@@ -88,3 +88,4 @@ Blog layout related tasks
 ✅ Can edit stage.maxHeight
 ✅ Can edit stage.opacity
 ✅ Added central dot
+✅ Add x/y axes

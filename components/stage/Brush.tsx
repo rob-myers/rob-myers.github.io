@@ -8,7 +8,7 @@ import { brushRectName, StageMeta } from "model/stage/stage.model";
 
 const Brush: React.FC<Props> = ({ wire, stage }) => {
   const root = useRef<THREE.Group>(null);
-  const controls = stage.internal.controls;
+  const controls = stage.internal.controls!;
   /** Ground position of pointer */
   const current = useRef(new Vector3).current;
   /** Ground position of last pointer down  */
@@ -18,7 +18,6 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const [everUsed, setEverUsed] = useState(false);
 
   useEffect(() => {
-    if (!controls?.camera) return;
     const group = root.current!;
 
     const sub = wire.subscribe(({ key, ndCoords }) => {

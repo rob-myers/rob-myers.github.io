@@ -11,6 +11,7 @@ import useStageStore from "store/stage.store";
 import StageToolbar from "./StageToolbar";
 import CameraControls from "./CameraControls";
 import Grid from "./Grid";
+import Axes from "./Axes";
 import Lights from "./Lights";
 import Brush, { PointerMsg } from "./Brush";
 import Block from "./Block";
@@ -61,10 +62,13 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           onPointerLeave={onPointer}
         >
           <Grid />
+          <Axes />
           <Lights />
 
           <CameraControls stage={stage} />
-          <Brush stage={stage} wire={ptrWire} />
+          {stage.internal.controls && (
+            <Brush stage={stage} wire={ptrWire} />
+          )}
 
           {Object.values(stage.block).map(block => (
             <Block

@@ -13,11 +13,6 @@ const CameraControls: React.FC<Props> = ({ stage }) => {
 
   const controls = useRef<PanZoomControls>();
 
-  const panZoomControls = useMemo(() => <panZoomControls
-    ref={controls}
-    args={[camera, domElement]}
-    enabled={enabled}
-  />, [enabled]);
 
   useEffect(() => {
     !stage.internal.controls && useStageStore.api
@@ -26,7 +21,13 @@ const CameraControls: React.FC<Props> = ({ stage }) => {
 
   useFrame((_state) => controls.current!.update());
 
-  return panZoomControls;
+  return (
+    <panZoomControls
+      ref={controls}
+      args={[camera, domElement]}
+      enabled={enabled}
+    />
+  );
 };
 
 interface Props {
