@@ -3,15 +3,17 @@ import { DoubleSide } from "three";
 import { geomService } from "model/geom.service";
 import { StageBlock, StageMeta } from "model/stage/stage.model";
 
-const Block: React.FC<Props> = ({ stage, block, flat }) => {
+const Block: React.FC<Props> = ({ stage, block, maxHeight }) => {
 
   const polygons = block.polygonKeys
     .map(x => stage.polygon[x]).filter(Boolean);
 
   const geometry = useMemo(() => {
     const flattened = polygons.flatMap(x => x.polygons);
-    return geomService.polysToWallsGeometry(flattened, flat ? 0 : block.height);
-  }, [...polygons, flat]);
+    return geomService.polysToWallsGeometry(
+      flattened, Math.min(block.height, maxHeight) 
+    );
+  }, [...polygons, maxHeight]);
 
   return (
     <group>
@@ -28,7 +30,7 @@ const Block: React.FC<Props> = ({ stage, block, flat }) => {
 interface Props {
   stage: StageMeta;
   block: StageBlock;
-  flat?: boolean;
+  maxHeight: number;
 }
 
 export default Block;

@@ -86,7 +86,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         brush: Stage.createDefaultBrushMeta(),
         polygon: addToLookup(Stage.createNamedPolygons('default'), {}),
 
-        flat: false,
+        maxHeight: 10,
       }, stage),
     })),
 

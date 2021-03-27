@@ -27,6 +27,8 @@ Blog layout related tasks
 - Fix multiline command launched from intermediate line
 - Start writing post / decide on blog format
 
+- Replace `defs` by `declare` (handle special mvdan-sh parsing)
+
 - `ps -s` shows full process src
 - How do `key` and `poll` work; can they be simplified?
 - Make a blender model and import it

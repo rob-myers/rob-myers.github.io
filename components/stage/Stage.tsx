@@ -71,7 +71,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
               key={block.key}
               stage={stage}
               block={block}
-              flat={stage.flat}
+              maxHeight={stage.maxHeight}
             />
           ))}
         </Canvas>

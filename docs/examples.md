@@ -10,7 +10,7 @@ key |
       } else if (msg.key === "d") {
         stage.brush.erase();
       } else if (msg.key === "q") {
-        stage.flat = !stage.flat;
+        stage.maxHeight = stage.maxHeight ? 0 : 10
       }
     }
   }' &
