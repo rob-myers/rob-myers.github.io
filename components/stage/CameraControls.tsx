@@ -1,4 +1,4 @@
-import { useRef, useMemo, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
 import useStageStore from 'store/stage.store';
@@ -10,9 +10,7 @@ extend({ PanZoomControls });
 const CameraControls: React.FC<Props> = ({ stage }) => {
   const { camera, gl: { domElement } } = useThree();
   const enabled = stage.internal.camEnabled;
-
   const controls = useRef<PanZoomControls>();
-
 
   useEffect(() => {
     !stage.internal.controls && useStageStore.api

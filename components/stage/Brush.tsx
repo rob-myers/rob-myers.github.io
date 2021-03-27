@@ -25,7 +25,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         active.current = false;
 
         if (Math.abs(group.scale.x) >= 0.01 || Math.abs(group.scale.y) >= 0.01) {
-          // Scale up rectangle to contain all touched 0.5 * 0.5 cells
+          // Scale up rectangle to contain all touched 0.1 * 0.1 cells
           group.position.x = (group.scale.x > 0 ? Math.floor : Math.ceil)(10 * group.position.x) / 10;
           group.position.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.position.y) / 10;
           vectPrecision(group.position, 1);
