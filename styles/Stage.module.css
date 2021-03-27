@@ -12,7 +12,7 @@
   position: absolute;
   background: red;
   border-radius: 4px;
-  top: calc((100% - 28px - 2px) * 0.5);
+  top: calc(28px + (100% - 28px) * 0.5 - 2px);
   left: calc(50% - 2px);
   height: 4px;
   width: 4px;
