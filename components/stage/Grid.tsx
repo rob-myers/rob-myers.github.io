@@ -11,7 +11,7 @@ const Grid: React.FC = () => {
       attach="material"
       side={THREE.DoubleSide}
       uniforms={{
-        uSize1: { value: 0.2 },
+        uSize1: { value: 0.1 },
         uSize2: { value: 1 },
         uColor: { value: new THREE.Color('#444') },
         uDistance: { value: 50 },
