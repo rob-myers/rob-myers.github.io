@@ -10,6 +10,8 @@ import { brushRectName, StageMeta } from "model/stage/stage.model";
 const Brush: React.FC<Props> = ({ wire, stage }) => {
   const root = useRef<THREE.Group>(null);
   const controls = stage.internal.controls!;
+  const locked = stage.brush.locked;
+
   /** Ground position of pointer */
   const current = useRef(new Vector3).current;
   /** Ground position of last pointer down  */
@@ -18,51 +20,51 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const active = useRef(false);
   const [everUsed, setEverUsed] = useState(false);
 
-  const locked = stage.brush.locked;
-
   useEffect(() => {
     const group = root.current!;
 
     const sub = wire.subscribe(({ key, ndCoords }) => {
-      if (locked) {
-        key === 'pointerleave' && (active.current = false);
-        return;
-      }
-
-      if (key === 'pointerleave' || key === 'pointerup') {
-        active.current = false;
-        if (Math.abs(group.scale.x) >= 0.01 || Math.abs(group.scale.y) >= 0.01) {
-          // Scale up rectangle to contain all touched 0.1 * 0.1 cells
-          group.position.x = (group.scale.x > 0 ? Math.floor : Math.ceil)(10 * group.position.x) / 10;
-          group.position.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.position.y) / 10;
-          vectPrecision(group.position, 1);
-          group.scale.set(current.x - group.position.x, -(current.y - group.position.y), 1);
-          group.scale.x = (group.scale.x > 0 ? Math.ceil : Math.floor)(10 * group.scale.x) / 10;
-          group.scale.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.scale.y) / 10;
-          vectPrecision(group.scale, 1);
-          // Sync with state
-          stage.brush.position.copy(group.position);
-          stage.brush.scale.copy(group.scale);
-        } else {
-          vectPrecision(group.position, 1);
+      if (!locked) {
+        if (key === 'pointermove' && active.current) {
+          ndCoordsToGroundPlane(current, ndCoords, controls.camera);
+          group.scale.set(current.x - initial.x, -(current.y - initial.y), 1);
+          console.log('move')
+          !everUsed && setEverUsed(true);
+        } else if (key === 'pointerleave' || key === 'pointerup') {
+          active.current = false;
+          if (Math.abs(group.scale.x) >= 0.01 || Math.abs(group.scale.y) >= 0.01) {
+            // Scale up rectangle to contain all touched 0.1 * 0.1 cells
+            group.position.x = (group.scale.x > 0 ? Math.floor : Math.ceil)(10 * group.position.x) / 10;
+            group.position.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.position.y) / 10;
+            vectPrecision(group.position, 1);
+            group.scale.set(current.x - group.position.x, -(current.y - group.position.y), 1);
+            group.scale.x = (group.scale.x > 0 ? Math.ceil : Math.floor)(10 * group.scale.x) / 10;
+            group.scale.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.scale.y) / 10;
+            vectPrecision(group.scale, 1);
+            // Sync with state
+            stage.brush.position.copy(group.position);
+            stage.brush.scale.copy(group.scale);
+          } else {
+            vectPrecision(group.position, 1);
+            group.scale.set(0, 0, 0);
+            stage.brush.position.copy(group.position);
+            stage.brush.scale.set(0, 0);
+          }
+        } else if (key === 'pointerdown') {
+          active.current = true;
+          ndCoordsToGroundPlane(initial, ndCoords, controls.camera);
+          current.copy(initial);
+          group.position.set(initial.x, initial.y, 0);
           group.scale.set(0, 0, 0);
-          stage.brush.position.copy(group.position);
-          stage.brush.scale.set(0, 0);
         }
-      } else if (key === 'pointerdown') {
-        active.current = true;
-        ndCoordsToGroundPlane(initial, ndCoords, controls.camera);
-        current.copy(initial);
-        group.position.set(initial.x, initial.y, 0);
-        group.scale.set(0, 0, 0);
-      } else if (key === 'pointermove' && active.current) {
-        ndCoordsToGroundPlane(current, ndCoords, controls.camera);
-        group.scale.set(current.x - initial.x, -(current.y - initial.y), 1);
-        !everUsed && setEverUsed(true);
+      } else {
+        if (key === 'pointerleave') {
+          active.current = false;
+          vectPrecision(group.position, 1);
+        }
       }
     });
     return () => {
-      active.current = false;
       sub.unsubscribe();
     };
   }, [everUsed, locked]);
@@ -72,7 +74,6 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     
     const key = e.type as 'pointerdown' | 'pointermove' | 'pointerup' | 'pointerout';
     const group = root.current!;
-
     if (key === 'pointermove' && active.current) {
       group.position.copy(e.point).add(initial);
     } else if (key === 'pointerdown') {
