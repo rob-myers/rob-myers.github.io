@@ -9,8 +9,7 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
   const toggleCam = useCallback(() => stage &&
     useStage.api.updateInternal(stage.key, ({ camEnabled }) => ({
       camEnabled: !camEnabled,
-    })),
-  []);
+    })), [stage]);
 
   return (
     <Toolbar>
