@@ -12,8 +12,8 @@ export function getWindow<T extends Record<string, any>>(): (Window & T) | undef
   return { x: e.clientX - left, y: e.clientY - top };
 }
 
- export function getNormDevicePos(e: React.MouseEvent | MouseEvent): { x: number; y: number } {
-  const { left, top, width, height } = (e.currentTarget! as Element).getBoundingClientRect();
+export function getNormDevicePos(e: React.MouseEvent | MouseEvent): { x: number; y: number } {
+  const { left, top, width, height } = (e.target! as Element).getBoundingClientRect();
   return {
     x: ((e.clientX - left) / width) * 2 - 1,
     y: -((e.clientY - top) / height) * 2 + 1,

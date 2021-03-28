@@ -58,7 +58,10 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
           group.scale.set(0, 0, 0);
         }
       } else {
-        if (key === 'pointerleave') {
+        if (key === 'pointermove' && active.current) {
+          ndCoordsToGroundPlane(current, ndCoords, controls.camera);
+          group.position.copy(current).add(initial);
+        } else if (key === 'pointerup' || key === 'pointerleave') {
           active.current = false;
           vectPrecision(group.position, 1);
         }
@@ -69,19 +72,10 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     };
   }, [everUsed, locked]);
 
-  const onMeshPointer = useCallback((e: PointerEvent) => {
-    if (!locked) return;
-    
-    const key = e.type as 'pointerdown' | 'pointermove' | 'pointerup' | 'pointerout';
-    const group = root.current!;
-    if (key === 'pointermove' && active.current) {
-      group.position.copy(e.point).add(initial);
-    } else if (key === 'pointerdown') {
+  const onMeshPointerDown = useCallback((e: PointerEvent) => {
+    if (locked && e.type === 'pointerdown') {
       active.current = true;
-      initial.copy(group.position).sub(e.point);
-    } else if (key === 'pointerup' || key === 'pointerout') {
-      active.current = false;
-      vectPrecision(group.position, 1);
+      initial.copy(root.current!.position).sub(e.point);
     }
   }, [locked]);
 
@@ -90,10 +84,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
       <mesh
         name={brushRectName}
         position={[0.5, -0.5, 0]}
-        onPointerDown={onMeshPointer}
-        onPointerUp={onMeshPointer}
-        onPointerMove={onMeshPointer}
-        onPointerOut={onMeshPointer}
+        onPointerDown={onMeshPointerDown}
       >
         <planeBufferGeometry args={[1, 1, 1]} />
         <meshStandardMaterial

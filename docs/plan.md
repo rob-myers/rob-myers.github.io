@@ -8,6 +8,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+- Cleanup how `brush.locked` is set
+
 - `Brush` has two modes: `select-rect` and `move-template`
   > Set the template by selecting via `select-rect`
   > Can mirror
