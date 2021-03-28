@@ -41,7 +41,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
             group.scale.x = (group.scale.x > 0 ? Math.ceil : Math.floor)(10 * group.scale.x) / 10;
             group.scale.y = (group.scale.y > 0 ? Math.ceil : Math.floor)(10 * group.scale.y) / 10;
             vectPrecision(group.scale, 1);
-            // Sync with state
+            // Sync state
             stage.brush.position.copy(group.position);
             stage.brush.scale.copy(group.scale);
           } else {
@@ -64,6 +64,9 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         } else if (key === 'pointerup' || key === 'pointerleave') {
           active.current = false;
           vectPrecision(group.position, 1);
+          // Sync state
+          stage.brush.position.copy(group.position);
+          stage.brush.scale.copy(group.scale);
         }
       }
     });
