@@ -22,7 +22,7 @@ export function createStageProxy(stageKey: string) {
               return (polygonKey = 'default') =>
                 useStage.api.applyBrush(stageKey, { polygonKey, erase: true });
             } else if (key === 'select') {
-              return () => useStage.api.toggleBrushLock(stageKey);
+              return () => useStage.api.selectByBrush(stageKey);
             } else {
               return useStage.api.getBrush(stageKey)[key];
             }

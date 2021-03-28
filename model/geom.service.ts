@@ -234,6 +234,13 @@ class GeomService {
     return outsetEdges;
   }
 
+  intersect(poly: Geom.Polygon, polys: Geom.Polygon[]): Geom.Polygon[] {
+    return polygonClipping
+      .intersection(poly.geoJson.coordinates,
+        ...polys.map(({ geoJson: { coordinates } }) => coordinates),
+      ).map(coords => Geom.Polygon.from(coords).cleanFinalReps());
+  }
+
   isVectorJson(p: any): p is Geom.VectorJson {
     return p && (typeof p.x === 'number') && (typeof p.y === 'number');
   }

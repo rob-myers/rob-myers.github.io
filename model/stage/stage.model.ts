@@ -1,8 +1,8 @@
 import { Subject } from "rxjs";
 import { Vector3, Scene } from "three";
+import { KeyedLookup } from "model/generic.model";
 import * as Geom from 'model/geom';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
-import { KeyedLookup } from "../generic.model";
 
 export type StageMeta = {
   key: string;
@@ -56,6 +56,7 @@ export interface BrushMeta {
   scale: Geom.Vector;
   /** Is the selection locked? */
   locked: boolean;
+  selection: SelectedBlock[];
 }
 
 export function createDefaultBrushMeta(): BrushMeta {
@@ -66,6 +67,7 @@ export function createDefaultBrushMeta(): BrushMeta {
     position: Geom.Vector.from({ x: 0, y: 0 }),
     scale: Geom.Vector.from({ x: 1, y: 1 }),
     locked: false,
+    selection: [],
   };
 };
 
@@ -99,33 +101,13 @@ export interface StageBlock {
   visible: boolean;
 }
 
-export interface StageLayer {
-  key: string;
-  /** An array of multipolygons */
-  polygons: Geom.Polygon[];
-  /** Attributes which apply to every polygon */
-  attrib: {
-    type: 'area' | 'low-wall' | 'high-wall';
-    editFlat: boolean;
-  };
-  // TODO can also contain meshes imported from Blender
-}
-
-export function createStageLayer(key: string): StageLayer {
-  return {
-    key,
-    polygons: [],
-    attrib: {
-      type: 'low-wall',
-      editFlat: false,
-    },
-  };
-}
-
 export const brushRectName = 'rect';
 
 export function computeGlobalBrushRect(brush: BrushMeta) {
   return brush.rect.clone()
-    .scaleBy(brush.scale)
-    .translate(brush.position);
+    .scaleBy(brush.scale).translate(brush.position);
+}
+
+export type SelectedBlock = Pick<StageBlock, 'key' | 'color' | 'height'> & {
+  polygons: Geom.Polygon[];
 }

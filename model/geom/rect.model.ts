@@ -9,6 +9,10 @@ export class Rect {
     public height: number,
   ) {}
 
+  get area() {
+    return this.width * this.height;
+  }
+
   public get center() {
     return new Vector(this.x + (this.width / 2), this.y + (this.height / 2));
   }

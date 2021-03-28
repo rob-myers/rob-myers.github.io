@@ -25,9 +25,9 @@ export type State = {
     getInternal: (stageKey: string) => Stage.StageMeta['internal'];
     getPolygon: (stageKey: string, polygonKey?: string) => Stage.NamedPolygons;
     getStage: (stageKey: string) => Stage.StageMeta;
-    toggleBrushLock: (stageKey: string) => void;
+    selectByBrush: (stageKey: string) => void;
     removeStage: (stageKey: string) => void;
-    updateBrush: (stageKey: string, updates: Partial<Stage.BrushMeta>) => void;
+    updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageMeta['internal']>) => void;
     updatePolygon: (
       stageKey: string,
@@ -114,10 +114,27 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().stage[stageKey];
     },
 
-    toggleBrushLock: (stageKey) => {
-      // TODO select something...
-      const { locked } = get().api.getBrush(stageKey);
-      get().api.updateBrush(stageKey, { locked: !locked });
+    selectByBrush: (stageKey) => {
+      const { block, brush, polygon } = get().api.getStage(stageKey)
+      const rect = Stage.computeGlobalBrushRect(brush);
+      if (!rect.area) {
+        return; // Nothing selected
+      }
+      
+      const poly = Geom.Polygon.fromRect(rect);
+      const selection = Object.values(block).filter(x => x.visible)
+        .map<Stage.SelectedBlock>(({ key, color, height, polygonKeys }) => {
+          const blockPolys = polygonKeys.flatMap(x => polygon[x].polygons);
+          const closePolys = blockPolys.filter(x => x.rect.intersects(rect));
+          const intersection = geomService.intersect(poly, closePolys);
+          return { key, color, height, polygons: intersection };
+        }).filter(x => x.polygons.length);
+      // console.log('selection', selection);        
+
+      get().api.updateBrush(stageKey, ({ locked }) => ({
+        locked: !locked,
+        selection,
+      }));
     },
 
     removeStage: (stageKey) => set(({ stage }) => ({
@@ -126,7 +143,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     updateBrush: (stageKey, updates) => {
       get().api.updateStage(stageKey, ({ brush }) => ({
-        brush: { ...brush, ...updates },
+        brush: { ...brush,
+          ...typeof updates === 'function' ? updates(brush) : () => updates,
+        },
       }));
     },
 
