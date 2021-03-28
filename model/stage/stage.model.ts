@@ -108,6 +108,7 @@ export function computeGlobalBrushRect(brush: BrushMeta) {
     .scaleBy(brush.scale).translate(brush.position);
 }
 
-export type SelectedBlock = Pick<StageBlock, 'key' | 'color' | 'height'> & {
+export interface SelectedBlock {
+  blockKey: string;
   polygons: Geom.Polygon[];
 }

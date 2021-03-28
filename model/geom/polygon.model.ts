@@ -290,6 +290,10 @@ export class Polygon {
     return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
   }
 
+  sub({ x, y }: VectorJson) {
+    return this.translate(-x, -y);
+  }
+
   /** Compute tangents of exterior and holes. */
   get tangents(): { outer: Vector[]; inner: Vector[][] } {
     const rings = [this.outline, ...this.holes];
@@ -311,9 +315,9 @@ export class Polygon {
     return { outer, inner };
   }
 
-  translate(delta: VectorJson) {
-    this.outline.forEach(p => p.translate(delta.x, delta.y));
-    this.holes.forEach(h => h.forEach(p => p.translate(delta.x, delta.y)));
+  translate(dx: number, dy: number) {
+    this.outline.forEach(p => p.translate(dx, dy));
+    this.holes.forEach(h => h.forEach(p => p.translate(dx, dy)));
     this.clearCache();
     return this;
   }

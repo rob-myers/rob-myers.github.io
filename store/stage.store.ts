@@ -122,13 +122,20 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }
       
       const poly = Geom.Polygon.fromRect(rect);
+      // Three.js views y+ as upwards, so our rect.{x,y} is bottom left
+      // The origin of the brush is the top left point
+      const origin = { x: rect.x, y: rect.y + rect.height };
       const selection = Object.values(block).filter(x => x.visible)
-        .map<Stage.SelectedBlock>(({ key, color, height, polygonKeys }) => {
+        .map<Stage.SelectedBlock>(({ key, polygonKeys }) => {
           const blockPolys = polygonKeys.flatMap(x => polygon[x].polygons);
           const closePolys = blockPolys.filter(x => x.rect.intersects(rect));
           const intersection = geomService.intersect(poly, closePolys);
-          return { key, color, height, polygons: intersection };
+          return {
+            blockKey: key,
+            polygons: intersection.map(x => x.sub(origin)),
+          };
         }).filter(x => x.polygons.length);
+      
       // console.log('selection', selection);        
 
       get().api.updateBrush(stageKey, ({ locked }) => ({

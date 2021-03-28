@@ -9,9 +9,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 ### TODO
 
 - Cleanup how `brush.locked` is set
-
-- `Brush` has two modes: `select-rect` and `move-template`
-  > Set the template by selecting via `select-rect`
+- `Brush` can be locked and selects...
+  > Can print the selected polygons
   > Can mirror
 - Programmatically defined `Select` UI?
   > e.g. saved polygon templates, blender imports, shortcuts

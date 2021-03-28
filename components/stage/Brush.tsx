@@ -28,7 +28,6 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         if (key === 'pointermove' && active.current) {
           ndCoordsToGroundPlane(current, ndCoords, controls.camera);
           group.scale.set(current.x - initial.x, -(current.y - initial.y), 1);
-          console.log('move')
           !everUsed && setEverUsed(true);
         } else if (key === 'pointerleave' || key === 'pointerup') {
           active.current = false;

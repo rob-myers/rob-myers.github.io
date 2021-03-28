@@ -82,9 +82,11 @@ export class Rect {
     return { x: this.x, y: this.y, width: this.width, height: this.height };
   }
 
+  /** w.r.t. y+ downwards */
   get ne() {
     return new Vector(this.x + this.width, this.y);
   }
+  /** w.r.t. y+ downwards */
   get nw() {
     return new Vector(this.x, this.y);
   }
@@ -97,7 +99,7 @@ export class Rect {
     return this;
   }
 
-  /** Anti-clockwise w.r.t y being downwards */
+  /** Anti-clockwise w.r.t y+ being downwards */
   get points(): [Vector, Vector, Vector, Vector] {
     return [
       new Vector(this.x, this.y),
@@ -124,6 +126,7 @@ export class Rect {
     return this;
   }
 
+  /** w.r.t. y+ downwards */
   public get s() {
     return this.y + this.height;
   }
@@ -140,9 +143,11 @@ export class Rect {
     return this;
   }
 
+  /** w.r.t. y+ downwards */
   get se() {
     return new Vector(this.x + this.width, this.y + this.height);
   }
+  /** w.r.t. y+ downwards */
   get sw() {
     return new Vector(this.x, this.y + this.height);
   }
