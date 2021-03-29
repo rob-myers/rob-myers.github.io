@@ -63,12 +63,12 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
       } else {
         if (key === 'pointermove' && active.current) {
           ndCoordsToGroundPlane(selector.position, ndCoords, controls.camera);
-          selector.position.add(current);
-          selection.position.copy(selector.position).sub(initial);
+          selector.position.add(initial);
+          selection.position.copy(selector.position).sub(stage.brush.selectedAt);
         } else if (key === 'pointerup' || key === 'pointerleave') {
           active.current = false;
           vectPrecision(selector.position, 1);
-          selection.position.copy(selector.position).sub(initial);
+          selection.position.copy(selector.position).sub(stage.brush.selectedAt);
           // Sync state
           stage.brush.position.copy(selector.position);
           stage.brush.scale.copy(selector.scale);
@@ -80,17 +80,14 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
   const onMeshPointerDown = useCallback((e: PointerEvent) => {
     if (locked && e.type === 'pointerdown') {
-      active.current = true;// Store selection offset
-      current.copy(selectorRef.current!.position).sub(e.point);
+      active.current = true;// Store selector offset
+      initial.copy(selectorRef.current!.position).sub(e.point);
     }
   }, [locked]);
 
   const selectionGeom = useMemo(() => {
     const polygons = stage.brush.selection.flatMap(x => x.polygons);
-    if (selectorRef.current) {// Store selector offset
-      initial.copy(selectorRef.current.position);
-      selectionRef.current?.position.set(0, 0, 0);
-    }
+    selectionRef.current?.position.set(0, 0, 0); // Reset
     return geomService.polysToGeometry(polygons);
   }, [stage.brush.selection]);
 

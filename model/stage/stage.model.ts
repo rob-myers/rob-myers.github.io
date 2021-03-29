@@ -47,7 +47,6 @@ export const initCameraPos = new Vector3(0, 0, 10);
 //#endregion
 
 export interface BrushMeta {
-  sides: number;
   /** The untransformed brush rect */
   rect: Geom.Rect;
   /** Mutated by Brush */
@@ -56,21 +55,24 @@ export interface BrushMeta {
   scale: Geom.Vector;
   /** Is the selection locked? */
   locked: boolean;
-  selection: SelectedBlock[];
   /** Current polygon key we add/cut blocks out of */
   polygonKey: string;
+
+  selection: SelectedPolygons[];
+  /** Last position we started selection from */
+  selectedAt: Vector3;
 }
 
 export function createDefaultBrushMeta(): BrushMeta {
   const sides = 6;
   return {
-    sides,
-    rect: Geom.Rect.from({ x: 0, y: -1, width: 1, height: 1 }),
-    position: Geom.Vector.from({ x: 0, y: 0 }),
-    scale: Geom.Vector.from({ x: 1, y: 1 }),
+    rect: new Geom.Rect(0, -1, 1, 1),
+    position: new Geom.Vector,
+    scale: new Geom.Vector(1, 1),
     locked: false,
-    selection: [],
     polygonKey: 'default',
+    selection: [],
+    selectedAt: new Vector3,
   };
 };
 
@@ -104,12 +106,13 @@ export interface StageBlock {
   visible: boolean;
 }
 
-export function computeGlobalBrushRect(brush: BrushMeta): Geom.Polygon {
+export function getGlobalBrushRect(brush: BrushMeta): Geom.Polygon {
   return Geom.Polygon.fromRect(brush.rect)
     .scaleBy(brush.scale).add(brush.position);
 }
 
-export interface SelectedBlock {
-  blockKey: string;
+export interface SelectedPolygons {
+  /** Selected from this polygon */
+  polygonKey: string;
   polygons: Geom.Polygon[];
 }

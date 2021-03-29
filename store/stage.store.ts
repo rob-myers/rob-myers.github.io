@@ -25,6 +25,12 @@ export type State = {
     getInternal: (stageKey: string) => Stage.StageMeta['internal'];
     getPolygon: (stageKey: string, polygonKey?: string) => Stage.NamedPolygons;
     getStage: (stageKey: string) => Stage.StageMeta;
+    modifyPolygon: (
+      stageKey: string,
+      polygonKey: string,
+      delta: Geom.Polygon[],
+      opts: { cutOut?: boolean },
+    ) => void;
     selectByBrush: (stageKey: string) => void;
     removeStage: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
@@ -56,15 +62,27 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     applyBrush: (stageKey, opts) => {
-      const brush = get().api.getBrush(stageKey);
-      const delta = Stage.computeGlobalBrushRect(brush).precision(1);
-      const { polygons: prev } = api.getPolygon(stageKey, brush.polygonKey);
+      const { api } = get();
+      const brush = api.getBrush(stageKey);
+      
+      if (!brush.selection.length) {// Add/cut rectangle
+        const delta = Stage.getGlobalBrushRect(brush);
+        api.modifyPolygon(stageKey, brush.polygonKey, [delta], { cutOut: opts.erase });
+      } else {// Add/cut offset selection
+        const offset = brush.position.clone().sub(brush.selectedAt);
+        for (const { polygonKey, polygons } of brush.selection) {
+          const delta = polygons.map(x => x.clone().add(offset));
+          api.modifyPolygon(stageKey, polygonKey, delta, { cutOut: opts.erase });
+        }
+      }
+    },
 
+    modifyPolygon: (stageKey, polygonKey, delta, { cutOut }) => {
       try {
-        const next = opts.erase
-          ? geomService.cutOut([delta], prev)
+        const { polygons: prev } = api.getPolygon(stageKey, polygonKey);
+        const next = cutOut
+          ? geomService.cutOut(delta, prev)
           : geomService.union(prev.concat(delta));
-        const polygonKey = brush.polygonKey;
         api.updatePolygon(stageKey, polygonKey, { polygons: next });
       } catch (error) {
         console.error('applyBrush: geometric operation failed');
@@ -116,7 +134,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     selectByBrush: (stageKey) => {
       const { block, brush, polygon } = get().api.getStage(stageKey)
-      const poly = Stage.computeGlobalBrushRect(brush);
+      const poly = Stage.getGlobalBrushRect(brush);
       const rect = poly.rect;
 
       if (brush.locked) {
@@ -124,20 +142,26 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         return;
       }
       
+      // `polygonKey` could occur multiple times if used by multiple blocks,
+      // but wouldn't expect this to happen
       const selection = Object.values(block).filter(x => x.visible)
-        .map<Stage.SelectedBlock>(({ key, polygonKeys }) => {
-          const blockPolys = polygonKeys.flatMap(x => polygon[x].polygons);
-          const closePolys = blockPolys.filter(x => x.rect.intersects(rect));
-          const intersection = geomService.union(closePolys.flatMap(x => geomService.intersect([poly, x])));
-          return { blockKey: key, polygons: intersection };
+        .flatMap<Stage.SelectedPolygons>(({ polygonKeys }) => {
+          return polygonKeys.map(x => polygon[x])
+            .map<Stage.NamedPolygons>(x => ({ ...x,
+              polygons: x.polygons.filter(x => x.rect.intersects(rect)),
+            })).filter(x => x.polygons.length)
+            .map<Stage.SelectedPolygons>((x) => ({
+              polygonKey: x.key,
+              polygons: geomService.union(x.polygons.flatMap(x => geomService.intersect([poly, x]))),
+            }))
         }).filter(x => x.polygons.length);
 
       // console.log('selection', selection);        
 
-      get().api.updateBrush(stageKey, ({ locked }) => ({
-        locked: !locked,
-        selection,
-      }));
+      get().api.updateBrush(stageKey, ({ locked, selectedAt: lastSelectedAt }) => {
+        lastSelectedAt.set(brush.position.x, brush.position.y, 0);
+        return { locked: !locked, selection };
+      });
     },
 
     removeStage: (stageKey) => set(({ stage }) => ({
