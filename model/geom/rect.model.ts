@@ -131,15 +131,10 @@ export class Rect {
     return this.y + this.height;
   }
 
+  /** Assume scalar is positive */
   public scale(scalar: number) {
-    return this.scaleBy({ x: scalar, y: scalar });
-  }
-
-  public scaleBy({ x, y }: VectorJson) {
-    this.x *= x;
-    this.y *= y;
-    this.width *= x;
-    this.height *= y;
+    this.x *= scalar;
+    this.y *= scalar;
     return this;
   }
 

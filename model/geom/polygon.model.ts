@@ -18,6 +18,10 @@ export class Polygon {
     public holes: Vector[][] = [],
   ) {}
   
+  add({ x, y }: VectorJson) {
+    return this.translate(x, y);
+  }
+
   get allPoints(): Vector[] {
     return this.outline.concat(...this.holes);
   }

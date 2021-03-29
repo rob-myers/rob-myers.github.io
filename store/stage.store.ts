@@ -57,7 +57,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     applyBrush: (stageKey, opts) => {
       const brush = get().api.getBrush(stageKey);
-      const delta = Geom.Polygon.fromRect(Stage.computeGlobalBrushRect(brush)).precision(1);
+      const delta = Stage.computeGlobalBrushRect(brush).precision(1);
       
       const { polygons: prev } = api.getPolygon(stageKey, opts.polygonKey);
       try {
@@ -116,26 +116,22 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     selectByBrush: (stageKey) => {
       const { block, brush, polygon } = get().api.getStage(stageKey)
-      const rect = Stage.computeGlobalBrushRect(brush);
-      if (!rect.area) {
-        return; // Nothing selected
+      const poly = Stage.computeGlobalBrushRect(brush);
+      const rect = poly.rect;
+
+      if (brush.locked) {
+        get().api.updateBrush(stageKey, { locked: false, selection: [] });
+        return;
       }
       
-      const poly = Geom.Polygon.fromRect(rect);
-      // Three.js views y+ as upwards, so our rect.{x,y} is bottom left
-      // The origin of the brush is the top left point
-      const origin = { x: rect.x, y: rect.y + rect.height };
       const selection = Object.values(block).filter(x => x.visible)
         .map<Stage.SelectedBlock>(({ key, polygonKeys }) => {
           const blockPolys = polygonKeys.flatMap(x => polygon[x].polygons);
           const closePolys = blockPolys.filter(x => x.rect.intersects(rect));
-          const intersection = geomService.intersect(poly, closePolys);
-          return {
-            blockKey: key,
-            polygons: intersection.map(x => x.sub(origin)),
-          };
+          const intersection = geomService.union(closePolys.flatMap(x => geomService.intersect([poly, x])));
+          return { blockKey: key, polygons: intersection };
         }).filter(x => x.polygons.length);
-      
+
       // console.log('selection', selection);        
 
       get().api.updateBrush(stageKey, ({ locked }) => ({
@@ -151,7 +147,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     updateBrush: (stageKey, updates) => {
       get().api.updateStage(stageKey, ({ brush }) => ({
         brush: { ...brush,
-          ...typeof updates === 'function' ? updates(brush) : () => updates,
+          ...typeof updates === 'function' ? updates(brush) : updates,
         },
       }));
     },

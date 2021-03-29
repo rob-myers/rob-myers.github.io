@@ -234,10 +234,12 @@ class GeomService {
     return outsetEdges;
   }
 
-  intersect(poly: Geom.Polygon, polys: Geom.Polygon[]): Geom.Polygon[] {
+  intersect([poly, ...rest ]: Geom.Polygon[]): Geom.Polygon[] {
     return polygonClipping
-      .intersection(poly.geoJson.coordinates,
-        ...polys.map(({ geoJson: { coordinates } }) => coordinates),
+      .intersection(
+        poly.geoJson.coordinates,
+        ...rest.map(({ geoJson: { coordinates } }) => coordinates,
+      ),
       ).map(coords => Geom.Polygon.from(coords).cleanFinalReps());
   }
 
@@ -311,15 +313,15 @@ class GeomService {
     const all = this.joinTriangulations(decomps);
     const geometry = new Geometry;
     geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, 0)));
-    geometry.faces.push(...all.tris.map(tri => new Face3(tri[2], tri[1], tri[0])));
+    geometry.faces.push(...all.tris.map(tri => new Face3(tri[0], tri[1], tri[2])));
     geometry.computeVertexNormals();
     geometry.computeFaceNormals();
-    return geometry;
+    return geometry.toBufferGeometry();
   }
 
   polysToMesh(polygons: Geom.Polygon[], material: THREE.Material): THREE.Mesh {
     const geometry = this.polysToGeometry(polygons);
-    return new Mesh(geometry.toBufferGeometry(), material);
+    return new Mesh(geometry, material);
   }
 
   /**

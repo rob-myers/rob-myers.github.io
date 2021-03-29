@@ -101,11 +101,9 @@ export interface StageBlock {
   visible: boolean;
 }
 
-export const brushRectName = 'rect';
-
-export function computeGlobalBrushRect(brush: BrushMeta) {
-  return brush.rect.clone()
-    .scaleBy(brush.scale).translate(brush.position);
+export function computeGlobalBrushRect(brush: BrushMeta): Geom.Polygon {
+  return Geom.Polygon.fromRect(brush.rect)
+    .scaleBy(brush.scale).add(brush.position);
 }
 
 export interface SelectedBlock {

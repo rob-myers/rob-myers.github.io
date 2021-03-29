@@ -8,6 +8,9 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+- `s` to select when in mode `rect`.
+- `w` to move switch between mode `rect` and `template`,
+
 - Cleanup how `brush.locked` is set
 - `Brush` can be locked and selects...
   > Can print the selected polygons
