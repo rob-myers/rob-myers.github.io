@@ -2,8 +2,8 @@ import useStage from "store/stage.store";
 import { BrushMeta, StageMeta } from "./stage.model";
 
 export interface ExtendedBrush extends BrushMeta {
-  paint: (polygonKey?: string) => void;
-  erase: (polygonKey?: string) => void;
+  paint: () => void;
+  erase: () => void;
   select: () => void;
 }
 
@@ -16,11 +16,9 @@ export function createStageProxy(stageKey: string) {
         return new Proxy({} as ExtendedBrush, {
           get(_, key: keyof ExtendedBrush) {
             if (key === 'paint') {
-              return (polygonKey = 'default') =>
-                useStage.api.applyBrush(stageKey, { polygonKey });
+              return () => useStage.api.applyBrush(stageKey, {});
             } else if (key === 'erase') {
-              return (polygonKey = 'default') =>
-                useStage.api.applyBrush(stageKey, { polygonKey, erase: true });
+              return () => useStage.api.applyBrush(stageKey, { erase: true });
             } else if (key === 'select') {
               return () => useStage.api.selectByBrush(stageKey);
             } else {

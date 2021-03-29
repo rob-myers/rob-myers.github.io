@@ -80,14 +80,14 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
   const onMeshPointerDown = useCallback((e: PointerEvent) => {
     if (locked && e.type === 'pointerdown') {
-      active.current = true;
+      active.current = true;// Store selection offset
       current.copy(selectorRef.current!.position).sub(e.point);
     }
   }, [locked]);
 
   const selectionGeom = useMemo(() => {
     const polygons = stage.brush.selection.flatMap(x => x.polygons);
-    if (selectorRef.current) {// Store initial offset
+    if (selectorRef.current) {// Store selector offset
       initial.copy(selectorRef.current.position);
       selectionRef.current?.position.set(0, 0, 0);
     }

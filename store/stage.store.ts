@@ -18,7 +18,7 @@ export type State = {
       walls: WallDef[],
       opts: { polygonKey?: string; cutOut?: boolean },
     ) => void;
-    applyBrush: (stageKey: string, opts: { polygonKey?: string; erase?: boolean }) => void;
+    applyBrush: (stageKey: string, opts: { erase?: boolean }) => void;
     createStage: (stageKey: string) => void;
     ensureStage: (stageKey: string) => void;
     getBrush: (stageKey: string) => Stage.BrushMeta;
@@ -58,13 +58,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     applyBrush: (stageKey, opts) => {
       const brush = get().api.getBrush(stageKey);
       const delta = Stage.computeGlobalBrushRect(brush).precision(1);
-      
-      const { polygons: prev } = api.getPolygon(stageKey, opts.polygonKey);
+      const { polygons: prev } = api.getPolygon(stageKey, brush.polygonKey);
+
       try {
         const next = opts.erase
           ? geomService.cutOut([delta], prev)
           : geomService.union(prev.concat(delta));
-        const polygonKey = opts.polygonKey || 'default';
+        const polygonKey = brush.polygonKey;
         api.updatePolygon(stageKey, polygonKey, { polygons: next });
       } catch (error) {
         console.error('applyBrush: geometric operation failed');

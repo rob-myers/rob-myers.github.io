@@ -57,6 +57,8 @@ export interface BrushMeta {
   /** Is the selection locked? */
   locked: boolean;
   selection: SelectedBlock[];
+  /** Current polygon key we add/cut blocks out of */
+  polygonKey: string;
 }
 
 export function createDefaultBrushMeta(): BrushMeta {
@@ -68,6 +70,7 @@ export function createDefaultBrushMeta(): BrushMeta {
     scale: Geom.Vector.from({ x: 1, y: 1 }),
     locked: false,
     selection: [],
+    polygonKey: 'default',
   };
 };
 
