@@ -8,18 +8,10 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Can undo/redo paint via Cmd/Ctrl-Z
-
-- `s` to select when in mode `rect`.
-- `w` to move switch between mode `rect` and `template`,
-
-- Cleanup how `brush.locked` is set
-- `Brush` can be locked and selects...
-  > Can print the selected polygons
-  > Can mirror
+- Can undo/redo polygon edit
+- Indicate `brush.locked` via UI text `polygons`
 - Programmatically defined `Select` UI?
   > e.g. saved polygon templates, blender imports, shortcuts
-
 
 Blog layout related tasks
 - `Terminal` and session has `sessionKey` and `stageKey`.
@@ -30,6 +22,7 @@ Blog layout related tasks
 - Auto pause on start/resume another `Stage`
 
 
+- Review and clean `Brush` code
 - Fix multiline command launched from intermediate line
 - Start writing post / decide on blog format
 
@@ -97,3 +90,5 @@ Blog layout related tasks
 ✅ Add x/y axes
 ✅ Can flip selection in x/y axes
 ✅ Can rotate selection by -/+ 90 deg
+✅ `f` to fill, `shift-f`/backspace to delete
+✅ Cmd+C selects, Cmd+X cuts, Cmd+V pastes, Esc unselects

@@ -3,6 +3,7 @@ import { Vector3, Scene } from "three";
 import { KeyedLookup } from "model/generic.model";
 import * as Geom from 'model/geom';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
+import { geomService } from "model/geom.service";
 
 export type StageMeta = {
   key: string;
@@ -118,4 +119,25 @@ export interface SelectedPolygons {
   /** Selected from this polygon */
   polygonKey: string;
   polygons: Geom.Polygon[];
+}
+
+export function getBrushSelection(
+  brush: BrushMeta,
+  block: StageMeta['block'],
+  polygon: StageMeta['polygon'],
+) {
+  // `polygonKey` can occur multiple times if used by multiple blocks,
+  // but wouldn't expect this to happen
+  const poly = getGlobalBrushRect(brush), rect = poly.rect;
+  return Object.values(block).filter(x => x.visible)
+    .flatMap<SelectedPolygons>(({ polygonKeys }) => {
+      return polygonKeys.map(x => polygon[x])
+        .map<NamedPolygons>(x => ({ ...x,
+          polygons: x.polygons.filter(x => x.rect.intersects(rect)),
+        })).filter(x => x.polygons.length)
+        .map<SelectedPolygons>((x) => ({
+          polygonKey: x.key,
+          polygons: geomService.union(x.polygons.flatMap(x => geomService.intersect([poly, x]))),
+        }))
+    }).filter(x => x.polygons.length);
 }

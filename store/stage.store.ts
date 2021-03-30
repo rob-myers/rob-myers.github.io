@@ -19,8 +19,12 @@ export type State = {
       walls: WallDef[],
       opts: { polygonKey?: string; cutOut?: boolean },
     ) => void;
-    applyBrush: (stageKey: string, opts: { erase?: boolean }) => void;
+    applyBrush: (stageKey: string, opts: {
+      erase?: boolean;
+    }) => void;
     createStage: (stageKey: string) => void;
+    cutSelectPolysInBrush: (stageKey: string) => void;
+    deselectPolysInBrush: (stageKey: string) => void;
     ensureStage: (stageKey: string) => void;
     getBrush: (stageKey: string) => Stage.BrushMeta;
     getInternal: (stageKey: string) => Stage.StageMeta['internal'];
@@ -32,7 +36,7 @@ export type State = {
       delta: Geom.Polygon[],
       opts: { cutOut?: boolean },
     ) => void;
-    selectBrush: (stageKey: string) => void;
+    selectPolysInBrush: (stageKey: string) => void;
     transformBrush: (stageKey: string, transformKey: TransformKey) => void;
     rememberPolygon: (stageKey: string, polygonKey: string) => void;
     removeStage: (stageKey: string) => void;
@@ -118,6 +122,28 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }, stage),
     })),
 
+    cutSelectPolysInBrush: (stageKey) => {
+      const { block, brush, polygon } = get().api.getStage(stageKey)
+      const selection = Stage.getBrushSelection(brush, block, polygon);
+      if (!selection.length) return;
+
+      if (!brush.locked) {
+        brush.selectFrom.set(brush.position.x, brush.position.y, 0);
+        get().api.updateBrush(stageKey, { locked: true, selection });
+        get().api.applyBrush(stageKey, { erase: true });
+      } else { // When selection exists just delete it
+        get().api.applyBrush(stageKey, { erase: true });
+      }
+
+    },
+
+    deselectPolysInBrush: (stageKey) => {
+      const { brush } = get().api.getStage(stageKey)
+      if (brush.locked) {
+        get().api.updateBrush(stageKey, { locked: false, selection: [] });
+      }
+    },
+
     ensureStage: (stageKey) => {
       if(!get().stage[stageKey]) {
         get().api.createStage(stageKey);
@@ -151,32 +177,15 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       stage: removeFromLookup(stageKey, stage),
     })),
 
-    selectBrush: (stageKey) => {
+    selectPolysInBrush: (stageKey) => {
       const { block, brush, polygon } = get().api.getStage(stageKey)
-      brush.selectFrom.set(brush.position.x, brush.position.y, 0);
+      const selection = Stage.getBrushSelection(brush, block, polygon);
 
-      if (brush.locked) {
-        get().api.updateBrush(stageKey, { locked: false, selection: [] });
-        return;
+      if (selection.length) {
+        // console.log('selection', selection);        
+        brush.selectFrom.set(brush.position.x, brush.position.y, 0);
+        get().api.updateBrush(stageKey, { locked: true, selection });
       }
-      
-      // `polygonKey` could occur multiple times if used by multiple blocks,
-      // but wouldn't expect this to happen
-      const poly = Stage.getGlobalBrushRect(brush), rect = poly.rect;
-      const selection = Object.values(block).filter(x => x.visible)
-        .flatMap<Stage.SelectedPolygons>(({ polygonKeys }) => {
-          return polygonKeys.map(x => polygon[x])
-            .map<Stage.NamedPolygons>(x => ({ ...x,
-              polygons: x.polygons.filter(x => x.rect.intersects(rect)),
-            })).filter(x => x.polygons.length)
-            .map<Stage.SelectedPolygons>((x) => ({
-              polygonKey: x.key,
-              polygons: geomService.union(x.polygons.flatMap(x => geomService.intersect([poly, x]))),
-            }))
-        }).filter(x => x.polygons.length);
-
-      // console.log('selection', selection);        
-      get().api.updateBrush(stageKey, { locked: true, selection });
     },
 
     transformBrush: (stageKey, key) => {

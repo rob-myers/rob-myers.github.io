@@ -16,7 +16,7 @@ const Block: React.FC<Props> = ({ stage, block }) => {
   const innerGeom = useMemo(() => geometry.clone(), [geometry]);
 
   // When flat, force transparent so can see selections over black
-  const opacity = stage.height === 0 ? 0.2 : stage.opacity;
+  const opacity = stage.height === 0 ? 0.15 : stage.opacity;
 
   return (
     <group>
@@ -36,7 +36,7 @@ const Block: React.FC<Props> = ({ stage, block }) => {
             side={BackSide}
             color={block.color}
             transparent
-            opacity={0.6}
+            opacity={0.5}
           />
         </mesh>
       )}

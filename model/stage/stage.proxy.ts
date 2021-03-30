@@ -5,6 +5,8 @@ export interface ExtendedBrush extends BrushMeta {
   paint: () => void;
   erase: () => void;
   select: () => void;
+  deselect: () => void;
+  cutSelect: () => void;
   transform: (key: TransformKey) => void;
   undoRedo: () => void;
 }
@@ -22,7 +24,9 @@ export function createStageProxy(stageKey: string) {
             switch (key) {
               case 'paint': return () => useStage.api.applyBrush(stageKey, {});
               case 'erase': return () => useStage.api.applyBrush(stageKey, { erase: true });
-              case 'select': return () => useStage.api.selectBrush(stageKey);
+              case 'select': return () => useStage.api.selectPolysInBrush(stageKey);
+              case 'deselect': return () => useStage.api.deselectPolysInBrush(stageKey);
+              case 'cutSelect': return () => useStage.api.cutSelectPolysInBrush(stageKey);
               case 'transform': return (transformKey: TransformKey) =>
                 useStage.api.transformBrush(stageKey, transformKey);
               case 'undoRedo': return () => useStage.api.undoRedoBrush(stageKey);

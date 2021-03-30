@@ -5,16 +5,20 @@ key | run '({ read, _: {msg} }, { stage: s }) {
   while (msg = await read()) {
     if (msg.type !== "keydown") continue;
     switch (msg.key) {
-      case "a": s.brush.paint(); break;
-      case "d": s.brush.erase(); break;
-      case "w": s.brush.select(); break;
+      case "f": s.brush.paint(); break;
+      case "v": msg.metaKey && s.brush.paint(); break;
+      case "F": s.brush.erase(); break;
+      case "Backspace": s.brush.erase(); break;
+      case "c": msg.metaKey && s.brush.select(); break;
+      case "x": msg.metaKey && s.brush.cutSelect();
+        !msg.metaKey && s.brush.transform("mirror(x)"); break;
+      case "Escape": s.brush.deselect(); break;
       case "1": [s.height, s.opacity] = [10, 1]; break;
       case "2": [s.height, s.opacity] = [0, 0.2]; break;
       case "3": [s.height, s.opacity] = [10, 0.2]; break;
-      case "x": s.brush.transform("mirror(x)"); break;
       case "y": s.brush.transform("mirror(y)"); break;
-      case "r": s.brush.transform("rotate(90)"); break;
-      case "R": s.brush.transform("rotate(-90)"); break;
+      case "q": s.brush.transform("rotate(90)"); break;
+      case "Q": s.brush.transform("rotate(-90)"); break;
       case "z": msg.metaKey && s.brush.undoRedo(); break;
     }
   }
