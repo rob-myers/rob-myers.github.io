@@ -8,7 +8,7 @@ export interface ExtendedBrush extends BrushMeta {
   transform: (key: TransformKey) => void;
 }
 
-export type TransformKey = 'flip-x' | 'flip-y' | 'rot-cw' | 'rot-acw';
+export type TransformKey = 'mirror(x)' | 'mirror(y)' | 'rotate(90)' | 'rotate(-90)';
 
 export function createStageProxy(stageKey: string) {
   return new Proxy({} as StageMeta, {

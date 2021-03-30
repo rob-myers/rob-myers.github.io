@@ -140,8 +140,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     selectBrush: (stageKey) => {
       const { block, brush, polygon } = get().api.getStage(stageKey)
-      const poly = Stage.getGlobalBrushRect(brush);
-      const rect = poly.rect;
+      brush.selectFrom.set(brush.position.x, brush.position.y, 0);
 
       if (brush.locked) {
         get().api.updateBrush(stageKey, { locked: false, selection: [] });
@@ -150,6 +149,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       
       // `polygonKey` could occur multiple times if used by multiple blocks,
       // but wouldn't expect this to happen
+      const poly = Stage.getGlobalBrushRect(brush), rect = poly.rect;
       const selection = Object.values(block).filter(x => x.visible)
         .flatMap<Stage.SelectedPolygons>(({ polygonKeys }) => {
           return polygonKeys.map(x => polygon[x])
@@ -163,11 +163,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         }).filter(x => x.polygons.length);
 
       // console.log('selection', selection);        
-
-      get().api.updateBrush(stageKey, ({ locked, selectFrom }) => {
-        selectFrom.set(brush.position.x, brush.position.y, 0);
-        return { locked: !locked, selection };
-      });
+      get().api.updateBrush(stageKey, { locked: true, selection });
     },
 
     transformBrush: (stageKey, key) => {
@@ -176,20 +172,20 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       let mutator: (p: Geom.Vector) => void;
       const center = rect.center;
       switch (key) {
-        case 'flip-x':
+        case 'mirror(x)':
           mutator = (p) => p.x = (2 * center.x) - p.x; break;
-        case 'flip-y':
+        case 'mirror(y)':
           mutator = (p) => p.y = (2 * center.y) - p.y; break;
-        case 'rot-cw':
+        case 'rotate(90)':
           mutator = (p) => p.copy(center).set(-(p.y - center.y), p.x - center.x); break;
-        case 'rot-acw':
+        case 'rotate(-90)':
           mutator = (p) => p.copy(center).set(p.y - center.y, -(p.x - center.x)); break;
         default:
           return;
       }
       selection.forEach(x => x.polygons.map(y => {
         y.mutatePoints(mutator).precision(1);
-        (key === 'flip-x' || key === 'flip-y') && y.reverse();
+        (key === 'mirror(x)' || key === 'mirror(y)') && y.reverse();
       }));
       get().api.updateBrush(stageKey, { selection: selection.slice() });
     },

@@ -1,22 +1,22 @@
 ## UI Pipelines
 
 ```sh
-key |
-  run '({ read, _: {msg} }, { stage: s }) {
-    while (msg = await read()) {
-      if (msg.event !== "keydown") continue;
-      switch (msg.key) {
-        case "a": s.brush.paint(); break;
-        case "d": s.brush.erase(); break;
-        case "w": s.brush.select(); break;
-        case "1": [s.height, s.opacity] = [10, 1]; break;
-        case "2": [s.height, s.opacity] = [0, 0.2]; break;
-        case "3": [s.height, s.opacity] = [10, 0.2]; break;
-        case "x": s.brush.transform("flip-x"); break;
-        case "y": s.brush.transform("flip-y"); break;
-      }
+key | run '({ read, _: {msg} }, { stage: s }) {
+  while (msg = await read()) {
+    if (msg.event !== "keydown") continue;
+    switch (msg.key) {
+      case "a": s.brush.paint(); break;
+      case "d": s.brush.erase(); break;
+      case "w": s.brush.select(); break;
+      case "1": [s.height, s.opacity] = [10, 1]; break;
+      case "2": [s.height, s.opacity] = [0, 0.2]; break;
+      case "3": [s.height, s.opacity] = [10, 0.2]; break;
+      case "x": s.brush.transform("mirror(x)"); break;
+      case "y": s.brush.transform("mirror(y)"); break;
+      case "r": s.brush.transform("rotate(90)"); break;
     }
-  }' &
+  }
+}' &
 ```
 
 ## Library

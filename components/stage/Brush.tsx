@@ -27,6 +27,10 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     const selection = selectionRef.current!;
     const controls = stage.internal.controls!;
 
+    if (!locked) {// Reset selection offset
+      selection.position.set(0, 0, 0);
+    }
+
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (!locked) {
         if (key === 'pointermove' && active.current) {
@@ -80,7 +84,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
   const onMeshPointerDown = useCallback((e: PointerEvent) => {
     if (locked && e.type === 'pointerdown') {
-      active.current = true;// Store selector offset
+      active.current = true; // Store selector offset:
       initial.set(stage.brush.position.x - e.point.x, stage.brush.position.y - e.point.y, 0);
     }
   }, [locked]);
