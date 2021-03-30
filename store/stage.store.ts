@@ -4,9 +4,10 @@ import { devtools, persist } from 'zustand/middleware';
 
 import * as Geom from 'model/geom';
 import { KeyedLookup } from 'model/generic.model';
-import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
 import { geomService } from 'model/geom.service';
 import * as Stage from 'model/stage/stage.model';
+import { TransformKey } from 'model/stage/stage.proxy';
+import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
 
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
@@ -31,7 +32,8 @@ export type State = {
       delta: Geom.Polygon[],
       opts: { cutOut?: boolean },
     ) => void;
-    selectByBrush: (stageKey: string) => void;
+    selectBrush: (stageKey: string) => void;
+    transformBrush: (stageKey: string, transformKey: TransformKey) => void;
     removeStage: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageMeta['internal']>) => void;
@@ -69,7 +71,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const delta = Stage.getGlobalBrushRect(brush);
         api.modifyPolygon(stageKey, brush.polygonKey, [delta], { cutOut: opts.erase });
       } else {// Add/cut offset selection
-        const offset = brush.position.clone().sub(brush.selectedAt);
+        const offset = brush.position.clone().sub(brush.selectFrom);
         for (const { polygonKey, polygons } of brush.selection) {
           const delta = polygons.map(x => x.clone().add(offset));
           api.modifyPolygon(stageKey, polygonKey, delta, { cutOut: opts.erase });
@@ -132,7 +134,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().stage[stageKey];
     },
 
-    selectByBrush: (stageKey) => {
+    removeStage: (stageKey) => set(({ stage }) => ({
+      stage: removeFromLookup(stageKey, stage),
+    })),
+
+    selectBrush: (stageKey) => {
       const { block, brush, polygon } = get().api.getStage(stageKey)
       const poly = Stage.getGlobalBrushRect(brush);
       const rect = poly.rect;
@@ -158,15 +164,35 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
       // console.log('selection', selection);        
 
-      get().api.updateBrush(stageKey, ({ locked, selectedAt: lastSelectedAt }) => {
-        lastSelectedAt.set(brush.position.x, brush.position.y, 0);
+      get().api.updateBrush(stageKey, ({ locked, selectFrom }) => {
+        selectFrom.set(brush.position.x, brush.position.y, 0);
         return { locked: !locked, selection };
       });
     },
 
-    removeStage: (stageKey) => set(({ stage }) => ({
-      stage: removeFromLookup(stageKey, stage),
-    })),
+    transformBrush: (stageKey, key) => {
+      const { selection } = get().api.getStage(stageKey).brush;
+      const rect = Geom.Rect.union(selection.flatMap(x => x.polygons).map(x => x.rect));
+      let mutator: (p: Geom.Vector) => void;
+      const center = rect.center;
+      switch (key) {
+        case 'flip-x':
+          mutator = (p) => p.x = (2 * center.x) - p.x; break;
+        case 'flip-y':
+          mutator = (p) => p.y = (2 * center.y) - p.y; break;
+        case 'rot-cw':
+          mutator = (p) => p.copy(center).set(-(p.y - center.y), p.x - center.x); break;
+        case 'rot-acw':
+          mutator = (p) => p.copy(center).set(p.y - center.y, -(p.x - center.x)); break;
+        default:
+          return;
+      }
+      selection.forEach(x => x.polygons.map(y => {
+        y.mutatePoints(mutator).precision(1);
+        (key === 'flip-x' || key === 'flip-y') && y.reverse();
+      }));
+      get().api.updateBrush(stageKey, { selection: selection.slice() });
+    },
 
     updateBrush: (stageKey, updates) => {
       get().api.updateStage(stageKey, ({ brush }) => ({

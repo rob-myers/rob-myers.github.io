@@ -60,7 +60,7 @@ export interface BrushMeta {
 
   selection: SelectedPolygons[];
   /** Last position we started selection from */
-  selectedAt: Vector3;
+  selectFrom: Vector3;
 }
 
 export function createDefaultBrushMeta(): BrushMeta {
@@ -72,7 +72,7 @@ export function createDefaultBrushMeta(): BrushMeta {
     locked: false,
     polygonKey: 'default',
     selection: [],
-    selectedAt: new Vector3,
+    selectFrom: new Vector3,
   };
 };
 

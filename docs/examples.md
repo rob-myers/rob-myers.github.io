@@ -5,12 +5,16 @@ key |
   run '({ read, _: {msg} }, { stage: s }) {
     while (msg = await read()) {
       if (msg.event !== "keydown") continue;
-      if (msg.key === "a") s.brush.paint();
-      else if (msg.key === "d") s.brush.erase();
-      else if (msg.key === "w") s.brush.select();
-      else if (msg.key === "1") [s.height, s.opacity] = [10, 1];
-      else if (msg.key === "2") [s.height, s.opacity] = [0, 0.2];
-      else if (msg.key === "3") [s.height, s.opacity] = [10, 0.2];
+      switch (msg.key) {
+        case "a": s.brush.paint(); break;
+        case "d": s.brush.erase(); break;
+        case "w": s.brush.select(); break;
+        case "1": [s.height, s.opacity] = [10, 1]; break;
+        case "2": [s.height, s.opacity] = [0, 0.2]; break;
+        case "3": [s.height, s.opacity] = [10, 0.2]; break;
+        case "x": s.brush.transform("flip-x"); break;
+        case "y": s.brush.transform("flip-y"); break;
+      }
     }
   }' &
 ```

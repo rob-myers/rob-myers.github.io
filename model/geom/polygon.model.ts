@@ -227,6 +227,13 @@ export class Polygon {
     };
   }
 
+  mutatePoints(mutator: (p: Vector) => void) {
+    this.outline.forEach(mutator);
+    this.holes.forEach(hole => hole.forEach(mutator));
+    this._triangulation = this._triangulationIds = undefined;
+    return this;
+  }
+
   /**
    * Quality triangulation via constrained delaunay library 'poly2ti'.
    * Can fail for 'non-wellformed polygons' e.g. given square
@@ -277,6 +284,11 @@ export class Polygon {
 
   get rect() {
     return Rect.fromPoints(...this.outline);
+  }
+
+  reverse() {
+    this.outline.reverse();
+    this.holes.forEach(hole => hole.reverse());
   }
 
   scale(scalar: number) {

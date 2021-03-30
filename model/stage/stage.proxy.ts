@@ -5,7 +5,10 @@ export interface ExtendedBrush extends BrushMeta {
   paint: () => void;
   erase: () => void;
   select: () => void;
+  transform: (key: TransformKey) => void;
 }
+
+export type TransformKey = 'flip-x' | 'flip-y' | 'rot-cw' | 'rot-acw';
 
 export function createStageProxy(stageKey: string) {
   return new Proxy({} as StageMeta, {
@@ -15,14 +18,13 @@ export function createStageProxy(stageKey: string) {
       if (key === 'brush') {
         return new Proxy({} as ExtendedBrush, {
           get(_, key: keyof ExtendedBrush) {
-            if (key === 'paint') {
-              return () => useStage.api.applyBrush(stageKey, {});
-            } else if (key === 'erase') {
-              return () => useStage.api.applyBrush(stageKey, { erase: true });
-            } else if (key === 'select') {
-              return () => useStage.api.selectByBrush(stageKey);
-            } else {
-              return useStage.api.getBrush(stageKey)[key];
+            switch (key) {
+              case 'paint': return () => useStage.api.applyBrush(stageKey, {});
+              case 'erase': return () => useStage.api.applyBrush(stageKey, { erase: true });
+              case 'select': return () => useStage.api.selectBrush(stageKey);
+              case 'transform': return (transformKey: TransformKey) =>
+                useStage.api.transformBrush(stageKey, transformKey);
+              default: return useStage.api.getBrush(stageKey)[key];
             }
           },
           set(_, key: string, value: any) {
