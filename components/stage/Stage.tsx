@@ -40,7 +40,12 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   
   const keyWire = stage?.internal.keyEvents;
   const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
-    keyWire?.next({ key: e.key, event: e.type as any });
+    keyWire?.next({
+      key: e.key,
+      type: e.type as any,
+      metaKey: e.metaKey,
+      shiftKey: e.shiftKey,
+    });
   }, [keyWire]);
 
   return (

@@ -6,6 +6,7 @@ export interface ExtendedBrush extends BrushMeta {
   erase: () => void;
   select: () => void;
   transform: (key: TransformKey) => void;
+  undoRedo: () => void;
 }
 
 export type TransformKey = 'mirror(x)' | 'mirror(y)' | 'rotate(90)' | 'rotate(-90)';
@@ -24,6 +25,7 @@ export function createStageProxy(stageKey: string) {
               case 'select': return () => useStage.api.selectBrush(stageKey);
               case 'transform': return (transformKey: TransformKey) =>
                 useStage.api.transformBrush(stageKey, transformKey);
+              case 'undoRedo': return () => useStage.api.undoRedoBrush(stageKey);
               default: return useStage.api.getBrush(stageKey)[key];
             }
           },

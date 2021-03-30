@@ -15,6 +15,8 @@ export type StageMeta = {
     controls?: PanZoomControls;
     /** Attached on mount */
     scene?: Scene;
+    /** Previous state of all polygons on stage before an edit */
+    prevPolygonLookup: KeyedLookup<NamedPolygons>;
   };
   /** Transparency in range [0,1] */
   opacity: number;
@@ -36,12 +38,11 @@ export interface PersistedStage {
 }
 
 //#region internal
-export interface StageKeyEvent {
-  /**` KeyboardEvent.type` */
-  event: 'keydown' | 'keyup';
-  /** `KeyboardEvent.key` */
-  key: string;
-}
+export type StageKeyEvent = Pick<KeyboardEvent,
+  'type' | 'key' | 'metaKey' | 'shiftKey'
+> & {
+  type: 'keydown' | 'keyup';
+};
 
 export const initCameraPos = new Vector3(0, 0, 10);
 //#endregion
@@ -53,13 +54,15 @@ export interface BrushMeta {
   position: Geom.Vector;
   /** Mutated by Brush */
   scale: Geom.Vector;
+  /** Key of the polygon the rectangle tool edits */
+  rectToolPolygonKey: string;
+
+
   /** Is the selection locked? */
   locked: boolean;
-  /** Current polygon key we add/cut blocks out of */
-  polygonKey: string;
-
+  /** Current selection */
   selection: SelectedPolygons[];
-  /** Last position we started selection from */
+  /** Position of brush when last made selection */
   selectFrom: Vector3;
 }
 
@@ -69,8 +72,8 @@ export function createDefaultBrushMeta(): BrushMeta {
     rect: new Geom.Rect(0, -1, 1, 1),
     position: new Geom.Vector,
     scale: new Geom.Vector(1, 1),
+    rectToolPolygonKey: 'default',
     locked: false,
-    polygonKey: 'default',
     selection: [],
     selectFrom: new Vector3,
   };

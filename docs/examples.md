@@ -3,7 +3,7 @@
 ```sh
 key | run '({ read, _: {msg} }, { stage: s }) {
   while (msg = await read()) {
-    if (msg.event !== "keydown") continue;
+    if (msg.type !== "keydown") continue;
     switch (msg.key) {
       case "a": s.brush.paint(); break;
       case "d": s.brush.erase(); break;
@@ -14,6 +14,8 @@ key | run '({ read, _: {msg} }, { stage: s }) {
       case "x": s.brush.transform("mirror(x)"); break;
       case "y": s.brush.transform("mirror(y)"); break;
       case "r": s.brush.transform("rotate(90)"); break;
+      case "R": s.brush.transform("rotate(-90)"); break;
+      case "z": msg.metaKey && s.brush.undoRedo(); break;
     }
   }
 }' &

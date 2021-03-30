@@ -36,7 +36,7 @@ const Block: React.FC<Props> = ({ stage, block }) => {
             side={BackSide}
             color={block.color}
             transparent
-            opacity={0.8}
+            opacity={0.6}
           />
         </mesh>
       )}

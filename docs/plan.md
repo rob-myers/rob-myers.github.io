@@ -8,6 +8,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+- Can undo/redo paint via Cmd/Ctrl-Z
+
 - `s` to select when in mode `rect`.
 - `w` to move switch between mode `rect` and `template`,
 
@@ -93,3 +95,5 @@ Blog layout related tasks
 ✅ Can edit stage.opacity
 ✅ Added central dot
 ✅ Add x/y axes
+✅ Can flip selection in x/y axes
+✅ Can rotate selection by -/+ 90 deg

@@ -34,7 +34,10 @@ export type State = {
     ) => void;
     selectBrush: (stageKey: string) => void;
     transformBrush: (stageKey: string, transformKey: TransformKey) => void;
+    rememberPolygon: (stageKey: string, polygonKey: string) => void;
     removeStage: (stageKey: string) => void;
+    /** Undo/redo last paint/erase */
+    undoRedoBrush: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageMeta['internal']>) => void;
     updatePolygon: (
@@ -60,6 +63,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const wallPolys = cutOut
         ? geomService.cutOut(delta, prev)
         : geomService.union(prev.concat(delta));
+      api.rememberPolygon(stageKey, polygonKey);
       api.updatePolygon(stageKey, polygonKey, { polygons: wallPolys });
     },
 
@@ -69,11 +73,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       
       if (!brush.selection.length) {// Add/cut rectangle
         const delta = Stage.getGlobalBrushRect(brush);
-        api.modifyPolygon(stageKey, brush.polygonKey, [delta], { cutOut: opts.erase });
+        api.modifyPolygon(stageKey, brush.rectToolPolygonKey, [delta], { cutOut: opts.erase });
       } else {// Add/cut offset selection
         const offset = brush.position.clone().sub(brush.selectFrom);
         for (const { polygonKey, polygons } of brush.selection) {
           const delta = polygons.map(x => x.clone().add(offset));
+          api.rememberPolygon(stageKey, polygonKey);
           api.modifyPolygon(stageKey, polygonKey, delta, { cutOut: opts.erase });
         }
       }
@@ -98,6 +103,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         internal: {
           camEnabled: true,
           keyEvents: new Subject,
+          prevPolygonLookup: {},
           // Others attached by components
         },
 
@@ -132,6 +138,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     getStage: (stageKey) => {
       return get().stage[stageKey];
+    },
+
+    rememberPolygon: (stageKey, polygonKey) => {
+      const prev = get().api.getPolygon(stageKey, polygonKey);
+      get().api.updateInternal(stageKey, ({ prevPolygonLookup }) => ({
+        prevPolygonLookup: addToLookup(prev, prevPolygonLookup),
+      }));
     },
 
     removeStage: (stageKey) => set(({ stage }) => ({
@@ -177,9 +190,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         case 'mirror(y)':
           mutator = (p) => p.y = (2 * center.y) - p.y; break;
         case 'rotate(90)':
-          mutator = (p) => p.copy(center).set(-(p.y - center.y), p.x - center.x); break;
+          mutator = (p) => p.set(center.x - (p.y - center.y), center.y + (p.x - center.x)); break;
         case 'rotate(-90)':
-          mutator = (p) => p.copy(center).set(p.y - center.y, -(p.x - center.x)); break;
+          mutator = (p) => p.set(center.x + (p.y - center.y), center.y - (p.x - center.x)); break;
         default:
           return;
       }
@@ -188,6 +201,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         (key === 'mirror(x)' || key === 'mirror(y)') && y.reverse();
       }));
       get().api.updateBrush(stageKey, { selection: selection.slice() });
+    },
+
+    undoRedoBrush: (stageKey) => {
+      /**
+       * TODO can restore copy of stage.polygon
+       */
+      console.log('undo redo');
     },
 
     updateBrush: (stageKey, updates) => {
