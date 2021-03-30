@@ -16,4 +16,5 @@
   left: calc(50% - 2px);
   height: 4px;
   width: 4px;
+  pointer-events: none;
 }
