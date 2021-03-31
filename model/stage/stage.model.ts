@@ -17,7 +17,7 @@ export type StageMeta = {
     /** Attached on mount */
     scene?: Scene;
     /** Previous state of all polygons on stage before an edit */
-    prevPolygonLookup: KeyedLookup<NamedPolygons>;
+    prevPolygon: KeyedLookup<NamedPolygons>;
   };
   /** Transparency in range [0,1] */
   opacity: number;
@@ -27,8 +27,8 @@ export type StageMeta = {
   brush: BrushMeta;
   /** Polygon storage */
   polygon: KeyedLookup<NamedPolygons>;
-  /** A block is an extruded polygon blocking the view/way */
-  block: KeyedLookup<StageBlock>;
+  /** Keys of polygons representing high walls */
+  walls: StageWalls;
 };
 
 export interface PersistedStage {
@@ -89,25 +89,21 @@ export function createNamedPolygons(key: string): NamedPolygons {
   return { key, polygons: [] };
 }
 
-export function createStageBlock(key: string, opts: Partial<StageBlock>): StageBlock {
+export function createStageWalls(opts: Partial<StageWalls>): StageWalls {
   return {
-    key,
     color: '#000',
     height: 10,
     polygonKeys: [],
-    visible: true,
     ...opts,
   };
 }
 
-export interface StageBlock {
-  key: string;
+export interface StageWalls {
   /** Keys of NamedPolygons */
   polygonKeys: string[];
   /** Height of top of extruded polygon  */
   height: number;
   color: string;
-  visible: boolean;
 }
 
 export function getGlobalBrushRect(brush: BrushMeta): Geom.Polygon {
@@ -123,21 +119,17 @@ export interface SelectedPolygons {
 
 export function getBrushSelection(
   brush: BrushMeta,
-  block: StageMeta['block'],
+  { polygonKeys }: StageWalls,
   polygon: StageMeta['polygon'],
 ) {
-  // `polygonKey` can occur multiple times if used by multiple blocks,
-  // but wouldn't expect this to happen
-  const poly = getGlobalBrushRect(brush), rect = poly.rect;
-  return Object.values(block).filter(x => x.visible)
-    .flatMap<SelectedPolygons>(({ polygonKeys }) => {
-      return polygonKeys.map(x => polygon[x])
-        .map<NamedPolygons>(x => ({ ...x,
-          polygons: x.polygons.filter(x => x.rect.intersects(rect)),
-        })).filter(x => x.polygons.length)
-        .map<SelectedPolygons>((x) => ({
-          polygonKey: x.key,
-          polygons: geomService.union(x.polygons.flatMap(x => geomService.intersect([poly, x]))),
-        }))
-    }).filter(x => x.polygons.length);
+  const poly = getGlobalBrushRect(brush)
+  const rect = poly.rect;
+  return polygonKeys.map(x => polygon[x])
+    .map<NamedPolygons>(x => ({ ...x,
+      polygons: x.polygons.filter(x => x.rect.intersects(rect)),
+    })).filter(x => x.polygons.length)
+    .map<SelectedPolygons>((x) => ({
+      polygonKey: x.key,
+      polygons: geomService.union(x.polygons.flatMap(x => geomService.intersect([poly, x]))),
+    }));
 }

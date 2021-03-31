@@ -14,7 +14,7 @@ import Grid from "./Grid";
 import Axes from "./Axes";
 import Lights from "./Lights";
 import Brush, { PointerMsg } from "./Brush";
-import Block from "./Block";
+import Walls from "./Walls";
 import styles from "styles/Stage.module.css";
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
@@ -75,13 +75,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
             <Brush stage={stage} wire={ptrWire} />
           )}
 
-          {Object.values(stage.block).map(block => (
-            <Block
-              key={block.key}
-              stage={stage}
-              block={block}
-            />
-          ))}
+          <Walls stage={stage} />
         </Canvas>
       )}
 

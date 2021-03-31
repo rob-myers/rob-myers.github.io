@@ -106,15 +106,15 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         internal: {
           camEnabled: true,
           keyEvents: new Subject,
-          prevPolygonLookup: {},
+          prevPolygon: {},
           // Others attached by components
         },
 
-        block: addToLookup(Stage.createStageBlock('default', {
-          polygonKeys: ['default'],
-        }), {}),
         brush: Stage.createDefaultBrushMeta(),
         polygon: addToLookup(Stage.createNamedPolygons('default'), {}),
+        walls: Stage.createStageWalls({
+          polygonKeys: ['default'],
+        }),
 
         height: 10,
         opacity: 1,
@@ -122,8 +122,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     })),
 
     cutSelectPolysInBrush: (stageKey) => {
-      const { block, brush, polygon } = get().api.getStage(stageKey)
-      const selection = Stage.getBrushSelection(brush, block, polygon);
+      const { brush, walls, polygon } = get().api.getStage(stageKey)
+      const selection = Stage.getBrushSelection(brush, walls, polygon);
       if (!selection.length) return;
 
       if (!brush.locked) {
@@ -164,8 +164,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     rememberPolygon: (stageKey, polygonKey) => {
       const prev = get().api.getPolygon(stageKey, polygonKey);
-      get().api.updateInternal(stageKey, ({ prevPolygonLookup }) => ({
-        prevPolygonLookup: addToLookup(prev, prevPolygonLookup),
+      get().api.updateInternal(stageKey, ({ prevPolygon: prevPolygonLookup }) => ({
+        prevPolygon: addToLookup(prev, prevPolygonLookup),
       }));
     },
 
@@ -174,8 +174,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     })),
 
     selectPolysInBrush: (stageKey) => {
-      const { block, brush, polygon } = get().api.getStage(stageKey)
-      const selection = Stage.getBrushSelection(brush, block, polygon);
+      const { brush, walls, polygon } = get().api.getStage(stageKey)
+      const selection = Stage.getBrushSelection(brush, walls, polygon);
 
       if (selection.length && !brush.locked) {
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
@@ -209,9 +209,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     undoRedoPolygons: (stageKey) => {
       const { polygon } = get().api.getStage(stageKey);
-      const { prevPolygonLookup } = get().api.getInternal(stageKey);
-      get().api.updateInternal(stageKey, { prevPolygonLookup: polygon })
-      get().api.updateStage(stageKey, { polygon: prevPolygonLookup })
+      const { prevPolygon } = get().api.getInternal(stageKey);
+      get().api.updateInternal(stageKey, { prevPolygon: polygon })
+      get().api.updateStage(stageKey, { polygon: prevPolygon })
     },
 
     updateBrush: (stageKey, updates) => {

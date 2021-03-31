@@ -1,16 +1,16 @@
 import { useMemo } from "react";
 import { BackSide, FrontSide } from "three";
 import { geomService } from "model/geom.service";
-import { StageBlock, StageMeta } from "model/stage/stage.model";
+import { StageMeta } from "model/stage/stage.model";
 
-const Block: React.FC<Props> = ({ stage, block }) => {
+const Walls: React.FC<Props> = ({ stage }) => {
 
-  const polygons = block.polygonKeys
+  const polygons = stage.walls.polygonKeys
     .map(x => stage.polygon[x]).filter(Boolean);
 
   const geometry = useMemo(() => geomService.polysToWalls(
     polygons.flatMap(x => x.polygons),
-    Math.min(block.height, stage.height),
+    Math.min(stage.walls.height, stage.height),
   ), [...polygons, stage.height]);
 
   const innerGeom = useMemo(() => geometry.clone(), [geometry]);
@@ -23,7 +23,7 @@ const Block: React.FC<Props> = ({ stage, block }) => {
       <mesh key={opacity} geometry={geometry}>
         <meshBasicMaterial
           side={FrontSide}
-          color={block.color}
+          color={stage.walls.color}
           {...opacity < 1 && {
             transparent: true,
             opacity,
@@ -34,7 +34,7 @@ const Block: React.FC<Props> = ({ stage, block }) => {
         <mesh geometry={innerGeom}>
           <meshBasicMaterial
             side={BackSide}
-            color={block.color}
+            color={stage.walls.color}
             transparent
             opacity={0.5}
           />
@@ -46,7 +46,6 @@ const Block: React.FC<Props> = ({ stage, block }) => {
 
 interface Props {
   stage: StageMeta;
-  block: StageBlock;
 }
 
-export default Block;
+export default Walls;
