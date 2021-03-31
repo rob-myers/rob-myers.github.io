@@ -29,7 +29,7 @@ export function createStageProxy(stageKey: string) {
               case 'cutSelect': return () => useStage.api.cutSelectPolysInBrush(stageKey);
               case 'transform': return (transformKey: TransformKey) =>
                 useStage.api.transformBrush(stageKey, transformKey);
-              case 'undoRedo': return () => useStage.api.undoRedoBrush(stageKey);
+              case 'undoRedo': return () => useStage.api.undoRedoPolygons(stageKey);
               default: return useStage.api.getBrush(stageKey)[key];
             }
           },

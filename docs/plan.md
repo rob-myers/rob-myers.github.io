@@ -8,10 +8,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Can undo/redo polygon edit
-- Indicate `brush.locked` via UI text `polygons`
-- Programmatically defined `Select` UI?
-  > e.g. saved polygon templates, blender imports, shortcuts
+- Start writing post / decide on blog format
 
 Blog layout related tasks
 - `Terminal` and session has `sessionKey` and `stageKey`.
@@ -22,12 +19,14 @@ Blog layout related tasks
 - Auto pause on start/resume another `Stage`
 
 
-- Review and clean `Brush` code
 - Fix multiline command launched from intermediate line
-- Start writing post / decide on blog format
+- Replace `stage.block` by `stage.walls`
+  > Originally was going to have low/medium walls too
+- Review and clean `Brush` code
+- Programmatically defined `Select` UI?
+  > e.g. saved polygon templates, blender imports, shortcuts
 
 - Replace `defs` by `declare` (handle special mvdan-sh parsing)
-
 - `ps -s` shows full process src
 - How do `key` and `poll` work; can they be simplified?
 - Make a blender model and import it
@@ -92,3 +91,4 @@ Blog layout related tasks
 ✅ Can rotate selection by -/+ 90 deg
 ✅ `f` to fill, `shift-f`/backspace to delete
 ✅ Cmd+C selects, Cmd+X cuts, Cmd+V pastes, Esc unselects
+✅ Can undo/redo polygons via Cmd-Z

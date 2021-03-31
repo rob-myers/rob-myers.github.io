@@ -19,9 +19,7 @@ export type State = {
       walls: WallDef[],
       opts: { polygonKey?: string; cutOut?: boolean },
     ) => void;
-    applyBrush: (stageKey: string, opts: {
-      erase?: boolean;
-    }) => void;
+    applyBrush: (stageKey: string, opts: { erase?: boolean }) => void;
     createStage: (stageKey: string) => void;
     cutSelectPolysInBrush: (stageKey: string) => void;
     deselectPolysInBrush: (stageKey: string) => void;
@@ -36,12 +34,12 @@ export type State = {
       delta: Geom.Polygon[],
       opts: { cutOut?: boolean },
     ) => void;
-    selectPolysInBrush: (stageKey: string) => void;
-    transformBrush: (stageKey: string, transformKey: TransformKey) => void;
     rememberPolygon: (stageKey: string, polygonKey: string) => void;
     removeStage: (stageKey: string) => void;
+    selectPolysInBrush: (stageKey: string) => void;
+    transformBrush: (stageKey: string, transformKey: TransformKey) => void;
     /** Undo/redo last paint/erase */
-    undoRedoBrush: (stageKey: string) => void;
+    undoRedoPolygons: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageMeta['internal']>) => void;
     updatePolygon: (
@@ -77,6 +75,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       
       if (!brush.selection.length) {// Add/cut rectangle
         const delta = Stage.getGlobalBrushRect(brush);
+        api.rememberPolygon(stageKey, brush.rectToolPolygonKey);
         api.modifyPolygon(stageKey, brush.rectToolPolygonKey, [delta], { cutOut: opts.erase });
       } else {// Add/cut offset selection
         const offset = brush.position.clone().sub(brush.selectFrom);
@@ -138,10 +137,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     deselectPolysInBrush: (stageKey) => {
-      const { brush } = get().api.getStage(stageKey)
-      if (brush.locked) {
-        get().api.updateBrush(stageKey, { locked: false, selection: [] });
-      }
+      get().api.updateBrush(stageKey, { locked: false, selection: [] });
     },
 
     ensureStage: (stageKey) => {
@@ -181,8 +177,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const { block, brush, polygon } = get().api.getStage(stageKey)
       const selection = Stage.getBrushSelection(brush, block, polygon);
 
-      if (selection.length) {
-        // console.log('selection', selection);        
+      if (selection.length && !brush.locked) {
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
         get().api.updateBrush(stageKey, { locked: true, selection });
       }
@@ -212,11 +207,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       get().api.updateBrush(stageKey, { selection: selection.slice() });
     },
 
-    undoRedoBrush: (stageKey) => {
-      /**
-       * TODO can restore copy of stage.polygon
-       */
-      console.log('undo redo');
+    undoRedoPolygons: (stageKey) => {
+      const { polygon } = get().api.getStage(stageKey);
+      const { prevPolygonLookup } = get().api.getInternal(stageKey);
+      get().api.updateInternal(stageKey, { prevPolygonLookup: polygon })
+      get().api.updateStage(stageKey, { polygon: prevPolygonLookup })
     },
 
     updateBrush: (stageKey, updates) => {
