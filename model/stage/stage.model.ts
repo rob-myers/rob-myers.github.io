@@ -11,6 +11,7 @@ export type StageMeta = {
   internal: {
     /** Can we move/zoom the pan-zoom camera? */
     camEnabled: boolean;
+    /** Keyboard events sent by `Stage`  */
     keyEvents: Subject<StageKeyEvent>;
     /** Attached on mount */
     controls?: PanZoomControls;
@@ -19,16 +20,14 @@ export type StageMeta = {
     /** Previous state of all polygons on stage before an edit */
     prevPolygon: KeyedLookup<NamedPolygons>;
   };
-  /** Transparency in range [0,1] */
-  opacity: number;
-  /** Can suppress high walls */
-  height: number;
   /** Used to select rectangles and move templates */
   brush: BrushMeta;
   /** Polygon storage */
   polygon: KeyedLookup<NamedPolygons>;
-  /** Keys of polygons representing high walls */
+  /** Has keys of polygons representing high walls */
   walls: StageWalls;
+  /** World bounds */
+  bounds: Geom.Rect; 
 };
 
 export interface PersistedStage {
@@ -57,8 +56,6 @@ export interface BrushMeta {
   scale: Geom.Vector;
   /** Key of the polygon the rectangle tool edits */
   rectToolPolygonKey: string;
-
-
   /** Is the selection locked? */
   locked: boolean;
   /** Current selection */
@@ -92,6 +89,7 @@ export function createNamedPolygons(key: string): NamedPolygons {
 export function createStageWalls(opts: Partial<StageWalls>): StageWalls {
   return {
     color: '#000',
+    opacity: 1,
     height: 10,
     polygonKeys: [],
     ...opts,
@@ -101,9 +99,10 @@ export function createStageWalls(opts: Partial<StageWalls>): StageWalls {
 export interface StageWalls {
   /** Keys of NamedPolygons */
   polygonKeys: string[];
-  /** Height of top of extruded polygon  */
   height: number;
   color: string;
+  /** Transparency in range [0,1] */
+  opacity: number;
 }
 
 export function getGlobalBrushRect(brush: BrushMeta): Geom.Polygon {

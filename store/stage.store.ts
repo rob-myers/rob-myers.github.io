@@ -24,7 +24,6 @@ export type State = {
     cutSelectPolysInBrush: (stageKey: string) => void;
     deselectPolysInBrush: (stageKey: string) => void;
     ensureStage: (stageKey: string) => void;
-    getBrush: (stageKey: string) => Stage.BrushMeta;
     getInternal: (stageKey: string) => Stage.StageMeta['internal'];
     getPolygon: (stageKey: string, polygonKey?: string) => Stage.NamedPolygons;
     getStage: (stageKey: string) => Stage.StageMeta;
@@ -48,6 +47,7 @@ export type State = {
       updates: LookupUpdates<Stage.NamedPolygons>,
     ) => void;
     updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
+    updateWalls: (stageKey: string, updates: Updates<Stage.StageWalls>) => void;
   }
 }
 
@@ -71,7 +71,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     applyBrush: (stageKey, opts) => {
       const { api } = get();
-      const brush = api.getBrush(stageKey);
+      const brush = api.getStage(stageKey).brush;
       
       if (!brush.selection.length) {// Add/cut rectangle
         const delta = Stage.getGlobalBrushRect(brush);
@@ -115,8 +115,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         walls: Stage.createStageWalls({
           polygonKeys: ['default'],
         }),
-
-        height: 10,
+        
+        bounds: new Geom.Rect(-20, -20, 40, 40),
         opacity: 1,
       }, stage),
     })),
@@ -144,10 +144,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       if(!get().stage[stageKey]) {
         get().api.createStage(stageKey);
       }
-    },
-
-    getBrush: (stageKey) => {
-      return get().stage[stageKey].brush;
     },
 
     getPolygon: (stageKey, polyonKey = 'default') => {
@@ -247,6 +243,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           stage,
           typeof updates === 'function' ? updates : () => updates,
         ),
+      }));
+    },
+
+    updateWalls: (stageKey, updates) => {
+      get().api.updateStage(stageKey, ({ walls }) => ({
+        walls: { ...walls,
+          ...typeof updates === 'function' ? updates(walls) : updates,
+        },
       }));
     },
 

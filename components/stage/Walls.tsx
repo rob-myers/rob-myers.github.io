@@ -10,13 +10,13 @@ const Walls: React.FC<Props> = ({ stage }) => {
 
   const geometry = useMemo(() => geomService.polysToWalls(
     polygons.flatMap(x => x.polygons),
-    Math.min(stage.walls.height, stage.height),
-  ), [...polygons, stage.height]);
+    stage.walls.height,
+  ), [...polygons, stage.walls.height]);
 
   const innerGeom = useMemo(() => geometry.clone(), [geometry]);
 
-  // When flat, force transparent so can see selections over black
-  const opacity = stage.height === 0 ? 0.15 : stage.opacity;
+  // When flat, force transparent so can see selections
+  const opacity = stage.walls.height === 0 ? 0.15 : stage.walls.opacity;
 
   return (
     <group>

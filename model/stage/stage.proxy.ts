@@ -1,5 +1,5 @@
 import useStage from "store/stage.store";
-import { BrushMeta, StageMeta } from "./stage.model";
+import { BrushMeta, StageMeta, StageWalls } from "./stage.model";
 
 export interface ExtendedBrush extends BrushMeta {
   paint: () => void;
@@ -30,11 +30,22 @@ export function createStageProxy(stageKey: string) {
               case 'transform': return (transformKey: TransformKey) =>
                 useStage.api.transformBrush(stageKey, transformKey);
               case 'undoRedo': return () => useStage.api.undoRedoPolygons(stageKey);
-              default: return useStage.api.getBrush(stageKey)[key];
+              default:
+                return useStage.api.getStage(stageKey).brush[key];
             }
           },
           set(_, key: string, value: any) {
             useStage.api.updateBrush(stageKey, { [key]: value });
+            return true;
+          },
+        });
+      } else if (key === 'walls') {
+        return new Proxy({} as StageWalls, {
+          get(_, key: keyof StageWalls) {
+            return useStage.api.getStage(stageKey).walls[key];
+          },
+          set(_, key: string, value: any) {
+            useStage.api.updateWalls(stageKey, { [key]: value });
             return true;
           },
         });
