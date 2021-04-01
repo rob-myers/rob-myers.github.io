@@ -6,6 +6,7 @@ import { KeyedLookup, mapValues } from 'model/generic.model';
 import { geomService } from 'model/geom.service';
 import * as Stage from 'model/stage/stage.model';
 import { TransformKey } from 'model/stage/stage.proxy';
+import { vectorToTriple } from 'model/3d/three.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
 
 import useGeomStore from './geom.store';
@@ -92,10 +93,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     createStage: (stageKey) => {
       const instance: Stage.StageMeta = Stage.createStage(stageKey);
 
-      // Rehydrate stage
-      const { polygon } = get().persist[stageKey] ||
-        (get().persist[stageKey] = Stage.createPersist(stageKey));
-      instance.polygon = mapValues(polygon, (x) => ({ ...x,
+      // Get persisted data for rehydration
+      const { polygon, cameraPosition } = get().persist[stageKey] || (
+        get().persist[stageKey] = Stage.createPersist(stageKey));
+      // Rehyrdrate
+      instance.internal.initCamPos.set(...cameraPosition);
+      instance.polygon = mapValues(polygon, (x) => ({
+        key: x.key,
         polygons: x.polygons.map(y => Geom.Polygon.from(y)),
       }));
 
@@ -150,12 +154,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { polygon } = api.getStage(stageKey);
-      const polyJson = {} as Stage.PersistedStage['polygon'];
-      Object.values(polygon).forEach(({ key, polygons }) =>
-        polyJson[key] = { key, polygons: polygons.map(x => x.json) });
-      set(({ persist }) => ({ persist:
-        addToLookup({ key: stageKey, polygon: polyJson }, persist),
+      const { polygon, internal } = api.getStage(stageKey);
+
+      set(({ persist }) => ({ persist: addToLookup({
+          key: stageKey,
+          polygon: mapValues(polygon, (x) => ({
+            key: x.key,
+            polygons: x.polygons.map(x => x.json),
+          })),
+          cameraPosition: vectorToTriple(internal.controls?.camera.position??Stage.initCameraPos),
+        }, persist),
       }));
     },
 

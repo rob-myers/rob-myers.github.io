@@ -4,7 +4,7 @@ import { Canvas, CanvasContext } from "react-three-fiber";
 import { Subject } from "rxjs";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
-import { initCameraPos } from "model/stage/stage.model";
+import { StageMeta } from "model/stage/stage.model";
 import useGeomStore from "store/geom.store";
 import useStage from "store/stage.store";
 
@@ -32,9 +32,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   }, [stageKey, rehydrated, ctxt?.gl]);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
-    initializeCanvasContext(ctxt);
+    initializeCanvasContext(ctxt, stage);
     setCtxt(ctxt);
-  }, []);
+  }, [stage]);
 
   const ptrWire = useRef(new Subject<PointerMsg>()).current;
   const onPointer = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -97,9 +97,12 @@ interface Props {
   stageKey: string;
 }
 
-function initializeCanvasContext(ctxt: CanvasContext) {
+function initializeCanvasContext(
+  ctxt: CanvasContext,
+  stage: StageMeta,
+) {
   const camera = ctxt.camera as PerspectiveCamera;
-  camera.position.copy(initCameraPos);
+  camera.position.copy(stage.internal.initCamPos);
   camera.setFocalLength(35);
   // ctxt.gl.shadowMap.enabled = true;
   // ctxt.gl.shadowMap.autoUpdate = false;

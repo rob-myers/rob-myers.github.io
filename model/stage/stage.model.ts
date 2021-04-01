@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 import { Vector3, Scene } from "three";
-import { KeyedLookup } from "model/generic.model";
+import { KeyedLookup, Triple } from "model/generic.model";
 import * as Geom from 'model/geom';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
 import { geomService } from "model/geom.service";
@@ -13,12 +13,14 @@ export type StageMeta = {
     camEnabled: boolean;
     /** Keyboard events sent by `Stage`  */
     keyEvents: Subject<StageKeyEvent>;
+    /** Previous state of all polygons on stage before an edit */
+    prevPolygon: KeyedLookup<NamedPolygons>;
+    /** Initial position of camera */
+    initCamPos: Vector3;
     /** Attached on mount */
     controls?: PanZoomControls;
     /** Attached on mount */
     scene?: Scene;
-    /** Previous state of all polygons on stage before an edit */
-    prevPolygon: KeyedLookup<NamedPolygons>;
   };
   /** Used to select rectangles and move templates */
   brush: BrushMeta;
@@ -42,6 +44,7 @@ export function createStage(stageKey: string): StageMeta {
       camEnabled: true,
       keyEvents: new Subject,
       prevPolygon: {},
+      initCamPos: initCameraPos.clone(),
       // ... other stuff attached by components
     },
 
@@ -61,6 +64,7 @@ export function createStage(stageKey: string): StageMeta {
 export interface PersistedStage {
   key: string;
   polygon: KeyedLookup<NamedPolygonsJson>;
+  cameraPosition: [number, number, number];
   /**
    * TODO
    */
@@ -73,6 +77,7 @@ export function createPersist(stageKey: string): PersistedStage {
       [CorePolygonKey.default]: { key: CorePolygonKey.default, polygons: [] },
       [CorePolygonKey.navigable]: { key: CorePolygonKey.navigable, polygons: [] },
     },
+    cameraPosition: [...initCameraPosArray],
   };
 }
 
@@ -83,7 +88,8 @@ export type StageKeyEvent = Pick<KeyboardEvent,
   type: 'keydown' | 'keyup';
 };
 
-export const initCameraPos = new Vector3(0, 0, 10);
+const initCameraPosArray: Triple<number> = [0, 0, 10];
+export const initCameraPos = new Vector3(...initCameraPosArray);
 //#endregion
 
 export interface BrushMeta {

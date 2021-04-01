@@ -36,6 +36,7 @@ export class PanZoomControls extends EventDispatcher {
   constructor(
     public camera: PerspectiveCamera,
     canvasEl: HTMLCanvasElement,
+    private actions: { onStop: () => void },
   ) {
     super();
 
@@ -140,6 +141,7 @@ export class PanZoomControls extends EventDispatcher {
     if (this.state === state) {
       this.state = 'none';
       // console.log('stopped', state);
+      this.actions.onStop();
     }
   }
 

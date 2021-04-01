@@ -1,3 +1,4 @@
+import { Triple } from 'model/generic.model';
 import { VectorJson } from 'model/geom';
 import * as THREE from 'three';
 
@@ -66,4 +67,8 @@ export function vectPrecision(v: THREE.Vector3, decimalPlaces: number) {
   v.y = Number(v.y.toFixed(decimalPlaces));
   v.z = Number(v.z.toFixed(decimalPlaces));
   return v;
+}
+
+export function vectorToTriple({ x, y, z }: THREE.Vector3): Triple<number> {
+  return [x, y, z];
 }
