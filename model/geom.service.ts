@@ -8,7 +8,7 @@ import { Geometry, Face3 } from 'model/3d/deprecated';
 import * as Geom from 'model/geom';
 
 const twopi = 2 * Math.PI;
-export const outsetAmount = 10;
+export const outsetAmount = 0.1;
 const defaultLineWidth = 0.015;
 
 class GeomService {
@@ -308,11 +308,15 @@ class GeomService {
     return geometry.toBufferGeometry();
   }
 
-  polysToGeometry(polygons: Geom.Polygon[]) {
+  polysToGeometry(polygons: Geom.Polygon[], plane: 'xy' | 'xz' = 'xy') {
     const decomps = polygons.map(p => p.triangulate());
     const all = this.joinTriangulations(decomps);
     const geometry = new Geometry;
-    geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, 0)));
+    if (plane === 'xy') {
+      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, 0)));
+    } else {
+      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, 0, p.y)));
+    }
     geometry.faces.push(...all.tris.map(tri => new Face3(tri[0], tri[1], tri[2])));
     geometry.computeVertexNormals();
     geometry.computeFaceNormals();

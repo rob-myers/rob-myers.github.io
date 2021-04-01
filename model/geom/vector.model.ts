@@ -59,6 +59,10 @@ export class Vector {
       : new Vector(p.x, p.y);
   }
 
+  get json(): VectorJson {
+    return { x: this.x, y: this.y };
+  }
+
   get length() {
     return Math.sqrt(this.x * this.x + this.y * this.y);
   }

@@ -154,7 +154,7 @@ export class Polygon {
   }
 
   static fromRect(rect: Rect) {
-    return new Polygon(rect.points);
+    return new Polygon(rect.points.reverse());
   }
 
   get geoJson(): GeoJsonPolygon {

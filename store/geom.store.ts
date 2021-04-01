@@ -25,8 +25,11 @@ export type State = {
       material: THREE.Material;
       children: THREE.Object3D[];
     };
-    createNavMesh: (polys: Geom.Polygon[]) => void;
-    requestNavPath: (src: Geom.Vector, dst: Geom.Vector) => Geom.VectorJson[];
+    createNavMesh: (navKey: string, polys: Geom.Polygon[]) => {
+      bounds: Geom.Rect;
+      navPolys: Geom.Polygon[];
+    };
+    requestNavPath: (navKey: string, src: Geom.Vector, dst: Geom.Vector) => Geom.VectorJson[];
   };
 }
 
@@ -92,6 +95,7 @@ const useStore = create<State>(devtools((set, get) => ({
         children,
       };
     },
+
     computeActorMeta: (mesh) => {
       return {
         key: mesh.name,
@@ -99,29 +103,28 @@ const useStore = create<State>(devtools((set, get) => ({
       };
     },
 
-    createNavMesh: (polys) => {
-      const floor = Geom.Rect.union(polys.map(x => x.rect));
-
+    createNavMesh: (navKey, polys) => {
+      const bounds = Geom.Rect.union(polys.map(x => x.rect)).outset(10);
       const navPolys = geomService.cutOut(
-        polys.flatMap(x => geomService.outset(x, outsetAmount)),
-        [Geom.Polygon.fromRect(floor)],
+        polys.flatMap(x => geomService.outset(x, 0.1).map(x => x.precision(1))),
+        [Geom.Polygon.fromRect(bounds)],
       );
-      const navMesh = geomService.polysToMesh(
-        navPolys,
-        new THREE.MeshNormalMaterial({ side: THREE.DoubleSide }),
-      );
-      // Only supports one nav mesh at a time
-      recastService.createNavMesh(navMesh);
+      // console.log({ bounds, navPolys });
+
+      const geometry = geomService.polysToGeometry(navPolys, 'xz');
+      // Non-blocking creation of recast navmesh
+      setTimeout(() => recastService.createNavMesh(navKey, geometry));
+      return { bounds, navPolys };
     },
 
-    requestNavPath: (src: Geom.VectorJson, dst: Geom.VectorJson) => {
+    requestNavPath: (navKey, src, dst) => {
       try {
         const src3 = new THREE.Vector3(src.x, src.y);
         const dst3 = new THREE.Vector3(dst.x, dst.y);
-        const navPath = recastService.computePath(src3, dst3);
+        const navPath = recastService.computePath(navKey, src3, dst3);
         return geomService.removePathReps(
-          [src].concat(navPath.map(({ x, y }) => ({ x, y }))));
-        
+          [src.json].concat(navPath.map(({ x, y }) => ({ x, y })))
+        );
       } catch (e) {
         console.error('nav error', e);
         return [];

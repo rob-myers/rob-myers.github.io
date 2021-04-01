@@ -30,7 +30,7 @@ export type StageMeta = {
   bounds: Geom.Rect; 
 };
 
-enum CorePolygonKey {
+export enum CorePolygonKey {
   default = 'default',
   navigable = 'navigable',
 }

@@ -8,7 +8,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- autogenerate `stage.polygon.navigable`
+- Depict `Navigable` and test navmesh
 - Import something from blender
 - Work on a humanoid in blender
 
@@ -94,3 +94,6 @@ Blog layout related tasks
 ✅ Replace `stage.block` by `stage.walls`
 ✅ `stage.bounds` auto-computed rect based on walls
 ✅ Persist `stage.polygon`
+✅ Auto-generate `stage.polygon.navigable`
+✅ Auto build recast navmesh
+

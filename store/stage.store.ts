@@ -8,6 +8,8 @@ import * as Stage from 'model/stage/stage.model';
 import { TransformKey } from 'model/stage/stage.proxy';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
 
+import useGeomStore from './geom.store';
+
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
   rehydrated: boolean;
@@ -38,9 +40,9 @@ export type State = {
     selectPolysInBrush: (stageKey: string) => void;
     transformBrush: (stageKey: string, transformKey: TransformKey) => void;
     undoRedoPolygons: (stageKey: string) => void;
-    updateBounds: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageMeta['internal']>) => void;
+    updateNavigable: (stageKey: string) => void;
     updatePolygon: (
       stageKey: string,
       polygonKey: string,
@@ -64,7 +66,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         Geom.Polygon.fromRect(new Geom.Rect(x, y, w, h)).precision(1));
       api.rememberPolygon(stageKey, polygonKey);
       api.modifyPolygon(stageKey, polygonKey, delta, { cutOut });
-      api.updateBounds(stageKey);
+      api.updateNavigable(stageKey);
       api.persist(stageKey);
     },
 
@@ -83,7 +85,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           api.modifyPolygon(stageKey, polygonKey, delta, { cutOut: opts.erase });
         }
       }
-      api.updateBounds(stageKey);
+      api.updateNavigable(stageKey);
       api.persist(stageKey);
     },
 
@@ -208,14 +210,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       api.updateStage(stageKey, { polygon: prevPolygon })
     },
 
-    updateBounds: (stageKey) => {
-      const { walls, polygon } = api.getStage(stageKey);
-      const polygons = walls.polygonKeys.flatMap(x => polygon[x].polygons);
-      api.updateStage(stageKey, {
-        bounds: Geom.Rect.union(polygons.map(x => x.rect)).outset(1),
-      });
-    },
-
     updateBrush: (stageKey, updates) => {
       api.updateStage(stageKey, ({ brush }) => ({
         brush: { ...brush,
@@ -230,6 +224,17 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           ...typeof updates === 'function' ? updates(internal) : updates,
         },
       }));
+    },
+
+    updateNavigable: (stageKey) => {
+      const { walls, polygon } = api.getStage(stageKey);
+      const polygons = walls.polygonKeys.flatMap(x => polygon[x].polygons);
+      const { bounds, navPolys } =  useGeomStore.api.createNavMesh(stageKey, polygons);
+
+      api.updateStage(stageKey, { bounds });
+      api.updatePolygon(stageKey, Stage.CorePolygonKey.navigable, {
+        polygons: navPolys,
+      });
     },
 
     updatePolygon: (stageKey, polygonKey, updates) => {

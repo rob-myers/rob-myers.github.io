@@ -8,36 +8,29 @@ const Recast = require('recast-detour');
  * https://github.com/BabylonJS/Babylon.js/blob/master/src/Navigation/Plugins/recastJSPlugin.ts
  */
 class RecastService {
-  /**
-   * Reference to the Recast library
-   */
+  /** Reference to the Recast library */
   public bjsRECAST: any = {};
-
-  /**
-   * plugin name
-   */
+  /** plugin name */
   public name: string = "RecastJSPlugin";
-
-  /**
-   * the first navmesh created. We might extend this to support multiple navmeshes
-   */
-  public navMesh: any;
+  /** Navmeshes by key */
+  public lookup: Record<string, any>;
 
   /**
    * Initializes the recastJS plugin
    * @param recastInjection can be used to inject your own recast reference
    */
   public constructor(recastInjection: any = Recast) {
-      if (typeof recastInjection === "function") {
-          recastInjection(this.bjsRECAST);
-      } else {
-          this.bjsRECAST = recastInjection;
-      }
+    if (typeof recastInjection === "function") {
+      recastInjection(this.bjsRECAST);
+    } else {
+      this.bjsRECAST = recastInjection;
+    }
+    this.lookup = {};
 
-      if (!this.isSupported()) {
-          console.error("RecastJS is not available. Please make sure you included the js file.");
-          return;
-      }
+    if (!this.isSupported()) {
+      console.error("RecastJS is not available. Please make sure you included the js file.");
+      return;
+    }
   }
 
   /**
@@ -46,112 +39,114 @@ class RecastService {
    * @param parameters bunch of parameters used to filter geometry
    */
   // createNavMesh(meshes: Array<THREE.Mesh>, parameters: INavMeshParameters): void {
-  createNavMesh(mesh: THREE.Mesh, parameters = defaultNavMeshParams): void {
-      const rc = new this.bjsRECAST.rcConfig();
-      rc.cs = parameters.cs;
-      rc.ch = parameters.ch;
-      rc.borderSize = 0;
-      rc.tileSize = 0;
-      rc.walkableSlopeAngle = parameters.walkableSlopeAngle;
-      rc.walkableHeight = parameters.walkableHeight;
-      rc.walkableClimb = parameters.walkableClimb;
-      rc.walkableRadius = parameters.walkableRadius;
-      rc.maxEdgeLen = parameters.maxEdgeLen;
-      rc.maxSimplificationError = parameters.maxSimplificationError;
-      rc.minRegionArea = parameters.minRegionArea;
-      rc.mergeRegionArea = parameters.mergeRegionArea;
-      rc.maxVertsPerPoly = parameters.maxVertsPerPoly;
-      rc.detailSampleDist = parameters.detailSampleDist;
-      rc.detailSampleMaxError = parameters.detailSampleMaxError;
+  createNavMesh(
+    navKey: string,
+    navGeom: THREE.BufferGeometry,
+    parameters = defaultNavMeshParams,
+  ): void {
+    const rc = new this.bjsRECAST.rcConfig();
+    rc.cs = parameters.cs;
+    rc.ch = parameters.ch;
+    rc.borderSize = 0;
+    rc.tileSize = 0;
+    rc.walkableSlopeAngle = parameters.walkableSlopeAngle;
+    rc.walkableHeight = parameters.walkableHeight;
+    rc.walkableClimb = parameters.walkableClimb;
+    rc.walkableRadius = parameters.walkableRadius;
+    rc.maxEdgeLen = parameters.maxEdgeLen;
+    rc.maxSimplificationError = parameters.maxSimplificationError;
+    rc.minRegionArea = parameters.minRegionArea;
+    rc.mergeRegionArea = parameters.mergeRegionArea;
+    rc.maxVertsPerPoly = parameters.maxVertsPerPoly;
+    rc.detailSampleDist = parameters.detailSampleDist;
+    rc.detailSampleMaxError = parameters.detailSampleMaxError;
 
-      this.navMesh = new this.bjsRECAST.NavMesh();
+    const navMesh = new this.bjsRECAST.NavMesh();
+    this.lookup[navKey] = navMesh;
 
-      // var index: number;
-      // var tri: number;
-      // var pt: number;
+    // var index: number;
+    // var tri: number;
+    // var pt: number;
 
-      // var indices = [];
-      // var positions = [];
-      // var offset = 0;
-      // for (index = 0; index < meshes.length; index++) {
-      //     if (meshes[index]) {
-      //         var mesh = meshes[index];
+    // var indices = [];
+    // var positions = [];
+    // var offset = 0;
+    // for (index = 0; index < meshes.length; index++) {
+    //     if (meshes[index]) {
+    //         var mesh = meshes[index];
 
-      //         const meshIndices = mesh.getIndices();
-      //         if (!meshIndices) {
-      //             continue;
-      //         }
-      //         const meshPositions = mesh.getVerticesData(VertexBuffer.PositionKind, false, false);
-      //         if (!meshPositions) {
-      //             continue;
-      //         }
+    //         const meshIndices = mesh.getIndices();
+    //         if (!meshIndices) {
+    //             continue;
+    //         }
+    //         const meshPositions = mesh.getVerticesData(VertexBuffer.PositionKind, false, false);
+    //         if (!meshPositions) {
+    //             continue;
+    //         }
 
-      //         const wm = mesh.computeWorldMatrix(true);
+    //         const wm = mesh.computeWorldMatrix(true);
 
-      //         for (tri = 0; tri < meshIndices.length; tri++) {
-      //             indices.push(meshIndices[tri] + offset);
-      //         }
+    //         for (tri = 0; tri < meshIndices.length; tri++) {
+    //             indices.push(meshIndices[tri] + offset);
+    //         }
 
-      //         var transformed = Vector3.Zero();
-      //         var position = Vector3.Zero();
-      //         for (pt = 0; pt < meshPositions.length; pt += 3) {
-      //             Vector3.FromArrayToRef(meshPositions, pt, position);
-      //             Vector3.TransformCoordinatesToRef(position, wm, transformed);
-      //             positions.push(transformed.x, transformed.y, transformed.z);
-      //         }
+    //         var transformed = Vector3.Zero();
+    //         var position = Vector3.Zero();
+    //         for (pt = 0; pt < meshPositions.length; pt += 3) {
+    //             Vector3.FromArrayToRef(meshPositions, pt, position);
+    //             Vector3.TransformCoordinatesToRef(position, wm, transformed);
+    //             positions.push(transformed.x, transformed.y, transformed.z);
+    //         }
 
-      //         offset += meshPositions.length / 3;
-      //     }
-      // }
+    //         offset += meshPositions.length / 3;
+    //     }
+    // }
 
-      const geometry = (new Geometry).fromBufferGeometry(mesh.geometry as THREE.BufferGeometry);
-      const positions = geometry.vertices.flatMap(v => [v.x, v.y, v.z]);
-      const offset = geometry.vertices.length;
-      const indices = geometry.faces.flatMap(f => [f.a, f.b, f.c]);
+    const geometry = (new Geometry).fromBufferGeometry(navGeom);
+    const positions = geometry.vertices.flatMap(v => [v.x, v.y, v.z]);
+    const offset = geometry.vertices.length;
+    const indices = geometry.faces.flatMap(f => [f.a, f.b, f.c]);
+    // console.log(positions, offset, indices);
 
-      this.navMesh.build(
-        positions, // [x1, y1, z1,  x2, y2, z2, ...]
-        offset, // Number of vectors
-        indices, // Triangle ids [ v1, v2, v3,  v1, v2, v4,  ... ]
-        indices.length, // Number of triangles
-        rc,
-      );
+    navMesh.build(
+      positions, // [x1, y1, z1,  x2, y2, z2, ...]
+      offset, // Number of vectors
+      indices, // Triangle ids [ v1, v2, v3,  v1, v2, v4,  ... ]
+      indices.length, // Number of triangles
+      rc,
+    );
   }
 
   /**
    * Create a navigation mesh debug mesh
    * @returns debug display mesh
    */
-  createDebugNavMesh(): THREE.Mesh {
-      var tri: number;
-      var pt: number;
-      var debugNavMesh = this.navMesh.getDebugNavMesh();
-      let triangleCount = debugNavMesh.getTriangleCount();
+  createDebugNavMesh(navKey: string): THREE.Mesh {
+    let tri: number, pt: number;
+    const debugNavMesh = this.lookup[navKey].getDebugNavMesh();
+    const triangleCount = debugNavMesh.getTriangleCount();
 
-      var indices = [] as number[];
-      var positions = [] as number[];
-      for (tri = 0; tri < triangleCount * 3; tri++)
-      {
-          indices.push(tri);
+    const indices = [] as number[];
+    const positions = [] as number[];
+    for (tri = 0; tri < triangleCount * 3; tri++) {
+      indices.push(tri);
+    }
+    for (tri = 0; tri < triangleCount; tri++) {
+      for (pt = 0; pt < 3 ; pt++) {
+        const point = debugNavMesh.getTriangle(tri).getPoint(pt);
+        positions.push(point.x, point.y, point.z);
       }
-      for (tri = 0; tri < triangleCount; tri++)
-      {
-          for (pt = 0; pt < 3 ; pt++)
-          {
-              let point = debugNavMesh.getTriangle(tri).getPoint(pt);
-              positions.push(point.x, point.y, point.z);
-          }
-      }
+    }
 
-      const geometry = new Geometry;
-      geometry.vertices = [...Array(positions.length / 3)]
-        .map((_, i) => new Vector3(...positions.slice(3 * i, 3 * (i + 1)) ));
-      geometry.faces = [...Array(indices.length / 3)]
-        .map((_, i) => new Face3(...indices.slice(3 * i, 3 * (i + 1)) as [number, number, number] ));
-      const mesh = new Mesh(geometry.toBufferGeometry());
-      mesh.name = "NavMeshDebug";
+    const geometry = new Geometry;
+    geometry.vertices = [...Array(positions.length / 3)]
+      .map((_, i) => new Vector3(...positions.slice(3 * i, 3 * (i + 1)) ));
+    geometry.faces = [...Array(indices.length / 3)]
+      .map((_, i) => new Face3(...indices.slice(3 * i, 3 * (i + 1)) as [number, number, number] ));
+    const mesh = new Mesh(geometry.toBufferGeometry());
+    mesh.name = "NavMeshDebug";
 
-      return mesh;
+    return mesh;
   }
 
   /**
@@ -159,12 +154,11 @@ class RecastService {
    * @param position world position
    * @returns the closest point to position constrained by the navigation mesh
    */
-  getClosestPoint(position: Vector3) : Vector3
-  {
-      var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
-      var ret = this.navMesh.getClosestPoint(p);
-      var pr = new Vector3(ret.x, ret.y, ret.z);
-      return pr;
+  getClosestPoint(navKey: string, position: Vector3) : Vector3 {
+    var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
+    var ret = this.lookup[navKey].getClosestPoint(p);
+    var pr = new Vector3(ret.x, ret.y, ret.z);
+    return pr;
   }
 
   /**
@@ -172,10 +166,10 @@ class RecastService {
    * @param position world position
    * @param result output the closest point to position constrained by the navigation mesh
    */
-  getClosestPointToRef(position: Vector3, result: Vector3) : void {
-      var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
-      var ret = this.navMesh.getClosestPoint(p);
-      result.set(ret.x, ret.y, ret.z);
+  getClosestPointToRef(navKey: string, position: Vector3, result: Vector3) : void {
+    var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
+    var ret = this.lookup[navKey].getClosestPoint(p);
+    result.set(ret.x, ret.y, ret.z);
   }
 
   /**
@@ -184,11 +178,11 @@ class RecastService {
    * @param maxRadius the maximum distance to the constrained world position
    * @returns the closest point to position constrained by the navigation mesh
    */
-  getRandomPointAround(position: Vector3, maxRadius: number): Vector3 {
-      var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
-      var ret = this.navMesh.getRandomPointAround(p, maxRadius);
-      var pr = new Vector3(ret.x, ret.y, ret.z);
-      return pr;
+  getRandomPointAround(navKey: string, position: Vector3, maxRadius: number): Vector3 {
+    var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
+    var ret = this.lookup[navKey].getRandomPointAround(p, maxRadius);
+    var pr = new Vector3(ret.x, ret.y, ret.z);
+    return pr;
   }
 
   /**
@@ -197,10 +191,10 @@ class RecastService {
    * @param maxRadius the maximum distance to the constrained world position
    * @param result output the closest point to position constrained by the navigation mesh
    */
-  getRandomPointAroundToRef(position: Vector3, maxRadius: number, result: Vector3): void {
-      var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
-      var ret = this.navMesh.getRandomPointAround(p, maxRadius);
-      result.set(ret.x, ret.y, ret.z);
+  getRandomPointAroundToRef(navKey: string, position: Vector3, maxRadius: number, result: Vector3): void {
+    var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
+    var ret = this.lookup[navKey].getRandomPointAround(p, maxRadius);
+    result.set(ret.x, ret.y, ret.z);
   }
 
   /**
@@ -209,12 +203,12 @@ class RecastService {
    * @param destination world position
    * @returns the resulting point along the navmesh
    */
-  moveAlong(position: Vector3, destination: Vector3): Vector3 {
-      var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
-      var d = new this.bjsRECAST.Vec3(destination.x, destination.y, destination.z);
-      var ret = this.navMesh.moveAlong(p, d);
-      var pr = new Vector3(ret.x, ret.y, ret.z);
-      return pr;
+  moveAlong(navKey: string, position: Vector3, destination: Vector3): Vector3 {
+    var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
+    var d = new this.bjsRECAST.Vec3(destination.x, destination.y, destination.z);
+    var ret = this.lookup[navKey].moveAlong(p, d);
+    var pr = new Vector3(ret.x, ret.y, ret.z);
+    return pr;
   }
 
   /**
@@ -223,11 +217,11 @@ class RecastService {
    * @param destination world position
    * @param result output the resulting point along the navmesh
    */
-  moveAlongToRef(position: Vector3, destination: Vector3, result: Vector3): void {
-      var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
-      var d = new this.bjsRECAST.Vec3(destination.x, destination.y, destination.z);
-      var ret = this.navMesh.moveAlong(p, d);
-      result.set(ret.x, ret.y, ret.z);
+  moveAlongToRef(navKey: string, position: Vector3, destination: Vector3, result: Vector3): void {
+    var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
+    var d = new this.bjsRECAST.Vec3(destination.x, destination.y, destination.z);
+    var ret = this.lookup[navKey].moveAlong(p, d);
+    result.set(ret.x, ret.y, ret.z);
   }
 
   /**
@@ -236,20 +230,18 @@ class RecastService {
    * @param end world position
    * @returns array containing world position composing the path
    */
-  computePath(start: Vector3, end: Vector3): Vector3[]
-  {
-      var pt: number;
-      let startPos = new this.bjsRECAST.Vec3(start.x, start.y, start.z);
-      let endPos = new this.bjsRECAST.Vec3(end.x, end.y, end.z);
-      let navPath = this.navMesh.computePath(startPos, endPos);
-      let pointCount = navPath.getPointCount();
-      var positions = [];
-      for (pt = 0; pt < pointCount; pt++)
-      {
-          let p = navPath.getPoint(pt);
-          positions.push(new Vector3(p.x, p.y, p.z));
-      }
-      return positions;
+  computePath(navKey: string, start: Vector3, end: Vector3): Vector3[] {
+    var pt: number;
+    let startPos = new this.bjsRECAST.Vec3(start.x, start.y, start.z);
+    let endPos = new this.bjsRECAST.Vec3(end.x, end.y, end.z);
+    let navPath = this.lookup[navKey].computePath(startPos, endPos);
+    let pointCount = navPath.getPointCount();
+    var positions = [];
+    for (pt = 0; pt < pointCount; pt++) {
+      let p = navPath.getPoint(pt);
+      positions.push(new Vector3(p.x, p.y, p.z));
+    }
+    return positions;
   }
 
   /**
@@ -258,73 +250,68 @@ class RecastService {
    * default is (1,1,1)
    * @param extent x,y,z value that define the extent around the queries point of reference
    */
-  setDefaultQueryExtent(extent: Vector3): void
-  {
-      let ext = new this.bjsRECAST.Vec3(extent.x, extent.y, extent.z);
-      this.navMesh.setDefaultQueryExtent(ext);
+  setDefaultQueryExtent(navKey: string, extent: Vector3): void {
+    let ext = new this.bjsRECAST.Vec3(extent.x, extent.y, extent.z);
+    this.lookup[navKey].setDefaultQueryExtent(ext);
   }
 
   /**
    * Get the Bounding box extent specified by setDefaultQueryExtent
    * @returns the box extent values
    */
-  getDefaultQueryExtent(): Vector3
-  {
-      let p = this.navMesh.getDefaultQueryExtent();
-      return new Vector3(p.x, p.y, p.z);
+  getDefaultQueryExtent(navKey: string): Vector3 {
+    const p = this.lookup[navKey].getDefaultQueryExtent();
+    return new Vector3(p.x, p.y, p.z);
   }
 
   /**
    * build the navmesh from a previously saved state using getNavmeshData
    * @param data the Uint8Array returned by getNavmeshData
    */
-  buildFromNavmeshData(data: Uint8Array): void
-  {
-      var nDataBytes = data.length * data.BYTES_PER_ELEMENT;
-      var dataPtr = this.bjsRECAST._malloc(nDataBytes);
+  buildFromNavmeshData(navKey: string, data: Uint8Array): void {
+    var nDataBytes = data.length * data.BYTES_PER_ELEMENT;
+    var dataPtr = this.bjsRECAST._malloc(nDataBytes);
 
-      var dataHeap = new Uint8Array(this.bjsRECAST.HEAPU8.buffer, dataPtr, nDataBytes);
-      dataHeap.set(data);
+    var dataHeap = new Uint8Array(this.bjsRECAST.HEAPU8.buffer, dataPtr, nDataBytes);
+    dataHeap.set(data);
 
-      let buf = new this.bjsRECAST.NavmeshData();
-      buf.dataPointer = dataHeap.byteOffset;
-      buf.size = data.length;
-      this.navMesh = new this.bjsRECAST.NavMesh();
-      this.navMesh.buildFromNavmeshData(buf);
+    let buf = new this.bjsRECAST.NavmeshData();
+    buf.dataPointer = dataHeap.byteOffset;
+    buf.size = data.length;
+    this.lookup[navKey] = new this.bjsRECAST.NavMesh();
+    this.lookup[navKey].buildFromNavmeshData(buf);
 
-      // Free memory
-      this.bjsRECAST._free(dataHeap.byteOffset);
+    // Free memory
+    this.bjsRECAST._free(dataHeap.byteOffset);
   }
 
   /**
    * returns the navmesh data that can be used later. The navmesh must be built before retrieving the data
    * @returns data the Uint8Array that can be saved and reused
    */
-  getNavmeshData(): Uint8Array
-  {
-      let navmeshData = this.navMesh.getNavmeshData();
-      var arrView = new Uint8Array(this.bjsRECAST.HEAPU8.buffer, navmeshData.dataPointer, navmeshData.size);
-      var ret = new Uint8Array(navmeshData.size);
-      ret.set(arrView);
-      this.navMesh.freeNavmeshData(navmeshData);
-      return ret;
+  getNavmeshData(navKey: string): Uint8Array {
+    let navmeshData = this.lookup[navKey].getNavmeshData();
+    var arrView = new Uint8Array(this.bjsRECAST.HEAPU8.buffer, navmeshData.dataPointer, navmeshData.size);
+    var ret = new Uint8Array(navmeshData.size);
+    ret.set(arrView);
+    this.lookup[navKey].freeNavmeshData(navmeshData);
+    return ret;
   }
 
   /**
    * Get the Bounding box extent result specified by setDefaultQueryExtent
    * @param result output the box extent values
    */
-  getDefaultQueryExtentToRef(result: Vector3): void
-  {
-      let p = this.navMesh.getDefaultQueryExtent();
-      result.set(p.x, p.y, p.z);
+  getDefaultQueryExtentToRef(navKey: string, result: Vector3): void {
+    let p = this.lookup[navKey].getDefaultQueryExtent();
+    result.set(p.x, p.y, p.z);
   }
 
   /**
    * Disposes
    */
   public dispose() {
-
+    this.lookup = {};
   }
 
   /**
@@ -332,7 +319,7 @@ class RecastService {
    * @returns true if plugin is supported
    */
   public isSupported(): boolean {
-      return this.bjsRECAST !== undefined;
+    return this.bjsRECAST !== undefined;
   }
 }
 
