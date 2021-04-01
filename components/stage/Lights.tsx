@@ -1,26 +1,23 @@
 import { useEffect, useRef } from "react";
 
 const Lights: React.FC = () => {
-  const lightRef = useRef<THREE.PointLight>(null);
-
-  useEffect(() => {
-    lightRef.current!.shadow.mapSize.width = 1024;
-    lightRef.current!.shadow.mapSize.height = 1024;
-  }, [lightRef]);
-
   return (
     <group name="lights">
       {/* <ambientLight
         color="white"
         intensity={0}
       /> */}
-      <pointLight
-        ref={lightRef}
-        position={[0, 0, 4]}
+      <spotLight
+        position={[0, 0, 1]}
         intensity={5}
-        decay={1}
-        distance={5}
+        decay={2.5}
+        distance={2}
+        power={8}
+        angle={Math.PI / 3}
+        // penumbra={1}
         castShadow
+        // shadow-mapSize-height={2048}
+        // shadow-mapSize-width={2048}
       />
   </group>
   );

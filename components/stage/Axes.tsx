@@ -4,8 +4,8 @@ import { useState } from "react";
 
 const Axes: React.FC = () => {
   
-  const [xAxis] = useState(geomService.createAxis('x', '#006', 0.4));
-  const [yAxis] = useState(geomService.createAxis('y', '#006', 0.4));
+  const [xAxis] = useState(geomService.createAxis('x', '#500', 0.3));
+  const [yAxis] = useState(geomService.createAxis('y', '#500', 0.3));
 
   return (
     <group position={[0, 0, 0.005]}>

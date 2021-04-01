@@ -13,20 +13,21 @@ const Navigable: React.FC<Props> = ({ stage }) => {
   return (
     <group>
       <mesh position={[bounds.cx, bounds.cy, 0]} receiveShadow>
-        <planeGeometry
-          args={[bounds.width, bounds.height, 30, 30]}
+        <planeBufferGeometry
+          args={[bounds.width, bounds.height, 10, 10]}
         />
         <meshStandardMaterial
           color="#fff"
           transparent
-          opacity={0.5}
+          opacity={0.8}
         />
       </mesh>
+      {/* TODO consider shows inverse polygon as darker instead */}
       <mesh geometry={navGeometry}>
-        <meshStandardMaterial
-          color="#999"
+        <meshBasicMaterial
+          color="#fff"
           transparent
-          opacity={0.5}
+          opacity={0.1}
         />
       </mesh>
     </group>

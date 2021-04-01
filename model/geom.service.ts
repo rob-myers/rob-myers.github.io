@@ -25,13 +25,15 @@ class GeomService {
 
   private getLineMat(lineWidth: number, color: string, opacity: number) {
     const key = JSON.stringify({ lineWidth, color, opacity });
-    return this.lineMatCache[key] || (
+    const material = this.lineMatCache[key] || (
       this.lineMatCache[key] = new MeshLineMaterial({
         color: this.getColor(color),
         lineWidth,
         opacity,
       })
     );
+    material.transparent = opacity < 1;
+    return material;
   }
 
   private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
@@ -79,7 +81,7 @@ class GeomService {
     const lineMaterial = this.getLineMat(
       opts.lineWidth || defaultLineWidth,
       opts.color || '#ffffff',
-      opts.opacity || 1,
+      opts.opacity??1,
     );
     return new THREE.Mesh(meshLine, lineMaterial);
   }
