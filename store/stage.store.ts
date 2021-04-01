@@ -36,7 +36,6 @@ export type State = {
     removeStage: (stageKey: string) => void;
     selectPolysInBrush: (stageKey: string) => void;
     transformBrush: (stageKey: string, transformKey: TransformKey) => void;
-    /** Undo/redo last paint/erase */
     undoRedoPolygons: (stageKey: string) => void;
     updateBounds: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
@@ -67,7 +66,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     applyBrush: (stageKey, opts) => {
-      const { api } = get();
       const brush = api.getStage(stageKey).brush;
       
       if (!brush.selection.length) {// Add/cut rectangle
@@ -109,28 +107,28 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     })),
 
     cutSelectPolysInBrush: (stageKey) => {
-      const { brush, walls, polygon } = get().api.getStage(stageKey)
+      const { brush, walls, polygon } = api.getStage(stageKey)
       const selection = Stage.getBrushSelection(brush, walls, polygon);
 
       if (!selection.length) {
         return;
       } else if (!brush.locked) {
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
-        get().api.updateBrush(stageKey, { locked: true, selection });
-        get().api.applyBrush(stageKey, { erase: true });
+        api.updateBrush(stageKey, { locked: true, selection });
+        api.applyBrush(stageKey, { erase: true });
       } else { // When selection exists just delete it
-        get().api.applyBrush(stageKey, { erase: true });
+        api.applyBrush(stageKey, { erase: true });
       }
 
     },
 
     deselectPolysInBrush: (stageKey) => {
-      get().api.updateBrush(stageKey, { locked: false, selection: [] });
+      api.updateBrush(stageKey, { locked: false, selection: [] });
     },
 
     ensureStage: (stageKey) => {
       if(!get().stage[stageKey]) {
-        get().api.createStage(stageKey);
+        api.createStage(stageKey);
       }
     },
 
@@ -156,8 +154,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     rememberPolygon: (stageKey, polygonKey) => {
-      const prev = get().api.getPolygon(stageKey, polygonKey);
-      get().api.updateInternal(stageKey, ({ prevPolygon: prevPolygonLookup }) => ({
+      const prev = api.getPolygon(stageKey, polygonKey);
+      api.updateInternal(stageKey, ({ prevPolygon: prevPolygonLookup }) => ({
         prevPolygon: addToLookup(prev, prevPolygonLookup),
       }));
     },
@@ -167,17 +165,17 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     })),
 
     selectPolysInBrush: (stageKey) => {
-      const { brush, walls, polygon } = get().api.getStage(stageKey)
+      const { brush, walls, polygon } = api.getStage(stageKey)
       const selection = Stage.getBrushSelection(brush, walls, polygon);
 
       if (selection.length && !brush.locked) {
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
-        get().api.updateBrush(stageKey, { locked: true, selection });
+        api.updateBrush(stageKey, { locked: true, selection });
       }
     },
 
     transformBrush: (stageKey, key) => {
-      const { selection } = get().api.getStage(stageKey).brush;
+      const { selection } = api.getStage(stageKey).brush;
       const rect = Geom.Rect.union(selection.flatMap(x => x.polygons).map(x => x.rect));
       let mutator: (p: Geom.Vector) => void;
       const center = rect.center;
@@ -197,26 +195,25 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         y.mutatePoints(mutator).precision(1);
         (key === 'mirror(x)' || key === 'mirror(y)') && y.reverse();
       }));
-      get().api.updateBrush(stageKey, { selection: selection.slice() });
+      api.updateBrush(stageKey, { selection: selection.slice() });
     },
 
     undoRedoPolygons: (stageKey) => {
-      const { polygon } = get().api.getStage(stageKey);
-      const { prevPolygon } = get().api.getStage(stageKey).internal;
-      get().api.updateInternal(stageKey, { prevPolygon: polygon })
-      get().api.updateStage(stageKey, { polygon: prevPolygon })
+      const { polygon, internal: { prevPolygon } } = api.getStage(stageKey);
+      api.updateInternal(stageKey, { prevPolygon: polygon })
+      api.updateStage(stageKey, { polygon: prevPolygon })
     },
 
     updateBounds: (stageKey) => {
-      const { walls, polygon } = get().api.getStage(stageKey);
+      const { walls, polygon } = api.getStage(stageKey);
       const polygons = walls.polygonKeys.flatMap(x => polygon[x].polygons);
-      get().api.updateStage(stageKey, {
+      api.updateStage(stageKey, {
         bounds: Geom.Rect.union(polygons.map(x => x.rect)).outset(1),
       });
     },
 
     updateBrush: (stageKey, updates) => {
-      get().api.updateStage(stageKey, ({ brush }) => ({
+      api.updateStage(stageKey, ({ brush }) => ({
         brush: { ...brush,
           ...typeof updates === 'function' ? updates(brush) : updates,
         },
@@ -224,18 +221,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     updateInternal: (stageKey, updates) => {
-      get().api.updateStage(stageKey, ({ internal }) => ({
+      api.updateStage(stageKey, ({ internal }) => ({
         internal: { ...internal,
           ...typeof updates === 'function' ? updates(internal) : updates,
-        }
+        },
       }));
     },
 
     updatePolygon: (stageKey, polygonKey, updates) => {
-      get().api.updateStage(stageKey, ({ polygon }) => ({
-        polygon: updateLookup(
-          polygonKey,
-          polygon,
+      api.updateStage(stageKey, ({ polygon }) => ({
+        polygon: updateLookup(polygonKey, polygon,
           typeof updates === 'function' ? updates : () => updates,
         ),
       }));
@@ -243,9 +238,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     updateStage: (stageKey, updates) => {
       set(({ stage }) => ({
-        stage: updateLookup(
-          stageKey,
-          stage,
+        stage: updateLookup(stageKey, stage,
           typeof updates === 'function' ? updates : () => updates,
         ),
       }));
