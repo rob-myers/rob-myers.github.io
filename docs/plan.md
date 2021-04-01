@@ -13,6 +13,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 - Can place crates
 - Work on a humanoid in blender
 - Ensure recast navmesh is working
+- Dark mode with stage background black
+- canvas filter provides dynamic player light
 
 - Start writing post / decide on blog format
 

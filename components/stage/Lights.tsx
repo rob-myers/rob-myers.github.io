@@ -7,13 +7,14 @@ const Lights: React.FC = () => {
         color="white"
         intensity={0}
       /> */}
-      <spotLight
+      <pointLight
+        // color="#aab"
         position={[0, 0, 1]}
-        intensity={5}
+        intensity={4}
         decay={2.5}
-        distance={2}
-        power={8}
-        angle={Math.PI / 3}
+        distance={2.5}
+        // power={8}
+        // angle={Math.PI / 3}
         // penumbra={1}
         castShadow
         // shadow-mapSize-height={2048}
