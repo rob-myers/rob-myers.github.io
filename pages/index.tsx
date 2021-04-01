@@ -21,7 +21,7 @@ export default function Home() {
           </span>
         </h1>
         <p className={styles.subtitle}>
-          inspired by <a href="https://en.wikipedia.org/wiki/Teleglitch" target='#'>
+          Inspired by <a href="https://en.wikipedia.org/wiki/Teleglitch" target='#'>
             Teleglitch
           </a>.
         </p>
