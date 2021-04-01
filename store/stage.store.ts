@@ -24,8 +24,7 @@ export type State = {
     cutSelectPolysInBrush: (stageKey: string) => void;
     deselectPolysInBrush: (stageKey: string) => void;
     ensureStage: (stageKey: string) => void;
-    getInternal: (stageKey: string) => Stage.StageMeta['internal'];
-    getPolygon: (stageKey: string, polygonKey?: string) => Stage.NamedPolygons;
+    getPolygon: (stageKey: string, polygonKey: string) => Stage.NamedPolygons;
     getStage: (stageKey: string) => Stage.StageMeta;
     modifyPolygon: (
       stageKey: string,
@@ -39,6 +38,7 @@ export type State = {
     transformBrush: (stageKey: string, transformKey: TransformKey) => void;
     /** Undo/redo last paint/erase */
     undoRedoPolygons: (stageKey: string) => void;
+    updateBounds: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageMeta['internal']>) => void;
     updatePolygon: (
@@ -59,14 +59,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   api: {
 
     addWalls: (stageKey, walls, { polygonKey = 'default', cutOut }) => {
-      const { polygons: prev } = api.getPolygon(stageKey, polygonKey);
       const delta = walls.map(([x, y, w, h]) =>
         Geom.Polygon.fromRect(new Geom.Rect(x, y, w, h)).precision(1));
-      const wallPolys = cutOut
-        ? geomService.cutOut(delta, prev)
-        : geomService.union(prev.concat(delta));
       api.rememberPolygon(stageKey, polygonKey);
-      api.updatePolygon(stageKey, polygonKey, { polygons: wallPolys });
+      api.modifyPolygon(stageKey, polygonKey, delta, { cutOut });
+      api.updateBounds(stageKey);
     },
 
     applyBrush: (stageKey, opts) => {
@@ -85,19 +82,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           api.modifyPolygon(stageKey, polygonKey, delta, { cutOut: opts.erase });
         }
       }
-    },
-
-    modifyPolygon: (stageKey, polygonKey, delta, { cutOut }) => {
-      try {
-        const { polygons: prev } = api.getPolygon(stageKey, polygonKey);
-        const next = cutOut
-          ? geomService.cutOut(delta, prev)
-          : geomService.union(prev.concat(delta));
-        api.updatePolygon(stageKey, polygonKey, { polygons: next });
-      } catch (error) {
-        console.error('applyBrush: geometric operation failed');
-        console.error(error);
-      }
+      api.updateBounds(stageKey);
     },
 
     createStage: (stageKey) => set(({ stage }) => ({
@@ -107,26 +92,29 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           camEnabled: true,
           keyEvents: new Subject,
           prevPolygon: {},
-          // Others attached by components
+          // other stuff attached by components
         },
 
         brush: Stage.createDefaultBrushMeta(),
-        polygon: addToLookup(Stage.createNamedPolygons('default'), {}),
+        polygon: {
+          default: Stage.createNamedPolygons('default'),
+          navigable: Stage.createNamedPolygons('navigable'),
+        },
         walls: Stage.createStageWalls({
           polygonKeys: ['default'],
         }),
         
-        bounds: new Geom.Rect(-20, -20, 40, 40),
-        opacity: 1,
+        bounds: new Geom.Rect(-1, -1, 2, 2),
       }, stage),
     })),
 
     cutSelectPolysInBrush: (stageKey) => {
       const { brush, walls, polygon } = get().api.getStage(stageKey)
       const selection = Stage.getBrushSelection(brush, walls, polygon);
-      if (!selection.length) return;
 
-      if (!brush.locked) {
+      if (!selection.length) {
+        return;
+      } else if (!brush.locked) {
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
         get().api.updateBrush(stageKey, { locked: true, selection });
         get().api.applyBrush(stageKey, { erase: true });
@@ -146,16 +134,25 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }
     },
 
-    getPolygon: (stageKey, polyonKey = 'default') => {
+    getPolygon: (stageKey, polyonKey) => {
       return get().stage[stageKey].polygon[polyonKey];
-    },
-
-    getInternal: (stageKey) => {
-      return get().stage[stageKey].internal;
     },
 
     getStage: (stageKey) => {
       return get().stage[stageKey];
+    },
+
+    modifyPolygon: (stageKey, polygonKey, delta, { cutOut }) => {
+      try {
+        const { polygons: prev } = api.getPolygon(stageKey, polygonKey);
+        const next = cutOut
+          ? geomService.cutOut(delta, prev)
+          : geomService.union(prev.concat(delta));
+        api.updatePolygon(stageKey, polygonKey, { polygons: next });
+      } catch (error) {
+        console.error('stage.store: modifyPolygon: geometric operation failed');
+        console.error(error);
+      }
     },
 
     rememberPolygon: (stageKey, polygonKey) => {
@@ -205,9 +202,17 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     undoRedoPolygons: (stageKey) => {
       const { polygon } = get().api.getStage(stageKey);
-      const { prevPolygon } = get().api.getInternal(stageKey);
+      const { prevPolygon } = get().api.getStage(stageKey).internal;
       get().api.updateInternal(stageKey, { prevPolygon: polygon })
       get().api.updateStage(stageKey, { polygon: prevPolygon })
+    },
+
+    updateBounds: (stageKey) => {
+      const { walls, polygon } = get().api.getStage(stageKey);
+      const polygons = walls.polygonKeys.flatMap(x => polygon[x].polygons);
+      get().api.updateStage(stageKey, {
+        bounds: Geom.Rect.union(polygons.map(x => x.rect)).outset(1),
+      });
     },
 
     updateBrush: (stageKey, updates) => {
@@ -218,6 +223,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }));
     },
 
+    updateInternal: (stageKey, updates) => {
+      get().api.updateStage(stageKey, ({ internal }) => ({
+        internal: { ...internal,
+          ...typeof updates === 'function' ? updates(internal) : updates,
+        }
+      }));
+    },
+
     updatePolygon: (stageKey, polygonKey, updates) => {
       get().api.updateStage(stageKey, ({ polygon }) => ({
         polygon: updateLookup(
@@ -225,14 +238,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           polygon,
           typeof updates === 'function' ? updates : () => updates,
         ),
-      }));
-    },
-
-    updateInternal: (stageKey, updates) => {
-      get().api.updateStage(stageKey, ({ internal }) => ({
-        internal: { ...internal,
-          ...typeof updates === 'function' ? updates(internal) : updates,
-        }
       }));
     },
 

@@ -110,7 +110,7 @@ class CmdService {
         break;
       }
       case 'key': {
-        const { keyEvents } = useStage.api.getInternal(meta.sessionKey);
+        const { keyEvents } = useStage.api.getStage(meta.sessionKey).internal;
         yield* this.iterateObservable(meta, keyEvents.asObservable());
         break;
       }

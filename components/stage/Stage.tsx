@@ -14,6 +14,7 @@ import Grid from "./Grid";
 import Axes from "./Axes";
 import Lights from "./Lights";
 import Brush, { PointerMsg } from "./Brush";
+import Navigable from "./Navigable";
 import Walls from "./Walls";
 import styles from "styles/Stage.module.css";
 
@@ -75,6 +76,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
             <Brush stage={stage} wire={ptrWire} />
           )}
 
+          <Navigable stage={stage} />
           <Walls stage={stage} />
         </Canvas>
       )}
