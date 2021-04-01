@@ -12,9 +12,9 @@ const Navigable: React.FC<Props> = ({ stage }) => {
     <mesh geometry={geometry}>
       <meshBasicMaterial
         side={FrontSide}
-        color="#eee"
-        // transparent
-        // opacity={0.8}
+        color="#ccf"
+        transparent
+        opacity={0.5}
       />
     </mesh>
   );
