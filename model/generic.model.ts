@@ -90,3 +90,23 @@ export function truncate(text: string, maxLength = 50) {
     ? text
     : `${text.slice(0, maxLength)} ...`;
 }
+
+/** Typed `Object.keys`, usually as finitely many string literals. */
+export function keys<K extends string>(
+  record: Partial<Record<K, any>> | Record<K, any>,
+) {
+  return Object.keys(record) as K[];
+}
+
+/**
+ * Given `{ [key]: value }`, returns fresh
+ * `{ [key]: _transform_(value) }`.
+ */
+ export function mapValues<SrcValue, DstValue, Key extends string = string>(
+  input: Record<Key, SrcValue>,
+  transform: (value: SrcValue) => DstValue,
+) {
+  const output = {} as Record<Key, DstValue>;
+  keys(input).forEach((key) => output[key] = transform(input[key]));
+  return output;
+}

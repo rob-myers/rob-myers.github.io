@@ -4,9 +4,9 @@ import { Canvas, CanvasContext } from "react-three-fiber";
 import { Subject } from "rxjs";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
-import { initCameraPos, StageMeta } from "model/stage/stage.model";
+import { initCameraPos } from "model/stage/stage.model";
 import useGeomStore from "store/geom.store";
-import useStageStore from "store/stage.store";
+import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
 import CameraControls from "./CameraControls";
@@ -19,15 +19,17 @@ import Walls from "./Walls";
 import styles from "styles/Stage.module.css";
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
-  const stage = useStageStore<StageMeta | null>(({ stage }) => stage[stageKey]??null);
+  const rehydrated = useStage(({ rehydrated }) => rehydrated);
+  const stage = useStage(({ stage }) => stage[stageKey]??null);
+
   const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
 
   useEffect(() => {
-    useStageStore.api.ensureStage(stageKey);
-    stage && ctxt?.gl && useStageStore.api.updateInternal(stageKey, { scene: ctxt.scene });
-  }, [stageKey, ctxt?.gl]);
+    rehydrated && useStage.api.ensureStage(stageKey);
+    stage && ctxt?.gl && useStage.api.updateInternal(stageKey, { scene: ctxt.scene });
+  }, [stageKey, rehydrated, ctxt?.gl]);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     initializeCanvasContext(ctxt);

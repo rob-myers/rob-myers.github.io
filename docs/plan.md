@@ -22,7 +22,6 @@ Blog layout related tasks
 - Auto pause on scroll out of view
 - Auto pause on start/resume another `Stage`
 
-
 - Fix multiline command launched from intermediate line
   > Originally was going to have low/medium walls too
 - Review and clean `Brush` code
@@ -46,9 +45,6 @@ Blog layout related tasks
 - Implement comments using build and client-side calls:
   > https://eiriksm.dev/walkthrough-github-comments
 - Must navigate to GitHub to actually post comments
-
-- Basic text editor using Prism shell highlighting, for coding/scripts/funcs
-- Can interface with process group via UI
 
 ### DONE
 
@@ -97,3 +93,4 @@ Blog layout related tasks
 ✅ Can undo/redo polygons via Cmd-Z
 ✅ Replace `stage.block` by `stage.walls`
 ✅ `stage.bounds` auto-computed rect based on walls
+✅ Persist `stage.polygon`

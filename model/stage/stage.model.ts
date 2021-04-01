@@ -30,11 +30,50 @@ export type StageMeta = {
   bounds: Geom.Rect; 
 };
 
+enum CorePolygonKey {
+  default = 'default',
+  navigable = 'navigable',
+}
+
+export function createStage(stageKey: string): StageMeta {
+  return {
+    key: stageKey,
+    internal: {
+      camEnabled: true,
+      keyEvents: new Subject,
+      prevPolygon: {},
+      // ... other stuff attached by components
+    },
+
+    brush: createDefaultBrushMeta(),
+    polygon: {
+      [CorePolygonKey.default]: createNamedPolygons(CorePolygonKey.default),
+      [CorePolygonKey.navigable]: createNamedPolygons(CorePolygonKey.navigable),
+    },
+    walls: createStageWalls({
+      polygonKeys: [CorePolygonKey.default],
+    }),
+    
+    bounds: new Geom.Rect(-1, -1, 2, 2),
+  };
+}
+
 export interface PersistedStage {
   key: string;
+  polygon: KeyedLookup<NamedPolygonsJson>;
   /**
    * TODO
    */
+}
+
+export function createPersist(stageKey: string): PersistedStage {
+  return {
+    key: stageKey,
+    polygon: {
+      [CorePolygonKey.default]: { key: CorePolygonKey.default, polygons: [] },
+      [CorePolygonKey.navigable]: { key: CorePolygonKey.navigable, polygons: [] },
+    },
+  };
 }
 
 //#region internal
@@ -65,9 +104,8 @@ export interface BrushMeta {
 }
 
 export function createDefaultBrushMeta(): BrushMeta {
-  const sides = 6;
   return {
-    rect: new Geom.Rect(0, -1, 1, 1),
+    rect: new Geom.Rect(0, -1, 1, 1), // ?
     position: new Geom.Vector,
     scale: new Geom.Vector(1, 1),
     rectToolPolygonKey: 'default',
@@ -80,6 +118,12 @@ export function createDefaultBrushMeta(): BrushMeta {
 export interface NamedPolygons {
   key: string;
   polygons: Geom.Polygon[];
+}
+
+/** Serializable `NamedPolygons` */
+export interface NamedPolygonsJson {
+  key: string;
+  polygons: Geom.PolygonJson[];
 }
 
 export function createNamedPolygons(key: string): NamedPolygons {

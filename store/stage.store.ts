@@ -1,9 +1,8 @@
-import { Subject } from 'rxjs';
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import * as Geom from 'model/geom';
-import { KeyedLookup } from 'model/generic.model';
+import { KeyedLookup, mapValues } from 'model/generic.model';
 import { geomService } from 'model/geom.service';
 import * as Stage from 'model/stage/stage.model';
 import { TransformKey } from 'model/stage/stage.proxy';
@@ -11,6 +10,7 @@ import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } f
 
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
+  rehydrated: boolean;
   persist: KeyedLookup<Stage.PersistedStage>;
 
   readonly api: {
@@ -32,6 +32,7 @@ export type State = {
       delta: Geom.Polygon[],
       opts: { cutOut?: boolean },
     ) => void;
+    persist: (stageKey: string) => void;
     rememberPolygon: (stageKey: string, polygonKey: string) => void;
     removeStage: (stageKey: string) => void;
     selectPolysInBrush: (stageKey: string) => void;
@@ -54,6 +55,7 @@ type WallDef = [number, number, number, number];
 
 const useStore = create<State>(devtools(persist((set, get) => ({
   stage: {},
+  rehydrated: false,
   persist: {},
   api: {
 
@@ -63,6 +65,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       api.rememberPolygon(stageKey, polygonKey);
       api.modifyPolygon(stageKey, polygonKey, delta, { cutOut });
       api.updateBounds(stageKey);
+      api.persist(stageKey);
     },
 
     applyBrush: (stageKey, opts) => {
@@ -81,30 +84,21 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         }
       }
       api.updateBounds(stageKey);
+      api.persist(stageKey);
     },
 
-    createStage: (stageKey) => set(({ stage }) => ({
-      stage: addToLookup({
-        key: stageKey,
-        internal: {
-          camEnabled: true,
-          keyEvents: new Subject,
-          prevPolygon: {},
-          // other stuff attached by components
-        },
+    createStage: (stageKey) => {
+      const instance: Stage.StageMeta = Stage.createStage(stageKey);
 
-        brush: Stage.createDefaultBrushMeta(),
-        polygon: {
-          default: Stage.createNamedPolygons('default'),
-          navigable: Stage.createNamedPolygons('navigable'),
-        },
-        walls: Stage.createStageWalls({
-          polygonKeys: ['default'],
-        }),
-        
-        bounds: new Geom.Rect(-1, -1, 2, 2),
-      }, stage),
-    })),
+      // Rehydrate stage
+      const { polygon } = get().persist[stageKey] ||
+        (get().persist[stageKey] = Stage.createPersist(stageKey));
+      instance.polygon = mapValues(polygon, (x) => ({ ...x,
+        polygons: x.polygons.map(y => Geom.Polygon.from(y)),
+      }));
+
+      set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
+    },
 
     cutSelectPolysInBrush: (stageKey) => {
       const { brush, walls, polygon } = api.getStage(stageKey)
@@ -116,7 +110,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
         api.updateBrush(stageKey, { locked: true, selection });
         api.applyBrush(stageKey, { erase: true });
-      } else { // When selection exists just delete it
+      } else {// When selection exists just delete it
         api.applyBrush(stageKey, { erase: true });
       }
 
@@ -153,6 +147,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }
     },
 
+    persist: (stageKey) => {
+      const { polygon } = api.getStage(stageKey);
+      const polyJson = {} as Stage.PersistedStage['polygon'];
+      Object.values(polygon).forEach(({ key, polygons }) =>
+        polyJson[key] = { key, polygons: polygons.map(x => x.json) });
+      set(({ persist }) => ({ persist:
+        addToLookup({ key: stageKey, polygon: polyJson }, persist),
+      }));
+    },
+
     rememberPolygon: (stageKey, polygonKey) => {
       const prev = api.getPolygon(stageKey, polygonKey);
       api.updateInternal(stageKey, ({ prevPolygon: prevPolygonLookup }) => ({
@@ -181,9 +185,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const center = rect.center;
       switch (key) {
         case 'mirror(x)':
-          mutator = (p) => p.x = (2 * center.x) - p.x; break;
-        case 'mirror(y)':
           mutator = (p) => p.y = (2 * center.y) - p.y; break;
+        case 'mirror(y)':
+          mutator = (p) => p.x = (2 * center.x) - p.x; break;
         case 'rotate(90)':
           mutator = (p) => p.set(center.x - (p.y - center.y), center.y + (p.x - center.x)); break;
         case 'rotate(-90)':
@@ -257,6 +261,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   name: 'stage',
   version: 2,
   blacklist: ['api', 'stage'],
+  onRehydrateStorage: (_) =>  {
+    return () => {
+      useStageStore.setState({ rehydrated: true });
+    };
+  },
 }), 'stage'));
 
 const api = useStore.getState().api;
