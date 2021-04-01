@@ -51,12 +51,17 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     });
   }, [keyWire]);
 
+  const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
+    stage.internal.camEnabled && e.currentTarget.focus()
+  , [stage]);
+
   return (
     <section
       className={styles.root}
       tabIndex={0}
       onKeyDown={onKey}
       onKeyUp={onKey}
+      onMouseOver={focusOnMouseOver}
     >
       <StageToolbar stage={stage} />
 
