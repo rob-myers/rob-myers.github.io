@@ -1,22 +1,35 @@
 import { useMemo } from "react";
 import { CorePolygonKey, StageMeta } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
-import { FrontSide } from "three";
 
 const Navigable: React.FC<Props> = ({ stage }) => {
 
   const { polygons } = stage.polygon[CorePolygonKey.navigable];
-  const geometry = useMemo(() => geomService.polysToGeometry(polygons), [polygons]);
+  const navGeometry = useMemo(() =>
+    geomService.polysToGeometry(polygons), [polygons]);
+
+  const { bounds } = stage;
 
   return (
-    <mesh geometry={geometry}>
-      <meshBasicMaterial
-        side={FrontSide}
-        color="#ccf"
-        transparent
-        opacity={0.5}
-      />
-    </mesh>
+    <group>
+      <mesh position={[bounds.cx, bounds.cy, 0]} receiveShadow>
+        <planeGeometry
+          args={[bounds.width, bounds.height, 30, 30]}
+        />
+        <meshStandardMaterial
+          color="#fff"
+          transparent
+          opacity={0.5}
+        />
+      </mesh>
+      <mesh geometry={navGeometry}>
+        <meshStandardMaterial
+          color="#999"
+          transparent
+          opacity={0.5}
+        />
+      </mesh>
+    </group>
   );
 };
 

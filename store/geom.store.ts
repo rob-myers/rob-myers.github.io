@@ -114,8 +114,7 @@ const useStore = create<State>(devtools((set, get) => ({
       ).outset(outsetBounds);
 
       const navPolys = geomService.cutOut(
-        polys.flatMap(x => geomService.outset(x, outsetWalls)
-          .map(x => x.precision(1))),
+        polys.flatMap(x => geomService.outset(x, outsetWalls)),
         [Geom.Polygon.fromRect(bounds)],
       );
       // console.log({ bounds, navPolys });

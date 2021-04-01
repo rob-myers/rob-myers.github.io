@@ -43,7 +43,10 @@ export function createStage(stageKey: string): StageMeta {
     internal: {
       camEnabled: true,
       keyEvents: new Subject,
-      prevPolygon: {},
+      prevPolygon: {
+        [CorePolygonKey.default]: createNamedPolygons(CorePolygonKey.default),
+        [CorePolygonKey.navigable]: createNamedPolygons(CorePolygonKey.navigable),
+      },
       initCamPos: initCameraPos.clone(),
       // ... other stuff attached by components
     },

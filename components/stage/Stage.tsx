@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { PerspectiveCamera } from "three";
+import { PCFSoftShadowMap, PerspectiveCamera } from "three";
 import { Canvas, CanvasContext } from "react-three-fiber";
 import { Subject } from "rxjs";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
 import { StageMeta } from "model/stage/stage.model";
-import useGeomStore from "store/geom.store";
+// import useGeomStore from "store/geom.store";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
@@ -22,14 +22,21 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   const rehydrated = useStage(({ rehydrated }) => rehydrated);
   const stage = useStage(({ stage }) => stage[stageKey]??null);
 
-  const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
+  // const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
 
   useEffect(() => {
-    rehydrated && useStage.api.ensureStage(stageKey);
-    stage && ctxt?.gl && useStage.api.updateInternal(stageKey, { scene: ctxt.scene });
+    if (rehydrated) useStage.api.ensureStage(stageKey);
+    if (ctxt?.gl && !stage.internal.scene) {
+      useStage.api.updateInternal(stageKey, { scene: ctxt.scene });
+      setTimeout(() => useStage.api.updateNavigable(stageKey));
+    }
   }, [stageKey, rehydrated, ctxt?.gl]);
+
+  useEffect(() => {
+    ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true);
+  }, [stage]);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     initializeCanvasContext(ctxt, stage);
@@ -65,7 +72,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     >
       <StageToolbar stage={stage} />
 
-      {stage && loadedGltf && (
+      {stage && (
         <Canvas
           pixelRatio={pixelRatio.current}
           onCreated={onCreatedCanvas}
@@ -104,9 +111,10 @@ function initializeCanvasContext(
   const camera = ctxt.camera as PerspectiveCamera;
   camera.position.copy(stage.internal.initCamPos);
   camera.setFocalLength(35);
-  // ctxt.gl.shadowMap.enabled = true;
-  // ctxt.gl.shadowMap.autoUpdate = false;
-  // ctxt.gl.shadowMap.type = PCFSoftShadowMap;
+  ctxt.gl.shadowMap.enabled = true;
+  ctxt.gl.shadowMap.autoUpdate = false;
+  ctxt.gl.shadowMap.type = PCFSoftShadowMap;
+  ctxt.gl.shadowMap.needsUpdate = true;
 }
 
 export default Stage;

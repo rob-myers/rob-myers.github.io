@@ -8,6 +8,7 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
+- Indicate brush position, for adding meshes
 - Import a textured crate from blender
 - Can place crates
 - Work on a humanoid in blender
@@ -28,6 +29,8 @@ Blog layout related tasks
 - Review and clean `Brush` code
 - Programmatically defined `Select` UI?
   > e.g. saved polygon templates, blender imports, shortcuts
+
+- Expose outset wall/bounds params
 
 - Replace `defs` by `declare` (handle special mvdan-sh parsing)
 - `ps -s` shows full process src
@@ -98,3 +101,4 @@ Blog layout related tasks
 ✅ Auto-generate `stage.polygon.navigable`
 ✅ Auto build recast navmesh
 ✅ Depict `Navigable`
+✅ Add shadows

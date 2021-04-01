@@ -20,7 +20,7 @@ const Walls: React.FC<Props> = ({ stage }) => {
 
   return (
     <group>
-      <mesh key={opacity} geometry={geometry}>
+      <mesh key={opacity} geometry={geometry} castShadow>
         <meshBasicMaterial
           side={FrontSide}
           color={stage.walls.color}
