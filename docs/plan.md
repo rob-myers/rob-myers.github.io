@@ -8,7 +8,8 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Import something from blender
+- Import a textured crate from blender
+- Can place crates
 - Work on a humanoid in blender
 - Ensure recast navmesh is working
 

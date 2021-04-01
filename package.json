@@ -8,10 +8,8 @@
     "export": "next export",
     "start": "yarn next-cfg && next start",
     "next-cfg": "tsc -p scripts",
-    "watch-gltf": "nodemon --watch './3d/**/*' -e gltf --exec 'yarn update-gltf'",
-    "update-gltf": "source scripts/gltf-to-jsx.sh",
-    "force-update-gltf": "yarn update-gltf '-1000000d'",
-    "types": "tsc --noEmit"
+    "types": "tsc --noEmit",
+    "copy-gltfs": "cp 3d/*.gltf public/*.gltf"
   },
   "dependencies": {
     "braces": "^3.0.2",
@@ -19,7 +17,6 @@
     "cli-columns": "^3.1.2",
     "earcut": "^2.2.2",
     "getopts": "^2.3.0",
-    "gltfjsx": "^3.1.4",
     "json-stringify-pretty-compact": "^3.0.0",
     "lodash.clonedeep": "^4.5.0",
     "mvdan-sh": "^0.5.0",

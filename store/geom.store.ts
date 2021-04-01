@@ -15,9 +15,10 @@ export type State = {
   actors: KeyedLookup<ActorMeshMeta>;
 
   readonly api: {
+    /** Load assets from gltf (exported from Blender). */
     load: () => Promise<void>;
     extractMeshes: (gltf: GLTF) => {
-      actors: THREE.Mesh[];
+      // actors: THREE.Mesh[];
     };
     computeActorMeta: (inner: THREE.Mesh) => ActorMeshMeta;
     createActor: (name: string) => {
@@ -45,45 +46,48 @@ const useStore = create<State>(devtools((set, get) => ({
   loadedGltf: false,
   navWorker: null,
   api: {
-    /**
-     * Load assets from gltf (exported from Blender).
-     * Initialize navigation worker.
-     */
+
     load: async () => {
       if (get().loadedGltf) {
         return;
       }
 
       const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader');
-      (new GLTFLoader()).load('/root.gltf', (gltf) => {
-        const { actors } = api.extractMeshes(gltf);
-        const actorMetas = actors.map(actor => api.computeActorMeta(actor));
-        // console.log({ actors, rooms, inners });
+      const { DRACOLoader } = await import('three/examples/jsm/loaders/DRACOLoader');
+
+      const loader = new GLTFLoader;
+      loader.setDRACOLoader((new DRACOLoader).setDecoderPath('/draco/'));
+
+      loader.load('/root.gltf', (gltf) => {
+        const { } = api.extractMeshes(gltf);
+        // const actorMetas = actors.map(actor => api.computeActorMeta(actor));
+        // // console.log({ actors, rooms, inners });
 
         set(_ => ({
           loadedGltf: true,
-          actors: lookupFromValues(actorMetas),
+          // actors: lookupFromValues(actorMetas),
         }));
       });
     },
 
     extractMeshes: (gltf: GLTF) => {
-      const actors = [] as THREE.Mesh[];
+      // const actors = [] as THREE.Mesh[];
       gltf.scene.traverse((node) => {
-        switch (node.name) {
-          case 'actors': {
-            actors.push(...node.children.filter(threeUtil.isMeshNode));
-            actors.forEach(actor => {
-              threeUtil.transformImportedMesh(actor);
-              actor.geometry.translate(0, 0, 0.2); // Move actor up
-              actor.children.filter(threeUtil.isMeshNode)
-                .forEach(child => threeUtil.transformImportedMesh(child));
-            });
-            break;
-          }
-        }
+        console.log('gltf: saw node:', node);
+        // switch (node.name) {
+        //   case 'actors': {
+        //     actors.push(...node.children.filter(threeUtil.isMeshNode));
+        //     actors.forEach(actor => {
+        //       threeUtil.transformImportedMesh(actor);
+        //       actor.geometry.translate(0, 0, 0.2); // Move actor up
+        //       actor.children.filter(threeUtil.isMeshNode)
+        //         .forEach(child => threeUtil.transformImportedMesh(child));
+        //     });
+        //     break;
+        //   }
+        // }
       });
-      return { actors };
+      return {};
     },
 
     createActor: (name) => {
