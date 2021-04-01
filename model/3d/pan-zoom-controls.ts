@@ -132,14 +132,14 @@ export class PanZoomControls extends EventDispatcher {
   private start(state: State) {
     if (this.state !== state) {
       this.state = state;
-      console.log('started', state);
+      // console.log('started', state);
     }
   }
 
   private stop(state: State) {
     if (this.state === state) {
       this.state = 'none';
-      console.log('stopped', state);
+      // console.log('stopped', state);
     }
   }
 
