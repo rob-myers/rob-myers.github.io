@@ -1,7 +1,23 @@
-import { StageMeta } from "model/stage/stage.model";
+import { useMemo } from "react";
+import { CorePolygonKey, StageMeta } from "model/stage/stage.model";
+import { geomService } from "model/geom.service";
+import { FrontSide } from "three";
 
 const Navigable: React.FC<Props> = ({ stage }) => {
-  return null;
+
+  const { polygons } = stage.polygon[CorePolygonKey.navigable];
+  const geometry = useMemo(() => geomService.polysToGeometry(polygons), polygons);
+
+  return (
+    <mesh geometry={geometry}>
+      <meshBasicMaterial
+        side={FrontSide}
+        color="#eee"
+        // transparent
+        // opacity={0.8}
+      />
+    </mesh>
+  );
 };
 
 interface Props {

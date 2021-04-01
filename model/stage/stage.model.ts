@@ -57,7 +57,7 @@ export function createStage(stageKey: string): StageMeta {
       polygonKeys: [CorePolygonKey.default],
     }),
     
-    bounds: new Geom.Rect(-1, -1, 2, 2),
+    bounds: initStageBounds.clone(),
   };
 }
 
@@ -89,7 +89,11 @@ export type StageKeyEvent = Pick<KeyboardEvent,
 };
 
 const initCameraPosArray: Triple<number> = [0, 0, 10];
+
 export const initCameraPos = new Vector3(...initCameraPosArray);
+
+export const initStageBounds = new Geom.Rect(0, 0, 0, 0);
+
 //#endregion
 
 export interface BrushMeta {

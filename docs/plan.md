@@ -8,9 +8,9 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 
 ### TODO
 
-- Depict `Navigable` and test navmesh
 - Import something from blender
 - Work on a humanoid in blender
+- Ensure recast navmesh is working
 
 - Start writing post / decide on blog format
 
@@ -96,4 +96,4 @@ Blog layout related tasks
 ✅ Persist `stage.polygon`
 ✅ Auto-generate `stage.polygon.navigable`
 ✅ Auto build recast navmesh
-
+✅ Depict `Navigable`

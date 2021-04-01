@@ -8,7 +8,8 @@ import { Geometry, Face3 } from 'model/3d/deprecated';
 import * as Geom from 'model/geom';
 
 const twopi = 2 * Math.PI;
-export const outsetAmount = 0.1;
+export const outsetWalls = 0.1;
+export const outsetBounds = 1;
 const defaultLineWidth = 0.015;
 
 class GeomService {
@@ -46,7 +47,7 @@ class GeomService {
     );
   }
 
-  createAxis(type: 'x' | 'y', color = '#f00', opacity = 1, lineWidth = 0.01) {
+  createAxis(type: 'x' | 'y', color = '#f00', opacity = 1, lineWidth = 0.005) {
     return this.createPolyLine(
       type === 'x'
         ? [new Vector3(-50, 0), new Vector3(50, 0)]

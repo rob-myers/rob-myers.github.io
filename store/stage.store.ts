@@ -96,7 +96,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       // Get persisted data for rehydration
       const { polygon, cameraPosition } = get().persist[stageKey] || (
         get().persist[stageKey] = Stage.createPersist(stageKey));
-      // Rehyrdrate
+      // Rehydrate
       instance.internal.initCamPos.set(...cameraPosition);
       instance.polygon = mapValues(polygon, (x) => ({
         key: x.key,
@@ -119,7 +119,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       } else {// When selection exists just delete it
         api.applyBrush(stageKey, { erase: true });
       }
-
     },
 
     deselectPolysInBrush: (stageKey) => {
@@ -237,7 +236,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     updateNavigable: (stageKey) => {
       const { walls, polygon } = api.getStage(stageKey);
       const polygons = walls.polygonKeys.flatMap(x => polygon[x].polygons);
-      const { bounds, navPolys } =  useGeomStore.api.createNavMesh(stageKey, polygons);
+      const { bounds, navPolys } = useGeomStore.api.createNavMesh(stageKey, polygons);
 
       api.updateStage(stageKey, { bounds });
       api.updatePolygon(stageKey, Stage.CorePolygonKey.navigable, {

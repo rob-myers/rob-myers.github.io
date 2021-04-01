@@ -5,9 +5,10 @@ import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import { KeyedLookup, lookupFromValues } from 'model/generic.model';
 import * as threeUtil from 'model/3d/three.model';
-import { geomService, outsetAmount } from 'model/geom.service';
+import { geomService, outsetBounds, outsetWalls } from 'model/geom.service';
 import * as Geom from 'model/geom';
 import { recastService } from 'model/3d/recast.service';
+import { initStageBounds } from 'model/stage/stage.model';
 
 export type State = {
   loadedGltf: boolean;
@@ -104,15 +105,19 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     createNavMesh: (navKey, polys) => {
-      const bounds = Geom.Rect.union(polys.map(x => x.rect)).outset(10);
+      const bounds = Geom.Rect.union(
+        polys.map(x => x.rect).concat(initStageBounds),
+      ).outset(outsetBounds);
+
       const navPolys = geomService.cutOut(
-        polys.flatMap(x => geomService.outset(x, 0.1).map(x => x.precision(1))),
+        polys.flatMap(x => geomService.outset(x, outsetWalls)
+          .map(x => x.precision(1))),
         [Geom.Polygon.fromRect(bounds)],
       );
       // console.log({ bounds, navPolys });
 
-      const geometry = geomService.polysToGeometry(navPolys, 'xz');
       // Non-blocking creation of recast navmesh
+      const geometry = geomService.polysToGeometry(navPolys, 'xz');
       setTimeout(() => recastService.createNavMesh(navKey, geometry));
       return { bounds, navPolys };
     },
