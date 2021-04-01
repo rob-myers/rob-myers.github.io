@@ -6,7 +6,7 @@ import { FrontSide } from "three";
 const Navigable: React.FC<Props> = ({ stage }) => {
 
   const { polygons } = stage.polygon[CorePolygonKey.navigable];
-  const geometry = useMemo(() => geomService.polysToGeometry(polygons), polygons);
+  const geometry = useMemo(() => geomService.polysToGeometry(polygons), [polygons]);
 
   return (
     <mesh geometry={geometry}>

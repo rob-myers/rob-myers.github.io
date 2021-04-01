@@ -11,7 +11,7 @@ const Walls: React.FC<Props> = ({ stage }) => {
   const geometry = useMemo(() => geomService.polysToWalls(
     polygons.flatMap(x => x.polygons),
     stage.walls.height,
-  ), [...polygons, stage.walls.height]);
+  ), [polygons, stage.walls.height]);
 
   const innerGeom = useMemo(() => geometry.clone(), [geometry]);
 
