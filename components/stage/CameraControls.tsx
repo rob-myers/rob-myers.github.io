@@ -9,7 +9,7 @@ extend({ PanZoomControls });
 
 const CameraControls: React.FC<Props> = ({ stage }) => {
   const { camera, gl: { domElement } } = useThree();
-  const enabled = stage.internal.camEnabled;
+  const enabled = stage.opts.panZoom;
   const controls = useRef<PanZoomControls>();
 
   useEffect(() => {

@@ -59,7 +59,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   }, [keyWire]);
 
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
-    stage?.internal.camEnabled && e.currentTarget.focus()
+    stage?.opts.panZoom && e.currentTarget.focus()
   , [stage]);
 
   return (

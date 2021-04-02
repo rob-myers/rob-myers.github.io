@@ -37,7 +37,8 @@ class ParseShService {
     let incomplete: null | boolean = null;
 
     try { // Use mvdah-sh to parse partial shell code
-      parser.Interactive({ read: () => partialSrc },
+      parser.Interactive(
+        { read: () => partialSrc },
         () => { incomplete = parser.Incomplete(); return false; }
       );
     } catch (e) { /** NOOP */}
@@ -74,6 +75,7 @@ class ParseShService {
     try {
       // Parser.Interactive expects terminal newline.
       const src = buffer.join('\n') + '\n';
+      // console.log({ src });
       const { incomplete, parsed } = this.interactiveParse(src);
 
       // if (parsed) {

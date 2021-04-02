@@ -7,8 +7,8 @@ import useStage from 'store/stage.store';
 const StageToolbar: React.FC<Props> = ({ stage }) => {
 
   const toggleCam = useCallback(() => stage &&
-    useStage.api.updateInternal(stage.key, ({ camEnabled }) => ({
-      camEnabled: !camEnabled,
+    useStage.api.updateOpts(stage.key, ({ panZoom }) => ({
+      panZoom: !panZoom,
     })), [stage]);
 
   return (
@@ -18,7 +18,7 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
           @<strong>{stage.key}</strong>
         </section>
         <Button
-          enabled={stage.internal.camEnabled}
+          enabled={stage.opts.panZoom}
           onClick={toggleCam}
         >
           panzoom

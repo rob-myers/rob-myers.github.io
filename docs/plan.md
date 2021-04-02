@@ -6,7 +6,15 @@ We plan to create a website concerned with Game AI. We will provide an editor so
 
 The editor consists of one or more `Terminal`s and a `Stage`.
 
+
+Will split UI pipeline into two while awaiting:
+> https://github.com/mvdan/sh/issues/692
+
 ### TODO
+
+- Can toggle lighting
+- `Navigable` draws inverse of polygon.navigable
+- Walls too close to light have truncated shadows?
 
 - Indicate brush position, for adding meshes
 - Import a textured crate from blender
@@ -14,7 +22,10 @@ The editor consists of one or more `Terminal`s and a `Stage`.
 - Work on a humanoid in blender
 - Ensure recast navmesh is working
 - Dark mode with stage background black
-- canvas filter provides dynamic player light
+- Canvas filter provides dynamic player light
+
+- Can launch scripts e.g. UI pipeline(s)
+- A `Terminal` can auto launch scripts
 
 - Start writing post / decide on blog format
 

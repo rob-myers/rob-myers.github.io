@@ -9,8 +9,6 @@ export type StageMeta = {
   key: string;
   /** Stuff the CLI usually would not access */
   internal: {
-    /** Can we move/zoom the pan-zoom camera? */
-    camEnabled: boolean;
     /** Keyboard events sent by `Stage`  */
     keyEvents: Subject<StageKeyEvent>;
     /** Previous state of all polygons on stage before an edit */
@@ -22,7 +20,12 @@ export type StageMeta = {
     /** Attached on mount */
     scene?: Scene;
   };
-  /** Used to select rectangles and move templates */
+  opts: {
+    /** Can we move/zoom the pan-zoom camera? */
+    panZoom: boolean;
+    lights: boolean;
+  };
+  /** Used to paint rectangles and copy/cut/paste templates */
   brush: BrushMeta;
   /** Polygon storage */
   polygon: KeyedLookup<NamedPolygons>;
@@ -41,7 +44,6 @@ export function createStage(stageKey: string): StageMeta {
   return {
     key: stageKey,
     internal: {
-      camEnabled: true,
       keyEvents: new Subject,
       prevPolygon: {
         [CorePolygonKey.default]: createNamedPolygons(CorePolygonKey.default),
@@ -49,6 +51,10 @@ export function createStage(stageKey: string): StageMeta {
       },
       initCamPos: initCameraPos.clone(),
       // ... other stuff attached by components
+    },
+    opts: {
+      lights: true,
+      panZoom: true,
     },
 
     brush: createDefaultBrushMeta(),
@@ -95,7 +101,7 @@ const initCameraPosArray: Triple<number> = [0, 0, 10];
 
 export const initCameraPos = new Vector3(...initCameraPosArray);
 
-export const initStageBounds = new Geom.Rect(0, 0, 0, 0);
+export const initStageBounds = new Geom.Rect(-5, -5, 10, 10);
 
 //#endregion
 

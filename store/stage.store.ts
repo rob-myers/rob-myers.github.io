@@ -44,6 +44,7 @@ export type State = {
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageMeta['internal']>) => void;
     updateNavigable: (stageKey: string) => void;
+    updateOpts: (stageKey: string, updates: Updates<Stage.StageMeta['opts']>) => void;
     updatePolygon: (
       stageKey: string,
       polygonKey: string,
@@ -244,6 +245,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       });
     },
 
+    updateOpts: (stageKey, updates) => {
+      api.updateStage(stageKey, ({ opts }) => ({
+        opts: { ...opts,
+          ...typeof updates === 'function' ? updates(opts) : updates,
+        },
+      }));
+    },
+
     updatePolygon: (stageKey, polygonKey, updates) => {
       api.updateStage(stageKey, ({ polygon }) => ({
         polygon: updateLookup(polygonKey, polygon,
@@ -271,7 +280,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 2,
+  version: 3,
   blacklist: ['api', 'stage'],
   onRehydrateStorage: (_) =>  {
     return () => {
