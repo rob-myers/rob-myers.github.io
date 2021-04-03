@@ -399,11 +399,11 @@ class CmdService {
   }
 
   /** JSON.parse with string fallback */
-  private parseArg(x: any) {
+  private parseArg(x: string) {
     try {
-      return x === undefined ?  undefined : JSON.parse(x);
+      return x === undefined ? undefined : JSON.parse(x);
     } catch {
-      return JSON.parse(`"${x}"`)
+      return x;
     }
   }
   
