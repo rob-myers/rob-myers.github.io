@@ -1,9 +1,10 @@
+import { PCFSoftShadowMap, PerspectiveCamera } from "three";
+import { Subject } from "rxjs";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { PCFSoftShadowMap, PerspectiveCamera } from "three";
 import { Canvas, CanvasContext } from "react-three-fiber";
-import { Subject } from "rxjs";
+import { useBeforeunload } from "react-beforeunload";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
 import { StageMeta } from "model/stage/stage.model";
@@ -24,6 +25,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
 
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
+
+  const persistOnUnload = useCallback(() => useStage.api.persist(stageKey), [stageKey]);
+  useBeforeunload(persistOnUnload);
 
   useEffect(() => {
     if (rehydrated) useStage.api.ensureStage(stageKey);

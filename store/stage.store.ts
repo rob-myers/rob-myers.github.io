@@ -162,7 +162,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             key: x.key,
             polygons: x.polygons.map(x => x.json),
           })),
-          cameraPosition: vectorToTriple(internal.controls?.camera.position??Stage.initCameraPos),
+          cameraPosition: vectorToTriple(
+            internal.controls?.camera.position??Stage.initCameraPos),
           opts: deepClone(opts),
         }, persist),
       }));
@@ -280,7 +281,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 5,
+  version: 1,
   blacklist: ['api', 'stage'],
   onRehydrateStorage: (_) =>  {
     return () => {
