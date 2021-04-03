@@ -152,7 +152,7 @@ export function createStageWalls(opts: Partial<StageWalls>): StageWalls {
   return {
     color: '#000',
     opacity: 1,
-    height: 10,
+    height: 2,
     polygonKeys: [],
     ...opts,
   };
