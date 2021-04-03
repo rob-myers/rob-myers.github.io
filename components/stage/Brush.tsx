@@ -13,7 +13,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const selectorRef = useRef<THREE.Mesh>(null);
   const selectorScaledRef = useRef<THREE.Mesh>(null);
   const selectionRef = useRef<THREE.Mesh>(null);
-  const originTexture = useGeomStore(({ texture }) => texture.crosshairIcon);
+  const originTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
 
   /** Ground position of pointer */
   const current = useRef(new THREE.Vector3).current;
@@ -113,7 +113,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     <>
       <group ref={selectorRef}>
         {originTexture && <mesh visible={showCursor}>
-          <planeGeometry args={[0.05, 0.05]} />
+          <planeGeometry args={[0.08, 0.08]} />
           <meshBasicMaterial map={originTexture} transparent />
         </mesh>}
         <mesh
