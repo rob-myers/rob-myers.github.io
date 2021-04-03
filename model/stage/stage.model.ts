@@ -37,6 +37,12 @@ export interface StageOpts {
   lights: boolean;
   /** CSS background of stage */
   background: string;
+  walls: {
+    height: number;
+    color: string;
+    /** Transparency in range [0,1] */
+    opacity: number;
+  };
 }
 
 export enum CorePolygonKey {
@@ -66,9 +72,9 @@ export function createStage(stageKey: string): StageMeta {
 
     brush: createDefaultBrushMeta(),
     polygon: createPolygonLookup(),
-    walls: createStageWalls({
+    walls: {
       polygonKeys: [CorePolygonKey.default],
-    }),
+    },
     
     bounds: initStageBounds.clone(),
   };
@@ -79,6 +85,11 @@ function createStageOpts(): StageOpts {
     lights: true,
     panZoom: true,
     background: 'white',
+    walls: {
+      color: '#000',
+      opacity: 1,
+      height: 2,
+    },
   };
 }
 
@@ -157,23 +168,9 @@ export function createNamedPolygons(key: string): NamedPolygons {
   return { key, polygons: [] };
 }
 
-export function createStageWalls(opts: Partial<StageWalls>): StageWalls {
-  return {
-    color: '#000',
-    opacity: 1,
-    height: 2,
-    polygonKeys: [],
-    ...opts,
-  };
-}
-
 export interface StageWalls {
   /** Keys of NamedPolygons */
   polygonKeys: string[];
-  height: number;
-  color: string;
-  /** Transparency in range [0,1] */
-  opacity: number;
 }
 
 export function getGlobalBrushRect(brush: BrushMeta): Geom.Polygon {
