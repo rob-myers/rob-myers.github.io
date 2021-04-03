@@ -100,7 +100,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
         </Canvas>
       )}
 
-      <CentralDot />
+      {/* <CentralDot /> */}
     </Root>
   );
 }
@@ -122,17 +122,17 @@ const Root = styled.section<{ background: string }>`
   `}
 `;
 
-const CentralDot = styled.div`
-    position: absolute;
-    background: #fff;
-    border: 1px solid red;
-    border-radius: 2px;
-    top: calc(28px + (100% - 28px) * 0.5 - 2px);
-    left: calc(50% - 2px);
-    height: 4px;
-    width: 4px;
-    pointer-events: none;
-`;
+// const CentralDot = styled.div`
+//     position: absolute;
+//     background: #fff;
+//     border: 1px solid red;
+//     border-radius: 2px;
+//     top: calc(28px + (100% - 28px) * 0.5 - 2px);
+//     left: calc(50% - 2px);
+//     height: 4px;
+//     width: 4px;
+//     pointer-events: none;
+// `;
 
 function initializeCanvasContext(
   ctxt: CanvasContext,

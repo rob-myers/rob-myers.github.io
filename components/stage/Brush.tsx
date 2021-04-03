@@ -36,6 +36,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     if (!locked) {// Reset selection offset
       selection.position.set(0, 0, 0);
     }
+    setShowCursor(!locked);
 
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (!locked) {
