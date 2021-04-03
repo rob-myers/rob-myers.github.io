@@ -1,18 +1,16 @@
 const Lights: React.FC<Props> = ({ enabled }) => {
   return (
     <group name="lights">
-      {!enabled && (
-        <ambientLight
-          color="white"
-          intensity={1}
-        />
-      )}
+      <ambientLight
+        color="#ffe"
+        intensity={enabled ? 0.04 : 1}
+      />
       {enabled && (
         <pointLight
           position={[0, 0, 3]}
-          intensity={2}
-          decay={2.5}
-          distance={4.5}
+          intensity={4}
+          decay={2}
+          distance={3.5}
           castShadow
           // color="#aab"
           // power={8}

@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import { PCFSoftShadowMap, PerspectiveCamera } from "three";
 import { Canvas, CanvasContext } from "react-three-fiber";
 import { Subject } from "rxjs";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
 import { StageMeta } from "model/stage/stage.model";
-// import useGeomStore from "store/geom.store";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
@@ -16,13 +17,11 @@ import Lights from "./Lights";
 import Brush, { PointerMsg } from "./Brush";
 import Navigable from "./Navigable";
 import Walls from "./Walls";
-import styles from "styles/Stage.module.css";
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
   const rehydrated = useStage(({ rehydrated }) => rehydrated);
   const stage = useStage(({ stage }) => stage[stageKey]??null);
 
-  // const loadedGltf = useGeomStore(({ loadedGltf }) => loadedGltf);
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
 
@@ -63,8 +62,8 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   , [stage]);
 
   return (
-    <section
-      className={styles.root}
+    <Root
+      background={stage?.opts.background}
       tabIndex={0}
       onKeyDown={onKey}
       onKeyUp={onKey}
@@ -90,19 +89,45 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
             <Brush stage={stage} wire={ptrWire} />
           )}
 
+
           <Navigable stage={stage} />
           <Walls stage={stage} />
         </Canvas>
       )}
 
-      <div className={styles.centralDot} />
-    </section>
+      <CentralDot />
+    </Root>
   );
 }
 
 interface Props {
   stageKey: string;
 }
+
+const Root = styled.section<{ background: string }>`
+  width: 100%;
+  height: 100%;
+  border: 1px solid #000;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  ${({ background }) => css`
+    background: ${background};
+  `}
+`;
+
+const CentralDot = styled.div`
+    position: absolute;
+    background: #fff;
+    border: 1px solid red;
+    border-radius: 2px;
+    top: calc(28px + (100% - 28px) * 0.5 - 2px);
+    left: calc(50% - 2px);
+    height: 4px;
+    width: 4px;
+    pointer-events: none;
+`;
 
 function initializeCanvasContext(
   ctxt: CanvasContext,

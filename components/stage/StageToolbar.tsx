@@ -1,8 +1,8 @@
-import { useCallback } from 'react';
-import styled from '@emotion/styled';
-import { css } from '@emotion/react';
-import { StageMeta } from 'model/stage/stage.model';
-import useStage from 'store/stage.store';
+import { useCallback } from "react";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
+import { StageMeta } from "model/stage/stage.model";
+import useStage from "store/stage.store";
 
 const StageToolbar: React.FC<Props> = ({ stage }) => {
 
@@ -41,6 +41,7 @@ const Toolbar = styled.section`
   padding: 4px;
   grid-template-columns: auto 70px;
   gap: 8px;
+  background-color: white;
 `;
 
 const Button = styled.span<{ enabled: boolean }>`

@@ -37,7 +37,7 @@ const Navigable: React.FC<Props> = ({ stage: {
         <meshBasicMaterial
           color="#000"
           transparent
-          opacity={0.3}
+          opacity={0.2}
         />
       </mesh>
     </group>

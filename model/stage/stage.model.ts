@@ -35,6 +35,8 @@ export interface StageOpts {
   /** Can we move/zoom the pan-zoom camera? */
   panZoom: boolean;
   lights: boolean;
+  /** CSS background of stage */
+  background: string;
 }
 
 export enum CorePolygonKey {
@@ -63,6 +65,7 @@ export function createStage(stageKey: string): StageMeta {
     opts: {
       lights: true,
       panZoom: true,
+      background: 'white',
     },
 
     brush: createDefaultBrushMeta(),
