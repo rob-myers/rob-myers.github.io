@@ -10,21 +10,21 @@ const Walls: React.FC<Props> = ({
   const geometry = useMemo(() => {
     const wallPolys = walls.polygonKeys
       .map(x => polygon[x]).flatMap(x => x.polygons);
-    return geomService.polysToWalls(wallPolys, opts.walls.height);
-  }, [polygon, opts.walls.height]);
+    return geomService.polysToWalls(wallPolys, opts.wallHeight);
+  }, [polygon, opts.wallHeight]);
 
   const innerGeom = useMemo(() => geometry.clone(), [geometry]);
 
   // When flat, force transparent so can see selections
-  const opacity = opts.walls.height === 0
-    ? 0.15 : opts.walls.opacity;
+  const opacity = opts.wallHeight === 0
+    ? 0.15 : opts.wallOpacity;
 
   return (
     <group>
       <mesh key={opacity} geometry={geometry} castShadow>
         <meshBasicMaterial
           side={FrontSide}
-          color={opts.walls.color}
+          color={opts.wallColor}
           {...opacity < 1 && {
             transparent: true,
             opacity,
@@ -35,7 +35,7 @@ const Walls: React.FC<Props> = ({
         <mesh geometry={innerGeom}>
           <meshBasicMaterial
             side={BackSide}
-            color={opts.walls.color}
+            color={opts.wallColor}
             transparent
             opacity={0.5}
           />

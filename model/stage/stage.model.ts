@@ -37,12 +37,12 @@ export interface StageOpts {
   lights: boolean;
   /** CSS background of stage */
   background: string;
-  walls: {
-    height: number;
-    color: string;
-    /** Transparency in range [0,1] */
-    opacity: number;
-  };
+  wallHeight: number;
+  wallColor: string;
+  /** Transparency in range [0,1] */
+  wallOpacity: number;
+  /** Persist on unload window? */
+  autoPersist: boolean;
 }
 
 export enum CorePolygonKey {
@@ -85,11 +85,10 @@ function createStageOpts(): StageOpts {
     lights: true,
     panZoom: true,
     background: 'white',
-    walls: {
-      color: '#000',
-      opacity: 1,
-      height: 2,
-    },
+    wallColor: '#000',
+    wallOpacity: 1,
+    wallHeight: 2,
+    autoPersist: true,
   };
 }
 

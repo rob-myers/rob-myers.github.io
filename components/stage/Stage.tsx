@@ -22,11 +22,12 @@ import Walls from "./Walls";
 const Stage: React.FC<Props> = ({ stageKey }) => {
   const rehydrated = useStage(({ rehydrated }) => rehydrated);
   const stage = useStage(({ stage }) => stage[stageKey]??null);
-
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
 
-  const persistOnUnload = useCallback(() => useStage.api.persist(stageKey), [stageKey]);
+  const persistOnUnload = useCallback(() =>
+    stage?.opts.autoPersist && useStage.api.persist(stageKey),
+  [stageKey, stage?.opts.autoPersist]);
   useBeforeunload(persistOnUnload);
 
   useEffect(() => {
