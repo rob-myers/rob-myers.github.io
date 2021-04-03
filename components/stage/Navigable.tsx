@@ -2,32 +2,42 @@ import { useMemo } from "react";
 import { CorePolygonKey, StageMeta } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
 
-const Navigable: React.FC<Props> = ({ stage }) => {
+const Navigable: React.FC<Props> = ({ stage: {
+  polygon,
+  bounds,
+  opts,
+} }) => {
 
-  const { polygons } = stage.polygon[CorePolygonKey.navigable];
-  const navGeometry = useMemo(() =>
-    geomService.polysToGeometry(polygons), [polygons]);
-
-  const { bounds } = stage;
+  const { polygons: wallPolys } = polygon[CorePolygonKey.walls];
+  const { polygons: navPolys } = polygon[CorePolygonKey.navigable];
+  
+  /** Lighting and shadows drawn outside wall bases */
+  const notWallsGeom = useMemo(() => {
+    const inverted = geomService.invert(wallPolys, bounds);
+    return geomService.polysToGeometry(inverted);
+  }, [bounds, wallPolys]);
+  
+  const unNavigableGeom = useMemo(() => {
+    const inverted = geomService.invert(navPolys, bounds);
+    return geomService.polysToGeometry(inverted);
+  }, [bounds, navPolys]);
 
   return (
     <group>
-      <mesh position={[bounds.cx, bounds.cy, 0]} receiveShadow>
-        <planeBufferGeometry
-          args={[bounds.width, bounds.height, 10, 10]}
-        />
-        <meshStandardMaterial
-          color="#fff"
-          transparent
-          opacity={0.8}
-        />
-      </mesh>
-      {/* TODO consider shows inverse polygon as darker instead */}
-      <mesh geometry={navGeometry}>
+      {opts.lights && (
+        <mesh geometry={notWallsGeom} receiveShadow>
+          <meshStandardMaterial
+            color="#fff"
+            transparent
+            opacity={0.8}
+          />
+        </mesh>
+      )}
+      <mesh geometry={unNavigableGeom}>
         <meshBasicMaterial
-          color="#fff"
+          color="#000"
           transparent
-          opacity={0.1}
+          opacity={0.3}
         />
       </mesh>
     </group>

@@ -236,13 +236,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     updateNavigable: (stageKey) => {
       const { walls, polygon } = api.getStage(stageKey);
-      const polygons = walls.polygonKeys.flatMap(x => polygon[x].polygons);
-      const { bounds, navPolys } = useGeomStore.api.createNavMesh(stageKey, polygons);
+      const wallPolys = walls.polygonKeys.flatMap(x => polygon[x].polygons);
+      const { bounds, navPolys } = useGeomStore.api.createNavMesh(stageKey, wallPolys);
 
       api.updateStage(stageKey, { bounds });
-      api.updatePolygon(stageKey, Stage.CorePolygonKey.navigable, {
-        polygons: navPolys,
-      });
+      api.updatePolygon(stageKey, Stage.CorePolygonKey.navigable, { polygons: navPolys });
+      api.updatePolygon(stageKey, Stage.CorePolygonKey.walls, { polygons: wallPolys });
     },
 
     updateOpts: (stageKey, updates) => {
@@ -280,7 +279,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 3,
+  version: 4,
   blacklist: ['api', 'stage'],
   onRehydrateStorage: (_) =>  {
     return () => {

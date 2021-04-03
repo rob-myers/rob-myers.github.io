@@ -1,27 +1,32 @@
-import { useEffect, useRef } from "react";
-
-const Lights: React.FC = () => {
+const Lights: React.FC<Props> = ({ enabled }) => {
   return (
     <group name="lights">
-      {/* <ambientLight
-        color="white"
-        intensity={0}
-      /> */}
-      <pointLight
-        // color="#aab"
-        position={[0, 0, 1]}
-        intensity={4}
-        decay={2.5}
-        distance={2.5}
-        // power={8}
-        // angle={Math.PI / 3}
-        // penumbra={1}
-        castShadow
-        // shadow-mapSize-height={2048}
-        // shadow-mapSize-width={2048}
-      />
+      {!enabled && (
+        <ambientLight
+          color="white"
+          intensity={1}
+        />
+      )}
+      {enabled && (
+        <pointLight
+          position={[0, 0, 1]}
+          intensity={1}
+          decay={2.5}
+          distance={2.5}
+          castShadow
+          // color="#aab"
+          // power={8}
+          // Saw unsightly white border for lower res shadow
+          shadow-mapSize-height={2048}
+          shadow-mapSize-width={2048}
+        />
+      )}
   </group>
   );
 };
+
+interface Props {
+  enabled: boolean;
+}
 
 export default Lights;

@@ -20,11 +20,7 @@ export type StageMeta = {
     /** Attached on mount */
     scene?: Scene;
   };
-  opts: {
-    /** Can we move/zoom the pan-zoom camera? */
-    panZoom: boolean;
-    lights: boolean;
-  };
+  opts: StageOpts;
   /** Used to paint rectangles and copy/cut/paste templates */
   brush: BrushMeta;
   /** Polygon storage */
@@ -32,12 +28,27 @@ export type StageMeta = {
   /** Has keys of polygons representing high walls */
   walls: StageWalls;
   /** World bounds */
-  bounds: Geom.Rect; 
+  bounds: Geom.Rect;
 };
+
+export interface StageOpts {
+  /** Can we move/zoom the pan-zoom camera? */
+  panZoom: boolean;
+  lights: boolean;
+}
 
 export enum CorePolygonKey {
   default = 'default',
   navigable = 'navigable',
+  walls = 'walls',
+}
+
+export function createPolygonLookup(): StageMeta['polygon'] {
+  return {
+    [CorePolygonKey.default]: createNamedPolygons(CorePolygonKey.default),
+    [CorePolygonKey.navigable]: createNamedPolygons(CorePolygonKey.navigable),
+    [CorePolygonKey.walls]: createNamedPolygons(CorePolygonKey.walls),
+  };
 }
 
 export function createStage(stageKey: string): StageMeta {
@@ -45,10 +56,7 @@ export function createStage(stageKey: string): StageMeta {
     key: stageKey,
     internal: {
       keyEvents: new Subject,
-      prevPolygon: {
-        [CorePolygonKey.default]: createNamedPolygons(CorePolygonKey.default),
-        [CorePolygonKey.navigable]: createNamedPolygons(CorePolygonKey.navigable),
-      },
+      prevPolygon: createPolygonLookup(),
       initCamPos: initCameraPos.clone(),
       // ... other stuff attached by components
     },
@@ -58,10 +66,7 @@ export function createStage(stageKey: string): StageMeta {
     },
 
     brush: createDefaultBrushMeta(),
-    polygon: {
-      [CorePolygonKey.default]: createNamedPolygons(CorePolygonKey.default),
-      [CorePolygonKey.navigable]: createNamedPolygons(CorePolygonKey.navigable),
-    },
+    polygon: createPolygonLookup(),
     walls: createStageWalls({
       polygonKeys: [CorePolygonKey.default],
     }),
@@ -74,18 +79,12 @@ export interface PersistedStage {
   key: string;
   polygon: KeyedLookup<NamedPolygonsJson>;
   cameraPosition: [number, number, number];
-  /**
-   * TODO
-   */
 }
 
 export function createPersist(stageKey: string): PersistedStage {
   return {
     key: stageKey,
-    polygon: {
-      [CorePolygonKey.default]: { key: CorePolygonKey.default, polygons: [] },
-      [CorePolygonKey.navigable]: { key: CorePolygonKey.navigable, polygons: [] },
-    },
+    polygon: createPolygonLookup(),
     cameraPosition: [...initCameraPosArray],
   };
 }

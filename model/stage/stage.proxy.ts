@@ -1,5 +1,5 @@
 import useStage from "store/stage.store";
-import { BrushMeta, StageMeta, StageWalls } from "./stage.model";
+import { BrushMeta, StageMeta, StageOpts, StageWalls } from "./stage.model";
 
 export interface ExtendedBrush extends BrushMeta {
   paint: () => void;
@@ -11,7 +11,12 @@ export interface ExtendedBrush extends BrushMeta {
   undoRedo: () => void;
 }
 
-export type TransformKey = 'mirror(x)' | 'mirror(y)' | 'rotate(90)' | 'rotate(-90)';
+export type TransformKey = (
+  | 'mirror(x)'
+  | 'mirror(y)'
+  | 'rotate(90)'
+  | 'rotate(-90)'
+);
 
 export function createStageProxy(stageKey: string) {
   return new Proxy({} as StageMeta, {
@@ -46,6 +51,16 @@ export function createStageProxy(stageKey: string) {
           },
           set(_, key: string, value: any) {
             useStage.api.updateWalls(stageKey, { [key]: value });
+            return true;
+          },
+        });
+      } else if (key === 'opts') {
+        return new Proxy({} as StageOpts, {
+          get(_, key: keyof StageOpts) {
+            return useStage.api.getStage(stageKey).opts[key];
+          },
+          set(_, key: string, value: any) {
+            useStage.api.updateOpts(stageKey, { [key]: value });
             return true;
           },
         });

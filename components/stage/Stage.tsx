@@ -83,7 +83,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
         >
           <Grid />
           <Axes />
-          <Lights />
+          <Lights enabled={stage.opts.lights} />
 
           <CameraControls stage={stage} />
           {stage.internal.controls && (

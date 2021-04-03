@@ -5,18 +5,17 @@ import { StageMeta } from "model/stage/stage.model";
 
 const Walls: React.FC<Props> = ({ stage }) => {
 
-  const polygons = stage.walls.polygonKeys
-    .map(x => stage.polygon[x]).filter(Boolean);
-
-  const geometry = useMemo(() => geomService.polysToWalls(
-    polygons.flatMap(x => x.polygons),
-    stage.walls.height,
-  ), [polygons, stage.walls.height]);
+  const geometry = useMemo(() => {
+    const wallPolys = stage.walls.polygonKeys
+      .map(x => stage.polygon[x]).flatMap(x => x.polygons);
+    return geomService.polysToWalls(wallPolys, stage.walls.height);
+  }, [stage.polygon, stage.walls.height]);
 
   const innerGeom = useMemo(() => geometry.clone(), [geometry]);
 
   // When flat, force transparent so can see selections
-  const opacity = stage.walls.height === 0 ? 0.15 : stage.walls.opacity;
+  const opacity = stage.walls.height === 0
+    ? 0.15 : stage.walls.opacity;
 
   return (
     <group>

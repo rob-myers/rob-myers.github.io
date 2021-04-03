@@ -12,9 +12,7 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Can toggle lighting
-- `Navigable` draws inverse of polygon.navigable
-- Walls too close to light have truncated shadows?
+- Indicate that something is currently selected
 
 - Indicate brush position, for adding meshes
 - Import a textured crate from blender
@@ -26,6 +24,7 @@ Will split UI pipeline into two while awaiting:
 
 - Can launch scripts e.g. UI pipeline(s)
 - A `Terminal` can auto launch scripts
+- Walls too close to light have truncated shadows?
 
 - Start writing post / decide on blog format
 
@@ -115,3 +114,5 @@ Blog layout related tasks
 ✅ Auto build recast navmesh
 ✅ Depict `Navigable`
 ✅ Add shadows
+✅ Can toggle lighting
+✅ `Navigable` draws inverse of polygon.navigable
