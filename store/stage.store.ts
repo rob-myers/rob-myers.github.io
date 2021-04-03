@@ -225,8 +225,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     undoRedoPolygons: (stageKey) => {
       const { polygon, internal: { prevPolygon } } = api.getStage(stageKey);
-      api.updateInternal(stageKey, { prevPolygon: polygon })
-      api.updateStage(stageKey, { polygon: prevPolygon })
+      api.updateInternal(stageKey, { prevPolygon: polygon });
+      api.updateStage(stageKey, { polygon: prevPolygon });
+      api.updateNavigable(stageKey);
+      api.persist(stageKey);
     },
 
     updateBrush: (stageKey, updates) => {

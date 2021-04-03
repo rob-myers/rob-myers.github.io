@@ -50,7 +50,7 @@ export const placeholderGroup = new THREE.Group;
 export const placeholderMesh = new THREE.Mesh;
 export const placeholderScene = new THREE.Scene;
 
-export function ndCoordsToGroundPlane(
+export function ndCoordsToGround(
   output: THREE.Vector3,
   ndCoords: VectorJson,
   camera: THREE.Camera,

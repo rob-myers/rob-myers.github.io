@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { PointerEvent } from "react-three-fiber";
 
 import * as Geom from "model/geom";
-import { ndCoordsToGroundPlane, vectPrecision } from "model/3d/three.model";
+import { ndCoordsToGround, vectPrecision } from "model/3d/three.model";
 import { getScaledBrushRect, StageMeta } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
 import useGeomStore from "store/geom.store";
@@ -41,7 +41,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (!locked) {
         if (key === 'pointermove' && active.current) {
-          ndCoordsToGroundPlane(current, ndCoords, controls.camera);
+          ndCoordsToGround(current, ndCoords, controls.camera);
           scale.set(current.x - initial.x, -(current.y - initial.y), 1);
           !everUsed && setEverUsed(true);
         } else if (key === 'pointerleave' || key === 'pointerup') {
@@ -67,7 +67,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
           setShowCursor(true);
         } else if (key === 'pointerdown') {
           active.current = true;
-          ndCoordsToGroundPlane(initial, ndCoords, controls.camera);
+          ndCoordsToGround(initial, ndCoords, controls.camera);
           current.copy(initial);
           position.set(initial.x, initial.y, 0);
           scale.set(0, 0, 0);
@@ -75,7 +75,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         }
       } else {
         if (key === 'pointermove' && active.current) {
-          ndCoordsToGroundPlane(position, ndCoords, controls.camera);
+          ndCoordsToGround(position, ndCoords, controls.camera);
           position.add(initial);
           selection.position.copy(position).sub(stage.brush.selectFrom);
         } else if (key === 'pointerup' || key === 'pointerleave') {
