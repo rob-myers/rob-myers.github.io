@@ -2,7 +2,7 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import * as Geom from 'model/geom';
-import { KeyedLookup, mapValues } from 'model/generic.model';
+import { deepClone, KeyedLookup, mapValues } from 'model/generic.model';
 import { geomService } from 'model/geom.service';
 import * as Stage from 'model/stage/stage.model';
 import { TransformKey } from 'model/stage/stage.proxy';
@@ -95,7 +95,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const instance: Stage.StageMeta = Stage.createStage(stageKey);
 
       // Get persisted data for rehydration
-      const { polygon, cameraPosition } = get().persist[stageKey] || (
+      const { polygon, cameraPosition, opts } = get().persist[stageKey] || (
         get().persist[stageKey] = Stage.createPersist(stageKey));
       // Rehydrate
       instance.internal.initCamPos.set(...cameraPosition);
@@ -103,6 +103,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         key: x.key,
         polygons: x.polygons.map(y => Geom.Polygon.from(y)),
       }));
+      instance.opts = deepClone(opts);
 
       set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
     },
@@ -154,8 +155,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { polygon, internal } = api.getStage(stageKey);
-
+      const { polygon, internal, opts } = api.getStage(stageKey);
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,
           polygon: mapValues(polygon, (x) => ({
@@ -163,6 +163,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             polygons: x.polygons.map(x => x.json),
           })),
           cameraPosition: vectorToTriple(internal.controls?.camera.position??Stage.initCameraPos),
+          opts: deepClone(opts),
         }, persist),
       }));
     },
@@ -279,7 +280,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 4,
+  version: 5,
   blacklist: ['api', 'stage'],
   onRehydrateStorage: (_) =>  {
     return () => {

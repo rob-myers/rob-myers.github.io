@@ -62,11 +62,7 @@ export function createStage(stageKey: string): StageMeta {
       initCamPos: initCameraPos.clone(),
       // ... other stuff attached by components
     },
-    opts: {
-      lights: true,
-      panZoom: true,
-      background: 'white',
-    },
+    opts: createStageOpts(),
 
     brush: createDefaultBrushMeta(),
     polygon: createPolygonLookup(),
@@ -78,10 +74,19 @@ export function createStage(stageKey: string): StageMeta {
   };
 }
 
+function createStageOpts(): StageOpts {
+  return {
+    lights: true,
+    panZoom: true,
+    background: 'white',
+  };
+}
+
 export interface PersistedStage {
   key: string;
   polygon: KeyedLookup<NamedPolygonsJson>;
   cameraPosition: [number, number, number];
+  opts: StageOpts;
 }
 
 export function createPersist(stageKey: string): PersistedStage {
@@ -89,6 +94,7 @@ export function createPersist(stageKey: string): PersistedStage {
     key: stageKey,
     polygon: createPolygonLookup(),
     cameraPosition: [...initCameraPosArray],
+    opts: createStageOpts(),
   };
 }
 

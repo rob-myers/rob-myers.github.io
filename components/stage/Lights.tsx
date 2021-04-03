@@ -3,14 +3,14 @@ const Lights: React.FC<Props> = ({ enabled }) => {
     <group name="lights">
       <ambientLight
         color="#ffe"
-        intensity={enabled ? 0.04 : 1}
+        intensity={enabled ? 0.03 : 1}
       />
       {enabled && (
         <pointLight
           position={[0, 0, 3]}
-          intensity={4}
+          intensity={6}
           decay={2}
-          distance={3.5}
+          distance={3.4}
           castShadow
           // color="#aab"
           // power={8}
