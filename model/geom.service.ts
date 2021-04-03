@@ -246,6 +246,12 @@ class GeomService {
       ).map(coords => Geom.Polygon.from(coords).cleanFinalReps());
   }
 
+  /** Cut polygons from rect, or their collective rect bounds. */
+  invert(polygons: Geom.Polygon[], rect?: Geom.Rect) {
+    const bounds = rect || Geom.Rect.union(polygons.map(x => x.rect));
+    return this.cutOut(polygons, [Geom.Polygon.fromRect(bounds)]);
+  }
+
   isVectorJson(p: any): p is Geom.VectorJson {
     return p && (typeof p.x === 'number') && (typeof p.y === 'number');
   }
