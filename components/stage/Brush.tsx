@@ -7,11 +7,13 @@ import * as Geom from "model/geom";
 import { ndCoordsToGroundPlane, vectPrecision } from "model/3d/three.model";
 import { getScaledBrushRect, StageMeta } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
+import useGeomStore from "store/geom.store";
 
 const Brush: React.FC<Props> = ({ wire, stage }) => {
   const selectorRef = useRef<THREE.Mesh>(null);
   const selectorScaledRef = useRef<THREE.Mesh>(null);
   const selectionRef = useRef<THREE.Mesh>(null);
+  const originTexture = useGeomStore(({ texture }) => texture.crosshairIcon);
 
   /** Ground position of pointer */
   const current = useRef(new THREE.Vector3).current;
@@ -21,7 +23,8 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const active = useRef(false);
   // Has the brush ever been used?
   const [everUsed, setEverUsed] = useState(false);
-    
+  const [showCursor, setShowCursor] = useState(true);
+
   const locked = stage.brush.locked;
 
   useEffect(() => {
@@ -60,12 +63,14 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
             stage.brush.position.copy(position);
             stage.brush.scale.set(0, 0);
           }
+          setShowCursor(true);
         } else if (key === 'pointerdown') {
           active.current = true;
           ndCoordsToGroundPlane(initial, ndCoords, controls.camera);
           current.copy(initial);
           position.set(initial.x, initial.y, 0);
           scale.set(0, 0, 0);
+          setShowCursor(false);
         }
       } else {
         if (key === 'pointermove' && active.current) {
@@ -89,6 +94,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     if (locked && e.type === 'pointerdown') {
       active.current = true; // Store selector offset:
       initial.set(stage.brush.position.x - e.point.x, stage.brush.position.y - e.point.y, 0);
+      setShowCursor(false);
     }
   }, [locked]);
 
@@ -106,7 +112,15 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   return (
     <>
       <group ref={selectorRef}>
-        <mesh geometry={selectorBorderGeom} visible={locked}>
+        {originTexture && <mesh visible={showCursor}>
+          <planeGeometry args={[0.05, 0.05]} />
+          <meshBasicMaterial map={originTexture} transparent />
+        </mesh>}
+        <mesh
+          geometry={selectorBorderGeom}
+          visible={locked}
+          position={[0, 0, 0.01]}
+        >
           <meshBasicMaterial color="#fff" transparent />
         </mesh>
         <mesh
@@ -115,11 +129,19 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
           geometry={selectorRectGeom}
           onPointerDown={onMeshPointerDown}
         >
-          <meshBasicMaterial color="#00f" transparent opacity={locked ? 0.1 : 0.2} />
+          <meshBasicMaterial
+            color="#00f"
+            transparent
+            opacity={locked ? 0.1 : 0.2}
+          />
         </mesh>
       </group>
       <mesh ref={selectionRef} geometry={selectionGeom}>
-        <meshBasicMaterial color="#00f" transparent opacity={0.2} />
+        <meshBasicMaterial
+          color="#00f"
+          transparent
+          opacity={0.2}
+        />
       </mesh>
     </>
   );

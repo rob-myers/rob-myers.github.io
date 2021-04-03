@@ -13,10 +13,6 @@ export default function({}: WebpackCtxt): webpack.Configuration {
             removingTagAttrs: ['viewBox'],
           }
         },
-        {
-          test: /\.(png|jpeg)$/,
-          loader: 'url-loader?limit=8192',
-        },
       ],
     }
   };

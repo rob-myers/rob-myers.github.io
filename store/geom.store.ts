@@ -8,7 +8,7 @@ import * as Geom from 'model/geom';
 import { recastService } from 'model/3d/recast.service';
 import { initStageBounds } from 'model/stage/stage.model';
 
-import redCrossPng from '3d/img/red-cross.png';
+import crosshairIcon from '../3d/img/crosshair-x.png';
 import { TextureLoader } from 'three';
 
 export type State = {
@@ -60,11 +60,8 @@ const useStore = create<State>(devtools((set, get) => ({
       const textureLoader = new TextureLoader;
       set(_ => ({
         texture: {
-          redCross: textureLoader.load(redCrossPng),
+          crosshairIcon: textureLoader.load(crosshairIcon),
         },
-      }));
-
-      set(_ => ({
         loaded: true,
         loading: false,
       }));

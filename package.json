@@ -21,6 +21,7 @@
     "lodash.clonedeep": "^4.5.0",
     "mvdan-sh": "^0.5.0",
     "next": "10.0.7",
+    "next-images": "^1.7.0",
     "poly2tri": "^1.5.0",
     "polygon-clipping": "^0.15.2",
     "react": "17.0.1",

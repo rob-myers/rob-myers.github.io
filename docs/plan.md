@@ -11,8 +11,6 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Indicate brush position, for adding meshes
-
 - Import a textured crate from blender
 - Can place crates
 - Work on a humanoid in blender
@@ -129,3 +127,4 @@ action.timeScale = 20;
 ✅ `Navigable` draws inverse of polygon.navigable
 ✅ Can make dark via `set stage/opts/background black`
 ✅ Emphasise something is currently selected via white border
+✅ Brush has origin indicator e.g. for placing meshes
