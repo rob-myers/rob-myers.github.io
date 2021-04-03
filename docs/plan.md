@@ -6,25 +6,24 @@ We plan to create a website concerned with Game AI. We will provide an editor so
 
 The editor consists of one or more `Terminal`s and a `Stage`.
 
-
 Will split UI pipeline into two while awaiting:
 > https://github.com/mvdan/sh/issues/692
 
 ### TODO
 
-- Indicate that something is currently selected
+- Bug combining selection flip with rotate 
 
 - Indicate brush position, for adding meshes
 - Import a textured crate from blender
 - Can place crates
 - Work on a humanoid in blender
 - Ensure recast navmesh is working
-- Dark mode with stage background black
 - Canvas filter provides dynamic player light
 
 - Can launch scripts e.g. UI pipeline(s)
 - A `Terminal` can auto launch scripts
 - Walls too close to light have truncated shadows?
+- Can add lights
 
 - Start writing post / decide on blog format
 
@@ -61,6 +60,19 @@ Blog layout related tasks
 - Implement comments using build and client-side calls:
   > https://eiriksm.dev/walkthrough-github-comments
 - Must navigate to GitHub to actually post comments
+
+### Animation
+
+```tsx
+const mixer = useRef<THREE.AnimationMixer>();
+useFrame(((_, delta) => mixer.current?.update(delta)));
+
+const clip = animService.fadeInOutClip();
+mixer.current = new THREE.AnimationMixer(selectorRef.current!);
+const action = mixer.current.clipAction(clip);
+action.play();
+action.timeScale = 20;
+```
 
 ### DONE
 
@@ -116,3 +128,5 @@ Blog layout related tasks
 ✅ Add shadows
 ✅ Can toggle lighting
 ✅ `Navigable` draws inverse of polygon.navigable
+✅ Can make dark via `set stage/opts/background black`
+✅ Emphasise something is currently selected via white border

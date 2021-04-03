@@ -64,6 +64,15 @@ export class Rect {
     );
   }
 
+  /** Expects "well-formed" inset */
+  public inset(nonNegAmount: number): Rect {
+    this.x += nonNegAmount;
+    this.y += nonNegAmount;
+    this.width -= 2 * nonNegAmount;
+    this.height -= 2 * nonNegAmount;
+    return this;
+  }
+
   /**
    * Does this filled rectangle intersect with `other` filled rectangle?
    * We exclude corner-point intersections.

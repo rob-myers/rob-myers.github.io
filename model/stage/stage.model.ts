@@ -31,6 +31,7 @@ export type StageMeta = {
   bounds: Geom.Rect;
 };
 
+/** Keep this flat so stage.proxy handles updates */
 export interface StageOpts {
   /** Can we move/zoom the pan-zoom camera? */
   panZoom: boolean;
@@ -174,7 +175,12 @@ export interface StageWalls {
 
 export function getGlobalBrushRect(brush: BrushMeta): Geom.Polygon {
   return Geom.Polygon.fromRect(brush.rect)
-    .scaleBy(brush.scale).add(brush.position);
+    .scaleBy(brush.scale)
+    .add(brush.position);
+}
+
+export function getScaledBrushRect(brush: BrushMeta): Geom.Polygon {
+  return Geom.Polygon.fromRect(brush.rect).scaleBy(brush.scale);
 }
 
 export interface SelectedPolygons {
