@@ -3,30 +3,30 @@ import { devtools } from 'zustand/middleware'
 import * as THREE from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
-import { KeyedLookup, lookupFromValues } from 'model/generic.model';
-import * as threeUtil from 'model/3d/three.model';
 import { geomService, outsetBounds, outsetWalls } from 'model/geom.service';
 import * as Geom from 'model/geom';
 import { recastService } from 'model/3d/recast.service';
 import { initStageBounds } from 'model/stage/stage.model';
 
+import redCrossPng from '3d/img/red-cross.png';
+import { TextureLoader } from 'three';
+
 export type State = {
-  loadedGltf: boolean;
-  actors: KeyedLookup<ActorMeshMeta>;
+  loaded: boolean;
+  loading: boolean;
+  texture: Record<string, THREE.Texture>;
+  // actors: KeyedLookup<ActorMeshMeta>;
 
   readonly api: {
     /** Load assets from gltf (exported from Blender). */
     load: () => Promise<void>;
-    extractMeshes: (gltf: GLTF) => {
-      // actors: THREE.Mesh[];
-    };
-    computeActorMeta: (inner: THREE.Mesh) => ActorMeshMeta;
-    createActor: (name: string) => {
-      actorName: string;
-      geometry: THREE.BufferGeometry;
-      material: THREE.Material;
-      children: THREE.Object3D[];
-    };
+    extractMeshes: (gltf: GLTF) => {};
+    // createActor: (name: string) => {
+    //   actorName: string;
+    //   geometry: THREE.BufferGeometry;
+    //   material: THREE.Material;
+    //   children: THREE.Object3D[];
+    // };
     createNavMesh: (navKey: string, polys: Geom.Polygon[]) => {
       bounds: Geom.Rect;
       navPolys: Geom.Polygon[];
@@ -35,77 +35,46 @@ export type State = {
   };
 }
 
-export interface ActorMeshMeta {
-  /** Mesh name */
-  key: string;
-  mesh: THREE.Mesh;
-}
-
 const useStore = create<State>(devtools((set, get) => ({
   actors: {},
-  loadedGltf: false,
-  navWorker: null,
+  loaded: false,
+  loading: false,
+  texture: {},
+
   api: {
 
     load: async () => {
-      if (get().loadedGltf) {
+      if (get().loaded || get().loading) {
         return;
       }
+      set(_ => ({ loading: true }));
 
       const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader');
       const { DRACOLoader } = await import('three/examples/jsm/loaders/DRACOLoader');
-
       const loader = new GLTFLoader;
       loader.setDRACOLoader((new DRACOLoader).setDecoderPath('/draco/'));
 
-      loader.load('/root.gltf', (gltf) => {
-        const { } = api.extractMeshes(gltf);
-        // const actorMetas = actors.map(actor => api.computeActorMeta(actor));
-        // // console.log({ actors, rooms, inners });
+      const gltf = await loader.loadAsync('/root.gltf');
+      const { } = api.extractMeshes(gltf);
 
-        set(_ => ({
-          loadedGltf: true,
-          // actors: lookupFromValues(actorMetas),
-        }));
-      });
+      const textureLoader = new TextureLoader;
+      set(_ => ({
+        texture: {
+          redCross: textureLoader.load(redCrossPng),
+        },
+      }));
+
+      set(_ => ({
+        loaded: true,
+        loading: false,
+      }));
     },
 
     extractMeshes: (gltf: GLTF) => {
-      // const actors = [] as THREE.Mesh[];
       gltf.scene.traverse((node) => {
         console.log('gltf: saw node:', node);
-        // switch (node.name) {
-        //   case 'actors': {
-        //     actors.push(...node.children.filter(threeUtil.isMeshNode));
-        //     actors.forEach(actor => {
-        //       threeUtil.transformImportedMesh(actor);
-        //       actor.geometry.translate(0, 0, 0.2); // Move actor up
-        //       actor.children.filter(threeUtil.isMeshNode)
-        //         .forEach(child => threeUtil.transformImportedMesh(child));
-        //     });
-        //     break;
-        //   }
-        // }
       });
       return {};
-    },
-
-    createActor: (name) => {
-      // TODO remove hard-coding
-      const { geometry, material, children } = get().actors['default-bot'].mesh;
-      return {
-        actorName: name,
-        geometry: geometry as THREE.BufferGeometry,
-        material: material as THREE.Material, // Could be array?
-        children,
-      };
-    },
-
-    computeActorMeta: (mesh) => {
-      return {
-        key: mesh.name,
-        mesh,
-      };
     },
 
     createNavMesh: (navKey, polys) => {
