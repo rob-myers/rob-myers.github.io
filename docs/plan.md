@@ -11,9 +11,8 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Bug combining selection flip with rotate 
-
 - Indicate brush position, for adding meshes
+
 - Import a textured crate from blender
 - Can place crates
 - Work on a humanoid in blender

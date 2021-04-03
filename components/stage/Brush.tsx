@@ -100,7 +100,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const selectorBorderGeom = useMemo(() => {
     const rectPoly = getScaledBrushRect(stage.brush);
     return geomService.polysToGeometry(
-      geomService.cutOut(rectPoly.createInset(0.01), [rectPoly]));
+      geomService.cutOut([rectPoly], rectPoly.createOutset(0.01)));
   }, [stage.brush.selection]);
 
   return (
@@ -119,7 +119,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         </mesh>
       </group>
       <mesh ref={selectionRef} geometry={selectionGeom}>
-        <meshBasicMaterial color="#00f" transparent opacity={0.3} />
+        <meshBasicMaterial color="#00f" transparent opacity={0.2} />
       </mesh>
     </>
   );

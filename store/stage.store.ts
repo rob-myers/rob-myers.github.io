@@ -191,10 +191,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     transformBrush: (stageKey, key) => {
-      const { selection } = api.getStage(stageKey).brush;
-      const rect = Geom.Rect.union(selection.flatMap(x => x.polygons).map(x => x.rect));
-      let mutator: (p: Geom.Vector) => void;
+      const { brush } = api.getStage(stageKey);
+      const { rect } = Stage.getGlobalBrushRect(brush);
+      // Ensure center is pairwise a multiple of 0.1
+      (rect.width * 10) % 2 && (rect.x -= 0.05);
+      (rect.height * 10) % 2 && (rect.y += 0.05);
       const center = rect.center;
+
+      let mutator: (p: Geom.Vector) => void;
       switch (key) {
         case 'mirror(x)':
           mutator = (p) => p.y = (2 * center.y) - p.y; break;
@@ -207,8 +211,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         default:
           return;
       }
+
+      const { selection } = api.getStage(stageKey).brush;
       selection.forEach(x => x.polygons.map(y => {
-        y.mutatePoints(mutator).precision(1);
+        y.mutatePoints(mutator);
         (key === 'mirror(x)' || key === 'mirror(y)') && y.reverse();
       }));
       api.updateBrush(stageKey, { selection: selection.slice() });

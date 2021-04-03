@@ -175,8 +175,7 @@ export interface StageWalls {
 
 export function getGlobalBrushRect(brush: BrushMeta): Geom.Polygon {
   return Geom.Polygon.fromRect(brush.rect)
-    .scaleBy(brush.scale)
-    .add(brush.position);
+    .scaleBy(brush.scale).add(brush.position);
 }
 
 export function getScaledBrushRect(brush: BrushMeta): Geom.Polygon {
