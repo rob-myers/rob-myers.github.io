@@ -1,8 +1,9 @@
 import Stage from 'components/stage/Stage'
 import Terminal from 'components/sh/Terminal'
 import Head from 'next/head'
-import styles from 'styles/Home.module.css'
 import { CoreVar } from 'model/sh/var.model'
+import { profiles } from 'model/sh/code-library'
+import styles from 'styles/Home.module.css'
 
 export default function Home() {
   return (
@@ -30,10 +31,10 @@ export default function Home() {
         <section className={styles.termStage}>
           <Stage stageKey="test" />
           <Terminal
-            sessionKey="test"
+            sessionKey="demo"
             env={{
               [CoreVar.STAGE_KEY]: "test",
-              [CoreVar.PROFILE]: "echo foo; echo bar",
+              [CoreVar.PROFILE]: profiles.first,
             }}
           />
         </section>

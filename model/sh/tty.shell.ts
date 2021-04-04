@@ -2,6 +2,7 @@ import type * as Sh from './parse/parse.model';
 import { testNever } from 'model/generic.model';
 import { Device, ShellIo, SigEnum } from './io/io.model';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
+import { CoreVar } from './var.model';
 
 import useSession, { ProcessMeta, ProcessStatus } from 'store/session.store';
 import { ParseService } from './parse/parse.service';
@@ -10,7 +11,7 @@ import { wrapInFile } from './parse/parse.util';
 import { semanticsService } from './semantics.service';
 import { TtyXterm } from './tty.xterm';
 import { ProcessError } from './sh.util';
-import { preloadedFunctions, preloadedVariables } from './functions';
+import { preloadedFunctions, preloadedVariables } from './code-library';
 
 export class TtyShell implements Device {
 
@@ -33,7 +34,7 @@ export class TtyShell implements Device {
     this.key = `/dev/tty-${sessionKey}`;
   }
   
-  initialise(xterm: TtyXterm) {
+  async initialise(xterm: TtyXterm) {
     this.xterm = xterm;
     this.io.read(this.onMessage.bind(this));
 
@@ -45,13 +46,14 @@ export class TtyShell implements Device {
       src: '',
     });
     this.process = useSession.api.getSession(this.sessionKey).process[0];
-    this.prompt('$');
 
-    if (parseService.parse!) {
-      this.addPreloadedFuncsVars();
-    } else {
-      initializers.push(() => this.addPreloadedFuncsVars());
+    if (!parseService.parse) {
+      await new Promise<void>(resolve => initializers.push(resolve));
     }
+
+    this.preloadFuncsVars();
+    await this.runProfile();
+    this.prompt('$');
   }
 
   private onMessage(msg: MessageFromXterm) {
@@ -151,17 +153,7 @@ export class TtyShell implements Device {
 
           // Run command
           this.process.src = singleLineSrc;
-          Object.assign<Sh.BaseMeta, Sh.BaseMeta>(result.parsed.meta, {
-            sessionKey: this.sessionKey,
-            pid: 0,
-            ppid: 0,
-            pgid: 0,
-            fd: {
-              0: this.key,
-              1: this.key,
-              2: this.key,
-            },
-          });
+          this.provideContextToParsed(result.parsed);
           await this.spawn(result.parsed, { leading: true });
 
           this.prompt('$');
@@ -186,7 +178,15 @@ export class TtyShell implements Device {
     }
   }
 
-  private addPreloadedFuncsVars() {
+  /** `prompt` must not contain non-readable characters e.g. ansi color codes */
+  private prompt(prompt: string) {
+    this.io.write({
+      key: 'send-xterm-prompt',
+      prompt: `${prompt} `,
+    });    
+  }
+
+  private preloadFuncsVars() {
     for (const [funcName, funcBody] of Object.entries(preloadedFunctions)) {
       const parsed = parseService.parse(`${funcName} () ${funcBody.trim()}`);
       const parsedBody = (parsed.Stmts[0].Cmd as Sh.FuncDecl).Body;
@@ -198,12 +198,21 @@ export class TtyShell implements Device {
     }
   }
 
-  /** `prompt` must not contain non-readable characters e.g. ansi color codes */
-  private prompt(prompt: string) {
-    this.io.write({
-      key: 'send-xterm-prompt',
-      prompt: `${prompt} `,
-    });    
+  private async runProfile() {
+    const profile = useSession.api.getVar(this.sessionKey, CoreVar.PROFILE) || '';
+    const parsed = parseService.parse(profile);
+    this.provideContextToParsed(parsed);
+    await this.spawn(parsed, { leading: true });
+  }
+
+  private provideContextToParsed(parsed: Sh.FileWithMeta) {
+    Object.assign<Sh.BaseMeta, Sh.BaseMeta>(parsed.meta, {
+      sessionKey: this.sessionKey,
+      pid: 0,
+      ppid: 0,
+      pgid: 0,
+      fd: { 0: this.key, 1: this.key, 2: this.key },
+    });
   }
 
   private getHistoryLine(lineIndex: number) {
@@ -247,7 +256,8 @@ export class TtyShell implements Device {
 }
 
 // Lazyload saves ~220kb initially
-let parseService = { tryParseBuffer: (_) => ({ key: 'failed', error: 'not ready' })} as ParseService;
+let parseService = { tryParseBuffer:
+  (_) => ({ key: 'failed', error: 'not ready' })} as ParseService;
 const initializers = [] as (() => void)[]; 
 import('./parse/parse.service').then(x => {
   parseService = x.parseService;

@@ -12,13 +12,10 @@ Will split UI pipeline into two while awaiting:
 ### TODO
 
 Blog layout related tasks
-- `Terminal` and session has `sessionKey` and `stageKey`.
 - Can pause/resume `Stage` with grey preview, un/mounting `Stage`
 - On pause/resume `Stage` we pause/resume all running processes
 - Auto pause on scroll out of view
 - Auto pause on start/resume another `Stage`
-- Can launch scripts e.g. UI pipeline(s)
-- A `Terminal` can auto launch scripts
 
 - Import a textured crate from blender
 - Can place crates
@@ -26,7 +23,6 @@ Blog layout related tasks
 - Ensure recast navmesh is working
 - Walls too close to light have truncated shadows?
 - Can add lights
-
 
 - Start writing post / decide on blog format
 
@@ -126,3 +122,6 @@ action.timeScale = 20;
 ✅ Can make dark via `set stage/opts/background black`
 ✅ Emphasise something is currently selected via white border
 ✅ Brush has origin indicator e.g. for placing meshes
+✅ `Terminal` has env prop with `STAGE_KEY` and `PROFILE`
+✅ `Terminal` linked to stage via `STAGE_KEY`
+✅ `Terminal` initially runs `PROFILE`

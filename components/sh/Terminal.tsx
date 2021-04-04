@@ -34,8 +34,8 @@ const Terminal: React.FC<Props> = ({ sessionKey, env }) => {
               session.ttyIo,
             );
             ttyXterm.initialise();
-            session.ttyShell.initialise(ttyXterm);
             fitAddonRef.current = fitAddon;
+            session.ttyShell.initialise(ttyXterm);
           }}
           options={{
             allowProposedApi: true, // Needed for WebLinksAddon
