@@ -2,6 +2,7 @@ import Stage from 'components/stage/Stage'
 import Terminal from 'components/sh/Terminal'
 import Head from 'next/head'
 import styles from 'styles/Home.module.css'
+import { STAGE_KEY, PROFILE } from 'model/sh/var.model'
 
 export default function Home() {
   return (
@@ -31,8 +32,8 @@ export default function Home() {
           <Terminal
             sessionKey="test"
             env={{
-              STAGE_KEY: "test",
-              PROFILE: "echo foo; echo bar",
+              [STAGE_KEY]: "test",
+              [PROFILE]: "echo foo; echo bar",
             }}
           />
         </section>

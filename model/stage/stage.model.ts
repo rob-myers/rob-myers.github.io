@@ -126,7 +126,7 @@ export const initStageBounds = new Geom.Rect(-5, -5, 10, 10);
 
 export interface BrushMeta {
   /** The untransformed brush rect */
-  rect: Geom.Rect;
+  baseRect: Geom.Rect;
   /** Mutated by Brush */
   position: Geom.Vector;
   /** Mutated by Brush */
@@ -143,7 +143,7 @@ export interface BrushMeta {
 
 export function createDefaultBrushMeta(): BrushMeta {
   return {
-    rect: new Geom.Rect(0, -1, 1, 1), // ?
+    baseRect: new Geom.Rect(0, -1, 1, 1), // ?
     position: new Geom.Vector,
     scale: new Geom.Vector(1, 1),
     rectToolPolygonKey: 'default',
@@ -174,12 +174,12 @@ export interface StageWalls {
 }
 
 export function getGlobalBrushRect(brush: BrushMeta): Geom.Polygon {
-  return Geom.Polygon.fromRect(brush.rect)
+  return Geom.Polygon.fromRect(brush.baseRect)
     .scaleBy(brush.scale).add(brush.position);
 }
 
 export function getScaledBrushRect(brush: BrushMeta): Geom.Polygon {
-  return Geom.Polygon.fromRect(brush.rect).scaleBy(brush.scale);
+  return Geom.Polygon.fromRect(brush.baseRect).scaleBy(brush.scale);
 }
 
 export interface SelectedPolygons {
