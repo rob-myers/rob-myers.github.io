@@ -9,7 +9,6 @@ import useSessionStore from 'store/session.store';
 import XTermComponent from './XTerm';
 
 const Terminal: React.FC<Props> = ({ sessionKey }) => {
-  const { ref, width = 1, height = 1 } = useResizeObserver<HTMLElement>();
 
   const session = useSessionStore(({ session }) =>
     sessionKey in session ? session[sessionKey] : null
@@ -20,6 +19,7 @@ const Terminal: React.FC<Props> = ({ sessionKey }) => {
     return () => useSessionStore.api.removeSession(sessionKey);
   }, [sessionKey]);
 
+  const { ref, width = 1, height = 1 } = useResizeObserver<HTMLElement>();
   const fitAddonRef = useRef<FitAddon>();
   useEffect(() => fitAddonRef.current?.fit(), [width, height]);
 
