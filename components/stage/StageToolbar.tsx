@@ -6,6 +6,12 @@ import useStage from "store/stage.store";
 
 const StageToolbar: React.FC<Props> = ({ stage }) => {
 
+  const toggleRunning = useCallback(() => {
+    if (stage) {
+      // TODO
+    }
+  },[stage]);
+
   const toggleCam = useCallback(() => stage &&
     useStage.api.updateOpts(stage.key, ({ panZoom }) =>
       ({ panZoom: !panZoom })
@@ -14,9 +20,12 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
   return (
     <Toolbar>
       {stage && <>
-        <section>
-          @<strong>{stage.key}</strong>
-        </section>
+        <LeftToolbar>
+          <span>@<strong>{stage.key}</strong></span>
+          <Button enabled onClick={toggleRunning}>
+            running
+          </Button>
+        </LeftToolbar>
         <Button enabled={stage.opts.panZoom} onClick={toggleCam}>
           panzoom
         </Button>
@@ -30,15 +39,22 @@ interface Props {
 }
 
 const Toolbar = styled.section`
-  user-select: none;
-  height: 28px;
-  font-size: 16px;
-  border-bottom: 1px solid #ddd;
   display: grid;
-  padding: 4px;
   grid-template-columns: auto 70px;
   gap: 8px;
+
+  height: 28px;
+  user-select: none;
+  font-size: 16px;
+  border-bottom: 1px solid #ddd;
+  padding: 4px;
   background-color: white;
+`;
+
+const LeftToolbar = styled.section`
+  display: grid;
+  grid-template-columns: 42px auto;
+  gap: 8px;
 `;
 
 const Button = styled.span<{ enabled: boolean }>`

@@ -71,7 +71,7 @@ export class TtyXterm {
     this.xterm.onData(this.handleXtermInput.bind(this));
     this.io.handleWriters(this.onMessage.bind(this));
 
-    this.xterm.writeln(`${ansiWhite}Connected to session ${ansiReset}${this.sessionKey}`);
+    this.xterm.writeln(`${ansiWhite}Connected to session ${ansiBrown}${this.sessionKey}${ansiReset}`);
     this.clearInput();
     this.cursorRow = 2;
   }
