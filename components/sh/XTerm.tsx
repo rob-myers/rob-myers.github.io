@@ -2,7 +2,7 @@ import { useRef, useEffect } from 'react';
 // https://github.com/farfromrefug/react-xterm/blob/master/src/react-xterm.tsx
 import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import styles from 'styles/Terminal.module.css';
+import styled from '@emotion/styled';
 
 const XTermComponent: React.FC<Props> = ({
   options,
@@ -20,14 +20,13 @@ const XTermComponent: React.FC<Props> = ({
     xterm.focus();
 
     const onResize = () => {
-      try {// Saw Uncaught Error: This API only accepts integers
-        fitAddon.fit();
-      } catch (e) {}
+      // Saw Uncaught Error: This API only accepts integers
+      try { fitAddon.fit(); } catch (e) {}
     };
     window.addEventListener('resize', onResize);
     onResize();
 
-    onMount(xterm);
+    onMount(xterm, fitAddon);
 
     return () => {
       window.removeEventListener('resize', onResize);
@@ -36,18 +35,26 @@ const XTermComponent: React.FC<Props> = ({
   }, []);
 
   return (
-    <div
+    <XTermContainer
       ref={containerRef}
-      className={styles.xtermContainer}
       onKeyDown={stopKeysPropagating}
     />
   );
 };
 
 interface Props {
-  onMount: (xterm: Terminal) => void;
+  onMount: (xterm: Terminal, fitAddon: FitAddon) => void;
   options?: ITerminalOptions;
 }
+
+const XTermContainer = styled.section<{}>`
+  height: inherit;
+
+  > div {
+    width: 100%;
+    padding: 4px;
+  }
+`;
 
 function stopKeysPropagating(e: React.KeyboardEvent) {
   e.stopPropagation();

@@ -1,26 +1,32 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
+import styled from '@emotion/styled';
+import { FitAddon } from 'xterm-addon-fit';
 
 import { TtyXterm } from 'model/sh/tty.xterm';
 import useSessionStore from 'store/session.store';
 import XTermComponent from './XTerm';
-import styles from 'styles/Terminal.module.css';
 
-const Terminal: React.FC<Props> = ({ sessionKey }) => {
+const Terminal: React.FC<Props> = ({ sessionKey, width, height }) => {
 
   const session = useSessionStore(({ session }) =>
-    sessionKey in session ? session[sessionKey] : null);
+    sessionKey in session ? session[sessionKey] : null
+  );
 
   useEffect(() => {
     useSessionStore.api.createSession(sessionKey);
     return () => useSessionStore.api.removeSession(sessionKey);
   }, [sessionKey]);
 
+  const fitAddonRef = useRef<FitAddon>();
+  useEffect(() => fitAddonRef.current?.fit()
+    , [width, height]); // TODO compute from hook?
+
   return (
-    <section className={styles.root}>
+    <Root style={{ width, height }}>
       {session ? (
         <XTerm
-          onMount={(xterm) => {
+          onMount={(xterm, fitAddon) => {
             const ttyXterm = new TtyXterm(
               xterm, // xterm.js instance
               session.key,
@@ -28,6 +34,7 @@ const Terminal: React.FC<Props> = ({ sessionKey }) => {
             );
             ttyXterm.initialise();
             session.ttyShell.initialise(ttyXterm);
+            fitAddonRef.current = fitAddon;
           }}
           options={{
             allowProposedApi: true, // Needed for WebLinksAddon
@@ -44,15 +51,22 @@ const Terminal: React.FC<Props> = ({ sessionKey }) => {
           }}
         />
       ) : null}
-    </section>
+    </Root>
   )
 };
 
 interface Props {
   sessionKey: string;
+  width: number;
+  height: number;
 }
 
+const Root = styled.section<{}>`
+  background: black;
+`;
+
 const XTerm = dynamic(() =>
-  import('components/sh/XTerm'), { ssr: false }) as typeof XTermComponent;
+  import('components/sh/XTerm'), { ssr: false },
+) as typeof XTermComponent;
 
 export default Terminal;
