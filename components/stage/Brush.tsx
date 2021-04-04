@@ -89,7 +89,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
       }
     });
     return () => sub.unsubscribe();
-  }, [everUsed, locked]);
+  }, [everUsed, locked, stage.internal]);
 
   const onMeshPointerDown = useCallback((e: PointerEvent) => {
     if (locked && e.type === 'pointerdown') {
@@ -97,7 +97,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
       initial.set(stage.brush.position.x - e.point.x, stage.brush.position.y - e.point.y, 0);
       setShowCursor(false);
     }
-  }, [locked]);
+  }, [locked, stage.internal]);
 
   const selectionGeom = useMemo(() => {
     const polygons = stage.brush.selection.flatMap(x => x.polygons);
@@ -106,8 +106,9 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
   const selectorBorderGeom = useMemo(() => {
     const rectPoly = getScaledBrushRect(stage.brush);
-    return geomService.polysToGeometry(
-      geomService.cutOut([rectPoly], rectPoly.createOutset(0.01)));
+    return geomService.polysToGeometry(rectPoly.rect.area
+      ? geomService.cutOut([rectPoly], rectPoly.createOutset(0.01)) : []
+    );
   }, [stage.brush.selection]);
 
   return (

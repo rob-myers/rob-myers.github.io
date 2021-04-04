@@ -29,6 +29,7 @@ export type State = {
     ensurePolygon: (stageKey: string, polygonKey: string) => void;
     ensureStage: (stageKey: string) => void;
     getPolygon: (stageKey: string, polygonKey: string) => Stage.NamedPolygons;
+    getPersist: (stageKey: string) => Stage.PersistedStage;
     getStage: (stageKey: string) => Stage.StageMeta;
     modifyPolygon: (
       stageKey: string,
@@ -43,9 +44,9 @@ export type State = {
     transformBrush: (stageKey: string, transformKey: TransformKey) => void;
     undoRedoPolygons: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
-    updateInternal: (stageKey: string, updates: Updates<Stage.StageMeta['internal']>) => void;
+    updateInternal: (stageKey: string, updates: Updates<Stage.StageInternal>) => void;
     updateNavigable: (stageKey: string) => void;
-    updateOpts: (stageKey: string, updates: Updates<Stage.StageMeta['opts']>) => void;
+    updateOpts: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
     updatePolygon: (
       stageKey: string,
       polygonKey: string,
@@ -97,10 +98,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const instance: Stage.StageMeta = Stage.createStage(stageKey);
 
       // Get persisted data for rehydration
-      const { polygon, cameraPosition, opts } = get().persist[stageKey] || (
-        get().persist[stageKey] = Stage.createPersist(stageKey));
+      const { polygon, opts } = api.getPersist(stageKey) || (
+        get().persist[stageKey] = Stage.createPersist(stageKey)
+      );
       // Rehydrate
-      instance.internal.initCamPos.set(...cameraPosition);
       instance.polygon = mapValues(polygon, (x) => ({
         key: x.key,
         polygons: x.polygons.map(y => Geom.Polygon.from(y)),
@@ -141,6 +142,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }
     },
 
+    getPersist: (stageKey) => {
+      return get().persist[stageKey];
+    },
+
     getPolygon: (stageKey, polyonKey) => {
       return get().stage[stageKey].polygon[polyonKey];
     },
@@ -164,15 +169,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     persist: (stageKey) => {
       const { polygon, internal, opts } = api.getStage(stageKey);
+
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,
           polygon: mapValues(polygon, (x) => ({
             key: x.key,
             polygons: x.polygons.map(x => x.json),
           })),
-          cameraPosition: vectorToTriple(
-            internal.controls?.camera.position??Stage.initCameraPos),
-          opts: deepClone(opts),
+          opts: { ...deepClone(opts),
+            initCameraPos: vectorToTriple(internal.controls?.camera.position??Stage.initCameraPos),
+          },
         }, persist),
       }));
     },

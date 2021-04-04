@@ -7,7 +7,6 @@ import { Canvas, CanvasContext } from "react-three-fiber";
 import { useBeforeunload } from "react-beforeunload";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
-import { StageMeta } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
@@ -27,31 +26,44 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
 
   const persistOnUnload = useCallback(() =>
     stage?.opts.autoPersist && useStage.api.persist(stageKey),
-  [stageKey, stage?.opts.autoPersist]);
+    [stage?.opts.autoPersist],
+  );
   useBeforeunload(persistOnUnload);
+
+  const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
+    // Most recent initial camera position is persisted one
+    const camera = ctxt.camera as PerspectiveCamera;
+    const { initCameraPos } = useStage.api.getPersist(stageKey).opts;
+    camera.position.set(...initCameraPos);
+
+    camera.setFocalLength(35);
+    ctxt.gl.shadowMap.enabled = true;
+    ctxt.gl.shadowMap.autoUpdate = false;
+    ctxt.gl.shadowMap.type = PCFSoftShadowMap;
+    ctxt.gl.shadowMap.needsUpdate = true;
+
+    stage.internal.scene = ctxt.scene;
+    setTimeout(() => useStage.api.updateNavigable(stageKey));
+    setCtxt(ctxt);
+  }, [stage?.internal]);
 
   useEffect(() => {
     if (rehydrated) useStage.api.ensureStage(stageKey);
-    if (ctxt?.gl && !stage.internal.scene) {
-      useStage.api.updateInternal(stageKey, { scene: ctxt.scene });
-      setTimeout(() => useStage.api.updateNavigable(stageKey));
+    if (ctxt && stage && !stage.opts.enabled) {
+      setCtxt(null);
+      delete stage.internal.scene;
     }
-  }, [stageKey, rehydrated, ctxt?.gl]);
+  }, [rehydrated, stage?.opts.enabled]);
 
   useEffect(() => {
     ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true);
-  }, [stage]);
-
-  const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
-    initializeCanvasContext(ctxt, stage);
-    setCtxt(ctxt);
-  }, [stage]);
+  }, [stage?.polygon, stage?.opts.wallHeight]);
 
   const ptrWire = useRef(new Subject<PointerMsg>()).current;
   const onPointer = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     ptrWire.next({ key: e.type as any, ndCoords: getNormDevicePos(e) });
   }, []);
-  
+
   const keyWire = stage?.internal.keyEvents;
   const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
     keyWire?.next({
@@ -63,8 +75,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   }, [keyWire]);
 
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
-    stage?.opts.panZoom && e.currentTarget.focus()
-  , [stage]);
+    stage?.opts.panZoom && e.currentTarget.focus(), [stage]);
 
   return (
     <Root
@@ -76,7 +87,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     >
       <StageToolbar stage={stage} />
 
-      {stage && (
+      {stage?.opts.enabled && (
         <Canvas
           pixelRatio={pixelRatio.current}
           onCreated={onCreatedCanvas}
@@ -94,18 +105,16 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
             <Brush stage={stage} wire={ptrWire} />
           )}
 
-
           <Navigable stage={stage} />
           <Walls stage={stage} />
         </Canvas>
       )}
-
-      {/* <CentralDot /> */}
     </Root>
   );
 }
 
 interface Props {
+  /** Assumed constant */
   stageKey: string;
 }
 
@@ -121,30 +130,5 @@ const Root = styled.section<{ background: string }>`
     background: ${background};
   `}
 `;
-
-// const CentralDot = styled.div`
-//     position: absolute;
-//     background: #fff;
-//     border: 1px solid red;
-//     border-radius: 2px;
-//     top: calc(28px + (100% - 28px) * 0.5 - 2px);
-//     left: calc(50% - 2px);
-//     height: 4px;
-//     width: 4px;
-//     pointer-events: none;
-// `;
-
-function initializeCanvasContext(
-  ctxt: CanvasContext,
-  stage: StageMeta,
-) {
-  const camera = ctxt.camera as PerspectiveCamera;
-  camera.position.copy(stage.internal.initCamPos);
-  camera.setFocalLength(35);
-  ctxt.gl.shadowMap.enabled = true;
-  ctxt.gl.shadowMap.autoUpdate = false;
-  ctxt.gl.shadowMap.type = PCFSoftShadowMap;
-  ctxt.gl.shadowMap.needsUpdate = true;
-}
 
 export default Stage;

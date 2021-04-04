@@ -8,14 +8,16 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
 
   const toggleRunning = useCallback(() => {
     if (stage) {
-      // TODO
+      stage.opts.enabled && useStage.api.persist(stage.key);
+      useStage.api.updateOpts(stage.key, { enabled: !stage.opts.enabled });
     }
-  },[stage]);
+  }, [stage]);
 
-  const toggleCam = useCallback(() => stage &&
-    useStage.api.updateOpts(stage.key, ({ panZoom }) =>
-      ({ panZoom: !panZoom })
-    ),[stage]);
+  const toggleCam = useCallback(() => {
+    stage && useStage.api.updateOpts(stage.key, {
+      panZoom: !stage.opts.panZoom,
+    });
+  }, [stage]);
 
   return (
     <Toolbar>
@@ -23,9 +25,10 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
         <LeftToolbar>
           <span>@<strong>{stage.key}</strong></span>
           <Button enabled onClick={toggleRunning}>
-            running
+            {stage.opts.enabled ? 'running' : 'paused'}
           </Button>
         </LeftToolbar>
+        <span/>
         <Button enabled={stage.opts.panZoom} onClick={toggleCam}>
           panzoom
         </Button>
@@ -40,7 +43,7 @@ interface Props {
 
 const Toolbar = styled.section`
   display: grid;
-  grid-template-columns: auto 70px;
+  grid-template-columns: 100px auto 70px;
   gap: 8px;
 
   height: 28px;

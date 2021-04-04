@@ -8,18 +8,7 @@ import { geomService } from "model/geom.service";
 export type StageMeta = {
   key: string;
   /** Stuff the CLI usually would not access */
-  internal: {
-    /** Keyboard events sent by `Stage`  */
-    keyEvents: Subject<StageKeyEvent>;
-    /** Previous state of all polygons on stage before an edit */
-    prevPolygon: KeyedLookup<NamedPolygons>;
-    /** Initial position of camera */
-    initCamPos: Vector3;
-    /** Attached on mount */
-    controls?: PanZoomControls;
-    /** Attached on mount */
-    scene?: Scene;
-  };
+  internal: StageInternal;
   opts: StageOpts;
   /** Used to paint rectangles and copy/cut/paste templates */
   brush: BrushMeta;
@@ -31,19 +20,36 @@ export type StageMeta = {
   bounds: Geom.Rect;
 };
 
+export interface StageInternal {
+  /** Keyboard events sent by `Stage`  */
+  keyEvents: Subject<StageKeyEvent>;
+  /** Previous state of all polygons on stage before an edit */
+  prevPolygon: KeyedLookup<NamedPolygons>;
+  /** Attached on mount */
+  controls?: PanZoomControls;
+  /** Attached on mount */
+  scene?: Scene;
+}
+
 /** Keep this flat so stage.proxy handles updates */
 export interface StageOpts {
+  enabled: boolean;
   /** Can we move/zoom the pan-zoom camera? */
   panZoom: boolean;
+  /** Lights enabled? */
   lights: boolean;
   /** CSS background of stage */
   background: string;
+  /** Height of walls */
   wallHeight: number;
+  /** Color of walls */
   wallColor: string;
   /** Transparency in range [0,1] */
   wallOpacity: number;
   /** Persist on unload window? */
   autoPersist: boolean;
+  /** Initial camera position */
+  initCameraPos: Triple<number>;
 }
 
 export enum CorePolygonKey {
@@ -66,7 +72,6 @@ export function createStage(stageKey: string): StageMeta {
     internal: {
       keyEvents: new Subject,
       prevPolygon: createPolygonLookup(),
-      initCamPos: initCameraPos.clone(),
       // ... other stuff attached by components
     },
     opts: createStageOpts(),
@@ -83,6 +88,7 @@ export function createStage(stageKey: string): StageMeta {
 
 function createStageOpts(): StageOpts {
   return {
+    enabled: true,
     lights: true,
     panZoom: true,
     background: 'white',
@@ -90,13 +96,13 @@ function createStageOpts(): StageOpts {
     wallOpacity: 1,
     wallHeight: 2,
     autoPersist: true,
+    initCameraPos: [...initCameraPosArray],
   };
 }
 
 export interface PersistedStage {
   key: string;
   polygon: KeyedLookup<NamedPolygonsJson>;
-  cameraPosition: [number, number, number];
   opts: StageOpts;
 }
 
@@ -104,7 +110,6 @@ export function createPersist(stageKey: string): PersistedStage {
   return {
     key: stageKey,
     polygon: createPolygonLookup(),
-    cameraPosition: [...initCameraPosArray],
     opts: createStageOpts(),
   };
 }

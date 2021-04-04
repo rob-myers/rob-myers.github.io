@@ -10,7 +10,7 @@ const Lights: React.FC<Props> = ({ enabled }) => {
           position={[0, 0, 3]}
           intensity={6}
           decay={2}
-          distance={3.4}
+          distance={4}
           castShadow
           // color="#aab"
           // power={8}

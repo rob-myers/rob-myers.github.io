@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react';
 import { extend, useThree, useFrame } from 'react-three-fiber';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
-import useStageStore from 'store/stage.store';
+import useStage from 'store/stage.store';
 import { StageMeta } from 'model/stage/stage.model';
 
 // See types/react-three-fiber/three-types.d.ts
@@ -13,10 +13,9 @@ const CameraControls: React.FC<Props> = ({ stage }) => {
   const controls = useRef<PanZoomControls>();
 
   useEffect(() => {
-    if (!stage.internal.controls) {
-      useStageStore.api.updateInternal(stage.key, { controls: controls.current! });
-    }
-  }, [stage.internal]);
+    useStage.api.updateInternal(stage.key, { controls: controls.current! });
+    return () => void delete stage.internal.controls;
+  }, []);
 
   useFrame((_state) => controls.current!.update());
 
