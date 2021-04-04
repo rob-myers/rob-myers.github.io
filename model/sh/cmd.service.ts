@@ -329,7 +329,7 @@ class CmdService {
         const stage = useStage.api.getStage(stageKey);
         if (path.length === 0) throw new Error('stage: cannot set any top-level key');
         deepGet(stage, path)[last] = data;
-        useStage.api.updateStage(sessionKey, {});
+        useStage.api.updateStage(stageKey, {});
       } else if (first === 'var') {
         const varLookup = useSession.api.getSession(sessionKey).var;
         deepGet(varLookup, path)[last] = data;
