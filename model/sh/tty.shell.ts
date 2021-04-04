@@ -194,7 +194,7 @@ export class TtyShell implements Device {
       useSession.api.addFunc(this.sessionKey, funcName, wrappedBody);
     }
     for (const [varName, varValue] of Object.entries(preloadedVariables)) {
-      useSession.api.setVar(this.sessionKey, varName, varValue.trim());
+      useSession.api.setVar(this.sessionKey, varName, varValue);
     }
   }
 

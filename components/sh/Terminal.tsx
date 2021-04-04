@@ -8,14 +8,14 @@ import { TtyXterm } from 'model/sh/tty.xterm';
 import useSessionStore from 'store/session.store';
 import XTermComponent from './XTerm';
 
-const Terminal: React.FC<Props> = ({ sessionKey }) => {
+const Terminal: React.FC<Props> = ({ sessionKey, env }) => {
 
   const session = useSessionStore(({ session }) =>
     sessionKey in session ? session[sessionKey] : null
   );
 
   useEffect(() => {
-    useSessionStore.api.createSession(sessionKey);
+    useSessionStore.api.createSession(sessionKey, env);
     return () => useSessionStore.api.removeSession(sessionKey);
   }, [sessionKey]);
 
@@ -58,6 +58,8 @@ const Terminal: React.FC<Props> = ({ sessionKey }) => {
 
 interface Props {
   sessionKey: string;
+  /** Can initialise variables */
+  env: Record<string, any>;
 }
 
 const Root = styled.section<{}>`

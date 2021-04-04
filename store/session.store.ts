@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
-import { KeyedLookup } from 'model/generic.model';
+import { deepClone, KeyedLookup } from 'model/generic.model';
 import { Device, makeShellIo, ShellIo } from 'model/sh/io/io.model';
 import { MessageFromShell, MessageFromXterm } from 'model/sh/tty.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
@@ -22,7 +22,7 @@ export type State = {
   readonly api: {
     addCleanup: (meta: BaseMeta, cleanup: () => void) => void;
     addFunc: (sessionKey: string, funcName: string, wrappedFile: FileWithMeta) => void;
-    createSession: (sessionKey: string) => void;
+    createSession: (sessionKey: string, env: Record<string, any>) => void;
     createProcess: (def: {
       sessionKey: string;
       ppid: number;
@@ -136,7 +136,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return processes[pid];
     },
 
-    createSession: (sessionKey) => {
+    createSession: (sessionKey, env) => {
       const persisted = api.ensurePersisted(sessionKey);
       const ttyIo = makeShellIo<MessageFromXterm, MessageFromShell>();
       const ttyShell = new TtyShell(sessionKey, ttyIo, persisted.history);
@@ -152,7 +152,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           func: {},
           ttyIo,
           ttyShell,
-          var: {},
+          var: deepClone(env),
           nextPid: 0,
           process: {},
         }, session),

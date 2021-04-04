@@ -28,7 +28,13 @@ export default function Home() {
 
         <section className={styles.termStage}>
           <Stage stageKey="test" />
-          <Terminal sessionKey="test" />
+          <Terminal
+            sessionKey="test"
+            env={{
+              STAGE_KEY: "test",
+              PROFILE: "echo foo; echo bar",
+            }}
+          />
         </section>
       </main>
     </>

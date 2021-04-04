@@ -273,7 +273,7 @@ class CmdService {
 
   private provideJsApi(meta: Sh.BaseMeta) {
     return {
-      // For js API convert { eof: true } to null, for truthy test
+      // For js API we convert { eof: true } to null, for truthy test
       read: async () => {
         const result = await this.readOnce(meta);
         return result.eof ? null : result;
