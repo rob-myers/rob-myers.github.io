@@ -181,16 +181,29 @@ class CmdService {
       case 'ps': {
         const { opts } = getOpts(args, { boolean: [
           'a', /** Show all processes */
+          's', /** Show process src */
         ], });
         const processes = Object.values(useSession.api.getProcesses(meta.sessionKey))
           .filter(opts.a ? x => x : ({ key: pid, pgid }) => pid === pgid);
         const title = ['pid', 'ppid', 'pgid'].map(x => x.padEnd(5)).join(' ')
-        yield `${ansiBlue}${title}${ansiReset}`;
-        for (const { key: pid, ppid, pgid, status, src } of processes) {
-          const icon = getProcessStatusIcon(status);
-          const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ')
-          yield `${info}${icon}  ${truncate(src, 40)}`;
+
+        if (!opts.s) {
+          yield `${ansiBlue}${title}${ansiReset}`;
+          for (const { key: pid, ppid, pgid, status, src } of processes) {
+            const icon = getProcessStatusIcon(status);
+            const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ')
+            yield `${info}${icon}  ${truncate(src, 30)}`;
+          }
+        } else {
+          for (const { key: pid, ppid, pgid, status, src } of processes) {
+            const icon = getProcessStatusIcon(status);
+            const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ')
+            yield `${ansiBlue}${title}${ansiReset}`;
+            yield `${info}${icon}`;
+            yield src + '\n';
+          }
         }
+
         break;
       }
       case 'run': {// e.g. await '({ read }) { yield "foo"; yield await read(); }'

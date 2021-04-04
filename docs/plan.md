@@ -35,7 +35,6 @@ Blog layout related tasks
 - Expose outset wall/bounds params
 
 - Replace `defs` by `declare` (handle special mvdan-sh parsing)
-- `ps -s` shows full process src
 - How do `key` and `poll` work; can they be simplified?
 - Make a blender model and import it
 - Add `cat` back in as a function
@@ -125,3 +124,4 @@ action.timeScale = 20;
 ✅ `Terminal` has env prop with `STAGE_KEY` and `PROFILE`
 ✅ `Terminal` linked to stage via `STAGE_KEY`
 ✅ `Terminal` initially runs `PROFILE`
+✅ `ps -s` shows full process src
