@@ -9,7 +9,7 @@ import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
 import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
-import { NamedFunction, STAGE_KEY } from './var.model';
+import { NamedFunction, CoreVar } from './var.model';
 import { getProcessStatusIcon, ReadResult, SigEnum, dataChunk, isDataChunk, preProcessRead } from './io/io.model';
 import { ProcessError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
@@ -98,7 +98,7 @@ class CmdService {
       }
       case 'get': {
         if (args[0]) {
-          const stageKey = useSession.api.getVar(meta.sessionKey, STAGE_KEY);
+          const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
           yield this.getData(meta.sessionKey, stageKey, args[0]);
         }
         break;
@@ -110,7 +110,7 @@ class CmdService {
         break;
       }
       case 'key': {
-        const stageKey = useSession.api.getVar(meta.sessionKey, STAGE_KEY);
+        const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
         const { keyEvents } = useStage.api.getStage(stageKey).internal;
         yield* this.iterateObservable(meta, keyEvents.asObservable());
         break;
@@ -203,7 +203,7 @@ class CmdService {
         break;
       }
       case 'set': {
-        const stageKey = useSession.api.getVar(meta.sessionKey, STAGE_KEY);
+        const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
         const value = this.parseArg(args[1]);
         yield this.setData(meta.sessionKey, stageKey, args[0], value);
         break;
@@ -245,7 +245,7 @@ class CmdService {
         const outputs = [] as any[];
         yield* this.read(meta, (data: any[]) => { outputs.push(data); });
         const filtered = outputs.filter(x => x.length === 4 && x.every(Number.isFinite));
-        const stageKey = useSession.api.getVar(meta.sessionKey, STAGE_KEY);
+        const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
         const polygonKey = opts.k || 'default';
         useStage.api.addWalls(stageKey, filtered, { polygonKey, cutOut: opts.c });
         break;
@@ -290,7 +290,7 @@ class CmdService {
   }
 
   private provideStageAndVars(meta: Sh.BaseMeta) {
-    const stageKey = useSession.api.getVar(meta.sessionKey, STAGE_KEY);
+    const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
     return {
       stage: createStageProxy(stageKey),
       var: useSession.api.getSession(meta.sessionKey).var,

@@ -10,5 +10,7 @@ export type NamedFunction = {
 
 export const varRegex = /^[a-z_][a-z0-9_-]*$/i;
 
-export const STAGE_KEY = 'STAGE_KEY';
-export const PROFILE = 'PROFILE';
+export enum CoreVar {
+  STAGE_KEY= 'STAGE_KEY',
+  PROFILE= 'PROFILE',
+}
