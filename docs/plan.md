@@ -17,6 +17,8 @@ Blog layout related tasks
 - On pause/resume `Stage` we pause/resume all running processes
 - Auto pause on scroll out of view
 - Auto pause on start/resume another `Stage`
+- Can launch scripts e.g. UI pipeline(s)
+- A `Terminal` can auto launch scripts
 
 - Import a textured crate from blender
 - Can place crates
@@ -25,8 +27,6 @@ Blog layout related tasks
 - Walls too close to light have truncated shadows?
 - Can add lights
 
-- Can launch scripts e.g. UI pipeline(s)
-- A `Terminal` can auto launch scripts
 
 - Start writing post / decide on blog format
 

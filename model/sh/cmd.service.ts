@@ -110,7 +110,8 @@ class CmdService {
         break;
       }
       case 'key': {
-        const { keyEvents } = useStage.api.getStage(meta.sessionKey).internal;
+        const stageKey = meta.sessionKey; // TODO
+        const { keyEvents } = useStage.api.getStage(stageKey).internal;
         yield* this.iterateObservable(meta, keyEvents.asObservable());
         break;
       }
@@ -237,12 +238,16 @@ class CmdService {
         break;
       }
       case 'wall': {
-        const { opts } = getOpts(args, { boolean: ['c', /** Cut out */ ], });
+        const { opts } = getOpts(args, {
+          boolean: ['c', /** Cut out */],
+          string: ['k', /** Polygon key */],
+        });
         const outputs = [] as any[];
         yield* this.read(meta, (data: any[]) => { outputs.push(data); });
         const filtered = outputs.filter(x => x.length === 4 && x.every(Number.isFinite));
-        const polygonKey = 'default'; // TODO
-        useStage.api.addWalls(meta.sessionKey, filtered, { polygonKey, cutOut: opts.c });
+        const polygonKey = opts.k || 'default';
+        const stageKey = meta.sessionKey; // TODO
+        useStage.api.addWalls(stageKey, filtered, { polygonKey, cutOut: opts.c });
         break;
       }
       default: throw testNever(command);
@@ -285,8 +290,9 @@ class CmdService {
   }
 
   private provideStageAndVars(meta: Sh.BaseMeta) {
+    const stageKey = meta.sessionKey; // TODO
     return {
-      stage: createStageProxy(meta.sessionKey),
+      stage: createStageProxy(stageKey),
       var: useSession.api.getSession(meta.sessionKey).var,
     };
   }

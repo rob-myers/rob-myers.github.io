@@ -20,12 +20,13 @@ export type State = {
     addWalls: (
       stageKey: string,
       walls: WallDef[],
-      opts: { polygonKey?: string; cutOut?: boolean },
+      opts: { polygonKey: string; cutOut?: boolean },
     ) => void;
     applyBrush: (stageKey: string, opts: { erase?: boolean }) => void;
     createStage: (stageKey: string) => void;
     cutSelectPolysInBrush: (stageKey: string) => void;
     deselectPolysInBrush: (stageKey: string) => void;
+    ensurePolygon: (stageKey: string, polygonKey: string) => void;
     ensureStage: (stageKey: string) => void;
     getPolygon: (stageKey: string, polygonKey: string) => Stage.NamedPolygons;
     getStage: (stageKey: string) => Stage.StageMeta;
@@ -63,9 +64,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   persist: {},
   api: {
 
-    addWalls: (stageKey, walls, { polygonKey = 'default', cutOut }) => {
+    addWalls: (stageKey, walls, { polygonKey, cutOut }) => {
       const delta = walls.map(([x, y, w, h]) =>
         Geom.Polygon.fromRect(new Geom.Rect(x, y, w, h)).precision(1));
+      api.ensurePolygon(stageKey, polygonKey);
       api.rememberPolygon(stageKey, polygonKey);
       api.modifyPolygon(stageKey, polygonKey, delta, { cutOut });
       api.updateNavigable(stageKey);
@@ -127,6 +129,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       api.updateBrush(stageKey, { locked: false, selection: [] });
     },
 
+    ensurePolygon: (stageKey, polygonKey) => {
+      const { polygon, internal: { prevPolygon } } = api.getStage(stageKey);
+      polygon[polygonKey] = polygon[polygonKey] || Stage.createNamedPolygons(polygonKey);
+      prevPolygon[polygonKey] = prevPolygon[polygonKey] || Stage.createNamedPolygons(polygonKey);
+    },
+
     ensureStage: (stageKey) => {
       if(!get().stage[stageKey]) {
         api.createStage(stageKey);
@@ -171,8 +179,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     rememberPolygon: (stageKey, polygonKey) => {
       const prev = api.getPolygon(stageKey, polygonKey);
-      api.updateInternal(stageKey, ({ prevPolygon: prevPolygonLookup }) => ({
-        prevPolygon: addToLookup(prev, prevPolygonLookup),
+      api.updateInternal(stageKey, ({ prevPolygon }) => ({
+        prevPolygon: addToLookup(prev, prevPolygon),
       }));
     },
 
