@@ -2,12 +2,14 @@ import { useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import styled from '@emotion/styled';
 import { FitAddon } from 'xterm-addon-fit';
+import useResizeObserver from 'use-resize-observer';
 
 import { TtyXterm } from 'model/sh/tty.xterm';
 import useSessionStore from 'store/session.store';
 import XTermComponent from './XTerm';
 
-const Terminal: React.FC<Props> = ({ sessionKey, width, height }) => {
+const Terminal: React.FC<Props> = ({ sessionKey }) => {
+  const { ref, width = 1, height = 1 } = useResizeObserver<HTMLElement>();
 
   const session = useSessionStore(({ session }) =>
     sessionKey in session ? session[sessionKey] : null
@@ -19,11 +21,10 @@ const Terminal: React.FC<Props> = ({ sessionKey, width, height }) => {
   }, [sessionKey]);
 
   const fitAddonRef = useRef<FitAddon>();
-  useEffect(() => fitAddonRef.current?.fit()
-    , [width, height]); // TODO compute from hook?
+  useEffect(() => fitAddonRef.current?.fit(), [width, height]);
 
   return (
-    <Root style={{ width, height }}>
+    <Root ref={ref}>
       {session ? (
         <XTerm
           onMount={(xterm, fitAddon) => {
@@ -57,8 +58,6 @@ const Terminal: React.FC<Props> = ({ sessionKey, width, height }) => {
 
 interface Props {
   sessionKey: string;
-  width: number;
-  height: number;
 }
 
 const Root = styled.section<{}>`

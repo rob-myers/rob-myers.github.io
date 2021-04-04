@@ -35,3 +35,9 @@
   display: grid;
   grid-template-rows: 1fr 1fr;
 }
+
+.termStage > section {
+  height: 400px;
+  max-width: 800px;
+  width: 100vw;
+}
