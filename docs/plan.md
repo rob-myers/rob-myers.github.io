@@ -11,26 +11,24 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Import a textured crate from blender
-- Can place crates
-- Work on a humanoid in blender
-- Ensure recast navmesh is working
-- Canvas filter provides dynamic player light
-
-- Can launch scripts e.g. UI pipeline(s)
-- A `Terminal` can auto launch scripts
-- Walls too close to light have truncated shadows?
-- Can add lights
-
-- Start writing post / decide on blog format
-
 Blog layout related tasks
 - `Terminal` and session has `sessionKey` and `stageKey`.
-- Can persist Stage geometry
 - Can pause/resume `Stage` with grey preview, un/mounting `Stage`
 - On pause/resume `Stage` we pause/resume all running processes
 - Auto pause on scroll out of view
 - Auto pause on start/resume another `Stage`
+
+- Import a textured crate from blender
+- Can place crates
+- Work on a humanoid in blender
+- Ensure recast navmesh is working
+- Walls too close to light have truncated shadows?
+- Can add lights
+
+- Can launch scripts e.g. UI pipeline(s)
+- A `Terminal` can auto launch scripts
+
+- Start writing post / decide on blog format
 
 - Fix multiline command launched from intermediate line
   > Originally was going to have low/medium walls too
