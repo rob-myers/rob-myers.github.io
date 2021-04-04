@@ -141,7 +141,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         <meshBasicMaterial
           color="#00f"
           transparent
-          opacity={0.2}
+          opacity={0.3}
         />
       </mesh>
     </>
