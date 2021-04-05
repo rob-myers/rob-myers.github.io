@@ -35,10 +35,10 @@ export type State = {
       stageKey: string,
       polygonKey: string,
       delta: Geom.Polygon[],
-      opts: { cutOut?: boolean },
+      opts: { cutOut?: boolean; mutate?: boolean },
     ) => void;
     persist: (stageKey: string) => void;
-    rememberPolygon: (stageKey: string, polygonKey: string) => void;
+    rememberPolygon: (stageKey: string, polygonKey: string, mutate?: boolean) => void;
     removeStage: (stageKey: string) => void;
     selectPolysInBrush: (stageKey: string) => void;
     spawnMesh: (stageKey: string, meshKey: string) => void;
@@ -52,7 +52,8 @@ export type State = {
     updatePolygon: (
       stageKey: string,
       polygonKey: string,
-      updates: LookupUpdates<Stage.NamedPolygons>,
+      updates: Partial<Stage.NamedPolygons>,
+      mutate?: boolean,
     ) => void;
     updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
     updateWalls: (stageKey: string, updates: Updates<Stage.StageWalls>) => void;
@@ -82,14 +83,18 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       
       if (!brush.selection.length) {// Add/cut rectangle
         const delta = Stage.getGlobalBrushRect(brush).precision(1);
-        api.rememberPolygon(stageKey, brush.rectToolPolygonKey);
-        api.modifyPolygon(stageKey, brush.rectToolPolygonKey, [delta], { cutOut: opts.erase });
+        api.rememberPolygon(stageKey, brush.rectToolPolygonKey, true);
+        api.modifyPolygon(stageKey, brush.rectToolPolygonKey, [delta], {
+          cutOut: opts.erase, mutate: true,
+        });
       } else {// Add/cut offset selection
         const offset = brush.position.clone().sub(brush.selectFrom);
         for (const { polygonKey, polygons } of brush.selection) {
           const delta = polygons.map(x => x.clone().add(offset));
-          api.rememberPolygon(stageKey, polygonKey);
-          api.modifyPolygon(stageKey, polygonKey, delta, { cutOut: opts.erase });
+          api.rememberPolygon(stageKey, polygonKey, true);
+          api.modifyPolygon(stageKey, polygonKey, delta, {
+            cutOut: opts.erase, mutate: true,
+          });
         }
       }
       api.updateNavigable(stageKey);
@@ -157,14 +162,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().stage[stageKey];
     },
 
-    modifyPolygon: (stageKey, polygonKey, delta, { cutOut }) => {
+    modifyPolygon: (stageKey, polygonKey, delta, { cutOut, mutate }) => {
       try {
         const { polygons: prev } = api.getPolygon(stageKey, polygonKey);
         const next = cutOut
           ? geomService.cutOut(delta, prev)
           : geomService.union(prev.concat(delta));
         next.forEach(polygon => polygon.precision(1));
-        api.updatePolygon(stageKey, polygonKey, { polygons: next });
+        api.updatePolygon(stageKey, polygonKey, { polygons: next }, mutate);
       } catch (error) {
         console.error('stage.store: modifyPolygon: geometric operation failed');
         console.error(error);
@@ -193,11 +198,15 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }));
     },
 
-    rememberPolygon: (stageKey, polygonKey) => {
+    rememberPolygon: (stageKey, polygonKey, mutate = false) => {
       const prev = api.getPolygon(stageKey, polygonKey);
-      api.updateInternal(stageKey, ({ prevPolygon }) => ({
-        prevPolygon: addToLookup(prev, prevPolygon),
-      }));
+      if (mutate) {
+        api.getStage(stageKey).internal.prevPolygon[prev.key] = prev;
+      } else {
+        api.updateInternal(stageKey, ({ prevPolygon }) => ({
+          prevPolygon: addToLookup(prev, prevPolygon),
+        }));
+      }
     },
 
     removeStage: (stageKey) => set(({ stage }) => ({
@@ -259,9 +268,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     undoRedoPolygons: (stageKey) => {
-      const { polygon, internal: { prevPolygon } } = api.getStage(stageKey);
-      api.updateInternal(stageKey, { prevPolygon: polygon });
-      api.updateStage(stageKey, { polygon: prevPolygon });
+      const stage = api.getStage(stageKey);
+      const { polygon, internal, internal: { prevPolygon } } = stage;
+      internal.prevPolygon = polygon;
+      stage.polygon = prevPolygon;
       api.updateNavigable(stageKey);
       api.persist(stageKey);
     },
@@ -291,13 +301,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     updateNavigable: (stageKey) => {
-      const { walls, polygon } = api.getStage(stageKey);
+      const { walls, polygon, internal } = api.getStage(stageKey);
       const wallPolys = walls.polygonKeys.flatMap(x => polygon[x].polygons);
       const { bounds, navPolys } = useGeom.api.createNavMesh(stageKey, wallPolys);
 
-      api.updateInternal(stageKey, { bounds });
-      api.updatePolygon(stageKey, Stage.CorePolygonKey.navigable, { polygons: navPolys });
-      api.updatePolygon(stageKey, Stage.CorePolygonKey.walls, { polygons: wallPolys });
+      internal.bounds = bounds;
+      polygon[Stage.CorePolygonKey.navigable].polygons = navPolys;
+      polygon[Stage.CorePolygonKey.walls].polygons = wallPolys;
+      api.updateStage(stageKey, ({ internal, polygon }) => ({
+        internal: { ...internal }, polygon: { ...polygon }
+      }));
     },
 
     updateOpts: (stageKey, updates) => {
@@ -308,12 +321,15 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }));
     },
 
-    updatePolygon: (stageKey, polygonKey, updates) => {
-      api.updateStage(stageKey, ({ polygon }) => ({
-        polygon: updateLookup(polygonKey, polygon,
-          typeof updates === 'function' ? updates : () => updates,
-        ),
-      }));
+    updatePolygon: (stageKey, polygonKey, updates, mutate) => {
+      if (mutate)  {
+        const { polygon } = api.getStage(stageKey);
+        Object.assign(polygon[polygonKey], updates);
+      } else {
+        api.updateStage(stageKey, ({ polygon }) => ({
+          polygon: updateLookup(polygonKey, polygon, () => updates),
+        }));
+      }
     },
 
     updateStage: (stageKey, updates) => {
