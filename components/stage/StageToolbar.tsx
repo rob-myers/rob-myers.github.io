@@ -13,13 +13,17 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
       setCanToggleRunning(false);
       setTimeout(() => setCanToggleRunning(true), 1000);
     }
-  }, [canToggleRunning, stage]);
+  }, [canToggleRunning, stage?.opts]);
 
   const toggleCam = useCallback(() => {
-    stage?.opts.enabled && useStage.api.updateOpts(stage.key, {
+    stage && useStage.api.updateOpts(stage.key, {
       panZoom: !stage.opts.panZoom,
     });
-  }, [stage]);
+  }, [stage?.opts]);
+
+  const onSelectSpawn = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    stage && useStage.api.spawnMesh(stage.key, e.currentTarget.value);
+  }, [stage?.opts]);
 
   return (
     <Toolbar>
@@ -43,15 +47,19 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
         </LeftToolbar>
         
         <Slot>
-          <select>
-            <option disabled>spawn</option>
-            <option>Crate</option>
+          <select
+            disabled={!stage.opts.enabled || !canToggleRunning}
+            value="disabled"
+            onChange={onSelectSpawn}
+          >
+            <option key="disabled" value="disabled" disabled>spawn</option>
+            <option key="Crate" value="Crate">Crate</option>
           </select>
         </Slot>
 
         <Slot>
           <Button
-            enabled={stage.opts.enabled && stage.opts.panZoom}
+            disabled={!stage.opts.enabled || !canToggleRunning || !stage.opts.panZoom}
             onClick={toggleCam}
             title={stage.opts.panZoom ? 'click to disable' : ''}
           >
@@ -69,7 +77,7 @@ interface Props {
 
 const Toolbar = styled.section`
   display: grid;
-  grid-template-columns: 110px auto 70px;
+  grid-template-columns: calc(42px + 64px) auto 70px;
   gap: 8px;
 
   height: 28px;
@@ -93,12 +101,13 @@ const Slot = styled.div<{ background?: string }>`
   `}
 `;
 
-const Button = styled.div<{ enabled?: boolean; emphasis?: boolean }>`
+const Button = styled.div<{ disabled?: boolean; emphasis?: boolean }>`
   cursor: pointer;
   display: flex;
+  padding: 0 2px;
 
-  ${({ enabled = true }) => css`
-    color: ${enabled ? '#000' : '#999'};
+  ${({ disabled = false }) => css`
+    color: ${disabled ? '#999' : '#000'};
   `}
   ${({ emphasis = false }) => emphasis && css`
     font-style: italic;
