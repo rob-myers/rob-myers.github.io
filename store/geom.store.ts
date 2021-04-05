@@ -9,69 +9,73 @@ import { recastService } from 'model/3d/recast.service';
 import { initStageBounds } from 'model/stage/stage.model';
 
 import thinPlusPng from '../3d/img/thin-plus.png';
-import { TextureLoader } from 'three';
+import { isMeshNode } from 'model/3d/three.model';
 
 export type State = {
   loaded: boolean;
   loading: boolean;
+  mesh: Record<string, THREE.Mesh>;
   texture: Record<string, THREE.Texture>;
-  // actors: KeyedLookup<ActorMeshMeta>;
 
   readonly api: {
-    /** Load assets from gltf (exported from Blender). */
-    load: () => Promise<void>;
-    extractMeshes: (gltf: GLTF) => {};
-    // createActor: (name: string) => {
-    //   actorName: string;
-    //   geometry: THREE.BufferGeometry;
-    //   material: THREE.Material;
-    //   children: THREE.Object3D[];
-    // };
     createNavMesh: (navKey: string, polys: Geom.Polygon[]) => {
       bounds: Geom.Rect;
       navPolys: Geom.Polygon[];
     };
+    /** Extract meshes from loaded gltf */
+    extractMeshes: (gltf: GLTF) => void;
+    /** Get a clone of specified mesh */
+    getMesh: (meshKey: string) => THREE.Mesh;
+    /** Load assets from gltf (exported from Blender). */
+    load: () => Promise<void>;
+    /** Load images as `THREE.Texture`s */
+    loadTextures: () => void;
     requestNavPath: (navKey: string, src: Geom.Vector, dst: Geom.Vector) => Geom.VectorJson[];
   };
 }
 
 const useStore = create<State>(devtools((set, get) => ({
-  actors: {},
   loaded: false,
   loading: false,
+  mesh: {},
   texture: {},
 
   api: {
 
     load: async () => {
-      if (get().loaded || get().loading) {
-        return;
-      }
+      if (get().loaded || get().loading) return;
       set(_ => ({ loading: true }));
 
       const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader');
       const { DRACOLoader } = await import('three/examples/jsm/loaders/DRACOLoader');
       const loader = new GLTFLoader;
       loader.setDRACOLoader((new DRACOLoader).setDecoderPath('/draco/'));
-
+      
       const gltf = await loader.loadAsync('/root.gltf');
-      const { } = api.extractMeshes(gltf);
+      api.extractMeshes(gltf);
+      api.loadTextures();
 
-      const textureLoader = new TextureLoader;
+      set(_ => ({ loaded: true, loading: false }));
+    },
+
+    extractMeshes: (gltf: GLTF) => {
+      const mesh = {} as State['mesh'];
+      gltf.scene.traverse((node) => {
+        // console.log('gltf: saw node:', node);
+        if (isMeshNode(node)) {
+          mesh[node.name] = node;
+        }
+      });
+      set(_ => ({ mesh }));
+    },
+
+    loadTextures: () => {
+      const textureLoader = new THREE.TextureLoader;
       set(_ => ({
         texture: {
           thinPlusPng: textureLoader.load(thinPlusPng),
         },
-        loaded: true,
-        loading: false,
       }));
-    },
-
-    extractMeshes: (gltf: GLTF) => {
-      gltf.scene.traverse((node) => {
-        console.log('gltf: saw node:', node);
-      });
-      return {};
     },
 
     createNavMesh: (navKey, polys) => {
@@ -89,6 +93,10 @@ const useStore = create<State>(devtools((set, get) => ({
       const geometry = geomService.polysToGeometry(navPolys, 'xz');
       setTimeout(() => recastService.createNavMesh(navKey, geometry));
       return { bounds, navPolys };
+    },
+
+    getMesh: (meshKey) => {
+      return get().mesh[meshKey].clone() as THREE.Mesh;
     },
 
     requestNavPath: (navKey, src, dst) => {
