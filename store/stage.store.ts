@@ -79,7 +79,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const brush = api.getStage(stageKey).brush;
       
       if (!brush.selection.length) {// Add/cut rectangle
-        const delta = Stage.getGlobalBrushRect(brush);
+        const delta = Stage.getGlobalBrushRect(brush).precision(1);
         api.rememberPolygon(stageKey, brush.rectToolPolygonKey);
         api.modifyPolygon(stageKey, brush.rectToolPolygonKey, [delta], { cutOut: opts.erase });
       } else {// Add/cut offset selection
@@ -160,6 +160,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const next = cutOut
           ? geomService.cutOut(delta, prev)
           : geomService.union(prev.concat(delta));
+        next.forEach(polygon => polygon.precision(1));
         api.updatePolygon(stageKey, polygonKey, { polygons: next });
       } catch (error) {
         console.error('stage.store: modifyPolygon: geometric operation failed');

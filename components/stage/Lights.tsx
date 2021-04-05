@@ -12,8 +12,8 @@ const Lights: React.FC<Props> = ({ enabled }) => {
           decay={2}
           distance={4}
           castShadow
-          // color="#aab"
-          // power={8}
+          // color="#ddd"
+          // power={18}
           // Saw unsightly white border for lower res shadow
           shadow-mapSize-height={2048}
           shadow-mapSize-width={2048}
