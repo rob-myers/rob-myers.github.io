@@ -34,6 +34,9 @@ export const preloadedFunctions = {
   pretty: `
 map '(x, { compactSafeStringify }) => compactSafeStringify(x)'
 `,
+  keys: `
+map Object.keys
+`,
 };
 
 const navigator = getWindow()?.navigator;
