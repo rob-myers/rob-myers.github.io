@@ -130,6 +130,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
           visible={everUsed}
           geometry={selectorRectGeom}
           onPointerDown={onMeshPointerDown}
+          position={[0, 0, 0.01]}
         >
           <meshBasicMaterial
             color="#00f"
