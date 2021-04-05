@@ -7,10 +7,13 @@ import { geomService } from "model/geom.service";
 
 export type StageMeta = {
   key: string;
-  /** Stuff the CLI usually would not access */
+  /** The internals of the stage */
   internal: StageInternal;
+  /** Key value store for internal use */
+  extra: StageExtra;
+  /** Important options the CLI is expected to access */
   opts: StageOpts;
-  /** Used to paint rectangles and copy/cut/paste templates */
+  /** Used to draw rects and copy/cut/paste templates */
   brush: BrushMeta;
   /** Polygon storage */
   polygon: KeyedLookup<NamedPolygons>;
@@ -27,8 +30,13 @@ export interface StageInternal {
   prevPolygon: KeyedLookup<NamedPolygons>;
   /** Attached on mount */
   controls?: PanZoomControls;
-  /** Attached on mount */
+  /** Attached by Stage */
   scene?: Scene;
+}
+
+export type StageExtra = Record<string, any> & {
+  /** Data url */
+  canvasPreview?: string;
 }
 
 /** Keep this flat so stage.proxy handles updates */
@@ -74,6 +82,7 @@ export function createStage(stageKey: string): StageMeta {
       prevPolygon: createPolygonLookup(),
       // ... other stuff attached by components
     },
+    extra: {},
     opts: createStageOpts(),
 
     brush: createDefaultBrushMeta(),
@@ -104,6 +113,7 @@ export interface PersistedStage {
   key: string;
   polygon: KeyedLookup<NamedPolygonsJson>;
   opts: StageOpts;
+  extra: StageExtra;
 }
 
 export function createPersist(stageKey: string): PersistedStage {
@@ -111,6 +121,7 @@ export function createPersist(stageKey: string): PersistedStage {
     key: stageKey,
     polygon: createPolygonLookup(),
     opts: createStageOpts(),
+    extra: {},
   };
 }
 

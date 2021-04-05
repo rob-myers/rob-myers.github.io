@@ -8,6 +8,7 @@ import {
 
 export class PanZoomControls extends EventDispatcher {
   public enabled = true;
+
   /** Normalized device (x, y) mouse position */
   private ndcMouse = new Vector2;
   /** World mouse position where z = 0 */
@@ -35,6 +36,7 @@ export class PanZoomControls extends EventDispatcher {
 
   constructor(
     public camera: PerspectiveCamera,
+    /** Making this `public` crashes redux devtools */
     canvasEl: HTMLCanvasElement,
   ) {
     super();

@@ -12,7 +12,6 @@ Will split UI pipeline into two while awaiting:
 ### TODO
 
 Blog layout related tasks
-- Can pause/resume `Stage` with grey preview, un/remounting `Stage`
 - Auto pause on scroll out of view
 - Auto pause on start/resume another `Stage`
 
@@ -125,3 +124,4 @@ action.timeScale = 20;
 ✅ `Terminal` initially runs `PROFILE`
 ✅ `ps -s` shows full process src
 ✅ Can unmount/remount `Stage` via UI
+✅ Can pause/resume `Stage` with greyed preview

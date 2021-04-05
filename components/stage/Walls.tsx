@@ -7,30 +7,28 @@ const Walls: React.FC<Props> = ({
   stage: { polygon, walls, opts }
 }) => {
 
-  const wallPolys = useMemo(() => walls.polygonKeys
+  const wallsPolys = useMemo(() => walls.polygonKeys
     .map(x => polygon[x]).flatMap(x => x.polygons), [polygon, walls]);
 
   const wallsGeom = useMemo(() =>
-    geomService.polysToWalls(wallPolys, opts.wallHeight), [wallPolys, opts.wallHeight]);
+    geomService.polysToWalls(wallsPolys, opts.wallHeight), [wallsPolys, opts.wallHeight]);
 
   const baseGeom = useMemo(() =>
-    geomService.polysToGeometry(wallPolys.flatMap(x => x.createOutset(0.005)), 'xy', 0.005), [wallPolys]);
-
-  const opacity = opts.wallOpacity;
+    geomService.polysToGeometry(wallsPolys.flatMap(x => x.createOutset(0.005)), 'xy', 0.005), [wallsPolys]);
 
   return (
     <group>
       <mesh
-        key={opacity}
+        key={opts.wallOpacity}
         geometry={wallsGeom}
         castShadow
         renderOrder={1}
       >
         <meshBasicMaterial
-          side={DoubleSide}
+          side={opts.wallOpacity === 1 ? DoubleSide : FrontSide}
           color={opts.wallColor}
           transparent
-          opacity={opacity}
+          opacity={opts.wallOpacity}
         />
       </mesh>
       <mesh geometry={baseGeom}>

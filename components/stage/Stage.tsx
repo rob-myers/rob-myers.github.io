@@ -42,21 +42,28 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     ctxt.gl.shadowMap.type = PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
 
-    stage.internal.scene = ctxt.scene;
+    useStage.api.updateInternal(stageKey, { scene: ctxt.scene });
     setTimeout(() => useStage.api.updateNavigable(stageKey));
     setCtxt(ctxt);
   }, [stage?.internal]);
 
   useEffect(() => {
-    if (rehydrated) useStage.api.ensureStage(stageKey);
-    if (ctxt && stage && !stage.opts.enabled) {
-      setCtxt(null);
+    if (rehydrated) {
+      useStage.api.ensureStage(stageKey);
+    }
+    if (ctxt && stage && !stage.opts.enabled) {// Detected stage disable
+      useStage.api.persist(stageKey);
+      ctxt.gl.render(ctxt.scene, ctxt.camera);
+      useStage.api.updateExtra(stageKey, { canvasPreview: ctxt.gl.domElement.toDataURL() });
       delete stage.internal.scene;
+      setCtxt(null);
     }
   }, [rehydrated, stage?.opts.enabled]);
 
   useEffect(() => {
-    ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true);
+    if (ctxt?.gl) {
+      ctxt.gl.shadowMap.needsUpdate = true;
+    }
   }, [stage?.polygon, stage?.opts]);
 
   const ptrWire = useRef(new Subject<PointerMsg>()).current;
@@ -77,9 +84,11 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
     stage?.opts.panZoom && e.currentTarget.focus(), [stage]);
 
+  const background = stage?.opts.enabled && ctxt ? stage.opts.background : '#aaa';  
+
   return (
     <Root
-      background={stage?.opts.background}
+      background={background}
       tabIndex={0}
       onKeyDown={onKey}
       onKeyUp={onKey}
@@ -87,7 +96,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     >
       <StageToolbar stage={stage} />
 
-      {stage?.opts.enabled && (
+      {stage && (stage?.opts.enabled || ctxt) && (
         <Canvas
           pixelRatio={pixelRatio.current}
           onCreated={onCreatedCanvas}
@@ -109,6 +118,10 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           <Walls stage={stage} />
         </Canvas>
       )}
+
+      {stage && !stage.opts.enabled && stage.extra.canvasPreview && (
+        <Placeholder src={stage.extra.canvasPreview} />
+      )}
     </Root>
   );
 }
@@ -129,6 +142,11 @@ const Root = styled.section<{ background: string }>`
   ${({ background }) => css`
     background: ${background};
   `}
+`;
+
+const Placeholder = styled.img<{}>`
+  margin: auto 0;
+  overflow: hidden;
 `;
 
 export default Stage;

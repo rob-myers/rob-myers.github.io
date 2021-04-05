@@ -1,20 +1,22 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { StageMeta } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
 const StageToolbar: React.FC<Props> = ({ stage }) => {
+  const [canToggleRunning, setCanToggleRunning] = useState(true);
 
   const toggleRunning = useCallback(() => {
-    if (stage) {
-      stage.opts.enabled && useStage.api.persist(stage.key);
+    if (canToggleRunning && stage) {
       useStage.api.updateOpts(stage.key, { enabled: !stage.opts.enabled });
+      setCanToggleRunning(false);
+      setTimeout(() => setCanToggleRunning(true), 1000);
     }
-  }, [stage]);
+  }, [canToggleRunning, stage]);
 
   const toggleCam = useCallback(() => {
-    stage && useStage.api.updateOpts(stage.key, {
+    stage?.opts.enabled && useStage.api.updateOpts(stage.key, {
       panZoom: !stage.opts.panZoom,
     });
   }, [stage]);
@@ -24,12 +26,20 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
       {stage && <>
         <LeftToolbar>
           <span>@<strong>{stage.key}</strong></span>
-          <Button enabled onClick={toggleRunning}>
+          <Button
+            enabled
+            onClick={toggleRunning}
+            title={stage.opts.enabled ? 'click to pause' : 'click to resume'}
+          >
             {stage.opts.enabled ? 'running' : 'paused'}
           </Button>
         </LeftToolbar>
         <span/>
-        <Button enabled={stage.opts.panZoom} onClick={toggleCam}>
+        <Button
+          enabled={stage.opts.enabled && stage.opts.panZoom}
+          onClick={toggleCam}
+          title={stage.opts.panZoom ? 'click to disable' : ''}
+        >
           panzoom
         </Button>
       </>}

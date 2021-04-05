@@ -44,6 +44,7 @@ export type State = {
     transformBrush: (stageKey: string, transformKey: TransformKey) => void;
     undoRedoPolygons: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
+    updateExtra: (stageKey: string, updates: Updates<Stage.StageExtra>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageInternal>) => void;
     updateNavigable: (stageKey: string) => void;
     updateOpts: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
@@ -98,7 +99,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const instance: Stage.StageMeta = Stage.createStage(stageKey);
 
       // Get persisted data for rehydration
-      const { polygon, opts } = api.getPersist(stageKey) || (
+      const { polygon, opts, extra } = api.getPersist(stageKey) || (
         get().persist[stageKey] = Stage.createPersist(stageKey)
       );
       // Rehydrate
@@ -107,6 +108,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         polygons: x.polygons.map(y => Geom.Polygon.from(y)),
       }));
       instance.opts = deepClone(opts);
+      instance.extra = deepClone(extra);
 
       set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
     },
@@ -169,7 +171,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { polygon, internal, opts } = api.getStage(stageKey);
+      const { polygon, internal, opts, extra } = api.getStage(stageKey);
 
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,
@@ -180,6 +182,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           opts: { ...deepClone(opts),
             initCameraPos: vectorToTriple(internal.controls?.camera.position??Stage.initCameraPos),
           },
+          extra: deepClone(extra),
         }, persist),
       }));
     },
@@ -254,6 +257,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }));
     },
 
+    updateExtra: (stageKey, updates) => {
+      api.updateStage(stageKey, ({ extra }) => ({
+        extra: { ...extra,
+          ...typeof updates === 'function' ? updates(extra) : updates,
+        },
+      }));
+    },
+
     updateInternal: (stageKey, updates) => {
       api.updateStage(stageKey, ({ internal }) => ({
         internal: { ...internal,
@@ -307,7 +318,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 1,
+  version: 0,
   blacklist: ['api', 'stage'],
   onRehydrateStorage: (_) =>  {
     return () => {
