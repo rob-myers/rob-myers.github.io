@@ -215,11 +215,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     spawnMesh: (stageKey, meshKey) => {
-      console.log('spawn', stageKey, meshKey);
-      // const mesh = useGeom.api.getMesh(meshKey);
-      /**
-       * TODO edit stage.mesh only here
-       */
+      const meshInstance = useGeom.api.cloneMesh(meshKey);
+      const { brush } = api.getStage(stageKey);
+      meshInstance.position.set(brush.position.x, brush.position.y, 0);
+      const instanceKey = meshInstance.uuid; // TODO ?
+      api.updateStage(stageKey, ({ mesh }) => ({ mesh: { ...mesh,
+          [instanceKey]: { key: instanceKey, meshKey, mesh: meshInstance },
+        }}),
+      );
     },
 
     transformBrush: (stageKey, key) => {

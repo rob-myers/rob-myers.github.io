@@ -11,17 +11,17 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Import a textured crate from blender
-- Can place crates
-
-Blog layout related tasks
-- Auto pause on scroll out of view
-- Auto pause on start/resume another `Stage`
+- Can select/delete meshes
+- Can persist meshes
 
 - Work on a humanoid in blender
 - Ensure recast navmesh is working
 - Walls too close to light have truncated shadows?
-- Can add lights
+- Can add lights via command line
+
+Blog layout related tasks
+- Auto pause on scroll out of view
+- Auto pause on start/resume another `Stage`
 
 - Start writing post / decide on blog format
 
@@ -49,19 +49,6 @@ Blog layout related tasks
 - Implement comments using build and client-side calls:
   > https://eiriksm.dev/walkthrough-github-comments
 - Must navigate to GitHub to actually post comments
-
-### Animation
-
-```tsx
-const mixer = useRef<THREE.AnimationMixer>();
-useFrame(((_, delta) => mixer.current?.update(delta)));
-
-const clip = animService.fadeInOutClip();
-mixer.current = new THREE.AnimationMixer(selectorRef.current!);
-const action = mixer.current.clipAction(clip);
-action.play();
-action.timeScale = 20;
-```
 
 ### DONE
 
@@ -126,3 +113,23 @@ action.timeScale = 20;
 ✅ `ps -s` shows full process src
 ✅ Can unmount/remount `Stage` via UI
 ✅ Can pause/resume `Stage` with greyed preview
+✅ Import blender textured crate into geom.store
+✅ Can spawn crates
+
+### Three.js Animation
+
+```tsx
+const mixer = useRef<THREE.AnimationMixer>();
+useFrame(((_, delta) => mixer.current?.update(delta)));
+
+const clip = animService.fadeInOutClip();
+mixer.current = new THREE.AnimationMixer(selectorRef.current!);
+const action = mixer.current.clipAction(clip);
+action.play();
+action.timeScale = 20;
+```
+
+### Blender
+
+Uncheck GLTF export > Transform > `+Y up`
+

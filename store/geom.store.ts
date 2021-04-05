@@ -18,14 +18,14 @@ export type State = {
   texture: Record<string, THREE.Texture>;
 
   readonly api: {
+    /** Get a clone of specified mesh */
+    cloneMesh: (meshKey: string) => THREE.Mesh;
     createNavMesh: (navKey: string, polys: Geom.Polygon[]) => {
       bounds: Geom.Rect;
       navPolys: Geom.Polygon[];
     };
     /** Extract meshes from loaded gltf */
     extractMeshes: (gltf: GLTF) => void;
-    /** Get a clone of specified mesh */
-    getMesh: (meshKey: string) => THREE.Mesh;
     /** Load assets from gltf (exported from Blender). */
     load: () => Promise<void>;
     /** Load images as `THREE.Texture`s */
@@ -95,7 +95,7 @@ const useStore = create<State>(devtools((set, get) => ({
       return { bounds, navPolys };
     },
 
-    getMesh: (meshKey) => {
+    cloneMesh: (meshKey) => {
       return get().mesh[meshKey].clone() as THREE.Mesh;
     },
 
