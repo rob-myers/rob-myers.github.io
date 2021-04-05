@@ -103,7 +103,7 @@ function createStageOpts(): StageOpts {
     background: 'white',
     wallColor: '#000',
     wallOpacity: 1,
-    wallHeight: 2,
+    wallHeight: 4,
     autoPersist: true,
     initCameraPos: [...initCameraPosArray],
   };

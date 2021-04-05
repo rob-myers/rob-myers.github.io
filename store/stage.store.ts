@@ -173,6 +173,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     persist: (stageKey) => {
       const { polygon, internal, opts, extra } = api.getStage(stageKey);
 
+      const computedCameraPos = internal.controls?.camera?.position
+        ? vectorToTriple(internal.controls.camera.position) : null;
+
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,
           polygon: mapValues(polygon, (x) => ({
@@ -180,7 +183,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             polygons: x.polygons.map(x => x.json),
           })),
           opts: { ...deepClone(opts),
-            initCameraPos: vectorToTriple(internal.controls?.camera.position??Stage.initCameraPos),
+            initCameraPos: [...computedCameraPos ||
+              persist[stageKey].opts.initCameraPos ||
+              opts.initCameraPos],
           },
           extra: deepClone(extra),
         }, persist),

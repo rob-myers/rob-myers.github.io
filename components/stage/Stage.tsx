@@ -51,7 +51,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     if (rehydrated) {
       useStage.api.ensureStage(stageKey);
     }
-    if (ctxt && stage && !stage.opts.enabled) {// Detected stage disable
+    if (ctxt?.gl && stage && !stage.opts.enabled) {
+      // Detected stage disable
+      // Check `ctxt?.gl` instead of `ctxt` for hotreloads on edit stage.store
       useStage.api.persist(stageKey);
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       useStage.api.updateExtra(stageKey, { canvasPreview: ctxt.gl.domElement.toDataURL() });
@@ -121,7 +123,10 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
       )}
 
       {stage && !stage.opts.enabled && stage.extra.canvasPreview && (
-        <Placeholder src={stage.extra.canvasPreview} />
+        <Placeholder
+          src={stage.extra.canvasPreview}
+          draggable={false}
+        />
       )}
     </Root>
   );
