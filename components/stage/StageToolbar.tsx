@@ -103,8 +103,8 @@ const Slot = styled.div<{ background?: string }>`
 
 const Button = styled.div<{ disabled?: boolean; emphasis?: boolean }>`
   cursor: pointer;
-  display: flex;
-  padding: 0 2px;
+  padding: 0 4px;
+  font-size: 11pt;
 
   ${({ disabled = false }) => css`
     color: ${disabled ? '#999' : '#000'};
