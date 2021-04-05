@@ -29,19 +29,25 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
           <div>
             @<strong>{stage.key}</strong>
           </div>
-          <Slot>
+          <Slot background="#eee">
             <Button
-              enabled
+              emphasis={!canToggleRunning}
               onClick={toggleRunning}
-              title={stage.opts.enabled ? 'click to pause' : 'click to resume'}
+              {...stage.opts.enabled && {
+                title: 'click to pause',
+              }}
             >
               {stage.opts.enabled ? 'running' : 'paused'}
-              {!canToggleRunning && <span style={{ fontSize: 12, alignSelf: 'center' }}>&nbsp;⌛</span>}
             </Button>
           </Slot>
         </LeftToolbar>
         
-        <Slot/>
+        <Slot>
+          <select>
+            <option disabled>spawn</option>
+            <option>Crate</option>
+          </select>
+        </Slot>
 
         <Slot>
           <Button
@@ -63,7 +69,7 @@ interface Props {
 
 const Toolbar = styled.section`
   display: grid;
-  grid-template-columns: 120px auto 70px;
+  grid-template-columns: 110px auto 70px;
   gap: 8px;
 
   height: 28px;
@@ -76,18 +82,26 @@ const Toolbar = styled.section`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 44px auto;
+  grid-template-columns: 42px auto;
   gap: 8px;
 `;
 
-const Slot = styled.div`display: flex`;
+const Slot = styled.div<{ background?: string }>`
+  display: flex;
+  ${({ background }) => css`
+    background: ${background};
+  `}
+`;
 
-const Button = styled.span<{ enabled: boolean }>`
+const Button = styled.div<{ enabled?: boolean; emphasis?: boolean }>`
   cursor: pointer;
   display: flex;
 
-  ${({ enabled }) => css`
+  ${({ enabled = true }) => css`
     color: ${enabled ? '#000' : '#999'};
+  `}
+  ${({ emphasis = false }) => emphasis && css`
+    font-style: italic;
   `}
 `;
 
