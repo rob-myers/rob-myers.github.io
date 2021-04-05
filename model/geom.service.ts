@@ -317,14 +317,18 @@ class GeomService {
     return geometry.toBufferGeometry();
   }
 
-  polysToGeometry(polygons: Geom.Polygon[], plane: 'xy' | 'xz' = 'xy') {
+  polysToGeometry(
+    polygons: Geom.Polygon[],
+    plane: 'xy' | 'xz' = 'xy',
+    height = 0,
+  ) {
     const decomps = polygons.map(p => p.triangulate());
     const all = this.joinTriangulations(decomps);
     const geometry = new Geometry;
     if (plane === 'xy') {
-      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, 0)));
+      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, height)));
     } else {
-      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, 0, p.y)));
+      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, height, p.y)));
     }
     geometry.faces.push(...all.tris.map(tri => new Face3(tri[0], tri[1], tri[2])));
     geometry.computeVertexNormals();

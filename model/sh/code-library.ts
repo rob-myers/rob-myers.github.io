@@ -74,9 +74,9 @@ key | run '({ read, _: {msg} }, { stage: { opts } }) {
   while (msg = await read()) {
     if (msg.type !== "keydown") continue;
     switch (msg.key) {
-      case "1": [opts.wallHeight, opts.wallOpacity] = [0, 0.2]; break;
-      case "2": [opts.wallHeight, opts.wallOpacity] = [2, 1]; break;
-      case "3": [opts.wallHeight, opts.wallOpacity] = [2, 0.2]; break;
+      case "1": opts.wallOpacity = 0; break;
+      case "2": opts.wallOpacity = 1; break;
+      case "3": opts.wallOpacity = 0.2; break;
       case "l": opts.lights = !opts.lights; break;
     }
   }

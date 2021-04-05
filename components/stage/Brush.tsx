@@ -101,14 +101,14 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
   const selectionGeom = useMemo(() => {
     const polygons = stage.brush.selection.flatMap(x => x.polygons);
-    return geomService.polysToGeometry(polygons);
+    return geomService.polysToGeometry(polygons, 'xy', 0.001);
   }, [stage.brush.selection]);
 
   const selectorBorderGeom = useMemo(() => {
     const rectPoly = getScaledBrushRect(stage.brush);
-    return geomService.polysToGeometry(rectPoly.rect.area
-      ? geomService.cutOut([rectPoly], rectPoly.createOutset(0.01)) : []
-    );
+    const border = rectPoly.rect.area
+      ? geomService.cutOut([rectPoly], rectPoly.createOutset(0.01)) : [];
+    return geomService.polysToGeometry(border, 'xy', 0.001);
   }, [stage.brush.selection]);
 
   return (
@@ -118,19 +118,15 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
           <planeGeometry args={[0.08, 0.08]} />
           <meshBasicMaterial map={originTexture} transparent />
         </mesh>}
-        <mesh
-          geometry={selectorBorderGeom}
-          visible={locked}
-          position={[0, 0, 0.01]}
-        >
-          <meshBasicMaterial color="#fff" transparent />
+        <mesh geometry={selectorBorderGeom} visible={locked}>
+          <meshBasicMaterial color="#fff" />
         </mesh>
         <mesh
           ref={selectorScaledRef}
           visible={everUsed}
           geometry={selectorRectGeom}
           onPointerDown={onMeshPointerDown}
-          position={[0, 0, 0.01]}
+          renderOrder={0} // So visible when behind transparent walls
         >
           <meshBasicMaterial
             color="#00f"

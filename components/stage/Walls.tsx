@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { BackSide, FrontSide } from "three";
+import { FrontSide } from "three";
 import { geomService } from "model/geom.service";
 import { StageMeta } from "model/stage/stage.model";
 
@@ -7,40 +7,38 @@ const Walls: React.FC<Props> = ({
   stage: { polygon, walls, opts }
 }) => {
 
-  const geometry = useMemo(() => {
-    const wallPolys = walls.polygonKeys
-      .map(x => polygon[x]).flatMap(x => x.polygons);
-    return geomService.polysToWalls(wallPolys, opts.wallHeight);
-  }, [polygon, opts.wallHeight]);
+  const wallPolys = useMemo(() => walls.polygonKeys
+    .map(x => polygon[x]).flatMap(x => x.polygons), [polygon, walls]);
 
-  const innerGeom = useMemo(() => geometry.clone(), [geometry]);
+  const wallsGeom = useMemo(() =>
+    geomService.polysToWalls(wallPolys, opts.wallHeight), [wallPolys, opts.wallHeight]);
 
-  // When flat, force transparent so can see selections
-  const opacity = opts.wallHeight === 0
-    ? 0.15 : opts.wallOpacity;
+  const baseGeom = useMemo(() =>
+    geomService.polysToGeometry(wallPolys), [wallPolys]);
+
+  const opacity = opts.wallOpacity;
 
   return (
     <group>
-      <mesh key={opacity} geometry={geometry} castShadow>
+      <mesh
+        key={opacity}
+        geometry={wallsGeom}
+        castShadow
+        renderOrder={1}
+      >
         <meshBasicMaterial
           side={FrontSide}
           color={opts.wallColor}
-          {...opacity < 1 && {
-            transparent: true,
-            opacity,
-          }}
+          transparent
+          opacity={opacity}
         />
       </mesh>
-      {opacity === 1 && (
-        <mesh geometry={innerGeom}>
-          <meshBasicMaterial
-            side={BackSide}
-            color={opts.wallColor}
-            transparent
-            opacity={0.5}
-          />
-        </mesh>
-      )}
+      <mesh geometry={baseGeom}>
+        <meshBasicMaterial
+          side={FrontSide}
+          color="#422"
+        />
+      </mesh>
     </group>
   );
 };
