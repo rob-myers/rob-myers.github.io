@@ -11,12 +11,13 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
+- Import a textured crate from blender
+- Can place crates
+
 Blog layout related tasks
 - Auto pause on scroll out of view
 - Auto pause on start/resume another `Stage`
 
-- Import a textured crate from blender
-- Can place crates
 - Work on a humanoid in blender
 - Ensure recast navmesh is working
 - Walls too close to light have truncated shadows?

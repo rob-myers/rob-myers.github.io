@@ -24,24 +24,34 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
   return (
     <Toolbar>
       {stage && <>
+
         <LeftToolbar>
-          <span>@<strong>{stage.key}</strong></span>
-          <Button
-            enabled
-            onClick={toggleRunning}
-            title={stage.opts.enabled ? 'click to pause' : 'click to resume'}
-          >
-            {stage.opts.enabled ? 'running' : 'paused'}
-          </Button>
+          <div>
+            @<strong>{stage.key}</strong>
+          </div>
+          <Slot>
+            <Button
+              enabled
+              onClick={toggleRunning}
+              title={stage.opts.enabled ? 'click to pause' : 'click to resume'}
+            >
+              {stage.opts.enabled ? 'running' : 'paused'}
+              {!canToggleRunning && <span style={{ fontSize: 12, alignSelf: 'center' }}>&nbsp;⌛</span>}
+            </Button>
+          </Slot>
         </LeftToolbar>
-        <span/>
-        <Button
-          enabled={stage.opts.enabled && stage.opts.panZoom}
-          onClick={toggleCam}
-          title={stage.opts.panZoom ? 'click to disable' : ''}
-        >
-          panzoom
-        </Button>
+        
+        <Slot/>
+
+        <Slot>
+          <Button
+            enabled={stage.opts.enabled && stage.opts.panZoom}
+            onClick={toggleCam}
+            title={stage.opts.panZoom ? 'click to disable' : ''}
+          >
+            panzoom
+          </Button>
+        </Slot>
       </>}
     </Toolbar>
   );
@@ -53,7 +63,7 @@ interface Props {
 
 const Toolbar = styled.section`
   display: grid;
-  grid-template-columns: 100px auto 70px;
+  grid-template-columns: 120px auto 70px;
   gap: 8px;
 
   height: 28px;
@@ -66,12 +76,16 @@ const Toolbar = styled.section`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 42px auto;
+  grid-template-columns: 44px auto;
   gap: 8px;
 `;
 
+const Slot = styled.div`display: flex`;
+
 const Button = styled.span<{ enabled: boolean }>`
   cursor: pointer;
+  display: flex;
+
   ${({ enabled }) => css`
     color: ${enabled ? '#000' : '#999'};
   `}
