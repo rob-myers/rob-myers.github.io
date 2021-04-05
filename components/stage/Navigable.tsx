@@ -4,7 +4,7 @@ import { geomService } from "model/geom.service";
 
 const Navigable: React.FC<Props> = ({ stage: {
   polygon,
-  bounds,
+  internal: { bounds },
   opts,
 } }) => {
 

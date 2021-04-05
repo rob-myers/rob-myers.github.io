@@ -9,7 +9,7 @@ import { TransformKey } from 'model/stage/stage.proxy';
 import { vectorToTriple } from 'model/3d/three.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
 
-import useGeomStore from './geom.store';
+import useGeom from './geom.store';
 
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
@@ -41,6 +41,7 @@ export type State = {
     rememberPolygon: (stageKey: string, polygonKey: string) => void;
     removeStage: (stageKey: string) => void;
     selectPolysInBrush: (stageKey: string) => void;
+    spawnMesh: (stageKey: string, meshKey: string) => void;
     transformBrush: (stageKey: string, transformKey: TransformKey) => void;
     undoRedoPolygons: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
@@ -213,6 +214,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }
     },
 
+    spawnMesh: (stageKey, meshKey) => {
+      console.log('spawn', stageKey, meshKey);
+      // const mesh = useGeom.api.getMesh(meshKey);
+      /**
+       * TODO edit stage.mesh only here
+       */
+    },
+
     transformBrush: (stageKey, key) => {
       const { brush } = api.getStage(stageKey);
       const { rect } = Stage.getGlobalBrushRect(brush);
@@ -281,9 +290,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     updateNavigable: (stageKey) => {
       const { walls, polygon } = api.getStage(stageKey);
       const wallPolys = walls.polygonKeys.flatMap(x => polygon[x].polygons);
-      const { bounds, navPolys } = useGeomStore.api.createNavMesh(stageKey, wallPolys);
+      const { bounds, navPolys } = useGeom.api.createNavMesh(stageKey, wallPolys);
 
-      api.updateStage(stageKey, { bounds });
+      api.updateInternal(stageKey, { bounds });
       api.updatePolygon(stageKey, Stage.CorePolygonKey.navigable, { polygons: navPolys });
       api.updatePolygon(stageKey, Stage.CorePolygonKey.walls, { polygons: wallPolys });
     },

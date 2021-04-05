@@ -7,20 +7,18 @@ import { geomService } from "model/geom.service";
 
 export type StageMeta = {
   key: string;
+  /** Used to draw rects and copy/cut/paste templates */
+  brush: BrushMeta;
   /** The internals of the stage */
   internal: StageInternal;
   /** Key value store for internal use */
   extra: StageExtra;
-  /** Important options the CLI is expected to access */
+  /** Important options, also for the CLI */
   opts: StageOpts;
-  /** Used to draw rects and copy/cut/paste templates */
-  brush: BrushMeta;
   /** Polygon storage */
   polygon: KeyedLookup<NamedPolygons>;
-  /** Has keys of polygons representing high walls */
+  /** Defines keys of polygons representing walls */
   walls: StageWalls;
-  /** World bounds */
-  bounds: Geom.Rect;
 };
 
 export interface StageInternal {
@@ -32,6 +30,8 @@ export interface StageInternal {
   controls?: PanZoomControls;
   /** Attached by Stage */
   scene?: Scene;
+  /** Auto-computed world bounds */
+  bounds: Geom.Rect;
 }
 
 export type StageExtra = Record<string, any> & {
@@ -80,6 +80,7 @@ export function createStage(stageKey: string): StageMeta {
     internal: {
       keyEvents: new Subject,
       prevPolygon: createPolygonLookup(),
+      bounds: initStageBounds.clone(),
       // ... other stuff attached by components
     },
     extra: {},
@@ -90,8 +91,6 @@ export function createStage(stageKey: string): StageMeta {
     walls: {
       polygonKeys: [CorePolygonKey.default],
     },
-    
-    bounds: initStageBounds.clone(),
   };
 }
 
