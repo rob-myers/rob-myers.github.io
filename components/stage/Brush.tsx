@@ -148,7 +148,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
 
 const selectorRectGeom = geomService.polysToGeometry([
   Geom.Polygon.fromRect(new Geom.Rect(0, -1, 1, 1))
-]);
+], 'xy', 0.001);
 
 interface Props {
   stage: StageMeta;
