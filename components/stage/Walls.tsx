@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { FrontSide } from "three";
+import { DoubleSide, FrontSide } from "three";
 import { geomService } from "model/geom.service";
 import { StageMeta } from "model/stage/stage.model";
 
@@ -14,7 +14,7 @@ const Walls: React.FC<Props> = ({
     geomService.polysToWalls(wallPolys, opts.wallHeight), [wallPolys, opts.wallHeight]);
 
   const baseGeom = useMemo(() =>
-    geomService.polysToGeometry(wallPolys), [wallPolys]);
+    geomService.polysToGeometry(wallPolys.flatMap(x => x.createOutset(0.005)), 'xy', 0.005), [wallPolys]);
 
   const opacity = opts.wallOpacity;
 
@@ -27,7 +27,7 @@ const Walls: React.FC<Props> = ({
         renderOrder={1}
       >
         <meshBasicMaterial
-          side={FrontSide}
+          side={DoubleSide}
           color={opts.wallColor}
           transparent
           opacity={opacity}
@@ -36,7 +36,7 @@ const Walls: React.FC<Props> = ({
       <mesh geometry={baseGeom}>
         <meshBasicMaterial
           side={FrontSide}
-          color="#422"
+          color="#222"
         />
       </mesh>
     </group>
