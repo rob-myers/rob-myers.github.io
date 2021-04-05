@@ -120,9 +120,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           <Navigable stage={stage} />
           <Walls stage={stage} />
         </Canvas>
-      )}
-
-      {stage && !stage.opts.enabled && stage.extra.canvasPreview && (
+      ) || stage.extra.canvasPreview && (
         <Placeholder
           src={stage.extra.canvasPreview}
           draggable={false}
