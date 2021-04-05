@@ -82,7 +82,8 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   }, [keyWire]);
 
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
-    stage?.opts.panZoom && e.currentTarget.focus(), [stage]);
+    stage?.opts.enabled && stage.opts.panZoom && 
+      e.currentTarget.focus(), [stage?.opts]);
 
   const background = stage?.opts.enabled && ctxt ? stage.opts.background : '#aaa';  
 

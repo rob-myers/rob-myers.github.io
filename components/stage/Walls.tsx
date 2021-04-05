@@ -10,11 +10,12 @@ const Walls: React.FC<Props> = ({
   const wallsPolys = useMemo(() => walls.polygonKeys
     .map(x => polygon[x]).flatMap(x => x.polygons), [polygon, walls]);
 
-  const wallsGeom = useMemo(() =>
-    geomService.polysToWalls(wallsPolys, opts.wallHeight), [wallsPolys, opts.wallHeight]);
+  const wallsGeom = useMemo(() => geomService.polysToWalls(
+    wallsPolys, opts.wallHeight), [wallsPolys, opts.wallHeight]);
 
-  const baseGeom = useMemo(() =>
-    geomService.polysToGeometry(wallsPolys.flatMap(x => x.createOutset(0.005)), 'xy', 0.005), [wallsPolys]);
+  const baseGeom = useMemo(() => geomService.polysToGeometry(
+    wallsPolys.flatMap(x => x.createOutset(0.005)), 'xy', 0.005),
+  [wallsPolys]);
 
   return (
     <group>
