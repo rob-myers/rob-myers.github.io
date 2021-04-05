@@ -15,6 +15,8 @@ export type StageMeta = {
   extra: StageExtra;
   /** Important options, also for the CLI */
   opts: StageOpts;
+  /** Instantiated mesh storage */
+  mesh: KeyedLookup<NamedMesh>;
   /** Polygon storage */
   polygon: KeyedLookup<NamedPolygons>;
   /** Defines keys of polygons representing walls */
@@ -87,6 +89,7 @@ export function createStage(stageKey: string): StageMeta {
     opts: createStageOpts(),
 
     brush: createDefaultBrushMeta(),
+    mesh: {},
     polygon: createPolygonLookup(),
     walls: {
       polygonKeys: [CorePolygonKey.default],
@@ -167,6 +170,14 @@ export function createDefaultBrushMeta(): BrushMeta {
     selectFrom: new Vector3,
   };
 };
+
+export interface NamedMesh {
+  /** Instance name */
+  key: string;
+  /** mesh.name */
+  meshKey: string;
+  mesh: THREE.Mesh;
+}
 
 export interface NamedPolygons {
   key: string;

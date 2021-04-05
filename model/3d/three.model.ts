@@ -72,3 +72,13 @@ export function vectPrecision(v: THREE.Vector3, decimalPlaces: number) {
 export function vectorToTriple({ x, y, z }: THREE.Vector3): Triple<number> {
   return [x, y, z];
 }
+
+export function ensureChildGroup(parent: THREE.Object3D, groupName: string) {
+  let group = parent.children.find(x => x.name === groupName && isGroupNode(x));
+  if (!group) {
+    group = new THREE.Group;
+    group.name = groupName;
+    parent.add(group);
+  }
+  return group as THREE.Group;
+}

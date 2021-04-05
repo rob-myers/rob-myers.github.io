@@ -17,6 +17,7 @@ import Lights from "./Lights";
 import Brush, { PointerMsg } from "./Brush";
 import Navigable from "./Navigable";
 import Walls from "./Walls";
+import Meshes from "./Meshes";
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
   const rehydrated = useStage(({ rehydrated }) => rehydrated);
@@ -53,11 +54,11 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     }
     if (ctxt?.gl && stage && !stage.opts.enabled) {
       // Detected stage disable
-      // Check `ctxt?.gl` instead of `ctxt` for hotreloads on edit stage.store
+      // NOTE we check `ctxt?.gl` instead of `ctxt` for hotreloads on edit stage.store
       useStage.api.persist(stageKey);
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       useStage.api.updateExtra(stageKey, { canvasPreview: ctxt.gl.domElement.toDataURL() });
-      delete stage.internal.scene;
+      useStage.api.updateInternal(stageKey, { scene: undefined });
       setCtxt(null);
     }
   }, [rehydrated, stage?.opts.enabled]);
@@ -100,6 +101,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
       <StageToolbar stage={stage} />
 
       {stage && (stage?.opts.enabled || ctxt) && (
+
         <Canvas
           pixelRatio={pixelRatio.current}
           onCreated={onCreatedCanvas}
@@ -108,23 +110,28 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           onPointerUpCapture={onPointer}
           onPointerLeave={onPointer}
         >
+
           <Grid />
           <Axes />
-          <Lights enabled={stage.opts.lights} />
-
           <CameraControls stage={stage} />
           {stage.internal.controls && (
             <Brush stage={stage} wire={ptrWire} />
           )}
 
+          <Lights enabled={stage.opts.lights} />
           <Navigable stage={stage} />
           <Walls stage={stage} />
+          <Meshes stage={stage} />
+
         </Canvas>
+
       ) || stage?.extra.canvasPreview && (
+
         <Placeholder
           src={stage.extra.canvasPreview}
           draggable={false}
         />
+
       )}
     </Root>
   );
