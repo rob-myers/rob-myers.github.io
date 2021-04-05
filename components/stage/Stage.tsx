@@ -57,7 +57,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
 
   useEffect(() => {
     ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true);
-  }, [stage?.polygon, stage?.opts.wallHeight]);
+  }, [stage?.polygon, stage?.opts]);
 
   const ptrWire = useRef(new Subject<PointerMsg>()).current;
   const onPointer = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
