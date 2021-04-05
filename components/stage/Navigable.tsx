@@ -25,7 +25,11 @@ const Navigable: React.FC<Props> = ({ stage: {
   return (
     <group>
       {opts.lights && (
-        <mesh geometry={notWallsGeom} receiveShadow>
+        <mesh
+          geometry={notWallsGeom}
+          renderOrder={-1}
+          receiveShadow
+        >
           <meshStandardMaterial
             color="#fff"
             transparent
@@ -33,7 +37,10 @@ const Navigable: React.FC<Props> = ({ stage: {
           />
         </mesh>
       )}
-      <mesh geometry={unNavigableGeom}>
+      <mesh
+        geometry={unNavigableGeom}
+        renderOrder={-1}
+      >
         <meshBasicMaterial
           color="#000"
           transparent
