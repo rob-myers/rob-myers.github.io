@@ -127,7 +127,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         return;
       } else if (!brush.locked) {
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
-        [brush.locked, brush.selectedPolys] = [true, selection];
+        // Need to update brush (vs mutate) because applyBrush won't update it
+        api.updateBrush(stageKey, { locked: true, selectedPolys: selection });
         api.applyBrush(stageKey, { erase: true });
       } else {// When selection exists just delete it
         api.applyBrush(stageKey, { erase: true });
