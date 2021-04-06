@@ -102,7 +102,7 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
   }, [locked]);
 
   const selectionGeom = useMemo(() => {
-    const polygons = brush.selection.flatMap(x => x.polygons);
+    const polygons = brush.selectedPolys.flatMap(x => x.polygons);
     return geomService.polysToGeometry(polygons, 'xy', 0.001);
   }, [brush]);
 

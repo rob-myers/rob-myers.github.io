@@ -11,7 +11,7 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Can select/delete meshes
+- Can select/move/delete meshes
 - Can persist meshes
 
 - Work on a humanoid in blender

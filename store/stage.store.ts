@@ -81,7 +81,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     applyBrush: (stageKey, opts) => {
       const brush = api.getStage(stageKey).brush;
       
-      if (!brush.selection.length) {// Add/cut rectangle
+      if (!brush.selectedPolys.length) {// Add/cut rectangle
         const delta = Stage.getGlobalBrushRect(brush).precision(1);
         api.rememberPolygon(stageKey, brush.rectToolPolygonKey, true);
         api.modifyPolygon(stageKey, brush.rectToolPolygonKey, [delta], {
@@ -89,7 +89,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         });
       } else {// Add/cut offset selection
         const offset = brush.position.clone().sub(brush.selectFrom);
-        for (const { polygonKey, polygons } of brush.selection) {
+        for (const { polygonKey, polygons } of brush.selectedPolys) {
           const delta = polygons.map(x => x.clone().add(offset));
           api.rememberPolygon(stageKey, polygonKey, true);
           api.modifyPolygon(stageKey, polygonKey, delta, {
@@ -127,7 +127,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         return;
       } else if (!brush.locked) {
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
-        api.updateBrush(stageKey, { locked: true, selection });
+        [brush.locked, brush.selectedPolys] = [true, selection];
         api.applyBrush(stageKey, { erase: true });
       } else {// When selection exists just delete it
         api.applyBrush(stageKey, { erase: true });
@@ -135,7 +135,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     deselectPolysInBrush: (stageKey) => {
-      api.updateBrush(stageKey, { locked: false, selection: [] });
+      api.updateBrush(stageKey, { locked: false, selectedPolys: [] });
     },
 
     ensurePolygon: (stageKey, polygonKey) => {
@@ -200,8 +200,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     rememberPolygon: (stageKey, polygonKey, mutate = false) => {
       const prev = api.getPolygon(stageKey, polygonKey);
+      const cloned: Stage.NamedPolygons = { ...prev, polygons: prev.polygons.map(x => x.clone()) };
       if (mutate) {
-        api.getStage(stageKey).internal.prevPolygon[prev.key] = prev;
+        api.getStage(stageKey).internal.prevPolygon[prev.key] = cloned;
       } else {
         api.updateInternal(stageKey, ({ prevPolygon }) => ({
           prevPolygon: addToLookup(prev, prevPolygon),
@@ -219,7 +220,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
       if (selection.length && !brush.locked) {
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
-        api.updateBrush(stageKey, { locked: true, selection });
+        api.updateBrush(stageKey, { locked: true, selectedPolys: selection });
       }
     },
 
@@ -259,12 +260,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           return;
       }
 
-      const { selection } = api.getStage(stageKey).brush;
-      selection.forEach(x => x.polygons.map(y => {
+      const { selectedPolys } = api.getStage(stageKey).brush;
+      selectedPolys.forEach(x => x.polygons.map(y => {
         y.mutatePoints(mutator).precision(1);
         (key === 'mirror(x)' || key === 'mirror(y)') && y.reverse();
       }));
-      api.updateBrush(stageKey, { selection: selection.slice() });
+      api.updateBrush(stageKey, { selectedPolys: selectedPolys.slice() });
     },
 
     undoRedoPolygons: (stageKey) => {
@@ -272,6 +273,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const { polygon, internal, internal: { prevPolygon } } = stage;
       internal.prevPolygon = polygon;
       stage.polygon = prevPolygon;
+      // Must refresh auxiliary polygons 'navigable' and 'walls'
       api.updateNavigable(stageKey);
       api.persist(stageKey);
     },
@@ -301,15 +303,15 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     updateNavigable: (stageKey) => {
-      const { walls, polygon, internal } = api.getStage(stageKey);
+      const { walls, polygon } = api.getStage(stageKey);
       const wallPolys = walls.polygonKeys.flatMap(x => polygon[x].polygons);
       const { bounds, navPolys } = useGeom.api.createNavMesh(stageKey, wallPolys);
 
-      internal.bounds = bounds;
       polygon[Stage.CorePolygonKey.navigable].polygons = navPolys;
       polygon[Stage.CorePolygonKey.walls].polygons = wallPolys;
       api.updateStage(stageKey, ({ internal, polygon }) => ({
-        internal: { ...internal }, polygon: { ...polygon }
+        internal: { ...internal, bounds },
+        polygon: { ...polygon }
       }));
     },
 

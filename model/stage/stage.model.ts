@@ -1,8 +1,8 @@
 import { Subject } from "rxjs";
 import { Vector3, Scene } from "three";
 import { KeyedLookup, Triple } from "model/generic.model";
-import * as Geom from 'model/geom';
-import { PanZoomControls } from 'model/3d/pan-zoom-controls';
+import * as Geom from "model/geom";
+import { PanZoomControls } from "model/3d/pan-zoom-controls";
 import { geomService } from "model/geom.service";
 
 export type StageMeta = {
@@ -153,8 +153,10 @@ export interface BrushMeta {
   rectToolPolygonKey: string;
   /** Is the selection locked? */
   locked: boolean;
-  /** Current selection */
-  selection: SelectedPolygons[];
+  /** Currently selected polygons */
+  selectedPolys: SelectedPolygons[];
+  /** Currently selected meshes */
+  selectedMeshes: null | THREE.Group;
   /** Position of brush when last made selection */
   selectFrom: Vector3;
 }
@@ -166,7 +168,8 @@ export function createDefaultBrushMeta(): BrushMeta {
     scale: new Geom.Vector(1, 1),
     rectToolPolygonKey: 'default',
     locked: false,
-    selection: [],
+    selectedPolys: [],
+    selectedMeshes: null,
     selectFrom: new Vector3,
   };
 };
