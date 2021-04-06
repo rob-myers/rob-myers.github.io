@@ -40,6 +40,8 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
     }
     setShowCursor(!locked);
 
+    function syncBrush() { brushPosition.copy(position) && brushScale.copy(scale); }
+
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (!locked) {
         if (key === 'pointermove' && active.current) {
@@ -57,15 +59,11 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
             scale.x = (scale.x > 0 ? Math.ceil : Math.floor)(10 * scale.x) / 10;
             scale.y = (scale.y > 0 ? Math.ceil : Math.floor)(10 * scale.y) / 10;
             vectPrecision(scale, 1);
-            // Sync state
-            brushPosition.copy(position);
-            brushScale.copy(scale);
           } else {
             vectPrecision(position, 1);
             scale.set(0, 0, 0);
-            brushPosition.copy(position);
-            brushScale.set(0, 0);
           }
+          syncBrush();
           setShowCursor(true);
         } else if (key === 'pointerdown') {
           active.current = true;
@@ -84,9 +82,7 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
           active.current = false;
           vectPrecision(position, 1);
           selection.position.copy(position).sub(selectFrom);
-          // Sync state
-          brushPosition.copy(position);
-          brushScale.copy(scale);
+          syncBrush();
         }
       }
     });
