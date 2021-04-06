@@ -83,8 +83,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       
       if (!brush.selectedPolys.length) {// Add/cut rectangle
         const delta = Stage.getGlobalBrushRect(brush).precision(1);
-        api.rememberPolygon(stageKey, brush.rectToolPolygonKey, true);
-        api.modifyPolygon(stageKey, brush.rectToolPolygonKey, [delta], {
+        api.rememberPolygon(stageKey, brush.rectPolygonKey, true);
+        api.modifyPolygon(stageKey, brush.rectPolygonKey, [delta], {
           cutOut: opts.erase, mutate: true,
         });
       } else {// Add/cut offset selection

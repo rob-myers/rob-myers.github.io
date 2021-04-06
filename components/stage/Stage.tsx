@@ -44,7 +44,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     ctxt.gl.shadowMap.type = PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
 
-    useStage.api.updateInternal(stageKey, { scene: ctxt.scene });
+    // Currently, updateNavigable will also update stage.internal
+    stage.internal.scene = ctxt.scene;
+    ctxt.scene.add(stage.brush.selectedMeshes);
     setTimeout(() => useStage.api.updateNavigable(stageKey));
     setCtxt(ctxt);
   }, [stage?.internal]);

@@ -126,7 +126,7 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
           visible={everUsed}
           geometry={selectorRectGeom}
           onPointerDown={onMeshPointerDown}
-          renderOrder={0} // So visible when behind transparent walls
+          renderOrder={0} // Avoids occlusion when behind transparent walls
         >
           <meshBasicMaterial
             color="#00f"

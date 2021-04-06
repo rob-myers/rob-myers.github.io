@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import { Vector3, Scene } from "three";
+import * as THREE from "three";
 import { KeyedLookup, Triple } from "model/generic.model";
 import * as Geom from "model/geom";
 import { PanZoomControls } from "model/3d/pan-zoom-controls";
@@ -31,7 +31,7 @@ export interface StageInternal {
   /** Attached on mount */
   controls?: PanZoomControls;
   /** Attached by Stage */
-  scene?: Scene;
+  scene?: THREE.Scene;
   /** Auto-computed world bounds */
   bounds: Geom.Rect;
 }
@@ -136,7 +136,7 @@ export type StageKeyEvent = Pick<KeyboardEvent,
 
 const initCameraPosArray: Triple<number> = [0, 0, 10];
 
-export const initCameraPos = new Vector3(...initCameraPosArray);
+export const initCameraPos = new THREE.Vector3(...initCameraPosArray);
 
 export const initStageBounds = new Geom.Rect(-5, -5, 10, 10);
 
@@ -150,27 +150,29 @@ export interface BrushMeta {
   /** Mutated by Brush */
   scale: Geom.Vector;
   /** Key of the polygon the rectangle tool edits */
-  rectToolPolygonKey: string;
+  rectPolygonKey: string;
   /** Is the selection locked? */
   locked: boolean;
   /** Currently selected polygons */
   selectedPolys: SelectedPolygons[];
   /** Currently selected meshes */
-  selectedMeshes: null | THREE.Group;
+  selectedMeshes: THREE.Group;
   /** Position of brush when last made selection */
-  selectFrom: Vector3;
+  selectFrom: THREE.Vector3;
 }
 
 export function createDefaultBrushMeta(): BrushMeta {
+  const selectedMeshes = new THREE.Group;
+  selectedMeshes.name = 'SelectedMeshes';
   return {
     baseRect: new Geom.Rect(0, -1, 1, 1), // ?
     position: new Geom.Vector,
     scale: new Geom.Vector(1, 1),
-    rectToolPolygonKey: 'default',
+    rectPolygonKey: 'default',
     locked: false,
     selectedPolys: [],
-    selectedMeshes: null,
-    selectFrom: new Vector3,
+    selectedMeshes: selectedMeshes,
+    selectFrom: new THREE.Vector3,
   };
 };
 
