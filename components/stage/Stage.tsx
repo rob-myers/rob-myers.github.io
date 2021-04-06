@@ -52,13 +52,13 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     if (rehydrated) {
       useStage.api.ensureStage(stageKey);
     }
+    // NOTE `ctxt?.gl` instead of `ctxt` for hotreloads on edit stage.store
     if (ctxt?.gl && stage && !stage.opts.enabled) {
       // Detected stage disable
-      // NOTE we check `ctxt?.gl` instead of `ctxt` for hotreloads on edit stage.store
-      useStage.api.persist(stageKey);
       ctxt.gl.render(ctxt.scene, ctxt.camera);
-      useStage.api.updateExtra(stageKey, { canvasPreview: ctxt.gl.domElement.toDataURL() });
-      useStage.api.updateInternal(stageKey, { scene: undefined });
+      stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
+      stage.internal.scene = undefined;
+      useStage.api.persist(stageKey);
       setCtxt(null);
     }
   }, [rehydrated, stage?.opts.enabled]);
@@ -88,11 +88,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     stage?.opts.enabled && stage.opts.panZoom && 
       e.currentTarget.focus(), [stage?.opts]);
 
-  const background = stage?.opts.enabled && ctxt ? stage.opts.background : '#aaa';  
-
   return (
     <Root
-      background={background}
+      background={stage?.opts.enabled && ctxt ? stage.opts.background : '#aaa'}
       tabIndex={0}
       onKeyDown={onKey}
       onKeyUp={onKey}
@@ -114,9 +112,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
           <Grid />
           <Axes />
           <CameraControls stage={stage} />
-          {stage.internal.controls && (
-            <Brush stage={stage} wire={ptrWire} />
-          )}
+          <Brush stage={stage} wire={ptrWire} />
 
           <Lights enabled={stage.opts.lights} />
           <Navigable stage={stage} />

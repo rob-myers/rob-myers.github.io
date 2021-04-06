@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Subject } from "rxjs";
 import * as THREE from "three";
-import { PointerEvent } from "react-three-fiber";
+import { PointerEvent, useThree } from "react-three-fiber";
 
 import * as Geom from "model/geom";
 import { ndCoordsToGround, vectPrecision } from "model/3d/three.model";
@@ -14,6 +14,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const selectorScaledRef = useRef<THREE.Mesh>(null);
   const selectionRef = useRef<THREE.Mesh>(null);
   const originTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
+  const { camera } = useThree();
 
   /** Ground position of pointer */
   const current = useRef(new THREE.Vector3).current;
@@ -31,7 +32,6 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     const position = selectorRef.current!.position;
     const scale = selectorScaledRef.current!.scale;
     const selection = selectionRef.current!;
-    const controls = stage.internal.controls!;
 
     if (!locked) {// Reset selection offset
       selection.position.set(0, 0, 0);
@@ -41,7 +41,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (!locked) {
         if (key === 'pointermove' && active.current) {
-          ndCoordsToGround(current, ndCoords, controls.camera);
+          ndCoordsToGround(current, ndCoords, camera);
           scale.set(current.x - initial.x, -(current.y - initial.y), 1);
           !everUsed && setEverUsed(true);
         } else if (key === 'pointerleave' || key === 'pointerup') {
@@ -67,7 +67,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
           setShowCursor(true);
         } else if (key === 'pointerdown') {
           active.current = true;
-          ndCoordsToGround(initial, ndCoords, controls.camera);
+          ndCoordsToGround(initial, ndCoords, camera);
           current.copy(initial);
           position.set(initial.x, initial.y, 0);
           scale.set(0, 0, 0);
@@ -75,7 +75,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         }
       } else {
         if (key === 'pointermove' && active.current) {
-          ndCoordsToGround(position, ndCoords, controls.camera);
+          ndCoordsToGround(position, ndCoords, camera);
           position.add(initial);
           selection.position.copy(position).sub(stage.brush.selectFrom);
         } else if (key === 'pointerup' || key === 'pointerleave') {
@@ -89,7 +89,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
       }
     });
     return () => sub.unsubscribe();
-  }, [everUsed, locked, stage.internal]);
+  }, [everUsed, locked]);
 
   const onMeshPointerDown = useCallback((e: PointerEvent) => {
     if (locked && e.type === 'pointerdown') {
@@ -97,7 +97,7 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
       initial.set(stage.brush.position.x - e.point.x, stage.brush.position.y - e.point.y, 0);
       setShowCursor(false);
     }
-  }, [locked, stage.internal]);
+  }, [locked]);
 
   const selectionGeom = useMemo(() => {
     const polygons = stage.brush.selection.flatMap(x => x.polygons);
