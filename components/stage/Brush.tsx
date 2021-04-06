@@ -5,11 +5,11 @@ import { PointerEvent, useThree } from "react-three-fiber";
 
 import * as Geom from "model/geom";
 import { ndCoordsToGround, vectPrecision } from "model/3d/three.model";
-import { getScaledBrushRect, StageMeta } from "model/stage/stage.model";
+import { BrushMeta, getScaledBrushRect } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
 import useGeomStore from "store/geom.store";
 
-const Brush: React.FC<Props> = ({ wire, stage }) => {
+const Brush: React.FC<Props> = ({ wire, brush }) => {
   const selectorRef = useRef<THREE.Mesh>(null);
   const selectorScaledRef = useRef<THREE.Mesh>(null);
   const selectionRef = useRef<THREE.Mesh>(null);
@@ -26,7 +26,8 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const [everUsed, setEverUsed] = useState(false);
   const [showCursor, setShowCursor] = useState(true);
 
-  const locked = stage.brush.locked;
+  // NOTE brush.{position,scale,selectFrom} refs never change
+  const { position: brushPosition, scale: brushScale, selectFrom, locked } = brush;
 
   useEffect(() => {
     const position = selectorRef.current!.position;
@@ -56,13 +57,13 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
             scale.y = (scale.y > 0 ? Math.ceil : Math.floor)(10 * scale.y) / 10;
             vectPrecision(scale, 1);
             // Sync state
-            stage.brush.position.copy(position);
-            stage.brush.scale.copy(scale);
+            brushPosition.copy(position);
+            brushScale.copy(scale);
           } else {
             vectPrecision(position, 1);
             scale.set(0, 0, 0);
-            stage.brush.position.copy(position);
-            stage.brush.scale.set(0, 0);
+            brushPosition.copy(position);
+            brushScale.set(0, 0);
           }
           setShowCursor(true);
         } else if (key === 'pointerdown') {
@@ -77,14 +78,14 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
         if (key === 'pointermove' && active.current) {
           ndCoordsToGround(position, ndCoords, camera);
           position.add(initial);
-          selection.position.copy(position).sub(stage.brush.selectFrom);
+          selection.position.copy(position).sub(selectFrom);
         } else if (key === 'pointerup' || key === 'pointerleave') {
           active.current = false;
           vectPrecision(position, 1);
-          selection.position.copy(position).sub(stage.brush.selectFrom);
+          selection.position.copy(position).sub(selectFrom);
           // Sync state
-          stage.brush.position.copy(position);
-          stage.brush.scale.copy(scale);
+          brushPosition.copy(position);
+          brushScale.copy(scale);
         }
       }
     });
@@ -94,22 +95,22 @@ const Brush: React.FC<Props> = ({ wire, stage }) => {
   const onMeshPointerDown = useCallback((e: PointerEvent) => {
     if (locked && e.type === 'pointerdown') {
       active.current = true; // Store selector offset:
-      initial.set(stage.brush.position.x - e.point.x, stage.brush.position.y - e.point.y, 0);
+      initial.set(brushPosition.x - e.point.x, brushPosition.y - e.point.y, 0);
       setShowCursor(false);
     }
   }, [locked]);
 
   const selectionGeom = useMemo(() => {
-    const polygons = stage.brush.selection.flatMap(x => x.polygons);
+    const polygons = brush.selection.flatMap(x => x.polygons);
     return geomService.polysToGeometry(polygons, 'xy', 0.001);
-  }, [stage.brush.selection]);
+  }, [brush]);
 
   const selectorBorderGeom = useMemo(() => {
-    const rectPoly = getScaledBrushRect(stage.brush);
+    const rectPoly = getScaledBrushRect(brush);
     const border = rectPoly.rect.area
       ? geomService.cutOut([rectPoly], rectPoly.createOutset(0.01)) : [];
     return geomService.polysToGeometry(border, 'xy', 0.001);
-  }, [stage.brush.selection]);
+  }, [brush]);
 
   return (
     <>
@@ -151,7 +152,7 @@ const selectorRectGeom = geomService.polysToGeometry([
 ], 'xy', 0.001);
 
 interface Props {
-  stage: StageMeta;
+  brush: BrushMeta;
   wire: Subject<PointerMsg>;
 }
 

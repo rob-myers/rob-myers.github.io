@@ -111,8 +111,8 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
 
           <Grid />
           <Axes />
-          <CameraControls stage={stage} />
-          <Brush stage={stage} wire={ptrWire} />
+          <CameraControls enabled={stage.opts.panZoom} internal={stage.internal} />
+          <Brush brush={stage.brush} wire={ptrWire} />
 
           <Lights enabled={stage.opts.lights} />
           <Navigable stage={stage} />
