@@ -171,6 +171,7 @@ const Root = styled.section<{ background: string }>`
 
 const Placeholder = styled.img<{}>`
   margin: auto;
+  overflow: hidden;
   max-width: 100%;
   max-height: 100%;
 `;
