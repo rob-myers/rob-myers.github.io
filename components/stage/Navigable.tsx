@@ -1,12 +1,12 @@
 import { useMemo } from "react";
-import { CorePolygonKey, StageMeta } from "model/stage/stage.model";
+import { CorePolygonKey, StageInternal, StageMeta } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
 
-const Navigable: React.FC<Props> = ({ stage: {
+const Navigable: React.FC<Props> = ({
   polygon,
-  internal: { bounds },
-  opts,
-} }) => {
+  bounds,
+  lightsEnabled,
+}) => {
 
   const { polygons: wallPolys } = polygon[CorePolygonKey.walls];
   const { polygons: navPolys } = polygon[CorePolygonKey.navigable];
@@ -24,7 +24,7 @@ const Navigable: React.FC<Props> = ({ stage: {
 
   return (
     <group>
-      {opts.lights && (
+      {lightsEnabled && (
         <mesh
           geometry={notWallsGeom}
           renderOrder={-1}
@@ -52,7 +52,9 @@ const Navigable: React.FC<Props> = ({ stage: {
 };
 
 interface Props {
-  stage: StageMeta;
+  bounds: StageInternal['bounds'];
+  polygon: StageMeta['polygon'];
+  lightsEnabled: boolean;
 }
 
 export default Navigable;

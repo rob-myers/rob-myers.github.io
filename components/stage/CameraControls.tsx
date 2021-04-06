@@ -7,6 +7,7 @@ import { StageInternal } from 'model/stage/stage.model';
 extend({ PanZoomControls });
 
 const CameraControls: React.FC<Props> = ({ internal, enabled }) => {
+  // console.log('CameraControls')
   const { camera, gl: { domElement } } = useThree();
   const controls = useRef<PanZoomControls>();
 

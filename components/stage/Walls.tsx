@@ -1,11 +1,9 @@
 import { useMemo } from "react";
 import { DoubleSide, FrontSide } from "three";
 import { geomService } from "model/geom.service";
-import { StageMeta } from "model/stage/stage.model";
+import { StageMeta, StageOpts, StageWalls } from "model/stage/stage.model";
 
-const Walls: React.FC<Props> = ({
-  stage: { polygon, walls, opts }
-}) => {
+const Walls: React.FC<Props> = ({ polygon, walls, opts }) => {
 
   const wallsPolys = useMemo(() => walls.polygonKeys
     .map(x => polygon[x]).flatMap(x => x.polygons), [polygon, walls]);
@@ -43,7 +41,9 @@ const Walls: React.FC<Props> = ({
 };
 
 interface Props {
-  stage: StageMeta;
+  opts: StageOpts;
+  polygon: StageMeta['polygon'];
+  walls: StageWalls;
 }
 
 export default Walls;

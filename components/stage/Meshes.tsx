@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import * as THREE from "three";
-import { StageMeta } from "model/stage/stage.model";
+import { StageInternal, StageMeta } from "model/stage/stage.model";
 import { ensureChildGroup } from "model/3d/three.model";
 
-const Meshes: React.FC<Props> = ({ stage }) => {
+const Meshes: React.FC<Props> = ({ internal, mesh }) => {
   const [meshRoot, setMeshRoot] = useState<THREE.Group>();
 
   useEffect(() => {
-    if (stage.internal.scene) {// ensure THREE.Group 'MeshRoot'
-      setMeshRoot(ensureChildGroup(stage.internal.scene, 'MeshRoot'));
+    if (internal.scene) {// ensure THREE.Group 'MeshRoot'
+      setMeshRoot(ensureChildGroup(internal.scene, 'MeshRoot'));
     }
-  }, [stage.internal.scene]);
+  }, [internal.scene]);
 
   useEffect(() => {
     if (meshRoot) {// ensure meshes are un/mounted in scene
-      const lookup = { ...stage.mesh };
+      const lookup = { ...mesh };
   
       meshRoot.children.forEach(mesh => {
         if (!lookup[mesh.userData.key]) {
@@ -29,13 +29,14 @@ const Meshes: React.FC<Props> = ({ stage }) => {
         meshRoot.add(mesh);
       });
     }
-  }, [meshRoot, stage.mesh]);
+  }, [meshRoot, mesh]);
 
   return null
 };
 
 interface Props {
-  stage: StageMeta;
+  internal: StageInternal;
+  mesh: StageMeta['mesh'];
 }
 
 export default Meshes;

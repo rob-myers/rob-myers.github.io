@@ -10,6 +10,7 @@ import { geomService } from "model/geom.service";
 import useGeomStore from "store/geom.store";
 
 const Brush: React.FC<Props> = ({ wire, brush }) => {
+  // console.log('Brush')
   const selectorRef = useRef<THREE.Mesh>(null);
   const selectorScaledRef = useRef<THREE.Mesh>(null);
   const selectionRef = useRef<THREE.Mesh>(null);

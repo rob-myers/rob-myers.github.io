@@ -20,6 +20,7 @@ import Walls from "./Walls";
 import Meshes from "./Meshes";
 
 const Stage: React.FC<Props> = ({ stageKey }) => {
+  // console.log('Stage')
   const rehydrated = useStage(({ rehydrated }) => rehydrated);
   const stage = useStage(({ stage }) => stage[stageKey]??null);
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
@@ -111,13 +112,30 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
 
           <Grid />
           <Axes />
-          <CameraControls enabled={stage.opts.panZoom} internal={stage.internal} />
-          <Brush brush={stage.brush} wire={ptrWire} />
+          <CameraControls
+            enabled={stage.opts.panZoom}
+            internal={stage.internal}
+          />
+          <Brush
+            brush={stage.brush}
+            wire={ptrWire}
+          />
 
           <Lights enabled={stage.opts.lights} />
-          <Navigable stage={stage} />
-          <Walls stage={stage} />
-          <Meshes stage={stage} />
+          <Navigable
+            bounds={stage.internal.bounds}
+            polygon={stage.polygon}
+            lightsEnabled={stage.opts.lights}
+          />
+          <Walls
+            opts={stage.opts}
+            polygon={stage.polygon}
+            walls={stage.walls}
+          />
+          <Meshes
+            internal={stage.internal}
+            mesh={stage.mesh}
+          />
 
         </Canvas>
 
