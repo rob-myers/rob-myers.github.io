@@ -72,8 +72,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const delta = walls.map(([x, y, w, h]) =>
         Geom.Polygon.fromRect(new Geom.Rect(x, y, w, h)).precision(1));
       api.ensurePolygon(stageKey, polygonKey);
-      api.rememberPolygon(stageKey, polygonKey);
-      api.modifyPolygon(stageKey, polygonKey, delta, { cutOut });
+      api.rememberPolygon(stageKey, polygonKey, true);
+      api.modifyPolygon(stageKey, polygonKey, delta, { cutOut, mutate: true });
       api.updateNavigable(stageKey);
       api.persist(stageKey);
     },

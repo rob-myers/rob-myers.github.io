@@ -11,10 +11,10 @@ import useGeomStore from "store/geom.store";
 
 const Brush: React.FC<Props> = ({ wire, brush }) => {
   // console.log('Brush')
+  const originTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
   const selectorRef = useRef<THREE.Mesh>(null);
   const selectorScaledRef = useRef<THREE.Mesh>(null);
   const selectionRef = useRef<THREE.Mesh>(null);
-  const originTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
   const { camera } = useThree();
 
   /** Ground position of pointer */
@@ -101,16 +101,14 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
     }
   }, [locked]);
 
-  const selectionGeom = useMemo(() => {
+  const { selectionGeom, selectorBorderGeom } = useMemo(() => {
     const polygons = brush.selectedPolys.flatMap(x => x.polygons);
-    return geomService.polysToGeometry(polygons, 'xy', 0.001);
-  }, [brush]);
+    const selectionGeom = geomService.polysToGeometry(polygons, 'xy', 0.001);
 
-  const selectorBorderGeom = useMemo(() => {
     const rectPoly = getScaledBrushRect(brush);
-    const border = rectPoly.rect.area
-      ? geomService.cutOut([rectPoly], rectPoly.createOutset(0.01)) : [];
-    return geomService.polysToGeometry(border, 'xy', 0.001);
+    const border = rectPoly.rect.area && geomService.cutOut([rectPoly], rectPoly.createOutset(0.01));
+    const selectorBorderGeom = geomService.polysToGeometry(border || [], 'xy', 0.001);
+    return { selectionGeom, selectorBorderGeom };
   }, [brush]);
 
   return (
