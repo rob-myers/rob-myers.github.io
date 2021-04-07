@@ -30,9 +30,9 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
       {stage && <>
 
         <LeftToolbar>
-          <div>
+          <Slot>
             @<strong>{stage.key}</strong>
-          </div>
+          </Slot>
           <Slot background="#eee">
             <Button
               emphasis={!canToggleRunning}
@@ -40,32 +40,43 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
               {...stage.opts.enabled && {
                 title: 'click to pause',
               }}
+              style={{
+                color: stage.opts.enabled ?  '#060' : '#600'
+              }}
             >
               {stage.opts.enabled ? 'running' : 'paused'}
             </Button>
           </Slot>
+          <Slot>
+            <select
+              disabled={!stage.opts.enabled || !canToggleRunning}
+              value="disabled"
+              onChange={onSelectSpawn}
+              style={{ display: 'flex' }}
+            >
+              <option key="disabled" value="disabled" disabled>spawn</option>
+              <option key="Crate" value="Crate">Crate</option>
+            </select>
+          </Slot>
         </LeftToolbar>
-        
-        <Slot>
-          <select
-            disabled={!stage.opts.enabled || !canToggleRunning}
-            value="disabled"
-            onChange={onSelectSpawn}
-          >
-            <option key="disabled" value="disabled" disabled>spawn</option>
-            <option key="Crate" value="Crate">Crate</option>
-          </select>
-        </Slot>
 
-        <Slot>
-          <Button
-            disabled={!stage.opts.enabled || !canToggleRunning || !stage.opts.panZoom}
-            onClick={toggleCam}
-            title={stage.opts.panZoom ? 'click to disable' : ''}
-          >
-            panzoom
-          </Button>
-        </Slot>
+        <RightToolbar>
+          <Slot background="#eee">
+            <Button disabled>
+              esc
+            </Button>
+          </Slot>
+
+          <Slot>
+            <Button
+              disabled={!stage.opts.enabled || !canToggleRunning || !stage.opts.panZoom}
+              onClick={toggleCam}
+              title={stage.opts.panZoom ? 'click to disable' : ''}
+            >
+              panzoom
+            </Button>
+          </Slot>
+        </RightToolbar>
       </>}
     </Toolbar>
   );
@@ -76,26 +87,32 @@ interface Props {
 }
 
 const Toolbar = styled.section`
-  display: grid;
-  grid-template-columns: calc(42px + 64px) auto 70px;
-  gap: 8px;
+  display: flex;
+  justify-content: space-between;
+  user-select: none;
 
   height: 28px;
-  user-select: none;
   font-size: 16px;
   border-bottom: 1px solid #ddd;
-  padding: 4px;
+  padding: 4px 8px 6px;
   background-color: white;
 `;
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 42px auto;
+  grid-template-columns: 42px 60px auto;
   gap: 8px;
+`;
+
+const RightToolbar = styled.section`
+  display: grid;
+  grid-template-columns: 30px 68px;
+  gap: 4px;
 `;
 
 const Slot = styled.div<{ background?: string }>`
   display: flex;
+  justify-content: center;
   ${({ background }) => css`
     background: ${background};
   `}
