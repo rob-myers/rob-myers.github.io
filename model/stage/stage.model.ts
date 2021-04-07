@@ -167,7 +167,7 @@ export function createDefaultBrushMeta(): BrushMeta {
   return {
     baseRect: new Geom.Rect(0, -1, 1, 1), // ?
     position: new Geom.Vector,
-    scale: new Geom.Vector(1, 1),
+    scale: new Geom.Vector(0, 0),
     rectPolygonKey: 'default',
     locked: false,
     selectedPolys: [],
@@ -230,8 +230,10 @@ export function getBrushSelection(
     .map<NamedPolygons>(x => ({ ...x,
       polygons: x.polygons.filter(x => x.rect.intersects(rect)),
     })).filter(x => x.polygons.length)
-    .map<SelectedPolygons>((x) => ({
-      polygonKey: x.key,
-      polygons: geomService.union(x.polygons.flatMap(x => geomService.intersect([poly, x]))),
-    }));
+    .map<SelectedPolygons>(
+      (x) => ({
+        polygonKey: x.key,
+        polygons: geomService.union(x.polygons.flatMap(x => geomService.intersect([poly, x]))),
+      })
+    ).filter(x => x.polygons.length);
 }
