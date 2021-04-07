@@ -12,16 +12,18 @@ import useGeomStore from "store/geom.store";
 const Brush: React.FC<Props> = ({ wire, brush }) => {
   // console.log('Brush')
   const originTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
+  const { camera } = useThree();
   const selectorRef = useRef<THREE.Mesh>(null);
   const selectorScaledRef = useRef<THREE.Mesh>(null);
   const selectionRef = useRef<THREE.Mesh>(null);
-  const { camera } = useThree();
 
-  /** Ground position of pointer */
-  const current = useRef(new THREE.Vector3).current;
-  /** Ground position of pointer on last pointer down  */
+  /**
+   * The ground position of last pointer down.
+   * If brush.locked, we compute it relative to
+   * to the brush position at that time.
+   */
   const initial = useRef(new THREE.Vector3).current;
-  /** Should we update the brush?  */
+  /** Should we update the brush? */
   const active = useRef(false);
   // Has the brush ever been used?
   const [everUsed, setEverUsed] = useState(false);
@@ -40,22 +42,26 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
     }
     setShowCursor(!locked);
 
+    /** Store the selector's position/scale in stage.brush */
     function syncBrush() { brushPosition.copy(position) && brushScale.copy(scale); }
+    /** Set selector's scale via mouse position relative to `from`. */
+    function computeRelScale(ndCoords: Geom.VectorJson, from: THREE.Vector3) {
+      ndCoordsToGround(scale, ndCoords, camera).sub(from).set(scale.x, -scale.y, 1);
+    }
 
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (!locked) {
         if (key === 'pointermove' && active.current) {
-          ndCoordsToGround(current, ndCoords, camera);
-          scale.set(current.x - initial.x, -(current.y - initial.y), 1);
+          computeRelScale(ndCoords, initial);
           !everUsed && setEverUsed(true);
-        } else if (key === 'pointerleave' || key === 'pointerup') {
+        } else if ((key === 'pointerleave' || key === 'pointerup') && active.current) {
           active.current = false;
           if (Math.abs(scale.x) >= 0.01 || Math.abs(scale.y) >= 0.01) {
-            // Scale up rectangle to contain all touched 0.1 * 0.1 cells
+            // We scale up rectangle to contain all touched 0.1 * 0.1 cells
             position.x = (scale.x > 0 ? Math.floor : Math.ceil)(10 * position.x) / 10;
             position.y = (scale.y > 0 ? Math.ceil : Math.floor)(10 * position.y) / 10;
             vectPrecision(position, 1);
-            scale.set(current.x - position.x, -(current.y - position.y), 1);
+            computeRelScale(ndCoords, position);
             scale.x = (scale.x > 0 ? Math.ceil : Math.floor)(10 * scale.x) / 10;
             scale.y = (scale.y > 0 ? Math.ceil : Math.floor)(10 * scale.y) / 10;
             vectPrecision(scale, 1);
@@ -67,16 +73,13 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
           setShowCursor(true);
         } else if (key === 'pointerdown') {
           active.current = true;
-          ndCoordsToGround(initial, ndCoords, camera);
-          current.copy(initial);
-          position.set(initial.x, initial.y, 0);
+          position.copy(ndCoordsToGround(initial, ndCoords, camera));
           scale.set(0, 0, 0);
           setShowCursor(false);
         }
-      } else {
-        if (key === 'pointermove' && active.current) {
-          ndCoordsToGround(position, ndCoords, camera);
-          position.add(initial);
+      } else if (active.current) {
+        if (key === 'pointermove') {
+          ndCoordsToGround(position, ndCoords, camera).sub(initial);
           selection.position.copy(position).sub(selectFrom);
         } else if (key === 'pointerup' || key === 'pointerleave') {
           active.current = false;
@@ -91,20 +94,20 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
 
   const onMeshPointerDown = useCallback((e: PointerEvent) => {
     if (locked && e.type === 'pointerdown') {
-      active.current = true; // Store selector offset:
-      initial.set(brushPosition.x - e.point.x, brushPosition.y - e.point.y, 0);
+      active.current = true; // Store place clicked, relative to brush position
+      initial.set(e.point.x - brushPosition.x, e.point.y - brushPosition.y, 0);
       setShowCursor(false);
     }
   }, [locked]);
 
   const { selectionGeom, selectorBorderGeom } = useMemo(() => {
     const polygons = brush.selectedPolys.flatMap(x => x.polygons);
-    const selectionGeom = geomService.polysToGeometry(polygons, 'xy', 0.001);
-
     const rectPoly = getScaledBrushRect(brush);
     const border = rectPoly.rect.area && geomService.cutOut([rectPoly], rectPoly.createOutset(0.01));
-    const selectorBorderGeom = geomService.polysToGeometry(border || [], 'xy', 0.001);
-    return { selectionGeom, selectorBorderGeom };
+    return {
+      selectionGeom: geomService.polysToGeometry(polygons, 'xy', 0.001),
+      selectorBorderGeom: geomService.polysToGeometry(border || [], 'xy', 0.001),
+    };
   }, [brush]);
 
   return (
@@ -142,6 +145,7 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
   );
 };
 
+/** Top left is (0, 0) */
 const selectorRectGeom = geomService.polysToGeometry([
   Geom.Polygon.fromRect(new Geom.Rect(0, -1, 1, 1))
 ], 'xy', 0.001);

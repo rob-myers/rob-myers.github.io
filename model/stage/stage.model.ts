@@ -157,7 +157,7 @@ export interface BrushMeta {
   selectedPolys: SelectedPolygons[];
   /** Currently selected meshes */
   selectedMeshes: THREE.Group;
-  /** Position of brush when last made selection */
+  /** Position of brush when last selection was started */
   selectFrom: THREE.Vector3;
 }
 
