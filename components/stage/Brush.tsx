@@ -9,7 +9,7 @@ import { BrushMeta, getScaledBrushRect } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
 import useGeomStore from "store/geom.store";
 
-const Brush: React.FC<Props> = ({ wire, brush }) => {
+const Brush: React.FC<Props> = ({ brush, wire }) => {
   // console.log('Brush')
   const originTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
   const { camera } = useThree();
@@ -17,30 +17,29 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
   const selectorScaledRef = useRef<THREE.Mesh>(null);
   const selectionRef = useRef<THREE.Mesh>(null);
 
-  /**
-   * The ground position of last pointer down.
-   * If brush.locked, we compute it relative to
-   * to the brush position at that time.
-   */
-  const initial = useRef(new THREE.Vector3).current;
   /** Should we update the brush? */
   const active = useRef(false);
-  // Has the brush ever been used?
-  const [everUsed, setEverUsed] = useState(false);
+  /** Should we show the cursor? */
   const [showCursor, setShowCursor] = useState(true);
 
-  // NOTE brush.{position,scale,selectFrom} refs never change
-  const { position: brushPosition, scale: brushScale, selectFrom, locked } = brush;
+  const {
+    position: brushPosition,
+    scale: brushScale,
+    selectFrom,
+    dragDelta,
+    locked,
+  } = brush;
 
   useEffect(() => {
     const position = selectorRef.current!.position;
     const scale = selectorScaledRef.current!.scale;
     const selection = selectionRef.current!;
 
-    if (!locked) {// Reset selection offset
-      selection.position.set(0, 0, 0);
-    }
+    position.set(brushPosition.x, brushPosition.y, 0);
+    scale.set(brushScale.x, brushScale.y, 1);
     setShowCursor(!locked);
+    // Occasional flicker?
+    selection.position.copy(position).sub(selectFrom);
 
     /** Store the selector's position/scale in stage.brush */
     function syncBrush() { brushPosition.copy(position) && brushScale.copy(scale); }
@@ -52,8 +51,7 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
     const sub = wire.subscribe(({ key, ndCoords }) => {
       if (!locked) {
         if (key === 'pointermove' && active.current) {
-          computeRelScale(ndCoords, initial);
-          !everUsed && setEverUsed(true);
+          computeRelScale(ndCoords, selectFrom);
         } else if ((key === 'pointerleave' || key === 'pointerup') && active.current) {
           active.current = false;
           if (Math.abs(scale.x) >= 0.01 || Math.abs(scale.y) >= 0.01) {
@@ -73,13 +71,13 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
           setShowCursor(true);
         } else if (key === 'pointerdown') {
           active.current = true;
-          position.copy(ndCoordsToGround(initial, ndCoords, camera));
+          position.copy(ndCoordsToGround(selectFrom, ndCoords, camera));
           scale.set(0, 0, 0);
           setShowCursor(false);
         }
       } else if (active.current) {
         if (key === 'pointermove') {
-          ndCoordsToGround(position, ndCoords, camera).sub(initial);
+          ndCoordsToGround(position, ndCoords, camera).sub(dragDelta);
           selection.position.copy(position).sub(selectFrom);
         } else if (key === 'pointerup' || key === 'pointerleave') {
           active.current = false;
@@ -89,25 +87,28 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
         }
       }
     });
-    return () => sub.unsubscribe();
-  }, [everUsed, locked]);
+    return () => {
+      sub.unsubscribe();
+      syncBrush();
+    }
+  }, [locked]);
 
   const onMeshPointerDown = useCallback((e: PointerEvent) => {
     if (locked && e.type === 'pointerdown') {
       active.current = true; // Store place clicked, relative to brush position
-      initial.set(e.point.x - brushPosition.x, e.point.y - brushPosition.y, 0);
+      dragDelta.set(e.point.x - brushPosition.x, e.point.y - brushPosition.y, 0);
       setShowCursor(false);
     }
   }, [locked]);
 
-  const { selectionGeom, selectorBorderGeom } = useMemo(() => {
-    const polygons = brush.selectedPolys.flatMap(x => x.polygons);
+  const selectionGeom = useMemo(() =>
+    geomService.polysToGeometry(brush.selectedPolys.flatMap(x => x.polygons), 'xy', 0.001)
+  , [brush]);
+
+  const selectorBorderGeom = useMemo(() => {
     const rectPoly = getScaledBrushRect(brush);
-    const border = rectPoly.rect.area && geomService.cutOut([rectPoly], rectPoly.createOutset(0.01));
-    return {
-      selectionGeom: geomService.polysToGeometry(polygons, 'xy', 0.001),
-      selectorBorderGeom: geomService.polysToGeometry(border || [], 'xy', 0.001),
-    };
+    const border = rectPoly.rect.area ? geomService.cutOut([rectPoly], rectPoly.createOutset(0.01)) : [];
+    return geomService.polysToGeometry(border, 'xy', 0.001);
   }, [brush]);
 
   return (
@@ -122,7 +123,6 @@ const Brush: React.FC<Props> = ({ wire, brush }) => {
         </mesh>
         <mesh
           ref={selectorScaledRef}
-          visible={everUsed}
           geometry={selectorRectGeom}
           onPointerDown={onMeshPointerDown}
           renderOrder={0} // Avoids occlusion when behind transparent walls

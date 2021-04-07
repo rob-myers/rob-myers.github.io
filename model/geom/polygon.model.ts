@@ -286,9 +286,11 @@ export class Polygon {
     return Rect.fromPoints(...this.outline);
   }
 
+  /** Mutates this polygon */
   reverse() {
     this.outline.reverse();
     this.holes.forEach(hole => hole.reverse());
+    return this;
   }
 
   scale(scalar: number) {

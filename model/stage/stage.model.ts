@@ -157,8 +157,10 @@ export interface BrushMeta {
   selectedPolys: SelectedPolygons[];
   /** Currently selected meshes */
   selectedMeshes: THREE.Group;
-  /** Position of brush when last selection was started */
+  /** Brush position where most recent selection was started */
   selectFrom: THREE.Vector3;
+  /** Drag position minus `selectFrom` */
+  dragDelta: THREE.Vector3;
 }
 
 export function createDefaultBrushMeta(): BrushMeta {
@@ -173,6 +175,7 @@ export function createDefaultBrushMeta(): BrushMeta {
     selectedPolys: [],
     selectedMeshes: selectedMeshes,
     selectFrom: new THREE.Vector3,
+    dragDelta: new THREE.Vector3,
   };
 };
 
@@ -209,8 +212,10 @@ export function getGlobalBrushRect(brush: BrushMeta): Geom.Polygon {
     .scaleBy(brush.scale).add(brush.position);
 }
 
-export function getScaledBrushRect(brush: BrushMeta): Geom.Polygon {
-  return Geom.Polygon.fromRect(brush.baseRect).scaleBy(brush.scale);
+export function getScaledBrushRect({ baseRect, scale }: BrushMeta): Geom.Polygon {
+  const polygon = Geom.Polygon.fromRect(baseRect).scaleBy(scale);
+  const sign = Math.sign(scale.x) * Math.sign(scale.y);
+  return sign === -1 ? polygon.reverse() : polygon;
 }
 
 export interface SelectedPolygons {
