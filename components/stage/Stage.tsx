@@ -65,11 +65,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     }
   }, [rehydrated, stage?.opts.enabled]);
 
-  useEffect(() => {
-    if (ctxt?.gl) {
-      ctxt.gl.shadowMap.needsUpdate = true;
-    }
-  }, [stage?.polygon, stage?.opts]);
+  const updateShadows = useCallback(() => {
+    ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true); 
+  }, [ctxt]);
 
   const ptrWire = useRef(new Subject<PointerMsg>()).current;
   const onPointer = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -87,8 +85,9 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   }, [keyWire]);
 
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
-    stage?.opts.enabled && stage.opts.panZoom && 
-      e.currentTarget.focus(), [stage?.opts]);
+    stage?.opts.enabled && stage.opts.panZoom && e.currentTarget.focus(),
+    [stage?.opts],
+  );
 
   return (
     <Root
@@ -132,8 +131,12 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
             opts={stage.opts}
             polygon={stage.polygon}
             walls={stage.walls}
+            updateShadows={updateShadows}
           />
-          <Meshes mesh={stage.mesh} />
+          <Meshes
+            mesh={stage.mesh}
+            updateShadows={updateShadows}
+          />
 
         </Canvas>
 
