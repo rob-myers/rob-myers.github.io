@@ -263,6 +263,7 @@ export function computeSelectedMeshes(
   });
   return touchedMeshes.map(({ mesh }) => {
     const clone = mesh.clone(true) as THREE.Mesh;
+    clone.castShadow = false;
     clone.material = useGeomStore.api.getMeshDef(mesh.name).selectedMaterial;
     return clone;
   });
