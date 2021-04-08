@@ -380,6 +380,11 @@ class GeomService {
     return { x: src.x + dir.x * tmax, y: src.y + dir.y * tmax };
   }
 
+  /** Project Box3 to xy plane */
+  rectFromBbox({ min, max }: THREE.Box3): Geom.Rect {
+    return new Geom.Rect(min.x, min.y, max.x - min.x, max.y - min.y);
+  }
+
   removePathReps(path: Geom.VectorJson[]) {
     let prev: Geom.VectorJson;
     return path.reduce((agg, p) => {
