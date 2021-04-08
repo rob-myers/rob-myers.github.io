@@ -155,8 +155,6 @@ export interface BrushMeta {
   locked: boolean;
   /** Currently selected polygons */
   selectedPolys: SelectedPolygons[];
-  /** Currently selected meshes */
-  selectedMeshes: THREE.Group;
   /** Brush position where most recent selection was started */
   selectFrom: THREE.Vector3;
   /** Drag position minus `selectFrom` */
@@ -164,16 +162,13 @@ export interface BrushMeta {
 }
 
 export function createDefaultBrushMeta(): BrushMeta {
-  const selectedMeshes = new THREE.Group;
-  selectedMeshes.name = 'SelectedMeshes';
   return {
-    baseRect: new Geom.Rect(0, -1, 1, 1), // ?
+    baseRect: new Geom.Rect(0, -1, 1, 1),
     position: new Geom.Vector,
     scale: new Geom.Vector(0, 0),
     rectPolygonKey: 'default',
     locked: false,
     selectedPolys: [],
-    selectedMeshes: selectedMeshes,
     selectFrom: new THREE.Vector3,
     dragDelta: new THREE.Vector3,
   };

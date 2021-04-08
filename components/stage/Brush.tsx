@@ -16,6 +16,7 @@ const Brush: React.FC<Props> = ({ brush, wire }) => {
   const selectorRef = useRef<THREE.Mesh>(null);
   const selectorScaledRef = useRef<THREE.Mesh>(null);
   const selectionRef = useRef<THREE.Mesh>(null);
+  const meshesRef = useRef<THREE.Group>(null);
 
   /** Should we update the brush? */
   const active = useRef(false);
@@ -141,6 +142,10 @@ const Brush: React.FC<Props> = ({ brush, wire }) => {
           opacity={0.3}
         />
       </mesh>
+      <group
+        ref={meshesRef}
+        name="SelectedMeshes"
+      />
     </>
   );
 };

@@ -46,7 +46,6 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
 
     // Currently, updateNavigable will also update stage.internal
     stage.internal.scene = ctxt.scene;
-    ctxt.scene.add(stage.brush.selectedMeshes);
     setTimeout(() => useStage.api.updateNavigable(stageKey));
     setCtxt(ctxt);
   }, [stage?.internal]);
