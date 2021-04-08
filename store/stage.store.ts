@@ -110,8 +110,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           instance.mesh.material = useGeom.api.getMeshDef(mesh.name).mesh.material;
           lookup[instance.key] = instance;
         }
-      }
-      // mutate because will api.updateNavigable after
+      } // mutate because will api.updateNavigable after
       api.getStage(stageKey).mesh = lookup;
     },
 
@@ -155,6 +154,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         // Need to update brush (vs mutate) because applyBrush won't update it
         api.updateBrush(stageKey, { locked: true, selectedPolys, selectedMeshes });
         api.applyBrush(stageKey, { erase: true });
+        api.updateOpts(stageKey, { canCancelUi: true });
       } else {// When selection exists, cut it out
         api.applyBrush(stageKey, { erase: true });
       }
@@ -162,6 +162,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     deselectBrush: (stageKey) => {
       api.updateBrush(stageKey, { locked: false, selectedPolys: [], selectedMeshes: [] });
+      api.updateOpts(stageKey, { canCancelUi: false });
     },
 
     ensurePolygon: (stageKey, polygonKey) => {
@@ -242,12 +243,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     selectWithBrush: (stageKey) => {
       const { brush, walls, polygon, mesh } = api.getStage(stageKey)
-
       const selectedPolys = Stage.computeSelectedPolygons(brush, walls, polygon);
       const selectedMeshes = Stage.computeSelectedMeshes(brush, mesh);
 
       if (!brush.locked && (selectedPolys.length || selectedMeshes.length)) {
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
+        api.updateOpts(stageKey, { canCancelUi: true });
         api.updateBrush(stageKey, { locked: true, selectedPolys, selectedMeshes });
       }
     },

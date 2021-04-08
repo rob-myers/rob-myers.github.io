@@ -61,6 +61,8 @@ export interface StageOpts {
   autoPersist: boolean;
   /** Initial camera position */
   initCameraPos: Triple<number>;
+  /** Can cancel selection via UI?  */
+  canCancelUi: boolean;
 }
 
 export enum CorePolygonKey {
@@ -109,6 +111,7 @@ function createStageOpts(): StageOpts {
     wallHeight: 4,
     autoPersist: true,
     initCameraPos: [...initCameraPosArray],
+    canCancelUi: false,
   };
 }
 

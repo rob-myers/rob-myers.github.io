@@ -13,17 +13,21 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
       setCanToggleRunning(false);
       setTimeout(() => setCanToggleRunning(true), 1000);
     }
-  }, [canToggleRunning, stage?.opts]);
+  }, [canToggleRunning, stage?.opts.enabled]);
 
   const toggleCam = useCallback(() => {
     stage && useStage.api.updateOpts(stage.key, {
       panZoom: !stage.opts.panZoom,
     });
-  }, [stage?.opts]);
+  }, [stage?.opts.panZoom]);
 
   const onSelectSpawn = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     stage && useStage.api.spawnMesh(stage.key, e.currentTarget.value);
-  }, [stage?.opts]);
+  }, [stage]);
+
+  const cancelSelection = useCallback(() => {
+    stage?.opts.canCancelUi && useStage.api.deselectBrush(stage.key);
+  }, [stage?.opts.canCancelUi]);
 
   return (
     <Toolbar>
@@ -48,22 +52,24 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
             </Button>
           </Slot>
           <Slot>
-            <select
+            <SelectSpawn
               disabled={!stage.opts.enabled || !canToggleRunning}
               value="disabled"
               onChange={onSelectSpawn}
-              style={{ display: 'flex' }}
             >
               <option key="disabled" value="disabled" disabled>spawn</option>
               <option key="Crate" value="Crate">Crate</option>
-            </select>
+            </SelectSpawn>
           </Slot>
         </LeftToolbar>
 
         <RightToolbar>
           <Slot background="#eee">
-            <Button disabled>
-              esc
+            <Button
+              disabled={!stage.opts.canCancelUi}
+              onClick={cancelSelection}
+            >
+              cancel
             </Button>
           </Slot>
 
@@ -104,9 +110,13 @@ const LeftToolbar = styled.section`
   gap: 8px;
 `;
 
+const SelectSpawn = styled.select`
+  display: flex;
+`;
+
 const RightToolbar = styled.section`
   display: grid;
-  grid-template-columns: 30px 68px;
+  grid-template-columns: auto 66px;
   gap: 4px;
 `;
 
