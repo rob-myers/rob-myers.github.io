@@ -4,6 +4,7 @@ import { KeyedLookup, Triple } from "model/generic.model";
 import * as Geom from "model/geom";
 import { PanZoomControls } from "model/3d/pan-zoom-controls";
 import { geomService } from "model/geom.service";
+import useGeomStore from "store/geom.store";
 
 export type StageMeta = {
   key: string;
@@ -16,7 +17,7 @@ export type StageMeta = {
   /** Important options, also for the CLI */
   opts: StageOpts;
   /** Instantiated mesh storage */
-  mesh: KeyedLookup<NamedMesh>;
+  mesh: KeyedLookup<MeshInstance>;
   /** Polygon storage */
   polygon: KeyedLookup<NamedPolygons>;
   /** Defines keys of polygons representing walls */
@@ -155,6 +156,8 @@ export interface BrushMeta {
   locked: boolean;
   /** Currently selected polygons */
   selectedPolys: SelectedPolygons[];
+  /** Currently selected meshes */
+  selectedMeshes: THREE.Mesh[];
   /** Brush position where most recent selection was started */
   selectFrom: THREE.Vector3;
   /** Drag position minus `selectFrom` */
@@ -169,16 +172,15 @@ export function createDefaultBrushMeta(): BrushMeta {
     rectPolygonKey: 'default',
     locked: false,
     selectedPolys: [],
+    selectedMeshes: [],
     selectFrom: new THREE.Vector3,
     dragDelta: new THREE.Vector3,
   };
 };
 
-export interface NamedMesh {
-  /** Instance name */
+export interface MeshInstance {
+  /** Instance identifier */
   key: string;
-  /** mesh.name */
-  meshKey: string;
   mesh: THREE.Mesh;
 }
 
@@ -204,10 +206,11 @@ export interface StageWalls {
 
 export function getGlobalBrushRect(brush: BrushMeta): Geom.Polygon {
   return Geom.Polygon.fromRect(brush.baseRect)
-    .scaleBy(brush.scale).add(brush.position);
+    .scaleBy(brush.scale)
+    .add(brush.position);
 }
 
-export function getScaledBrushRect({ baseRect, scale }: BrushMeta): Geom.Polygon {
+export function getScaledBrushRect(baseRect: Geom.Rect, scale: Geom.Vector): Geom.Polygon {
   const polygon = Geom.Polygon.fromRect(baseRect).scaleBy(scale);
   const sign = Math.sign(scale.x) * Math.sign(scale.y);
   return sign === -1 ? polygon.reverse() : polygon;
@@ -219,21 +222,39 @@ export interface SelectedPolygons {
   polygons: Geom.Polygon[];
 }
 
-export function getBrushSelection(
+export function computeSelectedPolygons(
   brush: BrushMeta,
   { polygonKeys }: StageWalls,
   polygon: StageMeta['polygon'],
-) {
-  const poly = getGlobalBrushRect(brush)
-  const rect = poly.rect;
+): SelectedPolygons[] {
+  const brushPoly = getGlobalBrushRect(brush);
+  const brushRect = brushPoly.rect;
   return polygonKeys.map(x => polygon[x])
     .map<NamedPolygons>(x => ({ ...x,
-      polygons: x.polygons.filter(x => x.rect.intersects(rect)),
+      polygons: x.polygons.filter(x => x.rect.intersects(brushRect)),
     })).filter(x => x.polygons.length)
-    .map<SelectedPolygons>(
-      (x) => ({
-        polygonKey: x.key,
-        polygons: geomService.union(x.polygons.flatMap(x => geomService.intersect([poly, x]))),
-      })
-    ).filter(x => x.polygons.length);
+    .map<SelectedPolygons>((x) => ({
+      polygonKey: x.key,
+      polygons: geomService.union(
+        x.polygons.flatMap(x => geomService.intersect([brushPoly, x]))
+      ),
+    })).filter(x => x.polygons.length);
+}
+
+export function computeSelectedMeshes(
+  brush: BrushMeta,
+  mesh: StageMeta['mesh'],
+): THREE.Mesh[] {
+  const brushRect = getGlobalBrushRect(brush).rect;
+  const bbox = new THREE.Box3;
+  const touchedMeshes = Object.values(mesh).filter(x => {
+    const meshRect = geomService.rectFromBbox(bbox.setFromObject(x.mesh));
+    return meshRect.intersects(brushRect);
+  });
+  return touchedMeshes.map(({ mesh }) => {
+    const clone = mesh.clone(true) as THREE.Mesh;
+    clone.material = useGeomStore.api.getMesh(mesh.name).selectedMaterial;
+    clone.userData.key = clone.uuid;
+    return clone;
+  });
 }

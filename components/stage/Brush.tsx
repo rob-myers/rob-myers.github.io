@@ -102,15 +102,25 @@ const Brush: React.FC<Props> = ({ brush, wire }) => {
     }
   }, [locked]);
 
-  const selectionGeom = useMemo(() =>
-    geomService.polysToGeometry(brush.selectedPolys.flatMap(x => x.polygons), 'xy', 0.001)
-  , [brush]);
+  const { selectedPolys, selectedMeshes, baseRect } = brush;
+
+  const selectedPolysGeom = useMemo(() =>
+    geomService.polysToGeometry(selectedPolys.flatMap(x => x.polygons), 'xy', 0.001)
+  , [selectedPolys]);
 
   const selectorBorderGeom = useMemo(() => {
-    const rectPoly = getScaledBrushRect(brush);
+    const rectPoly = getScaledBrushRect(baseRect, brushScale);
     const border = rectPoly.rect.area ? geomService.cutOut([rectPoly], rectPoly.createOutset(0.01)) : [];
     return geomService.polysToGeometry(border, 'xy', 0.001);
-  }, [brush]);
+  }, [locked]);
+
+  useEffect(() => {
+    const group = meshesRef.current!;
+    selectedMeshes.forEach((mesh) => group.add(mesh));
+    return () => {
+      selectedMeshes.forEach((mesh) => group.remove(mesh));
+    };
+  }, [selectedMeshes]);
 
   return (
     <>
@@ -135,17 +145,19 @@ const Brush: React.FC<Props> = ({ brush, wire }) => {
           />
         </mesh>
       </group>
-      <mesh ref={selectionRef} geometry={selectionGeom}>
-        <meshBasicMaterial
-          color="#00f"
-          transparent
-          opacity={0.3}
+      <group ref={selectionRef}>
+        <mesh geometry={selectedPolysGeom}>
+          <meshBasicMaterial
+            color="#00f"
+            transparent
+            opacity={0.3}
+          />
+        </mesh>
+        <group
+          ref={meshesRef}
+          name="SelectedMeshes"
         />
-      </mesh>
-      <group
-        ref={meshesRef}
-        name="SelectedMeshes"
-      />
+      </group>
     </>
   );
 };

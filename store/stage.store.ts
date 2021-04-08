@@ -25,7 +25,7 @@ export type State = {
     applyBrush: (stageKey: string, opts: { erase?: boolean }) => void;
     createStage: (stageKey: string) => void;
     cutSelectPolysInBrush: (stageKey: string) => void;
-    deselectPolysInBrush: (stageKey: string) => void;
+    deselectBrush: (stageKey: string) => void;
     ensurePolygon: (stageKey: string, polygonKey: string) => void;
     ensureStage: (stageKey: string) => void;
     getPolygon: (stageKey: string, polygonKey: string) => Stage.NamedPolygons;
@@ -40,8 +40,8 @@ export type State = {
     persist: (stageKey: string) => void;
     rememberPolygon: (stageKey: string, polygonKey: string, mutate?: boolean) => void;
     removeStage: (stageKey: string) => void;
-    selectPolysInBrush: (stageKey: string) => void;
-    spawnMesh: (stageKey: string, meshKey: string) => void;
+    selectUsingBrush: (stageKey: string) => void;
+    spawnMesh: (stageKey: string, meshName: string) => void;
     transformBrush: (stageKey: string, transformKey: TransformKey) => void;
     undoRedoPolygons: (stageKey: string) => void;
     updateBrush: (stageKey: string, updates: Updates<Stage.BrushMeta>) => void;
@@ -121,7 +121,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     cutSelectPolysInBrush: (stageKey) => {
       const { brush, walls, polygon } = api.getStage(stageKey)
-      const selection = Stage.getBrushSelection(brush, walls, polygon);
+      const selection = Stage.computeSelectedPolygons(brush, walls, polygon);
 
       if (!selection.length) {
         return;
@@ -135,8 +135,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }
     },
 
-    deselectPolysInBrush: (stageKey) => {
-      api.updateBrush(stageKey, { locked: false, selectedPolys: [] });
+    deselectBrush: (stageKey) => {
+      api.updateBrush(stageKey, { locked: false, selectedPolys: [], selectedMeshes: [] });
     },
 
     ensurePolygon: (stageKey, polygonKey) => {
@@ -215,23 +215,25 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       stage: removeFromLookup(stageKey, stage),
     })),
 
-    selectPolysInBrush: (stageKey) => {
-      const { brush, walls, polygon } = api.getStage(stageKey)
-      const selection = Stage.getBrushSelection(brush, walls, polygon);
+    selectUsingBrush: (stageKey) => {
+      const { brush, walls, polygon, mesh } = api.getStage(stageKey)
 
-      if (selection.length && !brush.locked) {
+      const selectedPolys = Stage.computeSelectedPolygons(brush, walls, polygon);
+      const selectedMeshes = Stage.computeSelectedMeshes(brush, mesh);
+
+      if (!brush.locked && (selectedPolys.length || selectedMeshes.length)) {
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
-        api.updateBrush(stageKey, { locked: true, selectedPolys: selection });
+        api.updateBrush(stageKey, { locked: true, selectedPolys, selectedMeshes });
       }
     },
 
-    spawnMesh: (stageKey, meshKey) => {
-      const meshInstance = useGeom.api.cloneMesh(meshKey);
+    spawnMesh: (stageKey, meshName) => {
+      const meshInstance = useGeom.api.cloneMesh(meshName);
       const { brush } = api.getStage(stageKey);
       meshInstance.position.set(brush.position.x, brush.position.y, 0);
       const instanceKey = meshInstance.uuid; // TODO ?
       api.updateStage(stageKey, ({ mesh }) => ({ mesh: { ...mesh,
-          [instanceKey]: { key: instanceKey, meshKey, mesh: meshInstance },
+          [instanceKey]: { key: instanceKey, mesh: meshInstance },
         }}),
       );
     },
