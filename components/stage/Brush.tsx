@@ -18,6 +18,7 @@ const Brush: React.FC<Props> = ({ brush, wire }) => {
   const selectionRef = useRef<THREE.Mesh>(null);
   const meshesRef = useRef<THREE.Group>(null);
 
+  const initialized = useRef(false);
   /** Should we update the brush? */
   const active = useRef(false);
   /** Should we show the cursor? */
@@ -39,8 +40,11 @@ const Brush: React.FC<Props> = ({ brush, wire }) => {
     position.set(brushPosition.x, brushPosition.y, 0);
     scale.set(brushScale.x, brushScale.y, 1);
     setShowCursor(!locked);
-    // Occasional flicker?
-    selection.position.copy(position).sub(selectFrom);
+    
+    selection.position.set(0, 0, 0);
+    // Reinitialize selection on remount
+    if (!initialized.current && locked) selection.position.copy(position).sub(selectFrom);
+    initialized.current = true;
 
     /** Store the selector's position/scale in stage.brush */
     function syncBrush() { brushPosition.copy(position) && brushScale.copy(scale); }
