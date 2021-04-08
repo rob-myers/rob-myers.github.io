@@ -27,11 +27,11 @@ export function createStageProxy(stageKey: string) {
         return new Proxy({} as ExtendedBrush, {
           get(_, key: keyof ExtendedBrush) {
             switch (key) {
-              case 'paint': return () => useStage.api.applyBrush(stageKey, {});
+              case 'paint': return () => useStage.api.applyBrush(stageKey, { erase: false });
               case 'erase': return () => useStage.api.applyBrush(stageKey, { erase: true });
-              case 'select': return () => useStage.api.selectUsingBrush(stageKey);
+              case 'select': return () => useStage.api.selectWithBrush(stageKey);
               case 'deselect': return () => useStage.api.deselectBrush(stageKey);
-              case 'cutSelect': return () => useStage.api.cutSelectPolysInBrush(stageKey);
+              case 'cutSelect': return () => useStage.api.cutWithBrush(stageKey);
               case 'transform': return (transformKey: TransformKey) =>
                 useStage.api.transformBrush(stageKey, transformKey);
               case 'undoRedo': return () => useStage.api.undoRedoPolygons(stageKey);

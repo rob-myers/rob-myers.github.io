@@ -16,6 +16,7 @@ class GeomService {
 
   private colorCache = {} as Record<string, THREE.Color>;
   private lineMatCache = {} as Record<string, MeshLineMaterial>;
+  private tempBox = new THREE.Box3;
 
   private getColor(color: string) {
     return this.colorCache[color] || (
@@ -380,8 +381,8 @@ class GeomService {
     return { x: src.x + dir.x * tmax, y: src.y + dir.y * tmax };
   }
 
-  /** Project Box3 to xy plane */
-  rectFromBbox({ min, max }: THREE.Box3): Geom.Rect {
+  rectFromMesh(mesh: THREE.Mesh): Geom.Rect {
+    const { min, max } = this.tempBox.setFromObject(mesh);
     return new Geom.Rect(min.x, min.y, max.x - min.x, max.y - min.y);
   }
 

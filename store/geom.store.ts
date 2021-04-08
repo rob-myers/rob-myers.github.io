@@ -27,7 +27,7 @@ export type State = {
     };
     /** Extract meshes from loaded gltf */
     extractMeshes: (gltf: GLTF) => void;
-    getMesh: (meshName: string) => MeshDef;
+    getMeshDef: (meshName: string) => MeshDef;
     /** Load assets from gltf (exported from Blender). */
     load: () => Promise<void>;
     /** Load images as `THREE.Texture`s */
@@ -80,7 +80,7 @@ const useStore = create<State>(devtools((set, get) => ({
       set(_ => ({ mesh }));
     },
 
-    getMesh: (meshName) => get().mesh[meshName],
+    getMeshDef: (meshName) => get().mesh[meshName],
 
     loadTextures: () => {
       const textureLoader = new THREE.TextureLoader;

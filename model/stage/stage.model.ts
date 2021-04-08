@@ -178,10 +178,21 @@ export function createDefaultBrushMeta(): BrushMeta {
   };
 };
 
+export function createMeshInstance(mesh: THREE.Mesh, { x, y }: Geom.VectorJson): MeshInstance {
+  const clone = mesh.clone(true) as THREE.Mesh;
+  clone.position.set(x, y, 0);
+  return {
+    key: clone.uuid,
+    mesh: clone,
+    rect: geomService.rectFromMesh(clone),
+  };
+}
+
 export interface MeshInstance {
   /** Instance identifier */
   key: string;
   mesh: THREE.Mesh;
+  rect: Geom.Rect;
 }
 
 export interface NamedPolygons {
@@ -246,15 +257,13 @@ export function computeSelectedMeshes(
   mesh: StageMeta['mesh'],
 ): THREE.Mesh[] {
   const brushRect = getGlobalBrushRect(brush).rect;
-  const bbox = new THREE.Box3;
-  const touchedMeshes = Object.values(mesh).filter(x => {
-    const meshRect = geomService.rectFromBbox(bbox.setFromObject(x.mesh));
-    return meshRect.intersects(brushRect);
+  const touchedMeshes = Object.values(mesh).filter(({ mesh }) => {
+    const meshRect = geomService.rectFromMesh(mesh);
+    return brushRect.containsRect(meshRect);
   });
   return touchedMeshes.map(({ mesh }) => {
     const clone = mesh.clone(true) as THREE.Mesh;
-    clone.material = useGeomStore.api.getMesh(mesh.name).selectedMaterial;
-    clone.userData.key = clone.uuid;
+    clone.material = useGeomStore.api.getMeshDef(mesh.name).selectedMaterial;
     return clone;
   });
 }

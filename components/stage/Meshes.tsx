@@ -9,17 +9,19 @@ const Meshes: React.FC<Props> = ({ mesh }) => {
     const meshRoot = groupRef.current!;
     const lookup = { ...mesh };
 
-    meshRoot.children.forEach(mesh => {
-      if (!lookup[mesh.userData.key]) {
+    // Must slice because .remove() splices
+    meshRoot.children.slice().forEach(mesh => {
+      if (!lookup[mesh.uuid]) {
+        // Remove if no longer in lookup
         meshRoot.remove(mesh);
       } else {
-        delete lookup[mesh.userData.key];
+        // Can ignore because already exists
+        delete lookup[mesh.uuid];
       }
     });
 
-    Object.values(lookup).forEach(({ key, mesh }) => {
-      mesh.userData.key = key;
-      meshRoot.add(mesh);
+    Object.values(lookup).forEach(({ mesh }) => {
+      meshRoot.add(mesh); // Add new
     });
   }, [mesh]);
 

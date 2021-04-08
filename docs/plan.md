@@ -11,9 +11,7 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Can select/move/delete meshes
 - Can persist meshes
-
 - Work on a humanoid in blender
 - Ensure recast navmesh is working
 - Walls too close to light have truncated shadows?
@@ -115,6 +113,7 @@ Blog layout related tasks
 ✅ Can pause/resume `Stage` with greyed preview
 ✅ Import blender textured crate into geom.store
 ✅ Can spawn crates
+✅ Can select/move/delete/cut meshes
 
 ### Three.js Animation
 
@@ -132,4 +131,3 @@ action.timeScale = 20;
 ### Blender
 
 Uncheck GLTF export > Transform > `+Y up`
-
