@@ -390,10 +390,11 @@ class CmdService {
     });
   }
 
-  private async readOnce(meta: Sh.BaseMeta) {
+  private async readOnce(meta: Sh.BaseMeta): Promise<ReadResult> {
     for await (const data of this.readLoop(meta, ({ data }) => data, true)) {
       return data;
     }
+    return { eof: true };
   }
 
   private async *split(meta: Sh.BaseMeta) {
