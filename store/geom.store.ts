@@ -72,7 +72,8 @@ const useStore = create<State>(devtools((set, get) => ({
         // console.log('gltf: saw node:', node);
         if (isMeshNode(node)) {
           const selectedMaterial = (node.material as THREE.Material).clone();
-          selectedMaterial.opacity = 0.3;
+          selectedMaterial.opacity = 0.5;
+          selectedMaterial.transparent = true;
           mesh[node.name] = { mesh: node, selectedMaterial };
         }
       });
