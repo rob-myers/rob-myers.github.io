@@ -1,41 +1,37 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { StageInternal, StageMeta } from "model/stage/stage.model";
-import { ensureChildGroup } from "model/3d/three.model";
+import { StageMeta } from "model/stage/stage.model";
 
-const Meshes: React.FC<Props> = ({ internal, mesh }) => {
-  const [meshRoot, setMeshRoot] = useState<THREE.Group>();
-
-  useEffect(() => {
-    if (internal.scene) {// ensure THREE.Group 'MeshRoot'
-      setMeshRoot(ensureChildGroup(internal.scene, 'MeshRoot'));
-    }
-  }, [internal.scene]);
+const Meshes: React.FC<Props> = ({ mesh }) => {
+  const groupRef = useRef<THREE.Group>(null); 
 
   useEffect(() => {
-    if (meshRoot) {// ensure meshes are un/mounted in scene
-      const lookup = { ...mesh };
-  
-      meshRoot.children.forEach(mesh => {
-        if (!lookup[mesh.userData.key]) {
-          meshRoot.remove(mesh);
-        } else {
-          delete lookup[mesh.userData.key];
-        }
-      });
-  
-      Object.values(lookup).forEach(({ key, mesh }) => {
-        mesh.userData.key = key;
-        meshRoot.add(mesh);
-      });
-    }
-  }, [meshRoot, mesh]);
+    const meshRoot = groupRef.current!;
+    const lookup = { ...mesh };
 
-  return null
+    meshRoot.children.forEach(mesh => {
+      if (!lookup[mesh.userData.key]) {
+        meshRoot.remove(mesh);
+      } else {
+        delete lookup[mesh.userData.key];
+      }
+    });
+
+    Object.values(lookup).forEach(({ key, mesh }) => {
+      mesh.userData.key = key;
+      meshRoot.add(mesh);
+    });
+  }, [mesh]);
+
+  return (
+    <group
+      ref={groupRef}
+      name="MeshRoot"
+    />
+  );
 };
 
 interface Props {
-  internal: StageInternal;
   mesh: StageMeta['mesh'];
 }
 

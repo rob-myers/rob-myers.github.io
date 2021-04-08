@@ -134,10 +134,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
             polygon={stage.polygon}
             walls={stage.walls}
           />
-          <Meshes
-            internal={stage.internal}
-            mesh={stage.mesh}
-          />
+          <Meshes mesh={stage.mesh} />
 
         </Canvas>
 
