@@ -13,38 +13,45 @@ export class Rect {
     return this.width * this.height;
   }
 
-  public get center() {
+  get center() {
     return new Vector(this.x + (this.width / 2), this.y + (this.height / 2));
   }
 
-  public clone() {
+  clone() {
     return new Rect(this.x, this.y, this.width, this.height);
   }
 
-  public contains({ x, y }: VectorJson) {
+  contains({ x, y }: VectorJson) {
     return this.x <= x &&
       x <= this.x + this.width &&
       this.y <= y &&
       y <= this.y + this.height;
   }
 
-  public get cx() {
+  containsRect(other: Rect) {
+    return (
+      (this.x <= other.x && other.e <= this.e)
+      && (this.y <= other.y && other.s <= this.s)
+    );
+  }
+
+  get cx() {
     return this.x + 0.5 * this.width;
   }
 
-  public get cy() {
+  get cy() {
     return this.y + 0.5 * this.height;
   }
 
-  public get e() {
+  get e() {
     return this.x + this.width;
   }
 
-  public static from({ x, y, width, height }: RectJson) {
+  static from({ x, y, width, height }: RectJson) {
     return new Rect(x, y, width, height);
   }
 
-  public static fromPoints(...ps: VectorJson[]) {
+  static fromPoints(...ps: VectorJson[]) {
     if (ps.length) {
       let mx = ps[0].x, my = ps[0].y, Mx = mx, My = my;
       ps.forEach(p => {
@@ -58,14 +65,14 @@ export class Rect {
     return Rect.zero;
   }
 
-  public static fromString(input: string) {
+  static fromString(input: string) {
     return new Rect(// see this.toString
       ...input.split(',').map(Number) as [number, number, number, number]
     );
   }
 
   /** Expects "well-formed" inset */
-  public inset(nonNegAmount: number): Rect {
+  inset(nonNegAmount: number): Rect {
     this.x += nonNegAmount;
     this.y += nonNegAmount;
     this.width -= 2 * nonNegAmount;
@@ -77,7 +84,7 @@ export class Rect {
    * Does this filled rectangle intersect with `other` filled rectangle?
    * We exclude corner-point intersections.
    */
-  public intersects(other: Rect) {
+  intersects(other: Rect) {
     return (
       Math.abs(this.cx - other.cx) * 2 < this.width + other.width &&
       Math.abs(this.cy - other.cy) * 2 <= this.height + other.height
@@ -100,7 +107,7 @@ export class Rect {
     return new Vector(this.x, this.y);
   }
 
-  public outset(nonNegAmount: number): Rect {
+outset(nonNegAmount: number): Rect {
     this.x -= nonNegAmount;
     this.y -= nonNegAmount;
     this.width += 2 * nonNegAmount;
@@ -136,12 +143,12 @@ export class Rect {
   }
 
   /** w.r.t. y+ downwards */
-  public get s() {
+  get s() {
     return this.y + this.height;
   }
 
   /** Assume scalar is positive */
-  public scale(scalar: number) {
+  scale(scalar: number) {
     this.x *= scalar;
     this.y *= scalar;
     return this;
