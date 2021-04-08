@@ -14,24 +14,32 @@ import { isMeshNode } from 'model/3d/three.model';
 export type State = {
   loaded: boolean;
   loading: boolean;
-  mesh: Record<string, THREE.Mesh>;
+  /** Mesh library */
+  mesh: Record<string, MeshDef>;
   texture: Record<string, THREE.Texture>;
 
   readonly api: {
     /** Get a clone of specified mesh */
-    cloneMesh: (meshKey: string) => THREE.Mesh;
+    cloneMesh: (meshName: string) => THREE.Mesh;
     createNavMesh: (navKey: string, polys: Geom.Polygon[]) => {
       bounds: Geom.Rect;
       navPolys: Geom.Polygon[];
     };
     /** Extract meshes from loaded gltf */
     extractMeshes: (gltf: GLTF) => void;
+    getMesh: (meshName: string) => MeshDef;
     /** Load assets from gltf (exported from Blender). */
     load: () => Promise<void>;
     /** Load images as `THREE.Texture`s */
     loadTextures: () => void;
     requestNavPath: (navKey: string, src: Geom.Vector, dst: Geom.Vector) => Geom.VectorJson[];
   };
+}
+
+export interface MeshDef {
+  mesh: THREE.Mesh;
+  /** Partially transparent clone of `mesh.material` */
+  selectedMaterial: THREE.Material;
 }
 
 const useStore = create<State>(devtools((set, get) => ({
@@ -63,11 +71,15 @@ const useStore = create<State>(devtools((set, get) => ({
       gltf.scene.traverse((node) => {
         // console.log('gltf: saw node:', node);
         if (isMeshNode(node)) {
-          mesh[node.name] = node;
+          const selectedMaterial = (node.material as THREE.Material).clone();
+          selectedMaterial.opacity = 0.3;
+          mesh[node.name] = { mesh: node, selectedMaterial };
         }
       });
       set(_ => ({ mesh }));
     },
+
+    getMesh: (meshName) => get().mesh[meshName],
 
     loadTextures: () => {
       const textureLoader = new THREE.TextureLoader;
@@ -96,7 +108,8 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     cloneMesh: (meshKey) => {
-      return get().mesh[meshKey].clone() as THREE.Mesh;
+      const { mesh } = get().mesh[meshKey];
+      return mesh.clone() as THREE.Mesh;
     },
 
     requestNavPath: (navKey, src, dst) => {
