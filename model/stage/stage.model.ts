@@ -142,7 +142,7 @@ const initCameraPosArray: Triple<number> = [0, 0, 10];
 
 export const initCameraPos = new THREE.Vector3(...initCameraPosArray);
 
-export const initStageBounds = new Geom.Rect(-5, -5, 10, 10);
+export const initStageBounds = new Geom.Rect(0, 0, 0, 0);
 
 //#endregion
 
