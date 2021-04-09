@@ -32,6 +32,7 @@ export type State = {
     }) => ProcessMeta;
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
     createVarDevice: (sessionKey: string, varName: string) => VarDevice;
+    ensureSession: (sessionKey: string, env: Record<string, any>) => void;
     ensurePersisted: (sessionKey: string) => PersistedSession;
     getFunc: (sessionKey: string, funcName: string) => NamedFunction | undefined;
     getFuncs: (sessionKey: string) => NamedFunction[];
@@ -163,6 +164,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const varDevice = new VarDevice(sessionKey, varName);
       get().device[varDevice.key] = varDevice;
       return varDevice;
+    },
+
+    ensureSession: (sessionKey, env) => {
+      if (!api.getSession(sessionKey)) {
+        api.createSession(sessionKey, env);
+      }
     },
 
     ensurePersisted: (sessionKey) => {

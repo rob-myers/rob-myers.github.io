@@ -15,8 +15,7 @@ const Terminal: React.FC<Props> = ({ sessionKey, env }) => {
   );
 
   useEffect(() => {
-    useSessionStore.api.createSession(sessionKey, env);
-    return () => useSessionStore.api.removeSession(sessionKey);
+    useSessionStore.api.ensureSession(sessionKey, env);
   }, [sessionKey]);
 
   const { ref, width = 1, height = 1 } = useResizeObserver<HTMLElement>();
