@@ -105,7 +105,7 @@ function createStageOpts(): StageOpts {
     enabled: true,
     lights: true,
     panZoom: true,
-    background: 'white',
+    background: '#ccc',
     wallColor: '#000',
     wallOpacity: 1,
     wallHeight: 4,
