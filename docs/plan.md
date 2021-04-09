@@ -11,8 +11,6 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Smaller crates: `0.2 ** 3`
-
 - Can persist meshes
 - Work on a humanoid in blender
 - Ensure recast navmesh is working
