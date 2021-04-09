@@ -14,9 +14,9 @@ const Walls: React.FC<Props> = ({ polygon, walls, opts, updateShadows }) => {
     return geomService.polysToWalls(wallsPolys, opts.wallHeight);
   }, [wallsPolys, opts.wallHeight]);
 
-  // const baseGeom = useMemo(() => geomService.polysToGeometry(
-  //   wallsPolys.flatMap(x => x.createOutset(0.005)), 'xy', 0.005),
-  // [wallsPolys]);
+  const baseGeom = useMemo(() => geomService.polysToGeometry(
+    wallsPolys, 'xy', 0),
+  [wallsPolys]);
 
   return (
     <group>
@@ -33,12 +33,17 @@ const Walls: React.FC<Props> = ({ polygon, walls, opts, updateShadows }) => {
           opacity={opts.wallOpacity}
         />
       </mesh>
-      {/* <mesh geometry={baseGeom}>
-        <meshBasicMaterial
-          side={FrontSide}
-          color="#222"
-        />
-      </mesh> */}
+      {opts.wallOpacity === 0 && (
+        <mesh
+          geometry={baseGeom}
+          renderOrder={1}
+        >
+          <meshBasicMaterial
+            side={FrontSide}
+            color="#666"
+          />
+        </mesh>
+      )}
     </group>
   );
 };
