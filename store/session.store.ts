@@ -32,7 +32,7 @@ export type State = {
     }) => ProcessMeta;
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
     createVarDevice: (sessionKey: string, varName: string) => VarDevice;
-    ensureSession: (sessionKey: string, env: Record<string, any>) => void;
+    ensureSession: (sessionKey: string, env: Record<string, any>) => Session;
     ensurePersisted: (sessionKey: string) => PersistedSession;
     getFunc: (sessionKey: string, funcName: string) => NamedFunction | undefined;
     getFuncs: (sessionKey: string) => NamedFunction[];
@@ -53,7 +53,7 @@ export type State = {
   }
 }
 
-interface Session {
+export interface Session {
   key: string;
   func: KeyedLookup<NamedFunction>;
   ttyIo: ShellIo<MessageFromXterm, MessageFromShell>;
@@ -167,9 +167,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     ensureSession: (sessionKey, env) => {
-      if (!api.getSession(sessionKey)) {
+      if (!get().api.getSession(sessionKey)) {
         api.createSession(sessionKey, env);
       }
+      return get().session[sessionKey];
     },
 
     ensurePersisted: (sessionKey) => {
