@@ -262,6 +262,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           [instance.key]: instance,
         }}),
       );
+      api.updateNavigable(stageKey);
     },
 
     transformBrush: (stageKey, key) => {
@@ -332,9 +333,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     updateNavigable: (stageKey) => {
-      const { walls, polygon } = api.getStage(stageKey);
+      const { walls, polygon, mesh } = api.getStage(stageKey);
       const wallPolys = walls.polygonKeys.flatMap(x => polygon[x].polygons);
-      const { bounds, navPolys } = useGeom.api.createNavMesh(stageKey, wallPolys);
+      const allPolys = wallPolys.concat(
+        Object.values(mesh).map(x => Geom.Polygon.fromRect(x.rect)));
+      const { bounds, navPolys } = useGeom.api.createNavMesh(stageKey, allPolys);
 
       polygon[Stage.CorePolygonKey.navigable].polygons = navPolys;
       polygon[Stage.CorePolygonKey.walls].polygons = wallPolys;
