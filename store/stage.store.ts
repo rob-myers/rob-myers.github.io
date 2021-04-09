@@ -99,6 +99,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const lookup = { ...prevLookup };
       if (erase) {
         const { rect: brushRect } = Stage.getGlobalBrushRect(brush);
+        brushRect.outset(0.01);
         for (const { key, rect } of Object.values(lookup)) {
           brushRect.containsRect(rect) && delete lookup[key];
         }

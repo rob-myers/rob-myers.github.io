@@ -259,7 +259,7 @@ export function computeSelectedMeshes(
   brush: BrushMeta,
   mesh: StageMeta['mesh'],
 ): THREE.Mesh[] {
-  const brushRect = getGlobalBrushRect(brush).rect;
+  const brushRect = getGlobalBrushRect(brush).rect.outset(0.01);
   const touchedMeshes = Object.values(mesh).filter(({ mesh }) => {
     const meshRect = geomService.rectFromMesh(mesh);
     return brushRect.containsRect(meshRect);
