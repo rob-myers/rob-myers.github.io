@@ -121,7 +121,10 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
             wire={ptrWire}
           />
 
-          <Lights enabled={stage.opts.lights} />
+          <Lights
+            enabled={stage.opts.lights}
+            updateShadows={updateShadows}
+          />
           <Navigable
             bounds={stage.internal.bounds}
             polygon={stage.polygon}

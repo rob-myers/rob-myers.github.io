@@ -1,4 +1,11 @@
-const Lights: React.FC<Props> = ({ enabled }) => {
+import { useEffect } from "react";
+
+const Lights: React.FC<Props> = ({ enabled, updateShadows }) => {
+
+  useEffect(() => {
+    enabled && updateShadows();
+  }, [enabled]);
+
   return (
     <group name="lights">
       <ambientLight
@@ -22,6 +29,7 @@ const Lights: React.FC<Props> = ({ enabled }) => {
 
 interface Props {
   enabled: boolean;
+  updateShadows: () => void;
 }
 
 export default Lights;
