@@ -33,7 +33,7 @@ const Navigable: React.FC<Props> = ({
           <meshStandardMaterial
             color="#fff"
             transparent
-            opacity={0.8}
+            opacity={0.4}
           />
         </mesh>
       )}
@@ -42,9 +42,9 @@ const Navigable: React.FC<Props> = ({
         renderOrder={-1}
       >
         <meshBasicMaterial
-          color="#000"
+          color="#006"
           transparent
-          opacity={0.2}
+          opacity={0.13}
         />
       </mesh>
     </group>
