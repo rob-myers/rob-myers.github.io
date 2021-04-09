@@ -5,27 +5,18 @@ import { FitAddon } from 'xterm-addon-fit';
 import useResizeObserver from 'use-resize-observer';
 
 import { TtyXterm } from 'model/sh/tty.xterm';
-import useSessionStore from 'store/session.store';
+import useSession from 'store/session.store';
 import XTermComponent from './XTerm';
 
 const Terminal: React.FC<Props> = ({ sessionKey, env }) => {
-
-  const session = useSessionStore(({ session }) =>
-    sessionKey in session ? session[sessionKey] : null
-  );
-
-  useEffect(() => {
-    useSessionStore.api.ensureSession(sessionKey, env);
-  }, [sessionKey]);
-
+  const session = useRef(useSession.api.ensureSession(sessionKey, env)).current;
   const { ref, width = 1, height = 1 } = useResizeObserver<HTMLElement>();
   const fitAddonRef = useRef<FitAddon>();
   useEffect(() => fitAddonRef.current?.fit(), [width, height]);
 
   return (
     <Root ref={ref}>
-      {session ? (
-        <XTerm
+      <XTerm
           onMount={(xterm, fitAddon) => {
             const ttyXterm = new TtyXterm(
               xterm, // xterm.js instance
@@ -50,7 +41,6 @@ const Terminal: React.FC<Props> = ({ sessionKey, env }) => {
             rows: 50,
           }}
         />
-      ) : null}
     </Root>
   )
 };
