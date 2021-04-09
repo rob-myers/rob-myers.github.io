@@ -8,7 +8,7 @@ import { Geometry, Face3 } from 'model/3d/deprecated';
 import * as Geom from 'model/geom';
 
 const twopi = 2 * Math.PI;
-export const outsetWalls = 0.05;
+export const outsetWalls = 0.04;
 export const outsetBounds = 0.1;
 const defaultLineWidth = 0.015;
 
