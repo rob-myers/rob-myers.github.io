@@ -24,6 +24,7 @@ export class TtyShell implements Device {
   private buffer = [] as string[];
   private readonly maxLines = 500;
   private process!: ProcessMeta;
+  private cleanPrevInitialise?: () => void;
   
   constructor(
     public sessionKey: string,
@@ -35,8 +36,9 @@ export class TtyShell implements Device {
   }
   
   async initialise(xterm: TtyXterm) {
+    this.cleanPrevInitialise?.();
     this.xterm = xterm;
-    this.io.read(this.onMessage.bind(this));
+    this.cleanPrevInitialise = this.io.read(this.onMessage.bind(this));
 
     // session corresponds to leading process where pid = ppid = pgid = 0
     useSession.api.createProcess({
