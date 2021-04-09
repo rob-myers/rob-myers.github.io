@@ -68,6 +68,9 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
             <Button
               disabled={!stage.opts.canCancelUi}
               onClick={cancelSelection}
+              {...stage.opts.canCancelUi && {
+                title: 'cancel selection',
+              }}
             >
               cancel
             </Button>
