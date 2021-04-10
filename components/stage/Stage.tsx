@@ -7,6 +7,7 @@ import { Canvas, CanvasContext } from "react-three-fiber";
 import { useBeforeunload } from "react-beforeunload";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
+import { createStageOpts } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
@@ -22,7 +23,7 @@ import Meshes from "./Meshes";
 const Stage: React.FC<Props> = ({ stageKey }) => {
   // console.log('Stage')
   const rehydrated = useStage(({ rehydrated }) => rehydrated);
-  const stage = useStage(({ stage }) => stage[stageKey]??null);
+  const stage = useStage(({ stage }) => stageKey in stage ? stage[stageKey] : null);
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
 
@@ -45,7 +46,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     ctxt.gl.shadowMap.needsUpdate = true;
 
     // Currently, updateNavigable will also update stage.internal
-    stage.internal.scene = ctxt.scene;
+    stage!.internal.scene = ctxt.scene;
     setTimeout(() => useStage.api.updateNavigable(stageKey));
     setCtxt(ctxt);
   }, [stage?.internal]);
@@ -97,7 +98,10 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
       onKeyUp={onKey}
       onMouseOver={focusOnMouseOver}
     >
-      <StageToolbar stage={stage} />
+      <StageToolbar
+        stageKey={stageKey}
+        opts={stage?.opts || createStageOpts()}
+      />
 
       {stage && (stage?.opts.enabled || ctxt) && (
 

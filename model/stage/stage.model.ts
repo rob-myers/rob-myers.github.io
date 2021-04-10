@@ -98,7 +98,7 @@ export function createStage(stageKey: string): StageMeta {
   };
 }
 
-function createStageOpts(): StageOpts {
+export function createStageOpts(): StageOpts {
   return {
     enabled: true,
     lights: true,

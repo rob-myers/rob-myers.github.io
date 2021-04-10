@@ -1,60 +1,51 @@
 import { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { StageMeta } from "model/stage/stage.model";
+import { StageOpts } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
-// TODO provide stageKey, opts and ready
-
-const StageToolbar: React.FC<Props> = ({ stage }) => {
+const StageToolbar: React.FC<Props> = ({ stageKey, opts }) => {
   const [canToggleRunning, setCanToggleRunning] = useState(true);
 
   const toggleRunning = useCallback(() => {
-    if (canToggleRunning && stage) {
-      useStage.api.updateOpts(stage.key, { enabled: !stage.opts.enabled });
+    if (canToggleRunning) {
+      useStage.api.updateOpts(stageKey, { enabled: !opts.enabled });
       setCanToggleRunning(false);
       setTimeout(() => setCanToggleRunning(true), 1000);
     }
-  }, [canToggleRunning, stage?.opts.enabled]);
+  }, [opts.enabled, canToggleRunning]);
 
-  const uiEnabled = stage?.opts.enabled && canToggleRunning;
-
+  const enableUi = opts.enabled && canToggleRunning;
+  
   const onSelectSpawn = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    stage && useStage.api.spawnMesh(stage.key, e.currentTarget.value);
-  }, [stage?.key]);
+    enableUi && useStage.api.spawnMesh(stageKey, e.currentTarget.value);
+  }, [enableUi]);
 
   const toggleCam = useCallback(() => {
-    stage && uiEnabled && useStage.api.updateOpts(stage!.key, {
-      panZoom: !stage!.opts.panZoom,
-    });
-  }, [uiEnabled, stage?.opts.panZoom]);
-
+    enableUi && useStage.api.updateOpts(stageKey, { panZoom: !opts.panZoom });
+  }, [enableUi, opts.panZoom]);
 
   return (
     <Toolbar>
-      {stage && <>
-
         <LeftToolbar>
           <Slot>
-            @<strong>{stage.key}</strong>
+            @<strong>{stageKey}</strong>
           </Slot>
           <Slot background="#eee">
             <Button
               emphasis={!canToggleRunning}
               onClick={toggleRunning}
-              {...stage.opts.enabled && {
-                title: 'click to pause',
-              }}
+              {...opts.enabled && { title: 'click to pause' }}
               style={{
-                color: stage.opts.enabled ?  '#030' : '#300'
+                color: opts.enabled ?  '#030' : '#300'
               }}
             >
-              {stage.opts.enabled ? 'running' : 'paused'}
+              {opts.enabled ? 'running' : 'paused'}
             </Button>
           </Slot>
           <Slot>
             <SelectSpawn
-              disabled={!uiEnabled}
+              disabled={!enableUi}
               value="disabled"
               onChange={onSelectSpawn}
             >
@@ -65,28 +56,26 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
         </LeftToolbar>
 
         <RightToolbar>
-          <Slot>
-            
-          </Slot>
+          <Slot />
           <Slot>
             <Button
-              disabled={!(uiEnabled && stage.opts.panZoom)}
-              onClick={toggleCam}
-              {...uiEnabled && {
-                title: stage.opts.panZoom ? 'click to disable' : '',
+              greyed={!(enableUi && opts.panZoom)}
+              {...enableUi && {
+                onClick: toggleCam,
+                ...opts.panZoom && { title: 'click to disable' },
               }}
             >
               panzoom
             </Button>
           </Slot>
         </RightToolbar>
-      </>}
     </Toolbar>
   );
 };
 
 interface Props {
-  stage: StageMeta | null;
+  stageKey: string;
+  opts: StageOpts;
 }
 
 const Toolbar = styled.section`
@@ -125,12 +114,12 @@ const Slot = styled.div<{ background?: string }>`
   `}
 `;
 
-const Button = styled.div<{ disabled?: boolean; emphasis?: boolean }>`
+const Button = styled.div<{ greyed?: boolean; emphasis?: boolean; }>`
   cursor: pointer;
   font-size: 11pt;
 
-  ${({ disabled = false }) => css`
-    color: ${disabled ? '#999' : '#000'};
+  ${({ greyed = false }) => css`
+    color: ${greyed ? '#999' : '#000'};
   `}
   ${({ emphasis = false }) => emphasis && css`
     font-style: italic;
