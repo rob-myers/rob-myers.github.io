@@ -11,7 +11,7 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Can persist meshes
+- `Terminal` waits for specified stages
 - Another mesh e.g. table
 - Mirror/rotate selected meshes too
 
@@ -120,6 +120,7 @@ Blog layout related tasks
 ✅ Import blender textured crate into geom.store
 ✅ Can spawn crates
 ✅ Can select/move/delete/cut meshes
+✅ Can persist meshes
 
 ### Three.js Animation
 

@@ -2,7 +2,7 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import * as Geom from 'model/geom';
-import { deepClone, KeyedLookup, mapValues } from 'model/generic.model';
+import { deepClone, KeyedLookup, lookupFromValues, mapValues } from 'model/generic.model';
 import { geomService } from 'model/geom.service';
 import * as Stage from 'model/stage/stage.model';
 import { TransformKey } from 'model/stage/stage.proxy';
@@ -156,7 +156,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         return;
       } else if (get().persist[stageKey]) {
         const instance: Stage.StageMeta = Stage.createStage(stageKey);
-        const { polygon, opts, extra } = api.getPersist(stageKey);
+        const { polygon, mesh, opts, extra } = api.getPersist(stageKey);
 
         // Restore persisted data
         instance.polygon = mapValues(polygon, (x) => ({
@@ -165,10 +165,25 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         }));
         instance.opts = deepClone(opts);
         instance.extra = deepClone(extra);
+        set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
 
-        set(({ stage }) => ({
-          stage: addToLookup(instance, stage),
+        // Persist meshes, but only when they're loaded
+        useGeom.api.load().then((() => {
+          set(({ stage }) => ({
+            stage: updateLookup(instance.key, stage, () => ({
+              mesh: lookupFromValues(
+                Object.values(mesh).map<Stage.MeshInstance>(({ meshName, position: { x, y }, radians }) => {
+                  const mesh = useGeom.api.cloneMesh(meshName);
+                  mesh.position.set(x, y, 0);
+                  mesh.rotation.set(0, 0, radians);
+                  const rect = geomService.rectFromMesh(mesh);
+                  return { key: mesh.uuid, mesh, rect };
+                }),
+              ),
+            }),
+          )}));
         }));
+
       } else {
         set(({ stage, persist }) => ({
           stage: addToLookup(Stage.createStage(stageKey), stage),
@@ -204,7 +219,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { polygon, internal, opts, extra } = api.getStage(stageKey);
+      const { polygon, mesh, internal, opts, extra } = api.getStage(stageKey);
 
       const computedCameraPos = internal.controls?.camera?.position
         ? vectorToTriple(internal.controls.camera.position) : null;
@@ -214,6 +229,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           polygon: mapValues(polygon, (x) => ({
             key: x.key,
             polygons: x.polygons.map(x => x.json),
+          })),
+          mesh: mapValues<Stage.MeshInstance, Stage.MeshInstanceJson>(mesh, ({ key, mesh }) => ({
+            key,
+            meshName: mesh.name,
+            position: { x: mesh.position.x, y: mesh.position.y },
+            radians: mesh.rotation.z,
           })),
           opts: { ...deepClone(opts),
             initCameraPos: [...computedCameraPos ||

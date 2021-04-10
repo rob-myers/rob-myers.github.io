@@ -115,6 +115,7 @@ export function createStageOpts(): StageOpts {
 export interface PersistedStage {
   key: string;
   polygon: KeyedLookup<NamedPolygonsJson>;
+  mesh: Record<string, MeshInstanceJson>;
   opts: StageOpts;
   extra: StageExtra;
 }
@@ -123,6 +124,7 @@ export function createPersist(stageKey: string): PersistedStage {
   return {
     key: stageKey,
     polygon: createPolygonLookup(),
+    mesh: {},
     opts: createStageOpts(),
     extra: {},
   };
@@ -193,6 +195,14 @@ export interface MeshInstance {
   key: string;
   mesh: THREE.Mesh;
   rect: Geom.Rect;
+}
+
+export interface MeshInstanceJson {
+  /** Original instance identifier */
+  key: string;
+  meshName: string;
+  position: Geom.VectorJson;
+  radians: number;
 }
 
 export interface NamedPolygons {

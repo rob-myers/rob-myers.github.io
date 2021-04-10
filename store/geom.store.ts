@@ -14,6 +14,7 @@ import { isMeshNode } from 'model/3d/three.model';
 export type State = {
   loaded: boolean;
   loading: boolean;
+  loadResolvers: (() => void)[];
   /** Mesh library */
   mesh: Record<string, MeshDef>;
   texture: Record<string, THREE.Texture>;
@@ -45,13 +46,19 @@ export interface MeshDef {
 const useStore = create<State>(devtools((set, get) => ({
   loaded: false,
   loading: false,
+  loadResolvers: [],
   mesh: {},
   texture: {},
 
   api: {
 
     load: async () => {
-      if (get().loaded || get().loading) return;
+      if (get().loaded) {
+        return;
+      } else if (get().loading) {
+        return new Promise(resolve => get().loadResolvers.push(resolve));
+      }
+
       set(_ => ({ loading: true }));
 
       const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader');
@@ -64,6 +71,7 @@ const useStore = create<State>(devtools((set, get) => ({
       api.loadTextures();
 
       set(_ => ({ loaded: true, loading: false }));
+      while (get().loadResolvers.pop()?.());
     },
 
     extractMeshes: (gltf: GLTF) => {
