@@ -187,7 +187,8 @@ class SemanticsService {
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
                 if (node.exitCode = file.exitCode) {
-                  throw new ShError(`${i}@pipe: exit code ${node.exitCode}`, node.exitCode);
+                  const nth = i === 0 ? '1st' : i === 1 ? '2nd' : i === 2 ? '3rd' : `${i + 1}th`;
+                  throw new ShError(`pipe: ${nth} child: exit code ${node.exitCode}`, node.exitCode);
                 }
                 resolve();
               } catch (e) {
