@@ -5,20 +5,19 @@ import { FitAddon } from 'xterm-addon-fit';
 import useResizeObserver from 'use-resize-observer';
 
 import { TtyXterm } from 'model/sh/tty.xterm';
-import useSessionStore from 'store/session.store';
+import useSession from 'store/session.store';
 import XTermComponent from './XTerm';
 
 const Terminal: React.FC<Props> = ({ sessionKey, env }) => {
 
-  const session = useSessionStore(({ session }) =>
+  const session = useSession(({ session }) =>
     sessionKey in session ? session[sessionKey] : null
   );
 
   useEffect(() => {
-    // Had issues using api.ensureSession, e.g.
-    // had to force full page reload on hot-reload stage.store
-    useSessionStore.api.createSession(sessionKey, env);
-    return () => useSessionStore.api.removeSession(sessionKey);
+    // Had hot-reload issues with api.ensureSession
+    useSession.api.createSession(sessionKey, env);
+    return () => useSession.api.removeSession(sessionKey);
   }, [sessionKey]);
 
   const { ref, width = 1, height = 1 } = useResizeObserver<HTMLElement>();
