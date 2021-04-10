@@ -24,7 +24,6 @@ export type State = {
       walls: WallDef[],
       opts: { polygonKey: string; cutOut?: boolean },
     ) => void;
-    createStage: (stageKey: string) => void;
     cutWithBrush: (stageKey: string) => void;
     deselectBrush: (stageKey: string) => void;
     ensurePolygon: (stageKey: string, polygonKey: string) => void;
@@ -125,24 +124,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       api.persist(stageKey);
     },
 
-    createStage: (stageKey) => {
-      const instance: Stage.StageMeta = Stage.createStage(stageKey);
-
-      // Get persisted data for rehydration
-      const { polygon, opts, extra } = api.getPersist(stageKey) || (
-        get().persist[stageKey] = Stage.createPersist(stageKey)
-      );
-      // Rehydrate
-      instance.polygon = mapValues(polygon, (x) => ({
-        key: x.key,
-        polygons: x.polygons.map(y => Geom.Polygon.from(y)),
-      }));
-      instance.opts = deepClone(opts);
-      instance.extra = deepClone(extra);
-
-      set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
-    },
-
     cutWithBrush: (stageKey) => {
       const { brush, walls, polygon, mesh } = api.getStage(stageKey)
       const selectedPolys = Stage.computeSelectedPolygons(brush, walls, polygon);
@@ -171,8 +152,28 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     ensureStage: (stageKey) => {
-      if(!get().stage[stageKey]) {
-        api.createStage(stageKey);
+      if (get().stage[stageKey]) {
+        return;
+      } else if (get().persist[stageKey]) {
+        const instance: Stage.StageMeta = Stage.createStage(stageKey);
+        const { polygon, opts, extra } = api.getPersist(stageKey);
+
+        // Restore persisted data
+        instance.polygon = mapValues(polygon, (x) => ({
+          key: x.key,
+          polygons: x.polygons.map(y => Geom.Polygon.from(y)),
+        }));
+        instance.opts = deepClone(opts);
+        instance.extra = deepClone(extra);
+
+        set(({ stage }) => ({
+          stage: addToLookup(instance, stage),
+        }));
+      } else {
+        set(({ stage, persist }) => ({
+          stage: addToLookup(Stage.createStage(stageKey), stage),
+          persist: addToLookup(Stage.createPersist(stageKey), persist),
+        }));
       }
     },
 
@@ -268,10 +269,15 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       // Adjust offset (TODO explain)
       rect.x -= (brush.position.x - brush.selectFrom.x);
       rect.y -= (brush.position.y - brush.selectFrom.y);
+
       // Ensure center is pairwise a multiple of 0.1
       (rect.width * 10) % 2 && (rect.width += 0.1);
       (rect.height * 10) % 2 && (rect.height += 0.1);
       const center = rect.center;
+
+      /**
+       * TODO transform meshes too
+       */
 
       let mutator: (p: Geom.Vector) => void;
       switch (key) {
@@ -287,12 +293,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           return;
       }
 
-      const { selectedPolys } = api.getStage(stageKey).brush;
-      selectedPolys.forEach(x => x.polygons.map(y => {
+      brush.selectedPolys.forEach(x => x.polygons.map(y => {
         y.mutatePoints(mutator).precision(1);
         (key === 'mirror(x)' || key === 'mirror(y)') && y.reverse();
       }));
-      api.updateBrush(stageKey, { selectedPolys: selectedPolys.slice() });
+      api.updateBrush(stageKey, { selectedPolys: brush.selectedPolys.slice() });
     },
 
     undoRedoPolygons: (stageKey) => {
@@ -395,3 +400,12 @@ const api = useStore.getState().api;
 const useStageStore = Object.assign(useStore, { api });
 
 export default useStageStore;
+
+if (module.hot) {
+  /**
+   * We force a full page reload because editing this file
+   * causes its default export to have different values
+   * in `Stage` versus `CmdService`.
+   */
+  module.hot.decline();
+}
