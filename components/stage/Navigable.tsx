@@ -56,8 +56,8 @@ const Navigable: React.FC<Props> = ({
       >
         <meshBasicMaterial
           side={FrontSide}
-          color={opts.wallOpacity ? "#000" : "#fff"}
           transparent
+          color="#000"
         />
       </mesh>
     </group>
