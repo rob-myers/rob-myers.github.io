@@ -53,7 +53,7 @@ export const shellScripts = {
   brushKeyHandler: `
 key | run '({ read, _: {msg} }, { stage: s }) {
   while (msg = await read()) {
-    if (msg.type !== "keydown") continue;
+    if (msg.type !== "keydown" || !s.opts.enabled) continue;
     switch (msg.key) {
       case "f": s.brush.paint(); break;
       case "v": msg.metaKey && s.brush.paint(); break;
@@ -75,7 +75,7 @@ key | run '({ read, _: {msg} }, { stage: s }) {
   optsKeyHandler: `
 key | run '({ read, _: {msg} }, { stage: { opts } }) {
   while (msg = await read()) {
-    if (msg.type !== "keydown") continue;
+    if (msg.type !== "keydown" || !opts.enabled) continue;
     switch (msg.key) {
       case "1": opts.wallOpacity = 0; break;
       case "2": opts.wallOpacity = 1; break;
