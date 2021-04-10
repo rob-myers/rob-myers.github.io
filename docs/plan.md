@@ -11,13 +11,16 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
+- Can persist meshes
+- Another mesh e.g. table
 - Mirror/rotate selected meshes too
 
 - Work on a humanoid in blender
+- Use mixamo to rig it
+- Try https://www.youtube.com/watch?v=gGFAF0Flc5Q&ab_channel=EricEisaman
+
 - Ensure recast navmesh is working
-- Walls too close to light have truncated shadows?
 - Can add lights via command line
-- Can persist meshes
 
 Blog layout related tasks
 - Auto pause on scroll out of view

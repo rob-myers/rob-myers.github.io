@@ -269,12 +269,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       // Adjust offset
       rect.x = brush.selectFrom.x;
       rect.y = brush.selectFrom.y - rect.height;
-      // Ensure center is pairwise a multiple of 0.1
+      // Ensure center coords are multiples of 0.1
       (rect.width * 10) % 2 && (rect.width += 0.1);
       (rect.height * 10) % 2 && (rect.height += 0.1);
-      const center = rect.center;
-
+      
       let mutator: (p: Geom.Vector) => void;
+      const center = rect.center;
       switch (key) {
         case 'mirror(x)':
           mutator = (p) => p.y = (2 * center.y) - p.y; break;
@@ -289,7 +289,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }
 
       brush.selectedPolys.forEach(x => x.polygons.map(y => {
-        y.mutatePoints(mutator).precision(1);
+        y.mutatePoints(mutator);
         (key === 'mirror(x)' || key === 'mirror(y)') && y.reverse();
       }));
 
