@@ -16,14 +16,16 @@ export default function Home() {
       <main className={styles.main}>
         <h1 className={styles.title}>
           Making the Damn Game
-          {/* <span className={styles.reference}>
+          <span className={styles.reference}>
             <a href="https://makegames.tumblr.com/post/1136623767/finishing-a-game" target='#'>
               [1]
             </a>
-          </span> */}
+          </span>
         </h1>
         <p className={styles.subtitle}>
-          <em>Programming human behaviour</em>
+          Inspired by <a href="https://en.wikipedia.org/wiki/Teleglitch" target='#'>
+            Teleglitch
+          </a>.
         </p>
 
         <section className={styles.termStage}>
