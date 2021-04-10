@@ -9,9 +9,11 @@ const PersistedStage: React.FC<Props> = ({ stageKey }) => {
   const stage = useStage(({ stage }) =>
     stageKey in stage ? stage[stageKey] : null
   );
-  
+
   useEffect(() => {
-    if (rehydrated) useStage.api.ensureStage(stageKey);
+    if (rehydrated) {
+      useStage.api.ensureStage(stageKey);
+    }
   }, [rehydrated, stageKey]);
 
   const persistOnUnload = useCallback(() =>
