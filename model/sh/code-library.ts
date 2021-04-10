@@ -32,7 +32,7 @@ export const preloadedFunctions = {
 }  
 `,
   pretty: `
-map '(x, { compactSafeStringify }) => compactSafeStringify(x)'
+map '(x, { util: {stringify} }) => stringify(x)'
 `,
   keys: `
 map Object.keys

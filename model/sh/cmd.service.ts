@@ -10,8 +10,8 @@ import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
 import { NamedFunction, CoreVar } from './var.model';
-import { getProcessStatusIcon, ReadResult, SigEnum, dataChunk, isDataChunk, preProcessRead } from './io/io.model';
-import { ProcessError, ShError } from './sh.util';
+import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRead } from './io/io.model';
+import { createKillError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 
 import useSession, { ProcessStatus } from 'store/session.store';
@@ -19,6 +19,9 @@ import useStage from 'store/stage.store';
 import { ansiBlue, ansiReset, ansiWhite } from './tty.xterm';
 
 const commandKeys = {
+  /** Wait for a stage to be ready */
+  'await-stage': true,
+  /** Execute a javascript function */
   call: true,
   /** List function definitions */
   defs: true,
@@ -65,6 +68,12 @@ class CmdService {
   async *runCmd(node: Sh.CallExpr, command: CommandName, args: string[]) {
     const { meta } = node;
     switch (command) {
+      case 'await-stage': {
+        /**
+         * TODO
+         */
+        break;
+      }
       case 'call': {
         const func = Function('_', `return ${args[0]}`);
         yield await func()(
@@ -149,7 +158,7 @@ class CmdService {
         ], });
         const funcDef = operands[0];
         const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
-        yield* this.read(meta, (data) => func()(data, { ...this.jsUtil }));
+        yield* this.read(meta, (data) => func()(data, { util: {...this.jsUtil} }));
         break;
       }
       case 'ls': {
@@ -174,7 +183,7 @@ class CmdService {
       case 'poll': {
         const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
         const delayMs = Math.max(seconds, 0.5) * 1000;
-        const observable = interval(delayMs).pipe(map(x => x + 1),startWith(0));
+        const observable = interval(delayMs).pipe(map(x => x + 2), startWith(1));
         yield* this.iterateObservable(meta, observable);
         break;
       }
@@ -222,14 +231,17 @@ class CmdService {
         break;
       }
       case 'sleep': {
-        const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
         const process = useSession.api.getProcess(meta);
-        await new Promise<void>((resolve, reject) => {
-          process.onResume = resolve;
-          useSession.api.addCleanup(meta, () => reject(new ProcessError(
-            SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
-          setTimeout(resolve, 1000 * seconds);
-        });
+        let ms = 1000 * (args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1);
+        let started = -1;
+        do {
+          await new Promise<void>((resolve, reject) => {
+            process.onSuspend = () => { ms = started + ms - Date.now(); resolve(); };
+            useSession.api.addCleanup(meta, () => reject(createKillError(meta)));
+            (started = Date.now()) && setTimeout(resolve, ms);
+          });
+          yield; // Pauses execution if process suspended
+        } while ((Date.now() < started + ms - 1))
         break;
       }
       case 'split': {
@@ -278,9 +290,7 @@ class CmdService {
   }
 
   private jsUtil = {
-    safeStringify: safeJsonStringify,
-    compactStringify: jsonStringifyPrettyCompact,
-    compactSafeStringify: (...args: Parameters<typeof safeJsonStringify>) =>
+    stringify: (...args: Parameters<typeof safeJsonStringify>) =>
       jsonStringifyPrettyCompact(JSON.parse(safeJsonStringify(...args))),
   };
 
@@ -293,9 +303,7 @@ class CmdService {
       },
       sleep: (seconds: number) => new Promise<void>((resolve, reject) => {
         setTimeout(resolve, seconds * 1000);
-        useSession.api.addCleanup(meta, () => reject(
-          new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)
-        ));
+        useSession.api.addCleanup(meta, () => reject(createKillError(meta)));
       }),
       /** Trick to provide local variables via destructuring */
       _: {},
@@ -348,8 +356,7 @@ class CmdService {
     const bucket: Bucket<any> = { enabled: true };
     const iterator = asyncIteratorFrom(observable, bucket);
     const process = useSession.api.getProcess(meta);
-    process.cleanups.push(() => bucket.promise?.reject(
-      new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey)));
+    process.cleanups.push(() => bucket.promise?.reject(createKillError(meta)));
     process.onSuspend = () => bucket.forget?.();
     process.onResume = () => bucket.remember?.();
     yield* iterator;

@@ -104,3 +104,6 @@ export class ProcessError extends Error {
     Object.setPrototypeOf(this, ProcessError.prototype);
   }
 }
+
+export const createKillError = (meta: Sh.BaseMeta) =>
+  new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey);
