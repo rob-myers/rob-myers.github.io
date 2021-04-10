@@ -119,7 +119,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
           <Navigable
             bounds={stage.internal.bounds}
             polygon={stage.polygon}
-            lightsEnabled={stage.opts.lights}
+            opts={stage.opts}
           />
           <Walls
             opts={stage.opts}
