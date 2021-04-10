@@ -69,9 +69,11 @@ class CmdService {
     const { meta } = node;
     switch (command) {
       case 'await-stage': {
-        /**
-         * TODO
-         */
+        const stageKey = this.parseArg(args[0]);
+        await new Promise<void>(resolve => {
+          useStage.api.awaitStage(stageKey, resolve);
+          useSession.api.addCleanup(meta, resolve);
+        });
         break;
       }
       case 'call': {
@@ -241,7 +243,7 @@ class CmdService {
             (started = Date.now()) && setTimeout(resolve, ms);
           });
           yield; // Pauses execution if process suspended
-        } while ((Date.now() < started + ms - 1))
+        } while (Date.now() < started + ms - 1)
         break;
       }
       case 'split': {

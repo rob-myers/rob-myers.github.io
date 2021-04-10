@@ -11,7 +11,6 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- `Terminal` waits for specified stages
 - Another mesh e.g. table
 - Mirror/rotate selected meshes too
 
@@ -121,6 +120,7 @@ Blog layout related tasks
 ✅ Can spawn crates
 ✅ Can select/move/delete/cut meshes
 ✅ Can persist meshes
+✅ Can `await-stage` i.e. ensure stage is ready
 
 ### Three.js Animation
 

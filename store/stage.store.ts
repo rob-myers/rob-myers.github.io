@@ -8,15 +8,18 @@ import * as Stage from 'model/stage/stage.model';
 import { TransformKey } from 'model/stage/stage.proxy';
 import { vectorToTriple } from 'model/3d/three.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
-
 import useGeom from './geom.store';
 
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
   rehydrated: boolean;
   persist: KeyedLookup<Stage.PersistedStage>;
+  resolve: {
+    createStage: { [stageKey: string]: (() => void)[] };
+  };
 
   readonly api: {
+    awaitStage: (stageKey: string, resolver: () => void) => Promise<void>;
     applyBrush: (stageKey: string, opts: { erase: boolean }) => void;
     applyBrushMeshes: (stageKey: string, opts: { erase: boolean }) => void;
     addWalls: (
@@ -66,7 +69,18 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   stage: {},
   rehydrated: false,
   persist: {},
+  resolve: { createStage: {} },
+
   api: {
+
+    awaitStage: async (stageKey, resolver) => {
+      const { stage, resolve: { createStage } } = get();
+      if (!stage[stageKey]) {
+        (createStage[stageKey] = createStage[stageKey] || []).push(resolver);
+      } else {
+        resolver();
+      }
+    },
 
     applyBrush: (stageKey, opts) => {
       const { brush } = api.getStage(stageKey);
@@ -154,8 +168,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     ensureStage: (stageKey) => {
       if (get().stage[stageKey]) {
         return;
-      } else if (get().persist[stageKey]) {
-        const instance: Stage.StageMeta = Stage.createStage(stageKey);
+      }
+      
+      if (get().persist[stageKey]) {
+        const instance = Stage.createStage(stageKey);
         const { polygon, mesh, opts, extra } = api.getPersist(stageKey);
 
         // Restore persisted data
@@ -183,13 +199,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             }),
           )}));
         }));
-
       } else {
         set(({ stage, persist }) => ({
           stage: addToLookup(Stage.createStage(stageKey), stage),
           persist: addToLookup(Stage.createPersist(stageKey), persist),
         }));
       }
+
+      get().resolve.createStage[stageKey]?.forEach(resolve => resolve());
     },
 
     getPersist: (stageKey) => {

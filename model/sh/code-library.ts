@@ -89,6 +89,8 @@ key | run '({ read, _: {msg} }, { stage: { opts } }) {
 
 export const profiles = {
   first: `
+await-stage "\${STAGE_KEY}"
+
 ${shellScripts.brushKeyHandler.trim()}
 
 ${shellScripts.optsKeyHandler.trim()}
