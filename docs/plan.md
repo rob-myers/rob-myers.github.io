@@ -11,11 +11,13 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Can persist meshes
+- Mirror/rotate selected meshes too
+
 - Work on a humanoid in blender
 - Ensure recast navmesh is working
 - Walls too close to light have truncated shadows?
 - Can add lights via command line
+- Can persist meshes
 
 Blog layout related tasks
 - Auto pause on scroll out of view
@@ -28,6 +30,7 @@ Blog layout related tasks
 - Review and clean `Brush` code
 - Programmatically defined `Select` UI?
   > e.g. saved polygon templates, blender imports, shortcuts
+- Can paint other polygons e.g. triggers
 
 - Expose outset wall/bounds params
 

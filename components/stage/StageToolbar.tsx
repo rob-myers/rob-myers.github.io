@@ -4,6 +4,8 @@ import { css } from "@emotion/react";
 import { StageMeta } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
+// TODO provide stageKey, opts and ready
+
 const StageToolbar: React.FC<Props> = ({ stage }) => {
   const [canToggleRunning, setCanToggleRunning] = useState(true);
 
@@ -15,19 +17,18 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
     }
   }, [canToggleRunning, stage?.opts.enabled]);
 
-  const toggleCam = useCallback(() => {
-    stage && useStage.api.updateOpts(stage.key, {
-      panZoom: !stage.opts.panZoom,
-    });
-  }, [stage?.opts.panZoom]);
+  const uiEnabled = stage?.opts.enabled && canToggleRunning;
 
   const onSelectSpawn = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     stage && useStage.api.spawnMesh(stage.key, e.currentTarget.value);
-  }, [stage]);
+  }, [stage?.key]);
 
-  const cancelSelection = useCallback(() => {
-    stage?.opts.canCancelUi && useStage.api.deselectBrush(stage.key);
-  }, [stage?.opts.canCancelUi]);
+  const toggleCam = useCallback(() => {
+    stage && uiEnabled && useStage.api.updateOpts(stage!.key, {
+      panZoom: !stage!.opts.panZoom,
+    });
+  }, [uiEnabled, stage?.opts.panZoom]);
+
 
   return (
     <Toolbar>
@@ -53,7 +54,7 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
           </Slot>
           <Slot>
             <SelectSpawn
-              disabled={!stage.opts.enabled || !canToggleRunning}
+              disabled={!uiEnabled}
               value="disabled"
               onChange={onSelectSpawn}
             >
@@ -64,23 +65,16 @@ const StageToolbar: React.FC<Props> = ({ stage }) => {
         </LeftToolbar>
 
         <RightToolbar>
-          <Slot background="#eee">
-            <Button
-              disabled={!stage.opts.canCancelUi}
-              onClick={cancelSelection}
-              {...stage.opts.canCancelUi && {
-                title: 'cancel selection',
-              }}
-            >
-              cancel
-            </Button>
+          <Slot>
+            
           </Slot>
-
           <Slot>
             <Button
-              disabled={!stage.opts.enabled || !canToggleRunning || !stage.opts.panZoom}
+              disabled={!(uiEnabled && stage.opts.panZoom)}
               onClick={toggleCam}
-              title={stage.opts.panZoom ? 'click to disable' : ''}
+              {...uiEnabled && {
+                title: stage.opts.panZoom ? 'click to disable' : '',
+              }}
             >
               panzoom
             </Button>
@@ -120,7 +114,7 @@ const SelectSpawn = styled.select`
 const RightToolbar = styled.section`
   display: grid;
   grid-template-columns: auto 66px;
-  gap: 4px;
+  gap: 6px;
 `;
 
 const Slot = styled.div<{ background?: string }>`
@@ -133,7 +127,6 @@ const Slot = styled.div<{ background?: string }>`
 
 const Button = styled.div<{ disabled?: boolean; emphasis?: boolean }>`
   cursor: pointer;
-  padding: 0 4px;
   font-size: 11pt;
 
   ${({ disabled = false }) => css`

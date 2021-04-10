@@ -40,7 +40,7 @@ const Walls: React.FC<Props> = ({ polygon, walls, opts, updateShadows }) => {
         >
           <meshBasicMaterial
             side={FrontSide}
-            color="#666"
+            color="#555"
           />
         </mesh>
       )}

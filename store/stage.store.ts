@@ -155,7 +155,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         // Need to update brush (vs mutate) because applyBrush won't update it
         api.updateBrush(stageKey, { locked: true, selectedPolys, selectedMeshes });
         api.applyBrush(stageKey, { erase: true });
-        api.updateOpts(stageKey, { canCancelUi: true });
       } else {// When selection exists, cut it out
         api.applyBrush(stageKey, { erase: true });
       }
@@ -163,7 +162,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     deselectBrush: (stageKey) => {
       api.updateBrush(stageKey, { locked: false, selectedPolys: [], selectedMeshes: [] });
-      api.updateOpts(stageKey, { canCancelUi: false });
     },
 
     ensurePolygon: (stageKey, polygonKey) => {
@@ -249,7 +247,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
       if (!brush.locked && (selectedPolys.length || selectedMeshes.length)) {
         brush.selectFrom.set(brush.position.x, brush.position.y, 0);
-        api.updateOpts(stageKey, { canCancelUi: true });
         api.updateBrush(stageKey, { locked: true, selectedPolys, selectedMeshes });
       }
     },
