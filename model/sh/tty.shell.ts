@@ -36,8 +36,10 @@ export class TtyShell implements Device {
   }
   
   async initialise(xterm: TtyXterm) {
-    this.cleanPrevInitialise?.();
     this.xterm = xterm;
+    
+    const reinitialising = !!this.cleanPrevInitialise;
+    this.cleanPrevInitialise?.();
     this.cleanPrevInitialise = this.io.read(this.onMessage.bind(this));
 
     // session corresponds to leading process where pid = ppid = pgid = 0
@@ -54,7 +56,7 @@ export class TtyShell implements Device {
     }
 
     this.preloadFuncsVars();
-    await this.runProfile();
+    if (!reinitialising) await this.runProfile();
     this.prompt('$');
   }
 
