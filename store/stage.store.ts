@@ -266,18 +266,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     transformBrush: (stageKey, key) => {
       const { brush } = api.getStage(stageKey);
       const { rect } = Stage.getGlobalBrushRect(brush);
-      // Adjust offset (TODO explain)
-      rect.x -= (brush.position.x - brush.selectFrom.x);
-      rect.y -= (brush.position.y - brush.selectFrom.y);
-
+      // Adjust offset
+      rect.x = brush.selectFrom.x;
+      rect.y = brush.selectFrom.y - rect.height;
       // Ensure center is pairwise a multiple of 0.1
       (rect.width * 10) % 2 && (rect.width += 0.1);
       (rect.height * 10) % 2 && (rect.height += 0.1);
       const center = rect.center;
-
-      /**
-       * TODO transform meshes too
-       */
 
       let mutator: (p: Geom.Vector) => void;
       switch (key) {
@@ -297,7 +292,20 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         y.mutatePoints(mutator).precision(1);
         (key === 'mirror(x)' || key === 'mirror(y)') && y.reverse();
       }));
-      api.updateBrush(stageKey, { selectedPolys: brush.selectedPolys.slice() });
+
+      const p = new Geom.Vector;
+      brush.selectedMeshes.forEach(mesh => {
+        mutator(p.copy(mesh.position));
+        mesh.position.set(p.x, p.y, 0);
+        /**
+         * TODO reflect and rotate meshes
+         */
+      });
+
+      api.updateBrush(stageKey, {
+        selectedPolys: brush.selectedPolys.slice(),
+        selectedMeshes: brush.selectedMeshes.slice(),
+      });
     },
 
     undoRedoPolygons: (stageKey) => {
