@@ -1,4 +1,4 @@
-import Stage from 'components/stage/Stage'
+import Stage from 'components/stage/PersistedStage'
 import Terminal from 'components/sh/Terminal'
 import Head from 'next/head'
 import { CoreVar } from 'model/sh/var.model'

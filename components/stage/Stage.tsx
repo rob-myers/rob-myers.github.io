@@ -4,10 +4,9 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { Canvas, CanvasContext } from "react-three-fiber";
-import { useBeforeunload } from "react-beforeunload";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
-import { createStageOpts } from "model/stage/stage.model";
+import { StageMeta } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
@@ -20,23 +19,15 @@ import Navigable from "./Navigable";
 import Walls from "./Walls";
 import Meshes from "./Meshes";
 
-const Stage: React.FC<Props> = ({ stageKey }) => {
+const Stage: React.FC<Props> = ({ stage }) => {
   // console.log('Stage')
-  const rehydrated = useStage(({ rehydrated }) => rehydrated);
-  const stage = useStage(({ stage }) => stageKey in stage ? stage[stageKey] : null);
   const pixelRatio = useRef(getWindow()?.devicePixelRatio);
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
-
-  const persistOnUnload = useCallback(() =>
-    stage?.opts.autoPersist && useStage.api.persist(stageKey),
-    [stage?.opts.autoPersist],
-  );
-  useBeforeunload(persistOnUnload);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     // Most recent initial camera position is persisted one
     const camera = ctxt.camera as PerspectiveCamera;
-    const { initCameraPos } = useStage.api.getPersist(stageKey).opts;
+    const { initCameraPos } = useStage.api.getPersist(stage.key).opts;
     camera.position.set(...initCameraPos);
 
     camera.setFocalLength(35);
@@ -45,26 +36,22 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     ctxt.gl.shadowMap.type = PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
 
-    // Currently, updateNavigable will also update stage.internal
-    stage!.internal.scene = ctxt.scene;
-    setTimeout(() => useStage.api.updateNavigable(stageKey));
+    // Currently updateNavigable will also update stage.internal
+    stage.internal.scene = ctxt.scene;
+    setTimeout(() => useStage.api.updateNavigable(stage.key));
     setCtxt(ctxt);
-  }, [stage?.internal]);
+  }, [stage.internal]);
 
   useEffect(() => {
-    if (rehydrated) {
-      useStage.api.ensureStage(stageKey);
-    }
     // NOTE `ctxt?.gl` instead of `ctxt` for hotreloads on edit stage.store
-    if (ctxt?.gl && stage && !stage.opts.enabled) {
-      // Detected stage disable
+    if (ctxt?.gl && !stage.opts.enabled) {// Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
       stage.internal.scene = undefined;
-      useStage.api.persist(stageKey);
+      useStage.api.persist(stage.key);
       setCtxt(null);
     }
-  }, [rehydrated, stage?.opts.enabled]);
+  }, [stage.opts.enabled]);
 
   const updateShadows = useCallback(() => {
     ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true); 
@@ -75,7 +62,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
     ptrWire.next({ key: e.type as any, ndCoords: getNormDevicePos(e) });
   }, []);
 
-  const keyWire = stage?.internal.keyEvents;
+  const keyWire = stage.internal.keyEvents;
   const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
     keyWire?.next({
       key: e.key,
@@ -86,24 +73,24 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
   }, [keyWire]);
 
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
-    stage?.opts.enabled && stage.opts.panZoom && e.currentTarget.focus(),
-    [stage?.opts],
+    stage.opts.enabled && stage.opts.panZoom && e.currentTarget.focus(),
+    [stage.opts],
   );
 
   return (
     <Root
-      background={stage?.opts.enabled && ctxt ? stage.opts.background : '#999'}
+      background={stage.opts.enabled && ctxt ? stage.opts.background : '#999'}
       tabIndex={0}
       onKeyDown={onKey}
       onKeyUp={onKey}
       onMouseOver={focusOnMouseOver}
     >
       <StageToolbar
-        stageKey={stageKey}
-        opts={stage?.opts || createStageOpts()}
+        stageKey={stage.key}
+        opts={stage.opts}
       />
 
-      {stage && (stage?.opts.enabled || ctxt) && (
+      {(stage.opts.enabled || ctxt) && (
 
         <Canvas
           pixelRatio={pixelRatio.current}
@@ -160,8 +147,7 @@ const Stage: React.FC<Props> = ({ stageKey }) => {
 }
 
 interface Props {
-  /** Assumed constant */
-  stageKey: string;
+  stage: StageMeta;
 }
 
 const Root = styled.section<{ background: string }>`
