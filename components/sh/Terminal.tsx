@@ -5,18 +5,30 @@ import { FitAddon } from 'xterm-addon-fit';
 import useResizeObserver from 'use-resize-observer';
 
 import { TtyXterm } from 'model/sh/tty.xterm';
-import useSession from 'store/session.store';
+import useSessionStore from 'store/session.store';
 import XTermComponent from './XTerm';
 
 const Terminal: React.FC<Props> = ({ sessionKey, env }) => {
-  const session = useRef(useSession.api.ensureSession(sessionKey, env)).current;
+
+  const session = useSessionStore(({ session }) =>
+    sessionKey in session ? session[sessionKey] : null
+  );
+
+  useEffect(() => {
+    // Had issues using api.ensureSession, e.g.
+    // had to force full page reload on hot-reload stage.store
+    useSessionStore.api.createSession(sessionKey, env);
+    return () => useSessionStore.api.removeSession(sessionKey);
+  }, [sessionKey]);
+
   const { ref, width = 1, height = 1 } = useResizeObserver<HTMLElement>();
   const fitAddonRef = useRef<FitAddon>();
   useEffect(() => fitAddonRef.current?.fit(), [width, height]);
 
   return (
     <Root ref={ref}>
-      <XTerm
+      {session ? (
+        <XTerm
           onMount={(xterm, fitAddon) => {
             const ttyXterm = new TtyXterm(
               xterm, // xterm.js instance
@@ -25,7 +37,11 @@ const Terminal: React.FC<Props> = ({ sessionKey, env }) => {
             );
             ttyXterm.initialise();
             fitAddonRef.current = fitAddon;
-            session.ttyShell.initialise(ttyXterm);
+            /**
+             * We wait because session[sessionKey] is not yet defined (?!),
+             * e.g. on hot reload after edit ancestral html.
+             */
+            setTimeout(() => session.ttyShell.initialise(ttyXterm));
           }}
           options={{
             allowProposedApi: true, // Needed for WebLinksAddon
@@ -41,6 +57,7 @@ const Terminal: React.FC<Props> = ({ sessionKey, env }) => {
             rows: 50,
           }}
         />
+      ) : null}
     </Root>
   )
 };

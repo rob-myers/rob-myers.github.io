@@ -400,12 +400,3 @@ const api = useStore.getState().api;
 const useStageStore = Object.assign(useStore, { api });
 
 export default useStageStore;
-
-if (module.hot) {
-  /**
-   * We force a full page reload because editing this file
-   * causes its default export to have different values
-   * in `Stage` versus `CmdService`.
-   */
-  module.hot.decline();
-}
