@@ -206,7 +206,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         }));
       }
 
-      get().resolve.createStage[stageKey]?.forEach(resolve => resolve());
+      while(get().resolve.createStage[stageKey]?.pop?.());
     },
 
     getPersist: (stageKey) => {
@@ -434,7 +434,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 }), {
   name: 'stage',
   version: 0,
-  blacklist: ['api', 'stage'],
+  blacklist: ['api', 'stage', 'resolve'],
   onRehydrateStorage: (_) =>  {
     return () => {
       useStageStore.setState({ rehydrated: true });
