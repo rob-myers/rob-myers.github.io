@@ -32,10 +32,10 @@ const Navigable: React.FC<Props> = ({
       <mesh
         geometry={notWallsGeom}
         renderOrder={-1}
-        receiveShadow
+        receiveShadow={opts.lights}
       >
         <meshStandardMaterial
-          color="#fff"
+          color={opts.wallOpacity || opts.lights ? "#fff" : "#777"}
           transparent
           opacity={0.6}
         />
