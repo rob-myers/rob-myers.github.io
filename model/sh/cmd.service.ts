@@ -5,7 +5,7 @@ import safeJsonStringify from 'safe-json-stringify';
 import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 
 import { deepGet, kebabToCamel, testNever, truncate } from 'model/generic.model';
-import { asyncIteratorFrom, Bucket } from 'model/rxjs/asyncIteratorFrom';
+import { asyncIteratorFrom, CoroutineConfig } from 'model/rxjs/asyncIteratorFrom';
 import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
@@ -355,12 +355,12 @@ class CmdService {
 
   /** Iterate a never-ending observable e.g. key events or polling */
   private async *iterateObservable(meta: Sh.BaseMeta, observable: Observable<any>) {
-    const bucket: Bucket<any> = { enabled: true };
-    const iterator = asyncIteratorFrom(observable, bucket);
+    const config: CoroutineConfig<any> = { enabled: true };
+    const iterator = asyncIteratorFrom(observable, config);
     const process = useSession.api.getProcess(meta);
-    process.cleanups.push(() => bucket.promise?.reject(createKillError(meta)));
-    process.onSuspend = () => bucket.forget?.();
-    process.onResume = () => bucket.remember?.();
+    process.cleanups.push(() => config.promise?.reject(createKillError(meta)));
+    process.onSuspend = () => config.forget?.();
+    process.onResume = () => config.remember?.();
     yield* iterator;
   }
 

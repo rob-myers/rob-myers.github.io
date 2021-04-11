@@ -2,36 +2,27 @@
 import { Observable } from "rxjs";
 import { Deferred } from "./deferred";
 
-export type Bucket<T> = {
-  promise?: Deferred<IteratorResult<T>>;
-  forget?: () => void;
-  remember?: () => void;
-  enabled: boolean;
-};
-
-export function asyncIteratorFrom<T>(
-  source: Observable<T>,
-  bucket: Bucket<T>,
-) {
-  bucket.forget = () => (bucket.enabled = false);
-  bucket.remember = () => (bucket.enabled = true);
-  bucket.enabled = true;
-  return coroutine(source, bucket);
+export function asyncIteratorFrom<T>(source: Observable<T>, config: CoroutineConfig<T>) {
+  config.forget = () => (config.enabled = false);
+  config.remember = () => (config.enabled = true);
+  config.enabled = true;
+  return coroutine(source, config);
 }
 
-async function* coroutine<T>(
-  source: Observable<T>,
-  bucket: Bucket<T>,
-) {
+async function* coroutine<T>(source: Observable<T>, config: CoroutineConfig<T>) {
   let deferred = null as null | Deferred<IteratorResult<T>>;
-  const values: T[] = [];
-  let hasError = false;
   let error: any = null;
-  let completed = false;
+  let [hasError, completed] = [false, false];
+  const values: T[] = [];
+
+  config.forget = () => {
+    config.enabled = false; // Ignore incoming
+    values.length = 0; // Forget pending
+  };
 
   const subs = source.subscribe({
     next: value => {
-      if (!bucket.enabled) {
+      if (!config.enabled) {
         return;
       } else if (deferred) {
         deferred.resolve({ value, done: false });
@@ -59,7 +50,7 @@ async function* coroutine<T>(
       } else if (hasError) {
         throw error;
       } else {
-        deferred = bucket.promise = new Deferred<IteratorResult<T>>();
+        deferred = config.promise = new Deferred<IteratorResult<T>>();
         const result = await deferred.promise;
         if (result.done) {
           return;
@@ -73,4 +64,11 @@ async function* coroutine<T>(
   } finally {
     subs.unsubscribe();
   }
+}
+
+export type CoroutineConfig<T> = {
+  promise?: Deferred<IteratorResult<T>>;
+  forget?: () => void;
+  remember?: () => void;
+  enabled: boolean;
 }
