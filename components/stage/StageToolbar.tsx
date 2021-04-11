@@ -51,6 +51,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts }) => {
             >
               <option key="disabled" value="disabled" disabled>spawn</option>
               <option key="Crate" value="Crate">Crate</option>
+              <option key="Table" value="Table">Table</option>
             </SelectSpawn>
           </Slot>
         </LeftToolbar>

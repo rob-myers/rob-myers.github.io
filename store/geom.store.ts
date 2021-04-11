@@ -82,6 +82,7 @@ const useStore = create<State>(devtools((set, get) => ({
           const selectedMaterial = (node.material as THREE.Material).clone();
           selectedMaterial.opacity = 0.5;
           selectedMaterial.transparent = true;
+          node.position.set(0, 0, 0);
           mesh[node.name] = { mesh: node, selectedMaterial };
         }
       });

@@ -11,8 +11,9 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Another mesh e.g. table
-- Mirror/rotate selected meshes too
+- Another mesh: `Table`
+- Can Mirror/rotate selected meshes
+- Can undo/redo meshes
 
 - Work on a humanoid in blender
 - Use mixamo to rig it
