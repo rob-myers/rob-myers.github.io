@@ -31,10 +31,10 @@ class SemanticsService {
       throw e;
     }
   }
+
   private expandParameter(meta: Sh.BaseMeta, varName: string): string {
-    if (/[0-9]+/.test(varName)) {// Positional
-      const varValue = useSession.api.getPositional(meta.pid, meta.sessionKey, Number(varName));
-      return varValue || '';
+    if (/^[0-9]+$/.test(varName)) {
+      return useSession.api.getPositional(meta.pid, meta.sessionKey, Number(varName));
     }
     const varValue = useSession.api.getVar(meta.sessionKey, varName);
     if (varValue === undefined || typeof varValue === 'string') {
@@ -328,8 +328,12 @@ class SemanticsService {
       case 'DblQuoted': {
         const output = [] as string[];
         for (const part of node.Parts) {
-          const { value } = await this.lastExpanded(sem.ExpandPart(part));
-          output.push(`${output.pop() || ''}${value || ''}`);
+          const result = await this.lastExpanded(sem.ExpandPart(part));
+          if (part.type === 'ParamExp' && part.Param.Value === '@') {
+            output.push(`${output.pop() || ''}${result.values[0] || ''}`, ...result.values.slice(1));
+          } else {
+            output.push(`${output.pop() || ''}${result.value || ''}`);
+          }
         }
         yield expand(output);
         return;
@@ -382,6 +386,7 @@ class SemanticsService {
 
   /**
    * - positionals $0, $1, ...
+   * - all positionals "${@}"
    * - vanilla $x, ${foo}
    * - default when empty ${foo:-bar}
    */
@@ -394,14 +399,16 @@ class SemanticsService {
       switch (Exp.Op) {
         case ':-': {
           const value = this.expandParameter(meta, Param.Value);
-          yield value !== '' || !Exp.Word
-            ? expand(value)
-            : await this.lastExpanded(this.Expand(Exp.Word));
+          yield value === '' && Exp.Word
+            ? await this.lastExpanded(this.Expand(Exp.Word))
+            : expand(value)
           break;
         }
         default:
           throw new ShError(`ParamExp: ${Param.Value}: unsupported operation`, 2);
       }
+    } else if (Param.Value === '@') {
+      yield expand(useSession.api.getProcess(meta).positionals.slice(1));
     } else {
       yield expand(this.expandParameter(meta, Param.Value));
     }
@@ -465,4 +472,5 @@ class SemanticsService {
 
 export const semanticsService = new SemanticsService;
 
-const sem = semanticsService; // Local shortcut
+/** Local shortcut */
+const sem = semanticsService;

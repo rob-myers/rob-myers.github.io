@@ -111,9 +111,9 @@ class CmdService {
         break;
       }
       case 'get': {
-        if (args[0]) {
-          const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
-          yield this.getData(meta.sessionKey, stageKey, args[0]);
+        const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
+        for (const arg of args) {
+          yield this.getData(meta.sessionKey, stageKey, arg);
         }
         break;
       }

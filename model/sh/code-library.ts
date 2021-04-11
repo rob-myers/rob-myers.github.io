@@ -38,7 +38,7 @@ map '(x, { util: {stringify} }) => stringify(x)'
 map Object.keys
 `,
   cat: `
-get "$1" | split
+get "$@" | split
 `,
   flat: `
 map "$1" | split
