@@ -13,12 +13,6 @@
   display: flex;
 }
 
-@media(max-width: 800px) {
-  .title {
-    font-size: 2.5rem;
-  }
-}
-
 .reference {
   font-size: small;
   padding-top: 10px;
@@ -26,6 +20,18 @@
 
 .subtitle {
   margin-bottom: 64px;
+}
+
+@media(max-width: 800px) {
+  .main {
+    padding: 2rem 0;
+  }
+  .title {
+    font-size: 2.5rem;
+  }
+  .subtitle {
+    margin-bottom: 48px;
+  }
 }
 
 .code {
