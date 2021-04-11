@@ -12,17 +12,16 @@ const Lights: React.FC<Props> = ({ enabled, updateShadows }) => {
         color="#ffe"
         intensity={enabled ? 0.05 : 1}
       />
-      {enabled && (
-        <pointLight
-          position={[0, 0, 3]}
-          intensity={3}
-          decay={1.5}
-          distance={4}
-          castShadow
-          shadow-mapSize-height={2048}
-          shadow-mapSize-width={2048}
-        />
-      )}
+      <pointLight
+        visible={enabled}
+        position={[0, 0, 3]}
+        intensity={3}
+        decay={1.5}
+        distance={4}
+        castShadow
+        shadow-mapSize-height={2048}
+        shadow-mapSize-width={2048}
+      />
   </group>
   );
 };

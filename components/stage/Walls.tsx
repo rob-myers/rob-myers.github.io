@@ -10,7 +10,7 @@ const Walls: React.FC<Props> = ({ polygon, walls, opts, updateShadows }) => {
   [polygon, walls]);
 
   const wallsGeom = useMemo(() => {
-    setTimeout(updateShadows, 5);
+    setTimeout(updateShadows, 20);
     return geomService.polysToWalls(wallsPolys, opts.wallHeight);
   }, [wallsPolys, opts.wallHeight]);
 
