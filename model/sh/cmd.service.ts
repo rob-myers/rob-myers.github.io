@@ -84,6 +84,9 @@ class CmdService {
         );
         break;
       }
+      /**
+       * TODO rename as `declare`
+       */
       case 'defs': {
         const funcs = useSession.api.getFuncs(meta.sessionKey);
         for (const { key, src } of funcs) {

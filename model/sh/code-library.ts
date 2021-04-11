@@ -37,6 +37,12 @@ map '(x, { util: {stringify} }) => stringify(x)'
   keys: `
 map Object.keys
 `,
+  cat: `
+get "$1" | split
+`,
+  flat: `
+map "$1" | split
+`,
 };
 
 const navigator = getWindow()?.navigator;
