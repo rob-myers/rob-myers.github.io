@@ -5,7 +5,7 @@ import { CoreVar } from 'model/sh/var.model'
 import { profiles } from 'model/sh/code-library'
 import styles from 'styles/Home.module.css'
 
-export default function Home() {
+export default function IndexPage() {
   return (
     <>
       <Head>

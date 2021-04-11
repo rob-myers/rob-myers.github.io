@@ -7,7 +7,7 @@ import 'xterm/css/xterm.css';
 import 'styles/globals.css'
 import useGeomStore from 'store/geom.store';
 
-const MyApp: React.FC<RootProps> = ({ Component, pageProps }) => {
+const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
 
   useEffect(() => {
     useGeomStore.api.load();
@@ -21,4 +21,4 @@ interface RootProps extends AppInitialProps {
   router: Router;
 }
 
-export default MyApp
+export default PagesRoot
