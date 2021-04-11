@@ -31,7 +31,7 @@ const Navigable: React.FC<Props> = ({
         receiveShadow={opts.lights}
       >
         <meshStandardMaterial
-          color={opts.wallOpacity || opts.lights ? "#fff" : "#777"}
+          color="#fff"
           transparent
           opacity={0.6}
         />
