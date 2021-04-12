@@ -41,7 +41,7 @@ const Navigable: React.FC<Props> = ({
         renderOrder={-1}
       >
         <meshBasicMaterial
-          color={opts.wallOpacity ? "#006" : "#000"}
+          color="#000"
           transparent
           opacity={0.13}
         />
