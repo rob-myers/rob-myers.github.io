@@ -2,21 +2,17 @@
 
 We plan to create a website concerned with Game AI. We will provide an editor so scenarios can be created and experienced. Users of the website can create scenarios and save them as textual "comments". The website will be arranged as a blog e.g. concerned with a particular setting, or a particular Game AI technique. There will also be a general area where users can post ideas/scenarios unrelated to the blog posts.
 
-## The editor
-
-The editor consists of one or more `Terminal`s and a `Stage`.
-
-Will split UI pipeline into two while awaiting:
+Issue related to shell
 > https://github.com/mvdan/sh/issues/692
 
 ### TODO
 
-- Another mesh `Barrel`
-- Another mesh `MainFrame` (simplified)
+- Try using uv-map-style for `Crate` too
+- Another textured mesh `MainFrame` (simplified)
 - Can mirror/rotate selected meshes
 - Can undo/redo meshes
 - Faster copy/paste? (maybe due to size of level)
-- Texture width/height should be a power of 2
+- Brush always has light outline, change colour on lock
 
 - Work on a humanoid in blender
 - Use mixamo to rig it
@@ -126,6 +122,8 @@ Blog layout related tasks
 ✅ Can persist meshes
 ✅ Can `await-stage` i.e. ensure stage is ready
 ✅ Life-sizes meshes in blender, scaled down on import gltf
+✅ Texture width/height should be a power of 2
+✅ Another textured mesh `Barrel`
 ### Three.js Animation
 
 ```tsx
