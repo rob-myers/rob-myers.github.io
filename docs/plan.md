@@ -11,9 +11,12 @@ Will split UI pipeline into two while awaiting:
 
 ### TODO
 
-- Another mesh: `Table`
-- Can Mirror/rotate selected meshes
+- Another mesh `Barrel`
+- Another mesh `MainFrame` (simplified)
+- Can mirror/rotate selected meshes
 - Can undo/redo meshes
+- Faster copy/paste? (maybe due to size of level)
+- Texture width/height should be a power of 2
 
 - Work on a humanoid in blender
 - Use mixamo to rig it
@@ -122,7 +125,7 @@ Blog layout related tasks
 ✅ Can select/move/delete/cut meshes
 ✅ Can persist meshes
 ✅ Can `await-stage` i.e. ensure stage is ready
-
+✅ Life-sizes meshes in blender, scaled down on import gltf
 ### Three.js Animation
 
 ```tsx
