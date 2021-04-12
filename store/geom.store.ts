@@ -11,12 +11,15 @@ import { initStageBounds } from 'model/stage/stage.model';
 import thinPlusPng from '../3d/img/thin-plus.png';
 import { isMeshNode } from 'model/3d/three.model';
 
+const scaleFactor = 1 / 5;
+
 export type State = {
   loaded: boolean;
   loading: boolean;
   loadResolvers: (() => void)[];
   /** Mesh library */
   mesh: Record<string, MeshDef>;
+  /** Texture library */
   texture: Record<string, THREE.Texture>;
 
   readonly api: {
@@ -82,10 +85,13 @@ const useStore = create<State>(devtools((set, get) => ({
           const selectedMaterial = (node.material as THREE.Material).clone();
           selectedMaterial.opacity = 0.5;
           selectedMaterial.transparent = true;
-          node.position.set(0, 0, 0); // Remove translation
-          const scaleFactor = 1 / 5; // Scale down
+          // Remove translation and scale down
+          node.position.set(0, 0, 0);
           node.scale.set(scaleFactor, scaleFactor, scaleFactor);
-          mesh[node.name] = { mesh: node, selectedMaterial };
+          mesh[node.name] = {
+            mesh: node, 
+            selectedMaterial,
+          };
         }
       });
       set(_ => ({ mesh }));

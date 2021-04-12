@@ -192,8 +192,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
                   const mesh = useGeom.api.cloneMesh(meshName);
                   mesh.position.set(x, y, 0);
                   mesh.rotation.set(0, 0, radians);
-                  const rect = geomService.rectFromMesh(mesh);
-                  return { key: mesh.uuid, mesh, rect };
+                  return {
+                    key: mesh.uuid,
+                    mesh,
+                    rect: geomService.rectFromMesh(mesh),
+                    basePolys: geomService.polyFromMesh(mesh),
+                  };
                 }),
               ),
             }),
@@ -384,7 +388,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const { walls, polygon, mesh } = api.getStage(stageKey);
       const wallPolys = walls.polygonKeys.flatMap(x => polygon[x].polygons);
       const allPolys = wallPolys.concat(
-        Object.values(mesh).map(x => Geom.Polygon.fromRect(x.rect)));
+        // Object.values(mesh).map(x => Geom.Polygon.fromRect(x.rect))
+        Object.values(mesh).flatMap(x => x.basePolys),
+      );
       const { bounds, navPolys } = useGeom.api.createNavMesh(stageKey, allPolys);
 
       polygon[Stage.CorePolygonKey.navigable].polygons = navPolys;

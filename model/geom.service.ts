@@ -382,7 +382,7 @@ class GeomService {
   }
 
   /**
-   * Compute base polygon of mesh.
+   * Compute base polygon of mesh, falling back to rectangular bounds.
    */
   polyFromMesh(mesh: THREE.Mesh): Geom.Polygon[] {
     const { faces, vertices: vs } = (new Geometry).fromBufferGeometry(mesh.geometry);
@@ -391,7 +391,9 @@ class GeomService {
     const triangles = faces
       .filter(({ a, b ,c }) => [a, b, c].every(id => Math.abs(vs[id].z) < groundError))
       .map(({ a, b, c }) => new Geom.Polygon([a, b, c].map(id => new Geom.Vector(vs[id].x, vs[id].y))))
-    return this.union(triangles);
+    return triangles.length
+      ? this.union(triangles)
+      : [Geom.Polygon.fromRect(this.rectFromMesh(mesh))];
   }
 
   rectFromMesh(mesh: THREE.Mesh): Geom.Rect {

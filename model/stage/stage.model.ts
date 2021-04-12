@@ -187,6 +187,7 @@ export function createMeshInstance(mesh: THREE.Mesh, { x, y }: Geom.VectorJson):
     key: clone.uuid,
     mesh: clone,
     rect: geomService.rectFromMesh(clone),
+    basePolys: geomService.polyFromMesh(clone),
   };
 }
 
@@ -195,6 +196,7 @@ export interface MeshInstance {
   key: string;
   mesh: THREE.Mesh;
   rect: Geom.Rect;
+  basePolys: Geom.Polygon[];
 }
 
 export interface MeshInstanceJson {
