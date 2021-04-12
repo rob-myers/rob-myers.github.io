@@ -381,6 +381,19 @@ class GeomService {
     return { x: src.x + dir.x * tmax, y: src.y + dir.y * tmax };
   }
 
+  /**
+   * Compute base polygon of mesh.
+   */
+  polyFromMesh(mesh: THREE.Mesh): Geom.Polygon[] {
+    const { faces, vertices: vs } = (new Geometry).fromBufferGeometry(mesh.geometry);
+    const groundError = 0.01;
+    vs.forEach(v => v.applyMatrix4(mesh.matrixWorld));
+    const triangles = faces
+      .filter(({ a, b ,c }) => [a, b, c].every(id => Math.abs(vs[id].z) < groundError))
+      .map(({ a, b, c }) => new Geom.Polygon([a, b, c].map(id => new Geom.Vector(vs[id].x, vs[id].y))))
+    return this.union(triangles);
+  }
+
   rectFromMesh(mesh: THREE.Mesh): Geom.Rect {
     const { min, max } = this.tempBox.setFromObject(mesh);
     return new Geom.Rect(min.x, min.y, max.x - min.x, max.y - min.y);
