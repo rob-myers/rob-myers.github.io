@@ -22,6 +22,7 @@ const Meshes: React.FC<Props> = ({ mesh, updateShadows }) => {
     Object.values(lookup).forEach(({ mesh }) => {
       meshRoot.add(mesh); // Add new
       mesh.castShadow = true;
+      mesh.receiveShadow = true;
     });
 
     updateShadows();

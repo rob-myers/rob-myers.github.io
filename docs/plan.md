@@ -7,8 +7,7 @@ Issue related to shell
 
 ### TODO
 
-- Try using uv-map-style for `Crate` too
-- Another textured mesh `MainFrame` (simplified)
+- Another textured mesh `Poster` (plain)
 - Can mirror/rotate selected meshes
 - Can undo/redo meshes
 - Faster copy/paste? (maybe due to size of level)
@@ -20,6 +19,7 @@ Issue related to shell
 
 - Ensure recast navmesh is working
 - Can add lights via command line
+- Bug `jarg '{ aloha: 42 }'`
 
 Blog layout related tasks
 - Auto pause on scroll out of view
@@ -124,6 +124,9 @@ Blog layout related tasks
 ✅ Life-sizes meshes in blender, scaled down on import gltf
 ✅ Texture width/height should be a power of 2
 ✅ Another textured mesh `Barrel`
+✅ Use uv-map-style for `Crate` too
+✅ Meshes receive and cast shadows
+
 ### Three.js Animation
 
 ```tsx

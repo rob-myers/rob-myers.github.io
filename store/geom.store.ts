@@ -82,6 +82,9 @@ const useStore = create<State>(devtools((set, get) => ({
       gltf.scene.traverse((node) => {
         // console.log('gltf: saw node:', node);
         if (isMeshNode(node)) {
+          // Avoid self-shadow issues
+          (node.material as THREE.Material).side = THREE.FrontSide;
+          // Create transparent clone to indicate selections
           const selectedMaterial = (node.material as THREE.Material).clone();
           selectedMaterial.opacity = 0.5;
           selectedMaterial.transparent = true;
