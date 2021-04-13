@@ -100,6 +100,7 @@ const LeftToolbar = styled.section`
 
 const SelectSpawn = styled.select`
   display: flex;
+  max-width: 64px;
 `;
 
 const RightToolbar = styled.section`
