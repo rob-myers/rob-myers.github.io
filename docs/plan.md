@@ -1,3 +1,21 @@
+# NOTE
+
+Will start new repo, using this one as a reference.
+
+1. Our project will be called "three.js CLI" or similar.
+   > Interactive sessions for three.js
+
+2. Decouple `Brush` from mesh create/cut/delete.
+Can select many rects. Can still lock. Has group where ghost meshes can be attached.
+
+3. Clean simplified rewrite of shell. No asyncFromObservable. Cleaner approach to pipelines.
+
+4. Main focus is:
+   - Convert atoms e.g. `Sensor sensed you` into small demo(s).
+   - Build composite programs e.g. causes alarm, guard checks monitor, guard comes to last know location, guard sees you, finished.
+
+---
+
 # Website objectives
 
 We plan to create a website concerned with Game AI. We will provide an editor so scenarios can be created and experienced. Users of the website can create scenarios and save them as textual "comments". The website will be arranged as a blog e.g. concerned with a particular setting, or a particular Game AI technique. There will also be a general area where users can post ideas/scenarios unrelated to the blog posts.
@@ -7,10 +25,13 @@ Issue related to shell
 
 ### TODO
 
-- Another textured mesh `Poster` (plain)
+We need a reason to design levels e.g. playing with Game AI techniques.
+
+- Better crate/barrel textures
+- Another textured mesh `...`
 - Can mirror/rotate selected meshes
 - Can undo/redo meshes
-- Faster copy/paste? (maybe due to size of level)
+- Faster copy/paste (maybe due to size of level)
 - Brush always has light outline, change colour on lock
 
 - Work on a humanoid in blender
