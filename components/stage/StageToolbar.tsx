@@ -17,8 +17,8 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts }) => {
 
   const enableUi = opts.enabled && canToggleRunning;
   
-  const onSelectSpawn = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    enableUi && useStage.api.spawnMesh(stageKey, e.currentTarget.value);
+  const onSelectAction = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    enableUi && console.log('do', e.currentTarget.value);
   }, [enableUi]);
 
   const toggleCam = useCallback(() => {
@@ -47,12 +47,12 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts }) => {
             <SelectSpawn
               disabled={!enableUi}
               value="disabled"
-              onChange={onSelectSpawn}
+              onChange={onSelectAction}
             >
-              <option key="disabled" value="disabled" disabled>spawn</option>
-              <option key="Crate" value="Crate">Crate</option>
-              <option key="Barrel" value="Barrel">Barrel</option>
-              <option key="MainFrame" value="MainFrame">MainFrame</option>
+              <option key="disabled" value="disabled" disabled>actions</option>
+              {['foo', 'bar', 'baz'].map(key => (
+                <option key={key} value={key}>{key}</option>
+              ))}
             </SelectSpawn>
           </Slot>
         </LeftToolbar>

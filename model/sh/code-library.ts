@@ -60,20 +60,21 @@ export const shellScripts = {
 key | run '({ read, _: {msg} }, { stage: s }) {
   while (msg = await read()) {
     if (msg.type !== "keydown" || !s.opts.enabled) continue;
-    switch (msg.key) {
-      case "f": s.brush.paint(); break;
-      case "v": msg.metaKey && s.brush.paint(); break;
-      case "F": s.brush.erase(); break;
-      case "Backspace": s.brush.erase(); break;
-      case "c": msg.metaKey && s.brush.select(); break;
-      case "x": msg.metaKey ? s.brush.cutSelect()
-        : s.brush.transform("mirror(x)"); break;
-      case "Escape": s.brush.deselect(); break;
-      case "y": s.brush.transform("mirror(y)"); break;
-      case "q": s.brush.transform("rotate(90)"); break;
-      case "Q": s.brush.transform("rotate(-90)"); break;
-      case "z": msg.metaKey && s.brush.undoRedo(); break;
-    }
+    // TODO
+    // switch (msg.key) {
+    //   case "f": s.brush.paint(); break;
+    //   case "v": msg.metaKey && s.brush.paint(); break;
+    //   case "F": s.brush.erase(); break;
+    //   case "Backspace": s.brush.erase(); break;
+    //   case "c": msg.metaKey && s.brush.select(); break;
+    //   case "x": msg.metaKey ? s.brush.cutSelect()
+    //     : s.brush.transform("mirror(x)"); break;
+    //   case "Escape": s.brush.deselect(); break;
+    //   case "y": s.brush.transform("mirror(y)"); break;
+    //   case "q": s.brush.transform("rotate(90)"); break;
+    //   case "Q": s.brush.transform("rotate(-90)"); break;
+    //   case "z": msg.metaKey && s.brush.undoRedo(); break;
+    // }
   }
 }' &
 `,
@@ -83,9 +84,9 @@ key | run '({ read, _: {msg} }, { stage: { opts } }) {
   while (msg = await read()) {
     if (msg.type !== "keydown" || !opts.enabled) continue;
     switch (msg.key) {
-      case "1": opts.wallOpacity = 0; break;
-      case "2": opts.wallOpacity = 1; break;
-      case "3": opts.wallOpacity = 0.4; break;
+      // case "1": opts.wallOpacity = 0; break;
+      // case "2": opts.wallOpacity = 1; break;
+      // case "3": opts.wallOpacity = 0.4; break;
       case "l": opts.lights = !opts.lights; break;
     }
   }

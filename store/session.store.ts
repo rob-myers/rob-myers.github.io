@@ -22,7 +22,7 @@ export type State = {
   readonly api: {
     addCleanup: (meta: BaseMeta, cleanup: () => void) => void;
     addFunc: (sessionKey: string, funcName: string, wrappedFile: FileWithMeta) => void;
-    createSession: (sessionKey: string, env: Record<string, any>) => void;
+    createSession: (sessionKey: string, env: Record<string, any>) => Session;
     createProcess: (def: {
       sessionKey: string;
       ppid: number;
@@ -83,7 +83,7 @@ export interface ProcessMeta {
   status: ProcessStatus;
   src: string;
   /** Executed on kill */
-  cleanups: (() => void)[];
+  onKill: (() => void)[];
   /** Executed on suspend */
   onSuspend: null | (() => void);
   /** Executed on resume */
@@ -99,19 +99,15 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
   api: {
     addCleanup: (meta, cleanup) => {
-      get().session[meta.sessionKey].process[meta.pid].cleanups.push(cleanup);
+      api.getProcess(meta).onKill.push(cleanup);
     },
 
     addFunc: (sessionKey, funcName, file) => {
-      set(({ session }) => ({
-        session: updateLookup(sessionKey, session, ({ func }) => ({
-          func: addToLookup({
-            key: funcName,
-            node: file,
-            src: srcService.multilineSrc(file),
-          }, func),
-        }))
-      }));
+      api.getSession(sessionKey).func[funcName] = {
+        key: funcName,
+        node: file,
+        src: srcService.multilineSrc(file),
+      };
     },
 
     createFifo(key, size) {
@@ -129,8 +125,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         sessionKey,
         status: ProcessStatus.Running,
         src,
-        positionals: ['rsrm', ...posPositionals || []],
-        cleanups: [],
+        positionals: ['3-cli', ...posPositionals || []],
+        onKill: [],
         onSuspend: null,
         onResume: null,
       };
@@ -141,41 +137,36 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const persisted = api.ensurePersisted(sessionKey);
       const ttyIo = makeShellIo<MessageFromXterm, MessageFromShell>();
       const ttyShell = new TtyShell(sessionKey, ttyIo, persisted.history);
-      const ttyDevice: Device = ttyShell;
-      const nullDevice = new NullDevice('/dev/null');
-
-      get().device[nullDevice.key] = nullDevice;
-      get().device[ttyDevice.key] = ttyDevice;
+      get().device[ttyShell.key] = ttyShell;
+      get().device['/dev/null'] = new NullDevice('/dev/null');
 
       set(({ session }) => ({
         session: addToLookup({
           key: sessionKey,
           func: {},
+          nextPid: 0,
+          process: {},
           ttyIo,
           ttyShell,
           var: deepClone(env),
-          nextPid: 0,
-          process: {},
         }, session),
       }));
+      return get().session[sessionKey];
     },
 
     createVarDevice(sessionKey, varName) {
       const varDevice = new VarDevice(sessionKey, varName);
-      get().device[varDevice.key] = varDevice;
-      return varDevice;
+      return get().device[varDevice.key] = varDevice;
     },
 
     ensureSession: (sessionKey, env) => {
-      if (!get().api.getSession(sessionKey)) {
-        api.createSession(sessionKey, env);
-      }
-      return get().session[sessionKey];
+      const { session } = get();
+      return session[sessionKey] = session[sessionKey]
+        || get().api.createSession(sessionKey, env);
     },
 
     ensurePersisted: (sessionKey) => {
-      const newItem: PersistedSession = { key: sessionKey, history: [] };
-      const persisted = get().persist?.[sessionKey]??newItem
+      const persisted = get().persist?.[sessionKey]??{ key: sessionKey, history: [] };
       set(({ persist: lookup }) => ({ persist: addToLookup(persisted, lookup) }));
       return persisted;
     },
@@ -202,9 +193,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     getProcesses: (sessionKey, pgid) => {
       const processes = Object.values(get().session[sessionKey].process);
-      return Number.isFinite(pgid)
-        ? processes.filter(x => x.pgid === pgid)
-        : processes;
+      return pgid === undefined ? processes : processes.filter(x => x.pgid === pgid);
     },
 
     getVar: (sessionKey, varName) => {
@@ -236,29 +225,25 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     removeSession: (sessionKey) => {
       delete get().device[get().session[sessionKey].ttyShell.key];
-      set(({ session }) => ({
-        session: removeFromLookup(sessionKey, session),
-      }));
+      set(({ session }) => ({ session: removeFromLookup(sessionKey, session) }));
     },
 
     resolve: (fd, meta) => {
       return get().device[meta.fd[fd]];
     },
 
-
-
     setVar: async (sessionKey, varName, varValue) => {
       api.getSession(sessionKey).var[varName] = varValue; // Mutate
     },
 
     warn: (sessionKey, msg) => {
-      get().session?.[sessionKey].ttyIo.write({ key: 'error', msg });
+      api.getSession(sessionKey).ttyIo.write({ key: 'error', msg });
     },
   },
 
 }), {
   name: 'session',
-  version: 3,
+  version: 0,
   blacklist: ['api', 'device', 'session'],
   onRehydrateStorage: (_) =>  {
     return () => {

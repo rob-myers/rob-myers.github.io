@@ -77,7 +77,6 @@ class ParseShService {
       const src = buffer.join('\n') + '\n';
       // console.log({ src });
       const { incomplete, parsed } = this.interactiveParse(src);
-
       // if (parsed) {
       //   console.log('parsed shell code', parsed);
       // }

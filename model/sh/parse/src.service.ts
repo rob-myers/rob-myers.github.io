@@ -61,15 +61,15 @@ export class SrcService {
       }
 
       case 'BinaryArithm': {
-        if (typeof node.number === 'number') return `${node.number}`;
+        // if (typeof node.number === 'number') return `${node.number}`;
         return [node.X, node.Y].map(c => this.src(c)).join(`${node.Op}`);
       }
       case 'UnaryArithm': {
-        if (typeof node.number === 'number') return `${node.number}`;
+        // if (typeof node.number === 'number') return `${node.number}`;
         return node.Post ? `${this.src(node.X)}${node.Op}` : `${node.Op}${this.src(node.X)}`;
       }
       case 'ParenArithm': {
-        if (typeof node.number === 'number') return `${node.number}`;
+        // if (typeof node.number === 'number') return `${node.number}`;
         return `(${this.src(node.X)})`;
       }
       case 'Word': {

@@ -1,8 +1,6 @@
-# NOTE
+## Project
 
-Will start new repo, using this one as a reference.
-
-1. Our project will be called "three.js CLI" or similar.
+1. Our project will be called _three.js CLI_ or similar.
    > Interactive sessions for three.js
 
 2. Decouple `Brush` from mesh create/cut/delete.
@@ -14,141 +12,17 @@ Can select many rects. Can still lock. Has group where ghost meshes can be attac
    - Convert atoms e.g. `Sensor sensed you` into small demo(s).
    - Build composite programs e.g. causes alarm, guard checks monitor, guard comes to last know location, guard sees you, finished.
 
----
+### TODOs
 
-# Website objectives
+...
 
-We plan to create a website concerned with Game AI. We will provide an editor so scenarios can be created and experienced. Users of the website can create scenarios and save them as textual "comments". The website will be arranged as a blog e.g. concerned with a particular setting, or a particular Game AI technique. There will also be a general area where users can post ideas/scenarios unrelated to the blog posts.
+## Issues
 
 Issue related to shell
 > https://github.com/mvdan/sh/issues/692
 
-### TODO
 
-We need a reason to design levels e.g. playing with Game AI techniques.
-
-- Better crate/barrel textures
-- Another textured mesh `...`
-- Can mirror/rotate selected meshes
-- Can undo/redo meshes
-- Faster copy/paste (maybe due to size of level)
-- Brush always has light outline, change colour on lock
-
-- Work on a humanoid in blender
-- Use mixamo to rig it
-- Try https://www.youtube.com/watch?v=gGFAF0Flc5Q&ab_channel=EricEisaman
-
-- Ensure recast navmesh is working
-- Can add lights via command line
-- Bug `jarg '{ aloha: 42 }'`
-
-Blog layout related tasks
-- Auto pause on scroll out of view
-- Auto pause on start/resume another `Stage`
-
-- Start writing post / decide on blog format
-
-- Fix multiline command launched from intermediate line
-  > Originally was going to have low/medium walls too
-- Review and clean `Brush` code
-- Programmatically defined `Select` UI?
-  > e.g. saved polygon templates, blender imports, shortcuts
-- Can paint other polygons e.g. triggers
-
-- Expose outset wall/bounds params
-
-- Replace `defs` by `declare` (handle special mvdan-sh parsing)
-- How do `key` and `poll` work; can they be simplified?
-- Make a blender model and import it
-- Add `cat` back in as a function
-
-- Try building a low poly character in blender
-- Beginners guide:
-  - https://www.youtube.com/watch?v=7MRonzqYJgw&ab_channel=GrantAbbitt
-  - https://www.youtube.com/watch?v=L0AY61v6-M4&ab_channel=GrantAbbitt
-- Model: https://www.youtube.com/watch?v=4OUYOKGl7x0
-- Rigging: https://www.youtube.com/watch?v=srpOeu9UUBU
-
-
-- Implement comments using build and client-side calls:
-  > https://eiriksm.dev/walkthrough-github-comments
-- Must navigate to GitHub to actually post comments
-
-### DONE
-
-✅ have `Terminal`
-✅ have `Stage`
-✅ can use `Terminal` to create rectilinear polygons in `Stage`
-✅ can create rectangular selection using mouse
-✅ need setting/theme/story to bring it to life
-   > We will remake Teleglitch on the web
-✅ can `get /brush/sides`
-✅ can `set /brush/sides 4`
-
-✅ `Terminal` can run background processes
-✅ can read from stage key events via `key`
-✅ list processes via `ps`
-  > have pid, ppid, pgid, sid, icon, src
-✅ can kill processes
-✅ Represent newlines in history using single char `¶` rather than `$'\n'`
-✅ can `read >data`
-✅ can `while read >data do ... done` and `while sleep; do echo foo`
-✅ can suspend/resume processes via `kill --STOP` and `kill --CONT`
-✅ Preload functions
-
-✅ Removed `while` and more generally will not add loop
-  constructs for shell. So, pipelines will not be created in loops.
-✅ Use `meta.fd` rather than 'stdOut' and 'stdIn'
-✅ Exactly one place `.readData` and exactly one place where `.writeData`.
-✅ Stop using device proxy i.e. guard `.readData`/`.writeData`
-✅ Complete code modifying `brush` on key events.
-✅ Better support for multiline history: left/right/backspace
-✅ Have layers with multipolygons and attribs
-✅ Can add/delete 3d walls iinto default layer via brush and a/d
-✅ Simplify brush i.e. only rectangles.
-   > Polygonal brush is hard to get right.
-✅ Decided against layers
-  > `stage.polygon` defines named polygons
-  > `stage.block` defines visible blocking polygons with height 
-✅ Can edit stage.maxHeight
-✅ Can edit stage.opacity
-✅ Added central dot
-✅ Add x/y axes
-✅ Can flip selection in x/y axes
-✅ Can rotate selection by -/+ 90 deg
-✅ `f` to fill, `shift-f`/backspace to delete
-✅ Cmd+C selects, Cmd+X cuts, Cmd+V pastes, Esc unselects
-✅ Can undo/redo polygons via Cmd-Z
-✅ Replace `stage.block` by `stage.walls`
-✅ `stage.bounds` auto-computed rect based on walls
-✅ Persist `stage.polygon`
-✅ Auto-generate `stage.polygon.navigable`
-✅ Auto build recast navmesh
-✅ Depict `Navigable`
-✅ Add shadows
-✅ Can toggle lighting
-✅ `Navigable` draws inverse of polygon.navigable
-✅ Can make dark via `set stage/opts/background black`
-✅ Emphasise something is currently selected via white border
-✅ Brush has origin indicator e.g. for placing meshes
-✅ `Terminal` has env prop with `STAGE_KEY` and `PROFILE`
-✅ `Terminal` linked to stage via `STAGE_KEY`
-✅ `Terminal` initially runs `PROFILE`
-✅ `ps -s` shows full process src
-✅ Can unmount/remount `Stage` via UI
-✅ Can pause/resume `Stage` with greyed preview
-✅ Import blender textured crate into geom.store
-✅ Can spawn crates
-✅ Can select/move/delete/cut meshes
-✅ Can persist meshes
-✅ Can `await-stage` i.e. ensure stage is ready
-✅ Life-sizes meshes in blender, scaled down on import gltf
-✅ Texture width/height should be a power of 2
-✅ Another textured mesh `Barrel`
-✅ Use uv-map-style for `Crate` too
-✅ Meshes receive and cast shadows
-
-### Three.js Animation
+### Three.js Animation example
 
 ```tsx
 const mixer = useRef<THREE.AnimationMixer>();

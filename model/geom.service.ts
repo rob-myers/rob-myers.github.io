@@ -8,9 +8,11 @@ import { Geometry, Face3 } from 'model/3d/deprecated';
 import * as Geom from 'model/geom';
 
 const twopi = 2 * Math.PI;
+const defaultLineWidth = 0.015;
+
+// TODO probably remove these constants
 export const outsetWalls = 0.04;
 export const outsetBounds = 0.1;
-const defaultLineWidth = 0.015;
 
 class GeomService {
 

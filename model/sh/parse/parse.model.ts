@@ -1,7 +1,4 @@
 import type Sh from 'mvdan-sh';
-// import { BaseAssignOpts } from './var.model';
-// import { ParameterDef } from './parameter.model';
-// import { RedirectDef } from './file.model';
 
 /** Our notion of position, as opposed to `MvdanSh.Pos`. */
 export interface Pos {
@@ -12,36 +9,14 @@ export interface Pos {
 
 /** Our notion of base node, as opposed to `MvdanSh.BaseNode`. */
 export interface BaseNode {
-  // End: Pos;
-  // Pos: Pos;
-
   /** Single instance for entire parse tree */
   meta: BaseMeta;
   /** Reference to parent node  */
   parent: null | ParsedSh;
-
-  /**
-   * Sometimes a node needs a uid:
-   * - identify command substitution file `/dev/cs-${pid}-${uid}`
-   */
-  uid?: string;
-
-  /** Used for test expansion */
-  boolean?: boolean;
-  /** Used for arithmetic expansion */
-  number?: number;
   /** Used for arithmetic/boolean expansion */
   string?: string;
   /** Used to calculate actual exit codes */
   exitCode?: number;
-  /** Used by Assign nodes only */
-  // declOpts?: Partial<BaseAssignOpts>;
-  // /** Used by ParamExp nodes only */
-  // paramDef?: ParameterDef<any, any>;
-  // /** Used by Redirects only */
-  // redirDef?: RedirectDef<any>;
-  /** Used by ForClause and WhileClause only */
-  lastIterated?: number;
 }
 
 export type ParsedSh = (

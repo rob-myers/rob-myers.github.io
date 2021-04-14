@@ -55,7 +55,7 @@ const commandKeys = {
   sponge: true,
   /** Test regex against string */
   test: true,
-  wall: true,
+  // wall: true,
 };
 type CommandName = keyof typeof commandKeys;
 
@@ -149,8 +149,8 @@ class CmdService {
               p.status = ProcessStatus.Killed;
               p.onResume?.();
               setTimeout(() => {
-                p.cleanups.forEach(cleanup => cleanup());
-                p.cleanups.length = 0;
+                p.onKill.forEach(cleanup => cleanup());
+                p.onKill.length = 0;
               });
             }
           });
@@ -267,19 +267,19 @@ class CmdService {
         regex.test(value) && (node.exitCode = 0);
         break;
       }
-      case 'wall': {
-        const { opts } = getOpts(args, {
-          boolean: ['c', /** Cut out */],
-          string: ['k', /** Polygon key */],
-        });
-        const outputs = [] as any[];
-        yield* this.read(meta, (data: any[]) => { outputs.push(data); });
-        const filtered = outputs.filter(x => x.length === 4 && x.every(Number.isFinite));
-        const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
-        const polygonKey = opts.k || 'default';
-        useStage.api.addWalls(stageKey, filtered, { polygonKey, cutOut: opts.c });
-        break;
-      }
+      // case 'wall': {
+      //   const { opts } = getOpts(args, {
+      //     boolean: ['c', /** Cut out */],
+      //     string: ['k', /** Polygon key */],
+      //   });
+      //   const outputs = [] as any[];
+      //   yield* this.read(meta, (data: any[]) => { outputs.push(data); });
+      //   const filtered = outputs.filter(x => x.length === 4 && x.every(Number.isFinite));
+      //   const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
+      //   const polygonKey = opts.k || 'default';
+      //   useStage.api.addWalls(stageKey, filtered, { polygonKey, cutOut: opts.c });
+      //   break;
+      // }
       default: throw testNever(command);
     }
   }
@@ -344,9 +344,6 @@ class CmdService {
         deepGet(stage, path)[last] = data;
         switch (path[0]) {
           case 'opts': useStage.api.updateOpts(stageKey, {}); break;
-          case 'brush': useStage.api.updateBrush(stageKey, {}); break;
-          case 'polygon': useStage.api.updatePolygon(stageKey, path[1], {}); break;
-          case 'walls': useStage.api.updateWalls(stageKey, {}); break;
           default: useStage.api.updateStage(stageKey, {}); break;
         }
       } else if (first === 'var') {
@@ -361,7 +358,7 @@ class CmdService {
     const config: CoroutineConfig<any> = { enabled: true };
     const iterator = asyncIteratorFrom(observable, config);
     const process = useSession.api.getProcess(meta);
-    process.cleanups.push(() => config.promise?.reject(createKillError(meta)));
+    process.onKill.push(() => config.promise?.reject(createKillError(meta)));
     process.onSuspend = () => config.forget?.();
     process.onResume = () => config.remember?.();
     yield* iterator;

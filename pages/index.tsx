@@ -15,17 +15,10 @@ export default function IndexPage() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Making the Damn Game
-          <span className={styles.reference}>
-            <a href="https://makegames.tumblr.com/post/1136623767/finishing-a-game" target='#'>
-              [1]
-            </a>
-          </span>
+          three.js CLI
         </h1>
         <p className={styles.subtitle}>
-          Inspired by <a href="https://en.wikipedia.org/wiki/Teleglitch" target='#'>
-            Teleglitch
-          </a>.
+          Interactive sessions for THREE.
         </p>
 
         <section className={styles.termStage}>

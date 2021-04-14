@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { Canvas, CanvasContext } from "react-three-fiber";
+import * as Geom from "model/geom";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
 import { StageMeta } from "model/stage/stage.model";
@@ -13,11 +14,6 @@ import StageToolbar from "./StageToolbar";
 import CameraControls from "./CameraControls";
 import Grid from "./Grid";
 import Axes from "./Axes";
-import Lights from "./Lights";
-import Brush, { PointerMsg } from "./Brush";
-import Navigable from "./Navigable";
-import Walls from "./Walls";
-import Meshes from "./Meshes";
 
 const Stage: React.FC<Props> = ({ stage }) => {
   // console.log('Stage')
@@ -38,7 +34,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
     // Currently updateNavigable will also update stage.internal
     stage.internal.scene = ctxt.scene;
-    setTimeout(() => useStage.api.updateNavigable(stage.key));
+    // setTimeout(() => useStage.api.updateNavigable(stage.key));
     setCtxt(ctxt);
   }, [stage.internal]);
 
@@ -107,30 +103,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
             enabled={stage.opts.panZoom}
             internal={stage.internal}
           />
-          <Brush
-            brush={stage.brush}
-            wire={ptrWire}
-          />
-
-          <Lights
-            enabled={stage.opts.lights}
-            updateShadows={updateShadows}
-          />
-          <Navigable
-            bounds={stage.internal.bounds}
-            polygon={stage.polygon}
-            opts={stage.opts}
-          />
-          <Walls
-            opts={stage.opts}
-            polygon={stage.polygon}
-            walls={stage.walls}
-            updateShadows={updateShadows}
-          />
-          <Meshes
-            mesh={stage.mesh}
-            updateShadows={updateShadows}
-          />
 
         </Canvas>
 
@@ -169,5 +141,15 @@ const Placeholder = styled.img<{}>`
   max-width: 100%;
   max-height: 100%;
 `;
+
+export type PointerMsg = {
+  /** Normalized device coords in [-1, 1] * [-1, 1] */
+  ndCoords: Geom.VectorJson;
+} & (
+  | { key: 'pointerdown' }
+  | { key: 'pointerup' }
+  | { key: 'pointerleave' }
+  | { key: 'pointermove' }
+);
 
 export default Stage;

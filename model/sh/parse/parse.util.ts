@@ -114,9 +114,9 @@ export function hasAncestralIterator(node: Sh.ParsedSh) {
 }
 
 /**
- * `getopts` handles dup options by providing an array,
- * and we restrict to the final item. Also we store all
- * extant option names as the value of key `__optKeys`.
+ * `getopts` handles dup options by providing an array.
+ * We restrict it to the final item. We also store list
+ * of extant option names as value of key `__optKeys`.
  */
 function simplifyGetOpts(parsed: getopts.ParsedOptions) {
   const output = parsed as getopts.ParsedOptions & { operands: string[] };

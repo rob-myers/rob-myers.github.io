@@ -72,8 +72,8 @@ class SemanticsService {
         const processes = useSession.api.getProcesses(e.sessionKey, process.pgid);
         processes.forEach((process) => {
           process.status = ProcessStatus.Killed;
-          process.cleanups.forEach(cleanup => cleanup());
-          process.cleanups.length = 0;
+          process.onKill.forEach(cleanup => cleanup());
+          process.onKill.length = 0;
         });
       }
     }

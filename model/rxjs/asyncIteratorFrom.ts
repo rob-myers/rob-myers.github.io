@@ -1,6 +1,18 @@
-/** https://github.com/ReactiveX/rxjs/blob/3f3c614d8b86c68d271a1db995ff11c61842e757/src/internal/asyncIteratorFrom.ts#L4 */
+/**
+ * Source: https://github.com/ReactiveX/rxjs/blob/3f3c614d8b86c68d271a1db995ff11c61842e757/src/internal/asyncIteratorFrom.ts#L4
+ * Try to remove this file.
+ */
+
+export class Deferred<T> {
+  resolve: (value: T | PromiseLike<T>) => void = null!;
+  reject: (reason?: any) => void = null!;
+  promise = new Promise<T>((a, b) => {
+    this.resolve = a;
+    this.reject = b;
+  });
+}
+
 import { Observable } from "rxjs";
-import { Deferred } from "./deferred";
 
 export function asyncIteratorFrom<T>(source: Observable<T>, config: CoroutineConfig<T>) {
   config.forget = () => (config.enabled = false);
