@@ -16,6 +16,8 @@ export function createStageProxy(stageKey: string) {
             useStage.api.updateOpts(stageKey, { [key]: value });
             return true;
           },
+          ownKeys: () => Object.keys(useStage.api.getStage(stageKey).opts),
+          getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       }
 
