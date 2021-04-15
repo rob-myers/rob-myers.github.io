@@ -119,18 +119,6 @@ class SemanticsService {
     return expanded;
   }
 
-  transpileRedirect(node: Sh.Redirect): RedirectDef {
-    const { N, Word, Hdoc } = node;
-    const fd = N ? Number(N.Value) : undefined;
-
-    switch (node.Op) {
-      case '>':
-        return { subKey: '>', mod: null, fd };
-      default:
-        throw new Error(`Unsupported redirection symbol '${node.Op}'.`);
-    }
-  }
-
   private async *Assign({ meta, Name, Value, Naked }: Sh.Assign) {
     let value = '';
     if (!Naked && Value) {
@@ -415,25 +403,16 @@ class SemanticsService {
   }
 
   private async Redirect(node: Sh.Redirect) {
-    const { meta } = node;
-    const def = this.transpileRedirect(node);
-
-    switch (def.subKey) {
-      case '>': {
-        const { value } = await this.lastExpanded(sem.Expand(node.Word));
-        if (varRegex.test(value)) {
-          const varDevice = useSession.api.createVarDevice(meta.sessionKey, value);
-          redirectNode(node.parent!, { 1: varDevice.key });
-        } else if (value === '/dev/null') {
-          redirectNode(node.parent!, { 1: '/dev/null' });
-        } else {
-          throw new ShError(`${def.subKey}: ${value}: invalid redirect`, 127);
-        }
-        break;
+    if (node.Op === '>') {
+      const { value } = await this.lastExpanded(sem.Expand(node.Word));
+      if (varRegex.test(value)) {
+        const varDevice = useSession.api.createVarDevice(node.meta.sessionKey, value);
+        return redirectNode(node.parent!, { 1: varDevice.key });
+      } else if (value === '/dev/null') {
+        return redirectNode(node.parent!, { 1: '/dev/null' });
       }
-      default:
-        throw new ShError(`${def.subKey}: unsupported redirect`, 127);
     }
+    throw new ShError(`${node.Op}: unsupported redirect`, 127);
   }
 
   private async *Stmt(stmt: Sh.Stmt) {

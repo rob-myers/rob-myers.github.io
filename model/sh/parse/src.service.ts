@@ -218,14 +218,14 @@ export class SrcService {
         return `let ${node.Exprs.map(c => this.src(c)).join(' ')}`;
 
       case 'Redirect': {
-        const def = semanticsService.transpileRedirect(node);
-
-        switch (def.subKey) {
+        const fd = node.N ? Number(node.N.Value) : '';
+        switch (node.Op) {
           case '>':
-            return `${def.fd || ''}${def.mod === 'append' ? '>>' : def.mod ? '>&' : '>'}${
-              this.src(node.Word) }${def.mod === 'move' ? '-' : ''}`;
+            const [part] = node.Word.Parts;
+            const move = part?.type === 'Lit' && part.Value.endsWith('-');
+            return `${fd}${node.Op}${this.src(node.Word) }${move ? '-' : ''}`;
           default:
-            throw testNever(def as never);
+            return '';
         }
       }
 
