@@ -82,8 +82,8 @@ export interface ProcessMeta {
   sessionKey: string;
   status: ProcessStatus;
   src: string;
-  /** Executed on kill */
-  onKill: (() => void)[];
+  /** Each executed on kill */
+  cleanups: (() => void)[];
   /** Executed on suspend */
   onSuspend: null | (() => void);
   /** Executed on resume */
@@ -99,7 +99,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
   api: {
     addCleanup: (meta, cleanup) => {
-      api.getProcess(meta).onKill.push(cleanup);
+      api.getProcess(meta).cleanups.push(cleanup);
     },
 
     addFunc: (sessionKey, funcName, file) => {
@@ -126,7 +126,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         status: ProcessStatus.Running,
         src,
         positionals: ['3-cli', ...posPositionals || []],
-        onKill: [],
+        cleanups: [],
         onSuspend: null,
         onResume: null,
       };

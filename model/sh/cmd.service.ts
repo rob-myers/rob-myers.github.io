@@ -27,22 +27,27 @@ const commandKeys = {
   defs: true,
   /** Output arguments as space-separated string */
   echo: true,
-  /** e.g. `get /brush/sides` from stage store */
+  /** Get a variable or something from stage $STAGE_KEY */
   get: true,
   /** List previous commands */
   history: true,
-  /** Stream key events from stage */
+  /** Stream key events from stage $STAGE_KEY */
   key: true,
+  /** Kill a process */
   kill: true,
   /** List variables, usually created via redirection */
   ls: true,
+  /** Outpus 1, 2, ... at fixed intervals */
   poll: true,
   /** List running processes */
   ps: true,
   /** Apply function to each item from stdin */
   map: true,
+  /** Exit from a function */
+  return: true,
+  /** Run a javascript generator */
   run: true,
-  /** e.g. `set /brush/sides 6` */
+  /** Set a variable of something in stage $STAGE_KEY */
   set: true,
   /** Wait for specified number of seconds */
   sleep: true,
@@ -141,17 +146,21 @@ class CmdService {
           processes.forEach(p => {
             if (opts.STOP) {
               p.onSuspend?.();
+              p.onSuspend = null;
               p.status = ProcessStatus.Suspended;
             } else if (opts.CONT) {
               p.onResume?.();
+              p.onResume = null;
               p.status = ProcessStatus.Running;
             } else {
               p.status = ProcessStatus.Killed;
               p.onResume?.();
-              setTimeout(() => {
-                p.onKill.forEach(cleanup => cleanup());
-                p.onKill.length = 0;
-              });
+              p.onSuspend = p.onResume = null;
+              // TODO ensure done elsewhere
+              // setTimeout(() => {
+              //   p.onKill.forEach(cleanup => cleanup());
+              //   p.onKill.length = 0;
+              // });
             }
           });
         }
@@ -217,10 +226,19 @@ class CmdService {
             yield src + '\n';
           }
         }
-
         break;
       }
-      case 'run': {// e.g. await '({ read }) { yield "foo"; yield await read(); }'
+      case 'return': {
+        const process = useSession.api.getProcess(meta);
+        process.status = ProcessStatus.Killed;
+        process.onResume?.();
+        process.onSuspend = process.onResume = null;
+        break;
+      }
+      /**
+       * e.g. run '({ read }) { yield "foo"; yield await read(); }'
+       */
+      case 'run': {
         const func = Function('_', `return async function *generator ${args[0]}`);
         yield* func()(
           this.provideJsApi(meta),
@@ -358,7 +376,7 @@ class CmdService {
     const config: CoroutineConfig<any> = { enabled: true };
     const iterator = asyncIteratorFrom(observable, config);
     const process = useSession.api.getProcess(meta);
-    process.onKill.push(() => config.promise?.reject(createKillError(meta)));
+    process.cleanups.push(() => config.promise?.reject(createKillError(meta)));
     process.onSuspend = () => config.forget?.();
     process.onResume = () => config.remember?.();
     yield* iterator;

@@ -8,7 +8,7 @@ import { NamedFunction, varRegex } from './var.model';
 import { expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
-import { preProcessWrite, RedirectDef, redirectNode, SigEnum } from './io/io.model';
+import { preProcessWrite, redirectNode, SigEnum } from './io/io.model';
 import { cloneParsed, wrapInFile } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
@@ -33,9 +33,10 @@ class SemanticsService {
   }
 
   private expandParameter(meta: Sh.BaseMeta, varName: string): string {
-    if (/^[0-9]+$/.test(varName)) {
+    if (/^\d+$/.test(varName)) {// Positional
       return useSession.api.getPositional(meta.pid, meta.sessionKey, Number(varName));
     }
+    // Otherwise we're retrieving a variable
     const varValue = useSession.api.getVar(meta.sessionKey, varName);
     if (varValue === undefined || typeof varValue === 'string') {
       return varValue || '';
@@ -45,11 +46,10 @@ class SemanticsService {
 
   private handleShError(node: Sh.ParsedSh, e: any, prefix?: string) {
     if (e instanceof ProcessError) {
-      throw e;
+      throw e; // Propagate signal (KILL)
     } else if (e instanceof ShError) {
       const message = [prefix, e.message].filter(Boolean).join(': ');
       useSession.api.warn(node.meta.sessionKey, message);
-      // if (e.exitCode === 0) throw e; // Propagate break/continue/return
       console.error(`ShError: ${node.meta.sessionKey}: ${message}`);
       node.exitCode = e.exitCode;
     } else {
@@ -72,8 +72,8 @@ class SemanticsService {
         const processes = useSession.api.getProcesses(e.sessionKey, process.pgid);
         processes.forEach((process) => {
           process.status = ProcessStatus.Killed;
-          process.onKill.forEach(cleanup => cleanup());
-          process.onKill.length = 0;
+          process.cleanups.forEach(cleanup => cleanup());
+          process.cleanups.length = 0;
         });
       }
     }
@@ -301,8 +301,9 @@ class SemanticsService {
         }
       }
 
-      node.string = values.join(' '); // If part of ArithmExpr?
-      yield expand(values); // Need array?
+      node.string = values.join(' ');
+      // Need array to handle $@
+      yield expand(values);
     } else {
       for await (const expanded of this.ExpandPart(node.Parts[0])) {
         node.string = expanded.value;

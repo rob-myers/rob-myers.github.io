@@ -9,12 +9,18 @@ Main focus is:
 
 ### TODOs
 
-- Clean simplified rewrite of shell. No asyncFromObservable. Cleaner approach to pipelines.
+- Simplify the shell.
+   - No asyncFromObservable.
+   - Cleaner approach to pipelines.
    - Remove dependency on `asyncIteratorFrom`
    - Simplify FifoDevice, pipes and IO
 - Sketch out milestones
 - Create replacement for brush i.e. `Selection`
 - Can select many rects. Can still lock. Has group where ghost meshes can be attached.
+
+### Done
+
+- Support `return` inside a function
 
 ## Issues
 

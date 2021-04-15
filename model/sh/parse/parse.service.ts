@@ -41,7 +41,7 @@ class ParseShService {
         { read: () => partialSrc },
         () => { incomplete = parser.Incomplete(); return false; }
       );
-    } catch (e) { /** NOOP */}
+    } catch {}
 
     // To clean it up we re-parse, which also provides source map
     const parsed = incomplete ? null : this.parse(partialSrc);
@@ -52,11 +52,10 @@ class ParseShService {
    * Use mvdan-sh to parse shell code.
    */
   parse(src: string): P.FileWithMeta {
-    // console.log({ syntax });
     const parser = syntax.NewParser(
       syntax.KeepComments(false),
-      // syntax.Variant(syntax.LangPOSIX),
       syntax.Variant(syntax.LangBash),
+      // syntax.Variant(syntax.LangPOSIX),
       // syntax.Variant(syntax.LangMirBSDKorn),
     );
     const parsed = parser.Parse(src, 'src.sh');
@@ -75,11 +74,8 @@ class ParseShService {
     try {
       // Parser.Interactive expects terminal newline.
       const src = buffer.join('\n') + '\n';
-      // console.log({ src });
       const { incomplete, parsed } = this.interactiveParse(src);
-      // if (parsed) {
-      //   console.log('parsed shell code', parsed);
-      // }
+      // if (parsed) console.log('parsed shell code', parsed);
 
       return incomplete
         ? { key: 'incomplete' as 'incomplete' }
