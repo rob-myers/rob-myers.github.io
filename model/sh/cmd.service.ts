@@ -266,10 +266,11 @@ class CmdService {
         do {
           await new Promise<void>((resolve, reject) => {
             process.onSuspend = () => { ms = started + ms - Date.now(); resolve(); };
+            // NOTE potentially adding many cleanups
             useSession.api.addCleanup(meta, () => reject(killError(meta)));
             (started = Date.now()) && setTimeout(resolve, ms);
           });
-          yield; // Pauses execution if process suspended
+          yield; // Pause execution if process suspended
         } while (Date.now() < started + ms - 1)
         break;
       }

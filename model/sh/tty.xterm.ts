@@ -6,7 +6,6 @@ import { scrollback, ShellIo, SigEnum, DataChunk, isDataChunk } from './io/io.mo
 export const ansiReset = '\x1b[0m';
 export const ansiBrown = '\x1b[33m';
 export const ansiBlue = '\x1b[1;34m';
-export const ansiOther = '\x1b[3;37m';
 export const ansiWhite = '\x1b[0;37m';
 export const ansiWarn = '\x1b[41;37m';
 
@@ -71,7 +70,8 @@ export class TtyXterm {
     this.xterm.onData(this.handleXtermInput.bind(this));
     this.io.handleWriters(this.onMessage.bind(this));
 
-    this.xterm.writeln(`${ansiWhite}Connected to session ${ansiBrown}${this.sessionKey}${ansiReset}`);
+    this.xterm.writeln(
+      `${ansiWhite}Connected to session ${ansiBlue}${this.sessionKey}${ansiReset}`);
     this.clearInput();
     this.cursorRow = 2;
   }
