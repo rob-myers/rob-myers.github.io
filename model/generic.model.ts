@@ -110,3 +110,12 @@ export function keys<K extends string>(
   keys(input).forEach((key) => output[key] = transform(input[key]));
   return output;
 }
+
+export class Deferred<T> {
+  resolve: (value: T | PromiseLike<T>) => void = null!;
+  reject: (reason?: any) => void = null!;
+  promise = new Promise<T>((resolve, reject) => {
+    this.resolve = resolve;
+    this.reject = reject;
+  });
+}

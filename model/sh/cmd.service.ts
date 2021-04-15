@@ -4,19 +4,20 @@ import cliColumns from 'cli-columns';
 import safeJsonStringify from 'safe-json-stringify';
 import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 
-import { deepGet, kebabToCamel, testNever, truncate } from 'model/generic.model';
+import { deepGet, kebabToCamel, testNever, truncate, Deferred } from 'model/generic.model';
 import { asyncIteratorFrom, CoroutineConfig } from 'model/rxjs/asyncIteratorFrom';
 import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
 import { NamedFunction, CoreVar } from './var.model';
 import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRead } from './io/io.model';
-import { createKillError, ShError } from './sh.util';
+import { createKillError as killError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
-
 import useSession, { ProcessStatus } from 'store/session.store';
-import useStage from 'store/stage.store';
 import { ansiBlue, ansiReset, ansiWhite } from './tty.xterm';
+
+import { StageKeyEvent } from 'model/stage/stage.model';
+import useStage from 'store/stage.store';
 
 const commandKeys = {
   /** Wait for a stage to be ready */
@@ -129,10 +130,15 @@ class CmdService {
         break;
       }
       case 'key': {
-        const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
-        const { keyEvents } = useStage.api.getStage(stageKey).internal;
-        yield* this.iterateObservable(meta, keyEvents.asObservable());
-        break;
+        let deferred: Deferred<StageKeyEvent>;
+        const process = useSession.api.getProcess(meta);
+        const sub = useStage.api.getStage(
+          useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY)
+        ).internal.keyEvents.subscribe({
+          next: (e) => process.status === ProcessStatus.Running && deferred.resolve(e),
+        });
+        process.cleanups.push(() => sub.unsubscribe(), () => deferred.reject(killError(meta)));
+        while (true) yield await (deferred = new Deferred<StageKeyEvent>()).promise; 
       }
       case 'kill': {
         const { opts, operands } = getOpts(args, { boolean: [
@@ -260,7 +266,7 @@ class CmdService {
         do {
           await new Promise<void>((resolve, reject) => {
             process.onSuspend = () => { ms = started + ms - Date.now(); resolve(); };
-            useSession.api.addCleanup(meta, () => reject(createKillError(meta)));
+            useSession.api.addCleanup(meta, () => reject(killError(meta)));
             (started = Date.now()) && setTimeout(resolve, ms);
           });
           yield; // Pauses execution if process suspended
@@ -326,7 +332,7 @@ class CmdService {
       },
       sleep: (seconds: number) => new Promise<void>((resolve, reject) => {
         setTimeout(resolve, seconds * 1000);
-        useSession.api.addCleanup(meta, () => reject(createKillError(meta)));
+        useSession.api.addCleanup(meta, () => reject(killError(meta)));
       }),
       /** Trick to provide local variables via destructuring */
       _: {},
@@ -376,7 +382,7 @@ class CmdService {
     const config: CoroutineConfig<any> = { enabled: true };
     const iterator = asyncIteratorFrom(observable, config);
     const process = useSession.api.getProcess(meta);
-    process.cleanups.push(() => config.promise?.reject(createKillError(meta)));
+    process.cleanups.push(() => config.promise?.reject(killError(meta)));
     process.onSuspend = () => config.forget?.();
     process.onResume = () => config.remember?.();
     yield* iterator;
