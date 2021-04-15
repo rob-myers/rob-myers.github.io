@@ -18,7 +18,7 @@ export default function IndexPage() {
           three.js CLI
         </h1>
         <p className={styles.subtitle}>
-          Interactive sessions for THREE.
+          Interactive sessions for THREE
         </p>
 
         <section className={styles.termStage}>
