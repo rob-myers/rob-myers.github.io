@@ -120,10 +120,7 @@ export async function preProcessWrite(
   process: ProcessMeta,
   device: Device,
 ) {
-  if (
-    process.status === ProcessStatus.Killed
-    || device.finishedReading(true)
-  ) {
+  if (process.status === ProcessStatus.Killed || device.finishedReading(true)) {
     throw new ProcessError(SigEnum.SIGKILL, process.key, process.sessionKey);
   } else if (process.status === ProcessStatus.Suspended) {
     await new Promise<void>(resolve => process.onResume = resolve);

@@ -98,18 +98,14 @@ class SemanticsService {
    */
   private async performShellExpansion(Args: Sh.Word[]): Promise<string[]> {
     const expanded = [] as string[];
-
     for (const word of Args) {
       const result = await this.lastExpanded(this.Expand(word));
       const single = word.Parts.length === 1 ? word.Parts[0] : null;
-
       if (word.exitCode) {
         throw new ShError('failed to expand word', word.exitCode);
       } else if (single?.type === 'SglQuoted') {
-        // No filename expansion for '' and $''.
         expanded.push(result.value);
       } else if (single?.type === 'ParamExp' || single?.type === 'CmdSubst') {
-        // Normalize command and parameter expansion,
         // e.g. ' foo \nbar ' -> ['foo', 'bar'].
         normalizeWhitespace(result.value).forEach(x => expanded.push(x));
       } else {
@@ -120,17 +116,17 @@ class SemanticsService {
   }
 
   private async *Assign({ meta, Name, Value, Naked }: Sh.Assign) {
-    let value = '';
-    if (!Naked && Value) {
-      value = (await this.lastExpanded(sem.Expand(Value))).value;
-    }
-    useSession.api.setVar(meta.sessionKey, Name.Value, value);
+    useSession.api.setVar(meta.sessionKey, Name.Value,
+      !Naked && Value
+        ? (await this.lastExpanded(sem.Expand(Value))).value
+        : ''
+    );
   }
 
   private async *BinaryCmd(node: Sh.BinaryCmd) {
     /** All contiguous binary cmds for same operator */
     const cmds = srcService.binaryCmds(node);
-    // Restrict to leaves of binary expression, assuming expression
+    // Restrict to leaves of binary tree, assuming it was
     // originally left-biased e.g. (((A * B) * C) * D) * E
     const stmts = [cmds[0].X].concat(cmds.map(({ Y }) => Y));
 
@@ -138,20 +134,21 @@ class SemanticsService {
       case '&&': {
         for (const stmt of stmts) {
           yield* sem.Stmt(stmt);
-          node.exitCode = stmt.exitCode;
-          if (node.exitCode) break;
+          if (node.exitCode = stmt.exitCode) break;
         }
         break;
       }
       case '||': {
         for (const stmt of stmts) {
           yield* sem.Stmt(stmt);
-          node.exitCode = stmt.exitCode;
-          if (node.exitCode === 0) break;
+          if (!(node.exitCode = stmt.exitCode)) break;
         }
         break;
       }
       case '|': {
+        /**
+         * TODO review/simplify this
+         */
         const { sessionKey, pid: ppid } = node.meta;
         const { ttyShell } = useSession.api.getSession(sessionKey);
         const files = stmts.map(x => wrapInFile(cloneParsed(x)));
@@ -208,12 +205,11 @@ class SemanticsService {
     node.exitCode = 0;
     const args = await sem.performShellExpansion(node.Args);
     console.log('simple command', args);
-
     const [command, ...cmdArgs] = args;
-    let func: NamedFunction | undefined;
     
     try {
       if (args.length) {
+        let func: NamedFunction | undefined;
         if (cmdService.isCmd(command)) {
           yield* cmdService.runCmd(node, command, cmdArgs);
         } else if (func = useSession.api.getFunc(node.meta.sessionKey, command)) {
@@ -232,16 +228,13 @@ class SemanticsService {
 
   /** Construct a simple command or a compound command. */
   private async *Command(node: Sh.Command, Redirs: Sh.Redirect[]) {
-    let generator: AsyncGenerator<any, void, unknown>;
-
     try {
       await sem.applyRedirects(node, Redirs);
-
+      
+      let generator: AsyncGenerator<any, void, unknown>;
       if (node.type === 'CallExpr') {
-        // Run simple command
         generator = this.CallExpr(node);
       } else {
-        // Run compound command
         switch (node.type) {
           case 'Block': generator = this.Block(node); break;
           case 'BinaryCmd': generator = this.BinaryCmd(node); break;
@@ -250,7 +243,6 @@ class SemanticsService {
             throw new ShError(`Command: ${node.type}: not implemented`, 2);
         }
       }
-
       // Actually run the code
       const process = useSession.api.getProcess(node.meta);
       const device = useSession.api.resolve(1, node.meta);
@@ -263,7 +255,10 @@ class SemanticsService {
     }
   }
 
-  /** Expand a `Word` which has `Parts`. */
+  /**
+   * Expand a `Word` which has `Parts`.
+   * TODO explain
+   */
   private async *Expand(node: Sh.Word) {
     if (node.Parts.length > 1) {
       for (const wordPart of node.Parts) {
@@ -271,7 +266,7 @@ class SemanticsService {
       }
       /*
       * Is the last value computed via a parameter/command-expansion,
-      * and, if so, does it have trailing whitespace?
+      * and does it have trailing whitespace?
       */
       let lastTrailing = false;
       const values = [] as string[];
@@ -289,8 +284,7 @@ class SemanticsService {
             // Since vs[0] has no leading space we must join words
             values.push(values.pop() + vs[0].trim());
             values.push(...vs.slice(1).map((x) => x.trim()));
-          }
-          // Check last element (pre-trim)
+          } // Check last element (pre-trim)
           lastTrailing = /\s$/.test(last(vs) as string);
         } else if (!values.length || lastTrailing) {// Freely add
           values.push(value);
@@ -302,7 +296,6 @@ class SemanticsService {
       }
 
       node.string = values.join(' ');
-      // Need array to handle $@
       yield expand(values);
     } else {
       for await (const expanded of this.ExpandPart(node.Parts[0])) {
@@ -344,11 +337,14 @@ class SemanticsService {
         const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
         await ttyShell.spawn(cloned);
         
-        yield expand(device.readAll()
-          .map(x => typeof x === 'string' ? x : safeJsonStringify(x))
-          .join('\n').replace(/\n*$/, ''),
-        );
-        useSession.api.removeDevice(device.key);
+        try {
+          yield expand(device.readAll()
+            .map(x => typeof x === 'string' ? x : safeJsonStringify(x))
+            .join('\n').replace(/\n*$/, ''),
+          );
+        } finally {
+          useSession.api.removeDevice(device.key);
+        }
         break;
       }
       case 'ParamExp': {
@@ -443,9 +439,7 @@ class SemanticsService {
        */
       yield* sem.Command(stmt.Cmd, stmt.Redirs);
       stmt.exitCode = stmt.Cmd.exitCode;
-      if (stmt.Negated) {
-        stmt.exitCode = 1 - Number(!!stmt.Cmd.exitCode);
-      }
+      stmt.Negated && (stmt.exitCode = 1 - Number(!!stmt.Cmd.exitCode));
     }
   }
 }
