@@ -146,26 +146,23 @@ class SemanticsService {
         break;
       }
       case '|': {
-        /**
-         * TODO review/simplify this
-         */
-        const { sessionKey, pid: ppid } = node.meta;
-        const { ttyShell } = useSession.api.getSession(sessionKey);
-        const files = stmts.map(x => wrapInFile(cloneParsed(x)));
-
-        // pid will be assigned in `spawn`, pgid is inherited
-        files.forEach(({ meta }) => meta.ppid = ppid);
         const fifos = [] as FifoDevice[];
+        const clones = stmts.map(x => {
+          const clone = wrapInFile(cloneParsed(x));
+          clone.meta.ppid = node.meta.pid; // (pid, pgid) are set in spawn
+          return clone;
+        });
 
         try {
-          for (const [i, file] of files.slice(0, -1).entries()) {
+          const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
+          for (const [i, file] of clones.slice(0, -1).entries()) {
             const fifoKey = `/dev/fifo-${i}-${file.meta.pid}`;
             fifos.push(useSession.api.createFifo(fifoKey));
-            files[i + 1].meta.fd[0] = file.meta.fd[1] = fifoKey;
+            clones[i + 1].meta.fd[0] = file.meta.fd[1] = fifoKey;
           }
-          const stdOuts = files.map(({ meta }) => useSession.api.resolve(1, meta));
+          const stdOuts = clones.map(({ meta }) => useSession.api.resolve(1, meta));
 
-          await Promise.all(files.map((file, i) =>
+          await Promise.all(clones.map((file, i) =>
             new Promise<void>(async (resolve, reject) => {
               try {
                 await ttyShell.spawn(file);
@@ -186,7 +183,7 @@ class SemanticsService {
           sem.handleShError(node, error);
         } finally {
           fifos.forEach(fifo => {
-            fifo.finishedWriting();
+            fifo.finishedWriting(); // TODO clarify
             useSession.api.removeDevice(fifo.key);
           });
         }
@@ -256,8 +253,8 @@ class SemanticsService {
   }
 
   /**
-   * Expand a `Word` which has `Parts`.
    * TODO explain
+   * Expand a `Word` which has `Parts`.
    */
   private async *Expand(node: Sh.Word) {
     if (node.Parts.length > 1) {
@@ -333,10 +330,10 @@ class SemanticsService {
         const fifoKey = `/dev/fifo-cmd-${shortid.generate()}`;
         const device = useSession.api.createFifo(fifoKey);
         cloned.meta.fd[1] = device.key;
-        
+
         const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
         await ttyShell.spawn(cloned);
-        
+
         try {
           yield expand(device.readAll()
             .map(x => typeof x === 'string' ? x : safeJsonStringify(x))

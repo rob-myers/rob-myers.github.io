@@ -7,16 +7,19 @@ Main focus is:
    - Convert atoms e.g. `Sensor sensed you` into small demo(s).
    - Build composite programs e.g. causes alarm, guard checks monitor, guard comes to last know location, guard sees you, finished.
 
-### TODOs
+### TODO
 
-- Simplify the shell.
-   - No asyncFromObservable.
-   - Cleaner approach to pipelines.
+- Try to simplify the shell.
+   - ✅ Clean semantics.service.
    - Remove dependency on `asyncIteratorFrom`
-   - Simplify FifoDevice, pipes and IO
+   - Clean cmd.service.
+   - Simplify pipelines?
+   - Simplify FifoDevice and Device?
 - Sketch out milestones
 - Create replacement for brush i.e. `Selection`
-- Can select many rects. Can still lock. Has group where ghost meshes can be attached.
+  - Can select many rects.
+  - Can still lock.
+  - Has group where ghost meshes can be attached.
 
 ### Done
 
