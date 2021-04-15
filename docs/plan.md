@@ -11,7 +11,7 @@ Main focus is:
 
 - Try to simplify the shell.
    - ✅ Clean semantics.service.
-   - Remove dependency on `asyncIteratorFrom`
+   - ✅ Remove dependency on asyncIteratorFrom
    - Clean cmd.service.
    - Simplify pipelines?
    - Simplify FifoDevice and Device?

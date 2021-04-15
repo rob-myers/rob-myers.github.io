@@ -1,11 +1,8 @@
-import { interval, Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import cliColumns from 'cli-columns';
 import safeJsonStringify from 'safe-json-stringify';
 import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 
-import { deepGet, kebabToCamel, testNever, truncate, Deferred } from 'model/generic.model';
-import { asyncIteratorFrom, CoroutineConfig } from 'model/rxjs/asyncIteratorFrom';
+import { deepGet, kebabToCamel, testNever, truncate, Deferred, pause } from 'model/generic.model';
 import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
@@ -24,7 +21,10 @@ const commandKeys = {
   'await-stage': true,
   /** Execute a javascript function */
   call: true,
-  /** List function definitions */
+  /**
+   * TODO rename as `declare`
+   * List function definitions
+   */
   defs: true,
   /** Output arguments as space-separated string */
   echo: true,
@@ -90,9 +90,6 @@ class CmdService {
         );
         break;
       }
-      /**
-       * TODO rename as `declare`
-       */
       case 'defs': {
         const funcs = useSession.api.getFuncs(meta.sessionKey);
         for (const { key, src } of funcs) {
@@ -134,7 +131,7 @@ class CmdService {
         const process = useSession.api.getProcess(meta);
         const sub = useStage.api.getStage(
           useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY)
-        ).internal.keyEvents.subscribe({
+        ).internal.keyEvents.subscribe({ // Ignore signals while paused
           next: (e) => process.status === ProcessStatus.Running && deferred.resolve(e),
         });
         process.cleanups.push(() => sub.unsubscribe(), () => deferred.reject(killError(meta)));
@@ -202,10 +199,13 @@ class CmdService {
       }
       case 'poll': {
         const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
-        const delayMs = Math.max(seconds, 0.5) * 1000;
-        const observable = interval(delayMs).pipe(map(x => x + 2), startWith(1));
-        yield* this.iterateObservable(meta, observable);
-        break;
+        const [delayMs, deferred] = [Math.max(seconds, 0.5) * 1000, new Deferred<void>()];
+        useSession.api.addCleanup(meta, () => deferred.resolve());
+        let count = 1;
+        while (true) {
+          yield count++;
+          await Promise.race([pause(delayMs), deferred.promise]);
+        }
       }
       case 'ps': {
         const { opts } = getOpts(args, { boolean: [
@@ -375,17 +375,6 @@ class CmdService {
         deepGet(varLookup, path)[last] = data;
       }
     }
-  }
-
-  /** Iterate a never-ending observable e.g. key events or polling */
-  private async *iterateObservable(meta: Sh.BaseMeta, observable: Observable<any>) {
-    const config: CoroutineConfig<any> = { enabled: true };
-    const iterator = asyncIteratorFrom(observable, config);
-    const process = useSession.api.getProcess(meta);
-    process.cleanups.push(() => config.promise?.reject(killError(meta)));
-    process.onSuspend = () => config.forget?.();
-    process.onResume = () => config.remember?.();
-    yield* iterator;
   }
 
   private async *readLoop(
