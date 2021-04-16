@@ -9,14 +9,14 @@ Main focus is:
 
 ### TODO
 
-- Try to simplify the shell.
+- 🛠 Try to simplify the shell.
    - ✅ Clean semantics.service.
    - ✅ Remove dependency on asyncIteratorFrom
    - Clean cmd.service.
    - Simplify pipelines?
    - Simplify FifoDevice and Device?
 - Sketch out milestones
-- Create replacement for brush i.e. `Selection`
+- 🛠 Create replacement for brush i.e. `Selection`
   - Can select many rects.
   - Can still lock.
   - Has group where ghost meshes can be attached.
