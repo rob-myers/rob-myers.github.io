@@ -18,9 +18,10 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
   useEffect(() => {
     selection.group = group.current!;
-    const { x, y, e, s } = selection.lastRect;
-    rectMesh.current!.position.set(x, y, 0);
+    const { lastCursor: { x: cx, y: cy }, lastRect: { x, y, e, s } } = selection;
+    cursorMesh.current!.position.set(cx, cy, 0);
     rectMesh.current!.scale.set(e - x, s - y, 0);
+    rectMesh.current!.position.set(x, y, 0);
     return () => void delete selection.group;
   }, []);
 
@@ -40,6 +41,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       } else if (key === 'pointerup' || key === 'pointerleave') {
         ptrDown = false;
         selection.lastRect.copy(Geom.Rect.fromPoints(selector.position, ptr));
+        selection.lastCursor.copy(selector.position);
       }
     });
 

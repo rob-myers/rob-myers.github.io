@@ -54,11 +54,14 @@ export interface StageSelection {
   polygons: Geom.Polygon[];
   /** Last rectangular selector */
   lastRect: Geom.Rect;
+  /** Last cursor position */
+  lastCursor: Geom.Vector;
 }
 
 interface StageSelectionJson {
   polygons: Geom.PolygonJson[];
   rect: Geom.RectJson;
+  cursor: Geom.VectorJson;
 }
 
 export function createStage(stageKey: string): StageMeta {
@@ -75,6 +78,7 @@ export function createStage(stageKey: string): StageMeta {
       group: new THREE.Group,
       polygons: [],
       lastRect: new Geom.Rect(0, 0, 0, 0),
+      lastCursor: new Geom.Vector,
     },
   };
 }
@@ -102,8 +106,9 @@ export function createPersist(stageKey: string): PersistedStage {
     opts: createStageOpts(),
     extra: {},
     selection: {
-      rect: { x: 0, y: 0, width: 0, height: 0 },
+      cursor: { x: 0, y: 0 },
       polygons: [],
+      rect: { x: 0, y: 0, width: 0, height: 0 },
     },
   };
 }

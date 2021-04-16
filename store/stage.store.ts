@@ -58,6 +58,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const { opts, extra, selection  } = api.getPersist(stageKey);
         instance.opts = deepClone(opts);
         instance.extra = deepClone(extra);
+        instance.selection.lastCursor = Geom.Vector.from(selection.cursor);
         instance.selection.lastRect = Geom.Rect.from(selection.rect);
         instance.selection.polygons = selection.polygons.map(x => Geom.Polygon.from(x));
         set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
@@ -94,8 +95,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           },
           extra: deepClone(extra),
           selection: {
-            polygons: selection.polygons.map(x => x.json),
+            cursor: selection.lastCursor.json,
             rect: selection.lastRect.json,
+            polygons: selection.polygons.map(x => x.json),
           },
         }, persist),
       }));
@@ -140,7 +142,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 1,
+  version: 0,
   blacklist: ['api', 'stage', 'resolve'],
   onRehydrateStorage: (_) =>  {
     return () => {
