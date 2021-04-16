@@ -74,9 +74,6 @@ class ShellWire<T> {
 }
 
 export enum SigEnum {
-  SIGHUP='SIGHUP',
-  SIGINT='SIGINT',
-  SIGQUIT='SIGQUIT',
   SIGKILL='SIGKILL',
 }
 

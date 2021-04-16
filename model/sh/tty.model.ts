@@ -1,9 +1,7 @@
-import { SigEnum } from "./io/io.model";
-
 export type MessageFromXterm = (
   | RequestHistoryLine
   | SendLineToShell
-  | SendSignalToShell
+  | SendKillSignalToShell
 );
 
 interface RequestHistoryLine {
@@ -20,9 +18,8 @@ interface SendLineToShell {
   line: string;
 }
 
-interface SendSignalToShell {
-  key: 'send-sig';
-  signal: SigEnum;
+interface SendKillSignalToShell {
+  key: 'send-kill-sig';
 }
 
 export type MessageFromShell = (

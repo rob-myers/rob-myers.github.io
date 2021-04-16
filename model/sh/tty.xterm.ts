@@ -341,7 +341,7 @@ export class TtyXterm {
           break;
         }
         case '\x03': {// Ctrl + C
-          this.sendSigInt();
+          this.sendSigKill();
           break;
         }
         case '\x17': {// Ctrl + W
@@ -585,9 +585,9 @@ export class TtyXterm {
   }
 
   /**
-   * Send SIGINT to foreground process group.
+   * Send kill signal to foreground process group.
    */
-  private sendSigInt() {
+  private sendSigKill() {
     this.input = '';
     this.setCursor(0);
     this.xterm.write('^C\r\n');
@@ -595,12 +595,8 @@ export class TtyXterm {
     this.cursor = 0;
     // Immediately forget any pending output
     this.commandBuffer.length = 0;
-
     // Reset controlling process
-    this.io.writeToReaders({
-      key: 'send-sig',
-      signal: SigEnum.SIGINT,
-    });
+    this.io.writeToReaders({ key: 'send-kill-sig' });
   }
 
   /**

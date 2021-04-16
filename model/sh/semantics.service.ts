@@ -5,7 +5,7 @@ import safeJsonStringify from 'safe-json-stringify';
 import { last } from 'model/generic.model';
 import useSession, { ProcessStatus } from 'store/session.store';
 import { NamedFunction, varRegex } from './var.model';
-import { expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
+import { createKillError, expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
 import { preProcessWrite, redirectNode, SigEnum } from './io/io.model';
@@ -61,8 +61,7 @@ class SemanticsService {
     }
   }
 
-  handleTopLevelProcessError(prefix: string, e: ProcessError) {
-    console.warn(`${prefix}: ${e.pid}@${e.sessionKey}: ${e.code}`)
+  handleTopLevelProcessError(e: ProcessError) {
     if (e.code === SigEnum.SIGKILL) {
       // Kill all processes in process group
       const process = useSession.api.getProcess(
@@ -156,7 +155,8 @@ class SemanticsService {
         try {
           const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
           for (const [i, file] of clones.slice(0, -1).entries()) {
-            const fifoKey = `/dev/fifo-${i}-${file.meta.pid}`;
+            // At most one pipeline can be running in any process
+            const fifoKey = `/dev/fifo-${file.meta.pid}-${i}`;
             fifos.push(useSession.api.createFifo(fifoKey));
             clones[i + 1].meta.fd[0] = file.meta.fd[1] = fifoKey;
           }
@@ -169,8 +169,7 @@ class SemanticsService {
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
                 if (node.exitCode = file.exitCode) {
-                  const nth = i === 0 ? '1st' : i === 1 ? '2nd' : i === 2 ? '3rd' : `${i + 1}th`;
-                  throw new ShError(`pipe: ${nth} child: exit code ${node.exitCode}`, node.exitCode);
+                  throw new ShError(`pipe ${i}`, node.exitCode);
                 }
                 resolve();
               } catch (e) {
@@ -180,7 +179,10 @@ class SemanticsService {
           ));
 
         } catch (error) {
-          sem.handleShError(node, error);
+          // Terminate children and this process on pipeline error
+          clones.map(({ meta }) => useSession.api.getProcess(meta))
+            .forEach(x => x && (x.status = ProcessStatus.Killed));
+          throw createKillError(node.meta);
         } finally {
           fifos.forEach(fifo => {
             fifo.finishedWriting(); // TODO clarify
@@ -240,9 +242,12 @@ class SemanticsService {
             throw new ShError(`Command: ${node.type}: not implemented`, 2);
         }
       }
-      // Actually run the code
       const process = useSession.api.getProcess(node.meta);
       const device = useSession.api.resolve(1, node.meta);
+      if (!device) {// Pipeline already failed
+        throw createKillError(node.meta);
+      }
+      // Actually run the code
       for await (const item of generator) {
         await preProcessWrite(process, device);
         await device.writeData(item);
@@ -420,11 +425,9 @@ class SemanticsService {
       const file = wrapInFile(Object.assign(cloneParsed(stmt), { Background: false } as Sh.Stmt));
       file.meta.ppid = stmt.meta.pid;
       file.meta.pgid = useSession.api.getSession(stmt.meta.sessionKey).nextPid;
-      ttyShell.spawn(file)
-        .then(() => console.warn(`background: ${file.meta.pid}: terminated`))
-        .catch((e) => {
+      ttyShell.spawn(file).catch((e) => {
           if (e instanceof ProcessError) {
-            this.handleTopLevelProcessError('background', e);
+            this.handleTopLevelProcessError(e);
           } else {
             console.error('background process error', e);
           }

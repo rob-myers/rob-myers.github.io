@@ -75,17 +75,14 @@ export class TtyShell implements Device {
         this.tryParse();
         break;
       }
-      case 'send-sig': {
-        if (msg.signal === SigEnum.SIGINT) {
-          this.buffer.length = 0;
-          if (this.process.status !== ProcessStatus.Running) {
-            this.prompt('$');
-          } else {
-            semanticsService.handleTopLevelProcessError(
-              'tty',
-              new ProcessError(SigEnum.SIGKILL, 0, this.sessionKey),
-            );
-          }
+      case 'send-kill-sig': {
+        this.buffer.length = 0;
+        if (this.process.status !== ProcessStatus.Running) {
+          this.prompt('$');
+        } else {
+          semanticsService.handleTopLevelProcessError(
+            new ProcessError(SigEnum.SIGKILL, 0, this.sessionKey),
+          );
         }
         break;
       }
@@ -120,7 +117,11 @@ export class TtyShell implements Device {
 
     try {
       for await (const _ of semanticsService.File(parsed));
+      console.warn(`${meta.sessionKey}${meta.pgid ? ' (background)' : ''}: ${meta.pid}: exit ${parsed.exitCode}`);
     } catch (e) {
+      if (e instanceof ProcessError) {
+        console.error(`${meta.sessionKey}${meta.pgid ? ' (background)' : ''}: ${meta.pid}: ${e.code}`)
+      }
       throw e;
     } finally {
       !opts.leading && useSession.api.removeProcess(meta.pid, this.sessionKey);
@@ -166,7 +167,7 @@ export class TtyShell implements Device {
       }
     } catch (e) {
       if (e instanceof ProcessError) {
-        semanticsService.handleTopLevelProcessError('foreground', e);
+        semanticsService.handleTopLevelProcessError(e);
       } else {
         console.error('unexpected error propagated to tty.shell', e);
       }
