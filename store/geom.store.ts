@@ -74,10 +74,8 @@ const useStore = create<State>(devtools((set, get) => ({
       // const { DRACOLoader } = await import('three/examples/jsm/loaders/DRACOLoader');
       // Needs files public/draco/ e.g. draco-decoder.js
       // loader.setDRACOLoader((new DRACOLoader).setDecoderPath('/draco/'));
-      
       const gltf = await loader.loadAsync('/root.gltf');
       api.extractMeshes(gltf);
-      api.loadTextures();
 
       set(_ => ({ loaded: true, loading: false }));
       while (get().loadResolvers.pop()?.());
