@@ -14,6 +14,7 @@ import StageToolbar from "./StageToolbar";
 import CameraControls from "./CameraControls";
 import Grid from "./Grid";
 import Axes from "./Axes";
+import Selection from "./Selection";
 
 const Stage: React.FC<Props> = ({ stage }) => {
   // console.log('Stage')
@@ -49,9 +50,9 @@ const Stage: React.FC<Props> = ({ stage }) => {
     }
   }, [stage.opts.enabled]);
 
-  const updateShadows = useCallback(() => {
-    ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true); 
-  }, [ctxt]);
+  // const updateShadows = useCallback(() => {
+  //   ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true); 
+  // }, [ctxt]);
 
   const ptrWire = useRef(new Subject<PointerMsg>()).current;
   const onPointer = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -103,7 +104,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
             enabled={stage.opts.panZoom}
             internal={stage.internal}
           />
-
+          <Selection selection={stage.selection} />
         </Canvas>
 
       ) || stage?.extra.canvasPreview && (

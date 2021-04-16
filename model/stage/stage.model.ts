@@ -12,6 +12,7 @@ export type StageMeta = {
   extra: StageExtra;
   /** Important options, also for the CLI */
   opts: StageOpts;
+  selection: StageSelection;
 };
 
 export interface StageInternal {
@@ -43,6 +44,16 @@ export interface StageOpts {
   initCameraPos: Triple<number>;
 }
 
+export interface StageSelection {
+  /**
+   * The root group of the Selection component.
+   * We may wish to attach semi-transparent meshes here.
+   */
+  group?: THREE.Group;
+  /** Currently selected polygons */
+  polygons: Geom.Polygon[];
+}
+
 export function createStage(stageKey: string): StageMeta {
   return {
     key: stageKey,
@@ -53,6 +64,10 @@ export function createStage(stageKey: string): StageMeta {
     },
     extra: {},
     opts: createStageOpts(),
+    selection: {
+      group: new THREE.Group,
+      polygons: [],
+    },
   };
 }
 
