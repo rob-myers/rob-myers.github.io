@@ -69,6 +69,17 @@ export function vectPrecision(v: THREE.Vector3, decimalPlaces: number) {
   return v;
 }
 
+/** Scaled up to 0.1 * 0.1 grid */
+export function scaleUpByTouched(from: THREE.Vector3, to: THREE.Vector3) {
+  const dx = to.x - from.x, dy = to.y - from.y;
+  from.x = (dx > 0 ? Math.floor : Math.ceil)(10 * from.x) / 10;
+  from.y = (dy > 0 ? Math.floor : Math.ceil)(10 * from.y) / 10;
+  vectPrecision(from, 1);
+  to.x = (dx > 0 ? Math.ceil : Math.floor)(10 * to.x) / 10;
+  to.y = (dy > 0 ? Math.ceil : Math.floor)(10 * to.y) / 10;
+  vectPrecision(to, 1);
+}
+
 export function vectorToTriple({ x, y, z }: THREE.Vector3): Triple<number> {
   return [x, y, z];
 }

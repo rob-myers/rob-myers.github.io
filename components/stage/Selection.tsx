@@ -1,8 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useThree } from "react-three-fiber";
 import { Subject } from "rxjs";
 import * as THREE from 'three';
-import { ndCoordsToGround } from "model/3d/three.model";
+import { ndCoordsToGround, scaleUpByTouched } from "model/3d/three.model";
 import * as Geom from "model/geom";
 import { StageSelection, StagePointerEvent, StageKeyEvent } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
@@ -12,9 +12,11 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const { camera } = useThree();
   const group = useRef<THREE.Group>(null);
   const cursorMesh = useRef<THREE.Mesh>(null);
+  const cursorTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geomService.createSquareGeometry()).current;
-  const cursorTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
+  const [polysGeom, setPolysGeom] = useState(geomService.polysToGeometry(selection.polygons));
+  const updatedAt = useRef(Date.now());
 
   useEffect(() => {
     selection.group = group.current!;
@@ -27,29 +29,37 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
   useEffect(() => {
     const [selector, ptr] = [rectMesh.current!, new THREE.Vector3];
-    let ptrDown = false;
-    
+    let [ptrDown, shiftDown] = [false, false];
+
     const ptrSub = ptrWire.subscribe(({ key, ndCoords }) => {
       if (key === 'pointermove' && ptrDown) {
         ndCoordsToGround(ndCoords, camera, ptr);
         selector.scale.set(ptr.x - selector.position.x, ptr.y - selector.position.y, 1);
       } else if (key === 'pointerdown') {
+        ptrDown = true;
         selector.position.copy(ndCoordsToGround(ndCoords, camera, ptr));
         selector.scale.set(0, 0, 1);
         cursorMesh.current!.position.copy(selector.position);
-        ptrDown = true;
       } else if (key === 'pointerup' || key === 'pointerleave') {
         ptrDown = false;
-        selection.lastRect.copy(Geom.Rect.fromPoints(selector.position, ptr));
+        scaleUpByTouched(selector.position, ptr);
+        const rect = Geom.Rect.fromPoints(selector.position, ptr);
+        selection.lastRect.copy(rect);
         selection.lastCursor.copy(selector.position);
+        selection.polygons = shiftDown
+          ? geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons)
+          : geomService.union(selection.polygons.concat(Geom.Polygon.fromRect(rect)));
+        updatedAt.current = Date.now();
+        setPolysGeom(geomService.polysToGeometry(selection.polygons));
+        selector.scale.set(0, 0, 0);
       }
     });
 
     const [blue, red] = [geomService.getColor('#00f'), geomService.getColor('#f00')];
 
     const keySub = keyWire.subscribe(({ shiftKey }) => {
-      const color = shiftKey ? red : blue;
-      (rectMesh.current!.material as THREE.MeshBasicMaterial).color = color;
+      shiftDown = shiftKey;
+      (rectMesh.current!.material as THREE.MeshBasicMaterial).color = shiftDown ? red : blue;
     });
 
     return () => {
@@ -73,11 +83,14 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         geometry={rectGeom}
         renderOrder={0} // Avoid occlusion by transparent walls
       >
-        <meshBasicMaterial
-          color="#00f"
-          transparent
-          opacity={0.2}
-        />
+        <meshBasicMaterial color="#00f" transparent opacity={0.2} />
+      </mesh>
+
+      <mesh
+        key={updatedAt.current}
+        geometry={polysGeom}
+      >
+        <meshBasicMaterial color="#00f" transparent opacity={0.2} />
       </mesh>
 
     </group>
