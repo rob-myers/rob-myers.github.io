@@ -32,7 +32,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     let [ptrDown, shiftDown] = [false, false];
 
     const ptrSub = ptrWire.subscribe(({ key, ndCoords }) => {
-      if (key === 'pointermove' && ptrDown) {
+      if (ptrDown && key === 'pointermove') {
         ndCoordsToGround(ndCoords, camera, ptr);
         selector.scale.set(ptr.x - selector.position.x, ptr.y - selector.position.y, 1);
       } else if (key === 'pointerdown') {
@@ -40,7 +40,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         selector.position.copy(ndCoordsToGround(ndCoords, camera, ptr));
         selector.scale.set(0, 0, 1);
         cursorMesh.current!.position.copy(selector.position);
-      } else if (key === 'pointerup' || key === 'pointerleave') {
+      } else if (ptrDown && (key === 'pointerup' || key === 'pointerleave')) {
         ptrDown = false;
         scaleUpByTouched(selector.position, ptr);
         const rect = Geom.Rect.fromPoints(selector.position, ptr);
@@ -57,9 +57,14 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
     const [blue, red] = [geomService.getColor('#00f'), geomService.getColor('#f00')];
 
-    const keySub = keyWire.subscribe(({ shiftKey }) => {
-      shiftDown = shiftKey;
-      (rectMesh.current!.material as THREE.MeshBasicMaterial).color = shiftDown ? red : blue;
+    const keySub = keyWire.subscribe(({ shiftKey, key }) => {
+      (rectMesh.current!.material as THREE.MeshBasicMaterial)
+        .color = (shiftDown = shiftKey) ? red : blue;
+      if (key === 'Escape' && ptrDown) {
+        selector.position.copy(ptr);
+        selector.scale.set(0, 0, 1);
+        ptrDown = false;
+      }
     });
 
     return () => {
