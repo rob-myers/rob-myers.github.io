@@ -20,10 +20,9 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
   useEffect(() => {
     selection.group = group.current!;
-    const { lastCursor: { x: cx, y: cy }, lastRect: { x, y, e, s } } = selection;
-    cursorMesh.current!.position.set(cx, cy, 0);
-    rectMesh.current!.scale.set(e - x, s - y, 0);
-    rectMesh.current!.position.set(x, y, 0);
+    const { x, y } = selection.lastCursor;
+    cursorMesh.current?.position.set(x, y, 0);
+    rectMesh.current?.scale.set(0, 0, 1);
     return () => void delete selection.group;
   }, []);
 
@@ -42,10 +41,9 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         cursorMesh.current!.position.copy(selector.position);
       } else if (ptrDown && (key === 'pointerup' || key === 'pointerleave')) {
         ptrDown = false;
+        selection.lastCursor.copy(selector.position);
         scaleUpByTouched(selector.position, ptr);
         const rect = Geom.Rect.fromPoints(selector.position, ptr);
-        selection.lastRect.copy(rect);
-        selection.lastCursor.copy(selector.position);
         selection.polygons = shiftDown
           ? geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons)
           : geomService.union(selection.polygons.concat(Geom.Polygon.fromRect(rect)));
