@@ -35,6 +35,13 @@ export class Rect {
     );
   }
 
+  copy({ x, y, width, height }: Rect) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+  }
+
   get cx() {
     return this.x + 0.5 * this.width;
   }

@@ -2,6 +2,7 @@ import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import { deepClone, KeyedLookup } from 'model/generic.model';
+import * as Geom from 'model/geom';
 import * as Stage from 'model/stage/stage.model';
 import { vectorToTriple } from 'model/3d/three.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
@@ -52,11 +53,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }
       
       if (get().persist[stageKey]) {
-        const instance = Stage.createStage(stageKey);
-        const { opts, extra } = api.getPersist(stageKey);
         // Restore persisted data
+        const instance = Stage.createStage(stageKey);
+        const { opts, extra, selection  } = api.getPersist(stageKey);
         instance.opts = deepClone(opts);
         instance.extra = deepClone(extra);
+        instance.selection.lastRect = Geom.Rect.from(selection.rect);
+        instance.selection.polygons = selection.polygons.map(x => Geom.Polygon.from(x));
         set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
       } else {
         set(({ stage, persist }) => ({
@@ -77,19 +80,23 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { internal, opts, extra } = api.getStage(stageKey);
+      const { internal, opts, extra, selection } = api.getStage(stageKey);
 
-      const computedCameraPos = internal.controls?.camera?.position
+      const currentCameraPos = internal.controls?.camera?.position
         ? vectorToTriple(internal.controls.camera.position) : null;
 
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,
           opts: {
             ...deepClone(opts),
-            initCameraPos: [...computedCameraPos ||
+            initCameraPos: [...currentCameraPos ||
               persist[stageKey].opts.initCameraPos || opts.initCameraPos],
           },
           extra: deepClone(extra),
+          selection: {
+            polygons: selection.polygons.map(x => x.json),
+            rect: selection.lastRect.json,
+          },
         }, persist),
       }));
     },
@@ -133,7 +140,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 0,
+  version: 1,
   blacklist: ['api', 'stage', 'resolve'],
   onRehydrateStorage: (_) =>  {
     return () => {

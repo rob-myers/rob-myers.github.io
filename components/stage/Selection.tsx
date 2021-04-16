@@ -3,6 +3,7 @@ import { useThree } from "react-three-fiber";
 import { Subject } from "rxjs";
 import * as THREE from 'three';
 import { ndCoordsToGround } from "model/3d/three.model";
+import * as Geom from "model/geom";
 import { StageSelection, PointerMsg } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
 import useGeomStore from "store/geom.store";
@@ -16,6 +17,9 @@ const Selection: React.FC<Props> = ({ ptrWire, selection }) => {
 
   useEffect(() => {
     selection.group = group.current!;
+    const { x, y, e, s } = selection.lastRect;
+    rectMesh.current!.position.set(x, y, 0);
+    rectMesh.current!.scale.set(e - x, s - y, 0);
     return () => void delete selection.group;
   }, []);
 
@@ -33,9 +37,10 @@ const Selection: React.FC<Props> = ({ ptrWire, selection }) => {
         ptrDown = true;
       } else if (key === 'pointerup') {
         ptrDown = false;
+        selection.lastRect.copy(Geom.Rect.fromPoints(selector.position, ptr));
       }
     });
-    return () => { sub.unsubscribe() };
+    return () => { sub.unsubscribe(); };
   }, []);
 
   return (
