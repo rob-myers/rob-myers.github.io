@@ -19,6 +19,7 @@ class GeomService {
   private colorCache = {} as Record<string, THREE.Color>;
   private lineMatCache = {} as Record<string, MeshLineMaterial>;
   private tempBox = new THREE.Box3;
+  private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
 
   private getColor(color: string) {
     return this.colorCache[color] || (
@@ -39,7 +40,6 @@ class GeomService {
     return material;
   }
 
-  private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
 
   computeTangents(ring: Geom.Vector[]) {
     // We concat `ring[0]` for final tangent
@@ -70,6 +70,20 @@ class GeomService {
     return mesh;
   }
 
+  createGroup(objects: THREE.Object3D[], name?: string) {
+    const group = new THREE.Group;
+    objects.forEach(o => group.add(o));
+    name && (group.name = name);
+    return group;
+  }
+
+  createPath(points: Geom.VectorJson[], name: string) {
+    const cubes = points.map(p => this.createCube(
+      new Vector3(p.x, p.y, 0.2), 0.05, this.whiteMaterial));
+    const polyLine = this.createPolyLine(points, { height: 0.2 });
+    return this.createGroup([...cubes, polyLine], name);
+  }
+
   createPolyLine(points: Geom.VectorJson[], opts: {
     height: number;
     loop?: boolean;
@@ -89,20 +103,6 @@ class GeomService {
     return new THREE.Mesh(meshLine, lineMaterial);
   }
 
-  createGroup(objects: THREE.Object3D[], name?: string) {
-    const group = new THREE.Group;
-    objects.forEach(o => group.add(o));
-    name && (group.name = name);
-    return group;
-  }
-
-  createPath(points: Geom.VectorJson[], name: string) {
-    const cubes = points.map(p => this.createCube(
-      new Vector3(p.x, p.y, 0.2), 0.05, this.whiteMaterial));
-    const polyLine = this.createPolyLine(points, { height: 0.2 });
-    return this.createGroup([...cubes, polyLine], name);
-  }
-
   createRegularPolygon(numEdges: number) {
     return Geom.Polygon.from({
       outline: range(numEdges).map((i) => ({
@@ -110,6 +110,13 @@ class GeomService {
         y: Math.sin((2 * i) * Math.PI / numEdges),
       })),
     });
+  }
+
+  /** Create a unit square in XY plane whose bottom-left is the origin */
+  createSquareGeometry() {
+    return this.polysToGeometry([Geom.Polygon.fromRect(
+      new Geom.Rect(0, 0, 1, 1),
+    )]);
   }
 
   /**

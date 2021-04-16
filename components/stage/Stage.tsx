@@ -4,10 +4,9 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { Canvas, CanvasContext } from "react-three-fiber";
-import * as Geom from "model/geom";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
-import { StageMeta } from "model/stage/stage.model";
+import { PointerMsg, StageMeta } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
@@ -104,7 +103,12 @@ const Stage: React.FC<Props> = ({ stage }) => {
             enabled={stage.opts.panZoom}
             internal={stage.internal}
           />
-          <Selection selection={stage.selection} />
+
+          <Selection
+            selection={stage.selection}
+            ptrWire={ptrWire}
+          />
+
         </Canvas>
 
       ) || stage?.extra.canvasPreview && (
@@ -142,15 +146,5 @@ const Placeholder = styled.img<{}>`
   max-width: 100%;
   max-height: 100%;
 `;
-
-export type PointerMsg = {
-  /** Normalized device coords in [-1, 1] * [-1, 1] */
-  ndCoords: Geom.VectorJson;
-} & (
-  | { key: 'pointerdown' }
-  | { key: 'pointerup' }
-  | { key: 'pointerleave' }
-  | { key: 'pointermove' }
-);
 
 export default Stage;

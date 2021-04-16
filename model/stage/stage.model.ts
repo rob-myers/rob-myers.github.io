@@ -105,5 +105,14 @@ export type StageKeyEvent = Pick<KeyboardEvent,
 const initCameraPosArray: Triple<number> = [0, 0, 10];
 export const initCameraPos = new THREE.Vector3(...initCameraPosArray);
 export const initStageBounds = new Geom.Rect(0, 0, 0, 0);
-
 //#endregion
+
+export type PointerMsg = {
+  /** Normalized device coords in [-1, 1] * [-1, 1] */
+  ndCoords: Geom.VectorJson;
+} & (
+  | { key: 'pointerdown' }
+  | { key: 'pointerup' }
+  | { key: 'pointerleave' }
+  | { key: 'pointermove' }
+);

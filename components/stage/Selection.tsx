@@ -1,15 +1,41 @@
-import { StageSelection } from "model/stage/stage.model";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import { useThree } from "react-three-fiber";
+import { Subject } from "rxjs";
+import * as THREE from 'three';
+import { ndCoordsToGround } from "model/3d/three.model";
+import { StageSelection, PointerMsg } from "model/stage/stage.model";
+import { geomService } from "model/geom.service";
 import useGeomStore from "store/geom.store";
 
-const Selection: React.FC<Props> = ({ selection }) => {
+const Selection: React.FC<Props> = ({ ptrWire, selection }) => {
+  const { camera } = useThree();
   const group = useRef<THREE.Group>(null);
-  const rect = useRef<THREE.Mesh>(null);
+  const rectMesh = useRef<THREE.Mesh>(null);
+  const rectGeom = useRef(geomService.createSquareGeometry()).current;
   const cursorTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
 
   useEffect(() => {
     selection.group = group.current!;
     return () => void delete selection.group;
+  }, []);
+
+  useEffect(() => {
+    const [selector, ptr] = [rectMesh.current!, new THREE.Vector3];
+    let ptrDown = false;
+    
+    const sub = ptrWire.subscribe(({ key, ndCoords }) => {
+      if (key === 'pointermove' && ptrDown) {
+        ndCoordsToGround(ndCoords, camera, ptr);
+        selector.scale.set(ptr.x - selector.position.x, ptr.y - selector.position.y, 1);
+      } else if (key === 'pointerdown') {
+        selector.position.copy(ndCoordsToGround(ndCoords, camera, ptr));
+        selector.scale.set(0, 0, 1);
+        ptrDown = true;
+      } else if (key === 'pointerup') {
+        ptrDown = false;
+      }
+    });
+    return () => { sub.unsubscribe() };
   }, []);
 
   return (
@@ -23,21 +49,23 @@ const Selection: React.FC<Props> = ({ selection }) => {
       )}
      
       <mesh
-        ref={rect}
+        ref={rectMesh}
+        geometry={rectGeom}
         renderOrder={0} // Avoid occlusion by transparent walls
       >
-          <planeGeometry args={[1, 1]} />
-          <meshBasicMaterial
-            color="#00f"
-            transparent
-            opacity={0.2}
-          />
+        <meshBasicMaterial
+          color="#00f"
+          transparent
+          opacity={0.2}
+        />
       </mesh>
+
     </group>
   );
 };
 
 interface Props {
+  ptrWire: Subject<PointerMsg>;
   selection: StageSelection;
 }
 

@@ -51,9 +51,9 @@ export const placeholderMesh = new THREE.Mesh;
 export const placeholderScene = new THREE.Scene;
 
 export function ndCoordsToGround(
-  output: THREE.Vector3,
   ndCoords: VectorJson,
   camera: THREE.Camera,
+  output = new THREE.Vector3,
 ) {
   output.set(ndCoords.x, ndCoords.y, 0.5);
   output.unproject(camera).sub(camera.position).normalize();
