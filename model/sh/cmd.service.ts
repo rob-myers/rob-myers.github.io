@@ -159,11 +159,8 @@ class CmdService {
               p.status = ProcessStatus.Killed;
               p.onResume?.();
               p.onSuspend = p.onResume = null;
-              // TODO ensure done elsewhere
-              // setTimeout(() => {
-              //   p.onKill.forEach(cleanup => cleanup());
-              //   p.onKill.length = 0;
-              // });
+              // Immediate clean e.g. stops `sleep`
+              setTimeout(() => { while (p.cleanups.pop()?.()); });
             }
           });
         }
