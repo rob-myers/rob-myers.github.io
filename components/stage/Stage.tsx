@@ -6,7 +6,7 @@ import { css } from "@emotion/react";
 import { Canvas, CanvasContext } from "react-three-fiber";
 
 import { getWindow, getNormDevicePos } from "model/dom.model";
-import { PointerMsg, StageMeta } from "model/stage/stage.model";
+import { StagePointerEvent, StageMeta } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
@@ -53,7 +53,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
   //   ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true); 
   // }, [ctxt]);
 
-  const ptrWire = useRef(new Subject<PointerMsg>()).current;
+  const ptrWire = useRef(new Subject<StagePointerEvent>()).current;
   const onPointer = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     ptrWire.next({ key: e.type as any, ndCoords: getNormDevicePos(e) });
   }, []);
@@ -107,6 +107,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
           <Selection
             selection={stage.selection}
             ptrWire={ptrWire}
+            keyWire={keyWire}
           />
 
         </Canvas>

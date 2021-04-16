@@ -21,12 +21,6 @@ class GeomService {
   private tempBox = new THREE.Box3;
   private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
 
-  private getColor(color: string) {
-    return this.colorCache[color] || (
-      this.colorCache[color] = new THREE.Color(color)
-    );
-  }
-
   private getLineMat(lineWidth: number, color: string, opacity: number) {
     const key = JSON.stringify({ lineWidth, color, opacity });
     const material = this.lineMatCache[key] || (
@@ -40,6 +34,11 @@ class GeomService {
     return material;
   }
 
+  getColor(color: string) {
+    return this.colorCache[color] || (
+      this.colorCache[color] = new THREE.Color(color)
+    );
+  }
 
   computeTangents(ring: Geom.Vector[]) {
     // We concat `ring[0]` for final tangent

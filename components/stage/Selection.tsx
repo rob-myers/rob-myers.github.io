@@ -4,13 +4,14 @@ import { Subject } from "rxjs";
 import * as THREE from 'three';
 import { ndCoordsToGround } from "model/3d/three.model";
 import * as Geom from "model/geom";
-import { StageSelection, PointerMsg } from "model/stage/stage.model";
+import { StageSelection, StagePointerEvent, StageKeyEvent } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
 import useGeomStore from "store/geom.store";
 
-const Selection: React.FC<Props> = ({ ptrWire, selection }) => {
+const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const { camera } = useThree();
   const group = useRef<THREE.Group>(null);
+  const cursorMesh = useRef<THREE.Mesh>(null);
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geomService.createSquareGeometry()).current;
   const cursorTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
@@ -27,28 +28,40 @@ const Selection: React.FC<Props> = ({ ptrWire, selection }) => {
     const [selector, ptr] = [rectMesh.current!, new THREE.Vector3];
     let ptrDown = false;
     
-    const sub = ptrWire.subscribe(({ key, ndCoords }) => {
+    const ptrSub = ptrWire.subscribe(({ key, ndCoords }) => {
       if (key === 'pointermove' && ptrDown) {
         ndCoordsToGround(ndCoords, camera, ptr);
         selector.scale.set(ptr.x - selector.position.x, ptr.y - selector.position.y, 1);
       } else if (key === 'pointerdown') {
         selector.position.copy(ndCoordsToGround(ndCoords, camera, ptr));
         selector.scale.set(0, 0, 1);
+        cursorMesh.current!.position.copy(selector.position);
         ptrDown = true;
-      } else if (key === 'pointerup') {
+      } else if (key === 'pointerup' || key === 'pointerleave') {
         ptrDown = false;
         selection.lastRect.copy(Geom.Rect.fromPoints(selector.position, ptr));
       }
     });
-    return () => { sub.unsubscribe(); };
+
+    const [blue, red] = [geomService.getColor('#00f'), geomService.getColor('#f00')];
+
+    const keySub = keyWire.subscribe(({ shiftKey }) => {
+      const color = shiftKey ? red : blue;
+      (rectMesh.current!.material as THREE.MeshBasicMaterial).color = color;
+    });
+
+    return () => {
+      ptrSub.unsubscribe();
+      keySub.unsubscribe();
+    };
   }, []);
 
   return (
     <group ref={group}>
 
       {cursorTexture && (
-        <mesh visible>
-          <planeGeometry args={[0.2, 0.2]} />
+        <mesh ref={cursorMesh}>
+          <planeGeometry args={[0.1, 0.1]} />
           <meshBasicMaterial map={cursorTexture} />
         </mesh>
       )}
@@ -70,7 +83,8 @@ const Selection: React.FC<Props> = ({ ptrWire, selection }) => {
 };
 
 interface Props {
-  ptrWire: Subject<PointerMsg>;
+  keyWire: Subject<StageKeyEvent>;
+  ptrWire: Subject<StagePointerEvent>;
   selection: StageSelection;
 }
 

@@ -108,19 +108,16 @@ export function createPersist(stageKey: string): PersistedStage {
   };
 }
 
-//#region internal
-export type StageKeyEvent = Pick<KeyboardEvent,
-  'type' | 'key' | 'metaKey' | 'shiftKey'
-> & {
+export type StageKeyEvent = Pick<KeyboardEvent, (
+  | 'key'
+  | 'metaKey'
+  | 'shiftKey'
+  | 'type'
+)> & {
   type: 'keydown' | 'keyup';
 };
 
-const initCameraPosArray: Triple<number> = [0, 0, 10];
-export const initCameraPos = new THREE.Vector3(...initCameraPosArray);
-export const initStageBounds = new Geom.Rect(0, 0, 0, 0);
-//#endregion
-
-export type PointerMsg = {
+export type StagePointerEvent = {
   /** Normalized device coords in [-1, 1] * [-1, 1] */
   ndCoords: Geom.VectorJson;
 } & (
@@ -129,3 +126,7 @@ export type PointerMsg = {
   | { key: 'pointerleave' }
   | { key: 'pointermove' }
 );
+
+const initCameraPosArray: Triple<number> = [0, 0, 10];
+export const initCameraPos = new THREE.Vector3(...initCameraPosArray);
+export const initStageBounds = new Geom.Rect(0, 0, 0, 0);
