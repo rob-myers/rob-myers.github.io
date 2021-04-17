@@ -54,11 +54,14 @@ export interface StageSelection {
   polygons: Geom.Polygon[];
   /** Last cursor position */
   lastCursor: Geom.Vector;
+  /** Is selection locked, so it can be dragged? */
+  locked: boolean;
 }
 
 interface StageSelectionJson {
   polygons: Geom.PolygonJson[];
   cursor: Geom.VectorJson;
+  locked: boolean;
 }
 
 export function createStage(stageKey: string): StageMeta {
@@ -75,6 +78,7 @@ export function createStage(stageKey: string): StageMeta {
       group: new THREE.Group,
       polygons: [],
       lastCursor: new Geom.Vector,
+      locked: false,
     },
   };
 }
@@ -104,6 +108,7 @@ export function createPersist(stageKey: string): PersistedStage {
     selection: {
       cursor: { x: 0, y: 0 },
       polygons: [],
+      locked: false,
     },
   };
 }

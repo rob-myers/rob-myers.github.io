@@ -26,6 +26,7 @@ export type State = {
     updateExtra: (stageKey: string, updates: Updates<Stage.StageExtra>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageInternal>) => void;
     updateOpts: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
+    updateSelection: (stageKey: string, updates: Updates<Stage.StageSelection>) => void;
     updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
   }
 }
@@ -59,6 +60,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         instance.opts = deepClone(opts);
         instance.extra = deepClone(extra);
         instance.selection.lastCursor = Geom.Vector.from(selection.cursor);
+        instance.selection.locked = selection.locked;
         instance.selection.polygons = selection.polygons.map(x => Geom.Polygon.from(x));
         set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
       } else {
@@ -96,6 +98,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           selection: {
             cursor: selection.lastCursor.json,
             polygons: selection.polygons.map(x => x.json),
+            locked: selection.locked,
           },
         }, persist),
       }));
@@ -125,6 +128,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       api.updateStage(stageKey, ({ opts }) => ({
         opts: { ...opts,
           ...typeof updates === 'function' ? updates(opts) : updates,
+        },
+      }));
+    },
+
+    updateSelection: (stageKey, updates) => {
+      api.updateStage(stageKey, ({ selection }) => ({
+        selection: { ...selection,
+          ...typeof updates === 'function' ? updates(selection) : updates,
         },
       }));
     },

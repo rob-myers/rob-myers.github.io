@@ -30,6 +30,8 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     const [selector, ptr] = [rectMesh.current!, new THREE.Vector3];
     let [ptrDown, shiftDown] = [false, false];
 
+    console.log('locked', selection.locked); // TODO
+
     const ptrSub = ptrWire.subscribe(({ key, ndCoords }) => {
       if (ptrDown && key === 'pointermove') {
         ndCoordsToGround(ndCoords, camera, ptr);
@@ -39,25 +41,30 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         selector.position.copy(ndCoordsToGround(ndCoords, camera, ptr));
         selector.scale.set(0, 0, 1);
         cursorMesh.current!.position.copy(selector.position);
-      } else if (ptrDown && (key === 'pointerup' || key === 'pointerleave')) {
-        ptrDown = false;
         selection.lastCursor.copy(selector.position);
+      } else if (ptrDown && key === 'pointerup') {
+        ptrDown = false;
+        selector.scale.set(0, 0, 0);
         scaleUpByTouched(selector.position, ptr);
         const rect = Geom.Rect.fromPoints(selector.position, ptr);
-        selection.polygons = shiftDown
+        const polygons = shiftDown
           ? geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons)
           : geomService.union(selection.polygons.concat(Geom.Polygon.fromRect(rect)));
+        setPolysGeom(geomService.polysToGeometry(polygons));
         updatedAt.current = Date.now();
-        setPolysGeom(geomService.polysToGeometry(selection.polygons));
+        selection.polygons = polygons;
+      } else if (key === 'pointerleave') {
+        ptrDown = false;
         selector.scale.set(0, 0, 0);
+        selection.lastCursor.copy(selector.position);
       }
     });
 
     const [blue, red] = [geomService.getColor('#00f'), geomService.getColor('#f00')];
 
     const keySub = keyWire.subscribe(({ shiftKey, key }) => {
-      (rectMesh.current!.material as THREE.MeshBasicMaterial)
-        .color = (shiftDown = shiftKey) ? red : blue;
+      shiftDown = shiftKey;
+      (rectMesh.current!.material as THREE.MeshBasicMaterial).color = shiftDown ? red : blue;
       if (key === 'Escape' && ptrDown) {
         selector.position.copy(ptr);
         selector.scale.set(0, 0, 1);
@@ -69,7 +76,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       ptrSub.unsubscribe();
       keySub.unsubscribe();
     };
-  }, []);
+  }, [selection.locked]);
 
   return (
     <group ref={group}>
@@ -90,8 +97,8 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       </mesh>
 
       <mesh
-        key={updatedAt.current}
         geometry={polysGeom}
+        key={updatedAt.current}
       >
         <meshBasicMaterial color="#00f" transparent opacity={0.2} />
       </mesh>

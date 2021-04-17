@@ -17,9 +17,11 @@ Main focus is:
    - Simplify FifoDevice and Device?
 - Sketch out milestones
 - 🛠 Create replacement for brush i.e. `Selection`
-  - Can select many rects.
-  - Can still lock.
+  - ✅ Can select many rects.
+  - Can save/restore selections.
+  - Can lock and then translate/transform.
   - Has group where ghost meshes can be attached.
+  - Could leave "select mode" by saving and locking empty selection
 
 ### Done
 
