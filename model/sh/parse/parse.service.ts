@@ -53,7 +53,7 @@ class ParseShService {
    */
   parse(src: string): P.FileWithMeta {
     const parser = syntax.NewParser(
-      syntax.KeepComments(false),
+      syntax.KeepComments(true),
       syntax.Variant(syntax.LangBash),
       // syntax.Variant(syntax.LangPOSIX),
       // syntax.Variant(syntax.LangMirBSDKorn),
@@ -224,13 +224,14 @@ class ParseShService {
   })
 
   private Block = (
-    { Pos, End, Lbrace, Rbrace, Stmts }: Sh.Block,
+    { Pos, End, Lbrace, Rbrace, Stmts, Last }: Sh.Block,
   ): P.Block => ({
     ...this.base({ Pos, End }),
     type: 'Block',
     Lbrace: this.pos(Lbrace),
     Rbrace: this.pos(Rbrace),
     Stmts: Stmts.map(Stmt => this.Stmt(Stmt)),
+    Last: Last.map(this.Comment),
   });
 
   private CallExpr = (

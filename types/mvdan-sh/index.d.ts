@@ -381,6 +381,7 @@ declare namespace MvdanSh {
     Lbrace: Pos;
     Rbrace: Pos;
     Stmts: StmtGeneric<Base, Pos, Op>[];
+    Last: CommentGeneric<Base, Pos, Op>[];
   }
   /**
    * CallExpr represents a command execution or function call, otherwise known as a "simple command".

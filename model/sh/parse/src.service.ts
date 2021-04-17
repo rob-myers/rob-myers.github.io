@@ -101,8 +101,10 @@ export class SrcService {
         if (this.onOneLine) {
           return `{ ${ this.seqSrc(Stmts) }${terminal} }`;
         } else {
+          const lines = this.seqSrc(Stmts).split('\n');
+          lines.length === 1 && !lines[0] && lines.pop(); // Avoid single blank line
           return `{\n${
-            this.seqSrc(Stmts).split('\n').map(x => `  ${x}`).join('\n')
+            lines.map(x => `  ${x}`).concat(node.Last.map(x => `  #${x.Text}`)).join('\n')
           }\n}`;
         }
       }
@@ -113,14 +115,22 @@ export class SrcService {
           node.Args.map(c => this.src(c)).join(' '),
         ].filter(Boolean).join(' ');
 
-      case 'Stmt':
-        return [
-
+      case 'Stmt': {
+        let output = [
           node.Negated && '!',
           this.src(node.Cmd),
           node.Redirs.map(c => this.src(c)).join(' '),
           node.Background && '&',
         ].filter(Boolean).join(' ');
+
+        if (!this.onOneLine && node.Comments.length) {
+          const before = [] as string[];
+          node.Comments.forEach(x => x.Hash.Offset < node.Position.Offset
+            ? before.push(`#${x.Text}`) : (output += ` #${x.Text}`));
+          output = before.concat(output).join('\n');
+        }
+        return output;
+      }
 
       case 'CaseClause': {
         const cases = node.Items.map(({ Patterns, Op, Stmts }) => ({
