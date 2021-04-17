@@ -1,7 +1,7 @@
 import { Terminal } from 'xterm';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
 import { safeStringify, testNever } from 'model/generic.model';
-import { scrollback, ShellIo, SigEnum, DataChunk, isDataChunk } from './io/io.model';
+import { scrollback, ShellIo, DataChunk, isDataChunk } from './io/io.model';
 
 export const ansiReset = '\x1b[0m';
 export const ansiBrown = '\x1b[33m';
