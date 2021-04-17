@@ -54,8 +54,8 @@ class ParseShService {
   parse(src: string): P.FileWithMeta {
     const parser = syntax.NewParser(
       syntax.KeepComments(false),
-      syntax.Variant(syntax.LangBash),
-      // syntax.Variant(syntax.LangPOSIX),
+      syntax.Variant(syntax.LangPOSIX),
+      // syntax.Variant(syntax.LangBash),
       // syntax.Variant(syntax.LangMirBSDKorn),
     );
     const parsed = parser.Parse(src, 'src.sh');

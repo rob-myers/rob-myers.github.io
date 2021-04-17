@@ -21,11 +21,8 @@ const commandKeys = {
   'await-stage': true,
   /** Execute a javascript function */
   call: true,
-  /**
-   * TODO rename as `declare`
-   * List function definitions
-   */
-  defs: true,
+  /** List function definitions */
+  declare: true,
   /** Output arguments as space-separated string */
   echo: true,
   /** Get a variable or something from stage $STAGE_KEY */
@@ -90,7 +87,7 @@ class CmdService {
         );
         break;
       }
-      case 'defs': {
+      case 'declare': {
         const funcs = useSession.api.getFuncs(meta.sessionKey);
         for (const { key, src } of funcs) {
           const lines = `${ansiBlue}${key}${ansiWhite} () ${src}`.split(/\r?\n/);
