@@ -167,9 +167,9 @@ class CmdService {
         const { opts, operands } = getOpts(args, { boolean: [
           '1', /** One line per item */
         ], });
-        const { stage, var: varLookup } = this.provideStageAndVars(meta);
-        let items = Object.keys(varLookup)
-          .concat(Object.keys(stage).map(x => `stage/${x}`)).sort();
+        const provided = this.provideStageAndVars(meta);
+        let items = Object.keys(provided)
+          .concat(Object.keys(provided.stage).map(x => `stage/${x}`)).sort();
 
         // We usually treat -1 as an operand, but it is an option here
         const prefix = operands.find(x => !x.startsWith('-'));
