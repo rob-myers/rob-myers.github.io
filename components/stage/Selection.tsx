@@ -26,27 +26,30 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   }, []);
 
   useEffect(() => {
-    const [selector, ptr] = [rectMesh.current!, new THREE.Vector3];
-    let [ptrDown, shiftDown] = [false, false];
+    const [position, scale] = [rectMesh.current!.position, rectMesh.current!.scale];
+    let [ptr, ptrDown, shiftDown] = [new THREE.Vector3, false, false];
 
     console.log('locked', selection.locked); // TODO
 
     const ptrSub = ptrWire.subscribe(({ key, ndCoords }) => {
       if (ptrDown && key === 'pointermove') {
         ndCoordsToGround(ndCoords, camera, ptr);
-        selector.scale.set(ptr.x - selector.position.x, ptr.y - selector.position.y, 1);
+        scale.set(ptr.x - position.x, ptr.y - position.y, 1);
       } else if (key === 'pointerdown') {
         ptrDown = true;
-        selector.position.copy(ndCoordsToGround(ndCoords, camera, ptr));
-        selector.scale.set(0, 0, 1);
-        cursorMesh.current!.position.copy(selector.position);
-        selection.lastCursor.copy(selector.position);
+        position.copy(ndCoordsToGround(ndCoords, camera, ptr));
+        scale.set(0, 0, 1);
+        cursorMesh.current!.position.copy(position);
+        selection.lastCursor.copy(position);
       } else if (ptrDown && key === 'pointerup') {
         ptrDown = false;
-        selector.scale.set(0, 0, 0);
-        scaleUpByTouched(selector.position, ptr);
+        scale.set(0, 0, 0);
+        if (Geom.Rect.fromPoints(position, ptr).area < 0.01 * 0.01) {
+          return; // Ignore when too small
+        }
+        scaleUpByTouched(position, ptr);
 
-        const rect = Geom.Rect.fromPoints(selector.position, ptr);
+        const rect = Geom.Rect.fromPoints(position, ptr);
         const polygons = shiftDown
           ? geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons)
           : geomService.union(selection.polygons.concat(Geom.Polygon.fromRect(rect)));
@@ -56,8 +59,8 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         selection.polygons = polygons;
       } else if (key === 'pointerleave') {
         ptrDown = false;
-        selector.scale.set(0, 0, 0);
-        selection.lastCursor.copy(selector.position);
+        scale.set(0, 0, 0);
+        selection.lastCursor.copy(position);
       }
     });
 
@@ -67,8 +70,8 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       shiftDown = shiftKey;
       (rectMesh.current!.material as THREE.MeshBasicMaterial).color = shiftDown ? red : blue;
       if (key === 'Escape' && ptrDown) {
-        selector.position.copy(ptr);
-        selector.scale.set(0, 0, 1);
+        position.copy(ptr);
+        scale.set(0, 0, 1);
         ptrDown = false;
       }
     });
