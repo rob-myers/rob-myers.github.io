@@ -200,7 +200,7 @@ class GeomService {
 
     // Compute 4-gons inset along edge normals by amount
     const [outerQuads, ...holesQuads] = [
-      { ring: poly.outline, inset: this.insetRing(poly.outline, amount) },
+      { ring: poly.outer, inset: this.insetRing(poly.outer, amount) },
       ...poly.holes.map(ring => ({ ring, inset: this.insetRing(ring, amount) })),
     ].map(({ ring, inset }) => ring.map((_, i) =>
       new Geom.Polygon([
@@ -288,7 +288,7 @@ class GeomService {
     }
     // Does any triangle in triangulation contain point?
     return polygon.triangulation
-      .map(({ outline }) => outline)
+      .map(({ outer }) => outer)
       .some(([u, v, w]) => this.isPointInTriangle(point, u, v, w));
   }
 
@@ -310,8 +310,8 @@ class GeomService {
     /** Difference between lower and upper vertices */
     const delta = offset / 2;
     offset = 0;
-    for (const { outline, holes } of polys) {
-      for (const cycle of [outline].concat(holes)) {
+    for (const { outer, holes } of polys) {
+      for (const cycle of [outer].concat(holes)) {
         const sides = cycle.length;
         geometry.faces.push(...cycle.map((_, i) =>
           new Face3(offset + i % sides, offset + (i + 1) % sides, delta + offset + (i + 1) % sides)));

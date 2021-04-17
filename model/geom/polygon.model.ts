@@ -14,7 +14,7 @@ export class Polygon {
   private _triangulationIds: undefined | Triple<number>[];
 
   constructor(
-    public outline: Vector[] = [],
+    public outer: Vector[] = [],
     public holes: Vector[][] = [],
   ) {}
   
@@ -23,7 +23,7 @@ export class Polygon {
   }
 
   get allPoints(): Vector[] {
-    return this.outline.concat(...this.holes);
+    return this.outer.concat(...this.holes);
   }
 
   private cache(indexTriples: Triple<number>[]) {
@@ -43,7 +43,7 @@ export class Polygon {
    * but are unsupported by npm module 'poly2tri'.
    */
   cleanFinalReps() {
-    for (const ring of [this.outline, ...this.holes]) {
+    for (const ring of [this.outer, ...this.holes]) {
       const last = ring.pop();
       if (last && !last.equals(ring[0])) {
         ring.push(last);
@@ -53,7 +53,7 @@ export class Polygon {
   }
 
   clone() {
-    const outline = this.outline.map(p => p.clone());
+    const outline = this.outer.map(p => p.clone());
     const holes = this.holes.map(hole => hole.map(p => p.clone()));
     return new Polygon(outline, holes);
   }
@@ -72,8 +72,8 @@ export class Polygon {
     // Compute 4-gons inset or outset along edge normals by `amount`
     const [outerQuads, ...holesQuads] = [
       {
-        ring: this.outline,
-        inset: Polygon.insetRing(this.outline, amount),
+        ring: this.outer,
+        inset: Polygon.insetRing(this.outer, amount),
       },
       ...this.holes.map(ring => ({
         ring,
@@ -115,7 +115,7 @@ export class Polygon {
 
   get edges() {
     return {
-      outline: this.outline.map((p, i, ps) => new Edge(p, ps[(i + 1) % ps.length])),
+      outline: this.outer.map((p, i, ps) => new Edge(p, ps[(i + 1) % ps.length])),
       holes: this.holes.map(hole => hole.map((p, i, ps) => new Edge(p, ps[(i + 1) % ps.length]))),
     };
   }
@@ -125,6 +125,9 @@ export class Polygon {
    * Also cannot handle Steiner points.
    */
   fastTriangulate() {
+    if (!this.outer.length) {
+      return { vs: [], tris: [] };
+    }
     const { coordinates } = this.geoJson;
     const data = earcut.flatten(coordinates);
     const triIds = earcut(data.vertices, data.holes, 2);
@@ -160,7 +163,7 @@ export class Polygon {
   get geoJson(): GeoJsonPolygon {
     return {
       type: 'Polygon',
-      coordinates: [this.outline.map<Coord>(({ x, y }) => [x, y])]
+      coordinates: [this.outer.map<Coord>(({ x, y }) => [x, y])]
         .concat(this.holes.map(hole => hole.map(({ x, y }) => [x, y]))),
     };
   }
@@ -222,13 +225,13 @@ export class Polygon {
 
   get json(): PolygonJson {
     return {
-      outer: this.outline.map(({ x, y }) => [x, y]),
+      outer: this.outer.map(({ x, y }) => [x, y]),
       holes: this.holes.map(hole => hole.map(({ x, y }) => [x, y])),
     };
   }
 
   mutatePoints(mutator: (p: Vector) => void) {
-    this.outline.forEach(mutator);
+    this.outer.forEach(mutator);
     this.holes.forEach(hole => hole.forEach(mutator));
     this._triangulation = this._triangulationIds = undefined;
     return this;
@@ -242,8 +245,11 @@ export class Polygon {
    */
   qualityTriangulate() {
     try {
+      if (!this.outer.length) {
+        return { vs: [], tris: [] };
+      }
       interface V2WithId extends VectorJson { id: number }
-      const outline: V2WithId[] = this.outline.map(({ x, y }, id) => ({ x, y, id }));
+      const outline: V2WithId[] = this.outer.map(({ x, y }, id) => ({ x, y, id }));
       let nextId = outline.length;
       const holes: V2WithId[][] = this.holes
         .map(hole => hole.map(({ x, y }) => ({ x, y, id: nextId++ })));
@@ -267,7 +273,7 @@ export class Polygon {
   }
 
   precision(decimalPlaces: number) {
-    this.outline.forEach(p => p.precision(decimalPlaces));
+    this.outer.forEach(p => p.precision(decimalPlaces));
     this.holes.forEach(hole => hole.forEach(p => p.precision(decimalPlaces)));
     this.clearCache();
     return this;
@@ -283,12 +289,12 @@ export class Polygon {
   }
 
   get rect() {
-    return Rect.fromPoints(...this.outline);
+    return Rect.fromPoints(...this.outer);
   }
 
   /** Mutates this polygon */
   reverse() {
-    this.outline.reverse();
+    this.outer.reverse();
     this.holes.forEach(hole => hole.reverse());
     return this;
   }
@@ -298,7 +304,7 @@ export class Polygon {
   }
 
   scaleBy(point: VectorJson) {
-    this.outline.forEach(p => p.scaleBy(point));
+    this.outer.forEach(p => p.scaleBy(point));
     this.holes.forEach(h => h.forEach(p => p.scaleBy(point)));
     this.clearCache();
     return this;
@@ -314,7 +320,7 @@ export class Polygon {
 
   /** Compute tangents of exterior and holes. */
   get tangents(): { outer: Vector[]; inner: Vector[][] } {
-    const rings = [this.outline, ...this.holes];
+    const rings = [this.outer, ...this.holes];
     const [outer, ...inner] = rings.map(ring =>
       // Append first to get final tangent
       ring.concat(ring[0]).reduce(
@@ -334,7 +340,7 @@ export class Polygon {
   }
 
   translate(dx: number, dy: number) {
-    this.outline.forEach(p => p.translate(dx, dy));
+    this.outer.forEach(p => p.translate(dx, dy));
     this.holes.forEach(h => h.forEach(p => p.translate(dx, dy)));
     this.clearCache();
     return this;
