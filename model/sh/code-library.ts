@@ -6,8 +6,8 @@ export const preloadedFunctions = {
   filter: `map -x "fn = $1; return (...args) => fn(...args) ? args[0] : undefined"`,
   /** We don't support backticks in the argument */
   jarg: `call '() => {
-  try { return Function("_", \`return '\${1:-\\"\\"}'\` )(); }
-  catch { return JSON.stringify(\`'$1'\`); }
+    try { return Function("_", \`return '\${1:-\\"\\"}'\` )(); }
+    catch { return JSON.stringify(\`'$1'\`); }
 }'
 `,
   reduce: `sponge | {
@@ -19,12 +19,10 @@ export const preloadedFunctions = {
   pretty: `map '(x, { util: {stringify} }) => stringify(x)'`,
   keys: `map Object.keys`,
   cat: `get "$@" | split`,
-  sel: `{
-  # START
-  # START 2
-  echo foo # MIDDLE
-  # END
-}
+  sel: `run '({ read }, { stage }) {
+    const input = await read(); // TODO
+    yield stage.selection.polygons.map(x => x.json);
+}'
 `,
 };
 

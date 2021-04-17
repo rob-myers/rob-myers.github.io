@@ -50,6 +50,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         const polygons = shiftDown
           ? geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons)
           : geomService.union(selection.polygons.concat(Geom.Polygon.fromRect(rect)));
+        polygons.forEach(x => x.precision(1)); // Increments of 0.1
         setPolysGeom(geomService.polysToGeometry(polygons));
         updatedAt.current = Date.now();
         selection.polygons = polygons;

@@ -148,8 +148,8 @@ export class Polygon {
       );
     }
     return new Polygon(
-      (input.outline || []).map(p => Vector.from(p)),
-      (input.holes || []).map(hole => hole.map(p => Vector.from(p))),
+      (input.outer || []).map(([x, y]) => new Vector(x, y)),
+      (input.holes || []).map(hole => hole.map(([x, y]) => new Vector(x, y))),
     );
   }
 
@@ -222,8 +222,8 @@ export class Polygon {
 
   get json(): PolygonJson {
     return {
-      outline: this.outline.map(({ x, y }) => ({ x, y })),
-      holes: this.holes.map(hole => hole.map(({ x, y }) => ({ x, y }))),
+      outer: this.outline.map(({ x, y }) => [x, y]),
+      holes: this.holes.map(hole => hole.map(({ x, y }) => [x, y])),
     };
   }
 
@@ -369,8 +369,8 @@ export class Polygon {
 }
 
 export interface PolygonJson {
-  outline: VectorJson[];
-  holes: VectorJson[][];
+  outer: [number, number][];
+  holes: [number, number][][];
 }
 export interface GeoJsonPolygon {
   type: 'Polygon';
