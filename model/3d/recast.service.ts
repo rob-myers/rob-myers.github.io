@@ -1,7 +1,6 @@
 import { Mesh, Vector3 } from "three";
 import { Geometry, Face3 } from "model/3d/deprecated";
-
-const Recast = require('recast-detour');
+import { getWindow } from "model/dom.model";
 
 /**
  * RecastJS navigation plugin
@@ -19,14 +18,17 @@ class RecastService {
    * Initializes the recastJS plugin
    * @param recastInjection can be used to inject your own recast reference
    */
-  public constructor(recastInjection: any = Recast) {
-    if (typeof recastInjection === "function") {
-      recastInjection(this.bjsRECAST);
-    } else {
-      this.bjsRECAST = recastInjection;
-    }
+  constructor() {
     this.lookup = {};
-
+  }
+  
+  initialize(Recast: any) {
+    if (typeof Recast === "function") {
+      Recast(this.bjsRECAST);
+    } else {
+      this.bjsRECAST = Recast;
+    }
+  
     if (!this.isSupported()) {
       console.error("RecastJS is not available. Please make sure you included the js file.");
       return;
@@ -417,3 +419,13 @@ export interface INavMeshParameters {
 }
 
 export const recastService = new RecastService;
+
+if (getWindow()) {
+  import('recast-detour').then((module) => {
+    recastService.initialize(module.default);
+    getWindow<any>()!.Recast = undefined;
+    // recastService.createNavMesh('test',
+    //   geomService.polysToGeometry([Polygon.fromRect(new Rect(0, 0, 10, 10))], 'xz')
+    // );
+  });
+}

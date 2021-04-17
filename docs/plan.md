@@ -18,10 +18,17 @@ Main focus is:
 - Sketch out milestones
 - 🛠 Create replacement for brush i.e. `Selection`
   - ✅ Can select rectilinear polygons.
+  - `sel >l1` saves current selection as json polygon (format?)
+  - session variables are persisted
+  - `get l1 | sel` to restore
   - Can save/restore selections.
   - Can lock and then translate/transform.
   - Has group where ghost meshes can be attached.
   - Could leave "select mode" by saving and locking empty selection
+
+- BUG
+   - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
+   - `call ({ stage }) => delete stage.opts.foo`
 
 ### Done
 

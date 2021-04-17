@@ -1,4 +1,8 @@
 import safeJsonStringify from 'safe-json-stringify';
+import { getWindow } from './dom.model';
+
+const w = getWindow();
+w && ((w as any).safeJsonStringify = safeJsonStringify);
 
 /** Useful for state management */
 export interface KeyedLookup<Value extends { key: K }, K extends string | number = string | number> {
