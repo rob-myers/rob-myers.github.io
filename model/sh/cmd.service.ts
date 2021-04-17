@@ -163,21 +163,12 @@ class CmdService {
         }
         break;
       }
-      case 'map': {
-        const { opts, operands } = getOpts(args, { boolean: [
-          'x', /** Permit extended func def, see function `filter` */
-        ], });
-        const funcDef = operands[0];
-        const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
-        yield* this.read(meta, (data) => func()(data, { util: {...this.jsUtil} }));
-        break;
-      }
       case 'ls': {
         const { opts, operands } = getOpts(args, { boolean: [
           '1', /** One line per item */
         ], });
         const { stage, var: varLookup } = this.provideStageAndVars(meta);
-        let items = Object.keys(varLookup).map(x => `var/${x}`)
+        let items = Object.keys(varLookup)
           .concat(Object.keys(stage).map(x => `stage/${x}`)).sort();
 
         // We usually treat -1 as an operand, but it is an option here
@@ -189,6 +180,15 @@ class CmdService {
         }
 
         for (const item of items) yield item;
+        break;
+      }
+      case 'map': {
+        const { opts, operands } = getOpts(args, { boolean: [
+          'x', /** Permit extended func def, see function `filter` */
+        ], });
+        const funcDef = operands[0];
+        const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
+        yield* this.read(meta, (data) => func()(data, { util: {...this.jsUtil} }));
         break;
       }
       case 'poll': {
@@ -343,11 +343,11 @@ class CmdService {
   }
 
   private getData(sessionKey: string, stageKey: string, pathStr: string) {
-    const [ first, ...path] = pathStr.split('/').map(kebabToCamel).filter(Boolean);
-    if  (first === 'stage') {
+    const path = pathStr.split('/').map(kebabToCamel).filter(Boolean);
+    if  (path[0] === 'stage') {
      const stage = useStage.api.getStage(stageKey);
-     return deepGet(stage, path);
-   } else if (first === 'var') {
+     return deepGet(stage, path.slice(1));
+   } else {
      const varLookup = useSession.api.getSession(sessionKey).var;
      return deepGet(varLookup, path);
    }
