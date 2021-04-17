@@ -29,7 +29,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     const [position, scale] = [rectMesh.current!.position, rectMesh.current!.scale];
     let [ptr, ptrDown, shiftDown] = [new THREE.Vector3, false, false];
 
-    console.log('locked', selection.locked); // TODO
+    // console.log('locked', selection.locked);
 
     const ptrSub = ptrWire.subscribe(({ key, ndCoords }) => {
       if (ptrDown && key === 'pointermove') {
@@ -87,7 +87,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   }, [selection.polygons]);
 
   return (
-    <group ref={group}>
+    <group ref={group} name="SelectionGroup">
 
       {cursorTexture && (
         <mesh ref={cursorMesh}>
