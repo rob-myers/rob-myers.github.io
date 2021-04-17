@@ -104,10 +104,10 @@ class GeomService {
 
   createRegularPolygon(numEdges: number) {
     return Geom.Polygon.from({
-      outline: range(numEdges).map((i) => ({
-        x: Math.cos((2 * i) * Math.PI / numEdges),
-        y: Math.sin((2 * i) * Math.PI / numEdges),
-      })),
+      outer: range(numEdges).map((i) => [
+        Math.cos((2 * i) * Math.PI / numEdges),
+        Math.sin((2 * i) * Math.PI / numEdges),
+      ]),
     });
   }
 
