@@ -149,12 +149,9 @@ export class SrcService {
         ].filter(Boolean).join(' ');
 
       case 'DeclClause':
-        // Needs clarification
         return [
-          node.Variant,
-          node.Opts.map(c => this.src(c)).join(' '),
-          node.Assigns.map(c => this.src(c)).join(' '),
-          node.others.map(c => this.src(c)).join(' '),
+          node.Variant.Value,
+          node.Args.map(c => this.src(c)).join(' '),
         ].filter(Boolean).join(' ');
 
       case 'ArithmExp':

@@ -203,8 +203,8 @@ class SemanticsService {
   private async *CallExpr(node: Sh.CallExpr) {
     node.exitCode = 0;
     const args = await sem.performShellExpansion(node.Args);
-    console.log('simple command', args);
     const [command, ...cmdArgs] = args;
+    console.log('simple command', args);
     
     try {
       if (args.length) {
@@ -238,6 +238,7 @@ class SemanticsService {
           case 'Block': generator = this.Block(node); break;
           case 'BinaryCmd': generator = this.BinaryCmd(node); break;
           case 'FuncDecl': generator = this.FuncDecl(node); break;
+          case 'DeclClause': generator = this.DeclClause(node); break;
           default:
             throw new ShError(`Command: ${node.type}: not implemented`, 2);
         }
@@ -254,6 +255,20 @@ class SemanticsService {
       }
     } catch (e) {
       sem.handleShError(node, e);
+    }
+  }
+
+  private async *DeclClause(node: Sh.DeclClause) {
+    if (node.Variant.Value === 'declare') {
+      if (node.Args.length) {
+        // TODO support options e.g. interpret as json
+        for (const assign of node.Args) yield* this.Assign(assign);
+      } else {
+        node.exitCode = 0;
+        yield* cmdService.runCmd(node, 'declare', []);
+      }
+    } else {
+      throw new ShError(`Commmand: DeclClause: ${node.Variant.Value} unsupported`, 2);
     }
   }
 

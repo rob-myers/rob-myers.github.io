@@ -68,7 +68,7 @@ class CmdService {
     return word in commandKeys;
   }
   
-  async *runCmd(node: Sh.CallExpr, command: CommandName, args: string[]) {
+  async *runCmd(node: Sh.CallExpr | Sh.DeclClause, command: CommandName, args: string[]) {
     const { meta } = node;
     switch (command) {
       case 'await-stage': {

@@ -41,7 +41,7 @@ export function getChildren(node: Sh.ParsedSh): Sh.ParsedSh[] {
     case 'CoprocClause': return [node.Stmt];
     case 'DblQuoted': return node.Parts;
     case 'DeclClause': return ([] as Sh.ParsedSh[])
-        .concat(node.Assigns, node.Opts, node.Variant, node.others);
+        .concat(node.Args, node.Variant);
     case 'ExtGlob': return [];
     case 'File': return node.Stmts;
     case 'ForClause': return [...node.Do, node.Loop];

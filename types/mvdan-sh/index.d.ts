@@ -507,14 +507,7 @@ declare namespace MvdanSh {
      * "typeset", or "nameref".
      */
     Variant: LitGeneric<Base, Pos, Op, DeclClauseLitValues>;
-    Opts: WordGeneric<Base, Pos, Op>[];
-    Assigns: AssignGeneric<Base, Pos, Op>[];
-    /**
-     * PATCH.
-     * - Words that might evaluate to an option or a variable name.
-     * - https://github.com/mvdan/sh/issues/332
-     */
-    others: WordGeneric<Base, Pos, Op>[];
+    Args: AssignGeneric<Base, Pos, Op>[];
   }
   type DeclClauseLitValues =
   | 'declare'

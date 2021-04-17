@@ -54,11 +54,12 @@ class ParseShService {
   parse(src: string): P.FileWithMeta {
     const parser = syntax.NewParser(
       syntax.KeepComments(false),
-      syntax.Variant(syntax.LangPOSIX),
-      // syntax.Variant(syntax.LangBash),
+      syntax.Variant(syntax.LangBash),
+      // syntax.Variant(syntax.LangPOSIX),
       // syntax.Variant(syntax.LangMirBSDKorn),
     );
     const parsed = parser.Parse(src, 'src.sh');
+    // console.log('mvdan-sh parsed', parsed);
     /**
      * Clean up the parse, making it serialisable.
      * We also use a single fresh `meta` for all nodes,
@@ -70,7 +71,6 @@ class ParseShService {
 
   tryParseBuffer(buffer: string[]) {
     // console.log('parsing shell code', buffer.slice());
-
     try {
       // Parser.Interactive expects terminal newline.
       const src = buffer.join('\n') + '\n';
@@ -302,9 +302,8 @@ class ParseShService {
   });
   
   private Command = (node: Sh.Command): P.Command => {
-    if ('Args' in node) {
+    if ('Args' in node && !('Variant' in node)) {
       return this.CallExpr(node);
-    // } else if ('IfPos' in node) {
     } else if ('FiPos' in node) {
       return this.IfClause(node);
     } else if  ('WhilePos' in node) {
@@ -356,34 +355,14 @@ class ParseShService {
     Right: this.pos(Right),
   });
   
-  /**
-   * ISSUE
-   * - ambiguity i.e. `declare $x` views latter as assignment,
-   *   yet could denote an option.
-   * - this.Assign is being sent a var without a name, and complains.
-   */
   private DeclClause = (
-    { Pos, End, Assigns, Opts, Variant }: Sh.DeclClause
+    { Pos, End, Args, Variant }: Sh.DeclClause
   ): P.DeclClause => {
-  // ): CallExpr => {
-    /**
-     * PATCH.
-     * - Move assigns with null `Name` into `others`, using `Value`.
-     * - Move assigns whose `Name` starts with -/+ into `options`, using `Name`.
-     */
-    const AssignsPatched = Assigns.filter((x) => x.Name && !/^[-+]/.test(x.Name.Value));
-    const others = Assigns.filter((x) => !x.Name).map(({ Value }) => Value as Sh.Word);
-    const OptsPatched = Opts.concat(
-      Assigns.filter((x) => x.Name && /^[-+]/.test(x.Name.Value))
-        .map<Sh.Word>((x) => ({ type: 'Word', Parts: [x.Name], Pos: x.Pos, End: x.End }))
-    );
     return {
       ...this.base({ Pos, End }),
       type: 'DeclClause',
-      Assigns: AssignsPatched.map(this.Assign),
-      Opts: OptsPatched.map(this.Word),
+      Args: Args.map(this.Assign),
       Variant: this.Lit(Variant),
-      others: others.map(this.Word),// PATCH.
     };
   };
   
