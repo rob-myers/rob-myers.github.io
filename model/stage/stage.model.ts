@@ -12,6 +12,7 @@ export type StageMeta = {
   extra: StageExtra;
   /** Important options, also for the CLI */
   opts: StageOpts;
+  /** The current selection */
   selection: StageSelection;
 };
 

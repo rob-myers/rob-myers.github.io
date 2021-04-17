@@ -54,6 +54,9 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts }) => {
               <option key="rectilinear" value="rectilinear">rectilinear</option>
               <option key="rectangle" value="rectangle">rectangle</option>
             </SelectMode>
+            <LockedButton disabled={!enableUi}>
+              locked
+            </LockedButton>
           </Slot>
         </LeftToolbar>
 
@@ -100,7 +103,19 @@ const LeftToolbar = styled.section`
 
 const SelectMode = styled.select`
   display: flex;
-  max-width: 84px;
+  max-width: 82px;
+`;
+
+const LockedButton = styled.div<{ disabled?: boolean }>`
+  display: flex;
+  justify-content: center;
+  font-size: small;
+  padding: 0 4px;
+  border-radius: 0 3px 3px 0;
+  border: 1px solid #000;
+  border-left-width: 0;
+  color: ${({ disabled }) => disabled ? '#aaa' : '#000'};
+  border-color: ${({ disabled }) => disabled ? '#ccc' : '#000'};
 `;
 
 const RightToolbar = styled.section`
