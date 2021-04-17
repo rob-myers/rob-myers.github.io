@@ -219,7 +219,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       set(({ persist }) => ({
         persist: updateLookup(sessionKey, persist, () => ({
           history: ttyShell.getHistory(),
-          var: mapValues(varLookup, x => JSON.parse(safeJsonStringify(x))),
+          var: mapValues(varLookup, x => {
+            try {// Unserializable is ignored
+              return JSON.parse(JSON.stringify(x));
+            } catch {}
+          }),
         })),
       }));
     },
