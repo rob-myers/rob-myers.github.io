@@ -234,9 +234,7 @@ export class TtyShell implements Device {
     if (prev !== srcLine) {
       this.history.push(srcLine);
       while (this.history.length > this.maxLines) this.history.shift();
-      useSession.api.persist(this.sessionKey, {
-        history: this.history.slice(),
-      });
+      useSession.api.persist(this.sessionKey);
     }
   }
 

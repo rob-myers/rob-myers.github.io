@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import styled from '@emotion/styled';
 import { FitAddon } from 'xterm-addon-fit';
 import useResizeObserver from 'use-resize-observer';
+import { useBeforeunload } from 'react-beforeunload';
 
 import { TtyXterm } from 'model/sh/tty.xterm';
 import useSession from 'store/session.store';
@@ -23,6 +24,12 @@ const Terminal: React.FC<Props> = ({ sessionKey, env }) => {
   const { ref, width = 1, height = 1 } = useResizeObserver<HTMLElement>();
   const fitAddonRef = useRef<FitAddon>();
   useEffect(() => fitAddonRef.current?.fit(), [width, height]);
+
+  // TODO option to turn off?
+  const persistOnUnload = useCallback(() =>
+    useSession.api.persist(sessionKey), [],
+  );
+  useBeforeunload(persistOnUnload);
 
   return (
     <Root ref={ref}>

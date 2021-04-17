@@ -1,7 +1,8 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import safeJsonStringify from 'safe-json-stringify';
 
-import { deepClone, KeyedLookup } from 'model/generic.model';
+import { deepClone, KeyedLookup, mapValues } from 'model/generic.model';
 import { Device, makeShellIo, ShellIo } from 'model/sh/io/io.model';
 import { MessageFromShell, MessageFromXterm } from 'model/sh/tty.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
@@ -43,7 +44,7 @@ export type State = {
     getVar: (sessionKey: string, varName: string) => any | undefined;
     getVars: (sessionKey: string) => { key: string; value: string }[];
     getSession: (sessionKey: string) => Session;
-    persist: (sessionKey: string, data: { history: string[] }) => void;
+    persist: (sessionKey: string) => void;
     removeDevice: (deviceKey: string) => void;
     removeProcess: (pid: number, sessionKey: string) => void;
     removeSession: (sessionKey: string) => void;
@@ -66,6 +67,7 @@ export interface Session {
 interface PersistedSession {
   key: string;
   history: string[];
+  var: Record<string, any>;
 }
 
 export enum ProcessStatus {
@@ -148,7 +150,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           process: {},
           ttyIo,
           ttyShell,
-          var: deepClone(env),
+          var: {
+            ...persisted.var,
+            ...deepClone(env),
+          },
         }, session),
       }));
       return get().session[sessionKey];
@@ -166,7 +171,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     ensurePersisted: (sessionKey) => {
-      const persisted = get().persist?.[sessionKey]??{ key: sessionKey, history: [] };
+      const persisted = get().persist?.[sessionKey]??{ key: sessionKey, history: [], var: {} };
       set(({ persist: lookup }) => ({ persist: addToLookup(persisted, lookup) }));
       return persisted;
     },
@@ -208,11 +213,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     getSession: (sessionKey) =>
       get().session[sessionKey],
 
-    persist: (sessionKey, { history }) => set(({ persist: persisted }) => ({
-      persist: updateLookup(sessionKey, persisted, () => ({
-        history,
-      })),
-    })),
+    persist: (sessionKey) => {
+      const { ttyShell, var: varLookup } = api.getSession(sessionKey);
+      
+      set(({ persist }) => ({
+        persist: updateLookup(sessionKey, persist, () => ({
+          history: ttyShell.getHistory(),
+          var: mapValues(varLookup, x => JSON.parse(safeJsonStringify(x))),
+        })),
+      }));
+    },
 
     removeDevice(deviceKey) {
       delete get().device[deviceKey];
