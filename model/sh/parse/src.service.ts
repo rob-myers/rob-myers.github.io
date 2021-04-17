@@ -97,7 +97,7 @@ export class SrcService {
       case 'Block': {
         const { Stmts } = node;
         // Handle `{ echo foo & }`
-        const terminal = this.isBackgroundNode(last(Stmts)!) ? '' : ';';
+        const terminal = Stmts.length && this.isBackgroundNode(last(Stmts)!) ? '' : ';';
         if (this.onOneLine) {
           return `{ ${ this.seqSrc(Stmts) }${terminal} }`;
         } else {
