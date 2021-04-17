@@ -89,12 +89,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,
-          opts: {
-            ...deepClone(opts),
+          opts: deepClone(opts),
+          extra: {
+            ...deepClone(extra),
             initCameraPos: [...currentCameraPos ||
-              persist[stageKey].opts.initCameraPos || opts.initCameraPos],
+              persist[stageKey].extra.initCameraPos || extra.initCameraPos],
           },
-          extra: deepClone(extra),
           selection: {
             cursor: selection.lastCursor.json,
             polygons: selection.polygons.map(x => x.json),

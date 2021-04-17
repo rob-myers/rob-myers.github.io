@@ -23,7 +23,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     // Most recent initial camera position is persisted one
     const camera = ctxt.camera as PerspectiveCamera;
-    const { initCameraPos } = useStage.api.getPersist(stage.key).opts;
+    const { initCameraPos } = useStage.api.getPersist(stage.key).extra;
     camera.position.set(...initCameraPos);
 
     camera.setFocalLength(35);

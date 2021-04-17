@@ -26,9 +26,12 @@ export interface StageInternal {
   bounds: Geom.Rect;
 }
 
+/** Key-value storage for internal use */
 export type StageExtra = Record<string, any> & {
   /** Data url */
   canvasPreview?: string;
+  /** Initial camera position */
+  initCameraPos: Triple<number>;
 }
 
 /** Keep this flat so stage.proxy handles updates */
@@ -40,8 +43,6 @@ export interface StageOpts {
   background: string;
   /** Persist on unload window? */
   autoPersist: boolean;
-  /** Initial camera position */
-  initCameraPos: Triple<number>;
 }
 
 export interface StageSelection {
@@ -72,7 +73,9 @@ export function createStage(stageKey: string): StageMeta {
       bounds: initStageBounds.clone(),
       // ...Other stuff is attached by components
     },
-    extra: {},
+    extra: {
+      initCameraPos: [...initCameraPosArray],
+    },
     opts: createStageOpts(),
     selection: {
       group: new THREE.Group,
@@ -89,7 +92,6 @@ export function createStageOpts(): StageOpts {
     panZoom: true,
     background: '#ccc',
     autoPersist: true,
-    initCameraPos: [...initCameraPosArray],
   };
 }
 
@@ -104,7 +106,9 @@ export function createPersist(stageKey: string): PersistedStage {
   return {
     key: stageKey,
     opts: createStageOpts(),
-    extra: {},
+    extra: {
+      initCameraPos: [...initCameraPosArray],
+    },
     selection: {
       cursor: { x: 0, y: 0 },
       polygons: [],
