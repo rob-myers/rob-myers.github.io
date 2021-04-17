@@ -337,8 +337,8 @@ class CmdService {
   private provideStageAndVars(meta: Sh.BaseMeta) {
     const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
     return {
+      ...useSession.api.getSession(meta.sessionKey).var,
       stage: createStageProxy(stageKey),
-      var: useSession.api.getSession(meta.sessionKey).var,
     };
   }
 
