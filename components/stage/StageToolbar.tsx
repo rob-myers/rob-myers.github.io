@@ -44,16 +44,16 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts }) => {
             </Button>
           </Slot>
           <Slot>
-            <SelectSpawn
+            <SelectMode
               disabled={!enableUi}
-              value="disabled"
+              value="rectilinear"
               onChange={onSelectAction}
             >
-              <option key="disabled" value="disabled" disabled>actions</option>
-              {['foo', 'bar', 'baz'].map(key => (
-                <option key={key} value={key}>{key}</option>
-              ))}
-            </SelectSpawn>
+              <option key="disabled" value="disabled" disabled>choose selector</option>
+              <option key="cursor" value="cursor">cursor</option>
+              <option key="rectilinear" value="rectilinear">rectilinear</option>
+              <option key="rectangle" value="rectangle">rectangle</option>
+            </SelectMode>
           </Slot>
         </LeftToolbar>
 
@@ -98,9 +98,9 @@ const LeftToolbar = styled.section`
   gap: 8px;
 `;
 
-const SelectSpawn = styled.select`
+const SelectMode = styled.select`
   display: flex;
-  max-width: 64px;
+  max-width: 84px;
 `;
 
 const RightToolbar = styled.section`

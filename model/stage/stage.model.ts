@@ -55,13 +55,22 @@ export interface StageSelection {
   polygons: Geom.Polygon[];
   /** Last cursor position */
   lastCursor: Geom.Vector;
-  /** Is selection locked, so it can be dragged? */
+  /** Which kind of selection are we using? */
+  selector: SelectorMode; 
+  /**
+   * Is the selector locked?
+   * If so, for 'rectangle' one can drag it.
+   * If so, for 'rectilinear' one can drag/transform.
+   */
   locked: boolean;
 }
+
+type SelectorMode = 'cursor' | 'rectangle' | 'rectilinear';
 
 interface StageSelectionJson {
   polygons: Geom.PolygonJson[];
   cursor: Geom.VectorJson;
+  selector: SelectorMode;
   locked: boolean;
 }
 
@@ -81,6 +90,7 @@ export function createStage(stageKey: string): StageMeta {
       group: new THREE.Group,
       polygons: [],
       lastCursor: new Geom.Vector,
+      selector: 'rectilinear',
       locked: false,
     },
   };
@@ -112,6 +122,7 @@ export function createPersist(stageKey: string): PersistedStage {
     selection: {
       cursor: { x: 0, y: 0 },
       polygons: [],
+      selector: 'rectilinear',
       locked: false,
     },
   };

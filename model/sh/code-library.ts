@@ -43,7 +43,7 @@ export const preloadedVariables = {
 
 export const shellScripts = {
 
-  brushKeyHandler: `
+  selectionKeyHandler: `
 key | run '({ read, _: {msg} }, { stage: s }) {
   while (msg = await read()) {
     if (msg.type !== "keydown" || !s.opts.enabled) continue;
@@ -85,8 +85,9 @@ export const profiles = {
   first: `
 await-stage "\${STAGE_KEY}"
 
-${shellScripts.brushKeyHandler.trim()}
+${shellScripts.selectionKeyHandler.trim()}
 
 ${shellScripts.optsKeyHandler.trim()}
+
 `.trim(),
 };

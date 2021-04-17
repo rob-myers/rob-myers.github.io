@@ -60,8 +60,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         instance.opts = deepClone(opts);
         instance.extra = deepClone(extra);
         instance.selection.lastCursor = Geom.Vector.from(selection.cursor);
-        instance.selection.locked = selection.locked;
         instance.selection.polygons = selection.polygons.map(x => Geom.Polygon.from(x));
+        instance.selection.selector = selection.selector;
+        instance.selection.locked = selection.locked;
         set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
       } else {
         set(({ stage, persist }) => ({
@@ -98,6 +99,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           selection: {
             cursor: selection.lastCursor.json,
             polygons: selection.polygons.map(x => x.json),
+            selector: selection.selector,
             locked: selection.locked,
           },
         }, persist),
