@@ -25,6 +25,8 @@ Main focus is:
   - Can lock and then translate/transform.
   - Has group where ghost meshes can be attached.
   - Could leave "select mode" by saving and locking empty selection
+✅ Can `echo foo >!x` to write last elem, not array
+
 
 - BUG
    - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)

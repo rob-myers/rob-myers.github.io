@@ -420,7 +420,10 @@ class SemanticsService {
     if (node.Op === '>') {
       const { value } = await this.lastExpanded(sem.Expand(node.Word));
       if (varRegex.test(value)) {
-        const varDevice = useSession.api.createVarDevice(node.meta.sessionKey, value);
+        const varDevice = useSession.api.createVarDevice(node.meta.sessionKey, value, 'array');
+        return redirectNode(node.parent!, { 1: varDevice.key });
+      } else if (value[0] === '!' && varRegex.test(value.slice(1))) {
+        const varDevice = useSession.api.createVarDevice(node.meta.sessionKey, value.slice(1), 'last');
         return redirectNode(node.parent!, { 1: varDevice.key });
       } else if (value === '/dev/null') {
         return redirectNode(node.parent!, { 1: '/dev/null' });
