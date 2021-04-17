@@ -16,7 +16,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geomService.createSquareGeometry()).current;
   const [polysGeom, setPolysGeom] = useState(geomService.polysToGeometry(selection.polygons));
-  const updatedAt = useRef(Date.now());
 
   useEffect(() => {
     selection.group = group.current!;
@@ -46,13 +45,14 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         ptrDown = false;
         selector.scale.set(0, 0, 0);
         scaleUpByTouched(selector.position, ptr);
+
         const rect = Geom.Rect.fromPoints(selector.position, ptr);
         const polygons = shiftDown
           ? geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons)
           : geomService.union(selection.polygons.concat(Geom.Polygon.fromRect(rect)));
         polygons.forEach(x => x.precision(1)); // Increments of 0.1
+
         setPolysGeom(geomService.polysToGeometry(polygons));
-        updatedAt.current = Date.now();
         selection.polygons = polygons;
       } else if (key === 'pointerleave') {
         ptrDown = false;
@@ -77,7 +77,11 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       ptrSub.unsubscribe();
       keySub.unsubscribe();
     };
-  }, [selection.locked]);
+  }, [selection]);
+
+  useEffect(() => {
+    setPolysGeom(geomService.polysToGeometry(selection.polygons));
+  }, [selection.polygons]);
 
   return (
     <group ref={group}>
@@ -99,7 +103,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
       <mesh
         geometry={polysGeom}
-        key={updatedAt.current}
       >
         <meshBasicMaterial color="#00f" transparent opacity={0.2} />
       </mesh>

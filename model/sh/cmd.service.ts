@@ -2,6 +2,7 @@ import cliColumns from 'cli-columns';
 import safeJsonStringify from 'safe-json-stringify';
 import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 
+import * as Geom from 'model/geom';
 import { deepGet, kebabToCamel, testNever, truncate, Deferred, pause } from 'model/generic.model';
 import { createStageProxy } from '../stage/stage.proxy';
 
@@ -323,7 +324,7 @@ class CmdService {
       // For js API we convert { eof: true } to null, for truthy test
       read: async () => {
         const result = await this.readOnce(meta);
-        return result.eof ? null : result;
+        return result?.eof ? null : result;
       },
       sleep: (seconds: number) => new Promise<void>((resolve, reject) => {
         setTimeout(resolve, seconds * 1000);
@@ -331,6 +332,7 @@ class CmdService {
       }),
       /** Trick to provide local variables via destructuring */
       _: {},
+      Geom,
     };
   }
 

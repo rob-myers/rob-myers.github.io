@@ -19,9 +19,15 @@ export const preloadedFunctions = {
   pretty: `map '(x, { util: {stringify} }) => stringify(x)'`,
   keys: `map Object.keys`,
   cat: `get "$@" | split`,
-  sel: `run '({ read }, { stage }) {
-    const input = await read(); // TODO
-    yield stage.selection.polygons.map(x => x.json);
+ 
+  sel: `run '({ read, Geom }, { stage: { selection } }) {
+    const input = await read();
+    if (input) {
+      selection.polygons = (Array.isArray(input) ? input : [input])
+        .map(x => Geom.Polygon.from(x))
+        .filter(x => x.outer.length);
+    }
+    yield selection.polygons.map(x => x.json);
 }'
 `,
 };

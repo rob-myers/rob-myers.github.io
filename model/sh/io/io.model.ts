@@ -146,7 +146,7 @@ export function getProcessStatusIcon(status: ProcessStatus) {
 //#region data chunk
 export const dataChunkKey = '__chunk__';
 export function isDataChunk(data: any): data is DataChunk {
-  if (data === undefined) {
+  if (data === undefined || data === null) {
     return false;
   }
   return data[dataChunkKey];
