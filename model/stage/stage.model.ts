@@ -56,13 +56,11 @@ export interface StageSelection {
   polygons: Geom.Polygon[];
   /** Last cursor position */
   lastCursor: Geom.Vector;
+  /** Last rectangle selector */
+  lastRect: Geom.Rect;
   /** Which kind of selection are we using? */
   selector: SelectorMode; 
-  /**
-   * Is the selector locked?
-   * If so, for 'rectangle' one can drag it.
-   * If so, for 'rectilinear' one can drag/transform.
-   */
+  /** Is the selector locked? */
   locked: boolean;
 }
 
@@ -71,6 +69,7 @@ type SelectorMode = 'crosshair' | 'rectangle' | 'rectilinear';
 interface StageSelectionJson {
   polygons: Geom.PolygonJson[];
   cursor: Geom.VectorJson;
+  rect: Geom.RectJson;
   selector: SelectorMode;
   locked: boolean;
 }
@@ -91,6 +90,7 @@ export function createStage(stageKey: string): StageMeta {
       group: new THREE.Group,
       polygons: [],
       lastCursor: new Geom.Vector,
+      lastRect: new Geom.Rect(0, 0, 0, 0),
       selector: 'rectilinear',
       locked: false,
     },
@@ -101,7 +101,7 @@ export function createStageOpts(): StageOpts {
   return {
     enabled: true,
     panZoom: true,
-    background: '#ccc',
+    background: '#eee',
     autoPersist: true,
   };
 }
@@ -121,10 +121,11 @@ export function createPersist(stageKey: string): PersistedStage {
       initCameraPos: [...initCameraPosArray],
     },
     selection: {
-      cursor: { x: 0, y: 0 },
       polygons: [],
       selector: 'rectilinear',
       locked: false,
+      cursor: { x: 0, y: 0 },
+      rect: { x: 0, y: 0, width: 0, height: 0 },
     },
   };
 }

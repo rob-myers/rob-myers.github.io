@@ -57,12 +57,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         // Restore persisted data
         const instance = Stage.createStage(stageKey);
         const { opts, extra, selection  } = api.getPersist(stageKey);
-        instance.opts = deepClone(opts);
-        instance.extra = deepClone(extra);
-        instance.selection.lastCursor = Geom.Vector.from(selection.cursor);
-        instance.selection.polygons = selection.polygons.map(x => Geom.Polygon.from(x));
-        instance.selection.selector = selection.selector;
-        instance.selection.locked = selection.locked;
+        instance.opts = deepClone(opts??Stage.createStageOpts());
+        instance.extra = deepClone(extra??{});
+        instance.selection.lastCursor = Geom.Vector.from(selection.cursor??{ x: 0, y: 0 });
+        instance.selection.lastRect = Geom.Rect.from(selection.rect??{ x: 0, y: 0, width: 0, height: 0 });
+        instance.selection.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
+        instance.selection.selector = selection.selector??'crosshair';
+        instance.selection.locked = selection.locked??false;
         set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
       } else {
         set(({ stage, persist }) => ({
@@ -97,10 +98,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
               persist[stageKey].extra.initCameraPos || extra.initCameraPos],
           },
           selection: {
-            cursor: selection.lastCursor.json,
             polygons: selection.polygons.map(x => x.json),
             selector: selection.selector,
             locked: selection.locked,
+            cursor: selection.lastCursor.json,
+            rect: selection.lastRect.json,
           },
         }, persist),
       }));
