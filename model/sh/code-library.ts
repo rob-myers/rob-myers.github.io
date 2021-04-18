@@ -26,8 +26,9 @@ export const preloadedFunctions = {
       selection.polygons = (Array.isArray(input) ? input : [input])
         .map(x => Geom.Polygon.from(x))
         .filter(x => x.outer.length);
+    } else {
+      yield selection.polygons.map(x => x.json);
     }
-    yield selection.polygons.map(x => x.json);
 }'
 `,
 };
