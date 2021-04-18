@@ -55,7 +55,6 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
                 selector
               </option>
               <option key="crosshair" value="crosshair">crosshair</option>
-              <option key="rectangle" value="rectangle">rectangle</option>
               <option key="rectilinear" value="rectilinear">rectilinear</option>
             </SelectMode>
             <LockedButton

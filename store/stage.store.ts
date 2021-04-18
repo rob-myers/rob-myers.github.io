@@ -60,7 +60,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         instance.opts = deepClone(opts??Stage.createStageOpts());
         instance.extra = deepClone(extra??{});
         instance.selection.cursor = Geom.Vector.from(selection.cursor??{ x: 0, y: 0 });
-        instance.selection.rect = Geom.Rect.from(selection.rect??{ x: 0, y: 0, width: 0, height: 0 });
         instance.selection.dragOffset = Geom.Vector.from(selection.dragOffset??{ x: 0, y: 0 });
         instance.selection.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
         instance.selection.selector = selection.selector??'crosshair';
@@ -104,7 +103,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             selector: selection.selector,
             locked: selection.locked,
             cursor: selection.cursor.json,
-            rect: selection.rect.json,
             dragOffset: selection.dragOffset.json,
           },
         }, persist),

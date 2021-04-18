@@ -56,8 +56,6 @@ export interface StageSelection {
   polygons: Geom.Polygon[];
   /** Last cursor position */
   cursor: Geom.Vector;
-  /** Last rectangle selector */
-  rect: Geom.Rect;
   /** Last drag offset  */
   dragOffset: Geom.Vector;
   /** Which kind of selection are we using? */
@@ -66,14 +64,13 @@ export interface StageSelection {
   locked: boolean;
 }
 
-type SelectorMode = 'crosshair' | 'rectangle' | 'rectilinear';
+type SelectorMode = 'crosshair' | 'rectilinear';
 
 interface StageSelectionJson {
   polygons: Geom.PolygonJson[];
   selector: SelectorMode;
   locked: boolean;
   cursor: Geom.VectorJson;
-  rect: Geom.RectJson;
   dragOffset: Geom.VectorJson;
 }
 
@@ -95,7 +92,6 @@ export function createStage(stageKey: string): StageMeta {
       selector: 'rectilinear',
       locked: false,
       cursor: new Geom.Vector,
-      rect: new Geom.Rect(0, 0, 0, 0),
       dragOffset: new Geom.Vector,
     },
   };
@@ -129,7 +125,6 @@ export function createPersist(stageKey: string): PersistedStage {
       selector: 'rectilinear',
       locked: false,
       cursor: { x: 0, y: 0 },
-      rect: { x: 0, y: 0, width: 0, height: 0 },
       dragOffset: { x: 0, y: 0 },
     },
   };

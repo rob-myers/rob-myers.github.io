@@ -32,18 +32,10 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   }, []);
 
   const restoreFromState = useCallback((selection: StageSelection) => {
-    switch (selection.selector) {
-      case 'rectangle':
-        const { x, y, e, s } = selection.rect;
-        rectMesh.current!.position.set(x, y, 0);
-        rectMesh.current!.scale.set(e - x, s - y, 1);
-        updateLockedOutline([Geom.Polygon.fromRect(selection.rect)]);
-        break;
-      case 'rectilinear':
-        rectMesh.current!.scale.set(0, 0, 0);
-        setPolysGeom(geomService.polysToGeometry(selection.polygons));
-        updateLockedOutline(selection.polygons);
-        break;
+    if (selection.selector === 'rectilinear') {
+      rectMesh.current!.scale.set(0, 0, 0);
+      setPolysGeom(geomService.polysToGeometry(selection.polygons));
+      updateLockedOutline(selection.polygons);
     }
   }, []);
 
@@ -53,7 +45,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     ));
   }, []);
 
-  
   useEffect(() => {// Handle selector change
     restoreFromState(selection);
   }, [selection.selector]);
@@ -64,7 +55,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
    */
   useEffect(() => {
     if (!selection.locked && selection.dragOffset.length) {
-      // selection.rect.add(selection.dragOffset);
       selection.polygons.map(x => x.add(selection.dragOffset));
       selection.dragOffset.copy(polysGroup.current!.position.set(0, 0, 0));
       restoreFromState(selection);
@@ -109,11 +99,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
           polygons.forEach(x => x.precision(1)); // Increments of 0.1
           selection.polygons = polygons; // Must assign before setPolysGeom
           setPolysGeom(geomService.polysToGeometry(polygons));
-        } else if (selection.selector === 'rectangle') {
-          scaleUpByTouched(position, ptr);
-          scale.set(ptr.x - position.x, ptr.y - position.y, 1);
-          selection.rect = Geom.Rect.fromPoints(position, ptr);
-          updateLockedOutline([Geom.Polygon.fromRect(selection.rect)]);
         }
 
       } else if (key === 'pointerleave') {
