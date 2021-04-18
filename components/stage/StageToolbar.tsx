@@ -33,17 +33,17 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
     <Toolbar>
         <LeftToolbar>
           <Slot>
-            @<strong>{stageKey}</strong>
+            <StageKey>
+              @<strong>{stageKey}</strong>
+            </StageKey>
           </Slot>
-          <Slot background="#eee">
-            <Button
+          <Slot>
+            <PauseButton
               onClick={toggleRunning}
-              {...opts.enabled && { title: 'click to pause' }}
               emphasis={!canToggleRunning}
-              style={{ color: opts.enabled ?  '#030' : '#300' }}
             >
               {opts.enabled ? 'running' : 'paused'}
-            </Button>
+            </PauseButton>
           </Slot>
           <Slot>
             <SelectMode
@@ -70,7 +70,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
         <RightToolbar>
           <Slot />
           <Slot>
-            <Button
+            <PanZoomButton
               greyed={!(enableUi && opts.panZoom)}
               {...enableUi && {
                 onClick: toggleCam,
@@ -78,7 +78,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
               }}
             >
               panzoom
-            </Button>
+            </PanZoomButton>
           </Slot>
         </RightToolbar>
     </Toolbar>
@@ -91,14 +91,6 @@ interface Props {
   selection: StageSelection;
 }
 
-const Slot = styled.div<{ background?: string }>`
-  display: flex;
-  justify-content: center;
-  ${({ background }) => css`
-    background: ${background};
-  `}
-`;
-
 const Toolbar = styled.section`
   display: flex;
   justify-content: space-between;
@@ -106,15 +98,39 @@ const Toolbar = styled.section`
 
   height: 28px;
   font-size: 16px;
-  border-bottom: 1px solid #ddd;
-  padding: 4px 8px;
-  background-color: white;
+  border-top: 1px solid #777;
+  padding: 0px 8px;
+
+  background-color: #000;
+  color: #ddd;
+`;
+
+const Slot = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 const LeftToolbar = styled.section`
   display: grid;
   grid-template-columns: 42px 60px auto;
-  gap: 8px;
+  gap: 10px;
+`;
+
+const StageKey = styled.div`
+  font-size: 11pt;
+  padding-bottom: 1spx;
+`;
+
+const PauseButton = styled.button<{ greyed?: boolean; emphasis?: boolean; }>`
+  cursor: pointer;
+  background: #000;
+  border-width: 1px;
+  outline: none;
+  color: #dee;
+  ${({ emphasis = false }) => emphasis && css`
+    font-style: italic;
+  `}
 `;
 
 const SelectMode = styled.select`
@@ -123,6 +139,7 @@ const SelectMode = styled.select`
   border-radius: 3px 0 0 3px;
   border-color: #999;
   outline: none;
+  background-color: #dde;
 `;
 
 const LockedButton = styled.div<{ greyed?: boolean }>`
@@ -134,25 +151,24 @@ const LockedButton = styled.div<{ greyed?: boolean }>`
   border-radius: 1px 3px 3px 1px;
   border: 1px solid #000;
   border-left-width: 0;
-  color: ${({ greyed }) => greyed ? '#aaa' : '#000'};
-  border-color: #999;
+  color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
+  border-color: #777;
 `;
 
 const RightToolbar = styled.section`
   display: grid;
-  grid-template-columns: auto 66px;
+  grid-template-columns: auto 68px;
   gap: 6px;
 `;
 
-const Button = styled.div<{ greyed?: boolean; emphasis?: boolean; }>`
+const PanZoomButton = styled.button<{ greyed?: boolean; emphasis?: boolean; }>`
   cursor: pointer;
-  font-size: 11pt;
+  background: #000;
+  border-width: 1px;
+  outline: none;
 
   ${({ greyed = false }) => css`
-    color: ${greyed ? '#999' : '#000'};
-  `}
-  ${({ emphasis = false }) => emphasis && css`
-    font-style: italic;
+    color: ${greyed ? '#777' : '#ddd'};
   `}
 `;
 
