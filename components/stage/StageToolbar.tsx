@@ -34,7 +34,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
         <LeftToolbar>
           <Slot>
             <StageKey>
-              @<strong>{stageKey}</strong>
+              @{stageKey}
             </StageKey>
           </Slot>
           <Slot>
@@ -101,7 +101,7 @@ const Toolbar = styled.section`
   border-top: 1px solid #777;
   padding: 0px 8px;
 
-  background-color: #000;
+  background-color: #222;
   color: #ddd;
 `;
 
@@ -119,12 +119,12 @@ const LeftToolbar = styled.section`
 
 const StageKey = styled.div`
   font-size: 11pt;
-  padding-bottom: 1spx;
+  padding-bottom: 3px;
 `;
 
 const PauseButton = styled.button<{ greyed?: boolean; emphasis?: boolean; }>`
   cursor: pointer;
-  background: #000;
+  background: #222;
   border-width: 1px;
   outline: none;
   color: #dfd;
@@ -161,7 +161,7 @@ const RightToolbar = styled.section`
 
 const PanZoomButton = styled.button<{ greyed?: boolean; emphasis?: boolean; }>`
   cursor: pointer;
-  background: #000;
+  background: #222;
   border-width: 1px;
   outline: none;
 
