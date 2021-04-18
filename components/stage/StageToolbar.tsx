@@ -54,7 +54,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
               <option key="disabled" value="disabled" disabled>
                 selector
               </option>
-              <option key="cursor" value="cursor">crosshair</option>
+              <option key="crosshair" value="crosshair">crosshair</option>
               <option key="rectangle" value="rectangle">rectangle</option>
               <option key="rectilinear" value="rectilinear">rectilinear</option>
             </SelectMode>
@@ -122,6 +122,7 @@ const SelectMode = styled.select`
   width: fit-content;
   border-radius: 3px 0 0 3px;
   border-color: #999;
+  outline: none;
 `;
 
 const LockedButton = styled.div<{ greyed?: boolean }>`
@@ -134,7 +135,7 @@ const LockedButton = styled.div<{ greyed?: boolean }>`
   border: 1px solid #000;
   border-left-width: 0;
   color: ${({ greyed }) => greyed ? '#aaa' : '#000'};
-  border-color: ${({ greyed }) => greyed ? '#ccc' : '#999'};
+  border-color: #999;
 `;
 
 const RightToolbar = styled.section`
