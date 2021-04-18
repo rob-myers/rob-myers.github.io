@@ -2,13 +2,6 @@ import { Triple } from 'model/generic.model';
 import { VectorJson } from 'model/geom';
 import * as THREE from 'three';
 
-export const navMeshMaterial = new THREE.MeshStandardMaterial({
-  color: 0xaa8686,
-  opacity: 0.2,
-  transparent: true,
-  side: THREE.DoubleSide,
-});
-
 export function isGroupNode(x: THREE.Object3D): x is THREE.Group {
   return x.type === 'Group';
 }
@@ -16,11 +9,6 @@ export function isGroupNode(x: THREE.Object3D): x is THREE.Group {
 export function isMeshNode(x: THREE.Object3D): x is THREE.Mesh {
   return x.type === 'Mesh';
 }
-
-export const epsilon = 0.0001;
-
-export type Coord3 = [number, number, number];
-
 
 export function getScene(obj: THREE.Object3D): null | THREE.Object3D {
   if (obj.type === 'Scene') {
@@ -38,17 +26,6 @@ export function getChild(obj: THREE.Object3D, childName: string) {
 export function getBounds(obj: THREE.Object3D) {
   return (new THREE.Box3).setFromObject(obj);
 }
-
-export function transformImportedMesh(mesh: THREE.Mesh) {
-  mesh.position.set(0, 0, 0);
-  mesh.geometry.rotateX(Math.PI/2);
-  mesh.geometry.translate(0, 0, -mesh.geometry.boundingBox!.min.z);
-  return mesh;
-}
-
-export const placeholderGroup = new THREE.Group;
-export const placeholderMesh = new THREE.Mesh;
-export const placeholderScene = new THREE.Scene;
 
 export function ndCoordsToGround(
   ndCoords: VectorJson,
@@ -69,7 +46,7 @@ export function vectPrecision(v: THREE.Vector3, decimalPlaces: number) {
   return v;
 }
 
-/** Scaled up to 0.1 * 0.1 grid */
+/** Scale up to grid of 0.1 * 0.1 tiles */
 export function scaleUpByTouched(from: THREE.Vector3, to: THREE.Vector3) {
   const dx = to.x - from.x, dy = to.y - from.y;
   from.x = (dx > 0 ? Math.floor : Math.ceil)(10 * from.x) / 10;
@@ -82,14 +59,4 @@ export function scaleUpByTouched(from: THREE.Vector3, to: THREE.Vector3) {
 
 export function vectorToTriple({ x, y, z }: THREE.Vector3): Triple<number> {
   return [x, y, z];
-}
-
-export function ensureChildGroup(parent: THREE.Object3D, groupName: string) {
-  let group = parent.children.find(x => x.name === groupName && isGroupNode(x));
-  if (!group) {
-    group = new THREE.Group;
-    group.name = groupName;
-    parent.add(group);
-  }
-  return group as THREE.Group;
 }
