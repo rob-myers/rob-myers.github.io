@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useThree } from "react-three-fiber";
 import { Subject } from "rxjs";
 import * as THREE from 'three';
@@ -16,6 +16,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geomService.createSquareGeometry()).current;
   const [polysGeom, setPolysGeom] = useState(geomService.polysToGeometry(selection.polygons));
+  const [outlineGeom, setOutlineGeom] = useState(geomService.polysToGeometry([]));
 
   useEffect(() => {
     selection.group = group.current!;
@@ -25,13 +26,23 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     return () => void delete selection.group;
   }, []);
 
+  const updateLockedOutline = useCallback((polygons: Geom.Polygon[]) => {
+    setOutlineGeom(geomService.polysToGeometry(
+      geomService.cutOut(polygons, polygons.flatMap(x => x.createOutset(0.01)))
+    ));
+  }, []);
+
   useEffect(() => {
     switch (selection.selector) {
-      case 'rectilinear': rectMesh.current!.scale.set(0, 0, 0); break;
+      case 'rectilinear':
+        rectMesh.current!.scale.set(0, 0, 0);
+        updateLockedOutline(selection.polygons);
+        break;
       case 'rectangle': {
         const { x, y, e, s } = selection.lastRect;
         rectMesh.current!.position.set(x, y, 0);
         rectMesh.current!.scale.set(e - x, s - y, 1);
+        updateLockedOutline([Geom.Polygon.fromRect(selection.lastRect)]);
         break;
       }
     }
@@ -47,11 +58,12 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         ndCoordsToGround(ndCoords, camera, ptr);
         scale.set(ptr.x - position.x, ptr.y - position.y, 1);
       } else if (key === 'pointerdown') {
+        ptrDown = true;
         position.copy(ndCoordsToGround(ndCoords, camera, ptr));
         selection.lastCursor.copy(position);
-        ptrDown = true;
         scale.set(0, 0, 0);
-        if (selection.selector === 'crosshair') {
+
+        if (selection.selector === 'crosshair' && !selection.locked) {
           vectPrecision(cursorPosition.copy(position), 1);
         }
       } else if (ptrDown && key === 'pointerup') {
@@ -67,17 +79,17 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
             ? geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons)
             : geomService.union(selection.polygons.concat(Geom.Polygon.fromRect(rect)));
           polygons.forEach(x => x.precision(1)); // Increments of 0.1
+          selection.polygons = polygons; // Must assign before setPolysGeom
           setPolysGeom(geomService.polysToGeometry(polygons));
-          selection.polygons = polygons;
         } else if (selection.selector === 'rectangle') {
           scaleUpByTouched(position, ptr);
           scale.set(ptr.x - position.x, ptr.y - position.y, 1);
           selection.lastRect = Geom.Rect.fromPoints(position, ptr);
+          updateLockedOutline([Geom.Polygon.fromRect(selection.lastRect )]);
         }
 
       } else if (key === 'pointerleave') {
         ptrDown = false;
-        // scale.set(0, 0, 0);
         selection.lastCursor.copy(position);
       }
     });
@@ -103,6 +115,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
   useEffect(() => {
     setPolysGeom(geomService.polysToGeometry(selection.polygons));
+    updateLockedOutline(selection.polygons);
   }, [selection.polygons]);
 
   return (
@@ -129,6 +142,13 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         visible={selection.selector === 'rectilinear'}
       >
         <meshBasicMaterial color="#00f" transparent opacity={0.2} />
+      </mesh>
+
+      <mesh
+        visible={selection.locked && selection.selector !== 'crosshair'}
+        geometry={outlineGeom}
+      >
+        <meshBasicMaterial color="#000" transparent opacity={0.5} />
       </mesh>
 
     </group>
