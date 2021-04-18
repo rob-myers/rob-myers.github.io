@@ -84,6 +84,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
       <StageToolbar
         stageKey={stage.key}
         opts={stage.opts}
+        selection={stage.selection}
       />
 
       {(stage.opts.enabled || ctxt) && (

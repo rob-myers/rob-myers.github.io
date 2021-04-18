@@ -22,13 +22,12 @@ Main focus is:
    - ✅ `sel >l1` saves current selection as json polygon
    - ✅ `get l1 | sel` to restore
    - ✅ session variables are persisted
-  - Stage supports different "selecting modes":
-    - cursor 
-    - rectangle 
-    - rectilinear 
-  - Can lock and then translate/transform.
-  - Has group where ghost meshes can be attached.
-  - Could leave "select mode" by saving and locking empty selection
+- Stage supports different "selecting modes":
+   - cursor 
+   - rectangle 
+   - rectilinear 
+   - Can lock and then translate/transform.
+   - Has group where ghost meshes can be attached.
 ✅ Can `echo foo >!x` to write last elem, not array
 - Error messages prefixed by function chain
 

@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { StageOpts } from "model/stage/stage.model";
+import { StageOpts, StageSelection } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
-const StageToolbar: React.FC<Props> = ({ stageKey, opts }) => {
+const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
   const [canToggleRunning, setCanToggleRunning] = useState(true);
 
   const toggleRunning = useCallback(() => {
@@ -17,8 +17,12 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts }) => {
 
   const enableUi = opts.enabled && canToggleRunning;
   
-  const onSelectAction = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    enableUi && console.log('do', e.currentTarget.value);
+  const changeSelector = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    enableUi && useStage.api.updateSelection(stageKey, { selector: e.currentTarget.value as any });
+  }, [enableUi]);
+
+  const toggleSelectorLocked = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    enableUi && useStage.api.updateSelection(stageKey, ({ locked }) => ({ locked: !locked }));
   }, [enableUi]);
 
   const toggleCam = useCallback(() => {
@@ -33,12 +37,10 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts }) => {
           </Slot>
           <Slot background="#eee">
             <Button
-              emphasis={!canToggleRunning}
               onClick={toggleRunning}
               {...opts.enabled && { title: 'click to pause' }}
-              style={{
-                color: opts.enabled ?  '#030' : '#300'
-              }}
+              emphasis={!canToggleRunning}
+              style={{ color: opts.enabled ?  '#030' : '#300' }}
             >
               {opts.enabled ? 'running' : 'paused'}
             </Button>
@@ -46,15 +48,20 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts }) => {
           <Slot>
             <SelectMode
               disabled={!enableUi}
-              value="rectilinear"
-              onChange={onSelectAction}
+              value={selection.selector}
+              onChange={changeSelector}
             >
-              <option key="disabled" value="disabled" disabled>choose selector</option>
-              <option key="cursor" value="cursor">cursor</option>
-              <option key="rectilinear" value="rectilinear">rectilinear</option>
+              <option key="disabled" value="disabled" disabled>
+                selector
+              </option>
+              <option key="cursor" value="cursor">crosshair</option>
               <option key="rectangle" value="rectangle">rectangle</option>
+              <option key="rectilinear" value="rectilinear">rectilinear</option>
             </SelectMode>
-            <LockedButton disabled={!enableUi}>
+            <LockedButton
+              greyed={!(enableUi && selection.locked)}
+              onClick={toggleSelectorLocked}
+            >
               locked
             </LockedButton>
           </Slot>
@@ -81,7 +88,16 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts }) => {
 interface Props {
   stageKey: string;
   opts: StageOpts;
+  selection: StageSelection;
 }
+
+const Slot = styled.div<{ background?: string }>`
+  display: flex;
+  justify-content: center;
+  ${({ background }) => css`
+    background: ${background};
+  `}
+`;
 
 const Toolbar = styled.section`
   display: flex;
@@ -103,33 +119,28 @@ const LeftToolbar = styled.section`
 
 const SelectMode = styled.select`
   display: flex;
-  max-width: 82px;
+  width: fit-content;
+  border-radius: 3px 0 0 3px;
+  border-color: #999;
 `;
 
-const LockedButton = styled.div<{ disabled?: boolean }>`
+const LockedButton = styled.div<{ greyed?: boolean }>`
+  cursor: pointer;
   display: flex;
   justify-content: center;
   font-size: small;
-  padding: 0 4px;
-  border-radius: 0 3px 3px 0;
+  padding: 0 4px 0 5px;
+  border-radius: 1px 3px 3px 1px;
   border: 1px solid #000;
   border-left-width: 0;
-  color: ${({ disabled }) => disabled ? '#aaa' : '#000'};
-  border-color: ${({ disabled }) => disabled ? '#ccc' : '#000'};
+  color: ${({ greyed }) => greyed ? '#aaa' : '#000'};
+  border-color: ${({ greyed }) => greyed ? '#ccc' : '#999'};
 `;
 
 const RightToolbar = styled.section`
   display: grid;
   grid-template-columns: auto 66px;
   gap: 6px;
-`;
-
-const Slot = styled.div<{ background?: string }>`
-  display: flex;
-  justify-content: center;
-  ${({ background }) => css`
-    background: ${background};
-  `}
 `;
 
 const Button = styled.div<{ greyed?: boolean; emphasis?: boolean; }>`

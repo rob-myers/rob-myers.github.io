@@ -66,7 +66,7 @@ export interface StageSelection {
   locked: boolean;
 }
 
-type SelectorMode = 'cursor' | 'rectangle' | 'rectilinear';
+type SelectorMode = 'crosshair' | 'rectangle' | 'rectilinear';
 
 interface StageSelectionJson {
   polygons: Geom.PolygonJson[];
