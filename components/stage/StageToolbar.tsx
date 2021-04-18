@@ -127,7 +127,7 @@ const PauseButton = styled.button<{ greyed?: boolean; emphasis?: boolean; }>`
   background: #000;
   border-width: 1px;
   outline: none;
-  color: #dee;
+  color: #dfd;
   ${({ emphasis = false }) => emphasis && css`
     font-style: italic;
   `}
@@ -140,6 +140,7 @@ const SelectMode = styled.select`
   border-color: #999;
   outline: none;
   background-color: #dde;
+  font-size: 10pt;
 `;
 
 const LockedButton = styled.div<{ greyed?: boolean }>`
@@ -147,12 +148,9 @@ const LockedButton = styled.div<{ greyed?: boolean }>`
   display: flex;
   justify-content: center;
   font-size: small;
-  padding: 0 4px 0 5px;
+  padding: 0 4px 2px 6px;
   border-radius: 1px 3px 3px 1px;
-  border: 1px solid #000;
-  border-left-width: 0;
   color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
-  border-color: #777;
 `;
 
 const RightToolbar = styled.section`
