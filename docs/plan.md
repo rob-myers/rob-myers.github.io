@@ -22,15 +22,15 @@ Main focus is:
    - ✅ `sel >l1` saves current selection as json polygon
    - ✅ `get l1 | sel` to restore
    - ✅ session variables are persisted
-- Stage supports different "selecting modes":
-   - cursor 
+- `Selection` supports different "selecting modes":
+   - crosshair 
    - rectangle 
    - rectilinear 
    - Can lock and then translate/transform.
    - Has group where ghost meshes can be attached.
 ✅ Can `echo foo >!x` to write last elem, not array
 - Error messages prefixed by function chain
-
+- Can `unset` variables and functions
 
 - BUG
    - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
