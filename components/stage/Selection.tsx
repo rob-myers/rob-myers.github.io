@@ -49,11 +49,10 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       } else if (key === 'pointerdown') {
         position.copy(ndCoordsToGround(ndCoords, camera, ptr));
         selection.lastCursor.copy(position);
+        ptrDown = true;
+        scale.set(0, 0, 0);
         if (selection.selector === 'crosshair') {
           vectPrecision(cursorPosition.copy(position), 1);
-        } else {
-          ptrDown = true;
-          scale.set(0, 0, 0);
         }
       } else if (ptrDown && key === 'pointerup') {
         ptrDown = false;
@@ -85,12 +84,14 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
     const [blue, red] = [geomService.getColor('#00f'), geomService.getColor('#f00')];
     const keySub = keyWire.subscribe(({ shiftKey, key }) => {
-      shiftDown = shiftKey;
-      (rectMesh.current!.material as THREE.MeshBasicMaterial).color = shiftDown ? red : blue;
-      if (key === 'Escape' && ptrDown && selection.selector === 'rectilinear') {
-        position.copy(ptr);
-        scale.set(0, 0, 1);
-        ptrDown = false;
+      if (selection.selector === 'rectilinear') {
+        shiftDown = shiftKey;
+        (rectMesh.current!.material as THREE.MeshBasicMaterial).color = shiftDown ? red : blue;
+        if (key === 'Escape' && ptrDown) {
+          position.copy(ptr);
+          scale.set(0, 0, 1);
+          ptrDown = false;
+        }
       }
     });
 
