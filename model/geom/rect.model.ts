@@ -17,6 +17,12 @@ export class Rect {
     return new Vector(this.x + (this.width / 2), this.y + (this.height / 2));
   }
 
+  add({ x, y }: VectorJson) {
+    this.x += x;
+    this.y += y;
+    return this;
+  }
+
   clone() {
     return new Rect(this.x, this.y, this.width, this.height);
   }
