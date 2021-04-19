@@ -31,23 +31,13 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     return () => void delete selection.group;
   }, []);
 
-  const restoreFromState = useCallback((selection: StageSelection) => {
-    if (selection.selector === 'rectilinear') {
-      rectMesh.current!.scale.set(0, 0, 0);
-      setPolysGeom(geomService.polysToGeometry(selection.polygons));
-      updateLockedOutline(selection.polygons);
-    }
-  }, []);
-
-  const updateLockedOutline = useCallback((polygons: Geom.Polygon[]) => {
+  const restoreFromState = useCallback(({ polygons }: StageSelection) => {
+    rectMesh.current!.scale.set(0, 0, 0);
+    setPolysGeom(geomService.polysToGeometry(polygons));
     setOutlineGeom(geomService.polysToGeometry(
       geomService.cutOut(polygons, polygons.flatMap(x => x.createOutset(0.01)))
     ));
   }, []);
-
-  useEffect(() => {// Handle selector change
-    restoreFromState(selection);
-  }, [selection.selector]);
 
   /**
    * Apply any transform when unlock
@@ -78,28 +68,29 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         position.copy(ndCoordsToGround(ndCoords, camera, ptr))
         scale.set(0, 0, 0);
         selection.cursor.copy(position);
-        
-        if (selection.selector === 'crosshair' && !selection.locked) {
-          vectPrecision(cursorPosition.copy(position), 1);
+        if (selection.editMode === 'rect') {
+          selection.polygons = [];
+          restoreFromState(selection);
         }
+        
       } else if (ptrDown && key === 'pointerup') {
         ptrDown = false;
-
+        scale.set(0, 0, 0);
         if (Geom.Rect.fromPoints(position, ptr).area < 0.01 * 0.01) {
-          scale.set(0, 0, 0);
-        } else if (selection.selector === 'rectilinear') {
-          scale.set(0, 0, 0);
-          scaleUpByTouched(position, ptr);
-          const rect = Geom.Rect.fromPoints(position, ptr);
-            // // TODO invert transformation instead
-            // .translate({x : -selection.dragOffset.x, y: -selection.dragOffset.y });
-          const polygons = shiftDown
+          vectPrecision(cursorPosition.copy(position), 1);
+          return;
+        }
+
+        scaleUpByTouched(position, ptr);
+        const rect = Geom.Rect.fromPoints(position, ptr);
+        const polygons = selection.editMode === 'rect'
+          ? [Geom.Polygon.fromRect(rect)]
+          : shiftDown
             ? geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons)
             : geomService.union(selection.polygons.concat(Geom.Polygon.fromRect(rect)));
-          polygons.forEach(x => x.precision(1)); // Increments of 0.1
-          selection.polygons = polygons; // Must assign before setPolysGeom
-          setPolysGeom(geomService.polysToGeometry(polygons));
-        }
+        polygons.forEach(x => x.precision(1)); // Increments of 0.1
+        selection.polygons = polygons; // Must assign before setPolysGeom
+        setPolysGeom(geomService.polysToGeometry(polygons));
 
       } else if (key === 'pointerleave') {
         ptrDown = false;
@@ -109,7 +100,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
     const [blue, red] = [geomService.getColor('#00f'), geomService.getColor('#f00')];
     const keySub = keyWire.subscribe(({ shiftKey, key }) => {
-      if (selection.selector === 'rectilinear') {
+      if (selection.editMode === 'paint') {
         shiftDown = shiftKey;
         (rectMesh.current!.material as THREE.MeshBasicMaterial).color = shiftDown ? red : blue;
         if (key === 'Escape' && ptrDown) {
@@ -151,16 +142,8 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
   // Listen for external updates to polygons
   useEffect(() => {
-    setPolysGeom(geomService.polysToGeometry(selection.polygons));
-    updateLockedOutline(selection.polygons);
+    restoreFromState(selection);
   }, [selection.polygons]);
-
-  const onLockedPointerDown = useCallback((e: PointerEvent) => {
-    if (selection.locked && e.type === 'pointerdown') {
-      dragging.current = true;
-      dragStart.copy(e.point);
-    }
-  }, [selection]);
 
   return (
     <group ref={group} name="SelectionGroup">
@@ -171,29 +154,34 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
           <meshBasicMaterial map={cursorTexture} />
         </mesh>
       )}
-
       
-        <mesh
-          ref={rectMesh}
-          geometry={rectGeom}
-          renderOrder={0} // Avoid occlusion by transparent walls
-          visible={selection.selector !== 'crosshair'}
-          onPointerDown={onLockedPointerDown}
-        >
-          <meshBasicMaterial color="#00f" transparent opacity={0.2} />
-        </mesh>
+      <mesh
+        ref={rectMesh}
+        geometry={rectGeom}
+        renderOrder={0} // Avoid occlusion by transparent walls
+        visible={selection.editMode !== 'hide'}
+      >
+        <meshBasicMaterial color="#00f" transparent opacity={0.2} />
+      </mesh>
 
-      <group ref={polysGroup}>
+      <group
+        ref={polysGroup}
+        visible={selection.editMode !== 'hide'}
+      >
         <mesh
           geometry={polysGeom}
-          visible={selection.selector === 'rectilinear'}
-          onPointerDown={onLockedPointerDown}
+          onPointerDown={(e: PointerEvent) => {
+            if (selection.locked && e.type === 'pointerdown') {
+              dragging.current = true;
+              dragStart.copy(e.point);
+            }
+          }}
         >
           <meshBasicMaterial color="#00f" transparent opacity={0.2} />
         </mesh>
 
         <mesh
-          visible={selection.locked && selection.selector !== 'crosshair'}
+          visible={selection.locked}
           geometry={outlineGeom}
         >
           <meshBasicMaterial color="#000" transparent opacity={0.5} />

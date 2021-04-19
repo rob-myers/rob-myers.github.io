@@ -62,7 +62,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         instance.selection.cursor = Geom.Vector.from(selection.cursor??{ x: 0, y: 0 });
         instance.selection.dragOffset = Geom.Vector.from(selection.dragOffset??{ x: 0, y: 0 });
         instance.selection.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
-        instance.selection.selector = selection.selector??'crosshair';
+        instance.selection.editMode = selection.editMode??'rect';
         instance.selection.locked = selection.locked??false;
         set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
       } else {
@@ -100,7 +100,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           },
           selection: {
             polygons: selection.polygons.map(x => x.json),
-            selector: selection.selector,
+            editMode: selection.editMode,
             locked: selection.locked,
             cursor: selection.cursor.json,
             dragOffset: selection.dragOffset.json,

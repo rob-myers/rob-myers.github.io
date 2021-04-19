@@ -58,17 +58,17 @@ export interface StageSelection {
   cursor: Geom.Vector;
   /** Last drag offset  */
   dragOffset: Geom.Vector;
-  /** Which kind of selection are we using? */
-  selector: SelectorMode; 
-  /** Is the selector locked? */
+  /** How the polygons can be edited */
+  editMode: SelectionEditMode; 
+  /** Is the selection locked? */
   locked: boolean;
 }
 
-type SelectorMode = 'crosshair' | 'rectilinear';
+type SelectionEditMode = 'hide' | 'rect' | 'paint';
 
 interface StageSelectionJson {
   polygons: Geom.PolygonJson[];
-  selector: SelectorMode;
+  editMode: SelectionEditMode;
   locked: boolean;
   cursor: Geom.VectorJson;
   dragOffset: Geom.VectorJson;
@@ -89,7 +89,7 @@ export function createStage(stageKey: string): StageMeta {
     selection: {
       group: new THREE.Group,
       polygons: [],
-      selector: 'rectilinear',
+      editMode: 'rect',
       locked: false,
       cursor: new Geom.Vector,
       dragOffset: new Geom.Vector,
@@ -122,7 +122,7 @@ export function createPersist(stageKey: string): PersistedStage {
     },
     selection: {
       polygons: [],
-      selector: 'rectilinear',
+      editMode: 'rect',
       locked: false,
       cursor: { x: 0, y: 0 },
       dragOffset: { x: 0, y: 0 },
