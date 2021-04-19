@@ -18,7 +18,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
   const enableUi = opts.enabled && canToggleRunning;
   
   const changeEditMode = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    enableUi && useStage.api.updateSelection(stageKey, { editMode: e.currentTarget.value as any });
+    enableUi && useStage.api.updateSelection(stageKey, { shape: e.currentTarget.value as any });
   }, [enableUi]);
 
   const toggleSelectorLocked = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -48,15 +48,14 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
           <Slot>
             <SelectMode
               disabled={!enableUi}
-              value={selection.editMode}
+              value={selection.shape}
               onChange={changeEditMode}
             >
               <option key="disabled" value="disabled" disabled>
                 select
               </option>
-              <option key="hide" value="hide">hide</option>
-              <option key="rect" value="rect">rect</option>
-              <option key="paint" value="paint">paint</option>
+              <option key="rectangle" value="rectangle">rectangle</option>
+              <option key="rectilinear" value="rectilinear">rectilinear</option>
             </SelectMode>
             <LockedButton
               greyed={!(enableUi && selection.locked)}

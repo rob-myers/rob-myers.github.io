@@ -68,7 +68,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         position.copy(ndCoordsToGround(ndCoords, camera, ptr))
         scale.set(0, 0, 0);
         selection.cursor.copy(position);
-        if (selection.editMode === 'rect') {
+        if (selection.shape === 'rectangle') {
           selection.polygons = [];
           restoreFromState(selection);
         }
@@ -83,7 +83,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
         scaleUpByTouched(position, ptr);
         const rect = Geom.Rect.fromPoints(position, ptr);
-        const polygons = selection.editMode === 'rect'
+        const polygons = selection.shape === 'rectangle'
           ? [Geom.Polygon.fromRect(rect)]
           : shiftDown
             ? geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons)
@@ -100,7 +100,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
     const [blue, red] = [geomService.getColor('#00f'), geomService.getColor('#f00')];
     const keySub = keyWire.subscribe(({ shiftKey, key }) => {
-      if (selection.editMode === 'paint') {
+      if (selection.shape === 'rectilinear') {
         shiftDown = shiftKey;
         (rectMesh.current!.material as THREE.MeshBasicMaterial).color = shiftDown ? red : blue;
         if (key === 'Escape' && ptrDown) {
@@ -159,14 +159,14 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         ref={rectMesh}
         geometry={rectGeom}
         renderOrder={0} // Avoid occlusion by transparent walls
-        visible={selection.editMode !== 'hide'}
+        visible={selection.visible}
       >
         <meshBasicMaterial color="#00f" transparent opacity={0.2} />
       </mesh>
 
       <group
         ref={polysGroup}
-        visible={selection.editMode !== 'hide'}
+        visible={selection.visible}
       >
         <mesh
           geometry={polysGeom}

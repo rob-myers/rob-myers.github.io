@@ -59,11 +59,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const { opts, extra, selection  } = api.getPersist(stageKey);
         instance.opts = deepClone(opts??Stage.createStageOpts());
         instance.extra = deepClone(extra??{});
+        instance.selection.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
+        instance.selection.shape = selection.shape??'rectangle';
+        instance.selection.locked = selection.locked??false;
+        instance.selection.visible = selection.visible??true;
         instance.selection.cursor = Geom.Vector.from(selection.cursor??{ x: 0, y: 0 });
         instance.selection.dragOffset = Geom.Vector.from(selection.dragOffset??{ x: 0, y: 0 });
-        instance.selection.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
-        instance.selection.editMode = selection.editMode??'rect';
-        instance.selection.locked = selection.locked??false;
+
         set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
       } else {
         set(({ stage, persist }) => ({
@@ -100,8 +102,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           },
           selection: {
             polygons: selection.polygons.map(x => x.json),
-            editMode: selection.editMode,
+            shape: selection.shape,
             locked: selection.locked,
+            visible: selection.visible,
             cursor: selection.cursor.json,
             dragOffset: selection.dragOffset.json,
           },

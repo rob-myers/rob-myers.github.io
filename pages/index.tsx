@@ -15,10 +15,10 @@ export default function IndexPage() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          three.js CLI
+          Topdown CLI
         </h1>
         <p className={styles.subtitle}>
-          Interactive sessions for <a target='#' href='https://threejs.org/'>three.js</a>
+          <a target='#' href='https://threejs.org/'>three.js</a> interactive sessions from topdown perspective
         </p>
 
         <section className={styles.termStage}>
