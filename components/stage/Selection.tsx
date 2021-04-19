@@ -15,9 +15,10 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const cursorTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geomService.createSquareGeometry()).current;
+  
+  const polysMesh = useRef<THREE.Mesh>(null);
   const [polysGeom, setPolysGeom] = useState(geomService.polysToGeometry(selection.polygons));
   const [outlineGeom, setOutlineGeom] = useState(geomService.polysToGeometry([]));
-
   const polysGroup = useRef<THREE.Group>(null);
   const dragging = useRef(false);
   const dragStart = useRef(new THREE.Vector3).current;
@@ -38,6 +39,10 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     ));
   }, []);
 
+  const setPolysFaded = useCallback((faded: boolean) => {
+    (polysMesh.current!.material as THREE.Material).opacity = faded ? 0.1 : 0.2;
+  }, []);
+
   // Handle mouse/keys when unlocked
   useEffect(() => {
     if (selection.locked) return;
@@ -53,11 +58,16 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       } else if (key === 'pointerdown') {
         ptrDown = true;
         position.copy(ndCoordsToGround(ndCoords, camera, ptr))
-        scale.set(0, 0, 0);
         selection.cursor.copy(position);
+        scale.set(0, 0, 0);
+        if (!selection.additive && !lastKeyMsg.metaKey && !lastKeyMsg.shiftKey) {
+          setPolysFaded(true); // Fade to indicate impending deletion
+        }
       } else if (ptrDown && key === 'pointerup') {
         ptrDown = false;
         scale.set(0, 0, 0);
+        setPolysFaded(false);
+
         if (Geom.Rect.fromPoints(position, ptr).area < 0.01 * 0.01) {
           vectPrecision(cursorPosition.copy(position), 1);
           return;
@@ -84,6 +94,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       } else if (key === 'pointerleave') {
         ptrDown = false;
         selection.cursor.copy(position);
+        setPolysFaded(false);
       }
     });
 
@@ -91,11 +102,16 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     const keySub = keyWire.subscribe((msg) => {
       lastKeyMsg = msg;
       (rectMesh.current!.material as THREE.MeshBasicMaterial).color = msg.shiftKey ? red : blue;
-      if (msg.key === 'Escape' && ptrDown) {
-        position.copy(ptr);
-        scale.set(0, 0, 1);
-        ptrDown = false;
+      if (ptrDown) {
+        setPolysFaded(!(msg.metaKey || msg.shiftKey || selection.additive));
+        if (msg.key === 'Escape') {
+          position.copy(ptr);
+          scale.set(0, 0, 1);
+          ptrDown = false;
+          setPolysFaded(false);
+        }
       }
+
     });
 
     return () => {
@@ -157,6 +173,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         visible={selection.enabled}
       >
         <mesh
+          ref={polysMesh}
           geometry={polysGeom}
           onPointerDown={(e: PointerEvent) => {
             if (selection.locked && e.type === 'pointerdown') {
