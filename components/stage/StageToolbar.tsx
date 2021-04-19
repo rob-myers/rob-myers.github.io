@@ -54,8 +54,8 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
               <option key="disabled" value="disabled" disabled>
                 select
               </option>
-              <option key="rectangle" value="rectangle">rectangle</option>
-              <option key="rectilinear" value="rectilinear">rectilinear</option>
+              <option key="rectangle" value="rectangle">once</option>
+              <option key="rectilinear" value="rectilinear">many</option>
             </SelectMode>
             <LockedButton
               greyed={!(enableUi && selection.locked)}

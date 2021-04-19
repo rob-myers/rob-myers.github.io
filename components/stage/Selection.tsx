@@ -22,12 +22,11 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const dragging = useRef(false);
   const dragStart = useRef(new THREE.Vector3).current;
 
+  // Initialize and rehydrate
   useEffect(() => {
     selection.group = group.current!;
-    const { cursor, dragOffset } = selection;
-    cursorMesh.current?.position.set(cursor.x, cursor.y, 0);
+    cursorMesh.current?.position.set(selection.cursor.x, selection.cursor.y, 0);
     rectMesh.current?.scale.set(0, 0, 1);
-    polysGroup.current?.position.set(dragOffset.x, dragOffset.y, 0);
     return () => void delete selection.group;
   }, []);
 
@@ -38,18 +37,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       geomService.cutOut(polygons, polygons.flatMap(x => x.createOutset(0.01)))
     ));
   }, []);
-
-  /**
-   * Apply any transform when unlock
-   * TODO affine transforms
-   */
-  useEffect(() => {
-    if (!selection.locked && selection.dragOffset.length) {
-      selection.polygons.map(x => x.add(selection.dragOffset));
-      selection.dragOffset.copy(polysGroup.current!.position.set(0, 0, 0));
-      restoreFromState(selection);
-    }
-  }, [selection.locked]);
 
   // Handle mouse/keys when unlocked
   useEffect(() => {
@@ -120,20 +107,21 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   // Handle mouse when locked
   useEffect(() => {
     if (!selection.locked) return;
-    // TODO support dragging rect too? Seems complex...
     const [position, ptr] = [polysGroup.current!.position, new THREE.Vector3];
-    const dragOffset = selection.dragOffset;
 
     const ptrSub = ptrWire.subscribe(({ key, ndCoords }) => {
       if (!dragging.current) {
         return;
       } else if (key === 'pointermove') {
         ndCoordsToGround(ndCoords, camera, ptr);
-        position.set(dragOffset.x, dragOffset.y, 0).add(ptr).sub(dragStart);
+        position.copy(ptr).sub(dragStart);
       } else if (key === 'pointerup' || key === 'pointerleave') {
         dragging.current = false;
         vectPrecision(position, 1);
-        selection.dragOffset.copy(position);
+        // Apply transform
+        selection.polygons.map(x => x.add(position).precision(1));
+        position.set(0, 0, 0);
+        restoreFromState(selection);
       }
     });
 

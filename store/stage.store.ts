@@ -54,6 +54,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }
       
       if (get().persist[stageKey]) {
+
         // Restore persisted data
         const instance = Stage.createStage(stageKey);
         const { opts, extra, selection  } = api.getPersist(stageKey);
@@ -64,7 +65,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         instance.selection.locked = selection.locked??false;
         instance.selection.visible = selection.visible??true;
         instance.selection.cursor = Geom.Vector.from(selection.cursor??{ x: 0, y: 0 });
-        instance.selection.dragOffset = Geom.Vector.from(selection.dragOffset??{ x: 0, y: 0 });
 
         set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
       } else {
@@ -106,7 +106,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             locked: selection.locked,
             visible: selection.visible,
             cursor: selection.cursor.json,
-            dragOffset: selection.dragOffset.json,
           },
         }, persist),
       }));
