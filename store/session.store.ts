@@ -127,7 +127,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         sessionKey,
         status: ProcessStatus.Running,
         src,
-        positionals: ['3-cli', ...posPositionals || []],
+        positionals: ['topdown-cli', ...posPositionals || []],
         cleanups: [],
         onSuspend: null,
         onResume: null,
