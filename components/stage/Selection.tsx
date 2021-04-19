@@ -44,7 +44,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
     const [position, scale] = [rectMesh.current!.position, rectMesh.current!.scale];
     const cursorPosition = cursorMesh.current!.position;
-    let [ptr, ptrDown, shiftDown] = [new THREE.Vector3, false, false];
+    let [ptr, ptrDown, lastKeyMsg] = [new THREE.Vector3, false, {} as StageKeyEvent];
 
     const ptrSub = ptrWire.subscribe(({ key, ndCoords }) => {
       if (ptrDown && key === 'pointermove') {
@@ -55,11 +55,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         position.copy(ndCoordsToGround(ndCoords, camera, ptr))
         scale.set(0, 0, 0);
         selection.cursor.copy(position);
-        if (selection.shape === 'rectangle') {
-          selection.polygons = [];
-          restoreFromState(selection);
-        }
-        
       } else if (ptrDown && key === 'pointerup') {
         ptrDown = false;
         scale.set(0, 0, 0);
@@ -70,13 +65,20 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
         scaleUpByTouched(position, ptr);
         const rect = Geom.Rect.fromPoints(position, ptr);
-        const polygons = selection.shape === 'rectangle'
-          ? [Geom.Polygon.fromRect(rect)]
-          : shiftDown
-            ? geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons)
-            : geomService.union(selection.polygons.concat(Geom.Polygon.fromRect(rect)));
+        const polygons = [] as Geom.Polygon[];
+        
+        if (lastKeyMsg.shiftKey) {
+          polygons.push(...geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons));
+        } else if(lastKeyMsg.metaKey || selection.additive) {
+          polygons.push(...geomService.union(selection.polygons.concat(Geom.Polygon.fromRect(rect))));
+        } else {
+          polygons.push(Geom.Polygon.fromRect(rect));
+        }
+
         polygons.forEach(x => x.precision(1)); // Increments of 0.1
-        selection.polygons = polygons; // Must assign before setPolysGeom
+        // Must assign before setPolysGeom
+        selection.prevPolys = selection.polygons.slice();
+        selection.polygons = polygons;
         setPolysGeom(geomService.polysToGeometry(polygons));
 
       } else if (key === 'pointerleave') {
@@ -86,15 +88,13 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     });
 
     const [blue, red] = [geomService.getColor('#00f'), geomService.getColor('#f00')];
-    const keySub = keyWire.subscribe(({ shiftKey, key }) => {
-      if (selection.shape === 'rectilinear') {
-        shiftDown = shiftKey;
-        (rectMesh.current!.material as THREE.MeshBasicMaterial).color = shiftDown ? red : blue;
-        if (key === 'Escape' && ptrDown) {
-          position.copy(ptr);
-          scale.set(0, 0, 1);
-          ptrDown = false;
-        }
+    const keySub = keyWire.subscribe((msg) => {
+      lastKeyMsg = msg;
+      (rectMesh.current!.material as THREE.MeshBasicMaterial).color = msg.shiftKey ? red : blue;
+      if (msg.key === 'Escape' && ptrDown) {
+        position.copy(ptr);
+        scale.set(0, 0, 1);
+        ptrDown = false;
       }
     });
 
@@ -147,14 +147,14 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         ref={rectMesh}
         geometry={rectGeom}
         renderOrder={0} // Avoid occlusion by transparent walls
-        visible={selection.visible}
+        visible={selection.enabled}
       >
         <meshBasicMaterial color="#00f" transparent opacity={0.2} />
       </mesh>
 
       <group
         ref={polysGroup}
-        visible={selection.visible}
+        visible={selection.enabled}
       >
         <mesh
           geometry={polysGeom}

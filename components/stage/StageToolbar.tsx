@@ -16,18 +16,23 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
   }, [opts.enabled, canToggleRunning]);
 
   const enableUi = opts.enabled && canToggleRunning;
-  
-  const changeEditMode = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    enableUi && useStage.api.updateSelection(stageKey, { shape: e.currentTarget.value as any });
+  const enableSelUi = enableUi && selection.enabled;
+
+  const toggleSelectionEnabled = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    enableUi && useStage.api.updateSelection(stageKey, ({ enabled }) => ({ enabled: !enabled }));
   }, [enableUi]);
 
-  const toggleSelectorLocked = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    enableUi && useStage.api.updateSelection(stageKey, ({ locked }) => ({ locked: !locked }));
-  }, [enableUi]);
+  const toggleSelectionAdditive = useCallback((_: React.MouseEvent<HTMLDivElement>) => {
+    enableSelUi && useStage.api.updateSelection(stageKey, ({ additive }) => ({ additive: !additive }));
+  }, [enableSelUi]);
+
+  const toggleSelectionLocked = useCallback((_: React.MouseEvent<HTMLDivElement>) => {
+    enableSelUi && useStage.api.updateSelection(stageKey, ({ locked }) => ({ locked: !locked }));
+  }, [enableSelUi]);
 
   const toggleCam = useCallback(() => {
-    enableUi && useStage.api.updateOpts(stageKey, { panZoom: !opts.panZoom });
-  }, [enableUi, opts.panZoom]);
+    enableUi && useStage.api.updateOpts(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }));
+  }, [enableUi]);
 
   return (
     <Toolbar>
@@ -45,21 +50,36 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
               {opts.enabled ? 'running' : 'paused'}
             </PauseButton>
           </Slot>
-          <Slot>
-            <SelectMode
-              disabled={!enableUi}
-              value={selection.shape}
-              onChange={changeEditMode}
+          <Slot style={{ background: '#444', padding: '0 4px' }}>
+            <Icon
+              greyed={!enableSelUi}
+              onClick={toggleSelectionEnabled}
+              title={enableSelUi
+                ? 'click to disable selection'
+                : 'click to enable selection'}
             >
-              <option key="disabled" value="disabled" disabled>
-                select
-              </option>
-              <option key="rectangle" value="rectangle">once</option>
-              <option key="rectilinear" value="rectilinear">many</option>
-            </SelectMode>
+              ✓
+            </Icon>
+            <Icon
+              greyed={!(enableSelUi && selection.additive)}
+              onClick={toggleSelectionAdditive}
+              {...enableSelUi && {
+                title: selection.additive
+                  ? 'click to select non-additively'
+                  : 'click to select additively'
+              }}
+            >
+              +
+            </Icon>
             <LockedButton
-              greyed={!(enableUi && selection.locked)}
-              onClick={toggleSelectorLocked}
+              greyed={!(enableSelUi && selection.locked)}
+              title="selection locked?"
+              onClick={toggleSelectionLocked}
+              {...enableSelUi && {
+                title: selection.locked
+                  ? 'click to unlock selection'
+                  : 'click to lock selection'
+              }}
             >
               locked
             </LockedButton>
@@ -132,14 +152,12 @@ const PauseButton = styled.button<{ greyed?: boolean; emphasis?: boolean; }>`
   `}
 `;
 
-const SelectMode = styled.select`
+const Icon = styled.div<{ greyed?: boolean }>`
+  cursor: pointer;
   display: flex;
-  width: fit-content;
-  border-radius: 3px 0 0 3px;
-  border-color: #999;
-  outline: none;
-  background-color: #dde;
-  font-size: 10pt;
+  justify-content: center;
+  padding: 0 4px 4px 4px;
+  color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
 `;
 
 const LockedButton = styled.div<{ greyed?: boolean }>`
@@ -147,8 +165,7 @@ const LockedButton = styled.div<{ greyed?: boolean }>`
   display: flex;
   justify-content: center;
   font-size: small;
-  padding: 0 4px 2px 6px;
-  border-radius: 1px 3px 3px 1px;
+  padding: 0 4px 2px 4px;
   color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
 `;
 

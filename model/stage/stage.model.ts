@@ -54,23 +54,22 @@ export interface StageSelection {
   group?: THREE.Group;
   /** Currently selected polygons */
   polygons: Geom.Polygon[];
-  /** Shape of next selection */
-  shape: SelectionShape; 
+  /** Previously selected polygons */
+  prevPolys: Geom.Polygon[];
   /** Is the selection locked? */
   locked: boolean;
-  /** Is the selection visible? */
-  visible: boolean;
+  /** Is the selection enabled? */
+  enabled: boolean;
+  additive: boolean;
   /** Last cursor position */
   cursor: Geom.Vector;
 }
 
-type SelectionShape = 'rectangle' | 'rectilinear';
-
 interface StageSelectionJson {
   polygons: Geom.PolygonJson[];
-  shape: SelectionShape;
   locked: boolean;
-  visible: boolean;
+  enabled: boolean;
+  additive: boolean;
   cursor: Geom.VectorJson;
 }
 
@@ -89,9 +88,10 @@ export function createStage(stageKey: string): StageMeta {
     selection: {
       group: new THREE.Group,
       polygons: [],
-      shape: 'rectangle',
+      prevPolys: [],
       locked: false,
-      visible: true,
+      enabled: true,
+      additive: false,
       cursor: new Geom.Vector,
     },
   };
@@ -122,9 +122,9 @@ export function createPersist(stageKey: string): PersistedStage {
     },
     selection: {
       polygons: [],
-      shape: 'rectangle',
       locked: false,
-      visible: true,
+      enabled: true,
+      additive: false,
       cursor: { x: 0, y: 0 },
     },
   };

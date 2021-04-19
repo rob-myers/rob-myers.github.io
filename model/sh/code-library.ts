@@ -45,24 +45,18 @@ export const preloadedVariables = {
 export const shellScripts = {
 
   selectionKeyHandler: `
-key | run '({ read, _: {msg} }, { stage: s }) {
+key | run '({ read, _: {msg} }, { stage: { opts, sel } }) {
   while (msg = await read()) {
-    if (msg.type !== "keydown" || !s.opts.enabled) continue;
-    // TODO
-    // switch (msg.key) {
-    //   case "f": s.brush.paint(); break;
-    //   case "v": msg.metaKey && s.brush.paint(); break;
-    //   case "F": s.brush.erase(); break;
-    //   case "Backspace": s.brush.erase(); break;
-    //   case "c": msg.metaKey && s.brush.select(); break;
-    //   case "x": msg.metaKey ? s.brush.cutSelect()
-    //     : s.brush.transform("mirror(x)"); break;
-    //   case "Escape": s.brush.deselect(); break;
-    //   case "y": s.brush.transform("mirror(y)"); break;
-    //   case "q": s.brush.transform("rotate(90)"); break;
-    //   case "Q": s.brush.transform("rotate(-90)"); break;
-    //   case "z": msg.metaKey && s.brush.undoRedo(); break;
-    // }
+    if (msg.type !== "keydown" || !opts.enabled || !sel.enabled) {
+      continue;
+    }
+    if (sel.locked) {
+      // TODO
+    } else {
+      switch (msg.key) {
+        case "z": msg.metaKey && ([sel.polygons, sel.prevPolys] = [sel.prevPolys, sel.polygons]); break;
+      }
+    }
   }
 }' &
 `,
