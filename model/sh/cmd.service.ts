@@ -12,9 +12,9 @@ import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRea
 import { createKillError as killError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import useSession, { ProcessStatus } from 'store/session.store';
-import { ansiBlue, ansiReset, ansiWhite } from './tty.xterm';
+import { ansiBlue, ansiBrown, ansiReset, ansiWhite } from './tty.xterm';
 
-import { StageKeyEvent } from 'model/stage/stage.model';
+import { StageKeyEvent, StageMeta } from 'model/stage/stage.model';
 import useStage from 'store/stage.store';
 
 const commandKeys = {
@@ -114,7 +114,7 @@ class CmdService {
       case 'get': {
         const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
         for (const arg of args) {
-          yield this.getData(meta.sessionKey, stageKey, arg);
+          yield this.getData(meta, arg);
         }
         break;
       }
@@ -167,20 +167,34 @@ class CmdService {
       case 'ls': {
         const { opts, operands } = getOpts(args, { boolean: [
           '1', /** One line per item */
+          'l', /** Detailed */
         ], });
-        const provided = this.provideStageAndVars(meta);
-        let items = Object.keys(provided)
-          .concat(Object.keys(provided.stage).map(x => `stage/${x}`)).sort();
-
         // We usually treat -1 as an operand, but it is an option here
-        const prefix = operands.find(x => !x.startsWith('-'));
-        prefix && (items = items.filter(x => x.startsWith(prefix)));
-        if (!opts[1]) {
-          const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
-          items = cliColumns(items, { width: ttyShell.xterm.xterm.cols }).split(/\r?\n/);
+        const queries = operands.filter(x => !x.startsWith('-'));
+        const queryFns = queries.map(x => Function('__', `return __.${x}`));
+        const root = this.provideStageAndVars(meta);
+        const roots = queryFns.length ? queryFns.map(query => query(root)) : [root];
+        const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
+        
+        for (const [i, obj] of roots.entries()) {
+          if (obj === undefined) {
+            useSession.api.warn(meta.sessionKey, `ls: ${queries[i]} is not defined`);
+            continue;
+          }
+          if (roots.length > 1) yield `${i > 0 ? '\n' : ''}${queries[i]}:`;
+          const keys = Object.keys(obj).sort();
+          let items = [] as string[];
+          if (opts.l) {
+            const metas = keys.map(x => Array.isArray(obj[x]) ? 'Array' : typeof obj[x]);
+            const metasWidth = Math.max(...metas.map(x => x.length));
+            items = keys.map((x, i) => `${ansiBrown}${metas[i].padEnd(metasWidth)}${ansiWhite} ${x}`);
+          } else if (opts[1]) {
+            items = keys;
+          } else {
+            items = cliColumns(keys, { width: ttyShell.xterm.xterm.cols }).split(/\r?\n/);
+          }
+          for (const item of items) yield item;
         }
-
-        for (const item of items) yield item;
         break;
       }
       case 'map': {
@@ -249,9 +263,9 @@ class CmdService {
         break;
       }
       case 'set': {
-        const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
-        const value = this.parseArg(args[1]);
-        yield this.setData(meta.sessionKey, stageKey, args[0], value);
+        const [pathStr, key] = args;
+        const value = this.parseArg(args[2]);
+        yield this.setData(meta, pathStr, key, value);
         break;
       }
       case 'sleep': {
@@ -336,7 +350,7 @@ class CmdService {
     };
   }
 
-  private provideStageAndVars(meta: Sh.BaseMeta) {
+  private provideStageAndVars(meta: Sh.BaseMeta): { stage: StageMeta } & Record<string, any> {
     const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
     return {
       ...useSession.api.getSession(meta.sessionKey).var,
@@ -344,34 +358,14 @@ class CmdService {
     };
   }
 
-  private getData(sessionKey: string, stageKey: string, pathStr: string) {
-    const path = pathStr.split('/').map(kebabToCamel).filter(Boolean);
-    if  (path[0] === 'stage') {
-     const stage = useStage.api.getStage(stageKey);
-     return deepGet(stage, path.slice(1));
-   } else {
-     const varLookup = useSession.api.getSession(sessionKey).var;
-     return deepGet(varLookup, path);
-   }
+  private getData(meta: Sh.BaseMeta, pathStr: string) {
+    const root = this.provideStageAndVars(meta);
+    return Function('__', `return __.${pathStr}`)(root);
   }
 
-  private setData(sessionKey: string, stageKey: string, pathStr: string, data: any) {
-    const [ first, ...path] = pathStr.split('/').map(kebabToCamel).filter(Boolean);
-    if (path.length) {
-      const last = path.pop()!;
-      if (first === 'stage') {
-        const stage = useStage.api.getStage(stageKey);
-        if (path.length === 0) throw new Error('stage: cannot set any top-level key');
-        deepGet(stage, path)[last] = data;
-        switch (path[0]) {
-          case 'opts': useStage.api.updateOpts(stageKey, {}); break;
-          default: useStage.api.updateStage(stageKey, {}); break;
-        }
-      } else if (first === 'var') {
-        const varLookup = useSession.api.getSession(sessionKey).var;
-        deepGet(varLookup, path)[last] = data;
-      }
-    }
+  private setData(meta: Sh.BaseMeta, pathStr: string, key: string, value: string) {
+    const objToEdit = this.getData(meta, pathStr);
+    objToEdit[key] = value;
   }
 
   private async *readLoop(
