@@ -36,70 +36,68 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
 
   return (
     <Toolbar>
-        <LeftToolbar>
-          <Slot>
-            <StageKey>
-              @{stageKey}
-            </StageKey>
-          </Slot>
-          <Slot>
-            <PauseButton
-              onClick={toggleRunning}
-              emphasis={!canToggleRunning}
-            >
-              {opts.enabled ? 'running' : 'paused'}
-            </PauseButton>
-          </Slot>
-          <Slot style={{ background: '#444', padding: '0 4px' }}>
-            <Icon
-              greyed={!enableSelUi}
-              onClick={toggleSelectionEnabled}
-              title={enableSelUi
-                ? 'click to disable selection'
-                : 'click to enable selection'}
-            >
-              ✓
-            </Icon>
-            <Icon
-              greyed={!(enableSelUi && selection.additive)}
-              onClick={toggleSelectionAdditive}
-              {...enableSelUi && {
-                title: selection.additive
-                  ? 'click to select non-additively'
-                  : 'click to select additively'
-              }}
-            >
-              +
-            </Icon>
-            <LockedButton
-              greyed={!(enableSelUi && selection.locked)}
-              title="selection locked?"
-              onClick={toggleSelectionLocked}
-              {...enableSelUi && {
-                title: selection.locked
-                  ? 'click to unlock selection'
-                  : 'click to lock selection'
-              }}
-            >
-              locked
-            </LockedButton>
-          </Slot>
-        </LeftToolbar>
-
-        <RightToolbar>
-          <Slot />
-          <Slot>
-            <PanZoomButton
-              greyed={!(enableUi && opts.panZoom)}
-              {...enableUi && {
-                onClick: toggleCam,
-                ...opts.panZoom && { title: 'click to disable' },
-              }}
-            >
-              panzoom
-            </PanZoomButton>
-          </Slot>
-        </RightToolbar>
+      <LeftToolbar>
+        <Slot>
+          <StageKey>
+            @{stageKey}
+          </StageKey>
+        </Slot>
+        <Slot>
+          <PauseButton
+            onClick={toggleRunning}
+            emphasis={!canToggleRunning}
+          >
+            {opts.enabled ? 'running' : 'paused'}
+          </PauseButton>
+        </Slot>
+        <SelectionToolbar>
+          <Icon
+            greyed={!enableSelUi}
+            onClick={toggleSelectionEnabled}
+            title={enableSelUi
+              ? 'selection enabled'
+              : 'selection disabled'}
+          >
+            ✓
+          </Icon>
+          <Icon
+            greyed={!(enableSelUi && selection.additive)}
+            onClick={toggleSelectionAdditive}
+            {...enableSelUi && {
+              title: selection.additive
+                ? 'selecting additively'
+                : 'selecting non-additively'
+            }}
+          >
+            +
+          </Icon>
+          <LockedButton
+            greyed={!(enableSelUi && selection.locked)}
+            onClick={toggleSelectionLocked}
+            {...enableSelUi && {
+              title: selection.locked
+                ? 'selection locked'
+                : 'selection unlocked'
+            }}
+          >
+            locked
+          </LockedButton>
+        </SelectionToolbar>
+      </LeftToolbar>
+      <RightToolbar>
+        <Slot />
+        <Slot>
+          <PanZoomButton
+            greyed={!(enableUi && opts.panZoom)}
+            {...enableUi && {
+              onClick: toggleCam,
+              ...opts.panZoom && { title: 'click to disable' },
+            }}
+          >
+            panzoom
+          </PanZoomButton>
+        </Slot>
+      </RightToolbar>
     </Toolbar>
   );
 };
@@ -141,15 +139,21 @@ const StageKey = styled.div`
   padding-bottom: 3px;
 `;
 
-const PauseButton = styled.button<{ greyed?: boolean; emphasis?: boolean; }>`
+const PauseButton = styled.button<{ emphasis?: boolean; }>`
   cursor: pointer;
   background: #222;
   border-width: 1px;
   outline: none;
   color: #dfd;
-  ${({ emphasis = false }) => emphasis && css`
-    font-style: italic;
-  `}
+  font-style: ${({ emphasis = false }) => emphasis ? 'italic' : ''};
+`;
+
+const SelectionToolbar = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #444;
+  padding: 0 4px;
 `;
 
 const Icon = styled.div<{ greyed?: boolean }>`
