@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useThree, PointerEvent } from "react-three-fiber";
+import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
 import { Subject } from "rxjs";
 import * as THREE from 'three';
-import { ndCoordsToGround, scaleUpByTouched, vectPrecision } from "model/3d/three.model";
+import { scaleUpByTouched, vectPrecision } from "model/3d/three.model";
 import * as Geom from "model/geom";
 import { StageSelection, StagePointerEvent, StageKeyEvent } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
 
 const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
-  const { camera } = useThree();
   const group = useRef<THREE.Group>(null);
 
   const rectMesh = useRef<THREE.Mesh>(null);
@@ -44,13 +43,14 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     const [position, scale] = [rectMesh.current!.position, rectMesh.current!.scale];
     let [ptr, ptrDown, lastKeyMsg] = [new THREE.Vector3, false, {} as StageKeyEvent];
 
-    const ptrSub = ptrWire.subscribe(({ key, ndCoords }) => {
+    const ptrSub = ptrWire.subscribe(({ key, point }) => {
+
       if (ptrDown && key === 'pointermove') {
-        ndCoordsToGround(ndCoords, camera, ptr);
+        ptr.copy(point);
         scale.set(ptr.x - position.x, ptr.y - position.y, 1);
       } else if (key === 'pointerdown') {
         ptrDown = true;
-        position.copy(ndCoordsToGround(ndCoords, camera, ptr))
+        position.copy(ptr.copy(point))
         selection.cursor.copy(position);
         scale.set(0, 0, 0);
         if (!selection.additive && !lastKeyMsg.metaKey && !lastKeyMsg.shiftKey) {
@@ -60,6 +60,10 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         ptrDown = false;
         scale.set(0, 0, 0);
         setPolysFaded(false);
+        if (Geom.Rect.fromPoints(position, ptr).area < 0.01 * 0.01) {
+          return;
+        }
+
         scaleUpByTouched(position, ptr);
         const rect = Geom.Rect.fromPoints(position, ptr);
         const polygons = [] as Geom.Polygon[];
@@ -80,7 +84,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
       } else if (key === 'pointerleave') {
         ptrDown = false;
-        selection.cursor.copy(position);
         setPolysFaded(false);
       }
     });
@@ -111,19 +114,22 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     if (!selection.locked) return;
     const [position, ptr] = [polysGroup.current!.position, new THREE.Vector3];
 
-    const ptrSub = ptrWire.subscribe(({ key, ndCoords }) => {
+    const ptrSub = ptrWire.subscribe(({ key, point }) => {
       if (!dragging.current) {
         return;
       } else if (key === 'pointermove') {
-        ndCoordsToGround(ndCoords, camera, ptr);
+        ptr.copy(point);
         position.copy(ptr).sub(dragStart);
       } else if (key === 'pointerup' || key === 'pointerleave') {
         dragging.current = false;
         vectPrecision(position, 1);
         // Apply transform
+        /**
+         * TODO prevent flicker by changing before trigger render
+         */
         selection.polygons.map(x => x.add(position).precision(1));
-        position.set(0, 0, 0);
         restoreFromState(selection);
+        position.set(0, 0, 0);
       }
     });
 
@@ -152,7 +158,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         <mesh
           ref={polysMesh}
           geometry={polysGeom}
-          onPointerDown={(e: PointerEvent) => {
+          onPointerDown={(e: ThreeEvent<PointerEvent>) => {
             if (selection.locked && e.type === 'pointerdown') {
               dragging.current = true;
               dragStart.copy(e.point);

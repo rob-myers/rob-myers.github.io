@@ -140,8 +140,8 @@ export type StageKeyEvent = Pick<KeyboardEvent, (
 };
 
 export type StagePointerEvent = {
-  /** Normalized device coords in [-1, 1] * [-1, 1] */
-  ndCoords: Geom.VectorJson;
+  /** Position on ground */
+  point: THREE.Vector3;
 } & (
   | { key: 'pointerdown' }
   | { key: 'pointerup' }

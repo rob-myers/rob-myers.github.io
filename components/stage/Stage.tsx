@@ -3,9 +3,11 @@ import { Subject } from "rxjs";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { Canvas, CanvasContext } from "react-three-fiber";
+import { Canvas } from "@react-three/fiber";
+import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
+import { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
 
-import { getWindow, getNormDevicePos } from "model/dom.model";
+import { getWindow } from "model/dom.model";
 import { StagePointerEvent, StageMeta } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
@@ -17,8 +19,6 @@ import Selection from "./Selection";
 import Cursor from "./Cursor";
 
 const Stage: React.FC<Props> = ({ stage }) => {
-  // console.log('Stage')
-  const pixelRatio = useRef(getWindow()?.devicePixelRatio);
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
@@ -26,12 +26,14 @@ const Stage: React.FC<Props> = ({ stage }) => {
     const camera = ctxt.camera as PerspectiveCamera;
     const { initCameraPos } = useStage.api.getPersist(stage.key).extra;
     camera.position.set(...initCameraPos);
-
+    console.log('created camera', camera);
+    
     camera.setFocalLength(35);
     ctxt.gl.shadowMap.enabled = true;
     ctxt.gl.shadowMap.autoUpdate = false;
     ctxt.gl.shadowMap.type = PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
+    ctxt.gl.setPixelRatio(getWindow()!.devicePixelRatio);
 
     // Currently updateNavigable will also update stage.internal
     stage.internal.scene = ctxt.scene;
@@ -55,8 +57,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
   // }, [ctxt]);
 
   const ptrWire = useRef(new Subject<StagePointerEvent>()).current;
-  const onPointer = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    ptrWire.next({ key: e.type as any, ndCoords: getNormDevicePos(e) });
+  const onPointer = useCallback((e: ThreeEvent<PointerEvent>) => {
+    ptrWire.next({ key: e.type as any, point: e.point });
   }, []);
 
   const keyWire = stage.internal.keyEvents;
@@ -90,14 +92,16 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
       {(stage.opts.enabled || ctxt) && (
 
-        <Canvas
-          pixelRatio={pixelRatio.current}
-          onCreated={onCreatedCanvas}
-          onPointerDownCapture={onPointer}
-          onPointerMoveCapture={onPointer}
-          onPointerUpCapture={onPointer}
-          onPointerLeave={onPointer}
-        >
+        <Canvas onCreated={onCreatedCanvas}>
+
+          <mesh
+            onPointerDown={onPointer}
+            onPointerMove={onPointer}
+            onPointerUp={onPointer}
+            onPointerLeave={onPointer}
+          >
+            <planeGeometry args={[100, 100]} />
+          </mesh>
 
           <Grid />
           <Axes />
@@ -106,14 +110,15 @@ const Stage: React.FC<Props> = ({ stage }) => {
             internal={stage.internal}
           />
 
-          <Cursor
-            selection={stage.selection}
-            ptrWire={ptrWire}
-          />
           <Selection
             selection={stage.selection}
             ptrWire={ptrWire}
             keyWire={keyWire}
+          />
+
+          <Cursor
+            initial={stage.selection.cursor}
+            ptrWire={ptrWire}
           />
 
         </Canvas>

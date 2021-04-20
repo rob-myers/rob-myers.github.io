@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react';
-import { extend, useThree, useFrame } from 'react-three-fiber';
+import { extend, useThree, useFrame } from '@react-three/fiber';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
 import { StageInternal } from 'model/stage/stage.model';
 
@@ -7,13 +7,12 @@ import { StageInternal } from 'model/stage/stage.model';
 extend({ PanZoomControls });
 
 const CameraControls: React.FC<Props> = ({ internal, enabled }) => {
-  // console.log('CameraControls')
   const { camera, gl: { domElement } } = useThree();
   const controls = useRef<PanZoomControls>();
 
   useEffect(() => {
     internal.controls = controls.current!;
-    return () => void delete internal.controls;
+    return () => { delete internal.controls };
   }, []);
 
   useFrame((_state) => controls.current!.update());
