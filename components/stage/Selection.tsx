@@ -6,16 +6,13 @@ import { ndCoordsToGround, scaleUpByTouched, vectPrecision } from "model/3d/thre
 import * as Geom from "model/geom";
 import { StageSelection, StagePointerEvent, StageKeyEvent } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
-import useGeomStore from "store/geom.store";
 
 const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const { camera } = useThree();
   const group = useRef<THREE.Group>(null);
-  const cursorMesh = useRef<THREE.Mesh>(null);
-  const cursorTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
+
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geomService.createSquareGeometry()).current;
-  
   const polysMesh = useRef<THREE.Mesh>(null);
   const [polysGeom, setPolysGeom] = useState(geomService.polysToGeometry(selection.polygons));
   const [outlineGeom, setOutlineGeom] = useState(geomService.polysToGeometry([]));
@@ -23,10 +20,8 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const dragging = useRef(false);
   const dragStart = useRef(new THREE.Vector3).current;
 
-  // Initialize and rehydrate
-  useEffect(() => {
+  useEffect(() => {// Initialize and rehydrate
     selection.group = group.current!;
-    cursorMesh.current?.position.set(selection.cursor.x, selection.cursor.y, 0);
     rectMesh.current?.scale.set(0, 0, 1);
     return () => void delete selection.group;
   }, []);
@@ -43,12 +38,10 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     (polysMesh.current!.material as THREE.Material).opacity = faded ? 0.1 : 0.2;
   }, []);
 
-  // Handle mouse/keys when unlocked
-  useEffect(() => {
+  useEffect(() => {// Handle mouse/keys when unlocked
     if (selection.locked) return;
 
     const [position, scale] = [rectMesh.current!.position, rectMesh.current!.scale];
-    const cursorPosition = cursorMesh.current!.position;
     let [ptr, ptrDown, lastKeyMsg] = [new THREE.Vector3, false, {} as StageKeyEvent];
 
     const ptrSub = ptrWire.subscribe(({ key, ndCoords }) => {
@@ -67,12 +60,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         ptrDown = false;
         scale.set(0, 0, 0);
         setPolysFaded(false);
-
-        if (Geom.Rect.fromPoints(position, ptr).area < 0.01 * 0.01) {
-          vectPrecision(cursorPosition.copy(position), 1);
-          return;
-        }
-
         scaleUpByTouched(position, ptr);
         const rect = Geom.Rect.fromPoints(position, ptr);
         const polygons = [] as Geom.Polygon[];
@@ -120,8 +107,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     };
   }, [selection]);
 
-  // Handle mouse when locked
-  useEffect(() => {
+  useEffect(() => {// Handle mouse when locked
     if (!selection.locked) return;
     const [position, ptr] = [polysGroup.current!.position, new THREE.Vector3];
 
@@ -144,21 +130,12 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     return () => { ptrSub.unsubscribe(); };
   }, [selection]);
 
-  // Listen for external updates to polygons
-  useEffect(() => {
+  useEffect(() => {// Listen for external updates to polygons
     restoreFromState(selection);
   }, [selection.polygons]);
 
   return (
     <group ref={group} name="SelectionGroup">
-
-      {cursorTexture && (
-        <mesh ref={cursorMesh}>
-          <planeGeometry args={[0.1, 0.1]} />
-          <meshBasicMaterial map={cursorTexture} />
-        </mesh>
-      )}
-      
       <mesh
         ref={rectMesh}
         geometry={rectGeom}

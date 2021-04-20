@@ -14,6 +14,7 @@ import CameraControls from "./CameraControls";
 import Grid from "./Grid";
 import Axes from "./Axes";
 import Selection from "./Selection";
+import Cursor from "./Cursor";
 
 const Stage: React.FC<Props> = ({ stage }) => {
   // console.log('Stage')
@@ -105,6 +106,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
             internal={stage.internal}
           />
 
+          <Cursor
+            selection={stage.selection}
+            ptrWire={ptrWire}
+          />
           <Selection
             selection={stage.selection}
             ptrWire={ptrWire}
