@@ -9,15 +9,16 @@ import { geomService } from "model/geom.service";
 
 const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const group = useRef<THREE.Group>(null);
-
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geomService.createSquareGeometry()).current;
   const polysMesh = useRef<THREE.Mesh>(null);
-  const [polysGeom, setPolysGeom] = useState(geomService.polysToGeometry(selection.polygons));
-  const [outlineGeom, setOutlineGeom] = useState(geomService.polysToGeometry([]));
+  const polysGeom = useRef(geomService.polysToGeometry(selection.polygons));
+  const polysPos = useRef(new THREE.Vector3);
+  const outlineGeom = useRef(geomService.polysToGeometry([]));
   const polysGroup = useRef<THREE.Group>(null);
   const dragging = useRef(false);
   const dragStart = useRef(new THREE.Vector3).current;
+  const [, triggerRenderAt] = useState(0);
 
   useEffect(() => {// Initialize and rehydrate
     selection.group = group.current!;
@@ -27,15 +28,22 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
   const restoreFromState = useCallback(({ polygons }: StageSelection) => {
     rectMesh.current!.scale.set(0, 0, 0);
-    setPolysGeom(geomService.polysToGeometry(polygons));
-    setOutlineGeom(geomService.polysToGeometry(
+    polysGeom.current = geomService.polysToGeometry(polygons);
+    outlineGeom.current = geomService.polysToGeometry(
       geomService.cutOut(polygons, polygons.flatMap(x => x.createOutset(0.01)))
-    ));
+    );
   }, []);
 
   const setPolysFaded = useCallback((faded: boolean) => {
     (polysMesh.current!.material as THREE.Material).opacity = faded ? 0.1 : 0.2;
   }, []);
+ 
+  const onDragPolys = useCallback((e: ThreeEvent<PointerEvent>) => {
+    if (selection.locked && e.type === 'pointerdown') {
+      dragging.current = true;
+      dragStart.copy(e.point);
+    }
+  }, [selection.locked]);
 
   useEffect(() => {// Handle mouse/keys when unlocked
     if (selection.locked) return;
@@ -77,11 +85,10 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         }
 
         polygons.forEach(x => x.precision(1)); // Increments of 0.1
-        // Must assign before setPolysGeom
         selection.prevPolys = selection.polygons.slice();
         selection.polygons = polygons;
-        setPolysGeom(geomService.polysToGeometry(polygons));
-
+        polysGeom.current = geomService.polysToGeometry(polygons);
+        triggerRenderAt(Date.now());
       } else if (key === 'pointerleave') {
         ptrDown = false;
         setPolysFaded(false);
@@ -101,7 +108,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
           setPolysFaded(false);
         }
       }
-
     });
 
     return () => {
@@ -123,13 +129,12 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       } else if (key === 'pointerup' || key === 'pointerleave') {
         dragging.current = false;
         vectPrecision(position, 1);
-        // Apply transform
-        /**
-         * TODO prevent flicker by changing before trigger render
-         */
+        // Apply transform and reset polygons group
         selection.polygons.map(x => x.add(position).precision(1));
         restoreFromState(selection);
-        position.set(0, 0, 0);
+        // Avoid flicker, unlike position.set(0, 0, 0)
+        polysPos.current = new THREE.Vector3;
+        triggerRenderAt(Date.now());
       }
     });
 
@@ -138,6 +143,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
   useEffect(() => {// Listen for external updates to polygons
     restoreFromState(selection);
+    triggerRenderAt(Date.now());
   }, [selection.polygons]);
 
   return (
@@ -154,23 +160,19 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       <group
         ref={polysGroup}
         visible={selection.enabled}
+        position={polysPos.current}
       >
         <mesh
           ref={polysMesh}
-          geometry={polysGeom}
-          onPointerDown={(e: ThreeEvent<PointerEvent>) => {
-            if (selection.locked && e.type === 'pointerdown') {
-              dragging.current = true;
-              dragStart.copy(e.point);
-            }
-          }}
+          geometry={polysGeom.current}
+          onPointerDown={onDragPolys}
         >
           <meshBasicMaterial color="#00f" transparent opacity={0.2} />
         </mesh>
 
         <mesh
           visible={selection.locked}
-          geometry={outlineGeom}
+          geometry={outlineGeom.current}
         >
           <meshBasicMaterial color="#000" transparent opacity={0.5} />
         </mesh>
