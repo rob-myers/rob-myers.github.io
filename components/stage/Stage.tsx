@@ -98,6 +98,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
             onPointerMove={onPointer}
             onPointerUp={onPointer}
             onPointerLeave={onPointer}
+            visible={false}
           >
             <planeGeometry args={[100, 100]} />
           </mesh>
