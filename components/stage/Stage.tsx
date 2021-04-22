@@ -26,7 +26,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
     const camera = ctxt.camera as PerspectiveCamera;
     const { initCameraPos } = useStage.api.getPersist(stage.key).extra;
     camera.position.set(...initCameraPos);
-    console.log('created camera', camera);
     
     camera.setFocalLength(35);
     ctxt.gl.shadowMap.enabled = true;

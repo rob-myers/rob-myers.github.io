@@ -49,17 +49,15 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     if (selection.locked) return;
 
     const [position, scale] = [rectMesh.current!.position, rectMesh.current!.scale];
-    let [ptr, ptrDown, lastKeyMsg] = [new THREE.Vector3, false, {} as StageKeyEvent];
+    let [ptrDown, lastKeyMsg] = [false, {} as StageKeyEvent];
 
     const ptrSub = ptrWire.subscribe(({ key, point }) => {
 
       if (ptrDown && key === 'pointermove') {
-        ptr.copy(point);
-        scale.set(ptr.x - position.x, ptr.y - position.y, 1);
+        scale.set(point.x - position.x, point.y - position.y, 1);
       } else if (key === 'pointerdown') {
         ptrDown = true;
-        position.copy(ptr.copy(point))
-        selection.cursor.copy(position);
+        position.copy(point);
         scale.set(0, 0, 0);
         if (!selection.additive && !lastKeyMsg.metaKey && !lastKeyMsg.shiftKey) {
           setPolysFaded(true); // Fade to indicate impending deletion
@@ -68,10 +66,10 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         ptrDown = false;
         scale.set(0, 0, 0);
         setPolysFaded(false);
-        if (Geom.Rect.fromPoints(position, ptr).area < 0.01 * 0.01) {
+        if (Geom.Rect.fromPoints(position, point).area < 0.01 * 0.01) {
           return;
         }
-
+        const ptr = point.clone();
         scaleUpByTouched(position, ptr);
         const rect = Geom.Rect.fromPoints(position, ptr);
         const polygons = [] as Geom.Polygon[];
@@ -96,16 +94,15 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     });
 
     const [blue, red] = [geomService.getColor('#00f'), geomService.getColor('#f00')];
+
     const keySub = keyWire.subscribe((msg) => {
       lastKeyMsg = msg;
       (rectMesh.current!.material as THREE.MeshBasicMaterial).color = msg.shiftKey ? red : blue;
       if (ptrDown) {
         setPolysFaded(!(msg.metaKey || msg.shiftKey || selection.additive));
         if (msg.key === 'Escape') {
-          position.copy(ptr);
           scale.set(0, 0, 1);
-          ptrDown = false;
-          setPolysFaded(false);
+          setPolysFaded(ptrDown = false);
         }
       }
     });
@@ -118,14 +115,13 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
   useEffect(() => {// Handle mouse when locked
     if (!selection.locked) return;
-    const [position, ptr] = [polysGroup.current!.position, new THREE.Vector3];
+    const position = polysGroup.current!.position;
 
     const ptrSub = ptrWire.subscribe(({ key, point }) => {
       if (!dragging.current) {
         return;
       } else if (key === 'pointermove') {
-        ptr.copy(point);
-        position.copy(ptr).sub(dragStart);
+        position.copy(point).sub(dragStart);
       } else if (key === 'pointerup' || key === 'pointerleave') {
         dragging.current = false;
         vectPrecision(position, 1);
