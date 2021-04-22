@@ -7,21 +7,23 @@ export class VarDevice implements Device {
 
   public key: string;
   private buffer: null | any[];
-
+  
   constructor(
     private sessionKey: string,
-    private varName: string,
+    private varPath: string,
     private mode: VarDeviceMode,
   ) {
-    this.key = `${varName}@${sessionKey}`;
+    this.key = `${varPath}@${sessionKey}`;
     this.buffer = null;
   }
 
   public async writeData(data: any) {
     if (this.mode === 'array') {
       if (!this.buffer) {
-        this.buffer = [];
-        useSessionStore.api.setVar(this.sessionKey, this.varName, this.buffer);
+        this.buffer = useSessionStore.api.getVarDeep(this.sessionKey, this.varPath);
+        if (!Array.isArray(this.buffer)) {
+          useSessionStore.api.setVarDeep(this.sessionKey, this.varPath, this.buffer = []);
+        }
       }
       if (data === undefined) {
         return; 
@@ -34,9 +36,9 @@ export class VarDevice implements Device {
       if (data === undefined) {
         return; 
       } else if (isDataChunk(data)) {
-        useSessionStore.api.setVar(this.sessionKey, this.varName, last(data.items));
+        useSessionStore.api.setVarDeep(this.sessionKey, this.varPath, last(data.items));
       } else {
-        useSessionStore.api.setVar(this.sessionKey, this.varName, data);
+        useSessionStore.api.setVarDeep(this.sessionKey, this.varPath, data);
       }
     }
   }

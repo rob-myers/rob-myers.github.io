@@ -1,6 +1,5 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import safeJsonStringify from 'safe-json-stringify';
 
 import { deepClone, KeyedLookup, mapValues } from 'model/generic.model';
 import { Device, makeShellIo, ShellIo } from 'model/sh/io/io.model';
@@ -42,6 +41,7 @@ export type State = {
     getProcesses: (sessionKey: string, pgid?: number) => ProcessMeta[];
     getPositional: (pid: number, sessionKey: string, varName: number) => string;
     getVar: (sessionKey: string, varName: string) => any | undefined;
+    getVarDeep: (sessionKey: string, varPath: string) => any | undefined;
     getVars: (sessionKey: string) => { key: string; value: string }[];
     getSession: (sessionKey: string) => Session;
     persist: (sessionKey: string) => void;
@@ -50,6 +50,7 @@ export type State = {
     removeSession: (sessionKey: string) => void;
     resolve: (fd: number, meta: BaseMeta) => Device;
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
+    setVarDeep: (sessionKey: string, varPath: string, varValue: any) => void;
     warn: (sessionKey: string, msg: string) => void;
   }
 }
@@ -159,8 +160,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().session[sessionKey];
     },
 
-    createVarDevice(sessionKey, varName, mode) {
-      const varDevice = new VarDevice(sessionKey, varName, mode);
+    createVarDevice(sessionKey, varPath, mode) {
+      const varDevice = new VarDevice(sessionKey, varPath, mode);
       return get().device[varDevice.key] = varDevice;
     },
 
@@ -205,6 +206,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().session[sessionKey].var[varName];
     },
 
+    getVarDeep: (sessionKey, varPath) => {
+      const root = get().session[sessionKey].var;
+      return Function('__', `return __.${varPath}`)(root);
+    },
+
     getVars: (sessionKey) => {
       return Object.entries(get().session[sessionKey].var)
         .map(([key, value]) => ({ key, value }));
@@ -246,8 +252,13 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().device[meta.fd[fd]];
     },
 
-    setVar: async (sessionKey, varName, varValue) => {
-      api.getSession(sessionKey).var[varName] = varValue; // Mutate
+    setVar: (sessionKey, varName, varValue) => {
+      api.getSession(sessionKey).var[varName] = varValue;
+    },
+
+    setVarDeep: (sessionKey, varPath, varValue) => {
+      const root = api.getSession(sessionKey).var;
+      Function('__1', '__2', `__1.${varPath} = __2`)(root, varValue);
     },
 
     warn: (sessionKey, msg) => {
