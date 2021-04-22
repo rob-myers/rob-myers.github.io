@@ -33,13 +33,11 @@ export const preloadedFunctions = {
 `,
 };
 
-const navigator = getWindow()?.navigator;
-
 export const preloadedVariables = {
-  navigator: {
-    platform: navigator?.platform??'',
-    userAgent: navigator?.userAgent??'',
-  },
+  // navigator: {
+  //   platform: navigator?.platform??'',
+  //   userAgent: navigator?.userAgent??'',
+  // },
 };
 
 export const shellScripts = {
