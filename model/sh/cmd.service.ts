@@ -3,7 +3,7 @@ import safeJsonStringify from 'safe-json-stringify';
 import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 
 import * as Geom from 'model/geom';
-import { deepGet, kebabToCamel, testNever, truncate, Deferred, pause } from 'model/generic.model';
+import { testNever, truncate, Deferred, pause } from 'model/generic.model';
 import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
@@ -26,7 +26,7 @@ const commandKeys = {
   declare: true,
   /** Output arguments as space-separated string */
   echo: true,
-  /** Get a variable or something from stage $STAGE_KEY */
+  /** Get each arg from stageAndVars */
   get: true,
   /** List previous commands */
   history: true,
@@ -34,9 +34,9 @@ const commandKeys = {
   key: true,
   /** Kill a process */
   kill: true,
-  /** List variables, usually created via redirection */
+  /** List variables */
   ls: true,
-  /** Outpus 1, 2, ... at fixed intervals */
+  /** Output 1, 2, ... at fixed intervals */
   poll: true,
   /** List running processes */
   ps: true,
@@ -44,9 +44,11 @@ const commandKeys = {
   map: true,
   /** Exit from a function */
   return: true,
+  /** Remove each arg from variables */
+  rm: true,
   /** Run a javascript generator */
   run: true,
-  /** Set a variable of something in stage $STAGE_KEY */
+  /** Set a key-value pair in stageAndVars */
   set: true,
   /** Wait for specified number of seconds */
   sleep: true,
@@ -112,9 +114,9 @@ class CmdService {
         break;
       }
       case 'get': {
-        const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
+        const root = this.provideStageAndVars(meta);
         for (const arg of args) {
-          yield this.getData(meta, arg);
+          yield Function('__', `return __.${arg}`)(root);
         }
         break;
       }
@@ -250,6 +252,11 @@ class CmdService {
         process.onSuspend = process.onResume = null;
         break;
       }
+      case 'rm': {
+        const root = useSession.api.getSession(meta.sessionKey).var;
+        for (const arg of args) Function('__', `delete __.${arg}`)(root);
+        break;
+      }
       /**
        * e.g. run '({ read }) { yield "foo"; yield await read(); }'
        */
@@ -263,9 +270,14 @@ class CmdService {
         break;
       }
       case 'set': {
-        const [pathStr, key] = args;
-        const value = this.parseArg(args[2]);
-        yield this.setData(meta, pathStr, key, value);
+        if (args.length === 2) {
+          const varLookup = useSession.api.getSession(meta.sessionKey).var;
+          varLookup[args[0]] = this.parseArg(args[1]);
+        } else if (args.length === 3) {
+          const root = this.provideStageAndVars(meta)
+          const obj = Function('__', `return __.${args[0]}`)(root);
+          obj[args[1]] = this.parseArg(args[2]);
+        }
         break;
       }
       case 'sleep': {
@@ -356,16 +368,6 @@ class CmdService {
       ...useSession.api.getSession(meta.sessionKey).var,
       stage: createStageProxy(stageKey),
     };
-  }
-
-  private getData(meta: Sh.BaseMeta, pathStr: string) {
-    const root = this.provideStageAndVars(meta);
-    return Function('__', `return __.${pathStr}`)(root);
-  }
-
-  private setData(meta: Sh.BaseMeta, pathStr: string, key: string, value: string) {
-    const objToEdit = this.getData(meta, pathStr);
-    objToEdit[key] = value;
   }
 
   private async *readLoop(
