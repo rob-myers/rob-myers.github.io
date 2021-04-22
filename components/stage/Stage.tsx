@@ -32,7 +32,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
     ctxt.gl.shadowMap.autoUpdate = false;
     ctxt.gl.shadowMap.type = PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
-    ctxt.gl.setPixelRatio(getWindow()!.devicePixelRatio);
 
     // Currently updateNavigable will also update stage.internal
     stage.internal.scene = ctxt.scene;
@@ -91,7 +90,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
       {(stage.opts.enabled || ctxt) && (
 
-        <Canvas onCreated={onCreatedCanvas}>
+        <Canvas
+          dpr={getWindow()!.devicePixelRatio}
+          onCreated={onCreatedCanvas}
+        >
 
           <mesh
             onPointerDown={onPointer}
