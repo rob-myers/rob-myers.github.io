@@ -51,7 +51,7 @@ class GeomService {
     );
   }
 
-  createAxis(type: 'x' | 'y', color = '#f00', opacity = 1, lineWidth = 0.005) {
+  createAxis(type: 'x' | 'y', color = '#f00', opacity = 1, lineWidth = 0.008) {
     return this.createPolyLine(
       type === 'x'
         ? [new Vector3(-50, 0), new Vector3(50, 0)]
