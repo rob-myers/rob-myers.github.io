@@ -3,7 +3,7 @@ import safeJsonStringify from 'safe-json-stringify';
 import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 
 import * as Geom from 'model/geom';
-import { testNever, truncate, Deferred, pause } from 'model/generic.model';
+import { testNever, truncate, Deferred, pause, tryParseJson } from 'model/generic.model';
 import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
@@ -48,7 +48,7 @@ const commandKeys = {
   rm: true,
   /** Run a javascript generator */
   run: true,
-  /** Set a key-value pair in stageAndVars */
+  /** Set something in stageAndVars */
   set: true,
   /** Wait for specified number of seconds */
   sleep: true,
@@ -270,14 +270,10 @@ class CmdService {
         break;
       }
       case 'set': {
-        if (args.length === 2) {
-          const varLookup = useSession.api.getSession(meta.sessionKey).var;
-          varLookup[args[0]] = this.parseArg(args[1]);
-        } else if (args.length === 3) {
-          const root = this.provideStageAndVars(meta)
-          const obj = Function('__', `return __.${args[0]}`)(root);
-          obj[args[1]] = this.parseArg(args[2]);
-        }
+        const root = this.provideStageAndVars(meta);
+        Function('__', `return __.${args[0]} = ${
+          tryParseJson(args[1]) === undefined ? `"${args[1]}"` : args[1]
+        }`)(root);
         break;
       }
       case 'sleep': {
@@ -364,10 +360,10 @@ class CmdService {
 
   private provideStageAndVars(meta: Sh.BaseMeta): { stage: StageMeta } & Record<string, any> {
     const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
-    return {
-      ...useSession.api.getSession(meta.sessionKey).var,
-      stage: createStageProxy(stageKey),
-    };
+    return Object.assign(
+      useSession.api.getSession(meta.sessionKey).var,
+      { stage: createStageProxy(stageKey) },
+    );
   }
 
   private async *readLoop(

@@ -35,9 +35,8 @@ export function createStageProxy(stageKey: string) {
 
       return stage[key];
     },
-    set(_, key: string, value: any) {
-      useStage.api.updateStage(stageKey, { [key]: value });
-      return true;
+    set(_, _key: keyof StageMeta, _value: any) {
+      throw Error('Cannot set top-level key of stage');
     },
     ownKeys: () => Object.keys(useStage.api.getStage(stageKey)),
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })

@@ -76,7 +76,7 @@ export function tryParseJson(input: any) {
   try {
     return JSON.parse(input);
   } catch (e) {
-    return null;
+    return undefined;
   }
 }
 
