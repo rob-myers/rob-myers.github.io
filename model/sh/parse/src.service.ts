@@ -1,6 +1,5 @@
 import type * as Sh from "./parse.model";
 import { last, testNever } from "model/generic.model";
-import { semanticsService } from "../semantics.service";
 
 export class SrcService {
 
@@ -228,6 +227,7 @@ export class SrcService {
         const fd = node.N ? Number(node.N.Value) : '';
         switch (node.Op) {
           case '>':
+          case '>>':
             const [part] = node.Word.Parts;
             const move = part?.type === 'Lit' && part.Value.endsWith('-');
             return `${fd}${node.Op}${this.src(node.Word) }${move ? '-' : ''}`;
