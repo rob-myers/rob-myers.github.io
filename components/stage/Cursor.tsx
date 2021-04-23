@@ -24,14 +24,14 @@ const Cursor: React.FC<Props> = ({ extra, ptrWire }) => {
     });
   }, []);
 
-  return texture && (
+  return texture ? (
     <group ref={group}>
       <mesh>
         <planeGeometry args={[0.1, 0.1]} />
         <meshBasicMaterial map={texture} transparent />
       </mesh>
     </group>
-  );
+  ) : null;
 };
 
 interface Props {
