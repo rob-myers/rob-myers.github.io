@@ -48,8 +48,8 @@ export interface StageOpts {
 
 export interface StageSelection {
   /**
-   * The root group of the Selection component.
-   * We may wish to attach semi-transparent meshes here.
+   * The transformation group of the Selection component.
+   * We will attach semi-transparent meshes here.
    */
   group?: THREE.Group;
   /** Currently selected polygons */
@@ -60,9 +60,13 @@ export interface StageSelection {
   locked: boolean;
   /** Is the selection enabled? */
   enabled: boolean;
+  /** Add next rectangle to selection, or overwrite? */
   additive: boolean;
   /** Last cursor position */
   cursor: Geom.Vector;
+  /**
+   * TODO add transform matrix
+   */
 }
 
 interface StageSelectionJson {

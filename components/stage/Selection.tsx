@@ -8,12 +8,10 @@ import { StageSelection, StagePointerEvent, StageKeyEvent } from "model/stage/st
 import { geomService } from "model/geom.service";
 
 const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
-  const group = useRef<THREE.Group>(null);
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geomService.createSquareGeometry()).current;
   const polysMesh = useRef<THREE.Mesh>(null);
   const polysGeom = useRef(geomService.polysToGeometry(selection.polygons));
-  const polysPos = useRef(new THREE.Vector3);
   const outlineGeom = useRef(geomService.polysToGeometry([]));
   const polysGroup = useRef<THREE.Group>(null);
   const dragging = useRef(false);
@@ -21,7 +19,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const [, triggerRenderAt] = useState(0);
 
   useEffect(() => {// Initialize and rehydrate
-    selection.group = group.current!;
+    selection.group = polysGroup.current!;
     rectMesh.current?.scale.set(0, 0, 1);
     return () => void delete selection.group;
   }, []);
@@ -115,27 +113,31 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
   useEffect(() => {// Handle mouse when locked
     if (!selection.locked) return;
-    const position = polysGroup.current!.position;
+    // const position = polysGroup.current!.position;
+    const matrix = polysGroup.current!.matrix;
+    /** Final position of last drag */
+    const dragFinish = new THREE.Vector3;
 
     const ptrSub = ptrWire.subscribe(({ key, point }) => {
       if (!dragging.current) {
         return;
       } else if (key === 'pointermove') {
-        position.copy(point).sub(dragStart);
+        matrix.setPosition(dragFinish.x + (point.x - dragStart.x), dragFinish.y + (point.y - dragStart.y), 0);
       } else if (key === 'pointerup' || key === 'pointerleave') {
         dragging.current = false;
-        vectPrecision(position, 1);
-        // Apply transform and reset polygons group
-        selection.polygons.map(x => x.add(position).precision(1));
-        restoreFromState(selection);
-        // Avoid flicker, unlike position.set(0, 0, 0)
-        polysPos.current = new THREE.Vector3;
-        triggerRenderAt(Date.now());
+        vectPrecision(dragFinish.set(matrix.elements[12], matrix.elements[13], 0), 1);
+        matrix.setPosition(dragFinish.x, dragFinish.y, 0);
       }
     });
 
     return () => { ptrSub.unsubscribe(); };
   }, [selection]);
+
+  useEffect(() => {
+    if (!selection.locked) {
+      // TODO apply transform on unlock
+    }
+  }, [selection.locked]);
 
   useEffect(() => {// Listen for external updates to polygons
     restoreFromState(selection);
@@ -143,7 +145,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   }, [selection.polygons]);
 
   return (
-    <group ref={group} name="SelectionGroup">
+    <group name="SelectionRoot">
       <mesh
         ref={rectMesh}
         geometry={rectGeom}
@@ -154,9 +156,10 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       </mesh>
 
       <group
+        name="SelectionTransform"
         ref={polysGroup}
         visible={selection.enabled}
-        position={polysPos.current}
+        matrixAutoUpdate={false}
       >
         <mesh
           ref={polysMesh}

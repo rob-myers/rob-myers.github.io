@@ -1,6 +1,6 @@
 ## Project
 
-Our project will be called _three.js CLI_ or similar.
+Our project will be called _Topdown CLI_ or similar.
    > Interactive sessions for three.js
 
 Main focus is:
@@ -15,20 +15,14 @@ Main focus is:
    - Clean cmd.service.
    - Simplify pipelines?
    - Simplify FifoDevice and Device?
-- Sketch out milestones
-- 🛠 Create replacement for brush i.e. `Selection`
-  - ✅ Can select rectilinear polygons.
-  - ✅ Can save/restore selections.
-   - ✅ `sel >l1` saves current selection as json polygon
-   - ✅ `get l1 | sel` to restore
-   - ✅ session variables are persisted
-- `Selection` supports... 
-- Make `Cursor` independent of `Selection`
-- Can lock and then translate/transform.
-- Has group where ghost meshes can be attached.
-✅ Can `echo foo >!x` to write last elem, not array
+
+- While locked, can transform Selection, and apply on unlock.
+
+- Can lock `Selection` and transform via keys
+- Can construct wall meshes from selection
+- Has group where ghost meshes can be attached
 - Error messages prefixed by function chain
-- Can `unset` variables and functions
+- Sketch out milestones
 
 - BUG
    - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
@@ -36,8 +30,18 @@ Main focus is:
 
 ### Done
 
-- Support `return` inside a function
-
+- ✅ Support `return` inside a function
+- ✅ Create replacement for brush i.e. `Selection`
+  - ✅ Can select rectilinear polygons.
+  - ✅ Can save/restore selections.
+   - ✅ `sel >l1` saves current selection as json polygon
+   - ✅ `get l1 | sel` to restore
+   - ✅ session variables are persisted
+✅ Make `Cursor` independent of `Selection`
+✅ Can lock and then translate
+✅ Can `echo foo >x` to write last elem, not array
+✅ Can `echo foo >> x` to write array, appending to extant
+✅ Can `rm` variables
 ## Issues
 
 Issue related to shell
