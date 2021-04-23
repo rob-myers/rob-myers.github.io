@@ -59,13 +59,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const instance = Stage.createStage(stageKey);
         const { opts, extra, selection  } = api.getPersist(stageKey);
         instance.opts = deepClone(opts??Stage.createStageOpts());
-        instance.extra = deepClone(extra??{});
+        instance.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         instance.selection.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
         instance.selection.prevPolys = instance.selection.polygons.slice();
         instance.selection.locked = selection.locked??false;
         instance.selection.enabled = selection.enabled??true;
         instance.selection.additive = selection.additive??false;
-        instance.selection.cursor = Geom.Vector.from(selection.cursor??{ x: 0, y: 0 });
 
         set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
       } else {
@@ -91,14 +90,19 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
       const currentCameraPos = internal.controls?.camera?.position
         ? vectorToTriple(internal.controls.camera.position) : null;
+      const currentCursorPos = extra.cursorGroup?.position
+        ? vectorToTriple(extra.cursorGroup?.position) : null;
 
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,
           opts: deepClone(opts),
           extra: {
-            ...deepClone(extra),
+            canvasPreview: extra.canvasPreview,
             initCameraPos: [...currentCameraPos ||
               persist[stageKey].extra.initCameraPos || extra.initCameraPos
+            ],
+            initCursorPos: [...currentCursorPos ||
+              persist[stageKey].extra.initCursorPos || extra.initCursorPos
             ],
           },
           selection: {
@@ -106,7 +110,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             locked: selection.locked,
             enabled: selection.enabled,
             additive: selection.additive,
-            cursor: selection.cursor.json,
           },
         }, persist),
       }));

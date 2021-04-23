@@ -1,5 +1,3 @@
-import { getWindow } from "model/dom.model";
-
 export const preloadedFunctions = {
   range: `call '(_, x) => [...Array(Number(x))].map((_, i) => i)' "$1"`,
   seq: `range "$1" | split`,
@@ -43,7 +41,7 @@ export const preloadedVariables = {
 export const shellScripts = {
 
   selectionKeyHandler: `
-key | run '({ read, _: {msg} }, { stage: { opts, sel } }) {
+key | run '({ read, _: {msg} }, { stage: { opts, selection: sel } }) {
   while (msg = await read()) {
     if (msg.type !== "keydown" || !opts.enabled || !sel.enabled) {
       continue;

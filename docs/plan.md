@@ -48,6 +48,11 @@ Issue related to shell
 > https://github.com/mvdan/sh/issues/692
 
 
+## Examples
+```sh
+get stage.extra.cursor.position | map 'p => p.set(1, 1)'
+```
+
 ### Three.js Animation example
 
 ```tsx

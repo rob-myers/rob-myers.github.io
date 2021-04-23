@@ -1,38 +1,41 @@
 import { useEffect, useRef } from "react";
 import { Subject } from "rxjs";
-import { StagePointerEvent, StageSelection } from "model/stage/stage.model";
+import { StageExtra, StagePointerEvent } from "model/stage/stage.model";
 import { vectPrecision } from "model/3d/three.model";
 import useGeomStore from "store/geom.store";
 
-const Cursor: React.FC<Props> = ({ initial, ptrWire }) => {
-  const cursorMesh = useRef<THREE.Mesh>(null);
-  const cursorTexture = useGeomStore(({ texture }) => texture.thinPlusPng);
+const Cursor: React.FC<Props> = ({ extra, ptrWire }) => {
+  const group = useRef<THREE.Group>(null);
+  const texture = useGeomStore(({ texture }) => texture.thinPlusPng);
 
   useEffect(() => {
-    cursorMesh.current?.position.set(initial.x, initial.y, 0);
+    extra.cursorGroup = group.current!;
+    extra.cursorGroup!.position.set(...extra.initCursorPos);
+    return () => void delete extra.cursorGroup;
   }, []);
   
   useEffect(() => {
-    const position = cursorMesh.current!.position;
+    const position = group.current!.position;
     const ptrSub = ptrWire.subscribe(({ key, point }) => {
-    if (key === 'pointerup') {
-      vectPrecision(position.copy(point), 1);
-      initial.copy(position);
-    }
-    return () => { ptrSub.unsubscribe(); };
+      if (key === 'pointerup') {
+        vectPrecision(position.copy(point), 1);
+      }
+      return () => ptrSub.unsubscribe();
     });
   }, []);
 
-  return cursorTexture && (
-    <mesh ref={cursorMesh}>
-      <planeGeometry args={[0.1, 0.1]} />
-      <meshBasicMaterial map={cursorTexture} transparent />
-    </mesh>
+  return texture && (
+    <group ref={group}>
+      <mesh>
+        <planeGeometry args={[0.1, 0.1]} />
+        <meshBasicMaterial map={texture} transparent />
+      </mesh>
+    </group>
   );
 };
 
 interface Props {
-  initial: StageSelection['cursor'];
+  extra: StageExtra;
   ptrWire: Subject<StagePointerEvent>;
 }
 

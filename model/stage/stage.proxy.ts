@@ -4,7 +4,7 @@ import { StageMeta, StageOpts, StageSelection } from "./stage.model";
 
 export function createStageProxy(stageKey: string) {
   return new Proxy({} as StageMeta, {
-    get(_, key: keyof StageMeta | 'sel') {
+    get(_, key: keyof StageMeta | 'cursor') {
       const stage = useStage.api.getStage(stageKey);
 
       if (key === 'opts') {
@@ -19,7 +19,7 @@ export function createStageProxy(stageKey: string) {
           ownKeys: () => Object.keys(useStage.api.getStage(stageKey).opts),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
-      } else if (key === 'selection' || key === 'sel') {
+      } else if (key === 'selection') {
         return new Proxy({} as StageSelection, {
           get(_, key: keyof StageSelection) {
             return useStage.api.getStage(stageKey).selection[key];
@@ -31,6 +31,8 @@ export function createStageProxy(stageKey: string) {
           ownKeys: () => Object.keys(useStage.api.getStage(stageKey).selection),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
+      } else if (key === 'cursor') {
+        return stage.extra.cursorGroup?.position;
       }
 
       return stage[key];
@@ -38,7 +40,9 @@ export function createStageProxy(stageKey: string) {
     set(_, _key: keyof StageMeta, _value: any) {
       throw Error('Cannot set top-level key of stage');
     },
-    ownKeys: () => Object.keys(useStage.api.getStage(stageKey)),
+    ownKeys: () => Object.keys(
+      useStage.api.getStage(stageKey)
+    ).concat('cursor'),
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
   });
 }

@@ -33,6 +33,9 @@ export type StageExtra = Record<string, any> & {
   canvasPreview?: string;
   /** Initial camera position */
   initCameraPos: Triple<number>;
+  /** Initial cursor position */
+  initCursorPos: Triple<number>;
+  cursorGroup?: THREE.Group;
 }
 
 /** Keep this flat so stage.proxy handles updates */
@@ -62,8 +65,6 @@ export interface StageSelection {
   enabled: boolean;
   /** Add next rectangle to selection, or overwrite? */
   additive: boolean;
-  /** Last cursor position */
-  cursor: Geom.Vector;
   /**
    * TODO add transform matrix
    */
@@ -74,7 +75,6 @@ interface StageSelectionJson {
   locked: boolean;
   enabled: boolean;
   additive: boolean;
-  cursor: Geom.VectorJson;
 }
 
 export function createStage(stageKey: string): StageMeta {
@@ -87,6 +87,8 @@ export function createStage(stageKey: string): StageMeta {
     },
     extra: {
       initCameraPos: [...initCameraPosArray],
+      initCursorPos: [...initCursorPos],
+      // ...Other stuff is attached by components
     },
     opts: createStageOpts(),
     selection: {
@@ -96,7 +98,6 @@ export function createStage(stageKey: string): StageMeta {
       locked: false,
       enabled: true,
       additive: false,
-      cursor: new Geom.Vector,
     },
   };
 }
@@ -123,13 +124,13 @@ export function createPersist(stageKey: string): PersistedStage {
     opts: createStageOpts(),
     extra: {
       initCameraPos: [...initCameraPosArray],
+      initCursorPos: [...initCursorPos],
     },
     selection: {
       polygons: [],
       locked: false,
       enabled: true,
       additive: false,
-      cursor: { x: 0, y: 0 },
     },
   };
 }
@@ -155,4 +156,5 @@ export type StagePointerEvent = {
 
 const initCameraPosArray: Triple<number> = [0, 0, 10];
 export const initCameraPos = new THREE.Vector3(...initCameraPosArray);
+export const initCursorPos: Triple<number> = [0, 0, 0];
 export const initStageBounds = new Geom.Rect(0, 0, 0, 0);

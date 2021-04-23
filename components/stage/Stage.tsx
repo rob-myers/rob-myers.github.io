@@ -119,7 +119,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
           />
 
           <Cursor
-            initial={stage.selection.cursor}
+            extra={stage.extra}
             ptrWire={ptrWire}
           />
 
