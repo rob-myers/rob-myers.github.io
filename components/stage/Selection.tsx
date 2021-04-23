@@ -5,11 +5,11 @@ import * as THREE from 'three';
 import { matrixToPosition, scaleUpByTouched, vectPrecision } from "model/3d/three.model";
 import * as Geom from "model/geom";
 import { StageSelection, StagePointerEvent, StageKeyEvent } from "model/stage/stage.model";
-import { geomService } from "model/geom.service";
+import { geom } from "model/geom.service";
 
 const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const rectMesh = useRef<THREE.Mesh>(null);
-  const rectGeom = useRef(geomService.createSquareGeometry()).current;
+  const rectGeom = useRef(geom.createSquareGeometry()).current;
   const polysGroup = useRef<THREE.Group>(null);
   const polysMesh = useRef<THREE.Mesh>(null);
   const outlineMesh = useRef<THREE.Mesh>(null);
@@ -25,12 +25,11 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     matrixToPosition(selection.group.matrix, dragFinish);
   }, []);
 
-  const restoreFromState = useCallback(({ polygons, bounds }: StageSelection) => {
-    bounds.copy(Geom.Rect.union(polygons.map(x => x.rect))).precision(1);
+  const restoreFromState = useCallback(({ polygons }: StageSelection) => {
     rectMesh.current!.scale.set(0, 0, 0);
-    polysMesh.current!.geometry = geomService.polysToGeometry(polygons);
-    outlineMesh.current!.geometry = geomService.polysToGeometry(
-      geomService.cutOut(polygons, polygons.flatMap(x => x.createOutset(0.01)))
+    polysMesh.current!.geometry = geom.polysToGeometry(polygons);
+    outlineMesh.current!.geometry = geom.polysToGeometry(
+      geom.cutOut(polygons, polygons.flatMap(x => x.createOutset(0.01)))
     );
   }, []);
 
@@ -74,9 +73,9 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         const polygons = [] as Geom.Polygon[];
         
         if (lastKeyMsg.shiftKey) {
-          polygons.push(...geomService.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons));
+          polygons.push(...geom.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons));
         } else if(lastKeyMsg.metaKey || selection.additive) {
-          polygons.push(...geomService.union(selection.polygons.concat(Geom.Polygon.fromRect(rect))));
+          polygons.push(...geom.union(selection.polygons.concat(Geom.Polygon.fromRect(rect))));
         } else {
           polygons.push(Geom.Polygon.fromRect(rect));
         }
@@ -91,7 +90,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       }
     });
 
-    const [blue, red] = [geomService.getColor('#00f'), geomService.getColor('#f00')];
+    const [blue, red] = [geom.getColor('#00f'), geom.getColor('#f00')];
 
     const keySub = keyWire.subscribe((msg) => {
       lastKeyMsg = msg;
@@ -133,8 +132,8 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   useEffect(() => {// Apply transform on unlock
     if (!selection.locked) {
       const matrix = selection.group.matrix;
-      selection.polygons.forEach(poly =>
-        geomService.applyMatrixPoly(matrix, poly).precision(1));
+      selection.polygons
+        .forEach(poly => geom.applyMatrixPoly(matrix, poly).precision(1));
       matrix.identity();
       restoreFromState(selection);
       dragFinish.set(0, 0, 0);

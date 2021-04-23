@@ -17,8 +17,8 @@ Main focus is:
    - Simplify FifoDevice and Device?
 
 - ✅ While locked can transform Selection, and apply on unlock.
-
 - Can lock `Selection` and transform via keys
+
 - Can construct wall meshes from selection
 - Has group where ghost meshes can be attached
 - Error messages prefixed by function chain

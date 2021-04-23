@@ -7,7 +7,7 @@ import { devtools } from 'zustand/middleware'
 import * as THREE from 'three';
 import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
-import { geomService, outsetBounds, outsetWalls } from 'model/geom.service';
+import { geom, outsetBounds, outsetWalls } from 'model/geom.service';
 import * as Geom from 'model/geom';
 import { recastService } from 'model/3d/recast.service';
 import { initStageBounds } from 'model/stage/stage.model';
@@ -113,14 +113,14 @@ const useStore = create<State>(devtools((set, get) => ({
         polys.map(x => x.rect).concat(initStageBounds),
       ).outset(outsetBounds);
 
-      const navPolys = geomService.cutOut(
-        polys.flatMap(x => geomService.outset(x, outsetWalls)),
+      const navPolys = geom.cutOut(
+        polys.flatMap(x => geom.outset(x, outsetWalls)),
         [Geom.Polygon.fromRect(bounds)],
       );
       // console.log({ bounds, navPolys });
 
       // Non-blocking creation of recast navmesh
-      const geometry = geomService.polysToGeometry(navPolys, 'xz');
+      const geometry = geom.polysToGeometry(navPolys, 'xz');
       setTimeout(() => recastService.createNavMesh(navKey, geometry));
       return { bounds, navPolys };
     },
@@ -135,7 +135,7 @@ const useStore = create<State>(devtools((set, get) => ({
         const src3 = new THREE.Vector3(src.x, src.y);
         const dst3 = new THREE.Vector3(dst.x, dst.y);
         const navPath = recastService.computePath(navKey, src3, dst3);
-        return geomService.removePathReps(
+        return geom.removePathReps(
           [src.json].concat(navPath.map(({ x, y }) => ({ x, y })))
         );
       } catch (e) {

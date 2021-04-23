@@ -67,8 +67,6 @@ export interface StageSelection {
   additive: boolean;
   /** Is the selection locked? */
   locked: boolean;
-  /** Bounding rectangle for `polygons` */
-  bounds: Geom.Rect;
 }
 
 /** Serializable `StageSelection` */
@@ -102,7 +100,6 @@ export function createStage(stageKey: string): StageMeta {
       locked: false,
       enabled: true,
       additive: false,
-      bounds: new Geom.Rect(0, 0, 0, 0),
     },
   };
 }

@@ -47,6 +47,11 @@ class GeomService {
     return poly;
   }
 
+  applyMatrixRect(matrix: THREE.Matrix4, rect: Geom.Rect) {
+    const [p, q] = [rect.nw, rect.se].map(x => this.applyMatrixVect(matrix, x));
+    return Geom.Rect.fromPoints(p, q);
+  }
+
   getColor(color: string) {
     return this.colorCache[color] || (
       this.colorCache[color] = new THREE.Color(color)
@@ -466,6 +471,10 @@ class GeomService {
       .map(coords => Geom.Polygon.from(coords).cleanFinalReps());
   }
 
+  unionRects(rects: Geom.Rect[]): Geom.Rect {
+    return Geom.Rect.union(rects);
+  }
+
 }
 
-export const geomService = new GeomService;
+export const geom = new GeomService;

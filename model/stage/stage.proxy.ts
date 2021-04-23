@@ -1,3 +1,4 @@
+import { geom } from "model/geom.service";
 import useStage from "store/stage.store";
 import { StageMeta, StageOpts, StageSelection } from "./stage.model";
 
@@ -21,14 +22,21 @@ export function createStageProxy(stageKey: string) {
         });
       } else if (key === 'selection') {
         return new Proxy({} as StageSelection, {
-          get(_, key: keyof StageSelection) {
+          get(_, key: keyof StageSelection | 'bounds') {
+            if (key === 'bounds') {
+              const { polygons, group } = useStage.api.getStage(stageKey).selection;
+              const bounds = geom.unionRects(polygons.map(x => x.rect));
+              return geom.applyMatrixRect(group.matrix, bounds).precision(1);
+            }
             return useStage.api.getStage(stageKey).selection[key];
           },
           set(_, key: string, value: any) {
             useStage.api.updateSelection(stageKey, { [key]: value });
             return true;
           },
-          ownKeys: () => Object.keys(useStage.api.getStage(stageKey).selection),
+          ownKeys: () => Object.keys(
+            useStage.api.getStage(stageKey).selection
+          ).concat('bounds'),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'cursor') {
