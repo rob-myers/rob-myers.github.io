@@ -116,7 +116,11 @@ class CmdService {
       case 'get': {
         const root = this.provideStageAndVars(meta);
         for (const arg of args) {
-          yield Function('__', `return __.${arg}`)(root);
+          try {
+            yield Function('__', `return __.${arg}`)(root);
+          } catch (e) {
+            throw new ShError(`${e}`.replace('__.', ''), 1);
+          }
         }
         break;
       }
