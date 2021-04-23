@@ -41,6 +41,7 @@ export const preloadedVariables = {
 export const shellScripts = {
 
   selectionKeyHandler: `
+# selection key handler
 key | run '({ read, _: {msg} }, { stage: { opts, selection: sel } }) {
   while (msg = await read()) {
     if (msg.type !== "keydown" || !opts.enabled || !sel.enabled) {
@@ -58,6 +59,7 @@ key | run '({ read, _: {msg} }, { stage: { opts, selection: sel } }) {
 `,
 
   optsKeyHandler: `
+# opts key handler
 key | run '({ read, _: {msg} }, { stage: { opts } }) {
   while (msg = await read()) {
     if (msg.type !== "keydown" || !opts.enabled) continue;
