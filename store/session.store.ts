@@ -42,7 +42,6 @@ export type State = {
     getPositional: (pid: number, sessionKey: string, varName: number) => string;
     getVar: (sessionKey: string, varName: string) => any | undefined;
     getVarDeep: (sessionKey: string, varPath: string) => any | undefined;
-    getVars: (sessionKey: string) => { key: string; value: string }[];
     getSession: (sessionKey: string) => Session;
     persist: (sessionKey: string) => void;
     removeDevice: (deviceKey: string) => void;
@@ -209,11 +208,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     getVarDeep: (sessionKey, varPath) => {
       const root = get().session[sessionKey].var;
       return Function('__', `return __.${varPath}`)(root);
-    },
-
-    getVars: (sessionKey) => {
-      return Object.entries(get().session[sessionKey].var)
-        .map(([key, value]) => ({ key, value }));
     },
 
     getSession: (sessionKey) =>
