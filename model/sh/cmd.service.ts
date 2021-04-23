@@ -231,20 +231,20 @@ class CmdService {
           .filter(opts.a ? x => x : ({ key: pid, pgid }) => pid === pgid);
         const title = ['pid', 'ppid', 'pgid'].map(x => x.padEnd(5)).join(' ')
 
-        if (!opts.s) {
-          yield `${ansiBlue}${title}${ansiReset}`;
-          for (const { key: pid, ppid, pgid, status, src } of processes) {
-            const icon = getProcessStatusIcon(status);
-            const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ')
-            yield `${info}${icon}  ${truncate(src, 30)}`;
-          }
-        } else {
+        if (opts.s) {
           for (const { key: pid, ppid, pgid, status, src } of processes) {
             const icon = getProcessStatusIcon(status);
             const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ')
             yield `${ansiBlue}${title}${ansiReset}`;
             yield `${info}${icon}`;
             yield src + '\n';
+          }
+        } else {
+          yield `${ansiBlue}${title}${ansiReset}`;
+          for (const { key: pid, ppid, pgid, status, src } of processes) {
+            const icon = getProcessStatusIcon(status);
+            const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ')
+            yield `${info}${icon}  ${truncate(src, 30)}`;
           }
         }
         break;
