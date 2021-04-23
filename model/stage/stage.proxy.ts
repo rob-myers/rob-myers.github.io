@@ -22,11 +22,13 @@ export function createStageProxy(stageKey: string) {
         });
       } else if (key === 'sel') {
         return new Proxy({} as StageSelection, {
-          get(_, key: keyof StageSelection | 'bounds') {
-            if (key === 'bounds') {
+          get(_, key: keyof StageSelection | 'bounds' | 'localBounds') {
+            if (key === 'bounds' || key === 'localBounds') {
               const { polygons, group } = useStage.api.getStage(stageKey).sel;
               const bounds = geom.unionRects(polygons.map(x => x.rect));
-              return geom.applyMatrixRect(group.matrix, bounds).precision(1);
+              return key === 'bounds'
+                ? geom.applyMatrixRect(group.matrix, bounds).precision(1)
+                : bounds.precision(1);
             }
             return useStage.api.getStage(stageKey).sel[key];
           },
@@ -34,9 +36,8 @@ export function createStageProxy(stageKey: string) {
             useStage.api.updateSelection(stageKey, { [key]: value });
             return true;
           },
-          ownKeys: () => Object.keys(
-            useStage.api.getStage(stageKey).sel
-          ).concat('bounds'),
+          ownKeys: () => Object.keys(useStage.api.getStage(stageKey).sel)
+            .concat('bounds', 'localBounds'),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'cursor') {
@@ -48,9 +49,8 @@ export function createStageProxy(stageKey: string) {
     set(_, _key: keyof StageMeta, _value: any) {
       throw Error('Cannot set top-level key of stage');
     },
-    ownKeys: () => Object.keys(
-      useStage.api.getStage(stageKey)
-    ).concat('cursor'),
+    ownKeys: () => Object.keys(useStage.api.getStage(stageKey))
+      .concat('cursor'),
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
   });
 }

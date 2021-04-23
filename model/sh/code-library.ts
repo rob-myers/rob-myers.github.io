@@ -18,41 +18,63 @@ export const preloadedFunctions = {
   keys: `map Object.keys`,
   cat: `get "$@" | split`,
  
-  sel: `run '({ read, Geom }, { stage: { selection } }) {
+  sel: `run '({ read, Geom }, { stage: { sel } }) {
     const input = await read();
     if (input) {
-      selection.polygons = (Array.isArray(input) ? input : [input])
+      sel.polygons = (Array.isArray(input) ? input : [input])
         .map(x => Geom.Polygon.from(x))
         .filter(x => x.outer.length);
     } else {
-      yield selection.polygons.map(x => x.json);
+      yield sel.polygons.map(x => x.json);
     }
 }'
 `,
 };
 
 export const preloadedVariables = {
-  // navigator: {
-  //   platform: navigator?.platform??'',
-  //   userAgent: navigator?.userAgent??'',
-  // },
 };
 
 export const shellScripts = {
 
-  selectionKeyHandler: `
-# selection key handler
-key | run '({ read, _: {msg} }, { stage: { opts, selection: sel } }) {
+  lockedSelectionKeyHandler: `
+# locked selection key handler
+key | run '({ read, THREE, _: {msg} }, { stage: { opts, sel } }) {
   while (msg = await read()) {
-    if (msg.type !== "keydown" || !opts.enabled || !sel.enabled) {
+    if (msg.type !== "keydown" || !opts.enabled || !sel.enabled || !sel.locked) {
       continue;
     }
-    if (sel.locked) {
-      // TODO
-    } else {
-      switch (msg.key) {
-        case "z": msg.metaKey && ([sel.polygons, sel.prevPolys] = [sel.prevPolys, sel.polygons]); break;
+    switch (msg.key) {
+      case "x": {
+        if (!msg.metaKey) {
+          const matrix = (new THREE.Matrix4).makeScale(-1, 1, 1)
+            .setPosition(Number((2 * sel.localBounds.cx).toFixed(1)), 0, 0);
+          sel.group.matrix.multiply(matrix);
+        }
       }
+      case "y": {
+        if (!msg.metaKey) {
+          const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
+            .setPosition(0, Number((2 * sel.localBounds.cy).toFixed(1)), 0);
+          sel.group.matrix.multiply(matrix);
+        }
+      }
+      break;
+    }
+  }
+}' &
+  `,
+
+  unlockedSelectionKeyHandler: `
+# unlocked selection key handler
+key | run '({ read, _: {msg} }, { stage: { opts, sel } }) {
+  while (msg = await read()) {
+    if (msg.type !== "keydown" || !opts.enabled || !sel.enabled || sel.locked) {
+      continue;
+    }
+    switch (msg.key) {
+      case "z":
+        msg.metaKey && ([sel.polygons, sel.prevPolys] = [sel.prevPolys, sel.polygons]);
+        break;
     }
   }
 }' &
@@ -78,7 +100,9 @@ export const profiles = {
   first: `
 await-stage "\${STAGE_KEY}"
 
-${shellScripts.selectionKeyHandler.trim()}
+${shellScripts.unlockedSelectionKeyHandler.trim()}
+
+${shellScripts.lockedSelectionKeyHandler.trim()}
 
 ${shellScripts.optsKeyHandler.trim()}
 

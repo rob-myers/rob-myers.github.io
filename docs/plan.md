@@ -17,16 +17,19 @@ Main focus is:
    - Simplify FifoDevice and Device?
 
 - ✅ While locked can transform Selection, and apply on unlock.
-- Can lock `Selection` and transform via keys
+- ✅ Can lock `Selection` and transform via keys
+- ✅ Can mirror `Selection` x/y
+- Can rotate `Selection` ± 90 degrees
 
 - Can construct wall meshes from selection
-- Has group where ghost meshes can be attached
+- Ghost meshes can be attached
 - Error messages prefixed by function chain
 - Sketch out milestones
 
 - BUG
    - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
    - `call ({ stage }) => delete stage.opts.foo`
+   - Ensures old processes killed cleanly on hot reload
 
 ### Done
 

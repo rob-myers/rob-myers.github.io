@@ -22,7 +22,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     polysGroup.current!.matrix.copy(selection.group.matrix);
     selection.group = polysGroup.current!;
     rectMesh.current?.scale.set(0, 0, 1);
-    matrixToPosition(selection.group.matrix, dragFinish);
   }, []);
 
   const restoreFromState = useCallback(({ polygons }: StageSelection) => {
@@ -41,6 +40,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     if (selection.locked && e.type === 'pointerdown') {
       dragging.current = true;
       dragStart.copy(e.point);
+      matrixToPosition(selection.group.matrix, dragFinish);
     }
   }, [selection.locked]);
 
@@ -132,11 +132,12 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   useEffect(() => {// Apply transform on unlock
     if (!selection.locked) {
       const matrix = selection.group.matrix;
-      selection.polygons
-        .forEach(poly => geom.applyMatrixPoly(matrix, poly).precision(1));
+      selection.polygons.forEach(poly => geom.applyMatrixPoly(matrix, poly).precision(1));
+      if ((new THREE.Matrix3).setFromMatrix4(matrix).determinant() < 0) {
+        selection.polygons.forEach(poly => poly.reverse());
+      }
       matrix.identity();
       restoreFromState(selection);
-      dragFinish.set(0, 0, 0);
     }
   }, [selection.locked]);
 
@@ -165,14 +166,22 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
           ref={polysMesh}
           onPointerDown={onDragPolys}
         >
-          <meshBasicMaterial color="#00f" transparent opacity={0.2} />
+          <meshBasicMaterial
+            color="#00f"
+            transparent
+            opacity={0.2}
+          />
         </mesh>
 
         <mesh
           ref={outlineMesh}
           visible={selection.locked}
         >
-          <meshBasicMaterial color="#000" transparent opacity={0.5} />
+          <meshBasicMaterial
+            color="#000"
+            transparent
+            opacity={0.5}
+          />
         </mesh>
       </group>
 
