@@ -18,7 +18,7 @@ export default function IndexPage() {
           Topdown CLI
         </h1>
         <p className={styles.subtitle}>
-          <a target='#' href='https://threejs.org/'>three.js</a> interactive sessions from a topdown perspective
+          interactive <a target='#' href='https://threejs.org/'>three.js</a> sessions from a topdown perspective
         </p>
 
         <section className={styles.termStage}>
