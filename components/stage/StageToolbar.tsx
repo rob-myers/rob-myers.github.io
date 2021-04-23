@@ -126,6 +126,7 @@ const Slot = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-bottom: 2px;
 `;
 
 const LeftToolbar = styled.section`
@@ -135,14 +136,12 @@ const LeftToolbar = styled.section`
 `;
 
 const StageKey = styled.div`
-  font-size: 11pt;
-  padding-bottom: 3px;
+  font-size: 10pt;
 `;
 
 const PauseButton = styled.div<{ emphasis?: boolean; }>`
   font-size: 10pt;
   cursor: pointer;
-  padding-bottom: 2px;
   outline: none;
   color: #dfd;
   font-style: ${({ emphasis = false }) => emphasis ? 'italic' : ''};
@@ -183,7 +182,6 @@ const PanZoomButton = styled.div<{ greyed?: boolean; emphasis?: boolean; }>`
   cursor: pointer;
   background: #222;
   font-size: 10pt;
-  padding-bottom: 2px;
   outline: none;
   ${({ greyed = false }) => css`
     color: ${greyed ? '#777' : '#ddd'};
