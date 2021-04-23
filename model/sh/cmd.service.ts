@@ -3,7 +3,7 @@ import safeJsonStringify from 'safe-json-stringify';
 import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 
 import * as Geom from 'model/geom';
-import { testNever, truncate, Deferred, pause, tryParseJson } from 'model/generic.model';
+import { testNever, truncate, Deferred, pause } from 'model/generic.model';
 import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
@@ -75,7 +75,7 @@ class CmdService {
     const { meta } = node;
     switch (command) {
       case 'await-stage': {
-        const stageKey = this.parseArg(args[0]);
+        const stageKey = this.parseJsonArg(args[0]);
         await new Promise<void>(resolve => {
           useStage.api.awaitStage(stageKey, resolve);
           useSession.api.addCleanup(meta, resolve);
@@ -146,7 +146,7 @@ class CmdService {
           'STOP', /** --STOP */
           'CONT', /** --CONT */
         ] });
-        const pgids = operands.map(x => this.parseArg(x))
+        const pgids = operands.map(x => this.parseJsonArg(x))
           .filter((x): x is number => Number.isFinite(x));
         for (const pgid of pgids) {
           const processes = useSession.api.getProcesses(meta.sessionKey, pgid).reverse();
@@ -213,7 +213,7 @@ class CmdService {
         break;
       }
       case 'poll': {
-        const seconds = args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1;
+        const seconds = args.length ? parseFloat(this.parseJsonArg(args[0])) || 0 : 1;
         const [delayMs, deferred] = [Math.max(seconds, 0.5) * 1000, new Deferred<void>()];
         useSession.api.addCleanup(meta, () => deferred.resolve());
         let count = 1;
@@ -261,9 +261,7 @@ class CmdService {
         for (const arg of args) Function('__', `delete __.${arg}`)(root);
         break;
       }
-      /**
-       * e.g. run '({ read }) { yield "foo"; yield await read(); }'
-       */
+      /** e.g. run '({ read }) { yield "foo"; yield await read(); }' */
       case 'run': {
         const func = Function('_', `return async function *generator ${args[0]}`);
         yield* func()(
@@ -275,14 +273,13 @@ class CmdService {
       }
       case 'set': {
         const root = this.provideStageAndVars(meta);
-        Function('__', `return __.${args[0]} = ${
-          tryParseJson(args[1]) === undefined ? `"${args[1]}"` : args[1]
-        }`)(root);
+        const value = this.parseJsArg(args[1]);
+        Function('__1', '__2', `return __1.${args[0]} = __2`)(root, value);
         break;
       }
       case 'sleep': {
         const process = useSession.api.getProcess(meta);
-        let ms = 1000 * (args.length ? parseFloat(this.parseArg(args[0])) || 0 : 1);
+        let ms = 1000 * (args.length ? parseFloat(this.parseJsonArg(args[0])) || 0 : 1);
         let started = -1;
         do {
           await new Promise<void>((resolve, reject) => {
@@ -296,7 +293,7 @@ class CmdService {
         break;
       }
       case 'split': {
-        const arg = this.parseArg(args[0]);
+        const arg = this.parseJsonArg(args[0]);
         yield* arg === undefined ? this.split(meta) : this.splitBy(meta, arg);
         break;
       }
@@ -440,11 +437,20 @@ class CmdService {
   }
 
   /** JSON.parse with string fallback */
-  private parseArg(x: string) {
+  private parseJsonArg(input: string) {
     try {
-      return x === undefined ? undefined : JSON.parse(x);
+      return input === undefined ? undefined : JSON.parse(input);
     } catch {
-      return x;
+      return input;
+    }
+  }
+
+  /** js parse with string fallbak */
+  private parseJsArg(input: string) {
+    try {
+      return Function(`return ${input}`)();
+    } catch (e) {
+      return JSON.stringify(input);
     }
   }
   
