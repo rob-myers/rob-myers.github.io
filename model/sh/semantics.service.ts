@@ -436,12 +436,12 @@ class SemanticsService {
   private async *Stmt(stmt: Sh.Stmt) {
     if (!stmt.Cmd) {
       throw new ShError('pure redirects are unsupported', 2);
-    } else if (stmt.Background) {
+    } else if (stmt.Background && (stmt.meta.pgid === 0)) {
       /**
        * Run a background process without awaiting.
        */
       const { ttyShell } = useSession.api.getSession(stmt.meta.sessionKey);
-      const file = wrapInFile(Object.assign(cloneParsed(stmt), { Background: false } as Sh.Stmt));
+      const file = wrapInFile(cloneParsed(stmt));
       file.meta.ppid = stmt.meta.pid;
       file.meta.pgid = useSession.api.getSession(stmt.meta.sessionKey).nextPid;
       ttyShell.spawn(file).catch((e) => {
