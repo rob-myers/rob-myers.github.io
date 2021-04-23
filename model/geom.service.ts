@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { Vector3, Mesh } from 'three';
 import { MeshLineMaterial, MeshLine } from 'three.meshline';
 import polygonClipping from 'polygon-clipping';
 
@@ -34,6 +33,20 @@ class GeomService {
     return material;
   }
 
+  applyMatrixVect(matrix: THREE.Matrix4, vector: Geom.Vector) {
+		const x = vector.x, y = vector.y;
+		const e = matrix.elements;
+		vector.x = ( e[ 0 ] * x + e[ 4 ] * y + e[ 8 ] * 0 + e[ 12 ] );
+		vector.y = ( e[ 1 ] * x + e[ 5 ] * y + e[ 9 ] * 0 + e[ 13 ] );
+    return vector;
+  }
+
+  applyMatrixPoly(matrix: THREE.Matrix4, poly: Geom.Polygon) {
+    poly.mutatePoints(v => this.applyMatrixVect(matrix, v));
+    // TODO ensure anticlockwise convention
+    return poly;
+  }
+
   getColor(color: string) {
     return this.colorCache[color] || (
       this.colorCache[color] = new THREE.Color(color)
@@ -54,14 +67,14 @@ class GeomService {
   createAxis(type: 'x' | 'y', color = '#f00', opacity = 1, lineWidth = 0.008) {
     return this.createPolyLine(
       type === 'x'
-        ? [new Vector3(-50, 0), new Vector3(50, 0)]
-        : [new Vector3(0, -50), new Vector3(0, 50)],
+        ? [new THREE.Vector3(-50, 0), new THREE.Vector3(50, 0)]
+        : [new THREE.Vector3(0, -50), new THREE.Vector3(0, 50)],
         { height: 0, color, opacity, lineWidth },
     );
   }
 
-  createCube(p: Vector3, dim: number, material: THREE.Material) {
-    const mesh = new Mesh(
+  createCube(p: THREE.Vector3, dim: number, material: THREE.Material) {
+    const mesh = new THREE.Mesh(
       new THREE.BoxGeometry(dim, dim, dim),
       material,
     );
@@ -78,7 +91,7 @@ class GeomService {
 
   createPath(points: Geom.VectorJson[], name: string) {
     const cubes = points.map(p => this.createCube(
-      new Vector3(p.x, p.y, 0.2), 0.05, this.whiteMaterial));
+      new THREE.Vector3(p.x, p.y, 0.2), 0.05, this.whiteMaterial));
     const polyLine = this.createPolyLine(points, { height: 0.2 });
     return this.createGroup([...cubes, polyLine], name);
   }
@@ -91,7 +104,7 @@ class GeomService {
     opacity?: number;
   }) {
     const meshLine = new MeshLine;
-    const vectors = points.map(p => new Vector3(p.x, p.y, opts.height));
+    const vectors = points.map(p => new THREE.Vector3(p.x, p.y, opts.height));
     opts.loop && vectors.length && vectors.push(vectors[0]);
     meshLine.setPoints(vectors);
     const lineMaterial = this.getLineMat(
@@ -298,12 +311,12 @@ class GeomService {
     const geometry = new Geometry;
     let offset = 0;
     for (const { vs, tris } of decomps) {
-      geometry.vertices.push(...vs.map(p => new Vector3(p.x, p.y, 0)));
+      geometry.vertices.push(...vs.map(p => new THREE.Vector3(p.x, p.y, 0)));
       geometry.faces.push(...tris.map(tri => new Face3(tri[0] + offset, tri[1] + offset, tri[2] + offset)));
       offset += vs.length;
     }
     for (const { vs, tris } of decomps) {
-      geometry.vertices.push(...vs.map(p => new Vector3(p.x, p.y, height)));
+      geometry.vertices.push(...vs.map(p => new THREE.Vector3(p.x, p.y, height)));
       geometry.faces.push(...tris.map(tri => new Face3(tri[0] + offset, tri[1] + offset, tri[2] + offset)));
       offset += vs.length;
     }
@@ -335,9 +348,9 @@ class GeomService {
     const all = this.joinTriangulations(decomps);
     const geometry = new Geometry;
     if (plane === 'xy') {
-      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, p.y, height)));
+      geometry.vertices.push(...all.vs.map(p => new THREE.Vector3(p.x, p.y, height)));
     } else {
-      geometry.vertices.push(...all.vs.map(p => new Vector3(p.x, height, p.y)));
+      geometry.vertices.push(...all.vs.map(p => new THREE.Vector3(p.x, height, p.y)));
     }
     geometry.faces.push(...all.tris.map(tri => new Face3(tri[0], tri[1], tri[2])));
     geometry.computeVertexNormals();
@@ -347,7 +360,7 @@ class GeomService {
 
   polysToMesh(polygons: Geom.Polygon[], material: THREE.Material): THREE.Mesh {
     const geometry = this.polysToGeometry(polygons);
-    return new Mesh(geometry, material);
+    return new THREE.Mesh(geometry, material);
   }
 
   /**
@@ -424,7 +437,7 @@ class GeomService {
   }
 
   toVector3(vector: Geom.VectorJson) {
-    return new Vector3(vector.x, vector.y);
+    return new THREE.Vector3(vector.x, vector.y);
   }
 
   triangleSign(p1: Geom.VectorJson, p2: Geom.VectorJson, p3: Geom.VectorJson) {

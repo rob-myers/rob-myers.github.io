@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
 import { Subject } from "rxjs";
 import * as THREE from 'three';
-import { scaleUpByTouched, vectPrecision } from "model/3d/three.model";
+import { matrixToPosition, scaleUpByTouched, vectPrecision } from "model/3d/three.model";
 import * as Geom from "model/geom";
 import { StageSelection, StagePointerEvent, StageKeyEvent } from "model/stage/stage.model";
 import { geomService } from "model/geom.service";
@@ -11,23 +11,24 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geomService.createSquareGeometry()).current;
   const polysMesh = useRef<THREE.Mesh>(null);
-  const polysGeom = useRef(geomService.polysToGeometry(selection.polygons));
-  const outlineGeom = useRef(geomService.polysToGeometry([]));
+  const outlineMesh = useRef<THREE.Mesh>(null);
   const polysGroup = useRef<THREE.Group>(null);
+
   const dragging = useRef(false);
   const dragStart = useRef(new THREE.Vector3).current;
-  const [, triggerRenderAt] = useState(0);
+  const dragFinish = useRef(new THREE.Vector3).current;
 
   useEffect(() => {// Initialize and rehydrate
+    polysGroup.current!.matrix.copy(selection.group.matrix);
     selection.group = polysGroup.current!;
     rectMesh.current?.scale.set(0, 0, 1);
-    return () => void delete selection.group;
+    matrixToPosition(selection.group.matrix, dragFinish);
   }, []);
 
   const restoreFromState = useCallback(({ polygons }: StageSelection) => {
     rectMesh.current!.scale.set(0, 0, 0);
-    polysGeom.current = geomService.polysToGeometry(polygons);
-    outlineGeom.current = geomService.polysToGeometry(
+    polysMesh.current!.geometry = geomService.polysToGeometry(polygons);
+    outlineMesh.current!.geometry = geomService.polysToGeometry(
       geomService.cutOut(polygons, polygons.flatMap(x => x.createOutset(0.01)))
     );
   }, []);
@@ -83,8 +84,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         polygons.forEach(x => x.precision(1)); // Increments of 0.1
         selection.prevPolys = selection.polygons.slice();
         selection.polygons = polygons;
-        polysGeom.current = geomService.polysToGeometry(polygons);
-        triggerRenderAt(Date.now());
+        polysMesh.current!.geometry = geomService.polysToGeometry(polygons);
       } else if (key === 'pointerleave') {
         ptrDown = false;
         setPolysFaded(false);
@@ -113,10 +113,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
   useEffect(() => {// Handle mouse when locked
     if (!selection.locked) return;
-    // const position = polysGroup.current!.position;
     const matrix = polysGroup.current!.matrix;
-    /** Final position of last drag */
-    const dragFinish = new THREE.Vector3;
 
     const ptrSub = ptrWire.subscribe(({ key, point }) => {
       if (!dragging.current) {
@@ -133,15 +130,19 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     return () => { ptrSub.unsubscribe(); };
   }, [selection]);
 
-  useEffect(() => {
+  useEffect(() => {// Apply transform on unlock
     if (!selection.locked) {
-      // TODO apply transform on unlock
+      const matrix = selection.group.matrix;
+      selection.polygons
+        .forEach(poly => geomService.applyMatrixPoly(matrix, poly).precision(1));
+      matrix.identity();
+      restoreFromState(selection);
+      dragFinish.set(0, 0, 0);
     }
   }, [selection.locked]);
 
   useEffect(() => {// Listen for external updates to polygons
     restoreFromState(selection);
-    triggerRenderAt(Date.now());
   }, [selection.polygons]);
 
   return (
@@ -163,15 +164,14 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       >
         <mesh
           ref={polysMesh}
-          geometry={polysGeom.current}
           onPointerDown={onDragPolys}
         >
           <meshBasicMaterial color="#00f" transparent opacity={0.2} />
         </mesh>
 
         <mesh
+          ref={outlineMesh}
           visible={selection.locked}
-          geometry={outlineGeom.current}
         >
           <meshBasicMaterial color="#000" transparent opacity={0.5} />
         </mesh>

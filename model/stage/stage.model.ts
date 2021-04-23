@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { Triple } from "model/generic.model";
 import * as Geom from "model/geom";
 import { PanZoomControls } from "model/3d/pan-zoom-controls";
+import { identityMatrix4 } from "model/3d/three.model";
 
 export type StageMeta = {
   key: string;
@@ -51,30 +52,31 @@ export interface StageOpts {
 
 export interface StageSelection {
   /**
-   * The transformation group of the Selection component.
-   * We will attach semi-transparent meshes here.
+   * The group containing a visual representation of `polygons`.
+   * We may also attach semi-transparent meshes here.
+   * Its initial value is only used to transmit any existing transform.
    */
-  group?: THREE.Group;
+  group: THREE.Group;
   /** Currently selected polygons */
   polygons: Geom.Polygon[];
   /** Previously selected polygons */
   prevPolys: Geom.Polygon[];
-  /** Is the selection locked? */
-  locked: boolean;
   /** Is the selection enabled? */
   enabled: boolean;
   /** Add next rectangle to selection, or overwrite? */
   additive: boolean;
-  /**
-   * TODO add transform matrix
-   */
+  /** Is the selection locked? */
+  locked: boolean;
 }
 
+/** Serializable `StageSelection` */
 interface StageSelectionJson {
   polygons: Geom.PolygonJson[];
   locked: boolean;
   enabled: boolean;
   additive: boolean;
+  /** Representation of `selection.group.matrix` */
+  matrix: number[];
 }
 
 export function createStage(stageKey: string): StageMeta {
@@ -131,6 +133,7 @@ export function createPersist(stageKey: string): PersistedStage {
       locked: false,
       enabled: true,
       additive: false,
+      matrix: identityMatrix4.toArray(),
     },
   };
 }

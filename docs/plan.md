@@ -16,7 +16,7 @@ Main focus is:
    - Simplify pipelines?
    - Simplify FifoDevice and Device?
 
-- While locked, can transform Selection, and apply on unlock.
+- ✅ While locked can transform Selection, and apply on unlock.
 
 - Can lock `Selection` and transform via keys
 - Can construct wall meshes from selection
@@ -51,6 +51,7 @@ Issue related to shell
 ## Examples
 ```sh
 get stage.extra.cursor.position | map 'p => p.set(1, 1)'
+get stage.cursor | map 'p => p.set(1, 1)'
 ```
 
 ### Three.js Animation example

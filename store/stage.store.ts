@@ -4,7 +4,7 @@ import { devtools, persist } from 'zustand/middleware';
 import { deepClone, KeyedLookup } from 'model/generic.model';
 import * as Geom from 'model/geom';
 import * as Stage from 'model/stage/stage.model';
-import { vectorToTriple } from 'model/3d/three.model';
+import { identityMatrix4, vectorToTriple } from 'model/3d/three.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
 
 export type State = {
@@ -62,9 +62,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         instance.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         instance.selection.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
         instance.selection.prevPolys = instance.selection.polygons.slice();
-        instance.selection.locked = selection.locked??false;
         instance.selection.enabled = selection.enabled??true;
         instance.selection.additive = selection.additive??false;
+        instance.selection.locked = selection.locked??false;
+        instance.selection.group.matrix.fromArray(selection.matrix);
 
         set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
       } else {
@@ -110,6 +111,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             locked: selection.locked,
             enabled: selection.enabled,
             additive: selection.additive,
+            matrix: (selection.group?.matrix??identityMatrix4).toArray(),
           },
         }, persist),
       }));
