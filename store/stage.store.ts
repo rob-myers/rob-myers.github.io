@@ -56,18 +56,19 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       if (get().persist[stageKey]) {
 
         // Restore persisted data
-        const instance = Stage.createStage(stageKey);
+        const s = Stage.createStage(stageKey);
         const { opts, extra, selection  } = api.getPersist(stageKey);
-        instance.opts = deepClone(opts??Stage.createStageOpts());
-        instance.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
-        instance.selection.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
-        instance.selection.prevPolys = instance.selection.polygons.slice();
-        instance.selection.enabled = selection.enabled??true;
-        instance.selection.additive = selection.additive??false;
-        instance.selection.locked = selection.locked??false;
-        instance.selection.group.matrix.fromArray(selection.matrix);
+        s.opts = deepClone(opts??Stage.createStageOpts());
+        s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
+        s.selection.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
+        s.selection.prevPolys = s.selection.polygons.slice();
+        s.selection.bounds = Geom.Rect.union(s.selection.polygons.map(x => x.rect)).precision(1);
+        s.selection.enabled = selection.enabled??true;
+        s.selection.additive = selection.additive??false;
+        s.selection.locked = selection.locked??false;
+        s.selection.group.matrix.fromArray(selection.matrix);
 
-        set(({ stage }) => ({ stage: addToLookup(instance, stage) }));
+        set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
         set(({ stage, persist }) => ({
           stage: addToLookup(Stage.createStage(stageKey), stage),

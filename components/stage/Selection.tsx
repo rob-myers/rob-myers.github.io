@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
 import { Subject } from "rxjs";
 import * as THREE from 'three';
@@ -10,9 +10,9 @@ import { geomService } from "model/geom.service";
 const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geomService.createSquareGeometry()).current;
+  const polysGroup = useRef<THREE.Group>(null);
   const polysMesh = useRef<THREE.Mesh>(null);
   const outlineMesh = useRef<THREE.Mesh>(null);
-  const polysGroup = useRef<THREE.Group>(null);
 
   const dragging = useRef(false);
   const dragStart = useRef(new THREE.Vector3).current;
@@ -25,7 +25,8 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     matrixToPosition(selection.group.matrix, dragFinish);
   }, []);
 
-  const restoreFromState = useCallback(({ polygons }: StageSelection) => {
+  const restoreFromState = useCallback(({ polygons, bounds }: StageSelection) => {
+    bounds.copy(Geom.Rect.union(polygons.map(x => x.rect))).precision(1);
     rectMesh.current!.scale.set(0, 0, 0);
     polysMesh.current!.geometry = geomService.polysToGeometry(polygons);
     outlineMesh.current!.geometry = geomService.polysToGeometry(
@@ -65,9 +66,8 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         ptrDown = false;
         scale.set(0, 0, 0);
         setPolysFaded(false);
-        if (Geom.Rect.fromPoints(position, point).area < 0.01 * 0.01) {
-          return;
-        }
+        if (Geom.Rect.fromPoints(position, point).area < 0.01 * 0.01) return;
+
         const ptr = point.clone();
         scaleUpByTouched(position, ptr);
         const rect = Geom.Rect.fromPoints(position, ptr);
@@ -84,7 +84,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         polygons.forEach(x => x.precision(1)); // Increments of 0.1
         selection.prevPolys = selection.polygons.slice();
         selection.polygons = polygons;
-        polysMesh.current!.geometry = geomService.polysToGeometry(polygons);
+        restoreFromState(selection);
       } else if (key === 'pointerleave') {
         ptrDown = false;
         setPolysFaded(false);
@@ -133,8 +133,8 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   useEffect(() => {// Apply transform on unlock
     if (!selection.locked) {
       const matrix = selection.group.matrix;
-      selection.polygons
-        .forEach(poly => geomService.applyMatrixPoly(matrix, poly).precision(1));
+      selection.polygons.forEach(poly =>
+        geomService.applyMatrixPoly(matrix, poly).precision(1));
       matrix.identity();
       restoreFromState(selection);
       dragFinish.set(0, 0, 0);

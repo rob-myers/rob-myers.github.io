@@ -46,6 +46,7 @@ export class Rect {
     this.y = y;
     this.width = width;
     this.height = height;
+    return this;
   }
 
   get cx() {
@@ -138,12 +139,12 @@ outset(nonNegAmount: number): Rect {
     ];
   }
 
-  /** Enforce 2 d.p. precision */
-  precision() {
-    this.x = Number(this.x.toFixed(2));
-    this.y = Number(this.y.toFixed(2));
-    this.width = Number(this.width.toFixed(2));
-    this.height = Number(this.height.toFixed(2));
+  /** Enforce decimal place precision */
+  precision(dp = 1) {
+    this.x = Number(this.x.toFixed(dp));
+    this.y = Number(this.y.toFixed(dp));
+    this.width = Number(this.width.toFixed(dp));
+    this.height = Number(this.height.toFixed(dp));
     return this;
   }
 
