@@ -1,6 +1,7 @@
 import cliColumns from 'cli-columns';
 import safeJsonStringify from 'safe-json-stringify';
 import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
+import * as THREE from 'three';
 
 import * as Geom from 'model/geom';
 import { testNever, truncate, Deferred, pause } from 'model/generic.model';
@@ -356,6 +357,7 @@ class CmdService {
       /** Trick to provide local variables via destructuring */
       _: {},
       Geom,
+      THREE,
     };
   }
 
