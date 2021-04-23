@@ -60,12 +60,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const { opts, extra, selection  } = api.getPersist(stageKey);
         s.opts = deepClone(opts??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
-        s.selection.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
-        s.selection.prevPolys = s.selection.polygons.slice();
-        s.selection.enabled = selection.enabled??true;
-        s.selection.additive = selection.additive??false;
-        s.selection.locked = selection.locked??false;
-        s.selection.group.matrix.fromArray(selection.matrix);
+        s.sel.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
+        s.sel.prevPolys = s.sel.polygons.slice();
+        s.sel.enabled = selection.enabled??true;
+        s.sel.additive = selection.additive??false;
+        s.sel.locked = selection.locked??false;
+        s.sel.group.matrix.fromArray(selection.matrix);
 
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
@@ -87,7 +87,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { internal, opts, extra, selection } = api.getStage(stageKey);
+      const { internal, opts, extra, sel: selection } = api.getStage(stageKey);
 
       const currentCameraPos = internal.controls?.camera?.position
         ? vectorToTriple(internal.controls.camera.position) : null;
@@ -146,8 +146,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     updateSelection: (stageKey, updates) => {
-      api.updateStage(stageKey, ({ selection }) => ({
-        selection: { ...selection,
+      api.updateStage(stageKey, ({ sel: selection }) => ({
+        sel: { ...selection,
           ...typeof updates === 'function' ? updates(selection) : updates,
         },
       }));

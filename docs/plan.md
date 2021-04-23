@@ -52,6 +52,7 @@ Issue related to shell
 ```sh
 get stage.extra.cursor.position | map 'p => p.set(1, 1)'
 get stage.cursor | map 'p => p.set(1, 1)'
+get stage.sel.bounds
 ```
 
 ### Three.js Animation example

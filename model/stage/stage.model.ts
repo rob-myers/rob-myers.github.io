@@ -14,7 +14,7 @@ export type StageMeta = {
   /** Important options, also for the CLI */
   opts: StageOpts;
   /** The current selection */
-  selection: StageSelection;
+  sel: StageSelection;
 };
 
 export interface StageInternal {
@@ -93,7 +93,7 @@ export function createStage(stageKey: string): StageMeta {
       // ...Other stuff is attached by components
     },
     opts: createStageOpts(),
-    selection: {
+    sel: {
       group: new THREE.Group,
       polygons: [],
       prevPolys: [],
