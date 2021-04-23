@@ -116,7 +116,7 @@ const Toolbar = styled.section`
   height: 28px;
   font-size: 16px;
   border-top: 1px solid #777;
-  padding: 0px 8px;
+  padding: 0px 4px 0 8px;
 
   background-color: #222;
   color: #ddd;
@@ -130,7 +130,7 @@ const Slot = styled.div`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 42px 60px auto;
+  grid-template-columns: 38px 50px auto;
   gap: 10px;
 `;
 
@@ -139,10 +139,10 @@ const StageKey = styled.div`
   padding-bottom: 3px;
 `;
 
-const PauseButton = styled.button<{ emphasis?: boolean; }>`
+const PauseButton = styled.div<{ emphasis?: boolean; }>`
+  font-size: 10pt;
   cursor: pointer;
-  background: #222;
-  border-width: 1px;
+  padding-bottom: 2px;
   outline: none;
   color: #dfd;
   font-style: ${({ emphasis = false }) => emphasis ? 'italic' : ''};
@@ -179,12 +179,12 @@ const RightToolbar = styled.section`
   gap: 6px;
 `;
 
-const PanZoomButton = styled.button<{ greyed?: boolean; emphasis?: boolean; }>`
+const PanZoomButton = styled.div<{ greyed?: boolean; emphasis?: boolean; }>`
   cursor: pointer;
   background: #222;
-  border-width: 1px;
+  font-size: 10pt;
+  padding-bottom: 2px;
   outline: none;
-
   ${({ greyed = false }) => css`
     color: ${greyed ? '#777' : '#ddd'};
   `}
