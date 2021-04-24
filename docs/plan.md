@@ -9,6 +9,14 @@ Main focus is:
 
 ### TODO
 
+- Can construct wall meshes from selection
+   - Have `stage.poly.{wall,nav,obs}`
+   - Can paint into `stage.poly`
+   - Can erase from `stage.poly`
+   - Have `Navigable`
+   - Have stage options `wallOpacity` and `wallHeight`
+- Ghost meshes can be attached
+
 - 🛠 Try to simplify the shell.
    - ✅ Clean semantics.service.
    - ✅ Remove dependency on asyncIteratorFrom
@@ -16,9 +24,6 @@ Main focus is:
    - Simplify pipelines?
    - Simplify FifoDevice and Device?
 
-- Can construct wall meshes from selection
-
-- Ghost meshes can be attached
 - Error messages prefixed by function chain
 - Sketch out milestones
 

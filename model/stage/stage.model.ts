@@ -15,6 +15,11 @@ export type StageMeta = {
   opts: StageOpts;
   /** The current selection */
   sel: StageSelection;
+  poly: Record<(
+    | 'wall' // walls
+    | 'obs'  // additional obstructions
+    | 'nav'  // navigable, computed from wall/obs
+  ), Geom.Polygon[]>;
 };
 
 export interface StageInternal {
@@ -76,7 +81,6 @@ interface StageSelectionJson {
   locked: boolean;
   enabled: boolean;
   additive: boolean;
-  /** Representation of `selection.group.matrix` */
   matrix: number[];
 }
 
@@ -103,6 +107,7 @@ export function createStage(stageKey: string): StageMeta {
       enabled: true,
       additive: false,
     },
+    poly: { wall: [], obs: [], nav: [] },
   };
 }
 
@@ -119,7 +124,7 @@ export interface PersistedStage {
   key: string;
   opts: StageOpts;
   extra: StageExtra;
-  selection: StageSelectionJson;
+  sel: StageSelectionJson;
 }
 
 export function createPersist(stageKey: string): PersistedStage {
@@ -130,7 +135,7 @@ export function createPersist(stageKey: string): PersistedStage {
       initCameraPos: [...initCameraPosArray],
       initCursorPos: [...initCursorPos],
     },
-    selection: {
+    sel: {
       polygons: [],
       locked: false,
       enabled: true,

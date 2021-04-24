@@ -57,16 +57,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
         // Restore persisted data
         const s = Stage.createStage(stageKey);
-        const { opts, extra, selection  } = api.getPersist(stageKey);
+        const { opts, extra, sel  } = api.getPersist(stageKey);
         s.opts = deepClone(opts??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         s.internal.cursorGroup.position.set(...s.extra.initCursorPos);
-        s.sel.localPolys = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
+        s.sel.localPolys = (sel.polygons??[]).map(x => Geom.Polygon.from(x));
         s.sel.prevPolys = s.sel.localPolys.slice();
-        s.sel.enabled = selection.enabled??true;
-        s.sel.additive = selection.additive??false;
-        s.sel.locked = selection.locked??false;
-        s.sel.group.matrix.fromArray(selection.matrix);
+        s.sel.enabled = sel.enabled??true;
+        s.sel.additive = sel.additive??false;
+        s.sel.locked = sel.locked??false;
+        s.sel.group.matrix.fromArray(sel.matrix);
 
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
@@ -107,7 +107,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
               persist[stageKey].extra.initCursorPos || extra.initCursorPos
             ],
           },
-          selection: {
+          sel: {
             polygons: selection.localPolys.map(x => x.json),
             locked: selection.locked,
             enabled: selection.enabled,
@@ -165,7 +165,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 1,
+  version: 0,
   blacklist: ['api', 'stage', 'resolve'],
   onRehydrateStorage: (_) =>  {
     return () => {
