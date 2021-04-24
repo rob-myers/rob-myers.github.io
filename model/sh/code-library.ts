@@ -21,8 +21,7 @@ export const preloadedFunctions = {
   sel: `run '({ read, Geom }, { stage: { sel } }) {
     const input = await read();
     if (input) {
-      sel.polygons = (Array.isArray(input) ? input : [input])
-        .map(x => Geom.Polygon.from(x))
+      sel.polygons = input.map(x => Geom.Polygon.from(x))
         .filter(x => x.outer.length);
     } else {
       yield sel.polygons.map(x => x.json);
@@ -43,22 +42,32 @@ key | run '({ read, THREE, _: {msg} }, { stage: { opts, sel } }) {
     if (msg.type !== "keydown" || !opts.enabled || !sel.enabled || !sel.locked) {
       continue;
     }
-    switch (msg.key) {
-      case "x": {
-        if (!msg.metaKey) {
+    if (!msg.metaKey) {
+      switch (msg.key) {
+        case "x": {
           const matrix = (new THREE.Matrix4).makeScale(-1, 1, 1)
-            .setPosition(Number((2 * sel.localBounds.cx).toFixed(1)), 0, 0);
+            .setPosition(2 * sel.localBounds.cx, 0, 0);
           sel.group.matrix.multiply(matrix);
+          break;
         }
-      }
-      case "y": {
-        if (!msg.metaKey) {
+        case "y": {
           const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
-            .setPosition(0, Number((2 * sel.localBounds.cy).toFixed(1)), 0);
+            .setPosition(0, 2 * sel.localBounds.cy, 0);
           sel.group.matrix.multiply(matrix);
+          break;
+        }
+        case "q":
+        case "Q": {
+          const { cx, cy } = sel.bounds;
+          const angle = (msg.shiftKey ? -1 : 1) * (Math.PI / 2);
+          sel.group.matrix.premultiply(
+            (new THREE.Matrix4).makeTranslation(-cx, -cy, 0)
+            .premultiply((new THREE.Matrix4).makeRotationZ(angle))
+            .premultiply((new THREE.Matrix4).makeTranslation(cx, cy, 0))
+          );
+          break;
         }
       }
-      break;
     }
   }
 }' &

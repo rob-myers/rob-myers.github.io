@@ -19,7 +19,7 @@ Main focus is:
 - ✅ While locked can transform Selection, and apply on unlock.
 - ✅ Can lock `Selection` and transform via keys
 - ✅ Can mirror `Selection` x/y
-- Can rotate `Selection` ± 90 degrees
+- ✅ Can rotate `Selection` ± 90 degrees
 
 - Can construct wall meshes from selection
 - Ghost meshes can be attached
