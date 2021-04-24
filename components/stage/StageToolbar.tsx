@@ -126,7 +126,7 @@ const Slot = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 2px;
+  padding-bottom: 3px;
 `;
 
 const LeftToolbar = styled.section`
