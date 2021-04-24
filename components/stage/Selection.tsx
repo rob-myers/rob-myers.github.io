@@ -132,9 +132,9 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   useEffect(() => {// Apply transform on unlock
     if (!selection.locked) {
       const matrix = selection.group.matrix;
-      selection.localPolys.forEach(poly => geom.applyMatrixPoly(matrix, poly).precision(1));
-      if ((new THREE.Matrix3).setFromMatrix4(matrix).determinant() < 0) {
-        selection.localPolys.forEach(poly => poly.reverse());
+      for (const poly of selection.localPolys) {
+        geom.applyMatrixPoly(matrix, poly).precision(1);
+        if (poly.sign() < 0) poly.reverse();
       }
       matrix.identity();
       restoreFromState(selection);
