@@ -1,17 +1,17 @@
 import { useEffect, useRef } from "react";
 import { Subject } from "rxjs";
-import { StageExtra, StagePointerEvent } from "model/stage/stage.model";
+import { StageInternal, StagePointerEvent } from "model/stage/stage.model";
 import { vectPrecision } from "model/3d/three.model";
 import useGeomStore from "store/geom.store";
 
-const Cursor: React.FC<Props> = ({ extra, ptrWire }) => {
+const Cursor: React.FC<Props> = ({ internal, ptrWire }) => {
   const group = useRef<THREE.Group>(null);
   const texture = useGeomStore(({ texture }) => texture.thinPlusPng);
 
   useEffect(() => {
-    extra.cursorGroup = group.current!;
-    extra.cursorGroup!.position.set(...extra.initCursorPos);
-    return () => void delete extra.cursorGroup;
+    group.current!.position.copy(internal.cursorGroup.position);
+    internal.cursorGroup = group.current!;
+    // Do not remove reference, so cursor available when stage paused
   }, []);
   
   useEffect(() => {
@@ -35,7 +35,7 @@ const Cursor: React.FC<Props> = ({ extra, ptrWire }) => {
 };
 
 interface Props {
-  extra: StageExtra;
+  internal: StageInternal;
   ptrWire: Subject<StagePointerEvent>;
 }
 

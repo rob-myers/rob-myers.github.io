@@ -108,8 +108,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
           <Grid />
           <Axes />
           <CameraControls
-            enabled={stage.opts.panZoom}
             internal={stage.internal}
+            enabled={stage.opts.panZoom}
           />
 
           <Selection
@@ -119,7 +119,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
           />
 
           <Cursor
-            extra={stage.extra}
+            internal={stage.internal}
             ptrWire={ptrWire}
           />
 
@@ -144,7 +144,8 @@ interface Props {
 const Root = styled.section<{ background: string }>`
   width: 100%;
   height: 100%;
-  border: 1px solid #000;
+  border: 1px solid #aaa;
+  border-width: 0 1px;
   overflow: scroll;
   display: flex;
   flex-direction: column;

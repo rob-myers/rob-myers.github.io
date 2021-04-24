@@ -26,6 +26,7 @@ export interface StageInternal {
   scene?: THREE.Scene;
   /** Auto-computed world bounds */
   bounds: Geom.Rect;
+  cursorGroup: THREE.Group;
 }
 
 /** Key-value storage for internal use */
@@ -36,7 +37,6 @@ export type StageExtra = Record<string, any> & {
   initCameraPos: Triple<number>;
   /** Initial cursor position */
   initCursorPos: Triple<number>;
-  cursorGroup?: THREE.Group;
 }
 
 /** Keep this flat so stage.proxy handles updates */
@@ -85,6 +85,7 @@ export function createStage(stageKey: string): StageMeta {
     internal: {
       keyEvents: new Subject,
       bounds: initStageBounds.clone(),
+      cursorGroup: new THREE.Group,
       // ...Other stuff is attached by components
     },
     extra: {

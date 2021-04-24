@@ -60,6 +60,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const { opts, extra, selection  } = api.getPersist(stageKey);
         s.opts = deepClone(opts??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
+        s.internal.cursorGroup.position.set(...s.extra.initCursorPos);
         s.sel.polygons = (selection.polygons??[]).map(x => Geom.Polygon.from(x));
         s.sel.prevPolys = s.sel.polygons.slice();
         s.sel.enabled = selection.enabled??true;

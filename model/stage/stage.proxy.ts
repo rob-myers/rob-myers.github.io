@@ -41,7 +41,7 @@ export function createStageProxy(stageKey: string) {
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'cursor') {
-        return stage.extra.cursorGroup?.position;
+        return stage.internal.cursorGroup.position;
       }
 
       return stage[key];
