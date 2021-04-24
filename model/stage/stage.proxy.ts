@@ -1,3 +1,4 @@
+import * as Geom from "model/geom";
 import { geom } from "model/geom.service";
 import useStage from "store/stage.store";
 import { StageMeta, StageOpts, StageSelection } from "./stage.model";
@@ -22,22 +23,41 @@ export function createStageProxy(stageKey: string) {
         });
       } else if (key === 'sel') {
         return new Proxy({} as StageSelection, {
-          get(_, key: keyof StageSelection | 'bounds' | 'localBounds') {
+          get(_, key: keyof StageSelection | 'bounds' | 'localBounds' | 'polygons') {
             if (key === 'bounds' || key === 'localBounds') {
-              const { polygons, group } = useStage.api.getStage(stageKey).sel;
-              const bounds = geom.unionRects(polygons.map(x => x.rect));
+              /**
+               * Provide world bounds or untransformed bounds.
+               */
+              const { localPolys, group: { matrix } } = useStage.api.getStage(stageKey).sel;
+              const bounds = geom.unionRects(localPolys.map(x => x.rect));
               return key === 'bounds'
-                ? geom.applyMatrixRect(group.matrix, bounds).precision(1)
+                ? geom.applyMatrixRect(matrix, bounds).precision(1)
                 : bounds.precision(1);
+            } else if (key === 'polygons') {
+              /**
+               * Provide world polygons.
+               */
+              const { localPolys, group: { matrix } } = useStage.api.getStage(stageKey).sel;
+              return localPolys.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
             }
             return useStage.api.getStage(stageKey).sel[key];
           },
-          set(_, key: string, value: any) {
+          set(_, key: keyof StageSelection | 'polygons', value: any) {
+            if (key === 'polygons') {
+              /**
+               * Given world polygons, set untransformed polygons.
+               */
+              const { group } = useStage.api.getStage(stageKey).sel;
+              const matrix = group.matrix.clone().invert();
+              const nextPolys = (value as Geom.Polygon[]).map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
+              useStage.api.updateSelection(stageKey, { localPolys: nextPolys });
+              return true;
+            }
             useStage.api.updateSelection(stageKey, { [key]: value });
             return true;
           },
           ownKeys: () => Object.keys(useStage.api.getStage(stageKey).sel)
-            .concat('bounds', 'localBounds'),
+            .concat('bounds', 'localBounds', 'polygons'),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'cursor') {

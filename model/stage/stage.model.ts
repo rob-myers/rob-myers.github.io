@@ -26,6 +26,7 @@ export interface StageInternal {
   scene?: THREE.Scene;
   /** Auto-computed world bounds */
   bounds: Geom.Rect;
+  /** `Cursor` overwrites this */
   cursorGroup: THREE.Group;
 }
 
@@ -57,9 +58,9 @@ export interface StageSelection {
    * Its initial value is only used to transmit any existing transform.
    */
   group: THREE.Group;
-  /** Currently selected polygons */
-  polygons: Geom.Polygon[];
-  /** Previously selected polygons */
+  /** Untransformed polygons */
+  localPolys: Geom.Polygon[];
+  /** Previous untransformed polygons */
   prevPolys: Geom.Polygon[];
   /** Is the selection enabled? */
   enabled: boolean;
@@ -96,7 +97,7 @@ export function createStage(stageKey: string): StageMeta {
     opts: createStageOpts(),
     sel: {
       group: new THREE.Group,
-      polygons: [],
+      localPolys: [],
       prevPolys: [],
       locked: false,
       enabled: true,

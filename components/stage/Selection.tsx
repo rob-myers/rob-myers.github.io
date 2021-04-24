@@ -24,11 +24,11 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     rectMesh.current?.scale.set(0, 0, 1);
   }, []);
 
-  const restoreFromState = useCallback(({ polygons }: StageSelection) => {
+  const restoreFromState = useCallback(({ localPolys }: StageSelection) => {
     rectMesh.current!.scale.set(0, 0, 0);
-    polysMesh.current!.geometry = geom.polysToGeometry(polygons);
+    polysMesh.current!.geometry = geom.polysToGeometry(localPolys);
     outlineMesh.current!.geometry = geom.polysToGeometry(
-      geom.cutOut(polygons, polygons.flatMap(x => x.createOutset(0.01)))
+      geom.cutOut(localPolys, localPolys.flatMap(x => x.createOutset(0.01)))
     );
   }, []);
 
@@ -73,16 +73,16 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         const polygons = [] as Geom.Polygon[];
         
         if (lastKeyMsg.shiftKey) {
-          polygons.push(...geom.cutOut([Geom.Polygon.fromRect(rect)], selection.polygons));
+          polygons.push(...geom.cutOut([Geom.Polygon.fromRect(rect)], selection.localPolys));
         } else if(lastKeyMsg.metaKey || selection.additive) {
-          polygons.push(...geom.union(selection.polygons.concat(Geom.Polygon.fromRect(rect))));
+          polygons.push(...geom.union(selection.localPolys.concat(Geom.Polygon.fromRect(rect))));
         } else {
           polygons.push(Geom.Polygon.fromRect(rect));
         }
 
         polygons.forEach(x => x.precision(1)); // Increments of 0.1
-        selection.prevPolys = selection.polygons.slice();
-        selection.polygons = polygons;
+        selection.prevPolys = selection.localPolys.slice();
+        selection.localPolys = polygons;
         restoreFromState(selection);
       } else if (key === 'pointerleave') {
         ptrDown = false;
@@ -132,9 +132,9 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   useEffect(() => {// Apply transform on unlock
     if (!selection.locked) {
       const matrix = selection.group.matrix;
-      selection.polygons.forEach(poly => geom.applyMatrixPoly(matrix, poly).precision(1));
+      selection.localPolys.forEach(poly => geom.applyMatrixPoly(matrix, poly).precision(1));
       if ((new THREE.Matrix3).setFromMatrix4(matrix).determinant() < 0) {
-        selection.polygons.forEach(poly => poly.reverse());
+        selection.localPolys.forEach(poly => poly.reverse());
       }
       matrix.identity();
       restoreFromState(selection);
@@ -143,7 +143,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
 
   useEffect(() => {// Listen for external updates to polygons
     restoreFromState(selection);
-  }, [selection.polygons]);
+  }, [selection.localPolys]);
 
   return (
     <group name="SelectionRoot">

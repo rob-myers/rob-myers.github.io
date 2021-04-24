@@ -76,8 +76,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
   return (
     <Root
-      // background={stage.opts.enabled && ctxt ? stage.opts.background : '#ccc'}
-      background={stage.opts.background}
+      background={stage.opts.enabled && ctxt ? stage.opts.background : '#ccc'}
       tabIndex={0}
       onKeyDown={onKey}
       onKeyUp={onKey}
@@ -175,7 +174,6 @@ const PlaceholderImage = styled.img<{}>`
   margin: auto;
   max-width: 100%;
   max-height: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.1);
 `;
 
 export default Stage;

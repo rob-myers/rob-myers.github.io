@@ -16,12 +16,8 @@ Main focus is:
    - Simplify pipelines?
    - Simplify FifoDevice and Device?
 
-- ✅ While locked can transform Selection, and apply on unlock.
-- ✅ Can lock `Selection` and transform via keys
-- ✅ Can mirror `Selection` x/y
-- ✅ Can rotate `Selection` ± 90 degrees
-
 - Can construct wall meshes from selection
+
 - Ghost meshes can be attached
 - Error messages prefixed by function chain
 - Sketch out milestones
@@ -33,6 +29,10 @@ Main focus is:
 
 ### Done
 
+- ✅ While locked can transform Selection, and apply on unlock.
+- ✅ Can lock `Selection` and transform via keys
+- ✅ Can mirror `Selection` x/y
+- ✅ Can rotate `Selection` ± 90 degrees
 - ✅ Support `return` inside a function
 - ✅ Create replacement for brush i.e. `Selection`
   - ✅ Can select rectilinear polygons.
