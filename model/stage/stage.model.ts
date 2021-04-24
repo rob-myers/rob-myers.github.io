@@ -77,10 +77,10 @@ export interface StageSelection {
 
 /** Serializable `StageSelection` */
 interface StageSelectionJson {
-  polygons: Geom.PolygonJson[];
-  locked: boolean;
   enabled: boolean;
+  locked: boolean;
   additive: boolean;
+  polygons: Geom.PolygonJson[];
   matrix: number[];
 }
 
@@ -125,6 +125,10 @@ export interface PersistedStage {
   opts: StageOpts;
   extra: StageExtra;
   sel: StageSelectionJson;
+  poly: Record<(
+    | 'wall' // walls
+    | 'obs'  // additional obstructions
+  ), Geom.PolygonJson[]>;
 }
 
 export function createPersist(stageKey: string): PersistedStage {
@@ -142,6 +146,7 @@ export function createPersist(stageKey: string): PersistedStage {
       additive: false,
       matrix: identityMatrix4.toArray(),
     },
+    poly: { wall: [], obs: [] },
   };
 }
 

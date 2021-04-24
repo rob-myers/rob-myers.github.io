@@ -57,7 +57,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
         // Restore persisted data
         const s = Stage.createStage(stageKey);
-        const { opts, extra, sel  } = api.getPersist(stageKey);
+        const { opts, extra, sel, poly } = api.getPersist(stageKey);
         s.opts = deepClone(opts??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         s.internal.cursorGroup.position.set(...s.extra.initCursorPos);
@@ -67,6 +67,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         s.sel.additive = sel.additive??false;
         s.sel.locked = sel.locked??false;
         s.sel.group.matrix.fromArray(sel.matrix);
+        s.poly.wall = (poly.wall??[]).map(x => Geom.Polygon.from(x));
+        s.poly.obs = (poly.obs??[]).map(x => Geom.Polygon.from(x));
 
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
@@ -88,7 +90,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { internal, opts, extra, sel: selection } = api.getStage(stageKey);
+      const { internal, opts, extra, sel, poly } = api.getStage(stageKey);
 
       const currentCameraPos = internal.controls?.camera?.position
         ? vectorToTriple(internal.controls.camera.position) : null;
@@ -108,11 +110,15 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             ],
           },
           sel: {
-            polygons: selection.localPolys.map(x => x.json),
-            locked: selection.locked,
-            enabled: selection.enabled,
-            additive: selection.additive,
-            matrix: (selection.group?.matrix??identityMatrix4).toArray(),
+            polygons: sel.localPolys.map(x => x.json),
+            locked: sel.locked,
+            enabled: sel.enabled,
+            additive: sel.additive,
+            matrix: (sel.group?.matrix??identityMatrix4).toArray(),
+          },
+          poly: {
+            wall: poly.wall.map(x => x.json),
+            obs: poly.obs.map(x => x.json),
           },
         }, persist),
       }));
