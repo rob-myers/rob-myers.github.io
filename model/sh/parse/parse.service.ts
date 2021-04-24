@@ -27,7 +27,7 @@ class ParseShService {
   }
 
   /**
-   * `partialSrc` must come from the command line.
+   * The input  `partialSrc` must come from the command line.
    * It must be `\n`-terminated.
    * It must not have a proper-prefix which is a complete command,
    * e.g. `echo foo\necho bar\n` invalid via proper-prefix `echo foo\n`.
@@ -35,15 +35,17 @@ class ParseShService {
   private interactiveParse(partialSrc: string): P.InteractiveParseResult {
     const parser = syntax.NewParser();
     let incomplete: null | boolean = null;
+    let readCount = 0;
 
-    try { // Use mvdah-sh to parse partial shell code
+    try {// Detect if code is incomplete or complete
       parser.Interactive(
-        { read: () => partialSrc },
+        { read: () => partialSrc.slice(readCount * 1000, ++readCount * 1000) },
         () => { incomplete = parser.Incomplete(); return false; }
       );
-    } catch {}
+    } catch (e) {
+      // Ignore errors due to code being partial and `read` resolving.
+    }
 
-    // To clean it up we re-parse, which also provides source map
     const parsed = incomplete ? null : this.parse(partialSrc);
     return { incomplete, parsed };
   }
@@ -62,8 +64,7 @@ class ParseShService {
     // console.log('mvdan-sh parsed', parsed);
     /**
      * Clean up the parse, making it serialisable.
-     * We also use a single fresh `meta` for all nodes,
-     * and attach parents.
+     * We also use a single fresh `meta` for all nodes, and attach parents.
      */
     const cleaned = this.File(parsed);
     return withParents(cleaned);
