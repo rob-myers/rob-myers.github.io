@@ -113,7 +113,8 @@ const Toolbar = styled.section`
   justify-content: space-between;
   user-select: none;
 
-  height: 28px;
+  height: 26px;
+  min-height: 26px;
   font-size: 16px;
   padding: 0px 4px 0 8px;
 
@@ -125,7 +126,6 @@ const Slot = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 2px;
 `;
 
 const LeftToolbar = styled.section`
@@ -158,7 +158,7 @@ const Icon = styled.div<{ greyed?: boolean }>`
   cursor: pointer;
   display: flex;
   justify-content: center;
-  padding: 0 4px 4px 4px;
+  padding: 0 4px 2px 4px;
   color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
 `;
 
@@ -167,7 +167,7 @@ const LockedButton = styled.div<{ greyed?: boolean }>`
   display: flex;
   justify-content: center;
   font-size: small;
-  padding: 0 4px 2px 4px;
+  padding: 0 4px 0px 4px;
   color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
 `;
 
