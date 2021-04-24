@@ -90,7 +90,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
       {(stage.opts.enabled || ctxt) && (
 
-        <Canvas
+        <CanvasRoot
           dpr={getWindow()!.devicePixelRatio}
           onCreated={onCreatedCanvas}
         >
@@ -123,7 +123,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
             ptrWire={ptrWire}
           />
 
-        </Canvas>
+        </CanvasRoot>
 
       ) || stage?.extra.canvasPreview && (
 
@@ -144,8 +144,6 @@ interface Props {
 const Root = styled.section<{ background: string }>`
   width: 100%;
   height: 100%;
-  border: 1px solid #aaa;
-  border-width: 0 1px;
   overflow: scroll;
   display: flex;
   flex-direction: column;
@@ -153,6 +151,11 @@ const Root = styled.section<{ background: string }>`
   ${({ background }) => css`
     background: ${background};
   `}
+`;
+
+const CanvasRoot = styled(Canvas)`
+  border: 0 solid #999;
+  border-width: 0 1px;
 `;
 
 const Placeholder = styled.img<{}>`

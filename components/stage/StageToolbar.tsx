@@ -119,6 +119,7 @@ const Toolbar = styled.section`
   padding: 0px 4px 0 8px;
 
   background-color: #222;
+  border-radius: 2px 2px 0 0;
   color: #ddd;
 `;
 
