@@ -115,13 +115,13 @@ class CmdService {
         break;
       }
       case 'get': {
-        const root = this.provideStageAndVars(meta);
-        for (const arg of args) {
-          try {
-            yield Function('__', `return __.${arg}`)(root);
-          } catch (e) {
-            throw new ShError(`${e}`.replace('__.', ''), 1);
-          }
+        try {
+          const root = this.provideStageAndVars(meta);
+          const outputs = args.map(arg => Function('__', `return __.${arg}`)(root));
+          node.exitCode = outputs.length && outputs.every(x => x === undefined) ? 1 : 0;
+          for (const output of outputs) yield output;
+        } catch (e) {
+          throw new ShError(`${e}`.replace('__.', ''), 1);
         }
         break;
       }
