@@ -16,6 +16,7 @@ const Cursor: React.FC<Props> = ({ internal, ptrWire }) => {
   }, [texture]);
   
   useEffect(() => {
+    if (!texture) return;
     const position = group.current!.position;
     const ptrSub = ptrWire.subscribe(({ key, point }) => {
       if (key === 'pointerup') {
@@ -23,7 +24,7 @@ const Cursor: React.FC<Props> = ({ internal, ptrWire }) => {
       }
       return () => ptrSub.unsubscribe();
     });
-  }, []);
+  }, [texture]);
 
   return texture ? (
     <group ref={group}>
