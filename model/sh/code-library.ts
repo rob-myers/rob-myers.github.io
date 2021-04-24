@@ -39,51 +39,54 @@ export const shellScripts = {
 # locked selection key handler
 key | run '({ read, THREE, _: {msg} }, { stage: { opts, sel } }) {
   while (msg = await read()) {
-    if (msg.type !== "keydown" || !opts.enabled || !sel.enabled || !sel.locked) {
-      continue;
-    }
-    if (!msg.metaKey) {
-      switch (msg.key) {
-        case "x": {
-          const matrix = (new THREE.Matrix4).makeScale(-1, 1, 1)
-            .setPosition(2 * sel.localBounds.cx, 0, 0);
-          sel.group.matrix.multiply(matrix);
-          break;
-        }
-        case "y": {
-          const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
-            .setPosition(0, 2 * sel.localBounds.cy, 0);
-          sel.group.matrix.multiply(matrix);
-          break;
-        }
-        case "q":
-        case "Q": {
-          const { cx, cy } = sel.bounds;
-          const angle = (msg.shiftKey ? -1 : 1) * (Math.PI / 2);
-          sel.group.matrix.premultiply(
-            (new THREE.Matrix4).makeTranslation(-cx, -cy, 0)
-            .premultiply((new THREE.Matrix4).makeRotationZ(angle))
-            .premultiply((new THREE.Matrix4).makeTranslation(cx, cy, 0))
-          );
-          break;
-        }
+    if (![msg.type === "keyup", opts.enabled, sel.enabled,
+      sel.locked, !msg.metaKey].every(Boolean)) continue;
+    switch (msg.key) {
+      case "x": {
+        const matrix = (new THREE.Matrix4).makeScale(-1, 1, 1)
+          .setPosition(2 * sel.localBounds.cx, 0, 0);
+        sel.group.matrix.multiply(matrix);
+        break;
+      }
+      case "y": {
+        const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
+          .setPosition(0, 2 * sel.localBounds.cy, 0);
+        sel.group.matrix.multiply(matrix);
+        break;
+      }
+      case "q":
+      case "Q": {
+        const { cx, cy } = sel.bounds;
+        const angle = (msg.key === "Q" ? -1 : 1) * (Math.PI / 2);
+        sel.group.matrix.premultiply(
+          (new THREE.Matrix4).makeTranslation(-cx, -cy, 0)
+          .premultiply((new THREE.Matrix4).makeRotationZ(angle))
+          .premultiply((new THREE.Matrix4).makeTranslation(cx, cy, 0))
+        );
+        break;
       }
     }
   }
 }' &
   `,
 
-  unlockedSelectionKeyHandler: `
-# unlocked selection key handler
+  selectionKeyHandler: `
+# selection key handler
 key | run '({ read, _: {msg} }, { stage: { opts, sel } }) {
   while (msg = await read()) {
-    if (msg.type !== "keydown" || !opts.enabled || !sel.enabled || sel.locked) {
-      continue;
-    }
-    switch (msg.key) {
-      case "z":
-        msg.metaKey && ([sel.polygons, sel.prevPolys] = [sel.prevPolys, sel.polygons]);
-        break;
+    if (msg.type !== "keydown" || !opts.enabled || !sel.enabled) continue;
+    if (msg.metaKey) {
+      switch (msg.key) {
+        case "z": !sel.locked &&
+          ([sel.polygons, sel.prevPolys] = [sel.prevPolys, sel.polygons]);
+          break;
+      }
+    } else {
+      switch (msg.key) {
+        case "f":
+          // TODO
+          break;
+      }
     }
   }
 }' &
@@ -109,7 +112,7 @@ export const profiles = {
   first: `
 await-stage "\${STAGE_KEY}"
 
-${shellScripts.unlockedSelectionKeyHandler.trim()}
+${shellScripts.selectionKeyHandler.trim()}
 
 ${shellScripts.lockedSelectionKeyHandler.trim()}
 
