@@ -58,6 +58,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const onPointer = useCallback((e: ThreeEvent<PointerEvent>) => {
     ptrWire.next({ key: e.type as any, point: e.point });
   }, []);
+  /** Change mesh `onPointerOut` type from 'pointermove' to 'pointerleave' */
+  const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) => {
+    ptrWire.next({ key: 'pointerleave', point: e.point });
+  }, []);
 
   const keyWire = stage.internal.keyEvents;
   const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
@@ -99,7 +103,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
             onPointerDown={onPointer}
             onPointerMove={onPointer}
             onPointerUp={onPointer}
-            onPointerLeave={onPointer}
+            onPointerOut={onPointerOut}
             visible={false}
           >
             <planeGeometry args={[100, 100]} />
