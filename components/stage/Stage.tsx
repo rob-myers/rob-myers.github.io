@@ -76,7 +76,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
   return (
     <Root
-      background={stage.opts.enabled && ctxt ? stage.opts.background : '#ccc'}
+      // background={stage.opts.enabled && ctxt ? stage.opts.background : '#ccc'}
+      background={stage.opts.background}
       tabIndex={0}
       onKeyDown={onKey}
       onKeyUp={onKey}
@@ -127,10 +128,12 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
       ) || stage?.extra.canvasPreview && (
 
-        <Placeholder
-          src={stage.extra.canvasPreview}
-          draggable={false}
-        />
+        <Placeholder>
+          <PlaceholderImage
+            src={stage.extra.canvasPreview}
+            draggable={false}
+          />
+        </Placeholder>
 
       )}
     </Root>
@@ -158,11 +161,21 @@ const CanvasRoot = styled(Canvas)`
   border-width: 0 1px;
 `;
 
-const Placeholder = styled.img<{}>`
-  margin: auto;
+const Placeholder = styled.div<{}>`
+  width: 100%;
+  height: 100%;
+  border: 10;
   overflow: hidden;
+  display: flex;
+  border: 0 solid #999;
+  border-width: 0 1px;
+`;
+
+const PlaceholderImage = styled.img<{}>`
+  margin: auto;
   max-width: 100%;
   max-height: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 `;
 
 export default Stage;
