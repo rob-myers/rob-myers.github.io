@@ -280,9 +280,9 @@ export class Polygon {
   }
 
   static pointInTriangle(pt: Vector, v1: Vector, v2: Vector, v3: Vector) {
-    const d1 = Polygon.sign(pt, v1, v2);
-    const d2 = Polygon.sign(pt, v2, v3);
-    const d3 = Polygon.sign(pt, v3, v1);
+    const d1 = Polygon.triangleSign(pt, v1, v2);
+    const d2 = Polygon.triangleSign(pt, v2, v3);
+    const d3 = Polygon.triangleSign(pt, v3, v1);
     const hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
     const hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
     return !(hasNeg && hasPos);
@@ -310,8 +310,9 @@ export class Polygon {
     return this;
   }
 
-  private static sign (p1: Vector, p2: Vector, p3: Vector) {
-    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+  sign() {
+    const [u, v, w] = this.outer;
+    return w ? Math.sign(Polygon.triangleSign(u, v, w)) : 0;
   }
 
   sub({ x, y }: VectorJson) {
@@ -344,6 +345,10 @@ export class Polygon {
     this.holes.forEach(h => h.forEach(p => p.translate(dx, dy)));
     this.clearCache();
     return this;
+  }
+
+  private static triangleSign(p1: Vector, p2: Vector, p3: Vector) {
+    return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
   }
 
   public get triangulation(): Polygon[] {
