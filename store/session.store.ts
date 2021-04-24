@@ -238,7 +238,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     removeSession: (sessionKey) => {
-      delete get().device[get().session[sessionKey].ttyShell.key];
+      const { process, ttyShell } = get().session[sessionKey];
+      for (const { cleanups } of Object.values(process)) {
+        cleanups.forEach(cleanup => cleanup());
+        cleanups.length = 0;
+      }
+      delete get().device[ttyShell.key];
       set(({ session }) => ({ session: removeFromLookup(sessionKey, session) }));
     },
 
