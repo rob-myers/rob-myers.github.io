@@ -115,7 +115,6 @@ const Toolbar = styled.section`
 
   height: 28px;
   font-size: 16px;
-  border-top: 1px solid #777;
   padding: 0px 4px 0 8px;
 
   background-color: #222;
@@ -126,7 +125,7 @@ const Slot = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding-bottom: 3px;
+  padding-bottom: 2px;
 `;
 
 const LeftToolbar = styled.section`
