@@ -9,10 +9,11 @@ const Cursor: React.FC<Props> = ({ internal, ptrWire }) => {
   const texture = useGeomStore(({ texture }) => texture.thinPlusPng);
 
   useEffect(() => {
+    if (!texture) return;
     group.current!.position.copy(internal.cursorGroup.position);
     internal.cursorGroup = group.current!;
     // Do not remove reference, so cursor available when stage paused
-  }, []);
+  }, [texture]);
   
   useEffect(() => {
     const position = group.current!.position;
