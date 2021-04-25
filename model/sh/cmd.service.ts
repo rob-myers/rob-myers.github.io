@@ -449,7 +449,7 @@ class CmdService {
     try {
       return Function(`return ${input}`)();
     } catch (e) {
-      return JSON.stringify(input);
+      return input;
     }
   }
 
