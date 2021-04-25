@@ -102,10 +102,10 @@ key | run '({ read, _: {msg} }, { stage: { opts } }) {
   while (msg = await read()) {
     if (msg.type !== "keydown" || !opts.enabled) continue;
     switch (msg.key) {
-      // case "1": opts.wallOpacity = 0; break;
-      // case "2": opts.wallOpacity = 1; break;
-      // case "3": opts.wallOpacity = 0.4; break;
-      case "l": opts.lights = !opts.lights; break;
+      case "1": opts.wallOpacity = 0; break;
+      case "2": opts.wallOpacity = 1; break;
+      case "3": opts.wallOpacity = 0.4; break;
+      // case "l": opts.lights = !opts.lights; break;
     }
   }
 }' &

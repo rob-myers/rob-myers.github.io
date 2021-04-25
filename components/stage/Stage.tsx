@@ -128,7 +128,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
             ptrWire={ptrWire}
           />
 
-          <World />
+          <World
+            opts={stage.opts}
+            poly={stage.poly}
+          />
 
         </CanvasRoot>
 
@@ -181,6 +184,7 @@ const PlaceholderImage = styled.img<{}>`
   margin: auto;
   max-width: 100%;
   max-height: 100%;
+  background: #ddd;
 `;
 
 export default Stage;
