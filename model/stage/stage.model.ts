@@ -106,7 +106,7 @@ export function createStage(stageKey: string): StageMeta {
       enabled: true,
       additive: false,
     },
-    poly: { wall: [], obs: [], nav: [] },
+    poly: { wall: [], prevWall: [], obs: [], prevObs: [], nav: [] },
   };
 }
 
@@ -123,9 +123,9 @@ export function createStageOpts(): StageOpts {
 }
 
 export type StagePoly = Record<(
-  | 'wall' // walls
-  | 'obs'  // additional obstructions
-  | 'nav'  // navigable, computed from wall/obs
+  | 'wall'  | 'prevWall' // walls
+  | 'obs' | 'prevObs' // obstructions
+  | 'nav'  // navigable
 ), Geom.Polygon[]>;
 
 export interface PersistedStage {

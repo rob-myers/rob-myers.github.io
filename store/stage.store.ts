@@ -69,7 +69,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         s.sel.locked = sel.locked??false;
         s.sel.group.matrix.fromArray(sel.matrix);
         s.poly.wall = (poly.wall??[]).map(x => Geom.Polygon.from(x));
+        s.poly.prevWall = s.poly.wall.map(x => x.clone());
         s.poly.obs = (poly.obs??[]).map(x => Geom.Polygon.from(x));
+        s.poly.prevObs = s.poly.obs.map(x => x.clone());
 
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
