@@ -78,16 +78,17 @@ key | run '({ read, use: {geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
     if (msg.metaKey) {
       switch (msg.key) {
         case "z": !sel.locked &&
-          ([sel.polygons, sel.prevPolys] = [sel.prevPolys, sel.polygons]);
+          ([sel.localPolys, sel.prevPolys] = [sel.prevPolys, sel.localPolys]);
           break;
       }
     } else {
       switch (msg.key) {
         case "f":
-          // TODO
+          poly.wall = geom.union(poly.wall.concat(sel.polygons));
           break;
+        case "F":
         case "Backspace":
-          // TODO
+          poly.wall = geom.cutOut(sel.polygons, poly.wall);
           break;
       }
     }

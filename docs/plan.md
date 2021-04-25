@@ -11,8 +11,8 @@ Main focus is:
 
 - Can construct wall meshes from selection
    ✅ Have `stage.poly.{wall,nav,obs}`
-   - Can paint into `stage.poly`
-   - Can erase from `stage.poly`
+   ✅ Can paint into `stage.poly.wall`
+   ✅ Can erase from `stage.poly.wall`
    - Have `Navigable`
    - Have stage options `wallOpacity` and `wallHeight`
 - Ghost meshes can be attached
