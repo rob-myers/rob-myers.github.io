@@ -133,16 +133,16 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     return () => { ptrSub.unsubscribe(); };
   }, [selection]);
 
-  useEffect(() => {// Apply transform on unlock
-    if (!selection.locked) {
+  useEffect(() => {
+    if (!selection.locked) {// Apply transform on unlock
       const matrix = selection.group.matrix;
       for (const poly of selection.localPolys) {
         geom.applyMatrixPoly(matrix, poly).precision(1);
         if (poly.sign() < 0) poly.reverse();
       }
       matrix.identity();
-      restoreFromState(selection);
     }
+    outlineMesh.current!.visible = selection.locked;
   }, [selection.locked]);
 
   useEffect(() => {// Listen for external updates to polygons
@@ -177,12 +177,9 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
           />
         </mesh>
 
-        <mesh
-          ref={outlineMesh}
-          visible={selection.locked}
-        >
+        <mesh ref={outlineMesh}>
           <meshBasicMaterial
-            color="#000"
+            color="#037"
             transparent
             opacity={0.5}
           />
