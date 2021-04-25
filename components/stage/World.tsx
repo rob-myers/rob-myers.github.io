@@ -56,7 +56,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
 
       <ambientLight
         color="#fff"
-        intensity={0.1}
+        intensity={0.15}
       />
       <pointLight
         // visible={enabled}
