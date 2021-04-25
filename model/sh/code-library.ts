@@ -77,15 +77,14 @@ key | run '({ read, use: {geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
     if (msg.type !== "keydown" || !opts.enabled || !sel.enabled) continue;
     if (msg.metaKey) {
       switch (msg.key) {
+        case "c":
+          break;
         case "z": !sel.locked &&
           ([poly.prevWall, poly.wall] = [poly.wall, poly.prevWall]);
           break;
       }
     } else {
       switch (msg.key) {
-        case "t":
-          sel.locked = !sel.locked;
-          break;
         case "f":
           [poly.prevWall, poly.wall] = [poly.wall, geom.union(poly.wall.concat(sel.polygons))];
           break;

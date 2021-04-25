@@ -81,7 +81,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         }
 
         polygons.forEach(x => x.precision(1)); // Increments of 0.1
-        selection.prevPolys = selection.localPolys.slice();
         selection.localPolys = polygons;
         restoreFromState(selection);
       } else if (key === 'pointerleave') {

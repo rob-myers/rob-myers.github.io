@@ -64,8 +64,6 @@ export interface StageSelection {
   group: THREE.Group;
   /** Untransformed polygons */
   localPolys: Geom.Polygon[];
-  /** Previous untransformed polygons */
-  prevPolys: Geom.Polygon[];
   /** Is the selection enabled? */
   enabled: boolean;
   /** Add next rectangle to selection, or overwrite? */
@@ -101,7 +99,6 @@ export function createStage(stageKey: string): StageMeta {
     sel: {
       group: new THREE.Group,
       localPolys: [],
-      prevPolys: [],
       locked: false,
       enabled: true,
       additive: false,

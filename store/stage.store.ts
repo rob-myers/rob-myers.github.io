@@ -63,7 +63,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         s.internal.cursorGroup.position.set(...s.extra.initCursorPos);
         s.sel.localPolys = (sel.polygons??[]).map(x => Geom.Polygon.from(x));
-        s.sel.prevPolys = s.sel.localPolys.slice();
         s.sel.enabled = sel.enabled??true;
         s.sel.additive = sel.additive??false;
         s.sel.locked = sel.locked??false;

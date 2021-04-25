@@ -19,6 +19,7 @@ Main focus is:
    ✅ Can clear via escape
    - Can only lock via copy/cut
    - Remove additive option
+   - Can add/erase obstruction (with undo/redo)
 
 
 
