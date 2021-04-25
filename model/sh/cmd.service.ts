@@ -4,6 +4,7 @@ import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 import * as THREE from 'three';
 
 import * as Geom from 'model/geom';
+import { geom } from 'model/geom.service';
 import { testNever, truncate, Deferred, pause } from 'model/generic.model';
 import { createStageProxy } from '../stage/stage.proxy';
 
@@ -345,28 +346,29 @@ class CmdService {
 
   private provideJsApi(meta: Sh.BaseMeta) {
     return {
-      // For js API we convert { eof: true } to null, for truthy test
       read: async () => {
         const result = await this.readOnce(meta);
+        // We convert { eof: true } to null, for truthy test
         return result?.eof ? null : result;
       },
+      // TODO support pause/resume like command `sleep`
       sleep: (seconds: number) => new Promise<void>((resolve, reject) => {
         setTimeout(resolve, seconds * 1000);
         useSession.api.addCleanup(meta, () => reject(killError(meta)));
       }),
       /** Trick to provide local variables via destructuring */
       _: {},
-      Geom,
-      THREE,
+      /** Provide e.g. THREE */
+      use: this.useProxy,
     };
   }
 
   private provideStageAndVars(meta: Sh.BaseMeta): { stage: StageMeta } & Record<string, any> {
     const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
-    return Object.assign(
-      useSession.api.getSession(meta.sessionKey).var,
-      { stage: createStageProxy(stageKey) },
-    );
+    return {
+      ...useSession.api.getSession(meta.sessionKey).var,
+      stage: createStageProxy(stageKey),
+    };
   }
 
   private async *readLoop(
@@ -455,6 +457,23 @@ class CmdService {
       return JSON.stringify(input);
     }
   }
+
+  /** Expose classes/services in js api */
+  private useProxy = new Proxy({} as {
+    geom: typeof geom;
+    Geom: typeof Geom;
+    THREE: typeof THREE;
+  }, {
+    get(_, key: 'geom' | 'Geom' | 'THREE')  {
+      switch (key) {
+        case 'geom': return geom;
+        case 'Geom': return Geom;
+        case 'THREE': return THREE;
+      }
+    },
+    ownKeys: () => ['geom', 'Geom', 'THREE'],
+    getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
+  });
   
 }
 

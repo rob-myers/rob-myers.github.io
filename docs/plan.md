@@ -10,7 +10,7 @@ Main focus is:
 ### TODO
 
 - Can construct wall meshes from selection
-   - Have `stage.poly.{wall,nav,obs}`
+   ✅ Have `stage.poly.{wall,nav,obs}`
    - Can paint into `stage.poly`
    - Can erase from `stage.poly`
    - Have `Navigable`

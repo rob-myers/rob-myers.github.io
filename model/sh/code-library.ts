@@ -18,7 +18,7 @@ export const preloadedFunctions = {
   keys: `map Object.keys`,
   cat: `get "$@" | split`,
  
-  sel: `run '({ read, Geom }, { stage: { sel } }) {
+  sel: `run '({ read, use: {Geom} }, { stage: {sel} }) {
     const input = await read();
     if (input) {
       sel.polygons = input.map(x => Geom.Polygon.from(x))
@@ -37,7 +37,7 @@ export const shellScripts = {
 
   lockedSelectionKeyHandler: `
 # locked selection key handler
-key | run '({ read, THREE, _: {msg} }, { stage: { opts, sel } }) {
+key | run '({ read, use: {THREE}, _: {msg} }, { stage: { opts, sel } }) {
   while (msg = await read()) {
     if (![msg.type === "keyup", opts.enabled, sel.enabled,
       sel.locked, !msg.metaKey].every(Boolean)) continue;
@@ -72,7 +72,7 @@ key | run '({ read, THREE, _: {msg} }, { stage: { opts, sel } }) {
 
   selectionKeyHandler: `
 # selection key handler
-key | run '({ read, _: {msg} }, { stage: { opts, sel } }) {
+key | run '({ read, use: {geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
   while (msg = await read()) {
     if (msg.type !== "keydown" || !opts.enabled || !sel.enabled) continue;
     if (msg.metaKey) {
@@ -84,6 +84,9 @@ key | run '({ read, _: {msg} }, { stage: { opts, sel } }) {
     } else {
       switch (msg.key) {
         case "f":
+          // TODO
+          break;
+        case "Backspace":
           // TODO
           break;
       }
