@@ -17,6 +17,7 @@ import Grid from "./Grid";
 import Axes from "./Axes";
 import Selection from "./Selection";
 import Cursor from "./Cursor";
+import World from "./World";
 
 const Stage: React.FC<Props> = ({ stage }) => {
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
@@ -126,6 +127,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
             internal={stage.internal}
             ptrWire={ptrWire}
           />
+
+          <World />
 
         </CanvasRoot>
 
