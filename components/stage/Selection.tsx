@@ -141,6 +141,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
         if (poly.sign() < 0) poly.reverse();
       }
       matrix.identity();
+      restoreFromState(selection);
     }
     outlineMesh.current!.visible = selection.locked;
   }, [selection.locked]);
