@@ -95,11 +95,15 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     const keySub = keyWire.subscribe((msg) => {
       lastKeyMsg = msg;
       (rectMesh.current!.material as THREE.MeshBasicMaterial).color = msg.shiftKey ? red : blue;
-      if (ptrDown) {
-        setPolysFaded(!(msg.metaKey || msg.shiftKey || selection.additive));
-        if (msg.key === 'Escape') {
+
+      ptrDown && setPolysFaded(!(msg.metaKey || msg.shiftKey || selection.additive));
+      if (msg.key === 'Escape' && msg.type === 'keyup') {
+        if (ptrDown) {// Cancel selection
           scale.set(0, 0, 1);
           setPolysFaded(ptrDown = false);
+        } else {// Clear selection
+          selection.localPolys = [];
+          restoreFromState(selection);
         }
       }
     });

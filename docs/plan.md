@@ -10,11 +10,18 @@ Main focus is:
 ### TODO
 
 - Can construct wall meshes from selection
-   ✅ Have `stage.poly.{wall,nav,obs}`
-   ✅ Can paint into `stage.poly.wall`
-   ✅ Can erase from `stage.poly.wall`
-   ✅ `World` shows walls
-   ✅ Have stage options `wallOpacity` and `wallHeight`
+   - ✅ Have `stage.poly.{wall,nav,obs}`
+   - ✅ Can paint into `stage.poly.wall`
+   - ✅ Can erase from `stage.poly.wall`
+   - ✅ `World` shows walls
+   - ✅ Have stage options `wallOpacity` and `wallHeight`
+- Simplify selection UI
+   ✅ Can clear via escape
+   - Can only lock via copy/cut
+   - Remove additive option
+
+
+
 - Ghost meshes can be attached
 
 - 🛠 Try to simplify the shell.
