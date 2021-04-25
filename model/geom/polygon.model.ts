@@ -143,7 +143,7 @@ export class Polygon {
     return { vs: this.allPoints, tris: indexTriples };
   }
 
-  static from(input: Partial<PolygonJson> | GeoJsonPolygon['coordinates']) {
+  static from(input: (Partial<PolygonJson> | GeoJsonPolygon['coordinates'])) {
     if (input instanceof Array) {
       return new Polygon(
         input[0].map(([x, y]) => new Vector(x, y)),

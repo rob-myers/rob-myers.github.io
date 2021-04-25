@@ -62,7 +62,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         s.opts = deepClone(opts??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         s.internal.cursorGroup.position.set(...s.extra.initCursorPos);
-        s.sel.localPolys = (sel.polygons??[]).map(x => Geom.Polygon.from(x));
+        s.sel.localBounds = Geom.Rect.from(sel.localBounds);
+        s.sel.localWall = (sel.localWall??[]).map(x => Geom.Polygon.from(x));
+        s.sel.localObs = (sel.localObs??[]).map(x => Geom.Polygon.from(x));
         s.sel.enabled = sel.enabled??true;
         s.sel.additive = sel.additive??false;
         s.sel.locked = sel.locked??false;
@@ -112,10 +114,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             ],
           },
           sel: {
-            polygons: sel.localPolys.map(x => x.json),
             locked: sel.locked,
             enabled: sel.enabled,
             additive: sel.additive,
+            localBounds: sel.localBounds.json,
+            localWall: sel.localWall.map(x => x.json),
+            localObs: sel.localObs.map(x => x.json),
             matrix: (sel.group?.matrix??identityMatrix4).toArray(),
           },
           poly: {

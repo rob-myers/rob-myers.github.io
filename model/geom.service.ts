@@ -41,15 +41,16 @@ class GeomService {
     return vector;
   }
 
+  /** Mutates `poly` */
   applyMatrixPoly(matrix: THREE.Matrix4, poly: Geom.Polygon) {
     poly.mutatePoints(v => this.applyMatrixVect(matrix, v));
-    // TODO ensure anticlockwise convention
     return poly;
   }
 
+  /** Mutates `rect` */
   applyMatrixRect(matrix: THREE.Matrix4, rect: Geom.Rect) {
     const [p, q] = [rect.nw, rect.se].map(x => this.applyMatrixVect(matrix, x));
-    return Geom.Rect.fromPoints(p, q);
+    return rect.copy(Geom.Rect.fromPoints(p, q));
   }
 
   getColor(color: string) {

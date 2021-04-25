@@ -62,14 +62,18 @@ export interface StageSelection {
    * Its initial value is only used to transmit any existing transform.
    */
   group: THREE.Group;
-  /** Untransformed polygons */
-  localPolys: Geom.Polygon[];
   /** Is the selection enabled? */
   enabled: boolean;
   /** Add next rectangle to selection, or overwrite? */
   additive: boolean;
   /** Is the selection locked? */
   locked: boolean;
+  /** Untransformed selection area */
+  localBounds: Geom.Rect;
+  /** Untransformed selected walls */
+  localWall: Geom.Polygon[];
+  /** Untransformed selected obs */
+  localObs: Geom.Polygon[];
 }
 
 /** Serializable `StageSelection` */
@@ -77,8 +81,11 @@ interface StageSelectionJson {
   enabled: boolean;
   locked: boolean;
   additive: boolean;
-  polygons: Geom.PolygonJson[];
+  /** Group transform */
   matrix: number[];
+  localBounds: Geom.RectJson;
+  localWall: Geom.PolygonJson[];
+  localObs: Geom.PolygonJson[];
 }
 
 export function createStage(stageKey: string): StageMeta {
@@ -88,20 +95,22 @@ export function createStage(stageKey: string): StageMeta {
       keyEvents: new Subject,
       bounds: initStageBounds.clone(),
       cursorGroup: new THREE.Group,
-      // ...Other stuff is attached by components
+      // ...Attached by components
     },
     extra: {
       initCameraPos: [...initCameraPosArray],
       initCursorPos: [...initCursorPos],
-      // ...Other stuff is attached by components
+      // ...Attached by components
     },
     opts: createStageOpts(),
     sel: {
       group: new THREE.Group,
-      localPolys: [],
       locked: false,
       enabled: true,
       additive: false,
+      localBounds: new Geom.Rect(0, 0, 0, 0),
+      localWall: [],
+      localObs: [],
     },
     poly: { wall: [], prevWall: [], obs: [], prevObs: [], nav: [] },
   };
@@ -145,11 +154,13 @@ export function createPersist(stageKey: string): PersistedStage {
       initCursorPos: [...initCursorPos],
     },
     sel: {
-      polygons: [],
       locked: false,
       enabled: true,
       additive: false,
       matrix: identityMatrix4.toArray(),
+      localBounds: new Geom.Rect(0, 0, 0, 0).json,
+      localObs: [],
+      localWall: [],
     },
     poly: { wall: [], obs: [] },
   };

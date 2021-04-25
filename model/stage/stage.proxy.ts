@@ -22,41 +22,32 @@ export function createStageProxy(stageKey: string) {
         });
       } else if (key === 'sel') {
         return new Proxy({} as StageSelection, {
-          get(_, key: keyof StageSelection | 'bounds' | 'localBounds' | 'polygons') {
-            if (key === 'bounds' || key === 'localBounds') {
-              /**
-               * Provide world bounds or untransformed bounds.
-               */
-              const { localPolys, group: { matrix } } = useStage.api.getStage(stageKey).sel;
-              const bounds = geom.unionRects(localPolys.map(x => x.rect));
-              return key === 'bounds'
-                ? geom.applyMatrixRect(matrix, bounds).precision(1)
-                : bounds.precision(1);
-            } else if (key === 'polygons') {
-              /**
-               * Provide world polygons.
-               */
-              const { localPolys, group: { matrix } } = useStage.api.getStage(stageKey).sel;
-              return localPolys.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
+          get(_, key: keyof StageSelection | 'bounds' | 'wall') {
+            if (key === 'bounds') {
+              // Provide world bounds
+              const { localBounds: rect, group: { matrix } } = useStage.api.getStage(stageKey).sel;
+              return geom.applyMatrixRect(matrix, rect.clone()).precision(1);
+            } else if (key === 'wall') {
+              // Provide world polygons
+              const { localWall, group: { matrix } } = useStage.api.getStage(stageKey).sel;
+              return localWall.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
             }
             return useStage.api.getStage(stageKey).sel[key];
           },
-          set(_, key: keyof StageSelection | 'polygons', value: any) {
-            if (key === 'polygons') {
-              /**
-               * Given world polygons, set untransformed polygons.
-               */
+          set(_, key: keyof StageSelection | 'wall', value: any) {
+            if (key === 'wall') {
+              // Given world polygons, set untransformed polygons
               const { group } = useStage.api.getStage(stageKey).sel;
               const matrix = group.matrix.clone().invert();
-              const nextPolys = (value as Geom.Polygon[]).map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
-              useStage.api.updateSel(stageKey, { localPolys: nextPolys });
+              const nextWall = (value as Geom.Polygon[]).map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
+              useStage.api.updateSel(stageKey, { localWall: nextWall });
               return true;
             }
             useStage.api.updateSel(stageKey, { [key]: value });
             return true;
           },
           ownKeys: () => Object.keys(useStage.api.getStage(stageKey).sel)
-            .concat('bounds', 'localBounds', 'polygons'),
+            .concat('bounds', 'wall'),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'opts') {

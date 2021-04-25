@@ -21,10 +21,10 @@ export const preloadedFunctions = {
   sel: `run '({ read, use: {Geom} }, { stage: {sel} }) {
     const input = await read();
     if (input) {
-      sel.polygons = input.map(x => Geom.Polygon.from(x))
+    sel.wall = input.map(x => Geom.Polygon.from(x))
         .filter(x => x.outer.length);
     } else {
-      yield sel.polygons.map(x => x.json);
+      yield sel.wall.map(x => x.json);
     }
 }'
 `,
@@ -72,7 +72,7 @@ key | run '({ read, use: {THREE}, _: {msg} }, { stage: { opts, sel } }) {
 
   selectionKeyHandler: `
 # selection key handler
-key | run '({ read, use: {geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
+key | run '({ read, use: {geom, Geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
   while (msg = await read()) {
     if (msg.type !== "keydown" || !opts.enabled || !sel.enabled) continue;
     if (msg.metaKey) {
@@ -85,13 +85,17 @@ key | run '({ read, use: {geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
       }
     } else {
       switch (msg.key) {
-        case "f":
-          [poly.prevWall, poly.wall] = [poly.wall, geom.union(poly.wall.concat(sel.polygons))];
+        case "f": {
+          const delta = Geom.Polygon.fromRect(sel.bounds);
+          [poly.prevWall, poly.wall] = [poly.wall, geom.union(poly.wall.concat(delta))];
           break;
+        }
         case "F":
-        case "Backspace":
-          [poly.prevWall, poly.wall] = [poly.wall, geom.cutOut(sel.polygons, poly.wall)];
+        case "Backspace": {
+          const delta = Geom.Polygon.fromRect(sel.bounds);
+          [poly.prevWall, poly.wall] = [poly.wall, geom.cutOut([delta], poly.wall)];
           break;
+        }
       }
     }
   }
