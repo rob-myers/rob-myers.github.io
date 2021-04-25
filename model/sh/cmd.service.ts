@@ -211,7 +211,7 @@ class CmdService {
         ], });
         const funcDef = operands[0];
         const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
-        yield* this.read(meta, (data) => func()(data, { util: {...this.jsUtil} }));
+        yield* this.read(meta, (data) => func()(data, this.useProxy));
         break;
       }
       case 'poll': {
@@ -339,11 +339,6 @@ class CmdService {
     await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
 
-  private jsUtil = {
-    stringify: (...args: Parameters<typeof safeJsonStringify>) =>
-      jsonStringifyPrettyCompact(JSON.parse(safeJsonStringify(...args))),
-  };
-
   private provideJsApi(meta: Sh.BaseMeta) {
     return {
       read: async () => {
@@ -463,15 +458,18 @@ class CmdService {
     geom: typeof geom;
     Geom: typeof Geom;
     THREE: typeof THREE;
+    stringify: (value: any) => string;
   }, {
-    get(_, key: 'geom' | 'Geom' | 'THREE')  {
+    get(_, key: 'geom' | 'Geom' | 'THREE' | 'stringify')  {
       switch (key) {
         case 'geom': return geom;
         case 'Geom': return Geom;
         case 'THREE': return THREE;
+        case 'stringify': return (...args: Parameters<typeof safeJsonStringify>) =>
+          jsonStringifyPrettyCompact(JSON.parse(safeJsonStringify(...args)));
       }
     },
-    ownKeys: () => ['geom', 'Geom', 'THREE'],
+    ownKeys: () => ['geom', 'Geom', 'THREE', 'stringify'],
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
   });
   

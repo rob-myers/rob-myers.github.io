@@ -14,7 +14,7 @@ export const preloadedFunctions = {
     || map "x => x.reduce($1)"
 }
 `,
-  pretty: `map '(x, { util: {stringify} }) => stringify(x)'`,
+  pretty: `map '(x, { stringify }) => stringify(x)'`,
   keys: `map Object.keys`,
   cat: `get "$@" | split`,
  
