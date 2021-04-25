@@ -15,10 +15,10 @@ export default function IndexPage() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Topdown CLI
+          Birdseye CLI
         </h1>
         <p className={styles.subtitle}>
-          interactive <a target='#' href='https://threejs.org/'>three.js</a> sessions from a topdown perspective
+          Interactive <a target='#' href='https://threejs.org/'>three.js</a> from a topdown perspective.
         </p>
 
         <section className={styles.termStage}>
