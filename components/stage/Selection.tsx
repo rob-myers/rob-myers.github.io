@@ -32,8 +32,12 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
     );
   }, []);
 
-  const setPolysFaded = useCallback((faded: boolean) => {
-    (polysMesh.current!.material as THREE.Material).opacity = faded ? 0.1 : 0.2;
+  let fadeId = 0; // setTimeout avoids flicker on click
+  const setPolysFaded = useCallback((shouldFade: boolean) => {
+    clearTimeout(fadeId);
+    const material = polysMesh.current!.material as THREE.Material;
+    if (shouldFade) fadeId = window.setTimeout(() => (material.opacity = 0.08), 150);
+    else material.opacity = 0.2;
   }, []);
  
   const onDragPolys = useCallback((e: ThreeEvent<PointerEvent>) => {
