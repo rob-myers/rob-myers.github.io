@@ -43,14 +43,14 @@ key | run '({ read, use: {THREE}, _: {msg} }, { stage: { opts, sel } }) {
       sel.locked, !msg.metaKey].every(Boolean)) continue;
     switch (msg.key) {
       case "x": {
-        const matrix = (new THREE.Matrix4).makeScale(-1, 1, 1)
-          .setPosition(2 * sel.localBounds.cx, 0, 0);
+        const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
+        .setPosition(0, 2 * sel.localBounds.cy, 0);
         sel.group.matrix.multiply(matrix);
         break;
       }
       case "y": {
-        const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
-          .setPosition(0, 2 * sel.localBounds.cy, 0);
+        const matrix = (new THREE.Matrix4).makeScale(-1, 1, 1)
+          .setPosition(2 * sel.localBounds.cx, 0, 0);
         sel.group.matrix.multiply(matrix);
         break;
       }
@@ -83,6 +83,9 @@ key | run '({ read, use: {geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
       }
     } else {
       switch (msg.key) {
+        case "t":
+          sel.locked = !sel.locked;
+          break;
         case "f":
           poly.wall = geom.union(poly.wall.concat(sel.polygons));
           break;
