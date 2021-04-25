@@ -51,9 +51,9 @@ const Stage: React.FC<Props> = ({ stage }) => {
     }
   }, [stage.opts.enabled]);
 
-  // const updateShadows = useCallback(() => {
-  //   ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true); 
-  // }, [ctxt]);
+  const updateShadows = useCallback(() => {
+    ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true); 
+  }, [ctxt]);
 
   const ptrWire = useRef(new Subject<StagePointerEvent>()).current;
   const onPointer = useCallback((e: ThreeEvent<PointerEvent>) => {
@@ -131,6 +131,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
           <World
             opts={stage.opts}
             poly={stage.poly}
+            updateShadows={updateShadows}
           />
 
         </CanvasRoot>
