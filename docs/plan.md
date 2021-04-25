@@ -13,8 +13,8 @@ Main focus is:
    ✅ Have `stage.poly.{wall,nav,obs}`
    ✅ Can paint into `stage.poly.wall`
    ✅ Can erase from `stage.poly.wall`
-   - `World` shows walls
-   - Have stage options `wallOpacity` and `wallHeight`
+   ✅ `World` shows walls
+   ✅ Have stage options `wallOpacity` and `wallHeight`
 - Ghost meshes can be attached
 
 - 🛠 Try to simplify the shell.
