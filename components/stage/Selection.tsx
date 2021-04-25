@@ -12,7 +12,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const rectGeom = useRef(geom.createSquareGeometry()).current;
   const polysGroup = useRef<THREE.Group>(null);
   const polysMesh = useRef<THREE.Mesh>(null);
-  const outlineMesh = useRef<THREE.Mesh>(null);
 
   const dragging = useRef(false);
   const dragStart = useRef(new THREE.Vector3).current;
@@ -27,9 +26,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
   const restoreFromState = useCallback(({ localPolys }: StageSelection) => {
     rectMesh.current!.scale.set(0, 0, 0);
     polysMesh.current!.geometry = geom.polysToGeometry(localPolys);
-    outlineMesh.current!.geometry = geom.polysToGeometry(
-      geom.cutOut(localPolys, localPolys.flatMap(x => x.createOutset(0.01)))
-    );
   }, []);
 
   let fadeId = 0; // setTimeout avoids flicker on click
@@ -143,7 +139,6 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
       matrix.identity();
       restoreFromState(selection);
     }
-    outlineMesh.current!.visible = selection.locked;
   }, [selection.locked]);
 
   useEffect(() => {// Listen for external updates to polygons
@@ -174,15 +169,7 @@ const Selection: React.FC<Props> = ({ selection, ptrWire, keyWire }) => {
           <meshBasicMaterial
             color="#00f"
             transparent
-            opacity={0.2}
-          />
-        </mesh>
-
-        <mesh ref={outlineMesh}>
-          <meshBasicMaterial
-            color="#037"
-            transparent
-            opacity={0.5}
+            opacity={selection.locked ? 0.4 : 0.2}
           />
         </mesh>
       </group>
