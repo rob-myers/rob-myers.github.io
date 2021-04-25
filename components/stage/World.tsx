@@ -15,8 +15,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
     floor.current!.position.set(bounds.x, bounds.y, 0);
     floor.current!.scale.set(bounds.width, bounds.height, 1);
     wallsBase.current!.geometry = geom.polysToGeometry(poly.wall);
-    const wallPolys = poly.wall.flatMap(x => x.createInset(0.03));
-    walls.current!.geometry = geom.polysToWalls(wallPolys, opts.wallHeight);
+    walls.current!.geometry = geom.polysToWalls(poly.wall, opts.wallHeight);
     updateShadows();
   }, [poly.wall, opts.wallHeight]);
 
@@ -45,12 +44,13 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
 
       <mesh
         ref={wallsBase}
-        renderOrder={1}
+        renderOrder={0}
         receiveShadow
+        visible={opts.wallOpacity === 0}
       >
         <meshStandardMaterial
           side={opts.wallOpacity === 1 ? THREE.DoubleSide : THREE.FrontSide}
-          color={opts.wallOpacity ? "#999" : '#555'}
+          color="#000"
         />
       </mesh>
 
