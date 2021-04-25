@@ -15,11 +15,7 @@ export type StageMeta = {
   opts: StageOpts;
   /** The current selection */
   sel: StageSelection;
-  poly: Record<(
-    | 'wall' // walls
-    | 'obs'  // additional obstructions
-    | 'nav'  // navigable, computed from wall/obs
-  ), Geom.Polygon[]>;
+  poly: StagePoly;
 };
 
 export interface StageInternal {
@@ -119,6 +115,12 @@ export function createStageOpts(): StageOpts {
     autoPersist: true,
   };
 }
+
+export type StagePoly = Record<(
+  | 'wall' // walls
+  | 'obs'  // additional obstructions
+  | 'nav'  // navigable, computed from wall/obs
+), Geom.Polygon[]>;
 
 export interface PersistedStage {
   key: string;

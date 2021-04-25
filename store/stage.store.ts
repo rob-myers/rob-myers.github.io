@@ -26,7 +26,8 @@ export type State = {
     updateExtra: (stageKey: string, updates: Updates<Stage.StageExtra>) => void;
     updateInternal: (stageKey: string, updates: Updates<Stage.StageInternal>) => void;
     updateOpts: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
-    updateSelection: (stageKey: string, updates: Updates<Stage.StageSelection>) => void;
+    updatePoly: (stageKey: string, updates: Updates<Stage.StagePoly>) => void;
+    updateSel: (stageKey: string, updates: Updates<Stage.StageSelection>) => void;
     updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
   }
 }
@@ -130,41 +131,32 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     updateExtra: (stageKey, updates) => {
       api.updateStage(stageKey, ({ extra }) => ({
-        extra: { ...extra,
-          ...typeof updates === 'function' ? updates(extra) : updates,
-        },
+        extra: { ...extra, ...typeof updates === 'function' ? updates(extra) : updates },
       }));
     },
-
     updateInternal: (stageKey, updates) => {
       api.updateStage(stageKey, ({ internal }) => ({
-        internal: { ...internal,
-          ...typeof updates === 'function' ? updates(internal) : updates,
-        },
+        internal: { ...internal, ...typeof updates === 'function' ? updates(internal) : updates },
       }));
     },
-
     updateOpts: (stageKey, updates) => {
       api.updateStage(stageKey, ({ opts }) => ({
-        opts: { ...opts,
-          ...typeof updates === 'function' ? updates(opts) : updates,
-        },
+        opts: { ...opts, ...typeof updates === 'function' ? updates(opts) : updates },
       }));
     },
-
-    updateSelection: (stageKey, updates) => {
+    updatePoly: (stageKey, updates) => {
+      api.updateStage(stageKey, ({ poly }) => ({
+        poly: { ...poly, ...typeof updates === 'function' ? updates(poly) : updates },
+      }));
+    },
+    updateSel: (stageKey, updates) => {
       api.updateStage(stageKey, ({ sel: selection }) => ({
-        sel: { ...selection,
-          ...typeof updates === 'function' ? updates(selection) : updates,
-        },
+        sel: { ...selection, ...typeof updates === 'function' ? updates(selection) : updates },
       }));
     },
-
     updateStage: (stageKey, updates) => {
       set(({ stage }) => ({
-        stage: updateLookup(stageKey, stage,
-          typeof updates === 'function' ? updates : () => updates,
-        ),
+        stage: updateLookup(stageKey, stage, typeof updates === 'function' ? updates : () => updates),
       }));
     },
 

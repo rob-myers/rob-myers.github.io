@@ -1,24 +1,23 @@
 import * as Geom from "model/geom";
 import { geom } from "model/geom.service";
 import useStage from "store/stage.store";
-import { StageMeta, StageOpts, StageSelection } from "./stage.model";
-
+import { StageMeta, StageOpts, StagePoly, StageSelection } from "./stage.model";
 
 export function createStageProxy(stageKey: string) {
   return new Proxy({} as StageMeta, {
     get(_, key: keyof StageMeta | 'cursor') {
       const stage = useStage.api.getStage(stageKey);
 
-      if (key === 'opts') {
-        return new Proxy({} as StageOpts, {
-          get(_, key: keyof StageOpts) {
-            return useStage.api.getStage(stageKey).opts[key];
+      if (key === 'poly') {
+        return new Proxy({} as StagePoly, {
+          get(_, key: keyof StagePoly) {
+            return useStage.api.getStage(stageKey).poly[key];
           },
-          set(_, key: string, value: any) {
-            useStage.api.updateOpts(stageKey, { [key]: value });
+          set(_, key: keyof StagePoly, value: any) {
+            useStage.api.updatePoly(stageKey, { [key]: value });
             return true;
           },
-          ownKeys: () => Object.keys(useStage.api.getStage(stageKey).opts),
+          ownKeys: () => Object.keys(useStage.api.getStage(stageKey).poly),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'sel') {
@@ -50,17 +49,29 @@ export function createStageProxy(stageKey: string) {
               const { group } = useStage.api.getStage(stageKey).sel;
               const matrix = group.matrix.clone().invert();
               const nextPolys = (value as Geom.Polygon[]).map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
-              useStage.api.updateSelection(stageKey, { localPolys: nextPolys });
+              useStage.api.updateSel(stageKey, { localPolys: nextPolys });
               return true;
             }
-            useStage.api.updateSelection(stageKey, { [key]: value });
+            useStage.api.updateSel(stageKey, { [key]: value });
             return true;
           },
           ownKeys: () => Object.keys(useStage.api.getStage(stageKey).sel)
             .concat('bounds', 'localBounds', 'polygons'),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
-      } else if (key === 'cursor') {
+      } else if (key === 'opts') {
+        return new Proxy({} as StageOpts, {
+          get(_, key: keyof StageOpts) {
+            return useStage.api.getStage(stageKey).opts[key];
+          },
+          set(_, key: string, value: any) {
+            useStage.api.updateOpts(stageKey, { [key]: value });
+            return true;
+          },
+          ownKeys: () => Object.keys(useStage.api.getStage(stageKey).opts),
+          getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
+        });
+      }  else if (key === 'cursor') {
         return stage.internal.cursorGroup.position;
       }
 

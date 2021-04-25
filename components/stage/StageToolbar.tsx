@@ -19,15 +19,15 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
   const enableSelUi = enableUi && selection.enabled;
 
   const toggleSelectionEnabled = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    enableUi && useStage.api.updateSelection(stageKey, ({ enabled }) => ({ enabled: !enabled }));
+    enableUi && useStage.api.updateSel(stageKey, ({ enabled }) => ({ enabled: !enabled }));
   }, [enableUi]);
 
   const toggleSelectionAdditive = useCallback((_: React.MouseEvent<HTMLDivElement>) => {
-    enableSelUi && useStage.api.updateSelection(stageKey, ({ additive }) => ({ additive: !additive }));
+    enableSelUi && useStage.api.updateSel(stageKey, ({ additive }) => ({ additive: !additive }));
   }, [enableSelUi]);
 
   const toggleSelectionLocked = useCallback((_: React.MouseEvent<HTMLDivElement>) => {
-    enableSelUi && useStage.api.updateSelection(stageKey, ({ locked }) => ({ locked: !locked }));
+    enableSelUi && useStage.api.updateSel(stageKey, ({ locked }) => ({ locked: !locked }));
   }, [enableSelUi]);
 
   const toggleCam = useCallback(() => {
