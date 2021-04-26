@@ -17,13 +17,15 @@ Main focus is:
    - ✅ Have stage options `wallOpacity` and `wallHeight`
 - Simplify selection UI
    ✅ Can clear via escape
-   - Can only lock via copy/cut
-   - Remove additive option
+   ✅ Can lock via copy/cut
+   - Remove additive option and clean away ui
    - Can add/erase obstruction (with undo/redo)
+- Cleanup code
+   - avoid Geom.Polygon.fromRect
+   - auto-track `prevWall`
 
 
 
-- Ghost meshes can be attached
 
 - 🛠 Try to simplify the shell.
    - ✅ Clean semantics.service.
