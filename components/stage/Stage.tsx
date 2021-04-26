@@ -166,6 +166,7 @@ const Root = styled.section<{ background: string }>`
 const CanvasRoot = styled(Canvas)`
   border: 0 solid #999;
   border-width: 0 1px;
+  background: #000;
 `;
 
 const Placeholder = styled.div<{}>`
@@ -173,7 +174,7 @@ const Placeholder = styled.div<{}>`
   overflow: hidden;
   display: flex;
   height: inherit;
-  background: #000;
+  background: #111;
 `;
 
 const PlaceholderImage = styled.img<{}>`
