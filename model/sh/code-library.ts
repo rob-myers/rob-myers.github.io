@@ -77,8 +77,13 @@ key | run '({ read, use: {geom, Geom}, _: {msg} }, { stage: { opts, sel, poly } 
     if (msg.type !== "keydown" || !opts.enabled || !sel.enabled) continue;
     if (msg.metaKey) {
       switch (msg.key) {
-        case "c":
+        case "c": {
+          const bounds = sel.bounds, polyBounds = Geom.Polygon.fromRect(bounds);
+          sel.wall = poly.wall.filter(poly => poly.rect.intersects(bounds))
+            .flatMap(poly => geom.intersect([polyBounds, poly]));
+          sel.locked = true;
           break;
+        }
         case "z": !sel.locked &&
           ([poly.prevWall, poly.wall] = [poly.wall, poly.prevWall]);
           break;
@@ -96,6 +101,11 @@ key | run '({ read, use: {geom, Geom}, _: {msg} }, { stage: { opts, sel, poly } 
           [poly.prevWall, poly.wall] = [poly.wall, geom.cutOut([delta], poly.wall)];
           break;
         }
+        case "Escape":
+          sel.localBounds = new Geom.Rect(0, 0, 0, 0);
+          sel.localWall = [];
+          sel.locked = false;
+          break;
       }
     }
   }

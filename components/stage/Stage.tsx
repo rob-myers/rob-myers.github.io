@@ -118,9 +118,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
           />
 
           <Selection
-            selection={stage.sel}
+            sel={stage.sel}
             ptrWire={ptrWire}
-            keyWire={keyWire}
           />
 
           <Cursor
