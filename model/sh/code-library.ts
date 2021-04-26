@@ -98,12 +98,14 @@ key | run '({ read, use: {geom, Geom}, _: {msg} }, { stage: { opts, sel, poly } 
     } else {
       switch (msg.key) {
         case "f": {
+          if (sel.locked) break;
           const delta = Geom.Polygon.fromRect(sel.bounds);
           [poly.prevWall, poly.wall] = [poly.wall, geom.union(poly.wall.concat(delta))];
           break;
         }
         case "F":
         case "Backspace": {
+          if (sel.locked) break;
           const delta = Geom.Polygon.fromRect(sel.bounds);
           [poly.prevWall, poly.wall] = [poly.wall, geom.cutOut([delta], poly.wall)];
           break;
