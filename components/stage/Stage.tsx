@@ -34,9 +34,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
     ctxt.gl.shadowMap.type = PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
 
-    // Currently updateNavigable will also update stage.internal
     stage.internal.scene = ctxt.scene;
-    // setTimeout(() => useStage.api.updateNavigable(stage.key));
     setCtxt(ctxt);
   }, [stage.internal]);
 
@@ -172,12 +170,8 @@ const CanvasRoot = styled(Canvas)`
 
 const Placeholder = styled.div<{}>`
   width: 100%;
-  height: 100%;
-  border: 10;
   overflow: hidden;
   display: flex;
-  border: 0 solid #999;
-  border-width: 0 1px;
 `;
 
 const PlaceholderImage = styled.img<{}>`
