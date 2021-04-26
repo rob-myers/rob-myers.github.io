@@ -22,10 +22,6 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
     enableUi && useStage.api.updateSel(stageKey, ({ enabled }) => ({ enabled: !enabled }));
   }, [enableUi]);
 
-  const toggleSelectionAdditive = useCallback((_: React.MouseEvent<HTMLDivElement>) => {
-    enableSelUi && useStage.api.updateSel(stageKey, ({ additive }) => ({ additive: !additive }));
-  }, [enableSelUi]);
-
   const toggleSelectionLocked = useCallback((_: React.MouseEvent<HTMLDivElement>) => {
     enableSelUi && useStage.api.updateSel(stageKey, ({ locked }) => ({ locked: !locked }));
   }, [enableSelUi]);
@@ -59,17 +55,6 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
               : 'selection disabled'}
           >
             ✓
-          </Icon>
-          <Icon
-            greyed={!(enableSelUi && selection.additive)}
-            onClick={toggleSelectionAdditive}
-            {...enableSelUi && {
-              title: selection.additive
-                ? 'selecting additively'
-                : 'selecting non-additively'
-            }}
-          >
-            +
           </Icon>
           <LockedButton
             greyed={!(enableSelUi && selection.locked)}

@@ -18,11 +18,13 @@ Main focus is:
 - Simplify selection UI
    ✅ Can clear via escape
    ✅ Can lock via copy/cut
-   - Remove additive option and clean away ui
+   ✅ Remove additive option and clean away ui
    - Can add/erase obstruction (with undo/redo)
    - Can add/remove lights via CLI
    - Review CLI function `sel`
+   - Can paint polygons using CLI
 - Cleanup code
+   - remove `stage.opts.wallColor`
    - avoid Geom.Polygon.fromRect
    - auto-track `prevWall`
 - Working towards character

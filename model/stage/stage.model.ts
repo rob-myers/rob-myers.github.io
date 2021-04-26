@@ -64,8 +64,6 @@ export interface StageSelection {
   group: THREE.Group;
   /** Is the selection enabled? */
   enabled: boolean;
-  /** Add next rectangle to selection, or overwrite? */
-  additive: boolean;
   /** Is the selection locked? */
   locked: boolean;
   /** Untransformed selection area */
@@ -80,7 +78,6 @@ export interface StageSelection {
 interface StageSelectionJson {
   enabled: boolean;
   locked: boolean;
-  additive: boolean;
   /** Group transform */
   matrix: number[];
   localBounds: Geom.RectJson;
@@ -107,7 +104,6 @@ export function createStage(stageKey: string): StageMeta {
       group: new THREE.Group,
       locked: false,
       enabled: true,
-      additive: false,
       localBounds: new Geom.Rect(0, 0, 0, 0),
       localWall: [],
       localObs: [],
@@ -156,7 +152,6 @@ export function createPersist(stageKey: string): PersistedStage {
     sel: {
       locked: false,
       enabled: true,
-      additive: false,
       matrix: identityMatrix4.toArray(),
       localBounds: new Geom.Rect(0, 0, 0, 0).json,
       localObs: [],

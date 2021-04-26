@@ -66,7 +66,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         s.sel.localWall = (sel.localWall??[]).map(x => Geom.Polygon.from(x));
         s.sel.localObs = (sel.localObs??[]).map(x => Geom.Polygon.from(x));
         s.sel.enabled = sel.enabled??true;
-        s.sel.additive = sel.additive??false;
         s.sel.locked = sel.locked??false;
         s.sel.group.matrix.fromArray(sel.matrix);
         s.poly.wall = (poly.wall??[]).map(x => Geom.Polygon.from(x));
@@ -116,7 +115,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           sel: {
             locked: sel.locked,
             enabled: sel.enabled,
-            additive: sel.additive,
             localBounds: sel.localBounds.json,
             localWall: sel.localWall.map(x => x.json),
             localObs: sel.localObs.map(x => x.json),
