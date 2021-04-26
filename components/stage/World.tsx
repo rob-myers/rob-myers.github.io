@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import * as Geom from "model/geom";
 import { geom } from "model/geom.service";
 import { StageOpts, StagePoly } from "model/stage/stage.model";
 
