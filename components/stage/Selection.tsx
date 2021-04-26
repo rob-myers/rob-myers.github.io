@@ -7,11 +7,11 @@ import * as Geom from "model/geom";
 import { StageSelection, StagePointerEvent } from "model/stage/stage.model";
 import { geom } from "model/geom.service";
 
-const Selection: React.FC<Props> = ({ sel, ptrWire }) => {
+const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
   const group = useRef<THREE.Group>(null);
-  const polysMesh = useRef<THREE.Mesh>(null);
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geom.createSquareGeometry()).current;
+  const wallMesh = useRef<THREE.Mesh>(null);
 
   const ptrDown = useRef(false);
   const dragging = useRef(false);
@@ -31,8 +31,8 @@ const Selection: React.FC<Props> = ({ sel, ptrWire }) => {
     rectMesh.current!.position.set(x, y, 0);
     rectMesh.current!.scale.set(width, height, 1);
     ptrDown.current = false;
-    // TODO create transparent walls instead
-    polysMesh.current!.geometry = geom.polysToGeometry(wall);
+
+    wallMesh.current!.geometry = geom.polysToGeometry(wall);
   }, []);
  
   const onDragPolys = useCallback((e: ThreeEvent<PointerEvent>) => {
@@ -48,9 +48,7 @@ const Selection: React.FC<Props> = ({ sel, ptrWire }) => {
 
     const [position, scale] = [rectMesh.current!.position, rectMesh.current!.scale];
     ptrDown.current = false;
-
     const ptrSub = ptrWire.subscribe(({ key, point }) => {
-
       if (ptrDown.current && key === 'pointermove') {
         scale.set(point.x - position.x, point.y - position.y, 1);
       } else if (key === 'pointerdown') {
@@ -76,8 +74,8 @@ const Selection: React.FC<Props> = ({ sel, ptrWire }) => {
 
   useEffect(() => {// Handle mouse when locked
     if (!sel.locked) return;
-    const { matrix } = group.current!;
 
+    const { matrix } = group.current!;
     const ptrSub = ptrWire.subscribe(({ key, point }) => {
       if (!dragging.current) {
         return;
@@ -124,22 +122,21 @@ const Selection: React.FC<Props> = ({ sel, ptrWire }) => {
         onPointerDown={onDragPolys}
       >
         <meshBasicMaterial
-          color="#00f"
+          color={sel.locked ? "#060" : "#00f"}
           transparent
           opacity={0.2}
         />
       </mesh>
 
       <mesh
-        // TODO show walls here!
-        ref={polysMesh}
+        ref={wallMesh}
         onPointerDown={onDragPolys}
         visible={sel.locked}
       >
         <meshBasicMaterial
-          color="#f00"
+          color="#00f"
           transparent
-          opacity={sel.locked ? 0.4 : 0.2}
+          opacity={0.4}
         />
       </mesh>
     </group>

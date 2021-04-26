@@ -172,13 +172,14 @@ const Placeholder = styled.div<{}>`
   width: 100%;
   overflow: hidden;
   display: flex;
+  height: inherit;
+  background: #000;
 `;
 
 const PlaceholderImage = styled.img<{}>`
   margin: auto;
   max-width: 100%;
   max-height: 100%;
-  background: #ddd;
 `;
 
 export default Stage;
