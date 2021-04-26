@@ -20,10 +20,12 @@ Main focus is:
    ✅ Can lock via copy/cut
    - Remove additive option and clean away ui
    - Can add/erase obstruction (with undo/redo)
+   - Can add/remove lights via CLI
+   - Review CLI function `sel`
 - Cleanup code
    - avoid Geom.Polygon.fromRect
    - auto-track `prevWall`
-
+- Working towards character
 
 
 
