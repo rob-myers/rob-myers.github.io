@@ -5,15 +5,10 @@ import { geom } from "model/geom.service";
 import { StageOpts, StagePoly } from "model/stage/stage.model";
 
 const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
-  const floorGeom = useRef(geom.createSquareGeometry()).current;
-  const floor = useRef<THREE.Mesh>(null);
   const walls = useRef<THREE.Mesh>(null);
   const wallsBase = useRef<THREE.Mesh>(null);
 
   useEffect(() => {
-    const bounds = Geom.Rect.union(poly.wall.map(x => x.rect)).outset(2);
-    floor.current!.position.set(bounds.x, bounds.y, 0);
-    floor.current!.scale.set(bounds.width, bounds.height, 1);
     wallsBase.current!.geometry = geom.polysToGeometry(poly.wall);
     walls.current!.geometry = geom.polysToWalls(poly.wall, opts.wallHeight);
     updateShadows();
@@ -21,11 +16,8 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
 
   return (
     <group>
-      <mesh
-        ref={floor}
-        geometry={floorGeom}
-        receiveShadow
-      >
+      <mesh receiveShadow>
+        <planeGeometry args={[100, 100]} />
         <meshStandardMaterial color="#fff" />
       </mesh>
 
@@ -50,7 +42,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
       >
         <meshStandardMaterial
           side={opts.wallOpacity === 1 ? THREE.DoubleSide : THREE.FrontSide}
-          color="#000"
+          color="#555"
         />
       </mesh>
 
