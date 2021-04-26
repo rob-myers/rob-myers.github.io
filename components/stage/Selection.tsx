@@ -57,9 +57,9 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
         scale.set(0, 0, 1);
       } else if (ptrDown.current && key === 'pointerup') {
         ptrDown.current = false;
-        if (Geom.Rect.fromPoints(position, point).area < 0.01 * 0.01) {
-          return scale.set(0, 0, 1);
-        }
+        // if (Geom.Rect.fromPoints(position, point).area < 0.002 * 0.002) {
+        //   return scale.set(0, 0, 1);
+        // }
         const ptr = point.clone();
         scaleUpByTouched(position, ptr);
         sel.localBounds = Geom.Rect.fromPoints(position, ptr).precision(1);
