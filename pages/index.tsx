@@ -18,7 +18,7 @@ export default function IndexPage() {
           Birdseye CLI
         </h1>
         <p className={styles.subtitle}>
-          Interactive <a target='#' href='https://threejs.org/'>three.js</a> from a topdown perspective.
+          A <a target='#' href='https://en.wikipedia.org/wiki/Command-line_interface'>CLI</a> for developing Game AI.
         </p>
 
         <section className={styles.termStage}>
