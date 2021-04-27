@@ -292,6 +292,16 @@ class GeomService {
     obj.position.set(position.x, position.y, obj.position.z);
   }
 
+  navFromUnnavigable(polys: Geom.Polygon[]) {
+    const rects = polys.map(x => x.rect);
+    const bounds = Geom.Polygon.from(Geom.Rect.union(rects));
+    return geom.cutOut(polys.flatMap(x => x.createOutset(0.05)), [bounds]);
+  }
+
+  outset(poly: Geom.Polygon, amount: number) {
+    return this.inset(poly, -amount);
+  }
+
   projectBox3XY({ min, max }: THREE.Box3): Geom.Rect {
     return new Geom.Rect(
       Number(min.x.toFixed(2)),
@@ -376,8 +386,19 @@ class GeomService {
     return new Geom.Vector(v.x, v.y).precision();
   }
 
-  outset(poly: Geom.Polygon, amount: number) {
-    return this.inset(poly, -amount);
+  /**
+   * Compute base polygon of mesh, falling back to rectangular bounds.
+   */
+  polyFromMesh(mesh: THREE.Mesh): Geom.Polygon[] {
+    const { faces, vertices: vs } = (new Geometry).fromBufferGeometry(mesh.geometry);
+    const groundError = 0.01;
+    vs.forEach(v => v.applyMatrix4(mesh.matrixWorld));
+    const triangles = faces
+      .filter(({ a, b ,c }) => [a, b, c].every(id => Math.abs(vs[id].z) < groundError))
+      .map(({ a, b, c }) => new Geom.Polygon([a, b, c].map(id => new Geom.Vector(vs[id].x, vs[id].y))))
+    return triangles.length
+      ? this.union(triangles)
+      : [Geom.Polygon.from(this.rectFromMesh(mesh))];
   }
 
   /** https://schteppe.github.io/p2.js/docs/files/src_collision_AABB.js.html */
@@ -408,20 +429,6 @@ class GeomService {
     return { x: src.x + dir.x * tmax, y: src.y + dir.y * tmax };
   }
 
-  /**
-   * Compute base polygon of mesh, falling back to rectangular bounds.
-   */
-  polyFromMesh(mesh: THREE.Mesh): Geom.Polygon[] {
-    const { faces, vertices: vs } = (new Geometry).fromBufferGeometry(mesh.geometry);
-    const groundError = 0.01;
-    vs.forEach(v => v.applyMatrix4(mesh.matrixWorld));
-    const triangles = faces
-      .filter(({ a, b ,c }) => [a, b, c].every(id => Math.abs(vs[id].z) < groundError))
-      .map(({ a, b, c }) => new Geom.Polygon([a, b, c].map(id => new Geom.Vector(vs[id].x, vs[id].y))))
-    return triangles.length
-      ? this.union(triangles)
-      : [Geom.Polygon.from(this.rectFromMesh(mesh))];
-  }
 
   rectFromMesh(mesh: THREE.Mesh): Geom.Rect {
     const { min, max } = this.tempBox.setFromObject(mesh);

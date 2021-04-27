@@ -15,6 +15,7 @@ export type StageMeta = {
   opts: StageOpts;
   /** The current selection */
   sel: StageSelection;
+  /** Polygons e.g. `wall` */
   poly: StagePoly;
 };
 

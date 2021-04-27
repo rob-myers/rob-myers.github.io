@@ -17,8 +17,13 @@ export function createStageProxy(stageKey: string) {
             if (key === 'wall' || key === 'obs') {
               const { poly } = useStage.api.getStage(stageKey);
               poly[key === 'wall' ? 'prevWall' : 'prevObs'] = poly[key];
+              useStage.api.updatePoly(stageKey, {
+                [key]: value,
+                nav: geom.navFromUnnavigable(poly.wall.concat(poly.obs)),
+              });
+            } else {
+              useStage.api.updatePoly(stageKey, { [key]: value });
             }
-            useStage.api.updatePoly(stageKey, { [key]: value });
             return true;
           },
           ownKeys: () => Object.keys(useStage.api.getStage(stageKey).poly),
