@@ -356,10 +356,9 @@ class GeomService {
         offset += cycle.length;
       }
     }
-
-    geometry.computeVertexNormals();
-    geometry.computeFaceNormals();
-    return geometry.toBufferGeometry();
+    const output = geometry.toBufferGeometry();
+    output.computeVertexNormals();
+    return output;
   }
 
   polysToGeometry(
@@ -376,9 +375,9 @@ class GeomService {
       geometry.vertices.push(...all.vs.map(p => new THREE.Vector3(p.x, height, p.y)));
     }
     geometry.faces.push(...all.tris.map(tri => new Face3(tri[0], tri[1], tri[2])));
+    const output = geometry.toBufferGeometry();
     geometry.computeVertexNormals();
-    geometry.computeFaceNormals();
-    return geometry.toBufferGeometry();
+    return output;
   }
 
   polysToMesh(polygons: Geom.Polygon[], material: THREE.Material): THREE.Mesh {
