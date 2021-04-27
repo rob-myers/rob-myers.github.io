@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { MeshLineMaterial, MeshLine } from 'three.meshline';
 import polygonClipping from 'polygon-clipping';
 
 import { range, Triple, tryParseJson } from 'model/generic.model';
@@ -16,16 +15,15 @@ export const outsetBounds = 0.1;
 class GeomService {
 
   private colorCache = {} as Record<string, THREE.Color>;
-  private lineMatCache = {} as Record<string, MeshLineMaterial>;
+  private lineMatCache = {} as Record<string, THREE.MeshBasicMaterial>;
   private tempBox = new THREE.Box3;
   private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
 
-  private getLineMat(lineWidth: number, color: string, opacity: number) {
-    const key = JSON.stringify({ lineWidth, color, opacity });
+  private getBasicMat(color: string, opacity: number) {
+    const key = JSON.stringify({ color, opacity });
     const material = this.lineMatCache[key] || (
-      this.lineMatCache[key] = new MeshLineMaterial({
+      this.lineMatCache[key] = new THREE.MeshBasicMaterial({
         color: this.getColor(color),
-        lineWidth,
         opacity,
       })
     );
@@ -104,21 +102,24 @@ class GeomService {
 
   createPolyLine(points: Geom.VectorJson[], opts: {
     height: number;
-    loop?: boolean;
     lineWidth?: number;
     color?: string;
     opacity?: number;
   }) {
-    const meshLine = new MeshLine;
-    const vectors = points.map(p => new THREE.Vector3(p.x, p.y, opts.height));
-    opts.loop && vectors.length && vectors.push(vectors[0]);
-    meshLine.setPoints(vectors);
-    const lineMaterial = this.getLineMat(
-      opts.lineWidth || defaultLineWidth,
-      opts.color || '#ffffff',
-      opts.opacity??1,
-    );
-    return new THREE.Mesh(meshLine, lineMaterial);
+    if (points.length < 2) {
+      new THREE.Mesh(new THREE.BufferGeometry, new THREE.MeshBasicMaterial);
+    }
+
+    const mesh = new THREE.Mesh;
+    const [p, q] = points.slice(points.length - 2);
+    const delta = new Geom.Vector(-(q.y - p.y), q.x - p.x).normalize(defaultLineWidth/2);
+    const polyPoints = points.map(({ x, y }) => new Geom.Vector(x, y).add(delta))
+      .concat(points.map(({ x, y }) => new Geom.Vector(x, y).sub(delta)).reverse());
+
+    mesh.geometry = this.polysToGeometry([new Geom.Polygon(polyPoints)], 'xy', opts.height);
+    mesh.material = this.getBasicMat( opts.color || '#ffffff', opts.opacity??1 );
+    (mesh.material as THREE.MeshBasicMaterial).side = THREE.DoubleSide;
+    return mesh;
   }
 
   createRegularPolygon(numEdges: number) {
