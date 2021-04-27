@@ -88,7 +88,7 @@ const Toolbar = styled.section`
   font-size: 16px;
   padding: 0 4px 2px 8px;
 
-  background-color: #222;
+  background-color: #333;
   border-radius: 2px 2px 0 0;
   color: #ddd;
 `;
