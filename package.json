@@ -9,7 +9,8 @@
     "start": "yarn next-cfg && next start",
     "next-cfg": "tsc -p scripts",
     "types": "tsc --noEmit",
-    "copy-gltfs": "nodemon --watch 3d --ext gltf --exec 'cp 3d/*.gltf public/*.gltf'"
+    "copy-gltfs": "nodemon --watch 3d --ext gltf --exec 'cp 3d/*.gltf public/*.gltf'",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@react-three/fiber": "^6.0.16",
@@ -63,6 +64,7 @@
     "gh-pages": "^3.1.0",
     "nodemon": "^2.0.7",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
+    "patch-package": "^6.4.7",
     "typescript": "^4.2.2",
     "url-loader": "^4.1.1",
     "webpack": "^5.24.2",

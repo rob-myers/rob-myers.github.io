@@ -1,4 +1,6 @@
-# Game AI Website
+# Birdseye CLI
+
+See the [plan](docs/plan.md).
 
 ```sh
 # Local development
@@ -9,8 +11,10 @@ yarn build
 yarn export
 cd out
 npx http-server
+
+# Patch npm modules with `patch-package`
+npx patch-package some-package
+git add patches/some-package+$version.patch
 ```
 
-> __NOTE__ files such as `next.config.js` are generated from `scripts/*` using `yarn next-cfg`.
-
-See the [plan](docs/plan.md).
+Files like `next.config.js` are generated from `scripts/*` via `yarn next-cfg`.
