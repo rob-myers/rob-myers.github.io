@@ -14,6 +14,10 @@ export function createStageProxy(stageKey: string) {
             return useStage.api.getStage(stageKey).poly[key];
           },
           set(_, key: keyof StagePoly, value: any) {
+            if (key === 'wall' || key === 'obs') {
+              const { poly } = useStage.api.getStage(stageKey);
+              poly[key === 'wall' ? 'prevWall' : 'prevObs'] = poly[key];
+            }
             useStage.api.updatePoly(stageKey, { [key]: value });
             return true;
           },

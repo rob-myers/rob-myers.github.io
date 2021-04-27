@@ -21,7 +21,7 @@ export const preloadedFunctions = {
   sel: `run '({ read, use: {Geom} }, { stage: {sel} }) {
     const input = await read();
     if (input) {
-    sel.wall = input.map(x => Geom.Polygon.from(x))
+      sel.wall = input.map(x => Geom.Polygon.from(x))
         .filter(x => x.outer.length);
     } else {
       yield sel.wall.map(x => x.json);
@@ -83,16 +83,14 @@ key | run '({ read, use: {geom, Geom}, _: {msg} }, { stage: { opts, sel, poly } 
           sel.wall = poly.wall.filter(poly => poly.rect.intersects(bounds))
             .flatMap(poly => geom.intersect([delta, poly]));
           sel.locked = true;
-          if (msg.key === "x") {
-            [poly.prevWall, poly.wall] = [poly.wall, geom.cutOut([delta], poly.wall)];
-          }
+          msg.key === "x" && (poly.wall = geom.cutOut([delta], poly.wall));
           break;
         }
-        case "v": sel.locked &&
-          ([poly.prevWall, poly.wall] = [poly.wall, geom.union(poly.wall.concat(sel.wall))]);
+        case "v":
+          sel.locked && (poly.wall = geom.union(poly.wall.concat(sel.wall)));
           break;
         case "z":
-          ([poly.prevWall, poly.wall] = [poly.wall, poly.prevWall]);
+          poly.wall = poly.prevWall;
           break;
       }
     } else {
@@ -100,14 +98,14 @@ key | run '({ read, use: {geom, Geom}, _: {msg} }, { stage: { opts, sel, poly } 
         case "f": {
           if (sel.locked) break;
           const delta = Geom.Polygon.from(sel.bounds);
-          [poly.prevWall, poly.wall] = [poly.wall, geom.union(poly.wall.concat(delta))];
+          poly.wall = geom.union(poly.wall.concat(delta));
           break;
         }
         case "F":
         case "Backspace": {
           if (sel.locked) break;
           const delta = Geom.Polygon.from(sel.bounds);
-          [poly.prevWall, poly.wall] = [poly.wall, geom.cutOut([delta], poly.wall)];
+          poly.wall = geom.cutOut([delta], poly.wall);
           break;
         }
         case "Escape":

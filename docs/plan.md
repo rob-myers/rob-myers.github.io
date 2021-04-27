@@ -25,9 +25,10 @@ Main focus is:
    - Can paint polygons using CLI
 - Cleanup code
    - ✅ remove `stage.opts.wallColor`
-   - ✅ avoid Geom.Polygon.fromRect
-   - auto-track `prevWall`
-- Working towards character
+   - ✅ remove Geom.Polygon.fromRect
+   - ✅ auto-track `prevWall` and `prevObs`
+
+- Work towards character
 
 
 
