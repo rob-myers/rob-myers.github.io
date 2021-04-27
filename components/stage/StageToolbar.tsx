@@ -86,7 +86,7 @@ const Toolbar = styled.section`
   height: 26px;
   min-height: 26px;
   font-size: 16px;
-  padding: 0 4px 0 8px;
+  padding: 0 4px 2px 8px;
 
   background-color: #222;
   border-radius: 2px 2px 0 0;
