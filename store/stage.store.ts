@@ -3,6 +3,7 @@ import { devtools, persist } from 'zustand/middleware';
 
 import { deepClone, KeyedLookup } from 'model/generic.model';
 import * as Geom from 'model/geom';
+import { geom } from 'model/geom.service';
 import * as Stage from 'model/stage/stage.model';
 import { identityMatrix4, vectorToTriple } from 'model/3d/three.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
@@ -62,17 +63,20 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         s.opts = deepClone(opts??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         s.internal.cursorGroup.position.set(...s.extra.initCursorPos);
+
         s.sel.localBounds = Geom.Rect.from(sel.localBounds);
         s.sel.localWall = (sel.localWall??[]).map(x => Geom.Polygon.from(x));
         s.sel.localObs = (sel.localObs??[]).map(x => Geom.Polygon.from(x));
         s.sel.enabled = sel.enabled??true;
         s.sel.locked = sel.locked??false;
         s.sel.group.matrix.fromArray(sel.matrix);
+        
         s.poly.wall = (poly.wall??[]).map(x => Geom.Polygon.from(x));
         s.poly.prevWall = s.poly.wall.map(x => x.clone());
         s.poly.obs = (poly.obs??[]).map(x => Geom.Polygon.from(x));
         s.poly.prevObs = s.poly.obs.map(x => x.clone());
-
+        s.poly.nav = geom.navFromUnnavigable(s.poly.wall.concat(s.poly.obs));
+        
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
         set(({ stage, persist }) => ({

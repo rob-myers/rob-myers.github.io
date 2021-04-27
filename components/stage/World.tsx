@@ -17,16 +17,12 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
 
   return (
     <group>
-      <mesh receiveShadow>
+      <mesh name="Floor" receiveShadow>
         <planeGeometry args={[100, 100]} />
         <meshStandardMaterial color="#fff" />
       </mesh>
 
-      <mesh
-        ref={walls}
-        castShadow
-        renderOrder={1}
-      >
+      <mesh ref={walls} castShadow renderOrder={1}>
         <meshBasicMaterial
           side={opts.wallOpacity === 1 ? THREE.DoubleSide : THREE.FrontSide}
           color="#000"
@@ -47,10 +43,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         />
       </mesh>
 
-      <mesh
-        ref={navigable}
-        renderOrder={0}
-      >
+      <mesh ref={navigable} renderOrder={0}>
         <meshBasicMaterial
           transparent
           opacity={0.2}

@@ -21,8 +21,8 @@ Main focus is:
    - ✅ Remove additive option and clean away ui
    - Can add/erase obstruction (with undo/redo)
    - Can add/remove lights via CLI
-   - Review CLI function `sel`
    - Can paint polygons using CLI
+   - Review CLI function `sel`
 - Cleanup code
    - ✅ remove `stage.opts.wallColor`
    - ✅ remove Geom.Polygon.fromRect
