@@ -50,7 +50,6 @@ export interface StageOpts {
   background: string;
   /** Persist on unload window? */
   autoPersist: boolean;
-  wallColor: string;
   wallHeight: number
   wallOpacity: number;
 }
@@ -118,7 +117,6 @@ export function createStageOpts(): StageOpts {
     panZoom: true,
     background: '#eee',
     autoPersist: true,
-    wallColor: '#000',
     wallHeight: 1,
     wallOpacity: 1,
   };

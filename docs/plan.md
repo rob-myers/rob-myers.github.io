@@ -24,7 +24,7 @@ Main focus is:
    - Review CLI function `sel`
    - Can paint polygons using CLI
 - Cleanup code
-   - remove `stage.opts.wallColor`
+   ✅ remove `stage.opts.wallColor`
    - avoid Geom.Polygon.fromRect
    - auto-track `prevWall`
 - Working towards character

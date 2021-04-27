@@ -73,6 +73,9 @@ export function createStageProxy(stageKey: string) {
     },
     ownKeys: () => Object.keys(useStage.api.getStage(stageKey))
       .concat('cursor'),
-    getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
+    getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
+    deleteProperty: (_, _key: keyof StageMeta) => {
+      throw Error('Cannot delete top-level key of stage');
+    },
   });
 }

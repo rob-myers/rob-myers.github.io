@@ -32,7 +32,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
       >
         <meshBasicMaterial
           side={opts.wallOpacity === 1 ? THREE.DoubleSide : THREE.FrontSide}
-          color={opts.wallColor}
+          color="#000"
           transparent
           opacity={opts.wallOpacity}
         />
