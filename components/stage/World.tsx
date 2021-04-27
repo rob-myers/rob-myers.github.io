@@ -7,13 +7,18 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
   const walls = useRef<THREE.Mesh>(null);
   const wallsBase = useRef<THREE.Mesh>(null);
   const navigable = useRef<THREE.Mesh>(null);
+  const obstructions = useRef<THREE.Mesh>(null);
 
   useEffect(() => {
-    wallsBase.current!.geometry = geom.polysToGeometry(poly.wall);
-    walls.current!.geometry = geom.polysToWalls(poly.wall, opts.wallHeight);
     navigable.current!.geometry = geom.polysToGeometry(poly.nav);
+    obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.2);
+    wallsBase.current!.geometry = walls.current!.geometry = geom.polysToWalls(poly.wall, opts.wallHeight);
     updateShadows();
-  }, [poly.wall, opts.wallHeight]);
+  }, [poly, opts.wallHeight]);
+
+  useEffect(() => {
+    updateShadows();
+  }, [opts.wallOpacity]);
 
   return (
     <group>
@@ -22,12 +27,27 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         <meshStandardMaterial color="#fff" />
       </mesh>
 
-      <mesh ref={walls} castShadow renderOrder={1}>
+      <mesh
+        ref={walls}
+        castShadow
+      >
         <meshBasicMaterial
-          side={opts.wallOpacity === 1 ? THREE.DoubleSide : THREE.FrontSide}
-          color="#000"
+          side={opts.wallOpacity === 1 ? THREE.DoubleSide: THREE.FrontSide}
+          color={"#000"}
           transparent
           opacity={opts.wallOpacity}
+          depthTest={opts.wallOpacity === 1}
+        />
+      </mesh>
+
+      <mesh
+        ref={obstructions}
+        castShadow
+        receiveShadow
+      >
+        <meshBasicMaterial
+          side={opts.wallOpacity === 1 ? THREE.DoubleSide : THREE.FrontSide}
+          color="#666"
         />
       </mesh>
 
@@ -35,15 +55,19 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         ref={wallsBase}
         renderOrder={0}
         receiveShadow
-        visible={opts.wallOpacity === 0}
+        scale={[1, 1, 0]}
+        visible={opts.wallOpacity !== 1}
       >
         <meshStandardMaterial
-          side={opts.wallOpacity === 1 ? THREE.DoubleSide : THREE.FrontSide}
+          side={THREE.FrontSide}
           color="#555"
         />
       </mesh>
 
-      <mesh ref={navigable} renderOrder={0}>
+      <mesh
+        ref={navigable}
+        renderOrder={0}
+      >
         <meshBasicMaterial
           transparent
           opacity={0.2}
@@ -53,7 +77,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
 
       <ambientLight
         color="#fff"
-        intensity={0.15}
+        intensity={opts.wallOpacity === 1 ? 0.15 : 0.35}
       />
       <pointLight
         position={[0.5, 0.5, 2.5]}
