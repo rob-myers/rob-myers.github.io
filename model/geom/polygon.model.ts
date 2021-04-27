@@ -4,7 +4,7 @@ import earcut from 'earcut';
 
 import { Triple, Pair } from 'model/generic.model';
 import { Vector, Coord, VectorJson, Edge } from "./vector.model";
-import { Rect } from "./rect.model";
+import { Rect, RectJson } from "./rect.model";
 
 export class Polygon {
 
@@ -143,12 +143,19 @@ export class Polygon {
     return { vs: this.allPoints, tris: indexTriples };
   }
 
-  static from(input: (Partial<PolygonJson> | GeoJsonPolygon['coordinates'])) {
+  static from(input: (
+    | Partial<PolygonJson>
+    | GeoJsonPolygon['coordinates'])
+    | Rect | RectJson
+  ) {
     if (input instanceof Array) {
       return new Polygon(
         input[0].map(([x, y]) => new Vector(x, y)),
         input.slice(1).map(hole => hole.map(([x, y]) => new Vector(x, y)))
       );
+    } else if ('width' in input) {
+      const rect = input instanceof Rect ? input : Rect.from(input);
+      return new Polygon(rect.points.reverse());
     }
     return new Polygon(
       (input.outer || []).map(([x, y]) => new Vector(x, y)),

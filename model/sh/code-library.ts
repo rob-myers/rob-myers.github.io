@@ -79,7 +79,7 @@ key | run '({ read, use: {geom, Geom}, _: {msg} }, { stage: { opts, sel, poly } 
       switch (msg.key) {
         case "c":
         case "x": {
-          const bounds = sel.bounds, delta = Geom.Polygon.fromRect(bounds);
+          const bounds = sel.bounds, delta = Geom.Polygon.from(bounds);
           sel.wall = poly.wall.filter(poly => poly.rect.intersects(bounds))
             .flatMap(poly => geom.intersect([delta, poly]));
           sel.locked = true;
@@ -99,14 +99,14 @@ key | run '({ read, use: {geom, Geom}, _: {msg} }, { stage: { opts, sel, poly } 
       switch (msg.key) {
         case "f": {
           if (sel.locked) break;
-          const delta = Geom.Polygon.fromRect(sel.bounds);
+          const delta = Geom.Polygon.from(sel.bounds);
           [poly.prevWall, poly.wall] = [poly.wall, geom.union(poly.wall.concat(delta))];
           break;
         }
         case "F":
         case "Backspace": {
           if (sel.locked) break;
-          const delta = Geom.Polygon.fromRect(sel.bounds);
+          const delta = Geom.Polygon.from(sel.bounds);
           [poly.prevWall, poly.wall] = [poly.wall, geom.cutOut([delta], poly.wall)];
           break;
         }

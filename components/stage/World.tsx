@@ -12,7 +12,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
   useEffect(() => {
     wallsBase.current!.geometry = geom.polysToGeometry(poly.wall);
     walls.current!.geometry = geom.polysToWalls(poly.wall, opts.wallHeight);
-    const bounds = Geom.Polygon.fromRect(Geom.Rect.union(poly.wall.map(x => x.rect)));
+    const bounds = Geom.Polygon.from(Geom.Rect.union(poly.wall.map(x => x.rect)));
     const nav = geom.cutOut(poly.wall.flatMap(x => x.createOutset(0.05)), [bounds]);
     navigable.current!.geometry = geom.polysToGeometry(nav);
     updateShadows();

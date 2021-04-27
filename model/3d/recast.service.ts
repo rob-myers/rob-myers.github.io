@@ -425,7 +425,7 @@ if (getWindow()) {
     recastService.initialize(module.default);
     getWindow<any>()!.Recast = undefined;
     // recastService.createNavMesh('test',
-    //   geomService.polysToGeometry([Polygon.fromRect(new Rect(0, 0, 10, 10))], 'xz')
+    //   geomService.polysToGeometry([Polygon.from(new Rect(0, 0, 10, 10))], 'xz')
     // );
   });
 }

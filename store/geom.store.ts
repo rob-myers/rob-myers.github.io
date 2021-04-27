@@ -115,7 +115,7 @@ const useStore = create<State>(devtools((set, get) => ({
 
       const navPolys = geom.cutOut(
         polys.flatMap(x => geom.outset(x, outsetWalls)),
-        [Geom.Polygon.fromRect(bounds)],
+        [Geom.Polygon.from(bounds)],
       );
       // console.log({ bounds, navPolys });
 

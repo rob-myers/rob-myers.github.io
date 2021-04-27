@@ -132,7 +132,7 @@ class GeomService {
 
   /** Create a unit square in XY plane whose bottom-left is the origin */
   createSquareGeometry() {
-    return this.polysToGeometry([Geom.Polygon.fromRect(
+    return this.polysToGeometry([Geom.Polygon.from(
       new Geom.Rect(0, 0, 1, 1),
     )]);
   }
@@ -277,7 +277,7 @@ class GeomService {
   /** Cut polygons from rect, or their collective rect bounds. */
   invert(polygons: Geom.Polygon[], rect?: Geom.Rect) {
     const bounds = rect || Geom.Rect.union(polygons.map(x => x.rect));
-    return this.cutOut(polygons, [Geom.Polygon.fromRect(bounds)]);
+    return this.cutOut(polygons, [Geom.Polygon.from(bounds)]);
   }
 
   isVectorJson(p: any): p is Geom.VectorJson {
@@ -420,7 +420,7 @@ class GeomService {
       .map(({ a, b, c }) => new Geom.Polygon([a, b, c].map(id => new Geom.Vector(vs[id].x, vs[id].y))))
     return triangles.length
       ? this.union(triangles)
-      : [Geom.Polygon.fromRect(this.rectFromMesh(mesh))];
+      : [Geom.Polygon.from(this.rectFromMesh(mesh))];
   }
 
   rectFromMesh(mesh: THREE.Mesh): Geom.Rect {
