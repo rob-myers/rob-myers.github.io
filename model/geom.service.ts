@@ -274,6 +274,12 @@ class GeomService {
       ).map(coords => Geom.Polygon.from(coords).cleanFinalReps());
   }
 
+  intersectPolysRect(polys: Geom.Polygon[], rect: Geom.Rect) {
+    const polyRect = Geom.Polygon.from(rect);
+    return polys.filter(poly => poly.rect.intersects(rect))
+      .flatMap(poly => geom.intersect([polyRect, poly]));
+  }
+
   /** Cut polygons from rect, or their collective rect bounds. */
   invert(polygons: Geom.Polygon[], rect?: Geom.Rect) {
     const bounds = rect || Geom.Rect.union(polygons.map(x => x.rect));

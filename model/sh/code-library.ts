@@ -35,89 +35,84 @@ export const preloadedVariables = {
 
 export const shellScripts = {
 
-  lockedSelectionKeyHandler: `
-# locked selection key handler
-key | run '({ read, use: {THREE}, _: {msg} }, { stage: { opts, sel } }) {
+  selectionKeyHandler: `
+# selection key handler
+key | run '({ read, use: {THREE, geom, Geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
   while (msg = await read()) {
-    if (![msg.type === "keyup", opts.enabled, sel.enabled,
-      sel.locked, !msg.metaKey].every(Boolean)) continue;
+    if (msg.type === "keyup" || !opts.enabled || !sel.enabled) continue;
+
     switch (msg.key) {
-      case "x": {
-        const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
-        .setPosition(0, 2 * sel.localBounds.cy, 0);
-        sel.group.matrix.multiply(matrix);
+      case "Backspace":
+      case "F":
+        if (sel.locked) {
+          poly.wall = geom.cutOut(sel.wall, poly.wall);
+        } else {
+          const delta = Geom.Polygon.from(sel.bounds);
+          poly.wall = geom.cutOut([delta], poly.wall);
+        }
         break;
-      }
-      case "y": {
-        const matrix = (new THREE.Matrix4).makeScale(-1, 1, 1)
-          .setPosition(2 * sel.localBounds.cx, 0, 0);
-        sel.group.matrix.multiply(matrix);
+      case "Escape":
+        if (sel.locked) {
+          sel.locked = false;
+          sel.localWall = [];
+        } else {
+          sel.localBounds = new Geom.Rect(0, 0, 0, 0);
+          sel.localWall = [];
+        }
         break;
-      }
+      case "c":
+      case "x":
+        if (msg.metaKey) {
+          const deltaWalls = geom.intersectPolysRect(poly.wall, sel.bounds);
+          [sel.wall, sel.locked] = [deltaWalls, true];
+          if (msg.key === "x") {
+            poly.wall = geom.cutOut(deltaWalls, poly.wall);
+          }
+        } else if (sel.locked) {
+          const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
+            .setPosition(0, 2 * sel.localBounds.cy, 0);
+          sel.group.matrix.multiply(matrix);
+        }
+        break;
+      case "f":
+        if (!sel.locked && !msg.metaKey) {
+          const delta = Geom.Polygon.from(sel.bounds);
+          poly.wall = geom.union(poly.wall.concat(delta));
+        }
+        break;
+      case "y":
+        if (sel.locked && !msg.metaKey) {
+          const matrix = (new THREE.Matrix4).makeScale(-1, 1, 1)
+            .setPosition(2 * sel.localBounds.cx, 0, 0);
+          sel.group.matrix.multiply(matrix);
+        }
+        break;
       case "q":
-      case "Q": {
-        const { cx, cy } = sel.bounds;
-        const angle = (msg.key === "Q" ? -1 : 1) * (Math.PI / 2);
-        sel.group.matrix.premultiply(
-          (new THREE.Matrix4).makeTranslation(-cx, -cy, 0)
-          .premultiply((new THREE.Matrix4).makeRotationZ(angle))
-          .premultiply((new THREE.Matrix4).makeTranslation(cx, cy, 0))
-        );
+      case "Q":
+        if (sel.locked && !msg.metaKey) {
+          const { cx, cy } = sel.bounds;
+          const angle = (msg.key === "Q" ? -1 : 1) * (Math.PI / 2);
+          sel.group.matrix.premultiply(
+            (new THREE.Matrix4).makeTranslation(-cx, -cy, 0)
+            .premultiply((new THREE.Matrix4).makeRotationZ(angle))
+            .premultiply((new THREE.Matrix4).makeTranslation(cx, cy, 0))
+          );
+        }
         break;
-      }
+      case "v":
+        if (sel.locked && msg.metaKey) {
+          poly.wall = geom.union(poly.wall.concat(sel.wall));
+        }
+        break;
+      case "z":
+        if (msg.metaKey) {
+          poly.wall = poly.prevWall;
+        }
+        break;
     }
   }
 }' &
   `,
-
-  selectionKeyHandler: `
-# selection key handler
-key | run '({ read, use: {geom, Geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
-  while (msg = await read()) {
-    if (msg.type !== "keydown" || !opts.enabled || !sel.enabled) continue;
-    if (msg.metaKey) {
-      switch (msg.key) {
-        case "c":
-        case "x": {
-          const bounds = sel.bounds, delta = Geom.Polygon.from(bounds);
-          sel.wall = poly.wall.filter(poly => poly.rect.intersects(bounds))
-            .flatMap(poly => geom.intersect([delta, poly]));
-          sel.locked = true;
-          msg.key === "x" && (poly.wall = geom.cutOut([delta], poly.wall));
-          break;
-        }
-        case "v":
-          sel.locked && (poly.wall = geom.union(poly.wall.concat(sel.wall)));
-          break;
-        case "z":
-          poly.wall = poly.prevWall;
-          break;
-      }
-    } else {
-      switch (msg.key) {
-        case "f": {
-          if (sel.locked) break;
-          const delta = Geom.Polygon.from(sel.bounds);
-          poly.wall = geom.union(poly.wall.concat(delta));
-          break;
-        }
-        case "F":
-        case "Backspace": {
-          if (sel.locked) break;
-          const delta = Geom.Polygon.from(sel.bounds);
-          poly.wall = geom.cutOut([delta], poly.wall);
-          break;
-        }
-        case "Escape":
-          sel.localBounds = new Geom.Rect(0, 0, 0, 0);
-          sel.localWall = [];
-          sel.locked = false;
-          break;
-      }
-    }
-  }
-}' &
-`,
 
   optsKeyHandler: `
 # opts key handler
@@ -140,8 +135,6 @@ export const profiles = {
 await-stage "\${STAGE_KEY}"
 
 ${shellScripts.selectionKeyHandler.trim()}
-
-${shellScripts.lockedSelectionKeyHandler.trim()}
 
 ${shellScripts.optsKeyHandler.trim()}
 

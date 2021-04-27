@@ -27,9 +27,9 @@ Main focus is:
    - ✅ remove `stage.opts.wallColor`
    - ✅ remove Geom.Polygon.fromRect
    - ✅ auto-track `prevWall` and `prevObs`
+   - ✅ only one selection key handler
 
 - Work towards character
-
 
 
 - 🛠 Try to simplify the shell.
