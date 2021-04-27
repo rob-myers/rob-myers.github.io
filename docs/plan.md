@@ -19,7 +19,7 @@ Main focus is:
    - ✅ Can clear via escape
    - ✅ Can lock via copy/cut
    - ✅ Remove additive option and clean away ui
-   - Can add/erase obstruction (with undo/redo)
+   - ✅ Can add/erase obstruction with undo/redo
    - Can add/remove lights via CLI
    - Can paint polygons using CLI
    - Review CLI function `sel`
@@ -29,6 +29,7 @@ Main focus is:
    - ✅ auto-track `prevWall` and `prevObs`
    - ✅ only one selection key handler
 
+- Add `xbcopy` i.e. copy to clipboard
 - Work towards character
 
 

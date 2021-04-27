@@ -12,6 +12,7 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geom.createSquareGeometry()).current;
   const wallMesh = useRef<THREE.Mesh>(null);
+  const obsMesh = useRef<THREE.Mesh>(null);
 
   const ptrDown = useRef(false);
   const dragging = useRef(false);
@@ -26,13 +27,13 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
     rectMesh.current!.scale.set(width, height, 1);
   }, []);
 
-  const restoreFromState = useCallback(({ localBounds, localWall: wall }: StageSelection) => {
+  const restoreFromState = useCallback(({ localBounds, localWall, localObs }: StageSelection) => {
     const { x, y , width, height } = localBounds;
     rectMesh.current!.position.set(x, y, 0);
     rectMesh.current!.scale.set(width, height, 1);
     ptrDown.current = false;
-
-    wallMesh.current!.geometry = geom.polysToGeometry(wall);
+    wallMesh.current!.geometry = geom.polysToGeometry(localWall);
+    obsMesh.current!.geometry = geom.polysToGeometry(localObs);
   }, []);
  
   const onDragPolys = useCallback((e: ThreeEvent<PointerEvent>) => {
@@ -135,6 +136,17 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
       >
         <meshBasicMaterial
           color="#00f"
+          transparent
+          opacity={0.4}
+        />
+      </mesh>
+
+      <mesh
+        ref={obsMesh}
+        visible={sel.locked}
+      >
+        <meshBasicMaterial
+          color="#f00"
           transparent
           opacity={0.4}
         />

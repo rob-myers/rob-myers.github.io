@@ -11,8 +11,9 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
 
   useEffect(() => {
     navigable.current!.geometry = geom.polysToGeometry(poly.nav);
-    obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.2);
-    wallsBase.current!.geometry = walls.current!.geometry = geom.polysToWalls(poly.wall, opts.wallHeight);
+    obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.1);
+    wallsBase.current!.geometry = walls.current!.geometry =
+      geom.polysToWalls(poly.wall, opts.wallHeight);
     updateShadows();
   }, [poly, opts.wallHeight]);
 
@@ -28,6 +29,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
       </mesh>
 
       <mesh
+        name="Walls"
         ref={walls}
         castShadow
       >
@@ -41,17 +43,20 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
       </mesh>
 
       <mesh
+        name="Obstructions"
         ref={obstructions}
         castShadow
         receiveShadow
       >
-        <meshBasicMaterial
-          side={opts.wallOpacity === 1 ? THREE.DoubleSide : THREE.FrontSide}
-          color="#666"
+        <meshStandardMaterial
+          color="#800"
+          transparent
+          opacity={opts.wallOpacity === 0 ? 0.2 : 1}
         />
       </mesh>
 
       <mesh
+        name="WallsBase"
         ref={wallsBase}
         renderOrder={0}
         receiveShadow
@@ -65,6 +70,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
       </mesh>
 
       <mesh
+        name="Navigable"
         ref={navigable}
         renderOrder={0}
       >
@@ -87,6 +93,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         castShadow
         shadow-mapSize-height={2048}
         shadow-mapSize-width={2048}
+        // shadow-bias={-0.01}
       />
 
     </group>

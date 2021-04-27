@@ -302,7 +302,7 @@ class GeomService {
   navFromUnnavigable(polys: Geom.Polygon[]) {
     const rects = polys.map(x => x.rect);
     const bounds = Geom.Polygon.from(Geom.Rect.union(rects));
-    return geom.cutOut(polys.flatMap(x => x.createOutset(0.05)), [bounds]);
+    return geom.cutOut(polys.flatMap(x => x.createOutset(0.03)), [bounds]);
   }
 
   outset(poly: Geom.Polygon, amount: number) {

@@ -31,32 +31,30 @@ export function createStageProxy(stageKey: string) {
         });
       } else if (key === 'sel') {
         return new Proxy({} as StageSelection, {
-          get(_, key: keyof StageSelection | 'bounds' | 'wall') {
-            if (key === 'bounds') {
-              // Provide world bounds
+          get(_, key: keyof StageSelection | 'bounds' | 'wall' | 'obs') {
+            if (key === 'bounds') {// Provide world bounds
               const { localBounds: rect, group: { matrix } } = useStage.api.getStage(stageKey).sel;
               return geom.applyMatrixRect(matrix, rect.clone()).precision(1);
-            } else if (key === 'wall') {
-              // Provide world polygons
-              const { localWall, group: { matrix } } = useStage.api.getStage(stageKey).sel;
-              return localWall.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
+            } else if (key === 'wall' || key === 'obs') {// Provide world polygons
+              const { localWall, localObs, group: { matrix } } = useStage.api.getStage(stageKey).sel;
+              return (key === 'wall' ? localWall : localObs)
+                .map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
             }
             return useStage.api.getStage(stageKey).sel[key];
           },
-          set(_, key: keyof StageSelection | 'wall', value: any) {
-            if (key === 'wall') {
-              // Given world polygons, set untransformed polygons
+          set(_, key: keyof StageSelection | 'wall' | 'obs', value: any) {
+            if (key === 'wall' || key === 'obs') {// Given world polygons, set untransformed polygons
               const { group } = useStage.api.getStage(stageKey).sel;
               const matrix = group.matrix.clone().invert();
-              const nextWall = (value as Geom.Polygon[]).map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
-              useStage.api.updateSel(stageKey, { localWall: nextWall });
+              const next = (value as Geom.Polygon[]).map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
+              useStage.api.updateSel(stageKey, key === 'wall' ? { localWall: next } : { localObs: next });
               return true;
             }
             useStage.api.updateSel(stageKey, { [key]: value });
             return true;
           },
           ownKeys: () => Object.keys(useStage.api.getStage(stageKey).sel)
-            .concat('bounds', 'wall'),
+            .concat('bounds', 'wall', 'obs'),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'opts') {

@@ -43,12 +43,26 @@ key | run '({ read, use: {THREE, Geom, geom}, _: {msg} }, { stage: { opts, sel, 
 
     switch (msg.key) {
       case "Backspace":
-      case "F":
         if (sel.locked) {
           poly.wall = geom.cutOut(sel.wall, poly.wall);
+          poly.obs = geom.cutOut(sel.obs, poly.obs);
         } else {
           const delta = Geom.Polygon.from(sel.bounds);
           poly.wall = geom.cutOut([delta], poly.wall);
+          poly.obs = geom.cutOut([delta], poly.obs);
+        }
+        break;
+      case "w":
+      case "s":
+        if (!sel.locked && !msg.metaKey) {
+          const delta = Geom.Polygon.from(sel.bounds);
+          if (msg.key === "w") {
+            poly.wall = geom.union(poly.wall.concat(delta));
+            poly.obs = geom.cutOut([delta], poly.obs);
+          } else {
+            poly.obs = geom.union(poly.obs.concat(delta));
+            poly.wall = geom.cutOut([delta], poly.wall);
+          }
         }
         break;
       case "Escape":
@@ -64,20 +78,16 @@ key | run '({ read, use: {THREE, Geom, geom}, _: {msg} }, { stage: { opts, sel, 
       case "x":
         if (msg.metaKey) {
           const deltaWalls = geom.intersectPolysRect(poly.wall, sel.bounds);
-          [sel.wall, sel.locked] = [deltaWalls, true];
+          const deltaObs = geom.intersectPolysRect(poly.obs, sel.bounds);
+          [sel.wall, sel.obs, sel.locked] = [deltaWalls, deltaObs, true];
           if (msg.key === "x") {
             poly.wall = geom.cutOut(deltaWalls, poly.wall);
+            poly.obs = geom.cutOut(deltaObs, poly.obs);
           }
         } else if (sel.locked) {
           const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
             .setPosition(0, 2 * sel.localBounds.cy, 0);
           sel.group.matrix.multiply(matrix);
-        }
-        break;
-      case "f":
-        if (!sel.locked && !msg.metaKey) {
-          const delta = Geom.Polygon.from(sel.bounds);
-          poly.wall = geom.union(poly.wall.concat(delta));
         }
         break;
       case "y":
@@ -102,11 +112,13 @@ key | run '({ read, use: {THREE, Geom, geom}, _: {msg} }, { stage: { opts, sel, 
       case "v":
         if (sel.locked && msg.metaKey) {
           poly.wall = geom.union(poly.wall.concat(sel.wall));
+          poly.obs = geom.union(poly.obs.concat(sel.obs));
         }
         break;
       case "z":
         if (msg.metaKey) {
           poly.wall = poly.prevWall;
+          poly.obs = poly.prevObs;
         }
         break;
     }
