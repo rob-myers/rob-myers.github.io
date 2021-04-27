@@ -1,4 +1,4 @@
-import { PCFSoftShadowMap, PerspectiveCamera } from "three";
+import * as THREE from "three";
 import { Subject } from "rxjs";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
@@ -24,14 +24,14 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     // Most recent initial camera position is persisted one
-    const camera = ctxt.camera as PerspectiveCamera;
+    const camera = ctxt.camera as THREE.PerspectiveCamera;
     const { initCameraPos } = useStage.api.getPersist(stage.key).extra;
     camera.position.set(...initCameraPos);
     
     camera.setFocalLength(35);
     ctxt.gl.shadowMap.enabled = true;
     ctxt.gl.shadowMap.autoUpdate = false;
-    ctxt.gl.shadowMap.type = PCFSoftShadowMap;
+    ctxt.gl.shadowMap.type = THREE.PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
 
     stage.internal.scene = ctxt.scene;
