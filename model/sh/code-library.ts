@@ -42,6 +42,17 @@ key | run '({ read, use: {THREE, Geom, geom}, _: {msg} }, { stage: { opts, sel, 
     if (msg.type === "keyup" || !opts.enabled || !sel.enabled) continue;
 
     switch (msg.key) {
+      case "-":
+      case "+": {
+        const delta = msg.key === "-" ? 0.1 : -0.1;
+        if (sel.locked) {
+          sel.wall = sel.wall.flatMap(x => x.createInset(delta));
+          sel.obs = sel.obs.flatMap(x => x.createInset(delta));
+        } else {
+          sel.localBounds = sel.localBounds.clone().inset(delta);
+        }
+        break;
+      }
       case "Backspace":
         if (sel.locked) {
           poly.wall = geom.cutOut(sel.wall, poly.wall);
@@ -66,17 +77,13 @@ key | run '({ read, use: {THREE, Geom, geom}, _: {msg} }, { stage: { opts, sel, 
         }
         break;
       case "Escape":
-        if (sel.locked) {
-          sel.locked = false;
-          sel.localWall = [];
-        } else {
-          sel.localBounds = new Geom.Rect(0, 0, 0, 0);
-          sel.localWall = [];
-        }
+        sel.locked = false;
+        sel.localWall = [];
+        sel.localBounds = new Geom.Rect(0, 0, 0, 0);
         break;
       case "c":
       case "x":
-        if (msg.metaKey) {
+        if (msg.metaKey && !sel.locked) {
           const deltaWalls = geom.intersectPolysRect(poly.wall, sel.bounds);
           const deltaObs = geom.intersectPolysRect(poly.obs, sel.bounds);
           [sel.wall, sel.obs, sel.locked] = [deltaWalls, deltaObs, true];
@@ -84,7 +91,7 @@ key | run '({ read, use: {THREE, Geom, geom}, _: {msg} }, { stage: { opts, sel, 
             poly.wall = geom.cutOut(deltaWalls, poly.wall);
             poly.obs = geom.cutOut(deltaObs, poly.obs);
           }
-        } else if (sel.locked) {
+        } else if (!msg.metaKey && sel.locked) {
           const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
             .setPosition(0, 2 * sel.localBounds.cy, 0);
           sel.group.matrix.multiply(matrix);
@@ -134,7 +141,7 @@ key | run '({ read, _: {msg} }, { stage: { opts } }) {
     switch (msg.key) {
       case "1": opts.wallOpacity = 0; break;
       case "2": opts.wallOpacity = 1; break;
-      case "3": opts.wallOpacity = 0.3; break;
+      case "3": opts.wallOpacity = 0.4; break;
       // case "l": opts.lights = !opts.lights; break;
     }
   }

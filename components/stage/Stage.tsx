@@ -79,7 +79,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
   return (
     <Root
-      background={stage.opts.enabled && ctxt ? stage.opts.background : '#ccc'}
+      background="#000"
       tabIndex={0}
       onKeyDown={onKey}
       onKeyUp={onKey}

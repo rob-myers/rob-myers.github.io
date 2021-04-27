@@ -8,6 +8,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
   const wallsBase = useRef<THREE.Mesh>(null);
   const navigable = useRef<THREE.Mesh>(null);
   const obstructions = useRef<THREE.Mesh>(null);
+  const pointLight = useRef<THREE.PointLight>(null);
 
   useEffect(() => {
     navigable.current!.geometry = geom.polysToGeometry(poly.nav);
@@ -15,10 +16,12 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
     wallsBase.current!.geometry = walls.current!.geometry =
       geom.polysToWalls(poly.wall, opts.wallHeight);
     updateShadows();
+    pointLight.current!.shadow.needsUpdate = true;
   }, [poly, opts.wallHeight]);
 
   useEffect(() => {
     updateShadows();
+    pointLight.current!.shadow.needsUpdate = true;
   }, [opts.wallOpacity]);
 
   return (
@@ -34,8 +37,8 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         castShadow
       >
         <meshBasicMaterial
-          side={opts.wallOpacity === 1 ? THREE.DoubleSide: THREE.FrontSide}
-          color={"#000"}
+          side={THREE.FrontSide}
+          color="#000"
           transparent
           opacity={opts.wallOpacity}
           depthTest={opts.wallOpacity === 1}
@@ -49,7 +52,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         receiveShadow
       >
         <meshStandardMaterial
-          color="#800"
+          color="#600"
           transparent
           opacity={opts.wallOpacity === 0 ? 0.2 : 1}
         />
@@ -65,7 +68,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
       >
         <meshStandardMaterial
           side={THREE.FrontSide}
-          color="#555"
+          color="#777"
         />
       </mesh>
 
@@ -86,6 +89,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         intensity={opts.wallOpacity === 1 ? 0.15 : 0.35}
       />
       <pointLight
+        ref={pointLight}
         position={[0.5, 0.5, 2.5]}
         intensity={3}
         decay={1.5}
@@ -93,6 +97,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         castShadow
         shadow-mapSize-height={2048}
         shadow-mapSize-width={2048}
+        shadow-autoUpdate={false}
         // shadow-bias={-0.01}
       />
 

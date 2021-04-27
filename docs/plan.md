@@ -28,6 +28,7 @@ Main focus is:
    - ✅ remove Geom.Polygon.fromRect
    - ✅ auto-track `prevWall` and `prevObs`
    - ✅ only one selection key handler
+   - remove `stage.opts.background`
 
 - Add `xbcopy` i.e. copy to clipboard
 - Work towards character
