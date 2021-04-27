@@ -22,10 +22,6 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
     enableUi && useStage.api.updateSel(stageKey, ({ enabled }) => ({ enabled: !enabled }));
   }, [enableUi]);
 
-  const toggleSelectionLocked = useCallback((_: React.MouseEvent<HTMLDivElement>) => {
-    enableSelUi && useStage.api.updateSel(stageKey, ({ locked }) => ({ locked: !locked }));
-  }, [enableSelUi]);
-
   const toggleCam = useCallback(() => {
     enableUi && useStage.api.updateOpts(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }));
   }, [enableUi]);
@@ -46,28 +42,17 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
             {opts.enabled ? 'running' : 'paused'}
           </PauseButton>
         </Slot>
-        <SelectionToolbar>
-          <Icon
+        <Slot>
+          <SelectButton
             greyed={!enableSelUi}
             onClick={toggleSelectionEnabled}
             title={enableSelUi
               ? 'selection enabled'
               : 'selection disabled'}
           >
-            ✓
-          </Icon>
-          <LockedButton
-            greyed={!(enableSelUi && selection.locked)}
-            onClick={toggleSelectionLocked}
-            {...enableSelUi && {
-              title: selection.locked
-                ? 'selection locked'
-                : 'selection unlocked'
-            }}
-          >
-            locked
-          </LockedButton>
-        </SelectionToolbar>
+            select
+          </SelectButton>
+        </Slot>
       </LeftToolbar>
       <RightToolbar>
         <Slot />
@@ -101,7 +86,7 @@ const Toolbar = styled.section`
   height: 26px;
   min-height: 26px;
   font-size: 16px;
-  padding: 0px 4px 0 8px;
+  padding: 0 4px 0 8px;
 
   background-color: #222;
   border-radius: 2px 2px 0 0;
@@ -118,42 +103,22 @@ const LeftToolbar = styled.section`
   display: grid;
   grid-template-columns: 38px 50px auto;
   gap: 10px;
-`;
-
-const StageKey = styled.div`
   font-size: 10pt;
 `;
+
+const StageKey = styled.div``;
 
 const PauseButton = styled.div<{ emphasis?: boolean; }>`
-  font-size: 10pt;
   cursor: pointer;
   outline: none;
   color: #dfd;
   font-style: ${({ emphasis = false }) => emphasis ? 'italic' : ''};
 `;
 
-const SelectionToolbar = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #444;
-  padding: 0 4px;
-`;
-
-const Icon = styled.div<{ greyed?: boolean }>`
+const SelectButton = styled.div<{ greyed?: boolean }>`
   cursor: pointer;
   display: flex;
   justify-content: center;
-  padding: 0 4px 2px 4px;
-  color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
-`;
-
-const LockedButton = styled.div<{ greyed?: boolean }>`
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  font-size: small;
-  padding: 0 4px 0px 4px;
   color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
 `;
 
@@ -161,12 +126,12 @@ const RightToolbar = styled.section`
   display: grid;
   grid-template-columns: auto 68px;
   gap: 6px;
+  font-size: 10pt;
 `;
 
 const PanZoomButton = styled.div<{ greyed?: boolean; emphasis?: boolean; }>`
   cursor: pointer;
   background: #222;
-  font-size: 10pt;
   outline: none;
   ${({ greyed = false }) => css`
     color: ${greyed ? '#777' : '#ddd'};

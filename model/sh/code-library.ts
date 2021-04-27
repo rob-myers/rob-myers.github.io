@@ -37,7 +37,7 @@ export const shellScripts = {
 
   selectionKeyHandler: `
 # selection key handler
-key | run '({ read, use: {THREE, geom, Geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
+key | run '({ read, use: {THREE, Geom, geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
   while (msg = await read()) {
     if (msg.type === "keyup" || !opts.enabled || !sel.enabled) continue;
 
