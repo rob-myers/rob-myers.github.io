@@ -83,8 +83,8 @@ const Toolbar = styled.section`
   justify-content: space-between;
   user-select: none;
 
-  height: 26px;
-  min-height: 26px;
+  height: 28px;
+  min-height: 28px;
   font-size: 16px;
   padding: 0 4px 2px 8px;
 
@@ -131,7 +131,6 @@ const RightToolbar = styled.section`
 
 const PanZoomButton = styled.div<{ greyed?: boolean; emphasis?: boolean; }>`
   cursor: pointer;
-  background: #222;
   outline: none;
   ${({ greyed = false }) => css`
     color: ${greyed ? '#777' : '#ddd'};
