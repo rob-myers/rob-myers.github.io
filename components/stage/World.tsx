@@ -45,7 +45,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         name="Obstructions"
         ref={obstructions}
         castShadow
-        scale={opts.wallOpacity === 0 ? [1, 1, 0] : [1, 1, 1]}
+        scale={[1, 1, Math.sign(opts.wallOpacity)] }
       >
         <meshBasicMaterial
           color={opts.wallOpacity ? "#000" : "#666"}
@@ -80,11 +80,12 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
 
       <ambientLight
         color="#fff"
-        intensity={opts.wallOpacity === 1 ? 0.15 : 0.35}
+        intensity={opts.wallOpacity === 1 ? 0.15 : 0.3}
       />
+
       <pointLight
         ref={pointLight}
-        position={[0.5, 0.5, 2.5]}
+        position={[1, 1, 1]}
         intensity={3}
         decay={1.5}
         distance={4}

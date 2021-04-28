@@ -20,17 +20,17 @@ Main focus is:
    - ✅ Can lock via copy/cut
    - ✅ Remove additive option and clean away ui
    - ✅ Can add/erase obstruction with undo/redo
+   - locked ui icon
    - Review CLI function `sel`
 - Cleanup code
    - ✅ remove `stage.opts.wallColor`
    - ✅ remove Geom.Polygon.fromRect
    - ✅ auto-track `prevWall` and `prevObs`
    - ✅ only one selection key handler
-   - remove `stage.opts.background`
-   - locked ui icon
+   - ✅ remove `stage.opts.background`
 
-- Can paint polygons using CLI
 - Can add/remove lights via CLI
+- Can paint polygons using CLI
 - Work towards character
 
 - Add `xbcopy` i.e. copy to clipboard

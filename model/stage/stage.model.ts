@@ -11,7 +11,7 @@ export type StageMeta = {
   internal: StageInternal;
   /** Key-value store for internal use */
   extra: StageExtra;
-  /** Important options, also for the CLI */
+  /** Important options for the CLI */
   opts: StageOpts;
   /** The current selection */
   sel: StageSelection;
@@ -47,8 +47,6 @@ export interface StageOpts {
   enabled: boolean;
   /** Can we move/zoom the pan-zoom camera? */
   panZoom: boolean;
-  /** CSS background of stage */
-  background: string;
   /** Persist on unload window? */
   autoPersist: boolean;
   wallHeight: number
@@ -116,7 +114,6 @@ export function createStageOpts(): StageOpts {
   return {
     enabled: true,
     panZoom: true,
-    background: '#eee',
     autoPersist: true,
     wallHeight: 1,
     wallOpacity: 1,
