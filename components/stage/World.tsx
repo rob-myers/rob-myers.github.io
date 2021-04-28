@@ -6,8 +6,8 @@ import { StageOpts, StagePoly } from "model/stage/stage.model";
 const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
   const walls = useRef<THREE.Mesh>(null);
   const wallsBase = useRef<THREE.Mesh>(null);
-  const navigable = useRef<THREE.Mesh>(null);
   const obstructions = useRef<THREE.Mesh>(null);
+  const navigable = useRef<THREE.Mesh>(null);
   const pointLight = useRef<THREE.PointLight>(null);
 
   useEffect(() => {
@@ -31,11 +31,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         <meshStandardMaterial color="#fff" />
       </mesh>
 
-      <mesh
-        name="Walls"
-        ref={walls}
-        castShadow
-      >
+      <mesh name="Walls" ref={walls} castShadow>
         <meshBasicMaterial
           side={THREE.FrontSide}
           color="#000"
@@ -49,12 +45,10 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         name="Obstructions"
         ref={obstructions}
         castShadow
-        receiveShadow
+        scale={opts.wallOpacity === 0 ? [1, 1, 0] : [1, 1, 1]}
       >
-        <meshStandardMaterial
-          color="#600"
-          transparent
-          opacity={opts.wallOpacity === 0 ? 0.2 : 1}
+        <meshBasicMaterial
+          color={opts.wallOpacity ? "#000" : "#666"}
         />
       </mesh>
 
