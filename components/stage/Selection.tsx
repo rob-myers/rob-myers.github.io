@@ -19,14 +19,6 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
   const dragStart = useRef(new THREE.Vector3).current;
   const dragFinish = useRef(new THREE.Vector3).current;
 
-  useEffect(() => {// Initialize and rehydrate
-    group.current!.matrix.copy(sel.group.matrix);
-    sel.group = group.current!;
-    const { x, y , width, height } = sel.localBounds;
-    rectMesh.current!.position.set(x, y, 0);
-    rectMesh.current!.scale.set(width, height, 1);
-  }, []);
-
   const restoreFromState = useCallback(({ localBounds, localWall, localObs }: StageSelection) => {
     const { x, y , width, height } = localBounds;
     rectMesh.current!.position.set(x, y, 0);
@@ -35,7 +27,7 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
     wallMesh.current!.geometry = geom.polysToGeometry(localWall);
     obsMesh.current!.geometry = geom.polysToGeometry(localObs);
   }, []);
- 
+
   const onDragPolys = useCallback((e: ThreeEvent<PointerEvent>) => {
     if (sel.locked && e.type === 'pointerdown') {
       dragging.current = true;
@@ -43,6 +35,14 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
       matrixToPosition(sel.group.matrix, dragFinish);
     }
   }, [sel.locked]);
+
+  useEffect(() => {// Initialize and rehydrate
+    group.current!.matrix.copy(sel.group.matrix);
+    sel.group = group.current!;
+    const { x, y , width, height } = sel.localBounds;
+    rectMesh.current!.position.set(x, y, 0);
+    rectMesh.current!.scale.set(width, height, 1);
+  }, []);
 
   useEffect(() => {// Handle mouse when unlocked
     if (sel.locked) return;
@@ -69,8 +69,7 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
         ptrDown.current = false;
       }
     });
-
-    return () => { ptrSub.unsubscribe(); };
+    return () => ptrSub.unsubscribe();
   }, [sel]);
 
   useEffect(() => {// Handle mouse when locked
@@ -88,12 +87,11 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
         matrix.setPosition(dragFinish.x, dragFinish.y, 0);
       }
     });
-
-    return () => { ptrSub.unsubscribe(); };
+    return () => ptrSub.unsubscribe();
   }, [sel]);
 
-  useEffect(() => {// Apply transform on unlock
-    if (!sel.locked) {
+  useEffect(() => {
+    if (!sel.locked) {// Apply transform on unlock
       const { group: { matrix }, localBounds, localWall } = sel;
       geom.applyMatrixRect(matrix, localBounds);
       for (const poly of localWall) {
