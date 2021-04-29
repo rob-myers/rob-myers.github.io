@@ -211,7 +211,7 @@ class CmdService {
         ], });
         const funcDef = operands[0];
         const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
-        yield* this.read(meta, (data) => func()(data, this.useProxy));
+        yield* this.read(meta, (data) => func()(data, this.provideStageAndVars(meta)));
         break;
       }
       case 'poll': {
@@ -353,8 +353,6 @@ class CmdService {
       }),
       /** Trick to provide local variables via destructuring */
       _: {},
-      /** Provide e.g. THREE */
-      use: this.useProxy,
     };
   }
 
@@ -363,6 +361,7 @@ class CmdService {
     return {
       ...useSession.api.getSession(meta.sessionKey).var,
       stage: createStageProxy(stageKey),
+      use: this.useProxy,
     };
   }
 
@@ -453,7 +452,7 @@ class CmdService {
     }
   }
 
-  /** Expose classes/services in js api */
+  /** Expose classes/services */
   private useProxy = new Proxy({} as {
     geom: typeof geom;
     Geom: typeof Geom;

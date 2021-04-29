@@ -14,7 +14,7 @@ export const preloadedFunctions = {
     || map "x => x.reduce($1)"
 }
 `,
-  pretty: `map '(x, { stringify }) => stringify(x)'`,
+  pretty: `map '(x, { use: {stringify} }) => stringify(x)'`,
   keys: `map Object.keys`,
   cat: `get "$@" | split`,
  
@@ -22,7 +22,7 @@ export const preloadedFunctions = {
   /**
    * TODO redo
    */
-  sel: `run '({ read, use: {Geom} }, { stage: {sel} }) {
+  sel: `run '({ read }, { stage: {sel}, use: {Geom} }) {
     const input = await read();
     if (input) {
       sel.wall = input.map(x => Geom.Polygon.from(x))
@@ -41,7 +41,7 @@ export const shellScripts = {
 
   selectionKeyHandler: `
 # selection key handler
-key | run '({ read, use: {THREE, Geom, geom}, _: {msg} }, { stage: { opts, sel, poly } }) {
+key | run '({ read, _: {msg} }, { stage: { opts, sel, poly }, use: {THREE, Geom, geom} }) {
   while (msg = await read()) {
     if (msg.type === "keyup" || !opts.enabled || !sel.enabled) continue;
 
