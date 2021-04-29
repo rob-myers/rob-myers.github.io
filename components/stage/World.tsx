@@ -8,10 +8,8 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
   const wallsBase = useRef<THREE.Mesh>(null);
   const obstructions = useRef<THREE.Mesh>(null);
   const navigable = useRef<THREE.Mesh>(null);
-  const spotLight = useRef<THREE.SpotLight>(null);
 
   const updateLighting = useCallback(() => {
-    spotLight.current!.shadow.needsUpdate = true;
     Object.values(light).forEach(light => light.shadow.needsUpdate = true);
     updateShadowMap();
   }, [light]);
@@ -95,22 +93,6 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
       />
 
       {Lights}
-
-      <spotLight
-        ref={spotLight}
-        position={[1, 1, 2]}
-        target-position={[1, 1, 0]}
-        intensity={3}
-        decay={1.5}
-        distance={3}
-        angle={Math.PI / 3}
-        castShadow
-        shadow-mapSize-height={2048}
-        shadow-mapSize-width={2048}
-        shadow-autoUpdate={false}
-      />
-      {spotLight.current &&
-        <primitive object={spotLight.current.target} />}
 
     </group>
   );

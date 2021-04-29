@@ -138,7 +138,7 @@ class GeomService {
     light.intensity = 3;
     light.decay = 1.5;
     light.distance = 3;
-    light.angle = Math.PI / 4;
+    // light.angle = Math.PI / 4;
     light.castShadow = true;
     light.shadow.mapSize.set(2048, 2048);
     light.shadow.autoUpdate = false;
