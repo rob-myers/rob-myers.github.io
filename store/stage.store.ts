@@ -25,8 +25,7 @@ export type State = {
     getStage: (stageKey: string) => Stage.StageMeta;
     persist: (stageKey: string) => void;
     removeStage: (stageKey: string) => void;
-    updateExtra: (stageKey: string, updates: Updates<Stage.StageExtra>) => void;
-    updateInternal: (stageKey: string, updates: Updates<Stage.StageInternal>) => void;
+    updateLight: (stageKey: string, updates: Stage.StageLightLookup) => void;
     updateOpts: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
     updatePoly: (stageKey: string, updates: Updates<Stage.StagePoly>) => void;
     updateSel: (stageKey: string, updates: Updates<Stage.StageSelection>) => void;
@@ -145,14 +144,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       stage: removeFromLookup(stageKey, stage),
     })),
 
-    updateExtra: (stageKey, updates) => {
-      api.updateStage(stageKey, ({ extra }) => ({
-        extra: { ...extra, ...typeof updates === 'function' ? updates(extra) : updates },
-      }));
-    },
-    updateInternal: (stageKey, updates) => {
-      api.updateStage(stageKey, ({ internal }) => ({
-        internal: { ...internal, ...typeof updates === 'function' ? updates(internal) : updates },
+    updateLight: (stageKey, updates) => {
+      api.updateStage(stageKey, ({ light }) => ({
+        light: { ...light, ...updates },
       }));
     },
     updateOpts: (stageKey, updates) => {

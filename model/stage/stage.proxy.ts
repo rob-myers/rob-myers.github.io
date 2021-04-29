@@ -1,7 +1,7 @@
 import * as Geom from "model/geom";
 import { geom } from "model/geom.service";
 import useStage from "store/stage.store";
-import { StageMeta, stageNavInset, StageOpts, StagePoly, StageSelection } from "./stage.model";
+import { StageLightLookup, StageMeta, stageNavInset, StageOpts, StagePoly, StageSelection } from "./stage.model";
 
 /**
  * TODO one proxy per stage?
@@ -75,7 +75,20 @@ export function createStageProxy(stageKey: string) {
       } else if (key === 'cursor') {
         return stage().internal.cursorGroup.position;
       } else if (key === 'light') {
-
+        return new Proxy({} as StageLightLookup, {
+          get(_, key: string | 'update') {
+            if (key === 'update') {
+              return () => useStage.api.updateLight(stageKey, {});
+            }
+            return stage().light[key];
+          },
+          set(_, key: string, value: any) {
+            useStage.api.updateLight(stageKey, { [key]: value });
+            return true;
+          },
+          ownKeys: () => Object.keys(stage().opts),
+          getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
+        });
       }
 
       return stage()[key];
