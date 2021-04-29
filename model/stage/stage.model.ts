@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 import * as THREE from "three";
-import { KeyedLookup, Triple } from "model/generic.model";
+import { Triple } from "model/generic.model";
 import * as Geom from "model/geom";
 import { PanZoomControls } from "model/3d/pan-zoom-controls";
 import { identityMatrix4 } from "model/3d/three.model";
@@ -65,6 +65,7 @@ export interface StageOpts {
   autoPersist: boolean;
   wallHeight: number
   wallOpacity: number;
+  ambientLight: number;
 }
 
 export interface StageSelection {
@@ -151,6 +152,7 @@ export function createStageOpts(): StageOpts {
     autoPersist: true,
     wallHeight: 1,
     wallOpacity: 1,
+    ambientLight: 0.15,
   };
 }
 

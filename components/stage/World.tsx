@@ -89,7 +89,7 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
 
       <ambientLight
         color="#fff"
-        intensity={opts.wallOpacity === 1 ? 0.15 : 0.3}
+        intensity={opts.ambientLight + (opts.wallOpacity === 1 ? 0 : 0.1)}
       />
 
       {Lights}

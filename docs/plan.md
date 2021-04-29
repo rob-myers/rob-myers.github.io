@@ -33,7 +33,11 @@ Main focus is:
    > Current approach (WIP)
    > `light 0 0 2`
    > `rm stage.light.light1`
-- Add `stage.opts.ambientLight`
+   - Can list: `light`
+   - Can add: `cursor | light`
+   - Can remove: `light rm light1`
+   - Can modify `light light1 'l => l.position.x += 1'`
+- ✅ Add `stage.opts.ambientLight`
 
 - Can paint polygons using CLI
 - Work towards character
