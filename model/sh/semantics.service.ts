@@ -9,7 +9,7 @@ import { createKillError, expand, Expanded, literal, normalizeWhitespace, Proces
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
 import { preProcessWrite, redirectNode, SigEnum } from './io/io.model';
-import { cloneParsed, wrapInFile } from './parse/parse.util';
+import { cloneParsed, collectIfClauses, wrapInFile } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
 class SemanticsService {
@@ -237,8 +237,10 @@ class SemanticsService {
         switch (node.type) {
           case 'Block': generator = this.Block(node); break;
           case 'BinaryCmd': generator = this.BinaryCmd(node); break;
-          case 'FuncDecl': generator = this.FuncDecl(node); break;
           case 'DeclClause': generator = this.DeclClause(node); break;
+          case 'FuncDecl': generator = this.FuncDecl(node); break;
+          case 'IfClause': generator = this.IfClause(node); break;
+          case 'TimeClause': generator = this.TimeClause(node); break;
           default:
             throw new ShError(`Command: ${node.type}: not implemented`, 2);
         }
@@ -386,6 +388,24 @@ class SemanticsService {
     useSession.api.addFunc(node.meta.sessionKey, node.Name.Value, wrappedFile);
   }
 
+  private async *IfClause(node: Sh.IfClause) {
+    for (const { Cond, Then } of collectIfClauses(node)) {
+      if (Cond.length) {// if | elif i.e. have a test
+        yield* sem.stmts(node, Cond);
+
+        if (last(Cond)!.exitCode === 0) {// Test succeeded
+          yield* sem.stmts(node, Then);
+          node.exitCode = last(Then)?.exitCode || 0;
+          return;
+        }
+      } else {// else
+        yield* sem.stmts(node, Then);
+        node.exitCode = last(Then)?.exitCode || 0;
+        return;
+      }
+    }
+  }
+
   /**
    * - positionals $0, $1, ...
    * - all positionals "${@}"
@@ -460,6 +480,16 @@ class SemanticsService {
       stmt.exitCode = stmt.Cmd.exitCode;
       stmt.Negated && (stmt.exitCode = 1 - Number(!!stmt.Cmd.exitCode));
     }
+  }
+
+  private async *TimeClause(node: Sh.TimeClause) {
+    const before = Date.now(); // Milliseconds since epoch
+    if (node.Stmt) {
+      yield* sem.Stmt(node.Stmt);
+    }
+    useSession.api.resolve(1, node.meta).writeData(
+      `real\t${Date.now() - before}ms`
+    );
   }
 }
 

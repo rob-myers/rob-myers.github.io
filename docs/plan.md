@@ -36,13 +36,17 @@ Main focus is:
    - Can list: `light`
    - Can add: `cursor | light`
    - Can remove: `light rm light1`
-   - Can modify `light light1 'l => l.position.x += 1'`
+   - Can modify: `light 'l => l.position.x += 1' light1`
 - ✅ Add `stage.opts.ambientLight`
 
 - Can paint polygons using CLI
 - Work towards character
 
+- ✅ Add builtins `true` and `false`
+- ✅ Implement `IfClause` in shell
 - Add `xbcopy` i.e. copy to clipboard
+- Can output serialized stage and reload from text
+- Can reset stage
 
 
 - 🛠 Try to simplify the shell.

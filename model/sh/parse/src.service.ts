@@ -1,5 +1,6 @@
 import type * as Sh from "./parse.model";
 import { last, testNever } from "model/generic.model";
+import { collectIfClauses } from "./parse.util";
 
 export class SrcService {
 
@@ -13,11 +14,6 @@ export class SrcService {
       return [cmd, ...this.binaryCmds(Y.Cmd)];
     }
     return [cmd];
-  }
-  
-  /** Collect contiguous if-clauses. */
-  private collectIfClauses(cmd: Sh.IfClause): Sh.IfClause[] {
-    return cmd.Else ? [cmd, ...this.collectIfClauses(cmd.Else)] : [cmd];
   }
   
   private isBackgroundNode(node: Sh.ParsedSh) {
@@ -213,7 +209,7 @@ export class SrcService {
         return `${node.Name.Value}() ${this.src(node.Body)}`;
       
       case 'IfClause': {
-        return this.collectIfClauses(node).map(({ Cond, Then }, i) =>
+        return collectIfClauses(node).map(({ Cond, Then }, i) =>
           Cond.length
             ? `${!i ? 'if' : 'elif'} ${this.seqSrc(Cond)}; then ${this.seqSrc(Then)}; `
             : `else ${this.seqSrc(Then)}; `

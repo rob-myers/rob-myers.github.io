@@ -156,3 +156,8 @@ export function wrapInFile(node: Sh.Stmt | Sh.CmdSubst): Sh.FileWithMeta {
     meta: node.meta,
   } as Sh.FileWithMeta;
 }
+
+/** Collect contiguous if-clauses. */
+export function collectIfClauses(cmd: Sh.IfClause): Sh.IfClause[] {
+  return cmd.Else ? [cmd, ...collectIfClauses(cmd.Else)] : [cmd];
+}

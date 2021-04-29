@@ -28,6 +28,8 @@ const commandKeys = {
   declare: true,
   /** Output arguments as space-separated string */
   echo: true,
+  /** Exit with code 1 */
+  false: true,
   /** Get each arg from stageAndVars */
   get: true,
   /** List previous commands */
@@ -63,6 +65,8 @@ const commandKeys = {
   sponge: true,
   /** Test regex against string */
   test: true,
+  /** Exit with code 0 */
+  true: true,
   // wall: true,
 };
 type CommandName = keyof typeof commandKeys;
@@ -113,6 +117,10 @@ class CmdService {
         } else {
           yield operands.join(' ');
         }
+        break;
+      }
+      case 'false': {
+        node.exitCode = 1;
         break;
       }
       case 'get': {
@@ -311,6 +319,10 @@ class CmdService {
         const value = args[1];
         node.exitCode = 1;
         regex.test(value) && (node.exitCode = 0);
+        break;
+      }
+      case 'true': {
+        node.exitCode = 0;
         break;
       }
       // case 'wall': {
