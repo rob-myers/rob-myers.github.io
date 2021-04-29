@@ -38,6 +38,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
     setCtxt(ctxt);
   }, [stage.internal]);
 
+  const updateShadowMap = useCallback(() => {
+    ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true); 
+  }, [ctxt]);
+
   useEffect(() => {
     // NOTE `ctxt?.gl` instead of `ctxt` for hotreloads on edit stage.store
     if (ctxt?.gl && !stage.opts.enabled) {// Detected stage disable
@@ -48,10 +52,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
       setCtxt(null);
     }
   }, [stage.opts.enabled]);
-
-  const updateShadows = useCallback(() => {
-    ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true); 
-  }, [ctxt]);
 
   const ptrWire = useRef(new Subject<StagePointerEvent>()).current;
   const onPointer = useCallback((e: ThreeEvent<PointerEvent>) => {
@@ -127,8 +127,9 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
           <World
             opts={stage.opts}
+            light={stage.light}
             poly={stage.poly}
-            updateShadows={updateShadows}
+            updateShadowMap={updateShadowMap}
           />
 
         </CanvasRoot>

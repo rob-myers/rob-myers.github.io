@@ -1,32 +1,47 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { geom } from "model/geom.service";
-import { StageOpts, StagePoly } from "model/stage/stage.model";
+import { StageLightLookup, StageOpts, StagePoly } from "model/stage/stage.model";
 
-const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
+const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
   const walls = useRef<THREE.Mesh>(null);
   const wallsBase = useRef<THREE.Mesh>(null);
   const obstructions = useRef<THREE.Mesh>(null);
   const navigable = useRef<THREE.Mesh>(null);
+  const lights = useRef<THREE.Group>(null);
   const pointLight = useRef<THREE.PointLight>(null);
 
   useEffect(() => {
     navigable.current!.geometry = geom.polysToGeometry(poly.nav);
     obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.1);
-    wallsBase.current!.geometry = walls.current!.geometry =
-      geom.polysToWalls(poly.wall, opts.wallHeight);
-    updateShadows();
+    walls.current!.geometry = geom.polysToWalls(poly.wall, opts.wallHeight);
+    wallsBase.current!.geometry = walls.current!.geometry;
     pointLight.current!.shadow.needsUpdate = true;
+    updateShadowMap();
   }, [poly, opts.wallHeight]);
 
-  useEffect(() => {
-    updateShadows();
-    pointLight.current!.shadow.needsUpdate = true;
-  }, [opts.wallOpacity]);
+  const Lights = useMemo(() => 
+    <group name="Lights" ref={lights}>
+      {Object.values(light).map(({ key, position }) => (
+        <pointLight
+          key={key}
+          position={position}
+          intensity={3}
+          decay={1.5}
+          distance={4}
+          castShadow
+          shadow-mapSize-height={2048}
+          shadow-mapSize-width={2048}
+          shadow-autoUpdate={false}
+          // shadow-bias={-0.01}
+        />
+      ))}
+    </group>  
+  , [light]);
 
   return (
     <group>
-      <mesh name="Floor" receiveShadow>
+      <mesh name="GroundPlane" receiveShadow>
         <planeGeometry args={[100, 100]} />
         <meshStandardMaterial color="#fff" />
       </mesh>
@@ -47,9 +62,7 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         castShadow
         scale={[1, 1, Math.sign(opts.wallOpacity)] }
       >
-        <meshBasicMaterial
-          color={opts.wallOpacity ? "#000" : "#666"}
-        />
+        <meshBasicMaterial color={opts.wallOpacity ? "#000" : "#888"} />
       </mesh>
 
       <mesh
@@ -62,20 +75,12 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
       >
         <meshStandardMaterial
           side={THREE.FrontSide}
-          color="#777"
+          color="#988"
         />
       </mesh>
 
-      <mesh
-        name="Navigable"
-        ref={navigable}
-        renderOrder={0}
-      >
-        <meshBasicMaterial
-          transparent
-          opacity={0.2}
-          color="#400"
-        />
+      <mesh name="Navigable" ref={navigable} renderOrder={0} visible={false}>
+        <meshBasicMaterial transparent opacity={0.1} color="#f00" />
       </mesh>
 
       <ambientLight
@@ -83,9 +88,11 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
         intensity={opts.wallOpacity === 1 ? 0.15 : 0.3}
       />
 
+      {Lights}
+
       <pointLight
         ref={pointLight}
-        position={[1, 1, 1]}
+        position={[1, 1, 2]}
         intensity={3}
         decay={1.5}
         distance={4}
@@ -102,8 +109,9 @@ const World: React.FC<Props> = ({ opts, poly, updateShadows }) => {
 
 interface Props {
   opts: StageOpts;
+  light: StageLightLookup;
   poly: StagePoly;
-  updateShadows: () => void;
+  updateShadowMap: () => void;
 }
 
 export default World;

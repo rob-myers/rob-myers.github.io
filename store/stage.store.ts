@@ -1,7 +1,8 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import * as THREE from 'three';
 
-import { deepClone, KeyedLookup } from 'model/generic.model';
+import { deepClone, KeyedLookup, mapValues } from 'model/generic.model';
 import * as Geom from 'model/geom';
 import { geom } from 'model/geom.service';
 import * as Stage from 'model/stage/stage.model';
@@ -11,7 +12,7 @@ import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } f
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
   rehydrated: boolean;
-  persist: KeyedLookup<Stage.PersistedStage>;
+  persist: KeyedLookup<Stage.StageMetaJson>;
   // TODO stage events instead
   resolve: {
     createStage: { [stageKey: string]: (() => void)[] };
@@ -20,7 +21,7 @@ export type State = {
   readonly api: {
     awaitStage: (stageKey: string, resolver: () => void) => Promise<void>;
     ensureStage: (stageKey: string) => void;
-    getPersist: (stageKey: string) => Stage.PersistedStage;
+    getPersist: (stageKey: string) => Stage.StageMetaJson;
     getStage: (stageKey: string) => Stage.StageMeta;
     persist: (stageKey: string) => void;
     removeStage: (stageKey: string) => void;
@@ -59,7 +60,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
         // Restore persisted data
         const s = Stage.createStage(stageKey);
-        const { opts, extra, sel, poly } = api.getPersist(stageKey);
+        const { opts, extra, sel, poly, light } = api.getPersist(stageKey);
         s.opts = deepClone(opts??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         s.internal.cursorGroup.position.set(...s.extra.initCursorPos);
@@ -75,7 +76,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         s.poly.prevWall = s.poly.wall.map(x => x.clone());
         s.poly.obs = (poly.obs??[]).map(x => Geom.Polygon.from(x));
         s.poly.prevObs = s.poly.obs.map(x => x.clone());
-        s.poly.nav = geom.navFromUnnavigable(s.poly.wall.concat(s.poly.obs));
+        s.poly.nav = geom.navFromUnnavigable(s.poly.wall.concat(s.poly.obs), Stage.stageNavInset);
+
+        s.light = mapValues(light, ({ key, position }) => ({
+          key,
+          position: new THREE.Vector3(...position),
+        })),
         
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
@@ -97,7 +103,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { internal, opts, extra, sel, poly } = api.getStage(stageKey);
+      const { internal, opts, extra, sel, poly, light } = api.getStage(stageKey);
 
       const currentCameraPos = internal.controls?.camera?.position
         ? vectorToTriple(internal.controls.camera.position) : null;
@@ -128,6 +134,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             wall: poly.wall.map(x => x.json),
             obs: poly.obs.map(x => x.json),
           },
+          light: mapValues(light, ({ key, position: { x, y, z } }) => ({
+            key,
+            position: [x, y, z],
+          })),
         }, persist),
       }));
     },

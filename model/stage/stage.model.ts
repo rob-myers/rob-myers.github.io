@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 import * as THREE from "three";
-import { Triple } from "model/generic.model";
+import { KeyedLookup, Triple } from "model/generic.model";
 import * as Geom from "model/geom";
 import { PanZoomControls } from "model/3d/pan-zoom-controls";
 import { identityMatrix4 } from "model/3d/three.model";
@@ -17,7 +17,21 @@ export type StageMeta = {
   sel: StageSelection;
   /** Polygons e.g. `wall` */
   poly: StagePoly;
+  /** Lights */
+  light: StageLightLookup;
 };
+
+export interface StageMetaJson {
+  key: string;
+  opts: StageOpts;
+  extra: StageExtra;
+  sel: StageSelectionJson;
+  poly: Record<(
+    | 'wall'
+    | 'obs'
+  ), Geom.PolygonJson[]>;
+  light: KeyedLookup<StageLightJson>;
+}
 
 export interface StageInternal {
   /** Keyboard events sent by `Stage`  */
@@ -72,6 +86,17 @@ export interface StageSelection {
   localObs: Geom.Polygon[];
 }
 
+export type StagePoly = Record<(
+  | 'wall'
+  | 'prevWall'
+  | 'obs'
+  | 'prevObs'
+  | 'nav'
+), Geom.Polygon[]>;
+
+
+export type StageLightLookup = KeyedLookup<StageLight>;
+
 /** Serializable `StageSelection` */
 interface StageSelectionJson {
   enabled: boolean;
@@ -107,6 +132,7 @@ export function createStage(stageKey: string): StageMeta {
       localObs: [],
     },
     poly: { wall: [], prevWall: [], obs: [], prevObs: [], nav: [] },
+    light: {},
   };
 }
 
@@ -120,24 +146,7 @@ export function createStageOpts(): StageOpts {
   };
 }
 
-export type StagePoly = Record<(
-  | 'wall'  | 'prevWall' // walls
-  | 'obs' | 'prevObs' // obstructions
-  | 'nav'  // navigable
-), Geom.Polygon[]>;
-
-export interface PersistedStage {
-  key: string;
-  opts: StageOpts;
-  extra: StageExtra;
-  sel: StageSelectionJson;
-  poly: Record<(
-    | 'wall' // walls
-    | 'obs'  // additional obstructions
-  ), Geom.PolygonJson[]>;
-}
-
-export function createPersist(stageKey: string): PersistedStage {
+export function createPersist(stageKey: string): StageMetaJson {
   return {
     key: stageKey,
     opts: createStageOpts(),
@@ -154,6 +163,7 @@ export function createPersist(stageKey: string): PersistedStage {
       localWall: [],
     },
     poly: { wall: [], obs: [] },
+    light: {},
   };
 }
 
@@ -180,3 +190,14 @@ const initCameraPosArray: Triple<number> = [0, 0, 10];
 export const initCameraPos = new THREE.Vector3(...initCameraPosArray);
 export const initCursorPos: Triple<number> = [0, 0, 0];
 export const initStageBounds = new Geom.Rect(0, 0, 0, 0);
+
+export const stageNavInset = 0.03;
+
+export interface StageLight {
+  key: string;
+  position: THREE.Vector3;
+}
+export interface StageLightJson {
+  key: string;
+  position: Triple<number>;
+}

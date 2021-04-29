@@ -1,7 +1,7 @@
 import * as Geom from "model/geom";
 import { geom } from "model/geom.service";
 import useStage from "store/stage.store";
-import { StageMeta, StageOpts, StagePoly, StageSelection } from "./stage.model";
+import { StageMeta, stageNavInset, StageOpts, StagePoly, StageSelection } from "./stage.model";
 
 export function createStageProxy(stageKey: string) {
   return new Proxy({} as StageMeta, {
@@ -19,7 +19,7 @@ export function createStageProxy(stageKey: string) {
               poly[key === 'wall' ? 'prevWall' : 'prevObs'] = poly[key];
               poly[key] = value;
               useStage.api.updatePoly(stageKey, {
-                nav: geom.navFromUnnavigable(poly.wall.concat(poly.obs)),
+                nav: geom.navFromUnnavigable(poly.wall.concat(poly.obs), stageNavInset),
               });
             } else {
               useStage.api.updatePoly(stageKey, { [key]: value });
@@ -33,8 +33,8 @@ export function createStageProxy(stageKey: string) {
         return new Proxy({} as StageSelection, {
           get(_, key: keyof StageSelection | 'bounds' | 'wall' | 'obs') {
             if (key === 'bounds') {// Provide world bounds
-              const { localBounds: rect, group: { matrix } } = useStage.api.getStage(stageKey).sel;
-              return geom.applyMatrixRect(matrix, rect.clone()).precision(1);
+              const { localBounds, group: { matrix } } = useStage.api.getStage(stageKey).sel;
+              return geom.applyMatrixRect(matrix, localBounds.clone()).precision(1);
             } else if (key === 'wall' || key === 'obs') {// Provide world polygons
               const { localWall, localObs, group: { matrix } } = useStage.api.getStage(stageKey).sel;
               return (key === 'wall' ? localWall : localObs)

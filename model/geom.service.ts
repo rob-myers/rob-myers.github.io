@@ -267,12 +267,11 @@ class GeomService {
   }
 
   intersect([poly, ...rest ]: Geom.Polygon[]): Geom.Polygon[] {
-    return polygonClipping
-      .intersection(
+    return polygonClipping.intersection(
         poly.geoJson.coordinates,
         ...rest.map(({ geoJson: { coordinates } }) => coordinates,
-      ),
-      ).map(coords => Geom.Polygon.from(coords).cleanFinalReps());
+      )).map(coords => Geom.Polygon.from(coords).cleanFinalReps()
+    );
   }
 
   intersectPolysRect(polys: Geom.Polygon[], rect: Geom.Rect) {
@@ -299,10 +298,9 @@ class GeomService {
     obj.position.set(position.x, position.y, obj.position.z);
   }
 
-  navFromUnnavigable(polys: Geom.Polygon[]) {
-    const rects = polys.map(x => x.rect);
-    const bounds = Geom.Polygon.from(Geom.Rect.union(rects));
-    return geom.cutOut(polys.flatMap(x => x.createOutset(0.03)), [bounds]);
+  navFromUnnavigable(polys: Geom.Polygon[], inset: number) {
+    const polyBounds = Geom.Polygon.from(this.unionRects(polys.map(x => x.rect)));
+    return geom.cutOut(polys.flatMap(x => x.createOutset(inset)), [polyBounds]);
   }
 
   outset(poly: Geom.Polygon, amount: number) {
