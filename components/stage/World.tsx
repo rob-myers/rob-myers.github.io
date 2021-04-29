@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { geom } from "model/geom.service";
 import { StageLight, StageOpts, StagePoly } from "model/stage/stage.model";
@@ -8,32 +8,26 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
   const wallsBase = useRef<THREE.Mesh>(null);
   const obstructions = useRef<THREE.Mesh>(null);
   const navigable = useRef<THREE.Mesh>(null);
-
-  const updateLighting = useCallback(() => {
-    Object.values(light).forEach(light => light.shadow.needsUpdate = true);
-    updateShadowMap();
-  }, [light]);
-
-  useEffect(() => {
-    navigable.current!.geometry = geom.polysToGeometry(poly.nav);
-    obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.1);
-    walls.current!.geometry = geom.polysToWalls(poly.wall, opts.wallHeight);
-    wallsBase.current!.geometry = walls.current!.geometry;
-    setTimeout(updateLighting, 0);
-  }, [poly, opts.wallHeight, opts.wallOpacity]);
-
-  useEffect(() => {
-    updateLighting();
-  }, [opts.wallOpacity, light]);
+  const [lightsAt, updateLightAt] = useState(0);
 
   const Lights = useMemo(() => {
+    Object.values(light).forEach(light => light.shadow.needsUpdate = true);
+    updateShadowMap();
     return <group name="Lights">
       {Object.values(light).map((light) => <>
         <primitive key={light.name} object={light} />
         {light.target && <primitive key={`${light.name}.dst`} object={light.target} />}
       </>)}
     </group>;
-  }, [light]);
+  }, [light, lightsAt]);
+
+  useEffect(() => {
+    navigable.current!.geometry = geom.polysToGeometry(poly.nav);
+    obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.1);
+    walls.current!.geometry = geom.polysToWalls(poly.wall, opts.wallHeight);
+    wallsBase.current!.geometry = walls.current!.geometry;
+    updateLightAt(Date.now());
+  }, [poly, opts.wallHeight, opts.wallOpacity]);
 
   return (
     <group>
