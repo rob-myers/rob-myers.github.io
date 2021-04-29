@@ -5,12 +5,12 @@ import * as THREE from 'three';
 
 import * as Geom from 'model/geom';
 import { geom } from 'model/geom.service';
-import { testNever, truncate, Deferred, pause } from 'model/generic.model';
+import { testNever, truncate, Deferred, pause, deepClone } from 'model/generic.model';
 import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
 import { NamedFunction, CoreVar } from './var.model';
-import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRead } from './io/io.model';
+import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRead, redirectNode } from './io/io.model';
 import { createKillError as killError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import useSession, { ProcessStatus } from 'store/session.store';
@@ -18,6 +18,7 @@ import { ansiBlue, ansiBrown, ansiReset, ansiWhite } from './tty.xterm';
 
 import { StageKeyEvent, StageMeta } from 'model/stage/stage.model';
 import useStage from 'store/stage.store';
+import { parseService } from './parse/parse.service';
 
 const commandKeys = {
   /** Wait for a stage to be ready */
@@ -345,10 +346,7 @@ class CmdService {
   async launchFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
     const cloned = cloneParsed(namedFunc.node);
     const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
-    Object.assign(cloned.meta, {
-      ...node.meta,
-      ppid: node.meta.pid,
-    } as Sh.BaseMeta);
+    Object.assign(cloned.meta, { ...node.meta, ppid: node.meta.pid } as Sh.BaseMeta);
     await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
 
@@ -364,6 +362,15 @@ class CmdService {
         setTimeout(resolve, seconds * 1000);
         useSession.api.addCleanup(meta, () => reject(killError(meta)));
       }),
+      spawn: async (command: string) => {
+        const { ttyShell } = useSession.api.getSession(meta.sessionKey);
+        const parsed = Object.assign(parseService.parse(command), { meta: deepClone(meta) });
+        const device = useSession.api.createSinkDevice(meta.sessionKey, `pid-${meta.pid}`);
+        redirectNode(parsed, { 1: device.key });
+        await ttyShell.spawn(parsed);
+        useSession.api.removeDevice(device.key);
+        return device.items.slice();
+      },
       /** Trick to provide local variables via destructuring */
       _: {},
     };

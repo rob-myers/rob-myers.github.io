@@ -4,7 +4,7 @@ import safeJsonStringify from 'safe-json-stringify';
 
 import { last } from 'model/generic.model';
 import useSession, { ProcessStatus } from 'store/session.store';
-import { NamedFunction, varRegex } from './var.model';
+import { NamedFunction } from './var.model';
 import { createKillError, expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';

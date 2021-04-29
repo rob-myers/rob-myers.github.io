@@ -20,11 +20,23 @@ export const preloadedFunctions = {
 
   cursor: `get stage.internal.cursorGroup.position`,
  
-  // TODO read from stdin
-  light: `call '({ stage, use: {THREE, geom} }, x = 0, y = 0, z = 0) => {
-    const position = new THREE.Vector3(...[x, y, z].map(Number));
-    const light = geom.createSpotLight(position);
-    stage.light.add(light);
+  light: `run '({ read, spawn, _: {msg, msgs = []} }, { stage, use: {THREE, geom} }, ...args) {
+    while (msg = await read()) msgs.push(msg);
+    if (!msgs.length && !args[0]) {
+      yield* await spawn("ls stage.light");
+    } else if (msgs.length) {
+      for (const { x, y, z } of msgs) {
+        const position = new THREE.Vector3(x, y, 2);
+        const light = geom.createSpotLight(position);
+        stage.light.add(light);
+      }
+    } else if (args[0] === "rm") {
+      for (const arg of args.slice(1)) {
+        delete stage.light[arg];
+      }
+    } else {
+      // TODO light "x => x.position.y = 2" light1
+    }
 }' "$@"`,  
   /**
    * TODO redo
@@ -81,8 +93,8 @@ key | run '({ read, _: {msg} }, { stage: { opts, sel, poly }, use: {THREE, Geom,
         break;
       case "Escape":
         sel.locked = false;
-        sel.localWall = [];
         sel.localBounds = new Geom.Rect(0, 0, 0, 0);
+        [sel.localWall, sel.localObs] = [[], []];
         break;
       case "c":
         if (msg.metaKey) {
@@ -134,8 +146,7 @@ key | run '({ read, _: {msg} }, { stage: { opts, sel, poly }, use: {THREE, Geom,
         break;
       case "z":
         if (msg.metaKey) {
-          poly.wall = poly.prevWall;
-          poly.obs = poly.prevObs;
+          [poly.wall, poly.obs] = [poly.prevWall, poly.prevObs];
         }
         break;
     }

@@ -9,6 +9,7 @@ import { TtyShell } from 'model/sh/tty.shell';
 import { NamedFunction } from 'model/sh/var.model';
 import { FifoDevice } from 'model/sh/io/fifo.device';
 import { VarDevice, VarDeviceMode } from 'model/sh/io/var.device';
+import { SinkDevice } from 'model/sh/io/sink.device';
 import { BaseMeta, FileWithMeta } from 'model/sh/parse/parse.model';
 import { srcService } from 'model/sh/parse/src.service';
 import { NullDevice } from 'model/sh/io/null.device';
@@ -31,7 +32,8 @@ export type State = {
       posPositionals?: string[];
     }) => ProcessMeta;
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
-    createVarDevice: (sessionKey: string, varName: string, mode: VarDeviceMode) => VarDevice;
+    createSinkDevice: (sessionKey: string, key: string) => SinkDevice;
+    createVarDevice: (sessionKey: string, varPath: string, mode: VarDeviceMode) => VarDevice;
     ensureSession: (sessionKey: string, env: Record<string, any>) => Session;
     ensurePersisted: (sessionKey: string) => PersistedSession;
     getFunc: (sessionKey: string, funcName: string) => NamedFunction | undefined;
@@ -159,9 +161,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       return get().session[sessionKey];
     },
 
+    createSinkDevice(sessionKey, key) {
+      const device = new SinkDevice(`${key}@${sessionKey}`);
+      return get().device[device.key] = device;
+    },
+
     createVarDevice(sessionKey, varPath, mode) {
-      const varDevice = new VarDevice(sessionKey, varPath, mode);
-      return get().device[varDevice.key] = varDevice;
+      const device = new VarDevice(sessionKey, varPath, mode);
+      return get().device[device.key] = device;
     },
 
     ensureSession: (sessionKey, env) => {

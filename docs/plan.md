@@ -30,12 +30,9 @@ Main focus is:
    - ✅ remove `stage.opts.background`
 
 - Can add/remove lights via CLI
-   > Current approach (WIP)
-   > `light 0 0 2`
-   > `rm stage.light.light1`
-   - Can list: `light`
-   - Can add: `cursor | light`
-   - Can remove: `light rm light1`
+   - ✅ Can list: `light`
+   - ✅ Can add: `cursor | light`
+   - ✅ Can remove: `light rm light1`
    - Can modify: `light 'l => l.position.x += 1' light1`
 - ✅ Add `stage.opts.ambientLight`
 
@@ -44,6 +41,7 @@ Main focus is:
 
 - ✅ Add builtins `true` and `false`
 - ✅ Implement `IfClause` in shell
+- ✅ Can `spawn()` instead `run`
 - Add `xbcopy` i.e. copy to clipboard
 - Can output serialized stage and reload from text
 - Can reset stage
