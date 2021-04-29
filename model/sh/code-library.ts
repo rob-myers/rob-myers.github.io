@@ -5,7 +5,7 @@ export const preloadedFunctions = {
   /** Backticks must be escaped */
   jarg: `call "() => {
     try { return Function('_', \\\`return \${1:-}\\\` )(); }
-    catch { return \\\`$1\`; }
+    catch { return \\\`$1\\\`; }
 }"
 `,
   reduce: `sponge | {
