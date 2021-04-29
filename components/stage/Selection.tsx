@@ -58,7 +58,7 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
         scale.set(0, 0, 1);
       } else if (ptrDown.current && key === 'pointerup') {
         ptrDown.current = false;
-        // if (Geom.Rect.fromPoints(position, point).area < 0.002 * 0.002) {
+        // if (Math.abs(position.x - point.x) < 0.01 && Math.abs(position.y - point.y) < 0.01) {
         //   return scale.set(0, 0, 1);
         // }
         const ptr = point.clone();
