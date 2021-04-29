@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { geom } from "model/geom.service";
 import { StageLightLookup, StageOpts, StagePoly } from "model/stage/stage.model";
@@ -8,25 +8,33 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
   const wallsBase = useRef<THREE.Mesh>(null);
   const obstructions = useRef<THREE.Mesh>(null);
   const navigable = useRef<THREE.Mesh>(null);
-  const lights = useRef<THREE.Group>(null);
   const pointLight = useRef<THREE.PointLight>(null);
+
+  const updateLighting = useCallback(() => {
+    pointLight.current!.shadow.needsUpdate = true;
+    updateShadowMap();
+  }, []);
 
   useEffect(() => {
     navigable.current!.geometry = geom.polysToGeometry(poly.nav);
     obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.1);
     walls.current!.geometry = geom.polysToWalls(poly.wall, opts.wallHeight);
     wallsBase.current!.geometry = walls.current!.geometry;
-    pointLight.current!.shadow.needsUpdate = true;
-    updateShadowMap();
-  }, [poly, opts.wallHeight]);
+    updateLighting();
+  }, [poly, opts.wallHeight, opts.wallOpacity]);
 
-  const Lights = useMemo(() => 
-    <group name="Lights" ref={lights}>
+  useEffect(() => {
+    updateLighting();
+  }, [opts.wallOpacity]);
+
+  const Lights = useMemo(() => {
+    pointLight.current && updateLighting();
+    return <group name="Lights">
       {Object.values(light).map(({ key, light }) => (
         <primitive key={key} object={light} />
       ))}
-    </group>  
-  , [light]);
+    </group>;
+  }, [light]);
 
   return (
     <group>
@@ -52,7 +60,7 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
         scale={[1, 1, Math.sign(opts.wallOpacity)] }
         >
         <meshBasicMaterial
-          color={opts.wallOpacity ? "#000" : "#888"}
+          color={opts.wallOpacity ? "#000" : "#777"}
           side={THREE.DoubleSide} // Fix shadows
         />
       </mesh>
@@ -87,7 +95,7 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
         position={[1, 1, 2]}
         intensity={3}
         decay={1.5}
-        distance={3}
+        distance={4}
         castShadow
         shadow-mapSize-height={2048}
         shadow-mapSize-width={2048}
