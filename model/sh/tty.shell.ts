@@ -189,10 +189,15 @@ export class TtyShell implements Device {
 
   private preloadFuncsVars() {
     for (const [funcName, funcBody] of Object.entries(preloadedFunctions)) {
-      const parsed = parseService.parse(`${funcName} () ${funcBody.trim()}`);
-      const parsedBody = (parsed.Stmts[0].Cmd as Sh.FuncDecl).Body;
-      const wrappedBody = wrapInFile(parsedBody);
-      useSession.api.addFunc(this.sessionKey, funcName, wrappedBody);
+      try {
+        const parsed = parseService.parse(`${funcName} () ${funcBody.trim()}`);
+        const parsedBody = (parsed.Stmts[0].Cmd as Sh.FuncDecl).Body;
+        const wrappedBody = wrapInFile(parsedBody);
+        useSession.api.addFunc(this.sessionKey, funcName, wrappedBody);
+      } catch (e) {
+        console.error(`Failed to preload function: ${funcName}`);
+        console.error(e);
+      }
     }
     for (const [varName, varValue] of Object.entries(preloadedVariables)) {
       useSession.api.setVar(this.sessionKey, varName, varValue);
