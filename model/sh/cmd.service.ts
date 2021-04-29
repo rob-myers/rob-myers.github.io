@@ -193,7 +193,7 @@ class CmdService {
           const keys = Object.keys(obj).sort();
           let items = [] as string[];
           if (opts.l) {
-            const metas = keys.map(x => Array.isArray(obj[x]) ? 'Array' : typeof obj[x]);
+            const metas = keys.map(x => obj[x]?.constructor.name || (obj[x] === null ? 'null' : 'undefined'));
             const metasWidth = Math.max(...metas.map(x => x.length));
             items = keys.map((x, i) => `${ansiBrown}${metas[i].padEnd(metasWidth)}${ansiWhite} ${x}`);
           } else if (opts[1]) {
