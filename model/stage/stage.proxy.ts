@@ -1,3 +1,4 @@
+import { firstAvailableInteger } from "model/generic.model";
 import * as Geom from "model/geom";
 import { geom } from "model/geom.service";
 import useStage from "store/stage.store";
@@ -10,7 +11,7 @@ import { StageLight, StageMeta, stageNavInset, StageOpts, StagePoly, StageSelect
 export function createStageProxy(stageKey: string) {
   const stage = () => useStage.api.getStage(stageKey);
   return new Proxy({} as StageMeta, {
-    get(_, key: keyof StageMeta | 'cursor') {
+    get(_, key: keyof StageMeta) {
       if (key === 'poly') {
         return new Proxy({} as StagePoly, {
           get(_, key: keyof StagePoly) {
@@ -72,12 +73,18 @@ export function createStageProxy(stageKey: string) {
           ownKeys: () => Object.keys(stage().opts),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
-      } else if (key === 'cursor') {
-        return stage().internal.cursorGroup.position;
       } else if (key === 'light') {
         return new Proxy({} as StageLight, {
-          get(_, key: string | 'update') {
-            if (key === 'update') {
+          get(_, key: string | 'add' | 'update') {
+            if (key === 'add') {
+              return (light: THREE.SpotLight) => {
+                light.name = `light${firstAvailableInteger(
+                  Object.keys(stage().light).filter(x => /^light\d+$/)
+                    .map(x => Number(x.slice(5)))
+                  )}`;
+                useStage.api.updateLight(stageKey, { [light.name]: light });
+              };
+            } else if (key === 'update') {
               return () => useStage.api.updateLight(stageKey, {});
             }
             return stage().light[key];
@@ -94,14 +101,12 @@ export function createStageProxy(stageKey: string) {
           },
         });
       }
-
       return stage()[key];
     },
     set(_, _key: keyof StageMeta, _value: any) {
       throw Error('Cannot set top-level key of stage');
     },
-    ownKeys: () => Object.keys(stage())
-      .concat('cursor'),
+    ownKeys: () => Object.keys(stage()),
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
     deleteProperty: (_, _key: keyof StageMeta) => {
       throw Error('Cannot delete top-level key of stage');

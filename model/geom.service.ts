@@ -131,13 +131,14 @@ class GeomService {
     });
   }
 
-  createSpotLight(name: string, position: THREE.Vector3) {
+  createSpotLight(position: THREE.Vector3) {
     const light = new THREE.SpotLight;
-    light.name = name;
     light.position.copy(position);
+    light.target.position.copy(position).setZ(0);
     light.intensity = 3;
     light.decay = 1.5;
     light.distance = 3;
+    light.angle = Math.PI / 4;
     light.castShadow = true;
     light.shadow.mapSize.set(2048, 2048);
     light.shadow.autoUpdate = false;

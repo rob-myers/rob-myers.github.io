@@ -47,7 +47,7 @@ export interface StageInternal {
 }
 
 /** Key-value storage for internal use */
-export type StageExtra = Record<string, any> & {
+export interface StageExtra {
   /** Data url */
   canvasPreview?: string;
   /** Initial camera position */

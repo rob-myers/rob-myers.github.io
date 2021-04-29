@@ -32,9 +32,9 @@ Main focus is:
 - Can add/remove lights via CLI
    > Current approach (WIP)
    > `light 0 0 2`
-   > `rm stage.light.light_1619692215755`
-
+   > `rm stage.light.light1`
 - Add `stage.opts.ambientLight`
+
 - Can paint polygons using CLI
 - Work towards character
 
