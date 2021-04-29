@@ -202,7 +202,7 @@ class CmdService {
           const keys = Object.keys(obj).sort();
           let items = [] as string[];
           if (opts.l) {
-            const metas = keys.map(x => obj[x]?.constructor.name || (obj[x] === null ? 'null' : 'undefined'));
+            const metas = keys.map(x => obj[x]?.constructor?.name || (obj[x] === null ? 'null' : 'undefined'));
             const metasWidth = Math.max(...metas.map(x => x.length));
             items = keys.map((x, i) => `${ansiBrown}${metas[i].padEnd(metasWidth)}${ansiWhite} ${x}`);
           } else if (opts[1]) {
@@ -376,13 +376,22 @@ class CmdService {
     };
   }
 
-  private provideStageAndVars(meta: Sh.BaseMeta): { stage: StageMeta } & Record<string, any> {
+  private provideStageAndVars(meta: Sh.BaseMeta): {
+    stage: StageMeta;
+    use: any;
+  } & Record<string, any> {
     const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
-    return {
-      ...useSession.api.getSession(meta.sessionKey).var,
+    const varLookup = useSession.api.getSession(meta.sessionKey).var;
+    return new Proxy({
+      ...varLookup,
       stage: createStageProxy(stageKey),
       use: this.useProxy,
-    };
+    }, {
+      deleteProperty: (_, key: string) => {
+        if (key === 'stage' || key === 'use') return false;
+        return delete varLookup[key];
+      },
+    });
   }
 
   private async *readLoop(
