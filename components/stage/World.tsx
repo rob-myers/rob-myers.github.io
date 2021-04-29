@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import * as THREE from "three";
 import { geom } from "model/geom.service";
-import { StageLightLookup, StageOpts, StagePoly } from "model/stage/stage.model";
+import { StageLight, StageOpts, StagePoly } from "model/stage/stage.model";
 
 const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
   const walls = useRef<THREE.Mesh>(null);
@@ -30,8 +30,8 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
   const Lights = useMemo(() => {
     pointLight.current && updateLighting();
     return <group name="Lights">
-      {Object.values(light).map(({ key, light }) => (
-        <primitive key={key} object={light} />
+      {Object.values(light).map((light) => (
+        <primitive key={light.uuid} object={light} />
       ))}
     </group>;
   }, [light]);
@@ -109,7 +109,7 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
 
 interface Props {
   opts: StageOpts;
-  light: StageLightLookup;
+  light: StageLight;
   poly: StagePoly;
   updateShadowMap: () => void;
 }

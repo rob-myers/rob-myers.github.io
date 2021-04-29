@@ -134,7 +134,7 @@ class GeomService {
   createSpotLight(name: string, position: THREE.Vector3) {
     const light = new THREE.SpotLight;
     light.name = name;
-    light.position = position.clone();
+    light.position.copy(position);
     light.intensity = 3;
     light.decay = 1.5;
     light.distance = 3;

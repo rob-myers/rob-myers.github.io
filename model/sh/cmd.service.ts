@@ -85,7 +85,7 @@ class CmdService {
         break;
       }
       case 'call': {
-        const func = Function('_', `return ${args[0]}`);
+        const func = Function('__', `return ${args[0]}`);
         yield await func()(
           this.provideStageAndVars(meta),
           ...args.slice(1),
@@ -259,7 +259,8 @@ class CmdService {
         break;
       }
       case 'rm': {
-        const root = useSession.api.getSession(meta.sessionKey).var;
+        // const root = useSession.api.getSession(meta.sessionKey).var;
+        const root = this.provideStageAndVars(meta);
         for (const arg of args) Function('__', `delete __.${arg}`)(root);
         break;
       }
@@ -267,7 +268,7 @@ class CmdService {
       case 'run': {
         const func = Function('_', `return async function *generator ${args[0]}`);
         yield* func()(
-          this.provideJsApi(meta),
+          this.provideRunApi(meta),
           this.provideStageAndVars(meta),
           ...args.slice(1),
         );
@@ -339,7 +340,7 @@ class CmdService {
     await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
 
-  private provideJsApi(meta: Sh.BaseMeta) {
+  private provideRunApi(meta: Sh.BaseMeta) {
     return {
       read: async () => {
         const result = await this.readOnce(meta);

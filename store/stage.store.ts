@@ -25,7 +25,7 @@ export type State = {
     getStage: (stageKey: string) => Stage.StageMeta;
     persist: (stageKey: string) => void;
     removeStage: (stageKey: string) => void;
-    updateLight: (stageKey: string, updates: Stage.StageLightLookup) => void;
+    updateLight: (stageKey: string, updates: Partial<Stage.StageLight>) => void;
     updateOpts: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
     updatePoly: (stageKey: string, updates: Updates<Stage.StagePoly>) => void;
     updateSel: (stageKey: string, updates: Updates<Stage.StageSelection>) => void;
@@ -77,9 +77,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         s.poly.prevObs = s.poly.obs.map(x => x.clone());
         s.poly.nav = geom.navFromUnnavigable(s.poly.wall.concat(s.poly.obs), Stage.stageNavInset);
 
-        s.light = mapValues(light, ({ key, position }) => ({ key,
-          light: geom.createSpotLight(key, new THREE.Vector3(...position)),
-        }));
+        s.light = mapValues(light, ({ name, position }) =>
+          geom.createSpotLight(name, new THREE.Vector3(...position)),
+        );
         
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
@@ -132,8 +132,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             wall: poly.wall.map(x => x.json),
             obs: poly.obs.map(x => x.json),
           },
-          light: mapValues(light, ({ key, light: {position: p} }) => ({
-            key,
+          light: mapValues(light, ({ name, position: p }) => ({
+            name,
             position: [p.x, p.y, p.z],
           })),
         }, persist),
@@ -145,9 +145,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     })),
 
     updateLight: (stageKey, updates) => {
-      api.updateStage(stageKey, ({ light }) => ({
-        light: { ...light, ...updates },
-      }));
+      api.updateStage(stageKey, ({ light }) => {
+        const next = {...light}; // Can delete by setting `undefined`
+        Object.entries(updates).forEach(([name, light]) => light ? (next[name] = light) : delete next[name]);
+        return {light: next};
+      });
     },
     updateOpts: (stageKey, updates) => {
       api.updateStage(stageKey, ({ opts }) => ({

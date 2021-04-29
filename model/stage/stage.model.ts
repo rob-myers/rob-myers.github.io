@@ -18,7 +18,7 @@ export type StageMeta = {
   /** Polygons e.g. `wall` */
   poly: StagePoly;
   /** Lights */
-  light: StageLightLookup;
+  light: StageLight;
 };
 
 export interface StageMetaJson {
@@ -30,7 +30,7 @@ export interface StageMetaJson {
     | 'wall'
     | 'obs'
   ), Geom.PolygonJson[]>;
-  light: KeyedLookup<StageLightJson>;
+  light: StageLightJson;
 }
 
 export interface StageInternal {
@@ -94,8 +94,16 @@ export type StagePoly = Record<(
   | 'nav'
 ), Geom.Polygon[]>;
 
+export interface StageLight { 
+  [name: string]: THREE.SpotLight;
+};
 
-export type StageLightLookup = KeyedLookup<StageLight>;
+export interface StageLightJson {
+  [name: string]: {
+    name: string;
+    position: Triple<number>;
+  }
+}
 
 /** Serializable `StageSelection` */
 interface StageSelectionJson {
@@ -192,13 +200,3 @@ export const initCursorPos: Triple<number> = [0, 0, 0];
 export const initStageBounds = new Geom.Rect(0, 0, 0, 0);
 
 export const stageNavInset = 0.03;
-
-export interface StageLight {
-  /** This is light.name */
-  key: string;
-  light: THREE.SpotLight;
-}
-export interface StageLightJson {
-  key: string;
-  position: Triple<number>;
-}

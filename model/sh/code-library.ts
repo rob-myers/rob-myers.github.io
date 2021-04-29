@@ -18,7 +18,12 @@ export const preloadedFunctions = {
   keys: `map Object.keys`,
   cat: `get "$@" | split`,
  
-  light: `echo foo`,  
+  light: `call '({ stage, use: {THREE, geom} }, x = 0, y = 0, z = 0) => {
+    const name = "light_" + Date.now();
+    const position = new THREE.Vector3(...[x, y, z].map(Number));
+    const light = geom.createSpotLight(name, position);
+    stage.light[name] = light;
+}' "$@"`,  
   /**
    * TODO redo
    */

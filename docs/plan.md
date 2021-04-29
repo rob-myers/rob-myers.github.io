@@ -30,6 +30,10 @@ Main focus is:
    - ✅ remove `stage.opts.background`
 
 - Can add/remove lights via CLI
+   > Current approach (WIP)
+   > `light 0 0 2`
+   > `rm stage.light.light_1619692215755`
+
 - Add `stage.opts.ambientLight`
 - Can paint polygons using CLI
 - Work towards character
@@ -82,6 +86,7 @@ get stage.extra.cursor.position | map 'p => p.set(1, 1)'
 get stage.cursor | map 'p => p.set(1, 1)'
 get stage.sel.bounds
 call '(_, ...args) => args' 1 2 3
+call '({ use: {THREE} }) => new THREE.SpotLight'
 ```
 
 ### Three.js Animation example
