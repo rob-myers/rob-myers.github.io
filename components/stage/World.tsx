@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { geom } from "model/geom.service";
 import { StageLight, StageOpts, StagePoly } from "model/stage/stage.model";
@@ -14,10 +14,10 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
     Object.values(light).forEach(light => light.shadow.needsUpdate = true);
     updateShadowMap();
     return <group name="Lights">
-      {Object.values(light).map((light) => <>
-        <primitive key={light.name} object={light} />
-        {light.target && <primitive key={`${light.name}.dst`} object={light.target} />}
-      </>)}
+      {Object.values(light).map((light) => [
+        <primitive key={light.name} object={light} />,
+        light.target && <primitive key={`${light.name}.dst`} object={light.target} />
+      ])}
     </group>;
   }, [light, lightsAt]);
 
