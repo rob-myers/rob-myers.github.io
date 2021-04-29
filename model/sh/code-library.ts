@@ -2,11 +2,11 @@ export const preloadedFunctions = {
   range: `call '(_, x) => [...Array(Number(x))].map((_, i) => i)' "$1"`,
   seq: `range "$1" | split`,
   filter: `map -x "fn = $1; return (...args) => fn(...args) ? args[0] : undefined"`,
-  /** We don't support backticks in the argument */
-  jarg: `call '() => {
-    try { return Function("_", \`return '\${1:-\\"\\"}'\` )(); }
-    catch { return JSON.stringify(\`'$1'\`); }
-}'
+  /** Backticks must be escaped */
+  jarg: `call "() => {
+    try { return Function('_', \\\`return \${1:-}\\\` )(); }
+    catch { return \\\`$1\`; }
+}"
 `,
   reduce: `sponge | {
   test '/\\S/' "$2" \\
@@ -18,6 +18,10 @@ export const preloadedFunctions = {
   keys: `map Object.keys`,
   cat: `get "$@" | split`,
  
+  light: `echo foo`,  
+  /**
+   * TODO redo
+   */
   sel: `run '({ read, use: {Geom} }, { stage: {sel} }) {
     const input = await read();
     if (input) {
@@ -43,16 +47,12 @@ key | run '({ read, use: {THREE, Geom, geom}, _: {msg} }, { stage: { opts, sel, 
 
     switch (msg.key) {
       case "-":
-      case "+": {
-        const delta = msg.key === "-" ? 0.1 : -0.1;
-        if (sel.locked) {
-          sel.wall = sel.wall.flatMap(x => x.createInset(delta));
-          sel.obs = sel.obs.flatMap(x => x.createInset(delta));
-        } else {
+      case "+":
+        if (!sel.locked) {
+          const delta = msg.key === "-" ? 0.1 : -0.1;
           sel.localBounds = sel.localBounds.clone().inset(delta);
         }
         break;
-      }
       case "Backspace":
         if (sel.locked) {
           poly.wall = geom.cutOut(sel.wall, poly.wall);
