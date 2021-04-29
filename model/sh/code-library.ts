@@ -60,16 +60,12 @@ key | run '({ read, _: {msg} }, { stage: { opts, sel, poly }, use: {THREE, Geom,
           sel.localBounds = sel.localBounds.clone().inset(delta);
         }
         break;
-      case "Backspace":
-        if (sel.locked) {
-          poly.wall = geom.cutOut(sel.wall, poly.wall);
-          poly.obs = geom.cutOut(sel.obs, poly.obs);
-        } else {
-          const delta = Geom.Polygon.from(sel.bounds);
-          poly.wall = geom.cutOut([delta], poly.wall);
-          poly.obs = geom.cutOut([delta], poly.obs);
-        }
+      case "Backspace": {
+        const delta = Geom.Polygon.from(sel.bounds);
+        poly.wall = geom.cutOut([delta], poly.wall);
+        poly.obs = geom.cutOut([delta], poly.obs);
         break;
+      }
       case "w":
       case "s":
         if (!sel.locked && !msg.metaKey) {
@@ -89,15 +85,22 @@ key | run '({ read, _: {msg} }, { stage: { opts, sel, poly }, use: {THREE, Geom,
         sel.localBounds = new Geom.Rect(0, 0, 0, 0);
         break;
       case "c":
+        if (msg.metaKey) {
+          const deltaWalls = geom.intersectPolysRect(poly.wall, sel.bounds);
+          const deltaObs = geom.intersectPolysRect(poly.obs, sel.bounds);
+          [sel.wall, sel.obs, sel.locked] = [deltaWalls, deltaObs, true];
+        }
+        break;
       case "x":
         if (msg.metaKey && !sel.locked) {
           const deltaWalls = geom.intersectPolysRect(poly.wall, sel.bounds);
           const deltaObs = geom.intersectPolysRect(poly.obs, sel.bounds);
           [sel.wall, sel.obs, sel.locked] = [deltaWalls, deltaObs, true];
-          if (msg.key === "x") {
-            poly.wall = geom.cutOut(deltaWalls, poly.wall);
-            poly.obs = geom.cutOut(deltaObs, poly.obs);
-          }
+          poly.wall = geom.cutOut(deltaWalls, poly.wall);
+          poly.obs = geom.cutOut(deltaObs, poly.obs);
+        } else if (msg.metaKey && sel.locked) {
+          poly.wall = geom.cutOut(sel.wall, poly.wall);
+          poly.obs = geom.cutOut(sel.obs, poly.obs);
         } else if (!msg.metaKey && sel.locked) {
           const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
             .setPosition(0, 2 * sel.localBounds.cy, 0);
