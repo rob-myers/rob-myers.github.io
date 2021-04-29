@@ -131,6 +131,19 @@ class GeomService {
     });
   }
 
+  createSpotLight(name: string, position: THREE.Vector3) {
+    const light = new THREE.SpotLight;
+    light.name = name;
+    light.position = position.clone();
+    light.intensity = 3;
+    light.decay = 1.5;
+    light.distance = 3;
+    light.castShadow = true;
+    light.shadow.mapSize.set(2048, 2048);
+    light.shadow.autoUpdate = false;
+    return light;
+  }
+
   /** Create a unit square in XY plane whose bottom-left is the origin */
   createSquareGeometry() {
     return this.polysToGeometry([Geom.Polygon.from(

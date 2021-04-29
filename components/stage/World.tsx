@@ -22,19 +22,8 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
 
   const Lights = useMemo(() => 
     <group name="Lights" ref={lights}>
-      {Object.values(light).map(({ key, position }) => (
-        <pointLight
-          key={key}
-          position={position}
-          intensity={3}
-          decay={1.5}
-          distance={4}
-          castShadow
-          shadow-mapSize-height={2048}
-          shadow-mapSize-width={2048}
-          shadow-autoUpdate={false}
-          // shadow-bias={-0.01}
-        />
+      {Object.values(light).map(({ key, light }) => (
+        <primitive key={key} object={light} />
       ))}
     </group>  
   , [light]);
@@ -48,7 +37,7 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
 
       <mesh name="Walls" ref={walls} castShadow>
         <meshBasicMaterial
-          side={THREE.FrontSide}
+          side={THREE.DoubleSide} // Fix shadows
           color="#000"
           transparent
           opacity={opts.wallOpacity}
@@ -61,8 +50,11 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
         ref={obstructions}
         castShadow
         scale={[1, 1, Math.sign(opts.wallOpacity)] }
-      >
-        <meshBasicMaterial color={opts.wallOpacity ? "#000" : "#888"} />
+        >
+        <meshBasicMaterial
+          color={opts.wallOpacity ? "#000" : "#888"}
+          side={THREE.DoubleSide} // Fix shadows
+        />
       </mesh>
 
       <mesh
@@ -90,17 +82,17 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
 
       {Lights}
 
-      <pointLight
+      <spotLight
         ref={pointLight}
         position={[1, 1, 2]}
         intensity={3}
         decay={1.5}
-        distance={4}
+        distance={3}
         castShadow
         shadow-mapSize-height={2048}
         shadow-mapSize-width={2048}
         shadow-autoUpdate={false}
-        // shadow-bias={-0.01}
+        // shadow-bias={-0.001}
       />
 
     </group>

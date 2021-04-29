@@ -194,8 +194,9 @@ export const initStageBounds = new Geom.Rect(0, 0, 0, 0);
 export const stageNavInset = 0.03;
 
 export interface StageLight {
+  /** This is light.name */
   key: string;
-  position: THREE.Vector3;
+  light: THREE.SpotLight;
 }
 export interface StageLightJson {
   key: string;

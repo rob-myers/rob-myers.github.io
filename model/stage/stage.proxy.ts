@@ -3,19 +3,22 @@ import { geom } from "model/geom.service";
 import useStage from "store/stage.store";
 import { StageMeta, stageNavInset, StageOpts, StagePoly, StageSelection } from "./stage.model";
 
+/**
+ * TODO one proxy per stage?
+ * TODO cache inner proxies too?
+ */
 export function createStageProxy(stageKey: string) {
+  const stage = useStage.api.getStage(stageKey);
   return new Proxy({} as StageMeta, {
     get(_, key: keyof StageMeta | 'cursor') {
-      const stage = useStage.api.getStage(stageKey);
-
       if (key === 'poly') {
         return new Proxy({} as StagePoly, {
           get(_, key: keyof StagePoly) {
-            return useStage.api.getStage(stageKey).poly[key];
+            return stage.poly[key];
           },
           set(_, key: keyof StagePoly, value: any) {
             if (key === 'wall' || key === 'obs') {
-              const { poly } = useStage.api.getStage(stageKey);
+              const { poly } = stage;
               poly[key === 'wall' ? 'prevWall' : 'prevObs'] = poly[key];
               poly[key] = value;
               useStage.api.updatePoly(stageKey, {
@@ -26,25 +29,25 @@ export function createStageProxy(stageKey: string) {
             }
             return true;
           },
-          ownKeys: () => Object.keys(useStage.api.getStage(stageKey).poly),
+          ownKeys: () => Object.keys(stage.poly),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'sel') {
         return new Proxy({} as StageSelection, {
           get(_, key: keyof StageSelection | 'bounds' | 'wall' | 'obs') {
             if (key === 'bounds') {// Provide world bounds
-              const { localBounds, group: { matrix } } = useStage.api.getStage(stageKey).sel;
+              const { localBounds, group: { matrix } } = stage.sel;
               return geom.applyMatrixRect(matrix, localBounds.clone()).precision(1);
             } else if (key === 'wall' || key === 'obs') {// Provide world polygons
-              const { localWall, localObs, group: { matrix } } = useStage.api.getStage(stageKey).sel;
+              const { localWall, localObs, group: { matrix } } = stage.sel;
               return (key === 'wall' ? localWall : localObs)
                 .map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
             }
-            return useStage.api.getStage(stageKey).sel[key];
+            return stage.sel[key];
           },
           set(_, key: keyof StageSelection | 'wall' | 'obs', value: any) {
             if (key === 'wall' || key === 'obs') {// Given world polygons, set untransformed polygons
-              const { group } = useStage.api.getStage(stageKey).sel;
+              const { group } = stage.sel;
               const matrix = group.matrix.clone().invert();
               const next = (value as Geom.Polygon[]).map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
               useStage.api.updateSel(stageKey, key === 'wall' ? { localWall: next } : { localObs: next });
@@ -53,24 +56,26 @@ export function createStageProxy(stageKey: string) {
             useStage.api.updateSel(stageKey, { [key]: value });
             return true;
           },
-          ownKeys: () => Object.keys(useStage.api.getStage(stageKey).sel)
+          ownKeys: () => Object.keys(stage.sel)
             .concat('bounds', 'wall', 'obs'),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'opts') {
         return new Proxy({} as StageOpts, {
           get(_, key: keyof StageOpts) {
-            return useStage.api.getStage(stageKey).opts[key];
+            return stage.opts[key];
           },
           set(_, key: string, value: any) {
             useStage.api.updateOpts(stageKey, { [key]: value });
             return true;
           },
-          ownKeys: () => Object.keys(useStage.api.getStage(stageKey).opts),
+          ownKeys: () => Object.keys(stage.opts),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
-      }  else if (key === 'cursor') {
+      } else if (key === 'cursor') {
         return stage.internal.cursorGroup.position;
+      } else if (key === 'light') {
+
       }
 
       return stage[key];
@@ -78,7 +83,7 @@ export function createStageProxy(stageKey: string) {
     set(_, _key: keyof StageMeta, _value: any) {
       throw Error('Cannot set top-level key of stage');
     },
-    ownKeys: () => Object.keys(useStage.api.getStage(stageKey))
+    ownKeys: () => Object.keys(stage)
       .concat('cursor'),
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
     deleteProperty: (_, _key: keyof StageMeta) => {

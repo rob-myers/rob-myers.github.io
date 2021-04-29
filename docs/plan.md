@@ -30,6 +30,7 @@ Main focus is:
    - ✅ remove `stage.opts.background`
 
 - Can add/remove lights via CLI
+- Add `stage.opts.ambientLight`
 - Can paint polygons using CLI
 - Work towards character
 
@@ -80,6 +81,7 @@ Issue related to shell
 get stage.extra.cursor.position | map 'p => p.set(1, 1)'
 get stage.cursor | map 'p => p.set(1, 1)'
 get stage.sel.bounds
+call '(_, ...args) => args' 1 2 3
 ```
 
 ### Three.js Animation example
