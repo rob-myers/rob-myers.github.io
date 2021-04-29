@@ -40,8 +40,6 @@ export interface StageInternal {
   controls?: PanZoomControls;
   /** Attached by Stage */
   scene?: THREE.Scene;
-  /** Auto-computed world bounds */
-  bounds: Geom.Rect;
   /** `Cursor` overwrites this */
   cursorGroup: THREE.Group;
 }
@@ -122,7 +120,6 @@ export function createStage(stageKey: string): StageMeta {
     key: stageKey,
     internal: {
       keyEvents: new Subject,
-      bounds: initStageBounds.clone(),
       cursorGroup: new THREE.Group,
       // ...Attached by components
     },
