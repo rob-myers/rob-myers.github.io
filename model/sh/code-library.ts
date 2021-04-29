@@ -9,9 +9,9 @@ export const preloadedFunctions = {
 }"
 `,
   reduce: `sponge | {
-  test '/\\S/' "$2" \\
-    && map "x => x.reduce($1, $( jarg "$2" ) )" \\
-    || map "x => x.reduce($1)"
+  if test '/\\S/' "$2"; then
+    map "x => x.reduce($1, $( jarg "$2" ) )"
+  else map "x => x.reduce($1)"; fi
 }
 `,
   pretty: `map '(x, { use: {stringify} }) => stringify(x)'`,
