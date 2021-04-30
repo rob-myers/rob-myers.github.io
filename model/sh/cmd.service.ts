@@ -139,15 +139,17 @@ class CmdService {
       }
       case 'help': {
         const { ttyShell } = useSession.api.getSession(meta.sessionKey);
-        yield `${ansiBrown}1) The following commands are supported:`;
+        yield `1) The following commands are supported:`;
         const commands = cliColumns(Object.keys(commandKeys), { width: ttyShell.xterm.xterm.cols }).split(/\r?\n/);
-        for (const line of commands) yield line;
-        yield `${ansiBrown}2) Use Ctrl-C to interrupt and Ctrl-L to clear screen.`
-        yield `${ansiBrown}3) View history via up/down or \`history\`.`
-        yield `${ansiBrown}4) Traverse input using Option-left/right and Ctrl-a/e.`
-        yield `${ansiBrown}5) Delete input using Ctrl-u/k.`
-        yield `${ansiBrown}6) You can copy and paste.`
-        yield `${ansiBrown}7) Pipes, command substitution and background processes are supported.`
+        for (const line of commands) yield `${ansiBrown}${line}`;
+        yield `2) To traverse the stage/variables run \`ls\` or e.g. \`ls stage.opts\`.`
+        yield `3) To view shell functions run \`declare\`.`
+        yield `4) Use Ctrl-C to interrupt and Ctrl-L to clear screen.`
+        yield `5) View history via up/down or \`history\`.`
+        yield `6) Traverse input using Option-left/right and Ctrl-a/e.`
+        yield `7) Delete input using Ctrl-w/u/k.`
+        yield `8) You can copy and paste.`
+        yield `9) Pipes, command substitution and background processes are supported.`
         break;
       }
       case 'history': {
