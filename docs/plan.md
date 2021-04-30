@@ -6,12 +6,6 @@ Main focus:
 
 ### TODO
 
-- Can construct wall meshes from selection
-   - ✅ Have `stage.poly.{wall,nav,obs}`
-   - ✅ Can paint into `stage.poly.wall`
-   - ✅ Can erase from `stage.poly.wall`
-   - ✅ `World` shows walls
-   - ✅ Have stage options `wallOpacity` and `wallHeight`
 - Simplify selection UI
    - ✅ Can clear via escape
    - ✅ Can lock via copy/cut
@@ -19,12 +13,6 @@ Main focus:
    - ✅ Can add/erase obstruction with undo/redo
    - locked ui icon
    - Review CLI function `sel`
-- Cleanup code
-   - ✅ remove `stage.opts.wallColor`
-   - ✅ remove Geom.Polygon.fromRect
-   - ✅ auto-track `prevWall` and `prevObs`
-   - ✅ only one selection key handler
-   - ✅ remove `stage.opts.background`
 
 - Can add/remove lights via CLI
    - ✅ Can list: `light`
@@ -33,8 +21,21 @@ Main focus:
    - Can modify: `light 'l => l.position.x += 1' light1`
 - ✅ Add `stage.opts.ambientLight`
 
+- Working towards character
+   - Design a character in blender e.g.
+      - https://www.youtube.com/watch?v=4OUYOKGl7x0&t=604s&ab_channel=GrantAbbitt
+   - Rig a character in blender e.g.
+      - https://www.youtube.com/watch?v=f2pTkW-1JkE&ab_channel=Blender
+      - https://www.youtube.com/watch?v=rcPema_ec08&ab_channel=3DBlenderTutorialsbyianscott888
+      - https://unboring.net/workflows/animation.html
+   - Walk cycle in blender https://www.youtube.com/watch?v=gFf5eGCjUUg&ab_channel=SebastianLague
+   - Have idle/walk/run on one character in blender
+   - Import into three.js e.g.
+      - https://www.youtube.com/watch?v=8n_v1aJmLmc
+   - Character controller e.g.
+      - https://www.youtube.com/watch?v=8n_v1aJmLmc
+
 - Can paint polygons using CLI
-- Work towards character
 
 - ✅ Add builtins `true` and `false`
 - ✅ Implement `IfClause` in shell
@@ -61,6 +62,20 @@ Main focus:
 
 ### Done
 
+- Cleanup code
+   - ✅ remove `stage.opts.wallColor`
+   - ✅ remove Geom.Polygon.fromRect
+   - ✅ auto-track `prevWall` and `prevObs`
+   - ✅ only one selection key handler
+   - ✅ remove `stage.opts.background`
+
+- Can construct wall meshes from selection
+   - ✅ Have `stage.poly.{wall,nav,obs}`
+   - ✅ Can paint into `stage.poly.wall`
+   - ✅ Can erase from `stage.poly.wall`
+   - ✅ `World` shows walls
+   - ✅ Have stage options `wallOpacity` and `wallHeight`
+
 - ✅ While locked can transform Selection, and apply on unlock.
 - ✅ Can lock `Selection` and transform via keys
 - ✅ Can mirror `Selection` x/y
@@ -80,7 +95,8 @@ Main focus:
 ## Issues
 
 Issue related to shell
-> https://github.com/mvdan/sh/issues/692
+> https://github.com/mvdan/sh/issues/699
+> ✅ https://github.com/mvdan/sh/issues/692
 
 
 ## Examples
@@ -117,3 +133,4 @@ Shift-d to duplicate
 Ctrl-R to loop cut (Edit mode)
 Alt-z for x-ray mode
 https://www.blendswap.com/blend/3639
+Cmd-RMB to add vertex (Edit Mode, Vertex)

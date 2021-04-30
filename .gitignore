@@ -38,6 +38,5 @@ babel.config.js
 next.config.js
 misc.config.js
 
-3d/*.blend
-3d/*.blend1
-3d/*.gltf
+3d/*
+!3d/img/*.png
