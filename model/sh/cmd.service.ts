@@ -33,6 +33,8 @@ const commandKeys = {
   false: true,
   /** Get each arg from stageAndVars */
   get: true,
+  /** List commands */
+  help: true,
   /** List previous commands */
   history: true,
   /** Stream key events from stage $STAGE_KEY */
@@ -133,6 +135,19 @@ class CmdService {
         } catch (e) {
           throw new ShError(`${e}`.replace('__.', ''), 1);
         }
+        break;
+      }
+      case 'help': {
+        const { ttyShell } = useSession.api.getSession(meta.sessionKey);
+        yield `${ansiBrown}1) The following commands are supported:`;
+        const commands = cliColumns(Object.keys(commandKeys), { width: ttyShell.xterm.xterm.cols }).split(/\r?\n/);
+        for (const line of commands) yield line;
+        yield `${ansiBrown}2) Use Ctrl-C to interrupt and Ctrl-L to clear screen.`
+        yield `${ansiBrown}3) View history via up/down or \`history\`.`
+        yield `${ansiBrown}4) Traverse input using Option-left/right and Ctrl-a/e.`
+        yield `${ansiBrown}5) Delete input using Ctrl-u/k.`
+        yield `${ansiBrown}6) You can copy and paste.`
+        yield `${ansiBrown}7) Pipes, command substitution and background processes are supported.`
         break;
       }
       case 'history': {

@@ -1,11 +1,8 @@
-## Project
+## Birdseye CLI
 
-Our project will be called _Topdown CLI_ or similar.
-   > Interactive sessions for three.js
-
-Main focus is:
-   - Convert atoms e.g. `Sensor sensed you` into small demo(s).
-   - Build composite programs e.g. causes alarm, guard checks monitor, guard comes to last know location, guard sees you, finished.
+Main focus:
+- Convert atoms e.g. `Sensor sensed you` into small demo(s).
+- Build composite programs e.g. causes alarm, guard checks monitor, guard comes to last know location, guard sees you, finished.
 
 ### TODO
 
@@ -88,8 +85,8 @@ Issue related to shell
 
 ## Examples
 ```sh
-get stage.extra.cursor.position | map 'p => p.set(1, 1)'
-get stage.cursor | map 'p => p.set(1, 1)'
+get stage.internal.cursorGroup.position | map 'p => p.set(1, 1)'
+cursor | map 'p => p.set(1, 1)'
 get stage.sel.bounds
 call '(_, ...args) => args' 1 2 3
 call '({ use: {THREE} }) => new THREE.SpotLight'
@@ -110,4 +107,13 @@ action.timeScale = 20;
 
 ### Blender
 
+Preferences > Input > Keyboard > check Emulate Numpad
 Uncheck GLTF export > Transform > `+Y up`
+Character turnaround sheet
+Option-r to reset rotation
+Option-g to reset translation
+Shift-RMB moves cursor to mouse
+Shift-d to duplicate
+Ctrl-R to loop cut (Edit mode)
+Alt-z for x-ray mode
+https://www.blendswap.com/blend/3639
