@@ -505,7 +505,7 @@ class CmdService {
     THREE: typeof THREE;
     stringify: (value: any) => string;
   }, {
-    get(_, key: 'geom' | 'Geom' | 'THREE' | 'stringify')  {
+    get(_, key: 'geom' | 'Geom' | 'THREE' | 'stringify' | string)  {
       switch (key) {
         case 'geom': return geom;
         case 'Geom': return Geom;
@@ -513,6 +513,7 @@ class CmdService {
         case 'stringify': return (...args: Parameters<typeof safeJsonStringify>) =>
           jsonStringifyPrettyCompact(JSON.parse(safeJsonStringify(...args)));
       }
+      return (_ as any)[key];
     },
     ownKeys: () => ['geom', 'Geom', 'THREE', 'stringify'],
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
