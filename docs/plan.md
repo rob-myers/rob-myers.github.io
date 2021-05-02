@@ -33,7 +33,7 @@ Main focus:
    - Import into three.js e.g.
       - https://www.youtube.com/watch?v=8n_v1aJmLmc
    - Character controller e.g.
-      - https://www.youtube.com/watch?v=8n_v1aJmLmc
+      - https://www.youtube.com/watch?v=EkPfhzIbp2g&t=6s
 
 - Can paint polygons using CLI
 
@@ -134,3 +134,7 @@ Ctrl-R to loop cut (Edit mode)
 Alt-z for x-ray mode
 https://www.blendswap.com/blend/3639
 Cmd-RMB to add vertex (Edit Mode, Vertex)
+Set origin of object as its center
+> Object Mode; RMB; Set origin; Origin to Geometry
+Set origin of cube as bottom center
+> Edit mode; Select bottom face; Shift-S; Cursor to active; Object Mode; RMB; Set origin; Origin to 3D Cursor
