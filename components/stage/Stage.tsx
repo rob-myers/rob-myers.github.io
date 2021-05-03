@@ -47,7 +47,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
     if (ctxt?.gl && !stage.opts.enabled) {// Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
-      stage.internal.scene = undefined;
+      delete stage.internal.scene;
       useStage.api.persist(stage.key);
       setCtxt(null);
     }
