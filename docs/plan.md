@@ -92,11 +92,11 @@ Main focus:
 ✅ Can `echo foo >x` to write last elem, not array
 ✅ Can `echo foo >> x` to write array, appending to extant
 ✅ Can `rm` variables
-## Issues
 
-Issue related to shell
-> https://github.com/mvdan/sh/issues/699
-> ✅ https://github.com/mvdan/sh/issues/692
+## mvdan-sh issues
+
+- https://github.com/mvdan/sh/issues/699
+- ✅ https://github.com/mvdan/sh/issues/692
 
 
 ## Examples
