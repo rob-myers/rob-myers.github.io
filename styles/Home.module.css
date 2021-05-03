@@ -9,23 +9,17 @@
 .title {
   margin: 0;
   line-height: 1.15;
-  font-size: 4rem;
+  font-size: 4.5rem;
   display: flex;
 }
 
 .subtitle {
-  margin-bottom: 64px;
+  margin-bottom: 32px;
 }
 
 @media(max-width: 800px) {
   .main {
     padding: 2rem 0;
-  }
-  .title {
-    font-size: 2.5rem;
-  }
-  .subtitle {
-    margin-bottom: 48px;
   }
 }
 
