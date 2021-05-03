@@ -41,7 +41,7 @@ export interface StageInternal {
   /** Attached by Stage */
   scene?: THREE.Scene;
   /** `Cursor` overwrites this */
-  cursorGroup: THREE.Group;
+  cursor: THREE.Group;
 }
 
 /** Key-value storage for internal use */
@@ -120,7 +120,7 @@ export function createStage(stageKey: string): StageMeta {
     key: stageKey,
     internal: {
       keyEvents: new Subject,
-      cursorGroup: new THREE.Group,
+      cursor: new THREE.Group,
       // ...Attached by components
     },
     extra: {

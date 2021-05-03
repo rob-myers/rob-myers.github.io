@@ -62,7 +62,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const { opts, extra, sel, poly, light } = api.getPersist(stageKey);
         s.opts = deepClone(opts??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
-        s.internal.cursorGroup.position.set(...s.extra.initCursorPos);
+        s.internal.cursor.position.set(...s.extra.initCursorPos);
 
         s.sel.localBounds = Geom.Rect.from(sel.localBounds);
         s.sel.localWall = (sel.localWall??[]).map(x => Geom.Polygon.from(x));
@@ -107,8 +107,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
       const currentCameraPos = internal.controls?.camera?.position
         ? vectorToTriple(internal.controls.camera.position) : null;
-      const currentCursorPos = internal.cursorGroup?.position
-        ? vectorToTriple(internal.cursorGroup?.position) : null;
+      const currentCursorPos = internal.cursor?.position
+        ? vectorToTriple(internal.cursor?.position) : null;
 
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,

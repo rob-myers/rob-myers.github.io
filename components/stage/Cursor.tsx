@@ -10,8 +10,8 @@ const Cursor: React.FC<Props> = ({ internal, ptrWire }) => {
 
   useEffect(() => {
     if (!texture) return;
-    group.current!.position.copy(internal.cursorGroup.position);
-    internal.cursorGroup = group.current!;
+    group.current!.position.copy(internal.cursor.position);
+    internal.cursor = group.current!;
     // Do not remove reference, so cursor available when stage paused
   }, [texture]);
   

@@ -18,7 +18,7 @@ export const preloadedFunctions = {
   keys: `map Object.keys`,
   cat: `get "$@" | split`,
 
-  cursor: `get stage.internal.cursorGroup.position`,
+  cursor: `get stage.internal.cursor.position`,
  
   light: `run '({ read, spawn, _: {msg, msgs = []} }, { stage, use: {THREE, geom} }, ...args) {
     while (msg = await read()) msgs.push(msg);
