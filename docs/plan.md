@@ -181,3 +181,7 @@ Dissolve selection via `Ctrl-x`
 Insert keyframe with `i`
 
 Timeline > Keying > Active keying set > `Location and Rotation`
+
+To reset pose mode, select all bones, Option-r, Option-g
+
+When pasting reversed keyframes, change keyframe and `Cmd+Shift+V` over pose view.

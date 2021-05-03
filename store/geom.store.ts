@@ -27,17 +27,11 @@ export type State = {
   texture: Record<string, THREE.Texture>;
 
   readonly api: {
-    /** Get a clone of specified imported mesh*/
-    cloneMesh: (meshName: string) => THREE.Mesh;
     /** Create a navigation mesh using recast */
     createNavMesh: (navKey: string, polys: Geom.Polygon[]) => {
       bounds: Geom.Rect;
       navPolys: Geom.Polygon[];
     };
-    /** Extract meshes from loaded gltf */
-    extractMeshes: (gltf: GLTF) => void;
-    /** Get an imported mesh definition */
-    getMeshDef: (meshName: string) => MeshDef;
     /** Load assets from gltf(s) exported from Blender. */
     loadGltfs: () => Promise<void>;
     /** Load images as `THREE.Texture`s */
@@ -66,7 +60,6 @@ const useStore = create<State>(devtools((set, get) => ({
       } else if (get().loading) {
         return new Promise(resolve => get().loadResolvers.push(resolve));
       }
-
       set(_ => ({ loading: true }));
 
       const { GLTFLoader } = await import('three/examples/jsm/loaders/GLTFLoader');
@@ -74,30 +67,14 @@ const useStore = create<State>(devtools((set, get) => ({
       // const { DRACOLoader } = await import('three/examples/jsm/loaders/DRACOLoader');
       // Needs files public/draco/ e.g. draco-decoder.js
       // loader.setDRACOLoader((new DRACOLoader).setDecoderPath('/draco/'));
-      const gltf = await loader.loadAsync('/root.gltf');
-      api.extractMeshes(gltf);
+
+      const gltf = await loader.loadAsync('/bot.gltf');
+      console.log({ gltf });
+      // gltf.scene.traverse((node) => {});
 
       set(_ => ({ loaded: true, loading: false }));
       while (get().loadResolvers.pop()?.());
     },
-
-    extractMeshes: (gltf: GLTF) => {
-      const mesh = {} as State['mesh'];
-      gltf.scene.traverse((node) => {
-        // console.log('gltf: saw node:', node);
-        if (isMeshNode(node)) {
-          // Avoid self-shadow issues
-          (node.material as THREE.Material).side = THREE.FrontSide;
-          // Remove translation and apply scale factor
-          node.position.set(0, 0, 0);
-          node.scale.set(scaleFactor, scaleFactor, scaleFactor);
-          mesh[node.name] = { mesh: node };
-        }
-      });
-      set(_ => ({ mesh }));
-    },
-
-    getMeshDef: (meshName) => get().mesh[meshName],
 
     loadTextures: () => {
       const textureLoader = new THREE.TextureLoader;
@@ -123,11 +100,6 @@ const useStore = create<State>(devtools((set, get) => ({
       const geometry = geom.polysToGeometry(navPolys, 'xz');
       setTimeout(() => recastService.createNavMesh(navKey, geometry));
       return { bounds, navPolys };
-    },
-
-    cloneMesh: (meshKey) => {
-      const { mesh } = get().mesh[meshKey];
-      return mesh.clone() as THREE.Mesh;
     },
 
     requestNavPath: (navKey, src, dst) => {
