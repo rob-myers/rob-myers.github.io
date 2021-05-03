@@ -22,7 +22,7 @@ Main focus:
 - ✅ Add `stage.opts.ambientLight`
 
 - Working towards character
-   - Design a character in blender
+   - Create Minecraft Steve in blender
       - ✅ https://www.youtube.com/watch?v=pbwEHN15HbI&ab_channel=TutsByKai
    - Rig a character in blender
       - ✅ https://www.youtube.com/watch?v=6DfF6r1Bpq4&ab_channel=SeyitAliYAPRAKCI
@@ -37,7 +37,9 @@ Main focus:
    - Character controller e.g.
       - https://www.youtube.com/watch?v=EkPfhzIbp2g&t=6s
 
+- Can create lines
 - Can paint polygons using CLI
+   > We'll use them to create triggers
 
 - ✅ Add builtins `true` and `false`
 - ✅ Implement `IfClause` in shell

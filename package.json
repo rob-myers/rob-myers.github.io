@@ -9,7 +9,7 @@
     "start": "yarn next-cfg && next start",
     "next-cfg": "tsc -p scripts",
     "types": "tsc --noEmit",
-    "copy-gltfs": "nodemon --watch 3d --ext gltf --exec 'cp 3d/*.gltf public/*.gltf'",
+    "copy-gltfs": "nodemon --watch 3d --ext gltf --exec 'cd 3d && for x in *.gltf; do cp \"${x}\" ../public/\"${x}\"; done'",
     "postinstall": "patch-package"
   },
   "dependencies": {
