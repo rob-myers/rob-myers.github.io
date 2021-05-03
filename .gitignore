@@ -39,5 +39,5 @@ next.config.js
 misc.config.js
 
 3d/*
-!3d/img/*.png
+!3d/img
 !3d/backup.bot.blend
