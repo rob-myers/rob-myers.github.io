@@ -19,10 +19,16 @@ import { ansiBlue, ansiBrown, ansiReset, ansiWhite } from './tty.xterm';
 import { StageKeyEvent, StageMeta } from 'model/stage/stage.model';
 import useStage from 'store/stage.store';
 import { parseService } from './parse/parse.service';
+import useGeomStore from 'store/geom.store';
 
 const commandKeys = {
   /** Wait for a stage to be ready */
   'await-stage': true,
+  /**
+   * Spawn a bot
+   * TODO move to a function
+   */
+  bot: true,
   /** Execute a javascript function */
   call: true,
   /** List function definitions */
@@ -88,6 +94,21 @@ class CmdService {
           useStage.api.awaitStage(stageKey, resolve);
           useSession.api.addCleanup(meta, resolve);
         });
+        break;
+      }
+      case 'bot': {
+        await useGeomStore.api.loadGltfs();
+        const { root, clips } =  useGeomStore.getState().bot!;
+        const { cursor, scene } = this.getSessionStage(meta.sessionKey).internal;
+        if (scene) {
+          const { SkeletonUtils } = await import('three/examples/jsm/utils/SkeletonUtils');
+          const clone = SkeletonUtils.clone(root);
+          clone.scale.setScalar(0.05);
+          clone.position.copy(cursor.position);
+          // const mixer = new THREE.AnimationMixer(clone);
+          // mixer.clipAction(clips[0]).play();
+          scene.add(clone);
+        }
         break;
       }
       case 'call': {
@@ -160,11 +181,10 @@ class CmdService {
       case 'key': {
         let deferred: Deferred<StageKeyEvent>;
         const process = useSession.api.getProcess(meta);
-        const sub = useStage.api.getStage(
-          useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY)
-        ).internal.keyEvents.subscribe({ // Ignore signals while paused
-          next: (e) => process.status === ProcessStatus.Running && deferred.resolve(e),
-        });
+        const sub = this.getSessionStage(meta.sessionKey).internal.keyEvents
+          .subscribe({ // Ignore signals while paused
+            next: (e) => process.status === ProcessStatus.Running && deferred.resolve(e),
+          });
         process.cleanups.push(() => sub.unsubscribe(), () => deferred.reject(killError(meta)));
         while (true) yield await (deferred = new Deferred<StageKeyEvent>()).promise; 
       }
@@ -344,6 +364,12 @@ class CmdService {
       }
       default: throw testNever(command);
     }
+  }
+
+  private getSessionStage(sessionKey: string) {
+    return useStage.api.getStage(
+      useSession.api.getVar(sessionKey, CoreVar.STAGE_KEY)
+    );
   }
 
   async launchFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
