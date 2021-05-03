@@ -70,7 +70,6 @@ const commandKeys = {
   test: true,
   /** Exit with code 0 */
   true: true,
-  // wall: true,
 };
 type CommandName = keyof typeof commandKeys;
 
@@ -343,19 +342,6 @@ class CmdService {
         node.exitCode = 0;
         break;
       }
-      // case 'wall': {
-      //   const { opts } = getOpts(args, {
-      //     boolean: ['c', /** Cut out */],
-      //     string: ['k', /** Polygon key */],
-      //   });
-      //   const outputs = [] as any[];
-      //   yield* this.read(meta, (data: any[]) => { outputs.push(data); });
-      //   const filtered = outputs.filter(x => x.length === 4 && x.every(Number.isFinite));
-      //   const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
-      //   const polygonKey = opts.k || 'default';
-      //   useStage.api.addWalls(stageKey, filtered, { polygonKey, cutOut: opts.c });
-      //   break;
-      // }
       default: throw testNever(command);
     }
   }
