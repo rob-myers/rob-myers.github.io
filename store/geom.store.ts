@@ -1,11 +1,9 @@
 /**
- * We'll use this store to create navmeshes.
- * We may or may not also use it to import gltfs.
+ * We'll use this store to import gltfs and create navmeshes.
  */
 import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import * as THREE from 'three';
-import { GLTF } from 'three/examples/jsm/loaders/GLTFLoader';
 
 import { geom, outsetBounds, outsetWalls } from 'model/geom.service';
 import * as Geom from 'model/geom';
@@ -13,7 +11,6 @@ import { recastService } from 'model/3d/recast.service';
 import { initStageBounds } from 'model/stage/stage.model';
 
 import thinPlusPng from '../3d/img/thin-plus.png';
-import { isMeshNode } from 'model/3d/three.model';
 
 const scaleFactor = 1 / 5;
 
@@ -21,8 +18,11 @@ export type State = {
   loaded: boolean;
   loading: boolean;
   loadResolvers: (() => void)[];
-  /** Mesh library */
-  mesh: Record<string, MeshDef>;
+  /** Animated bot loaded from gltf */
+  bot: null | {
+    root: THREE.Group;
+    clips: THREE.AnimationClip[];
+  };
   /** Texture library */
   texture: Record<string, THREE.Texture>;
 
@@ -49,7 +49,7 @@ const useStore = create<State>(devtools((set, get) => ({
   loaded: false,
   loading: false,
   loadResolvers: [],
-  mesh: {},
+  bot: null,
   texture: {},
 
   api: {
@@ -69,10 +69,15 @@ const useStore = create<State>(devtools((set, get) => ({
       // loader.setDRACOLoader((new DRACOLoader).setDecoderPath('/draco/'));
 
       const gltf = await loader.loadAsync('/bot.gltf');
-      console.log({ gltf });
-      // gltf.scene.traverse((node) => {});
+      const root = gltf.scene.children[0] as THREE.Group;
+      const clips = gltf.animations;
+      // console.log({ gltf });
 
-      set(_ => ({ loaded: true, loading: false }));
+      set(_ => ({
+        loaded: true,
+        loading: false,
+        bot: { root, clips },
+      }));
       while (get().loadResolvers.pop()?.());
     },
 
