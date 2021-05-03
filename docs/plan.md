@@ -25,7 +25,7 @@ Main focus:
    - Design a character in blender
       - ✅ https://www.youtube.com/watch?v=pbwEHN15HbI&ab_channel=TutsByKai
    - Rig a character in blender
-      - ✅ https://www.youtube.com/watch?v=rcPema_ec08&ab_channel=3DBlenderTutorialsbyianscott888
+      - ✅ https://www.youtube.com/watch?v=6DfF6r1Bpq4&ab_channel=SeyitAliYAPRAKCI
    - Walk cycle in blender
       - https://www.youtube.com/watch?v=gFf5eGCjUUg&ab_channel=SebastianLague
    - Have idle/walk/run on one character in blender
