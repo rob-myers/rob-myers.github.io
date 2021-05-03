@@ -103,7 +103,7 @@ class CmdService {
         if (scene) {
           const { SkeletonUtils } = await import('three/examples/jsm/utils/SkeletonUtils');
           const clone = SkeletonUtils.clone(root);
-          clone.scale.setScalar(0.05);
+          clone.scale.setScalar(0.03);
           clone.position.copy(cursor.position);
           // const mixer = new THREE.AnimationMixer(clone);
           // mixer.clipAction(clips[0]).play();
