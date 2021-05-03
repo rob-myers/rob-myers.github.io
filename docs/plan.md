@@ -39,7 +39,7 @@ Main focus:
 
 - ✅ Add builtins `true` and `false`
 - ✅ Implement `IfClause` in shell
-- ✅ Can `spawn()` instead `run`
+- ✅ Can `spawn()` inside `run` command
 - Add `xbcopy` i.e. copy to clipboard
 - Can output serialized stage and reload from text
 - Can reset stage
