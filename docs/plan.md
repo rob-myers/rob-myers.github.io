@@ -26,12 +26,14 @@ Main focus:
       - ✅ https://www.youtube.com/watch?v=pbwEHN15HbI&ab_channel=TutsByKai
    - Rig a character in blender
       - ✅ https://www.youtube.com/watch?v=6DfF6r1Bpq4&ab_channel=SeyitAliYAPRAKCI
+   - Add IK bones for knee/heel
+      - ✅ https://www.youtube.com/watch?v=Pt3-mHBCoQk&ab_channel=RoyalSkiesLLC
    - Walk cycle in blender
-      - https://www.youtube.com/watch?v=gFf5eGCjUUg&ab_channel=SebastianLague
+      - ✅ https://www.youtube.com/watch?v=gFf5eGCjUUg&ab_channel=SebastianLague
+   - Import into three.js
+      - https://www.youtube.com/watch?v=8n_v1aJmLmc
    - Have idle/walk/run on one character in blender
       - https://unboring.net/workflows/animation.html
-   - Import into three.js e.g.
-      - https://www.youtube.com/watch?v=8n_v1aJmLmc
    - Character controller e.g.
       - https://www.youtube.com/watch?v=EkPfhzIbp2g&t=6s
 
@@ -173,3 +175,7 @@ Given aligned Character mesh and armature, can:
 Join selected vertices with `j`
 
 Dissolve selection via `Ctrl-x`
+
+Insert keyframe with `i`
+
+Timeline > Keying > Active keying set > `Location and Rotation`
