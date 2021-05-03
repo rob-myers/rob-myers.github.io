@@ -37,9 +37,10 @@ export const preloadedFunctions = {
     } else {
       // TODO light "x => x.position.y = 2" light1
     }
-}' "$@"`,  
+}' "$@"`,
+
   /**
-   * TODO redo
+   * TODO rewrite
    */
   sel: `run '({ read }, { stage: {sel}, use: {Geom} }) {
     const input = await read();
