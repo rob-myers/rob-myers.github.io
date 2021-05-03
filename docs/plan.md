@@ -22,14 +22,14 @@ Main focus:
 - ✅ Add `stage.opts.ambientLight`
 
 - Working towards character
-   - Design a character in blender e.g.
-      - https://www.youtube.com/watch?v=4OUYOKGl7x0&t=604s&ab_channel=GrantAbbitt
-   - Rig a character in blender e.g.
-      - https://www.youtube.com/watch?v=f2pTkW-1JkE&ab_channel=Blender
-      - https://www.youtube.com/watch?v=rcPema_ec08&ab_channel=3DBlenderTutorialsbyianscott888
-      - https://unboring.net/workflows/animation.html
-   - Walk cycle in blender https://www.youtube.com/watch?v=gFf5eGCjUUg&ab_channel=SebastianLague
+   - Design a character in blender
+      - ✅ https://www.youtube.com/watch?v=pbwEHN15HbI&ab_channel=TutsByKai
+   - Rig a character in blender
+      - ✅ https://www.youtube.com/watch?v=rcPema_ec08&ab_channel=3DBlenderTutorialsbyianscott888
+   - Walk cycle in blender
+      - https://www.youtube.com/watch?v=gFf5eGCjUUg&ab_channel=SebastianLague
    - Have idle/walk/run on one character in blender
+      - https://unboring.net/workflows/animation.html
    - Import into three.js e.g.
       - https://www.youtube.com/watch?v=8n_v1aJmLmc
    - Character controller e.g.
@@ -124,17 +124,52 @@ action.timeScale = 20;
 ### Blender
 
 Preferences > Input > Keyboard > check Emulate Numpad
+
 Uncheck GLTF export > Transform > `+Y up`
+
 Character turnaround sheet
+
 Option-r to reset rotation
+
 Option-g to reset translation
+
 Shift-RMB moves cursor to mouse
+
 Shift-d to duplicate
-Ctrl-R to loop cut (Edit mode)
-Alt-z for x-ray mode
-https://www.blendswap.com/blend/3639
+
+Ctrl-r to loop cut in Edit mode
+
+Alt-z for transparent mode
+
 Cmd-RMB to add vertex (Edit Mode, Vertex)
+
 Set origin of object as its center
 > Object Mode; RMB; Set origin; Origin to Geometry
+
 Set origin of cube as bottom center
 > Edit mode; Select bottom face; Shift-S; Cursor to active; Object Mode; RMB; Set origin; Origin to 3D Cursor
+
+Minecraft textures: Turn off mip-map on texture.
+> Material's shader > Image Texture > (Interpolation) closest
+
+X-ray armature: Object Data Properties > Viewport display > In Front
+
+Switch to/from armature pose mode `Ctrl-Tab`
+
+Focus with `/`
+
+Option-LMB to select edge loop
+
+Larger selection via Ctrl-+
+
+Given aligned Character mesh and armature, can:
+1. Join mesh into single object `Character`.
+2. Add a vertex group `Head` (Object Data Properties).
+3. Select head vertices in edit mode and click `Assign` button.
+4. Add an Armature Modifier to `Character`, choosing armature.
+5. Parent `Character` to armature (Object properties).
+6. Try rotating the head bone in pose mode.
+
+Join selected vertices with `j`
+
+Dissolve selection via `Ctrl-x`

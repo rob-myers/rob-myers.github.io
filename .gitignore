@@ -40,3 +40,4 @@ misc.config.js
 
 3d/*
 !3d/img/*.png
+!3d/backup.bot.blend
