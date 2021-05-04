@@ -20,24 +20,15 @@ export const preloadedFunctions = {
 
   cursor: `get stage.internal.cursor.position`,
  
-  light: `run '({ read, spawn, _: {msg, msgs = []} }, { stage, use: {THREE, geom} }, ...args) {
-    while (msg = await read()) msgs.push(msg);
-    if (!msgs.length && !args[0]) {
-      yield* await spawn("ls stage.light");
-    } else if (msgs.length) {
-      for (const { x, y, z } of msgs) {
-        const position = new THREE.Vector3(x, y, 2);
-        const light = geom.createSpotLight(position);
-        stage.light.add(light);
-      }
-    } else if (args[0] === "rm") {
-      for (const arg of args.slice(1)) {
-        delete stage.light[arg];
-      }
-    } else {
-      // TODO light "x => x.position.y = 2" light1
-    }
-}' "$@"`,
+  light: `{
+  # create light at cursor
+  call '({ stage, use: {geom} }) => {
+    const position = stage.internal.cursor.position.clone().setZ(2);
+    const light = geom.createSpotLight(position);
+    stage.light.add(light);
+    return light;
+  }'
+}`,
 
   /**
    * TODO rewrite
