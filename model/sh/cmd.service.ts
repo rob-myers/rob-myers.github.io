@@ -222,7 +222,7 @@ class CmdService {
           '1', /** One line per item */
           'l', /** Detailed */
         ], });
-        // We usually treat -1 as an operand, but it is an option here
+        // We usually treat -1 as a numeric operand, but it is an option here
         const queries = operands.filter(x => !x.startsWith('-'));
         const queryFns = queries.map(x => Function('__', `return __.${x}`));
         const root = this.provideStageAndVars(meta);
