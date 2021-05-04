@@ -103,7 +103,7 @@
 
 ## Examples
 
-See the [code library](model/sh/code-library.ts).
+See the [code library](../model/sh/code-library.ts).
 
 ```sh
 get stage.internal.cursor.position | map 'p => p.set(1, 1)'
