@@ -59,7 +59,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
         // Restore persisted data
         const s = Stage.createStage(stageKey);
-        const { opt, extra, sel, poly, light } = api.getPersist(stageKey);
+        const { opt, extra, sel, poly, light, bot } = api.getPersist(stageKey);
         s.opt = deepClone(opt??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         s.internal.cursor.position.set(...s.extra.initCursorPos);
@@ -82,6 +82,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           light.name = name;
           return light;
         });
+        s.bot = mapValues(bot, ({ name, position }) => {
+          const placeholder = new THREE.Group;
+          placeholder.position.set(...position);
+          return { name, root: placeholder, clips: [] };
+        });
         
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
@@ -103,7 +108,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { internal, opt: opts, extra, sel, poly, light } = api.getStage(stageKey);
+      const { internal, opt: opts, extra, sel, poly, light, bot } = api.getStage(stageKey);
 
       const currentCameraPos = internal.controls?.camera?.position
         ? vectorToTriple(internal.controls.camera.position) : null;
@@ -135,6 +140,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             obs: poly.obs.map(x => x.json),
           },
           light: mapValues(light, ({ name, position: p }) => ({
+            name,
+            position: [p.x, p.y, p.z],
+          })),
+          bot: mapValues(bot, ({ name, root: { position: p } }) => ({
             name,
             position: [p.x, p.y, p.z],
           })),

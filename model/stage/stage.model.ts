@@ -19,6 +19,8 @@ export type StageMeta = {
   poly: StagePoly;
   /** Lights */
   light: StageLight;
+  /** Bots */
+  bot: StageBot;
 };
 
 export interface StageMetaJson {
@@ -31,6 +33,7 @@ export interface StageMetaJson {
     | 'obs'
   ), Geom.PolygonJson[]>;
   light: StageLightJson;
+  bot: StageBotJson;
 }
 
 export interface StageInternal {
@@ -85,25 +88,6 @@ export interface StageSelection {
   localObs: Geom.Polygon[];
 }
 
-export type StagePoly = Record<(
-  | 'wall'
-  | 'prevWall'
-  | 'obs'
-  | 'prevObs'
-  | 'nav'
-), Geom.Polygon[]>;
-
-export interface StageLight { 
-  [name: string]: THREE.SpotLight;
-};
-
-export interface StageLightJson {
-  [name: string]: {
-    name: string;
-    position: Triple<number>;
-  }
-}
-
 /** Serializable `StageSelection` */
 interface StageSelectionJson {
   enabled: boolean;
@@ -114,6 +98,45 @@ interface StageSelectionJson {
   localWall: Geom.PolygonJson[];
   localObs: Geom.PolygonJson[];
 }
+
+export type StagePoly = Record<(
+  | 'wall'
+  | 'prevWall'
+  | 'obs'
+  | 'prevObs'
+  | 'nav'
+), Geom.Polygon[]>;
+
+/** Stage lights */
+export interface StageLight { 
+  [name: string]: THREE.SpotLight;
+}
+
+export interface StageLightJson {
+  [name: string]: {
+    name: string;
+    position: Triple<number>;
+  };
+}
+
+export interface StageBot {
+  [name: string]: Bot;
+}
+
+export interface Bot {
+  name: string;
+  /** Initially a placeholder group when bot not loaded */
+  root: THREE.Group;
+  clips: THREE.AnimationClip[];
+}
+
+export interface StageBotJson {
+  [name: string]: {
+    name: string;
+    position: Triple<number>;
+  };
+}
+
 
 export function createStage(stageKey: string): StageMeta {
   return {
@@ -139,6 +162,7 @@ export function createStage(stageKey: string): StageMeta {
     },
     poly: { wall: [], prevWall: [], obs: [], prevObs: [], nav: [] },
     light: {},
+    bot: {},
   };
 }
 
@@ -171,6 +195,7 @@ export function createPersist(stageKey: string): StageMetaJson {
     },
     poly: { wall: [], obs: [] },
     light: {},
+    bot: {},
   };
 }
 
