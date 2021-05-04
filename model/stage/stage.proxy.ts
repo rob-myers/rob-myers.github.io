@@ -1,37 +1,41 @@
+import * as THREE from "three";
 import { firstAvailableInteger } from "model/generic.model";
 import * as Geom from "model/geom";
 import { geom } from "model/geom.service";
+import * as Stage from "./stage.model";
 import useStage from "store/stage.store";
-import { StageBot, StageLight, StageMeta, stageNavInset, StageOpts, StagePoly, StageSelection } from "./stage.model";
 
 export function createStageProxy(stageKey: string) {
   const stage = () => useStage.api.getStage(stageKey);
-  return new Proxy({} as StageMeta, {
-    get(_, key: keyof StageMeta | 'cursor') {
+  return new Proxy({} as Stage.StageMeta, {
+    get(_, key: keyof Stage.StageMeta | 'cursor') {
       if (key === 'poly') {
-        return new Proxy({} as StagePoly, {
-          get(_, key: keyof StagePoly) {
+        return new Proxy({} as Stage.StagePoly, {
+          get(_, key: keyof Stage.StagePoly | 'update' | 'mutate') {
+            if (key === 'update') {
+              return (updates: Partial<Stage.StagePoly> = {}) => {
+                useStage.api.updatePoly(stageKey, updates);
+                // TODO trigger computation in a component instead
+                setTimeout(() => useStage.api.mutatePoly(stageKey, (poly) => ({
+                  nav: geom.navFromUnnavigable(poly.wall.concat(poly.obs), Stage.stageNavInset),
+                })));
+              };
+            } else if (key === 'mutate') {
+              return (updates: Partial<Stage.StagePoly>) =>
+                useStage.api.mutatePoly(stageKey, updates);
+            }
             return stage().poly[key];
           },
-          set(_, key: keyof StagePoly, value: any) {
-            if (key === 'wall' || key === 'obs') {
-              const { poly } = stage();
-              poly[key === 'wall' ? 'prevWall' : 'prevObs'] = poly[key];
-              poly[key] = value;
-              useStage.api.updatePoly(stageKey, {
-                nav: geom.navFromUnnavigable(poly.wall.concat(poly.obs), stageNavInset),
-              });
-            } else {
-              useStage.api.updatePoly(stageKey, { [key]: value });
-            }
+          set(_, key: keyof Stage.StagePoly, value: any) {
+            useStage.api.updatePoly(stageKey, { [key]: value });
             return true;
           },
           ownKeys: () => Object.keys(stage().poly),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'sel') {
-        return new Proxy({} as StageSelection, {
-          get(_, key: keyof StageSelection | 'bounds' | 'wall' | 'obs') {
+        return new Proxy({} as Stage.StageSelection, {
+          get(_, key: keyof Stage.StageSelection | 'bounds' | 'wall' | 'obs') {
             if (key === 'bounds') {// Provide world bounds
               const { localBounds, group: { matrix } } = stage().sel;
               return geom.applyMatrixRect(matrix, localBounds.clone()).precision(1);
@@ -42,7 +46,7 @@ export function createStageProxy(stageKey: string) {
             }
             return stage().sel[key];
           },
-          set(_, key: keyof StageSelection | 'wall' | 'obs', value: any) {
+          set(_, key: keyof Stage.StageSelection | 'wall' | 'obs', value: any) {
             if (key === 'wall' || key === 'obs') {// Given world polygons, set untransformed polygons
               const { group } = stage().sel;
               const matrix = group.matrix.clone().invert();
@@ -58,8 +62,8 @@ export function createStageProxy(stageKey: string) {
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'opt') {
-        return new Proxy({} as StageOpts, {
-          get(_, key: keyof StageOpts) {
+        return new Proxy({} as Stage.StageOpts, {
+          get(_, key: keyof Stage.StageOpts) {
             return stage().opt[key];
           },
           set(_, key: string, value: any) {
@@ -70,7 +74,7 @@ export function createStageProxy(stageKey: string) {
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'light') {
-        return new Proxy({} as StageLight, {
+        return new Proxy({} as Stage.StageLight, {
           get(_, key: string | 'add' | 'update') {
             if (key === 'add') {
               return (light: THREE.SpotLight) => {
@@ -96,7 +100,7 @@ export function createStageProxy(stageKey: string) {
           },
         });
       } else if (key === 'bot') {
-        return new Proxy({} as StageBot, {
+        return new Proxy({} as Stage.StageBot, {
           deleteProperty: (_, key: string) => {
             useStage.api.updateBot(stageKey, { [key]: undefined });
             return true;
@@ -105,12 +109,13 @@ export function createStageProxy(stageKey: string) {
             if (key === 'add') {
               return (group: THREE.Group, clips: THREE.AnimationClip[]) => {
                 group.name = `bot${firstAvailableInteger(
-                  Object.keys(stage().bot).filter(x => /^bot\d+$/).map(x => Number(x.slice(5)))
+                  Object.keys(stage().bot).filter(x => /^bot\d+$/).map(x => Number(x.slice(3)))
                 )}`;
                 useStage.api.updateBot(stageKey, { [group.name]: {
                   name: group.name,
-                  group: group,
-                  clips, 
+                  group,
+                  clips,
+                  mixer: new THREE.AnimationMixer(group),
                 } });
               };
             }
@@ -128,12 +133,12 @@ export function createStageProxy(stageKey: string) {
       }
       return stage()[key];
     },
-    set(_, _key: keyof StageMeta, _value: any) {
+    set(_, _key: keyof Stage.StageMeta, _value: any) {
       throw Error('cannot set top-level key of stage');
     },
     ownKeys: () => Object.keys(stage()).concat('cursor'),
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
-    deleteProperty: (_, _key: keyof StageMeta) => {
+    deleteProperty: (_, _key: keyof Stage.StageMeta) => {
       throw Error('cannot delete top-level key of stage');
     },
   });

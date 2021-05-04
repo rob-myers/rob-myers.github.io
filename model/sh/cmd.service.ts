@@ -17,7 +17,6 @@ import { ansiBlue, ansiBrown, ansiReset, ansiWhite } from './tty.xterm';
 import { StageKeyEvent, StageMeta } from 'model/stage/stage.model';
 import useStage from 'store/stage.store';
 import { parseService } from './parse/parse.service';
-import useGeomStore from 'store/geom.store';
 import { Util } from 'model/runtime-utils';
 
 const commandKeys = {

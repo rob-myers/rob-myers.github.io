@@ -71,7 +71,7 @@ const useStore = create<State>(devtools((set, get) => ({
       set(_ => ({
         loaded: true,
         loading: false,
-        bot: { name: 'original', group, clips },
+        bot: { name: 'original', group, clips, mixer: new THREE.AnimationMixer(group) },
       }));
       while (get().loadResolvers.pop()?.());
     },

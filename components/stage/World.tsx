@@ -29,21 +29,32 @@ const World: React.FC<Props> = ({
   }, [light, lightsAt]);
 
   useEffect(() => {
-    navigable.current!.geometry = geom.polysToGeometry(poly.nav);
-    obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.1);
+    if (walls.current) {
+      walls.current!.geometry.dispose();
+      obstructions.current!.geometry.dispose();
+      // navigable.current.geometry.dispose();
+    }
     walls.current!.geometry = geom.polysToWalls(poly.wall, opt.wallHeight);
     wallsBase.current!.geometry = walls.current!.geometry;
+    obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.1);
+    // navigable.current!.geometry = geom.polysToGeometry(poly.nav);
     updateLightAt(Date.now());
-  }, [poly, opt.wallHeight, opt.wallOpacity]);
+  }, [poly, opt.wallHeight]);
+
+  const AllBots = useMemo(() => <Bots bot={bot} />, [bot]);
 
   return (
     <group>
-      <mesh name="GroundPlane" receiveShadow>
+      <mesh
+        name="GroundPlane"
+        receiveShadow
+        matrixAutoUpdate={false}
+      >
         <planeGeometry args={[100, 100]} />
         <meshStandardMaterial color="#fff" />
       </mesh>
 
-      <mesh name="Walls" ref={walls} castShadow>
+      <mesh name="Walls" ref={walls} castShadow matrixAutoUpdate={false}>
         <meshBasicMaterial
           side={THREE.DoubleSide} // Fixes shadows
           color="#000"
@@ -58,9 +69,10 @@ const World: React.FC<Props> = ({
         ref={obstructions}
         castShadow
         scale={[1, 1, Math.sign(opt.wallOpacity)] }
-        >
+        matrixAutoUpdate={false}
+      >
         <meshBasicMaterial
-          color={opt.wallOpacity ? "#000" : "#777"}
+          color={opt.wallOpacity ? "#222" : "#777"}
           side={THREE.DoubleSide} // Fixes shadows
         />
       </mesh>
@@ -72,6 +84,7 @@ const World: React.FC<Props> = ({
         receiveShadow
         scale={[1, 1, 0]}
         visible={opt.wallOpacity !== 1}
+        matrixAutoUpdate={opt.wallOpacity !== 1}
       >
         <meshStandardMaterial
           side={THREE.FrontSide}
@@ -79,14 +92,14 @@ const World: React.FC<Props> = ({
         />
       </mesh>
 
-      <mesh
+      {/* <mesh
         name="Navigable"
         ref={navigable}
         renderOrder={0}
         visible={false}
       >
         <meshBasicMaterial transparent opacity={0.1} color="#f00" />
-      </mesh>
+      </mesh> */}
 
       <ambientLight
         color="#fff"
@@ -94,9 +107,7 @@ const World: React.FC<Props> = ({
       />
 
       {Lights}
-
-      <Bots bot={bot} />
-
+      {AllBots}
     </group>
   );
 };

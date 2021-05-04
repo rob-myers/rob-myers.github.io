@@ -64,8 +64,10 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
         break;
       case "Backspace": {
         const delta = Geom.Polygon.from(sel.bounds);
-        poly.wall = geom.cutOut([delta], poly.wall);
-        poly.obs = geom.cutOut([delta], poly.obs);
+        poly.update({ prevWall: poly.wall, prevObs: poly.obs,
+          wall: geom.cutOut([delta], poly.wall),
+          obs: geom.cutOut([delta], poly.obs),
+        });
         break;
       }
       case "w":
@@ -73,11 +75,17 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
         if (!sel.locked && !msg.metaKey) {
           const delta = Geom.Polygon.from(sel.bounds);
           if (msg.key === "w") {
-            poly.wall = geom.union(poly.wall.concat(delta));
-            poly.obs = geom.cutOut([delta], poly.obs);
+            const nextObs = geom.cutOut([delta], poly.obs);
+            poly.update({ prevWall: poly.wall, prevObs: nextObs,
+              wall: geom.union(poly.wall.concat(delta)),
+              obs: nextObs,
+            });
           } else {
-            poly.obs = geom.union(poly.obs.concat(delta));
-            poly.wall = geom.cutOut([delta], poly.wall);
+            const nextWall = geom.cutOut([delta], poly.wall);
+            poly.update({ prevWall: nextWall, prevObs: poly.obs,
+              obs: geom.union(poly.obs.concat(delta)),
+              wall: nextWall,
+            });
           }
         }
         break;
@@ -98,11 +106,15 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
           const deltaWalls = geom.intersectPolysRect(poly.wall, sel.bounds);
           const deltaObs = geom.intersectPolysRect(poly.obs, sel.bounds);
           [sel.wall, sel.obs, sel.locked] = [deltaWalls, deltaObs, true];
-          poly.wall = geom.cutOut(deltaWalls, poly.wall);
-          poly.obs = geom.cutOut(deltaObs, poly.obs);
+          poly.update({ prevWall: poly.wall, prevObs: poly.obs,
+            wall: geom.cutOut(deltaWalls, poly.wall),
+            obs: geom.cutOut(deltaObs, poly.obs),
+          });
         } else if (msg.metaKey && sel.locked) {
-          poly.wall = geom.cutOut(sel.wall, poly.wall);
-          poly.obs = geom.cutOut(sel.obs, poly.obs);
+          poly.update({ prevWall: poly.wall, prevObs: poly.obs,
+            wall: geom.cutOut(sel.wall, poly.wall),
+            obs: geom.cutOut(sel.obs, poly.obs),
+          });
         } else if (!msg.metaKey && sel.locked) {
           const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
             .setPosition(0, 2 * sel.localBounds.cy, 0);
@@ -130,13 +142,19 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
         break;
       case "v":
         if (sel.locked && msg.metaKey) {
-          poly.wall = geom.union(poly.wall.concat(sel.wall));
-          poly.obs = geom.union(poly.obs.concat(sel.obs));
+          poly.update({ prevWall: poly.wall, prevObs: poly.obs,
+            wall: geom.union(poly.wall.concat(sel.wall)),
+            obs: geom.union(poly.obs.concat(sel.obs)),
+          });
+          poly.update();
         }
         break;
       case "z":
         if (msg.metaKey) {
-          [poly.wall, poly.obs] = [poly.prevWall, poly.prevObs];
+          poly.update({ prevWall: poly.wall, prevObs: poly.obs,
+            wall: poly.prevWall,
+            obs: poly.prevObs,
+          });
         }
         break;
     }
