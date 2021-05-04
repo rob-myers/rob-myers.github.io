@@ -169,6 +169,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         group.position.set(...position);
         return { name, group, clips, mixer: new THREE.AnimationMixer(group) };
       }));
+      api.updateLight(stageKey, {});
     },
 
     removeStage: (stageKey) => set(({ stage }) => ({

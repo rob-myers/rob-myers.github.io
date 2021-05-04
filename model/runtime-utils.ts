@@ -17,7 +17,8 @@ export class Util {
     // We assume respective gltf is loaded
     const { group: original, clips } = useGeomStore.getState().bot!;
     const group = SkeletonUtils.clone(original) as THREE.Group;
-    group.scale.setScalar(0.03)
+    group.scale.setScalar(0.03);
+    group.children.forEach(x => x.castShadow = true);
     return { group, clips };
   }
 }

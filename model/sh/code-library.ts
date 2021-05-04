@@ -36,8 +36,7 @@ call '({ stage, use: {Util} }) => {
   const { group, clips } = Util.createBot();
   group.position.copy(position);
   stage.bot.add(group, clips);
-  // const mixer = new THREE.AnimationMixer(group);
-  // mixer.clipAction(clips[0]).play();
+  stage.light.update();
 }'
 }`,
 
@@ -56,7 +55,7 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
 
     switch (msg.key) {
       case "-":
-      case "+":
+      case "=":
         if (!sel.locked) {
           const delta = msg.key === "-" ? 0.1 : -0.1;
           sel.localBounds = sel.localBounds.clone().inset(delta);
