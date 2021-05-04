@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Subject } from "rxjs";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { Canvas } from "@react-three/fiber";
@@ -39,9 +39,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
     setCtxt(ctxt);
   }, [stage.internal]);
 
-  const updateShadowMap = useCallback(() => {
-    ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true); 
-  }, [ctxt]);
+  const updateShadowMap = useCallback(
+    () => ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true), [ctxt]);
 
   useEffect(() => {
     // NOTE `ctxt?.gl` instead of `ctxt` for hotreloads on edit stage.store
@@ -59,9 +58,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
     ptrWire.next({ key: e.type as any, point: e.point });
   }, []);
   /** Change mesh `onPointerOut` type from 'pointermove' to 'pointerleave' */
-  const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) => {
-    ptrWire.next({ key: 'pointerleave', point: e.point });
-  }, []);
+  const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) =>
+    ptrWire.next({ key: 'pointerleave', point: e.point }), []);
 
   const keyWire = stage.internal.keyEvents;
   const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
@@ -77,6 +75,39 @@ const Stage: React.FC<Props> = ({ stage }) => {
     stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(),
     [stage.opt],
   );
+
+  const Base = useMemo(() => <>
+    <mesh
+      onPointerDown={onPointer}
+      onPointerMove={onPointer}
+      onPointerUp={onPointer}
+      onPointerOut={onPointerOut}
+      visible={false}
+      matrixAutoUpdate={false}
+    >
+      <planeGeometry args={[100, 100]} />
+    </mesh>
+    <Grid />
+    <Axes />
+    <Cursor
+      internal={stage.internal}
+      ptrWire={ptrWire}
+    />
+  </>, []);
+
+  const CamControls = useMemo(() =>
+    <CameraControls
+      internal={stage.internal}
+      enabled={stage.opt.panZoom}
+    />
+  , [stage.opt.panZoom]);
+
+  const Sel = useMemo(() =>
+    <Selection
+      sel={stage.sel}
+      ptrWire={ptrWire}
+    />
+  , [stage.sel]);
 
   return (
     <Root
@@ -98,33 +129,9 @@ const Stage: React.FC<Props> = ({ stage }) => {
           dpr={getWindow()!.devicePixelRatio}
           onCreated={onCreatedCanvas}
         >
-
-          <mesh
-            onPointerDown={onPointer}
-            onPointerMove={onPointer}
-            onPointerUp={onPointer}
-            onPointerOut={onPointerOut}
-            visible={false}
-          >
-            <planeGeometry args={[100, 100]} />
-          </mesh>
-
-          <Grid />
-          <Axes />
-          <CameraControls
-            internal={stage.internal}
-            enabled={stage.opt.panZoom}
-          />
-
-          <Selection
-            sel={stage.sel}
-            ptrWire={ptrWire}
-          />
-
-          <Cursor
-            internal={stage.internal}
-            ptrWire={ptrWire}
-          />
+          {Base}
+          {CamControls}
+          {Sel}
 
           <World
             bot={stage.bot}
