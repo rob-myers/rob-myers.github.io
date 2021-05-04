@@ -1,8 +1,8 @@
-import { useRef, useMemo } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import * as THREE from 'three';
 
 const Grid: React.FC = () => {
-  const gridMesh = useRef<JSX.IntrinsicElements['mesh']>(null);
+  const gridMesh = useRef<THREE.Mesh>(null);
   /**
    * https://github.com/Fyrestar/THREE.InfiniteGridHelper/blob/master/InfiniteGridHelper.js
    */
@@ -60,16 +60,19 @@ const Grid: React.FC = () => {
     />
   ), []);
 
+  useEffect(() => {
+    gridMesh.current!.rotation.set(Math.PI/2, 0, 0);
+    gridMesh.current!.updateMatrix();
+  }, []);
+
   return (
     <mesh
       ref={gridMesh}
       name="grid"
-      position={[0, 0, 0]}
-      scale={[1, 1, 1]}
-      rotation={[Math.PI/2, 0, 0]}
       frustumCulled={false}
+      matrixAutoUpdate={false}
     >
-      <planeBufferGeometry args={[2, 2, 1, 1]} attach="geometry" />
+      <planeGeometry args={[2, 2, 1, 1]} attach="geometry" />
       {gridMaterial}
     </mesh>
   );
