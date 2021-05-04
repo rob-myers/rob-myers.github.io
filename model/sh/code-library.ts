@@ -18,16 +18,23 @@ export const preloadedFunctions = {
   keys: `map Object.keys`,
   cat: `get "$@" | split`,
 
-  cursor: `get stage.internal.cursor.position`,
+  cursor: `get stage.cursor`,
  
   light: `{
-  # create light at cursor
-  call '({ stage, use: {geom} }) => {
-    const position = stage.internal.cursor.position.clone().setZ(2);
-    const light = geom.createSpotLight(position);
-    stage.light.add(light);
-    return light;
-  }'
+# create light at cursor
+call '({ stage, use: {geom} }) => {
+  const position = stage.cursor.clone().setZ(2);
+  const light = geom.createSpotLight(position);
+  stage.light.add(light);
+  return light;
+}'
+}`,
+
+  bot: `{
+# create bot at cursor
+call '() => {
+
+}'
 }`,
 
 };

@@ -4,14 +4,10 @@ import { geom } from "model/geom.service";
 import useStage from "store/stage.store";
 import { StageLight, StageMeta, stageNavInset, StageOpts, StagePoly, StageSelection } from "./stage.model";
 
-/**
- * TODO one proxy per stage?
- * TODO cache inner proxies too?
- */
 export function createStageProxy(stageKey: string) {
   const stage = () => useStage.api.getStage(stageKey);
   return new Proxy({} as StageMeta, {
-    get(_, key: keyof StageMeta) {
+    get(_, key: keyof StageMeta | 'cursor') {
       if (key === 'poly') {
         return new Proxy({} as StagePoly, {
           get(_, key: keyof StagePoly) {
@@ -100,6 +96,8 @@ export function createStageProxy(stageKey: string) {
             return true;
           },
         });
+      } else if (key === 'cursor') {
+        return stage().internal.cursor.position;
       }
       return stage()[key];
     },
