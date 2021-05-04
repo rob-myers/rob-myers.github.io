@@ -1,9 +1,5 @@
 ## Birdseye CLI
 
-Main focus:
-- Convert atoms e.g. `Sensor sensed you` into small demo(s).
-- Build composite programs e.g. causes alarm, guard checks monitor, guard comes to last know location, guard sees you, finished.
-
 ### TODO
 
 - Simplify selection UI
@@ -106,6 +102,9 @@ Main focus:
 
 
 ## Examples
+
+See the [code library](model/sh/code-library.ts).
+
 ```sh
 get stage.internal.cursor.position | map 'p => p.set(1, 1)'
 cursor | map 'p => p.set(1, 1)'

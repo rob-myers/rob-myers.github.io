@@ -8,8 +8,6 @@ export type NamedFunction = {
   node: FileWithMeta;
 }
 
-export const varRegex = /^[a-z_][a-z0-9_-]*$/i;
-
 export enum CoreVar {
   STAGE_KEY= 'STAGE_KEY',
   PROFILE= 'PROFILE',
