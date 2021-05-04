@@ -59,8 +59,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
         // Restore persisted data
         const s = Stage.createStage(stageKey);
-        const { opts, extra, sel, poly, light } = api.getPersist(stageKey);
-        s.opts = deepClone(opts??Stage.createStageOpts());
+        const { opt, extra, sel, poly, light } = api.getPersist(stageKey);
+        s.opt = deepClone(opt??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         s.internal.cursor.position.set(...s.extra.initCursorPos);
 
@@ -103,7 +103,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { internal, opts, extra, sel, poly, light } = api.getStage(stageKey);
+      const { internal, opt: opts, extra, sel, poly, light } = api.getStage(stageKey);
 
       const currentCameraPos = internal.controls?.camera?.position
         ? vectorToTriple(internal.controls.camera.position) : null;
@@ -112,7 +112,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,
-          opts: deepClone(opts),
+          opt: deepClone(opts),
           extra: {
             canvasPreview: extra.canvasPreview,
             initCameraPos: [...currentCameraPos ||
@@ -154,8 +154,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       });
     },
     updateOpts: (stageKey, updates) => {
-      api.updateStage(stageKey, ({ opts }) => ({
-        opts: { ...opts, ...typeof updates === 'function' ? updates(opts) : updates },
+      api.updateStage(stageKey, ({ opt: opts }) => ({
+        opt: { ...opts, ...typeof updates === 'function' ? updates(opts) : updates },
       }));
     },
     updatePoly: (stageKey, updates) => {

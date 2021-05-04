@@ -44,14 +44,14 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
   useEffect(() => {
     // NOTE `ctxt?.gl` instead of `ctxt` for hotreloads on edit stage.store
-    if (ctxt?.gl && !stage.opts.enabled) {// Detected stage disable
+    if (ctxt?.gl && !stage.opt.enabled) {// Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
       delete stage.internal.scene;
       useStage.api.persist(stage.key);
       setCtxt(null);
     }
-  }, [stage.opts.enabled]);
+  }, [stage.opt.enabled]);
 
   const ptrWire = useRef(new Subject<StagePointerEvent>()).current;
   const onPointer = useCallback((e: ThreeEvent<PointerEvent>) => {
@@ -73,8 +73,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
   }, [keyWire]);
 
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
-    stage.opts.enabled && stage.opts.panZoom && e.currentTarget.focus(),
-    [stage.opts],
+    stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(),
+    [stage.opt],
   );
 
   return (
@@ -87,11 +87,11 @@ const Stage: React.FC<Props> = ({ stage }) => {
     >
       <StageToolbar
         stageKey={stage.key}
-        opts={stage.opts}
+        opts={stage.opt}
         selection={stage.sel}
       />
 
-      {(stage.opts.enabled || ctxt) && (
+      {(stage.opt.enabled || ctxt) && (
 
         <CanvasRoot
           dpr={getWindow()!.devicePixelRatio}
@@ -112,7 +112,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
           <Axes />
           <CameraControls
             internal={stage.internal}
-            enabled={stage.opts.panZoom}
+            enabled={stage.opt.panZoom}
           />
 
           <Selection
@@ -126,7 +126,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
           />
 
           <World
-            opts={stage.opts}
+            opt={stage.opt}
             light={stage.light}
             poly={stage.poly}
             updateShadowMap={updateShadowMap}

@@ -12,7 +12,7 @@ export type StageMeta = {
   /** Key-value store for internal use */
   extra: StageExtra;
   /** Important options for the CLI */
-  opts: StageOpts;
+  opt: StageOpts;
   /** The current selection */
   sel: StageSelection;
   /** Polygons e.g. `wall` */
@@ -23,7 +23,7 @@ export type StageMeta = {
 
 export interface StageMetaJson {
   key: string;
-  opts: StageOpts;
+  opt: StageOpts;
   extra: StageExtra;
   sel: StageSelectionJson;
   poly: Record<(
@@ -128,7 +128,7 @@ export function createStage(stageKey: string): StageMeta {
       initCursorPos: [...initCursorPos],
       // ...Attached by components
     },
-    opts: createStageOpts(),
+    opt: createStageOpts(),
     sel: {
       group: new THREE.Group,
       locked: false,
@@ -156,7 +156,7 @@ export function createStageOpts(): StageOpts {
 export function createPersist(stageKey: string): StageMetaJson {
   return {
     key: stageKey,
-    opts: createStageOpts(),
+    opt: createStageOpts(),
     extra: {
       initCameraPos: [...initCameraPosArray],
       initCursorPos: [...initCursorPos],

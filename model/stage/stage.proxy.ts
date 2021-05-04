@@ -61,16 +61,16 @@ export function createStageProxy(stageKey: string) {
             .concat('bounds', 'wall', 'obs'),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
-      } else if (key === 'opts') {
+      } else if (key === 'opt') {
         return new Proxy({} as StageOpts, {
           get(_, key: keyof StageOpts) {
-            return stage().opts[key];
+            return stage().opt[key];
           },
           set(_, key: string, value: any) {
             useStage.api.updateOpts(stageKey, { [key]: value });
             return true;
           },
-          ownKeys: () => Object.keys(stage().opts),
+          ownKeys: () => Object.keys(stage().opt),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
         });
       } else if (key === 'light') {

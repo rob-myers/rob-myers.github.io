@@ -61,9 +61,9 @@ export const shellScripts = {
 
   selectionKeyHandler: `
 # selection key handler
-key | run '({ read, _: {msg} }, { stage: { opts, sel, poly }, use: {THREE, Geom, geom} }) {
+key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, geom} }) {
   while (msg = await read()) {
-    if (msg.type === "keyup" || !opts.enabled || !sel.enabled) continue;
+    if (msg.type === "keyup" || !opt.enabled || !sel.enabled) continue;
 
     switch (msg.key) {
       case "-":
@@ -156,15 +156,15 @@ key | run '({ read, _: {msg} }, { stage: { opts, sel, poly }, use: {THREE, Geom,
   `,
 
   optsKeyHandler: `
-# opts key handler
-key | run '({ read, _: {msg} }, { stage: { opts } }) {
+# options key handler
+key | run '({ read, _: {msg} }, { stage: { opt } }) {
   while (msg = await read()) {
-    if (msg.type !== "keydown" || !opts.enabled) continue;
+    if (msg.type !== "keydown" || !opt.enabled) continue;
     switch (msg.key) {
-      case "1": opts.wallOpacity = 0; break;
-      case "2": opts.wallOpacity = 1; break;
-      case "3": opts.wallOpacity = 0.4; break;
-      // case "l": opts.lights = !opts.lights; break;
+      case "1": opt.wallOpacity = 0; break;
+      case "2": opt.wallOpacity = 1; break;
+      case "3": opt.wallOpacity = 0.4; break;
+      // case "l": opt.lights = !opt.lights; break;
     }
   }
 }' &

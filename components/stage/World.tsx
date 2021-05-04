@@ -4,7 +4,7 @@ import { geom } from "model/geom.service";
 import { StageLight, StageOpts, StagePoly } from "model/stage/stage.model";
 import Bots from "./Bots";
 
-const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
+const World: React.FC<Props> = ({ opt, poly, light, updateShadowMap }) => {
   const walls = useRef<THREE.Mesh>(null);
   const wallsBase = useRef<THREE.Mesh>(null);
   const obstructions = useRef<THREE.Mesh>(null);
@@ -25,10 +25,10 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
   useEffect(() => {
     navigable.current!.geometry = geom.polysToGeometry(poly.nav);
     obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.1);
-    walls.current!.geometry = geom.polysToWalls(poly.wall, opts.wallHeight);
+    walls.current!.geometry = geom.polysToWalls(poly.wall, opt.wallHeight);
     wallsBase.current!.geometry = walls.current!.geometry;
     updateLightAt(Date.now());
-  }, [poly, opts.wallHeight, opts.wallOpacity]);
+  }, [poly, opt.wallHeight, opt.wallOpacity]);
 
   return (
     <group>
@@ -42,8 +42,8 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
           side={THREE.DoubleSide} // Fixes shadows
           color="#000"
           transparent
-          opacity={opts.wallOpacity}
-          depthTest={opts.wallOpacity === 1}
+          opacity={opt.wallOpacity}
+          depthTest={opt.wallOpacity === 1}
         />
       </mesh>
 
@@ -51,10 +51,10 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
         name="Obstructions"
         ref={obstructions}
         castShadow
-        scale={[1, 1, Math.sign(opts.wallOpacity)] }
+        scale={[1, 1, Math.sign(opt.wallOpacity)] }
         >
         <meshBasicMaterial
-          color={opts.wallOpacity ? "#000" : "#777"}
+          color={opt.wallOpacity ? "#000" : "#777"}
           side={THREE.DoubleSide} // Fixes shadows
         />
       </mesh>
@@ -65,7 +65,7 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
         renderOrder={0}
         receiveShadow
         scale={[1, 1, 0]}
-        visible={opts.wallOpacity !== 1}
+        visible={opt.wallOpacity !== 1}
       >
         <meshStandardMaterial
           side={THREE.FrontSide}
@@ -84,7 +84,7 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
 
       <ambientLight
         color="#fff"
-        intensity={opts.ambientLight + (opts.wallOpacity === 1 ? 0 : 0.1)}
+        intensity={opt.ambientLight + (opt.wallOpacity === 1 ? 0 : 0.1)}
       />
 
       {Lights}
@@ -96,7 +96,7 @@ const World: React.FC<Props> = ({ opts, poly, light, updateShadowMap }) => {
 };
 
 interface Props {
-  opts: StageOpts;
+  opt: StageOpts;
   light: StageLight;
   poly: StagePoly;
   updateShadowMap: () => void;

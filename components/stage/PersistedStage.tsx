@@ -17,8 +17,8 @@ const PersistedStage: React.FC<Props> = ({ stageKey }) => {
   }, [rehydrated, stageKey]);
 
   const persistOnUnload = useCallback(() =>
-    stage?.opts.autoPersist && useStage.api.persist(stageKey),
-    [stage?.opts.autoPersist, stageKey],
+    stage?.opt.autoPersist && useStage.api.persist(stageKey),
+    [stage?.opt.autoPersist, stageKey],
   );
   useBeforeunload(persistOnUnload);
 
