@@ -35,6 +35,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
     ctxt.gl.shadowMap.needsUpdate = true;
 
     stage.internal.scene = ctxt.scene;
+    useStage.api.rehydrateBot(stage.key);
     setCtxt(ctxt);
   }, [stage.internal]);
 
@@ -126,8 +127,9 @@ const Stage: React.FC<Props> = ({ stage }) => {
           />
 
           <World
-            opt={stage.opt}
+            bot={stage.bot}
             light={stage.light}
+            opt={stage.opt}
             poly={stage.poly}
             updateShadowMap={updateShadowMap}
           />

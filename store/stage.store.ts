@@ -9,6 +9,8 @@ import * as Stage from 'model/stage/stage.model';
 import { identityMatrix4, vectorToTriple } from 'model/3d/three.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
 
+import useGeomStore from "store/geom.store";
+
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
   rehydrated: boolean;
@@ -20,13 +22,17 @@ export type State = {
 
   readonly api: {
     awaitStage: (stageKey: string, resolver: () => void) => Promise<void>;
+    /** Get or rehydrate stage */
     ensureStage: (stageKey: string) => void;
     getPersist: (stageKey: string) => Stage.StageMetaJson;
     getStage: (stageKey: string) => Stage.StageMeta;
     persist: (stageKey: string) => void;
+    /** Rehydrate bots using data loaded into geom.store */
+    rehydrateBot: (stageKey: string) => Promise<void>;
     removeStage: (stageKey: string) => void;
+    updateBot: (stageKey: string, updates: Partial<Stage.StageBot>) => void;
     updateLight: (stageKey: string, updates: Partial<Stage.StageLight>) => void;
-    updateOpts: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
+    updateOpt: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
     updatePoly: (stageKey: string, updates: Updates<Stage.StagePoly>) => void;
     updateSel: (stageKey: string, updates: Updates<Stage.StageSelection>) => void;
     updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
@@ -59,7 +65,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
         // Restore persisted data
         const s = Stage.createStage(stageKey);
-        const { opt, extra, sel, poly, light, bot } = api.getPersist(stageKey);
+        const { opt, extra, sel, poly, light } = api.getPersist(stageKey);
         s.opt = deepClone(opt??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         s.internal.cursor.position.set(...s.extra.initCursorPos);
@@ -82,11 +88,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           light.name = name;
           return light;
         });
-        s.bot = mapValues(bot, ({ name, position }) => {
-          const placeholder = new THREE.Group;
-          placeholder.position.set(...position);
-          return { name, root: placeholder, clips: [] };
-        });
+        s.bot = {}; // See `api.rehydrateBot`
         
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
@@ -151,10 +153,30 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }));
     },
 
+    rehydrateBot: async (stageKey) => {
+      await useGeomStore.api.loadGltfs();
+      const { root, clips } =  useGeomStore.getState().bot!;
+      const { SkeletonUtils } = await import('three/examples/jsm/utils/SkeletonUtils');
+      const { bot } = api.getPersist(stageKey);
+
+      api.updateBot(stageKey, mapValues(bot, ({ name, position }) => {
+        const clone = SkeletonUtils.clone(root) as THREE.Group;
+        clone.position.set(...position);
+        return { name, root: clone, clips: clips.map(x => x.clone()) };
+      }));
+    },
+
     removeStage: (stageKey) => set(({ stage }) => ({
       stage: removeFromLookup(stageKey, stage),
     })),
 
+    updateBot: (stageKey, updates) => {
+      api.updateStage(stageKey, ({ bot }) => {
+        const next = {...bot}; // Can delete by setting `undefined`
+        Object.entries(updates).forEach(([name, bot]) => bot ? (next[name] = bot) : delete next[name]);
+        return {bot: next};
+      });
+    },
     updateLight: (stageKey, updates) => {
       api.updateStage(stageKey, ({ light }) => {
         const next = {...light}; // Can delete by setting `undefined`
@@ -162,7 +184,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         return {light: next};
       });
     },
-    updateOpts: (stageKey, updates) => {
+    updateOpt: (stageKey, updates) => {
       api.updateStage(stageKey, ({ opt: opts }) => ({
         opt: { ...opts, ...typeof updates === 'function' ? updates(opts) : updates },
       }));

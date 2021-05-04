@@ -67,7 +67,7 @@ export function createStageProxy(stageKey: string) {
             return stage().opt[key];
           },
           set(_, key: string, value: any) {
-            useStage.api.updateOpts(stageKey, { [key]: value });
+            useStage.api.updateOpt(stageKey, { [key]: value });
             return true;
           },
           ownKeys: () => Object.keys(stage().opt),

@@ -9,7 +9,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
 
   const toggleRunning = useCallback(() => {
     if (canToggleRunning) {
-      useStage.api.updateOpts(stageKey, { enabled: !opts.enabled });
+      useStage.api.updateOpt(stageKey, { enabled: !opts.enabled });
       setCanToggleRunning(false);
       setTimeout(() => setCanToggleRunning(true), 1000);
     }
@@ -23,7 +23,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
   }, [enableUi]);
 
   const toggleCam = useCallback(() => {
-    enableUi && useStage.api.updateOpts(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }));
+    enableUi && useStage.api.updateOpt(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }));
   }, [enableUi]);
 
   return (

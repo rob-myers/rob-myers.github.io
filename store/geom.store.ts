@@ -32,7 +32,7 @@ export type State = {
       bounds: Geom.Rect;
       navPolys: Geom.Polygon[];
     };
-    /** Load assets from gltf(s) exported from Blender. */
+    /** Wait until we've loaded gltf(s) exported from Blender. */
     loadGltfs: () => Promise<void>;
     /** Load images as `THREE.Texture`s */
     loadTextures: () => void;

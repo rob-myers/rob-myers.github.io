@@ -1,10 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { geom } from "model/geom.service";
-import { StageLight, StageOpts, StagePoly } from "model/stage/stage.model";
+import { StageBot, StageLight, StageOpts, StagePoly } from "model/stage/stage.model";
 import Bots from "./Bots";
 
-const World: React.FC<Props> = ({ opt, poly, light, updateShadowMap }) => {
+const World: React.FC<Props> = ({
+  bot,
+  light,
+  opt,
+  poly,
+  updateShadowMap,
+}) => {
   const walls = useRef<THREE.Mesh>(null);
   const wallsBase = useRef<THREE.Mesh>(null);
   const obstructions = useRef<THREE.Mesh>(null);
@@ -89,13 +95,14 @@ const World: React.FC<Props> = ({ opt, poly, light, updateShadowMap }) => {
 
       {Lights}
 
-      <Bots/>
+      <Bots bot={bot} />
 
     </group>
   );
 };
 
 interface Props {
+  bot: StageBot;
   opt: StageOpts;
   light: StageLight;
   poly: StagePoly;
