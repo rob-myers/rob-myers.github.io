@@ -111,6 +111,10 @@ cursor | map 'p => p.set(1, 1)'
 get stage.sel.bounds
 call '(_, ...args) => args' 1 2 3
 call '({ use: {THREE} }) => new THREE.SpotLight'
+# reading and writing
+run '({ read }) { const msg = await read(); yield "received"; yield msg; }'
+# spawn from js
+run '({ spawn }) { yield* await spawn("ls stage.light") }'
 ```
 
 ### Three.js Animation example
