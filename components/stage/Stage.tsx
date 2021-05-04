@@ -167,8 +167,6 @@ const Root = styled.section<{ background: string }>`
 `;
 
 const CanvasRoot = styled(Canvas)`
-  border: 0 solid #999;
-  border-width: 0 1px;
   background: #000;
 `;
 

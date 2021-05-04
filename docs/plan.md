@@ -36,6 +36,7 @@
       - https://www.youtube.com/watch?v=EkPfhzIbp2g&t=6s
 
 - Can create lines
+   > Need to outset line by computing intersection points
 - Can paint polygons using CLI
    > We'll use them to create triggers
 
