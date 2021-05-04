@@ -30,19 +30,6 @@ export const preloadedFunctions = {
   }'
 }`,
 
-  /**
-   * TODO rewrite
-   */
-  sel: `run '({ read }, { stage: {sel}, use: {Geom} }) {
-    const input = await read();
-    if (input) {
-      sel.wall = input.map(x => Geom.Polygon.from(x))
-        .filter(x => x.outer.length);
-    } else {
-      yield sel.wall.map(x => x.json);
-    }
-}'
-`,
 };
 
 export const preloadedVariables = {
