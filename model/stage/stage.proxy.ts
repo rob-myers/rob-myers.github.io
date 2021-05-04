@@ -2,7 +2,7 @@ import { firstAvailableInteger } from "model/generic.model";
 import * as Geom from "model/geom";
 import { geom } from "model/geom.service";
 import useStage from "store/stage.store";
-import { StageLight, StageMeta, stageNavInset, StageOpts, StagePoly, StageSelection } from "./stage.model";
+import { StageBot, StageLight, StageMeta, stageNavInset, StageOpts, StagePoly, StageSelection } from "./stage.model";
 
 export function createStageProxy(stageKey: string) {
   const stage = () => useStage.api.getStage(stageKey);
@@ -75,9 +75,8 @@ export function createStageProxy(stageKey: string) {
             if (key === 'add') {
               return (light: THREE.SpotLight) => {
                 light.name = `light${firstAvailableInteger(
-                  Object.keys(stage().light).filter(x => /^light\d+$/)
-                    .map(x => Number(x.slice(5)))
-                  )}`;
+                  Object.keys(stage().light).filter(x => /^light\d+$/).map(x => Number(x.slice(5)))
+                )}`;
                 useStage.api.updateLight(stageKey, { [light.name]: light });
               };
             } else if (key === 'update') {
@@ -96,18 +95,46 @@ export function createStageProxy(stageKey: string) {
             return true;
           },
         });
+      } else if (key === 'bot') {
+        return new Proxy({} as StageBot, {
+          deleteProperty: (_, key: string) => {
+            useStage.api.updateBot(stageKey, { [key]: undefined });
+            return true;
+          },
+          get(_, key: string | 'add') {
+            if (key === 'add') {
+              return (group: THREE.Group, clips: THREE.AnimationClip[]) => {
+                group.name = `bot${firstAvailableInteger(
+                  Object.keys(stage().bot).filter(x => /^bot\d+$/).map(x => Number(x.slice(5)))
+                )}`;
+                useStage.api.updateBot(stageKey, { [group.name]: {
+                  name: group.name,
+                  group: group,
+                  clips, 
+                } });
+              };
+            }
+            return stage().bot[key];
+          },
+          getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
+          ownKeys: () => Object.keys(stage().bot),
+          set(_, key: string, value: any) {
+            useStage.api.updateBot(stageKey, { [key]: value });
+            return true;
+          },
+        });
       } else if (key === 'cursor') {
         return stage().internal.cursor.position;
       }
       return stage()[key];
     },
     set(_, _key: keyof StageMeta, _value: any) {
-      throw Error('Cannot set top-level key of stage');
+      throw Error('cannot set top-level key of stage');
     },
-    ownKeys: () => Object.keys(stage()),
+    ownKeys: () => Object.keys(stage()).concat('cursor'),
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
     deleteProperty: (_, _key: keyof StageMeta) => {
-      throw Error('Cannot delete top-level key of stage');
+      throw Error('cannot delete top-level key of stage');
     },
   });
 }

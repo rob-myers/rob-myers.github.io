@@ -126,7 +126,7 @@ export interface StageBot {
 export interface Bot {
   name: string;
   /** Initially a placeholder group when bot not loaded */
-  root: THREE.Group;
+  group: THREE.Group;
   clips: THREE.AnimationClip[];
 }
 

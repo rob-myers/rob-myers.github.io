@@ -8,21 +8,16 @@ import * as THREE from 'three';
 import { geom, outsetBounds, outsetWalls } from 'model/geom.service';
 import * as Geom from 'model/geom';
 import { recastService } from 'model/3d/recast.service';
-import { initStageBounds } from 'model/stage/stage.model';
+import { Bot, initStageBounds } from 'model/stage/stage.model';
 
 import thinPlusPng from '../3d/img/thin-plus.png';
-
-const scaleFactor = 1 / 5;
 
 export type State = {
   loaded: boolean;
   loading: boolean;
   loadResolvers: (() => void)[];
   /** Animated bot loaded from gltf */
-  bot: null | {
-    root: THREE.Group;
-    clips: THREE.AnimationClip[];
-  };
+  bot: null | Bot;
   /** Texture library */
   texture: Record<string, THREE.Texture>;
 
@@ -69,14 +64,14 @@ const useStore = create<State>(devtools((set, get) => ({
       // loader.setDRACOLoader((new DRACOLoader).setDecoderPath('/draco/'));
 
       const gltf = await loader.loadAsync('/bot.gltf');
-      const root = gltf.scene.children[0] as THREE.Group;
+      const group = gltf.scene.children[0] as THREE.Group;
       const clips = gltf.animations;
       // console.log({ gltf });
 
       set(_ => ({
         loaded: true,
         loading: false,
-        bot: { root, clips },
+        bot: { name: 'original', group, clips },
       }));
       while (get().loadResolvers.pop()?.());
     },

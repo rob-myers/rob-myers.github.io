@@ -1,6 +1,4 @@
 import cliColumns from 'cli-columns';
-import safeJsonStringify from 'safe-json-stringify';
-import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 import * as THREE from 'three';
 
 import * as Geom from 'model/geom';
@@ -20,15 +18,11 @@ import { StageKeyEvent, StageMeta } from 'model/stage/stage.model';
 import useStage from 'store/stage.store';
 import { parseService } from './parse/parse.service';
 import useGeomStore from 'store/geom.store';
+import { Util } from 'model/runtime-utils';
 
 const commandKeys = {
   /** Wait for a stage to be ready */
   'await-stage': true,
-  /**
-   * Spawn a bot
-   * TODO move to a function
-   */
-  bot: true,
   /** Execute a javascript function */
   call: true,
   /** List function definitions */
@@ -94,21 +88,6 @@ class CmdService {
           useStage.api.awaitStage(stageKey, resolve);
           useSession.api.addCleanup(meta, resolve);
         });
-        break;
-      }
-      case 'bot': {
-        await useGeomStore.api.loadGltfs();
-        const { root, clips } =  useGeomStore.getState().bot!;
-        const { cursor, scene } = this.getSessionStage(meta.sessionKey).internal;
-        if (scene) {
-          const { SkeletonUtils } = await import('three/examples/jsm/utils/SkeletonUtils');
-          const clone = SkeletonUtils.clone(root);
-          clone.scale.setScalar(0.03);
-          clone.position.copy(cursor.position);
-          // const mixer = new THREE.AnimationMixer(clone);
-          // mixer.clipAction(clips[0]).play();
-          scene.add(clone);
-        }
         break;
       }
       case 'call': {
@@ -510,25 +489,31 @@ class CmdService {
     }
   }
 
-  /** Expose classes/services */
+  /**
+   * Expose classes/services
+   */
   private useProxy = new Proxy({} as {
     geom: typeof geom;
     Geom: typeof Geom;
     THREE: typeof THREE;
-    stringify: (value: any) => string;
+    Util: typeof Util;
   }, {
-    get(_, key: 'geom' | 'Geom' | 'THREE' | 'stringify' | string)  {
+    get(_, key: (
+      | 'geom'
+      | 'Geom'
+      | 'THREE'
+      | 'Util'
+    ))  {
       switch (key) {
         case 'geom': return geom;
         case 'Geom': return Geom;
         case 'THREE': return THREE;
-        case 'stringify': return (...args: Parameters<typeof safeJsonStringify>) =>
-          jsonStringifyPrettyCompact(JSON.parse(safeJsonStringify(...args)));
+        case 'Util': return Util;
+        default: return (_ as any)[key];
       }
-      return (_ as any)[key];
     },
-    ownKeys: () => ['geom', 'Geom', 'THREE', 'stringify'],
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
+    ownKeys: () => ['geom', 'Geom', 'THREE', 'Util'],
   });
   
 }

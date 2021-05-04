@@ -28,8 +28,8 @@
       - ✅ https://www.youtube.com/watch?v=gFf5eGCjUUg&ab_channel=SebastianLague
    - Import into three.js
       - ✅ Can import and clone model
+      - ✅ Can persist model
       - Can play model
-      - Can persist model
    - Have idle/walk/run on one character in blender
       - https://unboring.net/workflows/animation.html
    - Character controller e.g.
@@ -106,8 +106,9 @@
 See the [code library](../model/sh/code-library.ts).
 
 ```sh
-get stage.internal.cursor.position | map 'p => p.set(1, 1)'
+get stage.cursor | map 'p => p.set(1, 1)'
 cursor | map 'p => p.set(1, 1)'
+get 'stage.cursor.set(1, 1, 0)'
 get stage.sel.bounds
 call '(_, ...args) => args' 1 2 3
 call '({ use: {THREE} }) => new THREE.SpotLight'

@@ -14,7 +14,7 @@ export const preloadedFunctions = {
   else map "x => x.reduce($1)"; fi
 }
 `,
-  pretty: `map '(x, { use: {stringify} }) => stringify(x)'`,
+  pretty: `map '(x, { use: {Util} }) => Util.stringify(x)'`,
   keys: `map Object.keys`,
   cat: `get "$@" | split`,
 
@@ -26,14 +26,18 @@ call '({ stage, use: {geom} }) => {
   const position = stage.cursor.clone().setZ(2);
   const light = geom.createSpotLight(position);
   stage.light.add(light);
-  return light;
 }'
 }`,
 
   bot: `{
 # create bot at cursor
-call '() => {
-
+call '({ stage, use: {Util} }) => {
+  const position = stage.cursor.clone();
+  const { group, clips } = Util.createBot();
+  group.position.copy(position);
+  stage.bot.add(group, clips);
+  // const mixer = new THREE.AnimationMixer(group);
+  // mixer.clipAction(clips[0]).play();
 }'
 }`,
 

@@ -10,6 +10,7 @@ import { identityMatrix4, vectorToTriple } from 'model/3d/three.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
 
 import useGeomStore from "store/geom.store";
+import { Util } from 'model/runtime-utils';
 
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
@@ -145,7 +146,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             name,
             position: [p.x, p.y, p.z],
           })),
-          bot: mapValues(bot, ({ name, root: { position: p } }) => ({
+          bot: mapValues(bot, ({ name, group: { position: p } }) => ({
             name,
             position: [p.x, p.y, p.z],
           })),
@@ -155,14 +156,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     rehydrateBot: async (stageKey) => {
       await useGeomStore.api.loadGltfs();
-      const { root, clips } =  useGeomStore.getState().bot!;
-      const { SkeletonUtils } = await import('three/examples/jsm/utils/SkeletonUtils');
       const { bot } = api.getPersist(stageKey);
 
       api.updateBot(stageKey, mapValues(bot, ({ name, position }) => {
-        const clone = SkeletonUtils.clone(root) as THREE.Group;
-        clone.position.set(...position);
-        return { name, root: clone, clips: clips.map(x => x.clone()) };
+        const { group, clips } = Util.createBot();
+        group.position.set(...position);
+        return { name, group, clips, };
       }));
     },
 
