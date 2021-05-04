@@ -8,6 +8,7 @@ const Bots: React.FC<Props> = ({ bot }) => {
   // useFrame((_, delta) => Object.values(bot).forEach(x => x.mixer.update(delta)));
 
   useEffect(() => {
+    // TODO stop anims whenever changing stage, else get slowdown
     // for (const { mixer, clips } of Object.values(bot)) {
     //   if (!mixer.existingAction(clips[0])) {
     //     mixer.clipAction(clips[0]).play();
