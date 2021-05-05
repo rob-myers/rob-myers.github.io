@@ -59,7 +59,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
         </Slot>
         <Slot>
           <LockedIcon
-            greyed={!(enableSelUi && selection.locked)}
+            visible={enableSelUi && selection.locked}
             onClick={toggleSelectionLocked}
             title={enableSelUi && selection.locked ? "click to unlock" : ""}
           >
@@ -114,7 +114,7 @@ const Slot = styled.div`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 34px 44px 36px 0px;
+  grid-template-columns: 34px 42px 36px 0px;
   gap: 12px;
   font-size: 10pt;
 `;
@@ -135,9 +135,9 @@ const SelectButton = styled.div<{ greyed?: boolean }>`
   color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
 `;
 
-const LockedIcon = styled.div<{ greyed?: boolean }>`
+const LockedIcon = styled.div<{ visible?: boolean }>`
   cursor: pointer;
-  opacity: ${({ greyed }) => greyed ? 0.4 : 1};
+  opacity: ${({ visible }) => visible ? 1 : 0};
 `;
 
 const RightToolbar = styled.section`
