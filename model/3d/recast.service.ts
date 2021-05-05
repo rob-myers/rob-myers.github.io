@@ -1,5 +1,5 @@
 import { Mesh, Vector3 } from "three";
-import { Geometry, Face3 } from "model/3d/deprecated";
+import { Geometry, Face3 } from "model/3d/facade";
 import { getWindow } from "model/dom.model";
 
 /**

@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import polygonClipping from 'polygon-clipping';
 
 import { range, Triple, tryParseJson } from 'model/generic.model';
-import { Geometry, Face3 } from 'model/3d/deprecated';
+import { Geometry, Face3 } from 'model/3d/facade';
 import * as Geom from 'model/geom';
 
 const twopi = 2 * Math.PI;
