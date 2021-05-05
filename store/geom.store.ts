@@ -8,7 +8,7 @@ import * as THREE from 'three';
 import { geom, outsetBounds, outsetWalls } from 'model/geom.service';
 import * as Geom from 'model/geom';
 import { recastService } from 'model/3d/recast.service';
-import { Bot, initStageBounds } from 'model/stage/stage.model';
+import { initStageBounds } from 'model/stage/stage.model';
 
 import thinPlusPng from '../3d/img/thin-plus.png';
 
@@ -17,7 +17,7 @@ export type State = {
   loading: boolean;
   loadResolvers: (() => void)[];
   /** Animated bot loaded from gltf */
-  bot: null | Bot;
+  bot: null | { group: THREE.Group; clips: THREE.AnimationClip[] };
   /** Texture library */
   texture: Record<string, THREE.Texture>;
 
@@ -71,7 +71,7 @@ const useStore = create<State>(devtools((set, get) => ({
       set(_ => ({
         loaded: true,
         loading: false,
-        bot: { name: 'original', group, clips, mixer: new THREE.AnimationMixer(group) },
+        bot: { group, clips },
       }));
       while (get().loadResolvers.pop()?.());
     },

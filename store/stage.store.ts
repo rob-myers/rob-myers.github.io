@@ -11,6 +11,7 @@ import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } f
 
 import useGeomStore from "store/geom.store";
 import { Util } from 'model/runtime-utils';
+import { BotController } from 'model/3d/bot-controller';
 
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
@@ -161,7 +162,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       api.updateBot(stageKey, mapValues(bot, ({ name, position }) => {
         const { group, clips } = Util.createBot();
         group.position.set(...position);
-        return { name, group, clips, mixer: new THREE.AnimationMixer(group) };
+        return { name, group, controller: new BotController(group, clips) };
       }));
       api.updateLight(stageKey, {});
     },

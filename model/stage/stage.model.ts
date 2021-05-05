@@ -4,6 +4,7 @@ import { Triple } from "model/generic.model";
 import * as Geom from "model/geom";
 import { PanZoomControls } from "model/3d/pan-zoom-controls";
 import { identityMatrix4 } from "model/3d/three.model";
+import { BotController } from "model/3d/bot-controller";
 
 export type StageMeta = {
   key: string;
@@ -126,8 +127,7 @@ export interface StageBot {
 export interface Bot {
   name: string;
   group: THREE.Group;
-  clips: THREE.AnimationClip[];
-  mixer: THREE.AnimationMixer;
+  controller: BotController;
 }
 
 export interface StageBotJson {
@@ -136,7 +136,6 @@ export interface StageBotJson {
     position: Triple<number>;
   };
 }
-
 
 export function createStage(stageKey: string): StageMeta {
   return {

@@ -4,6 +4,7 @@ import * as Geom from "model/geom";
 import { geom } from "model/geom.service";
 import * as Stage from "./stage.model";
 import useStage from "store/stage.store";
+import { BotController } from "model/3d/bot-controller";
 
 export function createStageProxy(stageKey: string) {
   const stage = () => useStage.api.getStage(stageKey);
@@ -110,8 +111,7 @@ export function createStageProxy(stageKey: string) {
                 useStage.api.updateBot(stageKey, { [group.name]: {
                   name: group.name,
                   group,
-                  clips,
-                  mixer: new THREE.AnimationMixer(group),
+                  controller: new BotController(group, clips),
                 } });
               };
             }
