@@ -27,7 +27,6 @@ export type State = {
     ensureStage: (stageKey: string) => void;
     getPersist: (stageKey: string) => Stage.StageMetaJson;
     getStage: (stageKey: string) => Stage.StageMeta;
-    mutatePoly: (stageKey: string, updates: Updates<Stage.StagePoly>) => void;
     persist: (stageKey: string) => void;
     /** Rehydrate bots using data loaded into geom.store */
     rehydrateBot: (stageKey: string) => Promise<void>;
@@ -109,11 +108,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
     getStage: (stageKey) => {
       return get().stage[stageKey];
-    },
-
-    mutatePoly: (stageKey, updates) => {
-      const { poly } = api.getStage(stageKey);
-      Object.assign(poly, typeof updates === 'function' ? updates(poly) : updates);
     },
 
     persist: (stageKey) => {

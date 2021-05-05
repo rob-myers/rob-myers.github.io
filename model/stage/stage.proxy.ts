@@ -11,18 +11,15 @@ export function createStageProxy(stageKey: string) {
     get(_, key: keyof Stage.StageMeta | 'cursor') {
       if (key === 'poly') {
         return new Proxy({} as Stage.StagePoly, {
-          get(_, key: keyof Stage.StagePoly | 'update' | 'mutate') {
+          get(_, key: keyof Stage.StagePoly | 'update') {
             if (key === 'update') {
               return (updates: Partial<Stage.StagePoly> = {}) => {
                 useStage.api.updatePoly(stageKey, updates);
-                // TODO trigger computation in a component instead
-                setTimeout(() => useStage.api.mutatePoly(stageKey, (poly) => ({
-                  nav: geom.navFromUnnavigable(poly.wall.concat(poly.obs), Stage.stageNavInset),
-                })));
+                setTimeout(() => {// TODO trigger nav computation elsewhere
+                  const {poly} = useStage.api.getStage(stageKey);
+                  poly.nav = geom.navFromUnnavigable(poly.wall.concat(poly.obs), Stage.stageNavInset);
+                });
               };
-            } else if (key === 'mutate') {
-              return (updates: Partial<Stage.StagePoly>) =>
-                useStage.api.mutatePoly(stageKey, updates);
             }
             return stage().poly[key];
           },
