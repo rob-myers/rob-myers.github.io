@@ -36,7 +36,8 @@
       - https://www.youtube.com/watch?v=EkPfhzIbp2g&t=6s
 
 - Static shadows for static geometry
-- Fake transformed circular shadows for bots
+- Bot shadows using hack:
+   > https://threejs.org/examples/?q=shado#webgl_shadow_contact
 
 - Implement `cd` and `pwd`
    - e.g. `cd stage.light`
@@ -50,6 +51,11 @@
    > Need to outset line by computing intersection points
 - Can paint polygons using CLI
    > We'll use them to create triggers
+
+- Concerning style:
+   - still feel `obs` are too simplistic
+   - lets try creating some meshes
+   - maybe keep the walls high and use 1/2/3
 
 - ✅ Add builtins `true` and `false`
 - ✅ Implement `IfClause` in shell
