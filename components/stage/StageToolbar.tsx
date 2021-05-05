@@ -4,23 +4,27 @@ import { css } from "@emotion/react";
 import { StageOpts, StageSelection } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
-const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
+const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
   const [canToggleRunning, setCanToggleRunning] = useState(true);
 
   const toggleRunning = useCallback(() => {
     if (canToggleRunning) {
-      useStage.api.updateOpt(stageKey, { enabled: !opts.enabled });
+      useStage.api.updateOpt(stageKey, { enabled: !opt.enabled });
       setCanToggleRunning(false);
       setTimeout(() => setCanToggleRunning(true), 1000);
     }
-  }, [opts.enabled, canToggleRunning]);
+  }, [opt.enabled, canToggleRunning]);
 
-  const enableUi = opts.enabled && canToggleRunning;
+  const enableUi = opt.enabled && canToggleRunning;
   const enableSelUi = enableUi && selection.enabled;
 
-  const toggleSelectionEnabled = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+  const toggleSelectionEnabled = useCallback((_e: React.MouseEvent<HTMLDivElement>) => {
     enableUi && useStage.api.updateSel(stageKey, ({ enabled }) => ({ enabled: !enabled }));
   }, [enableUi]);
+
+  const toggleSelectionLocked = useCallback((_) => {
+    enableSelUi && selection.locked && useStage.api.updateSel(stageKey, ({ locked }) => ({ locked: !locked }));
+  }, [enableSelUi, selection]);
 
   const toggleCam = useCallback(() => {
     enableUi && useStage.api.updateOpt(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }));
@@ -39,7 +43,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
             onClick={toggleRunning}
             emphasis={!canToggleRunning}
           >
-            {opts.enabled ? 'running' : 'paused'}
+            {opt.enabled ? 'running' : 'paused'}
           </PauseButton>
         </Slot>
         <Slot>
@@ -53,15 +57,24 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
             select
           </SelectButton>
         </Slot>
+        <Slot>
+          <LockedIcon
+            greyed={!(enableSelUi && selection.locked)}
+            onClick={toggleSelectionLocked}
+            title={enableSelUi && selection.locked ? "click to unlock" : ""}
+          >
+            🔒
+          </LockedIcon>
+        </Slot>
       </LeftToolbar>
       <RightToolbar>
         <Slot />
         <Slot>
           <PanZoomButton
-            greyed={!(enableUi && opts.panZoom)}
+            greyed={!(enableUi && opt.panZoom)}
             {...enableUi && {
               onClick: toggleCam,
-              ...opts.panZoom && { title: 'click to disable' },
+              ...opt.panZoom && { title: 'click to disable' },
             }}
           >
             panzoom
@@ -74,7 +87,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opts, selection }) => {
 
 interface Props {
   stageKey: string;
-  opts: StageOpts;
+  opt: StageOpts;
   selection: StageSelection;
 }
 
@@ -101,8 +114,8 @@ const Slot = styled.div`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 38px 50px auto;
-  gap: 10px;
+  grid-template-columns: 34px 44px 36px 0px;
+  gap: 12px;
   font-size: 10pt;
 `;
 
@@ -120,6 +133,11 @@ const SelectButton = styled.div<{ greyed?: boolean }>`
   display: flex;
   justify-content: center;
   color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
+`;
+
+const LockedIcon = styled.div<{ greyed?: boolean }>`
+  cursor: pointer;
+  opacity: ${({ greyed }) => greyed ? 0.4 : 1};
 `;
 
 const RightToolbar = styled.section`

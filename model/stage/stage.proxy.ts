@@ -72,8 +72,6 @@ export function createStageProxy(stageKey: string) {
           set(_, key: string, value: any) {
             if (!Stage.stageOptKeys.includes(key))
               throw Error(`unknown stage option ${key}`);
-            if (!['boolean', 'number', 'string'].includes(typeof value))
-              throw Error(`stage option ${key} must be primitive`);
             useStage.api.updateOpt(stageKey, { [key]: value });
             return true;
           },

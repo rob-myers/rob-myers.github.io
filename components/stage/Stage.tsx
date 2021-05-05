@@ -157,7 +157,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
     >
       <StageToolbar
         stageKey={stage.key}
-        opts={stage.opt}
+        opt={stage.opt}
         selection={stage.sel}
       />
 

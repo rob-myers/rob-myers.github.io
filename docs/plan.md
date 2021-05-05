@@ -9,13 +9,6 @@
 - Can translate bot along nav path
 - Can make bot walk along nav path
 
-- Simplify selection UI
-   - ✅ Can clear via escape
-   - ✅ Can lock via copy/cut
-   - ✅ Remove additive option and clean away ui
-   - ✅ Can add/erase obstruction with undo/redo
-   - Show locked ui icon
-
 - Working towards character
    - Create Minecraft Steve in blender
       - ✅ https://www.youtube.com/watch?v=pbwEHN15HbI&ab_channel=TutsByKai
@@ -73,6 +66,14 @@
    - Ensures old processes killed cleanly on hot reload
 
 ### Done
+
+- Simplify selection UI
+   - ✅ Can clear via escape
+   - ✅ Can lock via copy/cut
+   - ✅ Remove additive option and clean away ui
+   - ✅ Can add/erase obstruction with undo/redo
+  padding-left: 8px;
+   - ✅ Show locked ui icon
 
 - Cleanup code
    - ✅ remove `stage.opts.wallColor`
