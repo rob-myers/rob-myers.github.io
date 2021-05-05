@@ -89,26 +89,41 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
         }
         break;
       case "Escape":
-        sel.locked = false;
-        sel.localBounds = new Geom.Rect(0, 0, 0, 0);
-        [sel.localWall, sel.localObs] = [[], []];
+        sel.update({
+          locked: false,
+          localBounds: new Geom.Rect(0, 0, 0, 0),
+          localWall: [],
+          localObs: [],
+        });
         break;
       case "c":
         if (msg.metaKey) {
           const deltaWalls = geom.intersectPolysRect(poly.wall, sel.bounds);
           const deltaObs = geom.intersectPolysRect(poly.obs, sel.bounds);
-          [sel.wall, sel.obs, sel.locked] = [deltaWalls, deltaObs, true];
+          if (deltaWalls.length || deltaObs.length) {
+            const matrix = sel.group.matrix.clone().invert();
+            sel.update({ wall: deltaWalls, obs: deltaObs, locked: true,
+              localWall: deltaWalls.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
+              localObs: deltaObs.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
+            });
+          }
         }
         break;
       case "x":
         if (msg.metaKey && !sel.locked) {
           const deltaWalls = geom.intersectPolysRect(poly.wall, sel.bounds);
           const deltaObs = geom.intersectPolysRect(poly.obs, sel.bounds);
-          [sel.wall, sel.obs, sel.locked] = [deltaWalls, deltaObs, true];
-          poly.update({ prevWall: poly.wall, prevObs: poly.obs,
-            wall: geom.cutOut(deltaWalls, poly.wall),
-            obs: geom.cutOut(deltaObs, poly.obs),
-          });
+          if (deltaWalls.length || deltaObs.length) {
+            const matrix = sel.group.matrix.clone().invert();
+            sel.update({ wall: deltaWalls, obs: deltaObs, locked: true,
+              localWall: deltaWalls.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
+              localObs: deltaObs.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
+            });
+            poly.update({ prevWall: poly.wall, prevObs: poly.obs,
+              wall: geom.cutOut(deltaWalls, poly.wall),
+              obs: geom.cutOut(deltaObs, poly.obs),
+            });
+          }
         } else if (msg.metaKey && sel.locked) {
           poly.update({ prevWall: poly.wall, prevObs: poly.obs,
             wall: geom.cutOut(sel.wall, poly.wall),

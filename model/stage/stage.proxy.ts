@@ -35,7 +35,10 @@ export function createStageProxy(stageKey: string) {
         });
       } else if (key === 'sel') {
         return new Proxy({} as Stage.StageSelection, {
-          get(_, key: keyof Stage.StageSelection | 'bounds' | 'wall' | 'obs') {
+          get(_, key: (
+            | keyof Stage.StageSelection
+            | 'bounds' | 'wall' | 'obs' | 'update'
+          )) {
             if (key === 'bounds') {// Provide world bounds
               const { localBounds, group: { matrix } } = stage().sel;
               return geom.applyMatrixRect(matrix, localBounds.clone()).precision(1);
@@ -43,17 +46,13 @@ export function createStageProxy(stageKey: string) {
               const { localWall, localObs, group: { matrix } } = stage().sel;
               return (key === 'wall' ? localWall : localObs)
                 .map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
+            } else if (key === 'update') {
+              return (updates: Partial<Stage.StageSelection> = {}) =>
+                useStage.api.updateSel(stageKey, updates);
             }
             return stage().sel[key];
           },
-          set(_, key: keyof Stage.StageSelection | 'wall' | 'obs', value: any) {
-            if (key === 'wall' || key === 'obs') {// Given world polygons, set untransformed polygons
-              const { group } = stage().sel;
-              const matrix = group.matrix.clone().invert();
-              const next = (value as Geom.Polygon[]).map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
-              useStage.api.updateSel(stageKey, key === 'wall' ? { localWall: next } : { localObs: next });
-              return true;
-            }
+          set(_, key: keyof Stage.StageSelection, value: any) {
             useStage.api.updateSel(stageKey, { [key]: value });
             return true;
           },
