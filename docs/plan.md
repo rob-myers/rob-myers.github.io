@@ -38,8 +38,12 @@
 - Static shadows for static geometry
 - Fake transformed circular shadows for bots
 
-- Implement `cd` with `cd -`  and `cd ~` too.
-   > Effects `ls`, `get`, `rm` and `set`
+- Implement `cd` and `pwd`
+   - e.g. `cd stage.light`
+   - `cd`, `cd -`, `cd .`, `cd ..`.
+   - `pwd`
+   - Affects `ls`, `get`, `rm` and `set`
+   - Need `ls -a` to see top-level `PWD` and `OLDPWD`
 
 
 - Can create lines
