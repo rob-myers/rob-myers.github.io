@@ -63,15 +63,17 @@ export function createStageProxy(stageKey: string) {
         });
       } else if (key === 'opt') {
         return new Proxy({} as Stage.StageOpts, {
-          deleteProperty: (_, key: string) => {
-            if (Stage.stageOptKeys.includes(key))
-              throw Error(`cannot delete internal option ${key}`);
-            return delete (stage().opt as any)[key];
+          deleteProperty: (_, _key: string) => {
+            throw Error(`cannot delete option`);
           },
           get(_, key: keyof Stage.StageOpts) {
             return stage().opt[key];
           },
           set(_, key: string, value: any) {
+            if (!Stage.stageOptKeys.includes(key))
+              throw Error(`unknown stage option ${key}`);
+            if (!['boolean', 'number', 'string'].includes(typeof value))
+              throw Error(`stage option ${key} must be primitive`);
             useStage.api.updateOpt(stageKey, { [key]: value });
             return true;
           },
