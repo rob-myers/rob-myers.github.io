@@ -21,6 +21,7 @@ import World from "./World";
 
 const Stage: React.FC<Props> = ({ stage }) => {
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
+  const [lightsAt, updateLightAt] = useState(0);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     // Most recent initial camera position is persisted one
@@ -40,7 +41,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
   }, [stage.internal]);
 
   const updateShadowMap = useCallback(
-    () => ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true), [ctxt]);
+    () => ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true),
+    [ctxt],
+  );
+  const updateLights = useCallback(() => updateLightAt(Date.now()), []);
 
   useEffect(() => {
     // NOTE `ctxt?.gl` instead of `ctxt` for hotreloads on edit stage.store
@@ -57,7 +61,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const onPointer = useCallback((e: ThreeEvent<PointerEvent>) => {
     ptrWire.next({ key: e.type as any, point: e.point });
   }, []);
-  /** Change mesh `onPointerOut` type from 'pointermove' to 'pointerleave' */
   const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) =>
     ptrWire.next({ key: 'pointerleave', point: e.point }), []);
 
@@ -109,6 +112,22 @@ const Stage: React.FC<Props> = ({ stage }) => {
     />
   , [stage.sel]);
 
+  const Light = useMemo(() => {
+    Object.values(stage.light).forEach(light => light.shadow.needsUpdate = true);
+    updateShadowMap();
+
+    return <group name="Lights">
+      {Object.values(stage.light).map((light) =>
+        <group key={light.name}>
+          <primitive object={light} />
+          {light.target && <primitive key={`${light.name}.dst`} object={light.target} />}
+          <spotLightHelper args={[light, "#fff"]} ref={(x) => x && (x as any).update()}  />
+        </group>
+      )}
+    </group>;
+
+  }, [stage.light, lightsAt]);
+
   return (
     <Root
       background="#000"
@@ -132,13 +151,13 @@ const Stage: React.FC<Props> = ({ stage }) => {
           {Base}
           {CamControls}
           {Sel}
+          {Light}
 
           <World
             bot={stage.bot}
-            light={stage.light}
             opt={stage.opt}
             poly={stage.poly}
-            updateShadowMap={updateShadowMap}
+            updateLights={updateLights}
           />
 
         </CanvasRoot>

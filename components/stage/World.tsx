@@ -6,16 +6,14 @@ import Bots from "./Bots";
 
 const World: React.FC<Props> = ({
   bot,
-  light,
   opt,
   poly,
-  updateShadowMap,
+  updateLights,
 }) => {
   const walls = useRef<THREE.Mesh>(null);
   const wallsBase = useRef<THREE.Mesh>(null);
   const obstructions = useRef<THREE.Mesh>(null);
   const navigable = useRef<THREE.Mesh>(null);
-  const [lightsAt, updateLightAt] = useState(0);
 
   useEffect(() => {
     walls.current!.geometry.dispose();
@@ -23,27 +21,13 @@ const World: React.FC<Props> = ({
     walls.current!.geometry = geom.polysToWalls(poly.wall, opt.wallHeight);
     wallsBase.current!.geometry = walls.current!.geometry;
     obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.1);
-    updateLightAt(Date.now());
+    updateLights();
   }, [poly.wall, poly.obs, opt.wallHeight]);
   
   useEffect(() => {
     navigable.current!.geometry.dispose();
     navigable.current!.geometry = geom.polysToGeometry(poly.nav);
   }, [poly.nav]);
-
-  const Lights = useMemo(() => {
-    Object.values(light).forEach(light => light.shadow.needsUpdate = true);
-    updateShadowMap();
-    return <group name="Lights">
-      {Object.values(light).map((light) =>
-        <group key={light.name}>
-          <primitive object={light} />
-          {light.target && <primitive key={`${light.name}.dst`} object={light.target} />}
-          <spotLightHelper args={[light, "#fff"]} ref={(x) => x && (x as any).update()}  />
-        </group>
-      )}
-    </group>;
-  }, [light, lightsAt]);
 
   const AllBots = useMemo(() => <Bots bot={bot} />, [bot]);
 
@@ -97,7 +81,7 @@ const World: React.FC<Props> = ({
       >
         <meshBasicMaterial
           side={THREE.FrontSide}
-          color="#fff"
+          color="#555"
         />
       </mesh>
 
@@ -119,7 +103,6 @@ const World: React.FC<Props> = ({
         intensity={opt.ambientLight + (opt.wallOpacity === 1 ? 0 : 0.1)}
       />
 
-      {Lights}
       {AllBots}
     </group>
   );
@@ -128,9 +111,8 @@ const World: React.FC<Props> = ({
 interface Props {
   bot: StageBot;
   opt: StageOpts;
-  light: StageLight;
   poly: StagePoly;
-  updateShadowMap: () => void;
+  updateLights: () => void;
 }
 
 export default World;
