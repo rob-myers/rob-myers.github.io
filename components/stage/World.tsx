@@ -35,10 +35,13 @@ const World: React.FC<Props> = ({
     Object.values(light).forEach(light => light.shadow.needsUpdate = true);
     updateShadowMap();
     return <group name="Lights">
-      {Object.values(light).map((light) => [
-        <primitive key={light.name} object={light} />,
-        light.target && <primitive key={`${light.name}.dst`} object={light.target} />
-      ])}
+      {Object.values(light).map((light) =>
+        <group key={light.name}>
+          <primitive object={light} />
+          {light.target && <primitive key={`${light.name}.dst`} object={light.target} />}
+          <spotLightHelper args={[light, "#fff"]} ref={(x) => x && (x as any).update()}  />
+        </group>
+      )}
     </group>;
   }, [light, lightsAt]);
 
@@ -78,7 +81,7 @@ const World: React.FC<Props> = ({
         matrixAutoUpdate={true}
       >
         <meshBasicMaterial
-          color={opt.wallOpacity ? "#000" : "#777"}
+          color="#000"
           side={THREE.DoubleSide} // Fixes shadows
         />
       </mesh>
@@ -92,9 +95,9 @@ const World: React.FC<Props> = ({
         visible={opt.wallOpacity !== 1}
         matrixAutoUpdate={opt.wallOpacity !== 1}
       >
-        <meshStandardMaterial
+        <meshBasicMaterial
           side={THREE.FrontSide}
-          color="#988"
+          color="#fff"
         />
       </mesh>
 
@@ -106,7 +109,7 @@ const World: React.FC<Props> = ({
       >
         <meshBasicMaterial
           transparent
-          opacity={0.1}
+          opacity={0.15}
           color="#000"
         />
       </mesh>
