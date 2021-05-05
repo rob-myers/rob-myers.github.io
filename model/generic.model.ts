@@ -52,6 +52,9 @@ function tryJsonStringify(input: any) {
 }
 
 export function safeStringify(input: any) {
+  if (typeof input === 'function') {
+    return zealousTrim(`${input}`);
+  }
   return tryJsonStringify(input) || safeJsonStringify(input);
 }
 
@@ -134,4 +137,16 @@ export class Deferred<T> {
     return extended.findIndex((_, i) => !extended.includes(i));
   }
   return 0;
+}
+
+export function zealousTrim(input: string): string {
+  return input.trim().replace(/\s\s+/g, ' ').trim();
+}
+
+export function keysDeep(obj: any): string[] {
+  const properties = new Set<string>();
+  let currentObj = obj;
+  do Object.getOwnPropertyNames(currentObj).map(item => properties.add(item));
+  while ((currentObj = Object.getPrototypeOf(currentObj)));
+  return [...properties.keys()];
 }

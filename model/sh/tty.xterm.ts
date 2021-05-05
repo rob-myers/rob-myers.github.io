@@ -477,8 +477,7 @@ export class TtyXterm {
       }
       default: {
         if (isDataChunk(msg)) {
-          (msg as DataChunk).items
-            .slice(-2 * scrollback)
+          (msg as DataChunk).items.slice(-2 * scrollback)
             .forEach(x => this.onMessage(x));
         } else {
           this.queueCommands([{

@@ -3,7 +3,7 @@ import * as THREE from 'three';
 
 import * as Geom from 'model/geom';
 import { geom } from 'model/geom.service';
-import { testNever, truncate, Deferred, pause, deepClone } from 'model/generic.model';
+import { testNever, truncate, Deferred, pause, deepClone, keysDeep } from 'model/generic.model';
 import { createStageProxy } from '../stage/stage.proxy';
 
 import type * as Sh from './parse/parse.model';
@@ -199,6 +199,7 @@ class CmdService {
         const { opts, operands } = getOpts(args, { boolean: [
           '1', /** One line per item */
           'l', /** Detailed */
+          'r', /** Recursive properties */
         ], });
         // We usually treat -1 as a numeric operand, but it is an option here
         const queries = operands.filter(x => !x.startsWith('-'));
@@ -213,7 +214,7 @@ class CmdService {
             continue;
           }
           if (roots.length > 1) yield `${i > 0 ? '\n' : ''}${queries[i]}:`;
-          const keys = Object.keys(obj).sort();
+          const keys = (opts.r ? keysDeep(obj) : Object.keys(obj)).sort();
           let items = [] as string[];
           if (opts.l) {
             const metas = keys.map(x => obj[x]?.constructor?.name || (obj[x] === null ? 'null' : 'undefined'));
@@ -497,12 +498,7 @@ class CmdService {
     THREE: typeof THREE;
     Util: typeof Util;
   }, {
-    get(_, key: (
-      | 'geom'
-      | 'Geom'
-      | 'THREE'
-      | 'Util'
-    ))  {
+    get(_, key: 'geom' | 'Geom' | 'THREE' | 'Util')  {
       switch (key) {
         case 'geom': return geom;
         case 'Geom': return Geom;
