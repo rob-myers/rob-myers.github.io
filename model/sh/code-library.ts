@@ -89,11 +89,8 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
         }
         break;
       case "Escape":
-        sel.update({
-          locked: false,
+        sel.update({ locked: false, localWall: [], localObs: [],
           localBounds: new Geom.Rect(0, 0, 0, 0),
-          localWall: [],
-          localObs: [],
         });
         break;
       case "c":
@@ -102,7 +99,7 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
           const deltaObs = geom.intersectPolysRect(poly.obs, sel.bounds);
           if (deltaWalls.length || deltaObs.length) {
             const matrix = sel.group.matrix.clone().invert();
-            sel.update({ wall: deltaWalls, obs: deltaObs, locked: true,
+            sel.update({ locked: true,
               localWall: deltaWalls.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
               localObs: deltaObs.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
             });
@@ -115,7 +112,7 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
           const deltaObs = geom.intersectPolysRect(poly.obs, sel.bounds);
           if (deltaWalls.length || deltaObs.length) {
             const matrix = sel.group.matrix.clone().invert();
-            sel.update({ wall: deltaWalls, obs: deltaObs, locked: true,
+            sel.update({ locked: true,
               localWall: deltaWalls.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
               localObs: deltaObs.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
             });
