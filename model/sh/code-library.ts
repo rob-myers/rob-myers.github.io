@@ -181,7 +181,6 @@ key | run '({ read, _: {msg} }, { stage: { opt } }) {
     switch (msg.key) {
       case "1": opt.wallOpacity = 0; break;
       case "2": opt.wallOpacity = 1; break;
-      case "3": opt.wallOpacity = 0.2; break;
       // case "l": opt.lights = !opt.lights; break;
     }
   }

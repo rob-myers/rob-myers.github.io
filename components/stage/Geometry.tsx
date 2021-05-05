@@ -70,14 +70,13 @@ const Geometry: React.FC<Props> = ({
         name="WallsBase"
         ref={wallsBase}
         renderOrder={0}
-        receiveShadow
         scale={[1, 1, 0]}
         visible={opt.wallOpacity !== 1}
         matrixAutoUpdate={opt.wallOpacity !== 1}
       >
         <meshBasicMaterial
           side={THREE.FrontSide}
-          color="#444"
+          color="#555"
         />
       </mesh>
 
