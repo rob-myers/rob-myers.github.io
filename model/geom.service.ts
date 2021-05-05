@@ -112,7 +112,7 @@ class GeomService {
 
     const mesh = new THREE.Mesh;
     const [p, q] = points.slice(points.length - 2);
-    const delta = new Geom.Vector(-(q.y - p.y), q.x - p.x).normalize(defaultLineWidth/2);
+    const delta = new Geom.Vector(-(q.y - p.y), q.x - p.x).normalize((opts.lineWidth || defaultLineWidth)/2);
     const polyPoints = points.map(({ x, y }) => new Geom.Vector(x, y).add(delta))
       .concat(points.map(({ x, y }) => new Geom.Vector(x, y).sub(delta)).reverse());
 

@@ -1,9 +1,7 @@
 import { geom } from "model/geom.service";
 import { useState } from "react";
 
-
 const Axes: React.FC = () => {
-  
   const [xAxis] = useState(geom.createAxis('x', '#500', 0.3));
   const [yAxis] = useState(geom.createAxis('y', '#500', 0.3));
 
