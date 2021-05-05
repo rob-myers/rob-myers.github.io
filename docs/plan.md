@@ -52,10 +52,7 @@
 - Can paint polygons using CLI
    > We'll use them to create triggers
 
-- Concerning style:
-   - still feel `obs` are too simplistic
-   - lets try creating some meshes
-   - maybe keep the walls high and use 1/2/3
+- Maybe keep the walls high and use 1/2/3
 
 - ✅ Add builtins `true` and `false`
 - ✅ Implement `IfClause` in shell
