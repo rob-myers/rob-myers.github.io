@@ -17,7 +17,8 @@ import Grid from "./Grid";
 import Axes from "./Axes";
 import Selection from "./Selection";
 import Cursor from "./Cursor";
-import World from "./World";
+import WorldGeometry from "./Geometry";
+import WorldBots from "./Bots";
 
 const Stage: React.FC<Props> = ({ stage }) => {
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
@@ -41,8 +42,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
   }, [stage.internal]);
 
   const updateShadowMap = useCallback(
-    () => ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true),
-    [ctxt],
+    () => ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true), [ctxt],
   );
   const updateLights = useCallback(() => updateLightAt(Date.now()), []);
 
@@ -61,8 +61,14 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const onPointer = useCallback((e: ThreeEvent<PointerEvent>) => {
     ptrWire.next({ key: e.type as any, point: e.point });
   }, []);
-  const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) =>
-    ptrWire.next({ key: 'pointerleave', point: e.point }), []);
+  const onPointerOut = useCallback(
+    (e: ThreeEvent<PointerEvent>) => ptrWire.next({ key: 'pointerleave', point: e.point }),
+    [],
+  );
+  const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
+    stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(),
+    [stage.opt],
+  );
 
   const keyWire = stage.internal.keyEvents;
   const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
@@ -73,11 +79,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
       shiftKey: e.shiftKey,
     });
   }, [keyWire]);
-
-  const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
-    stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(),
-    [stage.opt],
-  );
 
   const Base = useMemo(() => <>
     <mesh
@@ -115,18 +116,36 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const Light = useMemo(() => {
     Object.values(stage.light).forEach(light => light.shadow.needsUpdate = true);
     updateShadowMap();
+    return (
+      <group name="Lights">
+        <ambientLight
+          color="#fff"
+          intensity={stage.opt.ambientLight + (stage.opt.wallOpacity === 1 ? 0 : 0.1)}
+        />
+        {Object.values(stage.light).map((light) =>
+          <group key={light.name}>
+            <primitive object={light} />
+            {light.target && <primitive key={`${light.name}.dst`} object={light.target} />}
+            {/** TODO initial update? */}
+            <spotLightHelper args={[light, "#fff"]} ref={(x) => x && (x as any).update()}  />
+          </group>
+        )}
+      </group>
+    );
+  }, [stage.light, stage.opt, lightsAt]);
 
-    return <group name="Lights">
-      {Object.values(stage.light).map((light) =>
-        <group key={light.name}>
-          <primitive object={light} />
-          {light.target && <primitive key={`${light.name}.dst`} object={light.target} />}
-          <spotLightHelper args={[light, "#fff"]} ref={(x) => x && (x as any).update()}  />
-        </group>
-      )}
-    </group>;
+  const Geometry = useMemo(() =>
+    <WorldGeometry
+      opt={stage.opt}
+      poly={stage.poly}
+      updateLights={updateLights}
+    />
+  , [stage.opt, stage.poly]);
 
-  }, [stage.light, lightsAt]);
+  const Bots = useMemo(
+    () => <WorldBots bot={stage.bot} />,
+    [stage.bot],
+  );
 
   return (
     <Root
@@ -152,14 +171,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
           {CamControls}
           {Sel}
           {Light}
-
-          <World
-            bot={stage.bot}
-            opt={stage.opt}
-            poly={stage.poly}
-            updateLights={updateLights}
-          />
-
+          {Geometry}
+          {Bots}
         </CanvasRoot>
 
       ) || stage?.extra.canvasPreview && (

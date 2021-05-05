@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { geom } from "model/geom.service";
-import { StageBot, StageLight, StageOpts, StagePoly } from "model/stage/stage.model";
-import Bots from "./Bots";
+import { StageOpts, StagePoly } from "model/stage/stage.model";
 
-const World: React.FC<Props> = ({
-  bot,
+const Geometry: React.FC<Props> = ({
   opt,
   poly,
   updateLights,
@@ -28,8 +26,6 @@ const World: React.FC<Props> = ({
     navigable.current!.geometry.dispose();
     navigable.current!.geometry = geom.polysToGeometry(poly.nav);
   }, [poly.nav]);
-
-  const AllBots = useMemo(() => <Bots bot={bot} />, [bot]);
 
   return (
     <group>
@@ -97,22 +93,14 @@ const World: React.FC<Props> = ({
           color="#000"
         />
       </mesh>
-
-      <ambientLight
-        color="#fff"
-        intensity={opt.ambientLight + (opt.wallOpacity === 1 ? 0 : 0.1)}
-      />
-
-      {AllBots}
     </group>
   );
 };
 
 interface Props {
-  bot: StageBot;
   opt: StageOpts;
   poly: StagePoly;
   updateLights: () => void;
 }
 
-export default World;
+export default Geometry;
