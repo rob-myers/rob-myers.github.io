@@ -109,7 +109,7 @@ const World: React.FC<Props> = ({
       >
         <meshBasicMaterial
           transparent
-          opacity={0.15}
+          opacity={0.1}
           color="#000"
         />
       </mesh>
