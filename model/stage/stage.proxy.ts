@@ -9,6 +9,9 @@ import { BotController } from "model/3d/bot-controller";
 export function createStageProxy(stageKey: string) {
   const stage = () => useStage.api.getStage(stageKey);
   return new Proxy({} as Stage.StageMeta, {
+    deleteProperty: (_, _key: keyof Stage.StageMeta) => {
+      throw Error('cannot delete top-level key of stage');
+    },
     get(_, key: keyof Stage.StageMeta | 'cursor') {
       if (key === 'poly') {
         return new Proxy({} as Stage.StagePoly, {
@@ -60,6 +63,11 @@ export function createStageProxy(stageKey: string) {
         });
       } else if (key === 'opt') {
         return new Proxy({} as Stage.StageOpts, {
+          deleteProperty: (_, key: string) => {
+            if (Stage.stageOptKeys.includes(key))
+              throw Error(`cannot delete internal option ${key}`);
+            return delete (stage().opt as any)[key];
+          },
           get(_, key: keyof Stage.StageOpts) {
             return stage().opt[key];
           },
@@ -68,7 +76,7 @@ export function createStageProxy(stageKey: string) {
             return true;
           },
           ownKeys: () => Object.keys(stage().opt),
-          getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
+          getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
         });
       } else if (key === 'light') {
         return new Proxy({} as Stage.StageLight, {
@@ -134,8 +142,5 @@ export function createStageProxy(stageKey: string) {
     },
     ownKeys: () => Object.keys(stage()).concat('cursor'),
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
-    deleteProperty: (_, _key: keyof Stage.StageMeta) => {
-      throw Error('cannot delete top-level key of stage');
-    },
   });
 }

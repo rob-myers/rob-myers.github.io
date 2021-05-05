@@ -176,6 +176,8 @@ export function createStageOpts(): StageOpts {
   };
 }
 
+export const stageOptKeys = Object.keys(createStageOpts());
+
 export function createPersist(stageKey: string): StageMetaJson {
   return {
     key: stageKey,

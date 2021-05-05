@@ -2,20 +2,19 @@
 
 ### TODO
 
+- Can create lines
+   > Need to outset line by computing intersection points
+- Can request nav path
+- Can show nav path
+- Can translate bot along nav path
+- Can make bot walk along nav path
+
 - Simplify selection UI
    - ✅ Can clear via escape
    - ✅ Can lock via copy/cut
    - ✅ Remove additive option and clean away ui
    - ✅ Can add/erase obstruction with undo/redo
-   - locked ui icon
-   - Review CLI function `sel`
-
-- Can add/remove lights via CLI
-   - ✅ Can list: `light`
-   - ✅ Can add: `cursor | light`
-   - ✅ Can remove: `light rm light1`
-   - Can modify: `light 'l => l.position.x += 1' light1`
-- ✅ Add `stage.opts.ambientLight`
+   - Show locked ui icon
 
 - Working towards character
    - Create Minecraft Steve in blender
@@ -44,16 +43,13 @@
    - `cd`, `cd -`, `cd .`, `cd ..`.
    - `pwd`
    - Affects `ls`, `get`, `rm` and `set`
-   - Need `ls -a` to see top-level `PWD` and `OLDPWD`
+   - Need `ls -a` to see top-level caps vars e.g. `PWD` and `OLDPWD`
 
-
-- Can create lines
-   > Need to outset line by computing intersection points
 - Can paint polygons using CLI
    > We'll use them to create triggers
 
-- Maybe keep the walls high and use 1/2/3
-
+- ✅ Can add light at cursor via CLI
+- ✅ Add `stage.opts.ambientLight`
 - ✅ Add builtins `true` and `false`
 - ✅ Implement `IfClause` in shell
 - ✅ Can `spawn()` inside `run` command
@@ -70,11 +66,10 @@
    - Simplify FifoDevice and Device?
 
 - Error messages prefixed by function chain
-- Sketch out milestones
 
 - BUG
    - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
-   - `call ({ stage }) => delete stage.opts.foo`
+   - ✅ `call '({ stage }) => delete stage.opt.foo'`
    - Ensures old processes killed cleanly on hot reload
 
 ### Done
