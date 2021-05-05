@@ -17,6 +17,20 @@ const World: React.FC<Props> = ({
   const navigable = useRef<THREE.Mesh>(null);
   const [lightsAt, updateLightAt] = useState(0);
 
+  useEffect(() => {
+    walls.current!.geometry.dispose();
+    obstructions.current!.geometry.dispose();
+    walls.current!.geometry = geom.polysToWalls(poly.wall, opt.wallHeight);
+    wallsBase.current!.geometry = walls.current!.geometry;
+    obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.1);
+    updateLightAt(Date.now());
+  }, [poly.wall, poly.obs, opt.wallHeight]);
+  
+  useEffect(() => {
+    navigable.current!.geometry.dispose();
+    navigable.current!.geometry = geom.polysToGeometry(poly.nav);
+  }, [poly.nav]);
+
   const Lights = useMemo(() => {
     Object.values(light).forEach(light => light.shadow.needsUpdate = true);
     updateShadowMap();
@@ -27,19 +41,6 @@ const World: React.FC<Props> = ({
       ])}
     </group>;
   }, [light, lightsAt]);
-
-  useEffect(() => {
-    if (walls.current) {
-      walls.current!.geometry.dispose();
-      obstructions.current!.geometry.dispose();
-      // navigable.current.geometry.dispose();
-    }
-    walls.current!.geometry = geom.polysToWalls(poly.wall, opt.wallHeight);
-    wallsBase.current!.geometry = walls.current!.geometry;
-    obstructions.current!.geometry = geom.polysToWalls(poly.obs, 0.1);
-    // navigable.current!.geometry = geom.polysToGeometry(poly.nav);
-    updateLightAt(Date.now());
-  }, [poly, opt.wallHeight]);
 
   const AllBots = useMemo(() => <Bots bot={bot} />, [bot]);
 
@@ -54,7 +55,12 @@ const World: React.FC<Props> = ({
         <meshStandardMaterial color="#fff" />
       </mesh>
 
-      <mesh name="Walls" ref={walls} castShadow matrixAutoUpdate={false}>
+      <mesh
+        name="Walls"
+        ref={walls}
+        castShadow
+        matrixAutoUpdate={true}
+      >
         <meshBasicMaterial
           side={THREE.DoubleSide} // Fixes shadows
           color="#000"
@@ -69,10 +75,10 @@ const World: React.FC<Props> = ({
         ref={obstructions}
         castShadow
         scale={[1, 1, Math.sign(opt.wallOpacity)] }
-        matrixAutoUpdate={false}
+        matrixAutoUpdate={true}
       >
         <meshBasicMaterial
-          color={opt.wallOpacity ? "#222" : "#777"}
+          color={opt.wallOpacity ? "#000" : "#777"}
           side={THREE.DoubleSide} // Fixes shadows
         />
       </mesh>
@@ -92,14 +98,18 @@ const World: React.FC<Props> = ({
         />
       </mesh>
 
-      {/* <mesh
+      <mesh
         name="Navigable"
         ref={navigable}
         renderOrder={0}
-        visible={false}
+        // visible={false}
       >
-        <meshBasicMaterial transparent opacity={0.1} color="#f00" />
-      </mesh> */}
+        <meshBasicMaterial
+          transparent
+          opacity={0.1}
+          color="#000"
+        />
+      </mesh>
 
       <ambientLight
         color="#fff"

@@ -35,6 +35,13 @@
    - Character controller e.g.
       - https://www.youtube.com/watch?v=EkPfhzIbp2g&t=6s
 
+- Static shadows for static geometry
+- Fake transformed circular shadows for bots
+
+- Implement `cd` with `cd -`  and `cd ~` too.
+   > Effects `ls`, `get`, `rm` and `set`
+
+
 - Can create lines
    > Need to outset line by computing intersection points
 - Can paint polygons using CLI

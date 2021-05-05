@@ -223,4 +223,4 @@ export const initCameraPos = new THREE.Vector3(...initCameraPosArray);
 export const initCursorPos: Triple<number> = [0, 0, 0];
 export const initStageBounds = new Geom.Rect(0, 0, 0, 0);
 
-export const stageNavInset = 0.03;
+export const stageNavInset = 0.045;

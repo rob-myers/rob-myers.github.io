@@ -312,9 +312,12 @@ class GeomService {
     obj.position.set(position.x, position.y, obj.position.z);
   }
 
-  navFromUnnavigable(polys: Geom.Polygon[], inset: number) {
-    const polyBounds = Geom.Polygon.from(this.unionRects(polys.map(x => x.rect)));
-    return geom.cutOut(polys.flatMap(x => x.createOutset(inset)), [polyBounds]);
+  navFromUnnavigable(walls: Geom.Polygon[], obs: Geom.Polygon[], inset: number) {
+    const outers = this.union(walls.map(x => new Geom.Polygon(x.outer)));
+    return geom.cutOut(
+      walls.concat(obs).flatMap(x => x.createOutset(inset)),
+      outers.flatMap(x => x.createInset(inset)),
+    );
   }
 
   outset(poly: Geom.Polygon, amount: number) {

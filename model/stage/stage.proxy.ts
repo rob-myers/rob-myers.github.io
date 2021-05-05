@@ -15,10 +15,9 @@ export function createStageProxy(stageKey: string) {
             if (key === 'update') {
               return (updates: Partial<Stage.StagePoly> = {}) => {
                 useStage.api.updatePoly(stageKey, updates);
-                setTimeout(() => {// TODO trigger nav computation elsewhere
-                  const {poly} = useStage.api.getStage(stageKey);
-                  poly.nav = geom.navFromUnnavigable(poly.wall.concat(poly.obs), Stage.stageNavInset);
-                });
+                setTimeout(() => useStage.api.updatePoly(stageKey, (poly) => ({
+                  nav: geom.navFromUnnavigable(poly.wall, poly.obs, Stage.stageNavInset),
+                })), 10);
               };
             }
             return stage().poly[key];
