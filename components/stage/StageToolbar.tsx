@@ -114,7 +114,7 @@ const Slot = styled.div`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 34px 42px 36px 0px;
+  grid-template-columns: 38px 44px 36px 0px;
   gap: 12px;
   font-size: 10pt;
 `;
@@ -142,7 +142,7 @@ const LockedIcon = styled.div<{ visible?: boolean }>`
 
 const RightToolbar = styled.section`
   display: grid;
-  grid-template-columns: auto 68px;
+  grid-template-columns: auto 70px;
   gap: 6px;
   font-size: 10pt;
 `;
