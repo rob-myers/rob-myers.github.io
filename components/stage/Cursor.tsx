@@ -19,8 +19,8 @@ const Cursor: React.FC<Props> = ({ internal, ptrWire }) => {
     if (!texture) return;
     const position = group.current!.position;
     const ptrSub = ptrWire.subscribe(({ key, point }) => {
-      if (key === 'pointerup') {
-        vectPrecision(position.copy(point), 1);
+      if (key === 'pointerdown') {
+        vectPrecision(position.copy(point), 2);
       }
       return () => ptrSub.unsubscribe();
     });
