@@ -4,6 +4,9 @@
 
 - ✅ Can create line meshes
 - Can request nav path
+   - `click` provides next click
+   - `path $( cursor ) $( click )` provides navpath
+   - `stage.point` and `stage.path`
 - Can show nav path
 - Can translate bot along nav path
 - Can make bot walk along nav path
