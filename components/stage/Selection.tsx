@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useRef } from "react";
 import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
-import { Subject } from "rxjs";
 import * as THREE from 'three';
 import { matrixToPosition, scaleUpByTouched, vectPrecision } from "model/3d/three.model";
 import * as Geom from "model/geom";
-import { StageSelection, StagePointerEvent } from "model/stage/stage.model";
+import { StageSelection, StageInternal } from "model/stage/stage.model";
 import { geom } from "model/geom.service";
 
-const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
+const Selection: React.FC<Props> = ({ internal, sel }) => {
   const group = useRef<THREE.Group>(null);
   const rectMesh = useRef<THREE.Mesh>(null);
   const rectGeom = useRef(geom.createSquareGeometry()).current;
@@ -49,7 +48,7 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
 
     const [position, scale] = [rectMesh.current!.position, rectMesh.current!.scale];
     ptrDown.current = false;
-    const ptrSub = ptrWire.subscribe(({ key, point }) => {
+    const ptrSub = internal.ptrEvents.subscribe(({ key, point }) => {
       if (ptrDown.current && key === 'pointermove') {
         scale.set(point.x - position.x, point.y - position.y, 1);
       } else if (key === 'pointerdown') {
@@ -76,7 +75,7 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
     if (!sel.locked) return;
 
     const { matrix } = group.current!;
-    const ptrSub = ptrWire.subscribe(({ key, point }) => {
+    const ptrSub = internal.ptrEvents.subscribe(({ key, point }) => {
       if (!dragging.current) {
         return;
       } else if (key === 'pointermove') {
@@ -154,7 +153,7 @@ const Selection: React.FC<Props> = ({ ptrWire, sel }) => {
 };
 
 interface Props {
-  ptrWire: Subject<StagePointerEvent>;
+  internal: StageInternal;
   sel: StageSelection;
 }
 

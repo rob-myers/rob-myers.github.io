@@ -1,10 +1,9 @@
 import { useEffect, useRef } from "react";
-import { Subject } from "rxjs";
-import { StageInternal, StagePointerEvent } from "model/stage/stage.model";
+import { StageInternal } from "model/stage/stage.model";
 import { vectPrecision } from "model/3d/three.model";
 import useGeomStore from "store/geom.store";
 
-const Cursor: React.FC<Props> = ({ internal, ptrWire }) => {
+const Cursor: React.FC<Props> = ({ internal, locked }) => {
   const group = useRef<THREE.Group>(null);
   const texture = useGeomStore(({ texture }) => texture.thinPlusPng);
 
@@ -12,19 +11,19 @@ const Cursor: React.FC<Props> = ({ internal, ptrWire }) => {
     if (!texture) return;
     group.current!.position.copy(internal.cursor.position);
     internal.cursor = group.current!;
-    // Do not remove reference, so cursor available when stage paused
+    // We do not remove reference, so cursor available when stage paused
   }, [texture]);
   
   useEffect(() => {
     if (!texture) return;
     const position = group.current!.position;
-    const ptrSub = ptrWire.subscribe(({ key, point }) => {
-      if (key === 'pointerdown') {
-        vectPrecision(position.copy(point), 2);
+    const ptrSub = internal.ptrEvents.subscribe(({ key, point }) => {
+      if (key === 'pointerdown' && !locked) {
+        vectPrecision(position.copy(point), 1);
       }
-      return () => ptrSub.unsubscribe();
     });
-  }, [texture]);
+    return () => ptrSub.unsubscribe();
+  }, [texture, locked]);
 
   return texture ? (
     <group ref={group}>
@@ -38,7 +37,7 @@ const Cursor: React.FC<Props> = ({ internal, ptrWire }) => {
 
 interface Props {
   internal: StageInternal;
-  ptrWire: Subject<StagePointerEvent>;
+  locked: boolean;
 }
 
 export default Cursor;

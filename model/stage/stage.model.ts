@@ -70,6 +70,7 @@ export interface StageOpts {
   wallHeight: number
   wallOpacity: number;
   ambientLight: number;
+  lockCursor: boolean; 
 }
 
 export interface StageSelection {
@@ -176,6 +177,7 @@ export function createStageOpts(): StageOpts {
     wallHeight: 1,
     wallOpacity: 1,
     ambientLight: 0.15,
+    lockCursor: false,
   };
 }
 

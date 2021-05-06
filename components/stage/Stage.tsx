@@ -92,10 +92,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
     </mesh>
     <Grid />
     <Axes />
-    <Cursor
-      internal={stage.internal}
-      ptrWire={ptrWire}
-    />
   </>, []);
 
   const CamControls = useMemo(() =>
@@ -105,12 +101,16 @@ const Stage: React.FC<Props> = ({ stage }) => {
     />
   , [stage.opt.panZoom]);
 
-  const Sel = useMemo(() =>
-    <Selection
-      sel={stage.sel}
-      ptrWire={ptrWire}
+  const Sel = useMemo(() => <>
+    <Cursor
+      internal={stage.internal}
+      locked={stage.opt.lockCursor}
     />
-  , [stage.sel]);
+    <Selection
+      internal={stage.internal}
+      sel={stage.sel}
+    />
+  </>, [stage.opt.lockCursor, stage.sel]);
 
   const Light = useMemo(() => {
     Object.values(stage.light).forEach(light => light.shadow.needsUpdate = true);
@@ -119,7 +119,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
       <group name="Lights">
         <ambientLight
           color="#fff"
-          intensity={stage.opt.ambientLight + (stage.opt.wallOpacity === 1 ? 0 : 0.1)}
+          intensity={stage.opt.ambientLight}
         />
         {Object.values(stage.light).map((light) =>
           <group key={light.name}>
@@ -131,7 +131,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
         )}
       </group>
     );
-  }, [stage.light, stage.opt, lightsAt]);
+  }, [stage.light, stage.opt.ambientLight, lightsAt]);
 
   const Geometry = useMemo(() =>
     <WorldGeometry

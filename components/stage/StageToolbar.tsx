@@ -22,9 +22,9 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
     enableUi && useStage.api.updateSel(stageKey, ({ enabled }) => ({ enabled: !enabled }));
   }, [enableUi]);
 
-  const toggleSelectionLocked = useCallback((_) => {
-    enableSelUi && selection.locked && useStage.api.updateSel(stageKey, ({ locked }) => ({ locked: !locked }));
-  }, [enableSelUi, selection]);
+  const toggleCursorLocked = useCallback((_) => {
+    enableUi && useStage.api.updateOpt(stageKey, ({ lockCursor }) => ({ lockCursor: !lockCursor }));
+  }, [enableUi]);
 
   const toggleCam = useCallback(() => {
     enableUi && useStage.api.updateOpt(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }));
@@ -50,18 +50,16 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
           <SelectButton
             greyed={!enableSelUi}
             onClick={toggleSelectionEnabled}
-            title={enableSelUi
-              ? 'selection enabled'
-              : 'selection disabled'}
+            title="toggle selection mode"
           >
             select
           </SelectButton>
         </Slot>
         <Slot>
           <LockedIcon
-            visible={enableSelUi && selection.locked}
-            onClick={toggleSelectionLocked}
-            title={enableSelUi && selection.locked ? "click to unlock" : ""}
+            visible={enableUi && opt.lockCursor}
+            onClick={toggleCursorLocked}
+            title={enableSelUi ? "toggle cursor lock" : ""}
           >
             🔒
           </LockedIcon>
@@ -99,7 +97,7 @@ const Toolbar = styled.section`
   height: 28px;
   min-height: 28px;
   font-size: 16px;
-  padding: 0 4px 2px 8px;
+  padding: 0 4px 0px 8px;
 
   background-color: #333;
   border-radius: 2px 2px 0 0;
@@ -114,8 +112,8 @@ const Slot = styled.div`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 38px 44px 36px 0px;
-  gap: 12px;
+  grid-template-columns: auto 45px auto 8px;
+  gap: 8px;
   font-size: 10pt;
 `;
 
@@ -131,13 +129,12 @@ const PauseButton = styled.div<{ emphasis?: boolean; }>`
 const SelectButton = styled.div<{ greyed?: boolean }>`
   cursor: pointer;
   display: flex;
-  justify-content: center;
   color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
 `;
 
 const LockedIcon = styled.div<{ visible?: boolean }>`
   cursor: pointer;
-  opacity: ${({ visible }) => visible ? 1 : 0};
+  opacity: ${({ visible }) => visible ? 1 : 0.4};
 `;
 
 const RightToolbar = styled.section`

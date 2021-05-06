@@ -76,7 +76,7 @@ const Geometry: React.FC<Props> = ({
       >
         <meshBasicMaterial
           side={THREE.FrontSide}
-          color="#555"
+          color="#444"
         />
       </mesh>
 

@@ -107,7 +107,7 @@ class CmdService {
               next: (e) => {
                 if (e.key === 'pointerup' && process.status === ProcessStatus.Running) {
                   sub.unsubscribe();
-                  resolve(vectPrecision(e.point, 2));
+                  resolve(vectPrecision(e.point, 1));
                 }
               }
             });
