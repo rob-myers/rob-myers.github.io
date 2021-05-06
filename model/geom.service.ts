@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import polygonClipping from 'polygon-clipping';
 
-import { Triple } from 'model/generic.model';
+import { last, Triple } from 'model/generic.model';
 import { Geometry, Face3 } from 'model/3d/facade';
 import * as Geom from 'model/geom';
 
@@ -10,16 +10,13 @@ const defaultLineWidth = 0.015;
 class GeomService {
 
   private colorCache = {} as Record<string, THREE.Color>;
-  private lineMatCache = {} as Record<string, THREE.MeshBasicMaterial>;
+  private matCache = {} as Record<string, THREE.MeshBasicMaterial>;
   private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
 
   private getBasicMat(color: string, opacity: number) {
     const key = JSON.stringify({ color, opacity });
-    const material = this.lineMatCache[key] || (
-      this.lineMatCache[key] = new THREE.MeshBasicMaterial({
-        color: this.getColor(color),
-        opacity,
-      })
+    const material = this.matCache[key] || (
+      this.matCache[key] = new THREE.MeshBasicMaterial({ color: this.getColor(color), opacity })
     );
     material.transparent = opacity < 1;
     return material;
@@ -35,8 +32,7 @@ class GeomService {
 
   /** Mutates `poly` */
   applyMatrixPoly(matrix: THREE.Matrix4, poly: Geom.Polygon) {
-    poly.mutatePoints(v => this.applyMatrixVect(matrix, v));
-    return poly;
+    return poly.mutatePoints(v => this.applyMatrixVect(matrix, v));
   }
 
   /** Mutates `rect` */
@@ -60,36 +56,22 @@ class GeomService {
   }
 
   computeTangents(ring: Geom.Vector[]) {
-    // We concat `ring[0]` for final tangent
+    // We append `ring[0]` for final tangent
     return ring.concat(ring[0]).reduce(
-      (agg, p, i, ps) =>
-        i > 0
-          ? agg.concat(p.clone().translate(-ps[i - 1].x, -ps[i - 1].y).normalize())
-          : [],
-        [] as Geom.Vector[],
+      (agg, p, i, ps) => i > 0
+        ? agg.concat(p.clone().translate(-ps[i - 1].x, -ps[i - 1].y).normalize())
+        : [],
+      [] as Geom.Vector[],
     );
   }
 
-  createAxis(type: 'x' | 'y', color = '#f00', opacity = 1, lineWidth = 0.008) {
+  createAxis(type: 'x' | 'y', color = '#f00', opacity = 1, lineWidth = defaultLineWidth) {
     return this.createPolyLine(
       type === 'x'
         ? [new THREE.Vector3(-50, 0), new THREE.Vector3(50, 0)]
-        : [new THREE.Vector3(0, -50), new THREE.Vector3(0, 50)],
+        : [new THREE.Vector3(0, 50), new THREE.Vector3(0, -50)],
         { height: 0, color, opacity, lineWidth },
     );
-  }
-
-  createPath(points: Geom.VectorJson[], name: string) {
-    const cubes = points.map(p => {
-      const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.05), this.whiteMaterial);
-      mesh.position.set(p.x, p.y, 0.2);
-      return mesh;
-    });
-    const polyLine = this.createPolyLine(points, { height: 0.2 });
-    const group = new THREE.Group;
-    group.name = name;
-    [...cubes, polyLine].forEach(x => group.add(x));
-    return group;
   }
 
   createPolyLine(points: Geom.VectorJson[], opts: {
@@ -101,16 +83,12 @@ class GeomService {
     if (points.length < 2) {
       new THREE.Mesh(new THREE.BufferGeometry, new THREE.MeshBasicMaterial);
     }
-
+    const extent = opts.lineWidth || defaultLineWidth;
+    const polygon = this.linesToPoly(points.map(p => Geom.Vector.from(p)), extent);
     const mesh = new THREE.Mesh;
-    const [p, q] = points.slice(points.length - 2);
-    const delta = new Geom.Vector(-(q.y - p.y), q.x - p.x).normalize((opts.lineWidth || defaultLineWidth)/2);
-    const polyPoints = points.map(({ x, y }) => new Geom.Vector(x, y).add(delta))
-      .concat(points.map(({ x, y }) => new Geom.Vector(x, y).sub(delta)).reverse());
-
-    mesh.geometry = this.polysToGeometry([new Geom.Polygon(polyPoints)], 'xy', opts.height);
-    mesh.material = this.getBasicMat( opts.color || '#ffffff', opts.opacity??1 );
-    (mesh.material as THREE.MeshBasicMaterial).side = THREE.DoubleSide;
+    mesh.geometry = this.polysToGeometry([polygon], 'xy', opts.height);
+    const material = this.getBasicMat(opts.color || '#ffffff', opts.opacity??1);
+    material.side = THREE.DoubleSide, mesh.material = material;
     return mesh;
   }
 
@@ -136,13 +114,17 @@ class GeomService {
   }
 
   /** Cut `cuttingPolys` out of `polys`. */
-  cutOut(cuttingPolys: Geom.Polygon[], polys: Geom.Polygon[]): Geom.Polygon[] {
-    return polygonClipping
-      .difference(
-        polys.map(({ geoJson: { coordinates } }) => coordinates),
-        ...cuttingPolys.map(({ geoJson: { coordinates } }) => coordinates),
-      )
-      .map(coords => Geom.Polygon.from(coords).cleanFinalReps());
+  cutOut(
+    cuttingPolys: Geom.Polygon[],
+    polys: Geom.Polygon[],
+    precision?: number,
+  ): Geom.Polygon[] {
+    return polygonClipping.difference(
+      polys.map(({ geoJson: { coordinates } }) => coordinates),
+      ...cuttingPolys.map(({ geoJson: { coordinates } }) => coordinates),
+    )
+    .map(coords => Geom.Polygon.from(coords))
+    .map(poly => (precision ? poly.precision(precision) : poly).cleanFinalReps());
   }
 
   /** Join disjoint triangulations */
@@ -222,30 +204,21 @@ class GeomService {
 
   /** Inset a ring by `amount`. */
   insetRing(ring: Geom.Vector[], amount: number): Geom.Vector[] {
-    /** Tangents */
     const ts = this.computeTangents(ring);
-
     const length = ring.length;
     /** Edges of ring translated along their normal by `amount` */
     const offsetEdges = ring.map<[Geom.Vector, Geom.Vector]>((v, i) => [
       v.clone().translate(amount * -ts[i].y, amount * ts[i].x),
       ring[(i + 1) % length].clone().translate(amount * -ts[i].y, amount * ts[i].x),
     ]);
-    
     const outsetEdges = offsetEdges.map((edge, i) => {
       const nextIndex = (i + 1) % length;
       const nextEdge = offsetEdges[nextIndex];
-      const lambda = this.getLinesIntersection(
-        edge[1],
-        ts[i],
-        nextEdge[0],
-        ts[nextIndex],
-      );
+      const lambda = this.getLinesIntersection(edge[1], ts[i], nextEdge[0], ts[nextIndex]);
       return lambda
         ? edge[1].translate(lambda * ts[i].x, lambda * ts[i].y)
         : Geom.Vector.average([edge[1], nextEdge[0]]); // Fallback
     });
-
     return outsetEdges;
   }
 
@@ -262,6 +235,18 @@ class GeomService {
     const polyRect = Geom.Polygon.from(rect);
     return polys.filter(poly => poly.rect.intersects(rect))
       .flatMap(poly => geom.intersect([polyRect, poly]));
+  }
+
+  linesToPoly(line: Geom.Vector[], extent: number) {
+    const deltas = line.map((p, i) => line[(i + 1) % line.length].clone().sub(p));
+    const edgeNs = deltas.map(p => p.rotate90().normalize(extent));
+    const vertexNs = line.map((_, i) => {
+      if (i === 0) return edgeNs[i];
+      if (i === line.length - 1) return edgeNs[i - 1];
+      return edgeNs[i].clone().add(edgeNs[i - 1]).normalize(extent);
+    });
+    const extruded = line.map((p, i) => p.clone().add(vertexNs[i]));
+    return new Geom.Polygon(line.concat(extruded.reverse()));
   }
 
   /** Currently unused */
@@ -369,10 +354,11 @@ class GeomService {
     return (p1.x - p3.x) * (p2.y - p3.y) - (p1.y - p3.y) * (p2.x - p3.x);
   }
 
-  union(polys: Geom.Polygon[]): Geom.Polygon[] {
+  union(polys: Geom.Polygon[], precision?: number): Geom.Polygon[] {
     return polygonClipping
       .union([], ...polys.map(({ geoJson: { coordinates } }) => coordinates))
-      .map(coords => Geom.Polygon.from(coords).cleanFinalReps());
+      .map(coords => Geom.Polygon.from(coords))
+      .map(poly => (precision ? poly.precision(precision) : poly).cleanFinalReps());
   }
 
 }

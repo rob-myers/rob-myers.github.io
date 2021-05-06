@@ -64,8 +64,8 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
       case "Backspace": {
         const delta = Geom.Polygon.from(sel.bounds);
         poly.update({ prevWall: poly.wall, prevObs: poly.obs,
-          wall: geom.cutOut([delta], poly.wall),
-          obs: geom.cutOut([delta], poly.obs),
+          wall: geom.cutOut([delta], poly.wall, 1),
+          obs: geom.cutOut([delta], poly.obs, 1),
         });
         break;
       }
@@ -74,15 +74,15 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
         if (!sel.locked && !msg.metaKey) {
           const delta = Geom.Polygon.from(sel.bounds);
           if (msg.key === "w") {
-            const nextObs = geom.cutOut([delta], poly.obs);
+            const nextObs = geom.cutOut([delta], poly.obs, 1);
             poly.update({ prevWall: poly.wall, prevObs: nextObs,
-              wall: geom.union(poly.wall.concat(delta)),
+              wall: geom.union(poly.wall.concat(delta), 1),
               obs: nextObs,
             });
           } else {
-            const nextWall = geom.cutOut([delta], poly.wall);
+            const nextWall = geom.cutOut([delta], poly.wall, 1);
             poly.update({ prevWall: nextWall, prevObs: poly.obs,
-              obs: geom.union(poly.obs.concat(delta)),
+              obs: geom.union(poly.obs.concat(delta), 1),
               wall: nextWall,
             });
           }
@@ -117,14 +117,14 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
               localObs: deltaObs.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
             });
             poly.update({ prevWall: poly.wall, prevObs: poly.obs,
-              wall: geom.cutOut(deltaWalls, poly.wall),
-              obs: geom.cutOut(deltaObs, poly.obs),
+              wall: geom.cutOut(deltaWalls, poly.wall, 1),
+              obs: geom.cutOut(deltaObs, poly.obs, 1),
             });
           }
         } else if (msg.metaKey && sel.locked) {
           poly.update({ prevWall: poly.wall, prevObs: poly.obs,
-            wall: geom.cutOut(sel.wall, poly.wall),
-            obs: geom.cutOut(sel.obs, poly.obs),
+            wall: geom.cutOut(sel.wall, poly.wall, 1),
+            obs: geom.cutOut(sel.obs, poly.obs, 1),
           });
         } else if (!msg.metaKey && sel.locked) {
           const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
@@ -154,8 +154,8 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
       case "v":
         if (sel.locked && msg.metaKey) {
           poly.update({ prevWall: poly.wall, prevObs: poly.obs,
-            wall: geom.union(poly.wall.concat(sel.wall)),
-            obs: geom.union(poly.obs.concat(sel.obs)),
+            wall: geom.union(poly.wall.concat(sel.wall), 1),
+            obs: geom.union(poly.obs.concat(sel.obs), 1),
           });
           poly.update();
         }

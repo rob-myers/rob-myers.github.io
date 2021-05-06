@@ -2,8 +2,7 @@
 
 ### TODO
 
-- Can create lines
-   > Need to outset line by computing intersection points
+- ✅ Can create line meshes
 - Can request nav path
 - Can show nav path
 - Can translate bot along nav path

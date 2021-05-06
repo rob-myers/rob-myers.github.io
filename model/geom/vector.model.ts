@@ -81,6 +81,11 @@ export class Vector {
     return this;
   }
 
+  rotate90() {
+    [this.x, this.y] = [-this.y, this.x];
+    return this;
+  }
+
   round() {
     this.x = Math.round(this.x);
     this.y = Math.round(this.y);
