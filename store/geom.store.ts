@@ -5,10 +5,9 @@ import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import * as THREE from 'three';
 
-import { geom, outsetBounds, outsetWalls } from 'model/geom.service';
 import * as Geom from 'model/geom';
+import { geom } from 'model/geom.service';
 import { recastService } from 'model/3d/recast.service';
-import { initStageBounds } from 'model/stage/stage.model';
 
 import thinPlusPng from '../3d/img/thin-plus.png';
 
@@ -23,10 +22,7 @@ export type State = {
 
   readonly api: {
     /** Create a navigation mesh using recast */
-    createNavMesh: (navKey: string, polys: Geom.Polygon[]) => {
-      bounds: Geom.Rect;
-      navPolys: Geom.Polygon[];
-    };
+    createNavMesh: (navKey: string, polys: Geom.Polygon[]) => void;
     /** Wait until we've loaded gltf(s) exported from Blender. */
     loadGltfs: () => Promise<void>;
     /** Load images as `THREE.Texture`s */
@@ -85,21 +81,11 @@ const useStore = create<State>(devtools((set, get) => ({
       }));
     },
 
-    createNavMesh: (navKey, polys) => {
-      const bounds = Geom.Rect.union(
-        polys.map(x => x.rect).concat(initStageBounds),
-      ).outset(outsetBounds);
-
-      const navPolys = geom.cutOut(
-        polys.flatMap(x => geom.outset(x, outsetWalls)),
-        [Geom.Polygon.from(bounds)],
-      );
-      // console.log({ bounds, navPolys });
-
-      // Non-blocking creation of recast navmesh
-      const geometry = geom.polysToGeometry(navPolys, 'xz');
-      setTimeout(() => recastService.createNavMesh(navKey, geometry));
-      return { bounds, navPolys };
+    createNavMesh: (navKey, navPolys) => {
+      setTimeout(() => {
+        const geometry = geom.polysToGeometry(navPolys, 'xz');
+        recastService.createNavMesh(navKey, geometry);
+      });
     },
 
     requestNavPath: (navKey, src, dst) => {

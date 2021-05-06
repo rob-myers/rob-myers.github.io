@@ -1,10 +1,9 @@
 import * as THREE from "three";
 import { firstAvailableInteger } from "model/generic.model";
-import * as Geom from "model/geom";
 import { geom } from "model/geom.service";
 import * as Stage from "./stage.model";
-import useStage from "store/stage.store";
 import { BotController } from "model/3d/bot-controller";
+import useStage from "store/stage.store";
 
 export function createStageProxy(stageKey: string) {
   const stage = () => useStage.api.getStage(stageKey);
@@ -20,7 +19,7 @@ export function createStageProxy(stageKey: string) {
               return (updates: Partial<Stage.StagePoly> = {}) => {
                 useStage.api.updatePoly(stageKey, updates);
                 setTimeout(() => useStage.api.updatePoly(stageKey, (poly) => ({
-                  nav: geom.navFromUnnavigable(poly.wall, poly.obs, Stage.stageNavInset),
+                  nav: geom.computeNavPoly(poly.wall, poly.obs, Stage.stageNavInset),
                 })), 10);
               };
             }

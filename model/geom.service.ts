@@ -1,22 +1,16 @@
 import * as THREE from 'three';
 import polygonClipping from 'polygon-clipping';
 
-import { range, Triple, tryParseJson } from 'model/generic.model';
+import { Triple } from 'model/generic.model';
 import { Geometry, Face3 } from 'model/3d/facade';
 import * as Geom from 'model/geom';
 
-const twopi = 2 * Math.PI;
 const defaultLineWidth = 0.015;
-
-// TODO probably remove these constants
-export const outsetWalls = 0.04;
-export const outsetBounds = 0.1;
 
 class GeomService {
 
   private colorCache = {} as Record<string, THREE.Color>;
   private lineMatCache = {} as Record<string, THREE.MeshBasicMaterial>;
-  private tempBox = new THREE.Box3;
   private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
 
   private getBasicMat(color: string, opacity: number) {
@@ -57,6 +51,14 @@ class GeomService {
     );
   }
 
+  computeNavPoly(walls: Geom.Polygon[], obs: Geom.Polygon[], inset: number) {
+    const outers = this.union(walls.map(x => new Geom.Polygon(x.outer)));
+    return geom.cutOut(
+      walls.concat(obs).flatMap(x => x.createOutset(inset)),
+      outers.flatMap(x => x.createInset(inset)),
+    );
+  }
+
   computeTangents(ring: Geom.Vector[]) {
     // We concat `ring[0]` for final tangent
     return ring.concat(ring[0]).reduce(
@@ -77,27 +79,17 @@ class GeomService {
     );
   }
 
-  createCube(p: THREE.Vector3, dim: number, material: THREE.Material) {
-    const mesh = new THREE.Mesh(
-      new THREE.BoxGeometry(dim, dim, dim),
-      material,
-    );
-    mesh.position.set(p.x, p.y, p.z);
-    return mesh;
-  }
-
-  createGroup(objects: THREE.Object3D[], name?: string) {
-    const group = new THREE.Group;
-    objects.forEach(o => group.add(o));
-    name && (group.name = name);
-    return group;
-  }
-
   createPath(points: Geom.VectorJson[], name: string) {
-    const cubes = points.map(p => this.createCube(
-      new THREE.Vector3(p.x, p.y, 0.2), 0.05, this.whiteMaterial));
+    const cubes = points.map(p => {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.05), this.whiteMaterial);
+      mesh.position.set(p.x, p.y, 0.2);
+      return mesh;
+    });
     const polyLine = this.createPolyLine(points, { height: 0.2 });
-    return this.createGroup([...cubes, polyLine], name);
+    const group = new THREE.Group;
+    group.name = name;
+    [...cubes, polyLine].forEach(x => group.add(x));
+    return group;
   }
 
   createPolyLine(points: Geom.VectorJson[], opts: {
@@ -122,15 +114,6 @@ class GeomService {
     return mesh;
   }
 
-  createRegularPolygon(numEdges: number) {
-    return Geom.Polygon.from({
-      outer: range(numEdges).map((i) => [
-        Math.cos((2 * i) * Math.PI / numEdges),
-        Math.sin((2 * i) * Math.PI / numEdges),
-      ]),
-    });
-  }
-
   createSpotLight(position: THREE.Vector3) {
     const light = new THREE.SpotLight;
     light.position.copy(position);
@@ -147,14 +130,12 @@ class GeomService {
 
   /** Create a unit square in XY plane whose bottom-left is the origin */
   createSquareGeometry() {
-    return this.polysToGeometry([Geom.Polygon.from(
-      new Geom.Rect(0, 0, 1, 1),
-    )]);
+    return this.polysToGeometry([
+      Geom.Polygon.from(new Geom.Rect(0, 0, 1, 1))
+    ]);
   }
 
-  /**
-   * Cut `cuttingPolys` out of `polys`.
-   */
+  /** Cut `cuttingPolys` out of `polys`. */
   cutOut(cuttingPolys: Geom.Polygon[], polys: Geom.Polygon[]): Geom.Polygon[] {
     return polygonClipping
       .difference(
@@ -162,12 +143,6 @@ class GeomService {
         ...cuttingPolys.map(({ geoJson: { coordinates } }) => coordinates),
       )
       .map(coords => Geom.Polygon.from(coords).cleanFinalReps());
-  }
-
-  /** Ensure radian in range (-pi, pi] */
-  ensureDeltaRad(radians: number) {
-    const modulo = ((radians % twopi) + twopi) % twopi;
-    return modulo > Math.PI ? (modulo - twopi) : modulo;
   }
 
   /** Join disjoint triangulations */
@@ -210,11 +185,6 @@ class GeomService {
     return (d1x * (p1y - p0y) - d1y * (p1x - p0x)) / (d0y * d1x - d1y * d0x);
   }
 
-  getVertices(mesh: THREE.Mesh) {
-    const { vertices } = this.toThreeGeometry(mesh.geometry);
-    return vertices.map(p => mesh.localToWorld(p));
-  }
-
   isPointInTriangle(pt: Geom.VectorJson, v1: Geom.VectorJson, v2: Geom.VectorJson, v3: Geom.VectorJson) {
     const d1 = this.triangleSign(pt, v1, v2);
     const d2 = this.triangleSign(pt, v2, v3);
@@ -222,7 +192,6 @@ class GeomService {
 
     const hasNeg = d1 < 0 || d2 < 0 || d3 < 0;
     const hasPos = d1 > 0 || d2 > 0 || d3 > 0;
-
     return !(hasNeg && hasPos);
   }
 
@@ -288,51 +257,14 @@ class GeomService {
     );
   }
 
+  /** Used by code-library.ts */
   intersectPolysRect(polys: Geom.Polygon[], rect: Geom.Rect) {
     const polyRect = Geom.Polygon.from(rect);
     return polys.filter(poly => poly.rect.intersects(rect))
       .flatMap(poly => geom.intersect([polyRect, poly]));
   }
 
-  /** Cut polygons from rect, or their collective rect bounds. */
-  invert(polygons: Geom.Polygon[], rect?: Geom.Rect) {
-    const bounds = rect || Geom.Rect.union(polygons.map(x => x.rect));
-    return this.cutOut(polygons, [Geom.Polygon.from(bounds)]);
-  }
-
-  isVectorJson(p: any): p is Geom.VectorJson {
-    return p && (typeof p.x === 'number') && (typeof p.y === 'number');
-  }
-
-  isVectorJsonPath(p: any): p is Geom.VectorJson[] {
-    return p instanceof Array && p.every(p => this.isVectorJson(p));
-  }
-
-  moveToXY(obj: THREE.Object3D, position: Geom.VectorJson) {
-    obj.position.set(position.x, position.y, obj.position.z);
-  }
-
-  navFromUnnavigable(walls: Geom.Polygon[], obs: Geom.Polygon[], inset: number) {
-    const outers = this.union(walls.map(x => new Geom.Polygon(x.outer)));
-    return geom.cutOut(
-      walls.concat(obs).flatMap(x => x.createOutset(inset)),
-      outers.flatMap(x => x.createInset(inset)),
-    );
-  }
-
-  outset(poly: Geom.Polygon, amount: number) {
-    return this.inset(poly, -amount);
-  }
-
-  projectBox3XY({ min, max }: THREE.Box3): Geom.Rect {
-    return new Geom.Rect(
-      Number(min.x.toFixed(2)),
-      Number(min.y.toFixed(2)),
-      Number((max.x - min.x).toFixed(2)),
-      Number((max.y - min.y).toFixed(2)),
-    );
-  }
-
+  /** Currently unused */
   polyContainsPoint(polygon: Geom.Polygon, point: Geom.VectorJson) {
     if (!polygon.rect.contains(point)) {
       return false;
@@ -395,33 +327,6 @@ class GeomService {
     return output;
   }
 
-  polysToMesh(polygons: Geom.Polygon[], material: THREE.Material): THREE.Mesh {
-    const geometry = this.polysToGeometry(polygons);
-    return new THREE.Mesh(geometry, material);
-  }
-
-  /**
-   * Project onto XY plane, restricting precision.
-   */
-  projectXY(v: THREE.Vector3): Geom.Vector {
-    return new Geom.Vector(v.x, v.y).precision();
-  }
-
-  /**
-   * Compute base polygon of mesh, falling back to rectangular bounds.
-   */
-  polyFromMesh(mesh: THREE.Mesh): Geom.Polygon[] {
-    const { faces, vertices: vs } = (new Geometry).fromBufferGeometry(mesh.geometry);
-    const groundError = 0.01;
-    vs.forEach(v => v.applyMatrix4(mesh.matrixWorld));
-    const triangles = faces
-      .filter(({ a, b ,c }) => [a, b, c].every(id => Math.abs(vs[id].z) < groundError))
-      .map(({ a, b, c }) => new Geom.Polygon([a, b, c].map(id => new Geom.Vector(vs[id].x, vs[id].y))))
-    return triangles.length
-      ? this.union(triangles)
-      : [Geom.Polygon.from(this.rectFromMesh(mesh))];
-  }
-
   /** https://schteppe.github.io/p2.js/docs/files/src_collision_AABB.js.html */
   rayAabbIntersect(src: Geom.VectorJson, dir: Geom.VectorJson, rect: Geom.Rect){
     const t1 = (rect.x - src.x) / dir.x;
@@ -450,12 +355,6 @@ class GeomService {
     return { x: src.x + dir.x * tmax, y: src.y + dir.y * tmax };
   }
 
-
-  rectFromMesh(mesh: THREE.Mesh): Geom.Rect {
-    const { min, max } = this.tempBox.setFromObject(mesh);
-    return new Geom.Rect(min.x, min.y, max.x - min.x, max.y - min.y);
-  }
-
   removePathReps(path: Geom.VectorJson[]) {
     let prev: Geom.VectorJson;
     return path.reduce((agg, p) => {
@@ -466,42 +365,14 @@ class GeomService {
     }, [] as typeof path);
   }
 
-  toThreeGeometry(geom: THREE.BufferGeometry) {
-    return new Geometry().fromBufferGeometry(geom);
-  }
-
-  toVector3(vector: Geom.VectorJson) {
-    return new THREE.Vector3(vector.x, vector.y);
-  }
-
   triangleSign(p1: Geom.VectorJson, p2: Geom.VectorJson, p3: Geom.VectorJson) {
     return (p1.x - p3.x) * (p2.y - p3.y) - (p1.y - p3.y) * (p2.x - p3.x);
-  }
-
-  tryParsePoint(p: string)  {
-    const parsed = tryParseJson(p);
-    if (this.isVectorJson(parsed)) {
-      return parsed;
-    }
-    throw Error(`failed to parse ${p}`)
-  }
-
-  tryParsePath(p: string)  {
-    const parsed = tryParseJson(p);
-    if (this.isVectorJsonPath(parsed)) {
-      return parsed;
-    }
-    throw Error(`failed to parse ${p}`)
   }
 
   union(polys: Geom.Polygon[]): Geom.Polygon[] {
     return polygonClipping
       .union([], ...polys.map(({ geoJson: { coordinates } }) => coordinates))
       .map(coords => Geom.Polygon.from(coords).cleanFinalReps());
-  }
-
-  unionRects(rects: Geom.Rect[]): Geom.Rect {
-    return Geom.Rect.union(rects);
   }
 
 }

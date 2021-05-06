@@ -38,6 +38,8 @@
    - Affects `ls`, `get`, `rm` and `set`
    - Need `ls -a` to see top-level caps vars e.g. `PWD` and `OLDPWD`
 
+- Can add labels to obs?
+
 - Can paint polygons using CLI
    > We'll use them to create triggers
 
