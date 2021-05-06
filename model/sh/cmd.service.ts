@@ -18,12 +18,15 @@ import { StageKeyEvent, StageMeta } from 'model/stage/stage.model';
 import useStage from 'store/stage.store';
 import { parseService } from './parse/parse.service';
 import { Util } from 'model/runtime-utils';
+import { vectPrecision } from 'model/3d/three.model';
 
 const commandKeys = {
   /** Wait for a stage to be ready */
   'await-stage': true,
   /** Execute a javascript function */
   call: true,
+  /** Get next click event from stage $STAGE_KEY */
+  click: true,
   /** List function definitions */
   declare: true,
   /** Output arguments as space-separated string */
@@ -95,6 +98,20 @@ class CmdService {
           this.provideStageAndVars(meta),
           ...args.slice(1),
         );
+        break;
+      }
+      case 'click': {
+         const process = useSession.api.getProcess(meta);
+         yield await new Promise<any>((resolve) => {
+           const sub = this.getSessionStage(meta.sessionKey).internal.ptrEvents.subscribe({
+              next: (e) => {
+                if (e.key === 'pointerup' && process.status === ProcessStatus.Running) {
+                  sub.unsubscribe();
+                  resolve(vectPrecision(e.point, 2));
+                }
+              }
+            });
+         });
         break;
       }
       case 'declare': {

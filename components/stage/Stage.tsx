@@ -1,6 +1,5 @@
 import * as THREE from "three";
-import { Subject } from "rxjs";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { Canvas } from "@react-three/fiber";
@@ -8,7 +7,7 @@ import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events
 import { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
 
 import { getWindow } from "model/dom.model";
-import { StagePointerEvent, StageMeta } from "model/stage/stage.model";
+import { StageMeta } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
@@ -57,7 +56,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
     }
   }, [stage.opt.enabled]);
 
-  const ptrWire = useRef(new Subject<StagePointerEvent>()).current;
+  const ptrWire = stage.internal.ptrEvents;
   const onPointer = useCallback((e: ThreeEvent<PointerEvent>) => {
     ptrWire.next({ key: e.type as any, point: e.point });
   }, []);

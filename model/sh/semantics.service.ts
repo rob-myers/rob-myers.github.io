@@ -275,7 +275,6 @@ class SemanticsService {
   }
 
   /**
-   * TODO explain
    * Expand a `Word` which has `Parts`.
    */
   private async *Expand(node: Sh.Word) {

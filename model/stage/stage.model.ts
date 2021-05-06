@@ -40,6 +40,8 @@ export interface StageMetaJson {
 export interface StageInternal {
   /** Keyboard events sent by `Stage`  */
   keyEvents: Subject<StageKeyEvent>;
+  /** Mouse events sent by `Stage`  */
+  ptrEvents: Subject<StagePointerEvent>;
   /** Attached on mount */
   controls?: PanZoomControls;
   /** Attached by Stage */
@@ -142,6 +144,7 @@ export function createStage(stageKey: string): StageMeta {
     key: stageKey,
     internal: {
       keyEvents: new Subject,
+      ptrEvents: new Subject,
       cursor: new THREE.Group,
       // ...Attached by components
     },
