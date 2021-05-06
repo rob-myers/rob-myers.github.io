@@ -19,6 +19,9 @@ export const preloadedFunctions = {
   cat: `get "$@" | split`,
 
   cursor: `get stage.cursor`,
+
+  // 'map console.log' would log the 2nd arg too
+  log: `map 'x => console.log(x)'`,
  
   light: `{
 # create light at cursor
