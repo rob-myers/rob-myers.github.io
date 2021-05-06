@@ -4,8 +4,8 @@
 
 - ✅ Can create line meshes
 - Can request nav path
-   ✅ `click` provides next click
-   - Can lock cursor
+   - ✅ `click` provides next click
+   - ✅ Can lock cursor
    - `path $( cursor ) $( click )` provides navpath
    - `stage.point` and `stage.path`
 - Can show nav path

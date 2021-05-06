@@ -59,7 +59,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
           <LockedIcon
             visible={enableUi && opt.lockCursor}
             onClick={toggleCursorLocked}
-            title={enableSelUi ? "toggle cursor lock" : ""}
+            title={enableUi ? "toggle cursor lock" : ""}
           >
             🔒
           </LockedIcon>

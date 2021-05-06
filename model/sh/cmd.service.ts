@@ -231,9 +231,10 @@ class CmdService {
             continue;
           }
           if (roots.length > 1) yield `${i > 0 ? '\n' : ''}${queries[i]}:`;
-          const keys = (opts.r ? keysDeep(obj) : Object.keys(obj)).sort();
+          let keys = (opts.r ? keysDeep(obj) : Object.keys(obj)).sort();
           let items = [] as string[];
           if (opts.l) {
+            if (typeof obj === 'function') keys = keys.filter(x => !['caller', 'callee', 'arguments'].includes(x));
             const metas = keys.map(x => obj[x]?.constructor?.name || (obj[x] === null ? 'null' : 'undefined'));
             const metasWidth = Math.max(...metas.map(x => x.length));
             items = keys.map((x, i) => `${ansiBrown}${metas[i].padEnd(metasWidth)}${ansiWhite} ${x}`);
