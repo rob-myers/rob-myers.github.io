@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import polygonClipping from 'polygon-clipping';
 
-import { last, Triple } from 'model/generic.model';
+import { Triple } from 'model/generic.model';
 import { Geometry, Face3 } from 'model/3d/facade';
 import * as Geom from 'model/geom';
 
@@ -11,7 +11,6 @@ class GeomService {
 
   private colorCache = {} as Record<string, THREE.Color>;
   private matCache = {} as Record<string, THREE.MeshBasicMaterial>;
-  private whiteMaterial = new THREE.MeshBasicMaterial({ color: '#ffffff' });
 
   private getBasicMat(color: string, opacity: number) {
     const key = JSON.stringify({ color, opacity });
