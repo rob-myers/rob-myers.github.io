@@ -68,7 +68,9 @@
 - BUG
    - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
    - ✅ `call '({ stage }) => delete stage.opt.foo'`
-   - Ensures old processes killed cleanly on hot reload
+   - ✅ selection should flip global x/y after rotation
+   - Ensure old processes killed cleanly on hot reload
+   - Lights update issue
 
 ### Done
 

@@ -136,15 +136,15 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
           });
         } else if (!msg.metaKey && sel.locked) {
           const matrix = (new THREE.Matrix4).makeScale(1, -1, 1)
-            .setPosition(0, 2 * sel.localBounds.cy, 0);
-          sel.group.matrix.multiply(matrix);
+            .setPosition(0, 2 * sel.bounds.cy, 0);
+          sel.group.matrix.premultiply(matrix);
         }
         break;
       case "y":
         if (sel.locked && !msg.metaKey) {
           const matrix = (new THREE.Matrix4).makeScale(-1, 1, 1)
-            .setPosition(2 * sel.localBounds.cx, 0, 0);
-          sel.group.matrix.multiply(matrix);
+            .setPosition(2 * sel.bounds.cx, 0, 0);
+          sel.group.matrix.premultiply(matrix);
         }
         break;
       case "q":
