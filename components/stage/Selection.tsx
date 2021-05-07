@@ -110,7 +110,6 @@ const Selection: React.FC<Props> = ({ internal, sel }) => {
     <group
       name="SelectionRoot"
       ref={group}
-      visible={sel.enabled}
       matrixAutoUpdate={false}
     >
       <mesh

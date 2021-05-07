@@ -106,10 +106,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
       internal={stage.internal}
       locked={stage.opt.lockCursor}
     />
-    <Selection
+    {stage.sel.enabled && <Selection
       internal={stage.internal}
       sel={stage.sel}
-    />
+    />}
   </>, [stage.opt.lockCursor, stage.sel]);
 
   const Light = useMemo(() => {
