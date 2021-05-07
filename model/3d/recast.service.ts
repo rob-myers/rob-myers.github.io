@@ -122,10 +122,10 @@ class RecastService {
       .map((_, i) => new THREE.Vector3(...positions.slice(3 * i, 3 * (i + 1)) ));
     geometry.faces = [...Array(indices.length / 3)]
       .map((_, i) => new Face3(...indices.slice(3 * i, 3 * (i + 1)) as [number, number, number] ));
+
     const mesh = new THREE.Mesh(geometry.toBufferGeometry());
     mesh.name = "NavMeshDebug";
     mesh.material = new THREE.MeshBasicMaterial({ color: '#ff0000', transparent: true, opacity: 0.1 });
-
     return mesh;
   }
 

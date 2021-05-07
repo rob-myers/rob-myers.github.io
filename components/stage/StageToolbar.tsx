@@ -101,12 +101,11 @@ const Toolbar = styled.section`
   display: flex;
   justify-content: space-between;
   user-select: none;
-  font-family: 'Courier New', Courier, monospace;
   font-size: 10pt;
 
   height: 28px;
   min-height: 28px;
-  padding: 0 4px;
+  padding: 0 8px;
 
   background-color: #333;
   color: #ddd;
@@ -120,13 +119,11 @@ const Slot = styled.div`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 44px 70px 54px;
+  grid-template-columns: 40px 60px 54px;
   gap: 0px;
 `;
 
-const StageKey = styled.div`
-  font-family: Arial, Helvetica, sans-serif;
-`;
+const StageKey = styled.div``;
 
 const PauseButton = styled.div<{ emphasis?: boolean; }>`
   cursor: pointer;
