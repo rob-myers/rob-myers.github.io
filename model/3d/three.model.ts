@@ -25,10 +25,20 @@ export function ndCoordsToGround(
 }
 
 export function vectPrecision(v: THREE.Vector3, decimalPlaces: number) {
-  v.x = Number(v.x.toFixed(decimalPlaces));
-  v.y = Number(v.y.toFixed(decimalPlaces));
-  v.z = Number(v.z.toFixed(decimalPlaces));
-  return v;
+  return v.set(
+    Number(v.x.toFixed(decimalPlaces)),
+    Number(v.y.toFixed(decimalPlaces)),
+    Number(v.z.toFixed(decimalPlaces)),
+  );
+}
+
+/** Increments of 0.05, e.g. 3.15 */
+export function vectPrecisionSpecial(v: THREE.Vector3) {
+  return v.set(
+    Number((Math.round(v.x / 0.05) * 0.05).toFixed(2)),
+    Number((Math.round(v.y / 0.05) * 0.05).toFixed(2)),
+    Number((Math.round(v.z / 0.05) * 0.05).toFixed(2)),
+  );
 }
 
 /** Scale up to grid of 0.1 * 0.1 tiles */

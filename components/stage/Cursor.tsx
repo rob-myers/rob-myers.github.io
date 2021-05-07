@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { StageInternal } from "model/stage/stage.model";
-import { vectPrecision } from "model/3d/three.model";
+import { vectPrecision, vectPrecisionSpecial } from "model/3d/three.model";
 import useGeomStore from "store/geom.store";
 
 const Cursor: React.FC<Props> = ({ internal, locked }) => {
@@ -15,14 +15,15 @@ const Cursor: React.FC<Props> = ({ internal, locked }) => {
   }, [texture]);
   
   useEffect(() => {
-    if (!texture) return;
-    const position = group.current!.position;
-    const ptrSub = internal.ptrEvents.subscribe(({ key, point }) => {
-      if (key === 'pointerdown' && !locked) {
-        vectPrecision(position.copy(point), 1);
-      }
-    });
-    return () => ptrSub.unsubscribe();
+    if (texture) {
+      const position = group.current!.position;
+      const ptrSub = internal.ptrEvents.subscribe(({ key, point }) => {
+        if (key === 'pointerdown' && !locked) {
+          vectPrecisionSpecial(position.copy(point));
+        }
+      });
+      return () => ptrSub.unsubscribe();
+    }
   }, [texture, locked]);
 
   return texture ? (

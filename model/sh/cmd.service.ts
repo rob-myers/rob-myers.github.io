@@ -18,7 +18,7 @@ import { StageKeyEvent, StageMeta } from 'model/stage/stage.model';
 import useStage from 'store/stage.store';
 import { parseService } from './parse/parse.service';
 import { Util } from 'model/runtime-utils';
-import { vectPrecision } from 'model/3d/three.model';
+import { vectPrecision, vectPrecisionSpecial } from 'model/3d/three.model';
 
 const commandKeys = {
   /** Wait for a stage to be ready */
@@ -107,7 +107,7 @@ class CmdService {
               next: (e) => {
                 if (e.key === 'pointerup' && process.status === ProcessStatus.Running) {
                   sub.unsubscribe();
-                  resolve(vectPrecision(e.point, 1));
+                  resolve(vectPrecisionSpecial(e.point.clone()));
                 }
               },
             });
