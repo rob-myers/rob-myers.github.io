@@ -32,12 +32,9 @@ class RecastService {
   
   initialize(Recast: any) {
     Recast(this.bjsRECAST);
-  
     if (!this.bjsRECAST.NavMesh) {
-      console.error("RecastJS is not available. Please make sure you included the js file.");
-      return;
+      return console.error("RecastJS is not available. Please make sure you included the js file.");
     }
-
     while (this.readyResolvers.pop()?.());
   }
 
@@ -73,7 +70,7 @@ class RecastService {
     rc.detailSampleDist = parameters.detailSampleDist;
     rc.detailSampleMaxError = parameters.detailSampleMaxError;
 
-    const navMesh = new this.bjsRECAST.NavMesh();
+    const navMesh = new this.bjsRECAST.NavMesh;
     this.lookup[navKey] = navMesh;
 
     const geometry = (new Geometry).fromBufferGeometry(navGeom);
@@ -125,7 +122,7 @@ class RecastService {
 
     const mesh = new THREE.Mesh(geometry.toBufferGeometry());
     mesh.name = "NavMeshDebug";
-    mesh.material = new THREE.MeshBasicMaterial({ color: '#ff0000', transparent: true, opacity: 0.1 });
+    mesh.material = new THREE.MeshBasicMaterial({ color: '#f00', transparent: true, opacity: 0.1 });
     return mesh;
   }
 
@@ -300,19 +297,19 @@ class RecastService {
 }
 
 let defaultNavMeshParams: INavMeshParameters = {
-  cs: 0.2,
-  ch: 0.2,
+  cs: 0.005,
+  ch: 0.1,
   walkableSlopeAngle: 0,
   walkableHeight: 3,
   walkableClimb: 1,
   walkableRadius: 0,
   maxEdgeLen: 12,
-  maxSimplificationError: 1.3,
+  maxSimplificationError: 0.001,
   minRegionArea: 8,
   mergeRegionArea: 20,
   maxVertsPerPoly: 6,
   detailSampleDist: 6,
-  detailSampleMaxError: 1,
+  detailSampleMaxError: 0.1,
 };
 
 /**

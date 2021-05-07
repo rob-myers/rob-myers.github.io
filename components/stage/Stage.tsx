@@ -148,8 +148,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
   );
 
   const Debug = useMemo(
-    () => <primitive object={recastService.createDebugNavMesh(stage.key)} />,
-    [stage.internal.navComputedAt],
+    () => stage.opt.showRecastNav && <primitive object={recastService.createDebugNavMesh(stage.key)} />,
+    [stage.internal.navComputedAt, stage.opt.showRecastNav],
   );
 
   return (

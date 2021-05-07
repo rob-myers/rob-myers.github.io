@@ -71,6 +71,8 @@ export interface StageOpts {
   lockCursor: boolean; 
   /** Can we move/zoom the camera? */
   panZoom: boolean;
+  /** Show the navmesh computed by recast? */
+  showRecastNav: boolean;
   wallHeight: number
   wallOpacity: number;
 }
@@ -198,13 +200,14 @@ export function createStage(stageKey: string): StageMeta {
 
 export function createStageOpts(): StageOpts {
   return {
-    enabled: true,
-    panZoom: true,
+    ambientLight: 0.15,
     autoPersist: true,
+    enabled: true,
+    lockCursor: false,
+    panZoom: true,
+    showRecastNav: false,
     wallHeight: 1,
     wallOpacity: 1,
-    ambientLight: 0.15,
-    lockCursor: false,
   };
 }
 
