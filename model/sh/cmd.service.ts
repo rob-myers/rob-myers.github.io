@@ -102,15 +102,16 @@ class CmdService {
       }
       case 'click': {
          const process = useSession.api.getProcess(meta);
-         yield await new Promise<any>((resolve) => {
+         yield await new Promise((resolve) => {
            const sub = this.getSessionStage(meta.sessionKey).internal.ptrEvents.subscribe({
               next: (e) => {
                 if (e.key === 'pointerup' && process.status === ProcessStatus.Running) {
                   sub.unsubscribe();
                   resolve(vectPrecision(e.point, 1));
                 }
-              }
+              },
             });
+            process.cleanups.push(() => sub.unsubscribe(), resolve as any);
          });
         break;
       }
