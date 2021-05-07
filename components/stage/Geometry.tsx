@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { geom } from "model/geom.service";
-import { StageOpts, StagePoly } from "model/stage/stage.model";
+import { StageOpts, StagePolyLookup } from "model/stage/stage.model";
 
 const Geometry: React.FC<Props> = ({
   opt,
@@ -98,7 +98,7 @@ const Geometry: React.FC<Props> = ({
 
 interface Props {
   opt: StageOpts;
-  poly: StagePoly;
+  poly: StagePolyLookup;
   updateLights: () => void;
 }
 

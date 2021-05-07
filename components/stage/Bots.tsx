@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
-import { StageBot } from "model/stage/stage.model";
+import { StageBotLookup } from "model/stage/stage.model";
 
 const Bots: React.FC<Props> = ({ bot }) => {
   const root = useRef<THREE.Group>(null);
@@ -26,7 +26,7 @@ const Bots: React.FC<Props> = ({ bot }) => {
 };
 
 export interface Props {
-  bot: StageBot;
+  bot: StageBotLookup;
 }
 
 export default Bots;

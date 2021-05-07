@@ -9,9 +9,9 @@ export const preloadedFunctions = {
 }"
 `,
   reduce: `sponge | {
-  if test '/\\S/' "$2"; then
-    map "x => x.reduce($1, $( jarg "$2" ) )"
-  else map "x => x.reduce($1)"; fi
+if test '/\\S/' "$2"; then
+  map "x => x.reduce($1, $( jarg "$2" ) )"
+else map "x => x.reduce($1)"; fi
 }
 `,
   pretty: `map '(x, { use: {Util} }) => Util.stringify(x)'`,
@@ -41,6 +41,11 @@ call '({ stage, use: {Util} }) => {
   stage.bot.add(group, clips);
   stage.light.update();
 }'
+}`,
+
+  path: `{
+# request nav path
+
 }`,
 
 };

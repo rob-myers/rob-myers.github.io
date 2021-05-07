@@ -32,10 +32,10 @@ export type State = {
     /** Rehydrate bots using data loaded into geom.store */
     rehydrateBot: (stageKey: string) => Promise<void>;
     removeStage: (stageKey: string) => void;
-    updateBot: (stageKey: string, updates: Partial<Stage.StageBot>) => void;
-    updateLight: (stageKey: string, updates: Partial<Stage.StageLight>) => void;
+    updateBot: (stageKey: string, updates: Partial<Stage.StageBotLookup>) => void;
+    updateLight: (stageKey: string, updates: Partial<Stage.StageLightLookup>) => void;
     updateOpt: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
-    updatePoly: (stageKey: string, updates: Updates<Stage.StagePoly>) => void;
+    updatePoly: (stageKey: string, updates: Updates<Stage.StagePolyLookup>) => void;
     updateSel: (stageKey: string, updates: Updates<Stage.StageSelection>) => void;
     updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
   }
@@ -67,7 +67,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
         // Restore persisted data
         const s = Stage.createStage(stageKey);
-        const { opt, extra, sel, poly, light } = api.getPersist(stageKey);
+        const { opt, extra, sel, poly, light, path } = api.getPersist(stageKey);
         s.opt = deepClone(opt??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
         s.internal.cursor.position.set(...s.extra.initCursorPos);
@@ -91,6 +91,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           return light;
         });
         s.bot = {}; // See `api.rehydrateBot`
+        s.path = mapValues(path, ({ name, path }) => ({
+          name,
+          path: path.map(p => Geom.Vector.from(p)),
+        }));
         
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
@@ -112,7 +116,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { internal, opt: opts, extra, sel, poly, light, bot } = api.getStage(stageKey);
+      const { internal, opt: opts, extra, sel, poly, light, bot, path } = api.getStage(stageKey);
 
       const currentCameraPos = internal.controls?.camera?.position
         ? vectorToTriple(internal.controls.camera.position) : null;
@@ -150,6 +154,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           bot: mapValues(bot, ({ name, group: { position: p } }) => ({
             name,
             position: [p.x, p.y, p.z],
+          })),
+          path: mapValues(path, ({ name, path }) => ({
+            name,
+            path: path.map(x => x.json),
           })),
         }, persist),
       }));

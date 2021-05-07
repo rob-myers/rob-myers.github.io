@@ -1,9 +1,10 @@
 import * as THREE from "three";
 import { firstAvailableInteger } from "model/generic.model";
 import { geom } from "model/geom.service";
-import * as Stage from "./stage.model";
 import { BotController } from "model/3d/bot-controller";
+import * as Stage from "./stage.model";
 import useStage from "store/stage.store";
+import useGeomStore from "store/geom.store";
 
 export function createStageProxy(stageKey: string) {
   const stage = () => useStage.api.getStage(stageKey);
@@ -13,19 +14,23 @@ export function createStageProxy(stageKey: string) {
     },
     get(_, key: keyof Stage.StageMeta | 'cursor') {
       if (key === 'poly') {
-        return new Proxy({} as Stage.StagePoly, {
-          get(_, key: keyof Stage.StagePoly | 'update') {
+        return new Proxy({} as Stage.StagePolyLookup, {
+          get(_, key: keyof Stage.StagePolyLookup | 'update') {
             if (key === 'update') {
-              return (updates: Partial<Stage.StagePoly> = {}) => {
+              return (updates: Partial<Stage.StagePolyLookup> = {}) => {
                 useStage.api.updatePoly(stageKey, updates);
-                setTimeout(() => useStage.api.updatePoly(stageKey, (poly) => ({
-                  nav: geom.computeNavPoly(poly.wall, poly.obs, Stage.stageNavInset),
-                })), 10);
+                setTimeout(() => {
+                  useStage.api.updatePoly(stageKey, (poly) => {
+                    const nav = geom.computeNavPoly(poly.wall, poly.obs, Stage.stageNavInset);
+                    useGeomStore.api.createNavMesh(stageKey, nav);
+                    return {nav};
+                  });
+                }, 10);
               };
             }
             return stage().poly[key];
           },
-          set(_, key: keyof Stage.StagePoly, value: any) {
+          set(_, key: keyof Stage.StagePolyLookup, value: any) {
             useStage.api.updatePoly(stageKey, { [key]: value });
             return true;
           },
@@ -77,7 +82,7 @@ export function createStageProxy(stageKey: string) {
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
         });
       } else if (key === 'light') {
-        return new Proxy({} as Stage.StageLight, {
+        return new Proxy({} as Stage.StageLightLookup, {
           get(_, key: string | 'add' | 'update') {
             if (key === 'add') {
               return (light: THREE.SpotLight) => {
@@ -103,7 +108,7 @@ export function createStageProxy(stageKey: string) {
           },
         });
       } else if (key === 'bot') {
-        return new Proxy({} as Stage.StageBot, {
+        return new Proxy({} as Stage.StageBotLookup, {
           deleteProperty: (_, key: string) => {
             useStage.api.updateBot(stageKey, { [key]: undefined });
             return true;

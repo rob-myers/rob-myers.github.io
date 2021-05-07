@@ -17,11 +17,13 @@ export type StageMeta = {
   /** The current selection */
   sel: StageSelection;
   /** Polygons e.g. `wall` */
-  poly: StagePoly;
+  poly: StagePolyLookup;
   /** Lights */
-  light: StageLight;
+  light: StageLightLookup;
   /** Bots */
-  bot: StageBot;
+  bot: StageBotLookup;
+  /** Nav paths */
+  path: StagePathLookup;
 };
 
 export interface StageMetaJson {
@@ -29,12 +31,10 @@ export interface StageMetaJson {
   opt: StageOpts;
   extra: StageExtra;
   sel: StageSelectionJson;
-  poly: Record<(
-    | 'wall'
-    | 'obs'
-  ), Geom.PolygonJson[]>;
-  light: StageLightJson;
-  bot: StageBotJson;
+  poly: StagePolyLookupJson;
+  light: StageLightLookupJson;
+  bot: StageBotLookupJson;
+  path: StagePathLookupJson;
 }
 
 export interface StageInternal {
@@ -62,15 +62,15 @@ export interface StageExtra {
 
 /** Keep this flat so stage.proxy handles updates */
 export interface StageOpts {
-  enabled: boolean;
-  /** Can we move/zoom the pan-zoom camera? */
-  panZoom: boolean;
+  ambientLight: number;
   /** Persist on unload window? */
   autoPersist: boolean;
+  enabled: boolean;
+  lockCursor: boolean; 
+  /** Can we move/zoom the camera? */
+  panZoom: boolean;
   wallHeight: number
   wallOpacity: number;
-  ambientLight: number;
-  lockCursor: boolean; 
 }
 
 export interface StageSelection {
@@ -103,41 +103,64 @@ interface StageSelectionJson {
   localObs: Geom.PolygonJson[];
 }
 
-export type StagePoly = Record<(
-  | 'wall'
-  | 'prevWall'
-  | 'obs'
-  | 'prevObs'
-  | 'nav'
-), Geom.Polygon[]>;
+export interface StagePolyLookup {
+  wall: Geom.Polygon[];
+  prevWall: Geom.Polygon[];
+  obs: Geom.Polygon[];
+  prevObs: Geom.Polygon[];
+  nav: Geom.Polygon[];
+}
+
+export interface StagePolyLookupJson {
+  wall: Geom.PolygonJson[];
+  obs: Geom.PolygonJson[];
+}
 
 /** Stage lights */
-export interface StageLight { 
+export interface StageLightLookup { 
   [name: string]: THREE.SpotLight;
 }
 
-export interface StageLightJson {
+export interface StageLightLookupJson {
   [name: string]: {
     name: string;
     position: Triple<number>;
   };
 }
 
-export interface StageBot {
-  [name: string]: Bot;
+export interface StageBotLookup {
+  [name: string]: StageBot;
 }
 
-export interface Bot {
+export interface StageBot {
   name: string;
   group: THREE.Group;
   controller: BotController;
 }
 
-export interface StageBotJson {
+export interface StageBotLookupJson {
   [name: string]: {
     name: string;
     position: Triple<number>;
   };
+}
+
+export interface StagePathLookup {
+  [name: string]: StagePath;
+}
+
+export interface StagePath {
+  name: string;
+  path: Geom.Vector[];
+}
+
+export interface StagePathLookupJson {
+  [name: string]: StagePathJson;
+}
+
+export interface StagePathJson {
+  name: string;
+  path: Geom.VectorJson[];
 }
 
 export function createStage(stageKey: string): StageMeta {
@@ -166,6 +189,7 @@ export function createStage(stageKey: string): StageMeta {
     poly: { wall: [], prevWall: [], obs: [], prevObs: [], nav: [] },
     light: {},
     bot: {},
+    path: {},
   };
 }
 
@@ -202,6 +226,7 @@ export function createPersist(stageKey: string): StageMetaJson {
     poly: { wall: [], obs: [] },
     light: {},
     bot: {},
+    path: {},
   };
 }
 

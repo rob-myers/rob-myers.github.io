@@ -28,7 +28,7 @@ export type State = {
     /** Load images as `THREE.Texture`s */
     loadTextures: () => void;
     /** Request a navpath from previously created navmesh */
-    requestNavPath: (navKey: string, src: Geom.Vector, dst: Geom.Vector) => Geom.VectorJson[];
+    requestNavPath: (navKey: string, src: Geom.VectorJson, dst: Geom.VectorJson) => Geom.VectorJson[];
   };
 }
 
@@ -94,7 +94,7 @@ const useStore = create<State>(devtools((set, get) => ({
         const dst3 = new THREE.Vector3(dst.x, dst.y);
         const navPath = recastService.computePath(navKey, src3, dst3);
         return geom.removePathReps(
-          [src.json].concat(navPath.map(({ x, y }) => ({ x, y })))
+          [{ x: src.x, y: src.y }].concat(navPath.map(({ x, y }) => ({ x, y })))
         );
       } catch (e) {
         console.error('nav error', e);
