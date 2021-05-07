@@ -48,6 +48,8 @@ export interface StageInternal {
   scene?: THREE.Scene;
   /** `Cursor` overwrites this */
   cursor: THREE.Group;
+  /** Time navmesh was last computed */
+  navComputedAt: number;
 }
 
 /** Key-value storage for internal use */
@@ -170,6 +172,7 @@ export function createStage(stageKey: string): StageMeta {
       keyEvents: new Subject,
       ptrEvents: new Subject,
       cursor: new THREE.Group,
+      navComputedAt: 0,
       // ...Attached by components
     },
     extra: {

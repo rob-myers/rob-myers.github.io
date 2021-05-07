@@ -83,7 +83,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         s.poly.prevWall = s.poly.wall.map(x => x.clone());
         s.poly.obs = (poly.obs??[]).map(x => Geom.Polygon.from(x));
         s.poly.prevObs = s.poly.obs.map(x => x.clone());
+
         s.poly.nav = geom.computeNavPoly(s.poly.wall, s.poly.obs, Stage.stageNavInset);
+        useGeomStore.api.createNavMesh(stageKey, s.poly.nav).then(() => {
+          s.internal.navComputedAt = Date.now();
+          api.updateStage(stageKey, {});
+        });
 
         s.light = mapValues(light, ({ name, position }) => {
           const light = geom.createSpotLight(new THREE.Vector3(...position));

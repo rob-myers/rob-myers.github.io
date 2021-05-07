@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { firstAvailableInteger } from "model/generic.model";
+import * as Geom from "model/geom";
 import { geom } from "model/geom.service";
 import { BotController } from "model/3d/bot-controller";
 import * as Stage from "./stage.model";
@@ -19,12 +20,12 @@ export function createStageProxy(stageKey: string) {
             if (key === 'update') {
               return (updates: Partial<Stage.StagePolyLookup> = {}) => {
                 useStage.api.updatePoly(stageKey, updates);
-                setTimeout(() => {
-                  useStage.api.updatePoly(stageKey, (poly) => {
-                    const nav = geom.computeNavPoly(poly.wall, poly.obs, Stage.stageNavInset);
-                    useGeomStore.api.createNavMesh(stageKey, nav);
-                    return {nav};
-                  });
+                setTimeout(async () => {// Update navmesh and poly.nav
+                  const { poly, internal } = stage();
+                  const nav = geom.computeNavPoly(poly.wall, poly.obs, Stage.stageNavInset);
+                  await useGeomStore.api.createNavMesh(stageKey, nav);
+                  internal.navComputedAt = Date.now();
+                  useStage.api.updatePoly(stageKey, { nav });
                 }, 10);
               };
             }
@@ -36,6 +37,16 @@ export function createStageProxy(stageKey: string) {
           },
           ownKeys: () => Object.keys(stage().poly),
           getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true })
+        });
+      } else if (key === 'path') {
+        return new Proxy({} as Stage.StagePathLookup, {
+          get(_, key: string | 'request') {
+            if (key === 'request') {
+              return (src: Geom.VectorJson, dst: Geom.VectorJson) =>
+                useGeomStore.api.requestNavPath(stageKey, src, dst);
+            }
+            return stage().path[key];
+          },
         });
       } else if (key === 'sel') {
         return new Proxy({} as Stage.StageSelection, {

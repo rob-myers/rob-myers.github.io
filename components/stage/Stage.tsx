@@ -8,6 +8,7 @@ import { RootState as CanvasContext } from "@react-three/fiber/dist/declarations
 
 import { getWindow } from "model/dom.model";
 import { StageMeta } from "model/stage/stage.model";
+import { recastService } from "model/3d/recast.service";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
@@ -146,6 +147,11 @@ const Stage: React.FC<Props> = ({ stage }) => {
     [stage.bot],
   );
 
+  const Debug = useMemo(
+    () => <primitive object={recastService.createDebugNavMesh(stage.key)} />,
+    [stage.internal.navComputedAt],
+  );
+
   return (
     <Root
       background="#000"
@@ -172,6 +178,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
           {Light}
           {Geometry}
           {Bots}
+        
+          {Debug}
         </CanvasRoot>
 
       ) || stage?.extra.canvasPreview && (

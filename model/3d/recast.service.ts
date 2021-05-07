@@ -1,4 +1,4 @@
-import { Mesh, Vector3 } from "three";
+import * as THREE from "three";
 import { Geometry, Face3 } from "model/3d/facade";
 import { getWindow } from "model/dom.model";
 
@@ -13,7 +13,7 @@ class RecastService {
   public name: string = "RecastJSPlugin";
   /** Navmeshes by key */
   public lookup: Record<string, any>;
-
+  private readyResolvers = [] as (() => void)[];
   /**
    * Initializes the recastJS plugin
    * @param recastInjection can be used to inject your own recast reference
@@ -21,18 +21,24 @@ class RecastService {
   constructor() {
     this.lookup = {};
   }
+
+  async ready() {
+    if (!this.bjsRECAST.NavMesh) {
+      return new Promise<void>(resolve => {
+        this.readyResolvers.push(resolve);
+      });
+    }
+  }
   
   initialize(Recast: any) {
-    if (typeof Recast === "function") {
-      Recast(this.bjsRECAST);
-    } else {
-      this.bjsRECAST = Recast;
-    }
+    Recast(this.bjsRECAST);
   
-    if (!this.isSupported()) {
+    if (!this.bjsRECAST.NavMesh) {
       console.error("RecastJS is not available. Please make sure you included the js file.");
       return;
     }
+
+    while (this.readyResolvers.pop()?.());
   }
 
   clearNavMesh(navKey: string) {
@@ -44,12 +50,12 @@ class RecastService {
    * @param meshes array of all the geometry used to compute the navigatio mesh
    * @param parameters bunch of parameters used to filter geometry
    */
-  // createNavMesh(meshes: Array<THREE.Mesh>, parameters: INavMeshParameters): void {
   createNavMesh(
     navKey: string,
     navGeom: THREE.BufferGeometry,
     parameters = defaultNavMeshParams,
   ): void {
+
     const rc = new this.bjsRECAST.rcConfig();
     rc.cs = parameters.cs;
     rc.ch = parameters.ch;
@@ -70,44 +76,6 @@ class RecastService {
     const navMesh = new this.bjsRECAST.NavMesh();
     this.lookup[navKey] = navMesh;
 
-    // var index: number;
-    // var tri: number;
-    // var pt: number;
-
-    // var indices = [];
-    // var positions = [];
-    // var offset = 0;
-    // for (index = 0; index < meshes.length; index++) {
-    //     if (meshes[index]) {
-    //         var mesh = meshes[index];
-
-    //         const meshIndices = mesh.getIndices();
-    //         if (!meshIndices) {
-    //             continue;
-    //         }
-    //         const meshPositions = mesh.getVerticesData(VertexBuffer.PositionKind, false, false);
-    //         if (!meshPositions) {
-    //             continue;
-    //         }
-
-    //         const wm = mesh.computeWorldMatrix(true);
-
-    //         for (tri = 0; tri < meshIndices.length; tri++) {
-    //             indices.push(meshIndices[tri] + offset);
-    //         }
-
-    //         var transformed = Vector3.Zero();
-    //         var position = Vector3.Zero();
-    //         for (pt = 0; pt < meshPositions.length; pt += 3) {
-    //             Vector3.FromArrayToRef(meshPositions, pt, position);
-    //             Vector3.TransformCoordinatesToRef(position, wm, transformed);
-    //             positions.push(transformed.x, transformed.y, transformed.z);
-    //         }
-
-    //         offset += meshPositions.length / 3;
-    //     }
-    // }
-
     const geometry = (new Geometry).fromBufferGeometry(navGeom);
     const positions = geometry.vertices.flatMap(v => [v.x, v.y, v.z]);
     const offset = geometry.vertices.length;
@@ -124,10 +92,14 @@ class RecastService {
   }
 
   /**
-   * Create a navigation mesh debug mesh
+   * Create a THREE.Mesh to debug the navigation mesh.
    * @returns debug display mesh
    */
   createDebugNavMesh(navKey: string): THREE.Mesh {
+    if (!this.lookup[navKey]) {
+      return new THREE.Mesh;
+    }
+
     let tri: number, pt: number;
     const debugNavMesh = this.lookup[navKey].getDebugNavMesh();
     const triangleCount = debugNavMesh.getTriangleCount();
@@ -140,17 +112,19 @@ class RecastService {
     for (tri = 0; tri < triangleCount; tri++) {
       for (pt = 0; pt < 3 ; pt++) {
         const point = debugNavMesh.getTriangle(tri).getPoint(pt);
-        positions.push(point.x, point.y, point.z);
+        // positions.push(point.x, point.y, point.z);
+        positions.push(point.x, point.z, 0);
       }
     }
 
     const geometry = new Geometry;
     geometry.vertices = [...Array(positions.length / 3)]
-      .map((_, i) => new Vector3(...positions.slice(3 * i, 3 * (i + 1)) ));
+      .map((_, i) => new THREE.Vector3(...positions.slice(3 * i, 3 * (i + 1)) ));
     geometry.faces = [...Array(indices.length / 3)]
       .map((_, i) => new Face3(...indices.slice(3 * i, 3 * (i + 1)) as [number, number, number] ));
-    const mesh = new Mesh(geometry.toBufferGeometry());
+    const mesh = new THREE.Mesh(geometry.toBufferGeometry());
     mesh.name = "NavMeshDebug";
+    mesh.material = new THREE.MeshBasicMaterial({ color: '#ff0000', transparent: true, opacity: 0.1 });
 
     return mesh;
   }
@@ -160,10 +134,10 @@ class RecastService {
    * @param position world position
    * @returns the closest point to position constrained by the navigation mesh
    */
-  getClosestPoint(navKey: string, position: Vector3) : Vector3 {
+  getClosestPoint(navKey: string, position: THREE.Vector3) : THREE.Vector3 {
     var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
     var ret = this.lookup[navKey].getClosestPoint(p);
-    var pr = new Vector3(ret.x, ret.y, ret.z);
+    var pr = new THREE.Vector3(ret.x, ret.y, ret.z);
     return pr;
   }
 
@@ -172,7 +146,7 @@ class RecastService {
    * @param position world position
    * @param result output the closest point to position constrained by the navigation mesh
    */
-  getClosestPointToRef(navKey: string, position: Vector3, result: Vector3) : void {
+  getClosestPointToRef(navKey: string, position: THREE.Vector3, result: THREE.Vector3) : void {
     var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
     var ret = this.lookup[navKey].getClosestPoint(p);
     result.set(ret.x, ret.y, ret.z);
@@ -184,10 +158,10 @@ class RecastService {
    * @param maxRadius the maximum distance to the constrained world position
    * @returns the closest point to position constrained by the navigation mesh
    */
-  getRandomPointAround(navKey: string, position: Vector3, maxRadius: number): Vector3 {
+  getRandomPointAround(navKey: string, position: THREE.Vector3, maxRadius: number): THREE.Vector3 {
     var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
     var ret = this.lookup[navKey].getRandomPointAround(p, maxRadius);
-    var pr = new Vector3(ret.x, ret.y, ret.z);
+    var pr = new THREE.Vector3(ret.x, ret.y, ret.z);
     return pr;
   }
 
@@ -197,7 +171,7 @@ class RecastService {
    * @param maxRadius the maximum distance to the constrained world position
    * @param result output the closest point to position constrained by the navigation mesh
    */
-  getRandomPointAroundToRef(navKey: string, position: Vector3, maxRadius: number, result: Vector3): void {
+  getRandomPointAroundToRef(navKey: string, position: THREE.Vector3, maxRadius: number, result: THREE.Vector3): void {
     var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
     var ret = this.lookup[navKey].getRandomPointAround(p, maxRadius);
     result.set(ret.x, ret.y, ret.z);
@@ -209,11 +183,11 @@ class RecastService {
    * @param destination world position
    * @returns the resulting point along the navmesh
    */
-  moveAlong(navKey: string, position: Vector3, destination: Vector3): Vector3 {
+  moveAlong(navKey: string, position: THREE.Vector3, destination: THREE.Vector3): THREE.Vector3 {
     var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
     var d = new this.bjsRECAST.Vec3(destination.x, destination.y, destination.z);
     var ret = this.lookup[navKey].moveAlong(p, d);
-    var pr = new Vector3(ret.x, ret.y, ret.z);
+    var pr = new THREE.Vector3(ret.x, ret.y, ret.z);
     return pr;
   }
 
@@ -223,7 +197,7 @@ class RecastService {
    * @param destination world position
    * @param result output the resulting point along the navmesh
    */
-  moveAlongToRef(navKey: string, position: Vector3, destination: Vector3, result: Vector3): void {
+  moveAlongToRef(navKey: string, position: THREE.Vector3, destination: THREE.Vector3, result: THREE.Vector3): void {
     var p = new this.bjsRECAST.Vec3(position.x, position.y, position.z);
     var d = new this.bjsRECAST.Vec3(destination.x, destination.y, destination.z);
     var ret = this.lookup[navKey].moveAlong(p, d);
@@ -236,7 +210,7 @@ class RecastService {
    * @param end world position
    * @returns array containing world position composing the path
    */
-  computePath(navKey: string, start: Vector3, end: Vector3): Vector3[] {
+  computePath(navKey: string, start: THREE.Vector3, end: THREE.Vector3): THREE.Vector3[] {
     if (!this.lookup[navKey]) {
       console.warn(`navmesh: ${navKey}: not found`);
       return [];
@@ -249,7 +223,7 @@ class RecastService {
     var positions = [];
     for (pt = 0; pt < pointCount; pt++) {
       let p = navPath.getPoint(pt);
-      positions.push(new Vector3(p.x, p.y, p.z));
+      positions.push(new THREE.Vector3(p.x, p.y, p.z));
     }
     return positions;
   }
@@ -260,7 +234,7 @@ class RecastService {
    * default is (1,1,1)
    * @param extent x,y,z value that define the extent around the queries point of reference
    */
-  setDefaultQueryExtent(navKey: string, extent: Vector3): void {
+  setDefaultQueryExtent(navKey: string, extent: THREE.Vector3): void {
     let ext = new this.bjsRECAST.Vec3(extent.x, extent.y, extent.z);
     this.lookup[navKey].setDefaultQueryExtent(ext);
   }
@@ -269,9 +243,9 @@ class RecastService {
    * Get the Bounding box extent specified by setDefaultQueryExtent
    * @returns the box extent values
    */
-  getDefaultQueryExtent(navKey: string): Vector3 {
+  getDefaultQueryExtent(navKey: string): THREE.Vector3 {
     const p = this.lookup[navKey].getDefaultQueryExtent();
-    return new Vector3(p.x, p.y, p.z);
+    return new THREE.Vector3(p.x, p.y, p.z);
   }
 
   /**
@@ -312,7 +286,7 @@ class RecastService {
    * Get the Bounding box extent result specified by setDefaultQueryExtent
    * @param result output the box extent values
    */
-  getDefaultQueryExtentToRef(navKey: string, result: Vector3): void {
+  getDefaultQueryExtentToRef(navKey: string, result: THREE.Vector3): void {
     let p = this.lookup[navKey].getDefaultQueryExtent();
     result.set(p.x, p.y, p.z);
   }
@@ -322,14 +296,6 @@ class RecastService {
    */
   public dispose() {
     this.lookup = {};
-  }
-
-  /**
-   * If this plugin is supported
-   * @returns true if plugin is supported
-   */
-  public isSupported(): boolean {
-    return this.bjsRECAST !== undefined;
   }
 }
 

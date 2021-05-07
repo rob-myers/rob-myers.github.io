@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import * as Geom from 'model/geom';
 import { geom } from 'model/geom.service';
 import { recastService } from 'model/3d/recast.service';
+import { vectPrecision } from 'model/3d/three.model';
 
 import thinPlusPng from '../3d/img/thin-plus.png';
 
@@ -22,7 +23,7 @@ export type State = {
 
   readonly api: {
     /** Create a navigation mesh using recast */
-    createNavMesh: (navKey: string, polys: Geom.Polygon[]) => void;
+    createNavMesh: (navKey: string, polys: Geom.Polygon[]) => Promise<void>;
     /** Wait until we've loaded gltf(s) exported from Blender. */
     loadGltfs: () => Promise<void>;
     /** Load images as `THREE.Texture`s */
@@ -81,22 +82,22 @@ const useStore = create<State>(devtools((set, get) => ({
       }));
     },
 
-    createNavMesh: (navKey, navPolys) => {
-      setTimeout(() => {
-        if (navPolys.length) {
-          const geometry = geom.polysToGeometry(navPolys, 'xz');
-          recastService.createNavMesh(navKey, geometry);
-        } else {
-          recastService.clearNavMesh(navKey);
-        }
-      });
+    createNavMesh: async (navKey, navPolys) => {
+      await recastService.ready();
+      if (navPolys.length) {
+        const geometry = geom.polysToGeometry(navPolys, 'xz');
+        recastService.createNavMesh(navKey, geometry);
+      } else {
+        recastService.clearNavMesh(navKey);
+      }
     },
 
     requestNavPath: (navKey, src, dst) => {
       try {
         const src3 = new THREE.Vector3(src.x, src.y);
         const dst3 = new THREE.Vector3(dst.x, dst.y);
-        const navPath = recastService.computePath(navKey, src3, dst3);
+        const navPath = recastService.computePath(navKey, src3, dst3)
+          .map(x => vectPrecision(x, 2));
         return geom.removePathReps(
           [{ x: src.x, y: src.y }].concat(navPath.map(({ x, y }) => ({ x, y })))
         );
