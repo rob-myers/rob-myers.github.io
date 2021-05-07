@@ -24,7 +24,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
       case 'toggle-lock-cursor':
         enableUi && useStage.api.updateOpt(stageKey, ({ lockCursor }) => ({ lockCursor: !lockCursor }));
         break;
-      case 'cancel-selection':
+      case 'unlock-copy':
         enableUi && useStage.api.updateSel(stageKey, ({ locked }) => ({ locked: !locked }));
         break;
     }
@@ -65,9 +65,9 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
             <option value="toggle-lock-cursor">
               {opt.lockCursor ? 'unlock cursor' : 'lock cursor'}
             </option>
-            {selection.locked &&
-              <option value="cancel-selection">
-                cancel selection
+            {selection.enabled && selection.locked &&
+              <option value="unlock-copy">
+                unlock copy
               </option>
             }
           </SelectAction>
@@ -120,7 +120,7 @@ const Slot = styled.div`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 44px 58px 54px;
+  grid-template-columns: 44px 70px 54px;
   gap: 0px;
 `;
 
