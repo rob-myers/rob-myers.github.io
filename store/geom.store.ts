@@ -94,12 +94,12 @@ const useStore = create<State>(devtools((set, get) => ({
 
     requestNavPath: (navKey, src, dst) => {
       try {
-        const src3 = new THREE.Vector3(src.x, src.y);
-        const dst3 = new THREE.Vector3(dst.x, dst.y);
+        const src3 = new THREE.Vector3(src.x, 0, src.y);
+        const dst3 = new THREE.Vector3(dst.x, 0, dst.y);
         const navPath = recastService.computePath(navKey, src3, dst3)
           .map(x => vectPrecision(x, 2));
         return geom.removePathReps(
-          [{ x: src.x, y: src.y }].concat(navPath.map(({ x, y }) => ({ x, y })))
+          [{ x: src.x, y: src.y }].concat(navPath.map(({ x, z: y }) => ({ x, y })))
         );
       } catch (e) {
         console.error('nav error', e);

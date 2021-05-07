@@ -6,8 +6,8 @@
 - Can request nav path
    - ✅ `click` provides next click
    - ✅ Can lock cursor
-   - `path $( cursor ) $( click )` provides nav path
-   - `stage.point` and `stage.path`
+   - ✅ `nav $( cursor ) $( click )` provides nav path
+   - `nav ... | path [name]` shows path via `stage.path`
 - Can show nav path
 - Can translate bot along nav path
 - Can make bot walk along nav path

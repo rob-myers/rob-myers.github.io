@@ -43,7 +43,7 @@ call '({ stage, use: {Util} }) => {
 }'
 }`,
 
-  path: `{
+  nav: `{
 # request nav path
 call '({ stage }, srcStr, dstStr) => {
   const src = JSON.parse(srcStr);
