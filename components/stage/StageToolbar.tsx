@@ -57,10 +57,10 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
             onChange={onSelectAction}
           >
             <option disabled value="disabled">
-              act
+              gui
             </option>
             <option value="toggle-select">
-              {selection.enabled ? 'hide select' : 'allow select'}
+              {selection.enabled ? 'hide select' : 'show select'}
             </option>
             <option value="toggle-lock-cursor">
               {opt.lockCursor ? 'unlock cursor' : 'lock cursor'}
