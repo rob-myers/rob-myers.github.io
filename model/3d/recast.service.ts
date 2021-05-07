@@ -35,6 +35,10 @@ class RecastService {
     }
   }
 
+  clearNavMesh(navKey: string) {
+    delete this.lookup[navKey];
+  }
+
   /**
    * Creates a navigation mesh
    * @param meshes array of all the geometry used to compute the navigatio mesh
@@ -233,6 +237,10 @@ class RecastService {
    * @returns array containing world position composing the path
    */
   computePath(navKey: string, start: Vector3, end: Vector3): Vector3[] {
+    if (!this.lookup[navKey]) {
+      console.warn(`navmesh: ${navKey}: not found`);
+      return [];
+    }
     var pt: number;
     let startPos = new this.bjsRECAST.Vec3(start.x, start.y, start.z);
     let endPos = new this.bjsRECAST.Vec3(end.x, end.y, end.z);

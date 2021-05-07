@@ -83,8 +83,12 @@ const useStore = create<State>(devtools((set, get) => ({
 
     createNavMesh: (navKey, navPolys) => {
       setTimeout(() => {
-        const geometry = geom.polysToGeometry(navPolys, 'xz');
-        recastService.createNavMesh(navKey, geometry);
+        if (navPolys.length) {
+          const geometry = geom.polysToGeometry(navPolys, 'xz');
+          recastService.createNavMesh(navKey, geometry);
+        } else {
+          recastService.clearNavMesh(navKey);
+        }
       });
     },
 
