@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { StageOpts, StageSelection } from "model/stage/stage.model";
@@ -6,6 +6,7 @@ import useStage from "store/stage.store";
 
 const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
   const [canToggleRunning, setCanToggleRunning] = useState(true);
+  const enableUi = opt.enabled && canToggleRunning;
 
   const toggleRunning = useCallback(() => {
     if (canToggleRunning) {
@@ -15,15 +16,18 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
     }
   }, [opt.enabled, canToggleRunning]);
 
-  const enableUi = opt.enabled && canToggleRunning;
-  const enableSelUi = enableUi && selection.enabled;
-
-  const toggleSelectionEnabled = useCallback((_e: React.MouseEvent<HTMLDivElement>) => {
-    enableUi && useStage.api.updateSel(stageKey, ({ enabled }) => ({ enabled: !enabled }));
-  }, [enableUi]);
-
-  const toggleCursorLocked = useCallback((_) => {
-    enableUi && useStage.api.updateOpt(stageKey, ({ lockCursor }) => ({ lockCursor: !lockCursor }));
+  const onSelectAction = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    switch (e.currentTarget.value) {
+      case 'toggle-select':
+        enableUi && useStage.api.updateSel(stageKey, ({ enabled }) => ({ enabled: !enabled }));
+        break;
+      case 'toggle-lock-cursor':
+        enableUi && useStage.api.updateOpt(stageKey, ({ lockCursor }) => ({ lockCursor: !lockCursor }));
+        break;
+      case 'cancel-selection':
+        enableUi && useStage.api.updateSel(stageKey, ({ locked }) => ({ locked: !locked }));
+        break;
+    }
   }, [enableUi]);
 
   const toggleCam = useCallback(() => {
@@ -47,22 +51,26 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
           </PauseButton>
         </Slot>
         <Slot>
-          <SelectButton
-            greyed={!enableSelUi}
-            onClick={toggleSelectionEnabled}
-            title="toggle selection mode"
+          <SelectAction
+            disabled={!enableUi}
+            value="disabled"
+            onChange={onSelectAction}
           >
-            select
-          </SelectButton>
-        </Slot>
-        <Slot>
-          <LockedIcon
-            visible={enableUi && opt.lockCursor}
-            onClick={toggleCursorLocked}
-            title={enableUi ? "toggle cursor lock" : ""}
-          >
-            🔒
-          </LockedIcon>
+            <option disabled value="disabled">
+              act
+            </option>
+            <option value="toggle-select">
+              {selection.enabled ? 'hide select' : 'allow select'}
+            </option>
+            <option value="toggle-lock-cursor">
+              {opt.lockCursor ? 'unlock cursor' : 'lock cursor'}
+            </option>
+            {selection.locked &&
+              <option value="cancel-selection">
+                cancel selection
+              </option>
+            }
+          </SelectAction>
         </Slot>
       </LeftToolbar>
       <RightToolbar>
@@ -93,14 +101,14 @@ const Toolbar = styled.section`
   display: flex;
   justify-content: space-between;
   user-select: none;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 10pt;
 
   height: 28px;
   min-height: 28px;
-  font-size: 16px;
-  padding: 0 4px 0px 8px;
+  padding: 0 4px;
 
   background-color: #333;
-  border-radius: 2px 2px 0 0;
   color: #ddd;
 `;
 
@@ -112,12 +120,13 @@ const Slot = styled.div`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: auto 45px auto 8px;
-  gap: 8px;
-  font-size: 10pt;
+  grid-template-columns: 44px 58px 54px;
+  gap: 0px;
 `;
 
-const StageKey = styled.div``;
+const StageKey = styled.div`
+  font-family: Arial, Helvetica, sans-serif;
+`;
 
 const PauseButton = styled.div<{ emphasis?: boolean; }>`
   cursor: pointer;
@@ -126,22 +135,20 @@ const PauseButton = styled.div<{ emphasis?: boolean; }>`
   font-style: ${({ emphasis = false }) => emphasis ? 'italic' : ''};
 `;
 
-const SelectButton = styled.div<{ greyed?: boolean }>`
-  cursor: pointer;
-  display: flex;
-  color: ${({ greyed }) => greyed ? '#aaa' : '#fff'};
-`;
-
-const LockedIcon = styled.div<{ visible?: boolean }>`
-  cursor: pointer;
-  opacity: ${({ visible }) => visible ? 1 : 0.4};
+const SelectAction = styled.select<{}>`
+  background: inherit;
+  color: #fff;
+  outline: 0;
+  padding-left: 1px;
+  width: 45px;
+  margin-top: 1px;
+  font-family: 'Courier New', Courier, monospace;
 `;
 
 const RightToolbar = styled.section`
   display: grid;
   grid-template-columns: auto 70px;
   gap: 6px;
-  font-size: 10pt;
 `;
 
 const PanZoomButton = styled.div<{ greyed?: boolean; emphasis?: boolean; }>`
