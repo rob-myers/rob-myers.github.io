@@ -18,6 +18,9 @@
 }
 
 @media(max-width: 800px) {
+  .title {
+    font-size: 3.5rem;
+  }
   .main {
     padding: 2rem 0;
   }
