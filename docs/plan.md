@@ -69,8 +69,10 @@
    - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
    - ✅ `call '({ stage }) => delete stage.opt.foo'`
    - ✅ selection should flip global x/y after rotation
+   - Sometimes cutOut fails on ctrl-x
+      > Might be fixed by `intersectPolysRect` precision(1)
+   - Saw lights update issue?
    - Ensure old processes killed cleanly on hot reload
-   - Lights update issue
 
 ### Done
 

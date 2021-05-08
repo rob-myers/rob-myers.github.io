@@ -113,17 +113,14 @@ class GeomService {
   }
 
   /** Cut `cuttingPolys` out of `polys`. */
-  cutOut(
-    cuttingPolys: Geom.Polygon[],
-    polys: Geom.Polygon[],
-    precision?: number,
-  ): Geom.Polygon[] {
-    return polygonClipping.difference(
-      polys.map(({ geoJson: { coordinates } }) => coordinates),
-      ...cuttingPolys.map(({ geoJson: { coordinates } }) => coordinates),
-    )
-    .map(coords => Geom.Polygon.from(coords))
-    .map(poly => (precision ? poly.precision(precision) : poly).cleanFinalReps());
+  cutOut(cuttingPolys: Geom.Polygon[], polys: Geom.Polygon[], precision?: number): Geom.Polygon[] {
+    return polygonClipping
+      .difference(
+        polys.map(({ geoJson: { coordinates } }) => coordinates),
+        ...cuttingPolys.map(({ geoJson: { coordinates } }) => coordinates),
+      )
+      .map(coords => Geom.Polygon.from(coords))
+      .map(poly => (precision ? poly.precision(precision) : poly).cleanFinalReps());
   }
 
   /** Join disjoint triangulations */
@@ -233,7 +230,8 @@ class GeomService {
   intersectPolysRect(polys: Geom.Polygon[], rect: Geom.Rect) {
     const polyRect = Geom.Polygon.from(rect);
     return polys.filter(poly => poly.rect.intersects(rect))
-      .flatMap(poly => geom.intersect([polyRect, poly]));
+      .flatMap(poly => geom.intersect([polyRect, poly]))
+      .map(x => x.precision(1));
   }
 
   linesToPoly(line: Geom.Vector[], extent: number) {
