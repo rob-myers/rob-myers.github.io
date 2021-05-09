@@ -13,7 +13,7 @@ const Grid: React.FC = () => {
       uniforms={{
         uSize1: { value: 0.1 },
         uSize2: { value: 1 },
-        uColor: { value: new THREE.Color('#444') },
+        uColor: { value: new THREE.Color('#000') },
         uDistance: { value: 50 },
       }}
       transparent

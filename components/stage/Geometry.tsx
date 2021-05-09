@@ -35,7 +35,7 @@ const Geometry: React.FC<Props> = ({
         matrixAutoUpdate={false}
       >
         <planeGeometry args={[100, 100]} />
-        <meshStandardMaterial color="#fff" />
+        <meshStandardMaterial color="#777" />
       </mesh>
 
       <mesh
@@ -46,7 +46,7 @@ const Geometry: React.FC<Props> = ({
       >
         <meshBasicMaterial
           side={THREE.DoubleSide} // Fixes shadows
-          color="#000"
+          color="#fff"
           transparent
           opacity={opt.wallOpacity}
           depthTest={opt.wallOpacity === 1}
@@ -57,11 +57,10 @@ const Geometry: React.FC<Props> = ({
         name="Obstructions"
         ref={obstructions}
         castShadow
-        scale={[1, 1, Math.sign(opt.wallOpacity)] }
         matrixAutoUpdate={true}
       >
-        <meshBasicMaterial
-          color="#000"
+        <meshStandardMaterial
+          color="#111"
           side={THREE.DoubleSide} // Fixes shadows
         />
       </mesh>
@@ -89,7 +88,7 @@ const Geometry: React.FC<Props> = ({
         <meshBasicMaterial
           transparent
           opacity={0.1}
-          color="#000"
+          color="#fff"
         />
       </mesh>
     </group>

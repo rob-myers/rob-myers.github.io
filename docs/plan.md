@@ -10,7 +10,7 @@
 - ✅ `bot [name]` and `click 2 | bot`
 - ✅ `light` and `click 2 | light`
 
-- Can paint triggers via colours in a select
+- Can paint triggers via colours
 - Can copy/cut/paste triggers
 
 - ✅ Can create line meshes
