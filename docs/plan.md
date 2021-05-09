@@ -8,7 +8,7 @@
 - ✅ Remove ability to hide select
 - ✅ Show `copying`; click to cancel copy
 - ✅ `bot [name]` and `click 2 | bot`
-- `light [name]` and `click 2 | light`
+- ✅ `light` and `click 2 | light`
 
 - Can paint triggers via colours in a select
 - Can copy/cut/paste triggers

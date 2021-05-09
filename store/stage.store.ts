@@ -90,8 +90,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           api.updateStage(stageKey, {});
         });
 
-        s.light = mapValues(light, ({ name, position }) => {
-          const light = geom.createSpotLight(new THREE.Vector3(...position));
+        s.light = mapValues(light, ({ name, position: [x, y, z] }) => {
+          const light = geom.createSpotLight({ x, y }, z);
           light.name = name;
           return light;
         });

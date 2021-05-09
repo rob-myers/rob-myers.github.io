@@ -91,10 +91,10 @@ class GeomService {
     return mesh;
   }
 
-  createSpotLight(position: THREE.Vector3) {
+  createSpotLight({ x, y }: Geom.VectorJson, height: number) {
     const light = new THREE.SpotLight;
-    light.position.copy(position);
-    light.target.position.copy(position).setZ(0);
+    light.position.set(x, y, height);
+    light.target.position.set(x, y, 0);
     light.intensity = 3;
     light.decay = 1.5;
     light.distance = 3;

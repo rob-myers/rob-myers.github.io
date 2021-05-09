@@ -26,11 +26,17 @@ else map "x => x.reduce($1)"; fi
  
   light: `{
 # create light at cursor
-call '({ stage, use: {geom} }) => {
-  const position = stage.cursor.clone().setZ(2);
-  const light = geom.createSpotLight(position);
-  stage.light.add(light);
-}'
+run '({ read, _: {msg, count = 0} }, { stage, use: {geom} }) {
+  while (msg = await read()) {
+    const light = geom.createSpotLight(msg, 2);
+    stage.light.add(light);
+    count++;
+  }
+  if (!count) {
+    const light = geom.createSpotLight(stage.cursor, 2);
+    stage.light.add(light);
+  }
+}' $1
 }`,
 
   bot: `{
