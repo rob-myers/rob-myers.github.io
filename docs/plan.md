@@ -5,8 +5,8 @@
 - ✅ `click` provides next click
 - ✅ Can `click 3` to read 3 clicks 
 - ✅ Remove ability to lock cursor
-- Remove select enable/disable gui
-- Show `esc` for cancel copy
+- ✅ Remove ability to hide select
+- ✅ Show `copying`; click to cancel copy
 - `bot [name]` and `click 2 | bot`
 - `light [name]` and `click 2 | light`
 

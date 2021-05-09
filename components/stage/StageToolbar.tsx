@@ -16,20 +16,19 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
     }
   }, [opt.enabled, canToggleRunning]);
 
-  const onSelectAction = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+  const onSelectTrigger = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     switch (e.currentTarget.value) {
-      case 'toggle-select':
-        enableUi && useStage.api.updateSel(stageKey, ({ enabled }) => ({ enabled: !enabled }));
-        break;
-      case 'unlock-copy':
-        enableUi && useStage.api.updateSel(stageKey, ({ locked }) => ({ locked: !locked }));
-        break;
+      // TODO
     }
   }, [enableUi]);
+  
+  const toggleUnlockCopy = useCallback(() => enableUi && selection.locked &&
+    useStage.api.updateSel(stageKey, ({ locked }) => ({ locked: !locked }))
+  , [enableUi, selection]);
 
-  const toggleCam = useCallback(() => {
-    enableUi && useStage.api.updateOpt(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }));
-  }, [enableUi]);
+  const toggleCam = useCallback(() => enableUi &&
+    useStage.api.updateOpt(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }))
+  , [enableUi]);
 
   return (
     <Toolbar>
@@ -48,27 +47,30 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
           </PauseButton>
         </Slot>
         <Slot>
-          <SelectAction
+          <SelectTrigger
             disabled={!enableUi}
             value="disabled"
-            onChange={onSelectAction}
+            onChange={onSelectTrigger}
           >
             <option disabled value="disabled">
-              gui
+              trigger
             </option>
-            <option value="toggle-select">
-              {selection.enabled ? 'hide select' : 'show select'}
-            </option>
-            {selection.enabled && selection.locked &&
-              <option value="unlock-copy">
-                unlock copy
-              </option>
-            }
-          </SelectAction>
+            <option value="red">red</option>
+            <option value="blue">blue</option>
+            <option value="green">green</option>
+          </SelectTrigger>
         </Slot>
       </LeftToolbar>
       <RightToolbar>
-        <Slot />
+        <Slot>
+            <UnlockCopyButton
+              onClick={toggleUnlockCopy}
+              title="click to unlock copy"
+              enabled={enableUi && selection.enabled && selection.locked}
+            >
+              copying
+            </UnlockCopyButton>
+        </Slot>
         <Slot>
           <PanZoomButton
             greyed={!(enableUi && opt.panZoom)}
@@ -99,7 +101,7 @@ const Toolbar = styled.section`
 
   height: 28px;
   min-height: 28px;
-  padding: 0 8px;
+  padding: 0 12px 0 8px;
 
   background-color: #333;
   color: #ddd;
@@ -113,7 +115,7 @@ const Slot = styled.div`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 40px 60px 54px;
+  grid-template-columns: 40px 64px 64px;
   gap: 0px;
 `;
 
@@ -126,20 +128,23 @@ const PauseButton = styled.div<{ emphasis?: boolean; }>`
   font-style: ${({ emphasis = false }) => emphasis ? 'italic' : ''};
 `;
 
-const SelectAction = styled.select<{}>`
+const SelectTrigger = styled.select<{}>`
   background: inherit;
   color: #fff;
   outline: 0;
   padding-left: 1px;
-  width: 45px;
   margin-top: 1px;
-  font-family: 'Courier New', Courier, monospace;
 `;
 
 const RightToolbar = styled.section`
   display: grid;
-  grid-template-columns: auto 70px;
-  gap: 6px;
+  grid-template-columns: auto auto;
+  gap: 12px;
+`;
+
+const UnlockCopyButton = styled.div<{ enabled: boolean; }>`
+  cursor: pointer;
+  color: ${({ enabled }) => enabled ? 'white' : '#777'};
 `;
 
 const PanZoomButton = styled.div<{ greyed?: boolean; emphasis?: boolean; }>`
