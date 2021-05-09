@@ -4,7 +4,7 @@
 
 - ✅ `click` provides next click
 - ✅ Can `click 3` to read 3 clicks 
-- Remove ability to lock cursor
+- ✅ Remove ability to lock cursor
 - Remove select enable/disable gui
 - Show `esc` for cancel copy
 - `bot [name]` and `click 2 | bot`
