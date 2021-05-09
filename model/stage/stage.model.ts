@@ -68,7 +68,6 @@ export interface StageOpts {
   /** Persist on unload window? */
   autoPersist: boolean;
   enabled: boolean;
-  lockCursor: boolean; 
   /** Can we move/zoom the camera? */
   panZoom: boolean;
   /** Show the navmesh computed by recast? */
@@ -203,7 +202,6 @@ export function createStageOpts(): StageOpts {
     ambientLight: 0.15,
     autoPersist: true,
     enabled: true,
-    lockCursor: false,
     panZoom: true,
     showRecastNav: false,
     wallHeight: 1,

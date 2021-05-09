@@ -93,6 +93,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
     </mesh>
     <Grid />
     <Axes />
+    <Cursor internal={stage.internal} />
   </>, []);
 
   const CamControls = useMemo(() =>
@@ -103,15 +104,11 @@ const Stage: React.FC<Props> = ({ stage }) => {
   , [stage.opt.panZoom]);
 
   const Sel = useMemo(() => <>
-    <Cursor
-      internal={stage.internal}
-      locked={stage.opt.lockCursor}
-    />
     {stage.sel.enabled && <Selection
       internal={stage.internal}
       sel={stage.sel}
     />}
-  </>, [stage.opt.lockCursor, stage.sel]);
+  </>, [stage.sel]);
 
   const Light = useMemo(() => {
     Object.values(stage.light).forEach(light => light.shadow.needsUpdate = true);

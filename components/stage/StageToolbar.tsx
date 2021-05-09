@@ -21,9 +21,6 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
       case 'toggle-select':
         enableUi && useStage.api.updateSel(stageKey, ({ enabled }) => ({ enabled: !enabled }));
         break;
-      case 'toggle-lock-cursor':
-        enableUi && useStage.api.updateOpt(stageKey, ({ lockCursor }) => ({ lockCursor: !lockCursor }));
-        break;
       case 'unlock-copy':
         enableUi && useStage.api.updateSel(stageKey, ({ locked }) => ({ locked: !locked }));
         break;
@@ -61,9 +58,6 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
             </option>
             <option value="toggle-select">
               {selection.enabled ? 'hide select' : 'show select'}
-            </option>
-            <option value="toggle-lock-cursor">
-              {opt.lockCursor ? 'unlock cursor' : 'lock cursor'}
             </option>
             {selection.enabled && selection.locked &&
               <option value="unlock-copy">
