@@ -25,7 +25,7 @@ else map "x => x.reduce($1)"; fi
   log: `map 'x => console.log(x)'`,
  
   light: `{
-# create light at cursor
+# create lights at points
 run '({ read, _: {msg, count = 0} }, { stage, use: {geom} }) {
   while (msg = await read()) {
     const light = geom.createSpotLight(msg, 2);
@@ -36,7 +36,7 @@ run '({ read, _: {msg, count = 0} }, { stage, use: {geom} }) {
     const light = geom.createSpotLight(stage.cursor, 2);
     stage.light.add(light);
   }
-}' $1
+}' "$1"
 }`,
 
   bot: `{
@@ -54,16 +54,21 @@ run '({ read, _: {msg, count = 0} }, { stage, use: {Util} }, name) {
     group.position.copy(stage.cursor);
     stage.bot.add(group, clips, name);
   }
-}' $1
+}' "$1"
 }`,
 
-  nav: `{
-# request nav path
-call '({ stage }, srcStr, dstStr) => {
-  const src = JSON.parse(srcStr);
-  const dst = JSON.parse(dstStr);
-  return stage.path.request(src, dst);
-}' "$1" "$2"
+  path: `{
+# create nav path
+run '({ read, _: {msg, points = []} }, { stage }) => {
+  while (msg = await read()) {
+    points.push(msg);
+    if (points.length % 2 === 0) {
+      const [src, dst] = points.slice().reverse();
+      const path = stage.path.request(src, dst);
+      // TODO create graphics
+    }
+  }
+}' "$1"
 }`,
 
 };
@@ -139,8 +144,10 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
           if (deltaWalls.length || deltaObs.length) {
             const matrix = sel.group.matrix.clone().invert();
             sel.update({ locked: true,
-              localWall: deltaWalls.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
-              localObs: deltaObs.map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
+              localWall: deltaWalls.map(x =>
+                geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
+              localObs: deltaObs.map(x =>
+                geom.applyMatrixPoly(matrix, x.clone()).precision(1)),
             });
             poly.update({ prevWall: poly.wall, prevObs: poly.obs,
               wall: geom.cutOut(deltaWalls, poly.wall, 1),
@@ -197,7 +204,7 @@ key | run '({ read, _: {msg} }, { stage: { opt, sel, poly }, use: {THREE, Geom, 
     }
   }
 }' &
-  `,
+`,
 
   optsKeyHandler: `
 # options key handler
@@ -207,7 +214,7 @@ key | run '({ read, _: {msg} }, { stage: { opt } }) {
     switch (msg.key) {
       case "1": opt.wallOpacity = 0; break;
       case "2": opt.wallOpacity = 1; break;
-      // case "l": opt.lights = !opt.lights; break;
+      case "l": opt.ambientLight = opt.ambientLight === 1 ? 0.1 : 1; break;
     }
   }
 }' &
