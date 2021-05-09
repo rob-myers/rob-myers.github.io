@@ -3,19 +3,20 @@
 ### TODO
 
 - ✅ `click` provides next click
-- ✅ Can `click -n 3` to read 3 clicks 
+- ✅ Can `click 3` to read 3 clicks 
 - Remove ability to lock cursor
 - Remove select enable/disable gui
 - Show `esc` for cancel copy
-- `bot [name]` and `click -n 2 | bot`
-- `light [name]` and `click -n 2 | lights`
+- `bot [name]` and `click 2 | bot`
+- `light [name]` and `click 2 | light`
 
 - Can paint triggers via colours in a select
 - Can copy/cut/paste triggers
 
 - ✅ Can create line meshes
 - Can add nav path
-   - `{ cursor; click; } | path`
+   - `click 2 | path`
+   - `cursor && click | path`
 - Can translate bot along nav path
 - Can make bot walk along nav path
 

@@ -102,8 +102,8 @@ class CmdService {
       }
       case 'click': {
         const { opts } = getOpts(args, { string: [ 'n', /** number of clicks */ ], });
-        const numClicks = opts.n === '' ? 1 : Number(opts.n);
-        if (!Number.isFinite(numClicks)) throw Error('format -n [numberOfClicks]')
+        const numClicks = args[0] === undefined ? 1 : Number(args[0]);
+        if (!Number.isFinite(numClicks)) throw new ShError('format: click [numberOfClicks]', 1)
 
         const process = useSession.api.getProcess(meta);
         let [resolve, reject] = [(_: THREE.Vector3) => {}, (_: any) => {}];
