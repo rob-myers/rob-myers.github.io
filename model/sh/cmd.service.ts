@@ -103,17 +103,32 @@ class CmdService {
         break;
       }
       case 'cd': {
+        if (args.length > 1) {
+          throw new ShError('usage: `cd`, `cd stage.opt`, `cd /stage` and `cd -`', 1);
+        }
         const prevPwd = useSession.api.getVar(meta.sessionKey, 'OLDPWD') || '';
         const currPwd = useSession.api.getVar(meta.sessionKey, 'PWD') || '';
-        if (args[0] === '') {
+
+        if (!args[0] || args[0] === '/') {
           useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
           useSession.api.setVar(meta.sessionKey, 'PWD', '');
         } else if (args[0] === '-') {
           useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
           useSession.api.setVar(meta.sessionKey, 'PWD', prevPwd);
         } else {
-          useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
-          useSession.api.setVar(meta.sessionKey, 'PWD', args[0]);
+          try {
+            const parts = ['__'].concat(args[0][0] === '/'
+              ? [args[0].slice(1)]
+              : currPwd ? [currPwd, args[0]] : [args[0]]);
+            const root = this.provideStageAndVars(meta);
+            const dst = Function('__', `return ${parts.join('.')}`)(root);
+            if (dst) {
+              useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
+              useSession.api.setVar(meta.sessionKey, 'PWD', parts.slice(1).join('.'));
+            } else throw new Error;
+          } catch (e) {
+            throw new ShError(`${args[0]} not found`, 1);
+          }
         }
         break;
       }
@@ -168,9 +183,11 @@ class CmdService {
       case 'get': {
         try {
           const root = this.provideStageAndVars(meta);
-          const prefix = useSession.api.getVar(meta.sessionKey, 'PWD');
-          const cwd = Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
-          const outputs = args.map(arg => Function('__', `return __.${arg}`)(cwd));
+          const cwd = this.computeCwd(meta, root);
+          const outputs = args.map(arg => {
+            if (arg[0] === '/') return Function('__', `return __.${arg.slice(1)}`)(root);
+            return Function('__', `return __.${arg}`)(cwd)
+          });
           node.exitCode = outputs.length && outputs.every(x => x === undefined) ? 1 : 0;
           for (const output of outputs) yield output;
         } catch (e) {
@@ -246,15 +263,19 @@ class CmdService {
           'a', /** Show caps keys at root? */
         ], });
         const root = this.provideStageAndVars(meta);
-        const prefix = useSession.api.getVar(meta.sessionKey, 'PWD') || '';
-        const cwd = Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
+        const cwd = this.computeCwd(meta, root);
 
         // We usually treat -1 as a numeric operand, but it is an option here
         const queries = operands.filter(x => !x.startsWith('-'));
-        const queryFns = queries.map(x => Function('__', `return __.${x}`));
-        const roots = queryFns.length ? queryFns.map(query => query(cwd)) : [cwd];
+        if (!queries.length) queries.push('');
+        const roots = queries.map(x => {
+          if (x[0] === '/') {
+            return x.slice(1) ? Function('__', `return __.${x.slice(1)}`)(root) : root;
+          }
+          return x ? Function('__', `return __.${x}`)(cwd) : cwd;
+        });
+
         const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
-        
         for (const [i, obj] of roots.entries()) {
           if (obj === undefined) {
             useSession.api.warn(meta.sessionKey, `ls: ${queries[i]} is not defined`);
@@ -339,9 +360,14 @@ class CmdService {
       }
       case 'rm': {
         const root = this.provideStageAndVars(meta);
-        const prefix = useSession.api.getVar(meta.sessionKey, 'PWD');
-        const cwd = Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
-        for (const arg of args) Function('__', `delete __.${arg}`)(cwd);
+        const cwd = this.computeCwd(meta, root);
+        for (const arg of args) {
+          if (arg[0] === '/') {
+            Function('__', `delete __.${arg.slice(1)}`)(root);
+          } else {
+            Function('__', `delete __.${arg}`)(cwd);
+          }
+        }
         break;
       }
       /** e.g. run '({ read }) { yield "foo"; yield await read(); }' */
@@ -356,10 +382,13 @@ class CmdService {
       }
       case 'set': {
         const root = this.provideStageAndVars(meta);
-        const prefix = useSession.api.getVar(meta.sessionKey, 'PWD');
-        const cwd = Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
         const value = this.parseJsArg(args[1]);
-        Function('__1', '__2', `return __1.${args[0]} = __2`)(cwd, value);
+        if (args[0][0] === '/') {
+          Function('__1', '__2', `return __1.${args[0].slice(1)} = __2`)(root, value);
+        } else {
+          const cwd = this.computeCwd(meta, root);
+          Function('__1', '__2', `return __1.${args[0]} = __2`)(cwd, value);
+        }
         break;
       }
       case 'sleep': {
@@ -401,6 +430,11 @@ class CmdService {
       }
       default: throw testNever(command);
     }
+  }
+
+  private computeCwd(meta: Sh.BaseMeta, root: any) {
+    const prefix = useSession.api.getVar(meta.sessionKey, 'PWD');
+    return Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);    
   }
 
   private getSessionStage(sessionKey: string) {
