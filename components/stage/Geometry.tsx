@@ -59,7 +59,7 @@ const Geometry: React.FC<Props> = ({
         castShadow
         matrixAutoUpdate={true}
       >
-        <meshStandardMaterial
+        <meshBasicMaterial
           color="#111"
           side={THREE.DoubleSide} // Fixes shadows
         />
@@ -75,7 +75,7 @@ const Geometry: React.FC<Props> = ({
       >
         <meshBasicMaterial
           side={THREE.FrontSide}
-          color="#444"
+          color="#fff"
         />
       </mesh>
 
