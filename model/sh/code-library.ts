@@ -16,9 +16,10 @@ else map "x => x.reduce($1)"; fi
 `,
   pretty: `map '(x, { use: {Util} }) => Util.stringify(x)'`,
   keys: `map Object.keys`,
-  cat: `get "$@" | split`,
+  // cat: `get "$@" | split`,
 
   cursor: `get stage.cursor`,
+  // origin: `call '() => ({ x:0, y:0 })'`,
 
   // 'map console.log' would log the 2nd arg too
   log: `map 'x => console.log(x)'`,
