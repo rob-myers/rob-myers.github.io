@@ -42,15 +42,6 @@
 - Bot shadows using hack:
    > https://threejs.org/examples/?q=shado#webgl_shadow_contact
 
-- Implement `cd` and `pwd`
-   - e.g. `cd stage.light`
-   - `cd`, `cd -`, `cd .`, `cd ..`.
-   - `pwd`
-   - Affects `ls`, `get`, `rm` and `set`
-   - Need `ls -a` to see top-level caps vars e.g. `PWD` and `OLDPWD`
-
-- Can add labels to obs?
-
 - Can paint polygons using CLI
    > We'll use them to create triggers
 
@@ -83,6 +74,11 @@
    - Ensure old processes killed cleanly on hot reload
 
 ### Done
+
+✅ Implement `cd` and `pwd`
+   ✅ `cd stage.light`, `cd`, `cd -`, `pwd`
+   ✅ `ls -a` to see top-level caps vars e.g. `PWD` and `OLDPWD`
+   ✅ Affects `ls`, `get`, `rm` and `set`
 
 - Simplify selection UI
    - ✅ Can clear via escape

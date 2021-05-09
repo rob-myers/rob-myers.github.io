@@ -25,6 +25,7 @@ const commandKeys = {
   'await-stage': true,
   /** Execute a javascript function */
   call: true,
+  cd: true,
   /** Get next click event from stage $STAGE_KEY */
   click: true,
   /** List function definitions */
@@ -49,6 +50,7 @@ const commandKeys = {
   poll: true,
   /** List running processes */
   ps: true,
+  pwd: true,
   /** Apply function to each item from stdin */
   map: true,
   /** Exit from a function */
@@ -98,6 +100,21 @@ class CmdService {
           this.provideStageAndVars(meta),
           ...args.slice(1),
         );
+        break;
+      }
+      case 'cd': {
+        const prevPwd = useSession.api.getVar(meta.sessionKey, 'OLDPWD') || '';
+        const currPwd = useSession.api.getVar(meta.sessionKey, 'PWD') || '';
+        if (args[0] === '') {
+          useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
+          useSession.api.setVar(meta.sessionKey, 'PWD', '');
+        } else if (args[0] === '-') {
+          useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
+          useSession.api.setVar(meta.sessionKey, 'PWD', prevPwd);
+        } else {
+          useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
+          useSession.api.setVar(meta.sessionKey, 'PWD', args[0]);
+        }
         break;
       }
       case 'click': {
@@ -151,7 +168,9 @@ class CmdService {
       case 'get': {
         try {
           const root = this.provideStageAndVars(meta);
-          const outputs = args.map(arg => Function('__', `return __.${arg}`)(root));
+          const prefix = useSession.api.getVar(meta.sessionKey, 'PWD');
+          const cwd = Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
+          const outputs = args.map(arg => Function('__', `return __.${arg}`)(cwd));
           node.exitCode = outputs.length && outputs.every(x => x === undefined) ? 1 : 0;
           for (const output of outputs) yield output;
         } catch (e) {
@@ -223,13 +242,17 @@ class CmdService {
         const { opts, operands } = getOpts(args, { boolean: [
           '1', /** One line per item */
           'l', /** Detailed */
-          'r', /** Recursive properties */
+          'r', /** Recursive properties (prototype) */
+          'a', /** Show caps keys at root? */
         ], });
+        const root = this.provideStageAndVars(meta);
+        const prefix = useSession.api.getVar(meta.sessionKey, 'PWD') || '';
+        const cwd = Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
+
         // We usually treat -1 as a numeric operand, but it is an option here
         const queries = operands.filter(x => !x.startsWith('-'));
         const queryFns = queries.map(x => Function('__', `return __.${x}`));
-        const root = this.provideStageAndVars(meta);
-        const roots = queryFns.length ? queryFns.map(query => query(root)) : [root];
+        const roots = queryFns.length ? queryFns.map(query => query(cwd)) : [cwd];
         const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
         
         for (const [i, obj] of roots.entries()) {
@@ -239,6 +262,9 @@ class CmdService {
           }
           if (roots.length > 1) yield `${i > 0 ? '\n' : ''}${queries[i]}:`;
           let keys = (opts.r ? keysDeep(obj) : Object.keys(obj)).sort();
+          if (obj === root && !opts.a) {
+            keys = keys.filter(x => x !== x.toUpperCase());
+          }
           let items = [] as string[];
           if (opts.l) {
             if (typeof obj === 'function') keys = keys.filter(x => !['caller', 'callee', 'arguments'].includes(x));
@@ -300,6 +326,10 @@ class CmdService {
         }
         break;
       }
+      case 'pwd': {
+        yield useSession.api.getVar(meta.sessionKey, 'PWD') || '';
+        break;
+      }
       case 'return': {
         const process = useSession.api.getProcess(meta);
         process.status = ProcessStatus.Killed;
@@ -308,9 +338,10 @@ class CmdService {
         break;
       }
       case 'rm': {
-        // const root = useSession.api.getSession(meta.sessionKey).var;
         const root = this.provideStageAndVars(meta);
-        for (const arg of args) Function('__', `delete __.${arg}`)(root);
+        const prefix = useSession.api.getVar(meta.sessionKey, 'PWD');
+        const cwd = Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
+        for (const arg of args) Function('__', `delete __.${arg}`)(cwd);
         break;
       }
       /** e.g. run '({ read }) { yield "foo"; yield await read(); }' */
@@ -325,8 +356,10 @@ class CmdService {
       }
       case 'set': {
         const root = this.provideStageAndVars(meta);
+        const prefix = useSession.api.getVar(meta.sessionKey, 'PWD');
+        const cwd = Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
         const value = this.parseJsArg(args[1]);
-        Function('__1', '__2', `return __1.${args[0]} = __2`)(root, value);
+        Function('__1', '__2', `return __1.${args[0]} = __2`)(cwd, value);
         break;
       }
       case 'sleep': {
