@@ -123,8 +123,8 @@ export function createStageProxy(stageKey: string) {
           return new Proxy({} as Stage.StageBotLookup, {
             get(_, key: string | 'add') {
               if (key === 'add') {
-                return (group: THREE.Group, clips: THREE.AnimationClip[]) => {
-                  group.name = `bot${firstAvailableInteger(
+                return (group: THREE.Group, clips: THREE.AnimationClip[], name?: string) => {
+                  group.name = name || `bot${firstAvailableInteger(
                     Object.keys(stage().bot).filter(x => /^bot\d+$/).map(x => Number(x.slice(3)))
                   )}`;
                   useStage.api.updateBot(stageKey, { [group.name]: {

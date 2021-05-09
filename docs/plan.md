@@ -7,7 +7,7 @@
 - ✅ Remove ability to lock cursor
 - ✅ Remove ability to hide select
 - ✅ Show `copying`; click to cancel copy
-- `bot [name]` and `click 2 | bot`
+- ✅ `bot [name]` and `click 2 | bot`
 - `light [name]` and `click 2 | light`
 
 - Can paint triggers via colours in a select

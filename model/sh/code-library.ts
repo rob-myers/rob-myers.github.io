@@ -34,14 +34,21 @@ call '({ stage, use: {geom} }) => {
 }`,
 
   bot: `{
-# create bot at cursor
-call '({ stage, use: {Util} }) => {
-  const position = stage.cursor.clone();
-  const { group, clips } = Util.createBot();
-  group.position.copy(position);
-  stage.bot.add(group, clips);
-  stage.light.update();
-}'
+# create bots at points
+run '({ read, _: {msg, count = 0} }, { stage, use: {Util} }, name) {
+  while (msg = await read()) {
+    const { group, clips } = Util.createBot();
+    group.position.copy(msg);
+    const botName = name ? count ? name + count : name : undefined;
+    stage.bot.add(group, clips, botName);
+    count++;
+  }
+  if (!count) {
+    const { group, clips } = Util.createBot();
+    group.position.copy(stage.cursor);
+    stage.bot.add(group, clips, name);
+  }
+}' $1
 }`,
 
   nav: `{
