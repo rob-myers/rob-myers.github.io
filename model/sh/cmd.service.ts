@@ -385,10 +385,18 @@ class CmdService {
 
   private provideRunApi(meta: Sh.BaseMeta) {
     return {
+      // We convert { eof: true } to null, for truthy test
       read: async () => {
         const result = await this.readOnce(meta);
-        // We convert { eof: true } to null, for truthy test
         return result?.eof ? null : result;
+      },
+      readAll: async () => {
+        let msg: ReadResult, msgs = [] as any[];
+        do {
+          msg = await this.readOnce(meta);
+          !msg.eof && msgs.push(msg);
+        } while (!msg.eof);
+        return msgs;
       },
       // TODO support pause/resume like command `sleep`
       sleep: (seconds: number) => new Promise<void>((resolve, reject) => {
