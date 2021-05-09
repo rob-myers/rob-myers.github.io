@@ -101,18 +101,25 @@ class CmdService {
         break;
       }
       case 'click': {
-         const process = useSession.api.getProcess(meta);
-         yield await new Promise((resolve) => {
-           const sub = this.getSessionStage(meta.sessionKey).internal.ptrEvents.subscribe({
-              next: (e) => {
-                if (e.key === 'pointerup' && process.status === ProcessStatus.Running) {
-                  sub.unsubscribe();
-                  resolve(vectPrecisionSpecial(e.point.clone()));
-                }
-              },
-            });
-            process.cleanups.push(() => sub.unsubscribe(), resolve as any);
+        const { opts } = getOpts(args, { string: [ 'n', /** number of clicks */ ], });
+        const numClicks = opts.n === '' ? 1 : Number(opts.n);
+        if (!Number.isFinite(numClicks)) throw Error('format -n [numberOfClicks]')
+
+        const process = useSession.api.getProcess(meta);
+        let [resolve, reject] = [(_: THREE.Vector3) => {}, (_: any) => {}];
+        const sub = this.getSessionStage(meta.sessionKey).internal.ptrEvents.subscribe({
+           next: (e) => {
+             if (e.key === 'pointerup' && process.status === ProcessStatus.Running) {
+               resolve(vectPrecisionSpecial(e.point.clone()));
+             }
+           },
          });
+         process.cleanups.push(() => sub.unsubscribe(), () => reject(killError(meta)));
+
+        for (let i = 0; i < numClicks; i++) {
+          yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
+        }
+        sub.unsubscribe();
         break;
       }
       case 'declare': {

@@ -3,7 +3,7 @@
 ### TODO
 
 - ✅ `click` provides next click
-- Can `click -n 3` to read 3 clicks 
+- ✅ Can `click -n 3` to read 3 clicks 
 - Remove ability to lock cursor
 - Remove select enable/disable gui
 - Show `esc` for cancel copy
