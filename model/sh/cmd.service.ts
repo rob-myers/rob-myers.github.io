@@ -362,7 +362,9 @@ class CmdService {
         const root = this.provideStageAndVars(meta);
         const cwd = this.computeCwd(meta, root);
         for (const arg of args) {
-          if (arg[0] === '/') {
+          if (arg === '/') {
+            throw new ShError('cannot delete root', 1);
+          } else if (arg[0] === '/') {
             Function('__', `delete __.${arg.slice(1)}`)(root);
           } else {
             Function('__', `delete __.${arg}`)(cwd);
