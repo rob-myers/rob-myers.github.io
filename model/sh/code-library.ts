@@ -213,8 +213,9 @@ key | run '({ read, _: {msg} }, { stage: { opt } }) {
     if (msg.type !== "keydown" || !opt.enabled) continue;
     switch (msg.key) {
       case "1": opt.wallOpacity = 0; break;
-      case "2": opt.wallOpacity = 1; break;
-      case "l": opt.ambientLight = opt.ambientLight === 1 ? 0.1 : 1; break;
+      case "2": opt.wallOpacity = 1; opt.wallHeight = 0.5; break;
+      case "3": opt.wallOpacity = 1; opt.wallHeight = 4; break;
+      case "l": opt.ambientLight = opt.ambientLight === 1 ? 0.35 : 1; break;
     }
   }
 }' &
