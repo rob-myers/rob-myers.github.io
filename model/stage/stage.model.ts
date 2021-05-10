@@ -4,7 +4,6 @@ import { Triple } from "model/generic.model";
 import * as Geom from "model/geom";
 import { PanZoomControls } from "model/3d/pan-zoom-controls";
 import { identityMatrix4 } from "model/3d/three.model";
-import { BotController } from "model/3d/bot-controller";
 
 export type StageMeta = {
   key: string;
@@ -14,27 +13,12 @@ export type StageMeta = {
   extra: StageExtra;
   /** Important options for the CLI */
   opt: StageOpts;
-  /** The current selection */
-  sel: StageSelection;
-  /** Polygons e.g. `wall` */
-  poly: StagePolyLookup;
-  /** Lights */
-  light: StageLightLookup;
-  /** Bots */
-  bot: StageBotLookup;
-  /** Nav paths */
-  path: StagePathLookup;
 };
 
 export interface StageMetaJson {
   key: string;
   opt: StageOpts;
   extra: StageExtra;
-  sel: StageSelectionJson;
-  poly: StagePolyLookupJson;
-  light: StageLightLookupJson;
-  bot: StageBotLookupJson;
-  path: StagePathLookupJson;
 }
 
 export interface StageInternal {
@@ -46,10 +30,6 @@ export interface StageInternal {
   controls?: PanZoomControls;
   /** Attached by Stage */
   scene?: THREE.Scene;
-  /** `Cursor` overwrites this */
-  cursor: THREE.Group;
-  /** Time navmesh was last computed */
-  navComputedAt: number;
 }
 
 /** Key-value storage for internal use */
@@ -58,112 +38,15 @@ export interface StageExtra {
   canvasPreview?: string;
   /** Initial camera position */
   initCameraPos: Triple<number>;
-  /** Initial cursor position */
-  initCursorPos: Triple<number>;
 }
 
 /** Keep this flat so stage.proxy handles updates */
 export interface StageOpts {
-  ambientLight: number;
   /** Persist on unload window? */
   autoPersist: boolean;
   enabled: boolean;
   /** Can we move/zoom the camera? */
   panZoom: boolean;
-  /** Show the navmesh computed by recast? */
-  showRecastNav: boolean;
-  wallHeight: number
-  wallOpacity: number;
-}
-
-export interface StageSelection {
-  /**
-   * The group containing a visual representation of `polygons`.
-   * We may also attach semi-transparent meshes here.
-   * Its initial value is only used to transmit any existing transform.
-   */
-  group: THREE.Group;
-  /** Is the selection enabled? */
-  enabled: boolean;
-  /** Is the selection locked? */
-  locked: boolean;
-  /** Untransformed selection area */
-  localBounds: Geom.Rect;
-  /** Untransformed selected walls */
-  localWall: Geom.Polygon[];
-  /** Untransformed selected obs */
-  localObs: Geom.Polygon[];
-}
-
-/** Serializable `StageSelection` */
-interface StageSelectionJson {
-  enabled: boolean;
-  locked: boolean;
-  /** Group transform */
-  matrix: number[];
-  localBounds: Geom.RectJson;
-  localWall: Geom.PolygonJson[];
-  localObs: Geom.PolygonJson[];
-}
-
-export interface StagePolyLookup {
-  wall: Geom.Polygon[];
-  prevWall: Geom.Polygon[];
-  obs: Geom.Polygon[];
-  prevObs: Geom.Polygon[];
-  nav: Geom.Polygon[];
-}
-
-export interface StagePolyLookupJson {
-  wall: Geom.PolygonJson[];
-  obs: Geom.PolygonJson[];
-}
-
-/** Stage lights */
-export interface StageLightLookup { 
-  [name: string]: THREE.SpotLight;
-}
-
-export interface StageLightLookupJson {
-  [name: string]: {
-    name: string;
-    position: Triple<number>;
-  };
-}
-
-export interface StageBotLookup {
-  [name: string]: StageBot;
-}
-
-export interface StageBot {
-  name: string;
-  group: THREE.Group;
-  controller: BotController;
-}
-
-export interface StageBotLookupJson {
-  [name: string]: {
-    name: string;
-    position: Triple<number>;
-  };
-}
-
-export interface StagePathLookup {
-  [name: string]: StagePath;
-}
-
-export interface StagePath {
-  name: string;
-  path: Geom.Vector[];
-}
-
-export interface StagePathLookupJson {
-  [name: string]: StagePathJson;
-}
-
-export interface StagePathJson {
-  name: string;
-  path: Geom.VectorJson[];
 }
 
 export function createStage(stageKey: string): StageMeta {
@@ -172,40 +55,21 @@ export function createStage(stageKey: string): StageMeta {
     internal: {
       keyEvents: new Subject,
       ptrEvents: new Subject,
-      cursor: new THREE.Group,
-      navComputedAt: 0,
       // ...Attached by components
     },
     extra: {
       initCameraPos: [...initCameraPosArray],
-      initCursorPos: [...initCursorPos],
       // ...Attached by components
     },
     opt: createStageOpts(),
-    sel: {
-      group: new THREE.Group,
-      locked: false,
-      enabled: true,
-      localBounds: new Geom.Rect(0, 0, 0, 0),
-      localWall: [],
-      localObs: [],
-    },
-    poly: { wall: [], prevWall: [], obs: [], prevObs: [], nav: [] },
-    light: {},
-    bot: {},
-    path: {},
   };
 }
 
 export function createStageOpts(): StageOpts {
   return {
-    ambientLight: 0.15,
     autoPersist: true,
     enabled: true,
     panZoom: true,
-    showRecastNav: false,
-    wallHeight: 1,
-    wallOpacity: 1,
   };
 }
 
@@ -217,20 +81,7 @@ export function createPersist(stageKey: string): StageMetaJson {
     opt: createStageOpts(),
     extra: {
       initCameraPos: [...initCameraPosArray],
-      initCursorPos: [...initCursorPos],
     },
-    sel: {
-      locked: false,
-      enabled: true,
-      matrix: identityMatrix4.toArray(),
-      localBounds: new Geom.Rect(0, 0, 0, 0).json,
-      localObs: [],
-      localWall: [],
-    },
-    poly: { wall: [], obs: [] },
-    light: {},
-    bot: {},
-    path: {},
   };
 }
 

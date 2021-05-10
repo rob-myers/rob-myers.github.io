@@ -1,81 +1,13 @@
-import * as THREE from "three";
-import { firstAvailableInteger } from "model/generic.model";
-import * as Geom from "model/geom";
-import { geom } from "model/geom.service";
-import { BotController } from "model/3d/bot-controller";
 import * as Stage from "./stage.model";
 import useStage from "store/stage.store";
-import useGeomStore from "store/geom.store";
 
 export function createStageProxy(stageKey: string) {
   const stage = () => useStage.api.getStage(stageKey);
 
   return new Proxy({} as Stage.StageMeta, {
-    get(_, key: keyof Stage.StageMeta | 'cursor') {
+    get(_, key: keyof Stage.StageMeta) {
 
       switch (key) {
-        case 'poly':
-          return new Proxy({} as Stage.StagePolyLookup, {
-            get(_, key: keyof Stage.StagePolyLookup | 'update') {
-              if (key === 'update') {
-                return (updates: Partial<Stage.StagePolyLookup> = {}) => {
-                  useStage.api.updatePoly(stageKey, updates);
-                  // Update poly.nav and recast navmesh 
-                  setTimeout(async () => {
-                    const { poly, internal } = stage();
-                    const nav = geom.computeNavPoly(poly.wall, poly.obs, Stage.stageNavInset);
-                    useStage.api.updatePoly(stageKey, { nav });
-                    await useGeomStore.api.createNavMesh(stageKey, nav);
-                    internal.navComputedAt = Date.now();
-                  }, 10);
-                };
-              }
-              return stage().poly[key];
-            },
-            set(_, key: keyof Stage.StagePolyLookup, value: any) {
-              useStage.api.updatePoly(stageKey, { [key]: value });
-              return true;
-            },
-            ownKeys: () => Object.keys(stage().poly),
-            getOwnPropertyDescriptor: configurableDescriptor,
-          });
-        case 'path':
-          return new Proxy({} as Stage.StagePathLookup, {
-            get(_, key: string | 'request') {
-              if (key === 'request') {
-                return (src: Geom.VectorJson, dst: Geom.VectorJson) =>
-                  useGeomStore.api.requestNavPath(stageKey, src, dst);
-              }
-              return stage().path[key];
-            },
-          });
-        case 'sel':
-          return new Proxy({} as Stage.StageSelection, {
-            get(_, key: (
-              | keyof Stage.StageSelection
-              | 'bounds' | 'wall' | 'obs' | 'update'
-            )) {
-              if (key === 'bounds') {// Provide world bounds
-                const { localBounds, group: { matrix } } = stage().sel;
-                return geom.applyMatrixRect(matrix, localBounds.clone()).precision(1);
-              } else if (key === 'wall' || key === 'obs') {// Provide world polygons
-                const { localWall, localObs, group: { matrix } } = stage().sel;
-                return (key === 'wall' ? localWall : localObs)
-                  .map(x => geom.applyMatrixPoly(matrix, x.clone()).precision(1));
-              } else if (key === 'update') {
-                return (updates: Partial<Stage.StageSelection> = {}) =>
-                  useStage.api.updateSel(stageKey, updates);
-              }
-              return stage().sel[key];
-            },
-            set(_, key: keyof Stage.StageSelection, value: any) {
-              useStage.api.updateSel(stageKey, { [key]: value });
-              return true;
-            },
-            ownKeys: () => Object.keys(stage().sel)
-              .concat('bounds', 'wall', 'obs'),
-            getOwnPropertyDescriptor: configurableDescriptor,
-          });
         case 'opt':
           return new Proxy({} as Stage.StageOpts, {
             get(_, key: keyof Stage.StageOpts) {
@@ -93,60 +25,6 @@ export function createStageProxy(stageKey: string) {
             ownKeys: () => Object.keys(stage().opt),
             getOwnPropertyDescriptor: configurableDescriptor,
           });
-        case 'light':
-          return new Proxy({} as Stage.StageLightLookup, {
-            get(_, key: string | 'add' | 'update') {
-              if (key === 'add') {
-                return (light: THREE.SpotLight) => {
-                  light.name = `light${firstAvailableInteger(
-                    Object.keys(stage().light).filter(x => /^light\d+$/).map(x => Number(x.slice(5)))
-                  )}`;
-                  useStage.api.updateLight(stageKey, { [light.name]: light });
-                };
-              } else if (key === 'update') {
-                return () => useStage.api.updateLight(stageKey, {});
-              }
-              return stage().light[key];
-            },
-            set(_, key: string, value: any) {
-              useStage.api.updateLight(stageKey, { [key]: value });
-              return true;
-            },
-            deleteProperty: (_, key: string) => {
-              useStage.api.updateLight(stageKey, { [key]: undefined });
-              return true;
-            },
-            ownKeys: () => Object.keys(stage().light),
-            getOwnPropertyDescriptor: configurableDescriptor,
-          });
-        case 'bot':
-          return new Proxy({} as Stage.StageBotLookup, {
-            get(_, key: string | 'add') {
-              if (key === 'add') {
-                return (group: THREE.Group, clips: THREE.AnimationClip[], name?: string) => {
-                  group.name = name || `bot${firstAvailableInteger(
-                    Object.keys(stage().bot).filter(x => /^bot\d+$/).map(x => Number(x.slice(3)))
-                  )}`;
-                  useStage.api.updateBot(stageKey, { [group.name]: {
-                    name: group.name, group, controller: new BotController(group, clips),
-                  } });
-                };
-              }
-              return stage().bot[key];
-            },
-            set(_, key: string, value: any) {
-              useStage.api.updateBot(stageKey, { [key]: value });
-              return true;
-            },
-            deleteProperty: (_, key: string) => {
-              useStage.api.updateBot(stageKey, { [key]: undefined });
-              return true;
-            },
-            ownKeys: () => Object.keys(stage().bot),
-            getOwnPropertyDescriptor: configurableDescriptor,
-          });
-        case 'cursor':
-          return stage().internal.cursor.position;
         default:
           return stage()[key];
       }
@@ -160,7 +38,7 @@ export function createStageProxy(stageKey: string) {
       throw Error('cannot delete top-level key of stage');
     },
 
-    ownKeys: () => Object.keys(stage()).concat('cursor'),
+    ownKeys: () => Object.keys(stage()),
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
   });
 }

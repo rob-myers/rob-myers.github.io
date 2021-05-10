@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { StageOpts, StageSelection } from "model/stage/stage.model";
+import { StageOpts } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
-const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
+const StageToolbar: React.FC<Props> = ({ stageKey, opt }) => {
   const [canToggleRunning, setCanToggleRunning] = useState(true);
   const enableUi = opt.enabled && canToggleRunning;
 
@@ -15,16 +15,6 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
       setTimeout(() => setCanToggleRunning(true), 1000);
     }
   }, [opt.enabled, canToggleRunning]);
-
-  const onSelectTrigger = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    switch (e.currentTarget.value) {
-      // TODO
-    }
-  }, [enableUi]);
-  
-  const toggleUnlockCopy = useCallback(() => enableUi && selection.locked &&
-    useStage.api.updateSel(stageKey, ({ locked }) => ({ locked: !locked }))
-  , [enableUi, selection]);
 
   const toggleCam = useCallback(() => enableUi &&
     useStage.api.updateOpt(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }))
@@ -47,29 +37,10 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
           </PauseButton>
         </Slot>
         <Slot>
-          <SelectTrigger
-            disabled={!enableUi}
-            value="disabled"
-            onChange={onSelectTrigger}
-          >
-            <option disabled value="disabled">
-              trigger
-            </option>
-            <option value="red">red</option>
-            <option value="blue">blue</option>
-            <option value="green">green</option>
-          </SelectTrigger>
         </Slot>
       </LeftToolbar>
       <RightToolbar>
         <Slot>
-            <UnlockCopyButton
-              onClick={toggleUnlockCopy}
-              title="click to unlock copy"
-              enabled={enableUi && selection.enabled && selection.locked}
-            >
-              copying
-            </UnlockCopyButton>
         </Slot>
         <Slot>
           <PanZoomButton
@@ -90,7 +61,6 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt, selection }) => {
 interface Props {
   stageKey: string;
   opt: StageOpts;
-  selection: StageSelection;
 }
 
 const Toolbar = styled.section`

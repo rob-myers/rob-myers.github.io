@@ -1,17 +1,10 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import * as THREE from 'three';
 
-import { deepClone, KeyedLookup, mapValues } from 'model/generic.model';
-import * as Geom from 'model/geom';
-import { geom } from 'model/geom.service';
+import { deepClone, KeyedLookup } from 'model/generic.model';
 import * as Stage from 'model/stage/stage.model';
-import { identityMatrix4, vectorToTriple } from 'model/3d/three.model';
+import { vectorToTriple } from 'model/3d/three.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
-
-import useGeomStore from "store/geom.store";
-import { Util } from 'model/runtime-utils';
-import { BotController } from 'model/3d/bot-controller';
 
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
@@ -29,14 +22,8 @@ export type State = {
     getPersist: (stageKey: string) => Stage.StageMetaJson;
     getStage: (stageKey: string) => Stage.StageMeta;
     persist: (stageKey: string) => void;
-    /** Rehydrate bots using data loaded into geom.store */
-    rehydrateBot: (stageKey: string) => Promise<void>;
     removeStage: (stageKey: string) => void;
-    updateBot: (stageKey: string, updates: Partial<Stage.StageBotLookup>) => void;
-    updateLight: (stageKey: string, updates: Partial<Stage.StageLightLookup>) => void;
     updateOpt: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
-    updatePoly: (stageKey: string, updates: Updates<Stage.StagePolyLookup>) => void;
-    updateSel: (stageKey: string, updates: Updates<Stage.StageSelection>) => void;
     updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
   }
 }
@@ -67,39 +54,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
         // Restore persisted data
         const s = Stage.createStage(stageKey);
-        const { opt, extra, sel, poly, light, path } = api.getPersist(stageKey);
+        const { opt, extra } = api.getPersist(stageKey);
         s.opt = deepClone(opt??Stage.createStageOpts());
         s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
-        s.internal.cursor.position.set(...s.extra.initCursorPos);
-
-        s.sel.localBounds = Geom.Rect.from(sel.localBounds);
-        s.sel.localWall = (sel.localWall??[]).map(x => Geom.Polygon.from(x));
-        s.sel.localObs = (sel.localObs??[]).map(x => Geom.Polygon.from(x));
-        s.sel.enabled = sel.enabled??true;
-        s.sel.locked = sel.locked??false;
-        s.sel.group.matrix.fromArray(sel.matrix);
-        
-        s.poly.wall = (poly.wall??[]).map(x => Geom.Polygon.from(x));
-        s.poly.prevWall = s.poly.wall.map(x => x.clone());
-        s.poly.obs = (poly.obs??[]).map(x => Geom.Polygon.from(x));
-        s.poly.prevObs = s.poly.obs.map(x => x.clone());
-
-        s.poly.nav = geom.computeNavPoly(s.poly.wall, s.poly.obs, Stage.stageNavInset);
-        useGeomStore.api.createNavMesh(stageKey, s.poly.nav).then(() => {
-          s.internal.navComputedAt = Date.now();
-          api.updateStage(stageKey, {});
-        });
-
-        s.light = mapValues(light, ({ name, position: [x, y, z] }) => {
-          const light = geom.createSpotLight({ x, y }, z);
-          light.name = name;
-          return light;
-        });
-        s.bot = {}; // See `api.rehydrateBot`
-        s.path = mapValues(path, ({ name, path }) => ({
-          name,
-          path: path.map(p => Geom.Vector.from(p)),
-        }));
         
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
@@ -121,12 +78,10 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { internal, opt: opts, extra, sel, poly, light, bot, path } = api.getStage(stageKey);
+      const { internal, opt: opts, extra } = api.getStage(stageKey);
 
       const currentCameraPos = internal.controls?.camera?.position
         ? vectorToTriple(internal.controls.camera.position) : null;
-      const currentCursorPos = internal.cursor?.position
-        ? vectorToTriple(internal.cursor?.position) : null;
 
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,
@@ -136,81 +91,18 @@ const useStore = create<State>(devtools(persist((set, get) => ({
             initCameraPos: [...currentCameraPos ||
               persist[stageKey].extra.initCameraPos || extra.initCameraPos
             ],
-            initCursorPos: [...currentCursorPos ||
-              persist[stageKey].extra.initCursorPos || extra.initCursorPos
-            ],
           },
-          sel: {
-            locked: sel.locked,
-            enabled: sel.enabled,
-            localBounds: sel.localBounds.json,
-            localWall: sel.localWall.map(x => x.json),
-            localObs: sel.localObs.map(x => x.json),
-            matrix: (sel.group?.matrix??identityMatrix4).toArray(),
-          },
-          poly: {
-            wall: poly.wall.map(x => x.json),
-            obs: poly.obs.map(x => x.json),
-          },
-          light: mapValues(light, ({ name, position: p }) => ({
-            name,
-            position: [p.x, p.y, p.z],
-          })),
-          bot: mapValues(bot, ({ name, group: { position: p } }) => ({
-            name,
-            position: [p.x, p.y, p.z],
-          })),
-          path: mapValues(path, ({ name, path }) => ({
-            name,
-            path: path.map(x => x.json),
-          })),
         }, persist),
       }));
-    },
-
-    rehydrateBot: async (stageKey) => {
-      await useGeomStore.api.loadGltfs();
-      const { bot } = api.getPersist(stageKey);
-
-      api.updateBot(stageKey, mapValues(bot, ({ name, position }) => {
-        const { group, clips } = Util.createBot();
-        group.position.set(...position);
-        return { name, group, controller: new BotController(group, clips) };
-      }));
-      api.updateLight(stageKey, {});
     },
 
     removeStage: (stageKey) => set(({ stage }) => ({
       stage: removeFromLookup(stageKey, stage),
     })),
 
-    updateBot: (stageKey, updates) => {
-      api.updateStage(stageKey, ({ bot }) => {
-        const next = {...bot}; // Can delete by setting `undefined`
-        Object.entries(updates).forEach(([name, bot]) => bot ? (next[name] = bot) : delete next[name]);
-        return {bot: next};
-      });
-    },
-    updateLight: (stageKey, updates) => {
-      api.updateStage(stageKey, ({ light }) => {
-        const next = {...light}; // Can delete by setting `undefined`
-        Object.entries(updates).forEach(([name, light]) => light ? (next[name] = light) : delete next[name]);
-        return {light: next};
-      });
-    },
     updateOpt: (stageKey, updates) => {
       api.updateStage(stageKey, ({ opt: opts }) => ({
         opt: { ...opts, ...typeof updates === 'function' ? updates(opts) : updates },
-      }));
-    },
-    updatePoly: (stageKey, updates) => {
-      api.updateStage(stageKey, ({ poly }) => ({
-        poly: { ...poly, ...typeof updates === 'function' ? updates(poly) : updates },
-      }));
-    },
-    updateSel: (stageKey, updates) => {
-      api.updateStage(stageKey, ({ sel: selection }) => ({
-        sel: { ...selection, ...typeof updates === 'function' ? updates(selection) : updates },
       }));
     },
     updateStage: (stageKey, updates) => {

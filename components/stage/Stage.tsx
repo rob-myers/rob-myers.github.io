@@ -4,25 +4,19 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { Canvas } from "@react-three/fiber";
 import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
-import { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
+import type { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
 
+import type { StageMeta } from "model/stage/stage.model";
 import { getWindow } from "model/dom.model";
-import { StageMeta } from "model/stage/stage.model";
-import { recastService } from "model/3d/recast.service";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
 import CameraControls from "./CameraControls";
 import Grid from "./Grid";
 import Axes from "./Axes";
-import Selection from "./Selection";
-import Cursor from "./Cursor";
-import WorldGeometry from "./Geometry";
-import WorldBots from "./Bots";
 
 const Stage: React.FC<Props> = ({ stage }) => {
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
-  const [lightsAt, updateLightAt] = useState(0);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     // Most recent initial camera position is persisted one
@@ -35,19 +29,14 @@ const Stage: React.FC<Props> = ({ stage }) => {
     ctxt.gl.shadowMap.autoUpdate = false;
     ctxt.gl.shadowMap.type = THREE.PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
+    // TODO expose ctxt.gl
+    // () => ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true), [ctxt],
 
     stage.internal.scene = ctxt.scene;
-    useStage.api.rehydrateBot(stage.key);
     setCtxt(ctxt);
   }, [stage.internal]);
 
-  const updateShadowMap = useCallback(
-    () => ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true), [ctxt],
-  );
-  const updateLights = useCallback(() => updateLightAt(Date.now()), []);
-
   useEffect(() => {
-    // NOTE `ctxt?.gl` instead of `ctxt` for hotreloads on edit stage.store
     if (ctxt?.gl && !stage.opt.enabled) {// Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
@@ -58,17 +47,12 @@ const Stage: React.FC<Props> = ({ stage }) => {
   }, [stage.opt.enabled]);
 
   const ptrWire = stage.internal.ptrEvents;
-  const onPointer = useCallback((e: ThreeEvent<PointerEvent>) => {
-    ptrWire.next({ key: e.type as any, point: e.point });
-  }, []);
-  const onPointerOut = useCallback(
-    (e: ThreeEvent<PointerEvent>) => ptrWire.next({ key: 'pointerleave', point: e.point }),
-    [],
-  );
+  const onPointer = useCallback((e: ThreeEvent<PointerEvent>) =>
+    ptrWire.next({ key: e.type as any, point: e.point }), []);
+  const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) =>
+    ptrWire.next({ key: 'pointerleave', point: e.point }), []);
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
-    stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(),
-    [stage.opt],
-  );
+    stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(), [stage.opt]);
 
   const keyWire = stage.internal.keyEvents;
   const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
@@ -89,81 +73,15 @@ const Stage: React.FC<Props> = ({ stage }) => {
       visible={false}
       matrixAutoUpdate={false}
     >
-      <planeGeometry args={[100, 100]} />
+      <planeGeometry args={[10, 10]} />
     </mesh>
     <Grid />
     <Axes />
-    <Cursor internal={stage.internal} />
   </>, []);
-
-  const CamControls = useMemo(() =>
-    <CameraControls
-      internal={stage.internal}
-      enabled={stage.opt.panZoom}
-    />
-  , [stage.opt.panZoom]);
-
-  const Sel = useMemo(() => <>
-    {stage.sel.enabled && <Selection
-      internal={stage.internal}
-      sel={stage.sel}
-    />}
-  </>, [stage.sel]);
-
-  const Light = useMemo(() => {
-    Object.values(stage.light).forEach(light => light.shadow.needsUpdate = true);
-    updateShadowMap();
-    return <>
-       <ambientLight
-          color="#fff"
-          intensity={stage.opt.ambientLight}
-        />
-        <directionalLight
-          castShadow
-          shadow-mapSize={[2048, 2048]}
-          intensity={0.5}
-          position={new THREE.Vector3(2, 1, 2.5)}
-        />
-    </>;
-    // return (
-    //   <group name="Lights">
-    //     <ambientLight
-    //       color="#fff"
-    //       intensity={stage.opt.ambientLight}
-    //     />
-    //     {Object.values(stage.light).map((light) =>
-    //       <group key={light.name}>
-    //         <primitive object={light} />
-    //         {light.target && <primitive key={`${light.name}.dst`} object={light.target} />}
-    //         {/** TODO initial update? */}
-    //         <spotLightHelper args={[light, "#fff"]} ref={(x) => x && (x as any).update()}  />
-    //       </group>
-    //     )}
-    //   </group>
-    // );
-  }, [stage.light, stage.opt.ambientLight, lightsAt]);
-
-  const Geometry = useMemo(() =>
-    <WorldGeometry
-      opt={stage.opt}
-      poly={stage.poly}
-      updateLights={updateLights}
-    />
-  , [stage.opt, stage.poly]);
-
-  const Bots = useMemo(
-    () => <WorldBots bot={stage.bot} />,
-    [stage.bot],
-  );
-
-  const Debug = useMemo(
-    () => stage.opt.showRecastNav && <primitive object={recastService.createDebugNavMesh(stage.key)} />,
-    [stage.internal.navComputedAt, stage.opt.showRecastNav],
-  );
 
   return (
     <Root
-      background="#000"
+      background="#fff"
       tabIndex={0}
       onKeyDown={onKey}
       onKeyUp={onKey}
@@ -172,7 +90,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
       <StageToolbar
         stageKey={stage.key}
         opt={stage.opt}
-        selection={stage.sel}
       />
 
       {(stage.opt.enabled || ctxt) && (
@@ -182,13 +99,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
           onCreated={onCreatedCanvas}
         >
           {Base}
-          {CamControls}
-          {Sel}
-          {Light}
-          {Geometry}
-          {Bots}
-        
-          {Debug}
+          <CameraControls
+            internal={stage.internal}
+            enabled={stage.opt.panZoom}
+          />
         </CanvasRoot>
 
       ) || stage?.extra.canvasPreview && (
@@ -222,7 +136,7 @@ const Root = styled.section<{ background: string }>`
 `;
 
 const CanvasRoot = styled(Canvas)`
-  background: #000;
+  background: #fff;
 `;
 
 const Placeholder = styled.div<{}>`
@@ -230,7 +144,7 @@ const Placeholder = styled.div<{}>`
   overflow: hidden;
   display: flex;
   height: inherit;
-  background: #111;
+  background: #fff;
 `;
 
 const PlaceholderImage = styled.img<{}>`
