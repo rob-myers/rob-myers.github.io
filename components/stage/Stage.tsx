@@ -113,22 +113,34 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const Light = useMemo(() => {
     Object.values(stage.light).forEach(light => light.shadow.needsUpdate = true);
     updateShadowMap();
-    return (
-      <group name="Lights">
-        <ambientLight
+    return <>
+       <ambientLight
           color="#fff"
           intensity={stage.opt.ambientLight}
         />
-        {Object.values(stage.light).map((light) =>
-          <group key={light.name}>
-            <primitive object={light} />
-            {light.target && <primitive key={`${light.name}.dst`} object={light.target} />}
-            {/** TODO initial update? */}
-            <spotLightHelper args={[light, "#fff"]} ref={(x) => x && (x as any).update()}  />
-          </group>
-        )}
-      </group>
-    );
+        <directionalLight
+          castShadow
+          shadow-mapSize={[2048, 2048]}
+          intensity={0.5}
+          position={new THREE.Vector3(2, 1, 2.5)}
+        />
+    </>;
+    // return (
+    //   <group name="Lights">
+    //     <ambientLight
+    //       color="#fff"
+    //       intensity={stage.opt.ambientLight}
+    //     />
+    //     {Object.values(stage.light).map((light) =>
+    //       <group key={light.name}>
+    //         <primitive object={light} />
+    //         {light.target && <primitive key={`${light.name}.dst`} object={light.target} />}
+    //         {/** TODO initial update? */}
+    //         <spotLightHelper args={[light, "#fff"]} ref={(x) => x && (x as any).update()}  />
+    //       </group>
+    //     )}
+    //   </group>
+    // );
   }, [stage.light, stage.opt.ambientLight, lightsAt]);
 
   const Geometry = useMemo(() =>

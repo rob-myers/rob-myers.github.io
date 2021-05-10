@@ -2,16 +2,13 @@
 
 ### TODO
 
-- ✅ `click` provides next click
-- ✅ Can `click 3` to read 3 clicks 
-- ✅ Remove ability to lock cursor
-- ✅ Remove ability to hide select
-- ✅ Show `copying`; click to cancel copy
-- ✅ `bot [name]` and `click 2 | bot`
-- ✅ `light` and `click 2 | light`
-
-- Can paint triggers via colours
+Simplify + triggers
+- Use dark low walls (0.5); remove obs
+- Use one directional light; remove spotlights
+- Only update light when walls are 0.5?
+- Have triggers `low`, `middle`, `high`
 - Can copy/cut/paste triggers
+- Triggers have visible tags
 
 - ✅ Can create line meshes
 - Can add nav path
@@ -38,18 +35,9 @@
    - Character controller e.g.
       - https://www.youtube.com/watch?v=EkPfhzIbp2g&t=6s
 
-- Static shadows for static geometry
 - Bot shadows using hack:
    > https://threejs.org/examples/?q=shado#webgl_shadow_contact
 
-- Can paint polygons using CLI
-   > We'll use them to create triggers
-
-- ✅ Can add light at cursor via CLI
-- ✅ Add `stage.opts.ambientLight`
-- ✅ Add builtins `true` and `false`
-- ✅ Implement `IfClause` in shell
-- ✅ Can `spawn()` inside `run` command
 - Add `xbcopy` i.e. copy to clipboard
 - Can output serialized stage and reload from text
 - Can reset stage
@@ -74,6 +62,20 @@
    - Ensure old processes killed cleanly on hot reload
 
 ### Done
+
+- ✅ `click` provides next click
+- ✅ Can `click 3` to read 3 clicks 
+- ✅ Remove ability to lock cursor
+- ✅ Remove ability to hide select
+- ✅ Show `copying`; click to cancel copy
+- ✅ `bot [name]` and `click 2 | bot`
+- ✅ `light` and `click 2 | light`
+
+- ✅ Add `stage.opts.ambientLight`
+- ✅ Add builtins `true` and `false`
+- ✅ Implement `IfClause` in shell
+- ✅ Can `spawn()` inside `run` command
+- ✅ Can add light at cursor via CLI
 
 ✅ Implement `cd` and `pwd`
    ✅ `cd stage.light`, `cd`, `cd -`, `pwd`

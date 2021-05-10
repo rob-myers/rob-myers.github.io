@@ -35,7 +35,7 @@ const Geometry: React.FC<Props> = ({
         matrixAutoUpdate={false}
       >
         <planeGeometry args={[100, 100]} />
-        <meshStandardMaterial color="#777" />
+        <meshStandardMaterial color="#fff" />
       </mesh>
 
       <mesh
@@ -45,8 +45,8 @@ const Geometry: React.FC<Props> = ({
         matrixAutoUpdate={true}
       >
         <meshBasicMaterial
-          side={THREE.DoubleSide} // Fixes shadows
-          color="#fff"
+          side={THREE.DoubleSide}
+          color="#000"
           transparent
           opacity={opt.wallOpacity}
           depthTest={opt.wallOpacity === 1}
@@ -75,7 +75,7 @@ const Geometry: React.FC<Props> = ({
       >
         <meshBasicMaterial
           side={THREE.FrontSide}
-          color="#fff"
+          color="#666"
         />
       </mesh>
 
@@ -87,8 +87,8 @@ const Geometry: React.FC<Props> = ({
       >
         <meshBasicMaterial
           transparent
-          opacity={0.1}
-          color="#fff"
+          opacity={0.2}
+          color="#444"
         />
       </mesh>
     </group>
