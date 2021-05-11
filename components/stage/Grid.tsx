@@ -14,7 +14,7 @@ const Grid: React.FC = () => {
         uSize1: { value: 0.2 },
         uSize2: { value: 1 },
         uColor: { value: new THREE.Color('#333') },
-        uDistance: { value: 40 },
+        uDistance: { value: 80 },
       }}
       transparent
       vertexShader={`
@@ -45,7 +45,7 @@ const Grid: React.FC = () => {
         }
         
         void main() {
-          float d = 1.0 - min(distance(cameraPosition.xz, worldPosition.xz) / uDistance, 1.0);
+          float d = 1.0 - 0.25;
           float g1 = getGrid(uSize1);
           float g2 = getGrid(uSize2);
           
