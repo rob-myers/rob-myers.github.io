@@ -1,4 +1,4 @@
-import { useRef, useMemo, useEffect } from 'react';
+import { useRef, useMemo } from 'react';
 import * as THREE from 'three';
 
 const Grid: React.FC = () => {
@@ -59,11 +59,6 @@ const Grid: React.FC = () => {
       } as any}
     />
   ), []);
-
-  useEffect(() => {
-    gridMesh.current!.rotation.set(Math.PI/2, 0, 0);
-    gridMesh.current!.updateMatrix();
-  }, []);
 
   return (
     <mesh

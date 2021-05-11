@@ -20,10 +20,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     const camera = ctxt.camera as THREE.OrthographicCamera;
-    const { initCameraZoom, initCameraPos } = useStage.api.getPersist(stage.key).extra;
+    const { initCameraZoom, initCameraPos: [x, y, z] } = useStage.api.getPersist(stage.key).extra;
     camera.zoom = initCameraZoom;
-    camera.position.set(...initCameraPos);
-    camera.lookAt(initCameraPos[0], initCameraPos[1], 0);
+    camera.position.set(x, y, z);
+    camera.lookAt(x - 10, y - 10, z - 10);
     // camera.position.set(-10, 10, 10); // Side view
     // camera.lookAt(0, 0, 0);
     camera.updateProjectionMatrix();
@@ -111,7 +111,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
           {/* TEMP */}
           <directionalLight position={[-1, 3, 2]} />
-          <mesh position={[0, .5, .5]}>
+          <mesh position={[0, .5, 0]}>
             <boxGeometry/>
             <meshStandardMaterial color="#00f" />
           </mesh>
