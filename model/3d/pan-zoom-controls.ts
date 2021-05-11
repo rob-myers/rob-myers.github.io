@@ -83,6 +83,8 @@ export class PanZoomControls extends EventDispatcher {
   handleZoom() {
     // NOTE we do not change this.camera.position.z
     this.camera.zoom -= this.zoomChange * this.zoomSpeed;
+    // TODO remove hard-coding
+    this.camera.zoom = Math.max(this.camera.zoom, 20);
     this.zoomStart += this.zoomChange * this.dampingFactor;
     this.camera.updateProjectionMatrix();
     
@@ -132,7 +134,7 @@ export class PanZoomControls extends EventDispatcher {
   /** https://discourse.threejs.org/t/how-to-unproject-mouse2d-with-orthographic-camera/4777 */
   private ndcToWorld(ndCoords: Vector2, output: Vector3) {
     output.set(ndCoords.x, ndCoords.y, (this.camera.near + this.camera.far) / (this.camera.near - this.camera.far));
-    output.unproject(this.camera).setZ(0);
+    output.unproject(this.camera).setY(0);
   }
 
   private start(state: State) {
