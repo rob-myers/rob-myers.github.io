@@ -23,9 +23,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
     const { initCameraZoom, initCameraPos: [x, y, z] } = useStage.api.getPersist(stage.key).extra;
     camera.zoom = initCameraZoom;
     camera.position.set(x, y, z);
-    camera.lookAt(x - 10, y - 10, z - 10);
-    // camera.position.set(-10, 10, 10); // Side view
-    // camera.lookAt(0, 0, 0);
+    camera.near = z - 10;
+    camera.lookAt(x + 10, y - 10, z + 10);
     camera.updateProjectionMatrix();
 
     ctxt.gl.shadowMap.enabled = true;
@@ -50,6 +49,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const ptrWire = stage.root.ptr;
   const onPointer = useCallback((e: ThreeEvent<PointerEvent>) =>
     ptrWire.next({ key: e.type as any, point: e.point }), []);
+    
   const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) =>
     ptrWire.next({ key: 'pointerleave', point: e.point }), []);
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
@@ -65,19 +65,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
     });
   }, [keyWire]);
 
-  const FloorLayer = useMemo(() => <>
-    <mesh
-      name="ClickPlane"
-      onPointerDown={onPointer}
-      onPointerMove={onPointer}
-      onPointerUp={onPointer}
-      onPointerOut={onPointerOut}
-      visible={false}
-      matrixAutoUpdate={false}
-      rotation={[Math.PI/2, 0, 0]}
-    >
-      <planeGeometry args={[100, 100]} />
-    </mesh>
+  const Indicators = useMemo(() => <>
     <Grid />
     <Axes />
   </>, []);
@@ -102,7 +90,21 @@ const Stage: React.FC<Props> = ({ stage }) => {
           onCreated={onCreatedCanvas}
           orthographic
         >
-          {FloorLayer}
+          <mesh
+            name="PointerPlane"
+            onPointerDown={onPointer}
+            onPointerMove={onPointer}
+            onPointerUp={onPointer}
+            onPointerOut={onPointerOut}
+            visible={false}
+            // matrixAutoUpdate={false}
+            rotation={[-Math.PI/2, 0, 0]}
+          >
+            <planeGeometry args={[40, 40]} />
+            <meshBasicMaterial color="red" />
+          </mesh>
+
+          {Indicators}
 
           <CameraControls
             root={stage.root}

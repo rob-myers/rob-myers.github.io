@@ -67,8 +67,8 @@ class GeomService {
   createAxis(type: 'x' | 'y', color = '#f00', opacity = 1, lineWidth = defaultLineWidth) {
     return this.createPolyLine(
       type === 'x'
-        ? [new THREE.Vector3(-50, 0), new THREE.Vector3(50, 0)]
-        : [new THREE.Vector3(0, 50), new THREE.Vector3(0, -50)],
+        ? [new THREE.Vector3(-1000, 0), new THREE.Vector3(1000, 0)]
+        : [new THREE.Vector3(0, 1000), new THREE.Vector3(0, -1000)],
         { height: 0, color, opacity, lineWidth },
     );
   }
