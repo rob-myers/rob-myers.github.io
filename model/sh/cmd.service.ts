@@ -18,11 +18,9 @@ import { StageKeyEvent, StageMeta } from 'model/stage/stage.model';
 import useStage from 'store/stage.store';
 import { parseService } from './parse/parse.service';
 import { Util } from 'model/runtime-utils';
-import { vectPrecision, vectPrecisionSpecial } from 'model/3d/three.model';
+import { vectPrecisionSpecial } from 'model/3d/three.model';
 
 const commandKeys = {
-  /** Wait for a stage to be ready */
-  'await-stage': true,
   /** Execute a javascript function */
   call: true,
   cd: true,
@@ -70,6 +68,8 @@ const commandKeys = {
   split: true,
   /** Collect stdin into a single array */
   sponge: true,
+  /** Wait for a stage to be ready */
+  stage: true,
   /** Test regex against string */
   test: true,
   /** Exit with code 0 */
@@ -86,14 +86,6 @@ class CmdService {
   async *runCmd(node: Sh.CallExpr | Sh.DeclClause, command: CommandName, args: string[]) {
     const { meta } = node;
     switch (command) {
-      case 'await-stage': {
-        const stageKey = this.parseJsonArg(args[0]);
-        await new Promise<void>(resolve => {
-          useStage.api.awaitStage(stageKey, resolve);
-          useSession.api.addCleanup(meta, resolve);
-        });
-        break;
-      }
       case 'call': {
         const func = Function('__', `return ${args[0]}`);
         yield await func()(
@@ -199,7 +191,7 @@ class CmdService {
         const { ttyShell } = useSession.api.getSession(meta.sessionKey);
         yield `1) The following commands are supported:`;
         const commands = cliColumns(Object.keys(commandKeys), { width: ttyShell.xterm.xterm.cols }).split(/\r?\n/);
-        for (const line of commands) yield `${ansiBrown}${line}`;
+        for (const line of commands) yield `${ansiBlue}${line}`;
         yield `2) Traverse the stage/variables via \`ls\` or e.g. \`ls -l stage.opt\`.`
         yield `3) View shell functions via \`declare\`.`
         yield `4) Use Ctrl-c to interrupt and Ctrl-l to clear screen.`
@@ -417,6 +409,14 @@ class CmdService {
         const outputs = [] as any[];
         yield* this.read(meta, (data: any[]) => { outputs.push(data); });
         yield outputs;
+        break;
+      }
+      case 'stage': {
+        const stageKey = this.parseJsonArg(args[0]);
+        await new Promise<void>(resolve => {
+          useStage.api.awaitStage(stageKey, resolve);
+          useSession.api.addCleanup(meta, resolve);
+        });
         break;
       }
       case 'test': {

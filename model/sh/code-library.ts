@@ -45,7 +45,7 @@ key | run '({ read, _: {msg} }, { stage: { opt } }) {
 
 export const profiles = {
   first: `
-await-stage "\${STAGE_KEY}"
+stage "\${STAGE_KEY}"
 
 ${shellScripts.optsKeyHandler.trim()}
 
