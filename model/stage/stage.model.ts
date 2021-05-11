@@ -38,6 +38,7 @@ export interface StageExtra {
   canvasPreview?: string;
   /** Initial camera position */
   initCameraPos: Triple<number>;
+  initCameraZoom: number;
 }
 
 /** Keep this flat so stage.proxy handles updates */
@@ -59,6 +60,7 @@ export function createStage(stageKey: string): StageMeta {
     },
     extra: {
       initCameraPos: [...initCameraPosArray],
+      initCameraZoom,
       // ...Attached by components
     },
     opt: createStageOpts(),
@@ -81,6 +83,7 @@ export function createPersist(stageKey: string): StageMetaJson {
     opt: createStageOpts(),
     extra: {
       initCameraPos: [...initCameraPosArray],
+      initCameraZoom,
     },
   };
 }
@@ -106,7 +109,7 @@ export type StagePointerEvent = {
 
 const initCameraPosArray: Triple<number> = [0, 0, 10];
 export const initCameraPos = new THREE.Vector3(...initCameraPosArray);
-export const initCursorPos: Triple<number> = [0, 0, 0];
+export const initCameraZoom = 10;
 export const initStageBounds = new Geom.Rect(0, 0, 0, 0);
 
 export const stageNavInset = 0.045;

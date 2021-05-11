@@ -81,6 +81,7 @@ export class PanZoomControls extends EventDispatcher {
   }
 
   handleZoom() {
+    // NOTE we do not change this.camera.position.z
     this.camera.zoom -= this.zoomChange * this.zoomSpeed;
     this.zoomStart += this.zoomChange * this.dampingFactor;
     this.camera.updateProjectionMatrix();

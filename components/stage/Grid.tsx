@@ -14,7 +14,7 @@ const Grid: React.FC = () => {
         uSize1: { value: 0.2 },
         uSize2: { value: 1 },
         uColor: { value: new THREE.Color('#333') },
-        uDistance: { value: 50 },
+        uDistance: { value: 40 },
       }}
       transparent
       vertexShader={`
@@ -68,7 +68,7 @@ const Grid: React.FC = () => {
   return (
     <mesh
       ref={gridMesh}
-      name="grid"
+      name="Grid"
       frustumCulled={false}
       matrixAutoUpdate={false}
     >

@@ -56,7 +56,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const s = Stage.createStage(stageKey);
         const { opt, extra } = api.getPersist(stageKey);
         s.opt = deepClone(opt??Stage.createStageOpts());
-        s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCursorPos: Stage.initCursorPos });
+        s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCameraZoom: Stage.initCameraZoom });
         
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
@@ -81,17 +81,20 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const { internal, opt: opts, extra } = api.getStage(stageKey);
 
       const currentCameraPos = internal.controls?.camera?.position
-        ? vectorToTriple(internal.controls.camera.position)
-        : null;
+        ? vectorToTriple(internal.controls.camera.position) : null;
+      const currentCameraZoom = internal.controls?.camera?.zoom;
 
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,
           opt: deepClone(opts),
           extra: {
             canvasPreview: extra.canvasPreview,
-            initCameraPos: [...currentCameraPos ||
-              persist[stageKey].extra.initCameraPos || extra.initCameraPos
+            initCameraPos: [
+              ...currentCameraPos || persist[stageKey].extra.initCameraPos || extra.initCameraPos
             ],
+            initCameraZoom: (
+              currentCameraZoom??(persist[stageKey].extra.initCameraZoom || extra.initCameraZoom)
+            ),
           },
         }, persist),
       }));

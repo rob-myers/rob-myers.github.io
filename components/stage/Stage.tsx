@@ -19,10 +19,9 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
-    // Most recent initial camera position is persisted one
     const camera = ctxt.camera as THREE.OrthographicCamera;
-    camera.zoom = 100;
-    const { initCameraPos } = useStage.api.getPersist(stage.key).extra;
+    const { initCameraZoom, initCameraPos } = useStage.api.getPersist(stage.key).extra;
+    camera.zoom = initCameraZoom;
     camera.position.set(...initCameraPos);
     camera.lookAt(initCameraPos[0], initCameraPos[1], 0);
     // camera.position.set(-10, 10, 10); // Side view
@@ -33,8 +32,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
     ctxt.gl.shadowMap.autoUpdate = false;
     ctxt.gl.shadowMap.type = THREE.PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
-    // TODO expose ctxt.gl
-    // () => ctxt?.gl && (ctxt.gl.shadowMap.needsUpdate = true), [ctxt],
 
     stage.internal.scene = ctxt.scene;
     setCtxt(ctxt);
