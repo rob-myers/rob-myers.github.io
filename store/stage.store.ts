@@ -81,7 +81,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const { internal, opt: opts, extra } = api.getStage(stageKey);
 
       const currentCameraPos = internal.controls?.camera?.position
-        ? vectorToTriple(internal.controls.camera.position) : null;
+        ? vectorToTriple(internal.controls.camera.position)
+        : null;
 
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,

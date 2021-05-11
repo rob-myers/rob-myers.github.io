@@ -5,7 +5,7 @@ import { Triple } from 'model/generic.model';
 import { Geometry, Face3 } from 'model/3d/facade';
 import * as Geom from 'model/geom';
 
-const defaultLineWidth = 0.008;
+const defaultLineWidth = 0.03;
 
 class GeomService {
 

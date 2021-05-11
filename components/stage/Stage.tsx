@@ -20,11 +20,15 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     // Most recent initial camera position is persisted one
-    const camera = ctxt.camera as THREE.PerspectiveCamera;
+    const camera = ctxt.camera as THREE.OrthographicCamera;
+    camera.zoom = 100;
     const { initCameraPos } = useStage.api.getPersist(stage.key).extra;
     camera.position.set(...initCameraPos);
-    
-    camera.setFocalLength(35);
+    camera.lookAt(initCameraPos[0], initCameraPos[1], 0);
+    // camera.position.set(-10, 10, 10); // Side view
+    // camera.lookAt(0, 0, 0);
+    camera.updateProjectionMatrix();
+
     ctxt.gl.shadowMap.enabled = true;
     ctxt.gl.shadowMap.autoUpdate = false;
     ctxt.gl.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -64,16 +68,18 @@ const Stage: React.FC<Props> = ({ stage }) => {
     });
   }, [keyWire]);
 
-  const Base = useMemo(() => <>
+  const FloorLayer = useMemo(() => <>
     <mesh
+      name="ClickPlane"
       onPointerDown={onPointer}
       onPointerMove={onPointer}
       onPointerUp={onPointer}
       onPointerOut={onPointerOut}
       visible={false}
       matrixAutoUpdate={false}
+      rotation={[Math.PI/2, 0, 0]}
     >
-      <planeGeometry args={[10, 10]} />
+      <planeGeometry args={[100, 100]} />
     </mesh>
     <Grid />
     <Axes />
@@ -97,12 +103,22 @@ const Stage: React.FC<Props> = ({ stage }) => {
         <CanvasRoot
           dpr={getWindow()!.devicePixelRatio}
           onCreated={onCreatedCanvas}
+          orthographic
         >
-          {Base}
+          {FloorLayer}
+
           <CameraControls
             internal={stage.internal}
             enabled={stage.opt.panZoom}
           />
+
+          {/* TEMP */}
+          <directionalLight position={[-1, 3, 2]} />
+          <mesh position={[0, .5, .5]}>
+            <boxGeometry/>
+            <meshStandardMaterial color="#00f" />
+          </mesh>
+
         </CanvasRoot>
 
       ) || stage?.extra.canvasPreview && (

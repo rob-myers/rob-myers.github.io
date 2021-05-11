@@ -15,10 +15,10 @@ export default function IndexPage() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Isometric CLI
+          Sidescroll CLI
         </h1>
         <p className={styles.subtitle}>
-          A <a target='#' href='https://en.wikipedia.org/wiki/Command-line_interface'>CLI</a> for Isometric Game AI.
+          A <a target='#' href='https://en.wikipedia.org/wiki/Command-line_interface'>CLI</a> for Platform Game AI.
         </p>
 
         <section className={styles.termStage}>

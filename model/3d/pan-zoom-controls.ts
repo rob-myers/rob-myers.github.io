@@ -3,7 +3,7 @@ import {
   EventDispatcher,
   Vector2,
   Vector3,
-  PerspectiveCamera,
+  OrthographicCamera,
 } from 'three';
 
 export class PanZoomControls extends EventDispatcher {
@@ -21,7 +21,7 @@ export class PanZoomControls extends EventDispatcher {
   private panEnd = new Vector2;
   private panChange = new Vector2;
 
-  private zoomSpeed = 0.2;
+  private zoomSpeed = 1.2;
   private zoomStart = initCameraPos.z;
   private zoomEnd = initCameraPos.z;
   private zoomChange = 0;
@@ -35,7 +35,7 @@ export class PanZoomControls extends EventDispatcher {
   private cleanups: (() => void)[];
 
   constructor(
-    public camera: PerspectiveCamera,
+    public camera: OrthographicCamera,
     /** Making this `public` crashes redux devtools */
     canvasEl: HTMLCanvasElement,
   ) {
@@ -81,11 +81,15 @@ export class PanZoomControls extends EventDispatcher {
   }
 
   handleZoom() {
-    this.camera.position.z += this.zoomChange * this.zoomSpeed;
+    this.camera.zoom -= this.zoomChange * this.zoomSpeed;
     this.zoomStart += this.zoomChange * this.dampingFactor;
+    this.camera.updateProjectionMatrix();
     
     if (this.state !== 'pan') {
-      // Keep floor point under mouse fixed
+      /**
+       * Keep floor point under mouse fixed.
+       * Currently only works when ortho camera has no "angle".
+       */
       this.ndcToWorld(this.ndcMouse, this.zoomMouseDelta);
       this.zoomMouseDelta.sub(this.mouseWorld);
       this.camera.position.x -= this.zoomMouseDelta.x;
@@ -121,14 +125,13 @@ export class PanZoomControls extends EventDispatcher {
       -((e.clientY - top) / height) * 2 + 1,
     );
     this.ndcToWorld(this.ndcMouse, this.mouseWorld)
-    // console.log('ndcMouse', this.ndcMouse);
+    // console.log(this.mouseWorld);
   }
 
+  /** https://discourse.threejs.org/t/how-to-unproject-mouse2d-with-orthographic-camera/4777 */
   private ndcToWorld(ndCoords: Vector2, output: Vector3) {
-    output.set(ndCoords.x, ndCoords.y, 1);
-    output.unproject(this.camera).sub(this.camera.position).normalize();
-    output.multiplyScalar((0 - this.camera.position.z) / output.z);
-    output.add(this.camera.position);
+    output.set(ndCoords.x, ndCoords.y, (this.camera.near + this.camera.far) / (this.camera.near - this.camera.far));
+    output.unproject(this.camera).setZ(0);
   }
 
   private start(state: State) {
