@@ -1,18 +1,18 @@
 import { useRef, useEffect } from 'react';
 import { extend, useThree, useFrame } from '@react-three/fiber';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
-import { StageInternal } from 'model/stage/stage.model';
+import { StageRoot } from 'model/stage/stage.model';
 
 // See types/three-types.d.ts
 extend({ PanZoomControls });
 
-const CameraControls: React.FC<Props> = ({ internal, enabled }) => {
+const CameraControls: React.FC<Props> = ({ root, enabled }) => {
   const { camera, gl: { domElement } } = useThree();
   const controls = useRef<PanZoomControls>();
 
   useEffect(() => {
-    internal.controls = controls.current!;
-    return () => { delete internal.controls };
+    root.ctrl = controls.current!;
+    return () => { delete root.ctrl };
   }, []);
 
   useFrame((_state) => controls.current!.update());
@@ -27,7 +27,7 @@ const CameraControls: React.FC<Props> = ({ internal, enabled }) => {
 };
 
 interface Props {
-  internal: StageInternal;
+  root: StageRoot;
   enabled: boolean;
 }
 

@@ -33,21 +33,21 @@ const Stage: React.FC<Props> = ({ stage }) => {
     ctxt.gl.shadowMap.type = THREE.PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
 
-    stage.internal.scene = ctxt.scene;
+    stage.root.scene = ctxt.scene;
     setCtxt(ctxt);
-  }, [stage.internal]);
+  }, [stage.root]);
 
   useEffect(() => {
     if (ctxt?.gl && !stage.opt.enabled) {// Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
-      delete stage.internal.scene;
+      delete stage.root.scene;
       useStage.api.persist(stage.key);
       setCtxt(null);
     }
   }, [stage.opt.enabled]);
 
-  const ptrWire = stage.internal.ptrEvents;
+  const ptrWire = stage.root.ptr;
   const onPointer = useCallback((e: ThreeEvent<PointerEvent>) =>
     ptrWire.next({ key: e.type as any, point: e.point }), []);
   const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) =>
@@ -55,7 +55,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
     stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(), [stage.opt]);
 
-  const keyWire = stage.internal.keyEvents;
+  const keyWire = stage.root.key;
   const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
     keyWire?.next({
       key: e.key,
@@ -105,7 +105,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
           {FloorLayer}
 
           <CameraControls
-            internal={stage.internal}
+            root={stage.root}
             enabled={stage.opt.panZoom}
           />
 

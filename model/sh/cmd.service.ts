@@ -138,7 +138,7 @@ class CmdService {
 
         const process = useSession.api.getProcess(meta);
         let [resolve, reject] = [(_: THREE.Vector3) => {}, (_: any) => {}];
-        const sub = this.getSessionStage(meta.sessionKey).internal.ptrEvents.subscribe({
+        const sub = this.getSessionStage(meta.sessionKey).root.ptr.subscribe({
            next: (e) => {
              if (e.key === 'pointerup' && process.status === ProcessStatus.Running) {
                resolve(vectPrecisionSpecial(e.point.clone()));
@@ -219,7 +219,7 @@ class CmdService {
       case 'key': {
         let deferred: Deferred<StageKeyEvent>;
         const process = useSession.api.getProcess(meta);
-        const sub = this.getSessionStage(meta.sessionKey).internal.keyEvents
+        const sub = this.getSessionStage(meta.sessionKey).root.key
           .subscribe({ // Ignore signals while paused
             next: (e) => process.status === ProcessStatus.Running && deferred.resolve(e),
           });

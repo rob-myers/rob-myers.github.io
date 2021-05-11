@@ -3,12 +3,11 @@ import * as THREE from "three";
 import { Triple } from "model/generic.model";
 import * as Geom from "model/geom";
 import { PanZoomControls } from "model/3d/pan-zoom-controls";
-import { identityMatrix4 } from "model/3d/three.model";
 
 export type StageMeta = {
   key: string;
   /** The internals of the stage */
-  internal: StageInternal;
+  root: StageRoot;
   /** Key-value store for internal use */
   extra: StageExtra;
   /** Important options for the CLI */
@@ -21,13 +20,13 @@ export interface StageMetaJson {
   extra: StageExtra;
 }
 
-export interface StageInternal {
+export interface StageRoot {
   /** Keyboard events sent by `Stage`  */
-  keyEvents: Subject<StageKeyEvent>;
+  key: Subject<StageKeyEvent>;
   /** Mouse events sent by `Stage`  */
-  ptrEvents: Subject<StagePointerEvent>;
+  ptr: Subject<StagePointerEvent>;
   /** Attached on mount */
-  controls?: PanZoomControls;
+  ctrl?: PanZoomControls;
   /** Attached by Stage */
   scene?: THREE.Scene;
 }
@@ -53,9 +52,9 @@ export interface StageOpts {
 export function createStage(stageKey: string): StageMeta {
   return {
     key: stageKey,
-    internal: {
-      keyEvents: new Subject,
-      ptrEvents: new Subject,
+    root: {
+      key: new Subject,
+      ptr: new Subject,
       // ...Attached by components
     },
     extra: {
