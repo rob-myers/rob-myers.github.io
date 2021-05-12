@@ -1,5 +1,7 @@
 import cliColumns from 'cli-columns';
 import * as THREE from 'three';
+import safeStableStringify from 'safe-stable-stringify';
+import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 
 import * as Geom from 'model/geom';
 import { geom } from 'model/geom.service';
@@ -17,7 +19,6 @@ import { ansiBlue, ansiBrown, ansiReset, ansiWhite } from './tty.xterm';
 import { StageKeyEvent, StageMeta } from 'model/stage/stage.model';
 import useStage from 'store/stage.store';
 import { parseService } from './parse/parse.service';
-import { Util } from 'model/runtime-utils';
 import { vectPrecisionSpecial } from 'model/3d/three.model';
 
 const commandKeys = {
@@ -610,26 +611,35 @@ class CmdService {
     }
   }
 
+  private baseProxy = {};
+
   /**
    * Expose classes/services
    */
-  private useProxy = new Proxy({} as {
+  private useProxy = new Proxy(this.baseProxy as {
     geom: typeof geom;
     Geom: typeof Geom;
     THREE: typeof THREE;
-    Util: typeof Util;
+    stringify: (input: any) => string;
+    // Can dynamically add functions here...
   }, {
-    get(_, key: 'geom' | 'Geom' | 'THREE' | 'Util')  {
+    get(_, key: 'geom' | 'Geom' | 'THREE' | 'stringify')  {
       switch (key) {
         case 'geom': return geom;
         case 'Geom': return Geom;
         case 'THREE': return THREE;
-        case 'Util': return Util;
+        case 'stringify': return (input: string) => {
+          return jsonStringifyPrettyCompact(JSON.parse(
+            safeStableStringify(input, (_key, value) =>
+              value instanceof HTMLElement ? `HTMLElement[${value.nodeName}]` : value
+            )
+          ));
+        }
         default: return (_ as any)[key];
       }
     },
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
-    ownKeys: () => ['geom', 'Geom', 'THREE', 'Util'],
+    ownKeys: () => ['geom', 'Geom', 'THREE', 'stringify'].concat(Object.keys(this.baseProxy)),
   });
   
 }

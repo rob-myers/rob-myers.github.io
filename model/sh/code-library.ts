@@ -14,7 +14,7 @@ if test '/\\S/' "$2"; then
 else map "x => x.reduce($1)"; fi
 }
 `,
-  pretty: `map '(x, { use: {Util} }) => Util.stringify(x)'`,
+  pretty: `map '(x, {use}) => use.stringify(x)'`,
   keys: `map Object.keys`,
   // cat: `get "$@" | split`,
 
