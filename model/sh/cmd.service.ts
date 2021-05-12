@@ -51,6 +51,8 @@ const commandKeys = {
   pwd: true,
   /** Apply function to each item from stdin */
   map: true,
+  /** Wait for a stage to be ready */
+  ready: true,
   /** Exit from a function */
   return: true,
   /** Remove each arg from variables */
@@ -68,8 +70,6 @@ const commandKeys = {
   split: true,
   /** Collect stdin into a single array */
   sponge: true,
-  /** Wait for a stage to be ready */
-  stage: true,
   /** Test regex against string */
   test: true,
   /** Exit with code 0 */
@@ -140,7 +140,7 @@ class CmdService {
 
         const process = useSession.api.getProcess(meta);
         let [resolve, reject] = [(_: THREE.Vector3) => {}, (_: any) => {}];
-        const sub = this.getSessionStage(meta.sessionKey).root.ptr.subscribe({
+        const sub = this.getSessionStage(meta.sessionKey).root.ptrEvent.subscribe({
            next: (e) => {
              if (e.key === 'pointerup' && process.status === ProcessStatus.Running) {
                resolve(vectPrecisionSpecial(e.point.clone()));
@@ -210,7 +210,7 @@ class CmdService {
       case 'key': {
         let deferred: Deferred<StageKeyEvent>;
         const process = useSession.api.getProcess(meta);
-        const sub = this.getSessionStage(meta.sessionKey).root.key
+        const sub = this.getSessionStage(meta.sessionKey).root.keyEvent
           .subscribe({ // Ignore signals while paused
             next: (e) => process.status === ProcessStatus.Running && deferred.resolve(e),
           });
@@ -346,6 +346,14 @@ class CmdService {
         yield useSession.api.getVar(meta.sessionKey, 'PWD') || '';
         break;
       }
+      case 'ready': {
+        const stageKey = this.parseJsonArg(args[0]);
+        await new Promise<void>(resolve => {
+          useStage.api.awaitStage(stageKey, resolve);
+          useSession.api.addCleanup(meta, resolve);
+        });
+        break;
+      }
       case 'return': {
         const process = useSession.api.getProcess(meta);
         process.status = ProcessStatus.Killed;
@@ -412,14 +420,6 @@ class CmdService {
         const outputs = [] as any[];
         yield* this.read(meta, (data: any[]) => { outputs.push(data); });
         yield outputs;
-        break;
-      }
-      case 'stage': {
-        const stageKey = this.parseJsonArg(args[0]);
-        await new Promise<void>(resolve => {
-          useStage.api.awaitStage(stageKey, resolve);
-          useSession.api.addCleanup(meta, resolve);
-        });
         break;
       }
       case 'test': {

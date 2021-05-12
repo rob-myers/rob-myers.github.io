@@ -22,9 +22,9 @@ export interface StageMetaJson {
 
 export interface StageRoot {
   /** Keyboard events sent by `Stage`  */
-  key: Subject<StageKeyEvent>;
+  keyEvent: Subject<StageKeyEvent>;
   /** Mouse events sent by `Stage`  */
-  ptr: Subject<StagePointerEvent>;
+  ptrEvent: Subject<StagePointerEvent>;
   /** Attached on mount */
   ctrl?: CustomControls;
   /** Attached by Stage */
@@ -53,8 +53,8 @@ export function createStage(stageKey: string): StageMeta {
   return {
     key: stageKey,
     root: {
-      key: new Subject,
-      ptr: new Subject,
+      keyEvent: new Subject,
+      ptrEvent: new Subject,
       // ...Attached by components
     },
     extra: {

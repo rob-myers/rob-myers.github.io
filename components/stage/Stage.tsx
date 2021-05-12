@@ -46,7 +46,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
     }
   }, [stage.opt.enabled]);
 
-  const ptrWire = stage.root.ptr;
+  const ptrWire = stage.root.ptrEvent;
   const onPointer = useCallback((e: ThreeEvent<PointerEvent>) =>
     ptrWire.next({ key: e.type as any, point: e.point }), []);
     
@@ -55,7 +55,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
     stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(), [stage.opt]);
 
-  const keyWire = stage.root.key;
+  const keyWire = stage.root.keyEvent;
   const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
     keyWire?.next({
       key: e.key,
