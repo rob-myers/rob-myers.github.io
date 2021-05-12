@@ -98,8 +98,8 @@ class CmdService {
         if (args.length > 1) {
           throw new ShError('usage: `cd`, `cd stage.opt`, `cd /stage` and `cd -`', 1);
         }
-        const prevPwd = useSession.api.getVar(meta.sessionKey, 'OLDPWD') || '';
-        const currPwd = useSession.api.getVar(meta.sessionKey, 'PWD') || '';
+        const prevPwd: string = useSession.api.getVar(meta.sessionKey, 'OLDPWD') || '';
+        const currPwd: string = useSession.api.getVar(meta.sessionKey, 'PWD') || '';
 
         if (!args[0] || args[0] === '/') {
           useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
@@ -107,6 +107,16 @@ class CmdService {
         } else if (args[0] === '-') {
           useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
           useSession.api.setVar(meta.sessionKey, 'PWD', prevPwd);
+        } else if (args[0] === '..') {
+          // We do not attempt to handle '[' properly
+          const matches = currPwd.match(/(^.+)\.[^\]\.]+$/);
+          if (matches) {
+            useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
+            useSession.api.setVar(meta.sessionKey, 'PWD', matches[1]);
+          } else if (currPwd.match(/^[^\.\[]+$/)) {
+            useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
+            useSession.api.setVar(meta.sessionKey, 'PWD', '');
+          }
         } else {
           try {
             const parts = ['__'].concat(args[0][0] === '/'
