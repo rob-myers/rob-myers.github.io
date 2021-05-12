@@ -15,10 +15,10 @@ export default function IndexPage() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Isometric CLI
+          three.js CLI
         </h1>
         <p className={styles.subtitle}>
-          A <a target='#' href='https://en.wikipedia.org/wiki/Command-line_interface'>CLI</a> for Game AI.
+          Richer demos via interactive sessions
         </p>
 
         <section className={styles.termStage}>
