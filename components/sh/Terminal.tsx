@@ -59,7 +59,7 @@ const Terminal: React.FC<Props> = ({ sessionKey, env }) => {
               foreground: '#41FF00',
             },
             convertEol: false,
-            scrollback: 50,
+            scrollback: 250,
             rows: 50,
           }}
         />
