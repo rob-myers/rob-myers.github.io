@@ -160,14 +160,15 @@ const CanvasRoot = styled(Canvas)`
 `;
 
 const Placeholder = styled.div<{}>`
+  background: #444;
   width: 100%;
   overflow: hidden;
   display: flex;
   height: inherit;
-  background: #fff;
 `;
 
 const PlaceholderImage = styled.img<{}>`
+  background: #fff;
   margin: auto;
   max-width: 100%;
   max-height: 100%;
