@@ -7,6 +7,7 @@ import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events
 import type { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
 
 import type { StageMeta } from "model/stage/stage.model";
+import type { CustomControls } from "model/3d/custom-controls";
 import { getWindow } from "model/dom.model";
 import useStage from "store/stage.store";
 
@@ -34,30 +35,33 @@ const Stage: React.FC<Props> = ({ stage }) => {
     ctxt.gl.shadowMap.type = THREE.PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
 
-    stage.root.scene = ctxt.scene;
+    stage.scene = ctxt.scene;
     setCtxt(ctxt);
-  }, [stage.root]);
+  }, [stage]);
+
+  const setStageCtrl = useCallback((ctrl?: CustomControls) => {
+    ctrl ? (stage.ctrl = ctrl) : (delete stage.ctrl);
+  }, [stage]);
 
   useEffect(() => {
     if (ctxt?.gl && !stage.opt.enabled) {// Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
-      delete stage.root.scene;
+      delete stage.scene;
       useStage.api.persist(stage.key);
       setCtxt(null);
     }
   }, [stage.opt.enabled]);
 
-  const ptrWire = stage.root.ptrEvt;
+  const ptrWire = stage.extra.ptrEvent;
   const onPointer = useCallback((e: ThreeEvent<PointerEvent>) =>
     ptrWire.next({ key: e.type as any, point: e.point }), []);
-    
   const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) =>
     ptrWire.next({ key: 'pointerleave', point: e.point }), []);
   const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
     stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(), [stage.opt]);
 
-  const keyWire = stage.root.keyEvt;
+  const keyWire = stage.extra.keyEvent;
   const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
     keyWire?.next({
       key: e.key,
@@ -108,13 +112,13 @@ const Stage: React.FC<Props> = ({ stage }) => {
           {Indicators}
 
           <CameraControls
-            root={stage.root}
+            setStageCtrl={setStageCtrl}
             captureMouse={stage.opt.panZoom}
           />
 
           {/* TEMP */}
-          <directionalLight position={[-1, 3, 2]} />
-          <mesh position={[0, .5, 0]}>
+          <directionalLight name="TempLight" position={[-1, 3, 2]} />
+          <mesh name="TempCube" position={[0, .5, 0]}>
             <boxGeometry/>
             <meshStandardMaterial color="#00f" />
           </mesh>

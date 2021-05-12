@@ -20,7 +20,7 @@
 
 ### Done
 
-- ✅ improve axes
+- ✅ Improve axes
 - ✅ Can create line meshes
 - ✅ `click` provides next click
 - ✅ Can `click 3` to read 3 clicks 

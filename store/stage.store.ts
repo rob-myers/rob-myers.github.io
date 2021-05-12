@@ -1,3 +1,4 @@
+import { Subject } from 'rxjs';
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
@@ -56,7 +57,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const s = Stage.createStage(stageKey);
         const { opt, extra } = api.getPersist(stageKey);
         s.opt = deepClone(opt??Stage.createStageOpts());
-        s.extra = deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCameraZoom: Stage.initCameraZoom });
+        s.extra = {
+          ...deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCameraZoom: Stage.initCameraZoom }),
+          keyEvent: new Subject,
+          ptrEvent: new Subject,
+        };
         
         set(({ stage }) => ({ stage: addToLookup(s, stage) }));
       } else {
@@ -78,11 +83,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { root, opt: opts, extra } = api.getStage(stageKey);
+      const { ctrl, opt: opts, extra } = api.getStage(stageKey);
 
-      const currentCameraPos = root.ctrl?.camera?.position
-        ? vectorToTriple(root.ctrl.camera.position) : null;
-      const currentCameraZoom = root.ctrl?.camera?.zoom;
+      const currentCameraPos = ctrl?.camera?.position
+        ? vectorToTriple(ctrl.camera.position) : null;
+      const currentCameraZoom = ctrl?.camera?.zoom;
 
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,

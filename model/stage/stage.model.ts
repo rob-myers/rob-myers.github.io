@@ -6,29 +6,20 @@ import { CustomControls } from "model/3d/custom-controls";
 
 export type StageMeta = {
   key: string;
-  /** The internals of the stage */
-  root: StageRoot;
   /** Key-value store for internal use */
   extra: StageExtra;
   /** Important options for the CLI */
   opt: StageOpts;
+  /** Attached on mount */
+  ctrl?: CustomControls;
+  /** Attached by Stage */
+  scene?: THREE.Scene;
 };
 
 export interface StageMetaJson {
   key: string;
   opt: StageOpts;
-  extra: StageExtra;
-}
-
-export interface StageRoot {
-  /** Keyboard events sent by `Stage`  */
-  keyEvt: Subject<StageKeyEvent>;
-  /** Mouse events sent by `Stage`  */
-  ptrEvt: Subject<StagePointerEvent>;
-  /** Attached on mount */
-  ctrl?: CustomControls;
-  /** Attached by Stage */
-  scene?: THREE.Scene;
+  extra: Omit<StageExtra, 'keyEvent' | 'ptrEvent'>;
 }
 
 /** Key-value storage for internal use */
@@ -38,6 +29,10 @@ export interface StageExtra {
   /** Initial camera position */
   initCameraPos: Triple<number>;
   initCameraZoom: number;
+  /** Keyboard events sent by `Stage` */
+  keyEvent: Subject<StageKeyEvent>;
+  /** Mouse events sent by `Stage` */
+  ptrEvent: Subject<StagePointerEvent>;
 }
 
 /** Keep this flat so stage.proxy handles updates */
@@ -52,15 +47,12 @@ export interface StageOpts {
 export function createStage(stageKey: string): StageMeta {
   return {
     key: stageKey,
-    root: {
-      keyEvt: new Subject,
-      ptrEvt: new Subject,
-      // ...Attached by components
-    },
+    // {ctrl,scene} attached by components
     extra: {
       initCameraPos: [...initCameraPosArray],
       initCameraZoom,
-      // ...Attached by components
+      keyEvent: new Subject,
+      ptrEvent: new Subject,
     },
     opt: createStageOpts(),
   };

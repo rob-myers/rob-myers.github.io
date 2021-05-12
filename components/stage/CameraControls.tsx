@@ -1,29 +1,29 @@
 import { useRef, useEffect } from 'react';
 import { extend, useThree, useFrame } from '@react-three/fiber';
 import { CustomControls } from 'model/3d/custom-controls';
-import { StageRoot } from 'model/stage/stage.model';
 
 // See types/three-types.d.ts
 extend({ CustomControls });
 
-const CameraControls: React.FC<Props> = ({ root, captureMouse }) => {
+const CameraControls: React.FC<Props> = ({ setStageCtrl, captureMouse }) => {
   const { camera, gl: { domElement } } = useThree();
   const controls = useRef<CustomControls>();
 
   useEffect(() => {
-    root.ctrl = controls.current!;
+    const ctrl = controls.current!;
+    setStageCtrl(ctrl);
 
-    root.ctrl.maxPolarAngle = Math.PI / 4;
-    [root.ctrl.minZoom, root.ctrl.maxZoom] = [5, 80];
-    [root.ctrl.minDistance, root.ctrl.maxDistance] = [2, 20];
-    root.ctrl.screenSpacePanning = false;
+    ctrl.maxPolarAngle = Math.PI / 4;
+    [ctrl.minZoom, ctrl.maxZoom] = [5, 80];
+    [ctrl.minDistance, ctrl.maxDistance] = [2, 20];
+    ctrl.screenSpacePanning = false;
 
-    return () => { delete root.ctrl };
+    return () => setStageCtrl();
   }, []);
 
   useEffect(() => {
-    root.ctrl && (root.ctrl.capturePanZoom = captureMouse);
-  }, [root.ctrl, captureMouse]);
+    controls.current && (controls.current.capturePanZoom = captureMouse);
+  }, [captureMouse]);
 
   useFrame((_state) => controls.current!.update());
 
@@ -36,7 +36,7 @@ const CameraControls: React.FC<Props> = ({ root, captureMouse }) => {
 };
 
 interface Props {
-  root: StageRoot;
+  setStageCtrl: (ctrl?: CustomControls) => void;
   captureMouse: boolean;
 }
 
