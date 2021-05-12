@@ -1,125 +1,35 @@
-## Birdseye CLI
+## three.js CLI
 
 ### TODO
 
-Simplify + triggers
-- Use dark low walls (0.5); remove obs
-- Use one directional light; remove spotlights
-- Only update light when walls are 0.5?
-- Have triggers `low`, `middle`, `high`
-- Can copy/cut/paste triggers
-- Triggers have visible tags
-
-- ✅ Can create line meshes
-- Can add nav path
-   - `click 2 | path`
-   - `cursor && click | path`
-- Can translate bot along nav path
-- Can make bot walk along nav path
-
-- Working towards character
-   - Create Minecraft Steve in blender
-      - ✅ https://www.youtube.com/watch?v=pbwEHN15HbI&ab_channel=TutsByKai
-   - Rig a character in blender
-      - ✅ https://www.youtube.com/watch?v=6DfF6r1Bpq4&ab_channel=SeyitAliYAPRAKCI
-   - Add IK bones for knee/heel
-      - ✅ https://www.youtube.com/watch?v=Pt3-mHBCoQk&ab_channel=RoyalSkiesLLC
-   - Walk cycle in blender
-      - ✅ https://www.youtube.com/watch?v=gFf5eGCjUUg&ab_channel=SebastianLague
-   - Import into three.js
-      - ✅ Can import and clone model
-      - ✅ Can persist model
-      - Can play model
-   - Have idle/walk/run on one character in blender
-      - https://unboring.net/workflows/animation.html
-   - Character controller e.g.
-      - https://www.youtube.com/watch?v=EkPfhzIbp2g&t=6s
-
-- Bot shadows using hack:
-   > https://threejs.org/examples/?q=shado#webgl_shadow_contact
+- can define shell fns via syntax-highlighted js text
+  - `function foo({ use: {THREE} }) {}` becomes `call`
+  - `const foo = (...) => {}` becomes `call`
+  - `async function* foo({ read }, { use }) {}` becomes `run`
 
 - Add `xbcopy` i.e. copy to clipboard
-- Can output serialized stage and reload from text
 - Can reset stage
-
-
-- 🛠 Try to simplify the shell.
-   - ✅ Clean semantics.service.
-   - ✅ Remove dependency on asyncIteratorFrom
-   - Clean cmd.service.
-   - Simplify pipelines?
-   - Simplify FifoDevice and Device?
-
 - Error messages prefixed by function chain
 
-- BUG
-   - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
-   - ✅ `call '({ stage }) => delete stage.opt.foo'`
-   - ✅ selection should flip global x/y after rotation
-   - Sometimes cutOut fails on ctrl-x
-      > Might be fixed by `intersectPolysRect` precision(1)
-   - Saw lights update issue?
-   - Ensure old processes killed cleanly on hot reload
+### BUG
+- ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
+- ✅ `call '({ stage }) => delete stage.opt.foo'`
+- Ensure old processes killed cleanly on hot reload
 
 ### Done
 
+- ✅ Can create line meshes
 - ✅ `click` provides next click
 - ✅ Can `click 3` to read 3 clicks 
-- ✅ Remove ability to lock cursor
-- ✅ Remove ability to hide select
-- ✅ Show `copying`; click to cancel copy
-- ✅ `bot [name]` and `click 2 | bot`
-- ✅ `light` and `click 2 | light`
-
 - ✅ Add `stage.opts.ambientLight`
 - ✅ Add builtins `true` and `false`
 - ✅ Implement `IfClause` in shell
 - ✅ Can `spawn()` inside `run` command
-- ✅ Can add light at cursor via CLI
 
 ✅ Implement `cd` and `pwd`
-   ✅ `cd stage.light`, `cd`, `cd -`, `pwd`
+   ✅ `cd stage.opt`, `cd`, `cd -`, `pwd`
    ✅ `ls -a` to see top-level caps vars e.g. `PWD` and `OLDPWD`
    ✅ Affects `ls`, `get`, `rm` and `set`
-
-- Simplify selection UI
-   - ✅ Can clear via escape
-   - ✅ Can lock via copy/cut
-   - ✅ Remove additive option and clean away ui
-   - ✅ Can add/erase obstruction with undo/redo
-  padding-left: 8px;
-   - ✅ Show locked ui icon
-
-- Cleanup code
-   - ✅ remove `stage.opts.wallColor`
-   - ✅ remove Geom.Polygon.fromRect
-   - ✅ auto-track `prevWall` and `prevObs`
-   - ✅ only one selection key handler
-   - ✅ remove `stage.opts.background`
-
-- Can construct wall meshes from selection
-   - ✅ Have `stage.poly.{wall,nav,obs}`
-   - ✅ Can paint into `stage.poly.wall`
-   - ✅ Can erase from `stage.poly.wall`
-   - ✅ `World` shows walls
-   - ✅ Have stage options `wallOpacity` and `wallHeight`
-
-- ✅ While locked can transform Selection, and apply on unlock.
-- ✅ Can lock `Selection` and transform via keys
-- ✅ Can mirror `Selection` x/y
-- ✅ Can rotate `Selection` ± 90 degrees
-- ✅ Support `return` inside a function
-- ✅ Create replacement for brush i.e. `Selection`
-  - ✅ Can select rectilinear polygons.
-  - ✅ Can save/restore selections.
-   - ✅ `sel >l1` saves current selection as json polygon
-   - ✅ `get l1 | sel` to restore
-   - ✅ session variables are persisted
-✅ Make `Cursor` independent of `Selection`
-✅ Can lock and then translate
-✅ Can `echo foo >x` to write last elem, not array
-✅ Can `echo foo >> x` to write array, appending to extant
-✅ Can `rm` variables
 
 ## mvdan-sh issues
 
@@ -132,88 +42,10 @@ Simplify + triggers
 See the [code library](../model/sh/code-library.ts).
 
 ```sh
-get stage.cursor | map 'p => p.set(1, 1)'
-cursor | map 'p => p.set(1, 1)'
-get 'stage.cursor.set(1, 1, 0)'
-get stage.sel.bounds
 call '(_, ...args) => args' 1 2 3
 call '({ use: {THREE} }) => new THREE.SpotLight'
 # reading and writing
 poll | run '({ read, _: {msg} }) { while (msg = await read()) yield* ["hi", msg]; }'
 # spawn from js
-run '({ spawn }) { yield* await spawn("ls stage.light") }'
+run '({ spawn }) { yield* await spawn("ls /stage.opt") }'
 ```
-
-### Three.js Animation example
-
-```tsx
-const mixer = useRef<THREE.AnimationMixer>();
-useFrame(((_, delta) => mixer.current?.update(delta)));
-
-const clip = animService.fadeInOutClip();
-mixer.current = new THREE.AnimationMixer(selectorRef.current!);
-const action = mixer.current.clipAction(clip);
-action.play();
-action.timeScale = 20;
-```
-
-### Blender
-
-Preferences > Input > Keyboard > check Emulate Numpad
-
-Uncheck GLTF export > Transform > `+Y up`
-
-Character turnaround sheet
-
-Option-r to reset rotation
-
-Option-g to reset translation
-
-Shift-RMB moves cursor to mouse
-
-Shift-d to duplicate
-
-Ctrl-r to loop cut in Edit mode
-
-Alt-z for transparent mode
-
-Cmd-RMB to add vertex (Edit Mode, Vertex)
-
-Set origin of object as its center
-> Object Mode; RMB; Set origin; Origin to Geometry
-
-Set origin of cube as bottom center
-> Edit mode; Select bottom face; Shift-S; Cursor to active; Object Mode; RMB; Set origin; Origin to 3D Cursor
-
-Minecraft textures: Turn off mip-map on texture.
-> Material's shader > Image Texture > (Interpolation) closest
-
-X-ray armature: Object Data Properties > Viewport display > In Front
-
-Switch to/from armature pose mode `Ctrl-Tab`
-
-Focus with `/`
-
-Option-LMB to select edge loop
-
-Larger selection via Ctrl-+
-
-Given aligned Character mesh and armature, can:
-1. Join mesh into single object `Character`.
-2. Add a vertex group `Head` (Object Data Properties).
-3. Select head vertices in edit mode and click `Assign` button.
-4. Add an Armature Modifier to `Character`, choosing armature.
-5. Parent `Character` to armature (Object properties).
-6. Try rotating the head bone in pose mode.
-
-Join selected vertices with `j`
-
-Dissolve selection via `Ctrl-x`
-
-Insert keyframe with `i`
-
-Timeline > Keying > Active keying set > `Location and Rotation`
-
-To reset pose mode, select all bones, Option-r, Option-g
-
-When pasting reversed keyframes, change keyframe and `Cmd+Shift+V` over pose view.

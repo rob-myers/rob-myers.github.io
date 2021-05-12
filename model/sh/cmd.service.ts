@@ -287,7 +287,7 @@ class CmdService {
             useSession.api.warn(meta.sessionKey, `ls: ${queries[i]} is not defined`);
             continue;
           }
-          if (roots.length > 1) yield `${i > 0 ? '\n' : ''}${queries[i]}:`;
+          if (roots.length > 1) yield `${ansiBlue}${queries[i]}:`;
           let keys = (opts.r ? keysDeep(obj) : Object.keys(obj)).sort();
           if (obj === root && !opts.a) {
             keys = keys.filter(x => x !== x.toUpperCase());
