@@ -226,7 +226,8 @@ class CmdService {
             next: (e) => process.status === ProcessStatus.Running && deferred.resolve(e),
           });
         process.cleanups.push(() => sub.unsubscribe(), () => deferred.reject(killError(meta)));
-        while (true) yield await (deferred = new Deferred<StageKeyEvent>()).promise; 
+        while (true)
+          yield await (deferred = new Deferred<StageKeyEvent>()).promise; 
       }
       case 'kill': {
         const { opts, operands } = getOpts(args, { boolean: [
@@ -251,7 +252,10 @@ class CmdService {
               p.onResume?.();
               p.onSuspend = p.onResume = null;
               // Immediate clean e.g. stops `sleep`
-              setTimeout(() => { while (p.cleanups.pop()?.()); });
+              setTimeout(() => { 
+                p.cleanups.forEach(cleanup => cleanup());
+                p.cleanups.length = 0;
+              });
             }
           });
         }
