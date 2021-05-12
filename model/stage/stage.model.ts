@@ -2,7 +2,7 @@ import { Subject } from "rxjs";
 import * as THREE from "three";
 import { Triple } from "model/generic.model";
 import * as Geom from "model/geom";
-import { PanZoomControls } from "model/3d/pan-zoom-controls";
+import { CustomControls } from "model/3d/custom-controls";
 
 export type StageMeta = {
   key: string;
@@ -26,7 +26,7 @@ export interface StageRoot {
   /** Mouse events sent by `Stage`  */
   ptr: Subject<StagePointerEvent>;
   /** Attached on mount */
-  ctrl?: PanZoomControls;
+  ctrl?: CustomControls;
   /** Attached by Stage */
   scene?: THREE.Scene;
 }
