@@ -28,7 +28,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
     ctrl.target.set(...initCamTarget);
     ctrl.maxPolarAngle = Math.PI / 4;
-    [ctrl.minZoom, ctrl.maxZoom] = [5, 20];
+    [ctrl.minZoom, ctrl.maxZoom] = [5, 60];
     [ctrl.minDistance, ctrl.maxDistance] = [2, 20];
     ctrl.screenSpacePanning = false;
 
@@ -120,7 +120,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
           {/* TEMP */}
           <directionalLight name="TempLight" position={[-1, 3, 2]} />
-          <mesh name="TempCube" scale={[5, 5, 5]} position={[0, .5, 0]}>
+          <mesh name="TempCube" position={[0, .5, 0]}>
             <boxGeometry/>
             <meshStandardMaterial color="#00f" />
           </mesh>
