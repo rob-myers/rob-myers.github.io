@@ -168,7 +168,7 @@ const Placeholder = styled.div<{}>`
 `;
 
 const PlaceholderImage = styled.img<{}>`
-  background: #fff;
+  background: #ddd;
   margin: auto;
   max-width: 100%;
   max-height: 100%;
