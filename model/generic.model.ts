@@ -1,4 +1,5 @@
-import safeJsonStringify from 'safe-json-stringify';
+import safeStableStringify from 'safe-stable-stringify';
+// import safeJsonStringify from 'safe-json-stringify';
 
 /** Useful for state management */
 export interface KeyedLookup<Value extends { key: K }, K extends string | number = string | number> {
@@ -51,7 +52,12 @@ export function safeStringify(input: any) {
   if (typeof input === 'function') {
     return zealousTrim(`${input}`);
   }
-  return tryJsonStringify(input) || safeJsonStringify(input);
+  return tryJsonStringify(input)
+    || safeStableStringify(input, (_key, value) => {
+      if (value instanceof HTMLElement)
+        return `HTMLElement[${value.nodeName}]`;
+      return value;
+    });
 }
 
 export function flatten<T>(items: (T | T[])[]): T[] {
