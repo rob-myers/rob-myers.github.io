@@ -6,6 +6,8 @@
  *   `ln -s ../../node_modules/three/examples/jsm/deprecated/Geometry.js model/3d/Geometry.js`
  * - SkeletonUtils.js was created via:
  *   `ln -s ../../node_modules/three/examples/jsm/utils/SkeletonUtils.js model/3d/SkeletonUtils.js`
+ * - OrbitControls.js
+ *   `ln -s ../../node_modules/three/examples/jsm/controls/OrbitControls.js model/3d/OrbitControls.js`
  */
 import type { SkeletonUtils as SkeletonUtilsNamespace } from 'three/examples/jsm/utils/SkeletonUtils';
 import { SkeletonUtils as SkeletonUtilsValue } from './SkeletonUtils';
@@ -15,3 +17,8 @@ import type { Geometry as GeometryClass, Face3 as Face3Class } from 'three/examp
 import { Geometry as GeometryValue, Face3 as Face3Value } from './Geometry';
 export const Geometry = GeometryValue as unknown as typeof GeometryClass;
 export const Face3 = Face3Value as typeof Face3Class;
+
+import type { OrbitControls as OrbitControlsClass, MapControls as MapControlsClass } from 'three/examples/jsm/controls/OrbitControls';
+import { OrbitControls as OrbitControlsValue, MapControls as MapControlsValue } from './OrbitControls';
+export const OrbitControls = OrbitControlsValue as unknown as OrbitControlsClass;
+export const MapControls = MapControlsValue as unknown as MapControlsClass;

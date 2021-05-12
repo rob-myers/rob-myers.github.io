@@ -5,6 +5,8 @@ export declare global {
   namespace JSX {
     interface IntrinsicElements {
       panZoomControls: any; // TODO
+      orbitControls: any; // TODO
+      mapControls: any; // TODO
     }
   }
 }
