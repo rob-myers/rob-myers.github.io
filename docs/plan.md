@@ -2,6 +2,7 @@
 
 ### TODO
 
+- axes should be shaders?
 - permit "pure" js functions by attaching to `use`?
 - can define shell fns via syntax-highlighted js text
   - `function foo({ use: {THREE} }) {}` becomes `call`
