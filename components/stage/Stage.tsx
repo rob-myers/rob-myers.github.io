@@ -23,7 +23,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
     const { initCameraZoom, initCameraPos: [x, y, z] } = useStage.api.getPersist(stage.key).extra;
     camera.zoom = initCameraZoom;
     camera.position.set(x, y, z);
-    // camera.near = z - 1000;
+    camera.near = z - 1000;
     // camera.lookAt(x + 10, y - 10, z + 10);
     camera.updateProjectionMatrix();
 

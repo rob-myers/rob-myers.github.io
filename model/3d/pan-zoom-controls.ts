@@ -35,7 +35,7 @@ export class PanZoomControls extends EventDispatcher {
   /** Lower limit of vertical orbit in [0, Math.PI] */
   minPolarAngle = 0;
   /** Upper limit of vertical orbit in [0, Math.PI] */
-  maxPolarAngle = Math.PI;
+  maxPolarAngle = Math.PI / 4;
 
   /** Lower limit of horizontal orbit. If set, collectively in `[-2 PI, 2 PI]` with `max - min < 2 PI` */
   minAzimuthAngle = - Infinity;
