@@ -129,7 +129,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         sessionKey,
         status: ProcessStatus.Running,
         src,
-        positionals: ['birdseye-cli', ...posPositionals || []],
+        positionals: ['three.js-cli', ...posPositionals || []],
         cleanups: [],
         onSuspend: null,
         onResume: null,

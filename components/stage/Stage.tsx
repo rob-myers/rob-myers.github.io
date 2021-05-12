@@ -110,7 +110,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
           <CameraControls
             root={stage.root}
-            enabled={stage.opt.panZoom}
+            captureMouse={stage.opt.panZoom}
           />
 
           {/* TEMP */}

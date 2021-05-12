@@ -55,6 +55,8 @@ export class CustomControls extends EventDispatcher {
   /** This option actually enables dollying in and out; left as "zoom" for backwards compatibility */
   enableZoom = true;
   zoomSpeed = 1.0;
+  /** Added by us */
+  capturePanZoom = true;
 
   /** Set to false to disable rotating. */
   enableRotate = true;
@@ -403,14 +405,29 @@ export class CustomControls extends EventDispatcher {
     // no-op
   }
 
-  handleMouseWheel(event: MouseWheelEvent) {
-    if (event.deltaY < 0) {
-      this.dollyIn( this.getZoomScale() );
-    } else if ( event.deltaY > 0 ) {
-      this.dollyOut( this.getZoomScale() );
-    }
+  // handleMouseWheel(event: MouseWheelEvent) {
+    // if (event.deltaY < 0) {
+    //   this.dollyIn( this.getZoomScale() );
+    // } else if ( event.deltaY > 0 ) {
+    //   this.dollyOut( this.getZoomScale() );
+    // }
+    // this.update();
+  // }
 
-    this.update();
+  handleMouseWheel(event: MouseWheelEvent) {
+    if (!event.ctrlKey) {
+      this.pan(
+        -event.deltaX * this.panSpeed,
+        -event.deltaY * this.panSpeed,
+      );
+      this.update();
+    } else {
+      if (event.deltaY < 0) {
+        this.dollyIn( this.getZoomScale() );
+      } else if ( event.deltaY > 0 ) {
+        this.dollyOut( this.getZoomScale() );
+      }
+    }
   }
 
   handleKeyDown(event: KeyboardEvent) {
@@ -674,13 +691,17 @@ export class CustomControls extends EventDispatcher {
     this.state = this.STATE.NONE;
   }
 
-  onMouseWheel( event: MouseWheelEvent ) {
-    if ( this.enabled === false || this.enableZoom === false || ( this.state !== this.STATE.NONE && this.state !== this.STATE.ROTATE ) ) return;
+  onMouseWheel(event: MouseWheelEvent) {
+    if (
+      this.enabled === false
+      || this.capturePanZoom === false
+      || (this.state !== this.STATE.NONE && this.state !== this.STATE.ROTATE)
+    ) return;
 
     event.preventDefault();
 
     this.dispatchEvent({ type: 'start' });
-    this.handleMouseWheel( event );
+    this.handleMouseWheel(event);
     this.dispatchEvent({ type: 'end' });
   }
 

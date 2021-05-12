@@ -6,17 +6,24 @@ import { StageRoot } from 'model/stage/stage.model';
 // See types/three-types.d.ts
 extend({ CustomControls });
 
-const CameraControls: React.FC<Props> = ({ root, enabled }) => {
+const CameraControls: React.FC<Props> = ({ root, captureMouse }) => {
   const { camera, gl: { domElement } } = useThree();
   const controls = useRef<CustomControls>();
 
   useEffect(() => {
     root.ctrl = controls.current!;
+
     root.ctrl.maxPolarAngle = Math.PI / 4;
     [root.ctrl.minZoom, root.ctrl.maxZoom] = [5, 80];
     [root.ctrl.minDistance, root.ctrl.maxDistance] = [2, 20];
+    root.ctrl.screenSpacePanning = false;
+
     return () => { delete root.ctrl };
   }, []);
+
+  useEffect(() => {
+    root.ctrl && (root.ctrl.capturePanZoom = captureMouse);
+  }, [root.ctrl, captureMouse]);
 
   useFrame((_state) => controls.current!.update());
 
@@ -24,14 +31,13 @@ const CameraControls: React.FC<Props> = ({ root, enabled }) => {
     <customControls
       ref={controls}
       args={[camera, domElement]}
-      enabled={enabled}
     />
   );
 };
 
 interface Props {
   root: StageRoot;
-  enabled: boolean;
+  captureMouse: boolean;
 }
 
 export default CameraControls;
