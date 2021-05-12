@@ -307,8 +307,8 @@ export class Controls extends EventDispatcher {
       // rotate offset back to "camera-up-vector-is-up" space
       offset.applyQuaternion( quatInverse );
 
-      position.copy( this.target ).add( offset );
-      this.camera.lookAt( this.target );
+      position.copy(this.target).add(offset);
+      this.camera.lookAt(this.target);
 
       if (this.enableDamping) {
         sphericalDelta.theta *= ( 1 - this.dampingFactor );
@@ -329,11 +329,9 @@ export class Controls extends EventDispatcher {
         || lastPosition.distanceToSquared( this.camera.position ) > this.EPS
         || 8 * ( 1 - lastQuaternion.dot( this.camera.quaternion ) ) > this.EPS
       ) {
-
         this.dispatchEvent({ type: 'change' });
-
-        lastPosition.copy( this.camera.position );
-        lastQuaternion.copy( this.camera.quaternion );
+        lastPosition.copy(this.camera.position);
+        lastQuaternion.copy(this.camera.quaternion);
         this.zoomChanged = false;
         return true;
       }

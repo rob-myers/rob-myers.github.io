@@ -58,7 +58,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const { opt, extra } = api.getPersist(stageKey);
         s.opt = deepClone(opt??Stage.createStageOpts());
         s.extra = {
-          ...deepClone(extra??{ initCameraPos: Stage.initCameraPos, initCameraZoom: Stage.initCameraZoom }),
+          ...deepClone(extra??{ initCamPos: Stage.initCameraPos, initCamZoom: Stage.initCameraZoom }),
           keyEvent: new Subject,
           ptrEvent: new Subject,
         };
@@ -85,21 +85,18 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     persist: (stageKey) => {
       const { ctrl, opt: opts, extra } = api.getStage(stageKey);
 
-      const currentCameraPos = ctrl?.camera?.position
-        ? vectorToTriple(ctrl.camera.position) : null;
-      const currentCameraZoom = ctrl?.camera?.zoom;
-
+      const currCamPos = ctrl?.camera?.position ? vectorToTriple(ctrl.camera.position) : null;
+      const currCamTarget = ctrl?.target ? vectorToTriple(ctrl.target) : null;
+      const currCamZoom = ctrl?.camera?.zoom;
+    
       set(({ persist }) => ({ persist: addToLookup({
           key: stageKey,
           opt: deepClone(opts),
           extra: {
             canvasPreview: extra.canvasPreview,
-            initCameraPos: [
-              ...currentCameraPos || persist[stageKey].extra.initCameraPos || extra.initCameraPos
-            ],
-            initCameraZoom: (
-              currentCameraZoom??(persist[stageKey].extra.initCameraZoom || extra.initCameraZoom)
-            ),
+            initCamPos: [...currCamPos || persist[stageKey].extra.initCamPos || extra.initCamPos],
+            initCamTarget: [...currCamTarget || persist[stageKey].extra.initCamTarget || extra.initCamTarget],
+            initCamZoom: (currCamZoom??(persist[stageKey].extra.initCamZoom || extra.initCamZoom)),
           },
         }, persist),
       }));
@@ -123,7 +120,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 0,
+  version: 1,
   blacklist: ['api', 'stage', 'resolve'],
   onRehydrateStorage: (_) =>  {
     return () => {

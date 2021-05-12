@@ -52,7 +52,7 @@ export function scaleUpByTouched(from: THREE.Vector3, to: THREE.Vector3) {
   vectPrecision(to, 1);
 }
 
-export function vectorToTriple({ x, y, z }: THREE.Vector3): Triple<number> {
+export function vectorToTriple({ x, y, z }: { x: number; y: number; z: number }): Triple<number> {
   return [x, y, z];
 }
 

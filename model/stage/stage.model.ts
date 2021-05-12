@@ -27,8 +27,9 @@ export interface StageExtra {
   /** Data url */
   canvasPreview?: string;
   /** Initial camera position */
-  initCameraPos: Triple<number>;
-  initCameraZoom: number;
+  initCamPos: Triple<number>;
+  initCamTarget: Triple<number>;
+  initCamZoom: number;
   /** Keyboard events sent by `Stage` */
   keyEvent: Subject<StageKeyEvent>;
   /** Mouse events sent by `Stage` */
@@ -49,8 +50,9 @@ export function createStage(stageKey: string): StageMeta {
     key: stageKey,
     // {ctrl,scene} attached by components
     extra: {
-      initCameraPos: [...initCameraPosArray],
-      initCameraZoom,
+      initCamPos: [...initCameraPosArray],
+      initCamTarget: [0, 0, 0],
+      initCamZoom: initCameraZoom,
       keyEvent: new Subject,
       ptrEvent: new Subject,
     },
@@ -73,8 +75,9 @@ export function createPersist(stageKey: string): StageMetaJson {
     key: stageKey,
     opt: createStageOpts(),
     extra: {
-      initCameraPos: [...initCameraPosArray],
-      initCameraZoom,
+      initCamPos: [...initCameraPosArray],
+      initCamTarget: [0, 0, 0],
+      initCamZoom: initCameraZoom,
     },
   };
 }

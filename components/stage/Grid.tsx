@@ -65,7 +65,6 @@ const Grid: React.FC = () => {
       ref={gridMesh}
       name="Grid"
       frustumCulled={false}
-      matrixAutoUpdate={false}
     >
       <planeGeometry args={[2, 2, 1, 1]} attach="geometry" />
       {gridMaterial}

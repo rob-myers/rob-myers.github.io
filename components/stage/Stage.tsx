@@ -1,13 +1,13 @@
 import * as THREE from "three";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
 import type { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
 
 import type { StageMeta } from "model/stage/stage.model";
-import type { Controls } from "model/3d/controls";
+import { Controls } from "model/3d/controls";
 import { getWindow } from "model/dom.model";
 import useStage from "store/stage.store";
 
@@ -21,12 +21,20 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     const camera = ctxt.camera as THREE.OrthographicCamera | THREE.PerspectiveCamera;
-    const { initCameraZoom, initCameraPos: [x, y, z] } = useStage.api.getPersist(stage.key).extra;
-    camera.position.set(x, y, z);
+    const { initCamZoom, initCamPos, initCamTarget } = useStage.api.getPersist(stage.key).extra;
+
+    camera.position.set(...initCamPos);
+    const ctrl = new Controls(camera, ctxt.gl.domElement);
+
+    ctrl.target.set(...initCamTarget);
+    ctrl.maxPolarAngle = Math.PI / 4;
+    [ctrl.minZoom, ctrl.maxZoom] = [5, 20];
+    [ctrl.minDistance, ctrl.maxDistance] = [2, 20];
+    ctrl.screenSpacePanning = false;
 
     if (camera.type === 'OrthographicCamera') {
-      camera.zoom = Math.max(20, initCameraZoom);
-      camera.near = z - 1000;
+      camera.zoom = initCamZoom;
+      camera.near = initCamPos[2] - 1000;
     }
     camera.updateProjectionMatrix();
 
@@ -36,19 +44,17 @@ const Stage: React.FC<Props> = ({ stage }) => {
     ctxt.gl.shadowMap.needsUpdate = true;
 
     stage.scene = ctxt.scene;
+    stage.ctrl = ctrl;
     setCtxt(ctxt);
-  }, [stage]);
-
-  const setStageCtrl = useCallback((ctrl?: Controls) => {
-    ctrl ? (stage.ctrl = ctrl) : (delete stage.ctrl);
   }, [stage]);
 
   useEffect(() => {
     if (ctxt?.gl && !stage.opt.enabled) {// Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
-      delete stage.scene;
       useStage.api.persist(stage.key);
+      delete stage.scene;
+      delete stage.ctrl;
       setCtxt(null);
     }
   }, [stage.opt.enabled]);
@@ -71,24 +77,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
     });
   }, [keyWire]);
 
-  const Indicators = useMemo(() => <>
-    <mesh
-      name="PointerPlane"
-      onPointerDown={onPointer}
-      onPointerMove={onPointer}
-      onPointerUp={onPointer}
-      onPointerOut={onPointerOut}
-      visible={false}
-      // matrixAutoUpdate={false}
-      rotation={[-Math.PI/2, 0, 0]}
-    >
-      <planeGeometry args={[40, 40]} />
-      <meshBasicMaterial color="red" />
-    </mesh>
-    <Grid />
-    <Axes />
-  </>, []);
-
   return (
     <Root
       background="#fff"
@@ -107,18 +95,32 @@ const Stage: React.FC<Props> = ({ stage }) => {
         <CanvasRoot
           dpr={getWindow()!.devicePixelRatio}
           onCreated={onCreatedCanvas}
-          // orthographic
+          orthographic
         >
-          {Indicators}
+          <mesh
+            name="PointerPlane"
+            onPointerDown={onPointer}
+            onPointerMove={onPointer}
+            onPointerUp={onPointer}
+            onPointerOut={onPointerOut}
+            visible={false}
+            // matrixAutoUpdate={false}
+            rotation={[-Math.PI/2, 0, 0]}
+          >
+            <planeGeometry args={[40, 40]} />
+            <meshBasicMaterial color="red" />
+          </mesh>
+          <Grid />
+          <Axes />
 
-          <CameraControls
-            setStageCtrl={setStageCtrl}
+          {stage.ctrl && <CameraControls
+            controls={stage.ctrl}
             captureMouse={stage.opt.panZoom}
-          />
+          />}
 
           {/* TEMP */}
           <directionalLight name="TempLight" position={[-1, 3, 2]} />
-          <mesh name="TempCube" position={[0, .5, 0]}>
+          <mesh name="TempCube" scale={[5, 5, 5]} position={[0, .5, 0]}>
             <boxGeometry/>
             <meshStandardMaterial color="#00f" />
           </mesh>
