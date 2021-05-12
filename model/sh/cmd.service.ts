@@ -183,18 +183,7 @@ class CmdService {
         break;
       }
       case 'get': {
-        try {
-          const root = this.provideStageAndVars(meta);
-          const cwd = this.computeCwd(meta, root);
-          const outputs = args.map(arg => {
-            if (arg[0] === '/') return Function('__', `return __.${arg.slice(1)}`)(root);
-            return Function('__', `return __.${arg}`)(cwd)
-          });
-          node.exitCode = outputs.length && outputs.every(x => x === undefined) ? 1 : 0;
-          for (const output of outputs) yield output;
-        } catch (e) {
-          throw new ShError(`${e}`.replace('__.', ''), 1);
-        }
+        yield* this.get(node, args);
         break;
       }
       case 'help': {
@@ -445,6 +434,22 @@ class CmdService {
         break;
       }
       default: throw testNever(command);
+    }
+  }
+
+  async *get(node: Sh.BaseNode, args: string[]) {
+    try {
+      const meta = node.meta;
+      const root = this.provideStageAndVars(meta);
+      const cwd = this.computeCwd(meta, root);
+      const outputs = args.map(arg => {
+        if (arg[0] === '/') return Function('__', `return __.${arg.slice(1)}`)(root);
+        return Function('__', `return __.${arg}`)(cwd)
+      });
+      node.exitCode = outputs.length && outputs.every(x => x === undefined) ? 1 : 0;
+      for (const output of outputs) yield output;
+    } catch (e) {
+      throw new ShError(`${e}`.replace('__.', ''), 1);
     }
   }
 
