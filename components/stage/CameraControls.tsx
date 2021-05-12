@@ -2,9 +2,11 @@ import { useRef, useEffect } from 'react';
 import { extend, useThree, useFrame } from '@react-three/fiber';
 import { PanZoomControls } from 'model/3d/pan-zoom-controls';
 import { StageRoot } from 'model/stage/stage.model';
+// import { MapControls } from 'model/3d/facade';
 
 // See types/three-types.d.ts
 extend({ PanZoomControls });
+// extend({ MapControls });
 
 const CameraControls: React.FC<Props> = ({ root, enabled }) => {
   const { camera, gl: { domElement } } = useThree();
