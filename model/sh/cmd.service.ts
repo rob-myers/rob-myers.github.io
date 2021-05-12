@@ -344,7 +344,7 @@ class CmdService {
         break;
       }
       case 'pwd': {
-        yield useSession.api.getVar(meta.sessionKey, 'PWD') || '';
+        yield '/' + (useSession.api.getVar(meta.sessionKey, 'PWD') || '');
         break;
       }
       case 'ready': {

@@ -7,7 +7,6 @@ import { profiles } from 'model/sh/code-library'
 import Stage from 'components/stage/PersistedStage'
 import Terminal from 'components/sh/Terminal'
 import CodeEditor from 'components/text/editor';
-import styles from 'styles/Home.module.css'
 
 export default function IndexPage() {
   return (

@@ -25,6 +25,11 @@ export function createStageProxy(stageKey: string) {
             ownKeys: () => Object.keys(stage().opt),
             getOwnPropertyDescriptor: configurableDescriptor,
           });
+        case 'extra':
+          return {
+            ...stage().extra,
+            canvasPreview: undefined, // Hide large DataUrl
+          };
         default:
           return stage()[key];
       }
