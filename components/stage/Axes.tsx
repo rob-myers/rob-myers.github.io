@@ -7,9 +7,9 @@ const Axes: React.FC = () => {
   const [zAxis] = useState(geom.createAxis('z', '#005', 1));
 
   return (
-    <group position={[0, 0, 0.005]} matrixAutoUpdate={false}>
+    <group position={[0, 0, 0.005]}>
       <primitive object={xAxis} matrixAutoUpdate={false} />
-      <primitive object={yAxis} matrixAutoUpdate={false}/>
+      <primitive object={yAxis}/>
       <primitive object={zAxis} matrixAutoUpdate={false}/>
     </group>
   );

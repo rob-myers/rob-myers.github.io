@@ -64,7 +64,7 @@ class GeomService {
     );
   }
 
-  createAxis(type: 'x' | 'y' | 'z', color = '#f00', opacity = 1, lineWidth = defaultLineWidth) {
+  createAxis(type: 'x' | 'y' | 'z', color: string, opacity = 1, lineWidth = defaultLineWidth) {
     const points = [new THREE.Vector3, new THREE.Vector3];
     [points[0][type], points[1][type]] = [-1000, 1000];
     const geometry = (new THREE.BufferGeometry).setFromPoints(points);
