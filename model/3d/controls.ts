@@ -21,7 +21,7 @@ import {
 //    Zoom - middle mouse, or mousewheel / touch: two-finger spread or squish
 //    Pan - right mouse, or left mouse + ctrl/meta/shiftKey, or arrow keys / touch: two-finger move
 
-export class CustomControls extends EventDispatcher {
+export class Controls extends EventDispatcher {
 
   /** Set to false to disable this control */
   enabled = true;

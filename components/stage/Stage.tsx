@@ -7,7 +7,7 @@ import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events
 import type { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
 
 import type { StageMeta } from "model/stage/stage.model";
-import type { CustomControls } from "model/3d/custom-controls";
+import type { Controls } from "model/3d/controls";
 import { getWindow } from "model/dom.model";
 import useStage from "store/stage.store";
 
@@ -39,7 +39,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
     setCtxt(ctxt);
   }, [stage]);
 
-  const setStageCtrl = useCallback((ctrl?: CustomControls) => {
+  const setStageCtrl = useCallback((ctrl?: Controls) => {
     ctrl ? (stage.ctrl = ctrl) : (delete stage.ctrl);
   }, [stage]);
 

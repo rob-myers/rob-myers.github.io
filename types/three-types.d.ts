@@ -4,7 +4,7 @@ import * as _THREE from 'three';
 export declare global {
   namespace JSX {
     interface IntrinsicElements {
-      customControls: any;
+      controls: any;
       orbitControls: any;
       mapControls: any;
     }

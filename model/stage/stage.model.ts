@@ -2,7 +2,7 @@ import { Subject } from "rxjs";
 import * as THREE from "three";
 import { Triple } from "model/generic.model";
 import * as Geom from "model/geom";
-import { CustomControls } from "model/3d/custom-controls";
+import { Controls } from "model/3d/controls";
 
 export type StageMeta = {
   key: string;
@@ -11,7 +11,7 @@ export type StageMeta = {
   /** Important options for the CLI */
   opt: StageOpts;
   /** Attached on mount */
-  ctrl?: CustomControls;
+  ctrl?: Controls;
   /** Attached by Stage */
   scene?: THREE.Scene;
 };

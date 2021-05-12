@@ -1,13 +1,13 @@
 import { useRef, useEffect } from 'react';
 import { extend, useThree, useFrame } from '@react-three/fiber';
-import { CustomControls } from 'model/3d/custom-controls';
+import { Controls } from 'model/3d/controls';
 
 // See types/three-types.d.ts
-extend({ CustomControls });
+extend({ Controls });
 
 const CameraControls: React.FC<Props> = ({ setStageCtrl, captureMouse }) => {
   const { camera, gl: { domElement } } = useThree();
-  const controls = useRef<CustomControls>();
+  const controls = useRef<Controls>();
 
   useEffect(() => {
     const ctrl = controls.current!;
@@ -28,7 +28,7 @@ const CameraControls: React.FC<Props> = ({ setStageCtrl, captureMouse }) => {
   useFrame((_state) => controls.current!.update());
 
   return (
-    <customControls
+    <controls
       ref={controls}
       args={[camera, domElement]}
     />
@@ -36,7 +36,7 @@ const CameraControls: React.FC<Props> = ({ setStageCtrl, captureMouse }) => {
 };
 
 interface Props {
-  setStageCtrl: (ctrl?: CustomControls) => void;
+  setStageCtrl: (ctrl?: Controls) => void;
   captureMouse: boolean;
 }
 
