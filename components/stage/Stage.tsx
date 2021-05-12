@@ -68,6 +68,19 @@ const Stage: React.FC<Props> = ({ stage }) => {
   }, [keyWire]);
 
   const Indicators = useMemo(() => <>
+    <mesh
+      name="PointerPlane"
+      onPointerDown={onPointer}
+      onPointerMove={onPointer}
+      onPointerUp={onPointer}
+      onPointerOut={onPointerOut}
+      visible={false}
+      // matrixAutoUpdate={false}
+      rotation={[-Math.PI/2, 0, 0]}
+    >
+      <planeGeometry args={[40, 40]} />
+      <meshBasicMaterial color="red" />
+    </mesh>
     <Grid />
     <Axes />
   </>, []);
@@ -92,20 +105,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
           onCreated={onCreatedCanvas}
           // orthographic
         >
-          <mesh
-            name="PointerPlane"
-            onPointerDown={onPointer}
-            onPointerMove={onPointer}
-            onPointerUp={onPointer}
-            onPointerOut={onPointerOut}
-            visible={false}
-            // matrixAutoUpdate={false}
-            rotation={[-Math.PI/2, 0, 0]}
-          >
-            <planeGeometry args={[40, 40]} />
-            <meshBasicMaterial color="red" />
-          </mesh>
-
           {Indicators}
 
           <CameraControls

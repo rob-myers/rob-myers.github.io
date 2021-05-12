@@ -2,7 +2,6 @@
 
 ### TODO
 
-- axes should be shaders?
 - permit "pure" js functions by attaching to `use`?
 - can define shell fns via syntax-highlighted js text
   - `function foo({ use: {THREE} }) {}` becomes `call`
@@ -14,12 +13,14 @@
 - Error messages prefixed by function chain
 
 ### BUG
+
 - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
 - ✅ `call '({ stage }) => delete stage.opt.foo'`
 - Ensure old processes killed cleanly on hot reload
 
 ### Done
 
+- ✅ improve axes
 - ✅ Can create line meshes
 - ✅ `click` provides next click
 - ✅ Can `click 3` to read 3 clicks 

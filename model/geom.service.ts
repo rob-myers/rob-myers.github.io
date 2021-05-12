@@ -64,15 +64,16 @@ class GeomService {
     );
   }
 
-  createAxis(type: 'x' | 'y', color = '#f00', opacity = 1, lineWidth = defaultLineWidth) {
-    return this.createPolyLine(
-      type === 'x'
-        ? [new THREE.Vector3(-1000, 0), new THREE.Vector3(1000, 0)]
-        : [new THREE.Vector3(0, 1000), new THREE.Vector3(0, -1000)],
-        { height: 0, color, opacity, lineWidth },
-    );
+  createAxis(type: 'x' | 'y' | 'z', color = '#f00', opacity = 1, lineWidth = defaultLineWidth) {
+    const points = [new THREE.Vector3, new THREE.Vector3];
+    [points[0][type], points[1][type]] = [-1000, 1000];
+    const geometry = (new THREE.BufferGeometry).setFromPoints(points);
+    const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color, opacity, linewidth: 1 }));
+    line.name = `${type}Axis`;
+    return line;
   }
 
+  /** Extrude a polyline in the xz plane */
   createPolyLine(points: Geom.VectorJson[], opts: {
     height: number;
     lineWidth?: number;
@@ -89,21 +90,6 @@ class GeomService {
     const material = this.getBasicMat(opts.color || '#ffffff', opts.opacity??1);
     material.side = THREE.DoubleSide, mesh.material = material;
     return mesh;
-  }
-
-  createSpotLight({ x, y }: Geom.VectorJson, height: number) {
-    const light = new THREE.SpotLight;
-    light.position.set(x, y, height);
-    light.target.position.set(x, y, 0);
-    light.intensity = 3;
-    light.decay = 1.5;
-    light.distance = 3;
-    // light.angle = Math.PI / 4;
-    light.castShadow = true;
-    light.shadow.mapSize.set(2048, 2048);
-    light.shadow.autoUpdate = false;
-    light.shadow.camera.near = 0.3;
-    return light;
   }
 
   /** Create a unit square in XY plane whose bottom-left is the origin */
