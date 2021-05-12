@@ -64,11 +64,11 @@ class GeomService {
     );
   }
 
-  createAxis(type: 'x' | 'y' | 'z', color: string, opacity = 1, lineWidth = defaultLineWidth) {
+  createAxis(type: 'x' | 'y' | 'z', color: string, length: number) {
     const points = [new THREE.Vector3, new THREE.Vector3];
-    [points[0][type], points[1][type]] = [-1000, 1000];
+    [points[0][type], points[1][type]] = [-length/2, length/2];
     const geometry = (new THREE.BufferGeometry).setFromPoints(points);
-    const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color, opacity, linewidth: 1 }));
+    const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color, opacity: 1, linewidth: 1 }));
     line.name = `${type}Axis`;
     return line;
   }
