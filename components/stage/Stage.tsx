@@ -19,12 +19,14 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
-    const camera = ctxt.camera as THREE.OrthographicCamera;
+    const camera = ctxt.camera as THREE.OrthographicCamera | THREE.PerspectiveCamera;
     const { initCameraZoom, initCameraPos: [x, y, z] } = useStage.api.getPersist(stage.key).extra;
-    camera.zoom = initCameraZoom;
     camera.position.set(x, y, z);
-    camera.near = z - 1000;
-    // camera.lookAt(x + 10, y - 10, z + 10);
+
+    if (camera.type === 'OrthographicCamera') {
+      camera.zoom = Math.max(20, initCameraZoom);
+      camera.near = z - 1000;
+    }
     camera.updateProjectionMatrix();
 
     ctxt.gl.shadowMap.enabled = true;
@@ -88,7 +90,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
         <CanvasRoot
           dpr={getWindow()!.devicePixelRatio}
           onCreated={onCreatedCanvas}
-          orthographic
+          // orthographic
         >
           <mesh
             name="PointerPlane"

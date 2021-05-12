@@ -13,6 +13,8 @@ const CameraControls: React.FC<Props> = ({ root, enabled }) => {
   useEffect(() => {
     root.ctrl = controls.current!;
     root.ctrl.maxPolarAngle = Math.PI / 4;
+    [root.ctrl.minZoom, root.ctrl.maxZoom] = [5, 80];
+    [root.ctrl.minDistance, root.ctrl.maxDistance] = [2, 20];
     return () => { delete root.ctrl };
   }, []);
 

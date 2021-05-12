@@ -1,11 +1,12 @@
 /**
- * This is OrbitControls.js restricted to Orthographic camera.
+ * This is basically OrbitControls.js
  */
 import {
 	EventDispatcher,
   Matrix4,
 	MOUSE,
   OrthographicCamera,
+  PerspectiveCamera,
 	Quaternion,
 	Spherical,
 	TOUCH,
@@ -26,6 +27,11 @@ export class CustomControls extends EventDispatcher {
   enabled = true;
   /** "target" sets the location of focus, where the object orbits around */
   target = new Vector3;
+
+  /** How far you can dolly perspective camera in */
+  minDistance = 0;
+  /** How far you can dolly perspective camera out */
+  maxDistance = Infinity;
 
   /** How far you can zoom orthographic camera in */
   minZoom = 0;
@@ -110,7 +116,7 @@ export class CustomControls extends EventDispatcher {
   private state = this.STATE.NONE;
 
 	constructor(
-    public camera: OrthographicCamera,
+    public camera: OrthographicCamera | PerspectiveCamera,
     private domElement: HTMLCanvasElement,
   ) {
 		super();
@@ -134,16 +140,23 @@ export class CustomControls extends EventDispatcher {
     this.update();
   }
 
-
   dollyOut( dollyScale: number ) {
-    this.camera.zoom = Math.max( this.minZoom, Math.min( this.maxZoom, this.camera.zoom * dollyScale ) );
-    this.camera.updateProjectionMatrix();
-    this.zoomChanged = true;
+    if (this.camera.type === 'PerspectiveCamera') {
+      this.scale /= dollyScale;
+    } else {
+      this.camera.zoom = Math.max( this.minZoom, Math.min( this.maxZoom, this.camera.zoom * dollyScale ) );
+      this.camera.updateProjectionMatrix();
+      this.zoomChanged = true;
+    }
   }
   dollyIn(dollyScale: number) {
-    this.camera.zoom = Math.max( this.minZoom, Math.min( this.maxZoom, this.camera.zoom / dollyScale ) );
-    this.camera.updateProjectionMatrix();
-    this.zoomChanged = true;
+    if (this.camera.type === 'PerspectiveCamera') {
+      this.scale *= dollyScale;
+    } else {
+      this.camera.zoom = Math.max( this.minZoom, Math.min( this.maxZoom, this.camera.zoom / dollyScale ) );
+      this.camera.updateProjectionMatrix();
+      this.zoomChanged = true;
+    }
   }
 
   getAzimuthalAngle() {
@@ -157,12 +170,32 @@ export class CustomControls extends EventDispatcher {
   }
 
   // deltaX and deltaY are in pixels; right and down are positive
-  pan = (deltaX: number, deltaY: number) => {
-    const element = this.domElement;
-    // orthographic
-    this.panLeft( deltaX * ( this.camera.right - this.camera.left ) / this.camera.zoom / element.clientWidth, this.camera.matrix );
-    this.panUp( deltaY * ( this.camera.top - this.camera.bottom ) / this.camera.zoom / element.clientHeight, this.camera.matrix );
-  };
+  pan = (() => {
+    const offset = new Vector3;
+
+    return (deltaX: number, deltaY: number) => {
+      const element = this.domElement;
+
+      if (this.camera.type === 'PerspectiveCamera') {
+        // perspective
+        const position = this.camera.position;
+        offset.copy( position ).sub( this.target );
+        let targetDistance = offset.length();
+
+        // half of the fov is center to top of screen
+        targetDistance *= Math.tan( ( this.camera.fov / 2 ) * Math.PI / 180.0 );
+
+        // we use only clientHeight here so aspect ratio does not distort speed
+        this.panLeft( 2 * deltaX * targetDistance / element.clientHeight, this.camera.matrix );
+        this.panUp( 2 * deltaY * targetDistance / element.clientHeight, this.camera.matrix );
+      } else {
+        // orthographic
+        this.panLeft( deltaX * ( this.camera.right - this.camera.left ) / this.camera.zoom / element.clientWidth, this.camera.matrix );
+        this.panUp( deltaY * ( this.camera.top - this.camera.bottom ) / this.camera.zoom / element.clientHeight, this.camera.matrix );
+      }
+
+    }
+  })();
   panLeft = (() => {
     const v = new Vector3;
     return (distance: number, objectMatrix: Matrix4) => {
@@ -258,7 +291,7 @@ export class CustomControls extends EventDispatcher {
       spherical.makeSafe();
       spherical.radius *= this.scale;
       // restrict radius to be between desired limits
-      // spherical.radius = Math.max( this.minDistance, Math.min( this.maxDistance, spherical.radius ) );
+      spherical.radius = Math.max( this.minDistance, Math.min( this.maxDistance, spherical.radius ) );
 
       // move target to panned location
       if (this.enableDamping) {

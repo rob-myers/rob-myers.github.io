@@ -14,7 +14,7 @@ const Grid: React.FC = () => {
         uSize1: { value: 0.2 },
         uSize2: { value: 1 },
         uColor: { value: new THREE.Color('#333') },
-        uDistance: { value: 80 },
+        uDistance: { value: 1000 },
       }}
       transparent
       vertexShader={`
