@@ -2,7 +2,6 @@ import { useRef, useEffect } from 'react';
 import { extend, useThree, useFrame } from '@react-three/fiber';
 import { CustomControls } from 'model/3d/custom-controls';
 import { StageRoot } from 'model/stage/stage.model';
-// import { MapControls } from 'model/3d/facade';
 
 // See types/three-types.d.ts
 extend({ CustomControls });
@@ -13,6 +12,7 @@ const CameraControls: React.FC<Props> = ({ root, enabled }) => {
 
   useEffect(() => {
     root.ctrl = controls.current!;
+    root.ctrl.maxPolarAngle = Math.PI / 4;
     return () => { delete root.ctrl };
   }, []);
 

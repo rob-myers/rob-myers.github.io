@@ -35,7 +35,7 @@ export class CustomControls extends EventDispatcher {
   /** Lower limit of vertical orbit in [0, Math.PI] */
   minPolarAngle = 0;
   /** Upper limit of vertical orbit in [0, Math.PI] */
-  maxPolarAngle = Math.PI / 4;
+  maxPolarAngle = Math.PI;
 
   /** Lower limit of horizontal orbit. If set, collectively in `[-2 PI, 2 PI]` with `max - min < 2 PI` */
   minAzimuthAngle = - Infinity;
@@ -108,12 +108,10 @@ export class CustomControls extends EventDispatcher {
     TOUCH_DOLLY_ROTATE: 6
   };
   private state = this.STATE.NONE;
-  private getDomElement: () => HTMLCanvasElement;
 
 	constructor(
     public camera: OrthographicCamera,
-    /** Exposing this via public/private can break serialization */
-    domElement: HTMLCanvasElement,
+    private domElement: HTMLCanvasElement,
   ) {
 		super();
 
@@ -132,7 +130,6 @@ export class CustomControls extends EventDispatcher {
     domElement.addEventListener( 'touchend', this.onTouchEnd.bind(this) );
     domElement.addEventListener( 'touchmove', this.onTouchMove.bind(this), { passive: false } );
 
-    this.getDomElement = () => domElement;
     // force an update at start
     this.update();
   }
@@ -161,7 +158,7 @@ export class CustomControls extends EventDispatcher {
 
   // deltaX and deltaY are in pixels; right and down are positive
   pan = (deltaX: number, deltaY: number) => {
-    const element = this.getDomElement();
+    const element = this.domElement;
     // orthographic
     this.panLeft( deltaX * ( this.camera.right - this.camera.left ) / this.camera.zoom / element.clientWidth, this.camera.matrix );
     this.panUp( deltaY * ( this.camera.top - this.camera.bottom ) / this.camera.zoom / element.clientHeight, this.camera.matrix );
@@ -311,7 +308,7 @@ export class CustomControls extends EventDispatcher {
   })();
 
   dispose() {
-    const domElement = this.getDomElement();
+    const domElement = this.domElement;
     domElement.removeEventListener( 'contextmenu', this.onContextMenu );
 
     domElement.removeEventListener( 'pointerdown', this.onPointerDown );
@@ -341,7 +338,7 @@ export class CustomControls extends EventDispatcher {
   handleMouseMoveRotate(event: MouseEvent) {
     this.rotateEnd.set( event.clientX, event.clientY );
     this.rotateDelta.subVectors( this.rotateEnd, this.rotateStart ).multiplyScalar( this.rotateSpeed );
-    const element = this.getDomElement();
+    const element = this.domElement;
     this.rotateLeft( 2 * Math.PI * this.rotateDelta.x / element.clientHeight ); // yes, height
     this.rotateUp( 2 * Math.PI * this.rotateDelta.y / element.clientHeight );
     this.rotateStart.copy( this.rotateEnd );
@@ -465,7 +462,7 @@ export class CustomControls extends EventDispatcher {
     }
 
     this.rotateDelta.subVectors( this.rotateEnd, this.rotateStart ).multiplyScalar( this.rotateSpeed );
-    const element = this.getDomElement();
+    const element = this.domElement;
     this.rotateLeft( 2 * Math.PI * this.rotateDelta.x / element.clientHeight ); // yes, height
     this.rotateUp( 2 * Math.PI * this.rotateDelta.y / element.clientHeight );
     this.rotateStart.copy( this.rotateEnd );
@@ -548,7 +545,7 @@ export class CustomControls extends EventDispatcher {
 
     // Manually set the focus since calling preventDefault above
     // prevents the browser from setting it automatically.
-    this.getDomElement().focus();
+    this.domElement.focus();
 
     let mouseAction;
     switch ( event.button ) {
@@ -601,8 +598,8 @@ export class CustomControls extends EventDispatcher {
     }
 
     if ( this.state !== this.STATE.NONE ) {
-      this.getDomElement().ownerDocument.addEventListener( 'pointermove', this.onPointerMove.bind(this) );
-      this.getDomElement().ownerDocument.addEventListener( 'pointerup', this.onPointerUp.bind(this) );
+      this.domElement.ownerDocument.addEventListener( 'pointermove', this.onPointerMove.bind(this) );
+      this.domElement.ownerDocument.addEventListener( 'pointerup', this.onPointerUp.bind(this) );
       this.dispatchEvent({ type: 'start' });
     }
 
@@ -634,8 +631,8 @@ export class CustomControls extends EventDispatcher {
   }
 
   onMouseUp( event: MouseEvent ) {
-    this.getDomElement().ownerDocument.removeEventListener( 'pointermove', this.onPointerMove );
-    this.getDomElement().ownerDocument.removeEventListener( 'pointerup', this.onPointerUp );
+    this.domElement.ownerDocument.removeEventListener( 'pointermove', this.onPointerMove );
+    this.domElement.ownerDocument.removeEventListener( 'pointerup', this.onPointerUp );
 
     if ( this.enabled === false ) return;
 
