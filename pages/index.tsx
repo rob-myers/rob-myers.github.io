@@ -12,7 +12,7 @@ export default function IndexPage() {
   return (
     <>
       <Head>
-        <title>rsrm</title>
+        <title>three.js CLI</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
