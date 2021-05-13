@@ -7,7 +7,7 @@ const Axes: React.FC = () => {
   const [zAxis] = useState(geom.createAxis('z', '#005', 1000));
 
   return (
-    <group>
+    <group name="Axes">
       <primitive object={xAxis} />
       {/* <primitive object={yAxis} /> */}
       <primitive object={zAxis} />
