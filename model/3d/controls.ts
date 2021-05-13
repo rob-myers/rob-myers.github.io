@@ -139,7 +139,7 @@ export class Controls extends EventDispatcher {
     domElement.addEventListener( 'touchmove', this.onTouchMove.bind(this), { passive: false } );
 
     // force an update at start
-    this.update();
+    // this.update();
   }
 
   dollyOut( dollyScale: number ) {
