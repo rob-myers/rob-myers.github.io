@@ -1,9 +1,10 @@
 import React from "react";
 import Editor from "react-simple-code-editor";
-import { highlight, languages, Languages } from "prismjs";
+import { highlight, languages } from "prismjs";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
-import "prismjs/themes/prism.css"; //Example style, you can use another
+// import "prismjs/themes/prism.css"; //Example style, you can use another
+import "prismjs/themes/prism-tomorrow.css";
 
 const CodeEditor: React.FC = () => {
   const [code, setCode] = React.useState(
@@ -18,6 +19,10 @@ const CodeEditor: React.FC = () => {
       style={{
         fontFamily: '"Fira code", "Fira Mono", monospace',
         fontSize: 12,
+        height: 'inherit',
+        // prism-tomorrow specific:
+        background:'#2d2d2d',
+        color: '#ccc',
       }}
     />
   );

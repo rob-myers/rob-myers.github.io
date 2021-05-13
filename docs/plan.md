@@ -2,7 +2,9 @@
 
 On command line, need to e.g. `scene.scale.set'(1, 1, 1)'`.
 Otherwise js syntax conflicts with shell function syntax.
-Adding quotes also permits space in args.
+Adding quotes permits space e.g. `scene.children.map'(x => x.name)'`
+
+``
 
 ### TODO
 
@@ -52,8 +54,9 @@ See the [code library](../model/sh/code-library.ts).
 ```sh
 call '(_, ...args) => args' 1 2 3
 call '({ use: {THREE} }) => new THREE.SpotLight'
-# reading and writing
+
 poll | run '({ read, _: {msg} }) { while (msg = await read()) yield* ["hi", msg]; }'
-# spawn from js
 run '({ spawn }) { yield* await spawn("ls /stage.opt") }'
+
+scene.children.map'(x => x.name)'
 ```

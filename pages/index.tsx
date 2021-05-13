@@ -6,7 +6,7 @@ import { profiles } from 'model/sh/code-library'
 
 import Stage from 'components/stage/PersistedStage'
 import Terminal from 'components/sh/Terminal'
-import CodeEditor from 'components/text/editor';
+import CodeEditor from 'components/text/code-editor';
 
 export default function IndexPage() {
   return (
@@ -34,7 +34,9 @@ export default function IndexPage() {
               [CoreVar.PROFILE]: profiles.first,
             }}
           />
-          <CodeEditor />
+          <section style={{ maxHeight: 100, overflow: 'scroll', background: '#000' }}>
+            <CodeEditor />
+          </section>
         </Env>
 
       </Main>
