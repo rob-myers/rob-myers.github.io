@@ -3,13 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "yarn next-cfg && concurrently 'next -p 3002' 'yarn copy-gltfs'",
+    "dev": "yarn next-cfg && concurrently 'next -p 3002'",
     "build": "yarn next-cfg && next build",
     "export": "next export",
     "start": "yarn next-cfg && next start",
     "next-cfg": "tsc -p scripts",
     "types": "tsc --noEmit",
-    "copy-gltfs": "nodemon --watch 3d --ext gltf --exec 'cd 3d && for x in *.gltf; do cp \"${x}\" ../public/\"${x}\"; done'",
     "postinstall": "patch-package"
   },
   "dependencies": {

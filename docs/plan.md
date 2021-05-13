@@ -1,19 +1,18 @@
 ## three.js CLI
 
-On command line, need to e.g. `scene.scale.set'(1, 1, 1)'`.
-Otherwise js syntax conflicts with shell function syntax.
+On command line, need to `scene.scale.set'(1, 1, 1)'`,
+otherwise js syntax conflicts with shell function syntax.
 Adding quotes permits space e.g. `scene.children.map'(x => x.name)'`
-
-``
 
 ### TODO
 
-- try to remove `Geom`, using `earcut`, `GeoJsonPolygon` and `polycutting` directly
-- permit "pure" js functions by attaching to `use`?
 - can define shell fns via syntax-highlighted js text
   - `function foo({ use: {THREE} }) {}` becomes `call`
   - `const foo = (...) => {}` becomes `call`
   - `async function* foo({ read }, { use }) {}` becomes `run`
+
+- permit "pure" js functions by attaching to `use`?
+- try to remove `Geom`, using `earcut`, `GeoJsonPolygon` and `polycutting` directly
 
 - Add `xbcopy` i.e. copy to clipboard
 - Can reset stage
