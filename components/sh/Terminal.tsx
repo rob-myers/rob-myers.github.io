@@ -75,6 +75,7 @@ interface Props {
 }
 
 const Root = styled.section<{}>`
+  grid-area: terminal;
   background: black;
 `;
 

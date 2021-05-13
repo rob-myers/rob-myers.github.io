@@ -30,6 +30,7 @@ const PersistedStage: React.FC<Props> = ({ stageKey }) => {
 };
 
 const WrapperRoot = styled.section`
+  grid-area: stage;
   width: 100%;
   height: 100%;
 `;

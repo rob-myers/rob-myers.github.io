@@ -34,15 +34,27 @@ export default function IndexPage() {
               [CoreVar.PROFILE]: profiles.first,
             }}
           />
-          <section style={{ maxHeight: 100, overflow: 'scroll', background: '#000' }}>
-            <CodeEditor />
-          </section>
+          <CodeEditor />
         </Env>
 
       </Main>
     </>
   );
 }
+
+const Env = styled.section<{}>`
+  display: grid;
+  /* grid-template-rows: 1fr 1fr 1fr; */
+  grid-template-areas: 
+    "stage stage"
+    "terminal code";
+
+  > section {
+    height: 400px;
+    max-width: 800px;
+    width: 100%;
+  }
+`;
 
 const Main = styled.main<{}>`
   padding: 4rem 0;
@@ -70,15 +82,4 @@ const Title = styled.h1<{}>`
 const Subtitle = styled.p<{}>`
   margin-bottom: 38px;
   margin-top: 20px;
-`;
-
-const Env = styled.section<{}>`
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-
-  > section {
-    height: 400px;
-    max-width: 800px;
-    width: 100vw; 
-  }
 `;
