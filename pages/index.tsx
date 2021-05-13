@@ -49,6 +49,10 @@ const Env = styled.section<{}>`
   grid-template-areas: 
     "stage stage"
     "terminal code";
+
+  > * {
+    height: 400px;
+  }
 `;
 
 const Main = styled.main<{}>`

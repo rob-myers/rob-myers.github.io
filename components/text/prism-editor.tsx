@@ -3,7 +3,6 @@ import Editor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
-// import "prismjs/themes/prism.css"; //Example style, you can use another
 import "prismjs/themes/prism-tomorrow.css";
 
 const PrismEditor: React.FC = () => {
@@ -19,7 +18,10 @@ const PrismEditor: React.FC = () => {
       style={{
         fontFamily: '"Fira code", "Fira Mono", monospace',
         fontSize: 12,
-        // height: 'inherit',
+
+        // TODO remove hard-coding
+        minHeight: 400,
+
         // prism-tomorrow specific:
         background:'#2d2d2d',
         color: '#ccc',
