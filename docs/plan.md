@@ -1,5 +1,9 @@
 ## three.js CLI
 
+On command line, need to e.g. `scene.scale.set'(1, 1, 1)'`.
+Otherwise js syntax conflicts with shell function syntax.
+Adding quotes also permits space in args.
+
 ### TODO
 
 - try to remove `Geom`, using `earcut`, `GeoJsonPolygon` and `polycutting` directly
