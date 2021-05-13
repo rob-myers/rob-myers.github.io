@@ -438,7 +438,7 @@ class CmdService {
     }
   }
 
-  async *get(node: Sh.BaseNode, args: string[]) {
+  get(node: Sh.BaseNode, args: string[]) {
     try {
       const meta = node.meta;
       const root = this.provideStageAndVars(meta);
@@ -448,7 +448,7 @@ class CmdService {
         return Function('__', `return __.${arg}`)(cwd)
       });
       node.exitCode = outputs.length && outputs.every(x => x === undefined) ? 1 : 0;
-      for (const output of outputs) yield output;
+      return outputs;
     } catch (e) {
       throw new ShError(`${e}`.replace('__.', ''), 1);
     }

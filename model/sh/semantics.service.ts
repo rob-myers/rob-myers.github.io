@@ -214,8 +214,13 @@ class SemanticsService {
         } else if (func = useSession.api.getFunc(node.meta.sessionKey, command)) {
           await cmdService.launchFunc(node, func, cmdArgs);
         } else {
-          yield* cmdService.get(node, args);
-          // throw new ShError('command not found', 127);
+          try {
+            const results = cmdService.get(node, [args[0]]);
+            if (results[0] === undefined) throw Error();
+            yield* results;
+          } catch {
+            throw new ShError('command not found', 127);
+          }
         }
       } else {
         yield* sem.assignVars(node);
