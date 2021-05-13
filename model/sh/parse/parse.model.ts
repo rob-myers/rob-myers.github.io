@@ -186,6 +186,8 @@ export interface BaseMeta {
   ppid: number;
   pgid: number;
   fd: Record<number, string>;
+  /** Log extra info? */
+  verbose?: boolean;
 }
 
 export const defaultSessionKey = 'code-has-not-run';

@@ -117,7 +117,7 @@ export class TtyShell implements Device {
 
     try {
       for await (const _ of semanticsService.File(parsed));
-      console.warn(`${meta.sessionKey}${meta.pgid ? ' (background)' : ''}: ${meta.pid}: exit ${parsed.exitCode}`);
+      parsed.meta.verbose && console.warn(`${meta.sessionKey}${meta.pgid ? ' (background)' : ''}: ${meta.pid}: exit ${parsed.exitCode}`);
     } catch (e) {
       if (e instanceof ProcessError) {
         console.error(`${meta.sessionKey}${meta.pgid ? ' (background)' : ''}: ${meta.pid}: ${e.code}`)
@@ -218,6 +218,7 @@ export class TtyShell implements Device {
       ppid: 0,
       pgid: 0,
       fd: { 0: this.key, 1: this.key, 2: this.key },
+      verbose: false, // TODO runtime configurable
     });
   }
 

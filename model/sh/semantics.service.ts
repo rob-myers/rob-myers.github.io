@@ -204,7 +204,7 @@ class SemanticsService {
     node.exitCode = 0;
     const args = await sem.performShellExpansion(node.Args);
     const [command, ...cmdArgs] = args;
-    console.log('simple command', args);
+    node.meta.verbose && console.log('simple command', args);
     
     try {
       if (args.length) {
