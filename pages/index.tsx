@@ -69,6 +69,7 @@ const Title = styled.h1<{}>`
 
 const Subtitle = styled.p<{}>`
   margin-bottom: 38px;
+  margin-top: 20px;
 `;
 
 const Env = styled.section<{}>`

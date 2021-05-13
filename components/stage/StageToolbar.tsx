@@ -45,9 +45,9 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt }) => {
         <Slot>
           <PanZoomButton
             greyed={!(enableUi && opt.panZoom)}
+            title="scroll/pinch to panzoom?"
             {...enableUi && {
               onClick: toggleCam,
-              ...opt.panZoom && { title: 'click to disable' },
             }}
           >
             panzoom
