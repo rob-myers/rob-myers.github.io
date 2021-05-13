@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -29,12 +29,16 @@ const Stage: React.FC<Props> = ({ stage }) => {
     ctrl.target.set(...initCamTarget);
     ctrl.maxPolarAngle = Math.PI / 4;
     [ctrl.minZoom, ctrl.maxZoom] = [5, 60];
-    [ctrl.minDistance, ctrl.maxDistance] = [2, 20];
+    [ctrl.minDistance, ctrl.maxDistance] = [5, 80];
     ctrl.screenSpacePanning = false;
 
     if (camera.type === 'OrthographicCamera') {
       camera.zoom = initCamZoom;
       camera.near = initCamPos[2] - 1000;
+    } else {
+      camera.setFocalLength(14);
+      camera.near = 1;
+      ctrl.enableDamping = true;
     }
     camera.updateProjectionMatrix();
 
@@ -77,6 +81,27 @@ const Stage: React.FC<Props> = ({ stage }) => {
     });
   }, [keyWire]);
 
+  const Helpers = useMemo(() =>
+    <>
+      <mesh
+        name="PointerPlane"
+        onPointerDown={onPointer}
+        onPointerMove={onPointer}
+        onPointerUp={onPointer}
+        onPointerOut={onPointerOut}
+        visible={false}
+        // matrixAutoUpdate={false}
+        rotation={[-Math.PI/2, 0, 0]}
+      >
+        <planeGeometry args={[40, 40]} />
+        <meshBasicMaterial color="red" />
+      </mesh>
+      <Grid />
+      <Axes />
+    </>,
+    [],
+  );
+
   return (
     <Root
       background="#fff"
@@ -95,23 +120,9 @@ const Stage: React.FC<Props> = ({ stage }) => {
         <CanvasRoot
           dpr={getWindow()!.devicePixelRatio}
           onCreated={onCreatedCanvas}
-          orthographic
+          // orthographic
         >
-          <mesh
-            name="PointerPlane"
-            onPointerDown={onPointer}
-            onPointerMove={onPointer}
-            onPointerUp={onPointer}
-            onPointerOut={onPointerOut}
-            visible={false}
-            // matrixAutoUpdate={false}
-            rotation={[-Math.PI/2, 0, 0]}
-          >
-            <planeGeometry args={[40, 40]} />
-            <meshBasicMaterial color="red" />
-          </mesh>
-          <Grid />
-          <Axes />
+          {Helpers}
 
           {stage.ctrl && <CameraControls
             controls={stage.ctrl}
