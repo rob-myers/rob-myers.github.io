@@ -44,16 +44,11 @@ export default function IndexPage() {
 
 const Env = styled.section<{}>`
   display: grid;
-  /* grid-template-rows: 1fr 1fr 1fr; */
+  grid-template-columns: minmax(auto, 400px) minmax(auto, 400px);
+  grid-template-rows: 400px 400px;
   grid-template-areas: 
     "stage stage"
     "terminal code";
-
-  > section {
-    height: 400px;
-    max-width: 800px;
-    width: 100%;
-  }
 `;
 
 const Main = styled.main<{}>`

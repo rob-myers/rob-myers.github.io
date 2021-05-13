@@ -6,7 +6,9 @@ Adding quotes permits space e.g. `scene.children.map'(x => x.name)'`
 
 ### TODO
 
+
 - can define shell fns via syntax-highlighted js text
+  - replace `react-code-editor` by our own solution
   - `function foo({ use: {THREE} }) {}` becomes `call`
   - `const foo = (...) => {}` becomes `call`
   - `async function* foo({ read }, { use }) {}` becomes `run`
