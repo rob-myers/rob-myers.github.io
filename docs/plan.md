@@ -1,4 +1,4 @@
-## three.js CLI
+## Programmed Behaviour
 
 ### TODO
 

@@ -1,4 +1,4 @@
-# Birdseye CLI
+# Programmed Behaviour
 
 See the [plan](docs/plan.md).
 
