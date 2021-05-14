@@ -1,14 +1,20 @@
 import Head from 'next/head'
 import styled from "@emotion/styled";
+import { useMemo } from 'react';
+import * as portals from 'react-reverse-portal';
 
 import { CoreVar } from 'model/sh/var.model'
 import { profiles } from 'model/sh/code-library'
+import { getWindow } from 'model/dom.model';
 
 import Stage from 'components/stage/PersistedStage'
+import StagePortal from 'components/stage/StagePortal';
 import Terminal from 'components/sh/Terminal'
 import CodeEditor from 'components/text/code-editor';
 
 export default function IndexPage() {
+  const stageNode = useMemo(() => getWindow() && portals.createHtmlPortalNode(), []);
+
   return (
     <>
       <Head>
@@ -21,13 +27,18 @@ export default function IndexPage() {
           <Title>
             Programmed Behaviour
           </Title>
+          
           <Subtitle>
             Building bot behaviour, step by step
           </Subtitle>
 
+          {stageNode && <portals.InPortal node={stageNode}>
+            <Stage stageKey="test" />
+          </portals.InPortal>}
+
           <section>
             <Env>
-              <Stage stageKey="test" />
+              {stageNode && <StagePortal node={stageNode} />}
               <Terminal
                 sessionKey="demo"
                 env={{
@@ -38,6 +49,7 @@ export default function IndexPage() {
               <CodeEditor />
             </Env>
           </section>
+
         </div>
 
       </Main>
@@ -48,6 +60,7 @@ export default function IndexPage() {
 const Main = styled.main<{}>`
   display: flex;
   justify-content: center;
+  padding-bottom: 2rem;
 
   @media(max-width: 1024px) {
     margin: 0 3rem;
@@ -97,9 +110,5 @@ const Env = styled.section<{}>`
 
   @media(max-width: 1248px) {
     grid-template-columns: minmax(auto, 400px) minmax(auto, 400px);
-  }
-
-  > * {
-    height: 400px;
   }
 `;

@@ -2,7 +2,7 @@
 
 ### TODO
 
-- try moving stage around with react-reverse-portal
+- ✅ show stage using react-reverse-portal
 
 - write outline of 1st post i.e. walkthrough up to movable bots
 

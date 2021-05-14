@@ -77,6 +77,7 @@ interface Props {
 const Root = styled.section<{}>`
   grid-area: terminal;
   background: black;
+  height: 100%;
 `;
 
 const XTerm = dynamic(() =>
