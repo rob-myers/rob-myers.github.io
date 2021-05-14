@@ -2,7 +2,7 @@ import * as THREE from "three";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas } from "@react-three/fiber";
 import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
 import type { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
 
@@ -25,12 +25,12 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
     camera.position.set(...initCamPos);
     const ctrl = new Controls(camera, ctxt.gl.domElement);
-
     ctrl.target.set(...initCamTarget);
     ctrl.maxPolarAngle = Math.PI / 4;
     [ctrl.minZoom, ctrl.maxZoom] = [5, 60];
     [ctrl.minDistance, ctrl.maxDistance] = [5, 80];
     ctrl.screenSpacePanning = false;
+    ctrl.enableDamping = true;
 
     if (camera.type === 'OrthographicCamera') {
       camera.zoom = initCamZoom;
@@ -38,7 +38,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
     } else {
       camera.setFocalLength(14);
       camera.near = 1;
-      ctrl.enableDamping = true;
     }
     camera.updateProjectionMatrix();
 

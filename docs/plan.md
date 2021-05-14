@@ -4,6 +4,8 @@
 
 - stage/terminal/code in sticky header/side
 
+- write outline of 1st post i.e. walkthrough up to movable bots
+
 - can define shell fns via syntax-highlighted js text
   - a separate component which can change a session
   - `function foo({ use: {THREE} }) {}` becomes `call`
