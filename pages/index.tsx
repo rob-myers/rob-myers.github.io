@@ -12,17 +12,18 @@ export default function IndexPage() {
   return (
     <>
       <Head>
-        <title>three.js CLI</title>
+        <title>Programmed Behaviour</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <Main>
         <Title>
-          three.js CLI
+          Programmed<br/>
+          Behaviour
         </Title>
 
         <Subtitle>
-          Richer demos via interactive sessions
+          The code behind the curtain
         </Subtitle>
 
         <Env>
@@ -56,22 +57,19 @@ const Env = styled.section<{}>`
 `;
 
 const Main = styled.main<{}>`
-  padding: 4rem 0;
+  padding: 1rem 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-
-  @media(max-width: 800px) {
-    padding: 2rem 0;
-  }
 `;
 
 const Title = styled.h1<{}>`
   margin: 0;
   line-height: 1.15;
-  font-size: 4.5rem;
+  font-size: 5rem;
   display: flex;
+  text-align: center;
 
   @media(max-width: 800px) {
     font-size: 3.5rem;

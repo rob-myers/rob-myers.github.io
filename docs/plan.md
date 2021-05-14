@@ -1,23 +1,24 @@
 ## three.js CLI
 
-On command line, need to `scene.scale.set'(1, 1, 1)'`,
-otherwise js syntax conflicts with shell function syntax.
-Adding quotes permits space e.g. `scene.children.map'(x => x.name)'`
-
 ### TODO
 
+- stage/terminal/code in sticky header/side
 
 - can define shell fns via syntax-highlighted js text
-  - replace `react-code-editor` by our own solution
+  - a separate component which can change a session
   - `function foo({ use: {THREE} }) {}` becomes `call`
-  - `const foo = (...) => {}` becomes `call`
   - `async function* foo({ read }, { use }) {}` becomes `run`
 
-- permit "pure" js functions by attaching to `use`?
-- try to remove `Geom`, using `earcut`, `GeoJsonPolygon` and `polycutting` directly
+- integrate @box2d
+  > https://github.com/Lusito/box2d.ts
+
+- eliminate `Geom` and `geom.service`
+  > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
+
+- Can reset stage
+- Pause/resume uses `scene.toJson()` (+ box2d persist?)
 
 - Add `xbcopy` i.e. copy to clipboard
-- Can reset stage
 - Error messages prefixed by function chain
 
 ### BUG
@@ -25,6 +26,12 @@ Adding quotes permits space e.g. `scene.children.map'(x => x.name)'`
 - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
 - ✅ `call '({ stage }) => delete stage.opt.foo'`
 - Ensure old processes killed cleanly on hot reload
+
+## Notes
+
+On command line, need to `scene.scale.set'(1, 1, 1)'`,
+otherwise js syntax conflicts with shell function syntax.
+Adding quotes permits space e.g. `scene.children.map'(x => x.name)'`
 
 ### Done
 
