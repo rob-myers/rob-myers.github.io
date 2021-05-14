@@ -36,7 +36,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
       camera.zoom = initCamZoom;
       camera.near = initCamPos[2] - 1000;
     } else {
-      camera.setFocalLength(14);
+      camera.setFocalLength(24);
       camera.near = 1;
     }
     camera.updateProjectionMatrix();

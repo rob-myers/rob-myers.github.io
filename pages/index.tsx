@@ -51,7 +51,7 @@ const Main = styled.main<{}>`
 
   @media(max-width: 1024px) {
     margin: 0 3rem;
-    align-items: unset;
+    justify-content: unset;
   }
   @media(max-width: 800px) {
     margin: 0;
@@ -68,6 +68,7 @@ const Title = styled.h1<{}>`
   @media(max-width: 1248px) {
     margin-top: 1.5rem;
     font-size: 5rem;
+    max-width: 400px;
   }
 
   @media(max-width: 800px) {
