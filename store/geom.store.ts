@@ -10,8 +10,6 @@ import { geom } from 'model/geom.service';
 import { recastService } from 'model/3d/recast.service';
 import { vectPrecision } from 'model/3d/three.model';
 
-import thinPlusPng from '../3d/img/thin-plus.png';
-
 export type State = {
   /** Texture library */
   texture: Record<string, THREE.Texture>;
@@ -19,8 +17,6 @@ export type State = {
   readonly api: {
     /** Create a navigation mesh using recast */
     createNavMesh: (navKey: string, polys: Geom.Polygon[]) => Promise<void>;
-    /** Load images as `THREE.Texture`s */
-    loadTextures: () => void;
     /** Request a navpath from previously created navmesh */
     requestNavPath: (navKey: string, src: Geom.VectorJson, dst: Geom.VectorJson) => Geom.VectorJson[];
   };
@@ -34,15 +30,6 @@ const useStore = create<State>(devtools((set, get) => ({
   texture: {},
 
   api: {
-
-    loadTextures: () => {
-      const textureLoader = new THREE.TextureLoader;
-      set(_ => ({
-        texture: {
-          thinPlusPng: textureLoader.load(thinPlusPng),
-        },
-      }));
-    },
 
     createNavMesh: async (navKey, navPolys) => {
       await recastService.ready();
