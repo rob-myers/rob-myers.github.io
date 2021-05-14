@@ -172,7 +172,7 @@ const CanvasRoot = styled(Canvas)`
 `;
 
 const Placeholder = styled.div<{}>`
-  background: #444;
+  background: #666;
   width: 100%;
   overflow: hidden;
   display: flex;

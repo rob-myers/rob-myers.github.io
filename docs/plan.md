@@ -2,7 +2,7 @@
 
 ### TODO
 
-- stage/terminal/code in sticky header/side
+- try moving stage around with react-reverse-portal
 
 - write outline of 1st post i.e. walkthrough up to movable bots
 

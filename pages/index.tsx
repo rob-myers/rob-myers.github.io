@@ -17,66 +17,88 @@ export default function IndexPage() {
       </Head>
 
       <Main>
-        <Title>
-          Programmed<br/>
-          Behaviour
-        </Title>
+        <div>
+          <Title>
+            Programmed Behaviour
+          </Title>
+          <Subtitle>
+            Building bot behaviour, step by step
+          </Subtitle>
 
-        <Subtitle>
-          The code behind the curtain
-        </Subtitle>
-
-        <Env>
-          <Stage stageKey="test" />
-          <Terminal
-            sessionKey="demo"
-            env={{
-              [CoreVar.STAGE_KEY]: "test",
-              [CoreVar.PROFILE]: profiles.first,
-            }}
-          />
-          <CodeEditor />
-        </Env>
+          <section>
+            <Env>
+              <Stage stageKey="test" />
+              <Terminal
+                sessionKey="demo"
+                env={{
+                  [CoreVar.STAGE_KEY]: "test",
+                  [CoreVar.PROFILE]: profiles.first,
+                }}
+              />
+              <CodeEditor />
+            </Env>
+          </section>
+        </div>
 
       </Main>
     </>
   );
 }
 
+const Main = styled.main<{}>`
+  display: flex;
+  justify-content: center;
+
+  @media(max-width: 1024px) {
+    margin: 0 3rem;
+    align-items: unset;
+  }
+  @media(max-width: 800px) {
+    margin: 0;
+  }
+`;
+
+const Title = styled.h1<{}>`
+  margin-top: 2.5rem;
+  margin-bottom: 0;
+  line-height: 1.15;
+  font-size: 6rem;
+  max-width: 800px;
+
+  @media(max-width: 1248px) {
+    margin-top: 1.5rem;
+    font-size: 5rem;
+  }
+
+  @media(max-width: 800px) {
+    margin-top: 0.5rem;
+    font-size: 4rem;
+    margin-left: 4px;
+  }
+`;
+
+const Subtitle = styled.h3<{}>`
+  margin-left: 4px;
+  margin-bottom: 2.5rem;
+  color: #555;
+  font-weight: normal;
+`;
+
+
 const Env = styled.section<{}>`
   display: grid;
-  grid-template-columns: minmax(auto, 400px) minmax(auto, 400px);
+
+  grid-template-columns: minmax(auto, 500px) minmax(auto, 500px);
   grid-template-rows: 400px 400px;
   grid-template-areas: 
     "stage stage"
     "terminal code";
 
+  @media(max-width: 1248px) {
+    grid-template-columns: minmax(auto, 400px) minmax(auto, 400px);
+  }
+
   > * {
     height: 400px;
   }
-`;
-
-const Main = styled.main<{}>`
-  padding: 1rem 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const Title = styled.h1<{}>`
-  margin: 0;
-  line-height: 1.15;
-  font-size: 5rem;
-  display: flex;
-  text-align: center;
-
-  @media(max-width: 800px) {
-    font-size: 3.5rem;
-  }
-`;
-
-const Subtitle = styled.p<{}>`
-  margin-bottom: 38px;
-  margin-top: 20px;
 `;
