@@ -129,14 +129,14 @@ export class Controls extends EventDispatcher {
       zoom: this.camera.zoom,
     };
 
-    domElement.addEventListener( 'contextmenu', this.onContextMenu.bind(this) );
+    domElement.addEventListener( 'contextmenu', this.onContextMenu );
 
-    domElement.addEventListener( 'pointerdown', this.onPointerDown.bind(this) );
-    domElement.addEventListener( 'wheel', this.onMouseWheel.bind(this), { passive: false } );
+    domElement.addEventListener( 'pointerdown', this.onPointerDown );
+    domElement.addEventListener( 'wheel', this.onMouseWheel, { passive: false } );
 
-    domElement.addEventListener( 'touchstart', this.onTouchStart.bind(this), { passive: false } );
-    domElement.addEventListener( 'touchend', this.onTouchEnd.bind(this) );
-    domElement.addEventListener( 'touchmove', this.onTouchMove.bind(this), { passive: false } );
+    domElement.addEventListener( 'touchstart', this.onTouchStart, { passive: false } );
+    domElement.addEventListener( 'touchend', this.onTouchEnd );
+    domElement.addEventListener( 'touchmove', this.onTouchMove, { passive: false } );
 
     // force an update at start
     // this.update();
@@ -340,22 +340,6 @@ export class Controls extends EventDispatcher {
 
   })();
 
-  dispose() {
-    const domElement = this.domElement;
-    domElement.removeEventListener( 'contextmenu', this.onContextMenu );
-
-    domElement.removeEventListener( 'pointerdown', this.onPointerDown );
-    domElement.removeEventListener( 'wheel', this.onMouseWheel );
-
-    domElement.removeEventListener( 'touchstart', this.onTouchStart );
-    domElement.removeEventListener( 'touchend', this.onTouchEnd );
-    domElement.removeEventListener( 'touchmove', this.onTouchMove );
-
-    domElement.ownerDocument.removeEventListener( 'pointermove', this.onPointerMove );
-    domElement.ownerDocument.removeEventListener( 'pointerup', this.onPointerUp );
-    //this.dispatchEvent( { type: 'dispose' } ); // should this be added here?
-  }
-
   handleMouseDownRotate(event: MouseEvent) {
     this.rotateStart.set( event.clientX, event.clientY );
   }
@@ -553,7 +537,7 @@ export class Controls extends EventDispatcher {
     // no-op
   }
 
-  onPointerDown(event: PointerEvent) {
+  onPointerDown = (event: PointerEvent) => {
     if (!this.enabled) return;
 
     switch ( event.pointerType ) {
@@ -565,7 +549,7 @@ export class Controls extends EventDispatcher {
     }
   }
 
-  onPointerMove(event: PointerEvent) {
+  onPointerMove = (event: PointerEvent) => {
     if (!this.enabled) return;
 
     switch ( event.pointerType ) {
@@ -577,7 +561,7 @@ export class Controls extends EventDispatcher {
     }
   }
 
-  onPointerUp(event: PointerEvent) {
+  onPointerUp = (event: PointerEvent) => {
     switch (event.pointerType) {
       case 'mouse':
       case 'pen':
@@ -646,8 +630,8 @@ export class Controls extends EventDispatcher {
     }
 
     if ( this.state !== this.STATE.NONE ) {
-      this.domElement.ownerDocument.addEventListener( 'pointermove', this.onPointerMove.bind(this) );
-      this.domElement.ownerDocument.addEventListener( 'pointerup', this.onPointerUp.bind(this) );
+      this.domElement.ownerDocument.addEventListener( 'pointermove', this.onPointerMove );
+      this.domElement.ownerDocument.addEventListener( 'pointerup', this.onPointerUp );
       this.dispatchEvent({ type: 'start' });
     }
 
@@ -689,7 +673,7 @@ export class Controls extends EventDispatcher {
     this.state = this.STATE.NONE;
   }
 
-  onMouseWheel(event: MouseWheelEvent) {
+  onMouseWheel = (event: MouseWheelEvent) => {
     if (
       this.enabled === false
       || this.capturePanZoom === false
@@ -711,7 +695,7 @@ export class Controls extends EventDispatcher {
 
   }
 
-  onTouchStart( event: TouchEvent ) {
+  onTouchStart = ( event: TouchEvent ) => {
     if (!this.enabled) return;
 
     event.preventDefault(); // prevent scrolling
@@ -765,7 +749,7 @@ export class Controls extends EventDispatcher {
 
   }
 
-  onTouchMove( event: TouchEvent ) {
+  onTouchMove = ( event: TouchEvent ) => {
     if ( this.enabled === false ) return;
     event.preventDefault(); // prevent scrolling
     switch ( this.state ) {
@@ -799,16 +783,32 @@ export class Controls extends EventDispatcher {
 
   }
 
-  onTouchEnd( event: TouchEvent ) {
+  onTouchEnd = ( event: TouchEvent ) => {
     if ( this.enabled === false ) return;
     this.handleTouchEnd( event );
     this.dispatchEvent({ type: 'end' });
     this.state = this.STATE.NONE;
   }
 
-  onContextMenu( event: Event ) {
+  onContextMenu = ( event: Event ) => {
     if ( this.enabled === false ) return;
     event.preventDefault();
+  }
+
+  dispose() {
+    const domElement = this.domElement;
+    domElement.removeEventListener( 'contextmenu', this.onContextMenu );
+
+    domElement.removeEventListener( 'pointerdown', this.onPointerDown );
+    domElement.removeEventListener( 'wheel', this.onMouseWheel );
+
+    domElement.removeEventListener( 'touchstart', this.onTouchStart );
+    domElement.removeEventListener( 'touchend', this.onTouchEnd );
+    domElement.removeEventListener( 'touchmove', this.onTouchMove );
+
+    domElement.ownerDocument.removeEventListener( 'pointermove', this.onPointerMove );
+    domElement.ownerDocument.removeEventListener( 'pointerup', this.onPointerUp );
+    this.dispatchEvent( { type: 'dispose' } ); // should this be added here?
   }
 
 }
