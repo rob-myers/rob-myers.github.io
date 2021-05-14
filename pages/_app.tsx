@@ -10,7 +10,6 @@ import 'styles/globals.css'
 const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
   useEffect(() => {
     useGeomStore.api.loadTextures();
-    useGeomStore.api.loadGltfs();
   }, []);
   return <Component {...pageProps} />
 }
