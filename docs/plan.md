@@ -3,6 +3,8 @@
 ### TODO
 
 - ✅ show stage using react-reverse-portal
+- ✅ remove react-reversal portal,
+  we can "disable others" instead
 
 - write outline of 1st post i.e. walkthrough up to movable bots
 

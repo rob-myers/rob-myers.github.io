@@ -1,20 +1,14 @@
 import Head from 'next/head'
 import styled from "@emotion/styled";
-import { useMemo } from 'react';
-import * as portals from 'react-reverse-portal';
 
 import { CoreVar } from 'model/sh/var.model'
 import { profiles } from 'model/sh/code-library'
-import { getWindow } from 'model/dom.model';
 
 import Stage from 'components/stage/PersistedStage'
-import StagePortal from 'components/stage/StagePortal';
 import Terminal from 'components/sh/Terminal'
 import CodeEditor from 'components/text/code-editor';
 
 export default function IndexPage() {
-  const stageNode = useMemo(() => getWindow() && portals.createHtmlPortalNode(), []);
-
   return (
     <>
       <Head>
@@ -29,16 +23,12 @@ export default function IndexPage() {
           </Title>
           
           <Subtitle>
-            Building bot behaviour, step by step
+            Bot behaviour, step by step
           </Subtitle>
-
-          {stageNode && <portals.InPortal node={stageNode}>
-            <Stage stageKey="test" />
-          </portals.InPortal>}
 
           <section>
             <Env>
-              {stageNode && <StagePortal node={stageNode} />}
+              <Stage stageKey="test" />
               <Terminal
                 sessionKey="demo"
                 env={{
@@ -49,9 +39,7 @@ export default function IndexPage() {
               <CodeEditor />
             </Env>
           </section>
-
         </div>
-
       </Main>
     </>
   );
@@ -92,12 +80,18 @@ const Title = styled.h1<{}>`
 `;
 
 const Subtitle = styled.h3<{}>`
+  margin-top: 1rem;
   margin-left: 4px;
-  margin-bottom: 2.5rem;
+  margin-bottom: 3rem;
   color: #555;
   font-weight: normal;
+  font-size: 28px;
+ 
+  @media(max-width: 1248px) {
+    font-size: 20px;
+    margin-bottom: 2rem;
+  }
 `;
-
 
 const Env = styled.section<{}>`
   display: grid;

@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { useCallback, useEffect } from "react";
 import { useBeforeunload } from "react-beforeunload";
 
@@ -18,11 +19,21 @@ const PersistedStage: React.FC<Props> = ({ stageKey }) => {
   );
   useBeforeunload(persistOnUnload);
 
-  return stage ? <Stage stage={stage} /> : null;
+  return (
+    <Root>
+      {stage ? <Stage stage={stage} /> : null}
+    </Root>
+  );
 };
 
 interface Props {
   stageKey: string;
 }
+
+const Root = styled.section`
+  grid-area: stage;
+  width: 100%;
+  height: 100%;
+`;
 
 export default PersistedStage;
