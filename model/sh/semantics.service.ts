@@ -219,7 +219,7 @@ class SemanticsService {
             if (results[0] === undefined) throw Error();
             yield* results;
           } catch {
-            throw new ShError('command not found', 127);
+            throw new ShError('not found', 127);
           }
         }
       } else {
