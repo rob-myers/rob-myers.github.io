@@ -25,7 +25,7 @@ export default function IndexPage() {
           </Title>
           
           <Subtitle>
-            Bot behaviour, step by step
+            Making bots, step by step
           </Subtitle>
 
           <section>
