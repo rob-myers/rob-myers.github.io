@@ -3,12 +3,14 @@ import styled from "@emotion/styled";
 
 import { CoreVar } from 'model/sh/var.model'
 import { profiles } from 'model/sh/code-library'
-
-import Stage from 'components/stage/PersistedStage'
+import Stage from 'components/stage/WrappedStage'
 import Terminal from 'components/sh/Terminal'
 import CodeEditor from 'components/text/code-editor';
+import { usePage } from 'components/hooks';
 
 export default function IndexPage() {
+  usePage({ stageKeys: ['test'] });
+
   return (
     <>
       <Head>
@@ -27,6 +29,7 @@ export default function IndexPage() {
           </Subtitle>
 
           <section>
+            <Stage stageKey="test" />
             <Env>
               <Stage stageKey="test" />
               <Terminal

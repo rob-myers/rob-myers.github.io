@@ -4,7 +4,8 @@
 
 - ✅ show stage using react-reverse-portal
 - ✅ remove react-reversal portal,
-  we can "disable others" instead
+- can specify one `Stage` is active
+- can change active `Stage`
 
 - write outline of 1st post i.e. walkthrough up to movable bots
 

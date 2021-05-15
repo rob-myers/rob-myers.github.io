@@ -38,10 +38,9 @@ export interface StageExtra {
 
 /** Keep this flat so stage.proxy handles updates */
 export interface StageOpts {
-  /** Persist on unload window? */
-  autoPersist: boolean;
+  /** Is the stage enabled? */
   enabled: boolean;
-  /** Can we move/zoom the camera? */
+  /** Should stage capture mousewheel as pan/zoom? */
   panZoom: boolean;
 }
 
@@ -62,7 +61,6 @@ export function createStage(stageKey: string): StageMeta {
 
 export function createStageOpts(): StageOpts {
   return {
-    autoPersist: true,
     enabled: true,
     panZoom: true,
   };

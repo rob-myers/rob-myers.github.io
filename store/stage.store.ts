@@ -10,6 +10,7 @@ import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } f
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
   rehydrated: boolean;
+  persistOnUnload: boolean;
   persist: KeyedLookup<Stage.StageMetaJson>;
   // TODO stage events instead
   resolve: {
@@ -31,8 +32,9 @@ export type State = {
 
 const useStore = create<State>(devtools(persist((set, get) => ({
   stage: {},
-  rehydrated: false,
   persist: {},
+  persistOnUnload: true,
+  rehydrated: false,
   resolve: { createStage: {} },
 
   api: {
@@ -52,7 +54,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }
       
       if (get().persist[stageKey]) {
-
         // Restore persisted data
         const s = Stage.createStage(stageKey);
         const { opt, extra } = api.getPersist(stageKey);
