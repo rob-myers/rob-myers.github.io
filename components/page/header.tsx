@@ -39,12 +39,17 @@ const Subtitle = styled.h3<{}>`
   font-size: 16px;
   letter-spacing: 2px;
 
-  background-color: #766;
-  color: #fff;
-  border-radius: 5px 0 0 5px;
-  padding: 8px 12px;
+  border: #766 1px solid;
+  color: #555;
+  border-radius: 5px;
+  padding: 10px 12px;
  
   @media(max-width: 1248px) {
+    margin-bottom: 2rem;
+  }
+  @media(max-width: 800px) {
+    border-radius: 0;
+    border-width: 1px 0;
     margin-bottom: 2rem;
   }
 `;

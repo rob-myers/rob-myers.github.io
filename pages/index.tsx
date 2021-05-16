@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { CoreVar } from 'model/sh/var.model'
 import { profiles } from 'model/sh/code-library'
 
-import Header from 'components/page/header';
+import Header from 'components/page/Header';
 import Stage from 'components/stage/WrappedStage'
 import Terminal from 'components/sh/Terminal'
 import CodeEditor from 'components/code/code-editor';
