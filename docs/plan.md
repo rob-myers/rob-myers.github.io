@@ -12,6 +12,7 @@
 - `WrappedStage` has own persisted placeholder/camera angle
 
 - write outline of 1st post i.e. walkthrough up to movable bots
+  - render some markdown
 - Stop redux devtools from crashing
 
 - can define shell fns via syntax-highlighted js text
