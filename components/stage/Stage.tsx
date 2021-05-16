@@ -18,10 +18,12 @@ import Axes from "./Axes";
 
 const Stage: React.FC<Props> = ({ stage }) => {
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
+  const everUsed = useRef(false);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     const camera = ctxt.camera as THREE.OrthographicCamera | THREE.PerspectiveCamera;
     const { initCamZoom, initCamPos, initCamTarget } = useStage.api.getPersist(stage.key).extra;
+    everUsed.current = true;
 
     camera.position.set(...initCamPos);
     const ctrl = new Controls(camera, ctxt.gl.domElement);
@@ -52,10 +54,12 @@ const Stage: React.FC<Props> = ({ stage }) => {
   }, [stage]);
 
   useEffect(() => {
-    if (ctxt?.gl && !stage.opt.enabled) {// Detected stage disable
+    if (ctxt?.gl && !stage.opt.enabled) {
+      // Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
       useStage.api.persist(stage.key);
+
       delete stage.scene;
       delete stage.ctrl;
       setCtxt(null);
@@ -81,7 +85,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
   }, [keyWire]);
 
   const Helpers = useMemo(() =>
-    <>
+    <group name="Helpers">
       <mesh
         name="PointerPlane"
         onPointerDown={onPointer}
@@ -97,9 +101,13 @@ const Stage: React.FC<Props> = ({ stage }) => {
       </mesh>
       <Grid />
       <Axes />
-    </>,
+    </group>,
     [],
   );
+
+  const enableFromPlaceholder = useCallback(() => {
+    useStage.api.updateOpt(stage.key, { enabled: true });
+  }, [stage.key]);
 
   return (
     <Root
@@ -115,7 +123,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
       />
 
       {(stage.opt.enabled || ctxt) && (
-
         <CanvasRoot
           dpr={getWindow()!.devicePixelRatio}
           onCreated={onCreatedCanvas}
@@ -128,24 +135,27 @@ const Stage: React.FC<Props> = ({ stage }) => {
             captureMouse={stage.opt.panZoom}
           />}
 
-          {/* TEMP */}
-          <directionalLight name="TempLight" position={[-1, 3, 2]} />
-          <mesh name="TempCube" position={[0, .5, 0]}>
-            <boxGeometry/>
-            <meshStandardMaterial color="#00f" />
-          </mesh>
+          <group name="Persisted">
+            {/* TEMP */}
+            <directionalLight name="TempLight" position={[-1, 3, 2]} />
+            <mesh name="TempCube" position={[0, .5, 0]}>
+              <boxGeometry/>
+              <meshStandardMaterial color="#00f" />
+            </mesh>
+          </group>
 
         </CanvasRoot>
-
-      ) || stage?.extra.canvasPreview && (
-
+      ) || (
         <Placeholder>
           <PlaceholderImage
             src={stage.extra.canvasPreview}
             draggable={false}
+            fade={everUsed.current}
           />
+          <PlaceholderMessage onClick={enableFromPlaceholder}>
+            Click to enable
+          </PlaceholderMessage>
         </Placeholder>
-
       )}
     </Root>
   );
@@ -177,13 +187,33 @@ const Placeholder = styled.div<{}>`
   overflow: hidden;
   display: flex;
   height: inherit;
+  position: relative;
 `;
 
-const PlaceholderImage = styled.img<{}>`
-  background: #ddd;
+const PlaceholderImage = styled.img<{ fade: boolean }>`
+  @keyframes darken {
+    0% { filter: brightness(100%); }
+    100% { filter: brightness(70%); }
+  }
+  ${({ fade }) => fade && css`animation: darken 0.4s ease-out forwards 1;`}
+
+  background: #fff;
   margin: auto;
   max-width: 100%;
   max-height: 100%;
+`;
+
+const PlaceholderMessage = styled.div<{}>`
+  position: absolute;
+  width: inherit;
+  top: calc(50% - 2.8rem);
+  display: flex;
+  justify-content: center;
+  font-size: 4rem;
+  font-weight: lighter;
+  font-family: sans-serif;
+  color: #fff;
+  cursor: pointer;
 `;
 
 export default Stage;
