@@ -33,26 +33,27 @@ interface Props {
 const Root = styled.div<{}>`
   background: #666;
   width: 100%;
+  height: inherit;
   overflow: hidden;
   display: flex;
-  height: inherit;
   position: relative;
 `;
 
 const PlaceholderImage = styled.img<{ fade: boolean }>`
   @keyframes darken {
     0% { filter: brightness(100%); }
-    100% { filter: brightness(70%); }
+    100% { filter: brightness(60%); }
   }
   ${({ fade }) => fade
     && css`animation: darken 0.4s ease-out forwards 1;`
-    || css`filter: brightness(70%);`
+    || css`filter: brightness(60%);`
   }
 
   background: #fff;
   margin: auto;
   max-width: 100%;
   max-height: 100%;
+  user-select: none;
 `;
 
 const PlaceholderMessage = styled.div<{}>`
@@ -61,6 +62,7 @@ const PlaceholderMessage = styled.div<{}>`
   top: calc(50% - 3.5rem);
   display: flex;
   justify-content: center;
+  user-select: none;
 
   font-size: 3.8rem;
   font-weight: lighter;

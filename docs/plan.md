@@ -4,7 +4,7 @@
 
 - ✅ show stage using react-reverse-portal
 - ✅ remove react-reverse-portal,
-- ✅ `stage.scene` available when stage disabled?
+- ✅ `stage.scene` available when stage disabled
 - `stage.ctrl` available when stage disabled?
 - can specify one `Stage` is active
 - can change active `Stage`

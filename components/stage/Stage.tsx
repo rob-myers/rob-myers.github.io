@@ -126,6 +126,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
       {(stage.opt.enabled || ctxt) && (
 
         <CanvasRoot
+          fadeIn={stage.opt.enabled}
           dpr={getWindow()!.devicePixelRatio}
           onCreated={onCreatedCanvas}
           // orthographic
@@ -168,7 +169,13 @@ const Root = styled.section<{ background: string }>`
   ${({ background }) => css`background: ${background};`}
 `;
 
-const CanvasRoot = styled(Canvas)`
+const CanvasRoot = styled(Canvas)<{ fadeIn: boolean }>`
+  @keyframes dark-to-light {
+    0% { filter: brightness(10%); }
+    100% { filter: brightness(100%); }
+  }
+  animation: dark-to-light 0.8s ease-in forwards 1;
+
   background: #fff;
 `;
 
