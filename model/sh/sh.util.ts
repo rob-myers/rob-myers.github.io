@@ -45,6 +45,7 @@ export function interpretEscapeSequences(input: string): string {
     .replace(/\\\\([bfnrt])/g, '\\$1'));
 }
 
+
 const bracesOpts: braces.Options = {
   expand: true,
   rangeLimit: Infinity,
@@ -57,8 +58,10 @@ export function literal({ Value, parent }: Sh.Lit): string[] {
   /**
    * Remove at most one '\\\n'; can arise interactively in quotes,
    * see https://github.com/mvdan/sh/issues/321.
+   * Escape square brackets for npm module `braces`.
    */
-  const value = Value.replace(/\\\n/, '');
+  const value = Value.replace(/\\\n/, '')
+    .replace(/\[/g, '\\[').replace(/\]/g, '\\]');
 
   if (parent.type === 'DblQuoted') {
     // Double quotes: escape only ", \, $, `, no brace-expansion.

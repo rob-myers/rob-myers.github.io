@@ -4,10 +4,15 @@
 
 - ✅ show stage using react-reverse-portal
 - ✅ remove react-reversal portal,
+- `stage.scene` available when stage disabled?
+- `stage.ctrl` available when stage disabled?
 - can specify one `Stage` is active
 - can change active `Stage`
+- `WrappedStage` enforces one-at-a-time
+- `WrappedStage` has own persisted placeholder/camera angle
 
 - write outline of 1st post i.e. walkthrough up to movable bots
+- Stop redux devtools from crashing
 
 - can define shell fns via syntax-highlighted js text
   - a separate component which can change a session
@@ -28,6 +33,7 @@
 
 ### BUG
 
+- ✅ `echo scene.children[{0,1}]` was not expanding
 - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
 - ✅ `call '({ stage }) => delete stage.opt.foo'`
 - Ensure old processes killed cleanly on hot reload
