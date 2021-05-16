@@ -52,7 +52,7 @@ const PlaceholderImage = styled.img<{ fade: boolean }>`
 const PlaceholderMessage = styled.div<{}>`
   position: absolute;
   width: inherit;
-  top: calc(50% - 3rem);
+  top: calc(50% - 3.5rem);
   display: flex;
   justify-content: center;
 
