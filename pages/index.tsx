@@ -24,9 +24,9 @@ export default function IndexPage() {
         <div>
           <Header />
 
-          <section>
+          {/* <section>
             ok
-          </section>
+          </section> */}
 
           <section>
             {/* <Stage stageKey="test" /> */}

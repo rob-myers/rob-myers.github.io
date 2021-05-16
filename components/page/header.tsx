@@ -18,6 +18,7 @@ const Title = styled.h1<{}>`
   line-height: 1;
   font-size: 6rem;
   max-width: 800px;
+  color: #222;
 
   @media(max-width: 1248px) {
     margin-top: 2.5rem;
@@ -33,13 +34,17 @@ const Title = styled.h1<{}>`
 `;
 
 const Subtitle = styled.h3<{}>`
-  margin: 1rem 0 3rem 4px;
-  color: #555;
+  margin: 1.4rem 0 3rem 0;
   font-weight: normal;
-  font-size: 1.5rem;
+  font-size: 16px;
+  letter-spacing: 2px;
+
+  background-color: #766;
+  color: #fff;
+  border-radius: 5px 0 0 5px;
+  padding: 8px 12px;
  
   @media(max-width: 1248px) {
-    font-size: 1.2rem;
     margin-bottom: 2rem;
   }
 `;

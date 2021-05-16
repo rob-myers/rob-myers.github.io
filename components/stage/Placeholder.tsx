@@ -52,13 +52,15 @@ const PlaceholderImage = styled.img<{ fade: boolean }>`
 const PlaceholderMessage = styled.div<{}>`
   position: absolute;
   width: inherit;
-  top: calc(50% - 2.8rem);
+  top: calc(50% - 3rem);
   display: flex;
   justify-content: center;
-  font-size: 3rem;
+
+  font-size: 3.8rem;
   font-weight: lighter;
-  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 8px;
   color: white;
+
   > div {
     cursor: pointer;
   }
