@@ -14,7 +14,7 @@ const Header: React.FC = () => {
 
 const Title = styled.h1<{}>`
   margin-top: 3.5rem;
-  margin-bottom: 0;
+  margin-bottom: 2rem;
   line-height: 1;
   font-size: 6rem;
   max-width: 800px;
