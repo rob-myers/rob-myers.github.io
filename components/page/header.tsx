@@ -37,12 +37,12 @@ const Subtitle = styled.h3<{}>`
   margin: 1.4rem 0 3rem 0;
   font-weight: normal;
   font-size: 16px;
-  letter-spacing: 2px;
+  letter-spacing: 1px;
 
-  border: #766 1px solid;
+  border: #777 1px solid;
   color: #555;
   border-radius: 5px;
-  padding: 10px 12px;
+  padding: 8px 12px;
  
   @media(max-width: 1248px) {
     margin-bottom: 2rem;
