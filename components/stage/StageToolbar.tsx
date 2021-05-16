@@ -32,6 +32,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt }) => {
           <PauseButton
             onClick={toggleRunning}
             pending={!canToggleRunning}
+            title="toggle enabled"
           >
             {opt.enabled ? 'running' : 'paused'}
           </PauseButton>

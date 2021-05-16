@@ -209,11 +209,11 @@ const PlaceholderMessage = styled.div<{}>`
   top: calc(50% - 2.8rem);
   display: flex;
   justify-content: center;
-  font-size: 4rem;
+  font-size: 3rem;
   font-weight: lighter;
-  font-family: sans-serif;
-  color: #fff;
+  font-family: 'Courier New', Courier, monospace;
   cursor: pointer;
+  color: white;
 `;
 
 export default Stage;
