@@ -15,6 +15,7 @@ import StageToolbar from "./StageToolbar";
 import CameraControls from "./CameraControls";
 import Grid from "./Grid";
 import Axes from "./Axes";
+import Placeholder from "./Placeholder";
 
 const Stage: React.FC<Props> = ({ stage }) => {
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
@@ -146,18 +147,11 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
         </CanvasRoot>
       ) || (
-        <Placeholder>
-          <PlaceholderImage
-            src={stage.extra.canvasPreview}
-            draggable={false}
-            fade={everUsed.current}
-          />
-          <PlaceholderMessage>
-            <div onClick={enableFromPlaceholder}>
-              Click to enable
-            </div>
-          </PlaceholderMessage>
-        </Placeholder>
+        <Placeholder
+          dataUrl={stage.extra.canvasPreview}
+          everUsed={everUsed.current}
+          enableStage={enableFromPlaceholder}
+        />
       )}
     </Root>
   );
@@ -181,46 +175,6 @@ const Root = styled.section<{ background: string }>`
 
 const CanvasRoot = styled(Canvas)`
   background: #fff;
-`;
-
-const Placeholder = styled.div<{}>`
-  background: #666;
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  height: inherit;
-  position: relative;
-`;
-
-const PlaceholderImage = styled.img<{ fade: boolean }>`
-  @keyframes darken {
-    0% { filter: brightness(100%); }
-    100% { filter: brightness(70%); }
-  }
-  ${({ fade }) => fade
-    && css`animation: darken 0.4s ease-out forwards 1;`
-    || css`filter: brightness(70%);`
-  }
-
-  background: #fff;
-  margin: auto;
-  max-width: 100%;
-  max-height: 100%;
-`;
-
-const PlaceholderMessage = styled.div<{}>`
-  position: absolute;
-  width: inherit;
-  top: calc(50% - 2.8rem);
-  display: flex;
-  justify-content: center;
-  font-size: 3rem;
-  font-weight: lighter;
-  font-family: 'Courier New', Courier, monospace;
-  color: white;
-  > div {
-    cursor: pointer;
-  }
 `;
 
 export default Stage;
