@@ -1,7 +1,13 @@
+import { useCallback } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
+import useStage from "store/stage.store";
 
-const Placeholder: React.FC<Props> = ({  dataUrl, everUsed, enableStage }) => {
+const Placeholder: React.FC<Props> = ({ stageKey, dataUrl, everUsed }) => {
+  const enableStage = useCallback(() =>
+    useStage.api.updateOpt(stageKey, { enabled: true })
+  , [stageKey]);
+
   return (
     <Root>
       <PlaceholderImage
@@ -19,9 +25,9 @@ const Placeholder: React.FC<Props> = ({  dataUrl, everUsed, enableStage }) => {
 };
 
 interface Props {
+  stageKey: string;
   dataUrl?: string;
   everUsed: boolean;
-  enableStage: () => void;
 }
 
 const Root = styled.div<{}>`

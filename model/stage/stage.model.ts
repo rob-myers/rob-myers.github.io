@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { Triple } from "model/generic.model";
 import * as Geom from "model/geom";
 import { Controls } from "model/3d/controls";
+import { ThreeJson } from "model/3d/three.model";
 
 export type StageMeta = {
   key: string;
@@ -10,16 +11,16 @@ export type StageMeta = {
   extra: StageExtra;
   /** Important options for the CLI */
   opt: StageOpts;
-  /** Attached on mount */
+  /** Attached by `Stage` */
   ctrl?: Controls;
-  /** Attached by Stage */
-  scene?: THREE.Scene;
+  /** Attached by Stage or stage.extra.bgStage */
+  scene: THREE.Scene;
 };
 
 export interface StageMetaJson {
   key: string;
   opt: StageOpts;
-  extra: Omit<StageExtra, 'keyEvent' | 'ptrEvent'>;
+  extra: Omit<StageExtra, 'keyEvent' | 'ptrEvent' | 'bgScene' | 'group'>;
 }
 
 /** Key-value storage for internal use */
@@ -30,9 +31,21 @@ export interface StageExtra {
   initCamPos: Triple<number>;
   initCamTarget: Triple<number>;
   initCamZoom: number;
+
+  /** Serialized group containing everything except helpers */
+  sceneJson?: ThreeJson;
+  /** Restored "Persisted" group */
+  group: THREE.Group;
+  /**
+   * Three.js Scene provided to CLI when stage is disabled.
+   * We also used it to rehydrate the live scene.
+   * Children can only be in one scene at a time.
+   */
+  bgScene: THREE.Scene;
+
   /** Keyboard events sent by `Stage` */
   keyEvent: Subject<StageKeyEvent>;
-  /** Mouse events sent by `Stage` */
+  /** Mouse eventzs sent by `Stage` */
   ptrEvent: Subject<StagePointerEvent>;
 }
 
@@ -45,23 +58,26 @@ export interface StageOpts {
 }
 
 export function createStage(stageKey: string): StageMeta {
+  const bgScene = new THREE.Scene;
   return {
     key: stageKey,
-    // {ctrl,scene} attached by components
     extra: {
       initCamPos: [...initCameraPosArray],
       initCamTarget: [0, 0, 0],
       initCamZoom: initCameraZoom,
       keyEvent: new Subject,
       ptrEvent: new Subject,
+      group: new THREE.Group,
+      bgScene,
     },
     opt: createStageOpts(),
+    scene: bgScene,
   };
 }
 
 export function createStageOpts(): StageOpts {
   return {
-    enabled: true,
+    enabled: false,
     panZoom: true,
   };
 }

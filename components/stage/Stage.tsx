@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import styled from "@emotion/styled";
-import { css } from "@emotion/react";
 import { Canvas } from "@react-three/fiber";
 import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
 import type { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
+import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 
 import type { StageMeta } from "model/stage/stage.model";
 import { Controls } from "model/3d/controls";
@@ -50,18 +50,23 @@ const Stage: React.FC<Props> = ({ stage }) => {
     ctxt.gl.shadowMap.needsUpdate = true;
 
     stage.scene = ctxt.scene;
+    stage.scene.copy(stage.extra.bgScene, false);
     stage.ctrl = ctrl;
     setCtxt(ctxt);
   }, [stage]);
 
   useEffect(() => {
-    if (ctxt?.gl && !stage.opt.enabled) {
-      // Detected stage disable
+    if (ctxt?.gl && !stage.opt.enabled) {// Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
       useStage.api.persist(stage.key);
 
-      delete stage.scene;
+      // Copy current scene into background scene
+      stage.extra.bgScene.remove(...stage.extra.bgScene.children);
+      stage.extra.bgScene.add(...ctxt.scene.children);
+      stage.extra.bgScene.copy(ctxt.scene, false);
+      stage.scene = stage.extra.bgScene;
+
       delete stage.ctrl;
       setCtxt(null);
     }
@@ -94,7 +99,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
         onPointerUp={onPointer}
         onPointerOut={onPointerOut}
         visible={false}
-        // matrixAutoUpdate={false}
         rotation={[-Math.PI/2, 0, 0]}
       >
         <planeGeometry args={[40, 40]} />
@@ -106,14 +110,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
     [],
   );
 
-  const enableFromPlaceholder = useCallback(() => {
-    useStage.api.updateOpt(stage.key, { enabled: true });
-  }, [stage.key]);
-
   return (
     <Root
+      tabIndex={0} // For key events
       background="#fff"
-      tabIndex={0}
       onKeyDown={onKey}
       onKeyUp={onKey}
       onMouseOver={focusOnMouseOver}
@@ -124,33 +124,30 @@ const Stage: React.FC<Props> = ({ stage }) => {
       />
 
       {(stage.opt.enabled || ctxt) && (
+
         <CanvasRoot
           dpr={getWindow()!.devicePixelRatio}
           onCreated={onCreatedCanvas}
           // orthographic
         >
-          {Helpers}
-
           {stage.ctrl && <CameraControls
             controls={stage.ctrl}
             captureMouse={stage.opt.panZoom}
           />}
 
-          <group name="Persisted">
-            {/* TEMP */}
-            <directionalLight name="TempLight" position={[-1, 3, 2]} />
-            <mesh name="TempCube" position={[0, .5, 0]}>
-              <boxGeometry/>
-              <meshStandardMaterial color="#00f" />
-            </mesh>
-          </group>
+          {Helpers}
 
+          <primitive
+            name="Persisted"
+            object={stage.extra.group}
+          />
         </CanvasRoot>
+
       ) || (
         <Placeholder
+          stageKey={stage.key}
           dataUrl={stage.extra.canvasPreview}
           everUsed={everUsed.current}
-          enableStage={enableFromPlaceholder}
         />
       )}
     </Root>
@@ -168,9 +165,7 @@ const Root = styled.section<{ background: string }>`
   display: flex;
   flex-direction: column;
   position: relative;
-  ${({ background }) => css`
-    background: ${background};
-  `}
+  ${({ background }) => css`background: ${background};`}
 `;
 
 const CanvasRoot = styled(Canvas)`

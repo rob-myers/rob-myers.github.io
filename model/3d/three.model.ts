@@ -41,17 +41,6 @@ export function vectPrecisionSpecial(v: THREE.Vector3) {
   );
 }
 
-/** Scale up to grid of 0.1 * 0.1 tiles */
-export function scaleUpByTouched(from: THREE.Vector3, to: THREE.Vector3) {
-  const dx = to.x - from.x, dy = to.y - from.y;
-  from.x = (dx > 0 ? Math.floor : Math.ceil)(10 * from.x) / 10;
-  from.y = (dy > 0 ? Math.floor : Math.ceil)(10 * from.y) / 10;
-  vectPrecision(from, 1);
-  to.x = (dx > 0 ? Math.ceil : Math.floor)(10 * to.x) / 10;
-  to.y = (dy > 0 ? Math.ceil : Math.floor)(10 * to.y) / 10;
-  vectPrecision(to, 1);
-}
-
 export function vectorToTriple({ x, y, z }: { x: number; y: number; z: number }): Triple<number> {
   return [x, y, z];
 }
@@ -62,4 +51,82 @@ export function matrixToPosition(matrix: THREE.Matrix4, position: THREE.Vector3)
     matrix.elements[13],
     0,
   );
+}
+
+export function loadJson<T extends THREE.Object3D>(rootJson: ThreeJson) {
+  return new Promise<T>(resolve => {
+    (new THREE.ObjectLoader).parse(rootJson, (x) => resolve(x as T));
+  });
+}
+
+export function getPlaceholderGroup() {
+  const group = new THREE.Group;
+  const light = new THREE.DirectionalLight();
+  light.position.set(-1, 3, 2);
+  light.name = "TempLight";
+  group.add(light);
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(),
+    new THREE.MeshStandardMaterial({ color: new THREE.Color('#ff0000')}),
+    );
+  mesh.position.setY(0.5);
+  mesh.name = "TempCube";
+  group.add(mesh);
+  return group;
+}
+
+export function createThreeGroup(name: string) {
+  const group = new THREE.Group;
+  group.name = "Helpers";
+  return group;
+}
+
+/** Rough and ready approach without "type" literal refinements */
+export interface ThreeJson {
+  geometries: ThreeGeometryJson[];
+  materials: ThreeMaterialJson[];
+  metadata: { version: number; type: string; generator: string; }
+  object: ThreeObjectJson;
+}
+
+interface ThreeObjectJson {
+  children: ThreeObjectJson[];
+  matrix: number[];
+  name: string;
+  type: string;
+  uuid: string;
+}
+
+interface ThreeGeometryJson {
+  depth: number;
+  depthSegments: number;
+  height: number;
+  heightSegments: number;
+  type: string;
+  uuid: string;
+  width: number;
+  widthSegments: number;
+}
+
+interface ThreeMaterialJson {
+  color: number;
+  colorWrite: boolean;
+  depthFunc: number;
+  depthTest: boolean;
+  depthWrite: boolean;
+  emissive: number;
+  envMapIntensity: number;
+  metalness: number;
+  refractionRatio: number;
+  roughness: number;
+  stencilFail: number;
+  stencilFunc: number;
+  stencilFuncMask: number;
+  stencilRef: number;
+  stencilWrite: boolean;
+  stencilWriteMask: number;
+  stencilZFail: number;
+  stencilZPass: number;
+  type: string;
+  uuid: string;
 }

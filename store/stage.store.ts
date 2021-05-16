@@ -1,10 +1,10 @@
-import { Subject } from 'rxjs';
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import * as THREE from 'three';
 
 import { deepClone, KeyedLookup } from 'model/generic.model';
+import { vectorToTriple, loadJson, getPlaceholderGroup, createThreeGroup } from 'model/3d/three.model';
 import * as Stage from 'model/stage/stage.model';
-import { vectorToTriple } from 'model/3d/three.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
 
 export type State = {
@@ -58,13 +58,26 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         const s = Stage.createStage(stageKey);
         const { opt, extra } = api.getPersist(stageKey);
         s.opt = deepClone(opt??Stage.createStageOpts());
-        s.extra = {
-          ...deepClone(extra??{ initCamPos: Stage.initCameraPos, initCamZoom: Stage.initCameraZoom }),
-          keyEvent: new Subject,
-          ptrEvent: new Subject,
-        };
+
+        s.extra.initCamPos = extra.initCamPos || Stage.initCameraPos;
+        s.extra.initCamTarget = extra.initCamTarget || Stage.initCameraPos;
+        s.extra.initCamZoom = extra.initCamZoom || Stage.initCameraZoom;
+        s.extra.canvasPreview = extra.canvasPreview;
+        s.extra.sceneJson = extra.sceneJson;
         
-        set(({ stage }) => ({ stage: addToLookup(s, stage) }));
+        if (extra.sceneJson) {// Restore scene
+          loadJson<THREE.Scene>(extra.sceneJson).then((scene) => {
+            // console.warn('Loaded json scene', scene);
+            s.extra.bgScene = scene;
+            s.extra.group = scene.children[1] as THREE.Group || getPlaceholderGroup();
+            set(({ stage }) => ({ stage: addToLookup(s, stage) }));
+          });
+        } else {
+          s.extra.bgScene.add(createThreeGroup("Helpers"));
+          s.extra.group = getPlaceholderGroup();
+          set(({ stage }) => ({ stage: addToLookup(s, stage) }));
+        }
+
       } else {
         set(({ stage, persist }) => ({
           stage: addToLookup(Stage.createStage(stageKey), stage),
@@ -84,20 +97,23 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { ctrl, opt: opts, extra } = api.getStage(stageKey);
+      const { ctrl, opt, extra, scene } = api.getStage(stageKey);
 
-      const currCamPos = ctrl?.camera?.position ? vectorToTriple(ctrl.camera.position) : null;
+      // TODO persist camera?
       const currCamTarget = ctrl?.target ? vectorToTriple(ctrl.target) : null;
+      const currCamPos = ctrl?.camera?.position ? vectorToTriple(ctrl.camera.position) : null;
       const currCamZoom = ctrl?.camera?.zoom;
-    
-      set(({ persist }) => ({ persist: addToLookup({
-          key: stageKey,
-          opt: deepClone(opts),
+
+      set(({ persist, persist: { [stageKey]: prev } }) => ({ persist: addToLookup({
+        key: stageKey,
+        opt: deepClone(opt),
           extra: {
             canvasPreview: extra.canvasPreview,
-            initCamPos: [...currCamPos || persist[stageKey].extra.initCamPos || extra.initCamPos],
-            initCamTarget: [...currCamTarget || persist[stageKey].extra.initCamTarget || extra.initCamTarget],
-            initCamZoom: (currCamZoom??(persist[stageKey].extra.initCamZoom || extra.initCamZoom)),
+            initCamPos: [...currCamPos || prev.extra.initCamPos || extra.initCamPos],
+            initCamTarget: [...currCamTarget || prev.extra.initCamTarget || extra.initCamTarget],
+            initCamZoom: (currCamZoom??(prev.extra.initCamZoom || extra.initCamZoom)),
+
+            sceneJson: scene.toJSON(),
           },
         }, persist),
       }));
@@ -112,6 +128,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         opt: { ...opts, ...typeof updates === 'function' ? updates(opts) : updates },
       }));
     },
+
     updateStage: (stageKey, updates) => {
       set(({ stage }) => ({
         stage: updateLookup(stageKey, stage, typeof updates === 'function' ? updates : () => updates),
