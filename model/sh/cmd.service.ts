@@ -440,12 +440,11 @@ class CmdService {
 
   get(node: Sh.BaseNode, args: string[]) {
     try {
-      const meta = node.meta;
-      const root = this.provideStageAndVars(meta);
-      const cwd = this.computeCwd(meta, root);
+      const root = this.provideStageAndVars(node.meta);
+      const cwd = this.computeCwd(node.meta, root);
       const outputs = args.map(arg => {
         if (arg[0] === '/') return Function('__', `return __.${arg.slice(1)}`)(root);
-        return Function('__', `return __.${arg}`)(cwd)
+        return Function('__', isNaN(arg as any) ? `return __.${arg}` : `return __[${arg}]`)(cwd);
       });
       node.exitCode = outputs.length && outputs.every(x => x === undefined) ? 1 : 0;
       return outputs;

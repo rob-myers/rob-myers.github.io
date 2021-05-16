@@ -214,9 +214,9 @@ class SemanticsService {
         } else if (func = useSession.api.getFunc(node.meta.sessionKey, command)) {
           await cmdService.launchFunc(node, func, cmdArgs);
         } else {
-          try {
-            const results = cmdService.get(node, [args[0]]);
-            if (results[0] === undefined) throw Error();
+          try {// Try to `get` things instead
+            const results = cmdService.get(node, args).filter(x => x !== undefined);
+            if (!results.length) throw Error();
             yield* results;
           } catch {
             throw new ShError('not found', 127);
