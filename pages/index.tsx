@@ -29,7 +29,7 @@ export default function IndexPage() {
           </Subtitle>
 
           <section>
-            <Stage stageKey="test" />
+            {/* <Stage stageKey="test" /> */}
             <Env>
               <Stage stageKey="test" />
               <Terminal
@@ -88,10 +88,10 @@ const Subtitle = styled.h3<{}>`
   margin-bottom: 3rem;
   color: #555;
   font-weight: normal;
-  font-size: 28px;
+  font-size: 1.5rem;
  
   @media(max-width: 1248px) {
-    font-size: 20px;
+    font-size: 1.2rem;
     margin-bottom: 2rem;
   }
 `;
