@@ -274,7 +274,7 @@ class CmdService {
         const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
         for (const [i, obj] of roots.entries()) {
           if (obj === undefined) {
-            useSession.api.warn(meta.sessionKey, `ls: ${queries[i]} is not defined`);
+            useSession.api.warn(meta.sessionKey, `ls: "${queries[i]}" is not defined`);
             continue;
           }
           if (roots.length > 1) yield `${ansiBlue}${queries[i]}:`;
