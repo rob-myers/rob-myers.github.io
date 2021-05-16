@@ -31,7 +31,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt }) => {
         <Slot>
           <PauseButton
             onClick={toggleRunning}
-            emphasis={!canToggleRunning}
+            pending={!canToggleRunning}
           >
             {opt.enabled ? 'running' : 'paused'}
           </PauseButton>
@@ -91,30 +91,20 @@ const LeftToolbar = styled.section`
 
 const StageKey = styled.div``;
 
-const PauseButton = styled.div<{ emphasis?: boolean; }>`
+const PauseButton = styled.div<{ pending: boolean; }>`
   cursor: pointer;
   outline: none;
   color: #dfd;
-  font-style: ${({ emphasis = false }) => emphasis ? 'italic' : ''};
-`;
-
-const SelectTrigger = styled.select<{}>`
-  background: inherit;
-  color: #fff;
-  outline: 0;
-  padding-left: 1px;
-  margin-top: 1px;
+  ${({ pending }) => pending && css`
+    font-style: italic;
+    color: #ccc;
+  `}
 `;
 
 const RightToolbar = styled.section`
   display: grid;
   grid-template-columns: auto auto;
   gap: 12px;
-`;
-
-const UnlockCopyButton = styled.div<{ enabled: boolean; }>`
-  cursor: pointer;
-  color: ${({ enabled }) => enabled ? 'white' : '#777'};
 `;
 
 const PanZoomButton = styled.div<{ greyed?: boolean; emphasis?: boolean; }>`
