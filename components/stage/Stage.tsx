@@ -152,8 +152,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
             draggable={false}
             fade={everUsed.current}
           />
-          <PlaceholderMessage onClick={enableFromPlaceholder}>
-            Click to enable
+          <PlaceholderMessage>
+            <div onClick={enableFromPlaceholder}>
+              Click to enable
+            </div>
           </PlaceholderMessage>
         </Placeholder>
       )}
@@ -215,8 +217,10 @@ const PlaceholderMessage = styled.div<{}>`
   font-size: 3rem;
   font-weight: lighter;
   font-family: 'Courier New', Courier, monospace;
-  cursor: pointer;
   color: white;
+  > div {
+    cursor: pointer;
+  }
 `;
 
 export default Stage;
