@@ -195,7 +195,10 @@ const PlaceholderImage = styled.img<{ fade: boolean }>`
     0% { filter: brightness(100%); }
     100% { filter: brightness(70%); }
   }
-  ${({ fade }) => fade && css`animation: darken 0.4s ease-out forwards 1;`}
+  ${({ fade }) => fade
+    && css`animation: darken 0.4s ease-out forwards 1;`
+    || css`filter: brightness(70%);`
+  }
 
   background: #fff;
   margin: auto;
