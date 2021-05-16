@@ -9,6 +9,7 @@ import Stage from 'components/stage/WrappedStage'
 import Terminal from 'components/sh/Terminal'
 import CodeEditor from 'components/code/code-editor';
 import { usePage } from 'components/hooks';
+import { Section } from 'components/page/Section';
 
 export default function IndexPage() {
   usePage({ stageKeys: ['test'] });
@@ -24,9 +25,9 @@ export default function IndexPage() {
         <div>
           <Header />
 
-          {/* <section>
+          <Section>
             ok
-          </section> */}
+          </Section>
 
           <section>
             {/* <Stage stageKey="test" /> */}

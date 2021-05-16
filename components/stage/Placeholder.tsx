@@ -72,6 +72,10 @@ const PlaceholderMessage = styled.div<{}>`
   > div {
     cursor: pointer;
   }
+
+  @media(max-width: 800px) {
+    font-size: 2.5rem;
+  }
 `;
 
 export default Placeholder;

@@ -28,22 +28,22 @@ const Title = styled.h1<{}>`
 
   @media(max-width: 800px) {
     margin-top: 0.5rem;
+  }
+  @media(max-width: 500px) {
     font-size: 4rem;
-    margin-left: 4px;
   }
 `;
 
-const Subtitle = styled.h3<{}>`
+const Subtitle = styled.div<{}>`
   margin: 1.4rem 0 3rem 0;
   font-weight: normal;
-  font-size: 16px;
   letter-spacing: 1px;
 
-  border: #777 1px solid;
-  color: #555;
   border-radius: 5px;
-  padding: 8px 12px;
- 
+  padding: 10px;
+  background: #ddd;
+  color: #444;
+
   @media(max-width: 1248px) {
     margin-bottom: 2rem;
   }
