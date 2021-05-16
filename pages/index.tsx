@@ -3,9 +3,11 @@ import styled from "@emotion/styled";
 
 import { CoreVar } from 'model/sh/var.model'
 import { profiles } from 'model/sh/code-library'
+
+import Header from 'components/page/header';
 import Stage from 'components/stage/WrappedStage'
 import Terminal from 'components/sh/Terminal'
-import CodeEditor from 'components/text/code-editor';
+import CodeEditor from 'components/code/code-editor';
 import { usePage } from 'components/hooks';
 
 export default function IndexPage() {
@@ -20,13 +22,11 @@ export default function IndexPage() {
 
       <Main>
         <div>
-          <Title>
-            Programmed Behaviour
-          </Title>
-          
-          <Subtitle>
-            Making bots, step by step
-          </Subtitle>
+          <Header />
+
+          <section>
+            ok
+          </section>
 
           <section>
             {/* <Stage stageKey="test" /> */}
@@ -59,40 +59,6 @@ const Main = styled.main<{}>`
   }
   @media(max-width: 800px) {
     margin: 0;
-  }
-`;
-
-const Title = styled.h1<{}>`
-  margin-top: 2.5rem;
-  margin-bottom: 0;
-  line-height: 1.15;
-  font-size: 6rem;
-  max-width: 800px;
-
-  @media(max-width: 1248px) {
-    margin-top: 1.5rem;
-    font-size: 5rem;
-    max-width: 400px;
-  }
-
-  @media(max-width: 800px) {
-    margin-top: 0.5rem;
-    font-size: 4rem;
-    margin-left: 4px;
-  }
-`;
-
-const Subtitle = styled.h3<{}>`
-  margin-top: 1rem;
-  margin-left: 4px;
-  margin-bottom: 3rem;
-  color: #555;
-  font-weight: normal;
-  font-size: 1.5rem;
- 
-  @media(max-width: 1248px) {
-    font-size: 1.2rem;
-    margin-bottom: 2rem;
   }
 `;
 
