@@ -24,6 +24,7 @@ import { vectPrecisionSpecial } from 'model/3d/three.model';
 const commandKeys = {
   /** Execute a javascript function */
   call: true,
+  /** Change current key prefix */
   cd: true,
   /** Get next click event from stage $STAGE_KEY */
   click: true,
@@ -49,6 +50,7 @@ const commandKeys = {
   poll: true,
   /** List running processes */
   ps: true,
+  /** Print current key prefix */
   pwd: true,
   /** Apply function to each item from stdin */
   map: true,
@@ -90,14 +92,13 @@ class CmdService {
       case 'call': {
         const func = Function('__', `return ${args[0]}`);
         yield await func()(
-          this.provideStageAndVars(meta),
-          ...args.slice(1),
+          this.provideStageAndVars(meta, args.slice(1)),
         );
         break;
       }
       case 'cd': {
         if (args.length > 1) {
-          throw new ShError('usage: `cd`, `cd stage.opt`, `cd /stage` and `cd -`', 1);
+          throw new ShError('usage: `cd`, `cd foo.bar`, `cd /foo.bar`, `cd ..` and `cd -`', 1);
         }
         const prevPwd: string = useSession.api.getVar(meta.sessionKey, 'OLDPWD') || '';
         const currPwd: string = useSession.api.getVar(meta.sessionKey, 'PWD') || '';
@@ -221,8 +222,8 @@ class CmdService {
       }
       case 'kill': {
         const { opts, operands } = getOpts(args, { boolean: [
-          'STOP', /** --STOP */
-          'CONT', /** --CONT */
+          'STOP', /** --STOP pauses a process */
+          'CONT', /** --CONT continues a paused process */
         ] });
         const pgids = operands.map(x => this.parseJsonArg(x))
           .filter((x): x is number => Number.isFinite(x));
@@ -381,8 +382,7 @@ class CmdService {
         const func = Function('_', `return async function *generator ${args[0]}`);
         yield* func()(
           this.provideRunApi(meta),
-          this.provideStageAndVars(meta),
-          ...args.slice(1),
+          this.provideStageAndVars(meta, args.slice(1)),
         );
         break;
       }
@@ -408,7 +408,7 @@ class CmdService {
             useSession.api.addCleanup(meta, () => reject(killError(meta)));
             (started = Date.now()) && setTimeout(resolve, ms);
           });
-          yield; // Pause execution if process suspended
+          yield; // Pauses execution if process suspended
         } while (Date.now() < started + ms - 1)
         break;
       }
@@ -497,7 +497,7 @@ class CmdService {
     };
   }
 
-  private provideStageAndVars(meta: Sh.BaseMeta): {
+  private provideStageAndVars(meta: Sh.BaseMeta, posPositionals: string[] = []): {
     stage: StageMeta;
     use: any;
   } & Record<string, any> {
@@ -505,11 +505,12 @@ class CmdService {
     const varLookup = useSession.api.getSession(meta.sessionKey).var;
     return new Proxy({
       ...varLookup,
+      args: posPositionals,
       stage: createStageProxy(stageKey),
       use: this.useProxy,
     }, {
       deleteProperty: (_, key: string) => {
-        if (key === 'stage' || key === 'use') return false;
+        if (['args', 'stage', 'use'].includes(key)) return false;
         return delete varLookup[key];
       },
     });
