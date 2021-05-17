@@ -1,6 +1,7 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import * as THREE from 'three';
+import { Subject } from 'rxjs';
 
 import { deepClone, KeyedLookup } from 'model/generic.model';
 import { vectorToTriple, loadJson, getPlaceholderGroup } from 'model/3d/three.model';
@@ -9,14 +10,12 @@ import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } f
 import { Controls } from 'model/3d/controls';
 
 export type State = {
-  stage: KeyedLookup<Stage.StageMeta>;
   rehydrated: boolean;
   persistOnUnload: boolean;
+  stage: KeyedLookup<Stage.StageMeta>;
   persist: KeyedLookup<Stage.StageMetaJson>;
-  // TODO stage events instead
-  resolve: {
-    createStage: { [stageKey: string]: (() => void)[] };
-  };
+  /** Resolved on stage create or if already exists */
+  resolvers: { stageKey: string; resolve: () => void }[];
 
   readonly api: {
     awaitStage: (stageKey: string, resolver: () => void) => Promise<void>;
@@ -36,16 +35,16 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   persist: {},
   persistOnUnload: true,
   rehydrated: false,
-  resolve: { createStage: {} },
+  resolvers: [],
 
   api: {
 
-    awaitStage: async (stageKey, resolver) => {
-      const { stage, resolve: { createStage } } = get();
+    awaitStage: async (stageKey, resolve) => {
+      const { stage, resolvers } = get();
       if (!stage[stageKey]) {
-        (createStage[stageKey] = createStage[stageKey] || []).push(resolver);
+        resolvers.push({ stageKey, resolve });
       } else {
-        resolver();
+        resolve();
       }
     },
 
@@ -84,7 +83,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         }));
       }
 
-      while(get().resolve.createStage[stageKey]?.pop?.());
+      get().resolvers.filter(x => x.stageKey === stageKey)
+        .forEach(({ resolve }) => resolve());
+      get().resolvers = get().resolvers.filter(x => x.stageKey !== stageKey);
     },
 
     getPersist: (stageKey) => {
@@ -130,8 +131,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 0,
-  blacklist: ['api', 'stage', 'resolve'],
+  version: 1,
+  blacklist: ['api', 'stage', 'resolvers'],
   onRehydrateStorage: (_) =>  {
     return () => {
       useStageStore.setState({ rehydrated: true });

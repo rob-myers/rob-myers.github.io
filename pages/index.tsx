@@ -33,7 +33,6 @@ export default function IndexPage() {
           </Section>
 
           <section>
-            {/* <Stage stageKey="test" /> */}
             <Env>
               <Stage stageKey="test" />
               <Terminal
@@ -45,6 +44,7 @@ export default function IndexPage() {
               />
               <CodeEditor />
             </Env>
+            {/* <Stage stageKey="test" /> */}
           </section>
         </div>
       </Main>
