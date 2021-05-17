@@ -72,11 +72,11 @@ Adding quotes permits space e.g. `scene.children.map'(x => x.name)'`
 See the [code library](../model/sh/code-library.ts).
 
 ```sh
-call '(_, ...args) => args' 1 2 3
+call '({args}) => args' 1 2 3
 call '({ use: {THREE} }) => new THREE.SpotLight'
 
-poll | run '({ read, _: {msg} }) { while (msg = await read()) yield* ["hi", msg]; }'
-run '({ spawn }) { yield* await spawn("ls /stage.opt") }'
+poll | run '({ api: {read}, _: {msg} }) { while (msg = await read()) yield* ["hi", msg]; }'
+run '({ api:{spawn} }) { yield* await spawn("ls /stage.opt") }'
 
 scene.children.map'(x => x.name)'
 ```

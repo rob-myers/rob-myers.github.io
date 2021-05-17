@@ -91,9 +91,7 @@ class CmdService {
     switch (command) {
       case 'call': {
         const func = Function('__', `return ${args[0]}`);
-        yield await func()(
-          this.provideStageAndVars(meta, args.slice(1)),
-        );
+        yield await func()(this.provideProcessCtxt(meta, args.slice(1)));
         break;
       }
       case 'cd': {
@@ -124,7 +122,7 @@ class CmdService {
             const parts = ['__'].concat(args[0][0] === '/'
               ? [args[0].slice(1)]
               : currPwd ? [currPwd, args[0]] : [args[0]]);
-            const root = this.provideStageAndVars(meta);
+            const root = this.provideProcessCtxt(meta);
             const dst = Function('__', `return ${parts.join('.')}`)(root);
             if (dst) {
               useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
@@ -259,7 +257,7 @@ class CmdService {
           'r', /** Recursive properties (prototype) */
           'a', /** Show caps keys at root? */
         ], });
-        const root = this.provideStageAndVars(meta);
+        const root = this.provideProcessCtxt(meta);
         const cwd = this.computeCwd(meta, root);
 
         // We usually treat -1 as a numeric operand, but it is an option here
@@ -304,7 +302,7 @@ class CmdService {
         ], });
         const funcDef = operands[0];
         const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
-        yield* this.read(meta, (data) => func()(data, this.provideStageAndVars(meta)));
+        yield* this.read(meta, (data) => func()(data, this.provideProcessCtxt(meta)));
         break;
       }
       case 'poll': {
@@ -364,7 +362,7 @@ class CmdService {
         break;
       }
       case 'rm': {
-        const root = this.provideStageAndVars(meta);
+        const root = this.provideProcessCtxt(meta);
         const cwd = this.computeCwd(meta, root);
         for (const arg of args) {
           if (arg === '/') {
@@ -380,14 +378,11 @@ class CmdService {
       /** e.g. run '({ read }) { yield "foo"; yield await read(); }' */
       case 'run': {
         const func = Function('_', `return async function *generator ${args[0]}`);
-        yield* func()(
-          this.provideRunApi(meta),
-          this.provideStageAndVars(meta, args.slice(1)),
-        );
+        yield* func()(this.provideProcessCtxt(meta, args.slice(1)));
         break;
       }
       case 'set': {
-        const root = this.provideStageAndVars(meta);
+        const root = this.provideProcessCtxt(meta);
         const value = this.parseJsArg(args[1]);
         if (args[0][0] === '/') {
           Function('__1', '__2', `return __1.${args[0].slice(1)} = __2`)(root, value);
@@ -440,7 +435,7 @@ class CmdService {
 
   get(node: Sh.BaseNode, args: string[]) {
     try {
-      const root = this.provideStageAndVars(node.meta);
+      const root = this.provideProcessCtxt(node.meta);
       const cwd = this.computeCwd(node.meta, root);
       const outputs = args.map(arg => {
         if (arg[0] === '/') return Function('__', `return __.${arg.slice(1)}`)(root);
@@ -471,7 +466,7 @@ class CmdService {
     await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
 
-  private provideRunApi(meta: Sh.BaseMeta) {
+  private provideProcessApi(meta: Sh.BaseMeta) {
     return {
       // We convert { eof: true } to null, for truthy test
       read: async () => {
@@ -492,25 +487,25 @@ class CmdService {
         useSession.api.removeDevice(device.key);
         return device.items.slice();
       },
-      /** Trick to provide local variables via destructuring */
-      _: {},
     };
   }
 
-  private provideStageAndVars(meta: Sh.BaseMeta, posPositionals: string[] = []): {
-    stage: StageMeta;
-    use: any;
-  } & Record<string, any> {
+  private provideProcessCtxt(meta: Sh.BaseMeta, posPositionals: string[] = []) {
     const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
     const varLookup = useSession.api.getSession(meta.sessionKey).var;
     return new Proxy({
       ...varLookup,
-      args: posPositionals,
       stage: createStageProxy(stageKey),
       use: this.useProxy,
     }, {
+      get: (_, key) => {
+        if (key === 'args') return posPositionals;
+        else if (key === 'api') return this.provideProcessApi(meta);
+        // Trick to provide local variables via destructuring
+        else if (key === '_') return {};
+        return (_ as any)[key];
+      },
       deleteProperty: (_, key: string) => {
-        if (['args', 'stage', 'use'].includes(key)) return false;
         return delete varLookup[key];
       },
     });

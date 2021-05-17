@@ -36,7 +36,7 @@ export const shellScripts = {
 
   optsKeyHandler: `
 # options key handler
-key | run '({ read, _: {msg} }, { stage: { opt } }) {
+key | run '({ api: {read}, _: {msg}, stage: {opt} }) {
   while (msg = await read()) {
     if (msg.type !== "keydown" || !opt.enabled) continue;
     switch (msg.key) {
