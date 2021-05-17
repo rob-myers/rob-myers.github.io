@@ -5,4 +5,5 @@ export const Section = styled.section<{}>`
   border: 1px solid #ddd;
   padding: 18px;
   margin-bottom: 24px;
+  font-size: 20px;
 `;

@@ -26,7 +26,10 @@ export default function IndexPage() {
           <Header />
 
           <Section>
-            ok
+            I remember first controlling the pixels of a long since discarded television.
+            A grey button of a ZX Spectrum was pressed, and the avatar moved.
+            So virtual words exist.
+            They can be created.
           </Section>
 
           <section>
@@ -60,6 +63,9 @@ const Main = styled.main<{}>`
   }
   @media(max-width: 800px) {
     margin: 0;
+  }
+  > div {
+    max-width: 1000px;
   }
 `;
 
