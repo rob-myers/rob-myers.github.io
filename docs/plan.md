@@ -5,15 +5,14 @@
 - ✅ show stage using react-reverse-portal
 - ✅ remove react-reverse-portal,
 - ✅ `stage.scene` available when stage disabled
-- `stage.ctrl` available when stage disabled?
+- `stage.ctrl` available when stage disabled
+- cleaner camera initialization
 - can specify one `Stage` is active
-- can change active `Stage`
 - `WrappedStage` enforces one-at-a-time
 - `WrappedStage` has own persisted placeholder/camera angle
 
 - write outline of 1st post i.e. walkthrough up to movable bots
   - render some markdown
-- Stop redux devtools from crashing
 
 - can define shell fns via syntax-highlighted js text
   - a separate component which can change a session
@@ -31,6 +30,11 @@
 
 - Add `xbcopy` i.e. copy to clipboard
 - Error messages prefixed by function chain
+- stop redux devtools from crashing
+- handle persist in multiple tabs?
+  > https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event
+- e.g. warn and turn persist off
+- need "checkpoints": persist only needed for temporary experimentation
 
 ### BUG
 

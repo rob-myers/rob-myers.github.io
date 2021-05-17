@@ -40,9 +40,10 @@ const Subtitle = styled.div<{}>`
   letter-spacing: 1px;
 
   border-radius: 5px;
-  padding: 6px 10px;
-  border: #bcc 1px solid;
-  color: #777;
+  padding: 8px;
+  border: #aaa 1px solid;
+  color: #666;
+  font-family: sans-serif;
   background-image: linear-gradient(45deg, #ededed 3.85%, #ffffff 3.85%, #ffffff 50%, #ededed 50%, #ededed 53.85%, #ffffff 53.85%, #ffffff 100%);
   background-size: 8.38px 8.38px;
 
