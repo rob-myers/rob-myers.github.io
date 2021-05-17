@@ -69,12 +69,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           loadJson<THREE.Scene>(extra.sceneJson).then((scene) => {
             // console.warn('Loaded json scene', scene);
             s.extra.bgScene = scene;
-            s.extra.group = scene.children[1] as THREE.Group || getPlaceholderGroup();
+            s.extra.sceneGroup = scene.children[1] as THREE.Group || getPlaceholderGroup();
             set(({ stage }) => ({ stage: addToLookup(s, stage) }));
           });
         } else {
           s.extra.bgScene.add(createThreeGroup("Helpers"));
-          s.extra.group = getPlaceholderGroup();
+          s.extra.sceneGroup = getPlaceholderGroup();
           set(({ stage }) => ({ stage: addToLookup(s, stage) }));
         }
 

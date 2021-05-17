@@ -13,14 +13,19 @@ export type StageMeta = {
   opt: StageOpts;
   /** Attached by `Stage` */
   ctrl?: Controls;
-  /** Attached by Stage or stage.extra.bgStage */
+  /** The current scene (running or background) */
   scene: THREE.Scene;
 };
 
 export interface StageMetaJson {
   key: string;
   opt: StageOpts;
-  extra: Omit<StageExtra, 'keyEvent' | 'ptrEvent' | 'bgScene' | 'group'>;
+  extra: Omit<StageExtra, (
+    | 'keyEvent'
+    | 'ptrEvent'
+    | 'bgScene'
+    | 'sceneGroup'
+  )>;
 }
 
 /** Key-value storage for internal use */
@@ -32,14 +37,17 @@ export interface StageExtra {
   initCamTarget: Triple<number>;
   initCamZoom: number;
 
-  /** Serialized group containing everything except helpers */
+  /** Serialized scene */
   sceneJson?: ThreeJson;
-  /** Restored "Persisted" group */
-  group: THREE.Group;
   /**
-   * Three.js Scene provided to CLI when stage is disabled.
-   * We also used it to rehydrate the live scene.
-   * Children can only be in one scene at a time.
+   * The 2nd child of the restored scene.
+   * NOTE 1st child consists of helpers. 
+   */
+  sceneGroup: THREE.Group;
+  /**
+   * Used to rehydrate live scene.
+   * Provided to CLI when stage is disabled.
+   * NOTE objects can only be in one scene at a time.
    */
   bgScene: THREE.Scene;
 
@@ -67,7 +75,7 @@ export function createStage(stageKey: string): StageMeta {
       initCamZoom: initCameraZoom,
       keyEvent: new Subject,
       ptrEvent: new Subject,
-      group: new THREE.Group,
+      sceneGroup: new THREE.Group,
       bgScene,
     },
     opt: createStageOpts(),

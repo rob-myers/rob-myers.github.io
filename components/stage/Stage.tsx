@@ -140,7 +140,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
           <primitive
             name="Persisted"
-            object={stage.extra.group}
+            object={stage.extra.sceneGroup}
           />
         </CanvasRoot>
 
