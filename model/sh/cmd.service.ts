@@ -260,9 +260,7 @@ class CmdService {
         const root = this.provideProcessCtxt(meta);
         const cwd = this.computeCwd(meta, root);
 
-        // We usually treat -1 as a numeric operand, but it is an option here
-        const queries = operands.filter(x => !x.startsWith('-'));
-        if (!queries.length) queries.push('');
+        const queries = operands.length ? operands.slice() : [''];
         const roots = queries.map(x => {
           if (x[0] === '/') {
             return x.slice(1) ? Function('__', `return __.${x.slice(1)}`)(root) : root;

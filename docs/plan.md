@@ -6,7 +6,7 @@
 - ✅ remove react-reverse-portal,
 - ✅ `stage.scene` available when stage disabled
 - ✅ `stage.ctrl` available when stage disabled
-- cleaner camera initialization
+- ✅ cleaner camera initialization
 - can specify one `Stage` is active
 - `WrappedStage` enforces one-at-a-time
 - `WrappedStage` has own persisted placeholder/camera angle

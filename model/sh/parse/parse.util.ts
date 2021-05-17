@@ -92,8 +92,7 @@ export function getChildren(node: Sh.ParsedSh): Sh.ParsedSh[] {
 export function getOpts(args: string[], options?: getopts.Options) {
   return {
     opts: simplifyGetOpts(getopts(args, options)),
-    // Include options starting with a number to permit negative integers
-    operands: args.filter(x => x[0] !== '-' || !isNaN(x[1] as any)),
+    operands: args.filter(x => x[0] !== '-'),
   };
 }
 
