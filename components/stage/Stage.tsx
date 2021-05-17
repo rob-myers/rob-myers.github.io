@@ -23,14 +23,14 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
     everUsed.current = true;
     stage.ctrl.setDomElement(ctxt.gl.domElement);
+    stage.scene = ctxt.scene;
+    stage.scene.copy(stage.extra.bgScene, false);
 
     ctxt.gl.shadowMap.enabled = true;
     ctxt.gl.shadowMap.autoUpdate = false;
     ctxt.gl.shadowMap.type = THREE.PCFSoftShadowMap;
     ctxt.gl.shadowMap.needsUpdate = true;
 
-    stage.scene = ctxt.scene;
-    stage.scene.copy(stage.extra.bgScene, false);
     setCtxt(ctxt);
   }, [stage, ctxt]);
 
@@ -50,32 +50,35 @@ const Stage: React.FC<Props> = ({ stage }) => {
     }
   }, [stage.opt.enabled]);
 
-  const ptrWire = stage.extra.ptrEvent;
-  const onPointer = useCallback((e: ThreeEvent<PointerEvent>) =>
-    ptrWire.next({ key: e.type as any, point: e.point }), []);
-  const onPointerOut = useCallback((e: ThreeEvent<PointerEvent>) =>
-    ptrWire.next({ key: 'pointerleave', point: e.point }), []);
-  const focusOnMouseOver = useCallback((e: React.MouseEvent<HTMLElement>) =>
-    stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(), [stage.opt]);
-
-  const keyWire = stage.extra.keyEvent;
-  const onKey = useCallback((e: React.KeyboardEvent<HTMLElement>) => {
-    keyWire?.next({
-      key: e.key,
-      type: e.type as any,
-      metaKey: e.metaKey,
-      shiftKey: e.shiftKey,
-    });
-  }, [keyWire]);
+  const on = useMemo(() => {
+    const ptrWire = stage.extra.ptrEvent;
+    const keyWire = stage.extra.keyEvent;
+    return {
+      pointer: (e: ThreeEvent<PointerEvent>) =>
+        ptrWire.next({ key: e.type as any, point: e.point }),
+      pointerOut: (e: ThreeEvent<PointerEvent>) =>
+        ptrWire.next({ key: 'pointerleave', point: e.point }),
+      mouseOver: (e: React.MouseEvent<HTMLElement>) =>
+        stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(),
+      key: (e: React.KeyboardEvent<HTMLElement>) => {
+        keyWire?.next({
+          key: e.key,
+          type: e.type as any,
+          metaKey: e.metaKey,
+          shiftKey: e.shiftKey,
+        });
+      },
+    };
+  }, [stage.opt]);
 
   const Helpers = useMemo(() =>
     <group name="Helpers">
       <mesh
         name="PointerPlane"
-        onPointerDown={onPointer}
-        onPointerMove={onPointer}
-        onPointerUp={onPointer}
-        onPointerOut={onPointerOut}
+        onPointerDown={on.pointer}
+        onPointerMove={on.pointer}
+        onPointerUp={on.pointer}
+        onPointerOut={on.pointerOut}
         visible={false}
         rotation={[-Math.PI/2, 0, 0]}
       >
@@ -92,9 +95,9 @@ const Stage: React.FC<Props> = ({ stage }) => {
     <Root
       tabIndex={0} // For key events
       background="#fff"
-      onKeyDown={onKey}
-      onKeyUp={onKey}
-      onMouseOver={focusOnMouseOver}
+      onKeyDown={on.key}
+      onKeyUp={on.key}
+      onMouseOver={on.mouseOver}
     >
       <StageToolbar
         stageKey={stage.key}
