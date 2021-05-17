@@ -20,20 +20,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const [ctxt, setCtxt] = useState(null as null | CanvasContext);
   const everUsed = useRef(false);
 
-  const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
-    everUsed.current = true;
-    stage.ctrl.setDomElement(ctxt.gl.domElement);
-    stage.scene = ctxt.scene;
-    stage.scene.copy(stage.extra.bgScene, false);
-
-    ctxt.gl.shadowMap.enabled = true;
-    ctxt.gl.shadowMap.autoUpdate = false;
-    ctxt.gl.shadowMap.type = THREE.PCFSoftShadowMap;
-    ctxt.gl.shadowMap.needsUpdate = true;
-
-    setCtxt(ctxt);
-  }, [stage, ctxt]);
-
   useEffect(() => {
     if (ctxt?.gl && !stage.opt.enabled) {// Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
@@ -54,6 +40,19 @@ const Stage: React.FC<Props> = ({ stage }) => {
     const ptrWire = stage.extra.ptrEvent;
     const keyWire = stage.extra.keyEvent;
     return {
+      createdCanvas: (ctxt: CanvasContext) => {
+        everUsed.current = true;
+        stage.ctrl.setDomElement(ctxt.gl.domElement);
+        stage.scene = ctxt.scene;
+        stage.scene.copy(stage.extra.bgScene, false);
+    
+        ctxt.gl.shadowMap.enabled = true;
+        ctxt.gl.shadowMap.autoUpdate = false;
+        ctxt.gl.shadowMap.type = THREE.PCFSoftShadowMap;
+        ctxt.gl.shadowMap.needsUpdate = true;
+    
+        setCtxt(ctxt);
+      },
       pointer: (e: ThreeEvent<PointerEvent>) =>
         ptrWire.next({ key: e.type as any, point: e.point }),
       pointerOut: (e: ThreeEvent<PointerEvent>) =>
@@ -69,7 +68,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
         });
       },
     };
-  }, [stage.opt]);
+  }, [stage.opt, ctxt]);
 
   const Helpers = useMemo(() =>
     <group name="Helpers">
@@ -109,7 +108,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
         <CanvasRoot
           fadeIn={stage.opt.enabled}
           dpr={getWindow()!.devicePixelRatio}
-          onCreated={onCreatedCanvas}
+          onCreated={on.createdCanvas}
           camera={stage.extra.sceneCamera}
         >
           {stage.ctrl && <CameraControls
