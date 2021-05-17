@@ -7,7 +7,7 @@ const Header: React.FC = () => {
     </Title>
   
     <Subtitle>
-      Bot behaviour, step by step
+      Building bot behaviour, step by step
     </Subtitle>
   </>;
 };
@@ -40,9 +40,11 @@ const Subtitle = styled.div<{}>`
   letter-spacing: 1px;
 
   border-radius: 5px;
-  padding: 10px;
-  background: #ddd;
-  color: #444;
+  padding: 6px 10px;
+  border: #bcc 1px solid;
+  color: #777;
+  background-image: linear-gradient(45deg, #ededed 3.85%, #ffffff 3.85%, #ffffff 50%, #ededed 50%, #ededed 53.85%, #ffffff 53.85%, #ffffff 100%);
+  background-size: 8.38px 8.38px;
 
   @media(max-width: 1248px) {
     margin-bottom: 2rem;
