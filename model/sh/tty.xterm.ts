@@ -533,6 +533,11 @@ export class TtyXterm {
           break;
         }
         case 'newline': {
+          // Might have pressed enter on earlier line in multiline input
+          let { row: currentRow } = this.offsetToColRow(this.input, this.cursor);
+          const { row: finalRow } = this.offsetToColRow(this.input, this.input.length);
+          while (currentRow++ < finalRow) this.xterm.write('\r\n');
+
           this.xterm.write('\r\n');
           this.trackCursorRow(+1);
           this.sendLine();

@@ -375,7 +375,7 @@ class CmdService {
         }
         break;
       }
-      /** e.g. run '({ read }) { yield "foo"; yield await read(); }' */
+      /** e.g. run '({ api:{read} }) { yield "foo"; yield await read(); }' */
       case 'run': {
         const func = Function('_', `return async function *generator ${args[0]}`);
         yield* func()(this.provideProcessCtxt(meta, args.slice(1)));
