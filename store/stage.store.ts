@@ -3,9 +3,10 @@ import { devtools, persist } from 'zustand/middleware';
 import * as THREE from 'three';
 
 import { deepClone, KeyedLookup } from 'model/generic.model';
-import { vectorToTriple, loadJson, getPlaceholderGroup, createThreeGroup } from 'model/3d/three.model';
+import { vectorToTriple, loadJson, getPlaceholderGroup } from 'model/3d/three.model';
 import * as Stage from 'model/stage/stage.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
+import { Controls } from 'model/3d/controls';
 
 export type State = {
   stage: KeyedLookup<Stage.StageMeta>;
@@ -57,26 +58,24 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         // Restore persisted data
         const s = Stage.createStage(stageKey);
         const { opt, extra } = api.getPersist(stageKey);
-        s.opt = deepClone(opt??Stage.createStageOpts());
 
-        s.extra.initCamPos = extra.initCamPos || Stage.initCameraPos;
-        s.extra.initCamTarget = extra.initCamTarget || Stage.initCameraPos;
-        s.extra.initCamZoom = extra.initCamZoom || Stage.initCameraZoom;
+        s.opt = deepClone(opt??Stage.createStageOpts());
         s.extra.canvasPreview = extra.canvasPreview;
-        s.extra.sceneJson = extra.sceneJson;
-        
-        if (extra.sceneJson) {// Restore scene
-          loadJson<THREE.Scene>(extra.sceneJson).then((scene) => {
-            // console.warn('Loaded json scene', scene);
-            s.extra.bgScene = scene;
-            s.extra.sceneGroup = scene.children[1] as THREE.Group || getPlaceholderGroup();
-            set(({ stage }) => ({ stage: addToLookup(s, stage) }));
-          });
-        } else {
-          s.extra.bgScene.add(createThreeGroup("Helpers"));
-          s.extra.sceneGroup = getPlaceholderGroup();
+
+        Promise.all([
+          loadJson<THREE.Scene>(extra.sceneJson),
+          loadJson<THREE.PerspectiveCamera | THREE.OrthographicCamera>(extra.cameraJson),
+        ]).then(([scene, camera]) => {
+          // console.warn('Loaded json scene & camera', scene, camera);
+          s.extra.bgScene = scene;
+          s.extra.sceneGroup = scene.children[1] as THREE.Group || getPlaceholderGroup();
+          s.extra.sceneCamera = camera;
+
+          s.ctrl = Stage.initializeControls(new Controls(camera));
+          s.ctrl.target.set(...extra.camTarget);
+
           set(({ stage }) => ({ stage: addToLookup(s, stage) }));
-        }
+        });
 
       } else {
         set(({ stage, persist }) => ({
@@ -99,21 +98,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     persist: (stageKey) => {
       const { ctrl, opt, extra, scene } = api.getStage(stageKey);
 
-      // TODO persist camera?
-      const currCamTarget = ctrl?.target ? vectorToTriple(ctrl.target) : null;
-      const currCamPos = ctrl?.camera?.position ? vectorToTriple(ctrl.camera.position) : null;
-      const currCamZoom = ctrl?.camera?.zoom;
-
-      set(({ persist, persist: { [stageKey]: prev } }) => ({ persist: addToLookup({
+      set(({ persist }) => ({ persist: addToLookup({
         key: stageKey,
         opt: deepClone(opt),
           extra: {
             canvasPreview: extra.canvasPreview,
-            initCamPos: [...currCamPos || prev.extra.initCamPos || extra.initCamPos],
-            initCamTarget: [...currCamTarget || prev.extra.initCamTarget || extra.initCamTarget],
-            initCamZoom: (currCamZoom??(prev.extra.initCamZoom || extra.initCamZoom)),
-
             sceneJson: scene.toJSON(),
+            cameraJson: ctrl?.camera.toJSON(),
+            camTarget: vectorToTriple(ctrl.target),
           },
         }, persist),
       }));
@@ -138,7 +130,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
   },
 }), {
   name: 'stage',
-  version: 1,
+  version: 0,
   blacklist: ['api', 'stage', 'resolve'],
   onRehydrateStorage: (_) =>  {
     return () => {

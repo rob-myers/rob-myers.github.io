@@ -67,7 +67,7 @@ export function getPlaceholderGroup() {
   group.add(light);
   const mesh = new THREE.Mesh(
     new THREE.BoxGeometry(),
-    new THREE.MeshStandardMaterial({ color: new THREE.Color('#ff0000')}),
+    new THREE.MeshStandardMaterial({ color: new THREE.Color('#0000ff')}),
     );
   mesh.position.setY(0.5);
   mesh.name = "TempCube";

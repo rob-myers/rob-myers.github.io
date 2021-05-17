@@ -7,7 +7,6 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 
 import type { StageMeta } from "model/stage/stage.model";
-import { Controls } from "model/3d/controls";
 import { getWindow } from "model/dom.model";
 import useStage from "store/stage.store";
 
@@ -22,27 +21,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const everUsed = useRef(false);
 
   const onCreatedCanvas = useCallback((ctxt: CanvasContext) => {
-    const camera = ctxt.camera as THREE.OrthographicCamera | THREE.PerspectiveCamera;
-    const { initCamZoom, initCamPos, initCamTarget } = useStage.api.getPersist(stage.key).extra;
     everUsed.current = true;
-
-    camera.position.set(...initCamPos);
-    const ctrl = new Controls(camera, ctxt.gl.domElement);
-    ctrl.target.set(...initCamTarget);
-    ctrl.maxPolarAngle = Math.PI / 4;
-    [ctrl.minZoom, ctrl.maxZoom] = [5, 60];
-    [ctrl.minDistance, ctrl.maxDistance] = [5, 80];
-    ctrl.screenSpacePanning = false;
-    ctrl.enableDamping = true;
-
-    if (camera.type === 'OrthographicCamera') {
-      camera.zoom = initCamZoom;
-      camera.near = initCamPos[2] - 1000;
-    } else {
-      camera.setFocalLength(24);
-      camera.near = 1;
-    }
-    camera.updateProjectionMatrix();
+    stage.ctrl.setDomElement(ctxt.gl.domElement);
 
     ctxt.gl.shadowMap.enabled = true;
     ctxt.gl.shadowMap.autoUpdate = false;
@@ -51,9 +31,8 @@ const Stage: React.FC<Props> = ({ stage }) => {
 
     stage.scene = ctxt.scene;
     stage.scene.copy(stage.extra.bgScene, false);
-    stage.ctrl = ctrl;
     setCtxt(ctxt);
-  }, [stage]);
+  }, [stage, ctxt]);
 
   useEffect(() => {
     if (ctxt?.gl && !stage.opt.enabled) {// Detected stage disable
@@ -67,7 +46,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
       stage.extra.bgScene.copy(ctxt.scene, false);
       stage.scene = stage.extra.bgScene;
 
-      delete stage.ctrl;
       setCtxt(null);
     }
   }, [stage.opt.enabled]);
@@ -129,7 +107,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
           fadeIn={stage.opt.enabled}
           dpr={getWindow()!.devicePixelRatio}
           onCreated={onCreatedCanvas}
-          // orthographic
+          camera={stage.extra.sceneCamera}
         >
           {stage.ctrl && <CameraControls
             controls={stage.ctrl}

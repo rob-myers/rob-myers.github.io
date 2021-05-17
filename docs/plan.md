@@ -5,7 +5,7 @@
 - ✅ show stage using react-reverse-portal
 - ✅ remove react-reverse-portal,
 - ✅ `stage.scene` available when stage disabled
-- `stage.ctrl` available when stage disabled
+- ✅ `stage.ctrl` available when stage disabled
 - cleaner camera initialization
 - can specify one `Stage` is active
 - `WrappedStage` enforces one-at-a-time
