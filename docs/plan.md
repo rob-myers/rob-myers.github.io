@@ -3,13 +3,16 @@
 ### TODO
 
 - How are Stage/Terminal/Code laid out on a page?
-  - can specify one `Stage` is active
-  - `WrappedStage` enforces one-at-a-time
-  - `WrappedStage` has own persisted placeholder/camera angle
-  - can define shell fns via syntax-highlighted js text
-    - a separate component which can change a session
-    - `function foo({ use: {THREE} }) {}` becomes `call`
-    - `async function* foo({ read }, { use }) {}` becomes `run`
+  - disable stage on scroll out of view 
+  - each `Stage` has different `stageKey`
+  - can choose if persist `Stage`
+  - ✅ store stage data under different keys
+  - each `Terminal` has different `sessionKey`
+
+- can define shell fns via syntax-highlighted js text
+  - a separate component which can change a session
+  - `function foo({ use: {THREE} }) {}` becomes `call`
+  - `async function* foo({ read }, { use }) {}` becomes `run`
 
 - write outline of 1st post i.e. walkthrough up to movable bots
   - render some markdown

@@ -3,12 +3,10 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import useStage from "store/stage.store";
 
-const Placeholder: React.FC<Props> = ({ stageKey, everUsed }) => {
+const Placeholder: React.FC<Props> = ({ stageKey, everUsed, dataUrl }) => {
   const enableStage = useCallback(() =>
     useStage.api.updateOpt(stageKey, { enabled: true })
   , [stageKey]);
-
-  const dataUrl = useStage(({ persist }) => persist[stageKey].extra.canvasPreview);
 
   return (
     <Root>
@@ -28,6 +26,7 @@ const Placeholder: React.FC<Props> = ({ stageKey, everUsed }) => {
 
 interface Props {
   stageKey: string;
+  dataUrl?: string;
   everUsed: boolean;
 }
 

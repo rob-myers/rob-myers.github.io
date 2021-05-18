@@ -2,7 +2,7 @@ import { Subject } from "rxjs";
 import * as THREE from "three";
 import { Triple } from "model/generic.model";
 import { Controls } from "model/3d/controls";
-import { ThreeJson } from "model/3d/three.model";
+import { createPlaceholderGroup, ThreeJson } from "model/3d/three.model";
 
 export type StageMeta = {
   key: string;
@@ -24,6 +24,8 @@ export interface StageMetaJson {
 
 /** Key-value storage for internal use */
 export interface StageExtra {
+  /** Stage image data url */
+  canvasPreview?: string;
   /**
    * Second child of scene restored from `sceneJson`.
    * The 1st child consists of helpers. 
@@ -36,7 +38,6 @@ export interface StageExtra {
    * NOTE objects can only be in one scene at a time.
    */
   bgScene: THREE.Scene;
-
   /** Keyboard events sent by `Stage` */
   keyEvent: Subject<StageKeyEvent>;
   /** Mouse events sent by `Stage` */
@@ -44,10 +45,10 @@ export interface StageExtra {
 }
 
 export interface StageExtraJson {
-  /** Data url */
+  /** Stage image data url */
   canvasPreview?: string;
+  /** Camera's target */
   camTarget: Triple<number>;
-
   /** Serialized camera */
   cameraJson: ThreeJson;
   /** Serialized scene */
@@ -68,7 +69,8 @@ export function createStage(stageKey: string): StageMeta {
   return {
     key: stageKey,
     extra: {
-      sceneGroup: new THREE.Group,
+      canvasPreview: undefined,
+      sceneGroup: createPlaceholderGroup(),
       sceneCamera,
       bgScene,
       keyEvent: new Subject,
@@ -88,18 +90,6 @@ export function createStageOpts(): StageOpts {
 }
 
 export const stageOptKeys = Object.keys(createStageOpts());
-
-export function createPersist(stageKey: string): StageMetaJson {
-  return {
-    key: stageKey,
-    opt: createStageOpts(),
-    extra: {
-      camTarget: [0, 0, 0],
-      cameraJson: (new THREE.PerspectiveCamera).toJSON(),
-      sceneJson: (new THREE.Scene).toJSON(),
-    },
-  };
-}
 
 export type StageKeyEvent = Pick<KeyboardEvent, (
   | 'key'

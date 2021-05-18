@@ -1,8 +1,9 @@
 import create from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 import * as THREE from 'three';
 
 import { deepClone, KeyedLookup } from 'model/generic.model';
+import { getWindow } from 'model/dom.model';
 import { vectorToTriple, loadJson, createPlaceholderGroup } from 'model/3d/three.model';
 import * as Stage from 'model/stage/stage.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
@@ -15,23 +16,19 @@ export type State = {
   resolvers: { stageKey: string; resolve: () => void }[];
   /** Stages */
   stage: KeyedLookup<Stage.StageMeta>;
-  /** Persisted stages */
-  persist: KeyedLookup<Stage.StageMetaJson>;
 
   readonly api: {
     awaitStage: (stageKey: string, resolver: () => void) => Promise<void>;
-    /** Get or rehydrate stage */
-    ensureStage: (stageKey: string) => void;
-    getPersist: (stageKey: string) => Stage.StageMetaJson;
     getStage: (stageKey: string) => Stage.StageMeta;
     persist: (stageKey: string) => void;
+    rehydrate: (stageKeys: string[]) => void;
     removeStage: (stageKey: string) => void;
     updateOpt: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
     updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
   }
 }
 
-const useStore = create<State>(devtools(persist((set, get) => ({
+const useStore = create<State>(devtools((set, get) => ({
   persistOnUnload: true,
   rehydrated: false,
   resolvers: [],
@@ -49,67 +46,68 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }
     },
 
-    ensureStage: (stageKey) => {
-      if (get().stage[stageKey]) {
-        return;
-      }
-      
-      if (get().persist[stageKey]) {
-        // Restore persisted data
-        const s = Stage.createStage(stageKey);
-        const { opt, extra } = api.getPersist(stageKey);
-        s.opt = deepClone(opt??Stage.createStageOpts());
-
-        Promise.all([
-          loadJson<THREE.Scene>(extra.sceneJson),
-          loadJson<THREE.PerspectiveCamera | THREE.OrthographicCamera>(extra.cameraJson),
-        ]).then(([scene, camera]) => {
-          // console.warn('Loaded json scene & camera', scene, camera);
-          s.extra.bgScene = scene;
-          s.extra.sceneGroup = scene.children[1] as THREE.Group || createPlaceholderGroup();
-          s.extra.sceneCamera = camera;
-
-          s.ctrl = Stage.initializeControls(new Controls(camera));
-          s.ctrl.target.set(...extra.camTarget);
-
-          set(({ stage }) => ({ stage: addToLookup(s, stage) }));
-        });
-
-      } else {
-        set(({ stage, persist }) => ({
-          stage: addToLookup(Stage.createStage(stageKey), stage),
-          persist: addToLookup(Stage.createPersist(stageKey), persist),
-        }));
-      }
-
-      get().resolvers.filter(x => x.stageKey === stageKey)
-        .forEach(({ resolve }) => resolve());
-      get().resolvers = get().resolvers.filter(x => x.stageKey !== stageKey);
-    },
-
-    getPersist: (stageKey) => {
-      return get().persist[stageKey];
-    },
-
     getStage: (stageKey) => {
       return get().stage[stageKey];
     },
 
     persist: (stageKey) => {
-      const { ctrl, opt, scene } = api.getStage(stageKey);
-      const canvasPreview = ctrl.domElement?.toDataURL();
+      const { ctrl, opt, scene, extra } = api.getStage(stageKey);
 
-      set(({ persist }) => ({ persist: addToLookup({
+      const stageJson: Stage.StageMetaJson = {
         key: stageKey,
         opt: deepClone(opt),
-          extra: {
-            canvasPreview,
-            sceneJson: scene.toJSON(),
-            cameraJson: ctrl?.camera.toJSON(),
-            camTarget: vectorToTriple(ctrl.target),
-          },
-        }, persist),
-      }));
+        extra: {
+          canvasPreview: extra.canvasPreview,
+          sceneJson: scene.toJSON(),
+          cameraJson: ctrl?.camera.toJSON(),
+          camTarget: vectorToTriple(ctrl.target),
+        },
+      };
+      const serialized = JSON.stringify({ state: stageJson });
+
+      localStorage.setItem(`${stageKey}@stage`, serialized);
+      // set({});
+    },
+
+    rehydrate: (stageKeys) => {
+      if (!getWindow()) return;
+
+      for (const stageKey of stageKeys) {
+        const storageValue = localStorage.getItem(`${stageKey}@stage`);
+       
+        if (storageValue) {
+          const { state } = JSON.parse(storageValue) as { state: Stage.StageMetaJson };
+          const { opt, extra } = state;
+
+          const s = Stage.createStage(stageKey);
+          s.opt = deepClone(opt??Stage.createStageOpts());
+
+          Promise.all([
+            loadJson<THREE.Scene>(extra.sceneJson),
+            loadJson<THREE.PerspectiveCamera | THREE.OrthographicCamera>(extra.cameraJson),
+          ]).then(([scene, camera]) => {
+            // console.info('Loaded json scene & camera', scene, camera);
+            s.extra.bgScene = scene;
+            s.extra.sceneGroup = scene.children[1] as THREE.Group || createPlaceholderGroup();
+            s.extra.sceneCamera = camera;
+            s.extra.canvasPreview = extra.canvasPreview;
+  
+            s.ctrl = Stage.initializeControls(new Controls(camera));
+            s.ctrl.target.set(...extra.camTarget);
+  
+            set(({ stage }) => ({ stage: addToLookup(s, stage) }));
+          });
+
+        } else {
+          set(({ stage }) => ({ stage: addToLookup(Stage.createStage(stageKey), stage) }));
+        }
+
+        // Awaken anything waiting
+        get().resolvers.filter(x => x.stageKey === stageKey).forEach(({ resolve }) => resolve());
+        get().resolvers = get().resolvers.filter(x => x.stageKey !== stageKey);
+      }
+
+      set(() => ({ rehydrated: true }));
     },
 
     removeStage: (stageKey) => set(({ stage }) => ({
@@ -128,15 +126,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       }));
     },
 
-  },
-}), {
-  name: 'stage',
-  version: 1,
-  blacklist: ['api', 'stage', 'resolvers'],
-  onRehydrateStorage: (_) =>  {
-    return () => {
-      useStageStore.setState({ rehydrated: true });
-    };
   },
 }), 'stage'));
 
