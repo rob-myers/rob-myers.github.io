@@ -56,16 +56,19 @@ const Main = styled.main<{}>`
   display: flex;
   justify-content: center;
   padding-bottom: 2rem;
+  > div {
+    max-width: 1000px;
+  }
 
   @media(max-width: 1024px) {
     margin: 0 3rem;
     justify-content: unset;
+    > div {
+      max-width: 800px;
+    }
   }
   @media(max-width: 800px) {
     margin: 0;
-  }
-  > div {
-    max-width: 1000px;
   }
 `;
 
