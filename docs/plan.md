@@ -2,13 +2,6 @@
 
 ### TODO
 
-- How are Stage/Terminal/Code laid out on a page?
-  - ✅ disable stage on scroll out of view 
-  - ✅ can choose if persist `Stage`
-  - ✅ store stage data under different keys
-  - ✅ (convention) each `Stage` has different `stageKey`
-  - ✅ (convention) each `Terminal` has different `sessionKey`
-
 - can define shell fns via syntax-highlighted js text
   - a separate component which can change a session
   - `function foo({ use: {THREE} }) {}` becomes `call`
@@ -48,6 +41,13 @@ otherwise js syntax conflicts with shell function syntax.
 Adding quotes permits space e.g. `scene.children.map'(x => x.name)'`
 
 ### Done
+
+- How are Stage/Terminal/Code laid out on a page?
+  - ✅ disable stage on scroll out of view 
+  - ✅ can choose if persist `Stage`
+  - ✅ store stage data under different keys
+  - ✅ (convention) each `Stage` has different `stageKey`
+  - ✅ (convention) each `Terminal` has different `sessionKey`
 
 - ✅ show stage using react-reverse-portal
 - ✅ remove react-reverse-portal,

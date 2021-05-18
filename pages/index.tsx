@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import ReactMarkdown from 'react-markdown'
 import styled from "@emotion/styled";
 
 import { CoreVar } from 'model/sh/var.model'
@@ -28,10 +29,17 @@ export default function IndexPage() {
           <Header />
 
           <Section>
-            I remember first controlling the pixels of a long since discarded television.
-            A grey button of a ZX Spectrum was pressed, and the avatar moved.
-            So virtual words exist.
-            They can be created.
+          <ReactMarkdown children={`
+## Introduction
+            
+I vaguely remember first controlling the pixels of a long since discarded television.
+I pushed one of the grey buttons of our ZX Spectrum, and my avatar _moved_.
+I felt a rush of excitement: virtual worlds exist, virtual worlds can be created.
+
+These days, almost all of virtual worlds remain packaged as video games.
+The player plays a part; the game progresses.
+          
+          `} />
           </Section>
 
           <section>
