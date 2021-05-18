@@ -23,7 +23,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
   useEffect(() => {
     if (ctxt?.gl && !stage.opt.enabled) {// Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
-      stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
       useStage.api.persist(stage.key);
 
       // Copy current scene into background scene
@@ -127,7 +126,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
       ) || (
         <Placeholder
           stageKey={stage.key}
-          dataUrl={stage.extra.canvasPreview}
           everUsed={everUsed.current}
         />
       )}

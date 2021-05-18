@@ -58,9 +58,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         // Restore persisted data
         const s = Stage.createStage(stageKey);
         const { opt, extra } = api.getPersist(stageKey);
-
         s.opt = deepClone(opt??Stage.createStageOpts());
-        s.extra.canvasPreview = extra.canvasPreview;
 
         Promise.all([
           loadJson<THREE.Scene>(extra.sceneJson),
@@ -98,13 +96,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     persist: (stageKey) => {
-      const { ctrl, opt, extra, scene } = api.getStage(stageKey);
+      const { ctrl, opt, scene } = api.getStage(stageKey);
+      const canvasPreview = ctrl.domElement?.toDataURL();
 
       set(({ persist }) => ({ persist: addToLookup({
         key: stageKey,
         opt: deepClone(opt),
           extra: {
-            canvasPreview: extra.canvasPreview,
+            canvasPreview,
             sceneJson: scene.toJSON(),
             cameraJson: ctrl?.camera.toJSON(),
             camTarget: vectorToTriple(ctrl.target),

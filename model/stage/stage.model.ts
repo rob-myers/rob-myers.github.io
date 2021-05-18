@@ -24,24 +24,22 @@ export interface StageMetaJson {
 
 /** Key-value storage for internal use */
 export interface StageExtra {
-  /** Data url */
-  canvasPreview?: string;
-
   /**
-   * The 2nd child of restored scene.
-   * NOTE 1st child consists of helpers. 
+   * Second child of scene restored from `sceneJson`.
+   * The 1st child consists of helpers. 
    */
   sceneGroup: THREE.Group;
+  /** Camera restored from `cameraJson` */
   sceneCamera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
   /**
-   * For rehydrating scene, and CLI when stage disabled.
+   * Used to rehydrate scene and by CLI when stage disabled.
    * NOTE objects can only be in one scene at a time.
    */
   bgScene: THREE.Scene;
 
   /** Keyboard events sent by `Stage` */
   keyEvent: Subject<StageKeyEvent>;
-  /** Mouse eventzs sent by `Stage` */
+  /** Mouse events sent by `Stage` */
   ptrEvent: Subject<StagePointerEvent>;
 }
 

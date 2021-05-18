@@ -2,22 +2,17 @@
 
 ### TODO
 
-- ✅ show stage using react-reverse-portal
-- ✅ remove react-reverse-portal,
-- ✅ `stage.scene` available when stage disabled
-- ✅ `stage.ctrl` available when stage disabled
-- ✅ cleaner camera initialization
-- can specify one `Stage` is active
-- `WrappedStage` enforces one-at-a-time
-- `WrappedStage` has own persisted placeholder/camera angle
+- How are Stage/Terminal/Code laid out on a page?
+  - can specify one `Stage` is active
+  - `WrappedStage` enforces one-at-a-time
+  - `WrappedStage` has own persisted placeholder/camera angle
+  - can define shell fns via syntax-highlighted js text
+    - a separate component which can change a session
+    - `function foo({ use: {THREE} }) {}` becomes `call`
+    - `async function* foo({ read }, { use }) {}` becomes `run`
 
 - write outline of 1st post i.e. walkthrough up to movable bots
   - render some markdown
-
-- can define shell fns via syntax-highlighted js text
-  - a separate component which can change a session
-  - `function foo({ use: {THREE} }) {}` becomes `call`
-  - `async function* foo({ read }, { use }) {}` becomes `run`
 
 - integrate @box2d
   > https://github.com/Lusito/box2d.ts
@@ -50,6 +45,12 @@ otherwise js syntax conflicts with shell function syntax.
 Adding quotes permits space e.g. `scene.children.map'(x => x.name)'`
 
 ### Done
+
+- ✅ show stage using react-reverse-portal
+- ✅ remove react-reverse-portal,
+- ✅ `stage.scene` available when stage disabled
+- ✅ `stage.ctrl` available when stage disabled
+- ✅ cleaner camera initialization
 
 - ✅ Improve axes
 - ✅ Can create line meshes

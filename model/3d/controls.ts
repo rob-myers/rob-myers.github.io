@@ -116,7 +116,7 @@ export class Controls extends EventDispatcher {
     TOUCH_DOLLY_ROTATE: 6
   };
   private state = this.STATE.NONE;
-  private domElement!: HTMLCanvasElement;
+  public domElement!: HTMLCanvasElement;
 
 	constructor(public camera: OrthographicCamera | PerspectiveCamera) {
 		super();
