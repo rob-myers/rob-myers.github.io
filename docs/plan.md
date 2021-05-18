@@ -2,22 +2,25 @@
 
 ### TODO
 
-- can define shell fns via syntax-highlighted js text
+- `CodeEditor` component
+  - can define shell fns via syntax-highlighted js text
   - a separate component which can change a session
   - `function foo({ use: {THREE} }) {}` becomes `call`
   - `async function* foo({ read }, { use }) {}` becomes `run`
 
-- write outline of 1st post i.e. walkthrough up to movable bots
-- ✅ render some markdown
-
 - integrate @box2d
   > https://github.com/Lusito/box2d.ts
+
+
+- write outline of 1st post i.e. walkthrough up to movable bots
+- ✅ render some markdown
 
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
 
 - Can reset stage
 - Pause/resume uses `scene.toJson()` (+ box2d persist?)
+- persist individual sessions, analogous to stage.store
 
 - Add `xbcopy` i.e. copy to clipboard
 - Error messages prefixed by function chain

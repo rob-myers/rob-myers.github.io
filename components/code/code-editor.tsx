@@ -7,9 +7,11 @@ import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css";
 
 const CodeEditor: React.FC = () => {
-  const [code, setCode] = React.useState(
-    `function add(a, b) {\n  return a + b;\n}`
-  );
+  const [code, setCode] = React.useState(`
+function test(ctxt) {
+  console.log('process ctxt', ctxt);
+}
+`.trim());
   return (
     <Root
       value={code}
@@ -29,7 +31,7 @@ const CodeEditor: React.FC = () => {
   );
 }
 
-const Root = styled<typeof Editor>(Editor)`
+const Root = styled(Editor)`
   grid-area: code;
   background: #000;
   overflow: scroll;

@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 export const Section = styled.section<{}>`
   border-radius: 5px;
   border: 1px solid #ddd;
-  padding: 0 16px;
+  padding: 0 16px 16px 16px;
   margin-bottom: 24px;
   font-size: 20px;
 
