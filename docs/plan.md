@@ -8,7 +8,7 @@
   - `async function* foo({ read }, { use }) {}` becomes `run`
 
 - write outline of 1st post i.e. walkthrough up to movable bots
-  - render some markdown
+- ✅ render some markdown
 
 - integrate @box2d
   > https://github.com/Lusito/box2d.ts
