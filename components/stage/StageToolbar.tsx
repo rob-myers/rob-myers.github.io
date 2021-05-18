@@ -20,9 +20,10 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt }) => {
     useStage.api.updateOpt(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }))
   , [enableUi]);
 
-  const togglePersist = useCallback(() =>
-    useStage.api.updateOpt(stageKey, ({ persist }) => ({ persist: !persist }))
-  , [enableUi]);
+  const togglePersist = useCallback(() => {
+    useStage.api.updateOpt(stageKey, ({ persist }) => ({ persist: !persist }));
+    useStage.api.persist(stageKey, true); // Force a persist
+  }, [enableUi]);
 
   return (
     <Toolbar>

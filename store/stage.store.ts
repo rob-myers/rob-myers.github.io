@@ -19,7 +19,7 @@ export type State = {
   readonly api: {
     awaitStage: (stageKey: string, resolver: () => void) => Promise<void>;
     getStage: (stageKey: string) => Stage.StageMeta;
-    persist: (stageKey: string) => void;
+    persist: (stageKey: string, force?: boolean) => void;
     rehydrate: (stageKeys: string[]) => void;
     removeStage: (stageKey: string) => void;
     updateOpt: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
@@ -48,10 +48,10 @@ const useStore = create<State>(devtools((set, get) => ({
       return get().stage[stageKey];
     },
 
-    persist: (stageKey) => {
+    persist: (stageKey, force = false) => {
       const { ctrl, opt, scene, extra } = api.getStage(stageKey);
 
-      if (!opt.persist) return;
+      if (!opt.persist && !force) return;
 
       const stageJson: Stage.StageMetaJson = {
         key: stageKey,
