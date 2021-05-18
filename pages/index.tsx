@@ -99,4 +99,12 @@ const Env = styled.section<{}>`
   @media(max-width: 1248px) {
     grid-template-columns: minmax(auto, 400px) minmax(auto, 400px);
   }
+
+  @media(max-width: 800px) {
+  grid-template-rows: 350px 300px 300px;
+  grid-template-areas:
+    "stage stage"
+    "terminal terminal"
+    "code code";
+  }
 `;

@@ -34,31 +34,47 @@ function sum(a, b) {
   return a + b;
 }
 //#endregion
-  
+ 
 `.trimLeft());
   return (
     <Root>
-      <Editor
-        value={code}
-        onValueChange={(code) => setCode(code)}
-        highlight={(code) => highlight(code, languages.javascript, 'javascript')}
-        padding={10}
-        style={{
-          fontFamily: '"Fira code", "Fira Mono", monospace',
-          fontSize: 12,
-          // prism-tomorrow specific:
-          background:'#2d2d2d',
-          color: '#ccc',
-        }}
-      />
+      <Toolbar>
+        Toolbar
+      </Toolbar>
+      <EditorContainer>
+        <Editor
+          value={code}
+          onValueChange={(code) => setCode(code)}
+          highlight={(code) => highlight(code, languages.javascript, 'javascript')}
+          padding={10}
+          style={{
+            fontFamily: '"Fira code", "Fira Mono", monospace',
+            fontSize: 12,
+            // prism-tomorrow specific:
+            background:'#2d2d2d',
+            color: '#ccc',
+          }}
+        />
+      </EditorContainer>
     </Root>
   );
 }
 
-const Root = styled.div`
+const Root = styled.section`
   grid-area: code;
-  background: #000;
   flex: 1;
+`;
+
+const Toolbar = styled.section`
+  font-size: 11pt;
+  background: #445;
+  color: #ccc;
+  height: 28px;
+  padding: 6px;
+`;
+
+const EditorContainer = styled.div`
+  height: calc(100% - 28px);
   overflow: auto;
 `;
 
