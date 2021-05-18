@@ -3,11 +3,11 @@
 ### TODO
 
 - How are Stage/Terminal/Code laid out on a page?
-  - disable stage on scroll out of view 
-  - each `Stage` has different `stageKey`
+  - ✅ disable stage on scroll out of view 
   - can choose if persist `Stage`
   - ✅ store stage data under different keys
-  - each `Terminal` has different `sessionKey`
+  - ✅ (convention) each `Stage` has different `stageKey`
+  - ✅ (convention) each `Terminal` has different `sessionKey`
 
 - can define shell fns via syntax-highlighted js text
   - a separate component which can change a session

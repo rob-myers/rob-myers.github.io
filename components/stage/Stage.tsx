@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
-import type { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
+import type { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
+import type { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
 
 import type { StageMeta } from "model/stage/stage.model";
 import { getWindow } from "model/dom.model";
@@ -111,10 +111,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
           onCreated={on.createdCanvas}
           camera={stage.extra.sceneCamera}
         >
-          {stage.ctrl && <CameraControls
+          <CameraControls
             controls={stage.ctrl}
             captureMouse={stage.opt.panZoom}
-          />}
+          />
 
           {Helpers}
 

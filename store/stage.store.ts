@@ -65,15 +65,14 @@ const useStore = create<State>(devtools((set, get) => ({
       };
       const serialized = JSON.stringify({ state: stageJson });
 
-      localStorage.setItem(`${stageKey}@stage`, serialized);
-      // set({});
+      localStorage.setItem(`stage:${stageKey}`, serialized);
     },
 
     rehydrate: (stageKeys) => {
       if (!getWindow()) return;
 
       for (const stageKey of stageKeys) {
-        const storageValue = localStorage.getItem(`${stageKey}@stage`);
+        const storageValue = localStorage.getItem(`stage:${stageKey}`);
        
         if (storageValue) {
           const { state } = JSON.parse(storageValue) as { state: Stage.StageMetaJson };

@@ -6,13 +6,18 @@ import { Controls } from 'model/3d/controls';
 extend({ Controls });
 
 const CameraControls: React.FC<Props> = ({ controls, captureMouse }) => {
-  const { camera, size } = useThree();
+
+  useFrame((_state) => controls.update());
 
   useEffect(() => {
     controls && (controls.capturePanZoom = captureMouse);
   }, [captureMouse]);
 
-  // From react-three-fiber packages/fiber/src/core/store.ts
+  /**
+   * Resize camera on change canvas size.
+   * From react-three-fiber packages/fiber/src/core/store.ts
+   */
+  const { camera, size } = useThree();
   useEffect(() => {
     if (camera.type === 'OrthographicCamera') {
       camera.left = size.width / -2;
@@ -25,8 +30,6 @@ const CameraControls: React.FC<Props> = ({ controls, captureMouse }) => {
     camera.updateProjectionMatrix();
     camera.updateMatrixWorld();
   }, [size]);
-
-  useFrame((_state) => controls.update());
 
   return null;
 };

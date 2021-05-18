@@ -12,7 +12,9 @@ import { usePage } from 'components/hooks';
 import { Section } from 'components/page/Section';
 
 export default function IndexPage() {
-  usePage({ stageKeys: ['test'] });
+  usePage({ stageKeys: [
+    'test',
+  ] });
 
   return (
     <>
@@ -44,8 +46,10 @@ export default function IndexPage() {
               />
               <CodeEditor />
             </Env>
-            {/* <Stage stageKey="test" /> */}
           </section>
+
+          {/* <section style={{ height: 1000 }} /> */}
+
         </div>
       </Main>
     </>
