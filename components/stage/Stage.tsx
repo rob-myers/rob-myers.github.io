@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
 import type { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
@@ -59,7 +59,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
       mouseOver: (e: React.MouseEvent<HTMLElement>) =>
         stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(),
       key: (e: React.KeyboardEvent<HTMLElement>) => {
-        keyWire?.next({
+        stage.opt.enabled && keyWire?.next({
           key: e.key,
           type: e.type as any,
           metaKey: e.metaKey,
