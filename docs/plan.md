@@ -4,7 +4,7 @@
 
 - How are Stage/Terminal/Code laid out on a page?
   - ✅ disable stage on scroll out of view 
-  - can choose if persist `Stage`
+  - ✅ can choose if persist `Stage`
   - ✅ store stage data under different keys
   - ✅ (convention) each `Stage` has different `stageKey`
   - ✅ (convention) each `Terminal` has different `sessionKey`

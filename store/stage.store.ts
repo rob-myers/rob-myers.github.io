@@ -11,7 +11,6 @@ import { Controls } from 'model/3d/controls';
 
 export type State = {
   rehydrated: boolean;
-  persistOnUnload: boolean;
   /** Resolved on stage create or if already exists */
   resolvers: { stageKey: string; resolve: () => void }[];
   /** Stages */
@@ -29,7 +28,6 @@ export type State = {
 }
 
 const useStore = create<State>(devtools((set, get) => ({
-  persistOnUnload: true,
   rehydrated: false,
   resolvers: [],
   stage: {},
@@ -52,6 +50,8 @@ const useStore = create<State>(devtools((set, get) => ({
 
     persist: (stageKey) => {
       const { ctrl, opt, scene, extra } = api.getStage(stageKey);
+
+      if (!opt.persist) return;
 
       const stageJson: Stage.StageMetaJson = {
         key: stageKey,

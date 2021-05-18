@@ -20,6 +20,10 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt }) => {
     useStage.api.updateOpt(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }))
   , [enableUi]);
 
+  const togglePersist = useCallback(() =>
+    useStage.api.updateOpt(stageKey, ({ persist }) => ({ persist: !persist }))
+  , [enableUi]);
+
   return (
     <Toolbar>
       <LeftToolbar>
@@ -42,17 +46,22 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt }) => {
       </LeftToolbar>
       <RightToolbar>
         <Slot>
-        </Slot>
-        <Slot>
           <PanZoomButton
             greyed={!(enableUi && opt.panZoom)}
             title="scroll/pinch to panzoom?"
-            {...enableUi && {
-              onClick: toggleCam,
-            }}
+            {...enableUi && { onClick: toggleCam }}
           >
-            panzoom
+            capture
           </PanZoomButton>
+        </Slot>
+        <Slot>
+          <PersistButton
+              greyed={!opt.persist}
+              title="save data?"
+              onClick={togglePersist}
+            >
+              persist
+            </PersistButton>
         </Slot>
       </RightToolbar>
     </Toolbar>
@@ -86,8 +95,8 @@ const Slot = styled.div`
 
 const LeftToolbar = styled.section`
   display: grid;
-  grid-template-columns: 40px 64px 64px;
-  gap: 0px;
+  grid-template-columns: auto auto auto;
+  gap: 10px;
 `;
 
 const StageKey = styled.div``;
@@ -105,15 +114,23 @@ const PauseButton = styled.div<{ pending: boolean; }>`
 const RightToolbar = styled.section`
   display: grid;
   grid-template-columns: auto auto;
-  gap: 12px;
+  gap: 10px;
 `;
 
-const PanZoomButton = styled.div<{ greyed?: boolean; emphasis?: boolean; }>`
-  cursor: pointer;
+
+const PersistButton = styled.div<{ greyed: boolean }>`
   outline: none;
-  ${({ greyed = false }) => css`
-    color: ${greyed ? '#777' : '#ddd'};
-  `}
+  cursor: pointer;
+  ${({ greyed = false }) => greyed
+    && css`color: #777;`
+    || css`color: #ddd;`}
+`;
+
+const PanZoomButton = styled.div<{ greyed: boolean }>`
+  outline: none;
+  ${({ greyed = false }) => greyed
+    && css`color: #777; cursor: auto;`
+    || css`color: #ddd; cursor: pointer;`}
 `;
 
 export default StageToolbar;

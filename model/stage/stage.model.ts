@@ -61,6 +61,8 @@ export interface StageOpts {
   enabled: boolean;
   /** Should stage capture mousewheel as pan/zoom? */
   panZoom: boolean;
+  /** Should we persist this stage? */
+  persist: boolean;
 }
 
 export function createStage(stageKey: string): StageMeta {
@@ -86,6 +88,7 @@ export function createStageOpts(): StageOpts {
   return {
     enabled: false,
     panZoom: true,
+    persist: true,
   };
 }
 
