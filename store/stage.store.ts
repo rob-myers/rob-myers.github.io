@@ -86,7 +86,7 @@ const useStore = create<State>(devtools((set, get) => ({
             loadJson<THREE.PerspectiveCamera | THREE.OrthographicCamera>(extra.cameraJson),
           ]).then(([scene, camera]) => {
             // console.info('Loaded json scene & camera', scene, camera);
-            s.extra.bgScene = scene;
+            s.extra.bgScene = s.scene = scene;
             s.extra.sceneGroup = scene.children[1] as THREE.Group || createPlaceholderGroup();
             s.extra.sceneCamera = camera;
             s.extra.canvasPreview = extra.canvasPreview;

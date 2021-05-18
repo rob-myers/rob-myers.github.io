@@ -32,6 +32,7 @@
 
 ### BUG
 
+- ✅ `scene.children.length` was initially 0
 - ✅ `echo scene.children[{0,1}]` was not expanding
 - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
 - ✅ `call '({ stage }) => delete stage.opt.foo'`
