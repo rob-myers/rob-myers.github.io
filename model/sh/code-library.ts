@@ -4,22 +4,6 @@ export const preloadedFunctions = {
 
   seq: `range "$1" | split`,
 
-  filter: `map -x "fn = $1; return (...args) => fn(...args) ? args[0] : undefined"`,
-
-  /** Backticks must be escaped */
-  jarg: `call "() => {
-    try { return Function('_', \\\`return \${1:-}\\\` )(); }
-    catch { return \\\`$1\\\`; }
-}"
-`,
-
-  reduce: `sponge | {
-if test '/\\S/' "$2"; then
-  map "x => x.reduce($1, $( jarg "$2" ) )"
-else map "x => x.reduce($1)"; fi
-}
-`,
-
   pretty: `map '(x, {use}) => use.stringify(x)'`,
 
   keys: `map Object.keys`,

@@ -16,7 +16,7 @@ import { cloneParsed, getOpts } from './parse/parse.util';
 import useSession, { ProcessStatus } from 'store/session.store';
 import { ansiBlue, ansiBrown, ansiReset, ansiWhite } from './tty.xterm';
 
-import { StageKeyEvent, StageMeta } from 'model/stage/stage.model';
+import { StageKeyEvent } from 'model/stage/stage.model';
 import useStage from 'store/stage.store';
 import { parseService } from './parse/parse.service';
 import { vectPrecisionSpecial } from 'model/3d/three.model';
@@ -32,8 +32,12 @@ const commandKeys = {
   declare: true,
   /** Output arguments as space-separated string */
   echo: true,
+  /** Evaluate and return a javascript expression */
+  expr: true,
   /** Exit with code 1 */
   false: true,
+  /** Filter inputs */
+  filter: true,
   /** Get each arg from stageAndVars */
   get: true,
   /** List commands */
@@ -56,6 +60,8 @@ const commandKeys = {
   map: true,
   /** Wait for a stage to be ready */
   ready: true,
+  /** Reduce all items from stdin */
+  reduce: true,
   /** Exit from a function */
   return: true,
   /** Remove each arg from variables */
@@ -73,8 +79,6 @@ const commandKeys = {
   split: true,
   /** Collect stdin into a single array */
   sponge: true,
-  /** Test regex against string */
-  test: true,
   /** Exit with code 0 */
   true: true,
 };
@@ -90,7 +94,7 @@ class CmdService {
     const { meta } = node;
     switch (command) {
       case 'call': {
-        const func = Function('__', `return ${args[0]}`);
+        const func = Function(`return ${args[0]}`);
         yield await func()(this.provideProcessCtxt(meta, args.slice(1)));
         break;
       }
@@ -178,8 +182,17 @@ class CmdService {
         }
         break;
       }
+      case 'expr': {
+        yield this.parseJsArg(args.join(' '));
+        break;
+      }
       case 'false': {
         node.exitCode = 1;
+        break;
+      }
+      case 'filter': {
+        const func = Function(`fn = ${args[0]}; return (...args) => fn(...args) ? args[0] : undefined`);
+        yield* this.read(meta, (data) => func()(data, this.provideProcessCtxt(meta)));
         break;
       }
       case 'get': {
@@ -295,11 +308,7 @@ class CmdService {
         break;
       }
       case 'map': {
-        const { opts, operands } = getOpts(args, { boolean: [
-          'x', /** Permit extended func def, see function `filter` */
-        ], });
-        const funcDef = operands[0];
-        const func =  Function('__v__', opts.x ? funcDef : `return ${funcDef}`);
+        const func = Function(`return ${args[0]}`);
         yield* this.read(meta, (data) => func()(data, this.provideProcessCtxt(meta)));
         break;
       }
@@ -350,6 +359,15 @@ class CmdService {
           useStage.api.awaitStage(stageKey, resolve);
           useSession.api.addCleanup(meta, resolve);
         });
+        break;
+      }
+      case 'reduce': {
+        const inputs = [] as any[];
+        const reducer = Function(`return ${args[0]}`)();
+        yield* this.read(meta, (data: any[]) => { inputs.push(data); });
+        yield args[1]
+          ? inputs.reduce(reducer, this.parseJsArg(args[1]))
+          : inputs.reduce(reducer);
         break;
       }
       case 'return': {
@@ -414,13 +432,6 @@ class CmdService {
         const outputs = [] as any[];
         yield* this.read(meta, (data: any[]) => { outputs.push(data); });
         yield outputs;
-        break;
-      }
-      case 'test': {
-        const regex = Function('__v__', `return ${args[0]}`)() as RegExp;
-        const value = args[1];
-        node.exitCode = 1;
-        regex.test(value) && (node.exitCode = 0);
         break;
       }
       case 'true': {
