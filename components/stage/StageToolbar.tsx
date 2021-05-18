@@ -109,6 +109,7 @@ const PauseButton = styled.div<{ pending: boolean; }>`
   ${({ pending }) => pending && css`
     font-style: italic;
     color: #ddd;
+    cursor: auto;
   `}
 `;
 

@@ -32,11 +32,11 @@ export default function IndexPage() {
           <ReactMarkdown children={`
 ## Introduction
             
-I remember first controlling the pixels of that long since discarded television.
-Pushing one of the grey buttons of our ZX Spectrum, my avatar _moved_.
+I remember the first time I controlled some of the pixels of a television.
+I pushed one of the rubbery grey buttons of our ZX Spectrum, and the avatar _moved_.
 I felt a rush of excitement: virtual worlds exist, virtual worlds can be created.
 
-Today almost all virtual worlds remain packaged as video games.
+Today almost all of these "worlds" remain packaged as video games.
 The player plays a part; the game progresses.
           
           `} />
