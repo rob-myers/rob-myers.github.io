@@ -1,10 +1,9 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import * as THREE from 'three';
-import { Subject } from 'rxjs';
 
 import { deepClone, KeyedLookup } from 'model/generic.model';
-import { vectorToTriple, loadJson, getPlaceholderGroup } from 'model/3d/three.model';
+import { vectorToTriple, loadJson, createPlaceholderGroup } from 'model/3d/three.model';
 import * as Stage from 'model/stage/stage.model';
 import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
 import { Controls } from 'model/3d/controls';
@@ -12,10 +11,12 @@ import { Controls } from 'model/3d/controls';
 export type State = {
   rehydrated: boolean;
   persistOnUnload: boolean;
-  stage: KeyedLookup<Stage.StageMeta>;
-  persist: KeyedLookup<Stage.StageMetaJson>;
   /** Resolved on stage create or if already exists */
   resolvers: { stageKey: string; resolve: () => void }[];
+  /** Stages */
+  stage: KeyedLookup<Stage.StageMeta>;
+  /** Persisted stages */
+  persist: KeyedLookup<Stage.StageMetaJson>;
 
   readonly api: {
     awaitStage: (stageKey: string, resolver: () => void) => Promise<void>;
@@ -31,11 +32,11 @@ export type State = {
 }
 
 const useStore = create<State>(devtools(persist((set, get) => ({
-  stage: {},
-  persist: {},
   persistOnUnload: true,
   rehydrated: false,
   resolvers: [],
+  stage: {},
+  persist: {},
 
   api: {
 
@@ -67,7 +68,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         ]).then(([scene, camera]) => {
           // console.warn('Loaded json scene & camera', scene, camera);
           s.extra.bgScene = scene;
-          s.extra.sceneGroup = scene.children[1] as THREE.Group || getPlaceholderGroup();
+          s.extra.sceneGroup = scene.children[1] as THREE.Group || createPlaceholderGroup();
           s.extra.sceneCamera = camera;
 
           s.ctrl = Stage.initializeControls(new Controls(camera));

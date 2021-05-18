@@ -59,7 +59,7 @@ export function loadJson<T extends THREE.Object3D>(rootJson: ThreeJson) {
   });
 }
 
-export function getPlaceholderGroup() {
+export function createPlaceholderGroup() {
   const group = new THREE.Group;
   const light = new THREE.DirectionalLight();
   light.position.set(-1, 3, 2);
