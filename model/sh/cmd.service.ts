@@ -68,6 +68,8 @@ const commandKeys = {
   rm: true,
   /** Run a javascript generator */
   run: true,
+  /** Echo session key */
+  session: true,
   /** Set something in stageAndVars */
   set: true,
   /** Wait for specified number of seconds */
@@ -392,6 +394,10 @@ class CmdService {
       case 'run': {
         const func = Function('_', `return async function *generator ${args[0]}`);
         yield* func()(this.provideProcessCtxt(meta, args.slice(1)));
+        break;
+      }
+      case 'session': {
+        yield meta.sessionKey;
         break;
       }
       case 'set': {
