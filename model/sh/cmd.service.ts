@@ -16,7 +16,7 @@ import { cloneParsed, getOpts } from './parse/parse.util';
 import useSession, { ProcessStatus } from 'store/session.store';
 import { ansiBlue, ansiBrown, ansiReset, ansiWhite } from './tty.xterm';
 
-import { StageKeyEvent } from 'model/stage/stage.model';
+import { StageKeyEvent, StageMeta } from 'model/stage/stage.model';
 import useStage from 'store/stage.store';
 import { parseService } from './parse/parse.service';
 import { vectPrecisionSpecial } from 'model/3d/three.model';
@@ -500,22 +500,19 @@ class CmdService {
   }
 
   private provideProcessCtxt(meta: Sh.BaseMeta, posPositionals: string[] = []) {
-    const stageKey = useSession.api.getVar(meta.sessionKey, CoreVar.STAGE_KEY);
     const varLookup = useSession.api.getSession(meta.sessionKey).var;
+    const stageKey = varLookup[CoreVar.STAGE_KEY];
+    const stageProxy = (this.stageProxy[stageKey] = this.stageProxy[stageKey] || createStageProxy(stageKey));
+
     return new Proxy({
-      ...varLookup,
-      stage: createStageProxy(stageKey),
-      use: this.useProxy,
+      stage: stageProxy,
+      lib: this.libProxy,
+      var: varLookup,
     }, {
       get: (_, key) => {
+        if (key === 'api') return this.provideProcessApi(meta);
         if (key === 'args') return posPositionals;
-        else if (key === 'api') return this.provideProcessApi(meta);
-        // Trick to provide local variables via destructuring
-        else if (key === '_') return {};
         return (_ as any)[key];
-      },
-      deleteProperty: (_, key: string) => {
-        return delete varLookup[key];
       },
     });
   }
@@ -607,17 +604,19 @@ class CmdService {
     }
   }
 
-  private baseProxy = {};
+  private stageProxy = {} as { [stageKey: string]: StageMeta }
+
+  private baseLibProxy = {};
 
   /**
    * Expose classes/services
    */
-  private useProxy = new Proxy(this.baseProxy as {
+  private libProxy = new Proxy(this.baseLibProxy as {
     geom: typeof geom;
     Geom: typeof Geom;
     THREE: typeof THREE;
+    // TODO move to service which can be attached here
     stringify: (input: any) => string;
-    // Can dynamically add functions here...
   }, {
     get(_, key: 'geom' | 'Geom' | 'THREE' | 'stringify')  {
       switch (key) {
@@ -635,7 +634,7 @@ class CmdService {
       }
     },
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
-    ownKeys: () => ['geom', 'Geom', 'THREE', 'stringify'].concat(Object.keys(this.baseProxy)),
+    ownKeys: () => ['geom', 'Geom', 'THREE', 'stringify'].concat(Object.keys(this.baseLibProxy)),
   });
   
 }

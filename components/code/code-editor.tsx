@@ -9,31 +9,30 @@ import "prismjs/themes/prism-tomorrow.css";
 const CodeEditor: React.FC = () => {
   const [code, setCode] = React.useState(`
 function testLog(ctxt) {
-  console.log('process ctxt', ctxt);
+  console.log('process context', ctxt);
 }
 
-async function readIntoVar(ctxt) {
-  const [varName] = ctxt.args;
-  if (varName) {
-    ctxt[varName] = await ctxt.api.read();
+async function readIntoVar({ args, var, api }) {
+  if (args[0]) {
+    var[args[0]] = await api.read();
   }
 }
 
-function *testYield(ctxt) {
-  yield* ['process ctxt', ctxt];
+function *testYield(pr) {
+  yield* ['process context:', pr];
 }
 
-async function *yieldRead(ctxt) {
-  const value = await ctxt.api.read();
+async function *testYieldRead({ api }) {
+  const value = await api.read();
   yield 'the following was read:';
   yield value;
 }
 
-//#region pure
-function sum(a, b) {
-  return a + b;
+class Util {
+  static sum(a, b) {
+    return a + b;
+  }
 }
-//#endregion
  
 `.trimLeft());
   return (
