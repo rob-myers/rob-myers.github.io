@@ -3,9 +3,10 @@
 ### TODO
 
 - Can define shell fns via syntax-highlighted js text
-  - can select session in toolbar
-  - can press load and send text to session
-  - session can try to parse and warn if issues
+  - can press `send` and send text to session
+  - persist code via `code.store`
+  - session receives text
+  - session parses text and warns
   - `function foo() {}` becomes `call`
   - `async function foo() {}` becomes `call`
   - `function *foo() {}` becomes `run`

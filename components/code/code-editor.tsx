@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "@emotion/styled";
 import ReactSimpleCodeEditor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs";
@@ -6,7 +6,10 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css";
 
-const CodeEditor: React.FC = () => {
+const CodeEditor: React.FC<Props> = ({ filename, sessionKey }) => {
+  const codeKey = useRef(`${filename}@${sessionKey}`).current;
+
+
   const [code, setCode] = React.useState(`
 function testLog(ctxt) {
   console.log('process context', ctxt);
@@ -38,12 +41,16 @@ class Util {
   return (
     <Root>
       <Toolbar>
-        Toolbar
+        <div>{codeKey}</div>
+        <RunButton>
+          send
+        </RunButton>
       </Toolbar>
       <EditorContainer>
         <Editor
           value={code}
           onValueChange={(code) => setCode(code)}
+
           highlight={(code) => highlight(code, languages.javascript, 'javascript')}
           padding={10}
           style={{
@@ -65,11 +72,19 @@ const Root = styled.section`
 `;
 
 const Toolbar = styled.section`
-  font-size: 11pt;
-  background: #445;
-  color: #ccc;
+  font-size: 10pt;
+  background: #222;
+  color: #fff;
   height: 28px;
-  padding: 6px;
+  padding: 0 4px 5px 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+`;
+
+const RunButton = styled.button`
+  font-size: 9pt;
+  margin-bottom: -2px;
 `;
 
 const EditorContainer = styled.div`
@@ -89,5 +104,10 @@ const Editor = styled(ReactSimpleCodeEditor)`
     white-space: pre !important;
   }
 `;
+
+interface Props {
+  filename: string;
+  sessionKey: string;
+}
 
 export default CodeEditor;
