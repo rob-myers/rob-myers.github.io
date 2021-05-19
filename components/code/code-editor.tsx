@@ -12,9 +12,9 @@ function testLog(ctxt) {
   console.log('process context', ctxt);
 }
 
-async function readIntoVar({ args, var, api }) {
+async function readIntoVar({ args, var: v, api }) {
   if (args[0]) {
-    var[args[0]] = await api.read();
+    v[args[0]] = await api.read();
   }
 }
 

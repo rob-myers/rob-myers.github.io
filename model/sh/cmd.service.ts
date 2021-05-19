@@ -268,11 +268,9 @@ class CmdService {
           '1', /** One line per item */
           'l', /** Detailed */
           'r', /** Recursive properties (prototype) */
-          'a', /** Show caps keys at root? */
         ], });
         const root = this.provideProcessCtxt(meta);
         const cwd = this.computeCwd(meta, root);
-
         const queries = operands.length ? operands.slice() : [''];
         const roots = queries.map(x => {
           if (x[0] === '/') {
@@ -287,12 +285,11 @@ class CmdService {
             useSession.api.warn(meta.sessionKey, `ls: "${queries[i]}" is not defined`);
             continue;
           }
+
           if (roots.length > 1) yield `${ansiBlue}${queries[i]}:`;
           let keys = (opts.r ? keysDeep(obj) : Object.keys(obj)).sort();
-          if (obj === root && !opts.a) {
-            keys = keys.filter(x => x !== x.toUpperCase());
-          }
           let items = [] as string[];
+
           if (opts.l) {
             if (typeof obj === 'function') keys = keys.filter(x => !['caller', 'callee', 'arguments'].includes(x));
             const metas = keys.map(x => obj[x]?.constructor?.name || (obj[x] === null ? 'null' : 'undefined'));
