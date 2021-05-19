@@ -32,8 +32,8 @@ export default function IndexPage() {
           <ReactMarkdown children={`
 ## Introduction
             
-The first time I controlled the pixels of a television, I felt a rush of excitement.
-I pushed one of the rubbery grey buttons of our ZX Spectrum, and the avatar _moved_.
+When I first controlled the pixels of a television, I felt a rush of excitement.
+Pushing one of the rubbery grey buttons of our ZX Spectrum, the avatar _moved_.
 So virtual worlds exist, virtual worlds can be created.
 
 Today almost all of these "worlds" remain packaged as video games.
@@ -52,7 +52,7 @@ The player plays a part; the game progresses.
                   [CoreVar.PROFILE]: profiles.first,
                 }}
               />
-              <CodeEditor />
+              <CodeEditor filename="file.js" sessionKey="demo" />
             </Env>
           </section>
 

@@ -3,10 +3,14 @@
 ### TODO
 
 - Can define shell fns via syntax-highlighted js text
+  - can select session in toolbar
+  - can press load and send text to session
+  - session can try to parse and warn if issues
   - `function foo() {}` becomes `call`
   - `async function foo() {}` becomes `call`
   - `function *foo() {}` becomes `run`
   - `async function *foo() {}` becomes `run`
+  - `class foo {}` attached to `lib`
 
 - integrate @box2d
   > https://github.com/Lusito/box2d.ts
@@ -18,9 +22,13 @@
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
 
+- Different processes currently see the same `var.PWD`.
+  > PWD and OLDPWD should be handled like +ve positionals?
 - Can reset stage
 - Pause/resume uses `scene.toJson()` (+ box2d persist?)
 - persist individual sessions, analogous to stage.store
+- Only auto-persist stages that have been touched
+- Can turn off persist for whole page (this is not persisted)
 
 - Add `xbcopy` i.e. copy to clipboard
 - Error messages prefixed by function chain
