@@ -22,10 +22,6 @@ export type State = {
   };
 }
 
-export interface MeshDef {
-  mesh: THREE.Mesh;
-}
-
 const useStore = create<State>(devtools((set, get) => ({
   texture: {},
 

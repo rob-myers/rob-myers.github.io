@@ -6,7 +6,7 @@ import { deepClone, KeyedLookup } from 'model/generic.model';
 import { getWindow } from 'model/dom.model';
 import { vectorToTriple, loadJson, createPlaceholderGroup } from 'model/3d/three.model';
 import * as Stage from 'model/stage/stage.model';
-import { addToLookup, LookupUpdates, removeFromLookup, Updates, updateLookup } from './store.util';
+import { addToLookup, LookupUpdates, Updates, updateLookup } from './store.util';
 import { Controls } from 'model/3d/controls';
 
 export type State = {
@@ -21,7 +21,6 @@ export type State = {
     getStage: (stageKey: string) => Stage.StageMeta;
     persist: (stageKey: string, force?: boolean) => void;
     rehydrate: (stageKeys: string[]) => void;
-    removeStage: (stageKey: string) => void;
     updateOpt: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
     updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
   }
@@ -108,10 +107,6 @@ const useStore = create<State>(devtools((set, get) => ({
 
       set(() => ({ rehydrated: true }));
     },
-
-    removeStage: (stageKey) => set(({ stage }) => ({
-      stage: removeFromLookup(stageKey, stage),
-    })),
 
     updateOpt: (stageKey, updates) => {
       api.updateStage(stageKey, ({ opt: opts }) => ({
