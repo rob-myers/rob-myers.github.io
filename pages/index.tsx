@@ -74,12 +74,12 @@ const Main = styled.main<{}>`
   > div {
     max-width: 1000px;
   }
+
   @media(max-width: 1248px) {
     > div {
       max-width: 800px;
     }
   }
-
   @media(max-width: 1024px) {
     margin: 0 3rem;
     justify-content: unset;
@@ -92,14 +92,17 @@ const Main = styled.main<{}>`
 const Env = styled.section<{}>`
   display: grid;
 
-  grid-template-columns: minmax(auto, 500px) minmax(auto, 500px);
+  grid-template-columns: 500px 500px;
   grid-template-rows: 400px 400px;
   grid-template-areas: 
     "stage stage"
     "terminal code";
 
   @media(max-width: 1248px) {
-    grid-template-columns: minmax(auto, 400px) minmax(auto, 400px);
+    grid-template-columns: 400px 400px;
+  }
+  @media(max-width: 1024px) {
+    grid-template-columns: calc(50vw - 3rem) calc(50vw - 3rem);
   }
 
   @media(max-width: 800px) {

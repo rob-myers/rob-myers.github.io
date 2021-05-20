@@ -63,6 +63,7 @@ export function createPlaceholderGroup() {
   const group = new THREE.Group;
   const light = new THREE.DirectionalLight();
   light.position.set(-1, 3, 2);
+  light.lookAt(0, 0, 0);
   light.name = "TempLight";
   group.add(light);
   const mesh = new THREE.Mesh(

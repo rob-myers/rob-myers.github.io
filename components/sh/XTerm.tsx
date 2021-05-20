@@ -14,19 +14,18 @@ const XTermComponent: React.FC<Props> = ({
   useEffect(() => {
     const xterm = new Terminal(options);
     xtermRef.current = xterm;
+   
     const fitAddon = new FitAddon;
     xterm.loadAddon(fitAddon);
+    // Saw Uncaught Error: This API only accepts integers
+    const onResize = () => { try { fitAddon.fit(); } catch {} };
+    window.addEventListener('resize', onResize);
+    
     xterm.open(containerRef.current!);
     xterm.focus();
-
-    const onResize = () => {
-      // Saw Uncaught Error: This API only accepts integers
-      try { fitAddon.fit(); } catch (e) {}
-    };
-    window.addEventListener('resize', onResize);
     onResize();
 
-    onMount(xterm, fitAddon);
+    onMount(xterm);
 
     return () => {
       window.removeEventListener('resize', onResize);
@@ -43,7 +42,7 @@ const XTermComponent: React.FC<Props> = ({
 };
 
 interface Props {
-  onMount: (xterm: Terminal, fitAddon: FitAddon) => void;
+  onMount: (xterm: Terminal) => void;
   options?: ITerminalOptions;
 }
 
