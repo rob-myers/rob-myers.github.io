@@ -1,41 +1,18 @@
-import React, { useRef } from "react";
+import React from "react";
 import styled from "@emotion/styled";
 import ReactSimpleCodeEditor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css";
+
+import useCode from "store/code.store";
 import CodeToolbar from "./code-toolbar";
 
 export default function CodeEditor({ codeKey, sessionKey }: Props) {
-  const [code, setCode] = React.useState(`
-function testLog(ctxt) {
-  console.log('process context', ctxt);
-}
+  // const code = useCode(({ code }) => codeKey in code ? code[codeKey] : null);
 
-async function readIntoVar({ args, var: v, api }) {
-  if (args[0]) {
-    v[args[0]] = await api.read();
-  }
-}
-
-function *testYield(pr) {
-  yield* ['process context:', pr];
-}
-
-async function *testYieldRead({ api }) {
-  const value = await api.read();
-  yield 'the following was read:';
-  yield value;
-}
-
-class Util {
-  static sum(a, b) {
-    return a + b;
-  }
-}
- 
-`.trimLeft());
+  const [code, setCode] = React.useState('FOO'); // TEMP
   return (
     <Root>
       <CodeToolbar codeKey={codeKey} />

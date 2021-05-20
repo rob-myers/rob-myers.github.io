@@ -1,7 +1,8 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import { KeyedLookup } from 'model/generic.model';
-import { LookupUpdates, updateLookup } from './store.util';
+import { addToLookup, LookupUpdates, updateLookup } from './store.util';
+import { initialCode } from 'model/code/code.lib';
  
  export type State = {
    code: KeyedLookup<CodeMeta>;
@@ -25,6 +26,7 @@ interface CodeMeta {
 interface CodeMetaJson {
   current: string;
   lazy: boolean;
+  persist: boolean;
 }
  
 const useStore = create<State>(devtools((set, get) => ({
@@ -36,16 +38,39 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     persist: (codeKey) => {
-      const { key, current, lazy, persist } = api.getCode(codeKey);
+      const { current, lazy, persist } = api.getCode(codeKey);
 
       if (persist) {
-        const json: CodeMetaJson = { current, lazy };
-        localStorage.setItem(`code:${key}`, JSON.stringify(json));
+        const state: CodeMetaJson = { current, lazy, persist };
+        localStorage.setItem(`code:${codeKey}`, JSON.stringify({ state }));
       }
     },
 
     rehydrate: (codeKeys) => {
-      // TODO
+      for (const codeKey of codeKeys) {
+        const storageValue = localStorage.getItem(`code:${codeKey}`);
+
+        if (storageValue) {
+          const { state } = JSON.parse(storageValue) as { state: CodeMetaJson };
+
+          set(({ code }) => ({ code: addToLookup({
+            key: codeKey,
+            current: state.current,
+            lazy: state.lazy,
+            original: (initialCode as any)[codeKey] || '',
+            persist: state.persist,
+          }, code) }));
+
+        } else {
+          set(({ code }) => ({ code: addToLookup({
+            key: codeKey,
+            current: (initialCode as any)[codeKey] || '',
+            original: (initialCode as any)[codeKey] || '',
+            lazy: true,
+            persist: true,
+          }, code) }));
+        }
+      }
     },
 
     updateCode: (codeKey, updates) => {

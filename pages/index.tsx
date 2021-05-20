@@ -53,7 +53,10 @@ This website is concerned with the behaviour of virtual characters.
                   [CoreVar.PROFILE]: profiles.first,
                 }}
               />
-              <CodeEditor codeKey="file.js@demo" sessionKey="demo" />
+              <CodeEditor
+                codeKey="file.js@demo"
+                sessionKey="demo"
+              />
             </Env>
           </section>
 
