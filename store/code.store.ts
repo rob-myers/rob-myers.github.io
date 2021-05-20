@@ -15,7 +15,7 @@ import { initialCode } from 'model/code/code.lib';
    };
  }
 
-interface CodeMeta {
+export interface CodeMeta {
   key: string;
   original: string;
   current: string;

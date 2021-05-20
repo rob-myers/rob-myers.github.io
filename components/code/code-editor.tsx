@@ -15,7 +15,7 @@ export default function CodeEditor({ codeKey, sessionKey }: Props) {
 
   return (
     <Root>
-      <CodeToolbar codeKey={codeKey} />
+      <CodeToolbar code={code} />
       <EditorContainer>
         {code &&  (
           <Editor

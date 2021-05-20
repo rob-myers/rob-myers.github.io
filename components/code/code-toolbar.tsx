@@ -1,15 +1,31 @@
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
+import { useCallback } from "react";
+import useCode, { CodeMeta } from "store/code.store";
 
-export default function CodeToolbar({ codeKey }: Props) {
+export default function CodeToolbar({ code }: Props) {
+  const reset = useCallback(() => {
+    if (code) {
+      useCode.api.updateCode(code.key, ({ original }) => ({ current: original }));
+      useCode.api.persist(code.key);
+    }
+  }, [code]);
+
+  const toggleLazy = useCallback(() => {
+    if (code) {
+      useCode.api.updateCode(code.key, ({ lazy }) => ({ lazy: !lazy }));
+      useCode.api.persist(code.key);
+    }
+  }, [code]);
+
   return (
     <Root>
-      <div>{codeKey}</div>
+      <div>{code?.key}</div>
       <RightToolbar>
-        <ResetButton>
+        <ResetButton onClick={reset}>
           reset
         </ResetButton>
-        <LazyloadButton greyed={false}>
+        <LazyloadButton greyed={code?.lazy??true} onClick={toggleLazy}>
           lazyload
         </LazyloadButton>
       </RightToolbar>
@@ -18,7 +34,7 @@ export default function CodeToolbar({ codeKey }: Props) {
 }
 
 interface Props {
-  codeKey: string;
+  code: CodeMeta | null;
 }
 
 const Root = styled.section`
