@@ -1,7 +1,9 @@
 export const preloadedFunctions = {
 
   range: `{
-  call '({args}) => [...Array(Number(args[0]))].map((_, i) => i)' "$1"
+call '({args}) =>
+  [...Array(Number(args[0]))].map((_, i) => i)
+' "$1"
 }`,
 
   seq: `{
