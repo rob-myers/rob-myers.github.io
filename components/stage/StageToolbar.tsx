@@ -30,7 +30,7 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt }) => {
       <LeftToolbar>
         <Slot>
           <StageKey>
-            @{stageKey}
+            {stageKey}
           </StageKey>
         </Slot>
         <Slot>

@@ -14,7 +14,7 @@ import { Section } from 'components/page/Section';
 
 export default function IndexPage() {
   usePage({ stageKeys: [
-    'test',
+    'test@intro',
   ] });
 
   return (
@@ -44,11 +44,11 @@ This website is concerned with the behaviour of virtual characters.
 
           <section>
             <Env>
-              <Stage stageKey="test" />
+              <Stage stageKey="test@intro" />
               <Terminal
                 sessionKey="demo"
                 env={{
-                  [CoreVar.STAGE_KEY]: "test",
+                  [CoreVar.STAGE_KEY]: "test@intro",
                   [CoreVar.PROFILE]: profiles.first,
                 }}
               />

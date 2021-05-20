@@ -14,7 +14,7 @@ const WrappedStage: React.FC<Props> = ({ stageKey }) => {
 
   useEffect(() => {
     stage && !inView && useStage.api.updateOpt(stage.key, { enabled: false });
-  }, [inView]);
+  }, [inView, stageKey]);
 
   return (
     <Root ref={rootRef}>

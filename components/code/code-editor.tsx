@@ -7,7 +7,7 @@ import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css";
 import CodeToolbar from "./code-toolbar";
 
-const CodeEditor: React.FC<Props> = ({ filename, sessionKey }) => {
+export default function CodeEditor({ filename, sessionKey }: Props) {
   const codeKey = useRef(`${filename}@${sessionKey}`).current;
 
   const [code, setCode] = React.useState(`
@@ -61,6 +61,12 @@ class Util {
   );
 }
 
+interface Props {
+  filename: string;
+  sessionKey: string;
+}
+
+
 const Root = styled.section`
   grid-area: code;
   flex: 1;
@@ -83,10 +89,3 @@ const Editor = styled(ReactSimpleCodeEditor)`
     white-space: pre !important;
   }
 `;
-
-interface Props {
-  filename: string;
-  sessionKey: string;
-}
-
-export default CodeEditor;
