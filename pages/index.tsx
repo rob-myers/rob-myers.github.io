@@ -103,10 +103,11 @@ const Env = styled.section<{}>`
   }
 
   @media(max-width: 800px) {
+  grid-template-columns: 100vw;
   grid-template-rows: 350px 300px 300px;
   grid-template-areas:
-    "stage stage"
-    "terminal terminal"
-    "code code";
+    "stage"
+    "terminal"
+    "code";
   }
 `;
