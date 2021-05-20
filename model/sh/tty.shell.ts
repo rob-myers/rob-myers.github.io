@@ -11,7 +11,7 @@ import { wrapInFile } from './parse/parse.util';
 import { semanticsService } from './semantics.service';
 import { TtyXterm } from './tty.xterm';
 import { ProcessError } from './sh.util';
-import { preloadedFunctions, preloadedVariables } from './code-library';
+import { preloadedFunctions, preloadedVariables } from './sh.lib';
 
 export class TtyShell implements Device {
 

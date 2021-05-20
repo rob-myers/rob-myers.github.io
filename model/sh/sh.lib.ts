@@ -1,16 +1,26 @@
 export const preloadedFunctions = {
 
-  range: `call '({args}) => [...Array(Number(args[0]))].map((_, i) => i)' "$1"`,
+  range: `{
+  call '({args}) => [...Array(Number(args[0]))].map((_, i) => i)' "$1"
+}`,
 
-  seq: `range "$1" | split`,
+  seq: `{
+  range "$1" | split
+}`,
 
-  pretty: `map '(x, {lib}) => lib.stringify(x)'`,
+  pretty: `{
+  map '(x, {lib}) => lib.stringify(x)'
+}`,
 
-  keys: `map Object.keys`,
+  keys: `{
+  map Object.keys
+}`,
   // cat: `get "$@" | split`,
 
   // 'map console.log' would log the 2nd arg too
-  log: `map 'x => console.log(x)'`,
+  log: `{
+  map 'x => console.log(x)'
+}`,
 };
 
 export const preloadedVariables = {

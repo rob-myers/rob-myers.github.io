@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import styled from "@emotion/styled";
 
 import { CoreVar } from 'model/sh/var.model'
-import { profiles } from 'model/sh/code-library'
+import { profiles } from 'model/sh/sh.lib'
 
 import Header from 'components/page/Header';
 import Stage from 'components/stage/WrappedStage'
