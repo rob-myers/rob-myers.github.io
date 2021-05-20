@@ -34,11 +34,10 @@ export default function IndexPage() {
 ## Introduction
             
 When I first controlled the pixels of a long since discarded television, I felt a rush of excitement.
-Pushing a rubbery grey button of our ZX Spectrum, the avatar _moved_.
-So virtual worlds exist, virtual worlds can be created.
-Virtual characters too.
+As I pushed the rubbery grey buttons of our ZX Spectrum, the avatar _moved_.
+So virtual worlds can be created, and virtual characters too.
 
-This website is concerned with the behaviour of virtual characters.
+This website is about the behaviour of virtual characters.
 
             `} />
           </Section>
