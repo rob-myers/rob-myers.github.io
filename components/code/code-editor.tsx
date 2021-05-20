@@ -5,10 +5,10 @@ import { highlight, languages } from "prismjs";
 import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css";
+import CodeToolbar from "./code-toolbar";
 
 const CodeEditor: React.FC<Props> = ({ filename, sessionKey }) => {
   const codeKey = useRef(`${filename}@${sessionKey}`).current;
-
 
   const [code, setCode] = React.useState(`
 function testLog(ctxt) {
@@ -40,19 +40,14 @@ class Util {
 `.trimLeft());
   return (
     <Root>
-      <Toolbar>
-        <div>{codeKey}</div>
-        <RunButton>
-          send
-        </RunButton>
-      </Toolbar>
+      <CodeToolbar codeKey={codeKey} />
       <EditorContainer>
         <Editor
           value={code}
           onValueChange={(code) => setCode(code)}
 
           highlight={(code) => highlight(code, languages.javascript, 'javascript')}
-          padding={10}
+          padding={12}
           style={{
             fontFamily: '"Fira code", "Fira Mono", monospace',
             fontSize: 12,
@@ -69,22 +64,6 @@ class Util {
 const Root = styled.section`
   grid-area: code;
   flex: 1;
-`;
-
-const Toolbar = styled.section`
-  font-size: 10pt;
-  background: #222;
-  color: #fff;
-  height: 28px;
-  padding: 0 4px 5px 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-`;
-
-const RunButton = styled.button`
-  font-size: 9pt;
-  margin-bottom: -2px;
 `;
 
 const EditorContainer = styled.div`
