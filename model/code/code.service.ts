@@ -5,21 +5,22 @@ class CodeService {
    * We require strict spacing (see regexes below).
    * Each function/class must be terminated by line `}`.
    */
-  parseJs(code: string) {
+  parseJs(code: string): CodeError | ParsedCode {
     const lines = code.split('\n');
-    const output = {} as Record<string, {
-      name: string;
-      code: string;
-      type: MatchedType;
-    }>;
+    const output = {} as ParsedCode['output'];
     let [state, name, start] = [null as null | MatchedType, '', 0];
     let contents = [] as string[];
 
     outer:
     for (const [index, line] of lines.entries()) {
+      
       for (const [key, regex] of regexes) {
         const matched = line.match(regex);
         if (matched) {// Found a function or class
+          if (state) {
+            // Found another function/class before ending the current oone
+            return { error: `${contents[0]}: terminated unexpectedly`, line: start };
+          }
           [name, contents, start, state] = [matched[1], [line], index + 1, key];
           continue outer;
         }
@@ -88,5 +89,18 @@ const regexes = Object.entries({
   'async*': asyncGeneratorRegex,
   class: classRegex,
 }) as [MatchedType, RegExp][];
+
+export interface CodeError {
+  error: string;
+  line: number;
+}
+
+export interface ParsedCode {
+  output: Record<string, {
+    name: string;
+    code: string;
+    type: MatchedType;
+  }>;
+}
 
 export const codeService = new CodeService;

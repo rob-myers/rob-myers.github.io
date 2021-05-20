@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import ReactSimpleCodeEditor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs";
@@ -8,23 +8,27 @@ import "prismjs/themes/prism-tomorrow.css";
 
 import useCode from "store/code.store";
 import CodeToolbar from "./code-toolbar";
-import { codeService } from "model/code/code.service";
+import { CodeError, codeService } from "model/code/code.service";
 
 export default function CodeEditor({ codeKey, sessionKey }: Props) {
   const code = useCode(({ code }) => codeKey in code ? code[codeKey] : null);
   const timeoutId = useRef(0);
+  const [codeError, setCodeError] = useState<CodeError>();
 
   const onValueChange = useCallback((latest: string) => {
     useCode.api.updateCode(codeKey, { current: latest });
+
     window.clearTimeout(timeoutId.current);
 
     timeoutId.current = window.setTimeout(()=> {
       const result = codeService.parseJs(latest);
-      if ('error' in result) {// TODO depict error
+      if ('error' in result) {
         console.error(result);
+        setCodeError(result);
       } else {// TODO send result to session
         console.info(result.output);
         useCode.api.persist(codeKey);
+        setCodeError(undefined);
       }
     }, 1000);
   }, [codeKey]);
@@ -38,16 +42,17 @@ export default function CodeEditor({ codeKey, sessionKey }: Props) {
 
   return (
     <Root>
-      <CodeToolbar code={code} />
+      <CodeToolbar
+        code={code}
+        error={codeError}
+      />
       <EditorContainer>
         <Gap/>
         {code &&  (
           <Editor
             value={code.current}
             onValueChange={onValueChange}
-            // highlight={(code) => highlight(code, languages.javascript, 'javascript')}
             highlight={hightlightWithLineNumbers}
-            // padding={12}
             style={{
               fontFamily: '"Fira code", "Fira Mono", monospace',
               fontSize: 12,
@@ -72,10 +77,10 @@ function Gap() {
   );
 }
 
-
 const Root = styled.section`
   grid-area: code;
   flex: 1;
+  position: relative;
 `;
 
 const EditorContainer = styled.div`

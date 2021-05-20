@@ -5,7 +5,7 @@
 - Can define shell fns via syntax-highlighted js text
   - ✅ persist code via `code.store`
   - ✅ `CodeEditor` tests validity
-  - `CodeEditor` shows issues
+  - ✅ `CodeEditor` shows error
   - `CodeEditor` send parsed data to session
   - optionally lazyload shell functions/classes
   - `function foo() {}` becomes `call`
