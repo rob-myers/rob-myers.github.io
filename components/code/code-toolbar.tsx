@@ -40,7 +40,7 @@ interface Props {
 const Root = styled.section`
   font-size: 10pt;
   background: #222;
-  color: #ddd;
+  color: #fff;
   height: 28px;
   padding: 0 10px;
   display: flex;

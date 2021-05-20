@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import styled from "@emotion/styled";
 import ReactSimpleCodeEditor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs";
@@ -8,10 +8,28 @@ import "prismjs/themes/prism-tomorrow.css";
 
 import useCode from "store/code.store";
 import CodeToolbar from "./code-toolbar";
+import { codeService } from "model/code/code.service";
 
 export default function CodeEditor({ codeKey, sessionKey }: Props) {
   const code = useCode(({ code }) => codeKey in code ? code[codeKey] : null);
   const timeoutId = useRef(0);
+
+  const onValueChange = useCallback((latest: string) => {
+    useCode.api.updateCode(codeKey, { current: latest });
+    window.clearTimeout(timeoutId.current);
+
+    timeoutId.current = window.setTimeout(()=> {
+      const result = codeService.parseJs(latest);
+      if ('error' in result) {
+        // TODO depict error
+        console.error(result);
+      } else {
+        // TODO send result to session
+        console.info(result.output);
+        useCode.api.persist(codeKey);
+      }
+    }, 1000);
+  }, [codeKey]);
 
   return (
     <Root>
@@ -20,11 +38,7 @@ export default function CodeEditor({ codeKey, sessionKey }: Props) {
         {code &&  (
           <Editor
             value={code.current}
-            onValueChange={(latest) => {
-              useCode.api.updateCode(codeKey, { current: latest });
-              window.clearTimeout(timeoutId.current);
-              timeoutId.current = window.setTimeout(()=> useCode.api.persist(codeKey), 2000);
-            }}
+            onValueChange={onValueChange}
             highlight={(code) => highlight(code, languages.javascript, 'javascript')}
             padding={12}
             style={{

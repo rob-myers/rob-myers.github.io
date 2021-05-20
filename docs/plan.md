@@ -3,8 +3,8 @@
 ### TODO
 
 - Can define shell fns via syntax-highlighted js text
-  - persist code via `code.store`
-  - `CodeEditor` tests validity
+  - ✅ persist code via `code.store`
+  - ✅ `CodeEditor` tests validity
   - `CodeEditor` shows issues
   - `CodeEditor` send parsed data to session
   - optionally lazyload shell functions/classes

@@ -1,4 +1,3 @@
-
 export const initialCode = {
 
   'file.js@demo': `
