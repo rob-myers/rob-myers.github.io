@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import styled from "@emotion/styled";
 import ReactSimpleCodeEditor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs";
@@ -10,24 +10,29 @@ import useCode from "store/code.store";
 import CodeToolbar from "./code-toolbar";
 
 export default function CodeEditor({ codeKey, sessionKey }: Props) {
-  // const code = useCode(({ code }) => codeKey in code ? code[codeKey] : null);
+  const code = useCode(({ code }) => codeKey in code ? code[codeKey] : null);
+  const timeoutId = useRef(0);
 
-  const [code, setCode] = React.useState('FOO'); // TEMP
   return (
     <Root>
       <CodeToolbar codeKey={codeKey} />
       <EditorContainer>
-        <Editor
-          value={code}
-          onValueChange={(code) => setCode(code)}
-
-          highlight={(code) => highlight(code, languages.javascript, 'javascript')}
-          padding={12}
-          style={{
-            fontFamily: '"Fira code", "Fira Mono", monospace',
-            fontSize: 12,
-          }}
-        />
+        {code &&  (
+          <Editor
+            value={code.current}
+            onValueChange={(latest) => {
+              useCode.api.updateCode(codeKey, { current: latest });
+              window.clearTimeout(timeoutId.current);
+              timeoutId.current = window.setTimeout(()=> useCode.api.persist(codeKey), 2000);
+            }}
+            highlight={(code) => highlight(code, languages.javascript, 'javascript')}
+            padding={12}
+            style={{
+              fontFamily: '"Fira code", "Fira Mono", monospace',
+              fontSize: 12,
+            }}
+          />
+        )}
       </EditorContainer>
     </Root>
   );
