@@ -129,7 +129,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
         sessionKey,
         status: ProcessStatus.Running,
         src,
-        positionals: ['three.js-cli', ...posPositionals || []],
+        positionals: ['jsh', ...posPositionals || []],
         cleanups: [],
         onSuspend: null,
         onResume: null,
