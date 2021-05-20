@@ -103,6 +103,7 @@ const LeftToolbar = styled.section`
 const StageKey = styled.div`
   color: #ff8;
   opacity: 0.8;
+  user-select: text;
 `;
 
 const PauseButton = styled.div<{ pending: boolean; }>`

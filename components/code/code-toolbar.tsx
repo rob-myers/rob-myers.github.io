@@ -22,12 +22,16 @@ export default function CodeToolbar({ code }: Props) {
     <Root>
       <div>{code?.key}</div>
       <RightToolbar>
+        <LazyloadButton
+          greyed={code?.lazy??true}
+          title="lazy load?"
+          onClick={toggleLazy}
+        >
+          lazy
+        </LazyloadButton>
         <ResetButton onClick={reset}>
           reset
         </ResetButton>
-        <LazyloadButton greyed={code?.lazy??true} onClick={toggleLazy}>
-          lazyload
-        </LazyloadButton>
       </RightToolbar>
     </Root>
   );
@@ -42,7 +46,7 @@ const Root = styled.section`
   background: #222;
   color: #fff;
   height: 28px;
-  padding: 0 10px;
+  padding: 0 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -52,7 +56,7 @@ const Root = styled.section`
 const RightToolbar = styled.div`
   display: grid;
   grid-template-columns: auto auto;
-  gap: 12px;
+  gap: 10px;
 `;
 
 const ResetButton = styled.div<{}>`

@@ -20,27 +20,34 @@ export default function CodeEditor({ codeKey, sessionKey }: Props) {
 
     timeoutId.current = window.setTimeout(()=> {
       const result = codeService.parseJs(latest);
-      if ('error' in result) {
-        // TODO depict error
+      if ('error' in result) {// TODO depict error
         console.error(result);
-      } else {
-        // TODO send result to session
+      } else {// TODO send result to session
         console.info(result.output);
         useCode.api.persist(codeKey);
       }
     }, 1000);
   }, [codeKey]);
 
+  const hightlightWithLineNumbers = useCallback((code: string) =>
+    highlight(code, languages.javascript, 'javascript')
+      .split("\n")
+      .map((line, i) => `<span class='editorLineNumber'>${i + 1}</span>${line}`)
+      .join("\n"),
+    []);
+
   return (
     <Root>
       <CodeToolbar code={code} />
       <EditorContainer>
+        <Gap/>
         {code &&  (
           <Editor
             value={code.current}
             onValueChange={onValueChange}
-            highlight={(code) => highlight(code, languages.javascript, 'javascript')}
-            padding={12}
+            // highlight={(code) => highlight(code, languages.javascript, 'javascript')}
+            highlight={hightlightWithLineNumbers}
+            // padding={12}
             style={{
               fontFamily: '"Fira code", "Fira Mono", monospace',
               fontSize: 12,
@@ -57,6 +64,14 @@ interface Props {
   sessionKey: string;
 }
 
+function Gap() {
+  return (
+    <div style={{ display: 'flex', height: 8 }}>
+      <div style={{ width: 32, background: '#222' }} />
+    </div>
+  );
+}
+
 
 const Root = styled.section`
   grid-area: code;
@@ -66,8 +81,8 @@ const Root = styled.section`
 const EditorContainer = styled.div`
   height: calc(100% - 28px);
   overflow: auto;
-  background: #333;
   color: #ffc;
+  background: #333;
 `;
 
 const Editor = styled(ReactSimpleCodeEditor)`
@@ -76,9 +91,22 @@ const Editor = styled(ReactSimpleCodeEditor)`
   min-width: 100%;
   min-height: 100%;
   float: left;
+
   & > textarea,
   & > pre {
     outline: none;
     white-space: pre !important;
+    padding-left: 40px !important;
+  }
+
+  .editorLineNumber {
+    position: absolute;
+    left: 0px;
+    text-align: right;
+    width: 32px;
+    font-weight: 100;
+    background: #222;
+    color: #aaa;
+    padding-right: 4px;
   }
 `;
