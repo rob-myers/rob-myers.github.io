@@ -6,13 +6,13 @@
   - ✅ persist code via `code.store`
   - ✅ `CodeEditor` tests validity
   - ✅ `CodeEditor` shows error
-  - `CodeEditor` send parsed data to session
+  - ✅ `CodeEditor` sends parsed data to session
   - optionally lazyload shell functions/classes
-  - `function foo() {}` becomes `call`
-  - `async function foo() {}` becomes `call`
-  - `function *foo() {}` becomes `run`
-  - `async function *foo() {}` becomes `run`
-  - `class foo {}` attached to `lib`
+  - ✅ `function foo() {}` becomes `call`
+  - ✅ `async function foo() {}` becomes `call`
+  - ✅ `function *foo() {}` becomes `run`
+  - ✅ `async function *foo() {}` becomes `run`
+  - ✅ `class foo {}` attached to `lib`
 
 - integrate @box2d
   > https://github.com/Lusito/box2d.ts

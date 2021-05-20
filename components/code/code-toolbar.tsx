@@ -5,7 +5,7 @@ import useCode, { CodeMeta } from "store/code.store";
 import { CodeError } from "model/code/code.service";
 
 export default function CodeToolbar({ code, error }: Props) {
-  const [showError, setShowError] = useState(false);
+  const [showError, setShowError] = useState(true);
 
   const toggleShowError = useCallback(() => {
     error && setShowError(x => !x);
@@ -49,7 +49,7 @@ export default function CodeToolbar({ code, error }: Props) {
         </RightToolbar>
       </Root>
       {error && showError && <ErrorPanel>
-        ⚠️&nbsp; Line {error.line}: {error.error}
+        ⚠️&nbsp; Line {error.line}: <em>{error.error}</em>
       </ErrorPanel>}
     </>
   );
@@ -82,7 +82,10 @@ const ErrorButton = styled.div<{ greyed: boolean }>`
   outline: none;
   cursor: pointer;
   color: #f44;
-  ${({ greyed }) => greyed && css`color: #777;`}
+  ${({ greyed }) => greyed && css`
+    color: #777;
+    cursor: auto;
+  `}
 `;
 
 const LazyloadButton = styled.div<{ greyed: boolean }>`

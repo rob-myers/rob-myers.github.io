@@ -1,13 +1,45 @@
+import { cmdService } from "model/sh/cmd.service";
+import useSessionStore from "store/session.store";
+
 class CodeService {
 
+  jsToSession(sessionKey: string, { output }: ParsedJsCode) {
+    const funcDef = {} as { [funcName: string]: string };
+
+    for (const { name, code, type } of Object.values(output)) {
+      switch (type) {
+        case 'func':
+        case 'async': 
+          funcDef[name] = `{ call '${code}' "$@"; }`;
+          break;
+        case '*func':
+          funcDef[name] = `{ run '${
+            code.slice('function *'.length + name.length)
+          }' "$@"; }`;
+          break;
+        case 'async*':
+          funcDef[name] = `{ run '${
+            code.slice('async function *'.length + name.length)
+          }' "$@"; }`;
+          break;
+        case 'class':
+          cmdService.baseLibProxy[name] = Function(`return ${code}`)();
+          break;
+      }
+    }
+
+    const { ttyShell } = useSessionStore.api.getSession(sessionKey);
+    ttyShell.loadShellFuncs(funcDef);
+  }
+  
   /**
    * Expect top-level functions and classes only.
    * We require strict spacing (see regexes below).
    * Each function/class must be terminated by line `}`.
    */
-  parseJs(code: string): CodeError | ParsedCode {
+  parseJs(code: string): CodeError | ParsedJsCode {
     const lines = code.split('\n');
-    const output = {} as ParsedCode['output'];
+    const output = {} as ParsedJsCode['output'];
     let [state, name, start] = [null as null | MatchedType, '', 0];
     let contents = [] as string[];
 
@@ -19,7 +51,7 @@ class CodeService {
         if (matched) {// Found a function or class
           if (state) {
             // Found another function/class before ending the current oone
-            return { error: `${contents[0]}: terminated unexpectedly`, line: start };
+            return { error: `${contents[0]} terminated unexpectedly`, line: start };
           }
           [name, contents, start, state] = [matched[1], [line], index + 1, key];
           continue outer;
@@ -32,7 +64,10 @@ class CodeService {
         if (line === '}') {
           const code = contents.join('\n');
           if (!this.verifyDef(code, state)) {
-            return { error: `${contents[0]}: is not a function/class`, line: start }
+            return {
+              error: `${contents[0]} is not a valid ${state === 'class' ? 'class' : 'function'}`,
+              line: start,
+            };
           }
           output[name] = { name, code, type: state };
           contents.length = 0;
@@ -95,7 +130,7 @@ export interface CodeError {
   line: number;
 }
 
-export interface ParsedCode {
+export interface ParsedJsCode {
   output: Record<string, {
     name: string;
     code: string;

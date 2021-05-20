@@ -609,7 +609,7 @@ class CmdService {
 
   private stageProxy = {} as { [stageKey: string]: StageMeta }
 
-  private baseLibProxy = {};
+  public readonly baseLibProxy = {} as Record<string, any>;
 
   /**
    * Expose classes/services

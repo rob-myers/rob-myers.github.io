@@ -47,12 +47,15 @@ export class TtyShell implements Device {
     });
     this.process = useSession.api.getSession(this.sessionKey).process[0];
 
-    if (!parseService.parse) {
+    if (!parseService.parse) {// Wait for parse.service
       await new Promise<void>(resolve => initializers.push(resolve));
     }
-
-    this.preloadFuncsVars();
+    this.loadShellFuncs(preloadedFunctions);
+    for (const [varName, varValue] of Object.entries(preloadedVariables)) {
+      useSession.api.setVar(this.sessionKey, varName, varValue);
+    }
     await this.runProfile();
+
     this.prompt('$');
   }
 
@@ -187,20 +190,18 @@ export class TtyShell implements Device {
     });    
   }
 
-  private preloadFuncsVars() {
-    for (const [funcName, funcBody] of Object.entries(preloadedFunctions)) {
+  /** Input is a lookup `{ foo: '{ echo foo; }' }` */
+  loadShellFuncs(funcDef: { [funcName: string]: string }) {
+    for (const [funcName, funcBody] of Object.entries(funcDef)) {
       try {
         const parsed = parseService.parse(`${funcName} () ${funcBody.trim()}`);
         const parsedBody = (parsed.Stmts[0].Cmd as Sh.FuncDecl).Body;
         const wrappedBody = wrapInFile(parsedBody);
         useSession.api.addFunc(this.sessionKey, funcName, wrappedBody);
       } catch (e) {
-        console.error(`Failed to preload function: ${funcName}`);
+        console.error(`Failed to load function: ${funcName}`);
         console.error(e);
       }
-    }
-    for (const [varName, varValue] of Object.entries(preloadedVariables)) {
-      useSession.api.setVar(this.sessionKey, varName, varValue);
     }
   }
 

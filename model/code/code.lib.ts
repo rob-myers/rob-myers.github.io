@@ -2,7 +2,7 @@ export const initialCode = {
 
   'file.js@demo': `
 function testLog(ctxt) {
-  console.log('process context', ctxt);
+  console.log("process context", ctxt);
 }
 
 async function readIntoVar({ args, var: v, api }) {
@@ -12,12 +12,12 @@ async function readIntoVar({ args, var: v, api }) {
 }
 
 function *testYield(pr) {
-  yield* ['process context:', pr];
+  yield* ["process context:", pr];
 }
 
 async function *testYieldRead({ api }) {
   const value = await api.read();
-  yield 'the following was read:';
+  yield "the following was read:";
   yield value;
 }
 

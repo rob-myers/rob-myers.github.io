@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import ReactSimpleCodeEditor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs";
@@ -6,32 +6,37 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css";
 
-import useCode from "store/code.store";
+import useCodeStore from "store/code.store";
 import CodeToolbar from "./code-toolbar";
 import { CodeError, codeService } from "model/code/code.service";
+import useSessionStore from "store/session.store";
 
-export default function CodeEditor({ codeKey, sessionKey }: Props) {
-  const code = useCode(({ code }) => codeKey in code ? code[codeKey] : null);
-  const timeoutId = useRef(0);
+export default function CodeEditor({ codeKey }: Props) {
+  const code = useCodeStore(({ code }) => codeKey in code ? code[codeKey] : null);
+  const sessionKey = useSessionStore(({ session }) => session[codeKey.split('@')[1]]?.key);
   const [codeError, setCodeError] = useState<CodeError>();
+  const timeoutId = useRef(0);
 
   const onValueChange = useCallback((latest: string) => {
-    useCode.api.updateCode(codeKey, { current: latest });
-
+    useCodeStore.api.updateCode(codeKey, { current: latest });
     window.clearTimeout(timeoutId.current);
 
     timeoutId.current = window.setTimeout(()=> {
       const result = codeService.parseJs(latest);
       if ('error' in result) {
-        console.error(result);
         setCodeError(result);
       } else {// TODO send result to session
         console.info(result.output);
-        useCode.api.persist(codeKey);
+        sessionKey && codeService.jsToSession(sessionKey, result);
         setCodeError(undefined);
       }
+      useCodeStore.api.persist(codeKey); // Even if error
     }, 1000);
-  }, [codeKey]);
+  }, [codeKey, sessionKey]);
+
+  useEffect(() => {// Initial parse
+    code?.key && sessionKey && onValueChange(code.current);
+  }, [code?.key, sessionKey]);
 
   const hightlightWithLineNumbers = useCallback((code: string) =>
     highlight(code, languages.javascript, 'javascript')
@@ -66,7 +71,6 @@ export default function CodeEditor({ codeKey, sessionKey }: Props) {
 
 interface Props {
   codeKey: string;
-  sessionKey: string;
 }
 
 function Gap() {

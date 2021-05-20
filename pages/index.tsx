@@ -33,8 +33,8 @@ export default function IndexPage() {
             <ReactMarkdown children={`
 ## Introduction
             
-When I first controlled the pixels of a long since discarded television, I felt a rush of excitement.
-As I pushed the rubbery grey buttons of our ZX Spectrum, the avatar _moved_.
+When first controlling the pixels of a long since discarded television, I felt a rush of excitement.
+Pushing the rubbery grey buttons of our ZX Spectrum, the avatar _moved_.
 So virtual worlds can be created, and virtual characters too.
 
 This website is about the behaviour of virtual characters.
@@ -52,10 +52,7 @@ This website is about the behaviour of virtual characters.
                   [CoreVar.PROFILE]: profiles.first,
                 }}
               />
-              <CodeEditor
-                codeKey="file.js@demo"
-                sessionKey="demo"
-              />
+              <CodeEditor codeKey="file.js@demo" />
             </Env>
           </section>
 
