@@ -29,17 +29,17 @@ export default function IndexPage() {
           <Header />
 
           <Section>
-          <ReactMarkdown children={`
+            <ReactMarkdown children={`
 ## Introduction
             
-When I first controlled the pixels of a television, I felt a rush of excitement.
-Pushing one of the rubbery grey buttons of our ZX Spectrum, the avatar _moved_.
+When I first controlled the pixels of a long since discarded television, I felt a rush of excitement.
+Pushing a rubbery grey button of our ZX Spectrum, the avatar _moved_.
 So virtual worlds exist, virtual worlds can be created.
+Virtual characters too.
 
-Today almost all of these "worlds" remain packaged as video games.
-The player plays a part; the game progresses.
-          
-          `} />
+This website is concerned with the behaviour of virtual characters.
+
+            `} />
           </Section>
 
           <section>
