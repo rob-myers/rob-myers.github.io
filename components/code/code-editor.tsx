@@ -7,9 +7,7 @@ import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism-tomorrow.css";
 import CodeToolbar from "./code-toolbar";
 
-export default function CodeEditor({ filename, sessionKey }: Props) {
-  const codeKey = useRef(`${filename}@${sessionKey}`).current;
-
+export default function CodeEditor({ codeKey, sessionKey }: Props) {
   const [code, setCode] = React.useState(`
 function testLog(ctxt) {
   console.log('process context', ctxt);
@@ -51,9 +49,6 @@ class Util {
           style={{
             fontFamily: '"Fira code", "Fira Mono", monospace',
             fontSize: 12,
-            // prism-tomorrow specific:
-            background:'#2d2d2d',
-            color: '#ccc',
           }}
         />
       </EditorContainer>
@@ -62,7 +57,7 @@ class Util {
 }
 
 interface Props {
-  filename: string;
+  codeKey: string;
   sessionKey: string;
 }
 
@@ -75,6 +70,8 @@ const Root = styled.section`
 const EditorContainer = styled.div`
   height: calc(100% - 28px);
   overflow: auto;
+  background: #333;
+  color: #ffc;
 `;
 
 const Editor = styled(ReactSimpleCodeEditor)`

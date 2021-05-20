@@ -3,7 +3,6 @@ import { devtools } from 'zustand/middleware';
 import * as THREE from 'three';
 
 import { deepClone, KeyedLookup } from 'model/generic.model';
-import { getWindow } from 'model/dom.model';
 import { vectorToTriple, loadJson, createPlaceholderGroup } from 'model/3d/three.model';
 import * as Stage from 'model/stage/stage.model';
 import { addToLookup, LookupUpdates, Updates, updateLookup } from './store.util';
@@ -68,8 +67,6 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     rehydrate: (stageKeys) => {
-      if (!getWindow()) return;
-
       for (const stageKey of stageKeys) {
         const storageValue = localStorage.getItem(`stage:${stageKey}`);
        

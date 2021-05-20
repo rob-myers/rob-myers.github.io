@@ -13,9 +13,10 @@ import { usePage } from 'components/hooks';
 import { Section } from 'components/page/Section';
 
 export default function IndexPage() {
-  usePage({ stageKeys: [
-    'test@intro',
-  ] });
+  usePage({
+    stageKeys: ['test@intro'],
+    codeKeys: ['file.js@demo'],
+  });
 
   return (
     <>
@@ -52,11 +53,9 @@ This website is concerned with the behaviour of virtual characters.
                   [CoreVar.PROFILE]: profiles.first,
                 }}
               />
-              <CodeEditor filename="file.js" sessionKey="demo" />
+              <CodeEditor codeKey="file.js@demo" sessionKey="demo" />
             </Env>
           </section>
-
-          {/* <section style={{ height: 1000 }} /> */}
 
         </div>
       </Main>

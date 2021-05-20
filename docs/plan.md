@@ -3,10 +3,11 @@
 ### TODO
 
 - Can define shell fns via syntax-highlighted js text
-  - can press `send` and send text to session
   - persist code via `code.store`
-  - session receives text
-  - session parses text and warns
+  - `CodeEditor` tests validity
+  - `CodeEditor` shows issues
+  - `CodeEditor` send parsed data to session
+  - optionally lazyload shell functions/classes
   - `function foo() {}` becomes `call`
   - `async function foo() {}` becomes `call`
   - `function *foo() {}` becomes `run`
