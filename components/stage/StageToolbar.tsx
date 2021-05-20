@@ -100,7 +100,9 @@ const LeftToolbar = styled.section`
   gap: 10px;
 `;
 
-const StageKey = styled.div``;
+const StageKey = styled.div`
+  color: #ff8;
+`;
 
 const PauseButton = styled.div<{ pending: boolean; }>`
   cursor: pointer;

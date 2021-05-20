@@ -147,6 +147,7 @@ const Root = styled.section<{ background: string }>`
   flex-direction: column;
   position: relative;
   ${({ background }) => css`background: ${background};`}
+  outline: none;
 `;
 
 const CanvasRoot = styled(Canvas)<{ fadeIn: boolean }>`
