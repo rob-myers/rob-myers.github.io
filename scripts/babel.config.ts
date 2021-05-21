@@ -2,12 +2,18 @@ export default (api: Api): Config => {
   api.cache(true);
 
   return {
+    exclude: [],
     presets: [
       [
         'next/babel',
         {
-          'preset-env': {},
-          'transform-runtime': {},
+          'preset-env': {
+            "targets": {
+               "esmodules": true,
+            },
+          },
+          // https://github.com/babel/babel/issues/11539#issuecomment-626381058
+          // 'transform-runtime': {},
           'styled-jsx': {},
           'class-properties': {},
           '@emotion/babel-preset-css-prop': {},
@@ -34,6 +40,8 @@ interface Api {
 }
 
 interface Config {
+  exclude?: any[];
+  overrides?: any[];
   presets: object[];
   plugins: (string | object)[];
 }
