@@ -28,7 +28,7 @@ export default function CodeEditor({ codeKey }: Props) {
           codeService.jsToSession(sessionKey, result);
         }
         useCodeStore.api.persist(codeKey); // Even when error
-      }, 1000);
+      }, 500);
     }
   }, [code?.current]);
 
