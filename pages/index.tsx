@@ -87,10 +87,13 @@ const Env = styled.section<{}>`
   display: grid;
 
   grid-template-columns: 500px 500px;
-  grid-template-rows: 400px 400px;
+  grid-template-rows: 400px 400px 400px;
   grid-template-areas: 
     "stage stage"
-    "terminal code";
+    "terminal terminal"
+    "code code";
+    /* "stage stage"
+    "terminal code"; */
 
   @media(max-width: 1248px) {
     grid-template-columns: 400px 400px;
