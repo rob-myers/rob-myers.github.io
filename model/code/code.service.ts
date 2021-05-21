@@ -47,6 +47,14 @@ class CodeService {
     outer:
     for (const [index, line] of lines.entries()) {
       
+      if (line.includes("'")) {
+        return {
+          key: 'error',
+          error: `${line} must not contain any single-quote i.e. '`,
+          line: index + 1,
+        };
+      }
+
       for (const [key, regex] of regexes) {
         const matched = line.match(regex);
         if (matched) {// Found a function or class
