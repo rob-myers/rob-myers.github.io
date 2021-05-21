@@ -1,6 +1,9 @@
+/**
+ * TODO real code extracted some way?
+ */
 export const initialCode = {
 
-  'file.js@demo': `
+  'file.js': `
 
 function clear({stage:{root}}) {
   root.children.slice().forEach(child => root.remove(child));

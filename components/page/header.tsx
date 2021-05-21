@@ -3,11 +3,11 @@ import styled from "@emotion/styled";
 const Header: React.FC = () => {
   return <>
     <Title>
-      three.js CLI
+      Robots
     </Title>
   
     <Subtitle>
-      A command line interface for three.js
+      Let's build some fucking robots
     </Subtitle>
   </>;
 };

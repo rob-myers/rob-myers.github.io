@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import useStage from "store/stage.store";
 
-const Placeholder: React.FC<Props> = ({ stageKey, everUsed, dataUrl }) => {
+export default function Placeholder({ stageKey, everUsed, dataUrl }: Props) {
   const enableStage = useCallback(() =>
     useStage.api.updateOpt(stageKey, { enabled: true })
   , [stageKey]);
@@ -77,5 +77,3 @@ const PlaceholderMessage = styled.div<{}>`
     font-size: 2.5rem;
   }
 `;
-
-export default Placeholder;

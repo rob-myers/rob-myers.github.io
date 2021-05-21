@@ -5,8 +5,7 @@ import { Controls } from 'model/3d/controls';
 // Types must also be extended, see types/three-types.d.ts
 extend({ Controls });
 
-const CameraControls: React.FC<Props> = ({ controls, captureMouse }) => {
-
+export default function CameraControls({ controls, captureMouse }: Props) {
   useFrame((_state) => controls.update());
 
   useEffect(() => {
@@ -38,5 +37,3 @@ interface Props {
   controls: Controls;
   captureMouse: boolean;
 }
-
-export default CameraControls;

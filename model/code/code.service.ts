@@ -1,38 +1,12 @@
-import { cmdService } from "model/sh/cmd.service";
-import useSessionStore from "store/session.store";
-
 class CodeService {
 
-  jsToSession(sessionKey: string, { output }: ParsedJsCode) {
-    // console.info(sessionKey, output);
-    const funcDef = {} as { [funcName: string]: string };
-
+  jsToSession({ output }: ParsedJsCode) {
     for (const { name, code, type } of Object.values(output)) {
-      switch (type) {
-        case 'func':
-        case 'async': 
-          funcDef[name] = `{ call '${code}' "$@"; }`;
-          break;
-        case '*func':
-          funcDef[name] = `{ run '${
-            code.slice('function *'.length + name.length)
-          }' "$@"; }`;
-          break;
-        case 'async*':
-          funcDef[name] = `{ run '${
-            code.slice('async function *'.length + name.length)
-          }' "$@"; }`;
-          break;
-        case 'class':
-          const Class = Function(`return ${code}`)();
-          const instanceName = name[0].toLowerCase() + name.slice(1);
-          cmdService.baseLibProxy[instanceName] = new Class(cmdService.libProxy);
-          break;
-      }
+      /**
+       * TODO
+       */
+      console.info('load js', { name, code, type });
     }
-
-    const { ttyShell } = useSessionStore.api.getSession(sessionKey);
-    ttyShell.loadShellFuncs(funcDef);
   }
   
   /**

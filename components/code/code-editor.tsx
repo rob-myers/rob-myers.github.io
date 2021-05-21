@@ -9,11 +9,9 @@ import "prismjs/themes/prism-tomorrow.css";
 import useCodeStore from "store/code.store";
 import CodeToolbar from "./code-toolbar";
 import { CodeError, codeService } from "model/code/code.service";
-import useSessionStore from "store/session.store";
 
 export default function CodeEditor({ codeKey }: Props) {
   const code = useCodeStore(({ code }) => codeKey in code ? code[codeKey] : null);
-  const sessionKey = useSessionStore(({ session }) => session[codeKey.split('@')[1]]?.key);
   const [codeError, setCodeError] = useState<CodeError>();
   const timeoutId = useRef(0);
 
@@ -24,8 +22,8 @@ export default function CodeEditor({ codeKey }: Props) {
         const result = codeService.parseJs(code.current);
         setCodeError(result.key === 'error' ? result : undefined);
   
-        if (result.key === 'parsed' && sessionKey) {
-          codeService.jsToSession(sessionKey, result);
+        if (result.key === 'parsed') {
+          codeService.jsToSession(result);
         }
         useCodeStore.api.persist(codeKey); // Even when error
       }, 500);
@@ -34,7 +32,7 @@ export default function CodeEditor({ codeKey }: Props) {
 
   const onValueChange = useCallback((latest: string) => {
     useCodeStore.api.updateCode(codeKey, { current: latest });
-  }, [codeKey, sessionKey]);
+  }, [codeKey]);
 
   const hightlightWithLineNumbers = useCallback((code: string) =>
     highlight(code, languages.javascript, 'javascript')
