@@ -7,11 +7,15 @@ function clear({stage:{root}}) {
 }
 
 function addCube({stage:{root}, lib:{util}}) {
-  root.add(util.cube());
+  const cube = util.cube();
+  root.add(cube);
+  return cube;
 }
 
 function addLight({stage:{root}, lib:{util}}) {
-  root.add(util.light());
+  const light = util.light();
+  root.add(light);
+  return light;
 }
 
 function addGrid({stage:{root}, lib:{util}}) {
@@ -20,6 +24,12 @@ function addGrid({stage:{root}, lib:{util}}) {
 
 function addAxes({stage:{root}, lib:{util}}) {
   root.add(util.axes());
+}
+
+function addPointerPlane({stage:{root}, lib:{util}}) {
+  const plane = util.plane("PointerPlane", 40, 40);
+  plane.visible = false;
+  root.add(plane);
 }
 
 class Util {
@@ -35,6 +45,16 @@ class Util {
     cube.position.setY(0.5);
     cube.name = name;
     return cube;
+  }
+
+  plane(name = "TempPlane", width = 1, height = 1) {
+    const plane = new THREE.Mesh(
+      new THREE.PlaneGeometry(width, height),
+      new THREE.MeshStandardMaterial({ color: new THREE.Color("#ff0000")}),
+    );
+    plane.rotation.set(-Math.PI/2, 0, 0);
+    plane.name = name;
+    return plane;
   }
   
   light(name = "TempLight") {

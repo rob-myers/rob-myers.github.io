@@ -1,5 +1,12 @@
 ## three.js CLI
 
+Sadly realized we really do not need the terminal.
+- We can just execute javascript instead.
+- So, we'll create a new fresh branch.
+- Sometimes javascript provides functions/classes.
+- Sometimes javascript is executable e.g. vanilla, async, generator.
+- We'll continue towards Game AI, or making a game, or similar.
+
 ### TODO
 
 - Move helpers into functions
