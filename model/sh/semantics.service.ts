@@ -215,9 +215,7 @@ class SemanticsService {
           await cmdService.launchFunc(node, func, cmdArgs);
         } else {
           try {// Try to `get` things instead
-            const results = cmdService.get(node, args).filter(x => x !== undefined);
-            if (!results.length) throw Error();
-            yield* results;
+            yield* cmdService.get(node, args);
           } catch {
             throw new ShError('not found', 127);
           }
