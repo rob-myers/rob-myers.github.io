@@ -626,10 +626,14 @@ class CmdService {
         case 'geom': return geom;
         case 'Geom': return Geom;
         case 'THREE': return THREE;
-        case 'stringify': return (input: string) => {
+        case 'stringify': return (input: any) => {
+          if (typeof input === 'function') return `${input}`;
+
           return jsonStringifyPrettyCompact(JSON.parse(
             safeStableStringify(input, (_key, value) =>
-              value instanceof HTMLElement ? `HTMLElement[${value.nodeName}]` : value
+              value instanceof HTMLElement
+                ? `HTMLElement[${value.nodeName}]`
+                : value
             )
           ));
         }
