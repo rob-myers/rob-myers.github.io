@@ -141,7 +141,7 @@ class CmdService {
         break;
       }
       case 'click': {
-        const numClicks = args[0] === undefined ? 1 : Number(args[0]);
+        const numClicks = args[0] === undefined ? Number.MAX_SAFE_INTEGER : Number(args[0]);
         if (!Number.isFinite(numClicks)) throw new ShError('format: click [numberOfClicks]', 1);
 
         const process = useSession.api.getProcess(meta);

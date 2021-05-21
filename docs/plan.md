@@ -48,11 +48,6 @@
 - ✅ `call '({ stage }) => delete stage.opt.foo'`
 - Ensure old processes killed cleanly on hot reload
 
-## Notes
-
-On command line, need to `scene.scale.set'(1, 1, 1)'`,
-otherwise js syntax conflicts with shell function syntax.
-Adding quotes permits space e.g. `scene.children.map'(x => x.name)'`
 
 ### Done
 
@@ -102,3 +97,9 @@ run '({ api:{spawn} }) { yield* await spawn("ls /stage.opt") }'
 
 scene.children.map'(x => x.name)'
 ```
+
+## Notes
+
+On command line, need to `scene.scale.set'(1, 1, 1)'`,
+otherwise js syntax conflicts with shell function syntax.
+Adding quotes permits space e.g. `scene.children.map'(x => x.name)'`
