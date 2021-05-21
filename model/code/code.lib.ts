@@ -1,8 +1,27 @@
 export const initialCode = {
 
   'file.js@demo': `
-function testLog(ctxt) {
-  console.log("process context", ctxt);
+
+function clear({stage:{root}}) {
+  root.children.slice().forEach(child => root.remove(child));
+}
+
+function cube({stage:{root}, lib:{THREE}, args}) {
+  const cube = new THREE.Mesh(
+    new THREE.BoxGeometry(),
+    new THREE.MeshStandardMaterial({ color: new THREE.Color("#0000ff")}),
+  );
+  cube.position.setY(0.5);
+  cube.name = args[0] || "TempCube";
+  root.add(cube);
+}
+
+function light({stage:{root}, lib:{THREE}}) {
+  const light = new THREE.DirectionalLight;
+  light.position.set(-1, 3, 2);
+  light.lookAt(0, 0, 0);
+  light.name = "TempLight";
+  root.add(light);
 }
 
 async function readIntoVar({ args, var: v, api }) {

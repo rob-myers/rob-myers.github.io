@@ -69,7 +69,7 @@ export function createPlaceholderGroup() {
   const mesh = new THREE.Mesh(
     new THREE.BoxGeometry(),
     new THREE.MeshStandardMaterial({ color: new THREE.Color('#0000ff')}),
-    );
+  );
   mesh.position.setY(0.5);
   mesh.name = "TempCube";
   group.add(mesh);
