@@ -33,9 +33,8 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt }) => {
             {stageKey}
           </StageKey>
         </Slot>
-        <Slot>
+        <Slot onClick={toggleRunning}>
           <PauseButton
-            onClick={toggleRunning}
             pending={!canToggleRunning}
             title="toggle enabled"
           >
@@ -77,6 +76,7 @@ interface Props {
 const Toolbar = styled.section`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   user-select: none;
   font-size: 10pt;
 
@@ -91,7 +91,6 @@ const Toolbar = styled.section`
 const Slot = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
 `;
 
 const LeftToolbar = styled.section`
