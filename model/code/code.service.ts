@@ -4,6 +4,7 @@ import useSessionStore from "store/session.store";
 class CodeService {
 
   jsToSession(sessionKey: string, { output }: ParsedJsCode) {
+    // console.info(sessionKey, output);
     const funcDef = {} as { [funcName: string]: string };
 
     for (const { name, code, type } of Object.values(output)) {
@@ -51,7 +52,11 @@ class CodeService {
         if (matched) {// Found a function or class
           if (state) {
             // Found another function/class before ending the current oone
-            return { error: `${contents[0]} terminated unexpectedly`, line: start };
+            return {
+              key: 'error',
+              error: `${contents[0]} terminated unexpectedly`,
+              line: start, 
+            };
           }
           [name, contents, start, state] = [matched[1], [line], index + 1, key];
           continue outer;
@@ -65,6 +70,7 @@ class CodeService {
           const code = contents.join('\n');
           if (!this.verifyDef(code, state)) {
             return {
+              key: 'error',
               error: `${contents[0]} is not a valid ${state === 'class' ? 'class' : 'function'}`,
               line: start,
             };
@@ -76,14 +82,22 @@ class CodeService {
       } else if (!line || line.startsWith('//')) {
         // Ignore line
       } else {
-        return { error: `${line}: unexpected nonempty line`, line: index + 1 };
+        return {
+          key: 'error',
+          error: `${line}: unexpected nonempty line`,
+          line: index + 1,
+        };
       }
     }
     
     if (contents.length) {
-      return { error: `${contents[0]}: not terminated`, line: start };
+      return {
+        key: 'error',
+        error: `${contents[0]}: not terminated`,
+        line: start,
+      };
     }
-    return { output };
+    return { key: 'parsed', output };
   }
 
   private verifyDef(def: string, type: MatchedType) {
@@ -126,11 +140,13 @@ const regexes = Object.entries({
 }) as [MatchedType, RegExp][];
 
 export interface CodeError {
+  key: 'error';
   error: string;
   line: number;
 }
 
 export interface ParsedJsCode {
+  key: 'parsed';
   output: Record<string, {
     name: string;
     code: string;

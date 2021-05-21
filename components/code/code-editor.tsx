@@ -23,14 +23,12 @@ export default function CodeEditor({ codeKey }: Props) {
 
     timeoutId.current = window.setTimeout(()=> {
       const result = codeService.parseJs(latest);
-      if ('error' in result) {
-        setCodeError(result);
-      } else {// TODO send result to session
-        console.info(result.output);
-        sessionKey && codeService.jsToSession(sessionKey, result);
-        setCodeError(undefined);
+      setCodeError(result.key === 'error' ? result : undefined);
+
+      if (result.key === 'parsed' && sessionKey) {
+        codeService.jsToSession(sessionKey, result);
       }
-      useCodeStore.api.persist(codeKey); // Even if error
+      useCodeStore.api.persist(codeKey); // Even when error
     }, 1000);
   }, [codeKey, sessionKey]);
 
@@ -116,6 +114,6 @@ const Editor = styled(ReactSimpleCodeEditor)`
     font-weight: 100;
     background: #222;
     color: #aaa;
-    padding-right: 4px;
+    padding-right: 6px;
   }
 `;
