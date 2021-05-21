@@ -1,8 +1,13 @@
-## Programmed Behaviour
+## three.js CLI
 
 ### TODO
 
+- Move helpers into functions
+- Can auto-load helpers?
+- Remove `stage.root`
+
 - Can lazyload shell functions/classes
+- Multiple files via `select` in CodeEditor toolbar
 
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly

@@ -3,11 +3,11 @@ import styled from "@emotion/styled";
 const Header: React.FC = () => {
   return <>
     <Title>
-      Programmed Behaviour
+      three.js CLI
     </Title>
   
     <Subtitle>
-      Building bot behaviour, step by step
+      A command line interface for three.js
     </Subtitle>
   </>;
 };
@@ -17,13 +17,11 @@ const Title = styled.h1<{}>`
   margin-bottom: 2rem;
   line-height: 1;
   font-size: 6rem;
-  max-width: 800px;
   color: #222;
 
   @media(max-width: 1248px) {
     margin-top: 2.5rem;
     font-size: 5rem;
-    max-width: 400px;
   }
 
   @media(max-width: 800px) {

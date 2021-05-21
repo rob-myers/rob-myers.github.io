@@ -21,7 +21,9 @@ export default function IndexPage() {
   return (
     <>
       <Head>
-        <title>Programmed Behaviour</title>
+        <title>
+          three.js CLI
+        </title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -33,11 +35,7 @@ export default function IndexPage() {
             <ReactMarkdown children={`
 ## Introduction
             
-When first controlling the pixels of a long since discarded television, I felt a rush of excitement.
-Pushing the rubbery grey buttons of our ZX Spectrum, the avatar _moved_.
-So virtual worlds can be created, and virtual characters too.
-
-This website is about the behaviour of virtual characters.
+A command line interface for three.js.
 
             `} />
           </Section>
