@@ -2,39 +2,20 @@
 
 ### TODO
 
-- Can define shell fns via syntax-highlighted js text
-  - ✅ persist code via `code.store`
-  - ✅ `CodeEditor` tests validity
-  - ✅ `CodeEditor` shows error
-  - ✅ `CodeEditor` sends parsed data to session
-  - optionally lazyload shell functions/classes
-  - ✅ `function foo() {}` becomes `call`
-  - ✅ `async function foo() {}` becomes `call`
-  - ✅ `function *foo() {}` becomes `run`
-  - ✅ `async function *foo() {}` becomes `run`
-  - ✅ `class foo {}` attached to `lib`
-
-- integrate @box2d
-  > https://github.com/Lusito/box2d.ts
-
-
-- write outline of 1st post i.e. walkthrough up to movable bots
-- ✅ render some markdown
+- Can lazyload shell functions/classes
 
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
-
 - Different processes currently see the same `var.PWD`.
   > PWD and OLDPWD should be handled like +ve positionals?
-- Can reset stage
-- Pause/resume uses `scene.toJson()` (+ box2d persist?)
+
 - persist individual sessions, analogous to stage.store
 - Only auto-persist stages that have been touched
-- Can turn off persist for whole page (this is not persisted)
 
 - Add `xbcopy` i.e. copy to clipboard
 - Error messages prefixed by function chain
 - stop redux devtools from crashing
+- Can turn off persist for whole page (this is not persisted)
 - handle persist in multiple tabs?
   > https://developer.mozilla.org/en-US/docs/Web/API/Window/storage_event
 - e.g. warn and turn persist off
@@ -50,6 +31,22 @@
 
 
 ### Done
+
+- ✅ Can reset stage (via code)
+
+- Can define shell fns via syntax-highlighted js text
+  - ✅ persist code via `code.store`
+  - ✅ `CodeEditor` tests validity
+  - ✅ `CodeEditor` shows error
+  - ✅ `CodeEditor` sends parsed data to session
+  - ✅ `function foo() {}` becomes `call`
+  - ✅ `async function foo() {}` becomes `call`
+  - ✅ `function *foo() {}` becomes `run`
+  - ✅ `async function *foo() {}` becomes `run`
+  - ✅ `class foo {}` attached to `lib`
+
+- ✅ Pause/resume uses `scene.toJson()`
+- ✅ render some markdown
 
 - How are Stage/Terminal/Code laid out on a page?
   - ✅ disable stage on scroll out of view 
