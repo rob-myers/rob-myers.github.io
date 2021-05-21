@@ -12,8 +12,6 @@ import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
 import CameraControls from "./CameraControls";
-import Grid from "./Grid";
-import Axes from "./Axes";
 import Placeholder from "./Placeholder";
 
 const Stage: React.FC<Props> = ({ stage }) => {
@@ -71,6 +69,9 @@ const Stage: React.FC<Props> = ({ stage }) => {
   }, [stage.opt, ctxt]);
 
   const Helpers = useMemo(() =>
+  /**
+   * TODO move to code.lib
+   */
     <group name="Helpers">
       <mesh
         name="PointerPlane"
@@ -84,8 +85,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
         <planeGeometry args={[40, 40]} />
         <meshBasicMaterial color="red" />
       </mesh>
-      <Grid />
-      <Axes />
     </group>,
     [],
   );

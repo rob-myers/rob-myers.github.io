@@ -64,15 +64,6 @@ class GeomService {
     );
   }
 
-  createAxis(type: 'x' | 'y' | 'z', color: string, length: number) {
-    const points = [new THREE.Vector3, new THREE.Vector3];
-    [points[0][type], points[1][type]] = [-length/2, length/2];
-    const geometry = (new THREE.BufferGeometry).setFromPoints(points);
-    const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color, opacity: 1, linewidth: 1 }));
-    line.name = `${type}Axis`;
-    return line;
-  }
-
   /** Extrude a polyline in the xz plane */
   createPolyLine(points: Geom.VectorJson[], opts: {
     height: number;

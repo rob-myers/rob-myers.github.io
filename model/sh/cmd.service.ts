@@ -609,12 +609,14 @@ class CmdService {
 
   private stageProxy = {} as { [stageKey: string]: StageMeta }
 
+  /** __TODO__ one per stage */
   public readonly baseLibProxy = {} as Record<string, any>;
 
   /**
    * Expose classes/services
+   * __TODO__ one per stage
    */
-  private libProxy = new Proxy(this.baseLibProxy as {
+  public libProxy = new Proxy(this.baseLibProxy as {
     geom: typeof geom;
     Geom: typeof Geom;
     THREE: typeof THREE;

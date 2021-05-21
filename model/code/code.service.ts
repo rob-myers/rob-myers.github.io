@@ -24,7 +24,9 @@ class CodeService {
           }' "$@"; }`;
           break;
         case 'class':
-          cmdService.baseLibProxy[name] = Function(`return ${code}`)();
+          const Class = Function(`return ${code}`)();
+          const instanceName = name[0].toLowerCase() + name.slice(1);
+          cmdService.baseLibProxy[instanceName] = new Class(cmdService.libProxy);
           break;
       }
     }

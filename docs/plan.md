@@ -6,6 +6,8 @@
 - Can auto-load helpers?
 - Remove `stage.root`
 
+- baseLibProxy and libProxy should be one-per-stage
+
 - Can lazyload shell functions/classes
 - Multiple files via `select` in CodeEditor toolbar
 
@@ -28,6 +30,7 @@
 
 ### BUG
 
+- firefox sometimes flickers on click pause
 - ✅ `scene.children.length` was initially 0
 - ✅ `echo scene.children[{0,1}]` was not expanding
 - ✅ `call () => window` (window.Recast was breaking safe-json-stringify)
