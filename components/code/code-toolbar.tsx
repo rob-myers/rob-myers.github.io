@@ -107,7 +107,7 @@ const ErrorPanel = styled.div<{}>`
   top: 27px;
   font-size: 9pt;
   padding: 4px 8px;
-  background: #522;
+  background: rgba(100, 50, 50, 0.9);
   color: #fff;
   border: 1px solid #333;
   z-index: 10;

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import ReactSimpleCodeEditor from "react-simple-code-editor";
 import { highlight, languages } from "prismjs";
@@ -17,24 +17,24 @@ export default function CodeEditor({ codeKey }: Props) {
   const [codeError, setCodeError] = useState<CodeError>();
   const timeoutId = useRef(0);
 
+  useEffect(() => {
+    if (code?.current) {
+      window.clearTimeout(timeoutId.current);
+      timeoutId.current = window.setTimeout(()=> {
+        const result = codeService.parseJs(code.current);
+        setCodeError(result.key === 'error' ? result : undefined);
+  
+        if (result.key === 'parsed' && sessionKey) {
+          codeService.jsToSession(sessionKey, result);
+        }
+        useCodeStore.api.persist(codeKey); // Even when error
+      }, 1000);
+    }
+  }, [code?.current]);
+
   const onValueChange = useCallback((latest: string) => {
     useCodeStore.api.updateCode(codeKey, { current: latest });
-    window.clearTimeout(timeoutId.current);
-
-    timeoutId.current = window.setTimeout(()=> {
-      const result = codeService.parseJs(latest);
-      setCodeError(result.key === 'error' ? result : undefined);
-
-      if (result.key === 'parsed' && sessionKey) {
-        codeService.jsToSession(sessionKey, result);
-      }
-      useCodeStore.api.persist(codeKey); // Even when error
-    }, 1000);
   }, [codeKey, sessionKey]);
-
-  useEffect(() => {// Initial parse
-    code?.key && sessionKey && onValueChange(code.current);
-  }, [code?.key, sessionKey]);
 
   const hightlightWithLineNumbers = useCallback((code: string) =>
     highlight(code, languages.javascript, 'javascript')
