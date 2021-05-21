@@ -19,3 +19,4 @@
 - firefox sometimes flickers on click pause
 ### Done
 
+- ✅ code library built using js files instead of plaintext

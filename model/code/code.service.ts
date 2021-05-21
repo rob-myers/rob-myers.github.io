@@ -5,7 +5,7 @@ class CodeService {
       /**
        * TODO
        */
-      console.info('load js', { name, code, type });
+      // console.info('load js', { name, code, type });
     }
   }
   
