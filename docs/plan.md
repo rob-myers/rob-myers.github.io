@@ -8,8 +8,8 @@
 
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
-- Only auto-persist stages that have been touched
 
+- Only auto-persist stages that have been touched
 - stop redux devtools from crashing
 - handle persist in multiple tabs?
 - can turn off persist for whole page (this is not persisted)
