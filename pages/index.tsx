@@ -7,6 +7,7 @@ import Stage from 'components/stage/WrappedStage'
 import CodeEditor from 'components/code/code-editor';
 import { usePage } from 'components/hooks';
 import { Section } from 'components/page/Section';
+import PreactTest from 'model/beh/preact-test';
 
 export default function IndexPage() {
   usePage({
@@ -43,6 +44,10 @@ Let's do this.
             </Env>
           </section>
 
+          <section>
+            <PreactTest />
+          </section>
+
         </div>
       </Main>
     </>
@@ -71,7 +76,7 @@ const Env = styled.section<{}>`
   display: grid;
 
   grid-template-columns: 500px 500px;
-  grid-template-rows: 400px 400px 400px;
+  grid-template-rows: 400px 400px;
   grid-template-areas: 
     "stage stage"
     "code code";
@@ -85,7 +90,7 @@ const Env = styled.section<{}>`
 
   @media(max-width: 800px) {
   grid-template-columns: 100vw;
-  grid-template-rows: 350px 300px 300px;
+  grid-template-rows: 350px 300px;
   grid-template-areas:
     "stage"
     "code";

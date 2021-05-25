@@ -2,9 +2,16 @@
 
 ### TODO
 
+- Behaviour tree diffing
+  - Render tree with `preact.render` and `htm`
+  - Investigate diffing on reinvoke `preact.render` (same el, different tree).
+
 - Move helpers into functions
 - Auto-load helpers
 - Remove `stage.root`
+
+- Prefer to create modules at runtime using blob urls
+  > Seem to recall there's no module garbage collection, but so what
 
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
