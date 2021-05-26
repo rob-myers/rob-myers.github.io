@@ -35,9 +35,13 @@ const Subtitle = styled.div<{}>`
   font-weight: normal;
   letter-spacing: 1px;
 
-  padding: 32px 16px;
-  color: #333;
-  background: #eee;
+  padding: 36px 16px;
+  color: #fff;
+  background: #666;
+
+  a {
+    color: #ddd;
+  }
 
   @media(max-width: 800px) {
     border-radius: 0;

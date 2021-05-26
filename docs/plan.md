@@ -6,7 +6,7 @@
 
 - ✅ Move helpers into functions
 - ✅ Remove `stage.root`
-- Use persisted scene directly, rather "root group"
+- Use persisted scene directly, rather than "root group"
   - Stop using react-three-fiber
 
 - Implement pointer events as react-three-fiber does:
