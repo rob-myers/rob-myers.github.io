@@ -7,7 +7,6 @@ import Stage from 'components/stage/WrappedStage'
 import CodeEditor from 'components/code/code-editor';
 import { usePage } from 'components/hooks';
 import { Section } from 'components/page/Section';
-import PreactTest from 'model/beh/preact-test';
 
 export default function IndexPage() {
   usePage({
@@ -42,10 +41,6 @@ Let's do this.
               <Stage stageKey="test@intro" />
               <CodeEditor codeKey="file.js" />
             </Env>
-          </section>
-
-          <section>
-            <PreactTest />
           </section>
 
         </div>
