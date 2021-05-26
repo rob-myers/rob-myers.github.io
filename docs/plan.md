@@ -1,4 +1,4 @@
-## Robots
+## Three.js Behaviours
 
 ### TODO
 
@@ -27,6 +27,11 @@
 ### BUG
 
 - firefox sometimes flickers on click pause
+
+## Links
+
+- https://discourse.threejs.org/t/procedural-island-and-city-generator-and-flight-simulator-three-js/18816
+
 ### Done
 
 - ✅ code library built using js files instead of plaintext

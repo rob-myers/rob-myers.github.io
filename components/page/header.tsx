@@ -15,7 +15,8 @@ const Header: React.FC = () => {
 };
 
 const Title = styled.h1<{}>`
-  margin-bottom: 0rem;
+  margin-top: 2.5rem;
+  margin-bottom: 2rem;
   line-height: 1;
   font-size: 7rem;
   color: #222;
@@ -31,16 +32,15 @@ const Title = styled.h1<{}>`
 `;
 
 const Subtitle = styled.div<{}>`
-  margin: 1.4rem 0 0 0;
   font-weight: normal;
   letter-spacing: 1px;
 
-  padding: 36px 16px;
-  color: #fff;
-  background: #666;
+  padding: 24px 16px;
+  background: #eee;
+  color: #555;
 
   a {
-    color: #ddd;
+    color: #000;
   }
 
   @media(max-width: 800px) {

@@ -39,7 +39,7 @@ Let's do this.
 
           <section>
             <Env>
-              <Stage stageKey="test@intro" />
+              <Stage stageKey="test@intro"/>
               <BehTree />
               <CodeEditor codeKey="file.js" />
             </Env>

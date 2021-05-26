@@ -1,14 +1,17 @@
+import { useRef } from "react";
 import styled from "@emotion/styled";
 
 export default function BehTree() {
+  const containerRef = useRef<HTMLElement>(null);
+
   return (
-    <Root>
-      Behaviour tree
+    <Root ref={containerRef}>
     </Root>
   );
 }
 
 const Root = styled.section<{}>`
   grid-area: beh;
-  background: red;
+  border: 1px solid #ccc;
+  height: 100%;
 `;

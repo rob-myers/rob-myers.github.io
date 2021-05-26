@@ -12,7 +12,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@react-three/fiber": "^6.0.16",
+    "@react-three/fiber": "^6.2.2",
     "braces": "^3.0.2",
     "cdt2d": "^1.0.0",
     "cli-columns": "^3.1.2",
