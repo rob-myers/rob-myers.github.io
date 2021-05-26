@@ -131,7 +131,6 @@ const CanvasRoot = styled(Canvas)<{ fadeIn: boolean }>`
     100% { filter: brightness(100%); }
   }
   animation: dark-to-light 0.8s ease-in forwards 1;
-
   background: #fff;
 `;
 
