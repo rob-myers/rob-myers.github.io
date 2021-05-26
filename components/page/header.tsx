@@ -3,11 +3,13 @@ import styled from "@emotion/styled";
 const Header: React.FC = () => {
   return <>
     <Title>
-      Robots
+      Three.js Behaviours
     </Title>
   
     <Subtitle>
-      Let's build some fucking robots
+      Richer <a href="https://threejs.org/" target="_blank">
+        three.js
+      </a> demos via behaviour trees
     </Subtitle>
   </>;
 };

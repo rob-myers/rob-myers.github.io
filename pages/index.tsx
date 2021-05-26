@@ -18,7 +18,7 @@ export default function IndexPage() {
     <>
       <Head>
         <title>
-          Robots
+          Three.js Behaviours
         </title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
