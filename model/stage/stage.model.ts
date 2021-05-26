@@ -80,7 +80,7 @@ export function createStage(stageKey: string): StageMeta {
     },
     opt: createStageOpts(),
     scene: bgScene,
-    ctrl: initializeControls(new Controls(sceneCamera))
+    ctrl: initializeControls(new Controls(sceneCamera)),
   };
 }
 

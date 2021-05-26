@@ -1,5 +1,5 @@
 function clear({ scene }) {
-  scene.children.slice().forEach(child => root.remove(child));
+  scene.children.slice().forEach(child => scene.remove(child));
 }
 
 function addCube({ scene, util }) {

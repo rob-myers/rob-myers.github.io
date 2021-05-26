@@ -60,23 +60,33 @@ export function loadJson<T extends THREE.Object3D>(rootJson: ThreeJson) {
 }
 
 export function createPlaceholderGroup() {
-  const group = new THREE.Group;
   const light = new THREE.DirectionalLight();
   light.position.set(-1, 3, 2);
   light.lookAt(0, 0, 0);
   light.name = "TempLight";
-  group.add(light);
 
-  const mesh = new THREE.Mesh(
-    new THREE.BoxGeometry(),
+  const cube = new THREE.Mesh(
+    new THREE.BoxGeometry,
     new THREE.MeshStandardMaterial({ color: new THREE.Color('#0000ff')}),
   );
-  mesh.position.setY(0.5);
-  mesh.name = "TempCube";
-  group.add(mesh);
+  cube.position.setY(0.5);
+  cube.name = "TempCube";
 
-  group.add(createGrid(), createAxes());
-  return group;
+  const pointerPlane = new THREE.Mesh(
+    new THREE.PlaneGeometry(40, 40),
+    new THREE.MeshBasicMaterial({ color: new THREE.Color('#ff0000') }),
+  );
+  pointerPlane.rotation.set(-Math.PI/2, 0, 0);
+  pointerPlane.visible = false;
+  // TODO events onPointer{Down,Move,Out,Up}
+
+  return (new THREE.Group).add(
+    pointerPlane,
+    light,
+    cube,
+    createGrid(),
+    createAxes(),
+  );
 }
 
 

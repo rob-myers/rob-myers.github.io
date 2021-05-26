@@ -3,7 +3,6 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import type { ThreeEvent } from "@react-three/fiber/dist/declarations/src/core/events";
 import type { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
 
 import type { StageMeta } from "model/stage/stage.model";
@@ -35,7 +34,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
   }, [stage.opt.enabled]);
 
   const on = useMemo(() => {
-    const ptrWire = stage.extra.ptrEvent;
+    // const ptrWire = stage.extra.ptrEvent;
     const keyWire = stage.extra.keyEvent;
     return {
       createdCanvas: (ctxt: CanvasContext) => {
@@ -51,10 +50,10 @@ const Stage: React.FC<Props> = ({ stage }) => {
     
         setCtxt(ctxt);
       },
-      pointer: (e: ThreeEvent<PointerEvent>) =>
-        ptrWire.next({ key: e.type as any, point: e.point }),
-      pointerOut: (e: ThreeEvent<PointerEvent>) =>
-        ptrWire.next({ key: 'pointerleave', point: e.point }),
+      // pointer: (e: ThreeEvent<PointerEvent>) =>
+      //   ptrWire.next({ key: e.type as any, point: e.point }),
+      // pointerOut: (e: ThreeEvent<PointerEvent>) =>
+      //   ptrWire.next({ key: 'pointerleave', point: e.point }),
       mouseOver: (e: React.MouseEvent<HTMLElement>) =>
         stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(),
       key: (e: React.KeyboardEvent<HTMLElement>) => {
@@ -67,27 +66,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
       },
     };
   }, [stage.opt, ctxt]);
-
-  const Helpers = useMemo(() =>
-  /**
-   * TODO move to code.lib
-   */
-    <group name="Helpers">
-      <mesh
-        name="PointerPlane"
-        onPointerDown={on.pointer}
-        onPointerMove={on.pointer}
-        onPointerUp={on.pointer}
-        onPointerOut={on.pointerOut}
-        visible={false}
-        rotation={[-Math.PI/2, 0, 0]}
-      >
-        <planeGeometry args={[40, 40]} />
-        <meshBasicMaterial color="red" />
-      </mesh>
-    </group>,
-    [],
-  );
 
   return (
     <Root
@@ -114,8 +92,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
             controls={stage.ctrl}
             captureMouse={stage.opt.panZoom}
           />
-
-          {Helpers}
 
           <primitive
             name="Persisted"

@@ -5,7 +5,7 @@ export function createStageProxy(stageKey: string) {
   const stage = () => useStage.api.getStage(stageKey);
 
   return new Proxy({} as Stage.StageMeta, {
-    get(_, key: keyof Stage.StageMeta | 'root') {
+    get(_, key: keyof Stage.StageMeta) {
 
       switch (key) {
         case 'opt':
@@ -30,8 +30,6 @@ export function createStageProxy(stageKey: string) {
             ...stage().extra,
             canvasPreview: undefined, // Hide large DataUrl
           };
-        case 'root':
-          return stage().scene.children[1];
         default:
           return stage()[key];
       }
@@ -45,7 +43,7 @@ export function createStageProxy(stageKey: string) {
       throw Error('cannot delete top-level key of stage');
     },
 
-    ownKeys: () => Object.keys(stage()).concat('root'),
+    ownKeys: () => Object.keys(stage()),
     getOwnPropertyDescriptor: () => ({ enumerable: true, configurable: true }),
   });
 }

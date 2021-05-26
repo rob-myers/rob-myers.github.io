@@ -2,13 +2,16 @@
 
 ### TODO
 
-- Behaviour tree diffing
-  - Render tree with `preact.render` and `htm`
-  - Investigate diffing on reinvoke `preact.render` (same el, different tree).
+- Start work on behaviour tree GUI
 
-- Move helpers into functions
-- Auto-load helpers
-- Remove `stage.root`
+- ✅ Move helpers into functions
+- ✅ Remove `stage.root`
+- Use persisted scene directly, rather "root group"
+  - Stop using react-three-fiber
+
+- Implement pointer events as react-three-fiber does:
+  - packages/fiber/src/core/events.ts
+  - packages/fiber/src/web/events.ts
 
 - Prefer to create modules at runtime using blob urls
   > Seem to recall there's no module garbage collection, but so what

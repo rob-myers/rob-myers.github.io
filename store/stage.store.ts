@@ -10,13 +10,10 @@ import { Controls } from 'model/3d/controls';
 
 export type State = {
   rehydrated: boolean;
-  /** Resolved on stage create or if already exists */
-  resolvers: { stageKey: string; resolve: () => void }[];
   /** Stages */
   stage: KeyedLookup<Stage.StageMeta>;
 
   readonly api: {
-    awaitStage: (stageKey: string, resolver: () => void) => Promise<void>;
     getStage: (stageKey: string) => Stage.StageMeta;
     persist: (stageKey: string, force?: boolean) => void;
     rehydrate: (stageKeys: string[]) => void;
@@ -32,15 +29,6 @@ const useStore = create<State>(devtools((set, get) => ({
   persist: {},
 
   api: {
-
-    awaitStage: async (stageKey, resolve) => {
-      const { stage, resolvers } = get();
-      if (!stage[stageKey]) {
-        resolvers.push({ stageKey, resolve });
-      } else {
-        resolve();
-      }
-    },
 
     getStage: (stageKey) => {
       return get().stage[stageKey];
@@ -83,7 +71,7 @@ const useStore = create<State>(devtools((set, get) => ({
           ]).then(([scene, camera]) => {
             // console.info('Loaded json scene & camera', scene, camera);
             s.extra.bgScene = s.scene = scene;
-            s.extra.sceneGroup = scene.children[1] as THREE.Group || createPlaceholderGroup();
+            s.extra.sceneGroup = scene.children[0] as THREE.Group || createPlaceholderGroup();
             s.extra.sceneCamera = camera;
             s.extra.canvasPreview = extra.canvasPreview;
   
@@ -96,10 +84,6 @@ const useStore = create<State>(devtools((set, get) => ({
         } else {
           set(({ stage }) => ({ stage: addToLookup(Stage.createStage(stageKey), stage) }));
         }
-
-        // Awaken anything waiting
-        get().resolvers.filter(x => x.stageKey === stageKey).forEach(({ resolve }) => resolve());
-        get().resolvers = get().resolvers.filter(x => x.stageKey !== stageKey);
       }
 
       set(() => ({ rehydrated: true }));
