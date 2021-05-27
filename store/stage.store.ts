@@ -24,9 +24,7 @@ export type State = {
 
 const useStore = create<State>(devtools((set, get) => ({
   rehydrated: false,
-  resolvers: [],
   stage: {},
-  persist: {},
 
   api: {
 
