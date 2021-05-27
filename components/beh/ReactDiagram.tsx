@@ -1,7 +1,29 @@
-import { LegacyRef, useEffect, useRef, useState } from "react";
-import { AbstractReactFactory, GenerateWidgetEvent, CanvasEngineOptions, SelectionBoxLayerFactory, CanvasWidget } from '@projectstorm/react-canvas-core';
-import { DiagramModel, DiagramEngine, NodeModel, PortWidget, NodeLayerFactory, LinkLayerFactory, DefaultDiagramState } from '@projectstorm/react-diagrams-core';
-import { DefaultPortModel, DefaultLabelFactory, DefaultLinkFactory, DefaultNodeFactory, DefaultLinkModel, DefaultPortFactory } from '@projectstorm/react-diagrams-defaults';
+import { useEffect, useState } from "react";
+import {
+  AbstractReactFactory,
+  GenerateWidgetEvent,
+  CanvasEngineOptions,
+  SelectionBoxLayerFactory,
+  CanvasWidget,
+} from '@projectstorm/react-canvas-core';
+import {
+  DiagramModel,
+  DiagramEngine,
+  NodeModel,
+  PortWidget,
+  NodeLayerFactory,
+  LinkLayerFactory,
+  DefaultDiagramState,
+} from '@projectstorm/react-diagrams-core';
+import {
+  DefaultNodeModel,
+  DefaultPortModel,
+  DefaultLabelFactory,
+  DefaultLinkFactory,
+  DefaultNodeFactory,
+  DefaultLinkModel,
+  DefaultPortFactory,
+} from '@projectstorm/react-diagrams-defaults';
 
 export default function ReactDiagram() {
   const [engine, setEngine] = useState<DiagramEngine>();
@@ -13,23 +35,38 @@ export default function ReactDiagram() {
     e.getNodeFactories().registerFactory(new CustomNodeFactory);
     // console.log({ engine });
     
-    const node1 = new CustomNodeModel({ color: 'rgb(192,255,0)' });
+    const node1 = new CustomNodeModel({ color: '#060' });
     node1.setPosition(50, 50);
-    const node2 = new CustomNodeModel({ color: 'rgb(0,192,255)' });
+    // const node2 = new CustomNodeModel({ color: 'rgb(0,192,255)' });
+    const node2 = new DefaultNodeModel('Node 2', '#f00');
+    node2.addInPort('in');
+
     node2.setPosition(200, 50);
     const link1 = new DefaultLinkModel;
     link1.setSourcePort(node1.getPort('out')!)
     link1.setTargetPort(node2.getPort('in')!)
+    link1.addLabel('Hello, world!');
 
     const model = new DiagramModel;
     model.addAll(node1, node2, link1);
     e.setModel(model);
     setEngine(e);
-  }, []);
+  }, [engine]);
 
-  return engine
-    ? <CanvasWidget className="diagram-container" engine={engine} />
-    : null;
+  return (
+    <>
+      {engine && <CanvasWidget className="diagram-container" engine={engine} />}
+      <DevPanel reset={() => setEngine(undefined)} />
+    </>
+  );
+}
+
+function DevPanel({ reset }: { reset: () => void }) {
+  return (
+    <div style={{ position: 'absolute', background: 'red', zIndex: 1, right: 0, top: 0 }}>
+      <button onClick={reset}>Reset</button>
+    </div>
+  );
 }
 
 function createEngine(options: CanvasEngineOptions = {}): DiagramEngine {

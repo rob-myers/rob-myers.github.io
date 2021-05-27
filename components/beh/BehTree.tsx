@@ -23,9 +23,10 @@ const Root = styled.section<{}>`
   grid-area: beh;
   border: 1px solid #ccc;
   height: 100%;
+  position: relative;
+  background: #eee;
 
   .diagram-container{
-    background: #333333;
     width: 100%;
     height: 100%;
   }
@@ -39,6 +40,7 @@ const Root = styled.section<{}>`
     align-items: flex-start;
     justify-content: space-between;
     position: relative;
+    background: #ddd;
   }
 
   .custom-node-color {
