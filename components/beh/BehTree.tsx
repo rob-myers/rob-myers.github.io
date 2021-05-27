@@ -1,11 +1,19 @@
-import dynamic from 'next/dynamic';
 import styled from "@emotion/styled";
 
-const ReactDiagram = dynamic(() => import('./ReactDiagram'), { ssr: false });
+import { ReactDiagram } from 'components/beh/dynamic';
+import { useEffect, useRef } from "react";
 
 export default function BehTree() {
+  const root = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    root.current?.addEventListener('wheel', (e) => {
+      e.preventDefault();
+    });
+  }, []);
+
   return (
-    <Root>
+    <Root ref={root}>
       <ReactDiagram />
     </Root>
   );
@@ -22,8 +30,8 @@ const Root = styled.section<{}>`
     height: 100%;
   }
 
-  .custom-node{
-    border: solid 2px gray;
+  .custom-node {
+    border: solid 1px gray;
     border-radius: 5px;
     width: 50px;
     height: 50px;
@@ -33,7 +41,7 @@ const Root = styled.section<{}>`
     position: relative;
   }
 
-  .custom-node-color{
+  .custom-node-color {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -44,8 +52,8 @@ const Root = styled.section<{}>`
   }
 
   .circle-port{
-    width: 12px;
-    height: 12px;
+    width: 8px;
+    height: 8px;
     margin: 2px;
     border-radius: 4px;
     background: darkgray;

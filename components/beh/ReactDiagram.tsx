@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { LegacyRef, useEffect, useRef, useState } from "react";
 import { AbstractReactFactory, GenerateWidgetEvent, CanvasEngineOptions, SelectionBoxLayerFactory, CanvasWidget } from '@projectstorm/react-canvas-core';
 import { DiagramModel, DiagramEngine, NodeModel, PortWidget, NodeLayerFactory, LinkLayerFactory, DefaultDiagramState } from '@projectstorm/react-diagrams-core';
 import { DefaultPortModel, DefaultLabelFactory, DefaultLinkFactory, DefaultNodeFactory, DefaultLinkModel, DefaultPortFactory } from '@projectstorm/react-diagrams-defaults';
@@ -7,8 +7,10 @@ export default function ReactDiagram() {
   const [engine, setEngine] = useState<DiagramEngine>();
   
   useEffect(() => {
-    const engine = createEngine();
-    engine.getNodeFactories().registerFactory(new CustomNodeFactory);
+    if (engine) return;
+
+    const e = createEngine({});
+    e.getNodeFactories().registerFactory(new CustomNodeFactory);
     // console.log({ engine });
     
     const node1 = new CustomNodeModel({ color: 'rgb(192,255,0)' });
@@ -17,12 +19,12 @@ export default function ReactDiagram() {
     node2.setPosition(200, 50);
     const link1 = new DefaultLinkModel;
     link1.setSourcePort(node1.getPort('out')!)
-    link1.setTargetPort(node1.getPort('in')!)
+    link1.setTargetPort(node2.getPort('in')!)
 
     const model = new DiagramModel;
     model.addAll(node1, node2, link1);
-    engine.setModel(model);
-    setEngine(engine);
+    e.setModel(model);
+    setEngine(e);
   }, []);
 
   return engine
