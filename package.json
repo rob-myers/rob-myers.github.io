@@ -12,13 +12,10 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@projectstorm/react-diagrams-core": "^6.5.2",
-    "@projectstorm/react-diagrams-defaults": "^6.5.2",
     "@react-three/fiber": "^6.2.2",
     "braces": "^3.0.2",
     "cdt2d": "^1.0.0",
     "cli-columns": "^3.1.2",
-    "closest": "^0.0.1",
     "earcut": "^2.2.2",
     "getopts": "^2.3.0",
     "json-stringify-pretty-compact": "^3.0.0",
@@ -32,6 +29,7 @@
     "react": "17.0.1",
     "react-beforeunload": "^2.4.0",
     "react-dom": "17.0.1",
+    "react-flow-renderer": "^9.5.4",
     "react-intersection-observer": "^8.32.0",
     "react-markdown": "^6.0.2",
     "react-simple-code-editor": "^0.11.0",

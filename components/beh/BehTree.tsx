@@ -1,7 +1,6 @@
-import styled from "@emotion/styled";
-
-import { ReactDiagram } from 'components/beh/dynamic';
 import { useEffect, useRef } from "react";
+import styled from "@emotion/styled";
+import ReactFlowExample from './ReactFlow';
 
 export default function BehTree() {
   const root = useRef<HTMLElement>(null);
@@ -14,7 +13,7 @@ export default function BehTree() {
 
   return (
     <Root ref={root}>
-      <ReactDiagram />
+      <ReactFlowExample/>
     </Root>
   );
 }
