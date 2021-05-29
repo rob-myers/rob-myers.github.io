@@ -1,43 +1,44 @@
 import * as THREE from "three";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Canvas } from "@react-three/fiber";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import type { RootState as CanvasContext } from "@react-three/fiber/dist/declarations/src/core/store";
 
 import type { StageMeta } from "model/stage/stage.model";
-import { getWindow } from "model/dom.model";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
-import CameraControls from "./CameraControls";
+import StageCanvas, { StageCtxt } from "./StageCanvas";
 import Placeholder from "./Placeholder";
 
 const Stage: React.FC<Props> = ({ stage }) => {
-  const [ctxt, setCtxt] = useState(null as null | CanvasContext);
   const everUsed = useRef(false);
+  const subscribers = useRef([() => void stage.ctrl.update()]);
+  const [ctxt, setCtxt] = useState(null as null | StageCtxt);
 
   useEffect(() => {
-    if (ctxt?.gl && !stage.opt.enabled) {// Detected stage disable
+    if (ctxt?.gl && !stage.opt.enabled) {
+      // Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
       useStage.api.persist(stage.key);
-
       // Copy current scene into background scene
       stage.extra.bgScene.remove(...stage.extra.bgScene.children);
       stage.extra.bgScene.add(...ctxt.scene.children);
       stage.extra.bgScene.copy(ctxt.scene, false);
       stage.scene = stage.extra.bgScene;
-
       setCtxt(null);
     }
   }, [stage.opt.enabled]);
 
+  useEffect(
+    () => void (stage.ctrl.capturePanZoom = stage.opt.panZoom),
+    [stage.opt.panZoom],
+  );
+
   const on = useMemo(() => {
-    // const ptrWire = stage.extra.ptrEvent;
     const keyWire = stage.extra.keyEvent;
     return {
-      createdCanvas: (ctxt: CanvasContext) => {
+      createdCanvas: (ctxt: StageCtxt) => {
         everUsed.current = true;
         stage.ctrl.setDomElement(ctxt.gl.domElement);
         stage.scene = ctxt.scene;
@@ -50,10 +51,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
     
         setCtxt(ctxt);
       },
-      // pointer: (e: ThreeEvent<PointerEvent>) =>
-      //   ptrWire.next({ key: e.type as any, point: e.point }),
-      // pointerOut: (e: ThreeEvent<PointerEvent>) =>
-      //   ptrWire.next({ key: 'pointerleave', point: e.point }),
       mouseOver: (e: React.MouseEvent<HTMLElement>) =>
         stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(),
       key: (e: React.KeyboardEvent<HTMLElement>) => {
@@ -79,26 +76,15 @@ const Stage: React.FC<Props> = ({ stage }) => {
         stageKey={stage.key}
         opt={stage.opt}
       />
-
       {(stage.opt.enabled || ctxt) && (
-
-        <CanvasRoot
-          fadeIn={stage.opt.enabled}
-          dpr={getWindow()!.devicePixelRatio}
-          onCreated={on.createdCanvas}
-          camera={stage.extra.sceneCamera}
-        >
-          <CameraControls
-            controls={stage.ctrl}
-            captureMouse={stage.opt.panZoom}
+        <StageFader fadeIn={stage.opt.enabled}>
+          <StageCanvas
+            onCreated={on.createdCanvas}
+            camera={stage.extra.sceneCamera}
+            group={stage.extra.sceneGroup}
+            subscribers={subscribers.current}
           />
-
-          <primitive
-            name="Persisted"
-            object={stage.extra.sceneGroup}
-          />
-        </CanvasRoot>
-
+        </StageFader>
       ) || (
         <Placeholder
           stageKey={stage.key}
@@ -121,17 +107,19 @@ const Root = styled.section<{ background: string }>`
   display: flex;
   flex-direction: column;
   position: relative;
-  ${({ background }) => css`background: ${background};`}
   outline: none;
+  ${({ background }) => css`background: ${background};`}
 `;
 
-const CanvasRoot = styled(Canvas)<{ fadeIn: boolean }>`
+const StageFader = styled.section<{ fadeIn: boolean }>`
   @keyframes dark-to-light {
     0% { filter: brightness(10%); }
     100% { filter: brightness(100%); }
   }
-  animation: dark-to-light 0.8s ease-in forwards 1;
+  animation: dark-to-light 1s ease-in forwards 1;
   background: #fff;
+  width: 100%;
+  height: 100%;
 `;
 
 export default Stage;

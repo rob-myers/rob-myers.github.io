@@ -3,18 +3,18 @@
 ### TODO
 
 - Start work on behaviour tree GUI
+  - ✅ decided to use react-flow
+  - can add nodes
+  - can remove nodes
+  - can add/remove links
 
 - ✅ Move helpers into functions
 - ✅ Remove `stage.root`
 - Use persisted scene directly, rather than "root group"
-  - Stop using react-three-fiber
+  - ✅ remove use react-three-fiber
+  - remove root group
 
-- Implement pointer events as react-three-fiber does:
-  - packages/fiber/src/core/events.ts
-  - packages/fiber/src/web/events.ts
-
-- Prefer to create modules at runtime using blob urls
-  > Seem to recall there's no module garbage collection, but so what
+- Do CodeEditor line numbers differently e.g. a right-aligned textarea?
 
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
@@ -23,6 +23,9 @@
 - stop redux devtools from crashing
 - handle persist in multiple tabs?
 - can turn off persist for whole page (this is not persisted)
+- Implement pointer events as react-three-fiber does?
+  - packages/fiber/src/core/events.ts
+  - packages/fiber/src/web/events.ts
 
 ### BUG
 
