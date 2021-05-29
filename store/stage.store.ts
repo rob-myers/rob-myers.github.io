@@ -3,7 +3,7 @@ import { devtools } from 'zustand/middleware';
 import * as THREE from 'three';
 
 import { deepClone, KeyedLookup } from 'model/generic.model';
-import { vectorToTriple, loadJson, createPlaceholderGroup } from 'model/3d/three.model';
+import { vectorToTriple, loadJson } from 'model/3d/three.model';
 import * as Stage from 'model/stage/stage.model';
 import { addToLookup, LookupUpdates, Updates, updateLookup } from './store.util';
 import { Controls } from 'model/3d/controls';
@@ -47,8 +47,8 @@ const useStore = create<State>(devtools((set, get) => ({
           camTarget: vectorToTriple(ctrl.target),
         },
       };
-      const serialized = JSON.stringify({ state: stageJson });
 
+      const serialized = JSON.stringify(stageJson);
       localStorage.setItem(`stage:${stageKey}`, serialized);
     },
 
@@ -57,9 +57,7 @@ const useStore = create<State>(devtools((set, get) => ({
         const storageValue = localStorage.getItem(`stage:${stageKey}`);
        
         if (storageValue) {
-          const { state } = JSON.parse(storageValue) as { state: Stage.StageMetaJson };
-          const { opt, extra } = state;
-
+          const { opt, extra } = JSON.parse(storageValue) as Stage.StageMetaJson;
           const s = Stage.createStage(stageKey);
           s.opt = deepClone(opt??Stage.createStageOpts());
 
@@ -68,14 +66,11 @@ const useStore = create<State>(devtools((set, get) => ({
             loadJson<THREE.PerspectiveCamera | THREE.OrthographicCamera>(extra.cameraJson),
           ]).then(([scene, camera]) => {
             // console.info('Loaded json scene & camera', scene, camera);
-            s.extra.bgScene = s.scene = scene;
-            s.extra.sceneGroup = scene.children[0] as THREE.Group || createPlaceholderGroup();
+            s.scene = scene;
             s.extra.sceneCamera = camera;
             s.extra.canvasPreview = extra.canvasPreview;
-  
             s.ctrl = Stage.initializeControls(new Controls(camera));
             s.ctrl.target.set(...extra.camTarget);
-  
             set(({ stage }) => ({ stage: addToLookup(s, stage) }));
           });
 

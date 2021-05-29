@@ -8,12 +8,6 @@
   - can remove nodes
   - can add/remove links
 
-- ✅ Move helpers into functions
-- ✅ Remove `stage.root`
-- Use persisted scene directly, rather than "root group"
-  - ✅ remove use react-three-fiber
-  - remove root group
-
 - Do CodeEditor line numbers differently e.g. a right-aligned textarea?
 
 - eliminate `Geom` and `geom.service`
@@ -36,5 +30,11 @@
 - https://discourse.threejs.org/t/procedural-island-and-city-generator-and-flight-simulator-three-js/18816
 
 ### Done
+
+- ✅ Move helpers into functions
+- ✅ Remove `stage.root`
+- ✅ Use persisted scene directly, rather than "root group"
+  - ✅ remove use react-three-fiber
+  - ✅ remove root group
 
 - ✅ code library built using js files instead of plaintext

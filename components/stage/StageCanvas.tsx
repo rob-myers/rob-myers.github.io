@@ -11,14 +11,11 @@ export default function StageCanvas(props: Props) {
   const ctxt = useRef<StageCtxt>({ camera: props.camera } as StageCtxt);
 
   useEffect(() => {
-    const { camera, subscribers } = props;
-    Object.assign(ctxt.current, { camera, subscribers } as StageCtxt);
-  }, [props.subscribers, props.camera]);
+    const { camera, subscribers, scene } = props;
+    Object.assign(ctxt.current, { camera, subscribers, scene } as StageCtxt);
+  }, [props.scene, props.subscribers, props.camera]);
 
   useEffect(() => {
-    const scene = new THREE.Scene;
-    scene.add(props.group); // TEMP
-
     const gl = new THREE.WebGLRenderer({
       canvas: canvas.current!,
       antialias: true,
@@ -28,7 +25,7 @@ export default function StageCanvas(props: Props) {
     gl.setSize(canvas.current!.width, canvas.current!.height);
     gl.setPixelRatio(getWindow()!.devicePixelRatio);
 
-    Object.assign(ctxt.current, { scene, camera: props.camera, gl });
+    Object.assign(ctxt.current, { scene: props.scene, camera: props.camera, gl });
     props.onCreated(ctxt.current);
 
     const clock = new THREE.Clock;
@@ -37,7 +34,7 @@ export default function StageCanvas(props: Props) {
     function animate() {
       delta = clock.getDelta();
       ctxt.current.subscribers.forEach(fn => fn(ctxt.current, delta))
-      gl.render(scene, ctxt.current.camera);
+      gl.render(ctxt.current.scene, ctxt.current.camera);
       animId = requestAnimationFrame(animate);
     }
     animate();
@@ -90,7 +87,8 @@ export default function StageCanvas(props: Props) {
 interface Props {
   onCreated: (ctxt: StageCtxt) => void;
   camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
-  group: THREE.Group; // TEMP
+  scene: THREE.Scene;
+  // group: THREE.Group; // TEMP
   subscribers: Subscriber[];
 }
 

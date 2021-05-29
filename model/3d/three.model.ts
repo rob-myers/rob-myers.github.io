@@ -59,7 +59,8 @@ export function loadJson<T extends THREE.Object3D>(rootJson: ThreeJson) {
   });
 }
 
-export function createPlaceholderGroup() {
+export function createPlaceholderScene() {
+  const scene = new THREE.Scene;
   const light = new THREE.DirectionalLight();
   light.position.set(-1, 3, 2);
   light.lookAt(0, 0, 0);
@@ -80,7 +81,7 @@ export function createPlaceholderGroup() {
   pointerPlane.visible = false;
   // TODO events onPointer{Down,Move,Out,Up}
 
-  return (new THREE.Group).add(
+  return scene.add(
     pointerPlane,
     light,
     cube,

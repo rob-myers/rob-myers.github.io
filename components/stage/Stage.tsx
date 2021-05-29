@@ -16,16 +16,11 @@ const Stage: React.FC<Props> = ({ stage }) => {
   const [ctxt, setCtxt] = useState(null as null | StageCtxt);
 
   useEffect(() => {
-    if (ctxt?.gl && !stage.opt.enabled) {
+    if (ctxt && !stage.opt.enabled) {
       // Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
       stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
       useStage.api.persist(stage.key);
-      // Copy current scene into background scene
-      stage.extra.bgScene.remove(...stage.extra.bgScene.children);
-      stage.extra.bgScene.add(...ctxt.scene.children);
-      stage.extra.bgScene.copy(ctxt.scene, false);
-      stage.scene = stage.extra.bgScene;
       setCtxt(null);
     }
   }, [stage.opt.enabled]);
@@ -41,9 +36,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
       createdCanvas: (ctxt: StageCtxt) => {
         everUsed.current = true;
         stage.ctrl.setDomElement(ctxt.gl.domElement);
-        stage.scene = ctxt.scene;
-        stage.scene.copy(stage.extra.bgScene, false);
-    
         ctxt.gl.shadowMap.enabled = true;
         ctxt.gl.shadowMap.autoUpdate = false;
         ctxt.gl.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -81,7 +73,7 @@ const Stage: React.FC<Props> = ({ stage }) => {
           <StageCanvas
             onCreated={on.createdCanvas}
             camera={stage.extra.sceneCamera}
-            group={stage.extra.sceneGroup}
+            scene={stage.scene}
             subscribers={subscribers.current}
           />
         </StageFader>

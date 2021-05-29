@@ -2,7 +2,7 @@ import { Subject } from "rxjs";
 import * as THREE from "three";
 import { Triple } from "model/generic.model";
 import { Controls } from "model/3d/controls";
-import { createPlaceholderGroup, ThreeJson } from "model/3d/three.model";
+import { createPlaceholderScene, ThreeJson } from "model/3d/three.model";
 
 export type StageMeta = {
   key: string;
@@ -12,7 +12,7 @@ export type StageMeta = {
   opt: StageOpts;
   /** Camera controls */
   ctrl: Controls;
-  /** The current scene (running or background) */
+  /** The current scene */
   scene: THREE.Scene;
 };
 
@@ -26,18 +26,8 @@ export interface StageMetaJson {
 export interface StageExtra {
   /** Stage image data url */
   canvasPreview?: string;
-  /**
-   * Second child of scene restored from `sceneJson`.
-   * The 1st child consists of helpers. 
-   */
-  sceneGroup: THREE.Group;
   /** Camera restored from `cameraJson` */
   sceneCamera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
-  /**
-   * Used to rehydrate scene and by CLI when stage disabled.
-   * NOTE objects can only be in one scene at a time.
-   */
-  bgScene: THREE.Scene;
   /** Keyboard events sent by `Stage` */
   keyEvent: Subject<StageKeyEvent>;
   /** Mouse events sent by `Stage` */
@@ -66,21 +56,20 @@ export interface StageOpts {
 }
 
 export function createStage(stageKey: string): StageMeta {
-  const bgScene = new THREE.Scene;
+  const scene = createPlaceholderScene();
   const sceneCamera = new THREE.PerspectiveCamera;
+  const controls = initializeControls(new Controls(sceneCamera));
   return {
     key: stageKey,
     extra: {
       canvasPreview: undefined,
-      sceneGroup: createPlaceholderGroup(),
       sceneCamera,
-      bgScene,
       keyEvent: new Subject,
       ptrEvent: new Subject,
     },
     opt: createStageOpts(),
-    scene: bgScene,
-    ctrl: initializeControls(new Controls(sceneCamera)),
+    scene,
+    ctrl: controls,
   };
 }
 
