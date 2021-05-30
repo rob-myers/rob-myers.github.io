@@ -8,6 +8,7 @@ import CodeEditor from 'components/code/code-editor';
 import { usePage } from 'components/hooks';
 import { Section } from 'components/page/Section';
 import BehTree from 'components/beh/BehTree';
+import { TextEditor } from 'components/dynamic';
 
 export default function IndexPage() {
   usePage({
@@ -44,6 +45,9 @@ Let's do this.
               <CodeEditor codeKey="file.js" />
             </Env>
           </section>
+
+          {/* TODO try react-ace instead */}
+          <TextEditor/>
 
         </div>
       </Main>

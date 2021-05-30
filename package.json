@@ -12,6 +12,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "ace-builds": "^1.4.12",
     "braces": "^3.0.2",
     "cdt2d": "^1.0.0",
     "cli-columns": "^3.1.2",
@@ -26,6 +27,7 @@
     "polygon-clipping": "^0.15.2",
     "prismjs": "^1.23.0",
     "react": "17.0.1",
+    "react-ace": "^9.4.0",
     "react-beforeunload": "^2.4.0",
     "react-dom": "17.0.1",
     "react-flow-renderer": "^9.5.4",

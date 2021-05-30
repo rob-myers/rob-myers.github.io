@@ -4,14 +4,15 @@
 
 - Start work on behaviour tree GUI
   - ✅ decided to use react-flow
-  - can add nodes
-  - can remove nodes
-  - can add/remove links
+  - ✅ can add/remove links (add label to aid removal)
+  - can add/remove nodes
 
 - Do CodeEditor line numbers differently e.g. a right-aligned textarea?
 
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
+
+- avoid a physics engine?
 
 - Only auto-persist stages that have been touched
 - stop redux devtools from crashing
