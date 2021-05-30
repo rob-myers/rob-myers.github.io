@@ -1,45 +1,40 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Subject } from "rxjs";
+import { debounceTime, tap } from "rxjs/operators";
 import styled from "@emotion/styled";
-import ReactSimpleCodeEditor from "react-simple-code-editor";
-import { highlight, languages } from "prismjs";
-import "prismjs/components/prism-clike";
-import "prismjs/components/prism-javascript";
-import "prismjs/themes/prism-tomorrow.css";
+import AceEditor from "react-ace";
+import "ace-builds/src-noconflict/mode-javascript";
+import "ace-builds/src-noconflict/theme-monokai";
 
+import { CodeError } from "model/code/code.service";
 import useCodeStore from "store/code.store";
 import CodeToolbar from "./code-toolbar";
-import { CodeError, codeService } from "model/code/code.service";
 
-export default function CodeEditor({ codeKey }: Props) {
+export default function TextEditor({ codeKey }: { codeKey: string }) {
+  const subj = useRef(new Subject<string>());
+  const ace = useRef<AceEditor>(null);
   const code = useCodeStore(({ code }) => codeKey in code ? code[codeKey] : null);
   const [codeError, setCodeError] = useState<CodeError>();
-  const timeoutId = useRef(0);
 
   useEffect(() => {
-    if (code?.current) {
-      window.clearTimeout(timeoutId.current);
-      timeoutId.current = window.setTimeout(()=> {
-        const result = codeService.parseJs(code.current);
-        setCodeError(result.key === 'error' ? result : undefined);
+    const sub$ = subj.current.pipe(
+      debounceTime(300),
+      tap(latest => useCodeStore.api.updateCode(codeKey, { current: latest })),
+    ).subscribe();
+    return () => void sub$.unsubscribe();
+  }, []);
   
-        if (result.key === 'parsed') {
-          codeService.jsToSession(result);
-        }
-        useCodeStore.api.persist(codeKey); // Even when error
-      }, 500);
+  useEffect(() => {
+    if (code) {
+      ace.current?.editor.setValue(code.current);
+      ace.current?.editor.clearSelection();
     }
-  }, [code?.current]);
+  }, [code?.updateEditorAt]);
 
-  const onValueChange = useCallback((latest: string) => {
-    useCodeStore.api.updateCode(codeKey, { current: latest });
-  }, [codeKey]);
+  const onChange = useCallback((value: string) => {
+    subj.current.next(value)
+  }, []);
 
-  const hightlightWithLineNumbers = useCallback((code: string) =>
-    highlight(code, languages.javascript, 'javascript')
-      .split("\n")
-      .map((line, i) => `<span class='editorLineNumber'>${i + 1}</span>${line}`)
-      .join("\n"),
-    []);
 
   return (
     <Root>
@@ -47,71 +42,19 @@ export default function CodeEditor({ codeKey }: Props) {
         code={code}
         error={codeError}
       />
-      <EditorContainer>
-        <Gap/>
-        {code &&  (
-          <Editor
-            value={code.current}
-            onValueChange={onValueChange}
-            highlight={hightlightWithLineNumbers}
-            style={{
-              fontFamily: '"Fira code", "Fira Mono", monospace',
-              fontSize: 12,
-            }}
-          />
-        )}
-      </EditorContainer>
+      <AceEditor
+        ref={ace}
+        mode="javascript"
+        theme="monokai"
+        onChange={onChange}
+        editorProps={{ $blockScrolling: true }}
+        defaultValue={code?.current}
+        width="100%"
+      />
     </Root>
-  );
-}
-
-interface Props {
-  codeKey: string;
-}
-
-function Gap() {
-  return (
-    <div style={{ display: 'flex', height: 8 }}>
-      <div style={{ width: 32, background: '#222' }} />
-    </div>
   );
 }
 
 const Root = styled.section`
   grid-area: code;
-  flex: 1;
-  position: relative;
-`;
-
-const EditorContainer = styled.div`
-  height: calc(100% - 28px);
-  overflow: auto;
-  color: #ffc;
-  background: #333;
-`;
-
-const Editor = styled(ReactSimpleCodeEditor)`
-  white-space: pre;
-  caret-color: #fff;
-  min-width: 100%;
-  min-height: 100%;
-  float: left;
-
-  & > textarea,
-  & > pre {
-    outline: none;
-    white-space: pre !important;
-    padding-left: 40px !important;
-  }
-
-  .editorLineNumber {
-    position: absolute;
-    left: 0px;
-    text-align: right;
-    width: 32px;
-    font-weight: 100;
-    background: #222;
-    color: #aaa;
-    padding-right: 6px;
-  }
 `;

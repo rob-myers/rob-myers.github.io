@@ -7,7 +7,8 @@
   - ✅ can add/remove links (add label to aid removal)
   - can add/remove nodes
 
-- Do CodeEditor line numbers differently e.g. a right-aligned textarea?
+- ✅ use react-ace instead of react-simple-code-editor
+- provide SSR initial render for react-ace e.g. via React.Suspense?
 
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly

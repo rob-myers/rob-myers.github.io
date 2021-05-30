@@ -4,11 +4,10 @@ import styled from "@emotion/styled";
 
 import Header from 'components/page/Header';
 import Stage from 'components/stage/WrappedStage'
-import CodeEditor from 'components/code/code-editor';
 import { usePage } from 'components/hooks';
+import { CodeEditor } from 'components/dynamic';
 import { Section } from 'components/page/Section';
 import BehTree from 'components/beh/BehTree';
-import { TextEditor } from 'components/dynamic';
 
 export default function IndexPage() {
   usePage({
@@ -42,12 +41,9 @@ Let's do this.
             <Env>
               <Stage stageKey="test@intro"/>
               <BehTree />
-              <CodeEditor codeKey="file.js" />
+              <CodeEditor codeKey="file.js"/>
             </Env>
           </section>
-
-          {/* TODO try react-ace instead */}
-          <TextEditor/>
 
         </div>
       </Main>

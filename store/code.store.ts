@@ -19,13 +19,12 @@ export interface CodeMeta {
   key: string;
   original: string;
   current: string;
-  lazy: boolean;
   persist: boolean;
+  updateEditorAt: number;
 }
 
 interface CodeMetaJson {
   current: string;
-  lazy: boolean;
   persist: boolean;
 }
  
@@ -38,10 +37,10 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     persist: (codeKey) => {
-      const { current, lazy, persist } = api.getCode(codeKey);
+      const { current, persist } = api.getCode(codeKey);
 
       if (persist) {
-        const state: CodeMetaJson = { current, lazy, persist };
+        const state: CodeMetaJson = { current, persist };
         localStorage.setItem(`code:${codeKey}`, JSON.stringify({ state }));
       }
     },
@@ -56,9 +55,9 @@ const useStore = create<State>(devtools((set, get) => ({
           set(({ code }) => ({ code: addToLookup({
             key: codeKey,
             current: state.current,
-            lazy: state.lazy,
             original: (initialCode as any)[codeKey] || '',
             persist: state.persist,
+            updateEditorAt: Date.now(),
           }, code) }));
 
         } else {
@@ -66,8 +65,8 @@ const useStore = create<State>(devtools((set, get) => ({
             key: codeKey,
             current: (initialCode as any)[codeKey] || '',
             original: (initialCode as any)[codeKey] || '',
-            lazy: true,
             persist: true,
+            updateEditorAt: Date.now(),
           }, code) }));
         }
       }

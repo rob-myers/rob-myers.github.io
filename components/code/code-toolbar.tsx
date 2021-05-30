@@ -13,14 +13,10 @@ export default function CodeToolbar({ code, error }: Props) {
 
   const reset = useCallback(() => {
     if (code) {
-      useCode.api.updateCode(code.key, ({ original }) => ({ current: original }));
-      useCode.api.persist(code.key);
-    }
-  }, [code]);
-
-  const toggleLazy = useCallback(() => {
-    if (code) {
-      useCode.api.updateCode(code.key, ({ lazy }) => ({ lazy: !lazy }));
+      useCode.api.updateCode(code.key, ({ original }) => ({
+        current: original,
+        updateEditorAt: Date.now(),
+      }));
       useCode.api.persist(code.key);
     }
   }, [code]);
@@ -36,13 +32,6 @@ export default function CodeToolbar({ code, error }: Props) {
           >
             error
           </ErrorButton>
-          <LazyloadButton
-            greyed={code?.lazy??true}
-            title="lazy load?"
-            onClick={toggleLazy}
-          >
-            lazy
-          </LazyloadButton>
           <ResetButton onClick={reset}>
             reset
           </ResetButton>
@@ -86,13 +75,6 @@ const ErrorButton = styled.div<{ greyed: boolean }>`
     color: #777;
     cursor: auto;
   `}
-`;
-
-const LazyloadButton = styled.div<{ greyed: boolean }>`
-  outline: none;
-  cursor: pointer;
-  color: #ddd;
-  ${({ greyed }) => greyed && css`color: #777;`}
 `;
 
 const ResetButton = styled.div<{}>`
