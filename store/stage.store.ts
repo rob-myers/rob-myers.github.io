@@ -60,6 +60,7 @@ const useStore = create<State>(devtools((set, get) => ({
           const { opt, extra } = JSON.parse(storageValue) as Stage.StageMetaJson;
           const s = Stage.createStage(stageKey);
           s.opt = deepClone(opt??Stage.createStageOpts());
+          s.opt.enabled = false; // Force initially disabled
 
           Promise.all([
             loadJson<THREE.Scene>(extra.sceneJson),
