@@ -13,7 +13,7 @@
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
 
-- avoid a physics engine?
+- create a `@box2d/core` demo
 
 - Only auto-persist stages that have been touched
 - stop redux devtools from crashing

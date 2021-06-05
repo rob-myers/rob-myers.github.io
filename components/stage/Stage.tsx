@@ -10,7 +10,7 @@ import StageToolbar from "./StageToolbar";
 import StageCanvas, { StageCtxt } from "./StageCanvas";
 import Placeholder from "./Placeholder";
 
-const Stage: React.FC<Props> = ({ stage }) => {
+const Stage: React.FC<{stage: StageMeta}> = ({ stage }) => {
   const everUsed = useRef(false);
   const subscribers = useRef([() => void stage.ctrl.update()]);
   const [ctxt, setCtxt] = useState(null as null | StageCtxt);
@@ -86,10 +86,6 @@ const Stage: React.FC<Props> = ({ stage }) => {
       )}
     </Root>
   );
-}
-
-interface Props {
-  stage: StageMeta;
 }
 
 const Root = styled.section<{ background: string }>`
