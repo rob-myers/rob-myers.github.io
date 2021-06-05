@@ -1,21 +1,36 @@
-import { useCallback, useState } from 'react';
-import ReactFlow, { addEdge, Connection, Edge, Elements, removeElements, ArrowHeadType } from 'react-flow-renderer';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import ReactFlow, { addEdge, Connection, Edge, Elements, removeElements, ArrowHeadType, OnLoadParams } from 'react-flow-renderer';
 
 export default function ReactFlowExample() {
   const [elements, setElements] = useState(initElements);
+  const [instance, setInstance] = useState<OnLoadParams>();
 
-  const onElementsRemove = useCallback((elToRemove: Elements) =>
-    setElements((els) => removeElements(elToRemove, els)), []);
-  const onConnect = useCallback((params: Edge | Connection) =>
-    setElements((els) => addEdge(params, els)), []);
+  const on = useMemo(() => ({
+    elementsRemove: (elsToRemove: Elements) =>
+      setElements((els) => removeElements(elsToRemove, els)),
+    connect: (params: Edge | Connection) =>
+      setElements((els) => addEdge(params, els)),
+    load: (params: OnLoadParams) =>
+      setInstance(params),
+  }), []);
+
+  useEffect(() => {
+    if (instance) {
+      const onResize = () => instance.fitView();
+      window.addEventListener('resize', onResize);
+      onResize();
+      return () => window.removeEventListener('resize', onResize);
+    }
+  }, [instance]);
 
   return (
     <ReactFlow
       elements={elements}
-      onConnect={onConnect}
-      onElementsRemove={onElementsRemove}
+      onConnect={on.connect}
+      onElementsRemove={on.elementsRemove}
       zoomOnPinch
       panOnScroll
+      onLoad={on.load}
     />
   )
 }
