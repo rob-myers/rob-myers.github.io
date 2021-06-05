@@ -1,7 +1,8 @@
 import React from 'react';
 import { getBezierPath, getMarkerEnd } from 'react-flow-renderer';
 
-export default function CustomEdge({
+
+export default React.memo(function CustomEdge({
   id,
   sourceX,
   sourceY,
@@ -19,17 +20,17 @@ export default function CustomEdge({
 
   return (
     <>
-      <path id={id} style={style} className="react-flow__edge-path" d={edgePath} markerEnd={markerEnd} />
-      <circle
-        cx={(sourceX + targetX)/2}
-        cy={(sourceY + targetY)/2}
-        r={8}
-        fill="rgba(255, 255, 255, 0.5)"
+      <path
+        id={id}
+        className="react-flow__edge-path"
+        style={style}
+        d={edgePath}
+        markerEnd={markerEnd}
       />
       <text>
         <textPath
           href={`#${id}`}
-          style={{ fontSize: '12px' }}
+          style={{ fontSize: '12px', userSelect: 'none' }}
           startOffset="50%"
           textAnchor="middle"
           alignmentBaseline="central"
@@ -39,4 +40,4 @@ export default function CustomEdge({
       </text>
     </>
   );
-}
+})
