@@ -4,7 +4,8 @@ import { debounceTime, tap } from "rxjs/operators";
 import styled from "@emotion/styled";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/theme-monokai";
+// import "ace-builds/src-noconflict/theme-monokai";
+// import "ace-builds/src-noconflict/theme-tomorrow_night_bright";
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import "ace-builds/src-min-noconflict/ext-language_tools";
 
@@ -49,7 +50,7 @@ export default function TextEditor({ codeKey }: { codeKey: string }) {
       <AceEditor
         ref={ace}
         mode="javascript"
-        theme="monokai"
+        // theme="tomorrow_night"
         onChange={onChange}
         enableLiveAutocompletion
         // editorProps={{}}
