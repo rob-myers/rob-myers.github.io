@@ -5,6 +5,8 @@ import styled from "@emotion/styled";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/theme-monokai";
+import "ace-builds/src-min-noconflict/ext-searchbox";
+import "ace-builds/src-min-noconflict/ext-language_tools";
 
 import { CodeError } from "model/code/code.service";
 import useCodeStore from "store/code.store";
@@ -25,9 +27,11 @@ export default function TextEditor({ codeKey }: { codeKey: string }) {
   }, []);
   
   useEffect(() => {
-    if (code) {
-      ace.current?.editor.setValue(code.current);
-      ace.current?.editor.clearSelection();
+    const editor = ace.current?.editor
+    if (code && editor) {
+      editor.setValue(code.current);
+      editor.clearSelection();
+      editor.setShowPrintMargin(false);
     }
   }, [code?.updateEditorAt]);
 
@@ -47,8 +51,8 @@ export default function TextEditor({ codeKey }: { codeKey: string }) {
         mode="javascript"
         theme="monokai"
         onChange={onChange}
-        editorProps={{ $blockScrolling: true }}
-        defaultValue={code?.current}
+        enableLiveAutocompletion
+        // editorProps={{}}
         width="100%"
       />
     </Root>
