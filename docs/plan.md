@@ -14,6 +14,10 @@
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
 
 - create a `@box2d/core` demo
+- can undo/redo behaviour tree edits
+  - https://github.com/wbkd/react-flow/issues/656
+- use three.js `scene.userData` to persist variables etc
+- use dev-console for debugging e.g. can re-console.error
 
 - Only auto-persist stages that have been touched
 - stop redux devtools from crashing

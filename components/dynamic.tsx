@@ -1,6 +1,6 @@
 import dynamic from 'next/dynamic';
 
 export const CodeEditor = dynamic(
-  () => import('./code/code-editor'),
+  () => import('./code/CodeEditor'),
   { ssr: false },
 );

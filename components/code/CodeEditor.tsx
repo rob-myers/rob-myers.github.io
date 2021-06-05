@@ -11,7 +11,7 @@ import "ace-builds/src-min-noconflict/ext-language_tools";
 
 import { CodeError } from "model/code/code.service";
 import useCodeStore from "store/code.store";
-import CodeToolbar from "./code-toolbar";
+import CodeToolbar from "./CodeToolbar";
 
 export default function TextEditor({ codeKey }: { codeKey: string }) {
   const subj = useRef(new Subject<string>());
