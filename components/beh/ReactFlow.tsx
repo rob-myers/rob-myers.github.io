@@ -29,11 +29,9 @@ export default function ReactFlowExample() {
   }), []);
 
   useEffect(() => {
-    setElements(deepClone(initElements));
-  }, []);
-
-  useEffect(() => {
-    if (instance) {
+    if (!instance) {
+      setElements(deepClone(initElements));
+    } else {
       const onResize = () => instance.fitView();
       window.addEventListener('resize', onResize);
       onResize();
@@ -41,7 +39,7 @@ export default function ReactFlowExample() {
     }
   }, [instance]);
 
-  return (
+  return elements.length ? (
     <ReactFlow
       elements={elements}
       onConnect={on.connect}
@@ -56,9 +54,8 @@ export default function ReactFlowExample() {
     >
        <Controls />
     </ReactFlow>
-  )
+  ) : null;
 }
-
 
 const initElements: Elements = [
   {
