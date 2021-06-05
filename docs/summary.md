@@ -1,14 +1,33 @@
-## Robots
+## Summary
 
-An Online Library of Bot Behaviour Trees
+This website has source material,
+> all commonly recognisable conventions and devices used to present virtual characters and their environments.
 
-- 3d world via `three.js`
-- Navigation via `recast-detour`
+Video games are where these [tropes](https://tvtropes.org/pmwiki/pmwiki.php/Main/VideoGameTropes) usually live. The objective of this website it to explicitly implement them using three main ingredients:
+
+- [three.js](https://en.wikipedia.org/wiki/Three.js) (3d web library)
+- [behaviour trees](https://en.wikipedia.org/wiki/Behavior_tree_(artificial_intelligence,_robotics_and_control)) (graphical behaviour-building technique)
+- [online javascript editor](https://en.wikipedia.org/wiki/Ace_(editor)) (where base behaviours are written)
+
+The implementations will be minimalistic: _just enough to capture the idea_.
+
+
+## Why?
+
+- Games focus on User Experience, not "Rich Behaviour".
+- Games are burdened by setting, progression and graphics/design.
+- These same "burdens" bring virtual characters to life.
+- So, to improve virtual character behaviour, we'll try to leverage the vast panolpy of existing games.
+- Finally, behaviour trees are also relevant to [robotics](https://behavior-trees-iros-workshop.github.io/).
+
+
+## Technical
+
+- 3d via `three.js`
+- 3d navigation via `recast-detour`
 - 2d physics via `@box2d/core`
   - https://github.com/Lusito/box2d.ts
-  - `@box2d` is a full-blown ecosystem for box2d for the JavaScript/TypeScript world. It can be used both in the browser and in node.js
-- Behaviour trees editable in the browser
-
+- behaviour trees in the browser
 
 ## Resources
 
