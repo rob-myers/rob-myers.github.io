@@ -4,8 +4,11 @@
 
 - Start work on behaviour tree GUI
   - ✅ decided to use react-flow
-  - ✅ can add/remove links (add label to aid removal)
-  - can add/remove nodes
+  - ✅ can add/remove links
+  - can drag-n-drop nodes
+  - can choose in/out orientation
+    - in: left or top, single node
+    - out: right or bottom, many nodes
 
 - ✅ use react-ace instead of react-simple-code-editor
 - provide SSR initial render for react-ace e.g. via React.Suspense?

@@ -15,10 +15,10 @@ The implementations will be minimalistic: _just enough to capture the idea_.
 ## Why?
 
 - Games focus on User Experience, not "Rich Behaviour".
-- Games are burdened by setting, progression and graphics/design.
-- These same "burdens" bring virtual characters to life.
-- So, to improve virtual character behaviour, we'll try to leverage the vast panolpy of existing games.
-- Finally, behaviour trees are also relevant to [robotics](https://behavior-trees-iros-workshop.github.io/).
+- Games are burdened by setting, progression and graphics/design,
+- However, these same "burdens" bring virtual characters to life.
+- To improve virtual character behaviour without things becoming meaningless, we'll try to leverage the vast panolpy of existing games.
+- Finally, behaviour trees are increasingly relevant to [robotics](https://behavior-trees-iros-workshop.github.io/).
 
 
 ## Technical
@@ -27,7 +27,7 @@ The implementations will be minimalistic: _just enough to capture the idea_.
 - 3d navigation via `recast-detour`
 - 2d physics via `@box2d/core`
   - https://github.com/Lusito/box2d.ts
-- behaviour trees in the browser
+- graph editing via `react-flow-renderer`
 
 ## Resources
 

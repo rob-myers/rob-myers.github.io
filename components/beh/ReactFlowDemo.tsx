@@ -10,6 +10,7 @@ import ReactFlow, {
   Controls,
   Position,
   useZoomPanHelper,
+  useStoreState,
   Background,
   BackgroundVariant,
 } from 'react-flow-renderer';
@@ -22,17 +23,24 @@ import ConnectionLine from './ConnectionLine';
 
 export default function ReactFlowExample() {
   const [elements, setElements] = useState<Elements>(deepClone(initElements));
+  const edges = useStoreState(x => x.edges);
   const helper = useZoomPanHelper();
 
   const on = useMemo(() => ({
     elementsRemove: (elsToRemove: Elements) =>
       setElements((els) => removeElements(elsToRemove, els)),
-    edgeUpdate: (oldEdge: Edge, newConnection: Connection) =>
-      setElements((els) => updateEdge(oldEdge, newConnection, els)),
-    connect: (params: Edge | Connection) =>
-      setElements((els) => addEdge({ ...params, type: 'smoothstep' }, els)),
+    edgeUpdate: (oldEdge: Edge, newConn: Connection) => {
+      setElements((els) => {
+        const found = edges.find(x => x.source === newConn.source && x.target === newConn.target);
+        found && (els = removeElements([found], els));
+        return updateEdge(oldEdge, newConn, els);
+      });
+    },
+    connect: (params: Edge | Connection) => {
+      setElements((els) => addEdge({ ...params, type: 'smoothstep' }, els));
+    },
     load: (params: OnLoadParams) => {},
-  }), []);
+  }), [edges]);
 
   useEffect(() => {
     const onResize = () => helper.fitView();
