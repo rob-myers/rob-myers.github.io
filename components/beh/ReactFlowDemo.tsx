@@ -9,7 +9,7 @@ import ReactFlow, {
   OnLoadParams,
   Controls,
   Position,
-  ReactFlowProvider,
+  useZoomPanHelper,
 } from 'react-flow-renderer';
 
 import { deepClone } from 'model/generic.model';
@@ -18,8 +18,8 @@ import styled from '@emotion/styled';
 import CustomNode from './CustomNode';
 
 export default function ReactFlowExample() {
-  const [elements, setElements] = useState<Elements>([]);
-  const [instance, setInstance] = useState<OnLoadParams>();
+  const [elements, setElements] = useState<Elements>(deepClone(initElements));
+  const helper = useZoomPanHelper();
 
   const on = useMemo(() => ({
     elementsRemove: (elsToRemove: Elements) =>
@@ -28,28 +28,22 @@ export default function ReactFlowExample() {
       setElements((els) => updateEdge(oldEdge, newConnection, els)),
     connect: (params: Edge | Connection) =>
       setElements((els) => addEdge({ ...params }, els)),
-    load: (params: OnLoadParams) =>
-      setInstance(params),
+    load: (params: OnLoadParams) => {},
   }), []);
 
   useEffect(() => {
-    if (!instance) {
-      setElements(deepClone(initElements)); // Better hotreload
-    } else {
-      const onResize = () => instance.fitView();
-      window.addEventListener('resize', onResize);
-      onResize();
-      return () => window.removeEventListener('resize', onResize);
-    }
-  }, [instance]);
+    const onResize = () => helper.fitView();
+    window.addEventListener('resize', onResize);
+    setTimeout(onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [helper]);
 
   return (
-    <ReactFlowProvider>
+    <>
       <Toolbar>
         toolbar
       </Toolbar>
       <section style={{ height: 'calc(100% - 28px)' }}>
-      {elements.length && (
         <ReactFlow
           elements={elements}
           onConnect={on.connect}
@@ -61,11 +55,10 @@ export default function ReactFlowExample() {
           // edgeTypes={{ custom: CustomEdge }}
           nodeTypes={{ custom: CustomNode }}
         >
-           <Controls />
+            <Controls />
         </ReactFlow>
-      )}
       </section>
-    </ReactFlowProvider>
+    </>
   );
 }
 

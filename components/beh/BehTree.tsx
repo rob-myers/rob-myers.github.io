@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import styled from "@emotion/styled";
+import { ReactFlowProvider } from 'react-flow-renderer';
 import ReactFlowDemo from './ReactFlowDemo';
 
 export default function BehTree() {
@@ -13,7 +14,9 @@ export default function BehTree() {
 
   return (
     <Root ref={root}>
-      <ReactFlowDemo/>
+      <ReactFlowProvider>
+        <ReactFlowDemo/>
+      </ReactFlowProvider>
     </Root>
   );
 }
