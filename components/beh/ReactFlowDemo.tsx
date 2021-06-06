@@ -10,12 +10,15 @@ import ReactFlow, {
   Controls,
   Position,
   useZoomPanHelper,
+  Background,
+  BackgroundVariant,
 } from 'react-flow-renderer';
 
 import { deepClone } from 'model/generic.model';
 // import CustomEdge from './CustomEdge';
 import styled from '@emotion/styled';
 import CustomNode from './CustomNode';
+import ConnectionLine from './ConnectionLine';
 
 export default function ReactFlowExample() {
   const [elements, setElements] = useState<Elements>(deepClone(initElements));
@@ -27,7 +30,7 @@ export default function ReactFlowExample() {
     edgeUpdate: (oldEdge: Edge, newConnection: Connection) =>
       setElements((els) => updateEdge(oldEdge, newConnection, els)),
     connect: (params: Edge | Connection) =>
-      setElements((els) => addEdge({ ...params }, els)),
+      setElements((els) => addEdge({ ...params, type: 'smoothstep' }, els)),
     load: (params: OnLoadParams) => {},
   }), []);
 
@@ -52,10 +55,13 @@ export default function ReactFlowExample() {
           zoomOnPinch
           panOnScroll
           onLoad={on.load}
+          snapToGrid
           // edgeTypes={{ custom: CustomEdge }}
           nodeTypes={{ custom: CustomNode }}
+          connectionLineComponent={ConnectionLine}
         >
             <Controls />
+            <Background variant={BackgroundVariant.Lines} />
         </ReactFlow>
       </section>
     </>
@@ -81,12 +87,11 @@ const initElements: Elements = [
     type: 'custom',
     data: { label: 'root' },
     position: { x: 250, y: 5 },
-    sourcePosition: Position.Bottom,
   },
   { id: '2', data: { label: '1' }, position: { x: 100, y: 100 }, style: { width: 30 } },
-  { id: '3', data: { label: '2' }, position: { x: 200, y: 100 } },
+  { id: '3', data: { label: '2' }, position: { x: 200, y: 100 }, sourcePosition: Position.Right },
   { id: '4', data: { label: '3' }, position: { x: 400, y: 100 } },
-  { id: 'e1-2', source: '1', sourceHandle: 'a', target: '2', type: 'smoothstep', data: { text: '▶️' } },
-  { id: 'e1-3', source: '1', sourceHandle: 'b', target: '3', type: 'smoothstep', data: { text: '▶️' } },
-  { id: 'e1-4', source: '1', sourceHandle: 'c', target: '4', type: 'smoothstep', data: { text: '▶️' } },
+  { id: 'e1-2', source: '1', sourceHandle: 'a', target: '2', type: 'smoothstep' },
+  { id: 'e1-3', source: '1', sourceHandle: 'b', target: '3', type: 'smoothstep' },
+  { id: 'e1-4', source: '1', sourceHandle: 'c', target: '4', type: 'smoothstep' },
 ];

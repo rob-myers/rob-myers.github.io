@@ -25,7 +25,7 @@ const Root = styled.section<{}>`
   grid-area: beh;
   height: 100%;
   position: relative;
-  background: #eee;
+  /* background: #eee; */
 
   .diagram-container{
     width: 100%;
