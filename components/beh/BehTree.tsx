@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import styled from "@emotion/styled";
-import ReactFlowExample from './ReactFlow';
+import ReactFlowDemo from './ReactFlowDemo';
 
 export default function BehTree() {
   const root = useRef<HTMLElement>(null);
@@ -13,14 +13,13 @@ export default function BehTree() {
 
   return (
     <Root ref={root}>
-      <ReactFlowExample/>
+      <ReactFlowDemo/>
     </Root>
   );
 }
 
 const Root = styled.section<{}>`
   grid-area: beh;
-  border: 1px solid #ccc;
   height: 100%;
   position: relative;
   background: #eee;

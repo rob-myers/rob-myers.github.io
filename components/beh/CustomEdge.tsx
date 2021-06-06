@@ -2,7 +2,8 @@ import React from 'react';
 import { getBezierPath, getMarkerEnd } from 'react-flow-renderer';
 
 
-export default React.memo(function CustomEdge({
+// export default React.memo(function CustomEdge({
+export default (function CustomEdge({
   id,
   sourceX,
   sourceY,
@@ -30,7 +31,7 @@ export default React.memo(function CustomEdge({
       <text>
         <textPath
           href={`#${id}`}
-          style={{ fontSize: '12px', userSelect: 'none' }}
+          style={{ fontSize: '10px', userSelect: 'none' }}
           startOffset="50%"
           textAnchor="middle"
           alignmentBaseline="central"

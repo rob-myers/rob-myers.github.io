@@ -13,7 +13,7 @@
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
 
-- create a `@box2d/core` demo
+- create a `@box2d` demo
 - can undo/redo behaviour tree edits
   - https://github.com/wbkd/react-flow/issues/656
 - use three.js `scene.userData` to persist variables etc
