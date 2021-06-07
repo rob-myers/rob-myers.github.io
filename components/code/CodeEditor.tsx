@@ -55,6 +55,7 @@ export default function TextEditor({ codeKey }: { codeKey: string }) {
         enableLiveAutocompletion
         // editorProps={{}}
         width="100%"
+        height="calc(100% - 28px)"
       />
     </Root>
   );
