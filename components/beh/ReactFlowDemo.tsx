@@ -95,11 +95,11 @@ const Toolbar = styled.section`
 `;
 
 const initElements: Elements = [
-  { id: '1', type: 'custom', data: { label: 'root' }, position: { x: 250, y: 5 } },
-  { id: '2', data: { label: '1' }, position: { x: 100, y: 100 }, style: { width: 30 } },
-  { id: '3', data: { label: '2' }, position: { x: 200, y: 100 }, sourcePosition: Position.Right },
-  { id: '4', data: { label: '3' }, position: { x: 400, y: 100 } },
-  { id: 'e1-2', source: '1', sourceHandle: 'a', target: '2', type: 'smoothstep' },
-  { id: 'e1-3', source: '1', sourceHandle: 'b', target: '3', type: 'smoothstep' },
-  { id: 'e1-4', source: '1', sourceHandle: 'c', target: '4', type: 'smoothstep' },
+  { id: '1', type: 'custom', data: { label: 'custom', srcs: ['a', 'b', 'c'] }, position: { x: 250, y: 5 } },
+  { id: '2', type: 'custom', data: { label: '1', dsts: ['a'] }, position: { x: 100, y: 100 }, style: { width: 30 } },
+  { id: '3', type: 'custom', data: { label: '2', dsts: ['a'] }, position: { x: 200, y: 100 }, sourcePosition: Position.Right },
+  { id: '4', type: 'custom', data: { label: '3', dsts: ['a'] }, position: { x: 400, y: 100 } },
+  { id: 'e1-2', source: '1', sourceHandle: 'a', target: '2', targetHandle: 'a', type: 'smoothstep' },
+  { id: 'e1-3', source: '1', sourceHandle: 'b', target: '3', targetHandle: 'a', type: 'smoothstep' },
+  { id: 'e1-4', source: '1', sourceHandle: 'c', target: '4', targetHandle: 'a', type: 'smoothstep' },
 ];

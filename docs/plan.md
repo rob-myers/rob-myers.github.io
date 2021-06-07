@@ -5,6 +5,7 @@
 - Start work on behaviour tree GUI
   - ✅ decided to use react-flow
   - ✅ can add/remove links
+  - ✅ blue outline on select
   - can copy-paste nodes
   - can choose in/out orientation
     - in: left or top, single node

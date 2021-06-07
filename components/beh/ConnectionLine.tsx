@@ -16,7 +16,7 @@ export default function ConnectionLine({
         fill="none"
         stroke="#222"
         strokeWidth={0.5}
-        className="animated"
+        // className="animated"
         d={`M${sourceX},${sourceY} C ${sourceX} ${targetY} ${sourceX} ${targetY} ${targetX},${targetY}`}
       />
       <circle cx={targetX} cy={targetY} fill="#fff" r={3} stroke="#222" strokeWidth={0.5} />
