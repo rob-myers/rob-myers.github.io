@@ -28,8 +28,15 @@ export default function ReactFlowExample() {
       setElements((els) => els.length > 1 ? removeElements(elsToRemove, els) : els),
     edgeUpdate: (oldEdge: Edge, newConn: Connection) => {
       setElements((els) => {
-        const found = edges.find(x => x.source === newConn.source && x.target === newConn.target);
-        found && (els = removeElements([found], els));
+        // TODO ensure graph is a forest
+        const preexisting = edges.find(x =>
+          x.source === newConn.source && x.sourceHandle === newConn.sourceHandle
+          && x.target === newConn.target && x.targetHandle === newConn.targetHandle
+        );
+        if (preexisting) {
+          if (preexisting === oldEdge) return els;
+          els = removeElements([preexisting], els); // Prevent dup
+        }
         return updateEdge(oldEdge, newConn, els);
       });
     },
