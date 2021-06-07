@@ -1,6 +1,5 @@
 import { useBeforeunload } from "react-beforeunload";
 import { useCallback, useEffect } from 'react';
-import { getWindow } from "model/dom.model";
 import useStage from "store/stage.store";
 import useCode from "store/code.store";
 
@@ -10,10 +9,8 @@ export function usePage({
 }: PageConfig) {
 
   useEffect(() => {
-    if (getWindow()) {
-      useStage.api.rehydrate(stageKeys);
-      useCode.api.rehydrate(codeKeys);
-    }
+    useStage.api.rehydrate(stageKeys);
+    useCode.api.rehydrate(codeKeys);
   }, []);
 
   const persistOnUnload = useCallback(() => {

@@ -12,7 +12,7 @@ export default React.memo(({
   // TODO src can be down or right
   // TODO dst can be up or left
 }>) => {
-  const dxs = srcs.map((_, i) => (i * 10) - (0.5 * 10 * (srcs.length  - 1)) );
+  const dxs = srcs.map((_, i) => (i * 15) - (0.5 * 15 * (srcs.length  - 1)) );
 
   return (
     <>
