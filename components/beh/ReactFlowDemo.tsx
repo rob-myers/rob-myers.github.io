@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import ReactFlow, {
   addEdge,
   updateEdge,
@@ -14,7 +14,6 @@ import ReactFlow, {
 } from 'react-flow-renderer';
 
 import { deepClone } from 'model/generic.model';
-// import CustomEdge from './CustomEdge';
 import styled from '@emotion/styled';
 import CustomNode from './CustomNode';
 import ConnectionLine from './ConnectionLine';
