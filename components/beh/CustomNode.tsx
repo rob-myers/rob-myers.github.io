@@ -21,6 +21,7 @@ export default React.memo(({
       </Contents>
       {srcs.map((id, i) => (
         <Handle
+          key={id}
           type="source"
           position={Position.Bottom}
           id={id}
@@ -29,6 +30,7 @@ export default React.memo(({
       ))}
       {dsts.map((id, i) => (
         <Handle
+          key={id}
           type="target"
           position={Position.Top}
           id={id}
