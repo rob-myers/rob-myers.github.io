@@ -83,7 +83,7 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@^7.12.1", "@babel/runtime@^7.13.17", "@babel/runtime@^7.9.2":
+"@babel/runtime@^7.12.1", "@babel/runtime@^7.14.0", "@babel/runtime@^7.9.2":
   version "7.14.0"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.14.0.tgz#46794bc20b612c5f75e62dd071e24dfd95f1cbe6"
   integrity sha512-JELkvo/DlpNdJ7dlyw/eY7E0suy5i5GQH+Vlxaq1nsNJ+H7f4Vtv3jMeCEgRhZZQFXTjldYfQgv2qmM6M1v5wA==
@@ -503,7 +503,7 @@
     "@types/d3-interpolate" "*"
     "@types/d3-selection" "*"
 
-"@types/d3@^6.3.0":
+"@types/d3@^6.7.0":
   version "6.7.0"
   resolved "https://registry.yarnpkg.com/@types/d3/-/d3-6.7.0.tgz#e801778cfcf3b5e52ad4dae0d21263b2511d314f"
   integrity sha512-QOf+58QAvNcqpfIdAfdHe7wDWnIra1YvgCJh2Lxw5FY9dZ+6XVbN63DVoJLnDGpGNBycqUvj5rjHlKZkoz1PtQ==
@@ -4487,13 +4487,13 @@ react-draggable@^4.4.3:
     classnames "^2.2.5"
     prop-types "^15.6.0"
 
-react-flow-renderer@^9.5.4:
-  version "9.5.4"
-  resolved "https://registry.yarnpkg.com/react-flow-renderer/-/react-flow-renderer-9.5.4.tgz#669d3b587e53810187aeffcb90d025f6e917fc34"
-  integrity sha512-46Oors0UZubD7tYEnvN0+iS7YITKu2YkTnNSX32rTCAVj35kB2RHXaVPUGK5grURnWbWyPjAuV6qLWzlRPjQpg==
+react-flow-renderer@^9.6.0:
+  version "9.6.0"
+  resolved "https://registry.yarnpkg.com/react-flow-renderer/-/react-flow-renderer-9.6.0.tgz#b056cbb11ac429d3e19082e3d28aeef6d0323d31"
+  integrity sha512-uV0uVxaBJl++B0VGKVMr5dKaPfiRpq1IpicwTPY4xZYFrmKTipdGAoCM/SlH02UDcI886SSypdvrh4UXQA4xnQ==
   dependencies:
-    "@babel/runtime" "^7.13.17"
-    "@types/d3" "^6.3.0"
+    "@babel/runtime" "^7.14.0"
+    "@types/d3" "^6.7.0"
     "@types/react-redux" "^7.1.16"
     classcat "^5.0.3"
     d3-selection "^2.0.0"

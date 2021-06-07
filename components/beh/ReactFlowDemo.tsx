@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactFlow, {
   addEdge,
   updateEdge,
@@ -11,8 +11,6 @@ import ReactFlow, {
   Position,
   useZoomPanHelper,
   useStoreState,
-  Background,
-  BackgroundVariant,
 } from 'react-flow-renderer';
 
 import { deepClone } from 'model/generic.model';
@@ -28,7 +26,7 @@ export default function ReactFlowExample() {
 
   const on = useMemo(() => ({
     elementsRemove: (elsToRemove: Elements) =>
-      setElements((els) => removeElements(elsToRemove, els)),
+      setElements((els) => els.length > 1 ? removeElements(elsToRemove, els) : els),
     edgeUpdate: (oldEdge: Edge, newConn: Connection) => {
       setElements((els) => {
         const found = edges.find(x => x.source === newConn.source && x.target === newConn.target);
@@ -39,7 +37,16 @@ export default function ReactFlowExample() {
     connect: (params: Edge | Connection) => {
       setElements((els) => addEdge({ ...params, type: 'smoothstep' }, els));
     },
-    load: (params: OnLoadParams) => {},
+    load: (params: OnLoadParams) => { },
+    // addNode: () => {
+    //   const newNode: Elements[0] = {
+    //     id: `node_${id++}`,
+    //     type,
+    //     position,
+    //     data: { label: `${type} node` },
+    //   };
+    //   setElements((es) => es.concat(newNode));
+    // },
   }), [edges]);
 
   useEffect(() => {
@@ -52,7 +59,7 @@ export default function ReactFlowExample() {
   return (
     <>
       <Toolbar>
-        toolbar
+        <div>toolbar</div>
       </Toolbar>
       <section style={{ height: 'calc(100% - 28px)' }}>
         <ReactFlow
@@ -69,7 +76,6 @@ export default function ReactFlowExample() {
           connectionLineComponent={ConnectionLine}
         >
             <Controls />
-            <Background variant={BackgroundVariant.Lines} />
         </ReactFlow>
       </section>
     </>
@@ -90,12 +96,7 @@ const Toolbar = styled.section`
 `;
 
 const initElements: Elements = [
-  {
-    id: '1',
-    type: 'custom',
-    data: { label: 'root' },
-    position: { x: 250, y: 5 },
-  },
+  { id: '1', type: 'custom', data: { label: 'root' }, position: { x: 250, y: 5 } },
   { id: '2', data: { label: '1' }, position: { x: 100, y: 100 }, style: { width: 30 } },
   { id: '3', data: { label: '2' }, position: { x: 200, y: 100 }, sourcePosition: Position.Right },
   { id: '4', data: { label: '3' }, position: { x: 400, y: 100 } },
