@@ -12,6 +12,13 @@
     - out: right or bottom, many nodes
   - can undo/redo
 
+- try using a service-worker to define routes dynamically
+  - can we do dynamic imports and also change the file contents?
+  - would like to avoid our own "transpilation"
+  - https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API
+  - https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers#custom_responses_to_requests
+
+
 - ✅ use react-ace instead of react-simple-code-editor
 - provide SSR initial render for react-ace e.g. via React.Suspense?
 
