@@ -73,8 +73,7 @@ export default function ReactFlowExample() {
           onConnect={on.connect}
           onElementsRemove={on.elementsRemove}
           onEdgeUpdate={on.edgeUpdate}
-          zoomOnPinch
-          panOnScroll
+          zoomOnScroll={false}
           onLoad={on.load}
           snapToGrid
           // edgeTypes={{ custom: CustomEdge }}

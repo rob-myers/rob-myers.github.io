@@ -2,7 +2,7 @@
 
 ### TODO
 
-- Start work on behaviour tree GUI
+- Work out behaviour tree GUI (`ReactFlowDemo`)
   - ✅ decided to use react-flow
   - ✅ can add/remove links
   - ✅ blue outline on select
@@ -13,8 +13,9 @@
   - can undo/redo
 
 - try using a service-worker to define routes dynamically
-  - can we do dynamic imports and also change the file contents?
-  - would like to avoid our own "transpilation"
+  - ✅ can we do dynamic imports and also change the file contents?
+  - ✅ would like to avoid our own "transpilation"
+  - use IndexedDb to maintain state
   - https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API
   - https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers#custom_responses_to_requests
 

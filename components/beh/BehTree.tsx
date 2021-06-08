@@ -1,15 +1,20 @@
-import React, { useCallback } from "react";
+import React, { useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 import { ReactFlowProvider } from 'react-flow-renderer';
 import ReactFlowDemo from './ReactFlowDemo';
 
 export default function BehTree() {
-  const preventWheel = useCallback((e: React.WheelEvent) => {
-    e.preventDefault();
+  const root = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const el = root.current!;
+    const preventWheel = (e: MouseEvent) => e.preventDefault();
+    el.addEventListener('wheel', preventWheel, { passive: false } );
+    return () => el.removeEventListener('wheel', preventWheel);
   }, []);
 
   return (
-    <Root onWheel={preventWheel}>
+    <Root ref={root}>
       <ReactFlowProvider>
         <ReactFlowDemo/>
       </ReactFlowProvider>
