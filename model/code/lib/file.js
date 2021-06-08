@@ -1,28 +1,30 @@
-function clear({ scene }) {
+import THREE from '/npm/three.js';
+
+export function clear({ scene }) {
   scene.children.slice().forEach(child => scene.remove(child));
 }
 
-function addCube({ scene, util }) {
+export function addCube({ scene }) {
   const cube = util.cube();
   scene.add(cube);
   return cube;
 }
 
-function addLight({ scene, util }) {
+export function addLight({ scene }) {
   const light = util.light();
   scene.add(light);
   return light;
 }
 
-function addGrid({ scene, util }) {
+export function addGrid({ scene }) {
   scene.add(util.grid());
 }
 
-function addAxes({ scene, util }) {
+export function addAxes({ scene }) {
   scene.add(util.axes());
 }
 
-function addPointerPlane({ scene, util }) {
+export function addPointerPlane({ scene }) {
   const plane = util.plane("PointerPlane", 40, 40);
   plane.visible = false;
   scene.add(plane);
@@ -153,3 +155,5 @@ class Util {
   }
 
 }
+
+let util = new Util;
