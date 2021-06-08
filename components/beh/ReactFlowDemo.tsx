@@ -1,66 +1,55 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactFlow, {
   addEdge,
-  updateEdge,
   Connection,
   Edge,
   Elements,
   removeElements,
-  OnLoadParams,
+  OnLoadParams as ReactFlowInstance,
   Controls,
   Position,
-  useZoomPanHelper,
-  useStoreState,
+  useStoreActions,
+  isEdge,
 } from 'react-flow-renderer';
 
-import { deepClone } from 'model/generic.model';
 import styled from '@emotion/styled';
 import CustomNode from './CustomNode';
 import ConnectionLine from './ConnectionLine';
 
+export interface CustomNodeApi {
+  onHandleClick: (nodeId: string, handleId: string) => void;
+}
+
 export default function ReactFlowExample() {
-  const [elements, setElements] = useState<Elements>(deepClone(initElements));
-  const edges = useStoreState(x => x.edges);
-  const helper = useZoomPanHelper();
+  const instance = useRef<ReactFlowInstance>();
+  const nodeApi = useRef<CustomNodeApi>({
+    onHandleClick: () => {},
+  }).current;
+  const [elements, setElements] = useState<Elements>(createElements(nodeApi));
+  const addSelectedElements = useStoreActions(act => act.addSelectedElements);
+
+  useEffect(() => {
+    const edges = elements.filter(isEdge);
+    nodeApi.onHandleClick = (nodeId: string, handleId: string) => {
+      // Select edges connected to node's handle
+      addSelectedElements(edges.filter(x =>
+        (x.source === nodeId && x.sourceHandle === handleId)
+        || (x.target === nodeId && x.targetHandle === handleId)
+      ));
+    };
+  }, [elements]);
+
+  useEffect(() => void setTimeout(() => instance.current?.fitView()), []);
 
   const on = useMemo(() => ({
     elementsRemove: (elsToRemove: Elements) =>
       setElements((els) => els.length > 1 ? removeElements(elsToRemove, els) : els),
-    edgeUpdate: (oldEdge: Edge, newConn: Connection) => {
-      setElements((els) => {
-        // TODO ensure graph is a forest
-        const preexisting = edges.find(x =>
-          x.source === newConn.source && x.sourceHandle === newConn.sourceHandle
-          && x.target === newConn.target && x.targetHandle === newConn.targetHandle
-        );
-        if (preexisting) {
-          if (preexisting === oldEdge) return els;
-          els = removeElements([preexisting], els); // Prevent dup
-        }
-        return updateEdge(oldEdge, newConn, els);
-      });
-    },
     connect: (params: Edge | Connection) => {
       setElements((els) => addEdge({ ...params, type: 'smoothstep' }, els));
     },
-    load: (params: OnLoadParams) => { },
-    // addNode: () => {
-    //   const newNode: Elements[0] = {
-    //     id: `node_${id++}`,
-    //     type,
-    //     position,
-    //     data: { label: `${type} node` },
-    //   };
-    //   setElements((es) => es.concat(newNode));
-    // },
-  }), [edges]);
-
-  useEffect(() => {
-    const onResize = () => helper.fitView();
-    window.addEventListener('resize', onResize);
-    setTimeout(onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, [helper]);
+    load: (input: ReactFlowInstance) =>
+      instance.current = input,
+  }), []);
 
   return (
     <>
@@ -72,7 +61,7 @@ export default function ReactFlowExample() {
           elements={elements}
           onConnect={on.connect}
           onElementsRemove={on.elementsRemove}
-          onEdgeUpdate={on.edgeUpdate}
+          // onEdgeUpdate={on.edgeUpdate}
           zoomOnScroll={false}
           onLoad={on.load}
           snapToGrid
@@ -100,12 +89,17 @@ const Toolbar = styled.section`
   color: #ddd;
 `;
 
-const initElements: Elements = [
-  { id: '1', type: 'custom', data: { label: 'custom', srcs: ['a', 'b', 'c'] }, position: { x: 250, y: 5 } },
-  { id: '2', type: 'custom', data: { label: '1', dsts: ['a'] }, position: { x: 100, y: 100 }, style: { width: 30 } },
-  { id: '3', type: 'custom', data: { label: '2', dsts: ['a'] }, position: { x: 200, y: 100 }, sourcePosition: Position.Right },
-  { id: '4', type: 'custom', data: { label: '3', dsts: ['a'] }, position: { x: 400, y: 100 } },
-  { id: 'e1-2', source: '1', sourceHandle: 'a', target: '2', targetHandle: 'a', type: 'smoothstep' },
-  { id: 'e1-3', source: '1', sourceHandle: 'b', target: '3', targetHandle: 'a', type: 'smoothstep' },
-  { id: 'e1-4', source: '1', sourceHandle: 'c', target: '4', targetHandle: 'a', type: 'smoothstep' },
-];
+// Source/target handles start with s/t
+function createElements(nodeApi: CustomNodeApi) {
+  const initElements: Elements = [
+    { id: '1', type: 'custom', data: { label: 'custom', srcs: ['sa', 'sb', 'sc'] }, position: { x: 250, y: 5 } },
+    { id: '2', type: 'custom', data: { label: '1', dsts: ['ta'] }, position: { x: 100, y: 100 }, style: { width: 30 } },
+    { id: '3', type: 'custom', data: { label: '2', dsts: ['ta'] }, position: { x: 200, y: 100 }, sourcePosition: Position.Right },
+    { id: '4', type: 'custom', data: { label: '3', dsts: ['ta'] }, position: { x: 400, y: 100 } },
+    { id: 'e1-2', source: '1', sourceHandle: 'sa', target: '2', targetHandle: 'ta', type: 'smoothstep' },
+    { id: 'e1-3', source: '1', sourceHandle: 'sb', target: '3', targetHandle: 'ta', type: 'smoothstep' },
+    { id: 'e1-4', source: '1', sourceHandle: 'sc', target: '4', targetHandle: 'ta', type: 'smoothstep' },
+  ];
+  initElements.slice(0, 4).forEach(x => x.data.nodeApi = nodeApi);
+  return initElements;
+}

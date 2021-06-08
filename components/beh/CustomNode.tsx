@@ -1,14 +1,22 @@
 import React from 'react';
 import { Handle, Position, NodeProps } from 'react-flow-renderer';
 import styled from '@emotion/styled';
+import { CustomNodeApi } from './ReactFlowDemo';
 
-export default React.memo(({ 
-  data: { label, srcs = [], dsts = [] },
+export default React.memo(({
+  id,
+  data: {
+    label,
+    srcs = [],
+    dsts = [],
+    nodeApi,
+  },
   selected,
 }: NodeProps<{
   label: string;
   srcs?: string[];
   dsts?: string[];
+  nodeApi: CustomNodeApi;
   // TODO src can be down or right
   // TODO dst can be up or left
 }>) => {
@@ -19,22 +27,24 @@ export default React.memo(({
       <Contents selected={selected}>
         {label}
       </Contents>
-      {srcs.map((id, i) => (
+      {srcs.map((srcId, i) => (
         <Handle
-          key={id}
+          key={srcId}
           type="source"
           position={Position.Bottom}
-          id={id}
+          id={srcId}
           style={{ transform: `translate(${dxs[i]}px, 0)`, background: '#555' }}
+          onClick={() => nodeApi.onHandleClick(id, srcId)}
         />
       ))}
-      {dsts.map((id, i) => (
+      {dsts.map((dstId, i) => (
         <Handle
-          key={id}
+          key={dstId}
           type="target"
           position={Position.Top}
-          id={id}
+          id={dstId}
           style={{ transform: `translate(${dxs[i]}px, 0)`, background: '#555' }}
+          onClick={() => nodeApi.onHandleClick(id, dstId)}
         />
       ))}
     </>
