@@ -50,7 +50,9 @@ export default function ReactFlowExample() {
 
   const on = useMemo(() => ({
     elementsRemove: (elsToRemove: Elements) => {
-      setElements((els) => els.length > 1 ? removeElements(elsToRemove, els) : els);
+      setElements((els) => els.length > 1 && elsToRemove.length < els.length
+        ? removeElements(elsToRemove, els)
+        : els);
     },
     connect: (params: Edge | Connection) => {
       setElements((els) => addEdge({ ...params, type: 'smoothstep' }, els));
