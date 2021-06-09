@@ -60,22 +60,26 @@ export default function ReactFlowExample() {
     },
     keyDown: (e: React.KeyboardEvent) => {
       if (e.metaKey) {
-        switch (e.key.toLowerCase()) {
-          case 'c': {
-            // getElements() provides up-to-date positions, unlike `elements`
+        const key = e.key.toLowerCase();
+        switch (key) {
+          case 'c':
+          case 'x': {
+            // getElements() provides up-to-date positions, unlike `selectedElements`
             const els = instance.current?.getElements() || [];
             const sel = (selectedElements || []).map(x => els.find(y => y.id === x.id)!);
             clipboard.current = deepClone(sel);
+            if (key === 'x') {
+              setElements(els => removeElements(selectedElements || [], els));
+            }
             break;
           }
           case 'v': {
-            const newEls = computeElsToPaste(elements, clipboard.current);
+            const els = instance.current?.getElements() || [];
+            const newEls = computeElsToPaste(els, clipboard.current);
             setElements(els => els.concat(newEls));
             setTimeout(() => setSelectedElements(newEls), 30);
             break;
           }
-          case 'x':
-            break;
         }
       } else if (e.key === 'Escape') {
         resetSelectedElements();
@@ -153,22 +157,22 @@ function computeElsToPaste(current: Elements, srcEls: Elements) {
   const dstEls = (nodes as Elements).concat(edges);
   dstEls.forEach(x => x.id = idToNewId[x.id]);
   edges.forEach(x => (x.source = idToNewId[x.source]) && (x.target = idToNewId[x.target]));
+  console.log({
+    oldIds,
+    idToNewId,
+    dstEls,
+  });
   return dstEls;
 }
   
-const suffixRegex = /\.(\d+)$/;
-
 function computeIdtoNewId(current: Elements, srcEls: Elements) {
   const allIds = current.map(x => x.id);
   return srcEls.reduce((agg, { id }) => {
     if (allIds.includes(id)) {
-      const matched = id.match(suffixRegex);
-      if (matched) {
-        const prefix = `${id}.`;
-        const ints = allIds.filter(x => x.startsWith(prefix))
-          .map(x => Number(x.slice(prefix.length))).filter(x => !isNaN(x));
-        agg[id] = `${prefix}${firstAvailableInteger(ints)}`;
-      } else agg[id] = `${id}.0`;
+      const prefix = `${id}.`;
+      const ints = allIds.filter(x => x.startsWith(prefix))
+        .map(x => Number(x.slice(prefix.length))).filter(x => !isNaN(x));
+      agg[id] = `${prefix}${firstAvailableInteger(ints)}`;
     } else agg[id] = id;
     return agg;
   }, {} as Record<string, string>);
