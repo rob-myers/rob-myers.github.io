@@ -11,11 +11,13 @@ import ReactFlow, {
   isEdge,
   useStoreActions,
   useStoreState,
+  isNode,
 } from 'react-flow-renderer';
 
 import styled from '@emotion/styled';
 import CustomNode from './CustomNode';
 import ConnectionLine from './ConnectionLine';
+import { deepClone, firstAvailableInteger } from 'model/generic.model';
 
 export interface CustomNodeApi {
   onHandleClick: (nodeId: string, handleId: string) => void;
@@ -29,7 +31,9 @@ export default function ReactFlowExample() {
   const [elements, setElements] = useState<Elements>(createElements(nodeApi));
   const selectedElements = useStoreState(state => state.selectedElements);
   const addSelectedElements = useStoreActions(act => act.addSelectedElements);
-  const clipboard = useRef<Elements>([]);
+  const setSelectedElements = useStoreActions(act => act.setSelectedElements);
+  const resetSelectedElements = useStoreActions(act => act.resetSelectedElements);
+  const clipboard = useRef([] as Elements);
 
   useEffect(() => {
     const edges = elements.filter(isEdge);
@@ -58,11 +62,22 @@ export default function ReactFlowExample() {
       if (e.metaKey) {
         switch (e.key.toLowerCase()) {
           case 'c':
-            console.log({ selectedElements });
+            clipboard.current = deepClone((selectedElements || []));
             break;
-          case 'v': break;
-          case 'x': break;
+          case 'v': {
+            const newEls = computeElsToPaste(elements, clipboard.current);
+            setElements(els => els.concat(newEls));
+            setTimeout(() => {
+              setSelectedElements(newEls);
+            });
+            ;
+            break;
+          }
+          case 'x':
+            break;
         }
+      } else if (e.key === 'Escape') {
+        resetSelectedElements();
       }
     },
   }), [selectedElements]);
@@ -126,4 +141,34 @@ function createElements(nodeApi: CustomNodeApi) {
   ];
   initElements.slice(0, 4).forEach(x => x.data.nodeApi = nodeApi);
   return initElements;
+}
+
+/** Source elements may have been copied earlier, and are no longer in `current` */
+function computeElsToPaste(current: Elements, srcEls: Elements) {
+  const idToNewId = computeIdtoNewId(current, srcEls);
+  const oldIds = Object.keys(idToNewId);
+  const nodes = deepClone(srcEls.filter(isNode));
+  const edges = deepClone(srcEls.filter(isEdge).filter(x => oldIds.includes(x.source) && oldIds.includes(x.target)));
+  const dstEls = (nodes as Elements).concat(edges);
+  dstEls.forEach(x => x.id = idToNewId[x.id]);
+  edges.forEach(x => (x.source = idToNewId[x.source]) && (x.target = idToNewId[x.target]));
+  return dstEls;
+}
+  
+const suffixRegex = /\.(\d+)$/;
+
+function computeIdtoNewId(current: Elements, srcEls: Elements) {
+  const allIds = current.map(x => x.id);
+  return srcEls.reduce((agg, { id }) => {
+    if (allIds.includes(id)) {
+      const matched = id.match(suffixRegex);
+      if (matched) {
+        const prefix = `${id}.`;
+        const ints = allIds.filter(x => x.startsWith(prefix))
+          .map(x => Number(x.slice(prefix.length))).filter(x => !isNaN(x));
+        agg[id] = `${prefix}${firstAvailableInteger(ints)}`;
+      } else agg[id] = `${id}.0`;
+    } else agg[id] = id;
+    return agg;
+  }, {} as Record<string, string>);
 }
