@@ -1,15 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import ReactFlow, {
-  addEdge,
   Connection,
   Edge,
   Elements,
-  removeElements,
   OnLoadParams as ReactFlowInstance,
   Controls,
   Position,
-  useStoreActions,
+  addEdge,
+  removeElements,
   isEdge,
+  useStoreActions,
+  useStoreState,
 } from 'react-flow-renderer';
 
 import styled from '@emotion/styled';
@@ -26,7 +27,9 @@ export default function ReactFlowExample() {
     onHandleClick: () => {},
   }).current;
   const [elements, setElements] = useState<Elements>(createElements(nodeApi));
+  const selectedElements = useStoreState(state => state.selectedElements);
   const addSelectedElements = useStoreActions(act => act.addSelectedElements);
+  const clipboard = useRef<Elements>([]);
 
   useEffect(() => {
     const edges = elements.filter(isEdge);
@@ -42,36 +45,51 @@ export default function ReactFlowExample() {
   useEffect(() => void setTimeout(() => instance.current?.fitView()), []);
 
   const on = useMemo(() => ({
-    elementsRemove: (elsToRemove: Elements) =>
-      setElements((els) => els.length > 1 ? removeElements(elsToRemove, els) : els),
+    elementsRemove: (elsToRemove: Elements) => {
+      setElements((els) => els.length > 1 ? removeElements(elsToRemove, els) : els);
+    },
     connect: (params: Edge | Connection) => {
       setElements((els) => addEdge({ ...params, type: 'smoothstep' }, els));
     },
-    load: (input: ReactFlowInstance) =>
-      instance.current = input,
-  }), []);
+    load: (input: ReactFlowInstance) => {
+      instance.current = input;
+    },
+    keyDown: (e: React.KeyboardEvent) => {
+      if (e.metaKey) {
+        switch (e.key.toLowerCase()) {
+          case 'c':
+            console.log({ selectedElements });
+            break;
+          case 'v': break;
+          case 'x': break;
+        }
+      }
+    },
+  }), [selectedElements]);
 
   return (
     <>
       <Toolbar>
         <div>toolbar</div>
       </Toolbar>
-      <section style={{ height: 'calc(100% - 28px)' }}>
+      <Wrapper
+        style={{ height: 'calc(100% - 28px)' }}
+        onKeyDown={on.keyDown}
+        tabIndex={0}
+      >
         <ReactFlow
           elements={elements}
           onConnect={on.connect}
           onElementsRemove={on.elementsRemove}
-          // onEdgeUpdate={on.edgeUpdate}
           zoomOnScroll={false}
           onLoad={on.load}
           snapToGrid
-          // edgeTypes={{ custom: CustomEdge }}
           nodeTypes={{ custom: CustomNode }}
           connectionLineComponent={ConnectionLine}
         >
             <Controls />
         </ReactFlow>
-      </section>
+      </Wrapper>
     </>
   );
 }
@@ -87,6 +105,12 @@ const Toolbar = styled.section`
   padding: 0 12px 0 8px;
   background-color: #333;
   color: #ddd;
+`;
+
+const Wrapper = styled.section`
+  .react-flow__edge.selected .react-flow__edge-path {
+    stroke: blue;
+  }
 `;
 
 // Source/target handles start with s/t
