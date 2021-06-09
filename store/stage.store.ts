@@ -57,23 +57,29 @@ const useStore = create<State>(devtools((set, get) => ({
         const storageValue = localStorage.getItem(`stage:${stageKey}`);
        
         if (storageValue) {
-          const { opt, extra } = JSON.parse(storageValue) as Stage.StageMetaJson;
-          const s = Stage.createStage(stageKey);
-          s.opt = deepClone(opt??Stage.createStageOpts());
-          s.opt.enabled = false; // Force initially disabled
-
-          Promise.all([
-            loadJson<THREE.Scene>(extra.sceneJson),
-            loadJson<THREE.PerspectiveCamera | THREE.OrthographicCamera>(extra.cameraJson),
-          ]).then(([scene, camera]) => {
-            // console.info('Loaded json scene & camera', scene, camera);
-            s.scene = scene;
-            s.extra.sceneCamera = camera;
-            s.extra.canvasPreview = extra.canvasPreview;
-            s.ctrl = Stage.initializeControls(new Controls(camera));
-            s.ctrl.target.set(...extra.camTarget);
-            set(({ stage }) => ({ stage: addToLookup(s, stage) }));
-          });
+          try {
+            const { opt, extra } = JSON.parse(storageValue) as Stage.StageMetaJson;
+            const s = Stage.createStage(stageKey);
+            s.opt = deepClone(opt??Stage.createStageOpts());
+            s.opt.enabled = false; // Force initially disabled
+  
+            Promise.all([
+              loadJson<THREE.Scene>(extra.sceneJson),
+              loadJson<THREE.PerspectiveCamera | THREE.OrthographicCamera>(extra.cameraJson),
+            ]).then(([scene, camera]) => {
+              // console.info('Loaded json scene & camera', scene, camera);
+              s.scene = scene;
+              s.extra.sceneCamera = camera;
+              s.extra.canvasPreview = extra.canvasPreview;
+              s.ctrl = Stage.initializeControls(new Controls(camera));
+              s.ctrl.target.set(...extra.camTarget);
+              set(({ stage }) => ({ stage: addToLookup(s, stage) }));
+            });
+          } catch (e) {
+            console.error(`Failed to rehydrate stage ${stageKey}`);
+            console.error(e);
+            set(({ stage }) => ({ stage: addToLookup(Stage.createStage(stageKey), stage) }));
+          }
 
         } else {
           set(({ stage }) => ({ stage: addToLookup(Stage.createStage(stageKey), stage) }));
