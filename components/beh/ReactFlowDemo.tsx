@@ -80,7 +80,10 @@ export default function ReactFlowExample() {
             const newEls = computeElsToPaste(els, clipboard.current);
             newEls.filter(isNode).forEach(x => x.data.nodeApi = nodeApi);
             setElements(els => els.concat(newEls));
-            setTimeout(() => setSelectedElements(newEls), 30);
+            setTimeout(() => {
+              resetSelectedElements();
+              setSelectedElements(newEls);
+            }, 30);
             break;
           }
         }
