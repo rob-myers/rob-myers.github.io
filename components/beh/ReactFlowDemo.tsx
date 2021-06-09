@@ -33,6 +33,7 @@ export default function ReactFlowExample() {
   const addSelectedElements = useStoreActions(act => act.addSelectedElements);
   const setSelectedElements = useStoreActions(act => act.setSelectedElements);
   const resetSelectedElements = useStoreActions(act => act.resetSelectedElements);
+  const unsetNodesSelection = useStoreActions(act => act.unsetNodesSelection);
   const clipboard = useRef([] as Elements);
 
   useEffect(() => {
@@ -72,6 +73,8 @@ export default function ReactFlowExample() {
             clipboard.current = deepClone(sel);
             if (key === 'x') {
               setElements(els => removeElements(selectedElements || [], els));
+              resetSelectedElements();
+              unsetNodesSelection();
             }
             break;
           }
@@ -80,15 +83,13 @@ export default function ReactFlowExample() {
             const newEls = computeElsToPaste(els, clipboard.current);
             newEls.filter(isNode).forEach(x => x.data.nodeApi = nodeApi);
             setElements(els => els.concat(newEls));
-            setTimeout(() => {
-              resetSelectedElements();
-              setSelectedElements(newEls);
-            }, 30);
+            setTimeout(() => setSelectedElements(newEls));
             break;
           }
         }
       } else if (e.key === 'Escape') {
         resetSelectedElements();
+        unsetNodesSelection();
       }
     },
   }), [selectedElements]);
