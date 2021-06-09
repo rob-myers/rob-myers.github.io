@@ -8,7 +8,7 @@ export default function BehTree() {
 
   useEffect(() => {
     const el = root.current!;
-    const preventWheel = (e: MouseEvent) => e.preventDefault();
+    const preventWheel = (e: MouseEvent) => e.stopPropagation();
     el.addEventListener('wheel', preventWheel, { passive: false } );
     return () => el.removeEventListener('wheel', preventWheel);
   }, []);
