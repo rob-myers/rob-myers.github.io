@@ -13,7 +13,7 @@ import { CodeError } from "model/code/code.service";
 import useCodeStore from "store/code.store";
 import CodeToolbar from "./CodeToolbar";
 
-export default function TextEditor({ codeKey }: { codeKey: string }) {
+export default function CodeEdit({ codeKey }: { codeKey: string }) {
   const subj = useRef(new Subject<string>());
   const ace = useRef<AceEditor>(null);
   const code = useCodeStore(({ code }) => codeKey in code ? code[codeKey] : null);

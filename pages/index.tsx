@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 import Header from 'components/page/Header';
 import Stage from 'components/stage/WrappedStage'
 import { usePage } from 'components/hooks';
-import { CodeEditor } from 'components/dynamic';
+import { CodeEdit } from 'components/dynamic';
 import { Section } from 'components/page/Section';
 import BehTree from 'components/beh/BehTree';
 
@@ -41,7 +41,7 @@ Let's do this.
             <Env>
               <Stage stageKey="test@intro"/>
               <BehTree />
-              <CodeEditor codeKey="file.js"/>
+              <CodeEdit codeKey="file.js"/>
             </Env>
           </section>
 
