@@ -2,14 +2,24 @@
 
 ### TODO
 
+- 1st blog needed (will inform components)
+  - Could be an in-depth-intro into 3 core components
+    > `Stage` (THREE.Scene and THREE.Camera)
+    > `CodeEdit` (ACE editor + javascript modules)
+    > `BehTree` (react-flow-renderer and Behaviour forests)
+
+  - Permit `Stage` to have many cameras
+  - Fixing scene and camera, opening an instance auto-closes others.
+  - Behaviour tree has tabs so can revisit
+
 - Work out behaviour tree GUI (`ReactFlowDemo`)
   - ✅ decided to use react-flow
   - ✅ can add/remove links
   - ✅ blue outline on select
   - ✅ can copy-paste nodes
   - can choose in/out orientation
-    - in: left or top, single node
-    - out: right or bottom, single node
+    - in: left or top, 1 node per handle
+    - out: right or bottom, 1 node per handle
   - can undo/redo
 
 - try using a service-worker to define routes dynamically
@@ -27,8 +37,6 @@
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
 
 - create a `@box2d` demo
-- can undo/redo behaviour tree edits
-  - https://github.com/wbkd/react-flow/issues/656
 - use three.js `scene.userData` to persist variables etc
 - use dev-console for debugging e.g. can re-console.error
 
