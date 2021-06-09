@@ -9,7 +9,7 @@
   - ✅ can copy-paste nodes
   - can choose in/out orientation
     - in: left or top, single node
-    - out: right or bottom, many nodes
+    - out: right or bottom, single node
   - can undo/redo
 
 - try using a service-worker to define routes dynamically

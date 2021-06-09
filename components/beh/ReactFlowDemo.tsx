@@ -61,16 +61,17 @@ export default function ReactFlowExample() {
     keyDown: (e: React.KeyboardEvent) => {
       if (e.metaKey) {
         switch (e.key.toLowerCase()) {
-          case 'c':
-            clipboard.current = deepClone((selectedElements || []));
+          case 'c': {
+            // getElements() provides up-to-date positions, unlike `elements`
+            const els = instance.current?.getElements() || [];
+            const sel = (selectedElements || []).map(x => els.find(y => y.id === x.id)!);
+            clipboard.current = deepClone(sel);
             break;
+          }
           case 'v': {
             const newEls = computeElsToPaste(elements, clipboard.current);
             setElements(els => els.concat(newEls));
-            setTimeout(() => {
-              setSelectedElements(newEls);
-            });
-            ;
+            setTimeout(() => setSelectedElements(newEls), 30);
             break;
           }
           case 'x':
