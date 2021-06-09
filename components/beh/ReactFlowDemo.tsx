@@ -76,6 +76,7 @@ export default function ReactFlowExample() {
           case 'v': {
             const els = instance.current?.getElements() || [];
             const newEls = computeElsToPaste(els, clipboard.current);
+            newEls.filter(isNode).forEach(x => x.data.nodeApi = nodeApi);
             setElements(els => els.concat(newEls));
             setTimeout(() => setSelectedElements(newEls), 30);
             break;
@@ -157,11 +158,6 @@ function computeElsToPaste(current: Elements, srcEls: Elements) {
   const dstEls = (nodes as Elements).concat(edges);
   dstEls.forEach(x => x.id = idToNewId[x.id]);
   edges.forEach(x => (x.source = idToNewId[x.source]) && (x.target = idToNewId[x.target]));
-  console.log({
-    oldIds,
-    idToNewId,
-    dstEls,
-  });
   return dstEls;
 }
   
