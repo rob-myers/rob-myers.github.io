@@ -1,12 +1,9 @@
 import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-noconflict/mode-html";
 
-const {HtmlHighlightRules} = (window as any).ace.acequire(
-  "ace/mode/html_highlight_rules"
-);
-const {JavaScriptHighlightRules} = (window as any).ace.acequire(
-  "ace/mode/javascript_highlight_rules"
-);
+const {HtmlHighlightRules} = (window as any).ace.acequire("ace/mode/html_highlight_rules");
+const {JavaScriptHighlightRules} = (window as any).ace.acequire("ace/mode/javascript_highlight_rules");
+const { Mode: JavaScriptMode} = (window as any).ace.acequire("ace/mode/javascript");
 
 /**
  * https://ace.c9.io/#nav=higlighter
@@ -56,8 +53,7 @@ export class CustomHighlightRules extends JavaScriptHighlightRules {
   }
 }
 
-export default class CustomJavascriptMode extends (window as any).ace.acequire("ace/mode/javascript")
-  .Mode {
+export default class CustomJavascriptMode extends JavaScriptMode {
   constructor() {
     super();
     this.HighlightRules = CustomHighlightRules;

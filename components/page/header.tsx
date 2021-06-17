@@ -7,9 +7,9 @@ const Header: React.FC = () => {
     </Title>
   
     <Subtitle>
-      Richer <a href="https://threejs.org/" target="_blank">
+      Game AI built with <a href="https://threejs.org/" target="_blank">
         three.js
-      </a> demos via behaviour trees
+      </a> and <a href="https://preactjs.com/">preact</a>
     </Subtitle>
   </>;
 };
