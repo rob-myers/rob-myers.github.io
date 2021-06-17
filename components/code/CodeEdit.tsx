@@ -12,6 +12,7 @@ import "ace-builds/src-min-noconflict/ext-language_tools";
 import { CodeError } from "model/code/code.service";
 import useCodeStore from "store/code.store";
 import CodeToolbar from "./CodeToolbar";
+import CustomJavascriptMode from "./CustomMode";
 
 export default function CodeEdit({ codeKey }: { codeKey: string }) {
   const subj = useRef(new Subject<string>());
@@ -20,6 +21,9 @@ export default function CodeEdit({ codeKey }: { codeKey: string }) {
   const [codeError, setCodeError] = useState<CodeError>();
 
   useEffect(() => {
+    const customMode = new CustomJavascriptMode;
+    ace.current!.editor.getSession().setMode(customMode as any);
+
     const sub$ = subj.current.pipe(
       debounceTime(300),
       tap(latest => useCodeStore.api.updateCode(codeKey, { current: latest })),
