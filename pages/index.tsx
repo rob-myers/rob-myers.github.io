@@ -18,9 +18,7 @@ export default function IndexPage() {
   return (
     <>
       <Head>
-        <title>
-          Three.js Behaviours
-        </title>
+        <title>Three.js Behaviours</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -32,7 +30,12 @@ export default function IndexPage() {
             <ReactMarkdown children={`
 ## Introduction
             
-Let's do this.
+This website is about virtual characters and their environments.
+By virtual we mean _created via software and interacted with via software_.
+They mostly occur in video games, although real robots often have virtual counterparts in [robotic simulators](https://en.wikipedia.org/wiki/Robotics_simulator).
+
+Video games usually provide a _setting_, a lot of _design_ representing the setting and characters, and also some kind of _progression_. Although these three aspects breathe life into the game, they are also burdens.
+
 
             `} />
           </Section>

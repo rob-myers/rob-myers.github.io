@@ -2,15 +2,22 @@
 
 ### TODO
 
-- 1st blog needed (will inform components)
-  - Could be an in-depth-intro into 3 core components
-    > `Stage` (THREE.Scene and THREE.Camera)
-    > `CodeEdit` (ACE editor + javascript modules)
-    > `BehTree` (react-flow-renderer and Behaviour forests)
+- Start writing first blog post
+  - Explicit Game AI code; playable/editable
+  - Formal approach
+  - Minimalistic combinations of concepts
+    - select + pathfinding
+    - From A to B (select + pathfinding + trigger).
+    - From A to B, but need key (as player)
+    - From A to B, but need key (as bot without info)
 
-  - Permit `Stage` to have many cameras
-  - Fixing scene and camera, opening an instance auto-closes others.
-  - Behaviour tree has tabs so can revisit
+- @runtime try css-in-js with preact
+  > https://github.com/cristianbote/goober
+
+- Permit `Stage` to have many cameras
+- Fixing `Scene`/`Camera`, auto-closes others.
+- `BehTree` has tabs too
+- `CodeEdit` has tabs too
 
 - Work out behaviour tree GUI (`ReactFlowDemo`)
   - ✅ decided to use react-flow
@@ -31,7 +38,7 @@
 
 
 - ✅ use react-ace instead of react-simple-code-editor
-- provide SSR initial render for react-ace e.g. via React.Suspense?
+- provide fallback SSR initial render for react-ace
 
 - eliminate `Geom` and `geom.service`
   > use `earcut`, `GeoJsonPolygon` and `polycutting` directly
@@ -48,6 +55,11 @@
   - packages/fiber/src/core/events.ts
   - packages/fiber/src/web/events.ts
 
+- 3 core components
+  > `Stage` (THREE.Scene and THREE.Camera)
+  > `CodeEdit` (ACE editor + javascript modules)
+  > `BehTree` (react-flow-renderer and Behaviour forests)
+
 ### BUG
 
 - firefox sometimes flickers on click pause
@@ -63,5 +75,4 @@
 - ✅ Use persisted scene directly, rather than "root group"
   - ✅ remove use react-three-fiber
   - ✅ remove root group
-
 - ✅ code library built using js files instead of plaintext
