@@ -1,10 +1,12 @@
 html {
-  overscroll-behavior: none; /* Chrome */
+  /* Chrome */
+  overscroll-behavior: none;
 }
 
 html,
 body {
-  overscroll-behavior: none; /* Firefox */
+  /* Firefox */
+  overscroll-behavior: none;
 
   padding: 0;
   margin: 0;
