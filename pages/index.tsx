@@ -7,7 +7,6 @@ import Stage from 'components/stage/WrappedStage'
 import { usePage } from 'components/hooks';
 import { CodeEdit } from 'components/dynamic';
 import { Section } from 'components/page/Section';
-import BehTree from 'components/beh/BehTree';
 
 export default function IndexPage() {
   usePage({
@@ -43,7 +42,6 @@ Video games usually provide a _setting_, a lot of _design_ representing the sett
           <section>
             <Env>
               <Stage stageKey="test@intro"/>
-              <BehTree />
               <CodeEdit codeKey="file.js"/>
             </Env>
           </section>
@@ -76,10 +74,9 @@ const Env = styled.section<{}>`
   display: grid;
 
   grid-template-columns: 500px 500px;
-  grid-template-rows: 400px 400px 400px;
+  grid-template-rows: 400px 400px;
   grid-template-areas: 
     "stage stage"
-    "beh beh"
     "code code";
 
   @media(max-width: 1248px) {
@@ -90,10 +87,9 @@ const Env = styled.section<{}>`
   }
   @media(max-width: 800px) {
     grid-template-columns: 100vw;
-    grid-template-rows: 350px 300px 300px;
+    grid-template-rows: 350px 300px;
     grid-template-areas:
       "stage"
-      "beh"
       "code";
   }
 `;

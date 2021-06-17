@@ -16,18 +16,7 @@
 
 - Permit `Stage` to have many cameras
 - Fixing `Scene`/`Camera`, auto-closes others.
-- `BehTree` has tabs too
 - `CodeEdit` has tabs too
-
-- Work out behaviour tree GUI (`ReactFlowDemo`)
-  - ✅ decided to use react-flow
-  - ✅ can add/remove links
-  - ✅ blue outline on select
-  - ✅ can copy-paste nodes
-  - can choose in/out orientation
-    - in: left or top, 1 node per handle
-    - out: right or bottom, 1 node per handle
-  - can undo/redo
 
 - try using a service-worker to define routes dynamically
   - ✅ can we do dynamic imports and also change the file contents?
@@ -55,10 +44,9 @@
   - packages/fiber/src/core/events.ts
   - packages/fiber/src/web/events.ts
 
-- 3 core components
+- 2 core components
   > `Stage` (THREE.Scene and THREE.Camera)
   > `CodeEdit` (ACE editor + javascript modules)
-  > `BehTree` (react-flow-renderer and Behaviour forests)
 
 ### BUG
 
@@ -70,6 +58,7 @@
 
 ### Done
 
+- ✅ Remove behaviour tree code
 - ✅ Move helpers into functions
 - ✅ Remove `stage.root`
 - ✅ Use persisted scene directly, rather than "root group"
