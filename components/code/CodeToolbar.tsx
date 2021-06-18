@@ -54,7 +54,7 @@ const Root = styled.section`
   background: #222;
   color: #fff;
   height: 28px;
-  padding: 0 12px;
+  padding: 0 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -64,7 +64,9 @@ const Root = styled.section`
 const RightToolbar = styled.div`
   display: grid;
   grid-template-columns: auto auto auto;
-  gap: 12px;
+  > * {
+    margin-left: 10px;
+  }
 `;
 
 const ErrorButton = styled.div<{ greyed: boolean }>`

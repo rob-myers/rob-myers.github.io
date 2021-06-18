@@ -80,6 +80,7 @@ const TwoPanels = styled.section<{
     '0% 100%'};
   grid-template-rows: 100%;
   height: ${({ height }) => height}px;
+  overflow: hidden;
 
   @media(max-width: 1000px) {
     grid-template-columns: 100%;
