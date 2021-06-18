@@ -15,10 +15,13 @@ export type State = {
 
   readonly api: {
     getStage: (stageKey: string) => Stage.StageMeta;
-    persist: (stageKey: string, force?: boolean) => void;
-    rehydrate: (stageKeys: string[]) => void;
-    updateOpt: (stageKey: string, updates: Updates<Stage.StageOpts>) => void;
+    getView: (viewKey: string) => Stage.StageView;
+    persistStage: (stageKey: string, force?: boolean) => void;
+    persistView: (viewKey: string, force?: boolean) => void;
+    rehydrate: (viewIds: {stageKey: string; viewKey: string }[]) => void;
+    updateOpt: (viewKey: string, updates: Updates<Stage.StageViewOpts>) => void;
     updateStage: (stageKey: string, updates: LookupUpdates<Stage.StageMeta>) => void;
+    updateView: (viewKey: string, updates: LookupUpdates<Stage.StageView>) => void;
   }
 }
 
@@ -32,57 +35,99 @@ const useStore = create<State>(devtools((set, get) => ({
     getStage: (stageKey) => {
       return get().stage[stageKey];
     },
+    getView: (viewKey) => {
+      return get().view[viewKey];
+    },
 
-    persist: (stageKey, force = false) => {
-      const { ctrl, opt, scene, extra } = api.getStage(stageKey);
-
-      if (!opt.persist && !force) return;
+    persistStage: (stageKey, force = false) => {
+      const { scene } = api.getStage(stageKey);
 
       const stageJson: Stage.StageMetaJson = {
         key: stageKey,
-        opt: deepClone(opt),
         extra: {
-          canvasPreview: extra.canvasPreview,
           sceneJson: scene.toJSON(),
-          cameraJson: ctrl?.camera.toJSON(),
-          camTarget: vectorToTriple(ctrl.target),
         },
       };
-
-      const serialized = JSON.stringify(stageJson);
-      localStorage.setItem(`stage:${stageKey}`, serialized);
+      localStorage.setItem(`stage:${stageKey}`, JSON.stringify(stageJson));
     },
 
-    rehydrate: (stageKeys) => {
-      for (const stageKey of stageKeys) {
-        const storageValue = localStorage.getItem(`stage:${stageKey}`);
-       
-        if (storageValue) {
-          try {
-            const { opt, extra } = JSON.parse(storageValue) as Stage.StageMetaJson;
-            const s = Stage.createStage(stageKey);
-            s.opt = deepClone(opt??Stage.createStageOpts());
-            s.opt.enabled = false; // Force initially disabled
-  
-            Promise.all([
-              loadJson<THREE.Scene>(extra.sceneJson),
-              loadJson<THREE.PerspectiveCamera | THREE.OrthographicCamera>(extra.cameraJson),
-            ]).then(([scene, camera]) => {
-              // console.info('Loaded json scene & camera', scene, camera);
-              s.scene = scene;
-              s.extra.sceneCamera = camera;
-              s.extra.canvasPreview = extra.canvasPreview;
-              s.ctrl = Stage.initializeControls(new Controls(camera));
-              s.ctrl.target.set(...extra.camTarget);
-              set(({ stage }) => ({ stage: addToLookup(s, stage) }));
-            });
-          } catch (e) {
-            console.error(`Failed to rehydrate stage ${stageKey}`);
-            console.error(e);
-            set(({ stage }) => ({ stage: addToLookup(Stage.createStage(stageKey), stage) }));
-          }
+    persistView: (viewKey, force = false) => {
+      const { stageKey, ctrl, canvasPreview, opt } = api.getView(viewKey);
 
-        } else {
+      if (!opt.persist && !force) return;
+
+      const viewJson: Stage.StageViewJson = {
+        key: viewKey,
+        stageKey,
+        camTarget: vectorToTriple(ctrl.target),
+        cameraJson: ctrl?.camera.toJSON(),
+        canvasPreview,
+        opt: deepClone(opt),
+      };
+      localStorage.setItem(`view:${viewKey}`, JSON.stringify(viewJson));
+    },
+
+    rehydrate: async (viewIds) => {
+      // Rehydrate views
+      for (const { stageKey, viewKey } of viewIds) {
+        const viewString = localStorage.getItem(`view:${viewKey}`);
+
+        if (!viewString) {
+          set(({ view }) => ({ view: addToLookup(Stage.createView(stageKey, viewKey), view) }));
+          continue;
+        }
+
+        try {
+          const {
+            stageKey,
+            cameraJson,
+            canvasPreview,
+            camTarget,
+            opt,
+          } = JSON.parse(viewString) as Stage.StageViewJson;
+          const v = Stage.createView(stageKey, viewKey);
+
+          const camera = await loadJson<THREE.PerspectiveCamera | THREE.OrthographicCamera>(cameraJson);
+          // console.info('Loaded json scene & camera', scene, camera);
+          v.camera = camera;
+          v.canvasPreview = canvasPreview;
+          v.ctrl = Stage.initializeControls(new Controls(camera));
+          v.ctrl.target.set(...camTarget);
+          v.opt = deepClone(opt??Stage.createStageViewOpts());
+          v.opt.enabled = false; // Force initially disabled
+
+          set(({ view }) => ({ view: addToLookup(v, view) }));
+
+        } catch (e) {
+          console.error(`Failed to rehydrate view ${viewKey}`);
+          console.error(e);
+          set(({ view }) => ({ view: addToLookup(Stage.createView(stageKey, viewKey), view) }));
+        }
+      }
+
+      // Rehydrate stages
+      const stageKeys = Array.from(new Set(viewIds.map(x => x.stageKey)));
+      for (const stageKey of stageKeys) {
+        const stageString = localStorage.getItem(`stage:${stageKey}`);
+
+        if (!stageString) {
+          set(({ stage }) => ({ stage: addToLookup(Stage.createStage(stageKey), stage) }));
+          continue;
+        }
+
+        try {
+          const { extra } = JSON.parse(stageString) as Stage.StageMetaJson;
+          const s = Stage.createStage(stageKey);
+          // console.log({ stageKey, opt, extra });
+
+          const scene = await loadJson<THREE.Scene>(extra.sceneJson);
+          s.scene = scene;
+          set(({ stage }) => ({ stage: addToLookup(s, stage) }));
+          console.info('Loaded json scene', s);
+
+        } catch (e) {
+          console.error(`Failed to rehydrate stage ${stageKey}`);
+          console.error(e);
           set(({ stage }) => ({ stage: addToLookup(Stage.createStage(stageKey), stage) }));
         }
       }
@@ -90,8 +135,8 @@ const useStore = create<State>(devtools((set, get) => ({
       set(() => ({ rehydrated: true }));
     },
 
-    updateOpt: (stageKey, updates) => {
-      api.updateStage(stageKey, ({ opt: opts }) => ({
+    updateOpt: (viewKey, updates) => {
+      api.updateView(viewKey, ({ opt: opts }) => ({
         opt: { ...opts, ...typeof updates === 'function' ? updates(opts) : updates },
       }));
     },
@@ -99,6 +144,11 @@ const useStore = create<State>(devtools((set, get) => ({
     updateStage: (stageKey, updates) => {
       set(({ stage }) => ({
         stage: updateLookup(stageKey, stage, typeof updates === 'function' ? updates : () => updates),
+      }));
+    },
+    updateView: (viewKey, updates) => {
+      set(({ view }) => ({
+        view: updateLookup(viewKey, view, typeof updates === 'function' ? updates : () => updates),
       }));
     },
 

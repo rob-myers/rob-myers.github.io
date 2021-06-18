@@ -10,8 +10,11 @@ import { Section } from 'components/page/Section';
 
 export default function IndexPage() {
   usePage({
-    stageKeys: ['test@intro'],
-    codeKeys: ['file.js'],
+    views: [
+      { stageKey: 'test@intro', viewKey: 'va:test@intro' },
+      { stageKey: 'test@intro', viewKey: 'vb:test@intro' },
+    ],
+    codes: ['file.js'],
   });
 
   return (
@@ -41,7 +44,8 @@ Video games usually provide a _setting_, a lot of _design_ representing the sett
 
           <section>
             <Env>
-              <Stage stageKey="test@intro"/>
+              <Stage stageKey="test@intro" viewKey="va:test@intro" gridArea="view-a"/>
+              <Stage stageKey="test@intro" viewKey="vb:test@intro" gridArea="view-b"/>
               <CodeEdit codeKey="file.js"/>
             </Env>
           </section>
@@ -74,9 +78,10 @@ const Env = styled.section<{}>`
   display: grid;
 
   grid-template-columns: 1000px;
-  grid-template-rows: 400px 400px;
+  grid-template-rows: 400px 400px 400px;
   grid-template-areas: 
-    "stage"
+    "view-a"
+    "view-b"
     "code";
 
   @media(max-width: 1248px) {
@@ -87,6 +92,6 @@ const Env = styled.section<{}>`
   }
   @media(max-width: 800px) {
     grid-template-columns: 100vw;
-    grid-template-rows: 350px 300px;
+    grid-template-rows: 350px 350px 300px;
   }
 `;

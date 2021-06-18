@@ -3,10 +3,10 @@ import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 import useStage from "store/stage.store";
 
-export default function Placeholder({ stageKey, everUsed, dataUrl }: Props) {
+export default function Placeholder({ viewKey, everUsed, dataUrl }: Props) {
   const enableStage = useCallback(() =>
-    useStage.api.updateOpt(stageKey, { enabled: true })
-  , [stageKey]);
+    useStage.api.updateOpt(viewKey, { enabled: true })
+  , [viewKey]);
 
   return (
     <Root>
@@ -25,7 +25,7 @@ export default function Placeholder({ stageKey, everUsed, dataUrl }: Props) {
 };
 
 interface Props {
-  stageKey: string;
+  viewKey: string;
   dataUrl?: string;
   everUsed: boolean;
 }

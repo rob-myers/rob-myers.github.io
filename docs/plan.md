@@ -2,7 +2,7 @@
 
 ### TODO
 
-- Permit `Stage` to have many cameras
+- ✅ Permit `Stage` to have many cameras
 - At most 2 open (auto-close others)
 
 - Start writing first blog post

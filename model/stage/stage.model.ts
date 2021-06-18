@@ -8,10 +8,6 @@ export type StageMeta = {
   key: string;
   /** Key-value store for internal use */
   extra: StageExtra;
-  /** Important options for the CLI */
-  opt: StageOpts;
-  /** Camera controls */
-  ctrl: Controls;
   /** The current scene */
   scene: THREE.Scene;
 };
@@ -20,23 +16,34 @@ export type StageMeta = {
 export interface StageView {
   key: string;
   stageKey: string;
+  /** Stage image data url */
+  canvasPreview?: string;
+  /** Camera restored from `cameraJson` */
   camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
   /** Camera controls */
   ctrl: Controls;
+  opt: StageViewOpts;
+}
+
+export interface StageViewJson {
+  key: string;
+  stageKey: string;
+  /** Stage image data url */
+  canvasPreview?: string;
+  /** Camera's target */
+  camTarget: Triple<number>;
+  /** Serialized camera */
+  cameraJson: ThreeJson;
+  opt: StageViewOpts;
 }
 
 export interface StageMetaJson {
   key: string;
-  opt: StageOpts;
   extra: StageExtraJson;
 }
 
 /** Key-value storage for internal use */
 export interface StageExtra {
-  /** Stage image data url */
-  canvasPreview?: string;
-  /** Camera restored from `cameraJson` */
-  sceneCamera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
   /** Keyboard events sent by `Stage` */
   keyEvent: Subject<StageKeyEvent>;
   /** Mouse events sent by `Stage` */
@@ -44,18 +51,12 @@ export interface StageExtra {
 }
 
 export interface StageExtraJson {
-  /** Stage image data url */
-  canvasPreview?: string;
-  /** Camera's target */
-  camTarget: Triple<number>;
-  /** Serialized camera */
-  cameraJson: ThreeJson;
   /** Serialized scene */
   sceneJson: ThreeJson;
 }
 
 /** Keep this flat so stage.proxy handles updates */
-export interface StageOpts {
+export interface StageViewOpts {
   /** Is the stage enabled? */
   enabled: boolean;
   /** Should stage capture mousewheel as pan/zoom? */
@@ -66,23 +67,30 @@ export interface StageOpts {
 
 export function createStage(stageKey: string): StageMeta {
   const scene = createPlaceholderScene();
-  const sceneCamera = new THREE.PerspectiveCamera;
-  const controls = initializeControls(new Controls(sceneCamera));
   return {
     key: stageKey,
     extra: {
-      canvasPreview: undefined,
-      sceneCamera,
       keyEvent: new Subject,
       ptrEvent: new Subject,
     },
-    opt: createStageOpts(),
     scene,
-    ctrl: controls,
   };
 }
 
-export function createStageOpts(): StageOpts {
+export function createView(stageKey: string, viewKey: string): StageView {
+  const sceneCamera = new THREE.PerspectiveCamera;
+  const controls = initializeControls(new Controls(sceneCamera));
+  return {
+    key: viewKey,
+    stageKey,
+    camera: sceneCamera,
+    ctrl: controls,
+    canvasPreview: undefined,
+    opt: createStageViewOpts(),
+  };
+}
+
+export function createStageViewOpts(): StageViewOpts {
   return {
     enabled: false,
     panZoom: true,
@@ -90,7 +98,7 @@ export function createStageOpts(): StageOpts {
   };
 }
 
-export const stageOptKeys = Object.keys(createStageOpts());
+export const stageOptKeys = Object.keys(createStageViewOpts());
 
 export type StageKeyEvent = Pick<KeyboardEvent, (
   | 'key'

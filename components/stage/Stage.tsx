@@ -3,31 +3,31 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
 
-import type { StageMeta } from "model/stage/stage.model";
+import type { StageMeta, StageView } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
 import StageToolbar from "./StageToolbar";
 import StageCanvas, { StageCtxt } from "./StageCanvas";
 import Placeholder from "./Placeholder";
 
-export default function Stage({ stage }: {stage: StageMeta}) {
+export default function Stage({ stage, view }: Props) {
   const everUsed = useRef(false);
-  const subscribers = useRef([() => void stage.ctrl.update()]);
+  const subscribers = useRef([() => void view.ctrl.update()]);
   const [ctxt, setCtxt] = useState(null as null | StageCtxt);
 
   useEffect(() => {
-    if (ctxt && !stage.opt.enabled) {
+    if (ctxt && !view.opt.enabled) {
       // Detected stage disable
       ctxt.gl.render(ctxt.scene, ctxt.camera);
-      stage.extra.canvasPreview = ctxt.gl.domElement.toDataURL();
-      useStage.api.persist(stage.key);
+      view.canvasPreview = ctxt.gl.domElement.toDataURL();
+      useStage.api.persistStage(stage.key);
       setCtxt(null);
     }
-  }, [stage.opt.enabled]);
+  }, [view.opt.enabled]);
 
   useEffect(
-    () => void (stage.ctrl.capturePanZoom = stage.opt.panZoom),
-    [stage.opt.panZoom],
+    () => void (view.ctrl.capturePanZoom = view.opt.panZoom),
+    [view.opt.panZoom],
   );
 
   const on = useMemo(() => {
@@ -35,7 +35,7 @@ export default function Stage({ stage }: {stage: StageMeta}) {
     return {
       createdCanvas: (ctxt: StageCtxt) => {
         everUsed.current = true;
-        stage.ctrl.setDomElement(ctxt.gl.domElement);
+        view.ctrl.setDomElement(ctxt.gl.domElement);
         ctxt.gl.shadowMap.enabled = true;
         ctxt.gl.shadowMap.autoUpdate = false;
         ctxt.gl.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -44,9 +44,9 @@ export default function Stage({ stage }: {stage: StageMeta}) {
         setCtxt(ctxt);
       },
       mouseOver: (e: React.MouseEvent<HTMLElement>) =>
-        stage.opt.enabled && stage.opt.panZoom && e.currentTarget.focus(),
+        view.opt.enabled && view.opt.panZoom && e.currentTarget.focus(),
       key: (e: React.KeyboardEvent<HTMLElement>) => {
-        stage.opt.enabled && keyWire?.next({
+        view.opt.enabled && keyWire?.next({
           key: e.key,
           type: e.type as any,
           metaKey: e.metaKey,
@@ -54,7 +54,7 @@ export default function Stage({ stage }: {stage: StageMeta}) {
         });
       },
     };
-  }, [stage.opt, ctxt]);
+  }, [view.opt, ctxt]);
 
   return (
     <Root
@@ -66,26 +66,32 @@ export default function Stage({ stage }: {stage: StageMeta}) {
     >
       <StageToolbar
         stageKey={stage.key}
-        opt={stage.opt}
+        viewKey={view.key}
+        opt={view.opt}
       />
-      {(stage.opt.enabled || ctxt) && (
-        <StageFader fadeIn={stage.opt.enabled}>
+      {(view.opt.enabled || ctxt) && (
+        <StageFader fadeIn={view.opt.enabled}>
           <StageCanvas
             onCreated={on.createdCanvas}
-            camera={stage.extra.sceneCamera}
+            camera={view.camera}
             scene={stage.scene}
             subscribers={subscribers.current}
           />
         </StageFader>
       ) || (
         <Placeholder
-          stageKey={stage.key}
-          dataUrl={stage.extra.canvasPreview}
+          viewKey={view.key}
+          dataUrl={view.canvasPreview}
           everUsed={everUsed.current}
         />
       )}
     </Root>
   );
+}
+
+interface Props {
+  stage: StageMeta;
+  view: StageView;
 }
 
 const Root = styled.section<{ background: string }>`

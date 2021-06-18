@@ -1,28 +1,29 @@
 import React, { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import { css } from "@emotion/react";
-import { StageOpts } from "model/stage/stage.model";
+import { StageViewOpts } from "model/stage/stage.model";
 import useStage from "store/stage.store";
 
-const StageToolbar: React.FC<Props> = ({ stageKey, opt }) => {
+export default function StageToolbar({ stageKey, viewKey, opt }: Props) {
   const [canToggleRunning, setCanToggleRunning] = useState(true);
   const enableUi = opt.enabled && canToggleRunning;
 
   const toggleRunning = useCallback(() => {
     if (canToggleRunning) {
-      useStage.api.updateOpt(stageKey, { enabled: !opt.enabled });
+      useStage.api.updateOpt(viewKey, { enabled: !opt.enabled });
       setCanToggleRunning(false);
       setTimeout(() => setCanToggleRunning(true), 1000);
     }
   }, [opt.enabled, canToggleRunning]);
 
   const toggleCam = useCallback(() => enableUi &&
-    useStage.api.updateOpt(stageKey, ({ panZoom }) => ({ panZoom: !panZoom }))
+    useStage.api.updateOpt(viewKey, ({ panZoom }) => ({ panZoom: !panZoom }))
   , [enableUi]);
 
   const togglePersist = useCallback(() => {
-    useStage.api.updateOpt(stageKey, ({ persist }) => ({ persist: !persist }));
-    useStage.api.persist(stageKey, true); // Force a persist
+    useStage.api.updateOpt(viewKey, ({ persist }) => ({ persist: !persist }));
+    useStage.api.persistStage(stageKey, true); // Force a persist
+    useStage.api.persistView(viewKey, true);
   }, [enableUi]);
 
   return (
@@ -70,7 +71,8 @@ const StageToolbar: React.FC<Props> = ({ stageKey, opt }) => {
 
 interface Props {
   stageKey: string;
-  opt: StageOpts;
+  viewKey: string;
+  opt: StageViewOpts;
 }
 
 const Toolbar = styled.section`
@@ -137,5 +139,3 @@ const PanZoomButton = styled.div<{ greyed: boolean }>`
     && css`color: #777; cursor: auto;`
     || css`color: #ddd; cursor: pointer;`}
 `;
-
-export default StageToolbar;
