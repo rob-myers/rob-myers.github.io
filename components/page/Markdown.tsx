@@ -11,10 +11,9 @@ export default function Markdown({ children }: { children: string }) {
 };
 
 const Root = styled.div`
-  font-family: monospace;
-  font-size: 13pt;
+  font-size: 14pt;
 
   p {
-    line-height: 1.2;
+    line-height: 1.3;
   }
 `;

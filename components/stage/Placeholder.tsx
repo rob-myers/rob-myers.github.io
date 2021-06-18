@@ -58,22 +58,18 @@ const PlaceholderImage = styled.img<{ fade: boolean }>`
 
 const PlaceholderMessage = styled.div<{}>`
   position: absolute;
-  width: inherit;
-  top: calc(50% - 3.5rem);
+  color: white;
+  top: calc(50% - 2rem);
+  width: 100%;
   display: flex;
   justify-content: center;
-  user-select: none;
 
-  font-size: 3.8rem;
   font-weight: lighter;
+  font-size: 2rem;
   letter-spacing: 8px;
-  color: white;
+  user-select: none;
 
   > div {
     cursor: pointer;
-  }
-
-  @media(max-width: 800px) {
-    font-size: 2.5rem;
   }
 `;

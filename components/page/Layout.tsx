@@ -19,7 +19,7 @@ export const SideBySide = styled.section<{ height: number }>`
   grid-template-rows: 100%;
   height: ${props => props.height}px;
 
-  @media(max-width: 800px) {
+  @media(max-width: 1000px) {
     grid-template-columns: 100%;
     grid-template-rows: 50% 50%;
     height: ${props => 2 * props.height}px;

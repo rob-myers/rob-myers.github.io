@@ -36,7 +36,7 @@ This website is concerned with _Game AI_ i.e. those algorithms controlling the b
             />
 
           </Section>
-          <SideBySide height={400}>
+          <SideBySide height={350}>
             <Stage
               stageKey="test@intro"
               viewKey="va:test@intro"
