@@ -6,7 +6,7 @@ import Markdown from 'components/page/Markdown';
 import Stage from 'components/stage/WrappedStage';
 import { usePage } from 'components/hooks';
 import { CodeEdit } from 'components/dynamic';
-import { Section, SideBySide } from 'components/page/Layout';
+import { Section, TwoPanel } from 'components/page/Layout';
 
 export default function IndexPage() {
   usePage({
@@ -36,13 +36,13 @@ This website is concerned with _Game AI_ i.e. those algorithms controlling the b
             />
 
           </Section>
-          <SideBySide height={350}>
+          <TwoPanel height={350}>
             <Stage
               stageKey="test@intro"
               viewKey="va:test@intro"
             />
             <CodeEdit codeKey="file.js"/>
-          </SideBySide>
+          </TwoPanel>
 
           {/* <section>
             <Env>
