@@ -2,6 +2,9 @@
 
 ### TODO
 
+- Permit `Stage` to have many cameras
+- At most 2 open (auto-close others)
+
 - Start writing first blog post
   - Explicit Game AI code; playable/editable
   - Formal approach
@@ -14,9 +17,7 @@
 - @runtime try css-in-js with preact
   > https://github.com/cristianbote/goober
 
-- Permit `Stage` to have many cameras
-- Fixing `Scene`/`Camera`, auto-closes others.
-- `CodeEdit` has tabs too
+- `CodeEdit` has tabs
 
 - try using a service-worker to define routes dynamically
   - ✅ can we do dynamic imports and also change the file contents?

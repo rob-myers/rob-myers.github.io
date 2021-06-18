@@ -10,8 +10,8 @@ import { Controls } from 'model/3d/controls';
 
 export type State = {
   rehydrated: boolean;
-  /** Stages */
   stage: KeyedLookup<Stage.StageMeta>;
+  view: KeyedLookup<Stage.StageView>;
 
   readonly api: {
     getStage: (stageKey: string) => Stage.StageMeta;
@@ -25,6 +25,7 @@ export type State = {
 const useStore = create<State>(devtools((set, get) => ({
   rehydrated: false,
   stage: {},
+  view: {},
 
   api: {
 

@@ -10,7 +10,7 @@ import StageToolbar from "./StageToolbar";
 import StageCanvas, { StageCtxt } from "./StageCanvas";
 import Placeholder from "./Placeholder";
 
-const Stage: React.FC<{stage: StageMeta}> = ({ stage }) => {
+export default function Stage({ stage }: {stage: StageMeta}) {
   const everUsed = useRef(false);
   const subscribers = useRef([() => void stage.ctrl.update()]);
   const [ctxt, setCtxt] = useState(null as null | StageCtxt);
@@ -109,5 +109,3 @@ const StageFader = styled.section<{ fadeIn: boolean }>`
   width: 100%;
   height: 100%;
 `;
-
-export default Stage;

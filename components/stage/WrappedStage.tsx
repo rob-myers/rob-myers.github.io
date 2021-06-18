@@ -5,7 +5,7 @@ import styled from "@emotion/styled";
 import useStage from "store/stage.store";
 import Stage from './Stage';
 
-const WrappedStage: React.FC<Props> = ({ stageKey }) => {
+export default function WrappedStage({ stageKey }: Props) {
   const stage = useStage(({ stage }) => stageKey in stage ? stage[stageKey] : null);
   const { ref, inView } = useInView({ /** rootMargin: '200px' */ });
 
@@ -29,5 +29,3 @@ const Root = styled.section`
   width: 100%;
   height: 100%;
 `;
-
-export default WrappedStage;

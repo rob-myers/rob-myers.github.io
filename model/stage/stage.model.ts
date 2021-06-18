@@ -16,6 +16,15 @@ export type StageMeta = {
   scene: THREE.Scene;
 };
 
+/** Camera and controls for viewing a stage */
+export interface StageView {
+  key: string;
+  stageKey: string;
+  camera: THREE.PerspectiveCamera | THREE.OrthographicCamera;
+  /** Camera controls */
+  ctrl: Controls;
+}
+
 export interface StageMetaJson {
   key: string;
   opt: StageOpts;

@@ -73,23 +73,20 @@ const Main = styled.main<{}>`
 const Env = styled.section<{}>`
   display: grid;
 
-  grid-template-columns: 500px 500px;
+  grid-template-columns: 1000px;
   grid-template-rows: 400px 400px;
   grid-template-areas: 
-    "stage stage"
-    "code code";
+    "stage"
+    "code";
 
   @media(max-width: 1248px) {
-    grid-template-columns: 400px 400px;
+    grid-template-columns: 800px;
   }
   @media(max-width: 1024px) {
-    grid-template-columns: calc(50vw - 3rem) calc(50vw - 3rem);
+    grid-template-columns: calc(100vw - 6rem);
   }
   @media(max-width: 800px) {
     grid-template-columns: 100vw;
     grid-template-rows: 350px 300px;
-    grid-template-areas:
-      "stage"
-      "code";
   }
 `;
