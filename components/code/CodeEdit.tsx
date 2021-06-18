@@ -14,7 +14,7 @@ import useCodeStore from "store/code.store";
 import CodeToolbar from "./CodeToolbar";
 import CustomJavascriptMode from "./CustomMode";
 
-export default function CodeEdit({ codeKey }: { codeKey: string }) {
+export default function CodeEdit({ codeKey, gridArea }: Props) {
   const subj = useRef(new Subject<string>());
   const ace = useRef<AceEditor>(null);
   const code = useCodeStore(({ code }) => codeKey in code ? code[codeKey] : null);
@@ -46,7 +46,7 @@ export default function CodeEdit({ codeKey }: { codeKey: string }) {
 
 
   return (
-    <Root>
+    <Root gridArea={gridArea}>
       <CodeToolbar
         code={code}
         error={codeError}
@@ -65,6 +65,13 @@ export default function CodeEdit({ codeKey }: { codeKey: string }) {
   );
 }
 
-const Root = styled.section`
-  grid-area: code;
+interface Props {
+  codeKey: string;
+  gridArea?: string;
+}
+
+const Root = styled.section<{ gridArea?: string }>`
+  grid-area: ${props => props.gridArea || ''};
+  width: 100%;
+  height: 100%;
 `;

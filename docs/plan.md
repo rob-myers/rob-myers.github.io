@@ -2,9 +2,6 @@
 
 ### TODO
 
-- ✅ Permit `Stage` to have many cameras
-- At most 2 open (auto-close others)
-
 - Start writing first blog post
   - Explicit Game AI code; playable/editable
   - Formal approach
@@ -18,6 +15,7 @@
   > https://github.com/cristianbote/goober
 
 - `CodeEdit` has tabs
+- At most 2 stage's open (auto-close others)
 
 - try using a service-worker to define routes dynamically
   - ✅ can we do dynamic imports and also change the file contents?
@@ -47,7 +45,7 @@
 
 - 2 core components
   > `Stage` (THREE.Scene and THREE.Camera)
-  > `CodeEdit` (ACE editor + javascript modules)
+  > `CodeEdit` (ACE editor, compiled using dynamic import)
 
 ### BUG
 
@@ -59,6 +57,7 @@
 
 ### Done
 
+- ✅ Permit `Stage` to have many cameras
 - ✅ Remove behaviour tree code
 - ✅ Move helpers into functions
 - ✅ Remove `stage.root`

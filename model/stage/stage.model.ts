@@ -123,7 +123,7 @@ export const initCameraTarget = new THREE.Vector3(0, 0, 0);
 export const stageNavInset = 0.045;
 
 export function initializeControls(ctrl: Controls) {
-  ctrl.maxPolarAngle = Math.PI / 4;
+  // ctrl.maxPolarAngle = Math.PI / 4;
   ctrl.screenSpacePanning = false;
   ctrl.enableDamping = true;
 
