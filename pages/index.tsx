@@ -6,7 +6,7 @@ import Markdown from 'components/page/Markdown';
 import Stage from 'components/stage/WrappedStage';
 import { usePage } from 'components/hooks';
 import { CodeEdit } from 'components/dynamic';
-import { Section, TwoPanel } from 'components/page/Layout';
+import { Section, TwoPanel, Pill, Columns, Rows } from 'components/page/Layout';
 
 export default function IndexPage() {
   usePage({
@@ -33,6 +33,7 @@ export default function IndexPage() {
 ## Introduction
 
 Video game graphics improve year by year, but can the same be said of _Game AI_?
+
 > In other words, is the _behaviour of non-player characters_ (NPCs) improving?
 
 This question is vague. Which games are we referring to? How can we compare behaviour in different games? What constitutes better behaviour, beyond ironing out bugs or "behaving more like a human"? We need to provide more context.
@@ -46,8 +47,39 @@ Take a single-player game where a character is controlled in a 3d world, e.g.
 - [Fallout 4](https://en.wikipedia.org/wiki/Fallout_4) (2015),
 - [The Last of Us Part II](https://en.wikipedia.org/wiki/The_Last_of_Us_Part_II) (2020).
 
-Such games have much _graphic and sound design_ (including animation), obey basic rules of reality enforced by a _physics engine_, and provide a _user interface_ for character control. Collectively these three concepts could be called the _game environment_. This environment supports the _game experience_ i.e. _levels/missions/quests/encounters_ following a central plot or subplots, which provide a notion of progression. This game experience is mostly created via the behaviour of NPCs within the game environment.
+Such games have much _graphic/sound design_ (including animation), obey basic rules of reality enforced by a _physics engine_, and provide a _user interface_ for character control. Collectively these three concepts could be called the _game environment_. This environment together with the behaviour of NPCs determines the _game experience_ i.e. _levels/missions/quests/encounters_. 
+`}/>
 
+<Pill style={{ fontSize: 'smaller' }}>
+  <div style={{ padding: '2px 0' }}>
+    <em>Game experience</em>
+  </div>
+  <Rows count={2} style={{ gap: 4 }}>
+    <Pill>
+      <div style={{ padding: '2px 0' }}>
+        <em>Game environment</em>
+      </div>
+      <Columns count={3} style={{ gap: 1 }}>
+        <Pill>Graphic/sound design</Pill>
+        <Pill>Physics engine</Pill>
+        <Pill>User interface</Pill>
+      </Columns>
+    </Pill>
+    <Pill>
+      <div style={{ padding: '2px 0' }}>
+        <em>NPC behaviour</em>
+      </div>
+      <Columns count={3} style={{ gap: 1 }}>
+        <Pill>Individual behaviour</Pill>
+        <Pill>Group behaviour</Pill>
+        <Pill>Dynamic encounters, etc.</Pill>
+      </Columns>
+    </Pill>
+  </Rows>
+</Pill>
+
+<Markdown children={`
+Let's compare _Quake_ to _The Last of Us Part II_, which was released almost exactly 24 years later. Quake is a masterpiece. Set within a nightmarish world, it is the first truly 3d first-person-shooter and a stunning technical achievement.
 
 ---
 

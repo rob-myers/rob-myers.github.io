@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import React, { useState } from "react";
 
 export const Section = styled.section<{}>`
   border-radius: 0 0 12px 12px;
@@ -14,10 +14,23 @@ export const Section = styled.section<{}>`
   }
 `;
 
-export function TwoPanel({
-  children,
-  height,
-}: TwoPanelProps) {
+export const Columns = styled.div<{ count: number }>`
+  display: grid;
+  grid-template-rows: ${({ count }) => `1fr `.repeat(count)};
+`;
+
+export const Rows = styled.div<{ count: number }>`
+  display: grid;
+  grid-template-columns: ${({ count }) => `1fr `.repeat(count)};
+`;
+
+export const Pill = styled.div<{}>`
+  padding: 4px 6px;
+  border: 1px solid #777;
+  border-radius: 4px;
+`;
+
+export function TwoPanel({ children, height }: TwoPanelProps) {
   const [mode, setMode] = useState(2 as TwoPanelMode);
   return (
     <TwoPanelRoot mode={mode}>
