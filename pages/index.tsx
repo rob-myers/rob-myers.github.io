@@ -32,13 +32,31 @@ export default function IndexPage() {
             <Markdown children={`
 ## Introduction
 
-Video game graphics improve year by year, but can the same be said of _Game AI_? We are talking about _the behaviour of non-player characters_ (NPCs). However, our question is vague. Which games are we referring to? How can we compare behaviour in different games? What constitutes better behaviour, beyond ironing out bugs or "behaving more like a human"? Let us provide some context.
+Video game graphics improve year by year, but can the same be said of _Game AI_?
+> In other words, is the _behaviour of non-player characters_ (NPCs) improving?
 
-A typical video game involves controlling a single character within a 3d world. _Designing the visual aspects_ involves 3d modelling, character design, weapon design, level design, animation and more. _Basic rules of reality_ are enforced via a physics engine, the character being a cylinder and a castle wall being a cuboid; synchronised animation provides the illusion of real locomotion. A _User Interface_ enables control of the character e.g. for moving, talking, taking and attacking.
+This question is vague. Which games are we referring to? How can we compare behaviour in different games? What constitutes better behaviour, beyond ironing out bugs or "behaving more like a human"? We need to provide more context.
 
-Amongst 
+Take a single-player game where a character is controlled in a 3d world, e.g.
+- [Quake](https://en.wikipedia.org/wiki/Quake_(video_game)) (1996),
+- [GoldenEye](https://en.wikipedia.org/wiki/GoldenEye_007_(1997_video_game)) (1997),
+- [Thief II](https://en.wikipedia.org/wiki/Thief_II) (2000),
+- [Halo](https://en.wikipedia.org/wiki/Halo:_Combat_Evolved) (2001),
+- [Skyrim](https://en.wikipedia.org/wiki/The_Elder_Scrolls_V:_Skyrim) (2011),
+- [Fallout 4](https://en.wikipedia.org/wiki/Fallout_4) (2015),
+- [The Last of Us Part II](https://en.wikipedia.org/wiki/The_Last_of_Us_Part_II) (2020).
+
+Such games have much _graphic and sound design_ (including animation), obey basic rules of reality enforced by a _physics engine_, and provide a _user interface_ for character control. Collectively these three concepts could be called the _game environment_. This environment supports the _game experience_ i.e. _levels/missions/quests/encounters_ following a central plot or subplots, which provide a notion of progression. This game experience is mostly created via the behaviour of NPCs within the game environment.
+
 
 ---
+
+The reverse disease: making a game engine without any setting, design etc.
+
+Player experience more important than "interesting AI".
+
+Player often won't see enough of AI to see its intelligence.
+Hence the idea for characters to shout their intentions before doing them.
 
 Let us begin with a few common observations.
 
