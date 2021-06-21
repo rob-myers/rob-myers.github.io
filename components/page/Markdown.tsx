@@ -2,10 +2,11 @@ import styled from '@emotion/styled';
 import React from 'react';
 import ReactMarkdown from 'react-markdown'
 
-export default function Markdown({ children }: { children: string }) {
+export default function Markdown(props: ReactMarkdown.ReactMarkdownOptions) {
   return (
     <Root>
-      <ReactMarkdown children={children} />
+      {/* We explicitly skip html to hide html comments */}
+      <ReactMarkdown skipHtml {...props} />
     </Root>
   );
 };
@@ -18,7 +19,6 @@ const Root = styled.div`
   }
   code {
     background: #eee;
-    /* font-family: sans-serif; */
     font-weight: lighter;
     font-size: 13pt;
   }

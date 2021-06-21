@@ -34,11 +34,12 @@ export default function IndexPage() {
 
 Video game graphics improve year by year, but can the same be said of _Game AI_?
 
-> In other words, is the _behaviour of non-player characters_ (NPCs) improving?
+> In other words, is the _behaviour of non-player characters_ (NPCs) steadily improving?
 
-This question is vague. Which games are we referring to? How can we compare behaviour in different games? What constitutes better behaviour, beyond ironing out bugs or "behaving more like a human"? We need to provide more context.
+This question is a bit vague. Which games are we referring to? How can we compare behaviour in different games? What constitutes better behaviour, beyond ironing out bugs or "behaving more like a human"? We need to provide more context.
 
-Take a single-player game where a character is controlled in a 3d world, e.g.
+<!--
+Let's restrict to single-player 3d games where a single character is controlled, e.g.
 - [Quake](https://en.wikipedia.org/wiki/Quake_(video_game)) (1996),
 - [GoldenEye](https://en.wikipedia.org/wiki/GoldenEye_007_(1997_video_game)) (1997),
 - [Thief II](https://en.wikipedia.org/wiki/Thief_II) (2000),
@@ -46,42 +47,62 @@ Take a single-player game where a character is controlled in a 3d world, e.g.
 - [Skyrim](https://en.wikipedia.org/wiki/The_Elder_Scrolls_V:_Skyrim) (2011),
 - [Fallout 4](https://en.wikipedia.org/wiki/Fallout_4) (2015),
 - [The Last of Us Part II](https://en.wikipedia.org/wiki/The_Last_of_Us_Part_II) (2020).
+-->
 
-Such games have much _graphic/sound design_ (including animation), obey basic rules of reality enforced by a _physics engine_, and provide a _user interface_ for character control. Collectively these three concepts could be called the _game environment_. This environment together with the behaviour of NPCs determines the _game experience_ i.e. _levels/missions/quests/encounters_. 
+Most 3d games have lots of _graphic/sound design_ (including animation), obey basic rules of reality via a _physics engine_, and provide a _user interface_ for character control. Collectively these concepts could be called the _game environment_. They show the world, simulate the world, and apply player actions to the world. Combining the game environment with level design and the behaviour of NPCs determines the _game experience_. It is usually organised into _levels/missions/quests/encounters_, providing a sense of purpose and progression.
+
 `}/>
 
 <Pill style={{ fontSize: 'smaller' }}>
   <div style={{ padding: '2px 0' }}>
     <em>Game experience</em>
   </div>
-  <Rows count={2} style={{ gap: 4 }}>
+  <Columns count={2} style={{ gap: 4 }}>
     <Pill>
       <div style={{ padding: '2px 0' }}>
         <em>Game environment</em>
       </div>
-      <Columns count={3} style={{ gap: 1 }}>
+      <Rows count={3} style={{ gap: 1 }}>
         <Pill>Graphic/sound design</Pill>
         <Pill>Physics engine</Pill>
         <Pill>User interface</Pill>
-      </Columns>
+      </Rows>
     </Pill>
-    <Pill>
-      <div style={{ padding: '2px 0' }}>
-        <em>NPC behaviour</em>
-      </div>
-      <Columns count={3} style={{ gap: 1 }}>
-        <Pill>Individual behaviour</Pill>
-        <Pill>Group behaviour</Pill>
-        <Pill>Dynamic encounters, etc.</Pill>
-      </Columns>
-    </Pill>
-  </Rows>
+    <Columns count={1}>
+      <Pill>
+        <div style={{ padding: '2px 0 4px' }}>
+          <em>Level design</em>
+        </div>
+        <Rows count={1} style={{ gap: 1 }}>
+          <Pill>Layout, interaction, resources ...</Pill>
+        </Rows>
+        <div style={{ padding: '2px 0' }}>
+          <em>NPC behaviour</em>
+        </div>
+        <Rows count={1} style={{ gap: 1 }}>
+          <Pill>Scripted/Individual/Group behaviour ...</Pill>
+          {/* <Pill>Scripted behaviour</Pill> */}
+          {/* <Pill>Dynamic encounters, etc.</Pill> */}
+        </Rows>
+      </Pill>
+    </Columns>
+  </Columns>
 </Pill>
 
 <Markdown children={`
-Let's compare _Quake_ to _The Last of Us Part II_, which was released almost exactly 24 years later. Quake is a masterpiece. Set within a nightmarish world, it is the first truly 3d first-person-shooter and a stunning technical achievement.
+
+Let's compare two excellent games released 24 years apart. [Quake](https://en.wikipedia.org/wiki/Quake_(video_game)) (1996) was the first fully 3d first-person-shooter and is an incredible achievement. [The Last of Us Part II](https://en.wikipedia.org/wiki/The_Last_of_Us_Part_II) (2020) is arguably the most polished story-driven combat game currently in existence. Compared to Quake, its environment is far richer e.g. one can walk, run, creep, go prone, push through tight gaps, leapfrog barriers, climb ladders, set traps, throw bottles and create silencers. The levels are much larger and richer too. But comparing NPC behaviour we find a lot of similarities??? MAYBE WRONG
+
+
+TODO conceptual similarity of AI in Quake and The Last of Us Part II
+- Quake has monsters which try to reach you directly or via wall-following. Their search has a timeout, monsters may fight other monsters, and if a monster spots you it will awaken others nearby.
+- The Last of Us Part II has monsters which try to reach you directly or via path-finding. Their search has a timeout, monsters may fight other humans, and if a monster spots you it will awaken others nearby and alert them to your position.
 
 ---
+
+NPC behaviour is a very popular topic amongst game players, but there is not much technical content available online.
+
+Perhaps videos games are not the right place to expect Game AI to evolve. There are too many other constraints. Player Experience trumps all.
 
 The reverse disease: making a game engine without any setting, design etc.
 
