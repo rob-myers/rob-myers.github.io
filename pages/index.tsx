@@ -1,12 +1,19 @@
+import { useEffect } from 'react';
 import Head from 'next/head'
 import styled from "@emotion/styled";
 
 import Header from 'components/page/Header';
 import Markdown from 'components/page/Markdown';
 import { CodeEdit } from 'components/dynamic';
+import Terminal from 'components/sh/Terminal';
 import { Section } from 'components/page/Layout';
+import useCodeStore from 'store/code.store';
 
 export default function IndexPage() {
+
+  useEffect(() => {
+    useCodeStore.api.rehydrate(['file.js']);
+  }, []);
 
   return (
     <>
@@ -18,7 +25,6 @@ export default function IndexPage() {
       <Main>
         <div>
           <Header />
-
           <Section>
             <Markdown children={`
 ## Introduction
@@ -27,9 +33,12 @@ Aims...
 
 `}/>
         </Section>
-
         <section style={{ height: 300 }}>
           <CodeEdit codeKey="file.js"/>
+        </section>
+
+        <section style={{ height: 300 }}>
+          <Terminal sessionKey="test" env={env} />
         </section>
 
         </div>
@@ -37,6 +46,8 @@ Aims...
     </>
   );
 }
+
+const env = {};
 
 const Main = styled.main<{}>`
   display: flex;
