@@ -7,7 +7,8 @@ import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRea
 import useSession, { ProcessStatus } from 'store/session.store';
 import { createKillError as killError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
-import { ansiBlue, ansiBrown, ansiReset, ansiWhite } from './tty.xterm';
+import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
+import { TtyShell } from './tty.shell';
 import { parseService } from './parse/parse.service';
 
 const commandKeys = {
@@ -247,7 +248,7 @@ class CmdService {
             if (typeof obj === 'function') keys = keys.filter(x => !['caller', 'callee', 'arguments'].includes(x));
             const metas = keys.map(x => obj[x]?.constructor?.name || (obj[x] === null ? 'null' : 'undefined'));
             const metasWidth = Math.max(...metas.map(x => x.length));
-            items = keys.map((x, i) => `${ansiBrown}${metas[i].padEnd(metasWidth)}${ansiWhite} ${x}`);
+            items = keys.map((x, i) => `${ansiYellow}${metas[i].padEnd(metasWidth)}${ansiWhite} ${x}`);
           } else if (opts[1]) {
             items = keys;
           } else {
@@ -465,6 +466,10 @@ class CmdService {
   ) {
     const process = useSession.api.getProcess(meta);
     const device = useSession.api.resolve(0, meta);
+
+    if (device instanceof TtyShell && process.pgid !== 0) {
+      throw new ShError('background process tried to read tty', 1);
+    }
 
     let result = {} as ReadResult;
     while (!(result = await device.readData(once)).eof) {

@@ -4,7 +4,7 @@ import { safeStringify, testNever } from 'model/generic.model';
 import { scrollback, ShellIo, DataChunk, isDataChunk } from './io/io.model';
 
 export const ansiReset = '\x1b[0m';
-export const ansiBrown = '\x1b[33m';
+export const ansiYellow = '\x1b[93m';
 export const ansiBlue = '\x1b[1;34m';
 export const ansiWhite = '\x1b[0;37m';
 export const ansiWarn = '\x1b[41;37m';
@@ -427,7 +427,7 @@ export class TtyXterm {
       return this.queueCommands(msg.split('\n')
         .map(line => ({ key: 'line', line: `${ansiWhite}${line}${ansiReset}` })));
     } else if (msg === null) {
-      return this.queueCommands([{ key: 'line', line: `${ansiBrown}null${ansiReset}` }]);
+      return this.queueCommands([{ key: 'line', line: `${ansiYellow}null${ansiReset}` }]);
     } else if (msg == undefined) {
       return;
     }
@@ -482,7 +482,7 @@ export class TtyXterm {
         } else {
           this.queueCommands([{
             key: 'line',
-            line: `${ansiBrown}${safeStringify(msg)}${ansiReset}`,
+            line: `${ansiYellow}${safeStringify(msg)}${ansiReset}`,
           }]);
         }
       }

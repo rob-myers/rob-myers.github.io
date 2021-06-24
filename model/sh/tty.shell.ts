@@ -1,6 +1,6 @@
 import type * as Sh from './parse/parse.model';
 import { testNever } from 'model/generic.model';
-import { Device, ShellIo, SigEnum } from './io/io.model';
+import { Device, ReadResult, ShellIo, SigEnum } from './io/io.model';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
 import { CoreVar } from './var.model';
 
@@ -24,7 +24,12 @@ export class TtyShell implements Device {
   private buffer = [] as string[];
   private readonly maxLines = 500;
   private process!: ProcessMeta;
-  
+
+  private oneTimeReaders = [] as {
+    resolve: (msg: any) => void;
+    reject: () => void;
+  }[];
+ 
   constructor(
     public sessionKey: string,
     public io: ShellIo<MessageFromXterm, MessageFromShell>,
@@ -71,15 +76,23 @@ export class TtyShell implements Device {
         break;
       }
       case 'send-line': {
-        this.inputs.push({
-          line: msg.line, // xterm won't send another line until resolved
-          resolve: () => this.io.write({ key: 'tty-received-line' }),
-        });
-        this.tryParse();
+        if (this.oneTimeReaders.length) {
+          this.oneTimeReaders.shift()!.resolve(msg.line);
+          this.io.write({ key: 'tty-received-line' });
+        } else {
+          this.inputs.push({
+            line: msg.line,
+            // xterm won't send another line until resolved
+            resolve: () => this.io.write({ key: 'tty-received-line' }),
+          });
+          this.tryParse();
+        }
         break;
       }
       case 'send-kill-sig': {
         this.buffer.length = 0;
+        this.oneTimeReaders.forEach(({ reject }) => reject());
+        this.oneTimeReaders.length = 0;
         if (this.process.status !== ProcessStatus.Running) {
           this.prompt('$');
         } else {
@@ -246,8 +259,19 @@ export class TtyShell implements Device {
   }
 
   //#region Device
-  public async readData() {
-    return { eof: true };
+  public async readData(): Promise<ReadResult> {
+    try {
+      return await new Promise((resolve, reject) => {
+        this.oneTimeReaders.push({
+          resolve: (msg: string) => resolve({ data: msg }),
+          reject,
+        });
+        this.input?.resolve();
+        this.input = null;
+      });
+    } catch {
+      return { eof: true };
+    }
   }
   public async writeData(data: any) {
     this.io.write(data);
