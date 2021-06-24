@@ -1,10 +1,11 @@
 import cliColumns from 'cli-columns';
 
-import { testNever, truncate, Deferred, pause, deepClone, keysDeep } from 'model/generic.model';
+import { testNever, truncate, Deferred, pause, deepClone, keysDeep, safeStringify, pretty } from 'model/generic.model';
 import type * as Sh from './parse/parse.model';
 import type { NamedFunction } from './var.model';
 import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRead, redirectNode } from './io/io.model';
 import useSession, { ProcessStatus } from 'store/session.store';
+import useCodeStore from 'store/code.store';
 import { createKillError as killError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
@@ -222,6 +223,7 @@ class CmdService {
           '1', /** One line per item */
           'l', /** Detailed */
           'r', /** Recursive properties (prototype) */
+          'a', /** Show capitilized vars at top level */
         ], });
         const root = this.provideProcessCtxt(meta);
         const cwd = this.computeCwd(meta, root);
@@ -243,6 +245,7 @@ class CmdService {
           if (roots.length > 1) yield `${ansiBlue}${queries[i]}:`;
           let keys = (opts.r ? keysDeep(obj) : Object.keys(obj)).sort();
           let items = [] as string[];
+          if (cwd === root && !opts.a) keys = keys.filter(x => x.toUpperCase() !== x);
 
           if (opts.l) {
             if (typeof obj === 'function') keys = keys.filter(x => !['caller', 'callee', 'arguments'].includes(x));
@@ -406,7 +409,7 @@ class CmdService {
 
   private computeCwd(meta: Sh.BaseMeta, root: any) {
     const prefix = useSession.api.getVar(meta.sessionKey, 'PWD');
-    return Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);    
+    return Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
   }
 
   async launchFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
@@ -441,22 +444,28 @@ class CmdService {
   }
 
   private provideProcessCtxt(meta: Sh.BaseMeta, posPositionals: string[] = []) {
-    const varLookup = useSession.api.getSession(meta.sessionKey).var;
-    // const stageKey = varLookup[CoreVar.STAGE_KEY];
-    // const stageProxy = (this.stageProxy[stageKey] = this.stageProxy[stageKey] || createStageProxy(stageKey));
-
+    const session = useSession.api.getSession(meta.sessionKey);
     return new Proxy({
-      // stage: stageProxy,
-      // lib: this.libProxy,
-      var: varLookup,
+      ...session.var,
+      store: {
+        code: useCodeStore,
+      },
+      util: this.shellUtil,
     }, {
       get: (_, key) => {
         if (key === 'api') return this.provideProcessApi(meta);
         if (key === 'args') return posPositionals;
         return (_ as any)[key];
       },
+      deleteProperty: (_target, key) => {
+        return delete session.var[key as any];
+      },
     });
   }
+
+  private shellUtil = {
+    pretty: (x: any) => pretty(JSON.parse(safeStringify(x))),
+  };
 
   private async *readLoop(
     meta: Sh.BaseMeta,

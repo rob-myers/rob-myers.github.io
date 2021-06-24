@@ -44,20 +44,22 @@ export function pause(ms = 0) {
 
 function tryJsonStringify(input: any) {
   try {
-    return JSON.stringify(input);
-  } catch (e) {}
+    return JSON.stringify(input, (_k, v) => {
+      if (typeof v === 'function') return zealousTrim(`${v}`);
+      return v;
+    })
+  } catch {};
 }
 
 export function safeStringify(input: any) {
   if (typeof input === 'function') {
     return zealousTrim(`${input}`);
   }
-  return tryJsonStringify(input)
-    || safeStableStringify(input, (_key, value) => {
-      if (value instanceof HTMLElement)
-        return `HTMLElement[${value.nodeName}]`;
-      return value;
-    });
+  return tryJsonStringify(input) || safeStableStringify(input, (_k, v) => {
+    if (v instanceof HTMLElement)
+      return `HTMLElement[${v.nodeName}]`;
+    return v;
+  });
 }
 
 export function flatten<T>(items: (T | T[])[]): T[] {

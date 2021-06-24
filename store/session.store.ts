@@ -263,8 +263,11 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     setVarDeep: (sessionKey, varPath, varValue) => {
+      // TODO cache cwd?
+      const prefix = api.getVar(sessionKey, 'PWD');
       const root = api.getSession(sessionKey).var;
-      Function('__1', '__2', `__1.${varPath} = __2`)(root, varValue);
+      const cwd = Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
+      Function('__1', '__2', `__1.${varPath} = __2`)(cwd, varValue);
     },
 
     warn: (sessionKey, msg) => {

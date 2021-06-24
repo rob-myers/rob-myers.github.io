@@ -11,7 +11,7 @@ call '({args}) =>
 }`,
 
   pretty: `{
-  map '(x, {lib}) => lib.stringify(x)'
+  map '(x, {util}) => util.pretty(x)'
 }`,
 
   keys: `{
@@ -26,14 +26,17 @@ call '({args}) =>
 };
 
 export const preloadedVariables = {
-  _: {},
 };
 
 export const shellScripts = {
 
+  /**
+   * TODO `key` and `stage` no longer exist
+   */
   optsKeyHandler: `
+
 # options key handler
-key | run '({ api: {read}, var: {_: {msg}}, stage: {opt} }) {
+key | run '({ api: {read}, var: {msg}, stage: {opt} }) {
   while (msg = await read()) {
     if (msg.type !== "keydown" || !opt.enabled) continue;
     switch (msg.key) {
@@ -46,7 +49,6 @@ key | run '({ api: {read}, var: {_: {msg}}, stage: {opt} }) {
 
 export const profiles = {
   first: `
-ready "\${STAGE_KEY}"
 
 ${shellScripts.optsKeyHandler.trim()}
 
