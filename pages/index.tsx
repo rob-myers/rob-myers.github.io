@@ -18,7 +18,7 @@ export default function IndexPage() {
   return (
     <>
       <Head>
-        <title>env codev</title>
+        <title>The codev env</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

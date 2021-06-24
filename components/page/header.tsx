@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 const Header: React.FC = () => {
   return <>
     <Title>The codev environment</Title>
-    <Subtitle>An browser-based environment between dev and prod</Subtitle>
+    <Subtitle>A browser-based environment between dev and prod</Subtitle>
   </>;
 };
 
