@@ -2,12 +2,10 @@ import styled from "@emotion/styled";
 
 const Header: React.FC = () => {
   return <>
-    <Title>Three.js Behaviours</Title>
+    <Title>the codev environment</Title>
   
     <Subtitle>
-      Game AI built using <a href="https://threejs.org/">
-        three.js
-      </a> and <a href="https://preactjs.com/">preact</a>
+      inbetween dev and prod without the hassle
     </Subtitle>
   </>;
 };
