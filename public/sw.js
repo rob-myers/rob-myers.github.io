@@ -17,7 +17,7 @@ self.addEventListener('fetch',
       if (event.request.url.endsWith('/src/module.js')) {
         event.respondWith(new Response([
           `const foo = "bar";`,
-          `console.log({ foo });`,
+          `console.log({ foo, epochMs: ${Date.now()} });`,
           ``,
         ].join('\n'), { headers: { 'content-type': 'application/javascript' }}));
       } else {

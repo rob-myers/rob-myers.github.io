@@ -16,6 +16,7 @@
     "braces": "^3.0.2",
     "cli-columns": "^3.1.2",
     "getopts": "^2.3.0",
+    "htm": "^3.0.4",
     "json-stringify-pretty-compact": "^3.0.0",
     "lodash.clonedeep": "^4.5.0",
     "mvdan-sh": "^0.5.0",
