@@ -82,7 +82,7 @@ export function singleQuotes({ Dollar: interpret, Value }: Sh.SglQuoted) {
 }
 
 export class ShError extends Error {
-  constructor(message: string, public exitCode: number) {
+  constructor(message: string, public exitCode: number, public original?: Error) {
     super(message);
     // Set the prototype explicitly.
     Object.setPrototypeOf(this, ShError.prototype);

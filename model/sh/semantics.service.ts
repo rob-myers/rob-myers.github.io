@@ -235,8 +235,12 @@ class SemanticsService {
         yield* sem.assignVars(node);
       }
     } catch (e) {
-      e.message = `${command}: ${e.message || e}`;
-      throw e;
+      if (e instanceof ShError) {
+        e.message = `${command}: ${e.message || e}`;
+        throw e;
+      } else {
+        throw new ShError(`${command}: ${e.message || e}`, 1, e)
+      }
     }
   }
 

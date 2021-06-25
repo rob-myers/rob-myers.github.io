@@ -45,7 +45,7 @@ export function pause(ms = 0) {
 function tryJsonStringify(input: any) {
   try {
     return JSON.stringify(input, (_k, v) => {
-      if (typeof v === 'function') return zealousTrim(`${v}`);
+      if (typeof v === 'function') return `[Function]`;
       return v;
     })
   } catch {};
