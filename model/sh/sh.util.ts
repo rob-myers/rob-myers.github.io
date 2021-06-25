@@ -12,7 +12,6 @@ export function normalizeWhitespace(word: string, trim = true): string[] {
 
   // Otherwise preserve single leading/trailing space
   const words = word.replace(/[\s]+/g, ' ').split(' ');
-
   if (!words[0]) {// ['', 'foo'] -> [' foo']
     words.shift();
     words[0] = ' ' + words[0];

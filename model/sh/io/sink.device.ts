@@ -5,18 +5,15 @@ export class SinkDevice implements Device {
   
   constructor(public key: string) {}
 
-  public async writeData(data: any) {
-    this.items.push(data);
+  public async writeData(_data: any) {
+    // this.items.push(data);
   }
 
   public async readData(): Promise<ReadResult> {
     return { eof: true };
   }
 
-  public finishedReading() {
-    // NOOP
-  }
-  public finishedWriting() {
-    // NOOP
-  }
+  public finishedReading() {}
+  
+  public finishedWriting() {}
 }

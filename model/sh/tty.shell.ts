@@ -2,7 +2,6 @@ import type * as Sh from './parse/parse.model';
 import { testNever } from 'model/generic.model';
 import { Device, ReadResult, ShellIo, SigEnum } from './io/io.model';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
-import { CoreVar } from './var.model';
 
 import useSession, { ProcessMeta, ProcessStatus } from 'store/session.store';
 import { ParseService } from './parse/parse.service';
@@ -219,7 +218,7 @@ export class TtyShell implements Device {
   }
 
   private async runProfile() {
-    const profile = useSession.api.getVar(this.sessionKey, CoreVar.PROFILE) || '';
+    const profile = useSession.api.getVar(this.sessionKey, 'PROFILE') || '';
     const parsed = parseService.parse(profile);
     this.provideContextToParsed(parsed);
     await this.spawn(parsed, { leading: true });

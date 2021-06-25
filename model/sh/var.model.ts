@@ -7,8 +7,3 @@ export type NamedFunction = {
   src: null | string;
   node: FileWithMeta;
 }
-
-export enum CoreVar {
-  STAGE_KEY= 'STAGE_KEY',
-  PROFILE= 'PROFILE',
-}
