@@ -11,7 +11,7 @@ Write down a summary of what we are trying to do.
 - ✅ `api.read` can read lines from tty
 - ✅ redirect into cwd rather than `var`
 - better error "stacks"
-- perhaps can load modules from unpkg
+- can load modules from unpkg, caching source
 
 ### of interest
 

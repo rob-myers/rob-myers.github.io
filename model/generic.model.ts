@@ -1,5 +1,4 @@
 import safeStableStringify from 'safe-stable-stringify';
-// import safeJsonStringify from 'safe-json-stringify';
 
 /** Useful for state management */
 export interface KeyedLookup<Value extends { key: K }, K extends string | number = string | number> {
@@ -44,8 +43,11 @@ export function pause(ms = 0) {
 
 function tryJsonStringify(input: any) {
   try {
+    let ownKeys = [] as string[];
     return JSON.stringify(input, (_k, v) => {
-      if (typeof v === 'function') return `[Function${v.name}!]`;
+      if (typeof v === 'function') {
+        return `[Function]${(ownKeys = Object.keys(v)).length ? ` ...{${ownKeys}} ` : ''}`;
+      }
       return v;
     })
   } catch {};
