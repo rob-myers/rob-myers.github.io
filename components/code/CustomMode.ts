@@ -1,7 +1,7 @@
 import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/mode-html";
+import "ace-builds/src-noconflict/mode-scss";
 
-const {HtmlHighlightRules} = (window as any).ace.acequire("ace/mode/html_highlight_rules");
+const {ScssHighlightRules} = (window as any).ace.acequire("ace/mode/scss_highlight_rules");
 const {JavaScriptHighlightRules} = (window as any).ace.acequire("ace/mode/javascript_highlight_rules");
 const { Mode: JavaScriptMode} = (window as any).ace.acequire("ace/mode/javascript");
 
@@ -12,44 +12,29 @@ const { Mode: JavaScriptMode} = (window as any).ace.acequire("ace/mode/javascrip
  */
 export class CustomHighlightRules extends JavaScriptHighlightRules {
   constructor() {
-    super({ jsx: false });
-
-    // Use html highlighting inside html`...`
-    for (const rule of Object.values(this.$rules)) {
-      (rule as any[]).unshift({
-          token: "keyword",
-          regex: /html`/,
-          next: "html-start"
-      });
-    }
-    const jsRulesCount = Object.keys(this.$rules).length;
-    this.embedRules(HtmlHighlightRules, "html-", [
-      {
-          token: "keyword",
-          regex: "`",
-          next: "start"
-      },
-    ]);
-
-    // Inside html`...`, use js highlighting inside ${...}
-    const htmlRules = Object.values(this.$rules).slice(jsRulesCount);
-    for (const rule of htmlRules) {
-      (rule as any[]).unshift({
-        token: "keyword",
-        regex: /\${/,
-        next: "js-html-start"
-      });
-    }
-    this.embedRules(JavaScriptHighlightRules, "js-html-", [
+    super();
+    
+    // Use scss highlighting inside css`...`
+    this.$rules.start.unshift(
       {
         token: "keyword",
-        regex: "}",
-        next: "html-start"
+        regex: /(?:css`|styled\.[a-z]`)/,
+        next: "scss-start",
+      },
+      {
+        token: "keyword",
+        regex: /styled\([A-Z].*\)`/,
+        next: "scss-start",
+      },
+    );
+    this.embedRules(ScssHighlightRules, "scss-", [
+      {
+        token: "keyword",
+        // Strict ending mostly prevents inner backticks from breaking things
+        regex: "^`;$",
+        next: "start",
       },
     ]);
-
-    // NOTE we currently do not support highlighting for nested html`...`
-
   }
 }
 

@@ -9,7 +9,6 @@ import "ace-builds/src-noconflict/mode-javascript";
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import "ace-builds/src-min-noconflict/ext-language_tools";
 
-import { CodeError } from "model/code/code.service";
 import useCodeStore from "store/code.store";
 import CodeToolbar from "./CodeToolbar";
 import CustomJavascriptMode from "./CustomMode";
@@ -18,7 +17,6 @@ export default function CodeEdit({ codeKey, gridArea }: Props) {
   const subj = useRef(new Subject<string>());
   const ace = useRef<AceEditor>(null);
   const code = useCodeStore(({ code }) => codeKey in code ? code[codeKey] : null);
-  const [codeError, setCodeError] = useState<CodeError>();
 
   useEffect(() => {
     const customMode = new CustomJavascriptMode;
@@ -28,7 +26,10 @@ export default function CodeEdit({ codeKey, gridArea }: Props) {
       debounceTime(300),
       tap(latest => useCodeStore.api.updateCode(codeKey, { current: latest })),
     ).subscribe();
-    return () => void sub$.unsubscribe();
+
+    return () => {
+      sub$.unsubscribe();
+    };
   }, []);
   
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function CodeEdit({ codeKey, gridArea }: Props) {
   }, [code?.updateEditorAt]);
 
   const onChange = useCallback((value: string) => {
-    subj.current.next(value)
+    subj.current.next(value);
   }, []);
 
 
@@ -49,7 +50,7 @@ export default function CodeEdit({ codeKey, gridArea }: Props) {
     <Root gridArea={gridArea}>
       <CodeToolbar
         code={code}
-        error={codeError}
+        error={undefined}
       />
       <AceEditor
         ref={ace}
