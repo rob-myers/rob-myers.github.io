@@ -18,7 +18,7 @@ export default function IndexPage() {
   return (
     <>
       <Head>
-        <title>The browser environment</title>
+        <title>hot modules</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -29,17 +29,24 @@ export default function IndexPage() {
             <Markdown children={`
 ## Introduction
 
-Aims...
+- shell via xterm.js and mvdan-sh
+- ace-editor with tabs
+- webworker with forked @babel/standalone
+- service worker
+- systemjs modules
+- preact.js + linaria
+- react-query + zustand
 
 `}/>
-        </Section>
-        <section style={{ height: 300 }}>
-          <CodeEdit codeKey="file.js"/>
-        </section>
+          </Section>
 
-        <section style={{ height: 300 }}>
-          <Terminal sessionKey="test" env={env} />
-        </section>
+          <section style={{ height: 300, width: '100%' }}>
+            <CodeEdit codeKey="file.js"/>
+          </section>
+
+          <section style={{ height: 300 }}>
+            <Terminal sessionKey="test" env={env} />
+          </section>
 
         </div>
       </Main>
@@ -53,10 +60,15 @@ const Main = styled.main<{}>`
   display: flex;
   justify-content: center;
   padding-bottom: 2rem;
-  > div { max-width: 1000px; }
+  > div {
+    flex: 1;
+    max-width: 1000px;
+  }
 
   @media(max-width: 1248px) {
-    > div { max-width: 800px; }
+    > div {
+      max-width: 800px;
+    }
   }
   @media(max-width: 1024px) {
     margin: 0 3rem;

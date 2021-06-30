@@ -1,11 +1,14 @@
 ## Plan
 
-Write down a summary of what we are trying to do.
+- Write down a summary of what we are trying to do.
+
+- Try codemirror with jsx and [css-in-js support](https://github.com/codemirror/google-modes/blob/master/src/template_string_inline_language.js ).
+- Replace react-ace with codemirror
 
 ### service-worker
 - ✅ can respond with type `application/javascript`
 - ✅ `import('/src/module.js')` does not refetch,
-  need to e.g. `import('/src/module.js?v=2')`
+  although `import('/src/module.js?v=2')` would.
 
 ### shell
 - ✅ `api.read` can read lines from tty

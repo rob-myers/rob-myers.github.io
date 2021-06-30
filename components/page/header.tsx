@@ -1,11 +1,15 @@
 import styled from "@emotion/styled";
 
-const Header: React.FC = () => {
+export default function Header() {
   return <>
-    <Title>The browser environment</Title>
-    <Subtitle>A browser-based environment between dev and prod</Subtitle>
+    <Title>
+      Hot modules
+    </Title>
+    <Subtitle>
+      A browser-based investigation into modern web development
+    </Subtitle>
   </>;
-};
+}
 
 const Title = styled.h1<{}>`
   margin-top: 2.5rem;
@@ -42,5 +46,3 @@ const Subtitle = styled.div<{}>`
     padding: 18px 4px;
   }
 `;
-
-export default Header;
