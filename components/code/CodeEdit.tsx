@@ -54,7 +54,7 @@ export default function CodeEdit({ codeKey, gridArea }: Props) {
       />
       <AceEditor
         ref={ace}
-        mode="javascript"
+        mode="jsx"
         // theme="tomorrow_night"
         onChange={onChange}
         enableLiveAutocompletion
