@@ -1,9 +1,7 @@
 ## Plan
 
 - Write down a summary of what we are trying to do.
-
-- Try codemirror with jsx and [css-in-js support](https://github.com/codemirror/google-modes/blob/master/src/template_string_inline_language.js ).
-- Replace react-ace with codemirror
+- All running examples are Game AI
 
 ### service-worker
 - ✅ can respond with type `application/javascript`

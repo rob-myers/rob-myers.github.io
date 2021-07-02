@@ -6,7 +6,7 @@ export default function Header() {
       Hot modules
     </Title>
     <Subtitle>
-      A browser-based investigation into modern web development
+      Modern web development illustrated via Game AI
     </Subtitle>
   </>;
 }

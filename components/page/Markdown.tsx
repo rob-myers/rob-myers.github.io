@@ -6,14 +6,17 @@ export default function Markdown(props: ReactMarkdown.ReactMarkdownOptions) {
   return (
     <Root>
       {/* We explicitly skip html to hide html comments */}
-      <ReactMarkdown skipHtml {...props} />
+      <ReactMarkdown
+        skipHtml
+        {...props}
+      />
     </Root>
   );
 };
 
 const Root = styled.div`
   font-size: 14pt;
-
+  
   p {
     line-height: 1.4;
   }
@@ -21,5 +24,6 @@ const Root = styled.div`
     background: #eee;
     font-weight: lighter;
     font-size: 13pt;
+    padding: 0 4px;
   }
 `;
