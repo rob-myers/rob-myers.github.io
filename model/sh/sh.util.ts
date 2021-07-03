@@ -39,7 +39,6 @@ export function expand(values: string | any[]): Expanded {
 }
 
 export function interpretEscapeSequences(input: string): string {
-  console.log({ input })
   return JSON.parse(JSON.stringify(input)
     // '\\e' -> '\\u001b'.
     .replace(/\\\\e/g, '\\u001b')
