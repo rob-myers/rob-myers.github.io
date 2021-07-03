@@ -231,6 +231,7 @@ export class TtyShell implements Device {
       ppid: 0,
       pgid: 0,
       fd: { 0: this.key, 1: this.key, 2: this.key },
+      stack: [],
       verbose: false, // TODO runtime configurable
     });
   }

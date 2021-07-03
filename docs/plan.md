@@ -11,8 +11,10 @@
 ### shell
 - ✅ `api.read` can read lines from tty
 - ✅ redirect into cwd rather than `var`
+- support ansi-codes in `$'...'`
 - better error "stacks"
-- can load modules from unpkg, caching source
+  > ✅ have node.meta.stack with function names
+ can load modules from unpkg, caching source
 
 ### of interest
 

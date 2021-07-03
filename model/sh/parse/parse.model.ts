@@ -186,6 +186,7 @@ export interface BaseMeta {
   ppid: number;
   pgid: number;
   fd: Record<number, string>;
+  stack: string[];
   /** Log extra info? */
   verbose?: boolean;
 }

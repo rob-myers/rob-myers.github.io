@@ -235,11 +235,12 @@ class SemanticsService {
         yield* sem.assignVars(node);
       }
     } catch (e) {
+      const msg = `${node.meta.stack.concat(command).join(': ')}: ${e.message || e}`;
       if (e instanceof ShError) {
-        e.message = `${command}: ${e.message || e}`;
+        e.message = msg;
         throw e;
       } else {
-        throw new ShError(`${command}: ${e.message || e}`, 1, e)
+        throw new ShError(msg, 1, e)
       }
     }
   }

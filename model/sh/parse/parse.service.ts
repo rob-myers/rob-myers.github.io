@@ -23,6 +23,7 @@ class ParseShService {
         1: defaultStdInOut,
         2: defaultStdInOut,
       },
+      stack: [],
     };
   }
 

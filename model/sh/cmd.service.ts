@@ -415,7 +415,11 @@ class CmdService {
   async launchFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
     const cloned = cloneParsed(namedFunc.node);
     const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
-    Object.assign(cloned.meta, { ...node.meta, ppid: node.meta.pid } as Sh.BaseMeta);
+    Object.assign(cloned.meta, {
+      ...node.meta,
+      ppid: node.meta.pid,
+      stack: node.meta.stack.concat(namedFunc.key), // TODO elsewhere?
+    } as Sh.BaseMeta);
     await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
 
