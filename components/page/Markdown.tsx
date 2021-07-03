@@ -18,7 +18,7 @@ const Root = styled.div`
   font-size: 14pt;
   
   p {
-    line-height: 1.4;
+    line-height: 1.6;
   }
   code {
     background: #eee;

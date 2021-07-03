@@ -28,10 +28,11 @@ const Title = styled.h1<{}>`
   }
 `;
 
-const Subtitle = styled.div<{}>`
+const Subtitle = styled.h4<{}>`
   font-weight: normal;
   letter-spacing: 1px;
 
+  margin: 0;
   padding: 24px 16px;
   background: #eee;
   color: #555;

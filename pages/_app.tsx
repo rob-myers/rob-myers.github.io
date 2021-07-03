@@ -1,5 +1,6 @@
 import { NextComponentType, NextPageContext } from 'next';
 import { AppInitialProps } from 'next/app';
+import Head from 'next/head';
 import { Router } from 'next/router';
 
 import 'xterm/css/xterm.css';
@@ -24,7 +25,14 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
 
   }, []);
 
-  return <Component {...pageProps} />
+  return (
+    <>
+      <Head>
+          <title>Hot modules</title>
+      </Head>
+      <Component {...pageProps} />
+    </>
+  );
 }
 
 interface RootProps extends AppInitialProps {
