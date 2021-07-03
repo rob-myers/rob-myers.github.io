@@ -9,9 +9,10 @@
   although `import('/src/module.js?v=2')` would.
 
 ### shell
+- can trigger shell command from markdown link
 - ✅ `api.read` can read lines from tty
 - ✅ redirect into cwd rather than `var`
-- support ansi-codes in `$'...'`
+- ✅ support ansi-codes in `$'...'`
 - better error "stacks"
   > ✅ have node.meta.stack with function names
  can load modules from unpkg, caching source
@@ -47,7 +48,7 @@ mockDevEnv () {
 	echo "Hello ${DAVE}, I see you've changed file $( yellowText /home/src/foo.jsx )."
 	pauseTyping
 
-	echo "Ok, I have generated "$( yellowText /home/dist/foo.js )", ${DAVE}".
+	echo "I have generated "$( yellowText /home/dist/foo.js )", ${DAVE}".
 	pauseTyping
 
 	echo "I better let the browser runtime know now, ${DAVE}."
