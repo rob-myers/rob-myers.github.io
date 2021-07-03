@@ -431,15 +431,6 @@ class CmdService {
         setTimeout(resolve, seconds * 1000);
         useSession.api.addCleanup(meta, () => reject(killError(meta)));
       }),
-      spawn: async (command: string) => {
-        const { ttyShell } = useSession.api.getSession(meta.sessionKey);
-        const parsed = Object.assign(parseService.parse(command), { meta: deepClone(meta) });
-        const device = useSession.api.createSinkDevice(meta.sessionKey, `pid-${meta.pid}`);
-        redirectNode(parsed, { 1: device.key });
-        await ttyShell.spawn(parsed);
-        useSession.api.removeDevice(device.key);
-        return device.items.slice();
-      },
     };
   }
 
