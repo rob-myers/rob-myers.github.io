@@ -31,7 +31,7 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
           },
         },
         {
-          ...(!options.isServer && { node: { fs: 'empty' } as any }),
+          // ...(!options.isServer && { resolve: { fallback: { fs: false } } }),
         },
         // Bundle analyzer
         process.env.ANALYZE === 'true' ? {
