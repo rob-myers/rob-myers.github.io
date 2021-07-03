@@ -88,25 +88,24 @@ class CmdService {
       }
       case 'cd': {
         if (args.length > 1) {
-          throw new ShError('usage: `cd`, `cd foo.bar`, `cd /foo.bar`, `cd ..` and `cd -`', 1);
+          throw new ShError('usage: `cd /`, `cd`, `cd foo.bar`, `cd /foo.bar`, `cd ..` and `cd -`', 1);
         }
         const prevPwd: string = useSession.api.getVar(meta.sessionKey, 'OLDPWD') || '';
         const currPwd: string = useSession.api.getVar(meta.sessionKey, 'PWD') || '';
+        useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
 
-        if (!args[0] || args[0] === '/') {
-          useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
+        if (!args[0]) {
+          useSession.api.setVar(meta.sessionKey, 'PWD', 'home');
+        } else if (args[0] === '/') {
           useSession.api.setVar(meta.sessionKey, 'PWD', '');
         } else if (args[0] === '-') {
-          useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
           useSession.api.setVar(meta.sessionKey, 'PWD', prevPwd);
         } else if (args[0] === '..') {
           // We do not attempt to handle '[' properly
           const matches = currPwd.match(/(^.+)\.[^\]\.]+$/);
           if (matches) {
-            useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
             useSession.api.setVar(meta.sessionKey, 'PWD', matches[1]);
           } else if (currPwd.match(/^[^\.\[]+$/)) {
-            useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
             useSession.api.setVar(meta.sessionKey, 'PWD', '');
           }
         } else {
@@ -117,10 +116,10 @@ class CmdService {
             const root = this.provideProcessCtxt(meta);
             const dst = Function('__', `return ${parts.join('.')}`)(root);
             if (dst) {
-              useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
               useSession.api.setVar(meta.sessionKey, 'PWD', parts.slice(1).join('.'));
             } else throw new Error;
           } catch (e) {
+            useSession.api.setVar(meta.sessionKey, 'OLDPWD', prevPwd);
             throw new ShError(`${args[0]} not found`, 1);
           }
         }
