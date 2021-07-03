@@ -246,7 +246,7 @@ class CmdService {
           if (roots.length > 1) yield `${ansiBlue}${queries[i]}:`;
           let keys = (opts.r ? keysDeep(obj) : Object.keys(obj)).sort();
           let items = [] as string[];
-          if (cwd === root && !opts.a) keys = keys.filter(x => x.toUpperCase() !== x);
+          if (cwd === root.home && !opts.a) keys = keys.filter(x => x.toUpperCase() !== x);
 
           if (opts.l) {
             if (typeof obj === 'function') keys = keys.filter(x => !['caller', 'callee', 'arguments'].includes(x));
@@ -450,7 +450,7 @@ class CmdService {
   private provideProcessCtxt(meta: Sh.BaseMeta, posPositionals: string[] = []) {
     const session = useSession.api.getSession(meta.sessionKey);
     return new Proxy({
-      ...session.var,
+      home: session.var,
       store: {
         code: useCodeStore,
       },
@@ -461,8 +461,8 @@ class CmdService {
         if (key === 'args') return posPositionals;
         return (_ as any)[key];
       },
-      deleteProperty: (_target, key) => {
-        return delete session.var[key as any];
+      deleteProperty: (_target, _key) => {
+        return false;
       },
     });
   }

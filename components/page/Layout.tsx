@@ -58,7 +58,6 @@ export const Main = styled.main<{}>`
   }
 `;
 
-
 export const Section = styled.section<{}>`
   border-radius: 0 0 12px 12px;
   border: 1px solid #ddd;

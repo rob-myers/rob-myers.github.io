@@ -26,7 +26,7 @@ call '({args}) =>
 
   mockDevEnv: `{
 	DAVE=$'\\e[1;34mDave\\e[0;37m'
-	pauseTyping () { sleep 2; echo; sleep 0.5; }
+	pauseTyping () sleep 2;
   yellowText () echo $'\\e[93m'$1$'\\e[0;37m'
 
 	echo "Hello \${DAVE}, I see you've changed file $( yellowText /home/src/foo.jsx )."
@@ -35,12 +35,10 @@ call '({args}) =>
 	echo "I have generated "$( yellowText /home/dist/foo.js )", \${DAVE}".
 	pauseTyping
 
-	echo "I better let the browser runtime know now, \${DAVE}."
-	pauseTyping
-
-	yellowText "PING PONG!"
+	echo "I'll let the browser runtime know now \${DAVE}."
+  pauseTyping
+  
 	echo "I will now resume listening for source file changes, \${DAVE}..."
-
   unset DAVE pauseTyping yellowText
 }`
 };
