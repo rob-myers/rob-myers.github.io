@@ -5,8 +5,8 @@ import ReactMarkdown from 'react-markdown'
 export default function Markdown(props: ReactMarkdown.ReactMarkdownOptions) {
   return (
     <Root>
-      {/* We explicitly skip html to hide html comments */}
       <ReactMarkdown
+        // We explicitly skip html to hide html comments
         skipHtml
         {...props}
       />
@@ -18,12 +18,18 @@ const Root = styled.div`
   font-size: 14pt;
   
   p {
-    line-height: 1.6;
+    line-height: 1.5;
   }
   code {
     background: #eee;
     font-weight: lighter;
     font-size: 13pt;
     padding: 0 4px;
+  }
+  ul {
+    margin: 20px 0;
+    li {
+      margin: 8px 0;
+    }
   }
 `;
