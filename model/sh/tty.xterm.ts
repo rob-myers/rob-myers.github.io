@@ -422,13 +422,13 @@ export class TtyXterm {
     return { row, col };
   }
 
-  protected onMessage(msg: MessageFromShell | string) {
+  private onMessage(msg: MessageFromShell | string) {
     if (typeof msg === 'string') {
       return this.queueCommands(msg.split('\n')
         .map(line => ({ key: 'line', line: `${ansiWhite}${line}${ansiReset}` })));
     } else if (msg === null) {
       return this.queueCommands([{ key: 'line', line: `${ansiYellow}null${ansiReset}` }]);
-    } else if (msg == undefined) {
+    } else if (msg === undefined) {
       return;
     }
 

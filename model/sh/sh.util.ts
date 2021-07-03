@@ -39,7 +39,12 @@ export function expand(values: string | any[]): Expanded {
 }
 
 export function interpretEscapeSequences(input: string): string {
+  console.log({ input })
   return JSON.parse(JSON.stringify(input)
+    // '\\e' -> '\\u001b'.
+    .replace(/\\\\e/g, '\\u001b')
+    // Hex escape-code (0-255) e.g. '\\\\x1b' -> '\\u001b'.
+    .replace(/\\\\x([0-9a-f]{2})/g, '\\u00$1')
     // e.g. '\\\\n' -> '\\n'.
     .replace(/\\\\([bfnrt])/g, '\\$1'));
 }
