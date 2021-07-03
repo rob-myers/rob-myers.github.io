@@ -39,7 +39,7 @@ const Subtitle = styled.h4<{}>`
   @media(max-width: 800px) {
     border-radius: 0;
     border-width: 1px 0;
-    padding: 18px;
+    padding: 18px 12px;
   }
 `;
 
@@ -51,7 +51,7 @@ export const Section = styled.section<{}>`
   font-size: 20px;
 
   @media(max-width: 800px) {
-    /* padding: 0 12px 4px 4px; */
     border: 0;
+    padding: 0 12px 16px 12px;
   }
 `;

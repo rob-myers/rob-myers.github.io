@@ -28,6 +28,7 @@ const Root = styled.div`
   }
   ul {
     margin: 20px 0;
+    line-height: 1.4;
     li {
       margin: 8px 0;
     }
