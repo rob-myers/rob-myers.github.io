@@ -19,7 +19,7 @@ const Title = styled.h1<{}>`
 
   @media(max-width: 800px) {
     font-size: 5rem;
-    padding-left: 12px;
+    padding-left: 10px;
   }
 `;
 
@@ -42,6 +42,22 @@ const Subtitle = styled.h4<{}>`
     padding: 18px 12px;
   }
 `;
+
+export const Main = styled.main<{}>`
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+
+  @media(max-width: 1024px) {
+    margin: 0 1rem;
+  }
+  @media(max-width: 700px) {
+    margin: 0;
+  }
+`;
+
 
 export const Section = styled.section<{}>`
   border-radius: 0 0 12px 12px;
