@@ -10,7 +10,6 @@ import { createKillError as killError, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
-import { parseService } from './parse/parse.service';
 
 const commandKeys = {
   /** Execute a javascript function */
@@ -49,7 +48,7 @@ const commandKeys = {
   reduce: true,
   /** Exit from a function */
   return: true,
-  /** Remove each arg from variables */
+  /** Remove variable(s) */
   rm: true,
   /** Run a javascript generator */
   run: true,
@@ -68,6 +67,8 @@ const commandKeys = {
   sponge: true,
   /** Exit with code 0 */
   true: true,
+  /** Unset top-level variables and shell functions */
+  unset: true,
 };
 type CommandName = keyof typeof commandKeys;
 
@@ -386,6 +387,14 @@ class CmdService {
       }
       case 'true': {
         node.exitCode = 0;
+        break;
+      }
+      case 'unset': {
+        const { var: v, func } = useSession.api.getSession(meta.sessionKey);
+        for (const arg of args) {
+          delete v[arg];
+          delete func[arg];
+        }
         break;
       }
       default: throw testNever(command);

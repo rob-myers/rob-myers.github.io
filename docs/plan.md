@@ -34,3 +34,28 @@ https://github.com/nodejs/modules/issues/307
 - assume it is acyclic with a single entrypoint
 - convert modules to commonjs or similar
 - ...
+
+
+### Onsite shell functions
+
+```sh
+mockDevEnv () {
+	DAVE=$'\e[1;34mDave\e[0;37m'
+	pauseTyping () { sleep 2; echo; sleep 0.5; }
+  yellowText () echo $'\e[93m'$1$'\e[0;37m'
+
+	echo "Hello ${DAVE}, I see you've changed file $( yellowText /home/src/foo.jsx )."
+	pauseTyping
+
+	echo "Ok, I have generated "$( yellowText /home/dist/foo.js )", ${DAVE}".
+	pauseTyping
+
+	echo "I better let the browser runtime know now, ${DAVE}."
+	pauseTyping
+
+	yellowText "PING PONG!"
+	echo "I will now resume listening for source file changes, ${DAVE}..."
+
+  unset DAVE pauseTyping yellowText
+}
+```
