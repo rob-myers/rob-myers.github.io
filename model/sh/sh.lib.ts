@@ -25,21 +25,23 @@ call '({args}) =>
 }`,
 
   mockDevEnv: `{
-	DAVE=$'\\e[1;34mDave\\e[0;37m'
-	pauseTyping () sleep 2;
-  yellowText () echo $'\\e[93m'$1$'\\e[0;37m'
+  yellowText () echo $'\\e[93m'\${1}$'\\e[0;37m'
+  call '({home}) => {
+    home.src = home.src || {};
+    home.dist = home.dist || {};
+  }'
 
-	echo "Hello \${DAVE}, I see you've changed file $( yellowText /home/src/foo.jsx )."
-	pauseTyping
+	echo "Dev changes file $( yellowText /home/src/foo.jsx )"
+	sleep 2
 
-	echo "I have generated "$( yellowText /home/dist/foo.js )", \${DAVE}".
-	pauseTyping
+	echo "Dev environment transforms it into $( yellowText /home/dist/foo.js )"
+	sleep 2
 
-	echo "I'll let the browser runtime know now \${DAVE}."
-  pauseTyping
+	echo "Dev environment informs browser runtime about change"
+  sleep 2
   
-	echo "I will now resume listening for source file changes, \${DAVE}..."
-  unset DAVE pauseTyping yellowText
+	echo "Dev environment resumes listening for source file changes"
+  unset yellowText
 }`
 };
 
