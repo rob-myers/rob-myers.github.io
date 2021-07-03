@@ -23,9 +23,9 @@ export default function IndexPage() {
 
 In the beginning, Brendan Eich made LiveScript.
 It was subsequently renamed _JavaScript_ (aka JS).
-It is now the only programming language supported by all web browsers, and has two siblings. HTML describes the hierarchy of elements on a webpage, whereas CSS specifies their look and feel. Importantly, JS subsumes them both:
+Nowadays it is the only programming language understood by all web browsers. It has two siblings. HTML describes the hierarchy of elements on a webpage, whereas CSS specifies their look and feel. Importantly, JS subsumes them both:
 
-- e.g. via \`document.createElement\` and \`document.createElement('style')\`.
+<!-- - e.g. via \`document.createElement\` and \`document.createElement('style')\`. -->
 - e.g. via [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)) (syntactic sugar), [tagged templates](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates) (ES2015) and runtime DOM diffing.
 - e.g. via template languages compiling to JS.
 
