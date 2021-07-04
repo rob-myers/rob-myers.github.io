@@ -40,7 +40,7 @@ call '({args}) =>
 	echo "Dev environment informs $(yellowText 'browser runtime') about change"
   sleep 2
   
-	echo "Dev environment resumes listening for source file changes"
+	echo "The browser runtime decides to do a full page reload."
   unset yellowText
 }`
 };
