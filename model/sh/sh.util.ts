@@ -98,7 +98,7 @@ export class ProcessError extends Error {
     public pid: number,
     public sessionKey: string,
   ) {
-    super(`process error: ${code}`);
+    super(code);
     Object.setPrototypeOf(this, ProcessError.prototype);
   }
 }
