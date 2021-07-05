@@ -9,6 +9,9 @@
   although `import('/src/module.js?v=2')` would.
 
 ### shell
+- Perhaps use unix-like paths e.g. `/home/src` instead of `/home.src`?
+	> Will need to redo redirects
+	- Will need to redo `get`, bare `get`, `cd`, `ls`, ... more?
 - can trigger shell command from markdown link
 - improve `help`
 - ✅ `api.read` can read lines from tty
@@ -36,28 +39,3 @@ https://github.com/nodejs/modules/issues/307
 - assume it is acyclic with a single entrypoint
 - convert modules to commonjs or similar
 - ...
-
-
-### Onsite shell functions
-
-```sh
-mockDevEnv () {
-	DAVE=$'\e[1;34mDave\e[0;37m'
-	pauseTyping () { sleep 2; }
-  yellowText () echo $'\e[93m'$1$'\e[0;37m'
-
-	call '() => ';
-
-	echo "Hello ${DAVE}, I see you've changed file $( yellowText /home/src/foo.jsx )."
-	pauseTyping
-
-	echo "I have generated "$( yellowText /home/dist/foo.js )", ${DAVE}".
-	pauseTyping
-
-	echo "I'm letting the browser runtime know now ${DAVE}."
-	pauseTyping
-
-	echo "I will now resume listening for source file changes, ${DAVE}."
-  unset DAVE pauseTyping yellowText
-}
-```
