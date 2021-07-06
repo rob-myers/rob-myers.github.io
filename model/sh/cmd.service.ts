@@ -101,11 +101,15 @@ class CmdService {
             useSession.api.setVar(meta.sessionKey, 'PWD', prevPwd);
           } else if (args[0].startsWith('/')) {
             const parts = normalizeAbsParts(args[0].split('/'));
-            resolveNormalized(parts, this.provideProcessCtxt(node.meta));
+            if (resolveNormalized(parts, this.provideProcessCtxt(node.meta)) === undefined) {
+              throw Error;
+            }
             useSession.api.setVar(meta.sessionKey, 'PWD', parts.join('/'));
           } else {
             const parts = normalizeAbsParts(currPwd.split('/').concat(args[0].split('/')));
-            resolveNormalized(parts, this.provideProcessCtxt(node.meta));
+            if (resolveNormalized(parts, this.provideProcessCtxt(node.meta)) === undefined) {
+              throw Error;
+            }
             useSession.api.setVar(meta.sessionKey, 'PWD', parts.join(('/')));
           }
         } catch {
