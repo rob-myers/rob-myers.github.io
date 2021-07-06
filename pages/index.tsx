@@ -25,10 +25,11 @@ export default function IndexPage() {
 - Strongly influenced by Teleglitch
   - same level design, but sans 3d walls
   - same kind of procedural generation
-  - same mechanic i.e. explore/flee/attack
+  - same central mechanic i.e. explore/flee/attack
   - same objective i.e. escape military research base
   - _but_ the research is about near death experiences
   - _and_ the enemies are from Tibetan Mythology
+  - _and_ movement & crafting UI may differ
 - Played from mini-map perspective
 - Implemented via preact and css-in-js using SVG
 - Demonstrated step-by-step via onsite babel + hmr
