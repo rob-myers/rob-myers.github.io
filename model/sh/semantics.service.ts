@@ -206,43 +206,34 @@ class SemanticsService {
     const [command, ...cmdArgs] = args;
     node.meta.verbose && console.log('simple command', args);
     
-    try {
-      if (args.length) {
-        let func: NamedFunction | undefined;
-        if (cmdService.isCmd(command)) {
-          yield* cmdService.runCmd(node, command, cmdArgs);
-        } else if (func = useSession.api.getFunc(node.meta.sessionKey, command)) {
-          await cmdService.launchFunc(node, func, cmdArgs);
-        } else {
-          try {// Try to `get` things instead
-            for (const arg of args) {
-              if (arg.includes('(')) {// Permit undefined
-                yield* cmdService.get(node, [arg]);
-              } else {// Throw if get undefined
-                const result = cmdService.get(node, [arg]);
-                if (result[0] !== undefined) {
-                  yield* result;
-                } else {
-                  throw Error();
-                }
+    if (args.length) {
+      let func: NamedFunction | undefined;
+      if (cmdService.isCmd(command)) {
+        yield* cmdService.runCmd(node, command, cmdArgs);
+      } else if (func = useSession.api.getFunc(node.meta.sessionKey, command)) {
+        await cmdService.launchFunc(node, func, cmdArgs);
+      } else {
+        try {// Try to `get` things instead
+          for (const arg of args) {
+            if (arg.includes('(')) {// Permit undefined
+              yield* cmdService.get(node, [arg]);
+            } else {// Throw if get undefined
+              const result = cmdService.get(node, [arg]);
+              if (result[0] !== undefined) {
+                yield* result;
+              } else {
+                throw Error();
               }
             }
-          } catch {
-            throw new ShError('not found', 127);
           }
+        } catch {
+          throw new ShError('not found', 127);
         }
-      } else {
-        yield* sem.assignVars(node);
       }
-    } catch (e) {
-      const msg = `${node.meta.stack.concat(command).join(': ')}: ${e.message || e}`;
-      if (e instanceof ShError) {
-        e.message = msg;
-        throw e;
-      } else {
-        throw new ShError(msg, 1, e)
-      }
+    } else {
+      yield* sem.assignVars(node);
     }
+
   }
 
   /** Construct a simple command or a compound command. */
@@ -261,8 +252,7 @@ class SemanticsService {
           case 'FuncDecl': generator = this.FuncDecl(node); break;
           case 'IfClause': generator = this.IfClause(node); break;
           case 'TimeClause': generator = this.TimeClause(node); break;
-          default:
-            throw new ShError(`Command: ${node.type}: not implemented`, 2);
+          default: throw new ShError(`Command: ${node.type}: not implemented`, 2);
         }
       }
       const process = useSession.api.getProcess(node.meta);
@@ -276,6 +266,9 @@ class SemanticsService {
         await device.writeData(item);
       }
     } catch (e) {
+      const command = node.type === 'CallExpr' ? node.Args[0].string || 'unknown CallExpr' : node.type;
+      const error = e instanceof ShError ? e : new ShError('', 1, e);
+      error.message = `${node.meta.stack.concat(command).join(': ')}: ${e.message || e}`;
       sem.handleShError(node, e);
     }
   }

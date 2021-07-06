@@ -12,7 +12,7 @@ import { FifoDevice } from 'model/sh/io/fifo.device';
 import { VarDevice, VarDeviceMode } from 'model/sh/io/var.device';
 import { srcService } from 'model/sh/parse/src.service';
 import { NullDevice } from 'model/sh/io/null.device';
-import { resolveParentChild, ShError } from 'model/sh/sh.util';
+import { computeNormalizedParts, resolveNormalized, ShError } from 'model/sh/sh.util';
 
 export type State = {
   session: KeyedLookup<Session>;
@@ -260,11 +260,15 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       /** Like root of process context, but only has `home` */
       const root = { home : api.getSession(sessionKey).var };
       const pwd: string = api.getVar(sessionKey, 'PWD') || '';
-      const { parent, childKey } = resolveParentChild(varPath, root, pwd);
+      const parts = computeNormalizedParts(varPath, root, pwd);
 
-      if (!parent || !childKey) throw new ShError(`failed to resolve ${varPath}`, 1);
-      if (parent === root) throw new ShError('cannot assign to root directory', 1);
-      parent[childKey] = varValue;
+      if (parts[0] === 'home' && parts.length > 1) {
+        const childKey = parts.pop() as string;
+        const parent = resolveNormalized(parts, root);
+        parent[childKey] = varValue;
+      } else {
+        throw new ShError('only the home directory is writable', 1);
+      }
     },
 
     warn: (sessionKey, msg) => {

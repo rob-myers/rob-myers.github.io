@@ -6,7 +6,7 @@ import type { NamedFunction } from './var.model';
 import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRead } from './io/io.model';
 import useSession, { ProcessStatus } from 'store/session.store';
 import useCodeStore from 'store/code.store';
-import { createKillError as killError, normalizeAbsParts, resolveNormalized, resolvePath, ShError } from './sh.util';
+import { computeNormalizedParts, createKillError as killError, normalizeAbsParts, resolveNormalized, resolvePath, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
@@ -313,14 +313,14 @@ class CmdService {
       }
       case 'rm': {
         const root = this.provideProcessCtxt(meta);
-        const cwd = this.computeCwd(meta, root);
-        for (const arg of args) {
-          if (arg === '/') {
-            throw new ShError('cannot delete root', 1);
-          } else if (arg[0] === '/') {
-            Function('__', `delete __.${arg.slice(1)}`)(root);
+        const pwd = useSession.api.getVar<string>(meta.sessionKey, 'PWD') || '';
+        for (const path of args) {
+          const parts = computeNormalizedParts(path, root, pwd);
+          if (parts[0] === 'home' && parts.length > 1) {
+            const last = parts.pop() as string;
+            delete resolveNormalized(parts, root)[last];
           } else {
-            Function('__', `delete __.${arg}`)(cwd);
+            throw new ShError(`cannot delete ${path}`, 1);
           }
         }
         break;

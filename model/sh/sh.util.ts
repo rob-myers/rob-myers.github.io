@@ -114,21 +114,15 @@ export function resolvePath(path: string, root: any, pwd: string) {
   return resolveAbsParts(absParts, root);
 }
 
-export function resolveParentChild(varPath: string, root: any, pwd: string): (
-  | { parent: null; childKey: null }
-  | { parent: any; childKey: string }
-) {
+export function computeNormalizedParts(varPath: string, root: any, pwd: string): string[] {
   const absParts = varPath.startsWith('/')
     ? varPath.split('/')
     : pwd.split('/').concat(varPath.split('/'));
-  const childKey = absParts.pop();
-  return childKey
-    ? { parent: resolveAbsParts(absParts, root), childKey }
-    : { parent: null, childKey: null };
+  return normalizeAbsParts(absParts);
 }
 
-export function normalizeAbsParts(parts: string[]) {
-  return parts.reduce((agg, item) => {
+export function normalizeAbsParts(absParts: string[]) {
+  return absParts.reduce((agg, item) => {
     if (!item || item === '.') return agg;
     if (item === '..') return agg.slice(0, -1);
     return agg.concat(item);
