@@ -28,7 +28,9 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
-          <title>Hot modules</title>
+          <title>
+            esc the base
+          </title>
       </Head>
       <Component {...pageProps} />
     </>

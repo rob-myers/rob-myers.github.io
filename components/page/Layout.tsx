@@ -3,10 +3,10 @@ import styled from "@emotion/styled";
 export function Header() {
   return <>
     <Title>
-      Hot modules
+      esc the base
     </Title>
     <Subtitle>
-      Modern web development illustrated via Game AI
+      a topdown game built with web dev techniques
     </Subtitle>
   </>;
 }
@@ -28,7 +28,7 @@ const Subtitle = styled.h4<{}>`
   letter-spacing: 1px;
 
   margin: 0;
-  padding: 24px 16px;
+  padding: 20px 16px;
   background: #eee;
   color: #555;
 
