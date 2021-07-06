@@ -1,7 +1,5 @@
 ## Plan
 
-- Write down a summary of what we are trying to do.
-
 ### service-worker
 - ✅ can respond with type `application/javascript`
 - ✅ `import('/src/module.js')` does not refetch,

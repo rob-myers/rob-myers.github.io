@@ -6,7 +6,7 @@ export function Header() {
       esc the base
     </Title>
     <Subtitle>
-      a topdown game built with web dev techniques
+      a topdown game built using web dev
     </Subtitle>
   </>;
 }
