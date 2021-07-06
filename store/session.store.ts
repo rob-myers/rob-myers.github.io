@@ -1,17 +1,18 @@
 import create from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
+import type { BaseMeta, FileWithMeta } from 'model/sh/parse/parse.model';
+import type { MessageFromShell, MessageFromXterm } from 'model/sh/tty.model';
+import type { NamedFunction } from 'model/sh/var.model';
 import { deepClone, KeyedLookup, mapValues } from 'model/generic.model';
 import { Device, makeShellIo, ShellIo } from 'model/sh/io/io.model';
-import { MessageFromShell, MessageFromXterm } from 'model/sh/tty.model';
 import { addToLookup, removeFromLookup, updateLookup } from './store.util';
 import { TtyShell } from 'model/sh/tty.shell';
-import { NamedFunction } from 'model/sh/var.model';
 import { FifoDevice } from 'model/sh/io/fifo.device';
 import { VarDevice, VarDeviceMode } from 'model/sh/io/var.device';
-import { BaseMeta, FileWithMeta } from 'model/sh/parse/parse.model';
 import { srcService } from 'model/sh/parse/src.service';
 import { NullDevice } from 'model/sh/io/null.device';
+import { resolveParentChild, ShError } from 'model/sh/sh.util';
 
 export type State = {
   session: KeyedLookup<Session>;
@@ -40,7 +41,7 @@ export type State = {
     getProcess: (meta: BaseMeta) => ProcessMeta;
     getProcesses: (sessionKey: string, pgid?: number) => ProcessMeta[];
     getPositional: (pid: number, sessionKey: string, varName: number) => string;
-    getVar: (sessionKey: string, varName: string) => any | undefined;
+    getVar: <T = any>(sessionKey: string, varName: string) => T;
     getVarDeep: (sessionKey: string, varPath: string) => any | undefined;
     getSession: (sessionKey: string) => Session;
     persist: (sessionKey: string) => void;
@@ -256,11 +257,14 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     setVarDeep: (sessionKey, varPath, varValue) => {
-      // TODO cache cwd?
-      const prefix = api.getVar(sessionKey, 'PWD');
-      const root = api.getSession(sessionKey).var;
-      const cwd = Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
-      Function('__1', '__2', `__1.${varPath} = __2`)(cwd, varValue);
+      /** Like root of process context, but only has `home` */
+      const root = { home : api.getSession(sessionKey).var };
+      const pwd: string = api.getVar(sessionKey, 'PWD') || '';
+      const { parent, childKey } = resolveParentChild(varPath, root, pwd);
+
+      if (!parent || !childKey) throw new ShError(`failed to resolve ${varPath}`, 1);
+      if (parent === root) throw new ShError('cannot assign to root directory', 1);
+      parent[childKey] = varValue;
     },
 
     warn: (sessionKey, msg) => {

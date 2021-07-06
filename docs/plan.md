@@ -1,7 +1,6 @@
 ## Plan
 
 - Write down a summary of what we are trying to do.
-- All running examples are Game AI
 
 ### service-worker
 - ✅ can respond with type `application/javascript`
@@ -9,11 +8,11 @@
   although `import('/src/module.js?v=2')` would.
 
 ### shell
-- Perhaps use unix-like paths e.g. `/home/src` instead of `/home.src`?
-	> Will need to redo redirects
-	- Will need to redo `get`, bare `get`, `cd`, `ls`, ... more?
 - can trigger shell command from markdown link
 - improve `help`
+- Use unix-like paths e.g. `/home/src` instead of `/home.src`?
+	- ✅ Redo redirects
+	- ✅ Redo `get`, bare `get`, `cd`, `ls`
 - ✅ `api.read` can read lines from tty
 - ✅ redirect into cwd rather than `var`
 - ✅ support ansi-codes in `$'...'`

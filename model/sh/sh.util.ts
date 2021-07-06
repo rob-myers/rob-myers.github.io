@@ -103,5 +103,42 @@ export class ProcessError extends Error {
   }
 }
 
-export const createKillError = (meta: Sh.BaseMeta) =>
-  new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey);
+export function createKillError(meta: Sh.BaseMeta) {
+  return new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey);
+}
+
+export function resolvePath(path: string, root: any, pwd: string) {
+  const absParts = path.startsWith('/')
+    ? path.split('/')
+    : pwd.split('/').concat(path.split('/'));
+  return resolveAbsParts(absParts, root);
+}
+
+export function resolveParentChild(varPath: string, root: any, pwd: string): (
+  | { parent: null; childKey: null }
+  | { parent: any; childKey: string }
+) {
+  const absParts = varPath.startsWith('/')
+    ? varPath.split('/')
+    : pwd.split('/').concat(varPath.split('/'));
+  const childKey = absParts.pop();
+  return childKey
+    ? { parent: resolveAbsParts(absParts, root), childKey }
+    : { parent: null, childKey: null };
+}
+
+export function normalizeAbsParts(parts: string[]) {
+  return parts.reduce((agg, item) => {
+    if (!item || item === '.') return agg;
+    if (item === '..') return agg.slice(0, -1);
+    return agg.concat(item);
+  }, [] as string[]);
+}
+
+export function resolveNormalized(parts: string[], root: any) {
+  return parts.reduce((agg, item) => agg[item], root)
+}
+
+export function resolveAbsParts(absParts: string[], root: any): any {
+  return resolveNormalized(normalizeAbsParts(absParts), root);
+}

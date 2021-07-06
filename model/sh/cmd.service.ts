@@ -1,12 +1,12 @@
 import cliColumns from 'cli-columns';
 
-import { testNever, truncate, Deferred, pause, deepClone, keysDeep, safeStringify, pretty } from 'model/generic.model';
+import { testNever, truncate, Deferred, pause, keysDeep, safeStringify, pretty } from 'model/generic.model';
 import type * as Sh from './parse/parse.model';
 import type { NamedFunction } from './var.model';
-import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRead, redirectNode } from './io/io.model';
+import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRead } from './io/io.model';
 import useSession, { ProcessStatus } from 'store/session.store';
 import useCodeStore from 'store/code.store';
-import { createKillError as killError, ShError } from './sh.util';
+import { createKillError as killError, normalizeAbsParts, resolveNormalized, resolvePath, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
@@ -88,40 +88,29 @@ class CmdService {
       }
       case 'cd': {
         if (args.length > 1) {
-          throw new ShError('usage: `cd /`, `cd`, `cd foo.bar`, `cd /foo.bar`, `cd ..` and `cd -`', 1);
+          throw new ShError('usage: `cd /`, `cd`, `cd foo/bar`, `cd /foo/bar`, `cd ..` and `cd -`', 1);
         }
         const prevPwd: string = useSession.api.getVar(meta.sessionKey, 'OLDPWD') || '';
         const currPwd: string = useSession.api.getVar(meta.sessionKey, 'PWD') || '';
         useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
 
-        if (!args[0]) {
-          useSession.api.setVar(meta.sessionKey, 'PWD', 'home');
-        } else if (args[0] === '/') {
-          useSession.api.setVar(meta.sessionKey, 'PWD', '');
-        } else if (args[0] === '-') {
-          useSession.api.setVar(meta.sessionKey, 'PWD', prevPwd);
-        } else if (args[0] === '..') {
-          // We do not attempt to handle '[' properly
-          const matches = currPwd.match(/(^.+)\.[^\]\.]+$/);
-          if (matches) {
-            useSession.api.setVar(meta.sessionKey, 'PWD', matches[1]);
-          } else if (currPwd.match(/^[^\.\[]+$/)) {
-            useSession.api.setVar(meta.sessionKey, 'PWD', '');
+        try {
+          if (!args[0]) {
+            useSession.api.setVar(meta.sessionKey, 'PWD', 'home');
+          } else if (args[0] === '-') {
+            useSession.api.setVar(meta.sessionKey, 'PWD', prevPwd);
+          } else if (args[0].startsWith('/')) {
+            const parts = normalizeAbsParts(args[0].split('/'));
+            resolveNormalized(parts, this.provideProcessCtxt(node.meta));
+            useSession.api.setVar(meta.sessionKey, 'PWD', parts.join('/'));
+          } else {
+            const parts = normalizeAbsParts(currPwd.split('/').concat(args[0].split('/')));
+            resolveNormalized(parts, this.provideProcessCtxt(node.meta));
+            useSession.api.setVar(meta.sessionKey, 'PWD', parts.join(('/')));
           }
-        } else {
-          try {
-            const parts = ['__'].concat(args[0][0] === '/'
-              ? [args[0].slice(1)]
-              : currPwd ? [currPwd, args[0]] : [args[0]]);
-            const root = this.provideProcessCtxt(meta);
-            const dst = Function('__', `return ${parts.join('.')}`)(root);
-            if (dst) {
-              useSession.api.setVar(meta.sessionKey, 'PWD', parts.slice(1).join('.'));
-            } else throw new Error;
-          } catch (e) {
-            useSession.api.setVar(meta.sessionKey, 'OLDPWD', prevPwd);
-            throw new ShError(`${args[0]} not found`, 1);
-          }
+        } catch {
+          useSession.api.setVar(meta.sessionKey, 'OLDPWD', prevPwd);
+          throw new ShError(`${args[0]} not found`, 1);
         }
         break;
       }
@@ -225,15 +214,10 @@ class CmdService {
           'r', /** Recursive properties (prototype) */
           'a', /** Show capitilized vars at top level */
         ], });
-        const root = this.provideProcessCtxt(meta);
-        const cwd = this.computeCwd(meta, root);
+        const pwd = useSession.api.getVar(meta.sessionKey, 'PWD');
         const queries = operands.length ? operands.slice() : [''];
-        const roots = queries.map(x => {
-          if (x[0] === '/') {
-            return x.slice(1) ? Function('__', `return __.${x.slice(1)}`)(root) : root;
-          }
-          return x ? Function('__', `return __.${x}`)(cwd) : cwd;
-        });
+        const root = this.provideProcessCtxt(meta);
+        const roots = queries.map(path => resolvePath(path, root, pwd));
 
         const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
         for (const [i, obj] of roots.entries()) {
@@ -245,7 +229,7 @@ class CmdService {
           if (roots.length > 1) yield `${ansiBlue}${queries[i]}:`;
           let keys = (opts.r ? keysDeep(obj) : Object.keys(obj)).sort();
           let items = [] as string[];
-          if (cwd === root.home && !opts.a) keys = keys.filter(x => x.toUpperCase() !== x);
+          if (pwd === 'home' && !opts.a) keys = keys.filter(x => x.toUpperCase() !== x);
 
           if (opts.l) {
             if (typeof obj === 'function') keys = keys.filter(x => !['caller', 'callee', 'arguments'].includes(x));
@@ -401,23 +385,16 @@ class CmdService {
   }
 
   get(node: Sh.BaseNode, args: string[]) {
-    try {
-      const root = this.provideProcessCtxt(node.meta);
-      const cwd = this.computeCwd(node.meta, root);
-      const outputs = args.map(arg => {
-        if (arg[0] === '/') return Function('__', `return __.${arg.slice(1)}`)(root);
-        return Function('__', isNaN(arg as any) ? `return __.${arg}` : `return __[${arg}]`)(cwd);
-      });
-      node.exitCode = outputs.length && outputs.every(x => x === undefined) ? 1 : 0;
-      return outputs;
-    } catch (e) {
-      throw new ShError(`${e}`.replace('__.', ''), 1);
-    }
+    const root = this.provideProcessCtxt(node.meta);
+    const pwd = useSession.api.getVar<string>(node.meta.sessionKey, 'PWD') || '';
+    const outputs = args.map(arg => resolvePath(arg, root, pwd));
+    node.exitCode = outputs.length && outputs.every(x => x === undefined) ? 1 : 0;
+    return outputs;
   }
 
   private computeCwd(meta: Sh.BaseMeta, root: any) {
-    const prefix = useSession.api.getVar(meta.sessionKey, 'PWD');
-    return Function('__', `return __${prefix ? `.${prefix}` : ''}`)(root);
+    const pwd = useSession.api.getVar(meta.sessionKey, 'PWD');
+    return resolveNormalized(pwd.split('/'), root);
   }
 
   async launchFunc(node: Sh.CallExpr, namedFunc: NamedFunction, args: string[]) {
