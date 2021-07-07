@@ -40,10 +40,6 @@ _TODO make this into "real thing" with ace-editor and babel transpilation_
       `}/>
       </Section>
 
-      {/* <section style={{ height: 300, width: '100%' }}>
-        <CodeEdit codeKey="file.js"/>
-      </section> */}
-
     </Main>
   );
 }
