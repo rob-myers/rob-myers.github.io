@@ -3,6 +3,7 @@
 
 ### code-editor
 - use customized monokai theme
+- ✅ highlight styled.div`...` and styled(Component)`...`
 - ✅ css`...` should start inside a block context
 - ✅ use codemirror
 - ✅ get css`...` working with scss

@@ -10,9 +10,10 @@ function Foo() {
   );   
 }
 
-const Bar = css`
+const Bar = styled.div`
     background: red;
     grid-area: ${({ enabled }) => enabled ? 'foo' : 'bar'};
+
 		.classA, .myClass  {
     	color: red;
       grid-area: red;

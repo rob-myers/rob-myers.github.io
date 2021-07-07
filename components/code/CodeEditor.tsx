@@ -22,7 +22,7 @@ export default function CodeEditor({ codeKey, gridArea }: Props) {
         theme: 'monokai',
         lineNumbers: true,
         tabSize: 2,
-        value: code?.current,
+        value: code?.current || '',
       });
     }
     return () => {

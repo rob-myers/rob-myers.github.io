@@ -161,10 +161,20 @@ export class TemplateTokenizer {
     } else {
       this.trackStateInTemplate(style, stream, state, templateState);
     }
+
+    // console.log({style, current: stream.current()});
     if (style === 'variable') {
+      // For css`...`
       state.previousVariable = stream.current();
+      // For styled(Component)`...`
+      state.styled = state.prevStyled ? state.previousVariable : null;
+      state.prevStyled = state.previousVariable === 'styled';
+    } else if (style === 'property' && state.prevStyled) {
+      state.previousVariable = state.prevStyled = null;
+      // For styled.div`...`
+      state.styled = stream.current();
     } else {
-      state.previousVariable = null;
+      state.previousVariable = state.prevStyled = state.styled = null;
     }
   }
 
@@ -182,8 +192,7 @@ export class TemplateTokenizer {
    */
   trackStateNotInTemplate(style, stream, state, templateState) {
     // Has the inline expression represented by embeddedMode just ended?
-    if (templateState && style === 'string-2' &&
-        stream.current().startsWith('}')) {
+    if (templateState && style === 'string-2' && stream.current().startsWith('}')) {
       state.templateStack.pop();
       // The containing tokenizer should only consume the } at this point.
       stream.backUp(stream.current().length - 1);
@@ -191,7 +200,7 @@ export class TemplateTokenizer {
     }
     // Are we starting a new template?
     if (style === 'string-2' && stream.current().startsWith('`')) {
-      const mode = this.getModeForTemplateTag(state.previousVariable);
+      const mode = this.getModeForTemplateTag(state);
       const kind = 'template';
       if (mode) {
         // Nothing except the opening ` should be consumed.
@@ -218,17 +227,22 @@ export class TemplateTokenizer {
    */
   trackStateInTemplate(style, stream, state, templateState) {
     // Is the current template ending?
-    if (style === 'string-2' && stream.current().endsWith('`') &&
-        !this.isEscaped(stream.pos - 1)) {
+    if (
+      style === 'string-2'
+      && stream.current().endsWith('`')
+      && !this.isEscaped(stream.pos - 1)
+    ) {
       state.templateStack.pop();
       return;
     }
 
     // Are we starting a new inline expression?
-    if (style === 'string-2' && stream.current().endsWith('${') &&
-        !this.isEscaped(stream.pos - 2)) {
-      state.templateStack.push(
-          new TemplateState('inline-expression', null, null));
+    if (
+      style === 'string-2' &&
+      stream.current().endsWith('${') &&
+      !this.isEscaped(stream.pos - 2)
+    ) {
+      state.templateStack.push(new TemplateState('inline-expression', null, null));
       return;
     }
   }
@@ -290,13 +304,14 @@ export class TemplateTokenizer {
 
   /**
    * @private
-   * @param {string|null} templateTag
+   * @param {State} state
    */
-  getModeForTemplateTag(templateTag) {
-    if (templateTag === 'css') {
+  getModeForTemplateTag(state) {
+    // console.log(state);
+    if (state.previousVariable === 'css' || state.styled) {
       return CodeMirror.getMode(this.config, { 
         name: 'text/x-scss',
-        inline: true, // Top level is inside block 
+        inline: true, // Inside block at top-level
       });
     }
     return null;
@@ -327,11 +342,15 @@ class State {
      * @type {null|string}
      */
     this.previousVariable = previousVariable;
+
+    /** @type {null | true} */
+    this.prevStyled = null;
+    /** @type {null | string} */
+    this.styled = null;
   }
 
   copy() {
-    return new State(
-        this.templateStack.map((t) => t.copy()), this.previousVariable);
+    return new State(this.templateStack.map((t) => t.copy()), this.previousVariable);
   }
 
   /** @return {!TemplateState | undefined} */
@@ -362,8 +381,7 @@ class TemplateState {
     if (!this.mode) {
       return new TemplateState(this.kind, null, null);
     }
-    return new TemplateState(
-        this.kind, this.mode, CodeMirror.copyState(this.mode, this.state))
+    return new TemplateState(this.kind, this.mode, CodeMirror.copyState(this.mode, this.state));
   }
 }
 
