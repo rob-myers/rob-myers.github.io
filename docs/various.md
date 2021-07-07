@@ -1,4 +1,6 @@
-## Game plan
+## Game
+
+### Overview
 
 - Strongly influenced by Teleglitch
   - same level design, but sans 3d walls
@@ -7,15 +9,33 @@
   - same objective i.e. escape military research base
   - _but_ the research is about near death experiences
   - _and_ the enemies are from Tibetan Mythology
-  - _and_ movement & crafting UI may differ
-- Played from mini-map perspective
-- Implemented via preact and css-in-js using SVG
-- Demonstrated step-by-step via onsite babel + hmr
+  - _and_ UI for movement and crafting will differ
+- Played from minimap perspective
+- Implemented via preact and CSS-in-JS, using SVG
+- Demonstrated __step-by-step__ via onsite babel + hmr
+
+### Detail
+
+- The company is again Militech. The military research project is _Sensory Experiences in Intermediate States_. They use clones. A clone lacks a mind, and must be synced to their originator. They study three intermediate states:
+  - Awake (Clone studies)
+  - Dream (Induced clone lucid dreams)
+  - Death (Induced clone death and resuscitation).
+- How it all goes wrong.
+  - By experiencing death many times, the test subjects become expert meditators. They investigate the _dull lights_ (see Bardo Thodol) and continually escape the respective realms via resuscitation.
+  - Repeated _karmic reversal_ alerts these other realms. They create a _karmic self loop_ by killing an originator while her clone is being resuscitated. It provides a bridge between the realms.
+  - This event is the precursor to _The Night Land_.
+- The research base AI will help you escape. The AI is also trying to save the other personnel and test subjects. You must work together.
+- Minimap view because you are blind. Your blindness protects you against those that have been unleashed, because you cannot "see" your fears. You can still hear (represented via text, possibly sound).
+- The weapons are batons, tasers, handguns, lasers, security turrets. There are also various visualisation/concentration techniques.
+
+The _Bardo Thodol_ says:
+> O nobly-born, along with the radiances of Wisdom, the impure illusory lights of the Six Lokas will also come to shine. If it be asked, 'What are they?' [they are] a dull white light from the devas, a dull green light from the asuras, a dull yellow light from human beings, a dull blue light from the brutes, a dull reddish light from the pretas, and a dull smoke-coloured light from Hell. These six thus will come to shine, along with the six radiances of Wisdom; whereupon, be not afraid of nor be attracted towards any, but allow thyself to rest in the non-thought condition.
 
 ## Technical
 
 - shell via xterm.js and mvdan-sh
-- ace-editor with tabs
+- ~~ace-editor with tabs~~
+- codemirror with tabs
 - webworker with forked @babel/standalone
 - service worker
 - systemjs modules
@@ -23,8 +43,6 @@
 - react-query + zustand
 
 ## On Website Development
-
-_TODO needs rewrite within new context i.e. developing a game_
 
 In the beginning, Brendan Eich made LiveScript.
 It was subsequently renamed _JavaScript_ (aka JS).
