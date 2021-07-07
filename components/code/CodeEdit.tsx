@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { Subject } from "rxjs";
 import { debounceTime, tap } from "rxjs/operators";
 import styled from "@emotion/styled";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-javascript";
 // import "ace-builds/src-noconflict/theme-monokai";
-// import "ace-builds/src-noconflict/theme-tomorrow_night_bright";
+import "ace-builds/src-noconflict/theme-dawn";
+import "ace-builds/src-noconflict/theme-tomorrow_night";
+// import "ace-builds/src-noconflict/theme-merbivore_soft";
 import "ace-builds/src-min-noconflict/ext-searchbox";
 import "ace-builds/src-min-noconflict/ext-language_tools";
 
@@ -55,7 +57,10 @@ export default function CodeEdit({ codeKey, gridArea }: Props) {
       <AceEditor
         ref={ace}
         mode="jsx"
+        // theme="monokai"
+        // theme="merbivore_soft"
         // theme="tomorrow_night"
+        theme="dawn"
         onChange={onChange}
         enableLiveAutocompletion
         // editorProps={{}}
