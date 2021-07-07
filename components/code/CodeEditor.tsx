@@ -2,10 +2,13 @@ import { useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 
 import codemirror from 'codemirror';
+import 'codemirror/addon/edit/matchbrackets';
+import 'codemirror/addon/fold/foldcode'; // TODO
+
 import 'codemirror/mode/jsx/jsx';
-import 'codemirror/mode/css/css';
 import 'codemirror/mode/sass/sass';
 import './codemirror/custom-jsx-mode';
+import './codemirror/custom-keymap';
 
 import useCodeStore from "store/code.store";
 import CodeToolbar from "./CodeToolbar";
@@ -23,6 +26,8 @@ export default function CodeEditor({ codeKey, gridArea }: Props) {
         lineNumbers: true,
         tabSize: 2,
         value: code?.current || '',
+        matchBrackets: true,
+        keyMap: 'custom',
       });
     }
     return () => {
