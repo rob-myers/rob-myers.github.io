@@ -5,6 +5,7 @@ import Markdown from 'components/page/Markdown';
 import { CodeEdit } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 import useCodeStore from 'store/code.store';
+import CodeEditor from 'components/code/CodeEditor';
 
 const env = {};
 
@@ -25,6 +26,12 @@ _TODO make this into "real thing" with ace-editor and babel transpilation_
 
       <section style={{ height: 200 }}>
         <Terminal sessionKey="test" env={env} />
+      </section>
+
+      <br/>
+
+      <section style={{ height: 400 }}>
+        <CodeEditor codeKey="file.js" />
       </section>
 
       <Markdown children={`

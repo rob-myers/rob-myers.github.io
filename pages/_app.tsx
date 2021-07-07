@@ -2,10 +2,12 @@ import { NextComponentType, NextPageContext } from 'next';
 import { AppInitialProps } from 'next/app';
 import Head from 'next/head';
 import { Router } from 'next/router';
+import { useEffect } from 'react';
 
 import 'xterm/css/xterm.css';
 import 'styles/globals.css'
-import { useEffect } from 'react';
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/theme/monokai.css';
 
 const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
   useEffect(() => {
