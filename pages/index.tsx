@@ -2,10 +2,9 @@ import { useEffect } from 'react';
 
 import { Header, Section, Main } from 'components/page/Layout';
 import Markdown from 'components/page/Markdown';
-import { CodeEdit } from 'components/dynamic';
+import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 import useCodeStore from 'store/code.store';
-import CodeEditor from 'components/code/CodeEditor';
 
 const env = {};
 
@@ -41,9 +40,9 @@ _TODO make this into "real thing" with ace-editor and babel transpilation_
       `}/>
       </Section>
 
-      <section style={{ height: 300, width: '100%' }}>
+      {/* <section style={{ height: 300, width: '100%' }}>
         <CodeEdit codeKey="file.js"/>
-      </section>
+      </section> */}
 
     </Main>
   );

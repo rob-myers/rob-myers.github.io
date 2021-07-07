@@ -9,10 +9,11 @@ function Foo() {
   );   
 }
 
-const Bar = styled(Foo)`
+const Bar = css`
     background: red;
-    grid-area: ${({ area }) => `my-${area}`};
-    > .foo.bar {
-        background: ${() => 'red'};
+    grid-area: ${({ enabled }) => enabled ? 'foo' : 'bar'};
+		.classA, .myClass  {
+    	color: red;
+      grid-area: red;
     }
 `;
