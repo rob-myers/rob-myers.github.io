@@ -3,13 +3,14 @@ import styled from "@emotion/styled";
 
 import codemirror from 'codemirror';
 import 'codemirror/addon/edit/matchbrackets';
+// TODO customise comments to handle JSX comments
 import 'codemirror/addon/comment/comment';
 import 'codemirror/keymap/sublime';
-// import 'codemirror/addon/fold/foldcode'; // TODO
+// import 'codemirror/addon/fold/foldcode';
 
-import 'codemirror/mode/jsx/jsx';
 import 'codemirror/mode/sass/sass';
-import './codemirror/custom-jsx-mode';
+import 'codemirror/mode/javascript/javascript';
+import './codemirror/jsx-styled-mode';
 
 import useCodeStore from "store/code.store";
 import CodeToolbar from "./CodeToolbar";
