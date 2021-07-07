@@ -19,7 +19,7 @@ export default function CodeEditor({ codeKey, gridArea }: Props) {
       const cm = codemirror(editorRoot.current, {
         // mode: 'jsx',
         mode: 'jsx-styled',
-        theme: 'monokai',
+        theme: 'vscode-dark',
         lineNumbers: true,
         tabSize: 2,
         value: code?.current || '',

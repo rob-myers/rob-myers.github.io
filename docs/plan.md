@@ -2,7 +2,7 @@
 
 
 ### code-editor
-- use customized monokai theme
+- ✅ use customized theme based on vscode-dark
 - ✅ highlight styled.div`...` and styled(Component)`...`
 - ✅ css`...` should start inside a block context
 - ✅ use codemirror
