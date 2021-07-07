@@ -52,7 +52,6 @@ export default function CodeEdit({ codeKey, gridArea }: Props) {
     <Root gridArea={gridArea}>
       <CodeToolbar
         code={code}
-        error={undefined}
       />
       <AceEditor
         ref={ace}

@@ -264,8 +264,12 @@ const useStore = create<State>(devtools(persist((set, get) => ({
 
       if (parts[0] === 'home' && parts.length > 1) {
         const childKey = parts.pop() as string;
-        const parent = resolveNormalized(parts, root);
-        parent[childKey] = varValue;
+        try {
+          const parent = resolveNormalized(parts, root);
+          parent[childKey] = varValue;
+        } catch (e) {
+          throw new ShError(`cannot resolve /${parts.join('/')}`, 1);
+        }
       } else {
         throw new ShError('only the home directory is writable', 1);
       }

@@ -23,26 +23,6 @@ call '({args}) =>
   log: `{
   map 'x => console.log(x)'
 }`,
-
-  mockDevEnv: `{
-  yellowText () echo $'\\e[93m'\${1}$'\\e[0;37m'
-  call '({home}) => {
-    home.src = home.src || {};
-    home.dist = home.dist || {};
-  }'
-
-	echo "Dev changes file $( yellowText /home/src/foo.jsx )"
-	sleep 2
-
-	echo "Dev environment transforms it into $( yellowText /home/dist/foo.js )"
-	sleep 2
-
-	echo "Dev environment informs $(yellowText 'browser runtime') about change"
-  sleep 2
-  
-	echo "The browser runtime decides to do a full page reload."
-  unset yellowText
-}`
 };
 
 export const preloadedVariables = {
