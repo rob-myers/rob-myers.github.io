@@ -16,16 +16,16 @@
 
 ### Detail
 
-- The company is again Militech. The military research project is _Sensory Experiences in Intermediate States_. They use clones. A clone lacks a mind, and must be synced to their originator. They study three intermediate states:
+- The company is again Militech. The military research project is _Sensory Experiences in Intermediate States_. They use clones. A clone lacks "direction", and must be synced to their originator. They study three intermediate states:
   - Awake (Clone studies)
   - Dream (Induced clone lucid dreams)
   - Death (Induced clone death and resuscitation).
 - How it all goes wrong.
   - By experiencing death many times, the test subjects become expert meditators. They investigate the _dull lights_ (see Bardo Thodol) and continually escape the respective realms via resuscitation.
-  - Repeated _karmic reversal_ alerts these other realms. They create a _karmic self loop_ by killing an originator while her clone is being resuscitated. It provides a bridge between the realms.
+  - Repeated _karmic reversal_ alerts the other realms. They create a _karmic self loop_ by killing an originator while her clone is being resuscitated. It provides the first bridge between the realms.
   - This event is the precursor to _The Night Land_.
-- The research base AI will help you escape. The AI is also trying to save the other personnel and test subjects. You must work together.
-- Minimap view because you are blind. Your blindness protects you against those that have been unleashed, because you cannot "see" your fears. You can still hear (represented via text, possibly sound).
+- The research base AI will help you escape. The AI is also trying to save the other personnel and test subjects. You must work with the AI.
+- Minimap view because you are blind. Your blindness partially protects you against the "unleashed", because you cannot "see" your fears. You can still hear (represented via text, possibly sound).
 - The weapons are batons, tasers, handguns, lasers, security turrets. There are also various visualisation/concentration techniques.
 
 The _Bardo Thodol_ says:
