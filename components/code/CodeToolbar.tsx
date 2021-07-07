@@ -1,16 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import styled from "@emotion/styled";
-import { css } from "@emotion/react";
 import useCode, { CodeMeta } from "store/code.store";
-import { CodeError } from "model/code/code.service";
 
-export default function CodeToolbar({ code, error }: Props) {
-  const [showError, setShowError] = useState(true);
-
-  const toggleShowError = useCallback(() => {
-    error && setShowError(x => !x);
-  }, [showError, error]);
-
+export default function CodeToolbar({ code }: Props) {
   const reset = useCallback(() => {
     if (code) {
       useCode.api.updateCode(code.key, ({ original }) => ({
@@ -26,27 +18,18 @@ export default function CodeToolbar({ code, error }: Props) {
       <Root>
         <div>{code?.key}</div>
         <RightToolbar>
-          <ErrorButton
-            greyed={!error}
-            onClick={toggleShowError}
-          >
-            error
-          </ErrorButton>
+          <div/>
           <ResetButton onClick={reset}>
             reset
           </ResetButton>
         </RightToolbar>
       </Root>
-      {error && showError && <ErrorPanel>
-        ⚠️&nbsp; Line {error.line}: <em>{error.error}</em>
-      </ErrorPanel>}
     </>
   );
 }
 
 interface Props {
   code: CodeMeta | null;
-  error?: CodeError;
 }
 
 const Root = styled.section`
@@ -69,30 +52,8 @@ const RightToolbar = styled.div`
   }
 `;
 
-const ErrorButton = styled.div<{ greyed: boolean }>`
-  outline: none;
-  cursor: pointer;
-  color: #f44;
-  ${({ greyed }) => greyed && css`
-    color: #777;
-    cursor: auto;
-  `}
-`;
-
 const ResetButton = styled.div<{}>`
   outline: none;
   cursor: pointer;
   color: #ddd;
-`;
-
-const ErrorPanel = styled.div<{}>`
-  position: absolute;
-  right: 0;
-  top: 27px;
-  font-size: 9pt;
-  padding: 4px 8px;
-  background: rgba(100, 50, 50, 0.9);
-  color: #fff;
-  border: 1px solid #333;
-  z-index: 10;
 `;
