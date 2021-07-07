@@ -190,8 +190,7 @@ export class TemplateTokenizer {
       return;
     }
     // Are we starting a new template?
-    if (style === 'string-2' &&
-      stream.current().startsWith('`')) {
+    if (style === 'string-2' && stream.current().startsWith('`')) {
       const mode = this.getModeForTemplateTag(state.previousVariable);
       const kind = 'template';
       if (mode) {
@@ -294,22 +293,8 @@ export class TemplateTokenizer {
    * @param {string|null} templateTag
    */
   getModeForTemplateTag(templateTag) {
-    if (!templateTag) {
-      return null;
-    }
-    // There are likely more customizations that would be nice here.
-    // Would be a good place for configuration if so.
-    if (templateTag === 'htm') {
-      templateTag = 'html';
-    }
-    const modeSpecs = [`google-${templateTag}`, `${templateTag}`];
-    // Note: the google-modules build pipeline does not currently support
-    //   for/of.
-    for (let i = 0; i < modeSpecs.length; i++) {
-      const mode = CodeMirror.getMode(this.config, modeSpecs[i]);
-      if (mode && mode.name !== 'null') {
-        return mode;
-      }
+    if (templateTag === 'css') {
+      return CodeMirror.getMode(this.config, 'text/x-scss');
     }
     return null;
   }

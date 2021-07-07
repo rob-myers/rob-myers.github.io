@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import codemirror from 'codemirror';
 import 'codemirror/mode/jsx/jsx';
 import 'codemirror/mode/css/css';
+import 'codemirror/mode/sass/sass';
 import './codemirror/custom-jsx-mode';
 
 import useCodeStore from "store/code.store";
@@ -18,7 +19,7 @@ export default function CodeEditor({ codeKey, gridArea }: Props) {
       const cm = codemirror(editorRoot.current, {
         // mode: 'jsx',
         mode: 'jsx-styled',
-        theme: 'nord',
+        theme: 'monokai',
         lineNumbers: true,
         tabSize: 2,
         value: code?.current,

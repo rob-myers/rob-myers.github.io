@@ -1,19 +1,28 @@
-// CodeMirror, copyright (c) by Marijn Haverbeke and others
-// Distributed under an MIT license: https://codemirror.net/LICENSE
-
+/**
+ * `jsx-styled` : syntax highlighting for JSX and CSS-in-JS.
+ * Based on:
+ * - https://github.com/codemirror/CodeMirror/blob/master/mode/jsx/jsx.js
+ * - https://github.com/codemirror/google-modes/blob/64397a294a54e4b3324c81082e7d7d20ee015278/src/javascript.js
+ * - https://github.com/codemirror/google-modes/blob/64397a294a54e4b3324c81082e7d7d20ee015278/src/template_string_inline_language.js
+ */
 (function(mod) {
-  if (typeof exports == "object" && typeof module == "object") // CommonJS
-    // mod(require("../../lib/codemirror"), require("../xml/xml"), require("../javascript/javascript"))
+  if (typeof exports == "object" && typeof module == "object")
+    // CommonJS (NextJS)
     mod(
       require("codemirror/lib/codemirror"),
       require("codemirror/mode/jsx/jsx"),
       require("./template_string_inline_language"),
       require("./locals"),
-  );
+    );
   else if (typeof define == "function" && define.amd) // AMD
-    define(["codemirror/lib/codemirror", "codemirror/mode/jsx"], mod)
+    define([
+      "codemirror/lib/codemirror",
+      "codemirror/mode/jsx",
+      "./template_string_inline_language",
+      "./locals",
+    ], mod);
   else // Plain browser env
-    mod(CodeMirror)
+    throw Error('This module must be loaded via CommonJS or AMD');
 })(function(CodeMirror, _, TemplateTokenizerModule, LocalsModule) {
   "use strict"
 
@@ -24,7 +33,10 @@
   // context 0 means not in tag, 1 means in tag, and 2 means in tag
   // and js block comment.
   function Context(state, mode, depth, prev) {
-    this.state = state; this.mode = mode; this.depth = depth; this.prev = prev
+    this.state = state;
+    this.mode = mode;
+    this.depth = depth;
+    this.prev = prev;
   }
 
   function copyContext(context) {
@@ -55,7 +67,6 @@
         };
       },
 
-      // token,
       token: function (stream, state) {
         const embeddedParserState = state.embeddedParserState;
         if (embeddedParser.shouldInterceptTokenizing(embeddedParserState)) {
@@ -64,19 +75,18 @@
             return style;
           }
         }
-        // const style = super.token(stream, state);
         const style = jsxMode.token(stream, state.context.state)
         embeddedParser.trackState(style, stream, embeddedParserState);
-        return markLocals(style, scopes, stream, state)
+        return markLocals(style, scopes, stream, state);
       },
 
       indent: function(state, textAfter, fullLine) {
-        return state.context.mode.indent(state.context.state, textAfter, fullLine)
+        return state.context.mode.indent(state.context.state, textAfter, fullLine);
       },
 
       innerMode: function(state) {
-        return state.context
-      }
+        return state.context;
+      },
     }
   }, "jsx")
 

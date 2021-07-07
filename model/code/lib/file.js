@@ -1,4 +1,5 @@
 function Foo() {
+  const foo = `ok ${4}`;
   return (
     <Bar area="baz">
       <>

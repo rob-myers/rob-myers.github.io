@@ -7,8 +7,7 @@ import { useEffect } from 'react';
 import 'xterm/css/xterm.css';
 import 'styles/globals.css'
 import 'codemirror/lib/codemirror.css';
-// import 'codemirror/theme/monokai.css';
-import 'codemirror/theme/nord.css';
+import 'codemirror/theme/monokai.css';
 
 const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
   useEffect(() => {
