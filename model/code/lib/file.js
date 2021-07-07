@@ -4,7 +4,10 @@ function Foo() {
     <Bar area="baz">
       <>
         <div myattr="foo">Qux</div>
-        <div myattr="foo">Qux</div>
+        <div myattr="foo">
+          Qux
+          { foo && bar && <Component prop={42} /> }
+        </div>
       </>
     </Bar>
   );   
@@ -15,7 +18,7 @@ const Bar = styled.div`
     grid-area: ${({ enabled }) => enabled ? 'foo' : 'bar'};
 
 		.classA, .myClass  {
-    	color: red;
+      color: red;
       grid-area: red;
-    }
+		}
 `;
