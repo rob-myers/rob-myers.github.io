@@ -2,12 +2,10 @@
 
 
 ### code-editor
-Try to implement CodeMirror with styled.div and styled(Foo) highlighting.
-- Get codemirror working
-  - https://www.npmjs.com/package/react-codemirror2
-- Use https://github.com/codemirror/google-modes/pull/259/files
-  - In particular customise `getModeForTemplateTag`
-  - See https://github.com/PolymerLabs/playground-elements/pull/53/files#diff-c8156f10484ad01002c824bca5f1ecf0f08e622794e6edeb7b185a76e2d0bc43
+- use customized monokai theme
+- ✅ css`...` should start inside a block context
+- ✅ use codemirror
+- ✅ get css`...` working with scss
 
 ### service-worker
 - ✅ can respond with type `application/javascript`

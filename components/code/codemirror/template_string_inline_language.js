@@ -294,7 +294,10 @@ export class TemplateTokenizer {
    */
   getModeForTemplateTag(templateTag) {
     if (templateTag === 'css') {
-      return CodeMirror.getMode(this.config, 'text/x-scss');
+      return CodeMirror.getMode(this.config, { 
+        name: 'text/x-scss',
+        inline: true, // Top level is inside block 
+      });
     }
     return null;
   }
