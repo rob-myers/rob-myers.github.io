@@ -40,6 +40,7 @@ export default function CodeEditor({ codeKey, gridArea }: Props) {
           "Ctrl-Alt-Down": "swapLineDown",
           "Cmd-/": "customToggleComment",
         },
+        addModeClass: true,
       });
     }
     return () => {
@@ -52,7 +53,6 @@ export default function CodeEditor({ codeKey, gridArea }: Props) {
       <CodeToolbar
         code={code}
       />
-
       <div ref={editorRoot} />
  
     </Root>
