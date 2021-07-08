@@ -2,12 +2,12 @@ import { useEffect, useRef } from "react";
 import styled from "@emotion/styled";
 
 import codemirror from 'codemirror';
+import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/addon/edit/matchbrackets';
-// TODO customise comments to handle JSX comments
-import 'codemirror/addon/comment/comment';
 import 'codemirror/keymap/sublime';
 // import 'codemirror/addon/fold/foldcode';
 
+// import 'codemirror/addon/comment/comment';
 import 'codemirror/mode/sass/sass';
 import 'codemirror/mode/javascript/javascript';
 import './codemirror/jsx-styled-mode';
@@ -15,21 +15,36 @@ import './codemirror/jsx-styled-mode';
 import useCodeStore from "store/code.store";
 import CodeToolbar from "./CodeToolbar";
 
+Object.assign(codemirror.commands, {
+  noop: () => {},
+  customToggleComment: () => {
+    console.log('customToggleComment');
+  },
+});
+
 export default function CodeEditor({ codeKey, gridArea }: Props) {
   const editorRoot = useRef<HTMLDivElement>(null);
   const code = useCodeStore(({ code }) => codeKey in code ? code[codeKey] : null);
-
+  
   useEffect(() => {
     if (editorRoot.current) {
       const cm = codemirror(editorRoot.current, {
-        // mode: 'jsx',
-        mode: 'jsx-styled',
+        autoCloseBrackets: true,
+        keyMap: 'sublime',
         theme: 'vscode-dark',
         lineNumbers: true,
+        matchBrackets: true,
+        // mode: 'jsx',
+        mode: 'jsx-styled',
         tabSize: 2,
         value: code?.current || '',
-        matchBrackets: true,
-        keyMap: 'sublime',
+        extraKeys: {
+          "Cmd-Ctrl-Up": "noop",
+          "Cmd-Ctrl-Down": "noop",
+          "Ctrl-Alt-Up": "swapLineUp",
+          "Ctrl-Alt-Down": "swapLineDown",
+          "Cmd-/": "customToggleComment",
+        },
       });
     }
     return () => {
