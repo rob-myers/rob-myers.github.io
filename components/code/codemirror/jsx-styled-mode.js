@@ -10,16 +10,16 @@
     // CommonJS (NextJS)
     mod(
       require("codemirror/lib/codemirror"),
-      // require("codemirror/mode/jsx/jsx"),
-      require("./custom-jsx-mode"),
+      require("codemirror/mode/jsx/jsx"),
+      // require("./custom-jsx-mode"),
       require("./template_string_inline_language"),
       require("./locals"),
     );
   else if (typeof define == "function" && define.amd) // AMD
     define([
       "codemirror/lib/codemirror",
-      // "codemirror/mode/jsx",
-      "./custom-jsx-mode",
+      "codemirror/mode/jsx",
+      // "./custom-jsx-mode",
       "./template_string_inline_language",
       "./locals",
     ], mod);
@@ -51,7 +51,7 @@
   const scopes = ["Block", "FunctionDef", "ArrowFunc", "ForStatement"]
 
   CodeMirror.defineMode("jsx-styled", function(config, modeConfig) {
-    const jsxMode = CodeMirror.getMode(config, "custom-jsx");
+    const jsxMode = CodeMirror.getMode(config, "jsx");
     const embeddedParser = new TemplateTokenizer({}, CodeMirror);
 
     return {
@@ -90,6 +90,6 @@
         return state.context;
       },
     }
-  }, "custom-jsx")
+  }, "jsx")
 
 });
