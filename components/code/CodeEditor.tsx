@@ -6,21 +6,16 @@ import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/keymap/sublime';
 // import 'codemirror/addon/fold/foldcode';
-
 // import 'codemirror/addon/comment/comment';
+
 import 'codemirror/mode/sass/sass';
 import 'codemirror/mode/javascript/javascript';
 import './codemirror/jsx-styled-mode';
+import './codemirror/custom-cmds';
 
 import useCodeStore from "store/code.store";
 import CodeToolbar from "./CodeToolbar";
 
-Object.assign(codemirror.commands, {
-  noop: () => {},
-  customToggleComment: () => {
-    console.log('customToggleComment');
-  },
-});
 
 export default function CodeEditor({ codeKey, gridArea }: Props) {
   const editorRoot = useRef<HTMLDivElement>(null);
@@ -39,8 +34,8 @@ export default function CodeEditor({ codeKey, gridArea }: Props) {
         tabSize: 2,
         value: code?.current || '',
         extraKeys: {
-          "Cmd-Ctrl-Up": "noop",
-          "Cmd-Ctrl-Down": "noop",
+          "Cmd-Ctrl-Up": "noOp",
+          "Cmd-Ctrl-Down": "noOp",
           "Ctrl-Alt-Up": "swapLineUp",
           "Ctrl-Alt-Down": "swapLineDown",
           "Cmd-/": "customToggleComment",
