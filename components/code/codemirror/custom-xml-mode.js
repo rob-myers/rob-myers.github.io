@@ -1,3 +1,7 @@
+/**
+ * This is codemirror/mode/xml/xml.js where,
+ * - blockCommentStart and blockCommentEnd are commmented out
+ */
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: https://codemirror.net/LICENSE
 
@@ -386,7 +390,6 @@ CodeMirror.defineMode("custom-xml", function(editorConf, config_) {
     electricInput: /<\/[\s\w:]+>$/,
     // blockCommentStart: "<!--",
     // blockCommentEnd: "-->",
-
 
     configuration: config.htmlMode ? "html" : "xml",
     helperType: config.htmlMode ? "html" : "xml",

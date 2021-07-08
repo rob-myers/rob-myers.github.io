@@ -2,12 +2,20 @@
 
 
 ### code-editor
-- but, problems with comment toggling
+- codemirror has problems with comment toggling 
+  - jsx comments are broken
+  - scss should be /** */
+  - fix by customising comment addon
+  - need not fix all cases, just common ones
 - ✅ use customized theme based on vscode-dark
 - ✅ highlight styled.div`...` and styled(Component)`...`
 - ✅ css`...` should start inside a block context
 - ✅ use codemirror
 - ✅ get css`...` working with scss
+- could try monaco-editor
+  - https://www.npmjs.com/package/monaco-jsx-highlighter
+  - https://github.com/Microsoft/typescript-styled-plugin#configuration (might work?)
+  - https://luminaxster.github.io/syntax-highlighter/
 
 ### service-worker
 - ✅ can respond with type `application/javascript`
@@ -15,6 +23,7 @@
   although `import('/src/module.js?v=2')` would.
 
 ### shell
+- fix `set home/dist {}`
 - can trigger shell command from markdown link
 - improve `help`
 - Use unix-like paths e.g. `/home/src` instead of `/home.src`?

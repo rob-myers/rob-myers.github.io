@@ -3,10 +3,14 @@ function Foo() {
   return (
     <Bar area="baz">
       <>
-        <div myattr="foo">Qux</div>
         <div myattr="foo">
           Qux
-          { foo && bar && <Component prop={42} /> }
+        </div>
+        <div myattr="foo">
+          Qux
+          {
+            foo && bar && <Component prop={42} />
+          }
         </div>
       </>
     </Bar>

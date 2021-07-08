@@ -139,7 +139,8 @@
 
       innerMode: function(state) {
         return state.context
-      }
+      },
+
     }
   }, "custom-xml", "javascript")
 
