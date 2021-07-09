@@ -38,6 +38,6 @@ babel.config.js
 next.config.js
 misc.config.js
 
-# One of the sprite atlases from the game "teleglitch".
-# Originally named "gfx/set1.png"
-model/level/generate/set1.png
+# sprite atlases from the game "teleglitch" e.g. set1.png
+scripts/teleglitch/gfx/*
+scripts/teleglitch/mods/*.lua
