@@ -84,7 +84,7 @@ function luaGfxToJson() {
       v.map(x => JSON.stringify(x)).join(',\n  ')
     }\n]`).join(',\n')
   }}}`;
-  JSON.parse(json);
+  JSON.parse(json); // We verify the json
 
   fs.writeFileSync(absPath.replace(/\.lua$/, '.json'), json);  
 }
@@ -151,4 +151,3 @@ function modsLuaToJson() {
     );
   }
 }
-
