@@ -41,3 +41,4 @@ misc.config.js
 # sprite atlases from the game "teleglitch" e.g. set1.png
 scripts/teleglitch/gfx/*
 scripts/teleglitch/mods/*.lua
+scripts/teleglitch/lua/*.lua

@@ -1,6 +1,4 @@
-{
-"moduleName": "l1_1",
-"items":[
+{"moduleName":"l1_1", "items":[
 {"type":"rest","x":-1.79729,"y":3.34492,"angle":0.209439,"frame":16},
 {"type":"euroalus","x":-1.7582,"y":-1.56248,"angle":-0.244346,"frame":6},
 {"type":"soundemitter","x":-2.78591,"y":0.0161209,"angle":0,"minradius":0,"maxradius":4.88,"maxvolume":0.135,"pitch":1,"soundname":"bg7"},
@@ -133,5 +131,4 @@
 {"type":"pfp","verts":[57,281,282]},
 {"type":"pfp","verts":[281,56,75,62,59,282]},
 {"type":"pfp","verts":[281,54,55,56]}
-]
-}
+]}
