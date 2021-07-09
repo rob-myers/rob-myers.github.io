@@ -5,7 +5,7 @@ modsLuaToJson();
 luaGfxToJson();
 
 /**
- * Convert lua functions calls in lua/gfx.lua into json
+ * Convert lua functions calls in lua/gfx.lua into json.
  */
 function luaGfxToJson() {
   console.info('converting lua/gfx.lua ...');
@@ -16,6 +16,13 @@ function luaGfxToJson() {
 
   const sprites = {} as Record<string, Sprite>;
   const frames = {} as Record<string, Frame[]>;
+
+  function parseRowItem(x: string) {// Catch handles comment e.g. --katkiminev sein
+    try { return x ? JSON.parse(x) : undefined; } catch {
+      x = x[0] === ';' ? x.slice(1) : x;
+      return x === '--' ? undefined : x || undefined;
+    }
+  }
 
   for (const line of lines) {
     if (line.startsWith('CreateSprite')) {
@@ -31,9 +38,7 @@ function luaGfxToJson() {
         comment,
       ] = line.slice('CreateSprite('.length).split(/[,)]/)
         .map(x => x.trim())
-        .map(x => {// Catch handles comment e.g. --katkiminev sein
-          try { return x ? JSON.parse(x) : undefined; } catch { return x; }
-        });
+        .map(parseRowItem);
       
       sprites[name] = {
         name,
@@ -58,9 +63,7 @@ function luaGfxToJson() {
         comment,
       ] = line.slice('SetFrame('.length).split(/[,)]/)
         .map(x => x.trim())
-        .map(x => {
-          try { return x ? JSON.parse(x) : undefined; } catch { return x; }
-        });
+        .map(parseRowItem);
       
       (frames[name] = frames[name] || []).push({
         name,
@@ -78,16 +81,12 @@ function luaGfxToJson() {
     Object.values(sprites).map(v => JSON.stringify(v)).join(',\n  ')
   }\n],\n"frames":{\n${
     Object.entries(frames).map(([k, v]) => `"${k}":[\n  ${
-      // JSON.stringify(v)
       v.map(x => JSON.stringify(x)).join(',\n  ')
     }\n]`).join(',\n')
   }}}`;
   JSON.parse(json);
 
-  fs.writeFileSync(absPath.replace(/\.lua$/, '.json'),
-  // JSON.stringify({ sprites, frames }, undefined, '  '),
-  json,
-);  
+  fs.writeFileSync(absPath.replace(/\.lua$/, '.json'), json);  
 }
 
 interface Sprite {
