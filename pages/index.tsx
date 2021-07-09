@@ -5,6 +5,7 @@ import Markdown from 'components/page/Markdown';
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 import useCodeStore from 'store/code.store';
+import TeleglitchModule from 'components/level/teleglitch-module';
 
 const env = {};
 
@@ -18,6 +19,8 @@ export default function IndexPage() {
     <Main>
       <Header />
       <Section>
+        <TeleglitchModule/>
+
         <Markdown children={`
 _TODO hookup babel transpilation of jsx using forked @babel/standalone_
       `}/>
