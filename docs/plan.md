@@ -1,11 +1,13 @@
 ## Plan
 
+### levels
+- can render teleglitch "modules" on a canvas
+- will create polygon approximations using https://vectr.com/
 
 ### code-editor
-- codemirror has problems with comment toggling 
-  - jsx comments are broken
+- fix comment toggle for mode `jsx-styled`
+  - jsx should be //, /** */ and {/** */}
   - scss should be /** */
-  - fix by customising comment addon
   - need not fix all cases, just common ones
 - ✅ use customized theme based on vscode-dark
 - ✅ highlight styled.div`...` and styled(Component)`...`
@@ -28,19 +30,13 @@
 - improve `help`
 - Use unix-like paths e.g. `/home/src` instead of `/home.src`?
 	- ✅ Redo redirects
-	- ✅ Redo `get`, bare `get`, `cd`, `ls`
+	- ✅ Redo `get`, bare `get`, `cd`, `ls`, `rm`
 - ✅ `api.read` can read lines from tty
 - ✅ redirect into cwd rather than `var`
 - ✅ support ansi-codes in `$'...'`
 - better error "stacks"
   > ✅ have node.meta.stack with function names
  can load modules from unpkg, caching source
-
-### of interest
-
-- https://nodejs.org/api/modules.html#modules_all_together
-- https://github.com/nodejs/modules/issues/307#issuecomment-762465349
-- https://github.com/preactjs/prefresh/pull/236
 
 ### Module over-caching issue
 
@@ -54,3 +50,9 @@ https://github.com/nodejs/modules/issues/307
 - assume it is acyclic with a single entrypoint
 - convert modules to commonjs or similar
 - ...
+
+### Links
+
+- https://nodejs.org/api/modules.html#modules_all_together
+- https://github.com/nodejs/modules/issues/307#issuecomment-762465349
+- https://github.com/preactjs/prefresh/pull/236

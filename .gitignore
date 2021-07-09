@@ -38,7 +38,6 @@ babel.config.js
 next.config.js
 misc.config.js
 
-3d/*
-!3d/img
-!3d/backup.bot.blend
-!3d/walking.bot.blend
+# One of the sprite atlases from the game "teleglitch".
+# Originally named "gfx/set1.png"
+model/level/generate/set1.png

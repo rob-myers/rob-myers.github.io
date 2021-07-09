@@ -19,8 +19,7 @@ export default function IndexPage() {
       <Header />
       <Section>
         <Markdown children={`
-
-_TODO make this into "real thing" with ace-editor and babel transpilation_
+_TODO hookup babel transpilation of jsx using forked @babel/standalone_
       `}/>
 
       <section style={{ height: 200 }}>
