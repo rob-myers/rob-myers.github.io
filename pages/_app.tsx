@@ -3,11 +3,14 @@ import { AppInitialProps } from 'next/app';
 import Head from 'next/head';
 import { Router } from 'next/router';
 import { useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 import 'xterm/css/xterm.css';
 import 'styles/globals.css'
 import 'codemirror/lib/codemirror.css';
 import 'components/code/codemirror/custom-theme.css';
+
+const queryClient = new QueryClient;
 
 const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
   useEffect(() => {
@@ -34,7 +37,9 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
             esc the base
           </title>
       </Head>
-      <Component {...pageProps} />
+      <QueryClientProvider client={queryClient} >
+        <Component {...pageProps} />
+      </QueryClientProvider>
     </>
   );
 }
