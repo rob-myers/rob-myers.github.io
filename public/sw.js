@@ -9,7 +9,7 @@ self.addEventListener('activate', function(event) {
 const customRouteRegex = /\/src\//;
 
 self.addEventListener('fetch',
-  /** @param {import('../model/service-worker').FetchEvent} event */
+  /** @param {import('../types/service-worker').FetchEvent} event */
   async function(event) {
     if (event.request.method === 'GET' && customRouteRegex.test(event.request.url)){
       console.log({ url: event.request.url, event});
