@@ -11,17 +11,17 @@ export default function TeleglitchModule() {
   }
 
   const { data: teleglitch } = useQuery('teleglitch', async () => {
-    const img = new Image;
-    img.src = '/api/teleglitch/gfx?set1.png';
+    const spritesheet = new Image;
+    spritesheet.src = '/api/teleglitch/gfx?set1.png';
     const [canvas, gfx, modules] = await Promise.all([
-      img.decode().then(() => {
+      spritesheet.decode().then(() => {
         const canvas = document.createElement('canvas');
-        [canvas.width, canvas.height] = [img.width, img.height];
-        canvas.getContext('2d')!.drawImage(img, 0, 0);
+        [canvas.width, canvas.height] = [spritesheet.width, spritesheet.height];
+        canvas.getContext('2d')!.drawImage(spritesheet, 0, 0);
         return canvas;
       }),
       fetch('/api/teleglitch/lua?gfx.json').then(x => x.json()),
-      fetch('/api/teleglitch/mod').then(x => x.json()),
+      fetch('/api/teleglitch/mods').then(x => x.json()),
     ]);
     return { canvas, gfx, modules };
   }, { refetchOnWindowFocus: false });
@@ -31,6 +31,6 @@ export default function TeleglitchModule() {
   }, [teleglitch]);
 
   return (
-    <div />    
+    <div />
   );
 }
