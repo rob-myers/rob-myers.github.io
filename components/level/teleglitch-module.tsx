@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery } from "react-query";
+import type * as Teleglitch from 'types/teleglitch';
 
 /**
  * This component is available in development only, because it
@@ -9,8 +10,9 @@ export default function TeleglitchModule() {
   if (process.env.NODE_ENV === 'production') {
     return null;
   }
+  const moduleCanvas = useRef<HTMLCanvasElement>(null);
 
-  const { data: teleglitch } = useQuery('teleglitch', async () => {
+  const { data: teleglitch } = useQuery<Teleglitch>('teleglitch', async () => {
     const spritesheet = new Image;
     spritesheet.src = '/api/teleglitch/gfx?set1.png';
     const [canvas, gfx, modules] = await Promise.all([
@@ -27,10 +29,20 @@ export default function TeleglitchModule() {
   }, { refetchOnWindowFocus: false });
 
   useEffect(() => {
+    if (teleglitch) {
+      // TODO draw a module e.g. l1_1
+    }
+
     console.log(teleglitch);
   }, [teleglitch]);
 
   return (
-    <div />
+    <canvas ref={moduleCanvas} style={{ border: '1px solid red' }} />
   );
+}
+
+interface Teleglitch {
+  canvas: HTMLCanvasElement;
+  gfx: Teleglitch.Gfx;
+  modules: Teleglitch.Mods;
 }

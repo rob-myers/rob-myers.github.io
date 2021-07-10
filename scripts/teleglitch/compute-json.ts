@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import type * as Teleglitch from '../../types/teleglitch';
 
 modsLuaToJson();
 luaGfxToJson();
@@ -14,8 +15,8 @@ function luaGfxToJson() {
     .split('\n')
     .filter(x => x.trim() && !x.trim().startsWith('--'));
 
-  const sprites = {} as Record<string, Sprite>;
-  const frames = {} as Record<string, Frame[]>;
+  const sprites = {} as Record<string, Teleglitch.Sprite>;
+  const frames = {} as Record<string, Teleglitch.Frame[]>;
 
   function parseRowItem(x: string) {// Catch handles comment e.g. --katkiminev sein
     try { return x ? JSON.parse(x) : undefined; } catch {
@@ -87,30 +88,6 @@ function luaGfxToJson() {
   JSON.parse(json); // We verify the json
 
   fs.writeFileSync(absPath.replace(/\.lua$/, '.json'), json);  
-}
-
-interface Sprite {
-  name: string;
-  texture: string;
-  cols: number;
-  rows: number;
-  width: number;
-  height: number;
-  xOffset: number;
-  yOffset: number;
-  comment?: string;
-}
-
-interface Frame {
-  /** Name of respective sprite */
-  name: string;
-  /** Frame identifier, wrt sprite */
-  id: number;
-  x1: number;
-  y1: number;
-  x2: number;
-  y2: number;
-  comment?: string;
 }
 
 /**
