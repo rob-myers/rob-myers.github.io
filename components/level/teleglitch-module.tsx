@@ -15,7 +15,8 @@ export default function TeleglitchModule() {
   const { data: teleglitch } = useQuery<Teleglitch>('teleglitch', async () => {
     const spritesheet = new Image;
     spritesheet.src = '/api/teleglitch/gfx?set1.png';
-    const [canvas, gfx, modules] = await Promise.all([
+  
+    const [canvas, gfx, modules, objects] = await Promise.all([
       spritesheet.decode().then(() => {
         const canvas = document.createElement('canvas');
         [canvas.width, canvas.height] = [spritesheet.width, spritesheet.height];
@@ -24,16 +25,27 @@ export default function TeleglitchModule() {
       }),
       fetch('/api/teleglitch/lua?gfx.json').then(x => x.json()),
       fetch('/api/teleglitch/mods').then(x => x.json()),
+      fetch('/api/teleglitch/lua?objects.json').then(x => x.json()),
     ]);
-    return { canvas, gfx, modules };
+
+    return { canvas, gfx, modules, objects };
   }, { refetchOnWindowFocus: false });
 
   useEffect(() => {
-    if (teleglitch) {
-      // TODO draw a module e.g. l1_1
+    if (teleglitch) {// TODO draw a module
+      const module = teleglitch.modules.find(x => x.moduleName === 'algus3')!;
+      console.log(module);
+      for (const item of module.items) {
+        if (item.type === 'bmp') {
+          // TODO
+        } else if (false) {
+          // TODO objects
+        } else {
+          console.warn('ignoring item', item.type);
+        }
+      } 
     }
 
-    console.log(teleglitch);
   }, [teleglitch]);
 
   return (
@@ -45,4 +57,5 @@ interface Teleglitch {
   canvas: HTMLCanvasElement;
   gfx: Teleglitch.Gfx;
   modules: Teleglitch.Mods;
+  objects: Teleglitch.Objects;
 }
