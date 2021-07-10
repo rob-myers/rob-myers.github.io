@@ -13,12 +13,99 @@ export interface Mod {
   items: ModItem[];
 }
 
-export interface ModItem {
-  type: 'container'; // TODO
+export type ModItem = {
+  type: 'bmp';
   x: number;
   y: number;
   angle: number;
-  "sprite":"spr_puitkast"; // TODO
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  tex: string;
+} | {
+  type: 'door';
+  x: number;
+  y: number;
+  angle: number;
+  doortype: string;
+  sndname: string;
+} | {
+  type: 'node';
+  x: number;
+  y: number;
+  angle: number;
+  nodetype: 0 | 1 | 2 | 3;
+} | {
+  type: (
+    | 'rest'
+    | 'euroalus'
+    | 'arvuti_laud'
+    | 'kast2'
+    | 'tool'
+    | 'laud'
+    | 'terminal'
+    | 'punanehallmasinsuur'
+    | 'riiul'
+    | 'puust_kondeiner'
+    | 'laeklaas'
+    | 'Valgusti'
+    | 'Punane_8px_lai_siksak_laev6re'
+  );
+  x: number;
+  y: number;
+  angle: number;
+  frame: number;
+  funcname?: string;
+} | {
+  type: 'soundemitter';
+  x: number;
+  y: number;
+  angle: number;
+  minradius: number;
+  maxradius: number;
+  maxvolume: number;
+  pitch: 1;
+  soundname: string;
+} | {
+  type: 'container';
+  x: number;
+  y: number;
+  angle: number;
+  sprite: string;
+} | {
+  type: 'giant_zombie';
+  x: number;
+  y: number;
+  angle: number;
+} | {
+  type: 'sein_peez';
+  x: number;
+  y: number;
+  angle: number;
+  frame: number;
+  r?: number;
+  g?: number;
+  b?: number;
+} | {
+  type: 'light';
+  x: number;
+  y: number;
+  angle: number;
+  radius: number;
+  brightness: number;
+} | {
+  type: 'pfv';
+  id: number;
+  x: number;
+  y: number;
+  angle: number;
+  r: number;
+  g: number;
+  b: number;
+} | {
+  type: 'pfp';
+  verts: number[];
 }
 
 /**
