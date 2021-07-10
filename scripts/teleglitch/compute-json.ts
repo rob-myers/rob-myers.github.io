@@ -4,12 +4,45 @@ import type * as Teleglitch from '../../types/teleglitch';
 
 modsLuaToJson();
 luaGfxToJson();
+luaObjectsToJson();
+luaOldwallsToJson();
+
+function luaOldwallsToJson() {
+  // TODO
+}
+
+function luaObjectsToJson() {
+  console.info('converting lua/objects.lua...');
+  const absPath = path.resolve(__dirname, 'lua', 'objects.lua');
+  const jsCode = fs.readFileSync(absPath).toString()
+    .split('--Mehe depth on 2')[0]
+    .replace(/--/g, '//')
+    .replace(/createfunction[^\n]+\n/g, '')
+    .replace(/\n\s*([a-z]+)=([^\{])/g, '\n$1:$2');
+
+  const objectlist = {};
+  Function(
+    'materials',
+    'dofile',
+    'objectlist',
+    jsCode,
+  )({}, () => {}, objectlist);
+
+  fs.writeFileSync(
+    absPath.replace(/\.lua$/, '.json'),
+    `{\n${
+      Object.entries(objectlist)
+        .map(([k, v]) => `"${k}": ${JSON.stringify(v)}`)
+        .join(',\n')
+      }\n}`
+  );
+}
 
 /**
- * Convert lua functions calls in lua/gfx.lua into json.
+ * Convert lua functions calls in `lua/gfx.lua` into json.
  */
 function luaGfxToJson() {
-  console.info('converting lua/gfx.lua ...');
+  console.info('converting lua/gfx.lua...');
   const absPath = path.resolve(__dirname, 'lua', 'gfx.lua');
   const lines = fs.readFileSync(absPath).toString()
     .split('\n')
@@ -91,8 +124,8 @@ function luaGfxToJson() {
 }
 
 /**
- * This quick-n-dirty lua to json converter
- * expects a particular format, e.g.
+ * A quick-n-dirty lua to json converter
+ * which expects a particular format, e.g.
  * ```lua
  * modlist["l1_1"]=
  * {
@@ -109,7 +142,7 @@ function modsLuaToJson() {
     .map(x => path.resolve(__dirname, 'mods', x));
   
   for (const absPath of luaFilepaths) {
-    console.info('converting', `mods/${path.basename(absPath)}`, '...');
+    console.info('converting', `mods/${path.basename(absPath)}...`);
   
     const lines = fs.readFileSync(absPath).toString().split('\n');
     const moduleName = lines.shift()!.split('"')[1];

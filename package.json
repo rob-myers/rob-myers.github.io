@@ -10,7 +10,7 @@
     "next-cfg": "tsc -p scripts",
     "types": "tsc --noEmit",
     "postinstall": "patch-package",
-    "convert-tg": "ts-node ./scripts/teleglitch/compute-json"
+    "teleglitch-json": "ts-node ./scripts/teleglitch/compute-json"
   },
   "dependencies": {
     "braces": "^3.0.2",
