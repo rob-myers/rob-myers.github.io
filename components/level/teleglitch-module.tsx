@@ -43,8 +43,8 @@ export default function TeleglitchModule() {
 
       ctxt.resetTransform();
       ctxt.clearRect(0, 0, ctxt.canvas.width, ctxt.canvas.height);
-      ctxt.translate(140, 70);
-      ctxt.scale(8, 8);
+      ctxt.translate(150, 70);
+      ctxt.scale(10, 10);
       ctxt.scale(2, 1); // strange
       ctxt.strokeStyle = 'blue';
       ctxt.lineWidth = 0.05;
@@ -63,11 +63,13 @@ export default function TeleglitchModule() {
         ctxt.restore();
       }
 
-      // IN PROGRESS
       for (const item of objects) {
         const object = teleglitch.objects[item.type];
         const frame = teleglitch.gfx.frames[object.sprite][object.frame];
-        // console.log({ objectType: item.type, object, frame });
+        if (!frame) {
+          console.warn(`${item.type}: frame ${object.frame} not found`);
+          continue;
+        }
         const [w, h] = [frame.x2 - frame.x1, frame.y2 - frame.y1];
         const [dw, dh] = [w / scale, h / scale];
         ctxt.save();
@@ -79,7 +81,7 @@ export default function TeleglitchModule() {
       }
 
       for (const items of polydata) {
-        ctxt.fillStyle = 'rgba(255, 0, 0, 0.25)';
+        ctxt.fillStyle = 'rgba(255, 0, 0, 0.1)';
         ctxt.beginPath();
         ctxt.moveTo(items[0].x, items[0].y);
         items.forEach(p => ctxt.lineTo(p.x, p.y));
@@ -89,11 +91,11 @@ export default function TeleglitchModule() {
       }
 
       for (const item of nodes) {
-        ctxt.fillStyle = '#000';
+        ctxt.strokeStyle = 'rgba(0, 255, 0, 0.4)';
         ctxt.save();
         ctxt.translate(item.x, item.y);
         ctxt.rotate(item.angle);
-        ctxt.fillRect(-.5, -.5, 1, 1); // TODO draw node instead
+        ctxt.strokeRect(-.25, -.25, .5, .5); // TODO draw node instead
         ctxt.restore();
       }
     }
@@ -149,6 +151,8 @@ function organiseModule(mod: Teleglitch.Mod, teleglitch: TeleglitchData) {
   for (const item of mod.items) {
     if (item.type === 'bmp' && item.tex === 'gfx/set1.png') {
       bmps.push(item);
+    } else if (ignoredModuleItems.includes(item.type)) {
+      ignored.push(item); // Ignore silently
     } else if (item.type in teleglitch.objects) {
       objects.push(item as Teleglitch.ObjectModItem);
     } else if (item.type === 'node') {
@@ -159,8 +163,6 @@ function organiseModule(mod: Teleglitch.Mod, teleglitch: TeleglitchData) {
       allPoints[item.id] = item;
     } else if (item.type === 'pfp') {
       polydata.push(item.verts.map(x => allPoints[x]));
-    } else if (ignoredModuleItems.includes(item.type)) {
-      ignored.push(item); // Ignore silently
     } else {
       console.warn('ignoring item:', item.type);
       others.push(item);

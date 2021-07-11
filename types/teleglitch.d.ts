@@ -3,7 +3,7 @@
  */
 export interface Gfx {
   sprites: Sprite[];
-  frames: Record<string, Frame[]>;
+  frames: Record<string, Record<number, Frame>>;
 }
 
 export type Objects = Record<string, Object>;

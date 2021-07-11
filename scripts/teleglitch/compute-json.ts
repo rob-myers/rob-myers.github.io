@@ -65,7 +65,7 @@ function luaGfxToJson() {
     .filter(x => x.trim() && !x.trim().startsWith('--'));
 
   const sprites = {} as Record<string, Teleglitch.Sprite>;
-  const frames = {} as Record<string, Teleglitch.Frame[]>;
+  const frames = {} as Record<string, Record<number, Teleglitch.Frame>>;
 
   function parseRowItem(x: string) {// Catch handles comment e.g. --katkiminev sein
     try { return x ? JSON.parse(x) : undefined; } catch {
@@ -87,36 +87,34 @@ function luaGfxToJson() {
         name, texture, cols, rows,
         width, height, xOffset, yOffset, comment,
       };
-
     } else if (line.startsWith('SetFrame')) {
       const [name, id, x1, y1, x2, y2, comment] = line.slice('SetFrame('.length).split(/[,)]/)
         .map(x => x.trim())
         .map(parseRowItem);
-      
-      (frames[name] = frames[name] || []).push({
-        name, id, x1, y1, x2, y2, comment
-      });
+      frames[name] = frames[name] || {};
+      frames[name][id] = { name, id, x1, y1, x2, y2, comment };
     }
-
-    // Finally, ensure a single frame for each sprite
-    Object.values(sprites).forEach(s =>
-      frames[s.name] = frames[s.name] || [{
-        id: 0,
-        name: s.name,
-        x1: s.xOffset,
-        y1: s.yOffset,
-        x2: s.xOffset + s.width,
-        y2: s.yOffset + s.height,
-      }]
-    );
   }
+
+  // Finally, ensure/overwrite frame 0 for each sprite
+  Object.values(sprites).forEach(s => {
+    frames[s.name] = frames[s.name] || {};
+    frames[s.name][0] = {
+      id: 0,
+      name: s.name,
+      x1: s.xOffset,
+      y1: s.yOffset,
+      x2: s.xOffset + s.width,
+      y2: s.yOffset + s.height,
+    };
+  });
 
   const json = `{"sprites":[\n  ${
     Object.values(sprites).map(v => JSON.stringify(v)).join(',\n  ')
   }\n],\n"frames":{\n${
-    Object.entries(frames).map(([k, v]) => `"${k}":[\n  ${
-      v.map(x => JSON.stringify(x)).join(',\n  ')
-    }\n]`).join(',\n')
+    Object.entries(frames).map(([k, v]) => `"${k}":{\n  ${
+      Object.entries(v).map(([x, y]) => `"${x}": ${JSON.stringify(y)}`).join(',\n  ')
+    }\n}`).join(',\n')
   }}}`;
   JSON.parse(json); // We verify the json
 
