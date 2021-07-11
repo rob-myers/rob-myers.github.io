@@ -139,21 +139,21 @@ export interface LightModItem {
   brightness: number;
 }
 
-export type PolyModItem = (
-  | {
-    type: 'pfv';
-    id: number;
-    x: number;
-    y: number;
-    angle: number;
-    r: number;
-    g: number;
-    b: number;
-  } | {
-    type: 'pfp';
-    verts: number[];
-  }
-)
+export interface PointModItem {
+  type: 'pfv';
+  id: number;
+  x: number;
+  y: number;
+  angle: number;
+  r: number;
+  g: number;
+  b: number;
+}
+
+export interface PolyModItem {
+  type: 'pfp';
+  verts: number[];
+}
 
 export type ModItem = (
   | BmpModItem
@@ -163,6 +163,7 @@ export type ModItem = (
   | SoundEmitterModItem
   | ContainerModItem
   | LightModItem
+  | PointModItem
   | PolyModItem
 );
 

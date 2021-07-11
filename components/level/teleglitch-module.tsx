@@ -63,12 +63,24 @@ export default function TeleglitchModule() {
         ctxt.restore();
       }
 
+      // TODO objects
+
+      for (const items of polydata) {
+        ctxt.fillStyle = 'rgba(255, 0, 0, 0.25)';
+        ctxt.beginPath();
+        ctxt.moveTo(items[0].x, items[0].y);
+        items.forEach(p => ctxt.lineTo(p.x, p.y));
+        ctxt.closePath();
+        ctxt.fill();
+        ctxt.stroke();
+      }
+
       for (const item of nodes) {
+        ctxt.fillStyle = '#000';
         ctxt.save();
         ctxt.translate(item.x, item.y);
         ctxt.rotate(item.angle);
-        // TODO draw node instead
-        ctxt.fillRect(-.5, -.5, 1, 1);
+        ctxt.fillRect(-.5, -.5, 1, 1); // TODO draw node instead
         ctxt.restore();
       }
     }
@@ -111,10 +123,11 @@ function organiseModule(mod: Teleglitch.Mod, teleglitch: TeleglitchData) {
   const objects = [] as Teleglitch.ObjectModItem[];
   const nodes = [] as Teleglitch.NodeModItem[];
   const lights = [] as Teleglitch.LightModItem[];
-  const polydata = [] as Teleglitch.PolyModItem[];
+  const polydata = [] as Teleglitch.PointModItem[][];
   const ignored = [] as Teleglitch.ModItem[];
   const others = [] as Teleglitch.ModItem[];
-
+  const allPoints = [] as typeof polydata[0];
+  
   for (const item of mod.items) {
     if (item.type === 'bmp' && item.tex === 'gfx/set1.png') {
       bmps.push(item);
@@ -124,11 +137,12 @@ function organiseModule(mod: Teleglitch.Mod, teleglitch: TeleglitchData) {
       nodes.push(item);
     } else if (item.type === 'light') {
       lights.push(item);
-    } else if (item.type === 'pfv' || item.type === 'pfp') {
-      polydata.push(item);
+    } else if (item.type === 'pfv') {
+      allPoints[item.id] = item;
+    } else if (item.type === 'pfp') {
+      polydata.push(item.verts.map(x => allPoints[x]));
     } else if (ignoredModuleItems.includes(item.type)) {
-      // Ignore silently
-      ignored.push(item);
+      ignored.push(item); // Ignore silently
     } else {
       console.warn('ignoring item:', item.type);
       others.push(item);
