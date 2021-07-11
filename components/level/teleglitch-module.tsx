@@ -13,7 +13,7 @@ export default function TeleglitchModule() {
   }
   const moduleCanvas = useRef<HTMLCanvasElement>(null);
 
-  const { data: teleglitch } = useQuery<Teleglitch>('teleglitch', async () => {
+  const { data: teleglitch } = useQuery<TeleglitchData>('teleglitch', async () => {
     const img = new Image;
     img.src = '/api/teleglitch/gfx?set1.png';
   
@@ -44,37 +44,33 @@ export default function TeleglitchModule() {
       ctxt.resetTransform();
       ctxt.clearRect(0, 0, ctxt.canvas.width, ctxt.canvas.height);
       ctxt.translate(140, 70);
-      ctxt.scale(10, 10);
+      ctxt.scale(8, 8);
       ctxt.scale(2, 1); // strange
       ctxt.strokeStyle = 'blue';
       ctxt.lineWidth = 0.05;
       const scale = 12; // important
 
-      for (const item of module.items) {
-        if (item.type === 'bmp' && item.tex === 'gfx/set1.png') {
-          const [w, h] = [item.x2 - item.x1, item.y2 - item.y1];
-          const [dw, dh] = [w / scale, h / scale];
-          ctxt.save();
-          ctxt.translate(item.x, item.y);
-          ctxt.rotate(item.angle);
-          ctxt.drawImage(sheet, item.x1, item.y1, w, h, -dw/2, -dh/2, dw, dh);
-          // ctxt.strokeRect(-dw/2, -dh/2, dw, dh);
-          ctxt.restore();
-        } else if (item.type in teleglitch.objects) {
-          // TODO
-        } else if (item.type === 'node') {
-          // ctxt.save();
-          // ctxt.translate(item.x, item.y)
-        } else if (item.type === 'light') {
-          // TODO
-        } else if (item.type === 'pfv' || item.type === 'pfp') {
-          // TODO
-        } else if (ignoredModuleItems.includes(item.type)) {
-          // Ignore silently
-        } else {
-          console.warn('ignoring item:', item.type);
-        }
-      } 
+      const { bmps, objects, nodes, lights, polydata, ignored, others } = organiseModule(module, teleglitch);
+
+      for (const item of bmps) {
+        const [w, h] = [item.x2 - item.x1, item.y2 - item.y1];
+        const [dw, dh] = [w / scale, h / scale];
+        ctxt.save();
+        ctxt.translate(item.x, item.y);
+        ctxt.rotate(item.angle);
+        ctxt.drawImage(sheet, item.x1, item.y1, w, h, -dw/2, -dh/2, dw, dh);
+        // ctxt.strokeRect(-dw/2, -dh/2, dw, dh);
+        ctxt.restore();
+      }
+
+      for (const item of nodes) {
+        ctxt.save();
+        ctxt.translate(item.x, item.y);
+        ctxt.rotate(item.angle);
+        // TODO draw node instead
+        ctxt.fillRect(-.5, -.5, 1, 1);
+        ctxt.restore();
+      }
     }
 
   }, [teleglitch]);
@@ -91,7 +87,7 @@ export default function TeleglitchModule() {
   );
 }
 
-interface Teleglitch {
+interface TeleglitchData {
   /** Spritesheet `set1.png` */
   spritesheet: HTMLCanvasElement;
   gfx: Teleglitch.Gfx;
@@ -109,3 +105,43 @@ const ignoredModuleItems: Teleglitch.ModItem['type'][] = [
   'soundemitter',
   'terminal',
 ];
+
+function organiseModule(mod: Teleglitch.Mod, teleglitch: TeleglitchData) {
+  const bmps = [] as Teleglitch.BmpModItem[];
+  const objects = [] as Teleglitch.ObjectModItem[];
+  const nodes = [] as Teleglitch.NodeModItem[];
+  const lights = [] as Teleglitch.LightModItem[];
+  const polydata = [] as Teleglitch.PolyModItem[];
+  const ignored = [] as Teleglitch.ModItem[];
+  const others = [] as Teleglitch.ModItem[];
+
+  for (const item of mod.items) {
+    if (item.type === 'bmp' && item.tex === 'gfx/set1.png') {
+      bmps.push(item);
+    } else if (item.type in teleglitch.objects) {
+      objects.push(item as Teleglitch.ObjectModItem);
+    } else if (item.type === 'node') {
+      nodes.push(item);
+    } else if (item.type === 'light') {
+      lights.push(item);
+    } else if (item.type === 'pfv' || item.type === 'pfp') {
+      polydata.push(item);
+    } else if (ignoredModuleItems.includes(item.type)) {
+      // Ignore silently
+      ignored.push(item);
+    } else {
+      console.warn('ignoring item:', item.type);
+      others.push(item);
+    }
+  }
+
+  return {
+    bmps,
+    objects,
+    nodes,
+    lights,
+    polydata,
+    ignored,
+    others,
+  };
+}
