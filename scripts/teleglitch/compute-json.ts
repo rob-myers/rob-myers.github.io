@@ -5,11 +5,6 @@ import type * as Teleglitch from '../../types/teleglitch';
 modsLuaToJson();
 luaGfxToJson();
 luaObjectsToJson();
-luaOldwallsToJson();
-
-function luaOldwallsToJson() {
-  // TODO
-}
 
 function luaObjectsToJson() {
   console.info('converting lua/objects.lua...');
@@ -20,7 +15,7 @@ function luaObjectsToJson() {
     .replace(/createfunction[^\n]+\n/g, '')
     .replace(/\n\s*([a-z]+)=([^\{])/g, '\n$1:$2');
 
-  const objectlist = {};
+  const objectlist: Record<string, Teleglitch.Object> = {};
   Function(
     'materials',
     'dofile',
@@ -28,13 +23,34 @@ function luaObjectsToJson() {
     jsCode,
   )({}, () => {}, objectlist);
 
-  fs.writeFileSync(
-    absPath.replace(/\.lua$/, '.json'),
+  luaOldwallsToJson(objectlist);
+
+  fs.writeFileSync(absPath.replace(/\.lua$/, '.json'),
     `{\n${
-      Object.entries(objectlist)
-        .map(([k, v]) => `"${k}": ${JSON.stringify(v)}`)
-        .join(',\n')
+        Object.entries(objectlist)
+          .map(([k, v]) => `"${k}": ${
+            JSON.stringify(v, (key, value) => key === '__index' ? undefined : value)
+          }`)
+          .join(',\n')
       }\n}`
+  );
+}
+
+function luaOldwallsToJson(objectlist: Record<string, Teleglitch.Object>) {
+  console.info('converting lua/oldwalls.lua...');
+  const absPath = path.resolve(__dirname, 'lua', 'oldwalls.lua');
+  const jsCode = fs.readFileSync(absPath).toString()
+    .replace(/--/g, '//')
+    .replace(/\n\s*([a-z]+)=([^\{])/g, '\n$1:$2');
+
+  Function(
+    'objectlist',
+    'materials',
+    'setmetatable',
+    jsCode,
+  )(objectlist, 
+    {},
+    (next: Partial<Teleglitch.Object>, prev: Partial<Teleglitch.Object>) => Object.assign(next, prev),
   );
 }
 

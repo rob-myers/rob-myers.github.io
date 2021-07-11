@@ -34,10 +34,10 @@ export default function TeleglitchModule() {
 
   useEffect(() => {
     if (teleglitch) {// TODO draw a module
-      const module = teleglitch.modules.find(x => x.moduleName === 'algus3')!;
+      const module = teleglitch.modules.find(x => x.moduleName === 'l1_2')!;
       console.log(module);
       for (const item of module.items) {
-        if (item.type === 'bmp') {
+        if (item.type === 'bmp' && item.tex === 'gfx/set1.png') {
           // TODO
         } else if (item.type in teleglitch.objects) {
           // TODO
