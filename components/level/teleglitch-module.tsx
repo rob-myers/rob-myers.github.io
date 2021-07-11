@@ -14,32 +14,37 @@ export default function TeleglitchModule() {
   const moduleCanvas = useRef<HTMLCanvasElement>(null);
 
   const { data: teleglitch } = useQuery<TeleglitchData>('teleglitch', async () => {
-    const img = new Image;
-    img.src = '/api/teleglitch/gfx?set1.png';
+    const [sheetImg, nodesImg] = [...Array(2)].map(_ => new Image);
+    sheetImg.src = '/api/teleglitch/gfx?set1.png';
+    nodesImg.src = '/api/teleglitch/gfx?node.bmp';
   
-    const [canvas, gfx, modules, objects] = await Promise.all([
-      img.decode().then(() => {
+    const [spritesheet, nodesCanvas] = await Promise.all(
+      [sheetImg, nodesImg].map(async img => {
+        await img.decode();
         const canvas = document.createElement('canvas');
         [canvas.width, canvas.height] = [img.width, img.height];
         canvas.getContext('2d')!.drawImage(img, 0, 0);
         return canvas;
-      }),
+      })
+    );
+    const [gfx, objects, modules] = await Promise.all([
       fetch('/api/teleglitch/lua?gfx.json').then(handleJsonFetch),
-      fetch('/api/teleglitch/mods').then(handleJsonFetch),
       fetch('/api/teleglitch/lua?objects.json').then(handleJsonFetch),
+      fetch('/api/teleglitch/mods').then(handleJsonFetch),
     ]);
 
-    return { spritesheet: canvas, gfx, modules, objects };
+    return { spritesheet, nodesCanvas, gfx, modules, objects };
   }, useQueryOptions);
 
   useEffect(() => {
-    if (teleglitch) {// TODO draw a module
+    if (teleglitch) {// Draw a module
       const ctxt = moduleCanvas.current!.getContext('2d')!;
-      const sheet = teleglitch.spritesheet;
+      const { spritesheet, nodesCanvas } = teleglitch;
       const moduleName = [
         'algus3',
         'l1_5',
         'l1_6',
+        'l1_9',
         'l1_v2ike_ringaed',
         'l1_konservi_ladu',
       ][3];
@@ -49,7 +54,7 @@ export default function TeleglitchModule() {
       ctxt.resetTransform();
       ctxt.clearRect(0, 0, ctxt.canvas.width, ctxt.canvas.height);
       ctxt.translate(150, 70);
-      ctxt.scale(10, 10);
+      ctxt.scale(18, 18);
       ctxt.scale(2, 1); // strange
       ctxt.strokeStyle = 'blue';
       ctxt.lineWidth = 0.05;
@@ -63,13 +68,12 @@ export default function TeleglitchModule() {
         ctxt.save();
         ctxt.translate(item.x, item.y);
         ctxt.rotate(item.angle);
-        ctxt.drawImage(sheet, item.x1, item.y1, w, h, -dw/2, -dh/2, dw, dh);
+        ctxt.drawImage(spritesheet, item.x1, item.y1, w, h, -dw/2, -dh/2, dw, dh);
         // ctxt.strokeRect(-dw/2, -dh/2, dw, dh);
         ctxt.restore();
       }
 
       for (const item of objects) {
-        // if (item.type === 'oldwall_stone') continue;
         const object = teleglitch.objects[item.type];
         const frame = teleglitch.gfx.frames[object.sprite][object.frame];
         if (!frame) {
@@ -81,7 +85,7 @@ export default function TeleglitchModule() {
         ctxt.save();
         ctxt.translate(item.x, item.y);
         ctxt.rotate(item.angle);
-        ctxt.drawImage(sheet, frame.x1, frame.y1, w, h, -dw/2, -dh/2, dw, dh);
+        ctxt.drawImage(spritesheet, frame.x1, frame.y1, w, h, -dw/2, -dh/2, dw, dh);
         // ctxt.strokeRect(-dw/2, -dh/2, dw, dh);
         ctxt.restore();
       }
@@ -97,11 +101,13 @@ export default function TeleglitchModule() {
       }
 
       for (const item of nodes) {
-        ctxt.strokeStyle = 'rgba(0, 255, 0, 0.4)';
+        ctxt.fillStyle = 'rgba(0, 255, 0, 0.4)';
         ctxt.save();
         ctxt.translate(item.x, item.y);
         ctxt.rotate(item.angle);
-        ctxt.strokeRect(-.25, -.25, .5, .5); // TODO draw node instead
+        // TODO draw node instead
+        // ctxt.fillRect(-.25, -.25, .5, .5);
+        ctxt.drawImage(nodesCanvas, 24 * item.nodetype, 0, 24, 24, -.4, -.4, .8, .8);
         ctxt.restore();
       }
     }
@@ -123,6 +129,7 @@ export default function TeleglitchModule() {
 interface TeleglitchData {
   /** Spritesheet `set1.png` */
   spritesheet: HTMLCanvasElement;
+  nodesCanvas: HTMLCanvasElement;
   gfx: Teleglitch.Gfx;
   modules: Teleglitch.Mods;
   objects: Teleglitch.Objects;

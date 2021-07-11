@@ -1,8 +1,13 @@
 ## Plan
 
 ### levels
-- can render teleglitch "modules" on a canvas
-- will create polygon approximations using https://vectr.com/
+
+- teleglitch module viewer
+  - ✅ @dev can render teleglitch "modules" on a canvas
+  - can scroll and zoom canvas
+  - show 3d walls using css 3d transforms
+  - @prod can view teleglitch modules via images
+- start creating polygon approximations using https://vectr.com/
 
 ### code-editor
 - fix comment toggle for mode `jsx-styled`
