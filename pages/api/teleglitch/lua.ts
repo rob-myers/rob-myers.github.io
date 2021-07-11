@@ -5,7 +5,7 @@ import { rootPath } from '../index';
 
 const dirPath = path.resolve(rootPath, 'scripts/teleglitch/lua');
 
-/** e.g. `/api/teleglitch/lua?gfx.json` */
+/** e.g. `/api/teleglitch/lua?gfx.json` returns file gfx.json */
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   const filename = Object.keys(req.query)[0];
   const filenames = (await fs.readdir(dirPath)).filter(x => x.endsWith('.json'));

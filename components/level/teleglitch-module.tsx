@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useQuery } from "react-query";
 import type * as Teleglitch from 'types/teleglitch';
+import { handleJsonFetch, useQueryOptions } from "model/query.model";
 
 /**
  * This component is available in development only, because it
@@ -23,13 +24,13 @@ export default function TeleglitchModule() {
         canvas.getContext('2d')!.drawImage(spritesheet, 0, 0);
         return canvas;
       }),
-      fetch('/api/teleglitch/lua?gfx.json').then(x => x.json()),
-      fetch('/api/teleglitch/mods').then(x => x.json()),
-      fetch('/api/teleglitch/lua?objects.json').then(x => x.json()),
+      fetch('/api/teleglitch/lua?gfx.json').then(handleJsonFetch),
+      fetch('/api/teleglitch/mods').then(handleJsonFetch),
+      fetch('/api/teleglitch/lua?objects.json').then(handleJsonFetch),
     ]);
 
     return { canvas, gfx, modules, objects };
-  }, { refetchOnWindowFocus: false });
+  }, useQueryOptions);
 
   useEffect(() => {
     if (teleglitch) {// TODO draw a module
@@ -38,10 +39,18 @@ export default function TeleglitchModule() {
       for (const item of module.items) {
         if (item.type === 'bmp') {
           // TODO
-        } else if (false) {
-          // TODO objects
+        } else if (item.type in teleglitch.objects) {
+          // TODO
+        } else if (item.type === 'node') {
+          // TODO
+        } else if (item.type === 'light') {
+          // TODO
+        } else if (item.type === 'pfv' || item.type === 'pfp') {
+          // TODO
+        } else if (ignoredModuleItems.includes(item.type)) {
+          // Ignore silently
         } else {
-          console.warn('ignoring item', item.type);
+          console.warn('ignoring item:', item.type);
         }
       } 
     }
@@ -54,8 +63,20 @@ export default function TeleglitchModule() {
 }
 
 interface Teleglitch {
+  /** Spritesheet `set1.png` */
   canvas: HTMLCanvasElement;
   gfx: Teleglitch.Gfx;
   modules: Teleglitch.Mods;
   objects: Teleglitch.Objects;
 }
+
+const ignoredModuleItems: Teleglitch.ModItem['type'][] = [
+  'container',
+  'emptycan',
+  'door',
+  'directioncontroller',
+  'giant_zombie',
+  'mapmarker',
+  'soundemitter',
+  'terminal',
+];

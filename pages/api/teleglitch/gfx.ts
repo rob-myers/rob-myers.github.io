@@ -5,7 +5,7 @@ import { rootPath } from '../index';
 
 const dirPath = path.resolve(rootPath, 'scripts/teleglitch/gfx');
 
-/** e.g. `/api/teleglitch/gfx?set1.png` */
+/** `/api/teleglitch/gfx?set1.png` returns file set1.png */
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   const filename = Object.keys(req.query)[0];
   const filenames = (await fs.readdir(dirPath)).filter(x => x.endsWith('.png'));
