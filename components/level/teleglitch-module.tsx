@@ -39,7 +39,7 @@ export default function TeleglitchModule() {
       // const module = teleglitch.modules.find(x => x.moduleName === 'algus3')!;
       // const module = teleglitch.modules.find(x => x.moduleName === 'l1_konservi_ladu')!;
       const module = teleglitch.modules.find(x => x.moduleName === 'l1_v2ike_ringaed')!;
-      console.log(module, sheet);
+      console.log(teleglitch, module);
 
       ctxt.resetTransform();
       ctxt.clearRect(0, 0, ctxt.canvas.width, ctxt.canvas.height);
@@ -63,7 +63,20 @@ export default function TeleglitchModule() {
         ctxt.restore();
       }
 
-      // TODO objects
+      // IN PROGRESS
+      for (const item of objects) {
+        const object = teleglitch.objects[item.type];
+        const frame = teleglitch.gfx.frames[object.sprite][object.frame];
+        // console.log({ objectType: item.type, object, frame });
+        const [w, h] = [frame.x2 - frame.x1, frame.y2 - frame.y1];
+        const [dw, dh] = [w / scale, h / scale];
+        ctxt.save();
+        ctxt.translate(item.x, item.y);
+        ctxt.rotate(item.angle);
+        ctxt.drawImage(sheet, frame.x1, frame.y1, w, h, -dw/2, -dh/2, dw, dh);
+        // ctxt.strokeRect(-dw/2, -dh/2, dw, dh);
+        ctxt.restore();
+      }
 
       for (const items of polydata) {
         ctxt.fillStyle = 'rgba(255, 0, 0, 0.25)';
@@ -108,14 +121,19 @@ interface TeleglitchData {
 }
 
 const ignoredModuleItems: Teleglitch.ModItem['type'][] = [
+  'big_mutant1',
   'container',
   'emptycan',
   'door',
   'directioncontroller',
   'giant_zombie',
   'mapmarker',
+  'mutant1',
+  'mutant2',
+  'mutant3',
   'soundemitter',
   'terminal',
+  'zombie',
 ];
 
 function organiseModule(mod: Teleglitch.Mod, teleglitch: TeleglitchData) {

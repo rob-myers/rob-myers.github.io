@@ -77,54 +77,38 @@ function luaGfxToJson() {
   for (const line of lines) {
     if (line.startsWith('CreateSprite')) {
       const [
-        name,
-        texture,
-        cols,
-        rows,
-        width,
-        height,
-        xOffset,
-        yOffset,
-        comment,
+        name, texture, cols, rows,
+        width, height, xOffset, yOffset, comment,
       ] = line.slice('CreateSprite('.length).split(/[,)]/)
         .map(x => x.trim())
         .map(parseRowItem);
       
       sprites[name] = {
-        name,
-        texture,
-        cols,
-        rows,
-        width,
-        height,
-        xOffset,
-        yOffset,
-        comment,
+        name, texture, cols, rows,
+        width, height, xOffset, yOffset, comment,
       };
 
     } else if (line.startsWith('SetFrame')) {
-      const [
-        name,
-        id,
-        x1,
-        y1,
-        x2,
-        y2,
-        comment,
-      ] = line.slice('SetFrame('.length).split(/[,)]/)
+      const [name, id, x1, y1, x2, y2, comment] = line.slice('SetFrame('.length).split(/[,)]/)
         .map(x => x.trim())
         .map(parseRowItem);
       
       (frames[name] = frames[name] || []).push({
-        name,
-        id,
-        x1,
-        y1,
-        x2,
-        y2,
-        comment,
+        name, id, x1, y1, x2, y2, comment
       });
     }
+
+    // Finally, ensure a single frame for each sprite
+    Object.values(sprites).forEach(s =>
+      frames[s.name] = frames[s.name] || [{
+        id: 0,
+        name: s.name,
+        x1: s.xOffset,
+        y1: s.yOffset,
+        x2: s.xOffset + s.width,
+        y2: s.yOffset + s.height,
+      }]
+    );
   }
 
   const json = `{"sprites":[\n  ${

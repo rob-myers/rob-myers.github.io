@@ -88,9 +88,12 @@ export interface ObjectModItem {
     | 'Punane_v2ike_tynn'
     | 'Valgusti'
     // The below do not have `frame`
+    | 'big_mutant1'
     | 'emptycan'
     | 'giant_zombie'
     | 'directioncontroller'
+    | 'mutant1' | 'mutant2' | 'mutant3'
+    | 'zombie'
   );
   x: number;
   y: number;
