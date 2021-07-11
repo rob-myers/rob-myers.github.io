@@ -98,15 +98,18 @@ function luaGfxToJson() {
 
   // Finally, ensure/overwrite frame 0 for each sprite
   Object.values(sprites).forEach(s => {
-    frames[s.name] = frames[s.name] || {};
-    frames[s.name][0] = {
-      id: 0,
-      name: s.name,
-      x1: s.xOffset,
-      y1: s.yOffset,
-      x2: s.xOffset + s.width,
-      y2: s.yOffset + s.height,
-    };
+    if (!frames[s.name]) {
+      frames[s.name] = { 0: {
+        id: 0,
+        name: s.name,
+        x1: s.xOffset,
+        y1: s.yOffset,
+        x2: s.xOffset + s.width,
+        y2: s.yOffset + s.height,
+      }};
+    } else if (!frames[s.name][0]) {
+      frames[s.name][0] = Object.values(frames[s.name])[0];
+    }
   });
 
   const json = `{"sprites":[\n  ${

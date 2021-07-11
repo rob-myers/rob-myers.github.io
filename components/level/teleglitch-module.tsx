@@ -36,9 +36,14 @@ export default function TeleglitchModule() {
     if (teleglitch) {// TODO draw a module
       const ctxt = moduleCanvas.current!.getContext('2d')!;
       const sheet = teleglitch.spritesheet;
-      // const module = teleglitch.modules.find(x => x.moduleName === 'algus3')!;
-      // const module = teleglitch.modules.find(x => x.moduleName === 'l1_konservi_ladu')!;
-      const module = teleglitch.modules.find(x => x.moduleName === 'l1_v2ike_ringaed')!;
+      const moduleName = [
+        'algus3',
+        'l1_5',
+        'l1_6',
+        'l1_v2ike_ringaed',
+        'l1_konservi_ladu',
+      ][3];
+      const module = teleglitch.modules.find(x => x.moduleName === moduleName)!;
       console.log(teleglitch, module);
 
       ctxt.resetTransform();
@@ -64,6 +69,7 @@ export default function TeleglitchModule() {
       }
 
       for (const item of objects) {
+        // if (item.type === 'oldwall_stone') continue;
         const object = teleglitch.objects[item.type];
         const frame = teleglitch.gfx.frames[object.sprite][object.frame];
         if (!frame) {
