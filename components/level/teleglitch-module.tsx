@@ -43,7 +43,7 @@ export default function TeleglitchModule() {
 
       ctxt.resetTransform();
       ctxt.clearRect(0, 0, ctxt.canvas.width, ctxt.canvas.height);
-      ctxt.translate(100, 40);
+      ctxt.translate(140, 70);
       ctxt.scale(10, 10);
       ctxt.scale(2, 1); // strange
       ctxt.strokeStyle = 'blue';
@@ -55,7 +55,7 @@ export default function TeleglitchModule() {
           const [w, h] = [item.x2 - item.x1, item.y2 - item.y1];
           const [dw, dh] = [w / scale, h / scale];
           ctxt.save();
-          ctxt.translate(item.x + (dw/2), item.y + (dh/2));
+          ctxt.translate(item.x, item.y);
           ctxt.rotate(item.angle);
           ctxt.drawImage(sheet, item.x1, item.y1, w, h, -dw/2, -dh/2, dw, dh);
           // ctxt.strokeRect(-dw/2, -dh/2, dw, dh);
@@ -63,7 +63,8 @@ export default function TeleglitchModule() {
         } else if (item.type in teleglitch.objects) {
           // TODO
         } else if (item.type === 'node') {
-          // TODO
+          // ctxt.save();
+          // ctxt.translate(item.x, item.y)
         } else if (item.type === 'light') {
           // TODO
         } else if (item.type === 'pfv' || item.type === 'pfp') {
