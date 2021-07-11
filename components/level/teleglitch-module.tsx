@@ -47,7 +47,7 @@ export default function TeleglitchModule() {
         'l1_9',
         'l1_v2ike_ringaed',
         'l1_konservi_ladu',
-      ][3];
+      ][2];
       const module = teleglitch.modules.find(x => x.moduleName === moduleName)!;
       console.log(teleglitch, module);
 

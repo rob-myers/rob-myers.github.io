@@ -12,14 +12,20 @@ export function Header() {
 }
 
 const Title = styled.h1<{}>`
-  margin-bottom: 2rem;
+  margin-top: 48px;
+  margin-bottom: 0;
+  padding: 24px 8px;
   line-height: 1;
   font-size: 7rem;
   color: #222;
+  background: #eee;
 
+  @media(max-width: 1024px) {
+    margin-top: 24px;
+  }
   @media(max-width: 800px) {
+    margin-top: 16px;
     font-size: 5rem;
-    padding-left: 10px;
   }
 `;
 
@@ -28,8 +34,8 @@ const Subtitle = styled.h4<{}>`
   letter-spacing: 1px;
 
   margin: 0;
-  padding: 20px 16px;
-  background: #eee;
+  padding: 16px;
+  background: #ddd;
   color: #555;
 
   a {
@@ -39,7 +45,7 @@ const Subtitle = styled.h4<{}>`
   @media(max-width: 800px) {
     border-radius: 0;
     border-width: 1px 0;
-    padding: 18px 12px;
+    padding: 16px;
   }
 `;
 
@@ -59,8 +65,8 @@ export const Main = styled.main<{}>`
 `;
 
 export const Section = styled.section<{}>`
-  border-radius: 0 0 12px 12px;
   border: 1px solid #ddd;
+  border-width: 1px 0 0 1px;
   padding: 0 16px 16px 24px;
   margin-bottom: 24px;
   font-size: 20px;

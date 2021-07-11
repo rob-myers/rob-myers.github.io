@@ -19,27 +19,27 @@ export default function IndexPage() {
     <Main>
       <Header />
       <Section>
+
+        <br/>
         <TeleglitchModule/>
 
         <Markdown children={`
 _TODO hookup babel transpilation of jsx using forked @babel/standalone_
-      `}/>
+        `}/>
 
-      <section style={{ height: 200 }}>
-        <Terminal sessionKey="test" env={env} />
-      </section>
+        <section style={{ height: 200 }}>
+          <Terminal sessionKey="test" env={env} />
+        </section>
 
-      <br/>
+        <br/>
 
-      <section style={{ height: 400 }}>
-        <CodeEditor codeKey="file.js" />
-      </section>
+        <section style={{ height: 400 }}>
+          <CodeEditor codeKey="file.js" />
+        </section>
 
-      <Markdown children={`
-
----
-
-      `}/>
+        <Markdown children={`
+  Welcome
+        `}/>
       </Section>
 
     </Main>
