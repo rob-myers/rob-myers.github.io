@@ -53,8 +53,8 @@ export default function TeleglitchModule() {
 
       ctxt.resetTransform();
       ctxt.clearRect(0, 0, ctxt.canvas.width, ctxt.canvas.height);
-      ctxt.translate(150, 70);
-      ctxt.scale(18, 18);
+      ctxt.translate(160, 70);
+      ctxt.scale(13, 13);
       ctxt.scale(2, 1); // strange
       ctxt.strokeStyle = 'blue';
       ctxt.lineWidth = 0.05;
@@ -101,13 +101,11 @@ export default function TeleglitchModule() {
       }
 
       for (const item of nodes) {
-        ctxt.fillStyle = 'rgba(0, 255, 0, 0.4)';
         ctxt.save();
+        ctxt.globalAlpha = 0.5;
         ctxt.translate(item.x, item.y);
         ctxt.rotate(item.angle);
-        // TODO draw node instead
-        // ctxt.fillRect(-.25, -.25, .5, .5);
-        ctxt.drawImage(nodesCanvas, 24 * item.nodetype, 0, 24, 24, -.4, -.4, .8, .8);
+        ctxt.drawImage(nodesCanvas, 24 * item.nodetype, 0, 24, 24, -.5, -.5, 1, 1);
         ctxt.restore();
       }
     }
