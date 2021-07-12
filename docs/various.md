@@ -1,33 +1,44 @@
 ## Game
 
-### Overview
+### Game Overview
 
-- Strongly influenced by Teleglitch
-  - same level design, including 3d walls
-  - same kind of procedural generation
-  - same central mechanic i.e. explore/flee/attack
-  - same objective i.e. escape military research base
-  - _but_ the research is about near death experiences
-  - _and_ the enemies are from Tibetan Mythology
-  - _and_ UI for movement and crafting will differ
-- Played from minimap perspective
-- Implemented via preact and CSS-in-JS, using SVG
-- Demonstrated __step-by-step__ via onsite babel + hmr
+ Strongly influenced by Teleglitch:
+  - same level design, including 3d walls.
+  - same kind of procedural generation.
+  - same central mechanic i.e. explore/flee/attack.
+  - same objective i.e. escape military research base.
+  - _but_,
+    - the research is about near death experiences.
+    - Tibetan Buddhist Mythology.
+    - the UI for movement/crafting will differ.
+    - played from a minimap perspective.
 
-### Detail
+Implemented via __preact__ and __CSS-in-JS,__ using __SVG__. This means it is possible to demonstrate __step-by-step__ via onsite babel and hot-module-reloading.
 
-- The company is again Militech, The research project is _Sensory Experiences in Intermediate States_.
-  - They use clones, which lack "direction", so must be synced to their originator.
-  - They study three intermediate states:
+### Story Overview
+
+The company is again _Militech_. The research project is _Sensory Experiences in Intermediate States_. Their research proposal asks: _can bio-printed clones experience meditative states?_
+
+  - They use "fast baked" bio-printed clones. A fundamental problem in Clone Studies is their complete lack of "direction". They are only useful when mind-synced to their originator. They are not exact clones i.e. their cells are "tougher" via extremophile DNA.
+  - The research project studies three intermediate states:
     - Awake (Clone studies)
     - Dream (Induced clone lucid dreams)
     - Death (Induced clone death and resuscitation).
+      - Whilst both prone, the originator mind-syncs the clone.
+      - The clone is oxygen-deprived and dies; the originator enters a coma.
+      - The originator experiences the brain-death of the clone for e.g. 5 days.
+      - The clone is resuscitated: possible via their extremophile DNA.
+      - The originator awakens and is un-synced.
+
 - How it all goes wrong.
-  - By experiencing death many times, the test subjects become expert meditators. They investigate the _dull lights_ (see Bardo Thodol) and continually escape the respective realms via resuscitation.
-  - Repeated _karmic reversal_ alerts other realms. They create a _karmic self loop_ by killing an originator while her clone is being resuscitated. It provides the first bridge between the realms.
+  - Experiencing death countless times, the test subjects become expert meditators. They investigate the _dull lights_ (Bardo Thodol) and return via resuscitation, considering these experiences to be lucid dreams.
+  - The test subjects continually attempt to "merge" with a character they encounter before resuscitation. Finally a breakthrough: a clone wakes up too.
+  - All the clones wake up. They enslave their originators, who become The Bridge.
+
 - This event is the precursor to _The Night Land_.
 - The research base AI will help you escape. The AI is also trying to save the other personnel and test subjects. You must work with the AI.
-- Minimap view because you are blind. Your blindness partially protects you against the "unleashed", because you cannot "see" your fears. You can still hear (represented via text, possibly sound).
+- Minimap view because you are blind. Your blindness partially protects you against the "unleashed". You can still hear (represented via text, possibly sound).
+- The enemies are represented by the Base AI for optimum awareness and combat efficiency.
 - The weapons are batons, tasers, handguns, lasers, security turrets. There are also various visualisation/concentration techniques.
 
 The _Bardo Thodol_ says:
