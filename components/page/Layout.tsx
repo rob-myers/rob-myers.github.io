@@ -6,25 +6,23 @@ export function Header() {
       esc the base
     </Title>
     <Subtitle>
-      a topdown game built using web dev
+      a topdown game built via web dev
     </Subtitle>
   </>;
 }
 
 const Title = styled.h1<{}>`
-  margin-top: 48px;
+  margin-top: 0;
   margin-bottom: 0;
-  padding: 24px 8px;
+  padding: 32px 8px;
+
   line-height: 1;
   font-size: 7rem;
   color: #222;
   background: #eee;
 
-  @media(max-width: 1024px) {
-    margin-top: 24px;
-  }
   @media(max-width: 800px) {
-    margin-top: 16px;
+    padding: 24px 8px;
     font-size: 5rem;
   }
 `;
@@ -34,7 +32,7 @@ const Subtitle = styled.h4<{}>`
   letter-spacing: 1px;
 
   margin: 0;
-  padding: 16px;
+  padding: 24px;
   background: #ddd;
   color: #555;
 
@@ -56,9 +54,6 @@ export const Main = styled.main<{}>`
   max-width: 1000px;
   margin: 0 auto;
 
-  @media(max-width: 1024px) {
-    margin: 0 1rem;
-  }
   @media(max-width: 700px) {
     margin: 0;
   }
@@ -66,10 +61,11 @@ export const Main = styled.main<{}>`
 
 export const Section = styled.section<{}>`
   border: 1px solid #ddd;
-  border-width: 1px 0 0 1px;
+  /* border-width: 1px 0 0 1px; */
   padding: 0 16px 16px 24px;
   margin-bottom: 24px;
   font-size: 20px;
+  background: white;
 
   @media(max-width: 800px) {
     border: 0;
