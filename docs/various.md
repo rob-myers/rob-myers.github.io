@@ -1,61 +1,62 @@
-## Game
+## Project
 
-### Game Overview
+Project name: _Esc The Base_
+
+We are going to remake the teleglitch game mechanic with different graphics, characters and backstory.
+Hopefully we can do this explicitly, step-by-step, as an educational site.
+
+### Overview
 
  Strongly influenced by Teleglitch:
-  - same level design, including 3d walls.
-  - same kind of procedural generation.
-  - same central mechanic i.e. explore/flee/attack.
-  - same objective i.e. escape military research base.
-  - _but_,
-    - the research is about near death experiences.
-    - Tibetan Buddhist Mythology.
-    - the UI for movement/crafting will differ.
-    - played from a minimap perspective.
+  - _similar_:  military base with 3d walls, procedural generation, explore/flee/attack, user input interface, zoom in/out via aim.
+  - _different_: story is about researching near death experiences via clones, characters, weapons, graphical style (SVG + CSS 3d), no crafting.
 
-Implemented via __preact__ and __CSS-in-JS,__ using __SVG__. This means it is possible to demonstrate __step-by-step__ via onsite babel and hot-module-reloading.
+Implemented via __preact__ and __CSS-in-JS,__ also using __SVG__.
+> This means it is possible to demonstrate __step-by-step__ via onsite babel and __@preact/prefresh__.
 
-### Story Overview
+### Backstory
 
-The company is again _Militech_. The research project is _Sensory Experiences in Intermediate States_. Their research proposal asks: _can bio-printed clones experience meditative states?_
+The research project is _Sensory Experiences in Intermediate States_.
 
-  - They use "fast baked" bio-printed clones. A fundamental problem in Clone Studies is their complete lack of "direction". They are only useful when mind-synced to their originator. They are not exact clones i.e. their cells are "tougher" via extremophile DNA.
-  - The research project studies three intermediate states:
-    - Awake (Clone studies)
-    - Dream (Induced clone lucid dreams)
-    - Death (Induced clone death and resuscitation).
-      - Whilst both prone, the originator mind-syncs the clone.
-      - The clone is oxygen-deprived and dies; the originator enters a coma.
-      - The originator experiences the brain-death of the clone for e.g. 5 days.
-      - The clone is resuscitated: possible via their extremophile DNA.
-      - The originator awakens and is un-synced.
+  They use bio-printed clones which always lack "direction". They are only useful when mind-synced to their originator. Their cells are tougher via extremophile DNA (permits cold storage).
 
-- How it all goes wrong.
+  The research project studies three intermediate states:
+  - Awake (Clone studies)
+  - Dream (Induced Clone lucid dreams)
+  - Death (Induced Clone death and resuscitation).
+    > Whilst both prone, the originator mind-syncs the clone.
+      The clone is oxygen-deprived and dies; the originator enters a synced coma.
+      The originator experiences the brain-death of the clone for e.g. 5 days.
+      The clone is resuscitated: possible via their extremophile DNA.
+      Finally, the originator awakens and is un-synced.
+
+How it all goes wrong.
   - Experiencing death countless times, the test subjects become expert meditators. They investigate the _dull lights_ (Bardo Thodol) and return via resuscitation, considering these experiences to be lucid dreams.
-  - The test subjects continually attempt to "merge" with a character they encounter before resuscitation. Finally a breakthrough: a clone wakes up too.
-  - All the clones wake up. They enslave their originators, who become The Bridge.
-
-- This event is the precursor to _The Night Land_.
-- The research base AI will help you escape. The AI is also trying to save the other personnel and test subjects. You must work with the AI.
-- Minimap view because you are blind. Your blindness partially protects you against the "unleashed". You can still hear (represented via text, possibly sound).
-- The enemies are represented by the Base AI for optimum awareness and combat efficiency.
-- The weapons are batons, tasers, handguns, lasers, security turrets. There are also various visualisation/concentration techniques.
+  - The test subjects continually attempt to "merge" with characters encountered whilst dead. Finally a breakthrough: a clone wakes up too.
+  - All the clones wake up. They enslave their originators, making The Bridge.
+  - This event is the precursor to _The Night Land_.
 
 The _Bardo Thodol_ says:
 > O nobly-born, along with the radiances of Wisdom, the impure illusory lights of the Six Lokas will also come to shine. If it be asked, 'What are they?' [they are] a dull white light from the devas, a dull green light from the asuras, a dull yellow light from human beings, a dull blue light from the brutes, a dull reddish light from the pretas, and a dull smoke-coloured light from Hell. These six thus will come to shine, along with the six radiances of Wisdom; whereupon, be not afraid of nor be attracted towards any, but allow thyself to rest in the non-thought condition.
 
+The research base AI will help you escape.
+
 ## Technical
 
-- shell via xterm.js and mvdan-sh
-- ~~ace-editor with tabs~~
 - codemirror with tabs
+- shell via xterm.js and mvdan-sh
+  - to illustrate web dev setup e.g. babel.
+  - to log game events
+  - to run scripts e.g. list awakened enemies
 - webworker with forked @babel/standalone
 - service worker
 - systemjs modules
 - preact.js + linaria
 - react-query + zustand
+- 3d via css transform, see e.g.
+  > repo `rob-myers/archived-website`, branch `with-bash-and-level`, file `components/level/level-3d.tsx`
 
-## On Website Development
+## On Web Dev
 
 In the beginning, Brendan Eich made LiveScript.
 It was subsequently renamed _JavaScript_ (aka JS).
