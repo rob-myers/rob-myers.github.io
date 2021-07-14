@@ -6,7 +6,7 @@ export function Header() {
       esc the base
     </Title>
     <Subtitle>
-      a topdown game built via web dev
+      building a topdown game using web dev
     </Subtitle>
   </>;
 }
@@ -14,7 +14,7 @@ export function Header() {
 const Title = styled.h1<{}>`
   margin-top: 0;
   margin-bottom: 0;
-  padding: 32px 8px;
+  padding: 32px 12px;
 
   line-height: 1;
   font-size: 7rem;
@@ -29,18 +29,15 @@ const Title = styled.h1<{}>`
 
 const Subtitle = styled.h4<{}>`
   font-weight: normal;
+  font-size: larger;
   letter-spacing: 1px;
-
   margin: 0;
   padding: 24px;
   background: #ddd;
   color: #555;
-
-  a {
-    color: #000;
-  }
-
+  
   @media(max-width: 800px) {
+    font-size: unset;
     border-radius: 0;
     border-width: 1px 0;
     padding: 16px;
