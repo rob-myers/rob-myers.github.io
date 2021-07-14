@@ -6,13 +6,32 @@ export default function Markdown(props: ReactMarkdown.ReactMarkdownOptions) {
   return (
     <Root>
       <ReactMarkdown
-        // We explicitly skip html to hide html comments
-        skipHtml
+        components={components}
+        skipHtml // We explicitly skip html to hide html comments
         {...props}
       />
     </Root>
   );
 };
+
+const components = {
+  a({node, href, title, children, ...props}: any) {
+    return (
+      <a
+        href={href}
+        title={title}
+        {...href === '#' && { onClick: (e) => {
+            e.preventDefault();
+            // TODO trigger command
+            console.log('link triggered command:', title);
+        }}}
+        {...props}
+      >
+        {children}
+      </a>
+    );
+  }
+}
 
 const Root = styled.div`
   font-size: 14pt;

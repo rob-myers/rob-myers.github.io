@@ -20,6 +20,10 @@ export default function IndexPage() {
       <Header />
       <Section>
 
+        <Markdown children={`
+This is a [link](# "@test echo foo")
+        `}/>
+
         <br/>
         <TeleglitchModule/>
 
