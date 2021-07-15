@@ -1,6 +1,9 @@
 ## Plan
 
-### levels
+- Cleanup how terminal persists
+- Do not auto-persist if localStorage lacks `autopersist=true`
+
+### research
 
 - teleglitch module viewer
   - ✅ @dev can render teleglitch "modules" on a canvas
