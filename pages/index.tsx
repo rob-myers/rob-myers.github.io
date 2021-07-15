@@ -29,26 +29,14 @@ export default function IndexPage() {
 ## Statement of Intent
 
 This site has a clear objective: _build a topdown game step-by-step using modern web development techniques_. In the process we will:
-- see how web applications are often built.
+- see how websites are often built.
 - see how complex games can be built.
 - have a lot of fun doing it. 
 
-Our underlying motivation is to explain how web development works, including important devtools such as live code editing ([react-refresh](https://github.com/facebook/react/tree/main/packages/react-refresh)). But a proper explanation requires a reasonably complex web application. Now, there are plenty of interesting web applications out there e.g. ... 
+Our underlying motivation is _to explain how web development works_. But a proper explanation requires a reasonably complex web application. Most websites derive their structure from a prexisting business, a large user base, or a rich data source. Lacking all three, we chose something with a universal appeal i.e. a computer game.
 
 
-
----
----
-
-
-given particular interests and particular technology we are going to produce a particular output. Our chosen inspiration and technology are:
-- the excellent topdown game [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) ([video](https://www.youtube.com/watch?v=iEnS4wPRETw)).
-- a popular approach to web development ([preact](https://preactjs.com/) + css-in-js + [babel](https://babeljs.io/)).
-
-As output we'll create _another_ topdown game, written step-by-step using web dev techniques. 
-<!-- Teleglitch and [Quake](https://en.wikipedia.org/wiki/Quake_(video_game)) will determine the so-called _game mechanics_. -->
-
-
+_TODO_
 
         `}/>
 

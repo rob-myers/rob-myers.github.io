@@ -18,11 +18,9 @@ export const Section = styled.section<{}>`
   margin: 48px 0;
   font-size: 20px;
   background: white;
-  border-radius: 24px 24px 0 0;
   
   @media(max-width: 1000px) {
     margin: 0;
-    border-radius: 24px 24px 0 0;
   }
   @media(max-width: 800px) {
     border: 0;

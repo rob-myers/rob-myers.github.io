@@ -33,7 +33,7 @@ const components = {
       </a>
     );
   }
-}
+};
 
 const Root = styled.div`
   font-size: 14pt;
@@ -59,15 +59,21 @@ const Root = styled.div`
 const TitleRoot = styled.div`
   h1 {
     font-size: 7rem;
-    margin: 0;
+    margin: 48px 0 12px;
+
+    @media(max-width: 1024px) {
+      margin: 0;
+    }
+    @media(max-width: 800px) {
+      font-size: 5rem;
+    }
   }
 
   p {
-    margin: 4px 0 42px;
+    margin: 0 0 48px 0;
     border-bottom: 4px solid #000;
-    color: #fff;
-    background: #456;
-    padding: 8px;
+    color: #333;
+    padding: 0 0 8px;
     font-size: 1rem;
     letter-spacing: 1px;
   }
