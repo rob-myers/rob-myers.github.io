@@ -53,8 +53,7 @@ export default function CodeEditor({ codeKey, gridArea }: Props) {
       <CodeToolbar
         code={code}
       />
-      <div ref={editorRoot} />
- 
+      <div className="editor-root" ref={editorRoot} />
     </Root>
   );
 }
@@ -69,4 +68,11 @@ const Root = styled.section<{ gridArea?: string }>`
   width: 100%;
   height: 100%;
   font-size: 11pt;
+  
+  >.editor-root {
+    height: calc(100% - 28px);
+    .CodeMirror {
+      height: 100%;
+    }
+  }
 `;
