@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import React from 'react';
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 
 export default function Markdown(
   props: ReactMarkdown.ReactMarkdownOptions & { title?: boolean }
@@ -9,6 +10,7 @@ export default function Markdown(
     props.title ? TitleRoot : Root,
     undefined,
     <ReactMarkdown
+      rehypePlugins={[rehypeRaw]}
       components={components}
       skipHtml // We explicitly skip html to hide html comments
       {...props}
@@ -31,6 +33,19 @@ const components = {
       >
         {children}
       </a>
+    );
+  },
+  float({ children, ...props }: any) {
+    return (
+      <span
+        {...props}
+        style={{
+          float: 'right',
+          fontSize: props.rem ? `${props.rem}rem` : undefined,
+        }}
+      >
+        {children}
+      </span>
     );
   }
 };
@@ -57,24 +72,31 @@ const Root = styled.div`
 `;
 
 const TitleRoot = styled.div`
+  /** Site title */
   h1 {
-    font-size: 7rem;
     margin: 48px 0 12px;
-
+    font-size: 7rem;
+    
     @media(max-width: 1024px) {
-      margin: 0;
+      margin: 12px 0;
+      font-size: 5.8rem;
     }
     @media(max-width: 800px) {
-      font-size: 5rem;
+      font-size: 4.5rem;
     }
   }
 
+  /** Site subtitle */
   p {
     margin: 0 0 48px 0;
     border-bottom: 4px solid #000;
-    color: #333;
     padding: 0 0 8px;
-    font-size: 1rem;
+    color: #333;
+    font-size: 1.2rem;
     letter-spacing: 1px;
+
+    @media(max-width: 1000px) {
+      margin: 0 0 32px 0;
+    }
   }
 `;

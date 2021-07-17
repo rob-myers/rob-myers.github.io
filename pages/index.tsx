@@ -5,7 +5,6 @@ import Markdown from 'components/page/Markdown';
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 import useCodeStore from 'store/code.store';
-import TeleglitchModule from 'components/level/teleglitch-module';
 
 const env = {};
 
@@ -20,28 +19,27 @@ export default function IndexPage() {
       <Section>
 
         <Markdown title children={`
-  # esc the base
+# markup worlds
 
-  a topdown web game built step-by-step
+aspects of game mechanics
     `}/>
 
         <Markdown children={`
-## Statement of Intent
+## Statement of intent <float rem="1.2">17th July 2021</float>
 
-This site has a clear objective: _build a topdown game step-by-step using modern web development techniques_. In the process we will:
+The objective of this site is:
+> _to build partial game mechanics based on HTML, SVG and CSS, aiming towards complexity via composition._
+
+<!-- In the process we will:
 - see how websites are often built.
 - see how complex games can be built.
-- have a lot of fun doing it. 
 
-Our underlying motivation is _to explain how web development works_. But a proper explanation requires a reasonably complex web application. Most websites derive their structure from a prexisting business, a large user base, or a rich data source. Lacking all three, we chose something with a universal appeal i.e. a computer game.
 
+Actually, our underlying motivation is _to explain how web development works. But a proper explanation requires a complex web application. Most well-known websites derive their structure from a prexisting business, a large user base, or a rich data source. Lacking all three, we have chosen something with universal appeal: a computer game. -->
 
 _TODO_
 
         `}/>
-
-        <br/>
-        <TeleglitchModule/>
 
         <Markdown children={`
 _TODO hookup babel transpilation of jsx using forked @babel/standalone_
