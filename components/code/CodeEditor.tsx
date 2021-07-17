@@ -20,7 +20,8 @@ export default function CodeEditor({
   code, // TODO use store
   gridArea,
   lineNumbers,
-  pad,
+  padding,
+  height,
   readOnly,
 }: Props) {
   const editorRoot = useRef<HTMLDivElement>(null);
@@ -54,7 +55,7 @@ export default function CodeEditor({
   }, []);
 
   return (
-    <Root gridArea={gridArea} pad={pad}>
+    <Root gridArea={gridArea} height={height} padding={padding}>
       <div className="editor-root" ref={editorRoot} />
     </Root>
   );
@@ -64,24 +65,29 @@ interface Props {
   code?: string;
   gridArea?: string;
   lineNumbers?: boolean;
-  pad?: boolean;
+  padding?: string;
   readOnly?: boolean;
+  height: string;
 }
 
-const Root = styled.section<{ gridArea?: string; pad?: boolean }>`
+const Root = styled.section<{
+  gridArea?: string;
+  height?: string;
+  padding?: string;
+}>`
   grid-area: ${props => props.gridArea || ''};
   width: 100%;
   height: 100%;
   font-size: 10pt;
   
   >.editor-root {
-    height: 100%;
+    height: ${props => props.height || ''};;
     .CodeMirror {
-      height: 100%;
+      height: ${props => props.height || ''};;
     }
   }
 
   .CodeMirror-scroll {
-    padding: ${props => props.pad ? '12px' : ''};
+    padding: ${props => props.padding ? '12px' : ''};
   }
 `;
