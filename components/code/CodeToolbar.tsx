@@ -4,13 +4,13 @@ import useCode, { CodeMeta } from "store/code.store";
 
 export default function CodeToolbar({ code }: Props) {
   const reset = useCallback(() => {
-    if (code) {
-      useCode.api.updateCode(code.key, ({ original }) => ({
-        current: original,
-        updateEditorAt: Date.now(),
-      }));
-      useCode.api.persist(code.key);
-    }
+    // if (code) {
+    //   useCode.api.updateCode(code.key, ({ original }) => ({
+    //     current: original,
+    //     updateEditorAt: Date.now(),
+    //   }));
+    //   useCode.api.persist(code.key);
+    // }
   }, [code]);
 
   return (
@@ -29,7 +29,7 @@ export default function CodeToolbar({ code }: Props) {
 }
 
 interface Props {
-  code: CodeMeta | null;
+  code?: CodeMeta | null;
 }
 
 const Root = styled.section`

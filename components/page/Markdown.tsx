@@ -1,5 +1,6 @@
-import styled from '@emotion/styled';
 import React from 'react';
+import styled from '@emotion/styled';
+
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 
@@ -24,10 +25,10 @@ const components = {
       <a
         href={href}
         title={title}
-        {...href === '#' && { onClick: (e) => {
+        {...href === '#command' && { onClick: (e) => {
             e.preventDefault();
             // TODO trigger command
-            console.log('link triggered command:', title);
+            console.warn('link triggered command:', title);
         }}}
         {...props}
       >
@@ -40,6 +41,7 @@ const components = {
       <span
         {...props}
         style={{
+          ...props.style,
           float: 'right',
           fontSize: props.rem ? `${props.rem}rem` : undefined,
         }}
@@ -47,7 +49,7 @@ const components = {
         {children}
       </span>
     );
-  }
+  },
 };
 
 const Root = styled.div`
@@ -57,10 +59,8 @@ const Root = styled.div`
     line-height: 1.4;
   }
   code {
-    background: #eee;
-    font-weight: lighter;
     font-size: 13pt;
-    padding: 0 4px;
+    font-family: 'Courier New', Courier, monospace;
   }
   ul {
     margin: 20px 0;

@@ -13,13 +13,17 @@ import 'codemirror/mode/javascript/javascript';
 import './codemirror/jsx-styled-mode';
 import './codemirror/custom-cmds';
 
-import useCodeStore from "store/code.store";
-import CodeToolbar from "./CodeToolbar";
+// TODO move elsewhere
+// import CodeToolbar from "./CodeToolbar";
 
-
-export default function CodeEditor({ codeKey, gridArea }: Props) {
+export default function CodeEditor({
+  code, // TODO use store
+  gridArea,
+  lineNumbers,
+  pad,
+  readOnly,
+}: Props) {
   const editorRoot = useRef<HTMLDivElement>(null);
-  const code = useCodeStore(({ code }) => codeKey in code ? code[codeKey] : null);
   
   useEffect(() => {
     if (editorRoot.current) {
@@ -27,12 +31,12 @@ export default function CodeEditor({ codeKey, gridArea }: Props) {
         autoCloseBrackets: true,
         keyMap: 'sublime',
         theme: 'vscode-dark',
-        lineNumbers: true,
+        lineNumbers,
         matchBrackets: true,
         // mode: 'jsx',
         mode: 'jsx-styled',
         tabSize: 2,
-        value: code?.current || '',
+        value: code?.trim() || '',
         extraKeys: {
           "Cmd-Ctrl-Up": "noOp",
           "Cmd-Ctrl-Down": "noOp",
@@ -41,6 +45,7 @@ export default function CodeEditor({ codeKey, gridArea }: Props) {
           "Cmd-/": "customToggleComment",
         },
         addModeClass: true,
+        readOnly,
       });
     }
     return () => {
@@ -49,30 +54,34 @@ export default function CodeEditor({ codeKey, gridArea }: Props) {
   }, []);
 
   return (
-    <Root gridArea={gridArea}>
-      <CodeToolbar
-        code={code}
-      />
+    <Root gridArea={gridArea} pad={pad}>
       <div className="editor-root" ref={editorRoot} />
     </Root>
   );
 }
 
 interface Props {
-  codeKey: string;
+  code?: string;
   gridArea?: string;
+  lineNumbers?: boolean;
+  pad?: boolean;
+  readOnly?: boolean;
 }
 
-const Root = styled.section<{ gridArea?: string }>`
+const Root = styled.section<{ gridArea?: string; pad?: boolean }>`
   grid-area: ${props => props.gridArea || ''};
   width: 100%;
   height: 100%;
-  font-size: 11pt;
+  font-size: 10pt;
   
   >.editor-root {
-    height: calc(100% - 28px);
+    height: 100%;
     .CodeMirror {
       height: 100%;
     }
+  }
+
+  .CodeMirror-scroll {
+    padding: ${props => props.pad ? '12px' : ''};
   }
 `;
