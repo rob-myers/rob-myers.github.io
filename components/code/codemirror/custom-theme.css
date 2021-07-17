@@ -29,7 +29,8 @@
 .cm-s-vscode-dark .CodeMirror-gutters {background: #252526; border-right: 1px solid grey; color: #606366}
 .cm-s-vscode-dark span.cm-builtin {color: #A9B7C6;}
 .cm-s-vscode-dark {
-  font-family: Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace
+  font-family: Menlo, Monaco, Consolas, "Andale Mono", "Ubuntu Mono", "Courier New", monospace;
+  line-height: 1.4;
 }
 .cm-s-vscode-dark .CodeMirror-matchingbracket {background-color: #3b514d; color: yellow !important;}
 
