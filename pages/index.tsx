@@ -22,21 +22,22 @@ export default function IndexPage() {
         <Markdown title children={`
 # react re-spec
 
-richer and easier component testing
-        `}/>
+towards easier component design and testing
+`}/>
 
         <Markdown children={`
 ## Statement of intent <float rem="1.2">19th July 2021</float>
 
-_TODO_ rewrite intro
+Web applications are built from _components_ with behavioural assertions called _unit-tests_. They must pass before new code can be submitted. Frontend developers alternate between updating components and updating tests. Sometimes they _fix stale tests_; sometimes they _extend the component_ to satisfy a test. The tests also provide important documentation by specifying the expected use cases.
 
-The objective of this site is:
+The objective of this website is:
+> to make unit-testing more automatic and interactive.
 
-> _to develop a new approach to react testing..._
+It can be made _more automatic_ via static analysis e.g. each component induces a partially-specified state machine. It can be made _more interactive_ by [playing-in](https://link.springer.com/book/10.1007/978-3-642-19029-2) specifications.
 
-By a _partial game mechanic_ we mean a part of a video game, e.g. level design, physics, character motion, dialogue, controls etc. By _composition_ we mean functional composition. Each partial game mechanic will correspond to a JavaScript function, and richer ones are obtained by composing simpler ones.
 
-Mathematical notation is awash with composite functions. For example, given \`f(x,y):=(x-1)/(y-1)\` where \`x\` and \`y\` are real numbers, observe it is composed of subtraction and division (functions with two arguments), and constant-valued functions. In JavaScript we can write:
+_TODO_ ...
+
         `}/>
 
           <CodeEditor
@@ -50,8 +51,6 @@ const f = (x, y) => (x - 1) / (y - 1);
           `} />
 
         <Markdown children={`
-There are some technical differences (JavaScript numbers only take finitely many values; subtraction and division are language operators rather than functions), but otherwise the same compositional story is told. But the JavaScript functions we'll develop do not return numbers. They return _markup_.
-
 _TODO_ ...
 
 _TODO hookup babel transpilation of jsx using forked @babel/standalone_
