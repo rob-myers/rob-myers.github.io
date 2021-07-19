@@ -34,7 +34,7 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
     <>
       <Head>
           <title>
-            markup worlds
+            react re-spec
           </title>
       </Head>
       <QueryClientProvider client={queryClient} >

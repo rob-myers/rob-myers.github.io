@@ -81,13 +81,10 @@ const Root = styled.section<{
   font-size: 10pt;
   
   >.editor-root {
-    height: ${props => props.height || ''};;
+    height: 100%;
     .CodeMirror {
-      height: ${props => props.height || ''};;
+      height: ${props => props.height || ''};
+      padding: ${props => props.padding};
     }
-  }
-
-  .CodeMirror-scroll {
-    padding: ${props => props.padding ? '12px' : ''};
   }
 `;

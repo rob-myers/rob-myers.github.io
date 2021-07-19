@@ -20,17 +20,19 @@ export default function IndexPage() {
       <Section>
 
         <Markdown title children={`
-# markup worlds
+# react re-spec
 
-aspects of game mechanics
+richer and easier component testing
         `}/>
 
         <Markdown children={`
-## Statement of intent <float rem="1.2">17th July 2021</float>
+## Statement of intent <float rem="1.2">19th July 2021</float>
+
+_TODO_ rewrite intro
 
 The objective of this site is:
 
-> _to build partial game mechanics online, aiming for complexity via composition._
+> _to develop a new approach to react testing..._
 
 By a _partial game mechanic_ we mean a part of a video game, e.g. level design, physics, character motion, dialogue, controls etc. By _composition_ we mean functional composition. Each partial game mechanic will correspond to a JavaScript function, and richer ones are obtained by composing simpler ones.
 
@@ -38,8 +40,8 @@ Mathematical notation is awash with composite functions. For example, given \`f(
         `}/>
 
           <CodeEditor
-            height="96px"
-            padding="12px"
+            height="auto"
+            padding="16px 24px"
             readOnly
             code={`
 function f(x, y) { return (x - 1) / (y - 1); }
@@ -52,9 +54,6 @@ There are some technical differences (JavaScript numbers only take finitely many
 
 _TODO_ ...
 
-        `}/>
-
-        <Markdown children={`
 _TODO hookup babel transpilation of jsx using forked @babel/standalone_
         `}/>
 
