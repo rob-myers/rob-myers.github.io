@@ -40,9 +40,9 @@ const components = {
     return (
       <span
         {...props}
+        className="float"
         style={{
           ...props.style,
-          float: 'right',
           fontSize: props.rem ? `${props.rem}rem` : undefined,
         }}
       >
@@ -69,6 +69,14 @@ const Root = styled.div`
       margin: 8px 0;
     }
   }
+  span.float {
+    float: right;
+    color: #555;
+    @media(max-width: 480px) {
+      float: unset;
+      display: block;
+    }
+  }
 `;
 
 const TitleRoot = styled.div`
@@ -82,7 +90,10 @@ const TitleRoot = styled.div`
       font-size: 5.8rem;
     }
     @media(max-width: 800px) {
-      font-size: 4.5rem;
+      font-size: 5rem;
+    }
+    @media(max-width: 540px) {
+      font-size: 3.4rem;
     }
   }
 
