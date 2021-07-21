@@ -28,32 +28,51 @@ towards integrated unit-testing
         <Markdown children={`
 ## Statement of intent <float rem="1.2">19th July 2021</float>
 
-Web applications are built from _components_ satisfying assertions called _unit tests_. Frontend developers alternate between updating components and updating the respective assertions (amongst other jobs). Sometimes they fix stale tests; sometimes they extend a component to satisfy a test. Unit tests also provide important documentation by explicitly describing expected functionality.
+Web applications are built from _components_ satisfying assertions called _unit tests_. Frontend developers alternate between updating components and updating the respective assertions (amongst other tasks). Sometimes they fix stale tests; sometimes they extend a component to satisfy a test. The tests also provide important documentation by listing expected functionality.
+
+Typically unit-tests are written using code, in much the same way as components are.
+
+> _TODO codemirror example with two panes_
 
 The objective of this website is:
-> to reintegrate unit-tests into the frontend development process, making them automatic, interactive and fun.
+> _to rethink how unit-tests are written, by generating them automatically using interactivity_.
 
-#### How we'll do it
+#### A birdseye view
 
-Using static analysis we'll construct a _model_ of each component i.e. some kind of partially specified state-machine. By interacting with the component we can [play-in](https://link.springer.com/book/10.1007/978-3-642-19029-2) assertions (record input/ouput), thereby enriching the model. Finally we'll use the model to generate unit-tests, coverage reports, and answer queries.
+We'll use static analysis to construct a _model_ of each component. One can think of it as a partially specified state-machine. By interacting with the component we can _play-in_ assertions (record input/output), thereby enriching the model. Finally we'll use the model to generate unit-tests, coverage reports, and also answer queries.
 
-Eventually we envisage a system not unlike [Storybook](https://storybook.js.org/), where components, models and their induced unit tests can be viewed.
+Our ultimate aim is to build a system similar in spirit to [Storybook](https://storybook.js.org/), where components/models/tests can be viewed and edited.
 
-#### How it'll be fun
+#### Intended implementation
 
-Instead of writing additional code we're going to create unit-tests via interaction, which is more meaningful and more enjoyable. But for the process to be fun, the components should be fun to work with. We'll provide a large number of examples:
-- from projects freely available on GitHub.
-- from a topdown game we'll build step-by-step.
+The system will be built step-by-step on this website, using well-established technologies.
 
+- By _component_ we mean a [_React function component_](https://reactjs.org/docs/components-and-props.html#function-and-class-components). They are JavaScript functions where the syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html) is permitted.
+
+- To actually _execute_ the components we will use [_Preact_](https://preactjs.com/), an important DOM-diffing alternative to React.
+To support JSX and devtools we will run [Babel](https://babeljs.io/) in a webworker. Modules will be loaded using [SystemJS](https://github.com/systemjs/systemjs).
+
+- For _static analysis_ we will use eslint's [parser and tokenizer](https://github.com/eslint/espree). We may use a [SAT solver](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem#Algorithms_for_solving_SAT) to enumerate and constrain possible states.
+
+- To _interactively specify assertions_ we'll use Preact and our own in-browser terminal.
+
+
+#### All the fun of the fair
+
+Instead of writing unit-tests as code, we are going to create them interactively. But for the process to be fun, the components must be fun to work with. We'll draw from two sources:
+- popular projects freely available on GitHub.
+- a topdown game we are going to build step-by-step.
+
+_TODO_ learn about eslint
 
 _TODO_ ...
 
         `}/>
 
-        <section style={{ background: '#000', height: 94 }}>
+        <section style={{ background: '#000', height: 110 }}>
           <CodeEditor
             height="auto"
-            padding="16px 24px"
+            padding="24px"
             readOnly
             code={`
 function f(x, y) { return (x - 1) / (y - 1); }
