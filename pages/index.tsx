@@ -30,12 +30,12 @@ towards integrated unit-testing
 
 Web applications are built from _components_ satisfying assertions called _unit tests_. Frontend developers alternate between updating components and updating the respective assertions (amongst other tasks). Sometimes they fix stale tests; sometimes they extend a component to satisfy a test. The tests also provide important documentation by listing expected functionality.
 
-Typically unit-tests are written using code, in much the same way as components are.
+Typically, unit-tests are written using code - in much the same way as components are.
 
 > _TODO codemirror example with two panes_
 
 The objective of this website is:
-> _to rethink how unit-tests are written, by generating them automatically using interactivity_.
+> _to rethink how unit-tests are written, by generating them automatically through interactivity_.
 
 #### A birdseye view
 
@@ -55,6 +55,8 @@ To support JSX and devtools we will run [Babel](https://babeljs.io/) in a webwor
 - For _static analysis_ we will use eslint's [parser and tokenizer](https://github.com/eslint/espree). We may use a [SAT solver](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem#Algorithms_for_solving_SAT) to enumerate and constrain possible states.
 
 - To _interactively specify assertions_ we'll use Preact and our own in-browser terminal.
+
+- The generated unit-tests should use a popular format e.g. jest + react-test-renderer.
 
 
 #### All the fun of the fair

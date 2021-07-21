@@ -75,6 +75,7 @@ const Root = styled.div`
     @media(max-width: 480px) {
       float: unset;
       display: block;
+      margin-top: 8px;
     }
   }
 `;
