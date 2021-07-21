@@ -22,7 +22,7 @@ export default function IndexPage() {
         <Markdown title children={`
 # react re-spec
 
-towards integrated unit-testing
+towards integrated unit testing
         `}/>
 
         <Markdown children={`
@@ -30,16 +30,16 @@ towards integrated unit-testing
 
 Web applications are built from _components_ satisfying assertions called _unit tests_. Frontend developers alternate between updating components and updating the respective assertions (amongst other tasks). Sometimes they fix stale tests; sometimes they extend a component to satisfy a test. The tests also provide important documentation by listing expected functionality.
 
-Typically, unit-tests are written using code - in much the same way as components are.
+Typically, unit tests are written using code - in much the same way as components are.
 
 > _TODO codemirror example with two panes_
 
 The objective of this website is:
-> _to rethink how unit-tests are written, by generating them automatically through interactivity_.
+> _to rethink how unit tests are written, by generating them automatically through interactivity_.
 
 #### A birdseye view
 
-We'll use static analysis to construct a _model_ of each component. One can think of it as a partially specified state-machine. By interacting with the component we can _play-in_ assertions (record input/output), thereby enriching the model. Finally we'll use the model to generate unit-tests, coverage reports, and also answer queries.
+We'll use static analysis to construct a _model_ of each component. One can think of it as a partially specified state-machine. By interacting with the component we can _play-in_ assertions (record input/output), thereby enriching the model. Finally we'll use the model to generate unit tests, coverage reports, and also answer queries.
 
 Our ultimate aim is to build a system similar in spirit to [Storybook](https://storybook.js.org/), where components/models/tests can be viewed and edited.
 
@@ -47,25 +47,26 @@ Our ultimate aim is to build a system similar in spirit to [Storybook](https://s
 
 The system will be built step-by-step on this website, using well-established technologies.
 
-- By _component_ we mean a [_React function component_](https://reactjs.org/docs/components-and-props.html#function-and-class-components). They are JavaScript functions where the syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html) is permitted.
+- By _component_ we mean a [_React function component_](https://reactjs.org/docs/components-and-props.html#function-and-class-components). They are JavaScript functions where syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html) is permitted.
 
-- To actually _execute_ the components we will use [_Preact_](https://preactjs.com/), an important DOM-diffing alternative to React.
-To support JSX and devtools we will run [Babel](https://babeljs.io/) in a webworker. Modules will be loaded using [SystemJS](https://github.com/systemjs/systemjs).
+- To display and edit JavaScript code we'll use [CodeMirror](https://codemirror.net/).
 
-- For _static analysis_ we will use eslint's [parser and tokenizer](https://github.com/eslint/espree). We may use a [SAT solver](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem#Algorithms_for_solving_SAT) to enumerate and constrain possible states.
+- We'll _execute_ the components using [_Preact_](https://preactjs.com/), an important DOM-diffing alternative to React.
+To support JSX and devtools we'll run [Babel](https://babeljs.io/) in a webworker. Modules will be loaded using [SystemJS](https://github.com/systemjs/systemjs).
 
-- To _interactively specify assertions_ we'll use Preact and our own in-browser terminal.
+- For _static analysis_ we will use eslint's [parser and tokenizer](https://github.com/eslint/espree). We may also use a [SAT solver](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem#Algorithms_for_solving_SAT) to enumerate and constrain possible states.
 
-- The generated unit-tests should use a popular format e.g. jest + react-test-renderer.
+- To _interactively specify assertions_ we'll use Preact and our own in-browser terminal. The latter is built using [xterm.js](https://Xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js).
 
+- The generated unit tests will use [Jest](https://jestjs.io/) and [react-test-renderer](https://reactjs.org/docs/test-renderer.html). We may run them and display their results using our in-browser terminal.
+
+<!-- A notable omission is TypeScript. -->
 
 #### All the fun of the fair
 
-Instead of writing unit-tests as code, we are going to create them interactively. But for the process to be fun, the components must be fun to work with. We'll draw from two sources:
+Instead of writing unit tests as code, we are going to create them interactively. But for the process to be fun, the components must be fun to work with. We'll draw from two sources:
 - popular projects freely available on GitHub.
 - a topdown game we are going to build step-by-step.
-
-_TODO_ learn about eslint
 
 _TODO_ ...
 
