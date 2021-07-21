@@ -20,7 +20,7 @@ export default (api: Api): Config => {
         },
       ],
     ],
-    plugins: []
+    plugins: ['@emotion']
   };
 };
 
