@@ -11,9 +11,8 @@ export default function Markdown(
     props.title ? TitleRoot : Root,
     undefined,
     <ReactMarkdown
-      rehypePlugins={[rehypeRaw]}
+      rehypePlugins={[rehypeRaw]} // Permit html
       components={components}
-      skipHtml // We explicitly skip html to hide html comments
       {...props}
     />
   );
@@ -53,7 +52,10 @@ const components = {
 };
 
 const Root = styled.div`
-  font-size: 14pt;
+  font-size: 1.2rem;
+  @media(max-width: 540px) {
+    font-size: 1.1rem;
+  }
   
   p {
     line-height: 1.4;
@@ -76,6 +78,21 @@ const Root = styled.div`
       float: unset;
       display: block;
       margin-top: 8px;
+    }
+  }
+
+  table {
+    border: 0 solid #999;
+    border-width: 2px 0;
+    padding: 12px 0;
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 8px;
+      @media(max-width: 540px) {
+        padding: 4px 2px;
+      }
     }
   }
 `;

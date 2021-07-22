@@ -32,12 +32,25 @@ Web applications are built from _components_ satisfying assertions called _unit 
 
 Typically, unit tests are written using code - in much the same way as components are.
 
-> _TODO codemirror example with two panes_
+> _TODO codemirror example with two panes, possibly terminal too_
+        `}/>
+
+        {/* TODO component, tests and terminal  */}
+
+        <section style={{ background: '#000', height: 400 }}>
+          <CodeEditor
+            height="400px"
+            code={initialCode['file.js']}
+            lineNumbers
+          />
+        </section>
+
+        <Markdown children={`
 
 The objective of this website is:
 > _to rethink how unit tests are written, by generating them automatically through interactivity_.
 
-#### A birdseye view
+#### Birdseye view
 
 We'll use static analysis to construct a _model_ of each component. One can think of it as a partially specified state-machine. By interacting with the component we can _play-in_ assertions (record input/output), thereby enriching the model. Finally we'll use the model to generate unit tests, coverage reports, and also answer queries.
 
@@ -45,20 +58,49 @@ Our ultimate aim is to build a system similar in spirit to [Storybook](https://s
 
 #### Intended implementation
 
-The system will be built step-by-step on this website, using well-established technologies.
+The system will be built step-by-step _directly on this website_. We will use well-established technologies.
 
-- By _component_ we mean a [_React function component_](https://reactjs.org/docs/components-and-props.html#function-and-class-components). They are JavaScript functions where syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html) is permitted.
+<table>
+    <tr>
+      <th>Concept</th>
+      <th>Browser Technology</th>
+    </tr>
+    <tr>
+      <td>Code Editor</td>
+      <td><a href="https://codemirror.net/">CodeMirror</a> for viewing and editing JavaScript.</td>
+    </tr>
+    <tr>
+      <td>Component</td>
+      <td>
+        <a href="https://reactjs.org/docs/components-and-props.html#function-and-class-components">React function components</a> i.e. JavaScript functions which use syntactic sugar known as <a href="https://reactjs.org/docs/introducing-jsx.html">JSX</a>.
+      </td>
+    </tr>
+    <tr>
+      <td>Styling</td>
+      <td>
+        Component based CSS-in-JS via <a href="https://emotion.sh/">Emotion</a>.
+      </td>
+    </tr>
+    <tr>
+      <td>Component Framework</td>
+      <td><a href="https://preactjs.com/">Preact</a>, a DOM-diffing alternative to React.</td>
+    </tr>
+    <tr>
+      <td>Devtools</td>
+      <td><a href="https://babeljs.io/">Babel</a> in a webworker; <a href="https://github.com/systemjs/systemjs">SystemJS</a> for module loading.</td>
+    </tr>
+    <tr>
+      <td>Static analysis</td>
+      <td>Eslint's <a href="https://github.com/eslint/espree">parser and tokenizer</a>.</td>
+    </tr>
+    <tr>
+      <td>Live analysis</td>
+      <td>Monitoring via <a href="https://preactjs.com/guide/v10/options/">Preact option hooks</a>, code transforms and our own in-browser terminal.</td>
+    </tr>
+</table>
 
-- To display and edit JavaScript code we'll use [CodeMirror](https://codemirror.net/).
 
-- We'll _execute_ the components using [_Preact_](https://preactjs.com/), an important DOM-diffing alternative to React.
-To support JSX and devtools we'll run [Babel](https://babeljs.io/) in a webworker. Modules will be loaded using [SystemJS](https://github.com/systemjs/systemjs).
-
-- For _static analysis_ we will use eslint's [parser and tokenizer](https://github.com/eslint/espree). We may also use a [SAT solver](https://en.wikipedia.org/wiki/Boolean_satisfiability_problem#Algorithms_for_solving_SAT) to enumerate and constrain possible states.
-
-- To _interactively specify assertions_ we'll use Preact and our own in-browser terminal. The latter is built using [xterm.js](https://Xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js).
-
-- The generated unit tests will use [Jest](https://jestjs.io/) and [react-test-renderer](https://reactjs.org/docs/test-renderer.html). We may run them and display their results using our in-browser terminal.
+<!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
 <!-- A notable omission is TypeScript. -->
 
