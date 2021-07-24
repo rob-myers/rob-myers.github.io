@@ -90,7 +90,9 @@ const Root = styled.section<{
     height: 100%;
     .CodeMirror {
       height: ${props => props.height || ''};
-      padding: ${props => props.padding};
+      .CodeMirror-lines {
+        padding: ${props => props.padding};
+      }
     }
   }
 `;

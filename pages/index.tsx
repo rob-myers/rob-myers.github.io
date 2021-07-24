@@ -30,10 +30,17 @@ tracing frontend development
         <Markdown children={`
 ## Statement of intent <float rem="1.2">19th July 2021</float>
 
-This website is about _tracing the behaviour of web components_.
-We'll construct detailed traces using an in-browser terminal, revealing the inner workings of web pages.
+This website is about _tracing the behaviour of web components_. By a _trace_ we mean a list of "events", some from user input, some from rendered output, and others from internal and intermediate changes.
 
-Let's begin with an example: launch a web component, interact and observe.
+How it can be used:
+- to learn React/Preact
+- for integration tests
+- to improve performance
+- to explore the state space
+- to build models
+- to compare approaches
+
+By constructing detailed traces using our in-browser terminal, we will reveal the inner workings of web pages. Let's begin with an example: we'll launch a web component, interact with it, and observe the trace.
 
         `}/>
 
@@ -49,7 +56,8 @@ Let's begin with an example: launch a web component, interact and observe.
         <section style={{ background: '#000' }}>
           <CodeEditor
             height="auto"
-            padding="24px"
+            padding="16px 0"
+            lineNumbers
             readOnly
             code={`
 import { useState } from '@test/preact/hooks';
