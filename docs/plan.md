@@ -1,5 +1,8 @@
 ## Plan
 
+- Add babel in webworker
+- Connect terminal to babel somehow
+- Can transpile JSX and to SystemJS via babel
 - Cleanup how terminal persists
 - Do not auto-persist if localStorage lacks `autopersist=true`
 

@@ -22,15 +22,23 @@ export default function IndexPage() {
         <Markdown title children={`
 # react retrace
 
-understanding frontend development
+tracing frontend development
         `}/>
 
         <Markdown children={`
 ## Statement of intent <float rem="1.2">19th July 2021</float>
 
 Frontend web development is something of a dark art.
-There are those who believe JavaScript is a bad language, despite the lack of any fair comparison. _The only programming language web browsers understand is JavaScript_.
-Detractors may be reacting to the unreasonable hype surrounding web apps e.g. those held in highest esteem are more testaments to Advertising, Chat and Consumerism, rather than technology. Still, an adversarial viewpoint is a waste of time. From the technological perspective, we can expect frontend web applications to breathe new life into native libraries via [web assembly](https://developer.mozilla.org/en-US/docs/WebAssembly).
+Many still believe JavaScript is an inferior language, despite the lack of any fair comparison:
+> _the only programming language web browsers understand is JavaScript_.
+
+Its syntax is often criticised. This certainly _was_ a problem, but has been solved over the last 10 years via language revisions, intellisense, TypeScript and code-transforms.
+Some engineers even view the declarative nature of HTML and CSS with suspicion. Again, what is the alternative?
+
+On the other hand, detractors may just be reacting to the _unreasonable hype surrounding web apps_. Those held in highest esteem are really testaments to Advertising, Chat and Consumerism, rather than Technology.
+Nevertheless, an adversarial viewpoint is a waste of time. We can expect richer frontend web apps in the future via [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly).
+
+<!-- JavaScript's syntax is often criticised. It _was_ a real problem, but has been solved over the last 10 years via language revisions, linting, intellisense, code-transforms and TypeScript. The downside is the number of devtools needed. To get started one can use project CLIs  -->
 
 _TODO start to explain our objective here_
 
