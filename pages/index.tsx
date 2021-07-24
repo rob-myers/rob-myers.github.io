@@ -1,11 +1,13 @@
 import { useEffect } from 'react';
 
+import useCodeStore from 'store/code.store';
+import { initialCode } from 'model/code/code.lib';
+
 import { Section, Main } from 'components/page/Layout';
 import Markdown from 'components/page/Markdown';
 import { CodeEditor } from 'components/dynamic';
+import { Tabs, TabItem } from 'components/code/Tabs';
 import Terminal from 'components/sh/Terminal';
-import useCodeStore from 'store/code.store';
-import { initialCode } from 'model/code/code.lib';
 
 const env = {};
 
@@ -28,13 +30,21 @@ tracing frontend development
         <Markdown children={`
 ## Statement of intent <float rem="1.2">19th July 2021</float>
 
-This website is all about _tracing the behaviour of web components_.
-> We'll construct detailed traces using an in-browser terminal, revealing the inner workings of web pages.
+This website is about _tracing the behaviour of web components_.
+We'll construct detailed traces using an in-browser terminal, revealing the inner workings of web pages.
 
-We'll begin with an example.
-Let's launch a web component, interact with it, and observe the corresponding trace. Here is a web component:
+Let's begin with an example: launch a web component, interact and observe.
 
         `}/>
+
+        <Tabs defaultIndex={0} onTabClick={console.log}>
+          <TabItem label="A" index={0}>
+            Lorem ipsum
+          </TabItem>
+          <TabItem label="B" index={1}>
+            Dolor sit amet
+          </TabItem>
+        </Tabs>
 
         <section style={{ background: '#000' }}>
           <CodeEditor
@@ -46,9 +56,11 @@ import { useState } from '@test/preact/hooks';
 
 export default function App() {
   const [n, setN] = useState(1);
-  return <div onClick={_ => setN(n + 1)}>
-    {[...Array(n)].map(_ => 'Hello, world!')}
-  </div>;
+  return (
+    <div onClick={_ => setN(n + 1)}>
+      {[...Array(n)].map(i => <div key={i}>Hello, world!</div>)}
+    </div>
+  );
 }
           `} />
         </section>
