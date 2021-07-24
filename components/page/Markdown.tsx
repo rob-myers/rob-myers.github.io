@@ -82,9 +82,8 @@ const Root = styled.div`
   }
 
   table {
-    border: 0 solid #999;
-    border-width: 2px 0;
-    padding: 12px 0;
+    border: 1px solid #ccc;
+    border-left: 4px solid #999;
 
     th, td {
       text-align: left;

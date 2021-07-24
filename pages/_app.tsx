@@ -34,7 +34,7 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
     <>
       <Head>
           <title>
-            react re-spec
+            react retrace
           </title>
       </Head>
       <QueryClientProvider client={queryClient} >

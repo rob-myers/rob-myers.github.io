@@ -20,45 +20,44 @@ export default function IndexPage() {
       <Section>
 
         <Markdown title children={`
-# react re-spec
+# react retrace
 
-towards integrated unit testing
+understanding frontend development
         `}/>
 
         <Markdown children={`
 ## Statement of intent <float rem="1.2">19th July 2021</float>
 
-Web applications are built from _components_ satisfying assertions called _unit tests_. Frontend developers alternate between updating components and updating the respective assertions (amongst other tasks). Sometimes they fix stale tests; sometimes they extend a component to satisfy a test. The tests also provide important documentation by listing expected functionality.
+Frontend web development is something of a dark art.
+There are those who believe JavaScript is a bad language, despite the lack of any fair comparison. _The only programming language web browsers understand is JavaScript_.
+Detractors may be reacting to the unreasonable hype surrounding web apps e.g. those held in highest esteem are more testaments to Advertising, Chat and Consumerism, rather than technology. Still, an adversarial viewpoint is a waste of time. From the technological perspective, we can expect frontend web applications to breathe new life into native libraries via [web assembly](https://developer.mozilla.org/en-US/docs/WebAssembly).
 
-Typically, unit tests are written using code - in much the same way as components are.
+_TODO start to explain our objective here_
+
+Web applications are built from _components_ (resuable parts) satisfying assertions called _tests_. Components are tested individually via _unit tests_, and also collectively. Frontend developers alternate between updating components and updating these assertions, amongst other tasks. Sometimes they fix stale tests; sometimes they extend components to satisfy a test. By listing the expected functionality, tests also provide important documentation.
+
+These tests often amount to traces: a sequence of user input vs rendered output.
+
+_TODO tests are usually traces, but how do we trace a component? Still aim towards modelling with static-analysis and traces_
+
+Typically, a test specifies an expected trace through the system. Given a particular initial state and some user interaction, we expect particular output(s).
+
+> _TODO objective should focus on logging traces_
 
 > _TODO codemirror example with two panes, possibly terminal too_
-        `}/>
-
-        {/* TODO component, tests and terminal  */}
-
-        <section style={{ background: '#000', height: 400 }}>
-          <CodeEditor
-            height="400px"
-            code={initialCode['file.js']}
-            lineNumbers
-          />
-        </section>
-
-        <Markdown children={`
 
 The objective of this website is:
+
 > _to rethink how unit tests are written, by generating them automatically through interactivity_.
 
-#### Birdseye view
+### Birdseye view
 
 We'll use static analysis to construct a _model_ of each component. One can think of it as a partially specified state-machine. By interacting with the component we can _play-in_ assertions (record input/output), thereby enriching the model. Finally we'll use the model to generate unit tests, coverage reports, and also answer queries.
 
-Our ultimate aim is to build a system similar in spirit to [Storybook](https://storybook.js.org/), where components/models/tests can be viewed and edited.
 
-#### Intended implementation
+### Intended implementation
 
-The system will be built step-by-step _directly on this website_. We will use well-established technologies.
+We eventually aim to build a system similar to [Storybook](https://storybook.js.org/). But for now we'll built it __directly on this website__, using well-established technologies.
 
 <table>
     <tr>
@@ -76,9 +75,9 @@ The system will be built step-by-step _directly on this website_. We will use we
       </td>
     </tr>
     <tr>
-      <td>Styling</td>
+      <td>Styles</td>
       <td>
-        Component based CSS-in-JS via <a href="https://emotion.sh/">Emotion</a>.
+        Components can be enriched by runtime CSS. We'll use <a href="https://emotion.sh/">Emotion</a>.
       </td>
     </tr>
     <tr>
@@ -104,7 +103,7 @@ The system will be built step-by-step _directly on this website_. We will use we
 
 <!-- A notable omission is TypeScript. -->
 
-#### All the fun of the fair
+### All the fun of the fair
 
 Instead of writing unit tests as code, we are going to create them interactively. But for the process to be fun, the components must be fun to work with. We'll draw from two sources:
 - popular projects freely available on GitHub.
