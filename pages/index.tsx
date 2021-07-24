@@ -28,19 +28,52 @@ tracing frontend development
         <Markdown children={`
 ## Statement of intent <float rem="1.2">19th July 2021</float>
 
+This website is all about _tracing the behaviour of web components_.
+> We'll construct detailed traces using an in-browser terminal, revealing the inner workings of web pages.
+
+We'll begin with an example.
+Let's launch a web component, interact with it, and observe the corresponding trace. Here is a web component:
+
+        `}/>
+
+        <section style={{ background: '#000' }}>
+          <CodeEditor
+            height="auto"
+            padding="24px"
+            readOnly
+            code={`
+import { useState } from '@test/preact/hooks';
+
+export default function App() {
+  const [n, setN] = useState(1);
+  return <div onClick={_ => setN(n + 1)}>
+    {[...Array(n)].map(_ => 'Hello, world!')}
+  </div>;
+}
+          `} />
+        </section>
+
+        <Markdown children={`
+
+<br/>
+<br/>
+
+_TODO rewrite below, in view of [electron](https://www.electronjs.org/) e.g. VSCode and Slack_
+
 Frontend web development is something of a dark art.
-Many still believe JavaScript is an inferior language, despite the lack of any fair comparison:
-> _the only programming language web browsers understand is JavaScript_.
+For example, many programmers still believe JavaScript is an inferior language. This assertion lacks a fair comparison, because _the only programming language web browsers understand is JavaScript_. Although the language _certainly had problems_, they have been solved via [language revisions](https://ecmascriptfeatures.online/), intellisense, TypeScript and code-transforms.
+Some backend engineers even view the declarative nature of HTML and CSS with suspicion. Let us apply a similar argument: (a) they are fundamental to the internet, (b) they are now easier to use programmatically e.g. via component frameworks.
 
-Its syntax is often criticised. This certainly _was_ a problem, but has been solved over the last 10 years via language revisions, intellisense, TypeScript and code-transforms.
-Some engineers even view the declarative nature of HTML and CSS with suspicion. Again, what is the alternative?
+On the other hand, _there is definitely too much hype surrounding web applications_.
+Even those web apps held in highest esteem are really testaments to Advertising, Chat and Consumerism, rather than Technology.
+To put it another way, web applications
+Thankfully, we can expect richer web apps in the future via [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly). 
 
-On the other hand, detractors may just be reacting to the _unreasonable hype surrounding web apps_. Those held in highest esteem are really testaments to Advertising, Chat and Consumerism, rather than Technology.
-Nevertheless, an adversarial viewpoint is a waste of time. We can expect richer frontend web apps in the future via [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly).
-
-<!-- JavaScript's syntax is often criticised. It _was_ a real problem, but has been solved over the last 10 years via language revisions, linting, intellisense, code-transforms and TypeScript. The downside is the number of devtools needed. To get started one can use project CLIs  -->
+<!-- TODO expand above e.g. what is richer app (do not mean progressive) -->
 
 _TODO start to explain our objective here_
+
+
 
 Web applications are built from _components_ (resuable parts) satisfying assertions called _tests_. Components are tested individually via _unit tests_, and also collectively. Frontend developers alternate between updating components and updating these assertions, amongst other tasks. Sometimes they fix stale tests; sometimes they extend components to satisfy a test. By listing the expected functionality, tests also provide important documentation.
 

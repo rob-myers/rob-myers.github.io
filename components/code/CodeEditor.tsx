@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import styled from "@emotion/styled";
 
 import codemirror from 'codemirror';
@@ -12,6 +12,7 @@ import 'codemirror/mode/sass/sass';
 import 'codemirror/mode/javascript/javascript';
 import './codemirror/jsx-styled-mode';
 import './codemirror/custom-cmds';
+import CodeMirror from "codemirror";
 
 // TODO move elsewhere
 // import CodeToolbar from "./CodeToolbar";
@@ -25,10 +26,12 @@ export default function CodeEditor({
   readOnly,
 }: Props) {
   const editorRoot = useRef<HTMLDivElement>(null);
-  
+  const cm = useRef<CodeMirror.Editor>();
+  const value = useMemo(() => (code || '').trim(), [code]);
+
   useEffect(() => {
     if (editorRoot.current) {
-      const cm = codemirror(editorRoot.current, {
+      cm.current = codemirror(editorRoot.current, {
         autoCloseBrackets: true,
         keyMap: 'sublime',
         theme: 'vscode-dark',
@@ -51,8 +54,11 @@ export default function CodeEditor({
     }
     return () => {
       editorRoot.current?.childNodes.forEach(x => x.remove());
+      cm.current = undefined;
     };
   }, []);
+
+  useEffect(() => cm.current?.setValue(value || '') ,[value]);
 
   return (
     <Root gridArea={gridArea} height={height} padding={padding}>
