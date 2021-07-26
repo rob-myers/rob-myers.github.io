@@ -34,7 +34,7 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
     <>
       <Head>
           <title>
-            react retrace
+            react retraced
           </title>
       </Head>
       <QueryClientProvider client={queryClient} >

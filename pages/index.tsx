@@ -6,7 +6,6 @@ import { initialCode } from 'model/code/code.lib';
 import { Section, Main } from 'components/page/Layout';
 import Markdown from 'components/page/Markdown';
 import { CodeEditor } from 'components/dynamic';
-import { Tabs, TabItem } from 'components/code/Tabs';
 import Terminal from 'components/sh/Terminal';
 
 const env = {};
@@ -22,44 +21,70 @@ export default function IndexPage() {
       <Section>
 
         <Markdown title children={`
-# react retrace
+# react retraced
 
-tracing frontend development
+web components as formal state machines
         `}/>
 
         <Markdown children={`
 ## Statement of intent <float rem="1.2">19th July 2021</float>
 
-This website is about _tracing the behaviour of web components_. By a _trace_ we mean a list of "events", some from user input, some from rendered output, and others from internal and intermediate changes.
+Web applications are built from _components_ (resuable parts) satisfying assertions called _tests_. This website has the following objectives.
+> 1. Trace the internal and external behaviour of web components, using an in-browser terminal.
+> 2. Infer finite state machine representations via automatic trace generation.
+> 3. Apply the above to obtain better debugging, richer tests, better performance, and a deep understanding of modern web development.
 
-How it can be used:
-- to learn React/Preact
-- for integration tests
-- to improve performance
-- to explore the state space
-- to build models
-- to compare approaches
+## Web components
 
-By constructing detailed traces using our in-browser terminal, we will reveal the inner workings of web pages. Let's begin with an example: we'll launch a web component, interact with it, and observe the trace.
+Competing notions of web component exist in the wild.
+A popular approach is to use [React functional components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. _JavaScript functions_ which:
+- have a single argument, conventionally called _props_.
+- return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
+
+The argument _props_ consists of various inputs indexed by their name,
+but what is a _virtual_ DOM node?
+First of all, they are almost always written using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
+        `}/>
+
+        <section style={{ background: 'black' }}>
+          <CodeEditor
+              height="auto"
+              padding="16px 0"
+              lineNumbers
+              readOnly
+              code={`
+function MyComponent(props) {
+  return <>
+    <label for={props.name}>{props.label}</label>
+    <input name={props.name} placeholder={props.value} />
+  </>;
+}
+
+function MyComponentWithoutJSX(props) {
+  return h(Preact.Fragment, null,
+    h("label", { for: props.name }, props.label),
+    h("input", { name: props.name, placeholder: props.value })
+  );
+}
+          `} />
+        </section>
+
+
+
+        <br/>
+
+        <Markdown children={`
+Recall that the only programming language web browsers natively understand is JavaScript.
 
         `}/>
 
-        <Tabs defaultIndex={0} onTabClick={console.log}>
-          <TabItem label="A" index={0}>
-            Lorem ipsum
-          </TabItem>
-          <TabItem label="B" index={1}>
-            Dolor sit amet
-          </TabItem>
-        </Tabs>
-
-        <section style={{ background: '#000' }}>
+        <section style={{ background: 'black', height: 212 }}>
           <CodeEditor
-            height="auto"
-            padding="16px 0"
-            lineNumbers
-            readOnly
-            code={`
+              height="auto"
+              padding="16px 0"
+              lineNumbers
+              readOnly
+              code={`
 import { useState } from '@test/preact/hooks';
 
 export default function App() {
@@ -74,6 +99,15 @@ export default function App() {
         </section>
 
         <Markdown children={`
+
+
+How traces can be used:
+- to learn React/Preact
+- for integration tests
+- to improve performance
+- to explore the state space
+- to build models
+- to compare approaches
 
 <br/>
 <br/>
