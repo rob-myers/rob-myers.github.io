@@ -61,9 +61,13 @@ export default function CodeEditor({
   useEffect(() => cm.current?.setValue(value || '') ,[value]);
 
   return (
-    <Root gridArea={gridArea} height={height} padding={padding}>
-      <div className="editor-root" ref={editorRoot} />
-    </Root>
+    <Root
+      gridArea={gridArea}
+      height={height}
+      padding={padding}
+      className="editor-root"
+      ref={editorRoot}
+    />
   );
 }
 
@@ -76,7 +80,7 @@ interface Props {
   height: string;
 }
 
-const Root = styled.section<{
+const Root = styled.div<{
   gridArea?: string;
   height?: string;
   padding?: string;
@@ -86,13 +90,10 @@ const Root = styled.section<{
   height: 100%;
   font-size: 10pt;
   
-  >.editor-root {
-    height: 100%;
-    .CodeMirror {
-      height: ${props => props.height || ''};
-      .CodeMirror-lines {
-        padding: ${props => props.padding};
-      }
+  .CodeMirror {
+    height: ${props => props.height || ''};
+    .CodeMirror-lines {
+      padding: ${props => props.padding};
     }
   }
 `;
