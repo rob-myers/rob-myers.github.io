@@ -24,6 +24,6 @@ export const Section = styled.section<{}>`
   }
   @media(max-width: 800px) {
     border: 0;
-    padding: 0 12px 16px 12px;
+    padding: 0 16px 16px 16px;
   }
 `;

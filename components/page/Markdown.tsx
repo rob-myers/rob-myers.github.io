@@ -64,11 +64,14 @@ const Root = styled.div`
     font-size: 13pt;
     font-family: 'Courier New', Courier, monospace;
   }
-  ul {
+  ul, ol {
     margin: 20px 0;
     line-height: 1.2;
     li {
       margin: 8px 0;
+    }
+    @media(max-width: 540px) {
+      padding-left: 8px;
     }
   }
   span.float {
@@ -107,7 +110,7 @@ const TitleRoot = styled.div`
       font-size: 5.8rem;
     }
     @media(max-width: 800px) {
-      font-size: 5rem;
+      font-size: 4.8rem;
     }
     @media(max-width: 540px) {
       font-size: 3.4rem;
