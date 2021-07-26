@@ -1,5 +1,5 @@
 diff --git a/node_modules/codemirror/mode/javascript/javascript.js b/node_modules/codemirror/mode/javascript/javascript.js
-index 95cbbd8..f506097 100644
+index 95cbbd8..d99369d 100644
 --- a/node_modules/codemirror/mode/javascript/javascript.js
 +++ b/node_modules/codemirror/mode/javascript/javascript.js
 @@ -21,23 +21,24 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
@@ -9,7 +9,7 @@ index 95cbbd8..f506097 100644
 -
    var keywords = function(){
      function kw(type) {return {type: type, style: "keyword"};}
-+    function kw2(type) {return {type: type, style: "keyword-2"};}
++    function kw2(type) {return {type: type, style: "keyword keyword-2"};}
      var A = kw("keyword a"), B = kw("keyword b"), C = kw("keyword c"), D = kw("keyword d");
 +    var A2 = kw2("keyword a"), B2 = kw2("keyword b"), C2 = kw2("keyword c"), D2 = kw2("keyword d");
      var operator = kw("operator"), atom = {type: "atom", style: "atom"};
@@ -34,3 +34,30 @@ index 95cbbd8..f506097 100644
      };
    }();
  
+@@ -523,7 +524,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
+     if (type == "async") {
+       cx.marked = "property";
+       return cont(objprop);
+-    } else if (type == "variable" || cx.style == "keyword") {
++    } else if (type == "variable" || cx.style == "keyword" || cx.style.startsWith("keyword ")) {
+       cx.marked = "property";
+       if (value == "get" || value == "set") return cont(getterSetter);
+       var m // Work around fat-arrow-detection complication for detecting typescript typed arrow params
+@@ -633,7 +634,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
+     return pass(typeprop, typeprops)
+   }
+   function typeprop(type, value) {
+-    if (type == "variable" || cx.style == "keyword") {
++    if (type == "variable" || cx.style == "keyword" || cx.style.startsWith("keyword ")) {
+       cx.marked = "property"
+       return cont(typeprop)
+     } else if (value == "?" || type == "number" || type == "string") {
+@@ -782,7 +783,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
+       cx.marked = "keyword";
+       return cont(classBody);
+     }
+-    if (type == "variable" || cx.style == "keyword") {
++    if (type == "variable" || cx.style == "keyword" || cx.style.startsWith("keyword ")) {
+       cx.marked = "property";
+       return cont(classfield, classBody);
+     }
