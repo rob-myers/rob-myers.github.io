@@ -1,4 +1,4 @@
-# react retrace
+# react retraced
 
 See the [plan](docs/plan.md).
 
