@@ -7,6 +7,7 @@ import { Section, Main } from 'components/page/Layout';
 import Markdown from 'components/page/Markdown';
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
+import { TabsDemo } from 'components/page/Tabs';
 
 const env = {};
 
@@ -21,30 +22,35 @@ export default function IndexPage() {
       <Section>
 
         <Markdown title children={`
-# react retraced
+# esc the base
 
-web components as formal state machines
+building a topdown using web dev techniques
         `}/>
 
         <Markdown children={`
+
 ## Statement of intent <float rem="1.2">19th July 2021</float>
 
-Web applications are built from _components_ (resuable parts) satisfying assertions called _tests_. This website has the following objectives.
-> 1. Trace the internal and external behaviour of web components, using an in-browser terminal.
-> 2. Infer finite state machine representations via automatic trace generation.
-> 3. Apply the above to obtain better debugging, richer tests, better performance, and a deep understanding of modern web development.
+We're going to make a topdown game step-by-step...
 
-## Web components
 
-Competing notions of web component exist in the wild.
+## Components
+
+_TODO rewrite as 'technology we will use'_
+
+Competing web frameworks exist in the wild, often with their own notion of component.
 A popular approach is to use [React functional components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. _JavaScript functions_ which:
-- have a single argument, conventionally called _props_.
+- have a single parameter, conventionally called _props_.
 - return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
-The argument _props_ consists of various inputs indexed by their name,
-but what is a _virtual_ DOM node?
-First of all, they are almost always written using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
+The single argument _props_ is a JavaScript object defining the component's named inputs.
+But what is a _virtual_ DOM node?
+First consider how they denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
+
+_TODO move code inside layout manager_
         `}/>
+
+        <TabsDemo/>
 
         <section style={{ background: 'black' }}>
           <CodeEditor
@@ -56,24 +62,26 @@ First of all, they are almost always written using syntactic sugar known as [JSX
 function MyComponent(props) {
   return <>
     <label for={props.name}>{props.label}</label>
-    <input name={props.name} placeholder={props.value} />
+    <input name={props.name} placeholder={props.hint} />
   </>;
 }
 
+import { h, Fragment } from 'preact';
+
 function MyComponentWithoutJSX(props) {
-  return h(Preact.Fragment, null,
+  return h(Fragment, null,
     h("label", { for: props.name }, props.label),
-    h("input", { name: props.name, placeholder: props.value })
+    h("input", { name: props.name, placeholder: props.hint })
   );
 }
           `} />
         </section>
 
-
-
         <br/>
 
         <Markdown children={`
+_TODO support typescript syntax highlighting so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96)_
+
 Recall that the only programming language web browsers natively understand is JavaScript.
 
         `}/>
@@ -100,59 +108,16 @@ export default function App() {
 
         <Markdown children={`
 
-
-How traces can be used:
-- to learn React/Preact
-- for integration tests
-- to improve performance
-- to explore the state space
-- to build models
-- to compare approaches
-
-<br/>
 <br/>
 
-_TODO rewrite below, in view of [electron](https://www.electronjs.org/) e.g. VSCode and Slack_
+_TODO examples of complex apps built with web dev techniques, e.g. via [Electron](https://www.electronjs.org/) (VSCode and Slack), e.g. via React Native, e.g. the beginnings of WebAssembly_
 
-Frontend web development is something of a dark art.
-For example, many programmers still believe JavaScript is an inferior language. This assertion lacks a fair comparison, because _the only programming language web browsers understand is JavaScript_. Although the language _certainly had problems_, they have been solved via [language revisions](https://ecmascriptfeatures.online/), intellisense, TypeScript and code-transforms.
-Some backend engineers even view the declarative nature of HTML and CSS with suspicion. Let us apply a similar argument: (a) they are fundamental to the internet, (b) they are now easier to use programmatically e.g. via component frameworks.
-
-On the other hand, _there is definitely too much hype surrounding web applications_.
-Even those web apps held in highest esteem are really testaments to Advertising, Chat and Consumerism, rather than Technology.
-To put it another way, web applications
-Thankfully, we can expect richer web apps in the future via [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly). 
-
-<!-- TODO expand above e.g. what is richer app (do not mean progressive) -->
-
-_TODO start to explain our objective here_
-
-
-
-Web applications are built from _components_ (resuable parts) satisfying assertions called _tests_. Components are tested individually via _unit tests_, and also collectively. Frontend developers alternate between updating components and updating these assertions, amongst other tasks. Sometimes they fix stale tests; sometimes they extend components to satisfy a test. By listing the expected functionality, tests also provide important documentation.
-
-These tests often amount to traces: a sequence of user input vs rendered output.
-
-_TODO tests are usually traces, but how do we trace a component? Still aim towards modelling with static-analysis and traces_
-
-Typically, a test specifies an expected trace through the system. Given a particular initial state and some user interaction, we expect particular output(s).
-
-> _TODO objective should focus on logging traces_
-
-> _TODO codemirror example with two panes, possibly terminal too_
-
-The objective of this website is:
-
-> _to rethink how unit tests are written, by generating them automatically through interactivity_.
 
 ### Birdseye view
 
-We'll use static analysis to construct a _model_ of each component. One can think of it as a partially specified state-machine. By interacting with the component we can _play-in_ assertions (record input/output), thereby enriching the model. Finally we'll use the model to generate unit tests, coverage reports, and also answer queries.
-
-
 ### Intended implementation
 
-We eventually aim to build a system similar to [Storybook](https://storybook.js.org/). But for now we'll built it __directly on this website__, using well-established technologies.
+We are going to built the game __directly on this website__, using well-established technologies.
 
 <table>
     <tr>
@@ -198,14 +163,6 @@ We eventually aim to build a system similar to [Storybook](https://storybook.js.
 
 <!-- A notable omission is TypeScript. -->
 
-### All the fun of the fair
-
-Instead of writing unit tests as code, we are going to create them interactively. But for the process to be fun, the components must be fun to work with. We'll draw from two sources:
-- popular projects freely available on GitHub.
-- a topdown game we are going to build step-by-step.
-
-_TODO_ ...
-
         `}/>
 
         <section style={{ background: '#000', height: 110 }}>
@@ -221,7 +178,6 @@ const f = (x, y) => (x - 1) / (y - 1);
         </section>
 
         <Markdown children={`
-_TODO_ ...
 
 _TODO hookup babel transpilation of jsx using forked @babel/standalone_
         `}/>

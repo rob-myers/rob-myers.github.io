@@ -9,6 +9,7 @@ import 'xterm/css/xterm.css';
 import 'styles/globals.css'
 import 'codemirror/lib/codemirror.css';
 import 'components/code/codemirror/custom-theme.css';
+import 'flexlayout-react/style/light.css'
 
 const queryClient = new QueryClient;
 
@@ -34,7 +35,7 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
     <>
       <Head>
           <title>
-            react retraced
+            esc the base
           </title>
       </Head>
       <QueryClientProvider client={queryClient} >

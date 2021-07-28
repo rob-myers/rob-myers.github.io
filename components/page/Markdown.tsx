@@ -70,9 +70,9 @@ const Root = styled.div`
     li {
       margin: 8px 0;
     }
-    @media(max-width: 540px) {
-      padding-left: 8px;
-    }
+  }
+  ol {
+    line-height: 1.4;
   }
   span.float {
     float: right;
@@ -107,7 +107,7 @@ const TitleRoot = styled.div`
     
     @media(max-width: 1024px) {
       margin: 12px 0;
-      font-size: 5.8rem;
+      font-size: 6rem;
     }
     @media(max-width: 800px) {
       font-size: 4.8rem;

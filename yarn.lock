@@ -2130,6 +2130,11 @@ find-yarn-workspace-root@^2.0.0:
   dependencies:
     micromatch "^4.0.2"
 
+flexlayout-react@^0.5.12:
+  version "0.5.12"
+  resolved "https://registry.yarnpkg.com/flexlayout-react/-/flexlayout-react-0.5.12.tgz#649774d427e8e7fc4a0e4e6fbc82e5ff2e21a336"
+  integrity sha512-HcW80fYrhvv+qB7qA2dln5djpqE3b2na2ad7FnQc7KsnzXfEuxeWh26DWj8zxuOEw6+qHs3sYplQdZpAig4ZPA==
+
 foreach@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/foreach/-/foreach-2.0.5.tgz#0bee005018aeb260d0a3af3ae658dd0136ec1b99"
