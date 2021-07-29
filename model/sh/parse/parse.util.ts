@@ -146,7 +146,7 @@ export function withParents<T extends Sh.ParsedSh>(root: T) {
  * Convert node to a FileWithMeta,
  * so it can be used to drive a process.
  */
-export function wrapInFile(node: Sh.Stmt | Sh.CmdSubst): Sh.FileWithMeta {
+export function wrapInFile(node: Sh.Stmt | Sh.CmdSubst | Sh.Subshell): Sh.FileWithMeta {
   return {
     type: 'File',
     Stmts: node.type === 'Stmt'

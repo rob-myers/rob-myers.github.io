@@ -252,7 +252,8 @@ class SemanticsService {
           case 'FuncDecl': generator = this.FuncDecl(node); break;
           case 'IfClause': generator = this.IfClause(node); break;
           case 'TimeClause': generator = this.TimeClause(node); break;
-          default: throw new ShError(`Command: ${node.type}: not implemented`, 2);
+          case 'Subshell': generator = this.Subshell(node); break;
+          default: throw new ShError('not implemented', 2);
         }
       }
       const process = useSession.api.getProcess(node.meta);
@@ -492,6 +493,12 @@ class SemanticsService {
       stmt.exitCode = stmt.Cmd.exitCode;
       stmt.Negated && (stmt.exitCode = 1 - Number(!!stmt.Cmd.exitCode));
     }
+  }
+
+  private async *Subshell(node: Sh.Subshell) {
+    const cloned = wrapInFile(cloneParsed(node));
+    const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
+    await ttyShell.spawn(cloned);
   }
 
   private async *TimeClause(node: Sh.TimeClause) {
