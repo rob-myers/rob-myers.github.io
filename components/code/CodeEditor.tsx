@@ -65,7 +65,6 @@ export default function CodeEditor({
       gridArea={gridArea}
       height={height}
       padding={padding}
-      className="editor-root"
       ref={editorRoot}
     />
   );
@@ -88,7 +87,7 @@ const Root = styled.div<{
   grid-area: ${props => props.gridArea || ''};
   width: 100%;
   height: 100%;
-  font-size: 10pt;
+  font-size: 9pt;
   
   .CodeMirror {
     height: ${props => props.height || ''};
