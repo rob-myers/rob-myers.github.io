@@ -22,17 +22,47 @@ export default function IndexPage() {
       <Section>
 
         <Markdown title children={`
-# esc the base
+# rogue markup
 
-building a topdown using web dev techniques
+roguelike; built online; ai focus
         `}/>
 
         <Markdown children={`
 
-## Statement of intent <float rem="1.2">19th July 2021</float>
+## Objectives <float rem="1.2">19th July 2021</float>
 
-We're going to make a topdown game step-by-step...
+We are going to build a game step-by-step directly on this website.
+It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike).
+As an important side-effect, we'll see how modern frontend development works.
 
+### Constraints
+
+For such a project to take shape, a large number of decisions must be made. Here are some of the most important ones.
+
+- The setting, items and characters come from [Rogue](https://en.wikipedia.org/wiki/Rogue_(video_game)) or [NetHack](https://nethackwiki.com/wiki/NetHack).
+- Birdseye viewpoint and Realtime (not turn-based).
+- Styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of Terminal/Tiles, HTMLCanvas or WebGL.
+- Complete behavioural rewrite.
+- Behaviours are visually indicated.
+
+Why these constraints? Well, actually finishing a game is notoriously hard.
+We'll answer [the words](https://makegames.tumblr.com/post/1136623767/finishing-a-game) of Spelunky's creator.
+
+
+__Games I want to make__: the process itself should be fun
+
+> one
+
+__Games I want to have made__: caring about the end result
+
+> two
+
+__Games I’m good at making__: personal taste and experience
+
+> three
+
+
+### Stepwise
 
 ## Components
 
@@ -51,31 +81,6 @@ _TODO move code inside layout manager_
         `}/>
 
         <TabsDemo/>
-
-        <section style={{ background: 'black' }}>
-          <CodeEditor
-              height="auto"
-              padding="16px 0"
-              lineNumbers
-              readOnly
-              code={`
-function MyComponent(props) {
-  return <>
-    <label for={props.name}>{props.label}</label>
-    <input name={props.name} placeholder={props.hint} />
-  </>;
-}
-
-import { h, Fragment } from 'preact';
-
-function MyComponentWithoutJSX(props) {
-  return h(Fragment, null,
-    h("label", { for: props.name }, props.label),
-    h("input", { name: props.name, placeholder: props.hint })
-  );
-}
-          `} />
-        </section>
 
         <br/>
 
@@ -164,18 +169,6 @@ We are going to built the game __directly on this website__, using well-establis
 <!-- A notable omission is TypeScript. -->
 
         `}/>
-
-        <section style={{ background: '#000', height: 110 }}>
-          <CodeEditor
-            height="auto"
-            padding="24px"
-            readOnly
-            code={`
-function f(x, y) { return (x - 1) / (y - 1); }
-// or alternatively:
-const f = (x, y) => (x - 1) / (y - 1);
-          `} />
-        </section>
 
         <Markdown children={`
 

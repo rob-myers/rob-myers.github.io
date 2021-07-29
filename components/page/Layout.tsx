@@ -19,7 +19,7 @@ export const Section = styled.section<{}>`
   font-size: 20px;
   background: white;
   
-  @media(max-width: 1000px) {
+  @media(max-width: 1024px) {
     margin: 0;
   }
   @media(max-width: 800px) {

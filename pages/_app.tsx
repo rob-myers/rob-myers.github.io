@@ -35,7 +35,7 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
     <>
       <Head>
           <title>
-            esc the base
+            rogue markup
           </title>
       </Head>
       <QueryClientProvider client={queryClient} >

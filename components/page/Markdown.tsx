@@ -102,18 +102,18 @@ const Root = styled.div`
 const TitleRoot = styled.div`
   /** Site title */
   h1 {
-    margin: 48px 0 12px;
-    font-size: 7rem;
+    margin: 48px 0 20px;
+    font-size: 8rem;
     
     @media(max-width: 1024px) {
-      margin: 12px 0;
+      margin: 12px 0 16px;
       font-size: 6rem;
     }
     @media(max-width: 800px) {
       font-size: 4.8rem;
     }
-    @media(max-width: 540px) {
-      font-size: 3.4rem;
+    @media(max-width: 400px) {
+      font-size: 4rem;
     }
   }
 
@@ -123,10 +123,11 @@ const TitleRoot = styled.div`
     border-bottom: 4px solid #000;
     padding: 0 0 8px;
     color: #333;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     letter-spacing: 1px;
+    font-family: Courier, monospace;
 
-    @media(max-width: 1000px) {
+    @media(max-width: 1024px) {
       margin: 0 0 32px 0;
     }
   }
