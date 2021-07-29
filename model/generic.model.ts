@@ -149,11 +149,21 @@ export function zealousTrim(input: string): string {
   return input.trim().replace(/\s\s+/g, ' ').trim();
 }
 
-/** https://flaviocopes.com/how-to-list-object-methods-javascript/ */
 export function keysDeep(obj: any): string[] {
-  const properties = new Set<string>();
-  let currentObj = obj;
-  do Object.getOwnPropertyNames(currentObj).map(item => properties.add(item));
-  while ((currentObj = Object.getPrototypeOf(currentObj)));
-  return [...properties.keys()];
+  return Array.from(deepKeys(obj));
+}
+
+/**
+ * Iterate deep keys separated by `/`.
+ * https://stackoverflow.com/a/65571163/2917822
+ */
+function* deepKeys(t: any, path: string[] = []): IterableIterator<string> {
+  switch(t?.constructor) {
+    case Object:
+      for (const [k,v] of Object.entries(t))
+        yield* deepKeys(v, [...path, k])
+      break;
+    default:
+      yield path.join("/");
+  }
 }
