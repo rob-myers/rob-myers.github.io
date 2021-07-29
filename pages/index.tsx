@@ -40,24 +40,29 @@ As an important side-effect, we'll see how modern frontend development works.
 For such a project to take shape, a large number of decisions must be made. Here are some of the most important ones.
 
 - The setting, items and characters come from [Rogue](https://en.wikipedia.org/wiki/Rogue_(video_game)) or [NetHack](https://nethackwiki.com/wiki/NetHack).
-- Birdseye viewpoint and Realtime (not turn-based).
+- Birdseye realtime viewpoint, inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch).
 - Styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of Terminal/Tiles, HTMLCanvas or WebGL.
 - Complete behavioural rewrite.
 - Behaviours are visually indicated.
 
-Why these constraints? Well, actually finishing a game is notoriously hard.
-We'll answer [the words](https://makegames.tumblr.com/post/1136623767/finishing-a-game) of Spelunky's creator.
+It is worth explaining the motivation behind these decisions. First of all, finishing a game is notoriously hard.
+The creator of Spelunky suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game):
+
+1. __Games I want to make__: the process itself should be fun.
+  
+  > Marked improvements in Game AI occur rarely.
+  Many games feel like previous incarnations wearing new clothes.
+  On the other hand, _better Game AI_ is a ridiculously vague notion.
+  We are talking about a loosely-defined bunch of algorithms which play an important supporting role.
+  Nevertheless, for improvements in NPC behaviour to be _felt_, they must be observable by the player.
+  Then one approach is to visually indicate NPC decision-making, making it a central mechanic.
 
 
-__Games I want to make__: the process itself should be fun
-
-> one
-
-__Games I want to have made__: caring about the end result
+2. __Games I want to have made__: we should care about the end result.
 
 > two
 
-__Games I’m good at making__: personal taste and experience
+3. __Games I’m good at making__: it should suit our taste and experience.
 
 > three
 
