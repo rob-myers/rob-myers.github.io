@@ -23,8 +23,7 @@
   },
   "exclude": [
     "node_modules",
-    "./gh-pages.ts",
-    "./teleglitch"
+    "./gh-pages.ts"
   ],
   "include": [
     "./**/*.ts",
