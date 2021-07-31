@@ -6,15 +6,6 @@
 - Cleanup how terminal persists
 - Do not auto-persist if localStorage lacks `autopersist=true`
 
-### research
-
-- teleglitch module viewer
-  - ✅ @dev can render teleglitch "modules" on a canvas
-  - can scroll and zoom canvas
-  - show 3d walls using css 3d transforms
-  - @prod can view teleglitch modules via images
-- start creating polygon approximations using https://vectr.com/
-
 ### code-editor
 - fix comment toggle for mode `jsx-styled`
   - jsx should be //, /** */ and {/** */}

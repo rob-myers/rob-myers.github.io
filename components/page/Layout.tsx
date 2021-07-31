@@ -14,7 +14,7 @@ export const Main = styled.main<{}>`
 `;
 
 export const Section = styled.section<{}>`
-  padding: 24px 84px;
+  padding: 32px 120px;
   margin: 48px 0;
   font-size: 20px;
   background: white;

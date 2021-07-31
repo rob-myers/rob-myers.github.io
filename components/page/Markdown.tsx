@@ -102,12 +102,12 @@ const Root = styled.div`
 const TitleRoot = styled.div`
   /** Site title */
   h1 {
-    margin: 48px 0 20px;
-    font-size: 8rem;
+    margin: 48px 0 24px;
+    font-size: 7rem;
     
     @media(max-width: 1024px) {
-      margin: 12px 0 16px;
-      font-size: 6rem;
+      margin: 12px 0 24px;
+      font-size: 5.6rem;
     }
     @media(max-width: 800px) {
       font-size: 4.8rem;
