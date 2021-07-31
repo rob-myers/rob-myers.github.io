@@ -8,7 +8,7 @@ import Markdown from 'components/page/Markdown';
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 import { TabsDemo } from 'components/page/Tabs';
-import PanZoom from 'components/runtime/PanZoom';
+import PanZoom from 'runtime/components/PanZoom';
 
 const env = {};
 

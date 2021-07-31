@@ -1,6 +1,11 @@
+import { useState } from 'react';
 import { css } from '@emotion/react'
+import { Rect } from '../geom/rect';
 
 export default function PanZoom() {
+  const [zoom, setZoom] = useState(100);
+  const [bounds, setBounds] = useState(new Rect(0, 0, 0, 0));
+
   return (
     <svg
       css={css`
