@@ -8,6 +8,7 @@ import Markdown from 'components/page/Markdown';
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 import { TabsDemo } from 'components/page/Tabs';
+import PanZoom from 'components/runtime/PanZoom';
 
 const env = {};
 
@@ -32,27 +33,29 @@ Roguelike / Built online / AI focus
 ## Objectives <float rem="1.2">19th July 2021</float>
 
 We are going to build a game step-by-step directly on this website.
-It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike) focused on Game AI.
+It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike) emphasising Game AI instead of hack-n-slash.
 As an important side-effect, we'll see how modern frontend development works.
 
 ### Constraints
 
 For such a project to take shape, a large number of decisions must be made. Here are some of the most important ones.
 
-- We'll use styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
-- The viewpoint will be realtime and birdseye, inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch).
-- Levels will be procedurally generated, applying Teleglitch's method.
-- NPC behaviour will be compositional and unscripted.
-- All NPC decisions will be observable by the player.
-- Repeatable complex AI behaviour is an underlying objective.
+- Styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
+- Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and Emotion [styled components](https://emotion.sh/docs/styled).
+- Realtime birdseye viewpoint, inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch).
+- Procedurally generated levels, applying Teleglitch's method.
+- NPC behaviour should be compositional and unscripted, fully observable by the player, and produce repeatable complexity.
+- Specific game entities e.g. sensors, cameras, monitors.
 
 It is worth explaining the motivation behind these decisions.
-Creating a game (and finishing it) is notoriously hard.
+Starting and _finishing_ a game is notoriously hard.
 The creator of Spelunky suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
 
 #### Games I want to make: why the process will be fun
 
-_from here_
+The process will be fun because
+
+<br>
 
 We are particularly interested in NPC behaviors which are complex, yet clearly observable by the player.
 For example, consider the process by which a triggered sensor alerts a watcher who redirects nearby guards. Each step will be graphically indicated, each step will be interruptible, and the guard's future traversals will be plotted.
@@ -70,6 +73,13 @@ three
 
 
 ### Stepwise
+
+
+        `}/>
+
+        <PanZoom />
+
+        <Markdown children={`
 
 ## Components
 
