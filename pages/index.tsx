@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { css } from '@emotion/react';
 
 import useCodeStore from 'store/code.store';
 import { initialCode } from 'model/code/code.lib';
@@ -33,19 +34,18 @@ Roguelike / Built online / AI focus
 ## Objectives <float rem="1.2">19th July 2021</float>
 
 We are going to build a game step-by-step directly on this website.
-It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike) emphasising Game AI instead of hack-n-slash.
-As an important side-effect, we'll see how modern frontend development works.
+It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike).
+As an important side-effect, we'll see how frontend development works.
 
 ### Constraints
 
 For such a project to take shape, a large number of decisions must be made. Here are some of the most important ones.
 
-- Styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
+- Use styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and Emotion [styled components](https://emotion.sh/docs/styled).
-- Realtime birdseye viewpoint, inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch).
+- Viewpoint is realtime and birdseye, inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch).
 - Procedurally generated levels, applying Teleglitch's method.
-- NPC behaviour should be compositional and unscripted, fully observable by the player, and produce repeatable complexity.
-- Specific game entities e.g. sensors, cameras, monitors.
+- Combine simple NPC behaviour. We want compositional, understandable, repeatable and emergent behaviour.
 
 It is worth explaining the motivation behind these decisions.
 Starting and _finishing_ a game is notoriously hard.
@@ -53,19 +53,11 @@ The creator of Spelunky suggested [three requirements](https://makegames.tumblr.
 
 #### Games I want to make: why the process will be fun
 
-The process will be fun because
-
-<br>
-
-We are particularly interested in NPC behaviors which are complex, yet clearly observable by the player.
-For example, consider the process by which a triggered sensor alerts a watcher who redirects nearby guards. Each step will be graphically indicated, each step will be interruptible, and the guard's future traversals will be plotted.
-
-<!-- An example: a trap is triggered, a crystal ball reflects it, an acolyte notices it, asking nearby rangers to adjust their patrol routes.  -->
-
+Experimenting with Game AI (i.e. NPC behaviour) is great fun, although it must be understandable and repeatable. Interesting behaviour will stem from the environment and agent interaction, rather than individual thinking or scripted behaviour.
 
 #### Games I want to have made: caring about the end result
 
-two
+The end result...
 
 #### Games I’m good at making: suits our taste and experience
 
@@ -77,7 +69,9 @@ three
 
         `}/>
 
-        <PanZoom />
+        <section css={css`width: 400px; height: 400px; position: relative;`}>
+          <PanZoom />
+        </section>
 
         <Markdown children={`
 
