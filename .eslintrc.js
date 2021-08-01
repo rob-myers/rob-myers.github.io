@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 module.exports = {
     "env": {
         "browser": true,
@@ -19,5 +20,6 @@ module.exports = {
     ],
     "rules": {
         "react/react-in-jsx-scope": "off",
+        "react/prop-types": "off",
     }
 };
