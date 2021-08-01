@@ -1,14 +1,14 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 
 /**
  * @template T
- * @param {T} useRefArg 
+ * @param {() => T} useMemoArg 
  * @returns {[() => void, T]}
  */
-export default function useForceRefresh(useRefArg) {
+export default function useForceRefresh(useMemoArg) {
   const [, setState] = useState(0);
   return [
     useRef(() => setState(x => ++x)).current,
-    useRef(useRefArg).current,
+    useMemo(useMemoArg, []),
   ];
 }

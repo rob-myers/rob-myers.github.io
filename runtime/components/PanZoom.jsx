@@ -7,11 +7,13 @@ import { getRelativePos } from 'runtime/service/dom';
 import { Rect } from 'runtime/geom';
 
 /** @typedef {import('react').WheelEvent} WheelEvent */
+/** @typedef {import('react').PropsWithChildren<{}>} PropsWithChildren */
 
-export default function PanZoom() {
+/** @param {PropsWithChildren} props */
+export default function PanZoom({ children }) {
   const [ref, domBounds] = useMeasure();
 
-  const [refresh, state] = useForceRefresh({
+  const [refresh, state] = useForceRefresh(() => ({
     gridId: `grid-${nanoid()}`,
     zoom: 100,
     /** Userspace bounds */
@@ -39,11 +41,11 @@ export default function PanZoom() {
         state.bounds.delta(0.5 * e.deltaX, 0.5 * e.deltaY);
         refresh();
       }
-      state.dx = -(state.bounds.x > 0 ? state.bounds.x % 10 : (state.bounds.x % 10) + 10);
-      state.dy = -(state.bounds.y > 0 ? state.bounds.y % 10 : (state.bounds.y % 10) + 10);
+      state.dx = -state.bounds.x % 10;
+      state.dy = -state.bounds.y % 10;
     },
     preventDefault: (/** @type {MouseEvent} */ e) => e.preventDefault(),
-  });
+  }));
 
   useEffect(() => {// useLayoutEffect?
     state.bounds.width = domBounds.width;
@@ -75,13 +77,9 @@ export default function PanZoom() {
           fill={`url(#${state.gridId})`}
         />
         <g transform={`translate(${-state.bounds.x}, ${-state.bounds.y})`}>
-
-          {/* TODO */}
-          <rect x={5} y={5} width={20} height={20} fill="red" />
-
+          {children}
         </g>
       </g>
-
     </svg>
   );
 }
@@ -91,7 +89,13 @@ function GridPattern({ gridId, dx, dy }) {
   return (
     <defs>
       <pattern
-        id={gridId} x={dx} y={dy} width="10" height="10" patternUnits="userSpaceOnUse">
+        id={gridId}
+        x={dx}
+        y={dy}
+        width="10"
+        height="10"
+        patternUnits="userSpaceOnUse"
+      >
         <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(0,0,0,0.7)" strokeWidth="0.3"/>
       </pattern>
     </defs>

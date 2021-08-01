@@ -70,7 +70,10 @@ three
         `}/>
 
         <section css={css`width: 400px; height: 400px; position: relative;`}>
-          <PanZoom />
+          <PanZoom>
+            {/* TODO */}
+            <rect x={5} y={5} width={20} height={20} fill="red" />
+          </PanZoom>
         </section>
 
         <Markdown children={`
