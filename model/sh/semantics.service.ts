@@ -1,5 +1,5 @@
 import type * as Sh from './parse/parse.model';
-import shortid from 'shortid';
+import { nanoid } from 'nanoid';
 import safeJsonStringify from 'safe-json-stringify';
 
 import { last } from 'model/generic.model';
@@ -362,7 +362,7 @@ class SemanticsService {
       }
       case 'CmdSubst': {
         const cloned = wrapInFile(cloneParsed(node));
-        const fifoKey = `/dev/fifo-cmd-${shortid.generate()}`;
+        const fifoKey = `/dev/fifo-cmd-${nanoid()}`;
         const device = useSession.api.createFifo(fifoKey);
         cloned.meta.fd[1] = device.key;
 
