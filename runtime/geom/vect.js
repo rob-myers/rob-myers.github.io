@@ -1,4 +1,4 @@
-/** @typedef {import('../types').VectJson} VectJson */
+/** @typedef {import('runtime').VectJson} VectJson */
 
 /**
  * A two dimensional coordinate.
@@ -9,7 +9,7 @@
     return Math.atan2(this.y, this.x);
   }
 
-  /** @returns {import('../types').Coord} */
+  /** @returns {import('runtime').Coord} */
   get coord() {
     return [this.x, this.y];
   }
@@ -121,7 +121,7 @@
     return this;
   }
 
-  /** @param {VectJson} */
+  /** @param {VectJson} _ */
   sub({ x, y }) {
     return this.translate(-x, -y);
   }

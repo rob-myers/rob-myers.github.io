@@ -1,8 +1,8 @@
 import { Vect } from './vect';
 
-/** @typedef {import('../types').RectJson} RectJson */
-/** @typedef {import('./vect').VectJson} VectJson */
-/** @typedef {import('../types').GeoJsonPolygon} GeoJsonPolygon */
+/** @typedef {import('runtime').RectJson} RectJson */
+/** @typedef {import('runtime').VectJson} VectJson */
+/** @typedef {import('runtime').GeoJsonPolygon} GeoJsonPolygon */
 
 /**
  * A two dimensional rectangle where `(x, y)` is viewed as top left.
@@ -54,7 +54,12 @@ export class Rect {
 
   /** @returns {RectJson} */
   get json() {
-    return [this.x, this.y, this.width, this.height];
+    return { 
+      x: this.x,
+      y: this.y,
+      width: this.width,
+      height: this.height,
+    };
   }
 
   get key() {
@@ -169,12 +174,12 @@ export class Rect {
   }
 
   /** @param {RectJson} _ */
-  static fromJson([ x, y, width, height ]) {
+  static fromJson({ x, y, width, height }) {
     return new Rect(x, y, width, height);
   }
 
   /**
-   * Bounded version of lambda x. this.outset(-x)
+   * Bounded version of `lambda x.this.outset(-x)`
    * @param {number} nonNegAmount 
    */
   inset(nonNegAmount) {
