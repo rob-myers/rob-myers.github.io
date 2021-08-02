@@ -107,10 +107,10 @@ const TitleRoot = styled.div`
     
     @media(max-width: 1024px) {
       margin: 12px 0 24px;
-      font-size: 5.6rem;
+      font-size: 5.2rem;
     }
     @media(max-width: 800px) {
-      font-size: 4.8rem;
+      font-size: 4.2rem;
     }
     @media(max-width: 400px) {
       font-size: 4rem;

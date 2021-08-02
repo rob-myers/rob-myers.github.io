@@ -23,7 +23,9 @@ export const Section = styled.section<{}>`
     margin: 0;
   }
   @media(max-width: 800px) {
-    border: 0;
+    padding: 32px 64px;
+  }
+  @media(max-width: 600px) {
     padding: 0 16px 16px 16px;
   }
 `;
