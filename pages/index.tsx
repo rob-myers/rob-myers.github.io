@@ -37,6 +37,7 @@ We are going to build a game step-by-step directly on this website.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike).
 As an important side-effect, we'll see how frontend development works.
 
+---
 
 ## Constraints <float rem="1.2">19th July 2021</float>
 
@@ -81,8 +82,9 @@ We also need an approximation of a development environment:
 
 > We'll display code using [CodeMirror](https://codemirror.net/), transpile it from [JSX](https://reactjs.org/docs/introducing-jsx.html) via [Babel](https://babeljs.io/) in a webworker, and load using [SystemJS](https://github.com/systemjs/systemjs). We'll provide a terminal, and escape hatches to StackBlitz.
 
-Finally, I also have experience making the intended game mechanics. Perhaps my long line of unfinished projects is finally at an end!
+I also have experience making the intended game mechanics. Perhaps my long line of unfinished projects is finally at an end!
 
+---
 
 ## Beginnings <float rem="1.2">19th July 2021</float>
 
@@ -96,11 +98,11 @@ Finally, I also have experience making the intended game mechanics. Perhaps my l
           </PanZoom>
         </section>
 
+        <TabsDemo/>
+
         <Markdown children={`
 
-## Components
-
-_TODO rewrite as 'technology we will use'_
+_TODO rewrite below_
 
 Competing web frameworks exist in the wild, often with their own notion of component.
 A popular approach is to use [React functional components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. _JavaScript functions_ which:
@@ -111,17 +113,8 @@ The single argument _props_ is a JavaScript object defining the component's name
 But what is a _virtual_ DOM node?
 First consider how they denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
 
-_TODO move code inside layout manager_
-        `}/>
 
-        <TabsDemo/>
-
-        <br/>
-
-        <Markdown children={`
 _TODO support typescript syntax highlighting so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96)_
-
-Recall that the only programming language web browsers natively understand is JavaScript.
 
         `}/>
 

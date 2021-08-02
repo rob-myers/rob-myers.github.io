@@ -59,6 +59,8 @@ https://github.com/nodejs/modules/issues/307
 - https://github.com/nodejs/modules/issues/307#issuecomment-762465349
 - https://github.com/preactjs/prefresh/pull/236
 
+- https://github.com/cfware/babel-plugin-bare-import-rewrite/blob/master/index.js
+
 ---
 
 https://www.programmersought.com/article/96886629323/
@@ -70,3 +72,4 @@ If there is a syntax error in this function, there is no need to continue execut
   > 2. Check whether the external variable is referenced inside the function. If the external variable is referenced, the pre-parser will copy the variable in the stack to the heap. When the function is executed next time, it will directly use the reference in the heap to solve the problem. The problem with the package.
 
 Hopefully it caches this analysis, so, almost always, function declarations just amount to storing a name and some code.
+
