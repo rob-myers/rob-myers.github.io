@@ -37,6 +37,7 @@ We are going to build a game step-by-step directly on this website.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike).
 As an important side-effect, we'll see how frontend development works.
 
+
 ## Constraints <float rem="1.2">19th July 2021</float>
 
 For such a project to take shape, a large number of decisions must be made. Here are the most important ones, from low-level to high-level.
@@ -53,21 +54,21 @@ The creator of Spelunky suggested [three requirements](https://makegames.tumblr.
 
 ### Games I want to make: fun to develop
 
-Making this particular game will be fun because I really enjoy experimenting with Game AI (NPC behaviour).
+Why will this game be fun to make? Well, because I really enjoy experimenting with Game AI (NPC behaviour).
 We'll combine simple behaviours to obtain complex ones,
-using the environment and agent interaction, rather than individual thinking or scripted behaviour.
+using the environment and agent interaction, rather than individual "thinking" or scripted behaviour.
 
-### Games I want to have made: end result matters
+### Games I want to have made: the end result matters
 
-Leveraging our step-by-step online approach, we'll break things down into hurdles.
+We'll reach the end result by hurdling hurdles.
 
 #### Hurdle 1 - A Tale of Two Viewpoints
 - Implement a pannable zoomable infinite grid.
-- Implement a movable character with Teleglitch-style Viewpoint.
+- Implement a movable character & Teleglitch-style camera.
 - Support switching between these two viewpoints.
-- Support desktop & mobile; provide [StackBlitz](https://stackblitz.com/) links.
+- Support desktop & mobile; can optionally run code on [StackBlitz](https://stackblitz.com/).
 
-This first hurdle really matters: it provides just enough structure to make the game viewable.
+This first hurdle really matters: it provides just enough structure to make the game viewpoint _viewable_.
 
 <!-- We'll draw inspiration from [NetHack](https://www.nethack.org/) and other roguelikes, notably Teleglitch.
 NetHack's ≥ 34 year history shows _we needn't spell out a story_.
@@ -75,13 +76,13 @@ Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style
 
 ### Games I’m good at making: suitable experience
 
-Web dev
+We'll apply modern web development techniques to create the game.
+Code will be displayed using [CodeMirror](https://codemirror.net/), transpiled from [JSX](https://reactjs.org/docs/introducing-jsx.html) via [Babel](https://babeljs.io/) running in a webworker, and loaded using [SystemJS](https://github.com/systemjs/systemjs). We also provide an in-browser terminal. These are precisely the technologies I use when developing websites.
 
-We're using web development to create the game.
-This permits us to build it step-by-step on this website.
-We'll display code using [CodeMirror](https://codemirror.net/), transpile [JSX](https://reactjs.org/docs/introducing-jsx.html) using [Babel](https://babeljs.io/) in a webworker, and load modules using the module loader [SystemJS](https://github.com/systemjs/systemjs). We'll also use an in-browser terminal for analysis.
+Finally, I have experience making the intended game mechanics. Who knows, perhaps my long line of unfinished projects is finally at an end!
 
-### Stepwise
+
+## Beginnings <float rem="1.2">19th July 2021</float>
 
 
         `}/>

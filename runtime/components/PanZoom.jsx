@@ -7,7 +7,7 @@ import { getRelativePos } from 'runtime/service/dom';
 import { Rect } from 'runtime/geom';
 
 /** @param {React.PropsWithChildren<{ uid: string }>} props */
-export default function PanZoomGrid({ children, uid }) {
+export default function PanZoom({ children, uid }) {
   const [ref, domBounds] = useMeasure();
 
   const [refresh, state] = useForceRefresh(() => ({
