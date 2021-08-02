@@ -58,3 +58,15 @@ https://github.com/nodejs/modules/issues/307
 - https://nodejs.org/api/modules.html#modules_all_together
 - https://github.com/nodejs/modules/issues/307#issuecomment-762465349
 - https://github.com/preactjs/prefresh/pull/236
+
+---
+
+https://www.programmersought.com/article/96886629323/
+
+> After the introduction of the pre-parser, when V8 encounters a function, __it will not skip the function directly__, but will perform this fast pre-analysis on the function. The pre-analysis has two tasks
+
+  > 1. Determine whether the current function has a syntax error
+If there is a syntax error in this function, there is no need to continue execution
+  > 2. Check whether the external variable is referenced inside the function. If the external variable is referenced, the pre-parser will copy the variable in the stack to the heap. When the function is executed next time, it will directly use the reference in the heap to solve the problem. The problem with the package.
+
+Hopefully it caches this analysis, so, almost always, function declarations just amount to storing a name and some code.
