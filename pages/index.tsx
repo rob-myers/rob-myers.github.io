@@ -8,7 +8,7 @@ import { Section, Main } from 'components/page/Layout';
 import Markdown from 'components/page/Markdown';
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
-import { TabsDemo } from 'components/page/Tabs';
+import { TabsDemo } from 'components/page/TabsDemo';
 import PanZoom from 'runtime/components/PanZoom';
 
 const env = {};
@@ -87,7 +87,6 @@ I also have experience making the intended game mechanics. Perhaps my long line 
 ---
 
 ## Beginnings <float rem="1.2">19th July 2021</float>
-
 
         `}/>
 

@@ -1,5 +1,7 @@
 ## Plan
 
+- Make modular `Tabs` 
+
 - Add babel in webworker
 - Connect terminal to babel somehow
 - Can transpile JSX and to SystemJS via babel

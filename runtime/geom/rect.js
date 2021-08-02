@@ -1,8 +1,8 @@
 import { Vect } from './vect';
 
-/** @typedef {import('runtime').RectJson} RectJson */
-/** @typedef {import('runtime').VectJson} VectJson */
-/** @typedef {import('runtime').GeoJsonPolygon} GeoJsonPolygon */
+/** @typedef {import('./geom').RectJson} RectJson */
+/** @typedef {import('./geom').VectJson} VectJson */
+/** @typedef {import('./geom').GeoJsonPolygon} GeoJsonPolygon */
 
 /**
  * A two dimensional rectangle where `(x, y)` is viewed as top left.
