@@ -123,7 +123,7 @@ const TitleRoot = styled.div`
     border-bottom: 4px solid #000;
     padding: 0 0 8px;
     color: #333;
-    font-size: 1.1rem;
+    font-size: 1rem;
     letter-spacing: 1px;
     font-family: Courier, monospace;
 

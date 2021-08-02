@@ -40,7 +40,7 @@ As an important side-effect, we'll see how frontend development works.
 
 ## Constraints <float rem="1.2">19th July 2021</float>
 
-For such a project to take shape, a large number of decisions must be made. Here are the most important ones, from low-level to high-level.
+For this project to take shape, a large number of decisions must be made. Here are the most important ones, from low-level to high-level.
 
 - Use styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and Emotion [styled components](https://emotion.sh/docs/styled).
@@ -68,7 +68,7 @@ We'll reach the end result by hurdling hurdles.
 - Support switching between these two viewpoints.
 - Support desktop & mobile; can optionally run code on [StackBlitz](https://stackblitz.com/).
 
-This first hurdle really matters: it provides just enough structure to make the game viewpoint _viewable_.
+Inasmuch as anything matters, this first hurdle does: it provides just enough structure to make the game viewpoints _viewable_.
 
 <!-- We'll draw inspiration from [NetHack](https://www.nethack.org/) and other roguelikes, notably Teleglitch.
 NetHack's ≥ 34 year history shows _we needn't spell out a story_.
@@ -76,12 +76,12 @@ Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style
 
 ### Games I’m good at making: suitable experience
 
-We'll use popular frontend web development technologies like React and Emotion. I use these very same technologies in my job as a web developer. Additionally:
+I use React & Emotion heavily in my job as a web developer.
+We also need an approximation of a development environment:
 
-> To run code directly on the website, we need something approximating a development environment.
-We'll display code using [CodeMirror](https://codemirror.net/), transpile it from [JSX](https://reactjs.org/docs/introducing-jsx.html) via [Babel](https://babeljs.io/) in a webworker, and load it using [SystemJS](https://github.com/systemjs/systemjs). We also provide an in-browser terminal, and escape hatches to StackBlitz.
+> We'll display code using [CodeMirror](https://codemirror.net/), transpile it from [JSX](https://reactjs.org/docs/introducing-jsx.html) via [Babel](https://babeljs.io/) in a webworker, and load using [SystemJS](https://github.com/systemjs/systemjs). We'll provide a terminal, and escape hatches to StackBlitz.
 
-Finally, I have experience making the intended game mechanics. Who knows, perhaps my long line of unfinished projects is finally at an end!
+Finally, I also have experience making the intended game mechanics. Perhaps my long line of unfinished projects is finally at an end!
 
 
 ## Beginnings <float rem="1.2">19th July 2021</float>
