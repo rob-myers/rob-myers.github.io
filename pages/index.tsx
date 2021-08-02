@@ -26,20 +26,20 @@ export default function IndexPage() {
         <Markdown title children={`
 # Rogue Markup
 
-Roguelike; Built online; AI focus
+Roguelike; Built online; Game AI focus
         `}/>
 
         <Markdown children={`
 
-## Objectives <float rem="1.2">19th July 2021</float>
+## Objective <float rem="1.2">19th July 2021</float>
 
 We are going to build a game step-by-step directly on this website.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike).
 As an important side-effect, we'll see how frontend development works.
 
-### Constraints
+## Constraints <float rem="1.2">19th July 2021</float>
 
-For such a project to take shape, a large number of decisions must be made. Here are some of the most important ones.
+For such a project to take shape, a large number of decisions must be made. Here are the most important ones, from low-level to high-level.
 
 - Use styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and Emotion [styled components](https://emotion.sh/docs/styled).
@@ -51,24 +51,29 @@ For such a project to take shape, a large number of decisions must be made. Here
 Starting and _finishing_ a game is notoriously hard.
 The creator of Spelunky suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
 
-#### Games I want to make (why the process will be fun)
+### Games I want to make: fun to develop
 
-Experimenting with Game AI (NPC behaviour) can be great fun.
-We will combine simple behaviours to obtain complex ones,
-the latter arising from the environment and agent interaction, rather than individual thinking or scripted behaviour.
-Personally, I really enjoy making artificial worlds and watching them tick.
+Making this particular game will be fun because I really enjoy experimenting with Game AI (NPC behaviour).
+We'll combine simple behaviours to obtain complex ones,
+using the environment and agent interaction, rather than individual thinking or scripted behaviour.
 
-#### Games I want to have made (caring about the end result)
+### Games I want to have made: end result matters
 
-We'll draw inspiration from [NetHack](https://www.nethack.org/) and other roguelikes - notably Teleglitch. NetHack's 34 year history shows _we needn't spell a story out_.  Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style gameplay is achievable from a topdown perspective. Roughly speaking, we intend to extend Teleglitch's game mechanic with more complex NPC behaviour, inspired by other roguelikes.
+Leveraging our step-by-step online approach, we'll break things down into hurdles.
 
-Due to our step-by-step approach, we'll break the end result down into a number of _hurdles_. Here's the first one we care about:
-> __First hurdle__. ok
+#### Hurdle 1 - A Tale of Two Viewpoints
+- Implement a pannable zoomable infinite grid.
+- Implement a movable character with Teleglitch-style Viewpoint.
+- Support switching between these two viewpoints.
+- Support desktop & mobile; provide [StackBlitz](https://stackblitz.com/) links.
 
+This first hurdle really matters: it provides just enough structure to make the game viewable.
 
-_why do we care about the end result? Could specify 1st hurdle e.g. can move and look with tracking camera on desktop/mobile/CodePen_
+<!-- We'll draw inspiration from [NetHack](https://www.nethack.org/) and other roguelikes, notably Teleglitch.
+NetHack's ≥ 34 year history shows _we needn't spell out a story_.
+Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style gameplay is achievable from a topdown perspective. Roughly speaking, we intend to extend Teleglitch's game mechanic with more complex NPC behaviour. -->
 
-#### Games I’m good at making (suitable experience)
+### Games I’m good at making: suitable experience
 
 Web dev
 
