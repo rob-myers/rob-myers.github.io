@@ -26,7 +26,7 @@ export default function IndexPage() {
         <Markdown title children={`
 # Rogue Markup
 
-Roguelike / Built online / AI focus
+Roguelike; Built online; AI focus
         `}/>
 
         <Markdown children={`
@@ -43,26 +43,38 @@ For such a project to take shape, a large number of decisions must be made. Here
 
 - Use styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and Emotion [styled components](https://emotion.sh/docs/styled).
-- Viewpoint is realtime and birdseye, inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch).
-- Procedurally generated levels, applying Teleglitch's method.
-- Combine simple NPC behaviour. We want compositional, understandable, repeatable and emergent behaviour.
+- Use a realtime birdseye camera, inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch).
+- Use procedural level generation, following Teleglitch's method.
+- Use simple individual [NPC](https://en.wikipedia.org/wiki/Non-player_character) behaviours, combinable in many ways, to create understandable, repeatable and emergent behaviour.
 
-It is worth explaining the motivation behind these decisions.
+<!-- It is worth explaining the motivation behind these decisions. -->
 Starting and _finishing_ a game is notoriously hard.
 The creator of Spelunky suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
 
-#### Games I want to make: why the process will be fun
+#### Games I want to make (why the process will be fun)
 
-Experimenting with Game AI (i.e. NPC behaviour) is great fun, although it must be understandable and repeatable. Interesting behaviour will stem from the environment and agent interaction, rather than individual thinking or scripted behaviour.
+Experimenting with Game AI (NPC behaviour) can be great fun.
+We will combine simple behaviours to obtain complex ones,
+the latter arising from the environment and agent interaction, rather than individual thinking or scripted behaviour.
+Personally, I really enjoy making artificial worlds and watching them tick.
 
-#### Games I want to have made: caring about the end result
+#### Games I want to have made (caring about the end result)
 
-The end result...
+We'll draw inspiration from [NetHack](https://www.nethack.org/) and other roguelikes - notably Teleglitch. NetHack's 34 year history shows _we needn't spell a story out_.  Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style gameplay is achievable from a topdown perspective. Roughly speaking, we intend to extend Teleglitch's game mechanic with more complex NPC behaviour, inspired by other roguelikes.
 
-#### Games I’m good at making: suits our taste and experience
+Due to our step-by-step approach, we'll break the end result down into a number of _hurdles_. Here's the first one we care about:
+> __First hurdle__. ok
 
-three
 
+_why do we care about the end result? Could specify 1st hurdle e.g. can move and look with tracking camera on desktop/mobile/CodePen_
+
+#### Games I’m good at making (suitable experience)
+
+Web dev
+
+We're using web development to create the game.
+This permits us to build it step-by-step on this website.
+We'll display code using [CodeMirror](https://codemirror.net/), transpile [JSX](https://reactjs.org/docs/introducing-jsx.html) using [Babel](https://babeljs.io/) in a webworker, and load modules using the module loader [SystemJS](https://github.com/systemjs/systemjs). We'll also use an in-browser terminal for analysis.
 
 ### Stepwise
 
@@ -70,7 +82,7 @@ three
         `}/>
 
         <section css={css`width: 400px; height: 400px; position: relative;`}>
-          <PanZoom>
+          <PanZoom uid="test">
             {/* TODO */}
             <rect x={5} y={5} width={20} height={20} fill="red" />
           </PanZoom>

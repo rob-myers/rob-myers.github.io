@@ -1,14 +1,16 @@
-import { useState, useRef, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 
 /**
  * @template T
- * @param {() => T} useMemoArg 
+ * @param {undefined | (() => T)} useMemoArg 
  * @returns {[() => void, T]}
  */
-export default function useForceRefresh(useMemoArg) {
+export default function useForceRefresh(
+  useMemoArg = () => /** @type {any} */ (undefined)
+) {
   const [, setState] = useState(0);
   return [
-    useRef(() => setState(x => ++x)).current,
+    useCallback(() => setState(x => ++x), []),
     useMemo(useMemoArg, []),
   ];
 }

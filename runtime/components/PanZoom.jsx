@@ -1,20 +1,17 @@
+/** @typedef {import('react')} React */
 import { useEffect } from 'react';
 import useMeasure from 'react-use-measure';
 import { css } from '@emotion/react'
-import { nanoid } from 'nanoid';
 import useForceRefresh from 'runtime/hooks/use-force-refresh';
 import { getRelativePos } from 'runtime/service/dom';
 import { Rect } from 'runtime/geom';
 
-/** @typedef {import('react').WheelEvent} WheelEvent */
-/** @typedef {import('react').PropsWithChildren<{}>} PropsWithChildren */
-
-/** @param {PropsWithChildren} props */
-export default function PanZoom({ children }) {
+/** @param {React.PropsWithChildren<{ uid: string }>} props */
+export default function PanZoomGrid({ children, uid }) {
   const [ref, domBounds] = useMeasure();
 
   const [refresh, state] = useForceRefresh(() => ({
-    gridId: `grid-${nanoid()}`,
+    gridId: `grid-def-${uid}`,
     zoom: 100,
     /** Userspace bounds */
     bounds: new Rect(0, 0, domBounds.width, domBounds.height),
@@ -22,11 +19,13 @@ export default function PanZoom({ children }) {
     dy: 0,
     /** @type {null | SVGSVGElement} */
     root: null,
-    ref: (/** @type {null | SVGSVGElement} */ x) => {
-      ref(x);
-      state.root = x;
+    /** @param {null | SVGSVGElement} el */
+    ref: (el) => {
+      ref(el);
+      state.root = el;
     },
-    onWheel: (/** @type {WheelEvent} */ e) => {
+    /** @param {React.WheelEvent} e */
+    onWheel: e => {
       if (e.shiftKey) {// Zoom
         const nextZoom = state.zoom - 0.5 * e.deltaY;
         if (Math.abs(e.deltaY) > 0.1 && nextZoom >= 50 && nextZoom <= 500) {
@@ -35,28 +34,28 @@ export default function PanZoom({ children }) {
           state.bounds.x += rx * 100 * (1/state.zoom - 1/nextZoom);
           state.bounds.y += ry * 100 * (1/state.zoom - 1/nextZoom);
           state.zoom = nextZoom;
+          state.bounds.width = (state.zoom / 100) * domBounds.width;
+          state.bounds.height = (state.zoom / 100) * domBounds.height;
           refresh();
         }
       } else {// Pan
-        state.bounds.delta(0.5 * e.deltaX, 0.5 * e.deltaY);
+        state.bounds.delta(0.25 * e.deltaX, 0.25 * e.deltaY);
         refresh();
       }
       state.dx = -state.bounds.x % 10;
       state.dy = -state.bounds.y % 10;
     },
-    preventDefault: (/** @type {MouseEvent} */ e) => e.preventDefault(),
+    /** @param {MouseEvent} e */
+    preventDefault: e => e.preventDefault(),
   }));
-
-  useEffect(() => {// useLayoutEffect?
-    state.bounds.width = domBounds.width;
-    state.bounds.height = domBounds.height;
-    refresh();
-  }, [domBounds]);
 
   useEffect(() => {
     state.root?.addEventListener('wheel', state.preventDefault);
+    state.bounds.width = (state.zoom / 100) * domBounds.width;
+    state.bounds.height = (state.zoom / 100) * domBounds.height;
+    refresh();
     return () => state.root?.removeEventListener('wheel', state.preventDefault);
-  }, []);
+  }, [domBounds]);
 
   return (
     <svg
@@ -70,6 +69,7 @@ export default function PanZoom({ children }) {
       onWheel={state.onWheel}
     >
       <GridPattern gridId={state.gridId} dx={state.dx} dy={state.dy} />
+
       <g transform={`scale(${state.zoom / 100})`}>
         <rect
           width="200%" // since max zoom x2
