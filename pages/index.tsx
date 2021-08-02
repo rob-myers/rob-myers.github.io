@@ -76,8 +76,10 @@ Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style
 
 ### Games I’m good at making: suitable experience
 
-We'll apply modern web development techniques to create the game.
-Code will be displayed using [CodeMirror](https://codemirror.net/), transpiled from [JSX](https://reactjs.org/docs/introducing-jsx.html) via [Babel](https://babeljs.io/) running in a webworker, and loaded using [SystemJS](https://github.com/systemjs/systemjs). We also provide an in-browser terminal. These are precisely the technologies I use when developing websites.
+We'll use popular frontend web development technologies like React and Emotion. I use these very same technologies in my job as a web developer. Additionally:
+
+> To run code directly on the website, we need something approximating a development environment.
+We'll display code using [CodeMirror](https://codemirror.net/), transpile it from [JSX](https://reactjs.org/docs/introducing-jsx.html) via [Babel](https://babeljs.io/) in a webworker, and load it using [SystemJS](https://github.com/systemjs/systemjs). We also provide an in-browser terminal, and escape hatches to StackBlitz.
 
 Finally, I have experience making the intended game mechanics. Who knows, perhaps my long line of unfinished projects is finally at an end!
 
