@@ -18,7 +18,7 @@ export default function PanZoom({ children }) {
       bounds,
       /** Userspace view initial bounds */
       baseBounds,
-      worldBounds: new Rect(0, 0, 1000 + 1, 1000 + 1),
+      worldBounds: new Rect(-1000, -1000, 2000 + 1, 2000 + 1),
       /** @param {React.WheelEvent<SVGSVGElement>} e */
       onWheel: e => {
         if (e.shiftKey) {// Zoom
@@ -61,6 +61,7 @@ export default function PanZoom({ children }) {
       css={state.rootCss}
       onWheel={state.onWheel}
       viewBox={`${state.bounds}`}
+      preserveAspectRatio="xMinYMin"
     >
       <MemoedGrid bounds={state.worldBounds} />
       {children}
