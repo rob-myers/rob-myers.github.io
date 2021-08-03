@@ -1,5 +1,4 @@
-/** @typedef {import('react')} React */
-import React, { useEffect, useRef, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { css } from '@emotion/react'
 import { nanoid } from 'nanoid';
 import useForceRefresh from 'runtime/hooks/use-force-refresh';
@@ -38,8 +37,10 @@ export default function PanZoom({ children }) {
         }
         refresh();
       },
-      /** @param {MouseEvent} e */
-      preventDefault: e => e.preventDefault(),
+      /** @type {React.LegacyRef<SVGSVGElement>} */
+      rootRef: el => {
+        el?.addEventListener('wheel', e => e.preventDefault());
+      },
       rootCss: css`
         width: 100%;
         height: 100%;
@@ -49,15 +50,9 @@ export default function PanZoom({ children }) {
     };
   });
 
-  const root = useRef(/** @type {null|SVGSVGElement} */ (null));
-  useEffect(() => {
-    root.current?.addEventListener('wheel', state.preventDefault);
-    return () => root.current?.removeEventListener('wheel', state.preventDefault);
-  }, []);
-
   return (
     <svg
-      ref={root}
+      ref={state.rootRef}
       css={state.rootCss}
       onWheel={state.onWheel}
       viewBox={`${state.bounds}`}
