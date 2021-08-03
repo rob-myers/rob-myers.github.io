@@ -56,6 +56,7 @@ export default function PanZoom({ children }) {
         height: 100%;
         background: #fff;
         position: absolute; /** Fixes Safari issue? */
+        touch-action: pinch-zoom;
       `,
     };
   });
