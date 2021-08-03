@@ -16,8 +16,9 @@ export default function PanZoom({ children }) {
       viewBox,
       initViewBox,
       gridBounds: new Rect(-1000, -1000, 2000 + 1, 2000 + 1),
-      /** @param {React.WheelEvent<SVGSVGElement>} e */
+      /** @param {WheelEvent & { currentTarget: any }} e */
       onWheel: e => {
+        e.preventDefault();
         if (e.shiftKey) {// Zoom
           const zoom = state.zoom + 0.003 * e.deltaY;
           if (zoom <= 0.2) {
@@ -37,7 +38,7 @@ export default function PanZoom({ children }) {
       },
       /** @type {React.LegacyRef<SVGSVGElement>} */
       rootRef: el => {
-        el?.addEventListener('wheel', e => e.preventDefault());
+        el?.addEventListener('wheel', state.onWheel);
       },
       rootCss: css`
         width: 100%;
@@ -52,7 +53,6 @@ export default function PanZoom({ children }) {
     <svg
       ref={state.rootRef}
       css={state.rootCss}
-      onWheel={state.onWheel}
       preserveAspectRatio="xMinYMin"
       viewBox={`${state.viewBox}`}
     >

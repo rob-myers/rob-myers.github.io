@@ -9,7 +9,7 @@ export function getRelativePos(e) {
 /** @type {DOMPoint} */
 let svgPoint;
 
-/** @param {React.MouseEvent<SVGSVGElement>} e */
+/** @param {MouseEvent & { currentTarget: SVGSVGElement }} e */
 export function getSvgPos(e) {
   svgPoint = svgPoint || e.currentTarget.createSVGPoint();
   svgPoint.x = e.clientX;
