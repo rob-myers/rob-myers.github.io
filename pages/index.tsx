@@ -75,7 +75,13 @@ so I won't confuse Game AI with AI, nor will I fall prey to the Deep Learning hy
 Finally, I have created similar game mechanics many times over the years.
 Hopefully my chain of unfinished projects will come to a close!
 
-### Our First Hurdle - A Tale of Two Viewpoints
+---
+
+## Hurdle #1 <float rem="1.2">19th July 2021</float>
+
+### A Tale of Two Viewpoints
+
+We've summarised
 
 We'll reach the end result by hurdling hurdles.
 We begin by making the game viewpoints _viewable_.
