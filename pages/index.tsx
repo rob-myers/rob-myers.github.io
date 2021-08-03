@@ -51,9 +51,9 @@ The creator of Spelunky suggested [three requirements](https://makegames.tumblr.
 
 ### 1. Fun to develop (Games I want to make)
 
-We'll have fun making the game because experimenting with Game AI (NPC behaviour) is fascinating.
-We'll combine simple behaviours to obtain complex ones,
-using the environment and agent interaction, rather than individual "thinking" or scripted behaviour.
+Experimenting with Game AI (NPC behaviour) is fun.
+We'll combine simple behaviours to obtain complex ones.
+We'll depend on the environment and agent interaction, rather than complex individual "thinking" or scripted behaviour.
 
 
 ### 2. Desire end result (Games I want to have made)
