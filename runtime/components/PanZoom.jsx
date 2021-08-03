@@ -30,9 +30,9 @@ export default function PanZoom({ children }) {
         refresh();
       },
       /** @param {PointerEvent} e */
-      onPointerDown: (e) => state.panFrom = (new Vect(0, 0)).copy(getSvgPos(e)),
+      onPointerDown: e => state.panFrom = (new Vect(0, 0)).copy(getSvgPos(e)),
       /** @param {PointerEvent} e */
-      onPointerMove: (e) => {
+      onPointerMove: e => {
         if (state.panFrom) {
           const mouse = getSvgPos(e);
           viewBox.delta(state.panFrom.x - mouse.x, state.panFrom.y - mouse.y);
@@ -48,7 +48,7 @@ export default function PanZoom({ children }) {
           el.addEventListener('pointermove', state.onPointerMove);
           el.addEventListener('pointerup', state.onPointerUp);
           el.addEventListener('pointerleave', state.onPointerUp);
-          el.addEventListener('touchstart', (e) => e.preventDefault());
+          el.addEventListener('touchstart', e => e.preventDefault());
         }
       },
       rootCss: css`

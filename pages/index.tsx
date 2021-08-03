@@ -30,15 +30,16 @@ Roguelike; Built online; Game AI focus
 
 ## Objective <float rem="1.2">19th July 2021</float>
 
-We are going to build a game step-by-step directly on this website.
+We're going to build a game step-by-step on this website.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike).
-As an important side-effect, we'll see how frontend development works.
+
+As an important side-effect, we'll see how modern frontend development works. We shall use the [Markup language SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) (viewed as a subset of [HTML](https://en.wikipedia.org/wiki/HTML)), brought to life via JavaScript.
 
 ---
 
 ## Constraints <float rem="1.2">19th July 2021</float>
 
-For this project to take shape, a large number of decisions must be made. Here are the most important ones, from low-level to high-level.
+In order for this project to take shape, a large number of decisions were made. Here are the most important ones, from low to high-level.
 
 - Use styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and Emotion [styled components](https://emotion.sh/docs/styled).
@@ -53,14 +54,17 @@ The creator of Spelunky suggested [three requirements](https://makegames.tumblr.
 
 Experimenting with Game AI (NPC behaviour) is fun.
 We'll combine simple behaviours to obtain complex ones.
-We'll depend on the environment and agent interaction, rather than complex individual "thinking" or scripted behaviour.
+Importantly, complexity will arise from the environment and agent interaction, rather than complex individual "thinking" or scripted behaviour.
 
 
-### 2. Desire end result (Games I want to have made)
+### 2. The Result (Games I want to have made)
 
-_WHAT is end result?_
+We must ask, what do we aim for?
+[NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story explicitly_.
+Teleglitch shows survival-horror is achievable from a birdseye perspective.
 
-_WHY does it matter?_
+I want to make a game inspired by Teleglitch's procedural generation, camera viewpoint, and a sense of dread.
+At the same time, I want to build a Game AI engine where every NPC decision is depicted graphically...
 
 
 <!-- We'll draw inspiration from [NetHack](https://www.nethack.org/) and other roguelikes, notably Teleglitch.
@@ -69,11 +73,11 @@ Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style
 
 ### 3. Experience (Games I’m good at making)
 
-I work as a web developer, using React and Emotion on a daily basis. 
+I work as a web developer, using React & Emotion on a daily basis. 
 I have a [strong background](https://dblp.org/pid/81/8748.html) in theoretical computer science,
-so I won't confuse Game AI with AI, nor will I fall prey to the Deep Learning hype.
-Finally, I have created similar game mechanics many times over the years.
-Hopefully my chain of unfinished projects will come to a close!
+so I won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
+I have also created similar game mechanics _many_ times over the years.
+Here's hoping that my chain of unfinished projects is coming to a close!
 
 ---
 
