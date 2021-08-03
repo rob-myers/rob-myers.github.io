@@ -49,40 +49,44 @@ For this project to take shape, a large number of decisions must be made. Here a
 - Use procedural level generation, following Teleglitch's method.
 - Use simple individual [NPC](https://en.wikipedia.org/wiki/Non-player_character) behaviours, combinable in many ways, to create understandable, repeatable and emergent behaviour.
 
-<!-- It is worth explaining the motivation behind these decisions. -->
 Starting and _finishing_ a game is notoriously hard.
-The creator of Spelunky suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
+The creator of Spelunky suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). Let us  address them.
 
-### Games I want to make: fun to develop
+### 1. Fun to develop (Games I want to make)
 
-Why will this game be fun to make? Well, because I really enjoy experimenting with Game AI (NPC behaviour).
+This game will be fun to make, mainly because I really enjoy experimenting with Game AI (NPC behaviour).
 We'll combine simple behaviours to obtain complex ones,
 using the environment and agent interaction, rather than individual "thinking" or scripted behaviour.
 
-### Games I want to have made: the end result matters
+
+### 2. The end result matters (Games I want to have made)
+
+_This should be about why the end result matters to me._
 
 We'll reach the end result by hurdling hurdles.
+Inasmuch as anything matters, our first hurdle does: it provides just enough structure to make the game viewpoints _viewable_.
 
 #### Hurdle 1 - A Tale of Two Viewpoints
-- Implement a pannable zoomable infinite grid.
+- Implement a pannable zoomable grid.
 - Implement a movable character & Teleglitch-style camera.
 - Support switching between these two viewpoints.
 - Support desktop & mobile; can optionally run code on [StackBlitz](https://stackblitz.com/).
 
-Inasmuch as anything matters, this first hurdle does: it provides just enough structure to make the game viewpoints _viewable_.
 
 <!-- We'll draw inspiration from [NetHack](https://www.nethack.org/) and other roguelikes, notably Teleglitch.
 NetHack's ≥ 34 year history shows _we needn't spell out a story_.
 Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style gameplay is achievable from a topdown perspective. Roughly speaking, we intend to extend Teleglitch's game mechanic with more complex NPC behaviour. -->
 
-### Games I’m good at making: suitable experience
+### 3. Suitable experience (Games I’m good at making)
 
-I use React & Emotion heavily in my job as a web developer.
-We also need an approximation of a development environment:
+I work as a web developer, so React and Emotion are familiar technologies.
+I have a [strong background](https://dblp.org/pid/81/8748.html) in theoretical computer science,
+so I won't confuse Game AI with AI, nor believe all the hype surrounding Deep Learning.
+I have plenty of experience creating game mechanics (and of failing to create games).
+Perhaps my long line of unfinished projects is finally at an end!
 
-> We'll display code using [CodeMirror](https://codemirror.net/), transpile it from [JSX](https://reactjs.org/docs/introducing-jsx.html) via [Babel](https://babeljs.io/) in a webworker, and load using [SystemJS](https://github.com/systemjs/systemjs). We'll provide a terminal, and escape hatches to StackBlitz.
-
-I also have experience making the intended game mechanics. Perhaps my long line of unfinished projects is finally at an end!
+<!-- We need an approximation of a development environment:
+> We'll display code using [CodeMirror](https://codemirror.net/), transpile it from [JSX](https://reactjs.org/docs/introducing-jsx.html) via [Babel](https://babeljs.io/) in a webworker, and load using [SystemJS](https://github.com/systemjs/systemjs). We'll provide a terminal, and escape hatches to StackBlitz. -->
 
 ---
 
@@ -90,8 +94,8 @@ I also have experience making the intended game mechanics. Perhaps my long line 
 
         `}/>
 
-        <section css={css`width: 400px; height: 400px; position: relative;`}>
-          <PanZoom uid="test">
+        <section css={css`width: 100%; height: 400px; position: relative;`}>
+          <PanZoom>
             {/* TODO */}
             <rect x={5} y={5} width={20} height={20} fill="red" />
           </PanZoom>

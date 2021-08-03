@@ -120,7 +120,7 @@ export class Rect {
     return this.x <= x && x <= this.x + this.width && (this.y <= y && y <= this.y + this.height);
   }
 
-  /** @param {Rect} _ */
+  /** @param {RectJson} _ */
   copy({ x, y, width, height }) {
     this.x = x;
     this.y = y;

@@ -1,65 +1,56 @@
 /** @typedef {import('react')} React */
-import { useEffect } from 'react';
-import useMeasure from 'react-use-measure';
+import React, { useEffect, useRef, useMemo } from 'react';
 import { css } from '@emotion/react'
+import { nanoid } from 'nanoid';
 import useForceRefresh from 'runtime/hooks/use-force-refresh';
-import { getRelativePos } from 'runtime/service/dom';
+import { getSvgPos } from 'runtime/service/dom';
 import { Rect } from 'runtime/geom';
 
-/** @param {React.PropsWithChildren<{ uid: string }>} props */
-export default function PanZoom({ children, uid }) {
-  const [ref, domBounds] = useMeasure();
+/** @param {React.PropsWithChildren<{}>} props */
+export default function PanZoom({ children }) {
+  /** @type {React.Ref<SVGSVGElement>} */
+  const root = useRef(null);
 
-  const [refresh, state] = useForceRefresh(() => ({
-    gridId: `grid-def-${uid}`,
-    zoom: 100,
-    /** Userspace bounds */
-    bounds: new Rect(0, 0, domBounds.width, domBounds.height),
-    dx: 0,
-    dy: 0,
-    /** @type {null | SVGSVGElement} */
-    root: null,
-    /** @param {null | SVGSVGElement} el */
-    ref: (el) => {
-      ref(el);
-      state.root = el;
-    },
-    /** @param {React.WheelEvent} e */
-    onWheel: e => {
-      if (e.shiftKey) {// Zoom
-        const nextZoom = state.zoom - 0.5 * e.deltaY;
-        if (Math.abs(e.deltaY) > 0.1 && nextZoom >= 50 && nextZoom <= 500) {
-          const [rx, ry] = getRelativePos(e);
-          // We preserve world position of mouse while scaling
-          state.bounds.x += rx * 100 * (1/state.zoom - 1/nextZoom);
-          state.bounds.y += ry * 100 * (1/state.zoom - 1/nextZoom);
-          state.zoom = nextZoom;
-          state.bounds.width = (state.zoom / 100) * domBounds.width;
-          state.bounds.height = (state.zoom / 100) * domBounds.height;
-          refresh();
+  const [refresh, state] = useForceRefresh(() => {
+    const bounds = new Rect(0, 0, 200, 200);
+    const baseBounds = bounds.clone();
+    return {
+      zoom: 100,
+      /** Userspace view bounds */
+      bounds,
+      /** Userspace view initial bounds */
+      baseBounds,
+      worldBounds: new Rect(0, 0, 1000 + 1, 1000 + 1),
+      /** @param {React.WheelEvent<SVGSVGElement>} e */
+      onWheel: e => {
+        if (e.shiftKey) {// Zoom
+          const zoom = state.zoom + 0.03 * e.deltaY;
+          if (zoom <= 20) return;
+          const { x: rx, y: ry } = getSvgPos(e);
+          bounds.width = (zoom / 100) * baseBounds.width;
+          bounds.height = (zoom / 100) * baseBounds.height;
+          // Preserve world position of mouse while scaling
+          bounds.x = (zoom / state.zoom) * (bounds.x - rx) + rx;
+          bounds.y = (zoom / state.zoom) * (bounds.y - ry) + ry;
+          state.zoom = zoom;
+        } else {// Pan
+          bounds.delta(0.25 * e.deltaX, 0.25 * e.deltaY);
         }
-      } else {// Pan
-        state.bounds.delta(0.25 * e.deltaX, 0.25 * e.deltaY);
         refresh();
-      }
-      state.dx = -state.bounds.x % 10;
-      state.dy = -state.bounds.y % 10;
-    },
-    /** @param {MouseEvent} e */
-    preventDefault: e => e.preventDefault(),
-  }));
+      },
+      /** @param {MouseEvent} e */
+      preventDefault: e => e.preventDefault(),
+    };
+  });
 
   useEffect(() => {
-    state.root?.addEventListener('wheel', state.preventDefault);
-    state.bounds.width = (state.zoom / 100) * domBounds.width;
-    state.bounds.height = (state.zoom / 100) * domBounds.height;
-    refresh();
-    return () => state.root?.removeEventListener('wheel', state.preventDefault);
-  }, [domBounds]);
+    root.current?.addEventListener('wheel', state.preventDefault);
+    return () => root.current?.removeEventListener('wheel', state.preventDefault);
+  }, []);
 
   return (
     <svg
-      ref={state.ref}
+      ref={root}
       css={css`
         width: 100%;
         height: 100%;
@@ -67,37 +58,36 @@ export default function PanZoom({ children, uid }) {
         position: absolute; /** Fixes Safari issue? */
       `}
       onWheel={state.onWheel}
+      viewBox={`${state.bounds}`}
     >
-      <GridPattern gridId={state.gridId} dx={state.dx} dy={state.dy} />
-
-      <g transform={`scale(${state.zoom / 100})`}>
-        <rect
-          width="200%" // since max zoom x2
-          height="200%"
-          fill={`url(#${state.gridId})`}
-        />
-        <g transform={`translate(${-state.bounds.x}, ${-state.bounds.y})`}>
-          {children}
-        </g>
-      </g>
+      <MemoedGrid bounds={state.worldBounds} />
+      {children}
     </svg>
   );
 }
 
-/** @param {{ gridId: string, dx: number; dy: number }} props */
-function GridPattern({ gridId, dx, dy }) {
-  return (
+/** @param {{ bounds: Rect }} props */
+function Grid({ bounds }) {
+  const gridId = useMemo(() => `grid-${nanoid()}`, []);
+  return <>
     <defs>
       <pattern
         id={gridId}
-        x={dx}
-        y={dy}
         width="10"
         height="10"
         patternUnits="userSpaceOnUse"
       >
-        <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(0,0,0,0.7)" strokeWidth="0.3"/>
+        <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="0.3"/>
       </pattern>
     </defs>
-  );
+    <rect
+      x={bounds.x}
+      y={bounds.y}
+      width={bounds.width}
+      height={bounds.height}
+      fill={`url(#${gridId})`}
+    />
+  </>;
 }
+
+const MemoedGrid = React.memo(Grid);
