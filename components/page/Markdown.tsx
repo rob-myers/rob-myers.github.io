@@ -102,6 +102,7 @@ const Root = styled.div`
     margin: 32px 0 24px;
     height: 4px;
     background: #ddd;
+    border-color: #ddd;
   }
 `;
 
