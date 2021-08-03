@@ -8,8 +8,6 @@ import { Rect } from 'runtime/geom';
 
 /** @param {React.PropsWithChildren<{}>} props */
 export default function PanZoom({ children }) {
-  /** @type {React.Ref<SVGSVGElement>} */
-  const root = useRef(null);
 
   const [refresh, state] = useForceRefresh(() => {
     const bounds = new Rect(0, 0, 200, 200);
@@ -25,13 +23,15 @@ export default function PanZoom({ children }) {
       onWheel: e => {
         if (e.shiftKey) {// Zoom
           const zoom = state.zoom + 0.03 * e.deltaY;
-          if (zoom <= 20) return;
-          const { x: rx, y: ry } = getSvgPos(e);
-          bounds.width = (zoom / 100) * baseBounds.width;
-          bounds.height = (zoom / 100) * baseBounds.height;
+          if (zoom <= 20) {
+            return;
+          }
           // Preserve world position of mouse while scaling
+          const { x: rx, y: ry } = getSvgPos(e);
           bounds.x = (zoom / state.zoom) * (bounds.x - rx) + rx;
           bounds.y = (zoom / state.zoom) * (bounds.y - ry) + ry;
+          bounds.width = (zoom / 100) * baseBounds.width;
+          bounds.height = (zoom / 100) * baseBounds.height;
           state.zoom = zoom;
         } else {// Pan
           bounds.delta(0.25 * e.deltaX, 0.25 * e.deltaY);
@@ -40,9 +40,16 @@ export default function PanZoom({ children }) {
       },
       /** @param {MouseEvent} e */
       preventDefault: e => e.preventDefault(),
+      rootCss: css`
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        position: absolute; /** Fixes Safari issue? */
+      `,
     };
   });
 
+  const root = useRef(/** @type {null|SVGSVGElement} */ (null));
   useEffect(() => {
     root.current?.addEventListener('wheel', state.preventDefault);
     return () => root.current?.removeEventListener('wheel', state.preventDefault);
@@ -51,12 +58,7 @@ export default function PanZoom({ children }) {
   return (
     <svg
       ref={root}
-      css={css`
-        width: 100%;
-        height: 100%;
-        background: #fff;
-        position: absolute; /** Fixes Safari issue? */
-      `}
+      css={state.rootCss}
       onWheel={state.onWheel}
       viewBox={`${state.bounds}`}
     >
