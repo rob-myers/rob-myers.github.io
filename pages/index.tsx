@@ -56,39 +56,41 @@ We'll combine simple behaviours to obtain complex ones,
 using the environment and agent interaction, rather than individual "thinking" or scripted behaviour.
 
 
-### 2. The end result matters (Games I want to have made)
+### 2. Desire end result (Games I want to have made)
 
-_This should be about why the end result matters to me._
+_WHAT is end result?_
 
-We'll reach the end result by hurdling hurdles.
-Inasmuch as anything matters, our first hurdle does: it provides just enough structure to make the game viewpoints _viewable_.
-
-#### Hurdle 1 - A Tale of Two Viewpoints
-- Implement a pannable zoomable grid.
-- Implement a movable character & Teleglitch-style camera.
-- Support switching between these two viewpoints.
-- Support desktop & mobile; can optionally run code on [StackBlitz](https://stackblitz.com/).
+_WHY does it matter?_
 
 
 <!-- We'll draw inspiration from [NetHack](https://www.nethack.org/) and other roguelikes, notably Teleglitch.
 NetHack's ≥ 34 year history shows _we needn't spell out a story_.
 Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style gameplay is achievable from a topdown perspective. Roughly speaking, we intend to extend Teleglitch's game mechanic with more complex NPC behaviour. -->
 
-### 3. Suitable experience (Games I’m good at making)
+### 3. Experience (Games I’m good at making)
 
 I work as a web developer, using React and Emotion on a daily basis. 
 I have a [strong background](https://dblp.org/pid/81/8748.html) in theoretical computer science,
 so I won't confuse Game AI with AI, nor will I fall prey to the Deep Learning hype.
-Finally, I have also created similar game mechanics over the years.
+Finally, I have created similar game mechanics many times over the years.
+Hopefully my chain of unfinished projects will come to a close!
 
-Hopefully my long line of unfinished projects is coming to a close!
+### Our First Hurdle - A Tale of Two Viewpoints
+
+We'll reach the end result by hurdling hurdles.
+We begin by making the game viewpoints _viewable_.
+
+- Implement a pannable zoomable grid.
+- Implement a movable character & Teleglitch-style camera.
+- Support switching between these two viewpoints.
+- Support desktop & mobile; can optionally run code on [StackBlitz](https://stackblitz.com/).
 
 <!-- We need an approximation of a development environment:
 > We'll display code using [CodeMirror](https://codemirror.net/), transpile it from [JSX](https://reactjs.org/docs/introducing-jsx.html) via [Babel](https://babeljs.io/) in a webworker, and load using [SystemJS](https://github.com/systemjs/systemjs). We'll provide a terminal, and escape hatches to StackBlitz. -->
 
 ---
 
-## Beginnings <float rem="1.2">19th July 2021</float>
+## Pannable Zoomable Grid <float rem="1.2">19th July 2021</float>
 
         `}/>
 

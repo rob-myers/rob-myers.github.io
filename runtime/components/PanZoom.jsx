@@ -3,7 +3,7 @@ import { css } from '@emotion/react'
 import { nanoid } from 'nanoid';
 import useForceRefresh from 'runtime/hooks/use-force-refresh';
 import { getSvgPos } from 'runtime/service/dom';
-import { Rect } from 'runtime/geom';
+import { Rect, Vect } from 'runtime/geom';
 
 /** @param {React.PropsWithChildren<{}>} props */
 export default function PanZoom({ children }) {
@@ -12,33 +12,47 @@ export default function PanZoom({ children }) {
     const viewBox = new Rect(0, 0, 200, 200);
     const initViewBox = viewBox.clone();
     return {
+      panFrom: /** @type {null|Vect} */ (null),
       zoom: 1,
       viewBox,
       initViewBox,
       gridBounds: new Rect(-1000, -1000, 2000 + 1, 2000 + 1),
-      /** @param {WheelEvent & { currentTarget: any }} e */
+      /** @param {WheelEvent} e */
       onWheel: e => {
         e.preventDefault();
-        if (e.shiftKey) {// Zoom
-          const zoom = state.zoom + 0.003 * e.deltaY;
-          if (zoom <= 0.2) {
-            return;
-          }
-          // Preserve world position of mouse while scaling
-          const { x: rx, y: ry } = getSvgPos(e);
-          viewBox.x = (zoom / state.zoom) * (viewBox.x - rx) + rx;
-          viewBox.y = (zoom / state.zoom) * (viewBox.y - ry) + ry;
-          viewBox.width = zoom * initViewBox.width;
-          viewBox.height = zoom * initViewBox.height;
-          state.zoom = zoom;
-        } else {// Pan
-          viewBox.delta(0.25 * e.deltaX, 0.25 * e.deltaY);
+        const zoom = state.zoom + 0.003 * e.deltaY;
+        if (zoom <= 0.2) {
+          return; // TODO avoid jerkiness when max zoom-in
         }
+        const { x: rx, y: ry } = getSvgPos(e);
+        viewBox.x = (zoom / state.zoom) * (viewBox.x - rx) + rx;
+        viewBox.y = (zoom / state.zoom) * (viewBox.y - ry) + ry;
+        viewBox.width = zoom * initViewBox.width;
+        viewBox.height = zoom * initViewBox.height;
+        state.zoom = zoom;
         refresh();
       },
+      /** @param {PointerEvent} e */
+      onPointerDown: (e) => state.panFrom = (new Vect(0, 0)).copy(getSvgPos(e)),
+      /** @param {PointerEvent} e */
+      onPointerMove: (e) => {
+        if (state.panFrom) {
+          const mouse = getSvgPos(e);
+          viewBox.delta(state.panFrom.x - mouse.x, state.panFrom.y - mouse.y);
+          refresh();
+        }
+      },
+      onPointerUp: () => state.panFrom = null,
       /** @type {React.LegacyRef<SVGSVGElement>} */
       rootRef: el => {
-        el?.addEventListener('wheel', state.onWheel);
+        if (el) {
+          el.addEventListener('wheel', state.onWheel);
+          el.addEventListener('pointerdown', state.onPointerDown);
+          el.addEventListener('pointermove', state.onPointerMove);
+          el.addEventListener('pointerup', state.onPointerUp);
+          el.addEventListener('pointerleave', state.onPointerUp);
+          // TODO pinchzoom for mobile
+        }
       },
       rootCss: css`
         width: 100%;

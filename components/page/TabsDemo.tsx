@@ -65,6 +65,10 @@ export function TabsDemo() {
       width: 100%;
       height: 300px;
       border: 1px solid #555;
+
+      .flexlayout__tab_button_content {
+        user-select: none;
+      }
     `} >
       <Layout
         model={model}

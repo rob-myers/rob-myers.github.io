@@ -8,11 +8,14 @@ export function getRelativePos(e) {
 
 /** @type {DOMPoint} */
 let svgPoint;
+/** @type {SVGSVGElement} */
+let svg;
 
-/** @param {MouseEvent & { currentTarget: SVGSVGElement }} e */
+/** @param {MouseEvent & { currentTarget: any }} e */
 export function getSvgPos(e) {
-  svgPoint = svgPoint || e.currentTarget.createSVGPoint();
+  svg = e.currentTarget;
+  svgPoint = svgPoint || svg.createSVGPoint();
   svgPoint.x = e.clientX;
   svgPoint.y = e.clientY;
-  return svgPoint.matrixTransform(e.currentTarget.getScreenCTM()?.inverse());
+  return svgPoint.matrixTransform(svg.getScreenCTM()?.inverse());
 }
