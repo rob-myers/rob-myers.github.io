@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
+import gfm from 'remark-gfm';
 
 export default function Markdown(
   props: ReactMarkdown.ReactMarkdownOptions & { title?: boolean }
@@ -12,6 +13,7 @@ export default function Markdown(
     undefined,
     <ReactMarkdown
       rehypePlugins={[rehypeRaw]} // Permit html
+      remarkPlugins={[gfm]}
       components={components}
       {...props}
     />
@@ -69,6 +71,12 @@ const Root = styled.div`
     line-height: 1.2;
     li {
       margin: 8px 0;
+    }
+  }
+  ul.contains-task-list {
+    padding-left: 12px;
+    li.task-list-item {
+      list-style: none;
     }
   }
   ol {

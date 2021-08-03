@@ -59,15 +59,14 @@ Importantly, complexity will arise from the environment and agent interaction, r
 
 ### 2. The Result (Games I want to have made)
 
-So, what are we aiming for?
-[NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story explicitly_.
+[NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
 Teleglitch shows survival-horror is achievable from a birdseye perspective.
 
 We'll adapt Teleglitch's procedural generation, viewpoint, and dread (e.g. [permadeath](https://en.wikipedia.org/wiki/Permadeath)).
 We'll add triggers, cameras, guards, doors, keys, weapons etc.
-All NPC decisions will be depicted graphically, such as future probabilistic navpaths. The player must get from A to B (_ever was it so_); encountered options and behaviour is the interesting bit.
+All NPC decisions will be depicted graphically, such as future probabilistic navpaths. The player must get from A to B (_ever was it so_); the encountered behaviour is the interesting bit.
 
-Our ultimate aim is...
+So, what are we aiming for? ...
 
 ### 3. Experience (Games I’m good at making)
 
@@ -146,54 +145,19 @@ export default function App() {
 
 <br/>
 
-_TODO examples of complex apps built with web dev techniques, e.g. via [Electron](https://www.electronjs.org/) (VSCode and Slack), e.g. via React Native, e.g. the beginnings of WebAssembly_
-
-
-### Birdseye view
 
 ### Intended implementation
 
 We are going to built the game __directly on this website__, using well-established technologies.
 
-<table>
-    <tr>
-      <th>Concept</th>
-      <th>Browser Technology</th>
-    </tr>
-    <tr>
-      <td>Code Editor</td>
-      <td><a href="https://codemirror.net/">CodeMirror</a> for viewing and editing JavaScript.</td>
-    </tr>
-    <tr>
-      <td>Component</td>
-      <td>
-        <a href="https://reactjs.org/docs/components-and-props.html#function-and-class-components">React function components</a> i.e. JavaScript functions which use syntactic sugar known as <a href="https://reactjs.org/docs/introducing-jsx.html">JSX</a>.
-      </td>
-    </tr>
-    <tr>
-      <td>Styles</td>
-      <td>
-        Components can be enriched by runtime CSS. We'll use <a href="https://emotion.sh/">Emotion</a>.
-      </td>
-    </tr>
-    <tr>
-      <td>Component Framework</td>
-      <td><a href="https://preactjs.com/">Preact</a>, a DOM-diffing alternative to React.</td>
-    </tr>
-    <tr>
-      <td>Devtools</td>
-      <td><a href="https://babeljs.io/">Babel</a> in a webworker; <a href="https://github.com/systemjs/systemjs">SystemJS</a> for module loading.</td>
-    </tr>
-    <tr>
-      <td>Static analysis</td>
-      <td>Eslint's <a href="https://github.com/eslint/espree">parser and tokenizer</a>.</td>
-    </tr>
-    <tr>
-      <td>Live analysis</td>
-      <td>Monitoring via <a href="https://preactjs.com/guide/v10/options/">Preact option hooks</a>, code transforms and our own in-browser terminal.</td>
-    </tr>
-</table>
-
+| Concept | Browser Technology |
+| - | - |
+| Code Editor | [CodeMirror](https://codemirror.net/) for viewing and editing JavaScript. |
+| Component | [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions which use syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html) |
+| Styles | Components can be enriched by runtime CSS. We'll use [Emotion](https://emotion.sh/). |
+| Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
+| Devtools | [Babel](https://babeljs.io/) in a webworker; [SystemJS](https://github.com/systemjs/systemjs) for module loading. |
+| Live analysis | Monitoring via [react option hooks](https://preactjs.com/guide/v10/options/), code transforms and our own in-browser terminal. |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
