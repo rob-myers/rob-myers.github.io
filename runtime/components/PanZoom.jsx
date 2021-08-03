@@ -20,7 +20,7 @@ export default function PanZoom({ children }) {
       /** @param {WheelEvent} e */
       onWheel: e => {
         e.preventDefault();
-        const zoom = Math.max(state.zoom + 0.003 * e.deltaY, 0.2);
+        const zoom = Math.min(Math.max(state.zoom + 0.003 * e.deltaY, 0.2), 2);
         const { x: rx, y: ry } = getSvgPos(e);
         viewBox.x = (zoom / state.zoom) * (viewBox.x - rx) + rx;
         viewBox.y = (zoom / state.zoom) * (viewBox.y - ry) + ry;
@@ -48,7 +48,7 @@ export default function PanZoom({ children }) {
           el.addEventListener('pointermove', state.onPointerMove);
           el.addEventListener('pointerup', state.onPointerUp);
           el.addEventListener('pointerleave', state.onPointerUp);
-          // TODO pinchzoom for mobile
+          el.addEventListener('touchstart', (e) => e.preventDefault());
         }
       },
       rootCss: css`
@@ -56,7 +56,7 @@ export default function PanZoom({ children }) {
         height: 100%;
         background: #fff;
         position: absolute; /** Fixes Safari issue? */
-        touch-action: pinch-zoom;
+        touch-action: pan-x pan-y pinch-zoom;
       `,
     };
   });
