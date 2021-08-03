@@ -33,13 +33,13 @@ Roguelike; Built online; Game AI focus
 We're going to build a game step-by-step on this website.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike).
 
-As an important side-effect, we'll see how modern frontend development works. We shall use the [Markup language SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) (viewed as a subset of [HTML](https://en.wikipedia.org/wiki/HTML)), brought to life via JavaScript.
+As an important side-effect, we'll see how modern frontend development works. Our technology of choice is the [Markup language SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) (viewed as a subset of [HTML](https://en.wikipedia.org/wiki/HTML)), brought to life via JavaScript.
 
 ---
 
 ## Constraints <float rem="1.2">19th July 2021</float>
 
-In order for this project to take shape, a large number of decisions were made. Here are the most important ones, from low to high-level.
+In order for this project to take shape, I've made a number of decisions. Here are the most important ones, from low to high-level.
 
 - Use styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and Emotion [styled components](https://emotion.sh/docs/styled).
@@ -47,7 +47,7 @@ In order for this project to take shape, a large number of decisions were made. 
 - Use procedural level generation, following Teleglitch's method.
 - Use simple individual [NPC](https://en.wikipedia.org/wiki/Non-player_character) behaviours, combinable in many ways, to create understandable, repeatable and emergent behaviour.
 
-Starting and _finishing_ a game is notoriously hard.
+Now, starting and _finishing_ a game is notoriously hard.
 The creator of Spelunky suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). Let us  address them.
 
 ### 1. Fun to develop (Games I want to make)
@@ -59,17 +59,15 @@ Importantly, complexity will arise from the environment and agent interaction, r
 
 ### 2. The Result (Games I want to have made)
 
-We ask, what do we aim for?
+So, what are we aiming for?
 [NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story explicitly_.
 Teleglitch shows survival-horror is achievable from a birdseye perspective.
 
-Our game is inspired by Teleglitch's procedural generation, camera viewpoint, and a sense of dread.
-At the same time, I want to build a Game AI engine where every NPC decision is depicted graphically...
+We'll adapt Teleglitch's procedural generation, viewpoint, and dread (e.g. [permadeath](https://en.wikipedia.org/wiki/Permadeath)).
+We'll add triggers, cameras, guards, doors, keys, weapons etc.
+All NPC decisions will be depicted graphically, such as future probabilistic navpaths. The player must get from A to B (_ever was it so_); encountered options and behaviour is the interesting bit.
 
-
-<!-- We'll draw inspiration from [NetHack](https://www.nethack.org/) and other roguelikes, notably Teleglitch.
-NetHack's ≥ 34 year history shows _we needn't spell out a story_.
-Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style gameplay is achievable from a topdown perspective. Roughly speaking, we intend to extend Teleglitch's game mechanic with more complex NPC behaviour. -->
+Our ultimate aim is...
 
 ### 3. Experience (Games I’m good at making)
 

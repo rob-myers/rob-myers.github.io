@@ -68,6 +68,7 @@ export function TabsDemo() {
 
       .flexlayout__tab_button_content {
         user-select: none;
+        font-size: smaller;
       }
     `} >
       <Layout
