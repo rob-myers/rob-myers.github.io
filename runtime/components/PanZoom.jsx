@@ -20,10 +20,7 @@ export default function PanZoom({ children }) {
       /** @param {WheelEvent} e */
       onWheel: e => {
         e.preventDefault();
-        const zoom = state.zoom + 0.003 * e.deltaY;
-        if (zoom <= 0.2) {
-          return; // TODO avoid jerkiness when max zoom-in
-        }
+        const zoom = Math.max(state.zoom + 0.003 * e.deltaY, 0.2);
         const { x: rx, y: ry } = getSvgPos(e);
         viewBox.x = (zoom / state.zoom) * (viewBox.x - rx) + rx;
         viewBox.y = (zoom / state.zoom) * (viewBox.y - ry) + ry;
