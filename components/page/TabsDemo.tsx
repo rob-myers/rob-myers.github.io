@@ -6,7 +6,9 @@ import { css } from '@emotion/react';
 import { initialCode } from 'model/code/code';
 
 const json : IJsonModel= {
-  global: {},
+  global: {
+    tabEnableRename: false,
+  },
   layout: {
     "type": "row",
     "weight": 100,
@@ -20,11 +22,13 @@ const json : IJsonModel= {
             "type": "tab",
             "name": "pan-zoom",
             "component": "panzoom",
+            enableClose: false,
           },
           {
             "type": "tab",
             "name": "code",
             "component": "code", // TODO need filename too
+            enableClose: false,
           }
         ]
       }
