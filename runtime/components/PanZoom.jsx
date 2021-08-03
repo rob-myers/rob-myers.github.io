@@ -44,10 +44,10 @@ export default function PanZoom({ children }) {
       rootRef: el => {
         if (el) {
           el.addEventListener('wheel', state.onWheel);
-          el.addEventListener('pointerdown', state.onPointerDown);
-          el.addEventListener('pointermove', state.onPointerMove);
-          el.addEventListener('pointerup', state.onPointerUp);
-          el.addEventListener('pointerleave', state.onPointerUp);
+          el.addEventListener('pointerdown', state.onPointerDown, { passive: true });
+          el.addEventListener('pointermove', state.onPointerMove, { passive: true });
+          el.addEventListener('pointerup', state.onPointerUp, { passive: true });
+          el.addEventListener('pointerleave', state.onPointerUp, { passive: true });
           el.addEventListener('touchstart', e => e.preventDefault());
         }
       },
@@ -70,6 +70,7 @@ export default function PanZoom({ children }) {
     >
       <MemoedGrid bounds={state.gridBounds} />
       {children}
+      <rect />
     </svg>
   );
 }
