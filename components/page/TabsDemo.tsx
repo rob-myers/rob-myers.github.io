@@ -3,6 +3,7 @@ import { CodeEditor } from 'components/dynamic';
 import PanZoom from 'runtime/components/PanZoom';
 import 'flexlayout-react/style/dark.css';
 import { css } from '@emotion/react';
+import { initialCode } from 'model/code/code';
 
 const json : IJsonModel= {
   global: {},
@@ -17,21 +18,13 @@ const json : IJsonModel= {
         "children": [
           {
             "type": "tab",
-            "name": "code",
-            "component": "code", // TODO need filename too
-          }
-        ]
-      },
-      {
-        "type": "tabset",
-        "weight": 50,
-
-        "selected": 0,
-        "children": [
+            "name": "pan-zoom",
+            "component": "panzoom",
+          },
           {
             "type": "tab",
-            "name": "Two",
-            "component": "does_not_exist"
+            "name": "code",
+            "component": "code", // TODO need filename too
           }
         ]
       }
@@ -50,23 +43,7 @@ const factory = (node: TabNode) => {
         padding="16px 0"
         lineNumbers
         readOnly
-        code={`
-function MyComponent(props) {
-  return <>
-    <label for={props.name}>{props.label}</label>
-    <input name={props.name} placeholder={props.hint} />
-  </>;
-}
-
-import { h, Fragment } from 'preact';
-
-function MyComponentWithoutJSX(props) {
-  return h(Fragment, null,
-    h("label", { for: props.name }, props.label),
-    h("input", { name: props.name, placeholder: props.hint })
-  );
-}
-        `} />
+        code={initialCode['PanZoom.jsx']} />
     );
   } else {
     return (
@@ -83,7 +60,7 @@ export function TabsDemo() {
       position: relative;
       width: 100%;
       height: 300px;
-      border: 1px solid #ddd;
+      border: 1px solid #555;
     `} >
       <Layout
         model={model}

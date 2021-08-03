@@ -87,7 +87,7 @@ const Root = styled.div<{
   grid-area: ${props => props.gridArea || ''};
   width: 100%;
   height: 100%;
-  font-size: 9pt;
+  font-size: 13px;
   
   .CodeMirror {
     height: ${props => props.height || ''};

@@ -1,5 +1,6 @@
 ## Plan
 
+- Fix `PanZoom` mouse input
 - Make modular `Tabs` 
 
 - Add babel in webworker

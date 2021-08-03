@@ -2,7 +2,7 @@ import create from 'zustand';
 import { devtools } from 'zustand/middleware'
 import { KeyedLookup } from 'model/generic.model';
 import { addToLookup, LookupUpdates, updateLookup } from './store.util';
-import { initialCode } from 'model/code/code.lib';
+import { initialCode } from 'model/code/code';
  
  export type State = {
    code: KeyedLookup<CodeMeta>;
@@ -55,7 +55,7 @@ const useStore = create<State>(devtools((set, get) => ({
           set(({ code }) => ({ code: addToLookup({
             key: codeKey,
             current: state.current,
-            original: (initialCode as any)[codeKey] || '',
+            original: (code as any)[codeKey] || '',
             persist: state.persist,
             updateEditorAt: Date.now(),
           }, code) }));

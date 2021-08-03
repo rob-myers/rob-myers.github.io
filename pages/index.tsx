@@ -1,15 +1,12 @@
 import { useEffect } from 'react';
-import { css } from '@emotion/react';
-
 import useCodeStore from 'store/code.store';
-import { initialCode } from 'model/code/code.lib';
+import { initialCode } from 'model/code/code';
 
 import { Section, Main } from 'components/page/Layout';
 import Markdown from 'components/page/Markdown';
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 import { TabsDemo } from 'components/page/TabsDemo';
-import PanZoom from 'runtime/components/PanZoom';
 
 const env = {};
 
@@ -208,7 +205,7 @@ _TODO hookup babel transpilation of jsx using forked @babel/standalone_
         <section style={{ background: '#000', height: 400 }}>
           <CodeEditor
             height="400px"
-            code={initialCode['file.js']}
+            code={initialCode['PanZoom.jsx']}
             lineNumbers
           />
         </section>
