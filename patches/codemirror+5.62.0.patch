@@ -1,5 +1,5 @@
 diff --git a/node_modules/codemirror/mode/javascript/javascript.js b/node_modules/codemirror/mode/javascript/javascript.js
-index 95cbbd8..c25dc74 100644
+index 95cbbd8..994c790 100644
 --- a/node_modules/codemirror/mode/javascript/javascript.js
 +++ b/node_modules/codemirror/mode/javascript/javascript.js
 @@ -21,23 +21,24 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
@@ -61,6 +61,15 @@ index 95cbbd8..c25dc74 100644
        cx.marked = "property";
        return cont(classfield, classBody);
      }
+@@ -808,7 +809,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
+   }
+   function afterExport(type, value) {
+     if (value == "*") { cx.marked = "keyword"; return cont(maybeFrom, expect(";")); }
+-    if (value == "default") { cx.marked = "keyword"; return cont(expression, expect(";")); }
++    if (value == "default") { cx.marked = "keyword keyword-2"; return cont(expression, expect(";")); }
+     if (type == "{") return cont(commasep(exportField, "}"), maybeFrom, expect(";"));
+     return pass(statement);
+   }
 @@ -835,7 +836,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
      if (value == "as") { cx.marked = "keyword"; return cont(importSpec); }
    }
