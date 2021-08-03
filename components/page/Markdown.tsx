@@ -97,6 +97,12 @@ const Root = styled.div`
       }
     }
   }
+
+  hr {
+    margin: 32px 0 24px;
+    height: 4px;
+    background: #ddd;
+  }
 `;
 
 const TitleRoot = styled.div`

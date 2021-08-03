@@ -51,7 +51,7 @@ The creator of Spelunky suggested [three requirements](https://makegames.tumblr.
 
 ### 1. Fun to develop (Games I want to make)
 
-This game will be fun to make, mainly because I really enjoy experimenting with Game AI (NPC behaviour).
+We'll have fun making the game because experimenting with Game AI (NPC behaviour) is fascinating.
 We'll combine simple behaviours to obtain complex ones,
 using the environment and agent interaction, rather than individual "thinking" or scripted behaviour.
 
@@ -76,10 +76,10 @@ Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style
 
 ### 3. Suitable experience (Games I’m good at making)
 
-- I work as a web developer, using React and Emotion daily.
-- I have a [strong background](https://dblp.org/pid/81/8748.html) in theoretical computer science,
-so I won't confuse Game AI with AI, nor believe the hype surrounding Deep Learning.
-- I have plenty of experience creating similar game mechanics.
+I work as a web developer, using React and Emotion on a daily basis. 
+I have a [strong background](https://dblp.org/pid/81/8748.html) in theoretical computer science,
+so I won't confuse Game AI with AI, nor will I fall prey to the Deep Learning hype.
+Finally, I have also created similar game mechanics over the years.
 
 Hopefully my long line of unfinished projects is coming to a close!
 

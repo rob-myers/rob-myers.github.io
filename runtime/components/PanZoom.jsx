@@ -69,12 +69,7 @@ function Grid({ bounds }) {
   const gridId = useMemo(() => `grid-${nanoid()}`, []);
   return <>
     <defs>
-      <pattern
-        id={gridId}
-        width="10"
-        height="10"
-        patternUnits="userSpaceOnUse"
-      >
+      <pattern id={gridId} width="10" height="10" patternUnits="userSpaceOnUse">
         <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="0.3"/>
       </pattern>
     </defs>
