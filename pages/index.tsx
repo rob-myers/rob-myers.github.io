@@ -79,11 +79,12 @@ Teleglitch shows [Quake](https://en.wikipedia.org/wiki/Quake_(video_game))-style
 
 ### 3. Suitable experience (Games I’m good at making)
 
-I work as a web developer, so React and Emotion are familiar technologies.
-I have a [strong background](https://dblp.org/pid/81/8748.html) in theoretical computer science,
-so I won't confuse Game AI with AI, nor believe all the hype surrounding Deep Learning.
-I have plenty of experience creating game mechanics (and of failing to create games).
-Perhaps my long line of unfinished projects is finally at an end!
+- I work as a web developer, using React and Emotion daily.
+- I have a [strong background](https://dblp.org/pid/81/8748.html) in theoretical computer science,
+so I won't confuse Game AI with AI, nor believe the hype surrounding Deep Learning.
+- I have plenty of experience creating similar game mechanics.
+
+Hopefully my long line of unfinished projects is coming to a close!
 
 <!-- We need an approximation of a development environment:
 > We'll display code using [CodeMirror](https://codemirror.net/), transpile it from [JSX](https://reactjs.org/docs/introducing-jsx.html) via [Babel](https://babeljs.io/) in a webworker, and load using [SystemJS](https://github.com/systemjs/systemjs). We'll provide a terminal, and escape hatches to StackBlitz. -->
@@ -93,13 +94,6 @@ Perhaps my long line of unfinished projects is finally at an end!
 ## Beginnings <float rem="1.2">19th July 2021</float>
 
         `}/>
-
-        <section css={css`width: 100%; height: 400px; position: relative;`}>
-          <PanZoom>
-            {/* TODO */}
-            <rect x={5} y={5} width={20} height={20} fill="red" />
-          </PanZoom>
-        </section>
 
         <TabsDemo/>
 
