@@ -59,11 +59,11 @@ Importantly, complexity will arise from the environment and agent interaction, r
 
 ### 2. The Result (Games I want to have made)
 
-We must ask, what do we aim for?
+We ask, what do we aim for?
 [NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story explicitly_.
 Teleglitch shows survival-horror is achievable from a birdseye perspective.
 
-I want to make a game inspired by Teleglitch's procedural generation, camera viewpoint, and a sense of dread.
+Our game is inspired by Teleglitch's procedural generation, camera viewpoint, and a sense of dread.
 At the same time, I want to build a Game AI engine where every NPC decision is depicted graphically...
 
 
