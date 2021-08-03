@@ -1,12 +1,13 @@
 /* https://github.com/Inter-Net-Pro/Theme-VSCode-Dark/blob/master/vscode-dark.css */
 
 .cm-s-vscode-dark span.cm-meta {color: #569cd6}
-.cm-s-vscode-dark span.cm-number {color: #27d71e}
-.cm-s-vscode-dark span.cm-keyword {line-height: 1em; font-weight: bold; color: #569cd6;}
+.cm-s-vscode-dark span.cm-number {color: rgb(238, 238, 198)}
+.cm-s-vscode-dark span.cm-keyword {line-height: 1em; font-weight: bold; color: #3a82bd;}
 .cm-s-vscode-dark span.cm-keyword-2 {line-height: 1em; font-weight: bold; color: #c586c0;}
-.cm-s-vscode-dark span.cm-def {color:rgb(220, 220, 170)}
+.cm-s-vscode-dark span.cm-def {color:#77cdff}
+.cm-s-vscode-dark span.cm-def-2 {color:rgb(254, 254, 194)}
 .cm-s-vscode-dark span.cm-variable {color: #ddd6a3}
-.cm-s-vscode-dark span.cm-variable-2 {color: #4cbbf7}
+.cm-s-vscode-dark span.cm-variable-2 {color: #49b8f4}
 .cm-s-vscode-dark span.cm-variable-3,
 .cm-s-vscode-dark span.cm-type {color: #A9B7C6}
 .cm-s-vscode-dark span.cm-property {color: #9cdcfe}

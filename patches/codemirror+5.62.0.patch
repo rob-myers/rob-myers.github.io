@@ -1,5 +1,5 @@
 diff --git a/node_modules/codemirror/mode/javascript/javascript.js b/node_modules/codemirror/mode/javascript/javascript.js
-index 95cbbd8..994c790 100644
+index 95cbbd8..03cfa6d 100644
 --- a/node_modules/codemirror/mode/javascript/javascript.js
 +++ b/node_modules/codemirror/mode/javascript/javascript.js
 @@ -21,23 +21,24 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
@@ -34,6 +34,18 @@ index 95cbbd8..994c790 100644
      };
    }();
  
+@@ -276,9 +277,9 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
+     for (var v = list; v; v = v.next) if (v.name == name) return true
+     return false;
+   }
+-  function register(varname) {
++  function register(varname, alt) {
+     var state = cx.state;
+-    cx.marked = "def";
++    cx.marked = alt || "def";
+     if (!trackScope) return
+     if (state.context) {
+       if (state.lexical.info == "var" && state.context && state.context.block) {
 @@ -523,7 +524,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
      if (type == "async") {
        cx.marked = "property";
@@ -52,6 +64,15 @@ index 95cbbd8..994c790 100644
        cx.marked = "property"
        return cont(typeprop)
      } else if (value == "?" || type == "number" || type == "string") {
+@@ -733,7 +734,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
+   }
+   function functiondef(type, value) {
+     if (value == "*") {cx.marked = "keyword"; return cont(functiondef);}
+-    if (type == "variable") {register(value); return cont(functiondef);}
++    if (type == "variable") {register(value, "def def-2"); return cont(functiondef);}
+     if (type == "(") return cont(pushcontext, pushlex(")"), commasep(funarg, ")"), poplex, mayberettype, statement, popcontext);
+     if (isTS && value == "<") return cont(pushlex(">"), commasep(typeparam, ">"), poplex, functiondef)
+   }
 @@ -782,7 +783,7 @@ CodeMirror.defineMode("javascript", function(config, parserConfig) {
        cx.marked = "keyword";
        return cont(classBody);
