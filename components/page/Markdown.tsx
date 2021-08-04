@@ -60,7 +60,7 @@ const Root = styled.div`
   }
   
   p {
-    line-height: 1.4;
+    line-height: 1.5;
   }
   code {
     font-size: 13pt;
@@ -138,11 +138,12 @@ const TitleRoot = styled.div`
     border-bottom: 4px solid #000;
     padding: 0 0 8px;
     color: #333;
-    font-size: 1rem;
-    letter-spacing: 1px;
+    /* letter-spacing: 1px; */
     font-family: Courier, monospace;
-
+    font-size: 1.2rem;
+    
     @media(max-width: 1024px) {
+      font-size: 1rem;
       margin: 0 0 32px 0;
     }
   }
