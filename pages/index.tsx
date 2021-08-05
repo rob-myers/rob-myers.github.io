@@ -33,7 +33,7 @@ Roguelike; Built online; Game AI focus
 We're going to build a game step-by-step, directly on this website.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the spaceship _Gehennom_.
 
-As an important side-effect, we'll see how modern frontend development works. Our technology of choice is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via JavaScript.
+As an important side-effect, we'll see how modern frontend development works. Our technology of choice is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via CSS and JavaScript.
 
 ---
 
@@ -57,17 +57,31 @@ Spelunky's creator suggested [three requirements](https://makegames.tumblr.com/p
 ### 1. Fun to develop (Games I want to make)
 
 Experimenting with Game AI (NPC behaviour) is fun.
-We'll combine simple behaviours to obtain complex ones.
 Complexity will arise from the environment and agent interaction, rather than complex individual thinking or scripted behaviour.
 Simple interacting robots fits the space travel theme nicely.
-They're also analogous to UI components: systems running mostly in parallel with some intercommunication. 
+They're also analogous to UI components: systems running in parallel with some intercommunication.
+
 
 ### 2. The Result (Games I want to have made)
 
-[NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
-Teleglitch shows survival-horror is achievable from a birdseye perspective.
+As an end result I want a highly replayable space travel game.
+The underlying missions amount to going from A to B (_ever was it so_).
+Monotony will be overcome via mission specifics, interesting encounters, the ability to choose the route, and ship building.
+Think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can place [modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
 
-We'll adapt Teleglitch's procedural generation, viewpoint, and dread (e.g. mission [permadeath](https://en.wikipedia.org/wiki/Permadeath)). __FROM HERE__
+I also want the game to be extensible.
+We'll achieve this by providing (a) source code, (b) escape hatches to [StackBlitz](https://stackblitz.com/), (c) clear explanations.
+Comments will be shown, although they must be submitted via [GitHub](https://github.com/).
+
+<!--
+We said we'd build the game directly on this website.
+To clarify, we provide the source code and execute it directly using a "development environmment" built directly 
+-->
+
+<!--
+[NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
+Teleglitch shows survival-horror is achievable from a birdseye perspective. We'll adapt Teleglitch's procedural generation, viewpoint, and dread.
+-->
 
 <!--
 We'll add cameras, guards, doors, keys, weapons etc.
@@ -77,7 +91,7 @@ All NPC decisions will be depicted graphically, such as future navpaths with pro
 ### 3. Experience (Games I’m good at making)
 
 I work as a web developer, using React & Emotion on a daily basis. 
-I have a [strong background](https://dblp.org/pid/81/8748.html) in theoretical computer science,
+I have a [strong background](https://dblp.org/pid/81/8748.html) in Theoretical Computer Science,
 so I won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
 I have also created similar game mechanics _many_ times over the years.
 Here's hoping that my chain of unfinished projects is coming to a close!
@@ -85,9 +99,12 @@ Here's hoping that my chain of unfinished projects is coming to a close!
 
 ---
 
-## A Tale of Two Viewpoints <float rem="1.2">19th July 2021</float>
+## Plan <float rem="1.2">19th July 2021</float>
 
-We'll reach the end result by hurdling hurdles.
+Blurb.
+
+### A Tale of Two Viewpoints
+
 We begin by making the game viewpoints _viewable_.
 
 - Implement a pannable zoomable grid.
