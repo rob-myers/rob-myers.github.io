@@ -68,7 +68,7 @@ const Root = styled.div`
   }
   ul, ol {
     margin: 20px 0;
-    line-height: 1.2;
+    line-height: 1.4;
     li {
       margin: 8px 0;
     }
@@ -79,9 +79,7 @@ const Root = styled.div`
       list-style: none;
     }
   }
-  ol {
-    line-height: 1.4;
-  }
+
   span.float {
     float: right;
     color: #555;
