@@ -30,43 +30,49 @@ Roguelike; Built online; Game AI focus
 
 ## Objective <float rem="1.2">19th July 2021</float>
 
-We're going to build a game step-by-step on this website.
-It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike).
+We're going to build a game step-by-step, directly on this website.
+It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the spaceship _Gehennom_.
 
-As an important side-effect, we'll see how modern frontend development works. Our technology of choice is the [Markup language SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) (viewed as a subset of [HTML](https://en.wikipedia.org/wiki/HTML)), brought to life via JavaScript.
+As an important side-effect, we'll see how modern frontend development works. Our technology of choice is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via JavaScript.
 
 ---
 
 ## Constraints <float rem="1.2">19th July 2021</float>
 
-In order for this project to take shape, I've made a number of decisions. Here are the most important ones, from low to high-level.
+In order for this project to take shape, I've made a number of decisions. Here are the most important ones, from low-level to high-level.
 
-- Use styled [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
+- Use browser-based technologies.
+- Use CSS and [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and Emotion [styled components](https://emotion.sh/docs/styled).
 - Use a realtime birdseye camera, inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch).
 - Use procedural level generation, following Teleglitch's method.
-- Use simple individual [NPC](https://en.wikipedia.org/wiki/Non-player_character) behaviours, combinable in many ways, to create understandable, repeatable and emergent behaviour.
+- Use spaceship building and docking to justify procedural generation.
+- Use simplistic individual [NPCs](https://en.wikipedia.org/wiki/Non-player_character), combinable in many ways, yielding understandable, repeatable and emergent behaviour. Avoid scripted behaviour.
+- The player captains a spaceship, providing transport, hauling and shipping services.
 
-Now, starting and _finishing_ a game is notoriously hard.
-The creator of Spelunky suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). Let us  address them.
+Over time we shall clarify these constraints.
+But first we should emphasise something: starting and _finishing_ a game is notoriously hard.
+Spelunky's creator suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). Let us  address them.
 
 ### 1. Fun to develop (Games I want to make)
 
 Experimenting with Game AI (NPC behaviour) is fun.
 We'll combine simple behaviours to obtain complex ones.
-Importantly, complexity will arise from the environment and agent interaction, rather than complex individual "thinking" or scripted behaviour.
-
+Complexity will arise from the environment and agent interaction, rather than complex individual thinking or scripted behaviour.
+Simple interacting robots fits the space travel theme nicely.
+They're also analogous to UI components: systems running mostly in parallel with some intercommunication. 
 
 ### 2. The Result (Games I want to have made)
 
 [NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
 Teleglitch shows survival-horror is achievable from a birdseye perspective.
 
-We'll adapt Teleglitch's procedural generation, viewpoint, and dread (e.g. [permadeath](https://en.wikipedia.org/wiki/Permadeath)).
-We'll add triggers, cameras, guards, doors, keys, weapons etc.
-All NPC decisions will be depicted graphically, such as future probabilistic navpaths. The player must get from A to B (_ever was it so_); the encountered behaviour is the interesting bit.
+We'll adapt Teleglitch's procedural generation, viewpoint, and dread (e.g. mission [permadeath](https://en.wikipedia.org/wiki/Permadeath)). __FROM HERE__
 
-So, what are we aiming for? ...
+<!--
+We'll add cameras, guards, doors, keys, weapons etc.
+All NPC decisions will be depicted graphically, such as future navpaths with probabilistic branches. The player must get from A to B (_ever was it so_), the encountered behaviour being the interesting bit.
+-->
 
 ### 3. Experience (Games I’m good at making)
 
@@ -76,13 +82,10 @@ so I won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
 I have also created similar game mechanics _many_ times over the years.
 Here's hoping that my chain of unfinished projects is coming to a close!
 
+
 ---
 
-## Hurdle #1 <float rem="1.2">19th July 2021</float>
-
-### A Tale of Two Viewpoints
-
-We've summarised
+## A Tale of Two Viewpoints <float rem="1.2">19th July 2021</float>
 
 We'll reach the end result by hurdling hurdles.
 We begin by making the game viewpoints _viewable_.
