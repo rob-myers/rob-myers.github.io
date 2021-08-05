@@ -48,18 +48,18 @@ I've made a number of decisions. Here are the important ones, from low to high-l
 - Use procedural level generation, following Teleglitch's method.
 - Use spaceship building and docking to justify procedural generation.
 - Use simplistic individual [NPCs](https://en.wikipedia.org/wiki/Non-player_character), combinable in many ways, yielding understandable, repeatable and emergent behaviour. Avoid scripted behaviour.
-- The Player captains a spaceship, providing transport, hauling and shipping services.
+- Player captains a spaceship, providing transport, hauling and shipping services.
 
-Over time we'll clarify the above.
-But first let us say: starting and _finishing_ a game is notoriously hard.
-Spelunky's creator suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). We address them.
+Over time we'll clarify the above constraints.
+But first we must emphasise: _finishing a game is notoriously hard_.
+Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). We'll now address them.
 
 ### 1. Fun to develop (Games I want to make)
 
 Experimenting with Game AI (NPC behaviour) is fun.
 Complexity will arise from the environment and agent interaction, rather than complex individual thinking or scripted behaviour.
 Simple interacting robots fits the space travel theme nicely.
-They're also analogous to UI components: systems running in parallel with some intercommunication.
+They're also analogous to UI components: parallel systems with some intercommunication.
 
 
 ### 2. The Result (Games I want to have made)
@@ -67,16 +67,11 @@ They're also analogous to UI components: systems running in parallel with some i
 As an end result I want a _highly replayable space travel game_.
 The underlying missions amount to going from A to B (ever was it so).
 Monotony will be overcome via mission specifics, interesting encounters, the ability to choose the route, and ship building.
-Think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can place [modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
+Think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can place "[modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117)" when upgrading or docking.
 
-I also want the game to be extensible.
-We'll achieve this by providing (a) source code, (b) escape hatches to [StackBlitz](https://stackblitz.com/), (c) clear explanations.
-Comments will be shown, although they must be submitted via [GitHub](https://github.com/).
-
-<!--
-We said we'd build the game directly on this website.
-To clarify, we provide the source code and execute it directly using a "development environmment" built directly 
--->
+Importantly, I also want the game to be extensible.
+We'll achieve this by providing source code, escape hatches to [StackBlitz](https://stackblitz.com/), and clear explanations.
+Comments will be shown, so that [GitHub](https://github.com/) users can share their own StackBlitz links.
 
 <!--
 [NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
@@ -101,7 +96,20 @@ Here's hoping my chain of unfinished projects is coming to a close!
 
 ## Plan <float rem="1.2">19th July 2021</float>
 
-Blurb.
+### Running code
+
+We are going to build a game directly on this website.
+We'll not only provide the source code, but also a kind of _development environment_.
+Typically an example project will be presented as a number of tabs, consisting of source code files _foo/bar.jsx_, and a single tab named _App_ - the rendered output of the collective source code.
+In order to render the source, we'll [transpile](https://stackoverflow.com/a/44932758/2917822) it using [Babel](https://babeljs.io/) in a webworker and load using [SystemJS](https://github.com/systemjs/systemjs).
+
+This is a non-standard approach.
+Usually frontend developers write code on their own computers using their own development environment.
+In production (i.e. on a website) the code has already been transpiled and minified, so the browser can immediately render it. __FROM HERE__
+
+__TODO__ intended implementation table here
+
+__TODO__ describe online dev env approach
 
 ### A Tale of Two Viewpoints
 
