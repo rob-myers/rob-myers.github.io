@@ -39,7 +39,7 @@ As an important side-effect, we'll see how modern frontend development works. Ou
 
 ## Constraints <float rem="1.2">19th July 2021</float>
 
-In order for this project to take shape, I've made a number of decisions. Here are the most important ones, from low-level to high-level.
+I've made a number of decisions. Here are the important ones, from low to high-level.
 
 - Use browser-based technologies.
 - Use CSS and [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
@@ -48,11 +48,11 @@ In order for this project to take shape, I've made a number of decisions. Here a
 - Use procedural level generation, following Teleglitch's method.
 - Use spaceship building and docking to justify procedural generation.
 - Use simplistic individual [NPCs](https://en.wikipedia.org/wiki/Non-player_character), combinable in many ways, yielding understandable, repeatable and emergent behaviour. Avoid scripted behaviour.
-- The player captains a spaceship, providing transport, hauling and shipping services.
+- The Player captains a spaceship, providing transport, hauling and shipping services.
 
-Over time we shall clarify these constraints.
-But first we should emphasise something: starting and _finishing_ a game is notoriously hard.
-Spelunky's creator suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). Let us  address them.
+Over time we'll clarify the above.
+But first let us say: starting and _finishing_ a game is notoriously hard.
+Spelunky's creator suggested [three requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). We address them.
 
 ### 1. Fun to develop (Games I want to make)
 
@@ -64,8 +64,8 @@ They're also analogous to UI components: systems running in parallel with some i
 
 ### 2. The Result (Games I want to have made)
 
-As an end result I want a highly replayable space travel game.
-The underlying missions amount to going from A to B (_ever was it so_).
+As an end result I want a _highly replayable space travel game_.
+The underlying missions amount to going from A to B (ever was it so).
 Monotony will be overcome via mission specifics, interesting encounters, the ability to choose the route, and ship building.
 Think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can place [modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
 
@@ -94,7 +94,7 @@ I work as a web developer, using React & Emotion on a daily basis.
 I have a [strong background](https://dblp.org/pid/81/8748.html) in Theoretical Computer Science,
 so I won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
 I have also created similar game mechanics _many_ times over the years.
-Here's hoping that my chain of unfinished projects is coming to a close!
+Here's hoping my chain of unfinished projects is coming to a close!
 
 
 ---
