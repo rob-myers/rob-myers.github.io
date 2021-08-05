@@ -1,7 +1,8 @@
 ## Plan
 
-- Fix `PanZoom` mouse input
-- Make modular `Tabs` 
+- Make modular `Tabs`
+- Lazy-loaded articles
+- ✅ Fix `PanZoom` mouse input 
 
 - Add babel in webworker
 - Connect terminal to babel somehow
