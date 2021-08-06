@@ -57,7 +57,7 @@ Spelunky's creator suggested [three important requirements](https://makegames.tu
 
 ### 1. Fun to develop (Games I want to make)
 
-_Rogue Markup_ will be fun to develop because I enjoy experimenting with NPC behaviour, particularly in an open extensible way. One underlying motivation is the lack of Game AI resources available on the web. However, it is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which seemed fun to me.
+_Rogue Markup_ will be fun to develop because I enjoy experimenting with NPC behaviour, particularly in an extendable way. One of our underlying motivations is the lack of Game AI resources available on the web. However, it is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which felt fun for me.
 
 <!--
 Complexity will arise from the environment and agent interaction, rather than complex individual thinking or scripted behaviour.
@@ -72,7 +72,7 @@ The underlying missions amount to going from A to B (ever was it so).
 Monotony will be overcome via mission specifics, encountered NPC behaviours, procedural generation, and ship building.
 Think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
 
-Importantly, I want the game to be extensible.
+Importantly, I want the game to be extendable by others.
 We'll achieve this by providing source code, escape hatches to [StackBlitz](https://stackblitz.com/) and [CodeSandbox](https://codesandbox.io/), and clear explanations.
 Comments will be shown, so [GitHub](https://github.com/) users can share their own ideas and links.
 
