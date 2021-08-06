@@ -1,6 +1,6 @@
+// eslint-disable-next-line no-unused-vars
+import * as Geom from './types';
 import { Vect } from './vect';
-
-/** @typedef {import('./geom')} Geom */
 
 /**
  * A two dimensional rectangle where `(x, y)` is viewed as top left.

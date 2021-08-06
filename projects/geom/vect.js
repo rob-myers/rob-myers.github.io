@@ -1,4 +1,5 @@
-/** @typedef {import('./geom')} Geom */
+// eslint-disable-next-line no-unused-vars
+import * as Geom from './types';
 
 /**
  * A two dimensional coordinate.
