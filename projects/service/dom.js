@@ -1,11 +1,3 @@
-/** @typedef {import('react')} React */
-
-/** @param {React.MouseEvent} e */
-export function getRelativePos(e) {
-  const { left, top } = e.currentTarget.getBoundingClientRect();
-  return [e.clientX - left, e.clientY - top];
-}
-
 /** @type {DOMPoint} */
 let svgPoint;
 /** @type {SVGSVGElement} */
