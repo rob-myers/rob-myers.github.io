@@ -71,6 +71,9 @@ const Root = styled.div`
     line-height: 1.4;
     li {
       margin: 8px 0;
+      ul, ol {
+        line-height: 1.2;
+      }
     }
   }
   ul.contains-task-list {
