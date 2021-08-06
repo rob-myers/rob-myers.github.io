@@ -24,8 +24,4 @@ Files like `next.config.js` are generated from `scripts/*` via `yarn next-cfg`.
 # Can patch npm modules with `patch-package`
 npx patch-package some-package
 git add patches/some-package+$version.patch
-
-# To login to npm
-# https://docs.npmjs.com/cli/v7/commands/npm-adduser
-npm adduser
 ```
