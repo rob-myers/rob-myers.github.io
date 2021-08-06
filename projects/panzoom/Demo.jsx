@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from 'goober';
 import PanZoom from './PanZoom';
 
 export default function Demo() {
@@ -16,17 +16,17 @@ export default function Demo() {
   )
 }
 
-const Container = styled.div`
+const Container = styled('div')`
   display: flex;
   flex-direction: column;
   height: 100%;
 `;
 
-const Title = styled.div`
+const Title = styled('div')`
   padding: 8px;
 `;
 
-const Outline = styled.section`
+const Outline = styled('section')`
   flex: 1;
   border: 1px solid #aaa;
   position: relative;

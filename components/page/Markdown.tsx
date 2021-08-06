@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from '@emotion/styled';
+import { styled}  from 'goober';
 
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
@@ -53,7 +53,7 @@ const components = {
   },
 };
 
-const Root = styled.div`
+const Root = styled('div')`
   font-size: 1.2rem;
   @media(max-width: 540px) {
     font-size: 1.1rem;
@@ -115,7 +115,7 @@ const Root = styled.div`
   }
 `;
 
-const TitleRoot = styled.div`
+const TitleRoot = styled('div')`
   /** Site title */
   h1 {
     margin: 48px 0 24px;

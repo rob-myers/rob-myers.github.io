@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import styled from "@emotion/styled";
+import { styled } from "goober";
 import useCode, { CodeMeta } from "store/code.store";
 
 export default function CodeToolbar({ code }: Props) {
@@ -32,7 +32,7 @@ interface Props {
   code?: CodeMeta | null;
 }
 
-const Root = styled.section`
+const Root = styled('section')`
   font-size: 10pt;
   background: #222;
   color: #fff;
@@ -44,7 +44,7 @@ const Root = styled.section`
   border-bottom: 1px solid #333;
 `;
 
-const RightToolbar = styled.div`
+const RightToolbar = styled('div')`
   display: grid;
   grid-template-columns: auto auto auto;
   > * {
@@ -52,7 +52,7 @@ const RightToolbar = styled.div`
   }
 `;
 
-const ResetButton = styled.div<{}>`
+const ResetButton = styled('div')<{}>`
   outline: none;
   cursor: pointer;
   color: #ddd;

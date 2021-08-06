@@ -2,7 +2,7 @@ import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
 import { CodeEditor } from 'components/dynamic';
 import PanZoomDemo from 'projects/panzoom/Demo';
 import 'flexlayout-react/style/dark.css';
-import { css } from '@emotion/react';
+import { css } from 'goober';
 import { initialCode } from 'model/code/code';
 
 const json : IJsonModel= {
@@ -58,7 +58,7 @@ const factory = (node: TabNode) => {
 
 export function TabsDemo() {
   return (
-    <div css={css`
+    <div className={css`
       position: relative;
       width: 100%;
       height: 300px;

@@ -2,8 +2,11 @@ import { NextComponentType, NextPageContext } from 'next';
 import { AppInitialProps } from 'next/app';
 import Head from 'next/head';
 import { Router } from 'next/router';
-import { useEffect } from 'react';
+
+import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { setup } from 'goober';
+setup(React.createElement);
 
 import 'xterm/css/xterm.css';
 import 'styles/globals.css'

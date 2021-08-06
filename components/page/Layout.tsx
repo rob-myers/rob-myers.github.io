@@ -1,6 +1,6 @@
-import styled from "@emotion/styled";
+import { styled } from "goober";
 
-export const Main = styled.main<{}>`
+export const Main = styled('main')<{}>`
   display: flex;
   flex-direction: column;
   padding-bottom: 2rem;
@@ -13,7 +13,7 @@ export const Main = styled.main<{}>`
   }
 `;
 
-export const Section = styled.section<{}>`
+export const Section = styled('section')<{}>`
   padding: 32px 120px;
   margin: 48px 0;
   font-size: 20px;

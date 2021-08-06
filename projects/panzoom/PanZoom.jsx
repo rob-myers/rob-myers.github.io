@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { css } from '@emotion/react'
+import { css } from 'goober';
 import { nanoid } from 'nanoid';
 import useForceRefresh from '../hooks/use-force-refresh';
 import { getSvgPos } from '../service/dom';
@@ -64,7 +64,7 @@ export default function PanZoom({ children }) {
   return (
     <svg
       ref={state.rootRef}
-      css={state.rootCss}
+      className={state.rootCss}
       preserveAspectRatio="xMinYMin"
       viewBox={`${state.viewBox}`}
     >

@@ -14,17 +14,15 @@ export default (api: Api): Config => {
           },
           'preset-react': {
             runtime: 'automatic',
-            importSource: '@emotion/react',
           },
           // https://github.com/babel/babel/issues/11539#issuecomment-626381058
           // 'transform-runtime': {},
           // 'styled-jsx': {},
           // 'class-properties': {},
-          // '@emotion/babel-preset-css-prop': {},
         },
       ],
     ],
-    plugins: ['@emotion/babel-plugin']
+    plugins: []
   };
 };
 

@@ -18,6 +18,7 @@
     "codemirror": "^5.62.0",
     "flexlayout-react": "^0.5.12",
     "getopts": "^2.3.0",
+    "goober": "^2.0.39",
     "json-stringify-pretty-compact": "^3.0.0",
     "lodash.clonedeep": "^4.5.0",
     "mvdan-sh": "^0.5.0",
@@ -45,9 +46,6 @@
     "zustand": "^3.4.1"
   },
   "devDependencies": {
-    "@emotion/babel-preset-css-prop": "^11.2.0",
-    "@emotion/react": "^11.1.5",
-    "@emotion/styled": "^11.1.5",
     "@types/braces": "^3.0.0",
     "@types/codemirror": "^5.60.2",
     "@types/lodash.clonedeep": "^4.5.6",

@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import styled from '@emotion/styled';
+import {styled} from 'goober';
 import { useBeforeunload } from 'react-beforeunload';
 import type { ITerminalOptions } from 'xterm';
 
@@ -53,7 +53,7 @@ interface Props {
   env: Record<string, any>;
 }
 
-const Root = styled.section<{}>`
+const Root = styled('section')<{}>`
   grid-area: terminal;
   background: black;
   height: 100%;
