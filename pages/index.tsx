@@ -30,10 +30,10 @@ Roguelike; Built online; Game AI focus
 
 ## Objective <float rem="1.2">19th July 2021</float>
 
-We're going to build a game step-by-step on this website.
+On this site we shall build a game step-by-step.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the spaceship _Gehennom_.
 
-As an important side-effect, we'll see how modern frontend development works. Our technology of choice is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via CSS and JavaScript.
+As an important side-effect, a common approach to modern frontend development will be exposed. Our underlying technology of choice is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via CSS and JavaScript.
 
 ---
 
@@ -49,8 +49,7 @@ I've made a number of decisions. Here are the important ones, from low to high-l
   - Use a realtime birdseye camera.
   - Use procedural level generation, compatible with spaceship building/docking.
 - Use explicitly illustrated NPC decisions as a game mechanic.
-- The Player captains the spaceship _Gehennom_ and works for a corporation called _Unified Transport_.
-- Missions involve personnel transport, cargo transport, and hauling.
+- The Player captains the spaceship _Gehennom_ and works for the corporation _Unified Transport_. Missions involve personnel transport, cargo transport, and hauling.
 
 Over time we'll clarify the above constraints.
 But first we must emphasise: _finishing a game is notoriously hard_.
@@ -58,7 +57,7 @@ Spelunky's creator suggested [three important requirements](https://makegames.tu
 
 ### 1. Fun to develop (Games I want to make)
 
-_Rogue Markup_ will be fun to develop because I enjoy experimenting with NPC behaviour, particularly in an open extensible way. An underlying motivation is the lack of Game AI resources available on the web. However, it is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which seemed fun to me.
+_Rogue Markup_ will be fun to develop because I enjoy experimenting with NPC behaviour, particularly in an open extensible way. One underlying motivation is the lack of Game AI resources available on the web. However, it is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which seemed fun to me.
 
 <!--
 Complexity will arise from the environment and agent interaction, rather than complex individual thinking or scripted behaviour.
@@ -90,68 +89,51 @@ All NPC decisions will be depicted graphically, such as future navpaths with pro
 
 I work as a web developer, using React & Emotion on a daily basis. 
 I have a [strong background](https://dblp.org/pid/81/8748.html) in Theoretical Computer Science,
-so I won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
+so won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
 I have also created similar game mechanics _many_ times over the years.
 Here's hoping my chain of unfinished projects is coming to a close!
 
 ---
 
-## Plan  <float rem="1.2">19th July 2021</float>
+## Technology and Hurdles  <float rem="1.2">19th July 2021</float>
 
-We will build the game using well-established technologies.
+We will build the game using the following technologies.
 
 | Concept | Browser Technology |
 | - | - |
-| Code viewing | [CodeMirror](https://codemirror.net/) for viewing  JavaScript on the site. |
-| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html) |
+| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
 | Styles | Components will be styled using runtime CSS via [Emotion](https://emotion.sh/). |
 | Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
-| Live analysis | Monitor using [preact option hooks](https://preactjs.com/guide/v10/options/), and our in-browser terminal. |
+| Live analysis | Via [Preact option hooks](https://preactjs.com/guide/v10/options/) and our own in-browser terminal. |
+| Code viewing | [CodeMirror](https://codemirror.net/) for viewing  JavaScript on the site. [FlexLayout](https://github.com/caplin/FlexLayout) provides tabs and windows. |
 | Code editing | We'll provide [StackBlitz](https://stackblitz.com/) links. |
+| Code sharing | [GitHub](https://github.com/) comments (shown on the site) and StackBlitz. |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
 <!-- A notable omission is TypeScript. -->
 
-Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and a single tab named _App_ - the rendered output.
+Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and a single tab named _App_ (the output).
 
-### Quick introduction to React
 
-__TODO__ introduce our first tech-talk
+### Quick intro to React
 
 Competing web frameworks exist in the wild, often with their own notion of component.
-A popular approach is to use [React functional components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. _JavaScript functions_ which:
+Currently, a very popular approach is to use React functional components i.e. _JavaScript functions_ which:
 - have a single parameter, conventionally called _props_.
 - return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
 The single argument _props_ is a JavaScript object defining the component's named inputs.
 But what is a _virtual_ DOM node?
-First consider how they denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
+First consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
 
+__TODO__ demo app where can connect polygons together
 
-_TODO support typescript syntax highlighting so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96)_
+__TODO__ tabs with code, transpiled jsx, and app
+
+__TODO__ support typescript syntax highlighting so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96)
 
         `}/>
-
-        <section style={{ background: 'black', height: 212 }}>
-          <CodeEditor
-              height="auto"
-              padding="16px 0"
-              lineNumbers
-              readOnly
-              code={`
-import { useState } from '@test/preact/hooks';
-
-export default function App() {
-  const [n, setN] = useState(1);
-  return (
-    <div onClick={_ => setN(n + 1)}>
-      {[...Array(n)].map(i => <div key={i}>Hello, world!</div>)}
-    </div>
-  );
-}
-          `} />
-        </section>
 
         <Markdown children={`
 
