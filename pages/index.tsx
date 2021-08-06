@@ -30,7 +30,7 @@ Roguelike; Built online; Game AI focus
 
 ## Objective <float rem="1.2">19th July 2021</float>
 
-We're going to build a game step-by-step, directly on this website.
+We're going to build a game step-by-step on this website.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the spaceship _Gehennom_.
 
 As an important side-effect, we'll see how modern frontend development works. Our technology of choice is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via CSS and JavaScript.
@@ -42,13 +42,15 @@ As an important side-effect, we'll see how modern frontend development works. Ou
 I've made a number of decisions. Here are the important ones, from low to high-level.
 
 - Use browser-based technologies.
-- Use CSS and [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) instead of HTMLCanvas or WebGL.
-- Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and Emotion [styled components](https://emotion.sh/docs/styled).
-- Use a realtime birdseye camera, inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch).
-- Use procedural level generation, following Teleglitch's method.
-- Use spaceship building and docking to justify procedural generation.
-- Use simplistic individual [NPCs](https://en.wikipedia.org/wiki/Non-player_character), combinable in many ways, yielding understandable, repeatable and emergent behaviour. Avoid scripted behaviour.
-- Player captains a spaceship, providing transport, hauling and shipping services.
+  - Use CSS and SVG instead of HTMLCanvas or WebGL.
+  - Use [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and Emotion [styled components](https://emotion.sh/docs/styled).
+  - Use [Preact](https://preactjs.com/) instead of React.
+- Use game mechanics inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) and other roguelikes.
+  - Use a realtime birdseye camera.
+  - Use procedural level generation, compatible with spaceship building/docking.
+- Use explicitly illustrated NPC decisions as a game mechanic.
+- The Player captains the spaceship _Gehennom_ and works for a corporation called _Unified Transport_.
+- Missions involve personnel transport, cargo transport, and hauling.
 
 Over time we'll clarify the above constraints.
 But first we must emphasise: _finishing a game is notoriously hard_.
@@ -56,31 +58,32 @@ Spelunky's creator suggested [three important requirements](https://makegames.tu
 
 ### 1. Fun to develop (Games I want to make)
 
-Experimenting with Game AI (NPC behaviour) is fun.
+_Rogue Markup_ will be fun to develop because I enjoy experimenting with NPC behaviour, particularly in an open extensible way. An underlying motivation is the lack of Game AI resources available on the web. However, it is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which seemed fun to me.
+
+<!--
 Complexity will arise from the environment and agent interaction, rather than complex individual thinking or scripted behaviour.
 Simple interacting robots fits the space travel theme nicely.
 They're also analogous to UI components: parallel systems with some intercommunication.
-
+-->
 
 ### 2. The Result (Games I want to have made)
 
 As an end result I want a _highly replayable space travel game_.
 The underlying missions amount to going from A to B (ever was it so).
-Monotony will be overcome via mission specifics, interesting encounters, the ability to choose the route, and ship building.
-Think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can place "[modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117)" when upgrading or docking.
+Monotony will be overcome via mission specifics, encountered NPC behaviours, procedural generation, and ship building.
+Think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
 
-Importantly, I also want the game to be extensible.
+Importantly, I want the game to be extensible.
 We'll achieve this by providing source code, escape hatches to [StackBlitz](https://stackblitz.com/), and clear explanations.
-Comments will be shown, so that [GitHub](https://github.com/) users can share their own StackBlitz links.
+Comments will be shown, so [GitHub](https://github.com/) users can share their own ideas and links.
 
 <!--
 [NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
-Teleglitch shows survival-horror is achievable from a birdseye perspective. We'll adapt Teleglitch's procedural generation, viewpoint, and dread.
 -->
 
 <!--
 We'll add cameras, guards, doors, keys, weapons etc.
-All NPC decisions will be depicted graphically, such as future navpaths with probabilistic branches. The player must get from A to B (_ever was it so_), the encountered behaviour being the interesting bit.
+All NPC decisions will be depicted graphically, such as future navpaths with probabilistic branches.
 -->
 
 ### 3. Experience (Games I’m good at making)
@@ -91,49 +94,30 @@ so I won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
 I have also created similar game mechanics _many_ times over the years.
 Here's hoping my chain of unfinished projects is coming to a close!
 
-
 ---
 
-## Plan <float rem="1.2">19th July 2021</float>
+## Plan  <float rem="1.2">19th July 2021</float>
 
-### Running code
+We will build the game using well-established technologies.
 
-We are going to build a game directly on this website.
-We'll not only provide the source code, but also a kind of _development environment_.
-Typically an example project will be presented as a number of tabs, consisting of source code files _foo/bar.jsx_, and a single tab named _App_ - the rendered output of the collective source code.
-In order to render the source, we'll [transpile](https://stackoverflow.com/a/44932758/2917822) it using [Babel](https://babeljs.io/) in a webworker and load using [SystemJS](https://github.com/systemjs/systemjs).
+| Concept | Browser Technology |
+| - | - |
+| Code viewing | [CodeMirror](https://codemirror.net/) for viewing  JavaScript on the site. |
+| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html) |
+| Styles | Components will be styled using runtime CSS via [Emotion](https://emotion.sh/). |
+| Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
+| Live analysis | Monitor using [preact option hooks](https://preactjs.com/guide/v10/options/), and our in-browser terminal. |
+| Code editing | We'll provide [StackBlitz](https://stackblitz.com/) links. |
 
-This is a non-standard approach.
-Usually frontend developers write code on their own computers using their own development environment.
-In production (i.e. on a website) the code has already been transpiled and minified, so the browser can immediately render it. __FROM HERE__
+<!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
-__TODO__ intended implementation table here
+<!-- A notable omission is TypeScript. -->
 
-__TODO__ describe online dev env approach
+Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and a single tab named _App_ - the rendered output.
 
-### A Tale of Two Viewpoints
+### Quick introduction to React
 
-We begin by making the game viewpoints _viewable_.
-
-- Implement a pannable zoomable grid.
-- Implement a movable character & Teleglitch-style camera.
-- Support switching between these two viewpoints.
-- Support desktop & mobile; can optionally run code on [StackBlitz](https://stackblitz.com/).
-
-<!-- We need an approximation of a development environment:
-> We'll display code using [CodeMirror](https://codemirror.net/), transpile it from [JSX](https://reactjs.org/docs/introducing-jsx.html) via [Babel](https://babeljs.io/) in a webworker, and load using [SystemJS](https://github.com/systemjs/systemjs). We'll provide a terminal, and escape hatches to StackBlitz. -->
-
----
-
-## Pannable Zoomable Grid <float rem="1.2">19th July 2021</float>
-
-        `}/>
-
-        <TabsDemo/>
-
-        <Markdown children={`
-
-_TODO rewrite below_
+__TODO__ introduce our first tech-talk
 
 Competing web frameworks exist in the wild, often with their own notion of component.
 A popular approach is to use [React functional components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. _JavaScript functions_ which:
@@ -171,32 +155,25 @@ export default function App() {
 
         <Markdown children={`
 
-<br/>
+### Hurdle: two-viewpoints
 
+__TODO__ introduce our first hurdle
 
-### Intended implementation
+We begin by making the game viewpoints _viewable_.
+- Implement a pannable zoomable grid.
+- Implement a movable character & Teleglitch-style camera.
+- Support switching between these two viewpoints.
+- Support desktop & mobile; can optionally run code on [StackBlitz](https://stackblitz.com/).
 
-We are going to built the game __directly on this website__, using well-established technologies.
+---
 
-| Concept | Browser Technology |
-| - | - |
-| Code Editor | [CodeMirror](https://codemirror.net/) for viewing and editing JavaScript. |
-| Component | [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions which use syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html) |
-| Styles | Components can be enriched by runtime CSS. We'll use [Emotion](https://emotion.sh/). |
-| Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
-| Devtools | [Babel](https://babeljs.io/) in a webworker; [SystemJS](https://github.com/systemjs/systemjs) for module loading. |
-| Live analysis | Monitoring via [react option hooks](https://preactjs.com/guide/v10/options/), code transforms and our own in-browser terminal. |
-
-<!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
-
-<!-- A notable omission is TypeScript. -->
+## Pannable Zoomable Grid <float rem="1.2">19th July 2021</float>
 
         `}/>
 
-        <Markdown children={`
+        <TabsDemo/>
 
-_TODO hookup babel transpilation of jsx using forked @babel/standalone_
-        `}/>
+        <br/>
 
         <section style={{ height: 200 }}>
           <Terminal sessionKey="test" env={env} />
