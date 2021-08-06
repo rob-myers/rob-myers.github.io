@@ -1,4 +1,4 @@
-/** @typedef {import('./geom').VectJson} VectJson */
+/** @typedef {import('./geom')} Geom */
 
 /**
  * A two dimensional coordinate.
@@ -9,12 +9,12 @@
     return Math.atan2(this.y, this.x);
   }
 
-  /** @returns {import('./geom').Coord} */
+  /** @returns {Geom.Coord} */
   get coord() {
     return [this.x, this.y];
   }
 
-  /** @returns {VectJson} */
+  /** @returns {Geom.VectJson} */
   get json(){
     return { x: this.x, y: this.y };
   }
@@ -40,7 +40,7 @@
     /** @type {number} */ this.y = y;
   }
 
-  /** @param {VectJson} _ */
+  /** @param {Geom.VectJson} _ */
   add({ x, y }) {
     return this.translate(x, y);
   }
@@ -58,12 +58,12 @@
     return new Vect(this.x, this.y);
   }
 
-  /** @param {VectJson} p */
+  /** @param {Geom.VectJson} p */
   copy(p) {
     return this.set(p.x, p.y);
   }
 
-  /** @param {VectJson} p */
+  /** @param {Geom.VectJson} p */
   distanceTo(p) {
     return Math.sqrt(
       Math.pow(p.x - this.x, 2)
@@ -71,17 +71,17 @@
     );
   }
 
-  /** @param {VectJson} other */
+  /** @param {Geom.VectJson} other */
   dot(other) {
     return this.x * other.x + this.y * other.y;
   }
 
-  /** @param {VectJson} */
+  /** @param {Geom.VectJson} _ */
   equals({ x, y }) {
     return this.x === x && this.y === y;
   }
 
-  /** @param {[number, number] | VectJson} input */
+  /** @param {[number, number] | Geom.VectJson} input */
   static from(input) {
     return Array.isArray(input)
       ? new Vect(input[0], input[1])
@@ -121,7 +121,7 @@
     return this;
   }
 
-  /** @param {VectJson} _ */
+  /** @param {Geom.VectJson} _ */
   sub({ x, y }) {
     return this.translate(-x, -y);
   }
@@ -130,7 +130,7 @@
     return `${this.x},${this.y}`;
   }
 
-  /** @param {DOMMatrix} */
+  /** @param {DOMMatrix} _ */
   transform({ a, b, c, d, e, f }) {
     const { x, y } = this;
     this.x = a * x + c * y + e;

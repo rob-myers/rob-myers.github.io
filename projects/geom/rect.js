@@ -1,8 +1,6 @@
 import { Vect } from './vect';
 
-/** @typedef {import('./geom').RectJson} RectJson */
-/** @typedef {import('./geom').VectJson} VectJson */
-/** @typedef {import('./geom').GeoJsonPolygon} GeoJsonPolygon */
+/** @typedef {import('./geom')} Geom */
 
 /**
  * A two dimensional rectangle where `(x, y)` is viewed as top left.
@@ -37,7 +35,7 @@ export class Rect {
     return this.y + 0.5 * this.height;
   }
 
-  /** @returns {GeoJsonPolygon} */
+  /** @returns {Geom.GeoJsonPolygon} */
   get geoJson() {
     return {
       type: 'Polygon',
@@ -52,7 +50,7 @@ export class Rect {
     };
   }
 
-  /** @returns {RectJson} */
+  /** @returns {Geom.RectJson} */
   get json() {
     return { 
       x: this.x,
@@ -115,12 +113,12 @@ export class Rect {
     return new Rect(this.x, this.y, this.width, this.height);
   }
 
-  /** @param {VectJson} _ */
+  /** @param {Geom.VectJson} _ */
   contains({ x, y }) {
     return this.x <= x && x <= this.x + this.width && (this.y <= y && y <= this.y + this.height);
   }
 
-  /** @param {RectJson} _ */
+  /** @param {Geom.RectJson} _ */
   copy({ x, y, width, height }) {
     this.x = x;
     this.y = y;
@@ -173,7 +171,7 @@ export class Rect {
     }
   }
 
-  /** @param {RectJson} _ */
+  /** @param {Geom.RectJson} _ */
   static fromJson({ x, y, width, height }) {
     return new Rect(x, y, width, height);
   }
@@ -206,7 +204,7 @@ export class Rect {
     );
   }
 
-  /** @param {VectJson} _ */
+  /** @param {Geom.VectJson} _ */
   offset({ x, y }) {
     this.x += x;
     this.y += y;
@@ -231,7 +229,7 @@ export class Rect {
     return this;
   }
 
-  /** @param {VectJson} _ */
+  /** @param {Geom.VectJson} _ */
   setPosition({ x, y }) {
     this.x = x;
     this.y = y;

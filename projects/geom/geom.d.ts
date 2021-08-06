@@ -16,3 +16,5 @@ export interface VectJson {
   x: number;
   y: number;
 }
+
+export as namespace Geom;
