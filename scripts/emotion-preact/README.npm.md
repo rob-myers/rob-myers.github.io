@@ -9,6 +9,10 @@ npm view @emotion/react
 npm view @emotion/react dist.tarball
 
 # To publish
-cd scripts/alias
+cd scripts/package
 npm publish --access public
+
+# To unpublish all versions
+cd scripts/package
+npm unpublish @rob-myers/package
 ```

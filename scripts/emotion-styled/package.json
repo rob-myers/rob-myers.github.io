@@ -1,0 +1,18 @@
+{
+  "name": "@rob-myers/emotion-prestyled",
+  "version": "0.0.1",
+  "description": "`@emotion/styled` minimized UMD distribution, with \"react\" replaced by \"preact/compat\" and \"@emotion/react\" replaced by \"@rob-myers/emotion-preact\"",
+  "main": "emotion-styled.umd.min.js",
+  "umd:main": "emotion-styled.umd.min.js",
+	"exports": {
+		".": {
+			"umd": "./emotion-styled.umd.min.js"
+		},
+    "./": "./"
+  },
+  "scripts": {
+    "test": "echo 👌"
+  },
+  "author": "R.S.R.Myers",
+  "license": "ISC"
+}
