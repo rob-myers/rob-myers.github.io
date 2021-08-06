@@ -5,7 +5,9 @@ import codemirror from 'codemirror';
 import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/keymap/sublime';
-// import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/foldcode';
+import 'codemirror/addon/fold/indent-fold';
+// import 'codemirror/addon/fold/foldgutter';
 // import 'codemirror/addon/comment/comment';
 
 import 'codemirror/mode/sass/sass';
@@ -47,9 +49,13 @@ export default function CodeEditor({
           "Ctrl-Alt-Up": "swapLineUp",
           "Ctrl-Alt-Down": "swapLineDown",
           "Cmd-/": "customToggleComment",
+          "Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); },
         },
         addModeClass: true,
         readOnly,
+        foldOptions: {
+          rangeFinder: CodeMirror.fold.indent,
+        },
       });
     }
     return () => {
