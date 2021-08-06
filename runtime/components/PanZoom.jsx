@@ -70,7 +70,6 @@ export default function PanZoom({ children }) {
     >
       <MemoedGrid bounds={state.gridBounds} />
       {children}
-      <rect />
     </svg>
   );
 }
