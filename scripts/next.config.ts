@@ -3,6 +3,7 @@ import webpackMerge from 'webpack-merge';
 import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
 import WebpackBar from 'webpackbar';
 import withImages from 'next-images';
+import withPreact from 'next-plugin-preact';
 
 import configMisc from './misc.config';
 import { NextJsConfigCtxt, Phase, NextJsConfig, WebpackCtxt } from './next.model';
@@ -69,5 +70,5 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
     }
   };
 
-  return withImages(nextJsConfig);
+  return withImages(withPreact(nextJsConfig));
 };
