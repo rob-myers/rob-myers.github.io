@@ -1,6 +1,6 @@
 import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
 import { CodeEditor } from 'components/dynamic';
-import PanZoom from 'projects/panzoom/PanZoom';
+import PanZoomDemo from 'projects/panzoom/Demo';
 import 'flexlayout-react/style/dark.css';
 import { css } from '@emotion/react';
 import { initialCode } from 'model/code/code';
@@ -51,9 +51,7 @@ const factory = (node: TabNode) => {
     );
   } else {
     return (
-      <PanZoom>
-        <rect x={10} y={10} width={20} height={20} fill="red" />
-      </PanZoom>
+      <PanZoomDemo />
     )
   }
 }
@@ -69,6 +67,10 @@ export function TabsDemo() {
       .flexlayout__tab_button_content {
         user-select: none;
         font-size: smaller;
+      }
+      .flexlayout__tab {
+        background: white;
+        color: black;
       }
     `} >
       <Layout
