@@ -30,7 +30,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "runtime/**/*.js"
+    "projects/**/*.js"
   ],
   "exclude": [
     "node_modules",
