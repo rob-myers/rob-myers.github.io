@@ -129,7 +129,9 @@ First consider how they are usually denoted, via syntactic sugar known as [JSX](
 
 __TODO__ demo app where can connect polygons together
 
-__TODO__ tabs with code, transpiled jsx, and app
+__TODO__ tabs with the code, transpiled jsx, and app
+
+__TODO__ working StackBlitz project
 
 __TODO__ support typescript syntax highlighting so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96)
 
