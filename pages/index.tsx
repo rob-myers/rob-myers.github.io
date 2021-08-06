@@ -30,16 +30,16 @@ Roguelike; Built online; Game AI focus
 
 ## Objective <float rem="1.2">19th July 2021</float>
 
-On this site we shall build a game step-by-step.
+We are going to build a game step-by-step.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the spaceship _Gehennom_.
 
-As an important side-effect, a common approach to modern frontend development will be exposed. Our underlying technology of choice is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via CSS and JavaScript.
+As an important side-effect, a popular approach to frontend development will be exposed. Our underlying technology of choice is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via CSS and JavaScript.
 
 ---
 
 ## Constraints <float rem="1.2">19th July 2021</float>
 
-I've made a number of decisions. Here are the important ones, from low to high-level.
+I've necessarily made a large number of decisions. Here are the important ones, from low-level to high-level.
 
 - Use browser-based technologies.
   - Use CSS and SVG instead of HTMLCanvas or WebGL.
@@ -73,7 +73,7 @@ Monotony will be overcome via mission specifics, encountered NPC behaviours, pro
 Think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
 
 Importantly, I want the game to be extensible.
-We'll achieve this by providing source code, escape hatches to [StackBlitz](https://stackblitz.com/), and clear explanations.
+We'll achieve this by providing source code, escape hatches to [StackBlitz](https://stackblitz.com/) and [CodeSandbox](https://codesandbox.io/), and clear explanations.
 Comments will be shown, so [GitHub](https://github.com/) users can share their own ideas and links.
 
 <!--
@@ -106,8 +106,8 @@ We will build the game using the following technologies.
 | Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Live analysis | Via [Preact option hooks](https://preactjs.com/guide/v10/options/) and our own in-browser terminal. |
 | Code viewing | [CodeMirror](https://codemirror.net/) for viewing  JavaScript on the site. [FlexLayout](https://github.com/caplin/FlexLayout) provides tabs and windows. |
-| Code editing | We'll provide [StackBlitz](https://stackblitz.com/) links. |
-| Code sharing | [GitHub](https://github.com/) comments (shown on the site) and StackBlitz. |
+| Code editing | We'll provide links on [StackBlitz](https://stackblitz.com/), [CodeSandbox](https://codesandbox.io/). |
+| Code sharing | [GitHub](https://github.com/) comments (shown on the site) and StackBlitz, CodeSandbox. |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
@@ -131,7 +131,7 @@ __TODO__ demo app where can connect polygons together
 
 __TODO__ tabs with the code, transpiled jsx, and app
 
-__TODO__ working StackBlitz project
+__TODO__ it works on StackBlitz and CodeSandbox
 
 __TODO__ support typescript syntax highlighting so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96)
 
@@ -147,7 +147,7 @@ We begin by making the game viewpoints _viewable_.
 - Implement a pannable zoomable grid.
 - Implement a movable character & Teleglitch-style camera.
 - Support switching between these two viewpoints.
-- Support desktop & mobile; can optionally run code on [StackBlitz](https://stackblitz.com/).
+- Support desktop & mobile; can optionally run code on [StackBlitz](https://stackblitz.com/) and [CodeSandbox](https://codesandbox.io/).
 
 ---
 
