@@ -1,17 +1,26 @@
 ## Plan
 
-- Make modular `Tabs`
-- Lazy-loaded articles
-- Cleanup how terminal persists
-- Do not auto-persist if localStorage lacks `autopersist=true`
+- make `Tabs` modular
+- index page links to "article bunches"
+- cleanup how terminal persists
+- do not auto-persist if localStorage lacks `autopersist=true`
 - ✅ Fix `PanZoom` mouse input 
+
+### Components
+- ConnectPolyDemo
+- ✅ PanZoom using `geom`, `hooks`, `service/dom`
+
+### CodeSandbox and StackBlitz
+- StackBlitz for PanZoom
+- CodeSandbox for PanZoom
+- StackBlitz for ConnectPolyDemo
+- CodeSandbox for ConnectPolyDemo
 
 ### code-editor
 - support code-folding
-- fix comment toggle for mode `jsx-styled`
-  - jsx should be //, /** */ and {/** */}
-  - scss should be /** */
-  - need not fix all cases, just common ones
+  - ✅ can code-fold by indent using Ctrl-Q
+  - can code-fold via gutter
+- ✅ comment toggle no longer needed (we will not edit code onsite)
 - ✅ use customized theme based on vscode-dark
 - ✅ highlight styled.div`...` and styled(Component)`...`
 - ✅ css`...` should start inside a block context
