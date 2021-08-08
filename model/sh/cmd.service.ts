@@ -5,7 +5,6 @@ import type * as Sh from './parse/parse.model';
 import type { NamedFunction } from './var.model';
 import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRead } from './io/io.model';
 import useSession, { ProcessStatus } from 'store/session.store';
-import useCodeStore from 'store/code.store';
 import { computeNormalizedParts, createKillError as killError, normalizeAbsParts, resolveNormalized, resolvePath, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
@@ -431,9 +430,6 @@ class CmdService {
     const session = useSession.api.getSession(meta.sessionKey);
     return new Proxy({
       home: session.var,
-      store: {
-        code: useCodeStore,
-      },
       util: this.shellUtil,
     }, {
       get: (_, key) => {

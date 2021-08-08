@@ -8,7 +8,6 @@ import 'codemirror/keymap/sublime';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/indent-fold';
 // import 'codemirror/addon/fold/foldgutter';
-// import 'codemirror/addon/comment/comment';
 
 import 'codemirror/mode/sass/sass';
 import 'codemirror/mode/javascript/javascript';
@@ -16,11 +15,8 @@ import './codemirror/jsx-styled-mode';
 import './codemirror/custom-cmds';
 import CodeMirror from "codemirror";
 
-// TODO move elsewhere
-// import CodeToolbar from "./CodeToolbar";
-
 export default function CodeEditor({
-  code, // TODO use store
+  code,
   gridArea,
   lineNumbers,
   padding,
@@ -29,7 +25,7 @@ export default function CodeEditor({
 }: Props) {
   const editorRoot = useRef<HTMLDivElement>(null);
   const cm = useRef<CodeMirror.Editor>();
-  const value = useMemo(() => (code || '').trim(), [code]);
+  const value = useMemo(() => code.trim(), [code]);
 
   useEffect(() => {
     if (editorRoot.current) {
@@ -77,7 +73,7 @@ export default function CodeEditor({
 }
 
 interface Props {
-  code?: string;
+  code: string;
   gridArea?: string;
   lineNumbers?: boolean;
   padding?: string;

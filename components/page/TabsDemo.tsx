@@ -3,7 +3,7 @@ import { CodeEditor } from 'components/dynamic';
 import PanZoomDemo from 'projects/demo/PanZoomDemo';
 import 'flexlayout-react/style/dark.css';
 import { css } from 'goober';
-import { initialCode } from 'model/code/code';
+import { code } from 'model/tabs/tabs-lookup';
 
 const json : IJsonModel= {
   global: {
@@ -47,7 +47,7 @@ const factory = (node: TabNode) => {
         padding="16px 0"
         lineNumbers
         readOnly
-        code={initialCode['PanZoom.jsx']} />
+        code={code['components/PanZoom.jsx']} />
     );
   } else {
     return (

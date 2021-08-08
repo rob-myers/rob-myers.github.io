@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import useCodeStore from 'store/code.store';
-import { initialCode } from 'model/code/code';
+import { code } from 'model/tabs/tabs-lookup';
 
 import { Section, Main } from 'components/page/Layout';
 import Markdown from 'components/page/Markdown';
@@ -11,11 +10,6 @@ import { TabsDemo } from 'components/page/TabsDemo';
 const env = {};
 
 export default function IndexPage() {
-
-  useEffect(() => {
-    useCodeStore.api.rehydrate(['file.js']);
-  }, []);
-
   return (
     <Main>
       <Section>
@@ -169,7 +163,7 @@ We begin by making the game viewpoints _viewable_.
         <section style={{ background: '#000', height: 400 }}>
           <CodeEditor
             height="400px"
-            code={initialCode['PanZoom.jsx']}
+            code={code['components/PanZoom.jsx']}
             lineNumbers
           />
         </section>
