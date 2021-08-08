@@ -64,7 +64,8 @@ const Root = styled('div')`
   }
   code {
     font-size: 13pt;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: Courier, monospace;
+    color: #050;
   }
   ul, ol {
     margin: 20px 0;

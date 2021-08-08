@@ -39,25 +39,26 @@ As an important side-effect, a popular approach to frontend development will be 
 
 ## Constraints <float rem="1.2">19th July 2021</float>
 
-I've necessarily made a large number of decisions. Here are some of the most important ones, from low-level to high-level.
+I've necessarily made a large number of decisions. Here are some important ones, from low-level to high-level.
 
 - Use browser-based technologies.
   - Use CSS and SVG instead of HTMLCanvas or WebGL.
-  - Use [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and Emotion [styled components](https://emotion.sh/docs/styled).
-  - Use [Preact](https://preactjs.com/) instead of React.
+  - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), and also CSS-in-js styled components.
+  - Use [Preact](https://www.npmjs.com/package/preact) instead of React.
+  - Use [Goober](https://www.npmjs.com/package/goober) instead of [Emotion](https://www.npmjs.com/package/@emotion/styled).
 - Use game mechanics inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) and other roguelikes.
   - Use a realtime birdseye camera.
   - Use procedural level generation, compatible with spaceship building/docking.
 - Use explicitly illustrated NPC decisions as a game mechanic.
-- The Player captains the spaceship _Gehennom_ and works for the corporation _Unified Transport_. Missions involve personnel transport, cargo transport, and hauling.
+- The game will be called _Rogue Markup_. The player captains the spaceship _Gehennom_ and works for the corporation _Unified Transport_. Missions involve personnel transport, cargo transport, and hauling.
 
-Over time we'll clarify the above constraints.
+Over time we'll clarify these constraints.
 But first we must emphasise: _finishing a game is notoriously hard_.
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). We'll now address them.
 
 ### 1. Fun to develop (Games I want to make)
 
-_Rogue Markup_ will be fun to develop because I enjoy experimenting with NPC behaviour, particularly in an extendable way. One of our underlying motivations is the lack of Game AI resources available on the web. However, it is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which felt fun for me.
+_Rogue Markup_ will be fun to develop because I enjoy experimenting with NPC behaviour, particularly in an extendable way. One of our underlying motivations is the lack of Game AI resources available on the web. It is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which felt fun for me.
 
 <!--
 Complexity will arise from the environment and agent interaction, rather than complex individual thinking or scripted behaviour.
@@ -72,9 +73,9 @@ The underlying missions amount to going from A to B (ever was it so).
 Monotony will be overcome via mission specifics, encountered NPC behaviours, procedural generation, and ship building.
 Think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
 
-Importantly, I want the game to be extendable by others.
+Importantly, it should be easy for other people to extend this game.
 We'll achieve this by providing source code, escape hatches to [StackBlitz](https://stackblitz.com/) and [CodeSandbox](https://codesandbox.io/), and clear explanations.
-Comments will be shown, so [GitHub](https://github.com/) users can share their own ideas and links.
+Comments will be shown, so [GitHub](https://github.com/) users can share ideas and links.
 
 <!--
 [NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
@@ -102,7 +103,7 @@ We will build the game using the following technologies.
 | Concept | Browser Technology |
 | - | - |
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
-| Styles | Components will be styled using runtime CSS via [Emotion](https://emotion.sh/). |
+| Styles | Components will be styled using CSS-in-JS, namely [Goober](https://www.npmjs.com/package/goober) (very similar to [Emotion](https://www.npmjs.com/package/@emotion/styled)). |
 | Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Live analysis | Via [Preact option hooks](https://preactjs.com/guide/v10/options/) and our own in-browser terminal. |
 | Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides tabbed windows. |
@@ -119,13 +120,13 @@ Typically we'll present a "project" as a number of tabs, consisting of source co
 ### Quick intro to React
 
 Competing web frameworks exist in the wild, often with their own notion of component.
-Currently, a very popular approach is to use React functional components i.e. _JavaScript functions_ which:
+One popular approach uses React functional components i.e. _JavaScript functions_ which:
 - have a single parameter, conventionally called _props_.
 - return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
-The single argument _props_ is a JavaScript object defining the component's named inputs.
+The argument _props_ is a JavaScript object e.g. \`{ meaningOfLife: 42, ... }\` defining the component's named inputs.
 What is a _virtual_ DOM node?
-First consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
+Well, first consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
 
 __TODO__ demo app where can connect polygons together
 
