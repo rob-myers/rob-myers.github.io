@@ -30,16 +30,16 @@ Roguelike; Built online; Game AI focus
 
 ## Objective <float rem="1.2">19th July 2021</float>
 
-We are going to build a game step-by-step.
+We are going to build a game step-by-step on this website.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the spaceship _Gehennom_.
 
-As an important side-effect, a popular approach to frontend development will be exposed. Our underlying technology of choice is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via CSS and JavaScript.
+As an important side-effect, a popular approach to frontend development will be presented. The underlying technology is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via CSS and JavaScript.
 
 ---
 
 ## Constraints <float rem="1.2">19th July 2021</float>
 
-I've necessarily made a large number of decisions. Here are the important ones, from low-level to high-level.
+I've necessarily made a large number of decisions. Here are some of the most important ones, from low-level to high-level.
 
 - Use browser-based technologies.
   - Use CSS and SVG instead of HTMLCanvas or WebGL.
@@ -105,9 +105,9 @@ We will build the game using the following technologies.
 | Styles | Components will be styled using runtime CSS via [Emotion](https://emotion.sh/). |
 | Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Live analysis | Via [Preact option hooks](https://preactjs.com/guide/v10/options/) and our own in-browser terminal. |
-| Code viewing | [CodeMirror](https://codemirror.net/) for viewing  JavaScript on the site. [FlexLayout](https://github.com/caplin/FlexLayout) provides tabs and windows. |
-| Code editing | We'll provide links on [StackBlitz](https://stackblitz.com/), [CodeSandbox](https://codesandbox.io/). |
-| Code sharing | [GitHub](https://github.com/) comments (shown on the site) and StackBlitz, CodeSandbox. |
+| Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides tabbed windows. |
+| Code editing | External [CodeSandbox](https://codesandbox.io/) and [StackBlitz](https://stackblitz.com/) links, using React. |
+| Code sharing | [GitHub](https://github.com/) comments (shown on the site) e.g. referencing CodeSandbox, StackBlitz. |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
@@ -124,22 +124,20 @@ Currently, a very popular approach is to use React functional components i.e. _J
 - return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
 The single argument _props_ is a JavaScript object defining the component's named inputs.
-But what is a _virtual_ DOM node?
+What is a _virtual_ DOM node?
 First consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
 
 __TODO__ demo app where can connect polygons together
 
-__TODO__ tabs with the code, transpiled jsx, and app
+__TODO__ tabs with the code and app, also working on StackBlitz and CodeSandbox
 
-__TODO__ it works on StackBlitz and CodeSandbox
-
-__TODO__ support typescript syntax highlighting so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96)
+__TODO__ support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.
 
         `}/>
 
         <Markdown children={`
 
-### Hurdle: two-viewpoints
+### Hurdle: two viewpoints
 
 __TODO__ introduce our first hurdle
 
