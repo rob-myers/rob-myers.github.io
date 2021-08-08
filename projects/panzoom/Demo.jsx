@@ -1,7 +1,7 @@
 import { styled } from 'goober';
 import PanZoom from './PanZoom';
 
-export default function Demo() {
+export default function PanZoomDemo() {
   return (
     <Container>
       <Title>
