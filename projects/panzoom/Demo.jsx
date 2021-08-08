@@ -5,7 +5,7 @@ export default function Demo() {
   return (
     <Container>
       <Title>
-        Drag to pan, Scroll or Pinch to Zoom
+        drag to <strong>pan</strong>, scroll/pinch to <strong>zoom</strong>
       </Title>
       <Outline>
         <PanZoom >
@@ -21,6 +21,7 @@ const Container = styled('div')`
   flex-direction: column;
   height: 100%;
 `;
+Container.displayName = 'Container';
 
 const Title = styled('div')`
   padding: 8px;
