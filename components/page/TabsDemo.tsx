@@ -1,6 +1,6 @@
 import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
 import { CodeEditor } from 'components/dynamic';
-import PanZoomDemo from 'projects/panzoom/Demo';
+import PanZoomDemo from 'projects/demo/PanZoomDemo';
 import 'flexlayout-react/style/dark.css';
 import { css } from 'goober';
 import { initialCode } from 'model/code/code';

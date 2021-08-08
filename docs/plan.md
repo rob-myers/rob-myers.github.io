@@ -11,7 +11,9 @@
 - ✅ PanZoom using `geom`, `hooks`, `service/dom`
 
 ### CodeSandbox and StackBlitz
-- StackBlitz for PanZoom
+- hooks hot reloading on StackBlitz?
+- ✅ StackBlitz for PanZoom
+  > https://stackblitz.com/edit/rogue-markup-panzoom?file=index.js
 - CodeSandbox for PanZoom
 - StackBlitz for ConnectPolyDemo
 - CodeSandbox for ConnectPolyDemo
