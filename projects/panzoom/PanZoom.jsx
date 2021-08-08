@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import * as React from 'react';
 import { css } from 'goober';
 import { nanoid } from 'nanoid';
 import useForceRefresh from '../hooks/use-force-refresh';
@@ -76,7 +76,7 @@ export default function PanZoom({ children }) {
 
 /** @param {{ bounds: Rect }} props */
 function Grid({ bounds }) {
-  const gridId = useMemo(() => `grid-${nanoid()}`, []);
+  const gridId = React.useMemo(() => `grid-${nanoid()}`, []);
   return <>
     <defs>
       <pattern id={gridId} width="10" height="10" patternUnits="userSpaceOnUse">

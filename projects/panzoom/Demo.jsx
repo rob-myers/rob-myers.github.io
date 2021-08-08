@@ -1,19 +1,21 @@
+import * as React from 'react';
 import { styled } from 'goober';
 import PanZoom from './PanZoom';
 
-export default function PanZoomDemo() {
+/** @param {{ className?: string }} props */
+export default function PanZoomDemo({ className }) {
   return (
-    <Container>
+    <Container className={className}>
       <Title>
         drag to <strong>pan</strong>, scroll/pinch to <strong>zoom</strong>
       </Title>
       <Outline>
-        <PanZoom >
+        <PanZoom>
           <rect fill="red" x={10} y={10} width={20} height={20} />
         </PanZoom>
       </Outline>
     </Container>
-  )
+  );
 }
 
 const Container = styled('div')`
