@@ -1,3 +1,4 @@
+//@ts-nocheck
 function getScope(context, scopes) {
   for (let cx = context; cx; cx = cx.parent)
     if (scopes.indexOf(cx.name) > -1) return cx

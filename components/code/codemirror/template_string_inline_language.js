@@ -1,3 +1,4 @@
+//@ts-nocheck
 let CodeMirror;
 
 /**
@@ -225,7 +226,7 @@ export class TemplateTokenizer {
    * @param {!State} state
    * @param {!TemplateState} templateState
    */
-  trackStateInTemplate(style, stream, state, templateState) {
+  trackStateInTemplate(style, stream, state, _templateState) {
     // Is the current template ending?
     if (
       style === 'string-2'

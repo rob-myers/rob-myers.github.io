@@ -1,3 +1,4 @@
+//@ts-nocheck
 /**
  * `jsx-styled` : syntax highlighting for JSX and CSS-in-JS.
  * Based on:
