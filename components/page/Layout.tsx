@@ -16,7 +16,6 @@ export const Main = styled('main')<{}>`
 export const Section = styled('section')<{}>`
   padding: 32px 120px;
   margin: 48px 0;
-  font-size: 20px;
   background: white;
   
   @media(max-width: 1024px) {
