@@ -103,9 +103,9 @@ We will build the game using the following technologies.
 | Concept | Browser Technology |
 | - | - |
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
-| Styles | Components will be styled using CSS-in-JS, namely [Goober](https://www.npmjs.com/package/goober) (very similar to [Emotion](https://www.npmjs.com/package/@emotion/styled)). |
+| Styles | Components will be styled using CSS-in-JS, namely [Goober](https://www.npmjs.com/package/goober) (similar to [Emotion](https://www.npmjs.com/package/@emotion/styled)). |
 | Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
-| Static analysis | [ESLint](https://www.npmjs.com/package/eslint). TypeScript via [JsDoc comments](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html). |
+| Static analysis | [ESLint](https://www.npmjs.com/package/eslint) and also TypeScript via [JSDoc comments](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html). |
 | Live analysis | [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
 | Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides tabbed windows. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) and [StackBlitz](https://stackblitz.com/) links, using React. |

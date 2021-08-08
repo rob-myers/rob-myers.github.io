@@ -63,9 +63,10 @@ const Root = styled('div')`
     line-height: 1.5;
   }
   code {
-    font-size: 13pt;
+    font-size: 12pt;
     font-family: Courier, monospace;
-    color: #050;
+    color: #444;
+    background: #eee;
   }
   ul, ol {
     margin: 20px 0;
