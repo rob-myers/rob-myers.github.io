@@ -69,7 +69,7 @@ They're also analogous to UI components: parallel systems with some intercommuni
 ### 2. The Result (Games I want to have made)
 
 As an end result I want a _highly replayable space travel game_.
-The underlying missions amount to going from A to B (ever was it so).
+The underlying missions amount to going from A to B (🎵 ever was it so).
 Monotony will be overcome via mission specifics, encountered NPC behaviours, procedural generation, and ship building.
 Think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
 
@@ -105,7 +105,7 @@ We will build the game using the following technologies.
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
 | Styles | Components will be styled using CSS-in-JS, namely [Goober](https://www.npmjs.com/package/goober) (very similar to [Emotion](https://www.npmjs.com/package/@emotion/styled)). |
 | Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
-| Live analysis | Via [Preact option hooks](https://preactjs.com/guide/v10/options/) and our own in-browser terminal. |
+| Live analysis | Via [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
 | Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides tabbed windows. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) and [StackBlitz](https://stackblitz.com/) links, using React. |
 | Code sharing | [GitHub](https://github.com/) comments (shown on the site) e.g. referencing CodeSandbox, StackBlitz. |
@@ -128,11 +128,14 @@ The argument _props_ is a JavaScript object e.g. \`{ meaningOfLife: 42, ... }\` 
 What is a _virtual_ DOM node?
 Well, first consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
 
-__TODO__ demo app where can connect polygons together
-
-__TODO__ tabs with the code and app, also working on StackBlitz and CodeSandbox
-
-__TODO__ support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.
+__TODO__ 
+- prepare StackBlitz and CodeSandbox links for PanZoom
+- demo app ConnectPolygons
+- prepare StackBlitz and CodeSandbox links for ConnectPolygons
+- tabbed ConnectPolygons here, also with transpiled JSX
+- brief overview and point to StackBlitz/CodeSandbox links
+- brief discussion of VNode types, using typescript syntax highlighting
+  - support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.
 
         `}/>
 
