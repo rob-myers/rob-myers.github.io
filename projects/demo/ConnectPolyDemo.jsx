@@ -1,18 +1,15 @@
 import * as React from 'react';
 import { styled } from 'goober';
-import PanZoom from '../components/PanZoom';
 
 /** @param {{ className?: string }} props */
-export default function PanZoomDemo({ className }) {
+export default function ConnectPolyDemo({ className }) {
   return (
     <DemoRoot className={className}>
       <div>
-        drag to <strong>pan</strong>, scroll/pinch to <strong>zoom</strong>
+        click squares to <strong>connect</strong> or <strong>disconnect</strong>
       </div>
       <div>
-        <PanZoom>
-          <rect fill="red" x={10} y={10} width={20} height={20} />
-        </PanZoom>
+        {/* TODO */}
       </div>
     </DemoRoot>
   );
