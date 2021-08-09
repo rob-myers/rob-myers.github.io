@@ -229,10 +229,10 @@ export class Rect {
     return this;
   }
 
-  /** @param {Geom.VectJson} _ */
-  setPosition({ x, y }) {
-    this.x = x;
-    this.y = y;
+  /** @param {Geom.VectJson} position */
+  setPosition(position) {
+    this.x = position.x;
+    this.y = position.y;
     return this;
   }
 

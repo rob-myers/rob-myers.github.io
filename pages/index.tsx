@@ -6,6 +6,8 @@ import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 import { Tabs } from 'components/page/Tabs';
 
+import ConnectDemo from 'projects/demo/ConnectDemo';
+
 const env = {};
 
 export default function IndexPage() {
@@ -148,6 +150,8 @@ We begin by making the game viewpoints _viewable_.
 ## Pannable Zoomable Grid <float rem="1.2">19th July 2021</float>
 
         `}/>
+
+        <ConnectDemo />
 
         <Tabs tabs={[
           { key: 'component', componentKey: 'PanZoomDemo' },
