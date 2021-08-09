@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
 import { styled } from "goober";
 
-import * as Lookup from 'model/tabs/tabs-lookup';
+import * as Lookup from 'model/tabs-lookup';
 import { CodeEditor } from 'components/dynamic';
 
 export function Tabs({ tabs }: Props) {
@@ -26,9 +26,25 @@ interface Props {
 }
 
 type TabMeta = (
-  | { key: 'code'; filepath: string }
-  | { key: 'component'; componentKey: string }
+  | { key: 'code'; filepath: Lookup.CodeFilepathKey }
+  | { key: 'component'; componentKey: Lookup.ComponentKey }
 );
+
+const TabsRoot = styled('div')`
+  position: relative;
+  width: 100%;
+  height: 300px;
+  border: 1px solid #555;
+
+  .flexlayout__tab_button_content {
+    user-select: none;
+    font-size: smaller;
+  }
+  .flexlayout__tab {
+    background: white;
+    color: black;
+  }
+`;
 
 function computeJsonModel(tabs: TabMeta[]): IJsonModel {
   return {
@@ -45,10 +61,11 @@ function computeJsonModel(tabs: TabMeta[]): IJsonModel {
           selected: 0,
           children: tabs.map((meta) => ({
             type: 'tab',
-            name: meta.key,
-            component: meta.key === 'code'
-              ? meta.filepath
-              : meta.componentKey,
+            name: meta.key === 'code' ? meta.filepath : meta.componentKey,
+            config: {
+              key: meta.key,
+            },
+            component: meta.key === 'code' ? meta.filepath : meta.componentKey,
             enableClose: false,
           })),
         }
@@ -58,7 +75,7 @@ function computeJsonModel(tabs: TabMeta[]): IJsonModel {
 }
 
 function factory(node: TabNode) {
-  const nodeKey = node.getName() as TabMeta['key'];
+  const { key: nodeKey } = node.getConfig() as { key: TabMeta['key'] };
 
   switch (nodeKey) {
     case 'code': {
@@ -77,7 +94,7 @@ function factory(node: TabNode) {
     case 'component': {
       const componentKey = node.getComponent() || '';
       if (componentKey in Lookup.component) {
-        const FC = Lookup.component[componentKey];
+        const FC = Lookup.component[componentKey as Lookup.ComponentKey];
         return <FC/>
       }
       return <ErrorMessage>Unknown function component with name {componentKey}</ErrorMessage>;
@@ -92,19 +109,3 @@ function ErrorMessage({ children }: React.PropsWithChildren<{}>) {
     <strong>{children}</strong>
   </section>;
 }
-
-const TabsRoot = styled('div')`
-  position: relative;
-  width: 100%;
-  height: 300px;
-  border: 1px solid #555;
-
-  .flexlayout__tab_button_content {
-    user-select: none;
-    font-size: smaller;
-  }
-  .flexlayout__tab {
-    background: white;
-    color: black;
-  }
-`;

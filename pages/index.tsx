@@ -1,11 +1,10 @@
-import { useEffect } from 'react';
-import { code } from 'model/tabs/tabs-lookup';
+import { code } from 'model/tabs-lookup';
 
 import { Section, Main } from 'components/page/Layout';
 import Markdown from 'components/page/Markdown';
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
-import { TabsDemo } from 'components/page/TabsDemo';
+import { Tabs } from 'components/page/Tabs';
 
 const env = {};
 
@@ -24,8 +23,8 @@ Roguelike; Built online; Game AI focus
 
 ## Objective <float rem="1.2">19th July 2021</float>
 
-We are going to build a game step-by-step on this website.
-It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the spaceship _Gehennom_.
+We are going to build a video game step-by-step on this website.
+It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the sspaceship _Gehennom_.
 
 As an important side-effect, a popular approach to frontend development will be presented. The underlying technology is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via CSS and JavaScript.
 
@@ -37,13 +36,13 @@ I've necessarily made a large number of decisions. Here are some important ones,
 
 - Use browser-based technologies.
   - Use CSS and SVG instead of HTMLCanvas or WebGL.
-  - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), and also CSS-in-js styled components.
-  - Use [Preact](https://www.npmjs.com/package/preact) instead of React.
-  - Use [Goober](https://www.npmjs.com/package/goober) instead of [Emotion](https://www.npmjs.com/package/@emotion/styled).
+  - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS styled components.
+  - Use [Preact](https://www.npmjs.com/package/preact) instead of React, and [Goober](https://www.npmjs.com/package/goober) instead of [Emotion](https://www.npmjs.com/package/@emotion/styled).
 - Use game mechanics inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) and other roguelikes.
   - Use a realtime birdseye camera.
   - Use procedural level generation, compatible with spaceship building/docking.
 - Use explicitly illustrated NPC decisions as a game mechanic.
+- Use graphics based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 - The game will be called _Rogue Markup_. The player captains the spaceship _Gehennom_ and works for the corporation _Unified Transport_. Missions involve personnel transport, cargo transport, and hauling.
 
 Over time we'll clarify these constraints.
@@ -150,7 +149,10 @@ We begin by making the game viewpoints _viewable_.
 
         `}/>
 
-        <TabsDemo/>
+        <Tabs tabs={[
+          { key: 'component', componentKey: 'PanZoomDemo' },
+          { key: 'code', filepath: 'components/PanZoom.jsx' },
+        ]} />
 
         <br/>
 
