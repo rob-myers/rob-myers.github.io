@@ -96,17 +96,17 @@ We will build the game using the following technologies.
 | Concept | Browser Technology |
 | - | - |
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
-| Styles | Components will be styled using CSS-in-JS, namely [Goober](https://www.npmjs.com/package/goober) (similar to [Emotion](https://www.npmjs.com/package/@emotion/styled)). |
-| Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
+| Styles | Styled components via CSS-in-JS. |
+| Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. Styling via [Goober](https://www.npmjs.com/package/goober), similar to [Emotion](https://www.npmjs.com/package/@emotion/styled). |
 | Static analysis | [ESLint](https://www.npmjs.com/package/eslint) and also TypeScript via [JSDoc comments](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html). |
 | Live analysis | [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
-| Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides tabbed windows. |
+| Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides draggable tabs. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) and [StackBlitz](https://stackblitz.com/) links, using React. |
 | Code sharing | [GitHub](https://github.com/) comments (shown on the site) e.g. referencing CodeSandbox, StackBlitz. |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
-Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and a single tab named _App_ (the output).
+Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and another tab i.e. the rendered output.
 
 
 ### Quick intro to React
@@ -121,10 +121,10 @@ What is a _virtual_ DOM node?
 Well, first consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
 
 __TODO__ 
-- prepare StackBlitz and CodeSandbox links for PanZoom
-- demo app ConnectPolygons
-- prepare StackBlitz and CodeSandbox links for ConnectPolygons
-- tabbed ConnectPolygons here, also with transpiled JSX
+- demo app ConnectDemo
+- prepare CodeSandbox link for PanZoom
+- prepare StackBlitz and CodeSandbox links for ConnectDemo
+- tabbed ConnectDemo here, also with transpiled JSX
 - brief overview and point to StackBlitz/CodeSandbox links
 - brief discussion of VNode types, using typescript syntax highlighting
   - support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.

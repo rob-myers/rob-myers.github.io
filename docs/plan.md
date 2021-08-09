@@ -1,13 +1,13 @@
 ## Plan
 
-- make `Tabs` modular
 - index page links to "article bunches"
 - cleanup how terminal persists
 - do not auto-persist if localStorage lacks `autopersist=true`
+- ✅ make `Tabs` modular
 - ✅ Fix `PanZoom` mouse input 
 
 ### Components
-- ConnectPolyDemo
+- ConnectDemo using Geomorphs
 - ✅ PanZoom using `geom`, `hooks`, `service/dom`
 
 ### CodeSandbox and StackBlitz
