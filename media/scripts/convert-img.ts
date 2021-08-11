@@ -23,7 +23,9 @@ const manifestPath = path.join(dstDir, 'manifest.json');
 interface FileMeta {
   srcName: string;
   /** Numeric identifier from Starship Geomorphs 2.0 */
-  geomorphId: number;
+  id: number;
+  /** Sometimes a range is given */
+  ids: number[];
   /** Dimension in grid squares of Starship Geomorphs 2.0 */
   gridDim: [number, number];
   dstName: string;
@@ -39,19 +41,21 @@ const fileMetas = srcFilenames.flatMap<FileMeta>(filename => {
   }
 
   const srcName = matched[0];
-  const geomorphId = Number(matched[1]);
+  const ids = matched[1].split(',').map(Number);
+  const id = ids[0];
   const gridDim = matched[2].split('x').map(x => Number(x) / 5) as [number, number];
   const description = matched[3].concat(matched[4]);
   const { filePrefix, is, has } = extractMetaFromFilename(description);
-  const dstName =`${geomorphId}--${filePrefix}--${gridDim[0]}x${gridDim[1]}.png`;
+  const dstName =`${id}--${filePrefix}--${gridDim[0]}x${gridDim[1]}.png`;
 
   return [{
     srcName,
     dstName,
-    geomorphId,
+    id,
     gridDim,
     is,
     has,
+    ids,
   }];
 });
 // console.log(fileMetas);
@@ -80,7 +84,7 @@ if (detectImageMagick.toString().trim() !== '0') {
 for (const { srcName, dstName } of fileMetas) {
   const result = childProcess.execSync(`
     echo "${chalk.yellow('converting')} ${srcName} ${chalk.yellow('to')} ${dstName}"
-    convert "${path.join(srcDir, srcName)}" -fuzz 1% -trim "${path.join(dstDir, dstName)}"
+    convert "${path.join(srcDir, srcName)}" -fuzz 1% -trim -colors 16 "${path.join(dstDir, dstName)}"
   `);
   console.log(result.toString().trim());
 }
