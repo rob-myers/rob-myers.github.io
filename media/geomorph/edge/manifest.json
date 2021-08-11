@@ -1,0 +1,2613 @@
+{
+  "parentFolder": "100x50 Edge",
+  "fileMetas": [
+    {
+      "srcName": "301 [100x50] Bridge (4 Station, 2x Gunnery, Stateroom, Office, Briefing, Stellar Cartography).png",
+      "dstName": "bridge--20x10--301",
+      "geomorphId": 301,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "4-station",
+        "2x-gunnery",
+        "stateroom",
+        "office",
+        "briefing",
+        "stellar-cartography"
+      ]
+    },
+    {
+      "srcName": "302 [100x50] Xboat Repair Bay (Airlock, Repair Shop, Lounge, Fuel, Communication).png",
+      "dstName": "xboat-repair-bay--20x10--302",
+      "geomorphId": 302,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock", "repair-shop", "lounge", "fuel", "communication"]
+    },
+    {
+      "srcName": "303 [100x50] Passenger Deck (Staterooms, Lounge, Galley & Mess, Medical, 1x Low Berth, Engineering, Office).png",
+      "dstName": "passenger-deck--20x10--303",
+      "geomorphId": 303,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "staterooms",
+        "lounge",
+        "galley-and-mess",
+        "medical",
+        "1x-low-berth",
+        "engineering",
+        "office"
+      ]
+    },
+    {
+      "srcName": "304 [100x50] Communications (Sensors, Airlock, Communication Center, Staterooms, Lounge).png",
+      "dstName": "communications--20x10--304",
+      "geomorphId": 304,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "sensors",
+        "airlock",
+        "communication-center",
+        "staterooms",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "305 [100x50] Weapons Bay (6x Gunnery, Security, Engineering, Office, Staterooms).png",
+      "dstName": "weapons-bay--20x10--305",
+      "geomorphId": 305,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["6x-gunnery", "security", "engineering", "office", "staterooms"]
+    },
+    {
+      "srcName": "306 [100x50] Cargo Bay - 10-dTon Runabouts (Engineering, Tech Stations).png",
+      "dstName": "cargo-bay-10-dton-runabouts--20x10--306",
+      "geomorphId": 306,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["engineering", "tech-stations"]
+    },
+    {
+      "srcName": "306 [100x50] [Overlay] 2x 10-dTon Runabouts.png",
+      "dstName": "10-dton-runabouts--20x10--306",
+      "geomorphId": 306,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "307 [100x50] Cargo Bay - 20-dTon Launch.png",
+      "dstName": "cargo-bay-20-dton-launch--20x10--307",
+      "geomorphId": 307,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "307 [100x50] [Overlay] 20-dTon Launch (Cargo).png",
+      "dstName": "20-dton-launch--20x10--307",
+      "geomorphId": 307,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["cargo"]
+    },
+    {
+      "srcName": "308 [100x50] Cargo Bay - 50-dTon Launch (Office, Lounge, Lab).png",
+      "dstName": "cargo-bay-50-dton-launch--20x10--308",
+      "geomorphId": 308,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["office", "lounge", "lab"]
+    },
+    {
+      "srcName": "308 [100x50] [Overlay] 50-dTon Launch (Cargo).png",
+      "dstName": "50-dton-launch--20x10--308",
+      "geomorphId": 308,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["cargo"]
+    },
+    {
+      "srcName": "309 [100x50] Cargo Bay - Full (Airlock).png",
+      "dstName": "cargo-bay-full--20x10--309",
+      "geomorphId": 309,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock"]
+    },
+    {
+      "srcName": "310 [100x50] (2) Cargo Bay - Empty (Airlock).png",
+      "dstName": "cargo-bay-empty--20x10--310",
+      "geomorphId": 310,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": ["airlock"]
+    },
+    {
+      "srcName": "310 [100x50] Cargo Bay - Empty (Airlock).png",
+      "dstName": "cargo-bay-empty--20x10--310",
+      "geomorphId": 310,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock"]
+    },
+    {
+      "srcName": "310 [100x50] [Overlay] Cargo.png",
+      "dstName": "cargo--20x10--310",
+      "geomorphId": 310,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "311 [100x50] Cargo Bay - Upper (Airlock).png",
+      "dstName": "cargo-bay-upper--20x10--311",
+      "geomorphId": 311,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock"]
+    },
+    {
+      "srcName": "312 [100x50] (2) Cargo Bay - Upper (Airlock).png",
+      "dstName": "cargo-bay-upper--20x10--312",
+      "geomorphId": 312,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": ["airlock"]
+    },
+    {
+      "srcName": "312 [100x50] Cargo Bay - Upper (Airlock).png",
+      "dstName": "cargo-bay-upper--20x10--312",
+      "geomorphId": 312,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock"]
+    },
+    {
+      "srcName": "313 [100x50] Office Space (Briefing).png",
+      "dstName": "office-space--20x10--313",
+      "geomorphId": 313,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["briefing"]
+    },
+    {
+      "srcName": "314 [100x50] Restaurant & Bar.png",
+      "dstName": "restaurant-and-bar--20x10--314",
+      "geomorphId": 314,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "315 [100x50] Engineering (Office, Lab, Medical, Briefing).png",
+      "dstName": "engineering--20x10--315",
+      "geomorphId": 315,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["office", "lab", "medical", "briefing"]
+    },
+    {
+      "srcName": "316 [100x50] 40-dTon Launch Bay (Stateroom, Lounge, Cargo Bay).png",
+      "dstName": "40-dton-launch-bay--20x10--316",
+      "geomorphId": 316,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["stateroom", "lounge", "cargo-bay"]
+    },
+    {
+      "srcName": "316 [100x50] [Overlay] 40-dTon Saucer Launch Air-Raft.png",
+      "dstName": "40-dton-saucer-launch-air-raft--20x10--316",
+      "geomorphId": 316,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "316 [100x50] [Overlay] 40-dTon Saucer Launch.png",
+      "dstName": "40-dton-saucer-launch--20x10--316",
+      "geomorphId": 316,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "317 [100x50] Security Checkpoint (10-dTon Launch, Medical, 2x Low Berths, Surgery, Lab, Office).png",
+      "dstName": "security-checkpoint--20x10--317",
+      "geomorphId": 317,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "10-dton-launch",
+        "medical",
+        "2x-low-berths",
+        "surgery",
+        "lab",
+        "office"
+      ]
+    },
+    {
+      "srcName": "317 [100x50] [Overlay] 10-dTon Launch.png",
+      "dstName": "10-dton-launch--20x10--317",
+      "geomorphId": 317,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "318 [100x50] Waste Processing (Lab, Carniculture Production).png",
+      "dstName": "waste-processing--20x10--318",
+      "geomorphId": 318,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["lab", "carniculture-production"]
+    },
+    {
+      "srcName": "319 [100x50] Multipurpose (Bridge 4 Station, Cargo Hold, Engineering, Work Pod, Fuel, Staterooms, Lounge).png",
+      "dstName": "multipurpose--20x10--319",
+      "geomorphId": 319,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "bridge-4-station",
+        "cargo-hold",
+        "engineering",
+        "work-pod",
+        "fuel",
+        "staterooms",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "320 [100x50] Cloning Facility (Exercise Equipment, Education, Lab, Medical, 12 Pod Beds, Galley).png",
+      "dstName": "cloning-facility--20x10--320",
+      "geomorphId": 320,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "exercise-equipment",
+        "education",
+        "lab",
+        "medical",
+        "12-pod-beds",
+        "galley"
+      ]
+    },
+    {
+      "srcName": "321 [100x50] Fuel Deck (Office, Engineering, Fuel Ops).png",
+      "dstName": "fuel-deck--20x10--321",
+      "geomorphId": 321,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["office", "engineering", "fuel-ops"]
+    },
+    {
+      "srcName": "322 [100x50] Fuel Deck (Intake Scoops, Fuel Ops).png",
+      "dstName": "fuel-deck--20x10--322",
+      "geomorphId": 322,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["intake-scoops", "fuel-ops"]
+    },
+    {
+      "srcName": "323 [100x50] Low Berth Deck (80 Low Berths, Medical).png",
+      "dstName": "low-berth-deck--20x10--323",
+      "geomorphId": 323,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["80-low-berths", "medical"]
+    },
+    {
+      "srcName": "324 [100x50] Multipurpose (2x Escape Pod, 2x Gunnery, Engineering, Staterooms, Olounge, Security, 4 Station Bridge or Command).png",
+      "dstName": "multipurpose--20x10--324",
+      "geomorphId": 324,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "2x-escape-pod",
+        "2x-gunnery",
+        "engineering",
+        "staterooms",
+        "olounge",
+        "security",
+        "4-station-bridge-or-command"
+      ]
+    },
+    {
+      "srcName": "324 [100x50] [Overlay] 2x Escape Pods.png",
+      "dstName": "escape-pods--20x10--324",
+      "geomorphId": 324,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "325 [100x50] Cargo Bay - Full (2x 20-dTon Launch, Airlock).png",
+      "dstName": "cargo-bay-full--20x10--325",
+      "geomorphId": 325,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["2x-20-dton-launch", "airlock"]
+    },
+    {
+      "srcName": "326 [100x50] Cargo Bay - Empty.png",
+      "dstName": "cargo-bay-empty--20x10--326",
+      "geomorphId": 326,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "326 [100x50] [Overlay] 2x 20-dTon Launch (Cargo).png",
+      "dstName": "20-dton-launch--20x10--326",
+      "geomorphId": 326,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": ["cargo"]
+    },
+    {
+      "srcName": "326 [100x50] [Overlay] Cargo Arm Extended.png",
+      "dstName": "cargo-arm-extended--20x10--326",
+      "geomorphId": 326,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "326 [100x50] [Overlay] Cargo.png",
+      "dstName": "cargo--20x10--326",
+      "geomorphId": 326,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "326 [100x50] [Overlay] Retractable Airlock.png",
+      "dstName": "retractable-airlock--20x10--326",
+      "geomorphId": 326,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "327 [100x50] Vehicle Hangar (18x Grav Bikes, 2x Mechs, 2x Wheeled ATVs, Repair Shop).png",
+      "dstName": "vehicle-hangar--20x10--327",
+      "geomorphId": 327,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["18x-grav-bikes", "2x-mechs", "2x-wheeled-atvs", "repair-shop"]
+    },
+    {
+      "srcName": "327 [100x50] [Overlay] 18x Grav Bikes, 2x Mechs, 2x Wheeled ATVs.png",
+      "dstName": "grav-bikes-2x-mechs-2x-wheeled-atvs--20x10--327",
+      "geomorphId": 327,
+      "gridDim": [20, 10],
+      "is": ["overlay", "18x"],
+      "has": []
+    },
+    {
+      "srcName": "328 [100x50] Vehicle Hangar (8x Air-Raft, Repair Shop, Office, Lounge).png",
+      "dstName": "vehicle-hangar--20x10--328",
+      "geomorphId": 328,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["8x-air-raft", "repair-shop", "office", "lounge"]
+    },
+    {
+      "srcName": "328 [100x50] [Overlay] 8x Air-Rafts.png",
+      "dstName": "air-rafts--20x10--328",
+      "geomorphId": 328,
+      "gridDim": [20, 10],
+      "is": ["overlay", "8x"],
+      "has": []
+    },
+    {
+      "srcName": "329 [100x50] Missile Deck (4x Gunnery, Engineering, Staterooms, Offices, Lounge, Security).png",
+      "dstName": "missile-deck--20x10--329",
+      "geomorphId": 329,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "4x-gunnery",
+        "engineering",
+        "staterooms",
+        "offices",
+        "lounge",
+        "security"
+      ]
+    },
+    {
+      "srcName": "330 [100x50] Missile Deck (4x Gunnery, Briefing, Airlocks, Staterooms, Lounge).png",
+      "dstName": "missile-deck--20x10--330",
+      "geomorphId": 330,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["4x-gunnery", "briefing", "airlocks", "staterooms", "lounge"]
+    },
+    {
+      "srcName": "331 [100x50] Flight Deck - Vertical (Rampart Fighters, Repair Shop, Flight Operations).png",
+      "dstName": "flight-deck-vertical--20x10--331",
+      "geomorphId": 331,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["rampart-fighters", "repair-shop", "flight-operations"]
+    },
+    {
+      "srcName": "332 [100x50] Fighter Hangar (4x Rampart Fighters, Flight Control, Lounge, Staterooms, Repair Shop).png",
+      "dstName": "fighter-hangar--20x10--332",
+      "geomorphId": 332,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "4x-rampart-fighters",
+        "flight-control",
+        "lounge",
+        "staterooms",
+        "repair-shop"
+      ]
+    },
+    {
+      "srcName": "332 [100x50] [Overlay] (1) 4x Rampart Fighters.png",
+      "dstName": "rampart-fighters--20x10--332",
+      "geomorphId": 332,
+      "gridDim": [20, 10],
+      "is": ["overlay", "part-1", "4x"],
+      "has": []
+    },
+    {
+      "srcName": "332 [100x50] [Overlay] (2) 4x Rampart Fighters.png",
+      "dstName": "rampart-fighters--20x10--332",
+      "geomorphId": 332,
+      "gridDim": [20, 10],
+      "is": ["overlay", "part-2", "4x"],
+      "has": []
+    },
+    {
+      "srcName": "333 [100x50] Gig Cradle & 20-dTon Gig (Office, Cargo Hold).png",
+      "dstName": "gig-cradle-and-20-dton-gig--20x10--333",
+      "geomorphId": 333,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["office", "cargo-hold"]
+    },
+    {
+      "srcName": "333 [100x50] [Overlay] 20-dTon Gig.png",
+      "dstName": "20-dton-gig--20x10--333",
+      "geomorphId": 333,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "334 [100x50] Grav Vehicle Garage (2x G-Carriers, 2x Grav Tanks, Repair Shop, Airlocks).png",
+      "dstName": "grav-vehicle-garage--20x10--334",
+      "geomorphId": 334,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["2x-g-carriers", "2x-grav-tanks", "repair-shop", "airlocks"]
+    },
+    {
+      "srcName": "334 [100x50] [Overlay] 2x Grav-Carrier (Interrior).png",
+      "dstName": "grav-carrier--20x10--334",
+      "geomorphId": 334,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": ["interrior"]
+    },
+    {
+      "srcName": "334 [100x50] [Overlay] 2x Grav-Carrier, 2x Grav Tank.png",
+      "dstName": "grav-carrier-2x-grav-tank--20x10--334",
+      "geomorphId": 334,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "335 [100x50] Vehicle Hangar - Full (4x Grav Fighters, 4x Mechs, Offices, Repair Shop).png",
+      "dstName": "vehicle-hangar-full--20x10--335",
+      "geomorphId": 335,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["4x-grav-fighters", "4x-mechs", "offices", "repair-shop"]
+    },
+    {
+      "srcName": "335 [100x50] [Overlay] 4x Grav Fighters, 4x Mechs.png",
+      "dstName": "grav-fighters-4x-mechs--20x10--335",
+      "geomorphId": 335,
+      "gridDim": [20, 10],
+      "is": ["overlay", "4x"],
+      "has": []
+    },
+    {
+      "srcName": "336 [100x50] Vehicle Hangar - Empty.png",
+      "dstName": "vehicle-hangar-empty--20x10--336",
+      "geomorphId": 336,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "337 [100x50] Water Storage.png",
+      "dstName": "water-storage--20x10--337",
+      "geomorphId": 337,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "338 [100x50] Scrap & Recycling (Trash Compactor, Incinerator, Engineering, Offices, Lounge).png",
+      "dstName": "scrap-and-recycling--20x10--338",
+      "geomorphId": 338,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "trash-compactor",
+        "incinerator",
+        "engineering",
+        "offices",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "339 [100x50] Fighter Hangar - Lower (2x Valkyrie Fighters, Stateroom, Office, Repair Shop, Lounge).png",
+      "dstName": "fighter-hangar-lower--20x10--339",
+      "geomorphId": 339,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "2x-valkyrie-fighters",
+        "stateroom",
+        "office",
+        "repair-shop",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "339 [100x50] [Overlay] 2x Valkyrie Fighters.png",
+      "dstName": "valkyrie-fighters--20x10--339",
+      "geomorphId": 339,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "340 [100x50] Fighter Hanger - Upper (Flight Control).png",
+      "dstName": "fighter-hanger-upper--20x10--340",
+      "geomorphId": 340,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["flight-control"]
+    },
+    {
+      "srcName": "341 [100x50] Passenger Deck (Staterooms, Galley & Mess, Lounge, Gym, Medical).png",
+      "dstName": "passenger-deck--20x10--341",
+      "geomorphId": 341,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["staterooms", "galley-and-mess", "lounge", "gym", "medical"]
+    },
+    {
+      "srcName": "342 [100x50] Pool Deck (Bar, Galley).png",
+      "dstName": "pool-deck--20x10--342",
+      "geomorphId": 342,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["bar", "galley"]
+    },
+    {
+      "srcName": "343 [100x50] Arboretum (Stream, Waterfall, Lounge, Spas).png",
+      "dstName": "arboretum--20x10--343",
+      "geomorphId": 343,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["stream", "waterfall", "lounge", "spas"]
+    },
+    {
+      "srcName": "344 [100x50] Arboretum.png",
+      "dstName": "arboretum--20x10--344",
+      "geomorphId": 344,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "345 [100x50] Scout Deck (10-dTon Ship's Boat, Probe Launch, Sensors, Staterooms, Lounge, Cargo Hold, Air-Raft).png",
+      "dstName": "scout-deck--20x10--345",
+      "geomorphId": 345,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "10-dton-ships-boat",
+        "probe-launch",
+        "sensors",
+        "staterooms",
+        "lounge",
+        "cargo-hold",
+        "air-raft"
+      ]
+    },
+    {
+      "srcName": "345 [100x50] [Overlay] 10-dTon Ship's Boat & Air-Raft.png",
+      "dstName": "10-dton-ships-boat-and-air-raft--20x10--345",
+      "geomorphId": 345,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "346 [100x50] Gunnery & Barracks (8x Gunnery, Barracks, Staterooms, Lounge).png",
+      "dstName": "gunnery-and-barracks--20x10--346",
+      "geomorphId": 346,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["8x-gunnery", "barracks", "staterooms", "lounge"]
+    },
+    {
+      "srcName": "347 [100x50] Sandcaster Deck (5x Gunnery, Control Room, Airlock, Engineering, Staterooms, Lounge).png",
+      "dstName": "sandcaster-deck--20x10--347",
+      "geomorphId": 347,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "5x-gunnery",
+        "control-room",
+        "airlock",
+        "engineering",
+        "staterooms",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "348 [100x50] Bridge (9 Stations, Engineering, Airlock, Lounge, Office, Medical, Briefing, Air-Raft).png",
+      "dstName": "bridge--20x10--348",
+      "geomorphId": 348,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "9-stations",
+        "engineering",
+        "airlock",
+        "lounge",
+        "office",
+        "medical",
+        "briefing",
+        "air-raft"
+      ]
+    },
+    {
+      "srcName": "348 [100x50] [Overlay] Air-Raft.png",
+      "dstName": "air-raft--20x10--348",
+      "geomorphId": 348,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "349 [100x50] Passenger Deck - Lower (Staterooms, Galley, Bar, Lounge, Elevator).png",
+      "dstName": "passenger-deck-lower--20x10--349",
+      "geomorphId": 349,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["staterooms", "galley", "bar", "lounge", "elevator"]
+    },
+    {
+      "srcName": "350 [100x50] Passenger Deck - Upper (Stateroom, Lounge, Elevator).png",
+      "dstName": "passenger-deck-upper--20x10--350",
+      "geomorphId": 350,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["stateroom", "lounge", "elevator"]
+    },
+    {
+      "srcName": "351 [100x50] Engineering (Airlock, Decon Room, Work Pod, Offices).png",
+      "dstName": "engineering--20x10--351",
+      "geomorphId": 351,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock", "decon-room", "work-pod", "offices"]
+    },
+    {
+      "srcName": "352 [100x50] 20-dTon Launch Bay (2x 20d-Ton Launch, Security, Airlock, Medical, Cargo Hold, Air-Raft).png",
+      "dstName": "20-dton-launch-bay--20x10--352",
+      "geomorphId": 352,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "2x-20d-ton-launch",
+        "security",
+        "airlock",
+        "medical",
+        "cargo-hold",
+        "air-raft"
+      ]
+    },
+    {
+      "srcName": "352 [100x50] [Overlay] 2x 20-dTon Launch & Air-Raft.png",
+      "dstName": "20-dton-launch-and-air-raft--20x10--352",
+      "geomorphId": 352,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "352 [100x50] [Overlay] Extendable Airlock.png",
+      "dstName": "extendable-airlock--20x10--352",
+      "geomorphId": 352,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "353 [100x50] Research Lab (20-dTon Launch, Clean Lab, Labs, Loung, Cargo Hold).png",
+      "dstName": "research-lab--20x10--353",
+      "geomorphId": 353,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["20-dton-launch", "clean-lab", "labs", "loung", "cargo-hold"]
+    },
+    {
+      "srcName": "353 [100x50] [Overlay] 20-dTon Research Launch.png",
+      "dstName": "20-dton-research-launch--20x10--353",
+      "geomorphId": 353,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "354 [100x50] Hydroponics Bay.png",
+      "dstName": "hydroponics-bay--20x10--354",
+      "geomorphId": 354,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "355 [100x50] Carniculture Lab & Cargo Bay (20-dTon Launch, Lab, Offices).png",
+      "dstName": "carniculture-lab-and-cargo-bay--20x10--355",
+      "geomorphId": 355,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["20-dton-launch", "lab", "offices"]
+    },
+    {
+      "srcName": "355 [100x50] [Overlay] 20-dTon Launch.png",
+      "dstName": "20-dton-launch--20x10--355",
+      "geomorphId": 355,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "356 [100x50] Agricultural Bay (Airlock).png",
+      "dstName": "agricultural-bay--20x10--356",
+      "geomorphId": 356,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock"]
+    },
+    {
+      "srcName": "357 [100x50] Cargo Bay (Airlock).png",
+      "dstName": "cargo-bay--20x10--357",
+      "geomorphId": 357,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock"]
+    },
+    {
+      "srcName": "358 [100x50] Weapons Bay - Missiles (20-dTon Ship's Boat, 2x Gunnery, 2x Missile Control, Staterooms).png",
+      "dstName": "weapons-bay-missiles--20x10--358",
+      "geomorphId": 358,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "20-dton-ships-boat",
+        "2x-gunnery",
+        "2x-missile-control",
+        "staterooms"
+      ]
+    },
+    {
+      "srcName": "358 [100x50] [Overlay] 20-dTon Ship's Boat.png",
+      "dstName": "20-dton-ships-boat--20x10--358",
+      "geomorphId": 358,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "359 [100x50] (1) Engineering.png",
+      "dstName": "engineering--20x10--359",
+      "geomorphId": 359,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": []
+    },
+    {
+      "srcName": "359 [100x50] (2) Engineering - Lower.png",
+      "dstName": "engineering-lower--20x10--359",
+      "geomorphId": 359,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": []
+    },
+    {
+      "srcName": "359 [100x50] (2) Engineering - Upper.png",
+      "dstName": "engineering-upper--20x10--359",
+      "geomorphId": 359,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": []
+    },
+    {
+      "srcName": "360 [100x50] Multipurpose (2x Air-Rafts, Work Pod, Airlock, Engineering, Fuel, Lab, Staterooms, Lounge).png",
+      "dstName": "multipurpose--20x10--360",
+      "geomorphId": 360,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "2x-air-rafts",
+        "work-pod",
+        "airlock",
+        "engineering",
+        "fuel",
+        "lab",
+        "staterooms",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "360 [100x50] [Overlay] 2x Air-Rafts.png",
+      "dstName": "air-rafts--20x10--360",
+      "geomorphId": 360,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "361 [100x50] Engineering (Maneuver Drive, Power Plant, Fuel, Offices, Repair Shop, Airlock).png",
+      "dstName": "engineering--20x10--361",
+      "geomorphId": 361,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "maneuver-drive",
+        "power-plant",
+        "fuel",
+        "offices",
+        "repair-shop",
+        "airlock"
+      ]
+    },
+    {
+      "srcName": "362 [100x50] Engineering (Fuel, Power Plant, Lounge, Repair Shop).png",
+      "dstName": "engineering--20x10--362",
+      "geomorphId": 362,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["fuel", "power-plant", "lounge", "repair-shop"]
+    },
+    {
+      "srcName": "363 [100x50] Tech Lab - Lower (Offices, Lab, Air-Raft, Lounge).png",
+      "dstName": "tech-lab-lower--20x10--363",
+      "geomorphId": 363,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["offices", "lab", "air-raft", "lounge"]
+    },
+    {
+      "srcName": "363 [100x50] [Overlay] Air-Raft.png",
+      "dstName": "air-raft--20x10--363",
+      "geomorphId": 363,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "364 [100x50] Tech Lab - Upper (Offices).png",
+      "dstName": "tech-lab-upper--20x10--364",
+      "geomorphId": 364,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["offices"]
+    },
+    {
+      "srcName": "365 [100x50] Gunship Hangar - Lower (2x 20-dTon Gunboats).png",
+      "dstName": "gunship-hangar-lower--20x10--365",
+      "geomorphId": 365,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["2x-20-dton-gunboats"]
+    },
+    {
+      "srcName": "365 [100x50] [Overlay] 2x 20-dTon Gunboats.png",
+      "dstName": "20-dton-gunboats--20x10--365",
+      "geomorphId": 365,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "366 [100x50] Gunship Hangar - Upper (Flight Control).png",
+      "dstName": "gunship-hangar-upper--20x10--366",
+      "geomorphId": 366,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["flight-control"]
+    },
+    {
+      "srcName": "366 [100x50] [Overlay] 2x 20-dTon Gunboats.png",
+      "dstName": "20-dton-gunboats--20x10--366",
+      "geomorphId": 366,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "367 [100x50] Multipurpose (Cargo Shuttle, Escape Capsules, Engineering, Lab, Staterooms, Office).png",
+      "dstName": "multipurpose--20x10--367",
+      "geomorphId": 367,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "cargo-shuttle",
+        "escape-capsules",
+        "engineering",
+        "lab",
+        "staterooms",
+        "office"
+      ]
+    },
+    {
+      "srcName": "367 [100x50] [Overlay] Cargo Shuttle & Escape Capsules.png",
+      "dstName": "cargo-shuttle-and-escape-capsules--20x10--367",
+      "geomorphId": 367,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "368 [100x50] Barracks (Galley & Mess, Armory, Staterooms).png",
+      "dstName": "barracks--20x10--368",
+      "geomorphId": 368,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["galley-and-mess", "armory", "staterooms"]
+    },
+    {
+      "srcName": "369 [100x50] Cargo Bay - Full (2x 10-dTon Ship's Boats).png",
+      "dstName": "cargo-bay-full--20x10--369",
+      "geomorphId": 369,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["2x-10-dton-ships-boats"]
+    },
+    {
+      "srcName": "370 [100x50] Cargo Bay - Empty.png",
+      "dstName": "cargo-bay-empty--20x10--370",
+      "geomorphId": 370,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "370 [100x50] [Overlay] 2x 10-dTon Ship's Boats.png",
+      "dstName": "10-dton-ships-boats--20x10--370",
+      "geomorphId": 370,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "370 [100x50] [Overlay] Cargo.png",
+      "dstName": "cargo--20x10--370",
+      "geomorphId": 370,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "371 [100x50] Grav-Tank Garage (2x Heavy Grav Tanks, Staterooms, Offices, Repair Shop).png",
+      "dstName": "grav-tank-garage--20x10--371",
+      "geomorphId": 371,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["2x-heavy-grav-tanks", "staterooms", "offices", "repair-shop"]
+    },
+    {
+      "srcName": "371 [100x50] [Overlay] 2x Heavy Grav Tanks.png",
+      "dstName": "heavy-grav-tanks--20x10--371",
+      "geomorphId": 371,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "372 [100x50] Multipurpose (20-dTon Launch, Air-Raft, Cargo Hold, Fuel Intake Scoop, Engineering, Offices).png",
+      "dstName": "multipurpose--20x10--372",
+      "geomorphId": 372,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "20-dton-launch",
+        "air-raft",
+        "cargo-hold",
+        "fuel-intake-scoop",
+        "engineering",
+        "offices"
+      ]
+    },
+    {
+      "srcName": "372 [100x50] [Overlay] 20-dTon Launch & Air-Raft.png",
+      "dstName": "20-dton-launch-and-air-raft--20x10--372",
+      "geomorphId": 372,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "373 [100x50] Cargo Bay - 20-dTon Launch (Air-Raft, Airlock).png",
+      "dstName": "cargo-bay-20-dton-launch--20x10--373",
+      "geomorphId": 373,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["air-raft", "airlock"]
+    },
+    {
+      "srcName": "373 [100x50] [Overlay] 2x 20-dTon Launches & 2x Air-Rafts.png",
+      "dstName": "20-dton-launches-and-2x-air-rafts--20x10--373",
+      "geomorphId": 373,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "373 [100x50] [Overlay] Extendable Airlock.png",
+      "dstName": "extendable-airlock--20x10--373",
+      "geomorphId": 373,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "374 [100x50] Cargo Bay with Transporters.png",
+      "dstName": "cargo-bay-with-transporters--20x10--374",
+      "geomorphId": 374,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "375 [100x50] Cargo Bay & 20-dTon Bay with Launch.png",
+      "dstName": "cargo-bay-and-20-dton-bay-with-launch--20x10--375",
+      "geomorphId": 375,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "375 [100x50] [Overlay] 20-dTon Launch.png",
+      "dstName": "20-dton-launch--20x10--375",
+      "geomorphId": 375,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "376 [100x50] Fighter Hangar (5x Dragonfly Fighters, Repair Shop, Stateroom, Lounge).png",
+      "dstName": "fighter-hangar--20x10--376",
+      "geomorphId": 376,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["5x-dragonfly-fighters", "repair-shop", "stateroom", "lounge"]
+    },
+    {
+      "srcName": "376 [100x50] [Overlay] 5x Dragonfly Fighters (Exterior).png",
+      "dstName": "dragonfly-fighters--20x10--376",
+      "geomorphId": 376,
+      "gridDim": [20, 10],
+      "is": ["overlay", "5x"],
+      "has": ["exterior"]
+    },
+    {
+      "srcName": "376 [100x50] [Overlay] 5x Dragonfly Fighters (Interior).png",
+      "dstName": "dragonfly-fighters--20x10--376",
+      "geomorphId": 376,
+      "gridDim": [20, 10],
+      "is": ["overlay", "5x"],
+      "has": ["interior"]
+    },
+    {
+      "srcName": "377 [100x50] Multipurpose (4 Station Bridge, Air-Raft, Cargo Hold, Engineering, Lab, Medical, Staterooms, Lounge, Gunnery x2).png",
+      "dstName": "multipurpose--20x10--377",
+      "geomorphId": 377,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "4-station-bridge",
+        "air-raft",
+        "cargo-hold",
+        "engineering",
+        "lab",
+        "medical",
+        "staterooms",
+        "lounge",
+        "gunnery-x2"
+      ]
+    },
+    {
+      "srcName": "377 [100x50] [Overlay] Air-Raft.png",
+      "dstName": "air-raft--20x10--377",
+      "geomorphId": 377,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "378 [100x50] Fuel Refinery (Intake Scoops).png",
+      "dstName": "fuel-refinery--20x10--378",
+      "geomorphId": 378,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["intake-scoops"]
+    },
+    {
+      "srcName": "379 [100x50] Weapons Bay (2x Gunnery, 4x Missile Control, Staterooms, Lounge).png",
+      "dstName": "weapons-bay--20x10--379",
+      "geomorphId": 379,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["2x-gunnery", "4x-missile-control", "staterooms", "lounge"]
+    },
+    {
+      "srcName": "380 [100x50] Barracks & Training (48 Pod Beds, Lounge, Gym, Library, Office, Shooting Range, Armory).png",
+      "dstName": "barracks-and-training--20x10--380",
+      "geomorphId": 380,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "48-pod-beds",
+        "lounge",
+        "gym",
+        "library",
+        "office",
+        "shooting-range",
+        "armory"
+      ]
+    },
+    {
+      "srcName": "381 [100x50] Robotics Lab (Repair Shop, Offices).png",
+      "dstName": "robotics-lab--20x10--381",
+      "geomorphId": 381,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["repair-shop", "offices"]
+    },
+    {
+      "srcName": "382 [100x50] Multipurpose (2x Gunnery, 8x Drop Capsules, Engineering, Lab, Office, 12x Pod Beds, Staterooms, Lounge).png",
+      "dstName": "multipurpose--20x10--382",
+      "geomorphId": 382,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "2x-gunnery",
+        "8x-drop-capsules",
+        "engineering",
+        "lab",
+        "office",
+        "12x-pod-beds",
+        "staterooms",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "383 [100x50] Tank Bay (4x Grav Tanks, Offices, Staterooms, Repair Shop).png",
+      "dstName": "tank-bay--20x10--383",
+      "geomorphId": 383,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["4x-grav-tanks", "offices", "staterooms", "repair-shop"]
+    },
+    {
+      "srcName": "383 [100x50] [Overlay] 4x Grav Tanks.png",
+      "dstName": "grav-tanks--20x10--383",
+      "geomorphId": 383,
+      "gridDim": [20, 10],
+      "is": ["overlay", "4x"],
+      "has": []
+    },
+    {
+      "srcName": "384 [100x50] Multipurpose (Engineering, Lab, Medical, 2x Low Berths, Briefing, Office, Staterooms, Lounge).png",
+      "dstName": "multipurpose--20x10--384",
+      "geomorphId": 384,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "engineering",
+        "lab",
+        "medical",
+        "2x-low-berths",
+        "briefing",
+        "office",
+        "staterooms",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "385 [100x50] Cargo Bay (Escape Pod, Cargo Office).png",
+      "dstName": "cargo-bay--20x10--385",
+      "geomorphId": 385,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["escape-pod", "cargo-office"]
+    },
+    {
+      "srcName": "385 [100x50] [Overlay] Escape Pod.png",
+      "dstName": "escape-pod--20x10--385",
+      "geomorphId": 385,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "386 [100x50] Cargo Bay (Air-Raft, Airlock, Office, Engineering, Medical, 4x Low Berth).png",
+      "dstName": "cargo-bay--20x10--386",
+      "geomorphId": 386,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "air-raft",
+        "airlock",
+        "office",
+        "engineering",
+        "medical",
+        "4x-low-berth"
+      ]
+    },
+    {
+      "srcName": "386 [100x50] [Overlay] Air-Raft.png",
+      "dstName": "air-raft--20x10--386",
+      "geomorphId": 386,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "387 [100x50] Engineering (Solar Panels, Repair Shop, Airlocks).png",
+      "dstName": "engineering--20x10--387",
+      "geomorphId": 387,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["solar-panels", "repair-shop", "airlocks"]
+    },
+    {
+      "srcName": "388 [100x50] Mining Bay (2x Grav Mining Vehicles, Ore Processing).png",
+      "dstName": "mining-bay--20x10--388",
+      "geomorphId": 388,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["2x-grav-mining-vehicles", "ore-processing"]
+    },
+    {
+      "srcName": "388 [100x50] [Overlay] 2x Grav Mining Vehicles.png",
+      "dstName": "grav-mining-vehicles--20x10--388",
+      "geomorphId": 388,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "389 [100x50] Multipurpose (4 Station Bridge, Air-Raft, Briefing, Staterooms, Offices, Medical, Engineering, 12 Pod Beds, 8x Drop Capsules, Airlock).png",
+      "dstName": "multipurpose--20x10--389",
+      "geomorphId": 389,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "4-station-bridge",
+        "air-raft",
+        "briefing",
+        "staterooms",
+        "offices",
+        "medical",
+        "engineering",
+        "12-pod-beds",
+        "8x-drop-capsules",
+        "airlock"
+      ]
+    },
+    {
+      "srcName": "389 [100x50] [Overlay] Air-Raft.png",
+      "dstName": "air-raft--20x10--389",
+      "geomorphId": 389,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "390 [100x50] Multipurpose (10-dTon Ship's Boat, 4 Station Bridge, Briefing, Office, Lounge, Engineering, Cargo Bay).png",
+      "dstName": "multipurpose--20x10--390",
+      "geomorphId": 390,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "10-dton-ships-boat",
+        "4-station-bridge",
+        "briefing",
+        "office",
+        "lounge",
+        "engineering",
+        "cargo-bay"
+      ]
+    },
+    {
+      "srcName": "390 [100x50] [Overlay] 10-dTon Ship's Boat.png",
+      "dstName": "10-dton-ships-boat--20x10--390",
+      "geomorphId": 390,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "391 [100x50] Multipurpose (20-dTon Shuttle, Cargo Hold, Staterooms, Lounge, Engineering, Repair Shop).png",
+      "dstName": "multipurpose--20x10--391",
+      "geomorphId": 391,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "20-dton-shuttle",
+        "cargo-hold",
+        "staterooms",
+        "lounge",
+        "engineering",
+        "repair-shop"
+      ]
+    },
+    {
+      "srcName": "391 [100x50] [Overlay] 20-dTon Shuttle.png",
+      "dstName": "20-dton-shuttle--20x10--391",
+      "geomorphId": 391,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "392 [100x50] Cargo Bay (2x 10-dTon Utility Shuttles).png",
+      "dstName": "cargo-bay--20x10--392",
+      "geomorphId": 392,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["2x-10-dton-utility-shuttles"]
+    },
+    {
+      "srcName": "392 [100x50] [Overlay] 2x 10-dTon Utility Shuttles.png",
+      "dstName": "10-dton-utility-shuttles--20x10--392",
+      "geomorphId": 392,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "393 [100x50] Engineering - Lower (Work Pod, Office, Repair Shop, Lift).png",
+      "dstName": "engineering-lower--20x10--393",
+      "geomorphId": 393,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["work-pod", "office", "repair-shop", "lift"]
+    },
+    {
+      "srcName": "394 [100x50] Engineering - Upper (Airlock, Repair Shop, Lift).png",
+      "dstName": "engineering-upper--20x10--394",
+      "geomorphId": 394,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock", "repair-shop", "lift"]
+    },
+    {
+      "srcName": "395 [100x50] Elevator Core (10x Elevators, Stairs, Security, Observation Deck).png",
+      "dstName": "elevator-core--20x10--395",
+      "geomorphId": 395,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["10x-elevators", "stairs", "security", "observation-deck"]
+    },
+    {
+      "srcName": "396 [100x50] Elevator Core (4x Elevators, 2x Stairs, Cargo Elevator, Bar, Lounge, Observation Deck).png",
+      "dstName": "elevator-core--20x10--396",
+      "geomorphId": 396,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "4x-elevators",
+        "2x-stairs",
+        "cargo-elevator",
+        "bar",
+        "lounge",
+        "observation-deck"
+      ]
+    },
+    {
+      "srcName": "397 [100x50] Cargo Bay - 20-dTon Launch (20-dTon Launch, Engineering, Fuel, Cargo Hold).png",
+      "dstName": "cargo-bay-20-dton-launch--20x10--397",
+      "geomorphId": 397,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["20-dton-launch", "engineering", "fuel", "cargo-hold"]
+    },
+    {
+      "srcName": "397 [100x50] [Overlay] 20-dTon Launch.png",
+      "dstName": "20-dton-launch--20x10--397",
+      "geomorphId": 397,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "398 [100x50] Vehicle Bay (4x Grav Fighter, 4x Grav Tank, Offices, Repair Shop).png",
+      "dstName": "vehicle-bay--20x10--398",
+      "geomorphId": 398,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["4x-grav-fighter", "4x-grav-tank", "offices", "repair-shop"]
+    },
+    {
+      "srcName": "398 [100x50] [Overlay] 4x Grav Fighter, 4x Grav Tank.png",
+      "dstName": "grav-fighter-4x-grav-tank--20x10--398",
+      "geomorphId": 398,
+      "gridDim": [20, 10],
+      "is": ["overlay", "4x"],
+      "has": []
+    },
+    {
+      "srcName": "399 [100x50] Cargo Bay & Ship's Boat Bay (2x 10-dTon Ship's Boats, Cargo Bay, Office, Staterooms, Lounge).png",
+      "dstName": "cargo-bay-and-ships-boat-bay--20x10--399",
+      "geomorphId": 399,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "2x-10-dton-ships-boats",
+        "cargo-bay",
+        "office",
+        "staterooms",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "399 [100x50] [Overlay] 2x 10-dTon Ship's Boats.png",
+      "dstName": "10-dton-ships-boats--20x10--399",
+      "geomorphId": 399,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "400 [100x50] Fighter Hangar (2x Rampart Fighters, Launch Control, Repair Shop, Airlocks).png",
+      "dstName": "fighter-hangar--20x10--400",
+      "geomorphId": 400,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "2x-rampart-fighters",
+        "launch-control",
+        "repair-shop",
+        "airlocks"
+      ]
+    },
+    {
+      "srcName": "400 [100x50] [Overlay] (1) 2x Rampart Fighters.png",
+      "dstName": "rampart-fighters--20x10--400",
+      "geomorphId": 400,
+      "gridDim": [20, 10],
+      "is": ["overlay", "part-1", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "400 [100x50] [Overlay] (2) 2x Rampart Fighters.png",
+      "dstName": "rampart-fighters--20x10--400",
+      "geomorphId": 400,
+      "gridDim": [20, 10],
+      "is": ["overlay", "part-2", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "401 [100x50] Labs - Offices (Medical, Lounge).png",
+      "dstName": "labs-offices--20x10--401",
+      "geomorphId": 401,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["medical", "lounge"]
+    },
+    {
+      "srcName": "402 [100x50] Multipurpose (4 Station Bridge, Office, Lounge, Missile Launcher, Engineering, Offices, Air-Raft).png",
+      "dstName": "multipurpose--20x10--402",
+      "geomorphId": 402,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "4-station-bridge",
+        "office",
+        "lounge",
+        "missile-launcher",
+        "engineering",
+        "offices",
+        "air-raft"
+      ]
+    },
+    {
+      "srcName": "402 [100x50] [Overlay] Air-Raft.png",
+      "dstName": "air-raft--20x10--402",
+      "geomorphId": 402,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "403 [100x50] Vehicle Bay - Lower (8x Grav Bikes, 3x Mechs, 2x Dragonfly Fighters, Fuel).png",
+      "dstName": "vehicle-bay-lower--20x10--403",
+      "geomorphId": 403,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["8x-grav-bikes", "3x-mechs", "2x-dragonfly-fighters", "fuel"]
+    },
+    {
+      "srcName": "403 [100x50] [Overlay] 2x Dragonfly Fighters (Interior).png",
+      "dstName": "dragonfly-fighters--20x10--403",
+      "geomorphId": 403,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": ["interior"]
+    },
+    {
+      "srcName": "403 [100x50] [Overlay] 8x Grav Bikes, 3x Mechs, 2x Dragonfly Fighters.png",
+      "dstName": "grav-bikes-3x-mechs-2x-dragonfly-fighters--20x10--403",
+      "geomorphId": 403,
+      "gridDim": [20, 10],
+      "is": ["overlay", "8x"],
+      "has": []
+    },
+    {
+      "srcName": "404 [100x50] Vehicle Bay - Upper (Air-Raft).png",
+      "dstName": "vehicle-bay-upper--20x10--404",
+      "geomorphId": 404,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["air-raft"]
+    },
+    {
+      "srcName": "404 [100x50] [Overlay] Air-Raft, 8x Grav Bikes, 3x Mechs, 2x Dragonfly Fighters.png",
+      "dstName": "air-raft-8x-grav-bikes-3x-mechs-2x-dragonfly-fighters--20x10--404",
+      "geomorphId": 404,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "405 [100x50] Engineering (Staterooms, Lounge).png",
+      "dstName": "engineering--20x10--405",
+      "geomorphId": 405,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["staterooms", "lounge"]
+    },
+    {
+      "srcName": "406 [100x50] Multipurpose (Cargo Hold, Cargo Shuttle, Engineering, Lab, Office, Staterooms, Lounge, Airlock).png",
+      "dstName": "multipurpose--20x10--406",
+      "geomorphId": 406,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "cargo-hold",
+        "cargo-shuttle",
+        "engineering",
+        "lab",
+        "office",
+        "staterooms",
+        "lounge",
+        "airlock"
+      ]
+    },
+    {
+      "srcName": "406 [100x50] [Overlay] Cargo Shuttle.png",
+      "dstName": "cargo-shuttle--20x10--406",
+      "geomorphId": 406,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "407 [100x50] Mission Control (14 Station Control Room, Briefing, Office, Lounge, 6 Station Holo Display).png",
+      "dstName": "mission-control--20x10--407",
+      "geomorphId": 407,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "14-station-control-room",
+        "briefing",
+        "office",
+        "lounge",
+        "6-station-holo-display"
+      ]
+    },
+    {
+      "srcName": "408 [100x50] Medical Bay (8 Bed Sickbay, 7 Low Berths, 2 Exam Rooms, 2 Surgeries, Morgue, Office).png",
+      "dstName": "medical-bay--20x10--408",
+      "geomorphId": 408,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "8-bed-sickbay",
+        "7-low-berths",
+        "2-exam-rooms",
+        "2-surgeries",
+        "morgue",
+        "office"
+      ]
+    },
+    {
+      "srcName": "409 [100x50] Gymnasium (Sports Court, Exercise Equipment, Airlock, Cargo Door).png",
+      "dstName": "gymnasium--20x10--409",
+      "geomorphId": 409,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["sports-court", "exercise-equipment", "airlock", "cargo-door"]
+    },
+    {
+      "srcName": "410 [100x50] Holodeck.png",
+      "dstName": "holodeck--20x10--410",
+      "geomorphId": 410,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "411 [100x50] Shooting Range & Dojo (Lounge, Medical, Offices).png",
+      "dstName": "shooting-range-and-dojo--20x10--411",
+      "geomorphId": 411,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["lounge", "medical", "offices"]
+    },
+    {
+      "srcName": "412 [100x50] Cargo Bay - 50-dTon Launch.png",
+      "dstName": "cargo-bay-50-dton-launch--20x10--412",
+      "geomorphId": 412,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "412 [100x50] [Overlay] 50-dTon Launch (Cargo).png",
+      "dstName": "50-dton-launch--20x10--412",
+      "geomorphId": 412,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["cargo"]
+    },
+    {
+      "srcName": "413 [100x50] Multipurpose (2x Air-Raft, Engineering, Pod Door, 12 Pod Beds, Medical, 2x Low Berths, Staterooms, Offices).png",
+      "dstName": "multipurpose--20x10--413",
+      "geomorphId": 413,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "2x-air-raft",
+        "engineering",
+        "pod-door",
+        "12-pod-beds",
+        "medical",
+        "2x-low-berths",
+        "staterooms",
+        "offices"
+      ]
+    },
+    {
+      "srcName": "413 [100x50] [Overlay] 2x Air-Rafts.png",
+      "dstName": "air-rafts--20x10--413",
+      "geomorphId": 413,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "414 [100x50] Multipurpose (Engineering, Medical, 2x Low Berths, Sensor Probes, Sensor Ops, Lab).png",
+      "dstName": "multipurpose--20x10--414",
+      "geomorphId": 414,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "engineering",
+        "medical",
+        "2x-low-berths",
+        "sensor-probes",
+        "sensor-ops",
+        "lab"
+      ]
+    },
+    {
+      "srcName": "415 [100x50] Scout & Survey Deck (IISS Survey G-Carrier, 2x 10-dTon Recon Drones, Repair Shop, Staterooms, Lounge).png",
+      "dstName": "scout-and-survey-deck--20x10--415",
+      "geomorphId": 415,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "iiss-survey-g-carrier",
+        "2x-10-dton-recon-drones",
+        "repair-shop",
+        "staterooms",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "415 [100x50] [Overlay] IISS Survey G-Carrier.png",
+      "dstName": "iiss-survey-g-carrier--20x10--415",
+      "geomorphId": 415,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "416 [100x50] Scout & Survey Deck (IISS Survey G-Carrier, 10-dTon Recon Drone, Probes, Sensors, Repair Shop, Stateroom, Lounge).png",
+      "dstName": "scout-and-survey-deck--20x10--416",
+      "geomorphId": 416,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "iiss-survey-g-carrier",
+        "10-dton-recon-drone",
+        "probes",
+        "sensors",
+        "repair-shop",
+        "stateroom",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "416 [100x50] [Overlay] IISS Survey G-Carrier.png",
+      "dstName": "iiss-survey-g-carrier--20x10--416",
+      "geomorphId": 416,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "417 [100x50] Engineering (Airlock, Air-Raft, Repair Shop).png",
+      "dstName": "engineering--20x10--417",
+      "geomorphId": 417,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock", "air-raft", "repair-shop"]
+    },
+    {
+      "srcName": "417 [100x50] [Overlay] Air-Raft.png",
+      "dstName": "air-raft--20x10--417",
+      "geomorphId": 417,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "419 [100x50] Escape Pod Deck (12x Escape Pods, Repair Shop, Airlock).png",
+      "dstName": "escape-pod-deck--20x10--419",
+      "geomorphId": 419,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["12x-escape-pods", "repair-shop", "airlock"]
+    },
+    {
+      "srcName": "419 [100x50] [Overlay] 12x Escape Pods.png",
+      "dstName": "escape-pods--20x10--419",
+      "geomorphId": 419,
+      "gridDim": [20, 10],
+      "is": ["overlay", "12x"],
+      "has": []
+    },
+    {
+      "srcName": "420 [100x50] Escape Pod Deck (10x Escape Pods).png",
+      "dstName": "escape-pod-deck--20x10--420",
+      "geomorphId": 420,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["10x-escape-pods"]
+    },
+    {
+      "srcName": "420 [100x50] [Overlay] 10x Escape Pods.png",
+      "dstName": "escape-pods--20x10--420",
+      "geomorphId": 420,
+      "gridDim": [20, 10],
+      "is": ["overlay", "10x"],
+      "has": []
+    },
+    {
+      "srcName": "421 [100x50] Brig & Prison (16 Bed Prison, Galley, Medical, Security, Prison Transport, Engineering).png",
+      "dstName": "brig-and-prison--20x10--421",
+      "geomorphId": 421,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "16-bed-prison",
+        "galley",
+        "medical",
+        "security",
+        "prison-transport",
+        "engineering"
+      ]
+    },
+    {
+      "srcName": "421 [100x50] [Overlay] Prison Transport.png",
+      "dstName": "prison-transport--20x10--421",
+      "geomorphId": 421,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "422 [100x50] Passenger Deck (Staterooms, Steerage Staterooms, Lounge).png",
+      "dstName": "passenger-deck--20x10--422",
+      "geomorphId": 422,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["staterooms", "steerage-staterooms", "lounge"]
+    },
+    {
+      "srcName": "423 [100x50] Medical Research (20-dTon Hunting Launch, Animal Pens, Surgery, Labs, Morgue Lounge).png",
+      "dstName": "medical-research--20x10--423",
+      "geomorphId": 423,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "20-dton-hunting-launch",
+        "animal-pens",
+        "surgery",
+        "labs",
+        "morgue-lounge"
+      ]
+    },
+    {
+      "srcName": "423 [100x50] [Overlay] 20-dTon Launch (Hunting).png",
+      "dstName": "20-dton-launch--20x10--423",
+      "geomorphId": 423,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["hunting"]
+    },
+    {
+      "srcName": "424 [100x50] Multipurpose (4 Station Bridge, 2x Gunnery, Escape Pod, Lab, Engineering, Staterooms, Office, Lounge, Medical, 2x Low Berths).png",
+      "dstName": "multipurpose--20x10--424",
+      "geomorphId": 424,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "4-station-bridge",
+        "2x-gunnery",
+        "escape-pod",
+        "lab",
+        "engineering",
+        "staterooms",
+        "office",
+        "lounge",
+        "medical",
+        "2x-low-berths"
+      ]
+    },
+    {
+      "srcName": "424 [100x50] [Overlay] Escape Pod.png",
+      "dstName": "escape-pod--20x10--424",
+      "geomorphId": 424,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "425 [100x50] Fighter Hangar (3x Valkyrie Fighters, Flight Control, Repair Shop).png",
+      "dstName": "fighter-hangar--20x10--425",
+      "geomorphId": 425,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["3x-valkyrie-fighters", "flight-control", "repair-shop"]
+    },
+    {
+      "srcName": "425 [100x50] [Overlay] 3x Valkyrie Fighters.png",
+      "dstName": "valkyrie-fighters--20x10--425",
+      "geomorphId": 425,
+      "gridDim": [20, 10],
+      "is": ["overlay", "3x"],
+      "has": []
+    },
+    {
+      "srcName": "426 [100x50] Fighter Hangar & Crew Quarters (Air-Raft, 2x Dragonfly Fighters, Repair Shop, Engineering, Lab, Office, Staterooms, Lounge).png",
+      "dstName": "fighter-hangar-and-crew-quarters--20x10--426",
+      "geomorphId": 426,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "air-raft",
+        "2x-dragonfly-fighters",
+        "repair-shop",
+        "engineering",
+        "lab",
+        "office",
+        "staterooms",
+        "lounge"
+      ]
+    },
+    {
+      "srcName": "426 [100x50] [Overlay] 2x Dragonfly Fighters (Interior).png",
+      "dstName": "dragonfly-fighters--20x10--426",
+      "geomorphId": 426,
+      "gridDim": [20, 10],
+      "is": ["overlay", "2x"],
+      "has": ["interior"]
+    },
+    {
+      "srcName": "426 [100x50] [Overlay] Air-Raft & 2x Dragonfly Fighters.png",
+      "dstName": "air-raft-and-2x-dragonfly-fighters--20x10--426",
+      "geomorphId": 426,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "427 [100x50] Water Storage (Repair Shop, Airlock, Office, Lounge).png",
+      "dstName": "water-storage--20x10--427",
+      "geomorphId": 427,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["repair-shop", "airlock", "office", "lounge"]
+    },
+    {
+      "srcName": "428 [100x50] Multipurpose (Cargo Hold, Cargo Shuttle, Engineering, Lab, Medical, Staterooms, Airlock).png",
+      "dstName": "multipurpose--20x10--428",
+      "geomorphId": 428,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "cargo-hold",
+        "cargo-shuttle",
+        "engineering",
+        "lab",
+        "medical",
+        "staterooms",
+        "airlock"
+      ]
+    },
+    {
+      "srcName": "428 [100x50] [Overlay] Cargo Shuttle.png",
+      "dstName": "cargo-shuttle--20x10--428",
+      "geomorphId": 428,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "429 [100x50] Drop Capsule Deck (16x Drop Capsules, Suit Up Rooms, Armory, Stateroom, Control Center).png",
+      "dstName": "drop-capsule-deck--20x10--429",
+      "geomorphId": 429,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": [
+        "16x-drop-capsules",
+        "suit-up-rooms",
+        "armory",
+        "stateroom",
+        "control-center"
+      ]
+    },
+    {
+      "srcName": "430 [100x50] Passenger Deck (Staterooms, Lounge, Galley).png",
+      "dstName": "passenger-deck--20x10--430",
+      "geomorphId": 430,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["staterooms", "lounge", "galley"]
+    },
+    {
+      "srcName": "431 [100x50] Passenger Gate & Consourse (Airlock, Bar, Observation Deck).png",
+      "dstName": "passenger-gate-and-consourse--20x10--431",
+      "geomorphId": 431,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock", "bar", "observation-deck"]
+    },
+    {
+      "srcName": "432 [100x50] Passenger Gate & Consourse (Airlock, Observation Deck).png",
+      "dstName": "passenger-gate-and-consourse--20x10--432",
+      "geomorphId": 432,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock", "observation-deck"]
+    },
+    {
+      "srcName": "433 [100x50] Fuel Deck (Intake Scoops).png",
+      "dstName": "fuel-deck--20x10--433",
+      "geomorphId": 433,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["intake-scoops"]
+    },
+    {
+      "srcName": "434 [100x50] Fuel Deck (Intake Scoops).png",
+      "dstName": "fuel-deck--20x10--434",
+      "geomorphId": 434,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["intake-scoops"]
+    },
+    {
+      "srcName": "435 [100x50] Collapsible Fuel Tank - Full (Fuel Ops).png",
+      "dstName": "collapsible-fuel-tank-full--20x10--435",
+      "geomorphId": 435,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["fuel-ops"]
+    },
+    {
+      "srcName": "436 [100x50] Collapsible Fuel Tank - Empty (Fuel Ops).png",
+      "dstName": "collapsible-fuel-tank-empty--20x10--436",
+      "geomorphId": 436,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["fuel-ops"]
+    },
+    {
+      "srcName": "436 [100x50] [Overlay] Full Fuel Bladder.png",
+      "dstName": "full-fuel-bladder--20x10--436",
+      "geomorphId": 436,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "437 [100x50] Fuel Deck & Drop Tank (Airlock, Fuel Ops, Engineering).png",
+      "dstName": "fuel-deck-and-drop-tank--20x10--437",
+      "geomorphId": 437,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock", "fuel-ops", "engineering"]
+    },
+    {
+      "srcName": "438 [100x50] Fuel Deck - Detached Drop Tank (Airlock, Fuel Ops, Engineering).png",
+      "dstName": "fuel-deck-detached-drop-tank--20x10--438",
+      "geomorphId": 438,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock", "fuel-ops", "engineering"]
+    },
+    {
+      "srcName": "438 [100x50] [Overlay] Drop Tank.png",
+      "dstName": "drop-tank--20x10--438",
+      "geomorphId": 438,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "439 [100x50] Fuel Deck & Drop Tanks (Airlock, Fuel Ops).png",
+      "dstName": "fuel-deck-and-drop-tanks--20x10--439",
+      "geomorphId": 439,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock", "fuel-ops"]
+    },
+    {
+      "srcName": "440 [100x50] Fuel Deck - Detached Drop Tank (Airlock, Fuel Ops).png",
+      "dstName": "fuel-deck-detached-drop-tank--20x10--440",
+      "geomorphId": 440,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock", "fuel-ops"]
+    },
+    {
+      "srcName": "440 [100x50] [Overlay] Drop Tanks.png",
+      "dstName": "drop-tanks--20x10--440",
+      "geomorphId": 440,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "441 [100x50] Promenade - Food Court.png",
+      "dstName": "promenade-food-court--20x10--441",
+      "geomorphId": 441,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "442 [100x50] Promenade - Bar.png",
+      "dstName": "promenade-bar--20x10--442",
+      "geomorphId": 442,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "443 [100x50] Promenade - Retail.png",
+      "dstName": "promenade-retail--20x10--443",
+      "geomorphId": 443,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "444 [100x50] Promenade - Casino (Bar).png",
+      "dstName": "promenade-casino--20x10--444",
+      "geomorphId": 444,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["bar"]
+    },
+    {
+      "srcName": "445 [100x50] Passenger Quarters & Arboretum (Staterooms, Lounge).png",
+      "dstName": "passenger-quarters-and-arboretum--20x10--445",
+      "geomorphId": 445,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["staterooms", "lounge"]
+    },
+    {
+      "srcName": "446 [100x50] Crew Quarters & Mess Hall (Galley, Staterooms, Lounge).png",
+      "dstName": "crew-quarters-and-mess-hall--20x10--446",
+      "geomorphId": 446,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["galley", "staterooms", "lounge"]
+    },
+    {
+      "srcName": "447 [100x50] Communications Dish - Lower.png",
+      "dstName": "communications-dish-lower--20x10--447",
+      "geomorphId": 447,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "448 [100x50] Communication Dish - Upper (Airlock).png",
+      "dstName": "communication-dish-upper--20x10--448",
+      "geomorphId": 448,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["airlock"]
+    },
+    {
+      "srcName": "449 [100x50] Missile Deck - Lateral Barbettes (4x Missile Gunnery).png",
+      "dstName": "missile-deck-lateral-barbettes--20x10--449",
+      "geomorphId": 449,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": ["4x-missile-gunnery"]
+    },
+    {
+      "srcName": "450 [100x50] (1) Weapons Deck - Lateral Barbettes (Airlock, Repair Shop, Staterooms, Lounge).png",
+      "dstName": "weapons-deck-lateral-barbettes--20x10--450",
+      "geomorphId": 450,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["airlock", "repair-shop", "staterooms", "lounge"]
+    },
+    {
+      "srcName": "450 [100x50] (2) Weapons Deck - Lateral Barbettes (Airlock, Repair Shop, Staterooms, Lounge).png",
+      "dstName": "weapons-deck-lateral-barbettes--20x10--450",
+      "geomorphId": 450,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": ["airlock", "repair-shop", "staterooms", "lounge"]
+    },
+    {
+      "srcName": "451 [100x50] (1) Barbette Deck.png",
+      "dstName": "barbette-deck--20x10--451",
+      "geomorphId": 451,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": []
+    },
+    {
+      "srcName": "451 [100x50] (2) Dorsal Barbettes.png",
+      "dstName": "dorsal-barbettes--20x10--451",
+      "geomorphId": 451,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": []
+    },
+    {
+      "srcName": "452 [40x40] Fusion Barbette.png",
+      "dstName": "fusion-barbette--8x8--452",
+      "geomorphId": 452,
+      "gridDim": [8, 8],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "452 [40x40] Ion Barbette.png",
+      "dstName": "ion-barbette--8x8--452",
+      "geomorphId": 452,
+      "gridDim": [8, 8],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "452 [40x40] Laser Barbette.png",
+      "dstName": "laser-barbette--8x8--452",
+      "geomorphId": 452,
+      "gridDim": [8, 8],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "452 [40x40] Missile Barbette.png",
+      "dstName": "missile-barbette--8x8--452",
+      "geomorphId": 452,
+      "gridDim": [8, 8],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "452 [40x40] Plasma Barbette.png",
+      "dstName": "plasma-barbette--8x8--452",
+      "geomorphId": 452,
+      "gridDim": [8, 8],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "452 [40x40] Sandcaster Barbette.png",
+      "dstName": "sandcaster-barbette--8x8--452",
+      "geomorphId": 452,
+      "gridDim": [8, 8],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "453 [100x50] (1) 50-dTon Bay Weapon - Empty (2x Escape Pods, Engineering, Staterooms).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--453",
+      "geomorphId": 453,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["2x-escape-pods", "engineering", "staterooms"]
+    },
+    {
+      "srcName": "453 [100x50] (1) 50-dTon Bay Weapon - Twin Drum (2x Escape Pods, Engineering, Staterooms).png",
+      "dstName": "50-dton-bay-weapon-twin-drum--20x10--453",
+      "geomorphId": 453,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["2x-escape-pods", "engineering", "staterooms"]
+    },
+    {
+      "srcName": "453 [100x50] (2) 50-dTon Bay Weapon - Empty (2x Escape Pods, Engineering, Staterooms).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--453",
+      "geomorphId": 453,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": ["2x-escape-pods", "engineering", "staterooms"]
+    },
+    {
+      "srcName": "453 [100x50] [Overlay] (1) 2x Escape Pods.png",
+      "dstName": "escape-pods--20x10--453",
+      "geomorphId": 453,
+      "gridDim": [20, 10],
+      "is": ["overlay", "part-1", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "453 [100x50] [Overlay] (2) 2x Escape Pods.png",
+      "dstName": "escape-pods--20x10--453",
+      "geomorphId": 453,
+      "gridDim": [20, 10],
+      "is": ["overlay", "part-2", "2x"],
+      "has": []
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Large Missiles.png",
+      "dstName": "50-dton-bay-large-missiles--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Mine Layer.png",
+      "dstName": "50-dton-bay-mine-layer--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Particle Accelerator.png",
+      "dstName": "50-dton-bay-particle-accelerator--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Small Missiles.png",
+      "dstName": "50-dton-bay-small-missiles--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Twin Drum (Port Facing, Extended).png",
+      "dstName": "50-dton-bay-twin-drum--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["port-facing", "extended"]
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Twin Drum (Port Facing, Retracted).png",
+      "dstName": "50-dton-bay-twin-drum--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["port-facing", "retracted"]
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Twin Drum (Starboard Facing, Extended).png",
+      "dstName": "50-dton-bay-twin-drum--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["starboard-facing", "extended"]
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Twin Drum (Starboard Facing, Retracted).png",
+      "dstName": "50-dton-bay-twin-drum--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["starboard-facing", "retracted"]
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Weapon Twin Beam (Port Facing, Extended).png",
+      "dstName": "50-dton-bay-weapon-twin-beam--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["port-facing", "extended"]
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Weapon Twin Beam (Port Facing, Retracted).png",
+      "dstName": "50-dton-bay-weapon-twin-beam--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["port-facing", "retracted"]
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Weapon Twin Beam (Starboard Facing, Extended).png",
+      "dstName": "50-dton-bay-weapon-twin-beam--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["starboard-facing", "extended"]
+    },
+    {
+      "srcName": "453,454,455,456,457,458 [100x50] [Overlay] 50-dTon Bay Weapon Twin Beam (Starboard Facing, Retracted).png",
+      "dstName": "50-dton-bay-weapon-twin-beam--20x10--NaN",
+      "geomorphId": null,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": ["starboard-facing", "retracted"]
+    },
+    {
+      "srcName": "454 [100x50] (1) 50-dTon Bay Weapon - Empty (Airlock, Engineering, Repair Shop, Staterooms).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--454",
+      "geomorphId": 454,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["airlock", "engineering", "repair-shop", "staterooms"]
+    },
+    {
+      "srcName": "454 [100x50] (1) 50-dTon Bay Weapon - Twin Beam (Airlock, Engineering, Repair Shop, Staterooms).png",
+      "dstName": "50-dton-bay-weapon-twin-beam--20x10--454",
+      "geomorphId": 454,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["airlock", "engineering", "repair-shop", "staterooms"]
+    },
+    {
+      "srcName": "454 [100x50] (2) 50-dTon Bay Weapon - Empty (Airlock, Engineering, Repair Shop, Staterooms).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--454",
+      "geomorphId": 454,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": ["airlock", "engineering", "repair-shop", "staterooms"]
+    },
+    {
+      "srcName": "455 [100x50] (1) 50-dTon Bay Weapon - Empty (Air-Raft, Staterooms, Engineering).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--455",
+      "geomorphId": 455,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["air-raft", "staterooms", "engineering"]
+    },
+    {
+      "srcName": "455 [100x50] (1) 50-dTon Bay Weapon - Small Missiles (Air-Raft, Staterooms, Engineering).png",
+      "dstName": "50-dton-bay-weapon-small-missiles--20x10--455",
+      "geomorphId": 455,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["air-raft", "staterooms", "engineering"]
+    },
+    {
+      "srcName": "455 [100x50] (2) 50-dTon Bay Weapon - Empty (Air-Raft, Staterooms, Engineering).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--455",
+      "geomorphId": 455,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": ["air-raft", "staterooms", "engineering"]
+    },
+    {
+      "srcName": "455 [100x50] [Overlay] (1) Air-Raft.png",
+      "dstName": "air-raft--20x10--455",
+      "geomorphId": 455,
+      "gridDim": [20, 10],
+      "is": ["overlay", "part-1"],
+      "has": []
+    },
+    {
+      "srcName": "455 [100x50] [Overlay] (2) Air-Raft.png",
+      "dstName": "air-raft--20x10--455",
+      "geomorphId": 455,
+      "gridDim": [20, 10],
+      "is": ["overlay", "part-2"],
+      "has": []
+    },
+    {
+      "srcName": "456 [100x50] (1) 50-dTon Bay Weapon - Empty (Staterooms, 6 Station Command Room, Lounge).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--456",
+      "geomorphId": 456,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["staterooms", "6-station-command-room", "lounge"]
+    },
+    {
+      "srcName": "456 [100x50] (1) 50-dTon Bay Weapon - Large Missiles (Staterooms, 6 Station Command Room, Lounge).png",
+      "dstName": "50-dton-bay-weapon-large-missiles--20x10--456",
+      "geomorphId": 456,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["staterooms", "6-station-command-room", "lounge"]
+    },
+    {
+      "srcName": "456 [100x50] (2) 50-dTon Bay Weapon - Empty (Staterooms, 6 Station Command Room, Lounge).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--456",
+      "geomorphId": 456,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": ["staterooms", "6-station-command-room", "lounge"]
+    },
+    {
+      "srcName": "457 [100x50] (1) 50-dTon Bay Weapon - Empty (Engineering, Stateroom, Sensors, Repair Shop).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--457",
+      "geomorphId": 457,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["engineering", "stateroom", "sensors", "repair-shop"]
+    },
+    {
+      "srcName": "457 [100x50] (1) 50-dTon Bay Weapon - Particle Accelerator (Engineering, Stateroom, Sensors, Repair Shop).png",
+      "dstName": "50-dton-bay-weapon-particle-accelerator--20x10--457",
+      "geomorphId": 457,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["engineering", "stateroom", "sensors", "repair-shop"]
+    },
+    {
+      "srcName": "457 [100x50] (2) 50-dTon Bay Weapon - Empty (Engineering, Stateroom, Sensors, Repair Shop).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--457",
+      "geomorphId": 457,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": ["engineering", "stateroom", "sensors", "repair-shop"]
+    },
+    {
+      "srcName": "458 [100x50] (1) 50-dTon Bay Weapon - Empty (Mine Retrieval Shuttle, Mine Ops, Stateroom).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--458",
+      "geomorphId": 458,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["mine-retrieval-shuttle", "mine-ops", "stateroom"]
+    },
+    {
+      "srcName": "458 [100x50] (1) 50-dTon Bay Weapon - Mine Layer (Mine Retrieval Shuttle, Mine Ops, Stateroom).png",
+      "dstName": "50-dton-bay-weapon-mine-layer--20x10--458",
+      "geomorphId": 458,
+      "gridDim": [20, 10],
+      "is": ["part-1"],
+      "has": ["mine-retrieval-shuttle", "mine-ops", "stateroom"]
+    },
+    {
+      "srcName": "458 [100x50] (2) 50-dTon Bay Weapon - Empty (Mine Retrieval Shuttle, Mine Ops, Stateroom).png",
+      "dstName": "50-dton-bay-weapon-empty--20x10--458",
+      "geomorphId": 458,
+      "gridDim": [20, 10],
+      "is": ["part-2"],
+      "has": ["mine-retrieval-shuttle", "mine-ops", "stateroom"]
+    },
+    {
+      "srcName": "458 [100x50] [Overlay] (1) Mine Retrieval Shuttle.png",
+      "dstName": "mine-retrieval-shuttle--20x10--458",
+      "geomorphId": 458,
+      "gridDim": [20, 10],
+      "is": ["overlay", "part-1"],
+      "has": []
+    },
+    {
+      "srcName": "458 [100x50] [Overlay] (2) Mine Retrieval Shuttle.png",
+      "dstName": "mine-retrieval-shuttle--20x10--458",
+      "geomorphId": 458,
+      "gridDim": [20, 10],
+      "is": ["overlay", "part-2"],
+      "has": []
+    },
+    {
+      "srcName": "459 [100x50] 50 or 100-dTon Bay Weapons - Empty.png",
+      "dstName": "50-or-100-dton-bay-weapons-empty--20x10--459",
+      "geomorphId": 459,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "459 [100x50] 50 or 100-dTon Bay Weapons - Rotary & Particle Accelerator.png",
+      "dstName": "50-or-100-dton-bay-weapons-rotary-and-particle-accelerator--20x10--459",
+      "geomorphId": 459,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    },
+    {
+      "srcName": "459 [100x50] [Overlay] 50-dTon Bay Particle Accelerator.png",
+      "dstName": "50-dton-bay-particle-accelerator--20x10--459",
+      "geomorphId": 459,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "459 [100x50] [Overlay] 50-dTon Bay Rotary Weapon.png",
+      "dstName": "50-dton-bay-rotary-weapon--20x10--459",
+      "geomorphId": 459,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "459 [100x50] [Overlay] 50-dTon Empty Bay.png",
+      "dstName": "50-dton-empty-bay--20x10--459",
+      "geomorphId": 459,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "459 [100x50] [Overlay] 50-dTon Large Missile Launcher.png",
+      "dstName": "50-dton-large-missile-launcher--20x10--459",
+      "geomorphId": 459,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "459 [100x50] [Overlay] 50-dTon Small Missile Launcher.png",
+      "dstName": "50-dton-small-missile-launcher--20x10--459",
+      "geomorphId": 459,
+      "gridDim": [20, 10],
+      "is": ["overlay"],
+      "has": []
+    },
+    {
+      "srcName": "460 [100x50] 50- or 100-dTon Bay Weapons - Large & Small Missile Launchers.png",
+      "dstName": "50-or-100-dton-bay-weapons-large-and-small-missile-launchers--20x10--460",
+      "geomorphId": 460,
+      "gridDim": [20, 10],
+      "is": [],
+      "has": []
+    }
+  ]
+}
