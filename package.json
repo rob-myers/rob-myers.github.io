@@ -10,7 +10,7 @@
     "next-cfg": "tsc -p scripts",
     "types": "tsc --noEmit",
     "postinstall": "patch-package",
-    "teleglitch-json": "ts-node ./scripts/teleglitch/compute-json"
+    "convert-img": "ts-node -O '{ \"module\": \"commonjs\", \"isolatedModules\": false }' ./media/scripts/convert-img"
   },
   "dependencies": {
     "braces": "^3.0.2",

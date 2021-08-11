@@ -1,5 +1,9 @@
 ## Plan
 
+- cleanup projects
+  - migrate back to `@emotion` from `goober` (breaks CodeSandbox hmr)
+  - careful about module imports (breaks CodeSandbox hmr)
+  - reorg folder structure
 - index page links to "article bunches"
 - cleanup how terminal persists
 - do not auto-persist if localStorage lacks `autopersist=true`
@@ -8,6 +12,7 @@
 
 ### Components
 - ConnectDemo using Geomorphs
+  - First attempt at Geomorph to SVG i.e. conversion of `319-100x50-multi-purpose.png`.
 - ✅ PanZoom using `geom`, `hooks`, `service/dom`
 
 ### CodeSandbox and StackBlitz
@@ -51,19 +56,6 @@
 - better error "stacks"
   > ✅ have node.meta.stack with function names
  can load modules from unpkg, caching source
-
-### Module over-caching issue
-
-Javascript modules cannot be invalidated from cache, without refresh.
-This means hot-reloading will create many stale ones via `import('/src/module.js?v=2')`,
-potentially for every module along unique (modulo dependency cycles) path to root.
-
-https://github.com/nodejs/modules/issues/307
-
-- first statically determine import/export dependency graph
-- assume it is acyclic with a single entrypoint
-- convert modules to commonjs or similar
-- ...
 
 ### Links
 

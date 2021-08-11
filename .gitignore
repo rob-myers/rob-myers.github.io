@@ -38,7 +38,5 @@ babel.config.js
 next.config.js
 misc.config.js
 
-# spritesheets from the game "teleglitch" e.g. set1.png
-scripts/teleglitch/gfx/*
-scripts/teleglitch/mods/*
-scripts/teleglitch/lua/*
+media/downloads/*
+media/boxy/*

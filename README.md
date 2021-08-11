@@ -18,10 +18,16 @@ Files like `next.config.js` are generated from `scripts/*` via `yarn next-cfg`.
 
 ---
 
-# General info
+# General dev info
 
 ```sh
 # Can patch npm modules with `patch-package`
 npx patch-package some-package
 git add patches/some-package+$version.patch
+```
+
+```sh
+brew install imagemagick
+# autocrop an image using ImageMagick
+convert 319.100x50.Multipurpose.png -fuzz 1% -trim trimmed.319.100x50.Multipurpose.png 
 ```
