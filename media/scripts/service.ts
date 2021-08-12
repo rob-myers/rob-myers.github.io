@@ -28,7 +28,12 @@ export function metaFromSymbolFilename(matched: RegExpMatchArray): FileMeta {
   const category = matched[1].toLowerCase().replace(/ /g, '-');
   const id = Number(matched[2]);
   const ids = [id];
-  const is = matched[3] ? [`part-${matched[3]}`] : [];
+  const is = [] as string[];
+  if (matched[3]) {
+    matched[3].includes(' ')
+      ? is.push(matched[3].trim().toLowerCase().replace(/ /g, '-'))
+      : is.push(`part-${matched[3]}`)
+  }
   const gridDim = matched[4].split('x').map(x => Number(x) / 5) as [number, number];
   const dstName = `s${matched[2]}--${category}--${gridDim[0]}x${gridDim[1]}.png`;
 

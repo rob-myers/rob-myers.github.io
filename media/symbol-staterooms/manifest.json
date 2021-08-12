@@ -1,0 +1,1364 @@
+{
+  "parentFolder": "Staterooms",
+  "fileMetas": [
+    {
+      "srcName": "Barracks 001 [20x35].png",
+      "dstName": "s001--barracks--4x7.png",
+      "id": 1,
+      "gridDim": [4, 7],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Barracks 002 [20x30].png",
+      "dstName": "s002--barracks--4x6.png",
+      "id": 2,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Barracks 003 [20x40].png",
+      "dstName": "s003--barracks--4x8.png",
+      "id": 3,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Barracks 004 [20x35].png",
+      "dstName": "s004--barracks--4x7.png",
+      "id": 4,
+      "gridDim": [4, 7],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Barracks 005 [20x40].png",
+      "dstName": "s005--barracks--4x8.png",
+      "id": 5,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Barracks 006 [20x35].png",
+      "dstName": "s006--barracks--4x7.png",
+      "id": 6,
+      "gridDim": [4, 7],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Barracks 007 [20x40].png",
+      "dstName": "s007--barracks--4x8.png",
+      "id": 7,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Pod Beds 001 [20x20].png",
+      "dstName": "s001--pod-beds--4x4.png",
+      "id": 1,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Pod Beds 002 [10x20].png",
+      "dstName": "s002--pod-beds--2x4.png",
+      "id": 2,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Pod Beds 003 [15x20].png",
+      "dstName": "s003--pod-beds--3x4.png",
+      "id": 3,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Pod Beds 004 [20x40].png",
+      "dstName": "s004--pod-beds--4x8.png",
+      "id": 4,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Pod Beds 005 [20x40].png",
+      "dstName": "s005--pod-beds--4x8.png",
+      "id": 5,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Pod Beds 006 [20x40].png",
+      "dstName": "s006--pod-beds--4x8.png",
+      "id": 6,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Pod Beds 007 [10x20].png",
+      "dstName": "s007--pod-beds--2x4.png",
+      "id": 7,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Pod Beds 008 [10x20].png",
+      "dstName": "s008--pod-beds--2x4.png",
+      "id": 8,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Pod Beds 009 [20x20].png",
+      "dstName": "s009--pod-beds--4x4.png",
+      "id": 9,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Stateroom 001 [5x10].png",
+      "dstName": "s001--stateroom--1x2.png",
+      "id": 1,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Stateroom 002 [5x10].png",
+      "dstName": "s002--stateroom--1x2.png",
+      "id": 2,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Stateroom 003 [5x10].png",
+      "dstName": "s003--stateroom--1x2.png",
+      "id": 3,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Stateroom 004 [5x10].png",
+      "dstName": "s004--stateroom--1x2.png",
+      "id": 4,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Stateroom 005 [10x10].png",
+      "dstName": "s005--stateroom--2x2.png",
+      "id": 5,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Stateroom 006 [10x10].png",
+      "dstName": "s006--stateroom--2x2.png",
+      "id": 6,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Stateroom 007 [10x10].png",
+      "dstName": "s007--stateroom--2x2.png",
+      "id": 7,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Stateroom 008 [10x10].png",
+      "dstName": "s008--stateroom--2x2.png",
+      "id": 8,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Stateroom 009 [10x10].png",
+      "dstName": "s009--stateroom--2x2.png",
+      "id": 9,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Stateroom 010 [10x10].png",
+      "dstName": "s010--stateroom--2x2.png",
+      "id": 10,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Stateroom 011 [10x10].png",
+      "dstName": "s011--stateroom--2x2.png",
+      "id": 11,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Stateroom 012 [10x10].png",
+      "dstName": "s012--stateroom--2x2.png",
+      "id": 12,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Stateroom 013 [10x10].png",
+      "dstName": "s013--stateroom--2x2.png",
+      "id": 13,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Stateroom 014 [10x10].png",
+      "dstName": "s014--stateroom--2x2.png",
+      "id": 14,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Stateroom 015 [10x15].png",
+      "dstName": "s015--stateroom--2x3.png",
+      "id": 15,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Stateroom 016 [10x15].png",
+      "dstName": "s016--stateroom--2x3.png",
+      "id": 16,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Stateroom 017 [10x15].png",
+      "dstName": "s017--stateroom--2x3.png",
+      "id": 17,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Stateroom 018 [10x15].png",
+      "dstName": "s018--stateroom--2x3.png",
+      "id": 18,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Stateroom 019 [10x15].png",
+      "dstName": "s019--stateroom--2x3.png",
+      "id": 19,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Stateroom 020 [10x15].png",
+      "dstName": "s020--stateroom--2x3.png",
+      "id": 20,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Stateroom 021 [10x15].png",
+      "dstName": "s021--stateroom--2x3.png",
+      "id": 21,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Stateroom 022 [10x15].png",
+      "dstName": "s022--stateroom--2x3.png",
+      "id": 22,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Stateroom 023 [10x15].png",
+      "dstName": "s023--stateroom--2x3.png",
+      "id": 23,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Stateroom 024 [10x15].png",
+      "dstName": "s024--stateroom--2x3.png",
+      "id": 24,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Stateroom 025 [10x15].png",
+      "dstName": "s025--stateroom--2x3.png",
+      "id": 25,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Stateroom 026 [10x15].png",
+      "dstName": "s026--stateroom--2x3.png",
+      "id": 26,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Stateroom 027 [10x15].png",
+      "dstName": "s027--stateroom--2x3.png",
+      "id": 27,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Stateroom 028 [10x15].png",
+      "dstName": "s028--stateroom--2x3.png",
+      "id": 28,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Stateroom 029 [10x15].png",
+      "dstName": "s029--stateroom--2x3.png",
+      "id": 29,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Stateroom 030 [10x15].png",
+      "dstName": "s030--stateroom--2x3.png",
+      "id": 30,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Stateroom 031 [10x15].png",
+      "dstName": "s031--stateroom--2x3.png",
+      "id": 31,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Stateroom 032 [10x15].png",
+      "dstName": "s032--stateroom--2x3.png",
+      "id": 32,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Stateroom 033 [10x15].png",
+      "dstName": "s033--stateroom--2x3.png",
+      "id": 33,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Stateroom 034 [10x15].png",
+      "dstName": "s034--stateroom--2x3.png",
+      "id": 34,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [34]
+    },
+    {
+      "srcName": "Stateroom 035 [10x15].png",
+      "dstName": "s035--stateroom--2x3.png",
+      "id": 35,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [35]
+    },
+    {
+      "srcName": "Stateroom 036 [10x20].png",
+      "dstName": "s036--stateroom--2x4.png",
+      "id": 36,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [36]
+    },
+    {
+      "srcName": "Stateroom 037 [10x20].png",
+      "dstName": "s037--stateroom--2x4.png",
+      "id": 37,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [37]
+    },
+    {
+      "srcName": "Stateroom 038 [10x20].png",
+      "dstName": "s038--stateroom--2x4.png",
+      "id": 38,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Stateroom 039 [10x20].png",
+      "dstName": "s039--stateroom--2x4.png",
+      "id": 39,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Stateroom 040 [10x20].png",
+      "dstName": "s040--stateroom--2x4.png",
+      "id": 40,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [40]
+    },
+    {
+      "srcName": "Stateroom 041 [10x20].png",
+      "dstName": "s041--stateroom--2x4.png",
+      "id": 41,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Stateroom 042 [10x20].png",
+      "dstName": "s042--stateroom--2x4.png",
+      "id": 42,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [42]
+    },
+    {
+      "srcName": "Stateroom 043 [10x20].png",
+      "dstName": "s043--stateroom--2x4.png",
+      "id": 43,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [43]
+    },
+    {
+      "srcName": "Stateroom 044 [10x20].png",
+      "dstName": "s044--stateroom--2x4.png",
+      "id": 44,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [44]
+    },
+    {
+      "srcName": "Stateroom 045 [10x20].png",
+      "dstName": "s045--stateroom--2x4.png",
+      "id": 45,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [45]
+    },
+    {
+      "srcName": "Stateroom 046 [10x20].png",
+      "dstName": "s046--stateroom--2x4.png",
+      "id": 46,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [46]
+    },
+    {
+      "srcName": "Stateroom 047 [10x20].png",
+      "dstName": "s047--stateroom--2x4.png",
+      "id": 47,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [47]
+    },
+    {
+      "srcName": "Stateroom 048 [10x20].png",
+      "dstName": "s048--stateroom--2x4.png",
+      "id": 48,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [48]
+    },
+    {
+      "srcName": "Stateroom 049 [10x20].png",
+      "dstName": "s049--stateroom--2x4.png",
+      "id": 49,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [49]
+    },
+    {
+      "srcName": "Stateroom 050 [10x20].png",
+      "dstName": "s050--stateroom--2x4.png",
+      "id": 50,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [50]
+    },
+    {
+      "srcName": "Stateroom 051 [10x20].png",
+      "dstName": "s051--stateroom--2x4.png",
+      "id": 51,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [51]
+    },
+    {
+      "srcName": "Stateroom 052 [10x20].png",
+      "dstName": "s052--stateroom--2x4.png",
+      "id": 52,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [52]
+    },
+    {
+      "srcName": "Stateroom 053 [10x20].png",
+      "dstName": "s053--stateroom--2x4.png",
+      "id": 53,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [53]
+    },
+    {
+      "srcName": "Stateroom 054 [10x20].png",
+      "dstName": "s054--stateroom--2x4.png",
+      "id": 54,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [54]
+    },
+    {
+      "srcName": "Stateroom 055 [10x20].png",
+      "dstName": "s055--stateroom--2x4.png",
+      "id": 55,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [55]
+    },
+    {
+      "srcName": "Stateroom 056 [10x20].png",
+      "dstName": "s056--stateroom--2x4.png",
+      "id": 56,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [56]
+    },
+    {
+      "srcName": "Stateroom 057 [10x20].png",
+      "dstName": "s057--stateroom--2x4.png",
+      "id": 57,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [57]
+    },
+    {
+      "srcName": "Stateroom 058 [10x20].png",
+      "dstName": "s058--stateroom--2x4.png",
+      "id": 58,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [58]
+    },
+    {
+      "srcName": "Stateroom 059 [10x20].png",
+      "dstName": "s059--stateroom--2x4.png",
+      "id": 59,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [59]
+    },
+    {
+      "srcName": "Stateroom 060 [10x20].png",
+      "dstName": "s060--stateroom--2x4.png",
+      "id": 60,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [60]
+    },
+    {
+      "srcName": "Stateroom 061 [10x20].png",
+      "dstName": "s061--stateroom--2x4.png",
+      "id": 61,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [61]
+    },
+    {
+      "srcName": "Stateroom 062 [10x20].png",
+      "dstName": "s062--stateroom--2x4.png",
+      "id": 62,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [62]
+    },
+    {
+      "srcName": "Stateroom 063 [10x20].png",
+      "dstName": "s063--stateroom--2x4.png",
+      "id": 63,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [63]
+    },
+    {
+      "srcName": "Stateroom 064 [15x25].png",
+      "dstName": "s064--stateroom--3x5.png",
+      "id": 64,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [64]
+    },
+    {
+      "srcName": "Stateroom 065 [15x25].png",
+      "dstName": "s065--stateroom--3x5.png",
+      "id": 65,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [65]
+    },
+    {
+      "srcName": "Stateroom 066 [10x25].png",
+      "dstName": "s066--stateroom--2x5.png",
+      "id": 66,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [66]
+    },
+    {
+      "srcName": "Stateroom 067 [10x25].png",
+      "dstName": "s067--stateroom--2x5.png",
+      "id": 67,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [67]
+    },
+    {
+      "srcName": "Stateroom 068 [10x25].png",
+      "dstName": "s068--stateroom--2x5.png",
+      "id": 68,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [68]
+    },
+    {
+      "srcName": "Stateroom 069 [10x25].png",
+      "dstName": "s069--stateroom--2x5.png",
+      "id": 69,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [69]
+    },
+    {
+      "srcName": "Stateroom 070 [10x20].png",
+      "dstName": "s070--stateroom--2x4.png",
+      "id": 70,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [70]
+    },
+    {
+      "srcName": "Stateroom 071 [10x20].png",
+      "dstName": "s071--stateroom--2x4.png",
+      "id": 71,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [71]
+    },
+    {
+      "srcName": "Stateroom 072 [10x20].png",
+      "dstName": "s072--stateroom--2x4.png",
+      "id": 72,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [72]
+    },
+    {
+      "srcName": "Stateroom 073 [15x20].png",
+      "dstName": "s073--stateroom--3x4.png",
+      "id": 73,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [73]
+    },
+    {
+      "srcName": "Stateroom 074 [15x20].png",
+      "dstName": "s074--stateroom--3x4.png",
+      "id": 74,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [74]
+    },
+    {
+      "srcName": "Stateroom 075 [15x20].png",
+      "dstName": "s075--stateroom--3x4.png",
+      "id": 75,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [75]
+    },
+    {
+      "srcName": "Stateroom 076 [15x20].png",
+      "dstName": "s076--stateroom--3x4.png",
+      "id": 76,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [76]
+    },
+    {
+      "srcName": "Stateroom 077 [20x20].png",
+      "dstName": "s077--stateroom--4x4.png",
+      "id": 77,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [77]
+    },
+    {
+      "srcName": "Stateroom 078 [20x20].png",
+      "dstName": "s078--stateroom--4x4.png",
+      "id": 78,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [78]
+    },
+    {
+      "srcName": "Stateroom 079 [20x20].png",
+      "dstName": "s079--stateroom--4x4.png",
+      "id": 79,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [79]
+    },
+    {
+      "srcName": "Stateroom 079a [10x20].png",
+      "dstName": "s079--stateroom--2x4.png",
+      "id": 79,
+      "gridDim": [2, 4],
+      "is": ["part-a"],
+      "has": [],
+      "ids": [79]
+    },
+    {
+      "srcName": "Stateroom 079b [10x15].png",
+      "dstName": "s079--stateroom--2x3.png",
+      "id": 79,
+      "gridDim": [2, 3],
+      "is": ["part-b"],
+      "has": [],
+      "ids": [79]
+    },
+    {
+      "srcName": "Stateroom 080 [10x20].png",
+      "dstName": "s080--stateroom--2x4.png",
+      "id": 80,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [80]
+    },
+    {
+      "srcName": "Stateroom 081 [10x20].png",
+      "dstName": "s081--stateroom--2x4.png",
+      "id": 81,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [81]
+    },
+    {
+      "srcName": "Stateroom 082 [10x20].png",
+      "dstName": "s082--stateroom--2x4.png",
+      "id": 82,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [82]
+    },
+    {
+      "srcName": "Stateroom 083 [10x10].png",
+      "dstName": "s083--stateroom--2x2.png",
+      "id": 83,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [83]
+    },
+    {
+      "srcName": "Stateroom 084 [10x15].png",
+      "dstName": "s084--stateroom--2x3.png",
+      "id": 84,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [84]
+    },
+    {
+      "srcName": "Stateroom 085 [10x15].png",
+      "dstName": "s085--stateroom--2x3.png",
+      "id": 85,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [85]
+    },
+    {
+      "srcName": "Stateroom 086 [10x15].png",
+      "dstName": "s086--stateroom--2x3.png",
+      "id": 86,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [86]
+    },
+    {
+      "srcName": "Stateroom 087 [10x15].png",
+      "dstName": "s087--stateroom--2x3.png",
+      "id": 87,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [87]
+    },
+    {
+      "srcName": "Stateroom 088 [10x15].png",
+      "dstName": "s088--stateroom--2x3.png",
+      "id": 88,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [88]
+    },
+    {
+      "srcName": "Stateroom 089 [10x15].png",
+      "dstName": "s089--stateroom--2x3.png",
+      "id": 89,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [89]
+    },
+    {
+      "srcName": "Stateroom 090 [10x15].png",
+      "dstName": "s090--stateroom--2x3.png",
+      "id": 90,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [90]
+    },
+    {
+      "srcName": "Stateroom 091 [10x20].png",
+      "dstName": "s091--stateroom--2x4.png",
+      "id": 91,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [91]
+    },
+    {
+      "srcName": "Stateroom 092 [10x20].png",
+      "dstName": "s092--stateroom--2x4.png",
+      "id": 92,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [92]
+    },
+    {
+      "srcName": "Stateroom 093 [10x20].png",
+      "dstName": "s093--stateroom--2x4.png",
+      "id": 93,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [93]
+    },
+    {
+      "srcName": "Stateroom 094 [10x20].png",
+      "dstName": "s094--stateroom--2x4.png",
+      "id": 94,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [94]
+    },
+    {
+      "srcName": "Stateroom 095 [10x20].png",
+      "dstName": "s095--stateroom--2x4.png",
+      "id": 95,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [95]
+    },
+    {
+      "srcName": "Stateroom 096 [10x20].png",
+      "dstName": "s096--stateroom--2x4.png",
+      "id": 96,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [96]
+    },
+    {
+      "srcName": "Stateroom 097 [10x20].png",
+      "dstName": "s097--stateroom--2x4.png",
+      "id": 97,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [97]
+    },
+    {
+      "srcName": "Stateroom 098 [20x20].png",
+      "dstName": "s098--stateroom--4x4.png",
+      "id": 98,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [98]
+    },
+    {
+      "srcName": "Stateroom 099 [20x20].png",
+      "dstName": "s099--stateroom--4x4.png",
+      "id": 99,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [99]
+    },
+    {
+      "srcName": "Stateroom 100 [15x20].png",
+      "dstName": "s100--stateroom--3x4.png",
+      "id": 100,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [100]
+    },
+    {
+      "srcName": "Stateroom 101 [20x20].png",
+      "dstName": "s101--stateroom--4x4.png",
+      "id": 101,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [101]
+    },
+    {
+      "srcName": "Stateroom 102 [20x40].png",
+      "dstName": "s102--stateroom--4x8.png",
+      "id": 102,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [102]
+    },
+    {
+      "srcName": "Stateroom 103 [25x40].png",
+      "dstName": "s103--stateroom--5x8.png",
+      "id": 103,
+      "gridDim": [5, 8],
+      "is": [],
+      "has": [],
+      "ids": [103]
+    },
+    {
+      "srcName": "Stateroom 104 [20x40].png",
+      "dstName": "s104--stateroom--4x8.png",
+      "id": 104,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [104]
+    },
+    {
+      "srcName": "Stateroom 105 [25x40].png",
+      "dstName": "s105--stateroom--5x8.png",
+      "id": 105,
+      "gridDim": [5, 8],
+      "is": [],
+      "has": [],
+      "ids": [105]
+    },
+    {
+      "srcName": "Stateroom 106 [15x40].png",
+      "dstName": "s106--stateroom--3x8.png",
+      "id": 106,
+      "gridDim": [3, 8],
+      "is": [],
+      "has": [],
+      "ids": [106]
+    },
+    {
+      "srcName": "Stateroom 107 [15x20].png",
+      "dstName": "s107--stateroom--3x4.png",
+      "id": 107,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [107]
+    },
+    {
+      "srcName": "Stateroom 108 [15x20].png",
+      "dstName": "s108--stateroom--3x4.png",
+      "id": 108,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [108]
+    },
+    {
+      "srcName": "Stateroom 109 [15x20].png",
+      "dstName": "s109--stateroom--3x4.png",
+      "id": 109,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [109]
+    },
+    {
+      "srcName": "Stateroom 110 [10x20].png",
+      "dstName": "s110--stateroom--2x4.png",
+      "id": 110,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [110]
+    },
+    {
+      "srcName": "Stateroom 111 [10x20].png",
+      "dstName": "s111--stateroom--2x4.png",
+      "id": 111,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [111]
+    },
+    {
+      "srcName": "Stateroom 112 [10x15].png",
+      "dstName": "s112--stateroom--2x3.png",
+      "id": 112,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [112]
+    },
+    {
+      "srcName": "Stateroom 113 [15x30].png",
+      "dstName": "s113--stateroom--3x6.png",
+      "id": 113,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [113]
+    },
+    {
+      "srcName": "Stateroom 114 [15x30].png",
+      "dstName": "s114--stateroom--3x6.png",
+      "id": 114,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [114]
+    },
+    {
+      "srcName": "Stateroom 115 [15x30].png",
+      "dstName": "s115--stateroom--3x6.png",
+      "id": 115,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [115]
+    },
+    {
+      "srcName": "Stateroom 116 [15x20].png",
+      "dstName": "s116--stateroom--3x4.png",
+      "id": 116,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [116]
+    },
+    {
+      "srcName": "Stateroom 117 [15x20].png",
+      "dstName": "s117--stateroom--3x4.png",
+      "id": 117,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [117]
+    },
+    {
+      "srcName": "Stateroom 118 [25x45].png",
+      "dstName": "s118--stateroom--5x9.png",
+      "id": 118,
+      "gridDim": [5, 9],
+      "is": [],
+      "has": [],
+      "ids": [118]
+    },
+    {
+      "srcName": "Stateroom 119 [10x15].png",
+      "dstName": "s119--stateroom--2x3.png",
+      "id": 119,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [119]
+    },
+    {
+      "srcName": "Stateroom 120 [10x15].png",
+      "dstName": "s120--stateroom--2x3.png",
+      "id": 120,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [120]
+    },
+    {
+      "srcName": "Stateroom 121 [10x15].png",
+      "dstName": "s121--stateroom--2x3.png",
+      "id": 121,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [121]
+    },
+    {
+      "srcName": "Stateroom 122 [10x15].png",
+      "dstName": "s122--stateroom--2x3.png",
+      "id": 122,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [122]
+    },
+    {
+      "srcName": "Stateroom 123 [10x20].png",
+      "dstName": "s123--stateroom--2x4.png",
+      "id": 123,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [123]
+    },
+    {
+      "srcName": "Stateroom 124 [15x40].png",
+      "dstName": "s124--stateroom--3x8.png",
+      "id": 124,
+      "gridDim": [3, 8],
+      "is": [],
+      "has": [],
+      "ids": [124]
+    },
+    {
+      "srcName": "Stateroom 125 [15x40].png",
+      "dstName": "s125--stateroom--3x8.png",
+      "id": 125,
+      "gridDim": [3, 8],
+      "is": [],
+      "has": [],
+      "ids": [125]
+    },
+    {
+      "srcName": "Stateroom 126 [25x40].png",
+      "dstName": "s126--stateroom--5x8.png",
+      "id": 126,
+      "gridDim": [5, 8],
+      "is": [],
+      "has": [],
+      "ids": [126]
+    },
+    {
+      "srcName": "Stateroom 127 [30x40].png",
+      "dstName": "s127--stateroom--6x8.png",
+      "id": 127,
+      "gridDim": [6, 8],
+      "is": [],
+      "has": [],
+      "ids": [127]
+    },
+    {
+      "srcName": "Stateroom 128 [30x40].png",
+      "dstName": "s128--stateroom--6x8.png",
+      "id": 128,
+      "gridDim": [6, 8],
+      "is": [],
+      "has": [],
+      "ids": [128]
+    },
+    {
+      "srcName": "Stateroom 129 [20x40].png",
+      "dstName": "s129--stateroom--4x8.png",
+      "id": 129,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [129]
+    },
+    {
+      "srcName": "Stateroom 130 [15x25].png",
+      "dstName": "s130--stateroom--3x5.png",
+      "id": 130,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [130]
+    },
+    {
+      "srcName": "Stateroom 131 [20x20].png",
+      "dstName": "s131--stateroom--4x4.png",
+      "id": 131,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [131]
+    },
+    {
+      "srcName": "Stateroom 132 [15x20].png",
+      "dstName": "s132--stateroom--3x4.png",
+      "id": 132,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [132]
+    },
+    {
+      "srcName": "Stateroom 133 [20x25].png",
+      "dstName": "s133--stateroom--4x5.png",
+      "id": 133,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [133]
+    }
+  ]
+}
