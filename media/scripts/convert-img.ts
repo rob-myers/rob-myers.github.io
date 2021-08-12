@@ -1,7 +1,7 @@
 /**
  * Examples:
  * - yarn convert-img geomorph 'media/downloads/Geomorphs/100x50 Edge' media/geomorph/edge
- * - yarn convert-img symbol media/downloads/Symbols/Staterooms media/symbol/Staterooms
+ * - yarn convert-img symbol media/downloads/Symbols/Staterooms media/symbol/staterooms
  */
 import fs from 'fs';
 import path from 'path';
@@ -29,7 +29,7 @@ fs.mkdirSync(dstDir, { recursive: true });
 const manifestPath = path.join(dstDir, 'manifest.json');
 
 const filenameRegex = inputType === 'geomorph' ? geomorphsFilenameRegex : symbolsFilenameRegex;
-const extraMeta = inputType === 'geomorph' ? metaFromGeomorphFilename : metaFromSymbolFilename;
+const extractMeta = inputType === 'geomorph' ? metaFromGeomorphFilename : metaFromSymbolFilename;
 
 const fileMetas = srcFilenames.flatMap<FileMeta>(filename => {
   const matched = filename.match(filenameRegex);
@@ -37,7 +37,7 @@ const fileMetas = srcFilenames.flatMap<FileMeta>(filename => {
     console.warn('Ignoring unexpected PNG filename format:', filename);
     return [];
   }
-  return [extraMeta(matched)];
+  return [extractMeta(matched)];
 });
 // console.log(fileMetas);
 
