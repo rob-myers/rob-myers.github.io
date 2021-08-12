@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 200 200" width="200px" height="200px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <filter id="duotone-filter-0" x="-500%" y="-500%" width="1000%" height="1000%" bx:preset="duotone 1 rgb(189,11,145) rgb(252,187,13) 1">
+      <feColorMatrix type="matrix" result="grayscale" values="1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 1 0"/>
+      <feComponentTransfer color-interpolation-filters="sRGB">
+        <feFuncR type="gamma" exponent="1.5" amplitude="1" offset="0"/>
+        <feFuncG type="gamma" exponent="1.5" amplitude="1" offset="0"/>
+        <feFuncB type="gamma" exponent="1.5" amplitude="1" offset="0"/>
+      </feComponentTransfer>
+      <feComponentTransfer color-interpolation-filters="sRGB" result="duotone">
+        <feFuncR type="table" tableValues="0.741 0.988"/>
+        <feFuncG type="table" tableValues="0.043 0.733"/>
+        <feFuncB type="table" tableValues="0.569 0.051"/>
+        <feFuncA type="table" tableValues="0 1"/>
+      </feComponentTransfer>
+    </filter>
+    <bx:grid x="0" y="0" width="2" height="2"/>
+    <symbol id="symbol-0" viewBox="0 0 112 30" bx:pinned="true">
+      <path d="M 6.495 3.238 L 105.303 3.238 C 107.209 3.238 108.754 4.489 108.754 6.03 L 109.044 13.169 C 109.044 14.711 107.499 15.962 105.593 15.962 C 105.593 15.962 93.444 15.954 88.043 15.954 C 87.043 15.954 85.044 15.954 85.044 18.344 C 85.044 19.671 85.044 24.176 85.044 24.176 C 85.044 25.719 83.498 26.968 81.593 26.968 L 6.785 26.976 C 4.879 26.976 3.334 25.725 3.334 24.184 L 3.044 6.03 C 3.044 4.489 4.589 3.238 6.495 3.238 Z" style="stroke-linecap: round; fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); stroke-width: 6px;">
+        <title>arm-r</title>
+      </path>
+    </symbol>
+  </defs>
+  <g style="">
+    <title>seat</title>
+    <rect x="3" y="22" width="81" height="110" style="stroke-width: 5px; stroke: rgb(0, 0, 0); paint-order: fill; fill: rgb(237, 237, 237);" rx="1.808" ry="1.808">
+      <title>seat-front</title>
+    </rect>
+    <rect x="85" y="14" width="49" height="124" style="stroke: rgb(0, 0, 0); stroke-width: 2px; fill: rgb(237, 237, 237);" rx="1.808" ry="1.808">
+      <title>seat-back</title>
+    </rect>
+    <path style="fill: rgb(216, 216, 216); stroke: rgb(153, 153, 153); stroke-width: 3px;" d="M 83.788 27.738 L 83.788 128.234">
+      <title>seat-line</title>
+    </path>
+  </g>
+  <use width="115" height="30" transform="matrix(0.963331, 0, 0, 0.992919, 14.301, 0)" style="" xlink:href="#symbol-0">
+    <title>arm-r</title>
+  </use>
+  <use width="115" height="30" transform="matrix(0.963331, 0, 0, -0.992919, 14.301001, 153.575134)" style="" xlink:href="#symbol-0">
+    <title>arm-l</title>
+  </use>
+  <rect x="112" y="16.063" width="22" height="121.937" style="stroke-width: 5px; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);" rx="1.808" ry="1.808">
+    <title>back</title>
+  </rect>
+  <image width="137" height="155" style="opacity: 0.41; filter: url(#duotone-filter-0); pointer-events: none; visibility: hidden;" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIkAAACbAgMAAAArVFDKAAAACVBMVEX///8AAAD///9+749PAAAAAXRSTlMAQObYZgAAAJVJREFUeF7t2LENgCAUhGEaR2AfRrDwUTgC+zgCDVNK1IQYuRANqsT7E7qvoXynYlpgRm0Jrq9khleMDaC2zJS+Bo2kahnzCWPXF3w0WqRo5EkDusXYcNmM543PGbc3h3wE4R+GhoaGhoaGhoaGhoZmkkzunhvtudsT9NbdrcumgX2jzm6DNyJQ4/sY7HOmP2M6bBYwAzWdKyz5sAQyAAAAAElFTkSuQmCC">
+    <title>original</title>
+  </image>
+</svg>

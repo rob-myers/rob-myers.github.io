@@ -30,4 +30,10 @@ git add patches/some-package+$version.patch
 brew install imagemagick
 # autocrop an image using ImageMagick
 convert 319.100x50.Multipurpose.png -fuzz 1% -trim trimmed.319.100x50.Multipurpose.png 
+
+brew install pngcrush
+# overwrite with compressed image
+pngcrush -ow s037--stateroom--2x4.png
+# batch convert cwd
+pngcrush -d output_dir *.png
 ```

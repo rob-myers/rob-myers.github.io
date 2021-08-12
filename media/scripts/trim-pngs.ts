@@ -1,7 +1,8 @@
 /**
  * Examples:
- * - yarn convert-img geomorph 'media/downloads/Geomorphs/100x50 Edge' media/geomorph/edge
- * - yarn convert-img symbol media/downloads/Symbols/Staterooms media/symbol/staterooms
+ * - yarn trim-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
+ * - yarn trim-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
+ * - yarn trim-pngs symbol media/Symbols/Bridge media/symbol-bridge
  */
 import fs from 'fs';
 import path from 'path';
@@ -9,21 +10,22 @@ import chalk from 'chalk';
 import childProcess from 'child_process';
 import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 import { FileMeta, metaFromGeomorphFilename, metaFromSymbolFilename } from './service';
+import { nanoid } from 'nanoid';
 
 const [,, inputType, srcDir, dstDir] = process.argv;
 const geomorphsFilenameRegex = /(^[\d,]+) \[(\d+x\d+)\] ([^(]*)(.*)\.png$/;
 const symbolsFilenameRegex = /^(.*) (\d+)([^\d]*) \[(\d+x\d+)\]\.png$/;
 
 if (
-  !srcDir
+  (inputType !== 'geomorph' && inputType !== 'symbol')
+  || !srcDir
   || !dstDir
   || !fs.existsSync(srcDir)
-  || (inputType !== 'geomorph' && inputType !== 'symbol')
 ) {
   console.error(chalk.red(`
-error: usage: yarn convert-img {input_type} {src_folder} {dst_folder} where:
+error: usage: yarn trim-pngs {input_type} {src_dir} {dst_dir} where:
   - {input_type} in ['geomorph', 'symbol']
-  - {src_folder} exists
+  - {src_dir} exists
 `));
   process.exit(1);
 }
@@ -38,40 +40,42 @@ const extractMeta = inputType === 'geomorph' ? metaFromGeomorphFilename : metaFr
 const fileMetas = srcFilenames.flatMap<FileMeta>(filename => {
   const matched = filename.match(filenameRegex);
   if (!matched) {
-    console.warn('Ignoring unexpected PNG filename format:', filename);
+    console.warn(chalk.yellow('Ignoring file with unexpected PNG filename format:'), filename);
     return [];
   }
   return [extractMeta(matched)];
 });
 // console.log(fileMetas);
 
-console.info(
-  chalk.yellow('Creating'), manifestPath,
-);
+console.info(chalk.yellow('Creating manifest'), manifestPath,);
 fs.writeFileSync(path.join(dstDir, 'manifest.json'), jsonStringifyPrettyCompact({
   parentFolder: path.basename(srcDir),
   fileMetas,
 }));
 
-console.info(
-  chalk.yellow('Detecting'), 'ImageMagick command line',
-);
-const detectImageMagick = childProcess.execSync(`
+console.info(chalk.yellow('Detecting'), 'ImageMagick command line');
+if (childProcess.execSync(`
   convert --version | grep ImageMagick >/dev/null
   echo $?
-`);
-
-if (detectImageMagick.toString().trim() !== '0') {
+`).toString().trim() !== '0') {
   console.error(chalk.red("error: please install ImageMagick e.g. `brew install imagemagick`"));
   process.exit(1);
 }
 
-// TODO consider renaming then applying ImageMagick batch conversion
-
 for (const { srcName, dstName } of fileMetas) {
-  const result = childProcess.execSync(`
-    echo "${chalk.yellow('converting')} ${srcName} ${chalk.yellow('to')} ${dstName}"
-    convert "${path.join(srcDir, srcName)}" -fuzz 1% -trim -colors 16 "${path.join(dstDir, dstName)}"
-  `);
-  console.log(result.toString().trim());
+  console.info(childProcess.execSync(`
+    echo "${chalk.yellow('renaming')} ${srcName} ${chalk.yellow('to')} ${dstName}"
+    # convert "${path.join(srcDir, srcName)}" -fuzz 1% -trim -colorspace Gray -colors 32 "${path.join(dstDir, dstName)}"
+    cp "${path.join(srcDir, srcName)}" "${path.join(dstDir, dstName)}"
+  `).toString().trim());
 }
+
+console.info(chalk.yellow(`Applying ImageMagick \`convert\`s in parallel`));
+const tempDir = `temp_${nanoid()}`;
+
+childProcess.execSync(`
+  mkdir ${path.join(dstDir, tempDir)} && cd '${dstDir}'
+  time find *.png -print0 |
+    xargs -0 -I £ -P 40 convert -fuzz 1% -trim -colorspace Gray -colors 32 £ ./${tempDir}/£
+  mv ${tempDir}/*.png . && rmdir ${tempDir}
+`);

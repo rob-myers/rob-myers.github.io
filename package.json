@@ -10,7 +10,8 @@
     "next-cfg": "tsc -p scripts",
     "types": "tsc --noEmit",
     "postinstall": "patch-package",
-    "convert-img": "ts-node -O '{ \"module\": \"commonjs\", \"isolatedModules\": false }' ./media/scripts/convert-img"
+    "trim-pngs": "ts-node -O '{ \"module\": \"commonjs\", \"isolatedModules\": false }' ./media/scripts/trim-pngs",
+    "minify-pngs": "ts-node -O '{ \"module\": \"commonjs\", \"isolatedModules\": false }' ./media/scripts/minify-pngs"
   },
   "dependencies": {
     "braces": "^3.0.2",

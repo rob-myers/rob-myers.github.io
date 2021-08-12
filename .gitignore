@@ -38,7 +38,6 @@ babel.config.js
 next.config.js
 misc.config.js
 
-media/downloads/*
-media/boxy/*
-media/geomorph/**/*.png
-media/symbol/**/*.png
+media/*
+!media/scripts
+!media/boxy
