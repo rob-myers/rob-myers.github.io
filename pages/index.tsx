@@ -26,29 +26,36 @@ Roguelike; Built online; Game AI focus
 ## Objective <float rem="1.2">19th July 2021</float>
 
 We are going to build a video game step-by-step on this website.
-It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the sspaceship _Gehennom_.
+It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the spaceship _Gehennom_.
 
-As an important side-effect, a popular approach to frontend development will be presented. The underlying technology is the Markup language HTML, particularly [SVG](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics), brought to life via CSS and JavaScript.
+As an important side-effect, a popular approach to frontend development will be presented. The underlying technology is the Markup language HTML, brought to life via CSS, SVG and JavaScript.
 
 ---
 
 ## Constraints <float rem="1.2">19th July 2021</float>
 
-I've necessarily made a large number of decisions. Here are some important ones, from low-level to high-level.
+I've necessarily made a large number of decisions. Here are the important ones, from low-level to high-level.
 
-- Use browser-based technologies.
-  - Use CSS and SVG instead of HTMLCanvas or WebGL.
-  - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS styled components.
-  - Use [Preact](https://www.npmjs.com/package/preact) instead of React, and [Goober](https://www.npmjs.com/package/goober) instead of [Emotion](https://www.npmjs.com/package/@emotion/styled).
-- Use game mechanics inspired by [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) and other roguelikes.
-  - Use a realtime birdseye camera.
-  - Use procedural level generation, compatible with spaceship building/docking.
-- Use explicitly illustrated NPC decisions as a game mechanic.
-- Use graphics based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
-- The game will be called _Rogue Markup_. The player captains the spaceship _Gehennom_ and works for the corporation _Unified Transport_. Missions involve personnel transport, cargo transport, and hauling.
+- Concerning technology:
+  - Make a browser-based game.
+  - Use CSS/SVG/Images instead of HTMLCanvas/WebGL.
+  - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for physics.
+  - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and [Emotion](https://www.npmjs.com/package/@emotion/styled) CSS-in-JS styled components.
+  - Use [Preact](https://www.npmjs.com/package/preact) instead of React.
+  - Use [NextJS](https://nextjs.org/) as our development environment.
+- Concerning game mechanics:
+  - Use a realtime birdseye camera, like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
+  - Use procedural level generation, permitting spaceship building/docking.
+  - Use the physics engine [Rapier](https://www.npmjs.com/package/@dimforge/rapier2d).
+  - Use graphics based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
+  - Use explicitly illustrated NPC decisions as a game mechanic.
+- Concerning the setting:
+  - The game will be called _Rogue Markup_.
+  - The player captains the spaceship _Gehennom_, working for _Unified Transport_.
+  - Missions involve personnel transport, cargo transport, and hauling.
 
 Over time we'll clarify these constraints.
-But first we must emphasise: _finishing a game is notoriously hard_.
+But first we must emphasise: _finishing a game is really fucking hard_.
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). We'll now address them.
 
 ### 1. Fun to develop (Games I want to make)
@@ -66,7 +73,8 @@ They're also analogous to UI components: parallel systems with some intercommuni
 As an end result I want a _highly replayable space travel game_.
 The underlying missions amount to going from A to B (🎵 ever was it so).
 Monotony will be overcome via mission specifics, encountered NPC behaviours, procedural generation, and ship building.
-Think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
+Functionally, think of [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
+Graphically, see [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
 Importantly, it should be easy for other people to extend this game.
 We'll achieve this by providing source code, escape hatches to [StackBlitz](https://stackblitz.com/) and [CodeSandbox](https://codesandbox.io/), and clear explanations.
@@ -98,13 +106,13 @@ We will build the game using the following technologies.
 | Concept | Browser Technology |
 | - | - |
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
-| Styles | Styled components via CSS-in-JS. |
-| Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. Styling via [Goober](https://www.npmjs.com/package/goober), similar to [Emotion](https://www.npmjs.com/package/@emotion/styled). |
+| Styles | Styled components via CSS-in-JS [Emotion](https://www.npmjs.com/package/@emotion/styled). |
+| Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Static analysis | [ESLint](https://www.npmjs.com/package/eslint) and also TypeScript via [JSDoc comments](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html). |
 | Live analysis | [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
 | Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides draggable tabs. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) and [StackBlitz](https://stackblitz.com/) links, using React. |
-| Code sharing | [GitHub](https://github.com/) comments (shown on the site) e.g. referencing CodeSandbox, StackBlitz. |
+| Code sharing | [GitHub](https://github.com/) comments (shown on site) e.g. referencing CodeSandbox, StackBlitz. GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
@@ -118,13 +126,13 @@ One popular approach uses React functional components i.e. _JavaScript functions
 - have a single parameter, conventionally called _props_.
 - return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
-The argument _props_ is a JavaScript object e.g. \`{ meaningOfLife: 42, ... }\` defining the component's named inputs.
+The argument _props_ is a JavaScript object e.g. \`{ meaningOfLife: 42, ... }\`, defining the component's named inputs.
 What is a _virtual_ DOM node?
 Well, first consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
 
 __TODO__ 
 - demo app ConnectDemo
-- prepare CodeSandbox link for PanZoom
+- prepare CodeSandbox link for PanZoom ✅
 - prepare StackBlitz and CodeSandbox links for ConnectDemo
 - tabbed ConnectDemo here, also with transpiled JSX
 - brief overview and point to StackBlitz/CodeSandbox links
