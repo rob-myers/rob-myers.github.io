@@ -17,7 +17,7 @@ const geomorphsFilenameRegex = /(^[\d,]+) \[(\d+x\d+)\] ([^(]*)(.*)\.png$/;
 const symbolsFilenameRegex = /^(.*) (\d+)([^\d]*) \[(\d+x\d+)\]\.png$/;
 
 if (
-  (inputType !== 'geomorph' && inputType !== 'symbol')
+  !(inputType === 'geomorph' || inputType == 'symbol')
   || !srcDir
   || !dstDir
   || !fs.existsSync(srcDir)
@@ -53,19 +53,15 @@ fs.writeFileSync(path.join(dstDir, 'manifest.json'), jsonStringifyPrettyCompact(
   fileMetas,
 }));
 
-console.info(chalk.yellow('Detecting'), 'ImageMagick command line');
-if (childProcess.execSync(`
-  convert --version | grep ImageMagick >/dev/null
-  echo $?
-`).toString().trim() !== '0') {
+console.info(chalk.yellow('detecting'), 'ImageMagick command \`convert\`');
+if (childProcess.execSync(`convert --version | grep ImageMagick >/dev/null && echo $?`).toString().trim() !== '0') {
   console.error(chalk.red("error: please install ImageMagick e.g. `brew install imagemagick`"));
   process.exit(1);
 }
 
 for (const { srcName, dstName } of fileMetas) {
   console.info(childProcess.execSync(`
-    echo "${chalk.yellow('renaming')} ${srcName} ${chalk.yellow('to')} ${dstName}"
-    # convert "${path.join(srcDir, srcName)}" -fuzz 1% -trim -colorspace Gray -colors 32 "${path.join(dstDir, dstName)}"
+    echo "${chalk.yellow('copying')} ${srcName} ${chalk.yellow('to')} ${dstName}"
     cp "${path.join(srcDir, srcName)}" "${path.join(dstDir, dstName)}"
   `).toString().trim());
 }
@@ -76,6 +72,6 @@ const tempDir = `temp_${nanoid()}`;
 childProcess.execSync(`
   mkdir ${path.join(dstDir, tempDir)} && cd '${dstDir}'
   time find *.png -print0 |
-    xargs -0 -I £ -P 40 convert -fuzz 1% -trim -colorspace Gray -colors 32 £ ./${tempDir}/£
+    xargs -0 -I £ -P 40 convert -fuzz 1% -trim -colors 32 £ ./${tempDir}/£
   mv ${tempDir}/*.png . && rmdir ${tempDir}
 `);
