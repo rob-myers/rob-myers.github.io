@@ -1,18 +1,26 @@
 /**
- * Example: yarn convert-img 'media/downloads/Geomorphs/100x50 Edge' media/geomorph/edge
+ * Examples:
+ * - yarn convert-img geomorph 'media/downloads/Geomorphs/100x50 Edge' media/geomorph/edge
+ * - yarn convert-img symbol media/downloads/Symbols/Staterooms media/symbol/Staterooms
  */
 import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
-import { extractMetaFromFilename } from './service';
+import { FileMeta, metaFromGeomorphFilename, metaFromSymbolFilename } from './service';
 
-const [,, srcDir, dstDir] = process.argv;
-const filenameRegex = /(^[\d,]+) \[(\d+x\d+)\] ([^(]*)(.*)\.png$/;
+const [,, inputType, srcDir, dstDir] = process.argv;
+const geomorphsFilenameRegex = /(^[\d,]+) \[(\d+x\d+)\] ([^(]*)(.*)\.png$/;
+const symbolsFilenameRegex = /^(.*) (\d+)([^\d]*) \[(\d+x\d+)\]\.png$/;
 
-if (!srcDir || !dstDir || !fs.existsSync(srcDir)) {
-  console.error(chalk.red("error: usage: yarn convert-img {src_folder} {dst_folder} where {src_folder} exists"));
+if (
+  !srcDir
+  || !dstDir
+  || !fs.existsSync(srcDir)
+  || (inputType !== 'geomorph' && inputType !== 'symbol')
+) {
+  console.error(chalk.red("error: usage: yarn convert-img {input_type} {src_folder} {dst_folder} where {input_type} in ['geomorph', 'symbol'] and {src_folder} exists"));
   process.exit(1);
 }
 
@@ -20,18 +28,8 @@ const srcFilenames = fs.readdirSync(srcDir);
 fs.mkdirSync(dstDir, { recursive: true });
 const manifestPath = path.join(dstDir, 'manifest.json');
 
-interface FileMeta {
-  srcName: string;
-  /** Numeric identifier from Starship Geomorphs 2.0 */
-  id: number;
-  /** Sometimes a range is given */
-  ids: number[];
-  /** Dimension in grid squares of Starship Geomorphs 2.0 */
-  gridDim: [number, number];
-  dstName: string;
-  is: string[];
-  has: string[];
-}
+const filenameRegex = inputType === 'geomorph' ? geomorphsFilenameRegex : symbolsFilenameRegex;
+const extraMeta = inputType === 'geomorph' ? metaFromGeomorphFilename : metaFromSymbolFilename;
 
 const fileMetas = srcFilenames.flatMap<FileMeta>(filename => {
   const matched = filename.match(filenameRegex);
@@ -39,24 +37,7 @@ const fileMetas = srcFilenames.flatMap<FileMeta>(filename => {
     console.warn('Ignoring unexpected PNG filename format:', filename);
     return [];
   }
-
-  const srcName = matched[0];
-  const ids = matched[1].split(',').map(Number);
-  const id = ids[0];
-  const gridDim = matched[2].split('x').map(x => Number(x) / 5) as [number, number];
-  const description = matched[3].concat(matched[4]);
-  const { filePrefix, is, has } = extractMetaFromFilename(description);
-  const dstName =`${id}--${filePrefix}--${gridDim[0]}x${gridDim[1]}.png`;
-
-  return [{
-    srcName,
-    dstName,
-    id,
-    gridDim,
-    is,
-    has,
-    ids,
-  }];
+  return [extraMeta(matched)];
 });
 // console.log(fileMetas);
 
@@ -80,6 +61,8 @@ if (detectImageMagick.toString().trim() !== '0') {
   console.error(chalk.red("error: please install ImageMagick e.g. `brew install imagemagick`"));
   process.exit(1);
 }
+
+// TODO consider renaming then applying ImageMagick batch conversion
 
 for (const { srcName, dstName } of fileMetas) {
   const result = childProcess.execSync(`

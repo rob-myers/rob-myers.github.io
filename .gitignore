@@ -41,3 +41,4 @@ misc.config.js
 media/downloads/*
 media/boxy/*
 media/geomorph/**/*.png
+media/symbol/**/*.png
