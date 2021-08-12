@@ -18,7 +18,7 @@ export function metaFromGeomorphFilename(matched: RegExpMatchArray): FileMeta {
   const gridDim = matched[2].split('x').map(x => Number(x) / 5) as [number, number];
   const description = matched[3].concat(matched[4]);
   const { filePrefix, is, has } = extractGeomorphInfo(description);
-  const dstName =`${matched[1].split(',')[0]}--${filePrefix}--${gridDim[0]}x${gridDim[1]}.png`;
+  const dstName =`g${matched[1].split(',')[0]}--${filePrefix}--${gridDim[0]}x${gridDim[1]}.png`;
 
   return { srcName, dstName, id, gridDim, is, has, ids };
 }
@@ -30,7 +30,7 @@ export function metaFromSymbolFilename(matched: RegExpMatchArray): FileMeta {
   const ids = [id];
   const is = matched[3] ? [`part-${matched[3]}`] : [];
   const gridDim = matched[4].split('x').map(x => Number(x) / 5) as [number, number];
-  const dstName = `${matched[2]}--${category}--${gridDim[0]}x${gridDim[1]}.png`;
+  const dstName = `s${matched[2]}--${category}--${gridDim[0]}x${gridDim[1]}.png`;
 
   return { srcName, dstName, id, gridDim, is, has: [], ids };
 }

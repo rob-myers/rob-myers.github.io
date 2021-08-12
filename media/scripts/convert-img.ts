@@ -20,7 +20,11 @@ if (
   || !fs.existsSync(srcDir)
   || (inputType !== 'geomorph' && inputType !== 'symbol')
 ) {
-  console.error(chalk.red("error: usage: yarn convert-img {input_type} {src_folder} {dst_folder} where {input_type} in ['geomorph', 'symbol'] and {src_folder} exists"));
+  console.error(chalk.red(`
+error: usage: yarn convert-img {input_type} {src_folder} {dst_folder} where:
+  - {input_type} in ['geomorph', 'symbol']
+  - {src_folder} exists
+`));
   process.exit(1);
 }
 
