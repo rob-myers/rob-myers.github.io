@@ -1,16 +1,13 @@
 import React, { useMemo } from "react";
 import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
 import styled from '@emotion/styled';
+import { css } from "@emotion/react";
 
 import * as Lookup from 'model/tabs-lookup';
 import { CodeEditor } from 'components/dynamic';
 
 export function Tabs({ tabs }: Props) {
-  const model = useMemo(
-    () => Model.fromJson(computeJsonModel(tabs)),
-    [tabs],
-  );
-
+  const model = useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   return (
     <TabsRoot>
       <Layout
@@ -38,7 +35,7 @@ const TabsRoot = styled('div')`
 
   .flexlayout__tab_button_content {
     user-select: none;
-    font-size: smaller;
+    font-size: 12px;
   }
   .flexlayout__tab {
     background: white;
@@ -63,7 +60,7 @@ function computeJsonModel(tabs: TabMeta[]): IJsonModel {
             type: 'tab',
             name: meta.key === 'code'
               ? meta.filepath
-              : `@${meta.filepath.slice(0, -4)}`, // sans .jsx
+              : `${meta.filepath.slice(0, -4)}`, // sans .jsx
             config: {
               key: meta.key,
             },
@@ -83,13 +80,15 @@ function factory(node: TabNode) {
     case 'code': {
       const filepath = node.getComponent() || '';
       if (filepath in Lookup.code) {
-        return <CodeEditor
-          height="100%"
-          padding="16px 0"
-          lineNumbers
-          readOnly
-          code={Lookup.code[filepath as Lookup.CodeFilepathKey]}
-        />;
+        return <Tab>
+          <CodeEditor
+              height="100%"
+              padding="16px 0"
+              lineNumbers
+              readOnly
+              code={Lookup.code[filepath as Lookup.CodeFilepathKey]}
+            />;
+        </Tab>;
       }
       return <ErrorMessage>Unknown code with filepath {filepath}</ErrorMessage>;
     }
@@ -97,7 +96,7 @@ function factory(node: TabNode) {
       const componentKey = node.getComponent() || '';
       if (componentKey in Lookup.component) {
         const FC = Lookup.component[componentKey as Lookup.ComponentFilepathKey];
-        return <FC/>
+        return <Tab><FC/></Tab>
       }
       return <ErrorMessage>Unknown function component with name {componentKey}</ErrorMessage>;
     }
@@ -107,7 +106,33 @@ function factory(node: TabNode) {
 }
 
 function ErrorMessage({ children }: React.PropsWithChildren<{}>) {
-  return <section>
-    <strong>{children}</strong>
-  </section>;
+  return <section><strong>{children}</strong></section>;
+}
+
+function Tab({ children }: React.PropsWithChildren<{}>) {
+  return (
+    <TabRoot>
+      <TabToolbar />
+      <div>{children}</div>
+    </TabRoot>
+  );
+}
+
+const TabRoot = styled('section')`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  div:nth-of-type(2) { flex-grow: 1; }
+`;
+
+function TabToolbar() {
+  return (
+    <div css={css`
+      background: #444;
+      color: white;
+      padding: 6px 8px;
+    `}>
+      toolbar goes here
+    </div>
+  );
 }
