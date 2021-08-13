@@ -1,7 +1,6 @@
 import React, { useMemo } from "react";
 import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
 import styled from '@emotion/styled';
-import { css } from "@emotion/react";
 
 import * as Lookup from 'model/tabs-lookup';
 import { CodeEditor } from 'components/dynamic';
@@ -36,6 +35,7 @@ const TabsRoot = styled('div')`
   .flexlayout__tab_button_content {
     user-select: none;
     font-size: 12px;
+    font-family: Courier, monospace;
   }
   .flexlayout__tab {
     background: white;
@@ -51,24 +51,22 @@ function computeJsonModel(tabs: TabMeta[]): IJsonModel {
     layout: {
       type: 'row',
       weight: 100,
-      children: [
-        {
-          type: 'tabset',
-          weight: 50,
-          selected: 0,
-          children: tabs.map((meta) => ({
-            type: 'tab',
-            name: meta.key === 'code'
-              ? meta.filepath
-              : `${meta.filepath.slice(0, -4)}`, // sans .jsx
-            config: {
-              key: meta.key,
-            },
-            component: meta.filepath,
-            enableClose: false,
-          })),
-        }
-      ],
+      children: [{
+        type: 'tabset',
+        weight: 50,
+        selected: 0,
+        children: tabs.map((meta) => ({
+          type: 'tab',
+          name: meta.key === 'code'
+            ? meta.filepath
+            : meta.filepath.slice(0, -4), // sans .jsx
+          config: {
+            key: meta.key,
+          },
+          component: meta.filepath,
+          enableClose: false,
+        })),
+      }],
     }
   };
 }
@@ -113,25 +111,37 @@ function Tab({ children }: React.PropsWithChildren<{}>) {
   return (
     <TabRoot>
       <TabToolbar />
-      <div>{children}</div>
+      <div className="tab-content">{children}</div>
     </TabRoot>
   );
 }
 
 const TabRoot = styled('section')`
-  display: flex;
-  flex-direction: column;
   height: 100%;
-  div:nth-of-type(2) { flex-grow: 1; }
+  font-size: 14px;
+  position: relative;
+
+  .tab-toolbar {
+    background: #444;
+      color: white;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 32px;
+      padding: 6px 8px;
+  }
+
+  .tab-content {
+    position: absolute;
+    top: 32px;
+    width: 100%;
+    height: calc(100% - 32px);
+  }
 `;
 
 function TabToolbar() {
   return (
-    <div css={css`
-      background: #444;
-      color: white;
-      padding: 6px 8px;
-    `}>
+    <div className="tab-toolbar">
       toolbar goes here
     </div>
   );
