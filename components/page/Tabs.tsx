@@ -27,7 +27,7 @@ interface Props {
 
 type TabMeta = (
   | { key: 'code'; filepath: Lookup.CodeFilepathKey }
-  | { key: 'component'; componentKey: Lookup.ComponentKey }
+  | { key: 'component'; filepath: Lookup.ComponentFilepathKey }
 );
 
 const TabsRoot = styled('div')`
@@ -61,11 +61,13 @@ function computeJsonModel(tabs: TabMeta[]): IJsonModel {
           selected: 0,
           children: tabs.map((meta) => ({
             type: 'tab',
-            name: meta.key === 'code' ? meta.filepath : meta.componentKey,
+            name: meta.key === 'code'
+              ? meta.filepath
+              : `@${meta.filepath.slice(0, -4)}`, // sans .jsx
             config: {
               key: meta.key,
             },
-            component: meta.key === 'code' ? meta.filepath : meta.componentKey,
+            component: meta.filepath,
             enableClose: false,
           })),
         }
@@ -86,7 +88,7 @@ function factory(node: TabNode) {
           padding="16px 0"
           lineNumbers
           readOnly
-          code={Lookup.code['components/PanZoom.jsx']}
+          code={Lookup.code[filepath as Lookup.CodeFilepathKey]}
         />;
       }
       return <ErrorMessage>Unknown code with filepath {filepath}</ErrorMessage>;
@@ -94,7 +96,7 @@ function factory(node: TabNode) {
     case 'component': {
       const componentKey = node.getComponent() || '';
       if (componentKey in Lookup.component) {
-        const FC = Lookup.component[componentKey as Lookup.ComponentKey];
+        const FC = Lookup.component[componentKey as Lookup.ComponentFilepathKey];
         return <FC/>
       }
       return <ErrorMessage>Unknown function component with name {componentKey}</ErrorMessage>;

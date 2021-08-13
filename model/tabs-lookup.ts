@@ -1,14 +1,16 @@
-import PanZoomDemo from 'projects/demo/PanZoomDemo';
-import panZoomJsx from '!!raw-loader!projects/components/PanZoom.jsx';
+import PanZoomDemo from 'projects/panzoom/PanZoomDemo';
+import panZoomJsx from '!!raw-loader!projects/panzoom/PanZoom.jsx';
+import panZoomDemoJsx from '!!raw-loader!projects/panzoom/PanZoomDemo.jsx';
 
 export const code = {
-  'components/PanZoom.jsx': panZoomJsx,
+  'panzoom/PanZoom.jsx': panZoomJsx,
+  'panzoom/PanZoomDemo.jsx': panZoomDemoJsx,
 } as const;
 
 export const component = {
-  PanZoomDemo,
+  'panzoom/PanZoomDemo.jsx': PanZoomDemo,
 } as const;
 
-export type ComponentKey = keyof typeof component;
+export type ComponentFilepathKey = keyof typeof component;
 
 export type CodeFilepathKey = keyof typeof code;

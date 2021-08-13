@@ -1,6 +1,6 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
-import PanZoom from '../components/PanZoom';
+import PanZoom from './PanZoom';
 
 /** @param {{ className?: string }} props */
 export default function PanZoomDemo({ className }) {

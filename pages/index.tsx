@@ -6,7 +6,7 @@ import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 import { Tabs } from 'components/page/Tabs';
 
-import ConnectDemo from 'projects/demo/ConnectDemo';
+import ConnectDemo from 'projects/misc/ConnectDemo';
 
 const env = {};
 
@@ -164,8 +164,8 @@ We begin by making the game viewpoints _viewable_.
         <ConnectDemo />
 
         <Tabs tabs={[
-          { key: 'component', componentKey: 'PanZoomDemo' },
-          { key: 'code', filepath: 'components/PanZoom.jsx' },
+          { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
+          { key: 'code', filepath: 'panzoom/PanZoom.jsx' },
         ]} />
 
         <br/>
@@ -179,7 +179,7 @@ We begin by making the game viewpoints _viewable_.
         <section style={{ background: '#000', height: 400 }}>
           <CodeEditor
             height="400px"
-            code={code['components/PanZoom.jsx']}
+            code={code['panzoom/PanZoom.jsx']}
             lineNumbers
           />
         </section>
