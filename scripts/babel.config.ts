@@ -14,6 +14,7 @@ export default (api: Api): Config => {
           },
           'preset-react': {
             runtime: 'automatic',
+            importSource: '@emotion/react',
           },
           // https://github.com/babel/babel/issues/11539#issuecomment-626381058
           // 'transform-runtime': {},
@@ -22,7 +23,7 @@ export default (api: Api): Config => {
         },
       ],
     ],
-    plugins: []
+    plugins: ['@emotion/babel-plugin'],
   };
 };
 
