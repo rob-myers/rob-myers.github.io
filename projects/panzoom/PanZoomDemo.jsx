@@ -18,11 +18,11 @@ export default function PanZoomDemo({ className }) {
   );
 }
 
-export const DemoRoot = styled('section')`
+export const DemoRoot = styled('div')`
   display: flex;
   flex-direction: column;
   height: 100%;
   div:nth-of-type(1) { padding: 12px 8px; }
   div:nth-of-type(2) { flex: 1; border: 1px solid #aaa; position: relative; }
 `;
-DemoRoot.displayName = 'DemoRoot';
+DemoRoot.displayName = 'PanZoomDemo';
