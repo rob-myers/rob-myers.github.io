@@ -3,10 +3,12 @@
  *
  * Examples:
  * - yarn trim-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
+ * - yarn trim-pngs root media/Symbols media/symbol-root
+ * 
  * - yarn trim-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
+ * - yarn trim-pngs symbol media/Symbols/Lounge media/symbol-lounge
  * - yarn trim-pngs symbol media/Symbols/Bridge media/symbol-bridge
  * - yarn trim-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
- * - yarn trim-pngs root media/Symbols media/symbol-root
  */
 import fs from 'fs';
 import path from 'path';

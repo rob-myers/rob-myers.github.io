@@ -62,3 +62,9 @@ yarn trim-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-
 ```sh
 yarn trim-pngs root media/Symbols media/symbol-root
 ```
+
+### `minify edited large symbol PNGs`
+
+```sh
+yarn minify-pngs media/edited-symbols
+```

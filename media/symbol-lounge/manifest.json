@@ -1,0 +1,411 @@
+{
+  "parentFolder": "Lounge",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Lounge 001 [10x10].png",
+      "dstName": "lounge--001--2x2.png",
+      "id": 1,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Lounge 002 [10x10].png",
+      "dstName": "lounge--002--2x2.png",
+      "id": 2,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Lounge 003 [10x10].png",
+      "dstName": "lounge--003--2x2.png",
+      "id": 3,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Lounge 004 [10x10].png",
+      "dstName": "lounge--004--2x2.png",
+      "id": 4,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Lounge 005 [10x10].png",
+      "dstName": "lounge--005--2x2.png",
+      "id": 5,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Lounge 006 [10x10].png",
+      "dstName": "lounge--006--2x2.png",
+      "id": 6,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Lounge 007 [10x10].png",
+      "dstName": "lounge--007--2x2.png",
+      "id": 7,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Lounge 008 [10x15].png",
+      "dstName": "lounge--008--2x3.png",
+      "id": 8,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Lounge 009 [10x15].png",
+      "dstName": "lounge--009--2x3.png",
+      "id": 9,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Lounge 010 [10x15].png",
+      "dstName": "lounge--010--2x3.png",
+      "id": 10,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Lounge 011 [10x15].png",
+      "dstName": "lounge--011--2x3.png",
+      "id": 11,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Lounge 012 [10x15].png",
+      "dstName": "lounge--012--2x3.png",
+      "id": 12,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Lounge 013 [10x15].png",
+      "dstName": "lounge--013--2x3.png",
+      "id": 13,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Lounge 014 [10x20].png",
+      "dstName": "lounge--014--2x4.png",
+      "id": 14,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Lounge 015 [10x20].png",
+      "dstName": "lounge--015--2x4.png",
+      "id": 15,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Lounge 016 [10x20].png",
+      "dstName": "lounge--016--2x4.png",
+      "id": 16,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Lounge 017 [10x20].png",
+      "dstName": "lounge--017--2x4.png",
+      "id": 17,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Lounge 018 [10x20].png",
+      "dstName": "lounge--018--2x4.png",
+      "id": 18,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Lounge 019 [10x20].png",
+      "dstName": "lounge--019--2x4.png",
+      "id": 19,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Lounge 020 [10x20].png",
+      "dstName": "lounge--020--2x4.png",
+      "id": 20,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Lounge 021 [10x20].png",
+      "dstName": "lounge--021--2x4.png",
+      "id": 21,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Lounge 022 [10x20].png",
+      "dstName": "lounge--022--2x4.png",
+      "id": 22,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Lounge 023 [10x20].png",
+      "dstName": "lounge--023--2x4.png",
+      "id": 23,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Lounge 024 [10x20].png",
+      "dstName": "lounge--024--2x4.png",
+      "id": 24,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Lounge 025 [10x20].png",
+      "dstName": "lounge--025--2x4.png",
+      "id": 25,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Lounge 026 [15x15].png",
+      "dstName": "lounge--026--3x3.png",
+      "id": 26,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Lounge 027 [15x20].png",
+      "dstName": "lounge--027--3x4.png",
+      "id": 27,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Lounge 028 [15x20].png",
+      "dstName": "lounge--028--3x4.png",
+      "id": 28,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Lounge 029 [15x20].png",
+      "dstName": "lounge--029--3x4.png",
+      "id": 29,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Lounge 030 [15x20].png",
+      "dstName": "lounge--030--3x4.png",
+      "id": 30,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Lounge 031 [20x20].png",
+      "dstName": "lounge--031--4x4.png",
+      "id": 31,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Lounge 032 [20x20].png",
+      "dstName": "lounge--032--4x4.png",
+      "id": 32,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Lounge 033 [20x20].png",
+      "dstName": "lounge--033--4x4.png",
+      "id": 33,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Lounge 034 [20x20].png",
+      "dstName": "lounge--034--4x4.png",
+      "id": 34,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [34]
+    },
+    {
+      "srcName": "Lounge 035 [20x20].png",
+      "dstName": "lounge--035--4x4.png",
+      "id": 35,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [35]
+    },
+    {
+      "srcName": "Lounge 036 [20x20].png",
+      "dstName": "lounge--036--4x4.png",
+      "id": 36,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [36]
+    },
+    {
+      "srcName": "Lounge 037 [20x20].png",
+      "dstName": "lounge--037--4x4.png",
+      "id": 37,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [37]
+    },
+    {
+      "srcName": "Lounge 038 [15x20].png",
+      "dstName": "lounge--038--3x4.png",
+      "id": 38,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Lounge 040 [10x15].png",
+      "dstName": "lounge--040--2x3.png",
+      "id": 40,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [40]
+    },
+    {
+      "srcName": "Lounge 041 [10x20].png",
+      "dstName": "lounge--041--2x4.png",
+      "id": 41,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Lounge 042 [10x15].png",
+      "dstName": "lounge--042--2x3.png",
+      "id": 42,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [42]
+    },
+    {
+      "srcName": "Lounge 043 [10x20].png",
+      "dstName": "lounge--043--2x4.png",
+      "id": 43,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [43]
+    },
+    {
+      "srcName": "Lounge 044 [10x10].png",
+      "dstName": "lounge--044--2x2.png",
+      "id": 44,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [44]
+    },
+    {
+      "srcName": "Lounge 045 [10x10].png",
+      "dstName": "lounge--045--2x2.png",
+      "id": 45,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [45]
+    },
+    {
+      "srcName": "Lounge 046 [0x10].png",
+      "dstName": "lounge--046--0x2.png",
+      "id": 46,
+      "gridDim": [0, 2],
+      "is": [],
+      "has": [],
+      "ids": [46]
+    }
+  ]
+}
