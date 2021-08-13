@@ -95,3 +95,6 @@ export function error(...args: string[]) {
 export function info(...args: string[]) {
   console.info(chalk.yellow(...args));
 }
+export function warn(...args: string[]) {
+  console.info(chalk.grey(...args));
+}

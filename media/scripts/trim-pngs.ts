@@ -19,6 +19,7 @@ import {
   error,
   info,
   metaFromRootFilename,
+  warn,
 } from './service';
 import { nanoid } from 'nanoid';
 
@@ -65,9 +66,8 @@ const extractMeta = {
 info('creating manifest', manifestPath);
 const fileMetas = srcFilenames.flatMap<FileMeta>(filename => {
   const matched = filename.match(filenameRegex);
-  return matched
-    ? [extractMeta(matched)]
-    : (info('ignoring file with unexpected PNG filename format:', filename), []);
+  return matched ? [extractMeta(matched)]
+    : (filename.match(/\.png$/) && warn('ignoring PNG with unexpected filename format:', filename), []);
 });
 fs.writeFileSync(path.join(dstDir, 'manifest.json'), jsonStringifyPrettyCompact({
   parentFolder: path.basename(srcDir),
