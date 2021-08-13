@@ -38,4 +38,12 @@ babel.config.js
 next.config.js
 misc.config.js
 
-media/**/*[.png,.zip,.pdf,.dwg,.ctb,*.url]
+media/Geomorphs
+media/CustomTiles
+media/Symbols
+media/*.zip
+media/*.pdf
+media/*.dwg
+media/*.ctb
+media/*.url
+media/**/*.png

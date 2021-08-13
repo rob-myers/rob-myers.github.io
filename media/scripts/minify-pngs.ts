@@ -14,14 +14,12 @@ if (!srcDir || !fs.existsSync(srcDir)) {
   console.error(chalk.red(`error: usage: yarn minify-pngs {src_dir} where {src_dir} exists`));
   process.exit(1);
 }
-
-console.info(chalk.yellow('detecting'), 'optipng command');
 if (childProcess.execSync(`optipng --version | grep OptiPNG  >/dev/null && echo $?`).toString().trim() !== '0') {
   console.error(chalk.red("error: please install optipng e.g. `brew install optipng`"));
   process.exit(1);
 }
 
-console.info(chalk.yellow(`Applying \`optipng\` to all pngs in ${srcDir}`));
+console.info(chalk.yellow(`applying \`optipng\` to all pngs in ${srcDir}`));
 childProcess.execSync(`
   time find ${path.join(`'${srcDir}'`, '*.png')} -print0 |
     xargs -0 -n 1 -P 20 optipng

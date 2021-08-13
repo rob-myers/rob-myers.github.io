@@ -558,15 +558,6 @@
       "is": [],
       "has": [],
       "ids": [62]
-    },
-    {
-      "srcName": "Bridge 063 Lightning Class Cruiser [80x85].png",
-      "dstName": "s063--bridge--16x17.png",
-      "id": 63,
-      "gridDim": [16, 17],
-      "is": ["lightning-class-cruiser"],
-      "has": [],
-      "ids": [63]
     }
   ]
 }
