@@ -1,5 +1,6 @@
 /**
  * Rename and trim PNGs originally from Starship Geomorphs 2.0
+ *
  * Examples:
  * - yarn trim-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
  * - yarn trim-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
@@ -85,7 +86,7 @@ console.log(childProcess.execSync(fileMetas.map(({ srcName, dstName }) => `
   cp "${path.join(srcDir, srcName)}" "${path.join(dstDir, dstName)}"
 `).join('')).toString());
 
-info(`applying ImageMagick convert in parallel`);
+info(`applying ImageMagick command \`convert\` in parallel`);
 const tempDir = `temp_${nanoid()}`;
 
 childProcess.execSync(`

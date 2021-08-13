@@ -16,8 +16,8 @@ export function metaFromRootFilename(matched: RegExpMatchArray): FileMeta {
   const gridDim = matched[1].split('x').map(x => Number(x) / 5) as [number, number];
   const id = -1;
   const ids = [id];
-  const description = normalizeChars(`${matched[1]}${matched[2]}`);
-  const dstName = `${description}.png`;
+  const description = normalizeChars(matched[2]);
+  const dstName = `${gridDim[0]}x${gridDim[1]}${description ? `--${description}` : ''}.png`;
   return { srcName, dstName, id, gridDim, is: ['root'], has: [], ids };
 }
 
