@@ -10,12 +10,13 @@
 - ✅ make `Tabs` modular
 - ✅ Fix `PanZoom` mouse input 
 
-### Level design
+### level design
 - boxy svg scripts
   - transform: removes background image
   - transform: replace dataUrls by id refs
   - update: can replace symbols in geomorphs by latest version
-### React Components
+
+### react components
 - ConnectDemo using Geomorphs
   - First attempt at Geomorph to SVG i.e. conversion of `319-100x50-multi-purpose.png`.
 - ✅ PanZoom using `geom`, `hooks`, `service/dom`
