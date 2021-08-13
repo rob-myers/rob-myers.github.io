@@ -1,8 +1,7 @@
 /**
  * Examples:
  * - yarn minify-pngs media/geomorph-edge
- * - yarn minify-pngs media/symbol-staterooms
- * - yarn minify-pngs media/symbol-bridge
+ * - yarn minify-pngs media/edited-symbols
  */
 import fs from 'fs';
 import path from 'path';

@@ -1,9 +1,10 @@
 {
   "parentFolder": "Bridge",
+  "sourceType": "symbol",
   "fileMetas": [
     {
       "srcName": "Bridge 001 [5x10].png",
-      "dstName": "s001--bridge--1x2.png",
+      "dstName": "bridge--001--1x2.png",
       "id": 1,
       "gridDim": [1, 2],
       "is": [],
@@ -12,7 +13,7 @@
     },
     {
       "srcName": "Bridge 002 [5x10].png",
-      "dstName": "s002--bridge--1x2.png",
+      "dstName": "bridge--002--1x2.png",
       "id": 2,
       "gridDim": [1, 2],
       "is": [],
@@ -21,7 +22,7 @@
     },
     {
       "srcName": "Bridge 003 [5x10].png",
-      "dstName": "s003--bridge--1x2.png",
+      "dstName": "bridge--003--1x2.png",
       "id": 3,
       "gridDim": [1, 2],
       "is": [],
@@ -30,7 +31,7 @@
     },
     {
       "srcName": "Bridge 004 [5x10].png",
-      "dstName": "s004--bridge--1x2.png",
+      "dstName": "bridge--004--1x2.png",
       "id": 4,
       "gridDim": [1, 2],
       "is": [],
@@ -39,7 +40,7 @@
     },
     {
       "srcName": "Bridge 005 [5x10].png",
-      "dstName": "s005--bridge--1x2.png",
+      "dstName": "bridge--005--1x2.png",
       "id": 5,
       "gridDim": [1, 2],
       "is": [],
@@ -48,7 +49,7 @@
     },
     {
       "srcName": "Bridge 006 [10x10].png",
-      "dstName": "s006--bridge--2x2.png",
+      "dstName": "bridge--006--2x2.png",
       "id": 6,
       "gridDim": [2, 2],
       "is": [],
@@ -57,7 +58,7 @@
     },
     {
       "srcName": "Bridge 007 [10x10].png",
-      "dstName": "s007--bridge--2x2.png",
+      "dstName": "bridge--007--2x2.png",
       "id": 7,
       "gridDim": [2, 2],
       "is": [],
@@ -66,7 +67,7 @@
     },
     {
       "srcName": "Bridge 008 [15x25].png",
-      "dstName": "s008--bridge--3x5.png",
+      "dstName": "bridge--008--3x5.png",
       "id": 8,
       "gridDim": [3, 5],
       "is": [],
@@ -75,7 +76,7 @@
     },
     {
       "srcName": "Bridge 009 [10x15].png",
-      "dstName": "s009--bridge--2x3.png",
+      "dstName": "bridge--009--2x3.png",
       "id": 9,
       "gridDim": [2, 3],
       "is": [],
@@ -84,7 +85,7 @@
     },
     {
       "srcName": "Bridge 010 [5x15].png",
-      "dstName": "s010--bridge--1x3.png",
+      "dstName": "bridge--010--1x3.png",
       "id": 10,
       "gridDim": [1, 3],
       "is": [],
@@ -93,7 +94,7 @@
     },
     {
       "srcName": "Bridge 011 [10x15].png",
-      "dstName": "s011--bridge--2x3.png",
+      "dstName": "bridge--011--2x3.png",
       "id": 11,
       "gridDim": [2, 3],
       "is": [],
@@ -102,7 +103,7 @@
     },
     {
       "srcName": "Bridge 012 [10x15].png",
-      "dstName": "s012--bridge--2x3.png",
+      "dstName": "bridge--012--2x3.png",
       "id": 12,
       "gridDim": [2, 3],
       "is": [],
@@ -111,7 +112,7 @@
     },
     {
       "srcName": "Bridge 013 [5x15].png",
-      "dstName": "s013--bridge--1x3.png",
+      "dstName": "bridge--013--1x3.png",
       "id": 13,
       "gridDim": [1, 3],
       "is": [],
@@ -120,7 +121,7 @@
     },
     {
       "srcName": "Bridge 014 [10x15].png",
-      "dstName": "s014--bridge--2x3.png",
+      "dstName": "bridge--014--2x3.png",
       "id": 14,
       "gridDim": [2, 3],
       "is": [],
@@ -129,7 +130,7 @@
     },
     {
       "srcName": "Bridge 015 [5x15].png",
-      "dstName": "s015--bridge--1x3.png",
+      "dstName": "bridge--015--1x3.png",
       "id": 15,
       "gridDim": [1, 3],
       "is": [],
@@ -138,7 +139,7 @@
     },
     {
       "srcName": "Bridge 016 [10x15].png",
-      "dstName": "s016--bridge--2x3.png",
+      "dstName": "bridge--016--2x3.png",
       "id": 16,
       "gridDim": [2, 3],
       "is": [],
@@ -147,7 +148,7 @@
     },
     {
       "srcName": "Bridge 017 [10x20].png",
-      "dstName": "s017--bridge--2x4.png",
+      "dstName": "bridge--017--2x4.png",
       "id": 17,
       "gridDim": [2, 4],
       "is": [],
@@ -156,7 +157,7 @@
     },
     {
       "srcName": "Bridge 018 [10x20].png",
-      "dstName": "s018--bridge--2x4.png",
+      "dstName": "bridge--018--2x4.png",
       "id": 18,
       "gridDim": [2, 4],
       "is": [],
@@ -165,7 +166,7 @@
     },
     {
       "srcName": "Bridge 019 [10x20].png",
-      "dstName": "s019--bridge--2x4.png",
+      "dstName": "bridge--019--2x4.png",
       "id": 19,
       "gridDim": [2, 4],
       "is": [],
@@ -174,7 +175,7 @@
     },
     {
       "srcName": "Bridge 020 [10x25].png",
-      "dstName": "s020--bridge--2x5.png",
+      "dstName": "bridge--020--2x5.png",
       "id": 20,
       "gridDim": [2, 5],
       "is": [],
@@ -183,7 +184,7 @@
     },
     {
       "srcName": "Bridge 021 [10x30].png",
-      "dstName": "s021--bridge--2x6.png",
+      "dstName": "bridge--021--2x6.png",
       "id": 21,
       "gridDim": [2, 6],
       "is": [],
@@ -192,7 +193,7 @@
     },
     {
       "srcName": "Bridge 022 [5x40].png",
-      "dstName": "s022--bridge--1x8.png",
+      "dstName": "bridge--022--1x8.png",
       "id": 22,
       "gridDim": [1, 8],
       "is": [],
@@ -201,7 +202,7 @@
     },
     {
       "srcName": "Bridge 023 [20x25].png",
-      "dstName": "s023--bridge--4x5.png",
+      "dstName": "bridge--023--4x5.png",
       "id": 23,
       "gridDim": [4, 5],
       "is": [],
@@ -210,7 +211,7 @@
     },
     {
       "srcName": "Bridge 024 [25x37].png",
-      "dstName": "s024--bridge--5x7.4.png",
+      "dstName": "bridge--024--5x7.4.png",
       "id": 24,
       "gridDim": [5, 7.4],
       "is": [],
@@ -219,7 +220,7 @@
     },
     {
       "srcName": "Bridge 025 [25x30].png",
-      "dstName": "s025--bridge--5x6.png",
+      "dstName": "bridge--025--5x6.png",
       "id": 25,
       "gridDim": [5, 6],
       "is": [],
@@ -228,7 +229,7 @@
     },
     {
       "srcName": "Bridge 026 [20x30].png",
-      "dstName": "s026--bridge--4x6.png",
+      "dstName": "bridge--026--4x6.png",
       "id": 26,
       "gridDim": [4, 6],
       "is": [],
@@ -237,7 +238,7 @@
     },
     {
       "srcName": "Bridge 027 [30x35].png",
-      "dstName": "s027--bridge--6x7.png",
+      "dstName": "bridge--027--6x7.png",
       "id": 27,
       "gridDim": [6, 7],
       "is": [],
@@ -246,7 +247,7 @@
     },
     {
       "srcName": "Bridge 028 [10x15].png",
-      "dstName": "s028--bridge--2x3.png",
+      "dstName": "bridge--028--2x3.png",
       "id": 28,
       "gridDim": [2, 3],
       "is": [],
@@ -255,7 +256,7 @@
     },
     {
       "srcName": "Bridge 029 [10x15].png",
-      "dstName": "s029--bridge--2x3.png",
+      "dstName": "bridge--029--2x3.png",
       "id": 29,
       "gridDim": [2, 3],
       "is": [],
@@ -264,7 +265,7 @@
     },
     {
       "srcName": "Bridge 030 [20x30].png",
-      "dstName": "s030--bridge--4x6.png",
+      "dstName": "bridge--030--4x6.png",
       "id": 30,
       "gridDim": [4, 6],
       "is": [],
@@ -273,7 +274,7 @@
     },
     {
       "srcName": "Bridge 031 [15x60].png",
-      "dstName": "s031--bridge--3x12.png",
+      "dstName": "bridge--031--3x12.png",
       "id": 31,
       "gridDim": [3, 12],
       "is": [],
@@ -282,7 +283,7 @@
     },
     {
       "srcName": "Bridge 032 [15x30].png",
-      "dstName": "s032--bridge--3x6.png",
+      "dstName": "bridge--032--3x6.png",
       "id": 32,
       "gridDim": [3, 6],
       "is": [],
@@ -291,7 +292,7 @@
     },
     {
       "srcName": "Bridge 033 [15x35].png",
-      "dstName": "s033--bridge--3x7.png",
+      "dstName": "bridge--033--3x7.png",
       "id": 33,
       "gridDim": [3, 7],
       "is": [],
@@ -300,7 +301,7 @@
     },
     {
       "srcName": "Bridge 034 [20x25].png",
-      "dstName": "s034--bridge--4x5.png",
+      "dstName": "bridge--034--4x5.png",
       "id": 34,
       "gridDim": [4, 5],
       "is": [],
@@ -309,7 +310,7 @@
     },
     {
       "srcName": "Bridge 035 [20x35].png",
-      "dstName": "s035--bridge--4x7.png",
+      "dstName": "bridge--035--4x7.png",
       "id": 35,
       "gridDim": [4, 7],
       "is": [],
@@ -318,7 +319,7 @@
     },
     {
       "srcName": "Bridge 036 [20x30].png",
-      "dstName": "s036--bridge--4x6.png",
+      "dstName": "bridge--036--4x6.png",
       "id": 36,
       "gridDim": [4, 6],
       "is": [],
@@ -327,7 +328,7 @@
     },
     {
       "srcName": "Bridge 037 [15x25].png",
-      "dstName": "s037--bridge--3x5.png",
+      "dstName": "bridge--037--3x5.png",
       "id": 37,
       "gridDim": [3, 5],
       "is": [],
@@ -336,7 +337,7 @@
     },
     {
       "srcName": "Bridge 038 [40x40].png",
-      "dstName": "s038--bridge--8x8.png",
+      "dstName": "bridge--038--8x8.png",
       "id": 38,
       "gridDim": [8, 8],
       "is": [],
@@ -345,7 +346,7 @@
     },
     {
       "srcName": "Bridge 039 [15x45].png",
-      "dstName": "s039--bridge--3x9.png",
+      "dstName": "bridge--039--3x9.png",
       "id": 39,
       "gridDim": [3, 9],
       "is": [],
@@ -354,7 +355,7 @@
     },
     {
       "srcName": "Bridge 040 [10x25].png",
-      "dstName": "s040--bridge--2x5.png",
+      "dstName": "bridge--040--2x5.png",
       "id": 40,
       "gridDim": [2, 5],
       "is": [],
@@ -363,7 +364,7 @@
     },
     {
       "srcName": "Bridge 041 [20x40].png",
-      "dstName": "s041--bridge--4x8.png",
+      "dstName": "bridge--041--4x8.png",
       "id": 41,
       "gridDim": [4, 8],
       "is": [],
@@ -372,7 +373,7 @@
     },
     {
       "srcName": "Bridge 042 [40x45].png",
-      "dstName": "s042--bridge--8x9.png",
+      "dstName": "bridge--042--8x9.png",
       "id": 42,
       "gridDim": [8, 9],
       "is": [],
@@ -381,7 +382,7 @@
     },
     {
       "srcName": "Bridge 043 [10x20].png",
-      "dstName": "s043--bridge--2x4.png",
+      "dstName": "bridge--043--2x4.png",
       "id": 43,
       "gridDim": [2, 4],
       "is": [],
@@ -390,7 +391,7 @@
     },
     {
       "srcName": "Bridge 044 [25x40].png",
-      "dstName": "s044--bridge--5x8.png",
+      "dstName": "bridge--044--5x8.png",
       "id": 44,
       "gridDim": [5, 8],
       "is": [],
@@ -399,7 +400,7 @@
     },
     {
       "srcName": "Bridge 045 [20x50].png",
-      "dstName": "s045--bridge--4x10.png",
+      "dstName": "bridge--045--4x10.png",
       "id": 45,
       "gridDim": [4, 10],
       "is": [],
@@ -408,7 +409,7 @@
     },
     {
       "srcName": "Bridge 046 [25x50].png",
-      "dstName": "s046--bridge--5x10.png",
+      "dstName": "bridge--046--5x10.png",
       "id": 46,
       "gridDim": [5, 10],
       "is": [],
@@ -417,7 +418,7 @@
     },
     {
       "srcName": "Bridge 047 [15x30].png",
-      "dstName": "s047--bridge--3x6.png",
+      "dstName": "bridge--047--3x6.png",
       "id": 47,
       "gridDim": [3, 6],
       "is": [],
@@ -426,7 +427,7 @@
     },
     {
       "srcName": "Bridge 048 [25x25].png",
-      "dstName": "s048--bridge--5x5.png",
+      "dstName": "bridge--048--5x5.png",
       "id": 48,
       "gridDim": [5, 5],
       "is": [],
@@ -435,7 +436,7 @@
     },
     {
       "srcName": "Bridge 049 [40x50].png",
-      "dstName": "s049--bridge--8x10.png",
+      "dstName": "bridge--049--8x10.png",
       "id": 49,
       "gridDim": [8, 10],
       "is": [],
@@ -444,7 +445,7 @@
     },
     {
       "srcName": "Bridge 050 [25x30].png",
-      "dstName": "s050--bridge--5x6.png",
+      "dstName": "bridge--050--5x6.png",
       "id": 50,
       "gridDim": [5, 6],
       "is": [],
@@ -453,7 +454,7 @@
     },
     {
       "srcName": "Bridge 051 [15x30].png",
-      "dstName": "s051--bridge--3x6.png",
+      "dstName": "bridge--051--3x6.png",
       "id": 51,
       "gridDim": [3, 6],
       "is": [],
@@ -462,7 +463,7 @@
     },
     {
       "srcName": "Bridge 052 [30x40].png",
-      "dstName": "s052--bridge--6x8.png",
+      "dstName": "bridge--052--6x8.png",
       "id": 52,
       "gridDim": [6, 8],
       "is": [],
@@ -471,7 +472,7 @@
     },
     {
       "srcName": "Bridge 053 [15x25].png",
-      "dstName": "s053--bridge--3x5.png",
+      "dstName": "bridge--053--3x5.png",
       "id": 53,
       "gridDim": [3, 5],
       "is": [],
@@ -480,7 +481,7 @@
     },
     {
       "srcName": "Bridge 054 [70x70].png",
-      "dstName": "s054--bridge--14x14.png",
+      "dstName": "bridge--054--14x14.png",
       "id": 54,
       "gridDim": [14, 14],
       "is": [],
@@ -489,7 +490,7 @@
     },
     {
       "srcName": "Bridge 055 [15x20].png",
-      "dstName": "s055--bridge--3x4.png",
+      "dstName": "bridge--055--3x4.png",
       "id": 55,
       "gridDim": [3, 4],
       "is": [],
@@ -498,7 +499,7 @@
     },
     {
       "srcName": "Bridge 056 [15x60].png",
-      "dstName": "s056--bridge--3x12.png",
+      "dstName": "bridge--056--3x12.png",
       "id": 56,
       "gridDim": [3, 12],
       "is": [],
@@ -507,7 +508,7 @@
     },
     {
       "srcName": "Bridge 057 [10x15].png",
-      "dstName": "s057--bridge--2x3.png",
+      "dstName": "bridge--057--2x3.png",
       "id": 57,
       "gridDim": [2, 3],
       "is": [],
@@ -516,7 +517,7 @@
     },
     {
       "srcName": "Bridge 058 [15x25].png",
-      "dstName": "s058--bridge--3x5.png",
+      "dstName": "bridge--058--3x5.png",
       "id": 58,
       "gridDim": [3, 5],
       "is": [],
@@ -525,7 +526,7 @@
     },
     {
       "srcName": "Bridge 059 [40x50].png",
-      "dstName": "s059--bridge--8x10.png",
+      "dstName": "bridge--059--8x10.png",
       "id": 59,
       "gridDim": [8, 10],
       "is": [],
@@ -534,7 +535,7 @@
     },
     {
       "srcName": "Bridge 060 [15x25].png",
-      "dstName": "s060--bridge--3x5.png",
+      "dstName": "bridge--060--3x5.png",
       "id": 60,
       "gridDim": [3, 5],
       "is": [],
@@ -543,7 +544,7 @@
     },
     {
       "srcName": "Bridge 061 [25x25].png",
-      "dstName": "s061--bridge--5x5.png",
+      "dstName": "bridge--061--5x5.png",
       "id": 61,
       "gridDim": [5, 5],
       "is": [],
@@ -552,7 +553,7 @@
     },
     {
       "srcName": "Bridge 062 [30x35].png",
-      "dstName": "s062--bridge--6x7.png",
+      "dstName": "bridge--062--6x7.png",
       "id": 62,
       "gridDim": [6, 7],
       "is": [],

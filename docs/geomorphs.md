@@ -15,14 +15,14 @@ Importantly, this work has been [converted into PNGs](http://gurpsland.no-ip.org
 
 We'll convert each Geomorph into an SVG, containing:
 - SVG symbols/instance(s) corresponding to Starship Symbols.
-- Polygonal data representing walls
-- Polygonal data representing low obstacles
-- Textual data (e.g. SR and Stateroom)
-- Rectangular data representing doors
+- Polygonal data representing walls.
+- Polygonal data representing low obstacles.
+- Textual data (e.g. SR and Stateroom).
+- Rectangular data representing doors.
 
 Each SVG will be self-contained, so:
-- we'll need scripts to auto-update shared dependencies
-- we'll need scripts to combine them, avoiding duplication
+- we'll need scripts to auto-update shared dependencies.
+- we'll need scripts to combine them, avoiding duplication.
 
 ## Scripts
 
@@ -43,13 +43,21 @@ yarn trim-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
 yarn minify-pngs media/geomorph-edge
 ```
 
+- media/geomorph-edge ✅
+- media/geomorph-corner
+- media/geomorph-core
+- media/geomorph-end
+
 ### `trim large symbol PNGs`
 
 ```sh
 yarn trim-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
+yarn trim-pngs symbol media/Symbols/Bridge media/symbol-bridge
+yarn trim-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
+# ...
 ```
 
-### `trim large root symbol PNGs`
+### `trim large symbol PNGs (root directory)`
 
 ```sh
 yarn trim-pngs root media/Symbols media/symbol-root

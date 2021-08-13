@@ -1,9 +1,10 @@
 {
   "parentFolder": "Dock, Small Craft",
+  "sourceType": "symbol",
   "fileMetas": [
     {
       "srcName": "Air-Raft 001 [20x20].png",
-      "dstName": "s001--air-raft--4x4.png",
+      "dstName": "air-raft--001--4x4.png",
       "id": 1,
       "gridDim": [4, 4],
       "is": [],
@@ -12,7 +13,7 @@
     },
     {
       "srcName": "Air-Raft 002 [20x20].png",
-      "dstName": "s002--air-raft--4x4.png",
+      "dstName": "air-raft--002--4x4.png",
       "id": 2,
       "gridDim": [4, 4],
       "is": [],
@@ -21,7 +22,7 @@
     },
     {
       "srcName": "Air-Raft 003 [20x20].png",
-      "dstName": "s003--air-raft--4x4.png",
+      "dstName": "air-raft--003--4x4.png",
       "id": 3,
       "gridDim": [4, 4],
       "is": [],
@@ -30,7 +31,7 @@
     },
     {
       "srcName": "Air-Raft 004 [20x20].png",
-      "dstName": "s004--air-raft--4x4.png",
+      "dstName": "air-raft--004--4x4.png",
       "id": 4,
       "gridDim": [4, 4],
       "is": [],
@@ -39,7 +40,7 @@
     },
     {
       "srcName": "Air-Raft 004 [20x25] Dual.png",
-      "dstName": "s004--air-raft--4x5.png",
+      "dstName": "air-raft--004--4x5.png",
       "id": 4,
       "gridDim": [4, 5],
       "is": ["dual"],
@@ -48,7 +49,7 @@
     },
     {
       "srcName": "Air-Raft 005 [20x30] Dual.png",
-      "dstName": "s005--air-raft--4x6.png",
+      "dstName": "air-raft--005--4x6.png",
       "id": 5,
       "gridDim": [4, 6],
       "is": ["dual"],
@@ -57,7 +58,7 @@
     },
     {
       "srcName": "Dock 001 [15x50] 10-dTon Launch - Copy.png",
-      "dstName": "s001--dock--3x10.png",
+      "dstName": "dock--001--3x10.png",
       "id": 1,
       "gridDim": [3, 10],
       "is": ["10-dton-launch-copy"],
@@ -66,7 +67,7 @@
     },
     {
       "srcName": "Dock 002 [15x50] 10-dTon Launch.png",
-      "dstName": "s002--dock--3x10.png",
+      "dstName": "dock--002--3x10.png",
       "id": 2,
       "gridDim": [3, 10],
       "is": ["10-dton-launch"],
@@ -75,7 +76,7 @@
     },
     {
       "srcName": "Dock 003 [15x50] 10-dTon Launch.png",
-      "dstName": "s003--dock--3x10.png",
+      "dstName": "dock--003--3x10.png",
       "id": 3,
       "gridDim": [3, 10],
       "is": ["10-dton-launch"],
@@ -84,7 +85,7 @@
     },
     {
       "srcName": "Dock 004 [15x45] 10-dTon Ship's Boat.png",
-      "dstName": "s004--dock--3x9.png",
+      "dstName": "dock--004--3x9.png",
       "id": 4,
       "gridDim": [3, 9],
       "is": ["10-dton-ships-boat"],
@@ -93,7 +94,7 @@
     },
     {
       "srcName": "Dock 005 [15x45] 10-dTon Ship's Boat.png",
-      "dstName": "s005--dock--3x9.png",
+      "dstName": "dock--005--3x9.png",
       "id": 5,
       "gridDim": [3, 9],
       "is": ["10-dton-ships-boat"],
@@ -102,7 +103,7 @@
     },
     {
       "srcName": "Dock 006 [15x45] 10-dTon Ship's Boat.png",
-      "dstName": "s006--dock--3x9.png",
+      "dstName": "dock--006--3x9.png",
       "id": 6,
       "gridDim": [3, 9],
       "is": ["10-dton-ships-boat"],
@@ -111,7 +112,7 @@
     },
     {
       "srcName": "Dock 007 [20x40] 10-dTon Launch.png",
-      "dstName": "s007--dock--4x8.png",
+      "dstName": "dock--007--4x8.png",
       "id": 7,
       "gridDim": [4, 8],
       "is": ["10-dton-launch"],
@@ -120,7 +121,7 @@
     },
     {
       "srcName": "Dock 008 [20x40] 10-dTon Launch.png",
-      "dstName": "s008--dock--4x8.png",
+      "dstName": "dock--008--4x8.png",
       "id": 8,
       "gridDim": [4, 8],
       "is": ["10-dton-launch"],
@@ -129,7 +130,7 @@
     },
     {
       "srcName": "Dock 010 [20x40] 10-dTon Runabout.png",
-      "dstName": "s010--dock--4x8.png",
+      "dstName": "dock--010--4x8.png",
       "id": 10,
       "gridDim": [4, 8],
       "is": ["10-dton-runabout"],
@@ -138,7 +139,7 @@
     },
     {
       "srcName": "Dock 011 [20x40] 10-dTon Runabout.png",
-      "dstName": "s011--dock--4x8.png",
+      "dstName": "dock--011--4x8.png",
       "id": 11,
       "gridDim": [4, 8],
       "is": ["10-dton-runabout"],
@@ -147,7 +148,7 @@
     },
     {
       "srcName": "Dock 012 [20x40] 10-dTon Runabout.png",
-      "dstName": "s012--dock--4x8.png",
+      "dstName": "dock--012--4x8.png",
       "id": 12,
       "gridDim": [4, 8],
       "is": ["10-dton-runabout"],
@@ -156,7 +157,7 @@
     },
     {
       "srcName": "Dock 013 [20x40] 2x10-dTon Runabout.png",
-      "dstName": "s013--dock--4x8.png",
+      "dstName": "dock--013--4x8.png",
       "id": 13,
       "gridDim": [4, 8],
       "is": ["2x10-dton-runabout"],
@@ -165,7 +166,7 @@
     },
     {
       "srcName": "Dock 014 [20x40] 2x10-dTon Runabout.png",
-      "dstName": "s014--dock--4x8.png",
+      "dstName": "dock--014--4x8.png",
       "id": 14,
       "gridDim": [4, 8],
       "is": ["2x10-dton-runabout"],
@@ -174,7 +175,7 @@
     },
     {
       "srcName": "Dock 015 [20x50] 20-dTon Shuttle.png",
-      "dstName": "s015--dock--4x10.png",
+      "dstName": "dock--015--4x10.png",
       "id": 15,
       "gridDim": [4, 10],
       "is": ["20-dton-shuttle"],
@@ -183,7 +184,7 @@
     },
     {
       "srcName": "Dock 016 [20x50] 20-dTon Shuttle.png",
-      "dstName": "s016--dock--4x10.png",
+      "dstName": "dock--016--4x10.png",
       "id": 16,
       "gridDim": [4, 10],
       "is": ["20-dton-shuttle"],
@@ -192,7 +193,7 @@
     },
     {
       "srcName": "Dock 017 [20x50] 20-dTon Shuttle.png",
-      "dstName": "s017--dock--4x10.png",
+      "dstName": "dock--017--4x10.png",
       "id": 17,
       "gridDim": [4, 10],
       "is": ["20-dton-shuttle"],
@@ -201,7 +202,7 @@
     },
     {
       "srcName": "Dock 018 [20x100] 50-dTon Launch.png",
-      "dstName": "s018--dock--4x20.png",
+      "dstName": "dock--018--4x20.png",
       "id": 18,
       "gridDim": [4, 20],
       "is": ["50-dton-launch"],
@@ -210,7 +211,7 @@
     },
     {
       "srcName": "Dock 019 [20x100] 50-dTon Launch.png",
-      "dstName": "s019--dock--4x20.png",
+      "dstName": "dock--019--4x20.png",
       "id": 19,
       "gridDim": [4, 20],
       "is": ["50-dton-launch"],
@@ -219,7 +220,7 @@
     },
     {
       "srcName": "Dock 020 [20x100] 50-dTon Launch.png",
-      "dstName": "s020--dock--4x20.png",
+      "dstName": "dock--020--4x20.png",
       "id": 20,
       "gridDim": [4, 20],
       "is": ["50-dton-launch"],
@@ -228,7 +229,7 @@
     },
     {
       "srcName": "Dock 09 [20x40] 10-dTon Runabout.png",
-      "dstName": "s09--dock--4x8.png",
+      "dstName": "dock--09--4x8.png",
       "id": 9,
       "gridDim": [4, 8],
       "is": ["10-dton-runabout"],
