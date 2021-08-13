@@ -1,9 +1,13 @@
 ## Plan
 
-- try serving svg subimages locally
+- try watching boxy files and replacing data-urls
+  - commit both sets of files?
 - index page links to "article bunches"
 - cleanup how terminal persists
 - do not auto-persist if localStorage lacks `autopersist=true`
+- ✅ try serving svg subimages locally
+  - boxy CSP forbids this
+  - [asked about it](https://boxy-svg.com/questions/308/permit-loading-image-from-https-localhost)
 - cleanup projects
   - ✅ careful about module imports (`nanoid` breaks CodeSandbox hmr on Browser-tab-refresh)
   - ✅ reorg folder structure
