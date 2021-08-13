@@ -55,12 +55,14 @@ I've necessarily made a large number of decisions. Here are the important ones, 
   - Missions involve personnel transport, cargo transport, and hauling.
 
 Over time we'll clarify these constraints.
-But first we must emphasise: _finishing a game is really fucking hard_.
+But first we emphasise: _finishing a game is really fucking hard_.
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). We'll now address them.
 
 ### 1. Fun to develop (Games I want to make)
 
-_Rogue Markup_ will be fun to develop because I enjoy experimenting with NPC behaviour, particularly in an extendable way. One of our underlying motivations is the lack of Game AI resources available on the web. It is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which felt fun for me.
+_Rogue Markup_ will be fun to develop because I enjoy experimenting with NPC behaviour.
+One of our underlying motivations is the lack of Game AI resources available on the web.
+It is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which felt fun for me.
 
 <!--
 Complexity will arise from the environment and agent interaction, rather than complex individual thinking or scripted behaviour.
@@ -73,7 +75,7 @@ They're also analogous to UI components: parallel systems with some intercommuni
 As an end result I want a _highly replayable space travel game_.
 The underlying missions amount to going from A to B (🎵 ever was it so).
 Monotony will be overcome via mission specifics, encountered NPC behaviours, procedural generation, and ship building.
-Functionally, think of [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
+Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
 Graphically, see [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
 Importantly, it should be easy for other people to extend this game.
@@ -106,7 +108,7 @@ We will build the game using the following technologies.
 | Concept | Browser Technology |
 | - | - |
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
-| Styles | Styled components via CSS-in-JS [Emotion](https://www.npmjs.com/package/@emotion/styled). |
+| Styles | CSS-in-JS styled components via [Emotion](https://www.npmjs.com/package/@emotion/styled). |
 | Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Static analysis | [ESLint](https://www.npmjs.com/package/eslint) and also TypeScript via [JSDoc comments](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html). |
 | Live analysis | [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
