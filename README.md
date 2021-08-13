@@ -37,3 +37,8 @@ pngcrush -ow s037--stateroom--2x4.png
 # batch convert cwd
 pngcrush -d output_dir *.png
 ```
+
+```sh
+# set chrome://flags/#allow-insecure-localhost
+yarn https-proxy
+```

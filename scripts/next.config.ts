@@ -23,14 +23,6 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
             alias: {},
           },
         },
-        // Ignore tests
-        {
-          module: {
-            rules: [
-              { test: /\.spec\.(ts|tsx)$/, loader: 'ignore-loader' },
-            ],
-          },
-        },
         {
           // ...(!options.isServer && { resolve: { fallback: { fs: false } } }),
         },

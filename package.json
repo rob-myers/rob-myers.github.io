@@ -11,7 +11,8 @@
     "types": "tsc --noEmit",
     "postinstall": "patch-package",
     "trim-pngs": "ts-node -O '{ \"module\": \"commonjs\", \"isolatedModules\": false }' media/scripts/trim-pngs",
-    "minify-pngs": "ts-node -O '{ \"module\": \"commonjs\", \"isolatedModules\": false }' media/scripts/minify-pngs"
+    "minify-pngs": "ts-node -O '{ \"module\": \"commonjs\", \"isolatedModules\": false }' media/scripts/minify-pngs",
+    "https-proxy": "node_modules/local-ssl-proxy/bin/local-ssl-proxy --source 443 --target 3002"
   },
   "dependencies": {
     "@emotion/react": "^11.4.1",
@@ -66,6 +67,7 @@
     "extract-css-chunks-webpack-plugin": "^4.9.0",
     "file-loader": "^6.2.0",
     "gh-pages": "^3.1.0",
+    "local-ssl-proxy": "^1.3.0",
     "nodemon": "^2.0.7",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
     "patch-package": "^6.4.7",
