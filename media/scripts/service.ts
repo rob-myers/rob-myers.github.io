@@ -11,6 +11,16 @@ export interface FileMeta {
   has: string[];
 }
 
+export function metaFromRootFilename(matched: RegExpMatchArray): FileMeta {
+  const srcName = matched[0];
+  const gridDim = matched[1].split('x').map(x => Number(x) / 5) as [number, number];
+  const id = -1;
+  const ids = [id];
+  const description = normalizeChars(`${matched[1]}${matched[2]}`);
+  const dstName = `${description}.png`;
+  return { srcName, dstName, id, gridDim, is: ['root'], has: [], ids };
+}
+
 export function metaFromGeomorphFilename(matched: RegExpMatchArray): FileMeta {
   const srcName = matched[0];
   const ids = matched[1].split(',').map(Number);

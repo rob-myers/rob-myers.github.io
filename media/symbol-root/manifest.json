@@ -1,0 +1,123 @@
+{
+  "parentFolder": "Symbols",
+  "sourceType": "root",
+  "fileMetas": [
+    {
+      "srcName": "100x100 Checkerboard.png",
+      "dstName": "100x100-checkerboard.png",
+      "id": -1,
+      "gridDim": [20, 20],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "100x100 Iris Valves.png",
+      "dstName": "100x100-iris-valves.png",
+      "id": -1,
+      "gridDim": [20, 20],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "100x100 Vertical Core.png",
+      "dstName": "100x100-vertical-core.png",
+      "id": -1,
+      "gridDim": [20, 20],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "100x100.png",
+      "dstName": "100x100.png",
+      "id": -1,
+      "gridDim": [20, 20],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "100x50 Checkerboard.png",
+      "dstName": "100x50-checkerboard.png",
+      "id": -1,
+      "gridDim": [20, 10],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "100x50 Iris Valves.png",
+      "dstName": "100x50-iris-valves.png",
+      "id": -1,
+      "gridDim": [20, 10],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "100x50.png",
+      "dstName": "100x50.png",
+      "id": -1,
+      "gridDim": [20, 10],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "200x100 Checkerboard.png",
+      "dstName": "200x100-checkerboard.png",
+      "id": -1,
+      "gridDim": [40, 20],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "200x100 Iris Valves.png",
+      "dstName": "200x100-iris-valves.png",
+      "id": -1,
+      "gridDim": [40, 20],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "200x100.png",
+      "dstName": "200x100.png",
+      "id": -1,
+      "gridDim": [40, 20],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50x50 Checkerboard.png",
+      "dstName": "50x50-checkerboard.png",
+      "id": -1,
+      "gridDim": [10, 10],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50x50 Iris Valves.png",
+      "dstName": "50x50-iris-valves.png",
+      "id": -1,
+      "gridDim": [10, 10],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50x50.png",
+      "dstName": "50x50.png",
+      "id": -1,
+      "gridDim": [10, 10],
+      "is": ["root"],
+      "has": [],
+      "ids": [-1]
+    }
+  ]
+}
