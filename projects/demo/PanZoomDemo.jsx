@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled } from 'goober';
+import styled from '@emotion/styled';
 import PanZoom from '../components/PanZoom';
 
 /** @param {{ className?: string }} props */

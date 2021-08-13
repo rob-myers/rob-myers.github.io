@@ -14,12 +14,13 @@
     "minify-pngs": "ts-node -O '{ \"module\": \"commonjs\", \"isolatedModules\": false }' media/scripts/minify-pngs"
   },
   "dependencies": {
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
     "braces": "^3.0.2",
     "cli-columns": "^3.1.2",
     "codemirror": "^5.62.0",
     "flexlayout-react": "^0.5.12",
     "getopts": "^2.3.0",
-    "goober": "^2.0.39",
     "json-stringify-pretty-compact": "^3.0.0",
     "lodash.clonedeep": "^4.5.0",
     "mvdan-sh": "^0.5.0",

@@ -1,9 +1,9 @@
 ## Plan
 
 - cleanup projects
-  - migrate back to `@emotion` from `goober` (breaks CodeSandbox hmr)
   - careful about module imports (`nanoid` breaks CodeSandbox hmr on Browser-tab-refresh)
   - reorg folder structure
+  - ✅ migrate back to `@emotion` from `goober` (breaks CodeSandbox hmr)
 - index page links to "article bunches"
 - cleanup how terminal persists
 - do not auto-persist if localStorage lacks `autopersist=true`

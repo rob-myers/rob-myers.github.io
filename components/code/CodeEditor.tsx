@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import { styled } from "goober";
+import styled from '@emotion/styled';
 
 import codemirror from 'codemirror';
 import 'codemirror/addon/edit/closebrackets';
@@ -81,7 +81,7 @@ interface Props {
   height: string;
 }
 
-const Root = styled('div', React.forwardRef)<{
+const Root = styled('div')<{
   gridArea?: string;
   height?: string;
   padding?: string;

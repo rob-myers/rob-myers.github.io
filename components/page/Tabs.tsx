@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
-import { styled } from "goober";
+import styled from '@emotion/styled';
 
 import * as Lookup from 'model/tabs-lookup';
 import { CodeEditor } from 'components/dynamic';

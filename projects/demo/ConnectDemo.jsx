@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled } from 'goober';
+import styled from '@emotion/styled';
 
 /** @param {{ className?: string }} props */
 export default function ConnectPolyDemo({ className }) {

@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 // https://github.com/farfromrefug/react-xterm/blob/master/src/react-xterm.tsx
 import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import { styled } from 'goober';
+import styled from '@emotion/styled';
 
 export default function XTermComponent({
   options,
@@ -46,7 +46,7 @@ interface Props {
   options?: ITerminalOptions;
 }
 
-const XTermContainer = styled('section', React.forwardRef)<{}>`
+const XTermContainer = styled('section')<{}>`
   height: inherit;
 
   > div {

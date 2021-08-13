@@ -1,5 +1,5 @@
 import React from 'react';
-import { styled}  from 'goober';
+import styled  from '@emotion/styled';
 
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';

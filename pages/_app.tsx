@@ -5,8 +5,6 @@ import { Router } from 'next/router';
 
 import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { setup } from 'goober';
-setup(React.createElement);
 
 import 'xterm/css/xterm.css';
 import 'styles/globals.css'
