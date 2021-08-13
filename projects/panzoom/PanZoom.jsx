@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { css } from '@emotion/react';
-import { nanoid } from 'nanoid';
-import useForceRefresh from '../hooks/use-force-refresh';
-import { getSvgPos } from '../service/dom';
 import { Rect, Vect } from '../geom';
+import { getSvgPos, nanoid } from '../service';
+import useForceRefresh from '../hooks/use-force-refresh';
 
 /** @param {React.PropsWithChildren<{}>} props */
 export default function PanZoom({ children }) {
