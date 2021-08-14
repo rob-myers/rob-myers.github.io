@@ -47,4 +47,4 @@ media/*.dwg
 media/*.ctb
 media/*.url
 media/**/*.png
-!media/edited-symbols/*.png
+!media/used-symbols/*.png

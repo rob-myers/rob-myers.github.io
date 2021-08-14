@@ -13,16 +13,28 @@ Importantly, this work has been [converted into PNGs](http://gurpsland.no-ip.org
 
 ## Overview
 
-We'll convert each Geomorph into an SVG, containing:
+We'll convert each Starship Geomorph into a _standalone_ SVG, containing:
+- Original geomorph as partially transparent background data url PNG
 - SVG symbols/instance(s) corresponding to Starship Symbols.
-- Polygonal data representing walls.
-- Polygonal data representing low obstacles.
-- Textual data (e.g. SR and Stateroom).
-- Rectangular data representing doors.
+  - Both the symbol instance and the symbol will be present.
+  - Technically, the symbols should be "duplicates" of the SVGs below.
 
-Each SVG will be self-contained, so:
+We'll convert each Starship Symbol into a _standlone_ SVG
+  - Original symbol sans text as background data url PGN
+  - Polys representing walls.
+  - Polys representing low obstacles.
+  - Textual data (e.g. SR and Stateroom).
+  - Rects representing doors.
+  - Circs indicating seats
+  - Other triggers e.g. beds,.
+
+The above SVGs will be self-contained, so:
 - we'll need scripts to auto-update shared dependencies.
 - we'll need scripts to combine them, avoiding duplication.
+
+We can use a webpack loader, or a [runtime one](https://css-tricks.com/svg-loader-a-different-way-to-work-with-external-svg/)
+  - we only commit the "template" referring to symbols
+  - svg-loader loads the svg inline, so can parse e.g. physics data defined via polygons
 
 ## Scripts
 
@@ -63,8 +75,8 @@ yarn trim-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-
 yarn trim-pngs root media/Symbols media/symbol-root
 ```
 
-### `minify edited large symbol PNGs`
+### `minify used large symbol PNGs`
 
 ```sh
-yarn minify-pngs media/edited-symbols
+yarn minify-pngs media/used-symbols
 ```

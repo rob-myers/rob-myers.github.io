@@ -1,7 +1,5 @@
 ## Plan
 
-- try watching boxy files and replacing data-urls
-  - commit both sets of files?
 - index page links to "article bunches"
 - cleanup how terminal persists
 - do not auto-persist if localStorage lacks `autopersist=true`

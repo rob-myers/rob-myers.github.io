@@ -3,7 +3,7 @@ import path from 'path';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { repoRootDir } from 'pages/api';
 
-const symbolsDir = path.resolve(repoRootDir, 'media/edited-symbols');
+const symbolsDir = path.resolve(repoRootDir, 'media/used-symbols');
 
 /**
  * Example
