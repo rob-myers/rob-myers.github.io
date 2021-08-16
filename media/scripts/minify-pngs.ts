@@ -1,4 +1,8 @@
 /**
+ * yarn minify-pngs {src_dir}
+ * - {src_dir} is relative to repo root
+ * - {src_dir} exists
+ *
  * Examples:
  * - yarn minify-pngs media/geomorph-edge
  * - yarn minify-pngs media/used-symbols
@@ -10,7 +14,10 @@ import { error, info } from './service';
 
 const [,, srcDir] = process.argv;
 if (!srcDir || !fs.existsSync(srcDir)) {
-  error(`error: usage: yarn minify-pngs {src_dir} where {src_dir} exists`);
+  error(`error: usage: yarn minify-pngs {src_dir} where
+    - {src_dir} is relative to repo root
+    - {src_dir} exists
+  `);
   process.exit(1);
 }
 if (childProcess.execSync(`optipng --version | grep OptiPNG  >/dev/null && echo $?`).toString().trim() !== '0') {

@@ -1,14 +1,18 @@
 /**
- * Rename and trim PNGs originally from Starship Geomorphs 2.0
+ * Rename and trim PNGs originally from Starship Geomorphs 2.0.
+ * yarn rename-pngs {input_type} {src_dir} {dst_dir}
+ * - {input_type} in ['root', 'geomorph', 'symbol']
+ * - {src_dir} and {dst_dir} are relative to repo root
+ * - {src_dir} exists
  *
  * Examples:
- * - yarn trim-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
- * - yarn trim-pngs root media/Symbols media/symbol-root
+ * - yarn rename-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
+ * - yarn rename-pngs root media/Symbols media/symbol-root
  * 
- * - yarn trim-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
- * - yarn trim-pngs symbol media/Symbols/Lounge media/symbol-lounge
- * - yarn trim-pngs symbol media/Symbols/Bridge media/symbol-bridge
- * - yarn trim-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
+ * - yarn rename-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
+ * - yarn rename-pngs symbol media/Symbols/Lounge media/symbol-lounge
+ * - yarn rename-pngs symbol media/Symbols/Bridge media/symbol-bridge
+ * - yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
  */
 import fs from 'fs';
 import path from 'path';
@@ -37,10 +41,11 @@ if (
   || !dstDir
   || !fs.existsSync(srcDir)
 ) {
-  error(`error: usage: yarn trim-pngs {input_type} {src_dir} {dst_dir} where:
-  - {input_type} in ['root ,'geomorph', 'symbol']
-  - {src_dir} exists`
-  );
+  error(`error: usage: yarn rename-pngs {input_type} {src_dir} {dst_dir} where:
+  - {input_type} in ['root', 'geomorph', 'symbol']
+  - {src_dir} and {dst_dir} are relative to repo root
+  - {src_dir} exists
+  `);
   process.exit(1);
 }
 

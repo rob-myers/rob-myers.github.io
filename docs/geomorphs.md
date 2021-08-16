@@ -50,7 +50,7 @@ The geomorph PNGs are relatively small.
 # copy files to media/geomorph-edge with different names
 # store name transformation data in manifest.json
 # apply ImageMagick convert to trim them (zealous crop)
-yarn trim-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
+yarn rename-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
 # minify the created pngs using optipng
 yarn minify-pngs media/geomorph-edge
 ```
@@ -63,16 +63,16 @@ yarn minify-pngs media/geomorph-edge
 ### `trim large symbol PNGs`
 
 ```sh
-yarn trim-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
-yarn trim-pngs symbol media/Symbols/Bridge media/symbol-bridge
-yarn trim-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
+yarn rename-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
+yarn rename-pngs symbol media/Symbols/Bridge media/symbol-bridge
+yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
 # ...
 ```
 
 ### `trim large symbol PNGs (root directory)`
 
 ```sh
-yarn trim-pngs root media/Symbols media/symbol-root
+yarn rename-pngs root media/Symbols media/symbol-root
 ```
 
 ### `minify used large symbol PNGs`
