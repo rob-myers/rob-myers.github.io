@@ -4,8 +4,7 @@
 - cleanup how terminal persists
 - do not auto-persist if localStorage lacks `autopersist=true`
 - ✅ try serving svg subimages locally
-  - boxy CSP forbids this
-  - [asked about it](https://boxy-svg.com/questions/308/permit-loading-image-from-https-localhost)
+  > [boxy CSP forbids this](https://boxy-svg.com/questions/308/permit-loading-image-from-https-localhost)
 - cleanup projects
   - ✅ careful about module imports (`nanoid` breaks CodeSandbox hmr on Browser-tab-refresh)
   - ✅ reorg folder structure
@@ -14,10 +13,10 @@
 - ✅ Fix `PanZoom` mouse input 
 
 ### level design
-- boxy svg scripts
-  - transform: removes background image
-  - transform: replace dataUrls by id refs
-  - update: can replace symbols in geomorphs by latest version
+- strategy
+  - create dev hull/starship-symbols in Boxy
+  - create dev geomorph using JSX and `<use>`
+  - generate prod geomorph (1 runtime PNG, various shapes)
 
 ### react components
 - ConnectDemo using Geomorphs
