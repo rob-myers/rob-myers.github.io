@@ -8,23 +8,23 @@ import useForceRefresh from '../hooks/use-force-refresh';
 export default function PanZoom(props) {
 
   const [refresh, state] = useForceRefresh(() => {
-    const viewBox = new Rect(0, 0, 200, 200);
+    const viewBox = new Rect(0, 0, 500, 500);
     const initViewBox = viewBox.clone();
     return {
       panFrom: /** @type {null|Vect} */ (null),
       zoom: 1,
       viewBox,
       initViewBox,
-      gridBounds: new Rect(-1000, -1000, 2000 + 1, 2000 + 1),
+      gridBounds: new Rect(-5000, -5000, 10000 + 1, 10000 + 1),
       /** @param {WheelEvent} e */
       onWheel: e => {
         e.preventDefault();
-        const zoom = Math.min(Math.max(state.zoom + 0.003 * e.deltaY, 0.2), 2);
+        const zoom = Math.min(Math.max(state.zoom - 0.003 * e.deltaY, 0.4), 2);
         const { x: rx, y: ry } = getSvgPos(e);
-        viewBox.x = (zoom / state.zoom) * (viewBox.x - rx) + rx;
-        viewBox.y = (zoom / state.zoom) * (viewBox.y - ry) + ry;
-        viewBox.width = zoom * initViewBox.width;
-        viewBox.height = zoom * initViewBox.height;
+        viewBox.x = (state.zoom / zoom) * (viewBox.x - rx) + rx;
+        viewBox.y = (state.zoom / zoom) * (viewBox.y - ry) + ry;
+        viewBox.width = (1 / zoom) * initViewBox.width;
+        viewBox.height = (1 / zoom) * initViewBox.height;
         state.zoom = zoom;
         refresh();
       },

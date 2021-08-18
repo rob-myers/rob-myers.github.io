@@ -102,7 +102,7 @@ Here's hoping my chain of unfinished projects is coming to a close!
 
 ---
 
-## Technology and Hurdles  <float rem="1.2">19th July 2021</float>
+## Technology  <float rem="1.2">19th July 2021</float>
 
 We will build the game using the following technologies.
 
@@ -111,6 +111,7 @@ We will build the game using the following technologies.
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
 | Styles | CSS-in-JS styled components via [Emotion](https://www.npmjs.com/package/@emotion/styled). |
 | Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
+| Physics Engine | Rapier WebAssembly module |
 | Static analysis | [ESLint](https://www.npmjs.com/package/eslint) and also TypeScript via [JSDoc comments](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html). |
 | Live analysis | [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
 | Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides draggable tabs. |
@@ -121,30 +122,43 @@ We will build the game using the following technologies.
 
 Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and another tab i.e. the rendered output.
 
-
-### Quick intro to React
+### React, Styles and Preact
 
 Competing web frameworks exist in the wild, often with their own notion of component.
 One popular approach uses React functional components i.e. _JavaScript functions_ which:
 - have a single parameter, conventionally called _props_.
 - return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
-The argument _props_ is a JavaScript object defining the component's named inputs e.g. \`{ myInput: 42, otherInput: ['a', 'b', 'c'] }\`.
-It is worth briefly explaining _virtual_ DOM nodes. Consider some code:
-
+The argument _props_ is a JavaScript object defining the component's named inputs.
+As for _virtual_ DOM nodes, consider some code:
         `}/>
 
-        <section style={{ background: '#000', height: 400 }}>
+        <section>
           <CodeEditor
-            height="400px"
+            height="300px"
             code={code['panzoom/PanZoom.jsx']}
             lineNumbers
+            readOnly
           />
         </section>
 
         <Markdown children={`
+It defines a pannable and zoomable grid.
+Check it out [on CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external") or further below.
+
 
 <!-- Consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). -->
+
+### Static and Runtime Analysis
+
+### CodeSandbox and Comments
+
+        `}/>
+
+        <Markdown children={`
+
+
+## 1st Hurdle <float rem="1.2">19th July 2021</float>
 
 __TODO__ 
 - demo app GeomorphDemo
@@ -154,14 +168,6 @@ __TODO__
 - brief overview and point to /CodeSandbox links
 - brief discussion of VNode types, using typescript syntax highlighting
   - support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.
-
-        `}/>
-
-        <Markdown children={`
-
-### Hurdle: two viewpoints
-
-__TODO__ introduce our first hurdle
 
 We begin by making the game viewpoints _viewable_.
 - Implement a pannable zoomable grid.

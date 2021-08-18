@@ -25,6 +25,7 @@ const components = {
     return (
       <a
         href={href}
+        target={title === '@external' ? '_blank' : undefined}
         title={title}
         {...href === '#command' && { onClick: (e) => {
             e.preventDefault();
