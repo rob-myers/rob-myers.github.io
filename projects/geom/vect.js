@@ -105,6 +105,12 @@ import * as Geom from './types';
     return this;
   }
 
+  round() {
+    this.x = Math.round(this.x);
+    this.y = Math.round(this.y);
+    return this;
+  }
+
   /** @param {number} amount */
   scale(amount) {
     this.x *= amount;

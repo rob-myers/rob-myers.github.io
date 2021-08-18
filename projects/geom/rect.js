@@ -68,16 +68,18 @@ export class Rect {
     return Math.max(this.width, this.height);
   }
 
-  // get poly2(): Poly2 {
-  //   return new Poly2(
-  //     [
-  //       { x: this.x, y: this.y },
-  //       { x: this.x + this.width, y: this.y },
-  //       { x: this.x + this.width, y: this.y + this.height },
-  //       { x: this.x, y: this.y + this.height }
-  //     ].map(Vector2.from)
-  //   );
-  // }
+  /**
+   * Anti-clockwise w.r.t y being downwards
+   * @returns {[Vect, Vect, Vect, Vect]}
+   */
+  get points() {
+    return [
+      new Vect(this.x, this.y),
+      new Vect(this.x, this.y + this.height),
+      new Vect(this.x + this.width, this.y + this.height),
+      new Vect(this.x + this.width, this.y),
+    ];
+  }
 
   get right() {
     return this.x + this.width;
