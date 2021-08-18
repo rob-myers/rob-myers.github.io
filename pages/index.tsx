@@ -129,9 +129,22 @@ One popular approach uses React functional components i.e. _JavaScript functions
 - have a single parameter, conventionally called _props_.
 - return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
-The argument _props_ is a JavaScript object e.g. \`{ meaningOfLife: 42, ... }\`, defining the component's named inputs.
-What is a _virtual_ DOM node?
-Well, first consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
+The argument _props_ is a JavaScript object defining the component's named inputs e.g. \`{ myInput: 42, otherInput: ['a', 'b', 'c'] }\`.
+It is worth briefly explaining _virtual_ DOM nodes. Consider some code:
+
+        `}/>
+
+        <section style={{ background: '#000', height: 400 }}>
+          <CodeEditor
+            height="400px"
+            code={code['panzoom/PanZoom.jsx']}
+            lineNumbers
+          />
+        </section>
+
+        <Markdown children={`
+
+<!-- Consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). -->
 
 __TODO__ 
 - demo app GeomorphDemo
@@ -179,14 +192,6 @@ We begin by making the game viewpoints _viewable_.
         </section>
 
         <br/>
-
-        <section style={{ background: '#000', height: 400 }}>
-          <CodeEditor
-            height="400px"
-            code={code['panzoom/PanZoom.jsx']}
-            lineNumbers
-          />
-        </section>
 
         <Markdown children={`
 This is an example of a [command link](#command "@test echo foo").

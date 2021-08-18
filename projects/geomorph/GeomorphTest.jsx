@@ -5,8 +5,8 @@ import PanZoom from '../panzoom/PanZoom';
 /** @param {{ className?: string }} props */
 export default function GeomorphTest({ className }) {
   return (
-    <Root>
-      <PanZoom className={className}>
+    <Root className={className}>
+      <PanZoom>
         <use href="/svg/hull--301.svg#root" />
       </PanZoom>
     </Root>

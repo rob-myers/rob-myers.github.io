@@ -4,8 +4,8 @@ import { Rect, Vect } from '../geom';
 import { getSvgPos, generateId } from '../service';
 import useForceRefresh from '../hooks/use-force-refresh';
 
-/** @param {React.PropsWithChildren<{ className?: string }>} props */
-export default function PanZoom({ children, className }) {
+/** @param {React.PropsWithChildren<{}>} props */
+export default function PanZoom(props) {
 
   const [refresh, state] = useForceRefresh(() => {
     const viewBox = new Rect(0, 0, 200, 200);
@@ -64,18 +64,17 @@ export default function PanZoom({ children, className }) {
     <svg
       ref={state.rootRef}
       css={state.rootCss}
-      className={className}
       preserveAspectRatio="xMinYMin"
       viewBox={`${state.viewBox}`}
     >
       <MemoedGrid bounds={state.gridBounds} />
-      {children}
+      {props.children}
     </svg>
   );
 }
 
 /** @param {{ bounds: Rect }} props */
-function Grid({ bounds }) {
+function Grid(props) {
   const gridId = React.useMemo(() => generateId('grid-'), []);
   return <>
     <defs>
@@ -84,10 +83,10 @@ function Grid({ bounds }) {
       </pattern>
     </defs>
     <rect
-      x={bounds.x}
-      y={bounds.y}
-      width={bounds.width}
-      height={bounds.height}
+      x={props.bounds.x}
+      y={props.bounds.y}
+      width={props.bounds.width}
+      height={props.bounds.height}
       fill={`url(#${gridId})`}
     />
   </>;
