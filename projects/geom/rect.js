@@ -6,6 +6,18 @@ import { Vect } from './vect';
  * A two dimensional rectangle where `(x, y)` is viewed as top left.
  */
 export class Rect {
+  /**
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} width 
+   * @param {number} height 
+   */
+  constructor(x, y, width, height) {
+    /** @type {number} */ this.x = x;
+    /** @type {number} */ this.y = y;
+    /** @type {number} */ this.width = width;
+    /** @type {number} */ this.height = height;
+  }
 
   get area() {
     return this.width * this.height;
@@ -95,20 +107,6 @@ export class Rect {
 
   static get zero() {
     return new Rect(0, 0, 0, 0);
-  }
-
-  /**
-   * @constructor
-   * @param {number} x 
-   * @param {number} y 
-   * @param {number} width 
-   * @param {number} height 
-   */
-  constructor(x, y, width, height) {
-    /** @type {number} */ this.x = x;
-    /** @type {number} */ this.y = y;
-    /** @type {number} */ this.width = width;
-    /** @type {number} */ this.height = height;
   }
 
   clone() {

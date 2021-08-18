@@ -6,9 +6,7 @@ import { Rect } from "./rect";
 import { Coord, VectJson, GeoJsonPolygon } from "./types";
 import { Vect } from "./vect";
 
-
 export class Poly {
-
   /**
    * @param {Vect[]} outline
    * @param {Vect[][]} holes 
@@ -240,11 +238,11 @@ export class Poly {
    */
   qualityTriangulate() {
     try {
-      /** @typedef {VectJson & { id: number }} V2WithId */
-      const outline = this.outline.map(({ x, y }, id) => /** @type {V2WithId} */ ({ x, y, id }));
+      /** @typedef {VectJson & { id: number }} VWithId */
+      const outline = this.outline.map(({ x, y }, id) => /** @type {VWithId} */ ({ x, y, id }));
       let nextId = outline.length;
       const holes = this.holes
-        .map(hole => hole.map(({ x, y }) => /** @type {V2WithId} */ ({ x, y, id: nextId++ })));
+        .map(hole => hole.map(({ x, y }) => /** @type {VWithId} */ ({ x, y, id: nextId++ })));
 
       const tris = new poly2tri.SweepContext(outline)
         .addHoles(holes)
@@ -252,7 +250,7 @@ export class Poly {
         // .addPoints(this.steinerPoints)
         .triangulate()
         .getTriangles()
-        .map(t => /** @type {[V2WithId, V2WithId, V2WithId]} */ ([t.getPoint(0), t.getPoint(1), t.getPoint(2)]))
+        .map(t => /** @type {[VWithId, VWithId, VWithId]} */ ([t.getPoint(0), t.getPoint(1), t.getPoint(2)]))
         .map(([u, v, w]) => /** @type {[number, number, number]} */ ([u.id, v.id, w.id]));
       
       return { vs: this.allPoints, tris };

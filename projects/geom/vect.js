@@ -5,6 +5,14 @@ import * as Geom from './types';
  * A two dimensional coordinate.
  */
  export class Vect {
+  /**
+   * @param {number} x 
+   * @param {number} y 
+   */
+  constructor(x, y) {
+    /** @type {number} */ this.x = x;
+    /** @type {number} */ this.y = y;
+  }
 
   get angle() {
     return Math.atan2(this.y, this.x);
@@ -30,15 +38,6 @@ import * as Geom from './types';
 
   static get zero() {
     return new Vect(0, 0);
-  }
-
-  /**
-   * @param {number} x 
-   * @param {number} y 
-   */
-  constructor(x, y) {
-    /** @type {number} */ this.x = x;
-    /** @type {number} */ this.y = y;
   }
 
   /** @param {Geom.VectJson} _ */
