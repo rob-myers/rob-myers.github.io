@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { css } from '@emotion/react';
 import { Rect, Vect } from '../geom';
-import { getSvgPos, nanoid } from '../service';
+import { getSvgPos, generateId } from '../service';
 import useForceRefresh from '../hooks/use-force-refresh';
 
-/** @param {React.PropsWithChildren<{}>} props */
-export default function PanZoom({ children }) {
+/** @param {React.PropsWithChildren<{ className?: string }>} props */
+export default function PanZoom({ children, className }) {
 
   const [refresh, state] = useForceRefresh(() => {
     const viewBox = new Rect(0, 0, 200, 200);
@@ -64,6 +64,7 @@ export default function PanZoom({ children }) {
     <svg
       ref={state.rootRef}
       css={state.rootCss}
+      className={className}
       preserveAspectRatio="xMinYMin"
       viewBox={`${state.viewBox}`}
     >
@@ -75,7 +76,7 @@ export default function PanZoom({ children }) {
 
 /** @param {{ bounds: Rect }} props */
 function Grid({ bounds }) {
-  const gridId = React.useMemo(() => `grid-${nanoid()}`, []);
+  const gridId = React.useMemo(() => generateId('grid-'), []);
   return <>
     <defs>
       <pattern id={gridId} width="10" height="10" patternUnits="userSpaceOnUse">

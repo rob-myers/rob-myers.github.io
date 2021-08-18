@@ -159,16 +159,16 @@ export class Poly {
 
   /**
    * Compute intersection of two infinite lines i.e.
-   * - `p0 + lambda * d0`.
-   * - `p1 + lambda' * d1`.
+   * 1. `lambda x. p0 + x * d0`.
+   * 2. `lambda x. p1 + x * d1`.
    *
-   * If they intersect return `lambda`, else `null`.
+   * If they intersect non-degenerately return solution of (1), else `null`.
    * @private
    * @param {Vect} p0
    * @param {Vect} d0
    * @param {Vect} p1
    * @param {Vect} d1
-   * @returns {null | number}
+   * @returns {number | null}
    */
   static getLinesIntersection(p0, d0, p1, d1) {
     const d0x = d0.x,
@@ -232,7 +232,7 @@ export class Poly {
 
   /**
    * Quality triangulation via constrained delaunay library 'poly2ti'.
-   * Can fail for 'non-wellformed polygons' e.g. given square
+   * Can fail for non-wellformed polygons e.g. given square
    * with a hole, cut another hole meeting 1st hole at a point.
    * On failure we fallback to earcut algorithm, warning in console.
    */
@@ -294,7 +294,6 @@ export class Poly {
   }
 
   /**
-   * @private
    * @param {Vect} p1 
    * @param {Vect} p2 
    * @param {Vect} p3 
@@ -334,7 +333,7 @@ export class Poly {
   }
 
   /**
-   * Construct union of _polygons_, yielding a multipolygon.
+   * Construct union of polygons.
    * @param {Poly[]} polys 
    */
   static union(polys) {
