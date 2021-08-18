@@ -164,6 +164,9 @@ We begin by making the game viewpoints _viewable_.
 
         <GeomorphTest />
 
+        <br/>
+        <br/>
+
         <Tabs tabs={[
           { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
           { key: 'code', filepath: 'panzoom/PanZoom.jsx' },
