@@ -6,7 +6,7 @@ import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 import { Tabs } from 'components/page/Tabs';
 
-import ConnectDemo from 'projects/misc/ConnectDemo';
+import GeomorphTest from 'projects/geomorph/GeomorphTest';
 
 const env = {};
 
@@ -38,11 +38,12 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 
 - Concerning technology:
   - Make a browser-based game.
-  - Use CSS/SVG/Images instead of HTMLCanvas/WebGL.
+  - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
   - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for physics.
   - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and [Emotion](https://www.npmjs.com/package/@emotion/styled) CSS-in-JS styled components.
   - Use [Preact](https://www.npmjs.com/package/preact) instead of React.
   - Use [NextJS](https://nextjs.org/) as our development environment.
+  - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 - Concerning game mechanics:
   - Use a realtime birdseye camera, like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
   - Use procedural level generation, permitting spaceship building/docking.
@@ -50,7 +51,7 @@ I've necessarily made a large number of decisions. Here are the important ones, 
   - Use graphics based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
   - Use explicitly illustrated NPC decisions as a game mechanic.
 - Concerning the setting:
-  - The game will be called _Rogue Markup_.
+  - _Rogue Markup_ is the title of the game.
   - The player captains the spaceship _Gehennom_, working for _Unified Transport_.
   - Missions involve personnel transport, cargo transport, and hauling.
 
@@ -79,8 +80,8 @@ Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where
 Graphically, see [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
 Importantly, it should be easy for other people to extend this game.
-We'll achieve this by providing source code, escape hatches to [StackBlitz](https://stackblitz.com/) and [CodeSandbox](https://codesandbox.io/), and clear explanations.
-Comments will be shown, so [GitHub](https://github.com/) users can share ideas and links.
+We'll achieve this by providing source code, escape hatches to [CodeSandbox](https://codesandbox.io/), and clear explanations.
+Comments will be shown so that [GitHub](https://github.com/) users can share ideas and links.
 
 <!--
 [NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
@@ -113,8 +114,8 @@ We will build the game using the following technologies.
 | Static analysis | [ESLint](https://www.npmjs.com/package/eslint) and also TypeScript via [JSDoc comments](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html). |
 | Live analysis | [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
 | Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides draggable tabs. |
-| Code editing | External [CodeSandbox](https://codesandbox.io/) and [StackBlitz](https://stackblitz.com/) links, using React. |
-| Code sharing | [GitHub](https://github.com/) comments (shown on site) e.g. referencing CodeSandbox, StackBlitz. GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
+| Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
+| Code sharing | [GitHub](https://github.com/) comments (shown on site) e.g. referencing CodeSandbox. GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
@@ -133,11 +134,11 @@ What is a _virtual_ DOM node?
 Well, first consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html).
 
 __TODO__ 
-- demo app ConnectDemo
+- demo app GeomorphDemo
 - prepare CodeSandbox link for PanZoom ✅
-- prepare StackBlitz and CodeSandbox links for ConnectDemo
-- tabbed ConnectDemo here, also with transpiled JSX
-- brief overview and point to StackBlitz/CodeSandbox links
+- prepare CodeSandbox links for GeomorphDemo
+- tabbed GeomorphDemo here, also with transpiled JSX
+- brief overview and point to /CodeSandbox links
 - brief discussion of VNode types, using typescript syntax highlighting
   - support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.
 
@@ -153,7 +154,7 @@ We begin by making the game viewpoints _viewable_.
 - Implement a pannable zoomable grid.
 - Implement a movable character & Teleglitch-style camera.
 - Support switching between these two viewpoints.
-- Support desktop & mobile; can optionally run code on [StackBlitz](https://stackblitz.com/) and [CodeSandbox](https://codesandbox.io/).
+- Support desktop & mobile; can optionally run code on [CodeSandbox](https://codesandbox.io/).
 
 ---
 
@@ -161,7 +162,7 @@ We begin by making the game viewpoints _viewable_.
 
         `}/>
 
-        <ConnectDemo />
+        <GeomorphTest />
 
         <Tabs tabs={[
           { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },

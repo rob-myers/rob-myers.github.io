@@ -25,13 +25,11 @@
   - First attempt at Geomorph to SVG i.e. conversion of `319-100x50-multi-purpose.png`.
 - ✅ PanZoom using `geom`, `hooks`, `service/dom`
 
-### CodeSandbox and StackBlitz
-- hooks hot reloading on StackBlitz?
+### CodeSandbox
+- CodeSandbox for PanZoom
+- CodeSandbox for GeomorphDemo
 - ✅ StackBlitz for PanZoom
   > https://stackblitz.com/edit/rogue-markup-panzoom?file=index.js
-- CodeSandbox for PanZoom
-- StackBlitz for ConnectPolyDemo
-- CodeSandbox for ConnectPolyDemo
 
 ### code-editor
 - support code-folding
