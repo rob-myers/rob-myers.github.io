@@ -45,3 +45,21 @@
   background-color: #494d4e !important;
   color: #9c9e9e !important;
 }
+
+.CodeMirror-foldmarker {    
+  font-family: arial;
+}
+.CodeMirror-foldgutter {
+  width: .7em;
+}
+.CodeMirror-foldgutter-open,
+.CodeMirror-foldgutter-folded {
+  color: #aaa;
+  cursor: pointer;
+}
+.CodeMirror-foldgutter-open:after {
+  content: "\25BE";
+}
+.CodeMirror-foldgutter-folded:after {
+  content: "\25B8";
+}

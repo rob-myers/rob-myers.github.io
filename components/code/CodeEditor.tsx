@@ -7,7 +7,7 @@ import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/keymap/sublime';
 import 'codemirror/addon/fold/foldcode';
 import 'codemirror/addon/fold/indent-fold';
-// import 'codemirror/addon/fold/foldgutter';
+import 'codemirror/addon/fold/foldgutter';
 
 import 'codemirror/mode/sass/sass';
 import 'codemirror/mode/javascript/javascript';
@@ -52,6 +52,8 @@ export default function CodeEditor({
         foldOptions: {
           rangeFinder: CodeMirror.fold.indent,
         },
+        foldGutter: true,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
       });
     }
     return () => {
