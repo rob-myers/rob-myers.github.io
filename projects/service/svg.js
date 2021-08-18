@@ -1,21 +1,23 @@
 import { parseSVG, makeAbsolute, MoveToCommand } from 'svg-path-parser';
-import { VectJson } from '../geom/types';
+import { Vect } from '../geom/vect';
+import { Poly } from '../geom/poly';
 
 /**
  * Based on https://github.com/Phrogz/svg-path-to-polygons/blob/master/svg-path-to-polygons.js
- * Only supports straight lines i.e. M, L, H, V, Z
+ * Only supports straight lines i.e. M, L, H, V, Z.
+ * Creates a list of polygons without holes.
  * @param {string} svgPathString 
  */
 export function svgPathToPolygons(svgPathString) {
-	const polys = /** @type {VectJson[][]} */ ([]);
-	let poly = /** @type {VectJson[]} */ ([]);
+	const polys = /** @type {Vect[][]} */ ([]);
+	let poly = /** @type {Vect[]} */ ([]);
 
 	/**
 	 * @param {number} x 
 	 * @param {number} y 
 	 */
   function add(x, y){
-    poly.push({ x, y });
+    poly.push(new Vect(x, y));
   }
 
 	makeAbsolute(parseSVG(svgPathString)).forEach(cmd => {
@@ -33,5 +35,6 @@ export function svgPathToPolygons(svgPathString) {
 				throw Error(`svg command ${cmd.command} is not supported`);
 		}
 	});
-	return polys;
+
+	return polys.map(ps => new Poly(ps));
 }
