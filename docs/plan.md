@@ -14,7 +14,9 @@
 
 ### level design
 - strategy
-  - create dev hull/starship-symbols in Boxy
+  - create dev _hull_ and _starship-symbols_ in Boxy
+    - hull includes e.g. circular windows
+    - it defines walls and induces a bounding polygon
   - create dev geomorph using JSX and `<use>`
   - generate prod geomorph (1 runtime PNG, various shapes)
 
