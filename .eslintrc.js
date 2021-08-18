@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-undef
 module.exports = {
     "env": {
         "browser": true,
@@ -28,5 +27,19 @@ module.exports = {
                 "argsIgnorePattern": "^_"
             }
         ],
-    }
+    },
+    "overrides": [
+        {
+            "files": [".eslintrc.js"],
+            "rules": {
+                "no-undef": "off"
+            }
+        },
+        {
+            "files": ["projects/**/*.js"],
+            "rules": {
+                "no-unused-vars": "off"
+            }
+        }
+    ]
 };
