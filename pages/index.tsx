@@ -146,13 +146,14 @@ We begin by considering relevant code:
           tabs={[
             { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
             { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
+            { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
           ]}
           height="400px"
         />
 
         <Markdown children={`
 _PanZoom_ defines a pannable and zoomable grid.
-To see it in action, try clicking the other tab above, or [view the CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external").
+To see it in action, try clicking the other tabs above, or [view the CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external").
 Briefly:
 - _Grid_ renders a part of an SVG i.e. a finite grid obtained by repeating a 10x10 unit pattern.
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It continually adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
