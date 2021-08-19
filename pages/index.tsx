@@ -51,9 +51,10 @@ I've necessarily made a large number of decisions. Here are the important ones, 
   - Use graphics based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
   - Use explicitly illustrated NPC decisions as a game mechanic.
 - Concerning the setting:
-  - _Rogue Markup_ is the title of the game.
+  - The title of the game is _Rogue Markup_.
   - The player captains the spaceship _Gehennom_, working for _Unified Transport_.
-  - Missions involve personnel transport, cargo transport, and hauling.
+  - The missions involve personnel transport, cargo transport, and hauling.
+  - The graphical style is based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
 Over time we'll clarify these constraints.
 But first we emphasise: _finishing a game is really fucking hard_.
@@ -74,7 +75,7 @@ They're also analogous to UI components: parallel systems with some intercommuni
 ### 2. The Result (Games I want to have made)
 
 As an end result I want a _highly replayable space travel game_.
-The underlying missions amount to going from A to B (🎵 ever was it so).
+The underlying missions amount to going from A to B (ever was it so).
 Monotony will be overcome via mission specifics, encountered NPC behaviours, procedural generation, and ship building.
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
 Graphically, see [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
@@ -124,13 +125,13 @@ We will build the game using the following technologies.
 
 ### React, Styles and Preact
 
-Competing web frameworks exist in the wild, often with their own notion of component.
-One popular approach uses React functional components i.e. _JavaScript functions_ which:
+Competing web frameworks exist in the wild, often with their own notion of _component_ (fundamental unit of reusable code).
+One popular approach uses "React functional components" i.e. _JavaScript functions_ which:
 - have a single parameter, conventionally called _props_.
 - return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
 The argument _props_ is a JavaScript object defining the component's named inputs.
-As for _virtual_ DOM nodes, let's look at some code:
+As for _virtual_ DOM nodes, consider some code:
         `}/>
 
         <section>
@@ -144,20 +145,14 @@ As for _virtual_ DOM nodes, let's look at some code:
         </section>
 
         <Markdown children={`
-It defines a pannable and zoomable grid.
-Check it out [on CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external") or further below.
+The default export defines a pannable and zoomable grid, which can be seen [on CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external") or further below.
+This website is _not_ a React tutorial.
+However, we do want to be clear
 
 __TODO__ what are we trying to say here?
 - brief discussion of VNode types, using typescript syntax highlighting
 - brief overview and point to /CodeSandbox links
-  - support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.
-
-__TODO__ 
-- GeomorphDemo
-- prepare CodeSandbox link for PanZoom ✅
-- prepare CodeSandbox links for GeomorphDemo
-- tabbed GeomorphDemo here, also with transpiled JSX
-  
+  - support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.  
 
 <!-- Consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). -->
 
@@ -165,19 +160,25 @@ __TODO__
 
 ### Static and Runtime Analysis
 
-Typescript via JSdoc refering to CodeSandbox + images.
+- Typescript via JSdoc, refering to CodeSandbox.
+- Terminal + Preact hooks
+- Terminal + Game AI
 
-Terminal + Preact hooks
-
-Terminal + Game AI
-
-### Comments and CodeSandbox
+### Comments
 
         `}/>
 
         <Markdown children={`
 
-## Camera <float rem="1.2">19th July 2021</float>
+## Starship Geomorphs <float rem="1.2">19th July 2021</float>
+
+__TODO__ 
+- GeomorphDemo
+- prepare CodeSandbox link for PanZoom ✅
+- prepare CodeSandbox links for GeomorphDemo
+- tabbed GeomorphDemo here, also with transpiled JSX
+
+## Realtime Camera <float rem="1.2">19th July 2021</float>
 
 We begin by making the game viewpoints _viewable_.
 - Implement a pannable zoomable grid.
