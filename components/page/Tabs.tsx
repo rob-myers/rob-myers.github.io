@@ -61,7 +61,8 @@ function computeJsonModel(tabs: TabMeta[]): IJsonModel {
           type: 'tab',
           name: meta.key === 'code'
             ? meta.filepath
-            : meta.filepath.slice(0, -4), // sans .jsx
+            // : meta.filepath.slice(0, -4), // sans .jsx
+            : meta.filepath.split('/').pop()!.slice(0, -4),
           config: {
             key: meta.key,
             folds: 'folds' in meta ? meta.folds : undefined,
