@@ -25,13 +25,14 @@ const components = {
     return (
       <a
         href={href}
-        target={title === '@external' ? '_blank' : undefined}
+        target={['@external'].includes(title)  ? '_blank' : undefined}
         title={title}
-        {...href === '#command' && { onClick: (e) => {
+        {...href === '#command' && {
+          onClick: (e) => {
             e.preventDefault();
-            // TODO trigger command
             console.warn('link triggered command:', title);
-        }}}
+          }
+        }}
         {...props}
       >
         {children}

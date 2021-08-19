@@ -36,7 +36,8 @@ As an important side-effect, a popular approach to frontend development will be 
 
 I've necessarily made a large number of decisions. Here are the important ones, from low-level to high-level.
 
-- Concerning technology:
+### Concerning technology
+
   - Make a browser-based game.
   - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
   - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
@@ -44,12 +45,15 @@ I've necessarily made a large number of decisions. Here are the important ones, 
   - Use [Preact](https://www.npmjs.com/package/preact) instead of React.
   - Use [NextJS](https://nextjs.org/) as our development environment.
   - Use [CodeSandbox](https://codesandbox.io) to share editable code.
-- Concerning game mechanics:
+
+### Concerning game mechanics
+
   - Use a realtime birdseye camera, like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
   - Use the physics engine [Rapier](https://www.npmjs.com/package/@dimforge/rapier2d).
   - Use procedural generation e.g. spaceship building/docking.
   - Use explicitly illustrated NPC decisions as a game mechanic.
-- Concerning the setting:
+
+### Concerning the setting
   - The title of the game is _Rogue Markup_.
   - The player captains the spaceship _Gehennom_, working for _Unified Transport_.
   - The missions involve personnel transport, cargo transport, and hauling.
@@ -110,13 +114,13 @@ We will build the game using the following technologies.
 | - | - |
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
 | Styles | CSS-in-JS styled components via [Emotion](https://www.npmjs.com/package/@emotion/styled). |
-| Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
-| Physics Engine | [Rapier WebAssembly module](https://www.npmjs.com/package/@dimforge/rapier2d) |
+| Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
+| Physics engine | The WebAssembly module [Rapier](https://www.npmjs.com/package/@dimforge/rapier2d). |
 | Static analysis | [ESLint](https://www.npmjs.com/package/eslint) and also TypeScript via [JSDoc comments](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html). |
 | Live analysis | [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
 | Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides draggable tabs. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
-| Code sharing | [GitHub](https://github.com/) comments shown on site. GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
+| Code sharing | [GitHub](https://github.com/) comments shown on site; GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
@@ -130,7 +134,7 @@ One popular approach uses "React functional components" i.e. _JavaScript functio
 - return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
 The argument _props_ is a JavaScript object defining the component's named inputs.
-As for _virtual_ DOM nodes, consider some code:
+To get a grip on _virtual_ DOM nodes, first consider some code:
         `}/>
 
         <Tabs
@@ -142,12 +146,14 @@ As for _virtual_ DOM nodes, consider some code:
         />
 
         <Markdown children={`
-First some observations.
-- The code imports various things from other files.
-- The code exports a React function component called _PanZoom_.
-- PanZoom is a pannable/zoomable grid (see other tab, or [here](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external")).
-- PanZoom has a single input called _props_.
-- PanZoom returns something which looks like HTML.
+PanZoom is a pannable/zoomable grid (see other tab, or [here](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external")).
+It has a single input called props, and returns something which looks like HTML.
+The same can said for the React function component _Grid_.
+
+Recall the three giants: HTML, CSS and JavaScript, born in the early nineties.
+Technically only HTML is needed: CSS can be included via \\<style\\> tags, JavaScript via attributes like _onload_.
+
+<br/>
 
 __TODO__ what are we trying to say here?
 - brief discussion of VNode types, using typescript syntax highlighting
@@ -166,9 +172,7 @@ __TODO__ what are we trying to say here?
 
 ### Comments
 
-        `}/>
-
-        <Markdown children={`
+---
 
 ## Starship Geomorphs <float rem="1.2">19th July 2021</float>
 
@@ -178,6 +182,8 @@ __TODO__
 - prepare CodeSandbox links for GeomorphDemo
 - tabbed GeomorphDemo here, also with transpiled JSX
 
+---
+
 ## Realtime Camera <float rem="1.2">19th July 2021</float>
 
 We begin by making the game viewpoints _viewable_.
@@ -186,7 +192,6 @@ We begin by making the game viewpoints _viewable_.
 - Support switching between these two viewpoints.
 - Support desktop & mobile; can optionally run code on [CodeSandbox](https://codesandbox.io/).
 
----
 
         `}/>
 
