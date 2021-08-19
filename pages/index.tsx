@@ -39,7 +39,7 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 - Concerning technology:
   - Make a browser-based game.
   - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
-  - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for physics.
+  - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
   - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and [Emotion](https://www.npmjs.com/package/@emotion/styled) CSS-in-JS styled components.
   - Use [Preact](https://www.npmjs.com/package/preact) instead of React.
   - Use [NextJS](https://nextjs.org/) as our development environment.
@@ -111,7 +111,7 @@ We will build the game using the following technologies.
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
 | Styles | CSS-in-JS styled components via [Emotion](https://www.npmjs.com/package/@emotion/styled). |
 | Component Framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
-| Physics Engine | Rapier WebAssembly module |
+| Physics Engine | [Rapier WebAssembly module](https://www.npmjs.com/package/@dimforge/rapier2d) |
 | Static analysis | [ESLint](https://www.npmjs.com/package/eslint) and also TypeScript via [JSDoc comments](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html). |
 | Live analysis | [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
 | Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides draggable tabs. |
@@ -120,7 +120,7 @@ We will build the game using the following technologies.
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
-Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and another tab i.e. the rendered output.
+<!-- Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and another tab i.e. the rendered output. -->
 
 ### React, Styles and Preact
 
@@ -130,7 +130,7 @@ One popular approach uses React functional components i.e. _JavaScript functions
 - return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
 The argument _props_ is a JavaScript object defining the component's named inputs.
-As for _virtual_ DOM nodes, consider some code:
+As for _virtual_ DOM nodes, let's look at some code:
         `}/>
 
         <section>
@@ -147,28 +147,37 @@ As for _virtual_ DOM nodes, consider some code:
 It defines a pannable and zoomable grid.
 Check it out [on CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external") or further below.
 
+__TODO__ what are we trying to say here?
+- brief discussion of VNode types, using typescript syntax highlighting
+- brief overview and point to /CodeSandbox links
+  - support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.
+
+__TODO__ 
+- GeomorphDemo
+- prepare CodeSandbox link for PanZoom ✅
+- prepare CodeSandbox links for GeomorphDemo
+- tabbed GeomorphDemo here, also with transpiled JSX
+  
 
 <!-- Consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). -->
 
+### Physics Engine
+
 ### Static and Runtime Analysis
 
-### CodeSandbox and Comments
+Typescript via JSdoc refering to CodeSandbox + images.
+
+Terminal + Preact hooks
+
+Terminal + Game AI
+
+### Comments and CodeSandbox
 
         `}/>
 
         <Markdown children={`
 
-
-## 1st Hurdle <float rem="1.2">19th July 2021</float>
-
-__TODO__ 
-- demo app GeomorphDemo
-- prepare CodeSandbox link for PanZoom ✅
-- prepare CodeSandbox links for GeomorphDemo
-- tabbed GeomorphDemo here, also with transpiled JSX
-- brief overview and point to /CodeSandbox links
-- brief discussion of VNode types, using typescript syntax highlighting
-  - support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.
+## Camera <float rem="1.2">19th July 2021</float>
 
 We begin by making the game viewpoints _viewable_.
 - Implement a pannable zoomable grid.
@@ -177,8 +186,6 @@ We begin by making the game viewpoints _viewable_.
 - Support desktop & mobile; can optionally run code on [CodeSandbox](https://codesandbox.io/).
 
 ---
-
-## Pannable Zoomable Grid <float rem="1.2">19th July 2021</float>
 
         `}/>
 
