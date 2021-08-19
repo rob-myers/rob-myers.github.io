@@ -1,6 +1,5 @@
 ## Plan
 
-- codemirror toggling: initial + gutter
 - parse svg hull polygons and infer polygon outline
 
 - index page links to "article bunches"
@@ -35,6 +34,7 @@
   > https://stackblitz.com/edit/rogue-markup-panzoom?file=index.js
 
 ### code-editor
+- ✅ codemirror toggling: initial + gutter
 - support code-folding
   - ✅ can code-fold by indent using Ctrl-Q
   - can code-fold via gutter

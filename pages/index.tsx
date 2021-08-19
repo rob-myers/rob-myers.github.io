@@ -139,6 +139,7 @@ As for _virtual_ DOM nodes, consider some code:
             code={code['panzoom/PanZoom.jsx']}
             lineNumbers
             readOnly
+            folds={[{ line: 9, ch: 0 }]} // 1-based line 10
           />
         </section>
 

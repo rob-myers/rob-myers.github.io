@@ -39,7 +39,7 @@ export default function PanZoom(props) {
         }
       },
       onPointerUp: () => state.panFrom = null,
-      /** @type {React.LegacyRef<SVGSVGElement>} */
+      /** @type {(el: null | SVGSVGElement) => void} */
       rootRef: el => {
         if (el) {
           el.addEventListener('wheel', state.onWheel);

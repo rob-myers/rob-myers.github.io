@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import { useEffect, useRef } from "react";
 import styled from '@emotion/styled';
 
-import codemirror from 'codemirror';
+import CodeMirror from 'codemirror';
 import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/keymap/sublime';
@@ -13,7 +13,6 @@ import 'codemirror/mode/sass/sass';
 import 'codemirror/mode/javascript/javascript';
 import './codemirror/jsx-styled-mode';
 import './codemirror/custom-cmds';
-import CodeMirror from "codemirror";
 
 export default function CodeEditor({
   code,
@@ -22,14 +21,13 @@ export default function CodeEditor({
   padding,
   height,
   readOnly,
+  folds,
 }: Props) {
   const editorRoot = useRef<HTMLDivElement>(null);
-  const cm = useRef<CodeMirror.Editor>();
-  const value = useMemo(() => code.trim(), [code]);
 
   useEffect(() => {
     if (editorRoot.current) {
-      cm.current = codemirror(editorRoot.current, {
+      const cm = CodeMirror(editorRoot.current, {
         autoCloseBrackets: true,
         keyMap: 'sublime',
         theme: 'vscode-dark',
@@ -45,7 +43,9 @@ export default function CodeEditor({
           "Ctrl-Alt-Up": "swapLineUp",
           "Ctrl-Alt-Down": "swapLineDown",
           "Cmd-/": "customToggleComment",
-          "Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); },
+          "Ctrl-Q": function(cm){
+            cm.foldCode(cm.getCursor());
+          },
         },
         addModeClass: true,
         readOnly,
@@ -53,16 +53,18 @@ export default function CodeEditor({
           rangeFinder: CodeMirror.fold.indent,
         },
         foldGutter: true,
-        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
       });
+
+      if (folds) {
+        cm.refresh();
+        folds.forEach(range => cm.foldCode(range));
+      }
     }
     return () => {
       editorRoot.current?.childNodes.forEach(x => x.remove());
-      cm.current = undefined;
     };
   }, []);
-
-  useEffect(() => cm.current?.setValue(value || '') ,[value]);
 
   return (
     <Root
@@ -81,6 +83,7 @@ interface Props {
   padding?: string;
   readOnly?: boolean;
   height: string;
+  folds?: CodeMirror.Position[];
 }
 
 const Root = styled('div')<{
