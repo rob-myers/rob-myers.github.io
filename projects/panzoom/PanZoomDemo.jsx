@@ -1,6 +1,10 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import PanZoom from './PanZoom';
+import { Rect } from '../geom';
+
+const initViewBox = new Rect(0, 0, 200, 200);
+const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 
 /** @param {{ className?: string }} props */
 export default function PanZoomDemo({ className }) {
@@ -10,7 +14,7 @@ export default function PanZoomDemo({ className }) {
         drag to <strong>pan</strong>, scroll/pinch to <strong>zoom</strong>
       </div>
       <div>
-        <PanZoom>
+        <PanZoom initViewBox={initViewBox} gridBounds={gridBounds}>
           <rect fill="red" x={10} y={10} width={20} height={20} />
         </PanZoom>
       </div>

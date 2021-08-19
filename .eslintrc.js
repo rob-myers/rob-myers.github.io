@@ -36,7 +36,7 @@ module.exports = {
             }
         },
         {
-            "files": ["projects/**/*.js"],
+            "files": ["projects/**/*.js", "projects/**/*.jsx"],
             "rules": {
                 "no-unused-vars": "off"
             }

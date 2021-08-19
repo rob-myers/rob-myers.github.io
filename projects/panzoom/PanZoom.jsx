@@ -1,30 +1,31 @@
 import * as React from 'react';
 import { css } from '@emotion/react';
-import { Rect, Vect } from '../geom';
+import { Vect, Rect } from '../geom';
 import { getSvgPos, generateId } from '../service';
 import useForceRefresh from '../hooks/use-force-refresh';
 
-/** @param {React.PropsWithChildren<{}>} props */
+/** @param {React.PropsWithChildren<Props>} props */
 export default function PanZoom(props) {
 
   const [refresh, state] = useForceRefresh(() => {
-    const viewBox = new Rect(0, 0, 500, 500);
-    const initViewBox = viewBox.clone();
+    const viewBox = props.initViewBox.clone();
+    const minZoom = props.minZoom || 0.5;
+    const maxZoom = props.maxZoom || 2;
     return {
       panFrom: /** @type {null|Vect} */ (null),
-      zoom: 1,
+      zoom: props.initZoom || 1,
       viewBox,
-      initViewBox,
-      gridBounds: new Rect(-5000, -5000, 10000 + 1, 10000 + 1),
+      initViewBox: props.initViewBox,
+      gridBounds: props.gridBounds,
       /** @param {WheelEvent} e */
       onWheel: e => {
         e.preventDefault();
-        const zoom = Math.min(Math.max(state.zoom - 0.003 * e.deltaY, 0.4), 2);
+        const zoom = Math.min(Math.max(state.zoom - 0.003 * e.deltaY, minZoom), maxZoom);
         const { x: rx, y: ry } = getSvgPos(e);
         viewBox.x = (state.zoom / zoom) * (viewBox.x - rx) + rx;
         viewBox.y = (state.zoom / zoom) * (viewBox.y - ry) + ry;
-        viewBox.width = (1 / zoom) * initViewBox.width;
-        viewBox.height = (1 / zoom) * initViewBox.height;
+        viewBox.width = (1 / zoom) * props.initViewBox.width;
+        viewBox.height = (1 / zoom) * props.initViewBox.height;
         state.zoom = zoom;
         refresh();
       },
@@ -72,6 +73,15 @@ export default function PanZoom(props) {
     </svg>
   );
 }
+
+/**
+ * @typedef Props @type {object}
+ * @property {Rect} initViewBox Initial viewbox in world coords
+ * @property {Rect} gridBounds World bounds
+ * @property {number=} minZoom Minimum zoom factor (default 0.5)
+ * @property {number=} maxZoom Maximum zoom factor (default 2)
+ * @property {number=} initZoom Initial zoom factor (default 1)
+ */
 
 /** @param {{ bounds: Rect }} props */
 function Grid(props) {
