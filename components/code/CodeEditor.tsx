@@ -53,6 +53,7 @@ export default function CodeEditor({
         },
         foldGutter: true,
         gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+        // lineWrapping: true,
       });
 
       if (folds) {

@@ -157,7 +157,7 @@ Briefly:
 - _Grid_ renders a part of an SVG i.e. a finite grid obtained by repeating a 10x10 unit pattern.
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It continually adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
-Both PanZoom and Grid return something which looks like HTML, but isn't.
+Both PanZoom and Grid return something which looks like HTML.
 Recall the three pillars - HTML, CSS and JavaScript, all born in the early nineties.
 Technically, only HTML is needed to create a website, because CSS can be included via _\\<style\\>_ tags and JavaScript via attributes like _onload_.
 But ...

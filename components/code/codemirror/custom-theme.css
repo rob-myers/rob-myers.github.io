@@ -63,3 +63,7 @@
 .CodeMirror-foldgutter-folded:after {
   content: "\25B8";
 }
+
+/* .CodeMirror-hscrollbar {
+  height: 0 !important;
+} */
