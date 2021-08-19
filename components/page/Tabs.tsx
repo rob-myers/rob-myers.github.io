@@ -6,10 +6,10 @@ import * as Lookup from 'model/tabs-lookup';
 import { CodeEditor } from 'components/dynamic';
 import CodeMirror from "codemirror";
 
-export function Tabs({ tabs }: Props) {
+export function Tabs({ tabs, height = "300px" }: Props) {
   const model = useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   return (
-    <TabsRoot>
+    <TabsRoot height={height}>
       <Layout
         model={model}
         factory={factory}
@@ -20,6 +20,7 @@ export function Tabs({ tabs }: Props) {
 
 interface Props {
   tabs: TabMeta[];
+  height?: string;
 }
 
 type TabMeta = (
@@ -27,20 +28,20 @@ type TabMeta = (
   | { key: 'component'; filepath: Lookup.ComponentFilepathKey }
 );
 
-const TabsRoot = styled('div')`
+const TabsRoot = styled('div')<{ height: string }>`
   position: relative;
   width: 100%;
-  height: 300px;
+  height: ${(props) => props.height};
   border: 1px solid #555;
-
+  
   .flexlayout__tab_button_content {
     user-select: none;
     font-size: 12px;
-    font-family: Courier, monospace;
+    /* font-family: Courier, monospace; */
   }
   .flexlayout__tab {
-    background: white;
-    color: black;
+    /* background: black;
+    color: white; */
   }
 `;
 
@@ -91,7 +92,7 @@ function factory(node: TabNode) {
               readOnly
               code={Lookup.code[filepath as Lookup.CodeFilepathKey]}
               folds={folds}
-            />;
+            />
         </Tab>;
       }
       return <ErrorMessage>Unknown code with filepath {filepath}</ErrorMessage>;
@@ -129,26 +130,22 @@ const TabRoot = styled('section')`
 
   .tab-toolbar {
     background: #444;
-      color: white;
-      position: absolute;
-      top: 0;
-      width: 100%;
-      height: 32px;
-      padding: 6px 8px;
+    color: white;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 16px;
+    /* padding: 6px 8px; */
   }
 
   .tab-content {
     position: absolute;
-    top: 32px;
+    top: 16px;
     width: 100%;
-    height: calc(100% - 32px);
+    height: calc(100% - 16px);
   }
 `;
 
 function TabToolbar() {
-  return (
-    <div className="tab-toolbar">
-      toolbar goes here
-    </div>
-  );
+  return <div className="tab-toolbar" />;
 }

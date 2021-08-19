@@ -133,22 +133,21 @@ The argument _props_ is a JavaScript object defining the component's named input
 As for _virtual_ DOM nodes, consider some code:
         `}/>
 
-        <section>
-          <CodeEditor
-            height="300px"
-            code={code['panzoom/PanZoom.jsx']}
-            lineNumbers
-            readOnly
-            folds={[{ line: 9, ch: 0 }]} // 1-based line 10
-          />
-        </section>
+        <Tabs
+          tabs={[
+            { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
+            { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
+          ]}
+          height="400px"
+        />
 
         <Markdown children={`
-Let us make some observations.
+First some observations.
 - The code imports various things from other files.
 - The code exports a React function component called _PanZoom_.
-- PanZoom is a pannable/zoomable grid ([see CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external")).
+- PanZoom is a pannable/zoomable grid (see other tab, or [here](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external")).
 - PanZoom has a single input called _props_.
+- PanZoom returns something which looks like HTML.
 
 __TODO__ what are we trying to say here?
 - brief discussion of VNode types, using typescript syntax highlighting
@@ -196,10 +195,15 @@ We begin by making the game viewpoints _viewable_.
         <br/>
         <br/>
 
-        <Tabs tabs={[
-          { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
-          { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
-        ]} />
+        <section>
+          <CodeEditor
+            height="300px"
+            code={code['panzoom/PanZoom.jsx']}
+            lineNumbers
+            readOnly
+            folds={[{ line: 9, ch: 0 }]} // 1-based line 10
+          />
+        </section>
 
         <br/>
 
