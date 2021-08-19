@@ -1,5 +1,7 @@
 ## Plan
 
+- fix Tabs initial background e.g. CodeEditor initially fades in?
+
 - parse svg hull polygons and infer polygon outline
 
 - index page links to "article bunches"

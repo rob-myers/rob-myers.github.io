@@ -26,7 +26,7 @@ Roguelike; Built online; Game AI focus
 ## Objective <float rem="1.2">19th July 2021</float>
 
 We are going to build a video game step-by-step on this website.
-It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the spaceship _Gehennom_.
+It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the starship _Gehennom_.
 
 As an important side-effect, a popular approach to frontend development will be presented. The underlying technology is the Markup language HTML, brought to life via CSS, SVG and JavaScript.
 
@@ -55,12 +55,14 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 
 ### Concerning the setting
   - The title of the game is _Rogue Markup_.
-  - The player captains the spaceship _Gehennom_, working for _Unified Transport_.
+  - The player captains the starship _Gehennom_, working for _Unified Transport_.
   - The missions involve personnel transport, cargo transport, and hauling.
   - The graphical style is based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
 Over time we'll clarify these constraints.
-But first we emphasise: _finishing a game is really fucking hard_.
+But first we emphasise:
+> _finishing a game is really fucking hard_.
+
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). We'll now address them.
 
 ### 1. Fun to develop (Games I want to make)
@@ -130,12 +132,26 @@ We will build the game using the following technologies.
 
 Competing web frameworks exist in the wild, often with their own notion of _component_ (fundamental unit of reusable code).
 One popular approach uses "React functional components" i.e. _JavaScript functions_ which:
-- have a single parameter, conventionally called _props_.
-- return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
+1. Have a single parameter usually called _props_. It is a JavaScript object defining the named inputs, e.g.
+   `}/>
 
-The argument _props_ is a JavaScript object defining the component's named inputs.
-To get a grip on _virtual_ DOM nodes, first consider some code:
+    <section style={{ paddingLeft: 40, height: 40 }}>
+      <CodeEditor
+        height="40px"
+        code={"{ foo: 42, bar: ['pan', 'galactic'] }"}
+        readOnly
+        padding="12px 0 0 0"
+      />
+    </section>
+
+    <Markdown children={`
+
+2. Return a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
+
+It will be worth getting a basic grip on _virtual_ DOM nodes.
+Let us begin by considering some useful code:
         `}/>
+
 
         <Tabs
           tabs={[
@@ -146,12 +162,13 @@ To get a grip on _virtual_ DOM nodes, first consider some code:
         />
 
         <Markdown children={`
-PanZoom is a pannable/zoomable grid (see other tab, or [here](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external")).
-It has a single input called props, and returns something which looks like HTML.
-The same can said for the React function component _Grid_.
+_PanZoom_ defines a pannable and zoomable grid.
+Try clicking on the other tab above, or [view the CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external").
+PanZoom returns something which looks like HTML, and the same can be said for the React function component _Grid_.
 
-Recall the three giants: HTML, CSS and JavaScript, born in the early nineties.
-Technically only HTML is needed: CSS can be included via \\<style\\> tags, JavaScript via attributes like _onload_.
+Recall the three pillars - HTML, CSS and JavaScript, born in the early nineties.
+Technically, only HTML is needed to create a website, because CSS can be included via _\\<style\\>_ tags and JavaScript via attributes like _onload_.
+But in practice programmers need a way to decompose a website, rather than writing a huge blob of HTML.
 
 <br/>
 
