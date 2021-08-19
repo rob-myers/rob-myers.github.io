@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 
 import * as Lookup from 'model/tabs-lookup';
 import { CodeEditor } from 'components/dynamic';
+import CodeMirror from "codemirror";
 
 export function Tabs({ tabs }: Props) {
   const model = useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
@@ -22,7 +23,7 @@ interface Props {
 }
 
 type TabMeta = (
-  | { key: 'code'; filepath: Lookup.CodeFilepathKey }
+  | { key: 'code'; filepath: Lookup.CodeFilepathKey; folds?: CodeMirror.Position[] }
   | { key: 'component'; filepath: Lookup.ComponentFilepathKey }
 );
 
@@ -62,6 +63,7 @@ function computeJsonModel(tabs: TabMeta[]): IJsonModel {
             : meta.filepath.slice(0, -4), // sans .jsx
           config: {
             key: meta.key,
+            folds: 'folds' in meta ? meta.folds : undefined,
           },
           component: meta.filepath,
           enableClose: false,
@@ -72,7 +74,10 @@ function computeJsonModel(tabs: TabMeta[]): IJsonModel {
 }
 
 function factory(node: TabNode) {
-  const { key: nodeKey } = node.getConfig() as { key: TabMeta['key'] };
+  const { key: nodeKey, folds } = node.getConfig() as {
+    key: TabMeta['key'];
+    folds?: CodeMirror.Position[];
+  };
 
   switch (nodeKey) {
     case 'code': {
@@ -85,6 +90,7 @@ function factory(node: TabNode) {
               lineNumbers
               readOnly
               code={Lookup.code[filepath as Lookup.CodeFilepathKey]}
+              folds={folds}
             />;
         </Tab>;
       }

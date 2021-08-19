@@ -46,9 +46,8 @@ I've necessarily made a large number of decisions. Here are the important ones, 
   - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 - Concerning game mechanics:
   - Use a realtime birdseye camera, like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
-  - Use procedural level generation, permitting spaceship building/docking.
   - Use the physics engine [Rapier](https://www.npmjs.com/package/@dimforge/rapier2d).
-  - Use graphics based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
+  - Use procedural generation e.g. spaceship building/docking.
   - Use explicitly illustrated NPC decisions as a game mechanic.
 - Concerning the setting:
   - The title of the game is _Rogue Markup_.
@@ -117,7 +116,7 @@ We will build the game using the following technologies.
 | Live analysis | [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
 | Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides draggable tabs. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
-| Code sharing | [GitHub](https://github.com/) comments (shown on site) e.g. referencing CodeSandbox. GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
+| Code sharing | [GitHub](https://github.com/) comments shown on site. GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
@@ -145,9 +144,11 @@ As for _virtual_ DOM nodes, consider some code:
         </section>
 
         <Markdown children={`
-The default export defines a pannable and zoomable grid, which can be seen [on CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external") or further below.
-This website is _not_ a React tutorial.
-However, we do want to be clear
+Let us make some observations.
+- The code imports various things from other files.
+- The code exports a React function component called _PanZoom_.
+- PanZoom is a pannable/zoomable grid ([see CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external")).
+- PanZoom has a single input called _props_.
 
 __TODO__ what are we trying to say here?
 - brief discussion of VNode types, using typescript syntax highlighting
@@ -197,7 +198,7 @@ We begin by making the game viewpoints _viewable_.
 
         <Tabs tabs={[
           { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
-          { key: 'code', filepath: 'panzoom/PanZoom.jsx' },
+          { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
         ]} />
 
         <br/>
