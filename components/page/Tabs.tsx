@@ -81,7 +81,7 @@ function factory(node: TabNode) {
         return <Tab>
           <CodeEditor
               height="100%"
-              padding="16px 0"
+              // padding="16px 0"
               lineNumbers
               readOnly
               code={Lookup.code[filepath as Lookup.CodeFilepathKey]}

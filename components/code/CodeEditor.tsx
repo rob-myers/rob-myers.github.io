@@ -16,9 +16,8 @@ import './codemirror/custom-cmds';
 
 export default function CodeEditor({
   code,
-  gridArea,
   lineNumbers,
-  padding,
+  padding = "",
   height,
   readOnly,
   folds,
@@ -68,7 +67,6 @@ export default function CodeEditor({
 
   return (
     <Root
-      gridArea={gridArea}
       height={height}
       padding={padding}
       ref={editorRoot}
@@ -87,11 +85,9 @@ interface Props {
 }
 
 const Root = styled('div')<{
-  gridArea?: string;
   height?: string;
   padding?: string;
 }>`
-  grid-area: ${props => props.gridArea || ''};
   width: 100%;
   height: 100%;
   font-size: 13px;

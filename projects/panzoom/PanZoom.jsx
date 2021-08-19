@@ -76,10 +76,21 @@ export default function PanZoom(props) {
 /** @param {{ bounds: Rect }} props */
 function Grid(props) {
   const gridId = React.useMemo(() => generateId('grid-'), []);
+
   return <>
     <defs>
-      <pattern id={gridId} width="10" height="10" patternUnits="userSpaceOnUse">
-        <path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(0,0,0,0.5)" strokeWidth="0.3"/>
+      <pattern
+        id={gridId}
+        width="10" 
+        height="10"
+        patternUnits="userSpaceOnUse"
+      >
+        <path
+          d="M 10 0 L 0 0 0 10"
+          fill="none"
+          stroke="rgba(0,0,0,0.5)"
+          strokeWidth="0.3"
+        />
       </pattern>
     </defs>
     <rect
