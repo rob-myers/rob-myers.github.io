@@ -136,7 +136,7 @@ Competing web frameworks exist in the wild, often with their own notion of _comp
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
 
 - They have a single parameter, conventionally called _props_.
-  It is a JavaScript object defining named inputs, and possibly special properties e.g. _children_, _key_ and _ref_.
+  It is a JavaScript object defining named inputs and special properties e.g. _children_, _key_ and _ref_.
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
 To clarify these statements we'll consider relevant code:
@@ -159,10 +159,10 @@ Semantically:
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It continually adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
 Syntactically, PanZoom and Grid are functions returning something which looks like HTML (and yet isn't).
-Recall the three pillars: HTML, CSS and JavaScript, born in  the first half of the 1990s.
+Recall the three pillars: HTML, CSS and JavaScript, born in the early 1990s.
 Technically, only HTML is needed to create a website, because CSS can be included via _\\<style\\>_ tags and JavaScript via attributes like _onload_.
 But of the three pillars, JavaScript is the only programming language.
-Dynamically changing HTML and CSS is only possible via JavaScript, and it is now common to generate a website's initial HTML and CSS by running JavaScript on a server.
+Dynamically changing HTML and CSS is only possible via JavaScript, and it is now common to generate a website's initial HTML by running JavaScript on a server.
 
 So what are PanZoom and Grid returning?
 
@@ -172,9 +172,6 @@ To convert JSX into JavaScript one performs a transformation like this:
 
         <Tabs
           tabs={[
-            /**
-             * TODO split tabs
-             */
             { key: 'code', filepath: 'example/with-jsx.jsx' },
             { key: 'code', filepath: 'example/without-jsx.js' },
           ]}
@@ -182,6 +179,11 @@ To convert JSX into JavaScript one performs a transformation like this:
         />
 
         <Markdown children={`
+The angled brackets of XML are replaced by invocations of _React.createElement_.
+The 1st parameter is the type of element to be created,
+the 2nd represents XML attributes as a JavaScript object (or null),
+and all subsequent parameters correspond to children.
+
 
 <br/>
 

@@ -9,7 +9,8 @@ export function Grid(props) {
   return React.createElement(
     React.Fragment,
     null,
-    React.createElement("defs", null,
+    React.createElement("defs",
+      null,
       React.createElement("pattern", {
         id: gridId,
         width: "10",
