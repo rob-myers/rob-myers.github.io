@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { css } from '@emotion/react';
+import { css } from 'goober';
 import PanZoom from '../panzoom/PanZoom';
 import { Rect } from '../geom';
 
@@ -8,7 +8,7 @@ const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 
 export default function GeomorphTest() {
   return (
-    <div css={rootCss}>
+    <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds}>
         <use href="/svg/hull--301.svg#root" />
       </PanZoom>

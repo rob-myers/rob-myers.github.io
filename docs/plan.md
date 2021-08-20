@@ -1,5 +1,10 @@
 ## Plan
 
+- move back to `goober`
+  - hmr issue in next with emotion styled component (prob goober too)
+  - will use css`...` instead
+  - goober css doesn't need babel or /** @jsx jsx */
+
 - better Tabs UI
   - CodeEditor initially fades in
   - can enable/disable for easier scrolling

@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from 'goober';
 import * as Lookup from 'model/tabs-lookup';
 
 export type TabMeta = (
@@ -14,7 +14,7 @@ export function Tab({ children }: React.PropsWithChildren<{}>) {
   );
 }
 
-const TabRoot = styled.section`
+const TabRoot = styled('div')`
   height: 100%;
   width: 100%;
 `;

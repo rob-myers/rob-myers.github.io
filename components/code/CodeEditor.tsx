@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import styled from '@emotion/styled';
+import React, { useEffect, useRef } from "react";
+import { styled } from 'goober';
 
 import CodeMirror from 'codemirror';
 import 'codemirror/addon/edit/closebrackets';
@@ -85,7 +85,7 @@ interface Props {
   folds?: CodeMirror.Position[];
 }
 
-const Root = styled('div')<{
+const Root = styled('div', React.forwardRef)<{
   height?: string;
   padding?: string;
 }>`

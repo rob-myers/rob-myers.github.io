@@ -1,5 +1,5 @@
 import * as React from "react";
-import { css } from "@emotion/react";
+import { css } from "goober";
 import PanZoom from "./PanZoom";
 import { Rect } from "../geom";
 
@@ -8,7 +8,7 @@ const initViewBox = new Rect(0, 0, 200, 200);
 
 export default function PanZoomDemo() {
   return (
-    <div css={rootCss}>
+    <div className={rootCss}>
       <p>
         drag to <strong>pan</strong>, scroll/pinch to <strong>zoom</strong>
       </p>

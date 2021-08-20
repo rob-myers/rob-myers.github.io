@@ -1,5 +1,5 @@
 import { useCallback, useEffect } from 'react';
-import styled from '@emotion/styled';
+import { styled } from 'goober';
 import { useBeforeunload } from 'react-beforeunload';
 import type { ITerminalOptions } from 'xterm';
 

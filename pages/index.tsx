@@ -143,8 +143,6 @@ One popular approach uses _React function components_, which are just JavaScript
 To clarify these statements we'll consider relevant code:
         `}/>
 
-        <PanZoomDemo />
-
         <Tabs
           tabs={[
             { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },

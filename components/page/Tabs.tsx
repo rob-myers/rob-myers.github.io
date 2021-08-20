@@ -1,6 +1,6 @@
 import React from "react";
 import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
-import styled from '@emotion/styled';
+import { styled } from 'goober';
 
 import * as Lookup from 'model/tabs-lookup';
 import { CodeEditor } from 'components/dynamic';
@@ -24,7 +24,7 @@ interface Props {
   height?: string;
 }
 
-const TabsRoot = styled.div<{ height: string }>`
+const TabsRoot = styled('div')<{ height: string }>`
   position: relative;
   width: 100%;
   height: ${(props) => props.height};

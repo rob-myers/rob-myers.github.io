@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import { styled } from 'goober';
 
 export const Main = styled('main')<{}>`
   display: flex;

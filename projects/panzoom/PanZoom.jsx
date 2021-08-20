@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { css } from '@emotion/react';
+import { css } from 'goober';
 import { Vect, Rect } from '../geom';
 import { getSvgPos, generateId } from '../service';
 import useForceRefresh from '../hooks/use-force-refresh';
@@ -8,7 +8,7 @@ import useForceRefresh from '../hooks/use-force-refresh';
 export default function PanZoom(props) {
 
   const [refresh, state] = useForceRefresh(() => {
-    // NOTE editing this component will cause full reload
+    // NOTE editing this component will cause full
     const viewBox = props.initViewBox.clone();
     const minZoom = props.minZoom || 0.5;
     const maxZoom = props.maxZoom || 2;
@@ -64,7 +64,7 @@ export default function PanZoom(props) {
   return (
     <svg
       ref={state.rootRef}
-      css={state.rootCss}
+      className={state.rootCss}
       preserveAspectRatio="xMinYMin"
       viewBox={`${state.viewBox}`}
     >
