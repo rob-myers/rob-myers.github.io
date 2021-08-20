@@ -7,7 +7,6 @@ import Terminal from 'components/sh/Terminal';
 import { Tabs } from 'components/page/Tabs';
 
 import GeomorphTest from 'projects/geomorph/GeomorphTest';
-import PanZoomDemo from 'projects/panzoom/PanZoomDemo';
 
 const env = {};
 
@@ -39,26 +38,28 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 
 ### Concerning technology
 
-  - Make a browser-based game.
-  - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
-  - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
-  - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and [Emotion](https://www.npmjs.com/package/@emotion/styled) CSS-in-JS styled components.
-  - Use [Preact](https://www.npmjs.com/package/preact) instead of React.
-  - Use [NextJS](https://nextjs.org/) as our development environment.
-  - Use [CodeSandbox](https://codesandbox.io) to share editable code.
+
+- We'll make a browser-based game.
+- Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
+- Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
+- Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
+- Use [Preact](https://www.npmjs.com/package/preact) instead of React and [Goober](https://www.npmjs.com/package/goober) instead of [Emotion](https://www.npmjs.com/package/@emotion/styled).
+- Use [NextJS](https://nextjs.org/) as our development environment.
+- Use [CodeSandbox](https://codesandbox.io) to share editable code.
 
 ### Concerning game mechanics
 
-  - Use a realtime birdseye camera, like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
-  - Use the physics engine [Rapier](https://www.npmjs.com/package/@dimforge/rapier2d).
-  - Use procedural generation e.g. spaceship building/docking.
-  - Use explicitly illustrated NPC decisions as a game mechanic.
+- Use a realtime birdseye camera, like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
+- Use the physics engine [Rapier](https://www.npmjs.com/package/@dimforge/rapier2d).
+- Use procedural generation e.g. spaceship building/docking.
+- Use explicitly illustrated NPC decisions as a game mechanic.
 
 ### Concerning the setting
-  - The title of the game is _Rogue Markup_.
-  - The player captains the starship _Gehennom_, working for _Unified Transport_.
-  - The missions involve personnel transport, cargo transport, and hauling.
-  - The graphical style is based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
+  
+- The title of the game is _Rogue Markup_.
+- The player captains the starship _Gehennom_, working for _Unified Transport_.
+- The missions involve personnel transport, cargo transport, and hauling.
+- The graphical style is based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
 Over time we'll clarify these constraints.
 But first we emphasise:
@@ -116,7 +117,7 @@ We will build the game using the following technologies.
 | Concept | Browser Technology |
 | - | - |
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
-| Styles | CSS-in-JS styled components via [Emotion](https://www.npmjs.com/package/@emotion/styled). |
+| Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Physics engine | The WebAssembly module [Rapier](https://www.npmjs.com/package/@dimforge/rapier2d). |
 | Static analysis | [ESLint](https://www.npmjs.com/package/eslint) and also TypeScript via [JSDoc comments](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html). |

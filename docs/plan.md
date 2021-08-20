@@ -1,10 +1,5 @@
 ## Plan
 
-- move back to `goober`
-  - hmr issue in next with emotion styled component (prob goober too)
-  - will use css`...` instead
-  - goober css doesn't need babel or /** @jsx jsx */
-
 - better Tabs UI
   - CodeEditor initially fades in
   - can enable/disable for easier scrolling
@@ -18,6 +13,10 @@
 - do not auto-persist if localStorage lacks `autopersist=true`
 - c try serving svg subimages locally
   > [boxy CSP forbids this](https://boxy-svg.com/questions/308/permit-loading-image-from-https-localhost)
+- ✅ move back to `goober`
+  - hmr issue in next with emotion styled component (prob goober too)
+  - will use css`...` instead
+  - goober css doesn't need babel or /** @jsx jsx */
 - cleanup projects
   - ✅ careful about module imports (`nanoid` breaks CodeSandbox hmr on Browser-tab-refresh)
   - ✅ reorg folder structure
