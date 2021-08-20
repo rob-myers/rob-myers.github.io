@@ -1,30 +1,35 @@
-import * as React from 'react';
-import styled from '@emotion/styled';
-import PanZoom from './PanZoom';
-import { Rect } from '../geom';
+import * as React from "react";
+import styled from "@emotion/styled";
+import PanZoom from "./PanZoom";
+import { Rect } from "../geom";
 
-const initViewBox = new Rect(0, 0, 200, 200);
 const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
+const initViewBox = new Rect(0, 0, 200, 200);
 
-/** @param {{ className?: string }} props */
-export default function PanZoomDemo({ className }) {
+export default function PanZoomDemo() {
   return (
-    <DemoRoot className={className}>
-      <div className="title">
+    <Wrapper>
+      <p>
         drag to <strong>pan</strong>, scroll/pinch to <strong>zoom</strong>
-      </div>
+      </p>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds}>
         <rect fill="red" x={10} y={10} width={20} height={20} />
       </PanZoom>
-    </DemoRoot>
+    </Wrapper>
   );
 }
 
-export const DemoRoot = styled('div')`
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  .title { padding: 12px 8px; }
-  > svg { flex: 1; border: 1px solid #aaa; position: relative; }
+  border: 1px solid #aaa;
+  > p {
+    padding: 12px 8px;
+    margin: 0;
+    font-family: monospace;
+    font-size: 16px;
+    color: white;
+    background: black;
+  }
 `;
-DemoRoot.displayName = 'PanZoomDemo';

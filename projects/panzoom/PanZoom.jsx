@@ -55,7 +55,6 @@ export default function PanZoom(props) {
         width: 100%;
         height: 100%;
         background: #fff;
-        position: absolute; /** Fixes Safari issue? */
         touch-action: pan-x pan-y pinch-zoom;
       `,
     };
