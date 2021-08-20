@@ -38,7 +38,6 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 
 ### Concerning technology
 
-
 - We'll make a browser-based game.
 - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
 - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
@@ -94,7 +93,6 @@ Comments will be shown so that [GitHub](https://github.com/) users can share ide
 <!--
 [NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
 -->
-
 <!--
 We'll add cameras, guards, doors, keys, weapons etc.
 All NPC decisions will be depicted graphically, such as future navpaths with probabilistic branches.
@@ -160,8 +158,9 @@ Semantically:
 - _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It continually adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
-Syntactically, PanZoom and Grid are functions returning something which looks like HTML (and yet isn't).
-Recall the three pillars: HTML, CSS and JavaScript, born in the early 1990s.
+Syntactically, PanZoom and Grid are functions returning something which looks like HTML (but isn't).
+Recall the three pillars: HTML, CSS and JavaScript.
+They were born in the early 1990s.
 Technically, only HTML is needed to create a website, because CSS can be included via _\\<style\\>_ tags and JavaScript via attributes like _onload_.
 But of the three pillars, JavaScript is the only programming language.
 Dynamically changing HTML and CSS is only possible via JavaScript, and it is now common to generate a website's initial HTML by running JavaScript on a server.
@@ -182,11 +181,11 @@ To convert JSX into JavaScript one performs a transformation like this:
 
         <Markdown children={`
 The angled brackets of XML are replaced by invocations of _React.createElement_.
-The 1st parameter is the type of element to be created,
-the 2nd represents XML attributes as a JavaScript object (or null);
-finally, all subsequent parameters correspond to children.
+The first parameter is the type of element to be created.
+The second represents XML attributes as a JavaScript object, using null if there are no attributes.
+Finally, all subsequent parameters correspond to children.
 The recursive nature of XML is replaced by the recursive nature of function calls.
-So, to know what PanZoom and Grid are returning _we need to understand what React.createElement returns_.
+Then to know what PanZoom and Grid are returning _we need to understand what React.createElement returns_.
 
 
 __TODO__

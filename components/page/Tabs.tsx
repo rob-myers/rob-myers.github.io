@@ -11,10 +11,7 @@ export function Tabs({ tabs, height = "300px" }: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   return (
     <TabsRoot height={height}>
-      <Layout
-        model={model}
-        factory={factory}
-      />
+      <Layout model={model} factory={factory} />
     </TabsRoot>
   );
 }
