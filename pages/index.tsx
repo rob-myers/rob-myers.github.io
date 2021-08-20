@@ -125,9 +125,10 @@ We will build the game using the following technologies.
 | Code sharing | [GitHub](https://github.com/) comments shown on site; GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
-
 <!-- Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and another tab i.e. the rendered output. -->
 
+We want to create a video game in a very explicit way, exposing the code and the thought process.
+Then we should explain the underlying technologies before using them.
 
 ### React, Styles and Preact
 
@@ -135,11 +136,10 @@ Competing web frameworks exist in the wild, often with their own notion of _comp
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
 
 - They have a single parameter, conventionally called _props_.
-  It is a JavaScript object defining named inputs and special properties e.g. _children_, _key_ and _ref_.
+  It is a JavaScript object defining named inputs, and possibly special properties e.g. _children_, _key_ and _ref_.
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
-It is worth explaining these statements carefully.
-We begin by considering relevant code:
+To clarify these statements, consider relevant code:
         `}/>
 
         <Tabs
@@ -154,11 +154,11 @@ We begin by considering relevant code:
         <Markdown children={`
 _PanZoom_ defines a pannable and zoomable grid.
 To see it in action, try clicking the other tabs above, or [view the CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external").
-Briefly:
+Semantically:
 - _Grid_ renders a part of an SVG i.e. a finite grid obtained by repeating a 10x10 unit pattern.
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It continually adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
-Both PanZoom and Grid return something which looks like HTML.
+Syntactically, PanZoom and Grid are functions returning something which looks like HTML (and yet isn't).
 Recall the three pillars - HTML, CSS and JavaScript, all born in the early nineties.
 Technically, only HTML is needed to create a website, because CSS can be included via _\\<style\\>_ tags and JavaScript via attributes like _onload_.
 But ...
