@@ -1,3 +1,7 @@
+import { parseSVG, makeAbsolute, MoveToCommand } from 'svg-path-parser';
+import { Vect } from '../geom/vect';
+import { Poly } from '../geom/poly';
+
 /** @type {DOMPoint} */
 let svgPoint;
 /** @type {SVGSVGElement} */
@@ -11,10 +15,6 @@ export function getSvgPos(e) {
   svgPoint.y = e.clientY;
   return svgPoint.matrixTransform(svg.getScreenCTM()?.inverse());
 }
-
-import { parseSVG, makeAbsolute, MoveToCommand } from 'svg-path-parser';
-import { Vect } from '../geom/vect';
-import { Poly } from '../geom/poly';
 
 /**
  * Based on https://github.com/Phrogz/svg-path-to-polygons/blob/master/svg-path-to-polygons.js
