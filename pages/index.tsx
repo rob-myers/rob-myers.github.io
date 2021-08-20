@@ -127,8 +127,8 @@ We will build the game using the following technologies.
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 <!-- Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and another tab i.e. the rendered output. -->
 
-We want to create a video game in a very explicit way, exposing the code and the thought process.
-Then we should explain the underlying technologies before using them.
+We want to create a video game explicitly, exposing the code and underlying thought process.
+Then it is worth explaining these technologies before using them.
 
 ### React, Styles and Preact
 
@@ -144,8 +144,8 @@ To clarify these statements, consider relevant code:
 
         <Tabs
           tabs={[
-            { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
             { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
+            { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
             { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
           ]}
           height="400px"
@@ -153,22 +153,21 @@ To clarify these statements, consider relevant code:
 
         <Markdown children={`
 _PanZoom_ defines a pannable and zoomable grid.
-To see it in action, try clicking the other tabs above, or [view the CodeSandbox](https://codesandbox.io/s/react-emotion-hmr-checktypes-607p0?file=/src/panzoom/PanZoom.jsx "@external").
+To see it in action, try clicking the other tabs above, or [view the CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@external").
 Semantically:
 - _Grid_ renders a part of an SVG i.e. a finite grid obtained by repeating a 10x10 unit pattern.
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It continually adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
 Syntactically, PanZoom and Grid are functions returning something which looks like HTML (and yet isn't).
-Recall the three pillars - HTML, CSS and JavaScript, all born in the early nineties.
+Recall the three pillars: HTML, CSS and JavaScript, born in  the first half of the 1990s.
 Technically, only HTML is needed to create a website, because CSS can be included via _\\<style\\>_ tags and JavaScript via attributes like _onload_.
 But ...
 
 <br/>
 
-__TODO__ what are we trying to say here?
+__TODO__
 - brief discussion of VNode types, using typescript syntax highlighting
-- brief overview and point to /CodeSandbox links
-  - support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.  
+- support typescript syntax highlighting on this site, so can show preact types [Options](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L23) and [VNode](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/internal.d.ts#L96). We'll use Preact on this site, and React on the sandboxes.  
 
 <!-- Consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). -->
 
