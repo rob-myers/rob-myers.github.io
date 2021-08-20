@@ -139,7 +139,7 @@ One popular approach uses _React function components_, which are just JavaScript
   It is a JavaScript object defining named inputs, and possibly special properties e.g. _children_, _key_ and _ref_.
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
-To clarify these statements, consider relevant code:
+To clarify these statements we'll consider relevant code:
         `}/>
 
         <Tabs
@@ -166,7 +166,22 @@ Dynamically changing HTML and CSS is only possible via JavaScript, and it is now
 
 So what are PanZoom and Grid returning?
 
+The files above are [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)) i.e. JavaScript extended with syntactic sugar permiting XML syntax.
+To convert JSX into JavaScript one performs a transformation like this:
+        `}/>
 
+        <Tabs
+          tabs={[
+            /**
+             * TODO split tabs
+             */
+            { key: 'code', filepath: 'example/with-jsx.jsx' },
+            { key: 'code', filepath: 'example/without-jsx.js' },
+          ]}
+          height="400px"
+        />
+
+        <Markdown children={`
 
 <br/>
 
@@ -186,15 +201,22 @@ __TODO__
 
 ### Comments
 
+- Display GitHub comments from Issue (build-time)
+- Can use anonymous credits to get recent
+
 ---
 
 ## Starship Geomorphs <float rem="1.2">19th July 2021</float>
 
 __TODO__ 
 - GeomorphDemo
-- prepare CodeSandbox link for PanZoom ✅
 - prepare CodeSandbox links for GeomorphDemo
-- tabbed GeomorphDemo here, also with transpiled JSX
+        `}/>
+
+        <GeomorphTest />
+
+        <Markdown children={`
+
 
 ---
 
@@ -208,8 +230,6 @@ We begin by making the game viewpoints _viewable_.
 
 
         `}/>
-
-        <GeomorphTest />
 
         <br/>
         <br/>
