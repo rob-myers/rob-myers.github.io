@@ -1,5 +1,5 @@
 import * as React from "react";
-import styled from "@emotion/styled";
+import { css } from "@emotion/react";
 import PanZoom from "./PanZoom";
 import { Rect } from "../geom";
 
@@ -8,22 +8,23 @@ const initViewBox = new Rect(0, 0, 200, 200);
 
 export default function PanZoomDemo() {
   return (
-    <Wrapper>
+    <div css={rootCss}>
       <p>
         drag to <strong>pan</strong>, scroll/pinch to <strong>zoom</strong>
       </p>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds}>
         <rect fill="red" x={10} y={10} width={20} height={20} />
+        {/* <rect fill="red" x={10} y={40} width={20} height={20} /> */}
       </PanZoom>
-    </Wrapper>
+    </div>
   );
 }
 
-const Wrapper = styled.div`
+const rootCss = css`
   display: flex;
   flex-direction: column;
   height: 100%;
-  border: 1px solid #000;
+  border: 2px solid #000;
   border-top: none;
 
   > p {

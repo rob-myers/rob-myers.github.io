@@ -1,13 +1,12 @@
 ## Plan
 
 - better Tabs UI
-  - initial background e.g. CodeEditor initially fades in
+  - CodeEditor initially fades in
   - can enable/disable for easier scrolling
   - ✅ fix tabs colours
-- ✅ simplify PanZoom/Demo a bit
-
 - parse svg hull polygons and infer polygon outline
   - skip ahead and test this
+- ✅ simplify PanZoom/Demo a bit
 
 - index page links to "article bunches"
 - cleanup how terminal persists

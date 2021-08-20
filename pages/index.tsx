@@ -7,6 +7,7 @@ import Terminal from 'components/sh/Terminal';
 import { Tabs } from 'components/page/Tabs';
 
 import GeomorphTest from 'projects/geomorph/GeomorphTest';
+import PanZoomDemo from 'projects/panzoom/PanZoomDemo';
 
 const env = {};
 
@@ -142,6 +143,8 @@ One popular approach uses _React function components_, which are just JavaScript
 To clarify these statements we'll consider relevant code:
         `}/>
 
+        <PanZoomDemo />
+
         <Tabs
           tabs={[
             { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
@@ -172,8 +175,8 @@ To convert JSX into JavaScript one performs a transformation like this:
 
         <Tabs
           tabs={[
-            { key: 'code', filepath: 'example/with-jsx.jsx' },
             { key: 'code', filepath: 'example/without-jsx.js' },
+            { key: 'code', filepath: 'example/with-jsx.jsx' },
           ]}
           height="400px"
         />
@@ -184,7 +187,7 @@ The 1st parameter is the type of element to be created,
 the 2nd represents XML attributes as a JavaScript object (or null);
 finally, all subsequent parameters correspond to children.
 The recursive nature of XML is replaced by the recursive nature of function calls.
-So, to understand what PanZoom and Grid are returning _we need to understand what React.createElement returns_.
+So, to know what PanZoom and Grid are returning _we need to understand what React.createElement returns_.
 
 
 __TODO__
@@ -194,6 +197,9 @@ __TODO__
 <!-- Consider how they are usually denoted, via syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). -->
 
 ### Physics Engine
+
+- Raycast test
+- Dynamic collison test
 
 ### Static and Runtime Analysis
 

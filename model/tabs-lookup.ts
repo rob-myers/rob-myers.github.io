@@ -18,3 +18,8 @@ export const component = {
 export type ComponentFilepathKey = keyof typeof component;
 
 export type CodeFilepathKey = keyof typeof code;
+
+if (module.hot) {
+  // Avoid breaking fast-refresh of raw-loader imported jsx
+  module.hot.accept();
+}

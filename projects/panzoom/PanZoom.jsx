@@ -8,6 +8,7 @@ import useForceRefresh from '../hooks/use-force-refresh';
 export default function PanZoom(props) {
 
   const [refresh, state] = useForceRefresh(() => {
+    // NOTE editing this component will cause full reload
     const viewBox = props.initViewBox.clone();
     const minZoom = props.minZoom || 0.5;
     const maxZoom = props.maxZoom || 2;
