@@ -1,7 +1,7 @@
 ## Plan
 
 - better Tabs UI
-  - initial background e.g. CodeEditor initially fades in?
+  - initial background e.g. CodeEditor initially fades in
   - can enable/disable for easier scrolling
   - ✅ fix tabs colours
 - ✅ simplify PanZoom/Demo a bit

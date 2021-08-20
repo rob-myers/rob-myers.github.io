@@ -144,8 +144,8 @@ To clarify these statements, consider relevant code:
 
         <Tabs
           tabs={[
-            { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
             { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
+            { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
             { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
           ]}
           height="400px"
@@ -155,13 +155,18 @@ To clarify these statements, consider relevant code:
 _PanZoom_ defines a pannable and zoomable grid.
 To see it in action, try clicking the other tabs above, or [view the CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@external").
 Semantically:
-- _Grid_ renders a part of an SVG i.e. a finite grid obtained by repeating a 10x10 unit pattern.
+- _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It continually adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
 Syntactically, PanZoom and Grid are functions returning something which looks like HTML (and yet isn't).
 Recall the three pillars: HTML, CSS and JavaScript, born in  the first half of the 1990s.
 Technically, only HTML is needed to create a website, because CSS can be included via _\\<style\\>_ tags and JavaScript via attributes like _onload_.
-But ...
+But of the three pillars, JavaScript is the only programming language.
+Dynamically changing HTML and CSS is only possible via JavaScript, and it is now common to generate a website's initial HTML and CSS by running JavaScript on a server.
+
+So what are PanZoom and Grid returning?
+
+
 
 <br/>
 

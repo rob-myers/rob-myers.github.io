@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
 import styled from '@emotion/styled';
 
@@ -8,7 +8,7 @@ import CodeMirror from "codemirror";
 import { ErrorMessage, Tab, TabMeta } from "./Tab";
 
 export function Tabs({ tabs, height = "300px" }: Props) {
-  const model = useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
+  const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   return (
     <TabsRoot height={height}>
       <Layout
@@ -24,7 +24,7 @@ interface Props {
   height?: string;
 }
 
-const TabsRoot = styled('div')<{ height: string }>`
+const TabsRoot = styled.div<{ height: string }>`
   position: relative;
   width: 100%;
   height: ${(props) => props.height};
@@ -48,7 +48,7 @@ const TabsRoot = styled('div')<{ height: string }>`
     color: #ddd;
   }
   .flexlayout__splitter_vert, .flexlayout__splitter_horz {
-    background: #843d3d;
+    background: #827575;
   }
 `;
 
