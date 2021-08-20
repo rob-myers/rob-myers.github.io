@@ -181,11 +181,11 @@ To convert JSX into JavaScript one performs a transformation like this:
         <Markdown children={`
 The angled brackets of XML are replaced by invocations of _React.createElement_.
 The 1st parameter is the type of element to be created,
-the 2nd represents XML attributes as a JavaScript object (or null),
-and all subsequent parameters correspond to children.
+the 2nd represents XML attributes as a JavaScript object (or null);
+finally, all subsequent parameters correspond to children.
+The recursive nature of XML is replaced by the recursive nature of function calls.
+So, to understand what PanZoom and Grid are returning _we need to understand what React.createElement returns_.
 
-
-<br/>
 
 __TODO__
 - brief discussion of VNode types, using typescript syntax highlighting
