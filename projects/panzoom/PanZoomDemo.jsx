@@ -1,7 +1,7 @@
-import * as React from "react";
-import { css } from "goober";
-import PanZoom from "./PanZoom";
-import { Rect } from "../geom";
+import * as React from 'react';
+import { css } from 'goober';
+import PanZoom from './PanZoom';
+import { Rect } from '../geom';
 
 const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 const initViewBox = new Rect(0, 0, 200, 200);
@@ -25,14 +25,12 @@ const rootCss = css`
   flex-direction: column;
   height: 100%;
   border: 2px solid #000;
-  border-top: none;
 
   > p {
     padding: 12px 8px;
     margin: 0;
     font-family: monospace;
     font-size: 16px;
-    color: white;
-    background: black;
+    background: #eee;
   }
 `;
