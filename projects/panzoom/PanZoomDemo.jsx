@@ -23,7 +23,9 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  border: 1px solid #aaa;
+  border: 1px solid #000;
+  border-top: none;
+
   > p {
     padding: 12px 8px;
     margin: 0;

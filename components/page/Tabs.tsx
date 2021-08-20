@@ -28,16 +28,27 @@ const TabsRoot = styled('div')<{ height: string }>`
   position: relative;
   width: 100%;
   height: ${(props) => props.height};
-  border: 1px solid #555;
   
+  .flexlayout__tabset_tabbar_outer {
+    background: #222;
+    border-bottom: 1px solid #555;
+  }
+  .flexlayout__tab_button--selected, .flexlayout__tab_button:hover {
+    background: #444;
+  }
   .flexlayout__tab_button_content {
     user-select: none;
-    font-size: 12px;
-    /* font-family: Courier, monospace; */
+    font-size: 13px;
+    color: #aaa;
   }
-  .flexlayout__tab {
-    /* background: black;
-    color: white; */
+  .flexlayout__tab_button--selected .flexlayout__tab_button_content {
+    color: #fff;
+  }
+  .flexlayout__tab_button:hover:not(.flexlayout__tab_button--selected) .flexlayout__tab_button_content {
+    color: #ddd;
+  }
+  .flexlayout__splitter_vert, .flexlayout__splitter_horz {
+    background: #843d3d;
   }
 `;
 

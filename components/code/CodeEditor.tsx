@@ -17,7 +17,7 @@ import './codemirror/custom-cmds';
 export default function CodeEditor({
   code,
   lineNumbers,
-  padding = "",
+  padding = "12px 0",
   height,
   readOnly,
   folds,

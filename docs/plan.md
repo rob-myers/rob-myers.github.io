@@ -1,10 +1,10 @@
 ## Plan
 
-- simplify PanZoom/Demo a bit
 - better Tabs UI
   - initial background e.g. CodeEditor initially fades in?
   - can enable/disable for easier scrolling
-  - fix tabs colours
+  - ✅ fix tabs colours
+- ✅ simplify PanZoom/Demo a bit
 
 - parse svg hull polygons and infer polygon outline
   - skip ahead and test this
@@ -12,7 +12,7 @@
 - index page links to "article bunches"
 - cleanup how terminal persists
 - do not auto-persist if localStorage lacks `autopersist=true`
-- ✅ try serving svg subimages locally
+- c try serving svg subimages locally
   > [boxy CSP forbids this](https://boxy-svg.com/questions/308/permit-loading-image-from-https-localhost)
 - cleanup projects
   - ✅ careful about module imports (`nanoid` breaks CodeSandbox hmr on Browser-tab-refresh)

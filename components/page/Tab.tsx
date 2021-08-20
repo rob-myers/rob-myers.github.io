@@ -9,39 +9,20 @@ export type TabMeta = (
 export function Tab({ children }: React.PropsWithChildren<{}>) {
   return (
     <TabRoot>
-      <TabToolbar />
-      <div className="tab-content">{children}</div>
+      {children}
     </TabRoot>
   );
 }
 
-const TabRoot = styled('section')`
+const TabRoot = styled.section`
   height: 100%;
-  font-size: 14px;
-  position: relative;
-
-  .tab-toolbar {
-    background: #444;
-    color: white;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    height: 16px;
-    /* padding: 6px 8px; */
-  }
-
-  .tab-content {
-    position: absolute;
-    top: 16px;
-    width: 100%;
-    height: calc(100% - 16px);
-  }
+  width: 100%;
 `;
 
-function TabToolbar() {
-  return <div className="tab-toolbar" />;
-}
-
 export function ErrorMessage({ children }: React.PropsWithChildren<{}>) {
-  return <section><strong>{children}</strong></section>;
+  return (
+    <section>
+      <strong>{children}</strong>
+    </section>
+  );
 }
