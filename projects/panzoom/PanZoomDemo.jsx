@@ -14,7 +14,6 @@ export default function PanZoomDemo() {
       </p>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds}>
         <rect fill="red" x={10} y={10} width={20} height={20} />
-        {/* <rect fill="red" x={10} y={40} width={20} height={20} /> */}
       </PanZoom>
     </div>
   );
