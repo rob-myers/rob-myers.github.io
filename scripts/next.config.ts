@@ -14,16 +14,18 @@ console.log({ production });
 export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
 
   const nextJsConfig = {
+    eslint: {
+      // Warning: This allows production builds to successfully complete even if
+      // your project has ESLint errors.
+      ignoreDuringBuilds: true,
+    },
     webpack: (config: webpack.Configuration, options: WebpackCtxt) => {
       return webpackMerge(
         config,
-        // Module aliases
         {
           resolve: {
             alias: {},
           },
-        },
-        {
           // ...(!options.isServer && { resolve: { fallback: { fs: false } } }),
         },
         // Bundle analyzer
