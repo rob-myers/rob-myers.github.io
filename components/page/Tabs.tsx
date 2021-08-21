@@ -3,7 +3,7 @@ import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
 import { styled } from 'goober';
 
 import * as Lookup from 'model/tabs-lookup';
-import { CodeEditor } from 'components/dynamic';
+import CodeEditor from 'components/code/WrappedCodeEditor';
 import CodeMirror from "codemirror";
 import { ErrorMessage, Tab, TabMeta } from "./Tab";
 
@@ -62,16 +62,17 @@ function factory(node: TabNode) {
     case 'code': {
       const filepath = node.getComponent() || '';
       if (filepath in Lookup.code) {
-        return <Tab>
-          <CodeEditor
+        return (
+          <Tab>
+            <CodeEditor
               height="100%"
-              // padding="16px 0"
               lineNumbers
               readOnly
               code={Lookup.code[filepath as Lookup.CodeFilepathKey]}
               folds={folds}
             />
-        </Tab>;
+          </Tab>
+        );
       }
       return (
         <ErrorMessage>

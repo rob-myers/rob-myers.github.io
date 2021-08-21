@@ -2,7 +2,7 @@ import { code } from 'model/tabs-lookup';
 
 import { Section, Main } from 'components/page/Layout';
 import Markdown from 'components/page/Markdown';
-import { CodeEditor } from 'components/dynamic';
+import CodeEditor from 'components/code/WrappedCodeEditor';
 import Terminal from 'components/sh/Terminal';
 import { Tabs } from 'components/page/Tabs';
 

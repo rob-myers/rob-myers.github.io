@@ -35,7 +35,7 @@ export default function CodeEditor({
         // mode: 'jsx',
         mode: 'jsx-styled',
         tabSize: 2,
-        value: code?.trim() || '',
+        value: (code || '').trim(),
         extraKeys: {
           "Cmd-Ctrl-Up": "noOp",
           "Cmd-Ctrl-Down": "noOp",
@@ -75,7 +75,7 @@ export default function CodeEditor({
   );
 }
 
-interface Props {
+export interface Props {
   code: string;
   gridArea?: string;
   lineNumbers?: boolean;
