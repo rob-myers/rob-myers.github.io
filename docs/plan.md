@@ -1,11 +1,11 @@
 ## Plan
 
+- parse svg hull polygons and infer polygon outline
+  - ✅ prepared ts-node script, but will develop in DOM first
 - better Tabs UI
   - CodeEditor initially fades in
   - can enable/disable for easier scrolling
   - ✅ fix tabs colours
-- parse svg hull polygons and infer polygon outline
-  - skip ahead and test this
 - ✅ simplify PanZoom/Demo a bit
 
 - index page links to "article bunches"

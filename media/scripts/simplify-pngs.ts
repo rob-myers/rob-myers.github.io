@@ -5,7 +5,7 @@
  * - {src_dir} exists
  * 
  * Examples
- * - yarn simplify-pngs media/hull-sides
+ * - yarn simplify-pngs media/used-symbols
  */
 
 import fs from 'fs';
