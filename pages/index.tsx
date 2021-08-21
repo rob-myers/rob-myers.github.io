@@ -114,7 +114,7 @@ We will build the game using the following technologies.
 
 | Concept | Browser Technology |
 | - | - |
-| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html). |
+| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html) and internal state via [hooks](https://reactjs.org/docs/hooks-intro.html). |
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Physics engine | The WebAssembly module [Rapier](https://www.npmjs.com/package/@dimforge/rapier2d). |
@@ -180,7 +180,7 @@ It is the canonical way to write React components, and becomes meaningful when i
         <Tabs
           tabs={[
             { key: 'code', filepath: 'example/without-jsx.js', folds: [{ line: 9, ch: 0 }] },
-            { key: 'code', filepath: 'example/with-jsx.jsx' },
+            { key: 'code', filepath: 'example/with-jsx.jsx', folds: [{ line: 9, ch: 0 }] },
           ]}
           height="400px"
         />
