@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'Rubik';
-  font-display: swap;
+  font-display: optional;
   font-style: normal;
   font-weight: 400;
   src: url('/fonts/rubik-v14-latin-regular.eot'); /* IE9 Compat Modes */
