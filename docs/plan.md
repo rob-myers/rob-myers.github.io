@@ -1,6 +1,8 @@
 ## Plan
 
+- index page says "Coming soon"; current moved to /draft
 - parse svg hull polygons and infer polygon outline
+  - traverse shadow dom in GeomorphTest
   - ✅ prepared ts-node script, but will develop in DOM first
 - better Tabs UI
   - CodeEditor initially fades in
@@ -11,7 +13,7 @@
 - index page links to "article bunches"
 - cleanup how terminal persists
 - do not auto-persist if localStorage lacks `autopersist=true`
-- c try serving svg subimages locally
+- try serving svg subimages locally
   > [boxy CSP forbids this](https://boxy-svg.com/questions/308/permit-loading-image-from-https-localhost)
 - ✅ move back to `goober`
   - hmr issue in next with emotion styled component (prob goober too)
