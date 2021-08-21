@@ -20,6 +20,12 @@ export class Poly {
     return this.outline.concat(...this.holes);
   }
 
+  /** @param {DOMMatrix} m */
+  applyMatrix(m) {
+    this.outline = this.outline.map(p => Vect.from(m.transformPoint(p)));
+    this.holes.forEach(hole => hole.map(p => Vect.from(m.transformPoint(p))));
+  }
+
   /**
    * Ensure final point of each ring doesn't equal 1st point.
    * Such loops arise e.g. from npm module 'polygon-clipping',

@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { css } from 'goober';
-import PanZoom from '../panzoom/PanZoom';
 import { Rect } from '../geom';
+import PanZoom from '../panzoom/PanZoom';
 import UseSvg from './UseSvg';
 
-const initViewBox = new Rect(0, 0, 200, 200);
+const initViewBox = new Rect(0, 0, 1200, 600);
 const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 
 export default function GeomorphTest() {
