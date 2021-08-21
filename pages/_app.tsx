@@ -3,14 +3,14 @@ import { AppInitialProps } from 'next/app';
 import Head from 'next/head';
 import { Router } from 'next/router';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { setup } from 'goober';
 setup(React.createElement);
 
-import 'xterm/css/xterm.css';
 import 'styles/globals.css'
+import 'xterm/css/xterm.css';
 import 'codemirror/lib/codemirror.css';
 import 'components/code/codemirror/custom-theme.css';
 import 'flexlayout-react/style/light.css'
@@ -18,23 +18,6 @@ import 'flexlayout-react/style/light.css'
 const queryClient = new QueryClient;
 
 const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
-  useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').then(function(reg) {
-        if(reg.installing) {
-          console.info('Service worker installing');
-        } else if(reg.waiting) {
-          console.info('Service worker installed');
-        } else if(reg.active) {
-          console.info('Service worker active');
-        }
-      }).catch(function(error) {
-        console.error('Service worker registration failed with ' + error);
-      });
-    }
-
-  }, []);
-
   return (
     <>
       <Head>

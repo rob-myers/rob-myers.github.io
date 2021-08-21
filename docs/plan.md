@@ -82,8 +82,7 @@
 - https://nodejs.org/api/modules.html#modules_all_together
 - https://github.com/nodejs/modules/issues/307#issuecomment-762465349
 - https://github.com/preactjs/prefresh/pull/236
-
-- https://github.com/cfware/babel-plugin-bare-import-rewrite/blob/master/index.js
+- https://google-webfonts-helper.herokuapp.com/fonts
 
 ---
 

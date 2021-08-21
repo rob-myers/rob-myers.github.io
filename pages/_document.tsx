@@ -2,6 +2,7 @@ import { extractCss } from 'goober'
 import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document'
 
 class MyDocument extends Document<{ css: string }> {
+
   static async getInitialProps({ renderPage }: DocumentContext) {
     const page = await renderPage()
     const css = extractCss()
@@ -13,7 +14,7 @@ class MyDocument extends Document<{ css: string }> {
       <Html>
         <Head>
           <link rel="icon" href="/favicon.ico" />
-          <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik" />
+          <link rel="stylesheet" href="/fonts/styles.css" />
           <style
             id="_goober"
             dangerouslySetInnerHTML={{ __html: ' ' + this.props.css }}
