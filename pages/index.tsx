@@ -199,14 +199,12 @@ I chose Preact because it has the same API as React, but with a much smaller cod
 Then React.createElement refers to Preact's createElement, which amounts to the following code:
         `}/>
 
-        <section>
-          <CodeEditor
-            height="300px"
-            code={code['example/create-element.js']}
-            lineNumbers
-            readOnly
-          />
-        </section>
+        <CodeEditor
+          height="300px"
+          code={code['example/create-element.js']}
+          lineNumbers
+          readOnly
+        />
 
         <Markdown children={`
 
@@ -265,20 +263,6 @@ We begin by making the game viewpoints _viewable_.
         `}/>
 
         <br/>
-        <br/>
-
-        <section>
-          <CodeEditor
-            height="300px"
-            code={code['panzoom/PanZoom.jsx']}
-            lineNumbers
-            readOnly
-            folds={[{ line: 9, ch: 0 }]} // 1-based line 10
-          />
-        </section>
-
-        <br/>
-
         <section style={{ height: 200 }}>
           <Terminal sessionKey="test" env={env} />
         </section>

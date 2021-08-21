@@ -17,6 +17,7 @@ export function Tab({ children }: React.PropsWithChildren<{}>) {
 const TabRoot = styled('div')`
   height: 100%;
   width: 100%;
+  border-top: 6px solid #444;
 `;
 
 export function ErrorMessage({ children }: React.PropsWithChildren<{}>) {

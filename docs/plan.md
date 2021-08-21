@@ -1,13 +1,14 @@
 ## Plan
 
 - index page says "Coming soon"; current moved to /draft
-- parse svg hull polygons and infer polygon outline
-  - traverse shadow dom in GeomorphTest
-  - ✅ prepared ts-node script, but will develop in DOM first
 - better Tabs UI
   - CodeEditor initially fades in
   - can enable/disable for easier scrolling
   - ✅ fix tabs colours
+- ✅ parse svg hull polygons and infer polygon outline
+  - ✅ parsed using cheerio in `UseSvg`
+  - ✅ cannot traverse closed shadow dom
+  - ✅ prepared ts-node script, but will develop in DOM first
 - ✅ simplify PanZoom/Demo a bit
 
 - index page links to "article bunches"
