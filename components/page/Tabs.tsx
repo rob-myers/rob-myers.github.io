@@ -22,9 +22,12 @@ interface Props {
 }
 
 const TabsRoot = styled('div')<{ height: string }>`
-  position: relative;
-  width: 100%;
-  height: ${(props) => props.height};
+  padding-bottom: 16px;
+  > div {
+    position: relative;
+    height: ${(props) => props.height};
+    padding: 16px 0;
+  }
   
   .flexlayout__tabset_tabbar_outer {
     background: #222;
