@@ -171,10 +171,9 @@ For reasons of uniformity, it is increasingly common for the initial HTML and CS
 
 Although JavaScript can be directly embedded inside HTML,
 one cannot write fragments of HTML syntax inside JS without using strings.
-React developers use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)),
+React developers use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)) (see our code above),
 naturally combining JavaScript and XML syntax.
-This is the canonical way write React components, and the code further above is JSX.
-However, it only really becomes meaningful when it is transpiled (converted) back into JavaScript:
+It is the canonical way to write React components, and becomes meaningful when it is transpiled (converted) back into JavaScript:
         `}/>
 
         <Tabs
