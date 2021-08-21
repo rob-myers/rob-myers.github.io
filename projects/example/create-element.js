@@ -1,13 +1,11 @@
-import * as Preact from './preact-types';
-
 let vnodeId = 0;
 
 /**
  * Based on https://github.com/preactjs/preact/blob/master/src/create-element.js
- * @param {Preact.VNode["type"]} type 
+ * @param {import('./preact-types').VNode["type"]} type 
  * @param {Record<string, any> | null | undefined} [props] 
- * @param {Preact.ComponentChildren} [children] 
- * @returns {Preact.VNode}
+ * @param {import('./preact-types').ComponentChildren} [children] 
+ * @returns {import('./preact-types').VNode}
  */
 export function createElement(type, props, children) {
 	let normalizedProps = /** @type {Record<string, any>} */ ({}),

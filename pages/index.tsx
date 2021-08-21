@@ -138,9 +138,10 @@ One popular approach uses _React function components_, which are just JavaScript
 - They have a single parameter, conventionally called _props_.
   > It is a JavaScript object defining named inputs and the special properties _children_, _key_ and _ref_.
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
-  > Intutively this is an HTML fragment which should be rendered.
+  > It amounts to an HTML fragment which should be rendered.
 
-Let's try to understand how React function components work. Consider some code:
+Let's try to understand how React function components actually work.
+Consider some code:
         `}/>
 
         <Tabs
@@ -156,7 +157,7 @@ Let's try to understand how React function components work. Consider some code:
 
 The file _panzoom/PanZoom.jsx_ defines two React function components i.e. _PanZoom_ and _Grid_.
 The component _PanZoom_ defines a pannable and zoomable grid.
-To see it in action, try clicking the other tabs above, or [view the CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@external").
+You can seen it in action by clicking the other tabs above, or by viewing [this CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@external").
 Semantically:
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 - _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
@@ -178,7 +179,7 @@ It is the canonical way to write React components, and becomes meaningful when i
 
         <Tabs
           tabs={[
-            { key: 'code', filepath: 'example/without-jsx.js' },
+            { key: 'code', filepath: 'example/without-jsx.js', folds: [{ line: 9, ch: 0 }] },
             { key: 'code', filepath: 'example/with-jsx.jsx' },
           ]}
           height="400px"
@@ -195,7 +196,7 @@ Then to understand what PanZoom and Grid are returning _we need to understand Re
 This website is built using Preact, a popular alternative to React.
 Technically speaking, _react_ and _react-dom_ are understood as aliases for the npm module [@preact/compat](https://www.npmjs.com/package/@preact/compat).
 I chose Preact because it has the same API as React, but with a much smaller codebase, making it much easier to understand.
-Then React.createElement actually refers to Preact's createElement, which amounts to the following code:
+Then React.createElement refers to Preact's createElement, which amounts to the following code:
         `}/>
 
         <section>
@@ -208,6 +209,10 @@ Then React.createElement actually refers to Preact's createElement, which amount
         </section>
 
         <Markdown children={`
+
+The above creates a Preact VNode i.e. a JavaScript object with properties _type_, _props_, _key_, _ref_, and some additional internal ones. 
+
+
 __TODO__
 - simplified version of Preact [createElement](https://github.com/preactjs/preact/blob/7e33abd70ceb32f19e82c281e6b4d35091920f6a/src/create-element.js#L14)
 - createElement for case of function component
