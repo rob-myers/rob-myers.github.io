@@ -30,39 +30,4 @@
     <rect x="18.107" y="1193.375" width="590.898" height="21.212" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="900.28" y="1502.657" width="888.182" height="62.168" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
   </g>
-  <g style="pointer-events: none;">
-    <title>doors</title>
-    <rect x="575.557" y="1814" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
-    <rect x="1776" y="1815" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
-    <rect x="1776" y="1214" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
-    <rect x="574.973" y="1213.673" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
-    <rect x="852" y="1059.53" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, -451.530029, 1628.561523)"/>
-    <rect x="852" y="1059.53" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, 448.469971, 1628.561523)"/>
-    <rect x="852" y="1088.519" width="48" height="287.66" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, -477.622101, 2380.673096)"/>
-  </g>
-  <g style="pointer-events: none;">
-    <title>obstacles</title>
-    <rect x="478.923" y="202.964" width="138.602" height="154.168" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 1031.612915, -162.497116)"/>
-    <rect x="478.923" y="207.062" width="138.602" height="157.281" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 1335.029785, -162.497116)"/>
-    <rect x="478.923" y="205.011" width="138.602" height="155.723" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 1633.115723, -162.497116)"/>
-    <rect x="478.923" y="205.011" width="138.602" height="155.723" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 1934.955078, -159.497116)"/>
-    <path d="M 1171.856 -530.557 L 1240.556 -530.557 L 1240.557 1062.956 L 1162.957 1062.956 L 1171.856 -530.557 Z" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 1462.955566, -940.556519)"/>
-    <rect x="358.626" y="180.623" width="103.788" height="137.198" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 2170.099854, 1031.905273)"/>
-    <rect x="494.582" y="149.939" width="143.134" height="113.891" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 2307.697021, 856.603577)"/>
-    <rect x="494.582" y="149.939" width="143.134" height="113.891" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 2486.414795, 856.603577)"/>
-    <rect x="684.093" y="498.99" width="197.979" height="379.025" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 2715.285156, 858.214661)"/>
-    <rect x="501.715" y="363.571" width="145.198" height="276.163" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 749.84668, 1153.086914)"/>
-    <rect x="329.189" y="134.206" width="95.268" height="101.941" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 422.832397, 1212.166138)"/>
-    <rect x="349.483" y="134.206" width="101.141" height="101.941" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 491.532104, 1466.54126)"/>
-    <path d="M 385.696 -338.632 L 424.457 -389.02 L 464.774 -410.719 L 529.649 -410.719 L 588.718 -343.122 L 590.089 114.694 L 542.624 177.513 L 480.916 189.281 L 424.457 166.502 L 383.791 117.971 L 385.696 -338.632 Z" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 1089.28125, 1375.542969)"/>
-    <rect x="1160.624" y="588.906" width="335.886" height="447.323" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 2012.4021, 536.117187)"/>
-    <rect x="312.152" y="945.375" width="90.337" height="718.09" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 2504.901855, 1507.603638)"/>
-    <path d="M 870.606 2254.948 L 928.501 2036.91 L 940.765 1861.359 L 919.955 1637.863 L 849.314 1426.663 L 755.061 1261.359 L 881.748 1261.359 L 1000.284 1861.359 L 877.679 2461.359 L 755.061 2461.359 L 870.606 2254.948 Z" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 3061.358978, 1344.938995)"/>
-  </g>
-  <g>
-    <title>iris-valves</title>
-    <rect x="2375" y="914" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; pointer-events: auto; fill-opacity: 0.5;"/>
-    <rect y="911.944" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; pointer-events: auto; fill-opacity: 0.5;" x="-24"/>
-    <rect x="2375" y="914" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; pointer-events: auto; fill-opacity: 0.5;" transform="matrix(0, -1, 1, 0, 295, 3303.094238)"/>
-  </g>
 </svg>

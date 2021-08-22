@@ -109,6 +109,19 @@ export class Rect {
     return new Rect(0, 0, 0, 0);
   }
 
+  /** @param {DOMMatrix} m */
+  applyMatrix(m) {
+    if (!m.isIdentity) {
+      const min = m.transformPoint(this.topLeft);
+      const max = m.transformPoint(this.bottomRight);
+      this.x = Math.min(min.x, max.x);
+      this.y = Math.min(min.y, max.y);
+      this.width = Math.max(min.x, max.x) - this.x;
+      this.height = Math.max(min.y, max.y) - this.y;
+    }
+    return this;
+  }
+
   clone() {
     return new Rect(this.x, this.y, this.width, this.height);
   }

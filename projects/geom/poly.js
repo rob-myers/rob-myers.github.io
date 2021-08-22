@@ -22,8 +22,11 @@ export class Poly {
 
   /** @param {DOMMatrix} m */
   applyMatrix(m) {
-    this.outline = this.outline.map(p => Vect.from(m.transformPoint(p)));
-    this.holes.forEach(hole => hole.map(p => Vect.from(m.transformPoint(p))));
+    if (!m.isIdentity) {
+      this.outline = this.outline.map(p => Vect.from(m.transformPoint(p)));
+      this.holes.forEach(hole => hole.map(p => Vect.from(m.transformPoint(p))));
+    }
+    return this;
   }
 
   /**

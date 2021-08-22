@@ -13,10 +13,9 @@ export default function GeomorphTest() {
   return (
     <div className={rootCss} ref={rootRef}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds}>
-        <g className="symbols">
-          <UseSvg url="/svg/hull--301.svg" />
-          {/* <use href="/svg/hull--301.svg#root" /> */}
-        </g>
+        <UseSvg url="/svg/301--hull.svg" />
+        <UseSvg url="/svg/bridge--042--8x9.svg" transform="matrix(0.2, 0, 0, 0.2, 360, 60) " />
+        {/* <use href="/svg/hull--301.svg#root" /> */}
       </PanZoom>
     </div>
   );
