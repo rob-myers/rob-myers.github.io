@@ -139,10 +139,10 @@ In particular:
 - They have a single parameter, conventionally called _props_.
   > It is a JavaScript object defining named inputs, and possibly special properties like _children_, _key_ and _ref_.
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
-  > This return value can be thought of as an HTML fragment which should be rendered.
-- Their return value may change in response to changing props and/or internal state.
+  > This return value should be thought of as the HTML fragment to be rendered. It may differ based on the component's props and internal state.
 
-To get a better understanding, consider some code.
+React function components can of course render other such components.
+We can compose together the various "HTML fragments" to obtain the overall DOM tree we seek. Actually, it is worth being a bit more precise about this. Consider the code below.
         `}/>
 
         <Tabs
@@ -160,16 +160,16 @@ The file _panzoom/PanZoom.jsx_ defines two React function components, namely _Pa
 They are JavaScript functions with a single parameter, returning something which looks like HTML (but isn't).
 _PanZoom_ defines a pannable and zoomable grid.
 To see it in action click the other tabs above, or view [this CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@external").
-Semantically:
+Behaviourally:
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 - _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
 
 Notice _PanZoomDemo_ renders _PanZoom_ by using the XML tag _\\<PanZoom\\>_.
 Then although React function components are functions, they are not invoked like functions.
-We now provide some basic information about React works.
+Here are some more relevant details about React.
 
 - React developers use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), naturally combining JavaScript and XML syntax.
-- Devtools convert JSX into JS, by replacing XML tags with invocations of the function React.createElement.
+- Dev tools convert JSX into JS, by replacing XML tags with invocations of the function React.createElement.
   `}/>
 
   <CodeEditor
@@ -185,11 +185,10 @@ We now provide some basic information about React works.
 - This website uses Preact instead of React. Technically, _react_ and _react-dom_ are aliases for the npm module [@preact/compat](https://www.npmjs.com/package/@preact/compat).
   As a result, React.createElement corresponds to [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
   and constructs Preact.VNode's (virtual DOM nodes).
-- A React application is an instance of some chosen React function component.
-  Conventionally it is _\\<App/\\>_ or _React.createElement(App)_, [see the CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@external").
-- Executing a React application amounts to invoking _ReactDOM.render_.
-  The provided arguments are _\\<App/\\>_ and some pre-existing DOM node _root_.
-  Initially the [render function](https://github.com/preactjs/preact/blob/master/src/render.js) converts the virtual DOM tree into an actual DOM tree mounted at _root_.
+- The top-level component is conventionally called _App_.
+  Running a React app amounts to [invoking _ReactDOM.render_](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@external")
+  with two arguments i.e. _\\<App/\\>_ and a pre-existing DOM node _root_.
+  The [render function](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts the virtual DOM tree into an actual DOM tree mounted at _root_.
   Subsequent changes are [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
 
 <!--
@@ -215,25 +214,30 @@ Then to understand what PanZoom and Grid are returning _we need to understand Re
 -->
 
 So, React function components are JavaScript functions returning virtual DOM nodes (or null).
-They are naturally written using XML syntax via JSX.
-Components are composed together in the same way as HTML works.
+They are written using XML syntax via JSX.
+Components are composed together in the same way as HTML.
 The virtual DOM node returned by the App component will be converted and then mounted at a chosen pre-existing DOM node.
 Changing the props or internal state of a subcomponent can change its return value,
 causing a respective delta to be applied to the DOM.
 
 There's a lot more to say about components e.g. how they represent internal state.
 However, we've said more than enough for now.
-We'll close this subsection with two more remarks.
+We'll close this subsection with two related remarks.
 
 1.  Preact vs React.
 
-    Earlier we mentioned this website is built using Preact, a popular alternative to React.
+    We mentioned this website is built using Preact, a popular alternative to React.
     It has the same API, but with a much smaller codebase, making it easier to understand.
-    It also provides hooks into its underlying operations, which will help us improve performance.
+    It also provides hooks into its underlying operations, which will hopefully help us understand and improve performance later on.
 
 2.  CSS in JavaScript
 
-    __TODO__ say something about styles too
+    Both _PanZoom_ and _PanZoomDemo_ are styled using CSS-in-JS.
+    Traditionally, CSS is provided in CSS files (possibly transpiled from SCSS), linked in the _\\<head\\>_ and referenced by DOM elements via their class attribute.
+    
+    In React, the class attribute is written _className_ because "class" is a reserved word in JavaScript.
+
+    __TODO__ finish this
 
 ### Physics Engine
 
