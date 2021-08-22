@@ -51,7 +51,7 @@ function useSvgText(url) {
         doors,
         topNodes,
       });
-      
+
       return {
         svgInnerText: topNodes.map(x => $.html(x)).join('\n'),
         hullOutline,
