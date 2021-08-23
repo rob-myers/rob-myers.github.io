@@ -21,7 +21,6 @@ export default function Markdown(
   );
 }
 
-
 const titleComponents = {
   h1({ children, ...props }: any) {
     const router = useRouter();
@@ -136,7 +135,6 @@ const Root = styled('div')`
 `;
 
 const TitleRoot = styled('div')`
-  /** Site title */
   h1 {
     margin: 48px 0 24px;
     font-size: 7rem;
@@ -153,14 +151,13 @@ const TitleRoot = styled('div')`
       font-size: 4rem;
     }
   }
-
-  /** Site subtitle */
-  p {
+  
+  p {// Site subtitle
     margin: 0 0 48px 0;
     border-bottom: 4px solid #000;
     padding: 0 0 8px;
     color: #333;
-    /* letter-spacing: 1px; */
+    // letter-spacing: 1px; */
     font-family: Courier, monospace;
     font-size: 1.2rem;
     

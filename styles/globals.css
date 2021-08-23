@@ -1,13 +1,4 @@
-html {
-  /* Chrome */
-  overscroll-behavior: none;
-}
-
-html,
 body {
-  /* Firefox */
-  overscroll-behavior: none;
-
   padding: 0;
   margin: 0;
 
