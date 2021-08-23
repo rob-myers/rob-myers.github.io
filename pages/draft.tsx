@@ -133,12 +133,14 @@ One popular approach uses _React function components_, which are just JavaScript
 In particular:
 
 - They have a single parameter, conventionally called _props_.
-  > It is a JavaScript object defining named inputs, and possibly special properties like _children_, _key_ and _ref_.
+  
+  It is a JavaScript object defining named inputs, and possibly special properties like _children_, _key_ and _ref_.
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
-  > The returned value amounts to the HTML fragment to be rendered.
-  > It may depend on the component's props and internal state.
+  
+  The returned value is an HTML fragment to be rendered.
+  It may depend on the component's props and internal state.
 
-Given a bunch of components, one composes them using an XML-like syntax, yielding the overall DOM tree we seek.
+React developers compose components using an XML-like syntax, yielding the desired overall DOM tree.
 It is worth being a bit more precise, so consider this code:
         `}/>
 
