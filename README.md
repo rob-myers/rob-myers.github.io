@@ -41,3 +41,8 @@ optipng *.png
 # set chrome://flags/#allow-insecure-localhost
 yarn https-proxy
 ```
+
+```sh
+# Find local ip address for mobile development
+ifconfig | grep "inet " | grep -v 127.0.0.1
+```

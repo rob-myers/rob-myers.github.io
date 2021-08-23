@@ -1,5 +1,7 @@
 ## Plan
 
+- fix `PanZoom` on mobile
+  - ✅ can view local dev on phone
 - better Tabs UI
   - CodeEditor initially fades in
   - can enable/disable for easier scrolling

@@ -165,5 +165,9 @@ const titleRootCss = css`
       font-size: 1rem;
       margin: 0 0 32px 0;
     }
+
+    @media(max-width: 400px) {
+      font-size: 0.8rem;
+    }
   }
 `;
