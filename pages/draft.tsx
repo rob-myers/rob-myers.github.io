@@ -138,9 +138,8 @@ In particular:
   > The returned value amounts to the HTML fragment to be rendered.
   > It may depend on the component's props and internal state.
 
-React function components can (of course) render other such components.
-One composes together various "HTML fragments" to obtain the overall DOM tree we seek.
-It is worth being a bit more precise about this, so consider the code below.
+Given a bunch of components, one composes them using an XML-like syntax, yielding the overall DOM tree we seek.
+It is worth being a bit more precise, so consider this code:
         `}/>
 
         <Tabs
