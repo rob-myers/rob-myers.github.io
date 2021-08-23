@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React from 'react';
-import { styled } from 'goober';
+import { css } from 'goober';
 
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
@@ -9,15 +9,15 @@ import gfm from 'remark-gfm';
 export default function Markdown(
   props: ReactMarkdown.ReactMarkdownOptions & { title?: boolean }
 ) {
-  return React.createElement(
-    props.title ? TitleRoot : Root,
-    undefined,
-    <ReactMarkdown
-      rehypePlugins={[rehypeRaw]} // Permit html
-      remarkPlugins={[gfm]}
-      components={props.title ? titleComponents : components}
-      {...props}
-    />
+  return (
+    <div className={props.title ? titleRootCss : rootCss} >
+      <ReactMarkdown
+        rehypePlugins={[rehypeRaw]} // Permit html
+        remarkPlugins={[gfm]}
+        components={props.title ? titleComponents : components}
+        {...props}
+      />
+    </div>
   );
 }
 
@@ -70,7 +70,7 @@ const components = {
   },
 };
 
-const Root = styled('div')`
+const rootCss = css`
   font-size: 1.2rem;
   @media(max-width: 540px) {
     font-size: 1.1rem;
@@ -134,7 +134,7 @@ const Root = styled('div')`
   }
 `;
 
-const TitleRoot = styled('div')`
+const titleRootCss = css`
   h1 {
     margin: 48px 0 24px;
     font-size: 7rem;
