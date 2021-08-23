@@ -152,6 +152,8 @@ const useStore = create<State>(devtools(persist((set, get) => ({
           ttyIo,
           ttyShell,
           var: {
+            PWD: '',
+            OLDPWD: '',
             ...persisted.var,
             ...deepClone(env),
           },
@@ -259,7 +261,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     setVarDeep: (sessionKey, varPath, varValue) => {
       /** Like root of process context, but only has `home` */
       const root = { home : api.getSession(sessionKey).var };
-      const pwd: string = api.getVar(sessionKey, 'PWD') || '';
+      const pwd: string = api.getVar(sessionKey, 'PWD');
       const parts = computeNormalizedParts(varPath, root, pwd);
 
       if (parts[0] === 'home' && parts.length > 1) {

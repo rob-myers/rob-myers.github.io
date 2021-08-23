@@ -89,8 +89,8 @@ class CmdService {
         if (args.length > 1) {
           throw new ShError('usage: `cd /`, `cd`, `cd foo/bar`, `cd /foo/bar`, `cd ..` and `cd -`', 1);
         }
-        const prevPwd: string = useSession.api.getVar(meta.sessionKey, 'OLDPWD') || '';
-        const currPwd: string = useSession.api.getVar(meta.sessionKey, 'PWD') || '';
+        const prevPwd: string = useSession.api.getVar(meta.sessionKey, 'OLDPWD');
+        const currPwd: string = useSession.api.getVar(meta.sessionKey, 'PWD');
         useSession.api.setVar(meta.sessionKey, 'OLDPWD', currPwd);
 
         try {
@@ -291,7 +291,7 @@ class CmdService {
         break;
       }
       case 'pwd': {
-        yield '/' + (useSession.api.getVar(meta.sessionKey, 'PWD') || '');
+        yield '/' + (useSession.api.getVar(meta.sessionKey, 'PWD'));
         break;
       }
       case 'reduce': {
@@ -312,7 +312,7 @@ class CmdService {
       }
       case 'rm': {
         const root = this.provideProcessCtxt(meta);
-        const pwd = useSession.api.getVar<string>(meta.sessionKey, 'PWD') || '';
+        const pwd = useSession.api.getVar<string>(meta.sessionKey, 'PWD');
         for (const path of args) {
           const parts = computeNormalizedParts(path, root, pwd);
           if (parts[0] === 'home' && parts.length > 1) {
@@ -389,7 +389,7 @@ class CmdService {
 
   get(node: Sh.BaseNode, args: string[]) {
     const root = this.provideProcessCtxt(node.meta);
-    const pwd = useSession.api.getVar<string>(node.meta.sessionKey, 'PWD') || '';
+    const pwd = useSession.api.getVar<string>(node.meta.sessionKey, 'PWD');
     const outputs = args.map(arg => resolvePath(arg, root, pwd));
     node.exitCode = outputs.length && outputs.every(x => x === undefined) ? 1 : 0;
     return outputs;
