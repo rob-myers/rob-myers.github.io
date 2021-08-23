@@ -41,7 +41,7 @@ function useSvgText(url, transform) {
       const hull = topNodes.find(x => hasTitle($, x, 'hull'));
       const doors = topNodes.find(x => hasTitle($, x, 'doors'));
       const walls = topNodes.find(x => hasTitle($, x, 'walls'));
-      const obstacles = topNodes.find(x => hasTitle($, x, 'walls'));
+      const obstacles = topNodes.find(x => hasTitle($, x, 'obstacles'));
       const irisValves = topNodes.find(x => hasTitle($, x, 'iris-valves'));
 
       // Assume 1st polygon is outer one
