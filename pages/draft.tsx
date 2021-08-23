@@ -1,6 +1,5 @@
 import { code } from 'model/tabs-lookup';
 
-import { Section, Main } from 'components/page/Layout';
 import Markdown from 'components/page/Markdown';
 import CodeEditor from 'components/code/WrappedCodeEditor';
 import Terminal from 'components/sh/Terminal';
@@ -9,8 +8,8 @@ import GeomorphTest from 'projects/geomorph/GeomorphTest';
 
 export default function IndexPage() {
   return (
-    <Main>
-      <Section>
+    <div className="main">
+      <section>
 
         <Markdown title children={`
 # Rogue Markup
@@ -275,9 +274,9 @@ __TODO__
         <Markdown children={`
 This is an example of a [command link](#command "@test echo foo").
         `}/>
-      </Section>
 
-    </Main>
+      </section>
+    </div>
   );
 }
 

@@ -1,10 +1,9 @@
-import { Section, Main } from 'components/page/Layout';
 import Markdown from 'components/page/Markdown';
 
 export default function IndexPage() {
   return (
-    <Main>
-      <Section>
+    <div className="main">
+      <section>
 
         <Markdown title children={`
 # Rogue Markup
@@ -16,8 +15,8 @@ Roguelike; Built online; Game AI focus
 ## Coming soon
         `}/>
 
-      </Section>
+      </section>
 
-    </Main>
+    </div>
   );
 }
