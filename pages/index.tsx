@@ -187,10 +187,10 @@ We now provide more details of a general nature.
 - This website uses Preact instead of React. Technically, _react_ and _react-dom_ are aliases for the npm module [@preact/compat](https://www.npmjs.com/package/@preact/compat).
   As a result, React.createElement corresponds to [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
   and constructs Preact VNode's (virtual DOM nodes).
-- The top-level component is conventionally called _App_.
+- The root component is conventionally called _App_.
   Running a React application amounts to [invoking _ReactDOM.render_](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@external")
-  with two arguments i.e. _\\<App/\\>_ and a pre-existing DOM node _root_.
-  The [render function](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts the virtual DOM tree into an actual DOM tree mounted at _root_.
+  with two arguments: _\\<App/\\>_ and an extant DOM node _el_.
+  The [render function](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts the virtual DOM tree into an actual DOM tree mounted at _el_.
   Subsequent changes are [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
 
 <!--
@@ -211,22 +211,22 @@ There's a lot more to say about components e.g. how they represent internal stat
 However, we've said more than enough for now.
 We'll close this subsection with two related remarks.
 
-1.  Preact vs React.
+#### Preact vs React
 
-    This website is built using Preact, a popular alternative to React with the same API.
-    It has a much smaller codebase (easier to understand),
-    and provides hooks into its underlying operations (e.g. for performance monitoring).
-    Preact has a reputation for being faster,
-    although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer).
+This website is built using Preact, a popular alternative to React with the same API.
+It has a much smaller codebase (easier to understand),
+and provides hooks into its underlying operations (e.g. for performance monitoring).
+Preact has a reputation for being faster,
+although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer).
     
-2.  CSS in JavaScript
+#### CSS in JavaScript
 
-    Both _PanZoom_ and _PanZoomDemo_ are styled using CSS-in-JS.
-    Traditionally, CSS is provided in separate files (possibly transpiled from SCSS), linked in the _\\<head\\>_ and referenced by DOM elements via their class attribute.
-    Since JSX extends JS and _class_ is a [reserved word](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/class),
-    React uses the _className_ attribute instead.
+Both _PanZoom_ and _PanZoomDemo_ are styled using CSS-in-JS.
+Traditionally, CSS is provided in separate files (possibly transpiled from SCSS), linked in the _\\<head\\>_ and referenced by DOM elements via their class attribute.
+Since JSX extends JS and _class_ is a [reserved word](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/class),
+React uses the _className_ attribute instead.
 
-    __TODO__ finish this
+__TODO__ finish this
 
 ### Physics Engine
 
@@ -235,7 +235,7 @@ We'll close this subsection with two related remarks.
 
 ### Static and Runtime Analysis
 
-- Typescript via JSdoc, refering to CodeSandbox.
+- Typescript via JSDoc, refering to CodeSandbox.
 - Terminal + Preact hooks
 - Terminal + Game AI
 
@@ -257,18 +257,15 @@ __TODO__
 
         <Markdown children={`
 
-
 ---
 
-## Realtime Camera <float rem="1.2">19th July 2021</float>
+## Movement <float rem="1.2">19th July 2021</float>
 
-We begin by making the game viewpoints _viewable_.
-- Implement a pannable zoomable grid.
-- Implement a movable character & Teleglitch-style camera.
-- Support switching between these two viewpoints.
-- Support desktop & mobile; can optionally run code on [CodeSandbox](https://codesandbox.io/).
-
-
+- Navigation
+- Follow camera
+- Map view
+- Support mobile too
+- CodeSandbox
         `}/>
 
         <br/>
