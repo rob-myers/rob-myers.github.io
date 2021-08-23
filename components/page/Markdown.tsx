@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import React from 'react';
 import { styled } from 'goober';
 
@@ -14,11 +15,26 @@ export default function Markdown(
     <ReactMarkdown
       rehypePlugins={[rehypeRaw]} // Permit html
       remarkPlugins={[gfm]}
-      components={components}
+      components={props.title ? titleComponents : components}
       {...props}
     />
   );
 }
+
+
+const titleComponents = {
+  h1({ children, ...props }: any) {
+    const router = useRouter();
+    return (
+      <h1
+        onClick={() => router.push('/')}
+        {...props}
+      >
+        {children}
+      </h1>
+    );
+  },
+};
 
 const components = {
   a({node, href, title, children, ...props}: any) {
@@ -124,6 +140,7 @@ const TitleRoot = styled('div')`
   h1 {
     margin: 48px 0 24px;
     font-size: 7rem;
+    cursor: pointer;
     
     @media(max-width: 1024px) {
       margin: 12px 0 24px;

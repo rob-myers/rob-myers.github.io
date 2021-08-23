@@ -1,10 +1,10 @@
 ## Plan
 
-- index page says "Coming soon"; current moved to /draft
 - better Tabs UI
   - CodeEditor initially fades in
   - can enable/disable for easier scrolling
   - ✅ fix tabs colours
+- ✅ index page says "Coming soon"; current page moved to /draft
 - ✅ parse svg hull polygons and infer polygon outline
   - ✅ parsed using cheerio in `UseSvg`
   - ✅ cannot traverse closed shadow dom
