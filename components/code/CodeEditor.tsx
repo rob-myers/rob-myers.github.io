@@ -47,7 +47,10 @@ export default function CodeEditor({
           },
         },
         addModeClass: true,
-        readOnly,
+        readOnly: readOnly
+          // prevent text-edit UI on mobile device
+          ? window.matchMedia('(max-width: 400px)').matches ? 'nocursor' : true
+          : false,
         foldOptions: {
           rangeFinder: CodeMirror.fold.indent,
         },
@@ -94,6 +97,10 @@ const Root = styled('div', React.forwardRef)<{
   font-size: 13px;
   
   .CodeMirror {
+    ::selection {
+      background: rgb(40, 73, 105);
+    }
+
     height: ${props => props.height || ''};
     .CodeMirror-lines {
       padding: ${props => props.padding};
