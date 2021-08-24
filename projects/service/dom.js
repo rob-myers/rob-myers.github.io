@@ -4,16 +4,28 @@ import { Poly } from '../geom/poly';
 
 /** @type {DOMPoint} */
 let svgPoint;
-/** @type {SVGSVGElement} */
-let svg;
 
-/** @param {MouseEvent & { currentTarget: any }} e */
-export function getSvgPos(e) {
-  svg = e.currentTarget;
-  svgPoint = svgPoint || svg.createSVGPoint();
+/**
+ * @param {null | SVGSVGElement} svg 
+ * @param {MouseEvent} e 
+ */
+export function getSvgPos(svg, e) {
+  svgPoint = svgPoint || svg?.createSVGPoint();
   svgPoint.x = e.clientX;
   svgPoint.y = e.clientY;
-  return svgPoint.matrixTransform(svg.getScreenCTM()?.inverse());
+  return svgPoint.matrixTransform(svg?.getScreenCTM()?.inverse());
+}
+
+/**
+ * @param {null | SVGSVGElement} svg 
+ * @param {MouseEvent[]} es
+ */
+export function getSvgMid(svg, es) {
+  svgPoint = svgPoint || svg?.createSVGPoint();
+	svgPoint.x = svgPoint.y = 0;
+	es.forEach(e => { svgPoint.x += e.clientX; svgPoint.y += e.clientY; });
+	svgPoint.x /= es.length || 1; svgPoint.y /= es.length || 1;
+  return svgPoint.matrixTransform(svg?.getScreenCTM()?.inverse());
 }
 
 /**

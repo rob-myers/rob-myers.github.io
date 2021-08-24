@@ -65,11 +65,6 @@
   - https://github.com/Microsoft/typescript-styled-plugin#configuration (might work?)
   - https://luminaxster.github.io/syntax-highlighter/
 
-### service-worker
-- ✅ can respond with type `application/javascript`
-- ✅ `import('/src/module.js')` does not refetch,
-  although `import('/src/module.js?v=2')` would.
-
 ### shell
 - fix `set home/dist {}`
 - can trigger shell command from markdown link

@@ -1,3 +1,3 @@
-export { getSvgPos, svgPathToPolygons } from "./dom";
+export { getSvgPos, getSvgMid, svgPathToPolygons } from "./dom";
 
 export { generateId } from "./generate";

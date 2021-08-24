@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { css } from 'goober';
 import { Vect, Rect } from '../geom';
-import { getSvgPos, generateId } from '../service';
+import { getSvgPos, getSvgMid, generateId } from '../service';
 import useForceRefresh from '../hooks/use-force-refresh';
 
 /** @param {React.PropsWithChildren<Props>} props */
@@ -12,42 +12,75 @@ export default function PanZoom(props) {
     const minZoom = props.minZoom || 0.5;
     const maxZoom = props.maxZoom || 2;
     return {
-      panFrom: /** @type {null|Vect} */ (null),
-      zoom: props.initZoom || 1,
       viewBox,
-      initViewBox: props.initViewBox,
-      gridBounds: props.gridBounds,
-      /** @param {WheelEvent} e */
-      onWheel: e => {
-        e.preventDefault();
-        const zoom = Math.min(Math.max(state.zoom - 0.003 * e.deltaY, minZoom), maxZoom);
-        const { x: rx, y: ry } = getSvgPos(e);
-        viewBox.x = (state.zoom / zoom) * (viewBox.x - rx) + rx;
-        viewBox.y = (state.zoom / zoom) * (viewBox.y - ry) + ry;
+      /** @type {null | Vect} */
+      panFrom: null,
+      zoom: props.initZoom || 1,
+      /** @type {PointerEvent[]} */
+      ptrEvent: [],
+      /** @type {null | number} */
+      ptrDiff: null,
+      /**
+       * @param {DOMPoint} point 
+       * @param {number} delta 
+       */
+      zoomTo: (point, delta) => {
+        const zoom = Math.min(Math.max(state.zoom + delta, minZoom), maxZoom);
+        viewBox.x = (state.zoom / zoom) * (viewBox.x - point.x) + point.x;
+        viewBox.y = (state.zoom / zoom) * (viewBox.y - point.y) + point.y;
         viewBox.width = (1 / zoom) * props.initViewBox.width;
         viewBox.height = (1 / zoom) * props.initViewBox.height;
         state.zoom = zoom;
+      },
+      /** @param {WheelEvent} e */
+      onWheel: e => {
+        e.preventDefault();
+        const point = getSvgPos(state.rootEl, e);
+        state.zoomTo(point, - 0.003 * e.deltaY);
         refresh();
       },
       /** @param {PointerEvent} e */
-      onPointerDown: e => state.panFrom = (new Vect(0, 0)).copy(getSvgPos(e)),
+      onPointerDown: e => {
+        state.panFrom = (new Vect(0, 0)).copy(getSvgPos(state.rootEl, e));
+        state.ptrEvent.push(e);
+      },
       /** @param {PointerEvent} e */
       onPointerMove: e => {
-        if (state.panFrom) {
-          const mouse = getSvgPos(e);
+        state.ptrEvent = state.ptrEvent.map(x => x.pointerId === e.pointerId ? e : x);
+
+        if (state.ptrEvent.length === 2) {
+          const ptrDiff = Math.abs(state.ptrEvent[1].clientX - state.ptrEvent[0].clientX);
+          if (state.ptrDiff !== null) {
+            const point = getSvgMid(state.rootEl, state.ptrEvent);
+            state.zoomTo(point, 0.02 * (ptrDiff - state.ptrDiff));
+            refresh();
+          }          
+          state.ptrDiff = ptrDiff;
+        } else if (state.panFrom) {
+          const mouse = getSvgPos(state.rootEl, e);
           viewBox.delta(state.panFrom.x - mouse.x, state.panFrom.y - mouse.y);
           refresh();
         }
       },
-      onPointerUp: () => state.panFrom = null,
+      /** @param {PointerEvent} e */
+      onPointerUp: (e) => {
+        state.panFrom = null;
+        state.ptrEvent = state.ptrEvent.filter(alt => e.pointerId !== alt.pointerId);
+        if (state.ptrEvent.length < 2) state.ptrDiff = null;
+      },
+      /** @type {null | SVGSVGElement} */
+      rootEl: null,
       /** @type {(el: null | SVGSVGElement) => void} */
       rootRef: el => {
         if (el) {
+          state.rootEl = el;
           el.addEventListener('wheel', state.onWheel);
           el.addEventListener('pointerdown', state.onPointerDown, { passive: true });
           el.addEventListener('pointermove', state.onPointerMove, { passive: true });
           el.addEventListener('pointerup', state.onPointerUp, { passive: true });
+          el.addEventListener('pointercancel', state.onPointerUp, { passive: true });
           el.addEventListener('pointerleave', state.onPointerUp, { passive: true });
+          el.addEventListener('pointerout', state.onPointerUp, { passive: true });
           el.addEventListener('touchstart', e => e.preventDefault());
         }
       },
@@ -67,7 +100,7 @@ export default function PanZoom(props) {
       preserveAspectRatio="xMinYMin"
       viewBox={`${state.viewBox}`}
     >
-      <MemoedGrid bounds={state.gridBounds} />
+      <MemoedGrid bounds={props.gridBounds} />
       {props.children}
     </svg>
   );
