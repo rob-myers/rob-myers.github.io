@@ -140,8 +140,8 @@ In particular:
   The returned value is an HTML fragment to be rendered.
   It may depend on the component's props and internal state.
 
-React developers compose components using an XML-like syntax, yielding the desired overall DOM tree.
-It is worth being a bit more precise, so consider this code:
+React developers compose components together using an XML-like syntax, yielding the desired dynamic DOM tree.
+It is worth being a bit more precise, so consider some code.
         `}/>
 
         <Tabs
