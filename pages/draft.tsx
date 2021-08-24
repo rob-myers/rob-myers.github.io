@@ -218,14 +218,17 @@ although React has a _much_ wider scope via [custom renderers](https://github.co
     
 #### CSS in JavaScript
 
-Both _PanZoom_ and _PanZoomDemo_ are styled using CSS-in-JS.
 Traditionally, CSS is provided in separate files (possibly transpiled from SCSS), linked in the _\\<head\\>_ and referenced by DOM elements via their class attribute.
 Since JSX extends JS and _class_ is a [reserved word](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/class),
 React uses the _className_ attribute instead.
 
-__TODO__ finish this
+Both _PanZoom_ and _PanZoomDemo_ are styled using CSS-in-JS.
+This means the CSS is written inside JS or JSX files, often together with the React components it applies to.
+We use the npm module [goober](https://www.npmjs.com/package/goober).
 
 ### Physics Engine
+
+__TODO__ from here
 
 - Raycast test
 - Dynamic collison test
