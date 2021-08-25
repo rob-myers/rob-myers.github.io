@@ -23,8 +23,8 @@ export class Poly {
   /** @param {DOMMatrix} m */
   applyMatrix(m) {
     if (!m.isIdentity) {
-      this.outline = this.outline.map(p => Vect.from(m.transformPoint(p)));
-      this.holes.forEach(hole => hole.map(p => Vect.from(m.transformPoint(p))));
+      this.outline = this.outline.map(p => p.copy(m.transformPoint(p)));
+      this.holes.forEach(hole => hole.map(p => p.copy(m.transformPoint(p))));
     }
     return this;
   }
@@ -97,7 +97,6 @@ export class Poly {
 
   /**
    * Cut `cuttingPolys` from `polys`.
-   * @private
    * @param {Poly[]} cuttingPolys
    * @param {Poly[]} polys
    */
@@ -109,13 +108,6 @@ export class Poly {
       )
       .map(coords => Poly.from(coords).cleanFinalReps());
   }
-
-  // get edges() {
-  //   return {
-  //     outline: this.outline.map((p, i, ps) => new Edge(p, ps[(i + 1) % ps.length])),
-  //     holes: this.holes.map(hole => hole.map((p, i, ps) => new Edge(p, ps[(i + 1) % ps.length]))),
-  //   };
-  // }
 
   /**
    * Faster but less uniform.
