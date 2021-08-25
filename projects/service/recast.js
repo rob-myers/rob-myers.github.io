@@ -216,7 +216,7 @@ class RecastService {
    * @param {string} navKey
    * @param {VectJson} start world position
    * @param {VectJson} end position
-   * @returns {VectJson[]} array containing world position composing the path
+   * @returns {Vect[]} array containing world position composing the path
    */
   computePath(navKey, start, end) {
     if (!this.lookup[navKey]) {
@@ -229,11 +229,11 @@ class RecastService {
     const endPos = new this.bjsRECAST.Vec3(end.x, 0, end.y);
     const navPath = this.lookup[navKey].computePath(startPos, endPos);
     const pointCount = navPath.getPointCount();
-    /** @type {VectJson[]} */
+    /** @type {Vect[]} */
     const positions = [];
     for (pt = 0; pt < pointCount; pt++) {
       let p = navPath.getPoint(pt);
-      positions.push({ x: p.x, y: p.z });
+      positions.push(new Vect(p.x, p.z));
     }
     return positions;
   }
