@@ -7,6 +7,7 @@ import Tabs from 'components/page/Tabs';
 import Title from 'components/page/Title';
 import GeomorphTest from 'projects/geomorph/GeomorphTest';
 import PhysicsDemo from 'projects/physics/PhysicsDemo';
+import PathfindingDemo from 'projects/pathfinding/PathfindingDemo';
 
 export default function IndexPage() {
   return (
@@ -218,6 +219,12 @@ We use the npm module [Goober](https://www.npmjs.com/package/goober) to handle t
 
 Pathfinding is central to Game AI.
 Our NPCs need to move realistically e.g. they cannot move through walls, windows or locked doors.
+
+        `}/>
+
+        <PathfindingDemo />
+
+        <Markdown children={`
 
 ### Physics Engine
 

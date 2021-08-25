@@ -3,7 +3,7 @@ import * as polygonClipping from 'polygon-clipping';
 import earcut from 'earcut';
 
 import { Rect } from "./rect";
-import { Coord, VectJson, GeoJsonPolygon } from "./types";
+import { Coord, VectJson, GeoJsonPolygon, Triangulation } from "./types";
 import { Vect } from "./vect";
 
 export class Poly {
@@ -120,6 +120,7 @@ export class Poly {
   /**
    * Faster but less uniform.
    * Also cannot handle Steiner points.
+   * @returns {Triangulation}
    */
   fastTriangulate() {
     const { coordinates } = this.geoJson;
@@ -244,6 +245,7 @@ export class Poly {
    * Can fail for non-wellformed polygons e.g. given square
    * with a hole, cut another hole meeting 1st hole at a point.
    * On failure we fallback to earcut algorithm, warning in console.
+   * @returns {Triangulation}
    */
   qualityTriangulate() {
     try {
