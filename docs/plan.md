@@ -1,11 +1,12 @@
 ## Plan
 
-- fix `PanZoom` on mobile
-  - ✅ can view local dev on phone
+- tidy up `PanZoom` and update CodeSandboxes
 - better Tabs UI
   - CodeEditor initially fades in
   - can enable/disable for easier scrolling
   - ✅ fix tabs colours
+- ✅ fix `PanZoom` on mobile
+  - ✅ can view local dev on phone
 - ✅ first deploy
 - ✅ index page says "Coming soon"; current page moved to /draft
 - ✅ parse svg hull polygons and infer polygon outline

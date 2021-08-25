@@ -3,7 +3,8 @@ import { code } from 'model/tabs-lookup';
 import Markdown from 'components/page/Markdown';
 import CodeEditor from 'components/code/WrappedCodeEditor';
 import Terminal from 'components/sh/Terminal';
-import { Tabs } from 'components/page/Tabs';
+import Tabs from 'components/page/Tabs';
+import Title from 'components/page/Title';
 import GeomorphTest from 'projects/geomorph/GeomorphTest';
 
 export default function IndexPage() {
@@ -11,11 +12,7 @@ export default function IndexPage() {
     <div className="main">
       <section>
 
-        <Markdown title children={`
-# Rogue Markup
-
-Roguelike; Built online; Game AI focus
-        `}/>
+        <Title />
 
         <Markdown children={`
 

@@ -7,7 +7,7 @@ import CodeEditor from 'components/code/WrappedCodeEditor';
 import CodeMirror from "codemirror";
 import { ErrorMessage, Tab, TabMeta } from "./Tab";
 
-export function Tabs({ tabs, height = "300px" }: Props) {
+export default function Tabs({ tabs, height = "300px" }: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   return (
     <TabsRoot height={height}>

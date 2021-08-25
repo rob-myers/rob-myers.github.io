@@ -2,7 +2,6 @@ body {
   padding: 0;
   margin: 0;
 
-  /* font-family: Arial, sans-serif; */
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -11,8 +10,8 @@ body {
 }
 
 h1, h2, h3, h4 {
-  font-family: Rubik, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-weight: 500;
 }
 
 a {

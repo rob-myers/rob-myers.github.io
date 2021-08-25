@@ -137,37 +137,34 @@ const rootCss = css`
 const titleRootCss = css`
   h1 {
     margin: 48px 0 24px;
-    font-size: 7rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 7.5rem;
+    font-weight: 300;
     cursor: pointer;
     
     @media(max-width: 1024px) {
       margin: 12px 0 24px;
-      font-size: 5.2rem;
+      font-size: 6rem;
     }
     @media(max-width: 800px) {
-      font-size: 4.2rem;
+      font-size: 5rem;
     }
     @media(max-width: 400px) {
-      font-size: 4rem;
+      font-size: 3.6rem;
     }
   }
   
   p {// Site subtitle
-    margin: 0 0 48px 0;
-    border-bottom: 4px solid #000;
-    padding: 0 0 8px;
-    color: #333;
-    // letter-spacing: 1px; */
-    font-family: Courier, monospace;
-    font-size: 1.2rem;
-    
-    @media(max-width: 1024px) {
-      font-size: 1rem;
-      margin: 0 0 32px 0;
-    }
-
+    color: #444;
+    margin: 0 0 32px 0;
+    padding-top: 8px;
+    letter-spacing: 1px;
+    font-size: 1rem;
+    font-family: monospace;
+   
     @media(max-width: 400px) {
       font-size: 0.8rem;
+      padding-top: 0;
     }
   }
 `;
