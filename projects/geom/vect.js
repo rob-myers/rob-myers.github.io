@@ -96,6 +96,16 @@ import * as Geom from './types';
     return this;
   }
 
+  /**
+   * @param {number} dp decimal places
+   */
+  precision(dp) {
+    return this.set(
+      Number(this.x.toFixed(dp)),
+      Number(this.y.toFixed(dp)),
+    );
+  }
+
   /** @param {number} radians */
   rotate(radians) {
     const [x, y] = [this.x, this.y];
