@@ -22,7 +22,7 @@ interface Props {
 }
 
 const TabsRoot = styled('div')<{ height: string }>`
-  padding-bottom: 16px;
+  padding: 0 0 16px;
   > div {
     position: relative;
     height: ${(props) => props.height};
