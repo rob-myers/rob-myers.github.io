@@ -157,14 +157,16 @@ const titleRootCss = css`
   p {// Site subtitle
     color: #444;
     margin: 0 0 32px 0;
-    padding-top: 8px;
+    padding-top: 16px;
     letter-spacing: 1px;
     font-size: 1rem;
     font-family: monospace;
    
+    @media(max-width: 800px) {
+      padding-top: 0;
+    }
     @media(max-width: 400px) {
       font-size: 0.8rem;
-      padding-top: 0;
     }
   }
 `;
