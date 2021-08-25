@@ -81,7 +81,7 @@ Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where
 Graphically, see [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
 Importantly, it should be easy for other people to extend this game.
-We'll achieve this by providing source code, escape hatches to [CodeSandbox](https://codesandbox.io/), and clear explanations.
+We'll achieve this by providing source code, escape hatches to CodeSandbox, and clear explanations.
 Comments will be shown so that [GitHub](https://github.com/) users can share ideas and links.
 
 <!--
@@ -108,13 +108,14 @@ We will build the game using the following technologies.
 
 | Concept | Browser Technology |
 | - | - |
-| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) i.e. JavaScript functions using syntactic sugar known as [JSX](https://reactjs.org/docs/introducing-jsx.html) and internal state via [hooks](https://reactjs.org/docs/hooks-intro.html). |
+| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components). |
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
-| Physics engine | The WebAssembly module [box2d-wasm](https://www.npmjs.com/package/box2d-wasm). |
-| Static analysis | TypeScript via [JSDoc comments](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html); also [ESLint](https://www.npmjs.com/package/eslint). |
+| Pathfinding | [Emscripten port](https://www.npmjs.com/package/recast-detour) of [Recast & Detour](https://github.com/recastnavigation/recastnavigation).  |
+| Physics engine | [WebAssembly port](https://www.npmjs.com/package/box2d-wasm) of [Box2D](https://github.com/erincatto/box2d). |
+| Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html), and also [ESLint](https://www.npmjs.com/package/eslint). |
 | Live analysis | [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
-| Code viewing | [CodeMirror](https://codemirror.net/) for viewing JavaScript on this site. [FlexLayout](https://github.com/caplin/FlexLayout) provides draggable tabs. |
+| Code viewing | [CodeMirror](https://codemirror.net/) to view JS. [FlexLayout](https://github.com/caplin/FlexLayout) provides draggable tabs. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
 | Code sharing | [GitHub](https://github.com/) comments shown on site; GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
 
@@ -134,8 +135,8 @@ One popular approach uses _React function components_, which are just JavaScript
   It is a JavaScript object defining the component's named inputs, and possibly special properties like _children_, _key_ and _ref_.
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
   
-  The returned value is an HTML fragment to be rendered.
-  It may depend on the component's props and internal state.
+  The returned value amounts to an HTML fragment to be rendered,
+  and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers compose components using an XML-like syntax, in order to obtain the desired dynamic DOM tree.
 It is worth being a bit more precise, so consider some code.
@@ -206,15 +207,22 @@ and provides hooks into its underlying operations (allowing performance monitori
 Preact has a reputation for being faster,
 although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer).
     
-_CSS in JavaScript_. Traditionally, CSS is provided in separate files, linked in the _\\<head\\>_ and referenced by DOM elements via their class attribute.
-Both _PanZoom_ and _PanZoomDemo_ are styled using CSS-in-JS.
+_CSS in JavaScript_. Traditionally, CSS is provided in separate files,
+linked in the _\\<head\\>_ and referenced by DOM elements via their class or className attribute.
+Both PanZoom and PanZoomDemo are styled using CSS-in-JS.
 This means the CSS is written inside JS or JSX files, often together with the React components it applies to.
-We use the npm module [goober](https://www.npmjs.com/package/goober).
+We use the npm module [Goober](https://www.npmjs.com/package/goober) to handle this.
 
+
+### Pathfinding
+
+Pathfinding is central to Game AI.
+Our NPCs need to move realistically e.g. they cannot move through walls, windows or locked doors.
 
 ### Physics Engine
 
-The next browser technology we'll consider is a Physics engine.
+Why do we need a Physics engine?
+Raycasting, triggers, and collision detection.
 
 
 __TODO__ from here
