@@ -6,6 +6,7 @@ import Terminal from 'components/sh/Terminal';
 import Tabs from 'components/page/Tabs';
 import Title from 'components/page/Title';
 import GeomorphTest from 'projects/geomorph/GeomorphTest';
+import PhysicsDemo from 'projects/physics/PhysicsDemo';
 
 export default function IndexPage() {
   return (
@@ -166,17 +167,17 @@ We now provide more details of a general nature.
 
 - React developers use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), naturally combining JavaScript and XML syntax.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function _React.createElement_.
-  `}/>
+        `}/>
 
-  <CodeEditor
-    margin="0 0 0 40px"
-    height="310px"
-    code={code['example/jsx-to-js.jsx']}
-    lineNumbers
-    readOnly
-  />
+        <CodeEditor
+          margin="0 0 0 40px"
+          height="310px"
+          code={code['example/jsx-to-js.jsx']}
+          lineNumbers
+          readOnly
+        />
 
-  <Markdown children={`
+        <Markdown children={`
 
 - This website uses Preact instead of React. Technically, _react_ and _react-dom_ are aliases for the npm module [@preact/compat](https://www.npmjs.com/package/@preact/compat).
   As a result, React.createElement corresponds to [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
@@ -221,6 +222,12 @@ We use the npm module [goober](https://www.npmjs.com/package/goober).
 ### Physics Engine
 
 __TODO__ from here
+
+        `}/>
+
+        <PhysicsDemo />
+
+        <Markdown children={`
 
 - Raycast test
 - Dynamic collison test

@@ -21,6 +21,7 @@
     "deploy": "yarn local-deploy && yarn deploy-from-local"
   },
   "dependencies": {
+    "box2d-wasm": "^6.0.4",
     "braces": "^3.0.2",
     "cli-columns": "^3.1.2",
     "codemirror": "^5.62.0",
@@ -32,7 +33,7 @@
     "lodash.clonedeep": "^4.5.0",
     "mvdan-sh": "^0.5.0",
     "nanoid": "^3.1.23",
-    "next": "^11.0.1",
+    "next": "^11.1.0",
     "next-images": "^1.7.0",
     "next-plugin-preact": "^3.0.6",
     "poly2tri": "^1.5.0",

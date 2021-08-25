@@ -24,7 +24,10 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
         config,
         {
           resolve: {
-            alias: {},
+            fallback: {// Needed by box2d-wasm
+              fs: false,
+              path: false, 
+            }
           },
           // ...(!options.isServer && { resolve: { fallback: { fs: false } } }),
         },
