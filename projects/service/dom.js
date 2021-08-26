@@ -64,13 +64,3 @@ export function svgPathToPolygons(svgPathString) {
 
 	return polys.map(ps => new Poly(ps));
 }
-
-/**
- * @template {Record<string, any>} T
- * @returns {(Window & T) | undefined}
- */
-export function getWindow() {
-  return typeof window === 'undefined'
-    ? undefined
-    : /** @type {Window & T} */ /** @type {any} */ (window);
-}

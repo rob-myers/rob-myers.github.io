@@ -1,4 +1,3 @@
-import { getWindow } from './dom';
 import { Vect } from '../geom';
 import { Triangulation, VectJson } from '../geom/types';
 
@@ -361,18 +360,11 @@ let defaultNavMeshParams = {
  * data. (For height detail only.) [Limit: >=0] [Units: wu]
  */
 
-
-const window = getWindow();
-
-if (window) {
-  //@ts-ignore
+if (typeof self !== 'undefined') {
   import('recast-detour').then((module) => {
-    recastService.initialize(module.default);
-    window.Recast = undefined;
-    // recastService.createNavMesh('test',
-    //   geomService.polysToGeometry([Polygon.from(new Rect(0, 0, 10, 10))], 'xz')
-    // );
+    recast.initialize(module.default);
+    // console.log('Recast', self.Recast);
   });
 }
 
-export const recastService = new RecastService;
+export const recast = new RecastService;
