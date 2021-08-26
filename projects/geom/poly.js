@@ -16,13 +16,56 @@ export class Poly {
     /** @type {Vect[][]} */ this.holes = holes;
   }
 
+  get allPoints() {
+    return this.outline.concat(...this.holes);
+  }
+
+  /** @returns {GeoJsonPolygon} */
+  get geoJson() {
+    return {
+      type: 'Polygon',
+      coordinates: [
+        this.outline.map(({ x, y }) => /** @type {Coord} */ ([x, y]))
+      ].concat(
+        this.holes.map(hole => hole.map(({ x, y }) => [x, y]))
+      ),
+    };
+  }
+
+  get rect() {
+    return Rect.from(...this.outline);
+  }
+
+  get svgPath() {
+    return [this.outline, ...this.holes]
+      .map(ring => `M${ring}Z`)
+      .join(' ');
+  }
+
+  /** Compute tangents of exterior and holes. */
+  get tangents() {
+    const rings = [this.outline, ...this.holes];
+    const [outer, ...inner] = rings.map(ring =>
+      // Append first to get final tangent
+      ring.concat(ring[0]).reduce(
+        (agg, p, i, ps) =>
+          i > 0
+            ? agg.concat(
+              p
+                .clone()
+                .sub(ps[i - 1])
+                .normalize()
+            )
+            : [],
+        /** @type {Vect[]} */ ([])
+      )
+    );
+    return { outer, inner };
+  }
+
   /** @param {Vect} delta */
   add(delta) {
     return this.translate(delta.x, delta.y);
-  }
-
-  get allPoints() {
-    return this.outline.concat(...this.holes);
   }
 
   /** @param {DOMMatrix} m */
@@ -152,18 +195,6 @@ export class Poly {
     return new Poly(rect.points);
   }
 
-  /** @returns {GeoJsonPolygon} */
-  get geoJson() {
-    return {
-      type: 'Polygon',
-      coordinates: [
-        this.outline.map(({ x, y }) => /** @type {Coord} */ ([x, y]))
-      ].concat(
-        this.holes.map(hole => hole.map(({ x, y }) => [x, y]))
-      ),
-    };
-  }
-
   /**
    * Compute intersection of two infinite lines i.e.
    * 1. `lambda x. p0 + x * d0`.
@@ -226,17 +257,6 @@ export class Poly {
     });
   }
 
-  /** @type {GeoJsonPolygon} */
-  get json() {
-    return {
-      type: 'Polygon',
-      coordinates: [
-        this.outline.map(({ x, y }) => [x, y]),
-        ...this.holes.map(hole => hole.map(({ x, y }) => /** @type {Coord} */ ([x, y])))
-      ],
-    };
-  }
-
   /**
    * Quality triangulation via constrained delaunay library 'poly2ti'.
    * Can fail for non-wellformed polygons e.g. given square
@@ -294,10 +314,7 @@ export class Poly {
     return this;
   }
 
-  get rect() {
-    return Rect.from(...this.outline);
-  }
-
+  /** Mutate vectors by rounding. */
   round() {
     this.outline.forEach(p => p.round());
     this.holes.forEach(h => h.forEach(p => p.round()));
@@ -318,35 +335,6 @@ export class Poly {
    */
   static sign (p1, p2, p3) {
     return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
-  }
-
-  get svgPath() {
-    return [this.outline, ...this.holes]
-      .map(ring => `M${ring}Z`)
-      .join(' ');
-  }
-
-  /**
-   * Compute tangents of exterior and holes.
-   */
-  get tangents() {
-    const rings = [this.outline, ...this.holes];
-    const [outer, ...inner] = rings.map(ring =>
-      // Append first to get final tangent
-      ring.concat(ring[0]).reduce(
-        (agg, p, i, ps) =>
-          i > 0
-            ? agg.concat(
-              p
-                .clone()
-                .sub(ps[i - 1])
-                .normalize()
-            )
-            : [],
-        /** @type {Vect[]} */ ([])
-      )
-    );
-    return { outer, inner };
   }
 
   /**
