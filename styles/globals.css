@@ -19,7 +19,7 @@ a {
   text-decoration: none;
 }
 
-a.ext-link::before {
+a.new-tab-link::before {
   display: inline-block;
   content: '';
   background-image: url('/svg/ext-link-icon.svg');

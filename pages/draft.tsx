@@ -157,7 +157,7 @@ It is worth being a bit more precise, so consider some code.
 The file _panzoom/PanZoom.jsx_ defines two React function components, namely _PanZoom_ and _Grid_.
 They are JavaScript functions with a single parameter, returning something which looks like HTML (but isn't).
 _PanZoom_ defines a pannable and zoomable grid.
-To see it in action click the other tabs above, or view [this CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@external").
+To see it in action click the other tabs above, or view [this CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab").
 Behaviourally:
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 - _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
@@ -184,7 +184,7 @@ We now provide more details of a general nature.
   As a result, React.createElement corresponds to [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
   and constructs Preact VNode's (virtual DOM nodes).
 - The root component is conventionally called _App_.
-  Running a React application amounts to [invoking _ReactDOM.render_](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@external")
+  Running a React application amounts to [invoking _ReactDOM.render_](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
   with two arguments: _\\<App/\\>_ and an extant DOM node _el_.
   The [render function](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts the virtual DOM tree into an actual DOM tree mounted at _el_.
   Subsequent changes are [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
@@ -226,11 +226,10 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
 
         <Markdown children={`
 
-### Physics Engine
+### Physics engine
 
 Why do we need a Physics engine?
 > Raycasting, triggers, and collision detection.
-
 
 __TODO__ from here
 
@@ -261,6 +260,7 @@ __TODO__ from here
 __TODO__ 
 - GeomorphDemo
 - prepare CodeSandbox links for GeomorphDemo
+
         `}/>
 
         <GeomorphTest />
@@ -276,6 +276,7 @@ __TODO__
 - Map view
 - Support mobile too
 - CodeSandbox
+
         `}/>
 
         <br/>

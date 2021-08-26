@@ -41,8 +41,8 @@ const components = {
     return (
       <a
         href={href}
-        {...['@external'].includes(title) && {
-          className: 'ext-link',
+        {...['@new-tab'].includes(title) && {
+          className: 'new-tab-link',
           target: '_blank',          
         }}
         title={title}
