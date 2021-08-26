@@ -215,7 +215,7 @@ This means the CSS is written inside JS or JSX files, often together with the Re
 We use the npm module [Goober](https://www.npmjs.com/package/goober) to handle this.
 
 
-### Pathfinding
+### Navigation
 
 Pathfinding is central to Game AI.
 Our NPCs need to move realistically e.g. they cannot move through walls, windows or locked doors.
@@ -229,7 +229,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
 ### Physics Engine
 
 Why do we need a Physics engine?
-Raycasting, triggers, and collision detection.
+> Raycasting, triggers, and collision detection.
 
 
 __TODO__ from here

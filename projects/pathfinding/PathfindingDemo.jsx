@@ -8,7 +8,8 @@ export default function PathfindingDemo() {
       <PanZoom gridBounds={gridBounds} initViewBox={initViewBox}>
         <g transform="translate(150, 90)">
           {/* <polygon points={String(octogon.outline)} /> */}
-          <path d={`M${hollowOctagon.outline}Z M${hollowOctagon.holes[0]}Z`} />
+          {/* <path d={`M${hollowOctagon.outline}Z M${hollowOctagon.holes[0]}Z`} /> */}
+          <path d={`${figureOfEight.svgPath}`} />
         </g>
       </PanZoom>
     </section>
@@ -22,8 +23,13 @@ const range = [...Array(8)].map((_ ,i) => i);
 const octagon = new Poly(range.map((_ ,i) => new Vect(
   Math.cos(2 * Math.PI * (1/16 + i/8)),
   Math.sin(2 * Math.PI * (1/16 + i/8)),
-))).scale(50);
+))).scale(50).precision(0);
 const [hollowOctagon] = Poly.cutOut(
   [octagon.clone().scale(0.8)],
   [octagon],
 );
+const [figureOfEight] = Poly.union([
+  hollowOctagon,
+  hollowOctagon.clone().translate(hollowOctagon.rect.width, 0),
+]);
+figureOfEight.precision(0);

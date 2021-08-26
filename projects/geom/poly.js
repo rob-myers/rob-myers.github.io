@@ -16,6 +16,11 @@ export class Poly {
     /** @type {Vect[][]} */ this.holes = holes;
   }
 
+  /** @param {Vect} delta */
+  add(delta) {
+    return this.translate(delta.x, delta.y);
+  }
+
   get allPoints() {
     return this.outline.concat(...this.holes);
   }
@@ -279,6 +284,16 @@ export class Poly {
     return !(hasNeg && hasPos);
   }
 
+  /**
+   * Mutate vector precision.
+   * @param {number} dp decimal places
+   */
+  precision(dp) {
+    this.outline.forEach(p => p.precision(dp));
+    this.holes.forEach(hole => hole.forEach(p => p.precision(dp)));
+    return this;
+  }
+
   get rect() {
     return Rect.from(...this.outline);
   }
@@ -305,6 +320,12 @@ export class Poly {
     return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
   }
 
+  get svgPath() {
+    return [this.outline, ...this.holes]
+      .map(ring => `M${ring}Z`)
+      .join(' ');
+  }
+
   /**
    * Compute tangents of exterior and holes.
    */
@@ -328,10 +349,13 @@ export class Poly {
     return { outer, inner };
   }
 
-  /** @param {Vect} delta */
-  translate(delta) {
-    this.outline.forEach(p => p.translate(delta.x, delta.y));
-    this.holes.forEach(h => h.forEach(p => p.translate(delta.x, delta.y)));
+  /**
+   * @param {number} dx 
+   * @param {number} dy 
+   */
+  translate(dx, dy) {
+    this.outline.forEach(p => p.translate(dx, dy));
+    this.holes.forEach(h => h.forEach(p => p.translate(dx, dy)));
     return this;
   }
 
