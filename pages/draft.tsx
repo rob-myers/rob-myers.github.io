@@ -1,13 +1,12 @@
 import { code } from 'model/tabs-lookup';
-
-import Markdown from 'components/page/Markdown';
-import CodeEditor from 'components/code/WrappedCodeEditor';
-import Terminal from 'components/sh/Terminal';
-import Tabs from 'components/page/Tabs';
 import Title from 'components/page/Title';
+import Markdown from 'components/page/Markdown';
+import Tabs from 'components/page/Tabs';
+import CodeEditor from 'components/code/WrappedCodeEditor';
 import GeomorphTest from 'projects/geomorph/GeomorphTest';
 import PhysicsDemo from 'projects/physics/PhysicsDemo';
 import PathfindingDemo from 'projects/pathfinding/PathfindingDemo';
+import Terminal from 'components/sh/Terminal';
 
 export default function IndexPage() {
   return (
