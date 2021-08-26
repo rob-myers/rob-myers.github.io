@@ -13,7 +13,6 @@
 
 /** @typedef {{ x: number; y: number; width: number; height: number }} RectJson */
 
-
 /** @typedef {{ vs: import('./vect').Vect[]; tris: [number, number, number][] }} Triangulation */
 
 export {};
