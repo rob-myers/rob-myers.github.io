@@ -5,15 +5,20 @@ import PanZoom from "../panzoom/PanZoom";
 
 export default function PathfindingDemo() {
 
-  const navWorker = React.useRef( /** @type {null | Worker} */ (null));
-
   React.useEffect(() => {
     // From https://webpack.js.org/guides/web-workers/#syntax
-    navWorker.current = new Worker(new URL('./nav.worker.js', import.meta.url));
-    navWorker.current.addEventListener('message', (evt) => {
+    console.info('creating nav worker');
+    const worker = new Worker(new URL('./nav.worker.js', import.meta.url));
+    worker.addEventListener('message', (evt) => {
       console.info('main thread received', evt.data);
     });
-    navWorker.current.postMessage({ type: 'start' });
+    worker.postMessage({ type: 'ping' });
+    worker.postMessage({ type: 'create', navKey: 'fig-of-8', navPolys: [figureOfEight.geoJson] });
+
+    return () => {
+      console.info('terminating nav worker');
+      worker.terminate();
+    };
   }, []);
 
   return (

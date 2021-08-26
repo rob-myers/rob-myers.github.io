@@ -1,20 +1,23 @@
 import '@prefresh/core';
+import { Poly } from '../geom';
+import { GeoJsonPolygon } from '../geom/types';
 import { geom } from '../service/geom';
-import { octagon, hollowOctagon, figureOfEight } from '../example/geom';
 
 const ctx = /** @type {Worker} */ (/** @type {any} */ (self));
 
 ctx.addEventListener('message', async (evt) => {
-  console.info('worker received', evt.data);
+  console.info('nav worker received', evt.data);
 
   switch (evt.data.type) {
-    case 'start': {
-      ctx.postMessage({ type: 'received-start', data: null });
-      
-      // await geom.createNavMesh('octagon', [octagon]);
-      // await geom.createNavMesh('hollow-octagon', [hollowOctagon]);
-      await geom.createNavMesh('figure-of-eight', [figureOfEight]);
+    case 'ping':
+      ctx.postMessage({ type: 'pong' });
       return;
+    case 'create': {
+      const navKey = evt.data.navKey;
+      const polysJson = /** @type {GeoJsonPolygon[]} */ (evt.data.navPolys);
+      const navPolys = polysJson.map(Poly.from);
+      await geom.createNavMesh(navKey, navPolys);
+      return; 
     }
   }
 });
