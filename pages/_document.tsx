@@ -1,7 +1,7 @@
 import { extractCss } from 'goober'
 import Document, { Html, Head, Main, NextScript, DocumentContext } from 'next/document'
 
-class MyDocument extends Document<{ css: string }> {
+export default class MyDocument extends Document<{ css: string }> {
 
   static async getInitialProps({ renderPage }: DocumentContext) {
     const page = await renderPage()
@@ -27,5 +27,3 @@ class MyDocument extends Document<{ css: string }> {
     )
   }
 }
-
-export default MyDocument

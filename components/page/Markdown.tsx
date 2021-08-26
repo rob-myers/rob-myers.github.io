@@ -1,13 +1,14 @@
 import { useRouter } from 'next/router';
 import React from 'react';
 import { css } from 'goober';
-
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import gfm from 'remark-gfm';
 
 export default function Markdown(
-  props: ReactMarkdown.ReactMarkdownOptions & { title?: boolean }
+  props: ReactMarkdown.ReactMarkdownOptions & {
+    title?: boolean
+  }
 ) {
   return (
     <div className={props.title ? titleRootCss : rootCss} >
@@ -40,7 +41,10 @@ const components = {
     return (
       <a
         href={href}
-        target={['@external'].includes(title)  ? '_blank' : undefined}
+        {...['@external'].includes(title) && {
+          className: 'ext-link',
+          target: '_blank',          
+        }}
         title={title}
         {...href === '#command' && {
           onClick: (e) => {

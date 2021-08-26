@@ -31,4 +31,3 @@ export default function PathfindingDemo() {
 
 const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 const initViewBox = new Rect(0, 0, 200, 200);
-

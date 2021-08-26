@@ -19,6 +19,16 @@ a {
   text-decoration: none;
 }
 
+a.ext-link::before {
+  display: inline-block;
+  content: '';
+  background-image: url('/svg/ext-link-icon.svg');
+  background-size: 13px 13px;
+  height: 13px;
+  width: 13px;
+  margin-right: 4px;
+}
+
 * {
   box-sizing: border-box;
 }
