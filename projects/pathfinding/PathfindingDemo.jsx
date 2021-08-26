@@ -1,7 +1,20 @@
-import { Poly, Rect, Vect } from "../geom";
+import * as React from "react";
+import { Rect } from "../geom";
+import { octagon, hollowOctagon, figureOfEight } from '../example/geom';
 import PanZoom from "../panzoom/PanZoom";
 
 export default function PathfindingDemo() {
+
+  const navWorker = React.useRef( /** @type {null | Worker} */ (null));
+
+  React.useEffect(() => {
+    // From https://webpack.js.org/guides/web-workers/#syntax
+    navWorker.current = new Worker(new URL('./nav.worker.js', import.meta.url));
+    navWorker.current.addEventListener('message', (evt) => {
+      console.info('main thread received', evt.data);
+    });
+    navWorker.current.postMessage({ type: 'start' });
+  }, []);
 
   return (
     <section style={{ height: 300 }}>
@@ -19,17 +32,3 @@ export default function PathfindingDemo() {
 const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 const initViewBox = new Rect(0, 0, 200, 200);
 
-const range = [...Array(8)].map((_ ,i) => i);
-const octagon = new Poly(range.map((_ ,i) => new Vect(
-  Math.cos(2 * Math.PI * (1/16 + i/8)),
-  Math.sin(2 * Math.PI * (1/16 + i/8)),
-))).scale(50).precision(0);
-const [hollowOctagon] = Poly.cutOut(
-  [octagon.clone().scale(0.8)],
-  [octagon],
-);
-const [figureOfEight] = Poly.union([
-  hollowOctagon,
-  hollowOctagon.clone().translate(hollowOctagon.rect.width, 0),
-]);
-figureOfEight.precision(0);

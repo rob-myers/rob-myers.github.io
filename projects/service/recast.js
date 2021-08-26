@@ -82,6 +82,7 @@ class RecastService {
     const indices = navGeom.tris.flatMap(f => f);
     // console.log(positions, offset, indices);
 
+    console.info('recast: building:', navKey);
     navMesh.build(
       positions, // [x1, y1, z1,  x2, y2, z2, ...]
       offset, // Number of vectors
@@ -89,6 +90,7 @@ class RecastService {
       indices.length, // Number of triangles
       rc,
     );
+    console.info('recast: built:', navKey);
   }
 
   /**
@@ -319,7 +321,8 @@ class RecastService {
 
 /** @type {INavMeshParameters} */
 let defaultNavMeshParams = {
-  cs: 0.005,
+  // cs: 0.005,
+  cs: 0.5,
   ch: 0.1,
   walkableSlopeAngle: 0,
   walkableHeight: 3,

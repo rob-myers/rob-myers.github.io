@@ -1,19 +1,19 @@
 import { Triangulation, VectJson } from '../geom/types';
 import { Poly, Vect } from '../geom';
-import { recastService } from './recast';
+import { recast } from './recast';
 
 class GeomService {
   /**
-   * @param {string} navKey 
-   * @param {Poly[]} navPolys 
+   * @param {string} navKey
+   * @param {Poly[]} navPolys
    */
   async createNavMesh(navKey, navPolys) {
-    await recastService.ready();
+    await recast.ready();
     if (navPolys.length) {
-      const geometry = this.polysToTriangulation(navPolys);
-      recastService.createNavMesh(navKey, geometry);
+      const triangulation = this.polysToTriangulation(navPolys);
+      recast.createNavMesh(navKey, triangulation);
     } else {
-      recastService.clearNavMesh(navKey);
+      recast.clearNavMesh(navKey);
     }
   }
 
@@ -25,7 +25,7 @@ class GeomService {
    */
   requestNavPath(navKey, src, dst) {
     try {
-      const navPath = recastService.computePath(navKey, src, dst).map(x => x.precision(2));
+      const navPath = recast.computePath(navKey, src, dst).map(x => x.precision(2));
       return this.removePathReps([{ x: src.x, y: src.y }].concat(navPath));
     } catch (e) {
       console.error('nav error', e);
