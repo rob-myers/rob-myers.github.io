@@ -6,12 +6,12 @@ export const octagon = new Poly([...Array(8)].map((_ ,i) => new Vect(
 ))).scale(50).round();
 
 export const [hollowOctagon] = Poly.cutOut(
-  [octagon.clone().scale(0.8)],
   [octagon],
+  [octagon.clone().scale(60 / 40)],
 );
 
 export const [figureOfEight] = Poly.union([
   hollowOctagon,
-  hollowOctagon.clone().translate(hollowOctagon.rect.width, 0),
+  hollowOctagon.clone().translate(hollowOctagon.rect.width - 20, 0),
 ]);
 figureOfEight.round();

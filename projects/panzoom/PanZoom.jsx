@@ -35,13 +35,13 @@ export default function PanZoom(props) {
       /** @param {WheelEvent} e */
       onWheel: e => {
         e.preventDefault();
-        const point = getSvgPos(state.rootEl, e);
-        state.zoomTo(point, - 0.003 * e.deltaY);
+        const point = getSvgPos(e);
+        state.zoomTo(point, -0.003 * e.deltaY);
         refresh();
       },
       /** @param {PointerEvent} e */
       onPointerDown: e => {
-        state.panFrom = (new Vect(0, 0)).copy(getSvgPos(state.rootEl, e));
+        state.panFrom = (new Vect(0, 0)).copy(getSvgPos(e));
         state.ptrEvent.push(e);
       },
       /** @param {PointerEvent} e */
@@ -51,13 +51,13 @@ export default function PanZoom(props) {
         if (state.ptrEvent.length === 2) {
           const ptrDiff = Math.abs(state.ptrEvent[1].clientX - state.ptrEvent[0].clientX);
           if (state.ptrDiff !== null) {
-            const point = getSvgMid(state.rootEl, state.ptrEvent);
+            const point = getSvgMid(state.ptrEvent);
             state.zoomTo(point, 0.02 * (ptrDiff - state.ptrDiff));
             refresh();
           }          
           state.ptrDiff = ptrDiff;
         } else if (state.panFrom) {
-          const mouse = getSvgPos(state.rootEl, e);
+          const mouse = getSvgPos(e);
           viewBox.delta(state.panFrom.x - mouse.x, state.panFrom.y - mouse.y);
           refresh();
         }

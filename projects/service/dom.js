@@ -6,26 +6,29 @@ import { Poly } from '../geom/poly';
 let svgPoint;
 
 /**
- * @param {null | SVGSVGElement} svg 
- * @param {MouseEvent} e 
+ * @param {MouseEvent | import('react').MouseEvent} e 
  */
-export function getSvgPos(svg, e) {
-  svgPoint = svgPoint || svg?.createSVGPoint();
+export function getSvgPos(e) {
+  svgPoint = svgPoint || getSvgOwner(e)?.createSVGPoint();
   svgPoint.x = e.clientX;
   svgPoint.y = e.clientY;
-  return svgPoint.matrixTransform(svg?.getScreenCTM()?.inverse());
+  return svgPoint.matrixTransform(getSvgOwner(e)?.getScreenCTM()?.inverse());
 }
 
 /**
- * @param {null | SVGSVGElement} svg 
- * @param {MouseEvent[]} es
+ * @param {MouseEvent[] | import('react').MouseEvent[]} es The event `es[0]` must exist
  */
-export function getSvgMid(svg, es) {
-  svgPoint = svgPoint || svg?.createSVGPoint();
+export function getSvgMid(es) {
+  svgPoint = svgPoint || getSvgOwner(es[0])?.createSVGPoint();
 	svgPoint.x = svgPoint.y = 0;
 	es.forEach(e => { svgPoint.x += e.clientX; svgPoint.y += e.clientY; });
 	svgPoint.x /= es.length || 1; svgPoint.y /= es.length || 1;
-  return svgPoint.matrixTransform(svg?.getScreenCTM()?.inverse());
+  return svgPoint.matrixTransform(getSvgOwner(es[0])?.getScreenCTM()?.inverse());
+}
+
+/** @param {MouseEvent | import('react').MouseEvent} e */
+function getSvgOwner(e) {
+	return (/** @type {null | SVGElement} */ (e.target))?.ownerSVGElement;
 }
 
 /**
