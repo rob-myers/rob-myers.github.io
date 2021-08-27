@@ -80,7 +80,7 @@ const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 const initViewBox = new Rect(0, 0, 200, 200);
 const navKey = 'fig-of-8';
 const polygon = figureOfEight.clone().translate(80, 80);
-const [thickWalls] = polygon.createOutset(3);
+const [thickWalls] = polygon.createOutset(12);
 
 const rootCss = css`
   border: 1px solid #555555;

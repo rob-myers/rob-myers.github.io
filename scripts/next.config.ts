@@ -6,6 +6,7 @@ import withImages from 'next-images';
 import withPreact from 'next-plugin-preact';
 
 import { NextJsConfigCtxt, Phase, NextJsConfig, WebpackCtxt } from './next.model';
+import applySsrWorkersPatch from './ssr-workers-patch';
 
 const production = process.env.NODE_ENV === 'production';
 console.log({ production });
@@ -19,6 +20,9 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
       ignoreDuringBuilds: true,
     },
     webpack: (config: webpack.Configuration, options: WebpackCtxt) => {
+
+      applySsrWorkersPatch(config);
+
       return webpackMerge(
         config,
         {

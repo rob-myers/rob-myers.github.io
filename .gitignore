@@ -37,6 +37,7 @@ yarn-error.log*
 babel.config.js
 next.config.js
 misc.config.js
+ssr-workers-patch.js
 
 media/Geomorphs
 media/CustomTiles
