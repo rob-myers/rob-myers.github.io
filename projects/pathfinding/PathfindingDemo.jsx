@@ -42,6 +42,10 @@ export default function PathfindingDemo() {
     <section className={rootCss}>
       <PanZoom gridBounds={gridBounds} initViewBox={initViewBox}>
         <path
+          className="walls"
+          d={`${thickWalls.svgPath}`}
+        />
+        <path
           className="polygon"
           d={`${polygon.svgPath}`}
           onClick={(e) => {
@@ -51,6 +55,10 @@ export default function PathfindingDemo() {
               toggleDot(dots.length);
             }
           }}
+        />
+        <polyline
+          className="path"
+          points={`${path}`}
         />
         <g className="dots">
           {dots.map((p, i) =>
@@ -63,10 +71,6 @@ export default function PathfindingDemo() {
             />
           )}
         </g>
-        <polyline
-          className="path"
-          points={`${path}`}
-        />
       </PanZoom>
     </section>
   );
@@ -76,13 +80,19 @@ const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 const initViewBox = new Rect(0, 0, 200, 200);
 const navKey = 'fig-of-8';
 const polygon = figureOfEight.clone().translate(80, 80);
+const [thickWalls] = polygon.createOutset(3);
 
 const rootCss = css`
+  border: 1px solid #555555;
+
   height: 300px;
+  path.walls {
+    fill: #aaa;
+  }
   path.polygon {
     cursor: crosshair;
-    stroke: black;
     fill: white;
+    stroke:none;
   }
   g.dots circle {
     r: 2.5;
@@ -96,6 +106,8 @@ const rootCss = css`
   }
   polyline.path {
     fill: none;
-    stroke: blue;
+    stroke: #800;
+    stroke-width: 0.5;
+    stroke-dasharray: 4 4;
   }
 `;
