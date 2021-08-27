@@ -170,7 +170,7 @@ We now provide more details of a general nature.
         `}/>
 
         <CodeEditor
-          margin="0 0 0 40px"
+          margin="0 0 0 var(--list-indent)"
           height="310px"
           code={code['example/jsx-to-js.jsx']}
           lineNumbers

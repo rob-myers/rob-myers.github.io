@@ -92,6 +92,8 @@ const rootCss = css`
   ul, ol {
     margin: 20px 0;
     line-height: 1.4;
+    padding-left: var(--list-indent);
+
     li {
       margin: 8px 0;
       ul, ol {
