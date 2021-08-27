@@ -68,12 +68,9 @@ export default function PanZoom(props) {
         state.ptrEvent = state.ptrEvent.filter(alt => e.pointerId !== alt.pointerId);
         if (state.ptrEvent.length < 2) state.ptrDiff = null;
       },
-      /** @type {null | SVGSVGElement} */
-      rootEl: null,
       /** @type {(el: null | SVGSVGElement) => void} */
       rootRef: el => {
         if (el) {
-          state.rootEl = el;
           el.addEventListener('wheel', state.onWheel);
           el.addEventListener('pointerdown', state.onPointerDown, { passive: true });
           el.addEventListener('pointermove', state.onPointerMove, { passive: true });
