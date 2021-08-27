@@ -5,24 +5,32 @@ import { figureOfEight } from '../example/geom';
 import { getSvgPos } from "../service";
 import PanZoom from "../panzoom/PanZoom";
 
+// TODO provide random point button
+
 export default function PathfindingDemo() {
 
-  const worker = useRef(/** @type {null | Worker} */ (null));
+  /** @type {{ worker: Worker }} */
+  const ref = (useRef({}).current);
   const [dots, setDots] = useState(/** @type {Vect[]} */ ([]));
   const [selected, setSelected] = useState(/** @type {number[]} */ ([]));
   const [path, setPath] = useState(/** @type {Vect[]} */ ([]));
 
   useEffect(() => {
-    worker.current = new Worker(new URL('./nav.worker.js', import.meta.url));
-    worker.current.postMessage({ type: 'create', navKey, navPolys: [polygon.geoJson] });
-    worker.current.addEventListener('message', (e) => {
-      if (e.data.type === 'path') {
-        console.log(e.data.path);
-        setPath(e.data.path.map(Vect.from));
-      }
+    ref.worker = new Worker(new URL('./nav.worker.js', import.meta.url));
+    ref.worker.postMessage({ type: 'create', navKey, navPolys: [polygon.geoJson] });
+    ref.worker.addEventListener('message', (e) => {
+      if (e.data.type === 'path') setPath(e.data.path.map(Vect.from));
     });
-    return () => worker.current?.terminate();
+    return () => ref.worker?.terminate();
+    // geom.createNavMesh(navKey, [polygon]);
   }, []);
+
+  useEffect(() => {
+    if (selected.length === 2) {
+      ref.worker?.postMessage({ type: 'path', navKey, src: dots[selected[0]], dst: dots[selected[1]] })
+      // setPath(geom.requestNavPath(navKey, dots[selected[0]], dots[selected[1]]));
+    }
+  }, [dots, selected]);
 
   /** @param {number} index */
   function toggleDot(index) {
@@ -32,19 +40,10 @@ export default function PathfindingDemo() {
     );
   }
 
-  useEffect(() => {
-    if (selected.length === 2) {
-      worker.current?.postMessage({ type: 'path', navKey, src: dots[selected[0]], dst: dots[selected[1]] })
-    }
-  }, [dots, selected]);
-
   return (
     <section className={rootCss}>
       <PanZoom gridBounds={gridBounds} initViewBox={initViewBox}>
-        <path
-          className="walls"
-          d={`${thickWalls.svgPath}`}
-        />
+        <path className="walls" d={`${thickWalls.svgPath}`} />
         <path
           className="polygon"
           d={`${polygon.svgPath}`}
@@ -55,17 +54,16 @@ export default function PathfindingDemo() {
               toggleDot(dots.length);
             }
           }}
+
         />
-        <polyline
-          className="path"
-          points={`${path}`}
-        />
+        <polyline className="navpath" points={`${path}`} />
         <g className="dots">
           {dots.map((p, i) =>
             <circle
               key={i}
               cx={p.x}
               cy={p.y}
+              r={2.5}
               className={selected.includes(i) ? 'selected' : undefined }
               onClick={() => toggleDot(i)}
             />
@@ -95,7 +93,7 @@ const rootCss = css`
     stroke:none;
   }
   g.dots circle {
-    r: 2.5;
+    cursor: crosshair;
     fill: #ddd;
     stroke: black;
     stroke-width: 0.5;
@@ -104,7 +102,7 @@ const rootCss = css`
       fill: red;
     }
   }
-  polyline.path {
+  polyline.navpath {
     fill: none;
     stroke: #800;
     stroke-width: 0.5;

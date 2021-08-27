@@ -26,6 +26,10 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
       return webpackMerge(
         config,
         {
+          // experiments: {
+          //   asyncWebAssembly: true,
+          //   syncWebAssembly: true,
+          // },
           resolve: {
             fallback: {// Needed by box2d-wasm
               fs: false,
