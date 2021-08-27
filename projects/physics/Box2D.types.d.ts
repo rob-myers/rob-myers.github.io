@@ -1,4 +1,4 @@
-export declare namespace Box2D {
+declare namespace Box2D {
   export class b2Contact extends WrapperObject {
       protected static readonly __cache__: {
           [ptr: number]: b2Contact;

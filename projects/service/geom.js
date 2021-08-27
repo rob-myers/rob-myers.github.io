@@ -6,12 +6,13 @@ class GeomService {
   /**
    * @param {string} navKey
    * @param {Poly[]} navPolys
+   * @param {number} [walkableRadius]
    */
-  async createNavMesh(navKey, navPolys) {
+  async createNavMesh(navKey, navPolys, walkableRadius) {
     await recast.ready();
     if (navPolys.length) {
       const triangulation = this.polysToTriangulation(navPolys);
-      recast.createNavMesh(navKey, triangulation);
+      recast.createNavMesh(navKey, triangulation, { walkableRadius });
     } else {
       recast.clearNavMesh(navKey);
     }
@@ -21,12 +22,13 @@ class GeomService {
    * @param {string} navKey 
    * @param {VectJson} src
    * @param {VectJson} dst 
-   * @returns {VectJson[]}
+   * @returns {Vect[]}
    */
   requestNavPath(navKey, src, dst) {
     try {
-      const navPath = recast.computePath(navKey, src, dst).map(x => x.precision(2));
-      return this.removePathReps([{ x: src.x, y: src.y }].concat(navPath));
+      const navPath = recast.computePath(navKey, src, dst).map(x => x.precision(1));
+      // return this.removePathReps([{ x: src.x, y: src.y }].concat(navPath));
+      return navPath;
     } catch (e) {
       console.error('nav error', e);
       return [];

@@ -1,3 +1,4 @@
+/// <reference path="./recast-detour.d.ts" />
 import { Vect } from '../geom';
 import { Triangulation, VectJson } from '../geom/types';
 
@@ -12,9 +13,7 @@ class RecastService {
   constructor() {
     /** @type {any} Reference to the Recast library */
     this.bjsRECAST = {};
-    /** @type {"RecastJSPlugin"} plugin name */
-    this.name = "RecastJSPlugin";
-    /** @type {Record<string, any>} Navmeshes by key */
+    /** @type {Record<string, Recast.NavMesh>} Navmeshes by key */
     this.lookup = {};
     /** @type {((value?: any) => void)[]} */
     this.readyResolvers = [];
@@ -48,33 +47,35 @@ class RecastService {
    * Creates a navigation mesh
    * @param {string} navKey
    * @param {Triangulation} navGeom array of all the geometry used to compute the navigatio mesh
-   * @param {INavMeshParameters} parameters bunch of parameters used to filter geometry
+   * @param {Partial<INavMeshParameters>} parameters bunch of parameters used to filter geometry
    * @returns {void}
    */
   createNavMesh(
     navKey,
     navGeom,
-    parameters = defaultNavMeshParams,
+    parameters = {},
   ) {
-
+    const params = Object.assign({}, defaultNavMeshParams, parameters);
     const rc = new this.bjsRECAST.rcConfig();
-    rc.cs = parameters.cs;
-    rc.ch = parameters.ch;
-    rc.borderSize = 0;
+    rc.cs = params.cs;
+    rc.ch = params.ch;
+    rc.borderSize = params.borderSize;
     rc.tileSize = 0;
-    rc.walkableSlopeAngle = parameters.walkableSlopeAngle;
-    rc.walkableHeight = parameters.walkableHeight;
-    rc.walkableClimb = parameters.walkableClimb;
-    rc.walkableRadius = parameters.walkableRadius;
-    rc.maxEdgeLen = parameters.maxEdgeLen;
-    rc.maxSimplificationError = parameters.maxSimplificationError;
-    rc.minRegionArea = parameters.minRegionArea;
-    rc.mergeRegionArea = parameters.mergeRegionArea;
-    rc.maxVertsPerPoly = parameters.maxVertsPerPoly;
-    rc.detailSampleDist = parameters.detailSampleDist;
-    rc.detailSampleMaxError = parameters.detailSampleMaxError;
+    rc.walkableSlopeAngle = params.walkableSlopeAngle;
+    rc.walkableHeight = params.walkableHeight;
+    rc.walkableClimb = params.walkableClimb;
+    rc.walkableRadius = params.walkableRadius;
+    rc.maxEdgeLen = params.maxEdgeLen;
+    rc.maxSimplificationError = params.maxSimplificationError;
+    rc.minRegionArea = params.minRegionArea;
+    rc.mergeRegionArea = params.mergeRegionArea;
+    rc.maxVertsPerPoly = params.maxVertsPerPoly;
+    rc.detailSampleDist = params.detailSampleDist;
+    rc.detailSampleMaxError = params.detailSampleMaxError;
 
+    /** @type {Recast.NavMesh} */
     const navMesh = new this.bjsRECAST.NavMesh;
+    const prevNavMesh = this.lookup[navKey];
     this.lookup[navKey] = navMesh;
 
     const positions = navGeom.vs.flatMap(v => [v.x, 0, v.y]);
@@ -91,6 +92,7 @@ class RecastService {
       rc,
     );
     console.info('recast: built:', navKey);
+    prevNavMesh?.destroy();
   }
 
   /**
@@ -320,7 +322,8 @@ class RecastService {
 }
 
 /** @type {INavMeshParameters} */
-let defaultNavMeshParams = {
+const defaultNavMeshParams = {
+  borderSize: 0,
   // cs: 0.005,
   cs: 0.5,
   ch: 0.1,
@@ -341,6 +344,7 @@ let defaultNavMeshParams = {
  * Configures the navigation mesh creation
  * @typedef INavMeshParameters
  * @type {object}
+ * @property {number} borderSize The xz-plane cell size to use for fields. [Limit: > 0] [Units: wu]
  * @property {number} cs The xz-plane cell size to use for fields. [Limit: > 0] [Units: wu]
  * @property {number} ch The y-axis cell size to use for fields. [Limit: > 0] [Units: wu]
  * @property {number} walkableSlopeAngle The maximum slope that is considered walkable. [Limits: 0 <= value < 90] [Units: Degrees]

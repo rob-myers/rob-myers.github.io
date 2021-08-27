@@ -1,23 +1,42 @@
-import React from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { css } from "goober";
 import { Rect, Vect } from "../geom";
-import { octagon, hollowOctagon, figureOfEight } from '../example/geom';
+import { figureOfEight } from '../example/geom';
 import { getSvgPos } from "../service";
 import PanZoom from "../panzoom/PanZoom";
 
-const polygon = figureOfEight.clone().translate(80, 80);
-
 export default function PathfindingDemo() {
 
-  const [dots, setDots] = React.useState(() => /** @type {Vect[]} */ ([]));
-  const [selected, setSelected] = React.useState(() => /** @type {number[]} */ ([]));
+  const worker = useRef(/** @type {null | Worker} */ (null));
+  const [dots, setDots] = useState(/** @type {Vect[]} */ ([]));
+  const [selected, setSelected] = useState(/** @type {number[]} */ ([]));
+  const [path, setPath] = useState(/** @type {Vect[]} */ ([]));
 
-  React.useEffect(() => {
-    const worker = new Worker(new URL('./nav.worker.js', import.meta.url));
-    worker.postMessage({ type: 'ping' });
-    worker.postMessage({ type: 'create', navKey: 'fig-of-8', navPolys: [figureOfEight.geoJson] });
-    return () => worker.terminate();
+  useEffect(() => {
+    worker.current = new Worker(new URL('./nav.worker.js', import.meta.url));
+    worker.current.postMessage({ type: 'create', navKey, navPolys: [polygon.geoJson] });
+    worker.current.addEventListener('message', (e) => {
+      if (e.data.type === 'path') {
+        console.log(e.data.path);
+        setPath(e.data.path.map(Vect.from));
+      }
+    });
+    return () => worker.current?.terminate();
   }, []);
+
+  /** @param {number} index */
+  function toggleDot(index) {
+    setSelected(selected.includes(index)
+      ? selected.filter(x => x !== index)
+      : [index].concat(selected).slice(0, 2)
+    );
+  }
+
+  useEffect(() => {
+    if (selected.length === 2) {
+      worker.current?.postMessage({ type: 'path', navKey, src: dots[selected[0]], dst: dots[selected[1]] })
+    }
+  }, [dots, selected]);
 
   return (
     <section className={rootCss}>
@@ -29,6 +48,7 @@ export default function PathfindingDemo() {
             const point = getSvgPos(e);
             if (!dots.some(d => d.distanceTo(point) < 5)) {
               setDots(dots.concat(Vect.from(point)));
+              toggleDot(dots.length);
             }
           }}
         />
@@ -39,13 +59,14 @@ export default function PathfindingDemo() {
               cx={p.x}
               cy={p.y}
               className={selected.includes(i) ? 'selected' : undefined }
-              onClick={() => setSelected(selected.includes(i)
-                ? selected.filter(x => x !== i)
-                : [i].concat(selected).slice(0, 2)
-              )}
+              onClick={() => toggleDot(i)}
             />
           )}
         </g>
+        <polyline
+          className="path"
+          points={`${path}`}
+        />
       </PanZoom>
     </section>
   );
@@ -53,6 +74,8 @@ export default function PathfindingDemo() {
 
 const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 const initViewBox = new Rect(0, 0, 200, 200);
+const navKey = 'fig-of-8';
+const polygon = figureOfEight.clone().translate(80, 80);
 
 const rootCss = css`
   height: 300px;
@@ -70,5 +93,9 @@ const rootCss = css`
     &.selected {
       fill: red;
     }
+  }
+  polyline.path {
+    fill: none;
+    stroke: blue;
   }
 `;
