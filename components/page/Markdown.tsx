@@ -154,7 +154,7 @@ const titleRootCss = css`
       font-size: 5rem;
     }
     @media(max-width: 400px) {
-      font-size: 3.6rem;
+      font-size: 3.3rem;
     }
   }
   
