@@ -33,6 +33,7 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 ### Concerning technology
 
 - We'll make a browser-based game.
+- Support mobile devices but with restricted interfaces.
 - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
 - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
@@ -43,15 +44,16 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 ### Concerning game mechanics
 
 - Use a realtime birdseye camera, like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
-- Use [a recent port](https://www.npmjs.com/package/box2d-wasm) of the physics engine [Box2D](https://github.com/erincatto/box2d).
+- Use [a recent port](https://www.npmjs.com/package/box2d-wasm) of the pathfinding tool [Recast & Detour](https://github.com/recastnavigation/recastnavigation).
+- Use [a recent port](https://www.npmjs.com/package/recast-detour) of the physics engine [Box2D](https://github.com/erincatto/box2d).
 - Use procedural generation e.g. spaceship building/docking.
 - Use explicitly illustrated NPC decisions as a game mechanic.
 
 ### Concerning the setting
   
 - The title of the game is _Rogue Markup_.
-- The player captains the starship _Gehennom_, working for _Unified Transport_.
-- The missions involve personnel transport, cargo transport, and hauling.
+- The player character is the Captain of the starship _Gehennom_.
+  They work for _Unified Transport_, providing personnel transport, cargo transport, and hauling services.
 - The graphical style is based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
 Over time we'll clarify these constraints.
