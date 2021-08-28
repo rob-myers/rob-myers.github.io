@@ -1,10 +1,16 @@
 ## Plan
 
+- write Navigation subsection
+- write Physics engine subsection
+- Use a geomorph in PanZoomDemo
+- Use a geomorph in NavDemo
+
 - tidy up `PanZoom` and update CodeSandboxes
 - better Tabs UI
   - CodeEditor initially fades in
   - can enable/disable for easier scrolling
   - ✅ fix tabs colours
+
 - ✅ fix `PanZoom` on mobile
   - ✅ can view local dev on phone
 - ✅ first deploy
@@ -18,7 +24,7 @@
 - index page links to "article bunches"
 - cleanup how terminal persists
 - do not auto-persist if localStorage lacks `autopersist=true`
-- try serving svg subimages locally
+- ✅ try serving svg subimages locally
   > [boxy CSP forbids this](https://boxy-svg.com/questions/308/permit-loading-image-from-https-localhost)
 - ✅ move back to `goober`
   - hmr issue in next with emotion styled component (prob goober too)

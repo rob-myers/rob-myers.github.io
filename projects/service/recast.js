@@ -40,6 +40,7 @@ class RecastService {
 
   /** @param {string} navKey */
   clearNavMesh(navKey) {
+    this.lookup[navKey]?.destroy();
     delete this.lookup[navKey];
   }
 
@@ -100,7 +101,7 @@ class RecastService {
    * @param {string} navKey
    * @returns {Triangulation}
    */
-  createDebugNavMesh(navKey) {
+  getDebugTriangulation(navKey) {
     if (!this.lookup[navKey]) {
       return { vs: [], tris: [] };
     }
@@ -324,8 +325,7 @@ class RecastService {
 /** @type {INavMeshParameters} */
 const defaultNavMeshParams = {
   borderSize: 0,
-  // cs: 0.005,
-  cs: 0.5,
+  cs: 5,
   ch: 0.1,
   walkableSlopeAngle: 0,
   walkableHeight: 3,

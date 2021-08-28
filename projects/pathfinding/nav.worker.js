@@ -1,7 +1,11 @@
+/**
+ * Currently unused.
+ * However, recast-detour is currently showing asm.js error
+ * in production, so we might end up using this.
+ */
 import '@prefresh/core';
 import { Poly } from '../geom';
-import { GeoJsonPolygon } from '../geom/types';
-import { geom } from '../service/geom';
+import { geom, recast } from '../service';
 
 const ctx = /** @type {Worker} */ (/** @type {any} */ (self));
 
@@ -12,10 +16,13 @@ ctx.addEventListener('message', async (evt) => {
     case 'ping':
       ctx.postMessage({ type: 'pong' });
       return;
-    case 'create': {
+    case 'create':
+    case 'debug': {
       const { navKey, navPolys: polysJson, walkableRadius } = evt.data;
       const navPolys = polysJson.map(Poly.from);
       await geom.createNavMesh(navKey, navPolys, walkableRadius);
+      const debug = evt.data.type === 'debug' ? recast.getDebugTriangulation(navKey) : undefined;
+      ctx.postMessage({ type: 'created', navKey, debug });
       return; 
     }
     case 'path': {

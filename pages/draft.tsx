@@ -5,7 +5,7 @@ import Tabs from 'components/page/Tabs';
 import CodeEditor from 'components/code/WrappedCodeEditor';
 import GeomorphTest from 'projects/geomorph/GeomorphTest';
 import PhysicsDemo from 'projects/physics/PhysicsDemo';
-import PathfindingDemo from 'projects/pathfinding/PathfindingDemo';
+import NavDemo from 'projects/pathfinding/NavDemo';
 import Terminal from 'components/sh/Terminal';
 
 export default function IndexPage() {
@@ -141,7 +141,7 @@ One popular approach uses _React function components_, which are just JavaScript
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers compose components using an XML-like syntax, in order to obtain the desired dynamic DOM tree.
-It is worth being a bit more precise, so consider some code.
+Let's consider some code and its rendered output.
         `}/>
 
         <Tabs
@@ -223,7 +223,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
 
         `}/>
 
-        <PathfindingDemo />
+        <NavDemo />
 
         <Markdown children={`
 
