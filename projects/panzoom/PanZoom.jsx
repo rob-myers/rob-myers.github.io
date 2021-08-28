@@ -49,6 +49,7 @@ export default function PanZoom(props) {
         state.ptrEvent = state.ptrEvent.map(x => x.pointerId === e.pointerId ? e : x);
 
         if (state.ptrEvent.length === 2) {
+          state.contents.style.shapeRendering = 'optimizeSpeed';
           const ptrDiff = Math.abs(state.ptrEvent[1].clientX - state.ptrEvent[0].clientX);
           if (state.ptrDiff !== null) {
             const point = getSvgMid(state.ptrEvent);
@@ -66,11 +67,15 @@ export default function PanZoom(props) {
       onPointerUp: (e) => {
         state.panFrom = null;
         state.ptrEvent = state.ptrEvent.filter(alt => e.pointerId !== alt.pointerId);
-        if (state.ptrEvent.length < 2) state.ptrDiff = null;
+        if (state.ptrEvent.length < 2) {
+          state.ptrDiff = null;
+          state.contents.style.shapeRendering = 'auto';
+        }
       },
       /** @type {(el: null | SVGSVGElement) => void} */
       rootRef: el => {
         if (el) {
+          state.contents = /** @type {SVGGElement} */ (el.childNodes[2]);
           el.addEventListener('wheel', state.onWheel);
           el.addEventListener('pointerdown', state.onPointerDown, { passive: true });
           el.addEventListener('pointermove', state.onPointerMove, { passive: true });
@@ -81,6 +86,8 @@ export default function PanZoom(props) {
           el.addEventListener('touchstart', e => e.preventDefault());
         }
       },
+      /** @type {SVGGElement} */
+      contents: ({}),
       rootCss: css`
         width: 100%;
         height: 100%;
@@ -98,7 +105,9 @@ export default function PanZoom(props) {
       viewBox={`${state.viewBox}`}
     >
       <MemoedGrid bounds={props.gridBounds} />
-      {props.children}
+      <g>
+        {props.children}
+      </g>
     </svg>
   );
 }
