@@ -2,12 +2,11 @@ import * as React from 'react';
 import { css } from 'goober';
 import { Vect, Rect } from '../geom';
 import { getSvgPos, getSvgMid, generateId } from '../service';
-import useForceRefresh from '../hooks/use-force-refresh';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function PanZoom(props) {
 
-  const [refresh, state] = useForceRefresh(() => {
+  const state = React.useMemo(() => {
     const viewBox = props.initViewBox.clone();
     const minZoom = props.minZoom || 0.5;
     const maxZoom = props.maxZoom || 2;
@@ -37,7 +36,7 @@ export default function PanZoom(props) {
         e.preventDefault();
         const point = getSvgPos(e);
         state.zoomTo(point, -0.003 * e.deltaY);
-        refresh();
+        state.root.setAttribute('viewBox', `${state.viewBox}`);
       },
       /** @param {PointerEvent} e */
       onPointerDown: e => {
@@ -54,13 +53,13 @@ export default function PanZoom(props) {
           if (state.ptrDiff !== null) {
             const point = getSvgMid(state.ptrEvent);
             state.zoomTo(point, 0.02 * (ptrDiff - state.ptrDiff));
-            refresh();
+            state.root.setAttribute('viewBox', `${state.viewBox}`);
           }          
           state.ptrDiff = ptrDiff;
         } else if (state.panFrom) {
           const mouse = getSvgPos(e);
           viewBox.delta(state.panFrom.x - mouse.x, state.panFrom.y - mouse.y);
-          refresh();
+          state.root.setAttribute('viewBox', `${state.viewBox}`);
         }
       },
       /** @param {PointerEvent} e */
@@ -75,7 +74,8 @@ export default function PanZoom(props) {
       /** @type {(el: null | SVGSVGElement) => void} */
       rootRef: el => {
         if (el) {
-          state.contents = /** @type {SVGGElement} */ (el.childNodes[2]);
+          state.root = el;
+          state.contents = /** @type {SVGGElement} */ (el.children[2]);
           el.addEventListener('wheel', state.onWheel);
           el.addEventListener('pointerdown', state.onPointerDown, { passive: true });
           el.addEventListener('pointermove', state.onPointerMove, { passive: true });
@@ -84,8 +84,19 @@ export default function PanZoom(props) {
           el.addEventListener('pointerleave', state.onPointerUp, { passive: true });
           el.addEventListener('pointerout', state.onPointerUp, { passive: true });
           el.addEventListener('touchstart', e => e.preventDefault());
+        } else if (state.root) {
+          state.root.removeEventListener('wheel', state.onWheel);
+          state.root.removeEventListener('pointerdown', state.onPointerDown);
+          state.root.removeEventListener('pointermove', state.onPointerMove);
+          state.root.removeEventListener('pointerup', state.onPointerUp);
+          state.root.removeEventListener('pointercancel', state.onPointerUp);
+          state.root.removeEventListener('pointerleave', state.onPointerUp);
+          state.root.removeEventListener('pointerout', state.onPointerUp);
+          state.root.removeEventListener('touchstart', e => e.preventDefault());
         }
       },
+      /** @type {SVGSVGElement} */
+      root: ({}),
       /** @type {SVGGElement} */
       contents: ({}),
       rootCss: css`
@@ -95,7 +106,7 @@ export default function PanZoom(props) {
         touch-action: pan-x pan-y pinch-zoom;
       `,
     };
-  });
+  }, []);
 
   return (
     <svg
