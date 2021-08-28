@@ -20,23 +20,24 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
       ignoreDuringBuilds: true,
     },
     webpack: (config: webpack.Configuration, options: WebpackCtxt) => {
-
       applySsrWorkersPatch(config);
 
       return webpackMerge(
         config,
         {
-          // experiments: {
-          //   asyncWebAssembly: true,
-          //   syncWebAssembly: true,
-          // },
           resolve: {
             fallback: {// Needed by box2d-wasm
               fs: false,
               path: false, 
-            }
+            },
           },
-          // ...(!options.isServer && { resolve: { fallback: { fs: false } } }),
+          // output: {
+          //   webassemblyModuleFilename: 'static/wasm/[modulehash].wasm',
+          // },
+          // experiments: {
+          //   asyncWebAssembly: true,
+          //   syncWebAssembly: true,
+          // },
         },
         // Bundle analyzer
         process.env.ANALYZE === 'true' ? {
@@ -69,6 +70,7 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
             ),            
           ],          
         },
+
       );
     }
   };

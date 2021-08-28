@@ -368,13 +368,9 @@ const defaultNavMeshParams = {
  */
 
 if (typeof self !== 'undefined') {
-  /**
-   * TODO may need to fetch from public/, due
-   * to the way webpack handles asm.js or wasm.
-   */
   import('recast-detour').then((module) => {
+    // console.log('Recast', module.default);
     recast.initialize(module.default);
-    // console.log('Recast', self.Recast);
   });
 }
 
