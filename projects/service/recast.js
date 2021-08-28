@@ -325,26 +325,26 @@ class RecastService {
 /** @type {INavMeshParameters} */
 const defaultNavMeshParams = {
   borderSize: 0,
-  cs: 5,
-  ch: 0.1,
+  cs: 1,
+  ch: 1,
   walkableSlopeAngle: 0,
   walkableHeight: 3,
   walkableClimb: 1,
   walkableRadius: 0,
   maxEdgeLen: 12,
-  maxSimplificationError: 0.001,
-  minRegionArea: 8,
+  maxSimplificationError: 0.1,
+  minRegionArea: 10,
   mergeRegionArea: 20,
   maxVertsPerPoly: 6,
-  detailSampleDist: 6,
-  detailSampleMaxError: 0.1,
+  detailSampleDist: 0,
+  detailSampleMaxError: 10,
 };
 
 /**
  * Configures the navigation mesh creation
  * @typedef INavMeshParameters
  * @type {object}
- * @property {number} borderSize The xz-plane cell size to use for fields. [Limit: > 0] [Units: wu]
+ * @property {number} borderSize The size of the non-navigable border around the heightfield.
  * @property {number} cs The xz-plane cell size to use for fields. [Limit: > 0] [Units: wu]
  * @property {number} ch The y-axis cell size to use for fields. [Limit: > 0] [Units: wu]
  * @property {number} walkableSlopeAngle The maximum slope that is considered walkable. [Limits: 0 <= value < 90] [Units: Degrees]

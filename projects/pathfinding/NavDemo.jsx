@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { css } from "goober";
+import { useQuery } from "react-query";
 import { Rect, Vect } from "../geom";
 import { figureOfEight } from '../example/geom';
 import { getSvgPos, geom, recast } from "../service";
@@ -12,14 +13,12 @@ export default function NavDemo() {
   const [dots, setDots] = useState(/** @type {Vect[]} */ ([]));
   const [selected, setSelected] = useState(/** @type {number[]} */ ([]));
   const [path, setPath] = useState(/** @type {Vect[]} */ ([]));
-  const [tris, setTris] = useState(/** @type {Vect[][]} */ ([]));
 
-  useEffect(() => {
-    geom.createNavMesh(navKey, [polygon], {}).then(() => {
-      const tr = recast.getDebugTriangulation(navKey);
-      setTris(tr.tris.map(tri => tri.map(i => tr.vs[i])));
-    });
-  }, []);
+  const { data: tris } = useQuery('create-nav', async () => {
+    await geom.createNavMesh(navKey, [polygon], {  cs: 1, walkableRadius: 2, maxSimplificationError: 50 });
+    const { tris, vs } = recast.getDebugTriangulation(navKey);
+    return tris.map(tri => tri.map(i => vs[i]));
+  });
 
   useEffect(() => {
     if (selected.length === 2) {
@@ -48,7 +47,7 @@ export default function NavDemo() {
             }
           }}
         />
-        {tris.map((tri, i) =>
+        {tris?.map((tri, i) =>
           <polygon key={i} className="triangle" points={`${tri}`} />  
         )}
         <polyline className="navpath" points={`${path}`} />
@@ -73,14 +72,14 @@ const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 const initViewBox = new Rect(0, 0, 200, 200);
 const navKey = 'fig-of-8';
 const polygon = figureOfEight.clone().translate(100, 100);
-const [thickWalls] = polygon.createOutset(12);
+const [thickWalls] = polygon.createOutset(6);
 
 const rootCss = css`
   border: 1px solid #555555;
-
   height: 300px;
+
   path.walls {
-    fill: #aaa;
+    fill: #000;
   }
   path.polygon {
     cursor: crosshair;
@@ -99,7 +98,7 @@ const rootCss = css`
   }
   polygon.triangle {
     fill: none;
-    stroke: #999;
+    stroke: #bbb;
     stroke-width: 0.5;
   }
   polyline.navpath {
