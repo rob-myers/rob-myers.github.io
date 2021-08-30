@@ -108,10 +108,10 @@ We will build the game using the following technologies.
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components). |
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
-| Pathfinding | [Emscripten port](https://www.npmjs.com/package/recast-detour) of [Recast & Detour](https://github.com/recastnavigation/recastnavigation).  |
+| Pathfinding | Offline navmeshes, and a port of [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
 | Physics engine | [WebAssembly port](https://www.npmjs.com/package/box2d-wasm) of [Box2D](https://github.com/erincatto/box2d). |
 | Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html), and also [ESLint](https://www.npmjs.com/package/eslint). |
-| Live analysis | [Preact option hooks](https://preactjs.com/guide/v10/options/) and _our own in-browser terminal_. |
+| Live analysis | Our own in-browser terminal. |
 | Code viewing | [CodeMirror](https://codemirror.net/) to view JS. [FlexLayout](https://github.com/caplin/FlexLayout) provides draggable tabs. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
 | Code sharing | [GitHub](https://github.com/) comments shown on site; GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
@@ -123,8 +123,6 @@ We want to create a video game explicitly, exposing the code and underlying thou
 Then it is worth explaining these technologies before using them.
 
 ### React, Styles and Preact
-
-__TODO__ we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly e.g. via Web Components spec. By keeping the initial virtual DOM mostly constant, the DOM diffing won't
 
 Competing web frameworks exist in the wild, often with their own notion of component.
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
@@ -138,13 +136,28 @@ One popular approach uses _React function components_, which are just JavaScript
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers compose components using an XML-like syntax, in order to obtain the desired dynamic DOM tree.
-Let's consider an example and some source code.
+Let's consider some source code for a pannable and zoomable grid.
+        `}/>
+
+        <Tabs
+          tabs={[
+            { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
+          ]}
+          height="400px"
+        />
+
+        <Markdown children={`
+
+The file _panzoom/PanZoom.jsx_ (shown below) defines two React function components, namely _PanZoom_ and _Grid_.
+Behaviourally:
+- _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
+- _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
+
         `}/>
 
         <Tabs
           tabs={[
             { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
-            { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
             { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
           ]}
           height="400px"
@@ -152,13 +165,10 @@ Let's consider an example and some source code.
 
         <Markdown children={`
 
-The file _panzoom/PanZoom.jsx_ defines two React function components, namely _PanZoom_ and _Grid_.
-They are JavaScript functions with a single parameter, returning something which looks like HTML (but isn't).
+They are JS functions with a single parameter, returning something which looks like HTML (but isn't).
 _PanZoom_ defines a pannable and zoomable grid.
-To see it in action click the other tabs above, or view [this CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab").
-Behaviourally:
-- _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
-- _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
+You can also view it [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab"), which permits code editing.
+
 
 Notice _PanZoomDemo_ renders _PanZoom_ by using the XML tag _\\<PanZoom\\>_.
 Then although React function components are functions, they are not invoked like functions.
@@ -210,6 +220,7 @@ Both PanZoom and PanZoomDemo are styled using CSS-in-JS.
 This means the CSS is written inside JS or JSX files, often with the React component it applies to.
 The npm module [Goober](https://www.npmjs.com/package/goober) handles this.
 
+__TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly e.g. via Web Components spec. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
 
 ### Navigation
 
