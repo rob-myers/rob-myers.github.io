@@ -4,11 +4,11 @@ import classNames from 'classnames';
 import * as Lookup from 'model/tabs-lookup';
 import { Loadable } from 'components/dynamic';
 
-export default function Tab({ children }:  React.PropsWithChildren<{}>) {
+export default function Tab({ children, background }: Props) {
   const [fadeOut, setFadeOut] = useState(false);
 
   return (
-    <div className={rootCss}>
+    <div className={rootCss} style={{ background }}>
       <LoadingOverlay fadeOut={fadeOut} />
       <Loadable onLoaded={() => setFadeOut(true)}>
         {children}
@@ -16,6 +16,8 @@ export default function Tab({ children }:  React.PropsWithChildren<{}>) {
     </div>
   );
 }
+
+type Props = React.PropsWithChildren<{ background?: string }>
 
 const rootCss = css`
   height: 100%;

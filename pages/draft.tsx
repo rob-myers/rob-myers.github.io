@@ -1,11 +1,7 @@
-import { code } from 'model/tabs-lookup';
 import Title from 'components/page/Title';
 import Markdown from 'components/page/Markdown';
 import Tabs from 'components/page/Tabs';
-import CodeEditor from 'components/code/WrappedCodeEditor';
-import GeomorphTest from 'projects/geomorph/GeomorphTest';
 import PhysicsDemo from 'projects/physics/PhysicsDemo';
-import NavDemo from 'projects/pathfinding/NavDemo';
 import Terminal from 'components/sh/Terminal';
 
 export default function IndexPage() {

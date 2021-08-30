@@ -4,7 +4,7 @@ import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
 import CodeMirror from 'codemirror';
 
 import * as Lookup from 'model/tabs-lookup';
-import CodeEditor from 'components/code/WrappedCodeEditor';
+import {CodeEditor} from 'components/dynamic';
 import Tab, { ErrorMessage, TabMeta } from './Tab';
 
 export default function Tabs({ tabs, margin, height = "300px" }: Props) {
@@ -66,7 +66,7 @@ function factory(node: TabNode) {
       const filepath = node.getComponent() || '';
       if (filepath in Lookup.code) {
         return (
-          <Tab>
+          <Tab background="black">
             <CodeEditor
               height="100%"
               lineNumbers
