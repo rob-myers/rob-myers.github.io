@@ -115,7 +115,7 @@ export default function PanZoom(props) {
       preserveAspectRatio="xMinYMin"
       viewBox={`${state.viewBox}`}
     >
-      <MemoedGrid bounds={props.gridBounds} />
+      <Grid bounds={props.gridBounds} />
       <g className="contents">
         {props.children}
       </g>
@@ -161,5 +161,3 @@ function Grid(props) {
     />
   </>;
 }
-
-const MemoedGrid = React.memo(Grid);
