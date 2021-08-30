@@ -6,7 +6,7 @@ import { getSvgPos, getSvgMid, generateId } from '../service';
 /** @param {React.PropsWithChildren<Props>} props */
 export default function PanZoom(props) {
 
-  const state = React.useMemo(() => {
+  const [state] = React.useState(() => {
     const viewBox = props.initViewBox.clone();
     const minZoom = props.minZoom || 0.5;
     const maxZoom = props.maxZoom || 2;
@@ -82,15 +82,6 @@ export default function PanZoom(props) {
           el.addEventListener('pointerleave', state.onPointerUp, { passive: true });
           el.addEventListener('pointerout', state.onPointerUp, { passive: true });
           el.addEventListener('touchstart', e => e.preventDefault());
-        } else if (state.root) {
-          state.root.removeEventListener('wheel', state.onWheel);
-          state.root.removeEventListener('pointerdown', state.onPointerDown);
-          state.root.removeEventListener('pointermove', state.onPointerMove);
-          state.root.removeEventListener('pointerup', state.onPointerUp);
-          state.root.removeEventListener('pointercancel', state.onPointerUp);
-          state.root.removeEventListener('pointerleave', state.onPointerUp);
-          state.root.removeEventListener('pointerout', state.onPointerUp);
-          state.root.removeEventListener('touchstart', e => e.preventDefault());
         }
       },
       /** @type {SVGSVGElement} */
@@ -106,7 +97,7 @@ export default function PanZoom(props) {
         }
       `,
     };
-  }, []);
+  });
 
   return (
     <svg
@@ -116,7 +107,7 @@ export default function PanZoom(props) {
       viewBox={`${state.viewBox}`}
     >
       <Grid bounds={props.gridBounds} />
-      <g className="contents">
+      <g className="content">
         {props.children}
       </g>
     </svg>
