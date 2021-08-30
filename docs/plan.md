@@ -1,5 +1,6 @@
 ## Plan
 
+- demos should always involve starship geomorphs
 - write Navigation subsection
 - write Physics engine subsection
 - Use a geomorph in PanZoomDemo
@@ -84,6 +85,16 @@
 - ✅ support ansi-codes in `$'...'`
 - better error "stacks"
   > ✅ have node.meta.stack with function names
+
+## Technical constraints
+
+Cannot use e.g. Svelte because HMR/Fast-Refresh does not work on  CodeSandbox (or elsewhere), and we'll need that for AI editing later.
+  
+As close to JavaScript as possible.
+- Styled jsx with JSDoc types instead of styled tsx
+- Projects should only rely on React for _initial render_
+- Dom mutations should be done manually e.g. via Web Components
+- Projects should avoid SSR
 
 ### Links
 
