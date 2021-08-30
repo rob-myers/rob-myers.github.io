@@ -92,7 +92,7 @@ export default function PanZoom(props) {
         /* background: #fff; */
         touch-action: pan-x pan-y pinch-zoom;
 
-        > g.contents {
+        > g.content {
           shape-rendering: optimizeSpeed;
         }
       `,
