@@ -75,7 +75,15 @@ const components = {
 };
 
 const rootCss = css`
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   font-size: 1.2rem;
+
+  h1, h2, h3, h4 {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 500;
+  }
+
   @media(max-width: 540px) {
     font-size: 1.1rem;
   }
@@ -142,11 +150,11 @@ const rootCss = css`
 
 const titleRootCss = css`
   h1 {
-    margin: 48px 0 24px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 7.5rem;
     font-weight: 300;
     cursor: pointer;
+    margin: 48px 0 24px;
     
     @media(max-width: 1024px) {
       margin: 12px 0 24px;
