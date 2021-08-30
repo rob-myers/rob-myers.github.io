@@ -1,5 +1,4 @@
-/* eslint-disable react/display-name */
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
 import { Rect, Vect } from "../geom";

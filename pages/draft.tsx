@@ -28,8 +28,7 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 
 ### Concerning technology
 
-- We'll make a browser-based game.
-- Support mobile devices but with restricted interfaces.
+- We'll make a browser-based game for mobile & desktop devices.
 - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
 - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
@@ -40,8 +39,8 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 ### Concerning game mechanics
 
 - Use a realtime birdseye camera, like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
-- Use [a recent port](https://www.npmjs.com/package/box2d-wasm) of the pathfinding tool [Recast & Detour](https://github.com/recastnavigation/recastnavigation).
-- Use [a recent port](https://www.npmjs.com/package/recast-detour) of the physics engine [Box2D](https://github.com/erincatto/box2d).
+- Use [Recast](https://github.com/recastnavigation/recastnavigation) to generate navmeshes.
+- Use [a recent port](https://www.npmjs.com/package/box2d-wasm) of the physics engine [Box2D](https://github.com/erincatto/box2d).
 - Use procedural generation e.g. spaceship building/docking.
 - Use explicitly illustrated NPC decisions as a game mechanic.
 
@@ -124,6 +123,8 @@ We want to create a video game explicitly, exposing the code and underlying thou
 Then it is worth explaining these technologies before using them.
 
 ### React, Styles and Preact
+
+__TODO__ we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly e.g. via Web Components spec. By keeping the initial virtual DOM mostly constant, the DOM diffing won't
 
 Competing web frameworks exist in the wild, often with their own notion of component.
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
