@@ -1,10 +1,18 @@
+import React, { useState } from 'react';
 import { css } from 'goober';
+import classNames from 'classnames';
 import * as Lookup from 'model/tabs-lookup';
+import { Loadable } from 'components/dynamic';
 
 export default function Tab({ children }:  React.PropsWithChildren<{}>) {
+  const [fadeOut, setFadeOut] = useState(false);
+
   return (
     <div className={rootCss}>
-      {children}
+      <LoadingOverlay fadeOut={fadeOut} />
+      <Loadable onLoaded={() => setFadeOut(true)}>
+        {children}
+      </Loadable>
     </div>
   );
 }
@@ -14,6 +22,46 @@ const rootCss = css`
   width: 100%;
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-top: 6px solid #444;
+  position: relative;
+`;
+
+function LoadingOverlay(props: { fadeOut: boolean }) {
+  return (
+    <div className={classNames(overlayCss, { 'fade-out': props.fadeOut })}>
+      <div>
+        <div className="message">Loading...</div>
+      </div>
+    </div>
+  );
+}
+
+const overlayCss = css`
+  pointer-events: none;
+  position: absolute;
+  z-index: 5;
+  width: inherit;
+  height: inherit;
+  background: #000;
+  display: flex;
+  justify-content: center;
+
+  > div {
+    display: flex;
+    align-items: center;
+  }
+  .message {
+    color: #ccc;
+    background: #444;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  opacity: 1;
+  transition: opacity 0.5s linear;
+  &.fade-out {
+    opacity: 0;    
+  }
 `;
 
 export type TabMeta = (

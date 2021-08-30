@@ -146,8 +146,8 @@ Let's consider an example and some source code.
 
         <Tabs
           tabs={[
-            { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
             { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
+            { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
             { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
           ]}
           height="400px"
