@@ -1,5 +1,5 @@
-import dynamic from 'next/dynamic';
 import { styled } from 'goober';
+import { CodeEditor } from 'components/dynamic';
 import type { Props } from './CodeEditor';
 
 export default function WrappedCodeEditor(props: Props & { margin?: string }) {
@@ -9,8 +9,6 @@ export default function WrappedCodeEditor(props: Props & { margin?: string }) {
     </Background>
   );
 }
-
-const CodeEditor = dynamic(() => import('./CodeEditor'), { ssr: false });
 
 const Background = styled('section')<{ height: string; margin?: string; }>`
   height: ${props => props.height || '100%'};

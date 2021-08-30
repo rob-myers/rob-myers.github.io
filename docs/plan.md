@@ -1,7 +1,8 @@
 ## Plan
 
 - tabs prevent component SSR, and fade-in
-
+- save tabs state to browser state
+- emphasise render-once approach to React in intro
 - demos should always involve starship geomorphs
 - write Navigation subsection
 - write Physics engine subsection

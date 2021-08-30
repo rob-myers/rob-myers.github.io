@@ -1,17 +1,17 @@
-import React from "react";
-import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
+import React from 'react';
 import { styled } from 'goober';
+import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
+import CodeMirror from 'codemirror';
 
 import * as Lookup from 'model/tabs-lookup';
 import CodeEditor from 'components/code/WrappedCodeEditor';
-import CodeMirror from "codemirror";
-import { ErrorMessage, Tab, TabMeta } from "./Tab";
+import Tab, { ErrorMessage, TabMeta } from './Tab';
 
 export default function Tabs({ tabs, height = "300px" }: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   return (
     <TabsRoot height={height}>
-      <Layout model={model} factory={factory} />
+      <Layout model={model} factory={factory}  />
     </TabsRoot>
   );
 }

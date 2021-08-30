@@ -141,13 +141,13 @@ One popular approach uses _React function components_, which are just JavaScript
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers compose components using an XML-like syntax, in order to obtain the desired dynamic DOM tree.
-Let's consider some code and its rendered output.
+Let's consider an example and some source code.
         `}/>
 
         <Tabs
           tabs={[
-            { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
             { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
+            { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
             { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
           ]}
           height="400px"

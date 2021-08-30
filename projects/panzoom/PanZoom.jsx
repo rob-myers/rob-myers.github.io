@@ -98,7 +98,7 @@ export default function PanZoom(props) {
       rootCss: css`
         width: 100%;
         height: 100%;
-        background: #fff;
+        /* background: #fff; */
         touch-action: pan-x pan-y pinch-zoom;
 
         > g.contents {

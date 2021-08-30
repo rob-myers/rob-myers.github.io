@@ -3,9 +3,6 @@ import { css } from 'goober';
 import PanZoom from './PanZoom';
 import { Rect } from '../geom';
 
-const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
-const initViewBox = new Rect(0, 0, 200, 200);
-
 export default function PanZoomDemo() {
   return (
     <div className={rootCss}>
@@ -18,6 +15,9 @@ export default function PanZoomDemo() {
     </div>
   );
 }
+
+const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
+const initViewBox = new Rect(0, 0, 200, 200);
 
 const rootCss = css`
   display: flex;
