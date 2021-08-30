@@ -7,10 +7,10 @@ import * as Lookup from 'model/tabs-lookup';
 import CodeEditor from 'components/code/WrappedCodeEditor';
 import Tab, { ErrorMessage, TabMeta } from './Tab';
 
-export default function Tabs({ tabs, height = "300px" }: Props) {
+export default function Tabs({ tabs, margin, height = "300px" }: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   return (
-    <TabsRoot height={height}>
+    <TabsRoot height={height} margin={margin}>
       <Layout model={model} factory={factory}  />
     </TabsRoot>
   );
@@ -18,11 +18,14 @@ export default function Tabs({ tabs, height = "300px" }: Props) {
 
 interface Props {
   tabs: TabMeta[];
+  margin?: string;
   height?: string;
 }
 
-const TabsRoot = styled('div')<{ height: string }>`
+const TabsRoot = styled('div')<{ height: string; margin?: string }>`
+  margin: ${props => props.margin || 'auto'};
   padding: 0 0 16px;
+
   > div {
     position: relative;
     height: ${(props) => props.height};

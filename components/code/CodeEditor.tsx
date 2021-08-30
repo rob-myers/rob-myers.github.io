@@ -75,7 +75,7 @@ export default function CodeEditor({
     <Root
       ref={editorRoot}
       height={height}
-      padding={lineNumbers ? 16 : 24}
+      padding={lineNumbers ? 12 : 24}
     />
   );
 }
@@ -104,10 +104,10 @@ const Root = styled('div', React.forwardRef)<{
 
     height: ${props => props.height || ''};
     .CodeMirror-lines {
-      padding: ${props => props.padding}px 0;
+      margin: ${props => props.padding}px 0;
     }
     .CodeMirror-line {
-      padding: 0 ${props => props.padding}px;
+      margin: 0 ${props => props.padding}px;
     }
   }
 `;

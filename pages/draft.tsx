@@ -171,11 +171,11 @@ We now provide more details of a general nature.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function _React.createElement_.
         `}/>
 
-        <CodeEditor
+        <Tabs
           margin="0 0 0 var(--list-indent)"
-          height="300px"
-          code={code['example/jsx-to-js.jsx']}
-          readOnly
+          tabs={[
+            { key: 'code', filepath: 'example/jsx-to-js.jsx' },
+          ]}
         />
 
         <Markdown children={`
@@ -221,7 +221,11 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
 
         `}/>
 
-        <NavDemo />
+        <Tabs
+          tabs={[
+            { key: 'component', filepath: 'pathfinding/NavDemo.jsx' },
+          ]}
+        />
 
         <Markdown children={`
 
@@ -262,7 +266,11 @@ __TODO__
 
         `}/>
 
-        <GeomorphTest />
+        <Tabs
+          tabs={[
+            { key: 'component', filepath: 'geomorph/GeomorphTest.jsx' },
+          ]}
+        />
 
         <Markdown children={`
 
