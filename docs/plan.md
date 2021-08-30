@@ -1,5 +1,7 @@
 ## Plan
 
+- tabs prevent component SSR, and fade-in
+
 - demos should always involve starship geomorphs
 - write Navigation subsection
 - write Physics engine subsection
@@ -89,7 +91,7 @@
 ## Technical constraints
 
 Cannot use e.g. Svelte because HMR/Fast-Refresh does not work on  CodeSandbox (or elsewhere), and we'll need that for AI editing later.
-  
+
 As close to JavaScript as possible.
 - Styled jsx with JSDoc types instead of styled tsx
 - Projects should only rely on React for _initial render_

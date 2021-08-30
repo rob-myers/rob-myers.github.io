@@ -51,11 +51,14 @@ export default function CodeEditor({
           // prevent text-edit UI on mobile device
           ? window.matchMedia('(max-width: 400px)').matches ? 'nocursor' : true
           : false,
-        foldOptions: {
-          rangeFinder: CodeMirror.fold.indent,
+
+        ...lineNumbers && {
+          foldOptions: {
+            rangeFinder: CodeMirror.fold.indent,
+          },
+          foldGutter: true,
+          gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
         },
-        foldGutter: true,
-        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
         // lineWrapping: true,
       });
 

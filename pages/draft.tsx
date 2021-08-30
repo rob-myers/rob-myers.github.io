@@ -173,9 +173,9 @@ We now provide more details of a general nature.
 
         <CodeEditor
           margin="0 0 0 var(--list-indent)"
-          height="310px"
+          height="300px"
+          padding="24px"
           code={code['example/jsx-to-js.jsx']}
-          lineNumbers
           readOnly
         />
 
