@@ -15,5 +15,5 @@ const CodeEditor = dynamic(() => import('./CodeEditor'), { ssr: false });
 const Background = styled('section')<{ height: string; margin?: string; }>`
   height: ${props => props.height || '100%'};
   background: #000000;
-  margin: ${props => props.margin};
+  margin: ${props => props.margin || 'auto'};
 `;

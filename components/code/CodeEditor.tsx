@@ -17,7 +17,6 @@ import './codemirror/custom-cmds';
 export default function CodeEditor({
   code,
   lineNumbers,
-  padding = "12px 0",
   height,
   readOnly,
   folds,
@@ -74,9 +73,9 @@ export default function CodeEditor({
 
   return (
     <Root
-      height={height}
-      padding={padding}
       ref={editorRoot}
+      height={height}
+      padding={lineNumbers ? 16 : 24}
     />
   );
 }
@@ -85,7 +84,6 @@ export interface Props {
   code: string;
   gridArea?: string;
   lineNumbers?: boolean;
-  padding?: string;
   readOnly?: boolean;
   height: string;
   folds?: CodeMirror.Position[];
@@ -93,7 +91,7 @@ export interface Props {
 
 const Root = styled('div', React.forwardRef)<{
   height?: string;
-  padding?: string;
+  padding: number;
 }>`
   width: 100%;
   height: 100%;
@@ -106,7 +104,10 @@ const Root = styled('div', React.forwardRef)<{
 
     height: ${props => props.height || ''};
     .CodeMirror-lines {
-      padding: ${props => props.padding};
+      padding: ${props => props.padding}px 0;
+    }
+    .CodeMirror-line {
+      padding: 0 ${props => props.padding}px;
     }
   }
 `;
