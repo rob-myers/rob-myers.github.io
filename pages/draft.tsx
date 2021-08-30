@@ -205,15 +205,14 @@ We'll close this subsection with two related remarks.
 
 _Preact vs React_. This website is built using Preact, a popular alternative to React with the same API.
 It has a much smaller codebase (easier to understand),
-and provides hooks into its underlying operations (allowing performance monitoring).
-Preact has a reputation for being faster,
-although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer).
+and a reputation for being faster.
+However, React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer).
     
 _CSS in JavaScript_. Traditionally, CSS is provided in separate files,
-linked in the _\\<head\\>_ and referenced by DOM elements via their class or className attribute.
+linked in the _\\<head\\>_ and referenced by DOM elements via their class attribute.
 Both PanZoom and PanZoomDemo are styled using CSS-in-JS.
-This means the CSS is written inside JS or JSX files, often together with the React components it applies to.
-We use the npm module [Goober](https://www.npmjs.com/package/goober) to handle this.
+This means the CSS is written inside JS or JSX files, often with the React component it applies to.
+The npm module [Goober](https://www.npmjs.com/package/goober) handles this.
 
 
 ### Navigation
