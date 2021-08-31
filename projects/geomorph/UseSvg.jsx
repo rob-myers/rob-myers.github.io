@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import cheerio, { Cheerio, CheerioAPI, Element } from 'cheerio';
+import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { svgPathToPolygons } from '../service';
 import { Poly, Rect } from '../geom';
 
@@ -90,20 +90,18 @@ function extractGeoms(api, topNodes, rootMatrix, title) {
  * @returns {Poly[]}
  */
 function extractGeom({ tagName, attribs: a }, rootMatrix) {
-  const tm = new DOMMatrix(a.transform);
+  const polys = /** @type {Poly[]} */ ([]);
   if (tagName === 'rect') {
-    const poly = Poly.fromRect(
+    polys.push(Poly.fromRect(
       new Rect(Number(a.x), Number(a.y), Number(a.width), Number(a.height)
-    ).applyMatrix(rootMatrix.multiply(tm)));
-    return [poly];
+    )));
   } else if (tagName === 'path') {
-    const polys = svgPathToPolygons(a.d);
-    const m = rootMatrix.multiply(tm);
-    return polys.map(p => p.applyMatrix(m));
+    polys.push(...svgPathToPolygons(a.d));
   } else {
     console.warn('extractPoly: unexpected tagName:', tagName);
-    return [];
   }
+  const m = rootMatrix.multiply(new DOMMatrix(a.transform));
+  return polys.map(p => p.applyMatrix(m));
 }
 
 /**
