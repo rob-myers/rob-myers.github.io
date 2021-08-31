@@ -7,7 +7,7 @@ import * as Lookup from 'model/tabs-lookup';
 import {CodeEditor} from 'components/dynamic';
 import Tab, { ErrorMessage, TabMeta } from './Tab';
 
-export default function Tabs({ tabs, margin, height = "300px" }: Props) {
+export default function Tabs({ tabs, margin, height }: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   return (
     <TabsRoot height={height} margin={margin}>
@@ -17,19 +17,20 @@ export default function Tabs({ tabs, margin, height = "300px" }: Props) {
 }
 
 interface Props {
+  /** Height of each tab */
+  height: number;
   tabs: TabMeta[];
   margin?: string;
-  height?: string;
 }
 
-const TabsRoot = styled('div')<{ height: string; margin?: string }>`
+const TabsRoot = styled('div')<{ height: number; margin?: string }>`
+  height: ${(props) => props.height}px;
+  background: #444;
   margin: ${props => props.margin || 'auto'};
-  padding: 0 0 16px;
 
   > div {
     position: relative;
-    height: ${(props) => props.height};
-    padding: 16px 0;
+    height: inherit;
   }
   
   .flexlayout__tabset_tabbar_outer {

@@ -1,7 +1,7 @@
 /**
- * Currently unused.
- * However, recast-detour is currently showing asm.js error
- * in production, so we might end up using this.
+ * TODO
+ * - remove recast-detour
+ * - use this worker to store navmeshes and find paths
  */
 import '@prefresh/core';
 import { Poly } from '../geom';

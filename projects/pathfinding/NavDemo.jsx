@@ -97,7 +97,7 @@ const [thickWalls] = polygon.createOutset(6);
 
 const rootCss = css`
   border: 1px solid #555555;
-  height: 300px;
+  height: inherit;
 
   path.walls {
     fill: #000;

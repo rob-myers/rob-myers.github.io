@@ -141,10 +141,10 @@ Let's consider some source code for a pannable and zoomable grid.
         `}/>
 
         <Tabs
+          height={400}
           tabs={[
             { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
           ]}
-          height="400px"
         />
 
         <Markdown children={`
@@ -157,11 +157,11 @@ Behaviourally:
         `}/>
 
         <Tabs
+          height={400}
           tabs={[
             { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
             { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
           ]}
-          height="400px"
         />
 
         <Markdown children={`
@@ -180,6 +180,7 @@ We now provide more details of a general nature.
         `}/>
 
         <Tabs
+          height={320}
           margin="0 0 0 var(--list-indent)"
           tabs={[
             { key: 'code', filepath: 'example/jsx-to-js.jsx' },
@@ -231,6 +232,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
         `}/>
 
         <Tabs
+          height={300}
           tabs={[
             { key: 'component', filepath: 'pathfinding/NavDemo.jsx' },
           ]}
@@ -276,6 +278,7 @@ __TODO__
         `}/>
 
         <Tabs
+          height={300}
           tabs={[
             { key: 'component', filepath: 'geomorph/GeomorphTest.jsx' },
           ]}
