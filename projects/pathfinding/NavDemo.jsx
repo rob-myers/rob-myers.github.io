@@ -118,6 +118,7 @@ const rootCss = css`
     }
   }
   polygon.triangle {
+    pointer-events: none;
     fill: none;
     stroke: #bbb;
     stroke-width: 0.5;
