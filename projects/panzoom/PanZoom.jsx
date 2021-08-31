@@ -40,7 +40,7 @@ export default function PanZoom(props) {
       },
       /** @param {PointerEvent} e */
       onPointerDown: e => {
-        state.panFrom = (new Vect(0, 0)).copy(getSvgPos(e));
+        state.panFrom = (new Vect).copy(getSvgPos(e));
         state.ptrEvent.push(e);
       },
       /** @param {PointerEvent} e */
@@ -48,7 +48,6 @@ export default function PanZoom(props) {
         state.ptrEvent = state.ptrEvent.map(x => x.pointerId === e.pointerId ? e : x);
 
         if (state.ptrEvent.length === 2) {
-          
           const ptrDiff = Math.abs(state.ptrEvent[1].clientX - state.ptrEvent[0].clientX);
           if (state.ptrDiff !== null) {
             const point = getSvgMid(state.ptrEvent);
@@ -89,9 +88,7 @@ export default function PanZoom(props) {
       rootCss: css`
         width: 100%;
         height: 100%;
-        /* background: #fff; */
         touch-action: pan-x pan-y pinch-zoom;
-
         > g.content {
           shape-rendering: optimizeSpeed;
         }
