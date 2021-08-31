@@ -107,7 +107,7 @@ const Root = styled('div', React.forwardRef)<{
       margin: ${props => props.padding}px 0;
     }
     .CodeMirror-line {
-      margin: 0 ${props => props.padding}px;
+      padding: 0 ${props => props.padding}px;
     }
   }
 `;
