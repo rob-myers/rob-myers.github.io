@@ -9,7 +9,7 @@ import * as Geom from './types';
    * @param {number} x 
    * @param {number} y 
    */
-  constructor(x, y) {
+  constructor(x = 0, y = 0) {
     /** @type {number} */ this.x = x;
     /** @type {number} */ this.y = y;
   }
@@ -45,6 +45,16 @@ import * as Geom from './types';
     return this.translate(x, y);
   }
 
+  /**
+   * @param {Geom.VectJson} v 
+   * @param {number} s 
+   */
+	addScaledVector(v, s) {
+		this.x += v.x * s;
+		this.y += v.y * s;
+		return this;
+	}
+
   /** @param {Vect[]} vectors */
   static average(vectors) {
     return vectors.length
@@ -65,10 +75,12 @@ import * as Geom from './types';
 
   /** @param {Geom.VectJson} p */
   distanceTo(p) {
-    return Math.sqrt(
-      Math.pow(p.x - this.x, 2)
-      + Math.pow(p.y - this.y, 2)
-    );
+    return Math.hypot(p.x - this.x, p.y - this.y);
+  }
+
+  /** @param {Geom.VectJson} p */
+  distanceToSquared(p) {
+    return Math.pow(p.x - this.x, 2) + Math.pow(p.y - this.y, 2);
   }
 
   /** @param {Geom.VectJson} other */
@@ -140,6 +152,16 @@ import * as Geom from './types';
   /** @param {Geom.VectJson} _ */
   sub({ x, y }) {
     return this.translate(-x, -y);
+  }
+
+  /**
+   * @param {Geom.VectJson} p
+   * @param {Geom.VectJson} q
+   */
+  subVectors(p, q) {
+		this.x = p.x - q.x;
+		this.y = p.y - q.y;
+    return this;
   }
 
   toString() {
