@@ -2,8 +2,8 @@ import * as poly2tri from 'poly2tri';
 import * as polygonClipping from 'polygon-clipping';
 import earcut from 'earcut';
 
-import { Rect } from "./rect";
 import { Coord, VectJson, GeoJsonPolygon, Triangulation } from "./types";
+import { Rect } from "./rect";
 import { Vect } from "./vect";
 
 export class Poly {

@@ -32,8 +32,8 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
 - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
-- Favour DOM manipulation over React renders.
 - Use [Preact](https://www.npmjs.com/package/preact) instead of React, and [Goober](https://www.npmjs.com/package/goober) instead of [Emotion](https://www.npmjs.com/package/@emotion/styled).
+- For performance, favour DOM manipulation over React renders.
 - Use [NextJS](https://nextjs.org/) as our development environment.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 
@@ -123,7 +123,7 @@ We will build the game using the following technologies.
 We want to create a video game explicitly, exposing the code and underlying thought process.
 Then it is worth explaining these technologies before using them.
 
-### React, Styles and Preact
+### React, Preact and Rendering
 
 Competing web frameworks exist in the wild, often with their own notion of component.
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
@@ -133,7 +133,7 @@ One popular approach uses _React function components_, which are just JavaScript
   It is a JavaScript object defining the component's named inputs, and possibly special properties like _children_, _key_ and _ref_.
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
   
-  The returned value amounts to an HTML fragment to be rendered,
+  This returned value amounts to an HTML fragment to be rendered,
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers compose components using an XML-like syntax, in order to obtain the desired dynamic DOM tree.
