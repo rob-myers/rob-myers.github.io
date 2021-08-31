@@ -67,3 +67,12 @@ export function svgPathToPolygons(svgPathString) {
 
 	return polys.map(ps => new Poly(ps));
 }
+
+/** https://stackoverflow.com/a/4819886/2917822 */
+export let canTouchDevice = (
+	typeof window !== 'undefined' && (
+		'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+		navigator.msMaxTouchPoints > 0
+	)
+);

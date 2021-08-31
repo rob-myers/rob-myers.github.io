@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { css } from 'goober';
 import { Vect, Rect } from '../geom';
-import { getSvgPos, getSvgMid, generateId } from '../service';
+import { getSvgPos, getSvgMid, generateId, canTouchDevice } from '../service';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function PanZoom(props) {
@@ -89,8 +89,8 @@ export default function PanZoom(props) {
         width: 100%;
         height: 100%;
         touch-action: pan-x pan-y pinch-zoom;
-        > g.content {
-          shape-rendering: optimizeSpeed;
+        > g.content {// sporadic improvement for pixel5 vs macbookpro
+          shape-rendering: ${canTouchDevice ? 'optimizeSpeed' : 'auto'};
         }
       `,
     };
