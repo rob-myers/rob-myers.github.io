@@ -32,6 +32,7 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
 - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
+- Favour DOM manipulation over React renders.
 - Use [Preact](https://www.npmjs.com/package/preact) instead of React, and [Goober](https://www.npmjs.com/package/goober) instead of [Emotion](https://www.npmjs.com/package/@emotion/styled).
 - Use [NextJS](https://nextjs.org/) as our development environment.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
