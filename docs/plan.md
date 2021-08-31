@@ -1,13 +1,13 @@
 ## Plan
 
+- develop geomorph 301
+- use geomorph in `PanZoomDemo`
 - emphasise render-once approach to React in intro
 - demos should always involve starship geomorphs
 - save tabs state to browser state
 - write Navigation subsection
 - write Physics engine subsection
-- Use a geomorph in PanZoomDemo
-- Use a geomorph in NavDemo
-- PanZoom registers with zustand state and can be disabled
+- use geomorph in `NavDemo`
 - ✅ tabs prevent component SSR, and fade-in
 
 - tidy up `PanZoom` and update CodeSandboxes
