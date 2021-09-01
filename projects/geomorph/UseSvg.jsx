@@ -5,10 +5,13 @@ import { Poly, Rect, Vect } from '../geom';
 
 /** @param {Props} props */
 export default function UseSvg(props) {
-  const { data } = useSvgText(props.url, props.transform);
+  const { data } = useSvgText(props.url);
 
   return data ? (
-    <g className={`symbol ${data.basename}`}>
+    <g
+      className={`symbol ${data.basename}`}
+      transform={props.transform}
+    >
       {props.debug && (
         <g
           className="debug"
@@ -21,7 +24,8 @@ export default function UseSvg(props) {
       {!props.hull && (
         <image
           href={`/png/${data.basename}.png`}
-          style={{ transform: `matrix(0.2, 0, 0, 0.2, ${data.pngOffset})`}}
+          x={data.pngOffset.x}
+          y={data.pngOffset.y}
         />
       )}
       <g className="meta">
@@ -62,31 +66,24 @@ export default function UseSvg(props) {
 
 /**
  * @param {string} url 
- * @param {string} [transform]
  */
-function useSvgText(url, transform) {
+function useSvgText(url) {
   return useQuery(
     `use-svg-${url}`,
     async () => {
+      console.info('loading symbol', url);
       const contents = await fetch(url).then(x => x.text());
       const $ = cheerio.load(contents);
-      const rootMatrix = new DOMMatrix(transform);
 
       const topNodes = Array.from($('svg > *'));
-      const hull = extractGeoms($, topNodes, rootMatrix, 'hull');
-      const doors = extractGeoms($, topNodes, rootMatrix, 'doors');
-      const walls = extractGeoms($, topNodes, rootMatrix, 'walls');
-      const obstacles = extractGeoms($, topNodes, rootMatrix, 'obstacles');
-      const irisValves = extractGeoms($, topNodes, rootMatrix, 'iris-valves');
-      const labels = extractGeoms($, topNodes, rootMatrix, 'labels');
-      const pngOffset = extractPngOffset($, topNodes, rootMatrix);
-
-      // console.log({
-        // pngOffset,
-        // hull,
-        // doors,
-        // walls,
-      // });
+      const hull = extractGeoms($, topNodes, 'hull');
+      const doors = extractGeoms($, topNodes, 'doors');
+      const walls = extractGeoms($, topNodes, 'walls');
+      const obstacles = extractGeoms($, topNodes, 'obstacles');
+      const irisValves = extractGeoms($, topNodes, 'iris-valves');
+      const labels = extractGeoms($, topNodes, 'labels');
+      const pngOffset = extractPngOffset($, topNodes);
+      // console.log({ pngOffset, hull, doors, walls });
 
       return {
         basename: url.slice('/svg/'.length, -'.svg'.length),
@@ -106,34 +103,31 @@ function useSvgText(url, transform) {
 /**
  * @param {CheerioAPI} api 
  * @param {Element[]} topNodes 
- * @param {DOMMatrix} rootMatrix 
  */
-function extractPngOffset(api, topNodes, rootMatrix) {
+function extractPngOffset(api, topNodes) {
   const group = topNodes.find(x => hasTitle(api, x, 'background'));
   const { attribs: a } = api(group).children('image').toArray()[0];
-  return (new Vect(Number(a.x || 0), Number(a.y || 0))).transform(rootMatrix);
+  return (new Vect(Number(a.x || 0), Number(a.y || 0)));
 }
 
 /**
- * TODO forward meta?
- * @param {CheerioAPI} api 
- * @param {Element[]} topNodes 
- * @param {DOMMatrix} rootMatrix 
- * @param {string} title 
+ * TODO forward meta
+ * @param {CheerioAPI} api
+ * @param {Element[]} topNodes
+ * @param {string} title
  */
-function extractGeoms(api, topNodes, rootMatrix, title) {
+function extractGeoms(api, topNodes, title) {
   const group = topNodes.find(x => hasTitle(api, x, title));
   return api(group).children('rect, path').toArray()
-    .flatMap(x => extractGeom(x, rootMatrix))
+    .flatMap(x => extractGeom(x))
 }
 
 /**
- * TODO forward meta?
- * @param {Element} param0 
- * @param {DOMMatrix} rootMatrix 
+ * TODO forward meta
+ * @param {Element} param0
  * @returns {Poly[]}
  */
-function extractGeom({ tagName, attribs: a }, rootMatrix) {
+function extractGeom({ tagName, attribs: a }) {
   const polys = /** @type {Poly[]} */ ([]);
   if (tagName === 'rect') {
     polys.push(Poly.fromRect(
@@ -144,7 +138,7 @@ function extractGeom({ tagName, attribs: a }, rootMatrix) {
   } else {
     console.warn('extractPoly: unexpected tagName:', tagName);
   }
-  const m = rootMatrix.multiply(new DOMMatrix(a.transform));
+  const m = new DOMMatrix(a.transform);
   return polys.map(p => p.applyMatrix(m));
 }
 

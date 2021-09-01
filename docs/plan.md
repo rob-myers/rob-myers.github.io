@@ -8,6 +8,7 @@
 - write Navigation subsection
 - write Physics engine subsection
 - use geomorph in `NavDemo`
+- ✅ GeomorphTest caches symbols via react-query
 - ✅ tabs prevent component SSR, and fade-in
 
 - tidy up `PanZoom` and update CodeSandboxes
