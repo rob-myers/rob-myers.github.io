@@ -8,8 +8,11 @@ export default function GeomorphTest() {
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
-        <UseSvg url="/svg/bridge--042--8x9.svg" transform="matrix(0.2, 0, 0, 0.2, 360, 60)" />
         <UseSvg hull debug={true} url="/svg/301--hull.svg" />
+        <UseSvg url="/svg/stateroom--036--2x4.svg" transform="scale(0.2)" />
+        <UseSvg url="/svg/stateroom--036--2x4.svg" transform="matrix(-0.2, 0, 0, 0.2, 1200, 0)" />
+        <UseSvg url="/svg/stateroom--036--2x4.svg" transform="matrix(0, -0.2, 0.2, 0, 0, 600)" />
+        <UseSvg url="/svg/bridge--042--8x9.svg" transform="matrix(0.2, 0, 0, 0.2, 360, 60)" />
       </PanZoom>
     </div>
   );

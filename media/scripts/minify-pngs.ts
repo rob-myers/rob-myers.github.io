@@ -4,6 +4,7 @@
  * - {src_dir} exists
  *
  * Examples:
+ * - yarn minify-pngs public/png
  * - yarn minify-pngs media/geomorph-edge
  * - yarn minify-pngs media/used-symbols
  */
