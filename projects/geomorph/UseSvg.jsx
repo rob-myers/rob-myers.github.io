@@ -1,20 +1,24 @@
 import { useQuery } from 'react-query';
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { svgPathToPolygons } from '../service';
-import { Poly, Rect } from '../geom';
+import { Poly, Rect, Vect } from '../geom';
 
 /** @param {{ url: string, transform?: string }} props */
 export default function UseSvg(props) {
   const { data } = useSvgText(props.url, props.transform);
 
   return data ? (
-    <g className={`used ${props.url.slice('/svg/'.length)}`}>
-      <g
+    <g className={`symbol ${data.basename}`}>
+      {/* <g
         className="loaded"
         transform={props.transform}
         dangerouslySetInnerHTML={{
           __html: data.svgInnerText || '',
         }}
+      /> */}
+      <image
+        href={`/png/${data.basename}.png`}
+        style={{ transform: `matrix(0.2, 0, 0, 0.2, ${data.pngOffset})`}}
       />
       <g className="meta">
         {data.hull?.outline && (
@@ -25,6 +29,9 @@ export default function UseSvg(props) {
         )}
         {data.walls.map((poly, i) =>
           <path fill="rgba(0, 200, 0, 0.5)" key={i} d={`${poly.svgPath}`} />
+        )}
+        {data.obstacles.map((poly, i) =>
+          <path fill="rgba(200, 0, 200, 0.5)" key={i} d={`${poly.svgPath}`} />
         )}
       </g>
     </g>
@@ -49,24 +56,38 @@ function useSvgText(url, transform) {
       const walls = extractGeoms($, topNodes, rootMatrix, 'walls');
       const obstacles = extractGeoms($, topNodes, rootMatrix, 'obstacles');
       const irisValves = extractGeoms($, topNodes, rootMatrix, 'iris-valves');
-      const background = topNodes.find(x => hasTitle($, x, 'background'));
+      const pngOffset = extractPngOffset($, topNodes, rootMatrix);
 
       // console.log({
-      //   hull,
-      //   doors,
-      //   walls,
+        // pngOffset,
+        // hull,
+        // doors,
+        // walls,
       // });
 
       return {
+        basename: url.slice('/svg/'.length, -'.svg'.length),
         svgInnerText: topNodes.map(x => $.html(x)).join('\n'),
         hull: Poly.union(hull).find(Boolean), // Assume connected
         doors,
         irisValves,
         obstacles,
+        pngOffset,
         walls,
       };
     },
   );
+}
+
+/**
+ * @param {CheerioAPI} api 
+ * @param {Element[]} topNodes 
+ * @param {DOMMatrix} rootMatrix 
+ */
+function extractPngOffset(api, topNodes, rootMatrix) {
+  const group = topNodes.find(x => hasTitle(api, x, 'background'));
+  const { attribs: a } = api(group).children('image').toArray()[0];
+  return (new Vect(Number(a.x || 0), Number(a.y || 0))).transform(rootMatrix);
 }
 
 /**
