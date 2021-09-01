@@ -7,9 +7,9 @@ import UseSvg from './UseSvg';
 export default function GeomorphTest() {
   return (
     <div className={rootCss}>
-      <PanZoom initViewBox={initViewBox} gridBounds={gridBounds}>
+      <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
         <UseSvg url="/svg/bridge--042--8x9.svg" transform="matrix(0.2, 0, 0, 0.2, 360, 60)" />
-        <UseSvg hull debug url="/svg/301--hull.svg" />
+        <UseSvg hull debug={true} url="/svg/301--hull.svg" />
       </PanZoom>
     </div>
   );
@@ -27,6 +27,7 @@ const rootCss = css`
     .outline { fill: rgba(0, 0, 100, 0.2); }
     .door, .iris-valve { fill: rgba(0, 200, 0, 0.3); }
     .wall, .hull { fill: rgba(200, 50, 50, 0.5); }
-    .obstacle { fill: rgba(150, 100, 100, 0.5); }
+    .obstacle { fill: rgba(100, 100, 150, 0.5); }
+    .label { fill: rgba(0, 0, 0, 0.4); }
   }
 `;

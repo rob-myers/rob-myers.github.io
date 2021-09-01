@@ -43,6 +43,10 @@ export default function UseSvg(props) {
         {data.obstacles.map((poly, i) =>
           <path key={i} className="obstacle" d={`${poly.svgPath}`} />
         )}
+        {data.labels.map(({ outline }, i) =>
+          // TODO forward label via polygon.meta
+          <polygon key={i} className="label" points={`${outline}`} />
+        )}
       </g>
     </g>
   ) : null;
@@ -74,6 +78,7 @@ function useSvgText(url, transform) {
       const walls = extractGeoms($, topNodes, rootMatrix, 'walls');
       const obstacles = extractGeoms($, topNodes, rootMatrix, 'obstacles');
       const irisValves = extractGeoms($, topNodes, rootMatrix, 'iris-valves');
+      const labels = extractGeoms($, topNodes, rootMatrix, 'labels');
       const pngOffset = extractPngOffset($, topNodes, rootMatrix);
 
       // console.log({
@@ -86,10 +91,11 @@ function useSvgText(url, transform) {
       return {
         basename: url.slice('/svg/'.length, -'.svg'.length),
         svgInnerText: topNodes.map(x => $.html(x)).join('\n'),
-        hull: Poly.union(hull), // Assume connected
+        hull: Poly.union(hull), // Assume connected if exists
         doors,
         irisValves,
-        obstacles: Poly.union(obstacles),
+        labels,
+        obstacles,
         pngOffset,
         walls,
       };

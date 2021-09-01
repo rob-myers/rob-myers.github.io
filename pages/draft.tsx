@@ -316,7 +316,6 @@ public/png
 public/svg
 - Enriched symbols
 - Geomorph hulls
-
         `}/>
 
         <Tabs
