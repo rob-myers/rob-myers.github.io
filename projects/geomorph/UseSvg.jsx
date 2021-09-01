@@ -72,9 +72,9 @@ export default function UseSvg(props) {
  */
 function useSvgText(url, tags) {
   return useQuery(
-    `use-svg-${url}-${tags || []}`,
+    `use-svg-${url}-${tags || []}}`,
     async () => {
-      console.info('loading symbol', url);
+      console.info('loading symbol', url, tags || '(no tags)');
       const contents = await fetch(url).then(x => x.text());
       const $ = cheerio.load(contents);
 
@@ -86,7 +86,7 @@ function useSvgText(url, tags) {
       const irisValves = extractGeoms($, topNodes, 'iris-valves');
       const labels = extractGeoms($, topNodes, 'labels');
       const pngOffset = extractPngOffset($, topNodes);
-      // console.log({ url, walls });
+      // console.log({ url, hull });
 
       return {
         basename: url.slice('/svg/'.length, -'.svg'.length),
@@ -113,10 +113,7 @@ function extractGeoms(api, topNodes, title, tags) {
   const group = topNodes.find(x => hasTitle(api, x, title));
   return api(group).children('rect, path').toArray()
     .flatMap(x => extractGeom(api, x))
-    .filter(x => {
-      console.log(x.meta.title, tags)
-      return matchesTag(x.meta.title, tags)
-    });
+    .filter(x => matchesTag(x.meta.title, tags));
 }
 
 /**
@@ -133,8 +130,7 @@ function extractGeom(api, el) {
     const poly = Poly.fromRect(new Rect(Number(a.x || 0), Number(a.y || 0), Number(a.width || 0), Number(a.height || 0)));
     polys.push(poly.addMeta({ title }));
   } else if (tagName === 'path') {
-    const polys = svgPathToPolygons(a.d);
-    polys.push(...polys.map(x => x.addMeta({ title })));
+    polys.push(...svgPathToPolygons(a.d).map(x => x.addMeta({ title })));
   } else {
     console.warn('extractPoly: unexpected tagName:', tagName);
   }
