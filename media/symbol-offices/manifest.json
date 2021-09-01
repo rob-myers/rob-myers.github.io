@@ -1,0 +1,1032 @@
+{
+  "parentFolder": "Offices",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Office 001 [10x10].png",
+      "dstName": "office--001--2x2.png",
+      "id": 1,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Office 002 [10x10].png",
+      "dstName": "office--002--2x2.png",
+      "id": 2,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Office 003 [10x10].png",
+      "dstName": "office--003--2x2.png",
+      "id": 3,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Office 004 [10x10].png",
+      "dstName": "office--004--2x2.png",
+      "id": 4,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Office 005 [10x10].png",
+      "dstName": "office--005--2x2.png",
+      "id": 5,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Office 006 [10x10].png",
+      "dstName": "office--006--2x2.png",
+      "id": 6,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Office 007 [10x10].png",
+      "dstName": "office--007--2x2.png",
+      "id": 7,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Office 008 [10x10].png",
+      "dstName": "office--008--2x2.png",
+      "id": 8,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Office 009 [10x10].png",
+      "dstName": "office--009--2x2.png",
+      "id": 9,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Office 010 [10x10].png",
+      "dstName": "office--010--2x2.png",
+      "id": 10,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Office 011 [10x10].png",
+      "dstName": "office--011--2x2.png",
+      "id": 11,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Office 012 [10x10].png",
+      "dstName": "office--012--2x2.png",
+      "id": 12,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Office 013 [10x10].png",
+      "dstName": "office--013--2x2.png",
+      "id": 13,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Office 014 [10x10].png",
+      "dstName": "office--014--2x2.png",
+      "id": 14,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Office 015 [10x10].png",
+      "dstName": "office--015--2x2.png",
+      "id": 15,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Office 016 [10x10].png",
+      "dstName": "office--016--2x2.png",
+      "id": 16,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Office 017 [10x10].png",
+      "dstName": "office--017--2x2.png",
+      "id": 17,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Office 018 [10x10].png",
+      "dstName": "office--018--2x2.png",
+      "id": 18,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Office 019 [10x10].png",
+      "dstName": "office--019--2x2.png",
+      "id": 19,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Office 020 [10x15].png",
+      "dstName": "office--020--2x3.png",
+      "id": 20,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Office 021 [10x15].png",
+      "dstName": "office--021--2x3.png",
+      "id": 21,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Office 022 [10x15].png",
+      "dstName": "office--022--2x3.png",
+      "id": 22,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Office 023 [10x15].png",
+      "dstName": "office--023--2x3.png",
+      "id": 23,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Office 024 [10x15].png",
+      "dstName": "office--024--2x3.png",
+      "id": 24,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Office 025 [10x15].png",
+      "dstName": "office--025--2x3.png",
+      "id": 25,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Office 026 [10x15].png",
+      "dstName": "office--026--2x3.png",
+      "id": 26,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Office 027 [10x15].png",
+      "dstName": "office--027--2x3.png",
+      "id": 27,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Office 028 [10x15].png",
+      "dstName": "office--028--2x3.png",
+      "id": 28,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Office 029 [10x15].png",
+      "dstName": "office--029--2x3.png",
+      "id": 29,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Office 030 [10x15].png",
+      "dstName": "office--030--2x3.png",
+      "id": 30,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Office 031 [10x15].png",
+      "dstName": "office--031--2x3.png",
+      "id": 31,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Office 032 [10x15].png",
+      "dstName": "office--032--2x3.png",
+      "id": 32,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Office 033 [10x15].png",
+      "dstName": "office--033--2x3.png",
+      "id": 33,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Office 034 [10x15].png",
+      "dstName": "office--034--2x3.png",
+      "id": 34,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [34]
+    },
+    {
+      "srcName": "Office 035 [10x15].png",
+      "dstName": "office--035--2x3.png",
+      "id": 35,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [35]
+    },
+    {
+      "srcName": "Office 036 [10x20].png",
+      "dstName": "office--036--2x4.png",
+      "id": 36,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [36]
+    },
+    {
+      "srcName": "Office 037 [10x20].png",
+      "dstName": "office--037--2x4.png",
+      "id": 37,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [37]
+    },
+    {
+      "srcName": "Office 038 [10x20].png",
+      "dstName": "office--038--2x4.png",
+      "id": 38,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Office 039 [10x20].png",
+      "dstName": "office--039--2x4.png",
+      "id": 39,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Office 040 [10x20].png",
+      "dstName": "office--040--2x4.png",
+      "id": 40,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [40]
+    },
+    {
+      "srcName": "Office 041 [10x20].png",
+      "dstName": "office--041--2x4.png",
+      "id": 41,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Office 042 [10x20].png",
+      "dstName": "office--042--2x4.png",
+      "id": 42,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [42]
+    },
+    {
+      "srcName": "Office 043 [10x20].png",
+      "dstName": "office--043--2x4.png",
+      "id": 43,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [43]
+    },
+    {
+      "srcName": "Office 044 [10x20].png",
+      "dstName": "office--044--2x4.png",
+      "id": 44,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [44]
+    },
+    {
+      "srcName": "Office 045 [10x20].png",
+      "dstName": "office--045--2x4.png",
+      "id": 45,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [45]
+    },
+    {
+      "srcName": "Office 046 [10x20].png",
+      "dstName": "office--046--2x4.png",
+      "id": 46,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [46]
+    },
+    {
+      "srcName": "Office 047 [10x20].png",
+      "dstName": "office--047--2x4.png",
+      "id": 47,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [47]
+    },
+    {
+      "srcName": "Office 048 [10x20].png",
+      "dstName": "office--048--2x4.png",
+      "id": 48,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [48]
+    },
+    {
+      "srcName": "Office 049 [10x20].png",
+      "dstName": "office--049--2x4.png",
+      "id": 49,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [49]
+    },
+    {
+      "srcName": "Office 050 [10x20].png",
+      "dstName": "office--050--2x4.png",
+      "id": 50,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [50]
+    },
+    {
+      "srcName": "Office 051 [10x20].png",
+      "dstName": "office--051--2x4.png",
+      "id": 51,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [51]
+    },
+    {
+      "srcName": "Office 052 [10x20].png",
+      "dstName": "office--052--2x4.png",
+      "id": 52,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [52]
+    },
+    {
+      "srcName": "Office 053 [10x20].png",
+      "dstName": "office--053--2x4.png",
+      "id": 53,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [53]
+    },
+    {
+      "srcName": "Office 054 [10x20].png",
+      "dstName": "office--054--2x4.png",
+      "id": 54,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [54]
+    },
+    {
+      "srcName": "Office 055 [10x20].png",
+      "dstName": "office--055--2x4.png",
+      "id": 55,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [55]
+    },
+    {
+      "srcName": "Office 056 [10x20].png",
+      "dstName": "office--056--2x4.png",
+      "id": 56,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [56]
+    },
+    {
+      "srcName": "Office 057 [10x20].png",
+      "dstName": "office--057--2x4.png",
+      "id": 57,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [57]
+    },
+    {
+      "srcName": "Office 058 [15x20].png",
+      "dstName": "office--058--3x4.png",
+      "id": 58,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [58]
+    },
+    {
+      "srcName": "Office 059 [15x20].png",
+      "dstName": "office--059--3x4.png",
+      "id": 59,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [59]
+    },
+    {
+      "srcName": "Office 060 [15x20].png",
+      "dstName": "office--060--3x4.png",
+      "id": 60,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [60]
+    },
+    {
+      "srcName": "Office 061 [15x20].png",
+      "dstName": "office--061--3x4.png",
+      "id": 61,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [61]
+    },
+    {
+      "srcName": "Office 062 [15x20].png",
+      "dstName": "office--062--3x4.png",
+      "id": 62,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [62]
+    },
+    {
+      "srcName": "Office 063 [15x20].png",
+      "dstName": "office--063--3x4.png",
+      "id": 63,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [63]
+    },
+    {
+      "srcName": "Office 064 [15x20].png",
+      "dstName": "office--064--3x4.png",
+      "id": 64,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [64]
+    },
+    {
+      "srcName": "Office 065 [15x20].png",
+      "dstName": "office--065--3x4.png",
+      "id": 65,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [65]
+    },
+    {
+      "srcName": "Office 066 [15x20].png",
+      "dstName": "office--066--3x4.png",
+      "id": 66,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [66]
+    },
+    {
+      "srcName": "Office 067 [5x10].png",
+      "dstName": "office--067--1x2.png",
+      "id": 67,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [67]
+    },
+    {
+      "srcName": "Office 068 [5x10].png",
+      "dstName": "office--068--1x2.png",
+      "id": 68,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [68]
+    },
+    {
+      "srcName": "Office 069 [15x15].png",
+      "dstName": "office--069--3x3.png",
+      "id": 69,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [69]
+    },
+    {
+      "srcName": "Office 070 [15x25].png",
+      "dstName": "office--070--3x5.png",
+      "id": 70,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [70]
+    },
+    {
+      "srcName": "Office 071 [15x30].png",
+      "dstName": "office--071--3x6.png",
+      "id": 71,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [71]
+    },
+    {
+      "srcName": "Office 072 [20x20].png",
+      "dstName": "office--072--4x4.png",
+      "id": 72,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [72]
+    },
+    {
+      "srcName": "Office 073 [20x20].png",
+      "dstName": "office--073--4x4.png",
+      "id": 73,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [73]
+    },
+    {
+      "srcName": "Office 074 [20x20].png",
+      "dstName": "office--074--4x4.png",
+      "id": 74,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [74]
+    },
+    {
+      "srcName": "Office 075 [20x20].png",
+      "dstName": "office--075--4x4.png",
+      "id": 75,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [75]
+    },
+    {
+      "srcName": "Office 076 [20x20].png",
+      "dstName": "office--076--4x4.png",
+      "id": 76,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [76]
+    },
+    {
+      "srcName": "Office 077 [20x20].png",
+      "dstName": "office--077--4x4.png",
+      "id": 77,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [77]
+    },
+    {
+      "srcName": "Office 078 [20x20].png",
+      "dstName": "office--078--4x4.png",
+      "id": 78,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [78]
+    },
+    {
+      "srcName": "Office 079 [20x20].png",
+      "dstName": "office--079--4x4.png",
+      "id": 79,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [79]
+    },
+    {
+      "srcName": "Office 080 [20x20].png",
+      "dstName": "office--080--4x4.png",
+      "id": 80,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [80]
+    },
+    {
+      "srcName": "Office 081 [20x20].png",
+      "dstName": "office--081--4x4.png",
+      "id": 81,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [81]
+    },
+    {
+      "srcName": "Office 082 [20x20].png",
+      "dstName": "office--082--4x4.png",
+      "id": 82,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [82]
+    },
+    {
+      "srcName": "Office 083 [20x20].png",
+      "dstName": "office--083--4x4.png",
+      "id": 83,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [83]
+    },
+    {
+      "srcName": "Office 084 [20x20].png",
+      "dstName": "office--084--4x4.png",
+      "id": 84,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [84]
+    },
+    {
+      "srcName": "Office 085 [20x20].png",
+      "dstName": "office--085--4x4.png",
+      "id": 85,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [85]
+    },
+    {
+      "srcName": "Office 086 [20x20].png",
+      "dstName": "office--086--4x4.png",
+      "id": 86,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [86]
+    },
+    {
+      "srcName": "Office 087 [20x20].png",
+      "dstName": "office--087--4x4.png",
+      "id": 87,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [87]
+    },
+    {
+      "srcName": "Office 088 [20x20].png",
+      "dstName": "office--088--4x4.png",
+      "id": 88,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [88]
+    },
+    {
+      "srcName": "Office 089 [20x20].png",
+      "dstName": "office--089--4x4.png",
+      "id": 89,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [89]
+    },
+    {
+      "srcName": "Office 090 [20x20].png",
+      "dstName": "office--090--4x4.png",
+      "id": 90,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [90]
+    },
+    {
+      "srcName": "Office 091 [25x25].png",
+      "dstName": "office--091--5x5.png",
+      "id": 91,
+      "gridDim": [5, 5],
+      "is": [],
+      "has": [],
+      "ids": [91]
+    },
+    {
+      "srcName": "Office 092 [10x20].png",
+      "dstName": "office--092--2x4.png",
+      "id": 92,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [92]
+    },
+    {
+      "srcName": "Office 093 [10x20].png",
+      "dstName": "office--093--2x4.png",
+      "id": 93,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [93]
+    },
+    {
+      "srcName": "Office 094 [10x15].png",
+      "dstName": "office--094--2x3.png",
+      "id": 94,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [94]
+    },
+    {
+      "srcName": "Office 095 [10x15].png",
+      "dstName": "office--095--2x3.png",
+      "id": 95,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [95]
+    },
+    {
+      "srcName": "Office 096 [10x20].png",
+      "dstName": "office--096--2x4.png",
+      "id": 96,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [96]
+    },
+    {
+      "srcName": "Office 097 [10x15].png",
+      "dstName": "office--097--2x3.png",
+      "id": 97,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [97]
+    },
+    {
+      "srcName": "Office 098 [10x15].png",
+      "dstName": "office--098--2x3.png",
+      "id": 98,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [98]
+    },
+    {
+      "srcName": "Office 099 [10x15].png",
+      "dstName": "office--099--2x3.png",
+      "id": 99,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [99]
+    },
+    {
+      "srcName": "Office 100 [20x20].png",
+      "dstName": "office--100--4x4.png",
+      "id": 100,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [100]
+    },
+    {
+      "srcName": "Office 101 [25x30].png",
+      "dstName": "office--101--5x6.png",
+      "id": 101,
+      "gridDim": [5, 6],
+      "is": [],
+      "has": [],
+      "ids": [101]
+    },
+    {
+      "srcName": "Office 102 [20x20].png",
+      "dstName": "office--102--4x4.png",
+      "id": 102,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [102]
+    },
+    {
+      "srcName": "Office 103 [10x15].png",
+      "dstName": "office--103--2x3.png",
+      "id": 103,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [103]
+    },
+    {
+      "srcName": "Office 104 [10x15].png",
+      "dstName": "office--104--2x3.png",
+      "id": 104,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [104]
+    },
+    {
+      "srcName": "Office 105 [10x15].png",
+      "dstName": "office--105--2x3.png",
+      "id": 105,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [105]
+    },
+    {
+      "srcName": "Office 106 [10x15].png",
+      "dstName": "office--106--2x3.png",
+      "id": 106,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [106]
+    },
+    {
+      "srcName": "Office 107 [20x20].png",
+      "dstName": "office--107--4x4.png",
+      "id": 107,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [107]
+    },
+    {
+      "srcName": "Office 108 [10x15].png",
+      "dstName": "office--108--2x3.png",
+      "id": 108,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [108]
+    },
+    {
+      "srcName": "Office 109 [10x15].png",
+      "dstName": "office--109--2x3.png",
+      "id": 109,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [109]
+    },
+    {
+      "srcName": "Office 110 [10x15].png",
+      "dstName": "office--110--2x3.png",
+      "id": 110,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [110]
+    },
+    {
+      "srcName": "Office 111 [10x15].png",
+      "dstName": "office--111--2x3.png",
+      "id": 111,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [111]
+    },
+    {
+      "srcName": "Office 112 [10x15].png",
+      "dstName": "office--112--2x3.png",
+      "id": 112,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [112]
+    },
+    {
+      "srcName": "Office 113 [10x15].png",
+      "dstName": "office--113--2x3.png",
+      "id": 113,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [113]
+    },
+    {
+      "srcName": "Office 114 [10x10].png",
+      "dstName": "office--114--2x2.png",
+      "id": 114,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [114]
+    }
+  ]
+}

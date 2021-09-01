@@ -1,5 +1,6 @@
 /**
  * Rename and trim PNGs originally from Starship Geomorphs 2.0.
+ * 
  * yarn rename-pngs {input_type} {src_dir} {dst_dir}
  * - {input_type} in ['root', 'geomorph', 'symbol']
  * - {src_dir} and {dst_dir} are relative to repo root
@@ -8,10 +9,11 @@
  * Examples:
  * - yarn rename-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
  * - yarn rename-pngs root media/Symbols media/symbol-root
- * 
- * - yarn rename-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
- * - yarn rename-pngs symbol media/Symbols/Lounge media/symbol-lounge
  * - yarn rename-pngs symbol media/Symbols/Bridge media/symbol-bridge
+ * - yarn rename-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
+ * - yarn rename-pngs symbol media/Symbols/Offices media/symbol-offices
+ * 
+ * - yarn rename-pngs symbol media/Symbols/Lounge media/symbol-lounge
  * - yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
  */
 import fs from 'fs';

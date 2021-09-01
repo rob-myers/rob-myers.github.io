@@ -6,6 +6,7 @@
  * 
  * Examples
  * - yarn simplify-pngs media/used-symbols
+ * - yarn simplify-pngs public/png
  */
 
 import fs from 'fs';
