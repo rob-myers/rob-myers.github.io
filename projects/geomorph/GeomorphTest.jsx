@@ -8,8 +8,8 @@ export default function GeomorphTest() {
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds}>
-        <UseSvg url="/svg/301--hull.svg" />
         <UseSvg url="/svg/bridge--042--8x9.svg" transform="matrix(0.2, 0, 0, 0.2, 360, 60)" />
+        <UseSvg hull debug url="/svg/301--hull.svg" />
       </PanZoom>
     </div>
   );
@@ -24,5 +24,9 @@ const rootCss = css`
 
   .meta {
     stroke: none;
+    .outline { fill: rgba(0, 0, 100, 0.2); }
+    .door, .iris-valve { fill: rgba(0, 200, 0, 0.3); }
+    .wall, .hull { fill: rgba(200, 50, 50, 0.5); }
+    .obstacle { fill: rgba(150, 100, 100, 0.5); }
   }
 `;

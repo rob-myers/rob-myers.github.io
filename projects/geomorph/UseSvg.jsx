@@ -3,40 +3,58 @@ import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { svgPathToPolygons } from '../service';
 import { Poly, Rect, Vect } from '../geom';
 
-/** @param {{ url: string, transform?: string }} props */
+/** @param {Props} props */
 export default function UseSvg(props) {
   const { data } = useSvgText(props.url, props.transform);
 
   return data ? (
     <g className={`symbol ${data.basename}`}>
-      {/* <g
-        className="loaded"
-        transform={props.transform}
-        dangerouslySetInnerHTML={{
-          __html: data.svgInnerText || '',
-        }}
-      /> */}
-      <image
-        href={`/png/${data.basename}.png`}
-        style={{ transform: `matrix(0.2, 0, 0, 0.2, ${data.pngOffset})`}}
-      />
+      {props.debug && (
+        <g
+          className="debug"
+          transform={props.transform}
+          dangerouslySetInnerHTML={{
+            __html: data.svgInnerText || '',
+          }}
+        />
+      )}
+      {!props.hull && (
+        <image
+          href={`/png/${data.basename}.png`}
+          style={{ transform: `matrix(0.2, 0, 0, 0.2, ${data.pngOffset})`}}
+        />
+      )}
       <g className="meta">
-        {data.hull?.outline && (
-          <polygon fill="rgba(100, 0, 0, 0.2)" points={`${data.hull.outline}`} />
+        {data.hull[0] && (
+          <polygon className="outline" points={`${data.hull[0].outline}`} />
+        )}
+        {data.hull.map((poly, i) =>
+          <path key={i} className="hull" d={`${poly.svgPath}`} />
         )}
         {data.doors.map(({ outline }, i) =>
-          <polygon fill="rgba(0, 0, 200, 0.3)" key={i} points={`${outline}`} />
+          <polygon key={i} className="door" points={`${outline}`} />
+        )}
+        {data.irisValves.map(({ outline }, i) =>
+          <polygon key={i} className="iris-valve" points={`${outline}`} />
         )}
         {data.walls.map((poly, i) =>
-          <path fill="rgba(0, 200, 0, 0.5)" key={i} d={`${poly.svgPath}`} />
+          <path key={i} className="wall" d={`${poly.svgPath}`} />
         )}
         {data.obstacles.map((poly, i) =>
-          <path fill="rgba(200, 0, 200, 0.5)" key={i} d={`${poly.svgPath}`} />
+          <path key={i} className="obstacle" d={`${poly.svgPath}`} />
         )}
       </g>
     </g>
   ) : null;
 }
+
+/**
+ * @typedef Props @type {object}
+ * @property {string} url
+ * @property {string} [transform]
+ * @property {boolean} [hull]
+ * @property {boolean} [debug]
+ */
 
 /**
  * @param {string} url 
@@ -68,10 +86,10 @@ function useSvgText(url, transform) {
       return {
         basename: url.slice('/svg/'.length, -'.svg'.length),
         svgInnerText: topNodes.map(x => $.html(x)).join('\n'),
-        hull: Poly.union(hull).find(Boolean), // Assume connected
+        hull: Poly.union(hull), // Assume connected
         doors,
         irisValves,
-        obstacles,
+        obstacles: Poly.union(obstacles),
         pngOffset,
         walls,
       };
