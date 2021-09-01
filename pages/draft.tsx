@@ -123,21 +123,23 @@ We will build the game using the following technologies.
 We want to create a video game explicitly, exposing the code and underlying thought process.
 Then it is worth explaining these technologies before using them.
 
-### React, Preact and Rendering
+### React and Preact
 
 Competing web frameworks exist in the wild, often with their own notion of component.
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
 
 - They have a single parameter, conventionally called _props_.
   
-  It is a JavaScript object defining the component's named inputs, and possibly special properties like _children_, _key_ and _ref_.
+  It is a JavaScript object defining the component's named inputs,
+  and possibly special properties like _children_, _key_ and _ref_.
+
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
   
   This returned value amounts to an HTML fragment to be rendered,
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
-React developers compose components using an XML-like syntax, in order to obtain the desired dynamic DOM tree.
-Let's consider some source code for a pannable and zoomable grid.
+React developers compose components using an XML-like syntax, to obtain the desired dynamic DOM tree.
+Let's consider an example: a pannable and zoomable grid.
         `}/>
 
         <Tabs
@@ -167,15 +169,14 @@ Behaviourally:
         <Markdown children={`
 
 They are JS functions with a single parameter, returning something which looks like HTML (but isn't).
-_PanZoom_ defines a pannable and zoomable grid.
+_PanZoom_ defines a pannable and zoomable grid, and _PanZoomDemo_ renders _PanZoom_.
 You can also view it [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab"), which permits code editing.
-
 
 Notice _PanZoomDemo_ renders _PanZoom_ by using the XML tag _\\<PanZoom\\>_.
 Then although React function components are functions, they are not invoked like functions.
-We now provide more details of a general nature.
+We now list some important general info.
 
-- React developers use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), naturally combining JavaScript and XML syntax.
+- React developers use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), combining JavaScript and XML syntax.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function _React.createElement_.
         `}/>
 
@@ -189,14 +190,20 @@ We now provide more details of a general nature.
 
         <Markdown children={`
 
-- This website uses Preact instead of React. Technically, _react_ and _react-dom_ are aliases for the npm module [@preact/compat](https://www.npmjs.com/package/@preact/compat).
-  As a result, React.createElement corresponds to [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
-  and constructs Preact VNode's (virtual DOM nodes).
+- This website uses [Preact](https://www.npmjs.com/package/@preact/compat), an alternative to React with the same API.
+  Then _React.createElement_ corresponds to [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
+  and constructs Preact virtual DOM nodes.
 - The root component is conventionally called _App_.
   Running a React application amounts to [invoking _ReactDOM.render_](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
-  with two arguments: _\\<App/\\>_ and an extant DOM node _el_.
-  The [render function](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts the virtual DOM tree into an actual DOM tree mounted at _el_.
-  Subsequent changes are [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
+  with two arguments i.e. _\\<App/\\>_ and an extant DOM node _el_.
+  
+- [_ReactDOM.render_](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts _\\<App/\\>_ into a DOM node mounted at _el_.
+  A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
+  It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
+
+- If _\\<App/\\>_ defines a website, it is often rendered server-side.
+  [_ReactDOM.renderToString_](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js) creates HTML the client can render immediately.
+  The client invokes [_ReactDOM.hydrate_](https://github.com/preactjs/preact/blob/master/src/render.js) instead of _ReactDOM.render_, but with the same two arguments.
 
 <!--
 Recall the three pillars: HTML, CSS and JavaScript (JS), born in the early 1990s.
@@ -207,22 +214,27 @@ For reasons of uniformity, it is increasingly common for the initial HTML and CS
 
 So, React function components are JavaScript functions.
 They are written using XML syntax via JSX, and are composed together in the same way as HTML.
-There's more to say e.g. how they represent internal state,
-but we've said more than enough for now.
-We'll close this subsection with two related remarks.
+We use Preact e.g. because its codebase is smaller, and it has reputation for being faster
+(although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer)).
+Rendering a component involves (re)constructing virtual DOM nodes and diffing them.
+Since the initial payload of a website is HTML, the initial render is often precomputed.
 
-_Preact vs React_. This website is built using Preact, a popular alternative to React with the same API.
-It has a much smaller codebase (easier to understand),
-and a reputation for being faster.
-However, React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer).
-    
-_CSS in JavaScript_. Traditionally, CSS is provided in separate files,
-linked in the _\\<head\\>_ and referenced by DOM elements via their class attribute.
-Both PanZoom and PanZoomDemo are styled using CSS-in-JS.
-This means the CSS is written inside JS or JSX files, often with the React component it applies to.
-The npm module [Goober](https://www.npmjs.com/package/goober) handles this.
+<!--
+There's more to say e.g. how React function components represent internal state,
+but we've said more than enough for now.
+-->
+
+### React Rendering
 
 __TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly e.g. via Web Components spec. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
+
+### CSS-in-JS
+
+Traditionally, CSS is provided in separate files,
+linked in the _\\<head\\>_ and referenced by DOM elements via their class attribute.
+Both _PanZoom_ and _PanZoomDemo_ above are styled using CSS-in-JS.
+This means the CSS is written inside JS or JSX files, often together with the React component it applies to.
+The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us.
 
 ### Navigation
 
