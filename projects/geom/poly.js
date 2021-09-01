@@ -7,6 +7,7 @@ import { Rect } from "./rect";
 import { Vect } from "./vect";
 
 export class Poly {
+
   /**
    * @param {Vect[]} outline
    * @param {Vect[][]} holes 
@@ -14,6 +15,7 @@ export class Poly {
   constructor(outline = [], holes = []) {
     /** @type {Vect[]} */ this.outline = outline;
     /** @type {Vect[][]} */ this.holes = holes;
+    /** @type {Record<string, string>} */ this.meta;
   }
 
   get allPoints() {
@@ -38,8 +40,7 @@ export class Poly {
 
   get svgPath() {
     return [this.outline, ...this.holes]
-      .map(ring => `M${ring}Z`)
-      .join(' ');
+      .map(ring => `M${ring}Z`).join(' ');
   }
 
   /** Compute tangents of exterior and holes. */
@@ -66,6 +67,12 @@ export class Poly {
   /** @param {Vect} delta */
   add(delta) {
     return this.translate(delta.x, delta.y);
+  }
+
+  /** @param {Record<string, string | undefined>} meta */
+  addMeta(meta) {
+    this.meta = Object.assign(this.meta || {}, meta);
+    return this;
   }
 
   /** @param {DOMMatrix} m */

@@ -1,11 +1,12 @@
 import { useQuery } from 'react-query';
 import cheerio, { CheerioAPI, Element } from 'cheerio';
+import classNames from 'classnames';
 import { svgPathToPolygons } from '../service';
 import { Poly, Rect, Vect } from '../geom';
 
 /** @param {Props} props */
 export default function UseSvg(props) {
-  const { data } = useSvgText(props.url);
+  const { data } = useSvgText(props.url, props.tags);
 
   return data ? (
     <g
@@ -47,9 +48,9 @@ export default function UseSvg(props) {
         {data.obstacles.map((poly, i) =>
           <path key={i} className="obstacle" d={`${poly.svgPath}`} />
         )}
-        {data.labels.map(({ outline }, i) =>
-          // TODO forward label via polygon.meta
-          <polygon key={i} className="label" points={`${outline}`} />
+        {data.labels.map(({ outline, meta }, i) =>
+          // TODO render label meta.title
+          <polygon key={i} className={classNames("label", meta?.title)} points={`${outline}`} />
         )}
       </g>
     </g>
@@ -62,14 +63,16 @@ export default function UseSvg(props) {
  * @property {string} [transform]
  * @property {boolean} [hull]
  * @property {boolean} [debug]
+ * @property {string[]} [tags]
  */
 
 /**
- * @param {string} url 
+ * @param {string} url
+ * @param {string[]} [tags]
  */
-function useSvgText(url) {
+function useSvgText(url, tags) {
   return useQuery(
-    `use-svg-${url}`,
+    `use-svg-${url}-${tags || []}`,
     async () => {
       console.info('loading symbol', url);
       const contents = await fetch(url).then(x => x.text());
@@ -77,7 +80,7 @@ function useSvgText(url) {
 
       const topNodes = Array.from($('svg > *'));
       const hull = extractGeoms($, topNodes, 'hull');
-      const doors = extractGeoms($, topNodes, 'doors');
+      const doors = extractGeoms($, topNodes, 'doors', tags);
       const walls = extractGeoms($, topNodes, 'walls');
       const obstacles = extractGeoms($, topNodes, 'obstacles');
       const irisValves = extractGeoms($, topNodes, 'iris-valves');
@@ -88,7 +91,7 @@ function useSvgText(url) {
       return {
         basename: url.slice('/svg/'.length, -'.svg'.length),
         svgInnerText: topNodes.map(x => $.html(x)).join('\n'),
-        hull: Poly.union(hull), // Assume connected if exists
+        hull: Poly.union(hull), // Assume connected, if exists
         doors,
         irisValves,
         labels,
@@ -101,45 +104,52 @@ function useSvgText(url) {
 }
 
 /**
- * @param {CheerioAPI} api 
- * @param {Element[]} topNodes 
- */
-function extractPngOffset(api, topNodes) {
-  const group = topNodes.find(x => hasTitle(api, x, 'background'));
-  const { attribs: a } = api(group).children('image').toArray()[0];
-  return (new Vect(Number(a.x || 0), Number(a.y || 0)));
-}
-
-/**
- * TODO forward meta
  * @param {CheerioAPI} api
  * @param {Element[]} topNodes
  * @param {string} title
+ * @param {string[]} [tags]
  */
-function extractGeoms(api, topNodes, title) {
+function extractGeoms(api, topNodes, title, tags) {
   const group = topNodes.find(x => hasTitle(api, x, title));
   return api(group).children('rect, path').toArray()
-    .flatMap(x => extractGeom(x))
+    .flatMap(x => extractGeom(api, x))
+    .filter(x => {
+      console.log(x.meta.title, tags)
+      return matchesTag(x.meta.title, tags)
+    });
 }
 
 /**
- * TODO forward meta
- * @param {Element} param0
+ * @param {CheerioAPI} api
+ * @param {Element} el
  * @returns {Poly[]}
  */
-function extractGeom({ tagName, attribs: a }) {
+function extractGeom(api, el) {
+  const { tagName, attribs: a } = el;
   const polys = /** @type {Poly[]} */ ([]);
+  const title = api(el).children('title').text() || undefined;
+
   if (tagName === 'rect') {
-    polys.push(Poly.fromRect(
-      new Rect(Number(a.x || 0), Number(a.y || 0), Number(a.width || 0), Number(a.height || 0)
-    )));
+    const poly = Poly.fromRect(new Rect(Number(a.x || 0), Number(a.y || 0), Number(a.width || 0), Number(a.height || 0)));
+    polys.push(poly.addMeta({ title }));
   } else if (tagName === 'path') {
-    polys.push(...svgPathToPolygons(a.d));
+    const polys = svgPathToPolygons(a.d);
+    polys.push(...polys.map(x => x.addMeta({ title })));
   } else {
     console.warn('extractPoly: unexpected tagName:', tagName);
   }
   const m = new DOMMatrix(a.transform);
   return polys.map(p => p.applyMatrix(m));
+}
+
+/**
+ * @param {CheerioAPI} api 
+ * @param {Element[]} topNodes 
+ */
+ function extractPngOffset(api, topNodes) {
+  const group = topNodes.find(x => hasTitle(api, x, 'background'));
+  const { attribs: a } = api(group).children('image').toArray()[0];
+  return new Vect(Number(a.x || 0), Number(a.y || 0));
 }
 
 /**
@@ -151,4 +161,14 @@ function extractGeom({ tagName, attribs: a }) {
  */
  function hasTitle(api, node, title) {
   return api(node).children('title').text() === title && api(node).addClass(title)
+}
+
+/**
+ * @param {string | undefined} title
+ * @param {string[] | undefined} tags
+ */
+function matchesTag(title, tags) {
+  return !tags || !title || (
+    title.startsWith('has-') && tags.includes(title.slice(4))
+  );
 }
