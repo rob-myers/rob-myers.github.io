@@ -83,7 +83,7 @@ function useSvgText(url) {
       const irisValves = extractGeoms($, topNodes, 'iris-valves');
       const labels = extractGeoms($, topNodes, 'labels');
       const pngOffset = extractPngOffset($, topNodes);
-      // console.log({ pngOffset, hull, doors, walls });
+      // console.log({ url, walls });
 
       return {
         basename: url.slice('/svg/'.length, -'.svg'.length),
@@ -131,7 +131,7 @@ function extractGeom({ tagName, attribs: a }) {
   const polys = /** @type {Poly[]} */ ([]);
   if (tagName === 'rect') {
     polys.push(Poly.fromRect(
-      new Rect(Number(a.x), Number(a.y), Number(a.width), Number(a.height)
+      new Rect(Number(a.x || 0), Number(a.y || 0), Number(a.width || 0), Number(a.height || 0)
     )));
   } else if (tagName === 'path') {
     polys.push(...svgPathToPolygons(a.d));
