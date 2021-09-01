@@ -138,8 +138,9 @@ One popular approach uses _React function components_, which are just JavaScript
   This returned value amounts to an HTML fragment to be rendered,
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
-React developers compose components using an XML-like syntax, to obtain the desired dynamic DOM tree.
-Let's consider an example: a pannable and zoomable grid.
+React developers use a grammatical extension of JavaScript called JSX.
+It permits composing components using an XML-like syntax, to obtain the desired dynamic DOM tree.
+Let's consider an example, a pannable and zoomable grid.
         `}/>
 
         <Tabs
@@ -173,7 +174,7 @@ _PanZoom_ defines a pannable and zoomable grid, and _PanZoomDemo_ renders _PanZo
 You can also view it [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab"), which permits code editing.
 
 Notice _PanZoomDemo_ renders _PanZoom_ by using the XML tag _\\<PanZoom\\>_.
-Then although React function components are functions, they are not invoked like functions.
+Then although React function components are functions, syntactically they are not invoked like functions.
 We now list some important general info.
 
 - React developers use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), combining JavaScript and XML syntax.
