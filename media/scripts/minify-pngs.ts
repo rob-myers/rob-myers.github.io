@@ -1,12 +1,11 @@
 /**
  * yarn minify-pngs {src_dir}
  * - {src_dir} is relative to repo root
- * - {src_dir} exists
+ * - {src_dir} must exist
  *
  * Examples:
  * - yarn minify-pngs public/png
  * - yarn minify-pngs media/geomorph-edge
- * - yarn minify-pngs media/used-symbols
  */
 import fs from 'fs';
 import path from 'path';

@@ -5,7 +5,7 @@
  * - {src_dir} exists
  * 
  * Examples
- * - yarn simplify-pngs media/used-symbols
+ * - yarn simplify-pngs media/unsorted
  * - yarn simplify-pngs public/png
  */
 

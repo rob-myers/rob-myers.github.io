@@ -9,6 +9,7 @@ export default function GeomorphTest() {
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
         <UseSvg hull debug={true} url="/svg/301--hull.svg" />
+        <UseSvg url="/svg/misc-stellar-cartography--023--4x4.svg" transform="matrix(-0.2, 0, 0, 0.2, 1200, 360)" />
         <UseSvg url="/svg/stateroom--014--2x2.svg" transform="matrix(0.2, 0, 0, -0.2, 0, 480)" />
         <UseSvg url="/svg/stateroom--014--2x2.svg" transform="matrix(0.2, 0, 0, -0.2, 120, 480)" />
         <UseSvg url="/svg/office--001--2x2.svg" tags={['door-s']} transform="matrix(-0.2, 0, 0, 0.2, 240, 120)" />
