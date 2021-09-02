@@ -95,7 +95,7 @@ const Root = styled('div', React.forwardRef)<{
 }>`
   width: 100%;
   height: 100%;
-  font-size: 13px;
+  font-size: 0.9rem;
   
   .CodeMirror {
     ::selection {
