@@ -6,6 +6,7 @@ import NavDemo from 'projects/pathfinding/NavDemo';
 import navDemoJsx from '!!raw-loader!projects/pathfinding/NavDemo.jsx';
 
 import GeomorphTest from 'projects/geomorph/GeomorphTest';
+import PhysicsDemo from 'projects/physics/PhysicsDemo';
 import jsxToJs from '!!raw-loader!projects/example/jsx-to-js.jsx';
 
 export const code = {
@@ -19,6 +20,7 @@ export const component = {
   'panzoom/PanZoomDemo.jsx': PanZoomDemo,
   'pathfinding/NavDemo.jsx': NavDemo,
   'geomorph/GeomorphTest.jsx': GeomorphTest,
+  'physics/PhysicsDemo.jsx': PhysicsDemo,
 } as const;
 
 export type ComponentFilepathKey = keyof typeof component;

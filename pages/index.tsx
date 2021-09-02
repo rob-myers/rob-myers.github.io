@@ -3,7 +3,7 @@ import Title from 'components/page/Title';
 
 export default function IndexPage() {
   return (
-    <div className="main">
+    <main>
       <section>
 
         <Title />
@@ -13,7 +13,6 @@ export default function IndexPage() {
         `}/>
 
       </section>
-
-    </div>
+    </main>
   );
 }

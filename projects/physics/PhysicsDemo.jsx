@@ -1,6 +1,8 @@
 /// <reference path="./Box2D.types.d.ts"/>
 import * as React from 'react';
+import { Rect } from '../geom';
 import Box2DFactory from '../../public/box2d/entry';
+import PanZoom from '../panzoom/PanZoom';
 
 export default function PhysicsDemo() {
   
@@ -23,8 +25,15 @@ export default function PhysicsDemo() {
     };
   }, []);
 
-  return null;
+  return (
+    <PanZoom gridBounds={gridBounds} initViewBox={initViewBox}>
+      <text x={10} y={20}>TODO</text>
+    </PanZoom>
+  );
 }
+
+const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
+const initViewBox = new Rect(0, 0, 200, 200);
 
 /**
  * @typedef Physics

@@ -1,18 +1,20 @@
 :root {
+  --blog-indent: 16px;
   --list-indent: 36px;
 }
 @media(max-width: 400px) {
   :root {
+    --blog-indent: 8px;
     --list-indent: 24px;
   } 
 }
 
 body {
+  background: #ddd;
   padding: 0;
   margin: 0;
-  background: #eee;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -35,7 +37,7 @@ a.new-tab-link::after {
   box-sizing: border-box;
 }
 
-div.main {
+main {
   display: flex;
   flex-direction: column;
   padding-bottom: 2rem;
@@ -43,28 +45,27 @@ div.main {
   max-width: 1024px;
 }
 @media(max-width: 700px) {
-  div.main {
+  main {
     margin: 0;
   }
 }
 
-div.main > section {
+main > section {
   padding: 32px 150px;
-  background: #fff;
 }
 @media(max-width: 1024px) {
-  div.main > section {
+  main > section {
     padding: 32px 120px;
     margin: 0;
   }
 }
 @media(max-width: 800px) {
-  div.main > section {
+  main > section {
     padding: 32px 64px;
   }
 }
 @media(max-width: 600px) {
-  div.main > section {
+  main > section {
     padding: 0 16px 16px 16px;
   }
 }

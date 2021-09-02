@@ -7,15 +7,15 @@ import gfm from 'remark-gfm';
 
 export default function Markdown(
   props: ReactMarkdown.ReactMarkdownOptions & {
-    title?: boolean
+    title?: boolean;
   }
 ) {
   return (
-    <div className={props.title ? titleRootCss : rootCss} >
+    <div className={props.title ? titleRootCss : blogRootCss} >
       <ReactMarkdown
         rehypePlugins={[rehypeRaw]} // Permit html
         remarkPlugins={[gfm]}
-        components={props.title ? titleComponents : components}
+        components={props.title ? titleComponents : blogComponents}
         {...props}
       />
     </div>
@@ -36,7 +36,7 @@ const titleComponents = {
   },
 };
 
-const components = {
+const blogComponents = {
   a({node, href, title, children, ...props}: any) {
     return (
       <a
@@ -74,7 +74,52 @@ const components = {
   },
 };
 
-const rootCss = css`
+const titleRootCss = css`
+  h1 {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 6rem;
+    font-weight: 300;
+    cursor: pointer;
+    margin: 48px 0 24px;
+    color: #333;
+    
+    @media(max-width: 1024px) {
+      margin: 12px 0 24px;
+      font-size: 5rem;
+    }
+    @media(max-width: 800px) {
+      font-size: 4rem;
+    }
+    @media(max-width: 400px) {
+      font-size: 3.3rem;
+    }
+  }
+  
+  p {// Site subtitle
+    color: #444;
+    margin: 0 0 32px 0;
+    padding-top: 16px;
+    letter-spacing: 1px;
+    font-size: 1rem;
+    font-family: monospace;
+   
+    @media(max-width: 800px) {
+      padding-top: 0;
+    }
+    @media(max-width: 400px) {
+      font-size: 0.8rem;
+    }
+  }
+`;
+
+const blogRootCss = css`
+  background: #f6f6f6;
+  color: #333;
+  padding-left: var(--blog-indent);
+  padding-right: var(--blog-indent);
+  border-top: 8px solid #ccc;
+  border-bottom: 8px solid #ccc;
+
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   font-size: 1.2rem;
@@ -90,7 +135,9 @@ const rootCss = css`
   
   p {
     line-height: 1.5;
+    margin-bottom: 24px;
   }
+
   code {
     font-size: 12pt;
     font-family: Courier, monospace;
@@ -137,50 +184,6 @@ const rootCss = css`
       @media(max-width: 540px) {
         padding: 4px 2px;
       }
-    }
-  }
-
-  hr {
-    margin: 32px 0 24px;
-    height: 4px;
-    background: #ddd;
-    border-color: #ddd;
-  }
-`;
-
-const titleRootCss = css`
-  h1 {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 6rem;
-    font-weight: 300;
-    cursor: pointer;
-    margin: 48px 0 24px;
-    
-    @media(max-width: 1024px) {
-      margin: 12px 0 24px;
-      font-size: 5rem;
-    }
-    @media(max-width: 800px) {
-      font-size: 4rem;
-    }
-    @media(max-width: 400px) {
-      font-size: 3.3rem;
-    }
-  }
-  
-  p {// Site subtitle
-    color: #444;
-    margin: 0 0 32px 0;
-    padding-top: 16px;
-    letter-spacing: 1px;
-    font-size: 1rem;
-    font-family: monospace;
-   
-    @media(max-width: 800px) {
-      padding-top: 0;
-    }
-    @media(max-width: 400px) {
-      font-size: 0.8rem;
     }
   }
 `;

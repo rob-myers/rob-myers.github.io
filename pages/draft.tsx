@@ -6,27 +6,28 @@ import Terminal from 'components/sh/Terminal';
 
 export default function IndexPage() {
   return (
-    <div className="main">
+    <main>
       <section>
 
         <Title />
 
         <Markdown children={`
-
 ## Objective <float rem="1.2">19th July 2021</float>
 
 We are going to build a video game step-by-step on this website.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the starship _Gehennom_.
 
 As an important side-effect, a popular approach to frontend development will be presented. The underlying technology is the Markup language HTML, brought to life via CSS, SVG and JavaScript.
+        `}/>
 
----
+        <br/>
 
+        <Markdown children={`
 ## Constraints <float rem="1.2">19th July 2021</float>
 
 I've necessarily made a large number of decisions. Here are the important ones, from low-level to high-level.
 
-### Concerning technology
+### Technology
 
 - We'll make a browser-based game for mobile & desktop devices.
 - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
@@ -37,7 +38,7 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 - Use [NextJS](https://nextjs.org/) as our development environment.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 
-### Concerning game mechanics
+### Game mechanics
 
 - Use a realtime birdseye camera, like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
 - Use [Recast](https://github.com/recastnavigation/recastnavigation) to generate navmeshes.
@@ -45,14 +46,14 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 - Use procedural generation e.g. spaceship building/docking.
 - Use explicitly illustrated NPC decisions as a game mechanic.
 
-### Concerning the setting
+### Setting
   
 - The title of the game is _Rogue Markup_.
-- The player character is the Captain of the starship _Gehennom_.
-  They work for _Unified Transport_, providing personnel transport, cargo transport, and hauling services.
+- The player is the Captain of the starship _Gehennom_,
+  working for _Unified Transport_, providing cargo/personnel transport and hauling services.
 - The graphical style is based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
-Over time we'll clarify these constraints.
+Over time we'll clarify the above.
 But first we emphasise:
 > _finishing a game is really fucking hard_.
 
@@ -97,12 +98,14 @@ I have a [strong background](https://dblp.org/pid/81/8748.html) in Theoretical C
 so won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
 I have also created similar game mechanics _many_ times over the years.
 Here's hoping my chain of unfinished projects is coming to a close!
+        `}/>
 
----
+        <br/>
 
+        <Markdown children={`
 ## Technology  <float rem="1.2">19th July 2021</float>
 
-We will build the game using the following technologies.
+We're going to build the game using the following technologies.
 
 | Concept | Browser Technology |
 | - | - |
@@ -183,7 +186,7 @@ We now list some important general info.
 
         <Tabs
           height={320}
-          margin="0 0 0 var(--list-indent)"
+          // margin="0 0 0 var(--list-indent)"
           tabs={[
             { key: 'code', filepath: 'example/jsx-to-js.jsx' },
           ]}
@@ -255,20 +258,20 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
 
 ### Physics engine
 
-Why do we need a Physics engine?
-> Raycasting, triggers, and collision detection.
-
-__TODO__ from here
-
+We need a Physics engine:
+- Raycasting
+- Triggers
+- Collision detection
         `}/>
 
-        <PhysicsDemo />
+        <Tabs
+          height={300}
+          tabs={[
+            { key: 'component', filepath: 'physics/PhysicsDemo.jsx' },
+          ]}
+        />
 
         <Markdown children={`
-
-- Raycast test
-- Dynamic collison test
-
 ### Static and Runtime Analysis
 
 - Typescript via JSDoc, refering to CodeSandbox.
@@ -279,9 +282,11 @@ __TODO__ from here
 
 - Display GitHub comments from Issue (build-time)
 - Can use anonymous credits to get recent
+        `}/>
+        
+        <br/>
 
----
-
+        <Markdown children={`
 ## Starship Geomorphs <float rem="1.2">19th July 2021</float>
 
 ### Filesystem structure
@@ -326,9 +331,6 @@ public/svg
         />
 
         <Markdown children={`
-
----
-
 ## Movement <float rem="1.2">19th July 2021</float>
 
 - Navigation
@@ -348,7 +350,7 @@ This is an example of a [command link](#command "@test echo foo").
         `}/>
 
       </section>
-    </div>
+    </main>
   );
 }
 
