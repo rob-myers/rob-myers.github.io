@@ -25,8 +25,13 @@ interface Props {
 
 const TabsRoot = styled('div')<{ height: number; margin?: string }>`
   height: ${(props) => props.height}px;
-  background: #444;
   margin: ${props => props.margin || 'auto'};
+  background: #444;
+  
+  @media(min-width: 800px) {
+    margin-top: 24px;
+    margin-bottom: 24px;
+  }
 
   > div {
     position: relative;
