@@ -1,5 +1,5 @@
 :root {
-  --blog-indent: 36px;
+  --blog-indent: 64px;
   --list-indent: 36px;
 }
 @media(max-width: 480px) {
@@ -55,7 +55,7 @@ main > section {
 }
 @media(max-width: 1024px) {
   main > section {
-    padding: 32px 120px;
+    padding: 32px 64px;
     margin: 0;
   }
 }

@@ -125,8 +125,8 @@ const blogRootCss = css`
   border-bottom: 8px solid #ccc;
 
   @media(min-width: 600px) {
-    padding-top: 16px;
-    padding-bottom: 24px;
+    padding-top: 32px;
+    padding-bottom: 32px;
   }
 
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
