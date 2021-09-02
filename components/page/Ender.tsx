@@ -5,7 +5,7 @@ export default function() {
 }
 
 const rootCss = css`
-  background: #ccc;
+  background: #bfbfbf;
   margin: 0 0 32px;
-  height: 16px;
+  height: 2px;
 `;
