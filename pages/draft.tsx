@@ -49,19 +49,19 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 ### Setting
   
 - The title of the game is _Rogue Markup_.
-- The player is the Captain of the starship _Gehennom_,
-  working for _Unified Transport_, providing cargo/personnel transport and hauling services.
+- The player is the Captain of the starship _Gehennom_.
+- The player works for _Unified Transport_, providing cargo/personnel transport and hauling services.
 - The graphical style is based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
-Over time we'll clarify the above.
-But first we emphasise:
+Over time we'll clarify the above,
+but first we emphasise:
 > _finishing a game is really fucking hard_.
 
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). We'll now address them.
 
-### 1. Fun to develop (Games I want to make)
+### 1. Fun to develop
 
-_Rogue Markup_ will be fun to develop because I enjoy experimenting with NPC behaviour.
+_Games I want to make_. Rogue Markup will be fun to develop because I enjoy experimenting with NPC behaviour.
 One of our underlying motivations is the lack of Game AI resources available on the web.
 It is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which felt fun for me.
 
@@ -71,9 +71,9 @@ Simple interacting robots fits the space travel theme nicely.
 They're also analogous to UI components: parallel systems with some intercommunication.
 -->
 
-### 2. The Result (Games I want to have made)
+### 2. The Result
 
-As an end result I want a _highly replayable space travel game_.
+_Games I want to have made_. As an end result I want a highly replayable space travel game.
 The underlying missions amount to going from A to B (ever was it so).
 Monotony will be overcome via mission specifics, encountered NPC behaviours, procedural generation, and ship building.
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
@@ -91,9 +91,9 @@ We'll add cameras, guards, doors, keys, weapons etc.
 All NPC decisions will be depicted graphically, such as future navpaths with probabilistic branches.
 -->
 
-### 3. Experience (Games I’m good at making)
+### 3. Experience
 
-I work as a web developer, using React & Emotion on a daily basis. 
+_Games I’m good at making_. I work as a web developer, using React & Emotion on a daily basis. 
 I have a [strong background](https://dblp.org/pid/81/8748.html) in Theoretical Computer Science,
 so won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
 I have also created similar game mechanics _many_ times over the years.
