@@ -40,9 +40,7 @@ div.main {
   flex-direction: column;
   padding-bottom: 2rem;
   margin: 0 auto;
-  
-  max-width: 1000px;
-
+  max-width: 1024px;
 }
 @media(max-width: 700px) {
   div.main {
@@ -51,13 +49,12 @@ div.main {
 }
 
 div.main > section {
-  padding: 32px 120px;
-  margin: 48px 0;
+  padding: 32px 150px;
   background: white;
-  
 }
 @media(max-width: 1024px) {
   div.main > section {
+    padding: 32px 120px;
     margin: 0;
   }
 }
