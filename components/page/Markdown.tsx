@@ -84,31 +84,30 @@ const titleRootCss = css`
     font-size: 6rem;
     font-weight: 300;
     cursor: pointer;
-    margin: 48px 0 24px;
     color: #333;
+    margin: 0;
     
     @media(max-width: 1024px) {
-      margin: 12px 0 24px;
       font-size: 5rem;
     }
     @media(max-width: 800px) {
       font-size: 4rem;
     }
     @media(max-width: 480px) {
-      font-size: 3.3rem;
+      font-size: 3rem;
     }
   }
   
-  p {// Site subtitle
+  p {/** Site subtitle */
     color: #444;
-    margin: 0 0 32px 0;
-    padding-top: 16px;
     letter-spacing: 1px;
     font-size: 1rem;
     font-family: monospace;
-   
-    @media(max-width: 800px) {
-      padding-top: 0;
+    margin: 0;
+    padding: 24px 0 48px;
+    
+    @media(max-width: 600px) {
+      padding: 24px 0;
     }
     @media(max-width: 480px) {
       font-size: 0.8rem;
@@ -123,6 +122,11 @@ const blogRootCss = css`
   padding-right: var(--blog-indent);
   border-top: 8px solid #ccc;
   border-bottom: 8px solid #ccc;
+
+  @media(min-width: 600px) {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
 
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;

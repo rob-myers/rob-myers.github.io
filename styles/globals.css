@@ -1,8 +1,8 @@
 :root {
-  --blog-indent: 16px;
+  --blog-indent: 36px;
   --list-indent: 36px;
 }
-@media(max-width: 400px) {
+@media(max-width: 480px) {
   :root {
     --blog-indent: 8px;
     --list-indent: 24px;
