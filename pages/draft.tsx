@@ -1,8 +1,8 @@
 import Title from 'components/page/Title';
 import Markdown from 'components/page/Markdown';
 import Tabs from 'components/page/Tabs';
-import PhysicsDemo from 'projects/physics/PhysicsDemo';
 import Terminal from 'components/sh/Terminal';
+import Ender from 'components/page/Ender';
 
 export default function IndexPage() {
   return (
@@ -20,7 +20,7 @@ It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set 
 As an important side-effect, a popular approach to frontend development will be presented. The underlying technology is the Markup language HTML, brought to life via CSS, SVG and JavaScript.
         `}/>
 
-        <br/>
+        <Ender />
 
         <Markdown children={`
 ## Constraints <float rem="1.2">19th July 2021</float>
@@ -100,7 +100,7 @@ I have also created similar game mechanics _many_ times over the years.
 Here's hoping my chain of unfinished projects is coming to a close!
         `}/>
 
-        <br/>
+        <Ender />
 
         <Markdown children={`
 ## Technology  <float rem="1.2">19th July 2021</float>
@@ -239,6 +239,12 @@ linked in the _\\<head\\>_ and referenced by DOM elements via their class attrib
 Both _PanZoom_ and _PanZoomDemo_ above are styled using CSS-in-JS.
 This means the CSS is written inside JS or JSX files, often together with the React component it applies to.
 The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us.
+        `}/>
+
+        <Ender />
+
+        <Markdown children={`
+## Technology (Part 2)
 
 ### Navigation
 
@@ -284,7 +290,7 @@ We need a Physics engine:
 - Can use anonymous credits to get recent
         `}/>
         
-        <br/>
+        <Ender />
 
         <Markdown children={`
 ## Starship Geomorphs <float rem="1.2">19th July 2021</float>
