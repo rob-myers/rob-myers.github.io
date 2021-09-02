@@ -2,19 +2,19 @@
 
 - develop geomorph 301
 - use geomorph in `PanZoomDemo`
+- tidy up `PanZoom` and update CodeSandboxes
 - emphasise render-once approach to React in intro
 - demos should always involve starship geomorphs
-- save tabs state to browser state
 - write Navigation subsection
 - write Physics engine subsection
 - use geomorph in `NavDemo`
+- save tabs state to browser state (?)
 - ✅ GeomorphTest caches symbols via react-query
 - ✅ tabs prevent component SSR, and fade-in
 
-- tidy up `PanZoom` and update CodeSandboxes
 - better Tabs UI
-  - CodeEditor initially fades in
   - can enable/disable for easier scrolling
+  - ✅ CodeEditor initially fades in
   - ✅ fix tabs colours
 
 - ✅ fix `PanZoom` on mobile

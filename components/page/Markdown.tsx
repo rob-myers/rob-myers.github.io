@@ -77,6 +77,7 @@ const blogComponents = {
 const titleRootCss = css`
   @media(max-width: 600px) {
     padding-left: 8px;
+    margin-top: 12px;
   }
 
   h1 {
