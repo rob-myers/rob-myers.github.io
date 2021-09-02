@@ -10,7 +10,7 @@ import Tab, { ErrorMessage, TabMeta } from './Tab';
 export default function Tabs({ tabs, margin, height }: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   return (
-    <TabsRoot height={height} margin={margin}>
+    <TabsRoot className="scrollable" height={height} margin={margin}>
       <Layout model={model} factory={factory}  />
     </TabsRoot>
   );

@@ -36,6 +36,7 @@ export default function XTermComponent({
   return (
     <XTermContainer
       ref={containerRef}
+      className="scrollable"
       onKeyDown={stopKeysPropagating}
     />
   );

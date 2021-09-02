@@ -50,7 +50,7 @@ div.main {
 
 div.main > section {
   padding: 32px 150px;
-  background: white;
+  background: #fff;
 }
 @media(max-width: 1024px) {
   div.main > section {
@@ -69,15 +69,15 @@ div.main > section {
   }
 }
 
-::-webkit-scrollbar {
+.scrollable ::-webkit-scrollbar {
   width: 9px;
   height: 9px;
   overflow: auto;
 }
-::-webkit-scrollbar-track {
+.scrollable ::-webkit-scrollbar-track {
   background: transparent;
 }
-::-webkit-scrollbar-thumb {
+.scrollable ::-webkit-scrollbar-thumb {
   background-color: rgba(155, 155, 155, 0.5);
   border-radius: 20px;
   border: transparent;
