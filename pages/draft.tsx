@@ -2,7 +2,6 @@ import Title from 'components/page/Title';
 import Markdown from 'components/page/Markdown';
 import Tabs from 'components/page/Tabs';
 import Terminal from 'components/sh/Terminal';
-import Ender from 'components/page/Ender';
 
 export default function IndexPage() {
   return (
@@ -20,7 +19,7 @@ It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set 
 As an important side-effect, a popular approach to frontend development will be presented. The underlying technology is the Markup language HTML, brought to life via CSS, SVG and JavaScript.
         `}/>
 
-        <Ender />
+        <br/>
 
         <Markdown children={`
 ## Constraints <float rem="1.2">19th July 2021</float>
@@ -100,7 +99,7 @@ I have also created similar game mechanics _many_ times over the years.
 Here's hoping my chain of unfinished projects is coming to a close!
         `}/>
 
-        <Ender />
+        <br/>
 
         <Markdown children={`
 ## Technology  <float rem="1.2">19th July 2021</float>
@@ -241,7 +240,7 @@ This means the CSS is written inside JS or JSX files, often together with the Re
 The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us.
         `}/>
 
-        <Ender />
+        <br/>
 
         <Markdown children={`
 ## Technology (Part 2)
@@ -290,7 +289,7 @@ We need a Physics engine:
 - Can use anonymous credits to get recent
         `}/>
         
-        <Ender />
+        <br />
 
         <Markdown children={`
 ## Starship Geomorphs <float rem="1.2">19th July 2021</float>

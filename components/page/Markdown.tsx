@@ -75,6 +75,10 @@ const blogComponents = {
 };
 
 const titleRootCss = css`
+  @media(max-width: 600px) {
+    padding-left: 8px;
+  }
+
   h1 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 6rem;
@@ -90,7 +94,7 @@ const titleRootCss = css`
     @media(max-width: 800px) {
       font-size: 4rem;
     }
-    @media(max-width: 400px) {
+    @media(max-width: 480px) {
       font-size: 3.3rem;
     }
   }
@@ -106,7 +110,7 @@ const titleRootCss = css`
     @media(max-width: 800px) {
       padding-top: 0;
     }
-    @media(max-width: 400px) {
+    @media(max-width: 480px) {
       font-size: 0.8rem;
     }
   }
