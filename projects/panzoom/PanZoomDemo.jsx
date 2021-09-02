@@ -23,7 +23,6 @@ const rootCss = css`
   display: flex;
   flex-direction: column;
   height: 100%;
-  border: 2px solid #000;
 
   > p {
     padding: 12px 8px;
