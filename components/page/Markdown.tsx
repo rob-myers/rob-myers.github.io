@@ -126,7 +126,7 @@ const blogRootCss = css`
 
   @media(min-width: 600px) {
     padding-top: 16px;
-    padding-bottom: 16px;
+    padding-bottom: 24px;
   }
 
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
@@ -185,6 +185,7 @@ const blogRootCss = css`
   table {
     border: 1px solid #ccc;
     border-left: 4px solid #999;
+    width: 100%;
 
     th, td {
       text-align: left;
