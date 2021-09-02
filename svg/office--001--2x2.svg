@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="pointer-events: none;">
+    <title>background</title>
+    <image width="620" height="620" x="-10" y="-10" xlink:href="data:image/png;base64,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"/>
+  </g>
+  <g transform="matrix(1, 0, 0, 1, 0, 0.000001)" style="pointer-events: none;">
+    <title>doors</title>
+    <rect x="575" y="300" width="48" height="290" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
+      <title>has-door-e</title>
+    </rect>
+    <rect x="300" y="575" width="290" height="48" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
+      <title>has-door-s</title>
+    </rect>
+  </g>
+  <g style="pointer-events: none;" transform="matrix(1, 0, 0, 1, 0, 0.000001)">
+    <title>walls</title>
+    <rect y="-10" width="590" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; pointer-events: auto;"/>
+    <rect y="590" width="610" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; pointer-events: auto;"/>
+    <rect y="-10" width="20" height="620" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; pointer-events: auto;" x="-10"/>
+    <rect y="-10" width="20" height="620" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; pointer-events: auto;" x="590"/>
+  </g>
+</svg>
