@@ -1,0 +1,1590 @@
+{
+  "parentFolder": "Misc",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Airlock 001 [10x10].png",
+      "dstName": "airlock--001--2x2.png",
+      "id": 1,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Airlock 002 [10x10].png",
+      "dstName": "airlock--002--2x2.png",
+      "id": 2,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Airlock 003 [10x10].png",
+      "dstName": "airlock--003--2x2.png",
+      "id": 3,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Airlock 004 [10x10].png",
+      "dstName": "airlock--004--2x2.png",
+      "id": 4,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Airlock 005 [10x10].png",
+      "dstName": "airlock--005--2x2.png",
+      "id": 5,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Airlock 006 [10x15].png",
+      "dstName": "airlock--006--2x3.png",
+      "id": 6,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Airlock 007 [5x10].png",
+      "dstName": "airlock--007--1x2.png",
+      "id": 7,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Airlock 008 [10x10].png",
+      "dstName": "airlock--008--2x2.png",
+      "id": 8,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Airlock 009 [5x10].png",
+      "dstName": "airlock--009--1x2.png",
+      "id": 9,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Airlock 010 [5x10].png",
+      "dstName": "airlock--010--1x2.png",
+      "id": 10,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Airlock 011 [10x20].png",
+      "dstName": "airlock--011--2x4.png",
+      "id": 11,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Armory 001 [10x20].png",
+      "dstName": "armory--001--2x4.png",
+      "id": 1,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Armory 002 [20x20].png",
+      "dstName": "armory--002--4x4.png",
+      "id": 2,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Armory 003 [20x20].png",
+      "dstName": "armory--003--4x4.png",
+      "id": 3,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Armory 004 [20x40].png",
+      "dstName": "armory--004--4x8.png",
+      "id": 4,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Armory 005 [20x40].png",
+      "dstName": "armory--005--4x8.png",
+      "id": 5,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Bar 001 [20x20].png",
+      "dstName": "bar--001--4x4.png",
+      "id": 1,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Bar 002 [10x20].png",
+      "dstName": "bar--002--2x4.png",
+      "id": 2,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Bar 003 [10x10].png",
+      "dstName": "bar--003--2x2.png",
+      "id": 3,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Corridors 001 [20x20].png",
+      "dstName": "corridors--001--4x4.png",
+      "id": 1,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Corridors 002 [5x30].png",
+      "dstName": "corridors--002--1x6.png",
+      "id": 2,
+      "gridDim": [1, 6],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Corridors 003 [15x15].png",
+      "dstName": "corridors--003--3x3.png",
+      "id": 3,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Corridors 004 [20x20].png",
+      "dstName": "corridors--004--4x4.png",
+      "id": 4,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Corridors 005 [10x20].png",
+      "dstName": "corridors--005--2x4.png",
+      "id": 5,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Corridors 006 [15x15].png",
+      "dstName": "corridors--006--3x3.png",
+      "id": 6,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Corridors 007 [20x20].png",
+      "dstName": "corridors--007--4x4.png",
+      "id": 7,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Corridors 008 [20x20].png",
+      "dstName": "corridors--008--4x4.png",
+      "id": 8,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Corridors 009 [30x30].png",
+      "dstName": "corridors--009--6x6.png",
+      "id": 9,
+      "gridDim": [6, 6],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Door 001 [10x30].png",
+      "dstName": "door--001--2x6.png",
+      "id": 1,
+      "gridDim": [2, 6],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Door 002 [10x30].png",
+      "dstName": "door--002--2x6.png",
+      "id": 2,
+      "gridDim": [2, 6],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Door 003 [10x30].png",
+      "dstName": "door--003--2x6.png",
+      "id": 3,
+      "gridDim": [2, 6],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Door 004 [10x30].png",
+      "dstName": "door--004--2x6.png",
+      "id": 4,
+      "gridDim": [2, 6],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Elevator 001 [20x20].png",
+      "dstName": "elevator--001--4x4.png",
+      "id": 1,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Elevator 002 [5x5].png",
+      "dstName": "elevator--002--1x1.png",
+      "id": 2,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Elevator 003 [5x10].png",
+      "dstName": "elevator--003--1x2.png",
+      "id": 3,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Elevator 004 [5x15].png",
+      "dstName": "elevator--004--1x3.png",
+      "id": 4,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Elevator 005 [10x10].png",
+      "dstName": "elevator--005--2x2.png",
+      "id": 5,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Extendable Airlock 001 [5x10].png",
+      "dstName": "extendable-airlock--001--1x2.png",
+      "id": 1,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Extendable Airlock 002 [5x10].png",
+      "dstName": "extendable-airlock--002--1x2.png",
+      "id": 2,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Extendable Airlock 003 [5x10].png",
+      "dstName": "extendable-airlock--003--1x2.png",
+      "id": 3,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Extendable Airlock 004 [5x10].png",
+      "dstName": "extendable-airlock--004--1x2.png",
+      "id": 4,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Extendable Airlock 005 [10x20].png",
+      "dstName": "extendable-airlock--005--2x4.png",
+      "id": 5,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Extendable Airlock 006 [10x15].png",
+      "dstName": "extendable-airlock--006--2x3.png",
+      "id": 6,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Extendable Airlock 007 [5x20].png",
+      "dstName": "extendable-airlock--007--1x4.png",
+      "id": 7,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Iris Valves 001 [5x5].png",
+      "dstName": "iris-valves--001--1x1.png",
+      "id": 1,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Iris Valves 002 [5x5].png",
+      "dstName": "iris-valves--002--1x1.png",
+      "id": 2,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Iris Valves 003 [5x5].png",
+      "dstName": "iris-valves--003--1x1.png",
+      "id": 3,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Iris Valves 004 [5x5].png",
+      "dstName": "iris-valves--004--1x1.png",
+      "id": 4,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Iris Valves 005 [5x5].png",
+      "dstName": "iris-valves--005--1x1.png",
+      "id": 5,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Iris Valves 006 [5x5].png",
+      "dstName": "iris-valves--006--1x1.png",
+      "id": 6,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Iris Valves 007 [5x5].png",
+      "dstName": "iris-valves--007--1x1.png",
+      "id": 7,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Iris Valves 008 [5x5].png",
+      "dstName": "iris-valves--008--1x1.png",
+      "id": 8,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Iris Valves 009 [5x5].png",
+      "dstName": "iris-valves--009--1x1.png",
+      "id": 9,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Iris Valves 010 [5x5].png",
+      "dstName": "iris-valves--010--1x1.png",
+      "id": 10,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Iris Valves 011 [5x5].png",
+      "dstName": "iris-valves--011--1x1.png",
+      "id": 11,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Iris Valves 012 [5x5].png",
+      "dstName": "iris-valves--012--1x1.png",
+      "id": 12,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Iris Valves 013 [5x5].png",
+      "dstName": "iris-valves--013--1x1.png",
+      "id": 13,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Iris Valves 014 [5x5].png",
+      "dstName": "iris-valves--014--1x1.png",
+      "id": 14,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Iris Valves 015 [5x5].png",
+      "dstName": "iris-valves--015--1x1.png",
+      "id": 15,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Iris Valves 016 [5x5].png",
+      "dstName": "iris-valves--016--1x1.png",
+      "id": 16,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Iris Valves 017 [5x5].png",
+      "dstName": "iris-valves--017--1x1.png",
+      "id": 17,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Iris Valves 018 [5x5].png",
+      "dstName": "iris-valves--018--1x1.png",
+      "id": 18,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Iris Valves 019 [5x5].png",
+      "dstName": "iris-valves--019--1x1.png",
+      "id": 19,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Landscaping 00 [2x2].png",
+      "dstName": "landscaping--00--0.4x0.4.png",
+      "id": 0,
+      "gridDim": [0.4, 0.4],
+      "is": [],
+      "has": [],
+      "ids": [0]
+    },
+    {
+      "srcName": "Landscaping 001 [7x7].png",
+      "dstName": "landscaping--001--1.4x1.4.png",
+      "id": 1,
+      "gridDim": [1.4, 1.4],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Landscaping 002 [5x5].png",
+      "dstName": "landscaping--002--1x1.png",
+      "id": 2,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Landscaping 003 [5x5].png",
+      "dstName": "landscaping--003--1x1.png",
+      "id": 3,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Landscaping 004 [3x4].png",
+      "dstName": "landscaping--004--0.6x0.8.png",
+      "id": 4,
+      "gridDim": [0.6, 0.8],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Landscaping 005 [5x5].png",
+      "dstName": "landscaping--005--1x1.png",
+      "id": 5,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Landscaping 006 [3x3].png",
+      "dstName": "landscaping--006--0.6x0.6.png",
+      "id": 6,
+      "gridDim": [0.6, 0.6],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Landscaping 009 [2x2].png",
+      "dstName": "landscaping--009--0.4x0.4.png",
+      "id": 9,
+      "gridDim": [0.4, 0.4],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Landscaping 010 [2x2].png",
+      "dstName": "landscaping--010--0.4x0.4.png",
+      "id": 10,
+      "gridDim": [0.4, 0.4],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Landscaping 011 [1x1].png",
+      "dstName": "landscaping--011--0.2x0.2.png",
+      "id": 11,
+      "gridDim": [0.2, 0.2],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Landscaping 012 [6x8].png",
+      "dstName": "landscaping--012--1.2x1.6.png",
+      "id": 12,
+      "gridDim": [1.2, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Landscaping 013 [5x9].png",
+      "dstName": "landscaping--013--1x1.8.png",
+      "id": 13,
+      "gridDim": [1, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Landscaping 014 [2x5].png",
+      "dstName": "landscaping--014--0.4x1.png",
+      "id": 14,
+      "gridDim": [0.4, 1],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Landscaping 015 [2x8].png",
+      "dstName": "landscaping--015--0.4x1.6.png",
+      "id": 15,
+      "gridDim": [0.4, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Landscaping 016 [2x20].png",
+      "dstName": "landscaping--016--0.4x4.png",
+      "id": 16,
+      "gridDim": [0.4, 4],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Landscaping 017 [10x10].png",
+      "dstName": "landscaping--017--2x2.png",
+      "id": 17,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Landscaping 018 [15x15].png",
+      "dstName": "landscaping--018--3x3.png",
+      "id": 18,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Landscaping 019 [10x10].png",
+      "dstName": "landscaping--019--2x2.png",
+      "id": 19,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Landscaping 020 [3x10].png",
+      "dstName": "landscaping--020--0.6x2.png",
+      "id": 20,
+      "gridDim": [0.6, 2],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Landscaping 021 [3x10].png",
+      "dstName": "landscaping--021--0.6x2.png",
+      "id": 21,
+      "gridDim": [0.6, 2],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Landscaping 022 [5x10].png",
+      "dstName": "landscaping--022--1x2.png",
+      "id": 22,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Landscaping 023 [20x20].png",
+      "dstName": "landscaping--023--4x4.png",
+      "id": 23,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Landscaping 024 [20x20].png",
+      "dstName": "landscaping--024--4x4.png",
+      "id": 24,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Landscaping 025 [10x10].png",
+      "dstName": "landscaping--025--2x2.png",
+      "id": 25,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Landscaping 026 [10x10].png",
+      "dstName": "landscaping--026--2x2.png",
+      "id": 26,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Landscaping 027 [10x10].png",
+      "dstName": "landscaping--027--2x2.png",
+      "id": 27,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Landscaping 028 [15x15].png",
+      "dstName": "landscaping--028--3x3.png",
+      "id": 28,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Landscaping 029 [25x40].png",
+      "dstName": "landscaping--029--5x8.png",
+      "id": 29,
+      "gridDim": [5, 8],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Landscaping 030 [5x10].png",
+      "dstName": "landscaping--030--1x2.png",
+      "id": 30,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Landscaping 031 [7x15].png",
+      "dstName": "landscaping--031--1.4x3.png",
+      "id": 31,
+      "gridDim": [1.4, 3],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Landscaping 032 [15x15].png",
+      "dstName": "landscaping--032--3x3.png",
+      "id": 32,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Misc 001 Incinerator [25x45].png",
+      "dstName": "misc-incinerator--001--5x9.png",
+      "id": 1,
+      "gridDim": [5, 9],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Misc 002 Incinerator [20x45].png",
+      "dstName": "misc-incinerator--002--4x9.png",
+      "id": 2,
+      "gridDim": [4, 9],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Misc 003 Incinerator [20x20].png",
+      "dstName": "misc-incinerator--003--4x4.png",
+      "id": 3,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Misc 004 Incinerator [10x20].png",
+      "dstName": "misc-incinerator--004--2x4.png",
+      "id": 4,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Misc 005 Trash Compactor [25x45].png",
+      "dstName": "misc-trash-compactor--005--5x9.png",
+      "id": 5,
+      "gridDim": [5, 9],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Misc 006 Trash Compactor [20x45].png",
+      "dstName": "misc-trash-compactor--006--4x9.png",
+      "id": 6,
+      "gridDim": [4, 9],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Misc 007 Trash Compactor [25x40].png",
+      "dstName": "misc-trash-compactor--007--5x8.png",
+      "id": 7,
+      "gridDim": [5, 8],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Misc 008 Shooting Range [10x20].png",
+      "dstName": "misc-shooting-range--008--2x4.png",
+      "id": 8,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Misc 009 Shooting Range [15x25].png",
+      "dstName": "misc-shooting-range--009--3x5.png",
+      "id": 9,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Misc 010 Shooting Range [20x30].png",
+      "dstName": "misc-shooting-range--010--4x6.png",
+      "id": 10,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Misc 011 Holo Suite [10x10].png",
+      "dstName": "misc-holo-suite--011--2x2.png",
+      "id": 11,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Misc 012 Holo Suite [20x20].png",
+      "dstName": "misc-holo-suite--012--4x4.png",
+      "id": 12,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Misc 013 Gym [10x20].png",
+      "dstName": "misc-gym--013--2x4.png",
+      "id": 13,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Misc 014 Gym [20x20].png",
+      "dstName": "misc-gym--014--4x4.png",
+      "id": 14,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Misc 015 Gym & Fresher [20x20].png",
+      "dstName": "misc-gym-and-fresher--015--4x4.png",
+      "id": 15,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Misc 016 Transporter [20x30].png",
+      "dstName": "misc-transporter--016--4x6.png",
+      "id": 16,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Misc 017 Transporter [20x25].png",
+      "dstName": "misc-transporter--017--4x5.png",
+      "id": 17,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Misc 018 Transporter [20x20].png",
+      "dstName": "misc-transporter--018--4x4.png",
+      "id": 18,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Misc 019 Transporter [20x20].png",
+      "dstName": "misc-transporter--019--4x4.png",
+      "id": 19,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Misc 020 Stellar Cartography [50x50].png",
+      "dstName": "misc-stellar-cartography--020--10x10.png",
+      "id": 20,
+      "gridDim": [10, 10],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Misc 021 Stellar Cartography [20x20].png",
+      "dstName": "misc-stellar-cartography--021--4x4.png",
+      "id": 21,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Misc 022 Stellar Cartography [20x20].png",
+      "dstName": "misc-stellar-cartography--022--4x4.png",
+      "id": 22,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Misc 023 Stellar Cartography [20x20].png",
+      "dstName": "misc-stellar-cartography--023--4x4.png",
+      "id": 23,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Misc 030 Sensor Holo Pit [15x15].png",
+      "dstName": "misc-sensor-holo-pit--030--3x3.png",
+      "id": 30,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Misc 031 Sensor Holo Pit [15x15].png",
+      "dstName": "misc-sensor-holo-pit--031--3x3.png",
+      "id": 31,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Misc 032 Sensor Holo Pit [20x20].png",
+      "dstName": "misc-sensor-holo-pit--032--4x4.png",
+      "id": 32,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Misc 033 Solar Panels [10x20].png",
+      "dstName": "misc-solar-panels--033--2x4.png",
+      "id": 33,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Robotics 001 [5x5].png",
+      "dstName": "robotics--001--1x1.png",
+      "id": 1,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Robotics 002 [5x5].png",
+      "dstName": "robotics--002--1x1.png",
+      "id": 2,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Robotics 003 [5x10].png",
+      "dstName": "robotics--003--1x2.png",
+      "id": 3,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Robotics 004 [5x10].png",
+      "dstName": "robotics--004--1x2.png",
+      "id": 4,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Robotics 005 [5x10].png",
+      "dstName": "robotics--005--1x2.png",
+      "id": 5,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Robotics 006 [5x10].png",
+      "dstName": "robotics--006--1x2.png",
+      "id": 6,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Robotics 007 [5x5].png",
+      "dstName": "robotics--007--1x1.png",
+      "id": 7,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Robotics 008 [5x5].png",
+      "dstName": "robotics--008--1x1.png",
+      "id": 8,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Robotics 009 [5x5].png",
+      "dstName": "robotics--009--1x1.png",
+      "id": 9,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Robotics 010 [5x5].png",
+      "dstName": "robotics--010--1x1.png",
+      "id": 10,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Robotics 011 [5x5].png",
+      "dstName": "robotics--011--1x1.png",
+      "id": 11,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Robotics 012 [5x5].png",
+      "dstName": "robotics--012--1x1.png",
+      "id": 12,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Robotics 013 [10x10].png",
+      "dstName": "robotics--013--2x2.png",
+      "id": 13,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Robotics 014 [10x10].png",
+      "dstName": "robotics--014--2x2.png",
+      "id": 14,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Robotics 015 [3x9].png",
+      "dstName": "robotics--015--0.6x1.8.png",
+      "id": 15,
+      "gridDim": [0.6, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Robotics 016 [5x8].png",
+      "dstName": "robotics--016--1x1.6.png",
+      "id": 16,
+      "gridDim": [1, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Robotics 017 [5x7].png",
+      "dstName": "robotics--017--1x1.4.png",
+      "id": 17,
+      "gridDim": [1, 1.4],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Robotics 018 [5x14].png",
+      "dstName": "robotics--018--1x2.8.png",
+      "id": 18,
+      "gridDim": [1, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Robotics 019 [7x14].png",
+      "dstName": "robotics--019--1.4x2.8.png",
+      "id": 19,
+      "gridDim": [1.4, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Robotics 020 [7x9].png",
+      "dstName": "robotics--020--1.4x1.8.png",
+      "id": 20,
+      "gridDim": [1.4, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Robotics 021 [11x46].png",
+      "dstName": "robotics--021--2.2x9.2.png",
+      "id": 21,
+      "gridDim": [2.2, 9.2],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Robotics 022 [8x15].png",
+      "dstName": "robotics--022--1.6x3.png",
+      "id": 22,
+      "gridDim": [1.6, 3],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Sensor Probe 001 [10x10].png",
+      "dstName": "sensor-probe--001--2x2.png",
+      "id": 1,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Sensor Probe 002 [10x10].png",
+      "dstName": "sensor-probe--002--2x2.png",
+      "id": 2,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Sensor Probe 003 [10x10].png",
+      "dstName": "sensor-probe--003--2x2.png",
+      "id": 3,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Sensor Probe 004 [5x10].png",
+      "dstName": "sensor-probe--004--1x2.png",
+      "id": 4,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Sensor Probe 005 [10x10].png",
+      "dstName": "sensor-probe--005--2x2.png",
+      "id": 5,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Sensor Probe 006 [10x15].png",
+      "dstName": "sensor-probe--006--2x3.png",
+      "id": 6,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Stairs 001 [10x20].png",
+      "dstName": "stairs--001--2x4.png",
+      "id": 1,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Stairs 002 [5x10].png",
+      "dstName": "stairs--002--1x2.png",
+      "id": 2,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Stairs 003 [5x10].png",
+      "dstName": "stairs--003--1x2.png",
+      "id": 3,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Stairs 004 [5x20].png",
+      "dstName": "stairs--004--1x4.png",
+      "id": 4,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Stairs 005 [5x5].png",
+      "dstName": "stairs--005--1x1.png",
+      "id": 5,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Stairs 006 [10x20].png",
+      "dstName": "stairs--006--2x4.png",
+      "id": 6,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Stairs 007 [10x10].png",
+      "dstName": "stairs--007--2x2.png",
+      "id": 7,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Stairs 008 [10x15].png",
+      "dstName": "stairs--008--2x3.png",
+      "id": 8,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Stairs 009 [10x15].png",
+      "dstName": "stairs--009--2x3.png",
+      "id": 9,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Stairs 010 [10x20].png",
+      "dstName": "stairs--010--2x4.png",
+      "id": 10,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Stairs 011 [10x20].png",
+      "dstName": "stairs--011--2x4.png",
+      "id": 11,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Stairs 012 [10x10].png",
+      "dstName": "stairs--012--2x2.png",
+      "id": 12,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Stairs 013 [5x5].png",
+      "dstName": "stairs--013--1x1.png",
+      "id": 13,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Window 001 [0x5].png",
+      "dstName": "window--001--0x1.png",
+      "id": 1,
+      "gridDim": [0, 1],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Window 002 [0x5].png",
+      "dstName": "window--002--0x1.png",
+      "id": 2,
+      "gridDim": [0, 1],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Window 003 [0x7].png",
+      "dstName": "window--003--0x1.4.png",
+      "id": 3,
+      "gridDim": [0, 1.4],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Window 004 [0x7].png",
+      "dstName": "window--004--0x1.4.png",
+      "id": 4,
+      "gridDim": [0, 1.4],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Window 005 [0x10].png",
+      "dstName": "window--005--0x2.png",
+      "id": 5,
+      "gridDim": [0, 2],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Window 006 [0x10].png",
+      "dstName": "window--006--0x2.png",
+      "id": 6,
+      "gridDim": [0, 2],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Window 007 [0x12].png",
+      "dstName": "window--007--0x2.4.png",
+      "id": 7,
+      "gridDim": [0, 2.4],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Window 008 [0x12].png",
+      "dstName": "window--008--0x2.4.png",
+      "id": 8,
+      "gridDim": [0, 2.4],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Window 009 [0x15].png",
+      "dstName": "window--009--0x3.png",
+      "id": 9,
+      "gridDim": [0, 3],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Window 010 [0x15].png",
+      "dstName": "window--010--0x3.png",
+      "id": 10,
+      "gridDim": [0, 3],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Work Pod 001 [5x10].png",
+      "dstName": "work-pod--001--1x2.png",
+      "id": 1,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Work Pod 002 [10x10].png",
+      "dstName": "work-pod--002--2x2.png",
+      "id": 2,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Work Pod 003 [5x10].png",
+      "dstName": "work-pod--003--1x2.png",
+      "id": 3,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Work Pod 004 [10x10].png",
+      "dstName": "work-pod--004--2x2.png",
+      "id": 4,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    }
+  ]
+}

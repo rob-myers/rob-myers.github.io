@@ -12,6 +12,7 @@
  * - yarn rename-pngs symbol media/Symbols/Bridge media/symbol-bridge
  * - yarn rename-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
  * - yarn rename-pngs symbol media/Symbols/Offices media/symbol-offices
+ * - yarn rename-pngs symbol media/Symbols/Misc media/symbol-misc
  * 
  * - yarn rename-pngs symbol media/Symbols/Lounge media/symbol-lounge
  * - yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
@@ -21,6 +22,8 @@ import path from 'path';
 import chalk from 'chalk';
 import childProcess from 'child_process';
 import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
+import { nanoid } from 'nanoid';
+
 import { 
   FileMeta,
   metaFromGeomorphFilename,
@@ -29,13 +32,12 @@ import {
   info,
   metaFromRootFilename,
   warn,
+  symbolsFilenameRegex,
+  geomorphsFilenameRegex,
+  rootFilenameRegex,
 } from './service';
-import { nanoid } from 'nanoid';
 
 const [,, inputType, srcDir, dstDir] = process.argv;
-const rootFilenameRegex = /^(\d+x\d+)(.*)\.png$/;
-const geomorphsFilenameRegex = /(^[\d,]+) \[(\d+x\d+)\] ([^(]*)(.*)\.png$/;
-const symbolsFilenameRegex = /^(.*) (\d+)([a-z])? \[(\d+x\d+)\](.*)\.png$/;
 
 if (
   !(inputType === 'root' || inputType === 'geomorph' || inputType == 'symbol')
@@ -67,6 +69,7 @@ const filenameRegex = {
   'geomorph': geomorphsFilenameRegex,
   'symbol': symbolsFilenameRegex,
 }[inputType];
+
 const extractMeta = {
   'root': metaFromRootFilename,
   'geomorph': metaFromGeomorphFilename,
@@ -76,7 +79,8 @@ const extractMeta = {
 info('creating manifest', manifestPath);
 const fileMetas = srcFilenames.flatMap<FileMeta>(filename => {
   const matched = filename.match(filenameRegex);
-  return matched ? [extractMeta(matched)]
+  return matched
+    ? [extractMeta(matched)]
     : (filename.match(/\.png$/) && warn('ignoring PNG with unexpected filename format:', filename), []);
 });
 fs.writeFileSync(path.join(dstDir, 'manifest.json'), jsonStringifyPrettyCompact({

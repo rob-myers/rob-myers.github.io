@@ -11,6 +11,8 @@ export interface FileMeta {
   has: string[];
 }
 
+export const rootFilenameRegex = /^(\d+x\d+)(.*)\.png$/;
+
 export function metaFromRootFilename(matched: RegExpMatchArray): FileMeta {
   const srcName = matched[0];
   const gridDim = matched[1].split('x').map(x => Number(x) / 5) as [number, number];
@@ -20,6 +22,8 @@ export function metaFromRootFilename(matched: RegExpMatchArray): FileMeta {
   const dstName = `${gridDim[0]}x${gridDim[1]}${description ? `--${description}` : ''}.png`;
   return { srcName, dstName, id, gridDim, is: ['root'], has: [], ids };
 }
+
+export const geomorphsFilenameRegex = /(^[\d,]+) \[(\d+x\d+)\] ([^(]*)(.*)\.png$/;
 
 export function metaFromGeomorphFilename(matched: RegExpMatchArray): FileMeta {
   const srcName = matched[0];
@@ -32,17 +36,23 @@ export function metaFromGeomorphFilename(matched: RegExpMatchArray): FileMeta {
   return { srcName, dstName, id, gridDim, is, has, ids };
 }
 
+export const symbolsFilenameRegex = /^(.*) (\d+)([a-z])? (?:(.+) )?\[(\d+x\d+)\](.*)\.png$/;
+
+/**
+ * [1: category] [2: local_id][3: a-z]? [4: subcategory ]?[5: width*height][6: meta].png
+ */
 export function metaFromSymbolFilename(matched: RegExpMatchArray): FileMeta {
   const srcName = matched[0];
-  const category = normalizeChars(matched[1]);
+  let category = normalizeChars(matched[1]);
+  if (matched[4]) category += `-${normalizeChars(matched[4])}`;
   const id = Number(matched[2]);
   const ids = [id];
-  const gridDim = matched[4].split('x').map(x => Number(x) / 5) as [number, number];
+  const gridDim = matched[5].split('x').map(x => Number(x) / 5) as [number, number];
   // ids are local unlike geomorphs
   const dstName = `${category}--${matched[2]}--${gridDim[0]}x${gridDim[1]}.png`;
   const is = [] as string[];
   if (matched[3]) is.push(`part-${matched[3]}`);
-  if (matched[5]) is.push(normalizeChars(matched[5]));
+  if (matched[6]) is.push(normalizeChars(matched[6]));
   return { srcName, dstName, id, gridDim, is, has: [], ids };
 }
 
