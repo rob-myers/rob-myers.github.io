@@ -91,17 +91,17 @@ const titleCss = css`
 
   h1 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 6rem;
+    font-size: 6.5rem;
     font-weight: 300;
     cursor: pointer;
     color: #333;
     margin: 0;
     
     @media(max-width: 1024px) {
-      font-size: 5rem;
+      font-size: 6rem;
     }
     @media(max-width: 800px) {
-      font-size: 4rem;
+      font-size: 5rem;
     }
     @media(max-width: 480px) {
       font-size: 3rem;
@@ -139,10 +139,9 @@ const blogCss = css`
   h1, h2, h3, h4 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-weight: 500;
-  }
-
-  @media(max-width: 540px) {
-    font-size: 1.1rem;
+    @media(min-width: 600px) {
+      margin-top: 32px;
+    }
   }
   
   p {
@@ -178,6 +177,7 @@ const blogCss = css`
   span.float {
     float: right;
     color: #555;
+    user-select: none;
     @media(max-width: 480px) {
       float: unset;
       display: block;
@@ -209,7 +209,7 @@ const blogConnectCss = (opts: {
   border-top-width: ${opts.sansTop ? 0 : 2}px;
   border-bottom-width: ${opts.sansBot ? 0 : 2}px;
 
-  padding-top: ${opts.sansTop ? 24 : 32}px;
+  padding-top: ${opts.sansTop ? 24 : 24}px;
   padding-bottom: ${opts.sansBot ? 24 : 32}px;
 
   @media(max-width: 600px) {

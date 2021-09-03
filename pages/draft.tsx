@@ -174,9 +174,9 @@ Here's a whirlwind summary of React (and Preact).
 - Actually, this website uses [Preact](https://www.npmjs.com/package/@preact/compat), an alternative to React with the same API.
   Then _React.createElement_ is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
   and constructs Preact virtual DOM nodes.
-- The root component is conventionally called _App_.
+- The root component is usually called _App_.
   Running a React application means [invoking _ReactDOM.render_](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
-  with two arguments: _\\<App/\\>_ and an extant DOM node _el_.
+  with 2 arguments: _\\<App/\\>_ and an extant DOM node _el_.
 - [_ReactDOM.render_](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts _\\<App/\\>_ into a DOM node mounted at _el_.
   A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
   It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
