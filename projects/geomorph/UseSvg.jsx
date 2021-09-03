@@ -2,8 +2,6 @@ import { useQuery } from 'react-query';
 import classNames from 'classnames';
 import { parseStarshipSymbol } from './parse-symbol';
 
-// TODO merge public/{svg,png} as public/symbol
-
 /** @param {Props} props */
 export default function UseSvg(props) {
   const { data } = useSvgText(props.symbol, props.tags, props.debug);
@@ -24,7 +22,7 @@ export default function UseSvg(props) {
       )}
       {!props.hull && (
         <image
-          href={`/png/${props.symbol}.png`}
+          href={`/symbol/${props.symbol}.png`}
           x={data.pngOffset.x}
           y={data.pngOffset.y}
         />
@@ -76,8 +74,7 @@ function useSvgText(symbolName, tags, debug) {
     `use-svg-${symbolName}-${tags || '*'}}`,
     async () => {
       console.info('loading symbol', symbolName, tags || '*');
-      const url = `/svg/${symbolName}.svg`;
-      const contents = await fetch(url).then(x => x.text());
+      const contents = await fetch(`/symbol/${symbolName}.svg`).then(x => x.text());
       const parsed = parseStarshipSymbol(contents, tags, debug);
       // console.log({ symbolName, parsed });
       return parsed;

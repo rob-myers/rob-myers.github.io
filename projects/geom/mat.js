@@ -1,7 +1,7 @@
 import { VectJson } from './types';
 
 /**
- * A 2*3 affine 2d transformation matrix.
+ * A (2 row) * (3 col) affine 2d transformation matrix.
  * - Based on https://github.com/thednp/DOMMatrix/blob/master/src/index.js
  * - String format `matrix(a, b, c, d, e, f)`.
  */
