@@ -28,6 +28,7 @@ interface Props {
 const TabsRoot = styled('div')<{ height: number; }>`
   padding: var(--tabs-vert-indent) var(--blog-indent);
 
+  background: var(--blog-bg);
   @media(min-width: 600px) {
     background-image: linear-gradient(135deg, #dddddd 42.86%, #bbbbbb 42.86%, #bbbbbb 50%, #dddddd 50%, #dddddd 92.86%, #bbbbbb 92.86%, #bbbbbb 100%);
     background-size: 9.90px 9.90px;

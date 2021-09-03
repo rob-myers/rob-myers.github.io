@@ -26,44 +26,6 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-main {
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 2rem;
-  margin: 0 auto;
-  max-width: 1024px;
-}
-@media(max-width: 700px) {
-  main {
-    margin: 0;
-  }
-}
-
-main > section {
-  padding: 48px 64px;
-}
-@media(max-width: 1024px) {
-  main > section {
-    padding: 32px 64px;
-    margin: 0;
-  }
-}
-@media(max-width: 800px) {
-  main > section {
-    padding: 32px 64px;
-  }
-}
-@media(max-width: 600px) {
-  main > section {
-    padding: 0;
-  }
-}
-
-hr {
-  height: 32px;
-  border: none;
-}
-
 a {
   color: #00f;
   text-decoration: none;

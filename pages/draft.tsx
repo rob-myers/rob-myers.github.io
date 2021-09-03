@@ -1,16 +1,16 @@
 import Title from 'components/page/Title';
+import Gap from 'components/page/Gap';
+import Main from 'components/page/Main';
 import Markdown from 'components/page/Markdown';
 import Tabs from 'components/page/Tabs';
 import Terminal from 'components/sh/Terminal';
 
 export default function IndexPage() {
   return (
-    <main>
-      <section>
+    <Main>
+      <Title />
 
-        <Title />
-
-        <Markdown children={`
+      <Markdown children={`
 ## Objective <float rem="1.2">19th July 2021</float>
 
 We are going to build a video game step-by-step on this website.
@@ -19,9 +19,9 @@ It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set 
 As an important side-effect, a popular approach to frontend development will be presented. The underlying technology is the Markup language HTML, brought to life via CSS, SVG and JavaScript.
         `}/>
 
-        <hr/>
+      <Gap/>
 
-        <Markdown children={`
+      <Markdown children={`
 ## Constraints <float rem="1.2">19th July 2021</float>
 
 I've necessarily made a large number of decisions. Here are the important ones, from low-level to high-level.
@@ -97,11 +97,11 @@ I have a [strong background](https://dblp.org/pid/81/8748.html) in Theoretical C
 so won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
 I have also created similar game mechanics _many_ times over the years.
 Here's hoping my chain of unfinished projects is coming to a close!
-        `}/>
+      `}/>
 
-        <hr/>
+      <Gap/>
 
-        <Markdown sansBot children={`
+      <Markdown sansBot children={`
 ## Technology  <float rem="1.2">19th July 2021</float>
 
 We're going to build the game using the following technologies.
@@ -131,45 +131,45 @@ Competing web frameworks exist in the wild, often with their own notion of compo
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
 
 - They have a single parameter, conventionally called _props_.
-  
-  It is a JavaScript object defining the component's named inputs,
-  and possibly special properties like _children_, _key_ and _ref_.
+
+It is a JavaScript object defining the component's named inputs,
+and possibly special properties like _children_, _key_ and _ref_.
 
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
-  
-  This returned value amounts to an HTML fragment to be rendered,
-  and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
+
+This returned value amounts to an HTML fragment to be rendered,
+and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers use a grammatical extension of JavaScript called JSX.
 It permits composing components using an XML-like syntax, to obtain the desired dynamic DOM tree.
 Let's consider an example, a pannable and zoomable grid.
-        `}/>
+      `}/>
 
-        <Tabs
-          height={400}
-          tabs={[
-            { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
-          ]}
-        />
+      <Tabs
+        height={400}
+        tabs={[
+          { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
+        ]}
+      />
 
-        <Markdown sansTop sansBot children={`
+      <Markdown sansTop sansBot children={`
 
 The file _panzoom/PanZoom.jsx_ (shown below) defines two React function components, namely _PanZoom_ and _Grid_.
 Behaviourally:
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 - _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
 
-        `}/>
+      `}/>
 
-        <Tabs
-          height={400}
-          tabs={[
-            { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
-            { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
-          ]}
-        />
+      <Tabs
+        height={400}
+        tabs={[
+          { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
+          { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
+        ]}
+      />
 
-        <Markdown sansTop sansBot children={`
+      <Markdown sansTop sansBot children={`
 
 They are JS functions with a single parameter, returning something which looks like HTML (but isn't).
 _PanZoom_ defines a pannable and zoomable grid, and _PanZoomDemo_ renders _PanZoom_.
@@ -181,32 +181,32 @@ We now list some important general info.
 
 - React developers use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), combining JavaScript and XML syntax.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function _React.createElement_.
-        `}/>
+      `}/>
 
-        <Tabs
-          height={360}
-          indent="var(--list-indent)"
-          tabs={[
-            { key: 'code', filepath: 'example/jsx-to-js.jsx' },
-          ]}
-        />
+      <Tabs
+        height={360}
+        indent="var(--list-indent)"
+        tabs={[
+          { key: 'code', filepath: 'example/jsx-to-js.jsx' },
+        ]}
+      />
 
-        <Markdown sansTop children={`
+      <Markdown sansTop children={`
 
 - This website uses [Preact](https://www.npmjs.com/package/@preact/compat), an alternative to React with the same API.
-  Then _React.createElement_ corresponds to [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
-  and constructs Preact virtual DOM nodes.
+Then _React.createElement_ corresponds to [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
+and constructs Preact virtual DOM nodes.
 - The root component is conventionally called _App_.
-  Running a React application amounts to [invoking _ReactDOM.render_](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
-  with two arguments i.e. _\\<App/\\>_ and an extant DOM node _el_.
-  
+Running a React application amounts to [invoking _ReactDOM.render_](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
+with two arguments i.e. _\\<App/\\>_ and an extant DOM node _el_.
+
 - [_ReactDOM.render_](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts _\\<App/\\>_ into a DOM node mounted at _el_.
-  A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
-  It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
+A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
+It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
 
 - If _\\<App/\\>_ defines a website, it is often rendered server-side.
-  [_ReactDOM.renderToString_](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js) creates HTML the client can render immediately.
-  The client invokes [_ReactDOM.hydrate_](https://github.com/preactjs/preact/blob/master/src/render.js) instead of _ReactDOM.render_, but with the same two arguments.
+[_ReactDOM.renderToString_](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js) creates HTML the client can render immediately.
+The client invokes [_ReactDOM.hydrate_](https://github.com/preactjs/preact/blob/master/src/render.js) instead of _ReactDOM.render_, but with the same two arguments.
 
 <!--
 Recall the three pillars: HTML, CSS and JavaScript (JS), born in the early 1990s.
@@ -238,11 +238,11 @@ linked in the _\\<head\\>_ and referenced by DOM elements via their class attrib
 Both _PanZoom_ and _PanZoomDemo_ above are styled using CSS-in-JS.
 This means the CSS is written inside JS or JSX files, often together with the React component it applies to.
 The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us.
-        `}/>
+      `}/>
 
-        <hr/>
+      <Gap/>
 
-        <Markdown sansBot children={`
+      <Markdown sansBot children={`
 ## Technology (Part 2)
 
 ### Navigation
@@ -250,16 +250,16 @@ The npm module [Goober](https://www.npmjs.com/package/goober) handles this for u
 Pathfinding is central to Game AI.
 Our NPCs need to move realistically e.g. they cannot move through walls, windows or locked doors.
 
-        `}/>
+      `}/>
 
-        <Tabs
-          height={300}
-          tabs={[
-            { key: 'component', filepath: 'pathfinding/NavDemo.jsx' },
-          ]}
-        />
+      <Tabs
+        height={300}
+        tabs={[
+          { key: 'component', filepath: 'pathfinding/NavDemo.jsx' },
+        ]}
+      />
 
-        <Markdown sansTop children={`
+      <Markdown sansTop children={`
 
 ### Physics engine
 
@@ -267,16 +267,16 @@ We need a Physics engine:
 - Raycasting
 - Triggers
 - Collision detection
-        `}/>
+      `}/>
 
-        <Tabs
-          height={300}
-          tabs={[
-            { key: 'component', filepath: 'physics/PhysicsDemo.jsx' },
-          ]}
-        />
+      <Tabs
+        height={300}
+        tabs={[
+          { key: 'component', filepath: 'physics/PhysicsDemo.jsx' },
+        ]}
+      />
 
-        <Markdown children={`
+      <Markdown children={`
 ### Static and Runtime Analysis
 
 - Typescript via JSDoc, refering to CodeSandbox.
@@ -287,11 +287,11 @@ We need a Physics engine:
 
 - Display GitHub comments from Issue (build-time)
 - Can use anonymous credits to get recent
-        `}/>
-        
-        <hr />
+      `}/>
+      
+      <Gap/>
 
-        <Markdown children={`
+      <Markdown children={`
 ## Starship Geomorphs <float rem="1.2">19th July 2021</float>
 
 ### Filesystem structure
@@ -313,12 +313,12 @@ media/Symbols
 media/scripts
 - ts-node scripts launched via npm scripts
 - Directories generated by scripts
-  - media/geomorph-edge (Edge Geomorphs)
-  - media/symbol-bridge
-  - media/symbol-dock-small-craft
-  - media/symbol-staterooms
-  - media/symbol-lounge
-  - media/symbol-root
+- media/geomorph-edge (Edge Geomorphs)
+- media/symbol-bridge
+- media/symbol-dock-small-craft
+- media/symbol-staterooms
+- media/symbol-lounge
+- media/symbol-root
 
 public/png
 - PNGs from media/symbol-* with labels removed
@@ -326,36 +326,35 @@ public/png
 public/svg
 - Enriched symbols
 - Geomorph hulls
-        `}/>
+      `}/>
 
-        <Tabs
-          height={400}
-          tabs={[
-            { key: 'component', filepath: 'geomorph/GeomorphTest.jsx' },
-          ]}
-        />
+      <Tabs
+        height={400}
+        tabs={[
+          { key: 'component', filepath: 'geomorph/GeomorphTest.jsx' },
+        ]}
+      />
 
-        <Markdown children={`
+      <Markdown children={`
 ## Movement <float rem="1.2">19th July 2021</float>
 
 - Navigation
 - Follow camera
 - Map view
-        `}/>
+      `}/>
 
-        <br/>
-        <section style={{ height: 200 }}>
-          <Terminal sessionKey="test" env={env.test} />
-        </section>
+      <Gap/>
 
-        <br/>
-
-        <Markdown children={`
-This is an example of a [command link](#command "@test echo foo").
-        `}/>
-
+      <section style={{ height: 200 }}>
+        <Terminal sessionKey="test" env={env.test} />
       </section>
-    </main>
+
+      <Gap/>
+
+      <Markdown children={`
+This is an example of a [command link](#command "@test echo foo").
+      `}/>
+    </Main>
   );
 }
 

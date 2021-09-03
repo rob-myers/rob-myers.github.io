@@ -1,18 +1,15 @@
 import Markdown from 'components/page/Markdown';
 import Title from 'components/page/Title';
+import Main from 'components/page/Main';
 
 export default function IndexPage() {
   return (
-    <main>
-      <section>
+    <Main>
+      <Title />
 
-        <Title />
-
-        <Markdown children={`
+      <Markdown children={`
 ## Coming soon
-        `}/>
-
-      </section>
-    </main>
+      `}/>
+    </Main>
   );
 }
