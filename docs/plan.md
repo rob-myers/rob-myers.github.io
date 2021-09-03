@@ -1,8 +1,11 @@
 ## Plan
 
-- develop geomorph 301
-- use geomorph in `PanZoomDemo`
-- tidy up `PanZoom` and update CodeSandboxes
+- geomorph 301
+  - finish sub-symbols
+  - can paint aux polys to PNG
+  - use in `PanZoomDemo`
+  - tidy `PanZoom` and update CodeSandbox
+
 - emphasise render-once approach to React in intro
 - demos should always involve starship geomorphs
 - write Navigation subsection
