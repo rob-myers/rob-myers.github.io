@@ -149,21 +149,6 @@ Let's consider an example, a pannable and zoomable grid.
         height={400}
         tabs={[
           { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
-        ]}
-      />
-
-      <Markdown sansTop sansBot children={`
-
-The file _panzoom/PanZoom.jsx_ (shown below) defines two React function components, namely _PanZoom_ and _Grid_.
-Behaviourally:
-- _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
-- _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
-
-      `}/>
-
-      <Tabs
-        height={400}
-        tabs={[
           { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
           { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
         ]}
@@ -171,16 +156,38 @@ Behaviourally:
 
       <Markdown sansTop sansBot children={`
 
+The file _panzoom/PanZoom.jsx_ (see tab above) defines two React function components, _PanZoom_ and _Grid_.
+Behaviourally:
+- _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
+- _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
+
 They are JS functions with a single parameter, returning something which looks like HTML (but isn't).
-_PanZoom_ defines a pannable and zoomable grid, and _PanZoomDemo_ renders _PanZoom_.
+_PanZoomDemo_ renders _PanZoom_ and some basic instructions.
 You can also view it [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab"), which permits code editing.
 
-Notice _PanZoomDemo_ renders _PanZoom_ by using the XML tag _\\<PanZoom\\>_.
+Notice _PanZoom_ renders _Grid_ by using the XML tag _\\<Grid\\>_.
 Then although React function components are functions, syntactically they are not invoked like functions.
-We now list some important general info.
+Here's a whirlwind summary of React.
 
 - React developers use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), combining JavaScript and XML syntax.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function _React.createElement_.
+  See _example/jsx-to-js.jsx_ below.
+
+- This website uses [Preact](https://www.npmjs.com/package/@preact/compat), an alternative to React with the same API.
+  Then _React.createElement_ corresponds to [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
+  and constructs Preact virtual DOM nodes.
+- The root component is conventionally called _App_.
+  Running a React application amounts to [invoking _ReactDOM.render_](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
+  with two arguments i.e. _\\<App/\\>_ and an extant DOM node _el_.
+
+- [_ReactDOM.render_](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts _\\<App/\\>_ into a DOM node mounted at _el_.
+  A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
+  It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
+
+- If _\\<App/\\>_ defines a website, it is often rendered server-side.
+  Crucially, [_ReactDOM.renderToString_](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js) creates HTML the client can render immediately.
+  The client invokes [_ReactDOM.hydrate_](https://github.com/preactjs/preact/blob/master/src/render.js) instead of _ReactDOM.render_, but with the same two arguments.
+
       `}/>
 
       <Tabs
@@ -193,21 +200,6 @@ We now list some important general info.
 
       <Markdown sansTop children={`
 
-- This website uses [Preact](https://www.npmjs.com/package/@preact/compat), an alternative to React with the same API.
-Then _React.createElement_ corresponds to [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
-and constructs Preact virtual DOM nodes.
-- The root component is conventionally called _App_.
-Running a React application amounts to [invoking _ReactDOM.render_](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
-with two arguments i.e. _\\<App/\\>_ and an extant DOM node _el_.
-
-- [_ReactDOM.render_](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts _\\<App/\\>_ into a DOM node mounted at _el_.
-A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
-It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
-
-- If _\\<App/\\>_ defines a website, it is often rendered server-side.
-[_ReactDOM.renderToString_](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js) creates HTML the client can render immediately.
-The client invokes [_ReactDOM.hydrate_](https://github.com/preactjs/preact/blob/master/src/render.js) instead of _ReactDOM.render_, but with the same two arguments.
-
 <!--
 Recall the three pillars: HTML, CSS and JavaScript (JS), born in the early 1990s.
 Technically, only HTML is needed to create a website, because CSS can be included via _\\<style\\>_ tags and JS via _\\<script\\>_ tags.
@@ -215,12 +207,13 @@ But of the three pillars, JS is the only programming language, the only way to d
 For reasons of uniformity, it is increasingly common for the initial HTML and CSS to be generated by JS too.
 -->
 
-So, React function components are JavaScript functions.
-They are written using syntactic-sugar (JSX), and are composed together in the same way as HTML.
-We use Preact: its codebase is smaller, and it has reputation for being faster
-(although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer)).
-Rendering a component involves (re)constructing virtual DOM nodes and diffing them.
-Since the initial payload of a website is HTML, the initial render is often precomputed.
+In summary,
+> React function components are JavaScript functions.
+> They are written using syntactic-sugar (JSX), and are composed together in the same way as HTML.
+> We use Preact: its codebase is smaller, and it has reputation for being faster
+> (although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer)).
+> Rendering a component involves (re)constructing virtual DOM nodes and diffing them.
+> Since the initial payload of a website is HTML, the initial render is often precomputed.
 
 <!--
 There's more to say e.g. how React function components represent internal state,
@@ -332,6 +325,12 @@ public/svg
         height={400}
         tabs={[
           { key: 'component', filepath: 'geomorph/GeomorphTest.jsx' },
+        ]}
+      />
+      <Tabs
+        height={400}
+        tabs={[
+          { key: 'component', filepath: 'geomorph/GeomorphTest2.jsx' },
         ]}
       />
 
