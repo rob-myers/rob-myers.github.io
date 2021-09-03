@@ -34,7 +34,7 @@ a {
 a.new-tab-link::after {
   display: inline-block;
   content: '';
-  background-image: url('/svg/ext-link-icon.svg');
+  background-image: url('/icon/ext-link-icon.svg');
   background-size: 13px 13px;
   height: 13px;
   width: 13px;
