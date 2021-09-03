@@ -72,9 +72,9 @@ export default function UseSvg(props) {
  */
 function useSvgText(url, tags) {
   return useQuery(
-    `use-svg-${url}-${tags || []}}`,
+    `use-svg-${url}-${tags || '*'}}`,
     async () => {
-      console.info('loading symbol', url, tags || '(no tags)');
+      console.info('loading symbol', url, tags || '*');
       const contents = await fetch(url).then(x => x.text());
       const $ = cheerio.load(contents);
 
