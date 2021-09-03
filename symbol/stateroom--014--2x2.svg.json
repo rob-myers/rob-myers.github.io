@@ -1,0 +1,46 @@
+{
+  "hull": [],
+  "doors": [
+    {
+      "type": "Polygon",
+      "coordinates": [[[300, 578], [300, 626], [590, 626], [590, 578]]],
+      "meta": {}
+    },
+    {
+      "type": "Polygon",
+      "coordinates": [[[310, 275], [310, 323], [590, 323], [590, 275]]],
+      "meta": {}
+    }
+  ],
+  "irisValves": [],
+  "labels": [],
+  "obstacles": [],
+  "walls": [
+    {
+      "type": "Polygon",
+      "coordinates": [[[-10, -10], [-10, 610], [10, 610], [10, -10]]],
+      "meta": {}
+    },
+    {
+      "type": "Polygon",
+      "coordinates": [[[590, -10], [590, 610], [610, 610], [610, -10]]],
+      "meta": {}
+    },
+    {
+      "type": "Polygon",
+      "coordinates": [[[290, 0], [290, 310], [310, 310], [310, 0]]],
+      "meta": {}
+    },
+    {
+      "type": "Polygon",
+      "coordinates": [[[0, -10], [0, 10], [590, 10], [590, -10]]],
+      "meta": {}
+    },
+    {
+      "type": "Polygon",
+      "coordinates": [[[0, 590], [0, 610], [590, 610], [590, 590]]],
+      "meta": {}
+    }
+  ],
+  "pngOffset": {"x": -10, "y": -10}
+}
