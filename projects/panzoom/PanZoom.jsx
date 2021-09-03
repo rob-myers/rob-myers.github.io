@@ -63,7 +63,6 @@ export default function PanZoom(props) {
       },
       /** @param {PointerEvent} e */
       onPointerUp: (e) => {
-        console.log('up', e.type);
         state.panFrom = null;
         state.ptrEvent = state.ptrEvent.filter(alt => e.pointerId !== alt.pointerId);
         if (state.ptrEvent.length < 2) {
