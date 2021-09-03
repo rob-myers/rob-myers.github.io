@@ -2,17 +2,18 @@ import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { Poly, Rect, Vect, Mat } from '../geom';
 import { svgPathToPolygons } from '../service';
 
+/** @typedef {ReturnType<parseStarshipSymbol>} ParsedSymbol */
+
 /**
  * @param {string} svgContents
- * @param {string[]} [tags]
  * @param {boolean} [debug]
  */
-export function parseStarshipSymbol(svgContents, tags, debug) {
+export function parseStarshipSymbol(svgContents, debug) {
   const $ = cheerio.load(svgContents);
 
   const topNodes = Array.from($('svg > *'));
   const hull = extractGeoms($, topNodes, 'hull');
-  const doors = extractGeoms($, topNodes, 'doors', tags);
+  const doors = extractGeoms($, topNodes, 'doors');
   const walls = extractGeoms($, topNodes, 'walls');
   const obstacles = extractGeoms($, topNodes, 'obstacles');
   const irisValves = extractGeoms($, topNodes, 'iris-valves');
@@ -22,7 +23,7 @@ export function parseStarshipSymbol(svgContents, tags, debug) {
 
   return {
     /** Original svg with png data url; very useful during geomorph creation */
-    svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : '',
+    svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : undefined,
     /** Assumed connected, if exists */
     hull: Poly.union(hull),
     doors,
@@ -35,16 +36,25 @@ export function parseStarshipSymbol(svgContents, tags, debug) {
 }
 
 /**
+ * @param {ParsedSymbol} parsed
+ * @param {string[]} [tags]
+ */
+ export function restrictAllByTags(parsed, tags) {
+  if (tags) {
+    parsed.doors = restrictByTags(parsed.doors, tags);
+  }
+  return parsed;
+}
+
+/**
  * @param {CheerioAPI} api
  * @param {Element[]} topNodes
  * @param {string} title
- * @param {string[]} [tags]
  */
-function extractGeoms(api, topNodes, title, tags) {
+function extractGeoms(api, topNodes, title) {
   const group = topNodes.find(x => hasTitle(api, x, title));
   return api(group).children('rect, path').toArray()
     .flatMap(x => extractGeom(api, x))
-    .filter(x => matchesTag(x.meta?.title, tags));
 }
 
 /**
@@ -94,11 +104,9 @@ function extractGeom(api, el) {
 }
 
 /**
- * @param {string | undefined} title
- * @param {string[] | undefined} tags
+ * @param {Poly[]} polys
+ * @param {string[]} tags
  */
-function matchesTag(title, tags) {
-  return !tags || !title || (
-    title.startsWith('has-') && tags.includes(title.slice(4))
-  );
+function restrictByTags(polys, tags) {
+  return polys.filter(x => tags.includes(/** @type {*} */ (x.meta?.title)));
 }

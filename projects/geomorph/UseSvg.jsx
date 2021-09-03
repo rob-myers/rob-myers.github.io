@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import classNames from 'classnames';
-import { parseStarshipSymbol } from './parse-symbol';
+import { parseStarshipSymbol, restrictAllByTags } from './parse-symbol';
 
 /** @param {Props} props */
 export default function UseSvg(props) {
@@ -75,9 +75,9 @@ function useSvgText(symbolName, tags, debug) {
     async () => {
       console.info('loading symbol', symbolName, tags || '*');
       const contents = await fetch(`/symbol/${symbolName}.svg`).then(x => x.text());
-      const parsed = parseStarshipSymbol(contents, tags, debug);
+      const parsed = parseStarshipSymbol(contents, debug);
       // console.log({ symbolName, parsed });
-      return parsed;
+      return restrictAllByTags(parsed, tags);
     },
   );
 }

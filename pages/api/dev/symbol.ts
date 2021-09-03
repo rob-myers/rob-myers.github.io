@@ -31,7 +31,7 @@ export default async function (
     }
 
     const svgContents = fs.readFileSync(filepath).toString();
-    const result = parseStarshipSymbol(svgContents, tags, debug);
+    const result = parseStarshipSymbol(svgContents, debug);
 
     res.json({
       svgInnerText: result.svgInnerText,

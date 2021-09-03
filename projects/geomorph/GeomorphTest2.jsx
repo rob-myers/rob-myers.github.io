@@ -1,10 +1,12 @@
 import { css } from "goober";
+import { Rect } from "../geom";
+import PanZoom from '../panzoom/PanZoom';
 
 export default function GeomorphTest2() {
   return (
     <div className={rootCss}>
-      {/* <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
-        <UseSvg hull debug={true} url="/svg/301--hull.svg" />
+      <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
+        {/* <UseSvg hull debug={true} url="/svg/301--hull.svg" />
         <UseSvg url="/svg/misc-stellar-cartography--023--4x4.svg" transform="matrix(-0.2, 0, 0, 0.2, 1200, 360)" />
         <UseSvg url="/svg/stateroom--014--2x2.svg" transform="matrix(0.2, 0, 0, -0.2, 0, 480)" />
         <UseSvg url="/svg/stateroom--014--2x2.svg" transform="matrix(0.2, 0, 0, -0.2, 120, 480)" />
@@ -13,11 +15,14 @@ export default function GeomorphTest2() {
         <UseSvg url="/svg/stateroom--036--2x4.svg" transform="scale(0.2)" />
         <UseSvg url="/svg/stateroom--036--2x4.svg" transform="matrix(-0.2, 0, 0, 0.2, 1200, 0)" />
         <UseSvg url="/svg/stateroom--036--2x4.svg" transform="matrix(0, -0.2, 0.2, 0, 0, 600)" />
-        <UseSvg url="/svg/bridge--042--8x9.svg" transform="matrix(0.2, 0, 0, 0.2, 360, 60)" />
-      </PanZoom> */}
+        <UseSvg url="/svg/bridge--042--8x9.svg" transform="matrix(0.2, 0, 0, 0.2, 360, 60)" /> */}
+      </PanZoom>
     </div>
   );
 }
+
+const initViewBox = new Rect(0, 0, 1200, 600);
+const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 
 const rootCss = css``;
 
