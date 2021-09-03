@@ -1,12 +1,12 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
-import { Poly, Rect, Vect, Mat } from '../geom';
+import { Poly, Rect, Mat } from '../geom';
+import { VectJson, GeoJsonPolygon } from '../geom/types';
 import { svgPathToPolygons } from '../service';
-
-/** @typedef {ReturnType<parseStarshipSymbol>} ParsedSymbol */
 
 /**
  * @param {string} svgContents
  * @param {boolean} [debug]
+ * @returns {ParsedSymbol<Poly>}
  */
 export function parseStarshipSymbol(svgContents, debug) {
   const $ = cheerio.load(svgContents);
@@ -23,20 +23,50 @@ export function parseStarshipSymbol(svgContents, debug) {
 
   return {
     /** Original svg with png data url; very useful during geomorph creation */
-    svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : undefined,
-    /** Assumed connected, if exists */
+    svgInnerText: debug
+      ? topNodes.map(x => $.html(x)).join('\n') : undefined,
     hull: Poly.union(hull),
     doors,
     irisValves,
     labels,
     obstacles,
-    pngOffset,
     walls,
+    pngOffset,
   };
 }
 
 /**
- * @param {ParsedSymbol} parsed
+ * @param {ParsedSymbol<Poly>} parsed
+ * @returns {ParsedSymbol<GeoJsonPolygon>}
+ */
+export function serializeSymbol(parsed) {
+  return {
+    svgInnerText: parsed.svgInnerText,
+    hull: toJsons(parsed.hull),
+    doors: toJsons(parsed.doors),
+    irisValves: toJsons(parsed.irisValves),
+    labels: toJsons(parsed.labels),
+    obstacles: toJsons(parsed.obstacles),
+    walls: toJsons(parsed.walls),
+    pngOffset: parsed.pngOffset,
+  };
+}
+
+/**
+ * @template T
+ * @typedef ParsedSymbol @type {object}
+ * @property {string | undefined} svgInnerText
+ * @property {T[]} hull Assumed connected, if exists
+ * @property {T[]} doors
+ * @property {T[]} irisValves
+ * @property {T[]} labels
+ * @property {T[]} obstacles
+ * @property {T[]} walls
+ * @property {VectJson} pngOffset
+ */
+
+/**
+ * @param {ParsedSymbol<Poly>} parsed
  * @param {string[]} [tags]
  */
  export function restrictAllByTags(parsed, tags) {
@@ -83,13 +113,14 @@ function extractGeom(api, el) {
 }
 
 /**
- * @param {CheerioAPI} api 
- * @param {Element[]} topNodes 
+ * @param {CheerioAPI} api
+ * @param {Element[]} topNodes
+ * @returns {VectJson}
  */
  function extractPngOffset(api, topNodes) {
   const group = topNodes.find(x => hasTitle(api, x, 'background'));
   const { attribs: a } = api(group).children('image').toArray()[0];
-  return new Vect(Number(a.x || 0), Number(a.y || 0));
+  return { x: Number(a.x || 0), y: Number(a.y || 0) };
 }
 
 /**
@@ -109,4 +140,9 @@ function extractGeom(api, el) {
  */
 function restrictByTags(polys, tags) {
   return polys.filter(x => tags.includes(/** @type {*} */ (x.meta?.title)));
+}
+
+/** @param {Poly[]} polys */
+function toJsons(polys) {
+  return polys.map(x => x.geoJson);
 }

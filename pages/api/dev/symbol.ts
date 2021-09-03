@@ -2,8 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { repoRootDir } from 'pages/api';
-import { Poly } from 'projects/geom';
-import { parseStarshipSymbol } from 'projects/geomorph/parse-symbol';
+import { parseStarshipSymbol, serializeSymbol } from 'projects/geomorph/parse-symbol';
 
 const symbolsDir = path.resolve(repoRootDir, 'public/svg');
 
@@ -32,23 +31,9 @@ export default async function (
 
     const svgContents = fs.readFileSync(filepath).toString();
     const result = parseStarshipSymbol(svgContents, debug);
-
-    res.json({
-      svgInnerText: result.svgInnerText,
-      hull: toJsons(result.hull),
-      doors: toJsons(result.doors),
-      irisValves: toJsons(result.irisValves),
-      labels: toJsons(result.labels),
-      obstacles: toJsons(result.obstacles),
-      pngOffset: result.pngOffset.json,
-      walls: toJsons(result.walls),
-    });
+    res.json(serializeSymbol(result));
 
   } catch (e) {
     res.status(`${e}`.startsWith('404:') ? 404 : 500).json(`${e}`);
   }
-}
-
-function toJsons(polys: Poly[]) {
-  return polys.map(x => x.geoJson);
 }
