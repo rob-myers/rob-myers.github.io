@@ -1,6 +1,5 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
-import CSSMatrix from 'dommatrix';
-import { Poly, Rect, Vect } from '../geom';
+import { Poly, Rect, Vect, Mat } from '../geom';
 import { svgPathToPolygons } from '../service';
 
 /**
@@ -8,7 +7,7 @@ import { svgPathToPolygons } from '../service';
  * @param {string[]} [tags]
  * @param {boolean} [debug]
  */
-export function parseSymbol(svgContents, tags, debug) {
+export function parseStarshipSymbol(svgContents, tags, debug) {
   const $ = cheerio.load(svgContents);
 
   const topNodes = Array.from($('svg > *'));
@@ -45,7 +44,7 @@ function extractGeoms(api, topNodes, title, tags) {
   const group = topNodes.find(x => hasTitle(api, x, title));
   return api(group).children('rect, path').toArray()
     .flatMap(x => extractGeom(api, x))
-    .filter(x => matchesTag(x.meta.title, tags));
+    .filter(x => matchesTag(x.meta?.title, tags));
 }
 
 /**
@@ -66,9 +65,10 @@ function extractGeom(api, el) {
   } else {
     console.warn('extractPoly: unexpected tagName:', tagName);
   }
-  const m = a.transform
-    ? new CSSMatrix(a.transform)
-    : new CSSMatrix();
+  // DOMMatrix not available server-side
+  // const m = new DOMMatrix(a.transform);
+  const m = new Mat(a.transform);
+  // console.log(a.transform, m);
   return polys.map(p => p.applyMatrix(m));
 }
 

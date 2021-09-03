@@ -15,7 +15,7 @@ export class Poly {
   constructor(outline = [], holes = []) {
     /** @type {Vect[]} */ this.outline = outline;
     /** @type {Vect[][]} */ this.holes = holes;
-    /** @type {Record<string, string>} */ this.meta;
+    /** @type {undefined | Record<string, string>} */ this.meta;
   }
 
   get allPoints() {
@@ -31,6 +31,7 @@ export class Poly {
       ].concat(
         this.holes.map(hole => hole.map(({ x, y }) => [x, y]))
       ),
+      ...this.meta && { meta: this.meta  }
     };
   }
 
@@ -75,11 +76,11 @@ export class Poly {
     return this;
   }
 
-  /** @param {DOMMatrix} m */
+  /** @param {import('./mat').Mat} m */
   applyMatrix(m) {
     if (!m.isIdentity) {
-      this.outline = this.outline.map(p => p.copy(m.transformPoint(p)));
-      this.holes.forEach(hole => hole.map(p => p.copy(m.transformPoint(p))));
+      this.outline = this.outline.map(p => m.transformPoint(p));
+      this.holes.forEach(hole => hole.map(p => m.transformPoint(p)));
     }
     return this;
   }

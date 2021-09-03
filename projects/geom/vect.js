@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import * as Geom from './types';
 
 /**
@@ -104,7 +103,7 @@ import * as Geom from './types';
     if (this.length) {
       return this.scale(newLength / this.length);
     }
-    console.error(`Cannot normalize Vector2 '${this}' to length '${newLength}'`);
+    console.error(`Cannot normalize Vect '${this}' to length '${newLength}'`);
     return this;
   }
 
@@ -168,14 +167,6 @@ import * as Geom from './types';
     return `${this.x},${this.y}`;
   }
 
-  /** @param {DOMMatrix} _ */
-  transform({ a, b, c, d, e, f }) {
-    const { x, y } = this;
-    this.x = a * x + c * y + e;
-    this.y = b * x + d * y + f;
-    return this;
-  }
-
   /**
    * @param {number} x
    * @param {number} y
@@ -185,5 +176,4 @@ import * as Geom from './types';
     this.y += y;
     return this;
   }
-
 }

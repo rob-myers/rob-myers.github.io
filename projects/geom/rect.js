@@ -109,7 +109,7 @@ export class Rect {
     return new Rect(0, 0, 0, 0);
   }
 
-  /** @param {DOMMatrix} m */
+  /** @param {import('./mat').Mat} m */
   applyMatrix(m) {
     if (!m.isIdentity) {
       const min = m.transformPoint(this.topLeft);

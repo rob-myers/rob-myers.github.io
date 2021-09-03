@@ -288,7 +288,7 @@ We need a Physics engine:
 - Display GitHub comments from Issue (build-time)
 - Can use anonymous credits to get recent
       `}/>
-      
+
       <Gap/>
 
       <Markdown children={`

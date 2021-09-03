@@ -8,16 +8,16 @@ export default function GeomorphTest() {
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
-        <UseSvg hull debug={true} url="/svg/301--hull.svg" />
-        <UseSvg url="/svg/misc-stellar-cartography--023--4x4.svg" transform="matrix(-0.2, 0, 0, 0.2, 1200, 360)" />
-        <UseSvg url="/svg/stateroom--014--2x2.svg" transform="matrix(0.2, 0, 0, -0.2, 0, 480)" />
-        <UseSvg url="/svg/stateroom--014--2x2.svg" transform="matrix(0.2, 0, 0, -0.2, 120, 480)" />
-        <UseSvg url="/svg/office--001--2x2.svg" tags={['door-s']} transform="matrix(-0.2, 0, 0, 0.2, 240, 120)" />
-        <UseSvg url="/svg/office--001--2x2.svg" tags={['door-s']} transform="matrix(0.2, 0, 0, 0.2, 960, 120)" />
-        <UseSvg url="/svg/stateroom--036--2x4.svg" transform="scale(0.2)" />
-        <UseSvg url="/svg/stateroom--036--2x4.svg" transform="matrix(-0.2, 0, 0, 0.2, 1200, 0)" />
-        <UseSvg url="/svg/stateroom--036--2x4.svg" transform="matrix(0, -0.2, 0.2, 0, 0, 600)" />
-        <UseSvg url="/svg/bridge--042--8x9.svg" transform="matrix(0.2, 0, 0, 0.2, 360, 60)" />
+        <UseSvg hull debug={true} symbol="301--hull" />
+        <UseSvg symbol="misc-stellar-cartography--023--4x4" transform="matrix(-0.2, 0, 0, 0.2, 1200, 360)" />
+        <UseSvg symbol="stateroom--014--2x2" transform="matrix(0.2, 0, 0, -0.2, 0, 480)" />
+        <UseSvg symbol="stateroom--014--2x2" transform="matrix(0.2, 0, 0, -0.2, 120, 480)" />
+        <UseSvg symbol="office--001--2x2" tags={['door-s']} transform="matrix(-0.2, 0, 0, 0.2, 240, 120)" />
+        <UseSvg symbol="office--001--2x2" tags={['door-s']} transform="matrix(0.2, 0, 0, 0.2, 960, 120)" />
+        <UseSvg symbol="stateroom--036--2x4" transform="matrix(0.2, 0, 0, 0.2, 0, 0)" />
+        <UseSvg symbol="stateroom--036--2x4" transform="matrix(-0.2, 0, 0, 0.2, 1200, 0)" />
+        <UseSvg symbol="stateroom--036--2x4" transform="matrix(0, -0.2, 0.2, 0, 0, 600)" />
+        <UseSvg symbol="bridge--042--8x9" transform="matrix(0.2, 0, 0, 0.2, 360, 60)" />
       </PanZoom>
     </div>
   );

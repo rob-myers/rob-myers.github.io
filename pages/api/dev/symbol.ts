@@ -3,7 +3,7 @@ import path from 'path';
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { repoRootDir } from 'pages/api';
 import { Poly } from 'projects/geom';
-import { parseSymbol } from 'projects/geomorph/parse-symbol';
+import { parseStarshipSymbol } from 'projects/geomorph/parse-symbol';
 
 const symbolsDir = path.resolve(repoRootDir, 'public/svg');
 
@@ -31,7 +31,7 @@ export default async function (
     }
 
     const svgContents = fs.readFileSync(filepath).toString();
-    const result = parseSymbol(svgContents, tags, debug);
+    const result = parseStarshipSymbol(svgContents, tags, debug);
 
     res.json({
       svgInnerText: result.svgInnerText,

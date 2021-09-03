@@ -7,6 +7,7 @@
  * @property {'Polygon'} type Identifier amongst GeoJSON formats.
  * @property {Coord[][]} coordinates The 1st array defines the _outer polygon_,
  * the others define non-nested _holes_.
+ * @property {Record<string, string>} [meta] Optional additional info (not in spec).
  */
 
 /** @typedef {{ x: number; y: number }} VectJson */

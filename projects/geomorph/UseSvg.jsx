@@ -1,16 +1,16 @@
 import { useQuery } from 'react-query';
-import cheerio, { CheerioAPI, Element } from 'cheerio';
 import classNames from 'classnames';
-import { svgPathToPolygons } from '../service';
-import { Poly, Rect, Vect } from '../geom';
+import { parseStarshipSymbol } from './parse-symbol';
+
+// TODO merge public/{svg,png} as public/symbol
 
 /** @param {Props} props */
 export default function UseSvg(props) {
-  const { data } = useSvgText(props.url, props.tags);
+  const { data } = useSvgText(props.symbol, props.tags, props.debug);
 
   return data ? (
     <g
-      className={`symbol ${data.basename}`}
+      className={`symbol ${props.symbol}`}
       transform={props.transform}
     >
       {props.debug && (
@@ -24,7 +24,7 @@ export default function UseSvg(props) {
       )}
       {!props.hull && (
         <image
-          href={`/png/${data.basename}.png`}
+          href={`/png/${props.symbol}.png`}
           x={data.pngOffset.x}
           y={data.pngOffset.y}
         />
@@ -59,7 +59,7 @@ export default function UseSvg(props) {
 
 /**
  * @typedef Props @type {object}
- * @property {string} url
+ * @property {string} symbol
  * @property {string} [transform]
  * @property {boolean} [hull]
  * @property {boolean} [debug]
@@ -67,104 +67,20 @@ export default function UseSvg(props) {
  */
 
 /**
- * @param {string} url
+ * @param {string} symbolName
  * @param {string[]} [tags]
+ * @param {boolean} [debug]
  */
-function useSvgText(url, tags) {
+function useSvgText(symbolName, tags, debug) {
   return useQuery(
-    `use-svg-${url}-${tags || '*'}}`,
+    `use-svg-${symbolName}-${tags || '*'}}`,
     async () => {
-      console.info('loading symbol', url, tags || '*');
+      console.info('loading symbol', symbolName, tags || '*');
+      const url = `/svg/${symbolName}.svg`;
       const contents = await fetch(url).then(x => x.text());
-      const $ = cheerio.load(contents);
-
-      const topNodes = Array.from($('svg > *'));
-      const hull = extractGeoms($, topNodes, 'hull');
-      const doors = extractGeoms($, topNodes, 'doors', tags);
-      const walls = extractGeoms($, topNodes, 'walls');
-      const obstacles = extractGeoms($, topNodes, 'obstacles');
-      const irisValves = extractGeoms($, topNodes, 'iris-valves');
-      const labels = extractGeoms($, topNodes, 'labels');
-      const pngOffset = extractPngOffset($, topNodes);
-      // console.log({ url, hull });
-
-      return {
-        basename: url.slice('/svg/'.length, -'.svg'.length),
-        svgInnerText: topNodes.map(x => $.html(x)).join('\n'),
-        hull: Poly.union(hull), // Assume connected, if exists
-        doors,
-        irisValves,
-        labels,
-        obstacles,
-        pngOffset,
-        walls,
-      };
+      const parsed = parseStarshipSymbol(contents, tags, debug);
+      // console.log({ symbolName, parsed });
+      return parsed;
     },
-  );
-}
-
-/**
- * @param {CheerioAPI} api
- * @param {Element[]} topNodes
- * @param {string} title
- * @param {string[]} [tags]
- */
-function extractGeoms(api, topNodes, title, tags) {
-  const group = topNodes.find(x => hasTitle(api, x, title));
-  return api(group).children('rect, path').toArray()
-    .flatMap(x => extractGeom(api, x))
-    .filter(x => matchesTag(x.meta.title, tags));
-}
-
-/**
- * @param {CheerioAPI} api
- * @param {Element} el
- * @returns {Poly[]}
- */
-function extractGeom(api, el) {
-  const { tagName, attribs: a } = el;
-  const polys = /** @type {Poly[]} */ ([]);
-  const title = api(el).children('title').text() || undefined;
-
-  if (tagName === 'rect') {
-    const poly = Poly.fromRect(new Rect(Number(a.x || 0), Number(a.y || 0), Number(a.width || 0), Number(a.height || 0)));
-    polys.push(poly.addMeta({ title }));
-  } else if (tagName === 'path') {
-    polys.push(...svgPathToPolygons(a.d).map(x => x.addMeta({ title })));
-  } else {
-    console.warn('extractPoly: unexpected tagName:', tagName);
-  }
-  const m = new DOMMatrix(a.transform);
-  return polys.map(p => p.applyMatrix(m));
-}
-
-/**
- * @param {CheerioAPI} api 
- * @param {Element[]} topNodes 
- */
- function extractPngOffset(api, topNodes) {
-  const group = topNodes.find(x => hasTitle(api, x, 'background'));
-  const { attribs: a } = api(group).children('image').toArray()[0];
-  return new Vect(Number(a.x || 0), Number(a.y || 0));
-}
-
-/**
- * - Test if node has child <title>{title}</title>,
- * - Additionally add class {title} if so.
- * @param {CheerioAPI} api 
- * @param {Element} node 
- * @param {string} title 
- */
- function hasTitle(api, node, title) {
-  return api(node).children('title').text() === title && api(node).addClass(title)
-}
-
-/**
- * @param {string | undefined} title
- * @param {string[] | undefined} tags
- */
-function matchesTag(title, tags) {
-  return !tags || !title || (
-    title.startsWith('has-') && tags.includes(title.slice(4))
   );
 }
