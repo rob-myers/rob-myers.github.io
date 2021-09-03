@@ -209,8 +209,8 @@ const blogConnectCss = (opts: {
   border-top-width: ${opts.sansTop ? 0 : 2}px;
   border-bottom-width: ${opts.sansBot ? 0 : 2}px;
 
-  padding-top: ${opts.sansTop ? 16 : 32}px;
-  padding-bottom: ${opts.sansBot ? 16 : 32}px;
+  padding-top: ${opts.sansTop ? 24 : 32}px;
+  padding-bottom: ${opts.sansBot ? 24 : 32}px;
 
   @media(max-width: 600px) {
     padding-top: 8px;
