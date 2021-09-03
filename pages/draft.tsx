@@ -19,7 +19,7 @@ It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set 
 As an important side-effect, a popular approach to frontend development will be presented. The underlying technology is the Markup language HTML, brought to life via CSS, SVG and JavaScript.
         `}/>
 
-        <br/>
+        <hr/>
 
         <Markdown children={`
 ## Constraints <float rem="1.2">19th July 2021</float>
@@ -99,9 +99,9 @@ I have also created similar game mechanics _many_ times over the years.
 Here's hoping my chain of unfinished projects is coming to a close!
         `}/>
 
-        <br/>
+        <hr/>
 
-        <Markdown children={`
+        <Markdown sansBot children={`
 ## Technology  <float rem="1.2">19th July 2021</float>
 
 We're going to build the game using the following technologies.
@@ -152,7 +152,7 @@ Let's consider an example, a pannable and zoomable grid.
           ]}
         />
 
-        <Markdown children={`
+        <Markdown sansTop sansBot children={`
 
 The file _panzoom/PanZoom.jsx_ (shown below) defines two React function components, namely _PanZoom_ and _Grid_.
 Behaviourally:
@@ -169,7 +169,7 @@ Behaviourally:
           ]}
         />
 
-        <Markdown children={`
+        <Markdown sansTop sansBot children={`
 
 They are JS functions with a single parameter, returning something which looks like HTML (but isn't).
 _PanZoom_ defines a pannable and zoomable grid, and _PanZoomDemo_ renders _PanZoom_.
@@ -184,14 +184,14 @@ We now list some important general info.
         `}/>
 
         <Tabs
-          height={320}
-          // margin="0 0 0 var(--list-indent)"
+          height={360}
+          indent="var(--list-indent)"
           tabs={[
             { key: 'code', filepath: 'example/jsx-to-js.jsx' },
           ]}
         />
 
-        <Markdown children={`
+        <Markdown sansTop children={`
 
 - This website uses [Preact](https://www.npmjs.com/package/@preact/compat), an alternative to React with the same API.
   Then _React.createElement_ corresponds to [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
@@ -240,9 +240,9 @@ This means the CSS is written inside JS or JSX files, often together with the Re
 The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us.
         `}/>
 
-        <br/>
+        <hr/>
 
-        <Markdown children={`
+        <Markdown sansBot children={`
 ## Technology (Part 2)
 
 ### Navigation
@@ -259,7 +259,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
           ]}
         />
 
-        <Markdown children={`
+        <Markdown sansTop children={`
 
 ### Physics engine
 
@@ -289,7 +289,7 @@ We need a Physics engine:
 - Can use anonymous credits to get recent
         `}/>
         
-        <br />
+        <hr />
 
         <Markdown children={`
 ## Starship Geomorphs <float rem="1.2">19th July 2021</float>

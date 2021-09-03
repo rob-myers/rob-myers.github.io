@@ -7,30 +7,39 @@ import * as Lookup from 'model/tabs-lookup';
 import {CodeEditor} from 'components/dynamic';
 import Tab, { ErrorMessage, TabMeta } from './Tab';
 
-export default function Tabs({ tabs, margin, height }: Props) {
+export default function Tabs({ tabs, height }: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   return (
-    <TabsRoot className="scrollable" height={height} margin={margin}>
+    <TabsRoot
+      className="tabs scrollable"
+      height={height}
+    >
       <Layout model={model} factory={factory}  />
     </TabsRoot>
   );
 }
 
 interface Props {
-  /** Height of each tab */
   height: number;
   tabs: TabMeta[];
-  margin?: string;
+  indent?: string;
 }
 
-const TabsRoot = styled('div')<{ height: number; margin?: string }>`
-  height: ${(props) => props.height}px;
-  margin: ${props => props.margin || 'auto'};
-  background: #444;
+const TabsRoot = styled('div')<{ height: number; }>`
+  padding: var(--tabs-vert-indent) var(--blog-indent);
+
+  @media(min-width: 600px) {
+    background-image: linear-gradient(135deg, #dddddd 42.86%, #bbbbbb 42.86%, #bbbbbb 50%, #dddddd 50%, #dddddd 92.86%, #bbbbbb 92.86%, #bbbbbb 100%);
+    background-size: 9.90px 9.90px;
+  }
+
+  border: 2px solid #ccc;
+  border-width: 0 2px;
 
   > div {
+    background: #444;
     position: relative;
-    height: inherit;
+    height: ${(props) => props.height}px;
   }
   
   .flexlayout__tabset_tabbar_outer {

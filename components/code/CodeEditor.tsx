@@ -109,5 +109,8 @@ const Root = styled('div', React.forwardRef)<{
     .CodeMirror-line {
       padding: 0 ${props => props.padding}px;
     }
+    .CodeMirror-scrollbar-filler {
+      background: none;
+    }
   }
 `;

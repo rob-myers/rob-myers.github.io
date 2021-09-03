@@ -4,14 +4,23 @@ import { css } from 'goober';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import gfm from 'remark-gfm';
+import classNames from 'classnames';
 
 export default function Markdown(
   props: ReactMarkdown.ReactMarkdownOptions & {
     title?: boolean;
+    sansTop?: boolean;
+    sansBot?: boolean;
   }
 ) {
   return (
-    <div className={props.title ? titleRootCss : blogRootCss} >
+    <div
+      className={classNames(
+        props.title
+          ? titleCss
+          : [blogCss, blogConnectCss(props)],
+      )}
+    >
       <ReactMarkdown
         rehypePlugins={[rehypeRaw]} // Permit html
         remarkPlugins={[gfm]}
@@ -74,7 +83,7 @@ const blogComponents = {
   },
 };
 
-const titleRootCss = css`
+const titleCss = css`
   @media(max-width: 600px) {
     padding-left: 8px;
     margin-top: 12px;
@@ -116,18 +125,12 @@ const titleRootCss = css`
   }
 `;
 
-const blogRootCss = css`
-  background: #f6f6f6;
+const blogCss = css`
+  background: var(--blog-bg);
   color: #333;
+
   padding-left: var(--blog-indent);
   padding-right: var(--blog-indent);
-  border-top: 8px solid #ccc;
-  border-bottom: 8px solid #ccc;
-
-  @media(min-width: 600px) {
-    padding-top: 32px;
-    padding-bottom: 32px;
-  }
 
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
@@ -184,7 +187,7 @@ const blogRootCss = css`
 
   table {
     border: 1px solid #ccc;
-    border-left: 4px solid #999;
+    border-left: 2px solid #bbb;
     width: 100%;
 
     th, td {
@@ -195,5 +198,22 @@ const blogRootCss = css`
         padding: 4px 2px;
       }
     }
+  }
+`;
+
+const blogConnectCss = (opts: {
+  sansTop?: boolean;
+  sansBot?: boolean;
+}) => css`
+  border: 2px solid #ccc;
+  border-top-width: ${opts.sansTop ? 0 : 2}px;
+  border-bottom-width: ${opts.sansBot ? 0 : 2}px;
+
+  padding-top: ${opts.sansTop ? 16 : 32}px;
+  padding-bottom: ${opts.sansBot ? 16 : 32}px;
+
+  @media(max-width: 600px) {
+    padding-top: 8px;
+    padding-bottom: 8px;
   }
 `;
