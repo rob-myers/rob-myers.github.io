@@ -1,8 +1,11 @@
 import { css } from "goober";
+import { useQuery } from "react-query";
 import { Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
 
 export default function GeomorphTest2() {
+  useQuery('foo', async () => null); // Rerenders on focus page
+
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>

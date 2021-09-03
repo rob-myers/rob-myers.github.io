@@ -115,9 +115,9 @@ export default function PanZoom(props) {
  * @typedef Props @type {object}
  * @property {Rect} gridBounds World bounds
  * @property {Rect} initViewBox Initial viewbox in world coords
- * @property {number=} minZoom Minimum zoom factor (default 0.5)
- * @property {number=} maxZoom Maximum zoom factor (default 2)
- * @property {number=} initZoom Initial zoom factor (default 1)
+ * @property {number} [minZoom] Minimum zoom factor (default 0.5)
+ * @property {number} [maxZoom] Maximum zoom factor (default 2)
+ * @property {number} [initZoom] Initial zoom factor (default 1)
  */
 
 /** @param {{ bounds: Rect }} props */

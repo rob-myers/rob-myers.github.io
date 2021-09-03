@@ -1,6 +1,7 @@
 /**
- * Parse svg symbols in /public/symbol
- * - yarn svg-meta
+ * Usage: yarn svg-meta
+ * > Parse svg symbols in /public/symbol,
+ * > writing json files in same directory.
  */
 import fs from 'fs';
 import path from 'path';
