@@ -26,6 +26,7 @@
     "classnames": "^2.3.1",
     "cli-columns": "^3.1.2",
     "codemirror": "^5.62.0",
+    "dommatrix": "^0.0.6",
     "earcut": "^2.2.3",
     "flexlayout-react": "^0.5.12",
     "getopts": "^2.3.0",
