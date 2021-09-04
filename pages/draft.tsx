@@ -24,7 +24,7 @@ But what's special about this game?
 4. We'll emphasise extendability.
 
 From one perspective, web development enables an open and extendable approach to building a game.
-From another, realtime games push against the boundaries of traditional web development (we won't use HTMLCanvas or WebGL).
+From another, realtime games push against the boundaries of traditional web development (sans HTMLCanvas or WebGL).
         `}/>
 
       <Gap/>
@@ -32,7 +32,8 @@ From another, realtime games push against the boundaries of traditional web deve
       <Markdown top bot children={`
 ## Constraints <float rem="1.2">19th July 2021</float>
 
-I've necessarily made a large number of decisions. Here are the important ones, from low-level to high-level.
+This project needs a backbone.
+We've decided the technology to use and the underlying setting where events take place. We also describe the low-level game mechanics.
 
 ### Technology
 
@@ -58,7 +59,7 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 - The title of the game is _Rogue Markup_.
 - The player is the Captain of the starship _Gehennom_.
 - The player works for _Unified Transport_, providing cargo/personnel transport and hauling services.
-- The graphical style is based on [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
+- The graphical style is that of [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
 Over time we'll clarify the above,
 but first we emphasise:
@@ -68,9 +69,9 @@ Spelunky's creator suggested [three important requirements](https://makegames.tu
 
 ### 1. Fun to develop
 
-_Games I want to make_. Rogue Markup will be fun to develop because I enjoy experimenting with NPC behaviour.
-One of our underlying motivations is the lack of Game AI resources available on the web.
+_Games I want to make_. My underlying motivation is the lack of Game AI resources available on the web.
 It is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which felt fun for me.
+In particular, we'll control and monitor NPC behaviour using an in-browser terminal.
 
 <!--
 Complexity will arise from the environment and agent interaction, rather than complex individual thinking or scripted behaviour.
@@ -86,7 +87,7 @@ Monotony will be overcome via mission specifics, encountered NPC behaviours, pro
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
 Graphically, see [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
-Importantly, it should be easy for other people to extend this game.
+It should be easy for other people to extend this game.
 We'll achieve this by providing source code, escape hatches to CodeSandbox, and clear explanations.
 Comments will be shown so that [GitHub](https://github.com/) users can share ideas and links.
 
@@ -100,7 +101,7 @@ All NPC decisions will be depicted graphically, such as future navpaths with pro
 
 ### 3. Experience
 
-_Games I’m good at making_. I work as a web developer, using React & Emotion on a daily basis. 
+_Games I’m good at making_. I work as a web developer, using React and CSS-in-JS on a daily basis. 
 I have a [strong background](https://dblp.org/pid/81/8748.html) in Theoretical Computer Science,
 so won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
 I have also created similar game mechanics _many_ times over the years.
@@ -117,7 +118,7 @@ We're going to build the game using the following technologies.
 | Concept | Browser Technology |
 | - | - |
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components). |
-| Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
+| Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober), and programmatically. |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Pathfinding | Offline navmeshes, and a port of [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
 | Physics engine | [WebAssembly port](https://www.npmjs.com/package/box2d-wasm) of [Box2D](https://github.com/erincatto/box2d). |
