@@ -16,7 +16,15 @@ export default function IndexPage() {
 We are going to build a video game step-by-step on this website.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the starship _Gehennom_.
 
-As an important side-effect, a popular approach to frontend development will be presented. The underlying technology is the Markup language HTML, brought to life via CSS, SVG and JavaScript.
+But what's special about this game?
+
+1. We'll use standard web development techniques.
+2. We'll use [thousands of freely available assets](http://gurpsland.no-ip.org/geomorphs/).
+3. We'll control Game AI via an in-browser terminal.
+4. We'll emphasise extendability.
+
+From one perspective, web development enables an open and extendable approach to building a game.
+From another, realtime games push against the boundaries of traditional web development (we won't use HTMLCanvas or WebGL).
         `}/>
 
       <Gap/>
@@ -28,12 +36,12 @@ I've necessarily made a large number of decisions. Here are the important ones, 
 
 ### Technology
 
-- We'll make a browser-based game for mobile & desktop devices.
+- Create a browser-based game for mobile & desktop devices.
 - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
 - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
 - Use [Preact](https://www.npmjs.com/package/preact) instead of React, and [Goober](https://www.npmjs.com/package/goober) instead of [Emotion](https://www.npmjs.com/package/@emotion/styled).
-- For performance, favour DOM manipulation over React renders.
+- Favour DOM manipulation over React renders (for performance).
 - Use [NextJS](https://nextjs.org/) as our development environment.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 
