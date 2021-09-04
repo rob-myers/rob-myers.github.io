@@ -1,7 +1,8 @@
 import React from 'react';
-import { styled } from 'goober';
+import { css } from 'goober';
 import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
 import CodeMirror from 'codemirror';
+import classNames from 'classnames';
 
 import * as Lookup from 'model/tabs-lookup';
 import {CodeEditor} from 'components/dynamic';
@@ -10,12 +11,11 @@ import Tab, { ErrorMessage, TabMeta } from './Tab';
 export default function Tabs({ tabs, height }: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   return (
-    <TabsRoot
-      className="tabs scrollable"
-      __height={height}
+    <section
+      className={classNames("tabs", "scrollable", rootCss(height))}
     >
       <Layout model={model} factory={factory} />
-    </TabsRoot>
+    </section>
   );
 }
 
@@ -25,7 +25,7 @@ interface Props {
   indent?: string;
 }
 
-const TabsRoot = styled('div')<{ __height: number; }>`
+const rootCss = (height: number) => css`
   padding: var(--tabs-vert-indent) var(--blog-indent);
 
   background: var(--blog-bg);
@@ -39,7 +39,7 @@ const TabsRoot = styled('div')<{ __height: number; }>`
   > .flexlayout__layout {
     background: #444;
     position: relative;
-    height: ${(props) => props.__height}px;
+    height: ${height}px;
   }
   .flexlayout__tab {
     border: 1px solid rgba(0, 0, 0, 0.3);
