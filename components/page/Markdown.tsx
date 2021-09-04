@@ -9,8 +9,8 @@ import classNames from 'classnames';
 export default function Markdown(
   props: ReactMarkdown.ReactMarkdownOptions & {
     title?: boolean;
-    sansTop?: boolean;
-    sansBot?: boolean;
+    top?: boolean;
+    bot?: boolean;
   }
 ) {
   return (
@@ -128,8 +128,21 @@ const titleCss = css`
 const blogCss = css`
   background: var(--blog-bg);
   color: #333;
+
   padding-left: var(--blog-indent);
   padding-right: var(--blog-indent);
+
+  @media(min-width: 600px) {
+    > p:first-child { padding-top: 8px; }
+    > p:last-child { padding-bottom: 8px; }
+  }
+  padding-top: 24px;
+  padding-bottom: 24px;
+  @media(max-width: 600px) {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
 
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
@@ -201,22 +214,10 @@ const blogCss = css`
 `;
 
 const blogConnectCss = (opts: {
-  sansTop?: boolean;
-  sansBot?: boolean;
+  top?: boolean;
+  bot?: boolean;
 }) => css`
   border: 2px solid #ccc;
-  border-top-width: ${opts.sansTop ? 0 : 2}px;
-  border-bottom-width: ${opts.sansBot ? 0 : 2}px;
-
-  @media(min-width: 600px) {
-    > p:first-child { padding-top: 8px; }
-    > p:last-child { padding-bottom: 8px; }
-  }
-  
-  padding-top: 24px;
-  padding-bottom: 24px;
-  @media(max-width: 600px) {
-    padding-top: 8px;
-    padding-bottom: 8px;
-  }
+  border-top-width: ${opts.top ? 2 : 0}px;
+  border-bottom-width: ${opts.bot ? 2 : 0}px;
 `;

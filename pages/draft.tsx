@@ -10,7 +10,7 @@ export default function IndexPage() {
     <Main>
       <Title />
 
-      <Markdown children={`
+      <Markdown top bot children={`
 ## Objective <float rem="1.2">19th July 2021</float>
 
 We are going to build a video game step-by-step on this website.
@@ -21,7 +21,7 @@ As an important side-effect, a popular approach to frontend development will be 
 
       <Gap/>
 
-      <Markdown children={`
+      <Markdown top bot children={`
 ## Constraints <float rem="1.2">19th July 2021</float>
 
 I've necessarily made a large number of decisions. Here are the important ones, from low-level to high-level.
@@ -101,7 +101,7 @@ Here's hoping my chain of unfinished projects is coming to a close!
 
       <Gap/>
 
-      <Markdown sansBot children={`
+      <Markdown top children={`
 ## Technology  <float rem="1.2">19th July 2021</float>
 
 We're going to build the game using the following technologies.
@@ -154,7 +154,7 @@ Let's consider an example, a pannable and zoomable grid.
         ]}
       />
 
-      <Markdown sansTop sansBot children={`
+      <Markdown children={`
 
 The file _panzoom/PanZoom.jsx_ (see tab above) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
@@ -195,7 +195,7 @@ Here's a whirlwind overview of React (and Preact).
         ]}
       />
 
-      <Markdown sansTop children={`
+      <Markdown bot children={`
 
 So, React function components are written using syntactic-sugar (JSX), and composed together in the same way as HTML.
 We're actually using Preact: its codebase is smaller, and it has reputation for being faster
@@ -223,7 +223,7 @@ The npm module [Goober](https://www.npmjs.com/package/goober) handles this for u
 
       <Gap/>
 
-      <Markdown sansBot children={`
+      <Markdown top children={`
 ## Technology (Part 2)
 
 ### Navigation
@@ -240,8 +240,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
         ]}
       />
 
-      <Markdown sansTop children={`
-
+      <Markdown bot children={`
 ### Physics engine
 
 We need a Physics engine:
@@ -257,7 +256,11 @@ We need a Physics engine:
         ]}
       />
 
-      <Markdown children={`
+      <Gap/>
+
+      <Markdown top bot children={`
+## Technology (Part 3)
+
 ### Static and Runtime Analysis
 
 - Typescript via JSDoc, refering to CodeSandbox.
@@ -272,7 +275,7 @@ We need a Physics engine:
 
       <Gap/>
 
-      <Markdown children={`
+      <Markdown top children={`
 ## Starship Geomorphs <float rem="1.2">19th July 2021</float>
 
 ### Filesystem structure
@@ -322,7 +325,7 @@ public/svg
         ]}
       />
 
-      <Markdown children={`
+      <Markdown bot children={`
 ## Movement <float rem="1.2">19th July 2021</float>
 
 - Navigation
