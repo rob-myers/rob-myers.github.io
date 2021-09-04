@@ -7,7 +7,11 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 import { setup } from 'goober';
-setup(React.createElement);
+import { shouldForwardProp } from 'goober/should-forward-prop';
+setup(
+  React.createElement, undefined, undefined,
+  shouldForwardProp(prop => !prop.startsWith('__')),
+);
 
 import 'styles/globals.css'
 import 'xterm/css/xterm.css';

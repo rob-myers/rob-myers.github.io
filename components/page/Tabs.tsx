@@ -12,7 +12,7 @@ export default function Tabs({ tabs, height }: Props) {
   return (
     <TabsRoot
       className="tabs scrollable"
-      height={height}
+      __height={height}
     >
       <Layout model={model} factory={factory} />
     </TabsRoot>
@@ -25,7 +25,7 @@ interface Props {
   indent?: string;
 }
 
-const TabsRoot = styled('div')<{ height: number; }>`
+const TabsRoot = styled('div')<{ __height: number; }>`
   padding: var(--tabs-vert-indent) var(--blog-indent);
 
   background: var(--blog-bg);
@@ -39,7 +39,7 @@ const TabsRoot = styled('div')<{ height: number; }>`
   > .flexlayout__layout {
     background: #444;
     position: relative;
-    height: ${(props) => props.height}px;
+    height: ${(props) => props.__height}px;
   }
   .flexlayout__tab {
     border: 1px solid rgba(0, 0, 0, 0.3);
