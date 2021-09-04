@@ -10,6 +10,7 @@ export default function UseSvg(props) {
     <g
       className={`symbol ${props.symbol}`}
       transform={props.transform}
+      style={{ pointerEvents: 'none' }}
     >
       {props.debug && (
         <g

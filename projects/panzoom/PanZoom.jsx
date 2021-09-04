@@ -88,7 +88,6 @@ export default function PanZoom(props) {
         width: 100%;
         height: 100%;
         touch-action: pan-x pan-y pinch-zoom;
-        /** sporadic improvement for pixel5 vs macbookpro */
         > g.content {
           shape-rendering: ${canTouchDevice ? 'optimizeSpeed' : 'auto'};
         }
