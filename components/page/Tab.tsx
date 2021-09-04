@@ -25,15 +25,17 @@ const rootCss = css`
   border: 1px solid rgba(0, 0, 0, 0.3);
   border-top: 6px solid #444;
   position: relative;
+  /** Handle svg overflow */
+  overflow: hidden;
 `;
 
 function LoadingOverlay(props: { fadeOut: boolean }) {
   return (
-    <div className={classNames(overlayCss, { 'fade-out': props.fadeOut })}>
+    <section className={classNames(overlayCss, { 'fade-out': props.fadeOut })}>
       <div>
         <div className="message">Loading...</div>
       </div>
-    </div>
+    </section>
   );
 }
 
