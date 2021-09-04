@@ -151,6 +151,7 @@ const blogCss = css`
   h1, h2, h3, h4 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-weight: 500;
+    margin: 8px 0;
     @media(min-width: 600px) {
       margin-top: 32px;
     }
@@ -168,7 +169,7 @@ const blogCss = css`
     background: #eee;
   }
   ul, ol {
-    margin: 20px 0;
+    margin: 20px 0 24px;
     line-height: 1.4;
     padding-left: var(--list-indent);
 
