@@ -1,19 +1,15 @@
 import * as React from 'react';
 import PanZoomDemo from '../panzoom/PanZoomDemo';
 
-// With JSX
-const node = <div title="message">Welcome!</div>;
-// Without JSX
-const sameNode = React.createElement(
+const withJsx = <div title="message">Welcome!</div>;
+const withoutJsx = React.createElement(
   'div',
   { title: 'message' },
   'Welcome!',
 );
 
-// With JSX
-const altNode = <div><PanZoomDemo /></div>;
-// Without JSX
-const sameAltNode = React.createElement(
+const withJsxToo = <div><PanZoomDemo /></div>;
+const withoutJsxToo = React.createElement(
   'div',
   null,
   React.createElement(PanZoomDemo, null),
