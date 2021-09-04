@@ -128,7 +128,6 @@ const titleCss = css`
 const blogCss = css`
   background: var(--blog-bg);
   color: #333;
-
   padding-left: var(--blog-indent);
   padding-right: var(--blog-indent);
 
@@ -209,9 +208,13 @@ const blogConnectCss = (opts: {
   border-top-width: ${opts.sansTop ? 0 : 2}px;
   border-bottom-width: ${opts.sansBot ? 0 : 2}px;
 
-  padding-top: ${opts.sansTop ? 24 : 24}px;
-  padding-bottom: ${opts.sansBot ? 24 : 32}px;
-
+  @media(min-width: 600px) {
+    > p:first-child { padding-top: 8px; }
+    > p:last-child { padding-bottom: 8px; }
+  }
+  
+  padding-top: 24px;
+  padding-bottom: 24px;
   @media(max-width: 600px) {
     padding-top: 8px;
     padding-bottom: 8px;
