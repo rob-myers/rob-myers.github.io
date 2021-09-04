@@ -24,7 +24,7 @@ But what's special about this game?
 4. We'll emphasise extendability.
 
 From one perspective, web development enables an open and extendable approach to building a game.
-From another, realtime games push against the boundaries of traditional web development (sans HTMLCanvas or WebGL).
+From another, realtime games push against the boundaries of traditional Markup-based web development.
         `}/>
 
       <Gap/>
@@ -42,7 +42,7 @@ We've decided the technology to use and the underlying setting where events take
 - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
 - Use [Preact](https://www.npmjs.com/package/preact) instead of React, and [Goober](https://www.npmjs.com/package/goober) instead of [Emotion](https://www.npmjs.com/package/@emotion/styled).
-- Favour DOM manipulation over React renders (for performance).
+- Use and mutate [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) to avoid React renders.
 - Use [NextJS](https://nextjs.org/) as our development environment.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 
@@ -63,7 +63,7 @@ We've decided the technology to use and the underlying setting where events take
 
 Over time we'll clarify the above,
 but first we emphasise:
-> _finishing a game is really fucking hard_.
+> _finishing a video game is really fucking hard_.
 
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game). We'll now address them.
 
@@ -113,11 +113,14 @@ Here's hoping my chain of unfinished projects is coming to a close!
       <Markdown top children={`
 ## Technology  <float rem="1.2">19th July 2021</float>
 
+So we're going to build a video game, directly on this website.
+
+
 We're going to build the game using the following technologies.
 
 | Concept | Browser Technology |
 | - | - |
-| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components). |
+| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), combined with [Web Components](https://reactjs.org/docs/web-components.html). |
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober), and programmatically. |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Pathfinding | Offline navmeshes, and a port of [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
@@ -141,13 +144,13 @@ One popular approach uses _React function components_, which are just JavaScript
 
 - They have a single parameter, conventionally called _props_.
 
-It is a JavaScript object defining the component's named inputs,
-and possibly special properties like _children_, _key_ and _ref_.
+  It is a JavaScript object defining the component's named inputs,
+  and possibly special properties like _children_, _key_ and _ref_.
 
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
-This returned value amounts to an HTML fragment to be rendered,
-and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
+  This returned value amounts to an HTML fragment to be rendered,
+  and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers use a grammatical extension of JavaScript called JSX.
 It permits composing components using an XML-like syntax, to obtain the desired dynamic DOM tree.
