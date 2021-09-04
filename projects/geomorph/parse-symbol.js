@@ -12,26 +12,25 @@ export function parseStarshipSymbol(svgContents, debug) {
   const $ = cheerio.load(svgContents);
 
   const topNodes = Array.from($('svg > *'));
+  const pngOffset = extractPngOffset($, topNodes);
   const hull = extractGeoms($, topNodes, 'hull');
   const doors = extractGeoms($, topNodes, 'doors');
-  const walls = extractGeoms($, topNodes, 'walls');
-  const obstacles = extractGeoms($, topNodes, 'obstacles');
   const irisValves = extractGeoms($, topNodes, 'iris-valves');
   const labels = extractGeoms($, topNodes, 'labels');
-  const pngOffset = extractPngOffset($, topNodes);
+  const obstacles = extractGeoms($, topNodes, 'obstacles');
+  const walls = extractGeoms($, topNodes, 'walls');
   // console.log({ url, hull });
 
   return {
     /** Original svg with png data url; very useful during geomorph creation */
-    svgInnerText: debug
-      ? topNodes.map(x => $.html(x)).join('\n') : undefined,
+    svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : undefined,
+    pngOffset,
     hull: Poly.union(hull),
     doors,
     irisValves,
     labels,
     obstacles,
     walls,
-    pngOffset,
   };
 }
 
@@ -77,6 +76,16 @@ export function serializeSymbol(parsed) {
 }
 
 /**
+ * @param {Poly[]} polys
+ * @param {string[]} tags
+ */
+ function restrictByTags(polys, tags) {
+  return polys.filter(x =>
+    x.meta?.title.startsWith('has-') && tags.includes(x.meta.title)
+  );
+}
+
+/**
  * @param {CheerioAPI} api
  * @param {Element[]} topNodes
  * @param {string} title
@@ -103,7 +112,7 @@ function extractGeom(api, el) {
   } else if (tagName === 'path') {
     polys.push(...svgPathToPolygons(a.d).map(x => x.addMeta({ title })));
   } else {
-    console.warn('extractPoly: unexpected tagName:', tagName);
+    console.warn('extractGeom: unexpected tagName:', tagName);
   }
   // DOMMatrix not available server-side
   // const m = new DOMMatrix(a.transform);
@@ -132,14 +141,6 @@ function extractGeom(api, el) {
  */
  function hasTitle(api, node, title) {
   return api(node).children('title').text() === title && api(node).addClass(title)
-}
-
-/**
- * @param {Poly[]} polys
- * @param {string[]} tags
- */
-function restrictByTags(polys, tags) {
-  return polys.filter(x => tags.includes(/** @type {*} */ (x.meta?.title)));
 }
 
 /** @param {Poly[]} polys */

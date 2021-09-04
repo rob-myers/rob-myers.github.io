@@ -12,8 +12,8 @@ export default function GeomorphTest() {
         <UseSvg symbol="misc-stellar-cartography--023--4x4" transform="matrix(-0.2, 0, 0, 0.2, 1200, 360)" />
         <UseSvg symbol="stateroom--014--2x2" transform="matrix(0.2, 0, 0, -0.2, 0, 480)" />
         <UseSvg symbol="stateroom--014--2x2" transform="matrix(0.2, 0, 0, -0.2, 120, 480)" />
-        <UseSvg symbol="office--001--2x2" tags={['door-s']} transform="matrix(-0.2, 0, 0, 0.2, 240, 120)" />
-        <UseSvg symbol="office--001--2x2" tags={['door-s']} transform="matrix(0.2, 0, 0, 0.2, 960, 120)" />
+        <UseSvg symbol="office--001--2x2" tags={['has-door-s']} transform="matrix(-0.2, 0, 0, 0.2, 240, 120)" />
+        <UseSvg symbol="office--001--2x2" tags={['has-door-s']} transform="matrix(0.2, 0, 0, 0.2, 960, 120)" />
         <UseSvg symbol="stateroom--036--2x4" transform="matrix(0.2, 0, 0, 0.2, 0, 0)" />
         <UseSvg symbol="stateroom--036--2x4" transform="matrix(-0.2, 0, 0, 0.2, 1200, 0)" />
         <UseSvg symbol="stateroom--036--2x4" transform="matrix(0, -0.2, 0.2, 0, 0, 600)" />
