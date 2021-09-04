@@ -158,15 +158,17 @@ Let's consider an example, a pannable and zoomable grid.
 
 The file _panzoom/PanZoom.jsx_ (see tab above) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
+
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
+
 - _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
 
 They are JS functions with a single parameter, returning something which looks like HTML (but isn't).
 Notice _PanZoom_ renders _Grid_ by using the XML tag _\\<Grid\\>_.
 Then although React function components are functions, syntactically they are not invoked like functions.
-You can also view the demo and code [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab"), which permits code editing.
+You can also view the demo code [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab"), which permits code editing.
 
-Here's a whirlwind summary of React (and Preact).
+Here's a whirlwind overview of React (and Preact).
 
 - React devs use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), permitting XML syntax.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function _React.createElement_.
@@ -181,7 +183,7 @@ Here's a whirlwind summary of React (and Preact).
   A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
   It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
 - If _\\<App/\\>_ is a website, it is often [rendered server-side](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js) so the client can render the HTML immediately.
-  The client then invokes [_ReactDOM.hydrate_](https://github.com/preactjs/preact/blob/master/src/render.js) instead of _ReactDOM.render_, but with the same arguments.
+  Afterwards, the client invokes [_ReactDOM.hydrate_](https://github.com/preactjs/preact/blob/master/src/render.js) instead of _ReactDOM.render_, but with the same arguments.
 
       `}/>
 
