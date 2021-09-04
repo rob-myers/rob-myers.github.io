@@ -14,7 +14,7 @@ export default function Tabs({ tabs, height }: Props) {
       className="tabs scrollable"
       height={height}
     >
-      <Layout model={model} factory={factory}  />
+      <Layout model={model} factory={factory} />
     </TabsRoot>
   );
 }
@@ -33,16 +33,21 @@ const TabsRoot = styled('div')<{ height: number; }>`
     background-image: linear-gradient(135deg, #dddddd 42.86%, #bbbbbb 42.86%, #bbbbbb 50%, #dddddd 50%, #dddddd 92.86%, #bbbbbb 92.86%, #bbbbbb 100%);
     background-size: 9.90px 9.90px;
   }
-
   border: 2px solid #ccc;
   border-width: 0 2px;
 
-  > div {
+  > .flexlayout__layout {
     background: #444;
     position: relative;
     height: ${(props) => props.height}px;
   }
-  
+  .flexlayout__tab {
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-top: 6px solid #444;
+    position: relative;
+    /** Handle svg overflow */
+    overflow: hidden;
+  }
   .flexlayout__tabset_tabbar_outer {
     background: #222;
     border-bottom: 1px solid #555;
@@ -77,7 +82,7 @@ function factory(node: TabNode) {
       const filepath = node.getComponent() || '';
       if (filepath in Lookup.code) {
         return (
-          <Tab background="black">
+          <Tab>
             <CodeEditor
               height="100%"
               lineNumbers
