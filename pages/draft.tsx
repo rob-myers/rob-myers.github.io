@@ -22,11 +22,13 @@ But what's special about this game?
 3. We'll set it in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3), using [thousands of freely available assets](http://gurpsland.no-ip.org/geomorphs/).
 3. We'll expose its Game AI via an in-browser terminal.
 
+<!--
 Web development permits an open/extendable approach to building a game.
 On the other hand, realtime games push the boundaries of traditional web development,
 forcing us to take more care than usual.
 Finally, by emphasising programmable and monitorable Game AI,
 we hope to avoid unextendable icebergs of code.
+-->
         `}/>
 
       <Gap/>
@@ -134,10 +136,6 @@ But first we'll describe the underlying browser-based technologies we intend to 
 | Code sharing | [GitHub](https://github.com/) comments shown on site; GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
-<!-- Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and another tab i.e. the rendered output. -->
-
-<!-- We want to create a video game explicitly, exposing the code and underlying thought process.
-Then it is worth explaining these technologies before using them. -->
 
 ### React and Preact
 
@@ -185,6 +183,7 @@ You can also view the demo code [on CodeSandbox](https://codesandbox.io/s/rogue-
 Here's a whirlwind overview of React (and Preact).
 
 - React devs use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), permitting XML syntax.
+- React applications are often built by composing React function components, using the XML syntax for their return value.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function _React.createElement_.
   Please see _example/jsx-to-js.jsx_ further below.
 - Actually, this website uses Preact, an alternative to React with the same API.

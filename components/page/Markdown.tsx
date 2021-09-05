@@ -133,8 +133,12 @@ const blogCss = css`
   padding-right: var(--blog-indent);
 
   @media(min-width: 600px) {
-    > p:first-child { padding-top: 8px; }
-    > p:last-child { padding-bottom: 8px; }
+    > p:first-child {
+      padding-top: 8px;
+    }
+    > p:last-child, >ol:last-child {
+      padding-bottom: 8px;
+    }
   }
   padding-top: 24px;
   padding-bottom: 24px;
