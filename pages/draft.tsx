@@ -22,10 +22,11 @@ But what's special about this game?
 3. We'll set it in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3), using [thousands of freely available assets](http://gurpsland.no-ip.org/geomorphs/).
 3. We'll expose its Game AI via an in-browser terminal.
 
-From one perspective, web development permits an open/extendable approach to building a game.
-From another, realtime games push the boundaries of traditional web development.
-By making the Game AI programmable and monitorable,
-we hope to avoid creating unextendable icebergs of code.
+Web development permits an open/extendable approach to building a game.
+On the other hand, realtime games push the boundaries of traditional web development,
+forcing us to take more care than usual.
+Finally, by emphasising programmable and monitorable Game AI,
+we hope to avoid unextendable icebergs of code.
         `}/>
 
       <Gap/>
@@ -38,7 +39,7 @@ We've decided the technology to use, the low-level game mechanics, and the under
 
 ### Technology
 
-- Create a browser-based game for mobile & desktop devices.
+- Create a web game for mobile and desktop devices.
 - Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
 - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
@@ -47,20 +48,21 @@ We've decided the technology to use, the low-level game mechanics, and the under
 - Use [NextJS](https://nextjs.org/) as our development environment.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 
-### Game mechanics
+### Game mechanics (low-level)
 
-- Use a realtime birdseye camera, like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
+- Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) as the graphical style.
+- Use a realtime birdseye camera like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
 - Use [Recast](https://github.com/recastnavigation/recastnavigation) to generate navmeshes.
 - Use [a recent port](https://www.npmjs.com/package/box2d-wasm) of the physics engine [Box2D](https://github.com/erincatto/box2d).
-- Use procedural generation e.g. spaceship building/docking.
-- Use explicitly illustrated NPC decisions as a game mechanic.
+- Use procedural generation for spaceship building.
+- Use the terminal to program and monitor Game AI.
 
 ### Setting
   
 - The title of the game is _Rogue Markup_.
+- The events take place in the [Traveller Universe](https://travellermap.com).
 - The player is the Captain of the starship _Gehennom_.
 - The player works for _Unified Transport_, providing cargo/personnel transport and hauling services.
-- The graphical style is that of [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
 
 Over time we'll clarify the above,
 but first we emphasise:
@@ -86,7 +88,7 @@ _Games I want to have made_. As an end result I want a highly replayable space t
 The underlying missions amount to going from A to B (ever was it so).
 Monotony will be overcome via mission specifics, encountered NPC behaviours, procedural generation, and ship building.
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) where you can _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading or docking.
-Graphically, see [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html).
+Graphically, check out Starship Geomorphs 2.0.
 
 It should be easy for other people to extend this game.
 We'll achieve this by providing source code, escape hatches to CodeSandbox, and clear explanations.
@@ -115,13 +117,12 @@ Here's hoping my chain of unfinished projects is coming to a close!
 ## Technology  <float rem="1.2">19th July 2021</float>
 
 So we're going to build a video game, directly on this website.
-
-
-We're going to build the game using the following technologies.
+It will start getting fun once things are moving around under our control.
+But first we'll describe the underlying browser-based technologies we intend to use.
 
 | Concept | Browser Technology |
 | - | - |
-| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), combined with [Web Components](https://reactjs.org/docs/web-components.html). |
+| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), and [Web Components](https://reactjs.org/docs/web-components.html). |
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober), and programmatically. |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Pathfinding | Offline navmeshes, and a port of [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
@@ -135,8 +136,8 @@ We're going to build the game using the following technologies.
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 <!-- Typically we'll present a "project" as a number of tabs, consisting of source code _foo/bar.jsx_, and another tab i.e. the rendered output. -->
 
-We want to create a video game explicitly, exposing the code and underlying thought process.
-Then it is worth explaining these technologies before using them.
+<!-- We want to create a video game explicitly, exposing the code and underlying thought process.
+Then it is worth explaining these technologies before using them. -->
 
 ### React and Preact
 
@@ -186,7 +187,7 @@ Here's a whirlwind overview of React (and Preact).
 - React devs use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), permitting XML syntax.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function _React.createElement_.
   Please see _example/jsx-to-js.jsx_ further below.
-- Actually, this website uses [Preact](https://www.npmjs.com/package/@preact/compat), an alternative to React with the same API.
+- Actually, this website uses Preact, an alternative to React with the same API.
   Then _React.createElement_ is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
   and constructs Preact virtual DOM nodes.
 - The root component is usually called _App_.
@@ -221,9 +222,9 @@ There's more to say e.g. how React function components represent internal state,
 but we've said more than enough for now.
 -->
 
-### React Rendering
+### React Renders and Web Components
 
-__TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly e.g. via Web Components spec. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
+__TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
 
 ### CSS inside JS
 
