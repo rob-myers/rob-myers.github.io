@@ -16,10 +16,10 @@ export default function IndexPage() {
 We are going to build a video game step-by-step on this website.
 It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the starship _Gehennom_.
 
-But what's special about this game?
+In more detail:
 
 1. We'll build it using standard web development techniques.
-3. We'll set it in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3), using [thousands of freely available assets](http://gurpsland.no-ip.org/geomorphs/).
+2. We'll set it in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3), using [thousands of freely available assets](http://gurpsland.no-ip.org/geomorphs/).
 3. We'll expose its Game AI via an in-browser terminal.
 
 <!--
