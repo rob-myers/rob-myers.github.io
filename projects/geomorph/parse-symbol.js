@@ -4,11 +4,26 @@ import { VectJson, GeoJsonPolygon } from '../geom/types';
 import { svgPathToPolygons } from '../service';
 
 /**
+ * @template T
+ * @typedef ParsedSymbol @type {object}
+ * @property {string} symbolName
+ * @property {string | undefined} svgInnerText
+ * @property {T[]} hull Assumed connected, if exists
+ * @property {T[]} doors
+ * @property {T[]} irisValves
+ * @property {T[]} labels
+ * @property {T[]} obstacles
+ * @property {T[]} walls
+ * @property {VectJson} pngOffset
+ */
+
+/**
+ * @param {string} symbolName
  * @param {string} svgContents
  * @param {boolean} [debug]
  * @returns {ParsedSymbol<Poly>}
  */
-export function parseStarshipSymbol(svgContents, debug) {
+export function parseStarshipSymbol(symbolName, svgContents, debug) {
   const $ = cheerio.load(svgContents);
 
   const topNodes = Array.from($('svg > *'));
@@ -22,6 +37,7 @@ export function parseStarshipSymbol(svgContents, debug) {
   // console.log({ url, hull });
 
   return {
+    symbolName,
     /** Original svg with png data url; very useful during geomorph creation */
     svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : undefined,
     pngOffset,
@@ -40,6 +56,7 @@ export function parseStarshipSymbol(svgContents, debug) {
  */
 export function serializeSymbol(parsed) {
   return {
+    symbolName: parsed.symbolName,
     svgInnerText: parsed.svgInnerText,
     hull: toJsons(parsed.hull),
     doors: toJsons(parsed.doors),
@@ -50,19 +67,6 @@ export function serializeSymbol(parsed) {
     pngOffset: parsed.pngOffset,
   };
 }
-
-/**
- * @template T
- * @typedef ParsedSymbol @type {object}
- * @property {string | undefined} svgInnerText
- * @property {T[]} hull Assumed connected, if exists
- * @property {T[]} doors
- * @property {T[]} irisValves
- * @property {T[]} labels
- * @property {T[]} obstacles
- * @property {T[]} walls
- * @property {VectJson} pngOffset
- */
 
 /**
  * @param {ParsedSymbol<Poly>} parsed

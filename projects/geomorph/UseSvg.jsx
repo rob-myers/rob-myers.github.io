@@ -76,7 +76,7 @@ function useSvgText(symbolName, tags, debug) {
     async () => {
       console.info('loading symbol', symbolName, tags || '*');
       const contents = await fetch(`/symbol/${symbolName}.svg`).then(x => x.text());
-      const parsed = parseStarshipSymbol(contents, debug);
+      const parsed = parseStarshipSymbol(symbolName, contents, debug);
       // console.log({ symbolName, parsed });
       return restrictAllByTags(parsed, tags);
     },

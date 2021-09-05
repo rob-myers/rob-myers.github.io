@@ -18,7 +18,6 @@ export default async function (
 ) {
   try {
     const symbolName = req.query.name as string;
-    const tags = req.query.tags ? JSON.parse(req.query.tags as string) as string[] : undefined;
     const debug = 'debug' in req.query;
     if (!symbolName) {
       throw Error(`param "name" required e.g. /api/dev/symbol?name=my-symbol-name\n`);
@@ -30,7 +29,7 @@ export default async function (
     }
 
     const svgContents = fs.readFileSync(filepath).toString();
-    const result = parseStarshipSymbol(svgContents, debug);
+    const result = parseStarshipSymbol(symbolName, svgContents, debug);
     res.json(serializeSymbol(result));
 
   } catch (e) {
