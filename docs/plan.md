@@ -48,22 +48,29 @@
 
 ### level design
 - strategy
-  - create dev _hull_ and _starship-symbols_ in Boxy
-    - hull includes e.g. circular windows
-    - it defines walls and induces a bounding polygon
-  - create dev geomorph using JSX and `<use>`
   - generate prod geomorph (1 runtime PNG, various shapes)
-
-### react components
-- ConnectDemo using Geomorphs
-  - First attempt at Geomorph to SVG i.e. conversion of `319-100x50-multi-purpose.png`.
+  - ✅ create dev _hull_ and _starship-symbols_ in Boxy
+    - ✅ hull includes e.g. circular windows
+    - ✅ it defines walls and induces a bounding polygon
+  - ✅ create dev geomorph using JSX and `<use>`
+- ✅ First attempt at Geomorph to SVG i.e. conversion of `301`.
 - ✅ PanZoom using `geom`, `hooks`, `service/dom`
 
-### CodeSandbox
-- CodeSandbox for PanZoom
-- CodeSandbox for GeomorphDemo
-- ✅ StackBlitz for PanZoom
-  > https://stackblitz.com/edit/rogue-markup-panzoom?file=index.js
+### shell
+- simplification
+  - replace commands by `run` and a function
+    - call, expr, false, filter, help, map, poll, reduce, split, sponge, true
+  - simplify `help`
+- fix `set home/dist {}`
+- can trigger shell command from markdown link
+- Use unix-like paths e.g. `/home/src` instead of `/home.src`?
+	- ✅ Redo redirects
+	- ✅ Redo `get`, bare `get`, `cd`, `ls`, `rm`
+- ✅ `api.read` can read lines from tty
+- ✅ redirect into cwd rather than `var`
+- ✅ support ansi-codes in `$'...'`
+- better error "stacks"
+  > ✅ have node.meta.stack with function names
 
 ### code-editor
 - ✅ codemirror toggling: initial + gutter
@@ -76,23 +83,10 @@
 - ✅ css`...` should start inside a block context
 - ✅ use codemirror
 - ✅ get css`...` working with scss
-- could try monaco-editor
+- ✅ could try monaco-editor
   - https://www.npmjs.com/package/monaco-jsx-highlighter
   - https://github.com/Microsoft/typescript-styled-plugin#configuration (might work?)
   - https://luminaxster.github.io/syntax-highlighter/
-
-### shell
-- fix `set home/dist {}`
-- can trigger shell command from markdown link
-- improve `help`
-- Use unix-like paths e.g. `/home/src` instead of `/home.src`?
-	- ✅ Redo redirects
-	- ✅ Redo `get`, bare `get`, `cd`, `ls`, `rm`
-- ✅ `api.read` can read lines from tty
-- ✅ redirect into cwd rather than `var`
-- ✅ support ansi-codes in `$'...'`
-- better error "stacks"
-  > ✅ have node.meta.stack with function names
 
 ## Technical constraints
 
