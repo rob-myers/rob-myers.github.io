@@ -20,7 +20,7 @@ In more detail:
 
 1. We'll build it using standard web development techniques.
 2. We'll set it in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3), using [thousands of freely available assets](http://gurpsland.no-ip.org/geomorphs/).
-3. We'll expose its Game AI via an in-browser terminal.
+3. We'll focus on Game AI, controlled via an in-browser terminal.
 
 <!--
 Web development permits an open/extendable approach to building a game.
@@ -41,19 +41,19 @@ We've decided the technology to use, the low-level game mechanics, and the under
 
 ### Technology
 
-- Create a web game for mobile and desktop devices.
-- Use CSS/SVG/PNGs instead of HTMLCanvas/WebGL.
-- Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for simulating physics.
+- Create a web game for mobile/desktop.
+- Use CSS/SVG/PNGs, not HTMLCanvas/WebGL.
+- Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for physics.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
-- Use [Preact](https://www.npmjs.com/package/preact) instead of React, and [Goober](https://www.npmjs.com/package/goober) instead of [Emotion](https://www.npmjs.com/package/@emotion/styled).
-- Use and mutate [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) to avoid React renders.
-- Use [NextJS](https://nextjs.org/) as our development environment.
-- Use [CodeSandbox](https://codesandbox.io) to share editable code.
+- Use [Preact](https://www.npmjs.com/package/preact) (not React), and [Goober](https://www.npmjs.com/package/goober) (not [Emotion](https://www.npmjs.com/package/@emotion/styled)).
+- Use [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) to avoid React renders.
+- Use [NextJS](https://nextjs.org/) as our dev env.
+- Use [CodeSandbox](https://codesandbox.io) to share/edit code.
 
 ### Game mechanics (low-level)
 
-- Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) as the graphical style.
-- Use a realtime birdseye camera like [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch). 
+- Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
+- Use a realtime birdseye camera. 
 - Use [Recast](https://github.com/recastnavigation/recastnavigation) to generate navmeshes.
 - Use [a recent port](https://www.npmjs.com/package/box2d-wasm) of the physics engine [Box2D](https://github.com/erincatto/box2d).
 - Use procedural generation for spaceship building.
@@ -119,7 +119,7 @@ Here's hoping my chain of unfinished projects is coming to a close!
 ## Technology  <float rem="1.2">19th July 2021</float>
 
 So we're going to build a video game, directly on this website.
-It will start getting fun once things are moving around under our control.
+It will start getting fun once things are moving under our control.
 But first we'll describe the underlying browser-based technologies we intend to use.
 
 | Concept | Browser Technology |
