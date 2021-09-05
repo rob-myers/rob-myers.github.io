@@ -18,13 +18,14 @@ It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set 
 
 But what's special about this game?
 
-1. We'll use standard web development techniques.
-2. We'll use [thousands of freely available assets](http://gurpsland.no-ip.org/geomorphs/).
-3. We'll control Game AI via an in-browser terminal.
-4. We'll emphasise extendability.
+1. We'll build it using standard web development techniques.
+3. We'll set it in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3), using [thousands of freely available assets](http://gurpsland.no-ip.org/geomorphs/).
+3. We'll expose its Game AI via an in-browser terminal.
 
-From one perspective, web development enables an open and extendable approach to building a game.
-From another, realtime games push against the boundaries of traditional Markup-based web development.
+From one perspective, web development permits an open/extendable approach to building a game.
+From another, realtime games push the boundaries of traditional web development.
+By making the Game AI programmable and monitorable,
+we hope to avoid creating unextendable icebergs of code.
         `}/>
 
       <Gap/>
@@ -33,7 +34,7 @@ From another, realtime games push against the boundaries of traditional Markup-b
 ## Constraints <float rem="1.2">19th July 2021</float>
 
 This project needs a backbone.
-We've decided the technology to use and the underlying setting where events take place. We also describe the low-level game mechanics.
+We've decided the technology to use, the low-level game mechanics, and the underlying setting where events take place.
 
 ### Technology
 
@@ -127,7 +128,7 @@ We're going to build the game using the following technologies.
 | Physics engine | [WebAssembly port](https://www.npmjs.com/package/box2d-wasm) of [Box2D](https://github.com/erincatto/box2d). |
 | Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html), and also [ESLint](https://www.npmjs.com/package/eslint). |
 | Live analysis | Our own in-browser terminal. |
-| Code viewing | [CodeMirror](https://codemirror.net/) to view JS. [FlexLayout](https://github.com/caplin/FlexLayout) provides draggable tabs. |
+| Code viewing | [CodeMirror](https://codemirror.net/) to view JS. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
 | Code sharing | [GitHub](https://github.com/) comments shown on site; GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
 
