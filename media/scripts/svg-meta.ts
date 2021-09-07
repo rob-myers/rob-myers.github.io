@@ -5,14 +5,14 @@
  * > and a single json file /public/symbol/svg.json
  */
 import fs from 'fs';
-import path from 'path';
 import stringify from 'json-stringify-pretty-compact';
+import path from 'path';
+import type { GeoJsonPolygon } from 'projects/geom/types';
+import type { ParsedSymbol } from 'projects/geomorph/types';
 import {
-  ParsedSymbol,
   parseStarshipSymbol,
   serializeSymbol,
 } from '../../projects/geomorph/parse-symbol';
-import { GeoJsonPolygon } from 'projects/geom/types';
 
 const symbolsDir = path.resolve(__dirname, '../../public/symbol');
 const svgFilenames = fs.readdirSync(symbolsDir).filter(x => x.endsWith('.svg'));

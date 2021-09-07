@@ -1,21 +1,8 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
-import { Poly, Rect, Mat } from '../geom';
 import { VectJson, GeoJsonPolygon } from '../geom/types';
+import { ParsedSymbol} from './types';
+import { Poly, Rect, Mat } from '../geom';
 import { svgPathToPolygons } from '../service';
-
-/**
- * @template T
- * @typedef ParsedSymbol @type {object}
- * @property {string} symbolName
- * @property {string | undefined} svgInnerText
- * @property {T[]} hull Assumed connected, if exists
- * @property {T[]} doors
- * @property {T[]} irisValves
- * @property {T[]} labels
- * @property {T[]} obstacles
- * @property {T[]} walls
- * @property {VectJson} pngOffset
- */
 
 /**
  * @param {string} symbolName
