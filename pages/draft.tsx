@@ -13,7 +13,7 @@ export default function IndexPage() {
       <Markdown top bot children={`
 ## Objective <float rem="1.2">19th July 2021</float>
 
-This website aims to construct the _underlying Game AI_ of a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike),
+We'll construct the _underlying Game AI_ of a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike),
 set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
 Why?
 Because Game AI is more interesting than any particular game.
@@ -21,7 +21,7 @@ An environment is needed to make it meaningful,
 but fixed narratives and missions are not.
 
 We'll approach things algorithmically,
-driven by the environment e.g. thousands of [Traveller-themed assets](http://gurpsland.no-ip.org/geomorphs/).
+yet driven by the environment e.g. thousands of [Traveller-themed assets](http://gurpsland.no-ip.org/geomorphs/).
 We're particularly interested in _managing_ navigation, animation, and state machines.
 Game AI should be compositional, not forced into a straight-jacket.
 
@@ -38,33 +38,33 @@ forcing us to take more care than usual.
 ## Constraints <float rem="1.2">19th July 2021</float>
 
 This project needs a backbone.
-We've decided the technology to use, the low-level game mechanics, and the setting where events take place.
+We've decided how to build it, the underlying game mechanics, and where events take place.
 
 ### Technology
 
-- Support mobile/desktop devices.
 - Use CSS/SVG/PNGs, not HTMLCanvas/WebGL.
 - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for physics.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
 - Use [Preact](https://www.npmjs.com/package/preact) (not React), and [Goober](https://www.npmjs.com/package/goober) (not [Emotion](https://www.npmjs.com/package/@emotion/styled)).
 - Use [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) to avoid React renders.
 - Use [NextJS](https://nextjs.org/) as our dev env.
-- Use [CodeSandbox](https://codesandbox.io) to share/edit code.
+- Use [CodeSandbox](https://codesandbox.io) to share editable code.
+- Support mobile/desktop devices.
 
-### Game mechanics (low-level)
+### Game mechanics
 
 - Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
 - Use a realtime birdseye camera. 
 - Use [Recast](https://github.com/recastnavigation/recastnavigation) to generate navmeshes.
 - Use [a recent port](https://www.npmjs.com/package/box2d-wasm) of the physics engine [Box2D](https://github.com/erincatto/box2d).
 - Use procedural generation for spaceship building.
-- Use an in-browser terminal (programmatic interface).
+- Provide an in-browser terminal.
 
 ### Setting
   
-- The title of the game engine is _Rogue Markup_.
-- The events take place in the [Traveller Universe](https://travellermap.com).
-- __TODO__ example scenarios?
+- The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
+- Space vehicles/stations (Starship Geomorphs 2.0).
+- Characters classes from [Traveller Companion]().
 
 Over time we'll clarify the above,
 but first we emphasise:
@@ -77,12 +77,6 @@ Spelunky's creator suggested [three important requirements](https://makegames.tu
 _Games I want to make_. My underlying motivation is the lack of Game AI resources available on the web.
 It is hard to discuss Game AI without actually building a game, so I chose a setting and game mechanics which felt fun for me.
 In particular, we'll control and monitor NPC behaviour using an in-browser terminal.
-
-<!--
-Complexity will arise from the environment and agent interaction, rather than complex individual thinking or scripted behaviour.
-Simple interacting robots fits the space travel theme nicely.
-They're also analogous to UI components: parallel systems with some intercommunication.
--->
 
 ### 2. The Result
 
@@ -195,7 +189,7 @@ Here's a whirlwind overview of React (and Preact).
 - [_ReactDOM.render_](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts _\\<App/\\>_ into a DOM node mounted at _el_.
   A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
   It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
-- If _\\<App/\\>_ is a website, it is often [rendered server-side](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js) so the client can render the HTML immediately.
+- If _\\<App/\\>_ is a website, it is often [rendered as HTML server-side](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js) for the client to render immediately.
   Afterwards, the client invokes [_ReactDOM.hydrate_](https://github.com/preactjs/preact/blob/master/src/render.js) instead of _ReactDOM.render_, but with the same arguments.
 
       `}/>
