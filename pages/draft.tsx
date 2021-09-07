@@ -13,21 +13,22 @@ export default function IndexPage() {
       <Markdown top bot children={`
 ## Objective <float rem="1.2">19th July 2021</float>
 
-We are going to build a video game step-by-step on this website.
-It will be a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in space. We'll assume the role of Captain of the starship _Gehennom_.
+This website aims to construct the _underlying Game AI_ of a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike),
+set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
+Why?
+Because Game AI is more interesting than any particular game.
+An environment is needed to make it meaningful,
+but fixed narratives and missions are not.
 
-In more detail:
-
-1. We'll build it using standard web development techniques.
-2. We'll set it in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3), using [thousands of freely available assets](http://gurpsland.no-ip.org/geomorphs/).
-3. We'll focus on Game AI, controlled via an in-browser terminal.
+We'll approach things algorithmically,
+driven by the environment e.g. thousands of [Traveller-themed assets](http://gurpsland.no-ip.org/geomorphs/).
+We're particularly interested in _managing_ navigation, animation, and state machines.
+Game AI should be compositional, not forced into a straight-jacket.
 
 <!--
 Web development permits an open/extendable approach to building a game.
 On the other hand, realtime games push the boundaries of traditional web development,
 forcing us to take more care than usual.
-Finally, by emphasising programmable and monitorable Game AI,
-we hope to avoid unextendable icebergs of code.
 -->
         `}/>
 
@@ -37,11 +38,11 @@ we hope to avoid unextendable icebergs of code.
 ## Constraints <float rem="1.2">19th July 2021</float>
 
 This project needs a backbone.
-We've decided the technology to use, the low-level game mechanics, and the underlying setting where events take place.
+We've decided the technology to use, the low-level game mechanics, and the setting where events take place.
 
 ### Technology
 
-- Create a web game for mobile/desktop.
+- Support mobile/desktop devices.
 - Use CSS/SVG/PNGs, not HTMLCanvas/WebGL.
 - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for physics.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
@@ -57,14 +58,13 @@ We've decided the technology to use, the low-level game mechanics, and the under
 - Use [Recast](https://github.com/recastnavigation/recastnavigation) to generate navmeshes.
 - Use [a recent port](https://www.npmjs.com/package/box2d-wasm) of the physics engine [Box2D](https://github.com/erincatto/box2d).
 - Use procedural generation for spaceship building.
-- Use the terminal to program and monitor Game AI.
+- Use an in-browser terminal (programmatic interface).
 
 ### Setting
   
-- The title of the game is _Rogue Markup_.
+- The title of the game engine is _Rogue Markup_.
 - The events take place in the [Traveller Universe](https://travellermap.com).
-- The player is the Captain of the starship _Gehennom_.
-- The player works for _Unified Transport_, providing cargo/personnel transport and hauling services.
+- __TODO__ example scenarios?
 
 Over time we'll clarify the above,
 but first we emphasise:
@@ -210,16 +210,11 @@ Here's a whirlwind overview of React (and Preact).
 
       <Markdown bot children={`
 
-So, React function components are written using syntactic-sugar (JSX), and composed together in the same way as HTML.
-We're actually using Preact: its codebase is smaller, and it has reputation for being faster
-(although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer)).
+So, React function components are written using syntactic-sugar (JSX), and composed together like HTML.
+We're actually using Preact (its codebase is smaller, and it has reputation for being faster,
+although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer)).
 Rendering a component involves (re)constructing virtual DOM nodes and diffing them.
 Finally, the initial render of a website is often precomputed, so it loads faster.
-
-<!--
-There's more to say e.g. how React function components represent internal state,
-but we've said more than enough for now.
--->
 
 ### React Renders and Web Components
 
