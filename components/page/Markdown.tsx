@@ -4,7 +4,9 @@ import { css } from 'goober';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import gfm from 'remark-gfm';
+import { Actions } from 'flexlayout-react';
 import classNames from 'classnames';
+import useSiteStore from 'store/site.store';
 
 export default function Markdown(
   props: ReactMarkdown.ReactMarkdownOptions & {
@@ -58,7 +60,20 @@ const blogComponents = {
         {...href === '#command' && {
           onClick: (e) => {
             e.preventDefault();
-            console.warn('link triggered command:', title);
+            const [cmd, ...args] = title.split(' ');
+            switch (cmd) {
+              case 'open-tab': {
+                const [tabsKey, tabKey] = args;
+                const tabs = useSiteStore.getState().tabs[tabsKey];
+                if (tabs) {// in case tabs not enabled yet 
+                  tabs.model.doAction(Actions.selectTab(tabKey));
+                  tabs.scrollIntoView();
+                }
+                break;
+              }
+              default:
+                console.warn('link triggered unrecognised command:', title);
+            }
           }
         }}
         {...props}
