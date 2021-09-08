@@ -66,13 +66,14 @@ We've chosen the underlying technology, game mechanics, and where events take pl
   
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
 - Space vehicles/stations (Starship Geomorphs 2.0).
-- Characters classes from the [Traveller Companion]().
 
 Over time we'll clarify the above, but first we emphasise:
 > _creating a video game is really fucking hard_.
 
 Although we'll avoid _fixed_ narratives/missions/levels,
-compositional Game AI naturally leads to procedurally generated missions (common amongst Roguelikes). Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
+compositional Game AI naturally leads to procedurally generated missions (common amongst Roguelikes).
+In this sense we are trying to create a video game.
+Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
 We'll now address them.
 
 ### 1. Fun to develop
@@ -83,14 +84,14 @@ It is hard to discuss the subject without actually building a game, so I chose a
 
 ### 2. The Result
 
-_Games I want to have made_. As an end result I want a highly replayable space-based game/sandbox.
+_Games I want to have made_. As an end result I want a highly replayable space action-game/sandbox.
 Generated missions will involve going from A to B and doing C (ever was it so).
 Monotony will be overcome via encountered NPC behaviours and e.g. ship building.
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) with richer NPCs and the ability to _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading/docking.
 Graphically, see Starship Geomorphs 2.0.
 
-It should be easy for others to extend Rogue Markup.
-We'll achieve this by providing compositional source code, escape hatches to CodeSandbox and clear explanations.
+We want it to be easy for others to extend Rogue Markup.
+We'll achieve this by providing compositional code, escape hatches to CodeSandbox, and clear explanations.
 Comments will be shown so that [GitHub](https://github.com/) users can share ideas and links.
 
 <!--
@@ -115,18 +116,18 @@ Here's hoping my chain of unfinished projects is coming to a close!
       <Markdown top children={`
 ## Technology  <float rem="1.2">19th July 2021</float>
 
-We're going to build Game AI, directly on this website.
+So, we're going to build Game AI, directly on this website.
 It will start getting fun once things are moving under our control.
 But first we'll describe the underlying browser-based technologies.
 
 | Concept | Browser Technology |
 | - | - |
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), and [Web Components](https://reactjs.org/docs/web-components.html). |
-| Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober), and programmatically. |
+| Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober) & programmatically. |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
-| Pathfinding | Offline navmeshes, and a port of [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
+| Pathfinding | A port of [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
 | Physics engine | [WebAssembly port](https://www.npmjs.com/package/box2d-wasm) of [Box2D](https://github.com/erincatto/box2d). |
-| Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html), and also [ESLint](https://www.npmjs.com/package/eslint). |
+| Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html); also [ESLint](https://www.npmjs.com/package/eslint). |
 | Live analysis | Our own in-browser terminal. |
 | Code viewing | [CodeMirror](https://codemirror.net/) to view JS. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
@@ -137,6 +138,11 @@ But first we'll describe the underlying browser-based technologies.
 ### React and Preact
 
 __TODO__ start with brief intro to HTML, CSS and JavaScipt
+
+The early nineties brought HTML, CSS and JavaScript.
+The initial payload of a website is an HTML file,
+which may reference or directly embed CSS and JS.
+This response of the _server_ may depend on previous visits, because the browser maintains/sends data called _cookies_.
 
 Competing web frameworks exist in the wild, often with their own notion of component.
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
