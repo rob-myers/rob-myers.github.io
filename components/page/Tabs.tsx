@@ -22,7 +22,7 @@ export default function Tabs({ tabs, height, storeKey }: Props) {
       };
       return () => void delete useSiteStore.getState().tabs[storeKey];
     }
-  }, []);
+  }, [model]);
 
   return (
     <section

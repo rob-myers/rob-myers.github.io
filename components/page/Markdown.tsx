@@ -119,7 +119,7 @@ const titleCss = css`
       font-size: 5rem;
     }
     @media(max-width: 480px) {
-      font-size: 3rem;
+      font-size: 3.6rem;
     }
   }
   
@@ -135,7 +135,8 @@ const titleCss = css`
       padding: 24px 0;
     }
     @media(max-width: 480px) {
-      font-size: 0.8rem;
+      font-size: .9rem;
+      letter-spacing: 0;
     }
   }
 `;
