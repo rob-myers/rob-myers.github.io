@@ -96,7 +96,10 @@ const Root = styled('div', React.forwardRef)<{
   width: 100%;
   height: 100%;
   font-size: 0.9rem;
-  
+  @media(max-width: 600px) {
+    font-size: 0.8rem;
+  }
+
   .CodeMirror {
     ::selection {
       background: rgb(40, 73, 105);
