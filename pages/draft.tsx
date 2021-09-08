@@ -23,7 +23,7 @@ An environment is needed to make it meaningful,
 but fixed narratives and missions are not.
 
 We'll approach things algorithmically,
-but driven by the environment e.g. thousands of [Traveller-themed assets](http://gurpsland.no-ip.org/geomorphs/).
+but driven by the environment e.g. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 We're particularly interested in _managing_ navigation, animation, and state machines.
 Game AI should be compositional, not forced into a straight-jacket.
 
@@ -72,7 +72,7 @@ Over time we'll clarify the above, but first we emphasise:
 
 Although we'll avoid _fixed_ narratives/missions/levels,
 compositional Game AI naturally leads to procedurally generated missions (common amongst Roguelikes).
-In this sense we are trying to create a video game.
+In this sense we are attemping to create a video game.
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
 We'll now address them.
 
@@ -135,19 +135,21 @@ But first we'll describe the browser-based technologies we'll build upon.
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
+The early nineties brought us HTML, CSS and JavaScript.
+Visiting a website yields an HTML response, referencing/embedding CSS and JS.
+Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links and hovers).
+It is now common to generate the initial HTML using JS too,
+either during a build-step or by running JS on a server.
+Generating and/or bundling CSS using JS is also popular.
+In this way, JavaScript has become the central web technology.
+
+ℹ️ _We'll spend the next two sections describing how we use JS.
+The discussion is a bit technical and full of jargon, but the details can be picked up later on._
+
 ### React and Preact
 
-The early nineties brought us HTML, CSS and JavaScript.
-Visiting a website yields an HTML response, referencing or embedding CSS and JS.
-Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links and hovers).
-These days it is common to generate the initial HTML using JS too,
-either during a build-step or by running JS on a server.
-In this way, JavaScript becomes the central web technology.
 
-We'll spend the next two sections describing how we use JS.
-The discussion is technical, but the details can be picked up later on.
-
-Competing JS frameworks exist in the wild, usually with their own notion of _component_.
+Competing JS frameworks exist, usually with their own notion of _component_.
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
 
 - They have a single parameter, conventionally called _props_.
