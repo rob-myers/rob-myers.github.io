@@ -137,14 +137,13 @@ But first we'll describe the underlying browser-based technologies.
 
 ### React and Preact
 
-__TODO__ start with brief intro to HTML, CSS and JavaScipt
-
-The early nineties brought HTML, CSS and JavaScript.
+The early nineties brought HTML, CSS and JavaScript (JS).
 The initial payload of a website is an HTML file,
 which may reference or directly embed CSS and JS.
-This response of the _server_ may depend on previous visits, because the browser maintains/sends data called _cookies_.
+This _response of the server_ may depend on previous visits, because the browser maintains/sends data called _cookies_.
+Once the response is processed, JavaScript can take over.
 
-Competing web frameworks exist in the wild, often with their own notion of component.
+Competing JS frameworks exist in the wild, usually with their own notion of _component_.
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
 
 - They have a single parameter, conventionally called _props_.
@@ -163,6 +162,7 @@ Let's consider an example, a pannable and zoomable grid.
       `}/>
 
       <Tabs
+        storeKey="panzoom"
         height={400}
         tabs={[
           { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
@@ -173,7 +173,7 @@ Let's consider an example, a pannable and zoomable grid.
 
       <Markdown children={`
 
-The file _panzoom/PanZoom.jsx_ (see tab above) defines two React function components, _PanZoom_ and _Grid_.
+The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom code@panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
 
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
