@@ -137,11 +137,15 @@ But first we'll describe the underlying browser-based technologies.
 
 ### React and Preact
 
-The early nineties brought HTML, CSS and JavaScript (JS).
-The initial payload of a website is an HTML file,
-which may reference or directly embed CSS and JS.
-This _response of the server_ may depend on previous visits, because the browser maintains/sends data called _cookies_.
-Once the response is processed, JavaScript can take over.
+The early nineties brought us HTML, CSS and JavaScript.
+Visiting a website yields an HTML response, referencing or embedding CSS and JS.
+Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links and hover animations).
+These days it is common to generate the initial HTML using JS too,
+either during a build-step or by running JS on a server.
+In this way, JavaScript becomes the central web technology.
+
+We'll spend the next two sections describing how we use JS.
+The discussion is technical, but the details can be picked up later on.
 
 Competing JS frameworks exist in the wild, usually with their own notion of _component_.
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
