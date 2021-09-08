@@ -117,8 +117,8 @@ Here's hoping my chain of unfinished projects is coming to a close!
 ## Technology  <float rem="1.2">19th July 2021</float>
 
 So, we're going to build Game AI, directly on this website.
-It will start getting fun once things are moving under our control.
-But first we'll describe the underlying browser-based technologies.
+It will start getting fun once things are moving about, under our control.
+But first we'll describe the browser-based technologies we'll build upon.
 
 | Concept | Browser Technology |
 | - | - |
@@ -139,7 +139,7 @@ But first we'll describe the underlying browser-based technologies.
 
 The early nineties brought us HTML, CSS and JavaScript.
 Visiting a website yields an HTML response, referencing or embedding CSS and JS.
-Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links and hover animations).
+Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links and hovers).
 These days it is common to generate the initial HTML using JS too,
 either during a build-step or by running JS on a server.
 In this way, JavaScript becomes the central web technology.
