@@ -71,6 +71,8 @@ We've chosen the underlying technology, game mechanics, and where events take pl
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
 - Space vehicles/stations (Starship Geomorphs 2.0).
 
+<div style="height:8px"></div>
+
 Over time we'll clarify the above, but first we emphasise:
 > _creating a video game is really fucking hard_.
 
@@ -144,7 +146,7 @@ But first let us describe the underlying browser-based technologies.
 
 
 The early nineties brought us HTML, CSS and JavaScript.
-Visiting a website yields an HTML response, referencing/embedding CSS and JS.
+Visiting a website yields an HTML response, referencing and/or embedding CSS and JS.
 Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links and hovers).
 It is now common to generate the initial HTML using JS too,
 either during a build-step or by running JS on a server.
@@ -201,7 +203,7 @@ Here's a whirlwind overview of React (and Preact).
 - React devs use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), permitting XML syntax.
 - React applications are often built by composing React function components, using the XML syntax for their return value.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function _React.createElement_.
-  Please see _example/jsx-to-js.jsx_ further below.
+  See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js") further below.
 - Actually, this website uses Preact, an alternative to React with the same API.
   Then _React.createElement_ is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
   and constructs Preact virtual DOM nodes.
@@ -217,6 +219,7 @@ Here's a whirlwind overview of React (and Preact).
       `}/>
 
       <Tabs
+        storeKey="jsx-to-js"
         height={360}
         tabs={[
           { key: 'code', filepath: 'example/jsx-to-js.jsx' },
@@ -233,6 +236,11 @@ Finally, the initial render of a website is often precomputed, so it loads faste
 ### React Renders and Web Components
 
 __TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
+
+React is a component framework used to build websites.
+Websites respond to user interaction,
+and usually do not need to mutate the DOM 60 times a second.
+They often play
 
 ### CSS inside JS
 

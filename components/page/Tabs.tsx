@@ -18,7 +18,7 @@ export default function Tabs({ tabs, height, storeKey }: Props) {
       useSiteStore.getState().tabs[storeKey] = {
         key: storeKey,
         model,
-        scrollIntoView: () => rootRef.current?.scrollIntoView({ behavior: 'smooth'  }),
+        scrollIntoView: () => rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
       };
       return () => void delete useSiteStore.getState().tabs[storeKey];
     }

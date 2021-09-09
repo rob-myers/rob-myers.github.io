@@ -8,7 +8,7 @@ export default function IndexPage() {
       <Title />
 
       <Markdown children={`
-## Coming soon
+## Coming soon...
       `}/>
     </Main>
   );
