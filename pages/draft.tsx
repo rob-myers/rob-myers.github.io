@@ -10,21 +10,23 @@ export default function IndexPage() {
     <Main>
       <Title />
 
-      <Markdown top bot children={`
+      <Markdown children={`
+---
+
 ## Objective <float rem="1.2">19th July 2021</float>
 
-We'll construct the _underlying Game AI_ of a realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike),
+We'll construct a _Game AI focused_ realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike),
 set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
 
 _Why?_
 
-Because Game AI is more interesting than any particular game.
+Because Game AI (NPC behaviour) is more interesting than any particular game.
 An environment is needed to make it meaningful,
 but fixed narratives and missions are not.
 
 We'll approach things algorithmically,
-but driven by the environment e.g. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
-We're particularly interested in _managing_ navigation, animation, and state machines.
+yet driven by the environment i.e. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
+We'll focus on combining and managing behaviours.
 Game AI should be compositional, not forced into a straight-jacket.
 
 <!--
@@ -36,7 +38,9 @@ forcing us to take more care than usual.
 
       <Gap/>
 
-      <Markdown top bot children={`
+      <Markdown children={`
+---
+
 ## Constraints <float rem="1.2">19th July 2021</float>
 
 This project needs a backbone.
@@ -70,9 +74,11 @@ We've chosen the underlying technology, game mechanics, and where events take pl
 Over time we'll clarify the above, but first we emphasise:
 > _creating a video game is really fucking hard_.
 
+<!--
 Although we'll avoid _fixed_ narratives/missions/levels,
 compositional Game AI naturally leads to procedurally generated missions (common amongst Roguelikes).
 In this sense we are attemping to create a video game.
+-->
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
 We'll now address them.
 
@@ -90,7 +96,7 @@ Monotony will be overcome via encountered NPC behaviours and e.g. ship building.
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) with richer NPCs and the ability to _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading/docking.
 Graphically, see Starship Geomorphs 2.0.
 
-We want it to be easy for others to extend Rogue Markup.
+It should be easy for others to extend Rogue Markup.
 We'll achieve this by providing compositional code, escape hatches to CodeSandbox, and clear explanations.
 Comments will be shown so that [GitHub](https://github.com/) users can share ideas and links.
 
@@ -113,12 +119,13 @@ Here's hoping my chain of unfinished projects is coming to a close!
 
       <Gap/>
 
-      <Markdown top children={`
+      <Markdown children={`
+---
 ## Technology  <float rem="1.2">19th July 2021</float>
 
-So, we're going to build Game AI, directly on this website.
-It will start getting fun once things are moving about, under our control.
-But first we'll describe the browser-based technologies we'll build upon.
+So, we're building a roguelike, directly on this website.
+It will get fun once things are moving about.
+But first let us describe the underlying browser-based technologies.
 
 | Concept | Browser Technology |
 | - | - |
@@ -135,21 +142,20 @@ But first we'll describe the browser-based technologies we'll build upon.
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
+
 The early nineties brought us HTML, CSS and JavaScript.
 Visiting a website yields an HTML response, referencing/embedding CSS and JS.
 Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links and hovers).
 It is now common to generate the initial HTML using JS too,
 either during a build-step or by running JS on a server.
-Generating and/or bundling CSS using JS is also popular.
 In this way, JavaScript has become the central web technology.
 
-ℹ️ _We'll spend the next two sections describing how we use JS.
-The discussion is a bit technical and full of jargon, but the details can be picked up later on._
+ℹ️ _We'll spend two sections describing how we use JS.
+The discussion is technical and full of jargon, but the details can be picked up later on._
 
 ### React and Preact
 
-
-Competing JS frameworks exist, usually with their own notion of _component_.
+Competing JavaScript frameworks exist, usually with their own notion of _component_.
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
 
 - They have a single parameter, conventionally called _props_.
@@ -178,7 +184,6 @@ Let's consider an example, a pannable and zoomable grid.
       />
 
       <Markdown children={`
-
 The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom code@panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
 
@@ -213,14 +218,12 @@ Here's a whirlwind overview of React (and Preact).
 
       <Tabs
         height={360}
-        indent="var(--list-indent)"
         tabs={[
           { key: 'code', filepath: 'example/jsx-to-js.jsx' },
         ]}
       />
 
-      <Markdown bot children={`
-
+      <Markdown children={`
 So, React function components are written using syntactic-sugar (JSX), and composed together like HTML.
 We're actually using Preact (its codebase is smaller, and it has reputation for being faster,
 although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer)).
@@ -242,7 +245,8 @@ The npm module [Goober](https://www.npmjs.com/package/goober) handles this for u
 
       <Gap/>
 
-      <Markdown top children={`
+      <Markdown children={`
+---
 ## Technology (Part 2)
 
 ### Navigation
@@ -259,7 +263,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
         ]}
       />
 
-      <Markdown bot children={`
+      <Markdown children={`
 ### Physics engine
 
 We need a Physics engine:
@@ -277,7 +281,7 @@ We need a Physics engine:
 
       <Gap/>
 
-      <Markdown top bot children={`
+      <Markdown children={`
 ## Technology (Part 3)
 
 ### Static and Runtime Analysis
@@ -294,7 +298,7 @@ We need a Physics engine:
 
       <Gap/>
 
-      <Markdown top children={`
+      <Markdown children={`
 ## Starship Geomorphs <float rem="1.2">19th July 2021</float>
 
 ### Filesystem structure
@@ -344,7 +348,7 @@ public/svg
         ]}
       />
 
-      <Markdown bot children={`
+      <Markdown children={`
 ## Movement <float rem="1.2">19th July 2021</float>
 
 - Navigation
