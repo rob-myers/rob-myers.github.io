@@ -11,16 +11,12 @@ import useSiteStore from 'store/site.store';
 export default function Markdown(
   props: ReactMarkdown.ReactMarkdownOptions & {
     title?: boolean;
-    top?: boolean;
-    bot?: boolean;
   }
 ) {
   return (
     <div
       className={classNames(
-        props.title
-          ? titleCss
-          : [blogCss, blogConnectCss(props)],
+        props.title ? titleCss : blogCss,
       )}
     >
       <ReactMarkdown
@@ -106,19 +102,16 @@ const titleCss = css`
 
   h1 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 6.5rem;
+    font-size: 6rem;
     font-weight: 300;
     cursor: pointer;
     color: #333;
     margin: 0;
     
-    @media(max-width: 1024px) {
-      font-size: 6rem;
-    }
     @media(max-width: 800px) {
       font-size: 5rem;
     }
-    @media(max-width: 480px) {
+    @media(max-width: 600px) {
       font-size: 3.6rem;
     }
   }
@@ -132,79 +125,35 @@ const titleCss = css`
     padding: 24px 0 48px;
     
     @media(max-width: 600px) {
-      padding: 24px 0;
-    }
-    @media(max-width: 480px) {
       font-size: .9rem;
       letter-spacing: 0;
+      padding: 24px 0 8px;
     }
   }
 `;
 
 const blogCss = css`
-  background: var(--blog-bg);
-  color: #333;
-
-  padding-left: var(--blog-indent);
-  padding-right: var(--blog-indent);
-
-  @media(min-width: 600px) {
-    > p:first-child {
-      padding-top: 8px;
-    }
-    > p:last-child, >ol:last-child {
-      padding-bottom: 8px;
-    }
-  }
-  padding-top: 24px;
-  padding-bottom: 24px;
   @media(max-width: 600px) {
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding: 8px;
   }
 
-
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  line-height: 1.5;
   font-size: 1.2rem;
 
   h1, h2, h3, h4 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-weight: 500;
-    margin: 8px 0;
-    @media(min-width: 600px) {
-      margin-top: 32px;
-    }
   }
-  
-  p {
-    line-height: 1.5;
-    margin-bottom: 24px;
+  h2 {
+    font-size: 2rem;
+    @media(max-width: 600px) {
+      margin: 0;
+      font-size: 1.8rem;
+    }
   }
 
-  code {
-    font-size: 12pt;
-    font-family: Courier, monospace;
-    color: #444;
-    background: #eee;
-  }
-  ul, ol {
-    margin: 20px 0 24px;
-    line-height: 1.4;
-    padding-left: var(--list-indent);
-
-    li {
-      margin: 8px 0;
-      ul, ol {
-        line-height: 1.2;
-      }
-    }
-  }
-  ul.contains-task-list {
-    padding-left: 12px;
-    li.task-list-item {
-      list-style: none;
-    }
+  ul li, ol li {
+    margin: 4px 0;
   }
 
   span.float {
@@ -219,8 +168,14 @@ const blogCss = css`
   }
 
   table {
-    border: 1px solid #ccc;
-    border-left: 2px solid #bbb;
+    transition: 0.5s background-color ease;
+    background: var(--body-bg);
+    &:hover, &:active {
+      background: var(--focus-bg);
+    }
+
+    padding: 8px;
+    border: 1px solid #bbb;
     width: 100%;
 
     th, td {
@@ -232,13 +187,4 @@ const blogCss = css`
       }
     }
   }
-`;
-
-const blogConnectCss = (opts: {
-  top?: boolean;
-  bot?: boolean;
-}) => css`
-  border: 2px solid #ccc;
-  border-top-width: ${opts.top ? 2 : 0}px;
-  border-bottom-width: ${opts.bot ? 2 : 0}px;
 `;

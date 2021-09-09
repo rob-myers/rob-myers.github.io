@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from 'goober';
-import {Layout, Model, TabNode, IJsonModel, Actions} from 'flexlayout-react';
+import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
 import CodeMirror from 'codemirror';
 import classNames from 'classnames';
 
@@ -18,7 +18,7 @@ export default function Tabs({ tabs, height, storeKey }: Props) {
       useSiteStore.getState().tabs[storeKey] = {
         key: storeKey,
         model,
-        scrollIntoView: () => rootRef.current?.scrollIntoView({ behavior: 'smooth' }),
+        scrollIntoView: () => rootRef.current?.scrollIntoView({ behavior: 'smooth'  }),
       };
       return () => void delete useSiteStore.getState().tabs[storeKey];
     }
@@ -41,7 +41,6 @@ interface Props {
   storeKey?: string;
   height: number;
   tabs: TabMeta[];
-  indent?: string;
 }
 
 function factory(node: TabNode) {
@@ -123,15 +122,10 @@ function computeJsonModel(tabs: TabMeta[]): IJsonModel {
 }
 
 const rootCss = (height: number) => css`
-  padding: var(--tabs-vert-indent) var(--blog-indent);
-
-  background: var(--blog-bg);
-  @media(min-width: 600px) {
-    background-image: linear-gradient(135deg, #dddddd 42.86%, #bbbbbb 42.86%, #bbbbbb 50%, #dddddd 50%, #dddddd 92.86%, #bbbbbb 92.86%, #bbbbbb 100%);
-    background-size: 9.90px 9.90px;
+  margin: 40px 0;
+  @media(max-width: 600px) {
+    margin: 0;
   }
-  border: 2px solid #ccc;
-  border-width: 0 2px;
 
   > .flexlayout__layout {
     background: #444;
@@ -139,7 +133,7 @@ const rootCss = (height: number) => css`
     height: ${height}px;
   }
   .flexlayout__tab {
-    border: 1px solid rgba(0, 0, 0, 0.3);
+    /* border: 1px solid rgba(0, 0, 0, 0.3); */
     border-top: 6px solid #444;
     position: relative;
     /** Handle svg overflow */
