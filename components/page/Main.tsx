@@ -15,7 +15,7 @@ export const rootCss = css`
   flex-direction: column;
   padding-bottom: 2rem;
   
-  max-width: 1024px;
+  max-width: 880px;
   
   margin: 0 auto;
   > section {
