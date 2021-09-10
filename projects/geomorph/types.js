@@ -1,4 +1,4 @@
-import { GeoJsonPolygon, VectJson }  from '../geom/types';
+import { GeoJsonPolygon, RectJson }  from '../geom/types';
 
 /**
  * @typedef {Record<string, ParsedSymbol<GeoJsonPolygon>>} SvgJson
@@ -8,15 +8,15 @@ import { GeoJsonPolygon, VectJson }  from '../geom/types';
 /**
  * @template T
  * @typedef ParsedSymbol @type {object}
- * @property {string} symbolName
- * @property {string | undefined} svgInnerText
- * @property {T[]} hull Assumed connected, if exists
+ * @property {string} key Symbol name.
  * @property {T[]} doors
+ * @property {T[]} hull Assumed connected, if exists.
  * @property {T[]} irisValves
  * @property {T[]} labels
  * @property {T[]} obstacles
+ * @property {RectJson} pngRect
+ * @property {string | undefined} svgInnerText
  * @property {T[]} walls
- * @property {VectJson} pngOffset
  */
 
 /**

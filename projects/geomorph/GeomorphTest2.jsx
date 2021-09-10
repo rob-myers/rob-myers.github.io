@@ -17,16 +17,16 @@ export default function GeomorphTest2() {
         {gm && <>
           <image
             href={gm.debug.png}
-            x={gm.debug.pngOffset.x}
-            y={gm.debug.pngOffset.y}
+            x={gm.debug.pngRect.x}
+            y={gm.debug.pngRect.y}
             className="debug"
           />
           {gm.symbols.map((s, i) => (
             <g key={i} transform={s.transform}>
               <image
                 href={s.png}
-                x={s.pngOffset.x}
-                y={s.pngOffset.y}
+                x={s.pngRect.x}
+                y={s.pngRect.y}
                 className="symbol"
               />
             </g>
@@ -63,11 +63,11 @@ function useSymbolLayout(layout) {
     return {
       debug: {
         png: `/debug/${layout.key}.png`,
-        pngOffset: hull.pngOffset,
+        pngRect: hull.pngRect,
       },
       symbols: symbols.map((sym, i) => ({
-        png: `/symbol/${sym.symbolName}.png`,
-        pngOffset: sym.pngOffset,
+        png: `/symbol/${sym.key}.png`,
+        pngRect: sym.pngRect,
         transformArray: items[i].transform,
         transform: items[i].transform ? `matrix(${items[i].transform})` : undefined,
       })),

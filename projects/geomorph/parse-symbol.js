@@ -1,5 +1,5 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
-import { VectJson, GeoJsonPolygon } from '../geom/types';
+import { RectJson, GeoJsonPolygon } from '../geom/types';
 import { ParsedSymbol} from './types';
 import { Poly, Rect, Mat } from '../geom';
 import { svgPathToPolygons } from '../service';
@@ -14,7 +14,7 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
   const $ = cheerio.load(svgContents);
 
   const topNodes = Array.from($('svg > *'));
-  const pngOffset = extractPngOffset($, topNodes);
+  const pngRect = extractPngOffset($, topNodes);
   const hull = extractGeoms($, topNodes, 'hull');
   const doors = extractGeoms($, topNodes, 'doors');
   const irisValves = extractGeoms($, topNodes, 'iris-valves');
@@ -24,15 +24,15 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
   // console.log({ url, hull });
 
   return {
-    symbolName,
-    /** Original svg with png data url; very useful during geomorph creation */
-    svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : undefined,
-    pngOffset,
-    hull: Poly.union(hull),
+    key: symbolName,
     doors,
+    hull: Poly.union(hull),
     irisValves,
     labels,
     obstacles,
+    pngRect,
+    /** Original svg with png data url; very useful during geomorph creation */
+    svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : undefined,
     walls,
   };
 }
@@ -43,15 +43,15 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
  */
 export function serializeSymbol(parsed) {
   return {
-    symbolName: parsed.symbolName,
-    svgInnerText: parsed.svgInnerText,
+    key: parsed.key,
     hull: toJsons(parsed.hull),
     doors: toJsons(parsed.doors),
     irisValves: toJsons(parsed.irisValves),
     labels: toJsons(parsed.labels),
     obstacles: toJsons(parsed.obstacles),
+    pngRect: parsed.pngRect,
+    svgInnerText: parsed.svgInnerText,
     walls: toJsons(parsed.walls),
-    pngOffset: parsed.pngOffset,
   };
 }
 
@@ -115,12 +115,17 @@ function extractGeom(api, el) {
 /**
  * @param {CheerioAPI} api
  * @param {Element[]} topNodes
- * @returns {VectJson}
+ * @returns {RectJson}
  */
  function extractPngOffset(api, topNodes) {
   const group = topNodes.find(x => hasTitle(api, x, 'background'));
   const { attribs: a } = api(group).children('image').toArray()[0];
-  return { x: Number(a.x || 0), y: Number(a.y || 0) };
+  return {
+    x: Number(a.x || 0),
+    y: Number(a.y || 0),
+    width: Number(a.width || 0),
+    height: Number(a.height || 0),
+  };
 }
 
 /**

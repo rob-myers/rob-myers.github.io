@@ -24,8 +24,8 @@ export default function UseSvg(props) {
       {!props.hull && (
         <image
           href={`/symbol/${props.symbol}.png`}
-          x={data.pngOffset.x}
-          y={data.pngOffset.y}
+          x={data.pngRect.x}
+          y={data.pngRect.y}
         />
       )}
       <g className="meta">
