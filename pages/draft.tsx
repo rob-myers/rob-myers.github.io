@@ -244,9 +244,9 @@ A single DOM mutation often suffices e.g. CSS transforms and CSS transitions col
 
 When React renders a component, it computes the return value (a rooted subtree of the virtual DOM), compares the previous, and patches the DOM accordingly.
 If many components change in a small amount of time, [some renders can be avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221) via the ancestral relationship.
-Computing an entire rooted subtree can be avoided via [\`React.memo\`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
-But in practice the virtual DOM overhead can often be ignored,
-assuming the tree is not too large and the component updates are not too many.
+Also, recreating an entire rooted subtree can be avoided via [\`React.memo\`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
+But often in practice the virtual DOM overhead may be ignored,
+assuming a not-too-large tree and not-too-many component updates.
 
 ...usually do not need to mutate the DOM 60 times a second.
 
