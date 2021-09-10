@@ -34,6 +34,6 @@ import { Poly }  from '../geom';
  * @typedef SymbolLayoutItem @type {object}
  * @property {string} symbol
  * @property {boolean} [hull]
- * @property {number[]} [transform]
+ * @property {[number, number, number, number, number, number]} [transform]
  * @property {string[]} [tags]
  */

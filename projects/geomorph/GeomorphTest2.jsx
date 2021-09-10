@@ -17,29 +17,38 @@ export default function GeomorphTest2() {
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
-        <g>
-          {gm && <>
-            <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
-            <image className="underlay" href={gm.underlay} x={gm.hullRect.x} y={gm.hullRect.y} />
-            {gm.symbols.map((s, i) =>
-              <g key={i} transform={s.transform}>
-                <image className="symbol" href={s.pngHref} x={s.pngRect.x}  y={s.pngRect.y}/>
-              </g>
-            )}
-            <image className="overlay" href={gm.overlay} x={gm.hullRect.x} y={gm.hullRect.y} />
-          </>}
-        </g>
+        {gm && <g>
+          <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
+          <image className="underlay" href={gm.underlay} x={gm.hullRect.x} y={gm.hullRect.y} />
+          {gm.symbols.map((s, i) =>
+            <g key={i} transform={s.transform}>
+              <image className="symbol" href={s.pngHref} x={s.pngRect.x}  y={s.pngRect.y}/>
+            </g>
+          )}
+          <image className="overlay" href={gm.overlay} x={gm.hullRect.x} y={gm.hullRect.y} />
+        </g>}
       </PanZoom>
     </div>
   );
 }
 
+const initViewBox = new Rect(0, 0, 1200, 600);
+const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
+const rootCss = css`
+  height: 100%;
+  image.debug {
+    opacity: 0.3;
+  }
+  image.symbol {
+    transform: scale(0.2);
+  }
+`;
+
+
 /** @param {SymbolLayout} layout */
 function useSymbolLayout(layout) {
   const symbolData = useSymbolData();
-  /**
-   * IN PROGRESS
-   */
+
   if (symbolData) {
     const items = layout.items;
     const symbols = items.map(x => symbolData[x.symbol]);
@@ -75,7 +84,7 @@ const layout301 = {
   key: 'g-301--bridge',
   id: 301,
   items: [
-    { symbol: '301--hull', hull: true },
+    { symbol: '301--hull', hull: true }, // Hull must be first
     { symbol: 'misc-stellar-cartography--023--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
     { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 0, 480] },
     { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 120, 480] },
@@ -88,46 +97,46 @@ const layout301 = {
   ],
 };
 
-const initViewBox = new Rect(0, 0, 1200, 600);
-const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
-const rootCss = css`
-  height: 100%;
-  image.debug {
-    opacity: 0.3;
-  }
-  image.symbol {
-    transform: scale(0.2);
-  }
-`;
-
 /**
  * @param {SymbolLayout} layout
  * @param {ParsedSvgJson} symbolData 
  */
 function createAuxCanvases(layout, symbolData) {
-  const symbols = layout.items.map(x => symbolData[x.symbol]);
-  const { pngRect, hull: hullPolys } = symbols[0];
-  const hullRect = /** @type {RectJson} */ (symbols[0].hullRect);
+  const [hull, ...others] = layout.items.map(x => symbolData[x.symbol]);
+  const hullRect = /** @type {RectJson} */ (hull.hullRect);
 
   const oc = document.createElement('canvas');
   const uc = document.createElement('canvas');
-  oc.width = pngRect.width, oc.height = pngRect.height;
-  uc.width = pngRect.width, uc.height = pngRect.height;
+  oc.width = hull.pngRect.width, oc.height = hull.pngRect.height;
+  uc.width = hull.pngRect.width, uc.height = hull.pngRect.height;
   /** @type {[CanvasRenderingContext2D, CanvasRenderingContext2D]} */
   const [oct, uct] = ([oc.getContext('2d'), uc.getContext('2d')]);
   
-  const hullOutline = hullPolys[0].outline;
+  const hullOutline = hull.hull[0].outline;
   uct.translate(-hullRect.x, -hullRect.y);
   uct.fillStyle = 'rgba(0, 0, 100, 0.2)';
   fillRing(uct, hullOutline);
   uct.translate(hullRect.x, hullRect.y);
   
   oct.translate(-hullRect.x, -hullRect.y);
-  oct.fillStyle =  'rgba(200, 50, 50, 0.5)';
-  fillPolygon(oct, ...hullPolys);
+  oct.fillStyle = 'rgba(200, 50, 50, 0.2)';
+  fillPolygon(oct, ...hull.hull);
+  oct.fillStyle = 'rgba(0, 200, 0, 0.25)';
+  fillPolygon(oct, ...hull.doors)
   oct.translate(hullRect.x, hullRect.y);
-  // hullPolys
-
+  
+  for (const [i, { doors, walls }] of others.entries()) {
+    const { transform } = layout.items[i + 1];
+    oct.resetTransform();
+    oct.translate(-hullRect.x, -hullRect.y);
+    transform && oct.transform(...transform);
+    oct.scale(0.2, 0.2);
+    oct.fillStyle = 'rgba(0, 200, 0, 0.25)';
+    fillPolygon(oct, ...doors);
+    oct.fillStyle = 'rgba(200, 50, 50, 0.1)';
+    fillPolygon(oct, ...walls);
+  }
+  
   return { overlay: oc, underlay: uc };
 }
 
@@ -140,6 +149,7 @@ function fillRing(ctxt, ring, fill = true) {
     ctxt.moveTo(ring[0].x, ring[0].y);
     ring.forEach(p => ctxt.lineTo(p.x, p.y));
     fill && ctxt.fill();
+    ctxt.closePath();
   }
 }
 
@@ -148,12 +158,11 @@ function fillRing(ctxt, ring, fill = true) {
  * @param  {...Poly} polys 
  */
 function fillPolygon(ctxt, ...polys) {
+  ctxt.beginPath();
   for (const poly of polys) {
     fillRing(ctxt, poly.outline, false);
-    ctxt.closePath();
     for (const hole of poly.holes) {
       fillRing(ctxt, hole, false);
-      ctxt.closePath();
     }
     ctxt.fill();
   }
