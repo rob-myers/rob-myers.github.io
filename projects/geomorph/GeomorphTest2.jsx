@@ -2,8 +2,8 @@ import * as React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
 import { SymbolLayout, ParsedSvgJson } from './types';
-import { RectJson } from "../geom/types";
-import { Rect } from "../geom";
+import { RectJson, VectJson } from "../geom/types";
+import { Poly, Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
 import { deserializeSvgJson } from "./parse-symbol";
 
@@ -26,7 +26,7 @@ export default function GeomorphTest2() {
                 <image className="symbol" href={s.pngHref} x={s.pngRect.x}  y={s.pngRect.y}/>
               </g>
             )}
-            <image className="overlay" href={gm.overlay} {...gm.pngRect} />
+            <image className="overlay" href={gm.overlay} x={gm.hullRect.x} y={gm.hullRect.y} />
           </>}
         </g>
       </PanZoom>
@@ -106,7 +106,8 @@ const rootCss = css`
  */
 function createAuxCanvases(layout, symbolData) {
   const symbols = layout.items.map(x => symbolData[x.symbol]);
-  const { pngRect, hullRect, hull: hullPolys } = symbols[0];
+  const { pngRect, hull: hullPolys } = symbols[0];
+  const hullRect = /** @type {RectJson} */ (symbols[0].hullRect);
 
   const oc = document.createElement('canvas');
   const uc = document.createElement('canvas');
@@ -114,14 +115,46 @@ function createAuxCanvases(layout, symbolData) {
   uc.width = pngRect.width, uc.height = pngRect.height;
   /** @type {[CanvasRenderingContext2D, CanvasRenderingContext2D]} */
   const [oct, uct] = ([oc.getContext('2d'), uc.getContext('2d')]);
-
+  
   const hullOutline = hullPolys[0].outline;
+  uct.translate(-hullRect.x, -hullRect.y);
   uct.fillStyle = 'rgba(0, 0, 100, 0.2)';
-  hullRect && uct.translate(-hullRect.x, -hullRect.y);
-  uct.moveTo(hullOutline[0].x, hullOutline[0].y);
-  hullOutline.forEach(p => uct.lineTo(p.x, p.y));
-  uct.fill();
-  hullRect && uct.translate(hullRect.x, hullRect.y);
+  fillRing(uct, hullOutline);
+  uct.translate(hullRect.x, hullRect.y);
+  
+  oct.translate(-hullRect.x, -hullRect.y);
+  oct.fillStyle =  'rgba(200, 50, 50, 0.5)';
+  fillPolygon(oct, ...hullPolys);
+  oct.translate(hullRect.x, hullRect.y);
+  // hullPolys
 
   return { overlay: oc, underlay: uc };
+}
+
+/**
+ * @param {CanvasRenderingContext2D} ctxt 
+ * @param  {VectJson[]} ring 
+ */
+function fillRing(ctxt, ring, fill = true) {
+  if (ring.length) {
+    ctxt.moveTo(ring[0].x, ring[0].y);
+    ring.forEach(p => ctxt.lineTo(p.x, p.y));
+    fill && ctxt.fill();
+  }
+}
+
+/**
+ * @param {CanvasRenderingContext2D} ctxt 
+ * @param  {...Poly} polys 
+ */
+function fillPolygon(ctxt, ...polys) {
+  for (const poly of polys) {
+    fillRing(ctxt, poly.outline, false);
+    ctxt.closePath();
+    for (const hole of poly.holes) {
+      fillRing(ctxt, hole, false);
+      ctxt.closePath();
+    }
+    ctxt.fill();
+  }
 }
