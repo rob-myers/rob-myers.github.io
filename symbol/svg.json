@@ -1,6 +1,6 @@
 {
   "301--hull": {
-    "symbolName": "301--hull",
+    "key": "301--hull",
     "hull": [
       {
         "type": "Polygon",
@@ -91,11 +91,12 @@
     "irisValves": [],
     "labels": [],
     "obstacles": [],
-    "walls": [],
-    "pngOffset": {"x": -6, "y": -22}
+    "hullRect": {"x": -4, "y": -4.376002, "width": 1208, "height": 608.376002},
+    "pngRect": {"x": -6, "y": -22, "width": 1212, "height": 628},
+    "walls": []
   },
   "bridge--042--8x9": {
-    "symbolName": "bridge--042--8x9",
+    "key": "bridge--042--8x9",
     "hull": [],
     "doors": [
       {
@@ -511,6 +512,7 @@
         "meta": {}
       }
     ],
+    "pngRect": {"x": -23, "y": -67, "width": 2446, "height": 2790},
     "walls": [
       {
         "type": "Polygon",
@@ -758,11 +760,10 @@
         ],
         "meta": {}
       }
-    ],
-    "pngOffset": {"x": -23, "y": -67}
+    ]
   },
   "misc-stellar-cartography--023--4x4": {
-    "symbolName": "misc-stellar-cartography--023--4x4",
+    "key": "misc-stellar-cartography--023--4x4",
     "hull": [],
     "doors": [
       {
@@ -781,6 +782,7 @@
     "irisValves": [],
     "labels": [],
     "obstacles": [],
+    "pngRect": {"x": -10, "y": -10, "width": 1220, "height": 1220},
     "walls": [
       {
         "type": "Polygon",
@@ -814,11 +816,10 @@
         ],
         "meta": {}
       }
-    ],
-    "pngOffset": {"x": -10, "y": -10}
+    ]
   },
   "office--001--2x2": {
-    "symbolName": "office--001--2x2",
+    "key": "office--001--2x2",
     "hull": [],
     "doors": [
       {
@@ -835,6 +836,7 @@
     "irisValves": [],
     "labels": [],
     "obstacles": [],
+    "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620},
     "walls": [
       {
         "type": "Polygon",
@@ -856,11 +858,10 @@
         "coordinates": [[[590, -10], [590, 610], [610, 610], [610, -10]]],
         "meta": {}
       }
-    ],
-    "pngOffset": {"x": -10, "y": -10}
+    ]
   },
   "stateroom--014--2x2": {
-    "symbolName": "stateroom--014--2x2",
+    "key": "stateroom--014--2x2",
     "hull": [],
     "doors": [
       {
@@ -877,6 +878,7 @@
     "irisValves": [],
     "labels": [],
     "obstacles": [],
+    "pngRect": {"x": -10, "y": -10, "width": 620, "height": 634},
     "walls": [
       {
         "type": "Polygon",
@@ -903,16 +905,16 @@
         "coordinates": [[[0, 590], [0, 610], [590, 610], [590, 590]]],
         "meta": {}
       }
-    ],
-    "pngOffset": {"x": -10, "y": -10}
+    ]
   },
   "stateroom--036--2x4": {
-    "symbolName": "stateroom--036--2x4",
+    "key": "stateroom--036--2x4",
     "hull": [],
     "doors": [],
     "irisValves": [],
     "labels": [],
     "obstacles": [],
+    "pngRect": {"x": -10, "y": -10, "width": 620, "height": 1234},
     "walls": [
       {
         "type": "Polygon",
@@ -939,7 +941,6 @@
         "coordinates": [[[0, -10], [0, 10], [590, 10], [590, -10]]],
         "meta": {}
       }
-    ],
-    "pngOffset": {"x": -10, "y": -10}
+    ]
   }
 }
