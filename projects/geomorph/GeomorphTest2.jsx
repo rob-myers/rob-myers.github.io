@@ -4,12 +4,35 @@ import { SymbolLayout, SvgJson } from './types';
 import { Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
 
+// TODO load pre-parsed data from svg.json
+// TODO create single image with all symbols?
+
 export default function GeomorphTest2() {
-  useSymbolLayout(layout301);
+  const gm = useSymbolLayout(layout301);
+  console.log({ gm });
 
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
+        {gm && <>
+          <image
+            href={gm.debug.png}
+            x={gm.debug.pngOffset.x}
+            y={gm.debug.pngOffset.y}
+            className="debug"
+          />
+          {gm.symbols.map((s, i) => (
+            <g key={i} transform={s.transform}>
+              <image
+                href={s.png}
+                x={s.pngOffset.x}
+                y={s.pngOffset.y}
+                className="symbol"
+              />
+            </g>
+          ))}
+        </>}
+        
         {/* <UseSvg hull debug={true} url="/svg/301--hull.svg" />
         <UseSvg url="/svg/misc-stellar-cartography--023--4x4.svg" transform="matrix(-0.2, 0, 0, 0.2, 1200, 360)" />
         <UseSvg url="/svg/stateroom--014--2x2.svg" transform="matrix(0.2, 0, 0, -0.2, 0, 480)" />
@@ -28,21 +51,39 @@ export default function GeomorphTest2() {
 /** @param {SymbolLayout} layout */
 function useSymbolLayout(layout) {
   const svgJson = useSvgJson();
+
+  /**
+   * IN PROGRESS
+   */
   if (svgJson) {
-    return layout.items.map(x => svgJson[x.symbol])
+    const items = layout.items;
+    const symbols = items.map(x => svgJson[x.symbol]);
+    const hull = symbols[0];
+
+    return {
+      debug: {
+        png: `/debug/${layout.key}.png`,
+        pngOffset: hull.pngOffset,
+      },
+      symbols: symbols.map((sym, i) => ({
+        png: `/symbol/${sym.symbolName}.png`,
+        pngOffset: sym.pngOffset,
+        transformArray: items[i].transform,
+        transform: items[i].transform ? `matrix(${items[i].transform})` : undefined,
+      })),
+    };
   }
+  // return useQuery(`symbol-layout-${layout.key}-${!!svgJson}`, async () => {
+  //   if (!svgJson) return;
 
-  return useQuery(`symbol-layout-${layout.key}-${!!svgJson}`, async () => {
-    if (!svgJson) return;
-
-    // svgJson.items
-    console.log('saw svgJson', svgJson);
-    // console.info('loading symbol', symbolName, tags || '*');
-    // const contents = await fetch(`/symbol/${symbolName}.svg`).then(x => x.text());
-    // const parsed = parseStarshipSymbol(symbolName, contents, debug);
-    // // console.log({ symbolName, parsed });
-    // return restrictAllByTags(parsed, tags);
-  });
+  //   // svgJson.items
+  //   console.log('saw svgJson', svgJson);
+  //   // console.info('loading symbol', symbolName, tags || '*');
+  //   // const contents = await fetch(`/symbol/${symbolName}.svg`).then(x => x.text());
+  //   // const parsed = parseStarshipSymbol(symbolName, contents, debug);
+  //   // // console.log({ symbolName, parsed });
+  //   // return restrictAllByTags(parsed, tags);
+  // });
 }
 
 /** @returns {SvgJson | undefined} */
@@ -51,7 +92,9 @@ function useSvgJson() {
 }
 
 /** @type {SymbolLayout} */
-const layout301 = { key: 'g-301--bridge', id: 301,
+const layout301 = {
+  key: 'g-301--bridge',
+  id: 301,
   items: [
     { symbol: '301--hull', hull: true },
     { symbol: 'misc-stellar-cartography--023--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
@@ -68,4 +111,11 @@ const layout301 = { key: 'g-301--bridge', id: 301,
 
 const initViewBox = new Rect(0, 0, 1200, 600);
 const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
-const rootCss = css``;
+const rootCss = css`
+  image.debug {
+    opacity: 0.3;
+  }
+  image.symbol {
+    transform: scale(0.2);
+  }
+`;
