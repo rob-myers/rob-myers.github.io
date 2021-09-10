@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "yarn next-cfg && concurrently 'next -p 3002'",
+    "dev": "yarn next-cfg && concurrently 'next -p 3002' 'yarn watch-svg-meta'",
     "build": "yarn next-cfg && next build",
     "export": "next export",
     "start": "yarn next-cfg && next start",
@@ -15,6 +15,7 @@
     "minify-pngs": "yarn ts-script media/scripts/minify-pngs",
     "simplify-pngs": "yarn ts-script media/scripts/simplify-pngs",
     "svg-meta": "yarn ts-script media/scripts/svg-meta",
+    "watch-svg-meta": "nodemon --delay 4s --config media/scripts/svg-meta.nodemon.json --exec 'yarn svg-meta'",
     "https-proxy": "node_modules/local-ssl-proxy/bin/local-ssl-proxy --source 443 --target 3002",
     "local-deploy": "rm -rf .next && yarn build && yarn export",
     "deploy-from-local": "touch out/.nojekyll && cd scripts && ts-node gh-pages.ts",
