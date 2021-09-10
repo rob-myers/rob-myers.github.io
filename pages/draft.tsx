@@ -64,7 +64,7 @@ We've chosen the underlying technology, game mechanics, and where events take pl
 - Use [Recast](https://github.com/recastnavigation/recastnavigation) to generate navmeshes.
 - Use [a recent port](https://www.npmjs.com/package/box2d-wasm) of the physics engine [Box2D](https://github.com/erincatto/box2d).
 - Use procedural generation for spaceship building.
-- Provide an in-browser terminal.
+- Use an in-browser terminal.
 
 ### Setting
   
@@ -237,10 +237,18 @@ Finally, the initial render of a website is often precomputed, so it loads faste
 
 __TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
 
-React is a component framework used to build websites.
-Websites respond to user interaction,
-and usually do not need to mutate the DOM 60 times a second.
-For example, a CSS animation can be played at 60 fps by assigning a relevant class to an HTMLElement i.e. a single DOM mutation rather than a continual one.
+Websites respond to user interaction.
+Sometimes they respond without changing the DOM e.g. CSS and SVG animations, numerical computation, and sending data to a server.
+But often they respond by mutating it e.g. loading search results, toggling modals, and zooming.
+A single DOM mutation often suffices e.g. CSS transforms and CSS transitions collectively permit smooth zooming.
+
+When React renders a component, it computes the return value (a rooted subtree of the virtual DOM), compares the previous, and patches the DOM accordingly.
+If many components change in a small amount of time, [some renders can be avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221) via the ancestral relationship.
+Computing an entire rooted subtree can be avoided via [\`React.memo\`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
+But in practice the virtual DOM overhead can often be ignored,
+assuming the tree is not too large and the component updates are not too many.
+
+...usually do not need to mutate the DOM 60 times a second.
 
 ### CSS inside JS
 
