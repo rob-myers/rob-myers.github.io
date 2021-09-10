@@ -242,13 +242,17 @@ Sometimes they respond without changing the DOM e.g. CSS and SVG animations, num
 But often they respond by mutating it e.g. loading search results, toggling modals, and zooming.
 A single DOM mutation often suffices e.g. CSS transforms and CSS transitions collectively permit smooth zooming.
 
-When React renders a component, it computes the return value (a rooted subtree of the virtual DOM), compares the previous, and patches the DOM accordingly.
+When React renders a component, it computes the return value (a rooted subtree of the virtual DOM), compares the previous value, and patches the DOM accordingly.
 If many components change in a small amount of time, [some renders can be avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221) via the ancestral relationship.
 Also, recreating an entire rooted subtree can be avoided via [\`React.memo\`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
-But often in practice the virtual DOM overhead may be ignored,
-assuming a not-too-large tree and not-too-many component updates.
+But for many use cases one may simply ignore the virtual DOM overhead.
+In others, pagination and state-management can improve performance.
 
-...usually do not need to mutate the DOM 60 times a second.
+However, we are making a realtime video game.
+To move characters at 60 fps we'll be updating the DOM at the same rate.
+The virtual DOM overhead is no longer acceptable because (a) we can do better, (b) ...
+
+
 
 ### CSS inside JS
 
