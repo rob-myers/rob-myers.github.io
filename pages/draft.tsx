@@ -203,7 +203,7 @@ Here's a whirlwind overview of React (and Preact).
 - React devs use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), permitting XML syntax.
 - React applications are often built by composing React function components, using the XML syntax for their return value.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function \`React.createElement\`.
-  See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js") further below.
+  See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js").
 - Actually, this website uses Preact, an alternative to React with the same API.
   Then \`React.createElement\` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
   and constructs Preact virtual DOM nodes.
@@ -238,26 +238,27 @@ Finally, the initial render of a website is often precomputed, so it loads faste
 __TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
 
 Websites respond to user interaction.
-Sometimes they respond without changing the DOM e.g. CSS and SVG animations, numerical computation, and sending data to a server.
-But often they respond by mutating it e.g. loading search results, toggling modals, and zooming.
+Sometimes they respond without changing the DOM e.g. CSS/SVG animations, numerical computation, and storing data.
+But often they do mutate it e.g. loading search results, toggling modals, and zooming.
 A single DOM mutation often suffices e.g. CSS transforms and CSS transitions collectively permit smooth zooming.
 
-When React renders a component, it computes the return value (a rooted subtree of the virtual DOM), compares the previous value, and patches the DOM accordingly.
+When React renders a component, it computes the return value i.e. a rooted subtree of the virtual DOM.
+It then compares the previous value, and patches the DOM accordingly.
 If many components change in a small amount of time, [some renders can be avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221) via the ancestral relationship.
 Also, recreating an entire rooted subtree can be avoided via [\`React.memo\`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
-But for many use cases one may simply ignore the virtual DOM overhead.
-In others, pagination and state-management can improve performance.
+But most use cases may simply ignore the virtual DOM overhead.
+<!-- When performance becomes an issue, pagination, query caching, and state-management can go a long way. -->
 
 However, we are making a realtime video game.
 To move characters at 60 fps we'll be updating the DOM at the same rate.
 The virtual DOM overhead is no longer acceptable because (a) we can do better, (b) ...
 
-
+For example, [PanZoom.jsx](#command "open-tab panzoom code@panzoom/PanZoom.jsx") ...
 
 ### CSS inside JS
 
 Traditionally, CSS is provided in separate files,
-linked in the _\\<head\\>_ and referenced by DOM elements via their class attribute.
+linked in the \`<head/>\` and referenced by DOM elements via their space-separated attribute \`class\`.
 Both _PanZoom_ and _PanZoomDemo_ above are styled using CSS-in-JS.
 This means the CSS is written inside JS or JSX files, often together with the React component it applies to.
 The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us.
