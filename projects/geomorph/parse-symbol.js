@@ -1,6 +1,6 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { RectJson, GeoJsonPolygon } from '../geom/types';
-import { ParsedSymbol} from './types';
+import { ParsedSymbol, SvgJson, ParsedSvgJson } from './types';
 import { Poly, Rect, Mat } from '../geom';
 import { svgPathToPolygons } from '../service';
 
@@ -15,7 +15,8 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
 
   const topNodes = Array.from($('svg > *'));
   const pngRect = extractPngOffset($, topNodes);
-  const hull = extractGeoms($, topNodes, 'hull');
+  const hulls = extractGeoms($, topNodes, 'hull');
+  const hull = Poly.union(hulls);
   const doors = extractGeoms($, topNodes, 'doors');
   const irisValves = extractGeoms($, topNodes, 'iris-valves');
   const labels = extractGeoms($, topNodes, 'labels');
@@ -26,10 +27,11 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
   return {
     key: symbolName,
     doors,
-    hull: Poly.union(hull),
+    hull,
     irisValves,
     labels,
     obstacles,
+    hullRect: hull[0]?.rect,
     pngRect,
     /** Original svg with png data url; very useful during geomorph creation */
     svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : undefined,
@@ -49,6 +51,7 @@ export function serializeSymbol(parsed) {
     irisValves: toJsons(parsed.irisValves),
     labels: toJsons(parsed.labels),
     obstacles: toJsons(parsed.obstacles),
+    hullRect: parsed.hullRect,
     pngRect: parsed.pngRect,
     svgInnerText: parsed.svgInnerText,
     walls: toJsons(parsed.walls),
@@ -56,6 +59,34 @@ export function serializeSymbol(parsed) {
 }
 
 /**
+ * @param {ParsedSymbol<GeoJsonPolygon>} parsed
+ * @returns {ParsedSymbol<Poly>}
+ */
+export function deserializeSymbol(parsed) {
+  return {
+    key: parsed.key,
+    hull: parsed.hull.map(Poly.from),
+    doors: parsed.doors.map(Poly.from),
+    irisValves: parsed.irisValves.map(Poly.from),
+    labels: parsed.labels.map(Poly.from),
+    obstacles: parsed.obstacles.map(Poly.from),
+    hullRect: parsed.hullRect,
+    pngRect: parsed.pngRect,
+    svgInnerText: parsed.svgInnerText,
+    walls: parsed.walls.map(Poly.from),
+  };
+}
+
+/** @param {SvgJson} svgJson  */
+export function deserializeSvgJson(svgJson) {
+  return Object.values(svgJson).reduce(
+    (agg, item) => (agg[item.key] = deserializeSymbol(item)) && agg,
+    /** @type {ParsedSvgJson} */ ({}),
+  );
+}
+
+/**
+ * Currently only restricting doors by tags
  * @param {ParsedSymbol<Poly>} parsed
  * @param {string[]} [tags]
  */

@@ -1,8 +1,11 @@
+import * as React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
-import { SymbolLayout, SvgJson } from './types';
+import { SymbolLayout, ParsedSvgJson } from './types';
+import { RectJson } from "../geom/types";
 import { Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
+import { deserializeSvgJson } from "./parse-symbol";
 
 // TODO load pre-parsed data from svg.json
 // TODO create single image with all symbols?
@@ -14,35 +17,18 @@ export default function GeomorphTest2() {
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
-        {gm && <>
-          <image
-            href={gm.debug.png}
-            x={gm.debug.pngRect.x}
-            y={gm.debug.pngRect.y}
-            className="debug"
-          />
-          {gm.symbols.map((s, i) => (
-            <g key={i} transform={s.transform}>
-              <image
-                href={s.png}
-                x={s.pngRect.x}
-                y={s.pngRect.y}
-                className="symbol"
-              />
-            </g>
-          ))}
-        </>}
-        
-        {/* <UseSvg hull debug={true} url="/svg/301--hull.svg" />
-        <UseSvg url="/svg/misc-stellar-cartography--023--4x4.svg" transform="matrix(-0.2, 0, 0, 0.2, 1200, 360)" />
-        <UseSvg url="/svg/stateroom--014--2x2.svg" transform="matrix(0.2, 0, 0, -0.2, 0, 480)" />
-        <UseSvg url="/svg/stateroom--014--2x2.svg" transform="matrix(0.2, 0, 0, -0.2, 120, 480)" />
-        <UseSvg url="/svg/office--001--2x2.svg" tags={['door-s']} transform="matrix(-0.2, 0, 0, 0.2, 240, 120)" />
-        <UseSvg url="/svg/office--001--2x2.svg" tags={['door-s']} transform="matrix(0.2, 0, 0, 0.2, 960, 120)" />
-        <UseSvg url="/svg/stateroom--036--2x4.svg" transform="scale(0.2)" />
-        <UseSvg url="/svg/stateroom--036--2x4.svg" transform="matrix(-0.2, 0, 0, 0.2, 1200, 0)" />
-        <UseSvg url="/svg/stateroom--036--2x4.svg" transform="matrix(0, -0.2, 0.2, 0, 0, 600)" />
-        <UseSvg url="/svg/bridge--042--8x9.svg" transform="matrix(0.2, 0, 0, 0.2, 360, 60)" /> */}
+        <g>
+          {gm && <>
+            <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
+            <image className="underlay" href={gm.underlay} x={gm.hullRect.x} y={gm.hullRect.y} />
+            {gm.symbols.map((s, i) =>
+              <g key={i} transform={s.transform}>
+                <image className="symbol" href={s.pngHref} x={s.pngRect.x}  y={s.pngRect.y}/>
+              </g>
+            )}
+            <image className="overlay" href={gm.overlay} {...gm.pngRect} />
+          </>}
+        </g>
       </PanZoom>
     </div>
   );
@@ -50,45 +36,38 @@ export default function GeomorphTest2() {
 
 /** @param {SymbolLayout} layout */
 function useSymbolLayout(layout) {
-  const svgJson = useSvgJson();
-
+  const symbolData = useSymbolData();
   /**
    * IN PROGRESS
    */
-  if (svgJson) {
+  if (symbolData) {
     const items = layout.items;
-    const symbols = items.map(x => svgJson[x.symbol]);
-    const hull = symbols[0];
+    const symbols = items.map(x => symbolData[x.symbol]);
+    const { overlay, underlay } = createAuxCanvases(layout, symbolData);
 
     return {
-      debug: {
-        png: `/debug/${layout.key}.png`,
-        pngRect: hull.pngRect,
-      },
+      overlay: overlay.toDataURL(),
+      underlay: underlay.toDataURL(),
+      hullRect: /** @type {RectJson} */ (symbols[0].hullRect),
+      pngHref: `/debug/${layout.key}.png`,
+      pngRect: symbols[0].pngRect,
+
       symbols: symbols.map((sym, i) => ({
-        png: `/symbol/${sym.key}.png`,
+        pngHref: `/symbol/${sym.key}.png`,
         pngRect: sym.pngRect,
         transformArray: items[i].transform,
         transform: items[i].transform ? `matrix(${items[i].transform})` : undefined,
       })),
     };
   }
-  // return useQuery(`symbol-layout-${layout.key}-${!!svgJson}`, async () => {
-  //   if (!svgJson) return;
-
-  //   // svgJson.items
-  //   console.log('saw svgJson', svgJson);
-  //   // console.info('loading symbol', symbolName, tags || '*');
-  //   // const contents = await fetch(`/symbol/${symbolName}.svg`).then(x => x.text());
-  //   // const parsed = parseStarshipSymbol(symbolName, contents, debug);
-  //   // // console.log({ symbolName, parsed });
-  //   // return restrictAllByTags(parsed, tags);
-  // });
 }
 
-/** @returns {SvgJson | undefined} */
-function useSvgJson() {
-  return useQuery('svg-json', () => fetch('/symbol/svg.json').then(x => x.json())).data;
+function useSymbolData() {
+  return useQuery('svg-json',
+    () => fetch('/symbol/svg.json')
+      .then(x => x.json())
+      .then(x => deserializeSvgJson(x)),
+  ).data;
 }
 
 /** @type {SymbolLayout} */
@@ -112,6 +91,7 @@ const layout301 = {
 const initViewBox = new Rect(0, 0, 1200, 600);
 const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 const rootCss = css`
+  height: 100%;
   image.debug {
     opacity: 0.3;
   }
@@ -119,3 +99,29 @@ const rootCss = css`
     transform: scale(0.2);
   }
 `;
+
+/**
+ * @param {SymbolLayout} layout
+ * @param {ParsedSvgJson} symbolData 
+ */
+function createAuxCanvases(layout, symbolData) {
+  const symbols = layout.items.map(x => symbolData[x.symbol]);
+  const { pngRect, hullRect, hull: hullPolys } = symbols[0];
+
+  const oc = document.createElement('canvas');
+  const uc = document.createElement('canvas');
+  oc.width = pngRect.width, oc.height = pngRect.height;
+  uc.width = pngRect.width, uc.height = pngRect.height;
+  /** @type {[CanvasRenderingContext2D, CanvasRenderingContext2D]} */
+  const [oct, uct] = ([oc.getContext('2d'), uc.getContext('2d')]);
+
+  const hullOutline = hullPolys[0].outline;
+  uct.fillStyle = 'rgba(0, 0, 100, 0.2)';
+  hullRect && uct.translate(-hullRect.x, -hullRect.y);
+  uct.moveTo(hullOutline[0].x, hullOutline[0].y);
+  hullOutline.forEach(p => uct.lineTo(p.x, p.y));
+  uct.fill();
+  hullRect && uct.translate(hullRect.x, hullRect.y);
+
+  return { overlay: oc, underlay: uc };
+}

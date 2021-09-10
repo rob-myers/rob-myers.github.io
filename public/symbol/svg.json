@@ -91,6 +91,7 @@
     "irisValves": [],
     "labels": [],
     "obstacles": [],
+    "hullRect": {"x": -4, "y": -4.376002, "width": 1208, "height": 608.376002},
     "pngRect": {"x": -6, "y": -22, "width": 1212, "height": 628},
     "walls": []
   },
