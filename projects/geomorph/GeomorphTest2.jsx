@@ -121,20 +121,32 @@ function createAuxCanvases(layout, symbolData) {
   oct.translate(-hullRect.x, -hullRect.y);
   oct.fillStyle = 'rgba(200, 50, 50, 0.2)';
   fillPolygon(oct, ...hull.hull);
-  oct.fillStyle = 'rgba(0, 200, 0, 0.25)';
+  oct.fillStyle = 'rgba(0, 200, 0, 0.2)';
   fillPolygon(oct, ...hull.doors)
   oct.translate(hullRect.x, hullRect.y);
   
-  for (const [i, { doors, walls }] of others.entries()) {
+  for (const [i, {
+    doors,
+    irisValves,
+    labels,
+    obstacles,
+    walls,
+  }] of others.entries()) {
     const { transform } = layout.items[i + 1];
     oct.resetTransform();
     oct.translate(-hullRect.x, -hullRect.y);
     transform && oct.transform(...transform);
     oct.scale(0.2, 0.2);
-    oct.fillStyle = 'rgba(0, 200, 0, 0.25)';
+
+    oct.fillStyle = 'rgba(0, 200, 0, 0.2)';
     fillPolygon(oct, ...doors);
+    fillPolygon(oct, ...irisValves);
     oct.fillStyle = 'rgba(200, 50, 50, 0.1)';
     fillPolygon(oct, ...walls);
+    oct.fillStyle = 'rgba(100, 100, 150, 0.2)';
+    fillPolygon(oct, ...obstacles);
+    oct.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    fillPolygon(oct, ...labels);
   }
   
   return { overlay: oc, underlay: uc };
