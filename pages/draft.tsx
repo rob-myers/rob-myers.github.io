@@ -194,7 +194,7 @@ Behaviourally:
 - _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
 
 They are JS functions with a single parameter, returning something which looks like HTML (but isn't).
-Notice _PanZoom_ renders _Grid_ by using the XML tag _\\<Grid\\>_.
+Notice _PanZoom_ renders _Grid_ by using the XML tag \`<Grid/>\`.
 Then although React function components are functions, syntactically they are not invoked like functions.
 You can also view the demo code [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab"), which permits code editing.
 
@@ -202,19 +202,19 @@ Here's a whirlwind overview of React (and Preact).
 
 - React devs use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), permitting XML syntax.
 - React applications are often built by composing React function components, using the XML syntax for their return value.
-- Dev tools convert JSX into JS, by replacing XML tags with invocations of the function _React.createElement_.
+- Dev tools convert JSX into JS, by replacing XML tags with invocations of the function \`React.createElement\`.
   See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js") further below.
 - Actually, this website uses Preact, an alternative to React with the same API.
-  Then _React.createElement_ is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
+  Then \`React.createElement\` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
   and constructs Preact virtual DOM nodes.
 - The root component is usually called _App_.
-  Running a React application means [invoking _ReactDOM.render_](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
-  with 2 arguments: _\\<App/\\>_ and an extant DOM node _el_.
-- [_ReactDOM.render_](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts _\\<App/\\>_ into a DOM node mounted at _el_.
+  Running a React application means [invoking \`ReactDOM.render\`](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
+  with 2 arguments: \`<App/>\` and an extant DOM node _el_.
+- [\`ReactDOM.render\`](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts \`<App/>\` into a DOM node mounted at _el_.
   A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
   It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
-- If _\\<App/\\>_ is a website, it is often [rendered as HTML server-side](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js) for the client to render immediately.
-  Afterwards, the client invokes [_ReactDOM.hydrate_](https://github.com/preactjs/preact/blob/master/src/render.js) instead of _ReactDOM.render_, but with the same arguments.
+- If \`<App/>\` is a website, it is often [rendered as HTML server-side](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js), so the client can render it immediately.
+  The client then invokes [\`ReactDOM.hydrate\`](https://github.com/preactjs/preact/blob/master/src/render.js) instead of \`ReactDOM.render\`, but with the same arguments.
 
       `}/>
 
@@ -240,7 +240,7 @@ __TODO__ _we'll control the rendering i.e. React should only render initially or
 React is a component framework used to build websites.
 Websites respond to user interaction,
 and usually do not need to mutate the DOM 60 times a second.
-They often play
+For example, a CSS animation can be played at 60 fps by assigning a relevant class to an HTMLElement i.e. a single DOM mutation rather than a continual one.
 
 ### CSS inside JS
 
@@ -366,9 +366,9 @@ public/svg
 
       <Gap/>
 
-      <section style={{ height: 200 }}>
+      <div style={{ height: 200 }}>
         <Terminal sessionKey="test" env={env.test} />
-      </section>
+      </div>
 
       <Gap/>
 

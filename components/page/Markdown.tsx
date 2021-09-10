@@ -156,6 +156,15 @@ const blogCss = css`
     margin: 4px 0;
   }
 
+  code {
+    font-family: sans-serif;
+    letter-spacing: 1px;
+    color: #444;
+  }
+  a code {
+    color: unset;
+  }
+
   span.float {
     float: right;
     color: #555;
