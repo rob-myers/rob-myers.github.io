@@ -31,5 +31,3 @@ declare namespace Geom {
   }
 
 }
-
-export = Geom;

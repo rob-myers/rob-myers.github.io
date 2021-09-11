@@ -1,6 +1,4 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
-import { RectJson, GeoJsonPolygon } from '../geom/types';
-import { ParsedSymbol, SvgJson, ParsedSvgJson } from './types';
 import { Poly, Rect, Mat } from '../geom';
 import { svgPathToPolygons } from '../service';
 
@@ -8,7 +6,7 @@ import { svgPathToPolygons } from '../service';
  * @param {string} symbolName
  * @param {string} svgContents
  * @param {boolean} [debug]
- * @returns {ParsedSymbol<Poly>}
+ * @returns {Geomorph.ParsedSymbol<Poly>}
  */
 export function parseStarshipSymbol(symbolName, svgContents, debug) {
   const $ = cheerio.load(svgContents);
@@ -40,8 +38,8 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
 }
 
 /**
- * @param {ParsedSymbol<Poly>} parsed
- * @returns {ParsedSymbol<GeoJsonPolygon>}
+ * @param {Geomorph.ParsedSymbol<Poly>} parsed
+ * @returns {Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>}
  */
 export function serializeSymbol(parsed) {
   return {
@@ -59,8 +57,8 @@ export function serializeSymbol(parsed) {
 }
 
 /**
- * @param {ParsedSymbol<GeoJsonPolygon>} parsed
- * @returns {ParsedSymbol<Poly>}
+ * @param {Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>} parsed
+ * @returns {Geomorph.ParsedSymbol<Poly>}
  */
 export function deserializeSymbol(parsed) {
   return {
@@ -77,11 +75,11 @@ export function deserializeSymbol(parsed) {
   };
 }
 
-/** @param {SvgJson} svgJson  */
+/** @param {Geomorph.SvgJson} svgJson  */
 export function deserializeSvgJson(svgJson) {
   return Object.values(svgJson).reduce(
     (agg, item) => (agg[item.key] = deserializeSymbol(item)) && agg,
-    /** @type {ParsedSvgJson} */ ({}),
+    /** @type {Geomorph.ParsedSvgJson} */ ({}),
   );
 }
 
@@ -134,7 +132,7 @@ function extractGeom(api, el) {
 /**
  * @param {CheerioAPI} api
  * @param {Element[]} topNodes
- * @returns {RectJson}
+ * @returns {Geom.RectJson}
  */
  function extractPngOffset(api, topNodes) {
   const group = topNodes.find(x => hasTitle(api, x, 'background'));

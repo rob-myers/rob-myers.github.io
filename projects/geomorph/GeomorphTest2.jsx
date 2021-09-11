@@ -1,8 +1,6 @@
 import * as React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
-import { SymbolLayout, ParsedSvgJson } from './types';
-import { RectJson } from '../geom/types';
 import { Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
 import { deserializeSvgJson, restrictByTags } from "./parse-symbol";
@@ -46,7 +44,7 @@ const rootCss = css`
 `;
 
 
-/** @param {SymbolLayout} layout */
+/** @param {Geomorph.SymbolLayout} layout */
 function useSymbolLayout(layout) {
   const symbolData = useSymbolData();
 
@@ -58,7 +56,7 @@ function useSymbolLayout(layout) {
     return {
       overlay: overlay.toDataURL(),
       underlay: underlay.toDataURL(),
-      hullRect: /** @type {RectJson} */ (symbols[0].hullRect),
+      hullRect: /** @type {Geom.RectJson} */ (symbols[0].hullRect),
       pngHref: `/debug/${layout.key}.png`,
       pngRect: symbols[0].pngRect,
 
@@ -80,7 +78,7 @@ function useSymbolData() {
   ).data;
 }
 
-/** @type {SymbolLayout} */
+/** @type {Geomorph.SymbolLayout} */
 const layout301 = {
   key: 'g-301--bridge',
   id: 301,
@@ -99,12 +97,12 @@ const layout301 = {
 };
 
 /**
- * @param {SymbolLayout} layout
- * @param {ParsedSvgJson} symbolData 
+ * @param {Geomorph.SymbolLayout} layout
+ * @param {Geomorph.ParsedSvgJson} symbolData 
  */
 function createAuxCanvases(layout, symbolData) {
   const [hull, ...others] = layout.items.map(x => symbolData[x.symbol]);
-  const hullRect = /** @type {RectJson} */ (hull.hullRect);
+  const hullRect = /** @type {Geom.RectJson} */ (hull.hullRect);
 
   const oc = document.createElement('canvas');
   const uc = document.createElement('canvas');

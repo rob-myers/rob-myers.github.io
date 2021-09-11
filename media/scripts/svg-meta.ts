@@ -3,11 +3,12 @@
  * > Parse svg symbols in /public/symbol, writing
  * > a single json file /public/symbol/svg.json
  */
+/// <reference path="../../projects/geom/types.d.ts"/>
+/// <reference path="../../projects/geomorph/types.d.ts"/>
+
 import fs from 'fs';
-import stringify from 'json-stringify-pretty-compact';
 import path from 'path';
-import type { GeoJsonPolygon } from 'projects/geom/types';
-import type { ParsedSymbol } from 'projects/geomorph/types';
+import stringify from 'json-stringify-pretty-compact';
 import {
   parseStarshipSymbol,
   serializeSymbol,
@@ -16,7 +17,7 @@ import {
 const publicDir = path.resolve(__dirname, '../../public');
 const symbolsDir = path.resolve(publicDir, 'symbol');
 const svgFilenames = fs.readdirSync(symbolsDir).filter(x => x.endsWith('.svg'));
-const svgJsonLookup = {} as Record<string, ParsedSymbol<GeoJsonPolygon>>;
+const svgJsonLookup = {} as Record<string, Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>>;
 
 for (const filename of svgFilenames) {
   const symbolName = filename.slice(0, -'.svg'.length);

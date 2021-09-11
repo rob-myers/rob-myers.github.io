@@ -30,7 +30,8 @@
     "**/*.ts",
     "**/*.tsx",
     "projects/**/*.js",
-    "projects/**/*.jsx"
+    "projects/**/*.jsx",
+    "projects/**/*.d.ts"
   ],
   "exclude": [
     "node_modules",

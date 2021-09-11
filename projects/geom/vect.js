@@ -1,5 +1,3 @@
-import Geom from './types';
-
 /**
  * A two dimensional coordinate.
  */

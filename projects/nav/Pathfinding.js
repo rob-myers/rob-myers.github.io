@@ -5,22 +5,20 @@ import { Channel } from './Channel';
 
 import { Vect } from '../geom';
 import { Triangle } from './Triangle';
-import { Triangulation } from '../geom/types';
-import { Graph, GraphNode, Zone } from './types';
 
 /**
  * Defines an instance of the pathfinding module, with one or more zones.
  */
 export class Pathfinding {
 	constructor () {
-		/** @type {Record<string, Zone>} */
+		/** @type {Record<string, Nav.Zone>} */
 		this.zones = ({});
 
 		const temp = {
 			point: new Vect(0, 0),
 			triangle: new Triangle,
 			endPoint: new Vect(0, 0),
-			closestNode: /** @type {null | GraphNode} */ (null),
+			closestNode: /** @type {null | Nav.GraphNode} */ (null),
 			closestPoint: new Vect(0, 0),
 			closestDistance: Infinity,
 		};
@@ -30,8 +28,8 @@ export class Pathfinding {
 
 	/**
 	 * (Static) Builds a zone/node set from navigation mesh geometry.
-	 * @param  {Triangulation} tr
-	 * @return {Zone}
+	 * @param  {Geom.Triangulation} tr
+	 * @return {Nav.Zone}
 	 */
 	static createZone (tr) {
 		return Builder.buildZone(tr);
@@ -40,7 +38,7 @@ export class Pathfinding {
 	/**
 	 * Sets data for the given zone.
 	 * @param {string} zoneID
-	 * @param {Zone} zone
+	 * @param {Nav.Zone} zone
 	 */
 	setZoneData (zoneID, zone) {
 		this.zones[zoneID] = zone;
@@ -86,7 +84,7 @@ export class Pathfinding {
 	getClosestNode (position, zoneID, groupID, checkPolygon = false) {
 		const nodes = this.zones[zoneID].groups[groupID];
 		const vertices = this.zones[zoneID].vertices;
-		let closestNode = /** @type {null | GraphNode} */ (null);
+		let closestNode = /** @type {null | Nav.GraphNode} */ (null);
 		let closestDistance = Infinity;
 
 		nodes.forEach((node) => {
@@ -98,7 +96,7 @@ export class Pathfinding {
 			}
 		});
 
-		return /** @type {GraphNode} */ (closestNode);
+		return /** @type {Nav.GraphNode} */ (closestNode);
 	}
 
 	/**
@@ -123,14 +121,14 @@ export class Pathfinding {
 		}
 
 		const paths = AStar.search(
-      /** @type {Graph} */ (nodes),
+      /** @type {Nav.Graph} */ (nodes),
       closestNode,
       farthestNode
     );
 
 		/**
-		 * @param {GraphNode} a 
-		 * @param {GraphNode} b
+		 * @param {Nav.GraphNode} a 
+		 * @param {Nav.GraphNode} b
 		 */
 		const getPortalFromTo = function (a, b) {
 			for (let i = 0; i < a.neighbours.length; i++) {
@@ -207,7 +205,7 @@ export class Pathfinding {
 	 *
 	 * @param  {Vect} startRef
 	 * @param  {Vect} endRef Desired endpoint.
-	 * @param  {GraphNode} node
+	 * @param  {Nav.GraphNode} node
 	 * @param  {string} zoneID
 	 * @param  {number} groupID
 	 * @param  {Vect} endTarget Updated endpoint.

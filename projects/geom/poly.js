@@ -2,7 +2,6 @@ import * as poly2tri from 'poly2tri';
 import * as polygonClipping from 'polygon-clipping';
 import earcut from 'earcut';
 
-import { Coord, VectJson, GeoJsonPolygon, Triangulation } from "./types";
 import { Rect } from "./rect";
 import { Vect } from "./vect";
 
@@ -23,12 +22,12 @@ export class Poly {
     return this.outline.concat(...this.holes);
   }
 
-  /** @returns {GeoJsonPolygon} */
+  /** @returns {Geom.GeoJsonPolygon} */
   get geoJson() {
     return {
       type: 'Polygon',
       coordinates: [
-        this.outline.map(({ x, y }) => /** @type {Coord} */ ([x, y]))
+        this.outline.map(({ x, y }) => /** @type {Geom.Coord} */ ([x, y]))
       ].concat(
         this.holes.map(hole => hole.map(({ x, y }) => [x, y]))
       ),
@@ -169,7 +168,7 @@ export class Poly {
   /**
    * Faster but less uniform.
    * Also cannot handle Steiner points.
-   * @returns {Triangulation}
+   * @returns {Geom.Triangulation}
    */
   fastTriangulate() {
     const { coordinates } = this.geoJson;
@@ -185,7 +184,7 @@ export class Poly {
     return { vs: this.allPoints, tris: indexTriples };
   }
 
-  /** @param {GeoJsonPolygon | GeoJsonPolygon['coordinates']} input  */
+  /** @param {Geom.GeoJsonPolygon | Geom.GeoJsonPolygon['coordinates']} input  */
   static from(input) {
     if (input instanceof Array) {
       return new Poly(
@@ -272,11 +271,11 @@ export class Poly {
    * Can fail for non-wellformed polygons e.g. given square
    * with a hole, cut another hole meeting 1st hole at a point.
    * On failure we fallback to earcut algorithm, warning in console.
-   * @returns {Triangulation}
+   * @returns {Geom.Triangulation}
    */
   qualityTriangulate() {
     try {
-      /** @typedef {VectJson & { id: number }} VWithId */
+      /** @typedef {Geom.VectJson & { id: number }} VWithId */
       const outline = this.outline.map(({ x, y }, id) => /** @type {VWithId} */ ({ x, y, id }));
       let nextId = outline.length;
       const holes = this.holes

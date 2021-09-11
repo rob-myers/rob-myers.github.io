@@ -1,4 +1,3 @@
-import { Triangulation, VectJson } from '../geom/types';
 import { Poly, Vect } from '../geom';
 import { recast, INavMeshParameters } from './recast';
 
@@ -20,8 +19,8 @@ class GeomService {
 
   /**
    * @param {string} navKey 
-   * @param {VectJson} src
-   * @param {VectJson} dst 
+   * @param {Geom.VectJson} src
+   * @param {Geom.VectJson} dst 
    * @returns {Vect[]}
    */
   requestNavPath(navKey, src, dst) {
@@ -36,8 +35,8 @@ class GeomService {
 
   /**
    * Join disjoint triangulations
-   * @param {Triangulation[]} triangulations 
-   * @returns {Triangulation}
+   * @param {Geom.Triangulation[]} triangulations 
+   * @returns {Geom.Triangulation}
    */
   joinTriangulations(triangulations) {
     if (triangulations.length === 1) return triangulations[0];
@@ -54,7 +53,7 @@ class GeomService {
 
   /**
    * @param {Poly[]} polygons 
-   * @returns {Triangulation}
+   * @returns {Geom.Triangulation}
    */
   polysToTriangulation(polygons) {
     const decomps = polygons.map(p => p.qualityTriangulate());
@@ -63,7 +62,7 @@ class GeomService {
 
   /** @param {Vect[]} path */
   removePathReps(path) {
-    /** @type {VectJson} */
+    /** @type {Geom.VectJson} */
     let prev;
     return path.reduce((agg, p) => {
       if (!(prev && (p.x === prev.x) && (p.y === prev.y))) {

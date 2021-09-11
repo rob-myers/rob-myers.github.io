@@ -1,11 +1,9 @@
 import { BinaryHeap } from './BinaryHeap';
 import { Utils } from './Utils';
-import { VectJson } from '../geom/types';
-import { Graph, GraphNode } from './types';
 
 export class AStar {
 
-  /** @param {Graph} graph */
+  /** @param {Nav.Graph} graph */
   static init (graph) {
     for (let x = 0; x < graph.length; x++) {
       //for(var x in graph) {
@@ -20,10 +18,10 @@ export class AStar {
     }
   }
 
-  /** @param {Graph} graph */
+  /** @param {Nav.Graph} graph */
   static cleanUp (graph) {
     for (let x = 0; x < graph.length; x++) {
-      const node = /** @type {Partial<GraphNode>} */ (graph[x]);
+      const node = /** @type {Partial<Nav.GraphNode>} */ (graph[x]);
       delete node.f;
       delete node.g;
       delete node.h;
@@ -36,7 +34,7 @@ export class AStar {
 
   static heap () {
     return new BinaryHeap(
-      /** @param {GraphNode} node */
+      /** @param {Nav.GraphNode} node */
       function (node) {
         return node.f;
       }
@@ -44,9 +42,9 @@ export class AStar {
   }
 
   /**
-   * @param {Graph} graph 
-   * @param {GraphNode} start 
-   * @param {GraphNode} end 
+   * @param {Nav.Graph} graph 
+   * @param {Nav.GraphNode} start 
+   * @param {Nav.GraphNode} end 
    */
   static search (graph, start, end) {
     this.init(graph);
@@ -117,16 +115,16 @@ export class AStar {
   }
 
   /**
-   * @param {VectJson} pos1 
-   * @param {VectJson} pos2 
+   * @param {Geom.VectJson} pos1 
+   * @param {Geom.VectJson} pos2 
    */
   static heuristic (pos1, pos2) {
     return Utils.distanceToSquared(pos1, pos2);
   }
 
   /**
-   * @param {Graph} graph 
-   * @param {GraphNode} node 
+   * @param {Nav.Graph} graph 
+   * @param {Nav.GraphNode} node 
    */
   static neighbours (graph, node) {
     const ret = [];

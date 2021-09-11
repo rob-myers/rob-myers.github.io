@@ -1,5 +1,3 @@
-import { VectJson } from '../geom/types';
-
 export class Utils {
 
   /**
@@ -17,8 +15,8 @@ export class Utils {
   }
 
   /**
-   * @param {VectJson} a 
-   * @param {VectJson} b 
+   * @param {Geom.VectJson} a 
+   * @param {Geom.VectJson} b 
    */
   static distanceToSquared (a, b) {
     const dx = a.x - b.x;
@@ -29,8 +27,8 @@ export class Utils {
   /**
    * Jonas Raoni Soares Silva
    * http://jsfromhell.com/math/is-point-in-poly [rev. #0]
-   * @param {VectJson[]} poly 
-   * @param {VectJson} pt 
+   * @param {Geom.VectJson[]} poly 
+   * @param {Geom.VectJson} pt 
    * @returns 
    */
   static isPointInPoly (poly, pt) {
@@ -51,9 +49,9 @@ export class Utils {
   }
 
   /**
-   * @param {VectJson} vector 
+   * @param {Geom.VectJson} vector 
    * @param {{ vertexIds: number[]}} polygon 
-   * @param {VectJson[]} vertices 
+   * @param {Geom.VectJson[]} vertices 
    */
   static isVectorInPolygon (vector, polygon, vertices) {
 
@@ -62,7 +60,7 @@ export class Utils {
 
     let lowestPoint = 100000;
     let highestPoint = -100000;
-    let polygonVertices = /** @type {VectJson[]} */ ([]);
+    let polygonVertices = /** @type {Geom.VectJson[]} */ ([]);
 
     polygon.vertexIds.forEach((vId) => {
       lowestPoint = Math.min(vertices[vId].y, lowestPoint);
@@ -78,9 +76,9 @@ export class Utils {
   }
 
   /**
-   * @param {VectJson} a 
-   * @param {VectJson} b 
-   * @param {VectJson} c 
+   * @param {Geom.VectJson} a 
+   * @param {Geom.VectJson} b 
+   * @param {Geom.VectJson} c 
    */
   static triarea2 (a, b, c) {
     var ax = b.x - a.x;
@@ -91,8 +89,8 @@ export class Utils {
   }
 
   /**
-   * @param {VectJson} a 
-   * @param {VectJson} b 
+   * @param {Geom.VectJson} a 
+   * @param {Geom.VectJson} b 
    */
   static vequal (a, b) {
     return this.distanceToSquared(a, b) < 0.00001;

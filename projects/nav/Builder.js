@@ -1,12 +1,10 @@
 import { Utils } from './Utils';
 import { Vect } from '../geom';
-import { Triangulation } from '../geom/types';
-import { NavPoly, Zone, GraphNode } from './types';
 
 export class Builder {
   /**
    * Constructs groups from the given navigation mesh.
-   * @param  {Triangulation} tr
+   * @param  {Geom.Triangulation} tr
    */
   static buildZone (tr) {
     const navMesh = this._buildNavigationMesh(tr);
@@ -15,7 +13,7 @@ export class Builder {
       v.y = Utils.roundNumber(v.y, 2);
     });
 
-    const zone = /** @type {Zone} */ ({});
+    const zone = /** @type {Nav.Zone} */ ({});
     zone.vertices = navMesh.vertices;
 
     const groups = this._buildPolygonGroups(navMesh);
@@ -26,10 +24,10 @@ export class Builder {
     zone.groups = new Array(groups.length);
     groups.forEach((group, groupIndex) => {
 
-      const indexByPolygon = /** @type {Map<NavPoly, number>} */ (new Map()); // { polygon: index in group }
+      const indexByPolygon = /** @type {Map<Nav.NavPoly, number>} */ (new Map()); // { polygon: index in group }
       group.forEach((poly, polyIndex) => indexByPolygon.set(poly, polyIndex));
 
-      const newGroup = /** @type {GraphNode[]} */ (new Array(group.length));
+      const newGroup = /** @type {Nav.GraphNode[]} */ (new Array(group.length));
       group.forEach((poly, polyIndex) => {
 
         const neighbourIndices = /** @type {number[]} */ ([]);
@@ -48,7 +46,7 @@ export class Builder {
         centroid.x = Utils.roundNumber(centroid.x, 2);
         centroid.y = Utils.roundNumber(centroid.y, 2);
 
-        newGroup[polyIndex] = /** @type {GraphNode} */ ({
+        newGroup[polyIndex] = /** @type {Nav.GraphNode} */ ({
           id: polyIndex,
           centroid,
           neighbours: neighbourIndices,
@@ -65,7 +63,7 @@ export class Builder {
 
   /**
    * Constructs a navigation mesh from the given geometry.
-   * @param {Triangulation} triangulation
+   * @param {Geom.Triangulation} triangulation
    */
   static _buildNavigationMesh (triangulation) {
     return this._buildPolygonsFromTriang(triangulation);
@@ -73,7 +71,7 @@ export class Builder {
 
   /**
    * Spreads the group ID of the given polygon to all connected polygons
-   * @param {NavPoly} seed
+   * @param {Nav.NavPoly} seed
    */
   static _spreadGroupId (seed) {
     let nextBatch = new Set([seed]);
@@ -94,11 +92,11 @@ export class Builder {
   }
 
   /**
-   * @param {{ polygons: NavPoly[] }} navigationMesh 
+   * @param {{ polygons: Nav.NavPoly[] }} navigationMesh 
    */
   static _buildPolygonGroups (navigationMesh) {
     const polygons = navigationMesh.polygons;
-    const polygonGroups = /** @type {NavPoly[][]} */ ([]);
+    const polygonGroups = /** @type {Nav.NavPoly[][]} */ ([]);
 
     polygons.forEach((polygon) => {
       if (polygon.group !== undefined) {
@@ -116,11 +114,11 @@ export class Builder {
   }
 
   /**
-   * @param {NavPoly} polygon 
-   * @param {Record<number, NavPoly[]>} vertexPolygonMap 
+   * @param {Nav.NavPoly} polygon 
+   * @param {Record<number, Nav.NavPoly[]>} vertexPolygonMap 
    */
   static _buildPolygonNeighbours (polygon, vertexPolygonMap) {
-    const neighbours = /** @type {Set<NavPoly>} */ (new Set());
+    const neighbours = /** @type {Set<Nav.NavPoly>} */ (new Set());
 
     const groupA = vertexPolygonMap[polygon.vertexIds[0]];
     const groupB = vertexPolygonMap[polygon.vertexIds[1]];
@@ -145,10 +143,10 @@ export class Builder {
     return neighbours;
   }
 
-  /** @param {Triangulation} tr */
+  /** @param {Geom.Triangulation} tr */
   static _buildPolygonsFromTriang (tr) {
 
-    const polygons = /** @type {NavPoly[]} */ ([]);
+    const polygons = /** @type {Nav.NavPoly[]} */ ([]);
     const vertices = /** @type {Vect[]} */ ([]);
 
     // const position = tr.attributes.position;
@@ -160,7 +158,7 @@ export class Builder {
     // is related to connectivity of the mesh.
 
     /** Array of polygon objects by vertex index. */
-    const vertexPolygonMap = /** @type {Record<number, NavPoly[]>} */ ({});
+    const vertexPolygonMap = /** @type {Record<number, Nav.NavPoly[]>} */ ({});
 
     for (let i = 0; i < tr.vs.length; i++) {
       vertices.push(tr.vs[i]);
@@ -170,7 +168,7 @@ export class Builder {
     // Convert the faces into a custom format that supports more than 3 vertices
     for (let i = 0; i < tr.tris.length; i++) {
       const [a, b, c] = tr.tris[i];
-      const poly = /** @type {NavPoly} */ ({ vertexIds: [a, b, c] });
+      const poly = /** @type {Nav.NavPoly} */ ({ vertexIds: [a, b, c] });
       polygons.push(poly);
       vertexPolygonMap[a].push(poly);
       vertexPolygonMap[b].push(poly);
@@ -186,8 +184,8 @@ export class Builder {
   }
 
   /**
-   * @param {NavPoly} a
-   * @param {NavPoly} b
+   * @param {Nav.NavPoly} a
+   * @param {Nav.NavPoly} b
    * @returns {number[]}
    */
   static _getSharedVerticesInOrder (a, b) {

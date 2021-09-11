@@ -1,5 +1,3 @@
-// eslint-disable-next-line no-unused-vars
-import Geom from './types';
 import { Vect } from './vect';
 
 /**

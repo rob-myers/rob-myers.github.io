@@ -1,5 +1,3 @@
-import { VectJson } from './types';
-
 /**
  * A (2 row) * (3 col) affine 2d transformation matrix.
  * - Based on https://github.com/thednp/DOMMatrix/blob/master/src/index.js
@@ -44,7 +42,7 @@ export class Mat {
 
   /**
    * Transform point, mutating it.
-   * @template {VectJson} T
+   * @template {Geom.VectJson} T
    * @param {T} v
    * @returns {T}
    */

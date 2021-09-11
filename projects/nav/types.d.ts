@@ -1,7 +1,6 @@
-import { Vect } from '../geom';
-
 declare namespace Nav {
-
+  import { Vect } from '../geom';
+  
   export type Graph = GraphNode[];
 
   export interface GraphNode {
@@ -40,5 +39,3 @@ declare namespace Nav {
   }
 
 }
-
-export = Nav;

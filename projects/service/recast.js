@@ -1,6 +1,5 @@
 /// <reference path="./recast-detour.d.ts" />
 import { Vect } from '../geom';
-import { Triangulation, VectJson } from '../geom/types';
 
 /**
  * RecastJS navigation plugin
@@ -47,7 +46,7 @@ class RecastService {
   /**
    * Creates a navigation mesh
    * @param {string} navKey
-   * @param {Triangulation} navGeom array of all the geometry used to compute the navigatio mesh
+   * @param {Geom.Triangulation} navGeom array of all the geometry used to compute the navigatio mesh
    * @param {Partial<INavMeshParameters>} parameters bunch of parameters used to filter geometry
    * @returns {void}
    */
@@ -99,7 +98,7 @@ class RecastService {
   /**
    * Create a triangulation from the navigation mesh.
    * @param {string} navKey
-   * @returns {Triangulation}
+   * @returns {Geom.Triangulation}
    */
   getDebugTriangulation(navKey) {
     if (!this.lookup[navKey]) {
@@ -135,8 +134,8 @@ class RecastService {
   /**
    * Get a navigation mesh constrained position, closest to the parameter position
    * @param {string} navKey
-   * @param {VectJson} position world position
-   * @returns {VectJson} the closest point to position constrained by the navigation mesh
+   * @param {Geom.VectJson} position world position
+   * @returns {Geom.VectJson} the closest point to position constrained by the navigation mesh
    */
   getClosestPoint(navKey, position) {
     const p = new this.bjsRECAST.Vec3(position.x, 0, position.y);
@@ -147,8 +146,8 @@ class RecastService {
   /**
    * Get a navigation mesh constrained position, closest to the parameter position
    * @param {string} navKey
-   * @param {VectJson} position world position
-   * @param {VectJson} result output the closest point to position constrained by the navigation mesh
+   * @param {Geom.VectJson} position world position
+   * @param {Geom.VectJson} result output the closest point to position constrained by the navigation mesh
    * @returns {void}
    */
   getClosestPointToRef(navKey, position, result) {
@@ -161,9 +160,9 @@ class RecastService {
   /**
    * Get a navigation mesh constrained position, within a particular radius
    * @param {string} navKey
-   * @param {VectJson} position world position: ;
+   * @param {Geom.VectJson} position world position: ;
    * @param {number} maxRadius the maximum distance to the constrained world position
-   * @returns {VectJson} the closest point to position constrained by the navigation mesh
+   * @returns {Geom.VectJson} the closest point to position constrained by the navigation mesh
    */
   getRandomPointAround(navKey, position, maxRadius) {
     const p = new this.bjsRECAST.Vec3(position.x, 0, position.y);
@@ -174,9 +173,9 @@ class RecastService {
   /**
    * Get a navigation mesh constrained position, within a particular radius
    * @param {string} navKey
-   * @param {VectJson} position world position: ;
+   * @param {Geom.VectJson} position world position: ;
    * @param {number} maxRadius the maximum distance to the constrained world position
-   * @param {VectJson} result output the closest point to position constrained by the navigation mesh
+   * @param {Geom.VectJson} result output the closest point to position constrained by the navigation mesh
    */
   getRandomPointAroundToRef(navKey, position, maxRadius, result) {
     var p = new this.bjsRECAST.Vec3(position.x, 0, position.y);
@@ -188,9 +187,9 @@ class RecastService {
   /**
    * Compute the final position from a segment made of destination-position
    * @param {string} navKey
-   * @param {VectJson} position world position
-   * @param {VectJson} destination world position
-   * @returns {VectJson} the resulting point along the navmesh
+   * @param {Geom.VectJson} position world position
+   * @param {Geom.VectJson} destination world position
+   * @returns {Geom.VectJson} the resulting point along the navmesh
    */
   moveAlong(navKey, position, destination) {
     var p = new this.bjsRECAST.Vec3(position.x, 0, position.y);
@@ -202,9 +201,9 @@ class RecastService {
   /**
    * Compute the final position from a segment made of destination-position
    * @param {string} navKey
-   * @param {VectJson} position world position
-   * @param {VectJson} destination world position
-   * @param {VectJson} result output the resulting point along the navmesh
+   * @param {Geom.VectJson} position world position
+   * @param {Geom.VectJson} destination world position
+   * @param {Geom.VectJson} result output the resulting point along the navmesh
    * @returns {void}
    */
   moveAlongToRef(navKey, position, destination, result) {
@@ -218,8 +217,8 @@ class RecastService {
   /**
    * Compute a navigation path from start to end. Returns an empty array if no path can be computed
    * @param {string} navKey
-   * @param {VectJson} start world position
-   * @param {VectJson} end position
+   * @param {Geom.VectJson} start world position
+   * @param {Geom.VectJson} end position
    * @returns {Vect[]} array containing world position composing the path
    */
   computePath(navKey, start, end) {
@@ -247,7 +246,7 @@ class RecastService {
    * The queries will try to find a solution within those bounds
    * default is (1,1,1)
    * @param {string} navKey
-   * @param {VectJson} extent x,y,z value that define the extent around the queries point of reference
+   * @param {Geom.VectJson} extent x,y,z value that define the extent around the queries point of reference
    * @returns {void}
    */
   setDefaultQueryExtent(navKey, extent) {
@@ -258,7 +257,7 @@ class RecastService {
   /**
    * Get the Bounding box extent specified by setDefaultQueryExtent
    * @param {string} navKey
-   * @returns {VectJson} the box extent values
+   * @returns {Geom.VectJson} the box extent values
    */
   getDefaultQueryExtent(navKey) {
     const p = this.lookup[navKey].getDefaultQueryExtent();
@@ -305,7 +304,7 @@ class RecastService {
   /**
    * Get the Bounding box extent result specified by setDefaultQueryExtent
    * @param {string} navKey
-   * @param {VectJson} result output the box extent values
+   * @param {Geom.VectJson} result output the box extent values
    * @returns {void}
    */
   getDefaultQueryExtentToRef(navKey, result) {

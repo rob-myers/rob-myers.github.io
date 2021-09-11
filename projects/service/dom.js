@@ -1,5 +1,4 @@
 import { parseSVG, makeAbsolute, MoveToCommand } from 'svg-path-parser';
-import { VectJson } from '../geom/types';
 import { Vect } from '../geom/vect';
 import { Poly } from '../geom/poly';
 
@@ -80,7 +79,7 @@ export let canTouchDevice = (
 
 /**
  * @param {CanvasRenderingContext2D} ctxt 
- * @param  {VectJson[]} ring 
+ * @param  {Geom.VectJson[]} ring 
  */
 export function fillRing(ctxt, ring, fill = true) {
   if (ring.length) {

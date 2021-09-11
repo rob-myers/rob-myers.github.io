@@ -2,7 +2,6 @@
  * Source https://github.com/mrdoob/three.js/blob/dev/src/math/Vector2.js
  */
 import { Vect } from "../geom";
-import { VectJson } from "../geom/types";
 
 export class Triangle {
 
@@ -13,7 +12,7 @@ export class Triangle {
 	}
 
   /**
-   * @param {VectJson} p
+   * @param {Geom.VectJson} p
    * @param {Vect} target
    */
 	closestPointToPoint(p, target) {
@@ -93,9 +92,9 @@ export class Triangle {
 	}
 
   /**
-   * @param {VectJson} a 
-   * @param {VectJson} b 
-   * @param {VectJson} c 
+   * @param {Geom.VectJson} a 
+   * @param {Geom.VectJson} b 
+   * @param {Geom.VectJson} c 
    */
   set(a, b, c) {
 		this.a.copy( a );
