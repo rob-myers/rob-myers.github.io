@@ -44,7 +44,7 @@ forcing us to take more care than usual.
 ## Constraints <float rem="1.2">19th July 2021</float>
 
 This project needs a backbone.
-We've chosen the underlying technology, game mechanics, and where events take place.
+We've chosen the underlying technology, low-level game mechanics, and where events take place.
 
 ### Technology
 
@@ -57,7 +57,7 @@ We've chosen the underlying technology, game mechanics, and where events take pl
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 - Support mobile/desktop devices.
 
-### Game mechanics
+### Game mechanics (low-level)
 
 - Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
 - Use a realtime birdseye camera. 
