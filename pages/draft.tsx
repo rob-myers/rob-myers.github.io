@@ -22,7 +22,7 @@ _Why?_
 
 Because Game AI (NPC behaviour) is more interesting than any particular game.
 An environment is needed to make it meaningful,
-but fixed narratives and missions are not.
+but fixed narratives/missions are not.
 
 We'll approach things algorithmically,
 yet driven by the environment i.e. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
@@ -237,23 +237,25 @@ Finally, the initial render of a website is often precomputed, so it loads faste
 
 __TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
 
-Websites respond to user interaction.
-Sometimes they respond without changing the DOM e.g. CSS/SVG animations, numerical computation, and storing data.
-But often they do mutate it e.g. loading search results, toggling modals, and zooming.
-A single DOM mutation often suffices e.g. CSS transforms and CSS transitions collectively permit smooth zooming.
+Websites respond to interaction, sometimes without changing the DOM.
+When they do mutate the DOM, they usually don't continually do so.
+For example, changing the zoom-level can be done with a CSS transform and a pre-existing CSS transition.
+Loading search results is another example of a single mutation, possibly smoothed using CSS.
 
-When React renders a component, it computes the return value i.e. a rooted subtree of the virtual DOM.
-It then compares the previous value, and patches the DOM accordingly.
-If many components change in a small amount of time, [some renders can be avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221) via the ancestral relationship.
-Also, recreating an entire rooted subtree can be avoided via [\`React.memo\`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
-But most use cases may simply ignore the virtual DOM overhead.
-<!-- When performance becomes an issue, pagination, query caching, and state-management can go a long way. -->
+When React renders a component, it computes a rooted subtree of the virtual DOM,
+compares the previous one, and patches the DOM accordingly.
+If many components change in a small amount of time, [some renders are automatically avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221) via the ancestral relationship.
+Developers can also avoid recreating an entire rooted subtree using [\`React.memo\`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
+But for most websites, React developers may simply ignore the virtual DOM overhead. 
 
 However, we are making a realtime video game.
 To move characters at 60 fps we'll be updating the DOM at the same rate.
-The virtual DOM overhead is no longer acceptable because (a) we can do better, (b) ...
+We want to control the rendering, to ensure good performance and aid debugging.
+If we allowed React to render in response to user interaction, we'd lose this control.
 
-For example, [PanZoom.jsx](#command "open-tab panzoom code@panzoom/PanZoom.jsx") ...
+For example, let's take another look at [PanZoom.jsx](#command "open-tab panzoom code@panzoom/PanZoom.jsx") ...
+
+Server-side rendering cannot handle DOM mutations, so we'll force our components to load client-side.
 
 ### CSS inside JS
 
