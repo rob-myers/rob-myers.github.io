@@ -29,7 +29,6 @@ declare namespace Geomorph {
       /** Only exists for hull symbols */
       hullRect?: Geom.RectJson;
       pngRect: Geom.RectJson;
-      svgInnerText?: string; // TODO remove
     };
   }
 

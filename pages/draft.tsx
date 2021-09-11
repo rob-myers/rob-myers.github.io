@@ -372,13 +372,7 @@ public/svg
       <Tabs
         height={400}
         tabs={[
-          { key: 'component', filepath: 'geomorph/GeomorphTest.jsx' },
-        ]}
-      />
-      <Tabs
-        height={400}
-        tabs={[
-          { key: 'component', filepath: 'geomorph/GeomorphTest2.jsx' },
+          { key: 'component', filepath: 'geomorph/GeomorphDemo.jsx' },
         ]}
       />
 

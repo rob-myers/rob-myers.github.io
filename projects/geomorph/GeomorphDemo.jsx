@@ -97,24 +97,24 @@ function createAuxCanvases(layout, lookup) {
   oc.width = hull.meta.pngRect.width, oc.height = hull.meta.pngRect.height;
   uc.width = hull.meta.pngRect.width, uc.height = hull.meta.pngRect.height;
   /** @type {[CanvasRenderingContext2D, CanvasRenderingContext2D]} */
-  const [oct, uct] = ([oc.getContext('2d'), uc.getContext('2d')]);
+  const [oCtxt, uCtxt] = ([oc.getContext('2d'), uc.getContext('2d')]);
   
   const hullOutline = hull.hull[0].outline;
-  uct.translate(-hullRect.x, -hullRect.y);
-  uct.fillStyle = 'rgba(100, 0, 0, 0.1)';
-  fillRing(uct, hullOutline);
-  uct.fillStyle = 'rgba(0, 0, 200, 0.03)';
-  fillPolygon(uct, layout.navPoly);
-  // uct.strokeStyle = 'rgba(0, 0, 200, 0.2)';
+  uCtxt.translate(-hullRect.x, -hullRect.y);
+  uCtxt.fillStyle = 'rgba(100, 0, 0, 0.1)';
+  fillRing(uCtxt, hullOutline);
+  uCtxt.fillStyle = 'rgba(0, 0, 200, 0.03)';
+  fillPolygon(uCtxt, layout.navPoly);
+  // uct.strokeStyle = 'rgba(0, 0, 0, 0.2)';
   // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
   // decomps.forEach(decomp => drawTriangulation(uct, decomp));
-  uct.resetTransform();
+  uCtxt.resetTransform();
   
-  oct.translate(-hullRect.x, -hullRect.y);
-  oct.fillStyle = 'rgba(200, 50, 50, .5)';
-  fillPolygon(oct, hull.hull);
-  oct.fillStyle = 'rgba(0, 200, 0, .5)';
-  fillPolygon(oct, hull.doors);
+  oCtxt.translate(-hullRect.x, -hullRect.y);
+  oCtxt.fillStyle = 'rgba(200, 50, 50, .5)';
+  fillPolygon(oCtxt, hull.hull);
+  oCtxt.fillStyle = 'rgba(0, 200, 0, .5)';
+  fillPolygon(oCtxt, hull.doors);
   
   const {
     doors,
@@ -124,16 +124,16 @@ function createAuxCanvases(layout, lookup) {
     walls,
   } = layout.actual;
 
-  oct.fillStyle = 'rgba(0, 200, 0, 1)';
-  fillPolygon(oct, doors);
-  fillPolygon(oct, irisValves);
-  oct.fillStyle = 'rgba(200, 50, 50, .05)';
-  fillPolygon(oct, walls);
-  oct.fillStyle = 'rgba(100, 0, 0, 0.05)';
-  fillPolygon(oct, obstacles);
-  oct.fillStyle = 'rgba(0, 0, 0, 0.1)';
-  fillPolygon(oct, labels);
-  oct.resetTransform();
+  oCtxt.fillStyle = 'rgba(0, 200, 0, 1)';
+  fillPolygon(oCtxt, doors);
+  fillPolygon(oCtxt, irisValves);
+  oCtxt.fillStyle = 'rgba(200, 50, 50, .05)';
+  fillPolygon(oCtxt, walls);
+  oCtxt.fillStyle = 'rgba(100, 0, 0, 0.05)';
+  fillPolygon(oCtxt, obstacles);
+  oCtxt.fillStyle = 'rgba(0, 0, 0, 0.1)';
+  fillPolygon(oCtxt, labels);
+  oCtxt.resetTransform();
   
   return { overlay: oc, underlay: uc };
 }

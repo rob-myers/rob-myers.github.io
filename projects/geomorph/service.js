@@ -35,9 +35,8 @@ export function createLayout(def, lookup) {
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSymbol = symbols[0];
   const hullOutline = hullSymbol.hull[0].clone().removeHoles();
-
-  const navPoly = Poly.cutOut(
-    actual.walls.flatMap(x => x.createOutset(12.5))
+  const navPoly = Poly.cutOut(actual.walls
+      .flatMap(x => x.createOutset(12.5))
       .concat(actual.obstacles.flatMap(x => x.createOutset(5))),
     [hullOutline],
   );
@@ -91,7 +90,6 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
       doors: doors.map((/** @type {*} */ x) => x._title),
       hullRect: hulls[0]?.rect,
       pngRect,
-      svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : undefined,
     },
   };
 }

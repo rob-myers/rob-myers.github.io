@@ -5,8 +5,7 @@ import panZoomDemoJsx from '!!raw-loader!projects/panzoom/PanZoomDemo.jsx';
 import NavDemo from 'projects/pathfinding/NavDemo';
 import navDemoJsx from '!!raw-loader!projects/pathfinding/NavDemo.jsx';
 
-import GeomorphTest from 'projects/geomorph/GeomorphTest';
-import GeomorphTest2 from 'projects/geomorph/GeomorphTest2';
+import GeomorphDemo from 'projects/geomorph/GeomorphDemo';
 import PhysicsDemo from 'projects/physics/PhysicsDemo';
 import jsxToJs from '!!raw-loader!projects/example/jsx-to-js.jsx';
 
@@ -20,8 +19,7 @@ export const code = {
 export const component = {
   'panzoom/PanZoomDemo.jsx': PanZoomDemo,
   'pathfinding/NavDemo.jsx': NavDemo,
-  'geomorph/GeomorphTest.jsx': GeomorphTest,
-  'geomorph/GeomorphTest2.jsx': GeomorphTest2,
+  'geomorph/GeomorphDemo.jsx': GeomorphDemo,
   'physics/PhysicsDemo.jsx': PhysicsDemo,
 } as const;
 

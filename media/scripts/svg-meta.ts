@@ -26,7 +26,4 @@ for (const filename of svgFilenames) {
   svgJsonLookup[symbolName] = parsed;
 }
 
-fs.writeFileSync(
-  path.resolve(symbolsDir, 'svg.json'),
-  stringify(svgJsonLookup),
-);
+fs.writeFileSync(path.resolve(symbolsDir, 'svg.json'), stringify(svgJsonLookup));
