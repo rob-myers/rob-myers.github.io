@@ -1,4 +1,4 @@
-import * as Geom from './types';
+import Geom from './types';
 
 /**
  * A two dimensional coordinate.

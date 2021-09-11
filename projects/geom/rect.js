@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-unused-vars
-import * as Geom from './types';
+import Geom from './types';
 import { Vect } from './vect';
 
 /**

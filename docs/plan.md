@@ -3,7 +3,7 @@
 - move types.js files into d.ts
 - move meta out of Poly
 - labels -> small boxes
-- symbols have navpoly
+- compute geomorph nav poly
 - finish sub-symbols for geomorph 301
 - remove GeomorphTest1
 - rename GeomorphTest2 as GeomorphDemo
@@ -16,6 +16,9 @@
 - write Physics engine subsection
 - use geomorph in `NavDemo`
 - save tabs state to browser state (?)
+- investigate poly refinement
+  - Ruppert's Delaunay Refinement Algorithm
+  - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
 - ✅ GeomorphTest caches symbols via react-query
 - ✅ tabs prevent component SSR, and fade-in
 

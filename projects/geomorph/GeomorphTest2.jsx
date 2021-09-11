@@ -2,7 +2,7 @@ import * as React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
 import { SymbolLayout, ParsedSvgJson } from './types';
-import { RectJson } from "../geom/types";
+import { RectJson } from '../geom/types';
 import { Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
 import { deserializeSvgJson, restrictByTags } from "./parse-symbol";
