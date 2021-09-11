@@ -3,7 +3,7 @@ import { css } from "goober";
 import { useQuery } from "react-query";
 import { Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
-import { deserializeSvgJson, restrictByTags } from "./parse-symbol";
+import { createLayout, deserializeSvgJson } from "./parse-symbol";
 import { fillPolygon, fillRing } from '../service';
 
 // TODO load pre-parsed data from svg.json
@@ -43,42 +43,31 @@ const rootCss = css`
   }
 `;
 
+/** @param {Geomorph.LayoutDef} def */
+function useSymbolLayout(def) {
+  const symbolLookup = useSymbolLookup();
 
-/** @param {Geomorph.SymbolLayout} layout */
-function useSymbolLayout(layout) {
-  const symbolData = useSymbolData();
-
-  if (symbolData) {
-    const items = layout.items;
-    const symbols = items.map(x => symbolData[x.symbol]);
-    const { overlay, underlay } = createAuxCanvases(layout, symbolData);
-
+  if (symbolLookup) {
+    const layout = createLayout(def, symbolLookup);
+    const { overlay, underlay } = createAuxCanvases(layout, symbolLookup);
     return {
       overlay: overlay.toDataURL(),
       underlay: underlay.toDataURL(),
-      hullRect: /** @type {Geom.RectJson} */ (symbols[0].meta.hullRect),
-      pngHref: `/debug/${layout.key}.png`,
-      pngRect: symbols[0].meta.pngRect,
-
-      symbols: symbols.map((sym, i) => ({
-        pngHref: `/symbol/${sym.key}.png`,
-        pngRect: sym.meta.pngRect,
-        transformArray: items[i].transform,
-        transform: items[i].transform ? `matrix(${items[i].transform})` : undefined,
-      })),
+      ...layout,
     };
   }
 }
 
-function useSymbolData() {
+function useSymbolLookup() {
   return useQuery('svg-json',
     () => fetch('/symbol/svg.json')
       .then(x => x.json())
       .then(x => deserializeSvgJson(x)),
+    // { refetchOnWindowFocus: false },
   ).data;
 }
 
-/** @type {Geomorph.SymbolLayout} */
+/** @type {Geomorph.LayoutDef} */
 const layout301 = {
   key: 'g-301--bridge',
   id: 301,
@@ -97,12 +86,12 @@ const layout301 = {
 };
 
 /**
- * @param {Geomorph.SymbolLayout} layout
- * @param {Geomorph.ParsedSvgJson} symbolData 
+ * @param {Geomorph.Layout} layout
+ * @param {Geomorph.SymbolLookup} lookup 
  */
-function createAuxCanvases(layout, symbolData) {
-  const [hull, ...others] = layout.items.map(x => symbolData[x.symbol]);
-  const hullRect = /** @type {Geom.RectJson} */ (hull.meta.hullRect);
+function createAuxCanvases(layout, lookup) {
+  const hull = lookup[layout.hullKey];
+  const hullRect = layout.hullRect;
 
   const oc = document.createElement('canvas');
   const uc = document.createElement('canvas');
@@ -115,40 +104,32 @@ function createAuxCanvases(layout, symbolData) {
   uct.translate(-hullRect.x, -hullRect.y);
   uct.fillStyle = 'rgba(0, 0, 100, 0.2)';
   fillRing(uct, hullOutline);
-  uct.translate(hullRect.x, hullRect.y);
+  uct.resetTransform();
   
   oct.translate(-hullRect.x, -hullRect.y);
   oct.fillStyle = 'rgba(200, 50, 50, .5)';
   fillPolygon(oct, ...hull.hull);
   oct.fillStyle = 'rgba(0, 200, 0, 0.2)';
-  fillPolygon(oct, ...hull.doors)
-  oct.translate(hullRect.x, hullRect.y);
+  fillPolygon(oct, ...hull.doors);
   
-  for (const [i, {
+  const {
     doors,
     irisValves,
     labels,
     obstacles,
     walls,
-    meta,
-  }] of others.entries()) {
+  } = layout.actual;
 
-    const { transform, tags: tagsToUse } = layout.items[i + 1];
-    oct.resetTransform();
-    oct.translate(-hullRect.x, -hullRect.y);
-    transform && oct.transform(...transform);
-    oct.scale(0.2, 0.2);
-
-    oct.fillStyle = 'rgba(0, 200, 0, 1)';
-    fillPolygon(oct, ...restrictByTags(doors, meta.doors, tagsToUse));
-    fillPolygon(oct, ...irisValves);
-    oct.fillStyle = 'rgba(200, 50, 50, .05)';
-    fillPolygon(oct, ...walls);
-    oct.fillStyle = 'rgba(100, 100, 150, 0.2)';
-    fillPolygon(oct, ...obstacles);
-    oct.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    fillPolygon(oct, ...labels);
-  }
+  oct.fillStyle = 'rgba(0, 200, 0, 1)';
+  fillPolygon(oct, ...doors);
+  fillPolygon(oct, ...irisValves);
+  oct.fillStyle = 'rgba(200, 50, 50, .05)';
+  fillPolygon(oct, ...walls);
+  oct.fillStyle = 'rgba(100, 100, 150, 0.2)';
+  fillPolygon(oct, ...obstacles);
+  oct.fillStyle = 'rgba(0, 0, 0, 0.1)';
+  fillPolygon(oct, ...labels);
+  oct.resetTransform();
   
   return { overlay: oc, underlay: uc };
 }

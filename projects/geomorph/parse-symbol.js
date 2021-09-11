@@ -3,6 +3,57 @@ import { Poly, Rect, Mat } from '../geom';
 import { svgPathToPolygons } from '../service';
 
 /**
+ * @param {Geomorph.LayoutDef} def
+ * @param {Geomorph.SymbolLookup} lookup
+ * @returns {Geomorph.Layout}
+ */
+export function createLayout(def, lookup) {
+  /** @type {Geomorph.Layout['actual']} */
+  const actual = {
+    doors: [],
+    irisValves: [],
+    labels: [],
+    obstacles: [],
+    walls: [],
+  };
+  const m = new Mat;
+
+  def.items.forEach((item) => {
+    if (item.hull) return;
+    item.transform ? m.feedFromArray(item.transform) : m.setIdentity();
+    m.a *= 0.2;
+    m.b *= 0.2;
+    m.c *= 0.2;
+    m.d *= 0.2;
+    const { doors, irisValves, labels, obstacles, walls, meta } = lookup[item.symbol];
+    const nextDoors = restrictByTags(doors, meta.doors, item.tags);
+    actual.doors.push(...nextDoors.map(x => x.clone().applyMatrix(m)));
+    actual.irisValves.push(...irisValves.map(x => x.clone().applyMatrix(m)));
+    actual.labels.push(...labels.map(x => x.clone().applyMatrix(m)));
+    actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
+    actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
+  });
+
+  const symbols = def.items.map(x => lookup[x.symbol]);
+  const hullSymbol = symbols[0];
+
+  return {
+    def,
+    actual,
+    hullKey: hullSymbol.key,
+    hullRect: /** @type {Geom.RectJson} */ (hullSymbol.meta.hullRect),
+    pngHref: `/debug/${def.key}.png`,
+    pngRect: hullSymbol.meta.pngRect,
+    symbols: symbols.map((sym, i) => ({
+      pngHref: `/symbol/${sym.key}.png`,
+      pngRect: sym.meta.pngRect,
+      transformArray: def.items[i].transform,
+      transform: def.items[i].transform ? `matrix(${def.items[i].transform})` : undefined,
+    })),
+  };
+}
+
+/**
  * @param {string} symbolName
  * @param {string} svgContents
  * @param {boolean} [debug]
@@ -76,7 +127,7 @@ export function deserializeSymbol(json) {
 export function deserializeSvgJson(svgJson) {
   return Object.values(svgJson).reduce(
     (agg, item) => (agg[item.key] = deserializeSymbol(item)) && agg,
-    /** @type {Geomorph.ParsedSvgJson} */ ({}),
+    /** @type {Geomorph.SymbolLookup} */ ({}),
   );
 }
 

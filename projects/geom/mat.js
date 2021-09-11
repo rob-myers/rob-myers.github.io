@@ -4,17 +4,17 @@
  * - String format `matrix(a, b, c, d, e, f)`.
  */
 export class Mat {
-  /** @param  {[undefined] | [string] | SixTuple} args */
-  constructor(...args) {
+  /** @param  {string | SixTuple} [args] */
+  constructor(args) {
     this.a = 1;
     this.b = 0;
     this.c = 0;
     this.d = 1;
     this.e = 0;
     this.f = 0;
-    return args.length > 1
+    return args instanceof Array
       ? this.setMatrixValue(/** @type {SixTuple} */(args))
-      : this.setMatrixValue(/** @type {undefined | string} */(args[0]));
+      : this.setMatrixValue(/** @type {undefined | string} */(args));
   }
 
   get isIdentity() {
@@ -23,6 +23,15 @@ export class Mat {
       && this.c === 0 && this.d === 1
       && this.e === 0 && this.f === 0
     );
+  }
+
+  setIdentity() {
+    this.a = 1;
+    this.b = 0;
+    this.c = 0;
+    this.d = 1;
+    this.e = 0;
+    this.f = 0;
   }
 
   /** @param  {undefined | string | SixTuple | MatrixJson} source */
