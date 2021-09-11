@@ -17,15 +17,15 @@ export default function UseSvg(props) {
           className="debug"
           transform={props.transform}
           dangerouslySetInnerHTML={{
-            __html: data.svgInnerText || '',
+            __html: data.meta.svgInnerText || '',
           }}
         />
       )}
       {!props.hull && (
         <image
           href={`/symbol/${props.symbol}.png`}
-          x={data.pngRect.x}
-          y={data.pngRect.y}
+          x={data.meta.pngRect.x}
+          y={data.meta.pngRect.y}
         />
       )}
       <g className="meta">
@@ -77,7 +77,7 @@ function useSvgText(symbolName, tags, debug) {
       console.info('loading symbol', symbolName, tags || '*');
       const contents = await fetch(`/symbol/${symbolName}.svg`).then(x => x.text());
       const parsed = parseStarshipSymbol(symbolName, contents, debug);
-      parsed.doors = restrictByTags(parsed.doors, tags);
+      parsed.doors = restrictByTags(parsed.doors, parsed.meta.doors, tags);
       // console.log({ symbolName, parsed });
       return parsed;
     },

@@ -1,6 +1,5 @@
 ## Plan
 
-- move meta out of Poly
 - labels -> small boxes
 - compute geomorph nav poly
 - finish sub-symbols for geomorph 301
@@ -18,6 +17,7 @@
 - investigate poly refinement
   - Ruppert's Delaunay Refinement Algorithm
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
+- ✅ move meta out of Poly
 - ✅ move types.js files into d.ts
 - ✅ GeomorphTest caches symbols via react-query
 - ✅ tabs prevent component SSR, and fade-in

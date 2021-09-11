@@ -1,7 +1,6 @@
 import * as poly2tri from 'poly2tri';
 import * as polygonClipping from 'polygon-clipping';
 import earcut from 'earcut';
-
 import { Rect } from "./rect";
 import { Vect } from "./vect";
 
@@ -10,12 +9,10 @@ export class Poly {
   /**
    * @param {Vect[]} outline
    * @param {Vect[][]} holes
-   * @param {Record<string, string>} [meta]
    */
-  constructor(outline = [], holes = [], meta) {
+  constructor(outline = [], holes = []) {
     /** @type {Vect[]} */ this.outline = outline;
     /** @type {Vect[][]} */ this.holes = holes;
-    /** @type {Record<string, string> | undefined} */ this.meta = meta;
   }
 
   get allPoints() {
@@ -195,7 +192,6 @@ export class Poly {
     return new Poly(
       input.coordinates[0].map(([x, y]) => new Vect(x, y)),
       input.coordinates.slice(1).map(hole => hole.map(([x, y]) => new Vect(x, y))),
-      input.meta,
     );
   }
 

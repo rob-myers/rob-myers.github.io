@@ -20,20 +20,21 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
   const labels = extractGeoms($, topNodes, 'labels');
   const obstacles = extractGeoms($, topNodes, 'obstacles');
   const walls = extractGeoms($, topNodes, 'walls');
-  // console.log({ url, hull });
 
   return {
     key: symbolName,
-    doors,
     hull,
+    doors,
     irisValves,
     labels,
     obstacles,
-    hullRect: hull[0]?.rect,
-    pngRect,
-    /** Original svg with png data url; very useful during geomorph creation */
-    svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : undefined,
     walls,
+    meta: {
+      doors: doors.map((/** @type {*} */ x) => x._title),
+      hullRect: hull[0]?.rect,
+      pngRect,
+      svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : undefined,
+    },
   };
 }
 
@@ -49,29 +50,25 @@ export function serializeSymbol(parsed) {
     irisValves: toJsons(parsed.irisValves),
     labels: toJsons(parsed.labels),
     obstacles: toJsons(parsed.obstacles),
-    hullRect: parsed.hullRect,
-    pngRect: parsed.pngRect,
-    svgInnerText: parsed.svgInnerText,
     walls: toJsons(parsed.walls),
+    meta: parsed.meta,
   };
 }
 
 /**
- * @param {Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>} parsed
+ * @param {Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>} json
  * @returns {Geomorph.ParsedSymbol<Poly>}
  */
-export function deserializeSymbol(parsed) {
+export function deserializeSymbol(json) {
   return {
-    key: parsed.key,
-    hull: parsed.hull.map(Poly.from),
-    doors: parsed.doors.map(Poly.from),
-    irisValves: parsed.irisValves.map(Poly.from),
-    labels: parsed.labels.map(Poly.from),
-    obstacles: parsed.obstacles.map(Poly.from),
-    hullRect: parsed.hullRect,
-    pngRect: parsed.pngRect,
-    svgInnerText: parsed.svgInnerText,
-    walls: parsed.walls.map(Poly.from),
+    key: json.key,
+    hull: json.hull.map(Poly.from),
+    doors: json.doors.map(Poly.from),
+    irisValves: json.irisValves.map(Poly.from),
+    labels: json.labels.map(Poly.from),
+    obstacles: json.obstacles.map(Poly.from),
+    walls: json.walls.map(Poly.from),
+    meta: json.meta,
   };
 }
 
@@ -85,12 +82,19 @@ export function deserializeSvgJson(svgJson) {
 
 /**
  * @param {Poly[]} polys
+ * @param {(null | string)[]} polysTitles
  * @param {string[]} [tags]
  */
-export function restrictByTags(polys, tags) {
-  return tags
-    ? polys.filter(x => x.meta?.title.startsWith('has-') && tags.includes(x.meta.title))
-    : polys;
+export function restrictByTags(polys, polysTitles, tags) {
+  if (tags) {
+    return polysTitles.flatMap((title, i) =>
+      !title || !title.startsWith('has-')
+        ? polys[i]
+        : tags.includes(title) ? [polys[i]] : []
+    );
+  } else {
+    return polys;
+  }
 }
 
 /**
@@ -100,33 +104,32 @@ export function restrictByTags(polys, tags) {
  */
 function extractGeoms(api, topNodes, title) {
   const group = topNodes.find(x => hasTitle(api, x, title));
-  return api(group).children('rect, path').toArray()
-    .flatMap(x => extractGeom(api, x))
+  const children = api(group).children('rect, path').toArray();
+  return children.flatMap(x => extractGeom(api, x));
 }
 
 /**
  * @param {CheerioAPI} api
  * @param {Element} el
- * @returns {Poly[]}
  */
 function extractGeom(api, el) {
   const { tagName, attribs: a } = el;
-  const polys = /** @type {Poly[]} */ ([]);
-  const title = api(el).children('title').text() || undefined;
+  const output = /** @type {Poly[]} */ ([]);
+  const _title = api(el).children('title').text() || null;
 
   if (tagName === 'rect') {
-    const poly = Poly.fromRect(new Rect(Number(a.x || 0), Number(a.y || 0), Number(a.width || 0), Number(a.height || 0)));
-    polys.push(poly.addMeta({ title }));
+    const poly = Poly.fromRect(new Rect(Number(a.x || 0), Number(a.y || 0), Number(a.width || 0), Number(a.height || 0)))
+    output.push(Object.assign(poly, { _title }));
   } else if (tagName === 'path') {
-    polys.push(...svgPathToPolygons(a.d).map(x => x.addMeta({ title })));
+    const polys = svgPathToPolygons(a.d);
+    output.push(...polys.map(p => Object.assign(p, { _title })));
   } else {
     console.warn('extractGeom: unexpected tagName:', tagName);
   }
   // DOMMatrix not available server-side
   // const m = new DOMMatrix(a.transform);
   const m = new Mat(a.transform);
-  // console.log(a.transform, m);
-  return polys.map(p => p.applyMatrix(m));
+  return output.map(poly => poly.applyMatrix(m));
 }
 
 /**

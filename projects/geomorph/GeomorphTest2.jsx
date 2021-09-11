@@ -56,13 +56,13 @@ function useSymbolLayout(layout) {
     return {
       overlay: overlay.toDataURL(),
       underlay: underlay.toDataURL(),
-      hullRect: /** @type {Geom.RectJson} */ (symbols[0].hullRect),
+      hullRect: /** @type {Geom.RectJson} */ (symbols[0].meta.hullRect),
       pngHref: `/debug/${layout.key}.png`,
-      pngRect: symbols[0].pngRect,
+      pngRect: symbols[0].meta.pngRect,
 
       symbols: symbols.map((sym, i) => ({
         pngHref: `/symbol/${sym.key}.png`,
-        pngRect: sym.pngRect,
+        pngRect: sym.meta.pngRect,
         transformArray: items[i].transform,
         transform: items[i].transform ? `matrix(${items[i].transform})` : undefined,
       })),
@@ -102,12 +102,12 @@ const layout301 = {
  */
 function createAuxCanvases(layout, symbolData) {
   const [hull, ...others] = layout.items.map(x => symbolData[x.symbol]);
-  const hullRect = /** @type {Geom.RectJson} */ (hull.hullRect);
+  const hullRect = /** @type {Geom.RectJson} */ (hull.meta.hullRect);
 
   const oc = document.createElement('canvas');
   const uc = document.createElement('canvas');
-  oc.width = hull.pngRect.width, oc.height = hull.pngRect.height;
-  uc.width = hull.pngRect.width, uc.height = hull.pngRect.height;
+  oc.width = hull.meta.pngRect.width, oc.height = hull.meta.pngRect.height;
+  uc.width = hull.meta.pngRect.width, uc.height = hull.meta.pngRect.height;
   /** @type {[CanvasRenderingContext2D, CanvasRenderingContext2D]} */
   const [oct, uct] = ([oc.getContext('2d'), uc.getContext('2d')]);
   
@@ -130,15 +130,17 @@ function createAuxCanvases(layout, symbolData) {
     labels,
     obstacles,
     walls,
+    meta,
   }] of others.entries()) {
-    const { transform, tags } = layout.items[i + 1];
+
+    const { transform, tags: tagsToUse } = layout.items[i + 1];
     oct.resetTransform();
     oct.translate(-hullRect.x, -hullRect.y);
     transform && oct.transform(...transform);
     oct.scale(0.2, 0.2);
 
     oct.fillStyle = 'rgba(0, 200, 0, 1)';
-    fillPolygon(oct, ...restrictByTags(doors, tags));
+    fillPolygon(oct, ...restrictByTags(doors, meta.doors, tagsToUse));
     fillPolygon(oct, ...irisValves);
     oct.fillStyle = 'rgba(200, 50, 50, .05)';
     fillPolygon(oct, ...walls);
