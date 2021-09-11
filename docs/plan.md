@@ -1,6 +1,5 @@
 ## Plan
 
-- move types.js files into d.ts
 - move meta out of Poly
 - labels -> small boxes
 - compute geomorph nav poly
@@ -19,6 +18,7 @@
 - investigate poly refinement
   - Ruppert's Delaunay Refinement Algorithm
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
+- ✅ move types.js files into d.ts
 - ✅ GeomorphTest caches symbols via react-query
 - ✅ tabs prevent component SSR, and fade-in
 
