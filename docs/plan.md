@@ -1,10 +1,9 @@
 ## Plan
 
-- labels -> small boxes
 - compute geomorph nav poly
-- finish sub-symbols for geomorph 301
 - remove GeomorphTest1
 - rename GeomorphTest2 as GeomorphDemo
+- finish sub-symbols for geomorph 301
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
 
@@ -17,6 +16,7 @@
 - investigate poly refinement
   - Ruppert's Delaunay Refinement Algorithm
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
+- ✅ labels -> small boxes
 - ✅ move meta out of Poly
 - ✅ move types.js files into d.ts
 - ✅ GeomorphTest caches symbols via react-query
