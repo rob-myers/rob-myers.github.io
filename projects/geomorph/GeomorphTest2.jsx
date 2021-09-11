@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
 import { createLayout, deserializeSvgJson } from "./service";
-import { fillPolygon, fillRing } from '../service';
+import { drawTriangulation, fillPolygon, fillRing } from '../service';
 
 // TODO load pre-parsed data from svg.json
 // TODO create single image with all symbols?
@@ -104,14 +104,17 @@ function createAuxCanvases(layout, lookup) {
   uct.fillStyle = 'rgba(100, 0, 0, 0.1)';
   fillRing(uct, hullOutline);
   uct.fillStyle = 'rgba(0, 0, 200, 0.03)';
-  fillPolygon(uct, ...layout.navPoly);
+  fillPolygon(uct, layout.navPoly);
+  // uct.strokeStyle = 'rgba(0, 0, 200, 0.2)';
+  // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
+  // decomps.forEach(decomp => drawTriangulation(uct, decomp));
   uct.resetTransform();
   
   oct.translate(-hullRect.x, -hullRect.y);
   oct.fillStyle = 'rgba(200, 50, 50, .5)';
-  fillPolygon(oct, ...hull.hull);
+  fillPolygon(oct, hull.hull);
   oct.fillStyle = 'rgba(0, 200, 0, .5)';
-  fillPolygon(oct, ...hull.doors);
+  fillPolygon(oct, hull.doors);
   
   const {
     doors,
@@ -122,14 +125,14 @@ function createAuxCanvases(layout, lookup) {
   } = layout.actual;
 
   oct.fillStyle = 'rgba(0, 200, 0, 1)';
-  fillPolygon(oct, ...doors);
-  fillPolygon(oct, ...irisValves);
+  fillPolygon(oct, doors);
+  fillPolygon(oct, irisValves);
   oct.fillStyle = 'rgba(200, 50, 50, .05)';
-  fillPolygon(oct, ...walls);
+  fillPolygon(oct, walls);
   oct.fillStyle = 'rgba(100, 0, 0, 0.05)';
-  fillPolygon(oct, ...obstacles);
+  fillPolygon(oct, obstacles);
   oct.fillStyle = 'rgba(0, 0, 0, 0.1)';
-  fillPolygon(oct, ...labels);
+  fillPolygon(oct, labels);
   oct.resetTransform();
   
   return { overlay: oc, underlay: uc };

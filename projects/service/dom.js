@@ -92,9 +92,9 @@ export function fillRing(ctxt, ring, fill = true) {
 
 /**
  * @param {CanvasRenderingContext2D} ctxt 
- * @param  {...Poly} polys 
+ * @param {Poly[]} polys 
  */
-export function fillPolygon(ctxt, ...polys) {
+export function fillPolygon(ctxt, polys) {
   ctxt.beginPath();
   for (const poly of polys) {
     fillRing(ctxt, poly.outline, false);
@@ -103,4 +103,16 @@ export function fillPolygon(ctxt, ...polys) {
     }
     ctxt.fill();
   }
+}
+
+/**
+ * @param {CanvasRenderingContext2D} ctxt 
+ * @param {Geom.Triangulation} decomp 
+ */
+export function drawTriangulation(ctxt, decomp) {
+	for (const triIds of decomp.tris) {
+		ctxt.beginPath();
+		fillRing(ctxt, triIds.map(i => decomp.vs[i]), false);
+		ctxt.stroke();
+	}
 }
