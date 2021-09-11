@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import classNames from 'classnames';
-import { parseStarshipSymbol, restrictByTags } from './parse-symbol';
+import { parseStarshipSymbol, restrictByTags } from './service';
 
 /** @param {Props} props */
 export default function UseSvg(props) {
