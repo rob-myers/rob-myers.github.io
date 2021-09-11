@@ -1,4 +1,5 @@
 import { parseSVG, makeAbsolute, MoveToCommand } from 'svg-path-parser';
+import { VectJson } from '../geom/types';
 import { Vect } from '../geom/vect';
 import { Poly } from '../geom/poly';
 
@@ -76,3 +77,31 @@ export let canTouchDevice = (
 		navigator.msMaxTouchPoints > 0
 	)
 );
+
+/**
+ * @param {CanvasRenderingContext2D} ctxt 
+ * @param  {VectJson[]} ring 
+ */
+export function fillRing(ctxt, ring, fill = true) {
+  if (ring.length) {
+    ctxt.moveTo(ring[0].x, ring[0].y);
+    ring.forEach(p => ctxt.lineTo(p.x, p.y));
+    fill && ctxt.fill();
+    ctxt.closePath();
+  }
+}
+
+/**
+ * @param {CanvasRenderingContext2D} ctxt 
+ * @param  {...Poly} polys 
+ */
+export function fillPolygon(ctxt, ...polys) {
+  ctxt.beginPath();
+  for (const poly of polys) {
+    fillRing(ctxt, poly.outline, false);
+    for (const hole of poly.holes) {
+      fillRing(ctxt, hole, false);
+    }
+    ctxt.fill();
+  }
+}

@@ -2,10 +2,11 @@ import * as React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
 import { SymbolLayout, ParsedSvgJson } from './types';
-import { RectJson, VectJson } from "../geom/types";
-import { Poly, Rect } from "../geom";
+import { RectJson } from "../geom/types";
+import { Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
 import { deserializeSvgJson, restrictByTags } from "./parse-symbol";
+import { fillPolygon, fillRing } from '../service';
 
 // TODO load pre-parsed data from svg.json
 // TODO create single image with all symbols?
@@ -138,7 +139,7 @@ function createAuxCanvases(layout, symbolData) {
     transform && oct.transform(...transform);
     oct.scale(0.2, 0.2);
 
-    oct.fillStyle = 'rgba(0, 200, 0, 0.2)';
+    oct.fillStyle = 'rgba(0, 200, 0, 1)';
     fillPolygon(oct, ...restrictByTags(doors, tags));
     fillPolygon(oct, ...irisValves);
     oct.fillStyle = 'rgba(200, 50, 50, .05)';
@@ -150,32 +151,4 @@ function createAuxCanvases(layout, symbolData) {
   }
   
   return { overlay: oc, underlay: uc };
-}
-
-/**
- * @param {CanvasRenderingContext2D} ctxt 
- * @param  {VectJson[]} ring 
- */
-function fillRing(ctxt, ring, fill = true) {
-  if (ring.length) {
-    ctxt.moveTo(ring[0].x, ring[0].y);
-    ring.forEach(p => ctxt.lineTo(p.x, p.y));
-    fill && ctxt.fill();
-    ctxt.closePath();
-  }
-}
-
-/**
- * @param {CanvasRenderingContext2D} ctxt 
- * @param  {...Poly} polys 
- */
-function fillPolygon(ctxt, ...polys) {
-  ctxt.beginPath();
-  for (const poly of polys) {
-    fillRing(ctxt, poly.outline, false);
-    for (const hole of poly.holes) {
-      fillRing(ctxt, hole, false);
-    }
-    ctxt.fill();
-  }
 }
