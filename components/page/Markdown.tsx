@@ -133,12 +133,13 @@ const titleCss = css`
 `;
 
 const blogCss = css`
-  @media(max-width: 600px) {
-    padding: 8px;
-  }
-
   line-height: 1.5;
   font-size: 1.2rem;
+
+  @media(max-width: 600px) {
+    padding: 8px;
+    font-size: 1.1rem;
+  }
 
   h1, h2, h3, h4 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;

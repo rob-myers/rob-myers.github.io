@@ -22,7 +22,7 @@ _Why?_
 
 Because Game AI (NPC behaviour) is more interesting than any particular game.
 An environment is needed to make it meaningful,
-but fixed narratives/missions are not.
+fixed narratives/missions are not.
 
 We'll approach things algorithmically,
 yet driven by the environment i.e. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
