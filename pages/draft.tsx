@@ -235,27 +235,38 @@ Finally, the initial render of a website is often precomputed, so it loads faste
 
 ### React Renders and Web Components
 
-__TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
-
 Websites respond to interaction, sometimes without changing the DOM.
 When they do mutate the DOM, they usually don't continually do so.
-For example, changing the zoom-level can be done with a CSS transform and a pre-existing CSS transition.
-Loading search results is another example of a single mutation, possibly smoothed using CSS.
+For example, zooming a map can be done with a CSS transform and a pre-existing CSS transition.
+As another example, showing additional search results amounts to a single mutation.
 
 When React renders a component, it computes a rooted subtree of the virtual DOM,
-compares the previous one, and patches the DOM accordingly.
+compares the previous one, and patches the DOM.
 If many components change in a small amount of time, [some renders are automatically avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221) via the ancestral relationship.
 Developers can also avoid recreating an entire rooted subtree using [\`React.memo\`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
-But for most websites, React developers may simply ignore the virtual DOM overhead. 
+But for most websites, the DOM mutations are neither large nor frequent, and React developers may simply ignore the virtual DOM overhead.
 
 However, we are making a realtime video game.
 To move characters at 60 fps we'll be updating the DOM at the same rate.
-We want to control the rendering, to ensure good performance and aid debugging.
-If we allowed React to render in response to user interaction, we'd lose this control.
+We want to control the rendering, to ensure good performance and aid debugging e.g. when pushing the limits of visible objects.
+If we allowed React (actually, Preact) to render in response to user interaction, we'd lose this control.
+Take another look at _panzoom/PanZoom.jsx_.
 
-For example, let's take another look at [PanZoom.jsx](#command "open-tab panzoom code@panzoom/PanZoom.jsx") ...
+      `}/>
 
-Server-side rendering cannot handle DOM mutations, so we'll force our components to load client-side.
+      <Tabs
+        height={360}
+        tabs={[
+          { key: 'code', filepath: 'panzoom/PanZoom.jsx' },
+        ]}
+      />
+
+      <Markdown children={`
+
+__TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
+
+__TODO__ Server-side rendering cannot handle DOM mutations, so we don't use SSR.
+
 
 ### CSS inside JS
 
