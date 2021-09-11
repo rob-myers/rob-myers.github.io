@@ -220,7 +220,7 @@ Here's a whirlwind overview of React (and Preact).
 
       <Tabs
         storeKey="jsx-to-js"
-        height={360}
+        height={300}
         tabs={[
           { key: 'code', filepath: 'example/jsx-to-js.jsx' },
         ]}
