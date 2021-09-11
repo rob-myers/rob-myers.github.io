@@ -1,10 +1,14 @@
 ## Plan
 
-- geomorph 301
-  - finish sub-symbols
-  - can paint aux polys to PNG
-  - use in `PanZoomDemo`
-  - tidy `PanZoom` and update CodeSandbox
+- move types.js files into d.ts
+- move meta out of Poly
+- labels -> small boxes
+- symbols have navpoly
+- finish sub-symbols for geomorph 301
+- remove GeomorphTest1
+- rename GeomorphTest2 as GeomorphDemo
+- use in `PanZoomDemo`
+- tidy `PanZoom` and update CodeSandbox
 
 - emphasise render-once approach to React in intro
 - demos should always involve starship geomorphs
