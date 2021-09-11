@@ -1,6 +1,5 @@
 ## Plan
 
-- compute geomorph nav poly
 - remove GeomorphTest1
 - rename GeomorphTest2 as GeomorphDemo
 - finish sub-symbols for geomorph 301
@@ -16,6 +15,7 @@
 - investigate poly refinement
   - Ruppert's Delaunay Refinement Algorithm
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
+- ✅compute geomorph nav poly
 - ✅ labels -> small boxes
 - ✅ move meta out of Poly
 - ✅ move types.js files into d.ts

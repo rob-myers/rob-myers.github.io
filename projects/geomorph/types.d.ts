@@ -46,6 +46,8 @@ declare namespace Geomorph {
       obstacles: Poly[];
       walls: Poly[];
     };
+    navPoly: Poly[];
+
     hullKey: string;
     /** Bounds of hull polygon */
     hullRect: Geom.RectJson; // TODO degenerate
@@ -53,6 +55,7 @@ declare namespace Geomorph {
     pngHref: string;
     /** Original geomorph rect (debug only) */
     pngRect: Geom.RectJson;
+
     /** Includes hull symbol */
     symbols: {
       pngHref: string;

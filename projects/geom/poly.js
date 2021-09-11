@@ -319,6 +319,11 @@ export class Poly {
     return this;
   }
 
+  removeHoles() {
+    this.holes = [];
+    return this;
+  }
+
   /** Mutate vectors by rounding. */
   round() {
     this.outline.forEach(p => p.round());

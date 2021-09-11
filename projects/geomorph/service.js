@@ -21,10 +21,7 @@ export function createLayout(def, lookup) {
   def.items.forEach((item) => {
     if (item.hull) return;
     item.transform ? m.feedFromArray(item.transform) : m.setIdentity();
-    m.a *= 0.2;
-    m.b *= 0.2;
-    m.c *= 0.2;
-    m.d *= 0.2;
+    m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
     const { doors, irisValves, labels, obstacles, walls, meta } = lookup[item.symbol];
     const nextDoors = restrictByTags(doors, meta.doors, item.tags);
     actual.doors.push(...nextDoors.map(x => x.clone().applyMatrix(m)));
@@ -34,16 +31,27 @@ export function createLayout(def, lookup) {
     actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
   });
 
+  actual.walls = Poly.cutOut(actual.doors, actual.walls);
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSymbol = symbols[0];
+  const hullOutline = hullSymbol.hull[0].clone().removeHoles();
+
+  const navPoly = Poly.cutOut(
+    actual.walls.flatMap(x => x.createOutset(12.5))
+      .concat(actual.obstacles.flatMap(x => x.createOutset(5))),
+    [hullOutline],
+  );
 
   return {
     def,
     actual,
+    navPoly,
+
     hullKey: hullSymbol.key,
     hullRect: /** @type {Geom.RectJson} */ (hullSymbol.meta.hullRect),
     pngHref: `/debug/${def.key}.png`,
     pngRect: hullSymbol.meta.pngRect,
+
     symbols: symbols.map((sym, i) => ({
       pngHref: `/symbol/${sym.key}.png`,
       pngRect: sym.meta.pngRect,
@@ -64,17 +72,16 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
 
   const topNodes = Array.from($('svg > *'));
   const pngRect = extractPngOffset($, topNodes);
-  const hulls = extractGeoms($, topNodes, 'hull');
-  const hull = Poly.union(hulls);
+  const hulls = Poly.union(extractGeoms($, topNodes, 'hull'));
   const doors = extractGeoms($, topNodes, 'doors');
   const irisValves = extractGeoms($, topNodes, 'iris-valves');
   const labels = extractGeoms($, topNodes, 'labels');
-  const obstacles = extractGeoms($, topNodes, 'obstacles');
-  const walls = extractGeoms($, topNodes, 'walls');
-
+  const obstacles = Poly.union(extractGeoms($, topNodes, 'obstacles'));
+  const walls = Poly.union(extractGeoms($, topNodes, 'walls'));
+  
   return {
     key: symbolName,
-    hull,
+    hull: hulls,
     doors,
     irisValves,
     labels,
@@ -82,7 +89,7 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
     walls,
     meta: {
       doors: doors.map((/** @type {*} */ x) => x._title),
-      hullRect: hull[0]?.rect,
+      hullRect: hulls[0]?.rect,
       pngRect,
       svgInnerText: debug ? topNodes.map(x => $.html(x)).join('\n') : undefined,
     },

@@ -63,7 +63,6 @@ function useSymbolLookup() {
     () => fetch('/symbol/svg.json')
       .then(x => x.json())
       .then(x => deserializeSvgJson(x)),
-    // { refetchOnWindowFocus: false },
   ).data;
 }
 
@@ -102,14 +101,16 @@ function createAuxCanvases(layout, lookup) {
   
   const hullOutline = hull.hull[0].outline;
   uct.translate(-hullRect.x, -hullRect.y);
-  uct.fillStyle = 'rgba(0, 0, 100, 0.2)';
+  uct.fillStyle = 'rgba(100, 0, 0, 0.1)';
   fillRing(uct, hullOutline);
+  uct.fillStyle = 'rgba(0, 0, 200, 0.03)';
+  fillPolygon(uct, ...layout.navPoly);
   uct.resetTransform();
   
   oct.translate(-hullRect.x, -hullRect.y);
   oct.fillStyle = 'rgba(200, 50, 50, .5)';
   fillPolygon(oct, ...hull.hull);
-  oct.fillStyle = 'rgba(0, 200, 0, 0.2)';
+  oct.fillStyle = 'rgba(0, 200, 0, .5)';
   fillPolygon(oct, ...hull.doors);
   
   const {
@@ -125,7 +126,7 @@ function createAuxCanvases(layout, lookup) {
   fillPolygon(oct, ...irisValves);
   oct.fillStyle = 'rgba(200, 50, 50, .05)';
   fillPolygon(oct, ...walls);
-  oct.fillStyle = 'rgba(100, 100, 150, 0.2)';
+  oct.fillStyle = 'rgba(100, 0, 0, 0.05)';
   fillPolygon(oct, ...obstacles);
   oct.fillStyle = 'rgba(0, 0, 0, 0.1)';
   fillPolygon(oct, ...labels);
