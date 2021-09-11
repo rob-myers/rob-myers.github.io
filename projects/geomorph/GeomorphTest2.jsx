@@ -5,7 +5,7 @@ import { SymbolLayout, ParsedSvgJson } from './types';
 import { RectJson, VectJson } from "../geom/types";
 import { Poly, Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
-import { deserializeSvgJson } from "./parse-symbol";
+import { deserializeSvgJson, restrictByTags } from "./parse-symbol";
 
 // TODO load pre-parsed data from svg.json
 // TODO create single image with all symbols?
@@ -119,7 +119,7 @@ function createAuxCanvases(layout, symbolData) {
   uct.translate(hullRect.x, hullRect.y);
   
   oct.translate(-hullRect.x, -hullRect.y);
-  oct.fillStyle = 'rgba(200, 50, 50, 0.2)';
+  oct.fillStyle = 'rgba(200, 50, 50, .5)';
   fillPolygon(oct, ...hull.hull);
   oct.fillStyle = 'rgba(0, 200, 0, 0.2)';
   fillPolygon(oct, ...hull.doors)
@@ -132,16 +132,16 @@ function createAuxCanvases(layout, symbolData) {
     obstacles,
     walls,
   }] of others.entries()) {
-    const { transform } = layout.items[i + 1];
+    const { transform, tags } = layout.items[i + 1];
     oct.resetTransform();
     oct.translate(-hullRect.x, -hullRect.y);
     transform && oct.transform(...transform);
     oct.scale(0.2, 0.2);
 
     oct.fillStyle = 'rgba(0, 200, 0, 0.2)';
-    fillPolygon(oct, ...doors);
+    fillPolygon(oct, ...restrictByTags(doors, tags));
     fillPolygon(oct, ...irisValves);
-    oct.fillStyle = 'rgba(200, 50, 50, 0.1)';
+    oct.fillStyle = 'rgba(200, 50, 50, .05)';
     fillPolygon(oct, ...walls);
     oct.fillStyle = 'rgba(100, 100, 150, 0.2)';
     fillPolygon(oct, ...obstacles);

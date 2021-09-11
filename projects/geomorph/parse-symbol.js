@@ -86,25 +86,13 @@ export function deserializeSvgJson(svgJson) {
 }
 
 /**
- * Currently only restricting doors by tags
- * @param {ParsedSymbol<Poly>} parsed
+ * @param {Poly[]} polys
  * @param {string[]} [tags]
  */
- export function restrictAllByTags(parsed, tags) {
-  if (tags) {
-    parsed.doors = restrictByTags(parsed.doors, tags);
-  }
-  return parsed;
-}
-
-/**
- * @param {Poly[]} polys
- * @param {string[]} tags
- */
- function restrictByTags(polys, tags) {
-  return polys.filter(x =>
-    x.meta?.title.startsWith('has-') && tags.includes(x.meta.title)
-  );
+export function restrictByTags(polys, tags) {
+  return tags
+    ? polys.filter(x => x.meta?.title.startsWith('has-') && tags.includes(x.meta.title))
+    : polys;
 }
 
 /**

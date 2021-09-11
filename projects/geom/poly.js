@@ -10,12 +10,13 @@ export class Poly {
 
   /**
    * @param {Vect[]} outline
-   * @param {Vect[][]} holes 
+   * @param {Vect[][]} holes
+   * @param {Record<string, string>} [meta]
    */
-  constructor(outline = [], holes = []) {
+  constructor(outline = [], holes = [], meta) {
     /** @type {Vect[]} */ this.outline = outline;
     /** @type {Vect[][]} */ this.holes = holes;
-    /** @type {undefined | Record<string, string>} */ this.meta;
+    /** @type {Record<string, string> | undefined} */ this.meta = meta;
   }
 
   get allPoints() {
@@ -194,7 +195,8 @@ export class Poly {
     }
     return new Poly(
       input.coordinates[0].map(([x, y]) => new Vect(x, y)),
-      input.coordinates.slice(1).map(hole => hole.map(([x, y]) => new Vect(x, y)))
+      input.coordinates.slice(1).map(hole => hole.map(([x, y]) => new Vect(x, y))),
+      input.meta,
     );
   }
 
