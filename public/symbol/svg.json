@@ -554,6 +554,17 @@
       "pngRect": {"x": -23, "y": -67, "width": 2446, "height": 2790}
     }
   },
+  "iris-valves--005--1x1": {
+    "key": "iris-valves--005--1x1",
+    "doors": [],
+    "labels": [],
+    "obstacles": [],
+    "walls": [],
+    "meta": {
+      "doors": [],
+      "pngRect": {"x": 0, "y": 40, "width": 221, "height": 220}
+    }
+  },
   "misc-stellar-cartography--023--4x4": {
     "key": "misc-stellar-cartography--023--4x4",
     "doors": [

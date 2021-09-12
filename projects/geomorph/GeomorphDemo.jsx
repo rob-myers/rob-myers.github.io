@@ -81,6 +81,10 @@ const layout301 = {
     { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, 1, 1200, 0] },
     { symbol: 'stateroom--036--2x4', transform: [0, -1, 1, 0, 0, 600] },
     { symbol: 'bridge--042--8x9', transform: [1, 0, 0, 1, 360, 60] },
+    { symbol: 'iris-valves--005--1x1', transform: [0, -1, 1, 0, 0, 360] },
+    { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240] },
+    { symbol: 'iris-valves--005--1x1', transform: [-1, 0, 0, 1, 360, 540] },
+    { symbol: 'iris-valves--005--1x1', transform: [-1, 0, 0, 1, 960, 540] },
   ],
 };
 
