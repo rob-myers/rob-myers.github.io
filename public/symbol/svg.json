@@ -554,6 +554,17 @@
       "pngRect": {"x": -23, "y": -67, "width": 2446, "height": 2790}
     }
   },
+  "console--031--1x1.2": {
+    "key": "console--031--1x1.2",
+    "doors": [],
+    "labels": [],
+    "obstacles": [],
+    "walls": [],
+    "meta": {
+      "doors": [],
+      "pngRect": {"x": -4, "y": -4, "width": 377, "height": 307}
+    }
+  },
   "iris-valves--005--1x1": {
     "key": "iris-valves--005--1x1",
     "doors": [],

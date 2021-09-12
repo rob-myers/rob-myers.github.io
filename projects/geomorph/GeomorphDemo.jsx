@@ -85,6 +85,8 @@ const layout301 = {
     { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240] },
     { symbol: 'iris-valves--005--1x1', transform: [-1, 0, 0, 1, 360, 540] },
     { symbol: 'iris-valves--005--1x1', transform: [-1, 0, 0, 1, 960, 540] },
+    { symbol: 'console--031--1x1.2', transform: [-1, 0, 0, 1, 360, 60] },
+    { symbol: 'console--031--1x1.2', transform: [1, 0, 0, 1, 840, 60] },
   ],
 };
 
