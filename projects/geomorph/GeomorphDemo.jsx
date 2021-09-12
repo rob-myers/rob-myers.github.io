@@ -118,7 +118,6 @@ function createAuxCanvases(layout, lookup) {
   
   const {
     doors,
-    irisValves,
     labels,
     obstacles,
     walls,
@@ -126,7 +125,6 @@ function createAuxCanvases(layout, lookup) {
 
   oCtxt.fillStyle = 'rgba(0, 200, 0, 1)';
   fillPolygon(oCtxt, doors);
-  fillPolygon(oCtxt, irisValves);
   oCtxt.fillStyle = 'rgba(200, 50, 50, .05)';
   fillPolygon(oCtxt, walls);
   oCtxt.fillStyle = 'rgba(100, 0, 0, 0.05)';

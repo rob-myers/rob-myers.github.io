@@ -11,7 +11,6 @@ export function createLayout(def, lookup) {
   /** @type {Geomorph.Layout['actual']} */
   const actual = {
     doors: [],
-    irisValves: [],
     labels: [],
     obstacles: [],
     walls: [],
@@ -22,10 +21,9 @@ export function createLayout(def, lookup) {
     if (item.hull) return;
     item.transform ? m.feedFromArray(item.transform) : m.setIdentity();
     m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
-    const { doors, irisValves, labels, obstacles, walls, meta } = lookup[item.symbol];
+    const { doors, labels, obstacles, walls, meta } = lookup[item.symbol];
     const nextDoors = restrictByTags(doors, meta.doors, item.tags);
     actual.doors.push(...nextDoors.map(x => x.clone().applyMatrix(m)));
-    actual.irisValves.push(...irisValves.map(x => x.clone().applyMatrix(m)));
     actual.labels.push(...labels.map(x => x.clone().applyMatrix(m)));
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
@@ -74,7 +72,6 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
   const pngRect = extractPngOffset($, topNodes);
   const hulls = Poly.union(extractGeoms($, topNodes, 'hull'));
   const doors = extractGeoms($, topNodes, 'doors');
-  const irisValves = extractGeoms($, topNodes, 'iris-valves');
   const labels = extractGeoms($, topNodes, 'labels');
   const obstacles = Poly.union(extractGeoms($, topNodes, 'obstacles'));
   const walls = Poly.union(extractGeoms($, topNodes, 'walls'));
@@ -83,12 +80,11 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
     key: symbolName,
     hull: hulls,
     doors,
-    irisValves,
     labels,
     obstacles,
     walls,
     meta: {
-      doors: doors.map((/** @type {*} */ x) => x._title),
+      doors: doors.map((/** @type {*} */ x) => x._ownTags),
       hullRect: hulls[0]?.rect,
       pngRect,
     },
@@ -104,7 +100,6 @@ export function serializeSymbol(parsed) {
     key: parsed.key,
     hull: toJsons(parsed.hull),
     doors: toJsons(parsed.doors),
-    irisValves: toJsons(parsed.irisValves),
     labels: toJsons(parsed.labels),
     obstacles: toJsons(parsed.obstacles),
     walls: toJsons(parsed.walls),
@@ -121,7 +116,6 @@ export function deserializeSymbol(json) {
     key: json.key,
     hull: json.hull.map(Poly.from),
     doors: json.doors.map(Poly.from),
-    irisValves: json.irisValves.map(Poly.from),
     labels: json.labels.map(Poly.from),
     obstacles: json.obstacles.map(Poly.from),
     walls: json.walls.map(Poly.from),
@@ -139,15 +133,15 @@ export function deserializeSvgJson(svgJson) {
 
 /**
  * @param {Poly[]} polys
- * @param {(null | string)[]} polysTitles
+ * @param {string[][]} polysTags
  * @param {string[]} [tags]
  */
-export function restrictByTags(polys, polysTitles, tags) {
+export function restrictByTags(polys, polysTags, tags) {
   if (tags) {
-    return polysTitles.flatMap((title, i) =>
-      !title || !title.startsWith('has-')
-        ? polys[i]
-        : tags.includes(title) ? [polys[i]] : []
+    return polysTags.flatMap((ownTags, i) =>
+      ownTags.length
+        ? ownTags.some(tag => tags.includes(tag)) ? polys[i] : []
+        : polys[i]
     );
   } else {
     return polys;
@@ -172,14 +166,15 @@ function extractGeoms(api, topNodes, title) {
 function extractGeom(api, el) {
   const { tagName, attribs: a } = el;
   const output = /** @type {Poly[]} */ ([]);
-  const _title = api(el).children('title').text() || null;
+  const title = api(el).children('title').text() || null;
+  const _ownTags = title ? title.split(' ') : [];
 
   if (tagName === 'rect') {
     const poly = Poly.fromRect(new Rect(Number(a.x || 0), Number(a.y || 0), Number(a.width || 0), Number(a.height || 0)))
-    output.push(Object.assign(poly, { _title }));
+    output.push(Object.assign(poly, { _ownTags }));
   } else if (tagName === 'path') {
     const polys = svgPathToPolygons(a.d);
-    output.push(...polys.map(p => Object.assign(p, { _title })));
+    output.push(...polys.map(p => Object.assign(p, { _ownTags })));
   } else {
     console.warn('extractGeom: unexpected tagName:', tagName);
   }

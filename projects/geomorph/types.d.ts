@@ -8,24 +8,24 @@ declare namespace Geomorph {
   /** Parsed version of `SvgJson`  */
   export type SymbolLookup = Record<string, ParsedSymbol<Poly>>;
 
+  interface SvgGroups<T> {
+    /** Only non-empty for hull symbols; assume connected. */
+    hull: T[];
+    doors: T[];
+    labels: T[];
+    obstacles: T[];
+    walls: T[];
+  }
+
   /**
    * - `ParsedSymbol<GeoPolyJson>` used in `SvgJson`
    * - `ParsedSymbol<Poly>` used in `SymbolLookup`
    */
-  export interface ParsedSymbol<T> {
+  export interface ParsedSymbol<T> extends SvgGroups<T> {
     key: string;
-
-    /** Only non-empty for hull symbols; assume connected. */
-    hull: T[];
-    doors: T[];
-    irisValves: T[];
-    labels: T[];
-    obstacles: T[];
-    walls: T[];
-
     meta: {
-      /** Door titles */
-      doors: (null | string)[];
+      /** Door tags */
+      doors: string[][];
       /** Only exists for hull symbols */
       hullRect?: Geom.RectJson;
       pngRect: Geom.RectJson;
@@ -38,13 +38,7 @@ declare namespace Geomorph {
   export interface Layout {
     def: LayoutDef;
     /** Transformed and filtered */
-    actual: {
-      doors: Poly[];
-      irisValves: Poly[];
-      labels: Poly[];
-      obstacles: Poly[];
-      walls: Poly[];
-    };
+    actual: Omit<SvgGroups<Poly>, 'hull'>;
     navPoly: Poly[];
 
     hullKey: string;

@@ -1,10 +1,13 @@
 ## Plan
 
+- hull doors are tagged e.g. hull-door-e
+- hull has lifts (tagged iris)
 - finish sub-symbols for geomorph 301
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
-
+- perhaps precompute layouts too
 - emphasise render-once approach to React in intro
+
 - demos should always involve starship geomorphs
 - write Navigation subsection
 - write Physics engine subsection
@@ -13,6 +16,8 @@
 - investigate poly refinement
   - Ruppert's Delaunay Refinement Algorithm
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
+- ✅ asset titles space-separated and define ownTags
+- ✅ irisValves -> doors with tag iris
 - ✅ remove GeomorphTest1
 - ✅ rename GeomorphTest2 as GeomorphDemo
 - ✅ compute geomorph nav poly

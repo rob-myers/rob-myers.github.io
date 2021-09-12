@@ -84,12 +84,11 @@
         "coordinates": [[[850, 594], [850, 606], [948, 606], [948, 594]]]
       }
     ],
-    "irisValves": [],
     "labels": [],
     "obstacles": [],
     "walls": [],
     "meta": {
-      "doors": [null, null, null, null],
+      "doors": [[], [], [], []],
       "hullRect": {
         "x": -4,
         "y": -4.376002,
@@ -164,9 +163,7 @@
             [610.8968990000001, 1480.673096]
           ]
         ]
-      }
-    ],
-    "irisValves": [
+      },
       {
         "type": "Polygon",
         "coordinates": [[[2375, 914], [2375, 1194], [2423, 1194], [2423, 914]]]
@@ -174,7 +171,7 @@
       {
         "type": "Polygon",
         "coordinates": [
-          [[-24, 911.944], [-24, 1191.944], [24, 1191.944], [24, 911.944]]
+          [[-24, 911.9], [-24, 1191.9], [24, 1191.9], [24, 911.9]]
         ]
       },
       {
@@ -550,7 +547,7 @@
       }
     ],
     "meta": {
-      "doors": [null, null, null, null, null, null, null],
+      "doors": [[], [], [], [], [], [], [], ["iris"], ["iris"], ["iris"]],
       "pngRect": {"x": -23, "y": -67, "width": 2446, "height": 2790}
     }
   },
@@ -570,7 +567,6 @@
         ]
       }
     ],
-    "irisValves": [],
     "labels": [
       {
         "type": "Polygon",
@@ -611,7 +607,7 @@
       }
     ],
     "meta": {
-      "doors": [null],
+      "doors": [[]],
       "pngRect": {"x": -10, "y": -10, "width": 1220, "height": 1220}
     }
   },
@@ -628,7 +624,6 @@
         "coordinates": [[[300, 575], [300, 623], [590, 623], [590, 575]]]
       }
     ],
-    "irisValves": [],
     "labels": [],
     "obstacles": [],
     "walls": [
@@ -641,7 +636,7 @@
       }
     ],
     "meta": {
-      "doors": ["has-door-e", "has-door-s"],
+      "doors": [["has-door-e"], ["has-door-s"]],
       "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620}
     }
   },
@@ -658,7 +653,6 @@
         "coordinates": [[[310, 275], [310, 323], [590, 323], [590, 275]]]
       }
     ],
-    "irisValves": [],
     "labels": [],
     "obstacles": [],
     "walls": [
@@ -680,7 +674,7 @@
       }
     ],
     "meta": {
-      "doors": [null, null],
+      "doors": [[], []],
       "pngRect": {"x": -10, "y": -10, "width": 620, "height": 634}
     }
   },
@@ -688,7 +682,6 @@
     "key": "stateroom--036--2x4",
     "hull": [],
     "doors": [],
-    "irisValves": [],
     "labels": [],
     "obstacles": [],
     "walls": [
