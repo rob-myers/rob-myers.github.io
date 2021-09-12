@@ -22,8 +22,8 @@ export function createLayout(def, lookup) {
     item.transform ? m.feedFromArray(item.transform) : m.setIdentity();
     m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
     const { doors, labels, obstacles, walls, meta } = lookup[item.symbol];
-    const nextDoors = restrictByTags(doors, meta.doors, item.tags);
-    actual.doors.push(...nextDoors.map(x => x.clone().applyMatrix(m)));
+    const taggedDoors = restrictByTags(doors, meta.doors, item.tags);
+    actual.doors.push(...taggedDoors.map(x => x.clone().applyMatrix(m)));
     actual.labels.push(...labels.map(x => x.clone().applyMatrix(m)));
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
@@ -44,13 +44,13 @@ export function createLayout(def, lookup) {
     def,
     actual,
     navPoly,
-
-    hullKey: hullSymbol.key,
+    
     hullRect: /** @type {Geom.RectJson} */ (hullSymbol.meta.hullRect),
     pngHref: `/debug/${def.key}.png`,
     pngRect: hullSymbol.meta.pngRect,
 
     symbols: symbols.map((sym, i) => ({
+      key: sym.key,
       pngHref: `/symbol/${sym.key}.png`,
       pngRect: sym.meta.pngRect,
       transformArray: def.items[i].transform,

@@ -75,8 +75,8 @@ const layout301 = {
     { symbol: 'misc-stellar-cartography--023--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
     { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 0, 480] },
     { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 120, 480] },
-    { symbol: 'office--001--2x2', transform: [-1, 0, 0, 1, 240, 120], tags: ['has-door-s'] },
-    { symbol: 'office--001--2x2', transform: [1, 0, 0, 1, 960, 120], tags: ['has-door-s'] },
+    { symbol: 'office--001--2x2', transform: [-1, 0, 0, 1, 240, 120], tags: ['door-s'] },
+    { symbol: 'office--001--2x2', transform: [1, 0, 0, 1, 960, 120], tags: ['door-s'] },
     { symbol: 'stateroom--036--2x4' },
     { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, 1, 1200, 0] },
     { symbol: 'stateroom--036--2x4', transform: [0, -1, 1, 0, 0, 600] },
@@ -89,8 +89,8 @@ const layout301 = {
  * @param {Geomorph.SymbolLookup} lookup 
  */
 function createAuxCanvases(layout, lookup) {
-  const hull = lookup[layout.hullKey];
-  const hullRect = layout.hullRect;
+  const hull = lookup[layout.symbols[0].key];
+  const hullRect = /** @type {Geom.RectJson} */ (hull.meta.hullRect);
 
   const oc = document.createElement('canvas');
   const uc = document.createElement('canvas');
@@ -105,16 +105,16 @@ function createAuxCanvases(layout, lookup) {
   fillRing(uCtxt, hullOutline);
   uCtxt.fillStyle = 'rgba(0, 0, 200, 0.03)';
   fillPolygon(uCtxt, layout.navPoly);
-  // uct.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+  // uCtxt.strokeStyle = 'rgba(0, 0, 0, 0.2)';
   // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
-  // decomps.forEach(decomp => drawTriangulation(uct, decomp));
+  // decomps.forEach(decomp => drawTriangulation(uCtxt, decomp));
   uCtxt.resetTransform();
   
   oCtxt.translate(-hullRect.x, -hullRect.y);
   oCtxt.fillStyle = 'rgba(200, 50, 50, .5)';
   fillPolygon(oCtxt, hull.hull);
   oCtxt.fillStyle = 'rgba(0, 200, 0, .5)';
-  fillPolygon(oCtxt, hull.doors);
+  fillPolygon(oCtxt, hull.doors); // TODO can be filtered
   
   const {
     doors,

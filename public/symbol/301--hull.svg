@@ -27,10 +27,18 @@
   </g>
   <g style="pointer-events: none;">
     <title>doors</title>
-    <rect x="-6" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);"/>
-    <rect x="1194" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);"/>
-    <rect x="249.996" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);"/>
-    <rect x="850" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);"/>
+    <rect x="-6" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+      <title>door-w doors</title>
+    </rect>
+    <rect x="1194" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+      <title>door-e doors</title>
+    </rect>
+    <rect x="249.996" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+      <title>door-s-e doors</title>
+    </rect>
+    <rect x="850" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+      <title>door-s-w doors</title>
+    </rect>
   </g>
   <rect width="1200" height="600" style="fill: url(#grid-0); fill-rule: nonzero; pointer-events: none;">
     <title>grid</title>

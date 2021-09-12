@@ -41,7 +41,6 @@ declare namespace Geomorph {
     actual: Omit<SvgGroups<Poly>, 'hull'>;
     navPoly: Poly[];
 
-    hullKey: string;
     /** Bounds of hull polygon */
     hullRect: Geom.RectJson; // TODO degenerate
     /** Original geomorph (debug only) */
@@ -51,6 +50,7 @@ declare namespace Geomorph {
 
     /** Includes hull symbol */
     symbols: {
+      key: string;
       pngHref: string;
       pngRect: Geom.RectJon;
       transformArray?: LayoutDefItem['transform'];

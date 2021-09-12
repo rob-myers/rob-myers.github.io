@@ -10,10 +10,10 @@
   <g transform="matrix(1, 0, 0, 1, 0, 0.000001)" style="pointer-events: none;">
     <title>doors</title>
     <rect x="575" y="300" width="48" height="290" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
-      <title>has-door-e</title>
+      <title>door-e</title>
     </rect>
     <rect x="300" y="575" width="290" height="48" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
-      <title>has-door-s</title>
+      <title>door-s</title>
     </rect>
   </g>
   <g style="pointer-events: none;" transform="matrix(1, 0, 0, 1, 0, 0.000001)">

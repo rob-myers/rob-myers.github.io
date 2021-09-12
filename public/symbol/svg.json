@@ -88,7 +88,12 @@
     "obstacles": [],
     "walls": [],
     "meta": {
-      "doors": [[], [], [], []],
+      "doors": [
+        ["door-w", "doors"],
+        ["door-e", "doors"],
+        ["door-s-e", "doors"],
+        ["door-s-w", "doors"]
+      ],
       "hullRect": {
         "x": -4,
         "y": -4.376002,
@@ -636,7 +641,7 @@
       }
     ],
     "meta": {
-      "doors": [["has-door-e"], ["has-door-s"]],
+      "doors": [["door-e"], ["door-s"]],
       "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620}
     }
   },
