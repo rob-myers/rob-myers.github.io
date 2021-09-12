@@ -128,7 +128,7 @@ function createAuxCanvases(layout, lookup) {
   fillPolygon(oCtxt, walls);
   oCtxt.fillStyle = 'rgba(100, 0, 0, 0.05)';
   fillPolygon(oCtxt, obstacles);
-  oCtxt.fillStyle = 'rgba(0, 0, 0, 0.1)';
+  oCtxt.fillStyle = 'rgba(0, 0, 0, 0.04)';
   fillPolygon(oCtxt, labels);
   oCtxt.resetTransform();
   

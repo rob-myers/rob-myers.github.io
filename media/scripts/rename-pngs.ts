@@ -13,6 +13,7 @@
  * - yarn rename-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
  * - yarn rename-pngs symbol media/Symbols/Offices media/symbol-offices
  * - yarn rename-pngs symbol media/Symbols/Misc media/symbol-misc
+ * - yarn rename-pngs symbol 'media/Symbols/Furniture, Consoles, & Equipment' media/symbol-furniture-consoles-equipment
  * 
  * - yarn rename-pngs symbol media/Symbols/Lounge media/symbol-lounge
  * - yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
@@ -26,15 +27,17 @@ import { nanoid } from 'nanoid';
 
 import { 
   FileMeta,
+  metaFromRootFilename,
   metaFromGeomorphFilename,
   metaFromSymbolFilename,
+  metaFromAltSymbolFilename,
+  rootFilenameRegex,
+  geomorphsFilenameRegex,
+  symbolsFilenameRegex,
+  altSymbolsFilenameRegex,
   error,
   info,
-  metaFromRootFilename,
   warn,
-  symbolsFilenameRegex,
-  geomorphsFilenameRegex,
-  rootFilenameRegex,
 } from './service';
 
 const [,, inputType, srcDir, dstDir] = process.argv;
@@ -63,26 +66,38 @@ if (childProcess.execSync(
 const srcFilenames = fs.readdirSync(srcDir);
 fs.mkdirSync(dstDir, { recursive: true });
 const manifestPath = path.join(dstDir, 'manifest.json');
-
-const filenameRegex = {
-  'root': rootFilenameRegex,
-  'geomorph': geomorphsFilenameRegex,
-  'symbol': symbolsFilenameRegex,
-}[inputType];
-
-const extractMeta = {
-  'root': metaFromRootFilename,
-  'geomorph': metaFromGeomorphFilename,
-  'symbol': metaFromSymbolFilename,
-}[inputType];
+const fileMetas = [] as FileMeta[];
 
 info('creating manifest', manifestPath);
-const fileMetas = srcFilenames.flatMap<FileMeta>(filename => {
-  const matched = filename.match(filenameRegex);
-  return matched
-    ? [extractMeta(matched)]
-    : (filename.match(/\.png$/) && warn('ignoring PNG with unexpected filename format:', filename), []);
-});
+
+switch (inputType) {
+  case 'root':
+    srcFilenames.forEach(filename => {
+      const matched = filename.match(rootFilenameRegex);
+      if (matched) fileMetas.push(metaFromRootFilename(matched))
+      else if (filename.match(/\.png$/)) warn('ignoring PNG:', filename);
+    });
+    break;
+  case 'geomorph':
+    srcFilenames.forEach(filename => {
+      const matched = filename.match(geomorphsFilenameRegex);
+      if (matched) fileMetas.push(metaFromGeomorphFilename(matched))
+      else if (filename.match(/\.png$/)) warn('ignoring PNG:', filename);
+    });
+    break;
+  case 'symbol':
+    srcFilenames.forEach(filename => {
+      let matched = filename.match(symbolsFilenameRegex);
+      if (matched) fileMetas.push(metaFromSymbolFilename(matched))
+      else {
+        matched = filename.match(altSymbolsFilenameRegex);
+        if (matched) fileMetas.push(metaFromAltSymbolFilename(matched))
+        else if (filename.match(/\.png$/)) warn('ignoring PNG:', filename);
+      }
+    });
+    break;
+}
+
 fs.writeFileSync(path.join(dstDir, 'manifest.json'), jsonStringifyPrettyCompact({
   parentFolder: path.basename(srcDir),
   sourceType: inputType,
