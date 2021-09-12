@@ -732,5 +732,16 @@
       "doors": [],
       "pngRect": {"x": -10, "y": -10, "width": 620, "height": 1234}
     }
+  },
+  "weaponry--013--1x2": {
+    "key": "weaponry--013--1x2",
+    "doors": [],
+    "labels": [],
+    "obstacles": [],
+    "walls": [],
+    "meta": {
+      "doors": [],
+      "pngRect": {"x": 25, "y": 195, "width": 852, "height": 417}
+    }
   }
 }

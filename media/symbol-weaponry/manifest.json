@@ -1,0 +1,735 @@
+{
+  "parentFolder": "Weaponry",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Weaponry 001 [10x10].png",
+      "dstName": "weaponry--001--2x2.png",
+      "id": 1,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Weaponry 002 [10x10].png",
+      "dstName": "weaponry--002--2x2.png",
+      "id": 2,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Weaponry 003 [10x10].png",
+      "dstName": "weaponry--003--2x2.png",
+      "id": 3,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Weaponry 004 [10x15].png",
+      "dstName": "weaponry--004--2x3.png",
+      "id": 4,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Weaponry 005 [10x15].png",
+      "dstName": "weaponry--005--2x3.png",
+      "id": 5,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Weaponry 006 [10x15].png",
+      "dstName": "weaponry--006--2x3.png",
+      "id": 6,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Weaponry 007 [5x10].png",
+      "dstName": "weaponry--007--1x2.png",
+      "id": 7,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Weaponry 008 [5x10].png",
+      "dstName": "weaponry--008--1x2.png",
+      "id": 8,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Weaponry 009 [5x10].png",
+      "dstName": "weaponry--009--1x2.png",
+      "id": 9,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Weaponry 010 [5x10].png",
+      "dstName": "weaponry--010--1x2.png",
+      "id": 10,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Weaponry 011 [5x10].png",
+      "dstName": "weaponry--011--1x2.png",
+      "id": 11,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Weaponry 012 [5x10].png",
+      "dstName": "weaponry--012--1x2.png",
+      "id": 12,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Weaponry 013 [5x10].png",
+      "dstName": "weaponry--013--1x2.png",
+      "id": 13,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Weaponry 014 [5x10].png",
+      "dstName": "weaponry--014--1x2.png",
+      "id": 14,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Weaponry 015 [5x10].png",
+      "dstName": "weaponry--015--1x2.png",
+      "id": 15,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Weaponry 016 [5x5].png",
+      "dstName": "weaponry--016--1x1.png",
+      "id": 16,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Weaponry 017 [5x10].png",
+      "dstName": "weaponry--017--1x2.png",
+      "id": 17,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Weaponry 018 [40x50].png",
+      "dstName": "weaponry--018--8x10.png",
+      "id": 18,
+      "gridDim": [8, 10],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Weaponry 019 [5x5].png",
+      "dstName": "weaponry--019--1x1.png",
+      "id": 19,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Weaponry 020 [5x18].png",
+      "dstName": "weaponry--020--1x3.6.png",
+      "id": 20,
+      "gridDim": [1, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Weaponry 021 [2x10].png",
+      "dstName": "weaponry--021--0.4x2.png",
+      "id": 21,
+      "gridDim": [0.4, 2],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Weaponry 022 [15x15].png",
+      "dstName": "weaponry--022--3x3.png",
+      "id": 22,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Weaponry 023 [15x20].png",
+      "dstName": "weaponry--023--3x4.png",
+      "id": 23,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Weaponry 024 [15x20].png",
+      "dstName": "weaponry--024--3x4.png",
+      "id": 24,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Weaponry 025 [15x20].png",
+      "dstName": "weaponry--025--3x4.png",
+      "id": 25,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Weaponry 026 [15x20].png",
+      "dstName": "weaponry--026--3x4.png",
+      "id": 26,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Weaponry 027 [15x15].png",
+      "dstName": "weaponry--027--3x3.png",
+      "id": 27,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Weaponry 028 [15x25].png",
+      "dstName": "weaponry--028--3x5.png",
+      "id": 28,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Weaponry 029 [15x25].png",
+      "dstName": "weaponry--029--3x5.png",
+      "id": 29,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Weaponry 030 [25x40].png",
+      "dstName": "weaponry--030--5x8.png",
+      "id": 30,
+      "gridDim": [5, 8],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Weaponry 031 [20x25].png",
+      "dstName": "weaponry--031--4x5.png",
+      "id": 31,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Weaponry 032 [20x25].png",
+      "dstName": "weaponry--032--4x5.png",
+      "id": 32,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Weaponry 033 [25x40].png",
+      "dstName": "weaponry--033--5x8.png",
+      "id": 33,
+      "gridDim": [5, 8],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Weaponry 034 [10x10].png",
+      "dstName": "weaponry--034--2x2.png",
+      "id": 34,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [34]
+    },
+    {
+      "srcName": "Weaponry 035 [10x15].png",
+      "dstName": "weaponry--035--2x3.png",
+      "id": 35,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [35]
+    },
+    {
+      "srcName": "Weaponry 036 [10x20].png",
+      "dstName": "weaponry--036--2x4.png",
+      "id": 36,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [36]
+    },
+    {
+      "srcName": "Weaponry 037 [20x20].png",
+      "dstName": "weaponry--037--4x4.png",
+      "id": 37,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [37]
+    },
+    {
+      "srcName": "Weaponry 038 [10x20].png",
+      "dstName": "weaponry--038--2x4.png",
+      "id": 38,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Weaponry 038 [15x20].png",
+      "dstName": "weaponry--038--3x4.png",
+      "id": 38,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Weaponry 038 [20x20].png",
+      "dstName": "weaponry--038--4x4.png",
+      "id": 38,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Weaponry 038 [20x25].png",
+      "dstName": "weaponry--038--4x5.png",
+      "id": 38,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Weaponry 038 [20x30].png",
+      "dstName": "weaponry--038--4x6.png",
+      "id": 38,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Weaponry 038 [20x40].png",
+      "dstName": "weaponry--038--4x8.png",
+      "id": 38,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Weaponry 038 [20x50].png",
+      "dstName": "weaponry--038--4x10.png",
+      "id": 38,
+      "gridDim": [4, 10],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Weaponry 038 [5x20].png",
+      "dstName": "weaponry--038--1x4.png",
+      "id": 38,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Weaponry 039 [10x10].png",
+      "dstName": "weaponry--039--2x2.png",
+      "id": 39,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Weaponry 039 [10x15].png",
+      "dstName": "weaponry--039--2x3.png",
+      "id": 39,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Weaponry 039 [10x20].png",
+      "dstName": "weaponry--039--2x4.png",
+      "id": 39,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Weaponry 039 [10x25].png",
+      "dstName": "weaponry--039--2x5.png",
+      "id": 39,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Weaponry 039 [10x30].png",
+      "dstName": "weaponry--039--2x6.png",
+      "id": 39,
+      "gridDim": [2, 6],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Weaponry 039 [10x40].png",
+      "dstName": "weaponry--039--2x8.png",
+      "id": 39,
+      "gridDim": [2, 8],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Weaponry 039 [10x50].png",
+      "dstName": "weaponry--039--2x10.png",
+      "id": 39,
+      "gridDim": [2, 10],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Weaponry 039 [5x10].png",
+      "dstName": "weaponry--039--1x2.png",
+      "id": 39,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Weaponry 040 [5x10].png",
+      "dstName": "weaponry--040--1x2.png",
+      "id": 40,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [40]
+    },
+    {
+      "srcName": "Weaponry 041 [10x20].png",
+      "dstName": "weaponry--041--2x4.png",
+      "id": 41,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Weaponry 041 [15x20].png",
+      "dstName": "weaponry--041--3x4.png",
+      "id": 41,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Weaponry 041 [20x20].png",
+      "dstName": "weaponry--041--4x4.png",
+      "id": 41,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Weaponry 041 [20x25].png",
+      "dstName": "weaponry--041--4x5.png",
+      "id": 41,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Weaponry 041 [20x30].png",
+      "dstName": "weaponry--041--4x6.png",
+      "id": 41,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Weaponry 041 [20x40].png",
+      "dstName": "weaponry--041--4x8.png",
+      "id": 41,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Weaponry 041 [20x50].png",
+      "dstName": "weaponry--041--4x10.png",
+      "id": 41,
+      "gridDim": [4, 10],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Weaponry 041 [5x20].png",
+      "dstName": "weaponry--041--1x4.png",
+      "id": 41,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Weaponry 042 [5x10].png",
+      "dstName": "weaponry--042--1x2.png",
+      "id": 42,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [42]
+    },
+    {
+      "srcName": "Weaponry 043 [10x10].png",
+      "dstName": "weaponry--043--2x2.png",
+      "id": 43,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [43]
+    },
+    {
+      "srcName": "Weaponry 044 [10x10].png",
+      "dstName": "weaponry--044--2x2.png",
+      "id": 44,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [44]
+    },
+    {
+      "srcName": "Weaponry 045 [10x10].png",
+      "dstName": "weaponry--045--2x2.png",
+      "id": 45,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [45]
+    },
+    {
+      "srcName": "Weaponry 046 [10x10].png",
+      "dstName": "weaponry--046--2x2.png",
+      "id": 46,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [46]
+    },
+    {
+      "srcName": "Weaponry 047 [10x25].png",
+      "dstName": "weaponry--047--2x5.png",
+      "id": 47,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [47]
+    },
+    {
+      "srcName": "Weaponry 048 [10x15].png",
+      "dstName": "weaponry--048--2x3.png",
+      "id": 48,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [48]
+    },
+    {
+      "srcName": "Weaponry 049 [10x15].png",
+      "dstName": "weaponry--049--2x3.png",
+      "id": 49,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [49]
+    },
+    {
+      "srcName": "Weaponry 050 [10x15].png",
+      "dstName": "weaponry--050--2x3.png",
+      "id": 50,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [50]
+    },
+    {
+      "srcName": "Weaponry 051 [10x10].png",
+      "dstName": "weaponry--051--2x2.png",
+      "id": 51,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [51]
+    },
+    {
+      "srcName": "Weaponry 052 [5x35].png",
+      "dstName": "weaponry--052--1x7.png",
+      "id": 52,
+      "gridDim": [1, 7],
+      "is": [],
+      "has": [],
+      "ids": [52]
+    },
+    {
+      "srcName": "Weaponry 053 [25x50].png",
+      "dstName": "weaponry--053--5x10.png",
+      "id": 53,
+      "gridDim": [5, 10],
+      "is": [],
+      "has": [],
+      "ids": [53]
+    },
+    {
+      "srcName": "Weaponry 054 [15x25].png",
+      "dstName": "weaponry--054--3x5.png",
+      "id": 54,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [54]
+    },
+    {
+      "srcName": "Weaponry 055 [20x25].png",
+      "dstName": "weaponry--055--4x5.png",
+      "id": 55,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [55]
+    },
+    {
+      "srcName": "Weaponry 056 [45x60].png",
+      "dstName": "weaponry--056--9x12.png",
+      "id": 56,
+      "gridDim": [9, 12],
+      "is": [],
+      "has": [],
+      "ids": [56]
+    },
+    {
+      "srcName": "Weaponry 057 [45x60].png",
+      "dstName": "weaponry--057--9x12.png",
+      "id": 57,
+      "gridDim": [9, 12],
+      "is": [],
+      "has": [],
+      "ids": [57]
+    },
+    {
+      "srcName": "Weaponry 058 [45x60].png",
+      "dstName": "weaponry--058--9x12.png",
+      "id": 58,
+      "gridDim": [9, 12],
+      "is": [],
+      "has": [],
+      "ids": [58]
+    },
+    {
+      "srcName": "Weaponry 059 [45x60].png",
+      "dstName": "weaponry--059--9x12.png",
+      "id": 59,
+      "gridDim": [9, 12],
+      "is": [],
+      "has": [],
+      "ids": [59]
+    },
+    {
+      "srcName": "Weaponry 060 [45x60].png",
+      "dstName": "weaponry--060--9x12.png",
+      "id": 60,
+      "gridDim": [9, 12],
+      "is": [],
+      "has": [],
+      "ids": [60]
+    }
+  ]
+}
