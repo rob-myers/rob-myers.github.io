@@ -35,8 +35,9 @@ export function createLayout(def, lookup) {
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSymbol = symbols[0];
   const hullOutline = hullSymbol.hull[0].clone().removeHoles();
-  const navPoly = Poly.cutOut(actual.walls
-      .flatMap(x => x.createOutset(12.5))
+
+  const navPoly = Poly.cutOut(
+    actual.walls.concat(hullSymbol.hull).flatMap(x => x.createOutset(12.5))
       .concat(actual.obstacles.flatMap(x => x.createOutset(5))),
     [hullOutline],
   );
@@ -193,7 +194,7 @@ function extractGeom(api, el) {
  * @param {Element[]} topNodes
  * @returns {Geom.RectJson}
  */
- function extractPngOffset(api, topNodes) {
+function extractPngOffset(api, topNodes) {
   const group = topNodes.find(x => hasTitle(api, x, 'background'));
   const { attribs: a } = api(group).children('image').toArray()[0];
   return {
@@ -211,7 +212,7 @@ function extractGeom(api, el) {
  * @param {Element} node 
  * @param {string} title 
  */
- function hasTitle(api, node, title) {
+function hasTitle(api, node, title) {
   return api(node).children('title').text() === title && api(node).addClass(title)
 }
 
